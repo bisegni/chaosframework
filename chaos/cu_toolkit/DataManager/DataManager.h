@@ -1,0 +1,104 @@
+    //
+    //  DataManager.h
+    //  ControlSystemLib
+    //
+    //  Created by Claudio Bisegni on 12/03/11.
+    //  Copyright 2011 INFN. All rights reserved.
+    //
+#ifndef DataManager_H
+#define DataManager_H
+#include <map>
+#include <string>
+#include <boost/thread.hpp>
+#include <chaos/common/general/Manager.h>
+#include <chaos/common/utility/Singleton.h>
+#include <chaos/common/exception/CException.h>
+#include <chaos/common/io/IODataDriver.h>
+#include <chaos/common/data/CDataWrapper.h>
+#include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
+
+namespace chaos{
+    using namespace boost;
+    using namespace std;
+/*
+ * This class manage and organize the creation of output pipeline, 
+ * there is only one instance of this class
+ */
+DEFINE_CLASS_AS_SINGLETON_WITH_OTHER_SUBCLASS(DataManager, Manager)
+        //mutex for lock operation on service request
+    mutex managing_data_mutex;
+    shared_ptr<IODataDriver> liveDriver;
+    shared_ptr<MultiBufferDataStorage> outputBuffer;
+    map<string, KeyDataStorage*>  deviceIDKeyDataStorageMap;
+    
+    /*
+     * Constructor
+     */
+    DataManager();
+    
+    /*
+     * Distructor
+     */
+    ~DataManager();
+    
+public:
+    /*
+     * Initzialize the datamanager
+     */
+    void init() throw(CException);
+    /*
+     * Deinitzialize the datamanager
+     */
+    void deinit() throw(CException);
+    
+    /*
+     * Start all sub process
+     */
+    void start() throw(CException);
+    
+    /*
+     Configure the sandbox and all subtree of the CU
+     */
+    CDataWrapper* updateConfiguration(CDataWrapper*);
+    /*
+     *
+     */
+    KeyDataStorage *getKeyDataStorageNewInstanceForKey(string&) throw(CException);
+        //-------per test------
+    /*
+     * Return an instance for the configured data live driver
+     */
+    IODataDriver *getDataLiveDriverNewInstance() throw(CException);
+    
+    /*
+     Initialize a device id KeyDataStorageBuffer
+     */
+    void initDeviceIDKeyDataStorage(string&, CDataWrapper*) throw(CException);
+
+    /*
+     Initialize a device id KeyDataStorageBuffer
+     */
+    void deinitDeviceIDKeyDataStorage(string&) throw(CException);
+    
+    /*
+     Submit a CDataWrapper on device id KeyDataStorage
+     */
+    void pushDeviceDataByIdKey(string&, CDataWrapper*) throw(CException);
+    
+    /*
+     Get the last CDataWrapper from the live data for the device id key
+     */
+    ArrayPointer<CDataWrapper> *getLastCDataWrapperForDeviceIdKey(string&)  throw(CException);
+    /*
+     return a new instance of CDataWrapper filled with a mandatory data
+     according to key
+     */
+    CDataWrapper *getNewDataWrapperForDeviceIdKey(string&);
+    
+    /*
+     Configure the datamanager
+     */
+    void updateConfigurationForDeviceIdKey(string&, CDataWrapper*);
+};
+}
+#endif
