@@ -22,3 +22,6 @@ ChaosMsgClient/chaos
 *.os
 *.dylib
 *.class
+Documentation/html
+Documentation/latex
+ControlUnitTest/ChaosCUTest

@@ -4,6 +4,13 @@
    <FileRef
       location = "group:README.txt">
    </FileRef>
+   <Group
+      location = "container:"
+      name = "Documentation">
+      <FileRef
+         location = "group:Documentation/chaosdocs">
+      </FileRef>
+   </Group>
    <FileRef
       location = "group:CHAOSFramework.xcodeproj">
    </FileRef>
