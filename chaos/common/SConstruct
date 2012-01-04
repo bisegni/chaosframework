@@ -153,6 +153,7 @@ for id in [ "", "bson/", "bson/util/", "bson/lib/", "configuration/", "pool/", "
     for hFile in Glob( id + "*.h" ):
         installHeaderPath = installDir + "/" + "include" + "/chaos/common/" + id
         env.Install( installHeaderPath , hFile )
+        env.Clean( installHeaderPath )
         env.Alias('install-inc', [installHeaderPath])
 
 #lib
