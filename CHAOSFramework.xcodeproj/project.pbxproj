@@ -247,7 +247,6 @@
 		326DB41814B38BC00018A8D0 /* RpcServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcServer.h; sourceTree = "<group>"; };
 		326DB41A14B38BC00018A8D0 /* NetworkAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkAddress.h; sourceTree = "<group>"; };
 		326DB41B14B38BC00018A8D0 /* NetworkNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkNode.h; sourceTree = "<group>"; };
-		326DB41C14B38BC00018A8D0 /* SConstruct */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConstruct; sourceTree = "<group>"; };
 		326DB41E14B38BC00018A8D0 /* ChaosThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosThread.h; sourceTree = "<group>"; };
 		326DB41F14B38BC00018A8D0 /* CThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CThread.cpp; sourceTree = "<group>"; };
 		326DB42014B38BC00018A8D0 /* CThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CThread.h; sourceTree = "<group>"; };
@@ -289,7 +288,6 @@
 		326DB4B414B3A3E50018A8D0 /* KeyDataStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyDataStorage.h; sourceTree = "<group>"; };
 		326DB4B514B3A3E50018A8D0 /* MultiBufferDataStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MultiBufferDataStorage.cpp; sourceTree = "<group>"; };
 		326DB4B614B3A3E50018A8D0 /* MultiBufferDataStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiBufferDataStorage.h; sourceTree = "<group>"; };
-		326DB4B714B3A3E50018A8D0 /* SConstruct */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConstruct; sourceTree = "<group>"; };
 		326DB4D214B3B0070018A8D0 /* CachedElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedElement.h; sourceTree = "<group>"; };
 		326DB4D314B3B0070018A8D0 /* DeviceAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceAddress.h; sourceTree = "<group>"; };
 		326DB4D414B3B0070018A8D0 /* DeviceDataChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceDataChannel.h; sourceTree = "<group>"; };
@@ -307,7 +305,6 @@
 		326DB4E214B3B0070018A8D0 /* LLDataApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LLDataApi.h; sourceTree = "<group>"; };
 		326DB4E314B3B0070018A8D0 /* LLRpcApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LLRpcApi.cpp; sourceTree = "<group>"; };
 		326DB4E414B3B0070018A8D0 /* LLRpcApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LLRpcApi.h; sourceTree = "<group>"; };
-		326DB4E514B3B0070018A8D0 /* SConstruct */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConstruct; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -369,7 +366,6 @@
 		326DB3B314B38BC00018A8D0 /* common */ = {
 			isa = PBXGroup;
 			children = (
-				326DB41C14B38BC00018A8D0 /* SConstruct */,
 				326DB3E114B38BC00018A8D0 /* ChaosCommon.cpp */,
 				326DB3E214B38BC00018A8D0 /* ChaosCommon.h */,
 				326DB3E014B38BC00018A8D0 /* cconstants.h */,
@@ -618,7 +614,6 @@
 		326DB49914B3A3E20018A8D0 /* cu_toolkit */ = {
 			isa = PBXGroup;
 			children = (
-				326DB4B714B3A3E50018A8D0 /* SConstruct */,
 				326DB49B14B3A3E50018A8D0 /* ChaosCUToolkit.cpp */,
 				326DB49C14B3A3E50018A8D0 /* ChaosCUToolkit.h */,
 				326DB49D14B3A3E50018A8D0 /* CommandManager */,
@@ -689,7 +684,6 @@
 		326DB4CF14B3B0040018A8D0 /* ui_toolkit */ = {
 			isa = PBXGroup;
 			children = (
-				326DB4E514B3B0070018A8D0 /* SConstruct */,
 				326DB4D714B3B0070018A8D0 /* CUIToolkit.cpp */,
 				326DB4D814B3B0070018A8D0 /* CUIToolkit.h */,
 				326DB4D114B3B0070018A8D0 /* Common */,

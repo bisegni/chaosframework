@@ -13,7 +13,7 @@
 #include <string>
 
 #include <chaos/common/global.h>
-#include <chaos/common/data/CDataWrapper.h>hpp
+#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/dispatcher/CommandDispatcher.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>

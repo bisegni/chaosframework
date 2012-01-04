@@ -15,6 +15,6 @@
       location = "group:CHAOSFramework.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:ControlUnitTest.xcodeproj">
+      location = "group:example/ControlUnitTest/ControlUnitTest.xcodeproj">
    </FileRef>
 </Workspace>

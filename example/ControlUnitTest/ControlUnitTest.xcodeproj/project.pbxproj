@@ -7,39 +7,31 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3297FB5D14B43BBD00304D08 /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3297FB5B14B43BBD00304D08 /* libchaos_common.dylib */; };
-		3297FB5E14B43BBD00304D08 /* libchaos_cutoolkit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3297FB5C14B43BBD00304D08 /* libchaos_cutoolkit.dylib */; };
+		32F7449C14B49CFA0025638B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F7449914B49CFA0025638B /* main.cpp */; };
+		32F7449D14B49CFA0025638B /* WorkerCU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F7449A14B49CFA0025638B /* WorkerCU.cpp */; };
+		32F744A014B49D2A0025638B /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 32F7449E14B49D2A0025638B /* libchaos_common.dylib */; };
+		32F744A114B49D2A0025638B /* libchaos_cutoolkit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 32F7449F14B49D2A0025638B /* libchaos_cutoolkit.dylib */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		326027B614B30A2400C906CE /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
-		326027B814B30A2400C906CE /* ControlUnitTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ControlUnitTest; sourceTree = BUILT_PRODUCTS_DIR; };
-		326DB50914B3B7890018A8D0 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		326DB50A14B3B7890018A8D0 /* SConstruct */ = {isa = PBXFileReference; lastKnownFileType = text; path = SConstruct; sourceTree = "<group>"; };
-		326DB50B14B3B7890018A8D0 /* WorkerCU.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerCU.cpp; sourceTree = "<group>"; };
-		326DB50C14B3B7890018A8D0 /* WorkerCU.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WorkerCU.h; sourceTree = "<group>"; };
-		3297FB5B14B43BBD00304D08 /* libchaos_common.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libchaos_common.dylib; path = DerivedData/CHAOSWorkspace/Build/Products/Debug/libchaos_common.dylib; sourceTree = "<group>"; };
-		3297FB5C14B43BBD00304D08 /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libchaos_cutoolkit.dylib; path = DerivedData/CHAOSWorkspace/Build/Products/Debug/libchaos_cutoolkit.dylib; sourceTree = "<group>"; };
+		32F7448F14B49CCB0025638B /* ControlUnitTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ControlUnitTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		32F7449214B49CCB0025638B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		32F7449414B49CCC0025638B /* ControlUnitTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ControlUnitTest.1; sourceTree = "<group>"; };
+		32F7449914B49CFA0025638B /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = SOURCE_ROOT; };
+		32F7449A14B49CFA0025638B /* WorkerCU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerCU.cpp; sourceTree = SOURCE_ROOT; };
+		32F7449B14B49CFA0025638B /* WorkerCU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerCU.h; sourceTree = SOURCE_ROOT; };
+		32F7449E14B49D2A0025638B /* libchaos_common.dylib */ = {isa = PBXFileReference; lastKnownFileType = file; name = libchaos_common.dylib; path = ../../build/Release/libchaos_common.dylib; sourceTree = "<group>"; };
+		32F7449F14B49D2A0025638B /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; lastKnownFileType = file; name = libchaos_cutoolkit.dylib; path = ../../build/Release/libchaos_cutoolkit.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		326027B514B30A2400C906CE /* Frameworks */ = {
+		32F7448C14B49CCB0025638B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3297FB5D14B43BBD00304D08 /* libchaos_common.dylib in Frameworks */,
-				3297FB5E14B43BBD00304D08 /* libchaos_cutoolkit.dylib in Frameworks */,
+				32F744A014B49D2A0025638B /* libchaos_common.dylib in Frameworks */,
+				32F744A114B49D2A0025638B /* libchaos_cutoolkit.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -49,9 +41,10 @@
 		3260279D14B309ED00C906CE = {
 			isa = PBXGroup;
 			children = (
-				3297FB5B14B43BBD00304D08 /* libchaos_common.dylib */,
-				3297FB5C14B43BBD00304D08 /* libchaos_cutoolkit.dylib */,
+				32F7449E14B49D2A0025638B /* libchaos_common.dylib */,
+				32F7449F14B49D2A0025638B /* libchaos_cutoolkit.dylib */,
 				326DB50714B3B7890018A8D0 /* ControlUnitTest */,
+				32F7449114B49CCB0025638B /* ControlUnitTest */,
 				326027B914B30A2400C906CE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -59,7 +52,7 @@
 		326027B914B30A2400C906CE /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				326027B814B30A2400C906CE /* ControlUnitTest */,
+				32F7448F14B49CCB0025638B /* ControlUnitTest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -68,9 +61,18 @@
 			isa = PBXGroup;
 			children = (
 				326DB50A14B3B7890018A8D0 /* SConstruct */,
-				326DB50914B3B7890018A8D0 /* main.cpp */,
-				326DB50B14B3B7890018A8D0 /* WorkerCU.cpp */,
-				326DB50C14B3B7890018A8D0 /* WorkerCU.h */,
+				32F7449914B49CFA0025638B /* main.cpp */,
+				32F7449A14B49CFA0025638B /* WorkerCU.cpp */,
+				32F7449B14B49CFA0025638B /* WorkerCU.h */,
+			);
+			path = ControlUnitTest;
+			sourceTree = "<group>";
+		};
+		32F7449114B49CCB0025638B /* ControlUnitTest */ = {
+			isa = PBXGroup;
+			children = (
+				32F7449214B49CCB0025638B /* main.cpp */,
+				32F7449414B49CCC0025638B /* ControlUnitTest.1 */,
 			);
 			path = ControlUnitTest;
 			sourceTree = "<group>";
@@ -78,13 +80,12 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		326027B714B30A2400C906CE /* ControlUnitTest */ = {
+		32F7448E14B49CCB0025638B /* ControlUnitTest */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 326027C014B30A2400C906CE /* Build configuration list for PBXNativeTarget "ControlUnitTest" */;
+			buildConfigurationList = 32F7449614B49CCC0025638B /* Build configuration list for PBXNativeTarget "ControlUnitTest" */;
 			buildPhases = (
-				326027B414B30A2400C906CE /* Sources */,
-				326027B514B30A2400C906CE /* Frameworks */,
-				326027B614B30A2400C906CE /* CopyFiles */,
+				32F7448B14B49CCB0025638B /* Sources */,
+				32F7448C14B49CCB0025638B /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -92,7 +93,7 @@
 			);
 			name = ControlUnitTest;
 			productName = ControlUnitTest;
-			productReference = 326027B814B30A2400C906CE /* ControlUnitTest */;
+			productReference = 32F7448F14B49CCB0025638B /* ControlUnitTest */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -116,16 +117,18 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				326027B714B30A2400C906CE /* ControlUnitTest */,
+				32F7448E14B49CCB0025638B /* ControlUnitTest */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
-		326027B414B30A2400C906CE /* Sources */ = {
+		32F7448B14B49CCB0025638B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32F7449C14B49CFA0025638B /* main.cpp in Sources */,
+				32F7449D14B49CFA0025638B /* WorkerCU.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -144,7 +147,7 @@
 			};
 			name = Release;
 		};
-		326027C114B30A2400C906CE /* Debug */ = {
+		32F7449714B49CCC0025638B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -165,13 +168,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					.,
+					../../,
 					/usr/local/include,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
-					"\"/Coding/Sorgenti/build/DerivedData/CHAOSWorkspace-fraatyzeokvktlhfnkwmcpucemvy/Build/Products/Debug\"",
-					"\"$(SRCROOT)/DerivedData/CHAOSWorkspace/Build/Products/Debug\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
@@ -194,7 +192,7 @@
 			};
 			name = Debug;
 		};
-		326027C214B30A2400C906CE /* Release */ = {
+		32F7449814B49CCC0025638B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -209,13 +207,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					.,
+					../../,
 					/usr/local/include,
-				);
-				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
-					"\"/Coding/Sorgenti/build/DerivedData/CHAOSWorkspace-fraatyzeokvktlhfnkwmcpucemvy/Build/Products/Debug\"",
-					"\"$(SRCROOT)/DerivedData/CHAOSWorkspace/Build/Products/Debug\"",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
@@ -249,14 +242,13 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		326027C014B30A2400C906CE /* Build configuration list for PBXNativeTarget "ControlUnitTest" */ = {
+		32F7449614B49CCC0025638B /* Build configuration list for PBXNativeTarget "ControlUnitTest" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				326027C114B30A2400C906CE /* Debug */,
-				326027C214B30A2400C906CE /* Release */,
+				32F7449714B49CCC0025638B /* Debug */,
+				32F7449814B49CCC0025638B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
