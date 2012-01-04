@@ -155,16 +155,6 @@
 		326DB4F614B3B0070018A8D0 /* LLRpcApi.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4E414B3B0070018A8D0 /* LLRpcApi.h */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		326DB50414B3B7670018A8D0 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 326DB4FC14B3B7650018A8D0 /* ControlUnitTest.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 326027B814B30A2400C906CE;
-			remoteInfo = ControlUnitTest;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		326026E914B301F600C906CE /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_common.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3260276614B3068100C906CE /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_cutoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -318,7 +308,6 @@
 		326DB4E314B3B0070018A8D0 /* LLRpcApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LLRpcApi.cpp; sourceTree = "<group>"; };
 		326DB4E414B3B0070018A8D0 /* LLRpcApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LLRpcApi.h; sourceTree = "<group>"; };
 		326DB4E514B3B0070018A8D0 /* SConstruct */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConstruct; sourceTree = "<group>"; };
-		326DB4FC14B3B7650018A8D0 /* ControlUnitTest.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = ControlUnitTest.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -354,7 +343,6 @@
 				326DB49814B3A23B0018A8D0 /* SConstruct */,
 				326DB3B114B38BC00018A8D0 /* chaos */,
 				326026EA14B301F600C906CE /* Products */,
-				326DB4FC14B3B7650018A8D0 /* ControlUnitTest.xcodeproj */,
 			);
 			sourceTree = "<group>";
 		};
@@ -747,14 +735,6 @@
 			path = LowLevelApi;
 			sourceTree = "<group>";
 		};
-		326DB4FD14B3B7650018A8D0 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				326DB50514B3B7670018A8D0 /* ControlUnitTest */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -955,12 +935,6 @@
 			mainGroup = 3260260B14B300FE00C906CE;
 			productRefGroup = 326026EA14B301F600C906CE /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 326DB4FD14B3B7650018A8D0 /* Products */;
-					ProjectRef = 326DB4FC14B3B7650018A8D0 /* ControlUnitTest.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				326026E814B301F600C906CE /* chaos_common */,
@@ -969,16 +943,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		326DB50514B3B7670018A8D0 /* ControlUnitTest */ = {
-			isa = PBXReferenceProxy;
-			fileType = "compiled.mach-o.executable";
-			path = ControlUnitTest;
-			remoteRef = 326DB50414B3B7670018A8D0 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXShellScriptBuildPhase section */
 		3260275814B3027100C906CE /* ShellScript */ = {

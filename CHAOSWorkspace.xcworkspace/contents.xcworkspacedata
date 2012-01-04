@@ -2,6 +2,12 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:README.txt">
+   </FileRef>
+   <FileRef
       location = "group:CHAOSFramework.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:ControlUnitTest.xcodeproj">
    </FileRef>
 </Workspace>

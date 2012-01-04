@@ -114,9 +114,9 @@ num_cpu = int(os.environ.get('NUM_CPU', 2))
 SetOption('num_jobs', num_cpu)
 print "Compile using -j ", GetOption('num_jobs')
 
-env = Environment(CPPPATH=os.path.abspath('.'))  # Initialize the environment
+env = Environment()  # Initialize the environment
 env.Append(LIBPATH = ['/usr/lib', '/usr/local/lib'])
-        
+env.Append(CPPPATH='.')        
 #setup the version
 subprocess.call(os.path.abspath("chaos/common/version.sh"), shell=True)
  
@@ -161,11 +161,14 @@ if has_option( "all" ) or has_option( "common" ) or  has_option( "ui" ) or  has_
         for hFile in Glob( id + "*.h" ):
             installHeaderPath = installDir + "/" + "include" + "/" + id
             env.Install( installHeaderPath , hFile )
+            env.Clean("clean_installed",installHeaderPath)
             env.Alias('install', installHeaderPath)
 
     #lib
     print "install library into: "+installDir + "/lib/"
+    env.Clean("clean_installed",installDir + "/lib/"+ commonlibName)
     env.Install( installDir + "/lib/", commonlibName )
+    
 
 
 if has_option( "all" ) or has_option( "cu" ):
@@ -189,10 +192,12 @@ if has_option( "all" ) or has_option( "cu" ):
         for hFile in Glob( id + "*.h" ):
             installHeaderPath = installDir + "/" + "include" + "/" + id
             env.Install( installHeaderPath , hFile )
+            env.Clean("clean_installed",installHeaderPath)
             env.Alias( 'install' , installHeaderPath )
 
     #lib
     print "install library into: "+installDir + "/lib/"
+    env.Clean("clean_installed",installDir + "/lib/"+ cutoolkitlibName)
     env.Install( installDir + "/lib/", cutoolkitlibName )
 
 
@@ -221,12 +226,14 @@ if has_option( "all" )  or has_option( "ui" ):
         for hFile in Glob( id + "*.h" ):
             installHeaderPath = installDir + "/" + "include" + "/" + id
             env.Install( installHeaderPath , hFile )
+            env.Clean("clean_installed",installHeaderPath)
             env.Alias('install', installHeaderPath)
 
     #lib
     print "install library into: "+installDir + "/lib/"
+    env.Clean("clean_installed",installDir + "/lib/"+ libNameUIToolkit)
     env.Install( installDir + "/lib/", libNameUIToolkit )
-    env.Alias('install', [installDir + "/lib/"])
+    #env.Alias('install', [installDir + "/lib/"])
 
 env.Alias('install', [installDir + "/lib/"])
 env.Alias('install', [installDir + "/include/"])
