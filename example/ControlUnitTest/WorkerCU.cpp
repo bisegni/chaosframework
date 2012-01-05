@@ -29,6 +29,17 @@ using namespace chaos;
 
 WorkerCU::WorkerCU():AbstractControlUnit(),rng((const uint_fast32_t) time(0) ),one_to_six( -10000, 10000 ),randInt(rng, one_to_six) {
     //first we make some write
+     _deviceID.assign(SIMULATED_DEVICE_ID);
+    cuName = "WORKER_CU";
+    writeRead = false;
+    numberOfResponse = 0;
+}
+
+/*
+ Construct a new CU with an identifier
+ */
+WorkerCU::WorkerCU(string &customDeviceID):rng((const uint_fast32_t) time(0) ),one_to_six( -10000, 10000 ),randInt(rng, one_to_six){
+    _deviceID = customDeviceID;
     cuName = "WORKER_CU";
     writeRead = false;
     numberOfResponse = 0;
@@ -46,6 +57,7 @@ WorkerCU::~WorkerCU() {
  */
 void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
         //set the base information
+    const char *devIDInChar = _deviceID.c_str();
     cuSetup.addStringValue(ControlManagerConstant::CS_CM_CU_NAME, "WORKER_CU");
     cuSetup.addStringValue(ControlManagerConstant::CS_CM_CU_DESCRIPTION, "This is a beautifull CU");
     cuSetup.addStringValue(ControlManagerConstant::CS_CM_CU_CLASS, "HW1-CLASS1");
@@ -56,7 +68,7 @@ void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
     setDefaultScheduleDelay(CU_DELAY_FROM_TASKS);
     
     //add managed device di
-    addDeviceId(SIMULATED_DEVICE_ID);
+    addDeviceId(_deviceID);
     
     //add custom action
     AbstActionDescShrPtr  
@@ -81,26 +93,26 @@ void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
                                 "integer 32bit action param description for testing purpose");
     
         //setup the dataset
-    addAttributeToDataSet(SIMULATED_DEVICE_ID,
+    addAttributeToDataSet(devIDInChar,
                           DS_ELEMENT_1,
                           "describe the element 1 of the dataset",
                           CommandManagerConstant::CS_CMDM_ACTION_DESC_PAR_TYPE_INT32, 
                           Output);
     
-    addAttributeToDataSet(SIMULATED_DEVICE_ID,
+    addAttributeToDataSet(devIDInChar,
                           DS_ELEMENT_2,
                           "describe the element 2 of the dataset",
                           CommandManagerConstant::CS_CMDM_ACTION_DESC_PAR_TYPE_INT32, 
                           Bidirectional);
     
-    addAttributeToDataSet(SIMULATED_DEVICE_ID,
+    addAttributeToDataSet(devIDInChar,
                           DS_ELEMENT_3,
                           "describe the element 3 of the dataset",
                           CommandManagerConstant::CS_CMDM_ACTION_DESC_PAR_TYPE_BYTEARRAY, 
                           Output);
     
     
-    addAttributeToDataSet(SIMULATED_DEVICE_ID,
+    addAttributeToDataSet(devIDInChar,
                           DS_ELEMENT_4,
                           "describe the element 4 of the dataset",
                           CommandManagerConstant::CS_CMDM_ACTION_DESC_PAR_TYPE_STRING, 
@@ -121,7 +133,7 @@ void WorkerCU::init(CDataWrapper *newConfiguration) throw(CException) {
 void WorkerCU::run() throw(CException) {
     LAPP_ << "run WorkerCU";
     auto_ptr<SerializationBuffer> jsonResult;
-
+    const char *devIDInChar = _deviceID.c_str();
     string jsonString;
     string bufferHexRepresentation;
 
@@ -137,7 +149,7 @@ void WorkerCU::run() throw(CException) {
         //int bufferLen = 0;
         //const char * charBuff = NULL;
             //get last data
-        auto_ptr< ArrayPointer<CDataWrapper> > result(getLastDataSetForKey(SIMULATED_DEVICE_ID));
+        auto_ptr< ArrayPointer<CDataWrapper> > result(getLastDataSetForKey(devIDInChar));
         
         if(!result->size()) return;
         
@@ -154,7 +166,7 @@ void WorkerCU::run() throw(CException) {
         }
     } else  {
             //get new istance for CDataWrapper fille with rigth key
-    acquiredData = getNewDataWrapperForKey(SIMULATED_DEVICE_ID);
+    acquiredData = getNewDataWrapperForKey(devIDInChar);
     if(!acquiredData) return;
     
             //adding some interesting random data 
@@ -173,7 +185,7 @@ void WorkerCU::run() throw(CException) {
         
         delete[] binData;
             //submit acquired data
-        pushDataSetForKey(SIMULATED_DEVICE_ID, acquiredData);
+        pushDataSetForKey(devIDInChar, acquiredData);
         //}
     }
     writeRead = !writeRead;

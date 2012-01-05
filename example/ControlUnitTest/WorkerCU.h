@@ -8,14 +8,17 @@
 
 #ifndef ChaosLib_WorkerCU_h
 #define ChaosLib_WorkerCU_h
+
+#include <string>
 #include <boost/random.hpp>
 #include <boost/chrono.hpp>
 
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 
+using namespace std;
 using namespace chaos;
 using namespace boost;
-    using namespace boost::posix_time;
+using namespace boost::posix_time;
 
 class WorkerCU : public AbstractControlUnit {
     typedef boost::mt19937 RNGType; 
@@ -26,11 +29,16 @@ class WorkerCU : public AbstractControlUnit {
     int64_t numberOfResponse;
     high_resolution_clock::time_point lastExecutionTime;
     high_resolution_clock::time_point currentExecutionTime;
+    string _deviceID;
 public:
     /*
      Construct a new CU with an identifier
      */
     WorkerCU();
+    /*
+     Construct a new CU with an identifier
+     */
+    WorkerCU(string&);
     /*
      Destructor a new CU with an identifier
      */

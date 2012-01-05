@@ -12,7 +12,7 @@ print '**** Compiling in ' + buildMode + ' mode...'
 env = Environment()  # Initialize the environment
 
 
-sourceTarget = 'ChaosCUTest'
+sourceTarget = 'ControlUnitTest'
 sourceFiles = Glob( "*.cpp" )
 
 #make sure the sconscripts can get to the variables

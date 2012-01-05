@@ -11,8 +11,21 @@
 
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
+/*! \mainpage !Chaos - Control system based on a Highly Abstracted and Open Structure
+ *
+ * \section intro_sec Introduction
+ *
+ * This is the introduction.
+ *
+ * \section install_sec Installation
+ *
+ * \subsection step1 Step 1: Opening the box
+ *  
+ * etc...
+ */
+
+//! Default chaos namespace used to group all common api
 namespace chaos {
-    
    
     //! Chaos common engine class
     /*! 

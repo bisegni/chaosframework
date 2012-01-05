@@ -19,6 +19,18 @@
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManager.h>
 
+/*!
+ * \section intro_sec Introduction
+ *
+ * This is the introduction.
+ *
+ * \section install_sec Installation
+ *
+ * \subsection step1 Step 1: Opening the box
+ *  
+ * etc...
+ */
+
 namespace chaos{
     class ChaosCUToolkit : public ChaosCommon, public ServerDelegator {
     private:
