@@ -1,0 +1,26 @@
+# define the root logger with two appenders writing to console and file
+log4j.rootLogger = DEBUG, SYSLOG
+
+#define the appender named DEBUG
+log4j.appender.DEBUG=org.apache.log4j.ConsoleAppender
+log4j.appender.DEBUG.layout=org.apache.log4j.PatternLayout
+log4j.appender.DEBUG.layout.conversionPattern=%d{dd-MM-yyyy HH:mm:ss} [%t](%F:%L) %-5p %c - %m%n
+
+#define the appender named CONSOLE
+log4j.appender.CONSOLE=org.apache.log4j.ConsoleAppender
+log4j.appender.CONSOLE.layout=org.apache.log4j.PatternLayout
+log4j.appender.CONSOLE.layout.conversionPattern=%d{dd-MM-yyyy HH:mm:ss} [%t](%F:%L) %-5p %c - %m%n
+
+#define the appender named DAILY 
+log4j.appender.DAILY=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.DAILY.File=/tomcat.data/log/logs/godiva.log
+log4j.appender.DAILY.DatePattern='.' yyyy-MM-dd
+log4j.appender.DAILY.layout=org.apache.log4j.PatternLayout
+log4j.appender.DAILY.layout.conversionPattern=%d{dd-MM-yyyy HH:mm:ss} [%t](%F:%L) %-5p %c - %m%n
+
+#define SYSLOG
+log4j.appender.SYSLOG=org.apache.log4j.net.SyslogAppender
+log4j.appender.SYSLOG.syslogHost=localhost
+log4j.appender.SYSLOG.layout=org.apache.log4j.PatternLayout
+log4j.appender.SYSLOG.layout.ConversionPattern=%d{dd-MM-yyyy HH:mm:ss} [%t](%F:%L) %-5p %c - %m%n
+log4j.appender.SYSLOG.Facility=LOCAL1

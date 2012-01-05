@@ -1,0 +1,11 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE processes [
+  <!ELEMENT processes  ( process )*>
+  <!ELEMENT process  ( action )*>
+  <!ATTLIST process class CDATA #REQUIRED name CDATA #IMPLIED>
+  <!ELEMENT action  EMPTY>
+  <!ATTLIST action name CDATA #REQUIRED method CDATA #REQUIRED>
+]>
+<processes>
+	<process class="it.infn.chaos.mds.process.ManageDeviceProcess" />
+</processes>
