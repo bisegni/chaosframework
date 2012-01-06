@@ -9,12 +9,7 @@
 #include "global.h"
 #include "ChaosCommon.h"
 
-#include <stdio.h>      
-#include <sys/types.h>
-#include <ifaddrs.h>
-#include <netinet/in.h> 
-#include <string.h> 
-#include <arpa/inet.h>
+
 #include <boost/logging/format.hpp>
 #include <boost/logging/writer/ts_write.hpp>
 
@@ -24,17 +19,20 @@ using namespace boost::logging;
 
 
 BOOST_DEFINE_LOG(g_l, log_type)
-BOOST_DEFINE_LOG_FILTER(g_l_filter, level::holder)
+BOOST_DEFINE_LOG_FILTER(g_l_filter, boost::logging::level::holder)
 
-ChaosCommon::ChaosCommon() {
+    //BOOST_DEFINE_LOG(g_l, log_type)
+    //BOOST_DEFINE_LOG_FILTER(g_l_filter, level::holder)
+/*template<class T>
+ChaosCommon<T>::ChaosCommon() {
     GlobalConfiguration::getInstance()->preParseStartupParameters();
 }
-
-ChaosCommon::~ChaosCommon(){
+template<class T>
+ChaosCommon<T>::~ChaosCommon(){
     
 }
-
-void ChaosCommon::init(int argc, const char* argv[])  throw(CException) {
+template<class T>
+void ChaosCommon<T>::init(int argc, const char* argv[])  throw(CException) {
         // Add formatters and destinations
         // That is, how the message is to be formatted...
     g_l()->writer().add_formatter( formatter::time("$hh:$mm.$ss ") );
@@ -63,12 +61,13 @@ void ChaosCommon::init(int argc, const char* argv[])  throw(CException) {
     
 }
 
-GlobalConfiguration *ChaosCommon::getGlobalConfigurationInstance() {
+template<class T>
+GlobalConfiguration *ChaosCommon<T>::getGlobalConfigurationInstance() {
     return GlobalConfiguration::getInstance();
 }
 
-
-void ChaosCommon::scanForLocalNetworkAddress(){
+template<class T>
+void ChaosCommon<T>::scanForLocalNetworkAddress(){
         struct ifaddrs * ifAddrStruct=NULL;
         struct ifaddrs * ifa=NULL;
 #if __APPLE__
@@ -104,4 +103,4 @@ void ChaosCommon::scanForLocalNetworkAddress(){
         }
         if (ifAddrStruct!=NULL) freeifaddrs(ifAddrStruct);
         LAPP_ << "The local address chose is:  " << GlobalConfiguration::getInstance()->getLocalServerAddress();
-}
+}*/

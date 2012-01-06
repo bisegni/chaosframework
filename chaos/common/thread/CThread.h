@@ -13,8 +13,9 @@
 #include <boost/progress.hpp>
 #include <boost/thread.hpp>
 #include <boost/chrono.hpp>
-#include "CThreadExecutionTask.h"
 #include <chaos/common/global.h>
+
+#include <chaos/common/thread/CThreadExecutionTask.h>
 
 namespace chaos{
     class CThreadGroup;
@@ -85,8 +86,8 @@ namespace chaos{
 	bool simulationMode;
     boost::chrono::microseconds waithTimeInMicrosecond;
     boost::chrono::nanoseconds computedWaithTimeInNanoseconds;
-    scoped_ptr<thread> m_thread;
-	mutex statMutex;
+    boost::scoped_ptr<thread> m_thread;
+	boost::mutex statMutex;
     bool firstLoop;
         //statistic data
 	TaskCycleStatData statisticData;

@@ -32,13 +32,15 @@
  */
 
 namespace chaos{
-    class ChaosCUToolkit : public ChaosCommon, public ServerDelegator {
-    private:
+    class ChaosCUToolkit : public ChaosCommon<ChaosCUToolkit>, public ServerDelegator {
+        friend class Singleton<ChaosCUToolkit>;
         static boost::mutex monitor;
         static boost::condition endWaithCondition;
         
-    static void signalHanlder(int);
-    
+        ChaosCUToolkit(){};
+        ~ChaosCUToolkit(){};
+        static void signalHanlder(int);
+
     public:
         typedef boost::mutex::scoped_lock lock;
         void init(int argc = 1, const char* argv[] = NULL)  throw(CException);

@@ -32,7 +32,7 @@ namespace chaos {
      */
     class ControlManager : public CThreadExecutionTask, public DeclareAction,  public Manager, public Configurable, public Singleton<ControlManager> {
         friend class Singleton<ControlManager>;
-        mutable mutex qMutex;
+        mutable boost::mutex qMutex;
         condition_variable lockCondition;
         CThread *selfThreadPtr;
         queue< AbstractControlUnit* > submittedCUQueue;

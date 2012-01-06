@@ -26,7 +26,7 @@ namespace chaos{
  */
 DEFINE_CLASS_AS_SINGLETON_WITH_OTHER_SUBCLASS(DataManager, Manager)
         //mutex for lock operation on service request
-    mutex managing_data_mutex;
+    boost::mutex managing_data_mutex;
     shared_ptr<IODataDriver> liveDriver;
     shared_ptr<MultiBufferDataStorage> outputBuffer;
     map<string, KeyDataStorage*>  deviceIDKeyDataStorageMap;

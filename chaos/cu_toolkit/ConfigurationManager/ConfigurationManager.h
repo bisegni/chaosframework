@@ -22,7 +22,7 @@ namespace chaos{
         //DEFINE_CLASS_AS_SINGLETON(ConfigurationManager)
     class ConfigurationManager{
         //mutex for lock operation on service request
-    mutex managing_configuration_mutex;
+    boost::mutex managing_configuration_mutex;
     multimap<string, string> defaultDomainConfiguration;
     
     /*

@@ -29,7 +29,7 @@ namespace chaos {
     class CObjectProcessingQueue : public CThreadExecutionTask {
         bool inDeinit;
         int outputThreadNumber;
-        mutable mutex qMutex;
+        mutable boost::mutex qMutex;
         _heapEngine bufferQueue;
         condition_variable liveThreadConditionLock;
         condition_variable emptyQueueConditionLock;
@@ -108,7 +108,7 @@ namespace chaos {
          Deinitialization method for output buffer
          */
         virtual void deinit(bool waithForEmptyQueue=true) throw(CException) {
-            mutex::scoped_lock lock(qMutex);
+            boost::mutex::scoped_lock lock(qMutex);
             inDeinit = true;
             LAPP_ << "CObjectProcessingQueue Deinitialization";
                 //stopping the group
@@ -136,7 +136,7 @@ namespace chaos {
             push the row value into the buffer
          */
         virtual bool push(T* data) throw(CException) {
-            mutex::scoped_lock lock(qMutex);
+            boost::mutex::scoped_lock lock(qMutex);
             if(inDeinit) return true;
             bufferQueue.push(data);
             lock.unlock();

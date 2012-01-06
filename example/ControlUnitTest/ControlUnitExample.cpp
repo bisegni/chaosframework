@@ -18,8 +18,10 @@
  *  \section sec An basic usage for the ChaosCUToolkit package
  *  
  *  \subsection sec Toolkit usage
- *  First the ChaosCUToolkit class must be created
- *  \snippet example/ControlUnitTest/ControlUnitExample.cpp CUToolkit Instantiation
+ *  ChaosCUToolkit has private constructor so it can be used only using singleton pattern,
+ *  the only way to get unique isntance is; ChaosCUToolkit::getInstance(). So the first call of
+ *  getInstance method will rpovide the CUToolkit and Common layer initial setup.
+ *  \snippet example/ControlUnitTest/ControlUnitExample.cpp Custom Option
  *
  *  Then it must be initialized, in this method can be passed the main argument
  *  of a c or c++ programm
@@ -40,29 +42,26 @@ using namespace chaos;
 
 int main (int argc, const char* argv[] )
 {
-    //! [CUToolkit Instantiation]
-    ChaosCUToolkit csl;
-    //! [CUToolkit Instantiation]
-    
+   
     //! [Custom Option]
-    csl.getGlobalConfigurationInstance()->addOption(OPT_CUSTOM_DEVICE_ID, po::value<string>(), "Custom device identification string");
+    ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_CUSTOM_DEVICE_ID, po::value<string>(), "Custom device identification string");
     //! [Custom Option]
     
     //! [CUTOOLKIT Init]
-    csl.init(argc, argv);
+    ChaosCUToolkit::getInstance()->init(argc, argv);
     //! [CUTOOLKIT Init]
     
     //! [Adding the CustomControlUnit]
-    if(csl.getGlobalConfigurationInstance()->hasOption(OPT_CUSTOM_DEVICE_ID)){
-        string customdeviceID = csl.getGlobalConfigurationInstance()->getOption<string>(OPT_CUSTOM_DEVICE_ID);
-        csl.addControlUnit(new WorkerCU(customdeviceID));
+    if(ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CUSTOM_DEVICE_ID)){
+        string customdeviceID = ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<string>(OPT_CUSTOM_DEVICE_ID);
+        ChaosCUToolkit::getInstance()->addControlUnit(new WorkerCU(customdeviceID));
     }else{
-        csl.addControlUnit(new WorkerCU());
+        ChaosCUToolkit::getInstance()->addControlUnit(new WorkerCU());
     }
     //! [Adding the CustomControlUnit]
     
     //! [Starting the Framework]
-    csl.start();
+    ChaosCUToolkit::getInstance()->start();
     //! [Starting the Framework]
     return 0;
 }

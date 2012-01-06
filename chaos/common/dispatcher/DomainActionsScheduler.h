@@ -27,7 +27,7 @@ namespace chaos {
     class DomainActionsScheduler: public CObjectProcessingQueue<CDataWrapper> {
         friend class CommandDispatcher;
         bool armed;
-        mutex actionAccessMutext;
+        boost::mutex actionAccessMutext;
         shared_ptr<DomainActions> domainActionsContainer;
         
             //reference to global dispatcher used
