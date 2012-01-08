@@ -1,13 +1,13 @@
 //
 //  DatasetAttributeEventDispatcher.h
-//  ChaosLib
+//  ChaosFramework
 //
 //  Created by Bisegni Claudio on 05/11/11.
 //  Copyright (c) 2011 INFN. All rights reserved.
 //
 
-#ifndef ChaosLib_DatasetAttributeEventDispatcher_h
-#define ChaosLib_DatasetAttributeEventDispatcher_h
+#ifndef ChaosFramework_DatasetAttributeEventDispatcher_h
+#define ChaosFramework_DatasetAttributeEventDispatcher_h
 
 #include <map>
 #include <string>

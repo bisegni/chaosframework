@@ -1,13 +1,26 @@
 //
 //  global.h
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Claudio Bisegni on 14/06/11.
 //  Copyright 2011 INFN. All rights reserved.
 //
 
-#ifndef ChaosLib_global_h
-#define ChaosLib_global_h
+#ifndef ChaosFramework_global_h
+#define ChaosFramework_global_h
+
+/*! \mainpage !Chaos - Control system based on a Highly Abstracted and Open Structure
+ *
+ * \section intro_sec Introduction
+ *
+ * This is the introduction.
+ *
+ * \section install_sec Installation
+ *
+ * \subsection step1 Step 1: Opening the box
+ *  
+ * etc...
+ */
 
 #include <boost/version.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>

@@ -1,6 +1,6 @@
     //
     //  CommandDispatcher.cpp
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by bisegni on 08/07/11.
     //  Copyright 2011 INFN. All rights reserved.

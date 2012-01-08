@@ -1,6 +1,6 @@
     //
     //  CDataWrapper.h
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by Claudio Bisegni on 23/04/11.
     //  Copyright 2011 INFN. All rights reserved.

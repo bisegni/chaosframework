@@ -1,13 +1,13 @@
     //
     //  Common.h
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by Bisegni Claudio on 19/12/11.
     //  Copyright (c) 2011 INFN. All rights reserved.
     //
 
-#ifndef ControlSystemLib_ChaosCommon_h
-#define ControlSystemLib_ChaosCommon_h
+#ifndef ChaosFramework_ChaosCommon_h
+#define ChaosFramework_ChaosCommon_h
 
 #include <stdio.h>      
 #include <sys/types.h>
@@ -24,28 +24,11 @@
 #include <boost/logging/writer/ts_write.hpp>
 
 
-
-/*! \mainpage !Chaos - Control system based on a Highly Abstracted and Open Structure
- *
- * \section intro_sec Introduction
- *
- * This is the introduction.
- *
- * \section install_sec Installation
- *
- * \subsection step1 Step 1: Opening the box
- *  
- * etc...
- */
-
 //! Default chaos namespace used to group all common api
-namespace chaos {
+namespace chaos {    
     
     using namespace boost::logging;
 
-
-
-    
     //! Chaos common engine class
     /*! 
         This is the base class for the other toolkit, it thake care to initialize all common
@@ -96,22 +79,23 @@ namespace chaos {
         }
         
     protected:
-        //! Constructor
+        //! Constructor Method
         /*! 
-          A more elaborate description of the destructor.
+          Thi method call the \ref GlobalConfiguration::preParseStartupParameters method, starting the 
+          allocation of the startup framework parameter
          */
         ChaosCommon(){
             GlobalConfiguration::getInstance()->preParseStartupParameters();
         }
 
         
-        //! Destructor
+        //! Destructor method
         /*! 
          A more elaborate description of the destructor.
          */
         virtual ~ChaosCommon() {};
 
-        //! Init method
+        //! Initialization methdo
         /*! 
          This virtual method can be extended by toolkit subclass for specialized initializaion
          in themain toolkit subclass of ChaosCommon
@@ -147,9 +131,9 @@ namespace chaos {
 
         
     public:
-        //! Return the global configuration for the current process
-        /*! 
-         Return the GlobalConfiguration singleton instance
+         //! Return the global configuration for the current singleton instance
+        /*!
+         \return the GlobalConfiguration pointer to global instance
          */
         GlobalConfiguration *getGlobalConfigurationInstance() {
             return GlobalConfiguration::getInstance();

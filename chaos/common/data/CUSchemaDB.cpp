@@ -1,6 +1,6 @@
 //
 //  CUSchemaDB.cpp
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Bisegni Claudio on 14/07/11.
 //  Copyright 2011 INFN. All rights reserved.

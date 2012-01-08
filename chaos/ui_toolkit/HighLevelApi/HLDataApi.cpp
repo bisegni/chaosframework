@@ -1,6 +1,6 @@
 //
 //  HLDataApi.cpp
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Claudio Bisegni on 02/10/11.
 //  Copyright (c) 2011 INFN. All rights reserved.

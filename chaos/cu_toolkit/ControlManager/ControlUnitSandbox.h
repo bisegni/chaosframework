@@ -1,13 +1,13 @@
     //
     //  ControlUnitSandbox.h
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by Claudio Bisegni on 21/06/11.
     //  Copyright 2011 INFN. All rights reserved.
     //
 
-#ifndef ChaosLib_ControlUnitSandbox_h
-#define ChaosLib_ControlUnitSandbox_h
+#ifndef ChaosFramework_ControlUnitSandbox_h
+#define ChaosFramework_ControlUnitSandbox_h
 
 #include <vector>
 #include <boost/thread/recursive_mutex.hpp>

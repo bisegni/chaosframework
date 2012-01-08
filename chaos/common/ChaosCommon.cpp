@@ -1,6 +1,6 @@
 //
 //  log.cpp
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Bisegni Claudio on 19/12/11.
 //  Copyright (c) 2011 INFN. All rights reserved.

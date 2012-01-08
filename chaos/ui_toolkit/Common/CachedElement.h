@@ -1,13 +1,13 @@
 //
 //  CachedElement.h
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Claudio Bisegni on 02/10/11.
 //  Copyright (c) 2011 INFN. All rights reserved.
 //
 
-#ifndef ChaosLib_CachedElement_h
-#define ChaosLib_CachedElement_h
+#ifndef ChaosFramework_CachedElement_h
+#define ChaosFramework_CachedElement_h
 
 #include <chaos/common/global.h>
 #include <boost/interprocess/managed_shared_memory.hpp>

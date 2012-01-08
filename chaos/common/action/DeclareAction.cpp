@@ -1,6 +1,6 @@
     //
     //  DeclareAction.cpp
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by bisegni on 07/07/11.
     //  Copyright 2011 INFN. All rights reserved.

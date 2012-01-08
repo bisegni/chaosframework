@@ -1,13 +1,13 @@
 //
 //  GlobalConfiguration.h
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Bisegni Claudio on 27/12/11.
 //  Copyright (c) 2011 INFN. All rights reserved.
 //
 
-#ifndef ControlSystemLib_GlobalConfiguration_h
-#define ControlSystemLib_GlobalConfiguration_h
+#ifndef ChaosFramework_GlobalConfiguration_h
+#define ChaosFramework_GlobalConfiguration_h
 
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/cconstants.h>

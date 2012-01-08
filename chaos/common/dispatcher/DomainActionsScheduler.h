@@ -1,13 +1,13 @@
     //
     //  DomainActionsScheduler.h
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by bisegni on 08/07/11.
     //  Copyright 2011 INFN. All rights reserved.
     //
 
-#ifndef ChaosLib_ActionsScheduler_h
-#define ChaosLib_ActionsScheduler_h
+#ifndef ChaosFramework_ActionsScheduler_h
+#define ChaosFramework_ActionsScheduler_h
 
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>

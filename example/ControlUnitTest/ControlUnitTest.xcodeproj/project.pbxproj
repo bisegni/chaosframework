@@ -15,11 +15,11 @@
 
 /* Begin PBXFileReference section */
 		32F7448F14B49CCB0025638B /* ControlUnitTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ControlUnitTest; sourceTree = BUILT_PRODUCTS_DIR; };
-		32F7449914B49CFA0025638B /* ControlUnitExample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ControlUnitExample.cpp; sourceTree = SOURCE_ROOT; };
-		32F7449A14B49CFA0025638B /* WorkerCU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerCU.cpp; sourceTree = SOURCE_ROOT; };
-		32F7449B14B49CFA0025638B /* WorkerCU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerCU.h; sourceTree = SOURCE_ROOT; };
-		32F7449E14B49D2A0025638B /* libchaos_common.dylib */ = {isa = PBXFileReference; lastKnownFileType = file; name = libchaos_common.dylib; path = ../../build/Release/libchaos_common.dylib; sourceTree = "<group>"; };
-		32F7449F14B49D2A0025638B /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; lastKnownFileType = file; name = libchaos_cutoolkit.dylib; path = ../../build/Release/libchaos_cutoolkit.dylib; sourceTree = "<group>"; };
+		32F7449914B49CFA0025638B /* ControlUnitExample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ControlUnitExample.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		32F7449A14B49CFA0025638B /* WorkerCU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = WorkerCU.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		32F7449B14B49CFA0025638B /* WorkerCU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = WorkerCU.h; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		32F7449E14B49D2A0025638B /* libchaos_common.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libchaos_common.dylib; path = ../../build/Release/libchaos_common.dylib; sourceTree = "<group>"; };
+		32F7449F14B49D2A0025638B /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libchaos_cutoolkit.dylib; path = ../../build/Release/libchaos_cutoolkit.dylib; sourceTree = "<group>"; };
 		32F744A214B5D0670025638B /* SConstruct */ = {isa = PBXFileReference; lastKnownFileType = text; path = SConstruct; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -237,6 +237,7 @@
 				32F7449814B49CCC0025638B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

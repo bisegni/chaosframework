@@ -1,13 +1,13 @@
     //
     //  CPoolMemoryObject.h
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by Bisegni Claudio on 14/08/11.
     //  Copyright (c) 2011 INFN. All rights reserved.
     //
 
-#ifndef ChaosLib_CPoolMemoryObejct_h
-#define ChaosLib_CPoolMemoryObejct_h
+#ifndef ChaosFramework_CPoolMemoryObejct_h
+#define ChaosFramework_CPoolMemoryObejct_h
 
 
     //#include <new> // for size_t

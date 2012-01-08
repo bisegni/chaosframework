@@ -1,6 +1,6 @@
 //
 //  DatasetAttributeEventDispatcher.cpp
-//  ChaosLib
+//  ChaosFramework
 //
 //  Created by Bisegni Claudio on 06/11/11.
 //  Copyright (c) 2011 INFN. All rights reserved.

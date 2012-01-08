@@ -1,13 +1,13 @@
 //
 //  RPCClient.h
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Bisegni Claudio on 27/12/11.
 //  Copyright (c) 2011 INFN. All rights reserved.
 //
 
-#ifndef ControlSystemLib_RPCClient_h
-#define ControlSystemLib_RPCClient_h
+#ifndef ChaosFramework_RPCClient_h
+#define ChaosFramework_RPCClient_h
 
 #include <boost/shared_ptr.hpp>
 #include <string>

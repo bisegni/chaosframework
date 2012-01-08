@@ -1,6 +1,6 @@
 //
 //  GlobalConfiguration.cpp
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Bisegni Claudio on 01/01/12.
 //  Copyright (c) 2012 INFN. All rights reserved.

@@ -1,13 +1,13 @@
 //
 //  WorkerCU.h
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by bisegni on 23/06/11.
 //  Copyright 2011 INFN. All rights reserved.
 //
 
-#ifndef ChaosLib_WorkerCU_h
-#define ChaosLib_WorkerCU_h
+#ifndef ChaosFramework_WorkerCU_h
+#define ChaosFramework_WorkerCU_h
 
 #include <string>
 #include <boost/random.hpp>

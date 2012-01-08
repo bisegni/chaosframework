@@ -1,13 +1,13 @@
 //
 //  AttributeEventHandler.h
-//  ChaosLib
+//  ChaosFramework
 //
 //  Created by Bisegni Claudio on 05/11/11.
 //  Copyright (c) 2011 INFN. All rights reserved.
 //
 
-#ifndef ChaosLib_AttributeEventHandler_h
-#define ChaosLib_AttributeEventHandler_h
+#ifndef ChaosFramework_AttributeEventHandler_h
+#define ChaosFramework_AttributeEventHandler_h
 
 #include <map>
 #include <queue>

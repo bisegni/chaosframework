@@ -1,13 +1,13 @@
 //
 //  CUSchemaDB.h
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Bisegni Claudio on 14/07/11.
 //  Copyright 2011 INFN. All rights reserved.
 //
 
-#ifndef ChaosLib_CUSchemaDB_h
-#define ChaosLib_CUSchemaDB_h
+#ifndef ChaosFramework_CUSchemaDB_h
+#define ChaosFramework_CUSchemaDB_h
 #include <string>
 #include <map>
 #include <boost/shared_ptr.hpp>

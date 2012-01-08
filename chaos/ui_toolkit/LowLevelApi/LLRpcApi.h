@@ -1,13 +1,13 @@
     //
     //  LLRpcApi.h
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by Bisegni Claudio on 30/10/11.
     //  Copyright (c) 2011 INFN. All rights reserved.
     //
 
-#ifndef ControlSystemLib_LLRpcApi_h
-#define ControlSystemLib_LLRpcApi_h
+#ifndef ChaosFramework_LLRpcApi_h
+#define ChaosFramework_LLRpcApi_h
 
 #include <chaos/common/rpc/ChaosRpc.h>
 #include <chaos/common/dispatcher/ChaosDispatcher.h>
@@ -22,7 +22,7 @@ namespace chaos {
          LLRpcApi Class api for rpc system
          */
         class LLRpcApi {
-            friend class CUIToolkit;
+            friend class ChaosUIToolkit;
             
             static shared_ptr<RpcServer> rpcServer;
             static shared_ptr<RpcClient> rpcClient;

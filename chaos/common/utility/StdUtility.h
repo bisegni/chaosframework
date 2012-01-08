@@ -1,13 +1,13 @@
 //
 //  StdUtility.h
-//  ChaosLib
+//  ChaosFramework
 //
 //  Created by Bisegni Claudio on 06/11/11.
 //  Copyright (c) 2011 INFN. All rights reserved.
 //
 
-#ifndef ChaosLib_StdUtility_h
-#define ChaosLib_StdUtility_h
+#ifndef ChaosFramework_StdUtility_h
+#define ChaosFramework_StdUtility_h
 
 namespace cs {
     struct CharStrPointerCompare {

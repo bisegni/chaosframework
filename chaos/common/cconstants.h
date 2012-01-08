@@ -1,13 +1,13 @@
     //
     //  ConstolSystemConstants.h
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by Claudio Bisegni on 21/06/11.
     //  Copyright 2011 INFN. All rights reserved.
     //
 
-#ifndef ChaosLib_ConstrolSystemConstants_h
-#define ChaosLib_ConstrolSystemConstants_h
+#ifndef ChaosFramework_ConstrolSystemConstants_h
+#define ChaosFramework_ConstrolSystemConstants_h
 
     //Constant for sandbox
 namespace chaos {

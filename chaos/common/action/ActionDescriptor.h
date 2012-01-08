@@ -1,13 +1,13 @@
 //
 //  ActionDescriptor.h
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by bisegni on 06/07/11.
 //  Copyright 2011 INFN. All rights reserved.
 //
 
-#ifndef ChaosLib_ActionDescriptor_h
-#define ChaosLib_ActionDescriptor_h
+#ifndef ChaosFramework_ActionDescriptor_h
+#define ChaosFramework_ActionDescriptor_h
 
 #include "../global.h"
 

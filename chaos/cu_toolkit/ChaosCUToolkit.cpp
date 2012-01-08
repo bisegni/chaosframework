@@ -1,6 +1,6 @@
     //
     //  ChaosCUToolkit.cpp
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by Claudio Bisegni on 10/03/11.
     //  Copyright 2011 INFN. All rights reserved.
@@ -27,7 +27,7 @@ boost::condition ChaosCUToolkit::endWaithCondition;
 void ChaosCUToolkit::init(int argc, const char* argv[])  throw(CException) {
     try {
             //init common stage
-        ChaosCommon::init(argc, argv);
+        ChaosCommon<ChaosCUToolkit>::init(argc, argv);
     
         LAPP_ << "Initializing CHAOS Control System Library";
     

@@ -1,13 +1,13 @@
     //
     //  TimingUtil.h
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by Bisegni Claudio on 30/07/11.
     //  Copyright 2011 INFN. All rights reserved.
     //
 
-#ifndef ChaosLib_TimingUtil_h
-#define ChaosLib_TimingUtil_h
+#ifndef ChaosFramework_TimingUtil_h
+#define ChaosFramework_TimingUtil_h
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 

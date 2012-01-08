@@ -1,6 +1,6 @@
     //
     //  ControlManager.cpp
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by Claudio Bisegni on 14/06/11.
     //  Copyright 2011 INFN. All rights reserved.
