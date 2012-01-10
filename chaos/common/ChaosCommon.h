@@ -101,21 +101,29 @@ namespace chaos {
          in themain toolkit subclass of ChaosCommon
          */
         virtual void init(int argc, const char* argv[])  throw(CException) {
-                // Add formatters and destinations
-                // That is, how the message is to be formatted...
-            g_l()->writer().add_formatter( formatter::time("$hh:$mm.$ss ") );
-            g_l()->writer().add_formatter( formatter::append_newline() );
-            
-                //        ... and where should it be written to
-            g_l()->writer().add_destination( destination::cout() );
-            g_l()->writer().add_destination( destination::file("out.txt") );
-            g_l()->turn_cache_off();
-            
             try {
                 if(argv != NULL){
                     GlobalConfiguration::getInstance()->parseStartupParameters(argc, argv);
                 }
                 
+                    // Add formatters and destinations
+                    // That is, how the message is to be formatted...
+                g_l()->writer().add_formatter( formatter::time("$hh:$mm.$ss ") );
+                g_l()->writer().add_formatter( formatter::append_newline() );
+                
+                    //        ... and where should it be written to
+                if(GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(OPT_LOG_ON_CONSOLE)) {
+                    g_l()->writer().add_destination( destination::cout() );
+                }
+                
+                if(GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(OPT_LOG_ON_FILE) &&  
+                   GlobalConfiguration::getInstance()->getConfiguration()->hasKey(OPT_LOG_FILE)) {
+                    g_l()->writer().add_destination( destination::file(GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(OPT_LOG_FILE).c_str()) );
+                }
+                
+                g_l()->turn_cache_off();
+                
+
                     //the version constant are defined into version.h
                     //file generate to every compilation
                 PRINT_LIB_HEADER
