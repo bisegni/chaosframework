@@ -7,6 +7,7 @@ import it.infn.chaos.mds.RPCConstants;
 
 import org.bson.BasicBSONObject;
 import org.ref.common.business.*;
+import org.ref.common.type.Timestamp;
 
 /**
  * @author bisegni
@@ -14,34 +15,36 @@ import org.ref.common.business.*;
 @DBTable(name = "devices")
 public class Device extends BSONBusinessObject {
 	private static final long	serialVersionUID		= 6502276887373714133L;
-	@DBColumn(	name = "device_identification",
-				maxDimension = 40)
+	@DBColumn(name = "device_identification", maxDimension = 40)
 	private String				deviceIdentification	= null;
-	@DBColumn(	name = "cu_instance",
-				maxDimension = 40)
+	@DBColumn(name = "cu_instance", maxDimension = 40)
 	private String				cuInstance				= null;
-	@DBColumn(	name = "net_address",
-				maxDimension = 40)
+	@DBColumn(name = "net_address", maxDimension = 40)
 	private String				netAddress				= null;
 	@DBPrimaryKey
 	@DBColumn(name = "id_device")
 	private Integer				deviceID				= null;
 	@DBColumn(isComplex = true)
 	private Dataset				dataset					= null;
+	@DBColumn(name = "last_hb")
+	private Timestamp			lastHeartBeatTimestamp	= null;
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.ref.common.business.BusinessObject#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(Object d) {
 		if (!(d instanceof Device))
 			return false;
-		return deviceID != null && ((Device) d).getDeviceID() != null && ((Device) d).getDeviceID().equals(deviceID);
+		return deviceID != null
+				&& ((Device) d).getDeviceID() != null && ((Device) d).getDeviceID().equals(deviceID);
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.ref.common.business.BusinessObject#hashCode()
 	 */
 	@Override
@@ -51,6 +54,7 @@ public class Device extends BSONBusinessObject {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.ref.common.business.BusinessObject#toString()
 	 */
 	@Override
@@ -126,11 +130,13 @@ public class Device extends BSONBusinessObject {
 	}
 
 	/**
-	 * @param netAddress the netAddress to set
+	 * @param netAddress
+	 *            the netAddress to set
 	 */
 	public void setNetAddress(String netAddress) {
 		this.netAddress = netAddress;
 	}
+
 	@Override
 	public Object toBson() {
 		BasicBSONObject deviceObj = new BasicBSONObject();
@@ -159,6 +165,20 @@ public class Device extends BSONBusinessObject {
 			setDataset(ds);
 		}
 
+	}
+
+	/**
+	 * @return the lastHeartBeatTimestamp
+	 */
+	public Timestamp getLastHeartBeatTimestamp() {
+		return lastHeartBeatTimestamp;
+	}
+
+	/**
+	 * @param lastHeartBeatTimestamp the lastHeartBeatTimestamp to set
+	 */
+	public void setLastHeartBeatTimestamp(Timestamp lastHeartBeatTimestamp) {
+		this.lastHeartBeatTimestamp = lastHeartBeatTimestamp;
 	}
 
 }

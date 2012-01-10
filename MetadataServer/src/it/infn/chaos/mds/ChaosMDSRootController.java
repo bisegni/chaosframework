@@ -75,16 +75,24 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 
 			if (sourceData instanceof ViewNotifyEvent) {
 				viewEvent = (ViewNotifyEvent) sourceData;
-				if (viewEvent.getEventKind().equals(DemoAppView.DEVICE_SELECTED)) {
+				if (viewEvent.getEventKind().equals(DemoAppView.EVENT_DEVICE_SELECTED)) {
 					deviceHasBeenSelected(viewEvent.getEventData());
-				} else if (viewEvent.getEventKind().equals(DemoAppView.UPDATE_DEVICE_LIST)) {
+				} else if (viewEvent.getEventKind().equals(DemoAppView.EVENT_UPDATE_DEVICE_LIST)) {
 					updateDeviceList();
-				} else if (viewEvent.getEventKind().equals(DemoAppView.DATASET_SELECTED)) {
+				} else if (viewEvent.getEventKind().equals(DemoAppView.EVENT_DATASET_SELECTED)) {
 					updateDatasetAttributeList((Dataset) viewEvent.getEventData());
-				} else if (viewEvent.getEventKind().equals(DemoAppView.ATTRIBUTE_SAVE)) {
+				} else if (viewEvent.getEventKind().equals(DemoAppView.EVENT_ATTRIBUTE_SAVE)) {
 					updateAttributeUserModification();
-				} else if (viewEvent.getEventKind().equals(DemoAppView.DELETE_SELECTED_DEVICE)) {
+				} else if (viewEvent.getEventKind().equals(DemoAppView.EVENT_DELETE_SELECTED_DEVICE)) {
 					deleteSelectedDevice();
+				}else if(viewEvent.getEventKind().equals(DemoAppView.EVENT_SHOW_PREFERENCE)) {
+					try {
+						openViewByKeyAndClass("VISTA_DUE", LiveDataPreferenceView.class, OpenViewIn.DIALOG, "Live Data Preference");
+					} catch (InstantiationException e) {
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		} catch (Throwable e) {
@@ -135,7 +143,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 			mdp.updateDeviceAttributes(datasetAttributes);
 		} catch (Throwable e) {
 			RefVaadinErrorDialog.shorError(view.getWindow(), "Update Attribute Error", e.getMessage());
-			notifyEventoToViewWithData(DemoAppView.ATTRIBUTE_EDITING, null, null);
+			notifyEventoToViewWithData(DemoAppView.EVENT_ATTRIBUTE_EDITING, null, null);
 		}
 	}
 
@@ -199,6 +207,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 			woItem.getItemProperty(DemoAppView.TAB1_DEVICE_INSTANCE).setValue(device.getDeviceIdentification());
 			woItem.getItemProperty(DemoAppView.TAB1_CU_PARENT).setValue(device.getCuInstance());
 			woItem.getItemProperty(DemoAppView.TAB1_NET_ADDRESS).setValue(device.getNetAddress());
+			woItem.getItemProperty(DemoAppView.TAB1_LAST_HB).setValue(device.getLastHeartBeatTimestamp()!=null?device.getLastHeartBeatTimestamp().getDate():null);
 		}
 
 	}

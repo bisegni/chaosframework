@@ -15,17 +15,18 @@ import org.bson.types.BasicBSONList;
 import org.ref.common.exception.RefException;
 
 /**
- * RPC actions for manage the Control Unit registration and device dataset
- * retriving
+ * RPC actions for manage the Control Unit registration and device dataset retriving
  * 
  * @author bisegni
  */
 public class CUQueryHandler extends RPCActionHadler {
 	private static final String	SYSTEM					= "system";
 	private static final String	REGISTER_CONTROL_UNIT	= "registerControlUnit";
+	private static final String	HEARTBEAT_CONTROL_UNIT	= "heartbeatControlUnit";
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see it.infn.chaos.mds.rpc.server.RPCActionHadler#intiHanlder()
 	 */
 	@Override
@@ -35,9 +36,9 @@ public class CUQueryHandler extends RPCActionHadler {
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * it.infn.chaos.mds.rpc.server.RPCActionHadler#handleAction(java.lang.String
-	 * , java.lang.String, org.bson.BasicBSONObject)
+	 * 
+	 * @see it.infn.chaos.mds.rpc.server.RPCActionHadler#handleAction(java.lang.String ,
+	 * java.lang.String, org.bson.BasicBSONObject)
 	 */
 	@Override
 	public BasicBSONObject handleAction(String domain, String action, BasicBSONObject actionData) throws Throwable {
@@ -45,8 +46,21 @@ public class CUQueryHandler extends RPCActionHadler {
 		if (domain.equals(SYSTEM)) {
 			if (action.equals(REGISTER_CONTROL_UNIT)) {
 				result = registerControUnit(actionData);
+			} else if (action.equals(REGISTER_CONTROL_UNIT)) {
+				result = heartbeatControUnit(actionData);
 			}
 		}
+		return result;
+	}
+
+	/**
+	 * Execute l'heartbeat of the control unit
+	 * 
+	 * @param actionData
+	 * @return
+	 */
+	private BasicBSONObject heartbeatControUnit(BasicBSONObject actionData) {
+		BasicBSONObject result = null;
 		return result;
 	}
 
@@ -55,6 +69,7 @@ public class CUQueryHandler extends RPCActionHadler {
 	 * @throws Throwable
 	 */
 	private BasicBSONObject registerControUnit(BasicBSONObject actionData) throws Throwable {
+		Device d = null;
 		BasicBSONObject result = null;
 		DeviceDA dDA = null;
 		try {
@@ -75,7 +90,7 @@ public class CUQueryHandler extends RPCActionHadler {
 			ListIterator<Object> devicesDS = dsDesc.listIterator();
 			while (devicesDS.hasNext()) {
 				BasicBSONObject devDesc = (BasicBSONObject) devicesDS.next();
-				Device d = new Device();
+				d = new Device();
 				d.setCuInstance(controlUnitInstance);
 				d.setNetAddress(controlUnitNetAddress);
 				d.fillFromBson(devDesc);
@@ -99,6 +114,8 @@ public class CUQueryHandler extends RPCActionHadler {
 					dDA.insertDevice(d);
 				}
 			}
+			if (d != null)
+				dDA.performDeviceHB(d.getDeviceIdentification());
 			closeDataAccess(dDA, true);
 		} catch (RefException e) {
 			closeDataAccess(dDA, false);
