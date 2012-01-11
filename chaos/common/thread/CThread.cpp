@@ -36,7 +36,7 @@ void CThread::internalInit() {
     waithTimeInMicrosecond = microseconds(0);
 }
 
-    // Create the CThread and start work
+// Create the CThread and start work
 void CThread::start() {
     if(!m_stop) return;
     m_stop = false;
@@ -71,7 +71,7 @@ void CThread::setThreadID(int newCThreadID) {
 	threadID = newCThreadID;
 }
 
-    //set CThread id
+//set CThread id
 void CThread::setThreadPriorityLevel(int priorityLevel, int policyLevel) {
 #if defined(__linux__) || defined(__APPLE__)
     int retcode;
@@ -128,7 +128,7 @@ void CThread::setTask(CThreadExecutionTaskSPtr tUnit) {
 
 TaskCycleStatPtr CThread::getStat() {
 	TaskCycleStatPtr resultStat(new TaskCycleStatData());
-        //get the mutex lock
+    //get the mutex lock
 	mutex::scoped_lock  lock(statMutex);
 	memcpy(resultStat.get(), (void*)&statisticData, sizeof(TaskCycleStatData));
 	return resultStat;
@@ -136,25 +136,30 @@ TaskCycleStatPtr CThread::getStat() {
 
 void CThread::executeWork() {
     microseconds toWaith;
-    while (!m_stop) {
+    try{
+        while (!m_stop) {
             //mutex::scoped_lock  lock(statMutex);
-        for (; boost::chrono::steady_clock::now()<statisticData.ptimeNextStart; );
-        statisticData.ptimeNextStart = boost::chrono::steady_clock::now() + waithTimeInMicrosecond;
-    
-        taskUnit->executeOnThread();
-        
-        //se if we need to whait for the nex execution
-        if(waithTimeInMicrosecond.count()>=0 && !m_stop) {
+            for (; boost::chrono::steady_clock::now()<statisticData.ptimeNextStart; );
+            statisticData.ptimeNextStart = boost::chrono::steady_clock::now() + waithTimeInMicrosecond;
+            
+            taskUnit->executeOnThread();
+            
+            //se if we need to whait for the nex execution
+            if(waithTimeInMicrosecond.count()>=0 && !m_stop) {
                 //count the nanosecond to waith
-            if(waithTimeInMicrosecond.count() > 0){
-                toWaith = duration_cast<microseconds>(statisticData.ptimeNextStart - boost::chrono::steady_clock::now());
-                boost::this_thread::sleep(boost::posix_time::microseconds(toWaith.count() - 500));
-            }
-        } else {
+                if(waithTimeInMicrosecond.count() > 0){
+                    toWaith = duration_cast<microseconds>(statisticData.ptimeNextStart - boost::chrono::steady_clock::now());
+                    boost::this_thread::sleep(boost::posix_time::microseconds(toWaith.count() - 500));
+                }
+            } else {
                 //if m_stop==true or waithTimeInMicrosecond is < 0
                 //then we fall here so CThread will exit
-            m_stop = true;
+                m_stop = true;
+            }
         }
+    }catch(CException& exc){
+        //some exception has occured during thread execution
+        DECODE_CHAOS_EXCEPTION(exc);
     }
 	if(parentCThreadGroup) parentCThreadGroup->threadHasFinished(this);
 }   

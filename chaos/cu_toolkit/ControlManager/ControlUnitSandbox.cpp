@@ -1,10 +1,10 @@
-    //
-    //  ControlUnitSandbox.cpp
-    //  ChaosFramework
-    //
-    //  Created by Claudio Bisegni on 21/06/11.
-    //  Copyright 2011 INFN. All rights reserved.
-    //
+//
+//  ControlUnitSandbox.cpp
+//  ChaosFramework
+//
+//  Created by Claudio Bisegni on 21/06/11.
+//  Copyright 2011 INFN. All rights reserved.
+//
 
 #include "../../Common/global.h"
 #include "ControlUnitSandbox.h"
@@ -50,14 +50,14 @@ ControlUnitSandbox::ControlUnitSandbox(AbstractControlUnit *newAcu) {
     initialized = false;
     acu = newAcu;
     csThread = 0L;
- }
+}
 
 
 /*
  Contorl Unit Desctruction
  */
 ControlUnitSandbox::~ControlUnitSandbox() {
-        //thread deallocation
+    //thread deallocation
     deinitSandbox();
     
     if(acu){
@@ -90,19 +90,19 @@ const char * ControlUnitSandbox::getCUInstance() {
  */
 void ControlUnitSandbox::defineSandboxAndControlUnit(CDataWrapper& masterConfiguration) throw (CException) {
     if(!acu) throw CException(0, "No control unit associated", "ControlUnitSandbox::initSandBox");
-        //if(!masterConfiguration) throw CException(1, "No initial configuration passed", "ControlUnitSandbox::initSandBox");
+    //if(!masterConfiguration) throw CException(1, "No initial configuration passed", "ControlUnitSandbox::initSandBox");
     
-        //DataWrapper for send cu templat to the metadataserver
-        //associate new acs
+    //DataWrapper for send cu templat to the metadataserver
+    //associate new acs
     LAPP_ << "Init Control Unit Sandbox for Control Unit:" << CU_IDENTIFIER_C_STREAM;
     
     LAPP_ << "Init Thread for:" << CU_IDENTIFIER_C_STREAM;
-        //make the thread pointing to this class method for schedule run CU method
-        //taskSPtr.reset(this);
-        //simulate the metadataserver sending config 
-        //defaultInternalConf.reset(new CDataWrapper());
-        //if(masterConfiguration)
-        //defaultInternalConf->appendAllElement(*masterConfiguration);
+    //make the thread pointing to this class method for schedule run CU method
+    //taskSPtr.reset(this);
+    //simulate the metadataserver sending config 
+    //defaultInternalConf.reset(new CDataWrapper());
+    //if(masterConfiguration)
+    //defaultInternalConf->appendAllElement(*masterConfiguration);
     
     
     LAPP_ << "Start the Control Unit:" << CU_IDENTIFIER_C_STREAM << " setup";
@@ -113,11 +113,11 @@ void ControlUnitSandbox::defineSandboxAndControlUnit(CDataWrapper& masterConfigu
     LDBG_ << masterConfiguration.getJSONString();
     LDBG_ << "---------------END "<< CU_IDENTIFIER_C_STREAM << " SETUP------------";
 #endif  
-        //decode the dataset
+    //decode the dataset
     LAPP_ << "Register the action exposed by Control Unit:" << CU_IDENTIFIER_C_STREAM;
     CommandManager::getInstance()->registerAction(acu);
     
-        //expose updateConfiguration Methdo to rpc
+    //expose updateConfiguration Methdo to rpc
     LAPP_ << "Register Sandbox with domain:" << acu->getCUInstance() << " updateConfiguration action";
     DeclareAction::addActionDescritionInstance<ControlUnitSandbox>(this, 
                                                                    &ControlUnitSandbox::updateConfiguration, 
@@ -149,30 +149,30 @@ void ControlUnitSandbox::defineSandboxAndControlUnit(CDataWrapper& masterConfigu
  available. The first time will be the same as the initial
  */
 void ControlUnitSandbox::initSandbox(CDataWrapper *masterConfiguration) throw (CException) {
-        //the lock is need because it's possible initi ad deinit the Sandbox by 
-        //system action
+    //the lock is need because it's possible initi ad deinit the Sandbox by 
+    //system action
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     CHECK_INITIALIZED
-
-        //now ew can allocate the thread
+    
+    //now ew can allocate the thread
     csThread = new CThread(this);
     if(!csThread) throw CException(0,"Thread inititalization error","ControlUnitSandbox::initSandBox");
-
+    
     
     LAPP_ << "Init Control Unit:" << CU_IDENTIFIER_C_STREAM;
-        //acu->_init(defaultInternalConf);
+    //acu->_init(defaultInternalConf);
     acu->_init(masterConfiguration);
     
     LAPP_ << "Update Control Unit and Sandbox Configuration for:" << CU_IDENTIFIER_C_STREAM;
     updateConfiguration(masterConfiguration);
     
-        //register the actions fot the control unit
+    //register the actions fot the control unit
     CommandManager::getInstance()->registerAction(this);
-        //flag the sandbox initialiaztion status before the autostart
+    //flag the sandbox initialiaztion status before the autostart
     initialized = true;
     
-        //need to check if the CU wnat to be autostarted
-        //check if cu want to be started without metadataserver consense
+    //need to check if the CU wnat to be autostarted
+    //check if cu want to be started without metadataserver consense
     if(masterConfiguration->hasKey(ControlManagerConstant::CS_CM_CU_AUTOSTART) &&
        masterConfiguration->getInt32Value(ControlManagerConstant::CS_CM_CU_AUTOSTART)){
         LAPP_  << "Starting Control Unit Sanbox:" << CU_IDENTIFIER_C_STREAM;
@@ -186,20 +186,20 @@ void ControlUnitSandbox::initSandbox(CDataWrapper *masterConfiguration) throw (C
  to deinit the CU
  */
 void ControlUnitSandbox::deinitSandbox() throw (CException) {
-        //the lock is need because it's possible initi ad deinit the Sandbox by 
-        //system action
+    //the lock is need because it's possible initi ad deinit the Sandbox by 
+    //system action
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
-        //check the already deinitilaized status
+    //check the already deinitilaized status
     CHECK_NOT_INITIALIZED
     
-        //check the thread
+    //check the thread
     CHAOS_ASSERT(csThread);
-
+    
     
     LAPP_ << "Deinit Control Unit Sandbox for Control Unit:" << CU_IDENTIFIER_C_STREAM;
     CommandManager::getInstance()->deregisterAction(this);
-        //deinit the thread and dispose it
-        //stop the SandBox
+    //deinit the thread and dispose it
+    //stop the SandBox
     try{
         stopSandbox(NULL);
     }catch(CException& ex){
@@ -207,23 +207,23 @@ void ControlUnitSandbox::deinitSandbox() throw (CException) {
     }
     
     LAPP_ << "Deinit CU:" << CU_IDENTIFIER_C_STREAM;
-        //deinit the cu
+    //deinit the cu
     acu->_deinit();
     
-        //deallocate the thread
+    //deallocate the thread
     if(csThread){
         delete(csThread);
         csThread = 0L;
     }
     
-        //deallocate the control unit deinitializating it
+    //deallocate the control unit deinitializating it
     if(acu){
-            //register the action implemented by CU(it extends DeclareaAction Class)
+        //register the action implemented by CU(it extends DeclareaAction Class)
         LAPP_ << "Deregister the action exposed by Control Unit:" << CU_IDENTIFIER_C_STREAM;
         CommandManager::getInstance()->deregisterAction(acu);
     }
     
-        //flag the sandbox initialiaztion status
+    //flag the sandbox initialiaztion status
     initialized = false;
 }
 
@@ -233,13 +233,13 @@ void ControlUnitSandbox::deinitSandbox() throw (CException) {
 CDataWrapper* ControlUnitSandbox::startSandbox(CDataWrapper *startConfiguration) throw (CException){
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     
-        //check the initialization status
+    //check the initialization status
     CHECK_NOT_INITIALIZED
-        //check the already start status
+    //check the already start status
     CHECK_STARTED
-        //check the thread
+    //check the thread
     CHAOS_ASSERT(csThread);
-
+    
     
     if(!csThread) {
         LERR_ << "No trehad defined for sandbox "<< getSandboxName();
@@ -253,8 +253,8 @@ CDataWrapper* ControlUnitSandbox::startSandbox(CDataWrapper *startConfiguration)
     LAPP_ << "Start Thread for:" << CU_IDENTIFIER_C_STREAM;
     csThread->start();
     csThread->setThreadPriorityLevel(sched_get_priority_max(SCHED_RR), SCHED_RR);
-
-        //set started flag
+    
+    //set started flag
     started = true;
     return NULL;
 }
@@ -265,14 +265,14 @@ CDataWrapper* ControlUnitSandbox::startSandbox(CDataWrapper *startConfiguration)
 CDataWrapper* ControlUnitSandbox::stopSandbox(CDataWrapper *stopConfiguration) throw (CException){
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     
-        //check the initialization status
+    //check the initialization status
     CHECK_NOT_INITIALIZED
-        //check the already start status
+    //check the already start status
     CHECK_NOT_STARTED
     
-        //check the thread
+    //check the thread
     CHAOS_ASSERT(csThread);
-
+    
     if(csThread->isStopped()){
         LERR_ << "Sanbox "<< getSandboxName() << "already stopped";
     }
@@ -282,7 +282,7 @@ CDataWrapper* ControlUnitSandbox::stopSandbox(CDataWrapper *stopConfiguration) t
     if(csThread) csThread->stop();
     LAPP_ << "Stopped Thread for:" << CU_IDENTIFIER_C_STREAM;
     
-        //set started flag
+    //set started flag
     started = false;
     return NULL;
 }
@@ -296,7 +296,7 @@ CDataWrapper* ControlUnitSandbox::updateConfiguration(CDataWrapper *configData) 
     LDBG_ << "Update Configuration for Control Unit Sandbox:" << CU_IDENTIFIER_C_STREAM;
 #endif
     if(configData->hasKey(ControlManagerConstant::ControlUnitSandBoxConstant::CS_CM_THREAD_SCHEDULE_DELAY)){
-            //we need to configure the delay  from a run() call and the next
+        //we need to configure the delay  from a run() call and the next
         int32_t uSecdelay = configData->getInt32Value(ControlManagerConstant::ControlUnitSandBoxConstant::CS_CM_THREAD_SCHEDULE_DELAY);
 #if DEBUG
         LDBG_ << "THREAD_SCHEDULE_DELAY:" << uSecdelay << " uSecond";
@@ -332,10 +332,27 @@ void ControlUnitSandbox::addKeyDataStorageToCU(CDataWrapper *configData) {
     }
 }
 
+/*!
+ Perform the heartbeat operation for managed Contorl Unit Instance
+ */
+void ControlUnitSandbox::performHeartbeat() {
+    try{
+        
+    } catch(...) {
+        
+    }
+}
+
 /*
  Execute the scheduling of the run() method of the managed control unit
  */
-void ControlUnitSandbox::executeOnThread() throw(CException) {
-        //call the run mehtod for cu
+void ControlUnitSandbox::executeOnThread() throw(CException) {    
+    //call the run mehtod for cu
     acu->run();
+    
+    //check for heart beat time befor to going to sleep
+    if (boost::chrono::steady_clock::now() >= lastHeartBeatTime + heartBeatDelayInMicroseconds) {
+        performHeartbeat();
+    }
+    
 }

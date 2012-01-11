@@ -17,10 +17,13 @@ To generate documentation:  Doxygen software is needed and it can be downloaded 
 Library used by CHAOS:
     libmemcached:   libevent                    (http://libevent.org/)
                     libmemcached                (http://libmemcached.org/libMemcached.html)
+                    
     memcached:      memcached                   (http://memcached.org/)
+    
     msgpack:        msgpack                     (https://github.com/msgpack)
                     msgpack-rpc                 (https://github.com/msgpack/msgpack-rpc)
                     mpio                        (https://github.com/frsyuki/mpio)
+                    
     boost:          boost_program_options 
                     boost_system
                     boost_thread

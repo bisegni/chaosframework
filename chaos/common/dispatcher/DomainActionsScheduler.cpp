@@ -50,7 +50,7 @@ bool DomainActionsScheduler::push(CDataWrapper *actionParam) throw(CException) {
 string& DomainActionsScheduler::getManagedDomainName() {
     return domainActionsContainer->getDomainName();
 }
-
+  
 /*
  
  */
@@ -92,7 +92,7 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
             CDataWrapper *subCommand = actionDescription->getCSDataValue(CommandManagerConstant::CS_CMDM_SUB_CMD);
             CHAOS_ASSERT(subCommand);
                 //dipatch the subcommand
-            dispatcher->dispatchCommand(subCommand);
+            auto_ptr<CDataWrapper> dispatchSubCommandResult(dispatcher->dispatchCommand(subCommand));
         }
         
         if( actionResult ) {

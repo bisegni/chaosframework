@@ -7,8 +7,8 @@
     //
 
 #include "../global.h"
-#include "DefaultCommandDispatcher.h"
 #include "../cconstants.h"
+#include "DefaultCommandDispatcher.h"
 
 using namespace chaos;
 using namespace std;
@@ -40,11 +40,7 @@ void DefaultCommandDispatcher::deinit() throw(CException) {
         try{
             (*dasIter).second->deinit();  
         }catch(CException& cse){
-            LERR_ << "-----------Exception------------";
-            LERR_ << "Error  domain:"   <<  cse.errorDomain;
-            LERR_ << "Error message:"   <<  cse.errorMessage;
-            LERR_ << "Error    code:"   <<  cse.errorCode;
-            LERR_ << "-----------Exception------------";
+           DECODE_CHAOS_EXCEPTION(cse)
         }catch(...){
             LERR_ << "-----------Exception------------";
             LERR_ << "Unmanaged error";
