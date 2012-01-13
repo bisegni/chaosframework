@@ -112,13 +112,13 @@ namespace chaos {
                 g_l()->writer().add_formatter( formatter::append_newline() );
                 
                     //        ... and where should it be written to
-                if(GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(OPT_LOG_ON_CONSOLE)) {
+                if(GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(UserOption::OPT_LOG_ON_CONSOLE)) {
                     g_l()->writer().add_destination( destination::cout() );
                 }
                 
-                if(GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(OPT_LOG_ON_FILE) &&  
-                   GlobalConfiguration::getInstance()->getConfiguration()->hasKey(OPT_LOG_FILE)) {
-                    g_l()->writer().add_destination( destination::file(GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(OPT_LOG_FILE).c_str()) );
+                if(GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(UserOption::OPT_LOG_ON_FILE) &&  
+                   GlobalConfiguration::getInstance()->getConfiguration()->hasKey(UserOption::OPT_LOG_FILE)) {
+                    g_l()->writer().add_destination( destination::file(GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(UserOption::OPT_LOG_FILE).c_str()) );
                 }
                 
                 g_l()->turn_cache_off();

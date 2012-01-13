@@ -12,6 +12,32 @@
     //Constant for sandbox
 namespace chaos {
     
+    /** @defgroup CommonParamOption Common Layer Configuration Option
+     *  This is the collection of the parameter for common layer to customize the initial setup
+     *  @{
+     */
+    
+    //! Name space for grupping option used for commandline or in config file
+    namespace UserOption{
+            //! @Option for print the help
+        static const char * const OPT_HELP                          = "help";
+            //!  @Option Specify the network port where rpc system will publish al the service
+        static const char * const  OPT_RPC_SERVER_PORT              ="rpc-server-port";
+            //! @Option Specify the number of the thread that the rpc ssytem must use to process the request 
+        static const char * const  OPT_RPC_SERVER_THREAD_NUMBER     ="rpc-server-thread-number";
+            //! @Option Specify the live data servers address with the type host:port it is a multitoken parameter 
+        static const char * const  OPT_LIVE_DATA_SERVER_ADDRESS     ="live-data-servers";
+            //! @Option Specify the metadata address for the metadataserver
+        static const char * const  OPT_METADATASERVER_ADDRESS       ="metadata-server";
+            //! @Option Specify when the log must be forwarded on console
+        static const char * const  OPT_LOG_ON_CONSOLE               ="log-on-console";
+            //! @Option Specify when the log must be forwarded on file
+        static const char * const  OPT_LOG_ON_FILE                  ="log-on-file";
+            //! @Option Specify when the file path of the log
+        static const char * const  OPT_LOG_FILE                     ="log-file";
+    }
+    /** @} */ // end of ParamOption
+    
         //--------------global values-------------------
     static const char * const CS_LIB_METADATASET_ADDRESS                    = "mds_address";
     static const char * const CS_LIB_INSTANCE_NETWORK_ADDRESS               = "inst_net_address";
@@ -41,19 +67,19 @@ namespace chaos {
         
             //key for the 
         static const char * const CS_CM_CU_DEVICE_NAME                         = "cs|cm|cu|device_name";
-
+        
             //stast the CU without metadataserver permission 
         static const char * const CS_CM_CU_AUTOSTART                        = "cs|cm|cu|autostart";
         
             //key for dataset descriptors array {[domain, name, paramteres....]}
         static const char * const CS_CM_DATASET_DESC                         = "cs|cm|ds_desc";
-
+        
             //key for the domain of the attribute dataset
         static const char * const CS_CM_DATASET_ATTRIBUTE_DOMAIN                 = "cs|cm|ds_attr_dom";
         
             //key for the name of dataset attribute
         static const char * const CS_CM_DATASET_ATTRIBUTE_NAME                 = "cs|cm|ds_attr_name";
-            
+        
             //key for the tag of the dataset attrbiute
         static const char * const CS_CM_DATASET_ATTRIBUTE_TAG                  = "cs|cm|ds_attr_tag";
         
@@ -100,14 +126,14 @@ namespace chaos {
             static const char * const CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT        = "cs|cmdm|rpc_adapter_port";
             static const char * const CS_CMDM_RPC_ADAPTER_THREAD_NUMBER       = "cs|cmdm|rpc_adapter_tn";
         }
-
+        
             //key for action domain descriptors array {[domain, name, paramteres....]}
         static const char * const CS_CMDM_ACTION_DESC                         = "cs|cmdm|act_desc";
-            
+        
             //key for the array of object that represent the action paramteres 
             //description
         static const char * const CS_CMDM_ACTION_DESC_PARAM                   = "cs|cmdm|act_desc_param";
-            
+        
             //key representing the name of the parameter
         static const char * const CS_CMDM_ACTION_DESC_PAR_NAME                = "cs|cmdm|act_desc_par_name";
         
@@ -133,23 +159,23 @@ namespace chaos {
         
             //key for action name definition
         static const char * const CS_CMDM_ACTION_NAME                         = "cs|cmdm|act_name";
-
+        
             //key for action name definition
         static const char * const CS_CMDM_ACTION_DESCRIPTION                  = "cs|cmdm|act_desc";
-
+        
         
             //key action submission result
         static const char * const CS_CMDM_ACTION_SUBMISSION_RESULT            = "cs|cmdm|act_sub_result";
         
             //key action submission error message
         static const char * const CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE     = "cs|cmdm|act_sub_emsg";
-
+        
             //key action submission error domain
         static const char * const CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN      = "cs|cmdm|act_sub_edom";
-
+        
             //key action submission error code
         static const char * const CS_CMDM_ACTION_SUBMISSION_ERROR_CODE        = "cs|cmdm|act_sub_ecode";
-
+        
             //key for action sub command description
         static const char * const CS_CMDM_SUB_CMD                             = "cs|cmdm|sub_cmd";
         

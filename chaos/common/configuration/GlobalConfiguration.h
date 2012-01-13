@@ -29,53 +29,56 @@ namespace chaos {
     namespace po = boost::program_options;
     
     
-    //! Default Param Option constant
+        //! Default Param Option constant
     /*! 
      These are the program option when the common library must be used to define a command line application
      */
-    #define OPT_HELP                        "help"                      /*!< Print this help */ 
-    #define OPT_RPC_SERVER_PORT             "rpc-server-port"           /*!< Specify the network port where rpc system will publish al the service*/
-    #define OPT_RPC_SERVER_THREAD_NUMBER    "rpc-server-thread-number"  /*!< Specify the number of the thread that the rpc ssytem must use to process the request */
-    #define OPT_LIVE_DATA_SERVER_ADDRESS    "live-data-servers"         /*!< Specify the live data servers address with the type host:port it is a multitoken parameter */
-    #define OPT_METADATASERVER_ADDRESS      "metadata-server"           /*!< Specify the metadata address for the metadataserver */
-    #define OPT_LOG_ON_CONSOLE              "log-on-console"            /*!< Specify when the log must be forwarded on console */
-    #define OPT_LOG_ON_FILE                 "log-on-file"               /*!< Specify when the log must be forwarded on file */
-    #define OPT_LOG_FILE                    "log-file"                  /*!< Specify when the file path of the log */
+        //#define OPT_HELP                        "help"                      /**!< Print this help */ 
+        //#define OPT_RPC_SERVER_PORT             "rpc-server-port"           /*!< Specify the network port where rpc system will publish al the service*/
+        //#define OPT_RPC_SERVER_THREAD_NUMBER    "rpc-server-thread-number"  /*!< Specify the number of the thread that the rpc ssytem must use to process the request */
+        //#define OPT_LIVE_DATA_SERVER_ADDRESS    "live-data-servers"         /*!< Specify the live data servers address with the type host:port it is a multitoken parameter */
+        //#define OPT_METADATASERVER_ADDRESS      "metadata-server"           /*!< Specify the metadata address for the metadataserver */
+        //#define OPT_LOG_ON_CONSOLE              "log-on-console"            /*!< Specify when the log must be forwarded on console */
+        //#define OPT_LOG_ON_FILE                 "log-on-file"               /*!< Specify when the log must be forwarded on file */
+        //#define OPT_LOG_FILE                    "log-file"                  /*!< Specify when the file path of the log */
     
+    
+#define CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(t,x,y,z)\
+t x;\
+if(hasOption(y)){\
+x = getOption<t>(y);\
+}else{\
+x = z;\
+}\
 
-    #define CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(t,x,y,z)\
-        t x;\
-        if(hasOption(y)){\
-            x = getOption<t>(y);\
-        }else{\
-            x = z;\
-        }\
+#define CHECK_OPTION_WITH_DEFAULT(t,x,y,z)\
+if(hasOption(y)){\
+x = getOption<t>(y);\
+}else{\
+x = z;\
+}\
 
-    #define CHECK_OPTION_WITH_DEFAULT(t,x,y,z)\
-        if(hasOption(y)){\
-            x = getOption<t>(y);\
-        }else{\
-            x = z;\
-        }\
-
-    #define CHECK_OPTION(t,x,y)\
-        if(hasOption(y)){\
-            x = getOption<t>(y);\
-        }
+#define CHECK_OPTION(t,x,y)\
+if(hasOption(y)){\
+x = getOption<t>(y);\
+}
     
-    #define CHECK_AND_DEFINE_OPTION(t,x,y)\
-        t x;\
-        if(hasOption(y)){\
-            x = getOption<t>(y);\
-        }
+#define CHECK_AND_DEFINE_OPTION(t,x,y)\
+t x;\
+if(hasOption(y)){\
+x = getOption<t>(y);\
+}
     
-    #define CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(x,y)\
-        bool x;\
-        x = hasOption(y);
+#define CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(x,y)\
+bool x;\
+x = hasOption(y);
     
-    static const regex MetadataServerHostNameRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+){0,1}:[0-9]{4,5}");
-    static const regex MetadataServerIPRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}");
-    static const regex LocalServerIPRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b");
+        //! Regular expression for check server hostname and port
+    static const regex ServerHostNameRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+){0,1}:[0-9]{4,5}");
+        //! Regular expression for check server ip and port
+    static const regex ServerIPAndPortRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}");
+        //! Regular expression for check server ip
+    static const regex ServerIPRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b");
     
     /*
      Central class for all CHOAS framework configuraitons
@@ -140,8 +143,8 @@ namespace chaos {
          *Add the metadataserver address
          */
         void addMetadataServerAddress(string& mdsAddress) throw (CException) {
-            bool isHostnameAndPort = regex_match(mdsAddress, MetadataServerHostNameRegExp);
-            bool isIpAndPort  = regex_match(mdsAddress, MetadataServerIPRegExp);
+            bool isHostnameAndPort = regex_match(mdsAddress, ServerHostNameRegExp);
+            bool isIpAndPort  = regex_match(mdsAddress, ServerIPAndPortRegExp);
             if(!isHostnameAndPort && !isIpAndPort)
                 throw new CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
             
@@ -153,9 +156,8 @@ namespace chaos {
          *Add the metadataserver address
          */
         void addLocalServerAddress(const char * mdsAddress) throw (CException) {
-            bool isHostnameAndPort = regex_match(mdsAddress, LocalServerIPRegExp);
-            bool isIpAndPort  = regex_match(mdsAddress, LocalServerIPRegExp);
-            if(!isHostnameAndPort && !isIpAndPort)
+            bool isIp = regex_match(mdsAddress, ServerIPRegExp);
+            if(!isIp)
                 throw new CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
             
                 //address can be added

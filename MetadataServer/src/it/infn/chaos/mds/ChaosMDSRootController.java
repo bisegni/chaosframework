@@ -208,6 +208,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 			woItem.getItemProperty(DemoAppView.TAB1_CU_PARENT).setValue(device.getCuInstance());
 			woItem.getItemProperty(DemoAppView.TAB1_NET_ADDRESS).setValue(device.getNetAddress());
 			woItem.getItemProperty(DemoAppView.TAB1_LAST_HB).setValue(device.getLastHeartBeatTimestamp()!=null?device.getLastHeartBeatTimestamp().getDate():null);
+			woItem.getItemProperty("INIT").setValue(device.getInitAtStartup());
 		}
 
 	}
