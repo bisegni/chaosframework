@@ -45,6 +45,11 @@ CDataWrapper::CDataWrapper(const char* serializationBuffer, bool bson):bsonBuild
     setSerializedData(serializationBuffer, bson);
 }
 
+CDataWrapper *CDataWrapper::clone() {
+    CDataWrapper *result = new CDataWrapper(bsonBuilder->asTempObj().objdata());
+    return result;
+}
+
     //add a csdata value
 void CDataWrapper::addCSDataValue(const char *key, CDataWrapper& csData) {
     if(csData.bsonBuilder->len()==0) return;

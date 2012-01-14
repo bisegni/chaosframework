@@ -13,79 +13,86 @@ using namespace chaos;
 using namespace std;
 using namespace boost;
 
+CUSchemaDB::CUSchemaDB() {
+    
+}
+
+CUSchemaDB::~CUSchemaDB() {
+        //remove all dataset
+    clearAllDatasetsVectors();
+}
+
+void CUSchemaDB::clearAllDatasetsVectors() {
+    for (map<string, vector< CDataWrapper* > > ::iterator datasetIter = deviceIDDataset.begin();
+         datasetIter != deviceIDDataset.end();
+         datasetIter++) {
+        
+            //get domain name
+        string domainName = datasetIter->first;
+        clearDatasetForDeviceID(domainName);
+    }
+    deviceIDDataset.clear();
+}
+
+void CUSchemaDB::clearDatasetForDeviceID(string& deviceID){
+        //det dataset attribute for domain name
+    
+    vector< CDataWrapper* >& domainAttributeList = getDatasetForDeviceID(deviceID);
+    
+    for (vector<CDataWrapper*>::iterator datasetIterator = domainAttributeList.begin(); 
+         datasetIterator != domainAttributeList.end(); 
+         datasetIterator++) {
+        CDataWrapper *attribute = *datasetIterator;
+        delete(attribute);
+    }
+    
+    domainAttributeList.clear();
+}
+
 /*
  return the vector containing the atrtibute list for a domain
  */
-ptr_vector<DataSetAttribute>& CUSchemaDB::getDSAttributeListForDeviceID(string& domainName) {
-    if(datasetAttributeMap.count(domainName) > 0){
-        return datasetAttributeMap[domainName];
+vector< CDataWrapper* >& CUSchemaDB::getDatasetForDeviceID(string& deviceID) {
+    if(deviceIDDataset.count(deviceID) > 0){
+        return deviceIDDataset[deviceID];
     }
     
         //a new vector need to be added
-    addDeviceId(domainName);
-    return datasetAttributeMap[domainName];
+    addDeviceId(deviceID);
+    return deviceIDDataset[deviceID];
 }
+
 
 /*
  return the vector containing the atrtibute list for a domain
  */
 void CUSchemaDB::addDeviceId(string domainName) {
-    if(datasetAttributeMap.count(domainName) > 0){
+    if(deviceIDDataset.count(domainName) > 0){
         return;
     }
         //a new vector need to be added
-    ptr_vector<DataSetAttribute> newVector;
-    datasetAttributeMap.insert(make_pair<string, ptr_vector<DataSetAttribute> >(domainName, newVector));
-}
-
-
-/*
- Fill the CDataWrapper with the valu eof the attribute of the dataset
- */
-void CUSchemaDB::fillCDataWrapperWithAttributeValues(DataSetAttribute *srcAttributeDS,CDataWrapper *destCDataWrapper) {
-    CHAOS_ASSERT(srcAttributeDS && destCDataWrapper)
-        //add thename of the parameter
-    if(srcAttributeDS->attributeName.size())
-        destCDataWrapper->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME,
-                                                    srcAttributeDS->attributeName);
-    
-    if(srcAttributeDS->attributeTag.size())
-        destCDataWrapper->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TAG,
-                                          srcAttributeDS->attributeTag);
-    
-        //add the information about the parameter
-    if(srcAttributeDS->attributeDescription.size())
-        destCDataWrapper->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DESCRIPTION,
-                                                    srcAttributeDS->attributeDescription);
-    
-        //add the parameter type
-    destCDataWrapper->addInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION,
-                                               srcAttributeDS->attributeDirection);
-    
-        //add the parameter type
-    destCDataWrapper->addInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE,
-                                               srcAttributeDS->attributeType);
+    vector<CDataWrapper*> newVector;
+    deviceIDDataset.insert(make_pair<string, vector<CDataWrapper*> >(domainName, newVector));
 }
 
 /*
  Add the new field to the dataset
  */
-void CUSchemaDB::addAttributeToDataSet(const char*const attributeDomain, 
+void CUSchemaDB::addAttributeToDataSet(const char*const attributeDeviceID, 
 		const char*const attributeName,
 		const char*const attributeDescription,
 		DataType::DataType attributeType,
-		DataSetAttributeIOAttribute attributeDirection) {
+        DataType::DataSetAttributeIOAttribute attributeDirection) {
     
-    string aDom = attributeDomain;
-    ptr_vector<DataSetAttribute>& attributeList = getDSAttributeListForDeviceID(aDom);
+    string aDom = attributeDeviceID;
     
-	DataSetAttribute *attribute = new DataSetAttribute();
-	if(attributeName)attribute->attributeName.assign(attributeName);
-	if(attributeDescription)attribute->attributeDescription.assign(attributeDescription);
-	attribute->attributeType = attributeType;
-	attribute->attributeDirection = attributeDirection;
-    
-    attributeList.push_back(attribute);
+    vector< CDataWrapper* >& deviceDataset = getDatasetForDeviceID(aDom);
+    CDataWrapper *attributeForDeviceID = new CDataWrapper();
+    deviceDataset.push_back(attributeForDeviceID);
+    attributeForDeviceID->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME, attributeName);
+    attributeForDeviceID->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DESCRIPTION, attributeDescription);
+    attributeForDeviceID->addInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE, attributeType);
+    attributeForDeviceID->addInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION, attributeDirection);
 }
 
 /*
@@ -94,30 +101,44 @@ void CUSchemaDB::addAttributeToDataSet(const char*const attributeDomain,
 void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDataWrapper) {
         //if(!attributeDataWrapper) return;
 
-	string attributeDomain;
+	string attributeDeviceID;
 	string attributeName;
 	string attributeDescription;
-	DataSetAttributeIOAttribute attributeDirection = Input;
-	DataType::DataType attributeType = DataType::TYPE_INT32;
+    auto_ptr<CDataWrapper> elementDescription;
+    auto_ptr<CMultiTypeDataArrayWrapper> elementsDescriptions;
 
-	if(attributeDataWrapper.hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DOMAIN)){
-		attributeDomain = attributeDataWrapper.getStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DOMAIN);
+	if(attributeDataWrapper.hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)){
+		attributeDeviceID = attributeDataWrapper.getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
 	}
     
-	if(attributeDataWrapper.hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME)){
-		attributeName = attributeDataWrapper.getStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME);
-	}
-	if(attributeDataWrapper.hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DESCRIPTION)){
-		attributeDescription = attributeDataWrapper.getStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DESCRIPTION);
-	}
-	if(attributeDataWrapper.hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE)){
-		attributeType = (DataType::DataType)attributeDataWrapper.getInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE);
-	}
-	if(attributeDataWrapper.hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION)){
-		attributeDirection = (DataSetAttributeIOAttribute)attributeDataWrapper.getInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION);
-	}
-	//add the attribute to the dataset
-	addAttributeToDataSet(attributeDomain.c_str(), attributeName.c_str(), attributeDescription.c_str(), attributeType, attributeDirection);
+    if(attributeDataWrapper.hasKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION)){
+        vector< CDataWrapper* >& deviceDataset = getDatasetForDeviceID(attributeDeviceID);
+		elementsDescriptions.reset(attributeDataWrapper.getVectorValue(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION));
+    
+        for (int idx = 0; idx<= elementsDescriptions->size(); idx++) {
+                //create new space for element
+             CDataWrapper *attributeForDeviceID = new CDataWrapper();
+            
+                //next element in dataset
+            elementDescription.reset(elementsDescriptions->getCDataWrapperElementAtIndex(idx));
+                //attribute name
+            if(elementDescription->hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME))
+                attributeForDeviceID->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME, elementDescription->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME).c_str());
+                //attribute description
+            if(elementDescription->hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DESCRIPTION))
+                attributeForDeviceID->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DESCRIPTION, elementDescription->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DESCRIPTION).c_str());
+                //attribute type
+            if(elementDescription->hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE))
+                attributeForDeviceID->addInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE, elementDescription->getInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE));
+                //attribute direction
+            if(elementDescription->hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION))
+                attributeForDeviceID->addInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION, elementDescription->getInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION));
+
+            
+                //add filled element to dataset
+            deviceDataset.push_back(attributeForDeviceID);
+        }
+    }
 }
 
 /*
@@ -126,64 +147,57 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
 void CUSchemaDB::fillDataWrpperWithDataSetDescirption(CDataWrapper& datasetDescription) {    
 	//now i must describe the param for this action
     //CHAOS_ASSERT(datasetDescription)
-	if(datasetAttributeMap.size()){
-        auto_ptr<CDataWrapper> domainDatasetDescription;
-		auto_ptr<CDataWrapper> attributeDatasetDescription;
+	if(deviceIDDataset.size()){
+        shared_ptr<CDataWrapper> domainDatasetDescription;
 		//there are some parameter for this action, need to be added to rapresentation
-		for (map<string, ptr_vector<DataSetAttribute> > ::iterator datasetMapIter = datasetAttributeMap.begin();
-				datasetMapIter != datasetAttributeMap.end();
-				datasetMapIter++) {
+		for (map<string, vector< CDataWrapper* > > ::iterator datasetIter = deviceIDDataset.begin();
+				datasetIter != deviceIDDataset.end();
+				datasetIter++) {
             
                 //get domain name
-            string domainName = datasetMapIter->first;
+            string domainName = datasetIter->first;
                 
                 //det dataset attribute for domain name
             
-            ptr_vector<DataSetAttribute>& domainAttributeList = datasetMapIter->second;
+            vector<CDataWrapper*>& domainAttributeList = datasetIter->second;
 
             domainDatasetDescription.reset(new CDataWrapper());
                 //add domain name to description data
-            domainDatasetDescription->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DOMAIN, domainName);
+            domainDatasetDescription->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, domainName);
                 //add description for all attribute in the domain
-            for (ptr_vector<DataSetAttribute>::iterator datasetIterator = domainAttributeList.begin(); 
+            for (vector<CDataWrapper*>::iterator datasetIterator = domainAttributeList.begin(); 
                  datasetIterator != domainAttributeList.end(); 
                  datasetIterator++) {
-                
-                    //allocate a new element
-                attributeDatasetDescription.reset(new CDataWrapper());
-                
-                    //add all attribute to the description
-                fillCDataWrapperWithAttributeValues((DataSetAttribute*)&(*datasetIterator), attributeDatasetDescription.get());
-                
                     // add parametere representation object to main action representation
-                domainDatasetDescription->appendCDataWrapperToArray(*attributeDatasetDescription.get());
+                domainDatasetDescription->appendCDataWrapperToArray(**datasetIterator);
+                    //CDataWrapper *data = *datasetIterator;
             }
-            domainDatasetDescription->finalizeArrayForKey(DatasetDefinitionkey::CS_CM_DATASET_DESC);
+            domainDatasetDescription->finalizeArrayForKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION);
                 // add parametere representation object to main action representation
-			datasetDescription.appendCDataWrapperToArray(*domainDatasetDescription.get());
+            datasetDescription.appendCDataWrapperToArray(*domainDatasetDescription.get());
 		}
 
 		//cloese the array
-		datasetDescription.finalizeArrayForKey(DatasetDefinitionkey::CS_CM_DATASET_DESC);
+		datasetDescription.finalizeArrayForKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION);
 	}
 }
 
 /*
  * Return the attribute array for a specified direction
  */
-void CUSchemaDB::getAttributeForDirection(string& domainName, DataSetAttributeIOAttribute attributeDiretion, vector<DataSetAttribute*>& resultVector) {
+void CUSchemaDB::getAttributeForDirection(string& domainName, DataType::DataSetAttributeIOAttribute attributeDiretion, vector< shared_ptr<CDataWrapper> >& resultVector) {
     
         //get the attribute list for domain
-    ptr_vector<DataSetAttribute>& domainAttributeList = getDSAttributeListForDeviceID(domainName);
-	for (ptr_vector<DataSetAttribute>::iterator datasetAttributeIterator = domainAttributeList.begin(); 
+    vector<CDataWrapper*>& domainAttributeList = getDatasetForDeviceID(domainName);
+	for (vector<CDataWrapper*>::iterator datasetAttributeIterator = domainAttributeList.begin(); 
          datasetAttributeIterator != domainAttributeList.end(); 
          datasetAttributeIterator++) {
         
-		if(datasetAttributeIterator->attributeDirection!=attributeDiretion && datasetAttributeIterator->attributeDirection!=Bidirectional)
-			continue;
-
-		//add the found attribute
-		resultVector.push_back((DataSetAttribute*)&(*datasetAttributeIterator));
+        if((*datasetAttributeIterator)->hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION)) {
+            int32_t direction = (*datasetAttributeIterator)->getInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION);
+            if(direction==DataType::Bidirectional)
+                resultVector.push_back(shared_ptr<CDataWrapper>((*datasetAttributeIterator)->clone()));
+        }	
 	}
 }
 
@@ -191,11 +205,11 @@ void CUSchemaDB::getAttributeForDirection(string& domainName, DataSetAttributeIO
  return al domain 
  */
 void CUSchemaDB::getAllDeviceId(vector<string>& domainNames) {
-    for (map<string, ptr_vector<DataSetAttribute> > ::iterator datasetMapIter = datasetAttributeMap.begin();
-         datasetMapIter != datasetAttributeMap.end();
-         datasetMapIter++) {
+    for (map<string, vector<CDataWrapper*> > ::iterator deviceIDDatasetIter = deviceIDDataset.begin();
+         deviceIDDatasetIter != deviceIDDataset.end();
+         deviceIDDatasetIter++) {
         
             //add domain name
-        domainNames.push_back(datasetMapIter->first);
+        domainNames.push_back(deviceIDDatasetIter->first);
     }
 }

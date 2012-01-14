@@ -22,53 +22,23 @@ using namespace std;
 using namespace boost;
 
 /*
-     define the direction of dataset element
- */
-typedef enum {
-			Input = 0,
-			Output,
-			Bidirectional,
-} DataSetAttributeIOAttribute;
-
-/*
-     struct for describe an element for the dataset
- */
-struct DataSetAttribute {
-	//the domain of the attribute(usually the deviceid)
-	string attributeTag;
-	//the name of the attribute
-	string attributeName;
-	//the description of the attribute
-	string attributeDescription;
-	//the type
-	DataType::DataType attributeType;
-	//the direction (I|O|IO)
-	DataSetAttributeIOAttribute attributeDirection;
-};
-
-/*
      Class for contain all field for the CU Dataset
  */
 class CUSchemaDB {
-        //map<string, shared_ptr<DataSetAttribute> > datasetAttributeMap;
-        //map containing the domain and the attribute list for that domain
-    map<string, ptr_vector<DataSetAttribute> > datasetAttributeMap;
+    map<string, vector< CDataWrapper* > >deviceIDDataset;
     
-protected:
-    /*
-     Fill the CDataWrapper with the valu eof the attribute of the dataset
-     */
-    void fillCDataWrapperWithAttributeValues(DataSetAttribute*,CDataWrapper*);
-
+    void clearAllDatasetsVectors();
+    void clearDatasetForDeviceID(string&);
 
 public:
-
-    
+    CUSchemaDB();
+    virtual ~CUSchemaDB();
+  
     /*
      return the vector containing the atrtibute list for a domain
      */
-    ptr_vector<DataSetAttribute>& getDSAttributeListForDeviceID(string&);
-  
+    vector< CDataWrapper* >& getDatasetForDeviceID(string& deviceID);
+    
     /*
      add a new device id
      */
@@ -81,7 +51,7 @@ public:
 			const char*const,
 			const char*const,
 			DataType::DataType,
-			DataSetAttributeIOAttribute);
+			DataType::DataSetAttributeIOAttribute);
 
 	/*
        Add the new field at the CU dataset from the CDataWrapper
@@ -96,7 +66,7 @@ public:
 	/*
 	 * Return the attribute array for a specified direction
 	 */
-	void getAttributeForDirection(string& domainName, DataSetAttributeIOAttribute, vector< DataSetAttribute* >&);
+	void getAttributeForDirection(string& domainName, DataType::DataSetAttributeIOAttribute, vector< shared_ptr<CDataWrapper> >&);
     
     /*
      REturn all the setupped device id

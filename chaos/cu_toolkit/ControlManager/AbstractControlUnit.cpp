@@ -137,9 +137,9 @@ void AbstractControlUnit::loadCDataWrapperForJsonFile(CDataWrapper& setupConfigu
         }*/
 
         //auto_add all possible dataset attribute from the configuration file
-        if(csDWFromJson->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DESC)) {
+        if(csDWFromJson->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION)) {
         	//in the configuration file there are some attribute for the dataset we need to register it
-        	auto_ptr<CMultiTypeDataArrayWrapper> datasetAttributes (csDWFromJson->getVectorValue(DatasetDefinitionkey::CS_CM_DATASET_DESC));
+        	auto_ptr<CMultiTypeDataArrayWrapper> datasetAttributes (csDWFromJson->getVectorValue(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION));
         	for (unsigned int i = 0;  i < datasetAttributes->size() ; i++) {
         		addAttributeToDataSetFromDataWrapper(*datasetAttributes->getCDataWrapperElementAtIndex(i));
 			}
@@ -203,7 +203,7 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
     shared_ptr<CDataWrapper> elementDatasetDescription(new CDataWrapper());
     
     tempStringVector.clear();
-    vector<DataSetAttribute*> domainAttributeList; 
+    vector< shared_ptr<CDataWrapper> > domainAttributeList; 
     CUSchemaDB::getAllDeviceId(tempStringVector);
     
  
@@ -213,20 +213,21 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
     
         string ndName = *datasetIter;
         domainAttributeList.clear();
-        CUSchemaDB::getAttributeForDirection(ndName, Input, domainAttributeList);
+        CUSchemaDB::getAttributeForDirection(ndName, DataType::Input, domainAttributeList);
 
         
         //add param to second action
-        for (vector<DataSetAttribute*>::iterator datasetAttributeIter = domainAttributeList.begin();
+        for (vector< shared_ptr<CDataWrapper> >::iterator datasetAttributeIter = domainAttributeList.begin();
              datasetAttributeIter != domainAttributeList.end();
              datasetAttributeIter++) {
+            
             string attributeName = ndName;
-            DataSetAttribute *attrDesc = *datasetAttributeIter;
-            attributeName.append("_");attributeName.append(attrDesc->attributeName);
+            shared_ptr<CDataWrapper> attrDesc = *datasetAttributeIter;
+            attributeName.append("_");attributeName.append(attrDesc->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME));
             LAPP_ << "Define the setDatasetAttribute parameter '" << attributeName << "' for the CU:"<< CU_IDENTIFIER_C_STREAM;
             actionDescription->addParam(attributeName.c_str(), 
-                                        attrDesc->attributeType,
-                                        attrDesc->attributeDescription.c_str());
+                                        (DataType::DataType)attrDesc->getInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE),
+                                        attrDesc->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DESCRIPTION).c_str());
         }
     }
 
@@ -243,7 +244,6 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
     auto_ptr<SerializationBuffer> ser(setupConfiguration.getBSONData());
     //copy configuration for internal use
     _internalSetupConfiguration.reset(new CDataWrapper(ser->getBufferPtr()));
-    LAPP_ << _internalSetupConfiguration->getJSONString();
 }
 
 #pragma mark protected initi/deinit method
@@ -303,14 +303,6 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
  Update the configuration for all descendand tree in the Control Uniti class struccture
  */
 CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* newConfiguration) throw (CException) {
-   /* LAPP_ << "Update Configuraiton for AbstractControlUnit";
-       
-    vector<string> deviceIdVector;
-    CUSchemaDB::getAllDeviceId(deviceIdVector);
-    vector<string>::iterator devIDIter =  deviceIdVector.begin();
-    for (  ; devIDIter != deviceIdVector.end(); devIDIter++ ) {
-        DataManager::getInstance()->updateConfigurationForDeviceIdKey(*devIDIter, newConfiguration);
-    }*/
     map<string, KeyDataStorage*>::iterator iter = keyDataStorageMap.begin();
     KeyDataStorage *tmpKDS = 0L;
     //update the Contorl Unit's KeyDataStorage
@@ -331,8 +323,6 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* newConfigu
 void AbstractControlUnit::pushDataSetForKey(const char *key, CDataWrapper *acquiredData) {
         //send data to related buffer
     keyDataStorageMap[key]->pushDataSet(acquiredData);
-        // string strKey = key;
-        //DataManager::getInstance()->pushDeviceDataByIdKey(strKey, acquiredData);
 }
 
 /*
@@ -341,8 +331,6 @@ void AbstractControlUnit::pushDataSetForKey(const char *key, CDataWrapper *acqui
 ArrayPointer<CDataWrapper> *AbstractControlUnit::getLastDataSetForKey(const char *key) {
         //use keydatastorage from map
     return keyDataStorageMap[key]->getLastDataSet();
-        //string strKey = key;
-        //return DataManager::getInstance()->getLastCDataWrapperForDeviceIdKey(strKey);
 }
 
 /*
@@ -351,6 +339,4 @@ ArrayPointer<CDataWrapper> *AbstractControlUnit::getLastDataSetForKey(const char
  */
 CDataWrapper *AbstractControlUnit::getNewDataWrapperForKey(const char *key) {
     return keyDataStorageMap[key]->getNewDataWrapper();
-        //string strKey = key;
-        //return DataManager::getInstance()->getNewDataWrapperForDeviceIdKey(strKey);
 }

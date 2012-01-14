@@ -88,32 +88,35 @@ namespace chaos {
         //! Name space for grupping option used for define the dataset of the device abstraction
     namespace DatasetDefinitionkey {
             //!key for dataset descriptors array {[domain, name, paramteres....]}
-        static const char * const CS_CM_DATASET_DESC                         = "cs|cm|ds_desc";
+        static const char * const CS_CM_DATASET_DESCRIPTION                     = "cs|cm|ds_desc";
         
             //!key for the domain of the attribute dataset
-        static const char * const CS_CM_DATASET_ATTRIBUTE_DOMAIN                 = "cs|cm|ds_attr_dom";
+        static const char * const CS_CM_DATASET_DEVICE_ID                       = "cs|cm|ds_attr_dom";
         
             //!key for the name of dataset attribute
-        static const char * const CS_CM_DATASET_ATTRIBUTE_NAME                 = "cs|cm|ds_attr_name";
+        static const char * const CS_CM_DATASET_ATTRIBUTE_NAME                  = "cs|cm|ds_attr_name";
         
             //!key for the tag of the dataset attrbiute
-        static const char * const CS_CM_DATASET_ATTRIBUTE_TAG                  = "cs|cm|ds_attr_tag";
-        
-            //!key representing the name of the parameter
-        static const char * const CS_CM_DATASET_ATTRIBUTE_DESCRIPTION          = "cs|cm|ds_attr_desc";
-        
-            //!key representig the information for the parameter
-        static const char * const CS_CM_DATASET_ATTRIBUTE_DIRECTION            = "cs|cm|ds_attr_dir";
+        static const char * const CS_CM_DATASET_ATTRIBUTE_TAG                   = "cs|cm|ds_attr_tag";
         
             //!key representing the type of parameter
-        static const char * const CS_CM_DATASET_ATTRIBUTE_TYPE                 = "cs|cm|ds_attr_type";
+        static const char * const CS_CM_DATASET_ATTRIBUTE_TYPE                  = "cs|cm|ds_attr_type";
+        
+            //!key for the units ofr the attrbiute(ampere, volts)
+        static const char * const CS_CM_DATASET_ATTRIBUTE_UNIT                  = "cs|cm|ds_attr_unit";
+        
+            //!key representing the name of the parameter
+        static const char * const CS_CM_DATASET_ATTRIBUTE_DESCRIPTION           = "cs|cm|ds_attr_desc";
+        
+            //!key representig the information for the parameter
+        static const char * const CS_CM_DATASET_ATTRIBUTE_DIRECTION             = "cs|cm|ds_attr_dir";
         
             //!key representing the default value 
-        static const char * const CS_CMDM_ACTION_DESC_DEFAULT_VALUE            = "cs|cmdm|act_desc_par_default_value";
+        static const char * const CS_CMDM_ACTION_DESC_DEFAULT_VALUE             = "cs|cmdm|act_desc_par_default_value";
             //!key representing the default value 
-        static const char * const CS_CMDM_ACTION_DESC_MAX_RANGE                = "cs|cmdm|act_desc_par_max_range";            
+        static const char * const CS_CMDM_ACTION_DESC_MAX_RANGE                 = "cs|cmdm|act_desc_par_max_range";            
             //!key representing the default value 
-        static const char * const CS_CMDM_ACTION_DESC_MIN_RANGE                = "cs|cmdm|act_desc_par_min_range";
+        static const char * const CS_CMDM_ACTION_DESC_MIN_RANGE                 = "cs|cmdm|act_desc_par_min_range";
         
     }
     /** @} */ // end of DatasetDefinitionkey
@@ -137,7 +140,14 @@ namespace chaos {
                 //!byte array variable length
                 TYPE_BYTEARRAY
             } DataType;
-        } 
+        
+        //!define the direction of dataset element
+        typedef enum {
+			Input = 0,
+			Output,
+			Bidirectional,
+        } DataSetAttributeIOAttribute;
+    } 
     /** @} */ // end of ChaosDataType
     
     /** @defgroup RpcActionDefinitionKey Action Rpc Sharing Definition key

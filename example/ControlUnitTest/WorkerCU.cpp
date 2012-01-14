@@ -97,26 +97,26 @@ void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
                           DS_ELEMENT_1,
                           "describe the element 1 of the dataset",
                           DataType::TYPE_INT32, 
-                          Output);
+                          DataType::Output);
     
     addAttributeToDataSet(devIDInChar,
                           DS_ELEMENT_2,
                           "describe the element 2 of the dataset",
                           DataType::TYPE_INT32, 
-                          Bidirectional);
+                          DataType::Bidirectional);
     
     addAttributeToDataSet(devIDInChar,
                           DS_ELEMENT_3,
                           "describe the element 3 of the dataset",
                           DataType::TYPE_BYTEARRAY, 
-                          Output);
+                          DataType::Output);
     
     
     addAttributeToDataSet(devIDInChar,
                           DS_ELEMENT_4,
                           "describe the element 4 of the dataset",
                           DataType::TYPE_STRING, 
-                          Input);
+                          DataType::Input);
 }
 
 /*

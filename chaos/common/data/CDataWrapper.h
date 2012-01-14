@@ -75,6 +75,8 @@ namespace chaos {
         
         CDataWrapper();
         CDataWrapper(const char* serializationBuffer, bool bson=true);
+        
+        CDataWrapper *clone();
             //add a csdata value
         void addCSDataValue(const char *, CDataWrapper&);
         
