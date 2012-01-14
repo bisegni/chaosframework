@@ -41,7 +41,7 @@ struct DataSetAttribute {
 	//the description of the attribute
 	string attributeDescription;
 	//the type
-	CommandManagerConstant::ActionParamType attributeType;
+	DataType::DataType attributeType;
 	//the direction (I|O|IO)
 	DataSetAttributeIOAttribute attributeDirection;
 };
@@ -80,7 +80,7 @@ public:
 	void addAttributeToDataSet(const char*const,
 			const char*const,
 			const char*const,
-			CommandManagerConstant::ActionParamType,
+			DataType::DataType,
 			DataSetAttributeIOAttribute);
 
 	/*

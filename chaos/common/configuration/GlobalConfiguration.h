@@ -28,21 +28,6 @@ namespace chaos {
     using namespace boost;
     namespace po = boost::program_options;
     
-    
-        //! Default Param Option constant
-    /*! 
-     These are the program option when the common library must be used to define a command line application
-     */
-        //#define OPT_HELP                        "help"                      /**!< Print this help */ 
-        //#define OPT_RPC_SERVER_PORT             "rpc-server-port"           /*!< Specify the network port where rpc system will publish al the service*/
-        //#define OPT_RPC_SERVER_THREAD_NUMBER    "rpc-server-thread-number"  /*!< Specify the number of the thread that the rpc ssytem must use to process the request */
-        //#define OPT_LIVE_DATA_SERVER_ADDRESS    "live-data-servers"         /*!< Specify the live data servers address with the type host:port it is a multitoken parameter */
-        //#define OPT_METADATASERVER_ADDRESS      "metadata-server"           /*!< Specify the metadata address for the metadataserver */
-        //#define OPT_LOG_ON_CONSOLE              "log-on-console"            /*!< Specify when the log must be forwarded on console */
-        //#define OPT_LOG_ON_FILE                 "log-on-file"               /*!< Specify when the log must be forwarded on file */
-        //#define OPT_LOG_FILE                    "log-file"                  /*!< Specify when the file path of the log */
-    
-    
 #define CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(t,x,y,z)\
 t x;\
 if(hasOption(y)){\

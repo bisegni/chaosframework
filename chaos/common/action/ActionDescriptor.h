@@ -32,7 +32,7 @@ namespace chaos {
     struct ActionParamDescription {
         string paramName;
         string paramDescription;
-        CommandManagerConstant::ActionParamType paramType;
+        DataType::DataType paramType;
         
         ActionParamDescription(){}
         ActionParamDescription(const char*const _paramName):paramName(_paramName){}
@@ -110,7 +110,7 @@ namespace chaos {
         /*
          Add a new param
          */
-        void addParam(const char*const, CommandManagerConstant::ActionParamType, const char*const);
+        void addParam(const char*const, DataType::DataType, const char*const);
     };
     
     //define the ptr style defined

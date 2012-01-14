@@ -33,7 +33,7 @@ MsgPackClient::~MsgPackClient(){
  */
 void MsgPackClient::init(CDataWrapper *cfg) throw(CException) {
     LAPP_ << "Msgpack RpcSender initialization";
-    int32_t threadNumber = cfg->hasKey(CommandManagerConstant::RpcAdapterConstant::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER)? cfg->getInt32Value(CommandManagerConstant::RpcAdapterConstant::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER):1;
+    int32_t threadNumber = cfg->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER)? cfg->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER):1;
     LAPP_ << "Msgpack RpcSender ObjectProcessingQueue<CDataWrapper> initialization with "<< threadNumber <<" thread";
     CObjectProcessingQueue<CDataWrapper>::init(threadNumber);
     LAPP_ << "Msgpack RpcSender ObjectProcessingQueue<CDataWrapper> initialized";
@@ -75,7 +75,7 @@ void MsgPackClient::deinit() throw(CException) {
 bool MsgPackClient::submitMessage(CDataWrapper *message, bool onThisThread) throw(CException) {
     CHAOS_ASSERT(message);
     try{
-        if(!message->hasKey( CommandManagerConstant::CS_CMDM_REMOTE_HOST_IP))  
+        if(!message->hasKey( RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP))  
             throw CException(0, "No destination ip in message description", "MsgPackClient::submitMessage");
        
             //submit action
@@ -103,7 +103,7 @@ void MsgPackClient::processBufferElement(CDataWrapper *message) throw(CException
         //this implementation is too slow, client for ip need to be cached
     
         //get remote ip
-    string remoteHost = message->getStringValue(CommandManagerConstant::CS_CMDM_REMOTE_HOST_IP);
+    string remoteHost = message->getStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP);
         //split server and port
     algorithm::split(hostTokens, remoteHost, is_any_of(":"));
     
@@ -115,7 +115,7 @@ void MsgPackClient::processBufferElement(CDataWrapper *message) throw(CException
     auto_ptr<chaos::SerializationBuffer> callSerialization(message->getBSONData());
     msgpack::type::raw_ref rawMsg(callSerialization->getBufferPtr() , (uint32_t)callSerialization->getBufferLen());
     try{
-        rawResult = localSession.call(CommandManagerConstant::CS_CMDM_RPC_TAG, rawMsg).get<msgpack::type::raw_ref>();
+        rawResult = localSession.call(RpcActionDefinitionKey::CS_CMDM_RPC_TAG, rawMsg).get<msgpack::type::raw_ref>();
     } catch(...) {
         LAPP_ << "Error during message forwarding";
         return;

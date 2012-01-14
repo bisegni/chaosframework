@@ -41,7 +41,7 @@ void DeclareAction::getActionDescrionsInDataWrapper(CDataWrapper& actionsDescrip
     }
     
         //finalize the vector with the appropiate key
-    actionsDescription.finalizeArrayForKey(CommandManagerConstant::CS_CMDM_ACTION_DESC);
+    actionsDescription.finalizeArrayForKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DESC);
 }
 
 /*
@@ -49,13 +49,13 @@ void DeclareAction::getActionDescrionsInDataWrapper(CDataWrapper& actionsDescrip
  */
 void DeclareAction::decodeAction(AbstActionDescShrPtr& actionDesc, CDataWrapper& actionDescription) {
         //add domain for the action 
-    actionDescription.addStringValue(CommandManagerConstant::CS_CMDM_ACTION_DOMAIN, actionDesc->getTypeValue(AbstractActionDescriptor::ActionDomain));
+    actionDescription.addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, actionDesc->getTypeValue(AbstractActionDescriptor::ActionDomain));
     
         //add name for the action
-    actionDescription.addStringValue(CommandManagerConstant::CS_CMDM_ACTION_NAME, actionDesc->getTypeValue(AbstractActionDescriptor::ActionName));
+    actionDescription.addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, actionDesc->getTypeValue(AbstractActionDescriptor::ActionName));
     
         //add the information for the action
-    actionDescription.addStringValue(CommandManagerConstant::CS_CMDM_ACTION_DESCRIPTION, actionDesc->getTypeValue(AbstractActionDescriptor::ActionDescription));
+    actionDescription.addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DESCRIPTION, actionDesc->getTypeValue(AbstractActionDescriptor::ActionDescription));
     
         //now i must describe the param for this action
     vector< shared_ptr<ActionParamDescription> >& paramDescriptionVector = actionDesc->getParamDescriptions();
@@ -68,20 +68,20 @@ void DeclareAction::decodeAction(AbstActionDescShrPtr& actionDesc, CDataWrapper&
              paramIter++) {
             
                 //add thename of the parameter
-            paramDescRepresentation->addStringValue(CommandManagerConstant::CS_CMDM_ACTION_DESC_PAR_NAME, (*paramIter)->paramName);
+            paramDescRepresentation->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_NAME, (*paramIter)->paramName);
             
                 //add the information about the parameter
-            paramDescRepresentation->addStringValue(CommandManagerConstant::CS_CMDM_ACTION_DESC_PAR_INFO, (*paramIter)->paramDescription);
+            paramDescRepresentation->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_INFO, (*paramIter)->paramDescription);
             
                 //add the parameter type
-            paramDescRepresentation->addInt32Value(CommandManagerConstant::CS_CMDM_ACTION_DESC_PAR_TYPE, (*paramIter)->paramType);
+            paramDescRepresentation->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PAR_TYPE, (*paramIter)->paramType);
 
                 // add parametere representation object to main action representation
             actionDescription.appendCDataWrapperToArray(*paramDescRepresentation.get());
         }
         
             //cloese the array
-        actionDescription.finalizeArrayForKey(CommandManagerConstant::CS_CMDM_ACTION_DESC_PARAM);
+        actionDescription.finalizeArrayForKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM);
     }
     
     

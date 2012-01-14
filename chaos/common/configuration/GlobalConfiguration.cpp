@@ -67,14 +67,14 @@ void GlobalConfiguration::parseStartupParameters(int argc,const char* argv[]) th
         //configure rpc
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, rpcServerPort, UserOption::OPT_RPC_SERVER_PORT, 8888)
     addLocalServerBasePort(rpcServerPort);
-    configuration.addInt32Value(CommandManagerConstant::RpcAdapterConstant::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT, rpcServerPort);    
+    configuration.addInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT, rpcServerPort);    
     
 
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, rpcServerThreadNumber, UserOption::OPT_RPC_SERVER_THREAD_NUMBER, 2)
-    configuration.addInt32Value(CommandManagerConstant::RpcAdapterConstant::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER, rpcServerThreadNumber);
+    configuration.addInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER, rpcServerThreadNumber);
     
     //configure the unique rpc plugin
-    configuration.addStringValue(CommandManagerConstant::RpcAdapterConstant::CS_CMDM_RPC_ADAPTER_TYPE, "MsgPack");
+    configuration.addStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE, "MsgPack");
     
         //configure the live data
     CHECK_AND_DEFINE_OPTION(vector<string>, liveDataServer, UserOption::OPT_LIVE_DATA_SERVER_ADDRESS)
@@ -85,7 +85,7 @@ void GlobalConfiguration::parseStartupParameters(int argc,const char* argv[]) th
             configuration.appendStringToArray(liveDataServer[idx]);
         }
     }
-    configuration.finalizeArrayForKey(DataManagerConstant::LiveDataConstant::CS_DM_LD_SERVER_ADDRESS);
+    configuration.finalizeArrayForKey(LiveHistoryConfiguration::CS_DM_LD_SERVER_ADDRESS);
     
         //configure metadataserver
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(string, metadataServerAddress, UserOption::OPT_METADATASERVER_ADDRESS, "localhost:5000")

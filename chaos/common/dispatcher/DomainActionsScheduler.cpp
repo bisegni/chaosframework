@@ -64,7 +64,7 @@ void DomainActionsScheduler::setDispatcher(CommandDispatcher *newDispatcher) {
 void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescription) throw(CException) {
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     CDataWrapper *actionResult = NULL;
-    string actionName = actionDescription->getStringValue( CommandManagerConstant::CS_CMDM_ACTION_NAME );
+    string actionName = actionDescription->getStringValue( RpcActionDefinitionKey::CS_CMDM_ACTION_NAME );
     
     if(!domainActionsContainer->hasActionName(actionName)) {
         LAPP_ << "The action " << actionName << " is not present for domain " << domainActionsContainer->getDomainName();
@@ -87,9 +87,9 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
         actionResult = actionDescriptionPtr->call(actionDescription);
  
             //check if we need to submit a sub command
-        if( actionDescription->hasKey( CommandManagerConstant::CS_CMDM_SUB_CMD ) ) {
+        if( actionDescription->hasKey( RpcActionDefinitionKey::CS_CMDM_SUB_CMD ) ) {
                 //there is a subcommand to submit
-            CDataWrapper *subCommand = actionDescription->getCSDataValue(CommandManagerConstant::CS_CMDM_SUB_CMD);
+            CDataWrapper *subCommand = actionDescription->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_SUB_CMD);
             CHAOS_ASSERT(subCommand);
                 //dipatch the subcommand
             auto_ptr<CDataWrapper> dispatchSubCommandResult(dispatcher->dispatchCommand(subCommand));

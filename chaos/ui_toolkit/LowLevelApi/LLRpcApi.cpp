@@ -36,11 +36,11 @@ void LLRpcApi::initRpcApi(CDataWrapper *initSetup)  throw (CException) {
     
         //read the configuration for adapter type
     
-    if(!initSetup->hasKey(CommandManagerConstant::RpcAdapterConstant::CS_CMDM_RPC_ADAPTER_TYPE)) 
+    if(!initSetup->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE)) 
         throw CException(2, "No RPC Adapter type found in configuration", "LLRpcApi::initRpcApi");
     
     
-    string adapterType = initSetup->getStringValue(CommandManagerConstant::RpcAdapterConstant::CS_CMDM_RPC_ADAPTER_TYPE);
+    string adapterType = initSetup->getStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE);
     LAPP_ << "The Adapter is the type: " << adapterType;
         //get the rpc adaptor instance
     string serverName = adapterType+"Server";

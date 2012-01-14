@@ -44,13 +44,13 @@ void MultiBufferDataStorage::init(CDataWrapper *configuration) {
     int32_t liveThreadNumber = 0;
     CHAOS_ASSERT(configuration)
     LAPP_ << "Initialization Multi Sequencial Buffer";
-    auto_ptr<CDataWrapper>  dmStartupConfiguration(configuration->getCSDataValue(DataManagerConstant::CS_DM_CONFIGURATION));
+    auto_ptr<CDataWrapper>  dmStartupConfiguration(configuration->getCSDataValue(LiveHistoryConfiguration::CS_DM_CONFIGURATION));
     
     if(liveOBuffer) liveOBuffer->setEndElaborationListener(this);
     if(hstOBuffer) hstOBuffer->setEndElaborationListener(this);
     
-    if(dmStartupConfiguration->hasKey(DataManagerConstant::CS_DM_OUTPUT_BUFFER_THREAD_NUM)){
-        liveThreadNumber = dmStartupConfiguration->getInt32Value(DataManagerConstant::CS_DM_OUTPUT_BUFFER_THREAD_NUM);
+    if(dmStartupConfiguration->hasKey(LiveHistoryConfiguration::CS_DM_OUTPUT_BUFFER_THREAD_NUM)){
+        liveThreadNumber = dmStartupConfiguration->getInt32Value(LiveHistoryConfiguration::CS_DM_OUTPUT_BUFFER_THREAD_NUM);
     } else {
         LAPP_CFG_ << "No configuration for thread number found, use the default value";
         liveThreadNumber = DEFAULT_OBUFFER_THREAD_NUMEBR;
@@ -131,11 +131,11 @@ CDataWrapper* MultiBufferDataStorage::updateConfiguration(CDataWrapper *newConfi
     LAPP_CFG_ << "Configuration for Multi Sequencial Buffer";
         //chec if is present the DataManager configuration
     
-    if(newConfiguration->hasKey(DataManagerConstant::CS_DM_OUTPUT_BUFFER_LIVE_TIME))
-        liveMsecOffset = newConfiguration->getInt32Value(DataManagerConstant::CS_DM_OUTPUT_BUFFER_LIVE_TIME);
+    if(newConfiguration->hasKey(LiveHistoryConfiguration::CS_DM_OUTPUT_BUFFER_LIVE_TIME))
+        liveMsecOffset = newConfiguration->getInt32Value(LiveHistoryConfiguration::CS_DM_OUTPUT_BUFFER_LIVE_TIME);
 
-    if(newConfiguration->hasKey(DataManagerConstant::CS_DM_OUTPUT_BUFFER_HST_TIME))
-        historyUSecOffset = newConfiguration->getInt32Value(DataManagerConstant::CS_DM_OUTPUT_BUFFER_HST_TIME);
+    if(newConfiguration->hasKey(LiveHistoryConfiguration::CS_DM_OUTPUT_BUFFER_HST_TIME))
+        historyUSecOffset = newConfiguration->getInt32Value(LiveHistoryConfiguration::CS_DM_OUTPUT_BUFFER_HST_TIME);
     
         //update the driver configration
     if(liveOBuffer != NULL) liveOBuffer->updateConfiguration(newConfiguration);

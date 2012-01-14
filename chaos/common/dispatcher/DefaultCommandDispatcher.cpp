@@ -117,35 +117,35 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
 #if DEBUG
         LDBG_ << "Received Action Pack::" << commandPack->getJSONString();
 #endif
-        if(!commandPack->hasKey(CommandManagerConstant::CS_CMDM_ACTION_DOMAIN))
+        if(!commandPack->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN))
             throw CException(0, "Action Call with no action domain", "DefaultCommandDispatcher::dispatchCommand");
         
-        if(!commandPack->hasKey(CommandManagerConstant::CS_CMDM_ACTION_NAME))
+        if(!commandPack->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME))
             throw CException(1, "Action Call with no action name", "DefaultCommandDispatcher::dispatchCommand");
         
-        string actionDomain = commandPack->getStringValue(CommandManagerConstant::CS_CMDM_ACTION_DOMAIN);
+        string actionDomain = commandPack->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
         
-            //CommandManagerConstant::CS_CMDM_ACTION_NAME
+            //RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
         if(!dasMap.count(actionDomain)) throw CException(3, "Action Domain not registered", "DefaultCommandDispatcher::dispatchCommand");
         
             //submit the action(Thread Safe)
         dasMap[actionDomain]->push(commandPack);
         
             //tag message has submitted
-        resultPack->addInt32Value(CommandManagerConstant::CS_CMDM_ACTION_SUBMISSION_RESULT, 0);
+        resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, 0);
     }catch(CException& cse){
             //tag message has not submitted
-        resultPack->addInt32Value(CommandManagerConstant::CS_CMDM_ACTION_SUBMISSION_RESULT, 1);
+        resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, 1);
         
             //set error to general exception error
-        resultPack->addStringValue(CommandManagerConstant::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, cse.errorMessage);
-        resultPack->addStringValue(CommandManagerConstant::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN, cse.errorDomain);
-        resultPack->addInt32Value(CommandManagerConstant::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, cse.errorCode);
+        resultPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, cse.errorMessage);
+        resultPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN, cse.errorDomain);
+        resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, cse.errorCode);
     } catch(...){
             //tag message has not submitted
-        resultPack->addInt32Value(CommandManagerConstant::CS_CMDM_ACTION_SUBMISSION_RESULT, 1);
+        resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, 1);
             //set error to general exception error
-        resultPack->addStringValue(CommandManagerConstant::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, "Unmanaged error");
+        resultPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, "Unmanaged error");
     }
     return resultPack;
 }

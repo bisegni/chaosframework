@@ -97,13 +97,6 @@ void ControlUnitSandbox::defineSandboxAndControlUnit(CDataWrapper& masterConfigu
     LAPP_ << "Init Control Unit Sandbox for Control Unit:" << CU_IDENTIFIER_C_STREAM;
     
     LAPP_ << "Init Thread for:" << CU_IDENTIFIER_C_STREAM;
-    //make the thread pointing to this class method for schedule run CU method
-    //taskSPtr.reset(this);
-    //simulate the metadataserver sending config 
-    //defaultInternalConf.reset(new CDataWrapper());
-    //if(masterConfiguration)
-    //defaultInternalConf->appendAllElement(*masterConfiguration);
-    
     
     LAPP_ << "Start the Control Unit:" << CU_IDENTIFIER_C_STREAM << " setup";
     acu->_defineActionAndDataset(masterConfiguration);
@@ -173,8 +166,8 @@ void ControlUnitSandbox::initSandbox(CDataWrapper *masterConfiguration) throw (C
     
     //need to check if the CU wnat to be autostarted
     //check if cu want to be started without metadataserver consense
-    if(masterConfiguration->hasKey(ControlManagerConstant::CS_CM_CU_AUTOSTART) &&
-       masterConfiguration->getInt32Value(ControlManagerConstant::CS_CM_CU_AUTOSTART)){
+    if(masterConfiguration->hasKey(CUDefinitionKey::CS_CM_CU_AUTOSTART) &&
+       masterConfiguration->getInt32Value(CUDefinitionKey::CS_CM_CU_AUTOSTART)){
         LAPP_  << "Starting Control Unit Sanbox:" << CU_IDENTIFIER_C_STREAM;
         startSandbox(masterConfiguration);
         LAPP_  << "Started Control Unit Sanbox:" << CU_IDENTIFIER_C_STREAM;   
@@ -295,9 +288,9 @@ CDataWrapper* ControlUnitSandbox::updateConfiguration(CDataWrapper *configData) 
 #if DEBUG
     LDBG_ << "Update Configuration for Control Unit Sandbox:" << CU_IDENTIFIER_C_STREAM;
 #endif
-    if(configData->hasKey(ControlManagerConstant::ControlUnitSandBoxConstant::CS_CM_THREAD_SCHEDULE_DELAY)){
+    if(configData->hasKey(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY)){
         //we need to configure the delay  from a run() call and the next
-        int32_t uSecdelay = configData->getInt32Value(ControlManagerConstant::ControlUnitSandBoxConstant::CS_CM_THREAD_SCHEDULE_DELAY);
+        int32_t uSecdelay = configData->getInt32Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY);
 #if DEBUG
         LDBG_ << "THREAD_SCHEDULE_DELAY:" << uSecdelay << " uSecond";
 #endif
@@ -310,27 +303,6 @@ CDataWrapper* ControlUnitSandbox::updateConfiguration(CDataWrapper *configData) 
     return NULL;
 }
 #pragma mark Private Method
-
-/*
- According to Control Unit Configuraiton we must create the KeyDatStorage for every
- device id managed by CU
- */
-void ControlUnitSandbox::addKeyDataStorageToCU(CDataWrapper *configData) {
-    if(!configData || !acu) return;
-    
-    if(configData->hasKey(ControlManagerConstant::ControlUnitSandBoxConstant::CS_CM_CU_MANAGED_DEVICE_ID)){
-        LAPP_ << "Add Key Data Storage to control unit:" << CU_IDENTIFIER_C_STREAM;
-        shared_ptr<CMultiTypeDataArrayWrapper> deviceIDArray(configData->getVectorValue(ControlManagerConstant::ControlUnitSandBoxConstant::CS_CM_CU_MANAGED_DEVICE_ID));
-        for(int idx = 0; idx < deviceIDArray->size(); idx++) {
-            string deviceID = deviceIDArray->getStringElementAtIndex(idx);
-            
-            LAPP_ << "Create new Key Data Storage for DeviceID '" << deviceID << "' managed by Contro Unit '" << CU_IDENTIFIER_C_STREAM<< "'";
-            KeyDataStorage *kds =  DataManager::getInstance()->getKeyDataStorageNewInstanceForKey(deviceID);
-            LAPP_ << "Add Key Data Storage instance for DeviceID '" << deviceID << "' to Contro Unit '" << CU_IDENTIFIER_C_STREAM<< "'";
-            if(kds) acu->addKeyDataStorage(deviceID.c_str(), kds);
-        }
-    }
-}
 
 /*!
  Perform the heartbeat operation for managed Contorl Unit Instance

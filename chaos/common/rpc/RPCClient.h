@@ -70,7 +70,7 @@ namespace chaos {
                 //check in debug for pointer
             CHAOS_ASSERT(message)
                 // add the address to the message
-            message->addStringValue(CommandManagerConstant::CS_CMDM_REMOTE_HOST_IP, destinationIpAndPort);
+            message->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, destinationIpAndPort);
                 //submite the message
             return submitMessage(message,onThisThread);
         }
@@ -83,7 +83,7 @@ namespace chaos {
                 //check in debug for pointer
             CHAOS_ASSERT(message)
                 // add the address to the message
-            message->addStringValue(CommandManagerConstant::CS_CMDM_REMOTE_HOST_IP, metadataServerAddress);
+            message->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, metadataServerAddress);
                 //submite the message
             return submitMessage(message,onThisThread);
         }

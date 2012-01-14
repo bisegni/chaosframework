@@ -104,42 +104,42 @@ void AbstractControlUnit::loadCDataWrapperForJsonFile(CDataWrapper& setupConfigu
 
         
         //add default value from jfg file
-        if(csDWFromJson->hasKey(ControlManagerConstant::CS_CM_CU_NAME)){
-        	tmpStr = csDWFromJson->getStringValue(ControlManagerConstant::CS_CM_CU_NAME);
-        	setupConfiguration.addStringValue(ControlManagerConstant::CS_CM_CU_NAME, tmpStr);
+        if(csDWFromJson->hasKey(CUDefinitionKey::CS_CM_CU_NAME)){
+        	tmpStr = csDWFromJson->getStringValue(CUDefinitionKey::CS_CM_CU_NAME);
+        	setupConfiguration.addStringValue(CUDefinitionKey::CS_CM_CU_NAME, tmpStr);
         }
         
-        if(csDWFromJson->hasKey(ControlManagerConstant::CS_CM_CU_DESCRIPTION)){
-        	tmpStr = csDWFromJson->getStringValue(ControlManagerConstant::CS_CM_CU_DESCRIPTION);
-        	setupConfiguration.addStringValue(ControlManagerConstant::CS_CM_CU_DESCRIPTION, tmpStr);
+        if(csDWFromJson->hasKey(CUDefinitionKey::CS_CM_CU_DESCRIPTION)){
+        	tmpStr = csDWFromJson->getStringValue(CUDefinitionKey::CS_CM_CU_DESCRIPTION);
+        	setupConfiguration.addStringValue(CUDefinitionKey::CS_CM_CU_DESCRIPTION, tmpStr);
         }
-        if(csDWFromJson->hasKey(ControlManagerConstant::CS_CM_CU_CLASS)){
-                	tmpStr = csDWFromJson->getStringValue(ControlManagerConstant::CS_CM_CU_CLASS);
-                	setupConfiguration.addStringValue(ControlManagerConstant::CS_CM_CU_CLASS, tmpStr);
+        if(csDWFromJson->hasKey(CUDefinitionKey::CS_CM_CU_CLASS)){
+                	tmpStr = csDWFromJson->getStringValue(CUDefinitionKey::CS_CM_CU_CLASS);
+                	setupConfiguration.addStringValue(CUDefinitionKey::CS_CM_CU_CLASS, tmpStr);
                 }
 
-        if(csDWFromJson->hasKey(ControlManagerConstant::CS_CM_CU_AUTOSTART)){
-                       	tmpInt = csDWFromJson->getInt32Value(ControlManagerConstant::CS_CM_CU_AUTOSTART);
-                       	setupConfiguration.addInt32Value(ControlManagerConstant::CS_CM_CU_AUTOSTART, tmpInt);
+        if(csDWFromJson->hasKey(CUDefinitionKey::CS_CM_CU_AUTOSTART)){
+                       	tmpInt = csDWFromJson->getInt32Value(CUDefinitionKey::CS_CM_CU_AUTOSTART);
+                       	setupConfiguration.addInt32Value(CUDefinitionKey::CS_CM_CU_AUTOSTART, tmpInt);
                        }
-        if(csDWFromJson->hasKey(ControlManagerConstant::ControlUnitSandBoxConstant::CS_CM_THREAD_SCHEDULE_DELAY)){
-                       	tmpStr = csDWFromJson->getStringValue(ControlManagerConstant::ControlUnitSandBoxConstant::CS_CM_THREAD_SCHEDULE_DELAY);
-                       	setupConfiguration.addStringValue(ControlManagerConstant::ControlUnitSandBoxConstant::CS_CM_THREAD_SCHEDULE_DELAY, tmpStr);
+        if(csDWFromJson->hasKey(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY)){
+                       	tmpStr = csDWFromJson->getStringValue(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY);
+                       	setupConfiguration.addStringValue(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY, tmpStr);
                        }
 
         //check if we have the device id registered into cfg file
-        if(csDWFromJson->hasKey(ControlManagerConstant::ControlUnitSandBoxConstant::CS_CM_CU_MANAGED_DEVICE_ID)){
-        	auto_ptr<CMultiTypeDataArrayWrapper> datasetAttributes (csDWFromJson->getVectorValue(ControlManagerConstant::ControlUnitSandBoxConstant::CS_CM_CU_MANAGED_DEVICE_ID));
+     /*   if(csDWFromJson->hasKey(CUDefinitionKey::CS_CM_CU_MANAGED_DEVICE_ID)){
+        	auto_ptr<CMultiTypeDataArrayWrapper> datasetAttributes (csDWFromJson->getVectorValue(CUDefinitionKey::CS_CM_CU_MANAGED_DEVICE_ID));
         	for (unsigned int i = 0;  i < datasetAttributes->size() ; i++) {
                 string deviceIdFound = datasetAttributes->getStringElementAtIndex(i);
                 CUSchemaDB::addDeviceId(deviceIdFound);
         	}
-        }
+        }*/
 
         //auto_add all possible dataset attribute from the configuration file
-        if(csDWFromJson->hasKey(ControlManagerConstant::CS_CM_DATASET_DESC)) {
+        if(csDWFromJson->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DESC)) {
         	//in the configuration file there are some attribute for the dataset we need to register it
-        	auto_ptr<CMultiTypeDataArrayWrapper> datasetAttributes (csDWFromJson->getVectorValue(ControlManagerConstant::CS_CM_DATASET_DESC));
+        	auto_ptr<CMultiTypeDataArrayWrapper> datasetAttributes (csDWFromJson->getVectorValue(DatasetDefinitionkey::CS_CM_DATASET_DESC));
         	for (unsigned int i = 0;  i < datasetAttributes->size() ; i++) {
         		addAttributeToDataSetFromDataWrapper(*datasetAttributes->getCDataWrapperElementAtIndex(i));
 			}
@@ -160,7 +160,7 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
     
         //add the CU isntance, this can be redefinide by user in the defineActionAndDataset method
         //for let the CU have the same instance at every run
-    setupConfiguration.addStringValue(ControlManagerConstant::CS_CM_CU_INSTANCE, cuInstance);
+    setupConfiguration.addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE, cuInstance);
         //check if as been setuped a file for configuration
     LAPP_ << "Check if as been setup a json file path to configura CU:" << CU_IDENTIFIER_C_STREAM;
     loadCDataWrapperForJsonFile(setupConfiguration);
@@ -174,10 +174,10 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
     //add the scekdule dalay for the sandbox
     if(scheduleDelay){
     	//in this case ovverrride the config file
-    	setupConfiguration.addInt32Value(ControlManagerConstant::ControlUnitSandBoxConstant::CS_CM_THREAD_SCHEDULE_DELAY , scheduleDelay);
+    	setupConfiguration.addInt32Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY , scheduleDelay);
     }
 
-    tempStringVector.clear();
+   /* tempStringVector.clear();
     CUSchemaDB::getAllDeviceId(tempStringVector);
     if(tempStringVector.size()){  
         LAPP_ << "Configure the DeviceID for the CU:" << CU_IDENTIFIER_C_STREAM;
@@ -188,8 +188,8 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
             setupConfiguration.appendStringToArray(*devIdIter);   
         }
         //finalize array
-        setupConfiguration.finalizeArrayForKey(ControlManagerConstant::ControlUnitSandBoxConstant::CS_CM_CU_MANAGED_DEVICE_ID);
-    }
+        setupConfiguration.finalizeArrayForKey(CUDefinitionKey::ControlUnitSandBoxConstant::CS_CM_CU_MANAGED_DEVICE_ID);
+    }*/
     
     //for now we need only to add custom action for expose to rpc
     //input element of the dataset
@@ -264,14 +264,6 @@ void AbstractControlUnit::_init(CDataWrapper *newConfiguration) throw(CException
         tmpKDS->init(newConfiguration);
         keyDataStorageMap.insert(make_pair(*devIDIter, tmpKDS));
     }
-
-    /* vector<string> deviceIdVector;
-    CUSchemaDB::getAllDeviceId(deviceIdVector);
-    vector<string>::iterator devIDIter =  deviceIdVector.begin();
-    for (  ; devIDIter != deviceIdVector.end(); devIDIter++ ) {
-        DataManager::getInstance()->initDeviceIDKeyDataStorage(*devIDIter, newConfiguration);
-    }*/
-    
         //initializing the control unit
     init(newConfiguration);
 }
@@ -285,12 +277,6 @@ void AbstractControlUnit::_deinit() throw(CException) {
         //deinit the control unit 
     deinit();
     
-   /* vector<string> deviceIdVector;
-    CUSchemaDB::getAllDeviceId(deviceIdVector);
-    vector<string>::iterator devIDIter =  deviceIdVector.begin();
-    for (  ; devIDIter != deviceIdVector.end(); devIDIter++ ) {
-        DataManager::getInstance()->deinitDeviceIDKeyDataStorage(*devIDIter);
-    }*/
     map<string, KeyDataStorage*>::iterator iter = keyDataStorageMap.begin();
     
     KeyDataStorage *tmpKDS = 0L;

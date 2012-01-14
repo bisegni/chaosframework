@@ -46,24 +46,24 @@ void CUSchemaDB::fillCDataWrapperWithAttributeValues(DataSetAttribute *srcAttrib
     CHAOS_ASSERT(srcAttributeDS && destCDataWrapper)
         //add thename of the parameter
     if(srcAttributeDS->attributeName.size())
-        destCDataWrapper->addStringValue(ControlManagerConstant::CS_CM_DATASET_ATTRIBUTE_NAME,
+        destCDataWrapper->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME,
                                                     srcAttributeDS->attributeName);
     
     if(srcAttributeDS->attributeTag.size())
-        destCDataWrapper->addStringValue(ControlManagerConstant::CS_CM_DATASET_ATTRIBUTE_TAG,
+        destCDataWrapper->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TAG,
                                           srcAttributeDS->attributeTag);
     
         //add the information about the parameter
     if(srcAttributeDS->attributeDescription.size())
-        destCDataWrapper->addStringValue(ControlManagerConstant::CS_CM_DATASET_ATTRIBUTE_DESCRIPTION,
+        destCDataWrapper->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DESCRIPTION,
                                                     srcAttributeDS->attributeDescription);
     
         //add the parameter type
-    destCDataWrapper->addInt32Value(ControlManagerConstant::CS_CM_DATASET_ATTRIBUTE_DIRECTION,
+    destCDataWrapper->addInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION,
                                                srcAttributeDS->attributeDirection);
     
         //add the parameter type
-    destCDataWrapper->addInt32Value(ControlManagerConstant::CS_CM_DATASET_ATTRIBUTE_TYPE,
+    destCDataWrapper->addInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE,
                                                srcAttributeDS->attributeType);
 }
 
@@ -73,7 +73,7 @@ void CUSchemaDB::fillCDataWrapperWithAttributeValues(DataSetAttribute *srcAttrib
 void CUSchemaDB::addAttributeToDataSet(const char*const attributeDomain, 
 		const char*const attributeName,
 		const char*const attributeDescription,
-		CommandManagerConstant::ActionParamType attributeType,
+		DataType::DataType attributeType,
 		DataSetAttributeIOAttribute attributeDirection) {
     
     string aDom = attributeDomain;
@@ -98,23 +98,23 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
 	string attributeName;
 	string attributeDescription;
 	DataSetAttributeIOAttribute attributeDirection = Input;
-	CommandManagerConstant::ActionParamType attributeType = CommandManagerConstant::CS_CMDM_ACTION_DESC_PAR_TYPE_INT32;
+	DataType::DataType attributeType = DataType::TYPE_INT32;
 
-	if(attributeDataWrapper.hasKey(ControlManagerConstant::CS_CM_DATASET_ATTRIBUTE_DOMAIN)){
-		attributeDomain = attributeDataWrapper.getStringValue(ControlManagerConstant::CS_CM_DATASET_ATTRIBUTE_DOMAIN);
+	if(attributeDataWrapper.hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DOMAIN)){
+		attributeDomain = attributeDataWrapper.getStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DOMAIN);
 	}
     
-	if(attributeDataWrapper.hasKey(ControlManagerConstant::CS_CM_DATASET_ATTRIBUTE_NAME)){
-		attributeName = attributeDataWrapper.getStringValue(ControlManagerConstant::CS_CM_DATASET_ATTRIBUTE_NAME);
+	if(attributeDataWrapper.hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME)){
+		attributeName = attributeDataWrapper.getStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME);
 	}
-	if(attributeDataWrapper.hasKey(ControlManagerConstant::CS_CM_DATASET_ATTRIBUTE_DESCRIPTION)){
-		attributeDescription = attributeDataWrapper.getStringValue(ControlManagerConstant::CS_CM_DATASET_ATTRIBUTE_DESCRIPTION);
+	if(attributeDataWrapper.hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DESCRIPTION)){
+		attributeDescription = attributeDataWrapper.getStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DESCRIPTION);
 	}
-	if(attributeDataWrapper.hasKey(ControlManagerConstant::CS_CM_DATASET_ATTRIBUTE_TYPE)){
-		attributeType = (CommandManagerConstant::ActionParamType)attributeDataWrapper.getInt32Value(ControlManagerConstant::CS_CM_DATASET_ATTRIBUTE_TYPE);
+	if(attributeDataWrapper.hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE)){
+		attributeType = (DataType::DataType)attributeDataWrapper.getInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE);
 	}
-	if(attributeDataWrapper.hasKey(ControlManagerConstant::CS_CM_DATASET_ATTRIBUTE_DIRECTION)){
-		attributeDirection = (DataSetAttributeIOAttribute)attributeDataWrapper.getInt32Value(ControlManagerConstant::CS_CM_DATASET_ATTRIBUTE_DIRECTION);
+	if(attributeDataWrapper.hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION)){
+		attributeDirection = (DataSetAttributeIOAttribute)attributeDataWrapper.getInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION);
 	}
 	//add the attribute to the dataset
 	addAttributeToDataSet(attributeDomain.c_str(), attributeName.c_str(), attributeDescription.c_str(), attributeType, attributeDirection);
@@ -143,7 +143,7 @@ void CUSchemaDB::fillDataWrpperWithDataSetDescirption(CDataWrapper& datasetDescr
 
             domainDatasetDescription.reset(new CDataWrapper());
                 //add domain name to description data
-            domainDatasetDescription->addStringValue(ControlManagerConstant::CS_CM_DATASET_ATTRIBUTE_DOMAIN, domainName);
+            domainDatasetDescription->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DOMAIN, domainName);
                 //add description for all attribute in the domain
             for (ptr_vector<DataSetAttribute>::iterator datasetIterator = domainAttributeList.begin(); 
                  datasetIterator != domainAttributeList.end(); 
@@ -158,13 +158,13 @@ void CUSchemaDB::fillDataWrpperWithDataSetDescirption(CDataWrapper& datasetDescr
                     // add parametere representation object to main action representation
                 domainDatasetDescription->appendCDataWrapperToArray(*attributeDatasetDescription.get());
             }
-            domainDatasetDescription->finalizeArrayForKey(ControlManagerConstant::CS_CM_DATASET_DESC);
+            domainDatasetDescription->finalizeArrayForKey(DatasetDefinitionkey::CS_CM_DATASET_DESC);
                 // add parametere representation object to main action representation
 			datasetDescription.appendCDataWrapperToArray(*domainDatasetDescription.get());
 		}
 
 		//cloese the array
-		datasetDescription.finalizeArrayForKey(ControlManagerConstant::CS_CM_DATASET_DESC);
+		datasetDescription.finalizeArrayForKey(DatasetDefinitionkey::CS_CM_DATASET_DESC);
 	}
 }
 
