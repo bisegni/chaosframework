@@ -8,4 +8,5 @@
 ]>
 <processes>
 	<process class="it.infn.chaos.mds.process.ManageDeviceProcess" />
+	<process class="it.infn.chaos.mds.process.ManageServerProcess" />
 </processes>

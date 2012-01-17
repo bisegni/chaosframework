@@ -1,5 +1,5 @@
 # define the root logger with two appenders writing to console and file
-log4j.rootLogger = DEBUG, SYSLOG
+log4j.rootLogger = DEBUG, CONSOLE
 
 #define the appender named DEBUG
 log4j.appender.DEBUG=org.apache.log4j.ConsoleAppender

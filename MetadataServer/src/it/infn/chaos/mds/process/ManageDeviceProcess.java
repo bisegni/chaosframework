@@ -3,14 +3,13 @@
  */
 package it.infn.chaos.mds.process;
 
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.List;
-
 import it.infn.chaos.mds.business.Dataset;
 import it.infn.chaos.mds.business.DatasetAttribute;
 import it.infn.chaos.mds.business.Device;
 import it.infn.chaos.mds.da.DeviceDA;
+
+import java.util.Collection;
+import java.util.List;
 
 import org.ref.server.interapplicationenvironment.ProcessActionDescription;
 import org.ref.server.interapplicationenvironment.ProcessDescription;
