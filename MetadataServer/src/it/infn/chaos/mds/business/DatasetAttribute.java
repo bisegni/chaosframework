@@ -40,32 +40,34 @@ public class DatasetAttribute extends BSONBusinessObject {
 	private Integer				direction			= null;
 	@DBColumn(name = "timestamp")
 	private Date				timestamp			= null;
-	@DBColumn(	name = "attribute_check",
-				maxDimension = 128)
+	@DBColumn(name = "attribute_check", maxDimension = 128)
 	private String				check				= null;
-	@DBColumn(	name = "default_value",
-				maxDimension = 128)
+	@DBColumn(name = "default_value", maxDimension = 128)
 	private String				defaultValue		= null;
-	@DBColumn(	name = "tags_path",
-				maxDimension = 128)
+	@DBColumn(name = "tags_path", maxDimension = 128)
 	private String				tagsPath			= null;
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.ref.common.business.BusinessObject#equals(java.lang.Object)
 	 */
 	public boolean equals(Object attr) {
 		if (!(attr instanceof DatasetAttribute))
 			return false;
 		DatasetAttribute attrCasted = (DatasetAttribute) attr;
-		boolean result = attrCasted.getDeviceID() != null && getDeviceID() != null && attrCasted.getDeviceID().equals(getDeviceID());
-		result = result && attrCasted.getDatasetID() != null && getDatasetID() != null && attrCasted.getDatasetID().equals(getDatasetID());
-		result = result && attrCasted.getAttributeID() != null && getAttributeID() != null && attrCasted.getAttributeID().equals(getAttributeID());
+		boolean result = attrCasted.getDeviceID() != null
+							&& getDeviceID() != null && attrCasted.getDeviceID().equals(getDeviceID());
+		result = result
+					&& attrCasted.getDatasetID() != null && getDatasetID() != null && attrCasted.getDatasetID().equals(getDatasetID());
+		result = result
+					&& attrCasted.getAttributeID() != null && getAttributeID() != null && attrCasted.getAttributeID().equals(getAttributeID());
 		return result;
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.ref.common.business.BusinessObject#hashCode()
 	 */
 	public int hashCode() {
@@ -74,6 +76,7 @@ public class DatasetAttribute extends BSONBusinessObject {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.ref.common.business.BusinessObject#toString()
 	 */
 	public String toString() {
@@ -165,7 +168,7 @@ public class DatasetAttribute extends BSONBusinessObject {
 	/**
 	 * @param rangeMax
 	 *            the rangeMax to set
-	 * @throws RefException 
+	 * @throws RefException
 	 */
 	public void setRangeMax(String rangeMax) throws RefException {
 		checkDefaultValueForType(rangeMax);
@@ -182,7 +185,7 @@ public class DatasetAttribute extends BSONBusinessObject {
 	/**
 	 * @param rangeMin
 	 *            the rangeMin to set
-	 * @throws RefException 
+	 * @throws RefException
 	 */
 	public void setRangeMin(String rangeMin) throws RefException {
 		checkDefaultValueForType(rangeMax);
@@ -266,9 +269,8 @@ public class DatasetAttribute extends BSONBusinessObject {
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * it.infn.chaos.mds.business.BSONBusinessObject#fillFromBson(java.lang.
-	 * Object)
+	 * 
+	 * @see it.infn.chaos.mds.business.BSONBusinessObject#fillFromBson(java.lang. Object)
 	 */
 	public void fillFromBson(Object bson) throws RefException {
 		if (!(bson instanceof BasicBSONObject))
@@ -300,6 +302,7 @@ public class DatasetAttribute extends BSONBusinessObject {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see it.infn.chaos.mds.business.BSONBusinessObject#toBson()
 	 */
 	@Override
@@ -314,22 +317,22 @@ public class DatasetAttribute extends BSONBusinessObject {
 		}
 
 		if (getDirection() != null) {
-			bsonAttributeDescription.append(RPCConstants.DATASET_ATTRIBUTE_DIRECTION, getDescription());
+			bsonAttributeDescription.append(RPCConstants.DATASET_ATTRIBUTE_DIRECTION, getDirection());
 		}
 
 		if (getType() != null) {
 			bsonAttributeDescription.append(RPCConstants.DATASET_ATTRIBUTE_TYPE, getType());
 		}
-		
-		if(getRangeMax()!=null){
+
+		if (getRangeMax() != null) {
 			bsonAttributeDescription.append(RPCConstants.DATASET_ATTRIBUTE_MAX_RANGE, getRangeMax());
 		}
-		
-		if(getRangeMin()!=null){
+
+		if (getRangeMin() != null) {
 			bsonAttributeDescription.append(RPCConstants.DATASET_ATTRIBUTE_MIN_RANGE, getRangeMin());
 		}
-		
-		if(getDefaultValue()!=null){
+
+		if (getDefaultValue() != null) {
 			bsonAttributeDescription.append(RPCConstants.DATASET_ATTRIBUTE_DEFAULT_VALUE, getDefaultValue());
 		}
 		return bsonAttributeDescription;
@@ -355,9 +358,8 @@ public class DatasetAttribute extends BSONBusinessObject {
 	}
 
 	/**
-	 * CS_CMDM_ACTION_DESC_PAR_TYPE_INT32 = 0,
-	 * CS_CMDM_ACTION_DESC_PAR_TYPE_INT64, CS_CMDM_ACTION_DESC_PAR_TYPE_DOUBLE,
-	 * CS_CMDM_ACTION_DESC_PAR_TYPE_STRING,
+	 * CS_CMDM_ACTION_DESC_PAR_TYPE_INT32 = 0, CS_CMDM_ACTION_DESC_PAR_TYPE_INT64,
+	 * CS_CMDM_ACTION_DESC_PAR_TYPE_DOUBLE, CS_CMDM_ACTION_DESC_PAR_TYPE_STRING,
 	 * CS_CMDM_ACTION_DESC_PAR_TYPE_BYTEARRAY
 	 * 
 	 * @return
@@ -385,9 +387,8 @@ public class DatasetAttribute extends BSONBusinessObject {
 	}
 
 	/**
-	 * CS_CMDM_ACTION_DESC_PAR_TYPE_INT32 = 0,
-	 * CS_CMDM_ACTION_DESC_PAR_TYPE_INT64, CS_CMDM_ACTION_DESC_PAR_TYPE_DOUBLE,
-	 * CS_CMDM_ACTION_DESC_PAR_TYPE_STRING,
+	 * CS_CMDM_ACTION_DESC_PAR_TYPE_INT32 = 0, CS_CMDM_ACTION_DESC_PAR_TYPE_INT64,
+	 * CS_CMDM_ACTION_DESC_PAR_TYPE_DOUBLE, CS_CMDM_ACTION_DESC_PAR_TYPE_STRING,
 	 * CS_CMDM_ACTION_DESC_PAR_TYPE_BYTEARRAY
 	 * 
 	 * @return
@@ -428,6 +429,17 @@ public class DatasetAttribute extends BSONBusinessObject {
 	 */
 	public void setDefaultValue(String defaultValue) throws RefException {
 		checkDefaultValueForType(defaultValue);
+		if (defaultValue != null) {
+			int defv = Integer.parseInt(defaultValue);
+			int maxv = Integer.parseInt(getRangeMax());
+			int minv = Integer.parseInt(getRangeMin());
+			if (defv < minv) {
+				throw new RefException(String.format("The default value %s is lower than the minimum value %s", defaultValue, getRangeMin()));
+			}
+			if (defv > maxv) {
+				throw new RefException(String.format("The default value %s is greater than the maximum value %s", defaultValue, getRangeMax()));
+			}
+		}
 		this.defaultValue = defaultValue;
 
 	}

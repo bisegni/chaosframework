@@ -91,7 +91,7 @@ namespace chaos{
             return;
         }
 
-            //boost::mutex::scoped_lock lock(usageMutex);
+        boost::mutex::scoped_lock lock(useOutputChannelMutex);
         mcSetResult = memcached_set(memClient, key.c_str(), key.length(), serialization->getBufferPtr(), serialization->getBufferLen(), 0, 0);
                 //for debug
         if(mcSetResult!=MEMCACHED_SUCCESS) {
@@ -137,6 +137,7 @@ namespace chaos{
         uint32_t flags= 0;
         size_t value_length= 0;
         memcached_return_t mcSetResult = MEMCACHED_SUCCESS;
+        boost::mutex::scoped_lock lock(useInputChannelMutex);
         char* result =  memcached_get(memClientRead, key.c_str(), key.length(), &value_length, &flags,  &mcSetResult);
         if(dim) *dim = value_length;
         return result;

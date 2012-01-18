@@ -7,6 +7,7 @@ import it.infn.chaos.mds.business.Device;
 import it.infn.chaos.mds.process.ManageDeviceProcess;
 import it.infn.chaos.mds.process.ManageServerProcess;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -23,6 +24,7 @@ import org.ref.server.webapp.dialog.RefVaadinErrorDialog;
 import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.event.Action;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.UriFragmentUtility.FragmentChangedEvent;
@@ -85,8 +87,11 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 
 			if (sourceData instanceof ViewNotifyEvent) {
 				viewEvent = (ViewNotifyEvent) sourceData;
-
-				if (viewEvent.getEventKind().equals(LiveDataPreferenceView.EVENT_PREFERENCE_ADD_NEW_SERVER)) {
+				if (viewEvent.getEventKind().equals(LiveDataPreferenceView.EVENT_PREFERENCE_CLOSE_VIEW)) {
+					
+				} else if (viewEvent.getEventKind().equals(DemoAppView.EVENT_INITIALIZE_DEVICE_AT_STARTUP)) {
+					initializedOptionForSelectedDevice(true);
+				} else if (viewEvent.getEventKind().equals(LiveDataPreferenceView.EVENT_PREFERENCE_ADD_NEW_SERVER)) {
 					msp.addNewServer();
 					notifyEventoToViewWithData(LiveDataPreferenceView.EVENT_PREFERENCE_UPDATE_SERVER_LIST, this, msp.getAllServer());
 				} else if (viewEvent.getEventKind().equals(LiveDataPreferenceView.EVENT_PREFERENCE_UPDATE_SERVER_DATA)) {
@@ -117,6 +122,23 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 		}
 	}
 
+	/**
+	 * 
+	 * @param initialize
+	 * @throws Throwable 
+	 */
+	private void initializedOptionForSelectedDevice(boolean initialize) throws Throwable {
+		DemoAppView view = getViewByKey("VISTA");
+		Table dsTable = (Table) view.getComponentByKey(DemoAppView.KEY_DEVICE_TAB);
+		@SuppressWarnings("unchecked")
+		Collection<String> selectedDevice = (Collection<String>) dsTable.getItemIds();
+		for (Iterator<String> iterator = selectedDevice.iterator(); iterator.hasNext();) {
+			String deviceIdentification = iterator.next();
+			mdp.swapDeviceStartupInitizializationOption(deviceIdentification);
+		}
+		updateDeviceList();
+	}
+
 	private void updateServerData() throws Throwable {
 		LiveDataPreferenceView view = getViewByKey("VISTA_DUE");
 		Table t = (Table) view.getComponentByKey(LiveDataPreferenceView.KEY_PREFERENCE_TABLE);
@@ -125,7 +147,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 		for (Iterator<Integer> iterator = dataServer.iterator(); iterator.hasNext();) {
 			Integer dsIDToUpdate = (Integer) iterator.next();
 			@SuppressWarnings("unchecked")
-			DataServer dsToUpdate = ((BeanContainer<Integer, DataServer>)t.getContainerDataSource()).getItem(dsIDToUpdate).getBean();
+			DataServer dsToUpdate = ((BeanContainer<Integer, DataServer>) t.getContainerDataSource()).getItem(dsIDToUpdate).getBean();
 			msp.updateDataServer(dsToUpdate);
 		}
 	}
@@ -152,10 +174,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 			@SuppressWarnings("unchecked")
 			Collection<DatasetAttribute> datasetAttributes = (Collection<DatasetAttribute>) t.getItemIds();
 			for (DatasetAttribute datasetAttributeItemID : datasetAttributes) {
-				Object tmpValue = t.getItem(datasetAttributeItemID).getItemProperty(DemoAppView.TAB3_DEF_VALUE);
-				if (tmpValue != null) {
-					datasetAttributeItemID.setDefaultValue(tmpValue.toString());
-				}
+				Object tmpValue = null;
 				tmpValue = t.getItem(datasetAttributeItemID).getItemProperty(DemoAppView.TAB3_TAGS_PATH);
 				if (tmpValue != null) {
 					datasetAttributeItemID.setTagsPath(tmpValue.toString());
@@ -168,6 +187,10 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 				if (tmpValue != null) {
 					datasetAttributeItemID.setRangeMax(tmpValue.toString());
 				}
+				 tmpValue = t.getItem(datasetAttributeItemID).getItemProperty(DemoAppView.TAB3_DEF_VALUE);
+					if (tmpValue != null) {
+						datasetAttributeItemID.setDefaultValue(tmpValue.toString());
+					}
 			}
 			mdp.updateDeviceAttributes(datasetAttributes);
 		} catch (Throwable e) {
@@ -207,10 +230,14 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 	private void deviceHasBeenSelected(Object deviceIdentification) throws Throwable {
 		DemoAppView view = getViewByKey("VISTA");
 		Table dsTable = (Table) view.getComponentByKey(DemoAppView.KEY_DATASET_TAB);
+		//Button dsButtonInitiAtStartup = (Button) view.getComponentByKey(DemoAppView.KEY_DEVICE_START_AT_INIT_BUTTON);
+
 		dsTable.removeAllItems();
 		updateDatasetAttributeList(null);
 		if (deviceIdentification == null)
 			return;
+
+		//dsButtonInitiAtStartup.setEnabled(!mdp.isDeviceInitializableAtStartup(deviceIdentification.toString()));
 
 		List<Dataset> datasetsForDevice = mdp.getAllDatasetForDeviceIdentification(deviceIdentification.toString());
 

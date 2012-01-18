@@ -20,7 +20,13 @@ CThread::CThread(){
     internalInit();
 }
 
-CThread::CThread(CThreadExecutionTaskSPtr tUnit):taskUnit(tUnit){
+CThread::CThread(CThreadExecutionTaskSPtr tUnit){
+    setTask(tUnit);
+    internalInit();
+}
+
+CThread::CThread(boost::function<void(void)> func){
+    setScheduledFunction(func);
     internalInit();
 }
 
@@ -40,11 +46,9 @@ void CThread::internalInit() {
 void CThread::start() {
     if(!m_stop) return;
     m_stop = false;
-    
     statisticData.ptimeNextStart = statisticData.ptimeStart = boost::chrono::steady_clock::now();
     m_thread.reset(new thread(boost::bind(&CThread::executeWork, this)));
 	statisticData.cycle = 0;
-    
 }
 
 void CThread::stop(bool joinCThread) {
@@ -123,7 +127,14 @@ void CThread::setThreadPriorityLevel(int priorityLevel, int policyLevel) {
 }
 
 void CThread::setTask(CThreadExecutionTaskSPtr tUnit) {
+    if(!scheduledFunction.empty() || !tUnit) return;
     taskUnit = tUnit;
+    scheduledFunction = boost::bind(&CThreadExecutionTask::executeOnThread, tUnit);
+}
+
+void CThread::setScheduledFunction(boost::function<void(void)> func) {
+    if(!taskUnit) return;
+    scheduledFunction = func;
 }
 
 TaskCycleStatPtr CThread::getStat() {
@@ -142,7 +153,9 @@ void CThread::executeWork() {
             for (; boost::chrono::steady_clock::now()<statisticData.ptimeNextStart; );
             statisticData.ptimeNextStart = boost::chrono::steady_clock::now() + waithTimeInMicrosecond;
             
-            taskUnit->executeOnThread();
+            //call scheduled function
+            scheduledFunction();
+            //taskUnit->executeOnThread();
             
             //se if we need to whait for the nex execution
             if(waithTimeInMicrosecond.count()>=0 && !m_stop) {
@@ -158,6 +171,7 @@ void CThread::executeWork() {
             }
         }
     }catch(CException& exc){
+         m_stop = true;
         //some exception has occured during thread execution
         DECODE_CHAOS_EXCEPTION(exc);
     }

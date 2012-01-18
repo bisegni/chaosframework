@@ -43,6 +43,52 @@ public class DeviceDA extends DataAccess {
 	}
 
 	/**
+	 * 
+	 * @param deviceIdentification
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean isDeviceToBeInitialized(String deviceIdentification) throws Exception {
+		boolean result = false;
+		ResultSet rs = null;
+		PreparedStatement ps = null;
+		SqlBuilder sql = new SqlBuilder();
+		SqlTable t = sql.addTable(Device.class);
+		sql.addTableColumnToSelect(t.getTableName(), "init_at_startup");
+		sql.addCondition(true, "device_identification = ?");
+		try {
+			ps = getPreparedStatementForSQLCommand(sql.toString());
+			ps.setString(1, deviceIdentification);
+			rs = ps.executeQuery();
+			result = rs.next()?rs.getBoolean(1):false;
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			closeResultSet(rs);
+			closePreparedStatement(ps);
+		}
+
+		return result;
+	}
+
+	/**
+	 * 
+	 * @param deviceIdentification
+	 * @param init
+	 * @throws SQLException
+	 */
+	public void setStartupInitializationOption(String deviceIdentification, boolean init) throws SQLException {
+		InsertUpdateBuilder update = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_UPDATE);
+		update.addTable(Device.class);
+		update.addColumnAndValue(Device.INIT_AT_STARTUP, init);
+		update.addCondition(true, String.format("%s=?", Device.DEVICE_IDENTIFICATION));
+		PreparedStatement ps = getPreparedStatementForSQLCommand(update.toString());
+		Integer idx = update.fillPreparedStatement(ps);
+		ps.setString(idx++, deviceIdentification);
+		executeInsertUpdateAndClose(ps);
+	}
+
+	/**
 	 * Performe the device heartbeat
 	 * 
 	 * @param deviceID
@@ -462,4 +508,5 @@ public class DeviceDA extends DataAccess {
 		}
 		return result;
 	}
+
 }

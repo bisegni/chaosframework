@@ -46,7 +46,7 @@ public class CUQueryHandler extends RPCActionHadler {
 		if (domain.equals(SYSTEM)) {
 			if (action.equals(REGISTER_CONTROL_UNIT)) {
 				result = registerControUnit(actionData);
-			} else if (action.equals(REGISTER_CONTROL_UNIT)) {
+			} else if (action.equals(HEARTBEAT_CONTROL_UNIT)) {
 				result = heartbeatControUnit(actionData);
 			}
 		}
@@ -113,9 +113,19 @@ public class CUQueryHandler extends RPCActionHadler {
 				} else {
 					dDA.insertDevice(d);
 				}
+				
+				if (d != null) {
+					dDA.performDeviceHB(d.getDeviceIdentification());
+				
+					//at this point i need to check if thedevice need to be initialized
+					if(dDA.isDeviceToBeInitialized(d.getDeviceIdentification())) {
+						//send rpc command to initialize the device
+						result = composeStartupCommandForDeviceIdentification(d.getDeviceIdentification());
+					}
+				}
 			}
-			if (d != null)
-				dDA.performDeviceHB(d.getDeviceIdentification());
+			
+			
 			closeDataAccess(dDA, true);
 		} catch (RefException e) {
 			closeDataAccess(dDA, false);
@@ -124,6 +134,23 @@ public class CUQueryHandler extends RPCActionHadler {
 			closeDataAccess(dDA, false);
 			throw e;
 		}
+		return result;
+	}
+
+	/**
+	 * Compose the BSON object for startup initialization of device
+	 * @param deviceIdentification
+	 * @return
+	 * @throws Throwable 
+	 */
+	private BasicBSONObject composeStartupCommandForDeviceIdentification(String deviceIdentification) throws Throwable {
+		BasicBSONObject result = null;
+		DeviceDA dDA = getDataAccessInstance(DeviceDA.class);
+		Device d = dDA.getDeviceFromDeviceIdentification(deviceIdentification);
+		result = (BasicBSONObject) d.toBson();
+		result.append(RPCConstants.CS_CMDM_ACTION_DOMAIN, "system");
+		result.append(RPCConstants.CS_CMDM_ACTION_DOMAIN, "initControlUnit");
+		result.append("cu_uuid", d.getCuInstance());
 		return result;
 	}
 

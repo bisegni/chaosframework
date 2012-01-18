@@ -127,14 +127,6 @@ void AbstractControlUnit::loadCDataWrapperForJsonFile(CDataWrapper& setupConfigu
                        	setupConfiguration.addStringValue(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY, tmpStr);
                        }
 
-        //check if we have the device id registered into cfg file
-     /*   if(csDWFromJson->hasKey(CUDefinitionKey::CS_CM_CU_MANAGED_DEVICE_ID)){
-        	auto_ptr<CMultiTypeDataArrayWrapper> datasetAttributes (csDWFromJson->getVectorValue(CUDefinitionKey::CS_CM_CU_MANAGED_DEVICE_ID));
-        	for (unsigned int i = 0;  i < datasetAttributes->size() ; i++) {
-                string deviceIdFound = datasetAttributes->getStringElementAtIndex(i);
-                CUSchemaDB::addDeviceId(deviceIdFound);
-        	}
-        }*/
 
         //auto_add all possible dataset attribute from the configuration file
         if(csDWFromJson->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION)) {
