@@ -338,6 +338,21 @@ public class DatasetAttribute extends BSONBusinessObject {
 		return bsonAttributeDescription;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see it.infn.chaos.mds.business.BSONBusinessObject#toBsonHash()
+	 */
+	@Override
+	public String toBsonHash() throws Throwable {
+		BasicBSONObject bsonDesc = (BasicBSONObject) toBson();
+		//remove the field taht dind't be considered for hashing compare operation
+		bsonDesc.remove(RPCConstants.DATASET_ATTRIBUTE_MAX_RANGE);
+		bsonDesc.remove(RPCConstants.DATASET_ATTRIBUTE_MIN_RANGE);
+		bsonDesc.remove(RPCConstants.DATASET_ATTRIBUTE_DEFAULT_VALUE);
+		return SHA1(bsonDesc.toString());
+	}
+
 	/**
 	 * @return
 	 */
@@ -458,4 +473,5 @@ public class DatasetAttribute extends BSONBusinessObject {
 	public void setTagsPath(String tagsPath) {
 		this.tagsPath = tagsPath;
 	}
+
 }
