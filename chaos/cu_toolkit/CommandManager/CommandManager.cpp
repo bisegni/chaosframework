@@ -12,7 +12,6 @@
 #include "../../Common/global.h"
 #include "CommandManager.h"
 #include "../../Common/cconstants.h"
-#include "../ConfigurationManager/ConfigurationManager.h"
 #include "../../Common/configuration/GlobalConfiguration.h"
 
 

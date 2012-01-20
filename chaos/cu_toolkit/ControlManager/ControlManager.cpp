@@ -10,7 +10,6 @@
 #include "ControlManager.h"
 #include "../../Common/cconstants.h"
 #include "../CommandManager/CommandManager.h"
-#include "../ConfigurationManager/ConfigurationManager.h"
 #include "../../Common/configuration/GlobalConfiguration.h"
 
 using namespace chaos;

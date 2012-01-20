@@ -118,8 +118,6 @@
 		326DB4BA14B3A3E50018A8D0 /* CommandManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB49E14B3A3E50018A8D0 /* CommandManager.cpp */; };
 		326DB4BB14B3A3E50018A8D0 /* CommandManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB49F14B3A3E50018A8D0 /* CommandManager.h */; };
 		326DB4BC14B3A3E50018A8D0 /* CommandManagerDefaultAdapters.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4A014B3A3E50018A8D0 /* CommandManagerDefaultAdapters.h */; };
-		326DB4BD14B3A3E50018A8D0 /* ConfigurationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4A214B3A3E50018A8D0 /* ConfigurationManager.cpp */; };
-		326DB4BE14B3A3E50018A8D0 /* ConfigurationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4A314B3A3E50018A8D0 /* ConfigurationManager.h */; };
 		326DB4BF14B3A3E50018A8D0 /* AbstractControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4A514B3A3E50018A8D0 /* AbstractControlUnit.cpp */; };
 		326DB4C014B3A3E50018A8D0 /* AbstractControlUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4A614B3A3E50018A8D0 /* AbstractControlUnit.h */; };
 		326DB4C114B3A3E50018A8D0 /* ControlManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4A714B3A3E50018A8D0 /* ControlManager.cpp */; };
@@ -270,8 +268,6 @@
 		326DB49E14B3A3E50018A8D0 /* CommandManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = CommandManager.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB49F14B3A3E50018A8D0 /* CommandManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CommandManager.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB4A014B3A3E50018A8D0 /* CommandManagerDefaultAdapters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CommandManagerDefaultAdapters.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB4A214B3A3E50018A8D0 /* ConfigurationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ConfigurationManager.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		326DB4A314B3A3E50018A8D0 /* ConfigurationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ConfigurationManager.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB4A514B3A3E50018A8D0 /* AbstractControlUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = AbstractControlUnit.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB4A614B3A3E50018A8D0 /* AbstractControlUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AbstractControlUnit.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB4A714B3A3E50018A8D0 /* ControlManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ControlManager.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -617,7 +613,6 @@
 				326DB49B14B3A3E50018A8D0 /* ChaosCUToolkit.cpp */,
 				326DB49C14B3A3E50018A8D0 /* ChaosCUToolkit.h */,
 				326DB49D14B3A3E50018A8D0 /* CommandManager */,
-				326DB4A114B3A3E50018A8D0 /* ConfigurationManager */,
 				326DB4A414B3A3E50018A8D0 /* ControlManager */,
 				326DB4AB14B3A3E50018A8D0 /* DataManager */,
 			);
@@ -632,15 +627,6 @@
 				326DB4A014B3A3E50018A8D0 /* CommandManagerDefaultAdapters.h */,
 			);
 			path = CommandManager;
-			sourceTree = "<group>";
-		};
-		326DB4A114B3A3E50018A8D0 /* ConfigurationManager */ = {
-			isa = PBXGroup;
-			children = (
-				326DB4A214B3A3E50018A8D0 /* ConfigurationManager.cpp */,
-				326DB4A314B3A3E50018A8D0 /* ConfigurationManager.h */,
-			);
-			path = ConfigurationManager;
 			sourceTree = "<group>";
 		};
 		326DB4A414B3A3E50018A8D0 /* ControlManager */ = {
@@ -825,7 +811,6 @@
 				326DB4B914B3A3E50018A8D0 /* ChaosCUToolkit.h in Headers */,
 				326DB4BB14B3A3E50018A8D0 /* CommandManager.h in Headers */,
 				326DB4BC14B3A3E50018A8D0 /* CommandManagerDefaultAdapters.h in Headers */,
-				326DB4BE14B3A3E50018A8D0 /* ConfigurationManager.h in Headers */,
 				326DB4C014B3A3E50018A8D0 /* AbstractControlUnit.h in Headers */,
 				326DB4C214B3A3E50018A8D0 /* ControlManager.h in Headers */,
 				326DB4C414B3A3E50018A8D0 /* ControlUnitSandbox.h in Headers */,
@@ -993,7 +978,6 @@
 			files = (
 				326DB4B814B3A3E50018A8D0 /* ChaosCUToolkit.cpp in Sources */,
 				326DB4BA14B3A3E50018A8D0 /* CommandManager.cpp in Sources */,
-				326DB4BD14B3A3E50018A8D0 /* ConfigurationManager.cpp in Sources */,
 				326DB4BF14B3A3E50018A8D0 /* AbstractControlUnit.cpp in Sources */,
 				326DB4C114B3A3E50018A8D0 /* ControlManager.cpp in Sources */,
 				326DB4C314B3A3E50018A8D0 /* ControlUnitSandbox.cpp in Sources */,

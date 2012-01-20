@@ -8,7 +8,6 @@
 
 #include <boost/lexical_cast.hpp>
 #include "MultiBufferDataStorage.h"
-#include "../ConfigurationManager/ConfigurationManager.h"
 #include "../../common/cconstants.h"
 #include "../../common/global.h"
 
