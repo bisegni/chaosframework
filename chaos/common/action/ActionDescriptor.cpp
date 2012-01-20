@@ -1,6 +1,6 @@
 //
 //  ActionDescriptor.cpp
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by bisegni on 11/07/11.
 //  Copyright 2011 INFN. All rights reserved.
@@ -98,7 +98,7 @@ vector< shared_ptr<ActionParamDescription> >& AbstractActionDescriptor::getParam
 /*
  Add a new param
  */
-void AbstractActionDescriptor::addParam(const char*const paramName, chaos::CommandManagerConstant::ActionParamType type, const char*const description){
+void AbstractActionDescriptor::addParam(const char*const paramName, DataType::DataType type, const char*const description){
     shared_ptr<ActionParamDescription> desc (new ActionParamDescription(paramName));
     desc->paramType = type;
     desc->paramDescription = description;

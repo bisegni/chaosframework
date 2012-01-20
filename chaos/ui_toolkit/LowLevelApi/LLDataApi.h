@@ -6,8 +6,8 @@
 //  Copyright (c) 2011 INFN. All rights reserved.
 //
 
-#ifndef ChaosLib_LLDataApi_h
-#define ChaosLib_LLDataApi_h
+#ifndef ChaosFramework_LLDataApi_h
+#define ChaosFramework_LLDataApi_h
 
 #include <string>
 
@@ -24,7 +24,7 @@ namespace chaos {
          Low level api for data access api
          */
         class LLDataApi {
-            friend class CUIToolkit;
+            friend class ChaosUIToolkit;
             static DeviceDatasetCache *datasetCache;
             IODataDriver *liveDriver;
         public:

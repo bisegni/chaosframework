@@ -1,6 +1,6 @@
 //
 //  IOMemcachedDriver.h
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Claudio Bisegni on 13/03/11.
 //  Copyright 2011 INFN. All rights reserved.
@@ -20,7 +20,8 @@ namespace chaos{
     using namespace boost;
     
 class IOMemcachedDriver : public IODataDriver {
-        //mutex usageMutex;
+    boost::mutex useOutputChannelMutex;
+    boost::mutex useInputChannelMutex;
     memcached_st *memClient;
     memcached_st *memClientRead;
 public:

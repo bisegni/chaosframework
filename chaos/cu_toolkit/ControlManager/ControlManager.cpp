@@ -1,6 +1,6 @@
     //
     //  ControlManager.cpp
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by Claudio Bisegni on 14/06/11.
     //  Copyright 2011 INFN. All rights reserved.
@@ -71,7 +71,7 @@ void ControlManager::init() throw(CException) {
                                                                                    "Control Unit initialization system action");
         //add parameter for control unit name
     actionDescription->addParam(INIT_DEINIT_ACTION_CU_PARAM_NAME,
-    							CommandManagerConstant::CS_CMDM_ACTION_DESC_PAR_TYPE_STRING,
+    							DataType::TYPE_STRING,
     							"The name of the Control Unit to initialize");
     
         //deinit CU action
@@ -83,7 +83,7 @@ void ControlManager::init() throw(CException) {
                                                                                    "Control Unit initialization system action");
         //add parameter for control unit name
     actionDescription->addParam(INIT_DEINIT_ACTION_CU_PARAM_NAME,
-    							CommandManagerConstant::CS_CMDM_ACTION_DESC_PAR_TYPE_STRING,
+    							DataType::TYPE_STRING,
     							"The name of the Control Unit to initialize");
         //start CU action
     
@@ -94,7 +94,7 @@ void ControlManager::init() throw(CException) {
                                                                                    "Control Unit start system action");
         //add parameter for control unit name
     actionDescription->addParam(INIT_DEINIT_ACTION_CU_PARAM_NAME,
-    							CommandManagerConstant::CS_CMDM_ACTION_DESC_PAR_TYPE_STRING,
+    							DataType::TYPE_STRING,
     							"The name of the Control Unit to Start");
         //stop CU action
     
@@ -105,7 +105,7 @@ void ControlManager::init() throw(CException) {
                                                                                    "Control Unit stop system action");
         //add parameter for control unit name
     actionDescription->addParam(INIT_DEINIT_ACTION_CU_PARAM_NAME,
-    							CommandManagerConstant::CS_CMDM_ACTION_DESC_PAR_TYPE_STRING,
+    							DataType::TYPE_STRING,
     							"The name of the Control Unit to Stop");
         //register command manager action
     CommandManager::getInstance()->registerAction(this);
@@ -206,12 +206,16 @@ void ControlManager::executeOnThread() throw(CException) {
         sanboxMap.insert(make_pair(cusb->getCUInstance(), cusb));
         
             //check if we need to autostart and init the CU
-        if(cuActionAndDataset.hasKey(ControlManagerConstant::CS_CM_CU_AUTOSTART) &&
-           cuActionAndDataset.getInt32Value(ControlManagerConstant::CS_CM_CU_AUTOSTART)){
+        if(cuActionAndDataset.hasKey(CUDefinitionKey::CS_CM_CU_AUTOSTART) &&
+           cuActionAndDataset.getInt32Value(CUDefinitionKey::CS_CM_CU_AUTOSTART)){
                 //cusb->initSandbox(cusb->defaultInternalConf.get());
             auto_ptr<SerializationBuffer> serBuffForGlobalConf(GlobalConfiguration::getInstance()->getConfiguration()->getBSONData());
             auto_ptr<CDataWrapper> masterConfiguration(new CDataWrapper(serBuffForGlobalConf->getBufferPtr()));
             masterConfiguration->appendAllElement(cuActionAndDataset);
+            
+#if DEBUG
+            LDBG_ << masterConfiguration->getJSONString();
+#endif  
             
             cusb->initSandbox(masterConfiguration.get());
         }
@@ -232,11 +236,11 @@ void ControlManager::sendConfPackToMDS(CDataWrapper& dataToSend) {
     auto_ptr<SerializationBuffer> serBuf(dataToSend.getBSONData());
     CDataWrapper *mdsPack = new CDataWrapper(serBuf->getBufferPtr());
         //add action for metadata server
-    mdsPack->addStringValue(CommandManagerConstant::CS_CMDM_ACTION_DOMAIN, "system");
-    mdsPack->addStringValue(CommandManagerConstant::CS_CMDM_ACTION_NAME, "registerControlUnit");
+    mdsPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, "system");
+    mdsPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, "registerControlUnit");
         //add local ip and port
     
-    mdsPack->addStringValue(ControlManagerConstant::CS_CM_CU_INSTANCE_NET_ADDRESS, GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort().c_str());
+    mdsPack->addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS, GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort().c_str());
     CommandManager::getInstance()->sendMessageToMetadataServer(mdsPack);
 }
 
@@ -275,12 +279,12 @@ CDataWrapper* ControlManager::initSandbox(CDataWrapper *actionParam) throw (CExc
     CHECK_CU_PRESENCE_IN_MAP_OR_TROW(cuUUID)
     shared_ptr<ControlUnitSandbox> cusb = sanboxMap[cuUUID];
     LAPP_  << "Init Control Unit Sanbox for cu:" << cusb->getCUName() << " with instance:" << cusb->getCUInstance();
-    
+    /*
     auto_ptr<SerializationBuffer> serBuffForGlobalConf(GlobalConfiguration::getInstance()->getConfiguration()->getBSONData());
     auto_ptr<CDataWrapper> masterConfiguration(new CDataWrapper(serBuffForGlobalConf->getBufferPtr()));
-    masterConfiguration->appendAllElement(*cusb->getInternalCUConfiguration());
+    masterConfiguration->appendAllElement(*cusb->getInternalCUConfiguration());*/
     
-    cusb->initSandbox(masterConfiguration.get());
+    cusb->initSandbox(actionParam);
     LAPP_  << "Initialized Control Unit Sanbox:" << cusb->getCUName() << " with instance:" << cusb->getCUInstance();
 
         //sanboxMap[cuUUID]->initSandbox(actionParam);

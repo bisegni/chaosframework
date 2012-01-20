@@ -1,13 +1,13 @@
 //
 //  CommandManagerDefaultAdapters.h
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Claudio Bisegni on 18/06/11.
 //  Copyright 2011 INFN. All rights reserved.
 //
 
-#ifndef ChaosLib_CommandManagerModule_h
-#define ChaosLib_CommandManagerModule_h
+#ifndef ChaosFramework_CommandManagerModule_h
+#define ChaosFramework_CommandManagerModule_h
 
     //we need it to register at startup all the default Command Manager module
 #include "chaos/common/rpc/MsgPackServer.h"

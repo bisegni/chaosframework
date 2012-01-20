@@ -1,6 +1,6 @@
 //
 //  MultiBufferDataStorage.h
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Claudio Bisegni on 20/03/11.
 //  Copyright 2011 INFN. All rights reserved.

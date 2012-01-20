@@ -10,6 +10,7 @@ import it.infn.chaos.mds.business.Device;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
@@ -23,6 +24,117 @@ import org.ref.server.db.sqlbuilder.SqlTable;
  * @author bisegni
  */
 public class DeviceDA extends DataAccess {
+
+	/**
+	 * Performe the device heartbeat
+	 * 
+	 * @param deviceID
+	 * @throws SQLException
+	 */
+	public void performDeviceHB(Integer deviceID) throws SQLException {
+		InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_UPDATE);
+		iuBuilder.addTable(Device.class);
+		iuBuilder.addColumnAndValue("last_hb", "$CURRENT_TIMESTAMP");
+		iuBuilder.addCondition(true, "id_device=?");
+		PreparedStatement ps = getPreparedStatementForSQLCommand(iuBuilder.toString());
+		int idx = iuBuilder.fillPreparedStatement(ps);
+		ps.setInt(idx++, deviceID);
+		executeInsertUpdateAndClose(ps);
+	}
+
+	/**
+	 * 
+	 * @param deviceIdentification
+	 * @return
+	 * @throws Exception
+	 */
+	public boolean isDeviceToBeInitialized(String deviceIdentification) throws Exception {
+		boolean result = false;
+		ResultSet rs = null;
+		PreparedStatement ps = null;
+		SqlBuilder sql = new SqlBuilder();
+		SqlTable t = sql.addTable(Device.class);
+		sql.addTableColumnToSelect(t.getTableName(), "init_at_startup");
+		sql.addCondition(true, "device_identification = ?");
+		try {
+			ps = getPreparedStatementForSQLCommand(sql.toString());
+			ps.setString(1, deviceIdentification);
+			rs = ps.executeQuery();
+			result = rs.next()?rs.getBoolean(1):false;
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			closeResultSet(rs);
+			closePreparedStatement(ps);
+		}
+
+		return result;
+	}
+
+	/**
+	 * 
+	 * @param deviceIdentification
+	 * @param init
+	 * @throws SQLException
+	 */
+	public void setStartupInitializationOption(String deviceIdentification, boolean init) throws SQLException {
+		InsertUpdateBuilder update = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_UPDATE);
+		update.addTable(Device.class);
+		update.addColumnAndValue(Device.INIT_AT_STARTUP, init);
+		update.addCondition(true, String.format("%s=?", Device.DEVICE_IDENTIFICATION));
+		PreparedStatement ps = getPreparedStatementForSQLCommand(update.toString());
+		Integer idx = update.fillPreparedStatement(ps);
+		ps.setString(idx++, deviceIdentification);
+		executeInsertUpdateAndClose(ps);
+	}
+
+	/**
+	 * Performe the device heartbeat
+	 * 
+	 * @param deviceID
+	 * @throws Throwable
+	 */
+	public void performDeviceHB(String deviceIdentifiation) throws Throwable {
+		performDeviceHB(getDeviceIdFormInstance(deviceIdentifiation));
+	}
+
+	/**
+	 * 
+	 * @param deviceIdentifiation
+	 * @return
+	 * @throws Throwable
+	 */
+	public Date getLastHeatbeat(String deviceIdentifiation) throws Throwable {
+		return getLastHeatbeat(getDeviceIdFormInstance(deviceIdentifiation));
+	}
+
+	/**
+	 * 
+	 * @param deviceIdentifiation
+	 * @return
+	 * @throws Exception
+	 */
+	public Date getLastHeatbeat(Integer deviceID) throws Exception {
+		ResultSet rs = null;
+		PreparedStatement ps = null;
+		Date tsResult = null;
+		try {
+			SqlBuilder devSB = new SqlBuilder();
+			SqlTable t = devSB.addTable(Device.class);
+			devSB.addTableColumnToSelect(t.getTableName(), "last_hb");
+			devSB.addCondition(true, "id_device=?");
+			ps = getPreparedStatementForSQLCommand(devSB.toString());
+			ps.setInt(1, deviceID);
+			rs = ps.executeQuery();
+			tsResult = new Date(rs.next() ? rs.getTimestamp(1).getTime() : null);
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			closeResultSet(rs);
+			closePreparedStatement(ps);
+		}
+		return tsResult;
+	}
 
 	/**
 	 * return all the device
@@ -43,7 +155,7 @@ public class DeviceDA extends DataAccess {
 	/**
 	 * 
 	 * @param deviceIdentification
-	 * @throws Throwable 
+	 * @throws Throwable
 	 */
 	public void deleteDeviceByDeviceIdentification(String deviceIdentification) throws Throwable {
 		deleteDeviceByDeviceID(getDeviceIdFormInstance(deviceIdentification));
@@ -52,7 +164,7 @@ public class DeviceDA extends DataAccess {
 	/**
 	 * 
 	 * @param deviceIdentification
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
 	public void deleteDeviceByDeviceID(Integer idDevice) throws SQLException {
 		deleteDatasetsForDeviceID(idDevice);
@@ -63,7 +175,6 @@ public class DeviceDA extends DataAccess {
 		ps.setInt(1, idDevice);
 		executeInsertUpdateAndClose(ps);
 	}
-
 
 	/**
 	 * @param deviceInstance
@@ -87,10 +198,8 @@ public class DeviceDA extends DataAccess {
 		} catch (Throwable e) {
 			throw e;
 		} finally {
-			if (rs != null)
-				closeResultSet(rs);
-			if (ps != null)
-				closePreparedStatement(ps);
+			closeResultSet(rs);
+			closePreparedStatement(ps);
 		}
 
 		return result;
@@ -120,6 +229,7 @@ public class DeviceDA extends DataAccess {
 	 */
 	public Device insertDevice(Device d) throws Exception {
 		InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder();
+		iuBuilder.addColumnAndValue("last_hb", "$CURRENT_TIMESTAMP");
 		iuBuilder.fillWithBusinessClass(d);
 		PreparedStatement ps = getPreparedStatementForInputUpdateBuilder(iuBuilder);
 		iuBuilder.fillPreparedStatement(ps);
@@ -138,7 +248,7 @@ public class DeviceDA extends DataAccess {
 	 * 
 	 * @throws SQLException
 	 */
-	public void updateCUInstanceAndAddressForDeviceID(String deviceIdentification, String cuInstance, String netAddress)  throws SQLException {
+	public void updateCUInstanceAndAddressForDeviceID(String deviceIdentification, String cuInstance, String netAddress) throws SQLException {
 		InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_UPDATE);
 		iuBuilder.addTable(Device.class);
 		iuBuilder.addColumnAndValue("cu_instance", cuInstance);
@@ -173,10 +283,8 @@ public class DeviceDA extends DataAccess {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			if (rs != null)
-				closeResultSet(rs);
-			if (ps != null)
-				closePreparedStatement(ps);
+			closeResultSet(rs);
+			closePreparedStatement(ps);
 		}
 		return result;
 	}
@@ -202,26 +310,23 @@ public class DeviceDA extends DataAccess {
 		return (List<Dataset>) executeQueryPreparedStatementAndClose(ps, Dataset.class, null, null, false);
 	}
 
-
 	/**
 	 * 
 	 * @param deviceIdentification
-	 * @throws SQLException 
+	 * @throws SQLException
 	 */
 	public void deleteDatasetsForDeviceID(Integer idDevice) throws SQLException {
-		//delete first all attribute
+		// delete first all attribute
 		deleteDatasetAttributeForDeviceID(idDevice);
-		
+
 		DeleteSqlBuilder dSqlBuilder = new DeleteSqlBuilder();
 		dSqlBuilder.addTable(Dataset.class);
 		dSqlBuilder.addCondition(true, "id_device = ?");
 		PreparedStatement ps = getPreparedStatementForSQLCommand(dSqlBuilder.toString());
 		ps.setInt(1, idDevice);
 		executeInsertUpdateAndClose(ps);
-		
+
 	}
-
-
 
 	/**
 	 * Get the newest dataset for the device instance
@@ -274,7 +379,8 @@ public class DeviceDA extends DataAccess {
 	 */
 	public boolean isDSChanged(String devicedeviceIdentification, Vector<DatasetAttribute> dsAttrbiuteToUpdate) throws Throwable {
 		boolean result = false;
-		if (devicedeviceIdentification == null || dsAttrbiuteToUpdate == null || dsAttrbiuteToUpdate.size() == 0)
+		if (devicedeviceIdentification == null
+			|| dsAttrbiuteToUpdate == null || dsAttrbiuteToUpdate.size() == 0)
 			return false;
 		boolean matchHasBeenFound = false;
 		Dataset storedDS = getLastDatasetForDeviceIdentification(devicedeviceIdentification);
@@ -289,10 +395,7 @@ public class DeviceDA extends DataAccess {
 			String sha1NewAttr = attrNew.toBsonHash();
 			matchHasBeenFound = false;
 			for (DatasetAttribute attrStored : storedDS.getAttributes()) {
-				String sha1StoredAutoGen = attrStored.toBsonHash();
 				String sha1StoredAttr = attrStored.getCheck();
-				if (!sha1StoredAutoGen.equals(sha1StoredAttr))
-					System.out.println("sha1NewAttrAutoGen differ from sha1NewAttr this is an exception");
 				if (sha1StoredAttr.equals(sha1NewAttr)) {
 					matchHasBeenFound = true;
 					break;
@@ -335,7 +438,7 @@ public class DeviceDA extends DataAccess {
 		ps.setInt(1, idDevice);
 		executeInsertUpdateAndClose(ps);
 	}
-	
+
 	/**
 	 * 
 	 * @param datasetAttribute
@@ -358,9 +461,9 @@ public class DeviceDA extends DataAccess {
 		ps.setInt(idx++, datasetAttribute.getVersion());
 		ps.setInt(idx++, datasetAttribute.getAttributeID());
 		executeInsertUpdateAndClose(ps);
-		
+
 	}
-	
+
 	/**
 	 * return the dataset attributes for the dataset
 	 * 
@@ -400,11 +503,10 @@ public class DeviceDA extends DataAccess {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			if (rs == null)
-				closeResultSet(rs);
-			if (ps == null)
-				closePreparedStatement(ps);
+			closeResultSet(rs);
+			closePreparedStatement(ps);
 		}
 		return result;
 	}
+
 }

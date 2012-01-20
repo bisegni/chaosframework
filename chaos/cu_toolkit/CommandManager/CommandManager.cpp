@@ -1,6 +1,6 @@
 //
 //  CommandManager.cpp
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Claudio Bisegni on 21/02/11.
 //  Copyright 2011 INFN. All rights reserved.
@@ -153,11 +153,11 @@ void CommandManager::startupRPCAdapter(CDataWrapper *cmdMgrConfiguration) throw(
     
     //read the configuration for adapter type
     
-    if(!cmdMgrConfiguration->hasKey(CommandManagerConstant::RpcAdapterConstant::CS_CMDM_RPC_ADAPTER_TYPE)) {
+    if(!cmdMgrConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE)) {
         throw CException(0, "No RPC Adapter type found in configuration", "CommandManager::startupRPCAdapter");
     }
     
-    string adapterType = cmdMgrConfiguration->getStringValue(CommandManagerConstant::RpcAdapterConstant::CS_CMDM_RPC_ADAPTER_TYPE);
+    string adapterType = cmdMgrConfiguration->getStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE);
     LAPP_ << "The Adapter is the type: "<<adapterType;
         //get the rpc adaptor instance
     string serverName = adapterType+"Server";

@@ -1,13 +1,13 @@
     //
     //  Common.h
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by Bisegni Claudio on 19/12/11.
     //  Copyright (c) 2011 INFN. All rights reserved.
     //
 
-#ifndef ControlSystemLib_ChaosCommon_h
-#define ControlSystemLib_ChaosCommon_h
+#ifndef ChaosFramework_ChaosCommon_h
+#define ChaosFramework_ChaosCommon_h
 
 #include <stdio.h>      
 #include <sys/types.h>
@@ -24,28 +24,11 @@
 #include <boost/logging/writer/ts_write.hpp>
 
 
-
-/*! \mainpage !Chaos - Control system based on a Highly Abstracted and Open Structure
- *
- * \section intro_sec Introduction
- *
- * This is the introduction.
- *
- * \section install_sec Installation
- *
- * \subsection step1 Step 1: Opening the box
- *  
- * etc...
- */
-
 //! Default chaos namespace used to group all common api
-namespace chaos {
+namespace chaos {    
     
     using namespace boost::logging;
 
-
-
-    
     //! Chaos common engine class
     /*! 
         This is the base class for the other toolkit, it thake care to initialize all common
@@ -96,42 +79,51 @@ namespace chaos {
         }
         
     protected:
-        //! Constructor
+        //! Constructor Method
         /*! 
-          A more elaborate description of the destructor.
+          Thi method call the \ref GlobalConfiguration::preParseStartupParameters method, starting the 
+          allocation of the startup framework parameter
          */
         ChaosCommon(){
             GlobalConfiguration::getInstance()->preParseStartupParameters();
         }
 
         
-        //! Destructor
+        //! Destructor method
         /*! 
          A more elaborate description of the destructor.
          */
         virtual ~ChaosCommon() {};
 
-        //! Init method
+        //! Initialization methdo
         /*! 
          This virtual method can be extended by toolkit subclass for specialized initializaion
          in themain toolkit subclass of ChaosCommon
          */
         virtual void init(int argc, const char* argv[])  throw(CException) {
-                // Add formatters and destinations
-                // That is, how the message is to be formatted...
-            g_l()->writer().add_formatter( formatter::time("$hh:$mm.$ss ") );
-            g_l()->writer().add_formatter( formatter::append_newline() );
-            
-                //        ... and where should it be written to
-            g_l()->writer().add_destination( destination::cout() );
-            g_l()->writer().add_destination( destination::file("out.txt") );
-            g_l()->turn_cache_off();
-            
             try {
                 if(argv != NULL){
                     GlobalConfiguration::getInstance()->parseStartupParameters(argc, argv);
                 }
                 
+                    // Add formatters and destinations
+                    // That is, how the message is to be formatted...
+                g_l()->writer().add_formatter( formatter::time("$hh:$mm.$ss ") );
+                g_l()->writer().add_formatter( formatter::append_newline() );
+                
+                    //        ... and where should it be written to
+                if(GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(UserOption::OPT_LOG_ON_CONSOLE)) {
+                    g_l()->writer().add_destination( destination::cout() );
+                }
+                
+                if(GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(UserOption::OPT_LOG_ON_FILE) &&  
+                   GlobalConfiguration::getInstance()->getConfiguration()->hasKey(UserOption::OPT_LOG_FILE)) {
+                    g_l()->writer().add_destination( destination::file(GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(UserOption::OPT_LOG_FILE).c_str()) );
+                }
+                
+                g_l()->turn_cache_off();
+                
+
                     //the version constant are defined into version.h
                     //file generate to every compilation
                 PRINT_LIB_HEADER
@@ -147,9 +139,9 @@ namespace chaos {
 
         
     public:
-        //! Return the global configuration for the current process
-        /*! 
-         Return the GlobalConfiguration singleton instance
+         //! Return the global configuration for the current singleton instance
+        /*!
+         \return the GlobalConfiguration pointer to global instance
          */
         GlobalConfiguration *getGlobalConfigurationInstance() {
             return GlobalConfiguration::getInstance();

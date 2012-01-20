@@ -26,6 +26,7 @@ public class RPCConstants {
 	// key action submission error code
 	public static final String	CS_CMDM_ACTION_SUBMISSION_ERROR_CODE	= "cs|cmdm|act_sub_ecode";
 
+	public static final String	CS_CMDM_REMOTE_HOST_RESPONSE_IP			= "cs|cmdm|rh_resp_ip";
 	public static final String	CS_CMDM_REMOTE_HOST_RESPONSE_ID			= "cs|cmdm|rh_resp_id";
 	public static final String	CS_CMDM_REMOTE_HOST_IP					= "cs|cmdm|rh_ip";
 
@@ -42,5 +43,9 @@ public class RPCConstants {
 	public static final String	CONTROL_UNIT_INSTANCE					= "cs|cm|cu_instance";
 	public static final String	CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS	= "cs|cm|cu_instance_net_address";
 	public static final String	CONTROL_UNIT_NAME						= "cs|cm|cu_name";
+	public static final String	CONTROL_UNIT_AUTOSTART					= "cs|cm|cu|autostart";
 
+	public static final String	DEVICE_SCHEDULE_DELAY					= "cs|cm|cu|thr|sch_del";
+
+	public static final String	LIVE_DATASERVER_HOST_PORT				= "cs|dm|ld|server_address";
 }

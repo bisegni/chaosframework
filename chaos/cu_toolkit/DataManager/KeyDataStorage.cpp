@@ -1,6 +1,6 @@
 //
 //  KeyDataStorage.cpp
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Claudio Bisegni on 12/03/11.
 //  Copyright 2011 INFN. All rights reserved.
@@ -15,7 +15,7 @@ using namespace std;
 
 KeyDataStorage::KeyDataStorage(const char * key):dataSetKey(key),keyData(new CDataWrapper()) {
         //associate the key to datawrapper used for retrive last personal data
-    keyData->addStringValue(ControlSystemValueConstant::CS_CSV_DEVICE_ID, dataSetKey);
+    keyData->addStringValue(DataPackKey::CS_CSV_DEVICE_ID, dataSetKey);
 }
 
 KeyDataStorage::KeyDataStorage(std::string& key):dataSetKey(key) {
@@ -44,9 +44,9 @@ void KeyDataStorage::init(CDataWrapper *startConfig) {
 CDataWrapper* KeyDataStorage::getNewDataWrapper() {
     CDataWrapper *result = new CDataWrapper();
         //add key to datawrapper
-    result->addStringValue(ControlSystemValueConstant::CS_CSV_DEVICE_ID, dataSetKey);
+    result->addStringValue(DataPackKey::CS_CSV_DEVICE_ID, dataSetKey);
         //add timestamp to datawrapper
-    result->addInt64Value(ControlSystemValueConstant::CS_CSV_TIME_STAMP, timingUtil->getTimeStamp());
+    result->addInt64Value(DataPackKey::CS_CSV_TIME_STAMP, timingUtil->getTimeStamp());
     return result;
 }
 

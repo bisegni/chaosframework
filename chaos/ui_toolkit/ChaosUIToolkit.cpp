@@ -1,12 +1,12 @@
 //
-//  CUIToolkit.cpp
+//  ChaosUIToolkit.cpp
 //  UIToolkit
 //
 //  Created by bisegni on 08/09/11.
 //  Copyright (c) 2011 INFN. All rights reserved.
 //
 
-#include "CUIToolkit.h"
+#include "ChaosUIToolkit.h"
 #include "LowLevelApi/LLDataApi.h"
 #include "../common/utility/UUIDUtil.h"
 #include <boost/uuid/uuid.hpp>
@@ -21,24 +21,24 @@ using namespace chaos::ui;
 /*
  
  */
-CUIToolkit::CUIToolkit(){
+ChaosUIToolkit::ChaosUIToolkit(){
 	clientInstanceUUID = UUIDUtil::generateUUIDLite();
 }
 
 /*
  
  */
-CUIToolkit::~CUIToolkit(){
+ChaosUIToolkit::~ChaosUIToolkit(){
     
 }
 
 /*
  
  */
-void CUIToolkit::init(int argc, const char* argv[]) throw(CException) {
+void ChaosUIToolkit::init(int argc, const char* argv[]) throw(CException) {
     try{
             //init common stage
-        ChaosCommon::init(argc, argv);
+        ChaosCommon<ChaosUIToolkit>::init(argc, argv);
 
             //init the caches
         globalDatasetCache = new DeviceDatasetCache();
@@ -64,7 +64,7 @@ void CUIToolkit::init(int argc, const char* argv[]) throw(CException) {
 /*
  
  */
-void CUIToolkit::deinit() throw(CException) {
+void ChaosUIToolkit::deinit() throw(CException) {
     
     if(globalDatasetCache) {
         globalDatasetCache->deinit();

@@ -1,6 +1,6 @@
 //
 //  MsgPachDispatcher.cpp
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Claudio Bisegni on 01/05/11.
 //  Copyright 2011 INFN. All rights reserved.
@@ -15,7 +15,7 @@
 #include "../exception/CException.h"
 using namespace chaos;
 
-#define DEFAULT_MSGPACK_DISPATCHER_PORT             16000
+#define DEFAULT_MSGPACK_DISPATCHER_PORT             8888
 #define DEFAULT_MSGPACK_DISPATCHER_THREAD_NUMBER    4
 
 namespace rpc {
@@ -30,12 +30,12 @@ void MsgPackServer::init(CDataWrapper *adapterConfiguration) throw(CException) {
     
     LAPP_ << "MsgPackServer initialization"; 
     
-    portNumber = adapterConfiguration->hasKey(CommandManagerConstant::RpcAdapterConstant::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT)?
-                                                adapterConfiguration->getInt32Value(CommandManagerConstant::RpcAdapterConstant::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT ):
+    portNumber = adapterConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT)?
+                                                adapterConfiguration->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT ):
                                                 DEFAULT_MSGPACK_DISPATCHER_PORT;
     
-    threadNumber = adapterConfiguration->hasKey(CommandManagerConstant::RpcAdapterConstant::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER)?
-                                                adapterConfiguration->getInt32Value(CommandManagerConstant::RpcAdapterConstant::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER):
+    threadNumber = adapterConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER)?
+                                                adapterConfiguration->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER):
                                                 DEFAULT_MSGPACK_DISPATCHER_THREAD_NUMBER;
     
     LAPP_ << "MsgPackServer Configuration";
@@ -76,7 +76,7 @@ void MsgPackServer::dispatch(request req) {
         std::string method;
         req.method().convert(&method);
         
-        if(method == CommandManagerConstant::CS_CMDM_RPC_TAG) {
+        if(method == RpcActionDefinitionKey::CS_CMDM_RPC_TAG) {
                 
             msgpack::type::tuple<msgpack::type::raw_ref> params;
             req.params().convert(&params);

@@ -3,11 +3,12 @@
  */
 package it.infn.chaos.mds.rpc.server;
 
+import it.infn.chaos.mds.RPCConstants;
+
 import java.net.UnknownHostException;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
-import org.bson.BasicBSONDecoder;
 import org.bson.BasicBSONObject;
 import org.msgpack.MessagePackObject;
 import org.msgpack.object.RawType;
@@ -25,10 +26,11 @@ public class MSGPackRPCClient extends RPCClient {
 	/**
 	 * @throws Throwable
 	 */
-	public void sendMessage(String addressAndPort, BasicBSONObject messageData) throws Throwable {
+	public void sendMessage(BasicBSONObject messageData) throws Throwable {
 		synchronized (encoder) {
 			MessagePackObject result = null;
-			Client cli = getClientForAddress(addressAndPort);
+			String serverAddress = messageData.containsField(RPCConstants.CS_CMDM_REMOTE_HOST_IP)?messageData.getString(RPCConstants.CS_CMDM_REMOTE_HOST_IP):null;
+			Client cli = getClientForAddress(serverAddress);
 			try {
 				byte[] rawData = encoder.encode(messageData);
 				Object[] data = new Object[1];

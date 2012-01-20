@@ -1,13 +1,13 @@
 //
 //  DomainActions.h
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by bisegni on 07/07/11.
 //  Copyright 2011 INFN. All rights reserved.
 //
 
-#ifndef ChaosLib_DomainActions_h
-#define ChaosLib_DomainActions_h
+#ifndef ChaosFramework_DomainActions_h
+#define ChaosFramework_DomainActions_h
 
 #include <map>
 #include <string>

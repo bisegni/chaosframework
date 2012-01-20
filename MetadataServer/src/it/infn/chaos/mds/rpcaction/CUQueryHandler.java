@@ -4,10 +4,14 @@
 package it.infn.chaos.mds.rpcaction;
 
 import it.infn.chaos.mds.RPCConstants;
+import it.infn.chaos.mds.business.DataServer;
 import it.infn.chaos.mds.business.Device;
+import it.infn.chaos.mds.da.DataServerDA;
 import it.infn.chaos.mds.da.DeviceDA;
 import it.infn.chaos.mds.rpc.server.RPCActionHadler;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.ListIterator;
 
 import org.bson.BasicBSONObject;
@@ -15,17 +19,18 @@ import org.bson.types.BasicBSONList;
 import org.ref.common.exception.RefException;
 
 /**
- * RPC actions for manage the Control Unit registration and device dataset
- * retriving
+ * RPC actions for manage the Control Unit registration and device dataset retriving
  * 
  * @author bisegni
  */
 public class CUQueryHandler extends RPCActionHadler {
 	private static final String	SYSTEM					= "system";
 	private static final String	REGISTER_CONTROL_UNIT	= "registerControlUnit";
+	private static final String	HEARTBEAT_CONTROL_UNIT	= "heartbeatControlUnit";
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see it.infn.chaos.mds.rpc.server.RPCActionHadler#intiHanlder()
 	 */
 	@Override
@@ -35,9 +40,9 @@ public class CUQueryHandler extends RPCActionHadler {
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * it.infn.chaos.mds.rpc.server.RPCActionHadler#handleAction(java.lang.String
-	 * , java.lang.String, org.bson.BasicBSONObject)
+	 * 
+	 * @see it.infn.chaos.mds.rpc.server.RPCActionHadler#handleAction(java.lang.String ,
+	 * java.lang.String, org.bson.BasicBSONObject)
 	 */
 	@Override
 	public BasicBSONObject handleAction(String domain, String action, BasicBSONObject actionData) throws Throwable {
@@ -45,8 +50,21 @@ public class CUQueryHandler extends RPCActionHadler {
 		if (domain.equals(SYSTEM)) {
 			if (action.equals(REGISTER_CONTROL_UNIT)) {
 				result = registerControUnit(actionData);
+			} else if (action.equals(HEARTBEAT_CONTROL_UNIT)) {
+				result = heartbeatControUnit(actionData);
 			}
 		}
+		return result;
+	}
+
+	/**
+	 * Execute l'heartbeat of the control unit
+	 * 
+	 * @param actionData
+	 * @return
+	 */
+	private BasicBSONObject heartbeatControUnit(BasicBSONObject actionData) {
+		BasicBSONObject result = null;
 		return result;
 	}
 
@@ -55,6 +73,7 @@ public class CUQueryHandler extends RPCActionHadler {
 	 * @throws Throwable
 	 */
 	private BasicBSONObject registerControUnit(BasicBSONObject actionData) throws Throwable {
+		Device d = null;
 		BasicBSONObject result = null;
 		DeviceDA dDA = null;
 		try {
@@ -75,7 +94,7 @@ public class CUQueryHandler extends RPCActionHadler {
 			ListIterator<Object> devicesDS = dsDesc.listIterator();
 			while (devicesDS.hasNext()) {
 				BasicBSONObject devDesc = (BasicBSONObject) devicesDS.next();
-				Device d = new Device();
+				d = new Device();
 				d.setCuInstance(controlUnitInstance);
 				d.setNetAddress(controlUnitNetAddress);
 				d.fillFromBson(devDesc);
@@ -98,7 +117,18 @@ public class CUQueryHandler extends RPCActionHadler {
 				} else {
 					dDA.insertDevice(d);
 				}
+
+				if (d != null) {
+					dDA.performDeviceHB(d.getDeviceIdentification());
+
+					// at this point i need to check if thedevice need to be initialized
+					if (dDA.isDeviceToBeInitialized(d.getDeviceIdentification())) {
+						// send rpc command to initialize the device
+						result = composeStartupCommandForDeviceIdentification(d.getDeviceIdentification());
+					}
+				}
 			}
+
 			closeDataAccess(dDA, true);
 		} catch (RefException e) {
 			closeDataAccess(dDA, false);
@@ -107,6 +137,38 @@ public class CUQueryHandler extends RPCActionHadler {
 			closeDataAccess(dDA, false);
 			throw e;
 		}
+		return result;
+	}
+
+	/**
+	 * Compose the BSON object for startup initialization of device
+	 * 
+	 * @param deviceIdentification
+	 * @return
+	 * @throws Throwable
+	 */
+	private BasicBSONObject composeStartupCommandForDeviceIdentification(String deviceIdentification) throws Throwable {
+		BasicBSONObject result = null;
+		DeviceDA dDA = getDataAccessInstance(DeviceDA.class);
+		DataServerDA dsDA = getDataAccessInstance(DataServerDA.class);
+		
+		Device d = dDA.getDeviceFromDeviceIdentification(deviceIdentification);
+		result = (BasicBSONObject) d.toBson();
+		result.append(RPCConstants.CS_CMDM_ACTION_DOMAIN, "system");
+		result.append(RPCConstants.CS_CMDM_ACTION_NAME, "initControlUnit");
+		result.append(RPCConstants.CS_CMDM_REMOTE_HOST_IP, d.getNetAddress());
+		result.append("cu_uuid", d.getCuInstance());
+		result.append(RPCConstants.CONTROL_UNIT_AUTOSTART, 1);
+		//add live server 
+		BasicBSONList liveServers = new BasicBSONList();
+		List<DataServer> list = dsDA.getAllDataServer(true);
+		for (Iterator<DataServer> iterator = list.iterator(); iterator.hasNext();) {
+			DataServer dataServer = (DataServer) iterator.next();
+			liveServers.add(String.format("%s:%d", dataServer.getHostname(), dataServer.getPort()));
+		}
+		if(liveServers.size()>0)result.append(RPCConstants.LIVE_DATASERVER_HOST_PORT, liveServers);
+		result.append(RPCConstants.DEVICE_SCHEDULE_DELAY, 1000000);
+		
 		return result;
 	}
 

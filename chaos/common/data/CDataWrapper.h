@@ -1,6 +1,6 @@
     //
     //  CDataWrapper.h
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by Claudio Bisegni on 23/04/11.
     //  Copyright 2011 INFN. All rights reserved.
@@ -75,6 +75,8 @@ namespace chaos {
         
         CDataWrapper();
         CDataWrapper(const char* serializationBuffer, bool bson=true);
+        
+        CDataWrapper *clone();
             //add a csdata value
         void addCSDataValue(const char *, CDataWrapper&);
         

@@ -37,6 +37,6 @@ abstract public class RPCClient {
 	 * @throws RefException
 	 * @throws UnknownHostException
 	 */
-	abstract public void sendMessage(String addressAndPort, BasicBSONObject messageData) throws Throwable;
+	abstract public void sendMessage(BasicBSONObject messageData) throws Throwable;
 
 }

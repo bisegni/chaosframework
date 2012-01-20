@@ -1,13 +1,13 @@
 //
 //  AttributeEventHandlerQueueRunner.h
-//  ChaosLib
+//  ChaosFramework
 //
 //  Created by Bisegni Claudio on 05/11/11.
 //  Copyright (c) 2011 INFN. All rights reserved.
 //
 
-#ifndef ChaosLib_AttributeEventHandlerQueueRunner_h
-#define ChaosLib_AttributeEventHandlerQueueRunner_h
+#ifndef ChaosFramework_AttributeEventHandlerQueueRunner_h
+#define ChaosFramework_AttributeEventHandlerQueueRunner_h
 
 
 #include <chaos/common/pqueue/ChaosProcessingQueue.h>

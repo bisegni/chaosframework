@@ -7,27 +7,38 @@ import it.infn.chaos.mds.RPCConstants;
 
 import org.bson.BasicBSONObject;
 import org.ref.common.business.*;
+import org.ref.common.type.Timestamp;
 
 /**
  * @author bisegni
  */
 @DBTable(name = "devices")
 public class Device extends BSONBusinessObject {
+	public static final String	INIT_AT_STARTUP			= "init_at_startup";
+	public static final String	LAST_HB					= "last_hb";
+	public static final String	ID_DEVICE				= "id_device";
+	public static final String	NET_ADDRESS				= "net_address";
+	public static final String	CU_INSTANCE				= "cu_instance";
+	public static final String	DEVICE_IDENTIFICATION	= "device_identification";
 	private static final long	serialVersionUID		= 6502276887373714133L;
-	@DBColumn(	name = "device_identification",
+	@DBColumn(	name = DEVICE_IDENTIFICATION,
 				maxDimension = 40)
 	private String				deviceIdentification	= null;
-	@DBColumn(	name = "cu_instance",
+	@DBColumn(	name = CU_INSTANCE,
 				maxDimension = 40)
 	private String				cuInstance				= null;
-	@DBColumn(	name = "net_address",
+	@DBColumn(	name = NET_ADDRESS,
 				maxDimension = 40)
 	private String				netAddress				= null;
 	@DBPrimaryKey
-	@DBColumn(name = "id_device")
+	@DBColumn(name = ID_DEVICE)
 	private Integer				deviceID				= null;
 	@DBColumn(isComplex = true)
 	private Dataset				dataset					= null;
+	@DBColumn(name = LAST_HB)
+	private Timestamp			lastHeartBeatTimestamp	= null;
+	@DBColumn(name = INIT_AT_STARTUP)
+	private Boolean				initAtStartup			= false;
 
 	/*
 	 * (non-Javadoc)
@@ -126,11 +137,13 @@ public class Device extends BSONBusinessObject {
 	}
 
 	/**
-	 * @param netAddress the netAddress to set
+	 * @param netAddress
+	 *            the netAddress to set
 	 */
 	public void setNetAddress(String netAddress) {
 		this.netAddress = netAddress;
 	}
+
 	@Override
 	public Object toBson() {
 		BasicBSONObject deviceObj = new BasicBSONObject();
@@ -159,6 +172,36 @@ public class Device extends BSONBusinessObject {
 			setDataset(ds);
 		}
 
+	}
+
+	/**
+	 * @return the lastHeartBeatTimestamp
+	 */
+	public Timestamp getLastHeartBeatTimestamp() {
+		return lastHeartBeatTimestamp;
+	}
+
+	/**
+	 * @param lastHeartBeatTimestamp
+	 *            the lastHeartBeatTimestamp to set
+	 */
+	public void setLastHeartBeatTimestamp(Timestamp lastHeartBeatTimestamp) {
+		this.lastHeartBeatTimestamp = lastHeartBeatTimestamp;
+	}
+
+	/**
+	 * @return the initAtStartup
+	 */
+	public Boolean getInitAtStartup() {
+		return initAtStartup;
+	}
+
+	/**
+	 * @param initAtStartup
+	 *            the initAtStartup to set
+	 */
+	public void setInitAtStartup(Boolean initAtStartup) {
+		this.initAtStartup = initAtStartup;
 	}
 
 }

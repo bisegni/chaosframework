@@ -1,6 +1,6 @@
 //
 //  ControlUnitTest.cpp
-//  ControlSystemLibTest
+//  ChaosFrameworkTest
 //
 //  Created by Claudio Bisegni on 13/02/11.
 //  Copyright 2011 INFN. All rights reserved.
@@ -14,10 +14,10 @@
 #include <chaos/cu_toolkit/ChaosCUToolkit.h>
 #include <chaos/cu_toolkit/ConfigurationManager/ConfigurationManager.h>
 
-/*! \page ChaosCUToolkit_example ChaosCUToolkit Examples
- *  \section sec An basic usage for the ChaosCUToolkit package
+/*! \page page_example_cue ChaosCUToolkit Example
+ *  \section page_example_cue_sec An basic usage for the ChaosCUToolkit package
  *  
- *  \subsection sec Toolkit usage
+ *  \subsection page_example_cue_sec_sub1 Toolkit usage
  *  ChaosCUToolkit has private constructor so it can be used only using singleton pattern,
  *  the only way to get unique isntance is; ChaosCUToolkit::getInstance(). So the first call of
  *  getInstance method will rpovide the CUToolkit and Common layer initial setup.

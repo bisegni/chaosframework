@@ -1,13 +1,13 @@
 //
 //  DeviceDataChannel.h
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Claudio Bisegni on 02/10/11.
 //  Copyright (c) 2011 INFN. All rights reserved.
 //
 
-#ifndef ChaosLib_DeviceDataChannel_h
-#define ChaosLib_DeviceDataChannel_h
+#ifndef ChaosFramework_DeviceDataChannel_h
+#define ChaosFramework_DeviceDataChannel_h
 namespace chaos {
     namespace ui {
         

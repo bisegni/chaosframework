@@ -1,13 +1,13 @@
 //
 //  HLDataApi.h
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Claudio Bisegni on 02/10/11.
 //  Copyright (c) 2011 INFN. All rights reserved.
 //
 
-#ifndef ChaosLib_HLDataApi_h
-#define ChaosLib_HLDataApi_h
+#ifndef ChaosFramework_HLDataApi_h
+#define ChaosFramework_HLDataApi_h
 
 #include <string>
 #include <chaos/ui_toolkit/Common/DeviceDataChannel.h>
@@ -19,7 +19,7 @@ namespace chaos {
          High level api for maning device datasert
          */
         class HLDataApi{
-            friend class CUIToolkit;
+            friend class ChaosUIToolkit;
         
         /*
          * Constructor

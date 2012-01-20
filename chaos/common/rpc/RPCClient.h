@@ -1,13 +1,13 @@
 //
 //  RPCClient.h
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Bisegni Claudio on 27/12/11.
 //  Copyright (c) 2011 INFN. All rights reserved.
 //
 
-#ifndef ControlSystemLib_RPCClient_h
-#define ControlSystemLib_RPCClient_h
+#ifndef ChaosFramework_RPCClient_h
+#define ChaosFramework_RPCClient_h
 
 #include <boost/shared_ptr.hpp>
 #include <string>
@@ -70,7 +70,7 @@ namespace chaos {
                 //check in debug for pointer
             CHAOS_ASSERT(message)
                 // add the address to the message
-            message->addStringValue(CommandManagerConstant::CS_CMDM_REMOTE_HOST_IP, destinationIpAndPort);
+            message->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, destinationIpAndPort);
                 //submite the message
             return submitMessage(message,onThisThread);
         }
@@ -83,7 +83,7 @@ namespace chaos {
                 //check in debug for pointer
             CHAOS_ASSERT(message)
                 // add the address to the message
-            message->addStringValue(CommandManagerConstant::CS_CMDM_REMOTE_HOST_IP, metadataServerAddress);
+            message->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, metadataServerAddress);
                 //submite the message
             return submitMessage(message,onThisThread);
         }

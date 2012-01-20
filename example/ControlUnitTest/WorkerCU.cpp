@@ -1,6 +1,6 @@
     //
     //  File.cpp
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by bisegni on 23/06/11.
     //  Copyright 2011 INFN. All rights reserved.
@@ -58,10 +58,10 @@ WorkerCU::~WorkerCU() {
 void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
         //set the base information
     const char *devIDInChar = _deviceID.c_str();
-    cuSetup.addStringValue(ControlManagerConstant::CS_CM_CU_NAME, "WORKER_CU");
-    cuSetup.addStringValue(ControlManagerConstant::CS_CM_CU_DESCRIPTION, "This is a beautifull CU");
-    cuSetup.addStringValue(ControlManagerConstant::CS_CM_CU_CLASS, "HW1-CLASS1");
-    cuSetup.addInt32Value(ControlManagerConstant::CS_CM_CU_AUTOSTART, 1);
+    cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_NAME, "WORKER_CU");
+    cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_DESCRIPTION, "This is a beautifull CU");
+    cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_CLASS, "HW1-CLASS1");
+    //cuSetup.addInt32Value(CUDefinitionKey::CS_CM_CU_AUTOSTART, 1);
 
     
     //set the default delay for the CU
@@ -89,34 +89,34 @@ void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
     
         //add param to second action
     actionDescription->addParam(ACTION_TWO_PARAM_NAME, 
-                                CommandManagerConstant::CS_CMDM_ACTION_DESC_PAR_TYPE_INT32, 
+                                DataType::TYPE_INT32, 
                                 "integer 32bit action param description for testing purpose");
     
         //setup the dataset
     addAttributeToDataSet(devIDInChar,
                           DS_ELEMENT_1,
                           "describe the element 1 of the dataset",
-                          CommandManagerConstant::CS_CMDM_ACTION_DESC_PAR_TYPE_INT32, 
-                          Output);
+                          DataType::TYPE_INT32, 
+                          DataType::Output);
     
     addAttributeToDataSet(devIDInChar,
                           DS_ELEMENT_2,
                           "describe the element 2 of the dataset",
-                          CommandManagerConstant::CS_CMDM_ACTION_DESC_PAR_TYPE_INT32, 
-                          Bidirectional);
+                          DataType::TYPE_INT32, 
+                          DataType::Bidirectional);
     
     addAttributeToDataSet(devIDInChar,
                           DS_ELEMENT_3,
                           "describe the element 3 of the dataset",
-                          CommandManagerConstant::CS_CMDM_ACTION_DESC_PAR_TYPE_BYTEARRAY, 
-                          Output);
+                          DataType::TYPE_BYTEARRAY, 
+                          DataType::Output);
     
     
     addAttributeToDataSet(devIDInChar,
                           DS_ELEMENT_4,
                           "describe the element 4 of the dataset",
-                          CommandManagerConstant::CS_CMDM_ACTION_DESC_PAR_TYPE_STRING, 
-                          Input);
+                          DataType::TYPE_STRING, 
+                          DataType::Input);
 }
 
 /*

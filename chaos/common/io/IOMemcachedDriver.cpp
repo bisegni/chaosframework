@@ -1,6 +1,6 @@
     //
     //  IOMemcachedDriver.cpp
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by Claudio Bisegni on 13/03/11.
     //  Copyright 2011 INFN. All rights reserved.
@@ -85,13 +85,13 @@ namespace chaos{
         if(!dataToStore) return;
         
             //get the key to store data on the memcached
-        string key = dataToStore->getStringValue(ControlSystemValueConstant::CS_CSV_DEVICE_ID);
+        string key = dataToStore->getStringValue(DataPackKey::CS_CSV_DEVICE_ID);
         SerializationBuffer* serialization = dataToStore->getBSONData();
         if(!serialization) {
             return;
         }
 
-            //boost::mutex::scoped_lock lock(usageMutex);
+        boost::mutex::scoped_lock lock(useOutputChannelMutex);
         mcSetResult = memcached_set(memClient, key.c_str(), key.length(), serialization->getBufferPtr(), serialization->getBufferLen(), 0, 0);
                 //for debug
         if(mcSetResult!=MEMCACHED_SUCCESS) {
@@ -107,7 +107,7 @@ namespace chaos{
      */
     ArrayPointer<CDataWrapper>*  IOMemcachedDriver::retriveData(CDataWrapper * const keyData)  throw(CException) {
             //check for key length
-        string key = keyData->getStringValue(ControlSystemValueConstant::CS_CSV_DEVICE_ID);
+        string key = keyData->getStringValue(DataPackKey::CS_CSV_DEVICE_ID);
         return retriveData(key);
     }
     
@@ -137,6 +137,7 @@ namespace chaos{
         uint32_t flags= 0;
         size_t value_length= 0;
         memcached_return_t mcSetResult = MEMCACHED_SUCCESS;
+        boost::mutex::scoped_lock lock(useInputChannelMutex);
         char* result =  memcached_get(memClientRead, key.c_str(), key.length(), &value_length, &flags,  &mcSetResult);
         if(dim) *dim = value_length;
         return result;
@@ -154,9 +155,9 @@ namespace chaos{
             //shared_ptr<CDataWrapper>  dmStartupConfiguration = newConfigration->getCSDataValue(DataManagerConstant::CS_DM_CONFIGURATION);
         
 
-        if(newConfigration->hasKey(DataManagerConstant::LiveDataConstant::CS_DM_LD_SERVER_ADDRESS) && memClient){
+        if(newConfigration->hasKey(LiveHistoryConfiguration::CS_DM_LD_SERVER_ADDRESS) && memClient){
             LAPP_CFG_ << "Get the DataManager LiveData address value";
-            auto_ptr<CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(DataManagerConstant::LiveDataConstant::CS_DM_LD_SERVER_ADDRESS));
+            auto_ptr<CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(LiveHistoryConfiguration::CS_DM_LD_SERVER_ADDRESS));
                 //update the live data address
         
                 //we need forst to reset all the server list 

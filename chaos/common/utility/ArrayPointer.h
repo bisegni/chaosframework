@@ -1,13 +1,13 @@
     //
     //  ArrayPointer.h
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by Bisegni Claudio on 31/07/11.
     //  Copyright 2011 INFN. All rights reserved.
     //
 
-#ifndef ChaosLib_ArrayPointer_h
-#define ChaosLib_ArrayPointer_h
+#ifndef ChaosFramework_ArrayPointer_h
+#define ChaosFramework_ArrayPointer_h
 
 #include <vector>
 #include <boost/ptr_container/ptr_vector.hpp>

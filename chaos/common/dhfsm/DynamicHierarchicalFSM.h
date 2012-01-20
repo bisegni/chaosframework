@@ -1,6 +1,6 @@
 //
 //  DynamicHierarchicalFSM.h
-//  ChaosLib
+//  ChaosFramework
 //
 //  Created by Bisegni Claudio on 01/11/11.
 //  Copyright (c) 2011 INFN. All rights reserved.

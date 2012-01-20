@@ -3,14 +3,13 @@
  */
 package it.infn.chaos.mds.process;
 
-import java.sql.SQLException;
-import java.util.Collection;
-import java.util.List;
-
 import it.infn.chaos.mds.business.Dataset;
 import it.infn.chaos.mds.business.DatasetAttribute;
 import it.infn.chaos.mds.business.Device;
 import it.infn.chaos.mds.da.DeviceDA;
+
+import java.util.Collection;
+import java.util.List;
 
 import org.ref.server.interapplicationenvironment.ProcessActionDescription;
 import org.ref.server.interapplicationenvironment.ProcessDescription;
@@ -41,6 +40,47 @@ public class ManageDeviceProcess extends RefProcess {
 	}
 
 	/**
+	 * return the startup initialization feature of device
+	 * 
+	 * @param deviceIdentification
+	 * @return
+	 * @throws Throwable
+	 */
+	public boolean isDeviceInitializableAtStartup(String deviceIdentification) throws Throwable {
+		DeviceDA dDA = (DeviceDA) getDataAccessInstance(DeviceDA.class);
+		Device d = dDA.getDeviceFromDeviceIdentification(deviceIdentification);
+		return d!=null?d.getInitAtStartup():false;
+	}
+
+	/**
+	 * 
+	 * @param deviceIdentification
+	 * @param initialized
+	 * @throws Exception 
+	 */
+	public void setDeviceStartupInitizializationOption(String deviceIdentification, boolean init) throws Exception {
+		try {
+			DeviceDA dDA = (DeviceDA) getDataAccessInstance(DeviceDA.class);
+			dDA.setStartupInitializationOption(deviceIdentification, init);
+			commit();
+		} catch (Exception e) {
+			rollback();
+			throw e;
+		}
+	}
+
+	/**
+	 * 
+	 * @param deviceIdentification
+	 * @throws Throwable
+	 */
+	public void swapDeviceStartupInitizializationOption(String deviceIdentification) throws Throwable {
+		DeviceDA dDA = (DeviceDA) getDataAccessInstance(DeviceDA.class);
+		Device d = dDA.getDeviceFromDeviceIdentification(deviceIdentification);
+		setDeviceStartupInitizializationOption(d.getDeviceIdentification(), !d.getInitAtStartup());
+	}
+	
+	/**
 	 * @param d
 	 * @return
 	 * @throws Throwable
@@ -61,9 +101,10 @@ public class ManageDeviceProcess extends RefProcess {
 
 	/**
 	 * Return the dataset attribute list for the dataset
+	 * 
 	 * @param dsAttr
 	 * @return
-	 * @throws Throwable 
+	 * @throws Throwable
 	 */
 	public List<DatasetAttribute> getAttributeForDataset(Dataset dsAttr) throws Throwable {
 		DeviceDA dDA = (DeviceDA) getDataAccessInstance(DeviceDA.class);
@@ -73,7 +114,7 @@ public class ManageDeviceProcess extends RefProcess {
 	/**
 	 * 
 	 * @param datasetAttributes
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void updateDeviceAttributes(Collection<DatasetAttribute> datasetAttributes) throws Exception {
 		DeviceDA dDA = (DeviceDA) getDataAccessInstance(DeviceDA.class);
@@ -86,13 +127,14 @@ public class ManageDeviceProcess extends RefProcess {
 			rollback();
 			throw e;
 		}
-		
+
 	}
 
 	/**
 	 * Delete device by device identification
+	 * 
 	 * @param string
-	 * @throws Throwable 
+	 * @throws Throwable
 	 */
 	public void deleteDeviceByInstance(String deviceIdentification) throws Throwable {
 		DeviceDA dDA = (DeviceDA) getDataAccessInstance(DeviceDA.class);
@@ -104,4 +146,7 @@ public class ManageDeviceProcess extends RefProcess {
 			throw e;
 		}
 	}
+
+
+
 }

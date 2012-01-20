@@ -1,13 +1,13 @@
     //
     //  ControlManager.h
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by Claudio Bisegni on 14/06/11.
     //  Copyright 2011 INFN. All rights reserved.
     //
 
-#ifndef ChaosLib_ControlManager_h
-#define ChaosLib_ControlManager_h
+#ifndef ChaosFramework_ControlManager_h
+#define ChaosFramework_ControlManager_h
 
 #include <queue>
 #include <vector>
