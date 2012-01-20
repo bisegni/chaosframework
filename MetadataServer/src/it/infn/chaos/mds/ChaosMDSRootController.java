@@ -94,7 +94,9 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 				} else if (viewEvent.getEventKind().equals(LiveDataPreferenceView.EVENT_PREFERENCE_ADD_NEW_SERVER)) {
 					msp.addNewServer();
 					notifyEventoToViewWithData(LiveDataPreferenceView.EVENT_PREFERENCE_UPDATE_SERVER_LIST, this, msp.getAllServer());
-				} else if (viewEvent.getEventKind().equals(LiveDataPreferenceView.EVENT_PREFERENCE_UPDATE_SERVER_DATA)) {
+				} else if (viewEvent.getEventKind().equals(LiveDataPreferenceView.EVENT_PREFERENCE_DELETE_SERVER)) {
+					deleteSeletedDataserver();
+				}else if (viewEvent.getEventKind().equals(LiveDataPreferenceView.EVENT_PREFERENCE_UPDATE_SERVER_DATA)) {
 					updateServerData();
 				} else if (viewEvent.getEventKind().equals(DemoAppView.EVENT_DEVICE_SELECTED)) {
 					deviceHasBeenSelected(viewEvent.getEventData());
@@ -120,6 +122,24 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 			DemoAppView view = getViewByKey("VISTA");
 			RefVaadinErrorDialog.shorError(view.getWindow(), "Event Error", e.getMessage());
 		}
+	}
+
+	/**
+	 * @throws Throwable 
+	 * 
+	 */
+	private void deleteSeletedDataserver() throws Throwable {
+		LiveDataPreferenceView view = getViewByKey("VISTA_DUE");
+		Table t = (Table) view.getComponentByKey(LiveDataPreferenceView.KEY_PREFERENCE_TABLE);
+		Collection<Integer> dataServer = (Collection<Integer>) t.getValue();
+		for (Iterator<Integer> iterator = dataServer.iterator(); iterator.hasNext();) {
+			Integer dsIDToUpdate = (Integer) iterator.next();
+			@SuppressWarnings("unchecked")
+			DataServer dsToUpdate = ((BeanContainer<Integer, DataServer>) t.getContainerDataSource()).getItem(dsIDToUpdate).getBean();
+			msp.deleteServer(dsToUpdate);
+		}
+		notifyEventoToViewWithData(LiveDataPreferenceView.EVENT_PREFERENCE_UPDATE_SERVER_LIST, this, msp.getAllServer());
+		
 	}
 
 	/**

@@ -61,7 +61,7 @@ void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
     cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_NAME, "WORKER_CU");
     cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_DESCRIPTION, "This is a beautifull CU");
     cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_CLASS, "HW1-CLASS1");
-    cuSetup.addInt32Value(CUDefinitionKey::CS_CM_CU_AUTOSTART, 1);
+    //cuSetup.addInt32Value(CUDefinitionKey::CS_CM_CU_AUTOSTART, 1);
 
     
     //set the default delay for the CU

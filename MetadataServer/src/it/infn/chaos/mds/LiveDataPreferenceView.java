@@ -46,6 +46,7 @@ public class LiveDataPreferenceView extends RefVaadinBasePanel implements com.va
 		addComponent(liveDataView);
 		liveDataView.getPreferenceTable().setEditable(false);
 		liveDataView.getPreferenceTable().setSelectable(true);
+		liveDataView.getPreferenceTable().setMultiSelect(true);
 		serverListBeanContainer.addListener(this);
 		setComponentKey(KEY_PREFERENCE_TABLE, liveDataView.getPreferenceTable());
 		serverListBeanContainer.setBeanIdProperty("idServer");

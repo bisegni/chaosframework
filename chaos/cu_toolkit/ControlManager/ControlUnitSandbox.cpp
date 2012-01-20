@@ -101,11 +101,7 @@ void ControlUnitSandbox::defineSandboxAndControlUnit(CDataWrapper& masterConfigu
     LAPP_ << "Start the Control Unit:" << CU_IDENTIFIER_C_STREAM << " setup";
     acu->_defineActionAndDataset(masterConfiguration);
     LAPP_ << "Control Unit:" << CU_IDENTIFIER_C_STREAM << " done";
-#if DEBUG
-    LDBG_ << "-------------START "<< CU_IDENTIFIER_C_STREAM << " SETUP------------";
-    LDBG_ << masterConfiguration.getJSONString();
-    LDBG_ << "---------------END "<< CU_IDENTIFIER_C_STREAM << " SETUP------------";
-#endif  
+
     //decode the dataset
     LAPP_ << "Register the action exposed by Control Unit:" << CU_IDENTIFIER_C_STREAM;
     CommandManager::getInstance()->registerAction(acu);

@@ -116,8 +116,11 @@ void MsgPackClient::processBufferElement(CDataWrapper *message) throw(CException
     msgpack::type::raw_ref rawMsg(callSerialization->getBufferPtr() , (uint32_t)callSerialization->getBufferLen());
     try{
         rawResult = localSession.call(RpcActionDefinitionKey::CS_CMDM_RPC_TAG, rawMsg).get<msgpack::type::raw_ref>();
-    } catch(...) {
-        LAPP_ << "Error during message forwarding";
+    } catch (msgpack::type_error& e) {
+        LAPP_ << "Error during message forwarding:"<< e.what();
+        return;
+    } catch (std::exception& e) {
+        LAPP_ << "Error during message forwarding:"<< e.what();
         return;
     }
             //localSession.notify(CommandManagerConstant::CS_CMDM_RPC_TAG, rawMsg);

@@ -213,6 +213,10 @@ void ControlManager::executeOnThread() throw(CException) {
             auto_ptr<CDataWrapper> masterConfiguration(new CDataWrapper(serBuffForGlobalConf->getBufferPtr()));
             masterConfiguration->appendAllElement(cuActionAndDataset);
             
+#if DEBUG
+            LDBG_ << masterConfiguration->getJSONString();
+#endif  
+            
             cusb->initSandbox(masterConfiguration.get());
         }
     } catch (CException& ex) {
@@ -275,12 +279,12 @@ CDataWrapper* ControlManager::initSandbox(CDataWrapper *actionParam) throw (CExc
     CHECK_CU_PRESENCE_IN_MAP_OR_TROW(cuUUID)
     shared_ptr<ControlUnitSandbox> cusb = sanboxMap[cuUUID];
     LAPP_  << "Init Control Unit Sanbox for cu:" << cusb->getCUName() << " with instance:" << cusb->getCUInstance();
-    
+    /*
     auto_ptr<SerializationBuffer> serBuffForGlobalConf(GlobalConfiguration::getInstance()->getConfiguration()->getBSONData());
     auto_ptr<CDataWrapper> masterConfiguration(new CDataWrapper(serBuffForGlobalConf->getBufferPtr()));
-    masterConfiguration->appendAllElement(*cusb->getInternalCUConfiguration());
+    masterConfiguration->appendAllElement(*cusb->getInternalCUConfiguration());*/
     
-    cusb->initSandbox(masterConfiguration.get());
+    cusb->initSandbox(actionParam);
     LAPP_  << "Initialized Control Unit Sanbox:" << cusb->getCUName() << " with instance:" << cusb->getCUInstance();
 
         //sanboxMap[cuUUID]->initSandbox(actionParam);

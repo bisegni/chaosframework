@@ -62,7 +62,7 @@ namespace chaos {
             //! delay beetwen a subseguent cu start method call
         static const char * const CS_CM_THREAD_SCHEDULE_DELAY                   = "cs|cm|cu|thr|sch_del";        
             //! start the CU without metadataserver permission 
-        static const char * const CS_CM_CU_AUTOSTART                        = "cs|cm|cu|autostart";
+        static const char * const CS_CM_CU_AUTOSTART                            = "cs|cm|cu|autostart";
             //! start the CU without metadataserver presence 
         static const char * const CS_CM_CU_AUTOSTART_NO_MS                        = "cs|cm|cu|autostart_no_ms";
             //!key representing the type of parameter
@@ -200,10 +200,12 @@ namespace chaos {
             //!key for action sub command description
         static const char * const CS_CMDM_SUB_CMD                             = "cs|cmdm|sub_cmd";
         
+            //!key for the ip where to send the answer
+        static const char * const CS_CMDM_RESPONSE_HOST_IP                      = "cs|cmdm|rh_resp_ip"; 
             //!key for the answer, it is needed byt the requester to recognize the answer
-        static const char * const CS_CMDM_REMOTE_HOST_RESPONSE_ID            = "cs|cmdm|rh_resp_id"; 
-            //!ker ofr the ip where to send the answer
-        static const char * const CS_CMDM_REMOTE_HOST_IP                     = "cs|cmdm|rh_ip";     
+        static const char * const CS_CMDM_RESPONSE_ID                          = "cs|cmdm|rh_resp_id"; 
+            //!ker ofr the ip where to send the rpc pack
+        static const char * const CS_CMDM_REMOTE_HOST_IP                        = "cs|cmdm|rh_ip";     
     }
     /** @} */ // end of RpcActionDefinitionKey
     

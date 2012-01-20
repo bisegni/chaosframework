@@ -83,12 +83,14 @@ public class ActionHandlerExecutor implements Runnable {
 				e1.printStackTrace();
 			}
 
-			if (actionHandler == null || actionHandler.handler == null)
+			if (actionHandler == null
+				|| actionHandler.handler == null)
 				continue;
 
 			String domain = actionHandler.data.getString(RPCConstants.CS_CMDM_ACTION_DOMAIN);
 			String action = actionHandler.data.getString(RPCConstants.CS_CMDM_ACTION_NAME);
-			if (domain == null && action == null)
+			if (domain == null
+				&& action == null)
 				continue;
 
 			// get info for replay
@@ -96,16 +98,21 @@ public class ActionHandlerExecutor implements Runnable {
 				resultObject = actionHandler.handler._handleAction(domain, action, actionHandler.data);
 
 				if (resultObject != null) {
-					String address = actionHandler.data.containsField(RPCConstants.CS_CMDM_REMOTE_HOST_IP) ? actionHandler.data.getString(RPCConstants.CS_CMDM_REMOTE_HOST_IP) : null;
-					if (address == null)
-						continue;
+					String address = actionHandler.data.containsField(RPCConstants.CS_CMDM_REMOTE_HOST_RESPONSE_IP) ? actionHandler.data.getString(RPCConstants.CS_CMDM_REMOTE_HOST_RESPONSE_IP) : null;
+					if (address == null) {
+						// i need to check if someone ha set another ip as destination
+						if (!resultObject.containsField(RPCConstants.CS_CMDM_REMOTE_HOST_IP))
+							continue;
+					} else {
+						resultObject.remove(RPCConstants.CS_CMDM_REMOTE_HOST_IP);
+						resultObject.append(RPCConstants.CS_CMDM_REMOTE_HOST_IP, address);
+					}
+
 					String answerKey = actionHandler.data.containsField(RPCConstants.CS_CMDM_REMOTE_HOST_RESPONSE_ID) ? actionHandler.data.getString(RPCConstants.CS_CMDM_REMOTE_HOST_RESPONSE_ID) : null;
-					if (answerKey == null)
-						continue;
-					
-					resultObject.append(RPCConstants.CS_CMDM_REMOTE_HOST_IP, address);
-					resultObject.append(RPCConstants.CS_CMDM_REMOTE_HOST_RESPONSE_ID, answerKey);
-					SingletonServices.getInstance().getMdsRpcClient().sendMessage(address, resultObject);
+					if (answerKey != null) {
+						resultObject.append(RPCConstants.CS_CMDM_REMOTE_HOST_RESPONSE_ID, answerKey);
+					}
+					SingletonServices.getInstance().getMdsRpcClient().sendMessage(resultObject);
 				}
 			} catch (RefException e) {
 				e.printStackTrace();

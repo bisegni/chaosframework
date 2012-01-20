@@ -6,6 +6,7 @@ package it.infn.chaos.mds.process;
 import it.infn.chaos.mds.business.DataServer;
 import it.infn.chaos.mds.da.DataServerDA;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import org.ref.server.interapplicationenvironment.ProcessDescription;
@@ -64,5 +65,22 @@ public class ManageServerProcess extends RefProcess {
 	public List<DataServer> getAllServer() throws Throwable {
 		DataServerDA dsDA = (DataServerDA) getDataAccessInstance(DataServerDA.class);
 		return dsDA.getAllDataServer();
+	}
+
+	/**
+	 * remove a dataserver
+	 * @param dsToUpdate
+	 * @throws Exception 
+	 */
+	public void deleteServer(DataServer dsToUpdate) throws Exception {
+		try {
+			DataServerDA dsDA = (DataServerDA) getDataAccessInstance(DataServerDA.class);
+			dsDA.deleteDataserver(dsToUpdate.getIdServer());
+			commit();
+		} catch (Exception e) {
+			rollback();
+			throw e;
+		}
+		
 	}
 }
