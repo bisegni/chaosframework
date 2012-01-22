@@ -155,9 +155,9 @@ namespace chaos{
             //shared_ptr<CDataWrapper>  dmStartupConfiguration = newConfigration->getCSDataValue(DataManagerConstant::CS_DM_CONFIGURATION);
         
 
-        if(newConfigration->hasKey(LiveHistoryConfiguration::CS_DM_LD_SERVER_ADDRESS) && memClient){
+        if(newConfigration->hasKey(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS) && memClient){
             LAPP_CFG_ << "Get the DataManager LiveData address value";
-            auto_ptr<CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(LiveHistoryConfiguration::CS_DM_LD_SERVER_ADDRESS));
+            auto_ptr<CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS));
                 //update the live data address
         
                 //we need forst to reset all the server list 

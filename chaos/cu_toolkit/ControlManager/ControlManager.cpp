@@ -65,8 +65,8 @@ void ControlManager::init() throw(CException) {
     AbstActionDescShrPtr 
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this, 
                                                                                    &ControlManager::initSandbox, 
-                                                                                   chaos::CS_LIB_ACTION_DOMAIN_NAME, 
-                                                                                   chaos::CS_LIB_ACTION_DOMAIN_INIT_CU, 
+                                                                                   ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN, 
+                                                                                   ChaosSystemDomainAndActionLabel::ACTION_CU_INIT, 
                                                                                    "Control Unit initialization system action");
         //add parameter for control unit name
     actionDescription->addParam(INIT_DEINIT_ACTION_CU_PARAM_NAME,
@@ -77,8 +77,8 @@ void ControlManager::init() throw(CException) {
     
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this, 
                                                                                    &ControlManager::deinitSandbox, 
-                                                                                   chaos::CS_LIB_ACTION_DOMAIN_NAME, 
-                                                                                   chaos::CS_LIB_ACTION_DOMAIN_DEINIT_CU, 
+                                                                                   ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN, 
+                                                                                   ChaosSystemDomainAndActionLabel::ACTION_CU_DEINIT, 
                                                                                    "Control Unit initialization system action");
         //add parameter for control unit name
     actionDescription->addParam(INIT_DEINIT_ACTION_CU_PARAM_NAME,
@@ -88,8 +88,8 @@ void ControlManager::init() throw(CException) {
     
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this, 
                                                                                    &ControlManager::startSandbox, 
-                                                                                   chaos::CS_LIB_ACTION_DOMAIN_NAME, 
-                                                                                   chaos::CS_LIB_ACTION_DOMAIN_START_CU, 
+                                                                                   ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN, 
+                                                                                   ChaosSystemDomainAndActionLabel::ACTION_CU_START, 
                                                                                    "Control Unit start system action");
         //add parameter for control unit name
     actionDescription->addParam(INIT_DEINIT_ACTION_CU_PARAM_NAME,
@@ -99,8 +99,8 @@ void ControlManager::init() throw(CException) {
     
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this, 
                                                                                    &ControlManager::stopSandbox, 
-                                                                                   chaos::CS_LIB_ACTION_DOMAIN_NAME, 
-                                                                                   chaos::CS_LIB_ACTION_DOMAIN_STOP_CU, 
+                                                                                   ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN, 
+                                                                                   ChaosSystemDomainAndActionLabel::ACTION_CU_STOP, 
                                                                                    "Control Unit stop system action");
         //add parameter for control unit name
     actionDescription->addParam(INIT_DEINIT_ACTION_CU_PARAM_NAME,

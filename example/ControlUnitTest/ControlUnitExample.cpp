@@ -12,7 +12,6 @@
 #include "WorkerCU.h"
 #include <chaos/common/cconstants.h>
 #include <chaos/cu_toolkit/ChaosCUToolkit.h>
-#include <chaos/cu_toolkit/ConfigurationManager/ConfigurationManager.h>
 
 /*! \page page_example_cue ChaosCUToolkit Example
  *  \section page_example_cue_sec An basic usage for the ChaosCUToolkit package

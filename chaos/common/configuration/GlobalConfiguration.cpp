@@ -85,7 +85,7 @@ void GlobalConfiguration::parseStartupParameters(int argc,const char* argv[]) th
             configuration.appendStringToArray(liveDataServer[idx]);
         }
     }
-    configuration.finalizeArrayForKey(LiveHistoryConfiguration::CS_DM_LD_SERVER_ADDRESS);
+    configuration.finalizeArrayForKey(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS);
     
         //configure metadataserver
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(string, metadataServerAddress, UserOption::OPT_METADATASERVER_ADDRESS, "localhost:5000")
