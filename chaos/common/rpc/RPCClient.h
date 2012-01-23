@@ -1,5 +1,5 @@
 //
-//  RPCClient.h
+//  RpcClient.h
 //  ChaosFramework
 //
 //  Created by Bisegni Claudio on 27/12/11.
@@ -19,7 +19,7 @@
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
 namespace chaos {
-    /*
+    /*!
      Abstract class for standard adapter method for permit, to CommandManager
      the correct initialization for the adapter instance
      */
@@ -30,7 +30,7 @@ namespace chaos {
     protected:
 
     public:
-        /*
+        /*!
          Constructor di default per i
          */
         RpcClient(string *alias){
@@ -41,29 +41,29 @@ namespace chaos {
             }
         };
         
-        /*
+        /*!
          init the rpc adapter
          */
         virtual void init(CDataWrapper*) throw(CException) = 0;
         
-        /*
+        /*!
          start the rpc adapter
          */
         virtual void start() throw(CException) = 0;
         
-        /*
+        /*!
          deinit the rpc adapter
          */
         virtual void deinit() throw(CException) = 0;
         
-        /*
+        /*!
          Submit the message to be send to a certain ip, the datawrapper must contains
          the key CS_CMDM_REMOTE_HOST_IP, the second bool parameter specify, if this is 
          false, the message is sent in another queue thread 
          */
         virtual bool submitMessage(CDataWrapper*, bool) = 0;
         
-        /*
+        /*!
          Submite a message specifieng the address
          */
         bool submitMessage(string& destinationIpAndPort, CDataWrapper *message, bool onThisThread=false) {
@@ -75,7 +75,7 @@ namespace chaos {
             return submitMessage(message,onThisThread);
         }
         
-        /*
+        /*!
          Submite a message specifieng the address
          */
         bool submitMessageToMetadataServer(CDataWrapper *message, bool onThisThread=false) {
@@ -88,7 +88,7 @@ namespace chaos {
             return submitMessage(message,onThisThread);
         }
         
-        /*
+        /*!
          Return the adapter alias
          */
         const char * getName() const {

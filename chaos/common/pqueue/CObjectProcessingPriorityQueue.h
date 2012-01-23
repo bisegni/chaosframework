@@ -50,7 +50,7 @@ namespace chaos {
      
      */
     template<T>
-    class CObjectProcessingPriorityQueue : public CObjectProcessingQueue< PriorityQueuedElement<T>, ority_queue<PriorityQueuedElement*> > {
+    class CObjectProcessingPriorityQueue : public CObjectProcessingQueue< PriorityQueuedElement<T>, priority_queue<PriorityQueuedElement*> > {
         
         
     public:

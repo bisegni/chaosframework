@@ -24,7 +24,7 @@ namespace chaos {
     class RpcServer {
         string *typeName;
     protected:
-        shared_ptr<CommandDispatcher> commandDispatcher;
+        CommandDispatcher *commandDispatcher;
     public:
         RpcServer(string *alias){typeName = alias;};
             /*
@@ -46,7 +46,7 @@ namespace chaos {
             /*
              set the command dispatcher associated to the instance of rpc adapter
              */
-        void setCommandDispatcher(shared_ptr<CommandDispatcher> newCommandDispatcher){
+        void setCommandDispatcher(CommandDispatcher *newCommandDispatcher){
             commandDispatcher = newCommandDispatcher;
         }
         

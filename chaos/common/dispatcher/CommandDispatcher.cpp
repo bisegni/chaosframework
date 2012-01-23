@@ -156,6 +156,6 @@ const char * CommandDispatcher::getName() const {
 /*
  
  */
-void CommandDispatcher::setRpcClient(shared_ptr<RpcClient> rpcClPtr){
+void CommandDispatcher::setRpcClient(RpcClient *rpcClPtr){
     rpcClientPtr = rpcClPtr;
 }
