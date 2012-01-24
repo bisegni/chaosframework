@@ -23,6 +23,11 @@ using namespace boost;
 /*
  */
 CommandManager::CommandManager(){
+    canUseMetadataServer = GlobalConfiguration::getInstance()->isMEtadataServerConfigured();
+    if(canUseMetadataServer){
+        metadataServerAddress = GlobalConfiguration::getInstance()->getMetadataServerAddress();
+    }
+
 }
 
 /*
@@ -112,7 +117,14 @@ void CommandManager::sendMessage(string& serverAndPort, CDataWrapper *message, b
  */
 void CommandManager::sendMessageToMetadataServer(CDataWrapper *message, bool onThisThread) throw(CException) {
     CHAOS_ASSERT(rpcClient.get())
-    rpcClient->submitMessageToMetadataServer(message, onThisThread);
+    if(!canUseMetadataServer) return;
+    //check in debug for pointer
+    CHAOS_ASSERT(message)
+    // add the address to the message
+    message->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, metadataServerAddress);
+
+    
+    rpcClient->submitMessage(message, onThisThread);
 }
 
 /*
@@ -166,7 +178,7 @@ void CommandManager::startupRPCAdapter(CDataWrapper *cmdMgrConfiguration) throw(
     if(rpcServer.get() != NULL){
         LAPP_ << "Got RPC Server: " << rpcServer->getName();
             //set the dispatcher into the rpc adapter
-            rpcServer->setCommandDispatcher(cmdDispatcher);
+            rpcServer->setCommandDispatcher(cmdDispatcher.get());
             //if has been found the adapter, initialize it
         LAPP_ << "Init Rpc Server";
         rpcServer->init(cmdMgrConfiguration);
@@ -182,7 +194,7 @@ void CommandManager::startupRPCAdapter(CDataWrapper *cmdMgrConfiguration) throw(
             //if has been found the adapter, initialize it
         LAPP_ << "Init Rpc Server";
         rpcClient->init(cmdMgrConfiguration);
-        cmdDispatcher->setRpcClient(rpcClient);
+        cmdDispatcher->setRpcClient(rpcClient.get());
     }else{
         LAPP_ << "No RPC Adapter Server";
     }

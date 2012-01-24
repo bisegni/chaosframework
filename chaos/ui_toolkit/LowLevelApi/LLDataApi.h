@@ -10,7 +10,7 @@
 #define ChaosFramework_LLDataApi_h
 
 #include <string>
-
+#include <chaos/common/utility/Singleton.h>
 #include <chaos/ui_toolkit/Common/DeviceDatasetCache.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/io/IODataDriver.h>
@@ -23,15 +23,15 @@ namespace chaos {
         /*
          Low level api for data access api
          */
-        class LLDataApi {
+        class LLDataApi : public Singleton<LLDataApi>  {
             friend class ChaosUIToolkit;
             static DeviceDatasetCache *datasetCache;
             IODataDriver *liveDriver;
-        public:
+
             LLDataApi();
             ~LLDataApi();
             
-            
+          public:          
             /*
              return the last valid dataset for a device key
              */

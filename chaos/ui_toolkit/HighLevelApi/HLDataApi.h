@@ -18,7 +18,7 @@ namespace chaos {
         /*
          High level api for maning device datasert
          */
-        class HLDataApi{
+        class HLDataApi {
             friend class ChaosUIToolkit;
         
         /*

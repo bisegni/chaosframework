@@ -4,14 +4,11 @@
 package it.infn.chaos.mds.rpcaction;
 
 import it.infn.chaos.mds.RPCConstants;
-import it.infn.chaos.mds.business.DataServer;
 import it.infn.chaos.mds.business.Device;
 import it.infn.chaos.mds.da.DataServerDA;
 import it.infn.chaos.mds.da.DeviceDA;
 import it.infn.chaos.mds.rpc.server.RPCActionHadler;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.ListIterator;
 
 import org.bson.BasicBSONObject;
@@ -124,7 +121,12 @@ public class CUQueryHandler extends RPCActionHadler {
 					// at this point i need to check if thedevice need to be initialized
 					if (dDA.isDeviceToBeInitialized(d.getDeviceIdentification())) {
 						// send rpc command to initialize the device
-						result = composeStartupCommandForDeviceIdentification(d.getDeviceIdentification());
+						result = DeviceDescriptionUtility.composeStartupCommandForDeviceIdentification(d.getDeviceIdentification(),dDA , getDataAccessInstance(DataServerDA.class));
+						
+						//set the destination for the message
+						result.append(RPCConstants.CS_CMDM_REMOTE_HOST_IP, d.getNetAddress());
+						result.append(RPCConstants.CS_CMDM_ACTION_DOMAIN, "system");
+						result.append(RPCConstants.CS_CMDM_ACTION_NAME, "initControlUnit");
 					}
 				}
 			}
@@ -139,37 +141,4 @@ public class CUQueryHandler extends RPCActionHadler {
 		}
 		return result;
 	}
-
-	/**
-	 * Compose the BSON object for startup initialization of device
-	 * 
-	 * @param deviceIdentification
-	 * @return
-	 * @throws Throwable
-	 */
-	private BasicBSONObject composeStartupCommandForDeviceIdentification(String deviceIdentification) throws Throwable {
-		BasicBSONObject result = null;
-		DeviceDA dDA = getDataAccessInstance(DeviceDA.class);
-		DataServerDA dsDA = getDataAccessInstance(DataServerDA.class);
-		
-		Device d = dDA.getDeviceFromDeviceIdentification(deviceIdentification);
-		result = (BasicBSONObject) d.toBson();
-		result.append(RPCConstants.CS_CMDM_ACTION_DOMAIN, "system");
-		result.append(RPCConstants.CS_CMDM_ACTION_NAME, "initControlUnit");
-		result.append(RPCConstants.CS_CMDM_REMOTE_HOST_IP, d.getNetAddress());
-		result.append("cu_uuid", d.getCuInstance());
-		result.append(RPCConstants.CONTROL_UNIT_AUTOSTART, 1);
-		//add live server 
-		BasicBSONList liveServers = new BasicBSONList();
-		List<DataServer> list = dsDA.getAllDataServer(true);
-		for (Iterator<DataServer> iterator = list.iterator(); iterator.hasNext();) {
-			DataServer dataServer = (DataServer) iterator.next();
-			liveServers.add(String.format("%s:%d", dataServer.getHostname(), dataServer.getPort()));
-		}
-		if(liveServers.size()>0)result.append(RPCConstants.LIVE_DATASERVER_HOST_PORT, liveServers);
-		result.append(RPCConstants.DEVICE_SCHEDULE_DELAY, 1000000);
-		
-		return result;
-	}
-
 }

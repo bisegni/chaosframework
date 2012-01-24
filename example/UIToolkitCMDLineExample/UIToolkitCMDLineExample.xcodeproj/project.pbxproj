@@ -1,0 +1,262 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		328E76B314CEE4F500A3EA95 /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 328E76B114CEE4F500A3EA95 /* libchaos_common.dylib */; };
+		328E76B414CEE4F500A3EA95 /* libchaos_uitoolkit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 328E76B214CEE4F500A3EA95 /* libchaos_uitoolkit.dylib */; };
+		328E76B614CEE92D00A3EA95 /* UIToolkitCMDLineExample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E76B514CEE92D00A3EA95 /* UIToolkitCMDLineExample.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		32F7233D14CEE3AD00F8F793 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		328E76AE14CEE42B00A3EA95 /* SConstruct */ = {isa = PBXFileReference; lastKnownFileType = text; path = SConstruct; sourceTree = SOURCE_ROOT; };
+		328E76B114CEE4F500A3EA95 /* libchaos_common.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libchaos_common.dylib; path = ../../DerivedData/CHAOSWorkspace/Build/Products/Debug/libchaos_common.dylib; sourceTree = "<group>"; };
+		328E76B214CEE4F500A3EA95 /* libchaos_uitoolkit.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libchaos_uitoolkit.dylib; path = ../../DerivedData/CHAOSWorkspace/Build/Products/Debug/libchaos_uitoolkit.dylib; sourceTree = "<group>"; };
+		328E76B514CEE92D00A3EA95 /* UIToolkitCMDLineExample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UIToolkitCMDLineExample.cpp; sourceTree = SOURCE_ROOT; };
+		32F7233F14CEE3AD00F8F793 /* UIToolkitCMDLineExample */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = UIToolkitCMDLineExample; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		32F7233C14CEE3AD00F8F793 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				328E76B314CEE4F500A3EA95 /* libchaos_common.dylib in Frameworks */,
+				328E76B414CEE4F500A3EA95 /* libchaos_uitoolkit.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		32F7233414CEE3AC00F8F793 = {
+			isa = PBXGroup;
+			children = (
+				328E76B114CEE4F500A3EA95 /* libchaos_common.dylib */,
+				328E76B214CEE4F500A3EA95 /* libchaos_uitoolkit.dylib */,
+				32F7234214CEE3AD00F8F793 /* UIToolkitCMDLineExample */,
+				32F7234014CEE3AD00F8F793 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		32F7234014CEE3AD00F8F793 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				32F7233F14CEE3AD00F8F793 /* UIToolkitCMDLineExample */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		32F7234214CEE3AD00F8F793 /* UIToolkitCMDLineExample */ = {
+			isa = PBXGroup;
+			children = (
+				328E76AE14CEE42B00A3EA95 /* SConstruct */,
+				328E76B514CEE92D00A3EA95 /* UIToolkitCMDLineExample.cpp */,
+			);
+			path = UIToolkitCMDLineExample;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		32F7233E14CEE3AD00F8F793 /* UIToolkitCMDLineExample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 32F7234914CEE3AD00F8F793 /* Build configuration list for PBXNativeTarget "UIToolkitCMDLineExample" */;
+			buildPhases = (
+				32F7233B14CEE3AD00F8F793 /* Sources */,
+				32F7233C14CEE3AD00F8F793 /* Frameworks */,
+				32F7233D14CEE3AD00F8F793 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = UIToolkitCMDLineExample;
+			productName = UIToolkitCMDLineExample;
+			productReference = 32F7233F14CEE3AD00F8F793 /* UIToolkitCMDLineExample */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		32F7233614CEE3AC00F8F793 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0430;
+				ORGANIZATIONNAME = INFN;
+			};
+			buildConfigurationList = 32F7233914CEE3AC00F8F793 /* Build configuration list for PBXProject "UIToolkitCMDLineExample" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 32F7233414CEE3AC00F8F793;
+			productRefGroup = 32F7234014CEE3AD00F8F793 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				32F7233E14CEE3AD00F8F793 /* UIToolkitCMDLineExample */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		32F7233B14CEE3AD00F8F793 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				328E76B614CEE92D00A3EA95 /* UIToolkitCMDLineExample.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		32F7234714CEE3AD00F8F793 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		32F7234814CEE3AD00F8F793 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		32F7234A14CEE3AD00F8F793 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				HEADER_SEARCH_PATHS = (
+					../../,
+					/usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug\"",
+				);
+				OTHER_LDFLAGS = (
+					"-lboost_chrono",
+					"-lmemcached",
+					"-lboost_system",
+					"-lmongoclient",
+					"-lboost_thread",
+					"-lboost_program_options",
+					"-lboost_regex",
+					"-lboost_filesystem",
+					"-Levent",
+					"-lmpio",
+					"-lmsgpack",
+					"-lmsgpack-rpc",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		32F7234B14CEE3AD00F8F793 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				HEADER_SEARCH_PATHS = (
+					../../,
+					/usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug\"",
+				);
+				OTHER_LDFLAGS = (
+					"-lboost_chrono",
+					"-lmemcached",
+					"-lboost_system",
+					"-lmongoclient",
+					"-lboost_thread",
+					"-lboost_program_options",
+					"-lboost_regex",
+					"-lboost_filesystem",
+					"-Levent",
+					"-lmpio",
+					"-lmsgpack",
+					"-lmsgpack-rpc",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		32F7233914CEE3AC00F8F793 /* Build configuration list for PBXProject "UIToolkitCMDLineExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				32F7234714CEE3AD00F8F793 /* Debug */,
+				32F7234814CEE3AD00F8F793 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		32F7234914CEE3AD00F8F793 /* Build configuration list for PBXNativeTarget "UIToolkitCMDLineExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				32F7234A14CEE3AD00F8F793 /* Debug */,
+				32F7234B14CEE3AD00F8F793 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 32F7233614CEE3AC00F8F793 /* Project object */;
+}

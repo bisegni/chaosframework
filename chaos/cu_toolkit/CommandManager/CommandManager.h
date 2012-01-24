@@ -43,6 +43,9 @@ namespace chaos{
         friend class CommandDispatcherRegister;
         friend class ServerDelegator;
         friend class Singleton<CommandManager>;
+        
+        string metadataServerAddress;
+        bool canUseMetadataServer;
             //rpc server isntance
         shared_ptr<RpcServer> rpcServer;
             //rpc server isntance

@@ -202,6 +202,10 @@ namespace chaos {
         
             //!key for the ip where to send the answer
         static const char * const CS_CMDM_RESPONSE_HOST_IP                      = "cs|cmdm|rh_resp_ip"; 
+            //!key for the ip where to send the answer
+        static const char * const CS_CMDM_RESPONSE_DOMAIN                      = "cs|cmdm|rh_resp_domain"; 
+            //!key for the ip where to send the answer
+        static const char * const CS_CMDM_RESPONSE_ACTION                      = "cs|cmdm|rh_resp_action"; 
             //!key for the answer, it is needed byt the requester to recognize the answer
         static const char * const CS_CMDM_RESPONSE_ID                          = "cs|cmdm|rh_resp_id"; 
             //!ker ofr the ip where to send the rpc pack

@@ -200,7 +200,7 @@ void ControlManager::executeOnThread() throw(CException) {
             LERR_  << "Duplicated control unit instance " << cusb->getSandboxName();
             return;
         }
-        LAPP_  << "Control Unit Sanbox:" << cusb->getSandboxName() << " initialized";
+        LAPP_  << "Control Unit Sanbox:" << cusb->getSandboxName() << " ready to work";
             //add sandbox to all map of running cu
         sanboxMap.insert(make_pair(cusb->getCUInstance(), cusb));
         

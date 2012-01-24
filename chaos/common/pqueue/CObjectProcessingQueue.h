@@ -59,6 +59,8 @@ namespace chaos {
                 if(dataRow) processBufferElement(dataRow);
             } catch (CException& ex) {
                 DECODE_CHAOS_EXCEPTION(ex)
+            } catch (...) {
+                LAPP_ << "[CObjectProcessingQueue] Unkown exception";
             } 
             
                 //if weg got a listener notify it

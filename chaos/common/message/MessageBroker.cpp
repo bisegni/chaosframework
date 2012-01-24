@@ -8,14 +8,28 @@
 
 #include "MessageBroker.h"
 #include <chaos/common/global.h>
+#include <boost/lexical_cast.hpp>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
+#define MB_LAPP LAPP_ << "[MessageBroker::init]-" 
 
-#define MB_HEAD "[MessageBroker::init]-" 
+#define CHECK_INITIALIZED  if(initialized){\
+LAPP_ << "MessageBroker already initialized";\
+throw CException(0, "MessageBroker already initialized", "MessageBroker");\
+}
+
+#define CHECK_NOT_INITIALIZED  if(!initialized){\
+LAPP_ << "MessageBroker not initialized";\
+throw CException(1, "MessageBroker not initialized", "MessageBroker");\
+}
+
 
 using namespace chaos;
 
 MessageBroker::MessageBroker(){
+    rpcServer = NULL;
+    rpcClient = NULL;
+    commandDispatcher = NULL;
     canUseMetadataServer = GlobalConfiguration::getInstance()->isMEtadataServerConfigured();
     if(canUseMetadataServer){
         metadataServerAddress = GlobalConfiguration::getInstance()->getMetadataServerAddress();
@@ -31,10 +45,15 @@ MessageBroker::~MessageBroker() {
  * for the rpc client and server and for the dispatcher. All these are here initialized
  */
 void MessageBroker::init() throw(CException) {
-    LAPP_ <<  MB_HEAD << "Init Message Broker";
+    //lock esclusive access to init phase
+    recursive_mutex::scoped_lock  lock(managing_init_deinit_mutex);
+    //chec if initialized
+    CHECK_INITIALIZED
+    
+    MB_LAPP << "Init Message Broker";
     
     //get the dispatcher
-    LAPP_ <<  MB_HEAD  << "Get DefaultCommandDispatcher implementation";
+    MB_LAPP  << "Get DefaultCommandDispatcher implementation";
     commandDispatcher = ObjectFactoryRegister<CommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher");
     
     if(!commandDispatcher) throw CException(0, "CommandDispatcher implementation not found", "MessageBroker::init"); 
@@ -54,59 +73,79 @@ void MessageBroker::init() throw(CException) {
     
     // get the rpc type to instantiate
     string adapterType = globalConfiguration->getStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE);
-    LAPP_ <<  MB_HEAD  << "The Adapter type is: " << adapterType;
+    MB_LAPP  << "The Adapter type is: " << adapterType;
     //construct the rpc server and client name
     string serverName = adapterType+"Server";
     string clientName = adapterType+"Client";
     
     
-    LAPP_ <<  MB_HEAD  << "Trying to startup RPC Server: " << serverName;
+    MB_LAPP  << "Trying to startup RPC Server: " << serverName;
     rpcServer = ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(serverName.c_str());
     if(rpcServer){
-        LAPP_ <<  MB_HEAD  << "Got RPC Server: " << rpcServer->getName();
+        MB_LAPP  << "Got RPC Server: " << rpcServer->getName();
         //set the dispatcher into the rpc adapter
         rpcServer->setCommandDispatcher(commandDispatcher);
         //if has been found the adapter, initialize it
-        LAPP_ <<  MB_HEAD  << "Init Rpc Server";
+        MB_LAPP  << "Init Rpc Server";
         rpcServer->init(globalConfiguration);
     }else{
-        LAPP_ <<  MB_HEAD  << "No RPC Adapter Server";
+        MB_LAPP  << "No RPC Adapter Server";
     }
     
-    LAPP_ <<  MB_HEAD  << "Trying to startup RPC Client: " << clientName;
+    MB_LAPP  << "Trying to startup RPC Client: " << clientName;
     rpcClient = ObjectFactoryRegister<RpcClient>::getInstance()->getNewInstanceByName(clientName.c_str());
     if(rpcClient){
-        LAPP_ <<  MB_HEAD  << "Got RPC Client: " << rpcClient->getName();
+        MB_LAPP  << "Got RPC Client: " << rpcClient->getName();
         //set the dispatcher into the rpc adapter
         //rpcServer->setCommandDispatcher(cmdDispatcher);
         //if has been found the adapter, initialize it
-        LAPP_ <<  MB_HEAD  << "Init Rpc Server";
+        MB_LAPP  << "Init Rpc Server";
         rpcClient->init(globalConfiguration);
         commandDispatcher->setRpcClient(rpcClient);
     }else{
-        LAPP_ <<  MB_HEAD  << "No RPC Adapter Server";
+        MB_LAPP  << "No RPC Adapter Server";
     }
     
-    LAPP_ <<  MB_HEAD  << "Message Broker Initialized";
+    
+    MB_LAPP  << "Message Broker Initialized";
 }
 
 /*!
  * All rpc adapter and command siaptcer are deinitilized
  */
 void MessageBroker::deinit() throw(CException) {
-    LAPP_ <<  MB_HEAD  << "Deinitilizing Message Broker";
     
-    LAPP_ <<  MB_HEAD  << "Deinit RPC Adapter: " << rpcServer->getName();
+    //lock esclusive access to init phase
+    recursive_mutex::scoped_lock  lock(managing_init_deinit_mutex);
+    //chec if initialized
+    CHECK_NOT_INITIALIZED
+
+    MB_LAPP  << "Deinitilizing Message Broker";
+    
+    
+    for (map<string, MessageChannel*>::iterator channnelIter = activeChannel.begin(); 
+         channnelIter != activeChannel.end(); 
+         channnelIter++) {
+        //deinit channel
+        MB_LAPP  << "Deinit channel: " << channnelIter->second->channelID;
+        channnelIter->second->deinit();
+        MB_LAPP  << "Deleting channel: " << channnelIter->second->channelID;
+        delete(channnelIter->second);
+    }
+    MB_LAPP  << "Clear channel map";
+    activeChannel.clear();
+
+    MB_LAPP  << "Deinit RPC Adapter: " << rpcServer->getName();
     rpcServer->deinit();
-    LAPP_ <<  MB_HEAD  << "RPC Adapter deinitialized: " << rpcServer->getName();
+    MB_LAPP  << "RPC Adapter deinitialized: " << rpcServer->getName();
     
-    LAPP_ <<  MB_HEAD  << "Deinit RPC Adapter: " << rpcServer->getName();
+    MB_LAPP  << "Deinit RPC Adapter: " << rpcServer->getName();
     rpcClient->deinit();
-    LAPP_ <<  MB_HEAD  << "RPC Adapter deinitialized: " << rpcServer->getName();
+    MB_LAPP  << "RPC Adapter deinitialized: " << rpcServer->getName();
     
-    LAPP_ <<  MB_HEAD  << "Deinit Command Dispatcher";
+    MB_LAPP  << "Deinit Command Dispatcher";
     commandDispatcher->deinit();
-    LAPP_ <<  MB_HEAD  << "Command Dispatcher deinitialized";
+    MB_LAPP  << "Command Dispatcher deinitialized";
 
 }
 
@@ -114,9 +153,14 @@ void MessageBroker::deinit() throw(CException) {
  * all part are started
  */
 void MessageBroker::start() throw(CException){
-    LAPP_ <<  MB_HEAD  << "Start RPC Adapter: " << rpcServer->getName();
+    MB_LAPP  << "Start RPC Adapter: " << rpcServer->getName();
     rpcServer->start();
-    LAPP_ <<  MB_HEAD  << "RPC Adapter started: " << rpcServer->getName();
+    
+    MB_LAPP << "get the published host and port from rpc server";
+    getPublishedHostAndPort(publishedHostAndPort);
+    MB_LAPP << "Rpc server has been published in: " << publishedHostAndPort;
+    
+    MB_LAPP  << "RPC Adapter started: " << rpcServer->getName();
 }
 
 #pragma mark Action Registration
@@ -136,6 +180,25 @@ void MessageBroker::deregisterAction(DeclareAction* declareActionClass) {
     commandDispatcher->deregisterAction(declareActionClass);
 }
 
+/*!
+ Return the port where the rpc server has been published
+ */
+int MessageBroker::getPublishedPort() {
+    CHAOS_ASSERT(rpcServer);
+    return rpcServer->getPublishedPort();
+}
+
+/*!
+ Fill the parameter withe rigth value of host and port for the internale
+ rpc server of message broker
+ */
+void MessageBroker::getPublishedHostAndPort(string& hostAndPort) {
+    CHAOS_ASSERT(rpcServer);
+
+    hostAndPort = GlobalConfiguration::getInstance()->getLocalServerAddress();
+    hostAndPort.append(":");
+    hostAndPort.append(lexical_cast<string>(rpcServer->getPublishedPort()));
+}
 
 #pragma mark Message Submission
 
@@ -143,7 +206,7 @@ void MessageBroker::deregisterAction(DeclareAction* declareActionClass) {
  Submit a message and information for the destination servers are already setupped into CDataWrapper
  */
 bool MessageBroker::submitMessage(CDataWrapper *message, bool onThisThread) {
-    CHAOS_ASSERT(message)
+    CHAOS_ASSERT(message && rpcClient)
     return rpcClient->submitMessage(message, onThisThread);
 }
 
@@ -151,9 +214,19 @@ bool MessageBroker::submitMessage(CDataWrapper *message, bool onThisThread) {
  Submit a message specifing the destination
  */
 bool MessageBroker::submitMessage(string& serveAndPort, CDataWrapper *message, bool onThisThread) {
+    CHAOS_ASSERT(message && rpcClient)
+    //add answer id to datawrapper
     return rpcClient->submitMessage(serveAndPort, message, onThisThread);
 }
 
+/*!
+ Submite a new request to send to the remote host
+ */
+bool MessageBroker::submiteRequest(string& serveAndPort,  CDataWrapper *request, bool onThisThread) {
+    CHAOS_ASSERT(request && rpcClient)
+    request->addStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_HOST_IP, publishedHostAndPort);
+    return rpcClient->submitMessage(serveAndPort, request, onThisThread);
+}
 
 /*
  Submite a message specifieng the address
@@ -168,3 +241,13 @@ bool MessageBroker::submitMessageToMetadataServer(CDataWrapper *message, bool on
     return submitMessage(message,onThisThread);
 }
 
+/*
+ */
+MessageChannel *MessageBroker::getNewMessageChannelForremoteHost(string& remoteHost, EntityType type) {
+    MessageChannel *channel = new MessageChannel(this, metadataServerAddress);
+    
+    channel->init();
+    
+    activeChannel.insert(make_pair(channel->channelID, channel));
+    return channel;
+}

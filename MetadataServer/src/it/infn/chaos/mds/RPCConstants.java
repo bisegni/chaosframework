@@ -26,9 +26,18 @@ public class RPCConstants {
 	// key action submission error code
 	public static final String	CS_CMDM_ACTION_SUBMISSION_ERROR_CODE	= "cs|cmdm|act_sub_ecode";
 
+	// key
 	public static final String	CS_CMDM_REMOTE_HOST_RESPONSE_IP			= "cs|cmdm|rh_resp_ip";
+
+	// key
 	public static final String	CS_CMDM_REMOTE_HOST_RESPONSE_ID			= "cs|cmdm|rh_resp_id";
+
+	// key
 	public static final String	CS_CMDM_REMOTE_HOST_IP					= "cs|cmdm|rh_ip";
+
+	public static final String	CS_CMDM_RESPONSE_DOMAIN					= "cs|cmdm|rh_resp_domain";
+	// !key for the ip where to send the answer
+	public static final String	CS_CMDM_RESPONSE_ACTION					= "cs|cmdm|rh_resp_action";
 
 	// dataset
 	public static final String	DATASET_DEVICE_ID						= "cs|cm|ds_attr_dom";

@@ -144,8 +144,6 @@
 		326DB4EE14B3B0070018A8D0 /* HLDataApi.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4DB14B3B0070018A8D0 /* HLDataApi.h */; };
 		326DB4EF14B3B0070018A8D0 /* HLInfrastructureApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4DC14B3B0070018A8D0 /* HLInfrastructureApi.cpp */; };
 		326DB4F014B3B0070018A8D0 /* HLInfrastructureApi.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4DD14B3B0070018A8D0 /* HLInfrastructureApi.h */; };
-		326DB4F114B3B0070018A8D0 /* HLRpcApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4DE14B3B0070018A8D0 /* HLRpcApi.cpp */; };
-		326DB4F214B3B0070018A8D0 /* HLRpcApi.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4DF14B3B0070018A8D0 /* HLRpcApi.h */; };
 		326DB4F314B3B0070018A8D0 /* LLDataApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4E114B3B0070018A8D0 /* LLDataApi.cpp */; };
 		326DB4F414B3B0070018A8D0 /* LLDataApi.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4E214B3B0070018A8D0 /* LLDataApi.h */; };
 		326DB4F514B3B0070018A8D0 /* LLRpcApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4E314B3B0070018A8D0 /* LLRpcApi.cpp */; };
@@ -299,8 +297,6 @@
 		326DB4DB14B3B0070018A8D0 /* HLDataApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = HLDataApi.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB4DC14B3B0070018A8D0 /* HLInfrastructureApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = HLInfrastructureApi.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB4DD14B3B0070018A8D0 /* HLInfrastructureApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = HLInfrastructureApi.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB4DE14B3B0070018A8D0 /* HLRpcApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = HLRpcApi.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		326DB4DF14B3B0070018A8D0 /* HLRpcApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = HLRpcApi.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB4E114B3B0070018A8D0 /* LLDataApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LLDataApi.cpp; sourceTree = "<group>"; };
 		326DB4E214B3B0070018A8D0 /* LLDataApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LLDataApi.h; sourceTree = "<group>"; };
 		326DB4E314B3B0070018A8D0 /* LLRpcApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = LLRpcApi.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -710,8 +706,6 @@
 				326DB4DB14B3B0070018A8D0 /* HLDataApi.h */,
 				326DB4DC14B3B0070018A8D0 /* HLInfrastructureApi.cpp */,
 				326DB4DD14B3B0070018A8D0 /* HLInfrastructureApi.h */,
-				326DB4DE14B3B0070018A8D0 /* HLRpcApi.cpp */,
-				326DB4DF14B3B0070018A8D0 /* HLRpcApi.h */,
 			);
 			path = HighLevelApi;
 			sourceTree = "<group>";
@@ -860,7 +854,6 @@
 				326DB4EC14B3B0070018A8D0 /* ChaosUIToolkit.h in Headers */,
 				326DB4EE14B3B0070018A8D0 /* HLDataApi.h in Headers */,
 				326DB4F014B3B0070018A8D0 /* HLInfrastructureApi.h in Headers */,
-				326DB4F214B3B0070018A8D0 /* HLRpcApi.h in Headers */,
 				326DB4F414B3B0070018A8D0 /* LLDataApi.h in Headers */,
 				326DB4F614B3B0070018A8D0 /* LLRpcApi.h in Headers */,
 			);
@@ -1024,7 +1017,6 @@
 				326DB4EB14B3B0070018A8D0 /* ChaosUIToolkit.cpp in Sources */,
 				326DB4ED14B3B0070018A8D0 /* HLDataApi.cpp in Sources */,
 				326DB4EF14B3B0070018A8D0 /* HLInfrastructureApi.cpp in Sources */,
-				326DB4F114B3B0070018A8D0 /* HLRpcApi.cpp in Sources */,
 				326DB4F314B3B0070018A8D0 /* LLDataApi.cpp in Sources */,
 				326DB4F514B3B0070018A8D0 /* LLRpcApi.cpp in Sources */,
 			);
