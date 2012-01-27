@@ -33,7 +33,7 @@ namespace chaos{
 /*
  Base class for control unit execution task
  */
-    class AbstractControlUnit:public Configurable, public DeclareAction, public CUSchemaDB {
+    class AbstractControlUnit:public DeclareAction, public CUSchemaDB {
         friend class ControlUnitSandbox;
         int32_t scheduleDelay;
         string jsonSetupFilePath;
@@ -122,17 +122,17 @@ protected:
         /*
          Receive the evento for set the dataset input element
          */
-        virtual CDataWrapper* setDatasetAttribute(CDataWrapper*) throw (CException) = 0;
+        virtual CDataWrapper* setDatasetAttribute(CDataWrapper*, bool&) throw (CException) = 0;
         
         /*
          Event for update some CU configuration
          */
-        virtual CDataWrapper* updateConfiguration(CDataWrapper*) throw (CException);
+        virtual CDataWrapper* updateConfiguration(CDataWrapper*, bool&) throw (CException);
         
         /*
          Receive the evento for set the dataset input element
          */
-        virtual CDataWrapper* _setDatasetAttribute(CDataWrapper*) throw (CException);
+        virtual CDataWrapper* _setDatasetAttribute(CDataWrapper*, bool&) throw (CException);
         
         /*
          Create a new action description, return the description for let the user to add parameter

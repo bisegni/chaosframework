@@ -27,6 +27,7 @@ throw CException(1, "MessageBroker not initialized", "MessageBroker");\
 using namespace chaos;
 
 MessageBroker::MessageBroker(){
+    initialized = false;
     rpcServer = NULL;
     rpcClient = NULL;
     commandDispatcher = NULL;

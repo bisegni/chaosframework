@@ -104,7 +104,7 @@ namespace chaos{
         /*
          Shutdown the chaos control library
          */
-        CDataWrapper* shutdown(CDataWrapper*) throw (CException);
+        CDataWrapper* shutdown(CDataWrapper*, bool&) throw (CException);
     private:
         CommandManager();
         ~CommandManager();

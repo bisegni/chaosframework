@@ -84,12 +84,10 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
     
     try {
             //syncronously call the action in the current thread 
-        actionResult = actionDescriptionPtr->call(actionDescription);
+        actionResult = actionDescriptionPtr->call(actionDescription, elementPolicy.elementHasBeenDetached);
             
-            //check if need to manage the case that the parameter are managed by the action(propagatio to other function)
-        elementPolicy.needToBeDeleter = !actionResult || !actionResult->hasKey("self_managed_input_param");
         //if needToBeDeleter is false the life of actionDescription depend now form action
-        if(!elementPolicy.needToBeDeleter) return;
+        if(elementPolicy.elementHasBeenDetached) return;
             
             //check if we need to submit a sub command
         if( actionDescription->hasKey( RpcActionDefinitionKey::CS_CMDM_SUB_CMD ) ) {

@@ -81,7 +81,7 @@ bool MsgPackClient::submitMessage(CDataWrapper *message, bool onThisThread) thro
        
             //submit action
         if(onThisThread){
-            ePolicy.needToBeDeleter = false;
+            ePolicy.elementHasBeenDetached = false;
             processBufferElement(message, ePolicy);
         } else {
             CObjectProcessingQueue<CDataWrapper>::push(message);

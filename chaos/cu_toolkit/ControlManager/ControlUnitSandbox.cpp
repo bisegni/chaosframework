@@ -106,7 +106,7 @@ void ControlUnitSandbox::defineSandboxAndControlUnit(CDataWrapper& masterConfigu
     CommandManager::getInstance()->registerAction(acu);
     
     //expose updateConfiguration Methdo to rpc
-    LAPP_ << "Register Sandbox with domain:" << acu->getCUInstance() << " updateConfiguration action";
+    /*LAPP_ << "Register Sandbox with domain:" << acu->getCUInstance() << " updateConfiguration action";
     DeclareAction::addActionDescritionInstance<ControlUnitSandbox>(this, 
                                                                    &ControlUnitSandbox::updateConfiguration, 
                                                                    acu->getCUInstance(), 
@@ -125,7 +125,7 @@ void ControlUnitSandbox::defineSandboxAndControlUnit(CDataWrapper& masterConfigu
                                                                    &ControlUnitSandbox::stopSandbox, 
                                                                    acu->getCUInstance(), 
                                                                    "stopSandbox", 
-                                                                   "Start the control unit manage by this Sandbox");
+                                                                   "Start the control unit manage by this Sandbox");*/
     
     sandboxName.append("Sandbox_");sandboxName.append(acu->getCUName());sandboxName.append("_");sandboxName.append(acu->getCUInstance());    
 }
@@ -139,6 +139,7 @@ void ControlUnitSandbox::defineSandboxAndControlUnit(CDataWrapper& masterConfigu
 void ControlUnitSandbox::initSandbox(CDataWrapper *masterConfiguration) throw (CException) {
     //the lock is need because it's possible initi ad deinit the Sandbox by 
     //system action
+    bool detachParam = false;
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     CHECK_INITIALIZED
     
@@ -152,7 +153,7 @@ void ControlUnitSandbox::initSandbox(CDataWrapper *masterConfiguration) throw (C
     acu->_init(masterConfiguration);
     
     LAPP_ << "Update Control Unit and Sandbox Configuration for:" << CU_IDENTIFIER_C_STREAM;
-    updateConfiguration(masterConfiguration);
+    updateConfiguration(masterConfiguration, detachParam);
     
     //register the actions fot the control unit
     CommandManager::getInstance()->registerAction(this);
@@ -278,7 +279,7 @@ CDataWrapper* ControlUnitSandbox::stopSandbox(CDataWrapper *stopConfiguration) t
 /*
  Update the sandbox configuration. After SB has been configured the configData is sent to ControlUnit
  */
-CDataWrapper* ControlUnitSandbox::updateConfiguration(CDataWrapper *configData) {
+CDataWrapper* ControlUnitSandbox::updateConfiguration(CDataWrapper *configData, bool detachParam) {
     if(!configData) return NULL;
 #if DEBUG
     LDBG_ << "Update Configuration for Control Unit Sandbox:" << CU_IDENTIFIER_C_STREAM;
@@ -294,7 +295,7 @@ CDataWrapper* ControlUnitSandbox::updateConfiguration(CDataWrapper *configData) 
 #if DEBUG
     LDBG_ << "Update Configuration for Internal Control Unit:" << CU_IDENTIFIER_C_STREAM;
 #endif
-    if(acu)acu->updateConfiguration(configData);
+    if(acu)acu->updateConfiguration(configData, detachParam);
     return NULL;
 }
 #pragma mark Private Method

@@ -27,7 +27,7 @@ void MessageChannel::init() throw(CException) {
     //create a new channel id
     channelID = UUIDUtil::generateUUIDLite();
 
-    
+        //register the action for the response
     DeclareAction::addActionDescritionInstance<MessageChannel>(this, 
                                                                &MessageChannel::response, 
                                                                channelID.c_str(), 
@@ -49,10 +49,10 @@ void MessageChannel::deinit() throw(CException) {
 /*! 
  called when a result of an 
  */
-CDataWrapper *MessageChannel::response(CDataWrapper *responseData) {
+CDataWrapper *MessageChannel::response(CDataWrapper *responseData, bool& detachData) {
     if(!responseData->hasKey(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ID)) return NULL;
     CDataWrapper *result = new CDataWrapper();
-    result->addInt32Value("self_managed_input_param", 1);
+    detachData = true;
     
     //lock lk(waith_asnwer_mutex);
     atomic_int_type requestID = responseData->getInt32Value(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ID);

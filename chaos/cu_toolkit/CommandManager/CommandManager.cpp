@@ -146,7 +146,7 @@ void CommandManager::deregisterAction(DeclareAction* declareActionClass) {
 /*
  Init the sandbox
  */
-CDataWrapper* CommandManager::shutdown(CDataWrapper *actionParam) throw (CException) {
+CDataWrapper* CommandManager::shutdown(CDataWrapper *actionParam, bool& detachParam) throw (CException) {
      CHAOS_ASSERT(privLibControllerPtr)
     if(privLibControllerPtr) privLibControllerPtr->stop();
     return NULL;

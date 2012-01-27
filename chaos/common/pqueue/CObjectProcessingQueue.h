@@ -23,7 +23,7 @@ namespace chaos {
     using namespace boost;
     
     typedef struct {
-        bool needToBeDeleter;
+        bool elementHasBeenDetached;
     } ElementManagingPolicy;
     
     /*
@@ -60,9 +60,9 @@ namespace chaos {
                     DELETE_OBJ_POINTER(dataRow);
                     return;
                 }
-                elementPolicy.needToBeDeleter=true;
+                elementPolicy.elementHasBeenDetached=false;
                 if(dataRow) processBufferElement(dataRow, elementPolicy);
-                if(!elementPolicy.needToBeDeleter) return;
+                if(elementPolicy.elementHasBeenDetached) return;
             } catch (CException& ex) {
                 DECODE_CHAOS_EXCEPTION(ex)
             } catch (...) {

@@ -32,7 +32,7 @@ namespace chaos {
      This is Sandbox container where Control Unite live. It abstract all dataserver comunication to Control Unit, take care
      to proxy all metadata server <-> Control unit comunication.
      */
-    class ControlUnitSandbox : public CThreadExecutionTask, public Configurable, public DeclareAction {
+    class ControlUnitSandbox : public CThreadExecutionTask, public DeclareAction {
         
         friend class ControlManager;
         
@@ -125,7 +125,7 @@ namespace chaos {
         /*
          Configure the sandbox and all subtree of the CU
          */
-        CDataWrapper* updateConfiguration(CDataWrapper*);
+        CDataWrapper* updateConfiguration(CDataWrapper*, bool);
         
         /*
          */

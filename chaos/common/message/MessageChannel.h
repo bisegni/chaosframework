@@ -82,7 +82,7 @@ namespace chaos {
          \brief called when a response to a request is received, it will manage thesearch of
          hanlder specified for request id request
          */
-        CDataWrapper* response(CDataWrapper*);
+        CDataWrapper* response(CDataWrapper*, bool&);
         
         /*!
          Set the reqeust id into the CDataWrapper

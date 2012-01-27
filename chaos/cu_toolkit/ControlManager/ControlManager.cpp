@@ -273,7 +273,7 @@ bool ControlManager::isEmpty() const {
 /*
  Sandbox initialization system action
  */
-CDataWrapper* ControlManager::initSandbox(CDataWrapper *actionParam) throw (CException) {
+CDataWrapper* ControlManager::initSandbox(CDataWrapper *actionParam, bool& detachParam) throw (CException) {
     CHECK_AND_RETURN_CU_UUID_PARAM_OR_TROW(actionParam, cuUUID)
     CHECK_CU_PRESENCE_IN_MAP_OR_TROW(cuUUID)
     shared_ptr<ControlUnitSandbox> cusb = sanboxMap[cuUUID];
@@ -293,7 +293,7 @@ CDataWrapper* ControlManager::initSandbox(CDataWrapper *actionParam) throw (CExc
 /*
  Stop the sandbox
  */
-CDataWrapper* ControlManager::deinitSandbox(CDataWrapper *actionParam) throw (CException) {
+CDataWrapper* ControlManager::deinitSandbox(CDataWrapper *actionParam, bool& detachParam) throw (CException) {
     CHECK_AND_RETURN_CU_UUID_PARAM_OR_TROW(actionParam, cuUUID)
     CHECK_CU_PRESENCE_IN_MAP_OR_TROW(cuUUID)
     sanboxMap[cuUUID]->deinitSandbox();
@@ -303,7 +303,7 @@ CDataWrapper* ControlManager::deinitSandbox(CDataWrapper *actionParam) throw (CE
 /*
  Start the sandbox
  */
-CDataWrapper* ControlManager::startSandbox(CDataWrapper *actionParam) throw (CException) {
+CDataWrapper* ControlManager::startSandbox(CDataWrapper *actionParam, bool& detachParam) throw (CException) {
     CHECK_AND_RETURN_CU_UUID_PARAM_OR_TROW(actionParam, cuUUID)
     CHECK_CU_PRESENCE_IN_MAP_OR_TROW(cuUUID)
     sanboxMap[cuUUID]->startSandbox(actionParam);
@@ -313,7 +313,7 @@ CDataWrapper* ControlManager::startSandbox(CDataWrapper *actionParam) throw (CEx
 /*
  Stop the sandbox
  */
-CDataWrapper* ControlManager::stopSandbox(CDataWrapper *actionParam) throw (CException) {
+CDataWrapper* ControlManager::stopSandbox(CDataWrapper *actionParam, bool& detachParam) throw (CException) {
     CHECK_AND_RETURN_CU_UUID_PARAM_OR_TROW(actionParam, cuUUID)
     CHECK_CU_PRESENCE_IN_MAP_OR_TROW(cuUUID)
     sanboxMap[cuUUID]->stopSandbox(actionParam);

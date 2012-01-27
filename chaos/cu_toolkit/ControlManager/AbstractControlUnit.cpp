@@ -287,14 +287,14 @@ void AbstractControlUnit::_deinit() throw(CException) {
 /*
  Receive the evento for set the dataset input element
  */
-CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAttributeValues) throw (CException) {
-    return setDatasetAttribute(datasetAttributeValues);
+CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAttributeValues,  bool& detachParam) throw (CException) {
+    return setDatasetAttribute(datasetAttributeValues, detachParam);
 }
 
 /*
  Update the configuration for all descendand tree in the Control Uniti class struccture
  */
-CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* newConfiguration) throw (CException) {
+CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* newConfiguration, bool& detachParam) throw (CException) {
     map<string, KeyDataStorage*>::iterator iter = keyDataStorageMap.begin();
     KeyDataStorage *tmpKDS = 0L;
     //update the Contorl Unit's KeyDataStorage
