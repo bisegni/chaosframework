@@ -22,6 +22,10 @@ namespace chaos {
     using namespace std;
     using namespace boost;
     
+    typedef struct {
+        bool needToBeDeleter;
+    } ElementManagingPolicy;
+    
     /*
         Base class for the Output Buffer structure
      */
@@ -46,7 +50,7 @@ namespace chaos {
         void executeOnThread() throw(CException) {
                 //get the oldest element
             T* dataRow = NULL;
-            
+            ElementManagingPolicy elementPolicy;
                 //retrive the oldest element
             dataRow = waitAndPop();
             if(!dataRow) return;
@@ -56,7 +60,9 @@ namespace chaos {
                     DELETE_OBJ_POINTER(dataRow);
                     return;
                 }
-                if(dataRow) processBufferElement(dataRow);
+                elementPolicy.needToBeDeleter=true;
+                if(dataRow) processBufferElement(dataRow, elementPolicy);
+                if(!elementPolicy.needToBeDeleter) return;
             } catch (CException& ex) {
                 DECODE_CHAOS_EXCEPTION(ex)
             } catch (...) {
@@ -72,7 +78,7 @@ namespace chaos {
         /*
             Process the oldest element in buffer
          */
-        virtual void processBufferElement(T*) throw(CException) = 0;
+        virtual void processBufferElement(T*, ElementManagingPolicy&) throw(CException) = 0;
         
     public:
         int tag;

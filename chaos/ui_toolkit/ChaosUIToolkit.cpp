@@ -60,6 +60,7 @@ void ChaosUIToolkit::init(int argc, const char* argv[]) throw(CException) {
         LLDataApi::datasetCache = globalDatasetCache;
         UI_LAPP_ << "Init LLRpcApi";
         LLRpcApi::getInstance()->init();
+        UI_LAPP_ << "LLRpcApi Initilized";
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         exit(1);
@@ -70,6 +71,10 @@ void ChaosUIToolkit::init(int argc, const char* argv[]) throw(CException) {
  
  */
 void ChaosUIToolkit::deinit() throw(CException) {
+    
+    UI_LAPP_ << "Deinit LLRpcApi";
+    LLRpcApi::getInstance()->deinit();
+    UI_LAPP_ << "LLRpcApi Deinitialized";
     
     if(globalDatasetCache) {
         globalDatasetCache->deinit();

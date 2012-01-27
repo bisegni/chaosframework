@@ -61,7 +61,7 @@ void DomainActionsScheduler::setDispatcher(CommandDispatcher *newDispatcher) {
 /*
  process the element action to be executed
  */
-void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescription) throw(CException) {
+void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescription, ElementManagingPolicy& elementPolicy) throw(CException) {
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     CDataWrapper *actionResult = NULL;
     string actionName = actionDescription->getStringValue( RpcActionDefinitionKey::CS_CMDM_ACTION_NAME );
@@ -85,7 +85,12 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
     try {
             //syncronously call the action in the current thread 
         actionResult = actionDescriptionPtr->call(actionDescription);
- 
+            
+            //check if need to manage the case that the parameter are managed by the action(propagatio to other function)
+        elementPolicy.needToBeDeleter = !actionResult || !actionResult->hasKey("self_managed_input_param");
+        //if needToBeDeleter is false the life of actionDescription depend now form action
+        if(!elementPolicy.needToBeDeleter) return;
+            
             //check if we need to submit a sub command
         if( actionDescription->hasKey( RpcActionDefinitionKey::CS_CMDM_SUB_CMD ) ) {
                 //there is a subcommand to submit

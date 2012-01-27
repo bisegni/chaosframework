@@ -131,10 +131,25 @@ bool  CommandDispatcher::sendActionResult(CDataWrapper *actionRequest, CDataWrap
     string responseID = actionRequest->getStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ID); 
     string responseIP = actionRequest->getStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_HOST_IP); 
     
-        //fill answer with data for remote ip and request id
+    //fill answer with data for remote ip and request id
     actionResult->addStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ID, responseID);
     //set the response host ip as remote ip where to send the answere
     actionResult->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, responseIP);
+
+    if(!actionRequest->hasKey(RpcActionDefinitionKey::CS_CMDM_RESPONSE_DOMAIN) ||
+       !actionRequest->hasKey(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ACTION) ) {
+        
+        //fill the action doma and name for the response
+        string responseDomain = actionRequest->getStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_DOMAIN); 
+        string responseAction = actionRequest->getStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ACTION); 
+        
+        //set the domain for the response
+        actionResult->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, responseDomain);
+        //set the name of the action for the response
+        actionResult->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, responseAction);
+    }
+    
+    
     
     return rpcClientPtr->submitMessage(actionResult, onThisThread);
 }

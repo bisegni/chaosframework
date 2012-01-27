@@ -14,6 +14,7 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/exception/CException.h>
+#include <chaos/common/thread/CThreadSemaphore.h>
 
 #include <boost/function.hpp>
 #include <boost/thread/condition.hpp>
@@ -21,6 +22,11 @@
 
 namespace chaos {
     class MessageBroker;
+    
+    typedef struct {
+        int rquestID;
+        CDataWrapper *responseData;
+    } RequestInfo;
     
     //! MessageChannel
     /*! 
@@ -43,9 +49,11 @@ namespace chaos {
         //! channel id (action domain)
         string channelID;
         
-        boost::shared_mutex waith_asnwer_mutex;
-        boost::condition    waith_asnwer_condition;
-        typedef boost::shared_lock<boost::shared_mutex> lock;
+        CThreadSemaphore sem;
+        
+        boost::condition          waith_asnwer_condition;
+        boost::mutex               waith_asnwer_mutex;
+        typedef boost::unique_lock<boost::mutex>  lock;
         
         map<atomic_int_type, boost::function<void(CDataWrapper*)> > responsIdHandlerMap;
         map<atomic_int_type, CDataWrapper* > responseIdSyncMap;

@@ -74,13 +74,15 @@ void MsgPackClient::deinit() throw(CException) {
  */
 bool MsgPackClient::submitMessage(CDataWrapper *message, bool onThisThread) throw(CException) {
     CHAOS_ASSERT(message);
+    ElementManagingPolicy ePolicy;
     try{
         if(!message->hasKey( RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP))  
             throw CException(0, "No destination ip in message description", "MsgPackClient::submitMessage");
        
             //submit action
         if(onThisThread){
-            processBufferElement(message);
+            ePolicy.needToBeDeleter = false;
+            processBufferElement(message, ePolicy);
         } else {
             CObjectProcessingQueue<CDataWrapper>::push(message);
         }
@@ -96,7 +98,7 @@ bool MsgPackClient::submitMessage(CDataWrapper *message, bool onThisThread) thro
 /*
  process the element action to be executed
  */
-void MsgPackClient::processBufferElement(CDataWrapper *message) throw(CException) {
+void MsgPackClient::processBufferElement(CDataWrapper *message, ElementManagingPolicy& elementPolicy) throw(CException) {
         //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     vector<string> hostTokens;
     msgpack::type::raw_ref rawResult;

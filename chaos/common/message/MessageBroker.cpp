@@ -108,6 +108,7 @@ void MessageBroker::init() throw(CException) {
     
     
     MB_LAPP  << "Message Broker Initialized";
+    initialized = true;
 }
 
 /*!

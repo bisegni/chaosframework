@@ -36,6 +36,8 @@ int main (int argc, const char* argv[] )
     request->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, "SIMULATED_DEVICE_ID");
     auto_ptr<CDataWrapper>response(mdsChannel->sendRequest("system", "getCurrentDataset", request));
     
+    std::cout << response->getJSONString() << std::endl;
+    
     //! [UITOOLKIT_EX1 Init]
     ChaosUIToolkit::getInstance()->deinit();
     //! [UITOOLKIT_EX1 Init]

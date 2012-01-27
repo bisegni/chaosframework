@@ -27,7 +27,7 @@ namespace chaos {
             //messagepack connection pooling
         msgpack::rpc::session_pool *connectionPolling;
     protected:
-        virtual void processBufferElement(CDataWrapper*) throw(CException);
+        virtual void processBufferElement(CDataWrapper*, ElementManagingPolicy&) throw(CException);
         
     public:
          MsgPackClient(string *alias);

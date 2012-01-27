@@ -26,7 +26,7 @@ namespace chaos {
         /*
          Process the handler
          */
-        void processBufferElement(AbstractAttributeEventHandlerPtr) throw(CException);
+        void processBufferElement(AbstractAttributeEventHandlerPtr, ElementManagingPolicy&) throw(CException);
         
     public:
         /*
