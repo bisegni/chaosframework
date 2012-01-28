@@ -106,7 +106,7 @@ namespace chaos{
          deallocation is managed by rpc client, otherwise("true" value) the caller need to delete the object it self
          \return boolean value to informa is the mesage has been submitted
          */
-        bool  sendActionResult(CDataWrapper*, CDataWrapper*, bool onThisThread=false);
+        bool  sendActionResult(CDataWrapper*, bool onThisThread=false);
         
         //! dispatch the command accordin to protocol
         /*!

@@ -14,7 +14,7 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/exception/CException.h>
-#include <chaos/common/thread/CThreadSemaphore.h>
+#include <chaos/common/thread/MultiKeyObjectWaitSemaphore.h>
 
 #include <boost/function.hpp>
 #include <boost/thread/condition.hpp>
@@ -49,13 +49,13 @@ namespace chaos {
         //! channel id (action domain)
         string channelID;
         
-        CThreadSemaphore sem;
+            //!multi key semaphore for manage the return of the action and result association to the reqeust id
+        MultiKeyObjectWaitSemaphore<atomic_int_type,CDataWrapper*> sem;
         
-        boost::condition          waith_asnwer_condition;
-        boost::mutex               waith_asnwer_mutex;
-        typedef boost::unique_lock<boost::mutex>  lock;
-        
+            //!map to async request and handler
         map<atomic_int_type, boost::function<void(CDataWrapper*)> > responsIdHandlerMap;
+        
+            //!map to sync request and result
         map<atomic_int_type, CDataWrapper* > responseIdSyncMap;
         
         /*!
@@ -86,14 +86,11 @@ namespace chaos {
         
         /*!
          Set the reqeust id into the CDataWrapper
-         */
-        void prepareReqeustPack(CDataWrapper*, boost::function<void(CDataWrapper*)>&);
-        /*!
-         Set the reqeust id into the CDataWrapper
          \param requestPack the request pack to send
          \return the unique request id
          */
-        atomic_int_type prepareReqeustPack(CDataWrapper*);
+        atomic_int_type prepareRequestPackAndSend(const char * const, const char * const, CDataWrapper*, boost::function<void(CDataWrapper*)>*);
+
     public:
         
         /*! 
@@ -114,9 +111,10 @@ namespace chaos {
          \param nodeID id of the node into remote chaos rpc system
          \param actionName name of the actio to call
          \param requestPack the data to send
+         \param millisecToWait waith the response for onli these number of millisec then return
          \return the answer of the request
          */
-        CDataWrapper* sendRequest(const char * const, const char * const, CDataWrapper *);
+        CDataWrapper* sendRequest(const char * const, const char * const, CDataWrapper *, unsigned int millisecToWait=0);
         
     };
     

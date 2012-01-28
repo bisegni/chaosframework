@@ -64,6 +64,11 @@ void DomainActionsScheduler::setDispatcher(CommandDispatcher *newDispatcher) {
 void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescription, ElementManagingPolicy& elementPolicy) throw(CException) {
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     CDataWrapper *actionResult = NULL;
+    CDataWrapper *subCommand = NULL;
+    string responseID;
+    string responseIP;
+    string responseDomain;
+    string responseAction;
     string actionName = actionDescription->getStringValue( RpcActionDefinitionKey::CS_CMDM_ACTION_NAME );
     
     if(!domainActionsContainer->hasActionName(actionName)) {
@@ -83,25 +88,61 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
     if(!canFire) return;
     
     try {
-            //syncronously call the action in the current thread 
-        actionResult = actionDescriptionPtr->call(actionDescription, elementPolicy.elementHasBeenDetached);
-            
-        //if needToBeDeleter is false the life of actionDescription depend now form action
-        if(elementPolicy.elementHasBeenDetached) return;
-            
+            //get sub command if present
             //check if we need to submit a sub command
         if( actionDescription->hasKey( RpcActionDefinitionKey::CS_CMDM_SUB_CMD ) ) {
                 //there is a subcommand to submit
-            CDataWrapper *subCommand = actionDescription->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_SUB_CMD);
-            CHAOS_ASSERT(subCommand);
-                //dipatch the subcommand
+            subCommand = actionDescription->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_SUB_CMD);
+        }
+        
+            //check if request has the rigth key to let chaos lib can manage the answer send operation
+        if(actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ID) &&
+           actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_RESPONSE_HOST_IP) ) {
+        
+            //get infor for answer form the request
+            responseID = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ID); 
+            responseIP = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_HOST_IP); 
+            
+                //we must check this only if we have a destination ip to send the response
+            if(actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_RESPONSE_DOMAIN) &&
+               actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ACTION) ) {
+                    //fill the action doma and name for the response
+                responseDomain = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_DOMAIN); 
+                responseAction = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ACTION); 
+            }
+        }
+        
+        
+            //syncronously call the action in the current thread 
+        actionResult = actionDescriptionPtr->call(actionDescription, elementPolicy.elementHasBeenDetached);
+            
+            //check if we need to submit a sub command
+        if( subCommand ) {
             auto_ptr<CDataWrapper> dispatchSubCommandResult(dispatcher->dispatchCommand(subCommand));
         }
         
         if( actionResult ) {
+                
+            if(responseID.size() && responseIP.size()){
+                //fill answer with data for remote ip and request id
+                actionResult->addStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ID, responseID);
+                    //set the response host ip as remote ip where to send the answere
+                actionResult->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, responseIP);
+                   
+                    //check this only if we have a destionantion
+                if(responseDomain.size() && responseAction.size()){
+                     //set the domain for the response
+                    actionResult->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, responseDomain);
+                    
+                    //set the name of the action for the response
+                    actionResult->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, responseAction);
+                }
+                   
+            }
+           
                 //in any case this result must be LOG
                 //the result of the action action is sent using this thread
-            if(!dispatcher->sendActionResult(actionDescription, actionResult, false)){
+            if(!dispatcher->sendActionResult(actionResult, false)){
                     //the response has not been sent
                 DELETE_OBJ_POINTER(actionResult);
             }

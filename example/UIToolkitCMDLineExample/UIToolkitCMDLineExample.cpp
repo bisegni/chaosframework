@@ -9,6 +9,7 @@
 #include <iostream>
 #include <string>
 
+#include <chaos/common/global.h>
 #include <chaos/common/cconstants.h>
 #include <chaos/ui_toolkit/ChaosUIToolkit.h>
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
@@ -32,11 +33,30 @@ int main (int argc, const char* argv[] )
     
     MessageChannel *mdsChannel = LLRpcApi::getInstance()->getNewMetadataServerChannel();
     
+    LAPP_<< "Prepared request 0";
     CDataWrapper *request=new CDataWrapper();
     request->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, "SIMULATED_DEVICE_ID");
-    auto_ptr<CDataWrapper>response(mdsChannel->sendRequest("system", "getCurrentDataset", request));
     
+        //this method dealloc the requestMemory
+    auto_ptr<CDataWrapper>response(mdsChannel->sendRequest("system", "getCurrentDataset", request));
+    LAPP_<< "request 0 returned";
     std::cout << response->getJSONString() << std::endl;
+    
+        //realloc the memory
+    LAPP_<< "Prepared request 1";
+    request=new CDataWrapper();
+    request->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, "SIMULATED_DEVICE_ID");
+    response.reset(mdsChannel->sendRequest("system", "getCurrentDataset", request, 200));
+    
+    if(response.get())
+        std::cout << response->getJSONString() << std::endl;
+    
+    request=new CDataWrapper();
+    request->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, "SIMULATED_DEVICE_ID");
+    response.reset(mdsChannel->sendRequest("system", "getCurrentDataset", request));
+    
+    if(response.get())
+        std::cout << response->getJSONString() << std::endl;
     
     //! [UITOOLKIT_EX1 Init]
     ChaosUIToolkit::getInstance()->deinit();

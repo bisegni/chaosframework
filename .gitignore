@@ -1,4 +1,6 @@
 ControlSystemLibTest/ChaosCU
+example/UIToolkitCMDLineExample/UIToolkitCMDLineExample
+example/ControlUnitTest/ControlUnitTest
 .DS_Store
 *.xcuserdatad*
 *bisegni*

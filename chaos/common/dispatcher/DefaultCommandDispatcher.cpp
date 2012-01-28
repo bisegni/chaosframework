@@ -114,9 +114,6 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
     try{
         
         if(!commandPack) return resultPack;
-#if DEBUG
-        LDBG_ << "Received Action Pack::" << commandPack->getJSONString();
-#endif
         if(!commandPack->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN))
             throw CException(0, "Action Call with no action domain", "DefaultCommandDispatcher::dispatchCommand");
         

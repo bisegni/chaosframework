@@ -11,7 +11,7 @@
 
 using namespace chaos;
 
-MessageChannel::MessageChannel(MessageBroker *_broker, string& _remoteHost):broker(_broker), remoteHost(_remoteHost),waith_asnwer_mutex(),waith_asnwer_condition() {
+MessageChannel::MessageChannel(MessageBroker *_broker, string& _remoteHost):broker(_broker), remoteHost(_remoteHost) {
 }
 
 MessageChannel::~MessageChannel() {
@@ -51,50 +51,51 @@ void MessageChannel::deinit() throw(CException) {
  */
 CDataWrapper *MessageChannel::response(CDataWrapper *responseData, bool& detachData) {
     if(!responseData->hasKey(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ID)) return NULL;
-    CDataWrapper *result = new CDataWrapper();
-    detachData = true;
-    
-    //lock lk(waith_asnwer_mutex);
-    atomic_int_type requestID = responseData->getInt32Value(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ID);
-     LAPP_ << "new requestd id arrived:" << requestID;
-    //call the handler
-    if(responsIdHandlerMap.count(requestID)>0){
-        responsIdHandlerMap[requestID](responseData);
-    }else{
-
-        //put the result into the sync map result
-        responseIdSyncMap.insert(make_pair(requestID, responseData));
-        sem.unlock();
-        //waith_asnwer_condition.notify_one();
+    atomic_int_type requestID = 0;
+    try {
+        detachData = true;
+        
+            //lock lk(waith_asnwer_mutex);
+        atomic_int_type requestID = responseData->getInt32Value(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ID);
+        LAPP_ << "new requestd id arrived:" << requestID;
+            //call the handler
+        if(responsIdHandlerMap.count(requestID)>0){
+            responsIdHandlerMap[requestID](responseData);
+        }else{
+            sem.setWaithedObjectForKey(requestID, responseData);
+        }
+    } catch (...) {
+        LAPP_ << "An error occuring dispatching the response:" << requestID;
     }
-    return result;
+    return NULL;
 }
 
 /*
  */
-void MessageChannel::prepareReqeustPack(CDataWrapper *requestPack, boost::function<void(CDataWrapper*)>& handler) {
-    
-    atomic_int_type requestID = prepareReqeustPack(requestPack);
-    
-    //register the handler
-    responsIdHandlerMap.insert(make_pair(requestID, handler));
-}
-
-/*!
- Set the reqeust id into the CDataWrapper
- */
-inline atomic_int_type MessageChannel::prepareReqeustPack(CDataWrapper *requestPack) {
-    CHAOS_ASSERT(requestPack)
-    //get new reqeust id
+atomic_int_type MessageChannel::prepareRequestPackAndSend(const char * const nodeID, const char * const actionName, CDataWrapper *requestPack, boost::function<void(CDataWrapper*)> *handler) {
+    CHAOS_ASSERT(nodeID && actionName && requestPack)
+        //get new reqeust id
     atomic_int_type curentRequestID = atomic_increment(&channelRequestIDCounter);
+
+    requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, nodeID);
+    requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, actionName);
+
+    //register the handler
+    if(handler && !handler->empty())
+        responsIdHandlerMap.insert(make_pair(curentRequestID, *handler));
+    else
+        sem.initKey(curentRequestID);
     
-    //add current server as
+        //add current server as
     requestPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ID, curentRequestID);
     requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_DOMAIN, channelID);
     requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ACTION, "response");
     
+    broker->submiteRequest(remoteHost, requestPack);
+    
     return curentRequestID;
 }
+
 /*! 
  called when a result of an 
  */
@@ -113,45 +114,24 @@ void MessageChannel::sendMessage(const char * const nodeID,const char * const ac
  called when a result of an 
  */
 void MessageChannel::sendRequest(const char * const nodeID, const char * const actionName, CDataWrapper *requestPack, boost::function<void(CDataWrapper*)> handler) {
-    CHAOS_ASSERT(nodeID && actionName && requestPack)
-    
-    //add the action and dommain name
-    requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, nodeID);
-    requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, actionName);
-    
-    //get atomicaly request id
-    if(!handler.empty())
-        prepareReqeustPack(requestPack, handler);
-    
-    //send the request
-    broker->submiteRequest(remoteHost, requestPack);
-    
+    prepareRequestPackAndSend(nodeID, actionName, requestPack, &handler);
 }
 
-CDataWrapper* MessageChannel::sendRequest(const char * const nodeID, const char * const actionName, CDataWrapper *requestPack) {
+/*
+ */
+CDataWrapper* MessageChannel::sendRequest(const char * const nodeID, const char * const actionName, CDataWrapper *requestPack, unsigned int millisecToWait) {
     CHAOS_ASSERT(nodeID && actionName && requestPack)
     CDataWrapper *result = NULL;
     //lock lk(waith_asnwer_mutex);
-    atomic_int_type currentRequestID = prepareReqeustPack(requestPack);
+    atomic_int_type currentRequestID =  prepareRequestPackAndSend(nodeID, actionName, requestPack, NULL);
     LAPP_ << "new requestd id to send:" << currentRequestID;
-    
-    //add the action and dommain name
-    requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, nodeID);
-    requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, actionName);
-    
-    //send the request
-    broker->submiteRequest(remoteHost, requestPack);
 
     //waith the answer
     //waith_asnwer_condition.wait(lk);
-    sem.wait();
-    //get the result
-    result = responseIdSyncMap[currentRequestID];
-    
-    LAPP_ << result->getJSONString() << std::endl;
-    //delete the key
-    responseIdSyncMap.erase(currentRequestID);
-    
-    
+    if(millisecToWait)
+        result = sem.wait(currentRequestID, millisecToWait);
+    else
+        result = sem.wait(currentRequestID);
+
     return result;
 }

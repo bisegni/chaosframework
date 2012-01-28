@@ -18,7 +18,6 @@
 #include <chaos/ui_toolkit/Common/DeviceDatasetCache.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLInfrastructureApi.h>
-#include <chaos/ui_toolkit/HighLevelApi/HLRpcApi.h>
 
 namespace chaos{
     //! Default chaos namespace used to group all ui api
