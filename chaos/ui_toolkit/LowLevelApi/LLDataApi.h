@@ -27,7 +27,7 @@ namespace chaos {
             friend class ChaosUIToolkit;
             static DeviceDatasetCache *datasetCache;
             IODataDriver *liveDriver;
-
+            
             LLDataApi();
             ~LLDataApi();
             

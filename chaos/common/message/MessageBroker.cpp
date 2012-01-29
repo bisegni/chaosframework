@@ -13,21 +13,16 @@
 
 #define MB_LAPP LAPP_ << "[MessageBroker::init]-" 
 
-#define CHECK_INITIALIZED  if(initialized){\
-LAPP_ << "MessageBroker already initialized";\
-throw CException(0, "MessageBroker already initialized", "MessageBroker");\
-}
-
-#define CHECK_NOT_INITIALIZED  if(!initialized){\
-LAPP_ << "MessageBroker not initialized";\
-throw CException(1, "MessageBroker not initialized", "MessageBroker");\
-}
-
+#define INIT_STEP   0
+#define DEINIT_STEP 1
 
 using namespace chaos;
 
+   
+/*!
+ 
+ */
 MessageBroker::MessageBroker(){
-    initialized = false;
     rpcServer = NULL;
     rpcClient = NULL;
     commandDispatcher = NULL;
@@ -37,6 +32,8 @@ MessageBroker::MessageBroker(){
     }
 }
 
+/*!
+ */
 MessageBroker::~MessageBroker() {
     
 }
@@ -46,10 +43,8 @@ MessageBroker::~MessageBroker() {
  * for the rpc client and server and for the dispatcher. All these are here initialized
  */
 void MessageBroker::init() throw(CException) {
-    //lock esclusive access to init phase
-    recursive_mutex::scoped_lock  lock(managing_init_deinit_mutex);
-    //chec if initialized
-    CHECK_INITIALIZED
+    //check if initialized
+    SetupStateManager::levelUpFrom(INIT_STEP, "MessageBroker already initialized");
     
     MB_LAPP << "Init Message Broker";
     
@@ -109,7 +104,6 @@ void MessageBroker::init() throw(CException) {
     
     
     MB_LAPP  << "Message Broker Initialized";
-    initialized = true;
 }
 
 /*!
@@ -118,9 +112,7 @@ void MessageBroker::init() throw(CException) {
 void MessageBroker::deinit() throw(CException) {
     
     //lock esclusive access to init phase
-    recursive_mutex::scoped_lock  lock(managing_init_deinit_mutex);
-    //chec if initialized
-    CHECK_NOT_INITIALIZED
+    SetupStateManager::levelUpFrom(DEINIT_STEP, "MessageBroker already deinitialized");
 
     MB_LAPP  << "Deinitilizing Message Broker";
     

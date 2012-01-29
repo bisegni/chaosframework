@@ -16,6 +16,8 @@
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/message/MessageBroker.h>
 #include <chaos/common/message/MessageChannel.h>
+#include <chaos/common/utility/SetupStateManager.h>
+
 namespace chaos {
     namespace ui{
         using namespace boost;  
@@ -23,7 +25,7 @@ namespace chaos {
         /*
          LLRpcApi Class api for rpc system
          */
-        class LLRpcApi : public Singleton<LLRpcApi> {
+        class LLRpcApi : public Singleton<LLRpcApi>, private SetupStateManager {
             friend class ChaosUIToolkit;
             friend class Singleton<LLRpcApi>;
             

@@ -68,6 +68,7 @@ const boost::posix_time::ptime EPOCH(boost::gregorian::date(1970,1,1));
     //chaos assert to debug real badthing
 
 #include "version.h"
+
     //macro for decode the chaos exception
 #define DECODE_CHAOS_EXCEPTION(x) \
 LERR_ << "-----------Exception------------";\
@@ -96,6 +97,7 @@ LAPP_ << "Boost version: " << (BOOST_VERSION / 100000)\
 << "."<< ((BOOST_VERSION / 100) % 1000)<< "."<< (BOOST_VERSION / 100000);\
 LAPP_ << "Compiler Version: " << BOOST_COMPILER;\
 LAPP_ << "-----------------------------------------";\
+
 
 /*
  Abstraction for the server delegator

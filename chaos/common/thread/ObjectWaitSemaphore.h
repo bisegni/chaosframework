@@ -19,27 +19,46 @@ namespace chaos {
         //! Wait sempahore implementation
     /*! \class ObjectWaitSemaphore
      This implementation permit to a thread to be weakupped from another thread. In addition an object can be associated
-     at the istance of this semaphore and all waith method return will return it(if it has been set)
+     at the istance of this semaphore and all waith method return will return it(if it has been set). this class can mange only one thread
+     waiting for one object
+     \tparam T the type of the waited object
      */
     template<typename T>
     class ObjectWaitSemaphore {
+            //! notify that a thread still wating answer
+        bool inWait;
+            //! sign that an unlock has been given with the answer
+        bool answered;
+            //! object waited by waiting lock
         T objecForWait;
+            //! mutext used for unlock and wait esclusive access
         boost::mutex wait_answer_mutex;
+            //! condition variable for wait the answer
         condition_variable wait_answer_condition;
     public:
-        bool answered;
-        bool inWait;
-        
+
+            //!ObjectWaitSemaphore
+        /*! 
+         Default Constructor, initialize all internal variable
+         */
         ObjectWaitSemaphore(){
             objecForWait = NULL;
             answered = false;
             inWait = false;
         }
         
+            //!~ObjectWaitSemaphore
+        /*! 
+         Default Destructor, free the waited object if it's not has been keeped
+         */
         ~ObjectWaitSemaphore(){
             if(objecForWait) delete(objecForWait);
         }
         
+            //!setWaithedObject
+        /*! 
+         set the waited object
+         */
         void setWaithedObject(T _objecForWait){
             boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
             objecForWait = _objecForWait;
