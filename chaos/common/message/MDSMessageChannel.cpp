@@ -10,13 +10,16 @@
 
 using namespace chaos;
 
+    //!Base constructor
+/*!
+ Perform the node notwork construction
+ \param msgBroker the broker used by this channel
+ \param mdsIpAddress the address of metdataserver
+ */
+
 MDSMessageChannel::MDSMessageChannel(MessageBroker *msgBroker,const char * const mdsIpAddress) : MessageChannel(msgBroker, mdsIpAddress) {
     mdsAddress.ipPort = mdsIpAddress;
     mdsAddress.nodeID = "system";
-}
-
-MDSMessageChannel::~MDSMessageChannel() {
-    
 }
 
 //! Send heartbeat
@@ -40,7 +43,6 @@ void MDSMessageChannel::getAllDeviceID(vector<string>&  deviceIDVec, unsigned in
     //send request and wait the response
     auto_ptr<CDataWrapper> allDevicesResponse( MDSMessageChannel::sendRequest(mdsAddress.nodeID.c_str(), "getAllActiveDevice", new CDataWrapper(), millisecToWait));
     
-    
     if(allDevicesResponse.get() && allDevicesResponse->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)){
         //there is a result
         auto_ptr<CMultiTypeDataArrayWrapper> deviceIDresult(allDevicesResponse->getVectorValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID));
@@ -48,6 +50,5 @@ void MDSMessageChannel::getAllDeviceID(vector<string>&  deviceIDVec, unsigned in
         for (int idx = 0; idx < deviceIDresult->size(); idx++) {
             deviceIDVec.push_back(deviceIDresult->getStringElementAtIndex(idx));
         }
-        
     }
 }

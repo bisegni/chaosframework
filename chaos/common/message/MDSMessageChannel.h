@@ -36,7 +36,7 @@ namespace chaos {
          \param mdsIpAddress the address of metdataserver
          */
         MDSMessageChannel(MessageBroker *msgBroker, const char * const mdsIpAddress);
-        ~MDSMessageChannel();
+        
     public:
         
         //! Send heartbeat
