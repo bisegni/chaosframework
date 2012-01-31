@@ -58,7 +58,7 @@ LLRpcApi::~LLRpcApi() {
 
 /*
  */
-MessageChannel *LLRpcApi::getNewMetadataServerChannel() {
+MDSMessageChannel *LLRpcApi::getNewMetadataServerChannel() {
     string serverHost = GlobalConfiguration::getInstance()->getMetadataServerAddress();
-    return rpcMessageBroker->getNewMessageChannelForremoteHost(serverHost, MessageBroker::NORMAL);
+    return static_cast<MDSMessageChannel*>(rpcMessageBroker->getMetadataserverMessageChannel(serverHost));
 }

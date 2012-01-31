@@ -18,13 +18,24 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/dispatcher/CommandDispatcher.h>
+#include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/message/MessageChannel.h>
 #include <chaos/common/utility/SetupStateManager.h>
 
 namespace chaos {
-    
+
     using namespace std;
     using namespace boost;
+    
+    //! Channel Type Enumeration
+    /*!
+     Constants that identify the type of the channel to create
+     */
+    typedef enum {
+        RAW = 0, /*!< Identify a raw channel used to send data pack to remote server */
+        MDS  /*!< Identify a mds specific channel used to send data pack to the metadataserver */
+    } EntityType;
+
     
         //! Message Broker
     /*! 
@@ -46,19 +57,23 @@ namespace chaos {
             //!keep track of active channel
         map<string, MessageChannel*> activeChannel;
         
+        boost::mutex mapChannelAcces;
+        
         string publishedHostAndPort;
         string metadataServerAddress;
         bool canUseMetadataServer;
         
-    public:
-            //! Channel Type Enumeration
-        /*!
-         Constants that identify the type of the channel to create
-         */
-        typedef enum {
-            NORMAL = 0 /*!< Identify a raw channel used to send data pack to remote server */
-        } EntityType;
         
+        //! private raw channel creation
+        /*!
+         Get new message channel for comunicate with remote host
+         \param remoteHost host:port string htat identify the remote host 
+         \param type channel type to create
+         */
+        MessageChannel *getNewMessageChannelForRemoteHost(string& remoteHost, EntityType type);
+        
+    public:
+                
             //! Basic Constructor
         MessageBroker();
         
@@ -139,18 +154,19 @@ namespace chaos {
          Submit a message to the metadata server
          */
         bool submitMessageToMetadataServer(CDataWrapper*, bool onThisThread=false);
-            
-            //! Raw channel creation
-        /*!
-         Get new message channel for comunicate with remote host
-         \param remoteHost host:port string htat identify the remote host 
-         \param type channel type to create
-         */
-        MessageChannel *getNewMessageChannelForremoteHost(string& remoteHost, EntityType type);
-    };
-    
-    
-}
 
+        //!Metadata server channel creation
+        /*!
+         Performe the creation of metadata server
+         */
+        MDSMessageChannel *getMetadataserverMessageChannel(string& remoteHost);
+        
+        //!Channel deallocation
+        /*!
+         Perform the message channel deallocation
+         */
+        void disposeMessageChannel(MessageChannel *messageChannelToDispose);
+    };
+}
 
 #endif

@@ -7,11 +7,14 @@
 //
 
 #include "MessageChannel.h"
+#include <chaos/common/message/MessageBroker.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
 using namespace chaos;
 
-MessageChannel::MessageChannel(MessageBroker *_broker, string& _remoteHost):broker(_broker), remoteHost(_remoteHost) {
+MessageChannel::MessageChannel(MessageBroker *_broker, const char*const _remoteHost):broker(_broker){
+    //create the network address
+    remoteNodeAddress= _remoteHost;
 }
 
 MessageChannel::~MessageChannel() {
@@ -50,14 +53,14 @@ void MessageChannel::deinit() throw(CException) {
  called when a result of an 
  */
 CDataWrapper *MessageChannel::response(CDataWrapper *responseData, bool& detachData) {
-    if(!responseData->hasKey(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ID)) return NULL;
+    if(!responseData->hasKey(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID)) return NULL;
     atomic_int_type requestID = 0;
     try {
         detachData = true;
         
             //lock lk(waith_asnwer_mutex);
-        atomic_int_type requestID = responseData->getInt32Value(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ID);
-        LAPP_ << "new requestd id arrived:" << requestID;
+        atomic_int_type requestID = responseData->getInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID);
+        LDBG_ << "new requestd id arrived:" << requestID;
             //call the handler
         if(responsIdHandlerMap.count(requestID)>0){
             responsIdHandlerMap[requestID](responseData);
@@ -65,7 +68,7 @@ CDataWrapper *MessageChannel::response(CDataWrapper *responseData, bool& detachD
             sem.setWaithedObjectForKey(requestID, responseData);
         }
     } catch (...) {
-        LAPP_ << "An error occuring dispatching the response:" << requestID;
+        LDBG_ << "An error occuring dispatching the response:" << requestID;
     }
     return NULL;
 }
@@ -75,25 +78,26 @@ CDataWrapper *MessageChannel::response(CDataWrapper *responseData, bool& detachD
 atomic_int_type MessageChannel::prepareRequestPackAndSend(const char * const nodeID, const char * const actionName, CDataWrapper *requestPack, boost::function<void(CDataWrapper*)> *handler) {
     CHAOS_ASSERT(nodeID && actionName && requestPack)
         //get new reqeust id
-    atomic_int_type curentRequestID = atomic_increment(&channelRequestIDCounter);
+    atomic_int_type currentRequestID = atomic_increment(&channelRequestIDCounter);
+    LDBG_ << "new requestd id to send:" << currentRequestID;
 
     requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, nodeID);
     requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, actionName);
 
     //register the handler
     if(handler && !handler->empty())
-        responsIdHandlerMap.insert(make_pair(curentRequestID, *handler));
+        responsIdHandlerMap.insert(make_pair(currentRequestID, *handler));
     else
-        sem.initKey(curentRequestID);
+        sem.initKey(currentRequestID);
     
         //add current server as
-    requestPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ID, curentRequestID);
-    requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_DOMAIN, channelID);
-    requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ACTION, "response");
+    requestPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ANSWER_ID, currentRequestID);
+    requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN, channelID);
+    requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION, "response");
     
-    broker->submiteRequest(remoteHost, requestPack);
+    broker->submiteRequest(remoteNodeAddress, requestPack);
     
-    return curentRequestID;
+    return currentRequestID;
 }
 
 /*! 
@@ -107,7 +111,7 @@ void MessageChannel::sendMessage(const char * const nodeID,const char * const ac
     messagePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, actionName);
     
     //send the request
-    broker->submitMessage(remoteHost, messagePack);
+    broker->submitMessage(remoteNodeAddress, messagePack);
 }
 
 /*! 
@@ -124,7 +128,6 @@ CDataWrapper* MessageChannel::sendRequest(const char * const nodeID, const char 
     CDataWrapper *result = NULL;
     //lock lk(waith_asnwer_mutex);
     atomic_int_type currentRequestID =  prepareRequestPackAndSend(nodeID, actionName, requestPack, NULL);
-    LAPP_ << "new requestd id to send:" << currentRequestID;
 
     //waith the answer
     //waith_asnwer_condition.wait(lk);

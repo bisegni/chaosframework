@@ -12,17 +12,16 @@
 #include <string>
 namespace chaos {
         using namespace std;
-        /*
-         Manage an address for a specified endpoint
-         */
-        struct DeviceAddress {
+    //! Represent the abstraction of chaos address of the node
+    /*! \class DeviceAddress
+     this permit to abtsrac the chaos address of single node througt rpc system
+     */
+        typedef struct {
                 //the ipo for the host that run the control unit
             string ipPort;
                 //the instance of control unit that contain the deviceid
-            string cuInstance;
-                //the key that identify the device
-            string deviceID;
-        };
+            string nodeID;
+        } CNodeNetworkAddress;
 }
 #endif
 

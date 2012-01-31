@@ -13,6 +13,8 @@ public class RPCConstants {
 
 	// key for action name definition
 	public static final String	CS_CMDM_ACTION_NAME						= "cs|cmdm|act_name";
+	// !key for the specify the id of the request(the current message is an asnwer)
+	public static final String	CS_CMDM_MESSAGE_ID						= "cs|cmdm|act_msg_id";
 
 	// key action submission result
 	public static final String	CS_CMDM_ACTION_SUBMISSION_RESULT		= "cs|cmdm|act_sub_result";
@@ -27,17 +29,16 @@ public class RPCConstants {
 	public static final String	CS_CMDM_ACTION_SUBMISSION_ERROR_CODE	= "cs|cmdm|act_sub_ecode";
 
 	// key
-	public static final String	CS_CMDM_REMOTE_HOST_RESPONSE_IP			= "cs|cmdm|rh_resp_ip";
-
-	// key
-	public static final String	CS_CMDM_REMOTE_HOST_RESPONSE_ID			= "cs|cmdm|rh_resp_id";
-
-	// key
 	public static final String	CS_CMDM_REMOTE_HOST_IP					= "cs|cmdm|rh_ip";
 
-	public static final String	CS_CMDM_RESPONSE_DOMAIN					= "cs|cmdm|rh_resp_domain";
+	public static final String	CS_CMDM_ANSWER_DOMAIN					= "cs|cmdm|rh_ans_domain";
 	// !key for the ip where to send the answer
-	public static final String	CS_CMDM_RESPONSE_ACTION					= "cs|cmdm|rh_resp_action";
+	public static final String	CS_CMDM_ANSWER_ACTION					= "cs|cmdm|rh_ans_action";
+	// key
+	public static final String	CS_CMDM_REMOTE_HOST_ANSWER_IP			= "cs|cmdm|rh_ans_ip";
+
+	// key
+	public static final String	CS_CMDM_REMOTE_HOST_ANSWER_MESSAGE_ID	= "cs|cmdm|rh_ans_msg_id";
 
 	// dataset
 	public static final String	DATASET_DEVICE_ID						= "cs|cm|ds_attr_dom";

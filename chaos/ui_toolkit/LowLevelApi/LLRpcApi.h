@@ -15,7 +15,7 @@
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/message/MessageBroker.h>
-#include <chaos/common/message/MessageChannel.h>
+#include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/utility/SetupStateManager.h>
 
 namespace chaos {
@@ -52,7 +52,7 @@ namespace chaos {
             /*!
              Return a new channel for talk with metadata server
              */
-            MessageChannel *getNewMetadataServerChannel();
+            MDSMessageChannel *getNewMetadataServerChannel();
         };
     }
 }

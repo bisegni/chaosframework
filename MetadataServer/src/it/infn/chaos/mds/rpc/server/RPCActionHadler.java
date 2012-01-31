@@ -22,8 +22,8 @@ abstract public class RPCActionHadler {
 	private Hashtable<String, DomainActions>	domainHash	= new Hashtable<String, DomainActions>();
 
 	/**
-	 * Initialization method where an hablder must register the domain and
-	 * action alias for witch it can respond
+	 * Initialization method where an hablder must register the domain and action alias for witch it
+	 * can respond
 	 * 
 	 * @throws RefException
 	 */
@@ -130,7 +130,10 @@ abstract public class RPCActionHadler {
 	 * @throws SQLException
 	 */
 	protected void closeDataAccess(DataAccess daToClose, boolean commit) throws SQLException {
-		daToClose.getConnection().commit();
+		if (commit)
+			daToClose.getConnection().commit();
+		else
+			daToClose.getConnection().rollback();
 		daToClose.getConnection().close();
 	}
 

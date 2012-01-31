@@ -10,7 +10,6 @@
 #include <chaos/common/global.h>
 #include <boost/lexical_cast.hpp>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
-
 #define MB_LAPP LAPP_ << "[MessageBroker::init]-" 
 
 #define INIT_STEP   0
@@ -218,7 +217,7 @@ bool MessageBroker::submitMessage(string& serveAndPort, CDataWrapper *message, b
  */
 bool MessageBroker::submiteRequest(string& serveAndPort,  CDataWrapper *request, bool onThisThread) {
     CHAOS_ASSERT(request && rpcClient)
-    request->addStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_HOST_IP, publishedHostAndPort);
+    request->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP, publishedHostAndPort);
     return rpcClient->submitMessage(serveAndPort, request, onThisThread);
 }
 
@@ -237,11 +236,50 @@ bool MessageBroker::submitMessageToMetadataServer(CDataWrapper *message, bool on
 
 /*
  */
-MessageChannel *MessageBroker::getNewMessageChannelForremoteHost(string& remoteHost, EntityType type) {
-    MessageChannel *channel = new MessageChannel(this, metadataServerAddress);
-    
-    channel->init();
-    
-    activeChannel.insert(make_pair(channel->channelID, channel));
+MessageChannel *MessageBroker::getNewMessageChannelForRemoteHost(string& remoteHost, EntityType type) {
+    MessageChannel *channel = NULL;
+    switch (type) {
+        case RAW:
+            channel = new MessageChannel(this, metadataServerAddress.c_str());
+            break;
+            
+        case MDS:
+            channel = new MDSMessageChannel(this, metadataServerAddress.c_str());
+            break;
+    }
+    //check if the channel has been created
+    if(channel){
+        channel->init();
+        boost::mutex::scoped_lock lock(mapChannelAcces);
+        activeChannel.insert(make_pair(channel->channelID, channel));
+    }
     return channel;
+}
+
+//!Metadata server channel creation
+/*!
+ Performe the creation of metadata server
+ */
+MDSMessageChannel *MessageBroker::getMetadataserverMessageChannel(string& remoteHost) {
+    return static_cast<MDSMessageChannel*>(getNewMessageChannelForRemoteHost(remoteHost, MDS));
+}
+
+
+//!Channel deallocation
+/*!
+ Perform the message channel deallocation
+ */
+void MessageBroker::disposeMessageChannel(MessageChannel *messageChannelToDispose) {
+    if(!messageChannelToDispose) return;
+    
+    boost::mutex::scoped_lock lock(mapChannelAcces);
+    
+    //remove the channel as active
+    activeChannel.erase(messageChannelToDispose->channelID);
+    
+    //deallocate it
+    messageChannelToDispose->deinit();
+    
+    //dispose it
+    delete(messageChannelToDispose);
 }

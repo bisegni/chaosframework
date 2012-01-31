@@ -15,6 +15,7 @@
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/thread/MultiKeyObjectWaitSemaphore.h>
+#include <chaos/common/rpcnet/CNodeNetworkAddress.h>
 
 #include <boost/function.hpp>
 #include <boost/thread/condition.hpp>
@@ -42,7 +43,7 @@ namespace chaos {
         atomic_int_type channelRequestIDCounter;
         
             //! remote host where send the message and request
-        string remoteHost;
+        string remoteNodeAddress;
         
             //! channel id (action domain)
         string channelID;
@@ -55,16 +56,6 @@ namespace chaos {
         
             //!map to sync request and result
         map<atomic_int_type, CDataWrapper* > responseIdSyncMap;
-        
-        /*!
-         Private constructor called by MessageBroker
-         */
-        MessageChannel(MessageBroker*, string&);
-        
-        /*!
-         Private destructor called by MessageBroker
-         */
-        ~MessageChannel();
         
         /*!
          Initialization phase of the channel
@@ -88,6 +79,19 @@ namespace chaos {
          \return the unique request id
          */
         atomic_int_type prepareRequestPackAndSend(const char * const, const char * const, CDataWrapper*, boost::function<void(CDataWrapper*)>*);
+   
+    protected:
+        
+        /*!
+         Private constructor called by MessageBroker
+         */
+        MessageChannel(MessageBroker*, const char*const);
+        
+        /*!
+         Private destructor called by MessageBroker
+         */
+        ~MessageChannel();
+
         
     public:
         
@@ -118,5 +122,4 @@ namespace chaos {
     };
     
 }
-#include <chaos/common/message/MessageBroker.h>
 #endif

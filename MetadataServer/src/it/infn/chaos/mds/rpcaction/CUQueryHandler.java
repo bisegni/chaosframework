@@ -48,7 +48,7 @@ public class CUQueryHandler extends RPCActionHadler {
 			if (action.equals(REGISTER_CONTROL_UNIT)) {
 				result = registerControUnit(actionData);
 			} else if (action.equals(HEARTBEAT_CONTROL_UNIT)) {
-				result = heartbeatControUnit(actionData);
+				result = heartbeat(actionData);
 			}
 		}
 		return result;
@@ -60,8 +60,19 @@ public class CUQueryHandler extends RPCActionHadler {
 	 * @param actionData
 	 * @return
 	 */
-	private BasicBSONObject heartbeatControUnit(BasicBSONObject actionData) {
+	private BasicBSONObject heartbeat(BasicBSONObject actionData)  throws Throwable {
 		BasicBSONObject result = null;
+		if(!actionData.containsField(RPCConstants.DATASET_DEVICE_ID)) throw new RefException("Message desn't contain deviceid");
+		DeviceDA dDA = null;
+		try {
+			dDA = getDataAccessInstance(DeviceDA.class);
+			dDA.performDeviceHB(actionData.getString(RPCConstants.DATASET_DEVICE_ID));
+		} catch (Exception e) {
+			throw e;
+		}finally {
+			closeDataAccess(dDA, false);
+		}
+		
 		return result;
 	}
 

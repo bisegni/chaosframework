@@ -36,7 +36,7 @@ public class MSGPackRPCServer extends RPCServer {
 	@Override
 	public void init(int port) throws Throwable {
 		s = new Server();
-		s.listen("localhost", port);
+		s.listen("127.0.0.1", port);
 	}
 
 	/*

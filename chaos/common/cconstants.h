@@ -181,6 +181,9 @@ namespace chaos {
             //!key for action name definition
         static const char * const CS_CMDM_ACTION_NAME                         = "cs|cmdm|act_name";
         
+            //!key for the specify the id of the request(the current message is an asnwer)
+        static const char * const CS_CMDM_MESSAGE_ID                          = "cs|cmdm|act_msg_id"; 
+        
             //!key for action name definition
         static const char * const CS_CMDM_ACTION_DESCRIPTION                  = "cs|cmdm|act_desc";
         
@@ -201,13 +204,13 @@ namespace chaos {
         static const char * const CS_CMDM_SUB_CMD                             = "cs|cmdm|sub_cmd";
         
             //!key for the ip where to send the answer
-        static const char * const CS_CMDM_RESPONSE_HOST_IP                      = "cs|cmdm|rh_resp_ip"; 
+        static const char * const CS_CMDM_ANSWER_HOST_IP                      = "cs|cmdm|rh_ans_ip"; 
             //!key for the ip where to send the answer
-        static const char * const CS_CMDM_RESPONSE_DOMAIN                      = "cs|cmdm|rh_resp_domain"; 
+        static const char * const CS_CMDM_ANSWER_DOMAIN                      = "cs|cmdm|rh_ans_domain"; 
             //!key for the ip where to send the answer
-        static const char * const CS_CMDM_RESPONSE_ACTION                      = "cs|cmdm|rh_resp_action"; 
+        static const char * const CS_CMDM_ANSWER_ACTION                      = "cs|cmdm|rh_ans_action"; 
             //!key for the answer, it is needed byt the requester to recognize the answer
-        static const char * const CS_CMDM_RESPONSE_ID                          = "cs|cmdm|rh_resp_id"; 
+        static const char * const CS_CMDM_ANSWER_ID                          = "cs|cmdm|rh_ans_msg_id"; 
             //!ker ofr the ip where to send the rpc pack
         static const char * const CS_CMDM_REMOTE_HOST_IP                        = "cs|cmdm|rh_ip";     
     }

@@ -65,11 +65,11 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     CDataWrapper *actionResult = NULL;
     CDataWrapper *subCommand = NULL;
-    string responseID;
-    string responseIP;
-    string responseDomain;
-    string responseAction;
-    string actionName = actionDescription->getStringValue( RpcActionDefinitionKey::CS_CMDM_ACTION_NAME );
+    int     answerID;
+    string  answerIP;
+    string  answerDomain;
+    string  answerAction;
+    string  actionName = actionDescription->getStringValue( RpcActionDefinitionKey::CS_CMDM_ACTION_NAME );
     
     if(!domainActionsContainer->hasActionName(actionName)) {
         LAPP_ << "The action " << actionName << " is not present for domain " << domainActionsContainer->getDomainName();
@@ -96,19 +96,19 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
         }
         
             //check if request has the rigth key to let chaos lib can manage the answer send operation
-        if(actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ID) &&
-           actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_RESPONSE_HOST_IP) ) {
+        if(actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ID) &&
+           actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP) ) {
         
             //get infor for answer form the request
-            responseID = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ID); 
-            responseIP = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_HOST_IP); 
+            answerID = actionDescription->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ANSWER_ID); 
+            answerIP = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP); 
             
-                //we must check this only if we have a destination ip to send the response
-            if(actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_RESPONSE_DOMAIN) &&
-               actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ACTION) ) {
-                    //fill the action doma and name for the response
-                responseDomain = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_DOMAIN); 
-                responseAction = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ACTION); 
+                //we must check this only if we have a destination ip to send the answer
+            if(actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN) &&
+               actionDescription->hasKey(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION) ) {
+                    //fill the action doma and name for the answer
+                answerDomain = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN); 
+                answerAction = actionDescription->getStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION); 
             }
         }
         
@@ -123,19 +123,19 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
         
         if( actionResult ) {
                 
-            if(responseID.size() && responseIP.size()){
+            if(answerID && answerIP.size()){
                 //fill answer with data for remote ip and request id
-                actionResult->addStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ID, responseID);
-                    //set the response host ip as remote ip where to send the answere
-                actionResult->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, responseIP);
+                actionResult->addInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID, answerID);
+                    //set the answer host ip as remote ip where to send the answere
+                actionResult->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, answerIP);
                    
                     //check this only if we have a destionantion
-                if(responseDomain.size() && responseAction.size()){
-                     //set the domain for the response
-                    actionResult->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, responseDomain);
+                if(answerDomain.size() && answerAction.size()){
+                     //set the domain for the answer
+                    actionResult->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, answerDomain);
                     
-                    //set the name of the action for the response
-                    actionResult->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, responseAction);
+                    //set the name of the action for the answer
+                    actionResult->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, answerAction);
                 }
                    
             }

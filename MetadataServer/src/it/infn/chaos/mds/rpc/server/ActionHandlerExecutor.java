@@ -98,27 +98,27 @@ public class ActionHandlerExecutor implements Runnable {
 				resultObject = actionHandler.handler._handleAction(domain, action, actionHandler.data);
 
 				if (resultObject != null) {
-					String responseAddress = actionHandler.data.containsField(RPCConstants.CS_CMDM_REMOTE_HOST_RESPONSE_IP) ? actionHandler.data.getString(RPCConstants.CS_CMDM_REMOTE_HOST_RESPONSE_IP) : null;
-					Integer responseID = actionHandler.data.containsField(RPCConstants.CS_CMDM_REMOTE_HOST_RESPONSE_ID) ? actionHandler.data.getInt(RPCConstants.CS_CMDM_REMOTE_HOST_RESPONSE_ID) : null;
-					String reponseDomain = actionHandler.data.containsField(RPCConstants.CS_CMDM_RESPONSE_DOMAIN) ? actionHandler.data.getString(RPCConstants.CS_CMDM_RESPONSE_DOMAIN) : null;
-					String reponseAction = actionHandler.data.containsField(RPCConstants.CS_CMDM_RESPONSE_ACTION) ? actionHandler.data.getString(RPCConstants.CS_CMDM_RESPONSE_ACTION) : null;
+					String responseAddress = actionHandler.data.containsField(RPCConstants.CS_CMDM_REMOTE_HOST_ANSWER_IP) ? actionHandler.data.getString(RPCConstants.CS_CMDM_REMOTE_HOST_ANSWER_IP) : null;
+					Integer responseID = actionHandler.data.containsField(RPCConstants.CS_CMDM_REMOTE_HOST_ANSWER_MESSAGE_ID) ? actionHandler.data.getInt(RPCConstants.CS_CMDM_REMOTE_HOST_ANSWER_MESSAGE_ID) : null;
+					String reponseDomain = actionHandler.data.containsField(RPCConstants.CS_CMDM_ANSWER_DOMAIN) ? actionHandler.data.getString(RPCConstants.CS_CMDM_ANSWER_DOMAIN) : null;
+					String reponseAction = actionHandler.data.containsField(RPCConstants.CS_CMDM_ANSWER_ACTION) ? actionHandler.data.getString(RPCConstants.CS_CMDM_ANSWER_ACTION) : null;
 
 					if (responseAddress != null) {
 						resultObject.append(RPCConstants.CS_CMDM_REMOTE_HOST_IP, responseAddress);
 					}
-					
-					if(responseID != null) {
-						resultObject.append(RPCConstants.CS_CMDM_REMOTE_HOST_RESPONSE_ID, responseID);
+
+					if (responseID != null) {
+						resultObject.append(RPCConstants.CS_CMDM_MESSAGE_ID, responseID);
 					}
-					
-					if(reponseDomain != null) {
+
+					if (reponseDomain != null) {
 						resultObject.append(RPCConstants.CS_CMDM_ACTION_DOMAIN, reponseDomain);
 					}
-					
-					if(reponseAction != null) {
+
+					if (reponseAction != null) {
 						resultObject.append(RPCConstants.CS_CMDM_ACTION_NAME, reponseAction);
 					}
-					
+
 					SingletonServices.getInstance().getMdsRpcClient().sendMessage(resultObject);
 				}
 			} catch (RefException e) {
