@@ -16,12 +16,21 @@ namespace chaos {
     /*! \class DeviceAddress
      this permit to abtsrac the chaos address of single node througt rpc system
      */
-        typedef struct {
+        struct CNodeNetworkAddress{
                 //the ipo for the host that run the control unit
             string ipPort;
                 //the instance of control unit that contain the deviceid
             string nodeID;
-        } CNodeNetworkAddress;
+        };
+ 
+    //! Represent the abstraction of chaos address of the node
+    /*! \class DeviceAddress
+     this permit to abtsrac the chaos address of single node througt rpc system
+     */
+        struct CDeviceNetworkAddress : public CNodeNetworkAddress{
+            //the ipo for the host that run the control unit
+            string deviceID;
+        };
 }
 #endif
 

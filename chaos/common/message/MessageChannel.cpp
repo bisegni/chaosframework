@@ -17,6 +17,10 @@ MessageChannel::MessageChannel(MessageBroker *_broker, const char*const _remoteH
     remoteNodeAddress= _remoteHost;
 }
 
+MessageChannel::MessageChannel(MessageBroker *_broker):broker(_broker){
+
+}
+
 MessageChannel::~MessageChannel() {
     
 }

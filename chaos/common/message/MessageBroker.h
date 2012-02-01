@@ -18,8 +18,7 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/dispatcher/CommandDispatcher.h>
-#include <chaos/common/message/MDSMessageChannel.h>
-#include <chaos/common/message/MessageChannel.h>
+
 #include <chaos/common/utility/SetupStateManager.h>
 
 namespace chaos {
@@ -36,6 +35,9 @@ namespace chaos {
         MDS  /*!< Identify a mds specific channel used to send data pack to the metadataserver */
     } EntityType;
 
+    class MessageChannel;
+    class NetworkAddressMessageChannel;
+    class MDSMessageChannel;
     
         //! Message Broker
     /*! 
@@ -168,5 +170,4 @@ namespace chaos {
         void disposeMessageChannel(MessageChannel *messageChannelToDispose);
     };
 }
-
 #endif

@@ -88,11 +88,21 @@ namespace chaos {
         MessageChannel(MessageBroker*, const char*const);
         
         /*!
+         Private constructor called by MessageBroker
+         */
+        MessageChannel(MessageBroker*);
+        
+        /*!
          Private destructor called by MessageBroker
          */
         ~MessageChannel();
 
-        
+        /*!
+         Update the address of the channel
+         */
+        void setRemoteNodeAddress(string& remoteAddr){
+            remoteNodeAddress = remoteAddr;
+        }
     public:
         
         /*! 

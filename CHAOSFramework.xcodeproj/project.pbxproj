@@ -149,6 +149,9 @@
 		326DB4F514B3B0070018A8D0 /* LLRpcApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4E314B3B0070018A8D0 /* LLRpcApi.cpp */; };
 		326DB4F614B3B0070018A8D0 /* LLRpcApi.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4E414B3B0070018A8D0 /* LLRpcApi.h */; };
 		326EA57814D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 326EA57714D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h */; };
+		3297F22614D96F31004FFE4F /* DeviceChannelMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3297F22514D96F31004FFE4F /* DeviceChannelMessage.cpp */; };
+		3297F22914D96F43004FFE4F /* DeviceChannelMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 3297F22814D96F43004FFE4F /* DeviceChannelMessage.h */; };
+		3297F22B14D96F8D004FFE4F /* NetworkAddressMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3297F22A14D96F8D004FFE4F /* NetworkAddressMessageChannel.h */; };
 		32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */; };
 		32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */; };
 		32AAD78414CD63C6005A097C /* MessageBroker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AAD78314CD63C6005A097C /* MessageBroker.cpp */; };
@@ -307,6 +310,9 @@
 		326DB4E314B3B0070018A8D0 /* LLRpcApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = LLRpcApi.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB4E414B3B0070018A8D0 /* LLRpcApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = LLRpcApi.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326EA57714D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiKeyObjectWaitSemaphore.h; sourceTree = "<group>"; };
+		3297F22514D96F31004FFE4F /* DeviceChannelMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceChannelMessage.cpp; sourceTree = "<group>"; };
+		3297F22814D96F43004FFE4F /* DeviceChannelMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceChannelMessage.h; sourceTree = "<group>"; };
+		3297F22A14D96F8D004FFE4F /* NetworkAddressMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkAddressMessageChannel.h; sourceTree = "<group>"; };
 		32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDSMessageChannel.h; sourceTree = "<group>"; };
 		32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSMessageChannel.cpp; sourceTree = "<group>"; };
 		32AAD78314CD63C6005A097C /* MessageBroker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageBroker.cpp; sourceTree = "<group>"; };
@@ -742,6 +748,9 @@
 				32AAD78914CD772F005A097C /* MessageChannel.h */,
 				32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */,
 				32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */,
+				3297F22514D96F31004FFE4F /* DeviceChannelMessage.cpp */,
+				3297F22814D96F43004FFE4F /* DeviceChannelMessage.h */,
+				3297F22A14D96F8D004FFE4F /* NetworkAddressMessageChannel.h */,
 			);
 			path = message;
 			sourceTree = "<group>";
@@ -838,6 +847,8 @@
 				326EA57814D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h in Headers */,
 				32D68AD014D5D5A7009F290A /* SetupStateManager.h in Headers */,
 				32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */,
+				3297F22914D96F43004FFE4F /* DeviceChannelMessage.h in Headers */,
+				3297F22B14D96F8D004FFE4F /* NetworkAddressMessageChannel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1008,6 +1019,7 @@
 				32AAD78414CD63C6005A097C /* MessageBroker.cpp in Sources */,
 				32AAD78C14CD773F005A097C /* MessageChannel.cpp in Sources */,
 				32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */,
+				3297F22614D96F31004FFE4F /* DeviceChannelMessage.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

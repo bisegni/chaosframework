@@ -9,8 +9,7 @@
 #ifndef CHAOSFramework_MDSMessageChannel_h
 #define CHAOSFramework_MDSMessageChannel_h
 
-#include <chaos/common/message/MessageChannel.h>
-#include <chaos/common/rpcnet/CNodeNetworkAddress.h>
+#include <chaos/common/message/NetworkAddressMessageChannel.h>
 
 #include <vector>
 
@@ -20,22 +19,17 @@ namespace chaos {
     
     //! Message Channel specialize for metadataserver comunication
     /*! 
-     This is the base class for the other toolkit, it thake care to initialize all common
-     resource used for the base chaos function
+     This class represent a message chanel for comunication with the Metadata Server 
      */
-    class MDSMessageChannel : protected MessageChannel {
+    class MDSMessageChannel : public NetworkAddressMessageChannel {
         friend class MessageBroker;
-        
-        //! node address for metadata server
-        CNodeNetworkAddress mdsAddress;
-        
-        //!Base constructor
+    protected:
+        //! base constructor
         /*!
-         Perform the node notwork construction
-         \param msgBroker the broker used by this channel
-         \param mdsIpAddress the address of metdataserver
+         The base constructor prepare the base class constructor call to be adapted for metadataserver comunication. For the MDS the node address is
+         "system"(ip:port:system)
          */
-        MDSMessageChannel(MessageBroker *msgBroker, const char * const mdsIpAddress);
+        MDSMessageChannel(MessageBroker *msgBroker, CNodeNetworkAddress *mdsNodeAddress):NetworkAddressMessageChannel(msgBroker, mdsNodeAddress){}
         
     public:
         
@@ -52,8 +46,18 @@ namespace chaos {
         /*! 
          Return a list of all device id that are active
          \param deviceIDVec an array to contain the returned device id
+         \param millisecToWait delay after wich the wait is interrupt
          */
-        void getAllDeviceID(vector<string>& deviceIDVec, unsigned int millisecToWait=0);
+        int getAllDeviceID(vector<string>& deviceIDVec, unsigned int millisecToWait=0);
+        
+        //! Get node address for identification id
+        /*! 
+         Return the node address for an identification id
+         \param identificationID id for wich we need to get the network address information
+         \param nodeNetworkAddress node address structure to be filled with identification id network info
+         \param millisecToWait delay after wich the wait is interrupt
+         */
+        int getNetworkAddressForDevice(string& identificationID, CDeviceNetworkAddress& deviceNetworkAddress, unsigned int millisecToWait=0);
     };
     
 }

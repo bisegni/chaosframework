@@ -10,6 +10,9 @@
 #include <chaos/common/global.h>
 #include <boost/lexical_cast.hpp>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
+#include <chaos/common/message/MDSMessageChannel.h>
+#include <chaos/common/message/MessageChannel.h>
+
 #define MB_LAPP LAPP_ << "[MessageBroker::init]-" 
 
 #define INIT_STEP   0
@@ -244,7 +247,10 @@ MessageChannel *MessageBroker::getNewMessageChannelForRemoteHost(string& remoteH
             break;
             
         case MDS:
-            channel = new MDSMessageChannel(this, metadataServerAddress.c_str());
+            CNodeNetworkAddress *mdsNodeAddr = new CNodeNetworkAddress();
+            mdsNodeAddr->ipPort = metadataServerAddress.c_str();
+            mdsNodeAddr->nodeID = "system";
+            channel = new MDSMessageChannel(this, mdsNodeAddr);
             break;
     }
     //check if the channel has been created
