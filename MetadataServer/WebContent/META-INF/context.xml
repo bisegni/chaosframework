@@ -2,7 +2,7 @@
 <Context>
 	<Resource name="jdbc/chaosms" auth="Container" type="javax.sql.DataSource"
 		driverClassName="com.mysql.jdbc.Driver" factory="org.apache.commons.dbcp.BasicDataSourceFactory"
-		url="jdbc:mysql://localhost:3306/chaosms" username="chaos" password="chaos"
+		url="jdbc:mysql://192.168.1.3:3306/chaosms" username="chaos" password="chaos"
 		maxActive="100" maxIdle="10" testWhileIdle="true" testOnBorrow="true"
 		testOnReturn="false" validationQuery="SELECT 1" validationInterval="30000"
 		timeBetweenEvictionRunsMillis="30000" defaultAutoCommit="false" defaultTransactionIsolation="READ_COMMITTED">
