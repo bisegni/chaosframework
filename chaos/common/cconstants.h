@@ -180,6 +180,9 @@ namespace chaos {
         
             //!key for action name definition
         static const char * const CS_CMDM_ACTION_NAME                         = "cs|cmdm|act_name";
+
+        //!key for action message
+        static const char * const CS_CMDM_ACTION_MESSAGE                      = "cs|cmdm|act_msg";
         
             //!key for the specify the id of the request(the current message is an asnwer)
         static const char * const CS_CMDM_MESSAGE_ID                          = "cs|cmdm|act_msg_id"; 

@@ -18,7 +18,7 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/dispatcher/CommandDispatcher.h>
-
+#include <chaos/common/rpcnet/CNodeNetworkAddress.h>
 #include <chaos/common/utility/SetupStateManager.h>
 
 namespace chaos {
@@ -32,12 +32,14 @@ namespace chaos {
      */
     typedef enum {
         RAW = 0, /*!< Identify a raw channel used to send data pack to remote server */
-        MDS  /*!< Identify a mds specific channel used to send data pack to the metadataserver */
+        MDS,  /*!< Identify a mds specific channel used to send data pack to the metadataserver */
+        DEVICE  /*!< Identify a device specific channel used to send data pack to the target control unit */
     } EntityType;
 
     class MessageChannel;
     class NetworkAddressMessageChannel;
     class MDSMessageChannel;
+    class DeviceMessageChannel;
     
         //! Message Broker
     /*! 
@@ -69,10 +71,10 @@ namespace chaos {
         //! private raw channel creation
         /*!
          Get new message channel for comunicate with remote host
-         \param remoteHost host:port string htat identify the remote host 
+         \param nodeNetworkAddress node address info
          \param type channel type to create
          */
-        MessageChannel *getNewMessageChannelForRemoteHost(string& remoteHost, EntityType type);
+        MessageChannel *getNewMessageChannelForRemoteHost(CNodeNetworkAddress *nodeNetworkAddress, EntityType type);
         
     public:
                 
@@ -162,7 +164,14 @@ namespace chaos {
          Performe the creation of metadata server
          */
         MDSMessageChannel *getMetadataserverMessageChannel(string& remoteHost);
-        
+
+        //!Device channel creation
+        /*!
+         Performe the creation of device channel
+         \param deviceNetworkAddress device node address
+         */
+        DeviceMessageChannel *getDeviceMessageChannelFromAddress(CDeviceNetworkAddress  *deviceNetworkAddress);
+    
         //!Channel deallocation
         /*!
          Perform the message channel deallocation

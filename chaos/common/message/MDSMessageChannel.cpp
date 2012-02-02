@@ -7,7 +7,7 @@
 //
 
 #include "MDSMessageChannel.h"
-
+#include <chaos/common/message/MessageBroker.h>
 using namespace chaos;
 
 //! Send heartbeat
@@ -16,20 +16,35 @@ using namespace chaos;
  \param identificationID identification id of a device or a client
  */
 void MDSMessageChannel::sendHeartBeatForDeviceID(string& identificationID) {
-    CDataWrapper *hbMessage = new CDataWrapper();
-    hbMessage->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, identificationID);
-    MDSMessageChannel::sendMessage(nodeAddress->nodeID.c_str(), "heartbeat", hbMessage);
+    CDataWrapper hbMessage;
+    hbMessage.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, identificationID);
+    MessageChannel::sendMessage(nodeAddress->nodeID.c_str(), "heartbeat", &hbMessage);
 }
 
+    //! Send dataset to MDS
+/*! 
+ Return a list of all device id that are active
+ \param deviceDataset the CDatawrapper representi the device dataset infromation, th epointer is not disposed
+ \param millisecToWait delay after wich the wait is interrupt
+ */
+int MDSMessageChannel::sendControlUnitDescription(CDataWrapper *deviceDataset, uint32_t millisecToWait) {
+    CHAOS_ASSERT(deviceDataset)
+    string currentBrokerIpPort;
+    getBroker()->getPublishedHostAndPort(currentBrokerIpPort);
+    deviceDataset->addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS, currentBrokerIpPort.c_str());
+    
+    MessageChannel::sendMessage(nodeAddress->nodeID.c_str(), "registerControlUnit", deviceDataset);
+    return 0;
+}
 
 //! Get all active device id
 /*! 
  Return a list of all device id that are active
  \deviceID
  */
-int MDSMessageChannel::getAllDeviceID(vector<string>&  deviceIDVec, unsigned int millisecToWait) {
+int MDSMessageChannel::getAllDeviceID(vector<string>&  deviceIDVec, uint32_t millisecToWait) {
     //send request and wait the response
-    auto_ptr<CDataWrapper> allDevicesResponse( MDSMessageChannel::sendRequest(nodeAddress->nodeID.c_str(), "getAllActiveDevice", new CDataWrapper(), millisecToWait));
+    auto_ptr<CDataWrapper> allDevicesResponse( MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), "getAllActiveDevice", NULL, millisecToWait));
     
     if(allDevicesResponse.get() && allDevicesResponse->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)){
         //there is a result
@@ -47,17 +62,35 @@ int MDSMessageChannel::getAllDeviceID(vector<string>&  deviceIDVec, unsigned int
  Return the node address for an identification id
  nodeNetworkAddress node address structure to be filled with identification id network info
  */
-int MDSMessageChannel::getNetworkAddressForDevice(string& identificationID, CDeviceNetworkAddress& deviceNetworkAddress, unsigned int millisecToWait) {
+CDeviceNetworkAddress *MDSMessageChannel::getNetworkAddressForDevice(string& identificationID, uint32_t millisecToWait) {
     CDataWrapper *callData = new CDataWrapper();
+    CDeviceNetworkAddress *deviceNetworkAddress = NULL;
     callData->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, identificationID);
     //send request and wait the response
-    auto_ptr<CDataWrapper> nodeNetworkInfromation( MDSMessageChannel::sendRequest(nodeAddress->nodeID.c_str(), "getNodeNetworkAddress", callData, millisecToWait));
+    auto_ptr<CDataWrapper> nodeNetworkInfromation( MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), "getNodeNetworkAddress", callData, millisecToWait));
     
     if(nodeNetworkInfromation.get() && nodeNetworkInfromation->hasKey(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS) && nodeNetworkInfromation->hasKey(CUDefinitionKey::CS_CM_CU_INSTANCE)){
         //there is a result
-        deviceNetworkAddress.ipPort = nodeNetworkInfromation->getStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS);
-        deviceNetworkAddress.nodeID = nodeNetworkInfromation->getStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE);
-        deviceNetworkAddress.deviceID = identificationID;
+        deviceNetworkAddress = new CDeviceNetworkAddress();
+        deviceNetworkAddress->ipPort = nodeNetworkInfromation->getStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS);
+        deviceNetworkAddress->nodeID = nodeNetworkInfromation->getStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE);
+        deviceNetworkAddress->deviceID = identificationID;
     }
-    return nodeNetworkInfromation.get() == NULL;
+    return deviceNetworkAddress;
+}
+
+
+//! Get curent dataset for device
+/*! 
+ Return the node address for an identification id
+ \param identificationID id for wich we need to get the network address information
+ \param millisecToWait delay after wich the wait is interrupt
+ \return if the infromation is found, a CDataWrapper for dataset desprition is returned
+ */
+CDataWrapper* MDSMessageChannel::getLastDatasetForDevice(string& identificationID, uint32_t millisecToWait) {
+    CDataWrapper *callData = new CDataWrapper();
+    callData->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, identificationID);
+    //send request and wait the response
+    CDataWrapper *deviceInitInformation = MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), "getCurrentDataset", callData, millisecToWait);
+    return deviceInitInformation;
 }

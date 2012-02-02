@@ -18,13 +18,14 @@ using namespace std;
 using namespace chaos;
 using boost::shared_ptr;
 
-boost::mutex ChaosCUToolkit::monitor;
-boost::condition ChaosCUToolkit::endWaithCondition;
-
+//boost::mutex ChaosCUToolkit::monitor;
+//boost::condition ChaosCUToolkit::endWaithCondition;
+WaitSemaphore ChaosCUToolkit::waitCloseSemaphore;
 /*
  *
  */
 void ChaosCUToolkit::init(int argc, const char* argv[])  throw(CException) {
+    SetupStateManager::levelUpFrom(0, "ChaosCUToolkit already initialized");
     try {
             //init common stage
         ChaosCommon<ChaosCUToolkit>::init(argc, argv);
@@ -71,7 +72,7 @@ void ChaosCUToolkit::init(int argc, const char* argv[])  throw(CException) {
  */ 
 void ChaosCUToolkit::start(bool waithUntilEnd, bool deinitiOnEnd){
         //lock o monitor for waith the end
-    lock lk(monitor);
+    SetupStateManager::levelUpFrom(1, "ChaosCUToolkit already started");
     try {
         LAPP_ << "Starting CHAOS Control System Library";
             //start command manager, this manager must be the last to startup
@@ -92,7 +93,8 @@ void ChaosCUToolkit::start(bool waithUntilEnd, bool deinitiOnEnd){
         LAPP_ << "CHAOS Control System Library Started";
         LAPP_ << "-----------------------------------------";
         //at this point i must with for end signal
-        if(waithUntilEnd)endWaithCondition.wait(lk);
+        if(waithUntilEnd)/*endWaithCondition.wait(lk);*/
+            waitCloseSemaphore.wait();
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         exit(1);
@@ -106,9 +108,11 @@ void ChaosCUToolkit::start(bool waithUntilEnd, bool deinitiOnEnd){
  Stop the toolkit execution
  */
 void ChaosCUToolkit::stop() {
-    lock lk(monitor);
+    SetupStateManager::levelDownFrom(2, "ChaosCUToolkit already stoped");
+    //lock lk(monitor);
         //unlock the condition for end start method
-    endWaithCondition.notify_one();
+    //endWaithCondition.notify_one();
+    waitCloseSemaphore.unlock();
 }
 
 /*
@@ -116,7 +120,7 @@ void ChaosCUToolkit::stop() {
  */
 void ChaosCUToolkit::deinit() {
     LAPP_ << "Stopping CHAOS Control System Library";
-    
+    SetupStateManager::levelDownFrom(1, "ChaosCUToolkit already deinitialized");
         //start Control Manager
     LAPP_ << "Stopping Control Manager";
     ControlManager::getInstance()->deinit();
@@ -149,7 +153,8 @@ void ChaosCUToolkit::addControlUnit(AbstractControlUnit *newCU) {
  *
  */
 void ChaosCUToolkit::signalHanlder(int signalNumber) {
-    lock lk(monitor);
+    //lock lk(monitor);
         //unlock the condition for end start method
-    endWaithCondition.notify_one();
+    //endWaithCondition.notify_one();
+     waitCloseSemaphore.unlock();
 }

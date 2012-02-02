@@ -99,6 +99,8 @@ atomic_int_type MessageChannel::prepareRequestPackAndSend(const char * const nod
     requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_DOMAIN, channelID);
     requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_ACTION, "response");
     
+    //the message need to be put in a subobject with the current key: CS_CMDM_ACTION_MESSAGE
+    
     broker->submiteRequest(remoteNodeAddress, requestPack);
     
     return currentRequestID;
@@ -107,31 +109,35 @@ atomic_int_type MessageChannel::prepareRequestPackAndSend(const char * const nod
 /*! 
  called when a result of an 
  */
-void MessageChannel::sendMessage(const char * const nodeID,const char * const actionName, CDataWrapper *messagePack) {
-    CHAOS_ASSERT(nodeID && actionName && messagePack)
-    
+void MessageChannel::sendMessage(const char * const nodeID,const char * const actionName, CDataWrapper * const messagePack) {
+    CHAOS_ASSERT(nodeID && actionName)
+    CDataWrapper *dataPack = new CDataWrapper();
     //add the action and dommain name
-    messagePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, nodeID);
-    messagePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, actionName);
-    
+    dataPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, nodeID);
+    dataPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, actionName);
+    if(messagePack)dataPack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *messagePack);
     //send the request
-    broker->submitMessage(remoteNodeAddress, messagePack);
+    broker->submitMessage(remoteNodeAddress, dataPack);
 }
 
 /*! 
  called when a result of an 
  */
-void MessageChannel::sendRequest(const char * const nodeID, const char * const actionName, CDataWrapper *requestPack, boost::function<void(CDataWrapper*)> handler) {
-    prepareRequestPackAndSend(nodeID, actionName, requestPack, &handler);
+void MessageChannel::sendRequest(const char * const nodeID, const char * const actionName, CDataWrapper * const requestPack, boost::function<void(CDataWrapper*)> handler) {
+    CDataWrapper *dataPack = new CDataWrapper();
+    if(requestPack)dataPack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *requestPack);
+    prepareRequestPackAndSend(nodeID, actionName, dataPack, &handler);
 }
 
 /*
  */
-CDataWrapper* MessageChannel::sendRequest(const char * const nodeID, const char * const actionName, CDataWrapper *requestPack, unsigned int millisecToWait) {
-    CHAOS_ASSERT(nodeID && actionName && requestPack)
+CDataWrapper* MessageChannel::sendRequest(const char * const nodeID, const char * const actionName, CDataWrapper * const requestPack, uint32_t millisecToWait) {
+    CHAOS_ASSERT(nodeID && actionName)
     CDataWrapper *result = NULL;
+    CDataWrapper *dataPack = new CDataWrapper();
     //lock lk(waith_asnwer_mutex);
-    atomic_int_type currentRequestID =  prepareRequestPackAndSend(nodeID, actionName, requestPack, NULL);
+    if(requestPack)dataPack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *requestPack);
+    atomic_int_type currentRequestID =  prepareRequestPackAndSend(nodeID, actionName, dataPack, NULL);
 
     //waith the answer
     //waith_asnwer_condition.wait(lk);

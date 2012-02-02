@@ -41,6 +41,13 @@ namespace chaos {
          */
         void sendHeartBeatForDeviceID(string& identificationID);
         
+            //! Send dataset to MDS
+        /*! 
+         Return a list of all device id that are active
+         \param deviceDataset the CDatawrapper representi the device dataset infromation, th epointer is not disposed
+         \param millisecToWait delay after wich the wait is interrupt
+         */
+        int sendControlUnitDescription(CDataWrapper *deviceDataset, uint32_t millisecToWait=0);
         
         //! Get all active device id
         /*! 
@@ -48,16 +55,25 @@ namespace chaos {
          \param deviceIDVec an array to contain the returned device id
          \param millisecToWait delay after wich the wait is interrupt
          */
-        int getAllDeviceID(vector<string>& deviceIDVec, unsigned int millisecToWait=0);
+        int getAllDeviceID(vector<string>& deviceIDVec, uint32_t millisecToWait=0);
         
         //! Get node address for identification id
         /*! 
          Return the node address for an identification id
          \param identificationID id for wich we need to get the network address information
-         \param nodeNetworkAddress node address structure to be filled with identification id network info
          \param millisecToWait delay after wich the wait is interrupt
+         \return node address structure to be filled with identification id network info
          */
-        int getNetworkAddressForDevice(string& identificationID, CDeviceNetworkAddress& deviceNetworkAddress, unsigned int millisecToWait=0);
+        CDeviceNetworkAddress* getNetworkAddressForDevice(string& identificationID, uint32_t millisecToWait=0);
+        
+        //! Get curent dataset for device
+        /*! 
+         Return the node address for an identification id
+         \param identificationID id for wich we need to get the network address information
+         \param millisecToWait delay after wich the wait is interrupt
+         \return if the infromation is found, a CDataWrapper for dataset desprition is returned
+         */
+        CDataWrapper* getLastDatasetForDevice(string& identificationID, uint32_t millisecToWait=0);
     };
     
 }

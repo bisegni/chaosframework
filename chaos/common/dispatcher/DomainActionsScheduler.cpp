@@ -63,8 +63,12 @@ void DomainActionsScheduler::setDispatcher(CommandDispatcher *newDispatcher) {
  */
 void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescription, ElementManagingPolicy& elementPolicy) throw(CException) {
     //the domain is securely the same is is mandatory for submition so i need to get the name of the action
-    CDataWrapper *actionResult = NULL;
-    CDataWrapper *subCommand = NULL;
+    CDataWrapper            *responsePack = NULL;
+    CDataWrapper            *subCommand = NULL;
+    auto_ptr<CDataWrapper>  actionMessage;
+    auto_ptr<CDataWrapper>  actionResult;
+    
+    bool    detachParam = false;
     int     answerID;
     string  answerIP;
     string  answerDomain;
@@ -88,6 +92,12 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
     if(!canFire) return;
     
     try {
+            //get the action message
+        if( actionDescription->hasKey( RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE ) ) {
+                //there is a subcommand to submit
+            actionMessage.reset(actionDescription->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+        }
+        
             //get sub command if present
             //check if we need to submit a sub command
         if( actionDescription->hasKey( RpcActionDefinitionKey::CS_CMDM_SUB_CMD ) ) {
@@ -114,45 +124,51 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
         
         
             //syncronously call the action in the current thread 
-        actionResult = actionDescriptionPtr->call(actionDescription, elementPolicy.elementHasBeenDetached);
+        actionResult.reset(actionDescriptionPtr->call(actionMessage.get(), detachParam));
             
             //check if we need to submit a sub command
         if( subCommand ) {
             auto_ptr<CDataWrapper> dispatchSubCommandResult(dispatcher->dispatchCommand(subCommand));
         }
         
-        if( actionResult ) {
-                
-            if(answerID && answerIP.size()){
+        if( actionResult.get() ) {
+            responsePack = new CDataWrapper();
+            
+            if(answerIP.size()){
                 //fill answer with data for remote ip and request id
                 actionResult->addInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID, answerID);
                     //set the answer host ip as remote ip where to send the answere
-                actionResult->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, answerIP);
+                responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, answerIP);
                    
                     //check this only if we have a destionantion
                 if(answerDomain.size() && answerAction.size()){
                      //set the domain for the answer
-                    actionResult->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, answerDomain);
+                    responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, answerDomain);
                     
                     //set the name of the action for the answer
-                    actionResult->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, answerAction);
+                    responsePack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, answerAction);
                 }
                    
             }
            
+            responsePack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *actionResult.get());
                 //in any case this result must be LOG
                 //the result of the action action is sent using this thread
-            if(!dispatcher->sendActionResult(actionResult, false)){
+            if(!dispatcher->sendActionResult(responsePack, false)){
                     //the response has not been sent
-                DELETE_OBJ_POINTER(actionResult);
+                DELETE_OBJ_POINTER(responsePack);
             }
         }
     } catch (CException& ex) {
-        CHK_AND_DELETE_OBJ_POINTER(actionResult);
+        CHK_AND_DELETE_OBJ_POINTER(responsePack);
             //these exception need to be logged
         DECODE_CHAOS_EXCEPTION(ex);
     }
-
+        //check if we need to detach the action message
+    if(detachParam){
+        actionMessage.release();
+    }
+    
     //set hte action as no fired
     actionDescriptionPtr->setFired(false);
 

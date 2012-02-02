@@ -13,7 +13,12 @@ public class RPCConstants {
 
 	// key for action name definition
 	public static final String	CS_CMDM_ACTION_NAME						= "cs|cmdm|act_name";
-	// !key for the specify the id of the request(the current message is an asnwer)
+
+	// !key for action message
+	public static final String	CS_CMDM_ACTION_MESSAGE					= "cs|cmdm|act_msg";
+	
+	// !key for the specify the id of the request(the current message is an
+	// asnwer)
 	public static final String	CS_CMDM_MESSAGE_ID						= "cs|cmdm|act_msg_id";
 
 	// key action submission result

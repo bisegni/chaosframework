@@ -135,8 +135,6 @@
 		326DB4CD14B3A3E50018A8D0 /* MultiBufferDataStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4B514B3A3E50018A8D0 /* MultiBufferDataStorage.cpp */; };
 		326DB4CE14B3A3E50018A8D0 /* MultiBufferDataStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4B614B3A3E50018A8D0 /* MultiBufferDataStorage.h */; };
 		326DB4E614B3B0070018A8D0 /* CachedElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4D214B3B0070018A8D0 /* CachedElement.h */; };
-		326DB4E714B3B0070018A8D0 /* DeviceAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4D314B3B0070018A8D0 /* DeviceAddress.h */; };
-		326DB4E814B3B0070018A8D0 /* DeviceDataChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4D414B3B0070018A8D0 /* DeviceDataChannel.h */; };
 		326DB4E914B3B0070018A8D0 /* DeviceDatasetCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4D514B3B0070018A8D0 /* DeviceDatasetCache.cpp */; };
 		326DB4EA14B3B0070018A8D0 /* DeviceDatasetCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4D614B3B0070018A8D0 /* DeviceDatasetCache.h */; };
 		326DB4EB14B3B0070018A8D0 /* ChaosUIToolkit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4D714B3B0070018A8D0 /* ChaosUIToolkit.cpp */; };
@@ -150,9 +148,10 @@
 		326DB4F514B3B0070018A8D0 /* LLRpcApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4E314B3B0070018A8D0 /* LLRpcApi.cpp */; };
 		326DB4F614B3B0070018A8D0 /* LLRpcApi.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4E414B3B0070018A8D0 /* LLRpcApi.h */; };
 		326EA57814D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 326EA57714D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h */; };
-		3297F22614D96F31004FFE4F /* DeviceChannelMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3297F22514D96F31004FFE4F /* DeviceChannelMessage.cpp */; };
-		3297F22914D96F43004FFE4F /* DeviceChannelMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 3297F22814D96F43004FFE4F /* DeviceChannelMessage.h */; };
+		3297F22614D96F31004FFE4F /* DeviceMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3297F22514D96F31004FFE4F /* DeviceMessageChannel.cpp */; };
+		3297F22914D96F43004FFE4F /* DeviceMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3297F22814D96F43004FFE4F /* DeviceMessageChannel.h */; };
 		3297F22B14D96F8D004FFE4F /* NetworkAddressMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3297F22A14D96F8D004FFE4F /* NetworkAddressMessageChannel.h */; };
+		32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */; };
 		32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */; };
 		32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */; };
 		32AAD78414CD63C6005A097C /* MessageBroker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AAD78314CD63C6005A097C /* MessageBroker.cpp */; };
@@ -297,8 +296,6 @@
 		326DB4B514B3A3E50018A8D0 /* MultiBufferDataStorage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = MultiBufferDataStorage.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB4B614B3A3E50018A8D0 /* MultiBufferDataStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = MultiBufferDataStorage.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB4D214B3B0070018A8D0 /* CachedElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CachedElement.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB4D314B3B0070018A8D0 /* DeviceAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DeviceAddress.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB4D414B3B0070018A8D0 /* DeviceDataChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DeviceDataChannel.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB4D514B3B0070018A8D0 /* DeviceDatasetCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceDatasetCache.cpp; sourceTree = "<group>"; };
 		326DB4D614B3B0070018A8D0 /* DeviceDatasetCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceDatasetCache.h; sourceTree = "<group>"; };
 		326DB4D714B3B0070018A8D0 /* ChaosUIToolkit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosUIToolkit.cpp; sourceTree = "<group>"; };
@@ -312,9 +309,10 @@
 		326DB4E314B3B0070018A8D0 /* LLRpcApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = LLRpcApi.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB4E414B3B0070018A8D0 /* LLRpcApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = LLRpcApi.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326EA57714D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiKeyObjectWaitSemaphore.h; sourceTree = "<group>"; };
-		3297F22514D96F31004FFE4F /* DeviceChannelMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceChannelMessage.cpp; sourceTree = "<group>"; };
-		3297F22814D96F43004FFE4F /* DeviceChannelMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceChannelMessage.h; sourceTree = "<group>"; };
+		3297F22514D96F31004FFE4F /* DeviceMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceMessageChannel.cpp; sourceTree = "<group>"; };
+		3297F22814D96F43004FFE4F /* DeviceMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceMessageChannel.h; sourceTree = "<group>"; };
 		3297F22A14D96F8D004FFE4F /* NetworkAddressMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkAddressMessageChannel.h; sourceTree = "<group>"; };
+		32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaitSemaphore.h; sourceTree = "<group>"; };
 		32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDSMessageChannel.h; sourceTree = "<group>"; };
 		32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSMessageChannel.cpp; sourceTree = "<group>"; };
 		32AAD78314CD63C6005A097C /* MessageBroker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageBroker.cpp; sourceTree = "<group>"; };
@@ -613,6 +611,7 @@
 				326DB42314B38BC00018A8D0 /* CThreadGroup.h */,
 				326EA57714D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h */,
 				3216601014D49D0F008DADD2 /* ObjectWaitSemaphore.h */,
+				32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */,
 			);
 			path = thread;
 			sourceTree = "<group>";
@@ -712,8 +711,6 @@
 			isa = PBXGroup;
 			children = (
 				326DB4D214B3B0070018A8D0 /* CachedElement.h */,
-				326DB4D314B3B0070018A8D0 /* DeviceAddress.h */,
-				326DB4D414B3B0070018A8D0 /* DeviceDataChannel.h */,
 				326DB4D514B3B0070018A8D0 /* DeviceDatasetCache.cpp */,
 				326DB4D614B3B0070018A8D0 /* DeviceDatasetCache.h */,
 			);
@@ -751,8 +748,8 @@
 				32AAD78914CD772F005A097C /* MessageChannel.h */,
 				32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */,
 				32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */,
-				3297F22514D96F31004FFE4F /* DeviceChannelMessage.cpp */,
-				3297F22814D96F43004FFE4F /* DeviceChannelMessage.h */,
+				3297F22514D96F31004FFE4F /* DeviceMessageChannel.cpp */,
+				3297F22814D96F43004FFE4F /* DeviceMessageChannel.h */,
 				3297F22A14D96F8D004FFE4F /* NetworkAddressMessageChannel.h */,
 			);
 			path = message;
@@ -850,9 +847,10 @@
 				326EA57814D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h in Headers */,
 				32D68AD014D5D5A7009F290A /* SetupStateManager.h in Headers */,
 				32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */,
-				3297F22914D96F43004FFE4F /* DeviceChannelMessage.h in Headers */,
+				3297F22914D96F43004FFE4F /* DeviceMessageChannel.h in Headers */,
 				3297F22B14D96F8D004FFE4F /* NetworkAddressMessageChannel.h in Headers */,
 				325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */,
+				32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -880,8 +878,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				326DB4E614B3B0070018A8D0 /* CachedElement.h in Headers */,
-				326DB4E714B3B0070018A8D0 /* DeviceAddress.h in Headers */,
-				326DB4E814B3B0070018A8D0 /* DeviceDataChannel.h in Headers */,
 				326DB4EA14B3B0070018A8D0 /* DeviceDatasetCache.h in Headers */,
 				326DB4EC14B3B0070018A8D0 /* ChaosUIToolkit.h in Headers */,
 				326DB4EE14B3B0070018A8D0 /* HLDataApi.h in Headers */,
@@ -1023,7 +1019,7 @@
 				32AAD78414CD63C6005A097C /* MessageBroker.cpp in Sources */,
 				32AAD78C14CD773F005A097C /* MessageChannel.cpp in Sources */,
 				32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */,
-				3297F22614D96F31004FFE4F /* DeviceChannelMessage.cpp in Sources */,
+				3297F22614D96F31004FFE4F /* DeviceMessageChannel.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

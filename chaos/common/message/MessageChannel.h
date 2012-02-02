@@ -81,6 +81,12 @@ namespace chaos {
         atomic_int_type prepareRequestPackAndSend(const char * const, const char * const, CDataWrapper*, boost::function<void(CDataWrapper*)>*);
    
     protected:
+        /*!
+         Return the broker for that channel
+         */
+        MessageBroker * getBroker(){
+            return broker;
+        }
         
         /*!
          Private constructor called by MessageBroker
@@ -104,30 +110,31 @@ namespace chaos {
             remoteNodeAddress = remoteAddr;
         }
     public:
-        
+
         /*! 
          \brief send a message
+         \param messagePack the data to send, the pointer is not deallocated and i scopied into the pack
          */
-        void sendMessage(const char * const, const char * const, CDataWrapper*);
+        void sendMessage(const char * const, const char * const, CDataWrapper* const);
         
         /*! 
          \brief send a request
          \param nodeID id of the node into remote chaos rpc system
-         \param requestPack the data to send
+         \param requestPack the data to send, the pointer is not deallocated and i scopied into the pack
          \param handler the callback that need to be called when the answer arrive
          */
-        void sendRequest(const char * const, const char * const, CDataWrapper *, boost::function<void(CDataWrapper*)>);
+        void sendRequest(const char * const, const char * const, CDataWrapper* const, boost::function<void(CDataWrapper*)>);
         
         /*! 
          \brief send a syncronous request and can wait for a determinated number of milliseconds the answer. If it has not
          been received the method return with a NULL pointer
          \param nodeID id of the node into remote chaos rpc system
          \param actionName name of the actio to call
-         \param requestPack the data to send
+         \param requestPack the data to send, the pointer is not deallocated and i scopied into the pack
          \param millisecToWait waith the response for onli these number of millisec then return
          \return the answer of the request, a null value mean that the wait time is expired 
          */
-        CDataWrapper* sendRequest(const char * const, const char * const, CDataWrapper *, unsigned int millisecToWait=0);
+        CDataWrapper* sendRequest(const char * const, const char * const, CDataWrapper* const, uint32_t millisecToWait=0);
         
     };
     

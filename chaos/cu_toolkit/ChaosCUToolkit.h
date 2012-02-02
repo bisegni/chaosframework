@@ -16,6 +16,8 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/ChaosCommon.h>
+#include <chaos/common/thread/WaitSemaphore.h>
+#include <chaos/common/utility/SetupStateManager.h>
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManager.h>
 
@@ -31,10 +33,12 @@ namespace chaos{
      This class is a Singleton that need to be used to setup environment,
      add Custom Control unit, and start all Contro Unit environment
      */
-    class ChaosCUToolkit : public ChaosCommon<ChaosCUToolkit>, public ServerDelegator {
+    class ChaosCUToolkit : public ChaosCommon<ChaosCUToolkit>, public ServerDelegator, public SetupStateManager {
         friend class Singleton<ChaosCUToolkit>;
-        static boost::mutex monitor;
-        static boost::condition endWaithCondition;
+        //static boost::mutex monitor;
+        //static boost::condition endWaithCondition;
+        
+        static WaitSemaphore waitCloseSemaphore;
         
         ChaosCUToolkit(){};
         ~ChaosCUToolkit(){};

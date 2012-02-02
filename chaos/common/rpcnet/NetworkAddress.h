@@ -1,31 +1,28 @@
 //
-//  DeviceAddress.h
-//  ChaosFramework
+//  NetworkAddress.h
+//  ControlSystemLib
 //
-//  Created by Claudio Bisegni on 02/10/11.
+//  Created by Bisegni Claudio on 28/12/11.
 //  Copyright (c) 2011 INFN. All rights reserved.
 //
 
-#ifndef ChaosFramework_DeviceAddress_h
-#define ChaosFramework_DeviceAddress_h
+#ifndef ControlSystemLib_NetworkAddress_h
+#define ControlSystemLib_NetworkAddress_h
+
 #include <string>
 namespace chaos {
-    namespace ui {
         using namespace std;
         /*
-         Manage an address for a specified deviceId
+         Manage an address for a specified endpoint
          */
         struct DeviceAddress {
                 //the ipo for the host that run the control unit
-            string ip;
-                //the port where is publish the control unit instance
-            int  port;
+            string ipPort;
                 //the instance of control unit that contain the deviceid
             string cuInstance;
                 //the key that identify the device
             string deviceID;
-            
         };
-    }
 }
 #endif
+

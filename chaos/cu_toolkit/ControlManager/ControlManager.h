@@ -22,7 +22,7 @@
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/General/Configurable.h>
-
+#include <chaos/common/message/MDSMessageChannel.h>
 namespace chaos {
     using namespace std;
     using namespace boost;
@@ -37,7 +37,8 @@ namespace chaos {
         CThread *selfThreadPtr;
         queue< AbstractControlUnit* > submittedCUQueue;
         map<string, shared_ptr<ControlUnitSandbox> > sanboxMap;
-
+        MDSMessageChannel *mdsChannel;
+        
         void sendConfPackToMDS(CDataWrapper&);
         
         /*

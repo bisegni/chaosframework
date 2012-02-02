@@ -108,6 +108,11 @@ void ControlManager::init() throw(CException) {
     							"The name of the Control Unit to Stop");
         //register command manager action
     CommandManager::getInstance()->registerAction(this);
+    
+    LAPP_ << "Get the Metadataserver channel";
+    mdsChannel = CommandManager::getInstance()->getMetadataserverChannel();
+    if(mdsChannel) LAPP_ << "Metadataserver has been allocated";
+    else  LAPP_ << "Metadataserver allocation failed";
 }
 
 /*
@@ -127,6 +132,7 @@ void ControlManager::start() throw(CException) {
  Deinitialize the CU Instantiator
  */
 void ControlManager::deinit() throw(CException) {
+    bool detachDeinitParam;
     LAPP_  << "Deinit the Control Manager";
     LAPP_  << "Control Manager system action deinitialization";
         //deregistering the action
@@ -146,7 +152,7 @@ void ControlManager::deinit() throw(CException) {
     for ( ; sandboxIter != sanboxMap.end(); sandboxIter++ ){
         LAPP_  << "Deinit Control Unit Sanbox:" << (*sandboxIter).second->getCUName();
         try{
-            (*sandboxIter).second->deinitSandbox();
+            (*sandboxIter).second->deinitSandbox(NULL, detachDeinitParam);
         }  catch (CException& ex) {
             if(ex.errorCode != 1){
                     //these exception need to be logged
@@ -173,6 +179,7 @@ void ControlManager::submitControlUnit(AbstractControlUnit *data) throw(CExcepti
  Thread method that work on buffer item
  */
 void ControlManager::executeOnThread() throw(CException) {
+    bool detachDeinitParam;
         //initialize the Control Unit
     AbstractControlUnit *curCU = 0L;
     CDataWrapper cuActionAndDataset;
@@ -216,7 +223,7 @@ void ControlManager::executeOnThread() throw(CException) {
             LDBG_ << masterConfiguration->getJSONString();
 #endif  
             
-            cusb->initSandbox(masterConfiguration.get());
+            cusb->initSandbox(masterConfiguration.get(), detachDeinitParam);
         }
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
@@ -235,12 +242,13 @@ void ControlManager::sendConfPackToMDS(CDataWrapper& dataToSend) {
     auto_ptr<SerializationBuffer> serBuf(dataToSend.getBSONData());
     CDataWrapper *mdsPack = new CDataWrapper(serBuf->getBufferPtr());
         //add action for metadata server
-    mdsPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, "system");
-    mdsPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, "registerControlUnit");
         //add local ip and port
     
     mdsPack->addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS, GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort().c_str());
-    CommandManager::getInstance()->sendMessageToMetadataServer(mdsPack);
+    
+    mdsChannel->sendControlUnitDescription(mdsPack);
+    
+        //CommandManager::getInstance()->sendMessageToMetadataServer(mdsPack);
 }
 
 /*
@@ -282,12 +290,8 @@ CDataWrapper* ControlManager::initSandbox(CDataWrapper *actionParam, bool& detac
     auto_ptr<SerializationBuffer> serBuffForGlobalConf(GlobalConfiguration::getInstance()->getConfiguration()->getBSONData());
     auto_ptr<CDataWrapper> masterConfiguration(new CDataWrapper(serBuffForGlobalConf->getBufferPtr()));
     masterConfiguration->appendAllElement(*cusb->getInternalCUConfiguration());*/
-    
-    cusb->initSandbox(actionParam);
     LAPP_  << "Initialized Control Unit Sanbox:" << cusb->getCUName() << " with instance:" << cusb->getCUInstance();
-
-        //sanboxMap[cuUUID]->initSandbox(actionParam);
-    return NULL;
+    return cusb->initSandbox(actionParam, detachParam);
 }
 
 /*
@@ -296,8 +300,7 @@ CDataWrapper* ControlManager::initSandbox(CDataWrapper *actionParam, bool& detac
 CDataWrapper* ControlManager::deinitSandbox(CDataWrapper *actionParam, bool& detachParam) throw (CException) {
     CHECK_AND_RETURN_CU_UUID_PARAM_OR_TROW(actionParam, cuUUID)
     CHECK_CU_PRESENCE_IN_MAP_OR_TROW(cuUUID)
-    sanboxMap[cuUUID]->deinitSandbox();
-    return NULL;
+    return sanboxMap[cuUUID]->deinitSandbox(actionParam, detachParam);
 }
 
 /*
@@ -306,8 +309,7 @@ CDataWrapper* ControlManager::deinitSandbox(CDataWrapper *actionParam, bool& det
 CDataWrapper* ControlManager::startSandbox(CDataWrapper *actionParam, bool& detachParam) throw (CException) {
     CHECK_AND_RETURN_CU_UUID_PARAM_OR_TROW(actionParam, cuUUID)
     CHECK_CU_PRESENCE_IN_MAP_OR_TROW(cuUUID)
-    sanboxMap[cuUUID]->startSandbox(actionParam);
-    return NULL;
+    return sanboxMap[cuUUID]->startSandbox(actionParam, detachParam);
 }
 
 /*
@@ -316,6 +318,5 @@ CDataWrapper* ControlManager::startSandbox(CDataWrapper *actionParam, bool& deta
 CDataWrapper* ControlManager::stopSandbox(CDataWrapper *actionParam, bool& detachParam) throw (CException) {
     CHECK_AND_RETURN_CU_UUID_PARAM_OR_TROW(actionParam, cuUUID)
     CHECK_CU_PRESENCE_IN_MAP_OR_TROW(cuUUID)
-    sanboxMap[cuUUID]->stopSandbox(actionParam);
-    return NULL;
+    return sanboxMap[cuUUID]->stopSandbox(actionParam, detachParam);
 }

@@ -10,10 +10,11 @@
 #include <chaos/common/global.h>
 #include <boost/lexical_cast.hpp>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
+#include <chaos/common/message/DeviceMessageChannel.h>
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/message/MessageChannel.h>
 
-#define MB_LAPP LAPP_ << "[MessageBroker::init]-" 
+#define MB_LAPP LAPP_ << "[MessageBroker::init]- " 
 
 #define INIT_STEP   0
 #define DEINIT_STEP 1
@@ -114,7 +115,7 @@ void MessageBroker::init() throw(CException) {
 void MessageBroker::deinit() throw(CException) {
     
     //lock esclusive access to init phase
-    SetupStateManager::levelUpFrom(DEINIT_STEP, "MessageBroker already deinitialized");
+    SetupStateManager::levelDownFrom(DEINIT_STEP, "MessageBroker already deinitialized");
 
     MB_LAPP  << "Deinitilizing Message Broker";
     
@@ -239,18 +240,21 @@ bool MessageBroker::submitMessageToMetadataServer(CDataWrapper *message, bool on
 
 /*
  */
-MessageChannel *MessageBroker::getNewMessageChannelForRemoteHost(string& remoteHost, EntityType type) {
+MessageChannel *MessageBroker::getNewMessageChannelForRemoteHost(CNodeNetworkAddress *nodeNetworkAddress, EntityType type) {
+    CHAOS_ASSERT(nodeNetworkAddress)
     MessageChannel *channel = NULL;
     switch (type) {
         case RAW:
-            channel = new MessageChannel(this, metadataServerAddress.c_str());
+            channel = new MessageChannel(this, nodeNetworkAddress->ipPort.c_str());
+            delete(nodeNetworkAddress);
             break;
             
         case MDS:
-            CNodeNetworkAddress *mdsNodeAddr = new CNodeNetworkAddress();
-            mdsNodeAddr->ipPort = metadataServerAddress.c_str();
-            mdsNodeAddr->nodeID = "system";
-            channel = new MDSMessageChannel(this, mdsNodeAddr);
+            channel = new MDSMessageChannel(this, nodeNetworkAddress);
+            break;
+            
+        case DEVICE:
+            channel = new DeviceMessageChannel(this, static_cast<CDeviceNetworkAddress*>(nodeNetworkAddress));
             break;
     }
     //check if the channel has been created
@@ -267,9 +271,20 @@ MessageChannel *MessageBroker::getNewMessageChannelForRemoteHost(string& remoteH
  Performe the creation of metadata server
  */
 MDSMessageChannel *MessageBroker::getMetadataserverMessageChannel(string& remoteHost) {
-    return static_cast<MDSMessageChannel*>(getNewMessageChannelForRemoteHost(remoteHost, MDS));
+    CNodeNetworkAddress *mdsNodeAddr = new CNodeNetworkAddress();
+    mdsNodeAddr->ipPort = remoteHost.c_str();
+    mdsNodeAddr->nodeID = "system";
+    return static_cast<MDSMessageChannel*>(getNewMessageChannelForRemoteHost(mdsNodeAddr, MDS));
 }
 
+//!Device channel creation
+/*!
+ Performe the creation of device channel
+ \param deviceNetworkAddress device node address
+ */
+DeviceMessageChannel *MessageBroker::getDeviceMessageChannelFromAddress(CDeviceNetworkAddress *deviceNetworkAddress) {
+    return static_cast<DeviceMessageChannel*>(getNewMessageChannelForRemoteHost(deviceNetworkAddress, DEVICE));
+}
 
 //!Channel deallocation
 /*!

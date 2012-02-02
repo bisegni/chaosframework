@@ -105,27 +105,27 @@ namespace chaos {
         /*
          Sand box initialization, this method take care to setup the control unit
          */
-        void initSandbox(CDataWrapper*) throw (CException);
+        CDataWrapper* initSandbox(CDataWrapper*, bool&) throw (CException);
         /*
          Sand box Deinitialization, this method take care to deinitialize all the subtree 
          starting from CU->buffer->iodriver
          */
-        void deinitSandbox() throw (CException);
+        CDataWrapper* deinitSandbox(CDataWrapper*, bool&) throw (CException);
         
         /*
          Start the sandbox
          */
-        CDataWrapper* startSandbox(CDataWrapper*) throw (CException);
+        CDataWrapper* startSandbox(CDataWrapper*, bool&) throw (CException);
         
         /*
          Stop the sandbox
          */
-        CDataWrapper* stopSandbox(CDataWrapper*) throw (CException);
+        CDataWrapper* stopSandbox(CDataWrapper*, bool&) throw (CException);
         
         /*
          Configure the sandbox and all subtree of the CU
          */
-        CDataWrapper* updateConfiguration(CDataWrapper*, bool);
+        CDataWrapper* updateConfiguration(CDataWrapper*, bool&);
         
         /*
          */

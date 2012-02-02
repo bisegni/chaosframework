@@ -60,5 +60,12 @@ LLRpcApi::~LLRpcApi() {
  */
 MDSMessageChannel *LLRpcApi::getNewMetadataServerChannel() {
     string serverHost = GlobalConfiguration::getInstance()->getMetadataServerAddress();
-    return static_cast<MDSMessageChannel*>(rpcMessageBroker->getMetadataserverMessageChannel(serverHost));
+    return rpcMessageBroker->getMetadataserverMessageChannel(serverHost);
+}
+
+/*!
+ Return a new device channel
+ */
+DeviceMessageChannel *LLRpcApi::getNewDeviceMessageChannel(CDeviceNetworkAddress *deviceNetworkAddress) {
+    return rpcMessageBroker->getDeviceMessageChannelFromAddress(deviceNetworkAddress);
 }

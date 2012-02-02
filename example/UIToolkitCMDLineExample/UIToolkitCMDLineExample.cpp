@@ -47,7 +47,7 @@ int main (int argc, const char* argv[] )
 {
     try {
         int err = 0;
-        
+        CDeviceNetworkAddress *deviceAddress;
         //! [UIToolkit Init]
         ChaosUIToolkit::getInstance()->init(argc, argv);
         //! [UIToolkit Init]
@@ -69,8 +69,16 @@ int main (int argc, const char* argv[] )
                  devIter++) {
                 std::cout << "Device Identification: "<< *devIter << std::endl;
                 
-                err = mdsChannel->getNetworkAddressForDevice(*devIter, deviceNetworkAddress, 2000);
-                if(!err) std::cout << "Device Network Information: NET:"<< deviceNetworkAddress.ipPort << " CU:"<< deviceNetworkAddress.nodeID <<std::endl;
+                deviceAddress = mdsChannel->getNetworkAddressForDevice(*devIter, 2000);
+                if(deviceAddress) {
+                  std::cout << "Initzialize the device: NET:"<< deviceAddress->ipPort << " CU:"<< deviceAddress->nodeID <<std::endl;  
+                    DeviceMessageChannel *dMsgchannel = LLRpcApi::getInstance()->getNewDeviceMessageChannel(deviceAddress);
+                    auto_ptr<CDataWrapper> lastDeviceInfo(mdsChannel->getLastDatasetForDevice(*devIter));
+                    std::cout << "Device init param: "<< lastDeviceInfo->getJSONString() <<std::endl;
+                    dMsgchannel->initDevice(lastDeviceInfo.get());
+                }
+                
+                //try to initi
             }
         }  
         //! [UIToolkit Deinit]

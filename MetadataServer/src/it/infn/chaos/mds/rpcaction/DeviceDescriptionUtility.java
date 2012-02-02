@@ -45,6 +45,8 @@ public class DeviceDescriptionUtility {
 		if(liveServers.size()>0)result.append(RPCConstants.LIVE_DATASERVER_HOST_PORT, liveServers);
 		result.append(RPCConstants.DEVICE_SCHEDULE_DELAY, 1000000);
 		
+
+		
 		return result;
 	}
 }
