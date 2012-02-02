@@ -32,9 +32,9 @@ namespace chaos {
             struct ifaddrs * ifAddrStruct=NULL;
             struct ifaddrs * ifa=NULL;
 #if __APPLE__
-            const char *interfaceName  = "en0";
+            const char *interfaceName  = "en";
 #elif __linux__
-            const char *interfaceName = "eth0";
+            const char *interfaceName = "eth";
 #endif
             void * tmpAddrPtr=NULL;
             
@@ -42,9 +42,7 @@ namespace chaos {
             getifaddrs(&ifAddrStruct);
             
             for (ifa = ifAddrStruct; ifa != NULL; ifa = ifa->ifa_next) {
-                if(strcmp(interfaceName, ifa->ifa_name)!= 0) continue;
-                
-                
+                if(strstr(ifa->ifa_name, interfaceName)== NULL) continue;
                 
                 if (ifa ->ifa_addr->sa_family==AF_INET) { // check it is IP4
                                                           // is a valid IP4 Address
