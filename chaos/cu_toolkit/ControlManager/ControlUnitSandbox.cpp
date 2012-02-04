@@ -13,23 +13,25 @@
 #include "../CommandManager/CommandManager.h"
 
 
+#define LSANDBOX_ LAPP_ << "[Sandbox] - "
+
 #define CHECK_INITIALIZED  if(initialized){\
-LAPP_ << "Control Unit already initialized";\
+LSANDBOX_ << "Control Unit already initialized";\
 throw CException(0, "Control Unit already initialized", "ControlUnitSandbox");\
 }
 
 #define CHECK_NOT_INITIALIZED  if(!initialized){\
-LAPP_ << "Control Unit not initialized";\
+LSANDBOX_ << "Control Unit not initialized";\
 throw CException(1, "Control Unit not initialized", "ControlUnitSandbox");\
 }
 
 #define CHECK_STARTED  if(started){\
-LAPP_ << "Control Unit already started";\
+LSANDBOX_ << "Control Unit already started";\
 throw CException(2, "Control Unit already started", "ControlUnitSandbox");\
 }
 
 #define CHECK_NOT_STARTED  if(!started){\
-LAPP_ << "Control Unit not started";\
+LSANDBOX_ << "Control Unit not started";\
 throw CException(3, "Control Unit not started", "ControlUnitSandbox");\
 }
 
@@ -58,6 +60,7 @@ ControlUnitSandbox::ControlUnitSandbox(AbstractControlUnit *newAcu) {
 ControlUnitSandbox::~ControlUnitSandbox() {
     //thread deallocation
     bool detachParam;
+    
     deinitSandbox(NULL, detachParam);
     
     if(acu){
@@ -70,6 +73,8 @@ ControlUnitSandbox::~ControlUnitSandbox() {
  Return the sandbox name
  */
 string& ControlUnitSandbox::getSandboxName() {
+    
+        //register command manager action
     return sandboxName;
 }
 
@@ -94,57 +99,61 @@ void ControlUnitSandbox::defineSandboxAndControlUnit(CDataWrapper& masterConfigu
     
     //DataWrapper for send cu templat to the metadataserver
     //associate new acs
-    LAPP_ << "Init Control Unit Sandbox for Control Unit:" << CU_IDENTIFIER_C_STREAM;
+    LSANDBOX_ << "Init Control Unit Sandbox for Control Unit:" << CU_IDENTIFIER_C_STREAM;
     
-    LAPP_ << "Init Thread for:" << CU_IDENTIFIER_C_STREAM;
+    LSANDBOX_ << "Init Thread for:" << CU_IDENTIFIER_C_STREAM;
     
-    LAPP_ << "Start the Control Unit:" << CU_IDENTIFIER_C_STREAM << " setup";
+    LSANDBOX_ << "Start the Control Unit:" << CU_IDENTIFIER_C_STREAM << " setup";
     acu->_defineActionAndDataset(masterConfiguration);
-    LAPP_ << "Control Unit:" << CU_IDENTIFIER_C_STREAM << " done";
-
-    //decode the dataset
-    LAPP_ << "Register the action exposed by Control Unit:" << CU_IDENTIFIER_C_STREAM;
-    CommandManager::getInstance()->registerAction(acu);
+    LSANDBOX_ << "Control Unit:" << CU_IDENTIFIER_C_STREAM << " done";
     
     //expose updateConfiguration Methdo to rpc
-    LAPP_ << "Register Sandbox with domain:" << acu->getCUInstance() << " updateConfiguration action";
+    LSANDBOX_ << "Register Sandbox with domain:" << acu->getCUInstance() << " updateConfiguration action";
     DeclareAction::addActionDescritionInstance<ControlUnitSandbox>(this, 
                                                                    &ControlUnitSandbox::updateConfiguration, 
                                                                    acu->getCUInstance(), 
                                                                    "updateConfiguration", 
                                                                    "Update Configuration");
     
-    LAPP_ << "Register Sandbox with Domain:" << acu->getCUInstance() << " initDevice action";
+    LSANDBOX_ << "Register Sandbox with Domain:" << acu->getCUInstance() << " initDevice action";
     DeclareAction::addActionDescritionInstance<ControlUnitSandbox>(this, 
                                                                    &ControlUnitSandbox::initSandbox, 
                                                                    acu->getCUInstance(), 
                                                                    "initDevice", 
                                                                    "Perform the device initialization");
     
-    LAPP_ << "Register Sandbox with Domain:" << acu->getCUInstance() << " deinitDevice action";
+    LSANDBOX_ << "Register Sandbox with Domain:" << acu->getCUInstance() << " deinitDevice action";
     DeclareAction::addActionDescritionInstance<ControlUnitSandbox>(this, 
                                                                    &ControlUnitSandbox::deinitSandbox, 
                                                                    acu->getCUInstance(), 
                                                                    "deinitDevice", 
                                                                    "Perform the device deinitialization");
-    LAPP_ << "Register Sandbox with Domain:" << acu->getCUInstance() << " startDevice action";
+    LSANDBOX_ << "Register Sandbox with Domain:" << acu->getCUInstance() << " startDevice action";
     DeclareAction::addActionDescritionInstance<ControlUnitSandbox>(this, 
                                                                    &ControlUnitSandbox::startSandbox, 
                                                                    acu->getCUInstance(), 
                                                                    "startDevice", 
                                                                    "Sart the device scheduling");
     
-    LAPP_ << "Register Sandbox with Domain:" << acu->getCUInstance() << " stopDevice action";
+    LSANDBOX_ << "Register Sandbox with Domain:" << acu->getCUInstance() << " stopDevice action";
     DeclareAction::addActionDescritionInstance<ControlUnitSandbox>(this, 
                                                                    &ControlUnitSandbox::stopSandbox, 
                                                                    acu->getCUInstance(), 
                                                                    "stopDevice", 
                                                                    "Stop the device scheduling");
-    
-    //register command manager action
+        //register sandbox rpc action
     CommandManager::getInstance()->registerAction(this);
-
+    
     sandboxName.append("Sandbox_");sandboxName.append(acu->getCUName());sandboxName.append("_");sandboxName.append(acu->getCUInstance());    
+}
+
+/*
+ Define control unit
+ */
+void ControlUnitSandbox::undefineSandboxAndControlUnit() throw (CException) {
+        //register sandbox rpc action
+    LSANDBOX_ << "Deinit Control Unit Sandbox for Control Unit:" << CU_IDENTIFIER_C_STREAM;
+    CommandManager::getInstance()->deregisterAction(this);
 }
 
 /*
@@ -167,11 +176,11 @@ CDataWrapper* ControlUnitSandbox::initSandbox(CDataWrapper *initParameter, bool&
         if(!csThread) throw CException(0,"Thread inititalization error","ControlUnitSandbox::initSandBox");
         
         
-        LAPP_ << "Init Control Unit:" << CU_IDENTIFIER_C_STREAM;
+        LSANDBOX_ << "Init Control Unit:" << CU_IDENTIFIER_C_STREAM;
         //acu->_init(defaultInternalConf);
         acu->_init(initParameter);
         
-        LAPP_ << "Update Control Unit and Sandbox Configuration for:" << CU_IDENTIFIER_C_STREAM;
+        LSANDBOX_ << "Update Control Unit and Sandbox Configuration for:" << CU_IDENTIFIER_C_STREAM;
         updateConfiguration(initParameter, detachParam);
         
         //register the actions fot the control unit
@@ -179,15 +188,20 @@ CDataWrapper* ControlUnitSandbox::initSandbox(CDataWrapper *initParameter, bool&
         //flag the sandbox initialiaztion status before the autostart
         initialized = true;
         
+            //register rpc contorl unit action
+        LSANDBOX_ << "Register the action exposed by Control Unit:" << CU_IDENTIFIER_C_STREAM;
+        CommandManager::getInstance()->registerAction(acu);
+        
         //need to check if the CU wnat to be autostarted
         //check if cu want to be started without metadataserver consense
         if(initParameter->hasKey(CUDefinitionKey::CS_CM_CU_AUTOSTART) &&
            initParameter->getInt32Value(CUDefinitionKey::CS_CM_CU_AUTOSTART)){
-            LAPP_  << "Starting Control Unit Sanbox:" << CU_IDENTIFIER_C_STREAM;
+            LSANDBOX_  << "Starting Control Unit Sanbox:" << CU_IDENTIFIER_C_STREAM;
             startResut.reset(startSandbox(initParameter, detachParam));
-            LAPP_  << "Started Control Unit Sanbox:" << CU_IDENTIFIER_C_STREAM;   
+            LSANDBOX_  << "Started Control Unit Sanbox:" << CU_IDENTIFIER_C_STREAM;   
             if(startResut.get()) result->addCSDataValue("startSandbox", *startResut.get());
         }
+        
         result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, 0);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(result, ex)
@@ -214,9 +228,6 @@ CDataWrapper* ControlUnitSandbox::deinitSandbox(CDataWrapper *deinitParameter, b
         //check the thread
         CHAOS_ASSERT(csThread);
         
-        
-        LAPP_ << "Deinit Control Unit Sandbox for Control Unit:" << CU_IDENTIFIER_C_STREAM;
-        CommandManager::getInstance()->deregisterAction(this);
         //deinit the thread and dispose it
         //stop the SandBox
         try{
@@ -225,7 +236,7 @@ CDataWrapper* ControlUnitSandbox::deinitSandbox(CDataWrapper *deinitParameter, b
             if(ex.errorCode!=3) throw ex;
         }
         
-        LAPP_ << "Deinit CU:" << CU_IDENTIFIER_C_STREAM;
+        LSANDBOX_ << "Deinit CU:" << CU_IDENTIFIER_C_STREAM;
         //deinit the cu
         acu->_deinit();
         
@@ -238,7 +249,7 @@ CDataWrapper* ControlUnitSandbox::deinitSandbox(CDataWrapper *deinitParameter, b
         //deallocate the control unit deinitializating it
         if(acu){
             //register the action implemented by CU(it extends DeclareaAction Class)
-            LAPP_ << "Deregister the action exposed by Control Unit:" << CU_IDENTIFIER_C_STREAM;
+            LSANDBOX_ << "Deregister the action exposed by Control Unit:" << CU_IDENTIFIER_C_STREAM;
             CommandManager::getInstance()->deregisterAction(acu);
         }
         
@@ -277,9 +288,9 @@ CDataWrapper* ControlUnitSandbox::startSandbox(CDataWrapper *startConfiguration,
             LERR_ << "Sanbox "<< getSandboxName() << "already runnign";
         }
         
-        LAPP_ << "Sanbox "<< getSandboxName() << " start event";
+        LSANDBOX_ << "Sanbox "<< getSandboxName() << " start event";
         
-        LAPP_ << "Start Thread for:" << CU_IDENTIFIER_C_STREAM;
+        LSANDBOX_ << "Start Thread for:" << CU_IDENTIFIER_C_STREAM;
         csThread->start();
         csThread->setThreadPriorityLevel(sched_get_priority_max(SCHED_RR), SCHED_RR);
         
@@ -312,11 +323,11 @@ CDataWrapper* ControlUnitSandbox::stopSandbox(CDataWrapper *stopConfiguration, b
         if(csThread->isStopped()){
             LERR_ << "Sanbox "<< getSandboxName() << "already stopped";
         }
-        LAPP_ << "Stopping Control Unit:" << CU_IDENTIFIER_C_STREAM;
+        LSANDBOX_ << "Stopping Control Unit:" << CU_IDENTIFIER_C_STREAM;
         if(acu) acu->stop();
-        LAPP_ << "Stop Thread for:" << CU_IDENTIFIER_C_STREAM;
+        LSANDBOX_ << "Stop Thread for:" << CU_IDENTIFIER_C_STREAM;
         if(csThread) csThread->stop();
-        LAPP_ << "Stopped Thread for:" << CU_IDENTIFIER_C_STREAM;
+        LSANDBOX_ << "Stopped Thread for:" << CU_IDENTIFIER_C_STREAM;
         
         //set started flag
         started = false;

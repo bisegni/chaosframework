@@ -153,6 +153,7 @@ void ChaosCUToolkit::addControlUnit(AbstractControlUnit *newCU) {
  *
  */
 void ChaosCUToolkit::signalHanlder(int signalNumber) {
+    ChaosCUToolkit::getInstance()->levelDownFrom(2, "ChaosCUToolkit already stoped");
     //lock lk(monitor);
         //unlock the condition for end start method
     //endWaithCondition.notify_one();

@@ -103,6 +103,11 @@ namespace chaos {
         void defineSandboxAndControlUnit(CDataWrapper&) throw (CException); 
         
         /*
+         Define control unit
+         */
+        void undefineSandboxAndControlUnit() throw (CException); 
+        
+        /*
          Sand box initialization, this method take care to setup the control unit
          */
         CDataWrapper* initSandbox(CDataWrapper*, bool&) throw (CException);

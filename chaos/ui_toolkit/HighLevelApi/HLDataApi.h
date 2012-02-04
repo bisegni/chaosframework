@@ -10,8 +10,7 @@
 #define ChaosFramework_HLDataApi_h
 
 #include <string>
-#include <chaos/ui_toolkit/Common/DeviceDataChannel.h>
-#include <chaos/ui_toolkit/Common/DeviceAddress.h>
+
 namespace chaos {
     namespace ui {
         using namespace std;
@@ -32,15 +31,6 @@ namespace chaos {
         ~HLDataApi();
 
         public:
-            /*
-             Return a channel for a device by his device_id key
-             */
-            DeviceDataChannel *getDeviceLiveDataChannelByDeviceID(string&);
-            
-            /*
-             Return a channel for a device by his ip:port address
-             */
-            DeviceDataChannel *getDeviceLiveDataChannelByAddress(DeviceAddress&);
 
         };
     }

@@ -153,6 +153,7 @@ void ControlManager::deinit() throw(CException) {
         LAPP_  << "Deinit Control Unit Sanbox:" << (*sandboxIter).second->getCUName();
         try{
             (*sandboxIter).second->deinitSandbox(NULL, detachDeinitParam);
+            (*sandboxIter).second->undefineSandboxAndControlUnit();
         }  catch (CException& ex) {
             if(ex.errorCode != 1){
                     //these exception need to be logged

@@ -75,7 +75,14 @@ int main (int argc, const char* argv[] )
                     DeviceMessageChannel *dMsgchannel = LLRpcApi::getInstance()->getNewDeviceMessageChannel(deviceAddress);
                     auto_ptr<CDataWrapper> lastDeviceInfo(mdsChannel->getLastDatasetForDevice(*devIter));
                     std::cout << "Device init param: "<< lastDeviceInfo->getJSONString() <<std::endl;
-                    dMsgchannel->initDevice(lastDeviceInfo.get());
+                    err = dMsgchannel->initDevice(lastDeviceInfo.get());
+                    std::cout << "Device init operation result: " << err <<std::endl;
+                    err = dMsgchannel->startDevice();
+                    std::cout << "Device start operation result: " << err <<std::endl;
+                    err = dMsgchannel->stopDevice();
+                    std::cout << "Device stop operation result: " << err <<std::endl;
+                    err = dMsgchannel->deinitDevice();
+                    std::cout << "Device deinit operation result: " << err <<std::endl;
                 }
                 
                 //try to initi

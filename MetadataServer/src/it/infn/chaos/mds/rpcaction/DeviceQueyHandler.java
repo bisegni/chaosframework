@@ -127,7 +127,7 @@ public class DeviceQueyHandler extends RPCActionHadler {
 			dDA = getDataAccessInstance(DeviceDA.class);
 			dsDA = getDataAccessInstance(DataServerDA.class);
 			String deviceIdentification = actionData.getString(RPCConstants.DATASET_DEVICE_ID);
-			result = DeviceDescriptionUtility.composeStartupCommandForDeviceIdentification(deviceIdentification, dDA, dsDA);
+			result = DeviceDescriptionUtility.composeStartupCommandForDeviceIdentification(deviceIdentification, dDA, dsDA, false);
 		} catch (Throwable e) {
 			RPCUtils.addRefExceptionElementToBson(result, "DeviceQueyHandler::getDeviceDataseFromDeviceID", e.getMessage(), 0);
 			throw e;

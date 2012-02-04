@@ -132,7 +132,7 @@ public class CUQueryHandler extends RPCActionHadler {
 					// at this point i need to check if thedevice need to be initialized
 					if (dDA.isDeviceToBeInitialized(d.getDeviceIdentification())) {
 						// send rpc command to initialize the device
-						result = DeviceDescriptionUtility.composeStartupCommandForDeviceIdentification(d.getDeviceIdentification(),dDA , getDataAccessInstance(DataServerDA.class));
+						result = DeviceDescriptionUtility.composeStartupCommandForDeviceIdentification(d.getDeviceIdentification(),dDA , getDataAccessInstance(DataServerDA.class), true);
 						result.append(RPCConstants.CS_CMDM_REMOTE_HOST_IP, d.getNetAddress());
 						result.append(RPCConstants.CS_CMDM_ACTION_DOMAIN, "system");
 						result.append(RPCConstants.CS_CMDM_ACTION_NAME, "initControlUnit");
