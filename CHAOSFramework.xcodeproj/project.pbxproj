@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		320192BA14DEEAC000318F00 /* CObjectHandlerProcessingQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 320192B914DEEAC000318F00 /* CObjectHandlerProcessingQueue.h */; };
 		325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F86EB14D9E59D00CDF35F /* InetUtility.h */; };
 		3260276A14B306BA00C906CE /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 326026E914B301F600C906CE /* libchaos_common.dylib */; };
 		3260278B14B307E400C906CE /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 326026E914B301F600C906CE /* libchaos_common.dylib */; };
@@ -122,8 +123,6 @@
 		326DB4C014B3A3E50018A8D0 /* AbstractControlUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4A614B3A3E50018A8D0 /* AbstractControlUnit.h */; };
 		326DB4C114B3A3E50018A8D0 /* ControlManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4A714B3A3E50018A8D0 /* ControlManager.cpp */; };
 		326DB4C214B3A3E50018A8D0 /* ControlManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4A814B3A3E50018A8D0 /* ControlManager.h */; };
-		326DB4C314B3A3E50018A8D0 /* ControlUnitSandbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4A914B3A3E50018A8D0 /* ControlUnitSandbox.cpp */; };
-		326DB4C414B3A3E50018A8D0 /* ControlUnitSandbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4AA14B3A3E50018A8D0 /* ControlUnitSandbox.h */; };
 		326DB4C514B3A3E50018A8D0 /* OBufferListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4AD14B3A3E50018A8D0 /* OBufferListener.h */; };
 		326DB4C614B3A3E50018A8D0 /* OutputDataBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4AE14B3A3E50018A8D0 /* OutputDataBuffer.cpp */; };
 		326DB4C714B3A3E50018A8D0 /* OutputDataBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4AF14B3A3E50018A8D0 /* OutputDataBuffer.h */; };
@@ -164,6 +163,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		320192B914DEEAC000318F00 /* CObjectHandlerProcessingQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CObjectHandlerProcessingQueue.h; sourceTree = "<group>"; };
 		3216601014D49D0F008DADD2 /* ObjectWaitSemaphore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectWaitSemaphore.h; sourceTree = "<group>"; };
 		325F86EB14D9E59D00CDF35F /* InetUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InetUtility.h; sourceTree = "<group>"; };
 		326026E914B301F600C906CE /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_common.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -283,8 +283,6 @@
 		326DB4A614B3A3E50018A8D0 /* AbstractControlUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AbstractControlUnit.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB4A714B3A3E50018A8D0 /* ControlManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ControlManager.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB4A814B3A3E50018A8D0 /* ControlManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ControlManager.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB4A914B3A3E50018A8D0 /* ControlUnitSandbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ControlUnitSandbox.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		326DB4AA14B3A3E50018A8D0 /* ControlUnitSandbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ControlUnitSandbox.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB4AD14B3A3E50018A8D0 /* OBufferListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = OBufferListener.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB4AE14B3A3E50018A8D0 /* OutputDataBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = OutputDataBuffer.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB4AF14B3A3E50018A8D0 /* OutputDataBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = OutputDataBuffer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -573,6 +571,7 @@
 				326DB40E14B38BC00018A8D0 /* CObjectProcessingPriorityQueue.h */,
 				326DB40F14B38BC00018A8D0 /* CObjectProcessingQueue.h */,
 				326DB41014B38BC00018A8D0 /* CObjectProcessingQueueListener.h */,
+				320192B914DEEAC000318F00 /* CObjectHandlerProcessingQueue.h */,
 			);
 			path = pqueue;
 			sourceTree = "<group>";
@@ -664,8 +663,6 @@
 				326DB4A614B3A3E50018A8D0 /* AbstractControlUnit.h */,
 				326DB4A714B3A3E50018A8D0 /* ControlManager.cpp */,
 				326DB4A814B3A3E50018A8D0 /* ControlManager.h */,
-				326DB4A914B3A3E50018A8D0 /* ControlUnitSandbox.cpp */,
-				326DB4AA14B3A3E50018A8D0 /* ControlUnitSandbox.h */,
 			);
 			path = ControlManager;
 			sourceTree = "<group>";
@@ -851,6 +848,7 @@
 				3297F22B14D96F8D004FFE4F /* NetworkAddressMessageChannel.h in Headers */,
 				325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */,
 				32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */,
+				320192BA14DEEAC000318F00 /* CObjectHandlerProcessingQueue.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -863,7 +861,6 @@
 				326DB4BC14B3A3E50018A8D0 /* CommandManagerDefaultAdapters.h in Headers */,
 				326DB4C014B3A3E50018A8D0 /* AbstractControlUnit.h in Headers */,
 				326DB4C214B3A3E50018A8D0 /* ControlManager.h in Headers */,
-				326DB4C414B3A3E50018A8D0 /* ControlUnitSandbox.h in Headers */,
 				326DB4C514B3A3E50018A8D0 /* OBufferListener.h in Headers */,
 				326DB4C714B3A3E50018A8D0 /* OutputDataBuffer.h in Headers */,
 				326DB4C914B3A3E50018A8D0 /* DataManager.h in Headers */,
@@ -1031,7 +1028,6 @@
 				326DB4BA14B3A3E50018A8D0 /* CommandManager.cpp in Sources */,
 				326DB4BF14B3A3E50018A8D0 /* AbstractControlUnit.cpp in Sources */,
 				326DB4C114B3A3E50018A8D0 /* ControlManager.cpp in Sources */,
-				326DB4C314B3A3E50018A8D0 /* ControlUnitSandbox.cpp in Sources */,
 				326DB4C614B3A3E50018A8D0 /* OutputDataBuffer.cpp in Sources */,
 				326DB4C814B3A3E50018A8D0 /* DataManager.cpp in Sources */,
 				326DB4CB14B3A3E50018A8D0 /* KeyDataStorage.cpp in Sources */,

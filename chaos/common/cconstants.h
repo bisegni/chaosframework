@@ -231,17 +231,17 @@ namespace chaos {
             //! This action provide to the shutdown porcess of the enteir daemon 
             //! that runt the active contorl units. All it will be gracefull shutten down
             //! before daemon exit
-        static const char * const ACTION_CU_SHUTDOWN    = "shutdown";
+        static const char * const ACTION_SYSTEM_SHUTDOWN    = "shutdown";
             //! Start the control unit intialization, the action need the default value
             //! of the input attribute for a determinate device
-        static const char * const ACTION_CU_INIT        = "initControlUnit";
+        static const char * const ACTION_DEVICE_INIT        = "initDevice";
             //! Deinitialization of a control unit, if it is in run, the stop phase
             //! is started befor deinitialization one
-        static const char * const ACTION_CU_DEINIT      = "deinitControlUnit";
+        static const char * const ACTION_DEVICE_DEINIT      = "deinitDevice";
             //! start the run method schedule for a determinated device
-        static const char * const ACTION_CU_START       = "startControlUnit";
+        static const char * const ACTION_DEVICE_START       = "startDevice";
             //! pause the run method for a determinated device
-        static const char * const ACTION_CU_STOP        = "stopControlUnit";
+        static const char * const ACTION_DEVICE_STOP        = "stopDevice";
     }
      /** @} */ // end of ChaosSystemDomainAndActionLabel
     

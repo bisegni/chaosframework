@@ -72,6 +72,11 @@ public:
      REturn all the setupped device id
      */
     void getAllDeviceId(vector<string>& domainNames);
+    
+    /*!
+     return true if the device id is found
+     */
+    bool deviceIsPresent(string& deviceID);
 };
 
 }

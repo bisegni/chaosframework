@@ -57,17 +57,17 @@ protected:
     /*
      Execute the work, this is called with a determinated delay, it must be as fast as possible
      */
-    void run() throw(CException);
+    void run(const string&) throw(CException);
     
     /*
      The Control Unit will be stopped
      */
-    void stop() throw(CException);
+    void stop(const string&) throw(CException);
     
     /*(Optional)
      The Control Unit will be deinitialized and disposed
      */
-    void deinit() throw(CException);
+    void deinit(const string&) throw(CException);
     
     /* (Optional)
      Event from metadataserver or gui for update configuration
