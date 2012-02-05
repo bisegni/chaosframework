@@ -23,7 +23,6 @@ namespace chaos {
      */
     class DeviceMessageChannel : public NetworkAddressMessageChannel {
         friend class MessageBroker;
-        
         CDeviceNetworkAddress *deviceNetworkAddress;
         
     protected:
@@ -32,10 +31,7 @@ namespace chaos {
          The constructor create a channel for comunicate with the device that is contained in a Contro Unit, so the full network address is
          ip:port:cu_node_address(instance):deviceID
          */
-        DeviceMessageChannel(MessageBroker *msgBroker, CDeviceNetworkAddress *_deviceNetworkAddress) : NetworkAddressMessageChannel(msgBroker, _deviceNetworkAddress){
-            //take the reference for avoid continue cast fro CNetwork and CDevice
-            deviceNetworkAddress = _deviceNetworkAddress;
-        }
+        DeviceMessageChannel(MessageBroker *msgBroker, CDeviceNetworkAddress *_deviceNetworkAddress);
         
     public:
         /*!
@@ -62,6 +58,13 @@ namespace chaos {
          \millisecToWait the number of millisecond for waith the answer
          */
         int stopDevice(uint32_t millisecToWait = 0);
+        
+            //! Send the CDatawrapper as device attribute values
+        /*!
+         All the CDataWrapper is sent as pack for the device attributes values, no check is done
+         \param attributesValues the container for the values of some dataset attributes
+         */
+        int setAttributeValue(CDataWrapper& attributesValues, uint32_t millisecToWait = 0);
     };
 }
 #endif

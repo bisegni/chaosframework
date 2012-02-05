@@ -202,11 +202,11 @@ CDataWrapper* ControlUnitSandbox::initSandbox(CDataWrapper *initParameter, bool&
             if(startResut.get()) result->addCSDataValue("startSandbox", *startResut.get());
         }
         
-        result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, 0);
+        result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(result, ex)
     } catch(...){
-        result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, 1);
+        result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 1);
     }
 
     return result;
@@ -255,11 +255,11 @@ CDataWrapper* ControlUnitSandbox::deinitSandbox(CDataWrapper *deinitParameter, b
         
         //flag the sandbox initialiaztion status
         initialized = false;
-        result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, 0);
+        result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(result, ex)
     }catch(...){
-        result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, 1);
+        result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 1);
     }
 
     
@@ -296,11 +296,11 @@ CDataWrapper* ControlUnitSandbox::startSandbox(CDataWrapper *startConfiguration,
         
         //set started flag
         started = true;
-        result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, 0);
+        result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(result, ex)
     } catch(...){
-        result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, 1);
+        result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 1);
     }
     return result;
 }
@@ -331,11 +331,11 @@ CDataWrapper* ControlUnitSandbox::stopSandbox(CDataWrapper *stopConfiguration, b
         
         //set started flag
         started = false;
-        result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, 0);
+        result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(result, ex)
     } catch(...){
-        result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, 1);
+        result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 1);
     }
     return result;
 

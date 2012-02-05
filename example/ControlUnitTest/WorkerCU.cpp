@@ -209,6 +209,7 @@ void WorkerCU::deinit() throw(CException) {
  Receive the evento for set the dataset input element
  */
 CDataWrapper* WorkerCU::setDatasetAttribute(CDataWrapper *datasetAttrbiuteValue, bool& detachParam) throw (CException) {
+    if(datasetAttrbiuteValue) LAPP_ << "received message" << datasetAttrbiuteValue->getJSONString();
     return NULL;
 }
 

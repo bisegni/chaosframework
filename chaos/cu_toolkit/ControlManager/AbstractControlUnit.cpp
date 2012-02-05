@@ -189,10 +189,10 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
     AbstActionDescShrPtr 
     actionDescription = addActionDescritionInstance<AbstractControlUnit>(this, 
                                                               &AbstractControlUnit::_setDatasetAttribute, 
-                                                              "setDatasetElement", 
+                                                              "setDatasetAttribute", 
                                                               "method for set the input element for the dataset");
     
-    shared_ptr<CDataWrapper> elementDatasetDescription(new CDataWrapper());
+    /*shared_ptr<CDataWrapper> elementDatasetDescription(new CDataWrapper());
     
     tempStringVector.clear();
     vector< shared_ptr<CDataWrapper> > domainAttributeList; 
@@ -221,16 +221,16 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
                                         (DataType::DataType)attrDesc->getInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE),
                                         attrDesc->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DESCRIPTION).c_str());
         }
-    }
+    }*/
 
     
-    LAPP_ << "Get Action Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
+    LAPP_ << "Get Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
         //grab dataset description
     CUSchemaDB::fillDataWrpperWithDataSetDescirption(setupConfiguration);
     
     
         //grab action description
-    LAPP_ << "Get Dataset Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
+    LAPP_ << "Get Action Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
     DeclareAction::getActionDescrionsInDataWrapper(setupConfiguration);
 
     auto_ptr<SerializationBuffer> ser(setupConfiguration.getBSONData());
@@ -288,7 +288,21 @@ void AbstractControlUnit::_deinit() throw(CException) {
  Receive the evento for set the dataset input element
  */
 CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAttributeValues,  bool& detachParam) throw (CException) {
-    return setDatasetAttribute(datasetAttributeValues, detachParam);
+    CDataWrapper *result = new CDataWrapper();
+    CDataWrapper *executionResult = NULL;
+    try {
+        executionResult = setDatasetAttribute(datasetAttributeValues, detachParam);
+        result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
+        if(executionResult){
+            result->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, *executionResult);
+        }
+    } catch (CException& ex) {
+        DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(result, ex)
+    } catch(...){
+        result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 1);
+    }
+    if(executionResult) delete(executionResult);
+    return result;
 }
 
 /*

@@ -79,6 +79,12 @@ int main (int argc, const char* argv[] )
                     std::cout << "Device init operation result: " << err <<std::endl;
                     err = dMsgchannel->startDevice();
                     std::cout << "Device start operation result: " << err <<std::endl;
+                    
+                    CDataWrapper attributeValue;
+                    attributeValue.addInt32Value("key_value_1", 215);
+                    err = dMsgchannel->setAttributeValue(attributeValue);
+                    std::cout << "setAttributeValue operation result: " << err <<std::endl;
+                    
                     err = dMsgchannel->stopDevice();
                     std::cout << "Device stop operation result: " << err <<std::endl;
                     err = dMsgchannel->deinitDevice();
