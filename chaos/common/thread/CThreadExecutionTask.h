@@ -14,7 +14,7 @@ class CThread;
 class CThreadExecutionTask {
     friend class CThread;
 protected:
-    virtual void executeOnThread() throw(CException) = 0;
+    virtual void executeOnThread(const string&) throw(CException) = 0;
 };
 }
 #endif

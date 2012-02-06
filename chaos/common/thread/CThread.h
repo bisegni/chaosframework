@@ -48,7 +48,6 @@ namespace chaos{
     public:
     CThread();
     CThread(CThreadExecutionTaskSPtr);
-        CThread(boost::function<void(void)>);
     ~CThread();
     
         //internal init for class
@@ -69,23 +68,21 @@ namespace chaos{
     void join();
     
         //set thread id
-	void setThreadID(int);
+	void setThreadIdentification(string&);
     
         //set thread id
 	void setThreadPriorityLevel(int priorityLevel, int policyLevel=SCHED_OTHER);
     
         //set the control unit for this thread
     void setTask(CThreadExecutionTaskSPtr);
-        
-        //set the scheduled function managed by this thread
-    void setScheduledFunction(boost::function<void(void)>);
+
         
         //get this thread statistic
 	TaskCycleStatPtr getStat();
 	
     protected:
 	friend class CThreadGroup;
-	int threadID;
+	string threadIdentification;
     volatile bool m_stop;
 	bool simulationMode;
     boost::chrono::microseconds waithTimeInMicrosecond;
@@ -103,7 +100,6 @@ namespace chaos{
         //thread group that contain this thread , if there is one
 	CThreadGroup *parentCThreadGroup;
     CThreadExecutionTaskSPtr taskUnit;
-    boost::function<void(void)> scheduledFunction;
     };
 }
 #endif

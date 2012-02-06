@@ -165,7 +165,7 @@ void ControlManager::submitControlUnit(AbstractControlUnit *data) throw(CExcepti
 /*
  Thread method that work on buffer item
  */
-void ControlManager::executeOnThread() throw(CException) {
+void ControlManager::executeOnThread(const string& threadIdentification) throw(CException) {
         //initialize the Control Unit
     AbstractControlUnit *curCU = 0L;
     CDataWrapper cuActionAndDataset;

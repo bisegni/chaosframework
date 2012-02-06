@@ -24,6 +24,7 @@
 #include <chaos/common/thread/CThread.h>
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/common/pqueue/CObjectHandlerProcessingQueue.h>
+#include <chaos/common/thread/CThreadExecutionTask.h>
 
 namespace chaos{
     
@@ -74,7 +75,7 @@ deviceStateMap[deviceName]--;
     /*
      Base class for control unit execution task
      */
-    class AbstractControlUnit:public DeclareAction, public CUSchemaDB {
+    class AbstractControlUnit:public DeclareAction, public CUSchemaDB, public CThreadExecutionTask {
         friend class ControlUnitSandbox;
         int32_t scheduleDelay;
         string jsonSetupFilePath;
@@ -155,7 +156,7 @@ deviceStateMap[deviceName]--;
         /*
          Execute the scehduling for the device
          */
-        void _run(const string&) throw(CException); 
+        void executeOnThread(const string&) throw(CException); 
     protected:
             //CU Identifier
         string cuName;
