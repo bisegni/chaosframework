@@ -23,11 +23,7 @@ DeviceMessageChannel::DeviceMessageChannel(MessageBroker *msgBroker, CDeviceNetw
 int DeviceMessageChannel::initDevice(CDataWrapper *initData, uint32_t millisecToWait) {
     int err = 0;
     CHAOS_ASSERT(initData)
-    CDataWrapper initDeviceData;
-    initDeviceData.appendCDataWrapperToArray(*initData);
-    initDeviceData.finalizeArrayForKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION);
-    
-    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), "initDevice", &initDeviceData, millisecToWait));
+    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), "initDevice", initData, millisecToWait));
     if(initResult.get() && initResult->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)){
         err = initResult->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);
     }
@@ -37,8 +33,7 @@ int DeviceMessageChannel::initDevice(CDataWrapper *initData, uint32_t millisecTo
 int DeviceMessageChannel::deinitDevice(uint32_t millisecToWait) {
     int err = 0;
     CDataWrapper deinitDeviceData;
-    deinitDeviceData.appendStringToArray(deviceNetworkAddress->deviceID);
-    deinitDeviceData.finalizeArrayForKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
+    deinitDeviceData.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, deviceNetworkAddress->deviceID);
     auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), "deinitDevice", &deinitDeviceData, millisecToWait));
     if(initResult.get() && initResult->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)){
         err = initResult->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);
@@ -48,10 +43,9 @@ int DeviceMessageChannel::deinitDevice(uint32_t millisecToWait) {
 
 int DeviceMessageChannel::startDevice(uint32_t millisecToWait) {
     int err = 0;
-    CDataWrapper startDeviceData;
-    startDeviceData.appendStringToArray(deviceNetworkAddress->deviceID);
-    startDeviceData.finalizeArrayForKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
-    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), "startDevice", &startDeviceData, millisecToWait));
+    CDataWrapper startDeviceParam;
+    startDeviceParam.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, deviceNetworkAddress->deviceID);
+    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), "startDevice", &startDeviceParam, millisecToWait));
     if(initResult.get() && initResult->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)){
         err = initResult->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);
     }
@@ -61,8 +55,7 @@ int DeviceMessageChannel::startDevice(uint32_t millisecToWait) {
 int DeviceMessageChannel::stopDevice(uint32_t millisecToWait) {
     int err = 0;
     CDataWrapper stopDeviceData;
-    stopDeviceData.appendStringToArray(deviceNetworkAddress->deviceID);
-    stopDeviceData.finalizeArrayForKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
+    stopDeviceData.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, deviceNetworkAddress->deviceID);
     auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), "stopDevice", &stopDeviceData, millisecToWait));
     if(initResult.get() && initResult->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)){
         err = initResult->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);

@@ -252,58 +252,50 @@ void AbstractControlUnit::_undefineActionAndDataset() throw(CException) {
  */
 CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& detachParam) throw(CException) {
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
+    KeyDataStorage *tmpKDS = 0L;
     CDataWrapper *result = new CDataWrapper();
     auto_ptr<CDataWrapper> updateResult;
     try{
-        if(!initConfiguration || !initConfiguration->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION)) {
-            throw CException(0, "Node Device Init infromation in param", "AbstractControlUnit::_init");
+        if(!initConfiguration || !initConfiguration->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID) || !initConfiguration->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION)) {
+            throw CException(0, "Node Device Init information in param", "AbstractControlUnit::_init");
         }
         
-        auto_ptr<CMultiTypeDataArrayWrapper> initializationDevicesInformation(initConfiguration->getVectorValue(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION));
-            //load all keyDataStorageMap for the registered devices
-        KeyDataStorage *tmpKDS = 0L;
+        string deviceID = initConfiguration->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
+        LCU_ << "Initializating Phase for device:" << deviceID;
         
-            //cycle all found device
-        for (int idx = 0; idx < initializationDevicesInformation->size(); idx++) {
-            auto_ptr<CDataWrapper> deviceInitializationPack(initializationDevicesInformation->getCDataWrapperElementAtIndex(idx));
-            if(!deviceInitializationPack->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID) || !deviceInitializationPack->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION)) continue;
-            
-            string deviceID = deviceInitializationPack->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
-            LCU_ << "Initializating Phase for device:" << deviceID;
-            
-            if(!CUSchemaDB::deviceIsPresent(deviceID)) {
-                LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
-                continue;
-            }
-            
-                //check to see if the device can ben initialized
-            if(deviceStateMap[deviceID] != INIT_STATE) {
-                LCU_ << "device:" << deviceID << " already initialized";
-                continue; 
-            }
-            
-            LCU_ << "Create schedule thread for device:" << deviceID;
-                //initialize device scheduler
-            schedulerDeviceMap.insert(make_pair(deviceID, new CThread(this)));
-            schedulerDeviceMap[deviceID]->setThreadIdentification(deviceID);
-                //initialize key data storage for device id
-            LCU_ << "Create KeyDataStorage device:" << deviceID;
-            tmpKDS = DataManager::getInstance()->getKeyDataStorageNewInstanceForKey(deviceID);
-            tmpKDS->init(deviceInitializationPack.get());
-            
-            keyDataStorageMap.insert(make_pair(deviceID, tmpKDS));
-            
-            LCU_ << "Start custom inititialization" << deviceID;
-                //initializing the device in control unit
-            init(deviceInitializationPack.get());
-            
-                //advance status
-            deviceStateMap[deviceID]++;
+        if(!CUSchemaDB::deviceIsPresent(deviceID)) {
+            LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
+            throw CException(1, "Deviuce not known by this control unit", "AbstractControlUnit::_init");
         }
+        
+            //check to see if the device can ben initialized
+        if(deviceStateMap[deviceID] != INIT_STATE) {
+            LCU_ << "device:" << deviceID << " already initialized";
+            throw CException(2, "Device Already Initialized", "AbstractControlUnit::_init");
+        }
+        
+        LCU_ << "Create schedule thread for device:" << deviceID;
+            //initialize device scheduler
+        schedulerDeviceMap.insert(make_pair(deviceID, new CThread(this)));
+        schedulerDeviceMap[deviceID]->setThreadIdentification(deviceID);
+            //initialize key data storage for device id
+        LCU_ << "Create KeyDataStorage device:" << deviceID;
+        tmpKDS = DataManager::getInstance()->getKeyDataStorageNewInstanceForKey(deviceID);
+        tmpKDS->init(initConfiguration);
+        
+        keyDataStorageMap.insert(make_pair(deviceID, tmpKDS));
+        
+        LCU_ << "Start custom inititialization" << deviceID;
+            //initializing the device in control unit
+        init(initConfiguration);
+        
+            //advance status
+        deviceStateMap[deviceID]++;
+        
         
         result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
             //call update param function
-        updateResult.reset(updateConfiguration(deviceInitializationPack.get(), detachParam));
+        updateResult.reset(updateConfiguration(initConfiguration, detachParam));
         if(updateResult.get()) updateResult->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_SUB_CMD, *updateResult.get());
         
     } catch (CException& ex) {
@@ -321,48 +313,46 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
 CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& detachParam) throw(CException) {
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     LCU_ << "Deinitializating AbstractControlUnit";
+    CThread *tmpThread = 0L;
+    KeyDataStorage *tmpKDS = 0L;
     CDataWrapper *result = new CDataWrapper();
     try{
         if(!deinitParam || !deinitParam->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
             throw CException(0, "Node Device Defined in param", "AbstractControlUnit::_deinit");
         }
         
-        auto_ptr<CMultiTypeDataArrayWrapper> deinitializationDevicesInformation(deinitParam->getVectorValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID));
-            //load all keyDataStorageMap for the registered devices
-        CThread *tmpThread = 0L;
-        KeyDataStorage *tmpKDS = 0L;
-        
-        for (int idx = 0; idx < deinitializationDevicesInformation->size(); idx++) {
-            string deviceID = deinitializationDevicesInformation->getStringElementAtIndex(idx);
-            LCU_ << "Deinitialization Phase for device:" << deviceID;
-            if(!CUSchemaDB::deviceIsPresent(deviceID)) {
-                LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
-                continue;
-            }
-                //check to see if the device can ben initialized
-            if(deviceStateMap[deviceID] != INIT_STATE+1) {
-                LCU_ << "device:" << deviceID << " not initialized";
-                continue;
-            }
-                //deinit the control unit 
-            LCU_ << "Start custom deinitialization for device:" << deviceID;
-            deinit(deviceID);
-            
-                //remove scheduler
-            tmpThread = schedulerDeviceMap[deviceID];
-            delete(tmpThread);
-            tmpThread = 0L;
-            schedulerDeviceMap.erase(deviceID);
-            
-                //remove key data storage
-            tmpKDS = keyDataStorageMap[deviceID];
-            tmpKDS->deinit();
-            delete(tmpKDS);
-            tmpKDS = 0L;
-            keyDataStorageMap.erase(deviceID);
-            
-            deviceStateMap[deviceID]--;
+        string deviceID = deinitParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
+        LCU_ << "Deinitialization Phase for device:" << deviceID;
+        if(!CUSchemaDB::deviceIsPresent(deviceID)) {
+            LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
+            throw CException(1, "Deviuce not known by this control unit", "AbstractControlUnit::_deinit");
         }
+        
+            //check to see if the device can ben initialized
+        if(deviceStateMap[deviceID] != INIT_STATE+1) {
+            LCU_ << "device:" << deviceID << " already initialized";
+            throw CException(2, "Device Not Initialized", "AbstractControlUnit::_deinit");
+        }
+        
+            //deinit the control unit 
+        LCU_ << "Start custom deinitialization for device:" << deviceID;
+        deinit(deviceID);
+        
+            //remove scheduler
+        tmpThread = schedulerDeviceMap[deviceID];
+        delete(tmpThread);
+        tmpThread = 0L;
+        schedulerDeviceMap.erase(deviceID);
+        
+            //remove key data storage
+        tmpKDS = keyDataStorageMap[deviceID];
+        tmpKDS->deinit();
+        delete(tmpKDS);
+        tmpKDS = 0L;
+        keyDataStorageMap.erase(deviceID);
+        
+        deviceStateMap[deviceID]--;
+        
         result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(result, ex)
@@ -385,33 +375,38 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
             throw CException(0, "Node Device Defined in param", "AbstractControlUnit::_start");
         }
         
-        auto_ptr<CMultiTypeDataArrayWrapper> startDevicesInformation(startParam->getVectorValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID));
-        for (int idx = 0; idx < startDevicesInformation->size(); idx++) {
-            string deviceID = startDevicesInformation->getStringElementAtIndex(idx);
-            if(!CUSchemaDB::deviceIsPresent(deviceID)) continue;
-            
-                //check to see if the device can ben initialized
-            if(deviceStateMap[deviceID] != START_STATE) continue;
-            
-            CThread *csThread = schedulerDeviceMap[deviceID];
-            
-            if(!csThread) {
-                LCU_ << "No thread defined for device "<< deviceID;
-                continue;
-            }
-            
-            if(!csThread->isStopped()){
-                LCU_ << "thread for "<< deviceID << "already runnign";
-                continue;
-            }
-            
-            
-            LCU_ << "Start Thread for device id:" << deviceID;
-            csThread->start();
-            csThread->setThreadPriorityLevel(sched_get_priority_max(SCHED_RR), SCHED_RR);
-            
-            deviceStateMap[deviceID]++;
+        string deviceID = startParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
+        if(!CUSchemaDB::deviceIsPresent(deviceID)) {
+            LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
+            throw CException(1, "Deviuce not known by this control unit", "AbstractControlUnit::_start");
         }
+        
+            //check to see if the device can ben initialized
+        if(deviceStateMap[deviceID] != START_STATE) {
+            LCU_ << "device:" << deviceID << " already strted";
+            throw CException(2, "Device already started", "AbstractControlUnit::_start");
+        }            
+        
+        
+        CThread *csThread = schedulerDeviceMap[deviceID];
+        
+        if(!csThread) {
+            LCU_ << "No thread defined for device "<< deviceID;
+            throw CException(3, "No thread defined for device", "AbstractControlUnit::_start");
+        }
+        
+        if(!csThread->isStopped()){
+            LCU_ << "thread for "<< deviceID << "already running";
+            throw CException(4, "Thread for device already running", "AbstractControlUnit::_start");
+        }
+        
+        
+        LCU_ << "Start Thread for device id:" << deviceID;
+        csThread->start();
+        csThread->setThreadPriorityLevel(sched_get_priority_max(SCHED_RR), SCHED_RR);
+        
+        deviceStateMap[deviceID]++;
+        
         result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(result, ex)
@@ -432,38 +427,37 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachPa
         if(!stopParam || !stopParam->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
             throw CException(0, "Node Device Defined in param", "AbstractControlUnit::_stop");
         }
-        auto_ptr<CMultiTypeDataArrayWrapper> stopDevicesInformation(stopParam->getVectorValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID));
-        
-        for (int idx = 0; idx < stopDevicesInformation->size(); idx++) {
-            string deviceIDToStop = stopDevicesInformation->getStringElementAtIndex(idx);
-            if(!CUSchemaDB::deviceIsPresent(deviceIDToStop)) continue;
-            
-                //check to see if the device can ben initialized
-            if(deviceStateMap[deviceIDToStop] != START_STATE+1) {
-                LCU_ << "The state of device id" << deviceIDToStop << " isn't started";
-                continue;
-            }
-            
-            stop(deviceIDToStop);
-            
-            CThread *csThread = schedulerDeviceMap[deviceIDToStop];
-            
-            if(!csThread) {
-                LCU_ << "No thread defined for device "<< deviceIDToStop;
-                continue;
-            }
-            
-            if(csThread->isStopped()){
-                LCU_ << "thread for "<< deviceIDToStop << "already runnign";
-                continue;
-                
-            }
-            LCU_ << "Stopping Device ID:" << deviceIDToStop;
-            csThread->stop();
-            LCU_ << "Stopped Thread for Device ID:" << deviceIDToStop;
-            
-            deviceStateMap[deviceIDToStop]--;
+        string deviceID = stopParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
+        if(!CUSchemaDB::deviceIsPresent(deviceID)) {
+            LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
+            throw CException(1, "Device not known by this control unit", "AbstractControlUnit::_stop");
         }
+        
+            //check to see if the device can ben initialized
+        if(deviceStateMap[deviceID] != START_STATE+1) {
+            LCU_ << "device:" << deviceID << " not started";
+            throw CException(2, "Device not startded", "AbstractControlUnit::_stop");
+        }            
+        
+        stop(deviceID);
+        
+        CThread *csThread = schedulerDeviceMap[deviceID];
+        
+        if(!csThread) {
+            LCU_ << "No thread defined for device "<< deviceID;
+            throw CException(3, "No thread defined for device", "AbstractControlUnit::_stop");
+        }
+        
+        if(csThread->isStopped()){
+            LCU_ << "thread for "<< deviceID << "already runnign";
+           throw CException(4, "Thread for device already running", "AbstractControlUnit::_stop");
+        }
+        LCU_ << "Stopping Device ID:" << deviceID;
+        csThread->stop();
+        LCU_ << "Stopped Thread for Device ID:" << deviceID;
+        
+        deviceStateMap[deviceID]--;
+        
         result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(result, ex)
@@ -506,36 +500,31 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
  */
 CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack, bool& detachParam) throw (CException) {
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
+        //load all keyDataStorageMap for the registered devices
     CDataWrapper *result = new CDataWrapper();
     try{
-        if(!updatePack || !updatePack->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION)) {
+        if(!updatePack || !updatePack->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID) || !updatePack->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION)) {
             throw CException(0, "Update pack malformed", "AbstractControlUnit::updateConfiguration");
         }
         
-        auto_ptr<CMultiTypeDataArrayWrapper> updateConfigurationDevicesInformation(initConfiguration->getVectorValue(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION));
-            //load all keyDataStorageMap for the registered devices
-        KeyDataStorage *tmpKDS = 0L;
+        string deviceID = updatePack->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
         
-        for (int idx = 0; idx < updateConfigurationDevicesInformation->size(); idx++) {
-            auto_ptr<CDataWrapper> deviceInitializationPack(updateConfigurationDevicesInformation->getCDataWrapperElementAtIndex(idx));
-            if(!deviceInitializationPack->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID) || !deviceInitializationPack->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION)) continue;
-            
-            string deviceID = deviceInitializationPack->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
-            
-            
-            if(!CUSchemaDB::deviceIsPresent(deviceID))  throw CException(1, "The define not exist", "AbstractControlUnit::updateConfiguration");
-            
-                //check to see if the device can ben initialized
-            if(keyDataStorageMap.count(deviceID)!=0) {
-                keyDataStorageMap[deviceID]->updateConfiguration(newConfiguration);
-            }
-            
-            if(deviceInitializationPack->hasKey(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY)){
-                    //we need to configure the delay  from a run() call and the next
-                int32_t uSecdelay = deviceInitializationPack->getInt32Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY);
-                schedulerDeviceMap[deviceIDToStop]->setDelayBeetwenTask(uSecdelay);
-            }
+        if(!CUSchemaDB::deviceIsPresent(deviceID)) {
+            LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
+            throw CException(1, "Device not known by this control unit", "AbstractControlUnit::_stop");
         }
+
+            //check to see if the device can ben initialized
+        if(keyDataStorageMap.count(deviceID)!=0) {
+            keyDataStorageMap[deviceID]->updateConfiguration(updatePack);
+        }
+        
+        if(updatePack->hasKey(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY)){
+                //we need to configure the delay  from a run() call and the next
+            int32_t uSecdelay = updatePack->getInt32Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY);
+            schedulerDeviceMap[deviceID]->setDelayBeetwenTask(uSecdelay);
+        }
+        
         
         result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
     } catch (CException& ex) {
