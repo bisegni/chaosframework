@@ -276,6 +276,8 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
         //initialize device scheduler
     schedulerDeviceMap.insert(make_pair(deviceID, new CThread(this)));
     schedulerDeviceMap[deviceID]->setThreadIdentification(deviceID);
+        //set the defautl scehduling rate to 1 sec
+    schedulerDeviceMap[deviceID]->setDelayBeetwenTask(1000000);
         //initialize key data storage for device id
     LCU_ << "Create KeyDataStorage device:" << deviceID;
     tmpKDS = DataManager::getInstance()->getKeyDataStorageNewInstanceForKey(deviceID);

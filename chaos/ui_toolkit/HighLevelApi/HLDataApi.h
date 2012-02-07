@@ -9,17 +9,17 @@
 #ifndef ChaosFramework_HLDataApi_h
 #define ChaosFramework_HLDataApi_h
 
-#include <string>
-
+#include <chaos/ui_toolkit/HighLevelApi/DeviceController.h>
+#include <chaos/common/utility/Singleton.h>
 namespace chaos {
     namespace ui {
         using namespace std;
         /*
          High level api for maning device datasert
          */
-        class HLDataApi {
+        class HLDataApi  : public Singleton<HLDataApi> {
             friend class ChaosUIToolkit;
-        
+            friend class Singleton<HLDataApi>;
         /*
          * Constructor
          */
@@ -31,7 +31,7 @@ namespace chaos {
         ~HLDataApi();
 
         public:
-
+            DeviceController *getControllerForDeviceID(string& deviceID) throw (CException);
         };
     }
 }

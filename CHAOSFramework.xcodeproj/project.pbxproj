@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		320192BA14DEEAC000318F00 /* CObjectHandlerProcessingQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 320192B914DEEAC000318F00 /* CObjectHandlerProcessingQueue.h */; };
+		320DF98D14E17E2700251621 /* DeviceController.h in Headers */ = {isa = PBXBuildFile; fileRef = 320DF98C14E17E2700251621 /* DeviceController.h */; };
+		320DF99114E190BB00251621 /* DeviceController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320DF98F14E17E3D00251621 /* DeviceController.cpp */; };
 		325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F86EB14D9E59D00CDF35F /* InetUtility.h */; };
 		3260276A14B306BA00C906CE /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 326026E914B301F600C906CE /* libchaos_common.dylib */; };
 		3260278B14B307E400C906CE /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 326026E914B301F600C906CE /* libchaos_common.dylib */; };
@@ -164,6 +166,8 @@
 
 /* Begin PBXFileReference section */
 		320192B914DEEAC000318F00 /* CObjectHandlerProcessingQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CObjectHandlerProcessingQueue.h; sourceTree = "<group>"; };
+		320DF98C14E17E2700251621 /* DeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceController.h; sourceTree = "<group>"; };
+		320DF98F14E17E3D00251621 /* DeviceController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceController.cpp; sourceTree = "<group>"; };
 		3216601014D49D0F008DADD2 /* ObjectWaitSemaphore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectWaitSemaphore.h; sourceTree = "<group>"; };
 		325F86EB14D9E59D00CDF35F /* InetUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InetUtility.h; sourceTree = "<group>"; };
 		326026E914B301F600C906CE /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_common.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -721,6 +725,8 @@
 				326DB4DB14B3B0070018A8D0 /* HLDataApi.h */,
 				326DB4DC14B3B0070018A8D0 /* HLInfrastructureApi.cpp */,
 				326DB4DD14B3B0070018A8D0 /* HLInfrastructureApi.h */,
+				320DF98F14E17E3D00251621 /* DeviceController.cpp */,
+				320DF98C14E17E2700251621 /* DeviceController.h */,
 			);
 			path = HighLevelApi;
 			sourceTree = "<group>";
@@ -881,6 +887,7 @@
 				326DB4F014B3B0070018A8D0 /* HLInfrastructureApi.h in Headers */,
 				326DB4F414B3B0070018A8D0 /* LLDataApi.h in Headers */,
 				326DB4F614B3B0070018A8D0 /* LLRpcApi.h in Headers */,
+				320DF98D14E17E2700251621 /* DeviceController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1045,6 +1052,7 @@
 				326DB4EF14B3B0070018A8D0 /* HLInfrastructureApi.cpp in Sources */,
 				326DB4F314B3B0070018A8D0 /* LLDataApi.cpp in Sources */,
 				326DB4F514B3B0070018A8D0 /* LLRpcApi.cpp in Sources */,
+				320DF99114E190BB00251621 /* DeviceController.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -59,6 +59,11 @@ namespace chaos {
              Return a new device channel
              */
             DeviceMessageChannel *getNewDeviceMessageChannel(CDeviceNetworkAddress *deviceNetworkAddress);
+            
+            /*!
+             Delete a previously instantiatedchannel
+             */
+            void deleteMessageChannel(NetworkAddressMessageChannel*);
         };
     }
 }

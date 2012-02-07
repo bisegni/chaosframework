@@ -34,6 +34,7 @@ namespace chaos {
         DeviceMessageChannel(MessageBroker *msgBroker, CDeviceNetworkAddress *_deviceNetworkAddress);
         
     public:
+        void setNewAddress(CDeviceNetworkAddress *_deviceAddress);
         /*!
          Perform the hardware initialization
          \param initData the pointer to the data for device initialization. The memory is not deallocate after the send operation

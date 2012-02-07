@@ -9,6 +9,7 @@
 #include "HLDataApi.h"
 
 using namespace std;
+using namespace chaos;
 using namespace chaos::ui;
 
 /*
@@ -23,4 +24,10 @@ HLDataApi::HLDataApi() {
  */
 HLDataApi::~HLDataApi() {
     
+}
+
+DeviceController *HLDataApi::getControllerForDeviceID(string& deviceID) throw (CException) {
+    DeviceController *deviceController = new DeviceController(deviceID);
+    deviceController->updateChannel();
+    return deviceController;
 }

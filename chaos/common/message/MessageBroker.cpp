@@ -304,3 +304,10 @@ void MessageBroker::disposeMessageChannel(MessageChannel *messageChannelToDispos
     //dispose it
     delete(messageChannelToDispose);
 }
+    //!Channel deallocation
+/*!
+ Perform the message channel deallocation
+ */
+void MessageBroker::disposeMessageChannel(NetworkAddressMessageChannel *messageChannelToDispose) {
+    disposeMessageChannel(messageChannelToDispose);
+}

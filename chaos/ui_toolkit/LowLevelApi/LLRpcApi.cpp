@@ -69,3 +69,7 @@ MDSMessageChannel *LLRpcApi::getNewMetadataServerChannel() {
 DeviceMessageChannel *LLRpcApi::getNewDeviceMessageChannel(CDeviceNetworkAddress *deviceNetworkAddress) {
     return rpcMessageBroker->getDeviceMessageChannelFromAddress(deviceNetworkAddress);
 }
+
+void LLRpcApi::deleteMessageChannel(NetworkAddressMessageChannel *channelToDispose) {
+        //rpcMessageBroker->disposeMessageChannel(channelToDispose);
+}

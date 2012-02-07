@@ -24,6 +24,7 @@ namespace chaos{
     
     class IODataDriver: public Configurable {
     public:
+        virtual ~IODataDriver(){};
         /*
          * Init method, the has map has all received value for configuration
          * every implemented driver need to get all needed configuration param
@@ -56,7 +57,7 @@ namespace chaos{
          * This method retrive the cached object by CSDawrapperUsed as query key and
          * return a pointer to the class ArrayPointer of CDataWrapper type
          */
-        virtual char * retriveRawData(string&, size_t*)  throw(CException) = 0;
+        virtual char * retriveRawData(string& key, size_t* dataDim=NULL)  throw(CException) = 0;
         
         /*
          Update the driver configuration

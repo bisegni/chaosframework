@@ -28,7 +28,7 @@ namespace chaos {
         friend class MessageBroker;
     protected:
         //! node address for metadata server
-        CNodeNetworkAddress *nodeAddress;
+        auto_ptr<CNodeNetworkAddress> nodeAddress;
 
     public:
         //!Base constructor
@@ -39,13 +39,16 @@ namespace chaos {
          */
         NetworkAddressMessageChannel(MessageBroker *msgBroker,  CNodeNetworkAddress *_nodeAddress) : MessageChannel(msgBroker) {
             CHAOS_ASSERT(_nodeAddress)
-            nodeAddress = _nodeAddress;
-            if(nodeAddress)setRemoteNodeAddress(nodeAddress->ipPort);
-            
+            setNewAddress(_nodeAddress);           
         }
         
         virtual ~NetworkAddressMessageChannel(){
-            if(nodeAddress) delete nodeAddress;
+                //if(nodeAddress) delete nodeAddress;
+        }
+        
+        virtual void setNewAddress(CNodeNetworkAddress *_nodeAddress) {
+            nodeAddress.reset(_nodeAddress);
+            if(_nodeAddress)setRemoteNodeAddress(nodeAddress->ipPort);
         }
     };
 

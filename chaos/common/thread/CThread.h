@@ -62,7 +62,7 @@ namespace chaos{
     bool isStopped();
     
         //sec to waith beetwen task execution
-    void setDelayBeetwenTask(long microsecond);
+    void setDelayBeetwenTask(int64_t microsecond);
     
         //join to thread execution
     void join();

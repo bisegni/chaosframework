@@ -27,7 +27,7 @@ class IOMemcachedDriver : public IODataDriver {
 public:
     
     IOMemcachedDriver();
-    ~IOMemcachedDriver();
+    virtual ~IOMemcachedDriver();
     
     /*
      * Init method, the has map has all received value for configuration

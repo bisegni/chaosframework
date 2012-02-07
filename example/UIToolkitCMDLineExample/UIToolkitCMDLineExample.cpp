@@ -14,6 +14,7 @@
 #include <chaos/common/rpcnet/CNodeNetworkAddress.h>
 #include <chaos/ui_toolkit/ChaosUIToolkit.h>
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
+#include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
 /*! \page page_example_uiex1 ChaosUIToolkit Example
  \section page_example_uiex1_sec A basic usage for the ChaosUIToolkit package
  
@@ -69,6 +70,19 @@ int main (int argc, const char* argv[] )
                  devIter++) {
                 std::cout << "Device Identification: "<< *devIter << std::endl;
                 
+                auto_ptr<DeviceController> controller(HLDataApi::getInstance()->getControllerForDeviceID(*devIter));
+                
+                controller->initDevice();
+                controller->startDevice();
+                
+                controller->startTracking();
+                sleep(5000);
+                controller->stopTracking();
+                
+                controller->stopDevice();
+                controller->deinitDevice();
+                
+                /*
                 deviceAddress = mdsChannel->getNetworkAddressForDevice(*devIter, 2000);
                 if(deviceAddress) {
                   std::cout << "Initzialize the device: NET:"<< deviceAddress->ipPort << " CU:"<< deviceAddress->nodeID <<std::endl;  
@@ -94,8 +108,7 @@ int main (int argc, const char* argv[] )
                     std::cout << "Device stop operation result: " << err <<std::endl;
                     err = dMsgchannel->deinitDevice();
                     std::cout << "Device deinit operation result: " << err <<std::endl;
-                }
-                
+                }*/
                 //try to initi
             }
         }  

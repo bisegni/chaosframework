@@ -177,6 +177,8 @@ namespace chaos {
          Perform the message channel deallocation
          */
         void disposeMessageChannel(MessageChannel *messageChannelToDispose);
+        
+        void disposeMessageChannel(NetworkAddressMessageChannel *messageChannelToDispose);
     };
 }
 #endif

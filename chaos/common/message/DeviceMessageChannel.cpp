@@ -20,6 +20,10 @@ DeviceMessageChannel::DeviceMessageChannel(MessageBroker *msgBroker, CDeviceNetw
     deviceNetworkAddress = _deviceNetworkAddress;
 }
 
+void DeviceMessageChannel::setNewAddress(CDeviceNetworkAddress *_deviceAddress) {
+    NetworkAddressMessageChannel::setNewAddress(_deviceAddress);
+    deviceNetworkAddress = _deviceAddress;
+}
     //------------------------------------
 int DeviceMessageChannel::initDevice(CDataWrapper *initData, uint32_t millisecToWait) {
     int err = 0;
