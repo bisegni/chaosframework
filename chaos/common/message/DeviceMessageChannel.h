@@ -65,6 +65,12 @@ namespace chaos {
          \param attributesValues the container for the values of some dataset attributes
          */
         int setAttributeValue(CDataWrapper& attributesValues, uint32_t millisecToWait = 0);
+        
+            //!Set the device thread schedule delay
+        /*!
+         Set the delay between a schedule and the next
+         */
+        int setScheduleDelay(int64_t scheduledDealy, uint32_t millisecToWait = 0);
     };
 }
 #endif
