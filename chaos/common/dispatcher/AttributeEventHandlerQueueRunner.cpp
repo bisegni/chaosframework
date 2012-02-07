@@ -1,6 +1,6 @@
 //
 //  AttributeEventHandlerQueueRunner.cpp
-//  ChaosLib
+//  ChaosFramework
 //
 //  Created by Bisegni Claudio on 05/11/11.
 //  Copyright (c) 2011 INFN. All rights reserved.
@@ -38,6 +38,6 @@ bool AttributeEventHandlerQueueRunner::push(AbstractAttributeEventHandlerPtr act
 /*
  process the element action to be executed
  */
-void AttributeEventHandlerQueueRunner::processBufferElement(AbstractAttributeEventHandlerPtr eventHanlder) throw(CException) {
+void AttributeEventHandlerQueueRunner::processBufferElement(AbstractAttributeEventHandlerPtr eventHanlder, ElementManagingPolicy& elementPolicy) throw(CException) {
     eventHanlder->call();
 } 

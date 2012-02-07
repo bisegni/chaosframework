@@ -1,6 +1,6 @@
     //
     //  CThread.h
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by Claudio Bisegni on 20/03/11.
     //  Copyright 2011 INFN. All rights reserved.
@@ -13,8 +13,9 @@
 #include <boost/progress.hpp>
 #include <boost/thread.hpp>
 #include <boost/chrono.hpp>
-#include "CThreadExecutionTask.h"
 #include <chaos/common/global.h>
+
+#include <chaos/common/thread/CThreadExecutionTask.h>
 
 namespace chaos{
     class CThreadGroup;
@@ -47,6 +48,7 @@ namespace chaos{
     public:
     CThread();
     CThread(CThreadExecutionTaskSPtr);
+        CThread(boost::function<void(void)>);
     ~CThread();
     
         //internal init for class
@@ -74,7 +76,10 @@ namespace chaos{
     
         //set the control unit for this thread
     void setTask(CThreadExecutionTaskSPtr);
-    
+        
+        //set the scheduled function managed by this thread
+    void setScheduledFunction(boost::function<void(void)>);
+        
         //get this thread statistic
 	TaskCycleStatPtr getStat();
 	
@@ -85,8 +90,8 @@ namespace chaos{
 	bool simulationMode;
     boost::chrono::microseconds waithTimeInMicrosecond;
     boost::chrono::nanoseconds computedWaithTimeInNanoseconds;
-    scoped_ptr<thread> m_thread;
-	mutex statMutex;
+    boost::scoped_ptr<thread> m_thread;
+	boost::mutex statMutex;
     bool firstLoop;
         //statistic data
 	TaskCycleStatData statisticData;
@@ -98,6 +103,7 @@ namespace chaos{
         //thread group that contain this thread , if there is one
 	CThreadGroup *parentCThreadGroup;
     CThreadExecutionTaskSPtr taskUnit;
+    boost::function<void(void)> scheduledFunction;
     };
 }
 #endif

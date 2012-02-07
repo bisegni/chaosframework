@@ -6,8 +6,8 @@
 //  Copyright (c) 2011 INFN. All rights reserved.
 //
 
-#ifndef ChaosLib_DeviceDatasetCache_h
-#define ChaosLib_DeviceDatasetCache_h
+#ifndef ChaosFramework_DeviceDatasetCache_h
+#define ChaosFramework_DeviceDatasetCache_h
 
 #include <chaos/ui_toolkit/Common/CachedElement.h>
 #include <chaos/common/general/Manager.h>

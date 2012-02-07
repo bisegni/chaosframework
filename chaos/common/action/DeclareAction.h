@@ -1,16 +1,16 @@
 //
 //  DeclareAction.h
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by bisegni on 07/07/11.
 //  Copyright 2011 INFN. All rights reserved.
 //
 
-#ifndef ChaosLib_DeclareAction_h
-#define ChaosLib_DeclareAction_h
+#ifndef ChaosFramework_DeclareAction_h
+#define ChaosFramework_DeclareAction_h
 
 #include <vector>
-#include "ActionDescriptor.h"
+#include <chaos/common/action/ActionDescriptor.h>
 #include <chaos/common/data/CDataWrapper.h>
 
 namespace chaos {

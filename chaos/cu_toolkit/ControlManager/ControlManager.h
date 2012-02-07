@@ -1,13 +1,13 @@
     //
     //  ControlManager.h
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by Claudio Bisegni on 14/06/11.
     //  Copyright 2011 INFN. All rights reserved.
     //
 
-#ifndef ChaosLib_ControlManager_h
-#define ChaosLib_ControlManager_h
+#ifndef ChaosFramework_ControlManager_h
+#define ChaosFramework_ControlManager_h
 
 #include <queue>
 #include <vector>
@@ -22,7 +22,7 @@
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/General/Configurable.h>
-
+#include <chaos/common/message/MDSMessageChannel.h>
 namespace chaos {
     using namespace std;
     using namespace boost;
@@ -30,14 +30,15 @@ namespace chaos {
     /*
      Manager for the Control Unit execution
      */
-    class ControlManager : public CThreadExecutionTask, public DeclareAction,  public Manager, public Configurable, public Singleton<ControlManager> {
+    class ControlManager : public CThreadExecutionTask, public DeclareAction,  public Manager, public Singleton<ControlManager> {
         friend class Singleton<ControlManager>;
-        mutable mutex qMutex;
+        mutable boost::mutex qMutex;
         condition_variable lockCondition;
         CThread *selfThreadPtr;
         queue< AbstractControlUnit* > submittedCUQueue;
         map<string, shared_ptr<ControlUnitSandbox> > sanboxMap;
-
+        MDSMessageChannel *mdsChannel;
+        
         void sendConfPackToMDS(CDataWrapper&);
         
         /*
@@ -90,27 +91,27 @@ namespace chaos {
         /*
          Init the sandbox
          */
-        CDataWrapper* initSandbox(CDataWrapper*) throw (CException);
+        CDataWrapper* initSandbox(CDataWrapper*, bool&) throw (CException);
         
         /*
          Deinit the sandbox
          */
-        CDataWrapper* deinitSandbox(CDataWrapper*) throw (CException);
+        CDataWrapper* deinitSandbox(CDataWrapper*, bool&) throw (CException);
         
         /*
          Start the sandbox
          */
-        CDataWrapper* startSandbox(CDataWrapper*) throw (CException);
+        CDataWrapper* startSandbox(CDataWrapper*, bool&) throw (CException);
         
         /*
          Stop the sandbox
          */
-        CDataWrapper* stopSandbox(CDataWrapper*) throw (CException);
+        CDataWrapper* stopSandbox(CDataWrapper*, bool&) throw (CException);
         
         /*
          Configure the sandbox and all subtree of the CU
          */
-        CDataWrapper* updateConfiguration(CDataWrapper*) {
+        CDataWrapper* updateConfiguration(CDataWrapper*, bool&) {
             return NULL;
         }
     };

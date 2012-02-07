@@ -1,6 +1,6 @@
     //
     //  OutputDataBuffer.h
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by Claudio Bisegni on 17/03/11.
     //  Copyright 2011 INFN. All rights reserved.
@@ -26,7 +26,7 @@ namespace chaos {
         /*
          Process the oldest element in buffer
          */
-        virtual void processBufferElement(CDataWrapper*) throw(CException);
+        virtual void processBufferElement(CDataWrapper*, ElementManagingPolicy&) throw(CException);
     
     public:
         OutputDataBuffer();

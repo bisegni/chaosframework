@@ -1,13 +1,13 @@
     //
     //  DispatcherRegister.h
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by Bisegni Claudio on 29/10/11.
     //  Copyright (c) 2011 INFN. All rights reserved.
     //
 
-#ifndef ControlSystemLib_DispatcherRegister_h
-#define ControlSystemLib_DispatcherRegister_h
+#ifndef ChaosFramework_DispatcherRegister_h
+#define ChaosFramework_DispatcherRegister_h
 #include <chaos/common/utility/ObjectFactoryAliasInstantiation.h>
 #include <chaos/common/utility/Singleton.h>
 #include <string>

@@ -1,13 +1,13 @@
 //
 //  UUIDUtil.h
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Bisegni Claudio on 01/01/12.
 //  Copyright (c) 2012 INFN. All rights reserved.
 //
 
-#ifndef ControlSystemLib_UUIDUtil_h
-#define ControlSystemLib_UUIDUtil_h
+#ifndef ChaosFramework_UUIDUtil_h
+#define ChaosFramework_UUIDUtil_h
 
 #include <boost/uuid/uuid.hpp>            // uuid class
 #include <boost/uuid/uuid_generators.hpp> // generators
@@ -16,6 +16,7 @@
 
 namespace chaos {
     using namespace std;
+    using namespace boost;
     using namespace boost::uuids;
     
     /*

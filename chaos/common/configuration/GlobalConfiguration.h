@@ -1,13 +1,13 @@
-//
-//  GlobalConfiguration.h
-//  ControlSystemLib
-//
-//  Created by Bisegni Claudio on 27/12/11.
-//  Copyright (c) 2011 INFN. All rights reserved.
-//
+    //
+    //  GlobalConfiguration.h
+    //  ChaosFramework
+    //
+    //  Created by Bisegni Claudio on 27/12/11.
+    //  Copyright (c) 2011 INFN. All rights reserved.
+    //
 
-#ifndef ControlSystemLib_GlobalConfiguration_h
-#define ControlSystemLib_GlobalConfiguration_h
+#ifndef ChaosFramework_GlobalConfiguration_h
+#define ChaosFramework_GlobalConfiguration_h
 
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/cconstants.h>
@@ -28,9 +28,42 @@ namespace chaos {
     using namespace boost;
     namespace po = boost::program_options;
     
-    static const regex MetadataServerHostNameRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+){0,1}:[0-9]{4,5}");
-    static const regex MetadataServerIPRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}");
-    static const regex LocalServerIPRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b");
+#define CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(t,x,y,z)\
+t x;\
+if(hasOption(y)){\
+x = getOption<t>(y);\
+}else{\
+x = z;\
+}\
+
+#define CHECK_OPTION_WITH_DEFAULT(t,x,y,z)\
+if(hasOption(y)){\
+x = getOption<t>(y);\
+}else{\
+x = z;\
+}\
+
+#define CHECK_OPTION(t,x,y)\
+if(hasOption(y)){\
+x = getOption<t>(y);\
+}
+    
+#define CHECK_AND_DEFINE_OPTION(t,x,y)\
+t x;\
+if(hasOption(y)){\
+x = getOption<t>(y);\
+}
+    
+#define CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(x,y)\
+bool x;\
+x = hasOption(y);
+    
+        //! Regular expression for check server hostname and port
+    static const regex ServerHostNameRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}");
+        //! Regular expression for check server ip and port
+    static const regex ServerIPAndPortRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}");
+        //! Regular expression for check server ip
+    static const regex ServerIPRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b");
     
     /*
      Central class for all CHOAS framework configuraitons
@@ -46,10 +79,10 @@ namespace chaos {
         
         GlobalConfiguration():desc("Allowed options"){};
         ~GlobalConfiguration(){};
-
+        
         
     public:
-
+        
         /*
          parse the tandard startup parameters
          */
@@ -63,8 +96,8 @@ namespace chaos {
          Add a custom option
          */
         void addOption(const char* name,
-                             const po::value_semantic* s,
-                             const char* description) throw (CException);
+                       const po::value_semantic* s,
+                       const char* description) throw (CException);
         /*
          Add a custom option
          */
@@ -75,7 +108,7 @@ namespace chaos {
          return the presence of the option name
          */
         bool hasOption(const char* optName){
-            return vm.count(optName);
+            return vm.count(optName)>0;
         }
         
         
@@ -95,22 +128,21 @@ namespace chaos {
          *Add the metadataserver address
          */
         void addMetadataServerAddress(string& mdsAddress) throw (CException) {
-            bool isHostnameAndPort = regex_match(mdsAddress, MetadataServerHostNameRegExp);
-            bool isIpAndPort  = regex_match(mdsAddress, MetadataServerIPRegExp);
+            bool isHostnameAndPort = regex_match(mdsAddress, ServerHostNameRegExp);
+            bool isIpAndPort  = regex_match(mdsAddress, ServerIPAndPortRegExp);
             if(!isHostnameAndPort && !isIpAndPort)
                 throw new CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
-                    
+            
                 //address can be added
-            configuration.addStringValue(CS_LIB_METADATASET_ADDRESS, mdsAddress);
+            configuration.addStringValue(LiveHistoryMDSConfiguration::CS_LIB_METADATASET_ADDRESS, mdsAddress);
         }
         
         /**
          *Add the metadataserver address
          */
         void addLocalServerAddress(const char * mdsAddress) throw (CException) {
-            bool isHostnameAndPort = regex_match(mdsAddress, LocalServerIPRegExp);
-            bool isIpAndPort  = regex_match(mdsAddress, LocalServerIPRegExp);
-            if(!isHostnameAndPort && !isIpAndPort)
+            bool isIp = regex_match(mdsAddress, ServerIPRegExp);
+            if(!isIp)
                 throw new CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
             
                 //address can be added
@@ -126,7 +158,7 @@ namespace chaos {
          return the address of metadataserver
          */
         string getMetadataServerAddress() {
-            return configuration.getStringValue(CS_LIB_METADATASET_ADDRESS);
+            return configuration.getStringValue(LiveHistoryMDSConfiguration::CS_LIB_METADATASET_ADDRESS);
         }
         
         /*
@@ -155,7 +187,7 @@ namespace chaos {
          return the address of metadataserver
          */
         bool isMEtadataServerConfigured() {
-            return configuration.hasKey(CS_LIB_METADATASET_ADDRESS);
+            return configuration.hasKey(LiveHistoryMDSConfiguration::CS_LIB_METADATASET_ADDRESS);
         }
     };  
 }

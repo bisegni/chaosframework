@@ -1,17 +1,19 @@
     //
     //  ControlUnitSandbox.h
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by Claudio Bisegni on 21/06/11.
     //  Copyright 2011 INFN. All rights reserved.
     //
 
-#ifndef ChaosLib_ControlUnitSandbox_h
-#define ChaosLib_ControlUnitSandbox_h
+#ifndef ChaosFramework_ControlUnitSandbox_h
+#define ChaosFramework_ControlUnitSandbox_h
 
 #include <vector>
-#include <boost/thread/recursive_mutex.hpp>
+
+#include <boost/chrono.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/thread/recursive_mutex.hpp>
 
 #include <chaos/cu_toolkit/Controlmanager/AbstractControlUnit.h>
 #include <chaos/common/general/Configurable.h>
@@ -25,23 +27,55 @@ namespace chaos {
     using namespace std;
     using namespace boost;
     
-    /*
-     Sandbox for the controlunit execution
+    //! Sandbox for the controlunit execution
+    /*! 
+     This is Sandbox container where Control Unite live. It abstract all dataserver comunication to Control Unit, take care
+     to proxy all metadata server <-> Control unit comunication.
      */
-    class ControlUnitSandbox : public CThreadExecutionTask, public Configurable, public DeclareAction {
+    class ControlUnitSandbox : public CThreadExecutionTask, public DeclareAction {
         
         friend class ControlManager;
-
+        
+        //! Delay between heartbeat event in microseconds
+        boost::chrono::microseconds heartBeatDelayInMicroseconds;
+        
+        //! Last heartbeat time
+        high_resolution_clock::time_point lastHeartBeatTime;
+        
+        //! Sand box generated name
         string sandboxName;
-        recursive_mutex managing_cu_mutex;
-
+        
+        //! Control Unit instance managed by this sandbox
         AbstractControlUnit *acu;
+        
+        //!CThread utility class instance
         CThread *csThread;
         
+        //!mutex for multithreading managment of sand box
+        /*!
+         The muthex is needed because the call to the action can occours in different thread
+         */
+        recursive_mutex managing_cu_mutex;
         
+        /*!
+         \return the managed control unit name
+         */
         const char * getCUName();
+        
+        /*!
+         \return the managed control unit instance id
+         */
         const char * getCUInstance();
+        
+        /*!
+         Add the KeyDataStorage for managed devices 
+         */
         void addKeyDataStorageToCU(CDataWrapper*);
+        
+        /*!
+         Perform the heartbeat operation for managed Contorl Unit Instance
+         */
+        void performHeartbeat();
     protected:
         bool started;
         bool autostart;
@@ -69,29 +103,34 @@ namespace chaos {
         void defineSandboxAndControlUnit(CDataWrapper&) throw (CException); 
         
         /*
+         Define control unit
+         */
+        void undefineSandboxAndControlUnit() throw (CException); 
+        
+        /*
          Sand box initialization, this method take care to setup the control unit
          */
-        void initSandbox(CDataWrapper*) throw (CException);
+        CDataWrapper* initSandbox(CDataWrapper*, bool&) throw (CException);
         /*
          Sand box Deinitialization, this method take care to deinitialize all the subtree 
          starting from CU->buffer->iodriver
          */
-        void deinitSandbox() throw (CException);
+        CDataWrapper* deinitSandbox(CDataWrapper*, bool&) throw (CException);
         
         /*
          Start the sandbox
          */
-        CDataWrapper* startSandbox(CDataWrapper*) throw (CException);
+        CDataWrapper* startSandbox(CDataWrapper*, bool&) throw (CException);
         
         /*
          Stop the sandbox
          */
-        CDataWrapper* stopSandbox(CDataWrapper*) throw (CException);
+        CDataWrapper* stopSandbox(CDataWrapper*, bool&) throw (CException);
         
         /*
          Configure the sandbox and all subtree of the CU
          */
-        CDataWrapper* updateConfiguration(CDataWrapper*);
+        CDataWrapper* updateConfiguration(CDataWrapper*, bool&);
         
         /*
          */

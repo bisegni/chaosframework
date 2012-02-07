@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+	<session-config>
+		<session-timeout>5</session-timeout>
+	</session-config>
+	<display-name>ChaosMDS</display-name>
+	<listener>
+		<listener-class>org.ref.server.event.SessionListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.ref.server.slfservletadaptor.RefContextListener</listener-class>
+	</listener>
+	<context-param>
+		<param-name>mds.port</param-name>
+		<param-value>5000</param-value>
+	</context-param>
+	<!-- context param -->
+	<context-param>
+		<param-name>db.appserver.datasource</param-name>
+		<param-value>jdbc/chaosms</param-value>
+	</context-param>
+	<!-- Configurazione per il plugin dell'initi di govdia -->
+	<!-- Configurazione dei processi -->
+	<context-param>
+		<param-name>ref.process.config.path</param-name>
+		<param-value>/process.xml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>ref.init.plugin</param-name>
+		<param-value>it.infn.chaos.mds.ChaosMDSInitPlugin</param-value>
+	</context-param>
+	<context-param>
+		<param-name>ref.deinit.plugin</param-name>
+		<param-value>it.infn.chaos.mds.ChaosMDSInitPlugin</param-value>
+	</context-param>
+	<!-- Configurazione degli apigroups -->
+	<!-- Configurazione per i log -->
+	<context-param>
+		<param-name>log.configuration</param-name>
+		<param-value>/chaosmds.log4j</param-value>
+	</context-param>
+	<servlet>
+		<display-name>ChaosMDS</display-name>
+		<servlet-name>ChaosMDS</servlet-name>
+		<servlet-class>com.vaadin.terminal.gwt.server.ApplicationServlet</servlet-class>
+		<init-param>
+			<param-name>application</param-name>
+			<param-value>org.ref.server.webapp.RefVaadinApplication</param-value>
+		</init-param>
+		<init-param>
+			<param-name>ref.vaadin.application.controller</param-name>
+			<param-value>it.infn.chaos.mds.ChaosMDSRootController</param-value>
+		</init-param>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>ChaosMDS</servlet-name>
+		<url-pattern>/ChaosMDS/*</url-pattern>
+	</servlet-mapping>
+
+	<welcome-file-list>
+		<welcome-file>ChaosMDS</welcome-file>
+	</welcome-file-list>
+</web-app>

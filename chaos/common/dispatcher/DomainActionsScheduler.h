@@ -1,13 +1,13 @@
     //
     //  DomainActionsScheduler.h
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by bisegni on 08/07/11.
     //  Copyright 2011 INFN. All rights reserved.
     //
 
-#ifndef ChaosLib_ActionsScheduler_h
-#define ChaosLib_ActionsScheduler_h
+#ifndef ChaosFramework_ActionsScheduler_h
+#define ChaosFramework_ActionsScheduler_h
 
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
@@ -27,14 +27,14 @@ namespace chaos {
     class DomainActionsScheduler: public CObjectProcessingQueue<CDataWrapper> {
         friend class CommandDispatcher;
         bool armed;
-        mutex actionAccessMutext;
+        boost::mutex actionAccessMutext;
         shared_ptr<DomainActions> domainActionsContainer;
         
             //reference to global dispatcher used
             //to resubmit sub command
         CommandDispatcher *dispatcher;
     protected:
-        virtual void processBufferElement(CDataWrapper*) throw(CException);
+        virtual void processBufferElement(CDataWrapper*, ElementManagingPolicy&) throw(CException);
         
     public:
         /*

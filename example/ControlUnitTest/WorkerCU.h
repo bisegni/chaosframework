@@ -1,13 +1,13 @@
 //
 //  WorkerCU.h
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by bisegni on 23/06/11.
 //  Copyright 2011 INFN. All rights reserved.
 //
 
-#ifndef ChaosLib_WorkerCU_h
-#define ChaosLib_WorkerCU_h
+#ifndef ChaosFramework_WorkerCU_h
+#define ChaosFramework_WorkerCU_h
 
 #include <string>
 #include <boost/random.hpp>
@@ -72,27 +72,27 @@ protected:
     /* (Optional)
      Event from metadataserver or gui for update configuration
      */
-    CDataWrapper* updateConfiguration(CDataWrapper*) throw (CException);
+    CDataWrapper* updateConfiguration(CDataWrapper*, bool&) throw (CException);
     
     /* (Optional)
      This event is received when a dataset attribute is request to be valorized
      */
-    CDataWrapper* setDatasetAttribute(CDataWrapper*) throw (CException);
+    CDataWrapper* setDatasetAttribute(CDataWrapper*, bool&) throw (CException);
     
     /*
         Test Action Handler
      */
-    CDataWrapper* actionTestOne(CDataWrapper*);
+    CDataWrapper* actionTestOne(CDataWrapper*, bool&);
     
     /*
      Test Action Handler
      */
-    CDataWrapper* actionTestTwo(CDataWrapper*);
+    CDataWrapper* actionTestTwo(CDataWrapper*, bool&);
     
     /*
      Test Action Handler
      */
-    CDataWrapper* resetStatistic(CDataWrapper*);
+    CDataWrapper* resetStatistic(CDataWrapper*, bool&);
 
 };
 

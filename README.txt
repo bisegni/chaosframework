@@ -15,7 +15,22 @@ To generate documentation:  Doxygen software is needed and it can be downloaded 
 
 
 Library used by CHAOS:
-
-    memcached:  memcached
-    msgpack:    msgpack, msgpack-rpc, mpio
-    boost:      boost_program_options, boost_system, boost_thread, boost_chrono, boost_regex, 
+    libmemcached:   libevent                    (http://libevent.org/)
+                    libmemcached                (http://libmemcached.org/libMemcached.html)
+                    
+    memcached:      memcached                   (http://memcached.org/)
+    
+    msgpack:        msgpack                     (https://github.com/msgpack)
+                    msgpack-rpc                 (https://github.com/msgpack/msgpack-rpc)
+                    mpio                        (https://github.com/frsyuki/mpio)
+                    
+    boost:          boost_program_options 
+                    boost_system
+                    boost_thread
+                    boost_chrono
+                    boost_regex                 (www.boost.org)
+Boost logging v2 
+for install boost logging v2(http://torjo.com/log2/index.html)
+Step:
+    cd /usr/local/include/boost/
+    svn co http://svn.boost.org/svn/boost/sandbox/logging/boost/logging 

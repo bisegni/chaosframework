@@ -1,6 +1,6 @@
 //
 //  CDataWrapper.cpp
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Claudio Bisegni on 23/04/11.
 //  Copyright 2011 INFN. All rights reserved.
@@ -43,6 +43,11 @@ CDataWrapper::CDataWrapper():bsonBuilder(new BSONObjBuilder()),bsonArrayBuilder(
 CDataWrapper::CDataWrapper(const char* serializationBuffer, bool bson):bsonBuilder(new BSONObjBuilder()),bsonArrayBuilder(new BSONArrayBuilder()){
         //bsonBuilder->appendElements(BSONObj(serializationBuffer));
     setSerializedData(serializationBuffer, bson);
+}
+
+CDataWrapper *CDataWrapper::clone() {
+    CDataWrapper *result = new CDataWrapper(bsonBuilder->asTempObj().objdata());
+    return result;
 }
 
     //add a csdata value

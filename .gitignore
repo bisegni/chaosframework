@@ -1,4 +1,6 @@
 ControlSystemLibTest/ChaosCU
+example/UIToolkitCMDLineExample/UIToolkitCMDLineExample
+example/ControlUnitTest/ControlUnitTest
 .DS_Store
 *.xcuserdatad*
 *bisegni*
@@ -25,3 +27,6 @@ ChaosMsgClient/chaos
 Documentation/html
 Documentation/latex
 ControlUnitTest/ChaosCUTest
+*mwb.bak
+MetadataServer/.settings/org.eclipse.wst.ws.service.policy.prefs
+MetadataServer/WebContent/META-INF/context.xml

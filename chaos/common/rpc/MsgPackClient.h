@@ -1,13 +1,13 @@
 //
 //  MsgPackClient.h
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Bisegni Claudio on 09/08/11.
 //  Copyright (c) 2011 INFN. All rights reserved.
 //
 
-#ifndef ChaosLib_MsgPackClient_h
-#define ChaosLib_MsgPackClient_h
+#ifndef ChaosFramework_MsgPackClient_h
+#define ChaosFramework_MsgPackClient_h
 #include "RpcClient.h"
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/pqueue/ChaosProcessingQueue.h>
@@ -27,7 +27,7 @@ namespace chaos {
             //messagepack connection pooling
         msgpack::rpc::session_pool *connectionPolling;
     protected:
-        virtual void processBufferElement(CDataWrapper*) throw(CException);
+        virtual void processBufferElement(CDataWrapper*, ElementManagingPolicy&) throw(CException);
         
     public:
          MsgPackClient(string *alias);

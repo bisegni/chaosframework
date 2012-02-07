@@ -1,6 +1,6 @@
     //
     //  CommandDispatcher.cpp
-    //  ControlSystemLib
+    //  ChaosFramework
     //
     //  Created by bisegni on 08/07/11.
     //  Copyright 2011 INFN. All rights reserved.
@@ -113,7 +113,7 @@ bool CommandDispatcher::sendMessage(CDataWrapper* messageToSend, string& serverA
     CHAOS_ASSERT(messageToSend && rpcClientPtr)
     if(!messageToSend && serverAndPort.size()) return false;
     
-    messageToSend->addStringValue(CommandManagerConstant::CS_CMDM_REMOTE_HOST_IP, serverAndPort);
+    messageToSend->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, serverAndPort);
     
     return rpcClientPtr->submitMessage(messageToSend, onThisThread);
 }
@@ -121,20 +121,8 @@ bool CommandDispatcher::sendMessage(CDataWrapper* messageToSend, string& serverA
 /*
  Submit the action answer to rpc system
  */
-bool  CommandDispatcher::sendActionResult(CDataWrapper *actionRequest, CDataWrapper *actionResult, bool onThisThread) {
-    CHAOS_ASSERT(actionRequest && actionResult)
-        //check if request has the rigth key to let chaos lib can manage the answer send operation
-    if(!actionRequest->hasKey(CommandManagerConstant::CS_CMDM_REMOTE_HOST_RESPONSE_ID) ||
-       !actionRequest->hasKey(CommandManagerConstant::CS_CMDM_REMOTE_HOST_IP) ) return false;
-    
-        //get infor for answer form the request
-    string responseID = actionRequest->getStringValue(CommandManagerConstant::CS_CMDM_REMOTE_HOST_RESPONSE_ID); 
-    string remoteIP = actionRequest->getStringValue(CommandManagerConstant::CS_CMDM_REMOTE_HOST_IP); 
-    
-        //fill answer with data for remote ip and request id
-    actionResult->addStringValue(CommandManagerConstant::CS_CMDM_REMOTE_HOST_RESPONSE_ID, responseID);
-    actionResult->addStringValue(CommandManagerConstant::CS_CMDM_REMOTE_HOST_IP, remoteIP);
-    
+bool  CommandDispatcher::sendActionResult(CDataWrapper *actionResult, bool onThisThread) {
+    CHAOS_ASSERT(actionResult)
     return rpcClientPtr->submitMessage(actionResult, onThisThread);
 }
 
@@ -155,6 +143,6 @@ const char * CommandDispatcher::getName() const {
 /*
  
  */
-void CommandDispatcher::setRpcClient(shared_ptr<RpcClient> rpcClPtr){
+void CommandDispatcher::setRpcClient(RpcClient *rpcClPtr){
     rpcClientPtr = rpcClPtr;
 }

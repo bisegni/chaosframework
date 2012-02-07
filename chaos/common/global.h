@@ -1,13 +1,26 @@
 //
 //  global.h
-//  ControlSystemLib
+//  ChaosFramework
 //
 //  Created by Claudio Bisegni on 14/06/11.
 //  Copyright 2011 INFN. All rights reserved.
 //
 
-#ifndef ChaosLib_global_h
-#define ChaosLib_global_h
+#ifndef ChaosFramework_global_h
+#define ChaosFramework_global_h
+
+/*! \mainpage !Chaos - Control system based on a Highly Abstracted and Open Structure
+ *
+ * \section intro_sec Introduction
+ *
+ * This is the introduction.
+ *
+ * \section install_sec Installation
+ *
+ * \subsection step1 Step 1: Opening the box
+ *  
+ * etc...
+ */
 
 #include <boost/version.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -55,6 +68,7 @@ const boost::posix_time::ptime EPOCH(boost::gregorian::date(1970,1,1));
     //chaos assert to debug real badthing
 
 #include "version.h"
+
     //macro for decode the chaos exception
 #define DECODE_CHAOS_EXCEPTION(x) \
 LERR_ << "-----------Exception------------";\
@@ -62,6 +76,11 @@ LERR_ << "Domain:" << x.errorDomain;\
 LERR_ << "Message:" << x.errorMessage;\
 LERR_ << "Error Code;" << x.errorCode;\
 LERR_ << "-----------Exception------------";
+
+#define DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(cdatawrapper, ex)\
+cdatawrapper->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, ex.errorCode);\
+cdatawrapper->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN, ex.errorDomain);\
+cdatawrapper->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, ex.errorDomain);
 
 #define DELETE_OBJ_POINTER(x)\
 delete(x); x=NULL;\
@@ -83,6 +102,7 @@ LAPP_ << "Boost version: " << (BOOST_VERSION / 100000)\
 << "."<< ((BOOST_VERSION / 100) % 1000)<< "."<< (BOOST_VERSION / 100000);\
 LAPP_ << "Compiler Version: " << BOOST_COMPILER;\
 LAPP_ << "-----------------------------------------";\
+
 
 /*
  Abstraction for the server delegator
