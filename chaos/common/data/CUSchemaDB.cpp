@@ -213,3 +213,17 @@ void CUSchemaDB::getAllDeviceId(vector<string>& domainNames) {
         domainNames.push_back(deviceIDDatasetIter->first);
     }
 }
+
+/*
+ return al domain 
+ */
+bool CUSchemaDB::deviceIsPresent(string& deviceID) {
+    for (map<string, vector<CDataWrapper*> > ::iterator deviceIDDatasetIter = deviceIDDataset.begin();
+         deviceIDDatasetIter != deviceIDDataset.end();
+         deviceIDDatasetIter++) {
+        
+            //add domain name
+        if(!deviceIDDatasetIter->first.compare(deviceID)) return true;
+    }
+    return false;
+}

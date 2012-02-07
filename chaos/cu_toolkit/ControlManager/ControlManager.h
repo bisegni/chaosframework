@@ -15,7 +15,6 @@
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
 #include <chaos/common/general/Manager.h>
-#include <chaos/cu_toolkit/Controlmanager/ControlUnitSandbox.h>
 #include <chaos/cu_toolkit/Controlmanager/AbstractControlUnit.h>
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/thread/ChaosThread.h>
@@ -36,7 +35,7 @@ namespace chaos {
         condition_variable lockCondition;
         CThread *selfThreadPtr;
         queue< AbstractControlUnit* > submittedCUQueue;
-        map<string, shared_ptr<ControlUnitSandbox> > sanboxMap;
+        map<string, shared_ptr<AbstractControlUnit> > controlUnitInstanceMap;
         MDSMessageChannel *mdsChannel;
         
         void sendConfPackToMDS(CDataWrapper&);
@@ -44,7 +43,7 @@ namespace chaos {
         /*
          Thread method that work on buffer item
          */
-        void executeOnThread() throw(CException);
+        void executeOnThread(const string&) throw(CException);
         
         /*
          get the last insert data
@@ -91,29 +90,17 @@ namespace chaos {
         /*
          Init the sandbox
          */
-        CDataWrapper* initSandbox(CDataWrapper*, bool&) throw (CException);
+        CDataWrapper* loadControlUnit(CDataWrapper*, bool&) throw (CException);
         
         /*
          Deinit the sandbox
          */
-        CDataWrapper* deinitSandbox(CDataWrapper*, bool&) throw (CException);
-        
-        /*
-         Start the sandbox
-         */
-        CDataWrapper* startSandbox(CDataWrapper*, bool&) throw (CException);
-        
-        /*
-         Stop the sandbox
-         */
-        CDataWrapper* stopSandbox(CDataWrapper*, bool&) throw (CException);
+        CDataWrapper* unloadControlUnit(CDataWrapper*, bool&) throw (CException);
         
         /*
          Configure the sandbox and all subtree of the CU
          */
-        CDataWrapper* updateConfiguration(CDataWrapper*, bool&) {
-            return NULL;
-        }
+        CDataWrapper* updateConfiguration(CDataWrapper*, bool&);
     };
 }
 #endif

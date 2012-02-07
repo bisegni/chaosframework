@@ -25,17 +25,12 @@ CThread::CThread(CThreadExecutionTaskSPtr tUnit){
     internalInit();
 }
 
-CThread::CThread(boost::function<void(void)> func){
-    setScheduledFunction(func);
-    internalInit();
-}
-
 CThread::~CThread(){
     
 }
 
 void CThread::internalInit() {
-    threadID = 0;
+    threadIdentification = "";
     firstLoop = true;
 	m_stop = true;
 	parentCThreadGroup = 0L;
@@ -71,8 +66,8 @@ void CThread::join() {
     m_thread->join();
 }
 
-void CThread::setThreadID(int newCThreadID) {
-	threadID = newCThreadID;
+void CThread::setThreadIdentification(string& _threadIdentification) {
+	threadIdentification = _threadIdentification;
 }
 
 //set CThread id
@@ -127,14 +122,7 @@ void CThread::setThreadPriorityLevel(int priorityLevel, int policyLevel) {
 }
 
 void CThread::setTask(CThreadExecutionTaskSPtr tUnit) {
-    if(!scheduledFunction.empty() || !tUnit) return;
     taskUnit = tUnit;
-    scheduledFunction = boost::bind(&CThreadExecutionTask::executeOnThread, tUnit);
-}
-
-void CThread::setScheduledFunction(boost::function<void(void)> func) {
-    if(!taskUnit) return;
-    scheduledFunction = func;
 }
 
 TaskCycleStatPtr CThread::getStat() {
@@ -154,7 +142,7 @@ void CThread::executeWork() {
             statisticData.ptimeNextStart = boost::chrono::steady_clock::now() + waithTimeInMicrosecond;
             
             //call scheduled function
-            scheduledFunction();
+            taskUnit->executeOnThread(threadIdentification);
             //taskUnit->executeOnThread();
             
             //se if we need to whait for the nex execution

@@ -130,8 +130,8 @@ void WorkerCU::init(CDataWrapper *newConfiguration) throw(CException) {
 /*
  Execute the Control Unit work
  */
-void WorkerCU::run() throw(CException) {
-    LAPP_ << "run WorkerCU";
+void WorkerCU::run(const string& deviceID) throw(CException) {
+    LAPP_ << "run WorkerCU for device" << deviceID;
     auto_ptr<SerializationBuffer> jsonResult;
     const char *devIDInChar = _deviceID.c_str();
     string jsonString;
@@ -194,15 +194,15 @@ void WorkerCU::run() throw(CException) {
 /*
  Execute the Control Unit work
  */
-void WorkerCU::stop() throw(CException) {
-    LAPP_ << "stop WorkerCU";
+void WorkerCU::stop(const string& deviceID) throw(CException) {
+    LAPP_ << "stop WorkerCU for device " << deviceID;
 }
 
 /*
  Deinit the Control Unit
  */
-void WorkerCU::deinit() throw(CException) {
-    LAPP_ << "deinit WorkerCU";
+void WorkerCU::deinit(const string& deviceID) throw(CException) {
+    LAPP_ << "deinit WorkerCU for device " << deviceID;
 }
 
 /*

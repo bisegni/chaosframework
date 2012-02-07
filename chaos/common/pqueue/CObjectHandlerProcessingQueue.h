@@ -1,93 +1,88 @@
-    //
-    //  CObjectProcessingQueue.h
-    //  ChaosFramework
-    //
-    //  Created by Claudio Bisegni on 17/03/11.
-    //  Copyright 2011 INFN. All rights reserved.
-    //
+//
+//  CObjectHandlerProcessingQueue.h
+//  CHAOSFramework
+//
+//  Created by Bisegni Claudio on 05/02/12.
+//  Copyright (c) 2012 INFN. All rights reserved.
+//
 
-#ifndef CObjectProcessingQueue_H
-#define CObjectProcessingQueue_H
+#ifndef CHAOSFramework_CObjectHandlerProcessingQueue_h
+#define CHAOSFramework_CObjectHandlerProcessingQueue_h
+
+
 
 #include "CObjectProcessingQueueListener.h"
 #include <chaos/common/thread/CThreadExecutionTask.h>
 #include <chaos/common/thread/CThreadGroup.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/global.h>
+#include <chaos/common/action/ActionDescriptor.h>
 
 #include <queue>
-#include <boost/lexical_cast.hpp>
 
 namespace chaos {
     using namespace std;
     using namespace boost;
     
-    typedef struct {
-        bool elementHasBeenDetached;
-    } ElementManagingPolicy;
     
-    /*
-        Base class for the Output Buffer structure
+    /*!
+     Base class for the Output Buffer structure
      */
     template<typename T, typename _heapEngine = queue<T*> >
-    class CObjectProcessingQueue : public CThreadExecutionTask {
+    class CObjectHandlerProcessingQueue : public CThreadExecutionTask {
         bool inDeinit;
         int outputThreadNumber;
         mutable boost::mutex qMutex;
         _heapEngine bufferQueue;
         condition_variable liveThreadConditionLock;
         condition_variable emptyQueueConditionLock;
-        
+        boost::function<CDataWrapper*(CDataWrapper*)> handler;
             //thread group
         CThreadGroup threadGroup;
         
     protected:
-        CObjectProcessingQueueListener<T> *eventListener;
         
-        /*
+        /*!
+         
+         */
+        void setHandler(boost::function<CDataWrapper*(CDataWrapper*, bool)> _handler){
+            handler = _handler;
+        }
+        
+        /*!
          Thread method that work on buffer item
          */
-        void executeOnThread(const string& threadIdentification) throw(CException) {
+        void executeOnThread() throw(CException) {
+            bool detachData = false;
                 //get the oldest element
             T* dataRow = NULL;
-            ElementManagingPolicy elementPolicy;
                 //retrive the oldest element
             dataRow = waitAndPop();
             if(!dataRow) return;
                 //Process the element
             try {
-                if(eventListener && !(*eventListener).elementWillBeProcessed(tag, dataRow)){
-                    DELETE_OBJ_POINTER(dataRow);
-                    return;
-                }
-                elementPolicy.elementHasBeenDetached=false;
-                if(dataRow) processBufferElement(dataRow, elementPolicy);
-                if(elementPolicy.elementHasBeenDetached) return;
+                
+
+                if(dataRow && !handler.empty()) handler(dataRow, detachData);
+                if(detachData) return;
             } catch (CException& ex) {
                 DECODE_CHAOS_EXCEPTION(ex)
             } catch (...) {
                 LAPP_ << "[CObjectProcessingQueue] Unkown exception";
             } 
             
-                //if weg got a listener notify it
-            if(eventListener && !(*eventListener).elementWillBeDiscarded(tag, dataRow))return;
             
             DELETE_OBJ_POINTER(dataRow);
         }
         
-        /*
-            Process the oldest element in buffer
-         */
-        virtual void processBufferElement(T*, ElementManagingPolicy&) throw(CException) = 0;
-        
     public:
         int tag;
         
-        CObjectProcessingQueue(){
+        CObjectHandlerProcessingQueue(){
             inDeinit = false;
-            eventListener=0L;
         } 
-
+        
+        
         /*
          Set the internal thread delay for execute new task
          */
@@ -96,7 +91,7 @@ namespace chaos {
         }
         
         /*
-            Initialization method for output buffer
+         Initialization method for output buffer
          */
         virtual void init(int threadNumber) throw(CException) {
             inDeinit = false;
@@ -129,7 +124,7 @@ namespace chaos {
                 }
                 LAPP_ << "CObjectProcessingQueue queue is empty";
             }
-
+            
             LAPP_ << "CObjectProcessingQueue Stopping thread";
             threadGroup.stopGroup(false);
             lock.unlock();
@@ -141,7 +136,7 @@ namespace chaos {
         }
         
         /*
-            push the row value into the buffer
+         push the row value into the buffer
          */
         virtual bool push(T* data) throw(CException) {
             boost::mutex::scoped_lock lock(qMutex);
@@ -178,13 +173,13 @@ namespace chaos {
         }
         
         /*
-            check for empty buffer
+         check for empty buffer
          */
         bool isEmpty() const {
             boost::mutex::scoped_lock lock(qMutex);
             return bufferQueue.empty();
         }
-
+        
         /*
          check for empty buffer
          */
@@ -210,18 +205,11 @@ namespace chaos {
         }
         
         /*
-            Return le number of elementi into live data
+         Return le number of elementi into live data
          */
         unsigned long elementInLiveBuffer() const {
             boost::mutex::scoped_lock lock(qMutex);
             return bufferQueue.size();
-        }
-        
-        /*
-          Assign the elaboration Listener
-         */
-        void setEndElaborationListener(CObjectProcessingQueueListener<T> *objPtr) {
-            eventListener = objPtr; 
         }
         
         /*
@@ -232,5 +220,5 @@ namespace chaos {
         }
     };
 }
-#endif
 
+#endif

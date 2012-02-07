@@ -20,6 +20,7 @@ DeviceMessageChannel::DeviceMessageChannel(MessageBroker *msgBroker, CDeviceNetw
     deviceNetworkAddress = _deviceNetworkAddress;
 }
 
+    //------------------------------------
 int DeviceMessageChannel::initDevice(CDataWrapper *initData, uint32_t millisecToWait) {
     int err = 0;
     CHAOS_ASSERT(initData)
@@ -30,38 +31,43 @@ int DeviceMessageChannel::initDevice(CDataWrapper *initData, uint32_t millisecTo
     return err;
 }
 
+    //------------------------------------
 int DeviceMessageChannel::deinitDevice(uint32_t millisecToWait) {
     int err = 0;
-    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), "deinitDevice", NULL, millisecToWait));
+    CDataWrapper deinitDeviceData;
+    deinitDeviceData.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, deviceNetworkAddress->deviceID);
+    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), "deinitDevice", &deinitDeviceData, millisecToWait));
     if(initResult.get() && initResult->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)){
         err = initResult->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);
     }
     return err;
 }
 
+    //------------------------------------
 int DeviceMessageChannel::startDevice(uint32_t millisecToWait) {
     int err = 0;
-    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), "startDevice", NULL, millisecToWait));
+    CDataWrapper startDeviceParam;
+    startDeviceParam.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, deviceNetworkAddress->deviceID);
+    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), "startDevice", &startDeviceParam, millisecToWait));
     if(initResult.get() && initResult->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)){
         err = initResult->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);
     }
     return err;
 }
 
+    //------------------------------------
 int DeviceMessageChannel::stopDevice(uint32_t millisecToWait) {
     int err = 0;
-    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), "stopDevice", NULL, millisecToWait));
+    CDataWrapper stopDeviceData;
+    stopDeviceData.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, deviceNetworkAddress->deviceID);
+    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), "stopDevice", &stopDeviceData, millisecToWait));
     if(initResult.get() && initResult->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)){
         err = initResult->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);
     }
     return err;
 }
 
-    //! Send the CDatawrapper as device attribute values
-/*!
- All the CDataWrapper is sent as pack for the device attributes values, no check is done
- \param attributesValues the container for the values of some dataset attributes
- */
+    //------------------------------------
 int DeviceMessageChannel::setAttributeValue(CDataWrapper& attributesValues, uint32_t millisecToWait) {
     int err = 0;
         //create the pack
@@ -75,4 +81,18 @@ int DeviceMessageChannel::setAttributeValue(CDataWrapper& attributesValues, uint
         err = initResult->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);
     }
     return err;
+}
+
+    //------------------------------------
+int DeviceMessageChannel::setScheduleDelay(int64_t scheduledDealy, uint32_t millisecToWait){
+    int err = 0;
+    CDataWrapper startDeviceParam;
+    startDeviceParam.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, deviceNetworkAddress->deviceID);
+    startDeviceParam.addInt32Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY, scheduledDealy);
+    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), "updateConfiguration", &startDeviceParam, millisecToWait));
+    if(initResult.get() && initResult->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)){
+        err = initResult->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);
+    }
+    return err;
+
 }
