@@ -34,7 +34,7 @@ namespace chaos {
             //to resubmit sub command
         CommandDispatcher *dispatcher;
     protected:
-        virtual void processBufferElement(CDataWrapper*) throw(CException);
+        virtual void processBufferElement(CDataWrapper*, ElementManagingPolicy&) throw(CException);
         
     public:
         /*

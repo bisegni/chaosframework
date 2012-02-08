@@ -31,7 +31,6 @@ namespace chaos{
      */
     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(MsgPackServer, RpcServer), public rpc::dispatcher {
         
-        int portNumber;
         int threadNumber;
             //msgpack server instance
         rpc::server msgpackServer;

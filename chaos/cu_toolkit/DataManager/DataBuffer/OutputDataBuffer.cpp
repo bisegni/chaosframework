@@ -49,7 +49,7 @@ void OutputDataBuffer::deinit() throw(CException) {
 /*
  Process the oldest element in buffer
  */
-void OutputDataBuffer::processBufferElement(CDataWrapper *rowData)  throw(CException){
+void OutputDataBuffer::processBufferElement(CDataWrapper *rowData, ElementManagingPolicy&)  throw(CException){
         //check if livedata pointer is null
     if(!ioDriver || !rowData) return;
         

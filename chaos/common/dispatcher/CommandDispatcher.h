@@ -40,7 +40,7 @@ namespace chaos{
         
         //! Rpc Client for action result
         /*!Pointer to the associated rpc client, used to send the result of an action*/
-        shared_ptr<RpcClient> rpcClientPtr;
+        RpcClient *rpcClientPtr;
         
         //! Domain name <-> Action name association map
         /*!Contains the association between the domain name and all action for this domain*/
@@ -106,7 +106,7 @@ namespace chaos{
          deallocation is managed by rpc client, otherwise("true" value) the caller need to delete the object it self
          \return boolean value to informa is the mesage has been submitted
          */
-        bool  sendActionResult(CDataWrapper*, CDataWrapper*, bool onThisThread=false);
+        bool  sendActionResult(CDataWrapper*, bool onThisThread=false);
         
         //! dispatch the command accordin to protocol
         /*!
@@ -139,7 +139,7 @@ namespace chaos{
         /*
          Set the rpc client
          */
-        void setRpcClient(shared_ptr<RpcClient>);
+        void setRpcClient(RpcClient*);
 
     };
 }

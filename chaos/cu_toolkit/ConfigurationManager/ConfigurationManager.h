@@ -1,6 +1,6 @@
     //
     //  ConfigurationManager.h
-    //  ChaosFramework
+    //  ControlSystemLib
     //
     //  Created by Claudio Bisegni on 13/03/11.
     //  Copyright 2011 INFN. All rights reserved.
@@ -22,7 +22,7 @@ namespace chaos{
         //DEFINE_CLASS_AS_SINGLETON(ConfigurationManager)
     class ConfigurationManager{
         //mutex for lock operation on service request
-    boost::mutex managing_configuration_mutex;
+    mutex managing_configuration_mutex;
     multimap<string, string> defaultDomainConfiguration;
     
     /*

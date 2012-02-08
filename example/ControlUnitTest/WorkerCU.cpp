@@ -208,23 +208,24 @@ void WorkerCU::deinit() throw(CException) {
 /*
  Receive the evento for set the dataset input element
  */
-CDataWrapper* WorkerCU::setDatasetAttribute(CDataWrapper*) throw (CException) {
+CDataWrapper* WorkerCU::setDatasetAttribute(CDataWrapper *datasetAttrbiuteValue, bool& detachParam) throw (CException) {
+    if(datasetAttrbiuteValue) LAPP_ << "received message" << datasetAttrbiuteValue->getJSONString();
     return NULL;
 }
 
 /*
  Event for update some CU configuration
  */
-CDataWrapper* WorkerCU::updateConfiguration(CDataWrapper *newConfiguration) throw (CException) {
+CDataWrapper* WorkerCU::updateConfiguration(CDataWrapper *newConfiguration, bool& detachParam) throw (CException) {
     LAPP_ << "updateConfiguration  WorkerCU";
-    AbstractControlUnit::updateConfiguration(newConfiguration);
+    AbstractControlUnit::updateConfiguration(newConfiguration, detachParam);
     return NULL;
 }
 
 /*
  Test Action Handler
  */
-CDataWrapper* WorkerCU::actionTestOne(CDataWrapper *actionParam) {
+CDataWrapper* WorkerCU::actionTestOne(CDataWrapper *actionParam, bool& detachParam) {
     CDataWrapper *result = new CDataWrapper();
     result->addStringValue("result_key", "result_key_value");
     result->addInt64Value("result_key_int", ++numberOfResponse);
@@ -234,7 +235,7 @@ CDataWrapper* WorkerCU::actionTestOne(CDataWrapper *actionParam) {
 /*
  Test Action Handler
  */
-CDataWrapper* WorkerCU::resetStatistic(CDataWrapper *actionParam) {
+CDataWrapper* WorkerCU::resetStatistic(CDataWrapper *actionParam, bool& detachParam) {
     LAPP_ << "resetStatistic in WorkerCU called from rpc";
     numberOfResponse = 0;
     return NULL;
@@ -243,7 +244,7 @@ CDataWrapper* WorkerCU::resetStatistic(CDataWrapper *actionParam) {
 /*
  Test Action Handler
  */
-CDataWrapper* WorkerCU::actionTestTwo(CDataWrapper *actionParam) {
+CDataWrapper* WorkerCU::actionTestTwo(CDataWrapper *actionParam, bool& detachParam) {
     LAPP_ << "resetStatistic in WorkerCU called from rpc";
     if(actionParam->hasKey(ACTION_TWO_PARAM_NAME)){
         int32_t sleepTime =  actionParam->getInt32Value(ACTION_TWO_PARAM_NAME);

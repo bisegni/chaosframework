@@ -92,26 +92,37 @@ public class ActionHandlerExecutor implements Runnable {
 			if (domain == null
 				&& action == null)
 				continue;
-
+			BasicBSONObject actionMessage = (BasicBSONObject) (actionHandler.data.containsField(RPCConstants.CS_CMDM_ACTION_MESSAGE)?actionHandler.data.get(RPCConstants.CS_CMDM_ACTION_MESSAGE):null);
 			// get info for replay
 			try {
-				resultObject = actionHandler.handler._handleAction(domain, action, actionHandler.data);
+				
+				actionMessage = actionHandler.handler._handleAction(domain, action, actionMessage);
 
-				if (resultObject != null) {
-					String address = actionHandler.data.containsField(RPCConstants.CS_CMDM_REMOTE_HOST_RESPONSE_IP) ? actionHandler.data.getString(RPCConstants.CS_CMDM_REMOTE_HOST_RESPONSE_IP) : null;
-					if (address == null) {
-						// i need to check if someone ha set another ip as destination
-						if (!resultObject.containsField(RPCConstants.CS_CMDM_REMOTE_HOST_IP))
-							continue;
-					} else {
-						resultObject.remove(RPCConstants.CS_CMDM_REMOTE_HOST_IP);
-						resultObject.append(RPCConstants.CS_CMDM_REMOTE_HOST_IP, address);
+				if (actionMessage != null) {
+					resultObject = new BasicBSONObject();
+					String responseAddress = actionHandler.data.containsField(RPCConstants.CS_CMDM_REMOTE_HOST_ANSWER_IP) ? actionHandler.data.getString(RPCConstants.CS_CMDM_REMOTE_HOST_ANSWER_IP) : null;
+					String reponseDomain = actionHandler.data.containsField(RPCConstants.CS_CMDM_ANSWER_DOMAIN) ? actionHandler.data.getString(RPCConstants.CS_CMDM_ANSWER_DOMAIN) : null;
+					String reponseAction = actionHandler.data.containsField(RPCConstants.CS_CMDM_ANSWER_ACTION) ? actionHandler.data.getString(RPCConstants.CS_CMDM_ANSWER_ACTION) : null;
+					Integer responseID = actionHandler.data.containsField(RPCConstants.CS_CMDM_REMOTE_HOST_ANSWER_MESSAGE_ID) ? actionHandler.data.getInt(RPCConstants.CS_CMDM_REMOTE_HOST_ANSWER_MESSAGE_ID) : null;
+
+					if (responseAddress != null) {
+						resultObject.append(RPCConstants.CS_CMDM_REMOTE_HOST_IP, responseAddress);
 					}
 
-					String answerKey = actionHandler.data.containsField(RPCConstants.CS_CMDM_REMOTE_HOST_RESPONSE_ID) ? actionHandler.data.getString(RPCConstants.CS_CMDM_REMOTE_HOST_RESPONSE_ID) : null;
-					if (answerKey != null) {
-						resultObject.append(RPCConstants.CS_CMDM_REMOTE_HOST_RESPONSE_ID, answerKey);
+					if (reponseDomain != null) {
+						resultObject.append(RPCConstants.CS_CMDM_ACTION_DOMAIN, reponseDomain);
 					}
+
+					if (reponseAction != null) {
+						resultObject.append(RPCConstants.CS_CMDM_ACTION_NAME, reponseAction);
+					}
+
+					if (responseID != null) {
+						actionMessage.append(RPCConstants.CS_CMDM_MESSAGE_ID, responseID);
+					}
+
+					//add the action message
+					resultObject.put(RPCConstants.CS_CMDM_ACTION_MESSAGE, actionMessage);
 					SingletonServices.getInstance().getMdsRpcClient().sendMessage(resultObject);
 				}
 			} catch (RefException e) {

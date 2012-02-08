@@ -121,21 +121,8 @@ bool CommandDispatcher::sendMessage(CDataWrapper* messageToSend, string& serverA
 /*
  Submit the action answer to rpc system
  */
-bool  CommandDispatcher::sendActionResult(CDataWrapper *actionRequest, CDataWrapper *actionResult, bool onThisThread) {
-    CHAOS_ASSERT(actionRequest && actionResult)
-        //check if request has the rigth key to let chaos lib can manage the answer send operation
-    if(!actionRequest->hasKey(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ID) ||
-       !actionRequest->hasKey(RpcActionDefinitionKey::CS_CMDM_RESPONSE_HOST_IP) ) return false;
-    
-        //get infor for answer form the request
-    string responseID = actionRequest->getStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ID); 
-    string responseIP = actionRequest->getStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_HOST_IP); 
-    
-        //fill answer with data for remote ip and request id
-    actionResult->addStringValue(RpcActionDefinitionKey::CS_CMDM_RESPONSE_ID, responseID);
-    //set the response host ip as remote ip where to send the answere
-    actionResult->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, responseIP);
-    
+bool  CommandDispatcher::sendActionResult(CDataWrapper *actionResult, bool onThisThread) {
+    CHAOS_ASSERT(actionResult)
     return rpcClientPtr->submitMessage(actionResult, onThisThread);
 }
 
@@ -156,6 +143,6 @@ const char * CommandDispatcher::getName() const {
 /*
  
  */
-void CommandDispatcher::setRpcClient(shared_ptr<RpcClient> rpcClPtr){
+void CommandDispatcher::setRpcClient(RpcClient *rpcClPtr){
     rpcClientPtr = rpcClPtr;
 }

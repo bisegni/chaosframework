@@ -32,7 +32,7 @@ namespace chaos {
      This is Sandbox container where Control Unite live. It abstract all dataserver comunication to Control Unit, take care
      to proxy all metadata server <-> Control unit comunication.
      */
-    class ControlUnitSandbox : public CThreadExecutionTask, public Configurable, public DeclareAction {
+    class ControlUnitSandbox : public CThreadExecutionTask, public DeclareAction {
         
         friend class ControlManager;
         
@@ -103,29 +103,34 @@ namespace chaos {
         void defineSandboxAndControlUnit(CDataWrapper&) throw (CException); 
         
         /*
+         Define control unit
+         */
+        void undefineSandboxAndControlUnit() throw (CException); 
+        
+        /*
          Sand box initialization, this method take care to setup the control unit
          */
-        void initSandbox(CDataWrapper*) throw (CException);
+        CDataWrapper* initSandbox(CDataWrapper*, bool&) throw (CException);
         /*
          Sand box Deinitialization, this method take care to deinitialize all the subtree 
          starting from CU->buffer->iodriver
          */
-        void deinitSandbox() throw (CException);
+        CDataWrapper* deinitSandbox(CDataWrapper*, bool&) throw (CException);
         
         /*
          Start the sandbox
          */
-        CDataWrapper* startSandbox(CDataWrapper*) throw (CException);
+        CDataWrapper* startSandbox(CDataWrapper*, bool&) throw (CException);
         
         /*
          Stop the sandbox
          */
-        CDataWrapper* stopSandbox(CDataWrapper*) throw (CException);
+        CDataWrapper* stopSandbox(CDataWrapper*, bool&) throw (CException);
         
         /*
          Configure the sandbox and all subtree of the CU
          */
-        CDataWrapper* updateConfiguration(CDataWrapper*);
+        CDataWrapper* updateConfiguration(CDataWrapper*, bool&);
         
         /*
          */

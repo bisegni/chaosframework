@@ -26,7 +26,7 @@ namespace chaos {
         /*
          Process the oldest element in buffer
          */
-        virtual void processBufferElement(CDataWrapper*) throw(CException);
+        virtual void processBufferElement(CDataWrapper*, ElementManagingPolicy&) throw(CException);
     
     public:
         OutputDataBuffer();

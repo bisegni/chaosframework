@@ -26,6 +26,7 @@
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
+#include <chaos/common/message/MessageBroker.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManagerDefaultAdapters.h>
     //#include <chaos/ChaosCUToolkit.h"
 
@@ -43,15 +44,10 @@ namespace chaos{
         friend class CommandDispatcherRegister;
         friend class ServerDelegator;
         friend class Singleton<CommandManager>;
-            //rpc server isntance
-        shared_ptr<RpcServer> rpcServer;
-            //rpc server isntance
-        shared_ptr<RpcClient> rpcClient;       
-            //take the reference to the dispatcher used by all rpc
-        shared_ptr<CommandDispatcher> cmdDispatcher;
         
-            //take care to startup an rpc adapter according to configuration
-        void startupRPCAdapter(CDataWrapper*)throw(CException);
+        string metadataServerAddress;
+        bool canUseMetadataServer;
+        MessageBroker *broker;
 
     public:
         /*
@@ -78,16 +74,11 @@ namespace chaos{
          Configure the sandbox and all subtree of the CU
          */
         CDataWrapper* updateConfiguration(CDataWrapper*);
-        
+                
         /*
-         Send message over rpc channel
+         Get MEtadataserver channel
          */
-        void sendMessage(string&, CDataWrapper*, bool onThisThread = false) throw(CException);
-        
-        /*
-         Send message over rpc channel
-         */
-        void sendMessageToMetadataServer(CDataWrapper*, bool onThisThread = false) throw(CException);
+        MDSMessageChannel *getMetadataserverChannel();
         
         /*
          Register actions defined by AbstractActionDescriptor instance contained in the array
@@ -101,7 +92,7 @@ namespace chaos{
         /*
          Shutdown the chaos control library
          */
-        CDataWrapper* shutdown(CDataWrapper*) throw (CException);
+        CDataWrapper* shutdown(CDataWrapper*, bool&) throw (CException);
     private:
         CommandManager();
         ~CommandManager();

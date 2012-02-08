@@ -69,8 +69,11 @@ namespace chaos {
      Class that wrap the serializaiton system for data storage
      */
     class CDataWrapper/*: public CPoolMemoryObject<CDataWrapper> */{
-        scoped_ptr<BSONObjBuilder> bsonBuilder;
         scoped_ptr<BSONArrayBuilder> bsonArrayBuilder;
+        
+    protected:
+        scoped_ptr<BSONObjBuilder> bsonBuilder;
+        
     public:
         
         CDataWrapper();
@@ -88,7 +91,7 @@ namespace chaos {
         
             //add a string value
         void addStringValue(const char *, string&);
-
+        
             //add a string to array
         void appendStringToArray(const char *);
         
@@ -100,7 +103,7 @@ namespace chaos {
         void appendCDataWrapperToArray(CDataWrapper& srcDataWrapper, bool finalize=false);
             //finalize the array into a key for the current dataobject
         void finalizeArrayForKey(const char *);
-
+        
             //get a string value
         string  getStringValue(const char *);
         
@@ -109,7 +112,7 @@ namespace chaos {
         
             //add a integer value
         void addInt32Value(const char *, int32_t);
-
+        
 #if __linux__ && !defined(__x86_64__)
         void addDoubleValue(const char *key, double dValue);
 #endif
@@ -156,9 +159,39 @@ namespace chaos {
         
             //reset the datawrapper
         void reset();
-            
+        
             //append all element of an data wrapper
         void appendAllElement(CDataWrapper&);
+    };
+    
+        //! MutableCDataWrapper for field update
+    /*! \class MutableCDataWrapper
+     This implementation permit to modify the existent field value
+     */
+    class MutableCDataWrapper : public CDataWrapper {
+        
+    public:
+        
+        void updateStringValue(const char * key, string& newvalue) {
+            BSONElement element = bsonBuilder->asTempObj()[key];
+            if(element.String().size() != newvalue.size()) return;
+                //*reinterpret_cast< char* >( element.value() ) = newvalue.c_str;
+        }
+        
+        void updateInt32Value(const char * key, int32_t newvalue) {
+            BSONElement element = bsonBuilder->asTempObj()[key];
+            *reinterpret_cast< int32_t* >( (char*)element.value() ) = newvalue;
+        }
+        
+        void updateInt64Value(const char * key, int64_t newvalue) {
+            BSONElement element = bsonBuilder->asTempObj()[key];
+            *reinterpret_cast< int64_t* >( (char*)element.value() ) = newvalue;
+        }
+        
+        void updateDoubleValue(const char * key, double newvalue) {
+            BSONElement element = bsonBuilder->asTempObj()[key];
+            *reinterpret_cast< double* >( (char*)element.value() ) = newvalue;
+        }
     };
 }
 

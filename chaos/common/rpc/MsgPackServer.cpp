@@ -8,6 +8,7 @@
 
 #include <msgpack/rpc/server.h>
 #include <msgpack/rpc/transport/udp.h>
+#include <typeinfo>
 
 #include "../global.h"
 #include "MsgPackServer.h"
@@ -29,26 +30,31 @@ void MsgPackServer::init(CDataWrapper *adapterConfiguration) throw(CException) {
     //get portnumber and thread number
     
     LAPP_ << "MsgPackServer initialization"; 
-    
-    portNumber = adapterConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT)?
-                                                adapterConfiguration->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT ):
-                                                DEFAULT_MSGPACK_DISPATCHER_PORT;
-    
-    threadNumber = adapterConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER)?
-                                                adapterConfiguration->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER):
-                                                DEFAULT_MSGPACK_DISPATCHER_THREAD_NUMBER;
-    
-    LAPP_ << "MsgPackServer Configuration";
-    LAPP_ << "MsgPackServer[cfg] port number:" << portNumber;
-    LAPP_ << "MsgPackServer[cfg] thread number:" << threadNumber;
-    
-    //MsgPackRpcServer *server = new MsgPackRpcServer();
-    //server->disp = this;
-	//dp.reset(this);
-	msgpackServer.serve(this );
-    
-	msgpackServer.listen("0.0.0.0", portNumber);
-    LAPP_ << "MsgPackServer initialized";
+    try {
+        portNumber = adapterConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT)?
+        adapterConfiguration->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT ):
+        DEFAULT_MSGPACK_DISPATCHER_PORT;
+        
+        threadNumber = adapterConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER)?
+        adapterConfiguration->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER):
+        DEFAULT_MSGPACK_DISPATCHER_THREAD_NUMBER;
+        
+        LAPP_ << "MsgPackServer Configuration";
+        LAPP_ << "MsgPackServer[cfg] port number:" << portNumber;
+        LAPP_ << "MsgPackServer[cfg] thread number:" << threadNumber;
+        
+            //MsgPackRpcServer *server = new MsgPackRpcServer();
+            //server->disp = this;
+            //dp.reset(this);
+        msgpackServer.serve(this );
+        
+        msgpackServer.listen("0.0.0.0", portNumber);
+        LAPP_ << "MsgPackServer initialized";
+    } catch (std::exception& e) {
+        throw CException(-1, e.what(), "MsgPackServer::init");
+    } catch (...) {
+        throw CException(-2, "generic error", "MsgPackServer::init");
+    }
 }
 
 //start the rpc adapter

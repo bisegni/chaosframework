@@ -59,7 +59,7 @@ bool x;\
 x = hasOption(y);
     
         //! Regular expression for check server hostname and port
-    static const regex ServerHostNameRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+){0,1}:[0-9]{4,5}");
+    static const regex ServerHostNameRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}");
         //! Regular expression for check server ip and port
     static const regex ServerIPAndPortRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}");
         //! Regular expression for check server ip
@@ -134,7 +134,7 @@ x = hasOption(y);
                 throw new CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
             
                 //address can be added
-            configuration.addStringValue(CS_LIB_METADATASET_ADDRESS, mdsAddress);
+            configuration.addStringValue(LiveHistoryMDSConfiguration::CS_LIB_METADATASET_ADDRESS, mdsAddress);
         }
         
         /**
@@ -158,7 +158,7 @@ x = hasOption(y);
          return the address of metadataserver
          */
         string getMetadataServerAddress() {
-            return configuration.getStringValue(CS_LIB_METADATASET_ADDRESS);
+            return configuration.getStringValue(LiveHistoryMDSConfiguration::CS_LIB_METADATASET_ADDRESS);
         }
         
         /*
@@ -187,7 +187,7 @@ x = hasOption(y);
          return the address of metadataserver
          */
         bool isMEtadataServerConfigured() {
-            return configuration.hasKey(CS_LIB_METADATASET_ADDRESS);
+            return configuration.hasKey(LiveHistoryMDSConfiguration::CS_LIB_METADATASET_ADDRESS);
         }
     };  
 }

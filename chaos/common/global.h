@@ -68,6 +68,7 @@ const boost::posix_time::ptime EPOCH(boost::gregorian::date(1970,1,1));
     //chaos assert to debug real badthing
 
 #include "version.h"
+
     //macro for decode the chaos exception
 #define DECODE_CHAOS_EXCEPTION(x) \
 LERR_ << "-----------Exception------------";\
@@ -75,6 +76,11 @@ LERR_ << "Domain:" << x.errorDomain;\
 LERR_ << "Message:" << x.errorMessage;\
 LERR_ << "Error Code;" << x.errorCode;\
 LERR_ << "-----------Exception------------";
+
+#define DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(cdatawrapper, ex)\
+cdatawrapper->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, ex.errorCode);\
+cdatawrapper->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN, ex.errorDomain);\
+cdatawrapper->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, ex.errorDomain);
 
 #define DELETE_OBJ_POINTER(x)\
 delete(x); x=NULL;\
@@ -96,6 +102,7 @@ LAPP_ << "Boost version: " << (BOOST_VERSION / 100000)\
 << "."<< ((BOOST_VERSION / 100) % 1000)<< "."<< (BOOST_VERSION / 100000);\
 LAPP_ << "Compiler Version: " << BOOST_COMPILER;\
 LAPP_ << "-----------------------------------------";\
+
 
 /*
  Abstraction for the server delegator

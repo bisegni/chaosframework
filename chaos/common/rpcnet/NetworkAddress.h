@@ -1,13 +1,13 @@
 //
 //  NetworkAddress.h
-//  ChaosFramework
+//  ControlSystemLib
 //
 //  Created by Bisegni Claudio on 28/12/11.
 //  Copyright (c) 2011 INFN. All rights reserved.
 //
 
-#ifndef ChaosFramework_NetworkAddress_h
-#define ChaosFramework_NetworkAddress_h
+#ifndef ControlSystemLib_NetworkAddress_h
+#define ControlSystemLib_NetworkAddress_h
 
 #include <string>
 namespace chaos {

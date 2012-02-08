@@ -9,7 +9,10 @@
 #include "global.h"
 #include "ChaosCommon.h"
 
-
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
 #include <boost/logging/format.hpp>
 #include <boost/logging/writer/ts_write.hpp>
 

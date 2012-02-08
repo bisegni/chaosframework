@@ -7,87 +7,65 @@
 //
 
 #include "LLRpcApi.h"
-#include "../../common/data/CDataWrapper.h"
+#include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/global.h>
 
 using namespace boost;
 
 using namespace chaos;
 using namespace chaos::ui;
 
-    //initializing static initialization
-shared_ptr<RpcServer> LLRpcApi::rpcServer;
-shared_ptr<RpcClient> LLRpcApi::rpcClient;
-shared_ptr<CommandDispatcher> LLRpcApi::commandDispatcher;
-
+#define INIT_STEP   0
+#define DEINIT_STEP 1
 /*
  LL Rpc Api static initialization it should be called once for application
  */
-void LLRpcApi::initRpcApi(CDataWrapper *initSetup)  throw (CException) {
-     LAPP_ << "Init LLRpcApi";
-    if(!initSetup) throw CException(0, "No Init Setup Found", "LLRpcApi::initRpcApi");
+void LLRpcApi::init()  throw (CException) {
+    LAPP_ << "Init LLRpcApi";
+    SetupStateManager::levelUpFrom(INIT_STEP, "LLRpcApi already initialized");
     
-        //get the dispatcher
-    LAPP_ << "LLRpcApi::initRpcApi Initialization";
-    commandDispatcher.reset(ObjectFactoryRegister<CommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher"));
-    if(!commandDispatcher) throw CException(1, "No Dispatcher Found", "LLRpcApi::initRpcApi");
-    
-        //initiliazing command dispatcher
-    commandDispatcher->init(initSetup);
-    
-        //read the configuration for adapter type
-    
-    if(!initSetup->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE)) 
-        throw CException(2, "No RPC Adapter type found in configuration", "LLRpcApi::initRpcApi");
-    
-    
-    string adapterType = initSetup->getStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE);
-    LAPP_ << "The Adapter is the type: " << adapterType;
-        //get the rpc adaptor instance
-    string serverName = adapterType+"Server";
-    string clientName = adapterType+"Client";
-    rpcServer.reset(ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(serverName.c_str()));
-    if(rpcServer.get() != NULL){
-        LAPP_ << "Got RPC Server: " << rpcServer->getName();
-            //set the dispatcher into the rpc adapter
-        rpcServer->setCommandDispatcher(commandDispatcher);
-            //if has been found the adapter, initialize it
-        LAPP_ << "Init Rpc Server";
-        rpcServer->init(initSetup);
-    }else{
-        LAPP_ << "No RPC Adapter Server";
-    }
-    
-    rpcClient.reset(ObjectFactoryRegister<RpcClient>::getInstance()->getNewInstanceByName(clientName.c_str()));
-    if(rpcClient.get() != NULL){
-        LAPP_ << "Got RPC Client: " << rpcClient->getName();
-            //set the dispatcher into the rpc adapter
-            //rpcServer->setCommandDispatcher(cmdDispatcher);
-            //if has been found the adapter, initialize it
-        LAPP_ << "Init Rpc Server";
-        rpcClient->init(initSetup);
-        commandDispatcher->setRpcClient(rpcClient);
-    }else{
-        LAPP_ << "No RPC Adapter Server";
-    }
-
+    LAPP_ << "Init MessageBroker";
+    rpcMessageBroker->init();
+    LAPP_ << "MessageBroker Initialized";
+    LAPP_ << "Starting MessageBroker";
+    rpcMessageBroker->start();
+    LAPP_ << "MessageBroker Started";
 }
+
 /*
  Deinitialization of LL rpc api
  */
-void LLRpcApi::deinitRpcApi()  throw (CException) {
+void LLRpcApi::deinit()  throw (CException) {
     LAPP_ << "Deinit LLRpcApi";
-    LAPP_ << "Deinit RPC Server: " << rpcServer->getName();
-    rpcServer->deinit();
-    LAPP_ << "Deinit RPC Client: " << rpcClient->getName();
-    rpcClient->deinit();
-    LAPP_ << "Deinit command dispatcher: " << commandDispatcher->getName();
-    commandDispatcher->deinit();
+    SetupStateManager::levelDownFrom(DEINIT_STEP, "LLRpcApi already deinitialized");
+    LAPP_ << "Deinit MessageBroker";
+    rpcMessageBroker->deinit();
+    LAPP_ << "MessageBroker deinitialized";
 }
 
+/*
+ */
 LLRpcApi::LLRpcApi() {
-    
+    rpcMessageBroker = new MessageBroker();
 }
 
+/*
+ */
 LLRpcApi::~LLRpcApi() {
-    
+    if(rpcMessageBroker)
+        delete (rpcMessageBroker);
+}
+
+/*
+ */
+MDSMessageChannel *LLRpcApi::getNewMetadataServerChannel() {
+    string serverHost = GlobalConfiguration::getInstance()->getMetadataServerAddress();
+    return rpcMessageBroker->getMetadataserverMessageChannel(serverHost);
+}
+
+/*!
+ Return a new device channel
+ */
+DeviceMessageChannel *LLRpcApi::getNewDeviceMessageChannel(CDeviceNetworkAddress *deviceNetworkAddress) {
+    return rpcMessageBroker->getDeviceMessageChannelFromAddress(deviceNetworkAddress);
 }

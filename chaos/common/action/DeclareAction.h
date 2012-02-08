@@ -10,7 +10,7 @@
 #define ChaosFramework_DeclareAction_h
 
 #include <vector>
-#include "ActionDescriptor.h"
+#include <chaos/common/action/ActionDescriptor.h>
 #include <chaos/common/data/CDataWrapper.h>
 
 namespace chaos {

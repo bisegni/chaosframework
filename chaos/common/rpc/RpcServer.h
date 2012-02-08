@@ -24,29 +24,36 @@ namespace chaos {
     class RpcServer {
         string *typeName;
     protected:
-        shared_ptr<CommandDispatcher> commandDispatcher;
+        //! port where server has been published
+        int portNumber;
+        
+        CommandDispatcher *commandDispatcher;
     public:
         RpcServer(string *alias){typeName = alias;};
-            /*
-             init the rpc adapter
-             */
+        /*
+         init the rpc adapter
+         */
         virtual void init(CDataWrapper*) throw(CException) = 0;
-            
-            /*
-             start the rpc adapter
-             */
+        
+        /*
+         start the rpc adapter
+         */
         virtual void start() throw(CException) = 0;
         
-            /*
-             deinit the rpc adapter
-             */
+        /*
+         deinit the rpc adapter
+         */
         virtual void deinit() throw(CException) = 0;
-
         
-            /*
-             set the command dispatcher associated to the instance of rpc adapter
-             */
-        void setCommandDispatcher(shared_ptr<CommandDispatcher> newCommandDispatcher){
+        /*!
+         Return the published port
+         */
+        int getPublishedPort(){return portNumber;}
+        
+        /*
+         set the command dispatcher associated to the instance of rpc adapter
+         */
+        void setCommandDispatcher(CommandDispatcher *newCommandDispatcher){
             commandDispatcher = newCommandDispatcher;
         }
         

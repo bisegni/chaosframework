@@ -60,7 +60,7 @@ public class DeviceDA extends DataAccess {
 			ps = getPreparedStatementForSQLCommand(sql.toString());
 			ps.setString(1, deviceIdentification);
 			rs = ps.executeQuery();
-			result = rs.next()?rs.getBoolean(1):false;
+			result = rs.next() ? rs.getBoolean(1) : false;
 		} catch (Exception e) {
 			throw e;
 		} finally {
@@ -150,6 +150,16 @@ public class DeviceDA extends DataAccess {
 		devSB.addFooter("order by device_identification");
 		PreparedStatement ps = getPreparedStatementForSQLCommand(devSB.toString());
 		return (List<Device>) executeQueryPreparedStatementAndClose(ps, Device.class, null, null, false);
+	}
+
+	/**
+	 * 
+	 * @return
+	 * @throws Throwable 
+	 */
+	public List<Device> getAllActiveDevice() throws Throwable {
+		return getAllDevice();
+
 	}
 
 	/**

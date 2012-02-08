@@ -16,6 +16,7 @@
 
 namespace chaos {
     using namespace std;
+    using namespace boost;
     using namespace boost::uuids;
     
     /*

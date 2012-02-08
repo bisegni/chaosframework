@@ -8,6 +8,7 @@
 #include <iostream>
 
 #include "GlobalConfiguration.h"
+#include <chaos/common/utility/InetUtility.h>
 
 using namespace chaos;
 namespace po = boost::program_options;
@@ -66,8 +67,9 @@ void GlobalConfiguration::parseStartupParameters(int argc,const char* argv[]) th
     
         //configure rpc
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, rpcServerPort, UserOption::OPT_RPC_SERVER_PORT, 8888)
-    addLocalServerBasePort(rpcServerPort);
-    configuration.addInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT, rpcServerPort);    
+    int freeFoundPort = InetUtility::scanForLocalFreePort(rpcServerPort);
+    addLocalServerBasePort(freeFoundPort);
+    configuration.addInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT, freeFoundPort);    
     
 
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, rpcServerThreadNumber, UserOption::OPT_RPC_SERVER_THREAD_NUMBER, 2)
@@ -85,7 +87,7 @@ void GlobalConfiguration::parseStartupParameters(int argc,const char* argv[]) th
             configuration.appendStringToArray(liveDataServer[idx]);
         }
     }
-    configuration.finalizeArrayForKey(LiveHistoryConfiguration::CS_DM_LD_SERVER_ADDRESS);
+    configuration.finalizeArrayForKey(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS);
     
         //configure metadataserver
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(string, metadataServerAddress, UserOption::OPT_METADATASERVER_ADDRESS, "localhost:5000")

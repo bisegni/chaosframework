@@ -69,7 +69,7 @@ namespace chaos {
         static const char * const CS_CM_CU_NAME                                 = "cs|cm|cu_name";
             //!key representing the type of parameter
         static const char * const CS_CM_CU_INSTANCE                             = "cs|cm|cu_instance";
-            //!Control Unit instance network address
+            //!Control Unit instance internal address
         static const char * const CS_CM_CU_INSTANCE_NET_ADDRESS                 = "cs|cm|cu_instance_net_address";
             //!key representing the type of parameter
         static const char * const CS_CM_CU_DESCRIPTION                          = "cs|cm|cu_desc";
@@ -180,6 +180,12 @@ namespace chaos {
         
             //!key for action name definition
         static const char * const CS_CMDM_ACTION_NAME                         = "cs|cmdm|act_name";
+
+        //!key for action message
+        static const char * const CS_CMDM_ACTION_MESSAGE                      = "cs|cmdm|act_msg";
+        
+            //!key for the specify the id of the request(the current message is an asnwer)
+        static const char * const CS_CMDM_MESSAGE_ID                          = "cs|cmdm|act_msg_id"; 
         
             //!key for action name definition
         static const char * const CS_CMDM_ACTION_DESCRIPTION                  = "cs|cmdm|act_desc";
@@ -201,35 +207,51 @@ namespace chaos {
         static const char * const CS_CMDM_SUB_CMD                             = "cs|cmdm|sub_cmd";
         
             //!key for the ip where to send the answer
-        static const char * const CS_CMDM_RESPONSE_HOST_IP                      = "cs|cmdm|rh_resp_ip"; 
+        static const char * const CS_CMDM_ANSWER_HOST_IP                      = "cs|cmdm|rh_ans_ip"; 
+            //!key for the ip where to send the answer
+        static const char * const CS_CMDM_ANSWER_DOMAIN                      = "cs|cmdm|rh_ans_domain"; 
+            //!key for the ip where to send the answer
+        static const char * const CS_CMDM_ANSWER_ACTION                      = "cs|cmdm|rh_ans_action"; 
             //!key for the answer, it is needed byt the requester to recognize the answer
-        static const char * const CS_CMDM_RESPONSE_ID                          = "cs|cmdm|rh_resp_id"; 
+        static const char * const CS_CMDM_ANSWER_ID                          = "cs|cmdm|rh_ans_msg_id"; 
             //!ker ofr the ip where to send the rpc pack
         static const char * const CS_CMDM_REMOTE_HOST_IP                        = "cs|cmdm|rh_ip";     
     }
     /** @} */ // end of RpcActionDefinitionKey
     
-        //--------------global values-------------------
-    static const char * const CS_LIB_METADATASET_ADDRESS                    = "mds_address";
-    static const char * const CS_LIB_INSTANCE_NETWORK_ADDRESS               = "inst_net_address";
-        //-------------system action---------------------
-        //this constant define the domain name used to publish the action for
-        //system layer(all the manager data, control and command)
-    static const char * const CS_LIB_ACTION_DOMAIN_NAME                     = "system";
     
-    static const char * const CS_LIB_ACTION_DOMAIN_SHUTDOWN                 = "shutdown";
-    static const char * const CS_LIB_ACTION_DOMAIN_INIT_CU                  = "initControlUnit";
-    static const char * const CS_LIB_ACTION_DOMAIN_DEINIT_CU                = "deinitControlUnit";
-    static const char * const CS_LIB_ACTION_DOMAIN_START_CU                 = "startControlUnit";
-    static const char * const CS_LIB_ACTION_DOMAIN_STOP_CU                  = "stopControlUnit";
-        //-------------system action---------------------
+    /** @defgroup ChaosSystemDomainAndActionLabel Chaos System Action Label
+     *  This is the collection of the label that identify the name of the action defined at system level(doman "system")
+     *  These are the action that are used by chaos to interact with standard node(CUToolkti, UIToolkit, Metadata Server)
+     *  @{
+     */
+    namespace ChaosSystemDomainAndActionLabel {
+            //! The chaos action domain for system message
+        static const char * const SYSTEM_DOMAIN         = "system";
+            //! This action provide to the shutdown porcess of the enteir daemon 
+            //! that runt the active contorl units. All it will be gracefull shutten down
+            //! before daemon exit
+        static const char * const ACTION_CU_SHUTDOWN    = "shutdown";
+            //! Start the control unit intialization, the action need the default value
+            //! of the input attribute for a determinate device
+        static const char * const ACTION_CU_INIT        = "initControlUnit";
+            //! Deinitialization of a control unit, if it is in run, the stop phase
+            //! is started befor deinitialization one
+        static const char * const ACTION_CU_DEINIT      = "deinitControlUnit";
+            //! start the run method schedule for a determinated device
+        static const char * const ACTION_CU_START       = "startControlUnit";
+            //! pause the run method for a determinated device
+        static const char * const ACTION_CU_STOP        = "stopControlUnit";
+    }
+     /** @} */ // end of ChaosSystemDomainAndActionLabel
     
-    /** @defgroup ChaosLiveHistoryConfiguration Chaos Live and History configuration
+    /** @defgroup LiveHistoryMDSConfiguration Chaos Live and History configuration
      *  This is the collection of the key to configura history and live channel
      *  @{
      */
         //! This is the collection of the key to configura history and live channel
-    namespace LiveHistoryConfiguration {
+    namespace LiveHistoryMDSConfiguration {
+        static const char * const CS_LIB_METADATASET_ADDRESS            ="mds_network_addr";
             //!root key for DataManager Configuration
         static const char * const CS_DM_CONFIGURATION                         = "cs|dm|configuration";
             //!the numebr of the thread ofr the output buffer
@@ -246,7 +268,7 @@ namespace chaos {
         static const char * const CS_DM_HD_SERVER_ADDRESS                 = "cs|dm|hd|server_address";
 
     } 
-    /** @} */ // end of ChaosLiveHistoryConfiguration
+    /** @} */ // end of LiveHistoryMDSConfiguration
     
 
     /** @defgroup ChaosDataPackKey Chaos Data Pack standard key

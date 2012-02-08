@@ -25,12 +25,3 @@ HLInfrastructureApi::HLInfrastructureApi() {
 HLInfrastructureApi::~HLInfrastructureApi() {
     
 }
-
-/*
- Return the number and the pointer to the array of devices 
- that are contained on the specifed host and published to
- specified port
- */
-void HLInfrastructureApi::getDevicesOnIpAndPort(DeviceAddress* devicesAddressArray, int* numberOfDevicesFound) {
-    
-}

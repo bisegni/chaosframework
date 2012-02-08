@@ -38,7 +38,7 @@ namespace chaos {
         ActionParamDescription(const char*const _paramName):paramName(_paramName){}
     };
     
-    /*
+    /*!
      Abstract class for thedescribe an action
      with a name and a description
      */
@@ -77,15 +77,20 @@ namespace chaos {
         AbstractActionDescriptor();
         ~AbstractActionDescriptor();
         
-            //virtual method for call the action
-        virtual CDataWrapper* call(CDataWrapper *actionParam) = 0;
+        /*!
+         virtual method for call the action
+         \param actionParam the data sent to the action
+         \param detachParam the action can set this param to true, in this case the deallocation is demanded to the action
+         \return the result of the action
+         */
+        virtual CDataWrapper* call(CDataWrapper *actionParam, bool& detachParam) = 0;
         
-        /*
+        /*!
             set the string value for the determinated type
          */
         void setTypeValue(ActionStringType, string&);
         
-        /*
+        /*!
          set the string value for the determinated type
          */
         void setTypeValue(ActionStringType, const char*const);
@@ -95,19 +100,19 @@ namespace chaos {
         bool setFired(bool _fired);
         bool isEnabled();
 
-        /*
+        /*!
             get the string value for the determinated type, a reference
             has been return so keep in mind that string live within object life
          */        
         string& getTypeValue(ActionStringType);
         
 #pragma mark Param Method
-        /*
+        /*!
          Return the array list of the param defined by this action
          */
         vector< shared_ptr<ActionParamDescription> >& getParamDescriptions();
         
-        /*
+        /*!
          Add a new param
          */
         void addParam(const char*const, DataType::DataType, const char*const);
@@ -118,16 +123,16 @@ namespace chaos {
 
 #pragma mark Template for Action Definition
     
-    /*
+    /*!
      Template class for register a class method as an action. The T*
      msut not be deleted from this class when it will be deallocate
      */
     template <typename T>
     class ActionDescriptor : public AbstractActionDescriptor {
     public:
-        typedef CDataWrapper* (T::*ActionPointerDef)(CDataWrapper*);
+        typedef CDataWrapper* (T::*ActionPointerDef)(CDataWrapper*, bool&);
 
-        /*
+        /*!
          construct the action class with objectClass pointer,object method pointer action domain name and action name
          that implement the action. be aware that the object reference is never deallocated by
          this class
@@ -144,21 +149,20 @@ namespace chaos {
         }
 
         
-        /*
+        /*!
             execute the action call
          */
-        CDataWrapper* call(CDataWrapper *actionParam) {
+        CDataWrapper* call(CDataWrapper *actionParam, bool& detachParam) {
                 //call the action with param
             CHAOS_ASSERT(objectReference)
-            return ((*objectReference).*actionPointer)(actionParam);
+            return ((*objectReference).*actionPointer)(actionParam, detachParam);
         }
         
     private:
-        //pointer to the action to be executed
-        //poitner to the action
+        //!pointer to the action to be executed
         ActionPointerDef actionPointer;
         
-        //object pointer
+        //!object pointer
         T* objectReference;
         
     };
