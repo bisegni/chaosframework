@@ -81,35 +81,6 @@ int main (int argc, const char* argv[] )
                 
                 controller->stopDevice();
                 controller->deinitDevice();
-                
-                /*
-                deviceAddress = mdsChannel->getNetworkAddressForDevice(*devIter, 2000);
-                if(deviceAddress) {
-                  std::cout << "Initzialize the device: NET:"<< deviceAddress->ipPort << " CU:"<< deviceAddress->nodeID <<std::endl;  
-                    DeviceMessageChannel *dMsgchannel = LLRpcApi::getInstance()->getNewDeviceMessageChannel(deviceAddress);
-                    auto_ptr<CDataWrapper> lastDeviceInfo(mdsChannel->getLastDatasetForDevice(*devIter));
-                    std::cout << "Device init param: "<< lastDeviceInfo->getJSONString() <<std::endl;
-                    err = dMsgchannel->initDevice(lastDeviceInfo.get());
-                    std::cout << "Device init operation result: " << err <<std::endl;
-                    err = dMsgchannel->startDevice();
-                    std::cout << "Device start operation result: " << err <<std::endl;
-                    
-                    err = dMsgchannel->setScheduleDelay(500000);
-                    std::cout << "setScheduleDelay operation result: " << err <<std::endl;
-                    err = dMsgchannel->setScheduleDelay(250000);
-                    std::cout << "setScheduleDelay operation result: " << err <<std::endl;
-                    
-                    CDataWrapper attributeValue;
-                    attributeValue.addInt32Value("key_value_1", 215);
-                    err = dMsgchannel->setAttributeValue(attributeValue);
-                    std::cout << "setAttributeValue operation result: " << err <<std::endl;
-                    
-                    err = dMsgchannel->stopDevice();
-                    std::cout << "Device stop operation result: " << err <<std::endl;
-                    err = dMsgchannel->deinitDevice();
-                    std::cout << "Device deinit operation result: " << err <<std::endl;
-                }*/
-                //try to initi
             }
         }  
         //! [UIToolkit Deinit]

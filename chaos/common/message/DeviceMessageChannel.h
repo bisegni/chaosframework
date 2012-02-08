@@ -71,7 +71,7 @@ namespace chaos {
         /*!
          Set the delay between a schedule and the next
          */
-        int setScheduleDelay(int64_t scheduledDealy, uint32_t millisecToWait = 0);
+        int setScheduleDelay(uint32_t scheduledDealy, uint32_t millisecToWait = 0);
     };
 }
 #endif

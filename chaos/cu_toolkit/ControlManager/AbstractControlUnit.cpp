@@ -255,7 +255,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     KeyDataStorage *tmpKDS = 0L;
     auto_ptr<CDataWrapper> updateResult;
     if(!initConfiguration || !initConfiguration->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID) || !initConfiguration->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION)) {
-        throw CException(0, "Node Device Init information in param", "AbstractControlUnit::_init");
+        throw CException(-1, "Node Device Init information in param", "AbstractControlUnit::_init");
     }
     
     string deviceID = initConfiguration->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
@@ -263,13 +263,13 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     
     if(!CUSchemaDB::deviceIsPresent(deviceID)) {
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
-        throw CException(1, "Deviuce not known by this control unit", "AbstractControlUnit::_init");
+        throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_init");
     }
     
         //check to see if the device can ben initialized
     if(deviceStateMap[deviceID] != INIT_STATE) {
         LCU_ << "device:" << deviceID << " already initialized";
-        throw CException(2, "Device Already Initialized", "AbstractControlUnit::_init");
+        throw CException(-3, "Device Already Initialized", "AbstractControlUnit::_init");
     }
     
     LCU_ << "Create schedule thread for device:" << deviceID;
@@ -308,20 +308,20 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
     KeyDataStorage *tmpKDS = 0L;
     
     if(!deinitParam || !deinitParam->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
-        throw CException(0, "Node Device Defined in param", "AbstractControlUnit::_deinit");
+        throw CException(-1, "Node Device Defined in param", "AbstractControlUnit::_deinit");
     }
     
     string deviceID = deinitParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
     LCU_ << "Deinitialization Phase for device:" << deviceID;
     if(!CUSchemaDB::deviceIsPresent(deviceID)) {
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
-        throw CException(1, "Deviuce not known by this control unit", "AbstractControlUnit::_deinit");
+        throw CException(-2, "Deviuce not known by this control unit", "AbstractControlUnit::_deinit");
     }
     
         //check to see if the device can ben initialized
     if(deviceStateMap[deviceID] != INIT_STATE+1) {
         LCU_ << "device:" << deviceID << " already initialized";
-        throw CException(2, "Device Not Initialized", "AbstractControlUnit::_deinit");
+        throw CException(-3, "Device Not Initialized", "AbstractControlUnit::_deinit");
     }
     
         //deinit the control unit 
@@ -352,19 +352,19 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     
     if(!startParam || !startParam->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
-        throw CException(0, "Node Device Defined in param", "AbstractControlUnit::_start");
+        throw CException(-1, "Node Device Defined in param", "AbstractControlUnit::_start");
     }
     
     string deviceID = startParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
     if(!CUSchemaDB::deviceIsPresent(deviceID)) {
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
-        throw CException(1, "Deviuce not known by this control unit", "AbstractControlUnit::_start");
+        throw CException(-2, "Deviuce not known by this control unit", "AbstractControlUnit::_start");
     }
     
         //check to see if the device can ben initialized
     if(deviceStateMap[deviceID] != START_STATE) {
         LCU_ << "device:" << deviceID << " already strted";
-        throw CException(2, "Device already started", "AbstractControlUnit::_start");
+        throw CException(-3, "Device already started", "AbstractControlUnit::_start");
     }            
     
     
@@ -372,12 +372,12 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
     
     if(!csThread) {
         LCU_ << "No thread defined for device "<< deviceID;
-        throw CException(3, "No thread defined for device", "AbstractControlUnit::_start");
+        throw CException(-4, "No thread defined for device", "AbstractControlUnit::_start");
     }
     
     if(!csThread->isStopped()){
         LCU_ << "thread for "<< deviceID << "already running";
-        throw CException(4, "Thread for device already running", "AbstractControlUnit::_start");
+        throw CException(-5, "Thread for device already running", "AbstractControlUnit::_start");
     }
     
     
@@ -395,18 +395,18 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
 CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachParam) throw(CException) {
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     if(!stopParam || !stopParam->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
-        throw CException(0, "Node Device Defined in param", "AbstractControlUnit::_stop");
+        throw CException(-1, "Node Device Defined in param", "AbstractControlUnit::_stop");
     }
     string deviceID = stopParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
     if(!CUSchemaDB::deviceIsPresent(deviceID)) {
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
-        throw CException(1, "Device not known by this control unit", "AbstractControlUnit::_stop");
+        throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_stop");
     }
     
         //check to see if the device can ben initialized
     if(deviceStateMap[deviceID] != START_STATE+1) {
         LCU_ << "device:" << deviceID << " not started";
-        throw CException(2, "Device not startded", "AbstractControlUnit::_stop");
+        throw CException(-3, "Device not startded", "AbstractControlUnit::_stop");
     }            
     
     stop(deviceID);
@@ -415,12 +415,12 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachPa
     
     if(!csThread) {
         LCU_ << "No thread defined for device "<< deviceID;
-        throw CException(3, "No thread defined for device", "AbstractControlUnit::_stop");
+        throw CException(-4, "No thread defined for device", "AbstractControlUnit::_stop");
     }
     
     if(csThread->isStopped()){
         LCU_ << "thread for "<< deviceID << "already runnign";
-        throw CException(4, "Thread for device already running", "AbstractControlUnit::_stop");
+        throw CException(-5, "Thread for device already running", "AbstractControlUnit::_stop");
     }
     LCU_ << "Stopping Device ID:" << deviceID;
     csThread->stop();
@@ -446,14 +446,14 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
         //load all keyDataStorageMap for the registered devices
     if(!updatePack || !updatePack->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
-        throw CException(0, "Update pack without DeviceID", "AbstractControlUnit::updateConfiguration");
+        throw CException(-1, "Update pack without DeviceID", "AbstractControlUnit::updateConfiguration");
     }
     
     string deviceID = updatePack->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
     
     if(!CUSchemaDB::deviceIsPresent(deviceID)) {
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
-        throw CException(1, "Device not known by this control unit", "AbstractControlUnit::_stop");
+        throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_stop");
     }
     
         //check to see if the device can ben initialized

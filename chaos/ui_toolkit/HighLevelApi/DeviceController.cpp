@@ -21,6 +21,7 @@ DeviceController::DeviceController(string& _deviceID):deviceID(_deviceID) {
 
 DeviceController::~DeviceController() {
     if(liveDataThread){
+        stopTracking();
         liveDataThread->stop();
         delete(liveDataThread);
     }
@@ -73,7 +74,7 @@ int DeviceController::initDevice() {
         //initialize the devica with the metadataserver data
     err = deviceChannel->initDevice(lastDeviceInfo.get());
         //configure the live data with the same server where the device write
-    if(err == 0 || err == 2)
+    if(err == 0 || err == -2)
         ioLiveDataDriver->updateConfiguration(lastDeviceInfo.get());
     return err;
 }
