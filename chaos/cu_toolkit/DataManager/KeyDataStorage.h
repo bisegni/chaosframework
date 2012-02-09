@@ -11,7 +11,7 @@
 
 #include <string>
 #include <chaos/cu_toolkit/DataManager/MultiBufferDataStorage.h>
-#include <chaos/common/Utility/ArrayPointer.h>
+#include <chaos/common/utility/ArrayPointer.h>
 
 namespace chaos{
     using namespace std;
