@@ -143,6 +143,6 @@ namespace chaos{
 
     };
 }
-#include "../rpc/RpcClient.h"
+#include <chaos/common/rpc/RpcClient.h>
 
 #endif
