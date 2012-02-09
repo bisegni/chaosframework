@@ -20,7 +20,7 @@
 #include <chaos/common/thread/ChaosThread.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/exception/CException.h>
-#include <chaos/common/General/Configurable.h>
+#include <chaos/common/general/Configurable.h>
 #include <chaos/common/message/MDSMessageChannel.h>
 namespace chaos {
     using namespace std;
