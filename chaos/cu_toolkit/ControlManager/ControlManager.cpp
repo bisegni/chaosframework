@@ -6,11 +6,11 @@
     //  Copyright 2011 INFN. All rights reserved.
     //
 
-#include "../../Common/global.h"
+#include "../../common/global.h"
 #include "ControlManager.h"
-#include "../../Common/cconstants.h"
-#include "../CommandManager/CommandManager.h"
-#include "../../Common/configuration/GlobalConfiguration.h"
+#include "../../common/cconstants.h"
+#include "../commandManager/CommandManager.h"
+#include "../../common/configuration/GlobalConfiguration.h"
 
 using namespace chaos;
 using namespace std;
