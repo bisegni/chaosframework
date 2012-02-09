@@ -12,15 +12,15 @@
 #include <boost/utility.hpp>
 #include <boost/thread/once.hpp>
 #include <boost/shared_ptr.hpp>
-#include <chaos/common/General/Configurable.h>
+#include <chaos/common/general/Configurable.h>
 
 namespace chaos {
 #define DEFINE_CLASS_AS_SINGLETON(ClassName) \
-class ClassName : public Singleton<ClassName>, public Configurable {\
+class ClassName : public Singleton<ClassName>{\
 friend class Singleton<ClassName>;
     
 #define DEFINE_CLASS_AS_SINGLETON_WITH_OTHER_SUBCLASS(ClassName, Subclass) \
-class ClassName : public Subclass, public Singleton<ClassName>, public Configurable {\
+class ClassName : public Subclass, public Singleton<ClassName>{\
 friend class Singleton<ClassName>;
     using namespace boost;
     /*

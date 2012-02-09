@@ -21,8 +21,8 @@ import subprocess
 
 
 buildMode = ARGUMENTS.get('mode', 'release')   #holds current mode
-debugcflags = ['-Wall', '-GX', '-EHsc', '-DDEBUG']   #extra compile flags for debug
-releasecflags = ['-O2', '-EHsc', '-DNDEBUG']         #extra compile flags for release
+debugcflags = ['-Wall', '-DDEBUG']   #extra compile flags for debug
+releasecflags = ['-O2', '-DNDEBUG']         #extra compile flags for release
 
 print '**** Compiling in ' + buildMode + ' mode...'
 
