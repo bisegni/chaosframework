@@ -77,7 +77,7 @@ namespace chaos {
     public:
         
         CDataWrapper();
-        CDataWrapper(const char* serializationBuffer, bool bson=true);
+        CDataWrapper(const char* serializationBuffer, bool bson=true, bool owned = false);
         
         CDataWrapper *clone();
             //add a csdata value
@@ -152,7 +152,7 @@ namespace chaos {
         string getJSONString();
         
             //reinitialize the object with bson data
-        void setSerializedData(const char* bsonData, bool bson=true);
+        void setSerializedData(const char* bsonData, bool bson=true, bool owned = false);
         
             //check if the key is present in data wrapper
         bool hasKey(const char*);

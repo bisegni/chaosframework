@@ -1,10 +1,10 @@
-//
-//  DeviceLiveDataFetcher.cpp
-//  CHAOSFramework
-//
-//  Created by Bisegni Claudio on 07/02/12.
-//  Copyright (c) 2012 INFN. All rights reserved.
-//
+    //
+    //  DeviceLiveDataFetcher.cpp
+    //  CHAOSFramework
+    //
+    //  Created by Bisegni Claudio on 07/02/12.
+    //  Copyright (c) 2012 INFN. All rights reserved.
+    //
 
 #include "DeviceController.h"
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
@@ -29,7 +29,7 @@ DeviceController::~DeviceController() {
     if(mdsChannel){
         LLRpcApi::getInstance()->deleteMessageChannel(mdsChannel);
     }
-
+    
     
     if(deviceChannel){
         LLRpcApi::getInstance()->deleteMessageChannel(deviceChannel);
@@ -74,9 +74,31 @@ int DeviceController::initDevice() {
         //initialize the devica with the metadataserver data
     err = deviceChannel->initDevice(lastDeviceInfo.get());
         //configure the live data with the same server where the device write
-    if(err == 0 || err == -2)
+    if(err == 0 || err == -2){
         ioLiveDataDriver->updateConfiguration(lastDeviceInfo.get());
+        
+        initializeAttributeIndexMap(*lastDeviceInfo.get());
+    }
     return err;
+}
+
+/*!
+ Initialize the map for the devices
+ \param initiDevicedescription the reference to CDataWrapper that contain device initialization information
+ */
+void DeviceController::initializeAttributeIndexMap(CDataWrapper& initiDevicedescription) {
+    if(!initiDevicedescription.hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID) || !initiDevicedescription.hasKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION)) {
+        return;
+    }
+    auto_ptr<CDataWrapper> attributeDescription;
+    auto_ptr<CMultiTypeDataArrayWrapper> datasetDesription(initiDevicedescription.getVectorValue(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION));
+    for (int idx=0; idx < datasetDesription->size(); idx++) {
+        attributeDescription.reset(datasetDesription->getCDataWrapperElementAtIndex(idx));
+        if(!attributeDescription->hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME) || 
+           !attributeDescription->hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION)) continue;
+        
+        
+    }
 }
 
 int DeviceController::startDevice() {
@@ -94,7 +116,7 @@ int DeviceController::deinitDevice() {
     return deviceChannel->deinitDevice(); 
 }
 
-int DeviceController::setScheduleDelay(int64_t millisecDelay){
+int DeviceController::setScheduleDelay(int32_t millisecDelay){
     CHAOS_ASSERT(deviceChannel)
     return deviceChannel->setScheduleDelay(millisecDelay);
 }
@@ -102,7 +124,7 @@ int DeviceController::setScheduleDelay(int64_t millisecDelay){
 void DeviceController::startTracking() {
     CHAOS_ASSERT(liveDataThread)
     int64_t uSecdelay = 1000000;//default to 1 sec
-    //get the default schedule value if exist on metadata server
+                                //get the default schedule value if exist on metadata server
     auto_ptr<CDataWrapper> lastDeviceInfo(mdsChannel->getLastDatasetForDevice(deviceID));
     if(!lastDeviceInfo.get() && lastDeviceInfo->hasKey(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY)){
         uSecdelay = lastDeviceInfo->getInt32Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY);
@@ -117,10 +139,12 @@ void DeviceController::stopTracking() {
 }
 
 void DeviceController::executeOnThread(const string& threadID) throw(CException) {
+    fetchCurrentDeviceValue();
+}
+
+void DeviceController::fetchCurrentDeviceValue() {
     char *value = ioLiveDataDriver->retriveRawData(deviceID);
     if (value) {
-        auto_ptr<CDataWrapper> result(new CDataWrapper(value));
-        free(value);
-        std::cout << result->getJSONString();
+        currentLiveValue.reset(new CDataWrapper(value, true, true));
     }
 }
