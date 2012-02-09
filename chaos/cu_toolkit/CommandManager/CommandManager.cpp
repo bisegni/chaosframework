@@ -9,10 +9,10 @@
 #include <vector>
 #include <iostream>
 
-#include "../../Common/global.h"
+#include <chaos/common/global.h>
 #include "CommandManager.h"
-#include "../../Common/cconstants.h"
-#include "../../Common/configuration/GlobalConfiguration.h"
+#include <chaos/common/cconstants.h>
+#include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/message/MDSMessageChannel.h>
 
 using namespace chaos;
