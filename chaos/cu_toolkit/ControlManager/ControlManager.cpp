@@ -9,7 +9,7 @@
 #include "../../common/global.h"
 #include "ControlManager.h"
 #include "../../common/cconstants.h"
-#include "../commandManager/CommandManager.h"
+#include "../CommandManager/CommandManager.h"
 #include "../../common/configuration/GlobalConfiguration.h"
 
 using namespace chaos;
