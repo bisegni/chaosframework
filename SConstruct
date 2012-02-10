@@ -154,7 +154,7 @@ if has_option( "all" ) or has_option( "common" ) or  has_option( "ui" ) or  has_
     if has_option( "static" ):
         commonlibName = str( env.StaticLibrary(commonlibName, sourceFiles)[0] )
     else:
-        commonlibName = str( env.SharedLibrary(commonlibName, sourceFiles, LIBS=['boost_program_options', 'boost_system','boost_thread','boost_chrono','boost_regex','memcached','msgpack','msgpack-rpc','mpio'])[0] )
+        commonlibName = str( env.SharedLibrary(commonlibName, sourceFiles, LIBS=['boost_program_options', 'boost_system','boost_thread','boost_chrono','boost_regex','boost_log','boost_log_setup','memcached','msgpack','msgpack-rpc','mpio'])[0] )
     print "Lib file created: " + commonlibName
     
     #headers
@@ -185,7 +185,7 @@ if has_option( "all" ) or has_option( "cu" ):
     if has_option( "static" ):
         cutoolkitlibName = str( env.StaticLibrary(cutoolkitlibName, sourceFiles)[0] )
     else:
-        cutoolkitlibName = str( env.SharedLibrary(cutoolkitlibName, sourceFiles, LIBS=['boost_program_options', 'boost_system','boost_thread','boost_chrono','boost_regex','memcached','msgpack','msgpack-rpc','mpio', 'chaos_common'])[0] )
+        cutoolkitlibName = str( env.SharedLibrary(cutoolkitlibName, sourceFiles, LIBS=['boost_program_options', 'boost_system','boost_thread','boost_chrono','boost_regex','boost_log','boost_log_setup','memcached','msgpack','msgpack-rpc','mpio', 'chaos_common'])[0] )
     print "Lib file created: " + cutoolkitlibName
     
     #headers
@@ -219,7 +219,7 @@ if has_option( "all" )  or has_option( "ui" ):
     if has_option( "static" ):
         libName = str( env.StaticLibrary(libNameUIToolkit, sourceFiles)[0] )
     else:
-        libNameUIToolkit = str( env.SharedLibrary(libNameUIToolkit, sourceFiles, LIBS=['boost_program_options', 'boost_system','boost_thread','boost_chrono','boost_regex','memcached','msgpack','msgpack-rpc','mpio',  'chaos_common'])[0] )
+        libNameUIToolkit = str( env.SharedLibrary(libNameUIToolkit, sourceFiles, LIBS=['boost_program_options', 'boost_system','boost_thread','boost_chrono','boost_regex','boost_log','boost_log_setup','memcached','msgpack','msgpack-rpc','mpio',  'chaos_common'])[0] )
     print "Lib file created: " + libNameUIToolkit
     
     #headers

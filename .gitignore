@@ -29,4 +29,6 @@ Documentation/latex
 ControlUnitTest/ChaosCUTest
 *mwb.bak
 MetadataServer/.settings/org.eclipse.wst.ws.service.policy.prefs
+example/UIToolkitTest/testui.app
 MetadataServer/WebContent/META-INF/context.xml
+*application.log

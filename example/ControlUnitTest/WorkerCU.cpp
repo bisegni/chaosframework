@@ -27,7 +27,7 @@ using namespace chaos;
 #define CU_DELAY_FROM_TASKS     1000000 //1Sec
 #define ACTION_TWO_PARAM_NAME   "actionTestTwo_paramName"
 
-WorkerCU::WorkerCU():AbstractControlUnit(),rng((const uint_fast32_t) time(0) ),one_to_six( -10000, 10000 ),randInt(rng, one_to_six) {
+WorkerCU::WorkerCU():AbstractControlUnit(),rng((const uint_fast32_t) time(0) ),one_to_six( 1, 100 ),randInt(rng, one_to_six) {
     //first we make some write
      _deviceID.assign(SIMULATED_DEVICE_ID);
     cuName = "WORKER_CU";
@@ -38,7 +38,7 @@ WorkerCU::WorkerCU():AbstractControlUnit(),rng((const uint_fast32_t) time(0) ),o
 /*
  Construct a new CU with an identifier
  */
-WorkerCU::WorkerCU(string &customDeviceID):rng((const uint_fast32_t) time(0) ),one_to_six( -10000, 10000 ),randInt(rng, one_to_six){
+WorkerCU::WorkerCU(string &customDeviceID):rng((const uint_fast32_t) time(0) ),one_to_six( 1, 100 ),randInt(rng, one_to_six){
     _deviceID = customDeviceID;
     cuName = "WORKER_CU";
     writeRead = false;

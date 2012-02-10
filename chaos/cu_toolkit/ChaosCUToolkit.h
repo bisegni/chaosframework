@@ -46,7 +46,7 @@ namespace chaos{
 
     public:
         typedef boost::mutex::scoped_lock lock;
-        void init(int argc = 1, const char* argv[] = NULL)  throw(CException);
+        void init(int argc = 1, char* argv[] = NULL)  throw(CException);
         void start(bool waithUntilEnd=true, bool deinitiOnEnd=true);
         void stop();
         void deinit();

@@ -1,10 +1,10 @@
-//
-//  UIToolkitCMDLineExample.cpp
-//  UIToolkitCMDLineExample
-//
-//  Created by Claudio Bisegni on 24/01/12.
-//  Copyright (c) 2012 INFN. All rights reserved.
-//
+    //
+    //  UIToolkitCMDLineExample.cpp
+    //  UIToolkitCMDLineExample
+    //
+    //  Created by Claudio Bisegni on 24/01/12.
+    //  Copyright (c) 2012 INFN. All rights reserved.
+    //
 
 #include <iostream>
 #include <string>
@@ -44,48 +44,79 @@ using namespace std;
 using namespace chaos;
 using namespace chaos::ui;
 
-int main (int argc, const char* argv[] )
+int main (int argc, char* argv[] )
 {
     try {
         int err = 0;
-        CDeviceNetworkAddress *deviceAddress;
-        //! [UIToolkit Init]
+            //! [UIToolkit Init]
         ChaosUIToolkit::getInstance()->init(argc, argv);
-        //! [UIToolkit Init]
+            //! [UIToolkit Init]
         
-        //! [UIToolkit ChannelCreation]
+            //! [UIToolkit ChannelCreation]
         MDSMessageChannel *mdsChannel = LLRpcApi::getInstance()->getNewMetadataServerChannel();
-        //! [UIToolkit ChannelCreation]
+            //! [UIToolkit ChannelCreation]
         
         
-        //! [Datapack sent]
+            //! [Datapack sent]
         vector<string> allActiveDeviceID;
         CDeviceNetworkAddress deviceNetworkAddress;
         
         err = mdsChannel->getAllDeviceID(allActiveDeviceID, 2000);
-        //! [Datapack sent]
+            //! [Datapack sent]
         if(!err){
             for (vector<string>::iterator devIter = allActiveDeviceID.begin(); 
                  devIter != allActiveDeviceID.end(); 
                  devIter++) {
-                std::cout << "Device Identification: "<< *devIter << std::endl;
+                std::cout << "Device Identification: " << *devIter << std::endl;
                 
                 auto_ptr<DeviceController> controller(HLDataApi::getInstance()->getControllerForDeviceID(*devIter));
+
                 
                 controller->initDevice();
+                controller->setScheduleDelay(1000000);
                 controller->startDevice();
-                
+                controller->setupTracking();
+                string key = "intValue_1";
+                controller->addAttributeToTrack(key);
+                DataBuffer *intValue1Buff = controller->getBufferForAttribute(key);
                 controller->startTracking();
-                sleep(5000);
+                int *bPtr = reinterpret_pointer_cast<int>(intValue1Buff->getBasePointer());
+                
+                for (int idx = 0; idx < 60; idx++) {
+                    controller->fetchCurrentDeviceValue();
+                    int *wPtr = reinterpret_pointer_cast<int>(intValue1Buff->getWritePointer());
+
+                    std::cout << intValue1Buff->getWriteBufferPosition()<< std::endl;
+                    
+                    int64_t hisotryToRead = intValue1Buff->getDimension()-intValue1Buff->getWriteBufferPosition();
+                    int64_t recentToRead = intValue1Buff->getWriteBufferPosition();
+                    std::cout << "HIstory to read:" << hisotryToRead << std::endl;
+                    std::cout << "Recent to read:" << recentToRead << std::endl;
+                    
+
+                    for (int idx = 0; idx < hisotryToRead-1; idx++) {
+                        int *newbPtr=wPtr + idx;
+                        std::cout << *newbPtr;
+                    }
+                    if(bPtr != wPtr){
+                        for (int idx = 0; idx < recentToRead; idx++) {
+                            int *newbPtr=bPtr + idx;
+                            std::cout << *newbPtr;
+                        }
+                    }
+                    std::cout << std::endl;
+                    usleep(1000000);
+                }
+                
                 controller->stopTracking();
                 
                 controller->stopDevice();
                 controller->deinitDevice();
             }
         }  
-        //! [UIToolkit Deinit]
+            //! [UIToolkit Deinit]
         ChaosUIToolkit::getInstance()->deinit();
-        //! [UIToolkit Deinit]
+            //! [UIToolkit Deinit]
     } catch (CException& e) {
         std::cerr<< e.errorDomain << std::endl;
         std::cerr<< e.errorMessage << std::endl;

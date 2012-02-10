@@ -35,7 +35,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
 /*
  parse the tandard startup parameters
  */
-void GlobalConfiguration::parseStartupParameters(int argc,const char* argv[]) throw (CException){
+void GlobalConfiguration::parseStartupParameters(int argc, char* argv[]) throw (CException){
         //int rpcServerPort;
         //int rpcServerThreadNumber;
         //string metadataServerAddress;

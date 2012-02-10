@@ -199,6 +199,8 @@
 					"-lmpio",
 					"-lmsgpack",
 					"-lmsgpack-rpc",
+					"-lboost_log",
+					"-lboost_log_setup",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -228,6 +230,8 @@
 					"-lmpio",
 					"-lmsgpack",
 					"-lmsgpack-rpc",
+					"-lboost_log",
+					"-lboost_log_setup",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

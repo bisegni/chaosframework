@@ -24,4 +24,4 @@ else:
    env.Append(CCFLAGS=releasecflags)
 
 env.Append(LIBPATH = ['/usr/lib', '/usr/local/lib'])
-env.Program(sourceTarget, sourceFiles, LIBS=['chaos_cutoolkit', 'chaos_common', 'boost_program_options', 'boost_system','boost_thread', 'boost_chrono', 'boost_regex','memcached','msgpack','msgpack-rpc','mpio'])
+env.Program(sourceTarget, sourceFiles, LIBS=['chaos_cutoolkit', 'chaos_common', 'boost_program_options', 'boost_system','boost_thread', 'boost_chrono', 'boost_regex','boost_log','boost_log_setup','memcached','msgpack','msgpack-rpc','mpio'])

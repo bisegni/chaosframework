@@ -90,7 +90,7 @@ x = hasOption(y);
         /*
          parse the tandard startup parameters
          */
-        virtual void parseStartupParameters(int,const char* argv[]) throw (CException);
+        virtual void parseStartupParameters(int, char* argv[]) throw (CException);
         
         /*
          Add a custom option

@@ -39,7 +39,7 @@ using namespace chaos;
 
 #define OPT_CUSTOM_DEVICE_ID "custom-device-id"
 
-int main (int argc, const char* argv[] )
+int main (int argc, char* argv[] )
 {
    
     //! [Custom Option]

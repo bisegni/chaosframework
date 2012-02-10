@@ -1,26 +1,90 @@
 #include "graphwidget.h"
-
+#include <chaos/common/global.h>
+#include <boost/pointer_cast.hpp>
+#include <qwt_symbol.h>
+#include <qwt_legend_item.h>
+using namespace boost;
 GraphWidget::GraphWidget(QWidget *parent) :
-    QWidget(parent)
+    QWidget(parent),one_to_six( 0, 255 ),randInt(rng, one_to_six)
 {
-       // QVBoxLayout verticalBox;
-    plot = new QwtPlot(QwtText("CppQwtExample1"));
+    // QVBoxLayout verticalBox;
+    plot = new QwtPlot(QwtText("Chaos Attribute Plot"));
     plot->setGeometry(0,0,640,400);
-    plot->setAxisScale(QwtPlot::xBottom, 0.0,2.0 * M_PI);
-    plot->setAxisScale(QwtPlot::yLeft,-1.0,1.0);
+    plot->setAxisScale(QwtPlot::xBottom, 1, 30);
+    plot->insertLegend(new QwtLegend(), QwtPlot::BottomLegend);
 
-    sine = new QwtPlotCurve("Sine");
-    std::vector<double> xs;
-    std::vector<double> ys;
-    for (double x = 0; x < 2.0 * M_PI; x+=(M_PI / 10.0))
-    {
-        xs.push_back(x);
-        ys.push_back(std::sin(x));
-    }
-    sine->setSamples(&xs[0],&ys[0],xs.size());
-    sine->attach(plot);
-
-    vbox = new QVBoxLayout;
+    vbox = new QVBoxLayout();
     vbox->addWidget(plot,1);
     setLayout(vbox);
+
+    for (double x = 1; x <= 30; x++)
+    {
+        xs.push_back(x);
+    }
+}
+
+
+void GraphWidget::addNewPlot(chaos::DataBuffer *dataBuffer, std::string& plotName){
+    boost::mutex::scoped_lock  lock(manageMutex);
+    if(plotMap.count(plotName)>0) return;
+    boost::shared_ptr<PlotBufferAndCurve> newPlotInfo(new PlotBufferAndCurve());
+
+    QwtPlotCurve *c = new QwtPlotCurve(plotName.c_str());
+    c->setPen(QPen(QColor(randInt(), randInt(), randInt())));
+    c->setRenderHint(QwtPlotItem::RenderAntialiased);
+    c->setStyle(QwtPlotCurve::Lines);
+    c->setLegendAttribute(QwtPlotCurve::LegendShowLine,true);
+    c->setLegendAttribute(QwtPlotCurve::LegendShowSymbol,true);
+    c->attach(plot);
+    newPlotInfo->curve = c;
+    newPlotInfo->curveBuffer = dataBuffer;
+
+    plotMap.insert(std::make_pair(plotName, newPlotInfo));
+}
+
+void GraphWidget::removePlot(std::string& plotName) {
+    boost::mutex::scoped_lock  lock(manageMutex);
+    plotMap[plotName]->curve->detach();
+    plotMap.erase(plotName);
+}
+
+bool GraphWidget::hasPlot(std::string& plotName) {
+    boost::mutex::scoped_lock  lock(manageMutex);
+    return plotMap.count(plotName)>0;
+}
+
+void GraphWidget::update() {
+    boost::mutex::scoped_lock  lock(manageMutex);
+    PlotBufferAndCurve *tmpPlotInfoPtr = NULL;
+    std::vector<double> ys;
+
+    for(std::map<std::string, boost::shared_ptr<PlotBufferAndCurve> >::iterator iter = plotMap.begin();
+        iter != plotMap.end();
+        iter++){
+        ys.clear();
+        tmpPlotInfoPtr = iter->second.get();
+        int *wPtr = boost::reinterpret_pointer_cast<int>(tmpPlotInfoPtr->curveBuffer->getWritePointer());
+        int *bPtr = boost::reinterpret_pointer_cast<int>(tmpPlotInfoPtr->curveBuffer->getBasePointer());
+        int64_t historyDim = tmpPlotInfoPtr->curveBuffer->getDimension()-tmpPlotInfoPtr->curveBuffer->getWriteBufferPosition();
+        int64_t recentToRead = tmpPlotInfoPtr->curveBuffer->getWriteBufferPosition();
+
+        for (int idx = 0; idx < historyDim-1; idx++) {
+            double historyDouble(*(wPtr + idx));
+            ys.push_back(historyDouble);
+        }
+        if(bPtr != wPtr){
+            for (int idx = 0; idx < recentToRead; idx++) {
+                double recentDouble(*(bPtr + idx));
+                ys.push_back(recentDouble);
+            }
+        }
+        tmpPlotInfoPtr->curve->setSamples(&xs[0],&ys[0], 29);
+    }
+    //
+    emit updatePlot();
+}
+
+void GraphWidget::replot() {
+  boost::mutex::scoped_lock  lock(manageMutex);
+  plot->replot();
 }

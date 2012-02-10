@@ -42,7 +42,7 @@ ChaosUIToolkit::~ChaosUIToolkit(){
 /*
  
  */
-void ChaosUIToolkit::init(int argc, const char* argv[]) throw(CException) {
+void ChaosUIToolkit::init(int argc, char* argv[]) throw(CException) {
     try{
            
         UI_LAPP_ << "Init ChaosUIToolkit";

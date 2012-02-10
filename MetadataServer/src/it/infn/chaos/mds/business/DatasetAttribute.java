@@ -309,7 +309,7 @@ public class DatasetAttribute extends BSONBusinessObject {
 	public Object toBson() {
 		BasicBSONObject bsonAttributeDescription = new BasicBSONObject();
 		if (getName() != null) {
-			bsonAttributeDescription.append(RPCConstants.DATASET_ATTRIBUTE_NAME, getDescription());
+			bsonAttributeDescription.append(RPCConstants.DATASET_ATTRIBUTE_NAME, getName());
 		}
 
 		if (getDescription() != null) {

@@ -115,7 +115,7 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
         vector< CDataWrapper* >& deviceDataset = getDatasetForDeviceID(attributeDeviceID);
 		elementsDescriptions.reset(attributeDataWrapper.getVectorValue(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION));
     
-        for (int idx = 0; idx<= elementsDescriptions->size(); idx++) {
+        for (int idx = 0; idx < elementsDescriptions->size(); idx++) {
                 //create new space for element
              CDataWrapper *attributeForDeviceID = new CDataWrapper();
             
@@ -226,4 +226,29 @@ bool CUSchemaDB::deviceIsPresent(string& deviceID) {
         if(!deviceIDDatasetIter->first.compare(deviceID)) return true;
     }
     return false;
+}
+
+void CUSchemaDB::getDeviceDatasetAttributesName(string& deviceID, vector<string>& attributesName) {
+    vector<CDataWrapper*>& domainAttributeList = getDatasetForDeviceID(deviceID);
+    
+    for (vector<CDataWrapper*>::iterator iter = domainAttributeList.begin(); 
+         iter != domainAttributeList.end(); 
+         iter++) {
+        
+        attributesName.push_back((*iter)->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME));
+    }
+}
+
+void CUSchemaDB::getDeviceAttributeDescription(string& deviceID, string& attributesName, string& attributeDescription) {
+    vector<CDataWrapper*>& domainAttributeList = getDatasetForDeviceID(deviceID);
+    CDataWrapper *tmpPtr = NULL;
+    for (vector<CDataWrapper*>::iterator iter = domainAttributeList.begin(); 
+         iter != domainAttributeList.end(); 
+         iter++) {
+        tmpPtr = *iter;
+        if(tmpPtr->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME).compare(attributesName)==0){
+            attributeDescription = tmpPtr->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DESCRIPTION); 
+            break;
+        }
+    }
 }

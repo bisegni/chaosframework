@@ -77,6 +77,12 @@ public:
      return true if the device id is found
      */
     bool deviceIsPresent(string& deviceID);
+    
+    void getDeviceDatasetAttributesName(string& deviceID, vector<string>& attributesName);
+    
+    void getDeviceAttributeDescription(string& deviceID, string& attributesName, string& attributeDescription);
+    
+    
 };
 
 }

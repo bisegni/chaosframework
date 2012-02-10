@@ -41,8 +41,8 @@ namespace chaos{
             /** \brief A cached shared across more UIToolkit instance on the same machine*/
             DeviceDatasetCache *globalDatasetCache;
             /** \brief point to the class the need to be allert when this UIToolkit must exit*/
-            ServerDelegator *serverDelegator;    
-        
+            ServerDelegator *serverDelegator;  
+
                 //!Constructor
             ChaosUIToolkit();
                 //!Destructor
@@ -55,7 +55,7 @@ namespace chaos{
                 \param argv the argv of main cpp program function
                 \exception CException instance is created when something goes wrong
              */
-            void init(int argc = 1, const char* argv[] = NULL) throw(CException);
+            void init(int argc = 1, char* argv[] = NULL) throw(CException);
             
                 //!Deinitializaiton Method
             /*!

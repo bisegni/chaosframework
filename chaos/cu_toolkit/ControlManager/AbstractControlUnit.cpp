@@ -457,6 +457,13 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
     }
     
         //check to see if the device can ben initialized
+    if(deviceStateMap[deviceID] == INIT_STATE) {
+        LCU_ << "device:" << deviceID << " not initialized";
+        throw CException(-3, "Device Not Initilized", "AbstractControlUnit::updateConfiguration");
+    }            
+
+    
+        //check to see if the device can ben initialized
     if(keyDataStorageMap.count(deviceID)!=0) {
         keyDataStorageMap[deviceID]->updateConfiguration(updatePack);
     }
@@ -464,6 +471,7 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
     if(updatePack->hasKey(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY)){
             //we need to configure the delay  from a run() call and the next
         int32_t uSecdelay = updatePack->getInt32Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY);
+        LCU_ << "Update schedule delay in:" << uSecdelay << " microsecond";
         schedulerDeviceMap[deviceID]->setDelayBeetwenTask(uSecdelay);
     }
     

@@ -16,11 +16,14 @@
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/thread/CThread.h>
 #include <chaos/common/thread/CThreadExecutionTask.h>
-#include <chaos/common/utility/IDataBuffer.h>
+#include <chaos/common/utility/SingleBufferCircularBuffer.h>
+#include <chaos/common/data/CUSchemaDB.h>            
+
+#include <boost/thread/mutex.hpp>
+#include <map>
 
 namespace chaos {
     namespace ui{
-        
             //! Controller for a single device instance
         /*! 
          This represent a global controller for a single device, identified by DEVICE_ID. The contorlle rpermit to
@@ -41,8 +44,26 @@ namespace chaos {
             IODataDriver *ioLiveDataDriver;
                 //!the thread for the fetch operation
             CThread *liveDataThread;
+                //!Dataset database
+            CUSchemaDB datasetDB;
+                //!point to the freashest live value for this device dataset
+            auto_ptr<CDataWrapper> lastDeviceDefinition;
             
+                //!point to the freashest live value for this device dataset
             auto_ptr<CDataWrapper> currentLiveValue;
+            
+            boost::recursive_mutex trackMutext;
+            
+                //!store the type of the attribute for fast retrieve
+            std::map<string, DataType::DataSetAttributeIOAttribute> attributeDirectionMap;
+            std::map<string, DataType::DataType> attributeTypeMap;
+            std::vector<string> trackingAttribute;
+            
+                //!map for live data circular buffer
+            std::map<string,  chaos::SingleBufferCircularBuffer<int32_t> *> int32AttributeLiveBuffer;
+            std::map<string,  chaos::SingleBufferCircularBuffer<int64_t> *> int64AttributeLiveBuffer;
+            std::map<string,  chaos::SingleBufferCircularBuffer<double_t> *> doubleAttributeLiveBuffer;
+            
                 //! Defautl Constructor
             /*!
              The visibility of the constructor is private becase it's is isntantiable only via HLDataApi singleton
@@ -56,15 +77,22 @@ namespace chaos {
             void updateChannel() throw(CException);
             
             /*!
-             Fetch the current live value form live storage
-             */
-            inline void fetchCurrentDeviceValue();
-            
-            /*!
              Initialize the map for the devices
              \param initiDevicedescription the reference to CDataWrapper that contain device initialization information
              */
             void initializeAttributeIndexMap(CDataWrapper& initiDevicedescription);
+               
+                //!DeInitialize the map for the devices
+            /*!
+             Dispose all memory used for live data buffer
+             */
+            void deinitializeAttributeIndexMap();
+            
+                //! allocata new circular buffer for attribute and type
+            /*
+             
+             */
+            void allocateNewLiveBufferForAttributeAndType(string& attributeName, DataType::DataSetAttributeIOAttribute type, DataType::DataType attrbiuteType);
         protected:
                 //! the fetcher thread method
             void executeOnThread(const string&) throw(CException);
@@ -74,6 +102,10 @@ namespace chaos {
              All can destruct an isntance of the device controller
              */
             ~DeviceController();
+            
+            void getAttributesName(vector<string>& attributesName);
+            
+            void getAttributeDescription(string& attributesName, string& attributeDescription);
             
                 //!Device initialization
             /*!
@@ -106,11 +138,14 @@ namespace chaos {
              */
             int setScheduleDelay(int32_t millisecDelay);
             
+            void setupTracking();
+            
+            
                 //!Start to trackthe current device value
             /*!
              Start the live data tracking for this device, if no delay is given, the default delay of the device on metadataserver is got
              */
-            void startTracking();
+            void startTracking(bool automatic = false);
             
                 //!Stop the live data tracking
             /*!
@@ -118,16 +153,19 @@ namespace chaos {
              */
             void stopTracking();
             
-                //!Add a new value for indexed attribute to buffer
-            /*! 
-             \param buffer buffer where to put a new value retrieved fro live
-             \param indexOfAttribute index of the attribute to fetch
+                //add attrbiute to track
+            /*!
+             Add attribute to tracking
              */
-            template<typename T>
-            void addLiveValueToBuffer(typename choas::IDataBuffer<T> buffer, int32_t indexOfAttribute[]) {
-                fetchCurrentDeviceValue();
-                if(!currentLiveValue.get())return;
-            }
+            void addAttributeToTrack(string& attributeName);
+            
+            
+            /*!
+             Fetch the current live value form live storage
+             */
+            void fetchCurrentDeviceValue();
+            
+            chaos::DataBuffer *getBufferForAttribute(string& attributeName);
         };
     }
 }

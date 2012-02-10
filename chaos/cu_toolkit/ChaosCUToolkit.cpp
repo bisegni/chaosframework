@@ -24,7 +24,7 @@ WaitSemaphore ChaosCUToolkit::waitCloseSemaphore;
 /*
  *
  */
-void ChaosCUToolkit::init(int argc, const char* argv[])  throw(CException) {
+void ChaosCUToolkit::init(int argc, char* argv[])  throw(CException) {
     SetupStateManager::levelUpFrom(0, "ChaosCUToolkit already initialized");
     try {
             //init common stage
