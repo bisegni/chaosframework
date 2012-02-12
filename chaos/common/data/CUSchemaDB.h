@@ -31,6 +31,16 @@ class CUSchemaDB {
     void clearDatasetForDeviceID(string&);
 
 public:
+        //!Describe the range of the value for an attribute of the dataset
+    typedef struct {
+            //!max value of the range
+        string maxRange;
+            //minimum value of the range
+        string minRange;
+            //defaultValue
+        string defaultValue;
+    } RangeValueInfo;
+    
     CUSchemaDB();
     virtual ~CUSchemaDB();
   
@@ -66,7 +76,7 @@ public:
 	/*
 	 * Return the attribute array for a specified direction
 	 */
-	void getAttributeForDirection(string& domainName, DataType::DataSetAttributeIOAttribute, vector< shared_ptr<CDataWrapper> >&);
+	void getAttributeForDirection(string& deviceID, DataType::DataSetAttributeIOAttribute, vector< shared_ptr<CDataWrapper> >&);
     
     /*
      REturn all the setupped device id
@@ -80,8 +90,11 @@ public:
     
     void getDeviceDatasetAttributesName(string& deviceID, vector<string>& attributesName);
     
+    void getDeviceDatasetAttributesName(string& deviceID, vector<string>& attributesName, DataType::DataSetAttributeIOAttribute directionType);
+    
     void getDeviceAttributeDescription(string& deviceID, string& attributesName, string& attributeDescription);
     
+    void getDeviceAttributeRangeValueInfo(string& deviceID, string& attributesName, RangeValueInfo& rangeInfo);
     
 };
 

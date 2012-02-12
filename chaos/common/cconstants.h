@@ -144,8 +144,8 @@ namespace chaos {
         //!define the direction of dataset element
         typedef enum {
 			Input = 0,
-			Output,
-			Bidirectional,
+			Output=1,
+			Bidirectional=2,
         } DataSetAttributeIOAttribute;
     } 
     /** @} */ // end of ChaosDataType

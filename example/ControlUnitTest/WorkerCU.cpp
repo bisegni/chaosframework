@@ -21,17 +21,16 @@ using namespace chaos;
 #define DS_ELEMENT_1            "intValue_1"
 #define DS_ELEMENT_2            "intValue_2"
 #define DS_ELEMENT_3            "byteValue"
-#define DS_ELEMENT_4            "stringaValue"
+#define DS_ELEMENT_4            "doubleValue"
 
 #define TEST_BUFFER_DIM         100
 #define CU_DELAY_FROM_TASKS     1000000 //1Sec
 #define ACTION_TWO_PARAM_NAME   "actionTestTwo_paramName"
 
 WorkerCU::WorkerCU():AbstractControlUnit(),rng((const uint_fast32_t) time(0) ),one_to_six( 1, 100 ),randInt(rng, one_to_six) {
-    //first we make some write
-     _deviceID.assign(SIMULATED_DEVICE_ID);
+        //first we make some write
+    _deviceID.assign(SIMULATED_DEVICE_ID);
     cuName = "WORKER_CU";
-    writeRead = false;
     numberOfResponse = 0;
 }
 
@@ -41,7 +40,6 @@ WorkerCU::WorkerCU():AbstractControlUnit(),rng((const uint_fast32_t) time(0) ),o
 WorkerCU::WorkerCU(string &customDeviceID):rng((const uint_fast32_t) time(0) ),one_to_six( 1, 100 ),randInt(rng, one_to_six){
     _deviceID = customDeviceID;
     cuName = "WORKER_CU";
-    writeRead = false;
     numberOfResponse = 0;
 }
 
@@ -61,16 +59,16 @@ void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
     cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_NAME, "WORKER_CU");
     cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_DESCRIPTION, "This is a beautifull CU");
     cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_CLASS, "HW1-CLASS1");
-    //cuSetup.addInt32Value(CUDefinitionKey::CS_CM_CU_AUTOSTART, 1);
-
+        //cuSetup.addInt32Value(CUDefinitionKey::CS_CM_CU_AUTOSTART, 1);
     
-    //set the default delay for the CU
+    
+        //set the default delay for the CU
     setDefaultScheduleDelay(CU_DELAY_FROM_TASKS);
     
-    //add managed device di
+        //add managed device di
     addDeviceId(_deviceID);
     
-    //add custom action
+        //add custom action
     AbstActionDescShrPtr  
     actionDescription = addActionDescritionInstance<WorkerCU>(this, 
                                                               &WorkerCU::actionTestOne, 
@@ -81,7 +79,7 @@ void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
                                                               &WorkerCU::resetStatistic, 
                                                               "resetStatistic", 
                                                               "resetStatistic this action will reset  all cu statistic!");
-     
+    
     actionDescription = addActionDescritionInstance<WorkerCU>(this, 
                                                               &WorkerCU::actionTestTwo, 
                                                               "actionTestTwo", 
@@ -115,7 +113,7 @@ void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
     addAttributeToDataSet(devIDInChar,
                           DS_ELEMENT_4,
                           "describe the element 4 of the dataset",
-                          DataType::TYPE_STRING, 
+                          DataType::TYPE_DOUBLE, 
                           DataType::Input);
 }
 
@@ -136,59 +134,29 @@ void WorkerCU::run(const string& deviceID) throw(CException) {
     const char *devIDInChar = _deviceID.c_str();
     string jsonString;
     string bufferHexRepresentation;
-
+    
     currentExecutionTime = steady_clock::now();
     LAPP_ << "Time beetwen last call(msec):" << (currentExecutionTime-lastExecutionTime);
     lastExecutionTime = currentExecutionTime;
-
+    
         //get new data wrapper instance filled
         //with mandatory data
-    CDataWrapper *acquiredData = NULL;
-    
-    if(writeRead){
-        //int bufferLen = 0;
-        //const char * charBuff = NULL;
-            //get last data
-        auto_ptr< ArrayPointer<CDataWrapper> > result(getLastDataSetForKey(devIDInChar));
-        
-        if(!result->size()) return;
-        
-            //ge tthe first and only result
-        acquiredData = (*result.get())[0];
-        
-        if(acquiredData){
-            //charBuff = acquiredData->getBinaryValue("byteValue", bufferLen);
-            //bufferHexRepresentation.assign(toHex(charBuff, bufferLen));
-#if DEBUG
-            LAPP_ << "readed data " << acquiredData->getJSONString();
-#endif
-            //LAPP_ << "byte buffer contains=" << bufferHexRepresentation;
-        }
-    } else  {
-            //get new istance for CDataWrapper fille with rigth key
-    acquiredData = getNewDataWrapperForKey(devIDInChar);
+    CDataWrapper *acquiredData = getNewDataWrapperForKey(devIDInChar);
     if(!acquiredData) return;
     
-            //adding some interesting random data 
+        //adding some interesting random data 
     acquiredData->addInt32Value("intValue_1", randInt());
     acquiredData->addInt32Value("intValue_2", randInt());
+        //generate  test byte
+    const char * binData = new char[TEST_BUFFER_DIM];
+    
+        // bufferHexRepresentation.assign(toHex(binData, TEST_BUFFER_DIM));
+    acquiredData->addBinaryValue("byteValue", binData, TEST_BUFFER_DIM);
     acquiredData->addDoubleValue("doubleValue_1", 25.12);
-            //generate  test byte
-        const char * binData = new char[TEST_BUFFER_DIM];
-        
-       // bufferHexRepresentation.assign(toHex(binData, TEST_BUFFER_DIM));
-        acquiredData->addBinaryValue("byteValue", binData, TEST_BUFFER_DIM);
-#if DEBUG  
-        LAPP_ << "data to be write=" << acquiredData->getJSONString();
-#endif
-        //LAPP_ << "byte buffer contains=" << bufferHexRepresentation;
-        
-        delete[] binData;
-            //submit acquired data
-        pushDataSetForKey(devIDInChar, acquiredData);
-        //}
-    }
-    writeRead = !writeRead;
+    delete[] binData;
+        //submit acquired data
+    pushDataSetForKey(devIDInChar, acquiredData);
+    
 }
 
 /*

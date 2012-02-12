@@ -36,6 +36,7 @@ public:
     void update();
     bool hasPlot(std::string& plotName);
     void replot();
+    void clearAllPlot();
 signals:
     void updatePlot();
 public slots:

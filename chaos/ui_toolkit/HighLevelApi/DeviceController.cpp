@@ -74,12 +74,26 @@ void DeviceController::updateChannel() throw(CException) {
     }
 }
 
-void DeviceController::getAttributesName(vector<string>& attributesName) {
+void DeviceController::getDeviceDatasetAttributesName(vector<string>& attributesName) {
     datasetDB.getDeviceDatasetAttributesName(deviceID, attributesName);
 }
 
 void DeviceController::getAttributeDescription(string& attributesName, string& attributeDescription) {
     datasetDB.getDeviceAttributeDescription(deviceID, attributesName, attributeDescription);
+}
+
+/*!
+ Get all attribute name
+ */
+void DeviceController::getDeviceDatasetAttributesName(vector<string>& attributesName, DataType::DataSetAttributeIOAttribute directionType) {
+     datasetDB.getDeviceDatasetAttributesName(deviceID, attributesName, directionType);
+}
+
+/*!
+ Get range valu einfo for attrbiute name
+ */
+void DeviceController::getDeviceAttributeRangeValueInfo(string& attributesName, CUSchemaDB::RangeValueInfo& rangeInfo) {
+    datasetDB.getDeviceAttributeRangeValueInfo(deviceID, attributesName, rangeInfo);
 }
 
 int DeviceController::initDevice() {

@@ -61,6 +61,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     settings.setValue("main_window", saveGeometry());
     settings.setValue("main_window", saveState());
+    cleanCurrentDevice();
+
     QMainWindow::closeEvent(event);
 }
 void MainWindow::readSettings()
@@ -112,7 +114,8 @@ void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
     std::string dName = selectedDevice.toStdString();
     deviceController.reset(chaos::ui::HLDataApi::getInstance()->getControllerForDeviceID(dName));
     deviceController->setupTracking();
-    deviceController->getAttributesName(attributesName);
+    //get only output o attribute
+    deviceController->getDeviceDatasetAttributesName(attributesName, chaos::DataType::Output);
 
     QStandardItemModel *model = new QStandardItemModel(attributeDescription.size(), 2);
     model->setHeaderData(0, Qt::Horizontal, QObject::tr("Name"));
@@ -151,6 +154,11 @@ void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
         }
         graphWdg->addNewPlot(attributeBuffer, attributeName);
     }
+}
+
+void MainWindow::cleanCurrentDevice() {
+    on_buttonStopTracking_clicked();
+    graphWdg->clearAllPlot();
 }
 
 void MainWindow::on_buttonInit_clicked()

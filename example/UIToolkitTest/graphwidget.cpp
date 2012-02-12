@@ -88,3 +88,12 @@ void GraphWidget::replot() {
   boost::mutex::scoped_lock  lock(manageMutex);
   plot->replot();
 }
+
+void GraphWidget::clearAllPlot() {
+  boost::mutex::scoped_lock  lock(manageMutex);
+  for(std::map<std::string, boost::shared_ptr<PlotBufferAndCurve> >::iterator iter = plotMap.begin();
+      iter != plotMap.end();
+      iter++){
+      plotMap.erase(iter);
+  }
+}

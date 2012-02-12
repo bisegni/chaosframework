@@ -67,6 +67,7 @@ private:
     Ui::MainWindow *ui;
     void closeEvent(QCloseEvent *event);
     void readSettings();
+    void cleanCurrentDevice();
 
 };
 

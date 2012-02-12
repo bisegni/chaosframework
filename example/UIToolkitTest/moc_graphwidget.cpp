@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'graphwidget.h'
 **
-** Created: Sat Feb 11 20:21:10 2012
+** Created: Sun Feb 12 13:53:00 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!

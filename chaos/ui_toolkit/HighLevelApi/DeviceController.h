@@ -103,9 +103,22 @@ namespace chaos {
              */
             ~DeviceController();
             
-            void getAttributesName(vector<string>& attributesName);
-            
+            /*!
+             Get attribute name filtered by direction type
+             */
+            void getDeviceDatasetAttributesName(vector<string>& attributesName);
+            /*!
+             Get description for attribute name
+             */
             void getAttributeDescription(string& attributesName, string& attributeDescription);
+            /*!
+             Get all attribute name
+             */
+            void getDeviceDatasetAttributesName(vector<string>& attributesName, DataType::DataSetAttributeIOAttribute directionType);
+            /*!
+             Get range valu einfo for attrbiute name
+             */
+            void getDeviceAttributeRangeValueInfo(string& attributesName, CUSchemaDB::RangeValueInfo& rangeInfo);
             
                 //!Device initialization
             /*!
@@ -138,6 +151,9 @@ namespace chaos {
              */
             int setScheduleDelay(int32_t millisecDelay);
             
+            /*!
+             Setup the structure to accelerate the tracking of the live data
+             */
             void setupTracking();
             
             

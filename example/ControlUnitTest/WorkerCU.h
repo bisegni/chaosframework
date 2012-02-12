@@ -25,7 +25,6 @@ class WorkerCU : public AbstractControlUnit {
     RNGType rng;
     uniform_int<> one_to_six;    
     variate_generator< RNGType, uniform_int<> > randInt; 
-    bool writeRead;
     int64_t numberOfResponse;
     high_resolution_clock::time_point lastExecutionTime;
     high_resolution_clock::time_point currentExecutionTime;

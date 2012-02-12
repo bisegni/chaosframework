@@ -72,6 +72,9 @@ int main (int argc, char* argv[] )
                 auto_ptr<DeviceController> controller(HLDataApi::getInstance()->getControllerForDeviceID(*devIter));
 
                 
+                vector<string> allOutAttrName;
+                 controller->getDeviceDatasetAttributesName(allOutAttrName, chaos::DataType::Output);
+                
                 controller->initDevice();
                 controller->setScheduleDelay(1000000);
                 controller->startDevice();
