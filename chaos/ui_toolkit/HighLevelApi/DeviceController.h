@@ -144,6 +144,12 @@ namespace chaos {
              */
             int deinitDevice();
             
+                //!Get device state
+            /*!
+             Return the current device state
+             */
+            int getState(CUStateKey::ControlUnitState& deviceState);
+            
                 //!Set the scheduler delay for this determinated device
             /*!
              Set the delay for the thread that call the run() methdo for this device

@@ -60,7 +60,7 @@ int main (int argc, char* argv[] )
             //! [Datapack sent]
         vector<string> allActiveDeviceID;
         CDeviceNetworkAddress deviceNetworkAddress;
-        
+        CUStateKey::ControlUnitState deviceState;
         err = mdsChannel->getAllDeviceID(allActiveDeviceID, 2000);
             //! [Datapack sent]
         if(!err){
@@ -73,11 +73,22 @@ int main (int argc, char* argv[] )
 
                 
                 vector<string> allOutAttrName;
-                 controller->getDeviceDatasetAttributesName(allOutAttrName, chaos::DataType::Output);
+                controller->getDeviceDatasetAttributesName(allOutAttrName, chaos::DataType::Output);
+                
+                controller->getState(deviceState);
+                std::cout << "state " << deviceState << std::endl;
                 
                 controller->initDevice();
+                
+                controller->getState(deviceState);
+                std::cout << "state " << deviceState << std::endl;
+                
                 controller->setScheduleDelay(1000000);
                 controller->startDevice();
+                
+                controller->getState(deviceState);
+                std::cout << "state " << deviceState << std::endl;
+                
                 controller->setupTracking();
                 string key = "intValue_1";
                 controller->addAttributeToTrack(key);
@@ -85,7 +96,7 @@ int main (int argc, char* argv[] )
                 controller->startTracking();
                 int *bPtr = reinterpret_pointer_cast<int>(intValue1Buff->getBasePointer());
                 
-                for (int idx = 0; idx < 60; idx++) {
+                for (int idx = 0; idx < 30; idx++) {
                     controller->fetchCurrentDeviceValue();
                     int *wPtr = reinterpret_pointer_cast<int>(intValue1Buff->getWritePointer());
 
@@ -114,7 +125,14 @@ int main (int argc, char* argv[] )
                 controller->stopTracking();
                 
                 controller->stopDevice();
+                
+                controller->getState(deviceState);
+                std::cout << "state " << deviceState << std::endl;
+                
                 controller->deinitDevice();
+                
+                controller->getState(deviceState);
+                std::cout << "state " << deviceState << std::endl;
             }
         }  
             //! [UIToolkit Deinit]

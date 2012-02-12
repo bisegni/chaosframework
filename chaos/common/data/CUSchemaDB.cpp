@@ -285,6 +285,10 @@ void CUSchemaDB::getDeviceAttributeRangeValueInfo(string& deviceID, string& attr
             if(tmpPtr->hasKey(DatasetDefinitionkey::CS_CMDM_ACTION_DESC_DEFAULT_VALUE)){
                 rangeInfo.defaultValue = tmpPtr->getStringValue(DatasetDefinitionkey::CS_CMDM_ACTION_DESC_DEFAULT_VALUE);
             }
+            if(tmpPtr->hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE)){
+                rangeInfo.valueType = (DataType::DataType)tmpPtr->getInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE);
+            }
+            
             break;
         }
     }

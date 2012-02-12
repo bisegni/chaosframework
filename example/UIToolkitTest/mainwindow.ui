@@ -170,6 +170,9 @@
           </item>
           <item>
            <widget class="QSpinBox" name="spinTrackSpeed">
+            <property name="toolTip">
+             <string>milliseconds</string>
+            </property>
             <property name="keyboardTracking">
              <bool>false</bool>
             </property>
@@ -231,6 +234,9 @@
           </item>
           <item>
            <widget class="QSpinBox" name="spinDeviceSchedule">
+            <property name="toolTip">
+             <string>milliseconds</string>
+            </property>
             <property name="keyboardTracking">
              <bool>false</bool>
             </property>
@@ -263,6 +269,11 @@
             <width>16777215</width>
             <height>150</height>
            </size>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
           </property>
           <property name="selectionMode">
            <enum>QAbstractItemView::MultiSelection</enum>

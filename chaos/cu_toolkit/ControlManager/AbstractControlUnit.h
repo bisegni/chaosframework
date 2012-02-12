@@ -96,6 +96,8 @@ deviceStateMap[deviceName]--;
         
         map<string, int >  deviceStateMap;
         
+        CUStateKey::ControlUnitState cuState;
+        
         /*
          Add a new KeyDataStorage for a specific key
          */
@@ -128,11 +130,6 @@ deviceStateMap[deviceName]--;
          Define the control unit DataSet and Action into
          a CDataWrapper
          */
-        void _defineActionAndDataset(CDataWrapper&) throw(CException);
-        /*
-         Define the control unit DataSet and Action into
-         a CDataWrapper
-         */
         void _undefineActionAndDataset() throw(CException);       
         /*
          Initialize the Custom Contro Unit and return the configuration
@@ -151,8 +148,16 @@ deviceStateMap[deviceName]--;
         /*
          Stop the Custom Control Unit scheduling for device
          */
-        CDataWrapper* _stop(CDataWrapper*, bool& detachParam) throw(CException);   
-        
+        CDataWrapper* _stop(CDataWrapper*, bool& detachParam) throw(CException);  
+        /*
+         Get the current control unit state
+         */
+        CDataWrapper* _getState(CDataWrapper*, bool& detachParam) throw(CException);
+        /*
+         Define the control unit DataSet and Action into
+         a CDataWrapper
+         */
+        void _defineActionAndDataset(CDataWrapper&) throw(CException);
         /*
          Execute the scehduling for the device
          */

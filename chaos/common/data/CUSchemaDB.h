@@ -35,10 +35,12 @@ public:
     typedef struct {
             //!max value of the range
         string maxRange;
-            //minimum value of the range
+            //!minimum value of the range
         string minRange;
-            //defaultValue
+            //!defaultValue
         string defaultValue;
+            //!Type of the value
+        DataType::DataType valueType;
     } RangeValueInfo;
     
     CUSchemaDB();

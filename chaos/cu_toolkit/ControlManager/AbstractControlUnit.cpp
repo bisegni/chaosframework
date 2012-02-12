@@ -217,6 +217,12 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
                                                                     getCUInstance(), 
                                                                     ChaosSystemDomainAndActionLabel::ACTION_DEVICE_STOP, 
                                                                     "Stop the device scheduling");
+    LCU_ << "Register getState action";
+    DeclareAction::addActionDescritionInstance<AbstractControlUnit>(this, 
+                                                                    &AbstractControlUnit::_getState, 
+                                                                    getCUInstance(), 
+                                                                    ChaosSystemDomainAndActionLabel::ACTION_DEVICE_GET_STATE, 
+                                                                    "Get the state of the device");
     
     LCU_ << "Get Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
         //grab dataset description
@@ -295,6 +301,9 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     
         //call update param function
     updateConfiguration(initConfiguration, detachParam);
+    
+    cuState = CUStateKey::INIT;
+    
     return NULL;
 }
 
@@ -342,6 +351,9 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
     keyDataStorageMap.erase(deviceID);
     
     deviceStateMap[deviceID]--;
+    
+    cuState = CUStateKey::DEINIT;
+
     return NULL;
 }
 
@@ -386,6 +398,9 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
     csThread->setThreadPriorityLevel(sched_get_priority_max(SCHED_RR), SCHED_RR);
     
     deviceStateMap[deviceID]++;
+    
+    cuState = CUStateKey::START;
+
     return NULL;
 }
 
@@ -427,6 +442,9 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachPa
     LCU_ << "Stopped Thread for Device ID:" << deviceID;
     
     deviceStateMap[deviceID]--;
+    
+    cuState = CUStateKey::STOP;
+
     return NULL;
 }
 
@@ -439,6 +457,18 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
     return executionResult;
 }
 
+/*
+ Get the current control unit state
+ */
+CDataWrapper* AbstractControlUnit::_getState(CDataWrapper* getStatedParam, bool& detachParam) throw(CException) {
+    CDataWrapper *stateResult = new CDataWrapper();
+    if(!getStatedParam->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)){
+        throw CException(-1, "Get State Pack without DeviceID", "AbstractControlUnit::getState");
+    }
+    string deviceID = getStatedParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
+    stateResult->addInt32Value(CUStateKey::CONTROL_UNIT_STATE, deviceStateMap[deviceID]);
+    return stateResult;
+}
 /*
  Update the configuration for all descendand tree in the Control Uniti class struccture
  */
@@ -474,8 +504,6 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
         LCU_ << "Update schedule delay in:" << uSecdelay << " microsecond";
         schedulerDeviceMap[deviceID]->setDelayBeetwenTask(uSecdelay);
     }
-    
-    
     return NULL;
 }
 

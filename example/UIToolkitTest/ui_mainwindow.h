@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created: Sat Feb 11 21:05:22 2012
+** Created: Sun Feb 12 20:13:24 2012
 **      by: Qt User Interface Compiler version 4.7.4
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -240,6 +240,9 @@ public:
         tableView->setObjectName(QString::fromUtf8("tableView"));
         tableView->setMinimumSize(QSize(0, 129));
         tableView->setMaximumSize(QSize(16777215, 150));
+        QFont font;
+        font.setPointSize(10);
+        tableView->setFont(font);
         tableView->setSelectionMode(QAbstractItemView::MultiSelection);
 
         leftVerticalLayout->addWidget(tableView);
@@ -312,7 +315,13 @@ public:
         buttonStartTracking->setText(QApplication::translate("MainWindow", "Start Tracking", 0, QApplication::UnicodeUTF8));
         buttonStopTracking->setText(QApplication::translate("MainWindow", "Stop Tracking", 0, QApplication::UnicodeUTF8));
         label_3->setText(QApplication::translate("MainWindow", "Track Seed:", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        spinTrackSpeed->setToolTip(QApplication::translate("MainWindow", "milliseconds", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
         label_4->setText(QApplication::translate("MainWindow", "Device Schedule:", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_TOOLTIP
+        spinDeviceSchedule->setToolTip(QApplication::translate("MainWindow", "milliseconds", 0, QApplication::UnicodeUTF8));
+#endif // QT_NO_TOOLTIP
         buttonInit->setText(QApplication::translate("MainWindow", "Init", 0, QApplication::UnicodeUTF8));
         buttonStart->setText(QApplication::translate("MainWindow", "Start", 0, QApplication::UnicodeUTF8));
         buttonStop->setText(QApplication::translate("MainWindow", "Stop", 0, QApplication::UnicodeUTF8));

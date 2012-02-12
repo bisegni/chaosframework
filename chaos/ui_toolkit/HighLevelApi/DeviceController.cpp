@@ -123,6 +123,14 @@ int DeviceController::deinitDevice() {
     return deviceChannel->deinitDevice(); 
 }
 
+    //!Get device state
+/*!
+ Return the current device state
+ */
+int DeviceController::getState(CUStateKey::ControlUnitState& deviceState) {
+    CHAOS_ASSERT(deviceChannel)
+    return deviceChannel->getState(deviceState); 
+}
 
 /*!
  Initialize the map for the devices

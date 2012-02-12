@@ -117,18 +117,30 @@ void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
     //get only output o attribute
     deviceController->getDeviceDatasetAttributesName(attributesName, chaos::DataType::Output);
 
-    QStandardItemModel *model = new QStandardItemModel(attributeDescription.size(), 2);
+    QStandardItemModel *model = new QStandardItemModel(attributeDescription.size(), 3);
     model->setHeaderData(0, Qt::Horizontal, QObject::tr("Name"));
+    model->setHeaderData(0, Qt::Horizontal, QObject::tr("Direction"));
     model->setHeaderData(1, Qt::Horizontal, QObject::tr("Description"));
 
     int row = 0;
     for(std::vector<std::string>::iterator iter = attributesName.begin();
         iter != attributesName.end();
         iter++){
-
         deviceController->getAttributeDescription((*iter), attributeDescription);
         model->setItem(row, 0, new QStandardItem(QString((*iter).c_str())));
-        model->setItem(row++, 1, new QStandardItem(QString(attributeDescription.c_str())));
+        model->setItem(row, 1, new QStandardItem("Output"));
+        model->setItem(row++, 2, new QStandardItem(QString(attributeDescription.c_str())));
+    }
+    //get only input o attribute
+    attributesName.clear();
+    deviceController->getDeviceDatasetAttributesName(attributesName, chaos::DataType::Input);
+    for(std::vector<std::string>::iterator iter = attributesName.begin();
+        iter != attributesName.end();
+        iter++){
+        deviceController->getAttributeDescription((*iter), attributeDescription);
+        model->setItem(row, 0, new QStandardItem(QString((*iter).c_str())));
+        model->setItem(row, 1, new QStandardItem("Input"));
+        model->setItem(row++, 2, new QStandardItem(QString(attributeDescription.c_str())));
     }
     ui->tableView->setModel(model);
 

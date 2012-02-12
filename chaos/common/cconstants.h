@@ -81,6 +81,28 @@ namespace chaos {
     }
     /** @} */ // end of CUDefinitionKey
 
+    /** @} */ // end of RpcConfigurationKey
+    
+    /** @defgroup CUStateKey Control Unit State
+     *  This is the collection of the key for the control unit state definition
+     *  @{
+     */
+        //! Name space for grupping option used for define the control unit state
+    namespace CUStateKey {
+            //! The state of the control unit
+        static const char * const CONTROL_UNIT_STATE                   = "cu_state";        
+  
+            //!define the direction of dataset element
+        typedef enum {
+			INIT = 0,
+			DEINIT,
+			START,
+            STOP
+        } ControlUnitState;
+    }
+    /** @} */ // end of CUStateKey
+
+    
     /** @defgroup DatasetDefinitionkey Dataset definition key
      *  This is the collection of the key for the device dataset
      *  @{
@@ -242,6 +264,8 @@ namespace chaos {
         static const char * const ACTION_DEVICE_START       = "startDevice";
             //! pause the run method for a determinated device
         static const char * const ACTION_DEVICE_STOP        = "stopDevice";
+            //! return the state of the device
+        static const char * const ACTION_DEVICE_GET_STATE        = "getState";    
     }
      /** @} */ // end of ChaosSystemDomainAndActionLabel
     
