@@ -23,11 +23,8 @@ class GraphWidget : public QWidget
     Q_OBJECT
     QwtPlot *plot;
     QVBoxLayout *vbox;
-    std::vector<double> xs;
     boost::mutex manageMutex;
-    boost::mt19937 rng;
-    boost::uniform_int<> one_to_six;
-    boost::variate_generator< boost::mt19937, boost::uniform_int<> > randInt;
+    std::vector<double> xs;
     std::map<std::string, boost::shared_ptr<PlotBufferAndCurve> > plotMap;
 public:
     explicit GraphWidget(QWidget *parent = 0);

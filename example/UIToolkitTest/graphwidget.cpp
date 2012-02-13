@@ -5,14 +5,13 @@
 #include <qwt_legend_item.h>
 using namespace boost;
 GraphWidget::GraphWidget(QWidget *parent) :
-    QWidget(parent),one_to_six( 0, 255 ),randInt(rng, one_to_six)
+    QWidget(parent)
 {
     // QVBoxLayout verticalBox;
     plot = new QwtPlot(QwtText("Chaos Attribute Plot"));
     plot->setGeometry(0,0,640,400);
     plot->setAxisScale(QwtPlot::xBottom, 1, 30);
-    plot->insertLegend(new QwtLegend(), QwtPlot::BottomLegend);
-
+    plot->insertLegend(new QwtLegend(plot), QwtPlot::BottomLegend);
     vbox = new QVBoxLayout();
     vbox->addWidget(plot,1);
     setLayout(vbox);
@@ -28,14 +27,16 @@ void GraphWidget::addNewPlot(chaos::DataBuffer *dataBuffer, std::string& plotNam
     boost::mutex::scoped_lock  lock(manageMutex);
     if(plotMap.count(plotName)>0) return;
     boost::shared_ptr<PlotBufferAndCurve> newPlotInfo(new PlotBufferAndCurve());
+    boost::mt19937 rng((const uint_fast32_t) std::time(0) );
+    boost::uniform_int<> one_to_six( 0, 255 );
+    boost::variate_generator< boost::mt19937, boost::uniform_int<> > randInt(rng, one_to_six);
 
     QwtPlotCurve *c = new QwtPlotCurve(plotName.c_str());
     c->setPen(QPen(QColor(randInt(), randInt(), randInt())));
     c->setRenderHint(QwtPlotItem::RenderAntialiased);
     c->setStyle(QwtPlotCurve::Lines);
-    c->setLegendAttribute(QwtPlotCurve::LegendShowLine,true);
-    c->setLegendAttribute(QwtPlotCurve::LegendShowSymbol,true);
     c->attach(plot);
+    c->setLegendAttribute(QwtPlotCurve::LegendShowSymbol);
     newPlotInfo->curve = c;
     newPlotInfo->curveBuffer = dataBuffer;
 

@@ -98,6 +98,8 @@ public:
     
     void getDeviceAttributeRangeValueInfo(string& deviceID, string& attributesName, RangeValueInfo& rangeInfo);
     
+    int getDeviceAttributeDirection(string& deviceID, string& attributesName, DataType::DataSetAttributeIOAttribute& directionType);
+    
 };
 
 }

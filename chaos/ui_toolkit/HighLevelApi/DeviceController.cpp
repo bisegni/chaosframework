@@ -44,6 +44,10 @@ DeviceController::~DeviceController() {
     }
 }
 
+void DeviceController::getDeviceId(string& dId) {
+    dId.assign(deviceID);
+}
+
 void DeviceController::updateChannel() throw(CException) {
     
         //make the live driver    
@@ -96,6 +100,10 @@ void DeviceController::getDeviceAttributeRangeValueInfo(string& attributesName, 
     datasetDB.getDeviceAttributeRangeValueInfo(deviceID, attributesName, rangeInfo);
 }
 
+int DeviceController::getDeviceAttributeDirection(string& attributesName, DataType::DataSetAttributeIOAttribute& directionType) {
+    return datasetDB.getDeviceAttributeDirection(deviceID, attributesName, directionType);
+}
+
 int DeviceController::initDevice() {
     CHAOS_ASSERT(mdsChannel && deviceChannel)
     int err = 0;
@@ -130,6 +138,13 @@ int DeviceController::deinitDevice() {
 int DeviceController::getState(CUStateKey::ControlUnitState& deviceState) {
     CHAOS_ASSERT(deviceChannel)
     return deviceChannel->getState(deviceState); 
+}
+
+int DeviceController::setInt32AttributeValue(string& attributeName, int32_t attributeValue) {
+    CDataWrapper attributeValuePack;
+    attributeValuePack.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME, attributeName);
+    attributeValuePack.addInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_VALUE, attributeValue);
+    return deviceChannel->setAttributeValue(attributeValuePack);
 }
 
 /*!

@@ -29,8 +29,7 @@ Library used by CHAOS:
                     boost_thread
                     boost_chrono
                     boost_regex                 (www.boost.org)
-Boost logging v2 
-for install boost logging v2(http://torjo.com/log2/index.html)
-Step:
-    cd /usr/local/include/boost/
-    svn co http://svn.boost.org/svn/boost/sandbox/logging/boost/logging 
+                    boost_log                   (http://sourceforge.net/projects/boost-log/files/latest/download)
+ 
+
+for qt client download and install qwt(http://qwt.sourceforge.net/qwtinstall.html)

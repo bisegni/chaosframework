@@ -1,0 +1,26 @@
+#surefire
+#Thu Feb 09 16:18:08 CET 2012
+testClassesDirectory=/Volumes/DeepData/Sorgenti/gitrepo/chaosframework/MetadataServer/target/test-classes
+useManifestOnlyJar=true
+classPathUrl.1=/Volumes/DeepData/Sorgenti/gitrepo/chaosframework/MetadataServer/target/classes
+reportsDirectory=/Volumes/DeepData/Sorgenti/gitrepo/chaosframework/MetadataServer/target/surefire-reports
+classPathUrl.0=/Volumes/DeepData/Sorgenti/gitrepo/chaosframework/MetadataServer/target/test-classes
+dirscanner.0=directoryScannerOptions
+providerConfiguration=org.apache.maven.surefire.junit.JUnit3Provider
+testSuiteDefinitionTestSourceDirectory=/Volumes/DeepData/Sorgenti/gitrepo/chaosframework/MetadataServer/src/test/java
+surefireClassPathUrl.1=/Users/bisegni/.m2/repository/org/apache/maven/surefire/surefire-api/2.7.1/surefire-api-2.7.1.jar
+surefireClassPathUrl.0=/Users/bisegni/.m2/repository/org/apache/maven/surefire/surefire-junit3/2.7.1/surefire-junit3-2.7.1.jar
+report.2=org.apache.maven.surefire.report.XMLReporter
+useSystemClassLoader=true
+report.1=org.apache.maven.surefire.report.BriefFileReporter
+excludes0=**/*$*
+report.0=org.apache.maven.surefire.report.ForkingConsoleReporter
+isTrimStackTrace=true
+dirscanner.0.params=/Volumes/DeepData/Sorgenti/gitrepo/chaosframework/MetadataServer/target/test-classes|[**/Test*.java, **/*Test.java, **/*TestCase.java]|[**/*$*]
+enableAssertions=true
+includes2=**/*TestCase.java
+failIfNoTests=false
+includes1=**/*Test.java
+dirscanner.0.types=java.io.File|java.util.ArrayList|java.util.ArrayList
+includes0=**/Test*.java
+childDelegation=false

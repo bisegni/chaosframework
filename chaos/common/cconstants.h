@@ -117,6 +117,9 @@ namespace chaos {
         
             //!key for the name of dataset attribute
         static const char * const CS_CM_DATASET_ATTRIBUTE_NAME                  = "cs|cm|ds_attr_name";
+ 
+        //!key for the name of dataset attribute
+        static const char * const CS_CM_DATASET_ATTRIBUTE_VALUE                  = "cs|cm|ds_attr_value";
         
             //!key for the tag of the dataset attrbiute
         static const char * const CS_CM_DATASET_ATTRIBUTE_TAG                   = "cs|cm|ds_attr_tag";

@@ -293,3 +293,22 @@ void CUSchemaDB::getDeviceAttributeRangeValueInfo(string& deviceID, string& attr
         }
     }
 }
+
+int CUSchemaDB::getDeviceAttributeDirection(string& deviceID, string& attributesName, DataType::DataSetAttributeIOAttribute& directionType) {
+    vector<CDataWrapper*>& domainAttributeList = getDatasetForDeviceID(deviceID);
+    CDataWrapper *tmpPtr = NULL;
+    for (vector<CDataWrapper*>::iterator iter = domainAttributeList.begin(); 
+         iter != domainAttributeList.end(); 
+         iter++) {
+        tmpPtr = *iter;
+        if(tmpPtr->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME).compare(attributesName)==0){
+            if(tmpPtr->hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION)){
+                directionType = (DataType::DataSetAttributeIOAttribute)tmpPtr->getInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION);
+                return 0;
+            }else return -1;
+            
+            break;
+        }
+    }
+
+}

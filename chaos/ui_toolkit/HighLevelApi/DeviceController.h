@@ -103,6 +103,8 @@ namespace chaos {
              */
             ~DeviceController();
             
+            void getDeviceId(string& dId);
+            
             /*!
              Get attribute name filtered by direction type
              */
@@ -119,6 +121,10 @@ namespace chaos {
              Get range valu einfo for attrbiute name
              */
             void getDeviceAttributeRangeValueInfo(string& attributesName, CUSchemaDB::RangeValueInfo& rangeInfo);
+            /*!
+             Get the direction of the attribute
+             */
+            int getDeviceAttributeDirection(string& attributesName, DataType::DataSetAttributeIOAttribute& directionType);
             
                 //!Device initialization
             /*!
@@ -143,6 +149,8 @@ namespace chaos {
              Perform, if it's not be done the stop operation and afther the hardware deinitialization
              */
             int deinitDevice();
+            
+            int setInt32AttributeValue(string& attributeName, int32_t attributeValue);
             
                 //!Get device state
             /*!

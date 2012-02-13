@@ -12,6 +12,7 @@
 #include <string>
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
+#include <controldialog.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -153,18 +154,35 @@ void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
     if(index.column() != 0) return;
     QString selectedAttribute = ui->tableView->model()->data(index, Qt::DisplayRole).toString();
     std::string attributeName =  selectedAttribute.toStdString() ;
-    if(graphWdg->hasPlot(attributeName)){
-        graphWdg->removePlot(attributeName);
-    } else {
-        deviceController->addAttributeToTrack(attributeName);
-        chaos::DataBuffer *attributeBuffer = deviceController->getBufferForAttribute(attributeName);
-        if(!attributeBuffer) {
-            QMessageBox* msg = new QMessageBox(this);
-            msg->setText("Errore getting buffer for attribute!");
-            msg->show();
-            return;
+
+    // check the type of attribute
+    chaos::DataType::DataSetAttributeIOAttribute direction;
+    if(deviceController->getDeviceAttributeDirection(attributeName, direction)!=0){
+        return;
+    }
+
+    if (direction == chaos::DataType::Output || direction == chaos::DataType::Bidirectional){
+        //output
+        if(graphWdg->hasPlot(attributeName)){
+            graphWdg->removePlot(attributeName);
+        } else {
+            deviceController->addAttributeToTrack(attributeName);
+            chaos::DataBuffer *attributeBuffer = deviceController->getBufferForAttribute(attributeName);
+            if(!attributeBuffer) {
+                QMessageBox* msg = new QMessageBox(this);
+                msg->setText("Errore getting buffer for attribute!");
+                msg->show();
+                return;
+            }
+            graphWdg->addNewPlot(attributeBuffer, attributeName);
         }
-        graphWdg->addNewPlot(attributeBuffer, attributeName);
+    }
+
+    if (direction == chaos::DataType::Input || direction == chaos::DataType::Bidirectional) {
+        //input attribute
+        ControlDialog *ctrlDialog = new ControlDialog();
+        ctrlDialog->initDialog(deviceController, attributeName);
+        ctrlDialog->show();
     }
 }
 
@@ -176,27 +194,47 @@ void MainWindow::cleanCurrentDevice() {
 void MainWindow::on_buttonInit_clicked()
 {
     if(!deviceController.get()) return;
-    deviceController->initDevice();
+    if(deviceController->initDevice()!= 0 ){
+        QMessageBox* msg = new QMessageBox(this);
+        msg->setText("Device already initialized or error");
+        msg->show();
+    }
     //set the scehdule delay acocrding to control
-    deviceController->setScheduleDelay(ui->dialScheduleDevice->value());
+    if(deviceController->setScheduleDelay(ui->dialScheduleDevice->value()) != 0 ){
+        QMessageBox* msg = new QMessageBox(this);
+        msg->setText("Error setting schedule delay");
+        msg->show();
+    }
 }
 
 void MainWindow::on_buttonDeinit_clicked()
 {
     if(!deviceController.get()) return;
-    deviceController->deinitDevice();
+   if( deviceController->deinitDevice() != 0 ){
+        QMessageBox* msg = new QMessageBox(this);
+        msg->setText("Device alredy deinitialized or error");
+        msg->show();
+    }
 }
 
 void MainWindow::on_buttonStart_clicked()
 {
     if(!deviceController.get()) return;
-    deviceController->startDevice();
+    if(deviceController->startDevice() != 0 ){
+        QMessageBox* msg = new QMessageBox(this);
+        msg->setText("Device already started or error");
+        msg->show();
+    }
 }
 
 void MainWindow::on_buttonStop_clicked()
 {
     if(!deviceController.get()) return;
-    deviceController->stopDevice();
+    if(deviceController->stopDevice() != 0 ){
+        QMessageBox* msg = new QMessageBox(this);
+        msg->setText("Device already stopped or error");
+        msg->show();
+    }
 }
 
 void MainWindow::on_buttonStartTracking_clicked()

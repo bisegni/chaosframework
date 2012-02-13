@@ -8,6 +8,8 @@
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/ui_toolkit/HighLevelApi/DeviceController.h>
 #include <chaos/common/thread/ChaosThread.h>
+#include <boost/shared_ptr.hpp>
+
 namespace Ui {
 class MainWindow;
 }
@@ -18,7 +20,7 @@ class MainWindow : public QMainWindow, public chaos::CThreadExecutionTask
     QSettings settings;
     GraphWidget *graphWdg;
     chaos::MDSMessageChannel *mdsChannel;
-    std::auto_ptr<chaos::ui::DeviceController> deviceController;
+    boost::shared_ptr<chaos::ui::DeviceController> deviceController;
     chaos::CThread *trackThread;
 protected:
     void executeOnThread(const std::string&) throw(chaos::CException);
