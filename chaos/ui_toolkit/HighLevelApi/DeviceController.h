@@ -151,6 +151,7 @@ namespace chaos {
             int deinitDevice();
             
             int setInt32AttributeValue(string& attributeName, int32_t attributeValue);
+            int setDoubleAttributeValue(string& attributeName, double_t attributeValue); 
             
                 //!Get device state
             /*!
@@ -164,6 +165,7 @@ namespace chaos {
              \param millisecDelay the delay from the query to the metadata server
              */
             int setScheduleDelay(int32_t millisecDelay);
+            
             
             /*!
              Setup the structure to accelerate the tracking of the live data

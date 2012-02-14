@@ -23,7 +23,7 @@ GraphWidget::GraphWidget(QWidget *parent) :
 }
 
 
-void GraphWidget::addNewPlot(chaos::DataBuffer *dataBuffer, std::string& plotName){
+void GraphWidget::addNewPlot(chaos::DataBuffer *dataBuffer, std::string& plotName , chaos::DataType::DataType dataType){
     boost::mutex::scoped_lock  lock(manageMutex);
     if(plotMap.count(plotName)>0) return;
     boost::shared_ptr<PlotBufferAndCurve> newPlotInfo(new PlotBufferAndCurve());
@@ -39,7 +39,7 @@ void GraphWidget::addNewPlot(chaos::DataBuffer *dataBuffer, std::string& plotNam
     c->setLegendAttribute(QwtPlotCurve::LegendShowSymbol);
     newPlotInfo->curve = c;
     newPlotInfo->curveBuffer = dataBuffer;
-
+    newPlotInfo->dataType = dataType;
     plotMap.insert(std::make_pair(plotName, newPlotInfo));
 }
 
@@ -64,19 +64,37 @@ void GraphWidget::update() {
         iter++){
         ys.clear();
         tmpPlotInfoPtr = iter->second.get();
-        int *wPtr = boost::reinterpret_pointer_cast<int>(tmpPlotInfoPtr->curveBuffer->getWritePointer());
-        int *bPtr = boost::reinterpret_pointer_cast<int>(tmpPlotInfoPtr->curveBuffer->getBasePointer());
-        int64_t historyDim = tmpPlotInfoPtr->curveBuffer->getDimension()-tmpPlotInfoPtr->curveBuffer->getWriteBufferPosition();
-        int64_t recentToRead = tmpPlotInfoPtr->curveBuffer->getWriteBufferPosition();
+        if(tmpPlotInfoPtr->dataType == chaos::DataType::TYPE_INT32){
+            int *wPtr = boost::reinterpret_pointer_cast<int>(tmpPlotInfoPtr->curveBuffer->getWritePointer());
+            int *bPtr = boost::reinterpret_pointer_cast<int>(tmpPlotInfoPtr->curveBuffer->getBasePointer());
+            int64_t historyDim = tmpPlotInfoPtr->curveBuffer->getDimension()-tmpPlotInfoPtr->curveBuffer->getWriteBufferPosition();
+            int64_t recentToRead = tmpPlotInfoPtr->curveBuffer->getWriteBufferPosition();
 
-        for (int idx = 0; idx < historyDim-1; idx++) {
-            double historyDouble(*(wPtr + idx));
-            ys.push_back(historyDouble);
-        }
-        if(bPtr != wPtr){
-            for (int idx = 0; idx < recentToRead; idx++) {
-                double recentDouble(*(bPtr + idx));
-                ys.push_back(recentDouble);
+            for (int idx = 0; idx < historyDim-1; idx++) {
+                double historyDouble(*(wPtr + idx));
+                ys.push_back(historyDouble);
+            }
+            if(bPtr != wPtr){
+                for (int idx = 0; idx < recentToRead; idx++) {
+                    double recentDouble(*(bPtr + idx));
+                    ys.push_back(recentDouble);
+                }
+            }
+        }else if(tmpPlotInfoPtr->dataType == chaos::DataType::TYPE_DOUBLE){
+            double_t *wPtr = boost::reinterpret_pointer_cast<double_t>(tmpPlotInfoPtr->curveBuffer->getWritePointer());
+            double_t *bPtr = boost::reinterpret_pointer_cast<double_t>(tmpPlotInfoPtr->curveBuffer->getBasePointer());
+            int64_t historyDim = tmpPlotInfoPtr->curveBuffer->getDimension()-tmpPlotInfoPtr->curveBuffer->getWriteBufferPosition();
+            int64_t recentToRead = tmpPlotInfoPtr->curveBuffer->getWriteBufferPosition();
+
+            for (int idx = 0; idx < historyDim-1; idx++) {
+                double historyDouble(*(wPtr + idx));
+                ys.push_back(historyDouble);
+            }
+            if(bPtr != wPtr){
+                for (int idx = 0; idx < recentToRead; idx++) {
+                    double recentDouble(*(bPtr + idx));
+                    ys.push_back(recentDouble);
+                }
             }
         }
         tmpPlotInfoPtr->curve->setSamples(&xs[0],&ys[0], 29);
@@ -86,15 +104,15 @@ void GraphWidget::update() {
 }
 
 void GraphWidget::replot() {
-  boost::mutex::scoped_lock  lock(manageMutex);
-  plot->replot();
+    boost::mutex::scoped_lock  lock(manageMutex);
+    plot->replot();
 }
 
 void GraphWidget::clearAllPlot() {
-  boost::mutex::scoped_lock  lock(manageMutex);
-  for(std::map<std::string, boost::shared_ptr<PlotBufferAndCurve> >::iterator iter = plotMap.begin();
-      iter != plotMap.end();
-      iter++){
-      plotMap.erase(iter);
-  }
+    boost::mutex::scoped_lock  lock(manageMutex);
+    for(std::map<std::string, boost::shared_ptr<PlotBufferAndCurve> >::iterator iter = plotMap.begin();
+        iter != plotMap.end();
+        iter++){
+        plotMap.erase(iter);
+    }
 }

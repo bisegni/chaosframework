@@ -147,6 +147,13 @@ int DeviceController::setInt32AttributeValue(string& attributeName, int32_t attr
     return deviceChannel->setAttributeValue(attributeValuePack);
 }
 
+int DeviceController::setDoubleAttributeValue(string& attributeName, double_t attributeValue) {
+    CDataWrapper attributeValuePack;
+    attributeValuePack.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME, attributeName);
+    attributeValuePack.addDoubleValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_VALUE, attributeValue);
+    return deviceChannel->setAttributeValue(attributeValuePack);
+}
+
 /*!
  Initialize the map for the devices
  \param initiDevicedescription the reference to CDataWrapper that contain device initialization information

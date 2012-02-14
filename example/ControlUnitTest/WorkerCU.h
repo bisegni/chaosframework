@@ -25,7 +25,7 @@ class WorkerCU : public AbstractControlUnit {
     RNGType rng;
     uniform_int<> one_to_six;    
     variate_generator< RNGType, uniform_int<> > randInt; 
-    int64_t numberOfResponse;
+    double_t numberOfResponse;
     high_resolution_clock::time_point lastExecutionTime;
     high_resolution_clock::time_point currentExecutionTime;
     string _deviceID;

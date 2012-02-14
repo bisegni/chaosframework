@@ -154,7 +154,7 @@ void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
     if(index.column() != 0) return;
     QString selectedAttribute = ui->tableView->model()->data(index, Qt::DisplayRole).toString();
     std::string attributeName =  selectedAttribute.toStdString() ;
-
+    chaos::CUSchemaDB::RangeValueInfo rangeInfo;
     // check the type of attribute
     chaos::DataType::DataSetAttributeIOAttribute direction;
     if(deviceController->getDeviceAttributeDirection(attributeName, direction)!=0){
@@ -167,6 +167,7 @@ void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
             graphWdg->removePlot(attributeName);
         } else {
             deviceController->addAttributeToTrack(attributeName);
+            deviceController->getDeviceAttributeRangeValueInfo(attributeName, rangeInfo);
             chaos::DataBuffer *attributeBuffer = deviceController->getBufferForAttribute(attributeName);
             if(!attributeBuffer) {
                 QMessageBox* msg = new QMessageBox(this);
@@ -174,7 +175,7 @@ void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
                 msg->show();
                 return;
             }
-            graphWdg->addNewPlot(attributeBuffer, attributeName);
+            graphWdg->addNewPlot(attributeBuffer, attributeName, rangeInfo.valueType);
         }
     }
 
@@ -200,7 +201,7 @@ void MainWindow::on_buttonInit_clicked()
         msg->show();
     }
     //set the scehdule delay acocrding to control
-    if(deviceController->setScheduleDelay(ui->dialScheduleDevice->value()) != 0 ){
+    if(deviceController->setScheduleDelay(ui->dialScheduleDevice->value()*1000) != 0 ){
         QMessageBox* msg = new QMessageBox(this);
         msg->setText("Error setting schedule delay");
         msg->show();

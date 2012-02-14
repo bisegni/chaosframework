@@ -28,7 +28,7 @@ void ControlDialog::initDialog(boost::shared_ptr<chaos::ui::DeviceController>&  
     QString defStr(attributerange.defaultValue.c_str());
 
     switch(attributerange.valueType){
-        case chaos::DataType::TYPE_INT32:
+    case chaos::DataType::TYPE_INT32:{
         QSpinBox *int32SpinBox = new QSpinBox();
 
         int32_t min = minStr.toInt();
@@ -48,9 +48,30 @@ void ControlDialog::initDialog(boost::shared_ptr<chaos::ui::DeviceController>&  
 
         if(attributerange.defaultValue.size()>0){
             int32SpinBox->setValue(def);
+        }}
+        break;
+    case chaos::DataType::TYPE_DOUBLE:{
+        QSpinBox *doubleSpinBox = new QSpinBox();
+
+        double_t min = minStr.toDouble();
+        double_t max = maxStr.toDouble();
+        double_t def = defStr.toDouble();
+
+        //QString maxValue std::max(std::abs(min),std::abs(max));
+        controlWidget = doubleSpinBox;
+        if(attributerange.minRange.size()>0){
+            doubleSpinBox->setMinimum(min);
+        }
+
+        if(attributerange.maxRange.size()>0){
+            doubleSpinBox->setMaximum(max);
+        }
+
+        if(attributerange.defaultValue.size()>0){
+            doubleSpinBox->setValue(def);
         }
         break;
-    }
+    }}
     if(controlWidget == NULL) return;
 
     QVBoxLayout *gL = new QVBoxLayout();
@@ -63,10 +84,14 @@ void ControlDialog::on_buttonCommit_clicked()
     int err = 0;
     if(controlWidget==NULL) return;
     switch(attributerange.valueType){
-        case chaos::DataType::TYPE_INT32:
+    case chaos::DataType::TYPE_INT32:{
         QSpinBox *int32SpinBox = (QSpinBox*)controlWidget;
         err = deviceController->setInt32AttributeValue(attributeName, int32SpinBox->value());
-        break;
+        break;}
+    case chaos::DataType::TYPE_DOUBLE:{
+        QSpinBox *doubleSpinBox = (QSpinBox*)controlWidget;
+        err = deviceController->setDoubleAttributeValue(attributeName, doubleSpinBox->value());
+        break;}
     }
 }
 

@@ -14,14 +14,12 @@
 #include <chaos/common/bson/bson.h>
 #include <chaos/common/bson/util/hex.h>
 #include <chaos/common/action/ActionDescriptor.h>
-
+#include <cmath>
 using namespace chaos;
 
-#define SIMULATED_DEVICE_ID     "SIMULATED_DEVICE_ID"
-#define DS_ELEMENT_1            "intValue_1"
-#define DS_ELEMENT_2            "intValue_2"
-#define DS_ELEMENT_3            "byteValue"
-#define DS_ELEMENT_4            "doubleValue"
+#define SIMULATED_DEVICE_ID     "SIN_DEVICE"
+#define DS_ELEMENT_1            "sinOutput"
+#define DS_ELEMENT_2            "sinPhase"
 
 #define TEST_BUFFER_DIM         100
 #define CU_DELAY_FROM_TASKS     1000000 //1Sec
@@ -56,10 +54,8 @@ WorkerCU::~WorkerCU() {
 void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
         //set the base information
     const char *devIDInChar = _deviceID.c_str();
-    cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_NAME, "WORKER_CU");
+    cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_NAME, "SIN_CU");
     cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_DESCRIPTION, "This is a beautifull CU");
-    cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_CLASS, "HW1-CLASS1");
-        //cuSetup.addInt32Value(CUDefinitionKey::CS_CM_CU_AUTOSTART, 1);
     
     
         //set the default delay for the CU
@@ -93,16 +89,16 @@ void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
         //setup the dataset
     addAttributeToDataSet(devIDInChar,
                           DS_ELEMENT_1,
-                          "describe the element 1 of the dataset",
-                          DataType::TYPE_INT32, 
+                          "The sin value in output",
+                          DataType::TYPE_DOUBLE, 
                           DataType::Output);
     
     addAttributeToDataSet(devIDInChar,
                           DS_ELEMENT_2,
-                          "describe the element 2 of the dataset",
-                          DataType::TYPE_INT32, 
-                          DataType::Bidirectional);
-    
+                          "The input phase of the sin",
+                          DataType::TYPE_DOUBLE, 
+                          DataType::Input);
+ /*   
     addAttributeToDataSet(devIDInChar,
                           DS_ELEMENT_3,
                           "describe the element 3 of the dataset",
@@ -114,7 +110,7 @@ void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
                           DS_ELEMENT_4,
                           "describe the element 4 of the dataset",
                           DataType::TYPE_DOUBLE, 
-                          DataType::Input);
+                          DataType::Input);*/
 }
 
 /*
@@ -123,6 +119,7 @@ void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
 void WorkerCU::init(CDataWrapper *newConfiguration) throw(CException) {
     LAPP_ << "init WorkerCU";
     lastExecutionTime = boost::chrono::steady_clock::now();
+    numberOfResponse = 0;
 }
 
 /*
@@ -145,15 +142,18 @@ void WorkerCU::run(const string& deviceID) throw(CException) {
     if(!acquiredData) return;
     
         //adding some interesting random data 
-    acquiredData->addInt32Value("intValue_1", randInt());
-    acquiredData->addInt32Value("intValue_2", randInt());
+    numberOfResponse+=0.1;
+    double_t sinValue = std::sin(numberOfResponse);
+    LAPP_ << "Sin Value:" << sinValue;
+    acquiredData->addDoubleValue(DS_ELEMENT_1, sinValue);
+    //acquiredData->addInt32Value("intValue_2", randInt());
         //generate  test byte
-    const char * binData = new char[TEST_BUFFER_DIM];
+    //const char * binData = new char[TEST_BUFFER_DIM];
     
         // bufferHexRepresentation.assign(toHex(binData, TEST_BUFFER_DIM));
-    acquiredData->addBinaryValue("byteValue", binData, TEST_BUFFER_DIM);
-    acquiredData->addDoubleValue("doubleValue_1", 25.12);
-    delete[] binData;
+    //acquiredData->addBinaryValue("byteValue", binData, TEST_BUFFER_DIM);
+    //acquiredData->addDoubleValue("doubleValue_1", 25.12);
+    //delete[] binData;
         //submit acquired data
     pushDataSetForKey(devIDInChar, acquiredData);
     
