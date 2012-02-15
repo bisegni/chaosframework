@@ -1,5 +1,6 @@
 ControlSystemLibTest/ChaosCU
 example/UIToolkitCMDLineExample/UIToolkitCMDLineExample
+example/UIToolkitTest/UIToolkitTest.pro.user
 example/UIToolkitTest-build-*
 example/ControlUnitTest/ControlUnitTest
 .DS_Store
