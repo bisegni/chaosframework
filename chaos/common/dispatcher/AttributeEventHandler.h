@@ -84,7 +84,5 @@ namespace chaos {
         AttributeActionHandler handler;
 
     };
-
 }
-
 #endif

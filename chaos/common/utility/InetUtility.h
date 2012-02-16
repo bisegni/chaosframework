@@ -88,7 +88,5 @@ namespace chaos {
             return portno;
         }
     };
-    
 }
-
 #endif

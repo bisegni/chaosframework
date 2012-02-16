@@ -25,9 +25,6 @@ namespace chaos {
         inline int64_t getTimeStamp() {
             return (microsec_clock::universal_time()-EPOCH).total_milliseconds();
         }
-
     };
-    
 }
-
 #endif

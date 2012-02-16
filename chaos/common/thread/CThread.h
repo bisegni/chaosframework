@@ -75,8 +75,8 @@ namespace chaos{
     
         //set the control unit for this thread
     void setTask(CThreadExecutionTaskSPtr);
-
-        
+    
+    
         //get this thread statistic
 	TaskCycleStatPtr getStat();
 	

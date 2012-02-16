@@ -111,6 +111,4 @@ namespace chaos {
         IODataDriver* getBufferIODataDriver(int);
     };
 }
-
 #endif
-

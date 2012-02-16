@@ -68,7 +68,5 @@ namespace chaos {
         ArrayPointerIterator end(){ return pointerArray.end(); }
     }; 
     
-}  
-
-
+}
 #endif

@@ -37,7 +37,7 @@ namespace chaos {
          */
         typedef struct{
             int32_t location;      //4 char size
-                //keep track of retain on the object
+                                   //keep track of retain on the object
             int32_t memRetain;      //4 char size
             char objMem[sizeof(T)]; //char array for size of object
         } MemoryAllocationRecord, *MemoryAllocationRecordPtr;
@@ -62,11 +62,11 @@ namespace chaos {
                 unallocatedRecordIndex.push(idx);
             }
         }
-
+        
         ~CPoolMemory(){
             if(memoryPool) delete [] memoryPool;
         }
-
+        
         
         /*
          Allocate anew object form the pool
@@ -133,7 +133,4 @@ namespace chaos {
     };
     
 }
-
-
 #endif
-

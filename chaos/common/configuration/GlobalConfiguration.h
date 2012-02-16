@@ -191,7 +191,4 @@ x = hasOption(y);
         }
     };  
 }
-
-
-
 #endif

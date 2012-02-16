@@ -15,6 +15,4 @@ class DynamicHierarchicalFSM {
 public:
     
 };
-
-
 #endif

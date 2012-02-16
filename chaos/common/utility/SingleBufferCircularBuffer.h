@@ -69,5 +69,4 @@ namespace chaos {
         }
     };
 }
-
 #endif

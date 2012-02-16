@@ -144,5 +144,4 @@ namespace chaos{
     };
 }
 #include <chaos/common/rpc/RpcClient.h>
-
 #endif

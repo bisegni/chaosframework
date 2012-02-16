@@ -39,5 +39,4 @@ namespace chaos{
         bool isStopped();
     };
 }
-
 #endif

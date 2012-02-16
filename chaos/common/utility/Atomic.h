@@ -52,5 +52,4 @@ namespace chaos {
         
 #endif
 }
-
 #endif

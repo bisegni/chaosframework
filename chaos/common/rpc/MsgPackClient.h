@@ -54,6 +54,4 @@ namespace chaos {
         virtual bool submitMessage(CDataWrapper*, bool onThisThread=false) throw(CException);
     };
 }
-
-
 #endif

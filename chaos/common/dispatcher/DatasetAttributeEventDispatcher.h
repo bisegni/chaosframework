@@ -66,8 +66,5 @@ namespace chaos {
         void addAttributeHandlerInNewQueue(AbstractAttributeEventHandlerPtr);
         
     };
-    
 }
-
-
 #endif

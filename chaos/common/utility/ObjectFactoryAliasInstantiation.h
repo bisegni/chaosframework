@@ -30,5 +30,4 @@ namespace chaos {
         virtual void* createInstance() { return (void*)new T(&sAlias); };
     };
 }
-
 #endif

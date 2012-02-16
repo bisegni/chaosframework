@@ -55,5 +55,4 @@ namespace chaos {
         void getActionDescrionsInDataWrapper(CDataWrapper&);
     };
 }
-
 #endif

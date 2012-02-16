@@ -28,22 +28,22 @@ namespace chaos{
      *  
      */
     
-    //! Chaos Contorl Unit Framework Master Class
+        //! Chaos Contorl Unit Framework Master Class
     /*! 
      This class is a Singleton that need to be used to setup environment,
      add Custom Control unit, and start all Contro Unit environment
      */
     class ChaosCUToolkit : public ChaosCommon<ChaosCUToolkit>, public ServerDelegator, public SetupStateManager {
         friend class Singleton<ChaosCUToolkit>;
-        //static boost::mutex monitor;
-        //static boost::condition endWaithCondition;
+            //static boost::mutex monitor;
+            //static boost::condition endWaithCondition;
         
         static WaitSemaphore waitCloseSemaphore;
         
         ChaosCUToolkit(){};
         ~ChaosCUToolkit(){};
         static void signalHanlder(int);
-
+        
     public:
         typedef boost::mutex::scoped_lock lock;
         void init(int argc = 1, char* argv[] = NULL)  throw(CException);
@@ -51,7 +51,7 @@ namespace chaos{
         void stop();
         void deinit();
         void addControlUnit(AbstractControlUnit*);
-};
+    };
 }
     //#pragma GCC visibility pop
 #endif

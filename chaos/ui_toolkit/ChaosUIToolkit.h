@@ -63,7 +63,6 @@ namespace chaos{
              \exception CException instance is created when something goes wrong
              */
             void deinit() throw(CException);
-           
         };
     }
 }

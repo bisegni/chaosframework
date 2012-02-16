@@ -65,5 +65,4 @@ namespace chaos {
         void setDispatcher(CommandDispatcher*);
     };
 }
-
 #endif
