@@ -83,6 +83,4 @@ void DeclareAction::decodeAction(AbstActionDescShrPtr& actionDesc, CDataWrapper&
             //cloese the array
         actionDescription.finalizeArrayForKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DESC_PARAM);
     }
-    
-    
 }

@@ -311,3 +311,4 @@ void MessageBroker::disposeMessageChannel(MessageChannel *messageChannelToDispos
 void MessageBroker::disposeMessageChannel(NetworkAddressMessageChannel *messageChannelToDispose) {
     disposeMessageChannel(messageChannelToDispose);
 }
+
