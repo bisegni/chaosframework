@@ -90,15 +90,15 @@ int main (int argc, char* argv[] )
                 std::cout << "state " << deviceState << std::endl;
                 
                 controller->setupTracking();
-                string key = "intValue_1";
+                string key = "sinOutput";
                 controller->addAttributeToTrack(key);
                 DataBuffer *intValue1Buff = controller->getBufferForAttribute(key);
                 controller->startTracking();
-                int *bPtr = reinterpret_pointer_cast<int>(intValue1Buff->getBasePointer());
+                double_t *bPtr = reinterpret_pointer_cast<double_t>(intValue1Buff->getBasePointer());
                 
                 for (int idx = 0; idx < 30; idx++) {
                     controller->fetchCurrentDeviceValue();
-                    int *wPtr = reinterpret_pointer_cast<int>(intValue1Buff->getWritePointer());
+                    double_t *wPtr = reinterpret_pointer_cast<double_t>(intValue1Buff->getWritePointer());
 
                     std::cout << intValue1Buff->getWriteBufferPosition()<< std::endl;
                     
@@ -109,12 +109,12 @@ int main (int argc, char* argv[] )
                     
 
                     for (int idx = 0; idx < hisotryToRead-1; idx++) {
-                        int *newbPtr=wPtr + idx;
+                        double_t *newbPtr=wPtr + idx;
                         std::cout << *newbPtr;
                     }
                     if(bPtr != wPtr){
                         for (int idx = 0; idx < recentToRead; idx++) {
-                            int *newbPtr=bPtr + idx;
+                            double_t *newbPtr=bPtr + idx;
                             std::cout << *newbPtr;
                         }
                     }

@@ -100,6 +100,15 @@ add_option( "common", "build !CHOAS Common library" , 0 , False )
 add_option( "ui", "build !CHOAS UIToolkit library" , 0 , False )
 add_option( "cu", "build !CHOAS CUToolkit library" , 0 , False )
 add_option( "cpu", "Number of concurrent compilation unit" , 0 , False )
+add_option( "install", "Install all library" , 0 , False )
+
+
+env = Environment()  # Initialize the environment
+env.Append(LIBPATH = ['/usr/lib', '/usr/local/lib','.'])
+env.Append(CPPPATH='.')    
+
+if has_option( "install" ):
+    env.Default("install")
 
 if has_option( "prefix" ):
     installDir = GetOption( "prefix" )
@@ -108,15 +117,10 @@ else:
 
 print "prefix:",installDir
 
-#check the option
-
 num_cpu = int(os.environ.get('NUM_CPU', 2))
 SetOption('num_jobs', num_cpu)
 print "Compile using -j ", GetOption('num_jobs')
-
-env = Environment()  # Initialize the environment
-env.Append(LIBPATH = ['/usr/lib', '/usr/local/lib'])
-env.Append(CPPPATH='.')        
+    
 #setup the version
 subprocess.call(os.path.abspath("chaos/common/version.sh"), shell=True)
  
@@ -161,14 +165,17 @@ if has_option( "all" ) or has_option( "common" ) or  has_option( "ui" ) or  has_
     for id in [ "chaos/common/", "chaos/common/bson/", "chaos/common/bson/util/", "chaos/common/bson/lib/", "chaos/common/configuration/", "chaos/common/pool/", "chaos/common/data/" , "chaos/common/thread/" , "chaos/common/utility/" , "chaos/common/general/" , "chaos/common/pqueue/" , "chaos/common/rpc/", "chaos/common/rpcnet/", "chaos/common/dispatcher/" , "chaos/common/action/" ,"chaos/common/message/", "chaos/common/io/" , "chaos/common/exception/"]:
         for hFile in Glob( id + "*.h" ):
             installHeaderPath = installDir + "/" + "include" + "/" + id
-            env.Install( installHeaderPath , hFile )
+            if has_option( "install" ) :
+                env.Install( installHeaderPath , hFile )
             env.Clean("clean_installed",installHeaderPath)
-            env.Alias('install', installHeaderPath)
+            if has_option( "install" ) :
+                env.Alias('copy', installHeaderPath)
 
     #lib
-    print "install library into: "+installDir + "/lib/"
     env.Clean("clean_installed",installDir + "/lib/"+ commonlibName)
-    env.Install( installDir + "/lib/", commonlibName )
+    
+    if has_option( "install" ) :
+        env.Install( installDir + "/lib/", commonlibName )
     
 
 
@@ -192,14 +199,16 @@ if has_option( "all" ) or has_option( "cu" ):
     for id in [ "chaos/cu_toolkit/", "chaos/cu_toolkit/DataManager/", "chaos/cu_toolkit/DataManager/DataBuffer/", "chaos/cu_toolkit/ControlSystemValue/", "chaos/cu_toolkit/ControlManager/", "chaos/cu_toolkit/ControlException/", "chaos/cu_toolkit/ConfigurationManager/","chaos/cu_toolkit/CommandManager/"]:
         for hFile in Glob( id + "*.h" ):
             installHeaderPath = installDir + "/" + "include" + "/" + id
-            env.Install( installHeaderPath , hFile )
+            if has_option( "install" ) :
+                env.Install( installHeaderPath , hFile )
             env.Clean("clean_installed",installHeaderPath)
-            env.Alias( 'install' , installHeaderPath )
+            if has_option( "install" ) :
+                env.Alias( 'install' , installHeaderPath )
 
     #lib
-    print "install library into: "+installDir + "/lib/"
     env.Clean("clean_installed",installDir + "/lib/"+ cutoolkitlibName)
-    env.Install( installDir + "/lib/", cutoolkitlibName )
+    if has_option( "install" ) :
+        env.Install( installDir + "/lib/", cutoolkitlibName )
 
 
 
@@ -226,15 +235,15 @@ if has_option( "all" )  or has_option( "ui" ):
     for id in [ "chaos/ui_toolkit/", "chaos/ui_toolkit/Common/", "chaos/ui_toolkit/HighLevelApi/", "chaos/ui_toolkit/LowLevelApi/", "chaos/ui_toolkit/DataSystem/", "chaos/ui_toolkit/RpcSystem/"]:
         for hFile in Glob( id + "*.h" ):
             installHeaderPath = installDir + "/" + "include" + "/" + id
-            env.Install( installHeaderPath , hFile )
+            if has_option( "install" ) :
+                env.Install( installHeaderPath , hFile )
             env.Clean("clean_installed",installHeaderPath)
-            env.Alias('install', installHeaderPath)
+            #env.Alias('copy', installHeaderPath)
 
     #lib
-    print "install library into: "+installDir + "/lib/"
     env.Clean("clean_installed",installDir + "/lib/"+ libNameUIToolkit)
-    env.Install( installDir + "/lib/", libNameUIToolkit )
-    #env.Alias('install', [installDir + "/lib/"])
-
-env.Alias('install', [installDir + "/lib/"])
-env.Alias('install', [installDir + "/include/"])
+    if has_option( "install" ) :
+        env.Install( installDir + "/lib/", libNameUIToolkit )
+if has_option( "install" ) :
+    env.Alias('copy', [installDir + "/lib/"])
+    env.Alias('copy', [installDir + "/include/"])
