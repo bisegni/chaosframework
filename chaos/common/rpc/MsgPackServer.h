@@ -58,6 +58,5 @@ namespace chaos{
         void dispatch(request req);
     };
 }
-
 #endif
 

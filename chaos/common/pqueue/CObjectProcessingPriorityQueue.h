@@ -59,6 +59,5 @@ namespace chaos {
             CObjectProcessingQueue< PriorityQueuedElement<T>, ority_queue<PriorityQueuedElement*> >::push(_element);
         }
     };
-
 }
 #endif

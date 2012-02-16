@@ -24,5 +24,4 @@ namespace chaos {
         virtual CDataWrapper* updateConfiguration(CDataWrapper*) = 0;
     };
 }
-
 #endif

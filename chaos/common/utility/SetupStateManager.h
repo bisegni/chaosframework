@@ -66,11 +66,6 @@ namespace chaos {
             
             currentState--;
         }
-      
-
-        
     };
 }
-
-
 #endif
