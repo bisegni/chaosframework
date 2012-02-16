@@ -64,7 +64,6 @@ void ChaosCUToolkit::init(int argc, char* argv[])  throw(CException) {
         exit(1);
     }
         //start data manager
-    
 }
 
 /*
@@ -99,7 +98,6 @@ void ChaosCUToolkit::start(bool waithUntilEnd, bool deinitiOnEnd){
         DECODE_CHAOS_EXCEPTION(ex)
         exit(1);
     }
-    
         //execute the deinitialization of CU
     if(waithUntilEnd && deinitiOnEnd)deinit();
 }

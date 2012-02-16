@@ -40,4 +40,4 @@ bool AttributeEventHandlerQueueRunner::push(AbstractAttributeEventHandlerPtr act
  */
 void AttributeEventHandlerQueueRunner::processBufferElement(AbstractAttributeEventHandlerPtr eventHanlder, ElementManagingPolicy& elementPolicy) throw(CException) {
     eventHanlder->call();
-} 
+}

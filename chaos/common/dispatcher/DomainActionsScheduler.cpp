@@ -196,5 +196,4 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
     
         //set hte action as no fired
     actionDescriptionPtr->setFired(false);
-    
-} 
+}

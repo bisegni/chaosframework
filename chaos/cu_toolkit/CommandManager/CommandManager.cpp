@@ -117,4 +117,3 @@ CDataWrapper* CommandManager::shutdown(CDataWrapper *actionParam, bool& detachPa
     if(privLibControllerPtr) privLibControllerPtr->stop();
     return NULL;
 }
-

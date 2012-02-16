@@ -353,4 +353,3 @@ void DeviceController::fetchCurrentDeviceValue() {
         }
     }
 }
-

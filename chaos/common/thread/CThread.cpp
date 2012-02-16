@@ -164,4 +164,4 @@ void CThread::executeWork() {
         DECODE_CHAOS_EXCEPTION(exc);
     }
 	if(parentCThreadGroup) parentCThreadGroup->threadHasFinished(this);
-}   
+}
