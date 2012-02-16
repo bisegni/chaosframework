@@ -1,7 +1,6 @@
 !CHAOS Framework
 
 
-
 Compile !CHAOS Framework instruction: 
 
 To compile all tree framework(Common [--common], CUToolkit[--cu], UIToolkit[--ui]) togheter must be used the line "sudo scons --all --install copy", the package can be compilide also in separated way substituting --all with the single package parameter.
