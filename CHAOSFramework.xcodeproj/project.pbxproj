@@ -53,7 +53,6 @@
 		326DB45514B38BC00018A8D0 /* optime.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3DE14B38BC00018A8D0 /* optime.h */; };
 		326DB45614B38BC00018A8D0 /* time_support.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3DF14B38BC00018A8D0 /* time_support.h */; };
 		326DB45714B38BC00018A8D0 /* cconstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3E014B38BC00018A8D0 /* cconstants.h */; };
-		326DB45814B38BC00018A8D0 /* ChaosCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB3E114B38BC00018A8D0 /* ChaosCommon.cpp */; };
 		326DB45914B38BC00018A8D0 /* ChaosCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3E214B38BC00018A8D0 /* ChaosCommon.h */; };
 		326DB45A14B38BC00018A8D0 /* GlobalConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB3E414B38BC00018A8D0 /* GlobalConfiguration.cpp */; };
 		326DB45B14B38BC00018A8D0 /* GlobalConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3E514B38BC00018A8D0 /* GlobalConfiguration.h */; };
@@ -214,7 +213,6 @@
 		326DB3DE14B38BC00018A8D0 /* optime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = optime.h; sourceTree = "<group>"; };
 		326DB3DF14B38BC00018A8D0 /* time_support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = time_support.h; sourceTree = "<group>"; };
 		326DB3E014B38BC00018A8D0 /* cconstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = cconstants.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB3E114B38BC00018A8D0 /* ChaosCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ChaosCommon.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB3E214B38BC00018A8D0 /* ChaosCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ChaosCommon.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB3E414B38BC00018A8D0 /* GlobalConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = GlobalConfiguration.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB3E514B38BC00018A8D0 /* GlobalConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = GlobalConfiguration.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -387,7 +385,6 @@
 		326DB3B314B38BC00018A8D0 /* common */ = {
 			isa = PBXGroup;
 			children = (
-				326DB3E114B38BC00018A8D0 /* ChaosCommon.cpp */,
 				326DB3E214B38BC00018A8D0 /* ChaosCommon.h */,
 				326DB3E014B38BC00018A8D0 /* cconstants.h */,
 				326DB40114B38BC00018A8D0 /* global.h */,
@@ -1008,7 +1005,6 @@
 				326DB44914B38BC00018A8D0 /* nonce.cpp in Sources */,
 				326DB44B14B38BC00018A8D0 /* oid.cpp in Sources */,
 				326DB45214B38BC00018A8D0 /* json.cpp in Sources */,
-				326DB45814B38BC00018A8D0 /* ChaosCommon.cpp in Sources */,
 				326DB45A14B38BC00018A8D0 /* GlobalConfiguration.cpp in Sources */,
 				326DB45C14B38BC00018A8D0 /* CDataWrapper.cpp in Sources */,
 				326DB45E14B38BC00018A8D0 /* CUSchemaDB.cpp in Sources */,
