@@ -1,11 +1,22 @@
-//
-//  WorkerCU.h
-//  ChaosFramework
-//
-//  Created by bisegni on 23/06/11.
-//  Copyright 2011 INFN. All rights reserved.
-//
-
+/*	
+ *	WorkerCU.h
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *	
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
 #ifndef ChaosFramework_WorkerCU_h
 #define ChaosFramework_WorkerCU_h
 
@@ -25,8 +36,7 @@ class WorkerCU : public AbstractControlUnit {
     RNGType rng;
     uniform_int<> one_to_six;    
     variate_generator< RNGType, uniform_int<> > randInt; 
-    bool writeRead;
-    int64_t numberOfResponse;
+    double_t numberOfResponse;
     high_resolution_clock::time_point lastExecutionTime;
     high_resolution_clock::time_point currentExecutionTime;
     string _deviceID;
@@ -57,17 +67,17 @@ protected:
     /*
      Execute the work, this is called with a determinated delay, it must be as fast as possible
      */
-    void run() throw(CException);
+    void run(const string&) throw(CException);
     
     /*
      The Control Unit will be stopped
      */
-    void stop() throw(CException);
+    void stop(const string&) throw(CException);
     
     /*(Optional)
      The Control Unit will be deinitialized and disposed
      */
-    void deinit() throw(CException);
+    void deinit(const string&) throw(CException);
     
     /* (Optional)
      Event from metadataserver or gui for update configuration

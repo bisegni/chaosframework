@@ -1,11 +1,22 @@
-    //
-    //  ControlManager.h
-    //  ChaosFramework
-    //
-    //  Created by Claudio Bisegni on 14/06/11.
-    //  Copyright 2011 INFN. All rights reserved.
-    //
-
+/*	
+ *	ControlManager.h
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *	
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
 #ifndef ChaosFramework_ControlManager_h
 #define ChaosFramework_ControlManager_h
 
@@ -15,13 +26,12 @@
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
 #include <chaos/common/general/Manager.h>
-#include <chaos/cu_toolkit/Controlmanager/ControlUnitSandbox.h>
-#include <chaos/cu_toolkit/Controlmanager/AbstractControlUnit.h>
+#include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/thread/ChaosThread.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/exception/CException.h>
-#include <chaos/common/General/Configurable.h>
+#include <chaos/common/general/Configurable.h>
 #include <chaos/common/message/MDSMessageChannel.h>
 namespace chaos {
     using namespace std;
@@ -36,7 +46,7 @@ namespace chaos {
         condition_variable lockCondition;
         CThread *selfThreadPtr;
         queue< AbstractControlUnit* > submittedCUQueue;
-        map<string, shared_ptr<ControlUnitSandbox> > sanboxMap;
+        map<string, shared_ptr<AbstractControlUnit> > controlUnitInstanceMap;
         MDSMessageChannel *mdsChannel;
         
         void sendConfPackToMDS(CDataWrapper&);
@@ -44,7 +54,7 @@ namespace chaos {
         /*
          Thread method that work on buffer item
          */
-        void executeOnThread() throw(CException);
+        void executeOnThread(const string&) throw(CException);
         
         /*
          get the last insert data
@@ -91,29 +101,17 @@ namespace chaos {
         /*
          Init the sandbox
          */
-        CDataWrapper* initSandbox(CDataWrapper*, bool&) throw (CException);
+        CDataWrapper* loadControlUnit(CDataWrapper*, bool&) throw (CException);
         
         /*
          Deinit the sandbox
          */
-        CDataWrapper* deinitSandbox(CDataWrapper*, bool&) throw (CException);
-        
-        /*
-         Start the sandbox
-         */
-        CDataWrapper* startSandbox(CDataWrapper*, bool&) throw (CException);
-        
-        /*
-         Stop the sandbox
-         */
-        CDataWrapper* stopSandbox(CDataWrapper*, bool&) throw (CException);
+        CDataWrapper* unloadControlUnit(CDataWrapper*, bool&) throw (CException);
         
         /*
          Configure the sandbox and all subtree of the CU
          */
-        CDataWrapper* updateConfiguration(CDataWrapper*, bool&) {
-            return NULL;
-        }
+        CDataWrapper* updateConfiguration(CDataWrapper*, bool&);
     };
 }
 #endif

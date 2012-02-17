@@ -1,11 +1,22 @@
-    //
-    //  ConstolSystemConstants.h
-    //  ChaosFramework
-    //
-    //  Created by Claudio Bisegni on 21/06/11.
-    //  Copyright 2011 INFN. All rights reserved.
-    //
-
+/*	
+ *	cconstants.h
+ *	!CHAOS
+ *	Created by Bisegni Claudio.
+ *	
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
 #ifndef ChaosFramework_ConstrolSystemConstants_h
 #define ChaosFramework_ConstrolSystemConstants_h
 
@@ -81,6 +92,28 @@ namespace chaos {
     }
     /** @} */ // end of CUDefinitionKey
 
+    /** @} */ // end of RpcConfigurationKey
+    
+    /** @defgroup CUStateKey Control Unit State
+     *  This is the collection of the key for the control unit state definition
+     *  @{
+     */
+        //! Name space for grupping option used for define the control unit state
+    namespace CUStateKey {
+            //! The state of the control unit
+        static const char * const CONTROL_UNIT_STATE                   = "cu_state";        
+  
+            //!define the direction of dataset element
+        typedef enum {
+			INIT = 0,
+			DEINIT,
+			START,
+            STOP
+        } ControlUnitState;
+    }
+    /** @} */ // end of CUStateKey
+
+    
     /** @defgroup DatasetDefinitionkey Dataset definition key
      *  This is the collection of the key for the device dataset
      *  @{
@@ -95,6 +128,9 @@ namespace chaos {
         
             //!key for the name of dataset attribute
         static const char * const CS_CM_DATASET_ATTRIBUTE_NAME                  = "cs|cm|ds_attr_name";
+ 
+        //!key for the name of dataset attribute
+        static const char * const CS_CM_DATASET_ATTRIBUTE_VALUE                  = "cs|cm|ds_attr_value";
         
             //!key for the tag of the dataset attrbiute
         static const char * const CS_CM_DATASET_ATTRIBUTE_TAG                   = "cs|cm|ds_attr_tag";
@@ -144,8 +180,8 @@ namespace chaos {
         //!define the direction of dataset element
         typedef enum {
 			Input = 0,
-			Output,
-			Bidirectional,
+			Output=1,
+			Bidirectional=2,
         } DataSetAttributeIOAttribute;
     } 
     /** @} */ // end of ChaosDataType
@@ -231,17 +267,19 @@ namespace chaos {
             //! This action provide to the shutdown porcess of the enteir daemon 
             //! that runt the active contorl units. All it will be gracefull shutten down
             //! before daemon exit
-        static const char * const ACTION_CU_SHUTDOWN    = "shutdown";
+        static const char * const ACTION_SYSTEM_SHUTDOWN    = "shutdown";
             //! Start the control unit intialization, the action need the default value
             //! of the input attribute for a determinate device
-        static const char * const ACTION_CU_INIT        = "initControlUnit";
+        static const char * const ACTION_DEVICE_INIT        = "initDevice";
             //! Deinitialization of a control unit, if it is in run, the stop phase
             //! is started befor deinitialization one
-        static const char * const ACTION_CU_DEINIT      = "deinitControlUnit";
+        static const char * const ACTION_DEVICE_DEINIT      = "deinitDevice";
             //! start the run method schedule for a determinated device
-        static const char * const ACTION_CU_START       = "startControlUnit";
+        static const char * const ACTION_DEVICE_START       = "startDevice";
             //! pause the run method for a determinated device
-        static const char * const ACTION_CU_STOP        = "stopControlUnit";
+        static const char * const ACTION_DEVICE_STOP        = "stopDevice";
+            //! return the state of the device
+        static const char * const ACTION_DEVICE_GET_STATE        = "getState";    
     }
      /** @} */ // end of ChaosSystemDomainAndActionLabel
     
@@ -292,5 +330,4 @@ namespace chaos {
 
     
 }
-
 #endif

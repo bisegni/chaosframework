@@ -1,10 +1,22 @@
-//
-//  CDataWrapper.cpp
-//  ChaosFramework
-//
-//  Created by Claudio Bisegni on 23/04/11.
-//  Copyright 2011 INFN. All rights reserved.
-//
+/*	
+ *	CDataWrapper.cpp
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *	
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
 #include "../global.h"
 #include "CDataWrapper.h"
 using namespace chaos;
@@ -40,9 +52,9 @@ vector<BSONElement>::size_type CMultiTypeDataArrayWrapper::size() const{
 CDataWrapper::CDataWrapper():bsonBuilder(new BSONObjBuilder()),bsonArrayBuilder(new BSONArrayBuilder()){
 }
 
-CDataWrapper::CDataWrapper(const char* serializationBuffer, bool bson):bsonBuilder(new BSONObjBuilder()),bsonArrayBuilder(new BSONArrayBuilder()){
+CDataWrapper::CDataWrapper(const char* serializationBuffer, bool bson, bool owned):bsonBuilder(new BSONObjBuilder()),bsonArrayBuilder(new BSONArrayBuilder()){
         //bsonBuilder->appendElements(BSONObj(serializationBuffer));
-    setSerializedData(serializationBuffer, bson);
+    setSerializedData(serializationBuffer, bson, owned);
 }
 
 CDataWrapper *CDataWrapper::clone() {
@@ -223,8 +235,8 @@ string CDataWrapper::getJSONString() {
     return bsonBuilder->asTempObj().jsonString();
 }
     //reinitialize the object with bson data
-void CDataWrapper::setSerializedData(const char* bsonData, bool bson) {
-    bsonBuilder->appendElements(bson?BSONObj(bsonData):fromjson(bsonData));
+void CDataWrapper::setSerializedData(const char* bsonData, bool bson, bool owned) {
+    bsonBuilder->appendElements(bson?BSONObj(bsonData, owned):fromjson(bsonData));
 }
 
     //append all elemento of an

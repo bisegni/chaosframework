@@ -1,11 +1,22 @@
-//
-//  UIToolkitCMDLineExample.cpp
-//  UIToolkitCMDLineExample
-//
-//  Created by Claudio Bisegni on 24/01/12.
-//  Copyright (c) 2012 INFN. All rights reserved.
-//
-
+/*	
+ *	UIToolkitCMDLineExample.cpp
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *	
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
 #include <iostream>
 #include <string>
 #include <vector>
@@ -14,6 +25,7 @@
 #include <chaos/common/rpcnet/CNodeNetworkAddress.h>
 #include <chaos/ui_toolkit/ChaosUIToolkit.h>
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
+#include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
 /*! \page page_example_uiex1 ChaosUIToolkit Example
  \section page_example_uiex1_sec A basic usage for the ChaosUIToolkit package
  
@@ -43,60 +55,100 @@ using namespace std;
 using namespace chaos;
 using namespace chaos::ui;
 
-int main (int argc, const char* argv[] )
+int main (int argc, char* argv[] )
 {
     try {
         int err = 0;
-        CDeviceNetworkAddress *deviceAddress;
-        //! [UIToolkit Init]
+            //! [UIToolkit Init]
         ChaosUIToolkit::getInstance()->init(argc, argv);
-        //! [UIToolkit Init]
+            //! [UIToolkit Init]
         
-        //! [UIToolkit ChannelCreation]
+            //! [UIToolkit ChannelCreation]
         MDSMessageChannel *mdsChannel = LLRpcApi::getInstance()->getNewMetadataServerChannel();
-        //! [UIToolkit ChannelCreation]
+            //! [UIToolkit ChannelCreation]
         
         
-        //! [Datapack sent]
+            //! [Datapack sent]
         vector<string> allActiveDeviceID;
         CDeviceNetworkAddress deviceNetworkAddress;
-        
+        CUStateKey::ControlUnitState deviceState;
         err = mdsChannel->getAllDeviceID(allActiveDeviceID, 2000);
-        //! [Datapack sent]
+            //! [Datapack sent]
         if(!err){
             for (vector<string>::iterator devIter = allActiveDeviceID.begin(); 
                  devIter != allActiveDeviceID.end(); 
                  devIter++) {
-                std::cout << "Device Identification: "<< *devIter << std::endl;
+                std::cout << "Device Identification: " << *devIter << std::endl;
                 
-                deviceAddress = mdsChannel->getNetworkAddressForDevice(*devIter, 2000);
-                if(deviceAddress) {
-                  std::cout << "Initzialize the device: NET:"<< deviceAddress->ipPort << " CU:"<< deviceAddress->nodeID <<std::endl;  
-                    DeviceMessageChannel *dMsgchannel = LLRpcApi::getInstance()->getNewDeviceMessageChannel(deviceAddress);
-                    auto_ptr<CDataWrapper> lastDeviceInfo(mdsChannel->getLastDatasetForDevice(*devIter));
-                    std::cout << "Device init param: "<< lastDeviceInfo->getJSONString() <<std::endl;
-                    err = dMsgchannel->initDevice(lastDeviceInfo.get());
-                    std::cout << "Device init operation result: " << err <<std::endl;
-                    err = dMsgchannel->startDevice();
-                    std::cout << "Device start operation result: " << err <<std::endl;
+                auto_ptr<DeviceController> controller(HLDataApi::getInstance()->getControllerForDeviceID(*devIter));
+
+                
+                vector<string> allOutAttrName;
+                controller->getDeviceDatasetAttributesName(allOutAttrName, chaos::DataType::Output);
+                
+                controller->getState(deviceState);
+                std::cout << "state " << deviceState << std::endl;
+                
+                controller->initDevice();
+                
+                controller->getState(deviceState);
+                std::cout << "state " << deviceState << std::endl;
+                
+                controller->setScheduleDelay(1000000);
+                controller->startDevice();
+                
+                controller->getState(deviceState);
+                std::cout << "state " << deviceState << std::endl;
+                
+                controller->setupTracking();
+                string key = "sinOutput";
+                controller->addAttributeToTrack(key);
+                DataBuffer *intValue1Buff = controller->getBufferForAttribute(key);
+                controller->startTracking();
+                double_t *bPtr = reinterpret_pointer_cast<double_t>(intValue1Buff->getBasePointer());
+                
+                for (int idx = 0; idx < 30; idx++) {
+                    controller->fetchCurrentDeviceValue();
+                    double_t *wPtr = reinterpret_pointer_cast<double_t>(intValue1Buff->getWritePointer());
+
+                    std::cout << intValue1Buff->getWriteBufferPosition()<< std::endl;
                     
-                    CDataWrapper attributeValue;
-                    attributeValue.addInt32Value("key_value_1", 215);
-                    err = dMsgchannel->setAttributeValue(attributeValue);
-                    std::cout << "setAttributeValue operation result: " << err <<std::endl;
+                    int64_t hisotryToRead = intValue1Buff->getDimension()-intValue1Buff->getWriteBufferPosition();
+                    int64_t recentToRead = intValue1Buff->getWriteBufferPosition();
+                    std::cout << "HIstory to read:" << hisotryToRead << std::endl;
+                    std::cout << "Recent to read:" << recentToRead << std::endl;
                     
-                    err = dMsgchannel->stopDevice();
-                    std::cout << "Device stop operation result: " << err <<std::endl;
-                    err = dMsgchannel->deinitDevice();
-                    std::cout << "Device deinit operation result: " << err <<std::endl;
+
+                    for (int idx = 0; idx < hisotryToRead-1; idx++) {
+                        double_t *newbPtr=wPtr + idx;
+                        std::cout << *newbPtr;
+                    }
+                    if(bPtr != wPtr){
+                        for (int idx = 0; idx < recentToRead; idx++) {
+                            double_t *newbPtr=bPtr + idx;
+                            std::cout << *newbPtr;
+                        }
+                    }
+                    std::cout << std::endl;
+                    usleep(1000000);
                 }
                 
-                //try to initi
+                controller->stopTracking();
+                
+                controller->stopDevice();
+                
+                controller->getState(deviceState);
+                std::cout << "state " << deviceState << std::endl;
+                
+                controller->deinitDevice();
+                
+                controller->getState(deviceState);
+                std::cout << "state " << deviceState << std::endl;
             }
         }  
-        //! [UIToolkit Deinit]
+            //! [UIToolkit Deinit]
         ChaosUIToolkit::getInstance()->deinit();
-        //! [UIToolkit Deinit]
+            //! [UIToolkit Deinit]
     } catch (CException& e) {
         std::cerr<< e.errorDomain << std::endl;
         std::cerr<< e.errorMessage << std::endl;

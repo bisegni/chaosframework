@@ -1,10 +1,13 @@
 !CHAOS Framework
 
+!CHAOS use the standalone BSON C++ implementation, the source is exstraccted from orginal mongodb opensource distribution found on http://www.mongodb.org/ (http://www.10gen.com/)
+"BSON" stands for "binary JSON" - a binary storage format that is JSON inspired.
+This distribution merely rips it out of the bson repository into its own.
 
 
 Compile !CHAOS Framework instruction: 
 
-To compile all tree framework(Common [--common], CUToolkit[--cu], UIToolkit[--ui]) togheter must be used the line "sudo scons --all install", the package can be compilide also in separated way substituting --all with the single package parameter.
+To compile all tree framework(Common [--common], CUToolkit[--cu], UIToolkit[--ui]) togheter must be used the line "sudo scons --all --install copy", the package can be compilide also in separated way substituting --all with the single package parameter.
 
 To removed the instaled file: "sudo scons --all -c clean_installed"
 
@@ -29,8 +32,7 @@ Library used by CHAOS:
                     boost_thread
                     boost_chrono
                     boost_regex                 (www.boost.org)
-Boost logging v2 
-for install boost logging v2(http://torjo.com/log2/index.html)
-Step:
-    cd /usr/local/include/boost/
-    svn co http://svn.boost.org/svn/boost/sandbox/logging/boost/logging 
+                    boost_log                   (http://sourceforge.net/projects/boost-log/files/latest/download)
+ 
+
+for qt client download and install qwt(http://qwt.sourceforge.net/qwtinstall.html)

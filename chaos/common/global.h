@@ -1,11 +1,22 @@
-//
-//  global.h
-//  ChaosFramework
-//
-//  Created by Claudio Bisegni on 14/06/11.
-//  Copyright 2011 INFN. All rights reserved.
-//
-
+/*	
+ *	global.h
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *	
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
 #ifndef ChaosFramework_global_h
 #define ChaosFramework_global_h
 
@@ -24,29 +35,16 @@
 
 #include <boost/version.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/date_time/gregorian/gregorian.hpp> 
-#include <boost/logging/format_fwd.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
 using namespace boost;
 
-// Step 1: Optimize : use a cache string, to make formatting the message faster
-BOOST_LOG_FORMAT_MSG( logging::optimize::cache_string_one_str<> )
-#ifndef BOOST_LOG_COMPILE_FAST
-#include <boost/logging/format.hpp>
-#include <boost/logging/writer/ts_write.hpp>
-#endif
-    // Step 3 : Specify your logging class(es)
-typedef boost::logging::logger_format_write< > log_type;
+#include <boost/log/trivial.hpp>
 
-    // Step 4: declare which filters and loggers you'll use
-BOOST_DECLARE_LOG_FILTER(g_l_filter, boost::logging::level::holder)
-BOOST_DECLARE_LOG(g_l, log_type)
 
-    // Step 5: define the macros through which you'll log
-#define LDBG_  BOOST_LOG_USE_LOG_IF_LEVEL(g_l(), g_l_filter(), debug ) << "[dbg] "
-#define LERR_ BOOST_LOG_USE_LOG_IF_LEVEL(g_l(), g_l_filter(), error ) << "[ERR] "
-#define LAPP_ BOOST_LOG_USE_LOG_IF_LEVEL(g_l(), g_l_filter(), info )
-#define LAPP_CFG_ BOOST_LOG_USE_LOG_IF_LEVEL(g_l(), g_l_filter(), info ) << "[cfg] "
-
+#define LDBG_       BOOST_LOG_TRIVIAL(debug)
+#define LERR_       BOOST_LOG_TRIVIAL(error)
+#define LAPP_       BOOST_LOG_TRIVIAL(info)
+#define LAPP_CFG_   BOOST_LOG_TRIVIAL(info)
     //define for chaos assert macro, it print the basiclay infromation to find
     //the error when the condition is not true
 #ifndef DEBUG
@@ -114,4 +112,3 @@ public:
 };
 }
 #endif
-

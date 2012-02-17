@@ -1,11 +1,22 @@
-    //
-    //  CDataWrapper.h
-    //  ChaosFramework
-    //
-    //  Created by Claudio Bisegni on 23/04/11.
-    //  Copyright 2011 INFN. All rights reserved.
-    //
-
+/*	
+ *	CDataWrapper.h
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *	
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
 #ifndef CDataWrapper_H
 #define CDataWrapper_H
 #include <boost/scoped_ptr.hpp>
@@ -77,7 +88,7 @@ namespace chaos {
     public:
         
         CDataWrapper();
-        CDataWrapper(const char* serializationBuffer, bool bson=true);
+        CDataWrapper(const char* serializationBuffer, bool bson=true, bool owned = false);
         
         CDataWrapper *clone();
             //add a csdata value
@@ -152,7 +163,7 @@ namespace chaos {
         string getJSONString();
         
             //reinitialize the object with bson data
-        void setSerializedData(const char* bsonData, bool bson=true);
+        void setSerializedData(const char* bsonData, bool bson=true, bool owned = false);
         
             //check if the key is present in data wrapper
         bool hasKey(const char*);
@@ -194,6 +205,4 @@ namespace chaos {
         }
     };
 }
-
-
 #endif

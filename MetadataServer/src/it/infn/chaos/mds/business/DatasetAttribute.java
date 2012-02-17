@@ -309,7 +309,7 @@ public class DatasetAttribute extends BSONBusinessObject {
 	public Object toBson() {
 		BasicBSONObject bsonAttributeDescription = new BasicBSONObject();
 		if (getName() != null) {
-			bsonAttributeDescription.append(RPCConstants.DATASET_ATTRIBUTE_NAME, getDescription());
+			bsonAttributeDescription.append(RPCConstants.DATASET_ATTRIBUTE_NAME, getName());
 		}
 
 		if (getDescription() != null) {
@@ -444,14 +444,36 @@ public class DatasetAttribute extends BSONBusinessObject {
 	 */
 	public void setDefaultValue(String defaultValue) throws RefException {
 		checkDefaultValueForType(defaultValue);
+		boolean defMinMinValue = false;
+		boolean defMaxMaxValue = false;
 		if (defaultValue != null) {
-			int defv = Integer.parseInt(defaultValue);
-			int maxv = Integer.parseInt(getRangeMax());
-			int minv = Integer.parseInt(getRangeMin());
-			if (defv < minv) {
+			switch (getType()) {
+				case 0:{
+					int defv = Integer.parseInt(defaultValue);
+					int maxv = Integer.parseInt(getRangeMax());
+					int minv = Integer.parseInt(getRangeMin());
+					defMinMinValue = defv<minv;
+					defMaxMaxValue = defv>maxv;
+				}break;
+				case 1:{
+					long defv = Long.parseLong(defaultValue);
+					long maxv = Long.parseLong(getRangeMax());
+					long minv = Long.parseLong(getRangeMin());
+					defMinMinValue = defv<minv;
+					defMaxMaxValue = defv>maxv;
+				}break;
+				case 2:{
+					double defv = Double.parseDouble(defaultValue);
+					double maxv = Double.parseDouble(getRangeMax());
+					double minv = Double.parseDouble(getRangeMin());
+					defMinMinValue = defv<minv;
+					defMaxMaxValue = defv>maxv;
+				}break;
+			}
+			if (defMinMinValue) {
 				throw new RefException(String.format("The default value %s is lower than the minimum value %s", defaultValue, getRangeMin()));
 			}
-			if (defv > maxv) {
+			if (defMaxMaxValue) {
 				throw new RefException(String.format("The default value %s is greater than the maximum value %s", defaultValue, getRangeMax()));
 			}
 		}

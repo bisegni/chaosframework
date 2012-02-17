@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		320192BA14DEEAC000318F00 /* CObjectHandlerProcessingQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 320192B914DEEAC000318F00 /* CObjectHandlerProcessingQueue.h */; };
+		320DF98D14E17E2700251621 /* DeviceController.h in Headers */ = {isa = PBXBuildFile; fileRef = 320DF98C14E17E2700251621 /* DeviceController.h */; };
+		320DF99114E190BB00251621 /* DeviceController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320DF98F14E17E3D00251621 /* DeviceController.cpp */; };
 		325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F86EB14D9E59D00CDF35F /* InetUtility.h */; };
 		3260276A14B306BA00C906CE /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 326026E914B301F600C906CE /* libchaos_common.dylib */; };
 		3260278B14B307E400C906CE /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 326026E914B301F600C906CE /* libchaos_common.dylib */; };
@@ -50,7 +53,6 @@
 		326DB45514B38BC00018A8D0 /* optime.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3DE14B38BC00018A8D0 /* optime.h */; };
 		326DB45614B38BC00018A8D0 /* time_support.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3DF14B38BC00018A8D0 /* time_support.h */; };
 		326DB45714B38BC00018A8D0 /* cconstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3E014B38BC00018A8D0 /* cconstants.h */; };
-		326DB45814B38BC00018A8D0 /* ChaosCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB3E114B38BC00018A8D0 /* ChaosCommon.cpp */; };
 		326DB45914B38BC00018A8D0 /* ChaosCommon.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3E214B38BC00018A8D0 /* ChaosCommon.h */; };
 		326DB45A14B38BC00018A8D0 /* GlobalConfiguration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB3E414B38BC00018A8D0 /* GlobalConfiguration.cpp */; };
 		326DB45B14B38BC00018A8D0 /* GlobalConfiguration.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3E514B38BC00018A8D0 /* GlobalConfiguration.h */; };
@@ -122,8 +124,6 @@
 		326DB4C014B3A3E50018A8D0 /* AbstractControlUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4A614B3A3E50018A8D0 /* AbstractControlUnit.h */; };
 		326DB4C114B3A3E50018A8D0 /* ControlManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4A714B3A3E50018A8D0 /* ControlManager.cpp */; };
 		326DB4C214B3A3E50018A8D0 /* ControlManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4A814B3A3E50018A8D0 /* ControlManager.h */; };
-		326DB4C314B3A3E50018A8D0 /* ControlUnitSandbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4A914B3A3E50018A8D0 /* ControlUnitSandbox.cpp */; };
-		326DB4C414B3A3E50018A8D0 /* ControlUnitSandbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4AA14B3A3E50018A8D0 /* ControlUnitSandbox.h */; };
 		326DB4C514B3A3E50018A8D0 /* OBufferListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4AD14B3A3E50018A8D0 /* OBufferListener.h */; };
 		326DB4C614B3A3E50018A8D0 /* OutputDataBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4AE14B3A3E50018A8D0 /* OutputDataBuffer.cpp */; };
 		326DB4C714B3A3E50018A8D0 /* OutputDataBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4AF14B3A3E50018A8D0 /* OutputDataBuffer.h */; };
@@ -161,9 +161,13 @@
 		32AAD78C14CD773F005A097C /* MessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AAD78B14CD773F005A097C /* MessageChannel.cpp */; };
 		32AAD78E14CD95FD005A097C /* Atomic.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AAD78D14CD95FD005A097C /* Atomic.h */; };
 		32D68AD014D5D5A7009F290A /* SetupStateManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D68ACF14D5D5A7009F290A /* SetupStateManager.h */; };
+		32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		320192B914DEEAC000318F00 /* CObjectHandlerProcessingQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CObjectHandlerProcessingQueue.h; sourceTree = "<group>"; };
+		320DF98C14E17E2700251621 /* DeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceController.h; sourceTree = "<group>"; };
+		320DF98F14E17E3D00251621 /* DeviceController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceController.cpp; sourceTree = "<group>"; };
 		3216601014D49D0F008DADD2 /* ObjectWaitSemaphore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectWaitSemaphore.h; sourceTree = "<group>"; };
 		325F86EB14D9E59D00CDF35F /* InetUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InetUtility.h; sourceTree = "<group>"; };
 		326026E914B301F600C906CE /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_common.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -209,7 +213,6 @@
 		326DB3DE14B38BC00018A8D0 /* optime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = optime.h; sourceTree = "<group>"; };
 		326DB3DF14B38BC00018A8D0 /* time_support.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = time_support.h; sourceTree = "<group>"; };
 		326DB3E014B38BC00018A8D0 /* cconstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = cconstants.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB3E114B38BC00018A8D0 /* ChaosCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ChaosCommon.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB3E214B38BC00018A8D0 /* ChaosCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ChaosCommon.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB3E414B38BC00018A8D0 /* GlobalConfiguration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = GlobalConfiguration.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB3E514B38BC00018A8D0 /* GlobalConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = GlobalConfiguration.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -283,8 +286,6 @@
 		326DB4A614B3A3E50018A8D0 /* AbstractControlUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AbstractControlUnit.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB4A714B3A3E50018A8D0 /* ControlManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ControlManager.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB4A814B3A3E50018A8D0 /* ControlManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ControlManager.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB4A914B3A3E50018A8D0 /* ControlUnitSandbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ControlUnitSandbox.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		326DB4AA14B3A3E50018A8D0 /* ControlUnitSandbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ControlUnitSandbox.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB4AD14B3A3E50018A8D0 /* OBufferListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = OBufferListener.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB4AE14B3A3E50018A8D0 /* OutputDataBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = OutputDataBuffer.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB4AF14B3A3E50018A8D0 /* OutputDataBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = OutputDataBuffer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -322,6 +323,7 @@
 		32AAD78B14CD773F005A097C /* MessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageChannel.cpp; sourceTree = "<group>"; };
 		32AAD78D14CD95FD005A097C /* Atomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Atomic.h; sourceTree = "<group>"; };
 		32D68ACF14D5D5A7009F290A /* SetupStateManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetupStateManager.h; sourceTree = "<group>"; };
+		32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleBufferCircularBuffer.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -383,7 +385,6 @@
 		326DB3B314B38BC00018A8D0 /* common */ = {
 			isa = PBXGroup;
 			children = (
-				326DB3E114B38BC00018A8D0 /* ChaosCommon.cpp */,
 				326DB3E214B38BC00018A8D0 /* ChaosCommon.h */,
 				326DB3E014B38BC00018A8D0 /* cconstants.h */,
 				326DB40114B38BC00018A8D0 /* global.h */,
@@ -573,6 +574,7 @@
 				326DB40E14B38BC00018A8D0 /* CObjectProcessingPriorityQueue.h */,
 				326DB40F14B38BC00018A8D0 /* CObjectProcessingQueue.h */,
 				326DB41014B38BC00018A8D0 /* CObjectProcessingQueueListener.h */,
+				320192B914DEEAC000318F00 /* CObjectHandlerProcessingQueue.h */,
 			);
 			path = pqueue;
 			sourceTree = "<group>";
@@ -631,6 +633,7 @@
 				32AAD78D14CD95FD005A097C /* Atomic.h */,
 				32D68ACF14D5D5A7009F290A /* SetupStateManager.h */,
 				325F86EB14D9E59D00CDF35F /* InetUtility.h */,
+				32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -664,8 +667,6 @@
 				326DB4A614B3A3E50018A8D0 /* AbstractControlUnit.h */,
 				326DB4A714B3A3E50018A8D0 /* ControlManager.cpp */,
 				326DB4A814B3A3E50018A8D0 /* ControlManager.h */,
-				326DB4A914B3A3E50018A8D0 /* ControlUnitSandbox.cpp */,
-				326DB4AA14B3A3E50018A8D0 /* ControlUnitSandbox.h */,
 			);
 			path = ControlManager;
 			sourceTree = "<group>";
@@ -724,6 +725,8 @@
 				326DB4DB14B3B0070018A8D0 /* HLDataApi.h */,
 				326DB4DC14B3B0070018A8D0 /* HLInfrastructureApi.cpp */,
 				326DB4DD14B3B0070018A8D0 /* HLInfrastructureApi.h */,
+				320DF98F14E17E3D00251621 /* DeviceController.cpp */,
+				320DF98C14E17E2700251621 /* DeviceController.h */,
 			);
 			path = HighLevelApi;
 			sourceTree = "<group>";
@@ -851,6 +854,8 @@
 				3297F22B14D96F8D004FFE4F /* NetworkAddressMessageChannel.h in Headers */,
 				325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */,
 				32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */,
+				320192BA14DEEAC000318F00 /* CObjectHandlerProcessingQueue.h in Headers */,
+				32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -863,7 +868,6 @@
 				326DB4BC14B3A3E50018A8D0 /* CommandManagerDefaultAdapters.h in Headers */,
 				326DB4C014B3A3E50018A8D0 /* AbstractControlUnit.h in Headers */,
 				326DB4C214B3A3E50018A8D0 /* ControlManager.h in Headers */,
-				326DB4C414B3A3E50018A8D0 /* ControlUnitSandbox.h in Headers */,
 				326DB4C514B3A3E50018A8D0 /* OBufferListener.h in Headers */,
 				326DB4C714B3A3E50018A8D0 /* OutputDataBuffer.h in Headers */,
 				326DB4C914B3A3E50018A8D0 /* DataManager.h in Headers */,
@@ -884,6 +888,7 @@
 				326DB4F014B3B0070018A8D0 /* HLInfrastructureApi.h in Headers */,
 				326DB4F414B3B0070018A8D0 /* LLDataApi.h in Headers */,
 				326DB4F614B3B0070018A8D0 /* LLRpcApi.h in Headers */,
+				320DF98D14E17E2700251621 /* DeviceController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1000,7 +1005,6 @@
 				326DB44914B38BC00018A8D0 /* nonce.cpp in Sources */,
 				326DB44B14B38BC00018A8D0 /* oid.cpp in Sources */,
 				326DB45214B38BC00018A8D0 /* json.cpp in Sources */,
-				326DB45814B38BC00018A8D0 /* ChaosCommon.cpp in Sources */,
 				326DB45A14B38BC00018A8D0 /* GlobalConfiguration.cpp in Sources */,
 				326DB45C14B38BC00018A8D0 /* CDataWrapper.cpp in Sources */,
 				326DB45E14B38BC00018A8D0 /* CUSchemaDB.cpp in Sources */,
@@ -1031,7 +1035,6 @@
 				326DB4BA14B3A3E50018A8D0 /* CommandManager.cpp in Sources */,
 				326DB4BF14B3A3E50018A8D0 /* AbstractControlUnit.cpp in Sources */,
 				326DB4C114B3A3E50018A8D0 /* ControlManager.cpp in Sources */,
-				326DB4C314B3A3E50018A8D0 /* ControlUnitSandbox.cpp in Sources */,
 				326DB4C614B3A3E50018A8D0 /* OutputDataBuffer.cpp in Sources */,
 				326DB4C814B3A3E50018A8D0 /* DataManager.cpp in Sources */,
 				326DB4CB14B3A3E50018A8D0 /* KeyDataStorage.cpp in Sources */,
@@ -1049,6 +1052,7 @@
 				326DB4EF14B3B0070018A8D0 /* HLInfrastructureApi.cpp in Sources */,
 				326DB4F314B3B0070018A8D0 /* LLDataApi.cpp in Sources */,
 				326DB4F514B3B0070018A8D0 /* LLRpcApi.cpp in Sources */,
+				320DF99114E190BB00251621 /* DeviceController.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1110,6 +1114,7 @@
 					"-lmpio",
 					"-lmsgpack",
 					"-lmsgpack-rpc",
+					"-lboost_log",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -1152,6 +1157,7 @@
 					"-lmpio",
 					"-lmsgpack",
 					"-lmsgpack-rpc",
+					"-lboost_log",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -1197,6 +1203,8 @@
 					"-lmpio",
 					"-lmsgpack",
 					"-lmsgpack-rpc",
+					"-lboost_log",
+					"-lboost_log_setup",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -1235,6 +1243,8 @@
 					"-lmpio",
 					"-lmsgpack",
 					"-lmsgpack-rpc",
+					"-lboost_log",
+					"-lboost_log_setup",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -1280,6 +1290,8 @@
 					"-lmpio",
 					"-lmsgpack",
 					"-lmsgpack-rpc",
+					"-lboost_log",
+					"-lboost_log_setup",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -1318,6 +1330,8 @@
 					"-lmpio",
 					"-lmsgpack",
 					"-lmsgpack-rpc",
+					"-lboost_log",
+					"-lboost_log_setup",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

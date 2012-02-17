@@ -4,6 +4,9 @@
    <FileRef
       location = "group:README.txt">
    </FileRef>
+   <FileRef
+      location = "group:APACHE-2.0.txt">
+   </FileRef>
    <Group
       location = "container:"
       name = "Documentation">

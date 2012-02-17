@@ -1,11 +1,22 @@
-//
-//  ChaosUIToolkit.cpp
-//  UIToolkit
-//
-//  Created by bisegni on 08/09/11.
-//  Copyright (c) 2011 INFN. All rights reserved.
-//
-
+/*	
+ *	ChaosUIToolkit.cpp
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *	
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/ui_toolkit/ChaosUIToolkit.h>
 #include <chaos/ui_toolkit/LowLevelApi/LLDataApi.h>
@@ -42,7 +53,7 @@ ChaosUIToolkit::~ChaosUIToolkit(){
 /*
  
  */
-void ChaosUIToolkit::init(int argc, const char* argv[]) throw(CException) {
+void ChaosUIToolkit::init(int argc, char* argv[]) throw(CException) {
     try{
            
         UI_LAPP_ << "Init ChaosUIToolkit";
@@ -81,4 +92,3 @@ void ChaosUIToolkit::deinit() throw(CException) {
     }
     
 }
-

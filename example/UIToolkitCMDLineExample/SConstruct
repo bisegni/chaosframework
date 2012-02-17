@@ -4,8 +4,8 @@ SetOption('num_jobs', num_cpu)
 print "running with -j", GetOption('num_jobs')
 
 buildMode = ARGUMENTS.get('mode', 'release')   #holds current mode
-debugcflags = ['-Wall', '-GX', '-EHsc', '-DDEBUG']   #extra compile flags for debug
-releasecflags = ['-O2', '-EHsc', '-DNDEBUG']         #extra compile flags for release
+debugcflags = ['-Wall', '-DDEBUG']   #extra compile flags for debug
+releasecflags = ['-O2', '-DNDEBUG']         #extra compile flags for release
 
 print '**** Compiling in ' + buildMode + ' mode...'
 
@@ -24,4 +24,4 @@ else:
    env.Append(CCFLAGS=releasecflags)
 
 env.Append(LIBPATH = ['/usr/lib', '/usr/local/lib'])
-env.Program(sourceTarget, sourceFiles, LIBS=['chaos_uitoolkit', 'chaos_common', 'boost_program_options', 'boost_system','boost_thread', 'boost_chrono', 'boost_regex','memcached','msgpack','msgpack-rpc','mpio'])
+env.Program(sourceTarget, sourceFiles, LIBS=['chaos_uitoolkit', 'chaos_common', 'boost_program_options', 'boost_system','boost_thread', 'boost_chrono', 'boost_regex','boost_log','boost_log_setup','memcached','msgpack','msgpack-rpc','mpio'])

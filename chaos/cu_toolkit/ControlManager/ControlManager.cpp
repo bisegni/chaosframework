@@ -1,16 +1,27 @@
-    //
-    //  ControlManager.cpp
-    //  ChaosFramework
-    //
-    //  Created by Claudio Bisegni on 14/06/11.
-    //  Copyright 2011 INFN. All rights reserved.
-    //
-
-#include "../../Common/global.h"
+/*	
+ *	ControlManager.cpp
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *	
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
+#include "../../common/global.h"
 #include "ControlManager.h"
-#include "../../Common/cconstants.h"
+#include "../../common/cconstants.h"
 #include "../CommandManager/CommandManager.h"
-#include "../../Common/configuration/GlobalConfiguration.h"
+#include "../../common/configuration/GlobalConfiguration.h"
 
 using namespace chaos;
 using namespace std;
@@ -27,7 +38,7 @@ throw CException(0, "The Control Unit identifier param has not been set", "Contr
 y=x->getStringValue(INIT_DEINIT_ACTION_CU_PARAM_NAME);
 
 #define CHECK_CU_PRESENCE_IN_MAP_OR_TROW(x)\
-if(!sanboxMap.count(x)) {\
+if(!controlUnitInstanceMap.count(x)) {\
 throw CException(0, "The Control Unit identifier is not registered", "ControlManager::initSandbox");\
 }
 
@@ -64,48 +75,34 @@ void ControlManager::init() throw(CException) {
         //init CU action
     AbstActionDescShrPtr 
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this, 
-                                                                                   &ControlManager::initSandbox, 
+                                                                                   &ControlManager::loadControlUnit, 
                                                                                    ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN, 
-                                                                                   ChaosSystemDomainAndActionLabel::ACTION_CU_INIT, 
-                                                                                   "Control Unit initialization system action");
+                                                                                   "loadControlUnit", 
+                                                                                   "Control Unit load system action");
         //add parameter for control unit name
     actionDescription->addParam(INIT_DEINIT_ACTION_CU_PARAM_NAME,
     							DataType::TYPE_STRING,
-    							"The name of the Control Unit to initialize");
+    							INIT_DEINIT_ACTION_CU_PARAM_DESCRIPTION);
     
         //deinit CU action
     
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this, 
-                                                                                   &ControlManager::deinitSandbox, 
+                                                                                   &ControlManager::unloadControlUnit, 
                                                                                    ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN, 
-                                                                                   ChaosSystemDomainAndActionLabel::ACTION_CU_DEINIT, 
-                                                                                   "Control Unit initialization system action");
+                                                                                   "unloadControlUnit", 
+                                                                                   "Control Unit unload system action");
         //add parameter for control unit name
     actionDescription->addParam(INIT_DEINIT_ACTION_CU_PARAM_NAME,
     							DataType::TYPE_STRING,
-    							"The name of the Control Unit to initialize");
-        //start CU action
+    							INIT_DEINIT_ACTION_CU_PARAM_DESCRIPTION);
+
     
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this, 
-                                                                                   &ControlManager::startSandbox, 
-                                                                                   ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN, 
-                                                                                   ChaosSystemDomainAndActionLabel::ACTION_CU_START, 
-                                                                                   "Control Unit start system action");
-        //add parameter for control unit name
-    actionDescription->addParam(INIT_DEINIT_ACTION_CU_PARAM_NAME,
-    							DataType::TYPE_STRING,
-    							"The name of the Control Unit to Start");
-        //stop CU action
-    
-    actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this, 
-                                                                                   &ControlManager::stopSandbox, 
-                                                                                   ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN, 
-                                                                                   ChaosSystemDomainAndActionLabel::ACTION_CU_STOP, 
-                                                                                   "Control Unit stop system action");
-        //add parameter for control unit name
-    actionDescription->addParam(INIT_DEINIT_ACTION_CU_PARAM_NAME,
-    							DataType::TYPE_STRING,
-    							"The name of the Control Unit to Stop");
+                                                                                   &ControlManager::updateConfiguration, 
+                                                                                   "commandManager", 
+                                                                                   "updateConfiguration", 
+                                                                                   "Update Command Manager Configuration");
+  
         //register command manager action
     CommandManager::getInstance()->registerAction(this);
     
@@ -132,7 +129,6 @@ void ControlManager::start() throw(CException) {
  Deinitialize the CU Instantiator
  */
 void ControlManager::deinit() throw(CException) {
-    bool detachDeinitParam;
     LAPP_  << "Deinit the Control Manager";
     LAPP_  << "Control Manager system action deinitialization";
         //deregistering the action
@@ -148,20 +144,21 @@ void ControlManager::deinit() throw(CException) {
     LAPP_  << "Control Manager thread stoppped";
     
     LAPP_  << "Stopping all the submitted Control Unit";
-    map<string, shared_ptr<ControlUnitSandbox> >::iterator sandboxIter = sanboxMap.begin();
-    for ( ; sandboxIter != sanboxMap.end(); sandboxIter++ ){
-        LAPP_  << "Deinit Control Unit Sanbox:" << (*sandboxIter).second->getCUName();
+    map<string, shared_ptr<AbstractControlUnit> >::iterator cuIter = controlUnitInstanceMap.begin();
+    for ( ; cuIter != controlUnitInstanceMap.end(); cuIter++ ){
+        shared_ptr<AbstractControlUnit> cu = (*cuIter).second;
+        LAPP_  << "Deinit Control Unit Sanbox:" << cu->getCUInstance();
         try{
-            (*sandboxIter).second->deinitSandbox(NULL, detachDeinitParam);
-            (*sandboxIter).second->undefineSandboxAndControlUnit();
+            cu->_undefineActionAndDataset();
         }  catch (CException& ex) {
             if(ex.errorCode != 1){
                     //these exception need to be logged
                 DECODE_CHAOS_EXCEPTION(ex);
             }
         }
-        LAPP_  << "Deinitilized Control Unit Sanbox:" << (*sandboxIter).second->getCUName();
+        LAPP_  << "Deinitilized Control Unit Sanbox:" << cu->getCUInstance();
     }
+    controlUnitInstanceMap.clear();
 }
 
 
@@ -179,8 +176,7 @@ void ControlManager::submitControlUnit(AbstractControlUnit *data) throw(CExcepti
 /*
  Thread method that work on buffer item
  */
-void ControlManager::executeOnThread() throw(CException) {
-    bool detachDeinitParam;
+void ControlManager::executeOnThread(const string& threadIdentification) throw(CException) {
         //initialize the Control Unit
     AbstractControlUnit *curCU = 0L;
     CDataWrapper cuActionAndDataset;
@@ -192,30 +188,30 @@ void ControlManager::executeOnThread() throw(CException) {
             return;
         }
         LAPP_  << "Got new Control Unit";
-        shared_ptr<ControlUnitSandbox> cusb(new ControlUnitSandbox(curCU));
+        shared_ptr<AbstractControlUnit> cuPtr(curCU);
         
-        LAPP_  << "Setup Control Unit Sanbox for cu:" << cusb->getCUName() << " with instance:" << cusb->getCUInstance();
-        cusb->defineSandboxAndControlUnit(cuActionAndDataset);
-        LAPP_  << "Setup finished for Control Unit Sanbox:" << cusb->getCUName() << " with instance:" << cusb->getCUInstance();
-            //sendConfPackToMDS(cusb->defaultInternalConf.get());
+        LAPP_  << "Setup Control Unit Sanbox for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
+        cuPtr->_defineActionAndDataset(cuActionAndDataset);
+        LAPP_  << "Setup finished for Control Unit Sanbox:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
+            //sendConfPackToMDS(cuPtr->defaultInternalConf.get());
         sendConfPackToMDS(cuActionAndDataset);
-        LAPP_  << "Talk with MDS for cu:" << cusb->getCUName() << " with instance:" << cusb->getCUInstance();
+        LAPP_  << "Talk with MDS for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
                 
-        LAPP_  << "Configuration pack has been sent to MDS for cu:" << cusb->getCUName() << " with instance:" << cusb->getCUInstance();
+        LAPP_  << "Configuration pack has been sent to MDS for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
             //the sandbox name now is the real CUName_CUInstance before the initSandbox method call the CUInstance is
             //randomlly defined but if a CU want to ovveride it it can dureing initSandbox call
-        if(sanboxMap.count(cusb->getCUInstance())) {
-            LERR_  << "Duplicated control unit instance " << cusb->getSandboxName();
+        if(controlUnitInstanceMap.count(cuPtr->getCUInstance())) {
+            LERR_  << "Duplicated control unit instance " << cuPtr->getCUInstance();
             return;
         }
-        LAPP_  << "Control Unit Sanbox:" << cusb->getSandboxName() << " ready to work";
+        LAPP_  << "Control Unit Sanbox:" << cuPtr->getCUInstance() << " ready to work";
             //add sandbox to all map of running cu
-        sanboxMap.insert(make_pair(cusb->getCUInstance(), cusb));
+        controlUnitInstanceMap.insert(make_pair(cuPtr->getCUInstance(), cuPtr));
         
             //check if we need to autostart and init the CU
         if(cuActionAndDataset.hasKey(CUDefinitionKey::CS_CM_CU_AUTOSTART) &&
            cuActionAndDataset.getInt32Value(CUDefinitionKey::CS_CM_CU_AUTOSTART)){
-                //cusb->initSandbox(cusb->defaultInternalConf.get());
+                //cuPtr->initSandbox(cuPtr->defaultInternalConf.get());
             auto_ptr<SerializationBuffer> serBuffForGlobalConf(GlobalConfiguration::getInstance()->getConfiguration()->getBSONData());
             auto_ptr<CDataWrapper> masterConfiguration(new CDataWrapper(serBuffForGlobalConf->getBufferPtr()));
             masterConfiguration->appendAllElement(cuActionAndDataset);
@@ -223,8 +219,6 @@ void ControlManager::executeOnThread() throw(CException) {
 #if DEBUG
             LDBG_ << masterConfiguration->getJSONString();
 #endif  
-            
-            cusb->initSandbox(masterConfiguration.get(), detachDeinitParam);
         }
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
@@ -280,44 +274,22 @@ bool ControlManager::isEmpty() const {
 }
 
 /*
- Sandbox initialization system action
+ Init the sandbox
  */
-CDataWrapper* ControlManager::initSandbox(CDataWrapper *actionParam, bool& detachParam) throw (CException) {
-    CHECK_AND_RETURN_CU_UUID_PARAM_OR_TROW(actionParam, cuUUID)
-    CHECK_CU_PRESENCE_IN_MAP_OR_TROW(cuUUID)
-    shared_ptr<ControlUnitSandbox> cusb = sanboxMap[cuUUID];
-    LAPP_  << "Init Control Unit Sanbox for cu:" << cusb->getCUName() << " with instance:" << cusb->getCUInstance();
-    /*
-    auto_ptr<SerializationBuffer> serBuffForGlobalConf(GlobalConfiguration::getInstance()->getConfiguration()->getBSONData());
-    auto_ptr<CDataWrapper> masterConfiguration(new CDataWrapper(serBuffForGlobalConf->getBufferPtr()));
-    masterConfiguration->appendAllElement(*cusb->getInternalCUConfiguration());*/
-    LAPP_  << "Initialized Control Unit Sanbox:" << cusb->getCUName() << " with instance:" << cusb->getCUInstance();
-    return cusb->initSandbox(actionParam, detachParam);
+CDataWrapper* ControlManager::loadControlUnit(CDataWrapper*, bool&) throw (CException) {
+    return NULL;
 }
 
 /*
- Stop the sandbox
+ Deinit the sandbox
  */
-CDataWrapper* ControlManager::deinitSandbox(CDataWrapper *actionParam, bool& detachParam) throw (CException) {
-    CHECK_AND_RETURN_CU_UUID_PARAM_OR_TROW(actionParam, cuUUID)
-    CHECK_CU_PRESENCE_IN_MAP_OR_TROW(cuUUID)
-    return sanboxMap[cuUUID]->deinitSandbox(actionParam, detachParam);
+CDataWrapper* ControlManager::unloadControlUnit(CDataWrapper*, bool&) throw (CException) {
+    return NULL;
 }
 
 /*
- Start the sandbox
+ Configure the sandbox and all subtree of the CU
  */
-CDataWrapper* ControlManager::startSandbox(CDataWrapper *actionParam, bool& detachParam) throw (CException) {
-    CHECK_AND_RETURN_CU_UUID_PARAM_OR_TROW(actionParam, cuUUID)
-    CHECK_CU_PRESENCE_IN_MAP_OR_TROW(cuUUID)
-    return sanboxMap[cuUUID]->startSandbox(actionParam, detachParam);
-}
-
-/*
- Stop the sandbox
- */
-CDataWrapper* ControlManager::stopSandbox(CDataWrapper *actionParam, bool& detachParam) throw (CException) {
-    CHECK_AND_RETURN_CU_UUID_PARAM_OR_TROW(actionParam, cuUUID)
-    CHECK_CU_PRESENCE_IN_MAP_OR_TROW(cuUUID)
-    return sanboxMap[cuUUID]->stopSandbox(actionParam, detachParam);
+CDataWrapper* ControlManager::updateConfiguration(CDataWrapper*, bool&) {
+    return NULL;
 }

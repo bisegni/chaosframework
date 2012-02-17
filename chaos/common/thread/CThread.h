@@ -1,10 +1,23 @@
-    //
-    //  CThread.h
-    //  ChaosFramework
-    //
-    //  Created by Claudio Bisegni on 20/03/11.
-    //  Copyright 2011 INFN. All rights reserved.
-    //
+/*	
+ *	CThread.h
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *	
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
+
 #ifndef ControlSystemThread_H
 #define ControlSystemThread_H
 
@@ -48,7 +61,6 @@ namespace chaos{
     public:
     CThread();
     CThread(CThreadExecutionTaskSPtr);
-        CThread(boost::function<void(void)>);
     ~CThread();
     
         //internal init for class
@@ -63,29 +75,27 @@ namespace chaos{
     bool isStopped();
     
         //sec to waith beetwen task execution
-    void setDelayBeetwenTask(long microsecond);
+    void setDelayBeetwenTask(int64_t microsecond);
     
         //join to thread execution
     void join();
     
         //set thread id
-	void setThreadID(int);
+	void setThreadIdentification(string&);
     
         //set thread id
 	void setThreadPriorityLevel(int priorityLevel, int policyLevel=SCHED_OTHER);
     
         //set the control unit for this thread
     void setTask(CThreadExecutionTaskSPtr);
-        
-        //set the scheduled function managed by this thread
-    void setScheduledFunction(boost::function<void(void)>);
-        
+    
+    
         //get this thread statistic
 	TaskCycleStatPtr getStat();
 	
     protected:
 	friend class CThreadGroup;
-	int threadID;
+	string threadIdentification;
     volatile bool m_stop;
 	bool simulationMode;
     boost::chrono::microseconds waithTimeInMicrosecond;
@@ -103,7 +113,6 @@ namespace chaos{
         //thread group that contain this thread , if there is one
 	CThreadGroup *parentCThreadGroup;
     CThreadExecutionTaskSPtr taskUnit;
-    boost::function<void(void)> scheduledFunction;
     };
 }
 #endif

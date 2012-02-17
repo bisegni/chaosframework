@@ -1,12 +1,22 @@
-//
-//  CThread.cpp
-//  ChaosFramework
-//
-//  Created by Claudio Bisegni on 20/03/11.
-//  Copyright 2011 INFN. All rights reserved.
-//
-
-
+/*	
+ *	CThread.cpp
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *	
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
 
 #include "../global.h"
 #include "CThread.h"
@@ -25,17 +35,12 @@ CThread::CThread(CThreadExecutionTaskSPtr tUnit){
     internalInit();
 }
 
-CThread::CThread(boost::function<void(void)> func){
-    setScheduledFunction(func);
-    internalInit();
-}
-
 CThread::~CThread(){
     
 }
 
 void CThread::internalInit() {
-    threadID = 0;
+    threadIdentification = "";
     firstLoop = true;
 	m_stop = true;
 	parentCThreadGroup = 0L;
@@ -63,7 +68,7 @@ bool CThread::isStopped() {
     return m_stop;
 }
 
-void CThread::setDelayBeetwenTask(long msec) {
+void CThread::setDelayBeetwenTask(int64_t msec) {
     waithTimeInMicrosecond = microseconds(msec);
 }
 
@@ -71,8 +76,8 @@ void CThread::join() {
     m_thread->join();
 }
 
-void CThread::setThreadID(int newCThreadID) {
-	threadID = newCThreadID;
+void CThread::setThreadIdentification(string& _threadIdentification) {
+	threadIdentification = _threadIdentification;
 }
 
 //set CThread id
@@ -127,14 +132,7 @@ void CThread::setThreadPriorityLevel(int priorityLevel, int policyLevel) {
 }
 
 void CThread::setTask(CThreadExecutionTaskSPtr tUnit) {
-    if(!scheduledFunction.empty() || !tUnit) return;
     taskUnit = tUnit;
-    scheduledFunction = boost::bind(&CThreadExecutionTask::executeOnThread, tUnit);
-}
-
-void CThread::setScheduledFunction(boost::function<void(void)> func) {
-    if(!taskUnit) return;
-    scheduledFunction = func;
 }
 
 TaskCycleStatPtr CThread::getStat() {
@@ -154,7 +152,7 @@ void CThread::executeWork() {
             statisticData.ptimeNextStart = boost::chrono::steady_clock::now() + waithTimeInMicrosecond;
             
             //call scheduled function
-            scheduledFunction();
+            taskUnit->executeOnThread(threadIdentification);
             //taskUnit->executeOnThread();
             
             //se if we need to whait for the nex execution
@@ -176,4 +174,4 @@ void CThread::executeWork() {
         DECODE_CHAOS_EXCEPTION(exc);
     }
 	if(parentCThreadGroup) parentCThreadGroup->threadHasFinished(this);
-}   
+}

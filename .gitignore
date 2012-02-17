@@ -1,5 +1,7 @@
 ControlSystemLibTest/ChaosCU
 example/UIToolkitCMDLineExample/UIToolkitCMDLineExample
+example/UIToolkitTest/UIToolkitTest.pro.user
+example/UIToolkitTest-build-*
 example/ControlUnitTest/ControlUnitTest
 .DS_Store
 *.xcuserdatad*
@@ -29,4 +31,7 @@ Documentation/latex
 ControlUnitTest/ChaosCUTest
 *mwb.bak
 MetadataServer/.settings/org.eclipse.wst.ws.service.policy.prefs
+example/UIToolkitTest/testui.app
 MetadataServer/WebContent/META-INF/context.xml
+*application.log
+MetadataServer/.settings/*
