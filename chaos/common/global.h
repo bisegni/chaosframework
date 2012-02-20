@@ -24,13 +24,11 @@
  *
  * \section intro_sec Introduction
  *
- * This is the introduction.
+ * !CHOAS is a new idea on Control System software architecture, more information cam be found
+ * on http://chaos.infn.it/
  *
  * \section install_sec Installation
- *
- * \subsection step1 Step 1: Opening the box
- *  
- * etc...
+ * Read the README.txt file in the root of source code folder
  */
 
 #include <boost/version.hpp>
