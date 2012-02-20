@@ -86,19 +86,12 @@ int main (int argc, char* argv[] )
                 vector<string> allOutAttrName;
                 controller->getDeviceDatasetAttributesName(allOutAttrName, chaos::DataType::Output);
                 
-                controller->getState(deviceState);
-                std::cout << "state " << deviceState << std::endl;
-                
                 controller->initDevice();
-                
-                controller->getState(deviceState);
-                std::cout << "state " << deviceState << std::endl;
+
                 
                 controller->setScheduleDelay(1000000);
                 controller->startDevice();
-                
-                controller->getState(deviceState);
-                std::cout << "state " << deviceState << std::endl;
+
                 
                 controller->setupTracking();
                 string key = "sinOutput";
