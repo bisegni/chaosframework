@@ -5,6 +5,7 @@ example/UIToolkitTest-build-*
 example/ControlUnitTest/ControlUnitTest
 example/UIToolkitTest/ui*.h
 example/UIToolkitTest/moc*cpp
+example/UIToolkitTest/testui.pbproj/qt*.mak
 .DS_Store
 *.xcuserdatad*
 *bisegni*

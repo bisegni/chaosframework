@@ -256,6 +256,8 @@ void MainWindow::on_buttonInit_clicked()
         msg->setText("Error setting schedule delay");
         msg->show();
     }
+
+    updateDeviceState();
 }
 
 void MainWindow::on_buttonDeinit_clicked()
@@ -266,6 +268,8 @@ void MainWindow::on_buttonDeinit_clicked()
         msg->setText("Device alredy deinitialized or error");
         msg->show();
     }
+
+    updateDeviceState();
 }
 
 void MainWindow::on_buttonStart_clicked()
@@ -276,6 +280,7 @@ void MainWindow::on_buttonStart_clicked()
         msg->setText("Device already started or error");
         msg->show();
     }
+    updateDeviceState();
 }
 
 void MainWindow::on_buttonStop_clicked()
@@ -286,6 +291,7 @@ void MainWindow::on_buttonStop_clicked()
         msg->setText("Device already stopped or error");
         msg->show();
     }
+    updateDeviceState();
 }
 
 void MainWindow::on_buttonStartTracking_clicked()
