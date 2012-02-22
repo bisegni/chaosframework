@@ -3,6 +3,8 @@ example/UIToolkitCMDLineExample/UIToolkitCMDLineExample
 example/UIToolkitTest/UIToolkitTest.pro.user
 example/UIToolkitTest-build-*
 example/ControlUnitTest/ControlUnitTest
+example/UIToolkitTest/ui*.h
+example/UIToolkitTest/moc*cpp
 .DS_Store
 *.xcuserdatad*
 *bisegni*

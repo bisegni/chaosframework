@@ -43,6 +43,7 @@ class MainWindow : public QMainWindow, public chaos::CThreadExecutionTask
     chaos::CThread *trackThread;
 protected:
     void executeOnThread(const std::string&) throw(chaos::CException);
+    void updateDeviceState();
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
@@ -83,6 +84,8 @@ private slots:
     void on_spinDeviceSchedule_valueChanged(int arg1);
 
     void on_spinTrackSpeed_valueChanged(int arg1);
+
+    void on_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;

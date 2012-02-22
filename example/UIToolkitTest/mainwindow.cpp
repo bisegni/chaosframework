@@ -58,6 +58,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+
 void MainWindow::on_buttonDeleteDevice_clicked(bool checked)
 {
     qDebug() << "received signal";
@@ -122,6 +123,34 @@ void MainWindow::on_buttonUpdateDeviceList_clicked()
     ui->listView->setModel(model);
 }
 
+
+
+void MainWindow::updateDeviceState() {
+    if(!deviceController.get()) {
+        ui->labelState->setText("");
+        return;
+    }
+
+    chaos::CUStateKey::ControlUnitState currentState;
+    if(deviceController->getState(currentState)==0){
+        switch(currentState){
+            case chaos::CUStateKey::INIT:
+                 ui->labelState->setText("Initialized");
+            break;
+            case chaos::CUStateKey::DEINIT:
+                ui->labelState->setText("Deinitialized");
+            break;
+            case chaos::CUStateKey::START:
+                ui->labelState->setText("Started");
+            break;
+            case chaos::CUStateKey::STOP:
+                ui->labelState->setText("Stopped");
+            break;
+        }
+    }
+}
+
+
 void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
 {
     //deviceController
@@ -163,6 +192,8 @@ void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
         model->setItem(row++, 2, new QStandardItem(QString(attributeDescription.c_str())));
     }
     ui->tableView->setModel(model);
+
+    updateDeviceState();
 
     QHeaderView *header = ui->tableView->horizontalHeader();
     header->setResizeMode(QHeaderView::Stretch);
@@ -306,4 +337,9 @@ void MainWindow::on_spinDeviceSchedule_valueChanged(int value)
 void MainWindow::on_spinTrackSpeed_valueChanged(int value)
 {
     on_dialTrackSpeed_valueChanged(value);
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    updateDeviceState();
 }

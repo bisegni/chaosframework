@@ -250,6 +250,15 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
     auto_ptr<SerializationBuffer> ser(setupConfiguration.getBSONData());
         //copy configuration for internal use
     _internalSetupConfiguration.reset(new CDataWrapper(ser->getBufferPtr()));
+    
+    //setup all state for device
+    vector<string> domainNames;
+    CUSchemaDB::getAllDeviceId(domainNames);
+    for(vector<string>::iterator iter = domainNames.begin();
+        iter != domainNames.end();
+        iter++){
+        deviceExplicitStateMap[*iter] = CUStateKey::DEINIT;
+    }
 }
 
 /*
@@ -313,8 +322,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
         //call update param function
     updateConfiguration(initConfiguration, detachParam);
     
-    cuState = CUStateKey::INIT;
-    
+    deviceExplicitStateMap[deviceID] = CUStateKey::INIT;
     return NULL;
 }
 
@@ -363,8 +371,7 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
     
     deviceStateMap[deviceID]--;
     
-    cuState = CUStateKey::DEINIT;
-
+    deviceExplicitStateMap[deviceID] = CUStateKey::DEINIT;
     return NULL;
 }
 
@@ -410,8 +417,7 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
     
     deviceStateMap[deviceID]++;
     
-    cuState = CUStateKey::START;
-
+    deviceExplicitStateMap[deviceID] = CUStateKey::START;
     return NULL;
 }
 
@@ -454,8 +460,7 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachPa
     
     deviceStateMap[deviceID]--;
     
-    cuState = CUStateKey::STOP;
-
+    deviceExplicitStateMap[deviceID] = CUStateKey::STOP;
     return NULL;
 }
 
@@ -477,7 +482,7 @@ CDataWrapper* AbstractControlUnit::_getState(CDataWrapper* getStatedParam, bool&
         throw CException(-1, "Get State Pack without DeviceID", "AbstractControlUnit::getState");
     }
     string deviceID = getStatedParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
-    stateResult->addInt32Value(CUStateKey::CONTROL_UNIT_STATE, deviceStateMap[deviceID]);
+    stateResult->addInt32Value(CUStateKey::CONTROL_UNIT_STATE, deviceExplicitStateMap[deviceID]);
     return stateResult;
 }
 /*

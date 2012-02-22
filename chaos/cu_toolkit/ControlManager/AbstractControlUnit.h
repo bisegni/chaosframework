@@ -107,7 +107,7 @@ deviceStateMap[deviceName]--;
         
         map<string, int >  deviceStateMap;
         
-        CUStateKey::ControlUnitState cuState;
+        map<string, CUStateKey::ControlUnitState > deviceExplicitStateMap;
         
         /*
          Add a new KeyDataStorage for a specific key
