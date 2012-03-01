@@ -23,6 +23,7 @@
 #include <QWidget>
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
+#include <qwt_plot_grid.h>
 #include <cmath>
 #include <QVBoxLayout>
 #include <chaos/common/utility/SingleBufferCircularBuffer.h>
@@ -43,6 +44,7 @@ class GraphWidget : public QWidget
     friend class MainWindow;
     Q_OBJECT
     QwtPlot *plot;
+    QwtPlotGrid *grid;
     QVBoxLayout *vbox;
     boost::mutex manageMutex;
     std::vector<double> xs;

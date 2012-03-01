@@ -30,15 +30,27 @@ GraphWidget::GraphWidget(QWidget *parent) :
     plot = new QwtPlot(QwtText("Chaos Attribute Plot"));
     plot->setGeometry(0,0,640,400);
     plot->setAxisScale(QwtPlot::xBottom, 1, 30);
+    plot->setAxisScale(QwtPlot::yLeft, -10, +10);
     plot->insertLegend(new QwtLegend(plot), QwtPlot::BottomLegend);
     vbox = new QVBoxLayout();
     vbox->addWidget(plot,1);
     setLayout(vbox);
 
+    grid = new QwtPlotGrid();
+       //enable the x and y axis lines
+       grid->enableX(false);
+       grid->enableY(true);
+
+       //set the X and Y division and scale to that of the channels
+       grid->setXDiv(*(plot->axisScaleDiv(QwtPlot::xBottom)));
+       grid->setYDiv(*(plot->axisScaleDiv(QwtPlot::yLeft)));
+       grid->attach(plot);
+
     for (double x = 1; x <= 30; x++)
     {
         xs.push_back(x);
     }
+
 }
 
 

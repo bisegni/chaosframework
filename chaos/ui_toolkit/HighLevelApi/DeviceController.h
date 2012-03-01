@@ -203,6 +203,11 @@ namespace chaos {
              */
             void addAttributeToTrack(string& attributeName);
             
+            //get the CDatawrapper for the live value
+            /*!
+             the returned object is not own by requester but only by DeviceController isntance
+             */
+            CDataWrapper* getLiveCDataWrapperPtr();
             
             /*!
              Fetch the current live value form live storage

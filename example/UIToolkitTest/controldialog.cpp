@@ -70,7 +70,7 @@ void ControlDialog::initDialog(boost::shared_ptr<chaos::ui::DeviceController>&  
         }}
         break;
     case chaos::DataType::TYPE_DOUBLE:{
-        QSpinBox *doubleSpinBox = new QSpinBox();
+        QDoubleSpinBox *doubleSpinBox = new QDoubleSpinBox();
 
         double_t min = minStr.toDouble();
         double_t max = maxStr.toDouble();
@@ -81,7 +81,6 @@ void ControlDialog::initDialog(boost::shared_ptr<chaos::ui::DeviceController>&  
         if(attributerange.minRange.size()>0){
             doubleSpinBox->setMinimum(min);
         }
-
         if(attributerange.maxRange.size()>0){
             doubleSpinBox->setMaximum(max);
         }

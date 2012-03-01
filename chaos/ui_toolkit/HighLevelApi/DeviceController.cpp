@@ -154,15 +154,17 @@ int DeviceController::getState(CUStateKey::ControlUnitState& deviceState) {
 
 int DeviceController::setInt32AttributeValue(string& attributeName, int32_t attributeValue) {
     CDataWrapper attributeValuePack;
-    attributeValuePack.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME, attributeName);
-    attributeValuePack.addInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_VALUE, attributeValue);
+    //attributeValuePack.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME, attributeName);
+    //attributeValuePack.addInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_VALUE, attributeValue);
+    attributeValuePack.addInt32Value(attributeName.c_str(), attributeValue);
     return deviceChannel->setAttributeValue(attributeValuePack);
 }
 
 int DeviceController::setDoubleAttributeValue(string& attributeName, double_t attributeValue) {
     CDataWrapper attributeValuePack;
-    attributeValuePack.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME, attributeName);
-    attributeValuePack.addDoubleValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_VALUE, attributeValue);
+    //attributeValuePack.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME, attributeName);
+    //attributeValuePack.addDoubleValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_VALUE, attributeValue);
+    attributeValuePack.addDoubleValue(attributeName.c_str(), attributeValue);
     return deviceChannel->setAttributeValue(attributeValuePack);
 }
 
@@ -300,6 +302,14 @@ void DeviceController::addAttributeToTrack(string& attrbiuteName) {
     
         //allcoate the buffer for the new attribute to track
     allocateNewLiveBufferForAttributeAndType(attrbiuteName, attributeDirectionMap[attrbiuteName], attributeTypeMap[attrbiuteName]);
+}
+
+//get the CDatawrapper for the live value
+/*!
+ the returned object is not own by requester but only by DeviceController isntance
+ */
+CDataWrapper* DeviceController::getLiveCDataWrapperPtr() {
+    return currentLiveValue.get();
 }
 
 int DeviceController::setScheduleDelay(int32_t millisecDelay){

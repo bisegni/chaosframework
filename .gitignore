@@ -39,3 +39,4 @@ example/UIToolkitTest/testui.app
 MetadataServer/WebContent/META-INF/context.xml
 *application.log
 MetadataServer/.settings/*
+ChaosMDSLite/target*

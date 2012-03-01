@@ -30,17 +30,21 @@ using namespace chaos;
 
 #define SIMULATED_DEVICE_ID     "SIN_DEVICE"
 #define DS_ELEMENT_1            "sinOutput"
-#define DS_ELEMENT_2            "sinPhase"
+#define DS_ELEMENT_2            "sinAltitude"
+#define DS_ELEMENT_3            "sinPahseTime"
 
 #define TEST_BUFFER_DIM         100
 #define CU_DELAY_FROM_TASKS     1000000 //1Sec
 #define ACTION_TWO_PARAM_NAME   "actionTestTwo_paramName"
+
+
 
 WorkerCU::WorkerCU():AbstractControlUnit(),rng((const uint_fast32_t) time(0) ),one_to_six( 1, 100 ),randInt(rng, one_to_six) {
         //first we make some write
     _deviceID.assign(SIMULATED_DEVICE_ID);
     cuName = "WORKER_CU";
     numberOfResponse = 0;
+    sinCompConst = (double_t)6.28/(double_t)360;
 }
 
 /*
@@ -106,22 +110,15 @@ void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
     
     addAttributeToDataSet(devIDInChar,
                           DS_ELEMENT_2,
+                          "The input altitude of the sin",
+                          DataType::TYPE_DOUBLE, 
+                          DataType::Input);
+    
+    addAttributeToDataSet(devIDInChar,
+                          DS_ELEMENT_3,
                           "The input phase of the sin",
                           DataType::TYPE_DOUBLE, 
                           DataType::Input);
- /*   
-    addAttributeToDataSet(devIDInChar,
-                          DS_ELEMENT_3,
-                          "describe the element 3 of the dataset",
-                          DataType::TYPE_BYTEARRAY, 
-                          DataType::Output);
-    
-    
-    addAttributeToDataSet(devIDInChar,
-                          DS_ELEMENT_4,
-                          "describe the element 4 of the dataset",
-                          DataType::TYPE_DOUBLE, 
-                          DataType::Input);*/
 }
 
 /*
@@ -129,8 +126,11 @@ void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
  */
 void WorkerCU::init(CDataWrapper *newConfiguration) throw(CException) {
     LAPP_ << "init WorkerCU";
-    lastExecutionTime = boost::chrono::steady_clock::now();
+
+    initTime = steady_clock::now();
+    lastExecutionTime = steady_clock::now();
     numberOfResponse = 0;
+    curAltitude = 1;
 }
 
 /*
@@ -152,19 +152,12 @@ void WorkerCU::run(const string& deviceID) throw(CException) {
     CDataWrapper *acquiredData = getNewDataWrapperForKey(devIDInChar);
     if(!acquiredData) return;
     
-        //adding some interesting random data 
-    numberOfResponse+=0.1;
-    double_t sinValue = std::sin(numberOfResponse);
+        //adding some interesting random data
+    int64_t curMsec = (currentExecutionTime-initTime).count()/curPhasePeriod;
+    double_t sinValue = std::sin(curMsec*sinCompConst);
+    LAPP_ << "curMsec:" << curMsec;
     LAPP_ << "Sin Value:" << sinValue;
-    acquiredData->addDoubleValue(DS_ELEMENT_1, sinValue);
-    //acquiredData->addInt32Value("intValue_2", randInt());
-        //generate  test byte
-    //const char * binData = new char[TEST_BUFFER_DIM];
-    
-        // bufferHexRepresentation.assign(toHex(binData, TEST_BUFFER_DIM));
-    //acquiredData->addBinaryValue("byteValue", binData, TEST_BUFFER_DIM);
-    //acquiredData->addDoubleValue("doubleValue_1", 25.12);
-    //delete[] binData;
+    acquiredData->addDoubleValue(DS_ELEMENT_1, curAltitude*sinValue);
         //submit acquired data
     pushDataSetForKey(devIDInChar, acquiredData);
     
@@ -188,7 +181,20 @@ void WorkerCU::deinit(const string& deviceID) throw(CException) {
  Receive the evento for set the dataset input element
  */
 CDataWrapper* WorkerCU::setDatasetAttribute(CDataWrapper *datasetAttrbiuteValue, bool& detachParam) throw (CException) {
-    if(datasetAttrbiuteValue) LAPP_ << "received message" << datasetAttrbiuteValue->getJSONString();
+    if(!datasetAttrbiuteValue 
+       || !datasetAttrbiuteValue->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) return NULL;
+    
+    string id = datasetAttrbiuteValue->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
+    if(datasetAttrbiuteValue->hasKey(DS_ELEMENT_2)){
+        curAltitude = datasetAttrbiuteValue->getDoubleValue(DS_ELEMENT_2);
+        if(curAltitude < 1) curAltitude = 1;
+    }
+    
+    if(datasetAttrbiuteValue->hasKey(DS_ELEMENT_3)){
+        int64_t cur = datasetAttrbiuteValue->getDoubleValue(DS_ELEMENT_3);
+        if(cur < 1) cur = 1;
+        curPhasePeriod = cur * 1000000;
+    }
     return NULL;
 }
 

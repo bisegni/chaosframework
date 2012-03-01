@@ -37,9 +37,13 @@ class WorkerCU : public AbstractControlUnit {
     uniform_int<> one_to_six;    
     variate_generator< RNGType, uniform_int<> > randInt; 
     double_t numberOfResponse;
+    high_resolution_clock::time_point initTime;
     high_resolution_clock::time_point lastExecutionTime;
     high_resolution_clock::time_point currentExecutionTime;
     string _deviceID;
+    double_t sinCompConst;
+    double_t curAltitude;
+    double_t curPhasePeriod;
 public:
     /*
      Construct a new CU with an identifier
