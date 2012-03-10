@@ -32,6 +32,8 @@
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
 #include <controldialog.h>
+#include <boost/shared_ptr.hpp>
+#include <boost/thread.hpp>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -50,7 +52,6 @@ MainWindow::MainWindow(QWidget *parent) :
     //setup mds channel
     mdsChannel = chaos::ui::LLRpcApi::getInstance()->getNewMetadataServerChannel();
     trackThread = NULL;
-    QObject::connect(graphWdg,SIGNAL(updatePlot()),this,SLOT(updatePlot()));
 }
 
 MainWindow::~MainWindow()
@@ -300,10 +301,12 @@ void MainWindow::on_buttonStartTracking_clicked()
     trackThread = new chaos::CThread(this);
     trackThread->setDelayBeetwenTask(1000000);
     trackThread->start();
+    graphWdg->start();
 }
 
-void MainWindow::on_buttonStopTracking_clicked()
-{
+void MainWindow::on_buttonStopTracking_clicked() {
+    graphWdg->stop();
+
     if(!trackThread) return;
     trackThread->stop();
     delete(trackThread);
@@ -312,27 +315,20 @@ void MainWindow::on_buttonStopTracking_clicked()
 
 void MainWindow::executeOnThread(const std::string&) throw(chaos::CException) {
     if(!deviceController.get()) return;
+     boost::mutex::scoped_lock  lock(graphWdg->manageMutex);
     deviceController->fetchCurrentDeviceValue();
-    graphWdg->update();
 }
 
-void MainWindow::updatePlot(){
-    graphWdg->replot();
-}
-
-void MainWindow::on_dialTrackSpeed_valueChanged(int value)
-{
+void MainWindow::on_dialTrackSpeed_valueChanged(int value) {
     if(!trackThread) return;
     int64_t delay(value*1000);
     trackThread->setDelayBeetwenTask(delay);
 }
 
-void MainWindow::on_dialScheduleDevice_valueChanged(int value)
-{
+void MainWindow::on_dialScheduleDevice_valueChanged(int value) {
     if(!deviceController.get()) return;
     int64_t delay(value*1000);
     deviceController->setScheduleDelay(delay);
-
 }
 
 void MainWindow::on_spinDeviceSchedule_valueChanged(int value)

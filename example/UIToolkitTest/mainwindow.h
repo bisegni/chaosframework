@@ -50,7 +50,6 @@ public:
 
 public slots:
     void showContextMenuForWidget(const QPoint &pos);
-    void updatePlot();
 private slots:
 
     void on_buttonDeleteDevice_clicked(bool checked);

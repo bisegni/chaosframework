@@ -22,6 +22,8 @@
 #include <boost/pointer_cast.hpp>
 #include <qwt_symbol.h>
 #include <qwt_legend_item.h>
+#include <qwt_plot_directpainter.h>
+#include <qevent.h>
 using namespace boost;
 GraphWidget::GraphWidget(QWidget *parent) :
     QWidget(parent)
@@ -50,9 +52,13 @@ GraphWidget::GraphWidget(QWidget *parent) :
     {
         xs.push_back(x);
     }
-
+    d_timerId = -1;
+     d_directPainter = new QwtPlotDirectPainter();
 }
 
+GraphWidget::~GraphWidget() {
+    delete(d_directPainter);
+}
 
 void GraphWidget::addNewPlot(chaos::DataBuffer *dataBuffer, std::string& plotName , chaos::DataType::DataType dataType){
     boost::mutex::scoped_lock  lock(manageMutex);
@@ -68,6 +74,13 @@ void GraphWidget::addNewPlot(chaos::DataBuffer *dataBuffer, std::string& plotNam
     c->setStyle(QwtPlotCurve::Lines);
     c->attach(plot);
     c->setLegendAttribute(QwtPlotCurve::LegendShowSymbol);
+#if 1
+    c->setRenderHint(QwtPlotItem::RenderAntialiased, true);
+#endif
+#if 1
+    c->setPaintAttribute(QwtPlotCurve::ClipPolygons, false);
+#endif
+
     newPlotInfo->curve = c;
     newPlotInfo->curveBuffer = dataBuffer;
     newPlotInfo->dataType = dataType;
@@ -86,7 +99,6 @@ bool GraphWidget::hasPlot(std::string& plotName) {
 }
 
 void GraphWidget::update() {
-    boost::mutex::scoped_lock  lock(manageMutex);
     PlotBufferAndCurve *tmpPlotInfoPtr = NULL;
     std::vector<double> ys;
 
@@ -117,7 +129,7 @@ void GraphWidget::update() {
             int64_t historyDim = tmpPlotInfoPtr->curveBuffer->getDimension()-tmpPlotInfoPtr->curveBuffer->getWriteBufferPosition();
             int64_t recentToRead = tmpPlotInfoPtr->curveBuffer->getWriteBufferPosition();
 
-            for (int idx = 0; idx < historyDim-1; idx++) {
+            for (int idx = 0; idx < historyDim; idx++) {
                 double historyDouble(*(wPtr + idx));
                 ys.push_back(historyDouble);
             }
@@ -128,15 +140,12 @@ void GraphWidget::update() {
                 }
             }
         }
-        tmpPlotInfoPtr->curve->setSamples(&xs[0],&ys[0], 29);
+        std::cout << std::endl;
+        tmpPlotInfoPtr->curve->setSamples(&xs[0],&ys[0], 30);
+        //d_directPainter->drawSeries(tmpPlotInfoPtr->curve, 0, 29);
     }
     //
-    emit updatePlot();
-}
-
-void GraphWidget::replot() {
-    boost::mutex::scoped_lock  lock(manageMutex);
-    plot->replot();
+   // emit updatePlot();
 }
 
 void GraphWidget::clearAllPlot() {
@@ -146,4 +155,25 @@ void GraphWidget::clearAllPlot() {
         iter++){
         plotMap.erase(iter);
     }
+}
+void GraphWidget::start()
+{
+    d_timerId = startTimer(10);
+}
+
+void GraphWidget::stop()
+{
+    if(d_timerId != -1) killTimer(d_timerId);
+    d_timerId = -1;
+}
+
+void GraphWidget::timerEvent(QTimerEvent *event)
+{
+    if ( event->timerId() == d_timerId )
+    {
+        boost::mutex::scoped_lock  lock(manageMutex);
+        update();
+        plot->replot();
+    }
+    QWidget::timerEvent(event);
 }

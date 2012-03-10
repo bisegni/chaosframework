@@ -322,6 +322,9 @@
 		32AAD78914CD772F005A097C /* MessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageChannel.h; sourceTree = "<group>"; };
 		32AAD78B14CD773F005A097C /* MessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageChannel.cpp; sourceTree = "<group>"; };
 		32AAD78D14CD95FD005A097C /* Atomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Atomic.h; sourceTree = "<group>"; };
+		32C574D4150AAF8F00349A49 /* automake.ac */ = {isa = PBXFileReference; lastKnownFileType = text; path = automake.ac; sourceTree = "<group>"; };
+		32C574D6150AAF9900349A49 /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
+		32C574D7150AAFFA00349A49 /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		32D68ACF14D5D5A7009F290A /* SetupStateManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetupStateManager.h; sourceTree = "<group>"; };
 		32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleBufferCircularBuffer.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -357,6 +360,8 @@
 			isa = PBXGroup;
 			children = (
 				326DB49814B3A23B0018A8D0 /* SConstruct */,
+				32C574D4150AAF8F00349A49 /* automake.ac */,
+				32C574D6150AAF9900349A49 /* Makefile.am */,
 				326DB3B114B38BC00018A8D0 /* chaos */,
 				326026EA14B301F600C906CE /* Products */,
 			);
@@ -385,6 +390,7 @@
 		326DB3B314B38BC00018A8D0 /* common */ = {
 			isa = PBXGroup;
 			children = (
+				32C574D7150AAFFA00349A49 /* Makefile.am */,
 				326DB3E214B38BC00018A8D0 /* ChaosCommon.h */,
 				326DB3E014B38BC00018A8D0 /* cconstants.h */,
 				326DB40114B38BC00018A8D0 /* global.h */,
