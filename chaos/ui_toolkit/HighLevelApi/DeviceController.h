@@ -63,8 +63,11 @@ namespace chaos {
             
                 //!point to the freashest live value for this device dataset
             auto_ptr<CDataWrapper> currentLiveValue;
-            
+                
+                //mutext for multi threading track operation 
             boost::recursive_mutex trackMutext;
+            
+            uint32_t millisecToWaitOnOperation;
             
                 //!store the type of the attribute for fast retrieve
             std::map<string, DataType::DataSetAttributeIOAttribute> attributeDirectionMap;

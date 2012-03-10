@@ -40,3 +40,4 @@ MetadataServer/WebContent/META-INF/context.xml
 *application.log
 MetadataServer/.settings/*
 ChaosMDSLite/target*
+ChaosMDSLite/src/main/webapp/META-INF/context.xml

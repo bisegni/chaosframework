@@ -26,11 +26,15 @@ using namespace chaos;
 using namespace chaos::ui;
 using namespace std;
 using namespace std;
+
+#define MSEC_WAIT_OPERATION 1000
+
 DeviceController::DeviceController(string& _deviceID):deviceID(_deviceID) {
     mdsChannel = NULL;
     deviceChannel = NULL;
     ioLiveDataDriver = NULL;
     liveDataThread = new CThread(this);
+    millisecToWaitOnOperation = MSEC_WAIT_OPERATION;
 }
 
 DeviceController::~DeviceController() {
@@ -65,14 +69,16 @@ void DeviceController::updateChannel() throw(CException) {
         //make the live driver    
     if(!mdsChannel){
         mdsChannel = LLRpcApi::getInstance()->getNewMetadataServerChannel();
-        if(!mdsChannel) throw CException(0, "No MDS Channel created", "DeviceController::init");
+        if(!mdsChannel) throw CException(-1, "No MDS Channel created", "DeviceController::init");
     }
     
-    lastDeviceDefinition.reset(mdsChannel->getLastDatasetForDevice(deviceID));
+    lastDeviceDefinition.reset(mdsChannel->getLastDatasetForDevice(deviceID, millisecToWaitOnOperation));
+    if(!lastDeviceDefinition.get()) throw CException(-2, "No device dataset received", "DeviceController::updateChannel");
+        
     datasetDB.addAttributeToDataSetFromDataWrapper(*lastDeviceDefinition.get());
     
-    deviceAddress.reset(mdsChannel->getNetworkAddressForDevice(deviceID, 2000));
-    if(!deviceAddress.get()) throw CException(1, "No Address found for device", "DeviceController::init");
+    deviceAddress.reset(mdsChannel->getNetworkAddressForDevice(deviceID, millisecToWaitOnOperation));
+    if(!deviceAddress.get()) throw CException(-3, "No Address found for device", "DeviceController::init");
         
         //update live data driver
     ioLiveDataDriver = new IOMemcachedDriver();
@@ -84,7 +90,7 @@ void DeviceController::updateChannel() throw(CException) {
         //allocate device channel
     if(!deviceChannel){
         deviceChannel = LLRpcApi::getInstance()->getNewDeviceMessageChannel(deviceAddress.get());
-        if(!deviceChannel) throw CException(1, "No Address found for device", "DeviceController::init");
+        if(!deviceChannel) throw CException(-4, "Invalid device channel created", "DeviceController::init");
     }else{
         deviceChannel->setNewAddress(deviceAddress.get());  
     }
