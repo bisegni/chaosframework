@@ -42,7 +42,7 @@ namespace chaos {
          contorl the initialization and operation phase for a device. Allow to send value for input dataset and read the last 
          freshenest value form the live data
          */
-        class DeviceController: public CThreadExecutionTask {
+        class DeviceController {
             friend class HLDataApi;
                 //! represent the device id controlled by this instance
             string deviceID;
@@ -54,8 +54,6 @@ namespace chaos {
             DeviceMessageChannel *deviceChannel;
                 //! The io driver for accessing live data of the device
             IODataDriver *ioLiveDataDriver;
-                //!the thread for the fetch operation
-            CThread *liveDataThread;
                 //!Dataset database
             CUSchemaDB datasetDB;
                 //!point to the freashest live value for this device dataset
@@ -174,25 +172,10 @@ namespace chaos {
              */
             int getState(CUStateKey::ControlUnitState& deviceState);
             
-                //!Set the scheduler delay for this determinated device
-            /*!
-             Set the delay for the thread that call the run() methdo for this device
-             \param millisecDelay the delay from the query to the metadata server
-             */
-            int setScheduleDelay(int32_t millisecDelay);
-            
-            
             /*!
              Setup the structure to accelerate the tracking of the live data
              */
             void setupTracking();
-            
-            
-                //!Start to trackthe current device value
-            /*!
-             Start the live data tracking for this device, if no delay is given, the default delay of the device on metadataserver is got
-             */
-            void startTracking(bool automatic = false);
             
                 //!Stop the live data tracking
             /*!

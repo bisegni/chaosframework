@@ -33,18 +33,10 @@ DeviceController::DeviceController(string& _deviceID):deviceID(_deviceID) {
     mdsChannel = NULL;
     deviceChannel = NULL;
     ioLiveDataDriver = NULL;
-    liveDataThread = new CThread(this);
     millisecToWaitOnOperation = MSEC_WAIT_OPERATION;
 }
 
 DeviceController::~DeviceController() {
-    if(liveDataThread){
-        if(!liveDataThread->isStopped()){
-            stopTracking();
-        }
-        delete(liveDataThread);
-    }
-    
     if(mdsChannel){
         LLRpcApi::getInstance()->deleteMessageChannel(mdsChannel);
     }
@@ -318,42 +310,17 @@ CDataWrapper* DeviceController::getLiveCDataWrapperPtr() {
     return currentLiveValue.get();
 }
 
-int DeviceController::setScheduleDelay(int32_t millisecDelay){
-    CHAOS_ASSERT(deviceChannel)
-    return deviceChannel->setScheduleDelay(millisecDelay);
-}
-
 void DeviceController::setupTracking() {
+    boost::recursive_mutex::scoped_lock lock(trackMutext);
     CHAOS_ASSERT(lastDeviceDefinition.get())
     
         //init live buffer
     initializeAttributeIndexMap(*lastDeviceDefinition.get());
 }
 
-void DeviceController::startTracking(bool automatic) {
-    CHAOS_ASSERT(liveDataThread)
-
-    
-    int64_t uSecdelay = 1000000;//default to 1 sec
-                                //get the default schedule value if exist on metadata server
-    if(!automatic) return;
-    if(!lastDeviceDefinition.get() && lastDeviceDefinition->hasKey(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY)){
-        uSecdelay = lastDeviceDefinition->getInt32Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY);
-    }
-    liveDataThread->setDelayBeetwenTask(uSecdelay);
-    liveDataThread->start();
-    
-}
-
 void DeviceController::stopTracking() {
     boost::recursive_mutex::scoped_lock lock(trackMutext);
-    CHAOS_ASSERT(liveDataThread)
-    if(!liveDataThread->isStopped()) liveDataThread->stop();
     deinitializeAttributeIndexMap();
-}
-
-void DeviceController::executeOnThread(const string& threadID) throw(CException) {
-    fetchCurrentDeviceValue();
 }
 
 void DeviceController::fetchCurrentDeviceValue() {
@@ -364,7 +331,7 @@ void DeviceController::fetchCurrentDeviceValue() {
         currentLiveValue.reset(new CDataWrapper(value));
         free(value);
     }
-    
+    if(trackingAttribute.size() == 0) return;
     CDataWrapper *tmpPtr = currentLiveValue.get();
         //update buffer for tracked attribute
     for (std::vector<string>::iterator iter = trackingAttribute.begin(); 
