@@ -34,6 +34,7 @@
 #include <controldialog.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
+#include <qevent.h>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -52,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //setup mds channel
     mdsChannel = chaos::ui::LLRpcApi::getInstance()->getNewMetadataServerChannel();
     trackThread = NULL;
+    d_timerId = -1;
 }
 
 MainWindow::~MainWindow()
@@ -297,32 +299,49 @@ void MainWindow::on_buttonStop_clicked()
 
 void MainWindow::on_buttonStartTracking_clicked()
 {
-    if(trackThread) return;
-    trackThread = new chaos::CThread(this);
-    trackThread->setDelayBeetwenTask(1000000);
-    trackThread->start();
+    if(schedThread.get()) return;
+    runThread = true;
+    schedThread.reset(new boost::thread(boost::bind(&MainWindow::executeOnThread, this)));
+    //trackThread = new chaos::CThread(this);
+    //trackThread->setDelayBeetwenTask(1000000);
+    //trackThread->start();
+    //if(d_timerId != -1) return;
+    //int64_t delay(ui->dialTrackSpeed->value());
+    //d_timerId = startTimer(delay);
     graphWdg->start();
 }
 
 void MainWindow::on_buttonStopTracking_clicked() {
     graphWdg->stop();
-
-    if(!trackThread) return;
-    trackThread->stop();
-    delete(trackThread);
-    trackThread = NULL;
+    //if(d_timerId != -1) killTimer(d_timerId);
+    //d_timerId = -1;
+    runThread = false;
+    schedThread->join();
+    schedThread.reset();
+    //if(!trackThread) return;
+    //trackThread->stop();
+    //delete(trackThread);
+    //trackThread = NULL;
 }
 
-void MainWindow::executeOnThread(const std::string&) throw(chaos::CException) {
+void MainWindow::executeOnThread(){
     if(!deviceController.get()) return;
-     boost::mutex::scoped_lock  lock(graphWdg->manageMutex);
-    deviceController->fetchCurrentDeviceValue();
+    while(runThread){
+         //boost::mutex::scoped_lock  lock(graphWdg->manageMutex);
+        deviceController->fetchCurrentDeviceValue();
+        boost::this_thread::sleep(boost::posix_time::milliseconds(ui->dialTrackSpeed->value()));
+    }
+
 }
 
 void MainWindow::on_dialTrackSpeed_valueChanged(int value) {
-    if(!trackThread) return;
-    int64_t delay(value*1000);
-    trackThread->setDelayBeetwenTask(delay);
+    int64_t delay(value);
+    //trackThread->setDelayBeetwenTask(delay);
+
+    if(d_timerId != -1){
+        killTimer(d_timerId);
+        d_timerId = startTimer(delay);
+    }
 }
 
 void MainWindow::on_dialScheduleDevice_valueChanged(int value) {
@@ -344,4 +363,15 @@ void MainWindow::on_spinTrackSpeed_valueChanged(int value)
 void MainWindow::on_pushButton_clicked()
 {
     updateDeviceState();
+}
+
+void MainWindow::timerEvent(QTimerEvent *event)
+{
+    if ( event->timerId() == d_timerId )
+    {
+        if(!deviceController.get()) return;
+         //boost::mutex::scoped_lock  lock(graphWdg->manageMutex);
+        deviceController->fetchCurrentDeviceValue();
+    }
+    QMainWindow::timerEvent(event);
 }

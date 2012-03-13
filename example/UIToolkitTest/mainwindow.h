@@ -28,12 +28,13 @@
 #include <chaos/ui_toolkit/HighLevelApi/DeviceController.h>
 #include <chaos/common/thread/ChaosThread.h>
 #include <boost/shared_ptr.hpp>
-
+#include <boost/thread.hpp>
+#include <qwt_system_clock.h>
 namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow, public chaos::CThreadExecutionTask
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
     QSettings settings;
@@ -41,8 +42,11 @@ class MainWindow : public QMainWindow, public chaos::CThreadExecutionTask
     chaos::MDSMessageChannel *mdsChannel;
     boost::shared_ptr<chaos::ui::DeviceController> deviceController;
     chaos::CThread *trackThread;
+    int d_timerId;
+    boost::shared_ptr<boost::thread> schedThread;
+    bool runThread;
 protected:
-    void executeOnThread(const std::string&) throw(chaos::CException);
+    void executeOnThread();
     void updateDeviceState();
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -85,7 +89,7 @@ private slots:
     void on_spinTrackSpeed_valueChanged(int arg1);
 
     void on_pushButton_clicked();
-
+    void timerEvent(QTimerEvent *event);
 private:
     Ui::MainWindow *ui;
     void closeEvent(QCloseEvent *event);
