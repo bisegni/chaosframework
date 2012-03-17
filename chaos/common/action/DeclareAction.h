@@ -25,21 +25,27 @@
 #include <chaos/common/data/CDataWrapper.h>
 
 namespace chaos {
-    /*
+        //!Base class for all other that need to expose an action
+    /*!
      This class must manage the action description allocation and disposal
      every class that need to be register into commandMnaager for expose
      action, need to subclass this
      */
     class DeclareAction {
         vector<AbstActionDescShrPtr> actionDescriptionVector;
-        
-        /*
-         Decode one action to his correspondend CDataWrapper
+            //!action
+        /*!
+         Encode action into his correspondend CDataWrapper
          */
         void decodeAction(AbstActionDescShrPtr&, CDataWrapper&);
     public:
+        /*!
+         Default destructor
+         */
         ~DeclareAction();
-        /*
+        
+            //!action definition helper
+        /*!
          Create a new action description, returning it's shared pointer that can be used to configura the parametter
          */
         template<typename T>
@@ -54,13 +60,13 @@ namespace chaos {
             return newActionDesc;
         }
 
-        /*
+        /*!
          return the array that contains all action descriptor for 
          the istance implementing this class
          */
         vector<AbstActionDescShrPtr>& getActionDescriptors();
         
-        /*
+        /*!
          Return the description of all action into a CDataWrapper
          */
         void getActionDescrionsInDataWrapper(CDataWrapper&);

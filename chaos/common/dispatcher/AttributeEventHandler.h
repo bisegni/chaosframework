@@ -34,9 +34,9 @@ namespace chaos {
     using namespace boost;
     
 #pragma mark Handler
-    /*
-     Thisclass represent the abstract associotion ofattribute name
-     and ptr class method offset. Itwil be used into AttributeEventDispatcher class
+    /*!
+     This class represent the abstract associotion of attribute name
+     and ptr class method offset. It will be used into AttributeEventDispatcher class
      */
     class AbstractAttributeEventHandler {
         

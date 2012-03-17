@@ -30,7 +30,7 @@ namespace chaos {
     using namespace std;
     using namespace boost;
     
-    /*
+    /*!
      This class represent the abstract dispatcher for the pair
      attribute_name/method pointer. Thsi permit to serialize the call for some
      attribute
@@ -46,32 +46,32 @@ namespace chaos {
         
         ~DatasetAttributeEventDispatcher();
         
-        /*
+        /*!
          Init
          */
         void init();
         
-        /*
+        /*!
          Deinit
          */
         void deinit();
         
-        /*
+        /*!
          Add the attribute to the default queue
          */
         void addAttributeToDefaultQueue(string&) throw(CException);
         
-        /*
+        /*!
          Add the attribute to the default queue
          */
         void addAttributeToNewQueue(string&) throw(CException);
         
-        /*
+        /*!
          Add the attribute handler in the default queue
          */
         void addAttributeHandler(AbstractAttributeEventHandlerPtr);
         
-        /*
+        /*!
          Add the attribute handler in the default queue
          */
         void addAttributeHandlerInNewQueue(AbstractAttributeEventHandlerPtr);

@@ -1,0 +1,62 @@
+MagicDrawUML "16.0"
+(RTManager
+	(RTManagerOptions
+		CODE_GENERATION_REVERSE_OPTION 2
+		DELETED_ELEMENT_GENERATION_OPTION 0
+		LAUNCH_WIZARD FALSE
+		MERGE_AFTER_REVERSE FALSE
+		DEFAULT_WORKING_DIRECTORY "<install.root>"
+		DEFAULT_LANGUAGE "CORBA IDL"
+		(DDLLanguageOptions
+			mGenerateDocumentation TRUE
+			mGenEmptyDoc FALSE
+			mBracketInNewLine TRUE
+			mAddSpaces TRUE
+			mUseJavaDoc FALSE
+			mDefaultHeader "@(#) $FILE_NAME"
+			mGenerateDocumentation TRUE
+			(DocumentationProperties
+				DefaultDocumentationProcessor "STANDARD_PROCESSOR"
+				mCommentStyle 0
+				(Processors
+				)
+			)
+			classFielCreationType -1
+		)
+		DEFAULT_WORKING_DIRECTORY "<install.root>"
+		TEMP_DIRECTORY "Active Directory"
+		mResultToDiagram 1
+		mAnalysisType 0
+		(CORBAIDLLanguageOptions
+			mGenEmptyDoc FALSE
+			mBracketInNewLine TRUE
+			mAddSpaces TRUE
+			mUseJavaDoc FALSE
+			mDefaultHeader "@(#) $FILE_NAME"
+			mGenerateDocumentation TRUE
+			(DocumentationProperties
+				DefaultDocumentationProcessor "STANDARD_PROCESSOR"
+				mCommentStyle 0
+				(Processors
+				)
+			)
+			classFielCreationType -1
+			mUseIncludePath TRUE
+			mGenerateImports FALSE
+		)
+		defaultWorkingPackage "eee_1045467100313_135436_1"
+		defaultPathForReferences( list
+			"eee_1045467100313_135436_1"
+		)
+		resolveTemplateType TRUE
+		(XmlSchemaLanguageOptions
+			classFielCreationType -1
+		)
+		recentSourceRoots( list
+		)
+	)
+	(RTProjectGroupObject
+		mID "_17_0_4_b7802e2_1331991904239_965009_1893"
+		mName "Code engineering sets"
+	)
+)

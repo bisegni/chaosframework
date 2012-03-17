@@ -143,13 +143,15 @@ namespace chaos{
          */
         virtual void deregisterAction(DeclareAction *declareActionClass);
         
-        /*
-         Return the adapter alias
+        /*!
+         Ghet the name of tge dispatcher
+         \return the adapter alias
          */
         const char * getName() const;
         
-        /*
+        /*!
          Set the rpc client
+         \param rpc client implementation
          */
         void setRpcClient(RpcClient*);
 

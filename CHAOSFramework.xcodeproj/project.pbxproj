@@ -518,10 +518,10 @@
 		326DB3EF14B38BC00018A8D0 /* dispatcher */ = {
 			isa = PBXGroup;
 			children = (
+				326DB3F314B38BC00018A8D0 /* ChaosDispatcher.h */,
 				326DB3F014B38BC00018A8D0 /* AttributeEventHandler.h */,
 				326DB3F114B38BC00018A8D0 /* AttributeEventHandlerQueueRunner.cpp */,
 				326DB3F214B38BC00018A8D0 /* AttributeEventHandlerQueueRunner.h */,
-				326DB3F314B38BC00018A8D0 /* ChaosDispatcher.h */,
 				326DB3F414B38BC00018A8D0 /* CommandDispatcher.cpp */,
 				326DB3F514B38BC00018A8D0 /* CommandDispatcher.h */,
 				326DB3F614B38BC00018A8D0 /* DatasetAttributeEventDispatcher.cpp */,
