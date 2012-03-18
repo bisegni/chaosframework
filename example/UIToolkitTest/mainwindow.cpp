@@ -253,13 +253,7 @@ void MainWindow::on_buttonInit_clicked()
         msg->setText("Device already initialized or error");
         msg->show();
     }
-    //set the scehdule delay acocrding to control
-    if(deviceController->setScheduleDelay(ui->dialScheduleDevice->value()*1000) != 0 ){
-        QMessageBox* msg = new QMessageBox(this);
-        msg->setText("Error setting schedule delay");
-        msg->show();
-    }
-
+    deviceController->setScheduleDelay(ui->dialScheduleDevice->value()*1000);
     updateDeviceState();
 }
 
@@ -346,8 +340,7 @@ void MainWindow::on_dialTrackSpeed_valueChanged(int value) {
 
 void MainWindow::on_dialScheduleDevice_valueChanged(int value) {
     if(!deviceController.get()) return;
-    int64_t delay(value*1000);
-    deviceController->setScheduleDelay(delay);
+    deviceController->setScheduleDelay(value*1000);
 }
 
 void MainWindow::on_spinDeviceSchedule_valueChanged(int value)

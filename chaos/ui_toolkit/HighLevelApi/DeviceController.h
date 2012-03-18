@@ -82,6 +82,7 @@ namespace chaos {
              The visibility of the constructor is private becase it's is isntantiable only via HLDataApi singleton
              */
             DeviceController(string& _deviceID);
+ 
             
                 //! update inromation for talking with device
             /*!
@@ -118,6 +119,11 @@ namespace chaos {
             
             void getDeviceId(string& dId);
             
+                //! update the scudiling of device run method
+            /*!
+             Set the control unit run method scheduling delay
+             */
+            int setScheduleDelay(int32_t millisecDelay);
             /*!
              Get attribute name filtered by direction type
              */
