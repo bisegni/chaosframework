@@ -21,6 +21,7 @@ MagicDrawUML "16.0"
 				(Processors
 				)
 			)
+			classFielCreationType -1
 		)
 		DEFAULT_WORKING_DIRECTORY "<install.root>"
 		TEMP_DIRECTORY "Active Directory"
@@ -39,6 +40,7 @@ MagicDrawUML "16.0"
 				(Processors
 				)
 			)
+			classFielCreationType -1
 			mUseIncludePath TRUE
 			mGenerateImports FALSE
 		)
@@ -48,6 +50,7 @@ MagicDrawUML "16.0"
 		)
 		resolveTemplateType TRUE
 		(XmlSchemaLanguageOptions
+			classFielCreationType -1
 		)
 		recentSourceRoots( list
 		)
