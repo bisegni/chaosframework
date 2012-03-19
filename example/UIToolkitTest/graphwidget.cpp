@@ -140,7 +140,6 @@ void GraphWidget::update() {
                 }
             }
         }
-        std::cout << std::endl;
         tmpPlotInfoPtr->curve->setSamples(&xs[0],&ys[0], 30);
         //d_directPainter->drawSeries(tmpPlotInfoPtr->curve, 0, 29);
     }
