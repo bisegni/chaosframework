@@ -191,7 +191,7 @@ CDataWrapper* WorkerCU::setDatasetAttribute(CDataWrapper *datasetAttrbiuteValue,
     }
     
     if(datasetAttrbiuteValue->hasKey(DS_ELEMENT_3)){
-        int64_t cur = datasetAttrbiuteValue->getDoubleValue(DS_ELEMENT_3);
+        double_t cur = datasetAttrbiuteValue->getDoubleValue(DS_ELEMENT_3);
         if(cur < 1) cur = 1;
         curPhasePeriod = cur * 1000000;
     }
@@ -213,7 +213,6 @@ CDataWrapper* WorkerCU::updateConfiguration(CDataWrapper *newConfiguration, bool
 CDataWrapper* WorkerCU::actionTestOne(CDataWrapper *actionParam, bool& detachParam) {
     CDataWrapper *result = new CDataWrapper();
     result->addStringValue("result_key", "result_key_value");
-    result->addInt64Value("result_key_int", ++numberOfResponse);
     return result;
 }
 

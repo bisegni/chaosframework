@@ -136,9 +136,9 @@ if force64:
         env.Append( LINKFLAGS="-m64" )
 
 if force32:
-        env.Append( CFLAGS="-m32" )
-        env.Append( CXXFLAGS="-m32" )
-        env.Append( LINKFLAGS="-m32" )
+        env.Append( CFLAGS="-m32 -march=i686" )
+        env.Append( CXXFLAGS="-m32 -march=i686" )
+        env.Append( LINKFLAGS="-m32 -march=i686" )
         
 if has_option( "install" ):    
     env.Default("install")
