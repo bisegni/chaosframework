@@ -63,7 +63,7 @@ const boost::posix_time::ptime EPOCH(boost::gregorian::date(1970,1,1));
 
     //chaos assert to debug real badthing
 
-#include "version.h"
+#include <chaos/common/version.h>
 
     //macro for decode the chaos exception
 #define DECODE_CHAOS_EXCEPTION(x) \
