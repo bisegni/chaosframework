@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		320192BA14DEEAC000318F00 /* CObjectHandlerProcessingQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 320192B914DEEAC000318F00 /* CObjectHandlerProcessingQueue.h */; };
+		320C2183151B2C2B00BD0F41 /* EventBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 320C2182151B2C2B00BD0F41 /* EventBroker.h */; };
+		320C2187151B47C200BD0F41 /* EventBroker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320C2186151B47C200BD0F41 /* EventBroker.cpp */; };
+		320C218A151B555A00BD0F41 /* EventReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 320C2189151B555A00BD0F41 /* EventReceiver.h */; };
+		320C218C151B556E00BD0F41 /* EventReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320C218B151B556E00BD0F41 /* EventReceiver.cpp */; };
 		320DF98D14E17E2700251621 /* DeviceController.h in Headers */ = {isa = PBXBuildFile; fileRef = 320DF98C14E17E2700251621 /* DeviceController.h */; };
 		320DF99114E190BB00251621 /* DeviceController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320DF98F14E17E3D00251621 /* DeviceController.cpp */; };
 		325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F86EB14D9E59D00CDF35F /* InetUtility.h */; };
@@ -166,6 +170,10 @@
 
 /* Begin PBXFileReference section */
 		320192B914DEEAC000318F00 /* CObjectHandlerProcessingQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CObjectHandlerProcessingQueue.h; sourceTree = "<group>"; };
+		320C2182151B2C2B00BD0F41 /* EventBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventBroker.h; sourceTree = "<group>"; };
+		320C2186151B47C200BD0F41 /* EventBroker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventBroker.cpp; sourceTree = "<group>"; };
+		320C2189151B555A00BD0F41 /* EventReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventReceiver.h; sourceTree = "<group>"; };
+		320C218B151B556E00BD0F41 /* EventReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventReceiver.cpp; sourceTree = "<group>"; };
 		320DF98C14E17E2700251621 /* DeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceController.h; sourceTree = "<group>"; };
 		320DF98F14E17E3D00251621 /* DeviceController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceController.cpp; sourceTree = "<group>"; };
 		3216601014D49D0F008DADD2 /* ObjectWaitSemaphore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectWaitSemaphore.h; sourceTree = "<group>"; };
@@ -356,6 +364,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		320C2180151B2BF200BD0F41 /* event */ = {
+			isa = PBXGroup;
+			children = (
+				320C2186151B47C200BD0F41 /* EventBroker.cpp */,
+				320C2182151B2C2B00BD0F41 /* EventBroker.h */,
+				320C218B151B556E00BD0F41 /* EventReceiver.cpp */,
+				320C2189151B555A00BD0F41 /* EventReceiver.h */,
+			);
+			path = event;
+			sourceTree = "<group>";
+		};
 		3260260B14B300FE00C906CE = {
 			isa = PBXGroup;
 			children = (
@@ -396,7 +415,6 @@
 				326DB40114B38BC00018A8D0 /* global.h */,
 				326DB42E14B38BC00018A8D0 /* version.h */,
 				326DB42F14B38BC00018A8D0 /* version.sh */,
-				32AAD78114CD630D005A097C /* message */,
 				326DB3B514B38BC00018A8D0 /* action */,
 				326DB3BD14B38BC00018A8D0 /* bson */,
 				326DB3E314B38BC00018A8D0 /* configuration */,
@@ -409,6 +427,8 @@
 				326DB40814B38BC00018A8D0 /* pool */,
 				326DB40C14B38BC00018A8D0 /* pqueue */,
 				326DB41114B38BC00018A8D0 /* rpc */,
+				320C2180151B2BF200BD0F41 /* event */,
+				32AAD78114CD630D005A097C /* message */,
 				326DB41914B38BC00018A8D0 /* rpcnet */,
 				326DB41D14B38BC00018A8D0 /* thread */,
 				326DB42414B38BC00018A8D0 /* utility */,
@@ -862,6 +882,8 @@
 				32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */,
 				320192BA14DEEAC000318F00 /* CObjectHandlerProcessingQueue.h in Headers */,
 				32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */,
+				320C2183151B2C2B00BD0F41 /* EventBroker.h in Headers */,
+				320C218A151B555A00BD0F41 /* EventReceiver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1030,6 +1052,8 @@
 				32AAD78C14CD773F005A097C /* MessageChannel.cpp in Sources */,
 				32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */,
 				3297F22614D96F31004FFE4F /* DeviceMessageChannel.cpp in Sources */,
+				320C2187151B47C200BD0F41 /* EventBroker.cpp in Sources */,
+				320C218C151B556E00BD0F41 /* EventReceiver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

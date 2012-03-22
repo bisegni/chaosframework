@@ -187,7 +187,8 @@ if has_option( "all" ) or has_option( "common" ) or  has_option( "ui" ) or  has_
     sourceFiles += Glob( "chaos/common/message/*.cpp" )
     sourceFiles += Glob( "chaos/common/io/*.cpp" )
     sourceFiles += Glob( "chaos/common/exception/*.cpp" )
-
+    sourceFiles += Glob( "chaos/common/event/*.cpp" )
+    
     if has_option( "static" ):
         commonlibName = str( env.StaticLibrary(commonlibName, sourceFiles)[0] )
     else:
@@ -195,7 +196,7 @@ if has_option( "all" ) or has_option( "common" ) or  has_option( "ui" ) or  has_
     print "Lib file created: " + commonlibName
     
     #headers
-    for id in [ "chaos/common/", "chaos/common/bson/", "chaos/common/bson/util/", "chaos/common/bson/lib/", "chaos/common/configuration/", "chaos/common/pool/", "chaos/common/data/" , "chaos/common/thread/" , "chaos/common/utility/" , "chaos/common/general/" , "chaos/common/pqueue/" , "chaos/common/rpc/", "chaos/common/rpcnet/", "chaos/common/dispatcher/" , "chaos/common/action/" ,"chaos/common/message/", "chaos/common/io/" , "chaos/common/exception/"]:
+    for id in [ "chaos/common/", "chaos/common/bson/", "chaos/common/bson/util/", "chaos/common/bson/lib/", "chaos/common/configuration/", "chaos/common/pool/", "chaos/common/data/" , "chaos/common/thread/" , "chaos/common/utility/" , "chaos/common/general/" , "chaos/common/pqueue/" , "chaos/common/rpc/", "chaos/common/rpcnet/", "chaos/common/dispatcher/" , "chaos/common/action/" ,"chaos/common/message/", "chaos/common/io/" , "chaos/common/exception/", "chaos/common/event/"]:
         for hFile in Glob( id + "*.h" ):
             installHeaderPath = installDir + "/" + "include" + "/" + id
             if has_option( "install" ) :
