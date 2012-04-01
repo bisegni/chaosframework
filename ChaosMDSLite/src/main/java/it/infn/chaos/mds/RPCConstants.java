@@ -22,7 +22,7 @@ public class RPCConstants {
 	public static final String	CS_CMDM_MESSAGE_ID						= "cs|cmdm|act_msg_id";
 
 	// key action submission result
-	public static final String	CS_CMDM_ACTION_SUBMISSION_RESULT		= "cs|cmdm|act_sub_result";
+	//public static final String	CS_CMDM_ACTION_SUBMISSION_RESULT		= "cs|cmdm|act_sub_result";
 
 	// key action submission error message
 	public static final String	CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE	= "cs|cmdm|act_sub_emsg";

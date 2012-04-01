@@ -90,6 +90,16 @@ namespace chaos {
          Set the delay between a schedule and the next
          */
         int setScheduleDelay(uint32_t scheduledDealy, uint32_t millisecToWait = 0);
+        
+        /*! 
+         \brief send a message to a custom action
+         */
+        void sendCustomMessage(const char * const, CDataWrapper* const);
+        
+        /*! 
+         \brief send a request to a custom action
+         */
+        int sendCustomRequest(const char * const, CDataWrapper* const, CDataWrapper**const,uint32_t millisecToWait = 0);
     };
 }
 #endif

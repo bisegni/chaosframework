@@ -152,8 +152,10 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
             
             if(needAnswer){
                     //we need an answer so add the submition result
-                if(actionResult.get()) remoteActionResult->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, *actionResult.get());
-                    //put the submissione result error to 0(all i sgone well)
+                    //if(actionResult.get()) remoteActionResult->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, *actionResult.get());
+                    //put the submissione result error to 0(all is gone well)
+                if(actionResult.get()) remoteActionResult->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *actionResult.get());
+
                 remoteActionResult->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
             }
         } catch (CException& ex) {

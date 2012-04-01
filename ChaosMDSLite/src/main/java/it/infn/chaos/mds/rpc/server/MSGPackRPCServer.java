@@ -75,13 +75,13 @@ public class MSGPackRPCServer extends RPCServer {
 		try {
 			actionHandler = getHandlerForDomainAndAction(domain, action);
 			if (actionHandler == null) {
-				request.sendResult(getResponseRawType(1, "No action handler", "MSGPackRPCServer", 0));
+				request.sendResult(getResponseRawType("No action handler", "MSGPackRPCServer", 1));
 				return;
 			}
 			handlerExecution.submitAction(actionHandler, bsonData);
-			request.sendResult(getResponseRawType(0, null, null, 0));
+			request.sendResult(getResponseRawType(null, null, 0));
 		} catch (RefException e) {
-			request.sendResult(getResponseRawType(1, e.getExceptionDomain(), e.getMessage(), e.getExceptionCode()));
+			request.sendResult(getResponseRawType(e.getExceptionDomain(), e.getMessage(), e.getExceptionCode()));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -94,11 +94,11 @@ public class MSGPackRPCServer extends RPCServer {
 	 * @param errCode
 	 * @return
 	 */
-	private RawType getResponseRawType(int submissionResult, String errorDomain, String errorMsg, int errCode) {
+	private RawType getResponseRawType(String errorDomain, String errorMsg, int errCode) {
 		BasicBSONObject bbObj = new BasicBSONObject();
 		BasicBSONEncoder enc = new BasicBSONEncoder();
 
-		bbObj.append(RPCConstants.CS_CMDM_ACTION_SUBMISSION_RESULT, submissionResult);
+		//bbObj.append(RPCConstants.CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, submissionResult);
 		// fill bson with error
 		RPCUtils.addRefExceptionElementToBson(bbObj, errorDomain, errorMsg, errCode);
 		return RawType.create(enc.encode(bbObj));

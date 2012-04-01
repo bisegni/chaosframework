@@ -94,8 +94,8 @@ int DeviceMessageChannel::getState(CUStateKey::ControlUnitState& deviceState, ui
     auto_ptr<CDataWrapper> stateResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::ACTION_DEVICE_GET_STATE, &stopDeviceData, millisecToWait));
     if(stateResult.get() && stateResult->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)){
         err = stateResult->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);
-        if(err == 0 && stateResult->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT)) {
-            auto_ptr<CDataWrapper> statePack(stateResult->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT));
+        if(err == 0 /*&& stateResult->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT)*/) {
+            auto_ptr<CDataWrapper> statePack(stateResult->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
             if(statePack.get() && statePack->hasKey(CUStateKey::CONTROL_UNIT_STATE)){
                 deviceState = (CUStateKey::ControlUnitState)statePack->getInt32Value(CUStateKey::CONTROL_UNIT_STATE);
             }
@@ -132,4 +132,26 @@ int DeviceMessageChannel::setScheduleDelay(uint32_t scheduledDealy, uint32_t mil
     }
     return err;
 
+}
+
+/*! 
+ \brief send a message to a custom action
+ */
+void DeviceMessageChannel::sendCustomMessage(const char * const actAlias, CDataWrapper* const requestData) {
+    MessageChannel::sendMessage(deviceNetworkAddress->nodeID.c_str(), actAlias, requestData);
+}
+
+/*! 
+ \brief send a request to a custom action
+ */
+int DeviceMessageChannel::sendCustomRequest(const char * const actAlias, CDataWrapper* const requestData, CDataWrapper**const resultData, uint32_t millisecToWait) {
+    int err = -1;
+    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), actAlias, requestData, millisecToWait));
+    if(initResult.get() && initResult->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)){
+        err = initResult->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);
+        if(resultData) {
+            *resultData = initResult->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE);
+        }
+    }
+    return err;
 }

@@ -66,8 +66,13 @@ int main (int argc, char* argv[] )
             //! [UIToolkit ChannelCreation]
         MDSMessageChannel *mdsChannel = LLRpcApi::getInstance()->getNewMetadataServerChannel();
             //! [UIToolkit ChannelCreation]
-        
-        
+        string devID("SIN_DEVICE");
+        auto_ptr<CDeviceNetworkAddress> deviceAddress(mdsChannel->getNetworkAddressForDevice(devID, 2000));
+        DeviceMessageChannel *dmc = LLRpcApi::getInstance()->getNewDeviceMessageChannel(deviceAddress.get());
+        CDataWrapper *result = NULL;
+        if(!dmc->sendCustomRequest("actionTestOne", NULL, &result, 200000) && result){
+            std::cout << result->getJSONString() << std::endl;
+        }
             //! [Datapack sent]
         vector<string> allActiveDeviceID;
         CDeviceNetworkAddress deviceNetworkAddress;
@@ -97,12 +102,11 @@ int main (int argc, char* argv[] )
                 string key = "sinOutput";
                 controller->addAttributeToTrack(key);
                 DataBuffer *intValue1Buff = controller->getBufferForAttribute(key);
-                controller->startTracking();
-                double_t *bPtr = reinterpret_pointer_cast<double_t>(intValue1Buff->getBasePointer());
+                double_t *bPtr = static_cast<double_t*>(intValue1Buff->getBasePointer());
                 
                 for (int idx = 0; idx < 30; idx++) {
                     controller->fetchCurrentDeviceValue();
-                    double_t *wPtr = reinterpret_pointer_cast<double_t>(intValue1Buff->getWritePointer());
+                    double_t *wPtr = static_cast<double_t*>(intValue1Buff->getWritePointer());
 
                     std::cout << intValue1Buff->getWriteBufferPosition()<< std::endl;
                     
