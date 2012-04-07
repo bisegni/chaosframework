@@ -69,41 +69,41 @@ void ControlManager::init() throw(CException) {
     selfThreadPtr->setDelayBeetwenTask(0);
     if(!selfThreadPtr) throw CException(0, "Control Manager Thread allocation failure", "ControlManager::init");
     
-        //control manager action initialization
+    //control manager action initialization
     LAPP_  << "Control Manager system action initialization";
     
-        //init CU action
+    //init CU action
     AbstActionDescShrPtr 
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this, 
                                                                                    &ControlManager::loadControlUnit, 
                                                                                    ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN, 
                                                                                    "loadControlUnit", 
                                                                                    "Control Unit load system action");
-        //add parameter for control unit name
+    //add parameter for control unit name
     actionDescription->addParam(INIT_DEINIT_ACTION_CU_PARAM_NAME,
     							DataType::TYPE_STRING,
     							INIT_DEINIT_ACTION_CU_PARAM_DESCRIPTION);
     
-        //deinit CU action
+    //deinit CU action
     
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this, 
                                                                                    &ControlManager::unloadControlUnit, 
                                                                                    ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN, 
                                                                                    "unloadControlUnit", 
                                                                                    "Control Unit unload system action");
-        //add parameter for control unit name
+    //add parameter for control unit name
     actionDescription->addParam(INIT_DEINIT_ACTION_CU_PARAM_NAME,
     							DataType::TYPE_STRING,
     							INIT_DEINIT_ACTION_CU_PARAM_DESCRIPTION);
-
+    
     
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this, 
                                                                                    &ControlManager::updateConfiguration, 
                                                                                    "commandManager", 
                                                                                    "updateConfiguration", 
                                                                                    "Update Command Manager Configuration");
-  
-        //register command manager action
+    
+    //register command manager action
     CommandManager::getInstance()->registerAction(this);
     
     LAPP_ << "Get the Metadataserver channel";
@@ -129,9 +129,10 @@ void ControlManager::start() throw(CException) {
  Deinitialize the CU Instantiator
  */
 void ControlManager::deinit() throw(CException) {
+    bool detachFake = false;
     LAPP_  << "Deinit the Control Manager";
     LAPP_  << "Control Manager system action deinitialization";
-        //deregistering the action
+    //deregistering the action
     CommandManager::getInstance()->deregisterAction(this);
     LAPP_  << "Control Manager system action deinitialized";
     
@@ -147,12 +148,28 @@ void ControlManager::deinit() throw(CException) {
     map<string, shared_ptr<AbstractControlUnit> >::iterator cuIter = controlUnitInstanceMap.begin();
     for ( ; cuIter != controlUnitInstanceMap.end(); cuIter++ ){
         shared_ptr<AbstractControlUnit> cu = (*cuIter).second;
-        LAPP_  << "Deinit Control Unit Sanbox:" << cu->getCUInstance();
+        try{
+            cu->_stop(NULL, detachFake);
+        }catch (CException& ex) {
+            if(ex.errorCode != 1){
+                //these exception need to be logged
+                DECODE_CHAOS_EXCEPTION(ex);
+            }
+        }
+        
+        try{
+            cu->_deinit(NULL, detachFake);
+        }catch (CException& ex) {
+            if(ex.errorCode != 1){
+                //these exception need to be logged
+                DECODE_CHAOS_EXCEPTION(ex);
+            }
+        }
         try{
             cu->_undefineActionAndDataset();
         }  catch (CException& ex) {
             if(ex.errorCode != 1){
-                    //these exception need to be logged
+                //these exception need to be logged
                 DECODE_CHAOS_EXCEPTION(ex);
             }
         }
@@ -177,7 +194,7 @@ void ControlManager::submitControlUnit(AbstractControlUnit *data) throw(CExcepti
  Thread method that work on buffer item
  */
 void ControlManager::executeOnThread(const string& threadIdentification) throw(CException) {
-        //initialize the Control Unit
+    //initialize the Control Unit
     AbstractControlUnit *curCU = 0L;
     CDataWrapper cuActionAndDataset;
     
@@ -193,25 +210,25 @@ void ControlManager::executeOnThread(const string& threadIdentification) throw(C
         LAPP_  << "Setup Control Unit Sanbox for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
         cuPtr->_defineActionAndDataset(cuActionAndDataset);
         LAPP_  << "Setup finished for Control Unit Sanbox:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
-            //sendConfPackToMDS(cuPtr->defaultInternalConf.get());
+        //sendConfPackToMDS(cuPtr->defaultInternalConf.get());
         sendConfPackToMDS(cuActionAndDataset);
         LAPP_  << "Talk with MDS for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
-                
+        
         LAPP_  << "Configuration pack has been sent to MDS for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
-            //the sandbox name now is the real CUName_CUInstance before the initSandbox method call the CUInstance is
-            //randomlly defined but if a CU want to ovveride it it can dureing initSandbox call
+        //the sandbox name now is the real CUName_CUInstance before the initSandbox method call the CUInstance is
+        //randomlly defined but if a CU want to ovveride it it can dureing initSandbox call
         if(controlUnitInstanceMap.count(cuPtr->getCUInstance())) {
             LERR_  << "Duplicated control unit instance " << cuPtr->getCUInstance();
             return;
         }
         LAPP_  << "Control Unit Sanbox:" << cuPtr->getCUInstance() << " ready to work";
-            //add sandbox to all map of running cu
+        //add sandbox to all map of running cu
         controlUnitInstanceMap.insert(make_pair(cuPtr->getCUInstance(), cuPtr));
         
-            //check if we need to autostart and init the CU
+        //check if we need to autostart and init the CU
         if(cuActionAndDataset.hasKey(CUDefinitionKey::CS_CM_CU_AUTOSTART) &&
            cuActionAndDataset.getInt32Value(CUDefinitionKey::CS_CM_CU_AUTOSTART)){
-                //cuPtr->initSandbox(cuPtr->defaultInternalConf.get());
+            //cuPtr->initSandbox(cuPtr->defaultInternalConf.get());
             auto_ptr<SerializationBuffer> serBuffForGlobalConf(GlobalConfiguration::getInstance()->getConfiguration()->getBSONData());
             auto_ptr<CDataWrapper> masterConfiguration(new CDataWrapper(serBuffForGlobalConf->getBufferPtr()));
             masterConfiguration->appendAllElement(cuActionAndDataset);
@@ -223,7 +240,7 @@ void ControlManager::executeOnThread(const string& threadIdentification) throw(C
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
     } 
-        //no
+    //no
     
 }
 
@@ -231,19 +248,19 @@ void ControlManager::executeOnThread(const string& threadIdentification) throw(C
  
  */
 void ControlManager::sendConfPackToMDS(CDataWrapper& dataToSend) {
-        // dataToSend can't be sent because it is porperty of the CU
-        //so we need to copy it
-
+    // dataToSend can't be sent because it is porperty of the CU
+    //so we need to copy it
+    
     auto_ptr<SerializationBuffer> serBuf(dataToSend.getBSONData());
     CDataWrapper *mdsPack = new CDataWrapper(serBuf->getBufferPtr());
-        //add action for metadata server
-        //add local ip and port
+    //add action for metadata server
+    //add local ip and port
     
     mdsPack->addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS, GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort().c_str());
     
     mdsChannel->sendControlUnitDescription(mdsPack);
     
-        //CommandManager::getInstance()->sendMessageToMetadataServer(mdsPack);
+    //CommandManager::getInstance()->sendMessageToMetadataServer(mdsPack);
 }
 
 /*
@@ -251,15 +268,15 @@ void ControlManager::sendConfPackToMDS(CDataWrapper& dataToSend) {
  */
 AbstractControlUnit* ControlManager::waitAndPop() {
     AbstractControlUnit* data = 0L;
-        //boost::mutex::scoped_lock lock(qMutex);
+    //boost::mutex::scoped_lock lock(qMutex);
     boost::unique_lock<boost::mutex> lock(qMutex);
     while(submittedCUQueue.empty() && !selfThreadPtr->isStopped()) {
         lockCondition.wait(lock);
     }
     if(submittedCUQueue.empty()) return 0L;
-        //get the oldest data ad copy the ahsred_ptr
+    //get the oldest data ad copy the ahsred_ptr
     data = submittedCUQueue.front();
-        //remove the oldest data
+    //remove the oldest data
     submittedCUQueue.pop();
     
     return data;
