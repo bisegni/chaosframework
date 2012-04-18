@@ -126,9 +126,9 @@ namespace chaos {
         
 #if __linux__ && !defined(__x86_64__)
         void addDoubleValue(const char *key, double dValue);
-#endif
+#else
         void addDoubleValue(const char *key, double_t dValue);
-        
+#endif   
             //add a integer value
         void addInt64Value(const char *, int64_t);
         

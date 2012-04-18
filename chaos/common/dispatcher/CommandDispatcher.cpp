@@ -72,7 +72,7 @@ void CommandDispatcher::removeDomainActionsFromName(string& domainName) {
 /*
  Register actions defined by AbstractActionDescriptor instance contained in the array
  */
-void CommandDispatcher::registerAction(DeclareAction* declareActionClass) {
+void CommandDispatcher::registerAction(DeclareAction* declareActionClass)  throw(CException) {
     if(!declareActionClass) return;
     
     vector<AbstActionDescShrPtr>::iterator actDescIter = declareActionClass->getActionDescriptors().begin();
@@ -96,7 +96,7 @@ void CommandDispatcher::registerAction(DeclareAction* declareActionClass) {
 /*
  Deregister actions for a determianted domain
  */
-void CommandDispatcher::deregisterAction(DeclareAction* declareActionClass) {
+void CommandDispatcher::deregisterAction(DeclareAction* declareActionClass)  throw(CException) {
     if(!declareActionClass) return;
     
     vector<AbstActionDescShrPtr>::iterator actDescIter = declareActionClass->getActionDescriptors().begin();
@@ -120,7 +120,7 @@ void CommandDispatcher::deregisterAction(DeclareAction* declareActionClass) {
 /*
  Send a message
  */
-bool CommandDispatcher::sendMessage(CDataWrapper* messageToSend, string& serverAndPort,  bool onThisThread) {
+bool CommandDispatcher::sendMessage(CDataWrapper* messageToSend, string& serverAndPort,  bool onThisThread)  throw(CException) {
     CHAOS_ASSERT(messageToSend && rpcClientPtr)
     if(!messageToSend && serverAndPort.size()) return false;
     
@@ -132,7 +132,7 @@ bool CommandDispatcher::sendMessage(CDataWrapper* messageToSend, string& serverA
 /*
  Submit the action answer to rpc system
  */
-bool  CommandDispatcher::sendActionResult(CDataWrapper *actionResult, bool onThisThread) {
+bool  CommandDispatcher::sendActionResult(CDataWrapper *actionResult, bool onThisThread)  throw(CException) {
     CHAOS_ASSERT(actionResult)
     return rpcClientPtr->submitMessage(actionResult, onThisThread);
 }
@@ -140,7 +140,7 @@ bool  CommandDispatcher::sendActionResult(CDataWrapper *actionResult, bool onThi
 /*
  Update the configuration for the dispatcher
  */
-CDataWrapper* CommandDispatcher::updateConfiguration(CDataWrapper*) {
+CDataWrapper* CommandDispatcher::updateConfiguration(CDataWrapper*)  throw(CException) {
     return NULL;
 }
 

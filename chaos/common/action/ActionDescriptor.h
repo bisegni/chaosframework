@@ -28,6 +28,7 @@
 #include <boost/thread/locks.hpp>
 #include <chaos/common/cconstants.h>
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/exception/CException.h>
 
 namespace chaos {
     using namespace std;
@@ -94,7 +95,7 @@ namespace chaos {
          \param detachParam the action can set this param to true, in this case the deallocation is demanded to the action
          \return the result of the action
          */
-        virtual CDataWrapper* call(CDataWrapper *actionParam, bool& detachParam) = 0;
+        virtual CDataWrapper* call(CDataWrapper *actionParam, bool& detachParam)  throw (CException) = 0;
         
         /*!
             set the string value for the determinated type
@@ -163,7 +164,7 @@ namespace chaos {
         /*!
             execute the action call
          */
-        CDataWrapper* call(CDataWrapper *actionParam, bool& detachParam) {
+        CDataWrapper* call(CDataWrapper *actionParam, bool& detachParam)  throw (CException) {
                 //call the action with param
             CHAOS_ASSERT(objectReference)
             return ((*objectReference).*actionPointer)(actionParam, detachParam);

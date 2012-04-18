@@ -69,7 +69,7 @@ void DefaultCommandDispatcher::deinit() throw(CException) {
 /*
  Register actions defined by AbstractActionDescriptor instance contained in the array
  */
-void DefaultCommandDispatcher::registerAction(DeclareAction *declareActionClass) {
+void DefaultCommandDispatcher::registerAction(DeclareAction *declareActionClass)  throw(CException)  {
     if(!declareActionClass) return;
     
         //register the action
@@ -109,7 +109,7 @@ void DefaultCommandDispatcher::registerAction(DeclareAction *declareActionClass)
 /*
  Deregister actions for a determianted domain
  */
-void DefaultCommandDispatcher::deregisterAction(DeclareAction *declareActionClass) {
+void DefaultCommandDispatcher::deregisterAction(DeclareAction *declareActionClass)  throw(CException) {
         //call superclass method
     CommandDispatcher::deregisterAction(declareActionClass);
 }

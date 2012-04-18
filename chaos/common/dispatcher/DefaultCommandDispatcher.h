@@ -48,12 +48,12 @@ namespace chaos{
         /*!
          Register actions defined by AbstractActionDescriptor instance contained in the array
          */
-        virtual void registerAction(DeclareAction*);
+        virtual void registerAction(DeclareAction*)  throw(CException) ;
         
         /*!
          Deregister actions for a determianted domain
          */
-        virtual void deregisterAction(DeclareAction*);
+        virtual void deregisterAction(DeclareAction*)  throw(CException) ;
         
         /*!
          This method sub the pack received by RPC system to the execution queue accordint to the pack domain

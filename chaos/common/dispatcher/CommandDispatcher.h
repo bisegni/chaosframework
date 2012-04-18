@@ -23,7 +23,7 @@
 
 #include <map>
 #include <string>
-#include <boost/thread.hpp>
+    //#include <boost/thread.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include <chaos/common/action/DeclareAction.h>
@@ -89,7 +89,7 @@ namespace chaos{
         /*
          update the dispatcher configuration
          */
-        virtual CDataWrapper* updateConfiguration(CDataWrapper*);
+        virtual CDataWrapper* updateConfiguration(CDataWrapper*)  throw(CException) ;
         
         //! Send a message via RPC with the associated client
         /*!
@@ -100,7 +100,7 @@ namespace chaos{
             deallocation is managed by rpc client, otherwise("true" value) the caller need to delete the object it self
             \return boolean value to informa is the mesage has been submitted
          */
-        bool sendMessage(CDataWrapper* messageToSend, string& serverAndPort,  bool onThisThread = false);
+        bool sendMessage(CDataWrapper* messageToSend, string& serverAndPort,  bool onThisThread = false)  throw(CException);
         
         //! Send a message via RPC with the associated client
         /*!
@@ -118,14 +118,14 @@ namespace chaos{
          deallocation is managed by rpc client, otherwise("true" value) the caller need to delete the object it self
          \return boolean value to informa is the mesage has been submitted
          */
-        bool  sendActionResult(CDataWrapper*, bool onThisThread=false);
+        bool  sendActionResult(CDataWrapper*, bool onThisThread=false) throw(CException);
         
         //! dispatch the command accordin to protocol
         /*!
             Pure virtual function that need to be implemented by subclass for manage the priority or other thing befor
             the sending the message to the appropriate action
          */
-        virtual CDataWrapper* dispatchCommand(CDataWrapper*)=0;
+        virtual CDataWrapper* dispatchCommand(CDataWrapper*) throw(CException) =0;
         
         //! Action registration
         /*
@@ -133,7 +133,7 @@ namespace chaos{
          overrided by subclass for make some thing befor or after the registration
          \param declareActionClass The object that expose the domain and action name
          */
-        virtual void registerAction(DeclareAction *declareActionClass);
+        virtual void registerAction(DeclareAction *declareActionClass)  throw(CException) ;
         
         //! Action deregistration
         /*
@@ -141,7 +141,7 @@ namespace chaos{
          overrided by subclass for make some thing befor or after the registration
          \param declareActionClass The object that expose the domain and action name
          */
-        virtual void deregisterAction(DeclareAction *declareActionClass);
+        virtual void deregisterAction(DeclareAction *declareActionClass)  throw(CException) ;
         
         /*!
          Ghet the name of tge dispatcher

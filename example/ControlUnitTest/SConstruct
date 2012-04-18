@@ -77,19 +77,12 @@ sourceTarget = 'ControlUnitTest'
 sourceFiles = Glob( "*.cpp" )
 
 #make sure the sconscripts can get to the variables
-add_option( "64" , "whether to force 64 bit" , 0 , True , "force64" )
 add_option( "32" , "whether to force 32 bit" , 0 , True , "force32" )
 force32 = has_option( "force32" )
-force64 = has_option( "force64" )
 
-if not force64 and not force32:
-    force64 = True
-    print( "*** assuming you want a 64-bit*** " )
-msarch = None
+
 if force32:
     msarch = "x86"
-elif force64:
-    msarch = "x86_64"
 
 env = Environment(      MSVS_ARCH=msarch ,
                         TARGET_ARCH=msarch
@@ -98,15 +91,6 @@ Export('env', 'buildMode', 'debugcflags', 'releasecflags')
 
 if force32:
     processor = "i386"
-if force64:
-    processor = "x86_64"
-
-env['PROCESSOR_ARCHITECTURE'] = processor
-
-if force64:
-        env.Append( CFLAGS="-m64" )
-        env.Append( CXXFLAGS="-m64" )
-        env.Append( LINKFLAGS="-m64" )
 
 if force32:
         env.Append( CFLAGS="-m32 -march=i686" )

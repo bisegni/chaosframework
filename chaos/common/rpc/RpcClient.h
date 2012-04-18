@@ -77,12 +77,12 @@ namespace chaos {
          the key CS_CMDM_REMOTE_HOST_IP, the second bool parameter specify, if this is 
          false, the message is sent in another queue thread 
          */
-        virtual bool submitMessage(CDataWrapper*, bool) = 0;
+        virtual bool submitMessage(CDataWrapper*, bool)  throw(CException) = 0;
         
         /*!
          Submite a message specifieng the address
          */
-        bool submitMessage(string& destinationIpAndPort, CDataWrapper *message, bool onThisThread=false) {
+        bool submitMessage(string& destinationIpAndPort, CDataWrapper *message, bool onThisThread=false) throw(CException) {
                 //check in debug for pointer
             CHAOS_ASSERT(message)
                 // add the address to the message
@@ -90,19 +90,6 @@ namespace chaos {
                 //submite the message
             return submitMessage(message,onThisThread);
         }
-        
-        /*!
-         Submite a message specifieng the address
-        
-        bool submitMessageToMetadataServer(CDataWrapper *message, bool onThisThread=false) {
-            if(!canUseMetadataServer) return false;
-                //check in debug for pointer
-            CHAOS_ASSERT(message)
-                // add the address to the message
-            message->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, metadataServerAddress);
-                //submite the message
-            return submitMessage(message,onThisThread);
-        } */
         
         /*!
          Return the adapter alias

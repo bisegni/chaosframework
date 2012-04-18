@@ -67,14 +67,9 @@
 		326DB46014B38BC00018A8D0 /* CMPtrFSMState.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3EC14B38BC00018A8D0 /* CMPtrFSMState.h */; };
 		326DB46114B38BC00018A8D0 /* DynamicHierarchicalFSM.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3ED14B38BC00018A8D0 /* DynamicHierarchicalFSM.h */; };
 		326DB46214B38BC00018A8D0 /* FSMState.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3EE14B38BC00018A8D0 /* FSMState.h */; };
-		326DB46314B38BC00018A8D0 /* AttributeEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3F014B38BC00018A8D0 /* AttributeEventHandler.h */; };
-		326DB46414B38BC00018A8D0 /* AttributeEventHandlerQueueRunner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB3F114B38BC00018A8D0 /* AttributeEventHandlerQueueRunner.cpp */; };
-		326DB46514B38BC00018A8D0 /* AttributeEventHandlerQueueRunner.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3F214B38BC00018A8D0 /* AttributeEventHandlerQueueRunner.h */; };
 		326DB46614B38BC00018A8D0 /* ChaosDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3F314B38BC00018A8D0 /* ChaosDispatcher.h */; };
 		326DB46714B38BC00018A8D0 /* CommandDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB3F414B38BC00018A8D0 /* CommandDispatcher.cpp */; };
 		326DB46814B38BC00018A8D0 /* CommandDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3F514B38BC00018A8D0 /* CommandDispatcher.h */; };
-		326DB46914B38BC00018A8D0 /* DatasetAttributeEventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB3F614B38BC00018A8D0 /* DatasetAttributeEventDispatcher.cpp */; };
-		326DB46A14B38BC00018A8D0 /* DatasetAttributeEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3F714B38BC00018A8D0 /* DatasetAttributeEventDispatcher.h */; };
 		326DB46B14B38BC00018A8D0 /* DefaultCommandDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB3F814B38BC00018A8D0 /* DefaultCommandDispatcher.cpp */; };
 		326DB46C14B38BC00018A8D0 /* DefaultCommandDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3F914B38BC00018A8D0 /* DefaultCommandDispatcher.h */; };
 		326DB46D14B38BC00018A8D0 /* DomainActionsScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB3FA14B38BC00018A8D0 /* DomainActionsScheduler.cpp */; };
@@ -231,14 +226,9 @@
 		326DB3EC14B38BC00018A8D0 /* CMPtrFSMState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMPtrFSMState.h; sourceTree = "<group>"; };
 		326DB3ED14B38BC00018A8D0 /* DynamicHierarchicalFSM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicHierarchicalFSM.h; sourceTree = "<group>"; };
 		326DB3EE14B38BC00018A8D0 /* FSMState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = FSMState.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB3F014B38BC00018A8D0 /* AttributeEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeEventHandler.h; sourceTree = "<group>"; };
-		326DB3F114B38BC00018A8D0 /* AttributeEventHandlerQueueRunner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AttributeEventHandlerQueueRunner.cpp; sourceTree = "<group>"; };
-		326DB3F214B38BC00018A8D0 /* AttributeEventHandlerQueueRunner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeEventHandlerQueueRunner.h; sourceTree = "<group>"; };
 		326DB3F314B38BC00018A8D0 /* ChaosDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ChaosDispatcher.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB3F414B38BC00018A8D0 /* CommandDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = CommandDispatcher.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB3F514B38BC00018A8D0 /* CommandDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CommandDispatcher.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB3F614B38BC00018A8D0 /* DatasetAttributeEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatasetAttributeEventDispatcher.cpp; sourceTree = "<group>"; };
-		326DB3F714B38BC00018A8D0 /* DatasetAttributeEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetAttributeEventDispatcher.h; sourceTree = "<group>"; };
 		326DB3F814B38BC00018A8D0 /* DefaultCommandDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = DefaultCommandDispatcher.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB3F914B38BC00018A8D0 /* DefaultCommandDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DefaultCommandDispatcher.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB3FA14B38BC00018A8D0 /* DomainActionsScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = DomainActionsScheduler.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -539,13 +529,8 @@
 			isa = PBXGroup;
 			children = (
 				326DB3F314B38BC00018A8D0 /* ChaosDispatcher.h */,
-				326DB3F014B38BC00018A8D0 /* AttributeEventHandler.h */,
-				326DB3F114B38BC00018A8D0 /* AttributeEventHandlerQueueRunner.cpp */,
-				326DB3F214B38BC00018A8D0 /* AttributeEventHandlerQueueRunner.h */,
 				326DB3F414B38BC00018A8D0 /* CommandDispatcher.cpp */,
 				326DB3F514B38BC00018A8D0 /* CommandDispatcher.h */,
-				326DB3F614B38BC00018A8D0 /* DatasetAttributeEventDispatcher.cpp */,
-				326DB3F714B38BC00018A8D0 /* DatasetAttributeEventDispatcher.h */,
 				326DB3F814B38BC00018A8D0 /* DefaultCommandDispatcher.cpp */,
 				326DB3F914B38BC00018A8D0 /* DefaultCommandDispatcher.h */,
 				326DB3FA14B38BC00018A8D0 /* DomainActionsScheduler.cpp */,
@@ -829,11 +814,8 @@
 				326DB46014B38BC00018A8D0 /* CMPtrFSMState.h in Headers */,
 				326DB46114B38BC00018A8D0 /* DynamicHierarchicalFSM.h in Headers */,
 				326DB46214B38BC00018A8D0 /* FSMState.h in Headers */,
-				326DB46314B38BC00018A8D0 /* AttributeEventHandler.h in Headers */,
-				326DB46514B38BC00018A8D0 /* AttributeEventHandlerQueueRunner.h in Headers */,
 				326DB46614B38BC00018A8D0 /* ChaosDispatcher.h in Headers */,
 				326DB46814B38BC00018A8D0 /* CommandDispatcher.h in Headers */,
-				326DB46A14B38BC00018A8D0 /* DatasetAttributeEventDispatcher.h in Headers */,
 				326DB46C14B38BC00018A8D0 /* DefaultCommandDispatcher.h in Headers */,
 				326DB46E14B38BC00018A8D0 /* DomainActionsScheduler.h in Headers */,
 				326DB46F14B38BC00018A8D0 /* CException.h in Headers */,
@@ -1036,9 +1018,7 @@
 				326DB45A14B38BC00018A8D0 /* GlobalConfiguration.cpp in Sources */,
 				326DB45C14B38BC00018A8D0 /* CDataWrapper.cpp in Sources */,
 				326DB45E14B38BC00018A8D0 /* CUSchemaDB.cpp in Sources */,
-				326DB46414B38BC00018A8D0 /* AttributeEventHandlerQueueRunner.cpp in Sources */,
 				326DB46714B38BC00018A8D0 /* CommandDispatcher.cpp in Sources */,
-				326DB46914B38BC00018A8D0 /* DatasetAttributeEventDispatcher.cpp in Sources */,
 				326DB46B14B38BC00018A8D0 /* DefaultCommandDispatcher.cpp in Sources */,
 				326DB46D14B38BC00018A8D0 /* DomainActionsScheduler.cpp in Sources */,
 				326DB47414B38BC00018A8D0 /* IOMemcachedDriver.cpp in Sources */,
