@@ -174,7 +174,9 @@ namespace chaos {
                 //!C string variable length
                 TYPE_STRING,
                 //!byte array variable length
-                TYPE_BYTEARRAY
+                TYPE_BYTEARRAY,
+                //!struct type
+                TYPE_STRUCT
             } DataType;
         
         //!define the direction of dataset element
@@ -184,6 +186,23 @@ namespace chaos {
 			Bidirectional=2,
         } DataSetAttributeIOAttribute;
     } 
+    
+    /** @} */ // end of DatasetDefinitionkey
+    
+    /** @defgroup ChaosErrorCode Chaos Error Code
+     *  This is the collection of the definition of the chaos error code
+     *  @{
+     */
+    //! Name space for grupping the definition of the chaos error code
+    namespace ErrorCode {
+        //!typede for datatype
+        typedef enum {
+            //!Integer 32 bit length
+            EC_NO_ERROR = 0,
+            EC_TIMEOUT = 1
+        } ErrorCode;
+    } 
+    
     /** @} */ // end of ChaosDataType
     
     /** @defgroup RpcActionDefinitionKey Action Rpc Sharing Definition key

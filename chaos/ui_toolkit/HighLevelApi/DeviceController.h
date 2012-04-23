@@ -44,6 +44,8 @@ namespace chaos {
          */
         class DeviceController {
             friend class HLDataApi;
+                //!time to waith for the answer to an request;
+            uint32_t millisecToWait;
                 //! represent the device id controlled by this instance
             string deviceID;
                 //! the haos address of device
@@ -64,8 +66,6 @@ namespace chaos {
                 
                 //mutext for multi threading track operation 
             boost::recursive_mutex trackMutext;
-            
-            uint32_t millisecToWaitOnOperation;
             
                 //!store the type of the attribute for fast retrieve
             std::map<string, DataType::DataSetAttributeIOAttribute> attributeDirectionMap;
@@ -116,8 +116,27 @@ namespace chaos {
              All can destruct an isntance of the device controller
              */
             ~DeviceController();
-            
+            //!Return the deviceID of the device
+            /*!
+                Return the deviceID that identify the device managed by this controller
+                \param dID the string that will be filled with the device id
+             */
             void getDeviceId(string& dId);
+            
+            //!Set the request wait time 
+            /*!
+             Set the controller globally wait time, used when a request is forwarded to an device. after that time
+             the method return with some information.
+             \param newMillisecToWait the time that the answer is waited
+             */
+            void setRequestTimeWaith(uint32_t newMillisecToWait);
+            
+            //!Return the controller globally wait time
+            /*!
+             Return the controller globally wait time
+             \return the wait time
+             */
+            uint32_t getRequestTimeWaith();
             
                 //! update the scudiling of device run method
             /*!

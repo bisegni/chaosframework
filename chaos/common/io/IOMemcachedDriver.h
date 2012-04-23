@@ -32,10 +32,8 @@ namespace chaos{
     using namespace boost;
     
     class IOMemcachedDriver : public IODataDriver {
-        boost::mutex useOutputChannelMutex;
-        boost::mutex useInputChannelMutex;
+        boost::mutex useMCMutex;
         memcached_st *memClient;
-        memcached_st *memClientRead;
     public:
         
         IOMemcachedDriver();

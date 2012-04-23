@@ -157,7 +157,7 @@ void GraphWidget::clearAllPlot() {
 }
 void GraphWidget::start()
 {
-    d_timerId = startTimer(40);
+    d_timerId = startTimer(100);
 }
 
 void GraphWidget::stop()

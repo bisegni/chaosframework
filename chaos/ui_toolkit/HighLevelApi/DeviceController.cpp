@@ -33,7 +33,8 @@ DeviceController::DeviceController(string& _deviceID):deviceID(_deviceID) {
     mdsChannel = NULL;
     deviceChannel = NULL;
     ioLiveDataDriver = NULL;
-    millisecToWaitOnOperation = MSEC_WAIT_OPERATION;
+    millisecToWait = MSEC_WAIT_OPERATION;
+    
 }
 
 DeviceController::~DeviceController() {
@@ -52,6 +53,14 @@ DeviceController::~DeviceController() {
     }
 }
 
+void DeviceController::setRequestTimeWaith(uint32_t newMillisecToWait){
+    millisecToWait = newMillisecToWait;
+}
+
+uint32_t DeviceController::getRequestTimeWaith(){
+    return millisecToWait;
+}
+
 void DeviceController::getDeviceId(string& dId) {
     dId.assign(deviceID);
 }
@@ -64,12 +73,12 @@ void DeviceController::updateChannel() throw(CException) {
         if(!mdsChannel) throw CException(-1, "No MDS Channel created", "DeviceController::init");
     }
     
-    lastDeviceDefinition.reset(mdsChannel->getLastDatasetForDevice(deviceID, millisecToWaitOnOperation));
+    lastDeviceDefinition.reset(mdsChannel->getLastDatasetForDevice(deviceID, millisecToWait));
     if(!lastDeviceDefinition.get()) throw CException(-2, "No device dataset received", "DeviceController::updateChannel");
         
     datasetDB.addAttributeToDataSetFromDataWrapper(*lastDeviceDefinition.get());
     
-    deviceAddress.reset(mdsChannel->getNetworkAddressForDevice(deviceID, millisecToWaitOnOperation));
+    deviceAddress.reset(mdsChannel->getNetworkAddressForDevice(deviceID, millisecToWait));
     if(!deviceAddress.get()) throw CException(-3, "No Address found for device", "DeviceController::init");
         
         //update live data driver
@@ -90,7 +99,7 @@ void DeviceController::updateChannel() throw(CException) {
 
 int DeviceController::setScheduleDelay(int32_t millisecDelay) {
     CHAOS_ASSERT(deviceChannel)
-    return deviceChannel->setScheduleDelay(millisecDelay);
+    return deviceChannel->setScheduleDelay(millisecDelay, millisecToWait);
 }
 
 
@@ -126,7 +135,7 @@ int DeviceController::initDevice() {
     if(!lastDeviceDefinition.get()) return -1;
     
         //initialize the devica with the metadataserver data
-    err = deviceChannel->initDevice(lastDeviceDefinition.get());
+    err = deviceChannel->initDevice(lastDeviceDefinition.get(), millisecToWait);
         //configure the live data with the same server where the device write
     return err;
 }
@@ -134,17 +143,17 @@ int DeviceController::initDevice() {
 
 int DeviceController::startDevice() {
     CHAOS_ASSERT(deviceChannel)
-    return deviceChannel->startDevice();    
+    return deviceChannel->startDevice(millisecToWait);    
 }
 
 int DeviceController::stopDevice() {
     CHAOS_ASSERT(deviceChannel)
-    return deviceChannel->stopDevice();  
+    return deviceChannel->stopDevice(millisecToWait);  
 }
 
 int DeviceController::deinitDevice() {
     CHAOS_ASSERT(deviceChannel)
-    return deviceChannel->deinitDevice(); 
+    return deviceChannel->deinitDevice(millisecToWait); 
 }
 
     //!Get device state
@@ -153,7 +162,7 @@ int DeviceController::deinitDevice() {
  */
 int DeviceController::getState(CUStateKey::ControlUnitState& deviceState) {
     CHAOS_ASSERT(deviceChannel)
-    return deviceChannel->getState(deviceState); 
+    return deviceChannel->getState(deviceState, millisecToWait); 
 }
 
 int DeviceController::setInt32AttributeValue(string& attributeName, int32_t attributeValue) {
@@ -161,7 +170,7 @@ int DeviceController::setInt32AttributeValue(string& attributeName, int32_t attr
     //attributeValuePack.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME, attributeName);
     //attributeValuePack.addInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_VALUE, attributeValue);
     attributeValuePack.addInt32Value(attributeName.c_str(), attributeValue);
-    return deviceChannel->setAttributeValue(attributeValuePack);
+    return deviceChannel->setAttributeValue(attributeValuePack, millisecToWait);
 }
 
 int DeviceController::setDoubleAttributeValue(string& attributeName, double_t attributeValue) {
@@ -169,7 +178,7 @@ int DeviceController::setDoubleAttributeValue(string& attributeName, double_t at
     //attributeValuePack.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME, attributeName);
     //attributeValuePack.addDoubleValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_VALUE, attributeValue);
     attributeValuePack.addDoubleValue(attributeName.c_str(), attributeValue);
-    return deviceChannel->setAttributeValue(attributeValuePack);
+    return deviceChannel->setAttributeValue(attributeValuePack, millisecToWait);
 }
 
 /*!
