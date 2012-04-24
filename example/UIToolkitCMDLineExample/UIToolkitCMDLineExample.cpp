@@ -59,13 +59,13 @@ int main (int argc, char* argv[] )
 {
     try {
         int err = 0;
-            //! [UIToolkit Init]
+        //! [UIToolkit Init]
         ChaosUIToolkit::getInstance()->init(argc, argv);
-            //! [UIToolkit Init]
+        //! [UIToolkit Init]
         
-            //! [UIToolkit ChannelCreation]
+        //! [UIToolkit ChannelCreation]
         MDSMessageChannel *mdsChannel = LLRpcApi::getInstance()->getNewMetadataServerChannel();
-            //! [UIToolkit ChannelCreation]
+        //! [UIToolkit ChannelCreation]
         string devID("SIN_DEVICE");
         auto_ptr<CDeviceNetworkAddress> deviceAddress(mdsChannel->getNetworkAddressForDevice(devID, 2000));
         DeviceMessageChannel *dmc = LLRpcApi::getInstance()->getNewDeviceMessageChannel(deviceAddress.get());
@@ -73,79 +73,103 @@ int main (int argc, char* argv[] )
         if(!dmc->sendCustomRequest("actionTestOne", NULL, &result, 200000) && result){
             std::cout << result->getJSONString() << std::endl;
         }
-            //! [Datapack sent]
+        //! [Datapack sent]
         vector<string> allActiveDeviceID;
         CDeviceNetworkAddress deviceNetworkAddress;
         CUStateKey::ControlUnitState deviceState;
         err = mdsChannel->getAllDeviceID(allActiveDeviceID, 2000);
-            //! [Datapack sent]
+        //! [Datapack sent]
         if(!err){
             for (vector<string>::iterator devIter = allActiveDeviceID.begin(); 
                  devIter != allActiveDeviceID.end(); 
                  devIter++) {
                 std::cout << "Device Identification: " << *devIter << std::endl;
+            }
+            auto_ptr<DeviceController> controller(HLDataApi::getInstance()->getControllerForDeviceID(devID));
+            
+            
+            vector<string> allOutAttrName;
+            controller->getDeviceDatasetAttributesName(allOutAttrName, chaos::DataType::Output);
+            std::cout << "Print all output attribute for the device to read:" << std::endl;
+            for (int idx = 0; idx < allOutAttrName.size(); idx++) {
+                std::cout << allOutAttrName[idx] << std::endl;
+            }
+            
+            controller->initDevice();
+            
+            
+            controller->setScheduleDelay(1000000);
+            controller->startDevice();
+            
+            //set the number of point for the sinwave
+            controller->setInt32AttributeValue("points", 10);
+            controller->setDoubleAttributeValue("gain", 2.0);
+            controller->setDoubleAttributeValue("freq", 2.0);
+            
+            controller->setupTracking();
+            string key = "sinOutput";
+            string key2 = "sinWave";
+            controller->addAttributeToTrack(key);
+            controller->addAttributeToTrack(key2);
+            
+            DataBuffer *intValue1Buff = controller->getBufferForAttribute(key);
+            PointerBuffer *binaryValueBuff = controller->getPtrBufferForAttribute(key2);
+            double_t *bPtr = static_cast<double_t*>(intValue1Buff->getBasePointer());
+            
+            for (int idx = 0; idx < 30; idx++) {
+                controller->fetchCurrentDeviceValue();
+                double_t *wPtr = static_cast<double_t*>(intValue1Buff->getWritePointer());
                 
-                auto_ptr<DeviceController> controller(HLDataApi::getInstance()->getControllerForDeviceID(*devIter));
-
+                std::cout << intValue1Buff->getWriteBufferPosition()<< std::endl;
                 
-                vector<string> allOutAttrName;
-                controller->getDeviceDatasetAttributesName(allOutAttrName, chaos::DataType::Output);
+                int64_t hisotryToRead = intValue1Buff->getDimension()-intValue1Buff->getWriteBufferPosition();
+                int64_t recentToRead = intValue1Buff->getWriteBufferPosition();
+                std::cout << "History to read:" << hisotryToRead << std::endl;
+                std::cout << "Recent to read:" << recentToRead << std::endl;
                 
-                controller->initDevice();
-
                 
-                controller->setScheduleDelay(1000000);
-                controller->startDevice();
-
-                
-                controller->setupTracking();
-                string key = "sinOutput";
-                controller->addAttributeToTrack(key);
-                DataBuffer *intValue1Buff = controller->getBufferForAttribute(key);
-                double_t *bPtr = static_cast<double_t*>(intValue1Buff->getBasePointer());
-                
-                for (int idx = 0; idx < 30; idx++) {
-                    controller->fetchCurrentDeviceValue();
-                    double_t *wPtr = static_cast<double_t*>(intValue1Buff->getWritePointer());
-
-                    std::cout << intValue1Buff->getWriteBufferPosition()<< std::endl;
-                    
-                    int64_t hisotryToRead = intValue1Buff->getDimension()-intValue1Buff->getWriteBufferPosition();
-                    int64_t recentToRead = intValue1Buff->getWriteBufferPosition();
-                    std::cout << "HIstory to read:" << hisotryToRead << std::endl;
-                    std::cout << "Recent to read:" << recentToRead << std::endl;
-                    
-
-                    for (int idx = 0; idx < hisotryToRead-1; idx++) {
-                        double_t *newbPtr=wPtr + idx;
+                for (int idx = 0; idx < hisotryToRead-1; idx++) {
+                    double_t *newbPtr=wPtr + idx;
+                    std::cout << *newbPtr;
+                }
+                if(bPtr != wPtr){
+                    for (int idx = 0; idx < recentToRead; idx++) {
+                        double_t *newbPtr=bPtr + idx;
                         std::cout << *newbPtr;
                     }
-                    if(bPtr != wPtr){
-                        for (int idx = 0; idx < recentToRead; idx++) {
-                            double_t *newbPtr=bPtr + idx;
-                            std::cout << *newbPtr;
-                        }
-                    }
-                    std::cout << std::endl;
-                    usleep(1000000);
                 }
+                std::cout << std::endl;
                 
-                controller->stopTracking();
-                
-                controller->stopDevice();
-                
-                controller->getState(deviceState);
-                std::cout << "state " << deviceState << std::endl;
-                
-                controller->deinitDevice();
-                
-                controller->getState(deviceState);
-                std::cout << "state " << deviceState << std::endl;
+                int32_t tipedBufLen = 0;
+                boost::shared_ptr<double_t> sinWavePtr = binaryValueBuff->getTypedPtr<double_t>(tipedBufLen);
+                if(sinWavePtr){
+                    std::cout << "Buffer received:" << std::endl;
+                    std::cout << "Buffer received len:" << tipedBufLen<< std::endl;
+                    for(int32_t idx = 0; idx < tipedBufLen; idx++){
+                        std::cout << sinWavePtr.get()[idx];
+                    }
+                    
+                    std::cout << std::endl;
+                }
+                usleep(1000000);
             }
+            
+            controller->stopTracking();
+            
+            controller->stopDevice();
+            
+            controller->getState(deviceState);
+            std::cout << "state " << deviceState << std::endl;
+            
+            controller->deinitDevice();
+            
+            controller->getState(deviceState);
+            std::cout << "state " << deviceState << std::endl;
+            
         }  
-            //! [UIToolkit Deinit]
+        //! [UIToolkit Deinit]
         ChaosUIToolkit::getInstance()->deinit();
-            //! [UIToolkit Deinit]
+        //! [UIToolkit Deinit]
     } catch (CException& e) {
         std::cerr<< e.errorDomain << std::endl;
         std::cerr<< e.errorMessage << std::endl;

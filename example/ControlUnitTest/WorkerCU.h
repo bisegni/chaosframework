@@ -23,13 +23,14 @@
 #include <string>
 #include <boost/random.hpp>
 #include <boost/chrono.hpp>
-
+#include <boost/thread.hpp>
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 
 using namespace std;
 using namespace chaos;
 using namespace boost;
 using namespace boost::posix_time;
+
 
 class WorkerCU : public AbstractControlUnit {
     typedef boost::mt19937 RNGType; 
@@ -44,6 +45,17 @@ class WorkerCU : public AbstractControlUnit {
     double_t sinCompConst;
     double_t curAltitude;
     double_t curPhasePeriod;
+    long double PI;
+    
+    int32_t points;
+    double_t *sinevalue;
+    double_t freq;
+    double_t gain;
+    double_t phase;
+    double_t bias;
+    double_t noise;
+    
+    boost::mutex pointChangeMutex;
 public:
     /*
      Construct a new CU with an identifier
@@ -57,6 +69,8 @@ public:
      Destructor a new CU with an identifier
      */
     ~WorkerCU();
+    
+    void computeWave(CDataWrapper *acquiredData);
 protected:
     /*
      Define the Control Unit Dataset and Actions

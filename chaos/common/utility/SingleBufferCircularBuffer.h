@@ -22,6 +22,8 @@
 #define CHAOSFramework_SingleBufferCircularBuffer_h
 
 #include <cstring>
+#include <boost/shared_ptr.hpp>
+#include <boost/thread.hpp>
 
 namespace chaos {
     
@@ -78,6 +80,45 @@ namespace chaos {
         
         void * const getWritePointer(){
             return writePointer;
+        }
+    };
+    
+    
+    class PointerBuffer {
+        boost::shared_ptr<char> ptr;
+        int32_t bufferDimension;
+        boost::mutex mux;
+    public:
+        PointerBuffer(){
+            bufferDimension = 0;
+        }
+        
+        ~PointerBuffer(){
+        }
+        
+        void updateData(const char * srcPtr, int32_t srcDataLen) {
+            boost::mutex::scoped_lock lock(mux);
+            if(srcPtr == NULL || srcDataLen <=0) return;
+            if(ptr){
+                if(bufferDimension!=srcDataLen){
+                    ptr.reset((char*)std::malloc(srcDataLen));
+                }
+            }else{
+                ptr.reset((char*)std::malloc(srcDataLen));
+            }
+            bufferDimension = srcDataLen;
+            std::memcpy(ptr.get(), srcPtr, srcDataLen);
+        }
+        
+        boost::shared_ptr<char> getPtr(int32_t& bufDim){
+            bufDim = bufferDimension;
+            return ptr;
+        }
+        
+        template<typename T>
+        boost::shared_ptr<T> const getTypedPtr(int32_t& bufDim){
+            bufDim = bufferDimension/sizeof(T);
+            return boost::static_pointer_cast<T>(boost::shared_ptr<void>(ptr));
         }
     };
 }

@@ -166,18 +166,23 @@ int DeviceController::getState(CUStateKey::ControlUnitState& deviceState) {
 }
 
 int DeviceController::setInt32AttributeValue(string& attributeName, int32_t attributeValue) {
+    return setInt32AttributeValue(attributeName.c_str(), attributeValue);
+}
+
+int DeviceController::setInt32AttributeValue(const char *attributeName, int32_t attributeValue) {
     CDataWrapper attributeValuePack;
-    //attributeValuePack.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME, attributeName);
-    //attributeValuePack.addInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_VALUE, attributeValue);
-    attributeValuePack.addInt32Value(attributeName.c_str(), attributeValue);
+    attributeValuePack.addInt32Value(attributeName, attributeValue);
     return deviceChannel->setAttributeValue(attributeValuePack, millisecToWait);
 }
 
 int DeviceController::setDoubleAttributeValue(string& attributeName, double_t attributeValue) {
     CDataWrapper attributeValuePack;
-    //attributeValuePack.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME, attributeName);
-    //attributeValuePack.addDoubleValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_VALUE, attributeValue);
-    attributeValuePack.addDoubleValue(attributeName.c_str(), attributeValue);
+    return setDoubleAttributeValue(attributeName.c_str(), attributeValue);
+}
+
+int DeviceController::setDoubleAttributeValue(const char *attributeName, double_t attributeValue) {
+    CDataWrapper attributeValuePack;
+    attributeValuePack.addDoubleValue(attributeName, attributeValue);
     return deviceChannel->setAttributeValue(attributeValuePack, millisecToWait);
 }
 
@@ -242,6 +247,11 @@ void DeviceController::allocateNewLiveBufferForAttributeAndType(string& attribut
                 doubleAttributeLiveBuffer.insert(make_pair(attributeName, newBuffer));
             }
                 break;
+            case DataType::TYPE_BYTEARRAY:{
+                chaos::PointerBuffer *newBuffer = new chaos::PointerBuffer();
+                pointerAttributeLiveBuffer.insert(make_pair(attributeName, newBuffer));
+            }
+                break;
         }
     } else if(attributeDirection == DataType::Input || 
               attributeDirection == DataType::Bidirectional ){
@@ -268,6 +278,20 @@ chaos::DataBuffer *DeviceController::getBufferForAttribute(string& attributeName
             
         case DataType::TYPE_DOUBLE:
             result = doubleAttributeLiveBuffer[attributeName];
+            break;
+    }
+    return result;
+}
+
+chaos::PointerBuffer *DeviceController::getPtrBufferForAttribute(string& attributeName) {
+    boost::recursive_mutex::scoped_lock lock(trackMutext);
+    chaos::PointerBuffer * result = NULL;
+    //allocate attribute traccking
+    if(attributeTypeMap.count(attributeName) == 0 || attributeDirectionMap.count(attributeName) == 0 ) return result;
+    
+    switch (attributeTypeMap[attributeName]) {
+        case DataType::TYPE_BYTEARRAY:
+            result = pointerAttributeLiveBuffer[attributeName];
             break;
     }
     return result;
@@ -353,11 +377,11 @@ void DeviceController::fetchCurrentDeviceValue() {
          iter != trackingAttribute.end(); 
          iter++) {
         const char *key = (*iter).c_str();
+        if(!tmpPtr->hasKey(key)) continue;
         
         switch (attributeTypeMap[*iter]) {
             case DataType::TYPE_INT32:
                 int32AttributeLiveBuffer[*iter]->addValue(tmpPtr->getInt32Value(key));
-            
             break;
                 
             case DataType::TYPE_INT64:
@@ -366,6 +390,12 @@ void DeviceController::fetchCurrentDeviceValue() {
                 
             case DataType::TYPE_DOUBLE:
                 doubleAttributeLiveBuffer[*iter]->addValue(tmpPtr->getDoubleValue(key));
+                break;
+                
+            case DataType::TYPE_BYTEARRAY:
+                int32_t ptrLen = 0;
+                const char * tmpPtrAttribute = tmpPtr->getBinaryValue(key, ptrLen);
+                pointerAttributeLiveBuffer[*iter]->updateData(tmpPtrAttribute, ptrLen);
                 break;
         }
     }

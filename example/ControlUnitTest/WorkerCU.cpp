@@ -26,6 +26,11 @@
 #include <chaos/common/bson/util/hex.h>
 #include <chaos/common/action/ActionDescriptor.h>
 #include <cmath>
+#include <stdio.h>
+#include <iostream>
+#include <iomanip>
+#include <time.h> 
+#include <stdlib.h>
 using namespace chaos;
 
 #define SIMULATED_DEVICE_ID     "SIN_DEVICE"
@@ -40,7 +45,7 @@ using namespace chaos;
 
 
 WorkerCU::WorkerCU():AbstractControlUnit(),rng((const uint_fast32_t) time(0) ),one_to_six( 1, 100 ),randInt(rng, one_to_six) {
-        //first we make some write
+    //first we make some write
     _deviceID.assign(SIMULATED_DEVICE_ID);
     cuName = "WORKER_CU";
     numberOfResponse = 0;
@@ -67,19 +72,19 @@ WorkerCU::~WorkerCU() {
  Return the default configuration
  */
 void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
-        //set the base information
+    //set the base information
     const char *devIDInChar = _deviceID.c_str();
     cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_NAME, "SIN_CU");
     cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_DESCRIPTION, "This is a beautifull CU");
     
     
-        //set the default delay for the CU
+    //set the default delay for the CU
     setDefaultScheduleDelay(CU_DELAY_FROM_TASKS);
     
-        //add managed device di
+    //add managed device di
     addDeviceId(_deviceID);
     
-        //add custom action
+    //add custom action
     AbstActionDescShrPtr  
     actionDescription = addActionDescritionInstance<WorkerCU>(this, 
                                                               &WorkerCU::actionTestOne, 
@@ -96,16 +101,22 @@ void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
                                                               "actionTestTwo", 
                                                               "comandTestTwo, this action will do some beautifull things!");
     
-        //add param to second action
+    //add param to second action
     actionDescription->addParam(ACTION_TWO_PARAM_NAME, 
                                 DataType::TYPE_INT32, 
                                 "integer 32bit action param description for testing purpose");
     
-        //setup the dataset
+    //setup the dataset
     addAttributeToDataSet(devIDInChar,
                           DS_ELEMENT_1,
                           "The sin value in output",
                           DataType::TYPE_DOUBLE, 
+                          DataType::Output);
+    //setup the dataset
+    addAttributeToDataSet(devIDInChar,
+                          "sinWave",
+                          "The sin waveform",
+                          DataType::TYPE_BYTEARRAY, 
                           DataType::Output);
     
     addAttributeToDataSet(devIDInChar,
@@ -119,6 +130,42 @@ void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
                           "The input phase of the sin",
                           DataType::TYPE_DOUBLE, 
                           DataType::Input);
+    
+    addAttributeToDataSet(devIDInChar,
+                          "points",
+                          "The number of point that compose the wave",
+                          DataType::TYPE_INT32, 
+                          DataType::Input);
+    
+    addAttributeToDataSet(devIDInChar,
+                          "frequency",
+                          "The frequency of the wave",
+                          DataType::TYPE_DOUBLE, 
+                          DataType::Input);
+    addAttributeToDataSet(devIDInChar,
+                          "bias",
+                          "The bias of the wave",
+                          DataType::TYPE_DOUBLE, 
+                          DataType::Input);
+    
+    addAttributeToDataSet(devIDInChar,
+                          "gain",
+                          "The gain of the wave",
+                          DataType::TYPE_DOUBLE, 
+                          DataType::Input);
+    
+    addAttributeToDataSet(devIDInChar,
+                          "phase",
+                          "The phase of the wave",
+                          DataType::TYPE_DOUBLE, 
+                          DataType::Input);
+    
+    addAttributeToDataSet(devIDInChar,
+                          "noise",
+                          "The noise of the wave",
+                          DataType::TYPE_DOUBLE, 
+                          DataType::Input);
+    
 }
 
 /*
@@ -126,11 +173,21 @@ void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
  */
 void WorkerCU::init(CDataWrapper *newConfiguration) throw(CException) {
     LAPP_ << "init WorkerCU";
-
+    
     initTime = steady_clock::now();
     lastExecutionTime = steady_clock::now();
     numberOfResponse = 0;
     curAltitude = 1;
+    srand((unsigned)time(0));
+    PI = acos((long double) -1);
+    
+    sinevalue = NULL;
+    points = 0;
+    freq = 0.0;
+    gain = 0.0;
+    phase = 0.0;
+    bias = 0.0;
+    noise = 0.0;
 }
 
 /*
@@ -147,21 +204,34 @@ void WorkerCU::run(const string& deviceID) throw(CException) {
     LAPP_ << "Time beetwen last call(msec):" << (currentExecutionTime-lastExecutionTime);
     lastExecutionTime = currentExecutionTime;
     
-        //get new data wrapper instance filled
-        //with mandatory data
+    //get new data wrapper instance filled
+    //with mandatory data
     CDataWrapper *acquiredData = getNewDataWrapperForKey(devIDInChar);
     if(!acquiredData) return;
     
-        //adding some interesting random data
+    computeWave(acquiredData);
+    //adding some interesting random data
     int64_t curMsec = (currentExecutionTime-initTime).count()/curPhasePeriod;
     double_t sinValue = std::sin(curMsec*sinCompConst);
     LAPP_ << "curMsec:" << curMsec;
     LAPP_ << "Sin Value:" << sinValue;
     acquiredData->addDoubleValue(DS_ELEMENT_1, curAltitude*sinValue);
-        //submit acquired data
+    //submit acquired data
     pushDataSetForKey(devIDInChar, acquiredData);
     
 }
+
+void WorkerCU::computeWave(CDataWrapper *acquiredData) {
+    if(sinevalue == NULL) return;
+    double_t timeint = (double)1/freq/points;
+    double_t interval = (2*PI)/points;
+    boost::mutex::scoped_lock lock(pointChangeMutex);
+    for(int i=0; i<points; i++){
+        sinevalue[i] = (gain*sin((interval*i)+phase)+(rand()*(noise/100)*gain))+bias;
+    }
+    acquiredData->addBinaryValue("sinWave", (char*)sinevalue, sizeof(double)*points);
+}
+
 
 /*
  Execute the Control Unit work
@@ -175,6 +245,9 @@ void WorkerCU::stop(const string& deviceID) throw(CException) {
  */
 void WorkerCU::deinit(const string& deviceID) throw(CException) {
     LAPP_ << "deinit WorkerCU for device " << deviceID;
+    if(sinevalue){
+        free(sinevalue);
+    }
 }
 
 /*
@@ -194,6 +267,48 @@ CDataWrapper* WorkerCU::setDatasetAttribute(CDataWrapper *datasetAttrbiuteValue,
         double_t cur = datasetAttrbiuteValue->getDoubleValue(DS_ELEMENT_3);
         if(cur < 1) cur = 1;
         curPhasePeriod = cur * 1000000;
+    }
+    
+    if(datasetAttrbiuteValue->hasKey("points")){
+        boost::mutex::scoped_lock lock(pointChangeMutex);
+        int32_t newPoints = datasetAttrbiuteValue->getInt32Value("points");
+        if(points < 1) points = 0;
+        
+        if(!newPoints){
+            if(sinevalue){
+                free(sinevalue);
+                sinevalue = NULL;  
+            }
+        }else{
+            int32_t bufLen = sizeof(double_t) * newPoints;
+            if(sinevalue){
+                if(points != newPoints) sinevalue = (double_t*)realloc(sinevalue, bufLen);
+            }else{
+                sinevalue = (double_t*)malloc(bufLen);
+            }
+            memset(sinevalue, 0, bufLen);
+        }
+        
+        points = newPoints;
+    }
+    
+    if(datasetAttrbiuteValue->hasKey("freq")){
+        freq = datasetAttrbiuteValue->getDoubleValue("freq");
+    }
+    
+    if(datasetAttrbiuteValue->hasKey("gain")){
+        gain = datasetAttrbiuteValue->getDoubleValue("gain");
+    }
+    
+    if(datasetAttrbiuteValue->hasKey("phase")){
+        phase = datasetAttrbiuteValue->getDoubleValue("phase");
+    }
+    
+    if(datasetAttrbiuteValue->hasKey("bias")){
+        bias = datasetAttrbiuteValue->getDoubleValue("bias");
+    }
+    if(datasetAttrbiuteValue->hasKey("noise")){
+        noise = datasetAttrbiuteValue->getDoubleValue("noise");
     }
     return NULL;
 }

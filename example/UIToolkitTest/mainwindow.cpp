@@ -137,17 +137,17 @@ void MainWindow::updateDeviceState() {
     chaos::CUStateKey::ControlUnitState currentState;
     if(deviceController->getState(currentState)==0){
         switch(currentState){
-            case chaos::CUStateKey::INIT:
-                 ui->labelState->setText("Initialized");
+        case chaos::CUStateKey::INIT:
+            ui->labelState->setText("Initialized");
             break;
-            case chaos::CUStateKey::DEINIT:
-                ui->labelState->setText("Deinitialized");
+        case chaos::CUStateKey::DEINIT:
+            ui->labelState->setText("Deinitialized");
             break;
-            case chaos::CUStateKey::START:
-                ui->labelState->setText("Started");
+        case chaos::CUStateKey::START:
+            ui->labelState->setText("Started");
             break;
-            case chaos::CUStateKey::STOP:
-                ui->labelState->setText("Stopped");
+        case chaos::CUStateKey::STOP:
+            ui->labelState->setText("Stopped");
             break;
         }
     }
@@ -221,14 +221,25 @@ void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
         } else {
             deviceController->addAttributeToTrack(attributeName);
             deviceController->getDeviceAttributeRangeValueInfo(attributeName, rangeInfo);
-            chaos::DataBuffer *attributeBuffer = deviceController->getBufferForAttribute(attributeName);
-            if(!attributeBuffer) {
-                QMessageBox* msg = new QMessageBox(this);
-                msg->setText("Errore getting buffer for attribute!");
-                msg->show();
-                return;
+            if(rangeInfo.valueType != chaos::DataType::TYPE_BYTEARRAY){
+                chaos::DataBuffer *attributeBuffer = deviceController->getBufferForAttribute(attributeName);
+                if(!attributeBuffer) {
+                    QMessageBox* msg = new QMessageBox(this);
+                    msg->setText("Errore getting buffer for attribute!");
+                    msg->show();
+                    return;
+                }
+                graphWdg->addNewPlot(attributeBuffer, attributeName, rangeInfo.valueType);
+            }else{
+                chaos::PointerBuffer *pointerBuffer = deviceController->getPtrBufferForAttribute(attributeName);
+                if(!pointerBuffer) {
+                    QMessageBox* msg = new QMessageBox(this);
+                    msg->setText("Errore getting buffer for attribute!");
+                    msg->show();
+                    return;
+                }
+                graphWdg->addNewPlot(pointerBuffer, attributeName, rangeInfo.valueType);
             }
-            graphWdg->addNewPlot(attributeBuffer, attributeName, rangeInfo.valueType);
         }
     }
 
@@ -260,7 +271,7 @@ void MainWindow::on_buttonInit_clicked()
 void MainWindow::on_buttonDeinit_clicked()
 {
     if(!deviceController.get()) return;
-   if( deviceController->deinitDevice() != 0 ){
+    if( deviceController->deinitDevice() != 0 ){
         QMessageBox* msg = new QMessageBox(this);
         msg->setText("Device alredy deinitialized or error");
         msg->show();
@@ -321,7 +332,7 @@ void MainWindow::on_buttonStopTracking_clicked() {
 void MainWindow::executeOnThread(){
     if(!deviceController.get()) return;
     while(runThread){
-         //boost::mutex::scoped_lock  lock(graphWdg->manageMutex);
+        //boost::mutex::scoped_lock  lock(graphWdg->manageMutex);
         deviceController->fetchCurrentDeviceValue();
         boost::this_thread::sleep(boost::posix_time::milliseconds(ui->dialTrackSpeed->value()));
     }
@@ -363,7 +374,7 @@ void MainWindow::timerEvent(QTimerEvent *event)
     if ( event->timerId() == d_timerId )
     {
         if(!deviceController.get()) return;
-         //boost::mutex::scoped_lock  lock(graphWdg->manageMutex);
+        //boost::mutex::scoped_lock  lock(graphWdg->manageMutex);
         deviceController->fetchCurrentDeviceValue();
     }
     QMainWindow::timerEvent(event);

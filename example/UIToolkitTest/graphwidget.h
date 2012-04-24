@@ -44,6 +44,14 @@ class GraphWidget : public QWidget
             if(curve) delete(curve);
         }
     };
+    struct PlotPtrBufferAndCurve{
+        chaos::DataType::DataType dataType;
+        chaos::PointerBuffer *curvePointer;
+        QwtPlotCurve *curve;
+        ~PlotPtrBufferAndCurve(){
+            if(curve) delete(curve);
+        }
+    };
     friend class MainWindow;
     Q_OBJECT
     QwtPlot *plot;
@@ -54,11 +62,13 @@ class GraphWidget : public QWidget
 
     std::vector<double> xs;
     std::map<std::string, boost::shared_ptr<PlotBufferAndCurve> > plotMap;
+    std::map<std::string, boost::shared_ptr<PlotPtrBufferAndCurve> > pointerPlotMap;
 public:
     boost::mutex manageMutex;
     explicit GraphWidget(QWidget *parent = 0);
     ~GraphWidget();
     void addNewPlot(chaos::DataBuffer *dataBuffer, std::string& plotName, chaos::DataType::DataType dataType);
+    void addNewPlot(chaos::PointerBuffer *ptrBuffer, std::string& plotName, chaos::DataType::DataType dataType);
     void removePlot(std::string& plotName);
     void update();
     bool hasPlot(std::string& plotName);

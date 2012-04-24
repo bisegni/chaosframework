@@ -320,6 +320,6 @@ void MessageBroker::disposeMessageChannel(MessageChannel *messageChannelToDispos
  Perform the message channel deallocation
  */
 void MessageBroker::disposeMessageChannel(NetworkAddressMessageChannel *messageChannelToDispose) {
-    disposeMessageChannel(messageChannelToDispose);
+    MessageBroker::disposeMessageChannel((MessageChannel*)messageChannelToDispose);
 }
 

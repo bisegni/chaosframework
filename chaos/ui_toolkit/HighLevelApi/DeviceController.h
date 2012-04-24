@@ -76,6 +76,7 @@ namespace chaos {
             std::map<string,  chaos::SingleBufferCircularBuffer<int32_t> *> int32AttributeLiveBuffer;
             std::map<string,  chaos::SingleBufferCircularBuffer<int64_t> *> int64AttributeLiveBuffer;
             std::map<string,  chaos::SingleBufferCircularBuffer<double_t> *> doubleAttributeLiveBuffer;
+            std::map<string,  PointerBuffer*> pointerAttributeLiveBuffer;
             
                 //! Defautl Constructor
             /*!
@@ -189,7 +190,10 @@ namespace chaos {
             int deinitDevice();
             
             int setInt32AttributeValue(string& attributeName, int32_t attributeValue);
+            int setInt32AttributeValue(const char *attributeName, int32_t attributeValue);
+            
             int setDoubleAttributeValue(string& attributeName, double_t attributeValue); 
+            int setDoubleAttributeValue(const char *attributeName, double_t attributeValue); 
             
                 //!Get device state
             /*!
@@ -226,6 +230,7 @@ namespace chaos {
             void fetchCurrentDeviceValue();
             
             chaos::DataBuffer *getBufferForAttribute(string& attributeName);
+            chaos::PointerBuffer *getPtrBufferForAttribute(string& attributeName);
         };
     }
 }

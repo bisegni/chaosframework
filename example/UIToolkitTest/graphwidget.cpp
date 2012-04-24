@@ -39,25 +39,52 @@ GraphWidget::GraphWidget(QWidget *parent) :
     setLayout(vbox);
 
     grid = new QwtPlotGrid();
-       //enable the x and y axis lines
-       grid->enableX(false);
-       grid->enableY(true);
+    //enable the x and y axis lines
+    grid->enableX(false);
+    grid->enableY(true);
 
-       //set the X and Y division and scale to that of the channels
-       grid->setXDiv(*(plot->axisScaleDiv(QwtPlot::xBottom)));
-       grid->setYDiv(*(plot->axisScaleDiv(QwtPlot::yLeft)));
-       grid->attach(plot);
+    //set the X and Y division and scale to that of the channels
+    grid->setXDiv(*(plot->axisScaleDiv(QwtPlot::xBottom)));
+    grid->setYDiv(*(plot->axisScaleDiv(QwtPlot::yLeft)));
+    grid->attach(plot);
 
     for (double x = 1; x <= 30; x++)
     {
         xs.push_back(x);
     }
     d_timerId = -1;
-     d_directPainter = new QwtPlotDirectPainter();
+    d_directPainter = new QwtPlotDirectPainter();
 }
 
 GraphWidget::~GraphWidget() {
     delete(d_directPainter);
+}
+
+void GraphWidget::addNewPlot(chaos::PointerBuffer *pointerBuffer, std::string& plotName , chaos::DataType::DataType dataType){
+    boost::mutex::scoped_lock  lock(manageMutex);
+    if(plotMap.count(plotName)>0) return;
+    boost::shared_ptr<PlotPtrBufferAndCurve> newPlotInfo(new PlotPtrBufferAndCurve());
+    boost::mt19937 rng((const uint_fast32_t) std::time(0) );
+    boost::uniform_int<> one_to_six( 0, 255 );
+    boost::variate_generator< boost::mt19937, boost::uniform_int<> > randInt(rng, one_to_six);
+
+    QwtPlotCurve *c = new QwtPlotCurve(plotName.c_str());
+    c->setPen(QPen(QColor(randInt(), randInt(), randInt())));
+    c->setRenderHint(QwtPlotItem::RenderAntialiased);
+    c->setStyle(QwtPlotCurve::Lines);
+    c->attach(plot);
+    c->setLegendAttribute(QwtPlotCurve::LegendShowSymbol);
+#if 1
+    c->setRenderHint(QwtPlotItem::RenderAntialiased, true);
+#endif
+#if 1
+    c->setPaintAttribute(QwtPlotCurve::ClipPolygons, false);
+#endif
+
+    newPlotInfo->curve = c;
+    newPlotInfo->curvePointer = pointerBuffer;
+    newPlotInfo->dataType = dataType;
+    pointerPlotMap.insert(std::make_pair(plotName, newPlotInfo));
 }
 
 void GraphWidget::addNewPlot(chaos::DataBuffer *dataBuffer, std::string& plotName , chaos::DataType::DataType dataType){
@@ -100,8 +127,8 @@ bool GraphWidget::hasPlot(std::string& plotName) {
 
 void GraphWidget::update() {
     PlotBufferAndCurve *tmpPlotInfoPtr = NULL;
+    PlotPtrBufferAndCurve *tmpPointeInfoPtr = NULL;
     std::vector<double> ys;
-
     for(std::map<std::string, boost::shared_ptr<PlotBufferAndCurve> >::iterator iter = plotMap.begin();
         iter != plotMap.end();
         iter++){
@@ -143,8 +170,26 @@ void GraphWidget::update() {
         tmpPlotInfoPtr->curve->setSamples(&xs[0],&ys[0], 30);
         //d_directPainter->drawSeries(tmpPlotInfoPtr->curve, 0, 29);
     }
-    //
-   // emit updatePlot();
+
+    for(std::map<std::string, boost::shared_ptr<PlotPtrBufferAndCurve> >::iterator iter = pointerPlotMap.begin();
+        iter != pointerPlotMap.end();
+        iter++){
+        ys.clear();
+        tmpPointeInfoPtr = iter->second.get();
+        if(tmpPointeInfoPtr->dataType == chaos::DataType::TYPE_BYTEARRAY){
+            int32_t tipedBufLen = 0;
+            boost::shared_ptr<double_t> sinWavePtr = tmpPointeInfoPtr->curvePointer->getTypedPtr<double_t>(tipedBufLen);
+            double *tmpPtr = sinWavePtr.get();
+            if(!tmpPtr) continue;
+            for (int idx = 0; idx < tipedBufLen; idx++) {
+                double historyDouble(*(tmpPtr + idx));
+                ys.push_back(historyDouble);
+            }
+        }
+        tmpPointeInfoPtr->curve->setSamples(&xs[0],&ys[0], 30);
+    }
+//
+// emit updatePlot();
 }
 
 void GraphWidget::clearAllPlot() {
@@ -153,6 +198,11 @@ void GraphWidget::clearAllPlot() {
         iter != plotMap.end();
         iter++){
         plotMap.erase(iter);
+    }
+    for(std::map<std::string, boost::shared_ptr<PlotPtrBufferAndCurve> >::iterator iter = pointerPlotMap.begin();
+        iter != pointerPlotMap.end();
+        iter++){
+        pointerPlotMap.erase(iter);
     }
 }
 void GraphWidget::start()
