@@ -81,12 +81,7 @@ add_option( "32" , "whether to force 32 bit" , 0 , True , "force32" )
 force32 = has_option( "force32" )
 
 
-if force32:
-    msarch = "x86"
-
-env = Environment(      MSVS_ARCH=msarch ,
-                        TARGET_ARCH=msarch
-                        )  # Initialize the environment
+env = Environment()  # Initialize the environment
 Export('env', 'buildMode', 'debugcflags', 'releasecflags')
 
 if force32:

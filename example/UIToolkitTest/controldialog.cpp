@@ -20,6 +20,7 @@
 #include "controldialog.h"
 #include "ui_controldialog.h"
 #include <qspinbox.h>
+#include <limits>
 ControlDialog::ControlDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ControlDialog)
@@ -59,15 +60,23 @@ void ControlDialog::initDialog(boost::shared_ptr<chaos::ui::DeviceController>&  
         controlWidget = int32SpinBox;
         if(attributerange.minRange.size()>0){
             int32SpinBox->setMinimum(min);
+        }else{
+            int32SpinBox->setMinimum(std::numeric_limits<int32_t>::min());
         }
+
 
         if(attributerange.maxRange.size()>0){
             int32SpinBox->setMaximum(max);
+        }else{
+            int32SpinBox->setMaximum(std::numeric_limits<int32_t>::max());
         }
 
         if(attributerange.defaultValue.size()>0){
             int32SpinBox->setValue(def);
-        }}
+        }else{
+            int32SpinBox->setValue(0);
+        }
+    }
         break;
     case chaos::DataType::TYPE_DOUBLE:{
         QDoubleSpinBox *doubleSpinBox = new QDoubleSpinBox();
@@ -80,13 +89,20 @@ void ControlDialog::initDialog(boost::shared_ptr<chaos::ui::DeviceController>&  
         controlWidget = doubleSpinBox;
         if(attributerange.minRange.size()>0){
             doubleSpinBox->setMinimum(min);
+        }else {
+            doubleSpinBox->setMinimum(std::numeric_limits<double_t>::min());
         }
+
         if(attributerange.maxRange.size()>0){
             doubleSpinBox->setMaximum(max);
+        }else{
+            doubleSpinBox->setMaximum(std::numeric_limits<double_t>::max());
         }
 
         if(attributerange.defaultValue.size()>0){
             doubleSpinBox->setValue(def);
+        }else{
+            doubleSpinBox->setValue(0);
         }
         break;
     }}

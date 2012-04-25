@@ -35,7 +35,7 @@ using namespace boost::posix_time;
 class WorkerCU : public AbstractControlUnit {
     typedef boost::mt19937 RNGType; 
     RNGType rng;
-    uniform_int<> one_to_six;    
+    uniform_int<> one_to_hundred;    
     variate_generator< RNGType, uniform_int<> > randInt; 
     double_t numberOfResponse;
     high_resolution_clock::time_point initTime;
@@ -53,7 +53,7 @@ class WorkerCU : public AbstractControlUnit {
     double_t gain;
     double_t phase;
     double_t bias;
-    double_t noise;
+    double_t gainNoise;
     
     boost::mutex pointChangeMutex;
 public:
@@ -70,7 +70,7 @@ public:
      */
     ~WorkerCU();
     
-    void computeWave(CDataWrapper *acquiredData);
+    inline void computeWave(CDataWrapper *acquiredData);
 protected:
     /*
      Define the Control Unit Dataset and Actions

@@ -28,7 +28,7 @@ namespace chaos {
      *  @{
      */
     
-    //! Name space for grupping option used for commandline or in config file
+        //! Name space for grupping option used for commandline or in config file
     namespace UserOption{
             //! @Option for print the help
         static const char * const   OPT_HELP                          = "help";
@@ -53,17 +53,17 @@ namespace chaos {
      *  This is the collection of the key for the parameter used to configura rpc system
      *  @{
      */
-     //! Name space for grupping option used for rpc system configuration
+        //! Name space for grupping option used for rpc system configuration
     namespace RpcConfigurationKey {
-        //! @Option specify the type of the adatpre to be used
+            //! @Option specify the type of the adatpre to be used
         static const char * const CS_CMDM_RPC_ADAPTER_TYPE                = "cs|cmdm|rpc_adapter_type";
-        //! @Option specify the port where the rpc must publish the his socket
+            //! @Option specify the port where the rpc must publish the his socket
         static const char * const CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT        = "cs|cmdm|rpc_adapter_port";
-        //! @Option the number of the thread to user
+            //! @Option the number of the thread to user
         static const char * const CS_CMDM_RPC_ADAPTER_THREAD_NUMBER       = "cs|cmdm|rpc_adapter_tn";
     }
     /** @} */ // end of RpcConfigurationKey
-
+    
     /** @defgroup CUDefinitionKey Control Unit Definition
      *  This is the collection of the key for the control unit definition
      *  @{
@@ -88,10 +88,10 @@ namespace chaos {
         static const char * const CS_CM_CU_CLASS                                = "cs|cm|cu_class";
             //!key representing the type of parameter
         static const char * const CS_CM_CU_UUID                                 = "cs|cm|cu_uuid";    
-
+        
     }
     /** @} */ // end of CUDefinitionKey
-
+    
     /** @} */ // end of RpcConfigurationKey
     
     /** @defgroup CUStateKey Control Unit State
@@ -102,7 +102,7 @@ namespace chaos {
     namespace CUStateKey {
             //! The state of the control unit
         static const char * const CONTROL_UNIT_STATE                   = "cu_state";        
-  
+        
             //!define the direction of dataset element
         typedef enum {
 			INIT = 0,
@@ -112,7 +112,7 @@ namespace chaos {
         } ControlUnitState;
     }
     /** @} */ // end of CUStateKey
-
+    
     
     /** @defgroup DatasetDefinitionkey Dataset definition key
      *  This is the collection of the key for the device dataset
@@ -128,8 +128,8 @@ namespace chaos {
         
             //!key for the name of dataset attribute
         static const char * const CS_CM_DATASET_ATTRIBUTE_NAME                  = "cs|cm|ds_attr_name";
- 
-        //!key for the name of dataset attribute
+        
+            //!key for the name of dataset attribute
         static const char * const CS_CM_DATASET_ATTRIBUTE_VALUE                  = "cs|cm|ds_attr_value";
         
             //!key for the tag of the dataset attrbiute
@@ -161,25 +161,25 @@ namespace chaos {
      *  This is the collection of the definition of the chaos basic datatype
      *  @{
      */
-    //! Name space for grupping the definition of the chaos basic datatype
+        //! Name space for grupping the definition of the chaos basic datatype
     namespace DataType {
-                //!typede for datatype
-            typedef enum {
+            //!typede for datatype
+        typedef enum {
                 //!Integer 32 bit length
-                TYPE_INT32 = 0,
+            TYPE_INT32 = 0,
                 //!Integer 64 bit length
-                TYPE_INT64,
+            TYPE_INT64,
                 //!Double 64 bit length
-                TYPE_DOUBLE,
+            TYPE_DOUBLE,
                 //!C string variable length
-                TYPE_STRING,
+            TYPE_STRING,
                 //!byte array variable length
-                TYPE_BYTEARRAY,
+            TYPE_BYTEARRAY,
                 //!struct type
-                TYPE_STRUCT
-            } DataType;
+            TYPE_STRUCT
+        } DataType;
         
-        //!define the direction of dataset element
+            //!define the direction of dataset element
         typedef enum {
 			Input = 0,
 			Output=1,
@@ -193,11 +193,11 @@ namespace chaos {
      *  This is the collection of the definition of the chaos error code
      *  @{
      */
-    //! Name space for grupping the definition of the chaos error code
+        //! Name space for grupping the definition of the chaos error code
     namespace ErrorCode {
-        //!typede for datatype
+            //!typede for datatype
         typedef enum {
-            //!Integer 32 bit length
+                //!Integer 32 bit length
             EC_NO_ERROR = 0,
             EC_TIMEOUT = 1
         } ErrorCode;
@@ -235,8 +235,8 @@ namespace chaos {
         
             //!key for action name definition
         static const char * const CS_CMDM_ACTION_NAME                         = "cs|cmdm|act_name";
-
-        //!key for action message
+        
+            //!key for action message
         static const char * const CS_CMDM_ACTION_MESSAGE                      = "cs|cmdm|act_msg";
         
             //!key for the specify the id of the request(the current message is an asnwer)
@@ -300,7 +300,7 @@ namespace chaos {
             //! return the state of the device
         static const char * const ACTION_DEVICE_GET_STATE        = "getState";    
     }
-     /** @} */ // end of ChaosSystemDomainAndActionLabel
+    /** @} */ // end of ChaosSystemDomainAndActionLabel
     
     /** @defgroup LiveHistoryMDSConfiguration Chaos Live and History configuration
      *  This is the collection of the key to configura history and live channel
@@ -323,16 +323,17 @@ namespace chaos {
         static const char * const CS_DM_LD_SERVER_ADDRESS                 = "cs|dm|ld|server_address";
             //!history data address
         static const char * const CS_DM_HD_SERVER_ADDRESS                 = "cs|dm|hd|server_address";
-
+        
     } 
     /** @} */ // end of LiveHistoryMDSConfiguration
     
-
-    /** @defgroup ChaosDataPackKey Chaos Data Pack standard key
-     *  This is the collection of the standard key of the chaos pack that contain hardware data
-     *  @{
+    
+    /** @defgroup ChaosDataPackKey Chaos Data Pack standard for hardware instrument
+     This is the collection of the standard key that are contained into the data pack
+     that describe a device hardware metrix on it's input and output channel
+     @{
      */
-        //! This is the collection of the standard key of the chaos pack that contain hardware data
+        //! Namespace for standard constant used for hardware instrument
     namespace DataPackKey{
             //!define the device id key, this represent the
             //!primary key of the device
@@ -345,8 +346,8 @@ namespace chaos {
             //!this define key associated to the trigger
         static const char * const CS_CSV_TRIGGER_KEY                          = "cs|csv|trigger_key";       
     }    
-        /** @} */ // end of ChaosLiveHistoryConfiguration
-
+    /** @} */ // end of ChaosLiveHistoryConfiguration
+    
     
 }
 #endif

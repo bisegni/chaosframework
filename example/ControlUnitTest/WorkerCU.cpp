@@ -44,7 +44,7 @@ using namespace chaos;
 
 
 
-WorkerCU::WorkerCU():AbstractControlUnit(),rng((const uint_fast32_t) time(0) ),one_to_six( 1, 100 ),randInt(rng, one_to_six) {
+WorkerCU::WorkerCU():AbstractControlUnit(),rng((const uint_fast32_t) time(0) ),one_to_hundred( -100, 100 ),randInt(rng, one_to_hundred) {
     //first we make some write
     _deviceID.assign(SIMULATED_DEVICE_ID);
     cuName = "WORKER_CU";
@@ -55,7 +55,7 @@ WorkerCU::WorkerCU():AbstractControlUnit(),rng((const uint_fast32_t) time(0) ),o
 /*
  Construct a new CU with an identifier
  */
-WorkerCU::WorkerCU(string &customDeviceID):rng((const uint_fast32_t) time(0) ),one_to_six( 1, 100 ),randInt(rng, one_to_six){
+WorkerCU::WorkerCU(string &customDeviceID):rng((const uint_fast32_t) time(0) ),one_to_hundred( -100, 100 ),randInt(rng, one_to_hundred){
     _deviceID = customDeviceID;
     cuName = "WORKER_CU";
     numberOfResponse = 0;
@@ -139,7 +139,7 @@ void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
     
     addAttributeToDataSet(devIDInChar,
                           "frequency",
-                          "The frequency of the wave",
+                          "The frequency of the wave [1-10Mhz]",
                           DataType::TYPE_DOUBLE, 
                           DataType::Input);
     addAttributeToDataSet(devIDInChar,
@@ -161,8 +161,8 @@ void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
                           DataType::Input);
     
     addAttributeToDataSet(devIDInChar,
-                          "noise",
-                          "The noise of the wave",
+                          "gain_noise",
+                          "The gain of the noise of the wave",
                           DataType::TYPE_DOUBLE, 
                           DataType::Input);
     
@@ -183,11 +183,11 @@ void WorkerCU::init(CDataWrapper *newConfiguration) throw(CException) {
     
     sinevalue = NULL;
     points = 0;
-    freq = 0.0;
-    gain = 0.0;
+    freq = 1.0;
+    gain = 1.0;
     phase = 0.0;
     bias = 0.0;
-    noise = 0.0;
+    gainNoise = 0;
 }
 
 /*
@@ -223,11 +223,10 @@ void WorkerCU::run(const string& deviceID) throw(CException) {
 
 void WorkerCU::computeWave(CDataWrapper *acquiredData) {
     if(sinevalue == NULL) return;
-    double_t timeint = (double)1/freq/points;
     double_t interval = (2*PI)/points;
     boost::mutex::scoped_lock lock(pointChangeMutex);
     for(int i=0; i<points; i++){
-        sinevalue[i] = (gain*sin((interval*i)+phase)+(rand()*(noise/100)*gain))+bias;
+        sinevalue[i] = (gain*sin((interval*i)+phase)+(((double_t)randInt()/(double_t)100)*gainNoise)+bias);
     }
     acquiredData->addBinaryValue("sinWave", (char*)sinevalue, sizeof(double)*points);
 }
@@ -272,7 +271,7 @@ CDataWrapper* WorkerCU::setDatasetAttribute(CDataWrapper *datasetAttrbiuteValue,
     if(datasetAttrbiuteValue->hasKey("points")){
         boost::mutex::scoped_lock lock(pointChangeMutex);
         int32_t newPoints = datasetAttrbiuteValue->getInt32Value("points");
-        if(points < 1) points = 0;
+        if(newPoints < 1) newPoints = 0;
         
         if(!newPoints){
             if(sinevalue){
@@ -280,15 +279,16 @@ CDataWrapper* WorkerCU::setDatasetAttribute(CDataWrapper *datasetAttrbiuteValue,
                 sinevalue = NULL;  
             }
         }else{
-            int32_t bufLen = sizeof(double_t) * newPoints;
-            if(sinevalue){
-                if(points != newPoints) sinevalue = (double_t*)realloc(sinevalue, bufLen);
+            double_t* tmpPtr = (double_t*)realloc(sinevalue, sizeof(double_t) * newPoints);
+            if(tmpPtr) {
+                sinevalue = tmpPtr;
+                memset(sinevalue, 0, points);
             }else{
-                sinevalue = (double_t*)malloc(bufLen);
+                //memory can't be enlarged so pointer ramin the same
+                //so all remain unchanged
+                newPoints = points;
             }
-            memset(sinevalue, 0, bufLen);
         }
-        
         points = newPoints;
     }
     
@@ -307,9 +307,11 @@ CDataWrapper* WorkerCU::setDatasetAttribute(CDataWrapper *datasetAttrbiuteValue,
     if(datasetAttrbiuteValue->hasKey("bias")){
         bias = datasetAttrbiuteValue->getDoubleValue("bias");
     }
-    if(datasetAttrbiuteValue->hasKey("noise")){
-        noise = datasetAttrbiuteValue->getDoubleValue("noise");
+    if(datasetAttrbiuteValue->hasKey("gain_noise")){
+        gainNoise = datasetAttrbiuteValue->getDoubleValue("gain_noise");
     }
+    
+    
     return NULL;
 }
 
