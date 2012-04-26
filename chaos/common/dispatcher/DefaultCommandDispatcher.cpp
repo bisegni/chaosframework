@@ -112,6 +112,7 @@ void DefaultCommandDispatcher::registerAction(DeclareAction *declareActionClass)
 void DefaultCommandDispatcher::deregisterAction(DeclareAction *declareActionClass)  throw(CException) {
         //call superclass method
     CommandDispatcher::deregisterAction(declareActionClass);
+    //BUG
 }
 
 /*

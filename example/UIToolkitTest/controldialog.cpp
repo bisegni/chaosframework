@@ -55,27 +55,25 @@ void ControlDialog::initDialog(boost::shared_ptr<chaos::ui::DeviceController>&  
         int32_t max = maxStr.toInt();
         int32_t def = defStr.toInt();
 
-        //QString maxValue std::max(std::abs(min),std::abs(max));
-
         controlWidget = int32SpinBox;
-        if(attributerange.minRange.size()>0){
-            int32SpinBox->setMinimum(min);
-        }else{
-            int32SpinBox->setMinimum(std::numeric_limits<int32_t>::min());
+        if(attributerange.minRange.size()==0){
+          min = std::numeric_limits<int32_t>::min();
         }
 
-
-        if(attributerange.maxRange.size()>0){
-            int32SpinBox->setMaximum(max);
-        }else{
-            int32SpinBox->setMaximum(std::numeric_limits<int32_t>::max());
+        if(attributerange.maxRange.size()==0){
+           max = std::numeric_limits<int32_t>::max();
         }
 
-        if(attributerange.defaultValue.size()>0){
-            int32SpinBox->setValue(def);
-        }else{
-            int32SpinBox->setValue(0);
+        if(attributerange.defaultValue.size()==0){
+            def=0;
         }
+
+        int32SpinBox->setMinimum(min);
+        ui->horizontalSlider->setMinimum(min);
+        int32SpinBox->setMaximum(max);
+        ui->horizontalSlider->setMaximum(max);
+        int32SpinBox->setValue(def);
+        ui->horizontalSlider->setValue(def);
     }
         break;
     case chaos::DataType::TYPE_DOUBLE:{
@@ -87,23 +85,24 @@ void ControlDialog::initDialog(boost::shared_ptr<chaos::ui::DeviceController>&  
 
         //QString maxValue std::max(std::abs(min),std::abs(max));
         controlWidget = doubleSpinBox;
-        if(attributerange.minRange.size()>0){
-            doubleSpinBox->setMinimum(min);
-        }else {
-            doubleSpinBox->setMinimum(std::numeric_limits<double_t>::min());
+        if(attributerange.minRange.size()==0){
+          min = std::numeric_limits<double_t>::min();
         }
 
-        if(attributerange.maxRange.size()>0){
-            doubleSpinBox->setMaximum(max);
-        }else{
-            doubleSpinBox->setMaximum(std::numeric_limits<double_t>::max());
+        if(attributerange.maxRange.size()==0){
+           max = std::numeric_limits<double_t>::max();
         }
 
-        if(attributerange.defaultValue.size()>0){
-            doubleSpinBox->setValue(def);
-        }else{
-            doubleSpinBox->setValue(0);
+        if(attributerange.defaultValue.size()==0){
+            def=0;
         }
+
+        doubleSpinBox->setMinimum(min);
+        ui->horizontalSlider->setMinimum(-100);
+        doubleSpinBox->setMaximum(max);
+        ui->horizontalSlider->setMaximum(100);
+        doubleSpinBox->setValue(def);
+        ui->horizontalSlider->setValue((int)def);
         break;
     }}
     if(controlWidget == NULL) return;
@@ -132,4 +131,20 @@ void ControlDialog::on_buttonCommit_clicked()
 void ControlDialog::on_buttonClose_clicked()
 {
     close();
+}
+
+void ControlDialog::on_horizontalSlider_sliderMoved(int position)
+{
+    if(controlWidget==NULL) return;
+    switch(attributerange.valueType){
+    case chaos::DataType::TYPE_INT32:{
+        QSpinBox *int32SpinBox = (QSpinBox*)controlWidget;
+        int32SpinBox->setValue(position);
+        break;}
+    case chaos::DataType::TYPE_DOUBLE:{
+        QSpinBox *doubleSpinBox = (QSpinBox*)controlWidget;
+        doubleSpinBox->setValue(position);
+        break;}
+    }
+    on_buttonCommit_clicked();
 }

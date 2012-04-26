@@ -35,6 +35,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 #include <qevent.h>
+#include <QTableWidgetItem>
+#include "spinboxdelegate.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -48,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
     graphWdg = new GraphWidget();
     gL->addWidget(graphWdg, 1);
     ui->graphWidget->setLayout(gL);
-    ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->tableView->setEditTriggers(QAbstractItemView::EditKeyPressed);
     ui->listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     //setup mds channel
     mdsChannel = chaos::ui::LLRpcApi::getInstance()->getNewMetadataServerChannel();
@@ -169,10 +171,11 @@ void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
     //get only output o attribute
     deviceController->getDeviceDatasetAttributesName(attributesName, chaos::DataType::Output);
 
-    QStandardItemModel *model = new QStandardItemModel(attributeDescription.size(), 3);
+    QStandardItemModel *model = new QStandardItemModel(attributeDescription.size(), 4);
     model->setHeaderData(0, Qt::Horizontal, QObject::tr("Name"));
-    model->setHeaderData(0, Qt::Horizontal, QObject::tr("Direction"));
-    model->setHeaderData(1, Qt::Horizontal, QObject::tr("Description"));
+    model->setHeaderData(1, Qt::Horizontal, QObject::tr("Direction"));
+    model->setHeaderData(1, Qt::Horizontal, QObject::tr("Controller"));
+    model->setHeaderData(3, Qt::Horizontal, QObject::tr("Description"));
 
     int row = 0;
     for(std::vector<std::string>::iterator iter = attributesName.begin();
@@ -181,7 +184,8 @@ void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
         deviceController->getAttributeDescription((*iter), attributeDescription);
         model->setItem(row, 0, new QStandardItem(QString((*iter).c_str())));
         model->setItem(row, 1, new QStandardItem("Output"));
-        model->setItem(row++, 2, new QStandardItem(QString(attributeDescription.c_str())));
+        model->setItem(row, 2, new QStandardItem("Output"));
+        model->setItem(row++, 3, new QStandardItem(QString(attributeDescription.c_str())));
     }
     //get only input o attribute
     attributesName.clear();
@@ -192,10 +196,12 @@ void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
         deviceController->getAttributeDescription((*iter), attributeDescription);
         model->setItem(row, 0, new QStandardItem(QString((*iter).c_str())));
         model->setItem(row, 1, new QStandardItem("Input"));
-        model->setItem(row++, 2, new QStandardItem(QString(attributeDescription.c_str())));
+        model->setItem(row, 2, new QStandardItem("text"));
+        model->setItem(row++, 3, new QStandardItem(QString(attributeDescription.c_str())));
     }
     ui->tableView->setModel(model);
-
+    ui->tableView->setItemDelegateForColumn(2, new SpinBoxDelegate());
+    ui->tableView->setEditTriggers(QAbstractItemView::SelectedClicked);
     updateDeviceState();
 
     QHeaderView *header = ui->tableView->horizontalHeader();
@@ -321,8 +327,10 @@ void MainWindow::on_buttonStopTracking_clicked() {
     //if(d_timerId != -1) killTimer(d_timerId);
     //d_timerId = -1;
     runThread = false;
+    if(schedThread){
     schedThread->join();
     schedThread.reset();
+    }
     //if(!trackThread) return;
     //trackThread->stop();
     //delete(trackThread);
@@ -378,4 +386,10 @@ void MainWindow::timerEvent(QTimerEvent *event)
         deviceController->fetchCurrentDeviceValue();
     }
     QMainWindow::timerEvent(event);
+}
+
+void MainWindow::on_spinBox_valueChanged(int points)
+{
+    if(graphWdg == NULL) return;
+    graphWdg->setPointNumber(points);
 }

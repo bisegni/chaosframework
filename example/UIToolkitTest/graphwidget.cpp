@@ -31,7 +31,6 @@ GraphWidget::GraphWidget(QWidget *parent) :
     // QVBoxLayout verticalBox;
     plot = new QwtPlot(QwtText("Chaos Attribute Plot"));
     plot->setGeometry(0,0,640,400);
-    plot->setAxisScale(QwtPlot::xBottom, 1, 30);
     plot->setAxisScale(QwtPlot::yLeft, -10, +10);
     plot->insertLegend(new QwtLegend(plot), QwtPlot::BottomLegend);
     vbox = new QVBoxLayout();
@@ -47,13 +46,21 @@ GraphWidget::GraphWidget(QWidget *parent) :
     grid->setXDiv(*(plot->axisScaleDiv(QwtPlot::xBottom)));
     grid->setYDiv(*(plot->axisScaleDiv(QwtPlot::yLeft)));
     grid->attach(plot);
+    setPointNumber(30);
+    d_timerId = -1;
+    d_directPainter = new QwtPlotDirectPainter();
+}
 
-    for (double x = 1; x <= 30; x++)
+void GraphWidget::setPointNumber(int points){
+    boost::mutex::scoped_lock  lock(manageMutex);
+    numberOfPoint = points;
+    plot->setAxisScale(QwtPlot::xBottom, 1, points);
+    xs.clear();
+    for (double x = 1; x <= numberOfPoint; x++)
     {
         xs.push_back(x);
     }
-    d_timerId = -1;
-    d_directPainter = new QwtPlotDirectPainter();
+    plot->replot();
 }
 
 GraphWidget::~GraphWidget() {
@@ -167,7 +174,7 @@ void GraphWidget::update() {
                 }
             }
         }
-        tmpPlotInfoPtr->curve->setSamples(&xs[0],&ys[0], 30);
+        tmpPlotInfoPtr->curve->setSamples(&xs[0],&ys[0], ys.size());
         //d_directPainter->drawSeries(tmpPlotInfoPtr->curve, 0, 29);
     }
 
@@ -186,7 +193,7 @@ void GraphWidget::update() {
                 ys.push_back(historyDouble);
             }
         }
-        tmpPointeInfoPtr->curve->setSamples(&xs[0],&ys[0], 30);
+        tmpPointeInfoPtr->curve->setSamples(&xs[0],&ys[0], ys.size());
     }
 //
 // emit updatePlot();

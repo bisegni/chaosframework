@@ -57,6 +57,7 @@ class GraphWidget : public QWidget
     QwtPlot *plot;
     QwtPlotGrid *grid;
     QVBoxLayout *vbox;
+    int numberOfPoint;
     int d_timerId;
     QwtPlotDirectPainter *d_directPainter;
 
@@ -76,6 +77,7 @@ public:
     void start();
     void stop();
     void timerEvent(QTimerEvent *event);
+    void setPointNumber(int points);
 signals:
 public slots:
 

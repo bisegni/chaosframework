@@ -46,6 +46,8 @@ private slots:
 
     void on_buttonClose_clicked();
 
+    void on_horizontalSlider_sliderMoved(int position);
+
 private:
     Ui::ControlDialog *ui;
 };
