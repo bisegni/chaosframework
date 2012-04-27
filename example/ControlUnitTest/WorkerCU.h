@@ -24,6 +24,7 @@
 #include <boost/random.hpp>
 #include <boost/chrono.hpp>
 #include <boost/thread.hpp>
+#include <chaos/common/utility/Atomic.h>
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 
 using namespace std;
@@ -56,6 +57,8 @@ class WorkerCU : public AbstractControlUnit {
     double_t gainNoise;
     
     boost::mutex pointChangeMutex;
+    atomic_int_type messageID;
+    
 public:
     /*
      Construct a new CU with an identifier

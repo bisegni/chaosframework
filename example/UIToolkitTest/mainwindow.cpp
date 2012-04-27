@@ -36,7 +36,6 @@
 #include <boost/thread.hpp>
 #include <qevent.h>
 #include <QTableWidgetItem>
-#include "spinboxdelegate.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -200,7 +199,6 @@ void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
         model->setItem(row++, 3, new QStandardItem(QString(attributeDescription.c_str())));
     }
     ui->tableView->setModel(model);
-    ui->tableView->setItemDelegateForColumn(2, new SpinBoxDelegate());
     ui->tableView->setEditTriggers(QAbstractItemView::SelectedClicked);
     updateDeviceState();
 

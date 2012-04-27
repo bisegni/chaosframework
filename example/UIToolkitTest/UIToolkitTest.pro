@@ -17,13 +17,11 @@ LIBS += -L/usr/lib -L/usr/local/lib -L/usr/local/qwt-6.0.2-svn/lib -lqwt -lchaos
 SOURCES += main.cpp\
         mainwindow.cpp \
     graphwidget.cpp \
-    controldialog.cpp \
-    spinboxdelegate.cpp
+    controldialog.cpp
 
 HEADERS  += mainwindow.h \
     graphwidget.h \
-    controldialog.h \
-    spinboxdelegate.h
+    controldialog.h
 
 FORMS    += mainwindow.ui \
     controldialog.ui

@@ -194,28 +194,19 @@ void WorkerCU::init(CDataWrapper *newConfiguration) throw(CException) {
  Execute the Control Unit work
  */
 void WorkerCU::run(const string& deviceID) throw(CException) {
-    LAPP_ << "run WorkerCU for device" << deviceID;
-    auto_ptr<SerializationBuffer> jsonResult;
     const char *devIDInChar = _deviceID.c_str();
-    string jsonString;
-    string bufferHexRepresentation;
-    
-    currentExecutionTime = steady_clock::now();
-    LAPP_ << "Time beetwen last call(msec):" << (currentExecutionTime-lastExecutionTime);
-    lastExecutionTime = currentExecutionTime;
     
     //get new data wrapper instance filled
     //with mandatory data
     CDataWrapper *acquiredData = getNewDataWrapperForKey(devIDInChar);
     if(!acquiredData) return;
     
+    //put the messageID for test the lost of package
+    messageID = chaos::atomic_increment(&messageID);
+    acquiredData->addInt32Value("id", messageID);
     computeWave(acquiredData);
     //adding some interesting random data
-    int64_t curMsec = (currentExecutionTime-initTime).count()/curPhasePeriod;
-    double_t sinValue = std::sin(curMsec*sinCompConst);
-    LAPP_ << "curMsec:" << curMsec;
-    LAPP_ << "Sin Value:" << sinValue;
-    acquiredData->addDoubleValue(DS_ELEMENT_1, curAltitude*sinValue);
+
     //submit acquired data
     pushDataSetForKey(devIDInChar, acquiredData);
     

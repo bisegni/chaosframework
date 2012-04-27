@@ -25,6 +25,7 @@
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/ChaosCommon.h>
+#include <chaos/common/utility/Atomic.h>
 
 #include <chaos/ui_toolkit/Common/DeviceDatasetCache.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
