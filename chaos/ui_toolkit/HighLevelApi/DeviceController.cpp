@@ -38,6 +38,8 @@ DeviceController::DeviceController(string& _deviceID):deviceID(_deviceID) {
 }
 
 DeviceController::~DeviceController() {
+    stopTracking();
+    
     if(mdsChannel){
         LLRpcApi::getInstance()->deleteMessageChannel(mdsChannel);
     }
@@ -319,6 +321,13 @@ void DeviceController::deinitializeAttributeIndexMap() {
     
     for (std::map<string,  chaos::SingleBufferCircularBuffer<double_t> *>::iterator iter = doubleAttributeLiveBuffer.begin(); 
          iter != doubleAttributeLiveBuffer.end();
+         iter++) {
+        delete(iter->second);
+    }
+    doubleAttributeLiveBuffer.clear();
+    
+    for (std::map<string,  PointerBuffer*>::iterator iter = pointerAttributeLiveBuffer.begin(); 
+         iter != pointerAttributeLiveBuffer.end();
          iter++) {
         delete(iter->second);
     }

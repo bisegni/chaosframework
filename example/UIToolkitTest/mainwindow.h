@@ -45,6 +45,10 @@ class MainWindow : public QMainWindow
     int d_timerId;
     boost::shared_ptr<boost::thread> schedThread;
     bool runThread;
+    std::string checkSequentialIDKey;
+    int64_t lostPack;
+    int32_t lastID;
+    int64_t oversampling;
 protected:
     void executeOnThread();
     void updateDeviceState();
@@ -91,6 +95,8 @@ private slots:
     void on_pushButton_clicked();
     void timerEvent(QTimerEvent *event);
     void on_spinBox_valueChanged(int arg1);
+
+    void on_lineEdit_returnPressed();
 
 private:
     Ui::MainWindow *ui;

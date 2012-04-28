@@ -231,6 +231,10 @@ namespace chaos {
             
             chaos::DataBuffer *getBufferForAttribute(string& attributeName);
             chaos::PointerBuffer *getPtrBufferForAttribute(string& attributeName);
+            
+            CDataWrapper *getCurrentData(){
+                return currentLiveValue.get();
+            }
         };
     }
 }

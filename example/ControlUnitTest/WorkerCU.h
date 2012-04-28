@@ -57,7 +57,7 @@ class WorkerCU : public AbstractControlUnit {
     double_t gainNoise;
     
     boost::mutex pointChangeMutex;
-    atomic_int_type messageID;
+    int32_t messageID;
     
 public:
     /*

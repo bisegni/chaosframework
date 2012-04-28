@@ -55,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mdsChannel = chaos::ui::LLRpcApi::getInstance()->getNewMetadataServerChannel();
     trackThread = NULL;
     d_timerId = -1;
+    lostPack = 0;
 }
 
 MainWindow::~MainWindow()
@@ -311,23 +312,23 @@ void MainWindow::on_buttonStartTracking_clicked()
     if(schedThread.get()) return;
     runThread = true;
     schedThread.reset(new boost::thread(boost::bind(&MainWindow::executeOnThread, this)));
-    //trackThread = new chaos::CThread(this);
-    //trackThread->setDelayBeetwenTask(1000000);
-    //trackThread->start();
-    //if(d_timerId != -1) return;
-    //int64_t delay(ui->dialTrackSpeed->value());
-    //d_timerId = startTimer(delay);
+
+    if(d_timerId != -1) return;
+    d_timerId = startTimer(40);
+    lastID = 0;
+    lostPack = 0;
+    oversampling = 0;
     graphWdg->start();
 }
 
 void MainWindow::on_buttonStopTracking_clicked() {
     graphWdg->stop();
-    //if(d_timerId != -1) killTimer(d_timerId);
-    //d_timerId = -1;
+    if(d_timerId != -1) killTimer(d_timerId);
+    d_timerId = -1;
     runThread = false;
     if(schedThread){
-    schedThread->join();
-    schedThread.reset();
+        schedThread->join();
+        schedThread.reset();
     }
     //if(!trackThread) return;
     //trackThread->stop();
@@ -340,19 +341,24 @@ void MainWindow::executeOnThread(){
     while(runThread){
         //boost::mutex::scoped_lock  lock(graphWdg->manageMutex);
         deviceController->fetchCurrentDeviceValue();
+        if(checkSequentialIDKey.size()>0){
+            chaos::CDataWrapper *wrapper = deviceController->getCurrentData();
+            if(wrapper->hasKey(checkSequentialIDKey.c_str())){
+                int32_t curLastID = wrapper->getInt32Value(checkSequentialIDKey.c_str());
+                if(lastID+1<curLastID){
+                    lostPack++;
+                }else if(lastID==curLastID){
+                    oversampling++;
+                }
+                lastID = curLastID;
+            }
+        }
         boost::this_thread::sleep(boost::posix_time::milliseconds(ui->dialTrackSpeed->value()));
     }
 
 }
 
 void MainWindow::on_dialTrackSpeed_valueChanged(int value) {
-    int64_t delay(value);
-    //trackThread->setDelayBeetwenTask(delay);
-
-    if(d_timerId != -1){
-        killTimer(d_timerId);
-        d_timerId = startTimer(delay);
-    }
 }
 
 void MainWindow::on_dialScheduleDevice_valueChanged(int value) {
@@ -379,9 +385,11 @@ void MainWindow::timerEvent(QTimerEvent *event)
 {
     if ( event->timerId() == d_timerId )
     {
-        if(!deviceController.get()) return;
-        //boost::mutex::scoped_lock  lock(graphWdg->manageMutex);
-        deviceController->fetchCurrentDeviceValue();
+        QString message= "LP:";
+        message.append(QString::number(lostPack));
+        message.append(" os:");
+        message.append(QString::number(oversampling));
+        ui->lostPackageCountLabel->setText(message);
     }
     QMainWindow::timerEvent(event);
 }
@@ -390,4 +398,9 @@ void MainWindow::on_spinBox_valueChanged(int points)
 {
     if(graphWdg == NULL) return;
     graphWdg->setPointNumber(points);
+}
+
+void MainWindow::on_lineEdit_returnPressed()
+{
+    checkSequentialIDKey.assign(ui->lineEdit->text().toStdString());
 }

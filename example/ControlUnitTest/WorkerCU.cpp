@@ -180,7 +180,7 @@ void WorkerCU::init(CDataWrapper *newConfiguration) throw(CException) {
     curAltitude = 1;
     srand((unsigned)time(0));
     PI = acos((long double) -1);
-    
+    messageID = 0;
     sinevalue = NULL;
     points = 0;
     freq = 1.0;
@@ -202,7 +202,6 @@ void WorkerCU::run(const string& deviceID) throw(CException) {
     if(!acquiredData) return;
     
     //put the messageID for test the lost of package
-    messageID = chaos::atomic_increment(&messageID);
     acquiredData->addInt32Value("id", messageID);
     computeWave(acquiredData);
     //adding some interesting random data
