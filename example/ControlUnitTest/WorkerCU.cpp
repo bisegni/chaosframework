@@ -202,11 +202,7 @@ void WorkerCU::run(const string& deviceID) throw(CException) {
     if(!acquiredData) return;
     
     //put the messageID for test the lost of package
-<<<<<<< HEAD
-    acquiredData->addInt32Value("id", messageID);
-=======
     acquiredData->addInt32Value("id", ++messageID);
->>>>>>> update documentation and correct the bug into incremento for test cu datapack
     computeWave(acquiredData);
     //adding some interesting random data
 
