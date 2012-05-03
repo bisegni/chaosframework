@@ -123,12 +123,10 @@ namespace chaos {
         
             //add a integer value
         void addInt32Value(const char *, int32_t);
-        
-#if __linux__ && !defined(__x86_64__)
+            
+            //add a double value
         void addDoubleValue(const char *key, double dValue);
-#else
-        void addDoubleValue(const char *key, double_t dValue);
-#endif   
+
             //add a integer value
         void addInt64Value(const char *, int64_t);
         

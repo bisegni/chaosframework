@@ -114,11 +114,11 @@ int main (int argc, char* argv[] )
             
             DataBuffer *intValue1Buff = controller->getBufferForAttribute(key);
             PointerBuffer *binaryValueBuff = controller->getPtrBufferForAttribute(key2);
-            double_t *bPtr = static_cast<double_t*>(intValue1Buff->getBasePointer());
+            double *bPtr = static_cast<double*>(intValue1Buff->getBasePointer());
             
             for (int idx = 0; idx < 30; idx++) {
                 controller->fetchCurrentDeviceValue();
-                double_t *wPtr = static_cast<double_t*>(intValue1Buff->getWritePointer());
+                double *wPtr = static_cast<double*>(intValue1Buff->getWritePointer());
                 
                 std::cout << intValue1Buff->getWriteBufferPosition()<< std::endl;
                 
@@ -129,19 +129,19 @@ int main (int argc, char* argv[] )
                 
                 
                 for (int idx = 0; idx < hisotryToRead-1; idx++) {
-                    double_t *newbPtr=wPtr + idx;
+                    double *newbPtr=wPtr + idx;
                     std::cout << *newbPtr;
                 }
                 if(bPtr != wPtr){
                     for (int idx = 0; idx < recentToRead; idx++) {
-                        double_t *newbPtr=bPtr + idx;
+                        double *newbPtr=bPtr + idx;
                         std::cout << *newbPtr;
                     }
                 }
                 std::cout << std::endl;
                 
                 int32_t tipedBufLen = 0;
-                boost::shared_ptr<double_t> sinWavePtr = binaryValueBuff->getTypedPtr<double_t>(tipedBufLen);
+                boost::shared_ptr<double> sinWavePtr = binaryValueBuff->getTypedPtr<double>(tipedBufLen);
                 if(sinWavePtr){
                     std::cout << "Buffer received:" << std::endl;
                     std::cout << "Buffer received len:" << tipedBufLen<< std::endl;

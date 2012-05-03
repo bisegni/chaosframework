@@ -49,7 +49,7 @@ WorkerCU::WorkerCU():AbstractControlUnit(),rng((const uint_fast32_t) time(0) ),o
     _deviceID.assign(SIMULATED_DEVICE_ID);
     cuName = "WORKER_CU";
     numberOfResponse = 0;
-    sinCompConst = (double_t)6.28/(double_t)360;
+    sinCompConst = (double)6.28/(double)360;
 }
 
 /*
@@ -213,10 +213,10 @@ void WorkerCU::run(const string& deviceID) throw(CException) {
 
 void WorkerCU::computeWave(CDataWrapper *acquiredData) {
     if(sinevalue == NULL) return;
-    double_t interval = (2*PI)/points;
+    double interval = (2*PI)/points;
     boost::mutex::scoped_lock lock(pointChangeMutex);
     for(int i=0; i<points; i++){
-        sinevalue[i] = (gain*sin((interval*i)+phase)+(((double_t)randInt()/(double_t)100)*gainNoise)+bias);
+        sinevalue[i] = (gain*sin((interval*i)+phase)+(((double)randInt()/(double)100)*gainNoise)+bias);
     }
     acquiredData->addBinaryValue("sinWave", (char*)sinevalue, sizeof(double)*points);
 }
@@ -253,7 +253,7 @@ CDataWrapper* WorkerCU::setDatasetAttribute(CDataWrapper *datasetAttrbiuteValue,
     }
     
     if(datasetAttrbiuteValue->hasKey(DS_ELEMENT_3)){
-        double_t cur = datasetAttrbiuteValue->getDoubleValue(DS_ELEMENT_3);
+        double cur = datasetAttrbiuteValue->getDoubleValue(DS_ELEMENT_3);
         if(cur < 1) cur = 1;
         curPhasePeriod = cur * 1000000;
     }
@@ -269,7 +269,7 @@ CDataWrapper* WorkerCU::setDatasetAttribute(CDataWrapper *datasetAttrbiuteValue,
                 sinevalue = NULL;  
             }
         }else{
-            double_t* tmpPtr = (double_t*)realloc(sinevalue, sizeof(double_t) * newPoints);
+            double* tmpPtr = (double*)realloc(sinevalue, sizeof(double) * newPoints);
             if(tmpPtr) {
                 sinevalue = tmpPtr;
                 memset(sinevalue, 0, points);

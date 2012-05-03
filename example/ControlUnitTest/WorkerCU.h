@@ -38,23 +38,23 @@ class WorkerCU : public AbstractControlUnit {
     RNGType rng;
     uniform_int<> one_to_hundred;    
     variate_generator< RNGType, uniform_int<> > randInt; 
-    double_t numberOfResponse;
+    double numberOfResponse;
     high_resolution_clock::time_point initTime;
     high_resolution_clock::time_point lastExecutionTime;
     high_resolution_clock::time_point currentExecutionTime;
     string _deviceID;
-    double_t sinCompConst;
-    double_t curAltitude;
-    double_t curPhasePeriod;
+    double sinCompConst;
+    double curAltitude;
+    double curPhasePeriod;
     long double PI;
     
     int32_t points;
-    double_t *sinevalue;
-    double_t freq;
-    double_t gain;
-    double_t phase;
-    double_t bias;
-    double_t gainNoise;
+    double *sinevalue;
+    double freq;
+    double gain;
+    double phase;
+    double bias;
+    double gainNoise;
     
     boost::mutex pointChangeMutex;
     int32_t messageID;
