@@ -321,6 +321,9 @@ namespace chaos {
         static const char * const CS_DM_OUTPUT_BUFFER_HST_TIME               = "cs|dm|out_buf_hst_time";
             //!live data address
         static const char * const CS_DM_LD_SERVER_ADDRESS                 = "cs|dm|ld|server_address";
+            //!key associated with the device identification in a k/v storage ien
+        static const char * const CS_DM_LD_DEVICE_ADDRESS_KEY                     = "ld.device_addr_key";
+
             //!history data address
         static const char * const CS_DM_HD_SERVER_ADDRESS                 = "cs|dm|hd|server_address";
         

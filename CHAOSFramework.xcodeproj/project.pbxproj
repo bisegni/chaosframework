@@ -161,6 +161,7 @@
 		32AAD78E14CD95FD005A097C /* Atomic.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AAD78D14CD95FD005A097C /* Atomic.h */; };
 		32D68AD014D5D5A7009F290A /* SetupStateManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D68ACF14D5D5A7009F290A /* SetupStateManager.h */; };
 		32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */; };
+		32F466DE155EDBDE00AD3D81 /* IODataDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F466DD155EDBDE00AD3D81 /* IODataDriver.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -325,6 +326,7 @@
 		32C574D7150AAFFA00349A49 /* Makefile.am */ = {isa = PBXFileReference; lastKnownFileType = text; path = Makefile.am; sourceTree = "<group>"; };
 		32D68ACF14D5D5A7009F290A /* SetupStateManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetupStateManager.h; sourceTree = "<group>"; };
 		32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleBufferCircularBuffer.h; sourceTree = "<group>"; };
+		32F466DD155EDBDE00AD3D81 /* IODataDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IODataDriver.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -559,6 +561,7 @@
 		326DB40214B38BC00018A8D0 /* io */ = {
 			isa = PBXGroup;
 			children = (
+				32F466DD155EDBDE00AD3D81 /* IODataDriver.cpp */,
 				326DB40314B38BC00018A8D0 /* IODataDriver.h */,
 				326DB40414B38BC00018A8D0 /* IOMemcachedDriver.cpp */,
 				326DB40514B38BC00018A8D0 /* IOMemcachedDriver.h */,
@@ -1034,6 +1037,7 @@
 				3297F22614D96F31004FFE4F /* DeviceMessageChannel.cpp in Sources */,
 				320C2187151B47C200BD0F41 /* EventBroker.cpp in Sources */,
 				320C218C151B556E00BD0F41 /* EventReceiver.cpp in Sources */,
+				32F466DE155EDBDE00AD3D81 /* IODataDriver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

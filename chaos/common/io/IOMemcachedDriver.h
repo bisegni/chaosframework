@@ -34,6 +34,7 @@ namespace chaos{
     class IOMemcachedDriver : public IODataDriver {
         boost::mutex useMCMutex;
         memcached_st *memClient;
+        string dataKey;
     public:
         
         IOMemcachedDriver();
@@ -48,24 +49,16 @@ namespace chaos{
         void deinit() throw(CException);
         
         /*
-         * This method will cache all object passed to driver
+         * This method retrive the cached object by CSDawrapperUsed as query key and
+         * return a pointer to the class ArrayPointer of CDataWrapper type
          */
-        void storeData(CDataWrapper*) throw(CException);
+        virtual void storeRawData(size_t dataDim, const char * buffer)  throw(CException);
         
         /*
-         * This method retrive the cached object by his key
-         */
-        virtual ArrayPointer<CDataWrapper>* retriveData(CDataWrapper*const)  throw(CException);
-        /*
          * This method retrive the cached object by CSDawrapperUsed as query key and
          * return a pointer to the class ArrayPointer of CDataWrapper type
          */
-        virtual ArrayPointer<CDataWrapper>* retriveData(string&)  throw(CException);
-        /*
-         * This method retrive the cached object by CSDawrapperUsed as query key and
-         * return a pointer to the class ArrayPointer of CDataWrapper type
-         */
-        virtual char * retriveRawData(string& key, size_t *dim=NULL)  throw(CException);
+        virtual char * retriveRawData(size_t *dim=NULL)  throw(CException);
         /*
          Update the driver configuration
          */

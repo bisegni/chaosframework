@@ -43,16 +43,7 @@ namespace chaos {
             ~LLDataApi();
             
           public:          
-            /*
-             return the last valid dataset for a device key
-             */
-            char *getLastDatasetForDeviceKey(string&);
-            
-            int32_t getLastInt32ForDeviceKey(string&, string&);
-            
-            int64_t getLastInt64ForDeviceKey(string&, string&);
-            
-            double_t getLastDoubleForDeviceKey(string&, string&);
+
         };
     }
 }

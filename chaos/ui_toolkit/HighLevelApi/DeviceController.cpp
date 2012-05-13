@@ -374,7 +374,7 @@ void DeviceController::stopTracking() {
 void DeviceController::fetchCurrentDeviceValue() {
      boost::recursive_mutex::scoped_lock lock(trackMutext);
     
-    char *value = ioLiveDataDriver->retriveRawData(deviceID);
+    char *value = ioLiveDataDriver->retriveRawData();
     if (value) {
         currentLiveValue.reset(new CDataWrapper(value));
         free(value);

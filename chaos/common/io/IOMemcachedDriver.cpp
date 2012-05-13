@@ -55,6 +55,7 @@ namespace chaos{
      * every implemented driver need to get all needed configuration param
      */
     void IOMemcachedDriver::init() throw(CException) {
+        IODataDriver::init();
         LMEMDRIVER_ << "Initializing Driver with libmemcache: " << LIBMEMCACHED_VERSION_STRING;
         
         //memcached_return_t configResult = MEMCACHED_SUCCESS;
@@ -66,6 +67,7 @@ namespace chaos{
      * Deinitialization of memcached driver
      */
     void IOMemcachedDriver::deinit() throw(CException) {
+        IODataDriver::deinit();
         if(memClient){
             memcached_free(memClient);
             memClient = NULL;
@@ -73,67 +75,32 @@ namespace chaos{
     }
     
     /*
-     * This method will cache all object passed to driver
+     * This method retrive the cached object by CSDawrapperUsed as query key and
+     * return a pointer to the class ArrayPointer of CDataWrapper type
      */
-    void IOMemcachedDriver::storeData(CDataWrapper *dataToStore) throw(CException) {
-        memcached_return_t mcSetResult = MEMCACHED_SUCCESS;
-        if(!dataToStore) return;
-        
-        //get the key to store data on the memcached
-        string key = dataToStore->getStringValue(DataPackKey::CS_CSV_DEVICE_ID);
-        SerializationBuffer* serialization = dataToStore->getBSONData();
-        if(!serialization) {
-            return;
-        }
-        
+    void IOMemcachedDriver::storeRawData(size_t dataDim, const char * buffer)  throw(CException) {
         boost::mutex::scoped_lock lock(useMCMutex);
-        mcSetResult = memcached_set(memClient, key.c_str(), key.length(), serialization->getBufferPtr(), serialization->getBufferLen(), 0, 0);
-        //for debug
+        memcached_return_t mcSetResult = MEMCACHED_SUCCESS;
+        mcSetResult = memcached_set(memClient, dataKey.c_str(), dataKey.length(), buffer, dataDim, 0, 0);
+            //for debug
         if(mcSetResult!=MEMCACHED_SUCCESS) {
 #if DEBUG
             LMEMDRIVER_ << "cache data submition error";
 #endif
         }
-        delete(serialization);
-    }
-    
-    /*
-     * This method retrive the cached object by his key
-     */
-    ArrayPointer<CDataWrapper>*  IOMemcachedDriver::retriveData(CDataWrapper * const keyData)  throw(CException) {
-        //check for key length
-        string key = keyData->getStringValue(DataPackKey::CS_CSV_DEVICE_ID);
-        return retriveData(key);
+
     }
     
     /*
      * This method retrive the cached object by CSDawrapperUsed as query key and
      * return a pointer to the class ArrayPointer of CDataWrapper type
      */
-    ArrayPointer<CDataWrapper>* IOMemcachedDriver::retriveData(string& key)  throw(CException) {
-        ArrayPointer<CDataWrapper> *result = new ArrayPointer<CDataWrapper>();
-        
-        char *value = retriveRawData(key);
-        if (value) {
-            //some value has been received
-            //allocate the data wrapper object with serialization got from memcached
-            //CDataWrapper *dataWrapper = 
-            result->add(new CDataWrapper(value));
-            free(value);
-        }
-        return result;
-    }
-    
-    /*
-     * This method retrive the cached object by CSDawrapperUsed as query key and
-     * return a pointer to the class ArrayPointer of CDataWrapper type
-     */
-    char* IOMemcachedDriver::retriveRawData(string& key, size_t *dim)  throw(CException) {
+    char* IOMemcachedDriver::retriveRawData(size_t *dim)  throw(CException) {
         uint32_t flags= 0;
         size_t value_length= 0;
         memcached_return_t mcSetResult = MEMCACHED_SUCCESS;
         boost::mutex::scoped_lock lock(useMCMutex);
-        char* result =  memcached_get(memClient, key.c_str(), key.length(), &value_length, &flags,  &mcSetResult);
+        char* result =  memcached_get(memClient, dataKey.c_str(), dataKey.length(), &value_length, &flags,  &mcSetResult);
         if(dim) *dim = value_length;
         return result;
     }    
@@ -143,10 +110,16 @@ namespace chaos{
      */
     CDataWrapper* IOMemcachedDriver::updateConfiguration(CDataWrapper* newConfigration) {
         memcached_return_t configResult = MEMCACHED_SUCCESS;
-        //boost::mutex::scoped_lock lock(usageMutex);
+        boost::mutex::scoped_lock lock(useMCMutex);
         LMEMDRIVER_ << "Update Configuration";
         
         if(!memClient) throw CException(0, "Write memcached structure not allocated", "IOMemcachedDriver::updateConfiguration");
+        
+            //checkif someone has passed us the device indetification
+        if(newConfigration->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)){
+            dataKey = newConfigration->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
+            LMEMDRIVER_ << "The key for memory cache is: " << dataKey;
+        }
         
         if(newConfigration->hasKey(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS) && memClient){
             LMEMDRIVER_ << "Get the DataManager LiveData address value";

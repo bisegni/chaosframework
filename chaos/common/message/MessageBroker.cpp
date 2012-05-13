@@ -134,11 +134,14 @@ void MessageBroker::deinit() throw(CException) {
     for (map<string, MessageChannel*>::iterator channnelIter = activeChannel.begin(); 
          channnelIter != activeChannel.end(); 
          channnelIter++) {
+        
+        MessageChannel *messageChannelToDispose = channnelIter->second;
+        
         //deinit channel
-        MB_LAPP  << "Deinit channel: " << channnelIter->second->channelID;
-        channnelIter->second->deinit();
-        MB_LAPP  << "Deleting channel: " << channnelIter->second->channelID;
-        delete(channnelIter->second);
+        messageChannelToDispose->deinit();
+        
+            //dispose it
+        delete(messageChannelToDispose);
     }
     MB_LAPP  << "Clear channel map";
     activeChannel.clear();

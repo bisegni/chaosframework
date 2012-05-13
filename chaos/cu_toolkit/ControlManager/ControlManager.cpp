@@ -42,7 +42,8 @@ if(!controlUnitInstanceMap.count(x)) {\
 throw CException(0, "The Control Unit identifier is not registered", "ControlManager::initSandbox");\
 }
 
-
+#define LCMAPP_ LAPP_ << "[Control Manager] - "
+#define LCMERR_ LERR_ << "[Control Manager Error] - "
 
 /*
  Constructor
@@ -61,16 +62,16 @@ ControlManager::~ControlManager() {
  Initialize the CU Instantiator
  */
 void ControlManager::init() throw(CException) {
-    LAPP_  << "Init Control Manager";
+    LCMAPP_  << "Inititializing";
     CThreadExecutionTaskSPtr selfSharedPtr(this);
     
-    LAPP_  << "Control Manager Thread Allocation";
+    LCMAPP_  << "Thread Allocation";
     selfThreadPtr = new CThread(selfSharedPtr);
     selfThreadPtr->setDelayBeetwenTask(0);
-    if(!selfThreadPtr) throw CException(0, "Control Manager Thread allocation failure", "ControlManager::init");
+    if(!selfThreadPtr) throw CException(0, "Thread allocation failure", "ControlManager::init");
     
     //control manager action initialization
-    LAPP_  << "Control Manager system action initialization";
+    LCMAPP_  << "system action initialization";
     
     //init CU action
     AbstActionDescShrPtr 
@@ -106,22 +107,22 @@ void ControlManager::init() throw(CException) {
     //register command manager action
     CommandManager::getInstance()->registerAction(this);
     
-    LAPP_ << "Get the Metadataserver channel";
+    LCMAPP_ << "Get the Metadataserver channel";
     mdsChannel = CommandManager::getInstance()->getMetadataserverChannel();
-    if(mdsChannel) LAPP_ << "Metadataserver has been allocated";
-    else  LAPP_ << "Metadataserver allocation failed";
+    if(mdsChannel) LCMAPP_ << "Metadataserver has been allocated";
+    else  LCMAPP_ << "Metadataserver allocation failed";
 }
 
 /*
  Initialize the CU Instantiator
  */
 void ControlManager::start() throw(CException) {
-    LAPP_  << "Start Control Manager";
+    LCMAPP_  << "Start Control Manager";
     if(selfThreadPtr) {
         selfThreadPtr->start();
-        LAPP_  << "Control Manager Thread Started";
+        LCMAPP_  << "Thread Started";
     } else {
-        LERR_  << "No Control Manager Thread found";
+        LCMERR_  << "No Thread found";
     }
 }
 
@@ -130,50 +131,69 @@ void ControlManager::start() throw(CException) {
  */
 void ControlManager::deinit() throw(CException) {
     bool detachFake = false;
-    LAPP_  << "Deinit the Control Manager";
-    LAPP_  << "Control Manager system action deinitialization";
+    vector<string> allCUDeviceIDToStop;
+    LCMAPP_  << "Deinit the Control Manager";
+    LCMAPP_  << "system action deinitialization";
     //deregistering the action
     CommandManager::getInstance()->deregisterAction(this);
-    LAPP_  << "Control Manager system action deinitialized";
+    LCMAPP_  << "system action deinitialized";
     
-    LAPP_  << "Trying to stop Control Manager thread";
+    LCMAPP_  << "Trying to stop thread";
     if(selfThreadPtr)selfThreadPtr->stop(false);
-    LAPP_  << "Control Manager thread notified";
+    LCMAPP_  << "thread notified";
     
     lockCondition.notify_one();
     if(selfThreadPtr)selfThreadPtr->join();
-    LAPP_  << "Control Manager thread stoppped";
+    LCMAPP_  << "thread stoppped";
     
-    LAPP_  << "Stopping all the submitted Control Unit";
+    LCMAPP_  << "Deinit all the submitted Control Unit";
     map<string, shared_ptr<AbstractControlUnit> >::iterator cuIter = controlUnitInstanceMap.begin();
     for ( ; cuIter != controlUnitInstanceMap.end(); cuIter++ ){
         shared_ptr<AbstractControlUnit> cu = (*cuIter).second;
-        try{
-            cu->_stop(NULL, detachFake);
-        }catch (CException& ex) {
-            if(ex.errorCode != 1){
-                //these exception need to be logged
-                DECODE_CHAOS_EXCEPTION(ex);
-            }
-        }
+        LCMAPP_  << "Deinit Control Unit. " << cu->getCUInstance();
+            //load all device id for this cu
+        cu->getAllDeviceId(allCUDeviceIDToStop);
         
-        try{
-            cu->_deinit(NULL, detachFake);
-        }catch (CException& ex) {
-            if(ex.errorCode != 1){
-                //these exception need to be logged
-                DECODE_CHAOS_EXCEPTION(ex);
+        for (vector<string>::iterator iter =  allCUDeviceIDToStop.begin(); 
+             iter != allCUDeviceIDToStop.end(); 
+             iter++) {
+            
+                //stop all itnerna device
+           
+            CDataWrapper fakeDWForDeinit;
+            fakeDWForDeinit.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, *iter);
+            
+            try{
+                LCMAPP_  << "Stopping deviceid:" << *iter;
+                cu->_stop(&fakeDWForDeinit, detachFake);
+            }catch (CException& ex) {
+                if(ex.errorCode != 1){
+                        //these exception need to be logged
+                    DECODE_CHAOS_EXCEPTION(ex);
+                }
+            }
+            
+            try{
+                LCMAPP_  << "Deinit deviceid:" << *iter;
+                cu->_deinit(&fakeDWForDeinit, detachFake);
+            }catch (CException& ex) {
+                if(ex.errorCode != 1){
+                        //these exception need to be logged
+                    DECODE_CHAOS_EXCEPTION(ex);
+                }
+            }
+            try{
+                LCMAPP_  << "Undefine Action And Dataset for deviceid:" << *iter;
+                cu->_undefineActionAndDataset();
+            }  catch (CException& ex) {
+                if(ex.errorCode != 1){
+                        //these exception need to be logged
+                    DECODE_CHAOS_EXCEPTION(ex);
+                }
             }
         }
-        try{
-            cu->_undefineActionAndDataset();
-        }  catch (CException& ex) {
-            if(ex.errorCode != 1){
-                //these exception need to be logged
-                DECODE_CHAOS_EXCEPTION(ex);
-            }
-        }
-        LAPP_  << "Deinitilized Control Unit Sanbox:" << cu->getCUInstance();
+       
+        LCMAPP_  << "Deinitilized Control Unit Sanbox:" << cu->getCUInstance();
     }
     controlUnitInstanceMap.clear();
 }
@@ -204,24 +224,24 @@ void ControlManager::executeOnThread(const string& threadIdentification) throw(C
         if(!curCU){
             return;
         }
-        LAPP_  << "Got new Control Unit";
+        LCMAPP_  << "Got new Control Unit";
         shared_ptr<AbstractControlUnit> cuPtr(curCU);
         
-        LAPP_  << "Setup Control Unit Sanbox for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
+        LCMAPP_  << "Setup Control Unit Sanbox for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
         cuPtr->_defineActionAndDataset(cuActionAndDataset);
-        LAPP_  << "Setup finished for Control Unit Sanbox:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
+        LCMAPP_  << "Setup finished for Control Unit Sanbox:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
         //sendConfPackToMDS(cuPtr->defaultInternalConf.get());
         sendConfPackToMDS(cuActionAndDataset);
-        LAPP_  << "Talk with MDS for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
+        LCMAPP_  << "Talk with MDS for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
         
-        LAPP_  << "Configuration pack has been sent to MDS for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
+        LCMAPP_  << "Configuration pack has been sent to MDS for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
         //the sandbox name now is the real CUName_CUInstance before the initSandbox method call the CUInstance is
         //randomlly defined but if a CU want to ovveride it it can dureing initSandbox call
         if(controlUnitInstanceMap.count(cuPtr->getCUInstance())) {
-            LERR_  << "Duplicated control unit instance " << cuPtr->getCUInstance();
+            LCMERR_  << "Duplicated control unit instance " << cuPtr->getCUInstance();
             return;
         }
-        LAPP_  << "Control Unit Sanbox:" << cuPtr->getCUInstance() << " ready to work";
+        LCMAPP_  << "Control Unit Sanbox:" << cuPtr->getCUInstance() << " ready to work";
         //add sandbox to all map of running cu
         controlUnitInstanceMap.insert(make_pair(cuPtr->getCUInstance(), cuPtr));
         
