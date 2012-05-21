@@ -133,42 +133,90 @@ namespace bson {
         void decouple() { data = 0; }
 
         void appendUChar(unsigned char j) {
+#if defined(__ARM_EABI__)
+            memcpy(grow(sizeof(unsigned char)), &j, sizeof(unsigned char));
+#else
             *((unsigned char*)grow(sizeof(unsigned char))) = j;
+#endif
         }
         void appendChar(char j) {
+#if defined(__ARM_EABI__)
+            memcpy(grow(sizeof(char)), &j, sizeof(char));
+#else
             *((char*)grow(sizeof(char))) = j;
+#endif
         }
         void appendNum(char j) {
+#if defined(__ARM_EABI__)
+            memcpy(grow(sizeof(char)), &j, sizeof(char));
+#else
             *((char*)grow(sizeof(char))) = j;
+#endif
         }
         void appendNum(short j) {
+#if defined(__ARM_EABI__)
+            memcpy(grow(sizeof(short)), &j, sizeof(short));
+#else
             *((short*)grow(sizeof(short))) = j;
+#endif
         }
         void appendNum(int j) {
+#if defined(__ARM_EABI__)
+            memcpy(grow(sizeof(int)), &j, sizeof(int));
+#else
             *((int*)grow(sizeof(int))) = j;
+#endif
         }
         void appendNum(unsigned j) {
+#if defined(__ARM_EABI__)
+            memcpy(grow(sizeof(unsigned)), &j, sizeof(unsigned));
+#else
             *((unsigned*)grow(sizeof(unsigned))) = j;
+#endif
         }
         void appendNum(bool j) {
-            *((bool*)grow(sizeof(bool))) = j;
+#if defined(__ARM_EABI__)
+            memcpy(grow(sizeof(bool)), &j, sizeof(bool));
+#else
+             *((bool*)grow(sizeof(bool))) = j;
+#endif
         }
         void appendNum(double j) {
+#if defined(__ARM_EABI__)
+            memcpy(grow(sizeof(double)), &j, sizeof(double));
+#else
             *((double*)grow(sizeof(double))) = j;
+#endif
         }
         void appendNum(long double j) {
+#if defined(__ARM_EABI__)
+            memcpy(grow(sizeof(long double)), &j, sizeof(long double));
+#else
             *((long double*)grow(sizeof(long double))) = j;
+#endif
         }
         void appendNum(long long j) {
+#if defined(__ARM_EABI__)
+            memcpy(grow(sizeof(long long)), &j, sizeof(long long));
+#else
             *((long long*)grow(sizeof(long long))) = j;
+#endif
         }
 
         void appendNum(long int j) {
+#if defined(__ARM_EABI__)
+            memcpy(grow(sizeof(long int)), &j, sizeof(long int));
+#else
             *((long int*)grow(sizeof(long int))) = j;
+#endif
         }
 
         void appendNum(unsigned long long j) {
+#if defined(__ARM_EABI__)
+            memcpy(grow(sizeof(unsigned long long)), &j, sizeof(unsigned long long));
+#else
             *((unsigned long long*)grow(sizeof(unsigned long long))) = j;
+#endif
         }
 
         void appendBuf(const void *src, size_t len) {

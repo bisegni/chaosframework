@@ -99,20 +99,41 @@ namespace mongo {
     AtomicUInt AtomicUInt::operator--(int) {
         return atomic_int_helper(&x, -1);
     }
-#elif defined(__GNUC__)  && __GNUC__ >= 4 && __GNUC_MINOR__ >=1
-        // this is in GCC >= 4.1
-    inline void AtomicUInt::zero() { x = 0; } // TODO: this isn't thread safe - maybe
+#elif defined(__ARMEL__) || defined(__ARM_ARCH_5T__) || defined(__ARM_PCS) || defined(__ARM_EABI__)
+    
+#define arm_atomic_add_inline(ptr, val) \
+({ register unsigned int *__ptr asm("r2") = (ptr); \
+register unsigned int __result asm("r1"); \
+asm volatile ( \
+"1: @ atomic_add\n\t" \
+"ldr     r0, [r2]\n\t" \
+"mov     r3, #0xffff0fff\n\t" \
+"add     lr, pc, #4\n\t" \
+"add     r1, r0, %2\n\t" \
+"add     pc, r3, #(0xffff0fc0 - 0xffff0fff)\n\t" \
+"bcc     1b" \
+: "=&r" (__result) \
+: "r" (__ptr), "rIL" (val) \
+: "r0","r3","ip","lr","cc","memory" ); \
+__result; })
+    
+    inline void AtomicUInt::zero() { x = 0; } // TODO: this isn't thread safe
+    // from boost 1.39 interprocess/detail/atomic.hpp
+    inline unsigned atomic_int_helper(volatile unsigned *x, int val) {
+        int r = arm_atomic_add_inline(x, val) - val;
+        return r;
+    }
     AtomicUInt AtomicUInt::operator++() {
-        return __sync_add_and_fetch(&x, 1);
+        return atomic_int_helper(&x, 1)+1;
     }
     AtomicUInt AtomicUInt::operator++(int) {
-        return __sync_fetch_and_add(&x, 1);
+        return atomic_int_helper(&x, 1);
     }
     AtomicUInt AtomicUInt::operator--() {
-        return __sync_add_and_fetch(&x, -1);
+        return atomic_int_helper(&x, -1)-1;
     }
     AtomicUInt AtomicUInt::operator--(int) {
-        return __sync_fetch_and_add(&x, -1);
+        return atomic_int_helper(&x, -1);
     }
 #else
 #  error "unsupported compiler or platform"
