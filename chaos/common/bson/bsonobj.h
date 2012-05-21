@@ -450,7 +450,7 @@ namespace bson {
         class Holder : boost::noncopyable {
         private:
             Holder(); // this class should never be explicitly created
-            mongo::AtomicUInt refCount;
+            bson::AtomicUInt refCount;
         public:
             char data[4]; // start of object
 
