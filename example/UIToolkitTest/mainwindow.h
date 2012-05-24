@@ -52,6 +52,7 @@ class MainWindow : public QMainWindow
 protected:
     void executeOnThread();
     void updateDeviceState();
+    void cleanLastDevice();
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();

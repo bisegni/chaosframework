@@ -74,6 +74,8 @@ public:
     ~WorkerCU();
     
     inline void computeWave(CDataWrapper *acquiredData);
+    
+    inline void setWavePoint(int32_t newNumberOfPoints);
 protected:
     /*
      Define the Control Unit Dataset and Actions

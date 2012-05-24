@@ -182,12 +182,12 @@ void WorkerCU::init(CDataWrapper *newConfiguration) throw(CException) {
     PI = acos((long double) -1);
     messageID = 0;
     sinevalue = NULL;
-    points = 0;
+    setWavePoint(30);
     freq = 1.0;
-    gain = 1.0;
+    gain = 5.0;
     phase = 0.0;
     bias = 0.0;
-    gainNoise = 0;
+    gainNoise = 0.5;
 }
 
 /*
@@ -239,6 +239,30 @@ void WorkerCU::deinit(const string& deviceID) throw(CException) {
     }
 }
 
+void WorkerCU::setWavePoint(int32_t newNumberOfPoints) {
+    boost::mutex::scoped_lock lock(pointChangeMutex);
+
+    if(newNumberOfPoints < 1) newNumberOfPoints = 0;
+    
+    if(!newNumberOfPoints){
+        if(sinevalue){
+            free(sinevalue);
+            sinevalue = NULL;  
+        }
+    }else{
+        double* tmpPtr = (double*)realloc(sinevalue, sizeof(double) * newNumberOfPoints);
+        if(tmpPtr) {
+            sinevalue = tmpPtr;
+            memset(sinevalue, 0, points);
+        }else{
+                //memory can't be enlarged so pointer ramin the same
+                //so all remain unchanged
+            newNumberOfPoints = points;
+        }
+    }
+    points = newNumberOfPoints;
+}
+
 /*
  Receive the evento for set the dataset input element
  */
@@ -259,27 +283,7 @@ CDataWrapper* WorkerCU::setDatasetAttribute(CDataWrapper *datasetAttrbiuteValue,
     }
     
     if(datasetAttrbiuteValue->hasKey("points")){
-        boost::mutex::scoped_lock lock(pointChangeMutex);
-        int32_t newPoints = datasetAttrbiuteValue->getInt32Value("points");
-        if(newPoints < 1) newPoints = 0;
-        
-        if(!newPoints){
-            if(sinevalue){
-                free(sinevalue);
-                sinevalue = NULL;  
-            }
-        }else{
-            double* tmpPtr = (double*)realloc(sinevalue, sizeof(double) * newPoints);
-            if(tmpPtr) {
-                sinevalue = tmpPtr;
-                memset(sinevalue, 0, points);
-            }else{
-                //memory can't be enlarged so pointer ramin the same
-                //so all remain unchanged
-                newPoints = points;
-            }
-        }
-        points = newPoints;
+        setWavePoint(datasetAttrbiuteValue->getInt32Value("points"));
     }
     
     if(datasetAttrbiuteValue->hasKey("freq")){

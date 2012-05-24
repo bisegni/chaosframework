@@ -281,7 +281,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     KeyDataStorage *tmpKDS = 0L;
     auto_ptr<CDataWrapper> updateResult;
     if(!initConfiguration || !initConfiguration->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID) || !initConfiguration->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION)) {
-        throw CException(-1, "Node Device Init information in param", "AbstractControlUnit::_init");
+        throw CException(-1, "No Device Init information in param", "AbstractControlUnit::_init");
     }
     
     string deviceID = initConfiguration->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
@@ -336,7 +336,7 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
     KeyDataStorage *tmpKDS = 0L;
     
     if(!deinitParam || !deinitParam->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
-        throw CException(-1, "Node Device Defined in param", "AbstractControlUnit::_deinit");
+        throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_deinit");
     }
     
     string deviceID = deinitParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
@@ -382,7 +382,7 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     
     if(!startParam || !startParam->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
-        throw CException(-1, "Node Device Defined in param", "AbstractControlUnit::_start");
+        throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_start");
     }
     
     string deviceID = startParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
@@ -427,7 +427,7 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
 CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachParam) throw(CException) {
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     if(!stopParam || !stopParam->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
-        throw CException(-1, "Node Device Defined in param", "AbstractControlUnit::_stop");
+        throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_stop");
     }
     string deviceID = stopParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
     if(!CUSchemaDB::deviceIsPresent(deviceID)) {
@@ -469,6 +469,20 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachPa
  */
 CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAttributeValues,  bool& detachParam) throw (CException) {
     CDataWrapper *executionResult = NULL;
+        //lock shared access to control unit
+    recursive_mutex::scoped_lock  lock(managing_cu_mutex);
+    
+        //load all keyDataStorageMap for the registered devices
+    if(!datasetAttributeValues || !datasetAttributeValues->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
+        throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_setDatasetAttribute");
+    }
+        //retrive the deviceid
+    string deviceID = datasetAttributeValues->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
+    if(deviceExplicitStateMap[deviceID] == CUStateKey::DEINIT) {
+        throw CException(-2, "The Control Unit is in deinit state", "AbstractControlUnit::_setDatasetAttribute");
+    }
+    
+        //send dataset attribute change pack to control unit implementation
     executionResult = setDatasetAttribute(datasetAttributeValues, detachParam);
     return executionResult;
 }

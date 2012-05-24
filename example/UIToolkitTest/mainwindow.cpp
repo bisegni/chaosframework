@@ -87,7 +87,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     settings.setValue("main_window", saveGeometry());
     settings.setValue("main_window", saveState());
-    cleanCurrentDevice();
+    cleanLastDevice();
 
     QMainWindow::closeEvent(event);
 }
@@ -135,7 +135,6 @@ void MainWindow::updateDeviceState() {
         ui->labelState->setText("");
         return;
     }
-
     chaos::CUStateKey::ControlUnitState currentState;
     if(deviceController->getState(currentState)==0){
         switch(currentState){
@@ -155,9 +154,28 @@ void MainWindow::updateDeviceState() {
     }
 }
 
+/*
+  Try to remove the last selected device
+  */
+void MainWindow::cleanLastDevice() {
+    if(!deviceController) return;
+    ui->label_2->setText("");
+    ui->tableView->setModel(new QStandardItemModel(0, 4));
+    //stop the possible tracking
+    on_buttonStopTracking_clicked();
+
+    //remove the plot
+    graphWdg->clearAllPlot();
+
+    //
+    deviceController.reset();
+}
 
 void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
 {
+    //delete last device that is been controlled
+    cleanLastDevice();
+
     //deviceController
     std::string attributeDescription;
     std::vector<string> attributesName;
@@ -254,11 +272,6 @@ void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
         ctrlDialog->initDialog(deviceController, attributeName);
         ctrlDialog->show();
     }
-}
-
-void MainWindow::cleanCurrentDevice() {
-    on_buttonStopTracking_clicked();
-    graphWdg->clearAllPlot();
 }
 
 void MainWindow::on_buttonInit_clicked()

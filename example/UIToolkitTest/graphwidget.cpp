@@ -211,6 +211,7 @@ void GraphWidget::clearAllPlot() {
         iter++){
         pointerPlotMap.erase(iter);
     }
+    plot->replot();
 }
 void GraphWidget::start()
 {
