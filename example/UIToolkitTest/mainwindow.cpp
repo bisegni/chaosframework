@@ -364,6 +364,8 @@ void MainWindow::executeOnThread(){
         deviceController->fetchCurrentDeviceValue();
         if(checkSequentialIDKey.size()>0){
             chaos::CDataWrapper *wrapper = deviceController->getCurrentData();
+            if(wrapper == NULL) return;
+
             if(wrapper->hasKey(checkSequentialIDKey.c_str())){
                 int32_t curLastID = wrapper->getInt32Value(checkSequentialIDKey.c_str());
                 if(lastID+1<curLastID){

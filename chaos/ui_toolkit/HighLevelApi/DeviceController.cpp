@@ -375,10 +375,12 @@ void DeviceController::fetchCurrentDeviceValue() {
      boost::recursive_mutex::scoped_lock lock(trackMutext);
     
     char *value = ioLiveDataDriver->retriveRawData();
-    if (value) {
-        currentLiveValue.reset(new CDataWrapper(value));
-        free(value);
-    }
+        //check if some value has bee fetcher
+    if(!value) return;
+    
+    currentLiveValue.reset(new CDataWrapper(value));
+    free(value);
+    
     if(trackingAttribute.size() == 0) return;
     CDataWrapper *tmpPtr = currentLiveValue.get();
         //update buffer for tracked attribute
