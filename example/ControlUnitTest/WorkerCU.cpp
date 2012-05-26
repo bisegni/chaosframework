@@ -49,7 +49,6 @@ WorkerCU::WorkerCU():AbstractControlUnit(),rng((const uint_fast32_t) time(0) ),o
     _deviceID.assign(SIMULATED_DEVICE_ID);
     cuName = "WORKER_CU";
     numberOfResponse = 0;
-    sinCompConst = (double)6.28/(double)360;
 }
 
 /*
@@ -106,30 +105,13 @@ void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
                                 DataType::TYPE_INT32, 
                                 "integer 32bit action param description for testing purpose");
     
-    //setup the dataset
-    addAttributeToDataSet(devIDInChar,
-                          DS_ELEMENT_1,
-                          "The sin value in output",
-                          DataType::TYPE_DOUBLE, 
-                          DataType::Output);
+
     //setup the dataset
     addAttributeToDataSet(devIDInChar,
                           "sinWave",
                           "The sin waveform",
                           DataType::TYPE_BYTEARRAY, 
                           DataType::Output);
-    
-    addAttributeToDataSet(devIDInChar,
-                          DS_ELEMENT_2,
-                          "The input altitude of the sin",
-                          DataType::TYPE_DOUBLE, 
-                          DataType::Input);
-    
-    addAttributeToDataSet(devIDInChar,
-                          DS_ELEMENT_3,
-                          "The input phase of the sin",
-                          DataType::TYPE_DOUBLE, 
-                          DataType::Input);
     
     addAttributeToDataSet(devIDInChar,
                           "points",
@@ -177,7 +159,6 @@ void WorkerCU::init(CDataWrapper *newConfiguration) throw(CException) {
     initTime = steady_clock::now();
     lastExecutionTime = steady_clock::now();
     numberOfResponse = 0;
-    curAltitude = 1;
     srand((unsigned)time(0));
     PI = acos((long double) -1);
     messageID = 0;
@@ -218,7 +199,7 @@ void WorkerCU::computeWave(CDataWrapper *acquiredData) {
     for(int i=0; i<points; i++){
         sinevalue[i] = (gain*sin((interval*i)+phase)+(((double)randInt()/(double)100)*gainNoise)+bias);
     }
-    acquiredData->addBinaryValue("sinWave", (char*)sinevalue, sizeof(double)*points);
+    acquiredData->addBinaryValue("sinWave", (char*)sinevalue, (int32_t)sizeof(double)*points);
 }
 
 
@@ -250,10 +231,11 @@ void WorkerCU::setWavePoint(int32_t newNumberOfPoints) {
             sinevalue = NULL;  
         }
     }else{
-        double* tmpPtr = (double*)realloc(sinevalue, sizeof(double) * newNumberOfPoints);
+        size_t byteSize = sizeof(double) * newNumberOfPoints;
+        double* tmpPtr = (double*)realloc(sinevalue, byteSize);
         if(tmpPtr) {
             sinevalue = tmpPtr;
-            memset(sinevalue, 0, points);
+            memset(sinevalue, 0, byteSize);
         }else{
                 //memory can't be enlarged so pointer ramin the same
                 //so all remain unchanged
@@ -271,16 +253,6 @@ CDataWrapper* WorkerCU::setDatasetAttribute(CDataWrapper *datasetAttrbiuteValue,
        || !datasetAttrbiuteValue->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) return NULL;
     
     string id = datasetAttrbiuteValue->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
-    if(datasetAttrbiuteValue->hasKey(DS_ELEMENT_2)){
-        curAltitude = datasetAttrbiuteValue->getDoubleValue(DS_ELEMENT_2);
-        if(curAltitude < 1) curAltitude = 1;
-    }
-    
-    if(datasetAttrbiuteValue->hasKey(DS_ELEMENT_3)){
-        double cur = datasetAttrbiuteValue->getDoubleValue(DS_ELEMENT_3);
-        if(cur < 1) cur = 1;
-        curPhasePeriod = cur * 1000000;
-    }
     
     if(datasetAttrbiuteValue->hasKey("points")){
         setWavePoint(datasetAttrbiuteValue->getInt32Value("points"));

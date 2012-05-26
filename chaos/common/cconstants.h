@@ -29,7 +29,7 @@ namespace chaos {
      */
     
         //! Name space for grupping option used for commandline or in config file
-    namespace UserOption{
+    namespace InitOption{
             //! @Option for print the help
         static const char * const   OPT_HELP                          = "help";
             //!  @Option Specify the network port where rpc system will publish al the service
@@ -46,6 +46,8 @@ namespace chaos {
         static const char * const   OPT_LOG_ON_FILE                  ="log-on-file";
             //! @Option Specify when the file path of the log
         static const char * const   OPT_LOG_FILE                     ="log-file";
+            //! @Option Specify the severity of the log
+            //static const char * const   OPT_LOG_SEVERITY_LEVEL           ="log-severity-level";
     }
     /** @} */ // end of ParamOption
     

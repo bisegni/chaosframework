@@ -81,12 +81,8 @@ void GraphWidget::addNewPlot(chaos::PointerBuffer *pointerBuffer, std::string& p
     c->setStyle(QwtPlotCurve::Lines);
     c->attach(plot);
     c->setLegendAttribute(QwtPlotCurve::LegendShowSymbol);
-#if 1
-    c->setRenderHint(QwtPlotItem::RenderAntialiased, true);
-#endif
-#if 1
+    c->setRenderHint(QwtPlotItem::RenderAntialiased, false);
     c->setPaintAttribute(QwtPlotCurve::ClipPolygons, false);
-#endif
 
     newPlotInfo->curve = c;
     newPlotInfo->curvePointer = pointerBuffer;
@@ -108,12 +104,8 @@ void GraphWidget::addNewPlot(chaos::DataBuffer *dataBuffer, std::string& plotNam
     c->setStyle(QwtPlotCurve::Lines);
     c->attach(plot);
     c->setLegendAttribute(QwtPlotCurve::LegendShowSymbol);
-#if 1
-    c->setRenderHint(QwtPlotItem::RenderAntialiased, true);
-#endif
-#if 1
+    c->setRenderHint(QwtPlotItem::RenderAntialiased, false);
     c->setPaintAttribute(QwtPlotCurve::ClipPolygons, false);
-#endif
 
     newPlotInfo->curve = c;
     newPlotInfo->curveBuffer = dataBuffer;
@@ -123,13 +115,18 @@ void GraphWidget::addNewPlot(chaos::DataBuffer *dataBuffer, std::string& plotNam
 
 void GraphWidget::removePlot(std::string& plotName) {
     boost::mutex::scoped_lock  lock(manageMutex);
-    plotMap[plotName]->curve->detach();
-    plotMap.erase(plotName);
+    if(plotMap.count(plotName)){
+        plotMap[plotName]->curve->detach();
+        plotMap.erase(plotName);
+    } else if (pointerPlotMap.count(plotName)){
+        pointerPlotMap[plotName]->curve->detach();
+        pointerPlotMap.erase(plotName);
+    }
 }
 
 bool GraphWidget::hasPlot(std::string& plotName) {
     boost::mutex::scoped_lock  lock(manageMutex);
-    return plotMap.count(plotName)>0;
+    return plotMap.count(plotName)>0 || pointerPlotMap.count(plotName)>0;
 }
 
 void GraphWidget::update() {

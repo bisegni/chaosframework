@@ -43,9 +43,6 @@ class WorkerCU : public AbstractControlUnit {
     high_resolution_clock::time_point lastExecutionTime;
     high_resolution_clock::time_point currentExecutionTime;
     string _deviceID;
-    double sinCompConst;
-    double curAltitude;
-    double curPhasePeriod;
     long double PI;
     
     int32_t points;

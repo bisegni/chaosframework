@@ -99,6 +99,8 @@ private slots:
 
     void on_lineEdit_returnPressed();
 
+    void on_pushButtonResetStatistic_clicked();
+
 private:
     Ui::MainWindow *ui;
     void closeEvent(QCloseEvent *event);

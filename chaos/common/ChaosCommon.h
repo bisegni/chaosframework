@@ -75,12 +75,12 @@ namespace chaos {
                     GlobalConfiguration::getInstance()->parseStartupParameters(argc, argv);
                 }
                 
-                bool logOnConsole = GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(UserOption::OPT_LOG_ON_CONSOLE);
-                bool logOnFile = GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(UserOption::OPT_LOG_ON_FILE);
-                string logFileName = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(UserOption::OPT_LOG_FILE);
+                bool logOnConsole = GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_CONSOLE);
+                bool logOnFile = GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_FILE);
+                string logFileName = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_FILE);
+                    //int logLevel  = GlobalConfiguration::getInstance()->getConfiguration()->getIntValue(InitOption::OPT_LOG_SEVERITY_LEVEL);
                 
-                
-                    //logging::core::get()->set_filter (logging::flt::attr<logging::trivial::severity_level>("Severity") >= logging::trivial::info);
+
                 if(logOnConsole){
                     logging::init_log_to_console(std::clog, logging::keywords::format = "[%TimeStamp%]: %_%");
                 }
@@ -95,6 +95,12 @@ namespace chaos {
                      logging::keywords::format = "[%TimeStamp%]: %_%"                 // log record format
                      );
                 }
+                
+                /*
+                if(logOnConsole || logOnFile) {
+                    logging::core::get()->set_filter (logging::filters::attr< logging::trivial::severity_level >("Severity") >= logging::trivial::info);
+                }*/
+                
                     //the version constant are defined into version.h
                     //file generate to every compilation
                 PRINT_LIB_HEADER

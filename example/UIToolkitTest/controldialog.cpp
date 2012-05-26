@@ -122,8 +122,9 @@ void ControlDialog::on_buttonCommit_clicked()
         err = deviceController->setInt32AttributeValue(attributeName, int32SpinBox->value());
         break;}
     case chaos::DataType::TYPE_DOUBLE:{
-        QSpinBox *doubleSpinBox = (QSpinBox*)controlWidget;
-        err = deviceController->setDoubleAttributeValue(attributeName, doubleSpinBox->value());
+        QDoubleSpinBox *doubleSpinBox = (QDoubleSpinBox*)controlWidget;
+        double val = doubleSpinBox->value();
+        err = deviceController->setDoubleAttributeValue(attributeName, val);
         break;}
     }
 }

@@ -88,7 +88,7 @@ void MsgPackServer::deinit() throw(CException) {
 void MsgPackServer::dispatch(request req) {
     
         //data pack pointer
-    CDataWrapper *CDataWrapperPack = NULL;
+    CDataWrapper *cdataWrapperPack = NULL;
     try {
         std::string method;
         req.method().convert(&method);
@@ -102,14 +102,12 @@ void MsgPackServer::dispatch(request req) {
 
             //the new CDataWrapper(msgReceived.ptr) must not be deallocated, it's deallocation
             //is managed byt dispatcher subsystem
-            //CDataWrapperPack = new CDataWrapper(msgReceived.ptr);
-                //if(!CDataWrapperPack) throw CException(0, "CDataWrapper memory allocation error", "MsgPackServer::dispatch");
              
                 //dispatch the command
-            CDataWrapperPack = commandDispatcher->dispatchCommand(new CDataWrapper(msgReceived.ptr));
+            cdataWrapperPack = commandDispatcher->dispatchCommand(new CDataWrapper(msgReceived.ptr));
             
             //serialize the result
-            auto_ptr<SerializationBuffer> serialization(CDataWrapperPack->getBSONData());
+            auto_ptr<SerializationBuffer> serialization(cdataWrapperPack->getBSONData());
             
             //inpack the bson result
             msgpack::type::raw_ref  msgResult(serialization->getBufferPtr() , (int32_t)serialization->getBufferLen());
@@ -126,5 +124,5 @@ void MsgPackServer::dispatch(request req) {
     } 
     
             //deallocate the data wrapper pack if it has been allocated
-    if(CDataWrapperPack) delete(CDataWrapperPack);
+    if(cdataWrapperPack) delete(cdataWrapperPack);
 }

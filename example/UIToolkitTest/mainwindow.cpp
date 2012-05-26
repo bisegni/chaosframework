@@ -56,6 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     trackThread = NULL;
     d_timerId = -1;
     lostPack = 0;
+    checkSequentialIDKey.assign(ui->lineEdit->text().toStdString());
 }
 
 MainWindow::~MainWindow()
@@ -123,7 +124,7 @@ void MainWindow::on_buttonUpdateDeviceList_clicked()
     for(std::vector<std::string>::iterator iter = allActiveDeviceID.begin();
         iter != allActiveDeviceID.end();
         iter++){
-        model->insertRow(row++, new QStandardItem(QString((*iter).c_str())));
+        model->setItem(row++, new QStandardItem(QString((*iter).c_str())));
     }
     ui->listView->setModel(model);
 }
@@ -136,7 +137,9 @@ void MainWindow::updateDeviceState() {
         return;
     }
     chaos::CUStateKey::ControlUnitState currentState;
-    if(deviceController->getState(currentState)==0){
+    int err = deviceController->getState(currentState);
+    switch(err){
+        case 0:{
         switch(currentState){
         case chaos::CUStateKey::INIT:
             ui->labelState->setText("Initialized");
@@ -151,6 +154,12 @@ void MainWindow::updateDeviceState() {
             ui->labelState->setText("Stopped");
             break;
         }
+        break;
+
+    default:
+        ui->labelState->setText("timeout/offline");
+        break;
+    }
     }
 }
 
@@ -352,18 +361,19 @@ void MainWindow::on_buttonStopTracking_clicked() {
 void MainWindow::executeOnThread(){
     if(!deviceController.get()) return;
     while(runThread){
-        //boost::mutex::scoped_lock  lock(graphWdg->manageMutex);
         deviceController->fetchCurrentDeviceValue();
         if(checkSequentialIDKey.size()>0){
             chaos::CDataWrapper *wrapper = deviceController->getCurrentData();
             if(wrapper->hasKey(checkSequentialIDKey.c_str())){
                 int32_t curLastID = wrapper->getInt32Value(checkSequentialIDKey.c_str());
                 if(lastID+1<curLastID){
-                    lostPack++;
+                    lostPack += (curLastID - lastID + 1);
                 }else if(lastID==curLastID){
                     oversampling++;
                 }
+                std::cout << "last id:" << lastID << " - fetchedLastID:"<<curLastID << std::endl;
                 lastID = curLastID;
+
             }
         }
         boost::this_thread::sleep(boost::posix_time::milliseconds(ui->dialTrackSpeed->value()));
@@ -416,4 +426,10 @@ void MainWindow::on_spinBox_valueChanged(int points)
 void MainWindow::on_lineEdit_returnPressed()
 {
     checkSequentialIDKey.assign(ui->lineEdit->text().toStdString());
+}
+
+void MainWindow::on_pushButtonResetStatistic_clicked()
+{
+   lostPack = 0;
+   oversampling = 0;
 }

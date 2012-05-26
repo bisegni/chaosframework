@@ -330,9 +330,19 @@
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,0,1,1,1,1">
+         <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,0,1,0,0,0,0">
+          <item>
+           <widget class="QPushButton" name="pushButtonResetStatistic">
+            <property name="text">
+             <string>Reset Stat</string>
+            </property>
+           </widget>
+          </item>
           <item>
            <widget class="QLineEdit" name="lineEdit">
+            <property name="text">
+             <string>id</string>
+            </property>
             <property name="placeholderText">
              <string>Sequential ID Key</string>
             </property>
