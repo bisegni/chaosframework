@@ -83,7 +83,9 @@ private slots:
 
     void on_buttonStartTracking_clicked();
 
-    void on_buttonStopTracking_clicked();
+    void startTracking();
+
+    void stopTracking();
 
     void on_dialTrackSpeed_valueChanged(int value);
 
@@ -103,6 +105,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    QString returnAttributeTypeInString(string& attributeName);
     void closeEvent(QCloseEvent *event);
     void readSettings();
     void cleanCurrentDevice();

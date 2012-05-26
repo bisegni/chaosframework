@@ -139,7 +139,7 @@ void MainWindow::updateDeviceState() {
     chaos::CUStateKey::ControlUnitState currentState;
     int err = deviceController->getState(currentState);
     switch(err){
-        case 0:{
+    case 0:{
         switch(currentState){
         case chaos::CUStateKey::INIT:
             ui->labelState->setText("Initialized");
@@ -157,9 +157,9 @@ void MainWindow::updateDeviceState() {
         break;
 
     default:
-        ui->labelState->setText("timeout/offline");
-        break;
-    }
+            ui->labelState->setText("timeout/offline");
+            break;
+        }
     }
 }
 
@@ -171,7 +171,7 @@ void MainWindow::cleanLastDevice() {
     ui->label_2->setText("");
     ui->tableView->setModel(new QStandardItemModel(0, 4));
     //stop the possible tracking
-    on_buttonStopTracking_clicked();
+    stopTracking();
 
     //remove the plot
     graphWdg->clearAllPlot();
@@ -205,17 +205,20 @@ void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
     model->setHeaderData(3, Qt::Horizontal, QObject::tr("Description"));
 
     int row = 0;
+
     for(std::vector<std::string>::iterator iter = attributesName.begin();
         iter != attributesName.end();
         iter++){
         deviceController->getAttributeDescription((*iter), attributeDescription);
         model->setItem(row, 0, new QStandardItem(QString((*iter).c_str())));
         model->setItem(row, 1, new QStandardItem("Output"));
-        model->setItem(row, 2, new QStandardItem("Output"));
+        model->setItem(row, 2, new QStandardItem(returnAttributeTypeInString(*iter)));
         model->setItem(row++, 3, new QStandardItem(QString(attributeDescription.c_str())));
     }
+
     //get only input o attribute
     attributesName.clear();
+    //get only output o attribute
     deviceController->getDeviceDatasetAttributesName(attributesName, chaos::DataType::Input);
     for(std::vector<std::string>::iterator iter = attributesName.begin();
         iter != attributesName.end();
@@ -223,7 +226,7 @@ void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
         deviceController->getAttributeDescription((*iter), attributeDescription);
         model->setItem(row, 0, new QStandardItem(QString((*iter).c_str())));
         model->setItem(row, 1, new QStandardItem("Input"));
-        model->setItem(row, 2, new QStandardItem("text"));
+        model->setItem(row, 2, new QStandardItem(returnAttributeTypeInString(*iter)));
         model->setItem(row++, 3, new QStandardItem(QString(attributeDescription.c_str())));
     }
     ui->tableView->setModel(model);
@@ -232,6 +235,34 @@ void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
 
     QHeaderView *header = ui->tableView->horizontalHeader();
     header->setResizeMode(QHeaderView::Stretch);
+}
+
+QString  MainWindow::returnAttributeTypeInString(string& attributeName) {
+    QString result;
+    chaos::CUSchemaDB::RangeValueInfo attributeInfo;
+    deviceController->getDeviceAttributeRangeValueInfo(attributeName, attributeInfo);
+
+    switch(attributeInfo.valueType){
+    case chaos::DataType::TYPE_INT32:
+        result = "TYPE_INT32";
+        break;
+    case chaos::DataType::TYPE_DOUBLE:
+        result = "TYPE_DOUBLE";
+        break;
+    case chaos::DataType::TYPE_BYTEARRAY:
+        result = "TYPE_BYTEARRAY";
+        break;
+    case chaos::DataType::TYPE_INT64:
+        result = "TYPE_INT64";
+        break;
+    case chaos::DataType::TYPE_STRUCT:
+        result = "TYPE_STRUCT";
+        break;
+    case chaos::DataType::TYPE_STRING:
+        result = "TYPE_STRING";
+        break;
+    }
+    return result;
 }
 
 void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
@@ -329,7 +360,16 @@ void MainWindow::on_buttonStop_clicked()
     updateDeviceState();
 }
 
-void MainWindow::on_buttonStartTracking_clicked()
+void MainWindow::on_buttonStartTracking_clicked(){
+    bool tracking = schedThread.get() != NULL;
+    if(tracking){
+        stopTracking();
+    } else {
+        startTracking();
+    }
+}
+
+void MainWindow::startTracking()
 {
     if(schedThread.get()) return;
     runThread = true;
@@ -341,9 +381,10 @@ void MainWindow::on_buttonStartTracking_clicked()
     lostPack = 0;
     oversampling = 0;
     graphWdg->start();
+    ui->buttonStartTracking->setText("Stop Tracking");
 }
 
-void MainWindow::on_buttonStopTracking_clicked() {
+void MainWindow::stopTracking() {
     graphWdg->stop();
     if(d_timerId != -1) killTimer(d_timerId);
     d_timerId = -1;
@@ -352,11 +393,10 @@ void MainWindow::on_buttonStopTracking_clicked() {
         schedThread->join();
         schedThread.reset();
     }
-    //if(!trackThread) return;
-    //trackThread->stop();
-    //delete(trackThread);
-    //trackThread = NULL;
+    ui->buttonStartTracking->setText("Start Tracking");
 }
+
+
 
 void MainWindow::executeOnThread(){
     if(!deviceController.get()) return;
@@ -432,6 +472,6 @@ void MainWindow::on_lineEdit_returnPressed()
 
 void MainWindow::on_pushButtonResetStatistic_clicked()
 {
-   lostPack = 0;
-   oversampling = 0;
+    lostPack = 0;
+    oversampling = 0;
 }

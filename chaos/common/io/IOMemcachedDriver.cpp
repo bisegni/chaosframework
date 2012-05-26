@@ -32,7 +32,7 @@ namespace chaos{
     using namespace boost;
     using namespace boost::algorithm;
     //using namespace memcache;
-    
+
     /*
      * Driver constructor
      */
@@ -151,12 +151,18 @@ namespace chaos{
                 }
             }
             LMEMDRIVER_ << "write param";
+
             configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_BINARY_PROTOCOL, (uint64_t)1);
             configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_NO_BLOCK, (uint64_t)1);
-            configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_DISTRIBUTION, MEMCACHED_DISTRIBUTION_CONSISTENT_KETAMA);
-            configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_SERVER_FAILURE_LIMIT, 1);
-            configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_AUTO_EJECT_HOSTS, 1);
-            configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_RETRY_TIMEOUT,1);
+            configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_NOREPLY, (uint64_t)1);
+            configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_KETAMA_WEIGHTED, 1);
+            configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_KETAMA_HASH, MEMCACHED_HASH_MD5);
+            configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_REMOVE_FAILED_SERVERS, 0);
+            configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_RETRY_TIMEOUT,3600);
+            configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_TCP_NODELAY,1);
+                //configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_SERVER_FAILURE_LIMIT, 1);
+                //configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_REMOVE_FAILED_SERVERS, 0);
+                //configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_RETRY_TIMEOUT,1);
         }
         return NULL; 
     }

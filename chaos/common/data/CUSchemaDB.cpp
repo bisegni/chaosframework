@@ -145,6 +145,11 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
             if(elementDescription->hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION))
                 attributeForDeviceID->addInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION, elementDescription->getInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION));
             
+            if(elementDescription->hasKey(DatasetDefinitionkey::CS_CMDM_ACTION_DESC_MAX_RANGE))
+                attributeForDeviceID->addStringValue(DatasetDefinitionkey::CS_CMDM_ACTION_DESC_MAX_RANGE, elementDescription->getStringValue(DatasetDefinitionkey::CS_CMDM_ACTION_DESC_MAX_RANGE).c_str());
+            
+            if(elementDescription->hasKey(DatasetDefinitionkey::CS_CMDM_ACTION_DESC_MIN_RANGE))
+                attributeForDeviceID->addStringValue(DatasetDefinitionkey::CS_CMDM_ACTION_DESC_MIN_RANGE, elementDescription->getStringValue(DatasetDefinitionkey::CS_CMDM_ACTION_DESC_MIN_RANGE).c_str());
             
                 //add filled element to dataset
             deviceDataset.push_back(attributeForDeviceID);
