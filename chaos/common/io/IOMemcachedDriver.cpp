@@ -60,7 +60,8 @@ namespace chaos{
         
         //memcached_return_t configResult = MEMCACHED_SUCCESS;
         
-        memClient = memcached("", 0);
+        memClient = memcached(NULL, 0);
+        if(!memClient) throw CException(0, "LibMemcached structure has not been allocated", "IOMemcachedDriver::init");
     }
     
     /*
