@@ -1,3 +1,9 @@
+CMakeCache.txt
+CMakeFiles
+Makefile
+bin_*
+cmake_install.cmake
+install_manifest.txt
 ChaosMDSLite/target/*-0.jar
 ControlSystemLibTest/ChaosCU
 example/UIToolkitCMDLineExample/UIToolkitCMDLineExample
