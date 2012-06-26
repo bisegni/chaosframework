@@ -39,7 +39,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_LOG_ON_CONSOLE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on console");
         addOption(InitOption::OPT_LOG_ON_FILE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on file");
         addOption(InitOption::OPT_LOG_FILE, po::value< string >()->default_value("chaos_frameowrk.log"), "Specify when the file path of the log");
-            //addOption(InitOption::OPT_LOG_SEVERITY_LEVEL, po::value< int >()->default_value(0), "Specify log severity level (0)-info (1)-debug");
+        addOption(InitOption::OPT_PUBLISHING_IP, po::value< string >(), "Specify the ip address where to publish the framework rpc system");
     }catch (po::error &e) {
         throw CException(0, e.what(), "GlobalConfiguration::preParseStartupParameters");
     }
@@ -78,8 +78,9 @@ void GlobalConfiguration::parseStartupParameters(int argc, char* argv[]) throw (
     CHECK_AND_DEFINE_OPTION(string, logFilePath, InitOption::OPT_LOG_FILE)
     configuration.addStringValue(InitOption::OPT_LOG_FILE, logFilePath);
     
-        //CHECK_AND_DEFINE_OPTION(int, logLevel, InitOption::OPT_LOG_SEVERITY_LEVEL)
-        //configuration.addInt32Value(InitOption::OPT_LOG_SEVERITY_LEVEL, logLevel);
+    CHECK_AND_DEFINE_OPTION(string, publishingIp, InitOption::OPT_PUBLISHING_IP)
+    bool isIp = regex_match(publishingIp, ServerIPRegExp);
+    if(isIp) configuration.addStringValue(InitOption::OPT_PUBLISHING_IP, publishingIp);
     
         //configure rpc
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, rpcServerPort, InitOption::OPT_RPC_SERVER_PORT, 8888)

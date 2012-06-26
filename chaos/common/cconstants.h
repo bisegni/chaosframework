@@ -46,8 +46,8 @@ namespace chaos {
         static const char * const   OPT_LOG_ON_FILE                  ="log-on-file";
             //! @Option Specify when the file path of the log
         static const char * const   OPT_LOG_FILE                     ="log-file";
-            //! @Option Specify the severity of the log
-            //static const char * const   OPT_LOG_SEVERITY_LEVEL           ="log-severity-level";
+            //! @Option Specify the ip where publish the framework
+        static const char * const   OPT_PUBLISHING_IP                ="publishing-ip";
     }
     /** @} */ // end of ParamOption
     

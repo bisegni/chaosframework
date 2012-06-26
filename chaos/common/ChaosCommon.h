@@ -78,8 +78,6 @@ namespace chaos {
                 bool logOnConsole = GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_CONSOLE);
                 bool logOnFile = GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_FILE);
                 string logFileName = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_FILE);
-                    //int logLevel  = GlobalConfiguration::getInstance()->getConfiguration()->getIntValue(InitOption::OPT_LOG_SEVERITY_LEVEL);
-                
 
                 if(logOnConsole){
                     logging::init_log_to_console(std::clog, logging::keywords::format = "[%TimeStamp%]: %_%");
@@ -107,9 +105,14 @@ namespace chaos {
                 
                     //find our ip
                 string localIp;
-                InetUtility::scanForLocalNetworkAddress(localIp);
+                if(GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_PUBLISHING_IP)){
+                    string customPublishingIp = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_PUBLISHING_IP);
+                } else {
+                    InetUtility::scanForLocalNetworkAddress(localIp);
+                }
                 GlobalConfiguration::getInstance()->addLocalServerAddress(localIp.c_str());
-                LAPP_ << "The local address chose is:  " << GlobalConfiguration::getInstance()->getLocalServerAddress();
+                
+                LAPP_ << "The local address chosen is:  " << GlobalConfiguration::getInstance()->getLocalServerAddress();
                 
             } catch (CException &e) {
                 DECODE_CHAOS_EXCEPTION(e);

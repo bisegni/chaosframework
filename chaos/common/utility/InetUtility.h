@@ -44,9 +44,9 @@ namespace chaos {
             struct ifaddrs * ifAddrStruct=NULL;
             struct ifaddrs * ifa=NULL;
 #if __APPLE__
-            const char *interfaceName  = "en";
+            const char *ethInterfaceName  = "en";
 #elif __linux__
-            const char *interfaceName = "eth";
+            const char *ethInterfaceName = "eth";
 #endif
             void * tmpAddrPtr=NULL;
             
@@ -54,7 +54,7 @@ namespace chaos {
             getifaddrs(&ifAddrStruct);
             
             for (ifa = ifAddrStruct; ifa != NULL; ifa = ifa->ifa_next) {
-                if(strstr(ifa->ifa_name, interfaceName)== NULL) continue;
+                if(strstr(ifa->ifa_name, ethInterfaceName)== NULL) continue;
                 
                 if (ifa ->ifa_addr->sa_family==AF_INET) { // check it is IP4
                                                           // is a valid IP4 Address
@@ -73,6 +73,11 @@ namespace chaos {
                 } 
             }
             if (ifAddrStruct!=NULL) freeifaddrs(ifAddrStruct);
+            
+            if(ipPort.size() == 0) {
+                // no ip was found go to localhost
+                ipPort.assign("127.0.0.1");
+            }
         }
         
             //! Network port scan
