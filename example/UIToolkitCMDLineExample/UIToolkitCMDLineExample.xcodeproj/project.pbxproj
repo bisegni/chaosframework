@@ -29,6 +29,7 @@
 		328E76B114CEE4F500A3EA95 /* libchaos_common.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libchaos_common.dylib; path = ../../DerivedData/CHAOSWorkspace/Build/Products/Debug/libchaos_common.dylib; sourceTree = "<group>"; };
 		328E76B214CEE4F500A3EA95 /* libchaos_uitoolkit.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libchaos_uitoolkit.dylib; path = ../../DerivedData/CHAOSWorkspace/Build/Products/Debug/libchaos_uitoolkit.dylib; sourceTree = "<group>"; };
 		328E76B514CEE92D00A3EA95 /* UIToolkitCMDLineExample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UIToolkitCMDLineExample.cpp; sourceTree = SOURCE_ROOT; };
+		32949068159AFA1B00E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; name = CMakeLists.txt; path = ../CMakeLists.txt; sourceTree = "<group>"; };
 		32F7233F14CEE3AD00F8F793 /* UIToolkitCMDLineExample */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = UIToolkitCMDLineExample; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -66,6 +67,7 @@
 		32F7234214CEE3AD00F8F793 /* UIToolkitCMDLineExample */ = {
 			isa = PBXGroup;
 			children = (
+				32949068159AFA1B00E86BD1 /* CMakeLists.txt */,
 				328E76AE14CEE42B00A3EA95 /* SConstruct */,
 				328E76B514CEE92D00A3EA95 /* UIToolkitCMDLineExample.cpp */,
 			);
