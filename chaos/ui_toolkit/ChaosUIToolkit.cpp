@@ -83,6 +83,10 @@ void ChaosUIToolkit::init(int argc, char* argv[]) throw(CException) {
  */
 void ChaosUIToolkit::deinit() throw(CException) {
     
+    UI_LAPP_ << "Deinit HLDataApi";
+    HLDataApi::getInstance()->deinit();
+    UI_LAPP_ << "HLDataApi deinitilized";
+    
     UI_LAPP_ << "Deinit LLRpcApi";
     LLRpcApi::getInstance()->deinit();
     UI_LAPP_ << "LLRpcApi Deinitialized";

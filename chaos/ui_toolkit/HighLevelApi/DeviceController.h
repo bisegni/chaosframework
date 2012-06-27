@@ -84,6 +84,11 @@ namespace chaos {
              */
             DeviceController(string& _deviceID);
  
+            //!Public destructor
+            /*!
+             All can destruct an isntance of the device controller
+             */
+            ~DeviceController();
             
                 //! update inromation for talking with device
             /*!
@@ -112,11 +117,7 @@ namespace chaos {
                 //! the fetcher thread method
             void executeOnThread(const string&) throw(CException);
         public:
-                //!Public destructor
-            /*!
-             All can destruct an isntance of the device controller
-             */
-            ~DeviceController();
+
             //!Return the deviceID of the device
             /*!
                 Return the deviceID that identify the device managed by this controller

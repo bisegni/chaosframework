@@ -309,6 +309,9 @@ void MessageBroker::disposeMessageChannel(MessageChannel *messageChannelToDispos
     
     boost::mutex::scoped_lock lock(mapChannelAcces);
     
+    //check if the channel is active
+    if(activeChannel.count(messageChannelToDispose->channelID) == 0) return;
+
     //remove the channel as active
     activeChannel.erase(messageChannelToDispose->channelID);
     

@@ -184,9 +184,6 @@ int main (int argc, char* argv[] )
         controller->getState(deviceState);
         std::cout << "state " << deviceState << std::endl;
         
-        //deallocating the controller
-        delete(controller);
-        
         //! [UIToolkit Deinit]
         ChaosUIToolkit::getInstance()->deinit();
         //! [UIToolkit Deinit]
