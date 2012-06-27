@@ -188,6 +188,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug\"",
+					/usr/local/lib,
 				);
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
@@ -219,6 +220,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug\"",
+					/usr/local/lib,
 				);
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",

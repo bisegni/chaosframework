@@ -95,20 +95,20 @@ int main (int argc, char* argv[] )
         /*
          set the run schedule delay for the CU
          */
-        controller->setScheduleDelay(1000000);
+        err = controller->setScheduleDelay(1000000);
         
         /*
          Start the control unit
          */
-        controller->startDevice();
+        err = controller->startDevice();
         
         //------------------------------------------------------------------------------------
         //send command for set attribute of dataset without use BSON
-        controller->setInt32AttributeValue("points", 10);
-        controller->setDoubleAttributeValue("gain", 2.0);
-        controller->setDoubleAttributeValue("freq", 2.0);
+        err = controller->setInt32AttributeValue("points", 10);
+        err = controller->setDoubleAttributeValue("gain", 2.0);
+        err = controller->setDoubleAttributeValue("freq", 2.0);
         //------------------------------------------------------------------------------------
-
+        
         
         //---------------------------------------------------------------------------------------------------------
         //this step is to use internal UIToolkit buffer logic
@@ -121,28 +121,19 @@ int main (int argc, char* argv[] )
         DataBuffer *intValue1Buff = controller->getBufferForAttribute(key);
         PointerBuffer *binaryValueBuff = controller->getPtrBufferForAttribute(key2);
         
-        for (int idx = 0; idx < 30; idx++) {
+        for (int idx = 0; idx < 10; idx++) {
             controller->fetchCurrentDeviceValue();
             
-            std::cout << intValue1Buff->getWriteBufferPosition()<< std::endl;
-            
-            int64_t hisotryToRead = intValue1Buff->getDimension()-intValue1Buff->getWriteBufferPosition();
-            int64_t recentToRead = intValue1Buff->getWriteBufferPosition();
-            std::cout << "History to read:" << hisotryToRead << std::endl;
-            std::cout << "Recent to read:" << recentToRead << std::endl;
-            
-            double *bPtr = static_cast<double*>(intValue1Buff->getBasePointer());
-            
-            for (int idx = 0; idx < 30; idx++) {
-                controller->fetchCurrentDeviceValue();
+            if(intValue1Buff){
+                int64_t hisotryToRead = intValue1Buff?intValue1Buff->getDimension()-intValue1Buff->getWriteBufferPosition():0;
+                int64_t recentToRead = intValue1Buff?intValue1Buff->getWriteBufferPosition():0;
+                std::cout << "History to read:" << hisotryToRead << std::endl;
+                std::cout << "Recent to read:" << recentToRead << std::endl;
+                
+                double *bPtr = static_cast<double*>(intValue1Buff->getBasePointer());
                 double *wPtr = static_cast<double*>(intValue1Buff->getWritePointer());
                 
                 std::cout << intValue1Buff->getWriteBufferPosition()<< std::endl;
-                
-                int64_t hisotryToRead = intValue1Buff->getDimension()-intValue1Buff->getWriteBufferPosition();
-                int64_t recentToRead = intValue1Buff->getWriteBufferPosition();
-                std::cout << "History to read:" << hisotryToRead << std::endl;
-                std::cout << "Recent to read:" << recentToRead << std::endl;
                 
                 
                 for (int idx = 0; idx < hisotryToRead-1; idx++) {
@@ -155,7 +146,8 @@ int main (int argc, char* argv[] )
                         std::cout << *newbPtr;
                     }
                 }
-
+            }
+            if(binaryValueBuff){
                 int32_t tipedBufLen = 0;
                 boost::shared_ptr<double> sinWavePtr = binaryValueBuff->getTypedPtr<double>(tipedBufLen);
                 if(sinWavePtr){
@@ -167,12 +159,13 @@ int main (int argc, char* argv[] )
                     
                     std::cout << std::endl;
                 }
-                usleep(1000000);
             }
+            usleep(1000000);
+            
         }
         controller->stopTracking();
         //---------------------------------------------------------------------------------------------------------
-       
+        
         /*
          stopping of the device instead form MDS
          */

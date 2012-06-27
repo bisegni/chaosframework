@@ -303,7 +303,7 @@ chaos::PointerBuffer *DeviceController::getPtrBufferForAttribute(string& attribu
  Dispose all memory used for live data buffer
  */
 void DeviceController::deinitializeAttributeIndexMap() {
-         boost::recursive_mutex::scoped_lock lock(trackMutext);
+         //boost::recursive_mutex::scoped_lock lock(trackMutext);
         //dispose circula buffer
     for (std::map<string,  chaos::SingleBufferCircularBuffer<int32_t> *>::iterator iter = int32AttributeLiveBuffer.begin(); 
          iter != int32AttributeLiveBuffer.end();
@@ -331,7 +331,7 @@ void DeviceController::deinitializeAttributeIndexMap() {
          iter++) {
         delete(iter->second);
     }
-    doubleAttributeLiveBuffer.clear();
+    pointerAttributeLiveBuffer.clear();
 }
     //add attrbiute to track
 /*!
