@@ -7,6 +7,9 @@
    <FileRef
       location = "group:APACHE-2.0.txt">
    </FileRef>
+   <FileRef
+      location = "group:CMakeLists.txt">
+   </FileRef>
    <Group
       location = "container:"
       name = "Documentation">
