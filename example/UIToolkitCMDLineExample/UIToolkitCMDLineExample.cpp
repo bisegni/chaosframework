@@ -74,8 +74,10 @@ int main (int argc, char* argv[] )
         CUStateKey::ControlUnitState deviceState;
         //! [Datapack sent]
         
-        auto_ptr<DeviceController> controller(HLDataApi::getInstance()->getControllerForDeviceID(devID));
-        
+        DeviceController *controller = HLDataApi::getInstance()->getControllerForDeviceID(devID);
+        if(!controller) {
+             std::cout << "Error creating controller for:" << devID << std::endl;
+        }
         //------------------------------------------------------------------------------------
         //List all attribute of dataset without use BSON
         vector<string> allOutAttrName;
@@ -181,6 +183,9 @@ int main (int argc, char* argv[] )
         
         controller->getState(deviceState);
         std::cout << "state " << deviceState << std::endl;
+        
+        //deallocating the controller
+        delete(controller);
         
         //! [UIToolkit Deinit]
         ChaosUIToolkit::getInstance()->deinit();
