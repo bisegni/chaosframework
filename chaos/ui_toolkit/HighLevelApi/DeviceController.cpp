@@ -25,9 +25,11 @@
 using namespace chaos;
 using namespace chaos::ui;
 using namespace std;
-using namespace std;
 
 #define MSEC_WAIT_OPERATION 1000
+
+//timestamp string variable definition
+string timestampAttributeNameStr = DataPackKey::CS_CSV_TIME_STAMP;
 
 DeviceController::DeviceController(string& _deviceID):deviceID(_deviceID) {
     mdsChannel = NULL;
@@ -298,6 +300,11 @@ chaos::PointerBuffer *DeviceController::getPtrBufferForAttribute(string& attribu
     }
     return result;
 }
+
+chaos::DataBuffer *DeviceController::getPtrBufferForTimestamp(const int initialDimension) {
+    return int64AttributeLiveBuffer.count(timestampAttributeNameStr)>0? int64AttributeLiveBuffer[timestampAttributeNameStr]:NULL;
+}
+
     //!DeInitialize the map for the devices
 /*!
  Dispose all memory used for live data buffer
@@ -360,10 +367,13 @@ CDataWrapper* DeviceController::getLiveCDataWrapperPtr() {
 
 void DeviceController::setupTracking() {
     boost::recursive_mutex::scoped_lock lock(trackMutext);
-    CHAOS_ASSERT(lastDeviceDefinition.get())
     
         //init live buffer
     initializeAttributeIndexMap(*lastDeviceDefinition.get());
+    
+    //initialize timestamp buffer
+    chaos::SingleBufferCircularBuffer<int64_t> *newBuffer = new chaos::SingleBufferCircularBuffer<int64_t>(10);
+    int64AttributeLiveBuffer.insert(make_pair(timestampAttributeNameStr, newBuffer));
 }
 
 void DeviceController::stopTracking() {
@@ -383,6 +393,10 @@ void DeviceController::fetchCurrentDeviceValue() {
     
     if(trackingAttribute.size() == 0) return;
     CDataWrapper *tmpPtr = currentLiveValue.get();
+    
+    //add timestamp value
+    int64AttributeLiveBuffer[timestampAttributeNameStr]->addValue(tmpPtr->getInt64Value(DataPackKey::CS_CSV_TIME_STAMP));
+    
         //update buffer for tracked attribute
     for (std::vector<string>::iterator iter = trackingAttribute.begin(); 
          iter != trackingAttribute.end(); 

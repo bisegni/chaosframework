@@ -232,6 +232,7 @@ namespace chaos {
             
             chaos::DataBuffer *getBufferForAttribute(string& attributeName);
             chaos::PointerBuffer *getPtrBufferForAttribute(string& attributeName);
+            chaos::DataBuffer *getPtrBufferForTimestamp(const int initialDimension = 10);
             
             CDataWrapper *getCurrentData(){
                 return currentLiveValue.get();

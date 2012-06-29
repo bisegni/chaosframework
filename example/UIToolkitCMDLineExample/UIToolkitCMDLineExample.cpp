@@ -28,14 +28,18 @@
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
 #include <stdio.h>
 #include <chaos/common/bson/bson.h>
-
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/c_local_time_adjustor.hpp>
 /*! \page page_example_uiex1 ChaosUIToolkit Example
  \section page_example_uiex1_sec A basic usage for the ChaosUIToolkit package
  
  \subsection page_example_uiex1_sec_sub1 Toolkit usage
+ As in the CUToolkt, a developer can add a custom startup param
+ \snippet example/UIToolkitCMDLineExample/UIToolkitCMDLineExample.cpp UIToolkit Init
+ 
  this example show how initialize the UIToolkit, acquire a basic channel, used it and deinit the toolkit.
  The UIToolkit is create around singleton pattern and the channel object are self managed by toolkit. So the first thing
- is to initializ the toolkit interna engine:
+ is to initializ the toolkit internal engine:
  
  \snippet example/UIToolkitCMDLineExample/UIToolkitCMDLineExample.cpp UIToolkit Init
  
@@ -58,16 +62,45 @@ using namespace std;
 using namespace chaos;
 using namespace chaos::ui;
 using namespace bson;
+using namespace boost;
+using namespace boost::posix_time;
+using namespace boost::date_time;
+
+
+#define OPT_ITERATION "iteration"
+#define OPT_SLEEP_TIME "dac_sleep_time"
+
+inline ptime utcToLocalPTime(ptime utcPTime){
+	c_local_adjustor<ptime> utcToLocalAdjustor;
+	ptime t11 = utcToLocalAdjustor.utc_to_local(utcPTime);
+	return t11;
+}
 
 int main (int argc, char* argv[] )
 {
     try {
         int err = 0;
+        int iteration = 10;
+        long sleep = 1000000;
         string devID("SIN_DEVICE");
+        posix_time::time_duration currentTime;
+        
+        //! [UIToolkit Attribute Init]
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_ITERATION, po::value<int>()->default_value(10), "Set the number of acquiring iteration");
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SLEEP_TIME, po::value<long>()->default_value(1000000), "Set the number of microsecond between an acquisition and th eother");
+        //! [UIToolkit Attribute Init]
         
         //! [UIToolkit Init]
         ChaosUIToolkit::getInstance()->init(argc, argv);
         //! [UIToolkit Init]
+        
+        if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_ITERATION)){
+            iteration = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<int>(OPT_ITERATION);
+        }
+        
+        if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SLEEP_TIME)){
+            sleep = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<long>(OPT_SLEEP_TIME);
+        }
         
         //! [UIToolkit ChannelCreation]
         CDeviceNetworkAddress deviceNetworkAddress;
@@ -121,9 +154,10 @@ int main (int argc, char* argv[] )
         controller->addAttributeToTrack(key2);
         
         DataBuffer *intValue1Buff = controller->getBufferForAttribute(key);
+        DataBuffer *tsBuffer = controller->getPtrBufferForTimestamp();
         PointerBuffer *binaryValueBuff = controller->getPtrBufferForAttribute(key2);
         
-        for (int idx = 0; idx < 10; idx++) {
+        for (int idx = 0; idx < iteration; idx++) {
             controller->fetchCurrentDeviceValue();
             
             if(intValue1Buff){
@@ -149,12 +183,22 @@ int main (int argc, char* argv[] )
                     }
                 }
             }
+            
+            if(tsBuffer){
+                int64_t *bPtr = static_cast<int64_t*>(tsBuffer->getBasePointer());
+                int64_t *wPtr = static_cast<int64_t*>(tsBuffer->getWritePointer());
+                int64_t *lastTimestamp = bPtr==wPtr?bPtr+tsBuffer->getDimension()-1:wPtr-1;
+                if(lastTimestamp){
+                    currentTime = boost::posix_time::milliseconds(*lastTimestamp);
+                    std::cout << "Buffer received ts:" << utcToLocalPTime(EPOCH + currentTime) << std::endl;
+                }
+            }
+            
             if(binaryValueBuff){
                 int32_t tipedBufLen = 0;
                 boost::shared_ptr<double> sinWavePtr = binaryValueBuff->getTypedPtr<double>(tipedBufLen);
                 if(sinWavePtr){
-                    std::cout << "Buffer received:" << std::endl;
-                    std::cout << "Buffer received len:" << tipedBufLen<< std::endl;
+                    std::cout << "Buffer received len:" << tipedBufLen << std::endl;
                     for(int32_t idx = 0; idx < tipedBufLen; idx++){
                         std::cout << sinWavePtr.get()[idx];
                     }
@@ -162,7 +206,7 @@ int main (int argc, char* argv[] )
                     std::cout << std::endl;
                 }
             }
-            usleep(1000000);
+            usleep(sleep);
             
         }
         controller->stopTracking();
