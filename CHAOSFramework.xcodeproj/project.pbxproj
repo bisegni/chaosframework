@@ -159,6 +159,8 @@
 		32AAD78A14CD772F005A097C /* MessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AAD78914CD772F005A097C /* MessageChannel.h */; };
 		32AAD78C14CD773F005A097C /* MessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AAD78B14CD773F005A097C /* MessageChannel.cpp */; };
 		32AAD78E14CD95FD005A097C /* Atomic.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AAD78D14CD95FD005A097C /* Atomic.h */; };
+		32BE864715A0CEAF00818C39 /* LogManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BE864515A0CEAF00818C39 /* LogManager.cpp */; };
+		32BE864815A0CEAF00818C39 /* LogManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32BE864615A0CEAF00818C39 /* LogManager.h */; };
 		32D68AD014D5D5A7009F290A /* SetupStateManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D68ACF14D5D5A7009F290A /* SetupStateManager.h */; };
 		32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */; };
 		32F466DE155EDBDE00AD3D81 /* IODataDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F466DD155EDBDE00AD3D81 /* IODataDriver.cpp */; };
@@ -275,7 +277,6 @@
 		326DB42D14B38BC00018A8D0 /* UUIDUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = UUIDUtil.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB42E14B38BC00018A8D0 /* version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
 		326DB42F14B38BC00018A8D0 /* version.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = version.sh; sourceTree = "<group>"; };
-		326DB49814B3A23B0018A8D0 /* SConstruct */ = {isa = PBXFileReference; lastKnownFileType = text; path = SConstruct; sourceTree = "<group>"; };
 		326DB49B14B3A3E50018A8D0 /* ChaosCUToolkit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ChaosCUToolkit.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB49C14B3A3E50018A8D0 /* ChaosCUToolkit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ChaosCUToolkit.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB49E14B3A3E50018A8D0 /* CommandManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = CommandManager.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -324,6 +325,8 @@
 		32AAD78914CD772F005A097C /* MessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageChannel.h; sourceTree = "<group>"; };
 		32AAD78B14CD773F005A097C /* MessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageChannel.cpp; sourceTree = "<group>"; };
 		32AAD78D14CD95FD005A097C /* Atomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Atomic.h; sourceTree = "<group>"; };
+		32BE864515A0CEAF00818C39 /* LogManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogManager.cpp; sourceTree = "<group>"; };
+		32BE864615A0CEAF00818C39 /* LogManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogManager.h; sourceTree = "<group>"; };
 		32D68ACF14D5D5A7009F290A /* SetupStateManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetupStateManager.h; sourceTree = "<group>"; };
 		32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleBufferCircularBuffer.h; sourceTree = "<group>"; };
 		32F466DD155EDBDE00AD3D81 /* IODataDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IODataDriver.cpp; sourceTree = "<group>"; };
@@ -370,7 +373,6 @@
 		3260260B14B300FE00C906CE = {
 			isa = PBXGroup;
 			children = (
-				326DB49814B3A23B0018A8D0 /* SConstruct */,
 				326DB3B114B38BC00018A8D0 /* chaos */,
 				326026EA14B301F600C906CE /* Products */,
 			);
@@ -405,6 +407,7 @@
 				326DB40114B38BC00018A8D0 /* global.h */,
 				326DB42E14B38BC00018A8D0 /* version.h */,
 				326DB42F14B38BC00018A8D0 /* version.sh */,
+				32BE864415A0CDC200818C39 /* log */,
 				326DB3B514B38BC00018A8D0 /* action */,
 				326DB3BD14B38BC00018A8D0 /* bson */,
 				326DB3E314B38BC00018A8D0 /* configuration */,
@@ -772,6 +775,15 @@
 			path = message;
 			sourceTree = "<group>";
 		};
+		32BE864415A0CDC200818C39 /* log */ = {
+			isa = PBXGroup;
+			children = (
+				32BE864515A0CEAF00818C39 /* LogManager.cpp */,
+				32BE864615A0CEAF00818C39 /* LogManager.h */,
+			);
+			path = log;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -869,6 +881,7 @@
 				32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */,
 				320C2183151B2C2B00BD0F41 /* EventBroker.h in Headers */,
 				320C218A151B555A00BD0F41 /* EventReceiver.h in Headers */,
+				32BE864815A0CEAF00818C39 /* LogManager.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1038,6 +1051,7 @@
 				320C2187151B47C200BD0F41 /* EventBroker.cpp in Sources */,
 				320C218C151B556E00BD0F41 /* EventReceiver.cpp in Sources */,
 				32F466DE155EDBDE00AD3D81 /* IODataDriver.cpp in Sources */,
+				32BE864715A0CEAF00818C39 /* LogManager.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1130,6 +1144,7 @@
 					"-lmsgpack",
 					"-lmsgpack-rpc",
 					"-lboost_log",
+					"-lboost_log_setup",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -1174,6 +1189,7 @@
 					"-lmsgpack",
 					"-lmsgpack-rpc",
 					"-lboost_log",
+					"-lboost_log_setup",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

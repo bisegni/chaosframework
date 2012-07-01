@@ -88,7 +88,7 @@ x = hasOption(y);
         friend class Singleton<GlobalConfiguration>;
         
         
-        GlobalConfiguration():desc("Allowed options"){};
+        GlobalConfiguration():desc("!CHAOS Framework Allowed options:"){};
         ~GlobalConfiguration(){};
         
         

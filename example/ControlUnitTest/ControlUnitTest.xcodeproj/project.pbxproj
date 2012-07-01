@@ -14,13 +14,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		32BE864A15A0E3C500818C39 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		32D078D9159A504D0053BB3A /* libchaos_common.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libchaos_common.dylib; path = ../../DerivedData/CHAOSWorkspace/Build/Products/Debug/libchaos_common.dylib; sourceTree = "<group>"; };
 		32D078DA159A504D0053BB3A /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libchaos_cutoolkit.dylib; path = ../../DerivedData/CHAOSWorkspace/Build/Products/Debug/libchaos_cutoolkit.dylib; sourceTree = "<group>"; };
 		32F7448F14B49CCB0025638B /* ControlUnitTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ControlUnitTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		32F7449914B49CFA0025638B /* ControlUnitExample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ControlUnitExample.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		32F7449A14B49CFA0025638B /* WorkerCU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = WorkerCU.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		32F7449B14B49CFA0025638B /* WorkerCU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = WorkerCU.h; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		32F744A214B5D0670025638B /* SConstruct */ = {isa = PBXFileReference; lastKnownFileType = text; path = SConstruct; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +57,7 @@
 		326DB50714B3B7890018A8D0 /* ControlUnitTest */ = {
 			isa = PBXGroup;
 			children = (
-				32F744A214B5D0670025638B /* SConstruct */,
+				32BE864A15A0E3C500818C39 /* CMakeLists.txt */,
 				32F7449914B49CFA0025638B /* ControlUnitExample.cpp */,
 				32F7449A14B49CFA0025638B /* WorkerCU.cpp */,
 				32F7449B14B49CFA0025638B /* WorkerCU.h */,

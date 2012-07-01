@@ -20,23 +20,16 @@
 #ifndef ChaosFramework_ChaosCommon_h
 #define ChaosFramework_ChaosCommon_h
 
-#include <stdio.h>      
-
-
 #include <chaos/common/global.h>
 #include <chaos/common/utility/Singleton.h>
-#include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/utility/InetUtility.h>
+#include <chaos/common/log/LogManager.h>
+#include <chaos/common/configuration/GlobalConfiguration.h>
 
-#include <boost/log/core.hpp>
-#include <boost/log/trivial.hpp>
-#include <boost/log/filters.hpp>
-#include <boost/log/utility/init/to_file.hpp>
-#include <boost/log/utility/init/to_console.hpp>
+    //#include <stdio.h>
     //! Default chaos namespace used to group all common api
 namespace chaos {    
     using namespace boost;
-    namespace logging = boost::BOOST_LOG_NAMESPACE;
     
         //! Chaos common engine class
     /*! 
@@ -44,8 +37,8 @@ namespace chaos {
      resource used for the base chaos function
      */
     template<class T>
-    class ChaosCommon: public Singleton<T>{
-        
+    class ChaosCommon : public Singleton<T>{
+            LogManager logManager;
     protected:
             //! Constructor Method
         /*! 
@@ -68,56 +61,30 @@ namespace chaos {
          This virtual method can be extended by toolkit subclass for specialized initializaion
          in themain toolkit subclass of ChaosCommon
          */
-        virtual void init(int argc, char* argv[])  throw(CException) {
-            try {
-                
-                if(argv != NULL){
-                    GlobalConfiguration::getInstance()->parseStartupParameters(argc, argv);
-                }
-                
-                bool logOnConsole = GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_CONSOLE);
-                bool logOnFile = GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_FILE);
-                string logFileName = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_FILE);
-
-                if(logOnConsole){
-                    logging::init_log_to_console(std::clog, logging::keywords::format = "[%TimeStamp%]: %_%");
-                }
-                
-                if(logOnFile){
-                    logging::init_log_to_file
-                    (
-                     logging::keywords::file_name = logFileName,                  // file name pattern
-                     logging::keywords::rotation_size = 10 * 1024 * 1024,             // rotate files every 10 MiB...
-                     // ...or at midnight
-                     logging::keywords::time_based_rotation = logging::sinks::file::rotation_at_time_point(0, 0, 0),
-                     logging::keywords::format = "[%TimeStamp%]: %_%"                 // log record format
-                     );
-                }
-                
-                /*
-                if(logOnConsole || logOnFile) {
-                    logging::core::get()->set_filter (logging::filters::attr< logging::trivial::severity_level >("Severity") >= logging::trivial::info);
-                }*/
-                
-                    //the version constant are defined into version.h
-                    //file generate to every compilation
-                PRINT_LIB_HEADER
-                
-                    //find our ip
-                string localIp;
-                if(GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_PUBLISHING_IP)){
-                    string customPublishingIp = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_PUBLISHING_IP);
-                } else {
-                    InetUtility::scanForLocalNetworkAddress(localIp);
-                }
-                GlobalConfiguration::getInstance()->addLocalServerAddress(localIp.c_str());
-                
-                LAPP_ << "The local address chosen is:  " << GlobalConfiguration::getInstance()->getLocalServerAddress();
-                
-            } catch (CException &e) {
-                DECODE_CHAOS_EXCEPTION(e);
+        virtual void init(int argc, char* argv[]) throw(CException) {
+            
+            if(argv != NULL){
+                GlobalConfiguration::getInstance()->parseStartupParameters(argc, argv);
             }
             
+                //startup logger
+            logManager.init(argc, argv);
+            
+                //the version constant are defined into version.h
+                //file generate to every compilation
+            PRINT_LIB_HEADER
+            
+                //find our ip
+            string localIp;
+            if(GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_PUBLISHING_IP)){
+                localIp = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_PUBLISHING_IP);
+            } else {
+                InetUtility::scanForLocalNetworkAddress(localIp);
+            }
+            GlobalConfiguration::getInstance()->addLocalServerAddress(localIp.c_str());
+            
+            LAPP_ << "The local address chosen is:  " << GlobalConfiguration::getInstance()->getLocalServerAddress();
+
         }
         
         

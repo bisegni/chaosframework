@@ -17,12 +17,13 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include <iostream>
-#include <string>
 
 #include "WorkerCU.h"
 #include <chaos/common/cconstants.h>
 #include <chaos/cu_toolkit/ChaosCUToolkit.h>
+
+#include <iostream>
+#include <string>
 
 /*! \page page_example_cue ChaosCUToolkit Example
  *  \section page_example_cue_sec An basic usage for the ChaosCUToolkit package

@@ -29,7 +29,7 @@
 #include <netinet/in.h> 
 #include <string.h> 
 #include <arpa/inet.h>
-
+#include <chaos/common/global.h>
 namespace chaos {
     
     class InetUtility {

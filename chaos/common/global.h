@@ -34,15 +34,33 @@
 #include <boost/version.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/log/sources/basic_logger.hpp>
+#include <boost/log/sources/record_ostream.hpp>
+#include <boost/log/sources/global_logger_storage.hpp>
 using namespace boost;
 
-#include <boost/log/trivial.hpp>
+/*#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
+
+#include <boost/log/common.hpp>
+#include <boost/log/formatters.hpp>
+#include <boost/log/filters.hpp>
+
+#include <boost/log/utility/init/to_file.hpp>
+#include <boost/log/utility/init/to_console.hpp>
+#include <boost/log/utility/init/common_attributes.hpp>*/
 
 
-#define LDBG_       BOOST_LOG_TRIVIAL(debug)
-#define LERR_       BOOST_LOG_TRIVIAL(error)
-#define LAPP_       BOOST_LOG_TRIVIAL(info)
-#define LAPP_CFG_   BOOST_LOG_TRIVIAL(info)
+
+
+
+    //src::logger chaosLogger;
+BOOST_LOG_DECLARE_GLOBAL_LOGGER(chaosLogger, boost::log::sources::logger)
+
+#define LDBG_       BOOST_LOG(chaosLogger::get())
+#define LERR_       BOOST_LOG(chaosLogger::get())
+#define LAPP_       BOOST_LOG(chaosLogger::get())
+#define LAPP_CFG_   BOOST_LOG(chaosLogger::get())
     //define for chaos assert macro, it print the basiclay infromation to find
     //the error when the condition is not true
 #ifndef DEBUG
