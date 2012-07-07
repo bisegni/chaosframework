@@ -1,5 +1,29 @@
 SET(common_lib_src log/LogManager.cpp action/ActionDescriptor.cpp action/DeclareAction.cpp action/DomainActions.cpp bson/bsonobj.cpp bson/oid.cpp bson/lib/base64.cpp bson/lib/md5.c bson/lib/nonce.cpp bson/util/json.cpp configuration/GlobalConfiguration.cpp data/CDataWrapper.cpp data/CUSchemaDB.cpp dispatcher/CommandDispatcher.cpp dispatcher/DefaultCommandDispatcher.cpp dispatcher/DomainActionsScheduler.cpp event/EventBroker.cpp event/EventReceiver.cpp io/IODataDriver.cpp io/IOMemcachedDriver.cpp io/OutputMongoDataDriver.cpp message/DeviceMessageChannel.cpp message/MDSMessageChannel.cpp message/MessageBroker.cpp message/MessageChannel.cpp rpc/MsgPackClient.cpp rpc/MsgPackServer.cpp thread/CThread.cpp thread/CThreadGroup.cpp utility/EndianessBufferReaderHelper.cpp) 
 
+find_package (Boost 1.39 REQUIRED
+    COMPONENTS  program_options system thread chrono regex log log_setup)
+
+find_library(MEMCACHED_LIB memcached PATHS /usr/lib,/usr/local/lib DOC "memcached library")
+if(NOT MEMCACHED_LIB)
+    message(FATAL_ERROR "Library memcached required, but not found!")
+endif(NOT MEMCACHED_LIB)
+
+find_library(MSGPACK_LIB msgpack PATHS /usr/lib,/usr/local/lib DOC "msgpack library")
+if(NOT MSGPACK_LIB)
+    message(FATAL_ERROR "Library msgpack required, but not found!")
+endif(NOT MSGPACK_LIB)
+
+find_library(MSGPACK_RPC_LIB msgpack-rpc PATHS /usr/lib,/usr/local/lib DOC "msgpack-rpc library")
+if(NOT MSGPACK_RPC_LIB)
+    message(FATAL_ERROR "Library msgpack-rpc required, but not found!")
+endif(NOT MSGPACK_RPC_LIB)
+
+find_library(MPIO_LIB mpio PATHS /usr/lib,/usr/local/lib DOC "mpio library")
+if(NOT MPIO_LIB)
+    message(FATAL_ERROR "Library mpio required, but not found!")
+endif(NOT MPIO_LIB)
+
+
 ADD_LIBRARY(chaos_common SHARED ${common_lib_src})
 TARGET_LINK_LIBRARIES(chaos_common boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached msgpack msgpack-rpc mpio) 
         

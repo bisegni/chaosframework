@@ -6,7 +6,7 @@ EXECUTE_PROCESS(COMMAND chaos/common/version.sh)
 
 INCLUDE_DIRECTORIES(.) 
 ADD_DEFINITIONS(-g -O2 -Wall)
-
+    
 ADD_SUBDIRECTORY(chaos/common bin_common)
 ADD_SUBDIRECTORY(chaos/cu_toolkit bin_cutoolkit)
 ADD_SUBDIRECTORY(chaos/ui_toolkit bin_uitoolkit)
