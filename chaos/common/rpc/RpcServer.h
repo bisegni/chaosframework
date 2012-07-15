@@ -28,8 +28,9 @@
 #include <chaos/common/dispatcher/CommandDispatcher.h>
 #include <chaos/common/exception/CException.h>
 
-
 namespace chaos {
+using namespace std;
+
     /*
      Abstract class for standard adapter method for permit, to CommandManager
      the correct initialization for the adapter instance

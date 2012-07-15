@@ -20,7 +20,6 @@
 #include <iostream>
 
 #include "GlobalConfiguration.h"
-#include <chaos/common/utility/InetUtility.h>
 
 using namespace chaos;
 namespace po = boost::program_options;

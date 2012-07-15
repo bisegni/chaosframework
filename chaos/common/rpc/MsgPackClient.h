@@ -29,8 +29,10 @@
 #include <msgpack/rpc/client.h>
 #include <msgpack/rpc/session_pool.h>
 
+#include <string>
+
 namespace chaos {
-    
+    using namespace std;
     /*
      Class that manage the MessagePack message send.
      */
