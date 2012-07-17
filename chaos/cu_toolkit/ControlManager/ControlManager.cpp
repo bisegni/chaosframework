@@ -67,7 +67,7 @@ void ControlManager::init() throw(CException) {
     
     LCMAPP_  << "Thread Allocation";
     selfThreadPtr = new CThread(selfSharedPtr);
-    selfThreadPtr->setDelayBeetwenTask(0);
+    selfThreadPtr->setDelayBeetwenTask(100000);
     if(!selfThreadPtr) throw CException(0, "Thread allocation failure", "ControlManager::init");
     
     //control manager action initialization

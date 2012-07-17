@@ -49,13 +49,15 @@
 using namespace std;
 using namespace chaos;
 
-#define OPT_CUSTOM_DEVICE_ID "custom-device-id"
+#define OPT_CUSTOM_DEVICE_ID_A "device_a"
+#define OPT_CUSTOM_DEVICE_ID_B "device_b"
 
 int main (int argc, char* argv[] )
 {
-   
+    string tmpDeviceID;
     //! [Custom Option]
-    ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_CUSTOM_DEVICE_ID, po::value<string>(), "Custom device identification string");
+    ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_CUSTOM_DEVICE_ID_A, po::value<string>(), "Device A identification string");
+    ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_CUSTOM_DEVICE_ID_B, po::value<string>(), "Device B identification string");
     //! [Custom Option]
     
     //! [CUTOOLKIT Init]
@@ -63,11 +65,14 @@ int main (int argc, char* argv[] )
     //! [CUTOOLKIT Init]
     
     //! [Adding the CustomControlUnit]
-    if(ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CUSTOM_DEVICE_ID)){
-        string customdeviceID = ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<string>(OPT_CUSTOM_DEVICE_ID);
-        ChaosCUToolkit::getInstance()->addControlUnit(new WorkerCU(customdeviceID));
-    }else{
-        ChaosCUToolkit::getInstance()->addControlUnit(new WorkerCU());
+    if(ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CUSTOM_DEVICE_ID_A)){
+        tmpDeviceID = ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<string>(OPT_CUSTOM_DEVICE_ID_A);
+        ChaosCUToolkit::getInstance()->addControlUnit(new WorkerCU(tmpDeviceID));
+    }
+    
+    if(ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CUSTOM_DEVICE_ID_B)){
+        tmpDeviceID = ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<string>(OPT_CUSTOM_DEVICE_ID_B);
+        ChaosCUToolkit::getInstance()->addControlUnit(new WorkerCU(tmpDeviceID));
     }
     //! [Adding the CustomControlUnit]
     
