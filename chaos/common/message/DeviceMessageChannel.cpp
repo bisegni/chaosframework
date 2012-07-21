@@ -96,9 +96,9 @@ int DeviceMessageChannel::stopDevice(uint32_t millisecToWait) {
  */
 int DeviceMessageChannel::getState(CUStateKey::ControlUnitState& deviceState, uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
-    CDataWrapper stopDeviceData;
-    stopDeviceData.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, deviceNetworkAddress->deviceID);
-    auto_ptr<CDataWrapper> stateResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::ACTION_DEVICE_GET_STATE, &stopDeviceData, millisecToWait));
+    CDataWrapper deviceStateData;
+    deviceStateData.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, deviceNetworkAddress->deviceID);
+    auto_ptr<CDataWrapper> stateResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::ACTION_DEVICE_GET_STATE, &deviceStateData, millisecToWait));
     CHECK_TIMEOUT_AND_RESULT_CODE(stateResult, err)
     if(err == ErrorCode::EC_NO_ERROR) {
         auto_ptr<CDataWrapper> statePack(stateResult->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));

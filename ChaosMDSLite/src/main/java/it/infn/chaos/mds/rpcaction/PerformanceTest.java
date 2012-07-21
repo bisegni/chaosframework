@@ -18,7 +18,7 @@ public class PerformanceTest extends RPCActionHadler {
 	}
 
 	@Override
-	public BasicBSONObject handleAction(String domain, String action, BasicBSONObject actionData) throws Throwable {
+	public BasicBSONObject handleAction(String domain, String action, BasicBSONObject actionData) throws RefException {
 		if (domain.equals(SYSTEM) && action.equals(PERF)) {
 			return new BasicBSONObject().append("perf", new Date());
 		}

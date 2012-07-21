@@ -3,6 +3,7 @@
  */
 package it.infn.chaos.mds.rpcaction;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import it.infn.chaos.mds.RPCConstants;
@@ -46,7 +47,7 @@ public class DeviceQueyHandler extends RPCActionHadler {
 	 * java.lang.String, org.bson.BasicBSONObject)
 	 */
 	@Override
-	public BasicBSONObject handleAction(String domain, String action, BasicBSONObject actionData) throws Throwable {
+	public BasicBSONObject handleAction(String domain, String action, BasicBSONObject actionData) throws RefException {
 		BasicBSONObject result = null;
 		if (domain.equals(SYSTEM)) {
 			if (action.equals(GET_LAST_DATASET)) {
@@ -66,7 +67,7 @@ public class DeviceQueyHandler extends RPCActionHadler {
 	 * @return
 	 * @throws Throwable
 	 */
-	private BasicBSONObject getNodeNetworkAddress(BasicBSONObject actionData) throws Throwable {
+	private BasicBSONObject getNodeNetworkAddress(BasicBSONObject actionData) throws RefException {
 		DeviceDA dDA = null;
 		BasicBSONObject result = null;
 		try {
@@ -78,9 +79,12 @@ public class DeviceQueyHandler extends RPCActionHadler {
 			result.append(RPCConstants.CONTROL_UNIT_INSTANCE, d.getCuInstance());
 		} catch (Throwable e) {
 			RPCUtils.addRefExceptionElementToBson(result, "DeviceQueyHandler::getDeviceDataseFromDeviceID", e.getMessage(), 0);
-			throw e;
+			throw new RefException("getNodeNetworkAddress error", 1, "CUQueryHandler::getNodeNetworkAddress");
 		} finally {
-			closeDataAccess(dDA, false);
+			try {
+				closeDataAccess(dDA, false);
+			} catch (SQLException e) {
+			}
 		}
 		return result;
 	}
@@ -91,7 +95,7 @@ public class DeviceQueyHandler extends RPCActionHadler {
 	 * @return
 	 * @throws Throwable
 	 */
-	private BasicBSONObject getAllActiveDevice(BasicBSONObject actionData) throws Throwable {
+	private BasicBSONObject getAllActiveDevice(BasicBSONObject actionData) throws RefException {
 		DeviceDA dDA = null;
 		BasicBSONObject result = new BasicBSONObject();
 		try {
@@ -104,10 +108,12 @@ public class DeviceQueyHandler extends RPCActionHadler {
 			}
 			result.append(RPCConstants.DATASET_DEVICE_ID, deviceArray);
 		} catch (Throwable e) {
-			RPCUtils.addRefExceptionElementToBson(result, "DeviceQueyHandler::getDeviceDataseFromDeviceID", e.getMessage(), 0);
-			throw e;
+			throw new RefException("getNodeNetworkAddress error", 1, "CUQueryHandler::getNodeNetworkAddress");
 		} finally {
-			closeDataAccess(dDA, false);
+			try {
+				closeDataAccess(dDA, false);
+			} catch (SQLException e) {
+			}
 		}
 		return result;
 	}
@@ -119,7 +125,7 @@ public class DeviceQueyHandler extends RPCActionHadler {
 	 * @return
 	 * @throws Throwable
 	 */
-	private BasicBSONObject getDeviceDataseFromDeviceID(BasicBSONObject actionData) throws Throwable {
+	private BasicBSONObject getDeviceDataseFromDeviceID(BasicBSONObject actionData) throws RefException {
 		DeviceDA dDA = null;
 		DataServerDA dsDA = null;
 		BasicBSONObject result = null;
@@ -129,13 +135,20 @@ public class DeviceQueyHandler extends RPCActionHadler {
 			String deviceIdentification = actionData.getString(RPCConstants.DATASET_DEVICE_ID);
 			result = DeviceDescriptionUtility.composeStartupCommandForDeviceIdentification(deviceIdentification, dDA, dsDA, false);
 		} catch (Throwable e) {
-			RPCUtils.addRefExceptionElementToBson(result, "DeviceQueyHandler::getDeviceDataseFromDeviceID", e.getMessage(), 0);
-			throw e;
+			throw new RefException("getDeviceDataseFromDeviceID error", 1, "CUQueryHandler::getDeviceDataseFromDeviceID");
 		} finally {
 			if (dDA != null)
-				dDA.getConnection().close();
+				try {
+					dDA.getConnection().close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			if (dsDA != null)
-				dsDA.getConnection().close();
+				try {
+					dsDA.getConnection().close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 		}
 		return result;
 	}

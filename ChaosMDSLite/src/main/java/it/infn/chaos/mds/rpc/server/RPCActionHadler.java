@@ -34,14 +34,14 @@ abstract public class RPCActionHadler {
 	 * @param action
 	 * @param actionData
 	 */
-	abstract public BasicBSONObject handleAction(String domain, String action, BasicBSONObject actionData) throws Throwable;
+	abstract public BasicBSONObject handleAction(String domain, String action, BasicBSONObject actionData) throws RefException;
 
 	/**
 	 * @param domain
 	 * @param action
 	 * @param actionData
 	 */
-	public BasicBSONObject _handleAction(String domain, String action, BasicBSONObject actionData) {
+	public BasicBSONObject _handleAction(String domain, String action, BasicBSONObject actionData) throws RefException{
 		BasicBSONObject result = null;
 		try {
 			result = handleAction(domain, action, actionData);

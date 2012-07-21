@@ -132,7 +132,7 @@ void MainWindow::on_buttonUpdateDeviceList_clicked()
 
 
 void MainWindow::updateDeviceState() {
-    if(!deviceController.get()) {
+    if(!deviceController) {
         ui->labelState->setText("");
         return;
     }
@@ -176,8 +176,7 @@ void MainWindow::cleanLastDevice() {
     //remove the plot
     graphWdg->clearAllPlot();
 
-    //
-    deviceController.reset();
+    chaos::ui::HLDataApi::getInstance()->disposeDeviceControllerPtr(deviceController);
 }
 
 void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
@@ -193,7 +192,7 @@ void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
     ui->label_2->setText(selectedDevice);
 
     std::string dName = selectedDevice.toStdString();
-    deviceController.reset(chaos::ui::HLDataApi::getInstance()->getControllerForDeviceID(dName));
+    deviceController = chaos::ui::HLDataApi::getInstance()->getControllerForDeviceID(dName);
     deviceController->setupTracking();
     //get only output o attribute
     deviceController->getDeviceDatasetAttributesName(attributesName, chaos::DataType::Output);
@@ -316,7 +315,7 @@ void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
 
 void MainWindow::on_buttonInit_clicked()
 {
-    if(!deviceController.get()) return;
+    if(!deviceController) return;
     if(deviceController->initDevice()!= 0 ){
         QMessageBox* msg = new QMessageBox(this);
         msg->setText("Device already initialized or error");
@@ -328,7 +327,7 @@ void MainWindow::on_buttonInit_clicked()
 
 void MainWindow::on_buttonDeinit_clicked()
 {
-    if(!deviceController.get()) return;
+    if(!deviceController) return;
     if( deviceController->deinitDevice() != 0 ){
         QMessageBox* msg = new QMessageBox(this);
         msg->setText("Device alredy deinitialized or error");
@@ -340,7 +339,7 @@ void MainWindow::on_buttonDeinit_clicked()
 
 void MainWindow::on_buttonStart_clicked()
 {
-    if(!deviceController.get()) return;
+    if(!deviceController) return;
     if(deviceController->startDevice() != 0 ){
         QMessageBox* msg = new QMessageBox(this);
         msg->setText("Device already started or error");
@@ -351,7 +350,7 @@ void MainWindow::on_buttonStart_clicked()
 
 void MainWindow::on_buttonStop_clicked()
 {
-    if(!deviceController.get()) return;
+    if(!deviceController) return;
     if(deviceController->stopDevice() != 0 ){
         QMessageBox* msg = new QMessageBox(this);
         msg->setText("Device already stopped or error");
@@ -399,7 +398,7 @@ void MainWindow::stopTracking() {
 
 
 void MainWindow::executeOnThread(){
-    if(!deviceController.get()) return;
+    if(!deviceController) return;
     while(runThread){
         deviceController->fetchCurrentDeviceValue();
         if(checkSequentialIDKey.size()>0){
@@ -427,7 +426,7 @@ void MainWindow::on_dialTrackSpeed_valueChanged(int value) {
 }
 
 void MainWindow::on_dialScheduleDevice_valueChanged(int value) {
-    if(!deviceController.get()) return;
+    if(!deviceController) return;
     deviceController->setScheduleDelay(value*1000);
 }
 

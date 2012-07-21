@@ -28,7 +28,7 @@ using namespace std;
 
 #define INIT_DEINIT_ACTION_CU_PARAM_NAME            "cu_uuid"
 #define INIT_DEINIT_ACTION_CU_PARAM_DESCRIPTION     "The name of the Control Unit subject of the operation"
-
+#define WAITH_TIME_FOR_CU_REGISTRATION 2000
 
 #define CHECK_AND_RETURN_CU_UUID_PARAM_OR_TROW(x, y)\
 string y;\
@@ -43,6 +43,7 @@ throw CException(0, "The Control Unit identifier is not registered", "ControlMan
 }
 
 #define LCMAPP_ LAPP_ << "[Control Manager] - "
+#define LCMDBG_ LDBG_ << "[Control Manager DBG] - "
 #define LCMERR_ LERR_ << "[Control Manager Error] - "
 
 /*
@@ -63,12 +64,13 @@ ControlManager::~ControlManager() {
  */
 void ControlManager::init() throw(CException) {
     LCMAPP_  << "Inititializing";
-    CThreadExecutionTaskSPtr selfSharedPtr(this);
+        //CThreadExecutionTaskSPtr selfSharedPtr(this);
     
     LCMAPP_  << "Thread Allocation";
-    selfThreadPtr = new CThread(selfSharedPtr);
-    selfThreadPtr->setDelayBeetwenTask(100000);
+    selfThreadPtr = new CThread();
     if(!selfThreadPtr) throw CException(0, "Thread allocation failure", "ControlManager::init");
+    selfThreadPtr->setTask(this);
+    selfThreadPtr->setDelayBeetwenTask(200000);
     
     //control manager action initialization
     LCMAPP_  << "system action initialization";
@@ -162,7 +164,6 @@ void ControlManager::deinit() throw(CException) {
            
             CDataWrapper fakeDWForDeinit;
             fakeDWForDeinit.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, *iter);
-            
             try{
                 LCMAPP_  << "Stopping deviceid:" << *iter;
                 cu->_stop(&fakeDWForDeinit, detachFake);
@@ -215,6 +216,7 @@ void ControlManager::submitControlUnit(AbstractControlUnit *data) throw(CExcepti
  */
 void ControlManager::executeOnThread(const string& threadIdentification) throw(CException) {
     //initialize the Control Unit
+    int registrationError = ErrorCode::EC_NO_ERROR;
     AbstractControlUnit *curCU = 0L;
     CDataWrapper cuActionAndDataset;
     
@@ -229,12 +231,13 @@ void ControlManager::executeOnThread(const string& threadIdentification) throw(C
         
         LCMAPP_  << "Setup Control Unit Sanbox for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
         cuPtr->_defineActionAndDataset(cuActionAndDataset);
+        
         LCMAPP_  << "Setup finished for Control Unit Sanbox:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
         //sendConfPackToMDS(cuPtr->defaultInternalConf.get());
-        sendConfPackToMDS(cuActionAndDataset);
+        registrationError = sendConfPackToMDS(cuActionAndDataset);
         LCMAPP_  << "Talk with MDS for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
         
-        LCMAPP_  << "Configuration pack has been sent to MDS for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
+        LCMAPP_  << "Configuration pack has been sent to MDS for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance() << " with submission result="<<registrationError;
         //the sandbox name now is the real CUName_CUInstance before the initSandbox method call the CUInstance is
         //randomlly defined but if a CU want to ovveride it it can dureing initSandbox call
         if(controlUnitInstanceMap.count(cuPtr->getCUInstance())) {
@@ -253,7 +256,8 @@ void ControlManager::executeOnThread(const string& threadIdentification) throw(C
             auto_ptr<CDataWrapper> masterConfiguration(new CDataWrapper(serBuffForGlobalConf->getBufferPtr()));
             masterConfiguration->appendAllElement(cuActionAndDataset);
             
-#if DEBUG
+#if DEBUG   
+            LDBG_ << "Registration Error:" << registrationError;
             LDBG_ << masterConfiguration->getJSONString();
 #endif  
         }
@@ -267,7 +271,7 @@ void ControlManager::executeOnThread(const string& threadIdentification) throw(C
 /*
  
  */
-void ControlManager::sendConfPackToMDS(CDataWrapper& dataToSend) {
+int ControlManager::sendConfPackToMDS(CDataWrapper& dataToSend) {
     // dataToSend can't be sent because it is porperty of the CU
     //so we need to copy it
     
@@ -278,9 +282,8 @@ void ControlManager::sendConfPackToMDS(CDataWrapper& dataToSend) {
     
     mdsPack->addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS, GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort().c_str());
     
-    mdsChannel->sendControlUnitDescription(mdsPack);
-    
-    //CommandManager::getInstance()->sendMessageToMetadataServer(mdsPack);
+        //register CU from mds
+    return mdsChannel->sendUnitDescription(mdsPack, true, WAITH_TIME_FOR_CU_REGISTRATION);
 }
 
 /*

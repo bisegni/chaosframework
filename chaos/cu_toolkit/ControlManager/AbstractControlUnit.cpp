@@ -41,7 +41,6 @@ using namespace boost::uuids;
 #define LCU_ LAPP_ << "[Control Unit:"<<getCUInstance()<<"] - "
 
 
-
 #pragma mark constructor
 
 AbstractControlUnit::AbstractControlUnit(){
@@ -491,10 +490,10 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
  Get the current control unit state
  */
 CDataWrapper* AbstractControlUnit::_getState(CDataWrapper* getStatedParam, bool& detachParam) throw(CException) {
-    CDataWrapper *stateResult = new CDataWrapper();
     if(!getStatedParam->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)){
         throw CException(-1, "Get State Pack without DeviceID", "AbstractControlUnit::getState");
     }
+    CDataWrapper *stateResult = new CDataWrapper();
     string deviceID = getStatedParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
     stateResult->addInt32Value(CUStateKey::CONTROL_UNIT_STATE, deviceExplicitStateMap[deviceID]);
     return stateResult;

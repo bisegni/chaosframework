@@ -70,21 +70,26 @@ void DeviceController::getDeviceId(string& dId) {
 }
 
 void DeviceController::updateChannel() throw(CException) {
-    
+    int err = ErrorCode::EC_NO_ERROR;
+    CDataWrapper *devDefHandler = NULL;
+    CDeviceNetworkAddress *devAddress = NULL;
         //make the live driver    
     if(!mdsChannel){
         mdsChannel = LLRpcApi::getInstance()->getNewMetadataServerChannel();
         if(!mdsChannel) throw CException(-1, "No MDS Channel created", "DeviceController::init");
     }
     
-    lastDeviceDefinition.reset(mdsChannel->getLastDatasetForDevice(deviceID, millisecToWait));
-    if(!lastDeviceDefinition.get()) throw CException(-2, "No device dataset received", "DeviceController::updateChannel");
-        
+    err = mdsChannel->getLastDatasetForDevice(deviceID, &devDefHandler, millisecToWait);
+    if(err!=ErrorCode::EC_NO_ERROR || !devDefHandler) throw CException(-2, "No device dataset received", "DeviceController::updateChannel");
+    
+    lastDeviceDefinition.reset(devDefHandler);
+    
     datasetDB.addAttributeToDataSetFromDataWrapper(*lastDeviceDefinition.get());
     
-    deviceAddress.reset(mdsChannel->getNetworkAddressForDevice(deviceID, millisecToWait));
-    if(!deviceAddress.get()) throw CException(-3, "No Address found for device", "DeviceController::init");
-        
+    err = mdsChannel->getNetworkAddressForDevice(deviceID, &devAddress, millisecToWait);
+    if(err!=ErrorCode::EC_NO_ERROR || !devAddress) throw CException(-3, "No Address found for device", "DeviceController::init");
+    deviceAddress.reset(devAddress);
+    
         //update live data driver
     ioLiveDataDriver = new IOMemcachedDriver();
     if(ioLiveDataDriver) {

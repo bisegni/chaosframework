@@ -78,7 +78,8 @@ public class ActionHandlerExecutor implements Runnable {
 	 */
 	public void run() {
 		while (!done) {
-			BasicBSONObject resultObject = null;
+			BasicBSONObject resultMessage = new BasicBSONObject();
+			BasicBSONObject resultPack = new BasicBSONObject();
 			ActionHandlerExecutionUnit actionHandler = null;
 			try {
 				actionHandler = hanlderQueue.take();
@@ -86,54 +87,50 @@ public class ActionHandlerExecutor implements Runnable {
 				e1.printStackTrace();
 			}
 
-			if (actionHandler == null
-				|| actionHandler.handler == null)
+			if (actionHandler == null || actionHandler.handler == null)
 				continue;
 
 			String domain = actionHandler.data.getString(RPCConstants.CS_CMDM_ACTION_DOMAIN);
 			String action = actionHandler.data.getString(RPCConstants.CS_CMDM_ACTION_NAME);
-			if (domain == null
-				&& action == null)
+			if (domain == null && action == null)
 				continue;
-			BasicBSONObject actionMessage = (BasicBSONObject) (actionHandler.data.containsField(RPCConstants.CS_CMDM_ACTION_MESSAGE)?actionHandler.data.get(RPCConstants.CS_CMDM_ACTION_MESSAGE):null);
+			BasicBSONObject actionMessage = (BasicBSONObject) (actionHandler.data.containsField(RPCConstants.CS_CMDM_ACTION_MESSAGE) ? actionHandler.data.get(RPCConstants.CS_CMDM_ACTION_MESSAGE) : null);
 			// get info for replay
 			try {
-				
+
 				actionMessage = actionHandler.handler._handleAction(domain, action, actionMessage);
-
-				if (actionMessage != null) {
-					resultObject = new BasicBSONObject();
-					String responseAddress = actionHandler.data.containsField(RPCConstants.CS_CMDM_REMOTE_HOST_ANSWER_IP) ? actionHandler.data.getString(RPCConstants.CS_CMDM_REMOTE_HOST_ANSWER_IP) : null;
-					String reponseDomain = actionHandler.data.containsField(RPCConstants.CS_CMDM_ANSWER_DOMAIN) ? actionHandler.data.getString(RPCConstants.CS_CMDM_ANSWER_DOMAIN) : null;
-					String reponseAction = actionHandler.data.containsField(RPCConstants.CS_CMDM_ANSWER_ACTION) ? actionHandler.data.getString(RPCConstants.CS_CMDM_ANSWER_ACTION) : null;
-					Integer responseID = actionHandler.data.containsField(RPCConstants.CS_CMDM_REMOTE_HOST_ANSWER_MESSAGE_ID) ? actionHandler.data.getInt(RPCConstants.CS_CMDM_REMOTE_HOST_ANSWER_MESSAGE_ID) : null;
-
-					if (responseAddress != null) {
-						resultObject.append(RPCConstants.CS_CMDM_REMOTE_HOST_IP, responseAddress);
-					}
-
-					if (reponseDomain != null) {
-						resultObject.append(RPCConstants.CS_CMDM_ACTION_DOMAIN, reponseDomain);
-					}
-
-					if (reponseAction != null) {
-						resultObject.append(RPCConstants.CS_CMDM_ACTION_NAME, reponseAction);
-					}
-
-					if (responseID != null) {
-						actionMessage.append(RPCConstants.CS_CMDM_MESSAGE_ID, responseID);
-					}
-
-					//add the action message
-					resultObject.put(RPCConstants.CS_CMDM_ACTION_MESSAGE, actionMessage);
-					SingletonServices.getInstance().getMdsRpcClient().sendMessage(resultObject);
-				}
+				resultPack.append(RPCConstants.CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
+				if (actionMessage != null)
+					resultPack.append(RPCConstants.CS_CMDM_ACTION_MESSAGE, actionMessage);
 			} catch (RefException e) {
-				e.printStackTrace();
+				RPCUtils.addRefExceptionToBson(resultPack, e);
+			}
+
+			String responseAddress = actionHandler.data.containsField(RPCConstants.CS_CMDM_REMOTE_HOST_ANSWER_IP) ? actionHandler.data.getString(RPCConstants.CS_CMDM_REMOTE_HOST_ANSWER_IP) : null;
+			String reponseDomain = actionHandler.data.containsField(RPCConstants.CS_CMDM_ANSWER_DOMAIN) ? actionHandler.data.getString(RPCConstants.CS_CMDM_ANSWER_DOMAIN) : null;
+			String reponseAction = actionHandler.data.containsField(RPCConstants.CS_CMDM_ANSWER_ACTION) ? actionHandler.data.getString(RPCConstants.CS_CMDM_ANSWER_ACTION) : null;
+			Integer responseID = actionHandler.data.containsField(RPCConstants.CS_CMDM_REMOTE_HOST_ANSWER_MESSAGE_ID) ? actionHandler.data.getInt(RPCConstants.CS_CMDM_REMOTE_HOST_ANSWER_MESSAGE_ID) : null;
+
+			if (responseAddress == null || reponseDomain == null)
+				return;
+
+			resultMessage.append(RPCConstants.CS_CMDM_REMOTE_HOST_IP, responseAddress);
+			resultMessage.append(RPCConstants.CS_CMDM_ACTION_DOMAIN, reponseDomain);
+
+			if (reponseAction != null) {
+				resultMessage.append(RPCConstants.CS_CMDM_ACTION_NAME, reponseAction);
+			}
+
+			if (responseID != null) {
+				resultPack.append(RPCConstants.CS_CMDM_MESSAGE_ID, responseID);
+			}
+
+			// add the action message
+			resultMessage.put(RPCConstants.CS_CMDM_ACTION_MESSAGE, resultPack);
+			try {
+				System.out.println(resultMessage.toString());
+				SingletonServices.getInstance().getMdsRpcClient().sendMessage(resultMessage);
 			} catch (Throwable e) {
-				e.printStackTrace();
-			} finally {
-				resultObject = null;
 			}
 
 		}

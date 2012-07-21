@@ -49,7 +49,7 @@ namespace chaos {
         map<string, shared_ptr<AbstractControlUnit> > controlUnitInstanceMap;
         MDSMessageChannel *mdsChannel;
         
-        void sendConfPackToMDS(CDataWrapper&);
+        int sendConfPackToMDS(CDataWrapper&);
         
         /*
          Thread method that work on buffer item

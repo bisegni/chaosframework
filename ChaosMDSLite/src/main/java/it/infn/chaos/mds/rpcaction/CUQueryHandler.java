@@ -9,6 +9,7 @@ import it.infn.chaos.mds.da.DataServerDA;
 import it.infn.chaos.mds.da.DeviceDA;
 import it.infn.chaos.mds.rpc.server.RPCActionHadler;
 
+import java.sql.SQLException;
 import java.util.ListIterator;
 
 import org.bson.BasicBSONObject;
@@ -42,7 +43,7 @@ public class CUQueryHandler extends RPCActionHadler {
 	 * java.lang.String, org.bson.BasicBSONObject)
 	 */
 	@Override
-	public BasicBSONObject handleAction(String domain, String action, BasicBSONObject actionData) throws Throwable {
+	public BasicBSONObject handleAction(String domain, String action, BasicBSONObject actionData) throws RefException {
 		BasicBSONObject result = null;
 		if (domain.equals(SYSTEM)) {
 			if (action.equals(REGISTER_CONTROL_UNIT)) {
@@ -60,7 +61,7 @@ public class CUQueryHandler extends RPCActionHadler {
 	 * @param actionData
 	 * @return
 	 */
-	private BasicBSONObject heartbeat(BasicBSONObject actionData)  throws Throwable {
+	private BasicBSONObject heartbeat(BasicBSONObject actionData)  throws RefException {
 		BasicBSONObject result = null;
 		if(!actionData.containsField(RPCConstants.DATASET_DEVICE_ID)) throw new RefException("Message desn't contain deviceid");
 		DeviceDA dDA = null;
@@ -68,9 +69,15 @@ public class CUQueryHandler extends RPCActionHadler {
 			dDA = getDataAccessInstance(DeviceDA.class);
 			dDA.performDeviceHB(actionData.getString(RPCConstants.DATASET_DEVICE_ID));
 		} catch (Exception e) {
-			throw e;
+			throw new RefException("heartbeat error", 1, "CUQueryHandler::heartbeat");
+		} catch (Throwable e) {
+			throw new RefException("heartbeat error", 1, "CUQueryHandler::heartbeat");
 		}finally {
-			closeDataAccess(dDA, false);
+			try {
+				closeDataAccess(dDA, false);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		return result;
@@ -80,7 +87,7 @@ public class CUQueryHandler extends RPCActionHadler {
 	 * @return
 	 * @throws Throwable
 	 */
-	private BasicBSONObject registerControUnit(BasicBSONObject actionData) throws Throwable {
+	private BasicBSONObject registerControUnit(BasicBSONObject actionData) throws RefException {
 		Device d = null;
 		BasicBSONObject result = null;
 		DeviceDA dDA = null;
@@ -142,11 +149,17 @@ public class CUQueryHandler extends RPCActionHadler {
 
 			closeDataAccess(dDA, true);
 		} catch (RefException e) {
-			closeDataAccess(dDA, false);
-			throw e;
+			try {
+				closeDataAccess(dDA, false);
+			} catch (SQLException e1) {
+			}
+			throw new RefException("RegisterControUnit error", 1, "CUQueryHandler::registerControUnit");
 		} catch (Throwable e) {
-			closeDataAccess(dDA, false);
-			throw e;
+			try {
+				closeDataAccess(dDA, false);
+			} catch (SQLException e1) {
+			}
+			throw new RefException("RegisterControUnit error", 1, "CUQueryHandler::registerControUnit");
 		}
 		return result;
 	}

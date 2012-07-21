@@ -83,6 +83,7 @@ int main (int argc, char* argv[] )
         int iteration = 10;
         long sleep = 1000000;
         string devID("SIN_DEVICE");
+        vector<string> allDevice;
         posix_time::time_duration currentTime;
         
         //! [UIToolkit Attribute Init]
@@ -120,7 +121,10 @@ int main (int argc, char* argv[] )
             std::cout << allOutAttrName[idx] << std::endl;
         }
         //------------------------------------------------------------------------------------
-        
+        /*
+         get the state
+         */
+        err = controller->getState(deviceState);
         
         /*
          initialization of the device isntead form MDS
@@ -194,10 +198,10 @@ int main (int argc, char* argv[] )
                 }
             }
             
-            if(binaryValueBuff){
+            if(binaryValueBuff){ 
                 int32_t tipedBufLen = 0;
                 boost::shared_ptr<double> sinWavePtr = binaryValueBuff->getTypedPtr<double>(tipedBufLen);
-                if(sinWavePtr){
+                if(sinWavePtr.get()){
                     std::cout << "Buffer received len:" << tipedBufLen << std::endl;
                     for(int32_t idx = 0; idx < tipedBufLen; idx++){
                         std::cout << sinWavePtr.get()[idx];

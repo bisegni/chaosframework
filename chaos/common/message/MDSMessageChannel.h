@@ -59,7 +59,7 @@ namespace chaos {
          \param deviceDataset the CDatawrapper representi the device dataset infromation, th epointer is not disposed
          \param millisecToWait delay after wich the wait is interrupt
          */
-        int sendControlUnitDescription(CDataWrapper *deviceDataset, uint32_t millisecToWait=0);
+        int sendUnitDescription(CDataWrapper *deviceDataset, bool requestCheck=false, uint32_t millisecToWait=0);
         
         //! Get all active device id
         /*! 
@@ -73,19 +73,21 @@ namespace chaos {
         /*! 
          Return the node address for an identification id
          \param identificationID id for wich we need to get the network address information
+         \param deviceNetworkAddress the hadnle to the pointer representing the node address structure to be filled with identification id network info 
          \param millisecToWait delay after wich the wait is interrupt
-         \return node address structure to be filled with identification id network info
+         \return error code
          */
-        CDeviceNetworkAddress* getNetworkAddressForDevice(string& identificationID, uint32_t millisecToWait=0);
+        int getNetworkAddressForDevice(string& identificationID, CDeviceNetworkAddress** deviceNetworkAddress, uint32_t millisecToWait=0);
         
         //! Get curent dataset for device
         /*! 
          Return the node address for an identification id
          \param identificationID id for wich we need to get the network address information
+         \param deviceDefinition this is the handle to the pointer representig the dataset desprition is returned
          \param millisecToWait delay after wich the wait is interrupt
-         \return if the infromation is found, a CDataWrapper for dataset desprition is returned
+         \return error code
          */
-        CDataWrapper* getLastDatasetForDevice(string& identificationID, uint32_t millisecToWait=0);
+        int getLastDatasetForDevice(string& identificationID,  CDataWrapper** deviceDefinition, uint32_t millisecToWait=0);
     };
     
 }

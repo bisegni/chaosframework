@@ -31,7 +31,7 @@ class ControlDialog;
 class ControlDialog : public QDialog
 {
     Q_OBJECT
-    boost::shared_ptr<chaos::ui::DeviceController> deviceController;
+    chaos::ui::DeviceController *deviceController;
     chaos::CUSchemaDB::RangeValueInfo attributerange;
     std::string attributeName;
     std::string deviceID;
@@ -40,7 +40,7 @@ public:
     explicit ControlDialog(QWidget *parent = 0);
     ~ControlDialog();
     
-    void initDialog( boost::shared_ptr<chaos::ui::DeviceController>& _deviceController, string& _attributeName);
+    void initDialog( chaos::ui::DeviceController *_deviceController, string& _attributeName);
 private slots:
     void on_buttonCommit_clicked();
 

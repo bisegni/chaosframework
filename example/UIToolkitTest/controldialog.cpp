@@ -34,7 +34,7 @@ ControlDialog::~ControlDialog()
     delete ui;
 }
 
-void ControlDialog::initDialog(boost::shared_ptr<chaos::ui::DeviceController>&  _deviceController, string& _attributeName) {
+void ControlDialog::initDialog(chaos::ui::DeviceController *_deviceController, string& _attributeName) {
     deviceController = _deviceController;
     attributeName = _attributeName;
     //get the attribute info and allocate the controller
