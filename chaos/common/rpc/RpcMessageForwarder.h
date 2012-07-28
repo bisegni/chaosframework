@@ -21,7 +21,7 @@
 #ifndef CHAOSFramework_RPCMessageForwarderInterface_h
 #define CHAOSFramework_RPCMessageForwarderInterface_h
 
-#include <chaos/common/rpc/MessageNetworkDestination.h>
+#include <chaos/common/rpcnet/CNodeNetworkAddress.h>
 
 namespace chaos {
         //! Handle the rpc message forwarding
@@ -35,7 +35,7 @@ namespace chaos {
          \param MessageNetworkDestination the information for the message forward to network node
          \param onThisThread if true the message is forwarded in the same thread of the caller
          */
-        virtual bool submitRpcPack(MessageNetworkDestination*, bool onThisThread=false) throw(CException) = 0;
+        virtual bool submitRpcPack(CNodeNetworkAddress*, bool onThisThread=false) throw(CException) = 0;
     };
 }
 
