@@ -35,7 +35,7 @@ using namespace chaos;
 namespace logging = boost::BOOST_LOG_NAMESPACE;
 namespace fmt = boost::log::formatters;
 
-void LogManager::init(int argc, char* argv[]) throw(CException) {
+void LogManager::init() throw(CException) {
     bool logOnConsole = GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_CONSOLE);
     bool logOnFile = GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_FILE);
     string logFileName = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_FILE);

@@ -20,6 +20,9 @@
 #ifndef ChaosFramework_ChaosCommon_h
 #define ChaosFramework_ChaosCommon_h
 
+#include <errno.h>
+#include <sys/utsname.h>
+
 #include <chaos/common/global.h>
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/utility/InetUtility.h>
@@ -28,7 +31,8 @@
 
     //#include <stdio.h>
     //! Default chaos namespace used to group all common api
-namespace chaos {    
+namespace chaos {
+    using namespace std;
     using namespace boost;
     
         //! Chaos common engine class
@@ -62,17 +66,29 @@ namespace chaos {
          in themain toolkit subclass of ChaosCommon
          */
         virtual void init(int argc, char* argv[]) throw(CException) {
-            
+            int err = 0;
+            struct utsname u_name;
             if(argv != NULL){
                 GlobalConfiguration::getInstance()->parseStartupParameters(argc, argv);
             }
             
                 //startup logger
-            logManager.init(argc, argv);
-            
-                //the version constant are defined into version.h
-                //file generate to every compilation
+            logManager.init();
+
+            //                
             PRINT_LIB_HEADER
+            
+            err = uname(&u_name);
+            if(err==-1){
+                LAPP_ << "Platform: " << strerror(errno);
+            } else {
+               LAPP_ << "Platform: " << u_name.sysname << " " << u_name.nodename << " " << u_name.release << " " << u_name.version << " " << u_name.machine;
+            }
+            
+            LAPP_ << "Boost version: " << (BOOST_VERSION / 100000) << "."<< ((BOOST_VERSION / 100) % 1000)<< "."<< (BOOST_VERSION / 100000);
+            LAPP_ << "Compiler Version: " << BOOST_COMPILER;
+            LAPP_ << "-----------------------------------------";
+
             
                 //find our ip
             string localIp;
@@ -86,6 +102,7 @@ namespace chaos {
             LAPP_ << "The local address chosen is:  " << GlobalConfiguration::getInstance()->getLocalServerAddress();
 
         }
+        
         
         
     public:

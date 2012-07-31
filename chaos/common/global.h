@@ -110,12 +110,7 @@ LAPP_ << "-----------------------------------------";\
 LAPP_ << CSLIB_VERSION_HEADER;\
 LAPP_ << CSLIB_VERSION_NUMBER;\
 LAPP_ << CSLIB_VERSION_LAST_COMMITTER;\
-LAPP_ << "-----------------------------------------";\
-LAPP_ << "Platform: " << BOOST_PLATFORM;\
-LAPP_ << "Boost version: " << (BOOST_VERSION / 100000)\
-<< "."<< ((BOOST_VERSION / 100) % 1000)<< "."<< (BOOST_VERSION / 100000);\
-LAPP_ << "Compiler Version: " << BOOST_COMPILER;\
-LAPP_ << "-----------------------------------------";\
+LAPP_ << "-----------------------------------------";
 
 
 /*

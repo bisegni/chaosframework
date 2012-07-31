@@ -23,11 +23,6 @@ if(NOT MPIO_LIB)
     message(FATAL_ERROR "Library mpio required, but not found!")
 endif(NOT MPIO_LIB)
 
-find_library(CHAOSCOMMON_LIB chaos_common PATHS /usr/lib,/usr/local/lib DOC "chaos_common library")
-if(NOT CHAOSCOMMON_LIB)
-    message(FATAL_ERROR "Library chaos_common required, but not found!")
-endif(NOT CHAOSCOMMON_LIB)
-
 ADD_LIBRARY(chaos_uitoolkit SHARED ${ui_lib_src})
 TARGET_LINK_LIBRARIES(chaos_uitoolkit chaos_common boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached msgpack msgpack-rpc mpio) 
 

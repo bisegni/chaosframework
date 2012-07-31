@@ -31,7 +31,7 @@ namespace chaos {
         
         LogManager(){}
     public:
-        void init(int argc, char* argv[]) throw(CException);
+        void init() throw(CException);
     };
 }
 #endif /* defined(__CHAOSFramework__LogManager__) */

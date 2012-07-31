@@ -56,6 +56,8 @@ void GlobalConfiguration::parseStartupParameters(int argc, char* argv[]) throw (
         po::store(po::parse_command_line(argc, argv, desc), vm);
         po::notify(vm); 
     }catch (po::error &e) {
+            //write error also on cerr
+        std::cerr << e.what();
         throw CException(0, e.what(), "GlobalConfiguration::preParseStartupParameters");
 
     }
