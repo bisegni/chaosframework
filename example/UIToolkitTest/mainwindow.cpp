@@ -474,3 +474,13 @@ void MainWindow::on_pushButtonResetStatistic_clicked()
     lostPack = 0;
     oversampling = 0;
 }
+
+void MainWindow::on_spinBoxMaxYGrid_valueChanged(int arg1)
+{
+    graphWdg->setMinMaxGrid(ui->spinBoxMinYGrid->value(), ui->spinBoxMaxYGrid->value());
+}
+
+void MainWindow::on_spinBoxMinYGrid_valueChanged(int arg1)
+{
+    graphWdg->setMinMaxGrid(ui->spinBoxMinYGrid->value(), ui->spinBoxMaxYGrid->value());
+}

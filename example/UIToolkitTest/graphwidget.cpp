@@ -51,6 +51,11 @@ GraphWidget::GraphWidget(QWidget *parent) :
     d_directPainter = new QwtPlotDirectPainter();
 }
 
+void GraphWidget::setMinMaxGrid(int min, int max) {
+    plot->setAxisScale(QwtPlot::yLeft, min, max);
+    plot->replot();
+}
+
 void GraphWidget::setPointNumber(int points){
     boost::mutex::scoped_lock  lock(manageMutex);
     numberOfPoint = points;

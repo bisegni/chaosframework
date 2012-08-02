@@ -103,6 +103,10 @@ private slots:
 
     void on_pushButtonResetStatistic_clicked();
 
+    void on_spinBoxMaxYGrid_valueChanged(int arg1);
+
+    void on_spinBoxMinYGrid_valueChanged(int arg1);
+
 private:
     Ui::MainWindow *ui;
     QString returnAttributeTypeInString(string& attributeName);

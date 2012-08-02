@@ -78,6 +78,7 @@ public:
     void stop();
     void timerEvent(QTimerEvent *event);
     void setPointNumber(int points);
+    void setMinMaxGrid(int min, int max);
 signals:
 public slots:
 
