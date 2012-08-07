@@ -1,4 +1,4 @@
-SET(ui_lib_src ChaosUIToolkit.cpp Common/DeviceDatasetCache.cpp HighLevelApi/DeviceController.cpp HighLevelApi/HLDataApi.cpp HighLevelApi/HLInfrastructureApi.cpp LowLevelApi/LLDataApi.cpp LowLevelApi/LLRpcApi.cpp)
+SET(ui_lib_src ChaosUIToolkit.cpp ChaosUIToolkitCWrapper.cc Common/DeviceDatasetCache.cpp HighLevelApi/DeviceController.cpp HighLevelApi/HLDataApi.cpp HighLevelApi/HLInfrastructureApi.cpp LowLevelApi/LLDataApi.cpp LowLevelApi/LLRpcApi.cpp)
 
 find_package (Boost 1.39 REQUIRED
     COMPONENTS  program_options system thread chrono regex log log_setup)
