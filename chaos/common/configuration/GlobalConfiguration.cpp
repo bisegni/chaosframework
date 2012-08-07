@@ -44,16 +44,31 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
     }
 }
 
+/*!
+ Specialized option for startup c and cpp program main options parameter
+ */
+void GlobalConfiguration::parseStartupParameters(int argc, char* argv[]) throw (CException) {
+    parseParameter(po::parse_command_line(argc, argv, desc));
+}
+    //!stringbuffer parser
+/*
+ specialized option for string stream buffer with boost semantics
+ */
+void GlobalConfiguration::parseStringStream(istringstream &sStreamOptions) throw (CException) {
+     parseParameter(po::parse_config_file(sStreamOptions, desc));
+}
+
 /*
  parse the tandard startup parameters
  */
-void GlobalConfiguration::parseStartupParameters(int argc, char* argv[]) throw (CException){
+void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& optionsParser) throw (CException){
         //int rpcServerPort;
         //int rpcServerThreadNumber;
         //string metadataServerAddress;
         //vector<string> liveDataServer;
     try{   
-        po::store(po::parse_command_line(argc, argv, desc), vm);
+            //
+        po::store(optionsParser, vm);
         po::notify(vm); 
     }catch (po::error &e) {
             //write error also on cerr

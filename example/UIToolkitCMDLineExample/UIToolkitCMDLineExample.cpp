@@ -82,6 +82,7 @@ int main (int argc, char* argv[] )
         int err = 0;
         int iteration = 10;
         long sleep = 1000000;
+        istringstream optionStream;
         string devID("SIN_DEVICE");
         vector<string> allDevice;
         posix_time::time_duration currentTime;
@@ -93,6 +94,8 @@ int main (int argc, char* argv[] )
         
         //! [UIToolkit Init]
         ChaosUIToolkit::getInstance()->init(argc, argv);
+        //optionStream.str("metadata-server=testchaos:5000");
+        //ChaosUIToolkit::getInstance()->init(optionStream);
         //! [UIToolkit Init]
         
         if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_ITERATION)){

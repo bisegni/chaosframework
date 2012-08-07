@@ -50,16 +50,31 @@ ChaosUIToolkit::~ChaosUIToolkit(){
     if(globalDatasetCache) delete(globalDatasetCache);
 }
 
+    //! C and C++ attribute parser
+/*!
+ Specialized option for startup c and cpp program main options parameter
+ */
+void ChaosUIToolkit::init(int argc, char* argv[]) throw (CException) {
+    ChaosCommon<ChaosUIToolkit>::init(argc, argv);
+}
+    //!stringbuffer parser
+/*
+ specialized option for string stream buffer with boost semantics
+ */
+void ChaosUIToolkit::init(istringstream &initStringStream) throw (CException) {
+   ChaosCommon<ChaosUIToolkit>::init(initStringStream);
+}
+
 /*
  
  */
-void ChaosUIToolkit::init(int argc, char* argv[]) throw(CException) {
+void ChaosUIToolkit::init() throw(CException) {
     try{
-           
+        
         UI_LAPP_ << "Init ChaosUIToolkit";
          //init common substrate
         UI_LAPP_ << "Init Common substrate";
-        ChaosCommon<ChaosUIToolkit>::init(argc, argv);
+        ChaosCommon<ChaosUIToolkit>::init();
 
         
         if(globalDatasetCache) {

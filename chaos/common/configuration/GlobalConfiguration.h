@@ -28,6 +28,7 @@
 #include <chaos/common/utility/InetUtility.h>
 
 #include <string>
+#include <sstream>
 #include <boost/shared_ptr.hpp>
 #include <boost/program_options/option.hpp>
 #include <boost/program_options/options_description.hpp>
@@ -69,7 +70,7 @@ x = getOption<t>(y);\
 #define CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(x,y)\
 bool x;\
 x = hasOption(y);
-
+    
     /*
      Central class for all CHOAS framework configuraitons
      */
@@ -84,18 +85,28 @@ x = hasOption(y);
         
         GlobalConfiguration():desc("!CHAOS Framework Allowed options:"){};
         ~GlobalConfiguration(){};
-        
+        //! Parse the options
+        /*!
+         Generalized parser option function
+         */
+        void parseParameter(const po::basic_parsed_options<char>& optionsParser) throw (CException);
         
     public:
-        
+            //! startup parameter pre setup
         /*
-         parse the tandard startup parameters
+         Set up all stardard input attribute map
          */
-        virtual void preParseStartupParameters() throw (CException);
+        void preParseStartupParameters() throw (CException);
+            //! C and C++ attribute parser
+        /*!
+         Specialized option for startup c and cpp program main options parameter
+         */
+        void parseStartupParameters(int, char* argv[]) throw (CException);
+            //!stringbuffer parser
         /*
-         parse the tandard startup parameters
+         specialized option for string stream buffer with boost semantics
          */
-        virtual void parseStartupParameters(int, char* argv[]) throw (CException);
+        void parseStringStream(istringstream &) throw (CException);
         
         /*
          Add a custom option

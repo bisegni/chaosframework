@@ -1,8 +1,8 @@
-/*	
+/*
  *	ChaosCommon.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +22,7 @@
 
 #include <errno.h>
 #include <sys/utsname.h>
+#include <sstream>
 
 #include <chaos/common/global.h>
 #include <chaos/common/utility/Singleton.h>
@@ -36,17 +37,17 @@ namespace chaos {
     using namespace boost;
     
         //! Chaos common engine class
-    /*! 
+    /*!
      This is the base class for the other toolkit, it thake care to initialize all common
      resource used for the base chaos function
      */
     template<class T>
     class ChaosCommon : public Singleton<T>{
-            LogManager logManager;
+        LogManager logManager;
     protected:
             //! Constructor Method
-        /*! 
-         Thi method call the \ref GlobalConfiguration::preParseStartupParameters method, starting the 
+        /*!
+         Thi method call the \ref GlobalConfiguration::preParseStartupParameters method, starting the
          allocation of the startup framework parameter
          */
         ChaosCommon(){
@@ -55,41 +56,59 @@ namespace chaos {
         
         
             //! Destructor method
-        /*! 
+        /*!
          A more elaborate description of the destructor.
          */
         virtual ~ChaosCommon() {};
         
+    public:
+            //! C and C++ attribute parser
+        /*!
+         Specialized option for startup c and cpp program main options parameter
+         */
+        void init(int argc, char* argv[]) throw (CException) {
+            if(argv != NULL) {
+                GlobalConfiguration::getInstance()->parseStartupParameters(argc, argv);
+            }
+            init();
+        }
+            //!stringbuffer parser
+        /*
+         specialized option for string stream buffer with boost semantics
+         */
+        void init(istringstream &initStringStream) throw (CException) {
+            GlobalConfiguration::getInstance()->parseStringStream(initStringStream);
+            init();
+        }
+        
             //! Initialization methdo
-        /*! 
+        /*!
          This virtual method can be extended by toolkit subclass for specialized initializaion
          in themain toolkit subclass of ChaosCommon
          */
-        virtual void init(int argc, char* argv[]) throw(CException) {
+        virtual void init() throw (CException) {
             int err = 0;
             struct utsname u_name;
-            if(argv != NULL){
-                GlobalConfiguration::getInstance()->parseStartupParameters(argc, argv);
-            }
+            
             
                 //startup logger
             logManager.init();
-
-            //                
+            
+                //
             PRINT_LIB_HEADER
             
             err = uname(&u_name);
             if(err==-1){
                 LAPP_ << "Platform: " << strerror(errno);
             } else {
-               LAPP_ << "Platform: " << u_name.sysname << " " << u_name.nodename << " " << u_name.release << " " << u_name.version << " " << u_name.machine;
+                    LAPP_ << "Platform: " << u_name.sysname << " " << u_name.nodename << " " << u_name.release << " " << u_name.version << " " << u_name.machine;
             }
-            
+                
             LAPP_ << "Boost version: " << (BOOST_VERSION / 100000) << "."<< ((BOOST_VERSION / 100) % 1000)<< "."<< (BOOST_VERSION / 100000);
             LAPP_ << "Compiler Version: " << BOOST_COMPILER;
             LAPP_ << "-----------------------------------------";
-
-            
+                
+                
                 //find our ip
             string localIp;
             if(GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_PUBLISHING_IP)){
@@ -98,22 +117,18 @@ namespace chaos {
                 InetUtility::scanForLocalNetworkAddress(localIp);
             }
             GlobalConfiguration::getInstance()->addLocalServerAddress(localIp.c_str());
-            
+                
             LAPP_ << "The local address chosen is:  " << GlobalConfiguration::getInstance()->getLocalServerAddress();
-
         }
-        
-        
-        
-    public:
-            //! Return the global configuration for the current singleton instance
+                
+        //! Return the global configuration for the current singleton instance
         /*!
-         \return the GlobalConfiguration pointer to global instance
-         */
+        \return the GlobalConfiguration pointer to global instance
+        */
         GlobalConfiguration *getGlobalConfigurationInstance() {
             return GlobalConfiguration::getInstance();
         }
-        
-    }; 
+                
+};
 }
 #endif

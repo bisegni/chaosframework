@@ -32,14 +32,29 @@ using boost::shared_ptr;
 //boost::mutex ChaosCUToolkit::monitor;
 //boost::condition ChaosCUToolkit::endWaithCondition;
 WaitSemaphore ChaosCUToolkit::waitCloseSemaphore;
+
+
+    //! C and C++ attribute parser
+/*!
+ Specialized option for startup c and cpp program main options parameter
+ */
+void ChaosCUToolkit::init(int argc, char* argv[]) throw (CException) {
+    ChaosCommon<ChaosCUToolkit>::init(argc, argv);
+}
+    //!stringbuffer parser
+/*
+ specialized option for string stream buffer with boost semantics
+ */
+void ChaosCUToolkit::init(istringstream &initStringStream) throw (CException) {
+    ChaosCommon<ChaosCUToolkit>::init(initStringStream);
+}
+
 /*
  *
  */
-void ChaosCUToolkit::init(int argc, char* argv[])  throw(CException) {
+void ChaosCUToolkit::init()  throw(CException) {
     SetupStateManager::levelUpFrom(0, "ChaosCUToolkit already initialized");
     try {
-            //init common stage
-        ChaosCommon<ChaosCUToolkit>::init(argc, argv);
     
         LAPP_ << "Initializing CHAOS Control System Library";
     

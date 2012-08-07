@@ -60,14 +60,25 @@ namespace chaos{
                 //!Destructor
             ~ChaosUIToolkit();
         public:
-                //!Initializaiton Method
-            /*! 
-                This method provide at the all API package initialization it must be called only at applciaiton startup
-                \param argc the argc of main cpp program function
-                \param argv the argv of main cpp program function
-                \exception CException instance is created when something goes wrong
+                //! C and C++ attribute parser
+            /*!
+             Specialized option for startup c and cpp program main options parameter
              */
-            void init(int argc = 1, char* argv[] = NULL) throw(CException);
+            void init(int argc, char* argv[]) throw (CException);
+                //!stringbuffer parser
+            /*
+             specialized option for string stream buffer with boost semantics
+             */
+            void init(istringstream &initStringStream) throw (CException);
+            
+                //!Initializaiton Method
+            /*!
+             This method provide at the all API package initialization it must be called only at applciaiton startup
+             \param argc the argc of main cpp program function
+             \param argv the argv of main cpp program function
+             \exception CException instance is created when something goes wrong
+             */
+            void init() throw(CException);
             
                 //!Deinitializaiton Method
             /*!
