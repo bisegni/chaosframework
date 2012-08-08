@@ -65,6 +65,9 @@ extern "C" {
             controller = HLDataApi::getInstance()->getControllerForDeviceID(dID);
             if(controller) {
                 chanelMap.insert(make_pair((*devIDPtr = ++sequenceNumber), controller));
+                
+                    //activate the traking
+                controller->setupTracking();
             }
         } catch (CException& e) {
             err = e.errorCode;
