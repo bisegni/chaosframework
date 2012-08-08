@@ -19,16 +19,32 @@
  */
 
 #include "ChaosUIToolkitCWrapper.h"
+
+#include <map>
+
 #include <chaos/ui_toolkit/ChaosUIToolkit.h>
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
 #include <boost/lexical_cast.hpp>
 
+using namespace std;
 using namespace chaos;
 using namespace chaos::ui;
 using namespace boost;
 
+
+uint32_t sequenceNumber = 0;
+std::map<uint32_t, DeviceController *> chanelMap;
+
+DeviceController *getDeviceControllerFromID(uint32_t did) {
+    if(chanelMap.count(did)==0) return NULL;
+    return chanelMap[did];
+}
+
 extern "C" {
+    
+    
+    
     int initToolkit(const char* startupParameter) {
         int err = 0;
         istringstream optionStream;
@@ -41,83 +57,120 @@ extern "C" {
         return err;
     }
     
-    DevCtrl * getNewControllerForDeviceID(const char* deviceID) {
+    int getNewControllerForDeviceID(const char* deviceID, uint32_t *devIDPtr) {
+        int err = 0;
         DeviceController *controller = NULL;
         try{
             string dID = deviceID;
             controller = HLDataApi::getInstance()->getControllerForDeviceID(dID);
-        } catch (CException& e) {
-        }
-        return (DevCtrl*) controller;
-    }
-    
-    int initDevice(DevCtrl *dCtrl) {
-        int err = 0;
-        try{
-            if(dCtrl)
-                err = ((DeviceController*)dCtrl)->initDevice();
-            else
-                err = -1000;
+            if(controller) {
+                chanelMap.insert(make_pair((*devIDPtr = ++sequenceNumber), controller));
+            }
         } catch (CException& e) {
             err = e.errorCode;
         }
         return err;
     }
     
-    int startDevice(DevCtrl *dCtrl) {
+    int initDevice(uint32_t devID) {
         int err = 0;
         try{
-            if(dCtrl)
-                err = ((DeviceController*)dCtrl)->startDevice();
-            else
+            if(devID) {
+                DeviceController * ctrl = getDeviceControllerFromID(devID);
+                if(ctrl){
+                    err = ctrl->initDevice();
+                }else{
+                    err = -1001;
+                }
+            } else {
                 err = -1000;
-        } catch (CException& e) {
-            err = e.errorCode;
-        }
-        return err;
-    }
-    int stopDevice(DevCtrl *dCtrl) {
-        int err = 0;
-        try{
-            if(dCtrl)
-                err = ((DeviceController*)dCtrl)->stopDevice();
-            else
-                err = -1000;
+            }
         } catch (CException& e) {
             err = e.errorCode;
         }
         return err;
     }
     
-    int deinitDevice(DevCtrl *dCtrl) {
+    int startDevice(uint32_t devID) {
         int err = 0;
         try{
-            if(dCtrl)
-                err = ((DeviceController*)dCtrl)->deinitDevice();
-            else
+            if(devID) {
+                DeviceController * ctrl = getDeviceControllerFromID(devID);
+                if(ctrl){
+                    err = ctrl->startDevice();
+                }else{
+                    err = -1001;
+                }
+            } else {
                 err = -1000;
+            }
         } catch (CException& e) {
             err = e.errorCode;
         }
         return err;
     }
     
-    int fetchLiveData(DevCtrl *dCtrl) {
+    int stopDevice(uint32_t devID) {
         int err = 0;
         try{
-            if(dCtrl)
-                ((DeviceController*)dCtrl)->fetchCurrentDeviceValue();
-            else
+            if(devID) {
+                DeviceController * ctrl = getDeviceControllerFromID(devID);
+                if(ctrl){
+                    err = ctrl->stopDevice();
+                }else{
+                    err = -1001;
+                }
+            } else {
                 err = -1000;
+            }
         } catch (CException& e) {
             err = e.errorCode;
         }
         return err;
     }
     
-    int getStrValueForAttribute(DevCtrl *dCtrl, const char * dsAttrName, char ** dsAttrValue) {
+    int deinitDevice(uint32_t devID) {
         int err = 0;
         try{
+            if(devID) {
+                DeviceController * ctrl = getDeviceControllerFromID(devID);
+                if(ctrl){
+                    err = ctrl->deinitDevice();
+                }else{
+                    err = -1001;
+                }
+            } else {
+                err = -1000;
+            }
+        } catch (CException& e) {
+            err = e.errorCode;
+        }
+        return err;
+    }
+    
+    int fetchLiveData(uint32_t devID) {
+        int err = 0;
+        try{
+            if(devID) {
+                DeviceController * ctrl = getDeviceControllerFromID(devID);
+                if(ctrl){
+                    ctrl->fetchCurrentDeviceValue();
+                }else{
+                    err = -1001;
+                }
+            } else {
+                err = -1000;
+            }
+        } catch (CException& e) {
+            err = e.errorCode;
+        }
+        return err;
+    }
+    
+    int getStrValueForAttribute(uint32_t devID, const char * dsAttrName, char ** dsAttrValue) {
+        int err = 0;
+        try{
+            DeviceController *dCtrl = getDeviceControllerFromID(devID);
             if(dCtrl && dsAttrName && dsAttrValue) {
                 CDataWrapper *dataWrapper = ((DeviceController*)dCtrl)->getLiveCDataWrapperPtr();
                 if(dataWrapper && dataWrapper->hasKey(dsAttrName)) {

@@ -22,18 +22,19 @@
 #define CHAOSFramework_UIToolkitCWrapper_h
 
 typedef void DevCtrl;
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
     int initToolkit(const char* startupParameter);
-    DevCtrl * getNewControllerForDeviceID(const char* deviceID);
-    int initDevice(DevCtrl *dCtrl);
-    int startDevice(DevCtrl *dCtrl);
-    int stopDevice(DevCtrl *dCtrl);
-    int deinitDevice(DevCtrl *dCtrl);
-    int fetchLiveData(DevCtrl *dCtrl);
-    int getStrValueForAttribute(DevCtrl *dCtrl, const char * dsAttrName, char ** dsAttrValue);
+    int getNewControllerForDeviceID(const char* deviceID, uint32_t *devIDPtr);
+    int initDevice(uint32_t devID);
+    int startDevice(uint32_t devID);
+    int stopDevice(uint32_t devID);
+    int deinitDevice(uint32_t devID);
+    int fetchLiveData(uint32_t devID);
+    int getStrValueForAttribute(uint32_t devID, const char * dsAttrName, char ** dsAttrValue);
     int deinitToolkit();
 #ifdef __cplusplus
 }
