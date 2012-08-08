@@ -138,6 +138,19 @@ int DeviceController::getDeviceAttributeDirection(string& attributesName, DataTy
     return datasetDB.getDeviceAttributeDirection(deviceID, attributesName, directionType);
 }
 
+/*!
+ Get the direction of the attribute
+ */
+int DeviceController::getDeviceAttributeType(string& attributesName, DataType::DataType& type) {
+    int err = 0;
+    if(attributeTypeMap.count(attributesName)){
+        type = attributeTypeMap[attributesName];
+    } else {
+        err = -1;
+    }
+    return err;
+}
+
 int DeviceController::initDevice() {
     CHAOS_ASSERT(mdsChannel && deviceChannel)
     int err = 0;

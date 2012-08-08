@@ -165,6 +165,10 @@ namespace chaos {
              Get the direction of the attribute
              */
             int getDeviceAttributeDirection(string& attributesName, DataType::DataSetAttributeIOAttribute& directionType);
+            /*!
+             Get the direction of the attribute
+             */
+            int getDeviceAttributeType(string& attributesName, DataType::DataType& type);
             
                 //!Device initialization
             /*!

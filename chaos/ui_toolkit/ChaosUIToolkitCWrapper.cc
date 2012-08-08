@@ -22,9 +22,11 @@
 #include <chaos/ui_toolkit/ChaosUIToolkit.h>
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
+#include <boost/lexical_cast.hpp>
 
 using namespace chaos;
 using namespace chaos::ui;
+using namespace boost;
 
 extern "C" {
     int initToolkit(const char* startupParameter) {
@@ -98,6 +100,61 @@ extern "C" {
             err = e.errorCode;
         }
         return err;
+    }
+    
+    int fetchLiveData(DevCtrl *dCtrl) {
+        int err = 0;
+        try{
+            if(dCtrl)
+                ((DeviceController*)dCtrl)->fetchCurrentDeviceValue();
+            else
+                err = -1000;
+        } catch (CException& e) {
+            err = e.errorCode;
+        }
+        return err;
+    }
+    
+    int getStrValueForAttribute(DevCtrl *dCtrl, const char * dsAttrName, char ** dsAttrValue) {
+        int err = 0;
+        try{
+            if(dCtrl && dsAttrName && dsAttrValue) {
+                CDataWrapper *dataWrapper = ((DeviceController*)dCtrl)->getLiveCDataWrapperPtr();
+                if(dataWrapper && dataWrapper->hasKey(dsAttrName)) {
+                    DataType::DataType attributeType;
+                    string attributesName = dsAttrName;
+                    err = ((DeviceController*)dCtrl)->getDeviceAttributeType(attributesName, attributeType);
+                    if(err == 0){
+                        switch (attributeType) {
+                            case DataType::TYPE_INT64:
+                                *dsAttrValue = boost::lexical_cast<char *>(dataWrapper->getInt64Value(dsAttrName));
+                                break;
+                                
+                            case DataType::TYPE_INT32:
+                                *dsAttrValue = boost::lexical_cast<char *>(dataWrapper->getInt64Value(dsAttrName));
+                                break;
+                                
+                            case DataType::TYPE_DOUBLE:
+                                *dsAttrValue = boost::lexical_cast<char *>(dataWrapper->getDoubleValue(dsAttrName));
+                                break;
+                                
+                            case DataType::TYPE_STRING:
+                                *dsAttrValue = boost::lexical_cast<char *>(dataWrapper->getStringValue(dsAttrName));
+                                break;
+                                
+                            default:
+                                err = 1;
+                        }
+                    }
+                } else {
+                  err = -1001;
+                }
+            } else {
+                err = -1000;
+            }
+        } catch (CException& e) {
+            err = e.errorCode;
+        }
     }
     
     int deinitToolkit() {

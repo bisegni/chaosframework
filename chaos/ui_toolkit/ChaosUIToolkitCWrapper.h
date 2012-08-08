@@ -32,6 +32,8 @@ extern "C" {
     int startDevice(DevCtrl *dCtrl);
     int stopDevice(DevCtrl *dCtrl);
     int deinitDevice(DevCtrl *dCtrl);
+    int fetchLiveData(DevCtrl *dCtrl);
+    int getStrValueForAttribute(DevCtrl *dCtrl, const char * dsAttrName, char ** dsAttrValue);
     int deinitToolkit();
 #ifdef __cplusplus
 }
