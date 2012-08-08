@@ -208,6 +208,7 @@ extern "C" {
         } catch (CException& e) {
             err = e.errorCode;
         }
+        return err;
     }
     
     int deinitToolkit() {
