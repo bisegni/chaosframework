@@ -41,6 +41,14 @@ DeviceController *getDeviceControllerFromID(uint32_t did) {
     return chanelMap[did];
 }
 
+char * convertStringToCharPtr(string& orgString) {
+    char *result = NULL;
+    if(!orgString.length()) return NULL;
+    
+    result = (char*)malloc(sizeof(char) * orgString.length());
+    return result;
+}
+
 extern "C" {
     
     
@@ -172,6 +180,7 @@ extern "C" {
     
     int getStrValueForAttribute(uint32_t devID, const char * dsAttrName, char ** dsAttrValue) {
         int err = 0;
+        string tmpString;
         try{
             DeviceController *dCtrl = getDeviceControllerFromID(devID);
             if(dCtrl && dsAttrName && dsAttrValue) {
@@ -183,19 +192,23 @@ extern "C" {
                     if(err == 0){
                         switch (attributeType) {
                             case DataType::TYPE_INT64:
-                                *dsAttrValue = boost::lexical_cast<char *>(dataWrapper->getInt64Value(dsAttrName));
+                                tmpString = boost::lexical_cast<string>(dataWrapper->getInt64Value(dsAttrName));
+                                *dsAttrValue = convertStringToCharPtr(tmpString);
                                 break;
                                 
                             case DataType::TYPE_INT32:
-                                *dsAttrValue = boost::lexical_cast<char *>(dataWrapper->getInt64Value(dsAttrName));
+                                tmpString = boost::lexical_cast<string>(dataWrapper->getInt64Value(dsAttrName));
+                                *dsAttrValue = convertStringToCharPtr(tmpString);
                                 break;
                                 
                             case DataType::TYPE_DOUBLE:
-                                *dsAttrValue = boost::lexical_cast<char *>(dataWrapper->getDoubleValue(dsAttrName));
+                                tmpString = boost::lexical_cast<string>(dataWrapper->getDoubleValue(dsAttrName));
+                                *dsAttrValue = convertStringToCharPtr(tmpString);
                                 break;
                                 
                             case DataType::TYPE_STRING:
-                                *dsAttrValue = boost::lexical_cast<char *>(dataWrapper->getStringValue(dsAttrName));
+                                tmpString = boost::lexical_cast<string>(dataWrapper->getStringValue(dsAttrName));
+                                *dsAttrValue = convertStringToCharPtr(tmpString);
                                 break;
                                 
                             default:

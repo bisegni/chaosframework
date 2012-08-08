@@ -55,9 +55,9 @@ void ChaosCUToolkit::init(istringstream &initStringStream) throw (CException) {
 void ChaosCUToolkit::init()  throw(CException) {
     SetupStateManager::levelUpFrom(0, "ChaosCUToolkit already initialized");
     try {
-    
+        
         LAPP_ << "Initializing CHAOS Control System Library";
-    
+        ChaosCommon<ChaosCUToolkit>::init();
         if (signal((int) SIGINT, ChaosCUToolkit::signalHanlder) == SIG_ERR){
             LERR_ << "SIGINT Signal handler registraiton error";
         }

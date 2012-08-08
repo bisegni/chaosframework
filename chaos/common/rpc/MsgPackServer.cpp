@@ -70,9 +70,15 @@ void MsgPackServer::init(CDataWrapper *adapterConfiguration) throw(CException) {
 
 //start the rpc adapter
 void MsgPackServer::start() throw(CException) {
-    LAPP_ << "MsgPackServer starting";
-    msgpackServer.start(threadNumber);
-    LAPP_ << "MsgPackServer started";
+    try{
+        LAPP_ << "MsgPackServer starting";
+        msgpackServer.start(threadNumber);
+        LAPP_ << "MsgPackServer started";
+    }catch (std::exception& e) {
+        throw CException(-1, e.what(), "MsgPackServer::start");
+    } catch (...) {
+        throw CException(-2, "generic error", "MsgPackServer::start");
+    }
 }
 
 //deinit the rpc adapter
