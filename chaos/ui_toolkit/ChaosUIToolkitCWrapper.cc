@@ -45,7 +45,9 @@ char * convertStringToCharPtr(string& orgString) {
     char *result = NULL;
     if(!orgString.length()) return NULL;
     
-    result = (char*)malloc(sizeof(char) * orgString.length());
+    const char *tmpCStr = orgString.c_str();
+    result = (char*)malloc(strlen(tmpCStr)+1);
+    strcpy(result, tmpCStr);
     return result;
 }
 
