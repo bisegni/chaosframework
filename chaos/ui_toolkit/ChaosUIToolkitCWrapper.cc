@@ -36,11 +36,13 @@ using namespace boost;
 uint32_t sequenceNumber = 0;
 std::map<uint32_t, DeviceController *> chanelMap;
 
+    //---------------------------------------------------------------
 DeviceController *getDeviceControllerFromID(uint32_t did) {
     if(chanelMap.count(did)==0) return NULL;
     return chanelMap[did];
 }
 
+    //---------------------------------------------------------------
 char * convertStringToCharPtr(string& orgString) {
     char *result = NULL;
     if(!orgString.length()) return NULL;
@@ -52,9 +54,7 @@ char * convertStringToCharPtr(string& orgString) {
 }
 
 extern "C" {
-    
-    
-    
+        //---------------------------------------------------------------
     int initToolkit(const char* startupParameter) {
         int err = 0;
         istringstream optionStream;
@@ -67,7 +67,8 @@ extern "C" {
         return err;
     }
     
-    int getNewControllerForDeviceID(const char* deviceID, uint32_t *devIDPtr) {
+        //---------------------------------------------------------------
+    int getNewControllerForDeviceID(const char * const deviceID, uint32_t *devIDPtr) {
         int err = 0;
         DeviceController *controller = NULL;
         try{
@@ -85,6 +86,7 @@ extern "C" {
         return err;
     }
     
+        //---------------------------------------------------------------
     int initDevice(uint32_t devID) {
         int err = 0;
         try{
@@ -104,6 +106,7 @@ extern "C" {
         return err;
     }
     
+        //---------------------------------------------------------------
     int startDevice(uint32_t devID) {
         int err = 0;
         try{
@@ -123,6 +126,27 @@ extern "C" {
         return err;
     }
     
+        //---------------------------------------------------------------
+    int setDeviceRunScheduleDelay(uint32_t devID, int32_t delayTimeInMilliseconds) {
+        int err = 0;
+        try{
+            if(devID) {
+                DeviceController * ctrl = getDeviceControllerFromID(devID);
+                if(ctrl){
+                    err = ctrl->setScheduleDelay(delayTimeInMilliseconds);
+                }else{
+                    err = -1001;
+                }
+            } else {
+                err = -1000;
+            }
+        } catch (CException& e) {
+            err = e.errorCode;
+        }
+        return err;
+    }
+    
+        //---------------------------------------------------------------
     int stopDevice(uint32_t devID) {
         int err = 0;
         try{
@@ -142,6 +166,7 @@ extern "C" {
         return err;
     }
     
+        //---------------------------------------------------------------
     int deinitDevice(uint32_t devID) {
         int err = 0;
         try{
@@ -161,6 +186,7 @@ extern "C" {
         return err;
     }
     
+        //---------------------------------------------------------------
     int fetchLiveData(uint32_t devID) {
         int err = 0;
         try{
@@ -180,7 +206,8 @@ extern "C" {
         return err;
     }
     
-    int getStrValueForAttribute(uint32_t devID, const char * dsAttrName, char ** dsAttrValue) {
+        //---------------------------------------------------------------
+    int getStrValueForAttribute(uint32_t devID, const char * const dsAttrName, char ** dsAttrValue) {
         int err = 0;
         string tmpString;
         try{
@@ -229,6 +256,63 @@ extern "C" {
         return err;
     }
     
+        //---------------------------------------------------------------
+    int setStrValueForAttribute(uint32_t devID, const char * const dsAttrName, const char * const dsAttrValue) {
+        int err = 0;
+        string attributeName = dsAttrName;
+        DataType::DataType attributeType;
+        try{
+            DeviceController *dCtrl = getDeviceControllerFromID(devID);
+            if(dCtrl && dsAttrName && dsAttrValue) {
+
+                    err = ((DeviceController*)dCtrl)->getDeviceAttributeType(attributeName, attributeType);
+                    if(err == 0){
+                        switch (attributeType) {
+                               
+                            case DataType::TYPE_INT32:
+                                ((DeviceController*)dCtrl)->setInt32AttributeValue(dsAttrName, boost::lexical_cast<int32_t>(dsAttrValue));
+                                break;
+                                
+                            case DataType::TYPE_DOUBLE:
+                                ((DeviceController*)dCtrl)->setDoubleAttributeValue(dsAttrName, boost::lexical_cast<double>(dsAttrValue));
+                                break;
+                                
+                            default:
+                                err = 1;
+                        }
+                } else {
+                    err = -1001;
+                }
+            } else {
+                err = -1000;
+            }
+        } catch (bad_lexical_cast& e) {
+            err = -1002;
+        }
+        return err;
+    }
+    
+        //---------------------------------------------------------------
+    int deinitController(uint32_t devID) {
+        int err = 0;
+        try{
+            if(devID) {
+                DeviceController * ctrl = getDeviceControllerFromID(devID);
+                if(ctrl){
+                    HLDataApi::getInstance()->disposeDeviceControllerPtr(ctrl);
+                }else{
+                    err = -1001;
+                }
+            } else {
+                err = -1000;
+            }
+        } catch (CException& e) {
+            err = e.errorCode;
+        }
+        return err;
+    }
+    
+        //---------------------------------------------------------------
     int deinitToolkit() {
         int err = 0;
         try{

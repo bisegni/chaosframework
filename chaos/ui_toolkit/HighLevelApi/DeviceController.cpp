@@ -197,12 +197,12 @@ int DeviceController::setInt32AttributeValue(const char *attributeName, int32_t 
     return deviceChannel->setAttributeValue(attributeValuePack, millisecToWait);
 }
 
-int DeviceController::setDoubleAttributeValue(string& attributeName, double_t attributeValue) {
+int DeviceController::setDoubleAttributeValue(string& attributeName, double attributeValue) {
     CDataWrapper attributeValuePack;
     return setDoubleAttributeValue(attributeName.c_str(), attributeValue);
 }
 
-int DeviceController::setDoubleAttributeValue(const char *attributeName, double_t attributeValue) {
+int DeviceController::setDoubleAttributeValue(const char *attributeName, double attributeValue) {
     CDataWrapper attributeValuePack;
     attributeValuePack.addDoubleValue(attributeName, attributeValue);
     return deviceChannel->setAttributeValue(attributeValuePack, millisecToWait);

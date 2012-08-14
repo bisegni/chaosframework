@@ -197,8 +197,8 @@ namespace chaos {
             int setInt32AttributeValue(string& attributeName, int32_t attributeValue);
             int setInt32AttributeValue(const char *attributeName, int32_t attributeValue);
             
-            int setDoubleAttributeValue(string& attributeName, double_t attributeValue); 
-            int setDoubleAttributeValue(const char *attributeName, double_t attributeValue); 
+            int setDoubleAttributeValue(string& attributeName, double attributeValue);
+            int setDoubleAttributeValue(const char *attributeName, double attributeValue); 
             
                 //!Get device state
             /*!
