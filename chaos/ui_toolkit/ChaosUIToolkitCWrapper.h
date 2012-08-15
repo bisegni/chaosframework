@@ -87,7 +87,7 @@ extern "C" {
      */
     int initDevice(uint32_t devID);
     
-        //! Device startup
+        //! Startup the device
     /*!
      Perform the startup of the device
      \param devID is the identification number got from \link getNewControllerForDeviceID \endlink function
@@ -103,12 +103,65 @@ extern "C" {
      \return the error of operation, if all goes well the result is 0
      */
     int setDeviceRunScheduleDelay(uint32_t devID, int32_t delayTimeInMilliseconds);
+    
+        //! Stop the device
+    /*!
+     Perform the interruption of the run method scehduling without deinitlize the control unit
+     \param devID is the identification number got from \link getNewControllerForDeviceID \endlink function
+     \return the error of operation, if all goes well the result is 0
+     */
     int stopDevice(uint32_t devID);
+    
+        //! Deinit the device
+    /*!
+     Perform the deinitialization of the control unit
+     \param devID is the identification number got from \link getNewControllerForDeviceID \endlink function
+     \return the error of operation, if all goes well the result is 0
+     */
     int deinitDevice(uint32_t devID);
+    
+        //! Fetch the device live data
+    /*!
+     Perform the update of device control internal live data  cache
+     \param devID is the identification number got from \link getNewControllerForDeviceID \endlink function
+     \return the error of operation, if all goes well the result is 0
+     */
     int fetchLiveData(uint32_t devID);
-    int getStrValueForAttribute(uint32_t devID, const char * const dsAttrName, char ** dsAttrValue);
-    int setStrValueForAttribute(uint32_t devID, const char * const dsAttrName, const char * const dsAttrValue);
+    
+        //! Return a string represetnation of an attribute value
+    /*!
+     Return the stirng representation of an attribute value. The current attribute value is keept from the
+     device control interna cache, that is filled with \link fetchLiveData \endlink 
+     \param devID is the identification number got from \link getNewControllerForDeviceID \endlink function
+     \param dsAttrName the name of the attribute
+     \param dsAttrValueHandle the handle to c string that will contain the attribute value
+     \return the error of operation, if all goes well the result is 0
+     */
+    int getStrValueForAttribute(uint32_t devID, const char * const dsAttrName, char ** dsAttrValueHandle);
+    
+        //! Set the value for an attribute
+    /*!
+     Set an attribute value using  a string reprpesentation for the new value to use.
+     \param devID is the identification number got from \link getNewControllerForDeviceID \endlink function
+     \param dsAttrName the name of the attribute
+     \param dsAttrValueCStr the "c" string representing the attribute value
+     \return the error of operation, if all goes well the result is 0
+     */
+    int setStrValueForAttribute(uint32_t devID, const char * const dsAttrName, const char * const dsAttrValueCStr);
+    
+        //! Device Control deinitialization
+    /*!
+     Perform deinitialization of a device control associated to an id
+     \param devID is the identification number got from \link getNewControllerForDeviceID \endlink function
+     \return the error of operation, if all goes well the result is 0
+     */
     int deinitController(uint32_t devID);
+    
+        //! UiToolkit deinitialization
+    /*!
+     Perform the deinitialization of UIToolkit
+     \return the error of operation, if all goes well the result is 0
+     */
     int deinitToolkit();
 #ifdef __cplusplus
 }

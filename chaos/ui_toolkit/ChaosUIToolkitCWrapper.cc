@@ -250,12 +250,12 @@ extern "C" {
     }
     
         //---------------------------------------------------------------
-    int getStrValueForAttribute(uint32_t devID, const char * const dsAttrName, char ** dsAttrValue) {
+    int getStrValueForAttribute(uint32_t devID, const char * const dsAttrName, char ** dsAttrValueHandle) {
         int err = 0;
         string tmpString;
         try{
             DeviceController *dCtrl = getDeviceControllerFromID(devID);
-            if(dCtrl && dsAttrName && dsAttrValue) {
+            if(dCtrl && dsAttrName && dsAttrValueHandle) {
                 CDataWrapper *dataWrapper = ((DeviceController*)dCtrl)->getLiveCDataWrapperPtr();
                 if(dataWrapper && dataWrapper->hasKey(dsAttrName)) {
                     DataType::DataType attributeType;
@@ -265,22 +265,22 @@ extern "C" {
                         switch (attributeType) {
                             case DataType::TYPE_INT64:
                                 tmpString = boost::lexical_cast<string>(dataWrapper->getInt64Value(dsAttrName));
-                                *dsAttrValue = convertStringToCharPtr(tmpString);
+                                *dsAttrValueHandle = convertStringToCharPtr(tmpString);
                                 break;
                                 
                             case DataType::TYPE_INT32:
                                 tmpString = boost::lexical_cast<string>(dataWrapper->getInt64Value(dsAttrName));
-                                *dsAttrValue = convertStringToCharPtr(tmpString);
+                                *dsAttrValueHandle = convertStringToCharPtr(tmpString);
                                 break;
                                 
                             case DataType::TYPE_DOUBLE:
                                 tmpString = boost::lexical_cast<string>(dataWrapper->getDoubleValue(dsAttrName));
-                                *dsAttrValue = convertStringToCharPtr(tmpString);
+                                *dsAttrValueHandle = convertStringToCharPtr(tmpString);
                                 break;
                                 
                             case DataType::TYPE_STRING:
                                 tmpString = boost::lexical_cast<string>(dataWrapper->getStringValue(dsAttrName));
-                                *dsAttrValue = convertStringToCharPtr(tmpString);
+                                *dsAttrValueHandle = convertStringToCharPtr(tmpString);
                                 break;
                                 
                             default:
@@ -300,24 +300,24 @@ extern "C" {
     }
     
         //---------------------------------------------------------------
-    int setStrValueForAttribute(uint32_t devID, const char * const dsAttrName, const char * const dsAttrValue) {
+    int setStrValueForAttribute(uint32_t devID, const char * const dsAttrName, const char * const dsAttrValueCStr) {
         int err = 0;
         string attributeName = dsAttrName;
         DataType::DataType attributeType;
         try{
             DeviceController *dCtrl = getDeviceControllerFromID(devID);
-            if(dCtrl && dsAttrName && dsAttrValue) {
+            if(dCtrl && dsAttrName && dsAttrValueCStr) {
 
                     err = ((DeviceController*)dCtrl)->getDeviceAttributeType(attributeName, attributeType);
                     if(err == 0){
                         switch (attributeType) {
                                
                             case DataType::TYPE_INT32:
-                                ((DeviceController*)dCtrl)->setInt32AttributeValue(dsAttrName, boost::lexical_cast<int32_t>(dsAttrValue));
+                                ((DeviceController*)dCtrl)->setInt32AttributeValue(dsAttrName, boost::lexical_cast<int32_t>(dsAttrValueCStr));
                                 break;
                                 
                             case DataType::TYPE_DOUBLE:
-                                ((DeviceController*)dCtrl)->setDoubleAttributeValue(dsAttrName, boost::lexical_cast<double>(dsAttrValue));
+                                ((DeviceController*)dCtrl)->setDoubleAttributeValue(dsAttrName, boost::lexical_cast<double>(dsAttrValueCStr));
                                 break;
                                 
                             default:
