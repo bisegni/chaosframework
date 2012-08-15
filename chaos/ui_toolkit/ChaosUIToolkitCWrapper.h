@@ -64,6 +64,21 @@ extern "C" {
      */
     int getNewControllerForDeviceID(const char * const deviceID, uint32_t *devIDPtr);
     
+        //! Get device attribute names
+    /*!
+     Retrive the device attributes name giving a device identification string and a a direction.
+     \param deviceID is the unique string identification for a device.
+     \param attributeDirection can be one of these value:
+     - 0 -> input
+     - 1 -> output
+     - 2 -> bidirectional
+     \param attributeNameArrayPtr isthe handle to an array of "c" string
+     \param attributeNumber a pointer to an interger that will be filled
+     with the number for attribute names found
+     \return the error of operation, if all goes well the result is 0
+     */
+    int getDeviceDatasetAttributeNameForDirection(uint32_t devID, int16_t attributeDirection, char**attributeNameArrayHandle, uint32_t *attributeNumberPtr);
+
         //! Device initialization
     /*!
      Perform the initialization of the device, using the setup specified in the metadataserver
@@ -71,7 +86,22 @@ extern "C" {
      \return the error of operation, if all goes well the result is 0
      */
     int initDevice(uint32_t devID);
+    
+        //! Device startup
+    /*!
+     Perform the startup of the device
+     \param devID is the identification number got from \link getNewControllerForDeviceID \endlink function
+     \return the error of operation, if all goes well the result is 0
+     */
     int startDevice(uint32_t devID);
+    
+        //! Setup of the run method delay
+    /*!
+     Setup of the delay of the run method schedule
+     \param devID is the identification number got from \link getNewControllerForDeviceID \endlink function
+     \param delayTimeInMilliseconds the number of millisecond between lat run method execution
+     \return the error of operation, if all goes well the result is 0
+     */
     int setDeviceRunScheduleDelay(uint32_t devID, int32_t delayTimeInMilliseconds);
     int stopDevice(uint32_t devID);
     int deinitDevice(uint32_t devID);

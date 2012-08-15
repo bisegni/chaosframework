@@ -19,9 +19,9 @@
  */
 
 #include "ChaosUIToolkitCWrapper.h"
-
+#include <string.h>
 #include <map>
-
+#include <chaos/common/cconstants.h>
 #include <chaos/ui_toolkit/ChaosUIToolkit.h>
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
@@ -84,6 +84,49 @@ extern "C" {
             err = e.errorCode;
         }
         return err;
+    }
+    
+        //---------------------------------------------------------------
+    int getDeviceDatasetAttributeNameForDirection(uint32_t devID, int16_t attributeDirection, char**attributeNameArrayHandle, uint32_t *attributeNumberPtr) {
+        int err = 0;
+        char **arrayPtr;
+        uint32_t attributeFound = 0;
+        vector<string> attributesName;
+        DataType::DataSetAttributeIOAttribute _attributeDirection = static_cast<DataType::DataSetAttributeIOAttribute>(attributeDirection);
+        try{
+            if(devID) {
+                DeviceController * ctrl = getDeviceControllerFromID(devID);
+                if(ctrl){
+                        //get the name
+                    ctrl->getDeviceDatasetAttributesName(attributesName,  _attributeDirection);
+
+                        //copy yhe array dimension on function param
+                    *attributeNumberPtr = attributeFound = static_cast<uint32_t>(attributesName.size());
+                    
+                        //allcoate the memory for the array
+                    arrayPtr = (char**)malloc(attributeFound * sizeof(char));
+                    
+                        //scann all name and allocate the string
+                    for (int idx = 0 ; attributeFound; idx++) {
+                        string curName = attributesName[idx];
+                        
+                            //create and copy the attribute name into appropiate index
+                        arrayPtr[idx] = (char*)malloc(strlen(curName.c_str()) * sizeof(char) + 1);
+                        
+                            //copy the string
+                        strcpy(arrayPtr[idx], curName.c_str());
+                    }
+                }else{
+                    err = -1001;
+                }
+            } else {
+                err = -1000;
+            }
+        } catch (CException& e) {
+            err = e.errorCode;
+        }
+        return err;
+       
     }
     
         //---------------------------------------------------------------
