@@ -31,19 +31,21 @@
 namespace chaos {
 using namespace std;
 
+    class MessageBroker;
+    
     /*
      Abstract class for standard adapter method for permit, to CommandManager
      the correct initialization for the adapter instance
      */
     class RpcServer {
+        friend class MessageBroker;
         string *typeName;
     protected:
         //! port where server has been published
         int portNumber;
         
-        CommandDispatcher *commandDispatcher;
-    public:
-        RpcServer(string *alias){typeName = alias;};
+        RpcServerHanlder *commandHandler;
+        
         /*
          init the rpc adapter
          */
@@ -59,24 +61,23 @@ using namespace std;
          */
         virtual void deinit() throw(CException) = 0;
         
+    public:
+        RpcServer(string *alias);
+        
         /*!
          Return the published port
          */
-        int getPublishedPort(){return portNumber;}
+        int getPublishedPort();
         
         /*
          set the command dispatcher associated to the instance of rpc adapter
          */
-        void setCommandDispatcher(CommandDispatcher *newCommandDispatcher){
-            commandDispatcher = newCommandDispatcher;
-        }
+        void setCommandDispatcher(RpcServerHanlder *newCommandHandler);
         
         /*
          Return the adapter alias
          */
-        const char * getName() const {
-            return typeName->c_str();
-        }
+        const char * getName() const;
     };
 }
 #endif

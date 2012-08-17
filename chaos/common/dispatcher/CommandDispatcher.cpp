@@ -120,21 +120,13 @@ void CommandDispatcher::deregisterAction(DeclareAction* declareActionClass)  thr
 /*
  Send a message
  */
-bool CommandDispatcher::sendMessage(CDataWrapper* messageToSend, string& serverAndPort,  bool onThisThread)  throw(CException) {
+bool CommandDispatcher::submitMessage(string& serverAndPort,  CDataWrapper* messageToSend, bool onThisThread)  throw(CException) {
     CHAOS_ASSERT(messageToSend && rpcClientPtr)
     if(!messageToSend && serverAndPort.size()) return false;
     
-    messageToSend->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, serverAndPort);
+        //messageToSend->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, serverAndPort);
     
-    return rpcClientPtr->submitMessage(messageToSend, onThisThread);
-}
-
-/*
- Submit the action answer to rpc system
- */
-bool  CommandDispatcher::sendActionResult(CDataWrapper *actionResult, bool onThisThread)  throw(CException) {
-    CHAOS_ASSERT(actionResult)
-    return rpcClientPtr->submitMessage(actionResult, onThisThread);
+    return rpcClientPtr->submitMessage(serverAndPort, messageToSend, onThisThread);
 }
 
 /*
@@ -154,6 +146,6 @@ const char * CommandDispatcher::getName() const {
 /*
  
  */
-void CommandDispatcher::setRpcClient(RpcClient *rpcClPtr){
+void CommandDispatcher::setRpcForwarder(RpcMessageForwarder *rpcClPtr){
     rpcClientPtr = rpcClPtr;
 }

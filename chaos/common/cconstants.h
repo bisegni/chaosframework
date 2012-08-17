@@ -204,7 +204,8 @@ namespace chaos {
             EC_TIMEOUT = 1
         } ErrorCode;
     } 
-    
+    /** @} */ // end of ChaosDataType
+   
     /** @} */ // end of ChaosDataType
     
     /** @defgroup RpcActionDefinitionKey Action Rpc Sharing Definition key

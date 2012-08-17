@@ -111,7 +111,7 @@ void MessageBroker::init() throw(CException) {
         //if has been found the adapter, initialize it
         MB_LAPP  << "Init Rpc Server";
         rpcClient->init(globalConfiguration);
-        commandDispatcher->setRpcClient(rpcClient);
+        commandDispatcher->setRpcForwarder(rpcClient);
     }else{
         MB_LAPP  << "No RPC Adapter Server";
     }
@@ -214,14 +214,6 @@ void MessageBroker::getPublishedHostAndPort(string& hostAndPort) {
 #pragma mark Message Submission
 
 /*!
- Submit a message and information for the destination servers are already setupped into CDataWrapper
- */
-bool MessageBroker::submitMessage(CDataWrapper *message, bool onThisThread) {
-    CHAOS_ASSERT(message && rpcClient)
-    return rpcClient->submitMessage(message, onThisThread);
-}
-
-/*!
  Submit a message specifing the destination
  */
 bool MessageBroker::submitMessage(string& serveAndPort, CDataWrapper *message, bool onThisThread) {
@@ -241,16 +233,14 @@ bool MessageBroker::submiteRequest(string& serveAndPort,  CDataWrapper *request,
 
 /*
  Submite a message specifieng the address
- */
+ 
 bool MessageBroker::submitMessageToMetadataServer(CDataWrapper *message, bool onThisThread) {
     if(!canUseMetadataServer) return false;
     //check in debug for pointer
     CHAOS_ASSERT(message)
-    // add the address to the message
-    message->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, metadataServerAddress);
     //submite the message
-    return submitMessage(message,onThisThread);
-}
+    return submitMessage(metadataServerAddress, message,onThisThread);
+}*/
 
 /*
  */

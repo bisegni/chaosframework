@@ -110,7 +110,7 @@ void MsgPackServer::dispatch(request req) {
             //is managed byt dispatcher subsystem
              
                 //dispatch the command
-            cdataWrapperPack = commandDispatcher->dispatchCommand(new CDataWrapper(msgReceived.ptr));
+            cdataWrapperPack = commandHandler->dispatchCommand(new CDataWrapper(msgReceived.ptr));
             
             //serialize the result
             auto_ptr<SerializationBuffer> serialization(cdataWrapperPack->getBSONData());

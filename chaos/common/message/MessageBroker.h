@@ -143,8 +143,8 @@ namespace chaos {
          Submit a message, all the inromation for forwarding it are already into CDataWrapper
          \param message the message coded into key/value semantics
          \param onThisThread if true the message is forwarded in the same thread of the caller
-         */
-        bool submitMessage(CDataWrapper *message, bool onThisThread=false);
+         
+        bool submitMessage(CDataWrapper *message, bool onThisThread=false);*/
         
             //!message submition
         /*!
@@ -167,8 +167,8 @@ namespace chaos {
             //!message submition
         /*!
          Submit a message to the metadata server
-         */
-        bool submitMessageToMetadataServer(CDataWrapper*, bool onThisThread=false);
+         
+        bool submitMessageToMetadataServer(CDataWrapper*, bool onThisThread=false);*/
 
         //!Metadata server channel creation
         /*!

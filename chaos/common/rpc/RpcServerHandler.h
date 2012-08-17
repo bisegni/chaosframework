@@ -35,10 +35,11 @@ namespace chaos {
         /*!
          This method will be called by the implementation of RPCServer when a new data apck
          will be received
-         @param newPack the new CDatawrapper instance received by rpc server
+         @param newPack the new CDatawrapper instance pointer received by rpc server
          @return the response to the pack, if there is one
          */
-        virtual CDataWrapper * newRpcPackHasArrived(CDataWrapper& newPack) throw(CException) = 0;
+            //virtual CDataWrapper * newRpcPackHasArrived(CDataWrapper& newPack) throw(CException) = 0;
+        virtual CDataWrapper* dispatchCommand(CDataWrapper*)  throw(CException) = 0;
     };
 }
 #endif

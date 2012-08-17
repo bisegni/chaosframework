@@ -83,7 +83,7 @@ int main (int argc, char* argv[] )
         int iteration = 10;
         long sleep = 1000000;
         istringstream optionStream;
-        string devID("SIN_DEVICE");
+        string devID("test");
         vector<string> allDevice;
         posix_time::time_duration currentTime;
         

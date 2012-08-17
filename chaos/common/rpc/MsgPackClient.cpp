@@ -46,7 +46,7 @@ void MsgPackClient::init(CDataWrapper *cfg) throw(CException) {
     LAPP_ << "Msgpack RpcSender initialization";
     int32_t threadNumber = cfg->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER)? cfg->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER):1;
     LAPP_ << "Msgpack RpcSender ObjectProcessingQueue<CDataWrapper> initialization with "<< threadNumber <<" thread";
-    CObjectProcessingQueue<CDataWrapper>::init(threadNumber);
+    CObjectProcessingQueue<RpcMessageForwardInfo>::init(threadNumber);
     LAPP_ << "Msgpack RpcSender ObjectProcessingQueue<CDataWrapper> initialized";
     
     LAPP_ << "Msgpack RpcSender ConnectionPool initialization";
@@ -75,32 +75,42 @@ void MsgPackClient::deinit() throw(CException) {
     LAPP_ << "Msgpack Sender connectionPolling stopped";
     
     LAPP_ << "Msgpack Sender ObjectProcessingQueue<CDataWrapper> stopping";
-    CObjectProcessingQueue<CDataWrapper>::clear();
-    CObjectProcessingQueue<CDataWrapper>::deinit();
+    CObjectProcessingQueue<RpcMessageForwardInfo>::clear();
+    CObjectProcessingQueue<RpcMessageForwardInfo>::deinit();
     LAPP_ << "Msgpack Sender ObjectProcessingQueue<CDataWrapper> stopped";
 }
 
 /*
  
  */
-bool MsgPackClient::submitMessage(CDataWrapper *message, bool onThisThread) throw(CException) {
+bool MsgPackClient::submitMessage(string& destinationIpAndPort, CDataWrapper *message, bool onThisThread) throw(CException) {
     CHAOS_ASSERT(message);
+    RpcMessageForwardInfo *newForwardInfo = NULL;
     ElementManagingPolicy ePolicy;
     try{
-        if(!message->hasKey( RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP))  
+        if(!destinationIpAndPort.size())
             throw CException(0, "No destination ip in message description", "MsgPackClient::submitMessage");
        
+            //allocate new forward info
+        newForwardInfo = new RpcMessageForwardInfo();
+        newForwardInfo->nodeNetworkInfo.ipPort = destinationIpAndPort;
+        newForwardInfo->rpcMessage = message;
             //submit action
         if(onThisThread){
             ePolicy.elementHasBeenDetached = false;
-            processBufferElement(message, ePolicy);
+            processBufferElement(newForwardInfo, ePolicy);
+            if(message) delete(message);
+            if(newForwardInfo) delete(newForwardInfo);
+                //in this case i need to delete te memo
+            message = NULL;
+            newForwardInfo = NULL;
         } else {
-            CObjectProcessingQueue<CDataWrapper>::push(message);
+            CObjectProcessingQueue<RpcMessageForwardInfo>::push(newForwardInfo);
         }
     } catch(CException& ex){
             //in this case i need to delete the memory
         if(message) delete(message);
-            //in this case i need to delete te memory allocated by message
+        if(newForwardInfo) delete(newForwardInfo);
         DECODE_CHAOS_EXCEPTION(ex)
     }
     return true;
@@ -109,23 +119,20 @@ bool MsgPackClient::submitMessage(CDataWrapper *message, bool onThisThread) thro
 /*
  process the element action to be executed
  */
-void MsgPackClient::processBufferElement(CDataWrapper *message, ElementManagingPolicy& elementPolicy) throw(CException) {
+void MsgPackClient::processBufferElement(RpcMessageForwardInfo *messageInfo, ElementManagingPolicy& elementPolicy) throw(CException) {
         //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     vector<string> hostTokens;
     msgpack::type::raw_ref rawResult;
         //this implementation is too slow, client for ip need to be cached
-    
-        //get remote ip
-    string remoteHost = message->getStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP);
         //split server and port
-    algorithm::split(hostTokens, remoteHost, is_any_of(":"));
+    algorithm::split(hostTokens, messageInfo->nodeNetworkInfo.ipPort, is_any_of(":"));
     
         //allocate the msgpack client
     rpc::session localSession = connectionPolling->get_session(msgpack::rpc::ip_address(hostTokens[0], lexical_cast<uint16_t>(hostTokens[1])));
         //msgpack::rpc::client msgPackClient(msgpack::rpc::udp_builder(), ));
     
         //serialize the call packet
-    auto_ptr<chaos::SerializationBuffer> callSerialization(message->getBSONData());
+    auto_ptr<chaos::SerializationBuffer> callSerialization(messageInfo->rpcMessage->getBSONData());
     msgpack::type::raw_ref rawMsg(callSerialization->getBufferPtr() , (uint32_t)callSerialization->getBufferLen());
     try{
         rawResult = localSession.call(RpcActionDefinitionKey::CS_CMDM_RPC_TAG, rawMsg).get<msgpack::type::raw_ref>();

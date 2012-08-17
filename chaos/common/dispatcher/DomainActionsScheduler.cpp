@@ -192,7 +192,7 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
             responsePack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *remoteActionResult.get());
                 //in any case this result must be LOG
                 //the result of the action action is sent using this thread
-            if(!dispatcher->sendActionResult(responsePack, false)){
+            if(!dispatcher->submitMessage(answerIP, responsePack, false)){
                     //the response has not been sent
                 DELETE_OBJ_POINTER(responsePack);
             }

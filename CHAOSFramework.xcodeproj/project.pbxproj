@@ -149,6 +149,8 @@
 		326DB4F514B3B0070018A8D0 /* LLRpcApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4E314B3B0070018A8D0 /* LLRpcApi.cpp */; };
 		326DB4F614B3B0070018A8D0 /* LLRpcApi.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4E414B3B0070018A8D0 /* LLRpcApi.h */; };
 		326EA57814D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 326EA57714D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h */; };
+		327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B415DF99FB0003C6DA /* RpcClient.cpp */; };
+		327967B815DFAAF40003C6DA /* RpcServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B715DFAAF40003C6DA /* RpcServer.cpp */; };
 		328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */; };
 		328FB19015A9C6D600A1D8E7 /* RpcMessageForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 328FB18F15A9C6D600A1D8E7 /* RpcMessageForwarder.h */; };
 		3297F22614D96F31004FFE4F /* DeviceMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3297F22514D96F31004FFE4F /* DeviceMessageChannel.cpp */; };
@@ -316,6 +318,8 @@
 		326DB4E314B3B0070018A8D0 /* LLRpcApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = LLRpcApi.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB4E414B3B0070018A8D0 /* LLRpcApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = LLRpcApi.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326EA57714D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiKeyObjectWaitSemaphore.h; sourceTree = "<group>"; };
+		327967B415DF99FB0003C6DA /* RpcClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcClient.cpp; sourceTree = "<group>"; };
+		327967B715DFAAF40003C6DA /* RpcServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcServer.cpp; sourceTree = "<group>"; };
 		328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcServerHandler.h; sourceTree = "<group>"; };
 		328FB18F15A9C6D600A1D8E7 /* RpcMessageForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcMessageForwarder.h; sourceTree = "<group>"; };
 		3294905A159AF4BF00E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -610,7 +614,9 @@
 				326DB41414B38BC00018A8D0 /* MsgPackClient.h */,
 				326DB41514B38BC00018A8D0 /* MsgPackServer.cpp */,
 				326DB41614B38BC00018A8D0 /* MsgPackServer.h */,
+				327967B415DF99FB0003C6DA /* RpcClient.cpp */,
 				32AAD78714CD660B005A097C /* RpcClient.h */,
+				327967B715DFAAF40003C6DA /* RpcServer.cpp */,
 				326DB41814B38BC00018A8D0 /* RpcServer.h */,
 				328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */,
 				328FB18F15A9C6D600A1D8E7 /* RpcMessageForwarder.h */,
@@ -1067,6 +1073,8 @@
 				320C218C151B556E00BD0F41 /* EventReceiver.cpp in Sources */,
 				32F466DE155EDBDE00AD3D81 /* IODataDriver.cpp in Sources */,
 				32BE864715A0CEAF00818C39 /* LogManager.cpp in Sources */,
+				327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */,
+				327967B815DFAAF40003C6DA /* RpcServer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
