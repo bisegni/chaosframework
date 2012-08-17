@@ -87,7 +87,7 @@ extern "C" {
     }
     
         //---------------------------------------------------------------
-    int getDeviceDatasetAttributeNameForDirection(uint32_t devID, int16_t attributeDirection, char**attributeNameArrayHandle, uint32_t *attributeNumberPtr) {
+    int getDeviceDatasetAttributeNameForDirection(uint32_t devID, int16_t attributeDirection, char***attributeNameArrayHandle, uint32_t *attributeNumberPtr) {
         int err = 0;
         char **arrayPtr;
         uint32_t attributeFound = 0;
@@ -104,7 +104,7 @@ extern "C" {
                     *attributeNumberPtr = attributeFound = static_cast<uint32_t>(attributesName.size());
                     
                         //allcoate the memory for the array
-                    arrayPtr = (char**)malloc(attributeFound * sizeof(char));
+                    *attributeNameArrayHandle = arrayPtr = (char**)malloc(attributeFound * sizeof(char));
                     
                         //scann all name and allocate the string
                     for (int idx = 0 ; attributeFound; idx++) {

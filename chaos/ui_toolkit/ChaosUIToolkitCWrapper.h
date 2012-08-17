@@ -77,7 +77,7 @@ extern "C" {
      with the number for attribute names found
      \return the error of operation, if all goes well the result is 0
      */
-    int getDeviceDatasetAttributeNameForDirection(uint32_t devID, int16_t attributeDirection, char**attributeNameArrayHandle, uint32_t *attributeNumberPtr);
+    int getDeviceDatasetAttributeNameForDirection(uint32_t devID, int16_t attributeDirection, char***attributeNameArrayHandle, uint32_t *attributeNumberPtr);
 
         //! Device initialization
     /*!
