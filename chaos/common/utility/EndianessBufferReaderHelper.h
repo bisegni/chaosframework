@@ -22,20 +22,15 @@
 #define EndianessBufferReaderHelper_H
 
 #include <stdint.h>
+#include <machine/endian.h>
 namespace chaos{
+
     
     class EndianessBufferReaderHelper {
         bool isBigEndian;
         bool needBigEndian;
-        int is_big_endian(void)
-        {
-        union {
-            uint32_t i;
-            char c[4];
-        } bint = {0x01020304};
         
-        return bint.c[0] == 1; 
-        }
+        int is_big_endian();
         
         template <typename T>
         T swap_endian(T u) {
@@ -51,15 +46,10 @@ namespace chaos{
         }
     public:
         EndianessBufferReaderHelper();
-        void      setNeedBigEndian(bool);
-        int16_t   readInteger(unsigned char*);
-        int32_t   readLong(unsigned char*);
-        int64_t   readLongLong(unsigned char*);
-        double    readDouble(unsigned char*);
-        void      writeInteger(int16_t, unsigned char*);
-        void      writeLong(int32_t, unsigned char*);
-        void      writeLongLong(int64_t, unsigned char*);
-        void      writeDouble(double, unsigned char*);
+        void        setNeedBigEndian(bool);
+        void        swap2byte(char *, const char *);
+        void        swap4byte(char *, const char *);
+        void        swap8byte(char *, const char *);
     };
 }
 #endif

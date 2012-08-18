@@ -55,7 +55,7 @@ namespace chaos {
         
         MemoryAllocationRecordPtr memoryPool;
         
-        mutex threadPoolAccessMutex;
+        boost::mutex threadPoolAccessMutex;
         
         queue<int> unallocatedRecordIndex;
         
@@ -83,7 +83,7 @@ namespace chaos {
          Allocate anew object form the pool
          */
         T* getObjectNewInstance() {
-            mutex::scoped_lock lock(threadPoolAccessMutex);
+            boost::mutex::scoped_lock lock(threadPoolAccessMutex);
             T* returnAddress = NULL;
             
             if(!unallocatedRecordIndex.size()) return returnAddress;
@@ -110,7 +110,7 @@ namespace chaos {
          next reuse;
          */
         void release(T *pointer) {
-            mutex::scoped_lock lock(threadPoolAccessMutex);
+            boost::mutex::scoped_lock lock(threadPoolAccessMutex);
             
                 //check the record associated to the pointer
             if(!pointer || !usedRecordMap.count((intptr_t)pointer)) return;
@@ -134,7 +134,7 @@ namespace chaos {
          next reuse;
          */
         void retain(T *pointer) {
-            mutex::scoped_lock lock(threadPoolAccessMutex);
+            boost::mutex::scoped_lock lock(threadPoolAccessMutex);
             
                 //check the record associated to the pointer
             if(!pointer || !usedRecordMap.count((intptr_t)pointer)) return;

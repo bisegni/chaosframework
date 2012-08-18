@@ -1,8 +1,8 @@
-/*	
- *	ObjectFactoryAliasInstantiation.h
- *	!CHOAS
- *	Created by Bisegni Claudio.
- *	
+/*
+ *	CustomEventDescriptor.h
+ *	!CHAOS
+ *	Created by Claudio Bisegni on 19/08/12.
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,11 +17,23 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef ObjectFactoryAliasInstantiation_H
-#define ObjectFactoryAliasInstantiation_H
 
-#include <string>
+#ifndef __CHAOSFramework__CustomEventDescriptor__
+#define __CHAOSFramework__CustomEventDescriptor__
+
+#include <chaos/common/utility/ObjectFactoryRegister.h>
+#include <chaos/common/event/evt_desc/EventDescriptor.h>
+
 namespace chaos {
-    
+    namespace event{
+        namespace custom{
+                //REGISTER_AND_DEFINE_NOALIAS_DERIVED_CLASS_FACTORY(CustomEventDescriptor, EventDescriptor ) {
+            class CustomEventDescriptor : public EventDescriptor {
+            public:
+            };
+            
+        }
     }
-#endif
+}
+
+#endif /* defined(__CHAOSFramework__CustomEventDescriptor__) */

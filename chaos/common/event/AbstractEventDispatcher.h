@@ -1,21 +1,29 @@
-    //
-    //  EventBroker.h
-    //  CHAOSFramework
-    //
-    //  Created by Claudio Bisegni on 3/22/12.
-    //  Copyright (c) 2012 INFN. All rights reserved.
-    //
+/*
+ *	AbstractEventDispatcher.h
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
 
-#ifndef CHAOSFramework_EventBroker_h
-#define CHAOSFramework_EventBroker_h
+#ifndef CHAOSFramework_AbstractEventDispatcher_h
+#define CHAOSFramework_AbstractEventDispatcher_h
 
-#include <chaos/common/exception/CException.h>
+#include <chaos/common/event/EventServerHandler.h>
 
 namespace chaos {
-    
-    
-#define EVT_HB          0
-#define EVT_DEV_OFFLINE 1
     
         //!Event Broker managment class
     /*!
@@ -32,24 +40,16 @@ namespace chaos {
      */
     
     
-    class EventBroker {
-        
-        
-    public:
-            //! Basic Constructor
-        EventBroker();
-        
-            //! Basic Destructor
-        ~EventBroker();
-        
-            //!Event Broker initialization
+    class AbstractEventDispatcher : public EventServerHanlder {
+       
+    protected:
         /*!
          * Initzialize the Event Broker. In this step are taken the configured implementation
          * for the rpc client and server and for the dispatcher. All these are here initialized
          */
         void init() throw(CException);
         
-            //!EventBroker deinitialization
+            //!AbstractEventDispatcher deinitialization
         /*!
          * All rpc adapter and command dispatcher are deinitilized. All instantiated channel are disposed
          */
@@ -60,6 +60,17 @@ namespace chaos {
          * all part are started
          */
         void start() throw(CException);
+        
+    public:
+            //! Basic Constructor
+        AbstractEventDispatcher();
+        
+            //! Basic Destructor
+        ~AbstractEventDispatcher();
+        
+           
+        void dispatchEvent(EventDescriptor*)  throw(CException);
+
     };
     
 }

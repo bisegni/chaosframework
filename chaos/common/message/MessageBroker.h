@@ -31,6 +31,7 @@
 #include <chaos/common/dispatcher/CommandDispatcher.h>
 #include <chaos/common/rpcnet/CNodeNetworkAddress.h>
 #include <chaos/common/utility/SetupStateManager.h>
+    //#include <chaos/common/event/EventServer.h>
 
 namespace chaos {
 
@@ -59,6 +60,8 @@ namespace chaos {
      It abstract the !CHAOS rule for sending message and wait for answer and other facility.
      */
     class MessageBroker: private SetupStateManager {
+        
+            //event::EventServer *eventServer;
         
             //! Rpc client for message forwarding
         RpcClient *rpcClient;

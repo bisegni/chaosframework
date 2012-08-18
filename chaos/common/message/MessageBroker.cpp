@@ -31,7 +31,7 @@
 #define DEINIT_STEP 1
 
 using namespace chaos;
-
+using namespace chaos::event;
    
 /*!
  
@@ -88,6 +88,17 @@ void MessageBroker::init() throw(CException) {
     string serverName = adapterType+"Server";
     string clientName = adapterType+"Client";
     
+    
+   /* MB_LAPP  << "Trying to startup Event Server: ";
+    eventServer = ObjectFactoryRegister<EventServer>::getInstance()->getNewInstanceByName("AsioImplEventServer");
+    if(eventServer){
+        MB_LAPP  << "Got Event Server: " << eventServer->getName();
+            //if has been found the adapter, initialize it
+        MB_LAPP  << "Init Event Server";
+        eventServer->init(globalConfiguration);
+    }else{
+        MB_LAPP  << "No Event Server";
+    }*/
     
     MB_LAPP  << "Trying to startup RPC Server: " << serverName;
     rpcServer = ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(serverName.c_str());
@@ -146,6 +157,8 @@ void MessageBroker::deinit() throw(CException) {
     MB_LAPP  << "Clear channel map";
     activeChannel.clear();
 
+        //eventServer->deinit();
+    
     MB_LAPP  << "Deinit RPC Adapter: " << rpcServer->getName();
     rpcServer->deinit();
     MB_LAPP  << "RPC Adapter deinitialized: " << rpcServer->getName();
@@ -164,6 +177,9 @@ void MessageBroker::deinit() throw(CException) {
  * all part are started
  */
 void MessageBroker::start() throw(CException){
+        // MB_LAPP  << "Start Event Server: " << eventServer->getName();
+        //eventServer->start();
+    
     MB_LAPP  << "Start RPC Adapter: " << rpcServer->getName();
     rpcServer->start();
     

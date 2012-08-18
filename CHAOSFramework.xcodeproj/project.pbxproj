@@ -8,10 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		320192BA14DEEAC000318F00 /* CObjectHandlerProcessingQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 320192B914DEEAC000318F00 /* CObjectHandlerProcessingQueue.h */; };
-		320C2183151B2C2B00BD0F41 /* EventBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 320C2182151B2C2B00BD0F41 /* EventBroker.h */; };
-		320C2187151B47C200BD0F41 /* EventBroker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320C2186151B47C200BD0F41 /* EventBroker.cpp */; };
-		320C218A151B555A00BD0F41 /* EventReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = 320C2189151B555A00BD0F41 /* EventReceiver.h */; };
-		320C218C151B556E00BD0F41 /* EventReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320C218B151B556E00BD0F41 /* EventReceiver.cpp */; };
+		320C218A151B555A00BD0F41 /* EventServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 320C2189151B555A00BD0F41 /* EventServer.h */; };
+		320C218C151B556E00BD0F41 /* EventServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320C218B151B556E00BD0F41 /* EventServer.cpp */; };
 		320DF98D14E17E2700251621 /* DeviceController.h in Headers */ = {isa = PBXBuildFile; fileRef = 320DF98C14E17E2700251621 /* DeviceController.h */; };
 		320DF99114E190BB00251621 /* DeviceController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320DF98F14E17E3D00251621 /* DeviceController.cpp */; };
 		325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F86EB14D9E59D00CDF35F /* InetUtility.h */; };
@@ -149,8 +147,13 @@
 		326DB4F514B3B0070018A8D0 /* LLRpcApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4E314B3B0070018A8D0 /* LLRpcApi.cpp */; };
 		326DB4F614B3B0070018A8D0 /* LLRpcApi.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4E414B3B0070018A8D0 /* LLRpcApi.h */; };
 		326EA57814D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 326EA57714D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h */; };
+		3272FE1715E1053100B096FB /* EventForwarding.h in Headers */ = {isa = PBXBuildFile; fileRef = 3272FE1615E1053100B096FB /* EventForwarding.h */; };
 		327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B415DF99FB0003C6DA /* RpcClient.cpp */; };
 		327967B815DFAAF40003C6DA /* RpcServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B715DFAAF40003C6DA /* RpcServer.cpp */; };
+		327967D515E029C70003C6DA /* AsioImplEventServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967D315E029C70003C6DA /* AsioImplEventServer.cpp */; };
+		327967D615E029C70003C6DA /* AsioImplEventServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 327967D415E029C70003C6DA /* AsioImplEventServer.h */; };
+		327967D915E030C40003C6DA /* AsioEventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967D715E030C30003C6DA /* AsioEventHandler.cpp */; };
+		327967DA15E030C40003C6DA /* AsioEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 327967D815E030C30003C6DA /* AsioEventHandler.h */; };
 		328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */; };
 		328FB19015A9C6D600A1D8E7 /* RpcMessageForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 328FB18F15A9C6D600A1D8E7 /* RpcMessageForwarder.h */; };
 		3297F22614D96F31004FFE4F /* DeviceMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3297F22514D96F31004FFE4F /* DeviceMessageChannel.cpp */; };
@@ -167,17 +170,34 @@
 		32AAD78E14CD95FD005A097C /* Atomic.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AAD78D14CD95FD005A097C /* Atomic.h */; };
 		32BE864715A0CEAF00818C39 /* LogManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BE864515A0CEAF00818C39 /* LogManager.cpp */; };
 		32BE864815A0CEAF00818C39 /* LogManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32BE864615A0CEAF00818C39 /* LogManager.h */; };
+		32CFF95B15E4D950005D607E /* EventDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95915E4D950005D607E /* EventDescriptor.cpp */; };
+		32CFF95C15E4D950005D607E /* EventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFF95A15E4D950005D607E /* EventDescriptor.h */; };
+		32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95D15E4DBD3005D607E /* EventFactory.cpp */; };
+		32CFF96015E4DBD3005D607E /* EventFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFF95E15E4DBD3005D607E /* EventFactory.h */; };
 		32D68AD014D5D5A7009F290A /* SetupStateManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D68ACF14D5D5A7009F290A /* SetupStateManager.h */; };
+		32DD884E15E2663B000AF740 /* AbstractEventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DD884C15E2663B000AF740 /* AbstractEventDispatcher.cpp */; };
+		32DD884F15E2663B000AF740 /* AbstractEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DD884D15E2663B000AF740 /* AbstractEventDispatcher.h */; };
+		32DD885315E2681F000AF740 /* EventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DD885115E2681F000AF740 /* EventHandler.cpp */; };
+		32DD885415E2681F000AF740 /* EventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DD885215E2681F000AF740 /* EventHandler.h */; };
+		32DD886615E2C313000AF740 /* endianess.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DD886515E2C313000AF740 /* endianess.h */; };
+		32DF603715E14C7700312C94 /* NamedService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DF603515E14C7700312C94 /* NamedService.cpp */; };
+		32DF603815E14C7700312C94 /* NamedService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DF603615E14C7700312C94 /* NamedService.h */; };
+		32DF603B15E14D5F00312C94 /* AlertEventDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DF603915E14D5F00312C94 /* AlertEventDescriptor.cpp */; };
+		32DF603C15E14D5F00312C94 /* AlertEventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DF603A15E14D5F00312C94 /* AlertEventDescriptor.h */; };
+		32DF603F15E14F5A00312C94 /* InstrumentEventDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DF603D15E14F5A00312C94 /* InstrumentEventDescriptor.cpp */; };
+		32DF604015E14F5A00312C94 /* InstrumentEventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DF603E15E14F5A00312C94 /* InstrumentEventDescriptor.h */; };
+		32DF604315E1502700312C94 /* CommandEventDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DF604115E1502600312C94 /* CommandEventDescriptor.cpp */; };
+		32DF604415E1502700312C94 /* CommandEventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DF604215E1502700312C94 /* CommandEventDescriptor.h */; };
+		32DF604715E1505F00312C94 /* CustomEventDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DF604515E1505E00312C94 /* CustomEventDescriptor.cpp */; };
+		32DF604815E1505F00312C94 /* CustomEventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DF604615E1505F00312C94 /* CustomEventDescriptor.h */; };
 		32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */; };
 		32F466DE155EDBDE00AD3D81 /* IODataDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F466DD155EDBDE00AD3D81 /* IODataDriver.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		320192B914DEEAC000318F00 /* CObjectHandlerProcessingQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CObjectHandlerProcessingQueue.h; sourceTree = "<group>"; };
-		320C2182151B2C2B00BD0F41 /* EventBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventBroker.h; sourceTree = "<group>"; };
-		320C2186151B47C200BD0F41 /* EventBroker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventBroker.cpp; sourceTree = "<group>"; };
-		320C2189151B555A00BD0F41 /* EventReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventReceiver.h; sourceTree = "<group>"; };
-		320C218B151B556E00BD0F41 /* EventReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventReceiver.cpp; sourceTree = "<group>"; };
+		320C2189151B555A00BD0F41 /* EventServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventServer.h; sourceTree = "<group>"; };
+		320C218B151B556E00BD0F41 /* EventServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventServer.cpp; sourceTree = "<group>"; };
 		320DF98C14E17E2700251621 /* DeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceController.h; sourceTree = "<group>"; };
 		320DF98F14E17E3D00251621 /* DeviceController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceController.cpp; sourceTree = "<group>"; };
 		3216601014D49D0F008DADD2 /* ObjectWaitSemaphore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectWaitSemaphore.h; sourceTree = "<group>"; };
@@ -318,8 +338,13 @@
 		326DB4E314B3B0070018A8D0 /* LLRpcApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = LLRpcApi.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB4E414B3B0070018A8D0 /* LLRpcApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = LLRpcApi.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326EA57714D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiKeyObjectWaitSemaphore.h; sourceTree = "<group>"; };
+		3272FE1615E1053100B096FB /* EventForwarding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventForwarding.h; sourceTree = "<group>"; };
 		327967B415DF99FB0003C6DA /* RpcClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcClient.cpp; sourceTree = "<group>"; };
 		327967B715DFAAF40003C6DA /* RpcServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcServer.cpp; sourceTree = "<group>"; };
+		327967D315E029C70003C6DA /* AsioImplEventServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsioImplEventServer.cpp; sourceTree = "<group>"; };
+		327967D415E029C70003C6DA /* AsioImplEventServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsioImplEventServer.h; sourceTree = "<group>"; };
+		327967D715E030C30003C6DA /* AsioEventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsioEventHandler.cpp; sourceTree = "<group>"; };
+		327967D815E030C30003C6DA /* AsioEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsioEventHandler.h; sourceTree = "<group>"; };
 		328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcServerHandler.h; sourceTree = "<group>"; };
 		328FB18F15A9C6D600A1D8E7 /* RpcMessageForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcMessageForwarder.h; sourceTree = "<group>"; };
 		3294905A159AF4BF00E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -339,7 +364,26 @@
 		32AAD78D14CD95FD005A097C /* Atomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Atomic.h; sourceTree = "<group>"; };
 		32BE864515A0CEAF00818C39 /* LogManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogManager.cpp; sourceTree = "<group>"; };
 		32BE864615A0CEAF00818C39 /* LogManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogManager.h; sourceTree = "<group>"; };
+		32CFF95915E4D950005D607E /* EventDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventDescriptor.cpp; sourceTree = "<group>"; };
+		32CFF95A15E4D950005D607E /* EventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDescriptor.h; sourceTree = "<group>"; };
+		32CFF95D15E4DBD3005D607E /* EventFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventFactory.cpp; sourceTree = "<group>"; };
+		32CFF95E15E4DBD3005D607E /* EventFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventFactory.h; sourceTree = "<group>"; };
 		32D68ACF14D5D5A7009F290A /* SetupStateManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetupStateManager.h; sourceTree = "<group>"; };
+		32DD884C15E2663B000AF740 /* AbstractEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractEventDispatcher.cpp; sourceTree = "<group>"; };
+		32DD884D15E2663B000AF740 /* AbstractEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractEventDispatcher.h; sourceTree = "<group>"; };
+		32DD885115E2681F000AF740 /* EventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventHandler.cpp; sourceTree = "<group>"; };
+		32DD885215E2681F000AF740 /* EventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventHandler.h; sourceTree = "<group>"; };
+		32DD886515E2C313000AF740 /* endianess.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = endianess.h; sourceTree = "<group>"; };
+		32DF603515E14C7700312C94 /* NamedService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NamedService.cpp; sourceTree = "<group>"; };
+		32DF603615E14C7700312C94 /* NamedService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NamedService.h; sourceTree = "<group>"; };
+		32DF603915E14D5F00312C94 /* AlertEventDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlertEventDescriptor.cpp; sourceTree = "<group>"; };
+		32DF603A15E14D5F00312C94 /* AlertEventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertEventDescriptor.h; sourceTree = "<group>"; };
+		32DF603D15E14F5A00312C94 /* InstrumentEventDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InstrumentEventDescriptor.cpp; sourceTree = "<group>"; };
+		32DF603E15E14F5A00312C94 /* InstrumentEventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InstrumentEventDescriptor.h; sourceTree = "<group>"; };
+		32DF604115E1502600312C94 /* CommandEventDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommandEventDescriptor.cpp; sourceTree = "<group>"; };
+		32DF604215E1502700312C94 /* CommandEventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandEventDescriptor.h; sourceTree = "<group>"; };
+		32DF604515E1505E00312C94 /* CustomEventDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomEventDescriptor.cpp; sourceTree = "<group>"; };
+		32DF604615E1505F00312C94 /* CustomEventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomEventDescriptor.h; sourceTree = "<group>"; };
 		32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleBufferCircularBuffer.h; sourceTree = "<group>"; };
 		32F466DD155EDBDE00AD3D81 /* IODataDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IODataDriver.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -374,10 +418,16 @@
 		320C2180151B2BF200BD0F41 /* event */ = {
 			isa = PBXGroup;
 			children = (
-				320C2186151B47C200BD0F41 /* EventBroker.cpp */,
-				320C2182151B2C2B00BD0F41 /* EventBroker.h */,
-				320C218B151B556E00BD0F41 /* EventReceiver.cpp */,
-				320C2189151B555A00BD0F41 /* EventReceiver.h */,
+				32DF602B15E14B1900312C94 /* evt_desc */,
+				320C218B151B556E00BD0F41 /* EventServer.cpp */,
+				320C2189151B555A00BD0F41 /* EventServer.h */,
+				327967D315E029C70003C6DA /* AsioImplEventServer.cpp */,
+				327967D415E029C70003C6DA /* AsioImplEventServer.h */,
+				327967D715E030C30003C6DA /* AsioEventHandler.cpp */,
+				327967D815E030C30003C6DA /* AsioEventHandler.h */,
+				3272FE1615E1053100B096FB /* EventForwarding.h */,
+				32DD885115E2681F000AF740 /* EventHandler.cpp */,
+				32DD885215E2681F000AF740 /* EventHandler.h */,
 			);
 			path = event;
 			sourceTree = "<group>";
@@ -543,6 +593,8 @@
 		326DB3EF14B38BC00018A8D0 /* dispatcher */ = {
 			isa = PBXGroup;
 			children = (
+				32DD884C15E2663B000AF740 /* AbstractEventDispatcher.cpp */,
+				32DD884D15E2663B000AF740 /* AbstractEventDispatcher.h */,
 				326DB3F314B38BC00018A8D0 /* ChaosDispatcher.h */,
 				326DB3F414B38BC00018A8D0 /* CommandDispatcher.cpp */,
 				326DB3F514B38BC00018A8D0 /* CommandDispatcher.h */,
@@ -665,6 +717,9 @@
 				32D68ACF14D5D5A7009F290A /* SetupStateManager.h */,
 				325F86EB14D9E59D00CDF35F /* InetUtility.h */,
 				32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */,
+				32DF603515E14C7700312C94 /* NamedService.cpp */,
+				32DF603615E14C7700312C94 /* NamedService.h */,
+				32DD886515E2C313000AF740 /* endianess.h */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -802,6 +857,25 @@
 			path = log;
 			sourceTree = "<group>";
 		};
+		32DF602B15E14B1900312C94 /* evt_desc */ = {
+			isa = PBXGroup;
+			children = (
+				32CFF95915E4D950005D607E /* EventDescriptor.cpp */,
+				32CFF95A15E4D950005D607E /* EventDescriptor.h */,
+				32DF603915E14D5F00312C94 /* AlertEventDescriptor.cpp */,
+				32DF603A15E14D5F00312C94 /* AlertEventDescriptor.h */,
+				32DF603D15E14F5A00312C94 /* InstrumentEventDescriptor.cpp */,
+				32DF603E15E14F5A00312C94 /* InstrumentEventDescriptor.h */,
+				32DF604115E1502600312C94 /* CommandEventDescriptor.cpp */,
+				32DF604215E1502700312C94 /* CommandEventDescriptor.h */,
+				32DF604515E1505E00312C94 /* CustomEventDescriptor.cpp */,
+				32DF604615E1505F00312C94 /* CustomEventDescriptor.h */,
+				32CFF95D15E4DBD3005D607E /* EventFactory.cpp */,
+				32CFF95E15E4DBD3005D607E /* EventFactory.h */,
+			);
+			path = evt_desc;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -897,11 +971,23 @@
 				32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */,
 				320192BA14DEEAC000318F00 /* CObjectHandlerProcessingQueue.h in Headers */,
 				32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */,
-				320C2183151B2C2B00BD0F41 /* EventBroker.h in Headers */,
-				320C218A151B555A00BD0F41 /* EventReceiver.h in Headers */,
+				320C218A151B555A00BD0F41 /* EventServer.h in Headers */,
 				32BE864815A0CEAF00818C39 /* LogManager.h in Headers */,
 				328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */,
 				328FB19015A9C6D600A1D8E7 /* RpcMessageForwarder.h in Headers */,
+				327967D615E029C70003C6DA /* AsioImplEventServer.h in Headers */,
+				327967DA15E030C40003C6DA /* AsioEventHandler.h in Headers */,
+				3272FE1715E1053100B096FB /* EventForwarding.h in Headers */,
+				32DF603815E14C7700312C94 /* NamedService.h in Headers */,
+				32DF603C15E14D5F00312C94 /* AlertEventDescriptor.h in Headers */,
+				32DF604015E14F5A00312C94 /* InstrumentEventDescriptor.h in Headers */,
+				32DF604415E1502700312C94 /* CommandEventDescriptor.h in Headers */,
+				32DF604815E1505F00312C94 /* CustomEventDescriptor.h in Headers */,
+				32DD884F15E2663B000AF740 /* AbstractEventDispatcher.h in Headers */,
+				32DD885415E2681F000AF740 /* EventHandler.h in Headers */,
+				32DD886615E2C313000AF740 /* endianess.h in Headers */,
+				32CFF95C15E4D950005D607E /* EventDescriptor.h in Headers */,
+				32CFF96015E4DBD3005D607E /* EventFactory.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1069,12 +1155,22 @@
 				32AAD78C14CD773F005A097C /* MessageChannel.cpp in Sources */,
 				32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */,
 				3297F22614D96F31004FFE4F /* DeviceMessageChannel.cpp in Sources */,
-				320C2187151B47C200BD0F41 /* EventBroker.cpp in Sources */,
-				320C218C151B556E00BD0F41 /* EventReceiver.cpp in Sources */,
+				320C218C151B556E00BD0F41 /* EventServer.cpp in Sources */,
 				32F466DE155EDBDE00AD3D81 /* IODataDriver.cpp in Sources */,
 				32BE864715A0CEAF00818C39 /* LogManager.cpp in Sources */,
 				327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */,
 				327967B815DFAAF40003C6DA /* RpcServer.cpp in Sources */,
+				327967D515E029C70003C6DA /* AsioImplEventServer.cpp in Sources */,
+				327967D915E030C40003C6DA /* AsioEventHandler.cpp in Sources */,
+				32DF603715E14C7700312C94 /* NamedService.cpp in Sources */,
+				32DF603B15E14D5F00312C94 /* AlertEventDescriptor.cpp in Sources */,
+				32DF603F15E14F5A00312C94 /* InstrumentEventDescriptor.cpp in Sources */,
+				32DF604315E1502700312C94 /* CommandEventDescriptor.cpp in Sources */,
+				32DF604715E1505F00312C94 /* CustomEventDescriptor.cpp in Sources */,
+				32DD884E15E2663B000AF740 /* AbstractEventDispatcher.cpp in Sources */,
+				32DD885315E2681F000AF740 /* EventHandler.cpp in Sources */,
+				32CFF95B15E4D950005D607E /* EventDescriptor.cpp in Sources */,
+				32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

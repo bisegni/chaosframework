@@ -20,13 +20,40 @@
 
 #ifndef ChaosFramework_DispatcherRegister_h
 #define ChaosFramework_DispatcherRegister_h
-#include <chaos/common/utility/ObjectFactoryAliasInstantiation.h>
+
 #include <chaos/common/utility/Singleton.h>
 #include <string>
 
 namespace chaos {
     
     using namespace std;
+    
+    class ObjectFactory {
+        public :
+        ObjectFactory(const char *alias):sAlias(alias){};
+        std::string sAlias;
+        virtual void* createInstance() = 0;
+    };
+    
+    /*
+     Object factory with an alias
+     */
+    template <class T>
+    class ObjectFactoryAliasInstantiation : public ObjectFactory{
+    public:
+        ObjectFactoryAliasInstantiation(const char *alias):ObjectFactory(alias){};
+        virtual void* createInstance() { return (void*)new T(&sAlias); };
+    };
+
+    /*
+     Object factory with an alias
+     */
+    template <class T>
+    class ObjectFactoryInstantiation : public ObjectFactory{
+    public:
+        ObjectFactoryInstantiation(const char *alias):ObjectFactory(alias){};
+        virtual void* createInstance() { return (void*)new T(); };
+    };
     
     /*
      Template class for keep track of aliast+factory for the object that has been
@@ -69,7 +96,7 @@ namespace chaos {
      Class for instantiate at startuptipe(statically) the object type
      */
     template <typename T>
-    class ObjectInstancer {  
+    class ObjectInstancer {
     public:
         ObjectInstancer(ObjectFactory *commandFactory) {
             if(commandFactory){
@@ -78,11 +105,18 @@ namespace chaos {
         }
     };
     
+#define MAKE_SERVICE_CLASS_CONSTRUCTOR(SERVICE_NAME) SERVICE_NAME(string *alias):NamedService(alias){};
+ 
+#define MAKE_SERVICE_SUBCLASS_CONSTRUCTOR(SERVICE_NAME, BASE_SERVICE_NAME) SERVICE_NAME(string *alias):BASE_SERVICE_NAME(alias)
     /*
      Macro for help the Command Dispatcher classes registration
      */
 #define REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(CMD_CLASS_NAME, BASE_CLASS_NAME) class CMD_CLASS_NAME;\
 static const ObjectInstancer<BASE_CLASS_NAME> CMD_CLASS_NAME ## ObjectInstancer(new ObjectFactoryAliasInstantiation<CMD_CLASS_NAME>(#CMD_CLASS_NAME));\
+class CMD_CLASS_NAME : public BASE_CLASS_NAME
+    
+#define REGISTER_AND_DEFINE_NOALIAS_DERIVED_CLASS_FACTORY(CMD_CLASS_NAME, BASE_CLASS_NAME) class CMD_CLASS_NAME;\
+static const ObjectInstancer<BASE_CLASS_NAME> CMD_CLASS_NAME ## ObjectInstancer(new ObjectFactoryInstantiation<CMD_CLASS_NAME>(#CMD_CLASS_NAME));\
 class CMD_CLASS_NAME : public BASE_CLASS_NAME
 }
 #endif

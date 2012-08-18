@@ -21,7 +21,6 @@
 #ifndef MsgPackServer_H
 #define MsgPackServer_H
 
-#include "RpcServer.h"
 #include <boost/shared_ptr.hpp>
 #include <msgpack/rpc/server.h>
 
@@ -29,6 +28,7 @@
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
+#include <chaos/common/rpc/RpcServer.h>
 
 namespace chaos{
     

@@ -1,8 +1,8 @@
-/*	
- *	ObjectFactoryAliasInstantiation.h
- *	!CHOAS
- *	Created by Bisegni Claudio.
- *	
+/*
+ *	EventFactory.h
+ *	CHAOSFramework
+ *	Created by Claudio Bisegni on 22/08/12.
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,11 +17,21 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef ObjectFactoryAliasInstantiation_H
-#define ObjectFactoryAliasInstantiation_H
 
-#include <string>
+#ifndef __CHAOSFramework__EventFactory__
+#define __CHAOSFramework__EventFactory__
+
+#include <chaos/common/event/evt_desc/EventDescriptor.h>
+#include <chaos/common/exception/CException.h>
+
 namespace chaos {
-    
+    namespace event{
+        class EventFactory {
+        public:
+            static EventDescriptor *getEventInstance(const unsigned char * serializedEvent, uint16_t length) throw (CException);
+        };
+
     }
-#endif
+}
+
+#endif /* defined(__CHAOSFramework__EventFactory__) */

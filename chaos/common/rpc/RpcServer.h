@@ -27,12 +27,11 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/dispatcher/CommandDispatcher.h>
 #include <chaos/common/exception/CException.h>
-
+#include <chaos/common/event/EventHandler.h>
 namespace chaos {
-using namespace std;
+    using namespace std;
 
     class MessageBroker;
-    
     /*
      Abstract class for standard adapter method for permit, to CommandManager
      the correct initialization for the adapter instance

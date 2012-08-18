@@ -27,7 +27,13 @@
 
 using namespace chaos;
 
-EndianessBufferReaderHelper::EndianessBufferReaderHelper(){
+    //Static union for check endias of the system
+static union {
+    uint32_t i;
+    char c[4];
+} bint ={0x01020304};
+
+EndianessBufferReaderHelper::EndianessBufferReaderHelper() {
     needBigEndian = false;
     isBigEndian = is_big_endian();
 }
@@ -36,87 +42,41 @@ void EndianessBufferReaderHelper::setNeedBigEndian( bool nb) {
     needBigEndian = nb;
 }
 
+int EndianessBufferReaderHelper::is_big_endian(void) {
+    return bint.c[0] == 1;
+}
 
-int16_t EndianessBufferReaderHelper::readInteger(unsigned char* memPtr) {
-    uint16_t uInt16;
-    memcpy(&uInt16, memPtr, 2);
-
+void EndianessBufferReaderHelper::swap2byte(char * dest, const char * src) {
     if(isBigEndian == needBigEndian){
-        return uInt16;
+        memcpy(dest, src, 2);
     } else {
-        return swap_endian<uint16_t>(uInt16);
+        dest[0] = src[1];
+        dest[1] = src[0];
     }
 }
 
-void EndianessBufferReaderHelper::writeInteger(int16_t uInt16, unsigned char* memPtr) {
-    uint16_t tmpUint;
+void EndianessBufferReaderHelper::swap4byte(char * dest, const char * src) {
     if(isBigEndian == needBigEndian){
-        tmpUint = uInt16;
+        memcpy(dest, src, 4);
     } else {
-        tmpUint= swap_endian<uint16_t>(uInt16);
-    }
-    memcpy(memPtr, &tmpUint, 2);
-}
-
-int32_t EndianessBufferReaderHelper::readLong(unsigned char* memPtr) {
-    int32_t long32;
-    memcpy(&long32, memPtr, sizeof(int32_t));
-    
-    if(isBigEndian == needBigEndian){
-        return long32;
-    } else {
-        return swap_endian<int32_t>(long32);
+        dest[0] = src[3];
+        dest[1] = src[2];
+        dest[2] = src[1];
+        dest[3] = src[0];
     }
 }
 
-void EndianessBufferReaderHelper::writeLong(int32_t l32, unsigned char* memPtr) {
-    int32_t tmpL32;
+void EndianessBufferReaderHelper::swap8byte(char * dest, const char * src) {
     if(isBigEndian == needBigEndian){
-        tmpL32 = l32;
+        memcpy(dest, src, 2);
     } else {
-        tmpL32= swap_endian<int32_t>(l32);
+        dest[0] = src[7];
+        dest[1] = src[6];
+        dest[2] = src[5];
+        dest[3] = src[4];
+        dest[4] = src[3];
+        dest[5] = src[2];
+        dest[6] = src[1];
+        dest[7] = src[0];
     }
-    memcpy(memPtr, &tmpL32, sizeof(int32_t));
-}
-
-int64_t EndianessBufferReaderHelper::readLongLong(unsigned char* memPtr) {
-    int64_t long64;
-    memcpy(&long64, memPtr, sizeof(int64_t));
-    
-    if(isBigEndian == needBigEndian){
-        return long64;
-    } else {
-        return swap_endian<int64_t>(long64);
-    }
-}
-
-void EndianessBufferReaderHelper::writeLongLong(int64_t l64, unsigned char* memPtr) {
-    int64_t tmpL64;
-    if(isBigEndian == needBigEndian){
-        tmpL64 = l64;
-    } else {
-        tmpL64= swap_endian<int64_t>(l64);
-    }
-    memcpy(memPtr, &tmpL64, sizeof(int64_t));
-}
-
-double EndianessBufferReaderHelper::readDouble(unsigned char* memPtr) {
-    double double64;
-    memcpy(&double64, memPtr, 8);
-    
-    if(isBigEndian == needBigEndian){
-        return double64;
-    } else {
-        return swap_endian<double>(double64);
-    }
-}
-
-void EndianessBufferReaderHelper::writeDouble(double d64, unsigned char* memPtr) {
-    double tmpD64;
-    if(isBigEndian == needBigEndian){
-        tmpD64 = d64;
-    } else {
-        tmpD64= swap_endian<double>(d64);
-    }
-    memcpy(memPtr, &tmpD64, 8);
 }

@@ -1,4 +1,4 @@
-SET(common_lib_src log/LogManager.cpp action/ActionDescriptor.cpp action/DeclareAction.cpp action/DomainActions.cpp bson/bsonobj.cpp bson/oid.cpp bson/lib/base64.cpp bson/lib/md5.c bson/lib/nonce.cpp bson/util/json.cpp configuration/GlobalConfiguration.cpp data/CDataWrapper.cpp data/CUSchemaDB.cpp dispatcher/CommandDispatcher.cpp dispatcher/DefaultCommandDispatcher.cpp dispatcher/DomainActionsScheduler.cpp event/EventBroker.cpp event/EventReceiver.cpp io/IODataDriver.cpp io/IOMemcachedDriver.cpp io/OutputMongoDataDriver.cpp message/DeviceMessageChannel.cpp message/MDSMessageChannel.cpp message/MessageBroker.cpp message/MessageChannel.cpp rpc/RpcClient.cpp rpc/MsgPackClient.cpp rpc/RpcServer.cpp rpc/MsgPackServer.cpp thread/CThread.cpp thread/CThreadGroup.cpp utility/EndianessBufferReaderHelper.cpp) 
+SET(common_lib_src log/LogManager.cpp action/ActionDescriptor.cpp action/DeclareAction.cpp action/DomainActions.cpp bson/bsonobj.cpp bson/oid.cpp bson/lib/base64.cpp bson/lib/md5.c bson/lib/nonce.cpp bson/util/json.cpp configuration/GlobalConfiguration.cpp data/CDataWrapper.cpp data/CUSchemaDB.cpp dispatcher/CommandDispatcher.cpp dispatcher/DefaultCommandDispatcher.cpp dispatcher/DomainActionsScheduler.cpp  dispatcher/AbstractEventDispatcher.cpp event/EventServer.cpp event/AsioImplEventServer.cpp event/AsioEventHandler.cpp event/evt_desc/EventDescriptor.cpp event/evt_desc/AlertEventDescriptor.cpp event/evt_desc/InstrumentEventDescriptor.cpp event/evt_desc/CommandEventDescriptor.cpp event/evt_desc/CustomEventDescriptor.cpp io/IODataDriver.cpp io/IOMemcachedDriver.cpp io/OutputMongoDataDriver.cpp message/DeviceMessageChannel.cpp message/MDSMessageChannel.cpp message/MessageBroker.cpp message/MessageChannel.cpp rpc/RpcClient.cpp rpc/MsgPackClient.cpp rpc/RpcServer.cpp rpc/MsgPackServer.cpp thread/CThread.cpp thread/CThreadGroup.cpp utility/EndianessBufferReaderHelper.cpp utility/NamedService.cpp)
 
 find_package (Boost 1.39 REQUIRED
     COMPONENTS  program_options system thread chrono regex log log_setup)
@@ -49,6 +49,8 @@ FILE(GLOB files "dispatcher/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/dispatcher)
 FILE(GLOB files "event/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/event)
+FILE(GLOB files "event/evt_desc/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/event/evt_desc)
 FILE(GLOB files "exception/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/exception)
 FILE(GLOB files "general/*.h")

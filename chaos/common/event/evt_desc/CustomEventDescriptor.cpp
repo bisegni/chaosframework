@@ -1,8 +1,8 @@
-/*	
- *	ObjectFactoryAliasInstantiation.h
- *	!CHOAS
- *	Created by Bisegni Claudio.
- *	
+/*
+ *	CustomEventDescriptor.cpp
+ *	!CHAOS
+ *	Created by Claudio Bisegni on 19/08/12.
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,11 +17,8 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef ObjectFactoryAliasInstantiation_H
-#define ObjectFactoryAliasInstantiation_H
 
-#include <string>
-namespace chaos {
-    
-    }
-#endif
+#include "CustomEventDescriptor.h"
+using namespace chaos;
+using namespace chaos::event;
+using namespace chaos::event::custom;

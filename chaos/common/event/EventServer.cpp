@@ -1,8 +1,8 @@
-/*	
- *	ObjectFactoryAliasInstantiation.h
+/*
+ *	EventServer.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,11 +17,11 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef ObjectFactoryAliasInstantiation_H
-#define ObjectFactoryAliasInstantiation_H
 
-#include <string>
-namespace chaos {
-    
-    }
-#endif
+#include <chaos/common/event/EventServer.h>
+
+using namespace chaos;
+using namespace chaos::event;
+
+EventServer::EventServer(string *alias):NamedService(alias){
+}
