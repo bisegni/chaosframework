@@ -105,8 +105,6 @@
 		326DB48C14B38BC00018A8D0 /* CThreadGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB42214B38BC00018A8D0 /* CThreadGroup.cpp */; };
 		326DB48D14B38BC00018A8D0 /* CThreadGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB42314B38BC00018A8D0 /* CThreadGroup.h */; };
 		326DB48E14B38BC00018A8D0 /* ArrayPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB42514B38BC00018A8D0 /* ArrayPointer.h */; };
-		326DB48F14B38BC00018A8D0 /* EndianessBufferReaderHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB42614B38BC00018A8D0 /* EndianessBufferReaderHelper.cpp */; };
-		326DB49014B38BC00018A8D0 /* EndianessBufferReaderHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB42714B38BC00018A8D0 /* EndianessBufferReaderHelper.h */; };
 		326DB49114B38BC00018A8D0 /* ObjectFactoryAliasInstantiation.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB42814B38BC00018A8D0 /* ObjectFactoryAliasInstantiation.h */; };
 		326DB49214B38BC00018A8D0 /* ObjectFactoryRegister.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB42914B38BC00018A8D0 /* ObjectFactoryRegister.h */; };
 		326DB49314B38BC00018A8D0 /* Singleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB42A14B38BC00018A8D0 /* Singleton.h */; };
@@ -295,8 +293,6 @@
 		326DB42214B38BC00018A8D0 /* CThreadGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = CThreadGroup.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB42314B38BC00018A8D0 /* CThreadGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CThreadGroup.h; sourceTree = "<group>"; };
 		326DB42514B38BC00018A8D0 /* ArrayPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ArrayPointer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB42614B38BC00018A8D0 /* EndianessBufferReaderHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = EndianessBufferReaderHelper.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		326DB42714B38BC00018A8D0 /* EndianessBufferReaderHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = EndianessBufferReaderHelper.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB42814B38BC00018A8D0 /* ObjectFactoryAliasInstantiation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ObjectFactoryAliasInstantiation.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB42914B38BC00018A8D0 /* ObjectFactoryRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ObjectFactoryRegister.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB42A14B38BC00018A8D0 /* Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Singleton.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -705,8 +701,6 @@
 			isa = PBXGroup;
 			children = (
 				326DB42514B38BC00018A8D0 /* ArrayPointer.h */,
-				326DB42614B38BC00018A8D0 /* EndianessBufferReaderHelper.cpp */,
-				326DB42714B38BC00018A8D0 /* EndianessBufferReaderHelper.h */,
 				326DB42814B38BC00018A8D0 /* ObjectFactoryAliasInstantiation.h */,
 				326DB42914B38BC00018A8D0 /* ObjectFactoryRegister.h */,
 				326DB42A14B38BC00018A8D0 /* Singleton.h */,
@@ -950,7 +944,6 @@
 				326DB48B14B38BC00018A8D0 /* CThreadExecutionTask.h in Headers */,
 				326DB48D14B38BC00018A8D0 /* CThreadGroup.h in Headers */,
 				326DB48E14B38BC00018A8D0 /* ArrayPointer.h in Headers */,
-				326DB49014B38BC00018A8D0 /* EndianessBufferReaderHelper.h in Headers */,
 				326DB49114B38BC00018A8D0 /* ObjectFactoryAliasInstantiation.h in Headers */,
 				326DB49214B38BC00018A8D0 /* ObjectFactoryRegister.h in Headers */,
 				326DB49314B38BC00018A8D0 /* Singleton.h in Headers */,
@@ -1150,7 +1143,6 @@
 				326DB48214B38BC00018A8D0 /* MsgPackServer.cpp in Sources */,
 				326DB48914B38BC00018A8D0 /* CThread.cpp in Sources */,
 				326DB48C14B38BC00018A8D0 /* CThreadGroup.cpp in Sources */,
-				326DB48F14B38BC00018A8D0 /* EndianessBufferReaderHelper.cpp in Sources */,
 				32AAD78414CD63C6005A097C /* MessageBroker.cpp in Sources */,
 				32AAD78C14CD773F005A097C /* MessageChannel.cpp in Sources */,
 				32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */,
