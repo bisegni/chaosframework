@@ -1,7 +1,7 @@
 /*
- *	EventServer.h
- *	!CHOAS
- *	Created by Bisegni Claudio.
+ *	EventClient.h
+ *	CHAOSFramework
+ *	Created by Claudio Bisegni on 25/08/12.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
@@ -18,55 +18,59 @@
  *    	limitations under the License.
  */
 
-#ifndef CHAOSFramework_EventServer_h
-#define CHAOSFramework_EventServer_h
+#ifndef __CHAOSFramework__EventClient__
+#define __CHAOSFramework__EventClient__
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/NamedService.h>
-
-#include <chaos/common/event/EventHandler.h>
-
-
+#include <chaos/common/event/EventForwarder.h>
+#include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
 
 namespace chaos {
+    
     class MessageBroker;
-
-    namespace event{
+    
+    namespace event {
         
-        class EventServer : public NamedService {
+            //!Event client base class
+        /*!
+         
+         */
+        class EventClient : public NamedService, EventForwarder, CObjectProcessingPriorityQueue<EventDescriptor> {
             friend class chaos::MessageBroker;
-            
-                //! handler that can manage the event reception
-            EventHandler *rootEventHandler;
+            uint8_t threadNumber;
             
         protected:
             
                 //Default Server Constructor
-            EventServer(string *alias);
+            EventClient(string *alias);
             
             /*
              init the event adapter
              */
-            virtual void init(CDataWrapper*) throw(CException) = 0;
+            virtual void init(CDataWrapper*) throw(CException);
             
             /*
              start the event adapter
              */
-            virtual void start() throw(CException) = 0;
+            virtual void start() throw(CException);
             
             /*
              deinit the event adapter
              */
-            virtual void deinit() throw(CException) = 0;
+            virtual void deinit() throw(CException);
+    
+                //! abstract queue action method implementation
+            virtual void processBufferElement(EventDescriptor*, ElementManagingPolicy&) throw(CException);
             
-            void dispatchEventToHandler(const unsigned char * const serializedEvent, uint16_t length) throw (CException);
-
         public:
-            
-            void setEventHanlder(EventHandler *eventHanlder);
+            void setThreadNumber(unsigned int newThreadNumber);
+            unsigned int getThreadNumber();
+            virtual void submitEvent(EventDescriptor *event)  throw(CException);
         };
+
     }
 }
 
-#endif
+#endif /* defined(__CHAOSFramework__EventClient__) */

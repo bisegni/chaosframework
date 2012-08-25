@@ -31,7 +31,7 @@
 #include <chaos/common/dispatcher/CommandDispatcher.h>
 #include <chaos/common/rpcnet/CNodeNetworkAddress.h>
 #include <chaos/common/utility/SetupStateManager.h>
-    //#include <chaos/common/event/EventServer.h>
+#include <chaos/common/event/EventServer.h>
 
 namespace chaos {
 
@@ -61,7 +61,7 @@ namespace chaos {
      */
     class MessageBroker: private SetupStateManager {
         
-            //event::EventServer *eventServer;
+        event::EventServer *eventServer;
         
             //! Rpc client for message forwarding
         RpcClient *rpcClient;

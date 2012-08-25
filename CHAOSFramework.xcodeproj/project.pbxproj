@@ -12,6 +12,12 @@
 		320C218C151B556E00BD0F41 /* EventServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320C218B151B556E00BD0F41 /* EventServer.cpp */; };
 		320DF98D14E17E2700251621 /* DeviceController.h in Headers */ = {isa = PBXBuildFile; fileRef = 320DF98C14E17E2700251621 /* DeviceController.h */; };
 		320DF99114E190BB00251621 /* DeviceController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320DF98F14E17E3D00251621 /* DeviceController.cpp */; };
+		325013BC15E9258C00DCB13E /* EventClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325013BA15E9258C00DCB13E /* EventClient.cpp */; };
+		325013BD15E9258C00DCB13E /* EventClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 325013BB15E9258C00DCB13E /* EventClient.h */; };
+		325013D715E980C800DCB13E /* AsioImplEventClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325013D515E980C700DCB13E /* AsioImplEventClient.cpp */; };
+		325013D815E980C800DCB13E /* AsioImplEventClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 325013D615E980C800DCB13E /* AsioImplEventClient.h */; };
+		325013DC15E9843D00DCB13E /* AsioEventForwarder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325013DA15E9843D00DCB13E /* AsioEventForwarder.cpp */; };
+		325013DD15E9843D00DCB13E /* AsioEventForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 325013DB15E9843D00DCB13E /* AsioEventForwarder.h */; };
 		325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F86EB14D9E59D00CDF35F /* InetUtility.h */; };
 		3260276A14B306BA00C906CE /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 326026E914B301F600C906CE /* libchaos_common.dylib */; };
 		3260278B14B307E400C906CE /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 326026E914B301F600C906CE /* libchaos_common.dylib */; };
@@ -145,7 +151,7 @@
 		326DB4F514B3B0070018A8D0 /* LLRpcApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4E314B3B0070018A8D0 /* LLRpcApi.cpp */; };
 		326DB4F614B3B0070018A8D0 /* LLRpcApi.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4E414B3B0070018A8D0 /* LLRpcApi.h */; };
 		326EA57814D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 326EA57714D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h */; };
-		3272FE1715E1053100B096FB /* EventForwarding.h in Headers */ = {isa = PBXBuildFile; fileRef = 3272FE1615E1053100B096FB /* EventForwarding.h */; };
+		3272FE1715E1053100B096FB /* EventForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3272FE1615E1053100B096FB /* EventForwarder.h */; };
 		327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B415DF99FB0003C6DA /* RpcClient.cpp */; };
 		327967B815DFAAF40003C6DA /* RpcServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B715DFAAF40003C6DA /* RpcServer.cpp */; };
 		327967D515E029C70003C6DA /* AsioImplEventServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967D315E029C70003C6DA /* AsioImplEventServer.cpp */; };
@@ -199,6 +205,12 @@
 		320DF98C14E17E2700251621 /* DeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceController.h; sourceTree = "<group>"; };
 		320DF98F14E17E3D00251621 /* DeviceController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceController.cpp; sourceTree = "<group>"; };
 		3216601014D49D0F008DADD2 /* ObjectWaitSemaphore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectWaitSemaphore.h; sourceTree = "<group>"; };
+		325013BA15E9258C00DCB13E /* EventClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventClient.cpp; sourceTree = "<group>"; };
+		325013BB15E9258C00DCB13E /* EventClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventClient.h; sourceTree = "<group>"; };
+		325013D515E980C700DCB13E /* AsioImplEventClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsioImplEventClient.cpp; sourceTree = "<group>"; };
+		325013D615E980C800DCB13E /* AsioImplEventClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsioImplEventClient.h; sourceTree = "<group>"; };
+		325013DA15E9843D00DCB13E /* AsioEventForwarder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsioEventForwarder.cpp; sourceTree = "<group>"; };
+		325013DB15E9843D00DCB13E /* AsioEventForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsioEventForwarder.h; sourceTree = "<group>"; };
 		325F86EB14D9E59D00CDF35F /* InetUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InetUtility.h; sourceTree = "<group>"; };
 		326026E914B301F600C906CE /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_common.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3260276614B3068100C906CE /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_cutoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -334,7 +346,7 @@
 		326DB4E314B3B0070018A8D0 /* LLRpcApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = LLRpcApi.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB4E414B3B0070018A8D0 /* LLRpcApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = LLRpcApi.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326EA57714D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiKeyObjectWaitSemaphore.h; sourceTree = "<group>"; };
-		3272FE1615E1053100B096FB /* EventForwarding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventForwarding.h; sourceTree = "<group>"; };
+		3272FE1615E1053100B096FB /* EventForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventForwarder.h; sourceTree = "<group>"; };
 		327967B415DF99FB0003C6DA /* RpcClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcClient.cpp; sourceTree = "<group>"; };
 		327967B715DFAAF40003C6DA /* RpcServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcServer.cpp; sourceTree = "<group>"; };
 		327967D315E029C70003C6DA /* AsioImplEventServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsioImplEventServer.cpp; sourceTree = "<group>"; };
@@ -417,11 +429,17 @@
 				32DF602B15E14B1900312C94 /* evt_desc */,
 				320C218B151B556E00BD0F41 /* EventServer.cpp */,
 				320C2189151B555A00BD0F41 /* EventServer.h */,
+				325013BA15E9258C00DCB13E /* EventClient.cpp */,
+				325013BB15E9258C00DCB13E /* EventClient.h */,
+				325013D515E980C700DCB13E /* AsioImplEventClient.cpp */,
+				325013D615E980C800DCB13E /* AsioImplEventClient.h */,
 				327967D315E029C70003C6DA /* AsioImplEventServer.cpp */,
 				327967D415E029C70003C6DA /* AsioImplEventServer.h */,
 				327967D715E030C30003C6DA /* AsioEventHandler.cpp */,
 				327967D815E030C30003C6DA /* AsioEventHandler.h */,
-				3272FE1615E1053100B096FB /* EventForwarding.h */,
+				325013DA15E9843D00DCB13E /* AsioEventForwarder.cpp */,
+				325013DB15E9843D00DCB13E /* AsioEventForwarder.h */,
+				3272FE1615E1053100B096FB /* EventForwarder.h */,
 				32DD885115E2681F000AF740 /* EventHandler.cpp */,
 				32DD885215E2681F000AF740 /* EventHandler.h */,
 			);
@@ -970,7 +988,7 @@
 				328FB19015A9C6D600A1D8E7 /* RpcMessageForwarder.h in Headers */,
 				327967D615E029C70003C6DA /* AsioImplEventServer.h in Headers */,
 				327967DA15E030C40003C6DA /* AsioEventHandler.h in Headers */,
-				3272FE1715E1053100B096FB /* EventForwarding.h in Headers */,
+				3272FE1715E1053100B096FB /* EventForwarder.h in Headers */,
 				32DF603815E14C7700312C94 /* NamedService.h in Headers */,
 				32DF603C15E14D5F00312C94 /* AlertEventDescriptor.h in Headers */,
 				32DF604015E14F5A00312C94 /* InstrumentEventDescriptor.h in Headers */,
@@ -981,6 +999,9 @@
 				32DD886615E2C313000AF740 /* endianess.h in Headers */,
 				32CFF95C15E4D950005D607E /* EventDescriptor.h in Headers */,
 				32CFF96015E4DBD3005D607E /* EventFactory.h in Headers */,
+				325013BD15E9258C00DCB13E /* EventClient.h in Headers */,
+				325013D815E980C800DCB13E /* AsioImplEventClient.h in Headers */,
+				325013DD15E9843D00DCB13E /* AsioEventForwarder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1163,6 +1184,9 @@
 				32DD885315E2681F000AF740 /* EventHandler.cpp in Sources */,
 				32CFF95B15E4D950005D607E /* EventDescriptor.cpp in Sources */,
 				32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */,
+				325013BC15E9258C00DCB13E /* EventClient.cpp in Sources */,
+				325013D715E980C800DCB13E /* AsioImplEventClient.cpp in Sources */,
+				325013DC15E9843D00DCB13E /* AsioEventForwarder.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

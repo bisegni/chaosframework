@@ -77,7 +77,7 @@ namespace chaos {
             /*@}*/
         } EventTypeAndPriority;
         
-        
+            //forward declaration for event factory
         class EventFactory;
         
             //!Event base class

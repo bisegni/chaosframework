@@ -61,6 +61,37 @@ void AbstractEventDispatcher::deregisterHanlder(EventHandler *handlerToRemove)  
     
 }
 
-void AbstractEventDispatcher::dispatchEvent(EventDescriptor*)  throw(CException) {
+/*!
+ Thsi is the methdo that is called when the specified event is recognized
+ by dispatcher
+ */
+void AbstractEventDispatcher::executeAlertHandler(alert::AlertEventDescriptor *eventDescription)  throw(CException) {
+    
+}
+
+    //!Handler execution method
+/*!
+ Thsi is the methdo that is called when the specified event is recognized
+ by dispatcher
+ */
+void AbstractEventDispatcher::executeInstrumentHandler(instrument::InstrumentEventDescriptor *eventDescription)  throw(CException) {
+    
+}
+
+    //!Handler execution method
+/*!
+ Thsi is the methdo that is called when the specified event is recognized
+ by dispatcher
+ */
+void AbstractEventDispatcher::executeCommandHandler(command::CommandEventDescriptor *eventDescription)  throw(CException) {
+    
+}
+
+    //!Handler execution method
+/*!
+ Thsi is the methdo that is called when the specified event is recognized
+ by dispatcher
+ */
+void AbstractEventDispatcher::executeCustomHandler(custom::CustomEventDescriptor* eventDescription)  throw(CException) {
     
 }

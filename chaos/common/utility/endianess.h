@@ -29,7 +29,7 @@ enum endianness
 #endif
 };
 
-namespace detail {
+namespace util {
     
     template<typename T, size_t sz>
     struct swap_bytes
@@ -128,7 +128,7 @@ inline T byte_swap(T value)
         // ensure we're only swapping arithmetic types
     BOOST_STATIC_ASSERT(boost::is_arithmetic<T>::value);
     
-    return detail::do_byte_swap<from, to, T>()(value);
+    return util::do_byte_swap<from, to, T>()(value);
 }
 
 #endif

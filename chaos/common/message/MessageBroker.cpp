@@ -89,7 +89,7 @@ void MessageBroker::init() throw(CException) {
     string clientName = adapterType+"Client";
     
     
-   /* MB_LAPP  << "Trying to startup Event Server: ";
+   MB_LAPP  << "Trying to startup Event Server: ";
     eventServer = ObjectFactoryRegister<EventServer>::getInstance()->getNewInstanceByName("AsioImplEventServer");
     if(eventServer){
         MB_LAPP  << "Got Event Server: " << eventServer->getName();
@@ -98,7 +98,7 @@ void MessageBroker::init() throw(CException) {
         eventServer->init(globalConfiguration);
     }else{
         MB_LAPP  << "No Event Server";
-    }*/
+    }
     
     MB_LAPP  << "Trying to startup RPC Server: " << serverName;
     rpcServer = ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(serverName.c_str());
@@ -157,7 +157,7 @@ void MessageBroker::deinit() throw(CException) {
     MB_LAPP  << "Clear channel map";
     activeChannel.clear();
 
-        //eventServer->deinit();
+    eventServer->deinit();
     
     MB_LAPP  << "Deinit RPC Adapter: " << rpcServer->getName();
     rpcServer->deinit();
@@ -178,7 +178,7 @@ void MessageBroker::deinit() throw(CException) {
  */
 void MessageBroker::start() throw(CException){
         // MB_LAPP  << "Start Event Server: " << eventServer->getName();
-        //eventServer->start();
+    eventServer->start();
     
     MB_LAPP  << "Start RPC Adapter: " << rpcServer->getName();
     rpcServer->start();

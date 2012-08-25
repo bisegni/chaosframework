@@ -24,7 +24,7 @@
 #include <boost/thread.hpp>
 
 #include <chaos/common/action/DomainActions.h>
-#include "CommandDispatcher.h"
+#include <chaos/common/dispatcher/CommandDispatcher.h>
 #include <chaos/common/pqueue/ChaosProcessingQueue.h>
 #include <chaos/common/data/CDataWrapper.h>
 

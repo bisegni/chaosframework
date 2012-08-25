@@ -74,8 +74,29 @@ namespace chaos {
          */
         virtual void deregisterHanlder(EventHandler *handlerToRemove)  throw(CException);
         
-            //!manage the arrived event
-        void dispatchEvent(EventDescriptor*)  throw(CException);
+        /*!
+         Thsi is the methdo that is called when the specified event is recognized
+         by dispatcher
+         */
+        virtual void executeAlertHandler(alert::AlertEventDescriptor *eventDescription)  throw(CException);
+            //!Handler execution method
+        /*!
+         Thsi is the methdo that is called when the specified event is recognized
+         by dispatcher
+         */
+        virtual void executeInstrumentHandler(instrument::InstrumentEventDescriptor *eventDescription)  throw(CException);
+            //!Handler execution method
+        /*!
+         Thsi is the methdo that is called when the specified event is recognized
+         by dispatcher
+         */
+        virtual void executeCommandHandler(command::CommandEventDescriptor *eventDescription)  throw(CException);
+            //!Handler execution method
+        /*!
+         Thsi is the methdo that is called when the specified event is recognized
+         by dispatcher
+         */
+        virtual void executeCustomHandler(custom::CustomEventDescriptor* eventDescription)  throw(CException);
 
     };
     

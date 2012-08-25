@@ -42,17 +42,18 @@ namespace chaos {
      */
     template<typename T, typename _heapEngine = queue<T*> >
     class CObjectProcessingQueue : public CThreadExecutionTask {
-        bool inDeinit;
-        int outputThreadNumber;
-        mutable boost::mutex qMutex;
-        _heapEngine bufferQueue;
-        condition_variable liveThreadConditionLock;
-        condition_variable emptyQueueConditionLock;
         
             //thread group
         CThreadGroup threadGroup;
         
     protected:
+        _heapEngine bufferQueue;
+        bool inDeinit;
+        int outputThreadNumber;
+        mutable boost::mutex qMutex;
+        condition_variable liveThreadConditionLock;
+        condition_variable emptyQueueConditionLock;
+
         CObjectProcessingQueueListener<T> *eventListener;
         
         /*
@@ -72,7 +73,7 @@ namespace chaos {
                     return;
                 }
                 elementPolicy.elementHasBeenDetached=false;
-                if(dataRow) processBufferElement(dataRow, elementPolicy);
+                processBufferElement(dataRow, elementPolicy);
                 if(elementPolicy.elementHasBeenDetached) return;
             } catch (CException& ex) {
                 DECODE_CHAOS_EXCEPTION(ex)
@@ -156,11 +157,11 @@ namespace chaos {
          */
         virtual bool push(T* data) throw(CException) {
             boost::mutex::scoped_lock lock(qMutex);
-            if(inDeinit) return true;
+            if(inDeinit) return false;
             bufferQueue.push(data);
             lock.unlock();
             liveThreadConditionLock.notify_one();
-            return false;
+            return true;
         }
         
         /*
@@ -183,7 +184,7 @@ namespace chaos {
             oldestElement = bufferQueue.front();
             
                 //remove the oldest data
-            bufferQueue.pop();
+                //bufferQueue.pop();
             
             return oldestElement;
         }

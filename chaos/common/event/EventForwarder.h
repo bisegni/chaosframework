@@ -29,7 +29,7 @@ namespace chaos {
         /*!
          Abstract handler class for standard comunication between rpc client and server and other classes
          */
-        class EventForwarding {
+        class EventForwarder {
         public:
                 //! method called when the rpc server receive a new data
             /*!
@@ -39,7 +39,7 @@ namespace chaos {
              @return the response to the pack, if there is one
              */
                 //virtual CDataWrapper * newRpcPackHasArrived(CDataWrapper& newPack) throw(CException) = 0;
-            virtual void dispatchEvent(EventDescriptor *event)  throw(CException) = 0;
+            virtual void submitEvent(EventDescriptor *event)  throw(CException) = 0;
         };
     }
 }

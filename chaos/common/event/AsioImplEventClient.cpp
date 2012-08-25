@@ -1,7 +1,7 @@
 /*
- *	AsioImplEventServer.h
- *	!CHOAS
- *	Created by Bisegni Claudio.
+ *	AsioImplEventClient.cpp
+ *	CHAOSFramework
+ *	Created by Claudio Bisegni on 25/08/12.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
@@ -18,44 +18,30 @@
  *    	limitations under the License.
  */
 
-#include <chaos/common/event/AsioImplEventServer.h>
+#include <chaos/common/event/AsioImplEventClient.h>
 
-using namespace std;
-using namespace boost;
 using namespace chaos;
 using namespace chaos::event;
 
-#define DEFAULT_ALERT_EVENT_PORT        5000
-#define DEFAULT_INSTRUMENT_EVENT_PORT   5001
-#define DEFAULT_COMMAND_EVENT_PORT      5002
-#define DEFAULT_CUSTOM_EVENT_PORT       5003
-
-#define DEFAULT_MULTICAST_IP            "239.255.0.1"
-#define DEFAULT_BASE_IP                 "0.0.0.0"
-
-AsioImplEventServer::AsioImplEventServer(string *alias):EventServer(alias) {
+AsioImplEventClient::AsioImplEventClient(string *alias):EventClient(alias) {
     threadNumber = 0;
 }
 
 /*
  init the event adapter
  */
-void AsioImplEventServer::init(CDataWrapper*) throw(CException) {
+void AsioImplEventClient::init(CDataWrapper*) throw(CException) {
     threadNumber = 4;
 }
 
 /*
  start the event adapter
  */
-void AsioImplEventServer::start() throw(CException) {
-
+void AsioImplEventClient::start() throw(CException) {
+    
         //register forall event
         //create the services
-    shared_ptr<AsioEventHandler> handler(new AsioEventHandler(asio::ip::address::from_string(DEFAULT_BASE_IP),
-                                                              asio::ip::address::from_string(DEFAULT_MULTICAST_IP),
-                                                              io_service, 5000));
-    handlerVec.push_back(handler);
-
+    
     for (int idx = 0; idx < threadNumber; idx++) {
             //create the handler
         shared_ptr<thread> thread(new boost::thread(bind(&asio::io_service::run, &io_service)));
@@ -66,11 +52,10 @@ void AsioImplEventServer::start() throw(CException) {
 /*
  deinit the event adapter
  */
-void AsioImplEventServer::deinit() throw(CException) {
+void AsioImplEventClient::deinit() throw(CException) {
     io_service.stop();
         // Wait for all threads in the pool to exit.
     for (std::size_t i = 0; i < serviceThread.size(); ++i)
         serviceThread[i]->join();
     
 }
-

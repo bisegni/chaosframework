@@ -17,7 +17,9 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "AsioEventHandler.h"
+#include <chaos/common/event/AsioEventHandler.h>
+#include <chaos/common/global.h>
+#include <chaos/common/utility/UUIDUtil.h>
 
 using namespace boost;
 using namespace chaos;
@@ -27,6 +29,8 @@ AsioEventHandler::AsioEventHandler(const boost::asio::ip::address& listen_addres
                                    const boost::asio::ip::address& multicast_address,
                                    boost::asio::io_service& io_service,
                                    unsigned short mPort) : socket_(io_service) {
+    hanlderID = UUIDUtil::generateUUIDLite();
+    memset(data_, 0, 1024);
         // Create the socket so that multiple may be bound to the same address.
     boost::asio::ip::udp::endpoint listen_endpoint(listen_address, mPort);
     socket_.open(listen_endpoint.protocol());
@@ -47,9 +51,8 @@ AsioEventHandler::AsioEventHandler(const boost::asio::ip::address& listen_addres
 void AsioEventHandler::handle_receive_from(const boost::system::error_code& error,
                                            size_t bytes_recvd){
     if (!error) {
-        std::cout.write(data_, bytes_recvd);
-        std::cout << "received byte:"<<bytes_recvd<<" "<< std::endl;
-        
+        LAPP_ << hanlderID <<" "<< data_;
+        memset(data_, 0, bytes_recvd);
         socket_.async_receive_from(boost::asio::buffer(data_, max_length), sender_endpoint_,
                                    boost::bind(&AsioEventHandler::handle_receive_from, this,
                                                boost::asio::placeholders::error,

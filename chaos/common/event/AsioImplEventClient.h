@@ -1,7 +1,7 @@
 /*
- *	AsioImplEventServer.h
- *	!CHOAS
- *	Created by Bisegni Claudio.
+ *	AsioImplEventClient.h
+ *	CHAOSFramework
+ *	Created by Claudio Bisegni on 25/08/12.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
@@ -18,11 +18,12 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__AsioImplEventServer__
-#define __CHAOSFramework__AsioImplEventServer__
+#ifndef __CHAOSFramework__AsioImplEventClient__
+#define __CHAOSFramework__AsioImplEventClient__
+
 
 #include <chaos/common/event/AsioEventHandler.h>
-#include <chaos/common/event/EventServer.h>
+#include <chaos/common/event/EventClient.h>
 #include <string>
 #include <vector>
 #include <boost/asio.hpp>
@@ -37,7 +38,7 @@ namespace chaos {
         
         const short multicast_port = 30001;
         
-        REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(AsioImplEventServer, EventServer) {
+        REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(AsioImplEventClient, EventClient) {
         protected:
             /*
              init the event adapter
@@ -55,15 +56,15 @@ namespace chaos {
             void deinit() throw(CException);
             
         public:
-            AsioImplEventServer(string *alias);
+            AsioImplEventClient(string *alias);
             
         private:
             boost::asio::io_service io_service;
-            vector< shared_ptr<AsioEventHandler> > handlerVec;
             vector< shared_ptr<boost::thread> > serviceThread;
             uint8_t threadNumber;
             
         };
     }
 }
-#endif /* defined(__CHAOSFramework__AsioImplEventServer__) */
+
+#endif /* defined(__CHAOSFramework__AsioImplEventClient__) */

@@ -21,7 +21,10 @@
 #ifndef __CHAOSFramework__EventActionHandler__
 #define __CHAOSFramework__EventActionHandler__
 
-#include <chaos/common/event/evt_desc/EventDescriptor.h>
+#include <chaos/common/event/evt_desc/AlertEventDescriptor.h>
+#include <chaos/common/event/evt_desc/InstrumentEventDescriptor.h>
+#include <chaos/common/event/evt_desc/CommandEventDescriptor.h>
+#include <chaos/common/event/evt_desc/CustomEventDescriptor.h>
 
 namespace chaos {
     class AbstractEventDispatcer;
@@ -33,14 +36,33 @@ namespace chaos {
      from the dispatcher. 
      */
     class EventHandler {
+        friend class EventServer;
         friend class AbstractEventDispatcer;
     protected:
-            //!Handler execution method
+            //!Alert handler execution method
         /*!
          Thsi is the methdo that is called when the specified event is recognized
          by dispatcher
          */
-        virtual void executeHandler(EventDescriptor& eventDescription) = 0;
+        virtual void executeAlertHandler(alert::AlertEventDescriptor *eventDescription) throw(CException) = 0;
+            //!Instrument handler execution method
+        /*!
+         Thsi is the methdo that is called when the specified event is recognized
+         by dispatcher
+         */
+        virtual void executeInstrumentHandler(instrument::InstrumentEventDescriptor *eventDescription) throw(CException) = 0;
+            //!Command handler execution method
+        /*!
+         Thsi is the methdo that is called when the specified event is recognized
+         by dispatcher
+         */
+        virtual void executeCommandHandler(command::CommandEventDescriptor *eventDescription) throw(CException) = 0;
+            //!Custom handler execution method
+        /*!
+         Thsi is the methdo that is called when the specified event is recognized
+         by dispatcher
+         */
+        virtual void executeCustomHandler(custom::CustomEventDescriptor* eventDescription) throw(CException) = 0;
     };
     }
 }
