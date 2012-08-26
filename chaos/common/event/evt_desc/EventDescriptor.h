@@ -111,7 +111,7 @@ namespace chaos {
             /*
              If this instance own the memory it wil be deallocated
              */
-            ~EventDescriptor();
+            virtual ~EventDescriptor();
             
                 //!Event data inizialization
             /*

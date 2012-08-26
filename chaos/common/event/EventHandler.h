@@ -28,42 +28,42 @@
 
 namespace chaos {
     class AbstractEventDispatcer;
-
-    namespace event {    
-        //!Define an action to be axecuted afetr a specific event is received
-    /*!
-     Thsi class represent an handler that is called when a specified event is get
-     from the dispatcher. 
-     */
-    class EventHandler {
-        friend class EventServer;
-        friend class AbstractEventDispatcer;
-    protected:
-            //!Alert handler execution method
+    
+    namespace event {
+            //!Define an action to be axecuted afetr a specific event is received
         /*!
-         Thsi is the methdo that is called when the specified event is recognized
-         by dispatcher
+         Thsi class represent an handler that is called when a specified event is get
+         from the dispatcher.
          */
-        virtual void executeAlertHandler(alert::AlertEventDescriptor *eventDescription) throw(CException) = 0;
-            //!Instrument handler execution method
-        /*!
-         Thsi is the methdo that is called when the specified event is recognized
-         by dispatcher
-         */
-        virtual void executeInstrumentHandler(instrument::InstrumentEventDescriptor *eventDescription) throw(CException) = 0;
-            //!Command handler execution method
-        /*!
-         Thsi is the methdo that is called when the specified event is recognized
-         by dispatcher
-         */
-        virtual void executeCommandHandler(command::CommandEventDescriptor *eventDescription) throw(CException) = 0;
-            //!Custom handler execution method
-        /*!
-         Thsi is the methdo that is called when the specified event is recognized
-         by dispatcher
-         */
-        virtual void executeCustomHandler(custom::CustomEventDescriptor* eventDescription) throw(CException) = 0;
-    };
+        class EventHandler {
+            friend class EventServer;
+            friend class AbstractEventDispatcer;
+        protected:
+                //!Alert handler execution method
+            /*!
+             Thsi is the methdo that is called when the specified event is recognized
+             by dispatcher
+             */
+            virtual void executeAlertHandler(alert::AlertEventDescriptor *eventDescription) throw(CException) = 0;
+                //!Instrument handler execution method
+            /*!
+             Thsi is the methdo that is called when the specified event is recognized
+             by dispatcher
+             */
+            virtual void executeInstrumentHandler(instrument::InstrumentEventDescriptor *eventDescription) throw(CException) = 0;
+                //!Command handler execution method
+            /*!
+             Thsi is the methdo that is called when the specified event is recognized
+             by dispatcher
+             */
+            virtual void executeCommandHandler(command::CommandEventDescriptor *eventDescription) throw(CException) = 0;
+                //!Custom handler execution method
+            /*!
+             Thsi is the methdo that is called when the specified event is recognized
+             by dispatcher
+             */
+            virtual void executeCustomHandler(custom::CustomEventDescriptor* eventDescription) throw(CException) = 0;
+        };
     }
 }
 

@@ -59,7 +59,7 @@ namespace chaos {
         /*! 
          Default Destructor, free the waited object if it's not has been keeped
          */
-        virtual ~WaitSemaphore(){}
+        ~WaitSemaphore(){}
         
         
         //!wait

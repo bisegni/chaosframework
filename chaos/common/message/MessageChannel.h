@@ -93,13 +93,6 @@ namespace chaos {
    
     protected:
         /*!
-         Return the broker for that channel
-         */
-        MessageBroker * getBroker(){
-            return broker;
-        }
-        
-        /*!
          Private constructor called by MessageBroker
          */
         MessageChannel(MessageBroker*, const char*const);
@@ -112,7 +105,7 @@ namespace chaos {
         /*!
          Private destructor called by MessageBroker
          */
-        ~MessageChannel();
+        virtual ~MessageChannel();
 
         /*!
          Update the address of the channel
@@ -120,6 +113,14 @@ namespace chaos {
         void setRemoteNodeAddress(string& remoteAddr){
             remoteNodeAddress = remoteAddr;
         }
+        
+        /*!
+         Return the broker for that channel
+         */
+        MessageBroker * getBroker(){
+            return broker;
+        }
+        
     public:
 
         /*! 

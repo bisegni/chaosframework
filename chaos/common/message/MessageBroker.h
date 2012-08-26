@@ -104,7 +104,7 @@ namespace chaos {
         MessageBroker();
         
             //! Basic Destructor
-        ~MessageBroker();
+        virtual ~MessageBroker();
         
             //!Message Broker initialization
         /*!

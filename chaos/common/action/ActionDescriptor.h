@@ -87,7 +87,7 @@ namespace chaos {
         
             //default constructor
         AbstractActionDescriptor();
-        ~AbstractActionDescriptor();
+        virtual ~AbstractActionDescriptor();
         
         /*!
          virtual method for call the action

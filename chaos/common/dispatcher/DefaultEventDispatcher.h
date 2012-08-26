@@ -76,7 +76,7 @@ namespace chaos {
         DefaultEventDispatcher(string *alias);
         
             //! Basic Destructor
-        ~DefaultEventDispatcher();
+        virtual ~DefaultEventDispatcher();
         
             //! Action registration
         /*
