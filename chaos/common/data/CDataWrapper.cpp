@@ -49,10 +49,10 @@ vector<BSONElement>::size_type CMultiTypeDataArrayWrapper::size() const{
 }
 
 #pragma mark Public Methods
-CDataWrapper::CDataWrapper():bsonBuilder(new BSONObjBuilder()),bsonArrayBuilder(new BSONArrayBuilder()){
+CDataWrapper::CDataWrapper():bsonArrayBuilder(new BSONArrayBuilder()),bsonBuilder(new BSONObjBuilder()){
 }
 
-CDataWrapper::CDataWrapper(const char* serializationBuffer, bool bson, bool owned):bsonBuilder(new BSONObjBuilder()),bsonArrayBuilder(new BSONArrayBuilder()){
+CDataWrapper::CDataWrapper(const char* serializationBuffer, bool bson, bool owned):bsonArrayBuilder(new BSONArrayBuilder()),bsonBuilder(new BSONObjBuilder()){
         //bsonBuilder->appendElements(BSONObj(serializationBuffer));
     setSerializedData(serializationBuffer, bson, owned);
 }

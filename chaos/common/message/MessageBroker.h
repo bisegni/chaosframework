@@ -28,10 +28,9 @@
 #include <chaos/common/rpc/RpcServer.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/action/DeclareAction.h>
-#include <chaos/common/dispatcher/CommandDispatcher.h>
 #include <chaos/common/rpcnet/CNodeNetworkAddress.h>
 #include <chaos/common/utility/SetupStateManager.h>
-#include <chaos/common/event/EventServer.h>
+
 
 namespace chaos {
 
@@ -52,7 +51,12 @@ namespace chaos {
     class NetworkAddressMessageChannel;
     class MDSMessageChannel;
     class DeviceMessageChannel;
-    
+    class AbstractCommandDispatcher;
+    namespace event {
+        class EventServer;
+        class EventClient;
+    }
+
         //! Message Broker
     /*! 
      The MessageBroker is the manager for the message in chaos framework. It contains the reference to 
@@ -61,6 +65,10 @@ namespace chaos {
      */
     class MessageBroker: private SetupStateManager {
         
+            //!Event Client for event forwarding
+        event::EventClient *eventClient;
+        
+            //!Event server for event handlind
         event::EventServer *eventServer;
         
             //! Rpc client for message forwarding
@@ -70,7 +78,7 @@ namespace chaos {
         RpcServer *rpcServer;
         
             //! Rpc server for message dispatcher
-        CommandDispatcher *commandDispatcher;
+        AbstractCommandDispatcher *commandDispatcher;
         
             //!keep track of active channel
         map<string, MessageChannel*> activeChannel;
@@ -140,14 +148,6 @@ namespace chaos {
          Return the host and port where rpc server has benn published
          */
         void getPublishedHostAndPort(string&);
-        
-            //!message submition
-        /*!
-         Submit a message, all the inromation for forwarding it are already into CDataWrapper
-         \param message the message coded into key/value semantics
-         \param onThisThread if true the message is forwarded in the same thread of the caller
-         
-        bool submitMessage(CDataWrapper *message, bool onThisThread=false);*/
         
             //!message submition
         /*!

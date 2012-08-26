@@ -29,7 +29,7 @@ namespace chaos {
     /*!
      Abstract handler class for standard comunication between rpc client and server and other classes
      */
-    class RpcServerHanlder {
+    class RpcServerHandler {
     public:
         //! method called when the rpc server receive a new data
         /*!

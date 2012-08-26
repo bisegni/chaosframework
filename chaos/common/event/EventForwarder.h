@@ -17,8 +17,8 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef CHAOSFramework_EventServerHandler_h
-#define CHAOSFramework_EventServerHandler_h
+#ifndef CHAOSFramework_EventForwarder_h
+#define CHAOSFramework_EventForwarder_h
 
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/event/evt_desc/EventDescriptor.h>
@@ -36,10 +36,10 @@ namespace chaos {
              This method will be called by the implementation of RPCServer when a new data apck
              will be received
              @param newPack the new CDatawrapper instance pointer received by rpc server
-             @return the response to the pack, if there is one
+             @return a true value if the submitions to output queue has been done
              */
                 //virtual CDataWrapper * newRpcPackHasArrived(CDataWrapper& newPack) throw(CException) = 0;
-            virtual void submitEvent(EventDescriptor *event)  throw(CException) = 0;
+            virtual bool submitEvent(EventDescriptor *event)  throw(CException) = 0;
         };
     }
 }

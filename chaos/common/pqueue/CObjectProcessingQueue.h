@@ -184,7 +184,7 @@ namespace chaos {
             oldestElement = bufferQueue.front();
             
                 //remove the oldest data
-                //bufferQueue.pop();
+            bufferQueue.pop();
             
             return oldestElement;
         }

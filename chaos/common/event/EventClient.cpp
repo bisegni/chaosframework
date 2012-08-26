@@ -30,7 +30,6 @@ EventClient::EventClient(string *alias): NamedService(alias) {
  init the event adapter
  */
 void EventClient::init(CDataWrapper*) throw(CException) {
-    CObjectProcessingPriorityQueue<EventDescriptor>::init(threadNumber);
 }
 
 /*
@@ -46,8 +45,6 @@ void EventClient::start() throw(CException) {
 void EventClient::deinit() throw(CException) {
     LAPP_ << "Deinitializing Domain Actions Scheduler for domain:";
         //mutex::scoped_lock lockAction(actionAccessMutext);
-    CObjectProcessingPriorityQueue<EventDescriptor>::clear();
-    CObjectProcessingPriorityQueue<EventDescriptor>::deinit();
 }
 
 void EventClient::setThreadNumber(unsigned int newThreadNumber) {
@@ -56,14 +53,4 @@ void EventClient::setThreadNumber(unsigned int newThreadNumber) {
 
 unsigned int EventClient::getThreadNumber() {
     return threadNumber;
-}
-
-void EventClient::submitEvent(EventDescriptor *event) throw (CException) {
-    unsigned int priority = event->getEventPriority()*50;
-    CObjectProcessingPriorityQueue<EventDescriptor>::push(event, priority);
-}
-
-    //! abstract queue action method implementation
-void EventClient::processBufferElement(EventDescriptor *priorityElement, ElementManagingPolicy&) throw(CException) {
-    
 }

@@ -26,7 +26,7 @@
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/event/EventForwarder.h>
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
-
+#include <chaos/common/utility/ISDInterface.h>
 namespace chaos {
     
     class MessageBroker;
@@ -37,12 +37,11 @@ namespace chaos {
         /*!
          
          */
-        class EventClient : public NamedService, EventForwarder, CObjectProcessingPriorityQueue<EventDescriptor> {
+        class EventClient : public NamedService, EventForwarder, chaos::utility::ISDInterface {
             friend class chaos::MessageBroker;
-            uint8_t threadNumber;
             
         protected:
-            
+            uint8_t threadNumber;            
                 //Default Server Constructor
             EventClient(string *alias);
             
@@ -60,14 +59,10 @@ namespace chaos {
              deinit the event adapter
              */
             virtual void deinit() throw(CException);
-    
-                //! abstract queue action method implementation
-            virtual void processBufferElement(EventDescriptor*, ElementManagingPolicy&) throw(CException);
             
         public:
             void setThreadNumber(unsigned int newThreadNumber);
             unsigned int getThreadNumber();
-            virtual void submitEvent(EventDescriptor *event)  throw(CException);
         };
 
     }

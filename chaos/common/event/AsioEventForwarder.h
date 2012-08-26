@@ -26,28 +26,50 @@
 #include <string>
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
-
+#include <boost/thread/mutex.hpp>
+#include <boost/thread/condition.hpp>
+#include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
+#include <chaos/common/event/evt_desc/EventDescriptor.h>
 
 namespace chaos {
     namespace event{
         using namespace boost;
         
-        class AsioEventForwarder {
+        class AsioEventForwarder : public CObjectProcessingPriorityQueue<EventDescriptor> {
             std::string hanlderID;
+            
+        protected:
+            /*
+             init the event adapter
+             */
+            void init() throw(CException);
+            
+            /*
+             deinit the event adapter
+             */
+            void deinit() throw(CException);
+
             
         public:
             AsioEventForwarder(const boost::asio::ip::address& multicast_address,
                                unsigned short mPort,
                                boost::asio::io_service& io_service);
             
-            void handle_send_to(const boost::system::error_code& error, std::size_t bytes_transferred);
+            void handle_send_to(const boost::system::error_code& error);
             
-            void sendDataAsync(const unsigned char *buffer, uint16_t length);
+            void submitEventAsync(EventDescriptor *event);
+            
+                //! abstract queue action method implementation
+            void processBufferElement(EventDescriptor *priorityElement, ElementManagingPolicy& policy) throw(CException);
         private:
+            bool sent;
+                //! mutext used for unlock and wait esclusive access
+            boost::mutex wait_answer_mutex;
+                //! condition variable for wait the answer
+            condition_variable wait_answer_condition;
+            EventDescriptor *currentEventForwarded;
             boost::asio::ip::udp::socket _socket;
             boost::asio::ip::udp::endpoint _endpoint;
-            enum { max_length = 1024 };
-            char data_[max_length];
         };
     }
 }

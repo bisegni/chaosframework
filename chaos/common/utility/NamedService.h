@@ -14,13 +14,18 @@ namespace chaos {
     
     using namespace std;
     
+        //! Named service utilityes class
+    /*!
+     This class is a base class for all service that need to be recognized with an alias
+     */
     class NamedService {
         string *typeName;
     protected:
         NamedService(string *alias);
     public:
         /*
-         Return the adapter alias
+         Return the alias of the current instance
+         \return the alias
          */
         const char * getName() const;
     };

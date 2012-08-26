@@ -29,21 +29,47 @@ using namespace chaos::event;
 AsioEventForwarder::AsioEventForwarder(const boost::asio::ip::address& multicast_address,
                                        unsigned short mPort,
                                        boost::asio::io_service& io_service
-                                       ) :_endpoint(multicast_address, mPort), _socket(io_service, _endpoint.protocol()){
+                                       ) :_endpoint(multicast_address, mPort), _socket(io_service, _endpoint.protocol()) {
     hanlderID = UUIDUtil::generateUUIDLite();
-    memset(data_, 0, 1024);
+    sent = false;
 }
 
-void AsioEventForwarder::handle_send_to(const boost::system::error_code& error,
-                                        std::size_t bytes_transferred) {
+/*
+ init the event adapter
+ */
+void AsioEventForwarder::init() throw(CException) {
+    CObjectProcessingPriorityQueue<EventDescriptor>::init(1);
+}
+
+/*
+ deinit the event adapter
+ */
+void AsioEventForwarder::deinit() throw(CException) {
+    CObjectProcessingPriorityQueue<EventDescriptor>::clear();
+    CObjectProcessingPriorityQueue<EventDescriptor>::deinit();
+}
+
+void AsioEventForwarder::handle_send_to(const boost::system::error_code& error) {
     if (!error) {
-        memset(data_, 0, 1024);
+       
     }
+        //we need to delete the last event object
+    delete(currentEventForwarded);
+    currentEventForwarded = NULL;
+    sent = true;
+    boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
 }
 
-void AsioEventForwarder::sendDataAsync(const unsigned char *buffer, uint16_t length) {
-    std::memcpy(data_, buffer, length>1024?1024:length);
-    _socket.async_send_to(boost::asio::buffer(data_), _endpoint,
+void AsioEventForwarder::submitEventAsync(EventDescriptor *event) {
+    CObjectProcessingPriorityQueue<EventDescriptor>::push(event, event->getEventPriority());
+}
+
+void AsioEventForwarder::processBufferElement(EventDescriptor *priorityElement, ElementManagingPolicy& policy) throw(CException) {
+    boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
+    while ( ! sent ) wait_answer_condition.wait(lock);
+    policy.elementHasBeenDetached = true;
+    currentEventForwarded = priorityElement;
+    _socket.async_send_to(boost::asio::buffer(currentEventForwarded->getEventData(), currentEventForwarded->getEventDataLength()), _endpoint,
                           boost::bind(&AsioEventForwarder::handle_send_to, this,
                                       boost::asio::placeholders::error));
 

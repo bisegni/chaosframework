@@ -17,7 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-
+#include <chaos/common/cconstants.h>
 #include <chaos/common/event/AsioImplEventServer.h>
 
 using namespace std;
@@ -30,7 +30,6 @@ using namespace chaos::event;
 #define DEFAULT_COMMAND_EVENT_PORT      5002
 #define DEFAULT_CUSTOM_EVENT_PORT       5003
 
-#define DEFAULT_MULTICAST_IP            "239.255.0.1"
 #define DEFAULT_BASE_IP                 "0.0.0.0"
 
 AsioImplEventServer::AsioImplEventServer(string *alias):EventServer(alias) {
@@ -52,8 +51,8 @@ void AsioImplEventServer::start() throw(CException) {
         //register forall event
         //create the services
     shared_ptr<AsioEventHandler> handler(new AsioEventHandler(asio::ip::address::from_string(DEFAULT_BASE_IP),
-                                                              asio::ip::address::from_string(DEFAULT_MULTICAST_IP),
-                                                              io_service, 5000));
+                                                              asio::ip::address::from_string(EventConfiguration::CONF_EVENT_ALERT_MADDRESS),
+                                                              io_service, EventConfiguration::CONF_EVENT_PORT));
     handlerVec.push_back(handler);
 
     for (int idx = 0; idx < threadNumber; idx++) {

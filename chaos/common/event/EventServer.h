@@ -24,17 +24,16 @@
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/NamedService.h>
-
 #include <chaos/common/event/EventHandler.h>
-
+#include <chaos/common/utility/ISDInterface.h>
 
 
 namespace chaos {
     class MessageBroker;
-
+    
     namespace event{
         
-        class EventServer : public NamedService {
+        class EventServer : public NamedService , chaos::utility::ISDInterface {
             friend class chaos::MessageBroker;
             
                 //! handler that can manage the event reception

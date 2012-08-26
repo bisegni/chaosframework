@@ -23,7 +23,8 @@
 
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "DomainActionsScheduler.h"
+#include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
+#include <chaos/common/dispatcher/DomainActionsScheduler.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
 namespace chaos{
@@ -33,7 +34,7 @@ namespace chaos{
     /*!
      This class implemente the default CSLib dispatcher. It define an axecution buffer for every action domain
      */
-    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DefaultCommandDispatcher, CommandDispatcher) {
+    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DefaultCommandDispatcher, AbstractCommandDispatcher) {
         bool deinitialized;
         
         map<string, shared_ptr<DomainActionsScheduler> > dasMap;
@@ -44,7 +45,7 @@ namespace chaos{
         shared_ptr<DomainActionsScheduler>& getSchedulerForDomainName(string&);
 
     public:
-        DefaultCommandDispatcher(string *alias):CommandDispatcher(alias){};
+        DefaultCommandDispatcher(string *alias) : AbstractCommandDispatcher(alias){};
         /*!
          Register actions defined by AbstractActionDescriptor instance contained in the array
          */

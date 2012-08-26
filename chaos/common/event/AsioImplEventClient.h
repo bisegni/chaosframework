@@ -36,7 +36,7 @@ namespace chaos {
         using namespace std;
         using namespace boost;
         
-        const short multicast_port = 30001;
+        class AsioEventForwarder;
         
         REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(AsioImplEventClient, EventClient) {
         protected:
@@ -54,15 +54,16 @@ namespace chaos {
              deinit the event adapter
              */
             void deinit() throw(CException);
-            
+
         public:
             AsioImplEventClient(string *alias);
-            
+            bool submitEvent(EventDescriptor *event)  throw(CException);
         private:
+                //forwarder
+            AsioEventForwarder *alertForwarder;
+            
             boost::asio::io_service io_service;
             vector< shared_ptr<boost::thread> > serviceThread;
-            uint8_t threadNumber;
-            
         };
     }
 }

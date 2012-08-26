@@ -92,7 +92,7 @@ void MsgPackServer::deinit() throw(CException) {
  method has been requested by client
  */
 void MsgPackServer::dispatch(request req) {
-    
+    CHAOS_ASSERT(commandHandler)
         //data pack pointer
     CDataWrapper *cdataWrapperPack = NULL;
     try {

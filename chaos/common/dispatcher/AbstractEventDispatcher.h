@@ -1,7 +1,7 @@
 /*
  *	AbstractEventDispatcher.h
- *	!CHOAS
- *	Created by Bisegni Claudio.
+ *	CHAOSFramework
+ *	Created by Claudio Bisegni on 26/08/12.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
@@ -18,87 +18,62 @@
  *    	limitations under the License.
  */
 
-#ifndef CHAOSFramework_AbstractEventDispatcher_h
-#define CHAOSFramework_AbstractEventDispatcher_h
+#ifndef __CHAOSFramework__AbstractEventDispatcher__
+#define __CHAOSFramework__AbstractEventDispatcher__
 
+#include <chaos/common/utility/ISDInterface.h>
 #include <chaos/common/event/EventHandler.h>
 #include <chaos/common/utility/NamedService.h>
+
 namespace chaos {
     using namespace event;
-        //!Event Broker managment class
+    using namespace utility;
+
+        //! Abstract class for the event dispatcher
     /*!
-     This is the main class that manage the vent broadcasting from an internal chaos framework class and a remote chaos endpoint. 
-     Chaos event is base on multicast message for sharing event from different broker instance. The event are based on type of the event
-     and the data for a determinate event. A basic type are provided, other type can be customized. The heartbeat format is:
-     
-     32bit fro type, 
-     
-     The defined event type are:
-     
-     type EVT_HB, this type represent the event for a notification heratbeat message and the value is the deviceID sent from that device
-     type EVT_DEV_OFFLINE, this type represent the event for an offline notification for a determinated device, the value is the deviceID for that device
+     This is the base class that fix the rule for create an event dispatcher. The event dipsatcher has the
+     scope to forward the event received from the implemntation of the event server, to internal handler 
+     that has been register for specified kind of event.
      */
-    
-    
-    class AbstractEventDispatcher : public EventHandler, NamedService {
-       
+   
+    class AbstractEventDispatcher : public utility::ISDInterface, event::EventHandler, NamedService {
     protected:
-        //!Event dispatcher initialization
-        /*!
-         * Initzialize the Event Broker
-         */
-        void init() throw(CException);
         
-            //!Event dispatcher deinitialization
-        /*!
-         * All resource aredeinitialized
-         */
-        void deinit() throw(CException);
+            //-----------------------
+        void init(CDataWrapper *initData) throw(CException) = 0;
         
+            //-----------------------
+        void start() throw(CException) = 0;
+        
+            //-----------------------
+        void deinit() throw(CException) = 0;
+        
+            //-----------------------
+        virtual void executeAlertHandler(alert::AlertEventDescriptor *eventDescription)  throw(CException) = 0;
+        
+            //-----------------------
+        virtual void executeInstrumentHandler(instrument::InstrumentEventDescriptor *eventDescription)  throw(CException) = 0;
+        
+            //-----------------------
+        virtual void executeCommandHandler(command::CommandEventDescriptor *eventDescription)  throw(CException) = 0;
+        
+            //-----------------------
+        virtual void executeCustomHandler(custom::CustomEventDescriptor* eventDescription)  throw(CException) = 0;
     public:
-            //! Basic Constructor
         AbstractEventDispatcher(string *alias);
         
-            //! Basic Destructor
-        ~AbstractEventDispatcher();
-        
-            //! Action registration
+            //! Event handler registration
         /*
-
+            Perform the registration of an handler
          */
-        virtual void registerHandlerForEventFilter(EventHandler *handlerToRegister)  throw(CException);
+        virtual void registerHandlerForEventFilter(event::EventHandler *handlerToRegister)  throw(CException) = 0;
         
-            //! Event registration deregistration
+            //! Event handler deregistration
         /*
-
+            Perform the deregistration of an handler
          */
-        virtual void deregisterHanlder(EventHandler *handlerToRemove)  throw(CException);
-        
-        /*!
-         Thsi is the methdo that is called when the specified event is recognized
-         by dispatcher
-         */
-        virtual void executeAlertHandler(alert::AlertEventDescriptor *eventDescription)  throw(CException);
-            //!Handler execution method
-        /*!
-         Thsi is the methdo that is called when the specified event is recognized
-         by dispatcher
-         */
-        virtual void executeInstrumentHandler(instrument::InstrumentEventDescriptor *eventDescription)  throw(CException);
-            //!Handler execution method
-        /*!
-         Thsi is the methdo that is called when the specified event is recognized
-         by dispatcher
-         */
-        virtual void executeCommandHandler(command::CommandEventDescriptor *eventDescription)  throw(CException);
-            //!Handler execution method
-        /*!
-         Thsi is the methdo that is called when the specified event is recognized
-         by dispatcher
-         */
-        virtual void executeCustomHandler(custom::CustomEventDescriptor* eventDescription)  throw(CException);
-
+        virtual void deregisterHanlder(event::EventHandler *handlerToRemove)  throw(CException) = 0;
     };
     
 }
-#endif
+#endif /* defined(__CHAOSFramework__AbstractEventDispatcher__) */

@@ -1,5 +1,5 @@
 /*
- *	CommandDispatcher.h
+ *	AbstractCommandDispatcher.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef CommandDispatcher_H
-#define CommandDispatcher_H
+#ifndef AbstractCommandDispatcher_H
+#define AbstractCommandDispatcher_H
 
 #include <map>
 #include <string>
@@ -49,13 +49,13 @@ namespace chaos{
      to manage the priority execution all the registration of the domain and action are managed
      by this base class
      */
-    class CommandDispatcher : public RpcServerHanlder, Configurable {
+    class AbstractCommandDispatcher : public RpcServerHandler, Configurable {
             //friend class RpcClient;
         string *typeName;
         
             //! Rpc Client for action result
         /*!Pointer to the associated rpc client, used to send the result of an action*/
-        RpcMessageForwarder *rpcClientPtr;
+        RpcMessageForwarder *rpcForwarderPtr;
         
             //! Domain name <-> Action name association map
         /*!Contains the association between the domain name and all action for this domain*/
@@ -79,7 +79,7 @@ namespace chaos{
         
     public:
             //! Constructor
-        CommandDispatcher(string *alias);
+        AbstractCommandDispatcher(string *alias);
         
         
             //! Dispatch initialization with default value
@@ -134,9 +134,9 @@ namespace chaos{
         
         /*!
          Set the rpc forwarder implementation
-         \param rpc forwarder implementation instance
+         \param newRpcForwarderPtr rpc forwarder implementation instance
          */
-        void setRpcForwarder(RpcMessageForwarder *rpcClPtr);
+        void setRpcForwarder(RpcMessageForwarder *newRpcForwarderPtr);
         
     };
 }

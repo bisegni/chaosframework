@@ -1,4 +1,4 @@
-/*	
+/*
  *	MessageBroker.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
@@ -24,8 +24,11 @@
 #include <chaos/common/message/DeviceMessageChannel.h>
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/message/MessageChannel.h>
+#include <chaos/common/event/EventServer.h>
+#include <chaos/common/event/EventClient.h>
+#include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
 
-#define MB_LAPP LAPP_ << "[MessageBroker::init]- " 
+#define MB_LAPP LAPP_ << "[MessageBroker]- " 
 
 #define INIT_STEP   0
 #define DEINIT_STEP 1
@@ -37,6 +40,8 @@ using namespace chaos::event;
  
  */
 MessageBroker::MessageBroker(){
+    eventClient = NULL;
+    eventServer = NULL;
     rpcServer = NULL;
     rpcClient = NULL;
     commandDispatcher = NULL;
@@ -60,15 +65,10 @@ void MessageBroker::init() throw(CException) {
     //check if initialized
     SetupStateManager::levelUpFrom(INIT_STEP, "MessageBroker already initialized");
     
-    MB_LAPP << "Init Message Broker";
     
-    //get the dispatcher
-    MB_LAPP  << "Get DefaultCommandDispatcher implementation";
-    commandDispatcher = ObjectFactoryRegister<CommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher");
     
-    if(!commandDispatcher) throw CException(0, "CommandDispatcher implementation not found", "MessageBroker::init"); 
-    
-    //get global configuration reference
+    MB_LAPP << "Init pahse";
+        //get global configuration reference
     CDataWrapper *globalConfiguration = GlobalConfiguration::getInstance()->getConfiguration();
     
     
@@ -76,58 +76,58 @@ void MessageBroker::init() throw(CException) {
         throw CException(0, "No global configuraiton found", "MessageBroker::init");
     }
     
+    //get the dispatcher
+    MB_LAPP  << "Get DefaultCommandDispatcher implementation";
+    commandDispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher");
+    if(!commandDispatcher) throw CException(0, "CommandDispatcher implementation not found", "MessageBroker::init"); 
+
     //read the configuration for adapter type
     if(!globalConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE)) {
         throw CException(0, "No RPC Adapter type found in configuration", "MessageBroker::init");
     }
     
-    // get the rpc type to instantiate
-    string adapterType = globalConfiguration->getStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE);
-    MB_LAPP  << "The Adapter type is: " << adapterType;
-    //construct the rpc server and client name
-    string serverName = adapterType+"Server";
-    string clientName = adapterType+"Client";
-    
-    
-   MB_LAPP  << "Trying to startup Event Server: ";
-    eventServer = ObjectFactoryRegister<EventServer>::getInstance()->getNewInstanceByName("AsioImplEventServer");
-    if(eventServer){
-        MB_LAPP  << "Got Event Server: " << eventServer->getName();
-            //if has been found the adapter, initialize it
-        MB_LAPP  << "Init Event Server";
-        eventServer->init(globalConfiguration);
-    }else{
-        MB_LAPP  << "No Event Server";
+        //---------------------------- E V E N T ----------------------------
+    if(globalConfiguration->hasKey(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION)) {
+        string eventAdapterType = globalConfiguration->getStringValue(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION);
+            //construct the rpc server and client name
+        string eventServerName = eventAdapterType+"EventServer";
+        string eventClientName = eventAdapterType+"EventClient";
+        
+        MB_LAPP  << "Trying to initilize Event Server: " << eventServerName;
+        eventServer = ObjectFactoryRegister<EventServer>::getInstance()->getNewInstanceByName(eventServerName.c_str());
+        utility::ISDInterface::initImplementation(eventServer, globalConfiguration, eventServer->getName(), "MessageBroker::init");
+
+        
+        MB_LAPP  << "Trying to initilize Event Client: " << eventClientName;
+        eventClient = ObjectFactoryRegister<EventClient>::getInstance()->getNewInstanceByName(eventClientName.c_str());
+        utility::ISDInterface::initImplementation(eventClient, globalConfiguration, eventClientName.c_str(), "MessageBroker::init");
     }
+        //---------------------------- E V E N T ----------------------------
     
-    MB_LAPP  << "Trying to startup RPC Server: " << serverName;
-    rpcServer = ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(serverName.c_str());
-    if(rpcServer){
-        MB_LAPP  << "Got RPC Server: " << rpcServer->getName();
-        //set the dispatcher into the rpc adapter
-        rpcServer->setCommandDispatcher(commandDispatcher);
-        //if has been found the adapter, initialize it
-        MB_LAPP  << "Init Rpc Server";
-        rpcServer->init(globalConfiguration);
-    }else{
-        MB_LAPP  << "No RPC Adapter Server";
+        //---------------------------- R P C ----------------------------
+    if(globalConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE)){
+            // get the rpc type to instantiate
+        string rpcRapterType = globalConfiguration->getStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE);
+            //construct the rpc server and client name
+        string rpcServerName = rpcRapterType+"Server";
+        string rpcClientName = rpcRapterType+"Client";
+        
+        MB_LAPP  << "Trying to initilize RPC Server: " << rpcServerName;
+        rpcServer = ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(rpcServerName.c_str());
+        if(utility::ISDInterface::initImplementation(rpcServer, globalConfiguration, rpcServer->getName(), "MessageBroker::init")) {
+                //set the handler on the rpc server
+            rpcServer->setCommandDispatcher(commandDispatcher);
+        }
+        
+        
+        MB_LAPP  << "Trying to initilize RPC Client: " << rpcClientName;
+        rpcClient = ObjectFactoryRegister<RpcClient>::getInstance()->getNewInstanceByName(rpcClientName.c_str());
+        if(utility::ISDInterface::initImplementation(rpcClient, globalConfiguration, rpcClient->getName(), "MessageBroker::init")) {
+                //set the forwarder into dispatcher for answere
+            if(commandDispatcher) commandDispatcher->setRpcForwarder(rpcClient);
+        }
     }
-    
-    MB_LAPP  << "Trying to startup RPC Client: " << clientName;
-    rpcClient = ObjectFactoryRegister<RpcClient>::getInstance()->getNewInstanceByName(clientName.c_str());
-    if(rpcClient){
-        MB_LAPP  << "Got RPC Client: " << rpcClient->getName();
-        //set the dispatcher into the rpc adapter
-        //rpcServer->setCommandDispatcher(cmdDispatcher);
-        //if has been found the adapter, initialize it
-        MB_LAPP  << "Init Rpc Server";
-        rpcClient->init(globalConfiguration);
-        commandDispatcher->setRpcForwarder(rpcClient);
-    }else{
-        MB_LAPP  << "No RPC Adapter Server";
-    }
-    
-    
+        //---------------------------- R P C ----------------------------  
     MB_LAPP  << "Message Broker Initialized";
 }
 
@@ -157,15 +157,18 @@ void MessageBroker::deinit() throw(CException) {
     MB_LAPP  << "Clear channel map";
     activeChannel.clear();
 
-    eventServer->deinit();
     
-    MB_LAPP  << "Deinit RPC Adapter: " << rpcServer->getName();
-    rpcServer->deinit();
-    MB_LAPP  << "RPC Adapter deinitialized: " << rpcServer->getName();
+    MB_LAPP  << "Deinit event client: " << eventClient->getName();
+    utility::ISDInterface::deinitImplementation(eventClient, eventClient->getName(), "MessageBroker::deinit");
     
-    MB_LAPP  << "Deinit RPC Adapter: " << rpcServer->getName();
-    rpcClient->deinit();
-    MB_LAPP  << "RPC Adapter deinitialized: " << rpcServer->getName();
+    MB_LAPP  << "Deinit event server: " << eventServer->getName();
+    utility::ISDInterface::deinitImplementation(eventServer, eventServer->getName(), "MessageBroker::deinit");
+    
+    MB_LAPP  << "Deinit rpc server: " << rpcServer->getName();
+    utility::ISDInterface::deinitImplementation(rpcServer, rpcServer->getName(), "MessageBroker::deinit");
+    
+    MB_LAPP  << "Deinit rpc client: " << rpcClient->getName();
+    utility::ISDInterface::deinitImplementation(rpcClient, rpcClient->getName(), "MessageBroker::deinit");
     
     MB_LAPP  << "Deinit Command Dispatcher";
     commandDispatcher->deinit();
@@ -177,17 +180,43 @@ void MessageBroker::deinit() throw(CException) {
  * all part are started
  */
 void MessageBroker::start() throw(CException){
-        // MB_LAPP  << "Start Event Server: " << eventServer->getName();
-    eventServer->start();
     
-    MB_LAPP  << "Start RPC Adapter: " << rpcServer->getName();
-    rpcServer->start();
+    MB_LAPP  << "Start event server: " << eventServer->getName();
+    utility::ISDInterface::startImplementation(eventServer, eventServer->getName(), "MessageBroker::start");
     
+    MB_LAPP  << "Start event client: " << eventClient->getName();
+    utility::ISDInterface::startImplementation(eventClient, eventClient->getName(), "MessageBroker::start");
+
+    MB_LAPP  << "Start rpc server: " << rpcServer->getName();
+    utility::ISDInterface::startImplementation(rpcServer, rpcServer->getName(), "MessageBroker::start");
+
+    MB_LAPP  << "Start rpc server: " << rpcClient->getName();
+    utility::ISDInterface::startImplementation(rpcClient, rpcClient->getName(), "MessageBroker::start");
+
+
     MB_LAPP << "get the published host and port from rpc server";
     getPublishedHostAndPort(publishedHostAndPort);
     MB_LAPP << "Rpc server has been published in: " << publishedHostAndPort;
+}
+
+/*!
+ Return the port where the rpc server has been published
+ */
+int MessageBroker::getPublishedPort() {
+    CHAOS_ASSERT(rpcServer);
+    return rpcServer->getPublishedPort();
+}
+
+/*!
+ Fill the parameter withe rigth value of host and port for the internale
+ rpc server of message broker
+ */
+void MessageBroker::getPublishedHostAndPort(string& hostAndPort) {
+    CHAOS_ASSERT(rpcServer);
     
-    MB_LAPP  << "RPC Adapter started: " << rpcServer->getName();
+    hostAndPort = GlobalConfiguration::getInstance()->getLocalServerAddress();
+    hostAndPort.append(":");
+    hostAndPort.append(lexical_cast<string>(rpcServer->getPublishedPort()));
 }
 
 #pragma mark Action Registration
@@ -205,26 +234,6 @@ void MessageBroker::registerAction(DeclareAction* declareActionClass) {
 void MessageBroker::deregisterAction(DeclareAction* declareActionClass) {
     CHAOS_ASSERT(commandDispatcher)
     commandDispatcher->deregisterAction(declareActionClass);
-}
-
-/*!
- Return the port where the rpc server has been published
- */
-int MessageBroker::getPublishedPort() {
-    CHAOS_ASSERT(rpcServer);
-    return rpcServer->getPublishedPort();
-}
-
-/*!
- Fill the parameter withe rigth value of host and port for the internale
- rpc server of message broker
- */
-void MessageBroker::getPublishedHostAndPort(string& hostAndPort) {
-    CHAOS_ASSERT(rpcServer);
-
-    hostAndPort = GlobalConfiguration::getInstance()->getLocalServerAddress();
-    hostAndPort.append(":");
-    hostAndPort.append(lexical_cast<string>(rpcServer->getPublishedPort()));
 }
 
 #pragma mark Message Submission
@@ -246,17 +255,6 @@ bool MessageBroker::submiteRequest(string& serveAndPort,  CDataWrapper *request,
     request->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP, publishedHostAndPort);
     return rpcClient->submitMessage(serveAndPort, request, onThisThread);
 }
-
-/*
- Submite a message specifieng the address
- 
-bool MessageBroker::submitMessageToMetadataServer(CDataWrapper *message, bool onThisThread) {
-    if(!canUseMetadataServer) return false;
-    //check in debug for pointer
-    CHAOS_ASSERT(message)
-    //submite the message
-    return submitMessage(metadataServerAddress, message,onThisThread);
-}*/
 
 /*
  */

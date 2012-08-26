@@ -32,7 +32,7 @@ using namespace boost;
  */
 void DefaultCommandDispatcher::init(CDataWrapper *initConfiguration) throw(CException) {
     LDEF_CMD_DISPTC_APP_ << "Initializing Default Command Dispatcher";
-    CommandDispatcher::init(initConfiguration);
+    AbstractCommandDispatcher::init(initConfiguration);
     
     deinitialized = true;
     LDEF_CMD_DISPTC_APP_ << "Initilized Default Command Dispatcher";
@@ -63,7 +63,7 @@ void DefaultCommandDispatcher::deinit() throw(CException) {
     }
     
     deinitialized = false;
-    CommandDispatcher::deinit();
+    AbstractCommandDispatcher::deinit();
     LDEF_CMD_DISPTC_APP_ << "Deinitilized Default Command Dispatcher";
 }
 
@@ -75,7 +75,7 @@ void DefaultCommandDispatcher::registerAction(DeclareAction *declareActionClass)
     if(!declareActionClass) return;
     
         //register the action
-    CommandDispatcher::registerAction(declareActionClass);
+    AbstractCommandDispatcher::registerAction(declareActionClass);
     
         //we need to allocate the scheduler for every registered domain that doesn't exist
     
@@ -113,7 +113,7 @@ void DefaultCommandDispatcher::registerAction(DeclareAction *declareActionClass)
  */
 void DefaultCommandDispatcher::deregisterAction(DeclareAction *declareActionClass)  throw(CException) {
         //call superclass method
-    CommandDispatcher::deregisterAction(declareActionClass);
+    AbstractCommandDispatcher::deregisterAction(declareActionClass);
         //BUG
 }
 

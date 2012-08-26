@@ -30,7 +30,7 @@
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/RpcServer.h>
 #include <chaos/common/rpc/RpcClient.h>
-#include <chaos/common/dispatcher/CommandDispatcher.h>
+    //#include <chaos/common/dispatcher/CommandDispatcher.h>
 #include <chaos/common/general/Manager.h>
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/exception/CException.h>

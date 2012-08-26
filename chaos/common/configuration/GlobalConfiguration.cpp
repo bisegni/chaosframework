@@ -110,7 +110,9 @@ void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& o
     
     //configure the unique rpc plugin
     configuration.addStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE, "MsgPack");
-    
+        //configure the unique rpc plugin
+    configuration.addStringValue(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION, "AsioImpl");
+   
         //configure the live data
     CHECK_AND_DEFINE_OPTION(vector<string>, liveDataServer, InitOption::OPT_LIVE_DATA_SERVER_ADDRESS)
     if(liveDataServer.size()==0){

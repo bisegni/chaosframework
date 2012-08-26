@@ -24,7 +24,7 @@
 #include <boost/thread.hpp>
 
 #include <chaos/common/action/DomainActions.h>
-#include <chaos/common/dispatcher/CommandDispatcher.h>
+#include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
 #include <chaos/common/pqueue/ChaosProcessingQueue.h>
 #include <chaos/common/data/CDataWrapper.h>
 
@@ -35,7 +35,7 @@ namespace chaos {
     /*!
      This class define an environment where an aciotn can be executed
      */
-    class DomainActionsScheduler: public CObjectProcessingQueue<CDataWrapper> {
+    class DomainActionsScheduler: private CObjectProcessingQueue<CDataWrapper> {
         friend class CommandDispatcher;
             //! indicate the armed stato of this scheduler
         bool armed;
@@ -46,7 +46,7 @@ namespace chaos {
         shared_ptr<DomainActions> domainActionsContainer;
         
             //!reference to global dispatcher used to resubmit sub command
-        CommandDispatcher *dispatcher;
+        AbstractCommandDispatcher *dispatcher;
     protected:
         virtual void processBufferElement(CDataWrapper*, ElementManagingPolicy&) throw(CException);
         
@@ -76,7 +76,7 @@ namespace chaos {
         /*!
          Set the current dispatcher
          */
-        void setDispatcher(CommandDispatcher*);
+        void setDispatcher(AbstractCommandDispatcher*);
     };
 }
 #endif

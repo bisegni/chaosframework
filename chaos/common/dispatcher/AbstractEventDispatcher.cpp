@@ -1,7 +1,7 @@
 /*
- *	AbstractEventDispatcher.h
- *	!CHOAS
- *	Created by Bisegni Claudio.
+ *	AbstractEventDispatcher.cpp
+ *	CHAOSFramework
+ *	Created by Claudio Bisegni on 26/08/12.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
@@ -17,81 +17,9 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "AbstractEventDispatcher.h"
 
+#include <chaos/common/dispatcher/AbstractEventDispatcher.h>
 using namespace chaos;
-using namespace chaos::event;
 
-    //! Basic Constructor
-AbstractEventDispatcher::AbstractEventDispatcher(string *alias):NamedService(alias) {
-    
-}
-
-    //! Basic Destructor
-AbstractEventDispatcher::~AbstractEventDispatcher() {
-    
-}
-
-void AbstractEventDispatcher::init() throw(CException) {
-    
-}
-
-    //!AbstractEventDispatcher deinitialization
-/*!
- * All rpc adapter and command dispatcher are deinitilized. All instantiated channel are disposed
- */
-void AbstractEventDispatcher::deinit() throw(CException) {
-    
-}
-
-
-    //! Action registration
-/*
- 
- */
-void AbstractEventDispatcher::registerHandlerForEventFilter(EventHandler *handlerToRegister)  throw(CException) {
-    
-}
-
-    //! Event registration deregistration
-/*
- 
- */
-void AbstractEventDispatcher::deregisterHanlder(EventHandler *handlerToRemove)  throw(CException) {
-    
-}
-
-/*!
- Thsi is the methdo that is called when the specified event is recognized
- by dispatcher
- */
-void AbstractEventDispatcher::executeAlertHandler(alert::AlertEventDescriptor *eventDescription)  throw(CException) {
-    
-}
-
-    //!Handler execution method
-/*!
- Thsi is the methdo that is called when the specified event is recognized
- by dispatcher
- */
-void AbstractEventDispatcher::executeInstrumentHandler(instrument::InstrumentEventDescriptor *eventDescription)  throw(CException) {
-    
-}
-
-    //!Handler execution method
-/*!
- Thsi is the methdo that is called when the specified event is recognized
- by dispatcher
- */
-void AbstractEventDispatcher::executeCommandHandler(command::CommandEventDescriptor *eventDescription)  throw(CException) {
-    
-}
-
-    //!Handler execution method
-/*!
- Thsi is the methdo that is called when the specified event is recognized
- by dispatcher
- */
-void AbstractEventDispatcher::executeCustomHandler(custom::CustomEventDescriptor* eventDescription)  throw(CException) {
-    
+AbstractEventDispatcher::AbstractEventDispatcher(string *alias) : NamedService(alias) {
 }

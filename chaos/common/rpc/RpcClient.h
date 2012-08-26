@@ -26,10 +26,10 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/data/CDataWrapper.h>
-#include <chaos/common/dispatcher/CommandDispatcher.h>
+    //#include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
-
+#include <chaos/common/utility/ISDInterface.h>
 #include <chaos/common/rpc/RpcMessageForwarder.h>
 
 namespace chaos {
@@ -49,7 +49,7 @@ namespace chaos {
      Abstract class for standard adapter method for permit, to CommandManager
      the correct initialization for the adapter instance
      */
-    class RpcClient: public RpcMessageForwarder {
+    class RpcClient: public RpcMessageForwarder, chaos::utility::ISDInterface {
         friend class MessageBroker;
         string *typeName;
     protected:

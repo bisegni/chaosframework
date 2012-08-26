@@ -65,7 +65,7 @@ string& DomainActionsScheduler::getManagedDomainName() {
 /*
  
  */
-void DomainActionsScheduler::setDispatcher(CommandDispatcher *newDispatcher) {
+void DomainActionsScheduler::setDispatcher(AbstractCommandDispatcher *newDispatcher) {
     dispatcher = newDispatcher;
 }
 

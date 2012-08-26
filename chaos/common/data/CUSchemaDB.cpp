@@ -326,5 +326,5 @@ int CUSchemaDB::getDeviceAttributeDirection(string& deviceID, string& attributes
             break;
         }
     }
-
+    return 0;
 }

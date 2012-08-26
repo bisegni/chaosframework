@@ -1,5 +1,5 @@
 /*	
- *	CommandDispatcher.cpp
+ *	AbstractCommandDispatcher.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *	
@@ -18,25 +18,26 @@
  *    	limitations under the License.
  */
 #include "../global.h"
-#include "CommandDispatcher.h"
+    //#include "CommandDispatcher.h"
+#include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
 using namespace chaos;
 using namespace std;
 
-CommandDispatcher::CommandDispatcher(string *alias){
+AbstractCommandDispatcher::AbstractCommandDispatcher(string *alias){
     typeName = alias;
 }
 
 /*
  init the rpc adapter
  */
-void CommandDispatcher::init(CDataWrapper *initConfiguration) throw(CException) {
+void AbstractCommandDispatcher::init(CDataWrapper *initConfiguration) throw(CException) {
 }
 
 
 /*
  deinit the rpc adapter
  */
-void CommandDispatcher::deinit() throw(CException) {
+void AbstractCommandDispatcher::deinit() throw(CException) {
     
 }
 
@@ -44,7 +45,7 @@ void CommandDispatcher::deinit() throw(CException) {
  return an isntance of DomainActions pointer in relation to name
  but if the name is not present initialized it and add it to map
  */
-shared_ptr<DomainActions> CommandDispatcher::getDomainActionsFromName(string& domainName) {
+shared_ptr<DomainActions> AbstractCommandDispatcher::getDomainActionsFromName(string& domainName) {
         //check if is not preset, so we can allocate it
     if(!actionDomainExecutorMap.count(domainName)){
         shared_ptr<DomainActions>  result(new DomainActions(domainName));
@@ -63,7 +64,7 @@ shared_ptr<DomainActions> CommandDispatcher::getDomainActionsFromName(string& do
  return an isntance of DomainActions pointer and remove
  it form the map
  */
-void CommandDispatcher::removeDomainActionsFromName(string& domainName) {
+void AbstractCommandDispatcher::removeDomainActionsFromName(string& domainName) {
     if(!actionDomainExecutorMap.count(domainName)){
         actionDomainExecutorMap.erase(domainName);
     }
@@ -72,7 +73,7 @@ void CommandDispatcher::removeDomainActionsFromName(string& domainName) {
 /*
  Register actions defined by AbstractActionDescriptor instance contained in the array
  */
-void CommandDispatcher::registerAction(DeclareAction* declareActionClass)  throw(CException) {
+void AbstractCommandDispatcher::registerAction(DeclareAction* declareActionClass)  throw(CException) {
     if(!declareActionClass) return;
     
     vector<AbstActionDescShrPtr>::iterator actDescIter = declareActionClass->getActionDescriptors().begin();
@@ -96,7 +97,7 @@ void CommandDispatcher::registerAction(DeclareAction* declareActionClass)  throw
 /*
  Deregister actions for a determianted domain
  */
-void CommandDispatcher::deregisterAction(DeclareAction* declareActionClass)  throw(CException) {
+void AbstractCommandDispatcher::deregisterAction(DeclareAction* declareActionClass)  throw(CException) {
     if(!declareActionClass) return;
     
     vector<AbstActionDescShrPtr>::iterator actDescIter = declareActionClass->getActionDescriptors().begin();
@@ -120,32 +121,29 @@ void CommandDispatcher::deregisterAction(DeclareAction* declareActionClass)  thr
 /*
  Send a message
  */
-bool CommandDispatcher::submitMessage(string& serverAndPort,  CDataWrapper* messageToSend, bool onThisThread)  throw(CException) {
-    CHAOS_ASSERT(messageToSend && rpcClientPtr)
+bool AbstractCommandDispatcher::submitMessage(string& serverAndPort,  CDataWrapper* messageToSend, bool onThisThread)  throw(CException) {
+    CHAOS_ASSERT(messageToSend && rpcForwarderPtr)
     if(!messageToSend && serverAndPort.size()) return false;
-    
-        //messageToSend->addStringValue(RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP, serverAndPort);
-    
-    return rpcClientPtr->submitMessage(serverAndPort, messageToSend, onThisThread);
+    return rpcForwarderPtr->submitMessage(serverAndPort, messageToSend, onThisThread);
 }
 
 /*
  Update the configuration for the dispatcher
  */
-CDataWrapper* CommandDispatcher::updateConfiguration(CDataWrapper*)  throw(CException) {
+CDataWrapper* AbstractCommandDispatcher::updateConfiguration(CDataWrapper*)  throw(CException) {
     return NULL;
 }
 
 /*
  Return the adapter alias
  */
-const char * CommandDispatcher::getName() const {
+const char * AbstractCommandDispatcher::getName() const {
     return typeName->c_str();
 }
 
 /*
  
  */
-void CommandDispatcher::setRpcForwarder(RpcMessageForwarder *rpcClPtr){
-    rpcClientPtr = rpcClPtr;
+void AbstractCommandDispatcher::setRpcForwarder(RpcMessageForwarder *newRpcForwarderPtr){
+    rpcForwarderPtr = newRpcForwarderPtr;
 }

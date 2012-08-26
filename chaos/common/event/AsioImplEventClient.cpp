@@ -19,6 +19,8 @@
  */
 
 #include <chaos/common/event/AsioImplEventClient.h>
+#include <chaos/common/event/AsioEventForwarder.h>
+#include <chaos/common/cconstants.h>
 
 using namespace chaos;
 using namespace chaos::event;
@@ -32,6 +34,10 @@ AsioImplEventClient::AsioImplEventClient(string *alias):EventClient(alias) {
  */
 void AsioImplEventClient::init(CDataWrapper*) throw(CException) {
     threadNumber = 4;
+        //alertForwrder
+    alertForwarder = new AsioEventForwarder(asio::ip::address::from_string(event::EventConfiguration::CONF_EVENT_ALERT_MADDRESS),
+                                            event::EventConfiguration::CONF_EVENT_PORT,
+                                            io_service);
 }
 
 /*
@@ -58,4 +64,17 @@ void AsioImplEventClient::deinit() throw(CException) {
     for (std::size_t i = 0; i < serviceThread.size(); ++i)
         serviceThread[i]->join();
     
+}
+    //! abstract queue action method implementation
+bool AsioImplEventClient::submitEvent(EventDescriptor *event)  throw(CException) {
+    bool result = true;
+    switch (event->getEventType()) {
+        case 0:
+            alertForwarder->submitEventAsync(event);
+            break;
+            
+        default:
+            break;
+    }
+    return result;
 }

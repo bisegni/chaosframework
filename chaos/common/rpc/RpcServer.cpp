@@ -24,7 +24,7 @@ int RpcServer::getPublishedPort(){
 /*
  set the command dispatcher associated to the instance of rpc adapter
  */
-void RpcServer::setCommandDispatcher(RpcServerHanlder *newCommandHandler){
+void RpcServer::setCommandDispatcher(RpcServerHandler *newCommandHandler) {
     commandHandler = newCommandHandler;
 }
 
