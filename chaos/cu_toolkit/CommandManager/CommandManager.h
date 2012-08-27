@@ -25,23 +25,18 @@
 #include <vector>
 #include <map>
 #include <string>
-    //#include <boost/thread.hpp>
 #include <boost/shared_ptr.hpp>
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/RpcServer.h>
 #include <chaos/common/rpc/RpcClient.h>
-    //#include <chaos/common/dispatcher/CommandDispatcher.h>
 #include <chaos/common/general/Manager.h>
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/data/CDataWrapper.h>
-#include <chaos/common/utility/ObjectFactoryAliasInstantiation.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/general/Configurable.h>
-#include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/message/MessageBroker.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManagerDefaultAdapters.h>
-    //#include <chaos/ChaosCUToolkit.h"
 
 namespace chaos{
     using namespace std;

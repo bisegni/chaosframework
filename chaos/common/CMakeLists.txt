@@ -23,7 +23,6 @@ if(NOT MPIO_LIB)
     message(FATAL_ERROR "Library mpio required, but not found!")
 endif(NOT MPIO_LIB)
 
-
 ADD_LIBRARY(chaos_common SHARED ${common_lib_src})
 TARGET_LINK_LIBRARIES(chaos_common boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached msgpack msgpack-rpc mpio) 
         

@@ -25,6 +25,7 @@
 #include <chaos/common/cconstants.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/message/MDSMessageChannel.h>
+#include <chaos/common/utility/ObjectFactoryRegister.h>
 
 using namespace chaos;
 using namespace std;
