@@ -33,6 +33,10 @@ AbstractCommandDispatcher::AbstractCommandDispatcher(string *alias){
 void AbstractCommandDispatcher::init(CDataWrapper *initConfiguration) throw(CException) {
 }
 
+    //-----------------------
+void AbstractCommandDispatcher::start() throw(CException) {
+    
+}
 
 /*
  deinit the rpc adapter

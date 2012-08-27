@@ -2,7 +2,7 @@
  *	MessageBroker.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,15 +27,16 @@
 #include <chaos/common/event/EventServer.h>
 #include <chaos/common/event/EventClient.h>
 #include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
+#include <chaos/common/dispatcher/AbstractEventDispatcher.h>
 
-#define MB_LAPP LAPP_ << "[MessageBroker]- " 
+#define MB_LAPP LAPP_ << "[MessageBroker]- "
 
 #define INIT_STEP   0
 #define DEINIT_STEP 1
 
 using namespace chaos;
 using namespace chaos::event;
-   
+
 /*!
  
  */
@@ -62,7 +63,7 @@ MessageBroker::~MessageBroker() {
  * for the rpc client and server and for the dispatcher. All these are here initialized
  */
 void MessageBroker::init() throw(CException) {
-    //check if initialized
+        //check if initialized
     SetupStateManager::levelUpFrom(INIT_STEP, "MessageBroker already initialized");
     
     
@@ -73,21 +74,19 @@ void MessageBroker::init() throw(CException) {
     
     
     if(!globalConfiguration) {
-        throw CException(0, "No global configuraiton found", "MessageBroker::init");
-    }
-    
-    //get the dispatcher
-    MB_LAPP  << "Get DefaultCommandDispatcher implementation";
-    commandDispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher");
-    if(!commandDispatcher) throw CException(0, "CommandDispatcher implementation not found", "MessageBroker::init"); 
-
-    //read the configuration for adapter type
-    if(!globalConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE)) {
-        throw CException(0, "No RPC Adapter type found in configuration", "MessageBroker::init");
+        throw CException(1, "No global configuraiton found", "MessageBroker::init");
     }
     
         //---------------------------- E V E N T ----------------------------
     if(globalConfiguration->hasKey(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION)) {
+        eventDispatcher = ObjectFactoryRegister<AbstractEventDispatcher>::getInstance()->getNewInstanceByName("DefaultEventDispatcher");
+        if(!eventDispatcher)
+            throw CException(2, "Event dispatcher implementation not found", "MessageBroker::init");
+        
+        if(!utility::ISDInterface::initImplementation(eventDispatcher, globalConfiguration, "DefaultEventDispatcher", "MessageBroker::init"))
+            throw CException(3, "Event dispatcher has not been initialized due an error", "MessageBroker::init");
+        
+        
         string eventAdapterType = globalConfiguration->getStringValue(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION);
             //construct the rpc server and client name
         string eventServerName = eventAdapterType+"EventServer";
@@ -96,7 +95,7 @@ void MessageBroker::init() throw(CException) {
         MB_LAPP  << "Trying to initilize Event Server: " << eventServerName;
         eventServer = ObjectFactoryRegister<EventServer>::getInstance()->getNewInstanceByName(eventServerName.c_str());
         utility::ISDInterface::initImplementation(eventServer, globalConfiguration, eventServer->getName(), "MessageBroker::init");
-
+        
         
         MB_LAPP  << "Trying to initilize Event Client: " << eventClientName;
         eventClient = ObjectFactoryRegister<EventClient>::getInstance()->getNewInstanceByName(eventClientName.c_str());
@@ -106,6 +105,16 @@ void MessageBroker::init() throw(CException) {
     
         //---------------------------- R P C ----------------------------
     if(globalConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE)){
+            //get the dispatcher
+        MB_LAPP  << "Get DefaultCommandDispatcher implementation";
+        commandDispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher");
+        if(!commandDispatcher)
+            throw CException(2, "Command dispatcher implementation not found", "MessageBroker::init");
+        
+        if(!utility::ISDInterface::initImplementation(commandDispatcher, globalConfiguration, "DefaultCommandDispatcher", "MessageBroker::init"))
+            throw CException(3, "Command dispatcher has not been initialized due an error", "MessageBroker::init");
+        
+        
             // get the rpc type to instantiate
         string rpcRapterType = globalConfiguration->getStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE);
             //construct the rpc server and client name
@@ -126,8 +135,10 @@ void MessageBroker::init() throw(CException) {
                 //set the forwarder into dispatcher for answere
             if(commandDispatcher) commandDispatcher->setRpcForwarder(rpcClient);
         }
+    } else {
+        throw CException(4, "No RPC Adapter type found in configuration", "MessageBroker::init");
     }
-        //---------------------------- R P C ----------------------------  
+        //---------------------------- R P C ----------------------------
     MB_LAPP  << "Message Broker Initialized";
 }
 
@@ -136,19 +147,19 @@ void MessageBroker::init() throw(CException) {
  */
 void MessageBroker::deinit() throw(CException) {
     
-    //lock esclusive access to init phase
+        //lock esclusive access to init phase
     SetupStateManager::levelDownFrom(DEINIT_STEP, "MessageBroker already deinitialized");
-
+    
     MB_LAPP  << "Deinitilizing Message Broker";
     
     
-    for (map<string, MessageChannel*>::iterator channnelIter = activeChannel.begin(); 
-         channnelIter != activeChannel.end(); 
+    for (map<string, MessageChannel*>::iterator channnelIter = activeChannel.begin();
+         channnelIter != activeChannel.end();
          channnelIter++) {
         
         MessageChannel *messageChannelToDispose = channnelIter->second;
         
-        //deinit channel
+            //deinit channel
         messageChannelToDispose->deinit();
         
             //dispose it
@@ -156,7 +167,7 @@ void MessageBroker::deinit() throw(CException) {
     }
     MB_LAPP  << "Clear channel map";
     activeChannel.clear();
-
+    
     
     MB_LAPP  << "Deinit event client: " << eventClient->getName();
     utility::ISDInterface::deinitImplementation(eventClient, eventClient->getName(), "MessageBroker::deinit");
@@ -164,36 +175,41 @@ void MessageBroker::deinit() throw(CException) {
     MB_LAPP  << "Deinit event server: " << eventServer->getName();
     utility::ISDInterface::deinitImplementation(eventServer, eventServer->getName(), "MessageBroker::deinit");
     
-    MB_LAPP  << "Deinit rpc server: " << rpcServer->getName();
-    utility::ISDInterface::deinitImplementation(rpcServer, rpcServer->getName(), "MessageBroker::deinit");
-    
+    MB_LAPP  << "Deinit Event dispatcher";
+    utility::ISDInterface::deinitImplementation(eventDispatcher, "DefaultEventDispatcher", "MessageBroker::deinit");
+
     MB_LAPP  << "Deinit rpc client: " << rpcClient->getName();
     utility::ISDInterface::deinitImplementation(rpcClient, rpcClient->getName(), "MessageBroker::deinit");
     
-    MB_LAPP  << "Deinit Command Dispatcher";
-    commandDispatcher->deinit();
-    MB_LAPP  << "Command Dispatcher deinitialized";
+    MB_LAPP  << "Deinit rpc server: " << rpcServer->getName();
+    utility::ISDInterface::deinitImplementation(rpcServer, rpcServer->getName(), "MessageBroker::deinit");
 
+    MB_LAPP  << "Deinit Command Dispatcher";
+    utility::ISDInterface::deinitImplementation(commandDispatcher, "DefaultCommandDispatcher", "MessageBroker::deinit");
 }
 
 /*!
  * all part are started
  */
 void MessageBroker::start() throw(CException){
+    MB_LAPP  << "Start event dispathcer ";
+    utility::ISDInterface::startImplementation(eventDispatcher, "DefaultEventDispatcher", "MessageBroker::start");
     
     MB_LAPP  << "Start event server: " << eventServer->getName();
     utility::ISDInterface::startImplementation(eventServer, eventServer->getName(), "MessageBroker::start");
     
     MB_LAPP  << "Start event client: " << eventClient->getName();
     utility::ISDInterface::startImplementation(eventClient, eventClient->getName(), "MessageBroker::start");
+    
+    MB_LAPP  << "Start command dispathcer ";
+    utility::ISDInterface::startImplementation(commandDispatcher, "DefaultCommandDispatcher", "MessageBroker::start");
 
     MB_LAPP  << "Start rpc server: " << rpcServer->getName();
     utility::ISDInterface::startImplementation(rpcServer, rpcServer->getName(), "MessageBroker::start");
-
+    
     MB_LAPP  << "Start rpc server: " << rpcClient->getName();
     utility::ISDInterface::startImplementation(rpcClient, rpcClient->getName(), "MessageBroker::start");
-
-
+    
     MB_LAPP << "get the published host and port from rpc server";
     getPublishedHostAndPort(publishedHostAndPort);
     MB_LAPP << "Rpc server has been published in: " << publishedHostAndPort;
@@ -243,7 +259,7 @@ void MessageBroker::deregisterAction(DeclareAction* declareActionClass) {
  */
 bool MessageBroker::submitMessage(string& serveAndPort, CDataWrapper *message, bool onThisThread) {
     CHAOS_ASSERT(message && rpcClient)
-    //add answer id to datawrapper
+        //add answer id to datawrapper
     return rpcClient->submitMessage(serveAndPort, message, onThisThread);
 }
 
@@ -275,7 +291,7 @@ MessageChannel *MessageBroker::getNewMessageChannelForRemoteHost(CNodeNetworkAdd
             channel = new DeviceMessageChannel(this, static_cast<CDeviceNetworkAddress*>(nodeNetworkAddress));
             break;
     }
-    //check if the channel has been created
+        //check if the channel has been created
     if(channel){
         channel->init();
         boost::mutex::scoped_lock lock(mapChannelAcces);
@@ -284,7 +300,7 @@ MessageChannel *MessageBroker::getNewMessageChannelForRemoteHost(CNodeNetworkAdd
     return channel;
 }
 
-//!Metadata server channel creation
+    //!Metadata server channel creation
 /*!
  Performe the creation of metadata server
  */
@@ -295,7 +311,7 @@ MDSMessageChannel *MessageBroker::getMetadataserverMessageChannel(string& remote
     return static_cast<MDSMessageChannel*>(getNewMessageChannelForRemoteHost(mdsNodeAddr, MDS));
 }
 
-//!Device channel creation
+    //!Device channel creation
 /*!
  Performe the creation of device channel
  \param deviceNetworkAddress device node address
@@ -304,7 +320,7 @@ DeviceMessageChannel *MessageBroker::getDeviceMessageChannelFromAddress(CDeviceN
     return static_cast<DeviceMessageChannel*>(getNewMessageChannelForRemoteHost(deviceNetworkAddress, DEVICE));
 }
 
-//!Channel deallocation
+    //!Channel deallocation
 /*!
  Perform the message channel deallocation
  */
@@ -313,16 +329,16 @@ void MessageBroker::disposeMessageChannel(MessageChannel *messageChannelToDispos
     
     boost::mutex::scoped_lock lock(mapChannelAcces);
     
-    //check if the channel is active
+        //check if the channel is active
     if(activeChannel.count(messageChannelToDispose->channelID) == 0) return;
-
-    //remove the channel as active
+    
+        //remove the channel as active
     activeChannel.erase(messageChannelToDispose->channelID);
     
-    //deallocate it
+        //deallocate it
     messageChannelToDispose->deinit();
     
-    //dispose it
+        //dispose it
     delete(messageChannelToDispose);
 }
     //!Channel deallocation

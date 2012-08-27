@@ -38,11 +38,22 @@ namespace chaos{
         bool deinitialized;
         
         map<string, shared_ptr<DomainActionsScheduler> > dasMap;
-        
+    
         /*!
          return the scheduler for domain and if no present create a new instance
          */
         shared_ptr<DomainActionsScheduler>& getSchedulerForDomainName(string&);
+        
+    protected:
+        /*!
+         Initialization method for output buffer
+         */
+        void init(CDataWrapper *initConfiguration) throw(CException);
+        
+        /*!
+         Deinitialization method for output buffer
+         */
+        void deinit() throw(CException);
 
     public:
         DefaultCommandDispatcher(string *alias) : AbstractCommandDispatcher(alias){};
@@ -62,16 +73,7 @@ namespace chaos{
          will ever return an allocated object. The deallocaiton is demanded to caller
          */
         virtual CDataWrapper* dispatchCommand(CDataWrapper*) throw(CException);
-        
-        /*!
-         Initialization method for output buffer
-         */
-        void init(CDataWrapper *initConfiguration) throw(CException);
-        
-        /*!
-         Deinitialization method for output buffer
-         */
-        void deinit() throw(CException);
+
     };
 }
 #endif

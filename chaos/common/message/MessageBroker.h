@@ -31,7 +31,6 @@
 #include <chaos/common/rpcnet/CNodeNetworkAddress.h>
 #include <chaos/common/utility/SetupStateManager.h>
 
-
 namespace chaos {
 
     using namespace std;
@@ -52,6 +51,8 @@ namespace chaos {
     class MDSMessageChannel;
     class DeviceMessageChannel;
     class AbstractCommandDispatcher;
+    class AbstractEventDispatcher;
+    
     namespace event {
         class EventServer;
         class EventClient;
@@ -79,6 +80,9 @@ namespace chaos {
         
             //! Rpc server for message dispatcher
         AbstractCommandDispatcher *commandDispatcher;
+        
+            //! Rpc server for message dispatcher
+        AbstractEventDispatcher *eventDispatcher;
         
             //!keep track of active channel
         map<string, MessageChannel*> activeChannel;

@@ -38,7 +38,7 @@ namespace chaos {
    
     class AbstractEventDispatcher : public utility::ISDInterface, event::EventHandler, NamedService {
     protected:
-        
+      /*
             //-----------------------
         void init(CDataWrapper *initData) throw(CException) = 0;
         
@@ -58,7 +58,7 @@ namespace chaos {
         virtual void executeCommandHandler(command::CommandEventDescriptor *eventDescription)  throw(CException) = 0;
         
             //-----------------------
-        virtual void executeCustomHandler(custom::CustomEventDescriptor* eventDescription)  throw(CException) = 0;
+        virtual void executeCustomHandler(custom::CustomEventDescriptor* eventDescription)  throw(CException) = 0;*/
     public:
         AbstractEventDispatcher(string *alias);
         

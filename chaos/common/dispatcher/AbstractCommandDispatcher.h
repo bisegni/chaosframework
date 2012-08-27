@@ -33,6 +33,7 @@
 #include <chaos/common/action/DomainActions.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/general/Configurable.h>
+#include <chaos/common/utility/ISDInterface.h>
 
 /*
  Base class for the command implementation
@@ -43,13 +44,16 @@ namespace chaos{
     using namespace boost;
         //class RpcClient;
     
+    class MessageBroker;
+    
         //! Base class for the Chaos Action Dispatcher
     /*!
      The base class implement all the default needs for the dispatcher. The sublcass need only
      to manage the priority execution all the registration of the domain and action are managed
      by this base class
      */
-    class AbstractCommandDispatcher : public RpcServerHandler, Configurable {
+    class AbstractCommandDispatcher : public RpcServerHandler, Configurable, utility::ISDInterface {
+        friend class MessageBroker;
             //friend class RpcClient;
         string *typeName;
         
@@ -62,6 +66,15 @@ namespace chaos{
         map<string, shared_ptr<DomainActions> >  actionDomainExecutorMap;
         
     protected:
+        
+            //! Dispatch initialization with default value
+        virtual void init(CDataWrapper*) throw(CException);
+        
+            //-----------------------
+        virtual void start() throw(CException);
+        
+            //! Dispatch deinitialization with default value
+        virtual void deinit() throw(CException);
         
             //! Accessor to the object that manage the action for a domain
         /*!
@@ -80,14 +93,6 @@ namespace chaos{
     public:
             //! Constructor
         AbstractCommandDispatcher(string *alias);
-        
-        
-            //! Dispatch initialization with default value
-        virtual void init(CDataWrapper*) throw(CException);
-        
-        
-            //! Dispatch deinitialization with default value
-        virtual void deinit() throw(CException);
         
         /*
          update the dispatcher configuration

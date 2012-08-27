@@ -120,6 +120,7 @@ LAPP_ << "-----------------------------------------";
 namespace chaos{
 class ServerDelegator {
 public:
+    virtual ~ServerDelegator(){};
     virtual void stop() = 0;
 };
 }
