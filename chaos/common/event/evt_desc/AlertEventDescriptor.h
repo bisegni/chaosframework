@@ -34,8 +34,6 @@ namespace chaos {
                 EventAlertLastCodeNumber = EventAlertThresholdReset
             } EventAlertCode;
             
-                //! Alert event type code
-#define EVT_TYPE_CODE                 0
                 //! max priority for alert
 #define EVT_ALERT_DEFAULT_PRIORITY    63
                 //! offset for the code

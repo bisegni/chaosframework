@@ -28,7 +28,7 @@ using namespace chaos::event;
 
     //--------------------------------------------------------------
 EventDescriptor::EventDescriptor() {
-    eventData = new unsigned char[EVENT_DATA_BYTE_LENGTH];
+        //eventData = new unsigned char[EVENT_DATA_BYTE_LENGTH];
 }
 
     //--------------------------------------------------------------
@@ -47,7 +47,7 @@ void EventDescriptor::initData() {
 
     //--------------------------------------------------------------
 EventDescriptor::~EventDescriptor() {
-    if(eventData != NULL)  delete[] eventData;
+        //if(eventData != NULL)  delete[] eventData;
 }
 
     //--------------------------------------------------------------

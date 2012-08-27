@@ -25,8 +25,6 @@
 using namespace chaos;
 using namespace chaos::ui;
 
-DeviceDatasetCache *LLDataApi::datasetCache = NULL;
-
 LLDataApi::LLDataApi() {
     liveDriver = new IOMemcachedDriver();
     liveDriver->init();

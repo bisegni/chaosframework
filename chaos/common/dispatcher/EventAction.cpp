@@ -1,7 +1,7 @@
 /*
- *	AbstractEventDispatcher.cpp
+ *	EventAction.cpp
  *	CHAOSFramework
- *	Created by Claudio Bisegni on 26/08/12.
+ *	Created by Claudio Bisegni on 29/08/12.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
@@ -18,8 +18,4 @@
  *    	limitations under the License.
  */
 
-#include <chaos/common/dispatcher/AbstractEventDispatcher.h>
-using namespace chaos;
-
-AbstractEventDispatcher::AbstractEventDispatcher(string *alias) : NamedService(alias) {
-}
+#include "EventAction.h"

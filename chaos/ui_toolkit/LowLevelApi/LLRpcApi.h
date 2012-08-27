@@ -30,6 +30,7 @@
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/message/DeviceMessageChannel.h>
 #include <chaos/common/utility/SetupStateManager.h>
+#include <chaos/common/event/channel/AlertEventChannel.h>
 
 namespace chaos {
     namespace ui{
@@ -76,6 +77,9 @@ namespace chaos {
              Delete a previously instantiatedchannel
              */
             void deleteMessageChannel(NetworkAddressMessageChannel*);
+            
+            event::channel::AlertEventChannel *getNewAlertEventChannel() throw (CException);
+            void disposeEventChannel(event::channel::EventChannel *) throw (CException);
         };
     }
 }

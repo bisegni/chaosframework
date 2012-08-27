@@ -27,7 +27,6 @@
 #include <chaos/common/ChaosCommon.h>
 #include <chaos/common/utility/Atomic.h>
 
-#include <chaos/ui_toolkit/Common/DeviceDatasetCache.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLInfrastructureApi.h>
 
@@ -50,8 +49,6 @@ namespace chaos{
             friend class Singleton<ChaosUIToolkit>;
             /** \brief Client unique id */
             string clientInstanceUUID;
-            /** \brief A cached shared across more UIToolkit instance on the same machine*/
-            DeviceDatasetCache *globalDatasetCache;
             /** \brief point to the class the need to be allert when this UIToolkit must exit*/
             ServerDelegator *serverDelegator;  
 

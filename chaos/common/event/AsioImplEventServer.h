@@ -36,8 +36,10 @@ namespace chaos {
         using namespace boost;
         
         const short multicast_port = 30001;
+        class AsioEventHandler;
         
         REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(AsioImplEventServer, EventServer) {
+            friend class AsioEventHandler;
         protected:
             /*
              init the event adapter
@@ -54,6 +56,7 @@ namespace chaos {
              */
             void deinit() throw(CException);
             
+            void sendEventDataToRootHandler(unsigned char * buff, uint16_t length);
         public:
             AsioImplEventServer(string *alias);
             

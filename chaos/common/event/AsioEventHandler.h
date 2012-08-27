@@ -27,11 +27,15 @@
 
 namespace chaos {
     namespace event{
-        using namespace boost;
         
+        class AsioImplEventServer;
+        
+        using namespace boost;
         class AsioEventHandler {
-            std::string hanlderID;
+            friend class AsioImplEventServer;
             
+            std::string hanlderID;
+            AsioImplEventServer *asioServer;
         public:
             AsioEventHandler(const boost::asio::ip::address& listen_address,
                              const boost::asio::ip::address& multicast_address,

@@ -27,7 +27,7 @@
 namespace chaos {
     namespace event {
             //event pack struct bit length
-#define EVENT_DATA_BYTE_LENGTH              1024    //1024 byte * 8 bit
+#define EVENT_DATA_BYTE_LENGTH         1024    //1024 byte * 8 bit
 #define EVENT_DATA_BIT_LENGTH          8192    //1024 byte * 8 bit
         
             //header
@@ -45,6 +45,13 @@ namespace chaos {
             //data struct
 #define EVT_DATA_MAX_BYTE_LENGTH        1019 //1021 byte length for data
 #define EVT_DATA_MAX_BIT_LENGTH         8152 //1021 byte length for data
+        
+        typedef enum {
+            EventTypeAlert = 0,
+            EventTypeInstrument,
+            EventTypeCommand,
+            EventTypeCustom
+        } EventType;
         
         typedef enum {
             EventDataInt8 = 0,
@@ -88,7 +95,7 @@ namespace chaos {
             friend class EventFactory;
         protected:
                 //! event data pointer
-            unsigned char * eventData;
+            unsigned char eventData[EVENT_DATA_BYTE_LENGTH];
             
                 //!Set the size of the pack
             /*

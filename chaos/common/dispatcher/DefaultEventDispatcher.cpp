@@ -23,6 +23,8 @@
 using namespace chaos;
 using namespace chaos::event;
 
+#define EVTDISPAPP_ LAPP_ << "[DefaultEventDispatcher] - "
+
     //! Basic Constructor
 DefaultEventDispatcher::DefaultEventDispatcher(string *alias):AbstractEventDispatcher(alias) {
     
@@ -34,11 +36,11 @@ DefaultEventDispatcher::~DefaultEventDispatcher() {
 }
 
 void DefaultEventDispatcher::init(CDataWrapper* initData) throw(CException) {
-    
+    EVTDISPAPP_ << "Init";
 }
 
 void DefaultEventDispatcher::start() throw(CException) {
-    
+    EVTDISPAPP_ << "start"; 
 }
 
     //!DefaultEventDispatcher deinitialization
@@ -46,23 +48,22 @@ void DefaultEventDispatcher::start() throw(CException) {
  * All rpc adapter and command dispatcher are deinitilized. All instantiated channel are disposed
  */
 void DefaultEventDispatcher::deinit() throw(CException) {
+    EVTDISPAPP_ << "Deinit";
+}
+
+    //! Event handler registration
+/*
+ Perform the registration of an handler
+ */
+void DefaultEventDispatcher::registerEventActionForEventType(EventAction *eventAction, EventType eventType)  throw(CException) {
     
 }
 
-
-    //! Action registration
+    //! Event handler deregistration
 /*
- 
+ Perform the deregistration of an handler
  */
-void DefaultEventDispatcher::registerHandlerForEventFilter(event::EventHandler *handlerToRegister)  throw(CException) {
-    
-}
-
-    //! Event registration deregistration
-/*
- 
- */
-void DefaultEventDispatcher::deregisterHanlder(event::EventHandler *handlerToRemove)  throw(CException) {
+void DefaultEventDispatcher::deregisterEventAction(EventAction *eventAction)  throw(CException) {
     
 }
 
@@ -71,7 +72,7 @@ void DefaultEventDispatcher::deregisterHanlder(event::EventHandler *handlerToRem
  by dispatcher
  */
 void DefaultEventDispatcher::executeAlertHandler(alert::AlertEventDescriptor *eventDescription)  throw(CException) {
-    
+     EVTDISPAPP_ << "executeAlertHandler";
 }
 
     //!Handler execution method
@@ -80,7 +81,7 @@ void DefaultEventDispatcher::executeAlertHandler(alert::AlertEventDescriptor *ev
  by dispatcher
  */
 void DefaultEventDispatcher::executeInstrumentHandler(instrument::InstrumentEventDescriptor *eventDescription)  throw(CException) {
-    
+     EVTDISPAPP_ << "executeInstrumentHandler";
 }
 
     //!Handler execution method
@@ -89,7 +90,7 @@ void DefaultEventDispatcher::executeInstrumentHandler(instrument::InstrumentEven
  by dispatcher
  */
 void DefaultEventDispatcher::executeCommandHandler(command::CommandEventDescriptor *eventDescription)  throw(CException) {
-    
+     EVTDISPAPP_ << "executeCommandHandler";
 }
 
     //!Handler execution method
@@ -98,5 +99,5 @@ void DefaultEventDispatcher::executeCommandHandler(command::CommandEventDescript
  by dispatcher
  */
 void DefaultEventDispatcher::executeCustomHandler(custom::CustomEventDescriptor* eventDescription)  throw(CException) {
-    
+     EVTDISPAPP_ << "executeCustomHandler";
 }

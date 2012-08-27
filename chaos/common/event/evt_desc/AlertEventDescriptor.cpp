@@ -36,7 +36,7 @@ void AlertEventDescriptor::initData() {
         //use a temp ptr to go forward the buffer
     unsigned char * tmpPtr = eventData + EVT_HEADER_BYTE_LENGTH;
     
-    EventTypeAndPriority typeAndPriority = {EVT_TYPE_CODE, EVT_ALERT_DEFAULT_PRIORITY};
+    EventTypeAndPriority typeAndPriority = {EventTypeAlert, EVT_ALERT_DEFAULT_PRIORITY};
     *((uint8_t*)tmpPtr) = byte_swap<host_endian, little_endian, uint8_t>(*((uint8_t*)&typeAndPriority));
 }
 

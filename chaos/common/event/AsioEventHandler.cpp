@@ -18,6 +18,8 @@
  *    	limitations under the License.
  */
 #include <chaos/common/event/AsioEventHandler.h>
+#include <chaos/common/event/AsioImplEventServer.h>
+#include <chaos/common/event/EventHandler.h>
 #include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>
 
@@ -38,8 +40,7 @@ AsioEventHandler::AsioEventHandler(const boost::asio::ip::address& listen_addres
     socket_.bind(listen_endpoint);
     
         // Join the multicast group.
-    socket_.set_option(
-                       boost::asio::ip::multicast::join_group(multicast_address));
+    socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address));
     
     socket_.async_receive_from(
                                boost::asio::buffer(data_, max_length), sender_endpoint_,
@@ -51,6 +52,7 @@ AsioEventHandler::AsioEventHandler(const boost::asio::ip::address& listen_addres
 void AsioEventHandler::handle_receive_from(const boost::system::error_code& error,
                                            size_t bytes_recvd){
     if (!error) {
+        asioServer->sendEventDataToRootHandler((unsigned char*)data_, bytes_recvd);
         LAPP_ << hanlderID <<" "<< data_;
         memset(data_, 0, bytes_recvd);
         socket_.async_receive_from(boost::asio::buffer(data_, max_length), sender_endpoint_,

@@ -8,8 +8,12 @@
 
 #include <iostream>
 #include <iomanip>
-#include <chaos/common/event/evt_desc/AlertEventDescriptor.h>
-#include <chaos/common/event/evt_desc/EventFactory.h>
+#include <chaos/ui_toolkit/ChaosUIToolkit.h>
+#include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
+#include <chaos/common/event/channel/AlertEventChannel.h>
+
+using namespace chaos;
+using namespace chaos::ui;
 
 #define HEX( x ) setw(2) << setfill('0') << hex << (int)( x )
 
@@ -28,26 +32,20 @@ void printInfoMemory(chaos::event::EventDescriptor *test) {
     }
 }
 
-int main(int argc, const char * argv[])
+int main(int argc, char * argv[])
 {
 
-    chaos::event::alert::AlertEventDescriptor * test = new chaos::event::alert::AlertEventDescriptor();
-    chaos::event::EventDescriptor * test2 = NULL;
-    test->initData();
-    
-    int8_t value = 125;
-    test->setAlert(chaos::event::alert::EventAlertThresholdCrossing, UINT16_MAX, chaos::event::EventDataInt8, &value);
-    test->getAlertValue(&value, sizeof(int8_t));
-    std::cout << "First Test" << std::endl;
-    printInfoMemory(test);
-    
-    test2 = chaos::event::EventFactory::getEventInstance(test->getEventData(), test->getEventDataLength());
-    std::cout << "Second Test" << std::endl;
-    printInfoMemory(test2);
-    
-    if(test) delete(test);
-    if(test2) delete(test2);
-    
+    try {
+        chaos::ui::ChaosUIToolkit::getInstance()->init(argc, argv);
+        chaos::event::channel::AlertEventChannel *alertChannel = LLRpcApi::getInstance()->getNewAlertEventChannel();
+        
+        alertChannel->sendAlertInt32(event::alert::EventAlertThresholdCrossing, 200, 256);
+        sleep(600);
+        LLRpcApi::getInstance()->disposeEventChannel(alertChannel);
+    } catch (chaos::CException& ex) {
+        
+    }
+    ChaosUIToolkit::getInstance()->deinit();
     return 0;
 }
 

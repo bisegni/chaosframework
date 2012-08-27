@@ -29,6 +29,8 @@
 #include <queue>
 #include <boost/lexical_cast.hpp>
 
+#define COPQUEUE_LAPP_ LAPP_ << "[CObjectProcessingQueue] - "
+
 namespace chaos {
     using namespace std;
     using namespace boost;
@@ -78,7 +80,7 @@ namespace chaos {
             } catch (CException& ex) {
                 DECODE_CHAOS_EXCEPTION(ex)
             } catch (...) {
-                LAPP_ << "[CObjectProcessingQueue] Unkown exception";
+                COPQUEUE_LAPP_ << "Unkown exception";
             } 
             
                 //if weg got a listener notify it
@@ -112,16 +114,16 @@ namespace chaos {
          */
         virtual void init(int threadNumber) throw(CException) {
             inDeinit = false;
-            LAPP_ << "CObjectProcessingQueue init";        
+            COPQUEUE_LAPP_ << "init";
                 //add the n thread on the threadgroup
-            LAPP_ << "CObjectProcessingQueue creating " << threadNumber << " thread";
+            COPQUEUE_LAPP_ << "creating " << threadNumber << " thread";
             for (int idx = 0; idx<threadNumber; idx++) {
                 threadGroup.addThread(new CThread(this));
             }      
             
-            LAPP_ << "CObjectProcessingQueue Starting all thread";
+            COPQUEUE_LAPP_ << "Starting all thread";
             threadGroup.startGroup();
-            LAPP_ << "CObjectProcessingQueue Initialized";
+            COPQUEUE_LAPP_ << "Initialized";
         }
         
         /*
@@ -130,26 +132,26 @@ namespace chaos {
         virtual void deinit(bool waithForEmptyQueue=true) throw(CException) {
             boost::mutex::scoped_lock lock(qMutex);
             inDeinit = true;
-            LAPP_ << "CObjectProcessingQueue Deinitialization";
+            COPQUEUE_LAPP_ << "Deinitialization";
                 //stopping the group
-            LAPP_ << "CObjectProcessingQueue Deinitializing Threads";
+            COPQUEUE_LAPP_ << "Deinitializing Threads";
             
             if(waithForEmptyQueue){
-                LAPP_ << "CObjectProcessingQueue wait until queue is empty";
+                COPQUEUE_LAPP_ << "wait until queue is empty";
                 while( !bufferQueue.empty()){
                     emptyQueueConditionLock.wait(lock);
                 }
-                LAPP_ << "CObjectProcessingQueue queue is empty";
+                COPQUEUE_LAPP_ << "queue is empty";
             }
 
-            LAPP_ << "CObjectProcessingQueue Stopping thread";
+            COPQUEUE_LAPP_ << "Stopping thread";
             threadGroup.stopGroup(false);
             lock.unlock();
             
             liveThreadConditionLock.notify_all();
-            LAPP_ << "CObjectProcessingQueue join internal thread group";
+            COPQUEUE_LAPP_ << "join internal thread group";
             threadGroup.joinGroup();
-            LAPP_ << "CObjectProcessingQueue deinitlized";
+            COPQUEUE_LAPP_ << "deinitlized";
         }
         
         /*

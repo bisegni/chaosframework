@@ -1,7 +1,7 @@
 /*
- *	AbstractEventDispatcher.cpp
+ *	EventAction.cpp
  *	CHAOSFramework
- *	Created by Claudio Bisegni on 26/08/12.
+ *	Created by Claudio Bisegni on 29/08/12.
  *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
@@ -17,9 +17,16 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+#include <chaos/common/utility/UUIDUtil.h>
+#include <chaos/common/action/EventAction.h>
 
-#include <chaos/common/dispatcher/AbstractEventDispatcher.h>
 using namespace chaos;
 
-AbstractEventDispatcher::AbstractEventDispatcher(string *alias) : NamedService(alias) {
+EventAction::EventAction() {
+        //create the unique uuid for action, the uuid lite version can work in this context
+    actionUUID = UUIDUtil::generateUUIDLite();
+}
+
+EventAction::~EventAction() {
+    
 }

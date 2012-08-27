@@ -34,8 +34,10 @@
 namespace chaos {
     namespace event{
         using namespace boost;
+        class AsioImplEventClient;
         
         class AsioEventForwarder : public CObjectProcessingPriorityQueue<EventDescriptor> {
+            friend class AsioImplEventClient;
             std::string hanlderID;
             
         protected:

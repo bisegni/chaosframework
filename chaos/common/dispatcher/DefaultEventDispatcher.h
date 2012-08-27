@@ -78,17 +78,17 @@ namespace chaos {
             //! Basic Destructor
         virtual ~DefaultEventDispatcher();
         
-            //! Action registration
+            //! Event handler registration
         /*
-
+         Perform the registration of an handler
          */
-        void registerHandlerForEventFilter(event::EventHandler *handlerToRegister)  throw(CException);
+        virtual void registerEventActionForEventType(EventAction *eventAction, EventType eventType)  throw(CException);
         
-            //! Event registration deregistration
+            //! Event handler deregistration
         /*
-
+         Perform the deregistration of an handler
          */
-        void deregisterHanlder(event::EventHandler *handlerToRemove)  throw(CException);
+        virtual void deregisterEventAction(EventAction *eventAction)  throw(CException);
 
 
     };

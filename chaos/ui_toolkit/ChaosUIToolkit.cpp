@@ -38,16 +38,12 @@ using namespace chaos::ui;
  */
 ChaosUIToolkit::ChaosUIToolkit(){
 	clientInstanceUUID = UUIDUtil::generateUUIDLite();
-    
-    //init the caches
-    globalDatasetCache = new DeviceDatasetCache();
 }
 
 /*
  
  */
 ChaosUIToolkit::~ChaosUIToolkit(){
-    if(globalDatasetCache) delete(globalDatasetCache);
 }
 
     //! C and C++ attribute parser
@@ -75,15 +71,7 @@ void ChaosUIToolkit::init() throw(CException) {
          //init common substrate
         UI_LAPP_ << "Init Common substrate";
         ChaosCommon<ChaosUIToolkit>::init();
-
         
-        if(globalDatasetCache) {
-            UI_LAPP_ << "Init shared process ";
-            globalDatasetCache->init();
-        }
-        
-            //ssign static cache
-        LLDataApi::datasetCache = globalDatasetCache;
         UI_LAPP_ << "Init LLRpcApi";
         LLRpcApi::getInstance()->init();
         UI_LAPP_ << "LLRpcApi Initilized";
@@ -105,9 +93,4 @@ void ChaosUIToolkit::deinit() throw(CException) {
     UI_LAPP_ << "Deinit LLRpcApi";
     LLRpcApi::getInstance()->deinit();
     UI_LAPP_ << "LLRpcApi Deinitialized";
-    
-    if(globalDatasetCache) {
-        globalDatasetCache->deinit();
-    }
-    
 }

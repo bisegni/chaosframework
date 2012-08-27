@@ -71,7 +71,7 @@ namespace chaos {
         string actionDescription;
         
             //map for action
-        vector< shared_ptr<ActionParamDescription> > paramDescriptionVec;
+        vector< boost::shared_ptr<ActionParamDescription> > paramDescriptionVec;
         
         //only domain action can be set this value
         bool setEnabled(bool);
@@ -122,7 +122,7 @@ namespace chaos {
         /*!
          Return the array list of the param defined by this action
          */
-        vector< shared_ptr<ActionParamDescription> >& getParamDescriptions();
+        vector< boost::shared_ptr<ActionParamDescription> >& getParamDescriptions();
         
         /*!
          Add a new param
@@ -131,7 +131,7 @@ namespace chaos {
     };
     
     //define the ptr style defined
-    typedef shared_ptr<AbstractActionDescriptor> AbstActionDescShrPtr;
+    typedef boost::shared_ptr<AbstractActionDescriptor> AbstActionDescShrPtr;
 
 #pragma mark Template for Action Definition
     

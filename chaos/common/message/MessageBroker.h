@@ -28,9 +28,11 @@
 #include <chaos/common/rpc/RpcServer.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/action/DeclareAction.h>
+#include <chaos/common/action/EventAction.h>
 #include <chaos/common/rpcnet/CNodeNetworkAddress.h>
 #include <chaos/common/utility/SetupStateManager.h>
-
+#include <chaos/common/event/channel/EventChannel.h>
+#include <chaos/common/event/evt_desc/EventDescriptor.h>
 namespace chaos {
 
     using namespace std;
@@ -54,6 +56,9 @@ namespace chaos {
     class AbstractEventDispatcher;
     
     namespace event {
+        namespace channel {
+            class AlertEventChannel;
+        }
         class EventServer;
         class EventClient;
     }
@@ -85,9 +90,15 @@ namespace chaos {
         AbstractEventDispatcher *eventDispatcher;
         
             //!keep track of active channel
-        map<string, MessageChannel*> activeChannel;
+        map<string, MessageChannel*> activeRpcChannel;
+            //!Mutex for rpc channel managment
+        boost::mutex mapRpcChannelAcces;
         
-        boost::mutex mapChannelAcces;
+            //!keep track of active channel
+        map<string, event::channel::EventChannel*> activeEventChannel;
+        
+            //!Mutex for event channel managment
+        boost::mutex mapEventChannelAccess;
         
         string publishedHostAndPort;
         string metadataServerAddress;
@@ -129,18 +140,6 @@ namespace chaos {
          */
         virtual void start() throw(CException);
         
-            //! Action registration for the current isntance of MessageBroker
-        /*!
-         Register actions defined by AbstractActionDescriptor instance contained in the array
-         */
-        void registerAction(DeclareAction*);
-        
-            //!Action deregistration
-        /*!
-         Deregister actions owned by input parameter that are hosted in this current instance of message broker
-         */
-        void deregisterAction(DeclareAction*);
-        
             //!Get the published port
         /*!
          Return the port where the rpc server has been published
@@ -152,6 +151,57 @@ namespace chaos {
          Return the host and port where rpc server has benn published
          */
         void getPublishedHostAndPort(string&);
+        
+            //! event Action registration for the current instance of MessageBroker
+        /*!
+         Register an event actions defined for a detgerminated event type
+         \param eventAction the actio to register
+         \param eventType a type for the event for which the user want to register
+         */
+        void registerEventActionForEventType(EventAction *eventAction, event::EventType eventType);
+        
+            //!Event Action deregistration
+        /*!
+         Deregister an event action
+         */
+        void deregisterEventAction(EventAction *eventAction);
+        
+            //!Event channel creation
+        /*!
+         Performe the creation of an event channel of a desidered type
+         \param eventType is one of the value listent in EventType enum that specify the
+         type of the eventfor wich we want a channel
+         */
+        inline event::channel::EventChannel *getNewEventChannelFromType(event::EventType  eventType);
+        
+            //! Alert Event Creation
+        event::channel::AlertEventChannel *getNewAlertEventChannel();
+        
+            //!Event channel deallocation
+        /*!
+         Perform the event channel deallocation
+         */
+        void disposeEventChannel(event::channel::EventChannel *eventChannelToDispose);
+       
+        
+            //! event submission
+        /*!
+         Submit an event
+         \param event the new evento to submit
+         */
+        bool submitEvent(event::EventDescriptor *event);
+        
+            //! Action registration for the current isntance of MessageBroker
+        /*!
+         Register actions defined by AbstractActionDescriptor instance contained in the array
+         */
+        void registerAction(DeclareAction*);
+        
+            //!Action deregistration
+        /*!
+         Deregister actions owned by input parameter that are hosted in this current instance of message broker
+         */
+        void deregisterAction(DeclareAction*);
         
             //!message submition
         /*!

@@ -18,6 +18,7 @@
  *    	limitations under the License.
  */
 #include <chaos/common/cconstants.h>
+#include <chaos/common/global.h>
 #include <chaos/common/event/AsioImplEventServer.h>
 
 using namespace std;
@@ -40,7 +41,7 @@ AsioImplEventServer::AsioImplEventServer(string *alias):EventServer(alias) {
  init the event adapter
  */
 void AsioImplEventServer::init(CDataWrapper*) throw(CException) {
-    threadNumber = 4;
+    threadNumber = 1;
 }
 
 /*
@@ -53,6 +54,8 @@ void AsioImplEventServer::start() throw(CException) {
     shared_ptr<AsioEventHandler> handler(new AsioEventHandler(asio::ip::address::from_string(DEFAULT_BASE_IP),
                                                               asio::ip::address::from_string(EventConfiguration::CONF_EVENT_ALERT_MADDRESS),
                                                               io_service, EventConfiguration::CONF_EVENT_PORT));
+    handler->asioServer = this;
+    
     handlerVec.push_back(handler);
 
     for (int idx = 0; idx < threadNumber; idx++) {
@@ -73,3 +76,7 @@ void AsioImplEventServer::deinit() throw(CException) {
     
 }
 
+    //-----------------------
+void AsioImplEventServer::sendEventDataToRootHandler(unsigned char * buff, uint16_t length) {
+     dispatchEventToHandler(buff, length);
+}

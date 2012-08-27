@@ -24,6 +24,8 @@
 #include <queue>
 #include <vector>
 
+#define COPPQUEUE_LAPP_ LAPP_ << "[CObjectProcessingPriorityQueue] - "
+
 namespace chaos {
     using namespace std;
     template<typename T>
@@ -105,7 +107,7 @@ namespace chaos {
                     } catch (CException& ex) {
                         DECODE_CHAOS_EXCEPTION(ex)
                     } catch (...) {
-                        LAPP_ << "[CObjectProcessingQueue] Unkown exception";
+                        COPPQUEUE_LAPP_ << "Unkown exception";
                     }
                     
                         //if weg got a listener notify it
@@ -139,16 +141,16 @@ namespace chaos {
                  */
                 virtual void init(int threadNumber) throw(CException) {
                     inDeinit = false;
-                    LAPP_ << "CObjectProcessingQueue init";
+                    COPPQUEUE_LAPP_ << "init";
                         //add the n thread on the threadgroup
-                    LAPP_ << "CObjectProcessingQueue creating " << threadNumber << " thread";
+                    COPPQUEUE_LAPP_ << "creating " << threadNumber << " thread";
                     for (int idx = 0; idx<threadNumber; idx++) {
                         threadGroup.addThread(new CThread(this));
                     }
                     
-                    LAPP_ << "CObjectProcessingQueue Starting all thread";
+                    COPPQUEUE_LAPP_ << "Starting all thread";
                     threadGroup.startGroup();
-                    LAPP_ << "CObjectProcessingQueue Initialized";
+                    COPPQUEUE_LAPP_ << "Initialized";
                 }
                 
                 /*
@@ -157,26 +159,26 @@ namespace chaos {
                 virtual void deinit(bool waithForEmptyQueue=true) throw(CException) {
                     boost::mutex::scoped_lock lock(qMutex);
                     inDeinit = true;
-                    LAPP_ << "CObjectProcessingQueue Deinitialization";
+                    COPPQUEUE_LAPP_ << "Deinitialization";
                         //stopping the group
-                    LAPP_ << "CObjectProcessingQueue Deinitializing Threads";
+                    COPPQUEUE_LAPP_ << "Deinitializing Threads";
                     
                     if(waithForEmptyQueue){
-                        LAPP_ << "CObjectProcessingQueue wait until queue is empty";
+                        COPPQUEUE_LAPP_ << "wait until queue is empty";
                         while( !bufferQueue.empty()){
                             emptyQueueConditionLock.wait(lock);
                         }
-                        LAPP_ << "CObjectProcessingQueue queue is empty";
+                        COPPQUEUE_LAPP_ << "queue is empty";
                     }
                     
-                    LAPP_ << "CObjectProcessingQueue Stopping thread";
+                    COPPQUEUE_LAPP_ << "Stopping thread";
                     threadGroup.stopGroup(false);
                     lock.unlock();
                     
                     liveThreadConditionLock.notify_all();
-                    LAPP_ << "CObjectProcessingQueue join internal thread group";
+                    COPPQUEUE_LAPP_ << "join internal thread group";
                     threadGroup.joinGroup();
-                    LAPP_ << "CObjectProcessingQueue deinitlized";
+                    COPPQUEUE_LAPP_ << "deinitlized";
                 }
                 
                 bool push(T* elementToPush, unsigned int _priority = 50, bool _disposeOnDestroy = true){

@@ -38,6 +38,7 @@ void AsioImplEventClient::init(CDataWrapper*) throw(CException) {
     alertForwarder = new AsioEventForwarder(asio::ip::address::from_string(event::EventConfiguration::CONF_EVENT_ALERT_MADDRESS),
                                             event::EventConfiguration::CONF_EVENT_PORT,
                                             io_service);
+    alertForwarder->init();
 }
 
 /*
@@ -59,11 +60,12 @@ void AsioImplEventClient::start() throw(CException) {
  deinit the event adapter
  */
 void AsioImplEventClient::deinit() throw(CException) {
+    alertForwarder->deinit();
+    
     io_service.stop();
         // Wait for all threads in the pool to exit.
     for (std::size_t i = 0; i < serviceThread.size(); ++i)
         serviceThread[i]->join();
-    
 }
     //! abstract queue action method implementation
 bool AsioImplEventClient::submitEvent(EventDescriptor *event)  throw(CException) {

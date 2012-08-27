@@ -23,6 +23,7 @@
 #include <string>
 #include <chaos/ui_toolkit/HighLevelApi/DeviceController.h>
 #include <chaos/common/utility/Singleton.h>
+
 namespace chaos {
     namespace ui {
         using namespace std;

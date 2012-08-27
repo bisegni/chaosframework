@@ -51,7 +51,7 @@ namespace chaos{
     } TaskCycleStatData;
     
         //type for execution shared ptr
-    typedef shared_ptr<TaskCycleStatData> TaskCycleStatPtr;
+    typedef boost::shared_ptr<TaskCycleStatData> TaskCycleStatPtr;
     typedef CThreadExecutionTask *CThreadExecutionTaskSPtr;
     /*
      Base class for control unit thread

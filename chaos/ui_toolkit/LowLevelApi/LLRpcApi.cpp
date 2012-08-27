@@ -84,3 +84,12 @@ DeviceMessageChannel *LLRpcApi::getNewDeviceMessageChannel(CDeviceNetworkAddress
 void LLRpcApi::deleteMessageChannel(NetworkAddressMessageChannel *channelToDispose) {
     rpcMessageBroker->disposeMessageChannel(channelToDispose);
 }
+
+
+event::channel::AlertEventChannel *LLRpcApi::getNewAlertEventChannel() throw (CException) {
+    return rpcMessageBroker->getNewAlertEventChannel();
+}
+
+void LLRpcApi::disposeEventChannel(event::channel::EventChannel *eventChannel) throw (CException) {
+    rpcMessageBroker->disposeEventChannel(eventChannel);
+}

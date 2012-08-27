@@ -24,7 +24,8 @@
 #include <chaos/common/utility/ISDInterface.h>
 #include <chaos/common/event/EventHandler.h>
 #include <chaos/common/utility/NamedService.h>
-
+#include <chaos/common/action/EventAction.h>
+#include <chaos/common/event/evt_desc/EventDescriptor.h>
 namespace chaos {
     using namespace event;
     using namespace utility;
@@ -37,6 +38,7 @@ namespace chaos {
      */
    
     class AbstractEventDispatcher : public utility::ISDInterface, event::EventHandler, NamedService {
+        friend class MessageBroker;
     protected:
       /*
             //-----------------------
@@ -66,13 +68,13 @@ namespace chaos {
         /*
             Perform the registration of an handler
          */
-        virtual void registerHandlerForEventFilter(event::EventHandler *handlerToRegister)  throw(CException) = 0;
+        virtual void registerEventActionForEventType(EventAction *eventAction, EventType eventType)  throw(CException) = 0;
         
             //! Event handler deregistration
         /*
             Perform the deregistration of an handler
          */
-        virtual void deregisterHanlder(event::EventHandler *handlerToRemove)  throw(CException) = 0;
+        virtual void deregisterEventAction(EventAction *eventAction)  throw(CException) = 0;
     };
     
 }

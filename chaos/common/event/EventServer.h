@@ -35,12 +35,9 @@ namespace chaos {
         
         class EventServer : public NamedService , chaos::utility::ISDInterface {
             friend class chaos::MessageBroker;
-            
                 //! handler that can manage the event reception
             EventHandler *rootEventHandler;
-            
         protected:
-            
                 //Default Server Constructor
             EventServer(string *alias);
             

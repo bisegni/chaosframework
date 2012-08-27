@@ -28,6 +28,7 @@
 #include <chaos/common/event/EventClient.h>
 #include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
 #include <chaos/common/dispatcher/AbstractEventDispatcher.h>
+#include <chaos/common/event/channel/AlertEventChannel.h>
 
 #define MB_LAPP LAPP_ << "[MessageBroker]- "
 
@@ -94,7 +95,10 @@ void MessageBroker::init() throw(CException) {
         
         MB_LAPP  << "Trying to initilize Event Server: " << eventServerName;
         eventServer = ObjectFactoryRegister<EventServer>::getInstance()->getNewInstanceByName(eventServerName.c_str());
-        utility::ISDInterface::initImplementation(eventServer, globalConfiguration, eventServer->getName(), "MessageBroker::init");
+        if(utility::ISDInterface::initImplementation(eventServer, globalConfiguration, eventServer->getName(), "MessageBroker::init")){
+                //register the root handler on event server
+            eventServer->setEventHanlder(eventDispatcher);
+        }
         
         
         MB_LAPP  << "Trying to initilize Event Client: " << eventClientName;
@@ -152,9 +156,38 @@ void MessageBroker::deinit() throw(CException) {
     
     MB_LAPP  << "Deinitilizing Message Broker";
     
+        //---------------------------- E V E N T ----------------------------  
+    MB_LAPP  << "Deallocate all event channel";
+    for (map<string, event::channel::EventChannel*>::iterator channnelIter = activeEventChannel.begin();
+         channnelIter != activeEventChannel.end();
+         channnelIter++) {
+        
+        event::channel::EventChannel *eventChannelToDispose = channnelIter->second;
+        
+            //deinit channel
+        eventChannelToDispose->deinit();
+        
+            //dispose it
+        delete(eventChannelToDispose);
+    }
+    MB_LAPP  << "Clear event channel map";
+    activeEventChannel.clear();
     
-    for (map<string, MessageChannel*>::iterator channnelIter = activeChannel.begin();
-         channnelIter != activeChannel.end();
+    MB_LAPP  << "Deinit event client: " << eventClient->getName();
+    utility::ISDInterface::deinitImplementation(eventClient, eventClient->getName(), "MessageBroker::deinit");
+    
+    MB_LAPP  << "Deinit event server: " << eventServer->getName();
+    utility::ISDInterface::deinitImplementation(eventServer, eventServer->getName(), "MessageBroker::deinit");
+    
+    MB_LAPP  << "Deinit Event dispatcher";
+    utility::ISDInterface::deinitImplementation(eventDispatcher, "DefaultEventDispatcher", "MessageBroker::deinit");
+        //---------------------------- E V E N T ----------------------------
+
+    
+        //---------------------------- R P C ----------------------------
+    MB_LAPP  << "Deallocate all rpc channel";
+    for (map<string, MessageChannel*>::iterator channnelIter = activeRpcChannel.begin();
+         channnelIter != activeRpcChannel.end();
          channnelIter++) {
         
         MessageChannel *messageChannelToDispose = channnelIter->second;
@@ -165,19 +198,9 @@ void MessageBroker::deinit() throw(CException) {
             //dispose it
         delete(messageChannelToDispose);
     }
-    MB_LAPP  << "Clear channel map";
-    activeChannel.clear();
+    MB_LAPP  << "Clear rpc channel map";
+    activeRpcChannel.clear();
     
-    
-    MB_LAPP  << "Deinit event client: " << eventClient->getName();
-    utility::ISDInterface::deinitImplementation(eventClient, eventClient->getName(), "MessageBroker::deinit");
-    
-    MB_LAPP  << "Deinit event server: " << eventServer->getName();
-    utility::ISDInterface::deinitImplementation(eventServer, eventServer->getName(), "MessageBroker::deinit");
-    
-    MB_LAPP  << "Deinit Event dispatcher";
-    utility::ISDInterface::deinitImplementation(eventDispatcher, "DefaultEventDispatcher", "MessageBroker::deinit");
-
     MB_LAPP  << "Deinit rpc client: " << rpcClient->getName();
     utility::ISDInterface::deinitImplementation(rpcClient, rpcClient->getName(), "MessageBroker::deinit");
     
@@ -186,6 +209,8 @@ void MessageBroker::deinit() throw(CException) {
 
     MB_LAPP  << "Deinit Command Dispatcher";
     utility::ISDInterface::deinitImplementation(commandDispatcher, "DefaultCommandDispatcher", "MessageBroker::deinit");
+        //---------------------------- R P C ----------------------------
+
 }
 
 /*!
@@ -234,6 +259,102 @@ void MessageBroker::getPublishedHostAndPort(string& hostAndPort) {
     hostAndPort.append(":");
     hostAndPort.append(lexical_cast<string>(rpcServer->getPublishedPort()));
 }
+
+#pragma mark Event Registration and forwarding
+    //! event Action registration for the current instance of MessageBroker
+/*!
+ Register an event actions defined for a detgerminated event type
+ \param eventAction the actio to register
+ \param eventType a type for the event for which the user want to register
+ */
+void MessageBroker::registerEventActionForEventType(EventAction *eventAction, event::EventType eventType) {
+    CHAOS_ASSERT(eventDispatcher && eventAction);
+    eventDispatcher->registerEventActionForEventType(eventAction, eventType);
+}
+
+    //!Event Action deregistration
+/*!
+ Deregister an event action
+ */
+void MessageBroker::deregisterEventAction(EventAction *eventAction) {
+    CHAOS_ASSERT(eventDispatcher && eventAction);
+    eventDispatcher->deregisterEventAction(eventAction);
+}
+
+    //!Event channel creation
+/*!
+ Performe the creation of an event channel of a desidered type
+ \param eventType is one of the value listent in EventType enum that specify the
+ type of the eventfor wich we want a channel
+ */
+event::channel::EventChannel *MessageBroker::getNewEventChannelFromType(event::EventType  eventType) {
+    event::channel::EventChannel *newEventChannel = NULL;
+    switch (eventType) {
+        case event::EventTypeAlert:
+            newEventChannel = new event::channel::AlertEventChannel(this);
+            break;
+            
+        default:
+            break;
+    }
+        //check if the channel has been created
+    if(newEventChannel){
+        newEventChannel->init();
+        boost::mutex::scoped_lock lock(mapEventChannelAccess);
+        activeEventChannel.insert(make_pair(newEventChannel->channelID, newEventChannel));
+    }
+    
+    return newEventChannel;
+}
+    //!Device channel creation
+/*!
+ Performe the creation of device channel
+ \param deviceNetworkAddress device node address
+ */
+event::channel::AlertEventChannel *MessageBroker::getNewAlertEventChannel() {
+    return static_cast<event::channel::AlertEventChannel*>(MessageBroker::getNewEventChannelFromType(event::EventTypeAlert));
+}
+
+
+    //!Event channel deallocation
+/*!
+ Perform the event channel deallocation
+ */
+void MessageBroker::disposeEventChannel(event::channel::EventChannel *eventChannelToDispose) {
+    if(!eventChannelToDispose) return;
+    
+    boost::mutex::scoped_lock lock(mapEventChannelAccess);
+    
+        //check if the channel is active
+    if(activeEventChannel.count(eventChannelToDispose->channelID) == 0) return;
+    
+        //remove the channel as active
+    activeEventChannel.erase(eventChannelToDispose->channelID);
+    
+        //deallocate it
+    eventChannelToDispose->deinit();
+    
+        //dispose it
+    delete(eventChannelToDispose);
+}
+
+    //!message event
+/*!
+ Submit an event
+ \param event the new evento to submit
+ */
+bool MessageBroker::submitEvent(event::EventDescriptor *event) {
+    CHAOS_ASSERT(eventClient)
+    bool result = true;
+    try{
+        eventClient->submitEvent(event);
+    } catch(CException& ex) {
+        result = false;
+        DECODE_CHAOS_EXCEPTION(ex);
+    }
+    return result;
+}
+
 
 #pragma mark Action Registration
 /*
@@ -294,8 +415,8 @@ MessageChannel *MessageBroker::getNewMessageChannelForRemoteHost(CNodeNetworkAdd
         //check if the channel has been created
     if(channel){
         channel->init();
-        boost::mutex::scoped_lock lock(mapChannelAcces);
-        activeChannel.insert(make_pair(channel->channelID, channel));
+        boost::mutex::scoped_lock lock(mapRpcChannelAcces);
+        activeRpcChannel.insert(make_pair(channel->channelID, channel));
     }
     return channel;
 }
@@ -327,13 +448,13 @@ DeviceMessageChannel *MessageBroker::getDeviceMessageChannelFromAddress(CDeviceN
 void MessageBroker::disposeMessageChannel(MessageChannel *messageChannelToDispose) {
     if(!messageChannelToDispose) return;
     
-    boost::mutex::scoped_lock lock(mapChannelAcces);
+    boost::mutex::scoped_lock lock(mapRpcChannelAcces);
     
         //check if the channel is active
-    if(activeChannel.count(messageChannelToDispose->channelID) == 0) return;
+    if(activeRpcChannel.count(messageChannelToDispose->channelID) == 0) return;
     
         //remove the channel as active
-    activeChannel.erase(messageChannelToDispose->channelID);
+    activeRpcChannel.erase(messageChannelToDispose->channelID);
     
         //deallocate it
     messageChannelToDispose->deinit();
