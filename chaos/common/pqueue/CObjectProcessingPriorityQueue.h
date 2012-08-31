@@ -210,6 +210,8 @@ namespace chaos {
                         //get the last pointer from the queue
                     prioritizedElement = bufferQueue.top();
                     
+                        //remove the element
+                    bufferQueue.pop();
                     return prioritizedElement;
                 }
                 

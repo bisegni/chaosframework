@@ -75,6 +75,7 @@ void ChaosUIToolkit::init() throw(CException) {
         UI_LAPP_ << "Init LLRpcApi";
         LLRpcApi::getInstance()->init();
         UI_LAPP_ << "LLRpcApi Initilized";
+        UI_LAPP_ << "Initialization terminated";
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         exit(1);
@@ -93,4 +94,5 @@ void ChaosUIToolkit::deinit() throw(CException) {
     UI_LAPP_ << "Deinit LLRpcApi";
     LLRpcApi::getInstance()->deinit();
     UI_LAPP_ << "LLRpcApi Deinitialized";
+    UI_LAPP_ << "Deinitialization terminated";
 }

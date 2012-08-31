@@ -29,7 +29,7 @@ using namespace chaos::event;
 AsioEventForwarder::AsioEventForwarder(const boost::asio::ip::address& multicast_address,
                                        unsigned short mPort,
                                        boost::asio::io_service& io_service
-                                       ) :_endpoint(multicast_address, mPort), _socket(io_service, _endpoint.protocol()) {
+                                       ) :_endpoint(multicast_address, mPort), _socket(io_service) {
     hanlderID = UUIDUtil::generateUUIDLite();
     sent = true;
 }
@@ -38,6 +38,7 @@ AsioEventForwarder::AsioEventForwarder(const boost::asio::ip::address& multicast
  init the event adapter
  */
 void AsioEventForwarder::init() throw(CException) {
+    _socket.connect(_endpoint);
     CObjectProcessingPriorityQueue<EventDescriptor>::init(1);
 }
 
@@ -45,22 +46,10 @@ void AsioEventForwarder::init() throw(CException) {
  deinit the event adapter
  */
 void AsioEventForwarder::deinit() throw(CException) {
+    boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
+    _socket.close();
     CObjectProcessingPriorityQueue<EventDescriptor>::clear();
     CObjectProcessingPriorityQueue<EventDescriptor>::deinit();
-}
-
-void AsioEventForwarder::handle_send_to(const boost::system::error_code& error) {
-    boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
-    if (!error) {
-        LERR_ << error;
-    }else{
-        LERR_ << "Send successfull";
-    }
-        //we need to delete the last event object
-    delete(currentEventForwarded);
-    currentEventForwarded = NULL;
-    sent = true;
-    wait_answer_condition.notify_one();
 }
 
 void AsioEventForwarder::submitEventAsync(EventDescriptor *event) {
@@ -68,17 +57,5 @@ void AsioEventForwarder::submitEventAsync(EventDescriptor *event) {
 }
 
 void AsioEventForwarder::processBufferElement(EventDescriptor *priorityElement, ElementManagingPolicy& policy) throw(CException) {
-    boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
-    LAPP_ << "Waith for other send op";
-    while ( ! sent ) wait_answer_condition.wait(lock);
-    LAPP_ << "new send op";
-    sent = false;
-    policy.elementHasBeenDetached = true;
-    currentEventForwarded = priorityElement;
-    _socket.async_send_to(boost::asio::buffer(currentEventForwarded->getEventData(), currentEventForwarded->getEventDataLength()), _endpoint,
-                          boost::bind(&AsioEventForwarder::handle_send_to, this,
-                                      boost::asio::placeholders::error));
-    LAPP_ << "wait last send op";
-    while ( ! sent ) wait_answer_condition.wait(lock);
-
+    _socket.send(boost::asio::buffer(priorityElement->getEventData(), priorityElement->getEventDataLength()));
 }

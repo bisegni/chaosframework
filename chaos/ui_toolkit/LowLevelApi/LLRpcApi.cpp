@@ -26,32 +26,35 @@ using namespace boost;
 using namespace chaos;
 using namespace chaos::ui;
 
+#define LLRA_LAPP_ LAPP_ << "[LLRpcApi] - "
+
+
 #define INIT_STEP   0
 #define DEINIT_STEP 1
 /*
  LL Rpc Api static initialization it should be called once for application
  */
 void LLRpcApi::init()  throw (CException) {
-    LAPP_ << "Init LLRpcApi";
+    LLRA_LAPP_ << "Init";
     SetupStateManager::levelUpFrom(INIT_STEP, "LLRpcApi already initialized");
     
-    LAPP_ << "Init MessageBroker";
+    LLRA_LAPP_ << "Init MessageBroker";
     rpcMessageBroker->init();
-    LAPP_ << "MessageBroker Initialized";
-    LAPP_ << "Starting MessageBroker";
+    LLRA_LAPP_ << "MessageBroker Initialized";
+    LLRA_LAPP_ << "Starting MessageBroker";
     rpcMessageBroker->start();
-    LAPP_ << "MessageBroker Started";
+    LLRA_LAPP_ << "MessageBroker Started";
 }
 
 /*
  Deinitialization of LL rpc api
  */
 void LLRpcApi::deinit()  throw (CException) {
-    LAPP_ << "Deinit LLRpcApi";
+    LLRA_LAPP_ << "Deinit LLRpcApi";
     SetupStateManager::levelDownFrom(DEINIT_STEP, "LLRpcApi already deinitialized");
-    LAPP_ << "Deinit MessageBroker";
+    LLRA_LAPP_ << "Deinit MessageBroker";
     rpcMessageBroker->deinit();
-    LAPP_ << "MessageBroker deinitialized";
+    LLRA_LAPP_ << "MessageBroker deinitialized";
 }
 
 /*

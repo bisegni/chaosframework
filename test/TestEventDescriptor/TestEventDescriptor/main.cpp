@@ -40,7 +40,7 @@ int main(int argc, char * argv[])
         chaos::event::channel::AlertEventChannel *alertChannel = LLRpcApi::getInstance()->getNewAlertEventChannel();
         
         alertChannel->sendAlertInt32(event::alert::EventAlertThresholdCrossing, 200, 256);
-        sleep(600);
+        sleep(60);
         LLRpcApi::getInstance()->disposeEventChannel(alertChannel);
     } catch (chaos::CException& ex) {
         

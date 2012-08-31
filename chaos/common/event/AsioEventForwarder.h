@@ -57,8 +57,6 @@ namespace chaos {
                                unsigned short mPort,
                                boost::asio::io_service& io_service);
             
-            void handle_send_to(const boost::system::error_code& error);
-            
             void submitEventAsync(EventDescriptor *event);
             
                 //! abstract queue action method implementation
