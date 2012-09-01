@@ -41,23 +41,25 @@ namespace chaos {
             std::string hanlderID;
             
         protected:
-            /*
-             init the event adapter
+            /*!
+             init the asio event forwarder
              */
             void init() throw(CException);
             
-            /*
-             deinit the event adapter
+            /*!
+             deinit the asio event forwarder
              */
             void deinit() throw(CException);
 
             
         public:
+                //! default constructor
             AsioEventForwarder(const boost::asio::ip::address& multicast_address,
                                unsigned short mPort,
                                boost::asio::io_service& io_service);
             
-            void submitEventAsync(EventDescriptor *event);
+                //! submit the event
+            bool submitEventAsync(EventDescriptor *event);
             
                 //! abstract queue action method implementation
             void processBufferElement(EventDescriptor *priorityElement, ElementManagingPolicy& policy) throw(CException);
@@ -67,7 +69,6 @@ namespace chaos {
             boost::mutex wait_answer_mutex;
                 //! condition variable for wait the answer
             condition_variable wait_answer_condition;
-            EventDescriptor *currentEventForwarded;
             boost::asio::ip::udp::socket _socket;
             boost::asio::ip::udp::endpoint _endpoint;
         };

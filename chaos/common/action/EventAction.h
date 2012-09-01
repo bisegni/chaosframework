@@ -16,22 +16,37 @@ namespace chaos {
     
     using namespace std;
     
-    class AbstractEventDispatcer;
+    class EventTypeScheduler;
     
         //! Define an action for an event
     /*!
      
      */
     class EventAction {
-        friend class AbstractEventDispatcher;
+        friend class EventTypeScheduler;
         string actionUUID;
+        string domainName;
     protected:
-        
-        virtual void handleEvent(event::EventDescriptor *event) = 0;
+        virtual void handleEvent(const event::EventDescriptor * const event) = 0;
     public:
-        
+       
         EventAction();
         virtual ~EventAction();
+        
+        /*!
+         Set the name for the domain wich this action belong
+         */
+        void setDomainName(string& newDomainName);
+        
+        /*
+         Return c string of the domain name
+         */
+        const char * const getDomainName();
+        
+        /*
+         Return c string of the domain name
+         */
+        const char * const getUUID();
     };
 }
 

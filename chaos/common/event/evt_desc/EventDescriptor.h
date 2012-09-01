@@ -46,6 +46,16 @@ namespace chaos {
 #define EVT_DATA_MAX_BYTE_LENGTH        1019 //1021 byte length for data
 #define EVT_DATA_MAX_BIT_LENGTH         8152 //1021 byte length for data
         
+        
+            //! offset for the code
+#define EVT_SUB_CODE_OFFSET         5
+            //! offset for the priority
+#define EVT_SUB_CODE_PRIORITY_OFFSET      7
+            //! offset for the data type
+
+#define EVT_IDENTIFICATION_LENGTH_INFO_OFFSET 9
+#define EVT_IDENTIFICATION_VALUE_INFO_OFFSET 10
+        
         typedef enum {
             EventTypeAlert = 0,
             EventTypeInstrument,
@@ -75,7 +85,7 @@ namespace chaos {
         } EventHeader;
         
         /*!
-         A struct for define type and the priority of the event
+         A struct for define length and the value for the sender identifier
          */
         typedef struct {
             /*@{*/
@@ -97,6 +107,22 @@ namespace chaos {
                 //! event data pointer
             unsigned char eventData[EVENT_DATA_BYTE_LENGTH];
             
+            
+                //!Set the code of the alert
+            /*!
+             Set the allert code for this event
+             \param alertCode thecode of the alert
+             */
+            void setSubCode(uint16_t subCode);
+            
+            
+                //!Set the priority of this alert
+            /*!
+             Set the allert priority
+             \param alertPriority priority
+             */
+            void setSubCodePriority(uint16_t subCodePriority);
+            
                 //!Set the size of the pack
             /*
              This method is for internal use only to class tree, because this is used
@@ -104,6 +130,22 @@ namespace chaos {
              \param newSize is the new size of the packet
              */
             void setEventDataLength(uint8_t newSize);
+            
+                //! Set the sender identificaiton information
+            /*!
+                Check if all data is well formed and fix the max size of the identifier to 255 byte. If data exeed it si truncked
+             */
+            inline uint16_t setSenderIdentification(const char * const identification = NULL, uint8_t identificationLength = 0);
+            
+            /*!
+             Set the Value for the type and the identification, thia aslo adjust the total size of packet
+             \param identification is the identification for the sender
+             \param identificationLength is length of the indetification of the sender
+             \param valueType the enumeration that descrive the type of the value with EventDataType constant
+             \param valuePtr a pointer to the value
+             \param valueSizethe size of the value
+             */
+            void setIdentificationAndValueWithType(const char * identification, uint8_t identificationLength, EventDataType valueType, const void *valuePtr, uint16_t valueSize = 0);
             
         public:
             
@@ -126,25 +168,6 @@ namespace chaos {
              only the header and base length (header only length)
              */
             void initData();
-            
-                //!Event data inizialization with external memory
-            /*
-             This static method can be used to create an event indetified by external memory. memory can be an array as in the following example: char data[1024];
-             Check are done to memory dimension
-             \tparam E classthat identify the event type:
-             - AlertEventDescriptor
-             - InstrumentEventDescriptor
-             - CommandEventDescriptor
-             - CustomEventDescriptor
-             */
-            template <typename E, typename T, int N>
-            static EventDescriptor *initDataWithMemory(const unsigned char * const existingEventData) throw (CException) {
-                if(N != EVENT_DATA_BYTE_LENGTH)
-                    throw CException(0, "Event memory need to be 1024 byte length", "EventDescriptor::initDataWithMemory");
-                    
-                        //check the memory regior for the type to get wich class need to be extended
-                    
-                    }
             
                 //!Return the dversion form te header
             /*
@@ -186,6 +209,34 @@ namespace chaos {
              Return the data of the event
              */
             uint8_t getEventPriority();
+            
+            const char * const getIdentification();
+            
+            uint8_t getIdentificationlength();
+            
+            
+                //!Return the custom code of this alert
+            /*!
+             Return the alert custom code identified by this event
+             \return the custom code of the alert
+             */
+            uint16_t getSubCode();
+            
+            
+                //!Return the code of this alert
+            /*!
+             Return the alert code identified bythis event
+             \return the code of the alert
+             */
+            uint16_t getSubCodePriority();
+            
+            EventDataType getEventValueType();
+            
+            uint16_t getEventValueSize();
+            
+            void getEventValue(void *valuePtr, uint16_t *size);
+
+            
         };
     }
 }

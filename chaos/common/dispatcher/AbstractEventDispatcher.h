@@ -68,7 +68,7 @@ namespace chaos {
         /*
             Perform the registration of an handler
          */
-        virtual void registerEventActionForEventType(EventAction *eventAction, EventType eventType)  throw(CException) = 0;
+        virtual void registerEventAction(EventAction *eventAction, EventType eventType, const char * const identificationString = NULL)  throw(CException) = 0;
         
             //! Event handler deregistration
         /*

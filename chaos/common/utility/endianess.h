@@ -13,6 +13,7 @@
 #include <boost/static_assert.hpp>
 #include <boost/detail/endian.hpp>
 #include <stdexcept>
+#include <stdint.h>
 
 enum endianness
 {

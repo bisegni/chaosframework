@@ -47,7 +47,7 @@ void AlertEventDescriptor::initData() {
  \param alertCode thecode of the alert
  */
 void AlertEventDescriptor::setAlertCode(EventAlertCode alertCode) {
-    *((uint16_t*)(eventData+EVT_ALERT_CODE_OFFSET)) = byte_swap<host_endian, little_endian, uint16_t>(alertCode);
+    setSubCode(alertCode);
 }
 
     //!Return the code of this alert
@@ -56,8 +56,7 @@ void AlertEventDescriptor::setAlertCode(EventAlertCode alertCode) {
  \return the code of the alert
  */
 EventAlertCode AlertEventDescriptor::getAlertCode(){
-    uint16_t resultCode = byte_swap<little_endian, host_endian, uint16_t>( *((uint16_t*)(eventData+EVT_ALERT_CODE_OFFSET)));
-    return static_cast<EventAlertCode>(resultCode);
+    return (EventAlertCode)getSubCode();
 }
 
     //!Set the code of the alert
@@ -66,7 +65,7 @@ EventAlertCode AlertEventDescriptor::getAlertCode(){
  \param alertCode thecode of the alert
  */
 void AlertEventDescriptor::setAlertCustomCode(uint16_t alertCustomCode) {
-    *((uint16_t*)(eventData+EVT_ALERT_CODE_OFFSET)) = byte_swap<host_endian, little_endian, uint16_t>(alertCustomCode + EventAlertLastCodeNumber);
+    setSubCode(alertCustomCode + EventAlertLastCodeNumber);
 }
 
     //!Return the code of this alert
@@ -75,63 +74,8 @@ void AlertEventDescriptor::setAlertCustomCode(uint16_t alertCustomCode) {
  \return the code of the alert
  */
 uint16_t AlertEventDescriptor::getAlertCustomCode(){
-    return static_cast<EventAlertCode>(byte_swap<little_endian, host_endian, uint16_t>( *((uint16_t*)(eventData+EVT_ALERT_CODE_OFFSET)))-EventAlertLastCodeNumber);
+    return (getSubCode() - EventAlertLastCodeNumber);
 }
-
-    //!Set the priority of this alert
-/*
- Set the allert priority
- \param alertPriority priority
- */
-void AlertEventDescriptor::setAlertPriority(uint16_t alertPriority){
-    *((uint16_t*)(eventData + EVT_ALERT_PRORITY_OFFSET)) = byte_swap<host_endian, little_endian, uint16_t>(alertPriority);
-}
-
-    //!Return the code of this alert
-/*
- Return the alert code identified bythis event
- \return the code of the alert
- */
-uint16_t AlertEventDescriptor::getAlertPriority() {
-    return byte_swap<little_endian, host_endian, uint16_t>( *((uint16_t*)(eventData + EVT_ALERT_PRORITY_OFFSET)));
-    
-}
-
-EventDataType AlertEventDescriptor::getValuesType() {
-    return *((EventDataType*)(eventData + EVT_ALERT_DATA_TYPE_OFFSET));
-}
-
-uint16_t AlertEventDescriptor::setValueWithType(EventDataType valueType, const void *valuePtr, uint16_t valueSize) {
-    uint16_t dataDim = 0;
-    switch (valueType) {
-        case EventDataInt8:
-            dataDim = sizeof(uint8_t);
-            *((uint8_t*)(eventData + EVT_ALERT_DATA_OFFSET)) = byte_swap<host_endian, little_endian, uint8_t>(*((uint8_t*)valuePtr));
-            break;
-        case  EventDataInt16:
-            dataDim = sizeof(uint16_t);
-            *((uint16_t*)(eventData + EVT_ALERT_DATA_OFFSET)) = byte_swap<host_endian, little_endian, uint16_t>(*((uint16_t*)valuePtr));
-            break;
-        case  EventDataInt32:
-            dataDim = sizeof(uint32_t);
-            *((uint32_t*)(eventData + EVT_ALERT_DATA_OFFSET)) = byte_swap<host_endian, little_endian, uint32_t>(*((uint32_t*)valuePtr));
-            break;
-        case  EventDataInt64:
-            dataDim = sizeof(uint64_t);
-            *((uint64_t*)(eventData + EVT_ALERT_DATA_OFFSET)) = byte_swap<host_endian, little_endian, uint64_t>(*((uint64_t*)valuePtr));
-            break;
-        case  EventDataDouble:
-            dataDim = sizeof(double);
-            *((double*)(eventData + EVT_ALERT_DATA_OFFSET)) = byte_swap<host_endian, little_endian, double>(*((double*)valuePtr));
-            break;
-        case   EventDataCString:
-        case    EventDataBinary:
-            dataDim = valueSize;
-            memcpy((eventData + EVT_ALERT_DATA_OFFSET), valuePtr, valueSize);
-            break;
-    }
-    return dataDim;
- }
 
 /*!
  Set the Value for the type
@@ -139,13 +83,13 @@ uint16_t AlertEventDescriptor::setValueWithType(EventDataType valueType, const v
  \param valuePtr a pointer to the value
  \param valueSizethe size of the value
  */
-void AlertEventDescriptor::setAlert(EventAlertCode alertCode, uint16_t priority, EventDataType valueType, const void *valuePtr, uint16_t valueSize) {
+void AlertEventDescriptor::setAlert(const char * const indetifier, uint8_t identifierLength, uint16_t alertCode, uint16_t priority, EventDataType valueType, const void *valuePtr, uint16_t valueSize) {
         //2 byte
-    setAlertCode(alertCode);
+    setAlertCode((EventAlertCode)alertCode);
         //2 byte
-    setAlertPriority(priority);
+    setSubCodePriority(priority);
         //set the dimension, 10 is the fixed size of all information for alert pack
-    setEventDataLength(setValueWithType(valueType, valuePtr, valueSize) +  EVT_ALERT_DATA_OFFSET);
+    EventDescriptor::setIdentificationAndValueWithType(indetifier, identifierLength, valueType, valuePtr, valueSize);
 }
 
 /*!
@@ -154,21 +98,11 @@ void AlertEventDescriptor::setAlert(EventAlertCode alertCode, uint16_t priority,
  \param valuePtr a pointer to the value
  \param valueSizethe size of the value
  */
-void AlertEventDescriptor::setCustomAlert(uint16_t alertCustomCode, uint16_t priority, EventDataType valueType, const void *valuePtr, uint16_t valueSize) {
+void AlertEventDescriptor::setCustomAlert(const char * const indetifier, uint8_t identifierLength, uint16_t alertCustomCode, uint16_t priority, EventDataType valueType, const void *valuePtr, uint16_t valueSize) {
         //2 byte
     setAlertCustomCode(alertCustomCode);
         //2 byte
-    setAlertPriority(priority);
+    setSubCodePriority(priority);
         //set the dimension, 10 is the fixed size of all information for alert pack
-    setEventDataLength(setValueWithType(valueType, valuePtr, valueSize) +  EVT_ALERT_DATA_OFFSET);
-}
-
-uint16_t AlertEventDescriptor::getAlertValueSize() {
-    uint16_t packDimension = getEventDataLength();
-    return packDimension - EVT_ALERT_DATA_OFFSET;
-}
-
-void AlertEventDescriptor::getAlertValue(void *valuePtr, uint16_t valueSize) {
-    if(valuePtr != NULL || !valueSize) return;
-    memcpy(valuePtr, (eventData + EVT_ALERT_DATA_OFFSET), valueSize);
+    EventDescriptor::setIdentificationAndValueWithType(indetifier, identifierLength, valueType, valuePtr, valueSize);
 }

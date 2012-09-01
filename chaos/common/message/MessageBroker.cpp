@@ -267,9 +267,9 @@ void MessageBroker::getPublishedHostAndPort(string& hostAndPort) {
  \param eventAction the actio to register
  \param eventType a type for the event for which the user want to register
  */
-void MessageBroker::registerEventActionForEventType(EventAction *eventAction, event::EventType eventType) {
+void MessageBroker::registerEventAction(EventAction *eventAction, event::EventType eventType, const char * const identification) {
     CHAOS_ASSERT(eventDispatcher && eventAction);
-    eventDispatcher->registerEventActionForEventType(eventAction, eventType);
+    eventDispatcher->registerEventAction(eventAction, eventType, identification);
 }
 
     //!Event Action deregistration

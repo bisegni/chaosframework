@@ -17,7 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-
+#include <string>
 #include <chaos/common/global.h>
 #include <chaos/common/event/channel/AlertEventChannel.h>
 
@@ -35,8 +35,8 @@ AlertEventChannel::~AlertEventChannel() {
     
 }
 
-void AlertEventChannel::handleEvent(event::EventDescriptor *event) {
-    
+void AlertEventChannel::handleEvent(const event::EventDescriptor * const event) {
+    LAPP_ << "AlertEventChannel::handleEvent";
 }
 
     //--------------------inherited-----------------
@@ -44,47 +44,10 @@ void AlertEventChannel::activateChannelEventReception() {
         //activate the reception for the event type alert
     EventChannel::activateChannelEventReception(EventTypeAlert);
 }
-
     //-----------------------------------------------------
-int AlertEventChannel::sendAlert(alert::EventAlertCode alertCode, uint16_t priority, EventDataType typeOfData, const void *valuePtr, uint16_t valueSize) {
+int AlertEventChannel::sendEvent(const char * const identificationString, uint16_t subCode, uint16_t priority, EventDataType typeOfData, const void *valuePtr, uint16_t valueSize) {
     alert::AlertEventDescriptor *aed = new alert::AlertEventDescriptor();
     aed->initData();
-    aed->setAlert(alertCode, priority, typeOfData, valuePtr, valueSize);
-    return sendRawEvent(aed);
-}
-
-    //-----------------------------------------------------
-int AlertEventChannel::sendAlertInt8(alert::EventAlertCode alertCode, uint16_t priority, uint8_t value){
-    return sendAlert(alertCode, priority, EventDataInt8, &value);
-}
-
-    //-----------------------------------------------------
-int AlertEventChannel::sendAlertInt16(alert::EventAlertCode alertCode, uint16_t priority, uint16_t value){
-    return sendAlert(alertCode, priority, EventDataInt16, &value);
-}
-
-    //-----------------------------------------------------
-int AlertEventChannel::sendAlertInt32(alert::EventAlertCode alertCode, uint16_t priority, uint32_t value){
-    return sendAlert(alertCode, priority, EventDataInt32, &value);
-
-}
-
-    //-----------------------------------------------------
-int AlertEventChannel::sendAlertInt64(alert::EventAlertCode alertCode, uint16_t priority, uint64_t value){
-    return sendAlert(alertCode, priority, EventDataInt64, &value);
-}
-
-    //-----------------------------------------------------
-int AlertEventChannel::sendAlertDouble(alert::EventAlertCode alertCode, uint16_t priority, double value){
-    return sendAlert(alertCode, priority, EventDataDouble, &value);
-}
-
-    //-----------------------------------------------------
-int AlertEventChannel::sendAlertCString(alert::EventAlertCode alertCode, uint16_t priority, const char * value) {
-    return sendAlert(alertCode, priority, EventDataDouble, value, strlen(value));
-}
-
-    //-----------------------------------------------------
-int AlertEventChannel::sendAlertBinary(alert::EventAlertCode alertCode, uint16_t priority, void * value, uint16_t length) {
-    return sendAlert(alertCode, priority, EventDataDouble, value, length);
+    aed->setAlert(identificationString, std::strlen(identificationString), subCode, priority, typeOfData, valuePtr, valueSize);
+    return EventChannel::sendRawEvent(aed);
 }

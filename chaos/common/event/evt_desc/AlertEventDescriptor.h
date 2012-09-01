@@ -36,14 +36,7 @@ namespace chaos {
             
                 //! max priority for alert
 #define EVT_ALERT_DEFAULT_PRIORITY    63
-                //! offset for the code
-#define EVT_ALERT_CODE_OFFSET         5
-                //! offset for the priority
-#define EVT_ALERT_PRORITY_OFFSET      7
-                //! offset for the data type
-#define EVT_ALERT_DATA_TYPE_OFFSET    8
-                //! offset for the data
-#define EVT_ALERT_DATA_OFFSET         9
+
             
                 //REGISTER_AND_DEFINE_NOALIAS_DERIVED_CLASS_FACTORY(AlertEventDescriptor,EventDescriptor)  {
             class AlertEventDescriptor : public EventDescriptor {
@@ -63,23 +56,6 @@ namespace chaos {
                  \param customAlertCode the custom code of the alert
                  */
                 inline void setAlertCustomCode(uint16_t customAlertCode);
-                
-                
-                    //!Set the priority of this alert
-                /*!
-                 Set the allert priority
-                 \param alertPriority priority
-                 */
-                inline void setAlertPriority(uint16_t alertPriority);
-                
-                /*!
-                 Set the Value for the type
-                 \param valueType the enumeration that descrive the type of the value with EventDataType constant
-                 \param valuePtr a pointer to the value
-                 \param valueSizethe size of the value
-                 \return the length of the value
-                 */
-                inline uint16_t setValueWithType(EventDataType valueType, const void *valuePtr, uint16_t valueSize = 0);
                 
             public:
                 
@@ -127,7 +103,7 @@ namespace chaos {
                  \param valuePtr a pointer to the value
                  \param valueSizethe size of the value
                  */
-                void setAlert(EventAlertCode alertCode, uint16_t priority, EventDataType valueType, const void *valuePtr, uint16_t valueSize = 0);
+                void setAlert(const char * const indetifier, uint8_t identifierLength, uint16_t alertCode, uint16_t priority, EventDataType valueType, const void *valuePtr, uint16_t valueSize = 0);
                 
                 /*!
                  Set the Value for the custom type
@@ -135,11 +111,7 @@ namespace chaos {
                  \param valuePtr a pointer to the value
                  \param valueSizethe size of the value
                  */
-                void setCustomAlert(uint16_t alertCustomCode, uint16_t priority, EventDataType valueType, const void *valuePtr, uint16_t valueSize = 0);
-                
-                uint16_t getAlertValueSize();
-                
-                void getAlertValue(void *valuePtr, uint16_t valueSize);
+                void setCustomAlert(const char * const indetifier, uint8_t identifierLength, uint16_t alertCustomCode, uint16_t priority, EventDataType valueType, const void *valuePtr, uint16_t valueSize = 0);
             };
         }
     }

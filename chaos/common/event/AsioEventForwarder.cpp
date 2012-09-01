@@ -52,8 +52,8 @@ void AsioEventForwarder::deinit() throw(CException) {
     CObjectProcessingPriorityQueue<EventDescriptor>::deinit();
 }
 
-void AsioEventForwarder::submitEventAsync(EventDescriptor *event) {
-    CObjectProcessingPriorityQueue<EventDescriptor>::push(event, event->getEventPriority());
+bool AsioEventForwarder::submitEventAsync(EventDescriptor *event) {
+    return CObjectProcessingPriorityQueue<EventDescriptor>::push(event, event->getEventPriority());
 }
 
 void AsioEventForwarder::processBufferElement(EventDescriptor *priorityElement, ElementManagingPolicy& policy) throw(CException) {

@@ -36,56 +36,20 @@ namespace chaos {
              */
             class AlertEventChannel : public EventChannel {
                 friend class chaos::MessageBroker;
-                
-                    //!
-                /*!
-                 */
-                inline int sendAlert(alert::EventAlertCode alertCode, uint16_t priority, EventDataType typeOfData, const void *valuePtr, uint16_t valueSize = 0);
-         
+
             protected:
                 
                 AlertEventChannel(MessageBroker *rootBroker);
                 
                 ~AlertEventChannel();
-                void handleEvent(event::EventDescriptor *event);
+                
+                void handleEvent(const event::EventDescriptor * const event);
+                
+                int sendEvent(const char * const identificationString, uint16_t subCode, uint16_t priority, EventDataType typeOfData, const void *valuePtr, uint16_t valueSize = 0);
             public:
                 
                     //--------------------inherited-----------------
                 void activateChannelEventReception();
-                    //!
-                /*!
-                 */
-                int sendAlertInt8(alert::EventAlertCode alertCode, uint16_t priority, uint8_t value);
-                
-                    //!
-                /*!
-                 */
-                int sendAlertInt16(alert::EventAlertCode alertCode, uint16_t priority, uint16_t value);
-                
-                    //!
-                /*!
-                 */
-                int sendAlertInt32(alert::EventAlertCode alertCode, uint16_t priority, uint32_t value);
-                
-                    //!
-                /*!
-                 */
-                int sendAlertInt64(alert::EventAlertCode alertCode, uint16_t priority, uint64_t value);
-                
-                    //!
-                /*!
-                 */
-                int sendAlertDouble(alert::EventAlertCode alertCode, uint16_t priority, double value);
-                
-                    //!
-                /*!
-                 */
-                int sendAlertCString(alert::EventAlertCode alertCode, uint16_t priority, const char * value);
-                
-                    //!
-                /*!
-                 */
-                int sendAlertBinary(alert::EventAlertCode alertCode, uint16_t priority, void * value, uint16_t length);
             };
             
         }

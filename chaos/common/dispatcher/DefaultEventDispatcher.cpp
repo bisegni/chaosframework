@@ -20,6 +20,8 @@
 
 
 #include <chaos/common/dispatcher/DefaultEventDispatcher.h>
+#include <chaos/common/dispatcher/EventTypeScheduler.h>
+
 using namespace chaos;
 using namespace chaos::event;
 
@@ -37,6 +39,9 @@ DefaultEventDispatcher::~DefaultEventDispatcher() {
 
 void DefaultEventDispatcher::init(CDataWrapper* initData) throw(CException) {
     EVTDISPAPP_ << "Init";
+    alertEventScheduler = new EventTypeScheduler();
+    if(!alertEventScheduler) throw CException(0, "Error allocating Alert Event Scheduler", "DefaultEventDispatcher::init");
+    alertEventScheduler->init();
 }
 
 void DefaultEventDispatcher::start() throw(CException) {
@@ -49,14 +54,28 @@ void DefaultEventDispatcher::start() throw(CException) {
  */
 void DefaultEventDispatcher::deinit() throw(CException) {
     EVTDISPAPP_ << "Deinit";
+    if(alertEventScheduler) {
+        alertEventScheduler->deinit();
+        delete(alertEventScheduler);
+    }
 }
 
     //! Event handler registration
 /*
  Perform the registration of an handler
  */
-void DefaultEventDispatcher::registerEventActionForEventType(EventAction *eventAction, EventType eventType)  throw(CException) {
+void DefaultEventDispatcher::registerEventAction(EventAction *eventAction, EventType eventType, const char * const idntification)  throw(CException) {
+    EVTDISPAPP_ << "registerEventActionForEventType";
+    if(!eventAction) throw new CException(0, "The action pointer is null", "DefaultEventDispatcher::registerEventActionForEventType");
     
+    switch (eventType) {
+        case event::EventTypeAlert:
+            alertEventScheduler->installEventAction(eventAction);
+            break;
+            
+        default:
+            break;
+    }
 }
 
     //! Event handler deregistration
@@ -64,7 +83,9 @@ void DefaultEventDispatcher::registerEventActionForEventType(EventAction *eventA
  Perform the deregistration of an handler
  */
 void DefaultEventDispatcher::deregisterEventAction(EventAction *eventAction)  throw(CException) {
-    
+    EVTDISPAPP_ << "deregisterEventAction";
+        //try to remove from all scheduler, becaus eone action can be mapped to all event type
+    alertEventScheduler->removeEventAction(eventAction);
 }
 
 /*!
@@ -72,7 +93,7 @@ void DefaultEventDispatcher::deregisterEventAction(EventAction *eventAction)  th
  by dispatcher
  */
 void DefaultEventDispatcher::executeAlertHandler(alert::AlertEventDescriptor *eventDescription)  throw(CException) {
-     EVTDISPAPP_ << "executeAlertHandler";
+    alertEventScheduler->push(eventDescription);
 }
 
     //!Handler execution method

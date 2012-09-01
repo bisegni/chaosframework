@@ -62,8 +62,13 @@ namespace chaos {
                 
                 int sendRawEvent(EventDescriptor *newEvent);
                 
+                    //!
+                /*!
+                 */
+                virtual int sendEvent(const char * const identificationString, uint16_t subCode, uint16_t priority, EventDataType typeOfData, const void *valuePtr, uint16_t valueSize= 0) = 0;
+                
                     //-------------------inherited--------------------
-                virtual void handleEvent(event::EventDescriptor *event) = 0;
+                virtual void handleEvent(const event::EventDescriptor * const event) = 0;
 
                 
                 void activateChannelEventReception(EventType eventType);
@@ -73,6 +78,41 @@ namespace chaos {
                 virtual void activateChannelEventReception() = 0;
                 
                 void deactivateChannelEventReception();
+                
+                    //!
+                /*!
+                 */
+                int sendEventInt8(const char * const identificationString, uint16_t subCode, uint16_t priority, uint8_t value);
+                
+                    //!
+                /*!
+                 */
+                int sendEventInt16(const char * const identificationString, uint16_t subCode, uint16_t priority, uint16_t value);
+                
+                    //!
+                /*!
+                 */
+                int sendEventInt32(const char * const identificationString, uint16_t subCode, uint16_t priority, uint32_t value);
+                
+                    //!
+                /*!
+                 */
+                int sendEventInt64(const char * const identificationString, uint16_t subCode, uint16_t priority, uint64_t value);
+                
+                    //!
+                /*!
+                 */
+                int sendEventDouble(const char * const identificationString, uint16_t subCode, uint16_t priority, double value);
+                
+                    //!
+                /*!
+                 */
+                int sendEventCString(const char * const identificationString, uint16_t subCode, uint16_t priority, const char * value);
+                
+                    //!
+                /*!
+                 */
+                int sendEventBinary(const char * const identificationString, uint16_t subCode, uint16_t priority, void * value, uint16_t length);
             };
         }
     }

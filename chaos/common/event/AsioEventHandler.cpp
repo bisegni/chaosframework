@@ -22,7 +22,7 @@
 #include <chaos/common/event/EventHandler.h>
 #include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>
-
+#include <netinet/in.h>
 using namespace boost;
 using namespace chaos;
 using namespace chaos::event;
@@ -42,22 +42,18 @@ AsioEventHandler::AsioEventHandler(const boost::asio::ip::address& listen_addres
         // Join the multicast group.
     socket_.set_option(boost::asio::ip::multicast::join_group(multicast_address));
     
-    socket_.async_receive_from(
-                               boost::asio::buffer(data_, max_length), sender_endpoint_,
-                               boost::bind(&AsioEventHandler::handle_receive_from, this,
-                                           boost::asio::placeholders::error,
-                                           boost::asio::placeholders::bytes_transferred));
+    socket_.async_receive(boost::asio::buffer(data_, max_length),
+                          boost::bind(&AsioEventHandler::handle_receive_from, this,boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
 }
 
 void AsioEventHandler::handle_receive_from(const boost::system::error_code& error,
                                            size_t bytes_recvd){
     if (!error) {
         asioServer->sendEventDataToRootHandler((unsigned char*)data_, bytes_recvd);
-        LAPP_ << hanlderID <<" "<< data_;
         memset(data_, 0, bytes_recvd);
-        socket_.async_receive_from(boost::asio::buffer(data_, max_length), sender_endpoint_,
-                                   boost::bind(&AsioEventHandler::handle_receive_from, this,
-                                               boost::asio::placeholders::error,
-                                               boost::asio::placeholders::bytes_transferred));
+        
+            //waith for another event
+        socket_.async_receive(boost::asio::buffer(data_, max_length),
+                              boost::bind(&AsioEventHandler::handle_receive_from, this, boost::asio::placeholders::error,boost::asio::placeholders::bytes_transferred));
     }
 }

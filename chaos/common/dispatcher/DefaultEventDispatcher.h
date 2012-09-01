@@ -25,9 +25,15 @@
 
 namespace chaos {
     using namespace event;
+    using namespace std;
+    
+    class EventTypeScheduler;
     
     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DefaultEventDispatcher, AbstractEventDispatcher) {
+        
+        EventTypeScheduler *alertEventScheduler;
 
+        
     protected:
         //!Event dispatcher initialization
         /*!
@@ -76,19 +82,19 @@ namespace chaos {
         DefaultEventDispatcher(string *alias);
         
             //! Basic Destructor
-        virtual ~DefaultEventDispatcher();
+        ~DefaultEventDispatcher();
         
             //! Event handler registration
         /*
          Perform the registration of an handler
          */
-        virtual void registerEventActionForEventType(EventAction *eventAction, EventType eventType)  throw(CException);
+        void registerEventAction(EventAction *eventAction, EventType eventType, const char * const identificationString = NULL)  throw(CException);
         
             //! Event handler deregistration
         /*
          Perform the deregistration of an handler
          */
-        virtual void deregisterEventAction(EventAction *eventAction)  throw(CException);
+        void deregisterEventAction(EventAction *eventAction)  throw(CException);
 
 
     };

@@ -158,7 +158,7 @@ namespace chaos {
          \param eventAction the actio to register
          \param eventType a type for the event for which the user want to register
          */
-        void registerEventActionForEventType(EventAction *eventAction, event::EventType eventType);
+        void registerEventAction(EventAction *eventAction, event::EventType eventType, const char * const identification = NULL);
         
             //!Event Action deregistration
         /*!

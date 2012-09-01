@@ -72,7 +72,7 @@ bool AsioImplEventClient::submitEvent(EventDescriptor *event)  throw(CException)
     bool result = true;
     switch (event->getEventType()) {
         case 0:
-            alertForwarder->submitEventAsync(event);
+            result = alertForwarder->submitEventAsync(event);
             break;
             
         default:

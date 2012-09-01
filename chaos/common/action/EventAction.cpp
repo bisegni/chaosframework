@@ -20,6 +20,7 @@
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/action/EventAction.h>
 
+using namespace std;
 using namespace chaos;
 
 EventAction::EventAction() {
@@ -29,4 +30,19 @@ EventAction::EventAction() {
 
 EventAction::~EventAction() {
     
+}
+
+void EventAction::setDomainName(string& newDomainName) {
+    domainName = newDomainName;
+}
+
+const char * const EventAction::getDomainName() {
+    return domainName.c_str();
+}
+
+/*
+ Return c string of the domain name
+ */
+const char * const EventAction::getUUID() {
+    return actionUUID.c_str();
 }
