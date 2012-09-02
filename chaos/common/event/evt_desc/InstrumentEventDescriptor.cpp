@@ -26,3 +26,28 @@
 using namespace chaos;
 using namespace chaos::event;
 using namespace chaos::event::instrument;
+
+InstrumentEventDescriptor::InstrumentEventDescriptor():EventDescriptor(EventTypeInstrument, EVT_INSTRUMENT_DEFAULT_PRIORITY) {
+    
+}
+
+    //---------
+void InstrumentEventDescriptor::setNewScheduleDelay(const char * const deviceID, uint64_t newValue) {
+        //2 byte
+    setSubCode(EventInstrumentNewScheduleDelay);
+        //2 byte
+    setSubCodePriority(0);
+        //set the dimension, 10 is the fixed size of all information for alert pack
+    EventDescriptor::setIdentificationAndValueWithType(deviceID, strlen(deviceID), EventDataInt64, &newValue);
+}
+
+
+void InstrumentEventDescriptor::setInstrument(const char * const indetifier, uint8_t identifierLength, uint16_t alertCode, uint16_t priority, EventDataType valueType, const void *valuePtr, uint16_t valueSize)  throw (CException) {
+    if(alertCode <= EventAlertLastCodeNumber) throw CException(0, "Invalid custom sub code for the event", "InstrumentEventDescriptor::setInstrument");
+        //2 byte
+    setSubCode(alertCode);
+        //2 byte
+    setSubCodePriority(priority);
+        //set the dimension, 10 is the fixed size of all information for alert pack
+    EventDescriptor::setIdentificationAndValueWithType(indetifier, identifierLength, valueType, valuePtr, valueSize);
+}

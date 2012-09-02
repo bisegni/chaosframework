@@ -25,21 +25,10 @@ using namespace chaos;
 using namespace chaos::event;
 using namespace chaos::event::alert;
 
-    //!Event data inizialization
-/*
- Initialize the data for the base descriptor competence. These are
- only the header and base length (header only length)
- */
-void AlertEventDescriptor::initData() {
-        //call base data
-    EventDescriptor::initData();
-        //use a temp ptr to go forward the buffer
-    unsigned char * tmpPtr = eventData + EVT_HEADER_BYTE_LENGTH;
-    
-    EventTypeAndPriority typeAndPriority = {EventTypeAlert, EVT_ALERT_DEFAULT_PRIORITY};
-    *((uint8_t*)tmpPtr) = byte_swap<host_endian, little_endian, uint8_t>(*((uint8_t*)&typeAndPriority));
-}
 
+AlertEventDescriptor::AlertEventDescriptor():EventDescriptor(EventTypeAlert, EVT_ALERT_DEFAULT_PRIORITY)  {
+
+}
 
     //!Set the code of the alert
 /*

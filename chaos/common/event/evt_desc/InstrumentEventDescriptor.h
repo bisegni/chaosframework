@@ -26,14 +26,48 @@
 #define __CHAOSFramework__InstrumentEventDescriptor__
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/event/evt_desc/EventDescriptor.h>
+#include <chaos/common/exception/CException.h>
+
+#define EVT_INSTRUMENT_DEFAULT_PRIORITY    31
 
 namespace chaos {
     namespace event{
         namespace instrument {
-                //REGISTER_AND_DEFINE_NOALIAS_DERIVED_CLASS_FACTORY(InstrumentEventDescriptor, EventDescriptor ) {
+            
+                //!Instrument event type code
+            /*!
+             These represent the code for event type definition used
+             to define what happen into an instrument
+             */
+            typedef enum {
+                    //!The initialization pahse has been successfully done
+                EventInstrumentInitialized = 0,
+                    //!The deinitialization pahse has been successfully done
+                EventInstrumentDeinitialized,
+                    //!The instrument has been successfully started
+                EventInstrumentStarted,
+                    //!The instrument has been successfully stopped
+                EventInstrumentStopped,
+                    //! the intervall between run method call has been successfully changed
+                EventInstrumentNewScheduleDelay,
+                EventAlertLastCodeNumber = EventInstrumentInitialized
+            } EventInstrumentCode;
+            
+            /*!
+             This class represent the definition for the instrumens event
+             */
             class InstrumentEventDescriptor : public EventDescriptor {
             public:
-                
+                InstrumentEventDescriptor();
+                    //! Define the event for the update scehdule time notification
+                void setNewScheduleDelay(const char * const deviceID, uint64_t newValue);
+                /*!
+                 Set the Value for the type
+                 \param valueType the enumeration that descrive the type of the value with EventDataType constant
+                 \param valuePtr a pointer to the value
+                 \param valueSizethe size of the value
+                 */
+                void setInstrument(const char * const indetifier, uint8_t identifierLength, uint16_t alertCode, uint16_t priority, EventDataType valueType, const void *valuePtr, uint16_t valueSize = 0) throw (CException);
             };
 
         }

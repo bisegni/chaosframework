@@ -58,10 +58,11 @@ int main(int argc, char * argv[])
         dsc2->setEventData(dsc->getEventData(), dsc->getEventDataLength());
         printInfoMemory(dsc2.get());
 */
+        alertChannel->registerForIdentifier("device_a");
         alertChannel->activateChannelEventReception();
         alertChannel->sendEventInt32("device_a", event::alert::EventAlertThresholdCrossing, 200, 256);
 
-        sleep(5);
+        sleep(60);
         LLRpcApi::getInstance()->disposeEventChannel(alertChannel);
     } catch (chaos::CException& ex) {
         

@@ -27,8 +27,9 @@ using namespace chaos::event;
 #define EVENT_CURRENT_VERSION 0
 
     //--------------------------------------------------------------
-EventDescriptor::EventDescriptor() {
-        //eventData = new unsigned char[EVENT_DATA_BYTE_LENGTH];
+EventDescriptor::EventDescriptor(EventType _instanceType, uint8_t _instancePriority):instanceType(_instanceType), instancePriority(_instancePriority) {
+        //initialize data
+    initData();
 }
 
     //--------------------------------------------------------------
@@ -43,6 +44,13 @@ void EventDescriptor::initData() {
         //event header struct
     EventHeader header = {0x4345, 1, 5};
     *((uint32_t*)tmpPtr) = byte_swap<host_endian, little_endian, uint32_t>(*((uint32_t*)&header));
+    
+
+        //use a temp ptr to go forward the buffer
+    tmpPtr = eventData + EVT_HEADER_BYTE_LENGTH;
+    
+    EventTypeAndPriority typeAndPriority = {instanceType, instancePriority};
+    *((uint8_t*)tmpPtr) = byte_swap<host_endian, little_endian, uint8_t>(*((uint8_t*)&typeAndPriority));
 }
 
     //--------------------------------------------------------------

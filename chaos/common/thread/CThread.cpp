@@ -72,6 +72,10 @@ void CThread::setDelayBeetwenTask(int64_t msec) {
     waithTimeInMicrosecond = microseconds(msec);
 }
 
+int64_t CThread::getDelayBeetwenTask() {
+    return waithTimeInMicrosecond.count();
+}
+
 void CThread::join() {
     m_thread->join();
 }

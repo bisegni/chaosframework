@@ -62,14 +62,19 @@ bool EventTypeScheduler::push(event::EventDescriptor *event) throw(CException) {
 void EventTypeScheduler::installEventAction(EventAction *eventAction) {
     mutex::scoped_lock lockAction(eventSchedulerMutext);
     if(eventActionList.count(eventAction->getUUID()) > 0) return;
-    
         //add action
     eventActionList.insert(make_pair(eventAction->getUUID(), eventAction));
+    
+    eventAction->setEnabled(true);
 }
 
 void EventTypeScheduler::removeEventAction(EventAction *eventAction) {
+    if(!eventAction) return;
     mutex::scoped_lock lockAction(eventSchedulerMutext);
     if(eventActionList.count(eventAction->getUUID()) == 0) return;
+    
+        //shutdown the state for fire the action
+    eventAction->setEnabled(false);
     
         //add action
     eventActionList.erase(eventAction->getUUID());
@@ -79,11 +84,22 @@ void EventTypeScheduler::removeEventAction(EventAction *eventAction) {
  process the element action to be executed
  */
 void EventTypeScheduler::processBufferElement(event::EventDescriptor *eventDescription, ElementManagingPolicy& elementPolicy) throw(CException) {
-   mutex::scoped_lock lockAction(eventSchedulerMutext);
+    mutex::scoped_lock lockAction(eventSchedulerMutext);
     for ( map<string, EventAction*>::iterator iter =  eventActionList.begin();
          iter != eventActionList.end();
          iter++) {
-        (*iter).second->handleEvent(eventDescription);
+        AESS_ReadLock readLockForActionExecution( (*iter).second->aessMutext);
+       
+        bool canbeExecuted = (*iter).second->setFired(true);
+        if(!canbeExecuted) continue;
+        
+            //check if we can start it with the indetifier of the event
+        string identifier(eventDescription->getIdentification(), eventDescription->getIdentificationlength());
+        if((*iter).second->hasIdentifier(identifier.c_str())) {
+                //execute the action
+            (*iter).second->handleEvent(eventDescription);
+        }
+        (*iter).second->setFired(false);
     }
     
 }

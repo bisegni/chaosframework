@@ -59,15 +59,7 @@ namespace chaos {
                 
             public:
                 
-                    //!Event data inizialization
-                /*!
-                 Initialize the data for the base descriptor competence. These are
-                 only the header and base length (header only length)
-                 */
-                void initData();
-                
-                
-                
+                AlertEventDescriptor();
                     //!Return the code of this alert
                 /*!
                  Return the alert code identified bythis event
@@ -75,27 +67,12 @@ namespace chaos {
                  */
                 EventAlertCode getAlertCode();
                 
-                
-                
                     //!Return the custom code of this alert
                 /*!
                  Return the alert custom code identified by this event
                  \return the custom code of the alert
                  */
                 uint16_t getAlertCustomCode();
-                
-                
-                    //!Return the code of this alert
-                /*!
-                 Return the alert code identified bythis event
-                 \return the code of the alert
-                 */
-                uint16_t getAlertPriority();
-                
-                /*
-                 Return the type of the value
-                 */
-                EventDataType getValuesType();
                 
                 /*!
                  Set the Value for the type

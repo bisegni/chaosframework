@@ -37,9 +37,9 @@ namespace chaos {
     class EventAction;
     class DefaultEventDispatcher;
     
-        //!Scheduler for action in a domain
+        //!Scheduler for event action
     /*!
-     This class define an environment where an aciotn can be executed
+     This class define an environment where an action for an event can be executed
      */
     class EventTypeScheduler: private CObjectProcessingPriorityQueue<event::EventDescriptor> {
         friend class DefaultEventDispatcher;

@@ -22,6 +22,7 @@
 
 using namespace std;
 using namespace chaos;
+using namespace boost;
 
 EventAction::EventAction() {
         //create the unique uuid for action, the uuid lite version can work in this context
@@ -45,4 +46,34 @@ const char * const EventAction::getDomainName() {
  */
 const char * const EventAction::getUUID() {
     return actionUUID.c_str();
+}
+
+/*
+ */
+void EventAction::registerForIdentifier(const char * newIdentifier) {
+    boost::shared_lock< boost::shared_mutex >   lock(identifierMutext);
+    indetifierExecutioTrigger.insert(make_pair(newIdentifier, true));
+}
+
+/*
+ */
+void EventAction::deregisterForIdentifier(const char * newIdentifier) {
+    boost::shared_lock< boost::shared_mutex >   lock(identifierMutext);
+    if(indetifierExecutioTrigger.count(newIdentifier) != 0) return;
+    
+    indetifierExecutioTrigger.erase(newIdentifier);
+}
+/*
+ */
+void EventAction::clearAllRegisteredIdentifier(const char * newIdentifier) {
+     boost::shared_lock< boost::shared_mutex >   lock(identifierMutext);
+    indetifierExecutioTrigger.clear();
+}
+
+/*
+ */
+bool EventAction::hasIdentifier(const char * newIdentifier) {
+    boost::shared_lock< boost::shared_mutex >   lock(identifierMutext);
+    bool result = (indetifierExecutioTrigger.count(newIdentifier) > 0) || indetifierExecutioTrigger.size()==0;
+    return result;
 }

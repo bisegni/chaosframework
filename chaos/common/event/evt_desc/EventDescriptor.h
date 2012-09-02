@@ -26,23 +26,23 @@
 #include <chaos/common/exception/CException.h>
 namespace chaos {
     namespace event {
-            //event pack struct bit length
+            //!event pack struct bit length
 #define EVENT_DATA_BYTE_LENGTH         1024    //1024 byte * 8 bit
 #define EVENT_DATA_BIT_LENGTH          8192    //1024 byte * 8 bit
         
-            //header
+            //!header
 #define EVT_HEADER_BYTE_LENGTH          4       // in byte
 #define EVT_HEADERS_SIGN_LENGTH         16      // in bit
 #define EVT_HEADER_VER_LENGTH           3       // in bit
 #define EVT_HEADER_LEN_LENGTH           13      // in bit
         
-            //type and priority
+            //!type and priority
 #define EVT_TYPE_AND_PRIORITY_BYTE_LENGTH       1   //in byte
 #define EVT_TYPE_AND_PRIORITY_LENGTH            8   //in bit
 #define EVT_TYPE_FIELD_LENGTH                   2   //in bit
 #define EVT_PRIORITY_FIELD_LENGTH               6   //in bit
         
-            //data struct
+            //!data struct
 #define EVT_DATA_MAX_BYTE_LENGTH        1019 //1021 byte length for data
 #define EVT_DATA_MAX_BIT_LENGTH         8152 //1021 byte length for data
         
@@ -56,13 +56,21 @@ namespace chaos {
 #define EVT_IDENTIFICATION_LENGTH_INFO_OFFSET 9
 #define EVT_IDENTIFICATION_VALUE_INFO_OFFSET 10
         
+        /*!
+         \enum EventType
+         This enum define the type of the events
+         */
         typedef enum {
-            EventTypeAlert = 0,
+            EventTypeAlert = 0,     /**< The type associated to the alert event type */
             EventTypeInstrument,
             EventTypeCommand,
             EventTypeCustom
         } EventType;
         
+        /*!
+         \enum EventDataType
+         A struct for define the type of the value of an event
+         */
         typedef enum {
             EventDataInt8 = 0,
             EventDataInt16,
@@ -76,34 +84,39 @@ namespace chaos {
         /*!
          A struct for define the header of a chaos event pack
          */
-        typedef struct {
-            /*@{*/
-            uint16_t    sign:EVT_HEADERS_SIGN_LENGTH;   /**< signature for the Chaos Event protocoll 'CE' */
-            uint16_t    version:EVT_HEADER_VER_LENGTH;  /**< version of the protocoll */
-            uint16_t    length:EVT_HEADER_LEN_LENGTH;   /**< length of the event pack */
-            /*@}*/
-        } EventHeader;
+        struct EventHeader {
+                //! signature for the Chaos Event protocoll 'CE'
+            uint16_t    sign:EVT_HEADERS_SIGN_LENGTH;
+                //! version of the protocoll
+            uint16_t    version:EVT_HEADER_VER_LENGTH;
+                //! length of the event pack
+            uint16_t    length:EVT_HEADER_LEN_LENGTH;
+        };
         
         /*!
          A struct for define length and the value for the sender identifier
          */
-        typedef struct {
-            /*@{*/
-            uint8_t    type:EVT_TYPE_FIELD_LENGTH;             /**< typeoftheevent */
-            uint8_t    priority:EVT_PRIORITY_FIELD_LENGTH;     /**< priority ofthe event */
-            /*@}*/
-        } EventTypeAndPriority;
+        struct EventTypeAndPriority {
+                //! type of the event
+            uint8_t    type:EVT_TYPE_FIELD_LENGTH;
+                //! priority of the event
+            uint8_t    priority:EVT_PRIORITY_FIELD_LENGTH;     
+        };
         
             //forward declaration for event factory
         class EventFactory;
         
             //!Event base class
-        /*
+        /*!
          This is the base class for all other event type. His scope is to manage the comomn work for all event type
          */
         class EventDescriptor {
             friend class EventFactory;
+
         protected:
+            EventType instanceType;
+            uint8_t instancePriority;
+            
                 //! event data pointer
             unsigned char eventData[EVENT_DATA_BYTE_LENGTH];
             
@@ -154,7 +167,7 @@ namespace chaos {
              Initializze all information to manage an event type. Can also create
              a event constructor by already instatiated memory
              */
-            EventDescriptor();
+            EventDescriptor(EventType _instanceType, uint8_t _instancePriority);
             
                 //!Destructor of the event descriptor
             /*

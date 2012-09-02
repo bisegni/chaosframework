@@ -77,6 +77,9 @@ namespace chaos{
         //sec to waith beetwen task execution
     void setDelayBeetwenTask(int64_t microsecond);
     
+        //!Return the microsend of delay between a task and another
+    int64_t getDelayBeetwenTask();
+    
         //join to thread execution
     void join();
     

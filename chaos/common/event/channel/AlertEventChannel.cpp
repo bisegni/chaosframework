@@ -47,7 +47,6 @@ void AlertEventChannel::activateChannelEventReception() {
     //-----------------------------------------------------
 int AlertEventChannel::sendEvent(const char * const identificationString, uint16_t subCode, uint16_t priority, EventDataType typeOfData, const void *valuePtr, uint16_t valueSize) {
     alert::AlertEventDescriptor *aed = new alert::AlertEventDescriptor();
-    aed->initData();
     aed->setAlert(identificationString, std::strlen(identificationString), subCode, priority, typeOfData, valuePtr, valueSize);
     return EventChannel::sendRawEvent(aed);
 }
