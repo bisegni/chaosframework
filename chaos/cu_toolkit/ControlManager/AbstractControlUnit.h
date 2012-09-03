@@ -36,41 +36,23 @@
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/common/pqueue/CObjectHandlerProcessingQueue.h>
 #include <chaos/common/thread/CThreadExecutionTask.h>
+#include <boost/chrono.hpp>
 
 namespace chaos{
     
 #define CU_IDENTIFIER_C_STREAM getCUName() << "_" << getCUInstance() 
-    
-#define INIT_STATE      0    
+#define INIT_STATE      0
 #define START_STATE     1
     
-#define CHECK_INITIALIZED(deviceName)  if(deviceStateMap[deviceName] != INIT_STATE){\
-LSANDBOX_ << "Control Unit already initialized";\
-continue;\
-}\
-deviceStateMap[deviceName]++;
+    namespace event{
+        namespace channel {
+            class InstrumentEventChannel;
+        }
+    }
     
-#define CHECK_STARTED(deviceName)  if(deviceStateMap[deviceName] != START_STATE){\
-LSANDBOX_ << "Control Unit already started";\
-throw CException(2, "Control Unit already started", "ControlUnitSandbox");\
-}\
-deviceStateMap[deviceName]++;
-    
-#define CHECK_NOT_STARTED(deviceName)  if(deviceStateMap[deviceName] != START_STATE+1){\
-LSANDBOX_ << "Control Unit not started";\
-throw CException(3, "Control Unit not started", "ControlUnitSandbox");\
-}\
-deviceStateMap[deviceName]--;
-
-#define CHECK_NOT_INITIALIZED(deviceName)  if(deviceStateMap[deviceName] != INIT_STATE+1){\
-LSANDBOX_ << "Control Unit not initialized";\
-throw CException(1, "Control Unit not initialized", "ControlUnitSandbox");\
-}\
-deviceStateMap[deviceName]--;
-
-    
+    class ControManager;
     class ControlUnitThread;
-        //class ControlUnitInstantiator;
+    
     using namespace std;
     
     class ActionData {
@@ -87,9 +69,11 @@ deviceStateMap[deviceName]--;
      Base class for control unit execution task
      */
     class AbstractControlUnit:public DeclareAction, public CUSchemaDB, public CThreadExecutionTask {
+        friend class ControlManager;
+        
         int32_t scheduleDelay;
         string jsonSetupFilePath;
-        
+        boost::chrono::seconds  lastAcquiredTime;
         
             //!mutex for multithreading managment of sand box
         /*!
@@ -104,9 +88,13 @@ deviceStateMap[deviceName]--;
         
         map<string, CThread* >  schedulerDeviceMap;
         
+        map<string, boost::chrono::seconds >  heartBeatDeviceMap;
+        
         map<string, int >  deviceStateMap;
         
         map<string, CUStateKey::ControlUnitState > deviceExplicitStateMap;
+        
+        event::channel::InstrumentEventChannel *deviceEventChannel;
         
         /*
          Add a new KeyDataStorage for a specific key

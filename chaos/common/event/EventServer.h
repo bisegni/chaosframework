@@ -52,6 +52,12 @@ namespace chaos {
             virtual void start() throw(CException) = 0;
             
             /*
+             start the event adapter
+             */
+            virtual void listeForEventType(event::EventType type,  bool listen) throw(CException) = 0;
+
+            
+            /*
              deinit the event adapter
              */
             virtual void deinit() throw(CException) = 0;

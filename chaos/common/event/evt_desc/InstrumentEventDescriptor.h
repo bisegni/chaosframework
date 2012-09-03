@@ -50,7 +50,12 @@ namespace chaos {
                 EventInstrumentStopped,
                     //! the intervall between run method call has been successfully changed
                 EventInstrumentNewScheduleDelay,
-                EventAlertLastCodeNumber = EventInstrumentInitialized
+                    //!notify the change of some input attribute of the dataset
+                EventInstrumentInputDatasetAttributeChanged,
+                    //!notify the heartbeat of insturment
+                EventInstrumentHeartbeat,
+                    //! last entry
+                EventAlertLastCodeNumber = EventInstrumentHeartbeat
             } EventInstrumentCode;
             
             /*!
@@ -60,7 +65,11 @@ namespace chaos {
             public:
                 InstrumentEventDescriptor();
                     //! Define the event for the update scehdule time notification
-                void setNewScheduleDelay(const char * const deviceID, uint64_t newValue);
+                void setNewScheduleDelay(const char * const instrumentID, uint64_t newValue);
+                    //! Define the event for the input attribute dataset change scehdule time notification
+                void setDatasetInputAttributeChanged(const char * const instrumentID, uint16_t errorCode);
+                    //! Define the event for the heartbeat of the instrument
+                void setEartbeat(const char * const instrumentID);
                 /*!
                  Set the Value for the type
                  \param valueType the enumeration that descrive the type of the value with EventDataType constant

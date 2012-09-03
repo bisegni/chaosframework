@@ -22,6 +22,7 @@
 #define CHAOSFramework_DefaultEventDispatcher_h
 
 #include <chaos/common/dispatcher/AbstractEventDispatcher.h>
+#include <boost/thread.hpp>
 
 namespace chaos {
     using namespace event;
@@ -31,9 +32,13 @@ namespace chaos {
     
     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DefaultEventDispatcher, AbstractEventDispatcher) {
         
+            //! Alert scheduler
         EventTypeScheduler *alertEventScheduler;
 
+            //! Alert scheduler
+        EventTypeScheduler *instrumentEventScheduler;
         
+        boost::shared_mutex handlerVEctorMutext;
     protected:
         //!Event dispatcher initialization
         /*!

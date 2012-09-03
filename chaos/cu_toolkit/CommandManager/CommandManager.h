@@ -42,6 +42,12 @@ namespace chaos{
     using namespace std;
     using namespace boost;
     
+    namespace event {
+        namespace channel {
+            class InstrumentEventChannel;
+        }
+    }
+    
     /*
      * CommandManager
      * - Command Manager is the central class for the registration and execution of the custom command
@@ -87,6 +93,16 @@ namespace chaos{
          Get MEtadataserver channel
          */
         MDSMessageChannel *getMetadataserverChannel();
+        
+        /*
+         Get Device event channel
+         */
+        event::channel::InstrumentEventChannel *getDeviceEventChannel();
+        
+        /*!
+         Delete an event channel allocated with command manager
+         */
+        void deleteEventChannel(event::channel::EventChannel *eventChannel);
         
         /*
          Register actions defined by AbstractActionDescriptor instance contained in the array

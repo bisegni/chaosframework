@@ -172,7 +172,7 @@ namespace chaos {
          \param eventType is one of the value listent in EventType enum that specify the
          type of the eventfor wich we want a channel
          */
-        inline event::channel::EventChannel *getNewEventChannelFromType(event::EventType  eventType);
+        event::channel::EventChannel *getNewEventChannelFromType(event::EventType  eventType);
         
             //! Alert Event Creation
         event::channel::AlertEventChannel *getNewAlertEventChannel();

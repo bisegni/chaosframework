@@ -184,8 +184,8 @@
 		32AAD78E14CD95FD005A097C /* Atomic.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AAD78D14CD95FD005A097C /* Atomic.h */; };
 		32B89C9D15F39DB500B17AAA /* ActionExecutionSafetySystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B89C9B15F39DB500B17AAA /* ActionExecutionSafetySystem.cpp */; };
 		32B89C9E15F39DB500B17AAA /* ActionExecutionSafetySystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B89C9C15F39DB500B17AAA /* ActionExecutionSafetySystem.h */; };
-		32B89CA115F3D1E100B17AAA /* DeviceEventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B89C9F15F3D1E100B17AAA /* DeviceEventChannel.cpp */; };
-		32B89CA215F3D1E100B17AAA /* DeviceEventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B89CA015F3D1E100B17AAA /* DeviceEventChannel.h */; };
+		32B89CA115F3D1E100B17AAA /* InstrumentEventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B89C9F15F3D1E100B17AAA /* InstrumentEventChannel.cpp */; };
+		32B89CA215F3D1E100B17AAA /* InstrumentEventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B89CA015F3D1E100B17AAA /* InstrumentEventChannel.h */; };
 		32BE864715A0CEAF00818C39 /* LogManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BE864515A0CEAF00818C39 /* LogManager.cpp */; };
 		32BE864815A0CEAF00818C39 /* LogManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32BE864615A0CEAF00818C39 /* LogManager.h */; };
 		32CFF95B15E4D950005D607E /* EventDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95915E4D950005D607E /* EventDescriptor.cpp */; };
@@ -395,8 +395,8 @@
 		32AAD78D14CD95FD005A097C /* Atomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Atomic.h; sourceTree = "<group>"; };
 		32B89C9B15F39DB500B17AAA /* ActionExecutionSafetySystem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ActionExecutionSafetySystem.cpp; sourceTree = "<group>"; };
 		32B89C9C15F39DB500B17AAA /* ActionExecutionSafetySystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionExecutionSafetySystem.h; sourceTree = "<group>"; };
-		32B89C9F15F3D1E100B17AAA /* DeviceEventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceEventChannel.cpp; sourceTree = "<group>"; };
-		32B89CA015F3D1E100B17AAA /* DeviceEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceEventChannel.h; sourceTree = "<group>"; };
+		32B89C9F15F3D1E100B17AAA /* InstrumentEventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InstrumentEventChannel.cpp; sourceTree = "<group>"; };
+		32B89CA015F3D1E100B17AAA /* InstrumentEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InstrumentEventChannel.h; sourceTree = "<group>"; };
 		32BE864515A0CEAF00818C39 /* LogManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogManager.cpp; sourceTree = "<group>"; };
 		32BE864615A0CEAF00818C39 /* LogManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogManager.h; sourceTree = "<group>"; };
 		32CFF95915E4D950005D607E /* EventDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventDescriptor.cpp; sourceTree = "<group>"; };
@@ -478,8 +478,8 @@
 			children = (
 				3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */,
 				3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */,
-				32B89C9F15F3D1E100B17AAA /* DeviceEventChannel.cpp */,
-				32B89CA015F3D1E100B17AAA /* DeviceEventChannel.h */,
+				32B89C9F15F3D1E100B17AAA /* InstrumentEventChannel.cpp */,
+				32B89CA015F3D1E100B17AAA /* InstrumentEventChannel.h */,
 				325DE9EF15EC031E00D6F34E /* EventChannel.cpp */,
 				325DE9F015EC031E00D6F34E /* EventChannel.h */,
 				325DE9F415EC03F800D6F34E /* EventAction.h */,
@@ -1048,7 +1048,7 @@
 				325CA6BC15EE10B3007FCC12 /* EventAction.h in Headers */,
 				3253E09515F27A180079B40E /* EventTypeScheduler.h in Headers */,
 				32B89C9E15F39DB500B17AAA /* ActionExecutionSafetySystem.h in Headers */,
-				32B89CA215F3D1E100B17AAA /* DeviceEventChannel.h in Headers */,
+				32B89CA215F3D1E100B17AAA /* InstrumentEventChannel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1239,7 +1239,7 @@
 				325CA6BB15EE10B3007FCC12 /* EventAction.cpp in Sources */,
 				3253E09815F28A270079B40E /* EventTypeScheduler.cpp in Sources */,
 				32B89C9D15F39DB500B17AAA /* ActionExecutionSafetySystem.cpp in Sources */,
-				32B89CA115F3D1E100B17AAA /* DeviceEventChannel.cpp in Sources */,
+				32B89CA115F3D1E100B17AAA /* InstrumentEventChannel.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

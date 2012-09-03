@@ -57,10 +57,20 @@ namespace chaos {
 
         public:
             AsioImplEventClient(string *alias);
+            ~AsioImplEventClient();
             bool submitEvent(EventDescriptor *event)  throw(CException);
         private:
-                //forwarder
+                //! Allert forwarder
             AsioEventForwarder *alertForwarder;
+           
+            //! Instrument forwarder
+            AsioEventForwarder *instrumentForwarder;
+            
+            //! Command forwarder
+            AsioEventForwarder *commandForwarder;
+            
+            //! Custom forwarder
+            AsioEventForwarder *customForwarder;
             
             boost::asio::io_service io_service;
             vector< shared_ptr<boost::thread> > serviceThread;

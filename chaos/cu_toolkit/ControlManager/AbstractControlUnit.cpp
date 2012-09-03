@@ -20,6 +20,7 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>
+#include <chaos/common/event/channel/InstrumentEventChannel.h>
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 #include <chaos/cu_toolkit/DataManager/DataManager.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManager.h>
@@ -31,6 +32,7 @@
 #include <boost/uuid/uuid_generators.hpp> // generators
 #include <boost/uuid/uuid_io.hpp>         // streaming operators etc.
 #include <boost/lexical_cast.hpp>
+
 
 using namespace chaos;
 using namespace std;
@@ -321,6 +323,9 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
         //call update param function
     updateConfiguration(initConfiguration, detachParam);
     
+    //reset run schedule heartbeat
+    heartBeatDeviceMap[deviceID] = boost::chrono::seconds(0);
+    
     deviceExplicitStateMap[deviceID] = CUStateKey::INIT;
     return NULL;
 }
@@ -480,9 +485,20 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
     if(deviceExplicitStateMap[deviceID] == CUStateKey::DEINIT) {
         throw CException(-2, "The Control Unit is in deinit state", "AbstractControlUnit::_setDatasetAttribute");
     }
-    
+    try {
         //send dataset attribute change pack to control unit implementation
-    executionResult = setDatasetAttribute(datasetAttributeValues, detachParam);
+        executionResult = setDatasetAttribute(datasetAttributeValues, detachParam);
+        
+        //at this time notify the wel gone setting of comand
+        if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(deviceID.c_str(), 0);
+
+    } catch (CException& ex) {
+        //at this time notify the wel gone setting of comand
+        if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(deviceID.c_str(), ex.errorCode);
+
+        throw ex;
+    }
+    
     return executionResult;
 }
 
@@ -536,6 +552,11 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
             LCU_ << "Update schedule delay in:" << uSecdelay << " microsecond";
             schedulerDeviceMap[deviceID]->setDelayBeetwenTask(uSecdelay);
                 //send enve to fro update
+                //----------------------
+                // we need to optimize and be sure that event channel
+                // is mandatory so we can left over the 'if' check
+                //----------------------
+            if(deviceEventChannel) deviceEventChannel->notifyForScheduleUpdateWithNewValue(deviceID.c_str(), uSecdelay);
         }
     }
     return NULL;
@@ -547,6 +568,13 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
  */
 void AbstractControlUnit::executeOnThread( const string& deviceIDToSchedule) throw(CException) {
     run(deviceIDToSchedule);
+    
+    lastAcquiredTime = boost::chrono::duration_cast<boost::chrono::seconds>(boost::chrono::steady_clock::now().time_since_epoch());
+    //check if we need to sendthe heartbeat
+    if(deviceEventChannel && ((lastAcquiredTime - heartBeatDeviceMap[deviceIDToSchedule]) > boost::chrono::seconds(60))){
+        deviceEventChannel->notifyHeartbeat(deviceIDToSchedule.c_str());
+        heartBeatDeviceMap[deviceIDToSchedule] = lastAcquiredTime;
+    }
 }
 
 #pragma mark protected API

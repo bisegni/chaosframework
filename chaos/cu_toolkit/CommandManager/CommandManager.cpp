@@ -26,6 +26,8 @@
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
+#include <chaos/common/event/channel/InstrumentEventChannel.h>
+
 
 using namespace chaos;
 using namespace std;
@@ -103,6 +105,18 @@ CDataWrapper* CommandManager::updateConfiguration(CDataWrapper*) {
 MDSMessageChannel *CommandManager::getMetadataserverChannel() {
     string serverHost = GlobalConfiguration::getInstance()->getMetadataServerAddress();
     return broker->getMetadataserverMessageChannel(serverHost);
+}
+
+/*
+ Get Device event channel
+ */
+event::channel::InstrumentEventChannel *CommandManager::getDeviceEventChannel() {
+    return static_cast<event::channel::InstrumentEventChannel*>(broker->getNewEventChannelFromType(event::EventTypeInstrument));
+}
+
+    //
+void CommandManager::deleteEventChannel(event::channel::EventChannel *eventChannel) {
+    broker->disposeEventChannel(eventChannel);
 }
 
 /*

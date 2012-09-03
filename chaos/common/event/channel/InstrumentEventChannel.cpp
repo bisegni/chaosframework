@@ -1,5 +1,5 @@
 /*
- *	DeviceEventChannel.cpp
+ *	InstrumentEventChannel.cpp
  *	CHAOSFramework
  *	Created by Claudio Bisegni on 02/09/12.
  *
@@ -19,7 +19,7 @@
  */
 
 #include <chaos/common/global.h>
-#include <chaos/common/event/channel/DeviceEventChannel.h>
+#include <chaos/common/event/channel/InstrumentEventChannel.h>
 #include <chaos/common/event/evt_desc/InstrumentEventDescriptor.h>
 
 using namespace chaos;
@@ -28,35 +28,51 @@ using namespace chaos::event::channel;
 using namespace chaos::event::instrument;
 
     //-----------------------------------------------------
-DeviceEventChannel::DeviceEventChannel(MessageBroker *rootBroker):EventChannel(rootBroker) {
+InstrumentEventChannel::InstrumentEventChannel(MessageBroker *rootBroker):EventChannel(rootBroker) {
     
 }
 
     //-----------------------------------------------------
-DeviceEventChannel::~DeviceEventChannel() {
+InstrumentEventChannel::~InstrumentEventChannel() {
     
 }
 
-void DeviceEventChannel::handleEvent(const event::EventDescriptor * const event) {
-    LAPP_ << "DeviceEventChannel::handleEvent";
+void InstrumentEventChannel::handleEvent(const event::EventDescriptor * const event) {
+    LAPP_ << "InstrumentEventChannel::handleEvent";
 }
 
     //--------------------inherited-----------------
-void DeviceEventChannel::activateChannelEventReception() {
+void InstrumentEventChannel::activateChannelEventReception() {
         //activate the reception for the event type alert
     EventChannel::activateChannelEventReception(EventTypeAlert);
 }
 
     //-----------------------------------------------------
-int DeviceEventChannel::sendEvent(const char * const identificationString, uint16_t subCode, uint16_t priority, EventDataType typeOfData, const void *valuePtr, uint16_t valueSize) {
+int InstrumentEventChannel::sendEvent(const char * const identificationString, uint16_t subCode, uint16_t priority, EventDataType typeOfData, const void *valuePtr, uint16_t valueSize) {
     instrument::InstrumentEventDescriptor *ied = new instrument::InstrumentEventDescriptor();
     ied->setInstrument(identificationString, strlen(identificationString), subCode, priority, typeOfData, valuePtr, valueSize);
     return EventChannel::sendRawEvent(ied);
 }
 
     //-----------------------------------------------------
-int DeviceEventChannel::notifyForScheduleUpdateWithNewValue(const char * deviceID, uint64_t newScheduleUpdateTime) {
+int InstrumentEventChannel::notifyForScheduleUpdateWithNewValue(const char * insturmentID, uint64_t newScheduleUpdateTime) {
     instrument::InstrumentEventDescriptor *ied = new instrument::InstrumentEventDescriptor();
-    ied->setNewScheduleDelay(deviceID, newScheduleUpdateTime);
+    ied->setNewScheduleDelay(insturmentID, newScheduleUpdateTime);
+    return EventChannel::sendRawEvent(ied);
+}
+
+//-----------------------------------------------------
+int InstrumentEventChannel::notifyForAttributeSetting(const char * insturmentID, uint16_t error) {
+    instrument::InstrumentEventDescriptor *ied = new instrument::InstrumentEventDescriptor();
+    ied->setDatasetInputAttributeChanged(insturmentID, error);
+    return EventChannel::sendRawEvent(ied);
+}
+//! Send an event for the heartbeat
+/*!
+ \param insturmentID the indetificaiton of instrument
+ */
+int InstrumentEventChannel::notifyHeartbeat(const char * insturmentID) {
+    instrument::InstrumentEventDescriptor *ied = new instrument::InstrumentEventDescriptor();
+    ied->setEartbeat(insturmentID);
     return EventChannel::sendRawEvent(ied);
 }

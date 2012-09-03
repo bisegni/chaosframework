@@ -29,7 +29,7 @@
 #include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
 #include <chaos/common/dispatcher/AbstractEventDispatcher.h>
 #include <chaos/common/event/channel/AlertEventChannel.h>
-
+#include <chaos/common/event/channel/InstrumentEventChannel.h>
 #define MB_LAPP LAPP_ << "[MessageBroker]- "
 
 #define INIT_STEP   0
@@ -293,7 +293,9 @@ event::channel::EventChannel *MessageBroker::getNewEventChannelFromType(event::E
         case event::EventTypeAlert:
             newEventChannel = new event::channel::AlertEventChannel(this);
             break;
-            
+        case event::EventTypeInstrument:
+            newEventChannel = new event::channel::InstrumentEventChannel(this);
+            break;
         default:
             break;
     }

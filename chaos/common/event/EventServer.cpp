@@ -47,11 +47,17 @@ void EventServer::dispatchEventToHandler(const unsigned char * const serializedE
             //get header swapped checking endian conversion
         *((uint16_t*)eventTypeAndHeaderPtr.get()) = byte_swap<little_endian, host_endian, uint16_t>(*((uint16_t*)(serializedEvent+EVT_HEADER_BYTE_LENGTH)));
         
+            //dispatcher the event in the root handler on one of the fourth method
         switch (eventTypeAndHeaderPtr->type) {
             case EventTypeAlert:  {
                 alert::AlertEventDescriptor *result = new alert::AlertEventDescriptor();
                 result->setEventData(serializedEvent, length);
                 rootEventHandler->executeAlertHandler(result);
+            }
+            case EventTypeInstrument:  {
+                instrument::InstrumentEventDescriptor *result = new instrument::InstrumentEventDescriptor();
+                result->setEventData(serializedEvent, length);
+                rootEventHandler->executeInstrumentHandler(result);
             }
             break;
             default:
