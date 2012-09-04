@@ -20,14 +20,16 @@
 #ifndef ChaosFramework_GlobalConfiguration_h
 #define ChaosFramework_GlobalConfiguration_h
 
+#include <chaos/common/global.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/cconstants.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/utility/Singleton.h>
+#include <chaos/common/utility/InetUtility.h>
 
 #include <string>
+#include <sstream>
 #include <boost/shared_ptr.hpp>
-#include <boost/regex.hpp>
 #include <boost/program_options/option.hpp>
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/variables_map.hpp>
@@ -69,13 +71,6 @@ x = getOption<t>(y);\
 bool x;\
 x = hasOption(y);
     
-        //! Regular expression for check server hostname and port
-    static const regex ServerHostNameRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}");
-        //! Regular expression for check server ip and port
-    static const regex ServerIPAndPortRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}");
-        //! Regular expression for check server ip
-    static const regex ServerIPRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b");
-    
     /*
      Central class for all CHOAS framework configuraitons
      */
@@ -88,20 +83,30 @@ x = hasOption(y);
         friend class Singleton<GlobalConfiguration>;
         
         
-        GlobalConfiguration():desc("Allowed options"){};
+        GlobalConfiguration():desc("!CHAOS Framework Allowed options:"){};
         ~GlobalConfiguration(){};
-        
+        //! Parse the options
+        /*!
+         Generalized parser option function
+         */
+        void parseParameter(const po::basic_parsed_options<char>& optionsParser) throw (CException);
         
     public:
-        
+            //! startup parameter pre setup
         /*
-         parse the tandard startup parameters
+         Set up all stardard input attribute map
          */
-        virtual void preParseStartupParameters() throw (CException);
+        void preParseStartupParameters() throw (CException);
+            //! C and C++ attribute parser
+        /*!
+         Specialized option for startup c and cpp program main options parameter
+         */
+        void parseStartupParameters(int, char* argv[]) throw (CException);
+            //!stringbuffer parser
         /*
-         parse the tandard startup parameters
+         specialized option for string stream buffer with boost semantics
          */
-        virtual void parseStartupParameters(int, char* argv[]) throw (CException);
+        void parseStringStream(istringstream &) throw (CException);
         
         /*
          Add a custom option

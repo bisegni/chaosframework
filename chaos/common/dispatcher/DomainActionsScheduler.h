@@ -24,56 +24,59 @@
 #include <boost/thread.hpp>
 
 #include <chaos/common/action/DomainActions.h>
-#include "CommandDispatcher.h"
+#include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
 #include <chaos/common/pqueue/ChaosProcessingQueue.h>
 #include <chaos/common/data/CDataWrapper.h>
 
 namespace chaos {
     using namespace std;
     using namespace boost;
-    
-    /*
+        //!Scheduler for action in a domain
+    /*!
      This class define an environment where an aciotn can be executed
      */
-    class DomainActionsScheduler: public CObjectProcessingQueue<CDataWrapper> {
+    class DomainActionsScheduler: private CObjectProcessingQueue<CDataWrapper> {
         friend class CommandDispatcher;
+            //! indicate the armed stato of this scheduler
         bool armed;
+            //! mutext for regulate action execution and other operation as
+            //! registration and deregistration
         boost::mutex actionAccessMutext;
+            //!pointer to the domain containing action
         shared_ptr<DomainActions> domainActionsContainer;
         
-            //reference to global dispatcher used
-            //to resubmit sub command
-        CommandDispatcher *dispatcher;
+            //!reference to global dispatcher used to resubmit sub command
+        AbstractCommandDispatcher *dispatcher;
     protected:
         virtual void processBufferElement(CDataWrapper*, ElementManagingPolicy&) throw(CException);
         
     public:
-        /*
-         
+        /*!
+         Default constructor
          */
         DomainActionsScheduler(shared_ptr<DomainActions>);
-        /*
-         
+        /*!
+            Return the domain name managed by the sceduler instance
          */
         string& getManagedDomainName();
         
-        /*
-         Initialization method for output buffer
+        /*!
+         Initialization method
          */
         virtual void init(int) throw(CException);
         
-        /*
-         Deinitialization method for output buffer
+        /*!
+         Deinitialization method
          */
         virtual void deinit() throw(CException);
-        /*
-         
+        /*!
+         Push a new action pack into the queue
          */
         bool push(CDataWrapper*) throw(CException);
-        /*
-         
+        /*!
+         Set the current dispatcher
          */
-        void setDispatcher(CommandDispatcher*);
+        void setDispatcher(AbstractCommandDispatcher*);
     };
 }
 #endif

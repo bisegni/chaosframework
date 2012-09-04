@@ -89,7 +89,7 @@ namespace chaos {
         /*
          * Return the attribute array for a specified direction
          */
-        void getAttributeForDirection(string& deviceID, DataType::DataSetAttributeIOAttribute, vector< shared_ptr<CDataWrapper> >&);
+        void getAttributeForDirection(string& deviceID, DataType::DataSetAttributeIOAttribute, vector< boost::shared_ptr<CDataWrapper> >&);
         
         /*
          REturn all the setupped device id

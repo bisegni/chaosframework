@@ -29,8 +29,18 @@
 #include <netinet/in.h> 
 #include <string.h> 
 #include <arpa/inet.h>
+#include <chaos/common/global.h>
+#include <boost/regex.hpp>
 
 namespace chaos {
+    
+        //! Regular expression for check server hostname and port
+    static const regex ServerHostNameRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}");
+        //! Regular expression for check server ip and port
+    static const regex ServerIPAndPortRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}");
+        //! Regular expression for check server ip
+    static const regex ServerIPRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b");
+
     
     class InetUtility {
         
@@ -44,9 +54,9 @@ namespace chaos {
             struct ifaddrs * ifAddrStruct=NULL;
             struct ifaddrs * ifa=NULL;
 #if __APPLE__
-            const char *interfaceName  = "en";
+            const char *ethInterfaceName  = "en";
 #elif __linux__
-            const char *interfaceName = "eth";
+            const char *ethInterfaceName = "eth";
 #endif
             void * tmpAddrPtr=NULL;
             
@@ -54,7 +64,7 @@ namespace chaos {
             getifaddrs(&ifAddrStruct);
             
             for (ifa = ifAddrStruct; ifa != NULL; ifa = ifa->ifa_next) {
-                if(strstr(ifa->ifa_name, interfaceName)== NULL) continue;
+                if(strstr(ifa->ifa_name, ethInterfaceName)== NULL) continue;
                 
                 if (ifa ->ifa_addr->sa_family==AF_INET) { // check it is IP4
                                                           // is a valid IP4 Address
@@ -73,6 +83,11 @@ namespace chaos {
                 } 
             }
             if (ifAddrStruct!=NULL) freeifaddrs(ifAddrStruct);
+            
+            if(ipPort.size() == 0) {
+                // no ip was found go to localhost
+                ipPort.assign("127.0.0.1");
+            }
         }
         
             //! Network port scan

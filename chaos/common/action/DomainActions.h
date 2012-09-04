@@ -23,9 +23,7 @@
 #include <map>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
-#include <boost/thread.hpp>
-#include "ActionDescriptor.h"
+#include <chaos/common/action/ActionDescriptor.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/exception/CException.h>
 

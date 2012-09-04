@@ -1,8 +1,8 @@
-/*	
+/*
  *	CThread.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -51,7 +51,7 @@ namespace chaos{
     } TaskCycleStatData;
     
         //type for execution shared ptr
-    typedef shared_ptr<TaskCycleStatData> TaskCycleStatPtr;
+    typedef boost::shared_ptr<TaskCycleStatData> TaskCycleStatPtr;
     typedef CThreadExecutionTask *CThreadExecutionTaskSPtr;
     /*
      Base class for control unit thread
@@ -76,6 +76,9 @@ namespace chaos{
     
         //sec to waith beetwen task execution
     void setDelayBeetwenTask(int64_t microsecond);
+    
+        //!Return the microsend of delay between a task and another
+    int64_t getDelayBeetwenTask();
     
         //join to thread execution
     void join();
@@ -107,7 +110,7 @@ namespace chaos{
 	TaskCycleStatData statisticData;
 	
         // Thread entry point
-    void executeWork();   
+    void executeWork();
     
     private:
         //thread group that contain this thread , if there is one

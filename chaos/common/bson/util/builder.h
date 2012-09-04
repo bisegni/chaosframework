@@ -133,42 +133,42 @@ namespace bson {
         void decouple() { data = 0; }
 
         void appendUChar(unsigned char j) {
-            *((unsigned char*)grow(sizeof(unsigned char))) = j;
+            memcpy(grow(sizeof(unsigned char)), &j, sizeof(unsigned char));
         }
         void appendChar(char j) {
-            *((char*)grow(sizeof(char))) = j;
+            memcpy(grow(sizeof(char)), &j, sizeof(char));
         }
         void appendNum(char j) {
-            *((char*)grow(sizeof(char))) = j;
+            memcpy(grow(sizeof(char)), &j, sizeof(char));
         }
         void appendNum(short j) {
-            *((short*)grow(sizeof(short))) = j;
+            memcpy(grow(sizeof(short)), &j, sizeof(short));
         }
         void appendNum(int j) {
-            *((int*)grow(sizeof(int))) = j;
+            memcpy(grow(sizeof(int)), &j, sizeof(int));
         }
         void appendNum(unsigned j) {
-            *((unsigned*)grow(sizeof(unsigned))) = j;
+            memcpy(grow(sizeof(unsigned)), &j, sizeof(unsigned));
         }
         void appendNum(bool j) {
-            *((bool*)grow(sizeof(bool))) = j;
+            memcpy(grow(sizeof(bool)), &j, sizeof(bool));
         }
         void appendNum(double j) {
-            *((double*)grow(sizeof(double))) = j;
+            memcpy(grow(sizeof(double)), &j, sizeof(double));
         }
         void appendNum(long double j) {
-            *((long double*)grow(sizeof(long double))) = j;
+            memcpy(grow(sizeof(long double)), &j, sizeof(long double));
         }
         void appendNum(long long j) {
-            *((long long*)grow(sizeof(long long))) = j;
+            memcpy(grow(sizeof(long long)), &j, sizeof(long long));
         }
 
         void appendNum(long int j) {
-            *((long int*)grow(sizeof(long int))) = j;
+            memcpy(grow(sizeof(long int)), &j, sizeof(long int));
         }
 
         void appendNum(unsigned long long j) {
-            *((unsigned long long*)grow(sizeof(unsigned long long))) = j;
+            memcpy(grow(sizeof(unsigned long long)), &j, sizeof(unsigned long long));
         }
 
         void appendBuf(const void *src, size_t len) {

@@ -34,11 +34,49 @@ HLDataApi::HLDataApi() {
  * Distructor
  */
 HLDataApi::~HLDataApi() {
+   }
+
+/*
+ LL Rpc Api static initialization it should be called once for application
+ */
+void HLDataApi::init() throw (CException) {
     
 }
+/*
+ Deinitialization of LL rpc api
+ */
+void HLDataApi::deinit() throw (CException) {
+    for (map<string, DeviceController*>::iterator controllerIterator = controllerMap.begin(); 
+         controllerIterator != controllerMap.end(); 
+         controllerIterator++) {
+        
+        DeviceController *ctrl = controllerIterator->second;
+        
+        //dispose it
+        delete(ctrl);
+    }
+
+}
+
 
 DeviceController *HLDataApi::getControllerForDeviceID(string& deviceID) throw (CException) {
     DeviceController *deviceController = new DeviceController(deviceID);
     deviceController->updateChannel();
+    
+    controllerMap.insert(make_pair(deviceID, deviceController));
+    
     return deviceController;
+}
+
+void HLDataApi::disposeDeviceControllerPtr(DeviceController *ctrl) throw (CException) {
+    if(!ctrl) return;
+    string deviceID;
+    ctrl->getDeviceId(deviceID);
+    
+    //remove device from the map of all active device
+    controllerMap.erase(deviceID);
+    
+    //dispose the devie
+    delete ctrl;
+    ctrl = NULL;
 }

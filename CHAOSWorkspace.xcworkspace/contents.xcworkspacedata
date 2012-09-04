@@ -7,6 +7,9 @@
    <FileRef
       location = "group:APACHE-2.0.txt">
    </FileRef>
+   <FileRef
+      location = "group:CMakeLists.txt">
+   </FileRef>
    <Group
       location = "container:"
       name = "Documentation">
@@ -22,5 +25,11 @@
    </FileRef>
    <FileRef
       location = "group:example/UIToolkitCMDLineExample/UIToolkitCMDLineExample.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:example/UIToolkitCMDLineCWrapperExample/UIToolkitCMDLineCWrapperExample.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:test/TestEventDescriptor/TestEventDescriptor.xcodeproj">
    </FileRef>
 </Workspace>

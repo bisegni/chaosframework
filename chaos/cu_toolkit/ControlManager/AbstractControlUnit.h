@@ -87,7 +87,6 @@ deviceStateMap[deviceName]--;
      Base class for control unit execution task
      */
     class AbstractControlUnit:public DeclareAction, public CUSchemaDB, public CThreadExecutionTask {
-        friend class ControlUnitSandbox;
         int32_t scheduleDelay;
         string jsonSetupFilePath;
         
@@ -107,7 +106,7 @@ deviceStateMap[deviceName]--;
         
         map<string, int >  deviceStateMap;
         
-        CUStateKey::ControlUnitState cuState;
+        map<string, CUStateKey::ControlUnitState > deviceExplicitStateMap;
         
         /*
          Add a new KeyDataStorage for a specific key

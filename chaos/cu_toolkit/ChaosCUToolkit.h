@@ -56,7 +56,17 @@ namespace chaos{
         
     public:
         typedef boost::mutex::scoped_lock lock;
-        void init(int argc = 1, char* argv[] = NULL)  throw(CException);
+            //! C and C++ attribute parser
+        /*!
+         Specialized option for startup c and cpp program main options parameter
+         */
+        void init(int argc, char* argv[] = NULL) throw (CException);
+            //!stringbuffer parser
+        /*
+         specialized option for string stream buffer with boost semantics
+         */
+        void init(istringstream &initStringStream) throw (CException);
+        void init()  throw(CException);
         void start(bool waithUntilEnd=true, bool deinitiOnEnd=true);
         void stop();
         void deinit();

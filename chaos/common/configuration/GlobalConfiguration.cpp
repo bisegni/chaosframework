@@ -20,7 +20,6 @@
 #include <iostream>
 
 #include "GlobalConfiguration.h"
-#include <chaos/common/utility/InetUtility.h>
 
 using namespace chaos;
 namespace po = boost::program_options;
@@ -31,36 +30,54 @@ namespace po = boost::program_options;
 void GlobalConfiguration::preParseStartupParameters() throw (CException){
 
     try{   
-        addOption(UserOption::OPT_HELP, "Produce help message");
-        addOption(UserOption::OPT_RPC_SERVER_PORT, po::value<int>()->default_value(8888), "RPC server port");
-        addOption(UserOption::OPT_RPC_SERVER_THREAD_NUMBER, po::value<int>()->default_value(2),"RPC server thread number");
-        addOption(UserOption::OPT_LIVE_DATA_SERVER_ADDRESS, po::value< vector<string> >()->multitoken(), "Live server:port address");
-        addOption(UserOption::OPT_METADATASERVER_ADDRESS, po::value< string >()->default_value("localhost:5000"), "Metadataserver server:port address");
-        addOption(UserOption::OPT_LOG_ON_CONSOLE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on console");
-        addOption(UserOption::OPT_LOG_ON_FILE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on file");
-        addOption(UserOption::OPT_LOG_FILE, po::value< string >()->default_value("chaos_frameowrk.log"), "Specify when the file path of the log");
+        addOption(InitOption::OPT_HELP, "Produce help message");
+        addOption(InitOption::OPT_RPC_SERVER_PORT, po::value<int>()->default_value(8888), "RPC server port");
+        addOption(InitOption::OPT_RPC_SERVER_THREAD_NUMBER, po::value<int>()->default_value(2),"RPC server thread number");
+        addOption(InitOption::OPT_LIVE_DATA_SERVER_ADDRESS, po::value< vector<string> >()->multitoken(), "Live server:port address");
+        addOption(InitOption::OPT_METADATASERVER_ADDRESS, po::value< string >()->default_value("localhost:5000"), "Metadataserver server:port address");
+        addOption(InitOption::OPT_LOG_ON_CONSOLE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on console");
+        addOption(InitOption::OPT_LOG_ON_FILE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on file");
+        addOption(InitOption::OPT_LOG_FILE, po::value< string >()->default_value("chaos_frameowrk.log"), "Specify when the file path of the log");
+        addOption(InitOption::OPT_PUBLISHING_IP, po::value< string >(), "Specify the ip address where to publish the framework rpc system");
     }catch (po::error &e) {
         throw CException(0, e.what(), "GlobalConfiguration::preParseStartupParameters");
     }
 }
 
+/*!
+ Specialized option for startup c and cpp program main options parameter
+ */
+void GlobalConfiguration::parseStartupParameters(int argc, char* argv[]) throw (CException) {
+    parseParameter(po::parse_command_line(argc, argv, desc));
+}
+    //!stringbuffer parser
+/*
+ specialized option for string stream buffer with boost semantics
+ */
+void GlobalConfiguration::parseStringStream(istringstream &sStreamOptions) throw (CException) {
+     parseParameter(po::parse_config_file(sStreamOptions, desc));
+}
+
 /*
  parse the tandard startup parameters
  */
-void GlobalConfiguration::parseStartupParameters(int argc, char* argv[]) throw (CException){
+void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& optionsParser) throw (CException){
         //int rpcServerPort;
         //int rpcServerThreadNumber;
         //string metadataServerAddress;
         //vector<string> liveDataServer;
     try{   
-        po::store(po::parse_command_line(argc, argv, desc), vm);
+            //
+        po::store(optionsParser, vm);
         po::notify(vm); 
     }catch (po::error &e) {
+            //write error also on cerr
+        std::cerr << e.what();
         throw CException(0, e.what(), "GlobalConfiguration::preParseStartupParameters");
 
     }
     
-    if (hasOption(UserOption::OPT_HELP)) {
+    if (hasOption(InitOption::OPT_HELP)) {
         std::cout << desc;
         exit(0);
         return;
@@ -68,30 +85,36 @@ void GlobalConfiguration::parseStartupParameters(int argc, char* argv[]) throw (
     
         //now we can fill the gloabl configuration
         //start with getting log configuration
-    CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(logOnConsole, UserOption::OPT_LOG_ON_CONSOLE)
-    configuration.addBoolValue(UserOption::OPT_LOG_ON_CONSOLE, logOnConsole);
+    CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(logOnConsole, InitOption::OPT_LOG_ON_CONSOLE)
+    configuration.addBoolValue(InitOption::OPT_LOG_ON_CONSOLE, logOnConsole);
  
-    CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(logOnFile, UserOption::OPT_LOG_ON_FILE)
-    configuration.addBoolValue(UserOption::OPT_LOG_ON_FILE, logOnFile);
+    CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(logOnFile, InitOption::OPT_LOG_ON_FILE)
+    configuration.addBoolValue(InitOption::OPT_LOG_ON_FILE, logOnFile);
 
-    CHECK_AND_DEFINE_OPTION(string, logFilePath, UserOption::OPT_LOG_FILE)
-    configuration.addStringValue(UserOption::OPT_LOG_FILE, logFilePath);
+    CHECK_AND_DEFINE_OPTION(string, logFilePath, InitOption::OPT_LOG_FILE)
+    configuration.addStringValue(InitOption::OPT_LOG_FILE, logFilePath);
+    
+    CHECK_AND_DEFINE_OPTION(string, publishingIp, InitOption::OPT_PUBLISHING_IP)
+    bool isIp = regex_match(publishingIp, ServerIPRegExp);
+    if(isIp) configuration.addStringValue(InitOption::OPT_PUBLISHING_IP, publishingIp);
     
         //configure rpc
-    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, rpcServerPort, UserOption::OPT_RPC_SERVER_PORT, 8888)
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, rpcServerPort, InitOption::OPT_RPC_SERVER_PORT, 8888)
     int freeFoundPort = InetUtility::scanForLocalFreePort(rpcServerPort);
     addLocalServerBasePort(freeFoundPort);
     configuration.addInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT, freeFoundPort);    
     
 
-    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, rpcServerThreadNumber, UserOption::OPT_RPC_SERVER_THREAD_NUMBER, 2)
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, rpcServerThreadNumber, InitOption::OPT_RPC_SERVER_THREAD_NUMBER, 2)
     configuration.addInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER, rpcServerThreadNumber);
     
     //configure the unique rpc plugin
     configuration.addStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE, "MsgPack");
-    
+        //configure the unique rpc plugin
+    configuration.addStringValue(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION, "AsioImpl");
+   
         //configure the live data
-    CHECK_AND_DEFINE_OPTION(vector<string>, liveDataServer, UserOption::OPT_LIVE_DATA_SERVER_ADDRESS)
+    CHECK_AND_DEFINE_OPTION(vector<string>, liveDataServer, InitOption::OPT_LIVE_DATA_SERVER_ADDRESS)
     if(liveDataServer.size()==0){
         configuration.appendStringToArray("localhost:11211");
     }else{
@@ -102,7 +125,7 @@ void GlobalConfiguration::parseStartupParameters(int argc, char* argv[]) throw (
     configuration.finalizeArrayForKey(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS);
     
         //configure metadataserver
-    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(string, metadataServerAddress, UserOption::OPT_METADATASERVER_ADDRESS, "localhost:5000")
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(string, metadataServerAddress, InitOption::OPT_METADATASERVER_ADDRESS, "localhost:5000")
     if (metadataServerAddress.size()>0) {
         addMetadataServerAddress(metadataServerAddress);
     }

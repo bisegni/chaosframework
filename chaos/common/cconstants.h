@@ -1,8 +1,8 @@
-/*	
+/*
  *	cconstants.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,15 +28,15 @@ namespace chaos {
      *  @{
      */
     
-    //! Name space for grupping option used for commandline or in config file
-    namespace UserOption{
+        //! Name space for grupping option used for commandline or in config file
+    namespace InitOption{
             //! @Option for print the help
         static const char * const   OPT_HELP                          = "help";
             //!  @Option Specify the network port where rpc system will publish al the service
         static const char * const   OPT_RPC_SERVER_PORT              ="rpc-server-port";
-            //! @Option Specify the number of the thread that the rpc ssytem must use to process the request 
+            //! @Option Specify the number of the thread that the rpc ssytem must use to process the request
         static const char * const   OPT_RPC_SERVER_THREAD_NUMBER     ="rpc-server-thread-number";
-            //! @Option Specify the live data servers address with the type host:port it is a multitoken parameter 
+            //! @Option Specify the live data servers address with the type host:port it is a multitoken parameter
         static const char * const   OPT_LIVE_DATA_SERVER_ADDRESS     ="live-data-servers";
             //! @Option Specify the metadata address for the metadataserver
         static const char * const   OPT_METADATASERVER_ADDRESS       ="metadata-server";
@@ -46,6 +46,8 @@ namespace chaos {
         static const char * const   OPT_LOG_ON_FILE                  ="log-on-file";
             //! @Option Specify when the file path of the log
         static const char * const   OPT_LOG_FILE                     ="log-file";
+            //! @Option Specify the ip where publish the framework
+        static const char * const   OPT_PUBLISHING_IP                ="publishing-ip";
     }
     /** @} */ // end of ParamOption
     
@@ -53,17 +55,17 @@ namespace chaos {
      *  This is the collection of the key for the parameter used to configura rpc system
      *  @{
      */
-     //! Name space for grupping option used for rpc system configuration
+        //! Name space for grupping option used for rpc system configuration
     namespace RpcConfigurationKey {
-        //! @Option specify the type of the adatpre to be used
+            //! @Option specify the type of the adatpre to be used
         static const char * const CS_CMDM_RPC_ADAPTER_TYPE                = "cs|cmdm|rpc_adapter_type";
-        //! @Option specify the port where the rpc must publish the his socket
+            //! @Option specify the port where the rpc must publish the his socket
         static const char * const CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT        = "cs|cmdm|rpc_adapter_port";
-        //! @Option the number of the thread to user
+            //! @Option the number of the thread to user
         static const char * const CS_CMDM_RPC_ADAPTER_THREAD_NUMBER       = "cs|cmdm|rpc_adapter_tn";
     }
     /** @} */ // end of RpcConfigurationKey
-
+    
     /** @defgroup CUDefinitionKey Control Unit Definition
      *  This is the collection of the key for the control unit definition
      *  @{
@@ -71,10 +73,10 @@ namespace chaos {
         //! Name space for grupping option used for define the control unit
     namespace CUDefinitionKey {
             //! delay beetwen a subseguent cu start method call
-        static const char * const CS_CM_THREAD_SCHEDULE_DELAY                   = "cs|cm|cu|thr|sch_del";        
-            //! start the CU without metadataserver permission 
+        static const char * const CS_CM_THREAD_SCHEDULE_DELAY                   = "cs|cm|cu|thr|sch_del";
+            //! start the CU without metadataserver permission
         static const char * const CS_CM_CU_AUTOSTART                            = "cs|cm|cu|autostart";
-            //! start the CU without metadataserver presence 
+            //! start the CU without metadataserver presence
         static const char * const CS_CM_CU_AUTOSTART_NO_MS                        = "cs|cm|cu|autostart_no_ms";
             //!key representing the type of parameter
         static const char * const CS_CM_CU_NAME                                 = "cs|cm|cu_name";
@@ -87,11 +89,11 @@ namespace chaos {
             //!key representing the type of parameter
         static const char * const CS_CM_CU_CLASS                                = "cs|cm|cu_class";
             //!key representing the type of parameter
-        static const char * const CS_CM_CU_UUID                                 = "cs|cm|cu_uuid";    
-
+        static const char * const CS_CM_CU_UUID                                 = "cs|cm|cu_uuid";
+        
     }
     /** @} */ // end of CUDefinitionKey
-
+    
     /** @} */ // end of RpcConfigurationKey
     
     /** @defgroup CUStateKey Control Unit State
@@ -101,8 +103,8 @@ namespace chaos {
         //! Name space for grupping option used for define the control unit state
     namespace CUStateKey {
             //! The state of the control unit
-        static const char * const CONTROL_UNIT_STATE                   = "cu_state";        
-  
+        static const char * const CONTROL_UNIT_STATE                   = "cu_state";
+        
             //!define the direction of dataset element
         typedef enum {
 			INIT = 0,
@@ -112,7 +114,7 @@ namespace chaos {
         } ControlUnitState;
     }
     /** @} */ // end of CUStateKey
-
+    
     
     /** @defgroup DatasetDefinitionkey Dataset definition key
      *  This is the collection of the key for the device dataset
@@ -128,8 +130,8 @@ namespace chaos {
         
             //!key for the name of dataset attribute
         static const char * const CS_CM_DATASET_ATTRIBUTE_NAME                  = "cs|cm|ds_attr_name";
- 
-        //!key for the name of dataset attribute
+        
+            //!key for the name of dataset attribute
         static const char * const CS_CM_DATASET_ATTRIBUTE_VALUE                  = "cs|cm|ds_attr_value";
         
             //!key for the tag of the dataset attrbiute
@@ -147,11 +149,11 @@ namespace chaos {
             //!key representig the information for the parameter
         static const char * const CS_CM_DATASET_ATTRIBUTE_DIRECTION             = "cs|cm|ds_attr_dir";
         
-            //!key representing the default value 
+            //!key representing the default value
         static const char * const CS_CMDM_ACTION_DESC_DEFAULT_VALUE             = "cs|cmdm|act_desc_par_default_value";
-            //!key representing the default value 
-        static const char * const CS_CMDM_ACTION_DESC_MAX_RANGE                 = "cs|cmdm|act_desc_par_max_range";            
-            //!key representing the default value 
+            //!key representing the default value
+        static const char * const CS_CMDM_ACTION_DESC_MAX_RANGE                 = "cs|cmdm|act_desc_par_max_range";
+            //!key representing the default value
         static const char * const CS_CMDM_ACTION_DESC_MIN_RANGE                 = "cs|cmdm|act_desc_par_min_range";
         
     }
@@ -161,29 +163,49 @@ namespace chaos {
      *  This is the collection of the definition of the chaos basic datatype
      *  @{
      */
-    //! Name space for grupping the definition of the chaos basic datatype
+        //! Name space for grupping the definition of the chaos basic datatype
     namespace DataType {
-                //!typede for datatype
-            typedef enum {
+            //!typede for datatype
+        typedef enum {
                 //!Integer 32 bit length
-                TYPE_INT32 = 0,
+            TYPE_INT32 = 0,
                 //!Integer 64 bit length
-                TYPE_INT64,
+            TYPE_INT64,
                 //!Double 64 bit length
-                TYPE_DOUBLE,
+            TYPE_DOUBLE,
                 //!C string variable length
-                TYPE_STRING,
+            TYPE_STRING,
                 //!byte array variable length
-                TYPE_BYTEARRAY
-            } DataType;
+            TYPE_BYTEARRAY,
+                //!struct type
+            TYPE_STRUCT
+        } DataType;
         
-        //!define the direction of dataset element
+            //!define the direction of dataset element
         typedef enum {
 			Input = 0,
 			Output=1,
 			Bidirectional=2,
         } DataSetAttributeIOAttribute;
-    } 
+    }
+    
+    /** @} */ // end of DatasetDefinitionkey
+    
+    /** @defgroup ChaosErrorCode Chaos Error Code
+     *  This is the collection of the definition of the chaos error code
+     *  @{
+     */
+        //! Name space for grupping the definition of the chaos error code
+    namespace ErrorCode {
+            //!typede for datatype
+        typedef enum {
+                //!Integer 32 bit length
+            EC_NO_ERROR = 0,
+            EC_TIMEOUT = 1
+        } ErrorCode;
+    }
+    /** @} */ // end of ChaosDataType
+    
     /** @} */ // end of ChaosDataType
     
     /** @defgroup RpcActionDefinitionKey Action Rpc Sharing Definition key
@@ -197,7 +219,7 @@ namespace chaos {
             //!key for action domain descriptors array {[domain, name, paramteres....]}
         static const char * const CS_CMDM_ACTION_DESC                         = "cs|cmdm|act_desc";
         
-            //!key for the array of object that represent the action paramteres 
+            //!key for the array of object that represent the action paramteres
             //!description
         static const char * const CS_CMDM_ACTION_DESC_PARAM                   = "cs|cmdm|act_desc_param";
         
@@ -216,19 +238,19 @@ namespace chaos {
         
             //!key for action name definition
         static const char * const CS_CMDM_ACTION_NAME                         = "cs|cmdm|act_name";
-
-        //!key for action message
+        
+            //!key for action message
         static const char * const CS_CMDM_ACTION_MESSAGE                      = "cs|cmdm|act_msg";
         
             //!key for the specify the id of the request(the current message is an asnwer)
-        static const char * const CS_CMDM_MESSAGE_ID                          = "cs|cmdm|act_msg_id"; 
+        static const char * const CS_CMDM_MESSAGE_ID                          = "cs|cmdm|act_msg_id";
         
             //!key for action name definition
         static const char * const CS_CMDM_ACTION_DESCRIPTION                  = "cs|cmdm|act_desc";
         
         
             //!key action submission result
-        static const char * const CS_CMDM_ACTION_SUBMISSION_RESULT            = "cs|cmdm|act_sub_result";
+            //static const char * const CS_CMDM_ACTION_SUBMISSION_RESULT            = "cs|cmdm|act_sub_result";
         
             //!key action submission error message
         static const char * const CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE     = "cs|cmdm|act_sub_emsg";
@@ -243,15 +265,15 @@ namespace chaos {
         static const char * const CS_CMDM_SUB_CMD                             = "cs|cmdm|sub_cmd";
         
             //!key for the ip where to send the answer
-        static const char * const CS_CMDM_ANSWER_HOST_IP                      = "cs|cmdm|rh_ans_ip"; 
+        static const char * const CS_CMDM_ANSWER_HOST_IP                      = "cs|cmdm|rh_ans_ip";
             //!key for the ip where to send the answer
-        static const char * const CS_CMDM_ANSWER_DOMAIN                      = "cs|cmdm|rh_ans_domain"; 
+        static const char * const CS_CMDM_ANSWER_DOMAIN                      = "cs|cmdm|rh_ans_domain";
             //!key for the ip where to send the answer
-        static const char * const CS_CMDM_ANSWER_ACTION                      = "cs|cmdm|rh_ans_action"; 
+        static const char * const CS_CMDM_ANSWER_ACTION                      = "cs|cmdm|rh_ans_action";
             //!key for the answer, it is needed byt the requester to recognize the answer
-        static const char * const CS_CMDM_ANSWER_ID                          = "cs|cmdm|rh_ans_msg_id"; 
+        static const char * const CS_CMDM_ANSWER_ID                          = "cs|cmdm|rh_ans_msg_id";
             //!ker ofr the ip where to send the rpc pack
-        static const char * const CS_CMDM_REMOTE_HOST_IP                        = "cs|cmdm|rh_ip";     
+        static const char * const CS_CMDM_REMOTE_HOST_IP                        = "cs|cmdm|rh_ip";
     }
     /** @} */ // end of RpcActionDefinitionKey
     
@@ -264,7 +286,7 @@ namespace chaos {
     namespace ChaosSystemDomainAndActionLabel {
             //! The chaos action domain for system message
         static const char * const SYSTEM_DOMAIN         = "system";
-            //! This action provide to the shutdown porcess of the enteir daemon 
+            //! This action provide to the shutdown porcess of the enteir daemon
             //! that runt the active contorl units. All it will be gracefull shutten down
             //! before daemon exit
         static const char * const ACTION_SYSTEM_SHUTDOWN    = "shutdown";
@@ -279,9 +301,9 @@ namespace chaos {
             //! pause the run method for a determinated device
         static const char * const ACTION_DEVICE_STOP        = "stopDevice";
             //! return the state of the device
-        static const char * const ACTION_DEVICE_GET_STATE        = "getState";    
+        static const char * const ACTION_DEVICE_GET_STATE        = "getState";
     }
-     /** @} */ // end of ChaosSystemDomainAndActionLabel
+    /** @} */ // end of ChaosSystemDomainAndActionLabel
     
     /** @defgroup LiveHistoryMDSConfiguration Chaos Live and History configuration
      *  This is the collection of the key to configura history and live channel
@@ -302,18 +324,22 @@ namespace chaos {
         static const char * const CS_DM_OUTPUT_BUFFER_HST_TIME               = "cs|dm|out_buf_hst_time";
             //!live data address
         static const char * const CS_DM_LD_SERVER_ADDRESS                 = "cs|dm|ld|server_address";
+            //!key associated with the device identification in a k/v storage ien
+        static const char * const CS_DM_LD_DEVICE_ADDRESS_KEY                     = "ld.device_addr_key";
+        
             //!history data address
         static const char * const CS_DM_HD_SERVER_ADDRESS                 = "cs|dm|hd|server_address";
-
-    } 
+        
+    }
     /** @} */ // end of LiveHistoryMDSConfiguration
     
-
-    /** @defgroup ChaosDataPackKey Chaos Data Pack standard key
-     *  This is the collection of the standard key of the chaos pack that contain hardware data
-     *  @{
+    
+    /** @defgroup ChaosDataPackKey Chaos Data Pack standard for hardware instrument
+     This is the collection of the standard key that are contained into the data pack
+     that describe a device hardware metrix on it's input and output channel
+     @{
      */
-        //! This is the collection of the standard key of the chaos pack that contain hardware data
+        //! Namespace for standard constant used for hardware instrument
     namespace DataPackKey{
             //!define the device id key, this represent the
             //!primary key of the device
@@ -324,10 +350,32 @@ namespace chaos {
         static const char * const CS_CSV_TIME_STAMP                           = "cs|csv|timestamp";
         
             //!this define key associated to the trigger
-        static const char * const CS_CSV_TRIGGER_KEY                          = "cs|csv|trigger_key";       
-    }    
-        /** @} */ // end of ChaosLiveHistoryConfiguration
-
+        static const char * const CS_CSV_TRIGGER_KEY                          = "cs|csv|trigger_key";
+    }
+    /** @} */ // end of ChaosLiveHistoryConfiguration
+    
+    namespace event {
+        /** @defgroup EventConfiguration Chaos event constant for server
+         and cleint configuration
+         @{
+         */
+            //! Name space for grupping option used for commandline or in config file
+        namespace EventConfiguration {
+                //! @Option for choice the implementation
+            static const char * const   OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION     = "evt_adpt_impl";            
+                //! @Configuraiton for alert event multicast ip
+            static const char * const   CONF_EVENT_ALERT_MADDRESS                   = "239.255.0.1";
+                //! @Configuraiton for instruments event multicast ip
+            static const char * const   CONF_EVENT_INSTRUMENT_MADDRESS              = "239.255.0.2";
+                //! @Configuraiton for command event multicast ip
+            static const char * const   CONF_EVENT_COMMAND_MADDRESS                 = "239.255.0.3";
+                //! @Configuraiton for custom event multicast ip
+            static const char * const   CONF_EVENT_CUSTOM_MADDRESS                  = "239.255.0.4";
+                //! @Configuraiton for event multicast ip port
+            static const unsigned short CONF_EVENT_PORT                             = 5000;
+        }
+        /** @} */ // end of EventConfiguration
+    }
     
 }
 #endif

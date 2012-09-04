@@ -28,28 +28,37 @@
 #include <chaos/ui_toolkit/HighLevelApi/DeviceController.h>
 #include <chaos/common/thread/ChaosThread.h>
 #include <boost/shared_ptr.hpp>
-
+#include <boost/thread.hpp>
+#include <qwt_system_clock.h>
 namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow, public chaos::CThreadExecutionTask
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
     QSettings settings;
     GraphWidget *graphWdg;
     chaos::MDSMessageChannel *mdsChannel;
-    boost::shared_ptr<chaos::ui::DeviceController> deviceController;
+    chaos::ui::DeviceController *deviceController;
     chaos::CThread *trackThread;
+    int d_timerId;
+    boost::shared_ptr<boost::thread> schedThread;
+    bool runThread;
+    std::string checkSequentialIDKey;
+    int64_t lostPack;
+    int32_t lastID;
+    int64_t oversampling;
 protected:
-    void executeOnThread(const std::string&) throw(chaos::CException);
+    void executeOnThread();
+    void updateDeviceState();
+    void cleanLastDevice();
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
 public slots:
     void showContextMenuForWidget(const QPoint &pos);
-    void updatePlot();
 private slots:
 
     void on_buttonDeleteDevice_clicked(bool checked);
@@ -74,7 +83,9 @@ private slots:
 
     void on_buttonStartTracking_clicked();
 
-    void on_buttonStopTracking_clicked();
+    void startTracking();
+
+    void stopTracking();
 
     void on_dialTrackSpeed_valueChanged(int value);
 
@@ -84,8 +95,21 @@ private slots:
 
     void on_spinTrackSpeed_valueChanged(int arg1);
 
+    void on_pushButton_clicked();
+    void timerEvent(QTimerEvent *event);
+    void on_spinBox_valueChanged(int arg1);
+
+    void on_lineEdit_returnPressed();
+
+    void on_pushButtonResetStatistic_clicked();
+
+    void on_spinBoxMaxYGrid_valueChanged(int arg1);
+
+    void on_spinBoxMinYGrid_valueChanged(int arg1);
+
 private:
     Ui::MainWindow *ui;
+    QString returnAttributeTypeInString(string& attributeName);
     void closeEvent(QCloseEvent *event);
     void readSettings();
     void cleanCurrentDevice();

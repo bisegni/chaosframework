@@ -7,20 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		32D078DB159A504D0053BB3A /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 32D078D9159A504D0053BB3A /* libchaos_common.dylib */; };
+		32D078DC159A504D0053BB3A /* libchaos_cutoolkit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 32D078DA159A504D0053BB3A /* libchaos_cutoolkit.dylib */; };
 		32F7449C14B49CFA0025638B /* ControlUnitExample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F7449914B49CFA0025638B /* ControlUnitExample.cpp */; };
 		32F7449D14B49CFA0025638B /* WorkerCU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F7449A14B49CFA0025638B /* WorkerCU.cpp */; };
-		32F744A014B49D2A0025638B /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 32F7449E14B49D2A0025638B /* libchaos_common.dylib */; };
-		32F744A114B49D2A0025638B /* libchaos_cutoolkit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 32F7449F14B49D2A0025638B /* libchaos_cutoolkit.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		32BE864A15A0E3C500818C39 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		32D078D9159A504D0053BB3A /* libchaos_common.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libchaos_common.dylib; path = ../../DerivedData/CHAOSWorkspace/Build/Products/Debug/libchaos_common.dylib; sourceTree = "<group>"; };
+		32D078DA159A504D0053BB3A /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libchaos_cutoolkit.dylib; path = ../../DerivedData/CHAOSWorkspace/Build/Products/Debug/libchaos_cutoolkit.dylib; sourceTree = "<group>"; };
 		32F7448F14B49CCB0025638B /* ControlUnitTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ControlUnitTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		32F7449914B49CFA0025638B /* ControlUnitExample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ControlUnitExample.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		32F7449A14B49CFA0025638B /* WorkerCU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = WorkerCU.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		32F7449B14B49CFA0025638B /* WorkerCU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = WorkerCU.h; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		32F7449E14B49D2A0025638B /* libchaos_common.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libchaos_common.dylib; path = ../../build/Release/libchaos_common.dylib; sourceTree = "<group>"; };
-		32F7449F14B49D2A0025638B /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libchaos_cutoolkit.dylib; path = ../../build/Release/libchaos_cutoolkit.dylib; sourceTree = "<group>"; };
-		32F744A214B5D0670025638B /* SConstruct */ = {isa = PBXFileReference; lastKnownFileType = text; path = SConstruct; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -28,8 +28,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				32F744A014B49D2A0025638B /* libchaos_common.dylib in Frameworks */,
-				32F744A114B49D2A0025638B /* libchaos_cutoolkit.dylib in Frameworks */,
+				32D078DB159A504D0053BB3A /* libchaos_common.dylib in Frameworks */,
+				32D078DC159A504D0053BB3A /* libchaos_cutoolkit.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -39,8 +39,8 @@
 		3260279D14B309ED00C906CE = {
 			isa = PBXGroup;
 			children = (
-				32F7449E14B49D2A0025638B /* libchaos_common.dylib */,
-				32F7449F14B49D2A0025638B /* libchaos_cutoolkit.dylib */,
+				32D078D9159A504D0053BB3A /* libchaos_common.dylib */,
+				32D078DA159A504D0053BB3A /* libchaos_cutoolkit.dylib */,
 				326DB50714B3B7890018A8D0 /* ControlUnitTest */,
 				326027B914B30A2400C906CE /* Products */,
 			);
@@ -57,7 +57,7 @@
 		326DB50714B3B7890018A8D0 /* ControlUnitTest */ = {
 			isa = PBXGroup;
 			children = (
-				32F744A214B5D0670025638B /* SConstruct */,
+				32BE864A15A0E3C500818C39 /* CMakeLists.txt */,
 				32F7449914B49CFA0025638B /* ControlUnitExample.cpp */,
 				32F7449A14B49CFA0025638B /* WorkerCU.cpp */,
 				32F7449B14B49CFA0025638B /* WorkerCU.h */,
@@ -159,18 +159,21 @@
 					../../,
 					/usr/local/include,
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug\"",
+					/usr/local/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
 					"-lmemcached",
 					"-lboost_system",
-					"-lmongoclient",
 					"-lboost_thread",
 					"-lboost_program_options",
 					"-lboost_regex",
 					"-lboost_filesystem",
-					"-Levent",
 					"-lmpio",
 					"-lmsgpack",
 					"-lmsgpack-rpc",
@@ -200,17 +203,20 @@
 					../../,
 					/usr/local/include,
 				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug\"",
+					/usr/local/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
 					"-lmemcached",
 					"-lboost_system",
-					"-lmongoclient",
 					"-lboost_thread",
 					"-lboost_program_options",
 					"-lboost_regex",
 					"-lboost_filesystem",
-					"-Levent",
 					"-lmpio",
 					"-lmsgpack",
 					"-lmsgpack-rpc",

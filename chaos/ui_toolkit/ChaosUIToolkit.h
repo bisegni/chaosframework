@@ -25,8 +25,8 @@
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/ChaosCommon.h>
+#include <chaos/common/utility/Atomic.h>
 
-#include <chaos/ui_toolkit/Common/DeviceDatasetCache.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLInfrastructureApi.h>
 
@@ -49,8 +49,6 @@ namespace chaos{
             friend class Singleton<ChaosUIToolkit>;
             /** \brief Client unique id */
             string clientInstanceUUID;
-            /** \brief A cached shared across more UIToolkit instance on the same machine*/
-            DeviceDatasetCache *globalDatasetCache;
             /** \brief point to the class the need to be allert when this UIToolkit must exit*/
             ServerDelegator *serverDelegator;  
 
@@ -59,14 +57,25 @@ namespace chaos{
                 //!Destructor
             ~ChaosUIToolkit();
         public:
-                //!Initializaiton Method
-            /*! 
-                This method provide at the all API package initialization it must be called only at applciaiton startup
-                \param argc the argc of main cpp program function
-                \param argv the argv of main cpp program function
-                \exception CException instance is created when something goes wrong
+                //! C and C++ attribute parser
+            /*!
+             Specialized option for startup c and cpp program main options parameter
              */
-            void init(int argc = 1, char* argv[] = NULL) throw(CException);
+            void init(int argc, char* argv[]) throw (CException);
+                //!stringbuffer parser
+            /*
+             specialized option for string stream buffer with boost semantics
+             */
+            void init(istringstream &initStringStream) throw (CException);
+            
+                //!Initializaiton Method
+            /*!
+             This method provide at the all API package initialization it must be called only at applciaiton startup
+             \param argc the argc of main cpp program function
+             \param argv the argv of main cpp program function
+             \exception CException instance is created when something goes wrong
+             */
+            void init() throw(CException);
             
                 //!Deinitializaiton Method
             /*!

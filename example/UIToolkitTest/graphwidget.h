@@ -23,6 +23,7 @@
 #include <QWidget>
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
+#include <qwt_plot_grid.h>
 #include <cmath>
 #include <QVBoxLayout>
 #include <chaos/common/utility/SingleBufferCircularBuffer.h>
@@ -30,6 +31,9 @@
 #include <boost/thread.hpp>
 #include <boost/random.hpp>
 #include <chaos/common/cconstants.h>
+#include <qwt_system_clock.h>
+class QwtPlotDirectPainter;
+
 class GraphWidget : public QWidget
 {
     struct PlotBufferAndCurve{
@@ -40,23 +44,42 @@ class GraphWidget : public QWidget
             if(curve) delete(curve);
         }
     };
+    struct PlotPtrBufferAndCurve{
+        chaos::DataType::DataType dataType;
+        chaos::PointerBuffer *curvePointer;
+        QwtPlotCurve *curve;
+        ~PlotPtrBufferAndCurve(){
+            if(curve) delete(curve);
+        }
+    };
     friend class MainWindow;
     Q_OBJECT
     QwtPlot *plot;
+    QwtPlotGrid *grid;
     QVBoxLayout *vbox;
-    boost::mutex manageMutex;
+    int numberOfPoint;
+    int d_timerId;
+    QwtPlotDirectPainter *d_directPainter;
+
     std::vector<double> xs;
     std::map<std::string, boost::shared_ptr<PlotBufferAndCurve> > plotMap;
+    std::map<std::string, boost::shared_ptr<PlotPtrBufferAndCurve> > pointerPlotMap;
 public:
+    boost::mutex manageMutex;
     explicit GraphWidget(QWidget *parent = 0);
+    ~GraphWidget();
     void addNewPlot(chaos::DataBuffer *dataBuffer, std::string& plotName, chaos::DataType::DataType dataType);
+    void addNewPlot(chaos::PointerBuffer *ptrBuffer, std::string& plotName, chaos::DataType::DataType dataType);
     void removePlot(std::string& plotName);
     void update();
     bool hasPlot(std::string& plotName);
-    void replot();
     void clearAllPlot();
+    void start();
+    void stop();
+    void timerEvent(QTimerEvent *event);
+    void setPointNumber(int points);
+    void setMinMaxGrid(int min, int max);
 signals:
-    void updatePlot();
 public slots:
 
 };

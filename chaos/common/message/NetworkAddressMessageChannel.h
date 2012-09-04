@@ -57,7 +57,7 @@ namespace chaos {
                 //if(nodeAddress) delete nodeAddress;
         }
         
-        virtual void setNewAddress(CNodeNetworkAddress *_nodeAddress) {
+        void setNewAddress(CNodeNetworkAddress *_nodeAddress) {
             nodeAddress.reset(_nodeAddress);
             if(_nodeAddress)setRemoteNodeAddress(nodeAddress->ipPort);
         }

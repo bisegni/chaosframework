@@ -19,9 +19,11 @@
  */
 #ifndef ChaosFramework_HLDataApi_h
 #define ChaosFramework_HLDataApi_h
-
+#include <map>
+#include <string>
 #include <chaos/ui_toolkit/HighLevelApi/DeviceController.h>
 #include <chaos/common/utility/Singleton.h>
+
 namespace chaos {
     namespace ui {
         using namespace std;
@@ -31,18 +33,31 @@ namespace chaos {
         class HLDataApi  : public Singleton<HLDataApi> {
             friend class ChaosUIToolkit;
             friend class Singleton<HLDataApi>;
-        /*
-         * Constructor
-         */
-        HLDataApi();
-        
-        /*
-         * Distructor
-         */
-        ~HLDataApi();
-
+            
+            std::map<string, DeviceController* > controllerMap;
+            /*
+             LL Rpc Api static initialization it should be called once for application
+             */
+            void init() throw (CException);
+            /*
+             Deinitialization of LL rpc api
+             */
+            void deinit() throw (CException);
+            
+            /*
+             * Constructor
+             */
+            HLDataApi();
+            
+            /*
+             * Distructor
+             */
+            ~HLDataApi();
+            
         public:
+            
             DeviceController *getControllerForDeviceID(string& deviceID) throw (CException);
+            void disposeDeviceControllerPtr(DeviceController *) throw (CException);
         };
     }
 }

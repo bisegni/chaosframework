@@ -42,8 +42,10 @@ namespace chaos {
          contorl the initialization and operation phase for a device. Allow to send value for input dataset and read the last 
          freshenest value form the live data
          */
-        class DeviceController: public CThreadExecutionTask {
+        class DeviceController {
             friend class HLDataApi;
+                //!time to waith for the answer to an request;
+            uint32_t millisecToWait;
                 //! represent the device id controlled by this instance
             string deviceID;
                 //! the haos address of device
@@ -54,8 +56,6 @@ namespace chaos {
             DeviceMessageChannel *deviceChannel;
                 //! The io driver for accessing live data of the device
             IODataDriver *ioLiveDataDriver;
-                //!the thread for the fetch operation
-            CThread *liveDataThread;
                 //!Dataset database
             CUSchemaDB datasetDB;
                 //!point to the freashest live value for this device dataset
@@ -63,7 +63,8 @@ namespace chaos {
             
                 //!point to the freashest live value for this device dataset
             auto_ptr<CDataWrapper> currentLiveValue;
-            
+                
+                //mutext for multi threading track operation 
             boost::recursive_mutex trackMutext;
             
                 //!store the type of the attribute for fast retrieve
@@ -75,12 +76,19 @@ namespace chaos {
             std::map<string,  chaos::SingleBufferCircularBuffer<int32_t> *> int32AttributeLiveBuffer;
             std::map<string,  chaos::SingleBufferCircularBuffer<int64_t> *> int64AttributeLiveBuffer;
             std::map<string,  chaos::SingleBufferCircularBuffer<double_t> *> doubleAttributeLiveBuffer;
+            std::map<string,  PointerBuffer*> pointerAttributeLiveBuffer;
             
                 //! Defautl Constructor
             /*!
              The visibility of the constructor is private becase it's is isntantiable only via HLDataApi singleton
              */
             DeviceController(string& _deviceID);
+ 
+            //!Public destructor
+            /*!
+             All can destruct an isntance of the device controller
+             */
+            ~DeviceController();
             
                 //! update inromation for talking with device
             /*!
@@ -109,14 +117,34 @@ namespace chaos {
                 //! the fetcher thread method
             void executeOnThread(const string&) throw(CException);
         public:
-                //!Public destructor
+
+            //!Return the deviceID of the device
             /*!
-             All can destruct an isntance of the device controller
+                Return the deviceID that identify the device managed by this controller
+                \param dID the string that will be filled with the device id
              */
-            ~DeviceController();
-            
             void getDeviceId(string& dId);
             
+            //!Set the request wait time 
+            /*!
+             Set the controller globally wait time, used when a request is forwarded to an device. after that time
+             the method return with some information.
+             \param newMillisecToWait the time that the answer is waited
+             */
+            void setRequestTimeWaith(uint32_t newMillisecToWait);
+            
+            //!Return the controller globally wait time
+            /*!
+             Return the controller globally wait time
+             \return the wait time
+             */
+            uint32_t getRequestTimeWaith();
+            
+                //! update the scudiling of device run method
+            /*!
+             Set the control unit run method scheduling delay
+             */
+            int setScheduleDelay(int32_t millisecDelay);
             /*!
              Get attribute name filtered by direction type
              */
@@ -137,6 +165,10 @@ namespace chaos {
              Get the direction of the attribute
              */
             int getDeviceAttributeDirection(string& attributesName, DataType::DataSetAttributeIOAttribute& directionType);
+            /*!
+             Get the direction of the attribute
+             */
+            int getDeviceAttributeType(string& attributesName, DataType::DataType& type);
             
                 //!Device initialization
             /*!
@@ -163,7 +195,10 @@ namespace chaos {
             int deinitDevice();
             
             int setInt32AttributeValue(string& attributeName, int32_t attributeValue);
-            int setDoubleAttributeValue(string& attributeName, double_t attributeValue); 
+            int setInt32AttributeValue(const char *attributeName, int32_t attributeValue);
+            
+            int setDoubleAttributeValue(string& attributeName, double attributeValue);
+            int setDoubleAttributeValue(const char *attributeName, double attributeValue); 
             
                 //!Get device state
             /*!
@@ -171,25 +206,10 @@ namespace chaos {
              */
             int getState(CUStateKey::ControlUnitState& deviceState);
             
-                //!Set the scheduler delay for this determinated device
-            /*!
-             Set the delay for the thread that call the run() methdo for this device
-             \param millisecDelay the delay from the query to the metadata server
-             */
-            int setScheduleDelay(int32_t millisecDelay);
-            
-            
             /*!
              Setup the structure to accelerate the tracking of the live data
              */
             void setupTracking();
-            
-            
-                //!Start to trackthe current device value
-            /*!
-             Start the live data tracking for this device, if no delay is given, the default delay of the device on metadataserver is got
-             */
-            void startTracking(bool automatic = false);
             
                 //!Stop the live data tracking
             /*!
@@ -203,6 +223,11 @@ namespace chaos {
              */
             void addAttributeToTrack(string& attributeName);
             
+            //get the CDatawrapper for the live value
+            /*!
+             the returned object is not own by requester but only by DeviceController isntance
+             */
+            CDataWrapper* getLiveCDataWrapperPtr();
             
             /*!
              Fetch the current live value form live storage
@@ -210,6 +235,12 @@ namespace chaos {
             void fetchCurrentDeviceValue();
             
             chaos::DataBuffer *getBufferForAttribute(string& attributeName);
+            chaos::PointerBuffer *getPtrBufferForAttribute(string& attributeName);
+            chaos::DataBuffer *getPtrBufferForTimestamp(const int initialDimension = 10);
+            
+            CDataWrapper *getCurrentData(){
+                return currentLiveValue.get();
+            }
         };
     }
 }

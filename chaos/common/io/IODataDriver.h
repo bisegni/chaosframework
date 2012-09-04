@@ -30,7 +30,7 @@
 namespace chaos{ 
     using namespace std;
     
-    /*
+    /*!
      * History Output driver base abstract classe, that define two method to control
      * the initialization and history persistence of the data
      */
@@ -38,44 +38,48 @@ namespace chaos{
     class IODataDriver: public Configurable {
     public:
         virtual ~IODataDriver(){};
-        /*
+        /*!
          * Init method, the has map has all received value for configuration
          * every implemented driver need to get all needed configuration param
          */
-        virtual void init() throw(CException) = 0;
-        /*
+        virtual void init() throw(CException);
+        /*!
          * DeInit method
          */
-        virtual void deinit() throw(CException) = 0;
-        
-        /*
+        virtual void deinit() throw(CException);
+
+        /*!
          * This method cache all object passed to driver
          */
-        virtual void storeData(CDataWrapper*) throw(CException) = 0;
+        void storeData(CDataWrapper *dataToStore) throw(CException);
         
-        
-        /*
+        /*!
          * This method retrive the cached object by CSDawrapperUsed as query key and
          * return a pointer to the class ArrayPointer of CDataWrapper type
          */
-        virtual ArrayPointer<CDataWrapper>* retriveData(CDataWrapper*const)  throw(CException) = 0;
+        virtual ArrayPointer<CDataWrapper>* retriveData(CDataWrapper*const)  throw(CException);
         
-        /*
+        /*!
          * This method retrive the cached object by CSDawrapperUsed as query key and
          * return a pointer to the class ArrayPointer of CDataWrapper type
          */
-        virtual ArrayPointer<CDataWrapper>* retriveData(string&)  throw(CException) = 0;
+        virtual ArrayPointer<CDataWrapper>* retriveData()  throw(CException);
   
-        /*
+        /*!
+         * This method store a buffer into live cached
+         */
+        virtual void storeRawData(size_t dataDim, const char * buffer)  throw(CException) = 0;
+        
+        /*!
          * This method retrive the cached object by CSDawrapperUsed as query key and
          * return a pointer to the class ArrayPointer of CDataWrapper type
          */
-        virtual char * retriveRawData(string& key, size_t* dataDim=NULL)  throw(CException) = 0;
+        virtual char * retriveRawData(size_t* dataDim=NULL)  throw(CException) = 0;
         
-        /*
+        /*!
          Update the driver configuration
          */
-        virtual CDataWrapper* updateConfiguration(CDataWrapper*) = 0;
+        virtual CDataWrapper* updateConfiguration(CDataWrapper*);
     };
 }
 #endif

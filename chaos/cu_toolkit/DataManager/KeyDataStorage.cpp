@@ -69,7 +69,7 @@ ArrayPointer<CDataWrapper>* KeyDataStorage::getLastDataSet() {
         //retrive data from cache for the key managed by
         //this instance of keydatastorage
     CHAOS_ASSERT(liveIODriver);
-    return liveIODriver->retriveData(dataSetKey);
+    return liveIODriver->retriveData();
 }
 
 /*
@@ -83,7 +83,8 @@ ArrayPointer<CDataWrapper>* KeyDataStorage::getHistoricalDataSet(CDataWrapper *s
  
  */
 CDataWrapper* KeyDataStorage::updateConfiguration(CDataWrapper *newConfiguration) {
+        //add in the configuration the key for the device
+    newConfiguration->addStringValue(LiveHistoryMDSConfiguration::CS_DM_LD_DEVICE_ADDRESS_KEY, dataSetKey);
     MultiBufferDataStorage::updateConfiguration(newConfiguration);
-    
     return NULL;
 }

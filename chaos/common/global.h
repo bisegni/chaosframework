@@ -24,27 +24,43 @@
  *
  * \section intro_sec Introduction
  *
- * This is the introduction.
+ * !CHOAS is a new idea on Control System software architecture, more information cam be found
+ * on http://chaos.infn.it/
  *
  * \section install_sec Installation
- *
- * \subsection step1 Step 1: Opening the box
- *  
- * etc...
+ * Read the README.txt file in the root of source code folder
  */
 
 #include <boost/version.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/log/sources/basic_logger.hpp>
+#include <boost/log/sources/record_ostream.hpp>
+#include <boost/log/sources/global_logger_storage.hpp>
 using namespace boost;
 
-#include <boost/log/trivial.hpp>
+/*#include <boost/shared_ptr.hpp>
+#include <boost/make_shared.hpp>
+
+#include <boost/log/common.hpp>
+#include <boost/log/formatters.hpp>
+#include <boost/log/filters.hpp>
+
+#include <boost/log/utility/init/to_file.hpp>
+#include <boost/log/utility/init/to_console.hpp>
+#include <boost/log/utility/init/common_attributes.hpp>*/
 
 
-#define LDBG_       BOOST_LOG_TRIVIAL(debug)
-#define LERR_       BOOST_LOG_TRIVIAL(error)
-#define LAPP_       BOOST_LOG_TRIVIAL(info)
-#define LAPP_CFG_   BOOST_LOG_TRIVIAL(info)
+
+
+
+    //src::logger chaosLogger;
+BOOST_LOG_DECLARE_GLOBAL_LOGGER(chaosLogger, boost::log::sources::logger)
+
+#define LDBG_       BOOST_LOG(chaosLogger::get())
+#define LERR_       BOOST_LOG(chaosLogger::get())
+#define LAPP_       BOOST_LOG(chaosLogger::get())
+#define LAPP_CFG_   BOOST_LOG(chaosLogger::get())
     //define for chaos assert macro, it print the basiclay infromation to find
     //the error when the condition is not true
 #ifndef DEBUG
@@ -56,6 +72,7 @@ if (! (x)) \
 cout << "ERROR!! Assert " << #x << " failed\n"; \
 cout << " on line " << __LINE__  << "\n"; \
 cout << " in file " << __FILE__ << "\n";  \
+cout.flush();\
 }
 #endif
 
@@ -65,7 +82,7 @@ const boost::posix_time::ptime EPOCH(boost::gregorian::date(1970,1,1));
 
     //chaos assert to debug real badthing
 
-#include "version.h"
+#include <chaos/common/version.h>
 
     //macro for decode the chaos exception
 #define DECODE_CHAOS_EXCEPTION(x) \
@@ -94,12 +111,7 @@ LAPP_ << "-----------------------------------------";\
 LAPP_ << CSLIB_VERSION_HEADER;\
 LAPP_ << CSLIB_VERSION_NUMBER;\
 LAPP_ << CSLIB_VERSION_LAST_COMMITTER;\
-LAPP_ << "-----------------------------------------";\
-LAPP_ << "Platform: " << BOOST_PLATFORM;\
-LAPP_ << "Boost version: " << (BOOST_VERSION / 100000)\
-<< "."<< ((BOOST_VERSION / 100) % 1000)<< "."<< (BOOST_VERSION / 100000);\
-LAPP_ << "Compiler Version: " << BOOST_COMPILER;\
-LAPP_ << "-----------------------------------------";\
+LAPP_ << "-----------------------------------------";
 
 
 /*
@@ -108,6 +120,7 @@ LAPP_ << "-----------------------------------------";\
 namespace chaos{
 class ServerDelegator {
 public:
+    virtual ~ServerDelegator(){};
     virtual void stop() = 0;
 };
 }

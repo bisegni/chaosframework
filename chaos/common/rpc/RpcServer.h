@@ -25,24 +25,28 @@
 #include <string>
 
 #include <chaos/common/data/CDataWrapper.h>
-#include <chaos/common/dispatcher/CommandDispatcher.h>
+#include <chaos/common/rpc/RpcServerHandler.h>
 #include <chaos/common/exception/CException.h>
-
+#include <chaos/common/event/EventHandler.h>
+#include <chaos/common/utility/ISDInterface.h>
 
 namespace chaos {
+    using namespace std;
+
+    class MessageBroker;
     /*
      Abstract class for standard adapter method for permit, to CommandManager
      the correct initialization for the adapter instance
      */
-    class RpcServer {
+    class RpcServer : public chaos::utility::ISDInterface {
+        friend class MessageBroker;
         string *typeName;
     protected:
         //! port where server has been published
         int portNumber;
         
-        CommandDispatcher *commandDispatcher;
-    public:
-        RpcServer(string *alias){typeName = alias;};
+        RpcServerHandler *commandHandler;
+        
         /*
          init the rpc adapter
          */
@@ -58,24 +62,23 @@ namespace chaos {
          */
         virtual void deinit() throw(CException) = 0;
         
+    public:
+        RpcServer(string *alias);
+        
         /*!
          Return the published port
          */
-        int getPublishedPort(){return portNumber;}
+        int getPublishedPort();
         
         /*
          set the command dispatcher associated to the instance of rpc adapter
          */
-        void setCommandDispatcher(CommandDispatcher *newCommandDispatcher){
-            commandDispatcher = newCommandDispatcher;
-        }
+        void setCommandDispatcher(RpcServerHandler *newCommandHandler);
         
         /*
          Return the adapter alias
          */
-        const char * getName() const {
-            return typeName->c_str();
-        }
+        const char * getName() const;
     };
 }
 #endif

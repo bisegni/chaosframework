@@ -64,6 +64,6 @@ friend class Singleton<ClassName>;
     };
         //template<class T> mutex Singleton<T>::stMutext;
     template<class T> T* Singleton<T>::t = 0L;
-    template<class T> once_flag Singleton<T>::flag = BOOST_ONCE_INIT;
+    template<class T> boost::once_flag Singleton<T>::flag = BOOST_ONCE_INIT;
 }
 #endif

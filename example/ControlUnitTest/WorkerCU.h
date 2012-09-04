@@ -23,7 +23,8 @@
 #include <string>
 #include <boost/random.hpp>
 #include <boost/chrono.hpp>
-
+#include <boost/thread.hpp>
+#include <chaos/common/utility/Atomic.h>
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 
 using namespace std;
@@ -31,15 +32,30 @@ using namespace chaos;
 using namespace boost;
 using namespace boost::posix_time;
 
+
 class WorkerCU : public AbstractControlUnit {
     typedef boost::mt19937 RNGType; 
     RNGType rng;
-    uniform_int<> one_to_six;    
+    uniform_int<> one_to_hundred;    
     variate_generator< RNGType, uniform_int<> > randInt; 
-    double_t numberOfResponse;
+    double numberOfResponse;
+    high_resolution_clock::time_point initTime;
     high_resolution_clock::time_point lastExecutionTime;
     high_resolution_clock::time_point currentExecutionTime;
     string _deviceID;
+    long double PI;
+    
+    int32_t points;
+    double *sinevalue;
+    double freq;
+    double gain;
+    double phase;
+    double bias;
+    double gainNoise;
+    
+    boost::mutex pointChangeMutex;
+    int32_t messageID;
+    
 public:
     /*
      Construct a new CU with an identifier
@@ -53,6 +69,10 @@ public:
      Destructor a new CU with an identifier
      */
     ~WorkerCU();
+    
+    inline void computeWave(CDataWrapper *acquiredData);
+    
+    inline void setWavePoint(int32_t newNumberOfPoints);
 protected:
     /*
      Define the Control Unit Dataset and Actions

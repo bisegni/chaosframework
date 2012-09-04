@@ -32,6 +32,10 @@
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
 #include <controldialog.h>
+#include <boost/shared_ptr.hpp>
+#include <boost/thread.hpp>
+#include <qevent.h>
+#include <QTableWidgetItem>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -45,18 +49,21 @@ MainWindow::MainWindow(QWidget *parent) :
     graphWdg = new GraphWidget();
     gL->addWidget(graphWdg, 1);
     ui->graphWidget->setLayout(gL);
-    ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->tableView->setEditTriggers(QAbstractItemView::EditKeyPressed);
     ui->listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     //setup mds channel
     mdsChannel = chaos::ui::LLRpcApi::getInstance()->getNewMetadataServerChannel();
     trackThread = NULL;
-    QObject::connect(graphWdg,SIGNAL(updatePlot()),this,SLOT(updatePlot()));
+    d_timerId = -1;
+    lostPack = 0;
+    checkSequentialIDKey.assign(ui->lineEdit->text().toStdString());
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
+
 
 void MainWindow::on_buttonDeleteDevice_clicked(bool checked)
 {
@@ -81,7 +88,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     settings.setValue("main_window", saveGeometry());
     settings.setValue("main_window", saveState());
-    cleanCurrentDevice();
+    cleanLastDevice();
 
     QMainWindow::closeEvent(event);
 }
@@ -117,13 +124,66 @@ void MainWindow::on_buttonUpdateDeviceList_clicked()
     for(std::vector<std::string>::iterator iter = allActiveDeviceID.begin();
         iter != allActiveDeviceID.end();
         iter++){
-        model->insertRow(row++, new QStandardItem(QString((*iter).c_str())));
+        model->setItem(row++, new QStandardItem(QString((*iter).c_str())));
     }
     ui->listView->setModel(model);
 }
 
+
+
+void MainWindow::updateDeviceState() {
+    if(!deviceController) {
+        ui->labelState->setText("");
+        return;
+    }
+    chaos::CUStateKey::ControlUnitState currentState;
+    int err = deviceController->getState(currentState);
+    switch(err){
+    case 0:{
+        switch(currentState){
+        case chaos::CUStateKey::INIT:
+            ui->labelState->setText("Initialized");
+            break;
+        case chaos::CUStateKey::DEINIT:
+            ui->labelState->setText("Deinitialized");
+            break;
+        case chaos::CUStateKey::START:
+            ui->labelState->setText("Started");
+            break;
+        case chaos::CUStateKey::STOP:
+            ui->labelState->setText("Stopped");
+            break;
+        }
+        break;
+
+    default:
+            ui->labelState->setText("timeout/offline");
+            break;
+        }
+    }
+}
+
+/*
+  Try to remove the last selected device
+  */
+void MainWindow::cleanLastDevice() {
+    if(!deviceController) return;
+    ui->label_2->setText("");
+    ui->tableView->setModel(new QStandardItemModel(0, 4));
+    //stop the possible tracking
+    stopTracking();
+
+    //remove the plot
+    graphWdg->clearAllPlot();
+
+    chaos::ui::HLDataApi::getInstance()->disposeDeviceControllerPtr(deviceController);
+}
+
 void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
 {
+    //delete last device that is been controlled
+    cleanLastDevice();
+
     //deviceController
     std::string attributeDescription;
     std::vector<string> attributesName;
@@ -132,27 +192,32 @@ void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
     ui->label_2->setText(selectedDevice);
 
     std::string dName = selectedDevice.toStdString();
-    deviceController.reset(chaos::ui::HLDataApi::getInstance()->getControllerForDeviceID(dName));
+    deviceController = chaos::ui::HLDataApi::getInstance()->getControllerForDeviceID(dName);
     deviceController->setupTracking();
     //get only output o attribute
     deviceController->getDeviceDatasetAttributesName(attributesName, chaos::DataType::Output);
 
-    QStandardItemModel *model = new QStandardItemModel(attributeDescription.size(), 3);
+    QStandardItemModel *model = new QStandardItemModel(attributeDescription.size(), 4);
     model->setHeaderData(0, Qt::Horizontal, QObject::tr("Name"));
-    model->setHeaderData(0, Qt::Horizontal, QObject::tr("Direction"));
-    model->setHeaderData(1, Qt::Horizontal, QObject::tr("Description"));
+    model->setHeaderData(1, Qt::Horizontal, QObject::tr("Direction"));
+    model->setHeaderData(1, Qt::Horizontal, QObject::tr("Controller"));
+    model->setHeaderData(3, Qt::Horizontal, QObject::tr("Description"));
 
     int row = 0;
+
     for(std::vector<std::string>::iterator iter = attributesName.begin();
         iter != attributesName.end();
         iter++){
         deviceController->getAttributeDescription((*iter), attributeDescription);
         model->setItem(row, 0, new QStandardItem(QString((*iter).c_str())));
         model->setItem(row, 1, new QStandardItem("Output"));
-        model->setItem(row++, 2, new QStandardItem(QString(attributeDescription.c_str())));
+        model->setItem(row, 2, new QStandardItem(returnAttributeTypeInString(*iter)));
+        model->setItem(row++, 3, new QStandardItem(QString(attributeDescription.c_str())));
     }
+
     //get only input o attribute
     attributesName.clear();
+    //get only output o attribute
     deviceController->getDeviceDatasetAttributesName(attributesName, chaos::DataType::Input);
     for(std::vector<std::string>::iterator iter = attributesName.begin();
         iter != attributesName.end();
@@ -160,12 +225,43 @@ void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
         deviceController->getAttributeDescription((*iter), attributeDescription);
         model->setItem(row, 0, new QStandardItem(QString((*iter).c_str())));
         model->setItem(row, 1, new QStandardItem("Input"));
-        model->setItem(row++, 2, new QStandardItem(QString(attributeDescription.c_str())));
+        model->setItem(row, 2, new QStandardItem(returnAttributeTypeInString(*iter)));
+        model->setItem(row++, 3, new QStandardItem(QString(attributeDescription.c_str())));
     }
     ui->tableView->setModel(model);
+    ui->tableView->setEditTriggers(QAbstractItemView::SelectedClicked);
+    updateDeviceState();
 
     QHeaderView *header = ui->tableView->horizontalHeader();
     header->setResizeMode(QHeaderView::Stretch);
+}
+
+QString  MainWindow::returnAttributeTypeInString(string& attributeName) {
+    QString result;
+    chaos::CUSchemaDB::RangeValueInfo attributeInfo;
+    deviceController->getDeviceAttributeRangeValueInfo(attributeName, attributeInfo);
+
+    switch(attributeInfo.valueType){
+    case chaos::DataType::TYPE_INT32:
+        result = "TYPE_INT32";
+        break;
+    case chaos::DataType::TYPE_DOUBLE:
+        result = "TYPE_DOUBLE";
+        break;
+    case chaos::DataType::TYPE_BYTEARRAY:
+        result = "TYPE_BYTEARRAY";
+        break;
+    case chaos::DataType::TYPE_INT64:
+        result = "TYPE_INT64";
+        break;
+    case chaos::DataType::TYPE_STRUCT:
+        result = "TYPE_STRUCT";
+        break;
+    case chaos::DataType::TYPE_STRING:
+        result = "TYPE_STRING";
+        break;
+    }
+    return result;
 }
 
 void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
@@ -187,14 +283,25 @@ void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
         } else {
             deviceController->addAttributeToTrack(attributeName);
             deviceController->getDeviceAttributeRangeValueInfo(attributeName, rangeInfo);
-            chaos::DataBuffer *attributeBuffer = deviceController->getBufferForAttribute(attributeName);
-            if(!attributeBuffer) {
-                QMessageBox* msg = new QMessageBox(this);
-                msg->setText("Errore getting buffer for attribute!");
-                msg->show();
-                return;
+            if(rangeInfo.valueType != chaos::DataType::TYPE_BYTEARRAY){
+                chaos::DataBuffer *attributeBuffer = deviceController->getBufferForAttribute(attributeName);
+                if(!attributeBuffer) {
+                    QMessageBox* msg = new QMessageBox(this);
+                    msg->setText("Errore getting buffer for attribute!");
+                    msg->show();
+                    return;
+                }
+                graphWdg->addNewPlot(attributeBuffer, attributeName, rangeInfo.valueType);
+            }else{
+                chaos::PointerBuffer *pointerBuffer = deviceController->getPtrBufferForAttribute(attributeName);
+                if(!pointerBuffer) {
+                    QMessageBox* msg = new QMessageBox(this);
+                    msg->setText("Errore getting buffer for attribute!");
+                    msg->show();
+                    return;
+                }
+                graphWdg->addNewPlot(pointerBuffer, attributeName, rangeInfo.valueType);
             }
-            graphWdg->addNewPlot(attributeBuffer, attributeName, rangeInfo.valueType);
         }
     }
 
@@ -206,96 +313,121 @@ void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
     }
 }
 
-void MainWindow::cleanCurrentDevice() {
-    on_buttonStopTracking_clicked();
-    graphWdg->clearAllPlot();
-}
-
 void MainWindow::on_buttonInit_clicked()
 {
-    if(!deviceController.get()) return;
+    if(!deviceController) return;
     if(deviceController->initDevice()!= 0 ){
         QMessageBox* msg = new QMessageBox(this);
         msg->setText("Device already initialized or error");
         msg->show();
     }
-    //set the scehdule delay acocrding to control
-    if(deviceController->setScheduleDelay(ui->dialScheduleDevice->value()*1000) != 0 ){
-        QMessageBox* msg = new QMessageBox(this);
-        msg->setText("Error setting schedule delay");
-        msg->show();
-    }
+    deviceController->setScheduleDelay(ui->dialScheduleDevice->value()*1000);
+    updateDeviceState();
 }
 
 void MainWindow::on_buttonDeinit_clicked()
 {
-    if(!deviceController.get()) return;
-   if( deviceController->deinitDevice() != 0 ){
+    if(!deviceController) return;
+    if( deviceController->deinitDevice() != 0 ){
         QMessageBox* msg = new QMessageBox(this);
         msg->setText("Device alredy deinitialized or error");
         msg->show();
     }
+
+    updateDeviceState();
 }
 
 void MainWindow::on_buttonStart_clicked()
 {
-    if(!deviceController.get()) return;
+    if(!deviceController) return;
     if(deviceController->startDevice() != 0 ){
         QMessageBox* msg = new QMessageBox(this);
         msg->setText("Device already started or error");
         msg->show();
     }
+    updateDeviceState();
 }
 
 void MainWindow::on_buttonStop_clicked()
 {
-    if(!deviceController.get()) return;
+    if(!deviceController) return;
     if(deviceController->stopDevice() != 0 ){
         QMessageBox* msg = new QMessageBox(this);
         msg->setText("Device already stopped or error");
         msg->show();
     }
+    updateDeviceState();
 }
 
-void MainWindow::on_buttonStartTracking_clicked()
+void MainWindow::on_buttonStartTracking_clicked(){
+    bool tracking = schedThread.get() != NULL;
+    if(tracking){
+        stopTracking();
+    } else {
+        startTracking();
+    }
+}
+
+void MainWindow::startTracking()
 {
-    if(trackThread) return;
-    trackThread = new chaos::CThread(this);
-    trackThread->setDelayBeetwenTask(1000000);
-    trackThread->start();
+    if(schedThread.get()) return;
+    runThread = true;
+    schedThread.reset(new boost::thread(boost::bind(&MainWindow::executeOnThread, this)));
+
+    if(d_timerId != -1) return;
+    d_timerId = startTimer(40);
+    lastID = 0;
+    lostPack = 0;
+    oversampling = 0;
+    graphWdg->start();
+    ui->buttonStartTracking->setText("Stop Tracking");
 }
 
-void MainWindow::on_buttonStopTracking_clicked()
-{
-    if(!trackThread) return;
-    trackThread->stop();
-    delete(trackThread);
-    trackThread = NULL;
+void MainWindow::stopTracking() {
+    graphWdg->stop();
+    if(d_timerId != -1) killTimer(d_timerId);
+    d_timerId = -1;
+    runThread = false;
+    if(schedThread){
+        schedThread->join();
+        schedThread.reset();
+    }
+    ui->buttonStartTracking->setText("Start Tracking");
 }
 
-void MainWindow::executeOnThread(const std::string&) throw(chaos::CException) {
-    if(!deviceController.get()) return;
-    deviceController->fetchCurrentDeviceValue();
-    graphWdg->update();
+
+
+void MainWindow::executeOnThread(){
+    if(!deviceController) return;
+    while(runThread){
+        deviceController->fetchCurrentDeviceValue();
+        if(checkSequentialIDKey.size()>0){
+            chaos::CDataWrapper *wrapper = deviceController->getCurrentData();
+            if(wrapper == NULL) return;
+
+            if(wrapper->hasKey(checkSequentialIDKey.c_str())){
+                int32_t curLastID = wrapper->getInt32Value(checkSequentialIDKey.c_str());
+                if(lastID+1<curLastID){
+                    lostPack += (curLastID - lastID + 1);
+                }else if(lastID==curLastID){
+                    oversampling++;
+                }
+                std::cout << "last id:" << lastID << " - fetchedLastID:"<<curLastID << std::endl;
+                lastID = curLastID;
+
+            }
+        }
+        boost::this_thread::sleep(boost::posix_time::milliseconds(ui->dialTrackSpeed->value()));
+    }
+
 }
 
-void MainWindow::updatePlot(){
-    graphWdg->replot();
+void MainWindow::on_dialTrackSpeed_valueChanged(int value) {
 }
 
-void MainWindow::on_dialTrackSpeed_valueChanged(int value)
-{
-    if(!trackThread) return;
-    int64_t delay(value*1000);
-    trackThread->setDelayBeetwenTask(delay);
-}
-
-void MainWindow::on_dialScheduleDevice_valueChanged(int value)
-{
-    if(!deviceController.get()) return;
-    int64_t delay(value*1000);
-    deviceController->setScheduleDelay(delay);
-
+void MainWindow::on_dialScheduleDevice_valueChanged(int value) {
+    if(!deviceController) return;
+    deviceController->setScheduleDelay(value*1000);
 }
 
 void MainWindow::on_spinDeviceSchedule_valueChanged(int value)
@@ -306,4 +438,49 @@ void MainWindow::on_spinDeviceSchedule_valueChanged(int value)
 void MainWindow::on_spinTrackSpeed_valueChanged(int value)
 {
     on_dialTrackSpeed_valueChanged(value);
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    updateDeviceState();
+}
+
+void MainWindow::timerEvent(QTimerEvent *event)
+{
+    if ( event->timerId() == d_timerId )
+    {
+        QString message= "LP:";
+        message.append(QString::number(lostPack));
+        message.append(" os:");
+        message.append(QString::number(oversampling));
+        ui->lostPackageCountLabel->setText(message);
+    }
+    QMainWindow::timerEvent(event);
+}
+
+void MainWindow::on_spinBox_valueChanged(int points)
+{
+    if(graphWdg == NULL) return;
+    graphWdg->setPointNumber(points);
+}
+
+void MainWindow::on_lineEdit_returnPressed()
+{
+    checkSequentialIDKey.assign(ui->lineEdit->text().toStdString());
+}
+
+void MainWindow::on_pushButtonResetStatistic_clicked()
+{
+    lostPack = 0;
+    oversampling = 0;
+}
+
+void MainWindow::on_spinBoxMaxYGrid_valueChanged(int arg1)
+{
+    graphWdg->setMinMaxGrid(ui->spinBoxMinYGrid->value(), ui->spinBoxMaxYGrid->value());
+}
+
+void MainWindow::on_spinBoxMinYGrid_valueChanged(int arg1)
+{
+    graphWdg->setMinMaxGrid(ui->spinBoxMinYGrid->value(), ui->spinBoxMaxYGrid->value());
 }

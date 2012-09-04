@@ -1,8 +1,18 @@
+CMakeCache.txt
+CMakeFiles
+Makefile
+bin_*
+cmake_install.cmake
+install_manifest.txt
+ChaosMDSLite/target/*-0.jar
 ControlSystemLibTest/ChaosCU
 example/UIToolkitCMDLineExample/UIToolkitCMDLineExample
 example/UIToolkitTest/UIToolkitTest.pro.user
 example/UIToolkitTest-build-*
 example/ControlUnitTest/ControlUnitTest
+example/UIToolkitTest/ui*.h
+example/UIToolkitTest/moc*cpp
+example/UIToolkitTest/testui.pbproj/qt*.mak
 .DS_Store
 *.xcuserdatad*
 *bisegni*
@@ -35,3 +45,7 @@ example/UIToolkitTest/testui.app
 MetadataServer/WebContent/META-INF/context.xml
 *application.log
 MetadataServer/.settings/*
+ChaosMDSLite/target*
+ChaosMDSLite/src/main/webapp/META-INF/context.xml
+ChaosMDSLite/target/m2e-wtp*
+Documentation/uml/CHAOS.mdzip.bak

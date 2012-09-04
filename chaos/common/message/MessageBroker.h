@@ -28,10 +28,11 @@
 #include <chaos/common/rpc/RpcServer.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/action/DeclareAction.h>
-#include <chaos/common/dispatcher/CommandDispatcher.h>
+#include <chaos/common/action/EventAction.h>
 #include <chaos/common/rpcnet/CNodeNetworkAddress.h>
 #include <chaos/common/utility/SetupStateManager.h>
-
+#include <chaos/common/event/channel/EventChannel.h>
+#include <chaos/common/event/evt_desc/EventDescriptor.h>
 namespace chaos {
 
     using namespace std;
@@ -51,7 +52,17 @@ namespace chaos {
     class NetworkAddressMessageChannel;
     class MDSMessageChannel;
     class DeviceMessageChannel;
+    class AbstractCommandDispatcher;
+    class AbstractEventDispatcher;
     
+    namespace event {
+        namespace channel {
+            class AlertEventChannel;
+        }
+        class EventServer;
+        class EventClient;
+    }
+
         //! Message Broker
     /*! 
      The MessageBroker is the manager for the message in chaos framework. It contains the reference to 
@@ -60,6 +71,12 @@ namespace chaos {
      */
     class MessageBroker: private SetupStateManager {
         
+            //!Event Client for event forwarding
+        event::EventClient *eventClient;
+        
+            //!Event server for event handlind
+        event::EventServer *eventServer;
+        
             //! Rpc client for message forwarding
         RpcClient *rpcClient;
         
@@ -67,12 +84,21 @@ namespace chaos {
         RpcServer *rpcServer;
         
             //! Rpc server for message dispatcher
-        CommandDispatcher *commandDispatcher;
+        AbstractCommandDispatcher *commandDispatcher;
+        
+            //! Rpc server for message dispatcher
+        AbstractEventDispatcher *eventDispatcher;
         
             //!keep track of active channel
-        map<string, MessageChannel*> activeChannel;
+        map<string, MessageChannel*> activeRpcChannel;
+            //!Mutex for rpc channel managment
+        boost::mutex mapRpcChannelAcces;
         
-        boost::mutex mapChannelAcces;
+            //!keep track of active channel
+        map<string, event::channel::EventChannel*> activeEventChannel;
+        
+            //!Mutex for event channel managment
+        boost::mutex mapEventChannelAccess;
         
         string publishedHostAndPort;
         string metadataServerAddress;
@@ -93,7 +119,7 @@ namespace chaos {
         MessageBroker();
         
             //! Basic Destructor
-        ~MessageBroker();
+        virtual ~MessageBroker();
         
             //!Message Broker initialization
         /*!
@@ -114,18 +140,6 @@ namespace chaos {
          */
         virtual void start() throw(CException);
         
-            //! Action registration for the current isntance of MessageBroker
-        /*!
-         Register actions defined by AbstractActionDescriptor instance contained in the array
-         */
-        void registerAction(DeclareAction*);
-        
-            //!Action deregistration
-        /*!
-         Deregister actions owned by input parameter that are hosted in this current instance of message broker
-         */
-        void deregisterAction(DeclareAction*);
-        
             //!Get the published port
         /*!
          Return the port where the rpc server has been published
@@ -138,13 +152,56 @@ namespace chaos {
          */
         void getPublishedHostAndPort(string&);
         
-            //!message submition
+            //! event Action registration for the current instance of MessageBroker
         /*!
-         Submit a message, all the inromation for forwarding it are already into CDataWrapper
-         \param message the message coded into key/value semantics
-         \param onThisThread if true the message is forwarded in the same thread of the caller
+         Register an event actions defined for a detgerminated event type
+         \param eventAction the actio to register
+         \param eventType a type for the event for which the user want to register
          */
-        bool submitMessage(CDataWrapper *message, bool onThisThread=false);
+        void registerEventAction(EventAction *eventAction, event::EventType eventType, const char * const identification = NULL);
+        
+            //!Event Action deregistration
+        /*!
+         Deregister an event action
+         */
+        void deregisterEventAction(EventAction *eventAction);
+        
+            //!Event channel creation
+        /*!
+         Performe the creation of an event channel of a desidered type
+         \param eventType is one of the value listent in EventType enum that specify the
+         type of the eventfor wich we want a channel
+         */
+        inline event::channel::EventChannel *getNewEventChannelFromType(event::EventType  eventType);
+        
+            //! Alert Event Creation
+        event::channel::AlertEventChannel *getNewAlertEventChannel();
+        
+            //!Event channel deallocation
+        /*!
+         Perform the event channel deallocation
+         */
+        void disposeEventChannel(event::channel::EventChannel *eventChannelToDispose);
+       
+        
+            //! event submission
+        /*!
+         Submit an event
+         \param event the new evento to submit
+         */
+        bool submitEvent(event::EventDescriptor *event);
+        
+            //! Action registration for the current isntance of MessageBroker
+        /*!
+         Register actions defined by AbstractActionDescriptor instance contained in the array
+         */
+        void registerAction(DeclareAction*);
+        
+            //!Action deregistration
+        /*!
+         Deregister actions owned by input parameter that are hosted in this current instance of message broker
+         */
+        void deregisterAction(DeclareAction*);
         
             //!message submition
         /*!
@@ -167,8 +224,8 @@ namespace chaos {
             //!message submition
         /*!
          Submit a message to the metadata server
-         */
-        bool submitMessageToMetadataServer(CDataWrapper*, bool onThisThread=false);
+         
+        bool submitMessageToMetadataServer(CDataWrapper*, bool onThisThread=false);*/
 
         //!Metadata server channel creation
         /*!

@@ -103,7 +103,7 @@ namespace bson {
     }
 
     void OID::init() {
-        static mongo::AtomicUInt inc = (unsigned) security.getNonce();
+        static bson::AtomicUInt inc = (unsigned) security.getNonce();
 
         {
             unsigned t = (unsigned) time(0);

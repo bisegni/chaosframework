@@ -49,10 +49,10 @@ vector<BSONElement>::size_type CMultiTypeDataArrayWrapper::size() const{
 }
 
 #pragma mark Public Methods
-CDataWrapper::CDataWrapper():bsonBuilder(new BSONObjBuilder()),bsonArrayBuilder(new BSONArrayBuilder()){
+CDataWrapper::CDataWrapper():bsonArrayBuilder(new BSONArrayBuilder()),bsonBuilder(new BSONObjBuilder()){
 }
 
-CDataWrapper::CDataWrapper(const char* serializationBuffer, bool bson, bool owned):bsonBuilder(new BSONObjBuilder()),bsonArrayBuilder(new BSONArrayBuilder()){
+CDataWrapper::CDataWrapper(const char* serializationBuffer, bool bson, bool owned):bsonArrayBuilder(new BSONArrayBuilder()),bsonBuilder(new BSONObjBuilder()){
         //bsonBuilder->appendElements(BSONObj(serializationBuffer));
     setSerializedData(serializationBuffer, bson, owned);
 }
@@ -143,15 +143,11 @@ CMultiTypeDataArrayWrapper* CDataWrapper::getVectorValue(const char *key) {
 void CDataWrapper::addInt32Value(const char *key, int32_t i32Value) {
     bsonBuilder->appendNumber(key, i32Value);
 }
-#if __linux__ && !defined(__x86_64__)
-	void CDataWrapper::addDoubleValue(const char *key, double dValue) {
-		bsonBuilder->appendNumber(key, (double)dValue);
-	}
-#else
-void CDataWrapper::addDoubleValue(const char *key, double_t dValue) {
-	bsonBuilder->appendNumber(key, dValue);
+
+    //add a double value
+void CDataWrapper::addDoubleValue(const char *key, double dValue) {
+    bsonBuilder->appendNumber(key, (double)dValue);
 }
-#endif
 
     //add a integer value
 void CDataWrapper::addInt64Value(const char *key, int64_t i64Value) {

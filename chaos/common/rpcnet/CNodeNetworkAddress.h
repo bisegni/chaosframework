@@ -1,8 +1,8 @@
-/*	
+/*
  *	NetworkAddress.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,25 +23,32 @@
 
 #include <string>
 namespace chaos {
-        using namespace std;
-    //! Represent the abstraction of chaos address of the node
+    using namespace std;
+        //! Represent the abstraction of network address of the physical node
     /*! \class DeviceAddress
      this permit to abtsrac the chaos address of single node througt rpc system
      */
-        struct CNodeNetworkAddress{
-                //the ipo for the host that run the control unit
-            string ipPort;
-                //the instance of control unit that contain the deviceid
-            string nodeID;
-        };
- 
-    //! Represent the abstraction of chaos address of the node
+    struct CNetworkAddress {
+            //the ip and port for the host that run the control unit
+        string ipPort;
+    };
+    
+        //! Represent the abstraction of chaos node id of the chaos virtual node
     /*! \class DeviceAddress
      this permit to abtsrac the chaos address of single node througt rpc system
      */
-        struct CDeviceNetworkAddress : public CNodeNetworkAddress{
+    struct CNodeNetworkAddress : public CNetworkAddress {
+            //the instance of control unit that contain the deviceid
+        string nodeID;
+    };
+    
+        //! Represent the abstraction of chaos address of the node
+    /*! \class DeviceAddress
+     this permit to abtsrac the chaos address of single node througt rpc system
+     */
+    struct CDeviceNetworkAddress : public CNodeNetworkAddress{
             //the ipo for the host that run the control unit
-            string deviceID;
-        };
+        string deviceID;
+    };
 }
 #endif

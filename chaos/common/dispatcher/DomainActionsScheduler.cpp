@@ -65,7 +65,7 @@ string& DomainActionsScheduler::getManagedDomainName() {
 /*
  
  */
-void DomainActionsScheduler::setDispatcher(CommandDispatcher *newDispatcher) {
+void DomainActionsScheduler::setDispatcher(AbstractCommandDispatcher *newDispatcher) {
     dispatcher = newDispatcher;
 }
 
@@ -152,8 +152,10 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
             
             if(needAnswer){
                     //we need an answer so add the submition result
-                if(actionResult.get()) remoteActionResult->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, *actionResult.get());
-                    //put the submissione result error to 0(all i sgone well)
+                    //if(actionResult.get()) remoteActionResult->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, *actionResult.get());
+                    //put the submissione result error to 0(all is gone well)
+                if(actionResult.get()) remoteActionResult->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *actionResult.get());
+
                 remoteActionResult->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
             }
         } catch (CException& ex) {
@@ -190,7 +192,7 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
             responsePack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *remoteActionResult.get());
                 //in any case this result must be LOG
                 //the result of the action action is sent using this thread
-            if(!dispatcher->sendActionResult(responsePack, false)){
+            if(!dispatcher->submitMessage(answerIP, responsePack, false)){
                     //the response has not been sent
                 DELETE_OBJ_POINTER(responsePack);
             }

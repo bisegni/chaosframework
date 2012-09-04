@@ -23,53 +23,57 @@
 
 #include <string>
 #include <boost/shared_ptr.hpp>
-#include "DomainActionsScheduler.h"
+#include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
+#include <chaos/common/dispatcher/DomainActionsScheduler.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
 namespace chaos{
     
     using namespace std;
     using namespace boost;
-    /*
+    /*!
      This class implemente the default CSLib dispatcher. It define an axecution buffer for every action domain
      */
-    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DefaultCommandDispatcher, CommandDispatcher) {
+    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DefaultCommandDispatcher, AbstractCommandDispatcher) {
         bool deinitialized;
         
         map<string, shared_ptr<DomainActionsScheduler> > dasMap;
-        
-        /*
+    
+        /*!
          return the scheduler for domain and if no present create a new instance
          */
         shared_ptr<DomainActionsScheduler>& getSchedulerForDomainName(string&);
-
-    public:
-        DefaultCommandDispatcher(string *alias):CommandDispatcher(alias){};
-        /*
-         Register actions defined by AbstractActionDescriptor instance contained in the array
-         */
-        virtual void registerAction(DeclareAction*);
         
-        /*
-         Deregister actions for a determianted domain
-         */
-        virtual void deregisterAction(DeclareAction*);
-        
-        /*
-         This method sub the pack received by RPC system to the execution queue accordint to the pack domain
-         the multithreading push is managed by OBuffer that is the superclass of DomainActionsScheduler. This method
-         will ever return an allocated object. The deallocaiton is demanded to caller
-         */
-        virtual CDataWrapper* dispatchCommand(CDataWrapper*) throw(CException) ;
-        /*
+    protected:
+        /*!
          Initialization method for output buffer
          */
         void init(CDataWrapper *initConfiguration) throw(CException);
         
-        /*
+        /*!
          Deinitialization method for output buffer
          */
         void deinit() throw(CException);
+
+    public:
+        DefaultCommandDispatcher(string *alias) : AbstractCommandDispatcher(alias){};
+        /*!
+         Register actions defined by AbstractActionDescriptor instance contained in the array
+         */
+        virtual void registerAction(DeclareAction*)  throw(CException) ;
+        
+        /*!
+         Deregister actions for a determianted domain
+         */
+        virtual void deregisterAction(DeclareAction*)  throw(CException) ;
+        
+        /*!
+         This method sub the pack received by RPC system to the execution queue accordint to the pack domain
+         the multithreading push is managed by OBuffer that is the superclass of DomainActionsScheduler. This method
+         will ever return an allocated object. The deallocaiton is demanded to caller
+         */
+        virtual CDataWrapper* dispatchCommand(CDataWrapper*) throw(CException);
+
     };
 }
 #endif
