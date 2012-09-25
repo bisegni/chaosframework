@@ -173,7 +173,7 @@ namespace bson {
         about that. */
     inline unsigned curTimeMillis() {
         boost::xtime xt;
-#if (BOOST_VERSION / 100) < 50
+#if (BOOST_VERSION / 100 % 1000) < 50
         boost::xtime_get(&xt, boost::TIME_UTC);
 #else
         boost::xtime_get(&xt, boost::TIME_UTC_);
@@ -185,7 +185,7 @@ namespace bson {
     /** Date_t is milliseconds since epoch */
     inline Date_t jsTime() {
         boost::xtime xt;
-#if (BOOST_VERSION / 100) < 50
+#if (BOOST_VERSION / 100 % 1000) < 50
         boost::xtime_get(&xt, boost::TIME_UTC);
 #else
         boost::xtime_get(&xt, boost::TIME_UTC_);
@@ -196,7 +196,7 @@ namespace bson {
 
     inline unsigned long long curTimeMicros64() {
         boost::xtime xt;
-#if (BOOST_VERSION / 100) < 50
+#if (BOOST_VERSION / 100 % 1000) < 50
         boost::xtime_get(&xt, boost::TIME_UTC);
 #else
         boost::xtime_get(&xt, boost::TIME_UTC_);
@@ -208,7 +208,7 @@ namespace bson {
     // measures up to 1024 seconds.  or, 512 seconds with tdiff that is...
     inline unsigned curTimeMicros() {
         boost::xtime xt;
-#if (BOOST_VERSION / 100) < 50 
+#if (BOOST_VERSION / 100 % 1000) < 50 
         boost::xtime_get(&xt, boost::TIME_UTC);
 #else
         boost::xtime_get(&xt, boost::TIME_UTC_);
