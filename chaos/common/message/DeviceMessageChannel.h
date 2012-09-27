@@ -22,7 +22,7 @@
 
 #include <string>
 #include <chaos/common/message/NetworkAddressMessageChannel.h>
-#include <chaos/common/rpcnet/CNodeNetworkAddress.h>
+#include <chaos/common/network/CNodeNetworkAddress.h>
 
 namespace chaos {
     

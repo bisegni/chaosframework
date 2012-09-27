@@ -20,7 +20,7 @@
 #ifndef CHAOSFramework_NetworkAddressMessageChannel_h
 #define CHAOSFramework_NetworkAddressMessageChannel_h
 #include <chaos/common/message/MessageChannel.h>
-#include <chaos/common/rpcnet/CNodeNetworkAddress.h>
+#include <chaos/common/network/CNodeNetworkAddress.h>
 
 #include <vector>
 

@@ -24,7 +24,7 @@
 #include <string>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/cconstants.h>
-#include <chaos/common/rpcnet/CNodeNetworkAddress.h>
+#include <chaos/common/network/CNodeNetworkAddress.h>
 
 namespace chaos {
      

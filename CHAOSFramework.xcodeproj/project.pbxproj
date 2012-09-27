@@ -539,7 +539,7 @@
 				326DB41114B38BC00018A8D0 /* rpc */,
 				320C2180151B2BF200BD0F41 /* event */,
 				32AAD78114CD630D005A097C /* message */,
-				326DB41914B38BC00018A8D0 /* rpcnet */,
+				326DB41914B38BC00018A8D0 /* network */,
 				326DB41D14B38BC00018A8D0 /* thread */,
 				326DB42414B38BC00018A8D0 /* utility */,
 			);
@@ -739,13 +739,13 @@
 			path = rpc;
 			sourceTree = "<group>";
 		};
-		326DB41914B38BC00018A8D0 /* rpcnet */ = {
+		326DB41914B38BC00018A8D0 /* network */ = {
 			isa = PBXGroup;
 			children = (
 				326DB41A14B38BC00018A8D0 /* CNodeNetworkAddress.h */,
 				326DB41B14B38BC00018A8D0 /* NetworkNode.h */,
 			);
-			path = rpcnet;
+			path = network;
 			sourceTree = "<group>";
 		};
 		326DB41D14B38BC00018A8D0 /* thread */ = {

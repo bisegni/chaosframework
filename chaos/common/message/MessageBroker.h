@@ -29,7 +29,7 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/action/EventAction.h>
-#include <chaos/common/rpcnet/CNodeNetworkAddress.h>
+#include <chaos/common/network/CNodeNetworkAddress.h>
 #include <chaos/common/utility/SetupStateManager.h>
 #include <chaos/common/event/channel/EventChannel.h>
 #include <chaos/common/event/evt_desc/EventDescriptor.h>

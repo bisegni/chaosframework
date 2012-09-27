@@ -26,7 +26,7 @@
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/thread/MultiKeyObjectWaitSemaphore.h>
-#include <chaos/common/rpcnet/CNodeNetworkAddress.h>
+#include <chaos/common/network/CNodeNetworkAddress.h>
 
 #include <boost/function.hpp>
 #include <boost/thread/condition.hpp>
