@@ -19,13 +19,12 @@
  */
 #ifndef ChaosFramework_MsgPackClient_h
 #define ChaosFramework_MsgPackClient_h
-#include "RpcClient.h"
+#include <chaos/common/rpc/RpcClient.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/pqueue/ChaosProcessingQueue.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
-#include <msgpack/rpc/client.h>
 #include <msgpack/rpc/client.h>
 #include <msgpack/rpc/session_pool.h>
 

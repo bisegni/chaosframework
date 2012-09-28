@@ -1,4 +1,6 @@
-SET(common_lib_src log/LogManager.cpp action/ActionExecutionSafetySystem.cpp action/EventAction.cpp action/ActionDescriptor.cpp action/DeclareAction.cpp action/DomainActions.cpp bson/bsonobj.cpp bson/oid.cpp bson/lib/base64.cpp bson/lib/md5.c bson/lib/nonce.cpp bson/util/json.cpp configuration/GlobalConfiguration.cpp data/CDataWrapper.cpp data/CUSchemaDB.cpp dispatcher/DefaultEventDispatcher.cpp dispatcher/EventTypeScheduler.cpp dispatcher/AbstractEventDispatcher.cpp dispatcher/AbstractCommandDispatcher.cpp dispatcher/DefaultCommandDispatcher.cpp dispatcher/DomainActionsScheduler.cpp  dispatcher/AbstractEventDispatcher.cpp event/EventClient.cpp event/AsioImplEventClient event/AsioEventForwarder.cpp event/EventServer.cpp event/AsioImplEventServer.cpp event/AsioEventHandler.cpp event/evt_desc/EventDescriptor.cpp event/evt_desc/AlertEventDescriptor.cpp event/evt_desc/InstrumentEventDescriptor.cpp event/evt_desc/CommandEventDescriptor.cpp event/evt_desc/CustomEventDescriptor.cpp event/channel/EventChannel.cpp event/channel/AlertEventChannel.cpp event/channel/InstrumentEventChannel.cpp io/IODataDriver.cpp io/IOMemcachedDriver.cpp io/OutputMongoDataDriver.cpp message/DeviceMessageChannel.cpp message/MDSMessageChannel.cpp message/MessageBroker.cpp message/MessageChannel.cpp rpc/RpcClient.cpp rpc/MsgPackClient.cpp rpc/RpcServer.cpp rpc/MsgPackServer.cpp thread/CThread.cpp thread/CThreadGroup.cpp utility/NamedService.cpp utility/ISDInterface.cpp)
+SET(common_lib_src log/LogManager.cpp action/ActionExecutionSafetySystem.cpp action/EventAction.cpp action/ActionDescriptor.cpp action/DeclareAction.cpp action/DomainActions.cpp bson/bsonobj.cpp bson/oid.cpp bson/lib/base64.cpp bson/lib/md5.c bson/lib/nonce.cpp bson/util/json.cpp configuration/GlobalConfiguration.cpp data/CDataWrapper.cpp data/CUSchemaDB.cpp dispatcher/DefaultEventDispatcher.cpp dispatcher/EventTypeScheduler.cpp dispatcher/AbstractEventDispatcher.cpp dispatcher/AbstractCommandDispatcher.cpp dispatcher/DefaultCommandDispatcher.cpp dispatcher/DomainActionsScheduler.cpp  dispatcher/AbstractEventDispatcher.cpp event/EventClient.cpp event/AsioImplEventClient event/AsioEventForwarder.cpp event/EventServer.cpp event/AsioImplEventServer.cpp event/AsioEventHandler.cpp event/evt_desc/EventDescriptor.cpp event/evt_desc/AlertEventDescriptor.cpp event/evt_desc/InstrumentEventDescriptor.cpp event/evt_desc/CommandEventDescriptor.cpp event/evt_desc/CustomEventDescriptor.cpp event/channel/EventChannel.cpp event/channel/AlertEventChannel.cpp event/channel/InstrumentEventChannel.cpp io/IODataDriver.cpp io/IOMemcachedDriver.cpp io/OutputMongoDataDriver.cpp message/DeviceMessageChannel.cpp message/MDSMessageChannel.cpp message/MessageBroker.cpp message/MessageChannel.cpp rpc/RpcClient.cpp rpc/RpcServer.cpp rpc/msgpack/MsgPackClient.cpp rpc//msgpack/MsgPackServer.cpp thread/CThread.cpp thread/CThreadGroup.cpp utility/NamedService.cpp utility/ISDInterface.cpp)
+
+SET(common_lib_library boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached msgpack msgpack-rpc mpio zmq)
 
 find_package (Boost 1.39 REQUIRED
     COMPONENTS  program_options system thread chrono regex log log_setup)
@@ -23,8 +25,17 @@ if(NOT MPIO_LIB)
     message(FATAL_ERROR "Library mpio required, but not found!")
 endif(NOT MPIO_LIB)
 
+find_library(ZMQ_LIB zmq PATHS /usr/lib,/usr/local/lib DOC "zmq library for additional option in rpc and event")
+if(ZMQ_LIB)
+    message(STATUS "ZMQ library is found so additional rpc and event driver will be compiled")
+    SET(common_lib_src ${common_lib_src} rpc/zmq/ZMQClient.cpp rpc/zmq/ZMQServer.cpp)
+    SET(common_lib_library ${common_lib_library} zmq)
+endif(ZMQ_LIB)
+
 ADD_LIBRARY(chaos_common SHARED ${common_lib_src})
-TARGET_LINK_LIBRARIES(chaos_common boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached msgpack msgpack-rpc mpio) 
+
+TARGET_LINK_LIBRARIES(chaos_common ${common_lib_library}) 
+
         
 FILE(GLOB files "*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common)

@@ -17,9 +17,9 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "../global.h"
-#include "MsgPackClient.h"
-#include "../cconstants.h"
+#include <chaos/common/global.h>
+#include <chaos/common/rpc/msgpack/MsgPackClient.h>
+#include <chaos/common/cconstants.h>
 
 #include <string>
 #include <boost/lexical_cast.hpp>

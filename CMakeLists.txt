@@ -7,6 +7,7 @@ SET( ${PROJECT_NAME}_PATCH_LEVEL 0 )
 
 OPTION( BUILD_FORCE_32 "Force 32 bit compilation" OFF )
 
+
 EXECUTE_PROCESS(COMMAND chaos/common/version.sh)
 
 INCLUDE_DIRECTORIES(.) 

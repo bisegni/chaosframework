@@ -1,0 +1,75 @@
+/*	
+ *	ZMQServer.h
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *	
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
+
+#ifndef CHAOSFramework_ZMQServer_h
+#define CHAOSFramework_ZMQServer_h
+
+#include <vector>
+#include <boost/shared_ptr.hpp>
+#include <boost/thread.hpp>
+#include <zmq.h>
+
+#include <chaos/common/rpc/RpcServer.h>
+#include <chaos/common/utility/ObjectFactoryRegister.h>
+#include <chaos/common/utility/SetupStateManager.h>
+
+namespace chaos {
+    using namespace std;
+    /*
+     Class that implement the Chaos RPC adapter for 0mq protocoll
+     */
+    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(ZMQServer, RpcServer), private SetupStateManager   {
+        int threadNumber;
+        void *zmqContext;
+        vector<void*> socketsVector;
+        stringstream bindStr;
+        thread_group threadGroup;
+        bool runServer;
+        boost::shared_mutex socketMutex;
+        
+    public:
+        ZMQServer(string *alias):RpcServer(alias){};
+        /*
+         init the rpc adapter
+         */
+        void init(CDataWrapper*) throw(CException);
+        /*
+         start the rpc adapter
+         */
+        void start() throw(CException);
+        /*
+         start the rpc adapter
+         */
+        void stop() throw(CException);
+        /*
+         deinit the rpc adapter
+         */
+        void deinit() throw(CException);
+        
+            //server worker thread
+        /*!
+         Thread where data is received and managed
+         */
+        void executeOnThread();
+    };
+    
+}
+
+#endif
