@@ -19,9 +19,8 @@
  */
 #include <vector>
 #include <iostream>
-
+#include <chaos/cu_toolkit/CommandManager/CommandManager.h>
 #include <chaos/common/global.h>
-#include "CommandManager.h"
 #include <chaos/common/cconstants.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/message/MDSMessageChannel.h>
