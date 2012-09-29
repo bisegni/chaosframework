@@ -19,7 +19,7 @@
  */
 
 #include <chaos/common/event/channel/EventChannel.h>
-#include <chaos/common/message/MessageBroker.h>
+#include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/utility/UUIDUtil.h>
 
 using namespace std;
@@ -27,7 +27,7 @@ using namespace chaos;
 using namespace chaos::event;
 using namespace chaos::event::channel;
 
-EventChannel::EventChannel(MessageBroker *rootBroker) {
+EventChannel::EventChannel(NetworkBroker *rootBroker) {
     channelID = UUIDUtil::generateUUIDLite();
     messageBroker = rootBroker;
 }

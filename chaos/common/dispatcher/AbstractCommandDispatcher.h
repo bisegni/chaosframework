@@ -44,7 +44,7 @@ namespace chaos{
     using namespace boost;
         //class RpcClient;
     
-    class MessageBroker;
+    class NetworkBroker;
     
         //! Base class for the Chaos Action Dispatcher
     /*!
@@ -53,7 +53,7 @@ namespace chaos{
      by this base class
      */
     class AbstractCommandDispatcher : public RpcServerHandler, Configurable, utility::ISDInterface {
-        friend class MessageBroker;
+        friend class NetworkBroker;
             //friend class RpcClient;
         string *typeName;
         

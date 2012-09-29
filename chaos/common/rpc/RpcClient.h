@@ -43,14 +43,14 @@ namespace chaos {
         CDataWrapper *message;
     } MessageForwardingInfo;
     
-    class MessageBroker;
+    class NetworkBroker;
     
     /*!
      Abstract class for standard adapter method for permit, to CommandManager
      the correct initialization for the adapter instance
      */
     class RpcClient: public RpcMessageForwarder, chaos::utility::ISDInterface {
-        friend class MessageBroker;
+        friend class NetworkBroker;
         string *typeName;
     protected:
         

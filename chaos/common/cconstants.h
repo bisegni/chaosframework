@@ -32,6 +32,8 @@ namespace chaos {
     namespace InitOption{
             //! @Option for print the help
         static const char * const   OPT_HELP                          = "help";
+            //!  @Option Specify the implementation to use for rp messaging
+        static const char * const   OPT_RPC_IMPLEMENTATION           ="rpc-server-impl";
             //!  @Option Specify the network port where rpc system will publish al the service
         static const char * const   OPT_RPC_SERVER_PORT              ="rpc-server-port";
             //! @Option Specify the number of the thread that the rpc ssytem must use to process the request

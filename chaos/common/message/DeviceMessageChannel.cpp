@@ -41,7 +41,7 @@ e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_COD
  The constructor create a channel for comunicate with the device that is contained in a Contro Unit, so the full network address is
  ip:port:cu_node_address(instance):deviceID
  */
-DeviceMessageChannel::DeviceMessageChannel(MessageBroker *msgBroker, CDeviceNetworkAddress *_deviceNetworkAddress) : NetworkAddressMessageChannel(msgBroker, _deviceNetworkAddress){
+DeviceMessageChannel::DeviceMessageChannel(NetworkBroker *msgBroker, CDeviceNetworkAddress *_deviceNetworkAddress) : NetworkAddressMessageChannel(msgBroker, _deviceNetworkAddress){
         //take the reference for avoid continue cast fro CNetwork and CDevice
     deviceNetworkAddress = _deviceNetworkAddress;
 }

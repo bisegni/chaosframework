@@ -36,7 +36,7 @@ using namespace boost;
 /*
  */
 CommandManager::CommandManager(){
-    broker = new MessageBroker();
+    broker = new NetworkBroker();
     canUseMetadataServer = GlobalConfiguration::getInstance()->isMEtadataServerConfigured();
     if(canUseMetadataServer){
         metadataServerAddress = GlobalConfiguration::getInstance()->getMetadataServerAddress();

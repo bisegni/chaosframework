@@ -33,13 +33,13 @@
 namespace chaos {
     using namespace std;
 
-    class MessageBroker;
+    class NetworkBroker;
     /*
      Abstract class for standard adapter method for permit, to CommandManager
      the correct initialization for the adapter instance
      */
     class RpcServer : public chaos::utility::ISDInterface {
-        friend class MessageBroker;
+        friend class NetworkBroker;
         string *typeName;
     protected:
         //! port where server has been published

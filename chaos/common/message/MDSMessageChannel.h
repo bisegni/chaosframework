@@ -34,14 +34,14 @@ namespace chaos {
      This class represent a message chanel for comunication with the Metadata Server 
      */
     class MDSMessageChannel : public NetworkAddressMessageChannel {
-        friend class MessageBroker;
+        friend class NetworkBroker;
     protected:
         //! base constructor
         /*!
          The base constructor prepare the base class constructor call to be adapted for metadataserver comunication. For the MDS the node address is
          "system"(ip:port:system)
          */
-        MDSMessageChannel(MessageBroker *msgBroker, CNodeNetworkAddress *mdsNodeAddress):NetworkAddressMessageChannel(msgBroker, mdsNodeAddress){}
+        MDSMessageChannel(NetworkBroker *msgBroker, CNodeNetworkAddress *mdsNodeAddress):NetworkAddressMessageChannel(msgBroker, mdsNodeAddress){}
         
     public:
         

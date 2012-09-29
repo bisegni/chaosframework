@@ -29,7 +29,7 @@
 #include <chaos/common/utility/ISDInterface.h>
 namespace chaos {
     
-    class MessageBroker;
+    class NetworkBroker;
     
     namespace event {
         
@@ -38,7 +38,7 @@ namespace chaos {
          
          */
         class EventClient : public NamedService, EventForwarder, chaos::utility::ISDInterface {
-            friend class chaos::MessageBroker;
+            friend class chaos::NetworkBroker;
             
         protected:
             uint8_t threadNumber;            

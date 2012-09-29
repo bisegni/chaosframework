@@ -59,10 +59,11 @@ namespace chaos {
         size_t bSize;
         char *buffer;
     public:
+        bool disposeOnDelete;
         SerializationBuffer(const char *iBuff, size_t iSize){
             bSize = iSize;
             buffer = 0L;
-            
+            disposeOnDelete = true;
             if(iBuff && iSize){
                 buffer = new char[iSize];
                 std::memcpy(buffer, iBuff, iSize);
@@ -70,7 +71,7 @@ namespace chaos {
         }
         
         ~SerializationBuffer(){
-            if(buffer)delete buffer;
+            if(disposeOnDelete && buffer) delete buffer;
         }
         size_t getBufferLen(){return bSize;};
         const char *getBufferPtr(){return buffer;};

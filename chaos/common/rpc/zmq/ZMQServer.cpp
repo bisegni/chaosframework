@@ -29,6 +29,11 @@
 
 using namespace chaos;
 
+static void my_free (void *data, void *hint)
+{
+    delete (char*)data;
+}
+
     //init the server getting the configuration value
 void ZMQServer::init(CDataWrapper *adapterConfiguration) throw(CException) {
         //get portnumber and thread number
@@ -45,7 +50,10 @@ void ZMQServer::init(CDataWrapper *adapterConfiguration) throw(CException) {
         ZMQS_LAPP << "thread number:" << threadNumber;
         
             //create the ZMQContext
-        CHAOS_ASSERT(zmqContext = zmq_init (threadNumber));
+        CHAOS_ASSERT(zmqContext = zmq_ctx_new())
+        
+            //et the thread number
+        zmq_ctx_set(zmqContext, ZMQ_IO_THREADS, threadNumber);
         ZMQS_LAPP << "zmqContext initilized";
         
         
@@ -68,7 +76,7 @@ void ZMQServer::start() throw(CException) {
     ZMQS_LAPP << "Allocating thread for manage the request";
     runServer = true;
         //queue thread
-    for (int idx = 0; idx<threadNumber; idx++) {
+    for (int idx = 0; idx<1; idx++) {
         threadGroup.add_thread(new thread(boost::bind(&ZMQServer::executeOnThread, this)));
     }
     
@@ -84,7 +92,7 @@ void ZMQServer::stop() throw(CException) {
     ZMQS_LAPP << "Stopping thread";
     
     boost::shared_lock<boost::shared_mutex> socketLock(socketMutex);
-    for (int idx = 0; idx < socketsVector.size(); idx++) {
+    for (int idx = 0; idx < 1; idx++) {
             //close the socket
         zmq_close(socketsVector[idx]);
     }
@@ -98,7 +106,7 @@ void ZMQServer::deinit() throw(CException) {
     SetupStateManager::levelDownFrom(1, "ZMQServer already deinitialized");
         //serverThreadGroup.stopGroup(true);
     ZMQS_LAPP << "Deinitialization";
-    zmq_term (zmqContext);
+    zmq_ctx_destroy (zmqContext);
     ZMQS_LAPP << "Deinitialized";
 }
 
@@ -109,38 +117,44 @@ void ZMQServer::executeOnThread(){
     
         //data pack pointer
     int err = 0;
-    zmq_msg_t message;
     void *receiver = zmq_socket (zmqContext, ZMQ_REP);
     if(!receiver) return;
     
     boost::shared_lock<boost::shared_mutex> socketLock(socketMutex);
     socketsVector.push_back(receiver);
+    socketLock.unlock();
     
-    zmq_connect (receiver, "inproc://workers");
+    err = zmq_bind(receiver, bindStr.str().c_str());
+    if(err == 0){
+        ZMQS_LAPP << "Thread id:" << boost::lexical_cast<std::string>(boost::this_thread::get_id()) << "binded successfully";
+    } else {
+        ZMQS_LAPP << "Thread id:" << boost::lexical_cast<std::string>(boost::this_thread::get_id()) << "binded with error";
+        return;
+    }
     CDataWrapper *cdataWrapperPack = NULL;
     while (runServer) {
         try {
-            zmq_msg_init (&message);
-            err = zmq_recvmsg(receiver, &message, 0);
-            if(err == -1 || zmq_msg_size(&message)==0) {
-                zmq_msg_close (&message);
+            zmq_msg_t request;
+            err = zmq_msg_init(&request);
+            err = zmq_recvmsg(receiver, &request, 0);
+            if(err == -1 || zmq_msg_size(&request)==0) {
                 continue;
             }
-            cdataWrapperPack = new CDataWrapper((const char*)zmq_msg_data(&message));
-            
                 //  Send reply back to client
                 //dispatch the command
-            cdataWrapperPack = commandHandler->dispatchCommand(cdataWrapperPack);
+            cdataWrapperPack = commandHandler->dispatchCommand(new CDataWrapper((const char*)zmq_msg_data(&request)));
             
+            zmq_msg_t response;
             auto_ptr<SerializationBuffer> result(cdataWrapperPack->getBSONData());
-            zmq_send(receiver, (void*)result->getBufferPtr(), result->getBufferLen(), 0);
+            result->disposeOnDelete = false;
+            err = zmq_msg_init_data(&response, (void*)result->getBufferPtr(), result->getBufferLen(), my_free, NULL);
             
+            err = zmq_sendmsg(receiver, &response, 0);
                 //deallocate the data wrapper pack if it has been allocated
             if(cdataWrapperPack) delete(cdataWrapperPack);
         } catch (CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex)
         }
-        zmq_msg_close (&message);
     }
     zmq_close(receiver);
 }

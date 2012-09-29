@@ -28,7 +28,7 @@ using namespace chaos::event::channel;
 using namespace chaos::event::instrument;
 
     //-----------------------------------------------------
-InstrumentEventChannel::InstrumentEventChannel(MessageBroker *rootBroker):EventChannel(rootBroker) {
+InstrumentEventChannel::InstrumentEventChannel(NetworkBroker *rootBroker):EventChannel(rootBroker) {
     
 }
 

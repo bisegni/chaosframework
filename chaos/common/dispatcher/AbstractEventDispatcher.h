@@ -38,7 +38,7 @@ namespace chaos {
      */
    
     class AbstractEventDispatcher : public utility::ISDInterface, event::EventHandler, NamedService {
-        friend class MessageBroker;
+        friend class NetworkBroker;
     protected:
       /*
             //-----------------------

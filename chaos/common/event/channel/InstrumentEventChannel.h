@@ -25,7 +25,7 @@
 #include <chaos/common/event/evt_desc/AlertEventDescriptor.h>
 namespace chaos {
     
-    class MessageBroker;
+    class NetworkBroker;
     
     namespace event {
         namespace channel {
@@ -35,10 +35,10 @@ namespace chaos {
              This channel simplify the alert event forwarding and recivement
              */
             class InstrumentEventChannel : public EventChannel {
-                friend class chaos::MessageBroker;
+                friend class chaos::NetworkBroker;
             protected:
                 
-                InstrumentEventChannel(MessageBroker *rootBroker);
+                InstrumentEventChannel(NetworkBroker *rootBroker);
                 
                 ~InstrumentEventChannel();
                 

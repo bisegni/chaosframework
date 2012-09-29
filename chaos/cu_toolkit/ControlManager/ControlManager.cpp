@@ -241,10 +241,14 @@ void ControlManager::executeOnThread(const string& threadIdentification) throw(C
         
         LCMAPP_  << "Setup finished for Control Unit Sanbox:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
             //sendConfPackToMDS(cuPtr->defaultInternalConf.get());
-        registrationError = sendConfPackToMDS(cuActionAndDataset);
         LCMAPP_  << "Talk with MDS for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
-        
-        LCMAPP_  << "Configuration pack has been sent to MDS for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance() << " with submission result="<<registrationError;
+        registrationError = sendConfPackToMDS(cuActionAndDataset);
+        if(registrationError == ErrorCode::EC_NO_ERROR){
+            LCMAPP_  << "Configuration pack has been sent to MDS for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
+        } else {
+            LCMAPP_  << "ERROR sending configuration pack has been sent to MDS for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
+        }
+       
             //the sandbox name now is the real CUName_CUInstance before the initSandbox method call the CUInstance is
             //randomlly defined but if a CU want to ovveride it it can dureing initSandbox call
         if(controlUnitInstanceMap.count(cuPtr->getCUInstance())) {

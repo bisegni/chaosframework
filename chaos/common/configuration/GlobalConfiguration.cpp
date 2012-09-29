@@ -31,6 +31,8 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
 
     try{   
         addOption(InitOption::OPT_HELP, "Produce help message");
+        
+        addOption(InitOption::OPT_RPC_IMPLEMENTATION, po::value< string >()->default_value("MsgPack"), "Specify the rpc implementation");
         addOption(InitOption::OPT_RPC_SERVER_PORT, po::value<int>()->default_value(8888), "RPC server port");
         addOption(InitOption::OPT_RPC_SERVER_THREAD_NUMBER, po::value<int>()->default_value(2),"RPC server thread number");
         addOption(InitOption::OPT_LIVE_DATA_SERVER_ADDRESS, po::value< vector<string> >()->multitoken(), "Live server:port address");
@@ -109,7 +111,8 @@ void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& o
     configuration.addInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER, rpcServerThreadNumber);
     
     //configure the unique rpc plugin
-    configuration.addStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE, "MsgPack");
+    CHECK_AND_DEFINE_OPTION(string, rpcImpl, InitOption::OPT_RPC_IMPLEMENTATION)
+    configuration.addStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE, rpcImpl);
         //configure the unique rpc plugin
     configuration.addStringValue(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION, "AsioImpl");
    

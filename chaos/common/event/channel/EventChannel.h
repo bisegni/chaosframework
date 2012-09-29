@@ -28,7 +28,7 @@
 
 namespace chaos {
 
-    class MessageBroker;
+    class NetworkBroker;
     
     namespace event{
 
@@ -42,17 +42,17 @@ namespace chaos {
             class EventChannel : public EventAction {
                 
                     // make the broker friendly of this class to access private and protected memeber
-                friend class chaos::MessageBroker;
+                friend class chaos::NetworkBroker;
                 
                     // channel identification ID
                 std::string channelID;
                 
                     //broker for event forwarding
-                MessageBroker *messageBroker;
+                NetworkBroker *messageBroker;
                 
             protected:
                 
-                EventChannel(MessageBroker *rootBroker);
+                EventChannel(NetworkBroker *rootBroker);
                 
                 virtual ~EventChannel();
                 

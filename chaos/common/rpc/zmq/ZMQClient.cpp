@@ -34,6 +34,12 @@ using namespace msgpack;
 
 #define ZMQC_LAPP LAPP_ << "[ZMQClient] " 
 
+static void my_free (void *data, void *hint)
+{
+    delete (char*)data;
+}
+
+
 ZMQClient::ZMQClient(string *alias):RpcClient(alias){
 };
 
@@ -51,7 +57,11 @@ void ZMQClient::init(CDataWrapper *cfg) throw(CException) {
     ZMQC_LAPP << "ObjectProcessingQueue<RpcMessageForwardInfo> initialized";
     
     ZMQC_LAPP << "ConnectionPool initialization";
-    CHAOS_ASSERT(zmqContext = zmq_init(threadNumber))
+    CHAOS_ASSERT(zmqContext = zmq_ctx_new())
+    
+        //et the thread number
+    zmq_ctx_set(zmqContext, ZMQ_IO_THREADS, threadNumber);
+    
     ZMQC_LAPP << "ConnectionPool initialized";
 }
 
@@ -74,7 +84,7 @@ void ZMQClient::deinit() throw(CException) {
     ZMQC_LAPP << "ObjectProcessingQueue<RpcMessageForwardInfo> stopped";
     
         //destroy the zmq context
-    zmq_term(zmqContext);
+    zmq_ctx_destroy(zmqContext);
     ZMQC_LAPP << "ZMQ Destroyed";
 
 }
@@ -88,7 +98,7 @@ bool ZMQClient::submitMessage(string& destinationIpAndPort, CDataWrapper *messag
     RpcMessageForwardInfo *newForwardInfo = NULL;
     
     try{
-        if(!message->hasKey( RpcActionDefinitionKey::CS_CMDM_REMOTE_HOST_IP))  
+        if(!destinationIpAndPort.size())
             throw CException(0, "No destination ip in message description", "ZMQClient::submitMessage");
         
             //allocate new forward info
@@ -121,10 +131,10 @@ bool ZMQClient::submitMessage(string& destinationIpAndPort, CDataWrapper *messag
  */
 void ZMQClient::processBufferElement(RpcMessageForwardInfo *messageInfo, ElementManagingPolicy& elementPolicy) throw(CException) {
         //the domain is securely the same is is mandatory for submition so i need to get the name of the action
-    zmq_msg_t reply;
-    void *requester = zmq_socket (zmqContext, ZMQ_REQ);
+    int err = 0;
+    void *endPointSocket = zmq_socket (zmqContext, ZMQ_REQ);
         //this implementation is too slow, client for ip need to be cached
-    if(!requester) throw CException(-1, "error allocating socket", "ZMQClient::processBufferElement");
+    if(!endPointSocket) throw CException(-1, "error allocating socket", "ZMQClient::processBufferElement");
     
         //get remote ip
     string remoteHost = messageInfo->nodeNetworkInfo.ipPort;
@@ -134,12 +144,18 @@ void ZMQClient::processBufferElement(RpcMessageForwardInfo *messageInfo, Element
     try{
         string url = "tcp://";
         url.append(remoteHost);
-        zmq_connect(requester, url.c_str());
-        zmq_send(requester, callSerialization->getBufferPtr(), callSerialization->getBufferLen(), 0);
+        zmq_connect(endPointSocket, url.c_str());
         
-       
+        zmq_msg_t message;
+            //detach buffer from carrier object so we don't need to copy anymore the data
+        callSerialization->disposeOnDelete = false;
+        err = zmq_msg_init_data(&message, (void*)callSerialization->getBufferPtr(), callSerialization->getBufferLen(), my_free, NULL);
+        err = zmq_sendmsg(endPointSocket, &message, 0);
+            //zmq_send(endPointSocket, callSerialization->getBufferPtr(), callSerialization->getBufferLen(), 0);
+        
+        zmq_msg_t reply;
         zmq_msg_init (&reply);
-        zmq_recvmsg(requester, &reply, 0);
+        zmq_recvmsg(endPointSocket, &reply, 0);
         
             //decode result of the posting message operation
         if(zmq_msg_size(&reply)>0){
@@ -153,14 +169,10 @@ void ZMQClient::processBufferElement(RpcMessageForwardInfo *messageInfo, Element
         zmq_msg_close (&reply);
     } catch (msgpack::type_error& e) {
         ZMQC_LAPP << "Error during message forwarding:"<< e.what();
-        zmq_msg_close (&reply);
         return;
     } catch (std::exception& e) {
         ZMQC_LAPP << "Error during message forwarding:"<< e.what();
-        zmq_msg_close (&reply);
         return;
     }
-        //localSession.notify(CommandManagerConstant::CS_CMDM_RPC_TAG, rawMsg);
-    zmq_close(requester);
 
 }

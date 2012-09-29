@@ -18,17 +18,17 @@
  *    	limitations under the License.
  */
 #include "MessageChannel.h"
-#include <chaos/common/message/MessageBroker.h>
+#include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
 using namespace chaos;
 
-MessageChannel::MessageChannel(MessageBroker *_broker, const char*const _remoteHost):broker(_broker){
+MessageChannel::MessageChannel(NetworkBroker *_broker, const char*const _remoteHost):broker(_broker){
     //create the network address
     remoteNodeAddress= _remoteHost;
 }
 
-MessageChannel::MessageChannel(MessageBroker *_broker):broker(_broker){
+MessageChannel::MessageChannel(NetworkBroker *_broker):broker(_broker){
 
 }
 

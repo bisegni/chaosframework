@@ -35,7 +35,7 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/general/Configurable.h>
-#include <chaos/common/message/MessageBroker.h>
+#include <chaos/common/network/NetworkBroker.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManagerDefaultAdapters.h>
 
 namespace chaos{
@@ -61,7 +61,7 @@ namespace chaos{
         
         string metadataServerAddress;
         bool canUseMetadataServer;
-        MessageBroker *broker;
+        NetworkBroker *broker;
 
     public:
         /*
