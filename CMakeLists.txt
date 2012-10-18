@@ -10,7 +10,7 @@ OPTION( BUILD_FORCE_32 "Force 32 bit compilation" OFF )
 
 EXECUTE_PROCESS(COMMAND chaos/common/version.sh)
 
-INCLUDE_DIRECTORIES(.) 
+INCLUDE_DIRECTORIES(. ${CMAKE_INSTALL_PREFIX}/usr/local/include) 
 ADD_DEFINITIONS(-g -O2 -Wall)
     
 IF( BUILD_FORCE_32 ) 

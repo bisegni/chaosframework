@@ -1,4 +1,9 @@
 #!/bin/bash
+
+#####
+#Dipendence: autotools, automake, libtool, git-core, bzr, ruby, cmake, zlib1g-dev
+#####
+
 export BASE_EXTERNAL=$1
 pushd `dirname $0` > /dev/null
 SCRIPTPATH=`pwd -P`
@@ -13,7 +18,7 @@ export PREFIX=$BASE_EXTERNAL/usr/local
 
 if [ ! -d "$BASE_EXTERNAL/boost-log" ]; then
     echo "Download boost-log source"
-    svn co https://boost-log.svn.sourceforge.net/svnroot/boost-log/trunk/boost-log $BASE_EXTERNAL/boost-log
+    svn co https://boost-log.svn.sourceforge.net/svnroot/boost-log/branches/v1 $BASE_EXTERNAL/boost-log
 else
     echo "Update boost-log source"
     cd $BASE_EXTERNAL/boost-log
@@ -65,7 +70,7 @@ if [ ! -f "$BASE_EXTERNAL/boost/b2" ]; then
 fi
 
 echo "Compile and isntall boost libraries into $BASE_EXTERNAL"
-./b2 --prefix=$PREFIX install
+./b2 --prefix=$PREFIX --with-atomic --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread install
 
 if [ ! -d "$PREFIX/include/msgpack" ]; then
 
