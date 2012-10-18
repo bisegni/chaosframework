@@ -46,5 +46,5 @@ INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/DataManager/DataBuff
 
 INSTALL(TARGETS chaos_cutoolkit
         DESTINATION "lib"
-        PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
+        PERMISSIONS OWNER_WRITE GROUP_READ WORLD_READ)
 
