@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #####
-#Dipendence: autotools, automake, libtool, git-core, bzr, ruby, cmake, zlib1g-dev
+#Dipendence: autotools, automake, libtool, git-core, bzr, ruby, cmake, zlib1g-dev, libcloog-ppl0
 #####
 
 pushd `dirname $0` > /dev/null
@@ -15,19 +15,19 @@ PREFIX=$CHAOS_DIR/usr/local
 
 echo "Using $BASE_EXTERNAL as external library folder"
 echo "Using $CHAOS_DIR as chaos folder"
-
+echo "Using $PREFIX as prefix folder"
 
 if [ ! -d "$BASE_EXTERNAL/boost-log" ]; then
-    echo "Download boost-log source"
-    svn co https://boost-log.svn.sourceforge.net/svnroot/boost-log/branches/v1 $BASE_EXTERNAL/boost-log
+ echo "Download boost-log source"
+ svn co https://boost-log.svn.sourceforge.net/svnroot/boost-log/branches/v1 $BASE_EXTERNAL/boost-log
 else
-    echo "Update boost-log source"
-    cd $BASE_EXTERNAL/boost-log
-    svn update
+ echo "Update boost-log source"
+ cd $BASE_EXTERNAL/boost-log
+ svn update
 fi
 
 if [[ $? -ne 0 ]] ; then
-    exit 1
+exit 1
 fi
 
 if [ ! -d "$BASE_EXTERNAL/boost" ]; then
@@ -40,7 +40,7 @@ else
 fi
 
 if [[ $? -ne 0 ]] ; then
-    exit 1
+exit 1
 fi
 
 if [ ! -L "$BASE_EXTERNAL/boost/boost/log" ]; then
@@ -71,51 +71,64 @@ if [ ! -f "$BASE_EXTERNAL/boost/b2" ]; then
 fi
 
 echo "Compile and isntall boost libraries into $BASE_EXTERNAL"
-./b2 --prefix=$PREFIX --with-atomic --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread install
+./b2 --prefix=$PREFIX --with-program_options --with-atomic --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread install
 
-if [ ! -d "$PREFIX/include/msgpack" ]; then
-
+if [ ! -d "$BASE_EXTERNAL/msgpack" ]; then
     echo "Install masgpack"
     git clone https://github.com/msgpack/msgpack.git $BASE_EXTERNAL/msgpack
     cd $BASE_EXTERNAL/msgpack/cpp
-
-    ./bootstrap
-    ./configure --prefix=$PREFIX
-    make
-    make install
+else
+    echo "Update masgpack"
+    cd $BASE_EXTERNAL/msgpack/cpp
+    git pull
 fi
+./bootstrap
+./configure --prefix=$PREFIX
+make
+make install
 
-if [ ! -d "$PREFIX/include/mp" ]; then
-
+if [ ! -d "$BASE_EXTERNAL/mpio" ]; then
     echo "Install mpio"
     git clone https://github.com/frsyuki/mpio.git $BASE_EXTERNAL/mpio
     cd $BASE_EXTERNAL/mpio
-
-    ./bootstrap
-    ./configure --prefix=$PREFIX
-    make
-    make install
+else
+    echo "Update mpio"
+    cd $BASE_EXTERNAL/mpio
+    git pull
 fi
+./bootstrap
+./configure --prefix=$PREFIX
+make
+make install
 
-if [ ! -d "$PREFIX/include/msgpack/rpc" ]; then
+if [ ! -d "$BASE_EXTERNAL/msgpack-rpc" ]; then
     echo "Install msgpack-rpc"
     git clone https://github.com/msgpack/msgpack-rpc.git $BASE_EXTERNAL/msgpack-rpc
     cd $BASE_EXTERNAL/msgpack-rpc/cpp
-    ./bootstrap
-    ./configure --prefix=$PREFIX --with-mpio=$PREFIX
-    make
-    make install
+else
+    echo "Update msgpack-rpc"
+    cd $BASE_EXTERNAL/msgpack-rpc/
+    git pull
+    cd $BASE_EXTERNAL/msgpack-rpc/cpp
 fi
+./bootstrap
+./configure --prefix=$PREFIX --with-mpio=$PREFIX --with-msgpack=$PREFIX
+make
+make install
 
-if [ ! -f "$PREFIX/include/event.h" ]; then
+
+if [ ! -f "$BASE_EXTERNAL/libevent" ]; then
     echo "Installing LibEvent"
     git clone git://levent.git.sourceforge.net/gitroot/levent/libevent $BASE_EXTERNAL/libevent
     cd $BASE_EXTERNAL/libevent
-    ./autogen.sh
-    ./configure --prefix=$PREFIX
-    make
-    make install
+else
+    cd $BASE_EXTERNAL/libevent
+    git pull
 fi
+./autogen.sh
+./configure --prefix=$PREFIX
+make
+make install
 
 if [ ! -d "$PREFIX/include/libmemcached" ]; then
     echo "Install libmemcached into  $BASE_EXTERNAL/libmemcached-1.0.12"
@@ -131,5 +144,5 @@ cd
 echo "Compile !CHOAS"
 cd $CHAOS_DIR
 cmake -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX .
-make
+make VERBOSE=1
 make install

@@ -10,7 +10,8 @@ OPTION( BUILD_FORCE_32 "Force 32 bit compilation" OFF )
 
 EXECUTE_PROCESS(COMMAND chaos/common/version.sh)
 
-INCLUDE_DIRECTORIES(. usr/local/include) 
+INCLUDE_DIRECTORIES(. usr/local/include /usr/local/include /usr/include) 
+LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/usr/local/lib /usr/local/lib /usr/lib)
 ADD_DEFINITIONS(-g -O2 -Wall)
     
 IF( BUILD_FORCE_32 ) 
