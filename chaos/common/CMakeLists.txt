@@ -5,27 +5,27 @@ SET(common_lib_library boost_program_options boost_system boost_thread boost_chr
 find_package (Boost 1.39 REQUIRED
     COMPONENTS  program_options system thread chrono regex log log_setup)
 
-find_library(MEMCACHED_LIB memcached PATHS /usr/lib,/usr/local/lib DOC "memcached library")
+find_library(MEMCACHED_LIB memcached PATHS /usr/lib,/usr/local/lib,usr/local/lib DOC "memcached library")
 if(NOT MEMCACHED_LIB)
     message(FATAL_ERROR "Library memcached required, but not found!")
 endif(NOT MEMCACHED_LIB)
 
-find_library(MSGPACK_LIB msgpack PATHS /usr/lib,/usr/local/lib DOC "msgpack library")
+find_library(MSGPACK_LIB msgpack PATHS /usr/lib,/usr/local/lib,usr/local/lib  DOC "msgpack library")
 if(NOT MSGPACK_LIB)
     message(FATAL_ERROR "Library msgpack required, but not found!")
 endif(NOT MSGPACK_LIB)
 
-find_library(MSGPACK_RPC_LIB msgpack-rpc PATHS /usr/lib,/usr/local/lib DOC "msgpack-rpc library")
+find_library(MSGPACK_RPC_LIB msgpack-rpc PATHS /usr/lib,/usr/local/lib,usr/local/lib  DOC "msgpack-rpc library")
 if(NOT MSGPACK_RPC_LIB)
     message(FATAL_ERROR "Library msgpack-rpc required, but not found!")
 endif(NOT MSGPACK_RPC_LIB)
 
-find_library(MPIO_LIB mpio PATHS /usr/lib,/usr/local/lib DOC "mpio library")
+find_library(MPIO_LIB mpio PATHS /usr/lib,/usr/local/lib,usr/local/lib  DOC "mpio library")
 if(NOT MPIO_LIB)
     message(FATAL_ERROR "Library mpio required, but not found!")
 endif(NOT MPIO_LIB)
 
-find_library(ZMQ_LIB zmq PATHS /usr/lib,/usr/local/lib DOC "zmq library for additional option in rpc and event")
+find_library(ZMQ_LIB zmq PATHS /usr/lib,/usr/local/lib,usr/local/lib  DOC "zmq library for additional option in rpc and event")
 if(ZMQ_LIB)
     message(STATUS "ZMQ library is found so additional rpc and event driver will be compiled")
     SET(common_lib_src ${common_lib_src} rpc/zmq/ZMQClient.cpp rpc/zmq/ZMQServer.cpp)

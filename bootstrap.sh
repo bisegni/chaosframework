@@ -4,17 +4,18 @@
 #Dipendence: autotools, automake, libtool, git-core, bzr, ruby, cmake, zlib1g-dev
 #####
 
-export BASE_EXTERNAL=$1
 pushd `dirname $0` > /dev/null
 SCRIPTPATH=`pwd -P`
 popd > /dev/null
 
-export CHAOS_DIR=$SCRIPTPATH
+
+CHAOS_DIR=$SCRIPTPATH
+BASE_EXTERNAL=$CHAOS_DIR/external
+PREFIX=$CHAOS_DIR/usr/local
 
 echo "Using $BASE_EXTERNAL as external library folder"
 echo "Using $CHAOS_DIR as chaos folder"
 
-export PREFIX=$BASE_EXTERNAL/usr/local
 
 if [ ! -d "$BASE_EXTERNAL/boost-log" ]; then
     echo "Download boost-log source"
