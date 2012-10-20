@@ -26,52 +26,42 @@ else
  svn update
 fi
 
-if [[ $? -ne 0 ]] ; then
-exit 1
-fi
+if [ ! -d "$PREFIX/boost" ]; then
+    if [ ! -d "$BASE_EXTERNAL/boost" ]; then
+        echo "Download boost source"
+        wget --no-check-certificate -O $BASE_EXTERNAL/boost_1_51_0.tar.gz "http://downloads.sourceforge.net/project/boost/boost/1.51.0/boost_1_51_0.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F1.51.0%2F&ts=1350734344&use_mirror=freefr"
+        tar zxvf $BASE_EXTERNAL/boost_1_51_0.tar.gz -C $BASE_EXTERNAL
+        mv $BASE_EXTERNAL/boost_1_51_0 $BASE_EXTERNAL/boost
+    fi
 
-if [ ! -d "$BASE_EXTERNAL/boost" ]; then
-    echo "Download boost source"
-    svn co http://svn.boost.org/svn/boost/trunk/ $BASE_EXTERNAL/boost
-else
-    echo "Update boost source"
+
+    if [ ! -L "$BASE_EXTERNAL/boost/boost/log" ]; then
+        echo "link boost/log into boos source"
+        ln -s $BASE_EXTERNAL/boost-log/boost/log $BASE_EXTERNAL/boost/boost/
+        if [[ $? -ne 0 ]] ; then
+            exit 1
+        fi
+    fi
+
+    if [ ! -L "$BASE_EXTERNAL/boost/libs/log" ]; then
+        echo "link libs/log into boos source"
+        ln -s $BASE_EXTERNAL/boost-log/libs/log $BASE_EXTERNAL/boost/libs/
+        if [[ $? -ne 0 ]] ; then
+            exit 1
+        fi
+    fi
+
+    if [ ! -f "$BASE_EXTERNAL/boost/b2" ]; then
+        echo "Boostrapping boost"
+        cd $BASE_EXTERNAL/boost
+        ./bootstrap.sh
+    fi
+
     cd $BASE_EXTERNAL/boost
-    svn update
+    echo "Compile and isntall boost libraries into $BASE_EXTERNAL"
+    ./b2 --prefix=$PREFIX --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread install
 fi
 
-if [[ $? -ne 0 ]] ; then
-exit 1
-fi
-
-if [ ! -L "$BASE_EXTERNAL/boost/boost/log" ]; then
-    echo "link boost/log into boos source"
-    ln -s $BASE_EXTERNAL/boost-log/boost/log $BASE_EXTERNAL/boost/boost/
-    if [[ $? -ne 0 ]] ; then
-        exit 1
-    fi
-fi
-
-if [ ! -L "$BASE_EXTERNAL/boost/libs/log" ]; then
-    echo "link libs/log into boos source"
-    ln -s $BASE_EXTERNAL/boost-log/libs/log $BASE_EXTERNAL/boost/libs/
-    if [[ $? -ne 0 ]] ; then
-        exit 1
-    fi
-fi
-
-if [ ! -f "$BASE_EXTERNAL/boost/b2" ]; then
-    echo "Boostrapping boost"
-    cd $BASE_EXTERNAL/boost
-    ./bootstrap.sh
-
-    if [[ $? -ne 0 ]] ; then
-        exit 1
-    fi
-
-fi
-
-echo "Compile and isntall boost libraries into $BASE_EXTERNAL"
-./b2 --prefix=$PREFIX --with-program_options --with-atomic --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread install
 
 if [ ! -d "$BASE_EXTERNAL/msgpack" ]; then
     echo "Install masgpack"
