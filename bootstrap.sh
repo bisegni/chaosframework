@@ -1,14 +1,14 @@
 #!/bin/bash
 
 #####
-#Dipendence: autotools, automake, libtool, git-core, bzr, ruby, cmake, zlib1g-dev, libcloog-ppl0
+#Dipendence: automake, libtool, subversion, git-core, bzr, ruby, cmake, zlib1g-dev, libcloog-ppl0
 #####
 
 pushd `dirname $0` > /dev/null
 SCRIPTPATH=`pwd -P`
 popd > /dev/null
 
-BOOST_VERSION=boost_1_50_0.tar.gz
+BOOST_VERSION=1_50_0
 CHAOS_DIR=$SCRIPTPATH
 BASE_EXTERNAL=$CHAOS_DIR/external
 PREFIX=$CHAOS_DIR/usr/local
@@ -29,9 +29,9 @@ fi
 if [ ! -d "$PREFIX/boost" ]; then
     if [ ! -d "$BASE_EXTERNAL/boost" ]; then
         echo "Download boost source"
-        wget --no-check-certificate -O $BASE_EXTERNAL/$BOOST_VERSION "http://downloads.sourceforge.net/project/boost/boost/1.50.0/$BOOST_VERSION?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F1.51.0%2F&ts=1350734344&use_mirror=freefr"
-        tar zxvf $BASE_EXTERNAL/$BOOST_VERSION -C $BASE_EXTERNAL
-        mv $BASE_EXTERNAL/$BOOST_VERSION $BASE_EXTERNAL/boost
+        wget --no-check-certificate -O $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz "http://downloads.sourceforge.net/project/boost/boost/1.50.0/boost_$BOOST_VERSION.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F1.51.0%2F&ts=1350734344&use_mirror=freefr"
+        tar zxvf $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz -C $BASE_EXTERNAL
+        mv $BASE_EXTERNAL/boost_$BOOST_VERSION $BASE_EXTERNAL/boost
     fi
 
 
