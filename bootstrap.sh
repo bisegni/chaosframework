@@ -8,7 +8,7 @@ pushd `dirname $0` > /dev/null
 SCRIPTPATH=`pwd -P`
 popd > /dev/null
 
-
+BOOST_VERSION=boost_1_50_0.tar.gz
 CHAOS_DIR=$SCRIPTPATH
 BASE_EXTERNAL=$CHAOS_DIR/external
 PREFIX=$CHAOS_DIR/usr/local
@@ -29,14 +29,14 @@ fi
 if [ ! -d "$PREFIX/boost" ]; then
     if [ ! -d "$BASE_EXTERNAL/boost" ]; then
         echo "Download boost source"
-        wget --no-check-certificate -O $BASE_EXTERNAL/boost_1_51_0.tar.gz "http://downloads.sourceforge.net/project/boost/boost/1.51.0/boost_1_51_0.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F1.51.0%2F&ts=1350734344&use_mirror=freefr"
-        tar zxvf $BASE_EXTERNAL/boost_1_51_0.tar.gz -C $BASE_EXTERNAL
-        mv $BASE_EXTERNAL/boost_1_51_0 $BASE_EXTERNAL/boost
+        wget --no-check-certificate -O $BASE_EXTERNAL/$BOOST_VERSION "http://downloads.sourceforge.net/project/boost/boost/1.50.0/$BOOST_VERSION?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F1.51.0%2F&ts=1350734344&use_mirror=freefr"
+        tar zxvf $BASE_EXTERNAL/$BOOST_VERSION -C $BASE_EXTERNAL
+        mv $BASE_EXTERNAL/$BOOST_VERSION $BASE_EXTERNAL/boost
     fi
 
 
     if [ ! -L "$BASE_EXTERNAL/boost/boost/log" ]; then
-        echo "link boost/log into boos source"
+        echo "link boost/log into boost source"
         ln -s $BASE_EXTERNAL/boost-log/boost/log $BASE_EXTERNAL/boost/boost/
         if [[ $? -ne 0 ]] ; then
             exit 1
@@ -44,7 +44,7 @@ if [ ! -d "$PREFIX/boost" ]; then
     fi
 
     if [ ! -L "$BASE_EXTERNAL/boost/libs/log" ]; then
-        echo "link libs/log into boos source"
+        echo "link libs/log into boost source"
         ln -s $BASE_EXTERNAL/boost-log/libs/log $BASE_EXTERNAL/boost/libs/
         if [[ $? -ne 0 ]] ; then
             exit 1
