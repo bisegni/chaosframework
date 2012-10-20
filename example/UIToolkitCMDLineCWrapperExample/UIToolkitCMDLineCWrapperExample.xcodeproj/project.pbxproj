@@ -183,10 +183,12 @@
 				HEADER_SEARCH_PATHS = (
 					../../,
 					/usr/local/include,
+					usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug\"",
+					"$(SRCROOT)/usr/local/lib",
 				);
 				PRODUCT_NAME = UIToolkitCMDLineCWrapperExample;
 			};
@@ -198,10 +200,12 @@
 				HEADER_SEARCH_PATHS = (
 					../../,
 					/usr/local/include,
+					usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug\"",
+					"$(SRCROOT)/usr/local/lib",
 				);
 				PRODUCT_NAME = UIToolkitCMDLineCWrapperExample;
 			};

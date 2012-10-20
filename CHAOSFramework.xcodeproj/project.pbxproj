@@ -1346,11 +1346,14 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					.,
+					usr/local/include,
 					/usr/local/include,
+					/usr/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/chaos/common\"",
+					"$(SRCROOT)/usr/local/lib",
 					/usr/local/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
@@ -1392,11 +1395,14 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					.,
+					usr/local/include,
 					/usr/local/include,
+					/usr/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/chaos/common\"",
+					"$(SRCROOT)/usr/local/lib",
 					/usr/local/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
@@ -1443,11 +1449,14 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					.,
+					usr/local/include,
 					/usr/local/include,
+					/usr/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
 					"\"$(SRCROOT)/chaos/common\"",
+					"$(SRCROOT)/usr/local/lib",
+					/usr/local/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1488,11 +1497,14 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					.,
+					usr/local/include,
 					/usr/local/include,
+					/usr/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
 					"\"$(SRCROOT)/chaos/common\"",
+					"$(SRCROOT)/usr/local/lib",
+					/usr/local/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
@@ -1538,11 +1550,14 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					.,
+					usr/local/include,
 					/usr/local/include,
+					/usr/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
 					"\"$(SRCROOT)/chaos/common\"",
+					"$(SRCROOT)/usr/local/lib",
+					/usr/local/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1583,11 +1598,14 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					.,
+					usr/local/include,
 					/usr/local/include,
+					/usr/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
 					"\"$(SRCROOT)/chaos/common\"",
+					"$(SRCROOT)/usr/local/lib",
+					/usr/local/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (

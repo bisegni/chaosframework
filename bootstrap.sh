@@ -13,8 +13,14 @@ CHAOS_DIR=$SCRIPTPATH
 BASE_EXTERNAL=$CHAOS_DIR/external
 PREFIX=$CHAOS_DIR/usr/local
 
-echo "Using $BASE_EXTERNAL as external library folder"
+if [ -n "$1" ]; then
+    PREFIX=$1/usr/local
+else
+    PREFIX=$CHAOS_DIR/usr/local
+fi
+
 echo "Using $CHAOS_DIR as chaos folder"
+echo "Using $BASE_EXTERNAL as external library folder"
 echo "Using $PREFIX as prefix folder"
 
 if [ ! -d "$BASE_EXTERNAL/boost-log" ]; then
@@ -26,7 +32,7 @@ else
  svn update
 fi
 
-if [ ! -d "$PREFIX/boost" ]; then
+if [ ! -d "$PREFIX/include/boost" ]; then
     if [ ! -d "$BASE_EXTERNAL/boost" ]; then
         echo "Download boost source"
         wget --no-check-certificate -O $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz "http://downloads.sourceforge.net/project/boost/boost/1.50.0/boost_$BOOST_VERSION.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F1.51.0%2F&ts=1350734344&use_mirror=freefr"
@@ -58,8 +64,10 @@ if [ ! -d "$PREFIX/boost" ]; then
     fi
 
     cd $BASE_EXTERNAL/boost
-    echo "Compile and isntall boost libraries into $BASE_EXTERNAL"
-    ./b2 --prefix=$PREFIX --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread install
+    echo "Compile and install boost libraries into $PREFIX/"
+    ./b2 --prefix=$PREFIX link=shared --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread install
+else
+    echo "Boost Already present"
 fi
 
 
@@ -134,5 +142,5 @@ cd
 echo "Compile !CHOAS"
 cd $CHAOS_DIR
 cmake -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX .
-make VERBOSE=1
+make
 make install
