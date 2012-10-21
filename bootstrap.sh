@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #####
-#Dipendence: automake, libtool, subversion, git-core, bzr, ruby, cmake, zlib1g-dev, libcloog-ppl0
+#Dipendence: automake, libtool, subversion, git-core, bzr, ruby, cmake, zlib1g-dev, libcloog-ppl0, wget
 #####
 
 pushd `dirname $0` > /dev/null

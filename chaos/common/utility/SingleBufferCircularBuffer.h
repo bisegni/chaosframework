@@ -70,7 +70,7 @@ namespace chaos {
         }
         
             //!Default destructor
-        ~SingleBufferCircularBuffer(){
+        virtual ~SingleBufferCircularBuffer(){
             if(basePointer){
                 free(basePointer);
             }
