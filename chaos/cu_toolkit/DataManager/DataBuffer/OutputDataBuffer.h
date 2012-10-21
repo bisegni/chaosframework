@@ -19,6 +19,8 @@
  */
 #ifndef OutputDataBuffer_H
 #define OutputDataBuffer_H
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+
 #include <chaos/common/io/IODataDriver.h>
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/data/CDataWrapper.h> 
@@ -42,7 +44,7 @@ namespace chaos {
     public:
         OutputDataBuffer();
         OutputDataBuffer(IODataDriver*);
-        ~OutputDataBuffer();
+        virtual ~OutputDataBuffer();
         
         /*
          Initialization method for output buffer

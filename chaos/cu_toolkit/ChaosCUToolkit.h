@@ -20,7 +20,7 @@
 
 #ifndef ChaosCUToolkit_H
 #define ChaosCUToolkit_H
-    //#pragma GCC visibility push(hidden)
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <boost/thread/condition.hpp>
 

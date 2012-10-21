@@ -20,6 +20,7 @@
 
 #ifndef CHAOSFramework_SingleBufferCircularBuffer_h
 #define CHAOSFramework_SingleBufferCircularBuffer_h
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <cstring>
 #include <boost/shared_ptr.hpp>

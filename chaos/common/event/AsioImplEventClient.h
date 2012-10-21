@@ -20,7 +20,7 @@
 
 #ifndef __CHAOSFramework__AsioImplEventClient__
 #define __CHAOSFramework__AsioImplEventClient__
-
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <chaos/common/event/AsioEventHandler.h>
 #include <chaos/common/event/EventClient.h>

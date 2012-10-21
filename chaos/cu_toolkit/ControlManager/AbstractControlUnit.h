@@ -19,6 +19,7 @@
  */
 #ifndef ControlUnit_H
 #define ControlUnit_H
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <map>
 #include <string>
@@ -156,10 +157,7 @@ namespace chaos{
          a CDataWrapper
          */
         void _defineActionAndDataset(CDataWrapper&) throw(CException);
-        /*
-         Execute the scehduling for the device
-         */
-        void executeOnThread(const string&) throw(CException); 
+
     protected:
             //CU Identifier
         string cuName;
@@ -207,6 +205,11 @@ namespace chaos{
          Receive the evento for set the dataset input element
          */
         virtual CDataWrapper* _setDatasetAttribute(CDataWrapper*, bool&) throw (CException);
+        
+        /*
+         Execute the scehduling for the device
+         */
+        void executeOnThread(const string&) throw(CException);
         
         /*
          Create a new action description, return the description for let the user to add parameter

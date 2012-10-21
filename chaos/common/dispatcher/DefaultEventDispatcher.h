@@ -20,6 +20,7 @@
 
 #ifndef CHAOSFramework_DefaultEventDispatcher_h
 #define CHAOSFramework_DefaultEventDispatcher_h
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <chaos/common/dispatcher/AbstractEventDispatcher.h>
 #include <boost/thread.hpp>
@@ -87,7 +88,7 @@ namespace chaos {
         DefaultEventDispatcher(string *alias);
         
             //! Basic Destructor
-        ~DefaultEventDispatcher();
+        virtual ~DefaultEventDispatcher();
         
             //! Event handler registration
         /*

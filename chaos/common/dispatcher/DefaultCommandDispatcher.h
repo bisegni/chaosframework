@@ -20,6 +20,7 @@
 
 #ifndef DefaultCommandDispatcher_H
 #define DefaultCommandDispatcher_H
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <string>
 #include <boost/shared_ptr.hpp>

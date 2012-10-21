@@ -19,6 +19,7 @@
  */
 #ifndef ChaosFramework_ActionsScheduler_h
 #define ChaosFramework_ActionsScheduler_h
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>

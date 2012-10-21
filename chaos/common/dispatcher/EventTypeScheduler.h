@@ -20,6 +20,7 @@
 
 #ifndef __CHAOSFramework__DomainEventScheduler__
 #define __CHAOSFramework__DomainEventScheduler__
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
@@ -59,6 +60,12 @@ namespace chaos {
          Default constructor
          */
         EventTypeScheduler();
+        
+        /*!
+         Default destructor
+         */
+        virtual ~EventTypeScheduler();
+        
         /*!
          Return the domain name managed by the sceduler instance
          */

@@ -81,7 +81,7 @@ else
     git pull
 fi
 ./bootstrap
-./configure --prefix=$PREFIX
+./configure --prefix=$PREFIX --enable-static=NO --enable-shared=YES
 make
 make install
 
@@ -95,7 +95,7 @@ else
     git pull
 fi
 ./bootstrap
-./configure --prefix=$PREFIX
+./configure --prefix=$PREFIX --enable-static=NO --enable-shared=YES
 make
 make install
 
@@ -110,7 +110,7 @@ else
     cd $BASE_EXTERNAL/msgpack-rpc/cpp
 fi
 ./bootstrap
-./configure --prefix=$PREFIX --with-mpio=$PREFIX --with-msgpack=$PREFIX
+./configure --prefix=$PREFIX --with-mpio=$PREFIX --with-msgpack=$PREFIX --enable-static=NO --enable-shared=YES
 make
 make install
 
@@ -124,7 +124,7 @@ else
     git pull
 fi
 ./autogen.sh
-./configure --prefix=$PREFIX
+./configure --prefix=$PREFIX --enable-static=NO --enable-shared=YES
 make
 make install
 
@@ -133,7 +133,7 @@ if [ ! -d "$PREFIX/include/libmemcached" ]; then
     wget --no-check-certificate -O $BASE_EXTERNAL/libmemcached.tar.gz https://launchpad.net/libmemcached/1.0/1.0.12/+download/libmemcached-1.0.12.tar.gz
     tar zxvf $BASE_EXTERNAL/libmemcached.tar.gz -C $BASE_EXTERNAL
     cd $BASE_EXTERNAL/libmemcached-1.0.12
-    ./configure --without-memcached --prefix=$PREFIX
+    ./configure --without-memcached --prefix=$PREFIX --enable-static=NO --enable-shared=YES
     make
     make install
 fi

@@ -52,7 +52,7 @@ namespace chaos{
     /*
      * Distructor
      */
-    ~DataManager();
+    virtual ~DataManager();
     
 public:
     /*

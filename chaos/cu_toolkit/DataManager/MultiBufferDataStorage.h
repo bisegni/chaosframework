@@ -77,7 +77,7 @@ namespace chaos {
         /*
          Destructor
          */
-        ~MultiBufferDataStorage();
+        virtual ~MultiBufferDataStorage();
         
         /*
          Initialize the Multisequence buffer

@@ -20,6 +20,7 @@
 
 #ifndef MsgPackServer_H
 #define MsgPackServer_H
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <boost/shared_ptr.hpp>
 #include <msgpack/rpc/server.h>

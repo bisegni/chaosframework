@@ -19,6 +19,8 @@
  */
 #ifndef ChaosFramework_MsgPackClient_h
 #define ChaosFramework_MsgPackClient_h
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+
 #include <chaos/common/rpc/RpcClient.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/pqueue/ChaosProcessingQueue.h>

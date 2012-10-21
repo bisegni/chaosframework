@@ -20,6 +20,7 @@
 
 #ifndef CHAOSFramework_ZMQServer_h
 #define CHAOSFramework_ZMQServer_h
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <vector>
 #include <boost/shared_ptr.hpp>
