@@ -20,6 +20,7 @@
 
 #ifndef CHAOSFramework_ZMQServer_h
 #define CHAOSFramework_ZMQServer_h
+#ifdef DEV_WITH_ZMQ
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <vector>
@@ -72,5 +73,5 @@ namespace chaos {
     };
     
 }
-
+#endif
 #endif

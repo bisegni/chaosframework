@@ -18,6 +18,8 @@
  *    	limitations under the License.
  */
 
+#ifdef DEV_WITH_ZMQ
+
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/zmq/ZMQServer.h>
 #include <chaos/common/cconstants.h>
@@ -158,3 +160,5 @@ void ZMQServer::executeOnThread(){
     }
     zmq_close(receiver);
 }
+
+#endif

@@ -27,6 +27,12 @@ DomainActionsScheduler::DomainActionsScheduler(shared_ptr<DomainActions> _domain
     domainActionsContainer = _domainActionsContainer;
 }
 
+/*!
+ Default destructor
+ */
+DomainActionsScheduler::~DomainActionsScheduler() {
+    
+}
 /*
  Initialization method for output buffer
  */

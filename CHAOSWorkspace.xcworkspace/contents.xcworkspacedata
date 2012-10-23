@@ -33,6 +33,6 @@
       location = "group:example/UIToolkitCMDLineCWrapperExample/UIToolkitCMDLineCWrapperExample.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:test/TestEventDescriptor/TestEventDescriptor.xcodeproj">
+      location = "group:example/UIToolkitCMDLineCWrapperExample/../../test/TestEventDescriptor/TestEventDescriptor.xcodeproj">
    </FileRef>
 </Workspace>

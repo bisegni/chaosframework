@@ -8,6 +8,8 @@
 
 #ifndef CHAOSFramework_ZMQClient_h
 #define CHAOSFramework_ZMQClient_h
+#ifdef DEV_WITH_ZMQ
+
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <chaos/common/rpc/RpcClient.h>
@@ -53,5 +55,5 @@ namespace chaos {
         bool submitMessage(string& destinationIpAndPort, CDataWrapper *message, bool onThisThread=false) throw(CException);
     };
 }
-
+#endif
 #endif

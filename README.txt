@@ -7,11 +7,9 @@ This distribution merely rips it out of the bson repository into its own.
 
 Compile !CHAOS Framework instruction: 
 
-To compile all tree framework(Common [--common], CUToolkit[--cu], UIToolkit[--ui]) togheter must be used the line "sudo scons --all --install copy", the package can be compilide also in separated way substituting --all with the single package parameter.
+To compile all tree framework cmake is to beused with "cmake.". There is a bootstra.sh script file that try to download al dependence library and put all into {chaos root directory}/external and compiled staff into {chaos root directory}/usr/local
 
-To removed the instaled file: "sudo scons --all -c clean_installed"
 
-To removed compilation object only: "sudo scons --all -c"
 
 To generate documentation:  Doxygen software is needed and it can be downloaded from http://www.stack.nl/~dimitri/doxygen/ 
                             after installation launch from terminal "doxygen Documentation/chaosdocs"
@@ -36,3 +34,6 @@ Library used by CHAOS:
  
 
 for qt client download and install qwt(http://qwt.sourceforge.net/qwtinstall.html)
+
+
+To develop with zmqdriver DEV_WITH_ZMQ variablemust me defined

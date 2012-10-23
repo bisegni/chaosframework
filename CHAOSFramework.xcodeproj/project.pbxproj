@@ -1314,12 +1314,14 @@
 		3260261214B300FE00C906CE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 			};
 			name = Debug;
 		};
 		3260261314B300FE00C906CE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 			};
 			name = Release;
 		};
@@ -1371,7 +1373,6 @@
 					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
-					"-lzmq",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

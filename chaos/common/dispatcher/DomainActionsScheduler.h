@@ -57,6 +57,10 @@ namespace chaos {
          */
         DomainActionsScheduler(shared_ptr<DomainActions>);
         /*!
+         Default destructor
+         */
+        virtual ~DomainActionsScheduler();
+        /*!
             Return the domain name managed by the sceduler instance
          */
         string& getManagedDomainName();

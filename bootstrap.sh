@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #####
-#Dipendence: automake, libtool, subversion, git-core, bzr, ruby, cmake, zlib1g-dev, libcloog-ppl0, wget
+#Dipendence: automake libtool subversion git-core bzr ruby1.8-full cmake zlib1g-dev libcloog-ppl0 wget g++
 #####
 
 pushd `dirname $0` > /dev/null
@@ -9,6 +9,7 @@ SCRIPTPATH=`pwd -P`
 popd > /dev/null
 
 BOOST_VERSION=1_50_0
+LMEM_VERSION=1.0.12
 CHAOS_DIR=$SCRIPTPATH
 BASE_EXTERNAL=$CHAOS_DIR/external
 PREFIX=$CHAOS_DIR/usr/local
@@ -130,9 +131,9 @@ make install
 
 if [ ! -d "$PREFIX/include/libmemcached" ]; then
     echo "Install libmemcached into  $BASE_EXTERNAL/libmemcached-1.0.12"
-    wget --no-check-certificate -O $BASE_EXTERNAL/libmemcached.tar.gz https://launchpad.net/libmemcached/1.0/1.0.12/+download/libmemcached-1.0.12.tar.gz
+    wget --no-check-certificate -O $BASE_EXTERNAL/libmemcached.tar.gz https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz
     tar zxvf $BASE_EXTERNAL/libmemcached.tar.gz -C $BASE_EXTERNAL
-    cd $BASE_EXTERNAL/libmemcached-1.0.12
+    cd $BASE_EXTERNAL/libmemcached-$LMEM_VERSION
     ./configure --without-memcached --prefix=$PREFIX --enable-static=NO --enable-shared=YES
     make
     make install

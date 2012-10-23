@@ -17,6 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+#ifdef DEV_WITH_ZMQ
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/zmq/ZMQClient.h>
 #include <chaos/common/cconstants.h>
@@ -176,3 +177,4 @@ void ZMQClient::processBufferElement(RpcMessageForwardInfo *messageInfo, Element
     }
 
 }
+#endif
