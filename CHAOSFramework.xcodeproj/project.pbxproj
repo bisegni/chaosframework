@@ -15,6 +15,10 @@
 		322E1579161B629700C3003C /* NetworkAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = 322E1577161B629700C3003C /* NetworkAddress.h */; };
 		322E157A161B629700C3003C /* NetworkBroker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322E1578161B629700C3003C /* NetworkBroker.cpp */; };
 		322E157D161B62A900C3003C /* NetworkBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 322E157C161B62A900C3003C /* NetworkBroker.h */; };
+		323236CB164573C60052CE06 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323236CA164573C60052CE06 /* main.cpp */; };
+		323236CD164573C60052CE06 /* ChaosNodeDirectory.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 323236CC164573C60052CE06 /* ChaosNodeDirectory.1 */; };
+		323236DA164573F50052CE06 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323236D9164573F50052CE06 /* main.cpp */; };
+		323236DC164573F50052CE06 /* ChaosHSTService.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 323236DB164573F50052CE06 /* ChaosHSTService.1 */; };
 		3244D11D15ECC25800FE2F86 /* AlertEventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */; };
 		3244D11E15ECC25800FE2F86 /* AlertEventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */; };
 		325013BC15E9258C00DCB13E /* EventClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325013BA15E9258C00DCB13E /* EventClient.cpp */; };
@@ -216,6 +220,29 @@
 		32F466DE155EDBDE00AD3D81 /* IODataDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F466DD155EDBDE00AD3D81 /* IODataDriver.cpp */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		323236C5164573C60052CE06 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				323236CD164573C60052CE06 /* ChaosNodeDirectory.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		323236D4164573F50052CE06 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				323236DC164573F50052CE06 /* ChaosHSTService.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		320192B914DEEAC000318F00 /* CObjectHandlerProcessingQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CObjectHandlerProcessingQueue.h; sourceTree = "<group>"; };
 		320C2189151B555A00BD0F41 /* EventServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventServer.h; sourceTree = "<group>"; };
@@ -226,6 +253,12 @@
 		322E1577161B629700C3003C /* NetworkAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkAddress.h; sourceTree = "<group>"; };
 		322E1578161B629700C3003C /* NetworkBroker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkBroker.cpp; sourceTree = "<group>"; };
 		322E157C161B62A900C3003C /* NetworkBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkBroker.h; sourceTree = "<group>"; };
+		323236C7164573C60052CE06 /* ChaosNodeDirectory */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosNodeDirectory; sourceTree = BUILT_PRODUCTS_DIR; };
+		323236CA164573C60052CE06 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		323236CC164573C60052CE06 /* ChaosNodeDirectory.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ChaosNodeDirectory.1; sourceTree = "<group>"; };
+		323236D6164573F50052CE06 /* ChaosHSTService */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosHSTService; sourceTree = BUILT_PRODUCTS_DIR; };
+		323236D9164573F50052CE06 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		323236DB164573F50052CE06 /* ChaosHSTService.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ChaosHSTService.1; sourceTree = "<group>"; };
 		3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlertEventChannel.cpp; sourceTree = "<group>"; };
 		3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertEventChannel.h; sourceTree = "<group>"; };
 		325013BA15E9258C00DCB13E /* EventClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventClient.cpp; sourceTree = "<group>"; };
@@ -433,6 +466,20 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		323236C4164573C60052CE06 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		323236D3164573F50052CE06 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		326026E614B301F600C906CE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -483,6 +530,24 @@
 			path = event;
 			sourceTree = "<group>";
 		};
+		323236C9164573C60052CE06 /* ChaosNodeDirectory */ = {
+			isa = PBXGroup;
+			children = (
+				323236CA164573C60052CE06 /* main.cpp */,
+				323236CC164573C60052CE06 /* ChaosNodeDirectory.1 */,
+			);
+			path = ChaosNodeDirectory;
+			sourceTree = "<group>";
+		};
+		323236D8164573F50052CE06 /* ChaosHSTService */ = {
+			isa = PBXGroup;
+			children = (
+				323236D9164573F50052CE06 /* main.cpp */,
+				323236DB164573F50052CE06 /* ChaosHSTService.1 */,
+			);
+			path = ChaosHSTService;
+			sourceTree = "<group>";
+		};
 		325DE9EE15EC001900D6F34E /* channel */ = {
 			isa = PBXGroup;
 			children = (
@@ -501,6 +566,8 @@
 			isa = PBXGroup;
 			children = (
 				326DB3B114B38BC00018A8D0 /* chaos */,
+				323236C9164573C60052CE06 /* ChaosNodeDirectory */,
+				323236D8164573F50052CE06 /* ChaosHSTService */,
 				326026EA14B301F600C906CE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -511,6 +578,8 @@
 				326026E914B301F600C906CE /* libchaos_common.dylib */,
 				3260276614B3068100C906CE /* libchaos_cutoolkit.dylib */,
 				3260278714B307DA00C906CE /* libchaos_uitoolkit.dylib */,
+				323236C7164573C60052CE06 /* ChaosNodeDirectory */,
+				323236D6164573F50052CE06 /* ChaosHSTService */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1121,6 +1190,40 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		323236C6164573C60052CE06 /* ChaosNodeDirectory */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 323236D0164573C60052CE06 /* Build configuration list for PBXNativeTarget "ChaosNodeDirectory" */;
+			buildPhases = (
+				323236C3164573C60052CE06 /* Sources */,
+				323236C4164573C60052CE06 /* Frameworks */,
+				323236C5164573C60052CE06 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ChaosNodeDirectory;
+			productName = ChaosNodeDirectory;
+			productReference = 323236C7164573C60052CE06 /* ChaosNodeDirectory */;
+			productType = "com.apple.product-type.tool";
+		};
+		323236D5164573F50052CE06 /* ChaosHSTService */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 323236DD164573F50052CE06 /* Build configuration list for PBXNativeTarget "ChaosHSTService" */;
+			buildPhases = (
+				323236D2164573F50052CE06 /* Sources */,
+				323236D3164573F50052CE06 /* Frameworks */,
+				323236D4164573F50052CE06 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ChaosHSTService;
+			productName = ChaosHSTService;
+			productReference = 323236D6164573F50052CE06 /* ChaosHSTService */;
+			productType = "com.apple.product-type.tool";
+		};
 		326026E814B301F600C906CE /* chaos_common */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 326026EB14B301F600C906CE /* Build configuration list for PBXNativeTarget "chaos_common" */;
@@ -1197,6 +1300,8 @@
 				326026E814B301F600C906CE /* chaos_common */,
 				3260276514B3068100C906CE /* chaos_cutoolkit */,
 				3260278614B307DA00C906CE /* chaos_uitoolkit */,
+				323236C6164573C60052CE06 /* ChaosNodeDirectory */,
+				323236D5164573F50052CE06 /* ChaosHSTService */,
 			);
 		};
 /* End PBXProject section */
@@ -1218,6 +1323,22 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		323236C3164573C60052CE06 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				323236CB164573C60052CE06 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		323236D2164573F50052CE06 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				323236DA164573F50052CE06 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		326026E514B301F600C906CE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1311,6 +1432,112 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		323236CE164573C60052CE06 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		323236CF164573C60052CE06 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		323236DE164573F50052CE06 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		323236DF164573F50052CE06 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 		3260261214B300FE00C906CE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1632,6 +1859,22 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		323236D0164573C60052CE06 /* Build configuration list for PBXNativeTarget "ChaosNodeDirectory" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				323236CE164573C60052CE06 /* Debug */,
+				323236CF164573C60052CE06 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		323236DD164573F50052CE06 /* Build configuration list for PBXNativeTarget "ChaosHSTService" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				323236DE164573F50052CE06 /* Debug */,
+				323236DF164573F50052CE06 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		3260261014B300FE00C906CE /* Build configuration list for PBXProject "CHAOSFramework" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
