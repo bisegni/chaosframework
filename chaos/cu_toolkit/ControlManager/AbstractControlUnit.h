@@ -80,7 +80,7 @@ namespace chaos{
         /*!
          The muthex is needed because the call to the action can occours in different thread
          */
-        recursive_mutex managing_cu_mutex;
+        boost::recursive_mutex managing_cu_mutex;
         
             //
         map<string, KeyDataStorage*>  keyDataStorageMap;
@@ -165,7 +165,7 @@ namespace chaos{
             //it's dynamically assigned
         string cuInstance;
         
-        shared_ptr<CDataWrapper> _internalSetupConfiguration;
+        boost::shared_ptr<CDataWrapper> _internalSetupConfiguration;
         
         /*
          Return the tart configuration for the Control Unit instance

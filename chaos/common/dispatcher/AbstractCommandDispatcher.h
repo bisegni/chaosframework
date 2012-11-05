@@ -63,7 +63,7 @@ namespace chaos{
         
             //! Domain name <-> Action name association map
         /*!Contains the association between the domain name and all action for this domain*/
-        map<string, shared_ptr<DomainActions> >  actionDomainExecutorMap;
+        map<string, boost::shared_ptr<DomainActions> >  actionDomainExecutorMap;
         
     protected:
         
@@ -81,7 +81,7 @@ namespace chaos{
          \return the instance of DomainActions pointer in relation to name
          but if the name is not present initialized it and add it to map
          */
-        shared_ptr<DomainActions> getDomainActionsFromName(string&);
+        boost::shared_ptr<DomainActions> getDomainActionsFromName(string&);
         
             //! Remove the infromation about a domain
         /*!

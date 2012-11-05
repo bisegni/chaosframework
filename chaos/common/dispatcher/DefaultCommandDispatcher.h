@@ -38,12 +38,12 @@ namespace chaos{
     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DefaultCommandDispatcher, AbstractCommandDispatcher) {
         bool deinitialized;
         
-        map<string, shared_ptr<DomainActionsScheduler> > dasMap;
+        map<string, boost::shared_ptr<DomainActionsScheduler> > dasMap;
     
         /*!
          return the scheduler for domain and if no present create a new instance
          */
-        shared_ptr<DomainActionsScheduler>& getSchedulerForDomainName(string&);
+        boost::shared_ptr<DomainActionsScheduler>& getSchedulerForDomainName(string&);
         
     protected:
         /*!

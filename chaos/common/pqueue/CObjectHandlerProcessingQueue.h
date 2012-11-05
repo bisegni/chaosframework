@@ -45,8 +45,8 @@ namespace chaos {
         int outputThreadNumber;
         mutable boost::mutex qMutex;
         _heapEngine bufferQueue;
-        condition_variable liveThreadConditionLock;
-        condition_variable emptyQueueConditionLock;
+        boost::condition_variable liveThreadConditionLock;
+        boost::condition_variable emptyQueueConditionLock;
         boost::function<CDataWrapper*(CDataWrapper*)> handler;
             //thread group
         CThreadGroup threadGroup;
