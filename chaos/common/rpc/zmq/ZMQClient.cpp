@@ -54,8 +54,8 @@ void ZMQClient::init(CDataWrapper *cfg) throw(CException) {
     ZMQC_LAPP << "initialization";
     int32_t threadNumber = cfg->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER)? cfg->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER):1;
     ZMQC_LAPP << "ObjectProcessingQueue<CDataWrapper> initialization with "<< threadNumber <<" thread";
-    CObjectProcessingQueue<RpcMessageForwardInfo>::init(threadNumber);
-    ZMQC_LAPP << "ObjectProcessingQueue<RpcMessageForwardInfo> initialized";
+    CObjectProcessingQueue<NetworkForwardInfo>::init(threadNumber);
+    ZMQC_LAPP << "ObjectProcessingQueue<NetworkForwardInfo> initialized";
     
     ZMQC_LAPP << "ConnectionPool initialization";
     CHAOS_ASSERT(zmqContext = zmq_ctx_new())
@@ -79,10 +79,10 @@ void ZMQClient::start() throw(CException) {
 void ZMQClient::deinit() throw(CException) {
     ZMQC_LAPP << "deinitialization";
     
-    ZMQC_LAPP << "ObjectProcessingQueue<RpcMessageForwardInfo> stopping";
-    CObjectProcessingQueue<RpcMessageForwardInfo>::clear();
-    CObjectProcessingQueue<RpcMessageForwardInfo>::deinit();
-    ZMQC_LAPP << "ObjectProcessingQueue<RpcMessageForwardInfo> stopped";
+    ZMQC_LAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopping";
+    CObjectProcessingQueue<NetworkForwardInfo>::clear();
+    CObjectProcessingQueue<NetworkForwardInfo>::deinit();
+    ZMQC_LAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopped";
     
         //destroy the zmq context
     zmq_ctx_destroy(zmqContext);
@@ -96,14 +96,14 @@ void ZMQClient::deinit() throw(CException) {
 bool ZMQClient::submitMessage(string& destinationIpAndPort, CDataWrapper *message, bool onThisThread) throw(CException) {
     CHAOS_ASSERT(message);
     ElementManagingPolicy ePolicy;
-    RpcMessageForwardInfo *newForwardInfo = NULL;
+    NetworkForwardInfo *newForwardInfo = NULL;
     
     try{
         if(!destinationIpAndPort.size())
             throw CException(0, "No destination ip in message description", "ZMQClient::submitMessage");
         
             //allocate new forward info
-        newForwardInfo = new RpcMessageForwardInfo();
+        newForwardInfo = new NetworkForwardInfo();
         newForwardInfo->nodeNetworkInfo.ipPort = destinationIpAndPort;
         newForwardInfo->rpcMessage = message;
             //submit action
@@ -116,7 +116,7 @@ bool ZMQClient::submitMessage(string& destinationIpAndPort, CDataWrapper *messag
             message = NULL;
             newForwardInfo = NULL;
         } else {
-            CObjectProcessingQueue<RpcMessageForwardInfo>::push(newForwardInfo);
+            CObjectProcessingQueue<NetworkForwardInfo>::push(newForwardInfo);
         }
     } catch(CException& ex){
             //in this case i need to delete the memory
@@ -130,7 +130,7 @@ bool ZMQClient::submitMessage(string& destinationIpAndPort, CDataWrapper *messag
 /*
  process the element action to be executed
  */
-void ZMQClient::processBufferElement(RpcMessageForwardInfo *messageInfo, ElementManagingPolicy& elementPolicy) throw(CException) {
+void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementManagingPolicy& elementPolicy) throw(CException) {
         //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     int err = 0;
     void *endPointSocket = zmq_socket (zmqContext, ZMQ_REQ);

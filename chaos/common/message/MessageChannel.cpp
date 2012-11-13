@@ -65,7 +65,7 @@ void MessageChannel::deinit() throw(CException) {
 
 
 /*! 
- called when a result of an 
+ called when a result of a message is received
  */
 CDataWrapper *MessageChannel::response(CDataWrapper *responseData, bool& detachData) {
     if(!responseData->hasKey(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID)) return NULL;

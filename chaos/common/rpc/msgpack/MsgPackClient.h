@@ -35,15 +35,14 @@
 namespace chaos {
     using namespace std;
     
-    
     /*
      Class that manage the MessagePack message send.
      */
-     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(MsgPackClient, RpcClient), public CObjectProcessingQueue<RpcMessageForwardInfo> {
+     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(MsgPackClient, RpcClient), public CObjectProcessingQueue<NetworkForwardInfo> {
             //messagepack connection pooling
         msgpack::rpc::session_pool *connectionPolling;
     protected:
-        virtual void processBufferElement(RpcMessageForwardInfo*, ElementManagingPolicy&) throw(CException);
+        virtual void processBufferElement(NetworkForwardInfo*, ElementManagingPolicy&) throw(CException);
         
          /*
           init the rpc adapter

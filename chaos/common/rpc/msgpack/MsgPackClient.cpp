@@ -20,7 +20,6 @@
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/msgpack/MsgPackClient.h>
 #include <chaos/common/cconstants.h>
-
 #include <string>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
@@ -46,7 +45,7 @@ void MsgPackClient::init(CDataWrapper *cfg) throw(CException) {
     LAPP_ << "Msgpack RpcSender initialization";
     int32_t threadNumber = cfg->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER)? cfg->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER):1;
     LAPP_ << "Msgpack RpcSender ObjectProcessingQueue<CDataWrapper> initialization with "<< threadNumber <<" thread";
-    CObjectProcessingQueue<RpcMessageForwardInfo>::init(threadNumber);
+    CObjectProcessingQueue<NetworkForwardInfo>::init(threadNumber);
     LAPP_ << "Msgpack RpcSender ObjectProcessingQueue<CDataWrapper> initialized";
     
     LAPP_ << "Msgpack RpcSender ConnectionPool initialization";
@@ -75,8 +74,8 @@ void MsgPackClient::deinit() throw(CException) {
     LAPP_ << "Msgpack Sender connectionPolling stopped";
     
     LAPP_ << "Msgpack Sender ObjectProcessingQueue<CDataWrapper> stopping";
-    CObjectProcessingQueue<RpcMessageForwardInfo>::clear();
-    CObjectProcessingQueue<RpcMessageForwardInfo>::deinit();
+    CObjectProcessingQueue<NetworkForwardInfo>::clear();
+    CObjectProcessingQueue<NetworkForwardInfo>::deinit();
     LAPP_ << "Msgpack Sender ObjectProcessingQueue<CDataWrapper> stopped";
 }
 
@@ -85,14 +84,14 @@ void MsgPackClient::deinit() throw(CException) {
  */
 bool MsgPackClient::submitMessage(string& destinationIpAndPort, CDataWrapper *message, bool onThisThread) throw(CException) {
     CHAOS_ASSERT(message);
-    RpcMessageForwardInfo *newForwardInfo = NULL;
+    NetworkForwardInfo *newForwardInfo = NULL;
     ElementManagingPolicy ePolicy;
     try{
         if(!destinationIpAndPort.size())
             throw CException(0, "No destination ip in message description", "MsgPackClient::submitMessage");
        
             //allocate new forward info
-        newForwardInfo = new RpcMessageForwardInfo();
+        newForwardInfo = new NetworkForwardInfo();
         newForwardInfo->nodeNetworkInfo.ipPort = destinationIpAndPort;
         newForwardInfo->rpcMessage = message;
             //submit action
@@ -105,7 +104,7 @@ bool MsgPackClient::submitMessage(string& destinationIpAndPort, CDataWrapper *me
             message = NULL;
             newForwardInfo = NULL;
         } else {
-            CObjectProcessingQueue<RpcMessageForwardInfo>::push(newForwardInfo);
+            CObjectProcessingQueue<NetworkForwardInfo>::push(newForwardInfo);
         }
     } catch(CException& ex){
             //in this case i need to delete the memory
@@ -119,7 +118,7 @@ bool MsgPackClient::submitMessage(string& destinationIpAndPort, CDataWrapper *me
 /*
  process the element action to be executed
  */
-void MsgPackClient::processBufferElement(RpcMessageForwardInfo *messageInfo, ElementManagingPolicy& elementPolicy) throw(CException) {
+void MsgPackClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementManagingPolicy& elementPolicy) throw(CException) {
         //the domain is securely the same is is mandatory for submition so i need to get the name of the action
     vector<string> hostTokens;
     msgpack::type::raw_ref rawResult;

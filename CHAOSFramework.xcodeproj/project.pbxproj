@@ -17,6 +17,8 @@
 		322E157D161B62A900C3003C /* NetworkBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 322E157C161B62A900C3003C /* NetworkBroker.h */; };
 		3230D9D11652A32300113C93 /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 326026E914B301F600C906CE /* libchaos_common.dylib */; };
 		3230D9D21652A38600113C93 /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 326026E914B301F600C906CE /* libchaos_common.dylib */; };
+		3230DA0A1652C41D00113C93 /* NetworkForwardInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3230DA091652C41D00113C93 /* NetworkForwardInfo.h */; };
+		3230DA0D1652C44B00113C93 /* RpcMessageForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3230DA0C1652C44B00113C93 /* RpcMessageForwarder.h */; };
 		323236CB164573C60052CE06 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323236CA164573C60052CE06 /* main.cpp */; };
 		323236CD164573C60052CE06 /* ChaosNodeDirectory.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 323236CC164573C60052CE06 /* ChaosNodeDirectory.1 */; };
 		323236DA164573F50052CE06 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323236D9164573F50052CE06 /* main.cpp */; };
@@ -182,7 +184,6 @@
 		327967D915E030C40003C6DA /* AsioEventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967D715E030C30003C6DA /* AsioEventHandler.cpp */; };
 		327967DA15E030C40003C6DA /* AsioEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 327967D815E030C30003C6DA /* AsioEventHandler.h */; };
 		328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */; };
-		328FB19015A9C6D600A1D8E7 /* RpcMessageForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 328FB18F15A9C6D600A1D8E7 /* RpcMessageForwarder.h */; };
 		3297F22614D96F31004FFE4F /* DeviceMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3297F22514D96F31004FFE4F /* DeviceMessageChannel.cpp */; };
 		3297F22914D96F43004FFE4F /* DeviceMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3297F22814D96F43004FFE4F /* DeviceMessageChannel.h */; };
 		3297F22B14D96F8D004FFE4F /* NetworkAddressMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3297F22A14D96F8D004FFE4F /* NetworkAddressMessageChannel.h */; };
@@ -267,6 +268,8 @@
 		322E1578161B629700C3003C /* NetworkBroker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkBroker.cpp; sourceTree = "<group>"; };
 		322E157C161B62A900C3003C /* NetworkBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkBroker.h; sourceTree = "<group>"; };
 		3230D9E81652AAF100113C93 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		3230DA091652C41D00113C93 /* NetworkForwardInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkForwardInfo.h; sourceTree = "<group>"; };
+		3230DA0C1652C44B00113C93 /* RpcMessageForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcMessageForwarder.h; sourceTree = "<group>"; };
 		323236C7164573C60052CE06 /* ChaosNodeDirectory */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosNodeDirectory; sourceTree = BUILT_PRODUCTS_DIR; };
 		323236CA164573C60052CE06 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		323236CC164573C60052CE06 /* ChaosNodeDirectory.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ChaosNodeDirectory.1; sourceTree = "<group>"; };
@@ -436,7 +439,6 @@
 		327967D715E030C30003C6DA /* AsioEventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsioEventHandler.cpp; sourceTree = "<group>"; };
 		327967D815E030C30003C6DA /* AsioEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsioEventHandler.h; sourceTree = "<group>"; };
 		328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcServerHandler.h; sourceTree = "<group>"; };
-		328FB18F15A9C6D600A1D8E7 /* RpcMessageForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcMessageForwarder.h; sourceTree = "<group>"; };
 		3294905A159AF4BF00E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		3294905B159AF4D700E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		3294905C159AF4E600E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -854,7 +856,7 @@
 				327967B715DFAAF40003C6DA /* RpcServer.cpp */,
 				326DB41814B38BC00018A8D0 /* RpcServer.h */,
 				328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */,
-				328FB18F15A9C6D600A1D8E7 /* RpcMessageForwarder.h */,
+				3230DA0C1652C44B00113C93 /* RpcMessageForwarder.h */,
 			);
 			path = rpc;
 			sourceTree = "<group>";
@@ -867,6 +869,7 @@
 				322E1577161B629700C3003C /* NetworkAddress.h */,
 				326DB41A14B38BC00018A8D0 /* CNodeNetworkAddress.h */,
 				326DB41B14B38BC00018A8D0 /* NetworkNode.h */,
+				3230DA091652C41D00113C93 /* NetworkForwardInfo.h */,
 			);
 			path = network;
 			sourceTree = "<group>";
@@ -1141,7 +1144,6 @@
 				320C218A151B555A00BD0F41 /* EventServer.h in Headers */,
 				32BE864815A0CEAF00818C39 /* LogManager.h in Headers */,
 				328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */,
-				328FB19015A9C6D600A1D8E7 /* RpcMessageForwarder.h in Headers */,
 				327967D615E029C70003C6DA /* AsioImplEventServer.h in Headers */,
 				327967DA15E030C40003C6DA /* AsioEventHandler.h in Headers */,
 				3272FE1715E1053100B096FB /* EventForwarder.h in Headers */,
@@ -1173,6 +1175,8 @@
 				3268CE38161608D100FCDB10 /* ZMQServer.h in Headers */,
 				322E1579161B629700C3003C /* NetworkAddress.h in Headers */,
 				322E157D161B62A900C3003C /* NetworkBroker.h in Headers */,
+				3230DA0A1652C41D00113C93 /* NetworkForwardInfo.h in Headers */,
+				3230DA0D1652C44B00113C93 /* RpcMessageForwarder.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

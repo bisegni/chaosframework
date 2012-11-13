@@ -26,12 +26,10 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/data/CDataWrapper.h>
-    //#include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/utility/ISDInterface.h>
 #include <chaos/common/rpc/RpcMessageForwarder.h>
-
 namespace chaos {
     /*!
      Define the information for send a message to some server

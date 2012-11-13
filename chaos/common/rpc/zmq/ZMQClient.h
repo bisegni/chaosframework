@@ -25,10 +25,10 @@ namespace chaos {
     /*
      Class that manage the MessagePack message send.
      */
-    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(ZMQClient, RpcClient), public CObjectProcessingQueue<RpcMessageForwardInfo> {
+    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(ZMQClient, RpcClient), public CObjectProcessingQueue<NetworkForwardInfo> {
 
     protected:
-        virtual void processBufferElement(RpcMessageForwardInfo*, ElementManagingPolicy&) throw(CException);
+        virtual void processBufferElement(NetworkForwardInfo*, ElementManagingPolicy&) throw(CException);
         void *zmqContext;
     public:
         ZMQClient(string *alias);

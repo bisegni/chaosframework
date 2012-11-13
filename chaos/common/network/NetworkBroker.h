@@ -33,6 +33,7 @@
 #include <chaos/common/utility/SetupStateManager.h>
 #include <chaos/common/event/channel/EventChannel.h>
 #include <chaos/common/event/evt_desc/EventDescriptor.h>
+#include <chaos/common/network/NetworkForwardInfo.h>
 namespace chaos {
 
     using namespace std;
@@ -62,6 +63,8 @@ namespace chaos {
         class EventServer;
         class EventClient;
     }
+    
+
 
         //! Message Broker
     /*! 
@@ -114,7 +117,7 @@ namespace chaos {
         MessageChannel *getNewMessageChannelForRemoteHost(CNodeNetworkAddress *nodeNetworkAddress, EntityType type);
         
     public:
-                
+        
             //! Basic Constructor
         NetworkBroker();
         
@@ -210,7 +213,7 @@ namespace chaos {
          \param message the message coded into key/value semantics
          \param onThisThread if true the message is forwarded in the same thread of the caller
          */
-        bool submitMessage(string& serveAndPort, CDataWrapper *message, bool onThisThread=false);
+        bool submitMessage(string& serveAndPort, CDataWrapper *message, NetworkErrorHandler handler = NULL, bool onThisThread=false);
         
             //!message request
         /*!
@@ -219,7 +222,7 @@ namespace chaos {
          \param request the request coded into key/value semantics
          \param onThisThread if true the message is forwarded in the same thread of the caller
          */
-        bool submiteRequest(string& serveAndPort,  CDataWrapper *request, bool onThisThread=false);
+        bool submiteRequest(string& serveAndPort,  CDataWrapper *request, NetworkErrorHandler handler = NULL, bool onThisThread=false);
         
             //!message submition
         /*!
