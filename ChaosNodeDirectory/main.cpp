@@ -7,12 +7,20 @@
 //
 
 #include <iostream>
+#include <chaos/common/cconstants.h>
+#include <chaos/cu_toolkit/ChaosCUToolkit.h>
 
-int main(int argc, const char * argv[])
-{
+#include "ChaosNodeDirectory.h"
 
-    // insert code here...
-    std::cout << "Hello, World!\n";
+using namespace chaos;
+
+int main(int argc, char * argv[]) {
+        //! Setup custom param for Directory Node
+    chaos::nd::ChaosNodeDirectory::getInstance()->getGlobalConfigurationInstance()->addOption("device_a", po::value<string>(), "Device A identification string");
+        //Init the Node
+    chaos::nd::ChaosNodeDirectory::getInstance()->init(argc, argv);
+        //!Start the node
+    chaos::nd::ChaosNodeDirectory::getInstance()->start();
     return 0;
 }
 

@@ -19,7 +19,7 @@
  */
 #include "ChaosNodeDirectory.h"
 #include <csignal>
-
+#include <chaos/common/exception/CException.h>
 
 using namespace std;
 using namespace chaos;
@@ -28,6 +28,7 @@ using boost::shared_ptr;
 
 WaitSemaphore ChaosNodeDirectory::waitCloseSemaphore;
 
+#define LCND_ LAPP_ << "[ChaosNodeDirectory]- "
 
     //! C and C++ attribute parser
 /*!
@@ -51,14 +52,14 @@ void ChaosNodeDirectory::init()  throw(CException) {
     SetupStateManager::levelUpFrom(0, "ChaosNodeDirectory already initialized");
     try {
         
-        LAPP_ << "Initializing CHAOS Control System Library";
+        LCND_ << "Initializing";
         ChaosCommon<ChaosNodeDirectory>::init();
-        if (signal((int) SIGINT, ChaosNodeDirectory::signalHanlder) == SIG_ERR){
-            LERR_ << "SIGINT Signal handler registraiton error";
+        if (signal((int) SIGINT, ChaosNodeDirectory::signalHanlder) == SIG_ERR) {
+            throw CException(0, "Error registering SIGINT signal", "ChaosNodeDirectory::init");
         }
  
-        if (signal((int) SIGQUIT, ChaosNodeDirectory::signalHanlder) == SIG_ERR){
-            LERR_ << "SIGQUIT Signal handler registraiton error";
+        if (signal((int) SIGQUIT, ChaosNodeDirectory::signalHanlder) == SIG_ERR) {
+            throw CException(0, "Error registering SIG_ERR signal", "ChaosNodeDirectory::init");
         }
 
     } catch (CException& ex) {
@@ -75,13 +76,11 @@ void ChaosNodeDirectory::start(bool waithUntilEnd, bool deinitiOnEnd){
         //lock o monitor for waith the end
     SetupStateManager::levelUpFrom(1, "ChaosNodeDirectory already started");
     try {
-        LAPP_ << "Starting CHAOS Node Directory Service";
+        LCND_ << "Starting";
 
         
 
-        LAPP_ << "-----------------------------------------";
-        LAPP_ << "CHAOS Node Directory Service Started";
-        LAPP_ << "-----------------------------------------";
+        LCND_ << "Started";
         //at this point i must with for end signal
         if(waithUntilEnd)
             waitCloseSemaphore.wait();
@@ -108,11 +107,11 @@ void ChaosNodeDirectory::stop() {
  Deiniti all the manager
  */
 void ChaosNodeDirectory::deinit() {
-    LAPP_ << "Stopping CHAOS Control System Library";
+    LCND_ << "Stopping";
     SetupStateManager::levelDownFrom(1, "ChaosNodeDirectory already deinitialized");
         //start Control Manager
       
-    LAPP_ << "CHAOS Control System Library Stopped";
+    LCND_ << "Stopped";
 }
 
 /*
