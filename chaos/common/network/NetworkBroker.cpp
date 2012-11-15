@@ -380,19 +380,25 @@ void NetworkBroker::deregisterAction(DeclareAction* declareActionClass) {
 /*!
  Submit a message specifing the destination
  */
-bool NetworkBroker::submitMessage(string& serveAndPort, CDataWrapper *message, bool onThisThread) {
+bool NetworkBroker::submitMessage(string& serverAndPort, CDataWrapper *message, NetworkErrorHandler handler, const char * senderIdentifier, int64_t senderTag, bool onThisThread) {
     CHAOS_ASSERT(message && rpcClient)
+    NetworkForwardInfo *nfi = new NetworkForwardInfo();
+    nfi->destinationAddr = serverAndPort;
+    nfi->message = message;
         //add answer id to datawrapper
-    return rpcClient->submitMessage(serveAndPort, message, onThisThread);
+    return rpcClient->submitMessage(nfi, onThisThread);
 }
 
 /*!
  Submite a new request to send to the remote host
  */
-bool NetworkBroker::submiteRequest(string& serveAndPort,  CDataWrapper *request, bool onThisThread) {
+bool NetworkBroker::submiteRequest(string& serverAndPort,  CDataWrapper *request, NetworkErrorHandler handler, const char * senderIdentifier, int64_t senderTag, bool onThisThread) {
     CHAOS_ASSERT(request && rpcClient)
     request->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP, publishedHostAndPort);
-    return rpcClient->submitMessage(serveAndPort, request, onThisThread);
+    NetworkForwardInfo *nfi = new NetworkForwardInfo();
+    nfi->destinationAddr = serverAndPort;
+    nfi->message = request;
+    return rpcClient->submitMessage(nfi, onThisThread);
 }
 
 /*

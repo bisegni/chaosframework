@@ -67,6 +67,15 @@ namespace chaos {
          */
         virtual void deinit() throw(CException) = 0;
         
+        /*!
+         manage the call for the handler when nd error occours
+         */
+        inline void callErrorHandler(NetworkForwardInfo *fInfo, ErrorCode::ErrorCode eCode);
+        
+        /*!
+         manage the call for the handler when the operation has ended
+         */
+        inline void callEndOpHandler(NetworkForwardInfo *fInfo);
     public:
         /*!
          Constructor di default per i

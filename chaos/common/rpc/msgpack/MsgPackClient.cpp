@@ -82,34 +82,30 @@ void MsgPackClient::deinit() throw(CException) {
 /*
  
  */
-bool MsgPackClient::submitMessage(string& destinationIpAndPort, CDataWrapper *message, bool onThisThread) throw(CException) {
-    CHAOS_ASSERT(message);
+bool MsgPackClient::submitMessage(NetworkForwardInfo* forwardInfo, bool onThisThread) throw(CException) {
+    CHAOS_ASSERT(forwardInfo)
     NetworkForwardInfo *newForwardInfo = NULL;
     ElementManagingPolicy ePolicy;
     try{
-        if(!destinationIpAndPort.size())
+        if(!forwardInfo->destinationAddr.size())
             throw CException(0, "No destination ip in message description", "MsgPackClient::submitMessage");
-       
+        if(!forwardInfo->message)
+            throw CException(0, "No message in description", "MsgPackClient::submitMessage");
             //allocate new forward info
-        newForwardInfo = new NetworkForwardInfo();
-        newForwardInfo->nodeNetworkInfo.ipPort = destinationIpAndPort;
-        newForwardInfo->rpcMessage = message;
             //submit action
         if(onThisThread){
             ePolicy.elementHasBeenDetached = false;
             processBufferElement(newForwardInfo, ePolicy);
-            if(message) delete(message);
-            if(newForwardInfo) delete(newForwardInfo);
+            delete(forwardInfo->message);
+            delete(newForwardInfo);
                 //in this case i need to delete te memo
-            message = NULL;
-            newForwardInfo = NULL;
         } else {
             CObjectProcessingQueue<NetworkForwardInfo>::push(newForwardInfo);
         }
     } catch(CException& ex){
             //in this case i need to delete the memory
-        if(message) delete(message);
-        if(newForwardInfo) delete(newForwardInfo);
+        if(forwardInfo->message) delete(forwardInfo->message);
+        if(forwardInfo) delete(forwardInfo);
         DECODE_CHAOS_EXCEPTION(ex)
     }
     return true;
@@ -124,14 +120,14 @@ void MsgPackClient::processBufferElement(NetworkForwardInfo *messageInfo, Elemen
     msgpack::type::raw_ref rawResult;
         //this implementation is too slow, client for ip need to be cached
         //split server and port
-    algorithm::split(hostTokens, messageInfo->nodeNetworkInfo.ipPort, is_any_of(":"));
+    algorithm::split(hostTokens, messageInfo->destinationAddr, is_any_of(":"));
     
         //allocate the msgpack client
     rpc::session localSession = connectionPolling->get_session(msgpack::rpc::ip_address(hostTokens[0], lexical_cast<uint16_t>(hostTokens[1])));
         //msgpack::rpc::client msgPackClient(msgpack::rpc::udp_builder(), ));
     
         //serialize the call packet
-    auto_ptr<chaos::SerializationBuffer> callSerialization(messageInfo->rpcMessage->getBSONData());
+    auto_ptr<chaos::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
     msgpack::type::raw_ref rawMsg(callSerialization->getBufferPtr() , (uint32_t)callSerialization->getBufferLen());
     try{
         rawResult = localSession.call(RpcActionDefinitionKey::CS_CMDM_RPC_TAG, rawMsg).get<msgpack::type::raw_ref>();

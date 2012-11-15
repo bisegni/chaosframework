@@ -1634,14 +1634,14 @@
 		3260261214B300FE00C906CE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = DEV_WITH_ZMQ;
 			};
 			name = Debug;
 		};
 		3260261314B300FE00C906CE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = DEV_WITH_ZMQ;
 			};
 			name = Release;
 		};

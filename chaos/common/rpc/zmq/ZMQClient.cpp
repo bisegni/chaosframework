@@ -93,34 +93,30 @@ void ZMQClient::deinit() throw(CException) {
 /*
  
  */
-bool ZMQClient::submitMessage(string& destinationIpAndPort, CDataWrapper *message, bool onThisThread) throw(CException) {
-    CHAOS_ASSERT(message);
+bool ZMQClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread) throw(CException) {
+    CHAOS_ASSERT(forwardInfo);
     ElementManagingPolicy ePolicy;
     NetworkForwardInfo *newForwardInfo = NULL;
     
     try{
-        if(!destinationIpAndPort.size())
+        if(!forwardInfo->destinationAddr.size())
             throw CException(0, "No destination ip in message description", "ZMQClient::submitMessage");
-        
+        if(!forwardInfo->message)
+            throw CException(0, "No message in description", "ZMQClient::submitMessage");
             //allocate new forward info
-        newForwardInfo = new NetworkForwardInfo();
-        newForwardInfo->nodeNetworkInfo.ipPort = destinationIpAndPort;
-        newForwardInfo->rpcMessage = message;
             //submit action
         if(onThisThread){
             ePolicy.elementHasBeenDetached = false;
             processBufferElement(newForwardInfo, ePolicy);
-            if(message) delete(message);
-            if(newForwardInfo) delete(newForwardInfo);
-                //in this case i need to delete te memo
-            message = NULL;
-            newForwardInfo = NULL;
+            delete(forwardInfo->message);
+            delete(newForwardInfo);
         } else {
             CObjectProcessingQueue<NetworkForwardInfo>::push(newForwardInfo);
         }
     } catch(CException& ex){
             //in this case i need to delete the memory
-        if(message) delete(message);
+        if(forwardInfo->message) delete(forwardInfo->message);
+        if(forwardInfo) delete(forwardInfo);
             //in this case i need to delete te memory allocated by message
         DECODE_CHAOS_EXCEPTION(ex)
     }
@@ -138,13 +134,12 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
     if(!endPointSocket) throw CException(-1, "error allocating socket", "ZMQClient::processBufferElement");
     
         //get remote ip
-    string remoteHost = messageInfo->nodeNetworkInfo.ipPort;
         //serialize the call packet
-    auto_ptr<chaos::SerializationBuffer> callSerialization(messageInfo->rpcMessage->getBSONData());
+    auto_ptr<chaos::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
     
     try{
         string url = "tcp://";
-        url.append(remoteHost);
+        url.append(messageInfo->destinationAddr);
         zmq_connect(endPointSocket, url.c_str());
         
         zmq_msg_t message;

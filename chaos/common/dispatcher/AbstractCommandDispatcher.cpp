@@ -128,7 +128,10 @@ void AbstractCommandDispatcher::deregisterAction(DeclareAction* declareActionCla
 bool AbstractCommandDispatcher::submitMessage(string& serverAndPort,  CDataWrapper* messageToSend, bool onThisThread)  throw(CException) {
     CHAOS_ASSERT(messageToSend && rpcForwarderPtr)
     if(!messageToSend && serverAndPort.size()) return false;
-    return rpcForwarderPtr->submitMessage(serverAndPort, messageToSend, onThisThread);
+    NetworkForwardInfo *nfi = new NetworkForwardInfo();
+    nfi->destinationAddr = serverAndPort;
+    nfi->message = messageToSend;
+    return rpcForwarderPtr->submitMessage(nfi, onThisThread);
 }
 
 /*

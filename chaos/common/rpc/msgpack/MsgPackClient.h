@@ -68,7 +68,7 @@ namespace chaos {
          Submit the message to be send to a certain ip, the datawrapper must contains
          the key CS_CMDM_REMOTE_HOST_IP
          */
-        bool submitMessage(string& destinationIpAndPort, CDataWrapper *message, bool onThisThread=false) throw(CException);
+        bool submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread=false) throw(CException);
     };
 }
 #endif

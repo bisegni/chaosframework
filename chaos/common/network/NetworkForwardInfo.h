@@ -27,23 +27,34 @@
 
 namespace chaos {
         //! Pointer function for error handler
-    typedef void (*NetworkErrorHandler)(int errorCode, int tag);
+    typedef void (*NetworkErrorHandler)(const char *  emitterIdentifier, int64_t tag, ErrorCode::ErrorCode errorCode);
+ 
+        //! Pointer function for finisced operation handler
+    typedef void (*NetworkFinischedHandler)(const char *  emitterIdentifier, int64_t tag);
     
     /*!
      Structure used to contain information for
      message forward
+     \param destinationAddr server:port addres of remote endpoint
+     \param message the message coded into key/value semantics
+     \param errorOpHandler
+     \param endOpHandler
+     \param emitterIdentifier
+     \param tag
      */
     typedef struct {
             //!Define the information ip:port and node to reach a remote chaos node
-        CNodeNetworkAddress nodeNetworkInfo;
+        string destinationAddr;
             //! the message data
-        CDataWrapper *rpcMessage;
+        CDataWrapper *message;
             //! the error handler
-        NetworkErrorHandler handler;
-            //!
-        int tagIdentifier;
-            //! forward tag
-        int tagNumber;
+        NetworkErrorHandler errorOpHandler;
+            //! the handlet to informa the finisched operation
+        NetworkFinischedHandler endOpHandler;
+            //! the information for the emitter to be recognized itself
+        const char *emitterIdentifier;
+            //! forward tag for the miteer to recognize the kind of his operation
+        int64_t tag;
     } NetworkForwardInfo;
 }
 
