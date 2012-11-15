@@ -84,7 +84,6 @@ void MsgPackClient::deinit() throw(CException) {
  */
 bool MsgPackClient::submitMessage(NetworkForwardInfo* forwardInfo, bool onThisThread) throw(CException) {
     CHAOS_ASSERT(forwardInfo)
-    NetworkForwardInfo *newForwardInfo = NULL;
     ElementManagingPolicy ePolicy;
     try{
         if(!forwardInfo->destinationAddr.size())
@@ -95,12 +94,12 @@ bool MsgPackClient::submitMessage(NetworkForwardInfo* forwardInfo, bool onThisTh
             //submit action
         if(onThisThread){
             ePolicy.elementHasBeenDetached = false;
-            processBufferElement(newForwardInfo, ePolicy);
+            processBufferElement(forwardInfo, ePolicy);
             delete(forwardInfo->message);
-            delete(newForwardInfo);
+            delete(forwardInfo);
                 //in this case i need to delete te memo
         } else {
-            CObjectProcessingQueue<NetworkForwardInfo>::push(newForwardInfo);
+            CObjectProcessingQueue<NetworkForwardInfo>::push(forwardInfo);
         }
     } catch(CException& ex){
             //in this case i need to delete the memory

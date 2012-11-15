@@ -96,8 +96,6 @@ void ZMQClient::deinit() throw(CException) {
 bool ZMQClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread) throw(CException) {
     CHAOS_ASSERT(forwardInfo);
     ElementManagingPolicy ePolicy;
-    NetworkForwardInfo *newForwardInfo = NULL;
-    
     try{
         if(!forwardInfo->destinationAddr.size())
             throw CException(0, "No destination ip in message description", "ZMQClient::submitMessage");
@@ -107,11 +105,11 @@ bool ZMQClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread
             //submit action
         if(onThisThread){
             ePolicy.elementHasBeenDetached = false;
-            processBufferElement(newForwardInfo, ePolicy);
+            processBufferElement(forwardInfo, ePolicy);
             delete(forwardInfo->message);
-            delete(newForwardInfo);
+            delete(forwardInfo);
         } else {
-            CObjectProcessingQueue<NetworkForwardInfo>::push(newForwardInfo);
+            CObjectProcessingQueue<NetworkForwardInfo>::push(forwardInfo);
         }
     } catch(CException& ex){
             //in this case i need to delete the memory
