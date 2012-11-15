@@ -42,7 +42,7 @@ namespace chaos {
      NetworkBroker. It can send a message or a request. Message is the async forward data to domain/action hosted on remote rpc server and no answer is waited.
      Request is two pahse message, first a message(the reqeust) is sent to  domain/action on remote rpc server, then an aswer is waited this step can
      be achieved in two way:
-     1 - Async mode, an handler must be given on reqeust call
+     1 - Async mode, an handler must be given on request call
      2 - Sync mode, wait until the answer is received, or can be set a number of milliseconds to wait for.
      */
     class MessageChannel : public DeclareAction {

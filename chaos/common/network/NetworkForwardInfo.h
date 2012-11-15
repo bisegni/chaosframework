@@ -35,25 +35,19 @@ namespace chaos {
     /*!
      Structure used to contain information for
      message forward
-     \param destinationAddr server:port addres of remote endpoint
-     \param message the message coded into key/value semantics
-     \param errorOpHandler
-     \param endOpHandler
-     \param emitterIdentifier
-     \param tag
      */
     typedef struct {
-            //!Define the information ip:port and node to reach a remote chaos node
-        string destinationAddr;
+            //!Define the information ip:port used to reach a remote chaos network broker
+        std::string destinationAddr;
             //! the message data
         CDataWrapper *message;
             //! the error handler
         NetworkErrorHandler errorOpHandler;
             //! the handlet to informa the finisched operation
         NetworkFinischedHandler endOpHandler;
-            //! the information for the emitter to be recognized itself
+            //! the information for the emitter returned in all hadnler call
         const char *emitterIdentifier;
-            //! forward tag for the miteer to recognize the kind of his operation
+            //! tag returned in all hadnler call used by emitter
         int64_t tag;
     } NetworkForwardInfo;
 }
