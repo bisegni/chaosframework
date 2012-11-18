@@ -83,6 +83,7 @@ else
 fi
 ./bootstrap
 ./configure --prefix=$PREFIX --enable-static=NO --enable-shared=YES
+make clean
 make
 make install
 
@@ -97,6 +98,7 @@ else
 fi
 ./bootstrap
 ./configure --prefix=$PREFIX --enable-static=NO --enable-shared=YES
+make clean
 make
 make install
 
@@ -112,6 +114,7 @@ else
 fi
 ./bootstrap
 ./configure --prefix=$PREFIX --with-mpio=$PREFIX --with-msgpack=$PREFIX --enable-static=NO --enable-shared=YES
+make clean
 make
 make install
 
@@ -126,6 +129,7 @@ else
 fi
 ./autogen.sh
 ./configure --prefix=$PREFIX --enable-static=NO --enable-shared=YES
+make clean
 make
 make install
 
@@ -134,7 +138,8 @@ if [ ! -d "$PREFIX/include/libmemcached" ]; then
     wget --no-check-certificate -O $BASE_EXTERNAL/libmemcached.tar.gz https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz
     tar zxvf $BASE_EXTERNAL/libmemcached.tar.gz -C $BASE_EXTERNAL
     cd $BASE_EXTERNAL/libmemcached-$LMEM_VERSION
-    ./configure --without-memcached --prefix=$PREFIX --enable-static=NO --enable-shared=YES
+    ./configure --disable-sasl --prefix=$PREFIX --enable-static=NO --enable-shared=YES
+    make clean
     make
     make install
 fi
