@@ -9,7 +9,7 @@ SCRIPTPATH=`pwd -P`
 popd > /dev/null
 
 BOOST_VERSION=1_50_0
-LMEM_VERSION=1.0.12
+LMEM_VERSION=1.0.14
 CHAOS_DIR=$SCRIPTPATH
 BASE_EXTERNAL=$CHAOS_DIR/external
 PREFIX=$CHAOS_DIR/usr/local
@@ -82,7 +82,7 @@ else
     git pull
 fi
 ./bootstrap
-./configure --prefix=$PREFIX --enable-static=NO --enable-shared=YES
+./configure --prefix=$PREFIX
 make clean
 make
 make install
@@ -97,7 +97,7 @@ else
     git pull
 fi
 ./bootstrap
-./configure --prefix=$PREFIX --enable-static=NO --enable-shared=YES
+./configure --prefix=$PREFIX
 make clean
 make
 make install
@@ -113,7 +113,7 @@ else
     cd $BASE_EXTERNAL/msgpack-rpc/cpp
 fi
 ./bootstrap
-./configure --prefix=$PREFIX --with-mpio=$PREFIX --with-msgpack=$PREFIX --enable-static=NO --enable-shared=YES
+./configure --prefix=$PREFIX --with-mpio=$PREFIX --with-msgpack=$PREFIX
 make clean
 make
 make install
@@ -128,7 +128,7 @@ else
     git pull
 fi
 ./autogen.sh
-./configure --prefix=$PREFIX --enable-static=NO --enable-shared=YES
+./configure --prefix=$PREFIX
 make clean
 make
 make install
@@ -138,7 +138,7 @@ if [ ! -d "$PREFIX/include/libmemcached" ]; then
     wget --no-check-certificate -O $BASE_EXTERNAL/libmemcached.tar.gz https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz
     tar zxvf $BASE_EXTERNAL/libmemcached.tar.gz -C $BASE_EXTERNAL
     cd $BASE_EXTERNAL/libmemcached-$LMEM_VERSION
-    ./configure --disable-sasl --prefix=$PREFIX --enable-static=NO --enable-shared=YES
+    ./configure --disable-sasl --prefix=$PREFIX
     make clean
     make
     make install
