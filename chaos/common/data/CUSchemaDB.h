@@ -60,7 +60,7 @@ namespace chaos {
         /*
          return the vector containing the atrtibute list for a domain
          */
-        vector< CDataWrapper* >& getDatasetForDeviceID(string& deviceID);
+        vector< CDataWrapper* >& getDatasetForDeviceID(const string& deviceID);
         
         /*
          add a new device id
@@ -99,17 +99,17 @@ namespace chaos {
         /*!
          return true if the device id is found
          */
-        bool deviceIsPresent(string& deviceID);
+        bool deviceIsPresent(const string& deviceID);
         
-        void getDeviceDatasetAttributesName(string& deviceID, vector<string>& attributesName);
+        void getDeviceDatasetAttributesName(const string& deviceID, vector<string>& attributesName);
         
-        void getDeviceDatasetAttributesName(string& deviceID, vector<string>& attributesName, DataType::DataSetAttributeIOAttribute directionType);
+        void getDeviceDatasetAttributesName(const string& deviceID,  DataType::DataSetAttributeIOAttribute directionType, vector<string>& attributesName);
         
-        void getDeviceAttributeDescription(string& deviceID, string& attributesName, string& attributeDescription);
+        void getDeviceAttributeDescription(const string& deviceID, const string& attributesName, string& attributeDescription);
         
-        void getDeviceAttributeRangeValueInfo(string& deviceID, string& attributesName, RangeValueInfo& rangeInfo);
+        void getDeviceAttributeRangeValueInfo(const string& deviceID, const string& attributesName, RangeValueInfo& rangeInfo);
         
-        int getDeviceAttributeDirection(string& deviceID, string& attributesName, DataType::DataSetAttributeIOAttribute& directionType);
+        int getDeviceAttributeDirection(const string& deviceID, const string& attributesName, DataType::DataSetAttributeIOAttribute& directionType);
     };
 }
 #endif

@@ -87,6 +87,20 @@ void AbstractControlUnit::addKeyDataStorage(const char *key, KeyDataStorage* key
 }
 
 /*
+ Add a new handler
+ */
+void AbstractControlUnit::addHandlerForDSAttribute(const char * deviceID, cu::handler::DSAttributeHandler * classHandler)  throw (CException) {
+    if(!classHandler) return;
+    
+        //check if the handler engine has been previously created
+    if(attributeHandlerEngineForDeviceIDMap.count(deviceID) == 0){
+        attributeHandlerEngineForDeviceIDMap.insert(make_pair(deviceID, new cu::DSAttributeHandlerExecutionEngine(deviceID, this)));
+    }
+        //add the handler
+    attributeHandlerEngineForDeviceIDMap[deviceID]->addHandlerForDSAttribute(classHandler);
+}
+
+/*
  load the json file setupped into jsonSetupFilePath class attributed
  */
 void AbstractControlUnit::loadCDataWrapperForJsonFile(CDataWrapper& setupConfiguration)  throw (CException)  {
@@ -172,8 +186,8 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
         //for let the CU have the same instance at every run
     setupConfiguration.addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE, cuInstance);
         //check if as been setuped a file for configuration
-    LCU_ << "Check if as been setup a json file path to configura CU:" << CU_IDENTIFIER_C_STREAM;
-    loadCDataWrapperForJsonFile(setupConfiguration);
+        //LCU_ << "Check if as been setup a json file path to configura CU:" << CU_IDENTIFIER_C_STREAM;
+        //loadCDataWrapperForJsonFile(setupConfiguration);
     
         //first call the setup abstract method used by the implementing CU to define action, dataset and other
         //usefull value
@@ -248,9 +262,9 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
         //register command manager action
     CommandManager::getInstance()->registerAction(this);
     
-    auto_ptr<SerializationBuffer> ser(setupConfiguration.getBSONData());
+    /*auto_ptr<SerializationBuffer> ser(setupConfiguration.getBSONData());
         //copy configuration for internal use
-    _internalSetupConfiguration.reset(new CDataWrapper(ser->getBufferPtr()));
+    _internalSetupConfiguration.reset(new CDataWrapper(ser->getBufferPtr()));*/
     
     //setup all state for device
     vector<string> domainNames;
@@ -298,6 +312,10 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
         LCU_ << "device:" << deviceID << " already initialized";
         throw CException(-3, "Device Already Initialized", "AbstractControlUnit::_init");
     }
+    
+    LCU_ << "Initialize the DSAttribute handler engine for device:" << deviceID;
+    utility::ISDInterface::initImplementation(attributeHandlerEngineForDeviceIDMap[deviceID], initConfiguration, "DSAttribute handler engine", "AbstractControlUnit::_init");
+    
     
     LCU_ << "Create schedule thread for device:" << deviceID;
         //initialize device scheduler
@@ -360,6 +378,9 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
     LCU_ << "Start custom deinitialization for device:" << deviceID;
     deinit(deviceID);
     
+    LCU_ << "Deinitialize the DSAttribute handler engine for device:" << deviceID;
+    utility::ISDInterface::deinitImplementation(attributeHandlerEngineForDeviceIDMap[deviceID], "DSAttribute handler engine", "AbstractControlUnit::_deinit");
+
         //remove scheduler
     tmpThread = schedulerDeviceMap[deviceID];
     delete(tmpThread);
@@ -488,7 +509,15 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
     try {
         //send dataset attribute change pack to control unit implementation
         executionResult = setDatasetAttribute(datasetAttributeValues, detachParam);
-        
+        if(attributeHandlerEngineForDeviceIDMap.count(deviceID) > 0) {
+#if DEBUG
+            LAPP_ << "pre attributeHandlerEngineForDeviceIDMap[deviceID]->executeHandler(datasetAttributeValues);";
+#endif
+            attributeHandlerEngineForDeviceIDMap[deviceID]->executeHandler(datasetAttributeValues);
+#if DEBUG
+            LAPP_ << "post attributeHandlerEngineForDeviceIDMap[deviceID]->executeHandler(datasetAttributeValues);";
+#endif
+        }
         //at this time notify the wel gone setting of comand
         if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(deviceID.c_str(), 0);
 

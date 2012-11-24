@@ -19,8 +19,23 @@ namespace chaos {
          all class that need initialization phases need to be exetends this class
          */
         class ISDInterface {
-            
         public:
+            
+            typedef enum {
+                ISD_INITING,
+                ISD_INITIATED,
+                ISD_DEINITING,
+                ISD_DEINTIATED
+            } ISDState;
+            
+            /*!
+             */
+            ISDInterface();
+            
+            /*!
+             */
+            ~ISDInterface();
+            
                 //! Initialize instance
             virtual void init(CDataWrapper*) throw(chaos::CException) = 0;
             
@@ -33,6 +48,8 @@ namespace chaos {
             static bool initImplementation(ISDInterface *impl, CDataWrapper *initData, const char * const implName,  const char * const domainString);
             static bool startImplementation(ISDInterface *impl, const char * const implName,  const char * const domainString);
             static bool deinitImplementation(ISDInterface *impl, const char * const implName,  const char * const domainString);
+        protected:
+            ISDState isdState;
         };
     }
 }

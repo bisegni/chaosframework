@@ -28,12 +28,29 @@
 using namespace chaos;
 using namespace chaos::utility;
 
+/*!
+ */
+ISDInterface::ISDInterface() {
+        //set the default value
+    isdState = ISD_DEINTIATED;
+}
+
+/*!
+ */
+ISDInterface::~ISDInterface() {
+    
+}
+
+/*!
+ */
 bool ISDInterface::initImplementation(ISDInterface *impl, CDataWrapper *initData, const char * const implName,  const char * const domainString)  {
     bool result = true;
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
         ISD_LAPP  << "Initializing " << implName;
+        impl->isdState = ISD_INITING;
         impl->init(initData);
+        impl->isdState = ISD_INITIATED;
         ISD_LAPP  << implName << "Initialized";
     } catch (CException ex) {
         ISD_LAPP  << "Error initializing " << implName;
@@ -42,12 +59,16 @@ bool ISDInterface::initImplementation(ISDInterface *impl, CDataWrapper *initData
     return result;
 }
 
+/*!
+ */
 bool ISDInterface::deinitImplementation(ISDInterface *impl, const char * const implName,  const char * const domainString) {
     bool result = true;
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
         ISD_LAPP  << "Deinitializing " << implName;
+        impl->isdState = ISD_DEINITING;
         impl->deinit();
+        impl->isdState = ISD_DEINTIATED;
         ISD_LAPP  << implName << "Deinitialized";
     } catch (CException ex) {
         ISD_LAPP  << "Error Deinitializing " << implName;
@@ -56,6 +77,8 @@ bool ISDInterface::deinitImplementation(ISDInterface *impl, const char * const i
     return result;
 }
 
+/*!
+ */
 bool ISDInterface::startImplementation(ISDInterface *impl, const char * const implName,  const char * const domainString) {
     bool result = true;
     try {

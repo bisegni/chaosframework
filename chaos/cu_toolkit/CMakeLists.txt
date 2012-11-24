@@ -1,4 +1,6 @@
-SET(cu_lib_src ChaosCUToolkit.cpp CommandManager/CommandManager.cpp ConfigurationManager/ConfigurationManager.cpp ControlManager/AbstractControlUnit.cpp ControlManager/ControlManager.cpp DataManager/DataManager.cpp DataManager/KeyDataStorage.cpp DataManager/MultiBufferDataStorage.cpp DataManager/DataBuffer/OutputDataBuffer.cpp) 
+SET(cu_lib_src  ChaosCUToolkit.cpp CommandManager/CommandManager.cpp ConfigurationManager/ConfigurationManager.cpp ControlManager/DSAttributeHandlerExecutionEngine.cpp 
+                ControlManager/handler/DSAttributeHandler.cpp ControlManager/AbstractControlUnit.cpp ControlManager/ControlManager.cpp DataManager/DataManager.cpp 
+                DataManager/KeyDataStorage.cpp DataManager/MultiBufferDataStorage.cpp DataManager/DataBuffer/OutputDataBuffer.cpp ) 
 
 find_package (Boost 1.39 REQUIRED
     COMPONENTS  program_options system thread chrono regex log log_setup)
@@ -37,6 +39,9 @@ INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/ConfigurationManager
 
 FILE(GLOB files "ControlManager/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/ControlManager)
+
+FILE(GLOB files "ControlManager/handler/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/ControlManager/handler)
 
 FILE(GLOB files "DataManager/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/DataManager)
