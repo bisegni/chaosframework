@@ -63,7 +63,7 @@ void CUSchemaDB::clearDatasetForDeviceID(string& deviceID){
 /*
  return the vector containing the atrtibute list for a domain
  */
-vector< CDataWrapper* >& CUSchemaDB::getDatasetForDeviceID(string& deviceID) {
+vector< CDataWrapper* >& CUSchemaDB::getDatasetForDeviceID(const string& deviceID) {
     if(deviceIDDataset.count(deviceID) > 0){
         return deviceIDDataset[deviceID];
     }
@@ -233,7 +233,7 @@ void CUSchemaDB::getAllDeviceId(vector<string>& domainNames) {
 /*
  return al domain 
  */
-bool CUSchemaDB::deviceIsPresent(string& deviceID) {
+bool CUSchemaDB::deviceIsPresent(const string& deviceID) {
     for (map<string, vector<CDataWrapper*> > ::iterator deviceIDDatasetIter = deviceIDDataset.begin();
          deviceIDDatasetIter != deviceIDDataset.end();
          deviceIDDatasetIter++) {
@@ -244,7 +244,7 @@ bool CUSchemaDB::deviceIsPresent(string& deviceID) {
     return false;
 }
 
-void CUSchemaDB::getDeviceDatasetAttributesName(string& deviceID, vector<string>& attributesName) {
+void CUSchemaDB::getDeviceDatasetAttributesName(const string& deviceID, vector<string>& attributesName) {
     vector<CDataWrapper*>& domainAttributeList = getDatasetForDeviceID(deviceID);
     
     for (vector<CDataWrapper*>::iterator iter = domainAttributeList.begin(); 
@@ -255,7 +255,7 @@ void CUSchemaDB::getDeviceDatasetAttributesName(string& deviceID, vector<string>
     }
 }
 
-void CUSchemaDB::getDeviceDatasetAttributesName(string& deviceID, vector<string>& attributesName, DataType::DataSetAttributeIOAttribute directionType) {
+void CUSchemaDB::getDeviceDatasetAttributesName(const string& deviceID,  DataType::DataSetAttributeIOAttribute directionType, vector<string>& attributesName) {
     vector<CDataWrapper*>& domainAttributeList = getDatasetForDeviceID(deviceID);
     DataType::DataSetAttributeIOAttribute type = DataType::Input;
     for (vector<CDataWrapper*>::iterator iter = domainAttributeList.begin(); 
@@ -268,7 +268,7 @@ void CUSchemaDB::getDeviceDatasetAttributesName(string& deviceID, vector<string>
     }
 }
 
-void CUSchemaDB::getDeviceAttributeDescription(string& deviceID, string& attributesName, string& attributeDescription) {
+void CUSchemaDB::getDeviceAttributeDescription(const string& deviceID, const string& attributesName, string& attributeDescription) {
     vector<CDataWrapper*>& domainAttributeList = getDatasetForDeviceID(deviceID);
     CDataWrapper *tmpPtr = NULL;
     for (vector<CDataWrapper*>::iterator iter = domainAttributeList.begin(); 
@@ -282,7 +282,7 @@ void CUSchemaDB::getDeviceAttributeDescription(string& deviceID, string& attribu
     }
 }
 
-void CUSchemaDB::getDeviceAttributeRangeValueInfo(string& deviceID, string& attributesName, RangeValueInfo& rangeInfo) {
+void CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID, const string& attributesName, RangeValueInfo& rangeInfo) {
     vector<CDataWrapper*>& domainAttributeList = getDatasetForDeviceID(deviceID);
     CDataWrapper *tmpPtr = NULL;
     for (vector<CDataWrapper*>::iterator iter = domainAttributeList.begin(); 
@@ -310,7 +310,7 @@ void CUSchemaDB::getDeviceAttributeRangeValueInfo(string& deviceID, string& attr
     }
 }
 
-int CUSchemaDB::getDeviceAttributeDirection(string& deviceID, string& attributesName, DataType::DataSetAttributeIOAttribute& directionType) {
+int CUSchemaDB::getDeviceAttributeDirection(const string& deviceID, const string& attributesName, DataType::DataSetAttributeIOAttribute& directionType) {
     vector<CDataWrapper*>& domainAttributeList = getDatasetForDeviceID(deviceID);
     CDataWrapper *tmpPtr = NULL;
     for (vector<CDataWrapper*>::iterator iter = domainAttributeList.begin(); 

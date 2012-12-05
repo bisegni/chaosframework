@@ -37,6 +37,8 @@
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/common/pqueue/CObjectHandlerProcessingQueue.h>
 #include <chaos/common/thread/CThreadExecutionTask.h>
+#include <chaos/cu_toolkit/ControlManager/handler/DSAttributeHandler.h>
+#include <chaos/cu_toolkit/ControlManager/DSAttributeHandlerExecutionEngine.h>
 #include <boost/chrono.hpp>
 
 namespace chaos{
@@ -45,6 +47,7 @@ namespace chaos{
 #define INIT_STATE      0
 #define START_STATE     1
     
+        //forward evenc channel declaration
     namespace event{
         namespace channel {
             class InstrumentEventChannel;
@@ -76,6 +79,8 @@ namespace chaos{
         string jsonSetupFilePath;
         boost::chrono::seconds  lastAcquiredTime;
         
+        std::map<std::string, cu::DSAttributeHandlerExecutionEngine*> attributeHandlerEngineForDeviceIDMap;
+        
             //!mutex for multithreading managment of sand box
         /*!
          The muthex is needed because the call to the action can occours in different thread
@@ -97,66 +102,75 @@ namespace chaos{
         
         event::channel::InstrumentEventChannel *deviceEventChannel;
         
-        /*
+        /*!
          Add a new KeyDataStorage for a specific key
          */
         void addKeyDataStorage(const char *, KeyDataStorage*);
         
         void _sharedInit();
     public:
-        /*
+        /*!
          Construct a new CU with an identifier
          */
         AbstractControlUnit(const char *);
-        /*
+        /*!
          Construct a new CU with an identifier
          */
         AbstractControlUnit();
-        /*
+        /*!
          Destructor a new CU with an identifier
          */
         virtual ~AbstractControlUnit();
         
-        /*
+        /*!
          return the CU name
          */
         const char * getCUName();
-        /*
+        /*!
          return the CU instance
          */
-        const char * getCUInstance();      
-        /*
-         Define the control unit DataSet and Action into
-         a CDataWrapper
-         */
-        void _undefineActionAndDataset() throw(CException);       
-        /*
-         Initialize the Custom Contro Unit and return the configuration
-         */
-        CDataWrapper* _init(CDataWrapper*, bool& detachParam) throw(CException);        
-        
-        /*
-         Deinit the Control Unit
-         */
-        CDataWrapper* _deinit(CDataWrapper*, bool& detachParam) throw(CException);
-        
-        /*
-         Starto the  Control Unit scheduling for device
-         */
-        CDataWrapper* _start(CDataWrapper*, bool& detachParam) throw(CException);    
-        /*
-         Stop the Custom Control Unit scheduling for device
-         */
-        CDataWrapper* _stop(CDataWrapper*, bool& detachParam) throw(CException);  
-        /*
-         Get the current control unit state
-         */
-        CDataWrapper* _getState(CDataWrapper*, bool& detachParam) throw(CException);
-        /*
+        const char * getCUInstance();
+        /*!
          Define the control unit DataSet and Action into
          a CDataWrapper
          */
         void _defineActionAndDataset(CDataWrapper&) throw(CException);
+        
+        /*!
+         Define the control unit DataSet and Action into
+         a CDataWrapper
+         */
+        void _undefineActionAndDataset() throw(CException);
+        
+        /*!
+         Initialize the Custom Contro Unit and return the configuration
+         */
+        CDataWrapper* _init(CDataWrapper*, bool& detachParam) throw(CException);
+        
+        /*!
+         Deinit the Control Unit
+         */
+        CDataWrapper* _deinit(CDataWrapper*, bool& detachParam) throw(CException);
+        
+        /*!
+         Starto the  Control Unit scheduling for device
+         */
+        CDataWrapper* _start(CDataWrapper*, bool& detachParam) throw(CException);
+        
+        /*!
+         Stop the Custom Control Unit scheduling for device
+         */
+        CDataWrapper* _stop(CDataWrapper*, bool& detachParam) throw(CException);
+        
+        /*!
+         Receive the evento for set the dataset input element
+         */
+        virtual CDataWrapper* _setDatasetAttribute(CDataWrapper*, bool&) throw (CException);
+        
+        /*!
+         Get the current control unit state
+         */
+        CDataWrapper* _getState(CDataWrapper*, bool& detachParam) throw(CException);
 
     protected:
             //CU Identifier
@@ -167,51 +181,49 @@ namespace chaos{
         
         boost::shared_ptr<CDataWrapper> _internalSetupConfiguration;
         
-        /*
+        /*!
          Return the tart configuration for the Control Unit instance
          */
         virtual void defineActionAndDataset(CDataWrapper&) throw(CException)   = 0;
         
-        /*
+        /*!
          Initialize the Custom Contro Unit and return the configuration
          */
         virtual void init(CDataWrapper*) throw(CException) = 0;
         
-        /*
+        /*!
          Execute the Control Unit work
          */
         virtual void run(const string&) throw(CException) = 0;
         
-        /*
+        /*!
          Execute the Control Unit work
          */
         virtual void stop(const string&) throw(CException) = 0;
         
-        /*
+        /*!
          Deinit the Control Unit
          */
         virtual void deinit(const string&) throw(CException) = 0;
-        /*
-         Receive the evento for set the dataset input element
-         */
-        virtual CDataWrapper* setDatasetAttribute(CDataWrapper*, bool&) throw (CException) = 0;
         
-        /*
+        /*!
+         Receive the event for set the dataset input element, this virtual method
+         is empty because can be used by controlunit implementation
+         */
+        virtual CDataWrapper* setDatasetAttribute(CDataWrapper*, bool&) throw (CException){return NULL;};
+        
+        /*!
          Event for update some CU configuration
          */
         virtual CDataWrapper* updateConfiguration(CDataWrapper*, bool&) throw (CException);
+
         
-        /*
-         Receive the evento for set the dataset input element
-         */
-        virtual CDataWrapper* _setDatasetAttribute(CDataWrapper*, bool&) throw (CException);
-        
-        /*
+        /*!
          Execute the scehduling for the device
          */
         void executeOnThread(const string&) throw(CException);
         
-        /*
+        /*!
          Create a new action description, return the description for let the user to add parameter
          */
         template<typename T>
@@ -220,35 +232,47 @@ namespace chaos{
             return DeclareAction::addActionDescritionInstance(actonObjectPointer, actionHandler, cuInstance.c_str(), actionAliasName, actionDescription);
         }
         
+            //! add an handler for a determinate device id and attribute set
+        /*!
+         *  This function permit to attach an handler to an attribute name. When the control unit
+         *  receive by RPC an evento to set, a determinate attribute, to an specified value, this
+         *  handler will be called.
+         *  \param deviceID is the identification of the device that contain the attribute
+         *  \param attrName is the name of the attribute where the handler need to be attached
+         *  \param classHandler is the pointer to handler that need to be attached
+         *  \exception something is gone wrong
+         */
+        void addHandlerForDSAttribute(const char * deviceID, cu::handler::DSAttributeHandler * classHandler)  throw (CException);
+        
             //--------------Contro Unit Service Method----------------
-        /*
+        /*!
          Init the dataset ad other values by a json file
          */
         void initWithJsonFilePath(const char*const _jsonSetupFilePath) {
             jsonSetupFilePath.assign(_jsonSetupFilePath);
         }
         
-        /*
+        /*!
          Set the default schedule delay for the sandbox
          */
         void setDefaultScheduleDelay(int32_t _sDelay){scheduleDelay = _sDelay;};
         
-        /*
+        /*!
          load the json file setupped into jsonSetupFilePath class attributed
          */
         void loadCDataWrapperForJsonFile(CDataWrapper&)  throw (CException);
         
-        /*
+        /*!
          Send device data to output buffer
          */
         void pushDataSetForKey(const char *key, CDataWrapper*);
         
-        /*
+        /*!
          get latest device data 
          */
         ArrayPointer<CDataWrapper> *getLastDataSetForKey(const char *key);
         
-        /*
+        /*!
          return a new instance of CDataWrapper filled with a mandatory data
          according to key
          */
