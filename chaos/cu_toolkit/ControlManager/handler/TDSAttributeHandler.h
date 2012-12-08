@@ -27,6 +27,9 @@ namespace chaos {
     namespace cu {
         namespace  handler {
             
+                //---------------help macro------------
+
+            
                 //! Templated Attribute Handler base class
             /*! \class TDSAttributeHandler
              \brief
@@ -55,6 +58,11 @@ namespace chaos {
                 virtual void attributeHandler(T& attributeValue)  throw (CException) = 0;
                 
             public:
+                /*!
+                 *  Default constructor with attribute name as parameter
+                 */
+                TDSAttributeHandler(){};
+                
                 /*!
                  *  Default constructor with attribute name as parameter
                  */

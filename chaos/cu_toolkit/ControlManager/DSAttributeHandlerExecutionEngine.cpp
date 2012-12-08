@@ -143,43 +143,51 @@ bool DSAttributeHandlerExecutionEngine::executeHandler(CDataWrapper *message) th
                 LDSAHEE_ << "get the type of the attribute " << cAttrName;
 
                 if(message->hasKey(cAttrName)) {
-                    LDSAHEE_ << "The attribute " << cAttrName << " has benn found in message";
+                    LDSAHEE_ << "The attribute " << cAttrName << " has been found in message";
                         //get attribute info
                     referenceCUSchemeDB->getDeviceAttributeRangeValueInfo(deviceID, *iter, attributeInfo);
+                    
+                    LDSAHEE_ << "The information for attribute " << cAttrName << " has been found";
                     
                         //call handler
                     switch (attributeInfo.valueType) {
                         case DataType::TYPE_INT32: {
+                            LDSAHEE_ << "get int32 value for " << cAttrName;
                             i32v = message->getInt32Value(cAttrName);
                             LDSAHEE_ << "The attribute " << cAttrName << " is an int32 =" << i32v;
                             abstractValuePtr = &i32v;
                             break;
                         }
                         case DataType::TYPE_INT64: {
+                            LDSAHEE_ << "get int64 value for " << cAttrName;
                             i64v = message->getInt64Value(cAttrName);
                             LDSAHEE_ << "The attribute " << cAttrName << " is an int64 =" << i64v;
                             abstractValuePtr = &i64v;
                             break;
                         }
                         case DataType::TYPE_STRING: {
+                            LDSAHEE_ << "get string value for " << cAttrName;
                             sv = message->getStringValue(cAttrName);
                             LDSAHEE_ << "The attribute " << cAttrName << " is a string =" << sv;
                             abstractValuePtr = &sv;
                             break;
                         }
                         case DataType::TYPE_DOUBLE: {
+                            LDSAHEE_ << "get double value for " << cAttrName;
                             dv = message->getDoubleValue(cAttrName);
                             LDSAHEE_ << "The attribute " << cAttrName << " is an double =" << dv;
                             abstractValuePtr = &dv;
                             break;
                         }
                         case DataType::TYPE_BYTEARRAY: {
+                            LDSAHEE_ << "get bitearray value for " << cAttrName;
                             binv = message->getBinaryValue(cAttrName, binv_dim);
                             LDSAHEE_ << "The attribute " << cAttrName << " is a binary";
                             abstractValuePtr = &binv;
                             break;
                         }
                         case DataType::TYPE_STRUCT: {
+                            LDSAHEE_ << "get struct value for " << cAttrName;
                             cdatv = message->getCSDataValue(cAttrName);
                             LDSAHEE_ << "The attribute " << cAttrName << " is a struct";
                             abstractValuePtr = &cdatv;
