@@ -83,7 +83,7 @@ int main (int argc, char* argv[] )
         int iteration = 10;
         long sleep = 1000000;
         istringstream optionStream;
-        string devID("test");
+        string devID("test_2");
         vector<string> allDevice;
         posix_time::time_duration currentTime;
         
@@ -138,18 +138,21 @@ int main (int argc, char* argv[] )
          set the run schedule delay for the CU
          */
         err = controller->setScheduleDelay(1000000);
+
+        //------------------------------------------------------------------------------------
+        //send command for set attribute of dataset without use BSON
+        err = controller->setInt32AttributeValue("points", 10);
+        err = controller->setDoubleAttributeValue("gain_noise", 1.0);
+        err = controller->setDoubleAttributeValue("gain", 2.0);
+        err = controller->setDoubleAttributeValue("freq", 2.0);
+        err = controller->setDoubleAttributeValue("phase", 2.0);
+        //------------------------------------------------------------------------------------
+        
         
         /*
          Start the control unit
          */
         err = controller->startDevice();
-        
-        //------------------------------------------------------------------------------------
-        //send command for set attribute of dataset without use BSON
-        err = controller->setInt32AttributeValue("points", 10);
-        err = controller->setDoubleAttributeValue("gain", 2.0);
-        err = controller->setDoubleAttributeValue("freq", 2.0);
-        //------------------------------------------------------------------------------------
         
         
         //---------------------------------------------------------------------------------------------------------

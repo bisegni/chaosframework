@@ -32,7 +32,7 @@ namespace chaos {
     using namespace std;
     using namespace boost;
     
-    /*
+    /*!
      Class for contain all field for the CU Dataset
      */
     class CUSchemaDB {
@@ -54,20 +54,25 @@ namespace chaos {
             DataType::DataType valueType;
         } RangeValueInfo;
         
+        /*!
+         */
         CUSchemaDB();
+        
+        /*!
+         */
         virtual ~CUSchemaDB();
         
-        /*
+        /*!
          return the vector containing the atrtibute list for a domain
          */
         vector< CDataWrapper* >& getDatasetForDeviceID(const string& deviceID);
         
-        /*
+        /*!
          add a new device id
          */
         void addDeviceId(string);
         
-        /*
+        /*!
          Add the new field at the CU dataset
          */
         void addAttributeToDataSet(const char*const,
@@ -76,40 +81,60 @@ namespace chaos {
                                    DataType::DataType,
                                    DataType::DataSetAttributeIOAttribute);
         
-        /*
+        /*!
          Add the new field at the CU dataset from the CDataWrapper
          */
         void addAttributeToDataSetFromDataWrapper(CDataWrapper&);
         
-        /*
+        /*!
          fill a CDataWrapper with the dataset decode
          */
         void fillDataWrpperWithDataSetDescirption(CDataWrapper&);
         
-        /*
+        /*!
          * Return the attribute array for a specified direction
          */
-        void getAttributeForDirection(string& deviceID, DataType::DataSetAttributeIOAttribute, vector< boost::shared_ptr<CDataWrapper> >&);
+        void getAttributeForDirection(string& deviceID,
+                                      DataType::DataSetAttributeIOAttribute,
+                                      vector< boost::shared_ptr<CDataWrapper> >&);
         
-        /*
+        /*!
          REturn all the setupped device id
          */
         void getAllDeviceId(vector<string>& domainNames);
         
         /*!
-         return true if the device id is found
+         Return true if the device id is found
          */
         bool deviceIsPresent(const string& deviceID);
         
-        void getDeviceDatasetAttributesName(const string& deviceID, vector<string>& attributesName);
+        /*!
+         */
+        void getDeviceDatasetAttributesName(const string& deviceID,
+                                            vector<string>& attributesName);
         
-        void getDeviceDatasetAttributesName(const string& deviceID,  DataType::DataSetAttributeIOAttribute directionType, vector<string>& attributesName);
+        /*!
+         */
+       void getDeviceDatasetAttributesName(const string& deviceID,
+                                           DataType::DataSetAttributeIOAttribute directionType, vector<string>& attributesName);
         
-        void getDeviceAttributeDescription(const string& deviceID, const string& attributesName, string& attributeDescription);
+        /*!
+         */
+       void getDeviceAttributeDescription(const string& deviceID,
+                                          const string& attributesName,
+                                          string& attributeDescription);
         
-        void getDeviceAttributeRangeValueInfo(const string& deviceID, const string& attributesName, RangeValueInfo& rangeInfo);
+        /*!
+         */
+       void getDeviceAttributeRangeValueInfo(const string& deviceID,
+                                             const string& attributesName,
+                                             RangeValueInfo& rangeInfo);
         
-        int getDeviceAttributeDirection(const string& deviceID, const string& attributesName, DataType::DataSetAttributeIOAttribute& directionType);
+        /*!
+         */
+        int getDeviceAttributeDirection(const string& deviceID,
+                                        const string& attributesName,
+                                        DataType::DataSetAttributeIOAttribute& directionType);
     };
 }
 #endif

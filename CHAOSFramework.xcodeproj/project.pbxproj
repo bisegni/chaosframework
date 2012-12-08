@@ -46,6 +46,7 @@
 		325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F86EB14D9E59D00CDF35F /* InetUtility.h */; };
 		3260276A14B306BA00C906CE /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 326026E914B301F600C906CE /* libchaos_common.dylib */; };
 		3260278B14B307E400C906CE /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 326026E914B301F600C906CE /* libchaos_common.dylib */; };
+		3264B05C1673623F002E87FA /* TDSObjectHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3264B05B1673623E002E87FA /* TDSObjectHandler.h */; };
 		3265BF4615D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3265BF4515D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h */; };
 		3265BF4915D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3265BF4815D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc */; };
 		3268CE2D1616086800FCDB10 /* MsgPackClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3268CE291616086800FCDB10 /* MsgPackClient.cpp */; };
@@ -307,6 +308,7 @@
 		326026E914B301F600C906CE /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_common.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3260276614B3068100C906CE /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_cutoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3260278714B307DA00C906CE /* libchaos_uitoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_uitoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3264B05B1673623E002E87FA /* TDSObjectHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSObjectHandler.h; sourceTree = "<group>"; };
 		3265BF4515D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosUIToolkitCWrapper.h; sourceTree = "<group>"; };
 		3265BF4815D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosUIToolkitCWrapper.cc; sourceTree = "<group>"; };
 		3268CE291616086800FCDB10 /* MsgPackClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MsgPackClient.cpp; sourceTree = "<group>"; };
@@ -1034,6 +1036,7 @@
 				328D2FBC1660EF71007F482E /* TDSAttributeHandler.h */,
 				328D2FB01660E3EC007F482E /* DSAttributeHandler.cpp */,
 				328D2FB11660E3EC007F482E /* DSAttributeHandler.h */,
+				3264B05B1673623E002E87FA /* TDSObjectHandler.h */,
 			);
 			path = handler;
 			sourceTree = "<group>";
@@ -1229,6 +1232,7 @@
 				328D2FBE1660EF71007F482E /* TDSAttributeHandler.h in Headers */,
 				328D2FC316612AB3007F482E /* DSInt32Handler.h in Headers */,
 				32DB1188166267FB0036D1B9 /* DSDoubleHandler.h in Headers */,
+				3264B05C1673623F002E87FA /* TDSObjectHandler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

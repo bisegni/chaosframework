@@ -72,9 +72,9 @@ public:
     
     inline void computeWave(CDataWrapper *acquiredData);
     
-    inline void setDoubleValue(const std::string * const deviceID, double_t dValue);
+    inline void setDoubleValue(const std::string& deviceID, const double& dValue);
     
-    inline void setWavePoint(const std::string * const deviceID, int32_t newNumberOfPoints);
+    inline void setWavePoint(const std::string& deviceID, const int32_t& newNumberOfPoints);
 protected:
     /*
      Define the Control Unit Dataset and Actions
@@ -100,12 +100,6 @@ protected:
      The Control Unit will be deinitialized and disposed
      */
     void deinit(const string&) throw(CException);
-    
-    /*!
-     Receive the event for set the dataset input element, this virtual method
-     is empty because can be used by controlunit implementation
-     */
-    CDataWrapper* setDatasetAttribute(CDataWrapper*, bool&) throw (CException);
     
     /*
         Test Action Handler

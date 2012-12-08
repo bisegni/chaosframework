@@ -1,5 +1,5 @@
 /*
- *	DSDoubleHandler.h
+ *	TDSObjectHandler.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef CHAOSFramework_DSDoubleHandler_h
-#define CHAOSFramework_DSDoubleHandler_h
+#ifndef CHAOSFramework_TDSObjectHandler_h
+#define CHAOSFramework_TDSObjectHandler_h
 
 
 #include <chaos/common/global.h>
@@ -36,36 +36,36 @@ namespace chaos {
              \brief
              Thsi class implement and int32_t handler using an object ethod as handler pointer
              */
-            template <typename T>
-            class DSDoubleHandler : public TDSAttributeHandler<double_t> {
+            template <typename T, typename U>
+            class TDSObjectHandler : public TDSAttributeHandler<U> {
             protected:
                 
                     //! call the method that as been choosen to manage the value
                 /*!
                  *  \param attributeValue the int32_t value that need to be managed
                  */
-                inline void attributeHandler(double_t& attributeValue)  throw (CException) {
+                inline void attributeHandler(U& attributeValue)  throw (CException) {
                     CHAOS_ASSERT(objectPointer)
-                    ((*objectPointer).*handler)(&attributeName, attributeValue);
+                    ((*objectPointer).*handler)(TDSAttributeHandler<U>::attributeName, attributeValue);
                 }
                 
             public:
                 
                     //! The function point to the handle
-                typedef void (T::*DoubleHandler)(const std::string * const, double_t);
+                typedef void (T::*TDSHandler)(const std::string & , const U&);
                 
                 /*!
                  Default constructor
                  */
-                DSDoubleHandler(T *_objectPointer,
-                                DoubleHandler _handler):objectPointer(_objectPointer),handler(_handler) {};
+                TDSObjectHandler(T *_objectPointer,
+                                TDSHandler _handler):objectPointer(_objectPointer),handler(_handler) {};
                 
                 /*!
                  Default constructor
                  */
-                DSDoubleHandler(std::string attrName,
+                TDSObjectHandler(std::string attrName,
                                 T *_objectPointer,
-                                DoubleHandler _handler):TDSAttributeHandler<double_t>(attrName),objectPointer(_objectPointer),handler(_handler) {};
+                                TDSHandler _handler):TDSAttributeHandler<U>(attrName),objectPointer(_objectPointer),handler(_handler) {};
                 
                 
             private:
@@ -73,13 +73,10 @@ namespace chaos {
                 T *objectPointer;
                 
                     //! the handler pointer
-                DoubleHandler handler;
+                TDSHandler handler;
             };
             
         }
     }
 }
-
-
-
 #endif

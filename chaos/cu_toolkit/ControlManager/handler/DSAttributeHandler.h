@@ -26,8 +26,13 @@
 #include <chaos/common/exception/CException.h>
 
 namespace chaos {
+    
+        //Forward declaration
+    class AbstractControlUnit;
+    
     namespace cu {
         
+            //Forward declaration
         class DSAttributeHandlerExecutionEngine;
         
         namespace  handler {
@@ -42,6 +47,7 @@ namespace chaos {
              */
             class DSAttributeHandler {
                 friend class chaos::cu::DSAttributeHandlerExecutionEngine;
+                friend class chaos::AbstractControlUnit;
                 
                     //!handle the abstract call to the specialize handler
                 /*!
@@ -59,6 +65,9 @@ namespace chaos {
                 
                     //! Default constructor
                 DSAttributeHandler(std::string attrName);
+                
+                    //! Default constructor
+                DSAttributeHandler();
                 
                     //! Default Sestructor
                 virtual ~DSAttributeHandler();

@@ -56,6 +56,12 @@ namespace chaos {
                 /*!
                  Default constructor
                  */
+                DSInt32Handler(T *_objectPointer,
+                               I32Handler _handler):objectPointer(_objectPointer),handler(_handler) {};
+                
+                /*!
+                 Default constructor
+                 */
                 DSInt32Handler(std::string attrName,
                                T *_objectPointer,
                                I32Handler _handler):TDSAttributeHandler<int32_t>(attrName),objectPointer(_objectPointer),handler(_handler) {};

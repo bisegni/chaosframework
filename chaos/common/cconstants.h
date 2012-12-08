@@ -180,7 +180,9 @@ namespace chaos {
                 //!byte array variable length
             TYPE_BYTEARRAY,
                 //!struct type
-            TYPE_STRUCT
+            TYPE_STRUCT,
+                //!bool variable length
+            TYPE_BOOLEAN
         } DataType;
         
             //!define the direction of dataset element

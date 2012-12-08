@@ -26,6 +26,10 @@ DSAttributeHandler::DSAttributeHandler(std::string attrName):attributeName(attrN
     
 }
 
+DSAttributeHandler::DSAttributeHandler() {
+    
+}
+
 DSAttributeHandler::~DSAttributeHandler(){
     
 }

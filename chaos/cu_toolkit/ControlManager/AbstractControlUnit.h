@@ -37,8 +37,8 @@
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/common/pqueue/CObjectHandlerProcessingQueue.h>
 #include <chaos/common/thread/CThreadExecutionTask.h>
-#include <chaos/cu_toolkit/ControlManager/handler/DSAttributeHandler.h>
 #include <chaos/cu_toolkit/ControlManager/DSAttributeHandlerExecutionEngine.h>
+#include <chaos/cu_toolkit/ControlManager/handler/TDSObjectHandler.h>
 #include <boost/chrono.hpp>
 
 namespace chaos{
@@ -47,6 +47,11 @@ namespace chaos{
 #define INIT_STATE      0
 #define START_STATE     1
     
+#define CREATE_HANDLER(class, type, abstractPointer)\
+TDSObjectHandler<T, double> *typedHandler = NULL;\
+typename TDSObjectHandler<T, double>::TDSHandler handlerPointer = objectMethodHandler;\
+abstractPointer = typedHandler = new TDSObjectHandler<T, double>(objectPointer, handlerPointer);\
+
         //forward evenc channel declaration
     namespace event{
         namespace channel {
@@ -58,6 +63,7 @@ namespace chaos{
     class ControlUnitThread;
     
     using namespace std;
+    using namespace cu::handler;
     
     class ActionData {
         
@@ -72,7 +78,7 @@ namespace chaos{
     /*
      Base class for control unit execution task
      */
-    class AbstractControlUnit:public DeclareAction, public CUSchemaDB, public CThreadExecutionTask {
+    class AbstractControlUnit:public DeclareAction, protected CUSchemaDB, public CThreadExecutionTask {
         friend class ControlManager;
         
         int32_t scheduleDelay;
@@ -181,6 +187,7 @@ namespace chaos{
         
         boost::shared_ptr<CDataWrapper> _internalSetupConfiguration;
         
+            //------standard call-------------------------
         /*!
          Return the tart configuration for the Control Unit instance
          */
@@ -217,17 +224,137 @@ namespace chaos{
          */
         virtual CDataWrapper* updateConfiguration(CDataWrapper*, bool&) throw (CException);
 
-        
+            //----------------thread entry point---------------
         /*!
          Execute the scehduling for the device
          */
         void executeOnThread(const string&) throw(CException);
         
+        
+            //---------------------utility API-------------
+        
+        /*!
+         Add the new attribute in the dataset for at the CU dataset
+         */
+        void addAttributeToDataSet(const char*const deviceID,
+                                   const char*const attributeName,
+                                   const char*const attributeDescription,
+                                   DataType::DataType attributeType,
+                                   DataType::DataSetAttributeIOAttribute attributeDirection);
+        
+        /*!
+         Add the new attribute in the dataset for at the CU dataset with an associated handler
+         */
+        template<typename T>
+        void addTemplatedAttributeToDataSet(const char*const deviceID,
+                                             const char*const attributeName,
+                                             const char*const attributeDescription,
+                                             DataType::DataType attributeType,
+                                             DataType::DataSetAttributeIOAttribute attributeDirection,
+                                             TDSAttributeHandler<T>* handler) {
+            
+                //first add the attribute information in the schema
+            CUSchemaDB::addAttributeToDataSet(deviceID, attributeName, attributeDescription, attributeType, attributeDirection);
+            
+            
+                //check if there is a valid handler
+            if(handler != NULL) {
+                if(handler->attributeName.size() == 0){
+                        //add the attribute name to the handler
+                    handler->attributeName.assign(attributeName);
+                }
+                    //the ad the handler for that
+                AbstractControlUnit::addHandlerForDSAttribute(deviceID, handler);
+            }
+        }
+        
+        
+        /*!
+        Add the new attribute in the dataset for at the CU dataset with an associated handler
+        */
+        template<typename T>
+        void addInputInt32AttributeToDataSet(const char*const deviceID,
+                                   const char*const attributeName,
+                                   const char*const attributeDescription,
+                                   T* objectPointer,
+                                   typename TDSObjectHandler<T, int32_t>::TDSHandler  objectHandler) {
+
+            addTemplatedAttributeToDataSet(deviceID, attributeName, attributeDescription, DataType::TYPE_INT32, DataType::Input, new TDSObjectHandler<T, int32_t>(objectPointer, objectHandler));
+        }
+        
+        /*!
+         Add the new attribute in the dataset for at the CU dataset with an associated handler
+         */
+        template<typename T>
+        void addInputInt64AttributeToDataSet(const char*const deviceID,
+                                             const char*const attributeName,
+                                             const char*const attributeDescription,
+                                             T* objectPointer,
+                                             typename TDSObjectHandler<T, int64_t>::TDSHandler  objectHandler) {
+            
+            addTemplatedAttributeToDataSet(deviceID, attributeName, attributeDescription, DataType::TYPE_INT64, DataType::Input, new TDSObjectHandler<T, int64_t>(objectPointer, objectHandler));
+        }
+        
+        /*!
+         Add the new attribute in the dataset for at the CU dataset with an associated handler
+         */
+        template<typename T>
+        void addInputDoubleAttributeToDataSet(const char*const deviceID,
+                                              const char*const attributeName,
+                                              const char*const attributeDescription,
+                                              T* objectPointer,
+                                              typename TDSObjectHandler<T, double>::TDSHandler  objectHandler) {
+            
+            addTemplatedAttributeToDataSet(deviceID, attributeName, attributeDescription, DataType::TYPE_DOUBLE, DataType::Input, new TDSObjectHandler<T, double>(objectPointer, objectHandler));
+        }
+
+        /*!
+         Add the new attribute in the dataset for at the CU dataset with an associated handler
+         */
+        template<typename T>
+        void addInputBooleanAttributeToDataSet(const char*const deviceID,
+                                               const char*const attributeName,
+                                               const char*const attributeDescription,
+                                               T* objectPointer,
+                                               typename TDSObjectHandler<T, bool>::TDSHandler  objectHandler) {
+            
+            addTemplatedAttributeToDataSet(deviceID, attributeName, attributeDescription, DataType::TYPE_BOOLEAN, DataType::Input, new TDSObjectHandler<T, bool>(objectPointer, objectHandler));
+        }
+
+        /*!
+         Add the new attribute in the dataset for at the CU dataset with an associated handler
+         */
+        template<typename T>
+        void addInputStringAttributeToDataSet(const char*const deviceID,
+                                              const char*const attributeName,
+                                              const char*const attributeDescription,
+                                              T* objectPointer,
+                                              typename TDSObjectHandler<T, std::string>::TDSHandler  objectHandler) {
+            
+            addTemplatedAttributeToDataSet(deviceID, attributeName, attributeDescription, DataType::TYPE_STRING, DataType::Input, new TDSObjectHandler<T, std::string>(objectPointer, objectHandler));
+        }
+        
+        /*!
+         Add the new attribute in the dataset for at the CU dataset with an associated handler
+         */
+        template<typename T>
+        void addInputStructAttributeToDataSet(const char*const deviceID,
+                                              const char*const attributeName,
+                                              const char*const attributeDescription,
+                                              T* objectPointer,
+                                              typename TDSObjectHandler<T, CDataWrapper>::TDSHandler  objectHandler) {
+            
+            addTemplatedAttributeToDataSet(deviceID, attributeName, attributeDescription, DataType::TYPE_STRUCT, DataType::Input, new TDSObjectHandler<T, CDataWrapper>(objectPointer, objectHandler));
+        }
+        
         /*!
          Create a new action description, return the description for let the user to add parameter
          */
         template<typename T>
-        AbstActionDescShrPtr addActionDescritionInstance(T* actonObjectPointer, typename ActionDescriptor<T>::ActionPointerDef actionHandler, const char*const actionAliasName, const char*const actionDescription) {
+        AbstActionDescShrPtr addActionDescritionInstance(T* actonObjectPointer,
+                                                         typename ActionDescriptor<T>::ActionPointerDef actionHandler,
+                                                         const char*const actionAliasName,
+                                                         const char*const actionDescription) {
                 //call the DeclareAction action register method, the domain will be associated to the control unit isntance
             return DeclareAction::addActionDescritionInstance(actonObjectPointer, actionHandler, cuInstance.c_str(), actionAliasName, actionDescription);
         }
@@ -242,7 +369,8 @@ namespace chaos{
          *  \param classHandler is the pointer to handler that need to be attached
          *  \exception something is gone wrong
          */
-        void addHandlerForDSAttribute(const char * deviceID, cu::handler::DSAttributeHandler * classHandler)  throw (CException);
+        void addHandlerForDSAttribute(const char * deviceID,
+                                      cu::handler::DSAttributeHandler * classHandler)  throw (CException);
         
             //--------------Contro Unit Service Method----------------
         /*!
