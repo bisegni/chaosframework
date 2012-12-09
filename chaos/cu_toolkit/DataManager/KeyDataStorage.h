@@ -35,7 +35,7 @@ namespace chaos{
     public:
         KeyDataStorage(const char*);
         KeyDataStorage(string&);
-        ~KeyDataStorage();
+        virtual ~KeyDataStorage();
         
         void init(CDataWrapper*);
         

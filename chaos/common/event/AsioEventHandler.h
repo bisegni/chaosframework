@@ -41,7 +41,7 @@ namespace chaos {
                              const boost::asio::ip::address& multicast_address,
                              boost::asio::io_service &io_service,
                              unsigned short mPort);
-            
+            ~AsioEventHandler();
             void handle_receive_from(const boost::system::error_code& error,
                                      size_t bytes_recvd);
             

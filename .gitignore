@@ -49,3 +49,5 @@ ChaosMDSLite/target*
 ChaosMDSLite/src/main/webapp/META-INF/context.xml
 ChaosMDSLite/target/m2e-wtp*
 Documentation/uml/CHAOS.mdzip.bak
+external
+usr

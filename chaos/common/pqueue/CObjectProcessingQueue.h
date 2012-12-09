@@ -53,8 +53,8 @@ namespace chaos {
         bool inDeinit;
         int outputThreadNumber;
         mutable boost::mutex qMutex;
-        condition_variable liveThreadConditionLock;
-        condition_variable emptyQueueConditionLock;
+        boost::condition_variable liveThreadConditionLock;
+        boost::condition_variable emptyQueueConditionLock;
 
         CObjectProcessingQueueListener<T> *eventListener;
         

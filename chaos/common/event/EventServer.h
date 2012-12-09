@@ -29,12 +29,12 @@
 
 
 namespace chaos {
-    class MessageBroker;
+    class NetworkBroker;
     
     namespace event{
         
         class EventServer : public NamedService , chaos::utility::ISDInterface {
-            friend class chaos::MessageBroker;
+            friend class chaos::NetworkBroker;
                 //! handler that can manage the event reception
             EventHandler *rootEventHandler;
         protected:
@@ -50,6 +50,12 @@ namespace chaos {
              start the event adapter
              */
             virtual void start() throw(CException) = 0;
+            
+            /*
+             start the event adapter
+             */
+            virtual void listeForEventType(event::EventType type,  bool listen) throw(CException) = 0;
+
             
             /*
              deinit the event adapter

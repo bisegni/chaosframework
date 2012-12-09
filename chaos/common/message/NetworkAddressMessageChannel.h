@@ -20,7 +20,7 @@
 #ifndef CHAOSFramework_NetworkAddressMessageChannel_h
 #define CHAOSFramework_NetworkAddressMessageChannel_h
 #include <chaos/common/message/MessageChannel.h>
-#include <chaos/common/rpcnet/CNodeNetworkAddress.h>
+#include <chaos/common/network/CNodeNetworkAddress.h>
 
 #include <vector>
 
@@ -28,7 +28,7 @@ namespace chaos {
     
     using namespace std;
     
-    class MessageBroker;
+    class NetworkBroker;
     
     //! Message Channel constructed with a node address
     /*! 
@@ -36,7 +36,7 @@ namespace chaos {
      CNodeNetworkAddress ans information for the endpoint
      */
     class NetworkAddressMessageChannel : protected MessageChannel {
-        friend class MessageBroker;
+        friend class NetworkBroker;
     protected:
         //! node address for metadata server
         auto_ptr<CNodeNetworkAddress> nodeAddress;
@@ -48,7 +48,7 @@ namespace chaos {
          \param msgBroker the broker used by this channel
          \param mdsIpAddress the address of metdataserver
          */
-        NetworkAddressMessageChannel(MessageBroker *msgBroker,  CNodeNetworkAddress *_nodeAddress) : MessageChannel(msgBroker) {
+        NetworkAddressMessageChannel(NetworkBroker *msgBroker,  CNodeNetworkAddress *_nodeAddress) : MessageChannel(msgBroker) {
             CHAOS_ASSERT(_nodeAddress)
             setNewAddress(_nodeAddress);           
         }

@@ -27,6 +27,10 @@ using namespace chaos;
 EventTypeScheduler::EventTypeScheduler():armed(false){
 }
 
+EventTypeScheduler::~EventTypeScheduler() {
+    
+}
+
 /*
  Initialization method for output buffer
  */

@@ -38,12 +38,12 @@ void LLRpcApi::init()  throw (CException) {
     LLRA_LAPP_ << "Init";
     SetupStateManager::levelUpFrom(INIT_STEP, "LLRpcApi already initialized");
     
-    LLRA_LAPP_ << "Init MessageBroker";
+    LLRA_LAPP_ << "Init NetworkBroker";
     rpcMessageBroker->init();
-    LLRA_LAPP_ << "MessageBroker Initialized";
-    LLRA_LAPP_ << "Starting MessageBroker";
+    LLRA_LAPP_ << "NetworkBroker Initialized";
+    LLRA_LAPP_ << "Starting NetworkBroker";
     rpcMessageBroker->start();
-    LLRA_LAPP_ << "MessageBroker Started";
+    LLRA_LAPP_ << "NetworkBroker Started";
 }
 
 /*
@@ -52,15 +52,15 @@ void LLRpcApi::init()  throw (CException) {
 void LLRpcApi::deinit()  throw (CException) {
     LLRA_LAPP_ << "Deinit LLRpcApi";
     SetupStateManager::levelDownFrom(DEINIT_STEP, "LLRpcApi already deinitialized");
-    LLRA_LAPP_ << "Deinit MessageBroker";
+    LLRA_LAPP_ << "Deinit NetworkBroker";
     rpcMessageBroker->deinit();
-    LLRA_LAPP_ << "MessageBroker deinitialized";
+    LLRA_LAPP_ << "NetworkBroker deinitialized";
 }
 
 /*
  */
 LLRpcApi::LLRpcApi() {
-    rpcMessageBroker = new MessageBroker();
+    rpcMessageBroker = new NetworkBroker();
 }
 
 /*

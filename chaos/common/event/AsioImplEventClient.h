@@ -20,7 +20,7 @@
 
 #ifndef __CHAOSFramework__AsioImplEventClient__
 #define __CHAOSFramework__AsioImplEventClient__
-
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <chaos/common/event/AsioEventHandler.h>
 #include <chaos/common/event/EventClient.h>
@@ -57,10 +57,20 @@ namespace chaos {
 
         public:
             AsioImplEventClient(string *alias);
+            ~AsioImplEventClient();
             bool submitEvent(EventDescriptor *event)  throw(CException);
         private:
-                //forwarder
+                //! Allert forwarder
             AsioEventForwarder *alertForwarder;
+           
+            //! Instrument forwarder
+            AsioEventForwarder *instrumentForwarder;
+            
+            //! Command forwarder
+            AsioEventForwarder *commandForwarder;
+            
+            //! Custom forwarder
+            AsioEventForwarder *customForwarder;
             
             boost::asio::io_service io_service;
             vector< shared_ptr<boost::thread> > serviceThread;

@@ -46,6 +46,10 @@ AsioEventHandler::AsioEventHandler(const boost::asio::ip::address& listen_addres
                           boost::bind(&AsioEventHandler::handle_receive_from, this,boost::asio::placeholders::error, boost::asio::placeholders::bytes_transferred));
 }
 
+AsioEventHandler::~AsioEventHandler() {
+    socket_.close();
+}
+
 void AsioEventHandler::handle_receive_from(const boost::system::error_code& error,
                                            size_t bytes_recvd){
     if (!error) {

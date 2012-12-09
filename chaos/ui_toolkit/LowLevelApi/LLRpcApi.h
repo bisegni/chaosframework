@@ -26,7 +26,7 @@
 
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/exception/CException.h>
-#include <chaos/common/message/MessageBroker.h>
+#include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/message/DeviceMessageChannel.h>
 #include <chaos/common/utility/SetupStateManager.h>
@@ -43,7 +43,7 @@ namespace chaos {
             friend class ChaosUIToolkit;
             friend class Singleton<LLRpcApi>;
             
-            chaos::MessageBroker *rpcMessageBroker;
+            chaos::NetworkBroker *rpcMessageBroker;
             /*
              LL Rpc Api static initialization it should be called once for application
              */

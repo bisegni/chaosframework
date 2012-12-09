@@ -72,7 +72,9 @@ public:
     
     inline void computeWave(CDataWrapper *acquiredData);
     
-    inline void setWavePoint(int32_t newNumberOfPoints);
+    inline void setDoubleValue(const std::string& deviceID, const double& dValue);
+    
+    inline void setWavePoint(const std::string& deviceID, const int32_t& newNumberOfPoints);
 protected:
     /*
      Define the Control Unit Dataset and Actions
@@ -98,16 +100,6 @@ protected:
      The Control Unit will be deinitialized and disposed
      */
     void deinit(const string&) throw(CException);
-    
-    /* (Optional)
-     Event from metadataserver or gui for update configuration
-     */
-    CDataWrapper* updateConfiguration(CDataWrapper*, bool&) throw (CException);
-    
-    /* (Optional)
-     This event is received when a dataset attribute is request to be valorized
-     */
-    CDataWrapper* setDatasetAttribute(CDataWrapper*, bool&) throw (CException);
     
     /*
         Test Action Handler

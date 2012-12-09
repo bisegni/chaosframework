@@ -42,7 +42,7 @@ namespace chaos {
         bool disposeOnDestroy;
         int priority;
     public:
-        PriorityQueuedElement(T *_element, int _priority = 50, bool _disposeOnDestroy = true):element(_element), priority(_priority), disposeOnDestroy(_disposeOnDestroy){}
+        PriorityQueuedElement(T *_element, int _priority = 50, bool _disposeOnDestroy = true):element(_element), disposeOnDestroy(_disposeOnDestroy), priority(_priority) {}
         ~PriorityQueuedElement(){
             if (disposeOnDestroy && element) {
                 delete(element);
@@ -75,8 +75,8 @@ namespace chaos {
                 bool inDeinit;
                 int outputThreadNumber;
                 mutable boost::mutex qMutex;
-                condition_variable liveThreadConditionLock;
-                condition_variable emptyQueueConditionLock;
+                boost::condition_variable liveThreadConditionLock;
+                boost::condition_variable emptyQueueConditionLock;
                 
                     //thread group
                 CThreadGroup threadGroup;

@@ -19,6 +19,7 @@
  */
 #ifndef ChaosFramework_ActionsScheduler_h
 #define ChaosFramework_ActionsScheduler_h
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
@@ -43,7 +44,7 @@ namespace chaos {
             //! registration and deregistration
         boost::mutex actionAccessMutext;
             //!pointer to the domain containing action
-        shared_ptr<DomainActions> domainActionsContainer;
+        boost::shared_ptr<DomainActions> domainActionsContainer;
         
             //!reference to global dispatcher used to resubmit sub command
         AbstractCommandDispatcher *dispatcher;
@@ -54,7 +55,11 @@ namespace chaos {
         /*!
          Default constructor
          */
-        DomainActionsScheduler(shared_ptr<DomainActions>);
+        DomainActionsScheduler(boost::shared_ptr<DomainActions>);
+        /*!
+         Default destructor
+         */
+        virtual ~DomainActionsScheduler();
         /*!
             Return the domain name managed by the sceduler instance
          */

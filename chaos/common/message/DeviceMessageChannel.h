@@ -22,7 +22,7 @@
 
 #include <string>
 #include <chaos/common/message/NetworkAddressMessageChannel.h>
-#include <chaos/common/rpcnet/CNodeNetworkAddress.h>
+#include <chaos/common/network/CNodeNetworkAddress.h>
 
 namespace chaos {
     
@@ -33,7 +33,7 @@ namespace chaos {
      This class represent a message chanel for comunication with a device
      */
     class DeviceMessageChannel : public NetworkAddressMessageChannel {
-        friend class MessageBroker;
+        friend class NetworkBroker;
         CDeviceNetworkAddress *deviceNetworkAddress;
         
     protected:
@@ -42,7 +42,7 @@ namespace chaos {
          The constructor create a channel for comunicate with the device that is contained in a Contro Unit, so the full network address is
          ip:port:cu_node_address(instance):deviceID
          */
-        DeviceMessageChannel(MessageBroker *msgBroker, CDeviceNetworkAddress *_deviceNetworkAddress);
+        DeviceMessageChannel(NetworkBroker *msgBroker, CDeviceNetworkAddress *_deviceNetworkAddress);
         
     public:
         void setNewAddress(CDeviceNetworkAddress *_deviceAddress);

@@ -29,9 +29,13 @@ using namespace chaos::event;
 AsioEventForwarder::AsioEventForwarder(const boost::asio::ip::address& multicast_address,
                                        unsigned short mPort,
                                        boost::asio::io_service& io_service
-                                       ) :_endpoint(multicast_address, mPort), _socket(io_service) {
+                                       ) :_socket(io_service), _endpoint(multicast_address, mPort) {
     hanlderID = UUIDUtil::generateUUIDLite();
     sent = true;
+}
+
+AsioEventForwarder::~AsioEventForwarder() {
+    
 }
 
 /*

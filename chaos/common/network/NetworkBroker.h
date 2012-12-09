@@ -1,5 +1,5 @@
 /*	
- *	MessageBroker.h
+ *	NetworkBroker.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *	
@@ -29,10 +29,11 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/action/EventAction.h>
-#include <chaos/common/rpcnet/CNodeNetworkAddress.h>
+#include <chaos/common/network/CNodeNetworkAddress.h>
 #include <chaos/common/utility/SetupStateManager.h>
 #include <chaos/common/event/channel/EventChannel.h>
 #include <chaos/common/event/evt_desc/EventDescriptor.h>
+#include <chaos/common/network/NetworkForwardInfo.h>
 namespace chaos {
 
     using namespace std;
@@ -62,14 +63,16 @@ namespace chaos {
         class EventServer;
         class EventClient;
     }
+    
+
 
         //! Message Broker
     /*! 
-     The MessageBroker is the manager for the message in chaos framework. It contains the reference to 
+     The NetworkBroker is the manager for the message in chaos framework. It contains the reference to 
      chaos rpc client and server abstract class and to the message dispatcher abstract class. 
      It abstract the !CHAOS rule for sending message and wait for answer and other facility.
      */
-    class MessageBroker: private SetupStateManager {
+    class NetworkBroker: private SetupStateManager {
         
             //!Event Client for event forwarding
         event::EventClient *eventClient;
@@ -114,12 +117,12 @@ namespace chaos {
         MessageChannel *getNewMessageChannelForRemoteHost(CNodeNetworkAddress *nodeNetworkAddress, EntityType type);
         
     public:
-                
+        
             //! Basic Constructor
-        MessageBroker();
+        NetworkBroker();
         
             //! Basic Destructor
-        virtual ~MessageBroker();
+        virtual ~NetworkBroker();
         
             //!Message Broker initialization
         /*!
@@ -128,7 +131,7 @@ namespace chaos {
          */
         virtual void init() throw(CException);
         
-            //!MessageBroker deinitialization
+            //!NetworkBroker deinitialization
         /*!
          * All rpc adapter and command dispatcher are deinitilized. All instantiated channel are disposed
          */
@@ -152,7 +155,7 @@ namespace chaos {
          */
         void getPublishedHostAndPort(string&);
         
-            //! event Action registration for the current instance of MessageBroker
+            //! event Action registration for the current instance of NetworkBroker
         /*!
          Register an event actions defined for a detgerminated event type
          \param eventAction the actio to register
@@ -172,7 +175,7 @@ namespace chaos {
          \param eventType is one of the value listent in EventType enum that specify the
          type of the eventfor wich we want a channel
          */
-        inline event::channel::EventChannel *getNewEventChannelFromType(event::EventType  eventType);
+        event::channel::EventChannel *getNewEventChannelFromType(event::EventType  eventType);
         
             //! Alert Event Creation
         event::channel::AlertEventChannel *getNewAlertEventChannel();
@@ -191,7 +194,7 @@ namespace chaos {
          */
         bool submitEvent(event::EventDescriptor *event);
         
-            //! Action registration for the current isntance of MessageBroker
+            //! Action registration for the current isntance of NetworkBroker
         /*!
          Register actions defined by AbstractActionDescriptor instance contained in the array
          */
@@ -210,7 +213,7 @@ namespace chaos {
          \param message the message coded into key/value semantics
          \param onThisThread if true the message is forwarded in the same thread of the caller
          */
-        bool submitMessage(string& serveAndPort, CDataWrapper *message, bool onThisThread=false);
+        bool submitMessage(string& serverAndPort, CDataWrapper *message, NetworkErrorHandler handler = NULL, const char * senderIdentifier = NULL, int64_t senderTag = (int64_t)0, bool onThisThread=false);
         
             //!message request
         /*!
@@ -219,7 +222,7 @@ namespace chaos {
          \param request the request coded into key/value semantics
          \param onThisThread if true the message is forwarded in the same thread of the caller
          */
-        bool submiteRequest(string& serveAndPort,  CDataWrapper *request, bool onThisThread=false);
+        bool submiteRequest(string& serverAndPort,  CDataWrapper *request, NetworkErrorHandler handler = NULL, const char * senderIdentifier = NULL, int64_t senderTag = (int64_t)0, bool onThisThread=false);
         
             //!message submition
         /*!

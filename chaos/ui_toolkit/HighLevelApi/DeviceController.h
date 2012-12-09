@@ -21,7 +21,7 @@
 #ifndef CHAOSFramework_DeviceLiveDataFetcher_h
 #define CHAOSFramework_DeviceLiveDataFetcher_h
 
-#include <chaos/common/rpcnet/CNodeNetworkAddress.h>
+#include <chaos/common/network/CNodeNetworkAddress.h>
 #include <chaos/common/io/IODataDriver.h>
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/message/DeviceMessageChannel.h>

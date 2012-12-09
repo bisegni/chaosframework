@@ -19,13 +19,14 @@
  */
 #ifndef ChaosFramework_MsgPackClient_h
 #define ChaosFramework_MsgPackClient_h
-#include "RpcClient.h"
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+
+#include <chaos/common/rpc/RpcClient.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/pqueue/ChaosProcessingQueue.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
-#include <msgpack/rpc/client.h>
 #include <msgpack/rpc/client.h>
 #include <msgpack/rpc/session_pool.h>
 
@@ -34,15 +35,14 @@
 namespace chaos {
     using namespace std;
     
-    
     /*
      Class that manage the MessagePack message send.
      */
-     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(MsgPackClient, RpcClient), public CObjectProcessingQueue<RpcMessageForwardInfo> {
+     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(MsgPackClient, RpcClient), public CObjectProcessingQueue<NetworkForwardInfo> {
             //messagepack connection pooling
         msgpack::rpc::session_pool *connectionPolling;
     protected:
-        virtual void processBufferElement(RpcMessageForwardInfo*, ElementManagingPolicy&) throw(CException);
+        virtual void processBufferElement(NetworkForwardInfo*, ElementManagingPolicy&) throw(CException);
         
          /*
           init the rpc adapter
@@ -68,7 +68,7 @@ namespace chaos {
          Submit the message to be send to a certain ip, the datawrapper must contains
          the key CS_CMDM_REMOTE_HOST_IP
          */
-        bool submitMessage(string& destinationIpAndPort, CDataWrapper *message, bool onThisThread=false) throw(CException);
+        bool submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread=false) throw(CException);
     };
 }
 #endif

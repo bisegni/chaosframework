@@ -1,8 +1,8 @@
-/*	
+/*
  *	ControlUnit.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,9 +20,11 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>
+#include <chaos/common/event/channel/InstrumentEventChannel.h>
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 #include <chaos/cu_toolkit/DataManager/DataManager.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManager.h>
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -31,6 +33,7 @@
 #include <boost/uuid/uuid_generators.hpp> // generators
 #include <boost/uuid/uuid_io.hpp>         // streaming operators etc.
 #include <boost/lexical_cast.hpp>
+
 
 using namespace chaos;
 using namespace std;
@@ -82,6 +85,32 @@ const char * AbstractControlUnit::getCUInstance(){
  */
 void AbstractControlUnit::addKeyDataStorage(const char *key, KeyDataStorage* keyDatStorafePointer) {
     keyDataStorageMap.insert(make_pair(key, keyDatStorafePointer));
+}
+
+/*!
+ Add the new attribute in the dataset for at the CU dataset
+ */
+void AbstractControlUnit::addAttributeToDataSet(const char*const deviceID,
+                                                const char*const attributeName,
+                                                const char*const attributeDescription,
+                                                DataType::DataType attributeType,
+                                                DataType::DataSetAttributeIOAttribute attributeDirection) {
+        //add the attribute
+    CUSchemaDB::addAttributeToDataSet(deviceID, attributeName, attributeDescription, attributeType, attributeDirection);
+}
+
+/*
+ Add a new handler
+ */
+void AbstractControlUnit::addHandlerForDSAttribute(const char * deviceID, cu::handler::DSAttributeHandler * classHandler)  throw (CException) {
+    if(!classHandler) return;
+    
+        //check if the handler engine has been previously created
+    if(attributeHandlerEngineForDeviceIDMap.count(deviceID) == 0){
+        attributeHandlerEngineForDeviceIDMap.insert(make_pair(deviceID, new cu::DSAttributeHandlerExecutionEngine(deviceID, this)));
+    }
+        //add the handler
+    attributeHandlerEngineForDeviceIDMap[deviceID]->addHandlerForDSAttribute(classHandler);
 }
 
 /*
@@ -170,13 +199,13 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
         //for let the CU have the same instance at every run
     setupConfiguration.addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE, cuInstance);
         //check if as been setuped a file for configuration
-    LCU_ << "Check if as been setup a json file path to configura CU:" << CU_IDENTIFIER_C_STREAM;
-    loadCDataWrapperForJsonFile(setupConfiguration);
+        //LCU_ << "Check if as been setup a json file path to configura CU:" << CU_IDENTIFIER_C_STREAM;
+        //loadCDataWrapperForJsonFile(setupConfiguration);
     
         //first call the setup abstract method used by the implementing CU to define action, dataset and other
         //usefull value
     LCU_ << "Define Actions and Dataset for:" << CU_IDENTIFIER_C_STREAM;
-    defineActionAndDataset(setupConfiguration);    
+    defineActionAndDataset(setupConfiguration);
     
     
         //add the scekdule dalay for the sandbox
@@ -187,51 +216,51 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
         //for now we need only to add custom action for expose to rpc
         //input element of the dataset
     LCU_ << "Define the base action for map the input attribute of the dataset of the CU:" << CU_IDENTIFIER_C_STREAM;
-    AbstActionDescShrPtr 
-    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this, 
-                                                                         &AbstractControlUnit::_setDatasetAttribute, 
-                                                                         "setDatasetAttribute", 
+    AbstActionDescShrPtr
+    actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                         &AbstractControlUnit::_setDatasetAttribute,
+                                                                         "setDatasetAttribute",
                                                                          "method for set the input element for the dataset");
     
         //expose updateConfiguration Methdo to rpc
     LCU_ << "Register updateConfiguration action";
-    DeclareAction::addActionDescritionInstance<AbstractControlUnit>(this, 
-                                                                    &AbstractControlUnit::updateConfiguration, 
-                                                                    getCUInstance(), 
-                                                                    "updateConfiguration", 
+    DeclareAction::addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                    &AbstractControlUnit::updateConfiguration,
+                                                                    getCUInstance(),
+                                                                    "updateConfiguration",
                                                                     "Update Configuration");
     
     LCU_ << "Register initDevice action";
-    DeclareAction::addActionDescritionInstance<AbstractControlUnit>(this, 
-                                                                    &AbstractControlUnit::_init, 
-                                                                    getCUInstance(), 
-                                                                    ChaosSystemDomainAndActionLabel::ACTION_DEVICE_INIT, 
+    DeclareAction::addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                    &AbstractControlUnit::_init,
+                                                                    getCUInstance(),
+                                                                    ChaosSystemDomainAndActionLabel::ACTION_DEVICE_INIT,
                                                                     "Perform the device initialization");
     
     LCU_ << "Register deinitDevice action";
-    DeclareAction::addActionDescritionInstance<AbstractControlUnit>(this, 
-                                                                    &AbstractControlUnit::_deinit, 
-                                                                    getCUInstance(), 
-                                                                    ChaosSystemDomainAndActionLabel::ACTION_DEVICE_DEINIT, 
+    DeclareAction::addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                    &AbstractControlUnit::_deinit,
+                                                                    getCUInstance(),
+                                                                    ChaosSystemDomainAndActionLabel::ACTION_DEVICE_DEINIT,
                                                                     "Perform the device deinitialization");
     LCU_ << "Register startDevice action";
-    DeclareAction::addActionDescritionInstance<AbstractControlUnit>(this, 
-                                                                    &AbstractControlUnit::_start, 
-                                                                    getCUInstance(), 
-                                                                    ChaosSystemDomainAndActionLabel::ACTION_DEVICE_START, 
+    DeclareAction::addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                    &AbstractControlUnit::_start,
+                                                                    getCUInstance(),
+                                                                    ChaosSystemDomainAndActionLabel::ACTION_DEVICE_START,
                                                                     "Sart the device scheduling");
     
     LCU_ << "Register stopDevice action";
-    DeclareAction::addActionDescritionInstance<AbstractControlUnit>(this, 
-                                                                    &AbstractControlUnit::_stop, 
-                                                                    getCUInstance(), 
-                                                                    ChaosSystemDomainAndActionLabel::ACTION_DEVICE_STOP, 
+    DeclareAction::addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                    &AbstractControlUnit::_stop,
+                                                                    getCUInstance(),
+                                                                    ChaosSystemDomainAndActionLabel::ACTION_DEVICE_STOP,
                                                                     "Stop the device scheduling");
     LCU_ << "Register getState action";
-    DeclareAction::addActionDescritionInstance<AbstractControlUnit>(this, 
-                                                                    &AbstractControlUnit::_getState, 
-                                                                    getCUInstance(), 
-                                                                    ChaosSystemDomainAndActionLabel::ACTION_DEVICE_GET_STATE, 
+    DeclareAction::addActionDescritionInstance<AbstractControlUnit>(this,
+                                                                    &AbstractControlUnit::_getState,
+                                                                    getCUInstance(),
+                                                                    ChaosSystemDomainAndActionLabel::ACTION_DEVICE_GET_STATE,
                                                                     "Get the state of the device");
     
     LCU_ << "Get Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
@@ -246,11 +275,11 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
         //register command manager action
     CommandManager::getInstance()->registerAction(this);
     
-    auto_ptr<SerializationBuffer> ser(setupConfiguration.getBSONData());
-        //copy configuration for internal use
-    _internalSetupConfiguration.reset(new CDataWrapper(ser->getBufferPtr()));
+    /*auto_ptr<SerializationBuffer> ser(setupConfiguration.getBSONData());
+     //copy configuration for internal use
+     _internalSetupConfiguration.reset(new CDataWrapper(ser->getBufferPtr()));*/
     
-    //setup all state for device
+        //setup all state for device
     vector<string> domainNames;
     CUSchemaDB::getAllDeviceId(domainNames);
     for(vector<string>::iterator iter = domainNames.begin();
@@ -297,6 +326,10 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
         throw CException(-3, "Device Already Initialized", "AbstractControlUnit::_init");
     }
     
+    LCU_ << "Initialize the DSAttribute handler engine for device:" << deviceID;
+    utility::ISDInterface::initImplementation(attributeHandlerEngineForDeviceIDMap[deviceID], initConfiguration, "DSAttribute handler engine", "AbstractControlUnit::_init");
+    
+    
     LCU_ << "Create schedule thread for device:" << deviceID;
         //initialize device scheduler
     schedulerDeviceMap.insert(make_pair(deviceID, new CThread(this)));
@@ -320,6 +353,9 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     
         //call update param function
     updateConfiguration(initConfiguration, detachParam);
+    
+        //reset run schedule heartbeat
+    heartBeatDeviceMap[deviceID] = boost::chrono::seconds(0);
     
     deviceExplicitStateMap[deviceID] = CUStateKey::INIT;
     return NULL;
@@ -351,9 +387,12 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
         throw CException(-3, "Device Not Initialized", "AbstractControlUnit::_deinit");
     }
     
-        //deinit the control unit 
+        //deinit the control unit
     LCU_ << "Start custom deinitialization for device:" << deviceID;
     deinit(deviceID);
+    
+    LCU_ << "Deinitialize the DSAttribute handler engine for device:" << deviceID;
+    utility::ISDInterface::deinitImplementation(attributeHandlerEngineForDeviceIDMap[deviceID], "DSAttribute handler engine", "AbstractControlUnit::_deinit");
     
         //remove scheduler
     tmpThread = schedulerDeviceMap[deviceID];
@@ -394,7 +433,7 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
     if(deviceStateMap[deviceID] != START_STATE) {
         LCU_ << "device:" << deviceID << " already strted";
         throw CException(-3, "Device already started", "AbstractControlUnit::_start");
-    }            
+    }
     
     
     CThread *csThread = schedulerDeviceMap[deviceID];
@@ -438,7 +477,7 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachPa
     if(deviceStateMap[deviceID] != START_STATE+1) {
         LCU_ << "device:" << deviceID << " not started";
         throw CException(-3, "Device not startded", "AbstractControlUnit::_stop");
-    }            
+    }
     
     stop(deviceID);
     
@@ -480,9 +519,28 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
     if(deviceExplicitStateMap[deviceID] == CUStateKey::DEINIT) {
         throw CException(-2, "The Control Unit is in deinit state", "AbstractControlUnit::_setDatasetAttribute");
     }
+    try {
+            //send dataset attribute change pack to control unit implementation
+        executionResult = setDatasetAttribute(datasetAttributeValues, detachParam);
+        if(attributeHandlerEngineForDeviceIDMap.count(deviceID) > 0) {
+#if DEBUG
+            LAPP_ << "pre attributeHandlerEngineForDeviceIDMap[deviceID]->executeHandler(datasetAttributeValues);";
+#endif
+            attributeHandlerEngineForDeviceIDMap[deviceID]->executeHandler(datasetAttributeValues);
+#if DEBUG
+            LAPP_ << "post attributeHandlerEngineForDeviceIDMap[deviceID]->executeHandler(datasetAttributeValues);";
+#endif
+        }
+            //at this time notify the wel gone setting of comand
+        if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(deviceID.c_str(), 0);
+        
+    } catch (CException& ex) {
+            //at this time notify the wel gone setting of comand
+        if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(deviceID.c_str(), ex.errorCode);
+        
+        throw ex;
+    }
     
-        //send dataset attribute change pack to control unit implementation
-    executionResult = setDatasetAttribute(datasetAttributeValues, detachParam);
     return executionResult;
 }
 
@@ -519,8 +577,8 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
     if(deviceStateMap[deviceID] == INIT_STATE) {
         LCU_ << "device:" << deviceID << " not initialized";
         throw CException(-3, "Device Not Initilized", "AbstractControlUnit::updateConfiguration");
-    }            
-
+    }
+    
     
         //check to see if the device can ben initialized
     if(keyDataStorageMap.count(deviceID)!=0) {
@@ -536,6 +594,11 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
             LCU_ << "Update schedule delay in:" << uSecdelay << " microsecond";
             schedulerDeviceMap[deviceID]->setDelayBeetwenTask(uSecdelay);
                 //send enve to fro update
+                //----------------------
+                // we need to optimize and be sure that event channel
+                // is mandatory so we can left over the 'if' check
+                //----------------------
+            if(deviceEventChannel) deviceEventChannel->notifyForScheduleUpdateWithNewValue(deviceID.c_str(), uSecdelay);
         }
     }
     return NULL;
@@ -547,6 +610,13 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
  */
 void AbstractControlUnit::executeOnThread( const string& deviceIDToSchedule) throw(CException) {
     run(deviceIDToSchedule);
+    
+    lastAcquiredTime = boost::chrono::duration_cast<boost::chrono::seconds>(boost::chrono::steady_clock::now().time_since_epoch());
+        //check if we need to sendthe heartbeat
+    if(deviceEventChannel && ((lastAcquiredTime - heartBeatDeviceMap[deviceIDToSchedule]) > boost::chrono::seconds(60))){
+        deviceEventChannel->notifyHeartbeat(deviceIDToSchedule.c_str());
+        heartBeatDeviceMap[deviceIDToSchedule] = lastAcquiredTime;
+    }
 }
 
 #pragma mark protected API

@@ -20,7 +20,6 @@
 #include "HLInfrastructureApi.h"
 
 
-using namespace std;
 using namespace chaos::ui;
 
 /*

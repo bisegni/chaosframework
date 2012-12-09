@@ -38,8 +38,25 @@ namespace chaos {
         const short multicast_port = 30001;
         class AsioEventHandler;
         
+        //! Asio impleentation for the !CHOAS event server
+        /*!
+         
+         */
         REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(AsioImplEventServer, EventServer) {
             friend class AsioEventHandler;
+            
+            //! alert socket
+            AsioEventHandler *alertHandler;
+            
+            //! istrument socket
+            AsioEventHandler *instrumentHandler;
+            
+            //! command socket
+            AsioEventHandler *commandHandler;
+            
+            //! custom socket
+            AsioEventHandler *customHandler;
+            
         protected:
             /*
              init the event adapter
@@ -52,6 +69,11 @@ namespace chaos {
             void start() throw(CException);
             
             /*
+             register or deregister for a kynd of event
+             */
+            virtual void listeForEventType(event::EventType type,  bool listen) throw(CException);
+            
+            /*
              deinit the event adapter
              */
             void deinit() throw(CException);
@@ -62,7 +84,6 @@ namespace chaos {
             
         private:
             boost::asio::io_service io_service;
-            vector< shared_ptr<AsioEventHandler> > handlerVec;
             vector< shared_ptr<boost::thread> > serviceThread;
             uint8_t threadNumber;
             

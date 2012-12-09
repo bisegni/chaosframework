@@ -124,7 +124,7 @@ void DeviceController::getAttributeDescription(string& attributesName, string& a
  Get all attribute name
  */
 void DeviceController::getDeviceDatasetAttributesName(vector<string>& attributesName, DataType::DataSetAttributeIOAttribute directionType) {
-     datasetDB.getDeviceDatasetAttributesName(deviceID, attributesName, directionType);
+     datasetDB.getDeviceDatasetAttributesName(deviceID, directionType, attributesName);
 }
 
 /*!

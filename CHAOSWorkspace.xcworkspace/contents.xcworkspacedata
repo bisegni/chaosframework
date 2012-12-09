@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:bootstrap.sh">
+   </FileRef>
+   <FileRef
       location = "group:README.txt">
    </FileRef>
    <FileRef
@@ -30,6 +33,6 @@
       location = "group:example/UIToolkitCMDLineCWrapperExample/UIToolkitCMDLineCWrapperExample.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:test/TestEventDescriptor/TestEventDescriptor.xcodeproj">
+      location = "group:example/UIToolkitCMDLineCWrapperExample/../../test/TestEventDescriptor/TestEventDescriptor.xcodeproj">
    </FileRef>
 </Workspace>

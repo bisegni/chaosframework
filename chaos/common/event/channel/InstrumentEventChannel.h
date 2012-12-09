@@ -1,5 +1,5 @@
 /*
- *	DeviceEventChannel.h
+ *	InstrumentEventChannel.h
  *	CHAOSFramework
  *	Created by Claudio Bisegni on 02/09/12.
  *
@@ -25,7 +25,7 @@
 #include <chaos/common/event/evt_desc/AlertEventDescriptor.h>
 namespace chaos {
     
-    class MessageBroker;
+    class NetworkBroker;
     
     namespace event {
         namespace channel {
@@ -34,13 +34,13 @@ namespace chaos {
             /*!
              This channel simplify the alert event forwarding and recivement
              */
-            class DeviceEventChannel : public EventChannel {
-                friend class chaos::MessageBroker;
+            class InstrumentEventChannel : public EventChannel {
+                friend class chaos::NetworkBroker;
             protected:
                 
-                DeviceEventChannel(MessageBroker *rootBroker);
+                InstrumentEventChannel(NetworkBroker *rootBroker);
                 
-                ~DeviceEventChannel();
+                ~InstrumentEventChannel();
                 
                 void handleEvent(const event::EventDescriptor * const event);
                 
@@ -53,8 +53,24 @@ namespace chaos {
                     //! Send an event for the scehdule update setting
                 /*!
                  Take care to construct and send an instrument event forn the schedule update
+                 \param insturmentID the identificatin Of the instrument
+                 \param newScheduleUpdateTime new run scehdule delay value
                  */
-                int notifyForScheduleUpdateWithNewValue(const char * deviceID, uint64_t newScheduleUpdateTime);
+                int notifyForScheduleUpdateWithNewValue(const char * insturmentID, uint64_t newScheduleUpdateTime);
+                
+                //! Send an event for the dataset attribute setting
+                /*!
+                 Notify that the setting of some input attribute of the dataset hase been done
+                 \param insturmentID the indetificaiton of instrument
+                 \param error gived settin the param
+                 */
+                int notifyForAttributeSetting(const char * insturmentID, uint16_t error);
+                
+                //! Send an event for the heartbeat
+                /*!
+                 \param insturmentID the indetificaiton of instrument
+                 */
+                int notifyHeartbeat(const char * insturmentID);
             };
             
         }

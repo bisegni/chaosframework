@@ -32,15 +32,37 @@ InstrumentEventDescriptor::InstrumentEventDescriptor():EventDescriptor(EventType
 }
 
     //---------
-void InstrumentEventDescriptor::setNewScheduleDelay(const char * const deviceID, uint64_t newValue) {
+void InstrumentEventDescriptor::setNewScheduleDelay(const char * const instrumentID, uint64_t newValue) {
         //2 byte
     setSubCode(EventInstrumentNewScheduleDelay);
         //2 byte
     setSubCodePriority(0);
         //set the dimension, 10 is the fixed size of all information for alert pack
-    EventDescriptor::setIdentificationAndValueWithType(deviceID, strlen(deviceID), EventDataInt64, &newValue);
+    EventDescriptor::setIdentificationAndValueWithType(instrumentID, strlen(instrumentID), EventDataInt64, &newValue);
 }
 
+
+
+void InstrumentEventDescriptor::setDatasetInputAttributeChanged(const char * const instrumentID, uint16_t errorCode) {
+    //2 byte
+    setSubCode(EventInstrumentInputDatasetAttributeChanged);
+    //2 byte
+    setSubCodePriority(0);
+    //set the dimension, 10 is the fixed size of all information for alert pack
+    EventDescriptor::setIdentificationAndValueWithType(instrumentID, strlen(instrumentID), EventDataInt16, &errorCode);
+  
+}
+
+//! Define the event for the heartbeat of the instrument
+void InstrumentEventDescriptor::setEartbeat(const char * const instrumentID) {
+    uint8_t state = 0;
+    //2 byte
+    setSubCode(EventInstrumentHeartbeat);
+    //2 byte
+    setSubCodePriority(0);
+    //set the dimension, 10 is the fixed size of all information for alert pack
+    EventDescriptor::setIdentificationAndValueWithType(instrumentID, strlen(instrumentID), EventDataInt8, &state);
+}
 
 void InstrumentEventDescriptor::setInstrument(const char * const indetifier, uint8_t identifierLength, uint16_t alertCode, uint16_t priority, EventDataType valueType, const void *valuePtr, uint16_t valueSize)  throw (CException) {
     if(alertCode <= EventAlertLastCodeNumber) throw CException(0, "Invalid custom sub code for the event", "InstrumentEventDescriptor::setInstrument");

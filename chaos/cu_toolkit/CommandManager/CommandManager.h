@@ -35,12 +35,18 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/general/Configurable.h>
-#include <chaos/common/message/MessageBroker.h>
+#include <chaos/common/network/NetworkBroker.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManagerDefaultAdapters.h>
 
 namespace chaos{
     using namespace std;
     using namespace boost;
+    
+    namespace event {
+        namespace channel {
+            class InstrumentEventChannel;
+        }
+    }
     
     /*
      * CommandManager
@@ -55,7 +61,7 @@ namespace chaos{
         
         string metadataServerAddress;
         bool canUseMetadataServer;
-        MessageBroker *broker;
+        NetworkBroker *broker;
 
     public:
         /*
@@ -87,6 +93,16 @@ namespace chaos{
          Get MEtadataserver channel
          */
         MDSMessageChannel *getMetadataserverChannel();
+        
+        /*
+         Get Device event channel
+         */
+        event::channel::InstrumentEventChannel *getDeviceEventChannel();
+        
+        /*!
+         Delete an event channel allocated with command manager
+         */
+        void deleteEventChannel(event::channel::EventChannel *eventChannel);
         
         /*
          Register actions defined by AbstractActionDescriptor instance contained in the array

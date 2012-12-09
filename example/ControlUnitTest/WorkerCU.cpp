@@ -25,6 +25,9 @@
 #include <chaos/common/bson/bson.h>
 #include <chaos/common/bson/util/hex.h>
 #include <chaos/common/action/ActionDescriptor.h>
+#include <chaos/cu_toolkit/ControlManager/handler/DSInt32Handler.h>
+#include <chaos/cu_toolkit/ControlManager/handler/DSDoubleHandler.h>
+
 #include <cmath>
 #include <stdio.h>
 #include <iostream>
@@ -113,41 +116,42 @@ void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
                           DataType::TYPE_BYTEARRAY, 
                           DataType::Output);
     
-    addAttributeToDataSet(devIDInChar,
-                          "points",
-                          "The number of point that compose the wave",
-                          DataType::TYPE_INT32, 
-                          DataType::Input);
+    addInputInt32AttributeToDataSet<WorkerCU>(devIDInChar,
+                                              "points",
+                                              "The number of point that compose the wave",
+                                              this,
+                                              &WorkerCU::setWavePoint);
+
+    addInputDoubleAttributeToDataSet<WorkerCU>(devIDInChar,
+                                               "frequency",
+                                               "The frequency of the wave [1-10Mhz]",
+                                               this,
+                                               &WorkerCU::setDoubleValue);
+
+    addInputDoubleAttributeToDataSet<WorkerCU>(devIDInChar,
+                                               "bias",
+                                               "The bias of the wave",
+                                               this,
+                                               &WorkerCU::setDoubleValue);
+
     
-    addAttributeToDataSet(devIDInChar,
-                          "frequency",
-                          "The frequency of the wave [1-10Mhz]",
-                          DataType::TYPE_DOUBLE, 
-                          DataType::Input);
-    addAttributeToDataSet(devIDInChar,
-                          "bias",
-                          "The bias of the wave",
-                          DataType::TYPE_DOUBLE, 
-                          DataType::Input);
-    
-    addAttributeToDataSet(devIDInChar,
-                          "gain",
-                          "The gain of the wave",
-                          DataType::TYPE_DOUBLE, 
-                          DataType::Input);
-    
-    addAttributeToDataSet(devIDInChar,
-                          "phase",
-                          "The phase of the wave",
-                          DataType::TYPE_DOUBLE, 
-                          DataType::Input);
-    
-    addAttributeToDataSet(devIDInChar,
-                          "gain_noise",
-                          "The gain of the noise of the wave",
-                          DataType::TYPE_DOUBLE, 
-                          DataType::Input);
-    
+    addInputDoubleAttributeToDataSet<WorkerCU>(devIDInChar,
+                                               "gain",
+                                               "The gain of the wave",
+                                               this,
+                                               &WorkerCU::setDoubleValue);
+
+    addInputDoubleAttributeToDataSet<WorkerCU>(devIDInChar,
+                                               "phase",
+                                               "The phase of the wave",
+                                               this,
+                                               &WorkerCU::setDoubleValue);
+
+    addInputDoubleAttributeToDataSet<WorkerCU>(devIDInChar,
+                                               "gain_noise",
+                                               "The gain of the noise of the wave",
+                                               this,
+                                               &WorkerCU::setDoubleValue);
 }
 
 /*
@@ -163,7 +167,7 @@ void WorkerCU::init(CDataWrapper *newConfiguration) throw(CException) {
     PI = acos((long double) -1);
     messageID = 0;
     sinevalue = NULL;
-    setWavePoint(30);
+    setWavePoint("points", 30);
     freq = 1.0;
     gain = 5.0;
     phase = 0.0;
@@ -220,18 +224,20 @@ void WorkerCU::deinit(const string& deviceID) throw(CException) {
     }
 }
 
-void WorkerCU::setWavePoint(int32_t newNumberOfPoints) {
+/*
+ */
+void WorkerCU::setWavePoint(const std::string& deviceID, const int32_t& newNumberOfPoints) {
     boost::mutex::scoped_lock lock(pointChangeMutex);
-
-    if(newNumberOfPoints < 1) newNumberOfPoints = 0;
+    int32_t tmpNOP = newNumberOfPoints;
+    if(tmpNOP < 1) tmpNOP = 0;
     
-    if(!newNumberOfPoints){
+    if(!tmpNOP){
         if(sinevalue){
             free(sinevalue);
             sinevalue = NULL;  
         }
     }else{
-        size_t byteSize = sizeof(double) * newNumberOfPoints;
+        size_t byteSize = sizeof(double) * tmpNOP;
         double* tmpPtr = (double*)realloc(sinevalue, byteSize);
         if(tmpPtr) {
             sinevalue = tmpPtr;
@@ -239,55 +245,27 @@ void WorkerCU::setWavePoint(int32_t newNumberOfPoints) {
         }else{
                 //memory can't be enlarged so pointer ramin the same
                 //so all remain unchanged
-            newNumberOfPoints = points;
+            tmpNOP = points;
         }
     }
-    points = newNumberOfPoints;
+    points = tmpNOP;
 }
 
 /*
- Receive the evento for set the dataset input element
  */
-CDataWrapper* WorkerCU::setDatasetAttribute(CDataWrapper *datasetAttrbiuteValue, bool& detachParam) throw (CException) {
-    if(!datasetAttrbiuteValue 
-       || !datasetAttrbiuteValue->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) return NULL;
-    
-    string id = datasetAttrbiuteValue->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
-    
-    if(datasetAttrbiuteValue->hasKey("points")){
-        setWavePoint(datasetAttrbiuteValue->getInt32Value("points"));
+void WorkerCU::setDoubleValue(const std::string& deviceID, const double& dValue) {
+    LAPP_ <<  "setDoubleValue for " << deviceID << " = " << dValue;
+    if(!deviceID.compare("frequency")){
+        freq = dValue;
+    } else if(!deviceID.compare("gain")){
+        gain = dValue;
+    } else if(!deviceID.compare("phase")){
+        phase = dValue;
+    } else if(!deviceID.compare("bias")){
+        bias = dValue;
+    } else if(!deviceID.compare("gain_noise")){
+        gainNoise = dValue;
     }
-    
-    if(datasetAttrbiuteValue->hasKey("freq")){
-        freq = datasetAttrbiuteValue->getDoubleValue("freq");
-    }
-    
-    if(datasetAttrbiuteValue->hasKey("gain")){
-        gain = datasetAttrbiuteValue->getDoubleValue("gain");
-    }
-    
-    if(datasetAttrbiuteValue->hasKey("phase")){
-        phase = datasetAttrbiuteValue->getDoubleValue("phase");
-    }
-    
-    if(datasetAttrbiuteValue->hasKey("bias")){
-        bias = datasetAttrbiuteValue->getDoubleValue("bias");
-    }
-    if(datasetAttrbiuteValue->hasKey("gain_noise")){
-        gainNoise = datasetAttrbiuteValue->getDoubleValue("gain_noise");
-    }
-    
-    
-    return NULL;
-}
-
-/*
- Event for update some CU configuration
- */
-CDataWrapper* WorkerCU::updateConfiguration(CDataWrapper *newConfiguration, bool& detachParam) throw (CException) {
-    LAPP_ << "updateConfiguration  WorkerCU";
-    AbstractControlUnit::updateConfiguration(newConfiguration, detachParam);
-    return NULL;
 }
 
 /*

@@ -26,12 +26,10 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/data/CDataWrapper.h>
-    //#include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/utility/ISDInterface.h>
 #include <chaos/common/rpc/RpcMessageForwarder.h>
-
 namespace chaos {
     /*!
      Define the information for send a message to some server
@@ -43,14 +41,14 @@ namespace chaos {
         CDataWrapper *message;
     } MessageForwardingInfo;
     
-    class MessageBroker;
+    class NetworkBroker;
     
     /*!
      Abstract class for standard adapter method for permit, to CommandManager
      the correct initialization for the adapter instance
      */
     class RpcClient: public RpcMessageForwarder, chaos::utility::ISDInterface {
-        friend class MessageBroker;
+        friend class NetworkBroker;
         string *typeName;
     protected:
         
@@ -69,6 +67,15 @@ namespace chaos {
          */
         virtual void deinit() throw(CException) = 0;
         
+        /*!
+         manage the call for the handler when nd error occours
+         */
+        inline void callErrorHandler(NetworkForwardInfo *fInfo, ErrorCode::ErrorCode eCode);
+        
+        /*!
+         manage the call for the handler when the operation has ended
+         */
+        inline void callEndOpHandler(NetworkForwardInfo *fInfo);
     public:
         /*!
          Constructor di default per i

@@ -20,7 +20,7 @@
 
 #ifndef __CHAOSFramework__AsioEventForwarder__
 #define __CHAOSFramework__AsioEventForwarder__
-
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <iostream>
 #include <string>
@@ -57,6 +57,8 @@ namespace chaos {
             AsioEventForwarder(const boost::asio::ip::address& multicast_address,
                                unsigned short mPort,
                                boost::asio::io_service& io_service);
+            
+            virtual ~AsioEventForwarder();
             
                 //! submit the event
             bool submitEventAsync(EventDescriptor *event);

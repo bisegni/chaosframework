@@ -42,6 +42,11 @@ void DefaultEventDispatcher::init(CDataWrapper* initData) throw(CException) {
     alertEventScheduler = new EventTypeScheduler();
     if(!alertEventScheduler) throw CException(0, "Error allocating Alert Event Scheduler", "DefaultEventDispatcher::init");
     alertEventScheduler->init();
+    
+    
+    instrumentEventScheduler = new EventTypeScheduler();
+    if(!instrumentEventScheduler) throw CException(0, "Error allocating Instrument Event Scheduler", "DefaultEventDispatcher::init");
+    instrumentEventScheduler->init();
 }
 
 void DefaultEventDispatcher::start() throw(CException) {
@@ -58,6 +63,12 @@ void DefaultEventDispatcher::deinit() throw(CException) {
         alertEventScheduler->deinit();
         delete(alertEventScheduler);
     }
+    
+    if(instrumentEventScheduler) {
+        instrumentEventScheduler->deinit();
+        delete(instrumentEventScheduler);
+    }
+
 }
 
     //! Event handler registration
@@ -65,6 +76,8 @@ void DefaultEventDispatcher::deinit() throw(CException) {
  Perform the registration of an handler
  */
 void DefaultEventDispatcher::registerEventAction(EventAction *eventAction, EventType eventType, const char * const idntification)  throw(CException) {
+    boost::shared_lock<boost::shared_mutex> lock(handlerVEctorMutext);
+    
     EVTDISPAPP_ << "registerEventActionForEventType";
     if(!eventAction) throw new CException(0, "The action pointer is null", "DefaultEventDispatcher::registerEventActionForEventType");
     
@@ -73,6 +86,9 @@ void DefaultEventDispatcher::registerEventAction(EventAction *eventAction, Event
             alertEventScheduler->installEventAction(eventAction);
             break;
             
+        case event::EventTypeInstrument:
+            instrumentEventScheduler->installEventAction(eventAction);
+            break;
         default:
             break;
     }
@@ -85,7 +101,9 @@ void DefaultEventDispatcher::registerEventAction(EventAction *eventAction, Event
 void DefaultEventDispatcher::deregisterEventAction(EventAction *eventAction)  throw(CException) {
     EVTDISPAPP_ << "deregisterEventAction";
         //try to remove from all scheduler, becaus eone action can be mapped to all event type
-    alertEventScheduler->removeEventAction(eventAction);
+    if(alertEventScheduler) alertEventScheduler->removeEventAction(eventAction);
+    
+    if(instrumentEventScheduler) instrumentEventScheduler->installEventAction(eventAction);
 }
 
 /*!
@@ -93,6 +111,7 @@ void DefaultEventDispatcher::deregisterEventAction(EventAction *eventAction)  th
  by dispatcher
  */
 void DefaultEventDispatcher::executeAlertHandler(alert::AlertEventDescriptor *eventDescription)  throw(CException) {
+    EVTDISPAPP_ << "Received and alert event";
     alertEventScheduler->push(eventDescription);
 }
 
@@ -102,7 +121,8 @@ void DefaultEventDispatcher::executeAlertHandler(alert::AlertEventDescriptor *ev
  by dispatcher
  */
 void DefaultEventDispatcher::executeInstrumentHandler(instrument::InstrumentEventDescriptor *eventDescription)  throw(CException) {
-     EVTDISPAPP_ << "executeInstrumentHandler";
+     EVTDISPAPP_ << "Received an instrument event";
+    alertEventScheduler->push(eventDescription);
 }
 
     //!Handler execution method

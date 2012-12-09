@@ -21,10 +21,11 @@
 #include <msgpack/rpc/transport/udp.h>
 #include <typeinfo>
 
-#include "../global.h"
-#include "MsgPackServer.h"
-#include "../cconstants.h"
-#include "../exception/CException.h"
+#include <chaos/common/global.h>
+#include <chaos/common/rpc/msgpack/MsgPackServer.h>
+#include <chaos/common/cconstants.h>
+#include <chaos/common/exception/CException.h>
+
 using namespace chaos;
 
 #define DEFAULT_MSGPACK_DISPATCHER_PORT             8888

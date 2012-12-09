@@ -26,7 +26,7 @@ using namespace chaos::event;
 using namespace chaos::event::channel;
 
     //-----------------------------------------------------
-AlertEventChannel::AlertEventChannel(MessageBroker *rootBroker):EventChannel(rootBroker) {
+AlertEventChannel::AlertEventChannel(NetworkBroker *rootBroker):EventChannel(rootBroker) {
     
 }
 

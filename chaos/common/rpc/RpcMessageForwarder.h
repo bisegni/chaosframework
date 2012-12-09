@@ -24,39 +24,23 @@
 #include <string>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/cconstants.h>
-#include <chaos/common/rpcnet/CNodeNetworkAddress.h>
+#include <chaos/common/network/NetworkForwardInfo.h>
 
 namespace chaos {
-     
-    struct RpcMessageForwardInfo;
-    
+
     /*!
      Abstract class that indetify the implementation as an rpc message forwarder
      */
     class RpcMessageForwarder {
-        typedef void (rpcForwarderHandler)(ErrorCode::ErrorCode forwardingError, uint32_t messageTag);
-
+        
     public:
         /*!
          Submit a pack, all the inromation for forwarding it are already into CDataWrapper
          \param MessageNetworkDestination the information for the message forward to network node
          \param onThisThread if true the message is forwarded in the same thread of the caller
          */
-            //virtual bool submitRpcPack(RPCMessageForwardInfo&, bool onThisThread=false) throw(CException) = 0;
-        virtual bool submitMessage(string& destinationIpAndPort, CDataWrapper *message, bool onThisThread=false)=0;
+        virtual bool submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread=false)=0;
     };
-    
-    /*!
-     Structure used to contain information for
-     message forward
-     */
-    struct  RpcMessageForwardInfo{
-            //!Define the information ip:port and node to reach a remote chaos node
-        CNodeNetworkAddress nodeNetworkInfo;
-            //! the message data
-        CDataWrapper *rpcMessage;
-    } ;
-
 }
 
 #endif

@@ -21,7 +21,7 @@
 #define ChaosFramework_CommandManagerModule_h
 
     //we need it to register at startup all the default Command Manager module
-#include "chaos/common/rpc/MsgPackServer.h"
-#include "chaos/common/rpc/MsgPackClient.h"
+#include "chaos/common/rpc/RpcServer.h"
+#include "chaos/common/rpc/RpcClient.h"
 #include "chaos/common/dispatcher/DefaultCommandDispatcher.h"
 #endif
