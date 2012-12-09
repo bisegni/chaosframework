@@ -88,7 +88,6 @@ void DeviceController::updateChannel() throw(CException) {
     
     err = mdsChannel->getNetworkAddressForDevice(deviceID, &devAddress, millisecToWait);
     if(err!=ErrorCode::EC_NO_ERROR || !devAddress) throw CException(-3, "No Address found for device", "DeviceController::init");
-    deviceAddress.reset(devAddress);
     
         //update live data driver
     ioLiveDataDriver = new IOMemcachedDriver();
@@ -97,12 +96,12 @@ void DeviceController::updateChannel() throw(CException) {
         ioLiveDataDriver->updateConfiguration(lastDeviceDefinition.get());
     }
 
-        //allocate device channel
+        //allocate device channel the memory of the CDeviceNetworkAddress * is managed by channel
     if(!deviceChannel){
-        deviceChannel = LLRpcApi::getInstance()->getNewDeviceMessageChannel(deviceAddress.get());
+        deviceChannel = LLRpcApi::getInstance()->getNewDeviceMessageChannel(devAddress);
         if(!deviceChannel) throw CException(-4, "Invalid device channel created", "DeviceController::init");
     }else{
-        deviceChannel->setNewAddress(deviceAddress.get());  
+        deviceChannel->setNewAddress(devAddress);  
     }
 }
 
@@ -379,7 +378,7 @@ void DeviceController::addAttributeToTrack(string& attrbiuteName) {
 /*!
  the returned object is not own by requester but only by DeviceController isntance
  */
-CDataWrapper* DeviceController::getLiveCDataWrapperPtr() {
+const CDataWrapper * DeviceController::getLiveCDataWrapperPtr() {
     return currentLiveValue.get();
 }
 

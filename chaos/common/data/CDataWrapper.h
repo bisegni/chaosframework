@@ -96,7 +96,7 @@ namespace chaos {
         void addCSDataValue(const char *, CDataWrapper&);
         
             //get a csdata value
-        CDataWrapper *getCSDataValue(const char *);
+        CDataWrapper *getCSDataValue(const char *)const;
         
             //add a string value
         void addStringValue(const char *, const char *);
@@ -117,10 +117,10 @@ namespace chaos {
         void finalizeArrayForKey(const char *);
         
             //get a string value
-        string  getStringValue(const char *);
+        string  getStringValue(const char *)const;
         
             //return a vectorvalue for a key
-        CMultiTypeDataArrayWrapper* getVectorValue(const char *);
+        CMultiTypeDataArrayWrapper* getVectorValue(const char *)const;
         
             //add a integer value
         void addInt32Value(const char *, int32_t);
@@ -132,25 +132,25 @@ namespace chaos {
         void addInt64Value(const char *, int64_t);
         
             //add a integer value
-        int32_t getInt32Value(const char *key);
+        int32_t getInt32Value(const char *key)const;
         
             //add a integer value
-        int64_t getInt64Value(const char *key);
+        int64_t getInt64Value(const char *key)const;
         
             //add a integer value
-        double_t getDoubleValue(const char *key);
+        double_t getDoubleValue(const char *key)const;
         
             //add a bool value
         void addBoolValue(const char *, bool);
         
             //get a bool value
-        bool getBoolValue(const char *);
+        bool getBoolValue(const char *) const;
         
             //set a binary data value
         void addBinaryValue(const char *, const char *, int);
         
             //return the binary data value
-        const char* getBinaryValue(const char *, int&);
+        const char* getBinaryValue(const char *, int&)const;
         
             //return the bson data
         SerializationBuffer* getBSONData();
@@ -165,7 +165,7 @@ namespace chaos {
         void setSerializedData(const char* bsonData, bool bson=true, bool owned = false);
         
             //check if the key is present in data wrapper
-        bool hasKey(const char*);
+        bool hasKey(const char*) const;
         
             //reset the datawrapper
         void reset();

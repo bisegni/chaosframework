@@ -81,15 +81,15 @@ int main (int argc, char* argv[] )
     try {
         int err = 0;
         int iteration = 10;
-        long sleep = 1000000;
+        unsigned int sleep = 1000000;
         istringstream optionStream;
-        string devID("test_2");
+        string devID("device_a");
         vector<string> allDevice;
         posix_time::time_duration currentTime;
         
         //! [UIToolkit Attribute Init]
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_ITERATION, po::value<int>()->default_value(10), "Set the number of acquiring iteration");
-        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SLEEP_TIME, po::value<long>()->default_value(1000000), "Set the number of microsecond between an acquisition and th eother");
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SLEEP_TIME, po::value<unsigned int>()->default_value(1000000), "Set the number of microsecond between an acquisition and th eother");
         //! [UIToolkit Attribute Init]
         
         //! [UIToolkit Init]
@@ -103,7 +103,7 @@ int main (int argc, char* argv[] )
         }
         
         if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SLEEP_TIME)){
-            sleep = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<long>(OPT_SLEEP_TIME);
+            sleep = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_SLEEP_TIME);
         }
         
         //! [UIToolkit ChannelCreation]
@@ -158,41 +158,14 @@ int main (int argc, char* argv[] )
         //---------------------------------------------------------------------------------------------------------
         //this step is to use internal UIToolkit buffer logic
         controller->setupTracking();
-        string key = "sinOutput";
-        string key2 = "sinWave";
+        string key = "sinWave";
         controller->addAttributeToTrack(key);
-        controller->addAttributeToTrack(key2);
         
-        DataBuffer *intValue1Buff = controller->getBufferForAttribute(key);
         DataBuffer *tsBuffer = controller->getPtrBufferForTimestamp();
-        PointerBuffer *binaryValueBuff = controller->getPtrBufferForAttribute(key2);
+        PointerBuffer *binaryValueBuff = controller->getPtrBufferForAttribute(key);
         
         for (int idx = 0; idx < iteration; idx++) {
             controller->fetchCurrentDeviceValue();
-            
-            if(intValue1Buff){
-                int64_t hisotryToRead = intValue1Buff?intValue1Buff->getDimension()-intValue1Buff->getWriteBufferPosition():0;
-                int64_t recentToRead = intValue1Buff?intValue1Buff->getWriteBufferPosition():0;
-                std::cout << "History to read:" << hisotryToRead << std::endl;
-                std::cout << "Recent to read:" << recentToRead << std::endl;
-                
-                double *bPtr = static_cast<double*>(intValue1Buff->getBasePointer());
-                double *wPtr = static_cast<double*>(intValue1Buff->getWritePointer());
-                
-                std::cout << intValue1Buff->getWriteBufferPosition()<< std::endl;
-                
-                
-                for (int idx = 0; idx < hisotryToRead-1; idx++) {
-                    double *newbPtr=wPtr + idx;
-                    std::cout << *newbPtr;
-                }
-                if(bPtr != wPtr){
-                    for (int idx = 0; idx < recentToRead; idx++) {
-                        double *newbPtr=bPtr + idx;
-                        std::cout << *newbPtr;
-                    }
-                }
-            }
             
             if(tsBuffer){
                 int64_t *bPtr = static_cast<int64_t*>(tsBuffer->getBasePointer());

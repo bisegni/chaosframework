@@ -57,6 +57,10 @@ namespace chaos {
                 //if(nodeAddress) delete nodeAddress;
         }
         
+        /*!
+         Set a new addres for the channel
+         \param _nodeAddress the pointer to a strcture of type CNodeNetworkAddress. The mermory is managed internally by the channel
+         */
         void setNewAddress(CNodeNetworkAddress *_nodeAddress) {
             nodeAddress.reset(_nodeAddress);
             if(_nodeAddress)setRemoteNodeAddress(nodeAddress->ipPort);
