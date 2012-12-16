@@ -144,7 +144,20 @@ if [ ! -d "$PREFIX/include/libmemcached" ]; then
     make install
 fi
 
-cd
+if [ ! -d "$BASE_EXTERNAL/zeromq3-x" ]; then
+echo "Download zmq source"
+git clonegit clone https://github.com/zeromq/zeromq3-x.git $BASE_EXTERNAL/zeromq3-x
+else
+echo "Update zmq source"
+cd $BASE_EXTERNAL/zeromq3-x
+git pull
+fi
+cd $BASE_EXTERNAL/zeromq3-x
+./autogen.sh
+./configure --prefix=$PREFIX
+make
+make install
+
 echo "Compile !CHOAS"
 cd $CHAOS_DIR
 cmake -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX .
