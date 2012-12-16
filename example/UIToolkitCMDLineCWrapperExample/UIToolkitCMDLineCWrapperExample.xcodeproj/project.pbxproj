@@ -188,6 +188,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug\"",
+					/usr/local/lib,
 					"$(SRCROOT)/usr/local/lib",
 				);
 				PRODUCT_NAME = UIToolkitCMDLineCWrapperExample;
@@ -205,6 +206,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug\"",
+					/usr/local/lib,
 					"$(SRCROOT)/usr/local/lib",
 				);
 				PRODUCT_NAME = UIToolkitCMDLineCWrapperExample;

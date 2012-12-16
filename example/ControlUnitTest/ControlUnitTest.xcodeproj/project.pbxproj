@@ -157,14 +157,14 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					../../,
-					usr/local/include,
+					../../usr/local/include,
 					/usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug\"",
-					"$(SRCROOT)/usr/local/lib",
 					/usr/local/lib,
+					"\"$(SRCROOT)/../../usr/local/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
@@ -203,14 +203,14 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					../../,
-					usr/local/include,
+					../../usr/local/include,
 					/usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug\"",
-					"$(SRCROOT)/usr/local/lib",
 					/usr/local/lib,
+					"\"$(SRCROOT)/../../usr/local/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
