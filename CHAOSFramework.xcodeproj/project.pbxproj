@@ -194,6 +194,8 @@
 		3297F22614D96F31004FFE4F /* DeviceMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3297F22514D96F31004FFE4F /* DeviceMessageChannel.cpp */; };
 		3297F22914D96F43004FFE4F /* DeviceMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3297F22814D96F43004FFE4F /* DeviceMessageChannel.h */; };
 		3297F22B14D96F8D004FFE4F /* NetworkAddressMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3297F22A14D96F8D004FFE4F /* NetworkAddressMessageChannel.h */; };
+		32A51AFE167F95B30007E25A /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A51AFC167F95B30007E25A /* sqlite3.c */; };
+		32A51AFF167F95B30007E25A /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A51AFD167F95B30007E25A /* sqlite3.h */; };
 		32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */; };
 		32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */; };
 		32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */; };
@@ -207,6 +209,8 @@
 		32B89CA215F3D1E100B17AAA /* InstrumentEventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B89CA015F3D1E100B17AAA /* InstrumentEventChannel.h */; };
 		32BE864715A0CEAF00818C39 /* LogManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BE864515A0CEAF00818C39 /* LogManager.cpp */; };
 		32BE864815A0CEAF00818C39 /* LogManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32BE864615A0CEAF00818C39 /* LogManager.h */; };
+		32BF74AD167CEB57007F8A57 /* EntityDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BF74AB167CEB57007F8A57 /* EntityDB.cpp */; };
+		32BF74AE167CEB57007F8A57 /* EntityDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 32BF74AC167CEB57007F8A57 /* EntityDB.h */; };
 		32CFF95B15E4D950005D607E /* EventDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95915E4D950005D607E /* EventDescriptor.cpp */; };
 		32CFF95C15E4D950005D607E /* EventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFF95A15E4D950005D607E /* EventDescriptor.h */; };
 		32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95D15E4DBD3005D607E /* EventFactory.cpp */; };
@@ -461,6 +465,8 @@
 		3297F22514D96F31004FFE4F /* DeviceMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceMessageChannel.cpp; sourceTree = "<group>"; };
 		3297F22814D96F43004FFE4F /* DeviceMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceMessageChannel.h; sourceTree = "<group>"; };
 		3297F22A14D96F8D004FFE4F /* NetworkAddressMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkAddressMessageChannel.h; sourceTree = "<group>"; };
+		32A51AFC167F95B30007E25A /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sqlite3.c; sourceTree = "<group>"; };
+		32A51AFD167F95B30007E25A /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
 		32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaitSemaphore.h; sourceTree = "<group>"; };
 		32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDSMessageChannel.h; sourceTree = "<group>"; };
 		32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSMessageChannel.cpp; sourceTree = "<group>"; };
@@ -474,6 +480,8 @@
 		32B89CA015F3D1E100B17AAA /* InstrumentEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InstrumentEventChannel.h; sourceTree = "<group>"; };
 		32BE864515A0CEAF00818C39 /* LogManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogManager.cpp; sourceTree = "<group>"; };
 		32BE864615A0CEAF00818C39 /* LogManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogManager.h; sourceTree = "<group>"; };
+		32BF74AB167CEB57007F8A57 /* EntityDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityDB.cpp; sourceTree = "<group>"; };
+		32BF74AC167CEB57007F8A57 /* EntityDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityDB.h; sourceTree = "<group>"; };
 		32CFF95915E4D950005D607E /* EventDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventDescriptor.cpp; sourceTree = "<group>"; };
 		32CFF95A15E4D950005D607E /* EventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDescriptor.h; sourceTree = "<group>"; };
 		32CFF95D15E4DBD3005D607E /* EventFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventFactory.cpp; sourceTree = "<group>"; };
@@ -543,6 +551,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		320642CE167CEA8A00D63D71 /* entity_db */ = {
+			isa = PBXGroup;
+			children = (
+				32BF74AA167CEB29007F8A57 /* sqlite_impl */,
+				32BF74AB167CEB57007F8A57 /* EntityDB.cpp */,
+				32BF74AC167CEB57007F8A57 /* EntityDB.h */,
+			);
+			path = entity_db;
+			sourceTree = "<group>";
+		};
 		320C2180151B2BF200BD0F41 /* event */ = {
 			isa = PBXGroup;
 			children = (
@@ -773,6 +791,7 @@
 		326DB3E614B38BC00018A8D0 /* data */ = {
 			isa = PBXGroup;
 			children = (
+				320642CE167CEA8A00D63D71 /* entity_db */,
 				326DB3E714B38BC00018A8D0 /* CDataWrapper.cpp */,
 				326DB3E814B38BC00018A8D0 /* CDataWrapper.h */,
 				326DB3E914B38BC00018A8D0 /* CUSchemaDB.cpp */,
@@ -1066,6 +1085,15 @@
 			path = log;
 			sourceTree = "<group>";
 		};
+		32BF74AA167CEB29007F8A57 /* sqlite_impl */ = {
+			isa = PBXGroup;
+			children = (
+				32A51AFC167F95B30007E25A /* sqlite3.c */,
+				32A51AFD167F95B30007E25A /* sqlite3.h */,
+			);
+			path = sqlite_impl;
+			sourceTree = "<group>";
+		};
 		32DF602B15E14B1900312C94 /* evt_desc */ = {
 			isa = PBXGroup;
 			children = (
@@ -1211,6 +1239,8 @@
 				322E157D161B62A900C3003C /* NetworkBroker.h in Headers */,
 				3230DA0A1652C41D00113C93 /* NetworkForwardInfo.h in Headers */,
 				3230DA0D1652C44B00113C93 /* RpcMessageForwarder.h in Headers */,
+				32BF74AE167CEB57007F8A57 /* EntityDB.h in Headers */,
+				32A51AFF167F95B30007E25A /* sqlite3.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1464,6 +1494,8 @@
 				3268CE35161608D100FCDB10 /* ZMQClient.cpp in Sources */,
 				3268CE37161608D100FCDB10 /* ZMQServer.cpp in Sources */,
 				322E157A161B629700C3003C /* NetworkBroker.cpp in Sources */,
+				32BF74AD167CEB57007F8A57 /* EntityDB.cpp in Sources */,
+				32A51AFE167F95B30007E25A /* sqlite3.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1676,14 +1708,14 @@
 		3260261214B300FE00C906CE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = DEV_WITH_ZMQ;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 			};
 			name = Debug;
 		};
 		3260261314B300FE00C906CE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = DEV_WITH_ZMQ;
+				GCC_PREPROCESSOR_DEFINITIONS = "";
 			};
 			name = Release;
 		};
@@ -1735,7 +1767,6 @@
 					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
-					"-lzmq",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -1783,7 +1814,6 @@
 					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
-					"-lzmq",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
