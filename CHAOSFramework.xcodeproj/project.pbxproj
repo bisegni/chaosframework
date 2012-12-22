@@ -184,6 +184,8 @@
 		327967D615E029C70003C6DA /* AsioImplEventServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 327967D415E029C70003C6DA /* AsioImplEventServer.h */; };
 		327967D915E030C40003C6DA /* AsioEventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967D715E030C30003C6DA /* AsioEventHandler.cpp */; };
 		327967DA15E030C40003C6DA /* AsioEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 327967D815E030C30003C6DA /* AsioEventHandler.h */; };
+		3289F9A5168508460080D93F /* SQLiteEntityDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */; };
+		3289F9A6168508460080D93F /* SQLiteEntityDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 3289F9A4168508460080D93F /* SQLiteEntityDB.h */; };
 		328D2FB71660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328D2FB51660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp */; };
 		328D2FB81660EACD007F482E /* DSAttributeHandlerExecutionEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 328D2FB61660EACD007F482E /* DSAttributeHandlerExecutionEngine.h */; };
 		328D2FB91660EAD6007F482E /* DSAttributeHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328D2FB01660E3EC007F482E /* DSAttributeHandler.cpp */; };
@@ -452,6 +454,8 @@
 		327967D715E030C30003C6DA /* AsioEventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsioEventHandler.cpp; sourceTree = "<group>"; };
 		327967D815E030C30003C6DA /* AsioEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsioEventHandler.h; sourceTree = "<group>"; };
 		327CB2D8167E44D700AED2C6 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteEntityDB.cpp; sourceTree = "<group>"; };
+		3289F9A4168508460080D93F /* SQLiteEntityDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteEntityDB.h; sourceTree = "<group>"; };
 		328D2FB01660E3EC007F482E /* DSAttributeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DSAttributeHandler.cpp; sourceTree = "<group>"; };
 		328D2FB11660E3EC007F482E /* DSAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSAttributeHandler.h; sourceTree = "<group>"; };
 		328D2FB51660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DSAttributeHandlerExecutionEngine.cpp; sourceTree = "<group>"; };
@@ -1090,6 +1094,8 @@
 			children = (
 				32A51AFC167F95B30007E25A /* sqlite3.c */,
 				32A51AFD167F95B30007E25A /* sqlite3.h */,
+				3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */,
+				3289F9A4168508460080D93F /* SQLiteEntityDB.h */,
 			);
 			path = sqlite_impl;
 			sourceTree = "<group>";
@@ -1241,6 +1247,7 @@
 				3230DA0D1652C44B00113C93 /* RpcMessageForwarder.h in Headers */,
 				32BF74AE167CEB57007F8A57 /* EntityDB.h in Headers */,
 				32A51AFF167F95B30007E25A /* sqlite3.h in Headers */,
+				3289F9A6168508460080D93F /* SQLiteEntityDB.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1496,6 +1503,7 @@
 				322E157A161B629700C3003C /* NetworkBroker.cpp in Sources */,
 				32BF74AD167CEB57007F8A57 /* EntityDB.cpp in Sources */,
 				32A51AFE167F95B30007E25A /* sqlite3.c in Sources */,
+				3289F9A5168508460080D93F /* SQLiteEntityDB.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

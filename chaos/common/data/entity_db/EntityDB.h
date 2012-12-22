@@ -23,6 +23,9 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <string>
+
+#include <chaos/common/exception/CException.h>
 
 namespace chaos {
     /*!
@@ -53,21 +56,14 @@ namespace chaos {
         
         
         class EntityDB {
-            
-            /*!
-             Initialize the db implementation
-             */
-            int32_t initDB(void);
-            
-            /*!
-             Initialize the db implementation
-             */
-            int32_t deinitDB(void);
-            
+            bool    _temporaryAllocation;
+            std::string  _name;
         public:
             
             /*!
              Default constructor
+             \param temporary if true instruct the driver to create a temporary database
+             that will be deleted when the object will be destroyed
              */
             EntityDB();
             
@@ -76,53 +72,67 @@ namespace chaos {
              */
             virtual ~EntityDB();
             
+            
             /*!
-             Register a new Key returning the associated ID.
+             Initialize the db implementation
+             */
+            virtual int16_t initDB(const char* name, bool temporary = true) throw (CException) {
+                _name.assign(name);
+                _temporaryAllocation = temporary;
+            }
+            
+            /*!
+             Initialize the db implementation
+             */
+            virtual int16_t deinitDB()  throw (CException) = 0;
+            
+            /*!
+             add a new Key returning the associated ID.
              \param newKey is the string associate to a key
              \param keyID is the new returned ID for the key
              */
-            virtual int32_t registerNewKey(const char *newKey, int32_t& keyID) = 0;
+            virtual int16_t addNewKey(const char *newKey, int32_t& keyID) = 0;
             
             /*!
-             Register a new entity with his key/value returning the associated ID.
+             add a new entity with his key/value returning the associated ID.
              \param entityKeyID the key id for the entity key
              \param entityKeyName the name associate to the key forthe new entity
              \param newEntityID is the new returned ID for the entity
              */
-            virtual int32_t registerNewEntity(int32_t entityKeyID, const char *entityKeyName, int32_t& newEntityID) = 0;
+            virtual int16_t addNewEntity(int32_t entityKeyID, const char *entityKeyName, int32_t& newEntityID) = 0;
             
             /*!
              Delete the entity and all associated property
              \param entityID is the id of the key to delete
              */
-            virtual int32_t deleteEntity(int32_t entityID) = 0;
+            virtual int16_t deleteEntity(int32_t entityID) = 0;
             
             /*!
-             Register a new number property for entity with his key/value returning the associated ID.
+             add a new number property for entity with his key/value returning the associated ID.
              \param entityID is the id that identify the entity where to attach the property
              \param propertyKeyID is the id of the key that we need to attach to the entity
              \param value is the value to attach to the property
              \param newEntityPropertyID is the new id for the entity/property 
              */
-            virtual int32_t registerNewPropertyForEntity(int32_t entityID, int32_t propertyKeyID, int64_t value, int32_t* newEntityPropertyID = NULL) = 0;
+            virtual int16_t addNewPropertyForEntity(int32_t entityID, int32_t propertyKeyID, int64_t value, int32_t& newEntityPropertyID) = 0;
 
             /*!
-             Register a new double property for entity with his key/value returning the associated ID.
+             add a new double property for entity with his key/value returning the associated ID.
              \param entityID is the id that identify the entity where to attach the property
              \param propertyKeyID is the id of the key that we need to attach to the entity
              \param value is the value to attach to the property
              \param newEntityPropertyID is the new id for the entity/property
              */
-            virtual int32_t registerNewPropertyForEntity(int32_t entityID, int32_t propertyKeyID, double value, int32_t* newEntityPropertyID = NULL) = 0;
+            virtual int16_t addNewPropertyForEntity(int32_t entityID, int32_t propertyKeyID, double value, int32_t& newEntityPropertyID) = 0;
             
             /*!
-             Register a new string property for entity with his key/value returning the associated ID.
+             add a new string property for entity with his key/value returning the associated ID.
              \param entityID is the id that identify the entity where to attach the property
              \param propertyKeyID is the id of the key that we need to attach to the entity
              \param value is the value to attach to the property
              \param newEntityPropertyID is the new id for the entity/property
              */
-            virtual int32_t registerNewPropertyForEntity(int32_t entityID, int32_t propertyKeyID, const char * value, int32_t* newEntityPropertyID = NULL) = 0;
+            virtual int16_t addNewPropertyForEntity(int32_t entityID, int32_t propertyKeyID, const char * value, int32_t& newEntityPropertyID) = 0;
             
             /*!
              update the integer value for a property of an entity 
@@ -130,30 +140,27 @@ namespace chaos {
              \param propertyID is the id of the property
              \param newValue is the new value
              */
-            virtual int32_t updatePropertyForEntity(int32_t entityID, int32_t propertyID, int64_t newValue) = 0;
+            virtual int16_t updatePropertyForEntity(int32_t propertyID, int64_t newValue) = 0;
             
             /*!
              update the double value for a property of an entity
-             \param entityID is the id that identify the entity where to attach the property
              \param propertyID is the id of the property
              \param newValue is the new value
              */
-            virtual int32_t updatePropertyForEntity(int32_t entityID, int32_t propertyID, double newValue) = 0;
+            virtual int16_t updatePropertyForEntity(int32_t propertyID, double newValue) = 0;
             
             /*!
              update the string value for a property of an entity
-             \param entityID is the id that identify the entity where to attach the property
              \param propertyID is the id of the property
              \param newValue is the new value
              */
-            virtual int32_t updatePropertyForEntity(int32_t entityID, int32_t propertyID, const char * newValue) = 0;
+            virtual int16_t updatePropertyForEntity(int32_t propertyID, const char * newValue) = 0;
             
             /*!
              Delete a property for a entity
-             \param entityID is the id that identify the entity where to attach the property
              \param propertyID is the id of the property
              */
-            virtual int32_t deleteEntityProperty(int32_t entityID, int32_t propertyID) = 0;
+            virtual int16_t deleteEntityProperty(int32_t propertyID) = 0;
             
 
             

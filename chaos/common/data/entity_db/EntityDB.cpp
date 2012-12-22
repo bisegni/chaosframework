@@ -25,12 +25,12 @@ using namespace chaos::edb;
  Default constructor
  */
 EntityDB::EntityDB() {
-    
+
 }
 
 /*!
  Default destructor
  */
 EntityDB::~EntityDB() {
-    
+
 }
