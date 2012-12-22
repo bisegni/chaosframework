@@ -34,12 +34,12 @@
  \section page_example_uiex1_sec A basic usage for the ChaosUIToolkit package
  
  \subsection page_example_uiex1_sec_sub1 Toolkit usage
- As in the CUToolkt, a developer can add a custom startup param
+ As in the CUToolkit, a developer can add a custom startup param
  \snippet example/UIToolkitCMDLineExample/UIToolkitCMDLineExample.cpp UIToolkit Init
  
  this example show how initialize the UIToolkit, acquire a basic channel, used it and deinit the toolkit.
  The UIToolkit is create around singleton pattern and the channel object are self managed by toolkit. So the first thing
- is to initializ the toolkit internal engine:
+ is to initialize the toolkit internal engine:
  
  \snippet example/UIToolkitCMDLineExample/UIToolkitCMDLineExample.cpp UIToolkit Init
  
@@ -69,6 +69,7 @@ using namespace boost::date_time;
 
 #define OPT_ITERATION "iteration"
 #define OPT_SLEEP_TIME "dac_sleep_time"
+#define OPT_DEVICE_ID "device_id"
 
 inline ptime utcToLocalPTime(ptime utcPTime){
 	c_local_adjustor<ptime> utcToLocalAdjustor;
@@ -90,13 +91,14 @@ int main (int argc, char* argv[] )
         //! [UIToolkit Attribute Init]
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_ITERATION, po::value<int>()->default_value(10), "Set the number of acquiring iteration");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SLEEP_TIME, po::value<unsigned int>()->default_value(1000000), "Set the number of microsecond between an acquisition and th eother");
+        
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_DEVICE_ID, po::value<string>()->default_value("device_a"), "Specify the device ID");
         //! [UIToolkit Attribute Init]
         
         //! [UIToolkit Init]
         ChaosUIToolkit::getInstance()->init(argc, argv);
-        //optionStream.str("metadata-server=testchaos:5000");
-        //ChaosUIToolkit::getInstance()->init(optionStream);
-        //! [UIToolkit Init]
+        
+        devID=ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<string>(OPT_DEVICE_ID);
         
         if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_ITERATION)){
             iteration = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<int>(OPT_ITERATION);
@@ -110,7 +112,6 @@ int main (int argc, char* argv[] )
         CDeviceNetworkAddress deviceNetworkAddress;
         CUStateKey::ControlUnitState deviceState;
         //! [Datapack sent]
-        
         DeviceController *controller = HLDataApi::getInstance()->getControllerForDeviceID(devID);
         if(!controller) {
              std::cout << "Error creating controller for:" << devID << std::endl;
