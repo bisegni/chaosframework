@@ -27,21 +27,7 @@ namespace chaos {
             boost::mutex nextSeqID;
             
             //autoncrement statement
-            sqlite3_stmt *seqIncrementStmt;
-            sqlite3_stmt *seqSelectStmt;
-            
-            sqlite3_stmt *keyCreationStmt;
-            sqlite3_stmt *keyIdSelectionStmt;
-            
-            sqlite3_stmt *entityCreationStmt;
-            sqlite3_stmt *entityDeleteStmt;
-            
-            sqlite3_stmt *propertyAddStrStmt;
-            sqlite3_stmt *propertyAddNumberStmt;
-            sqlite3_stmt *propertyAddDoubleStmt;
-            sqlite3_stmt *propertyUpdateStrStmt;
-            sqlite3_stmt *propertyUpdateNumberStmt;
-            sqlite3_stmt *propertyUpdateDoubleStmt;
+            sqlite3_stmt *stmt[19];
             
             
             inline int16_t openDatabase(const char *databasePath);
@@ -77,6 +63,55 @@ namespace chaos {
              \param newEntityID is the new returned ID for the entity
              */
             int16_t addNewEntity(int32_t entityKeyID, const char *keyValue, int32_t& newEntityID);
+            
+            /*!
+             add a new entity with his key/value returning the associated ID.
+             \param entityKeyID the key id for the entity key
+             \param entityKeyValue the name associate to the key forthe new entity
+             \param newEntityID is the new returned ID for the entity
+             */
+            int16_t addNewEntity(int32_t entityKeyID, int64_t *entityKeyValue, int32_t& newEntityID);
+            
+            /*!
+             search the entitys with key and value
+             \param entityKeyID the key id for the entity key
+             \param entityKeyValue the string associated to the entity in fulltext
+             \param resultEntityIDs the vector containing the retrived id
+             */
+            int16_t searchEntityByKeyAndValue(int32_t entityKeyID, const char * entityKeyValue, std::vector<int64_t> resultEntityIDs);
+            
+            /*!
+             search the entitys with key and value
+             \param entityKeyID the key id for the entity key
+             \param entityKeyValue the int associated to the entity in fulltext
+             \param resultEntityIDs the vector containing the retrived id
+             */
+            int16_t searchEntityByKeyAndValue(int32_t entityKeyID, int64_t entityKeyValue, std::vector<int64_t> resultEntityID);
+            
+            /*!
+             search the entitys using property key and value
+             \param entityKeyID the key id for the entity key
+             \param entityKeyValue the string associated to the entity in fulltext
+             \param resultEntityIDs the vector containing the retrived id
+             */
+            int16_t searchEntityByPropertyKeyAndValue(int32_t entityKeyID, const char * entityKeyValue, std::vector<int64_t> resultEntityIDs);
+            
+            /*!
+             search the entitys using property key and value
+             \param entityKeyID the key id for the entity key
+             \param entityKeyValue the int associated to the entity in fulltext
+             \param resultEntityIDs the vector containing the retrived id
+             */
+            int16_t searchEntityByPropertyKeyAndValue(int32_t entityKeyID, int64_t entityKeyValue, std::vector<int64_t> resultEntityID);
+            
+            /*!
+             search the entitys using property key and value
+             \param entityKeyID the key id for the entity key
+             \param entityKeyValue the int associated to the entity in fulltext
+             \param resultEntityIDs the vector containing the retrived id
+             */
+            int16_t searchEntityByPropertyKeyAndValue(int32_t entityKeyID, double entityKeyValue, std::vector<int64_t> resultEntityID);
+
             
             /*!
              Delete the entity and all associated property

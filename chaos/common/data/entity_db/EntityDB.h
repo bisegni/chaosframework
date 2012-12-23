@@ -24,7 +24,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <string>
-
+#include <vector>
 #include <chaos/common/exception/CException.h>
 
 namespace chaos {
@@ -79,6 +79,7 @@ namespace chaos {
             virtual int16_t initDB(const char* name, bool temporary = true) throw (CException) {
                 _name.assign(name);
                 _temporaryAllocation = temporary;
+                return 0;
             }
             
             /*!
@@ -96,10 +97,58 @@ namespace chaos {
             /*!
              add a new entity with his key/value returning the associated ID.
              \param entityKeyID the key id for the entity key
-             \param entityKeyName the name associate to the key forthe new entity
+             \param entityKeyValue the name associate to the key forthe new entity
              \param newEntityID is the new returned ID for the entity
              */
-            virtual int16_t addNewEntity(int32_t entityKeyID, const char *entityKeyName, int32_t& newEntityID) = 0;
+            virtual int16_t addNewEntity(int32_t entityKeyID, const char *entityKeyValue, int32_t& newEntityID) = 0;
+        
+            /*!
+             add a new entity with his key/value returning the associated ID.
+             \param entityKeyID the key id for the entity key
+             \param entityKeyValue the name associate to the key forthe new entity
+             \param newEntityID is the new returned ID for the entity
+             */
+            virtual int16_t addNewEntity(int32_t entityKeyID, int64_t entityKeyValue, int32_t& newEntityID) = 0;
+            
+            /*!
+             search the entitys with key and value
+             \param entityKeyID the key id for the entity key
+             \param entityKeyValue the string associated to the entity in fulltext
+             \param resultEntityIDs the vector containing the retrived id
+             */
+            virtual int16_t searchEntityByKeyAndValue(int32_t entityKeyID, const char * entityKeyValue, std::vector<int64_t> resultEntityIDs) = 0;
+            
+            /*!
+             search the entitys with key and value
+             \param entityKeyID the key id for the entity key
+             \param entityKeyValue the int associated to the entity in fulltext
+             \param resultEntityIDs the vector containing the retrived id
+             */
+            virtual int16_t searchEntityByKeyAndValue(int32_t entityKeyID, int64_t entityKeyValue, std::vector<int64_t> resultEntityID) = 0;
+            
+            /*!
+             search the entitys using property key and value
+             \param entityKeyID the key id for the entity key
+             \param entityKeyValue the string associated to the entity in fulltext
+             \param resultEntityIDs the vector containing the retrived id
+             */
+            virtual int16_t searchEntityByPropertyKeyAndValue(int32_t entityKeyID, const char * entityKeyValue, std::vector<int64_t> resultEntityIDs) = 0;
+            
+            /*!
+             search the entitys using property key and value
+             \param entityKeyID the key id for the entity key
+             \param entityKeyValue the int associated to the entity in fulltext
+             \param resultEntityIDs the vector containing the retrived id
+             */
+            virtual int16_t searchEntityByPropertyKeyAndValue(int32_t entityKeyID, int64_t entityKeyValue, std::vector<int64_t> resultEntityID) = 0;
+            
+            /*!
+             search the entitys using property key and value
+             \param entityKeyID the key id for the entity key
+             \param entityKeyValue the int associated to the entity in fulltext
+             \param resultEntityIDs the vector containing the retrived id
+             */
+            virtual int16_t searchEntityByPropertyKeyAndValue(int32_t entityKeyID, double entityKeyValue, std::vector<int64_t> resultEntityID) = 0;
             
             /*!
              Delete the entity and all associated property
