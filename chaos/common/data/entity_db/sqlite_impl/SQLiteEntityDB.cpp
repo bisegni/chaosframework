@@ -169,7 +169,7 @@ int16_t SQLiteEntityDB::addNewKey(const char *newKey, int32_t& keyID) {
 /*!
  add a new entity with his key/value returning the associated ID.
  */
-int16_t SQLiteEntityDB::addNewEntity(int32_t entityKeyID, const char *keyValue, int32_t& newEntityID) {
+int16_t SQLiteEntityDB::addNewEntity(int32_t keyID, const char *keyValue, int32_t& newEntityID) {
     int16_t result = 0;
     
     //get next id
@@ -180,7 +180,7 @@ int16_t SQLiteEntityDB::addNewEntity(int32_t entityKeyID, const char *keyValue, 
     if(result != SQLITE_OK) return result;
     
     // set key id
-    result = sqlite3_bind_int(stmt[4], 2, entityKeyID);
+    result = sqlite3_bind_int(stmt[4], 2, keyID);
     if(result != SQLITE_OK) return result;
 
     // set key str value
@@ -193,7 +193,7 @@ int16_t SQLiteEntityDB::addNewEntity(int32_t entityKeyID, const char *keyValue, 
 /*!
  add a new entity with his key/value returning the associated ID.
  */
-int16_t SQLiteEntityDB::addNewEntity(int32_t entityKeyID, int64_t keyValue, int32_t& newEntityID) {
+int16_t SQLiteEntityDB::addNewEntity(int32_t keyID, int64_t keyValue, int32_t& newEntityID) {
     int16_t result = 0;
     
     //get next id
@@ -204,7 +204,7 @@ int16_t SQLiteEntityDB::addNewEntity(int32_t entityKeyID, int64_t keyValue, int3
     if(result != SQLITE_OK) return result;
     
     // set key id
-    result = sqlite3_bind_int(stmt[5], 2, entityKeyID);
+    result = sqlite3_bind_int(stmt[5], 2, keyID);
     if(result != SQLITE_OK) return result;
     
     // set key str value
@@ -217,21 +217,21 @@ int16_t SQLiteEntityDB::addNewEntity(int32_t entityKeyID, int64_t keyValue, int3
 /*!
  search the entitys with key and value
  */
-virtual int16_t searchEntityByKeyAndValue(int32_t entityKeyID, const char * entityKeyValue, std::vector<int64_t> resultEntityIDs) {
+int16_t SQLiteEntityDB::searchEntityByKeyAndValue(int32_t keyID, const char * keyValue, std::vector<int64_t> resultEntityIDs) {
     int16_t result = 0;
         
     // set new entity id
-    result = sqlite3_bind_int(entityTextSearchStmt, 1, newEntityID);
+    result = sqlite3_bind_int(stmt[6], 1, keyID);
     if(result != SQLITE_OK) return result;
     
     // set key id
-    result = sqlite3_bind_text(entityTextSearchStmt, 2, entityKeyValue, -1, NULL);
+    result = sqlite3_bind_text(stmt[6], 2, keyValue, -1, NULL);
     if(result != SQLITE_OK) return result;
     
     // cicle the row
-    while((result = sqlite3_step(entityTextSearchStmt)) == SQLITE_ROW) {
+    while((result = sqlite3_step(stmt[6])) == SQLITE_ROW) {
         //get foun ids
-        resultEntityIDs.push_back(sqlite3_column_int64(entityTextSearchStmt, 0));
+        resultEntityIDs.push_back(sqlite3_column_int64(stmt[6], 0));
 		
     }
     
@@ -241,21 +241,21 @@ virtual int16_t searchEntityByKeyAndValue(int32_t entityKeyID, const char * enti
 /*!
  search the entitys with key and value
  */
-int16_t searchEntityByKeyAndValue(int32_t entityKeyID, int64_t entityKeyValue, std::vector<int64_t> resultEntityID) {
+int16_t SQLiteEntityDB::searchEntityByKeyAndValue(int32_t keyID, int64_t keyValue, std::vector<int64_t> resultEntityIDs) {
     int16_t result = 0;
     
     // set new entity id
-    result = sqlite3_bind_int(entityTextSearchStmt, 1, newEntityID);
+    result = sqlite3_bind_int(stmt[7], 1, keyID);
     if(result != SQLITE_OK) return result;
     
     // set key id
-    result = sqlite3_bind_int(entityTextSearchStmt, 2, entityKeyValue, NULL);
+    result = sqlite3_bind_int64(stmt[7], 2, keyValue);
     if(result != SQLITE_OK) return result;
     
     // cicle the row
-    while((result = sqlite3_step(entityTextSearchStmt)) == SQLITE_ROW) {
+    while((result = sqlite3_step(stmt[7])) == SQLITE_ROW) {
         //get foun ids
-        resultEntityIDs.push_back(sqlite3_column_int64(entityTextSearchStmt, 0));
+        resultEntityIDs.push_back(sqlite3_column_int64(stmt[7], 0));
     }
     return result;
 }
@@ -264,15 +264,15 @@ int16_t searchEntityByKeyAndValue(int32_t entityKeyID, int64_t entityKeyValue, s
 /*!
  search the entitys using property key and value
  */
-int16_t searchEntityByPropertyKeyAndValue(int32_t entityKeyID, const char * entityKeyValue, std::vector<int64_t> resultEntityIDs) {
+int16_t SQLiteEntityDB::searchEntityByPropertyKeyAndValue(int32_t keyID, const char * keyValue, std::vector<int64_t> resultEntityIDs) {
     int16_t result = 0;
     
     // set new entity id
-    result = sqlite3_bind_int(stmt[8], 1, newEntityID);
+    result = sqlite3_bind_int(stmt[8], 1, keyID);
     if(result != SQLITE_OK) return result;
     
     // set key id
-    result = sqlite3_bind_text(stmt[8], 2, entityKeyValue, -1, NULL);
+    result = sqlite3_bind_text(stmt[8], 2, keyValue, -1, NULL);
     if(result != SQLITE_OK) return result;
     
     // cicle the row
@@ -288,15 +288,15 @@ int16_t searchEntityByPropertyKeyAndValue(int32_t entityKeyID, const char * enti
 /*!
  search the entitys using property key and value
  */
-int16_t searchEntityByPropertyKeyAndValue(int32_t entityKeyID, int64_t entityKeyValue, std::vector<int64_t> resultEntityIDs) {
+int16_t SQLiteEntityDB::searchEntityByPropertyKeyAndValue(int32_t keyID, int64_t keyValue, std::vector<int64_t> resultEntityIDs) {
     int16_t result = 0;
     
     // set new entity id
-    result = sqlite3_bind_int(stmt[9], 1, newEntityID);
+    result = sqlite3_bind_int(stmt[9], 1, keyID);
     if(result != SQLITE_OK) return result;
     
     // set key id
-    result = sqlite3_bind_int(stmt[9], 2, entityKeyValue);
+    result = sqlite3_bind_int64(stmt[9], 2, keyValue);
     if(result != SQLITE_OK) return result;
     
     // cicle the row
@@ -310,15 +310,15 @@ int16_t searchEntityByPropertyKeyAndValue(int32_t entityKeyID, int64_t entityKey
 /*!
  search the entitys using property key and value
  */
-int16_t searchEntityByPropertyKeyAndValue(int32_t entityKeyID, double entityKeyValue, std::vector<int64_t> resultEntityIDs) {
+int16_t SQLiteEntityDB::searchEntityByPropertyKeyAndValue(int32_t keyID, double keyValue, std::vector<int64_t> resultEntityIDs) {
     int16_t result = 0;
     
     // set new entity id
-    result = sqlite3_bind_int(stmt[10], 1, newEntityID);
+    result = sqlite3_bind_int(stmt[10], 1, keyID);
     if(result != SQLITE_OK) return result;
     
     // set key id
-    result = sqlite3_bind_double(stmt[10], 2, entityKeyValue);
+    result = sqlite3_bind_double(stmt[10], 2, keyValue);
     if(result != SQLITE_OK) return result;
     
     // cicle the row
@@ -346,7 +346,7 @@ int16_t SQLiteEntityDB::deleteEntity(int32_t entityID) {
 /*!
  add a new number property for entity with his key/value returning the associated ID.
  */
-int16_t SQLiteEntityDB::addNewPropertyForEntity(int32_t entityID, int32_t propertyKeyID, int64_t value, int32_t& newEntityPropertyID) {
+int16_t SQLiteEntityDB::addNewPropertyForEntity(int32_t entityID, int32_t keyID, int64_t keyValue, int32_t& newEntityPropertyID) {
     int16_t result = 0;
     
     //get next id
@@ -361,10 +361,10 @@ int16_t SQLiteEntityDB::addNewPropertyForEntity(int32_t entityID, int32_t proper
     if(result != SQLITE_OK) return result;
     
     // set key str value
-    result = sqlite3_bind_int(stmt[13], 3, propertyKeyID);
+    result = sqlite3_bind_int(stmt[13], 3, keyID);
     if(result != SQLITE_OK) return result;
     
-    result = sqlite3_bind_int64(stmt[13], 4, value);
+    result = sqlite3_bind_int64(stmt[13], 4, keyValue);
     if(result != SQLITE_OK) return result;
     
    return  sqlite3_step(stmt[13]);
@@ -375,7 +375,7 @@ int16_t SQLiteEntityDB::addNewPropertyForEntity(int32_t entityID, int32_t proper
 /*!
  add a new double property for entity with his key/value returning the associated ID.
  */
-int16_t SQLiteEntityDB::addNewPropertyForEntity(int32_t entityID, int32_t propertyKeyID, double value, int32_t& newEntityPropertyID) {
+int16_t SQLiteEntityDB::addNewPropertyForEntity(int32_t entityID, int32_t keyID, double keyValue, int32_t& newEntityPropertyID) {
     int16_t result = 0;
     
     //get next id
@@ -390,10 +390,10 @@ int16_t SQLiteEntityDB::addNewPropertyForEntity(int32_t entityID, int32_t proper
     if(result != SQLITE_OK) return result;
     
     // set key str value
-    result = sqlite3_bind_int(stmt[14], 3, propertyKeyID);
+    result = sqlite3_bind_int(stmt[14], 3, keyID);
     if(result != SQLITE_OK) return result;
     
-    result = sqlite3_bind_double(stmt[14], 4, value);
+    result = sqlite3_bind_double(stmt[14], 4, keyValue);
     if(result != SQLITE_OK) return result;
     
     return  sqlite3_step(stmt[14]);
@@ -404,7 +404,7 @@ int16_t SQLiteEntityDB::addNewPropertyForEntity(int32_t entityID, int32_t proper
 /*!
  add a new string property for entity with his key/value returning the associated ID.
  */
-int16_t SQLiteEntityDB::addNewPropertyForEntity(int32_t entityID, int32_t propertyKeyID, const char * value, int32_t& newEntityPropertyID) {
+int16_t SQLiteEntityDB::addNewPropertyForEntity(int32_t entityID, int32_t keyID, const char * keyValue, int32_t& newEntityPropertyID) {
     int16_t result = 0;
     
     //get next id
@@ -419,10 +419,10 @@ int16_t SQLiteEntityDB::addNewPropertyForEntity(int32_t entityID, int32_t proper
     if(result != SQLITE_OK) return result;
     
     // set key str value
-    result = sqlite3_bind_int(stmt[12], 3, propertyKeyID);
+    result = sqlite3_bind_int(stmt[12], 3, keyID);
     if(result != SQLITE_OK) return result;
     
-    result = sqlite3_bind_text(stmt[12], 4, value, -1, NULL);
+    result = sqlite3_bind_text(stmt[12], 4, keyValue, -1, NULL);
     if(result != SQLITE_OK) return result;
     
     return  sqlite3_step(stmt[12]);

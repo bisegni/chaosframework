@@ -96,59 +96,59 @@ namespace chaos {
             
             /*!
              add a new entity with his key/value returning the associated ID.
-             \param entityKeyID the key id for the entity key
-             \param entityKeyValue the name associate to the key forthe new entity
+             \param keyID the key id for the entity key
+             \param keyValue the name associate to the key forthe new entity
              \param newEntityID is the new returned ID for the entity
              */
-            virtual int16_t addNewEntity(int32_t entityKeyID, const char *entityKeyValue, int32_t& newEntityID) = 0;
+            virtual int16_t addNewEntity(int32_t keyID, const char *keyValue, int32_t& newEntityID) = 0;
         
             /*!
              add a new entity with his key/value returning the associated ID.
-             \param entityKeyID the key id for the entity key
-             \param entityKeyValue the name associate to the key forthe new entity
+             \param keyID the key id for the entity key
+             \param keyValue the name associate to the key forthe new entity
              \param newEntityID is the new returned ID for the entity
              */
-            virtual int16_t addNewEntity(int32_t entityKeyID, int64_t entityKeyValue, int32_t& newEntityID) = 0;
+            virtual int16_t addNewEntity(int32_t keyID, int64_t keyValue, int32_t& newEntityID) = 0;
             
             /*!
              search the entitys with key and value
-             \param entityKeyID the key id for the entity key
-             \param entityKeyValue the string associated to the entity in fulltext
+             \param keyID the key id for the entity key
+             \param keyValue the string associated to the entity in fulltext
              \param resultEntityIDs the vector containing the retrived id
              */
-            virtual int16_t searchEntityByKeyAndValue(int32_t entityKeyID, const char * entityKeyValue, std::vector<int64_t> resultEntityIDs) = 0;
+            virtual int16_t searchEntityByKeyAndValue(int32_t keyID, const char * keyValue, std::vector<int64_t> resultEntityIDs) = 0;
             
             /*!
              search the entitys with key and value
-             \param entityKeyID the key id for the entity key
-             \param entityKeyValue the int associated to the entity in fulltext
+             \param keyID the key id for the entity key
+             \param keyValue the int associated to the entity in fulltext
              \param resultEntityIDs the vector containing the retrived id
              */
-            virtual int16_t searchEntityByKeyAndValue(int32_t entityKeyID, int64_t entityKeyValue, std::vector<int64_t> resultEntityID) = 0;
+            virtual int16_t searchEntityByKeyAndValue(int32_t keyID, int64_t keyValue, std::vector<int64_t> resultEntityID) = 0;
             
             /*!
              search the entitys using property key and value
-             \param entityKeyID the key id for the entity key
-             \param entityKeyValue the string associated to the entity in fulltext
+             \param keyID the key id for the entity key
+             \param keyValue the string associated to the entity in fulltext
              \param resultEntityIDs the vector containing the retrived id
              */
-            virtual int16_t searchEntityByPropertyKeyAndValue(int32_t entityKeyID, const char * entityKeyValue, std::vector<int64_t> resultEntityIDs) = 0;
+            virtual int16_t searchEntityByPropertyKeyAndValue(int32_t keyID, const char * keyValue, std::vector<int64_t> resultEntityIDs) = 0;
             
             /*!
              search the entitys using property key and value
-             \param entityKeyID the key id for the entity key
-             \param entityKeyValue the int associated to the entity in fulltext
+             \param keyID the key id for the entity key
+             \param keyValue the int associated to the entity in fulltext
              \param resultEntityIDs the vector containing the retrived id
              */
-            virtual int16_t searchEntityByPropertyKeyAndValue(int32_t entityKeyID, int64_t entityKeyValue, std::vector<int64_t> resultEntityID) = 0;
+            virtual int16_t searchEntityByPropertyKeyAndValue(int32_t keyID, int64_t keyValue, std::vector<int64_t> resultEntityID) = 0;
             
             /*!
              search the entitys using property key and value
-             \param entityKeyID the key id for the entity key
-             \param entityKeyValue the int associated to the entity in fulltext
+             \param keyID the key id for the entity key
+             \param keyValue the int associated to the entity in fulltext
              \param resultEntityIDs the vector containing the retrived id
              */
-            virtual int16_t searchEntityByPropertyKeyAndValue(int32_t entityKeyID, double entityKeyValue, std::vector<int64_t> resultEntityID) = 0;
+            virtual int16_t searchEntityByPropertyKeyAndValue(int32_t keyID, double keyValue, std::vector<int64_t> resultEntityID) = 0;
             
             /*!
              Delete the entity and all associated property
@@ -159,29 +159,29 @@ namespace chaos {
             /*!
              add a new number property for entity with his key/value returning the associated ID.
              \param entityID is the id that identify the entity where to attach the property
-             \param propertyKeyID is the id of the key that we need to attach to the entity
-             \param value is the value to attach to the property
+             \param keyID is the id of the key that we need to attach to the entity
+             \param keyValue is the value to attach to the property
              \param newEntityPropertyID is the new id for the entity/property 
              */
-            virtual int16_t addNewPropertyForEntity(int32_t entityID, int32_t propertyKeyID, int64_t value, int32_t& newEntityPropertyID) = 0;
+            virtual int16_t addNewPropertyForEntity(int32_t entityID, int32_t keyID, int64_t keyValue, int32_t& newEntityPropertyID) = 0;
 
             /*!
              add a new double property for entity with his key/value returning the associated ID.
              \param entityID is the id that identify the entity where to attach the property
-             \param propertyKeyID is the id of the key that we need to attach to the entity
-             \param value is the value to attach to the property
+             \param keyID is the id of the key that we need to attach to the entity
+             \param keyValue is the value to attach to the property
              \param newEntityPropertyID is the new id for the entity/property
              */
-            virtual int16_t addNewPropertyForEntity(int32_t entityID, int32_t propertyKeyID, double value, int32_t& newEntityPropertyID) = 0;
+            virtual int16_t addNewPropertyForEntity(int32_t entityID, int32_t keyID, double keyValue, int32_t& newEntityPropertyID) = 0;
             
             /*!
              add a new string property for entity with his key/value returning the associated ID.
              \param entityID is the id that identify the entity where to attach the property
-             \param propertyKeyID is the id of the key that we need to attach to the entity
-             \param value is the value to attach to the property
+             \param keyID is the id of the key that we need to attach to the entity
+             \param keyValue is the value to attach to the property
              \param newEntityPropertyID is the new id for the entity/property
              */
-            virtual int16_t addNewPropertyForEntity(int32_t entityID, int32_t propertyKeyID, const char * value, int32_t& newEntityPropertyID) = 0;
+            virtual int16_t addNewPropertyForEntity(int32_t entityID, int32_t keyID, const char * keyValue, int32_t& newEntityPropertyID) = 0;
             
             /*!
              update the integer value for a property of an entity 

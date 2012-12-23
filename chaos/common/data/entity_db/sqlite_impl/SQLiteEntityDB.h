@@ -51,126 +51,82 @@ namespace chaos {
             
             /*!
              add a new Key returning the associated ID.
-             \param newKey is the string associate to a key
-             \param keyID is the new returned ID for the key
              */
             int16_t addNewKey(const char *newKey, int32_t& keyID);
             
-            /*!
+            /*
              add a new entity with his key/value returning the associated ID.
-             \param entityKeyID the key id for the entity key
-             \param entityKeyName the name associate to the key forthe new entity
-             \param newEntityID is the new returned ID for the entity
              */
-            int16_t addNewEntity(int32_t entityKeyID, const char *keyValue, int32_t& newEntityID);
+            int16_t addNewEntity(int32_t keyID, const char *keyValue, int32_t& newEntityID);
             
-            /*!
+            /*
              add a new entity with his key/value returning the associated ID.
-             \param entityKeyID the key id for the entity key
-             \param entityKeyValue the name associate to the key forthe new entity
-             \param newEntityID is the new returned ID for the entity
              */
-            int16_t addNewEntity(int32_t entityKeyID, int64_t *entityKeyValue, int32_t& newEntityID);
+            int16_t addNewEntity(int32_t keyID, int64_t keyValue, int32_t& newEntityID);
             
-            /*!
+            /*
              search the entitys with key and value
-             \param entityKeyID the key id for the entity key
-             \param entityKeyValue the string associated to the entity in fulltext
-             \param resultEntityIDs the vector containing the retrived id
              */
-            int16_t searchEntityByKeyAndValue(int32_t entityKeyID, const char * entityKeyValue, std::vector<int64_t> resultEntityIDs);
+            int16_t searchEntityByKeyAndValue(int32_t keyID, const char * keyValue, std::vector<int64_t> resultEntityIDs);
             
-            /*!
+            /*
              search the entitys with key and value
-             \param entityKeyID the key id for the entity key
-             \param entityKeyValue the int associated to the entity in fulltext
-             \param resultEntityIDs the vector containing the retrived id
              */
-            int16_t searchEntityByKeyAndValue(int32_t entityKeyID, int64_t entityKeyValue, std::vector<int64_t> resultEntityID);
+            int16_t searchEntityByKeyAndValue(int32_t keyID, int64_t keyValue, std::vector<int64_t> resultEntityID);
             
-            /*!
+            /*
              search the entitys using property key and value
-             \param entityKeyID the key id for the entity key
-             \param entityKeyValue the string associated to the entity in fulltext
-             \param resultEntityIDs the vector containing the retrived id
              */
-            int16_t searchEntityByPropertyKeyAndValue(int32_t entityKeyID, const char * entityKeyValue, std::vector<int64_t> resultEntityIDs);
+            int16_t searchEntityByPropertyKeyAndValue(int32_t keyID, const char * keyValue, std::vector<int64_t> resultEntityIDs);
             
-            /*!
+            /*
              search the entitys using property key and value
-             \param entityKeyID the key id for the entity key
-             \param entityKeyValue the int associated to the entity in fulltext
-             \param resultEntityIDs the vector containing the retrived id
              */
-            int16_t searchEntityByPropertyKeyAndValue(int32_t entityKeyID, int64_t entityKeyValue, std::vector<int64_t> resultEntityID);
+            int16_t searchEntityByPropertyKeyAndValue(int32_t keyID, int64_t keyValue, std::vector<int64_t> resultEntityID);
             
-            /*!
+            /*
              search the entitys using property key and value
-             \param entityKeyID the key id for the entity key
-             \param entityKeyValue the int associated to the entity in fulltext
-             \param resultEntityIDs the vector containing the retrived id
              */
-            int16_t searchEntityByPropertyKeyAndValue(int32_t entityKeyID, double entityKeyValue, std::vector<int64_t> resultEntityID);
+            int16_t searchEntityByPropertyKeyAndValue(int32_t keyID, double keyValue, std::vector<int64_t> resultEntityID);
 
             
-            /*!
+            /*
              Delete the entity and all associated property
-             \param entityID is the id of the key to delete
              */
             int16_t deleteEntity(int32_t entityID);
             
-            /*!
+            /*
              add a new number property for entity with his key/value returning the associated ID.
-             \param entityID is the id that identify the entity where to attach the property
-             \param propertyKeyID is the id of the key that we need to attach to the entity
-             \param value is the value to attach to the property
-             \param newEntityPropertyID is the new id for the entity/property
              */
-            int16_t addNewPropertyForEntity(int32_t entityID, int32_t propertyKeyID, int64_t value, int32_t& newEntityPropertyID);
+            int16_t addNewPropertyForEntity(int32_t entityID, int32_t keyID, int64_t keyValue, int32_t& newEntityPropertyID);
             
-            /*!
+            /*
              add a new double property for entity with his key/value returning the associated ID.
-             \param entityID is the id that identify the entity where to attach the property
-             \param propertyKeyID is the id of the key that we need to attach to the entity
-             \param value is the value to attach to the property
-             \param newEntityPropertyID is the new id for the entity/property
              */
-            int16_t addNewPropertyForEntity(int32_t entityID, int32_t propertyKeyID, double value, int32_t& newEntityPropertyID);
+            int16_t addNewPropertyForEntity(int32_t entityID, int32_t keyID, double keyValue, int32_t& newEntityPropertyID);
             
-            /*!
+            /*
              add a new string property for entity with his key/value returning the associated ID.
-             \param entityID is the id that identify the entity where to attach the property
-             \param propertyKeyID is the id of the key that we need to attach to the entity
-             \param value is the value to attach to the property
-             \param newEntityPropertyID is the new id for the entity/property
              */
-            int16_t addNewPropertyForEntity(int32_t entityID, int32_t propertyKeyID, const char * value, int32_t& newEntityPropertyID);
+            int16_t addNewPropertyForEntity(int32_t entityID, int32_t keyID, const char * keyValue, int32_t& newEntityPropertyID);
             
-            /*!
+            /*
              update the integer value for a property of an entity
-             \param entityID is the id that identify the entity where to attach the property
-             \param propertyID is the id of the property
-             \param newValue is the new value
              */
             int16_t updatePropertyForEntity(int32_t propertyID, int64_t newValue);
             
-            /*!
+            /*
              update the double value for a property of an entity
-             \param propertyID is the id of the property
-             \param newValue is the new value
              */
             int16_t updatePropertyForEntity(int32_t propertyID, double newValue);
             
-            /*!
+            /*
              update the string value for a property of an entity
-             \param propertyID is the id of the property
-             \param newValue is the new value
              */
             int16_t updatePropertyForEntity(int32_t propertyID, const char * newValue);
             
-            /*!
+            /*
              Delete a property for a entity
-             \param propertyID is the id of the property
              */
             int16_t deleteEntityProperty(int32_t propertyID);
 
