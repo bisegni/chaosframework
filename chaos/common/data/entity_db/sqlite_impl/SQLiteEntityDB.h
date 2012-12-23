@@ -10,24 +10,28 @@
 #define __CHAOSFramework__SQLiteEntityDB__
 
 #include <boost/thread.hpp>
-
+#include <string>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/data/entity_db/EntityDB.h>
 #include <chaos/common/data/entity_db/sqlite_impl/sqlite3.h>
 
+#define NUM_STMT 20
+
 namespace chaos {
     namespace edb {
+        
         
         /*!
          SQLite implementation for the entity db
          */
-        REGISTER_AND_DEFINE_NOALIAS_DERIVED_CLASS_FACTORY(SQLiteEntityDB, EntityDB) {
+        class SQLiteEntityDB : public EntityDB {
+            string alias;
             sqlite3 *dbInstance;
             
-            boost::mutex nextSeqID;
+            boost::mutex seqWorkMutext;
             
             //autoncrement statement
-            sqlite3_stmt *stmt[19];
+            sqlite3_stmt *stmt[NUM_STMT];
             
             
             inline int16_t openDatabase(const char *databasePath);
@@ -38,56 +42,49 @@ namespace chaos {
             
             inline int16_t getNextIDOnTable(const char * tableName, int32_t &seqID);
             
+            int16_t initSequence(const char *tableName);
+            
+            bool hasSequence(const char *tableName);
         public:
             /*!
+             Default constructor
+             */
+            SQLiteEntityDB();
+
+            /*!
+             Default destructor
+             */
+            virtual ~SQLiteEntityDB();
+            
+            /*
              Initialize the db implementation
              */
             int16_t initDB(const char* name, bool temporary = true)  throw (CException) ;
             
-            /*!
+            /*
              Initialize the db implementation
              */
             int16_t deinitDB()  throw (CException) ;
             
-            /*!
+            /*
              add a new Key returning the associated ID.
              */
-            int16_t addNewKey(const char *newKey, int32_t& keyID);
+            int16_t getIDForKey(const char *newKey, int32_t& keyID);
             
             /*
              add a new entity with his key/value returning the associated ID.
              */
-            int16_t addNewEntity(int32_t keyID, const char *keyValue, int32_t& newEntityID);
-            
-            /*
-             add a new entity with his key/value returning the associated ID.
-             */
-            int16_t addNewEntity(int32_t keyID, int64_t keyValue, int32_t& newEntityID);
+            int16_t getIDForEntity(KeyIdAndValue& keyInfo, int32_t& newEntityID);
             
             /*
              search the entitys with key and value
              */
-            int16_t searchEntityByKeyAndValue(int32_t keyID, const char * keyValue, std::vector<int64_t> resultEntityIDs);
-            
-            /*
-             search the entitys with key and value
-             */
-            int16_t searchEntityByKeyAndValue(int32_t keyID, int64_t keyValue, std::vector<int64_t> resultEntityID);
+            int16_t searchEntityByKeyAndValue(KeyIdAndValue& keyInfo, std::vector<int32_t>& resultEntityIDs);
             
             /*
              search the entitys using property key and value
              */
-            int16_t searchEntityByPropertyKeyAndValue(int32_t keyID, const char * keyValue, std::vector<int64_t> resultEntityIDs);
-            
-            /*
-             search the entitys using property key and value
-             */
-            int16_t searchEntityByPropertyKeyAndValue(int32_t keyID, int64_t keyValue, std::vector<int64_t> resultEntityID);
-            
-            /*
-             search the entitys using property key and value
-             */
-            int16_t searchEntityByPropertyKeyAndValue(int32_t keyID, double keyValue, std::vector<int64_t> resultEntityID);
+            int16_t searchEntityByPropertyKeyAndValue(KeyIdAndValue& keyInfo, std::vector<int32_t>& resultEntityIDs);
 
             
             /*
@@ -98,33 +95,23 @@ namespace chaos {
             /*
              add a new number property for entity with his key/value returning the associated ID.
              */
-            int16_t addNewPropertyForEntity(int32_t entityID, int32_t keyID, int64_t keyValue, int32_t& newEntityPropertyID);
-            
-            /*
-             add a new double property for entity with his key/value returning the associated ID.
-             */
-            int16_t addNewPropertyForEntity(int32_t entityID, int32_t keyID, double keyValue, int32_t& newEntityPropertyID);
-            
-            /*
-             add a new string property for entity with his key/value returning the associated ID.
-             */
-            int16_t addNewPropertyForEntity(int32_t entityID, int32_t keyID, const char * keyValue, int32_t& newEntityPropertyID);
+            int16_t addNewPropertyForEntity(int32_t entityID, KeyIdAndValue& keyInfo, int32_t& newEntityPropertyID);
             
             /*
              update the integer value for a property of an entity
              */
-            int16_t updatePropertyForEntity(int32_t propertyID, int64_t newValue);
+            int16_t updatePropertyForEntity(int32_t propertyID, KeyIdAndValue& newTypeAndValue);
             
             /*
-             update the double value for a property of an entity
+             return all property of an entity
              */
-            int16_t updatePropertyForEntity(int32_t propertyID, double newValue);
+            int16_t searchPropertyForEntity(int32_t entityID, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues);
             
             /*
-             update the string value for a property of an entity
+             eturn al lprorerty for an entity for wich the ids are contained into the keysIDs array
              */
-            int16_t updatePropertyForEntity(int32_t propertyID, const char * newValue);
-            
+            int16_t searchPropertyForEntity(int32_t entityID, std::vector<int32_t>& keysIDs, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues);
+
             /*
              Delete a property for a entity
              */

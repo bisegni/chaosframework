@@ -26,8 +26,10 @@
 #include <string>
 #include <vector>
 #include <chaos/common/exception/CException.h>
+#include <chaos/common/utility/ArrayPointer.h>
 
 namespace chaos {
+    
     /*!
      The namespace edb group all code for the managment of a the abstract entity database.
      */
@@ -56,14 +58,40 @@ namespace chaos {
         
         
         class EntityDB {
+        protected:
             bool    _temporaryAllocation;
             std::string  _name;
         public:
             
             /*!
+             Define the type of the value for a key
+             */
+            typedef enum {
+                NUM_VALUE = 0,
+                DOUBLE_VALUE,
+                STR_VALUE
+            } ValueType;
+            
+            /*!
+             Define an union for contain temporaly, the value for a key
+             */
+            typedef union {
+                int64_t numValue;
+                double doubleValue;
+                char strValue[256];
+            } KeyValue;
+            
+            /*!
+             Define the infromation for the type, id and value for a key
+             */
+            typedef struct {
+                ValueType   type;
+                int32_t     keyID;
+                KeyValue    value;
+            } KeyIdAndValue;
+            
+            /*!
              Default constructor
-             \param temporary if true instruct the driver to create a temporary database
-             that will be deleted when the object will be destroyed
              */
             EntityDB();
             
@@ -75,6 +103,9 @@ namespace chaos {
             
             /*!
              Initialize the db implementation
+             \name the name of the database
+             \param temporary if true instruct the driver to create a temporary database
+             that will be deleted when the object will be destroyed
              */
             virtual int16_t initDB(const char* name, bool temporary = true) throw (CException) {
                 _name.assign(name);
@@ -92,63 +123,29 @@ namespace chaos {
              \param newKey is the string associate to a key
              \param keyID is the new returned ID for the key
              */
-            virtual int16_t addNewKey(const char *newKey, int32_t& keyID) = 0;
+            virtual int16_t getIDForKey(const char *newKey, int32_t& keyID) = 0;
             
             /*!
-             add a new entity with his key/value returning the associated ID.
-             \param keyID the key id for the entity key
-             \param keyValue the name associate to the key forthe new entity
+             try to find the key and id value on entity, if no entity is found, new one
+             is created
+             \param keyInfo the key information for the new entity
              \param newEntityID is the new returned ID for the entity
              */
-            virtual int16_t addNewEntity(int32_t keyID, const char *keyValue, int32_t& newEntityID) = 0;
-        
-            /*!
-             add a new entity with his key/value returning the associated ID.
-             \param keyID the key id for the entity key
-             \param keyValue the name associate to the key forthe new entity
-             \param newEntityID is the new returned ID for the entity
-             */
-            virtual int16_t addNewEntity(int32_t keyID, int64_t keyValue, int32_t& newEntityID) = 0;
+            virtual int16_t getIDForEntity(KeyIdAndValue& keyInfo, int32_t& newEntityID) = 0;
             
             /*!
              search the entitys with key and value
-             \param keyID the key id for the entity key
-             \param keyValue the string associated to the entity in fulltext
+            \param keyInfo the key information for the new entity
              \param resultEntityIDs the vector containing the retrived id
              */
-            virtual int16_t searchEntityByKeyAndValue(int32_t keyID, const char * keyValue, std::vector<int64_t> resultEntityIDs) = 0;
-            
-            /*!
-             search the entitys with key and value
-             \param keyID the key id for the entity key
-             \param keyValue the int associated to the entity in fulltext
-             \param resultEntityIDs the vector containing the retrived id
-             */
-            virtual int16_t searchEntityByKeyAndValue(int32_t keyID, int64_t keyValue, std::vector<int64_t> resultEntityID) = 0;
+            virtual int16_t searchEntityByKeyAndValue(KeyIdAndValue& keyInfo, std::vector<int32_t>& resultEntityIDs) = 0;
             
             /*!
              search the entitys using property key and value
-             \param keyID the key id for the entity key
-             \param keyValue the string associated to the entity in fulltext
+             \param keyInfo is the string associate to a key
              \param resultEntityIDs the vector containing the retrived id
              */
-            virtual int16_t searchEntityByPropertyKeyAndValue(int32_t keyID, const char * keyValue, std::vector<int64_t> resultEntityIDs) = 0;
-            
-            /*!
-             search the entitys using property key and value
-             \param keyID the key id for the entity key
-             \param keyValue the int associated to the entity in fulltext
-             \param resultEntityIDs the vector containing the retrived id
-             */
-            virtual int16_t searchEntityByPropertyKeyAndValue(int32_t keyID, int64_t keyValue, std::vector<int64_t> resultEntityID) = 0;
-            
-            /*!
-             search the entitys using property key and value
-             \param keyID the key id for the entity key
-             \param keyValue the int associated to the entity in fulltext
-             \param resultEntityIDs the vector containing the retrived id
-             */
-            virtual int16_t searchEntityByPropertyKeyAndValue(int32_t keyID, double keyValue, std::vector<int64_t> resultEntityID) = 0;
+            virtual int16_t searchEntityByPropertyKeyAndValue(KeyIdAndValue& keyInfo, std::vector<int32_t>& resultEntityIDs) = 0;
             
             /*!
              Delete the entity and all associated property
@@ -159,51 +156,32 @@ namespace chaos {
             /*!
              add a new number property for entity with his key/value returning the associated ID.
              \param entityID is the id that identify the entity where to attach the property
-             \param keyID is the id of the key that we need to attach to the entity
-             \param keyValue is the value to attach to the property
+             \param keyInfo the key information for the new entity
              \param newEntityPropertyID is the new id for the entity/property 
              */
-            virtual int16_t addNewPropertyForEntity(int32_t entityID, int32_t keyID, int64_t keyValue, int32_t& newEntityPropertyID) = 0;
-
-            /*!
-             add a new double property for entity with his key/value returning the associated ID.
-             \param entityID is the id that identify the entity where to attach the property
-             \param keyID is the id of the key that we need to attach to the entity
-             \param keyValue is the value to attach to the property
-             \param newEntityPropertyID is the new id for the entity/property
-             */
-            virtual int16_t addNewPropertyForEntity(int32_t entityID, int32_t keyID, double keyValue, int32_t& newEntityPropertyID) = 0;
+            virtual int16_t addNewPropertyForEntity(int32_t entityID, KeyIdAndValue& keyInfo, int32_t& newEntityPropertyID) = 0;
             
             /*!
-             add a new string property for entity with his key/value returning the associated ID.
-             \param entityID is the id that identify the entity where to attach the property
-             \param keyID is the id of the key that we need to attach to the entity
-             \param keyValue is the value to attach to the property
-             \param newEntityPropertyID is the new id for the entity/property
-             */
-            virtual int16_t addNewPropertyForEntity(int32_t entityID, int32_t keyID, const char * keyValue, int32_t& newEntityPropertyID) = 0;
-            
-            /*!
-             update the integer value for a property of an entity 
-             \param entityID is the id that identify the entity where to attach the property
+             update the integer value for a property of an entity
              \param propertyID is the id of the property
-             \param newValue is the new value
+             \param newTypeAndValue is the string associate to a key
              */
-            virtual int16_t updatePropertyForEntity(int32_t propertyID, int64_t newValue) = 0;
+            virtual int16_t updatePropertyForEntity(int32_t propertyID, KeyIdAndValue& newTypeAndValue) = 0;
             
             /*!
-             update the double value for a property of an entity
+             return all property of an entity
              \param propertyID is the id of the property
-             \param newValue is the new value
+             \param resultKeyAndValues the information of the key found
              */
-            virtual int16_t updatePropertyForEntity(int32_t propertyID, double newValue) = 0;
+            virtual int16_t searchPropertyForEntity(int32_t entityID, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues) = 0;
             
             /*!
-             update the string value for a property of an entity
+             return al lprorerty for an entity for wich the ids are contained into the keysIDs array
              \param propertyID is the id of the property
-             \param newValue is the new value
+             \param keysIDs the vector that contain the id for the key to that must be returned
+             \param resultKeyAndValues the information of the key found
              */
-            virtual int16_t updatePropertyForEntity(int32_t propertyID, const char * newValue) = 0;
+            virtual int16_t searchPropertyForEntity(int32_t entityID, std::vector<int32_t>& keysIDs, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues) = 0;
             
             /*!
              Delete a property for a entity

@@ -39,7 +39,7 @@ namespace chaos {
      Object factory with an alias
      */
     template <class T>
-    class ObjectFactoryAliasInstantiation : public ObjectFactory{
+    class ObjectFactoryAliasInstantiation : public ObjectFactory {
     public:
         ObjectFactoryAliasInstantiation(const char *alias):ObjectFactory(alias){};
         virtual void* createInstance() { return (void*)new T(&sAlias); };
@@ -49,7 +49,7 @@ namespace chaos {
      Object factory with an alias
      */
     template <class T>
-    class ObjectFactoryInstantiation : public ObjectFactory{
+    class ObjectFactoryInstantiation : public ObjectFactory {
     public:
         ObjectFactoryInstantiation(const char *alias):ObjectFactory(alias){};
         virtual void* createInstance() { return (void*)new T(); };
@@ -70,7 +70,7 @@ namespace chaos {
          */
         void registerObjectFactory(const char *alias, ObjectFactory *factoryPtr) {
                 //register command into map
-            string aliasString = string(alias);
+            string aliasString(alias);
             if(objectFacotoryList.count(aliasString) == 0){
                 objectFacotoryList.insert(make_pair(aliasString, factoryPtr));
             }
@@ -81,7 +81,7 @@ namespace chaos {
          */
         T *getNewInstanceByName(const char *alias) {
             T *result=NULL;
-            string aliasString = string(alias);
+            string aliasString(alias);
                 //get the reference for the className
             ObjectFactory *acf = objectFacotoryList[aliasString];
                 //return null ora create instance

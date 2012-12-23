@@ -35,4 +35,7 @@
    <FileRef
       location = "group:example/UIToolkitCMDLineCWrapperExample/../../test/TestEventDescriptor/TestEventDescriptor.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:test/TestEntityDB/TestEntityDB.xcodeproj">
+   </FileRef>
 </Workspace>

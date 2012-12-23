@@ -11,6 +11,12 @@
 using namespace chaos;
 using namespace chaos::edb;
 
+#define SET_CHECK_AND_TROW_ERROR(var, sql, st) \
+var=sqlite3_prepare_v2(dbInstance, sql, -1, &st, NULL);\
+if(var != SQLITE_OK) throw CException(var, sqlite3_errstr(var), "SQLiteEntityDB::initDB");
+
+#define DONE_TO_OK_RESULT(result, step_func) (result=step_func)==SQLITE_DONE?SQLITE_OK:result
+
 #define CREATE_SEQ_TABLE \
 "create table if not exists seq (seq_num integer, seq_name char(32))"
 
@@ -18,28 +24,28 @@ using namespace chaos::edb;
 "create table if not exists key (id integer primary key , key_name char(256))"
 
 #define CREATE_ENTITY_TABLE \
-"create table if not exists entity (id integer primary key , key_id integer, str_value char(256), num_value integer,  double_value double)"
-
-#define CREATE_ENTITY_KEY_FK \
-"ALTER TABLE entity ADD CONSTRAINT fk_entity_key FOREIGN KEY (key_id) REFERENCES key(id)"
+"create table if not exists entity (id integer primary key , key_id integer, key_type integer, str_value char(256), num_value integer,  double_value double, FOREIGN KEY(key_id) REFERENCES key(id) ON DELETE RESTRICT)"
 
 #define CREATE_PROPERTY_TABLE \
-"create table if not exists property (id integer primary key , entity_id integer, key_id integer, str_value char(256), num_value integer,  double_value double)"
-
-#define CREATE_PROPERTY_ENTITY_FK \
-"ALTER TABLE property ADD CONSTRAINT fk_prop_ent FOREIGN KEY (entity_id) REFERENCES entity(id)"
-
-#define CREATE_PROPERTY_KEY_FK \
-"ALTER TABLE property ADD CONSTRAINT fk_prop_key FOREIGN KEY (key_id) REFERENCES key(id)"
+"create table if not exists property (id integer primary key , entity_id integer, key_id integer,  key_type integer, str_value char(256), num_value integer,  double_value double, FOREIGN KEY(entity_id) REFERENCES entity(id) ON DELETE CASCADE, FOREIGN KEY(key_id) REFERENCES key(id) ON DELETE RESTRICT)"
 
 #define CREATE_ENTITY_RELATION_TABLE \
-"create table if not exists entity (id_entity_parent integer primary key, id_entity_child integer primary key)"
+"create table if not exists entity (id_entity_parent integer primary key, id_entity_child integer primary key, FOREIGN KEY(id_entity_parent) REFERENCES entity(id) ON DELETE CASCADE, FOREIGN KEY(id_entity_child) REFERENCES entity(id) ON DELETE RESTRICT)"
 
-
-/*
- sqlite3_column_int(stmt, 0);
- (const char *)sqlite3_column_text(stmt, 1);
+/*!
+ Default constructor
  */
+SQLiteEntityDB::SQLiteEntityDB() {
+    
+}
+
+/*!
+ Default destructor
+ */
+SQLiteEntityDB::~SQLiteEntityDB() {
+    
+}
+
 
 /*!
  Initialize the db implementation
@@ -47,87 +53,72 @@ using namespace chaos::edb;
 int16_t SQLiteEntityDB::initDB(const char* name, bool temporary)  throw (CException) {
     int16_t result = 0;
     int errorSequence = 0;
+    std::string uriPath = "file:";
+    uriPath.append(name);
+    
+    if(_temporaryAllocation) {
+        //use mermory database for temporary
+        uriPath.append("?mode=memory&cache=shared");
+    }
     
     //clean all statement pointer
-    for (int i = 0; i < 19; i++) {
+    for (int i = 0; i < NUM_STMT; i++) {
         stmt[i] = NULL;
     }
     
     EntityDB::initDB(name, temporary);
     
+    
     //open database
     if(openDatabase(name) != SQLITE_OK) throw CException(errorSequence++, "Error openening database", "SQLiteEntityDB::initDB");
     
     //create tables
-    if(makeInsertUpdateDelete(CREATE_SEQ_TABLE) != SQLITE_OK) throw CException(errorSequence++, "Error initializing sequence table", "SQLiteEntityDB::initDB");
-    if(makeInsertUpdateDelete(CREATE_KEY_TABLE) != SQLITE_OK) throw CException(errorSequence++, "Error initializing key table", "SQLiteEntityDB::initDB");
-    if(makeInsertUpdateDelete(CREATE_ENTITY_TABLE) != SQLITE_OK) throw CException(errorSequence++, "Error initializing entity table", "SQLiteEntityDB::initDB");
-    if(makeInsertUpdateDelete(CREATE_ENTITY_KEY_FK) != SQLITE_OK) throw CException(errorSequence++, "Error initializing entity table fk", "SQLiteEntityDB::initDB");
-    if(makeInsertUpdateDelete(CREATE_PROPERTY_TABLE) != SQLITE_OK) throw CException(errorSequence++, "Error initializing property table", "SQLiteEntityDB::initDB");
-    if(makeInsertUpdateDelete(CREATE_PROPERTY_ENTITY_FK) != SQLITE_OK) throw CException(errorSequence++, "Error initializing property table fk", "SQLiteEntityDB::initDB");
-    if(makeInsertUpdateDelete(CREATE_PROPERTY_KEY_FK) != SQLITE_OK) throw CException(errorSequence++, "Error initializing property table fk", "SQLiteEntityDB::initDB");
-    if(makeInsertUpdateDelete(CREATE_ENTITY_RELATION_TABLE) != SQLITE_OK) throw CException(errorSequence++, "Error initializing entity table relation", "SQLiteEntityDB::initDB");
+    if(makeInsertUpdateDelete(CREATE_SEQ_TABLE) != SQLITE_DONE) throw CException(errorSequence++, "Error initializing sequence table", "SQLiteEntityDB::initDB");
+    if(makeInsertUpdateDelete(CREATE_KEY_TABLE) != SQLITE_DONE) throw CException(errorSequence++, "Error initializing key table", "SQLiteEntityDB::initDB");
+    if(makeInsertUpdateDelete(CREATE_ENTITY_TABLE) != SQLITE_DONE) throw CException(errorSequence++, "Error initializing entity table", "SQLiteEntityDB::initDB");
+    if(makeInsertUpdateDelete(CREATE_PROPERTY_TABLE) != SQLITE_DONE) throw CException(errorSequence++, "Error initializing property table", "SQLiteEntityDB::initDB");
+    if(makeInsertUpdateDelete(CREATE_ENTITY_RELATION_TABLE) != SQLITE_DONE) throw CException(errorSequence++, "Error initializing entity table relation", "SQLiteEntityDB::initDB");
     
     
     // create increment update statement on table name
-    result = sqlite3_prepare_v2(dbInstance, "update seq set seq_num = seq_num + 1 where seq_name = ?", -1, &stmt[0], NULL);
-    if(result != SQLITE_OK) throw CException(errorSequence++, "error initializing stmt[0] statement", "SQLiteEntityDB::initDB");
-    
-    result = sqlite3_prepare_v2(dbInstance, "select seq_num from seq where seq_name = ?", -1, &stmt[1], NULL);
-    if(result != SQLITE_OK) throw CException(errorSequence++, "error initializing stmt[1] statement", "SQLiteEntityDB::initDB");
-    
-    result = sqlite3_prepare_v2(dbInstance, "insert into key values (?,?)", -1, &stmt[2], NULL);
-    if(result != SQLITE_OK) throw CException(errorSequence++, "error initializing stmt[2] statement", "SQLiteEntityDB::initDB");
-    
-    result = sqlite3_prepare_v2(dbInstance, "select id from key where key_name = ?", -1, &stmt[3], NULL);
-    if(result != SQLITE_OK) throw CException(errorSequence++, "error initializing stmt[3] statement", "SQLiteEntityDB::initDB");
-    
-    result = sqlite3_prepare_v2(dbInstance, "insert into entity(id, key_id, str_value) values (?,?,?)", -1, &stmt[4], NULL);
-    if(result != SQLITE_OK) throw CException(errorSequence++, "error initializing stmt[4] statement", "SQLiteEntityDB::initDB");
-    
-    result = sqlite3_prepare_v2(dbInstance, "insert into entity(id, key_id, num_value) values (?,?,?)", -1, &stmt[5], NULL);
-    if(result != SQLITE_OK) throw CException(errorSequence++, "error initializing stmt[5] statement", "SQLiteEntityDB::initDB");
-    
-    result = sqlite3_prepare_v2(dbInstance, "select id from entity where key_id = ? and str_value like '%?%'", -1, &stmt[6], NULL);
-    if(result != SQLITE_OK) throw CException(errorSequence++, "error initializing stmt[6] statement", "SQLiteEntityDB::initDB");
-    
-    result = sqlite3_prepare_v2(dbInstance, "select id from entity where key_id = ? and num_value = ?", -1, &stmt[7], NULL);
-    if(result != SQLITE_OK) throw CException(errorSequence++, "error initializing stmt[7] statement", "SQLiteEntityDB::initDB");
-    
-    result = sqlite3_prepare_v2(dbInstance, "select distinct(entity_id) from property where key_id = ? and str_value like '%?%'", -1, &stmt[8], NULL);
-    if(result != SQLITE_OK) throw CException(errorSequence++, "error initializing stmt[7] statement", "SQLiteEntityDB::initDB");
-    
-    result = sqlite3_prepare_v2(dbInstance, "select distinct(entity_id) from property where key_id = ? and num_value = ?", -1, &stmt[9], NULL);
-    if(result != SQLITE_OK) throw CException(errorSequence++, "error initializing stmt[7] statement", "SQLiteEntityDB::initDB");
-    
-    result = sqlite3_prepare_v2(dbInstance, "select distinct(entity_id) from property where key_id = ? and double_value = ?", -1, &stmt[10], NULL);
-    if(result != SQLITE_OK) throw CException(errorSequence++, "error initializing stmt[7] statement", "SQLiteEntityDB::initDB");
+    SET_CHECK_AND_TROW_ERROR(result, "update seq set seq_num = seq_num + 1 where seq_name = ?", stmt[0])
+    SET_CHECK_AND_TROW_ERROR(result, "select seq_num from seq where seq_name = ?", stmt[1])
+    SET_CHECK_AND_TROW_ERROR(result, "insert into key values (?,?)", stmt[2])
+    SET_CHECK_AND_TROW_ERROR(result, "select id from key where key_name = ?", stmt[3])
+    SET_CHECK_AND_TROW_ERROR(result, "insert into entity(id, key_id, key_type, str_value) values (?,?,?,?)", stmt[4])
+    SET_CHECK_AND_TROW_ERROR(result, "insert into entity(id, key_id,  key_type, num_value) values (?,?,?,?)", stmt[5])
+    SET_CHECK_AND_TROW_ERROR(result, "select id from entity where key_id = ? and str_value like ?", stmt[6])
+    SET_CHECK_AND_TROW_ERROR(result, "select id from entity where key_id = ? and num_value = ?", stmt[7])
+    SET_CHECK_AND_TROW_ERROR(result, "select distinct(entity_id) from property where key_id = ? and str_value like ?    ", stmt[8])
+    SET_CHECK_AND_TROW_ERROR(result, "select distinct(entity_id) from property where key_id = ? and num_value = ?", stmt[9])
+    SET_CHECK_AND_TROW_ERROR(result, "select distinct(entity_id) from property where key_id = ? and double_value = ?", stmt[10])
+    SET_CHECK_AND_TROW_ERROR(result, "delete from entity where id = ?", stmt[11])
     
     //-----property
-    result = sqlite3_prepare_v2(dbInstance, "delete entity where id = ?", -1, &stmt[11], NULL);
-    if(result != SQLITE_OK) throw CException(errorSequence++, "error initializing stmt[11] statement", "SQLiteEntityDB::initDB");
+    SET_CHECK_AND_TROW_ERROR(result, "insert into property(id, entity_id, key_id, key_type, str_value) values (?,?,?,?,?)", stmt[12])
+    SET_CHECK_AND_TROW_ERROR(result, "insert into property(id, entity_id, key_id, key_type, num_value) values (?,?,?,?,?)", stmt[13])
+    SET_CHECK_AND_TROW_ERROR(result, "insert into property(id, entity_id, key_id, key_type, double_value) values (?,?,?,?,?)", stmt[14])
+    SET_CHECK_AND_TROW_ERROR(result, "update property set str_value = ?, entity_id = ? where id = ?", stmt[15])
+    SET_CHECK_AND_TROW_ERROR(result, "update property set num_value = ?, entity_id = ? where id = ?", stmt[16])
+    SET_CHECK_AND_TROW_ERROR(result, "update property set double_value = ?, entity_id = ? where id = ?", stmt[17])
+    SET_CHECK_AND_TROW_ERROR(result, "delete from property where id = ?", stmt[18])
     
-    result = sqlite3_prepare_v2(dbInstance, "insert into property(id, entity_id, key_id, str_value) values (?,?,?,?)", -1, &stmt[12], NULL);
-    if(result != SQLITE_OK) throw CException(errorSequence++, "error initializing stmt[12] statement", "SQLiteEntityDB::initDB");
-
-    result = sqlite3_prepare_v2(dbInstance, "insert into property(id, entity_id, key_id, num_value) values (?,?,?,?)", -1, &stmt[13], NULL);
-    if(result != SQLITE_OK) throw CException(errorSequence++, "error initializing stmt[13] statement", "SQLiteEntityDB::initDB");
-
-    result = sqlite3_prepare_v2(dbInstance, "insert into property(id, entity_id, key_id, double_value) values (?,?,?,?)", -1, &stmt[14], NULL);
-    if(result != SQLITE_OK) throw CException(errorSequence++, "error initializing stmt[14] statement", "SQLiteEntityDB::initDB");
-
-    result = sqlite3_prepare_v2(dbInstance, "update property set str_value = ? where id = ?", -1, &stmt[15], NULL);
-    if(result != SQLITE_OK) throw CException(errorSequence++, "error initializing stmt[12] statement", "SQLiteEntityDB::initDB");
+    //search
+    SET_CHECK_AND_TROW_ERROR(result, "select key_id, key_type, CASE (key_type) when 0 then num_value when 1 then double_value else str_value end from property where entity_id = ?", stmt[19])
+    SET_CHECK_AND_TROW_ERROR(result, "select id from entity where key_id = ?", stmt[20])
     
-    result = sqlite3_prepare_v2(dbInstance, "update property set num_value = ? where id = ?", -1, &stmt[16], NULL);
-    if(result != SQLITE_OK) throw CException(errorSequence++, "error initializing stmt[13] statement", "SQLiteEntityDB::initDB");
+    //init the sequence
+    if(!result && !hasSequence("key")){
+        result = initSequence("key");
+    }
     
-    result = sqlite3_prepare_v2(dbInstance, "update property set double_value = ? where id = ?", -1, &stmt[17], NULL);
-    if(result != SQLITE_OK) throw CException(errorSequence++, "error initializing stmt[14] statement", "SQLiteEntityDB::initDB");
+    if(!result && !hasSequence("entity")){
+        result = initSequence("entity");
+    }
     
-    result = sqlite3_prepare_v2(dbInstance, "delete property where id = ?", -1, &stmt[18], NULL);
-    if(result != SQLITE_OK) throw CException(errorSequence++, "error initializing stmt[18] statement", "SQLiteEntityDB::initDB");
-    
+    if(!result && !hasSequence("property")){
+        result = initSequence("property");
+    }
     return result;
 }
 
@@ -136,11 +127,11 @@ int16_t SQLiteEntityDB::initDB(const char* name, bool temporary)  throw (CExcept
  */
 int16_t SQLiteEntityDB::deinitDB()  throw (CException) {
     int16_t result = 0;
-    for (int i = 0; i < 19; i++) {
+    for (int i = 0; i < NUM_STMT; i++) {
         if(stmt[i]) sqlite3_finalize(stmt[i]);
         stmt[i] = NULL;
     }
-
+    
     closeDatabase();
     return result;
 }
@@ -149,8 +140,23 @@ int16_t SQLiteEntityDB::deinitDB()  throw (CException) {
 /*!
  add a new Key returning the associated ID.
  */
-int16_t SQLiteEntityDB::addNewKey(const char *newKey, int32_t& keyID) {
+int16_t SQLiteEntityDB::getIDForKey(const char *newKey, int32_t& keyID) {
     int16_t result = 0;
+    
+    sqlite3_reset(stmt[3]);
+    sqlite3_reset(stmt[2]);
+    
+    result = sqlite3_bind_text(stmt[3], 1, newKey, -1, NULL);
+    if(result != SQLITE_OK) return result;
+    
+    result = sqlite3_step(stmt[3]);
+    if(result != SQLITE_ROW && result != SQLITE_DONE) return result;
+    
+    //get the id
+    if(result == SQLITE_ROW) {
+        keyID = sqlite3_column_int(stmt[3], 0);
+        return SQLITE_OK;
+    }
     
     //get next id
     if((result =  getNextIDOnTable("key", keyID)) != SQLITE_OK) return result;
@@ -161,172 +167,69 @@ int16_t SQLiteEntityDB::addNewKey(const char *newKey, int32_t& keyID) {
     
     result = sqlite3_bind_text(stmt[2], 2, newKey, -1, NULL);
     if(result != SQLITE_OK) return result;
-
-    return  sqlite3_step(stmt[2]);
+    
+    result = sqlite3_step(stmt[2]);
+    if(result != SQLITE_DONE) return result;
+    
+    return  SQLITE_OK;
 }
 
-
-/*!
+/*
  add a new entity with his key/value returning the associated ID.
  */
-int16_t SQLiteEntityDB::addNewEntity(int32_t keyID, const char *keyValue, int32_t& newEntityID) {
+int16_t SQLiteEntityDB::getIDForEntity(KeyIdAndValue& keyInfo, int32_t& newEntityID) {
     int16_t result = 0;
+    sqlite3_stmt *targetStmt = NULL;
+    std::vector<int32_t> resultEntityIDs;
+    
+    result = searchEntityByKeyAndValue(keyInfo, resultEntityIDs);
+    if(result != SQLITE_OK) return result;
+    
+    if(resultEntityIDs.size()== 1) {
+        newEntityID = resultEntityIDs[0];
+        return result;
+    }
+
+    switch (keyInfo.type) {
+        case EntityDB::NUM_VALUE:
+            targetStmt = stmt[5];
+            sqlite3_reset(targetStmt);
+            result = sqlite3_bind_int64(targetStmt, 4, keyInfo.value.numValue);
+            if(result != SQLITE_OK) return result;
+            break;
+        case EntityDB::DOUBLE_VALUE:
+            //not managed
+            return -1;
+            break;
+        case EntityDB::STR_VALUE: {
+            targetStmt = stmt[4];
+            sqlite3_reset(targetStmt);
+            result = sqlite3_bind_text(targetStmt, 4, keyInfo.value.strValue, -1, NULL);
+            if(result != SQLITE_OK) return result;
+            break;
+        }
+    }
     
     //get next id
     if((result =  getNextIDOnTable("entity", newEntityID)) != SQLITE_OK) return result;
     
     // set new entity id
-    result = sqlite3_bind_int(stmt[4], 1, newEntityID);
+    result = sqlite3_bind_int(targetStmt, 1, newEntityID);
     if(result != SQLITE_OK) return result;
     
     // set key id
-    result = sqlite3_bind_int(stmt[4], 2, keyID);
-    if(result != SQLITE_OK) return result;
-
-    // set key str value
-    result = sqlite3_bind_text(stmt[4], 3, keyValue, -1, NULL);
+    result = sqlite3_bind_int64(targetStmt, 2, keyInfo.keyID);
     if(result != SQLITE_OK) return result;
     
-    return  sqlite3_step(stmt[4]);
-}
-
-/*!
- add a new entity with his key/value returning the associated ID.
- */
-int16_t SQLiteEntityDB::addNewEntity(int32_t keyID, int64_t keyValue, int32_t& newEntityID) {
-    int16_t result = 0;
-    
-    //get next id
-    if((result =  getNextIDOnTable("entity", newEntityID)) != SQLITE_OK) return result;
-    
-    // set new entity id
-    result = sqlite3_bind_int(stmt[5], 1, newEntityID);
+    // set key type
+    result = sqlite3_bind_int(targetStmt, 3, keyInfo.type);
     if(result != SQLITE_OK) return result;
     
-    // set key id
-    result = sqlite3_bind_int(stmt[5], 2, keyID);
-    if(result != SQLITE_OK) return result;
+    //insert the entity
+    result = sqlite3_step(stmt[4]);
+    if(result != SQLITE_DONE) return result;
     
-    // set key str value
-    result = sqlite3_bind_int64(stmt[5], 3, keyValue);
-    if(result != SQLITE_OK) return result;
-    
-    return  sqlite3_step(stmt[5]);
-}
-
-/*!
- search the entitys with key and value
- */
-int16_t SQLiteEntityDB::searchEntityByKeyAndValue(int32_t keyID, const char * keyValue, std::vector<int64_t> resultEntityIDs) {
-    int16_t result = 0;
-        
-    // set new entity id
-    result = sqlite3_bind_int(stmt[6], 1, keyID);
-    if(result != SQLITE_OK) return result;
-    
-    // set key id
-    result = sqlite3_bind_text(stmt[6], 2, keyValue, -1, NULL);
-    if(result != SQLITE_OK) return result;
-    
-    // cicle the row
-    while((result = sqlite3_step(stmt[6])) == SQLITE_ROW) {
-        //get foun ids
-        resultEntityIDs.push_back(sqlite3_column_int64(stmt[6], 0));
-		
-    }
-    
-    return  result;
-}
-
-/*!
- search the entitys with key and value
- */
-int16_t SQLiteEntityDB::searchEntityByKeyAndValue(int32_t keyID, int64_t keyValue, std::vector<int64_t> resultEntityIDs) {
-    int16_t result = 0;
-    
-    // set new entity id
-    result = sqlite3_bind_int(stmt[7], 1, keyID);
-    if(result != SQLITE_OK) return result;
-    
-    // set key id
-    result = sqlite3_bind_int64(stmt[7], 2, keyValue);
-    if(result != SQLITE_OK) return result;
-    
-    // cicle the row
-    while((result = sqlite3_step(stmt[7])) == SQLITE_ROW) {
-        //get foun ids
-        resultEntityIDs.push_back(sqlite3_column_int64(stmt[7], 0));
-    }
-    return result;
-}
-
-
-/*!
- search the entitys using property key and value
- */
-int16_t SQLiteEntityDB::searchEntityByPropertyKeyAndValue(int32_t keyID, const char * keyValue, std::vector<int64_t> resultEntityIDs) {
-    int16_t result = 0;
-    
-    // set new entity id
-    result = sqlite3_bind_int(stmt[8], 1, keyID);
-    if(result != SQLITE_OK) return result;
-    
-    // set key id
-    result = sqlite3_bind_text(stmt[8], 2, keyValue, -1, NULL);
-    if(result != SQLITE_OK) return result;
-    
-    // cicle the row
-    while((result = sqlite3_step(stmt[8])) == SQLITE_ROW) {
-        //get foun ids
-        resultEntityIDs.push_back(sqlite3_column_int64(stmt[8], 0));
-		
-    }
-    
-    return  result;
-}
-
-/*!
- search the entitys using property key and value
- */
-int16_t SQLiteEntityDB::searchEntityByPropertyKeyAndValue(int32_t keyID, int64_t keyValue, std::vector<int64_t> resultEntityIDs) {
-    int16_t result = 0;
-    
-    // set new entity id
-    result = sqlite3_bind_int(stmt[9], 1, keyID);
-    if(result != SQLITE_OK) return result;
-    
-    // set key id
-    result = sqlite3_bind_int64(stmt[9], 2, keyValue);
-    if(result != SQLITE_OK) return result;
-    
-    // cicle the row
-    while((result = sqlite3_step(stmt[9])) == SQLITE_ROW) {
-        //get foun ids
-        resultEntityIDs.push_back(sqlite3_column_int64(stmt[9], 0));
-    }
-    return result;
-}
-
-/*!
- search the entitys using property key and value
- */
-int16_t SQLiteEntityDB::searchEntityByPropertyKeyAndValue(int32_t keyID, double keyValue, std::vector<int64_t> resultEntityIDs) {
-    int16_t result = 0;
-    
-    // set new entity id
-    result = sqlite3_bind_int(stmt[10], 1, keyID);
-    if(result != SQLITE_OK) return result;
-    
-    // set key id
-    result = sqlite3_bind_double(stmt[10], 2, keyValue);
-    if(result != SQLITE_OK) return result;
-    
-    // cicle the row
-    while((result = sqlite3_step(stmt[10])) == SQLITE_ROW) {
-        //get foun ids
-        resultEntityIDs.push_back(sqlite3_column_int64(stmt[10], 0));
-    }
-    return result;
+    return  SQLITE_OK;
 }
 
 /*!
@@ -334,155 +237,319 @@ int16_t SQLiteEntityDB::searchEntityByPropertyKeyAndValue(int32_t keyID, double 
  */
 int16_t SQLiteEntityDB::deleteEntity(int32_t entityID) {
     int16_t result = 0;
+    sqlite3_reset(stmt[11]);
+
     // set new entity id
     result = sqlite3_bind_int(stmt[11], 1, entityID);
     if(result != SQLITE_OK) return result;
-
-    return  sqlite3_step(stmt[11]);
+    
+    result = sqlite3_step(stmt[11]);
+    if(result != SQLITE_OK) return result;
+    
+    return  SQLITE_OK;
 }
 
-
-
-/*!
+/*
  add a new number property for entity with his key/value returning the associated ID.
  */
-int16_t SQLiteEntityDB::addNewPropertyForEntity(int32_t entityID, int32_t keyID, int64_t keyValue, int32_t& newEntityPropertyID) {
+int16_t SQLiteEntityDB::addNewPropertyForEntity(int32_t entityID, KeyIdAndValue& keyInfo, int32_t& newEntityPropertyID) {
     int16_t result = 0;
     
+    sqlite3_stmt *targetStmt = NULL;
+        
     //get next id
     if((result =  getNextIDOnTable("property", newEntityPropertyID)) != SQLITE_OK) return result;
     
+    switch (keyInfo.type) {
+        case EntityDB::NUM_VALUE:
+            targetStmt = stmt[13];
+            sqlite3_reset(targetStmt);
+
+            // set key id
+            result = sqlite3_bind_int64(targetStmt, 5, keyInfo.value.numValue);
+            break;
+        case EntityDB::DOUBLE_VALUE:
+            //not managed
+            targetStmt = stmt[14];
+            sqlite3_reset(targetStmt);
+
+            result = sqlite3_bind_double(targetStmt, 5, keyInfo.value.doubleValue);
+            break;
+        case EntityDB::STR_VALUE: {
+            targetStmt = stmt[12];
+            sqlite3_reset(targetStmt);
+
+            result = sqlite3_bind_text(targetStmt, 5, keyInfo.value.strValue, -1, NULL);
+            break;
+        }
+    }
+    if(result != SQLITE_OK) return result;
+    
+    
     // set new entity id
-    result = sqlite3_bind_int(stmt[13], 1, newEntityPropertyID);
+    result = sqlite3_bind_int(targetStmt, 1, newEntityPropertyID);
     if(result != SQLITE_OK) return result;
     
     // set key id
-    result = sqlite3_bind_int(stmt[13], 2, entityID);
+    result = sqlite3_bind_int(targetStmt, 2, entityID);
     if(result != SQLITE_OK) return result;
     
     // set key str value
-    result = sqlite3_bind_int(stmt[13], 3, keyID);
+    result = sqlite3_bind_int64(targetStmt, 3, keyInfo.keyID);
     if(result != SQLITE_OK) return result;
     
-    result = sqlite3_bind_int64(stmt[13], 4, keyValue);
+    result = sqlite3_bind_int(targetStmt, 4, keyInfo.type);
     if(result != SQLITE_OK) return result;
     
-   return  sqlite3_step(stmt[13]);
+    result = sqlite3_step(targetStmt);
+    if(result != SQLITE_OK) return result;
+    
+    return  SQLITE_OK;
 }
 
-
-
-/*!
- add a new double property for entity with his key/value returning the associated ID.
- */
-int16_t SQLiteEntityDB::addNewPropertyForEntity(int32_t entityID, int32_t keyID, double keyValue, int32_t& newEntityPropertyID) {
-    int16_t result = 0;
-    
-    //get next id
-    if((result =  getNextIDOnTable("property", newEntityPropertyID)) != SQLITE_OK) return result;
-    
-    // set new entity id
-    result = sqlite3_bind_int(stmt[14], 1, newEntityPropertyID);
-    if(result != SQLITE_OK) return result;
-    
-    // set key id
-    result = sqlite3_bind_int(stmt[14], 2, entityID);
-    if(result != SQLITE_OK) return result;
-    
-    // set key str value
-    result = sqlite3_bind_int(stmt[14], 3, keyID);
-    if(result != SQLITE_OK) return result;
-    
-    result = sqlite3_bind_double(stmt[14], 4, keyValue);
-    if(result != SQLITE_OK) return result;
-    
-    return  sqlite3_step(stmt[14]);
-}
-
-
-
-/*!
- add a new string property for entity with his key/value returning the associated ID.
- */
-int16_t SQLiteEntityDB::addNewPropertyForEntity(int32_t entityID, int32_t keyID, const char * keyValue, int32_t& newEntityPropertyID) {
-    int16_t result = 0;
-    
-    //get next id
-    if((result =  getNextIDOnTable("property", newEntityPropertyID)) != SQLITE_OK) return result;
-    
-    // set new entity id
-    result = sqlite3_bind_int(stmt[12], 1, newEntityPropertyID);
-    if(result != SQLITE_OK) return result;
-    
-    // set key id
-    result = sqlite3_bind_int(stmt[12], 2, entityID);
-    if(result != SQLITE_OK) return result;
-    
-    // set key str value
-    result = sqlite3_bind_int(stmt[12], 3, keyID);
-    if(result != SQLITE_OK) return result;
-    
-    result = sqlite3_bind_text(stmt[12], 4, keyValue, -1, NULL);
-    if(result != SQLITE_OK) return result;
-    
-    return  sqlite3_step(stmt[12]);
-}
-
-
-
-/*!
+/*
  update the integer value for a property of an entity
  */
-int16_t SQLiteEntityDB::updatePropertyForEntity(int32_t propertyID, int64_t newValue) {
+int16_t SQLiteEntityDB::updatePropertyForEntity(int32_t propertyID, KeyIdAndValue& newTypeAndValue) {
     int16_t result = 0;
-     
-    // set new entity id
-    result = sqlite3_bind_int64(stmt[16], 1, newValue);
+    
+    sqlite3_stmt *targetStmt = NULL;
+        
+    switch (newTypeAndValue.type) {
+        case EntityDB::NUM_VALUE:
+            targetStmt = stmt[16];
+            sqlite3_reset(targetStmt);
+
+            // set key id
+            result = sqlite3_bind_int64(targetStmt, 1, newTypeAndValue.value.numValue);
+            break;
+        case EntityDB::DOUBLE_VALUE:
+            //not managed
+            targetStmt = stmt[17];
+            sqlite3_reset(targetStmt);
+
+            result = sqlite3_bind_double(targetStmt, 1, newTypeAndValue.value.doubleValue);
+            break;
+        case EntityDB::STR_VALUE: {
+            targetStmt = stmt[15];
+            sqlite3_reset(targetStmt);
+
+            result = sqlite3_bind_text(targetStmt, 1, newTypeAndValue.value.strValue, -1, NULL);
+            break;
+        }
+    }
+    if(result != SQLITE_OK) return result;
+    
+    result = sqlite3_bind_int64(targetStmt, 2, newTypeAndValue.keyID);
     if(result != SQLITE_OK) return result;
     
     // set key id
-    result = sqlite3_bind_int(stmt[16], 2, propertyID);
+    result = sqlite3_bind_int(targetStmt, 3, propertyID);
     if(result != SQLITE_OK) return result;
     
-    return  sqlite3_step(stmt[16]);
+    result = sqlite3_step(targetStmt);
+    if(result != SQLITE_OK) return result;
+
+    return  SQLITE_OK;
+    
 }
 
 
-
-/*!
- update the double value for a property of an entity
+/*
+ search the entitys with key and value
  */
-int16_t SQLiteEntityDB::updatePropertyForEntity(int32_t propertyID, double newValue) {
+int16_t SQLiteEntityDB::searchEntityByKeyAndValue(KeyIdAndValue& keyInfo, std::vector<int32_t>& resultEntityIDs) {
     int16_t result = 0;
     
+    bool onlyKeyID = keyInfo.value.numValue == 0;
+    sqlite3_stmt *targetStmt = NULL;
+    
+    sqlite3_reset(stmt[7]);
+    sqlite3_reset(stmt[6]);
+    
+    if(onlyKeyID){
+        targetStmt = stmt[20];
+        sqlite3_reset(targetStmt);
+    }else{
+        switch (keyInfo.type) {
+            case EntityDB::NUM_VALUE:
+                targetStmt = stmt[7];
+                sqlite3_reset(targetStmt);
+                result = sqlite3_bind_int64(targetStmt, 2, keyInfo.value.numValue);
+                if(result != SQLITE_OK) return result;
+                break;
+            case EntityDB::DOUBLE_VALUE:
+                //not managed
+                return -1;
+                break;
+            case EntityDB::STR_VALUE: {
+                targetStmt = stmt[6];
+                sqlite3_reset(targetStmt);
+                // set key id
+                result = sqlite3_bind_text(targetStmt, 2, keyInfo.value.strValue, -1, NULL);
+                if(result != SQLITE_OK) return result;
+                break;
+            }
+        }
+    }
     // set new entity id
-    result = sqlite3_bind_int64(stmt[17], 1, newValue);
+    result = sqlite3_bind_int(targetStmt, 1, keyInfo.keyID);
     if(result != SQLITE_OK) return result;
     
-    // set key id
-    result = sqlite3_bind_int(stmt[17], 2, propertyID);
-    if(result != SQLITE_OK) return result;
+    // cicle the row
+    while((result = sqlite3_step(targetStmt)) == SQLITE_ROW) {
+        //get foun ids
+        resultEntityIDs.push_back(sqlite3_column_int(targetStmt, 0));
+    }
     
-    return  sqlite3_step(stmt[17]);
+    return  SQLITE_OK;
+    
 }
 
-
-
-/*!
- update the string value for a property of an entity
+/*
+ search the entitys using property key and value
  */
-int16_t SQLiteEntityDB::updatePropertyForEntity(int32_t propertyID, const char * newValue) {
+int16_t SQLiteEntityDB::searchEntityByPropertyKeyAndValue(KeyIdAndValue& keyInfo, std::vector<int32_t>& resultEntityIDs) {
     int16_t result = 0;
     
+    sqlite3_stmt *targetStmt = NULL;
+    
+    switch (keyInfo.type) {
+        case EntityDB::NUM_VALUE:
+            targetStmt = stmt[9];
+            sqlite3_reset(targetStmt);
+            
+            // set key id
+            result = sqlite3_bind_int64(targetStmt, 2, keyInfo.value.numValue);
+            if(result != SQLITE_OK) return result;
+            break;
+        case EntityDB::DOUBLE_VALUE:
+            //not managed
+            targetStmt = stmt[10];
+            sqlite3_reset(targetStmt);
+            result = sqlite3_bind_double(targetStmt, 2, keyInfo.value.doubleValue);
+            if(result != SQLITE_OK) return result;
+            break;
+        case EntityDB::STR_VALUE: {
+            targetStmt = stmt[8];
+            sqlite3_reset(targetStmt);
+            result = sqlite3_bind_text(targetStmt, 2, keyInfo.value.strValue, -1, NULL);
+            if(result != SQLITE_OK) return result;
+            break;
+        }
+    }
+    
     // set new entity id
-    result = sqlite3_bind_text(stmt[17], 1, newValue, -1, NULL);
+    result = sqlite3_bind_int64(targetStmt, 1, keyInfo.keyID);
     if(result != SQLITE_OK) return result;
     
-    // set key id
-    result = sqlite3_bind_int(stmt[17], 2, propertyID);
+    // cicle the row
+    while((result = sqlite3_step(targetStmt)) == SQLITE_ROW) {
+        //get foun ids
+        resultEntityIDs.push_back(sqlite3_column_int(targetStmt, 0));
+    }
+    
+    return  SQLITE_OK;
+}
+
+/*
+ update the integer value for a property of an entity
+ */
+int16_t SQLiteEntityDB::searchPropertyForEntity(int32_t entityID, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues) {
+    int16_t result = 0;
+    
+    sqlite3_reset(stmt[19]);
+    
+    //set the entity id
+    result = sqlite3_bind_int64(stmt[19], 3, entityID);
     if(result != SQLITE_OK) return result;
     
-    return  sqlite3_step(stmt[17]);
+    // cicle the selectted row
+    while((result = sqlite3_step(stmt[19])) == SQLITE_ROW) {
+        //Allocate new result row struct info
+        KeyIdAndValue *record = new KeyIdAndValue();
+        
+        
+        //get the id for the key
+        record->keyID = sqlite3_column_int(stmt[19], 0);
+        
+        // valorize the need field
+        switch (sqlite3_column_int(stmt[19], 1)) {
+            case 0:
+                record->value.numValue = sqlite3_column_int64(stmt[19], 2);
+                break;
+            case 1:
+                record->value.doubleValue = sqlite3_column_int64(stmt[19], 2);
+                break;
+            case 2:
+                //copy the string into memoery of the value
+                strcpy(record->value.strValue, (const char *)sqlite3_column_text(stmt[19], 2));
+                break;
+        }
+        //get foun ids
+        resultKeyAndValues.add(record);
+    }
+    return result;
+}
+
+/*
+ update the integer value for a property of an entity
+ */
+int16_t SQLiteEntityDB::searchPropertyForEntity(int32_t entityID, std::vector<int32_t>& keysIDs, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues) {
+    int16_t result = 0;
+    
+    sqlite3_stmt *stmt = NULL;
+
+    //if no key id is passed use the other function
+    if(keysIDs.size() == 0) return searchPropertyForEntity(entityID, resultKeyAndValues);
+    
+    // i have key id
+    std::string select("select key_id, key_type, CASE (key_type) when 0 then num_result when 1 then double_result else str_result end from property where entity_id = ? and key_id in (");
+    
+    for(int i = 0; i< keysIDs.size(); i++) {select.append("?,");}
+    
+    //remove last "," form select
+    keysIDs.resize(keysIDs.size()-1);
+    
+    
+    //close select
+    select.append(")");
+    
+    try {
+        
+        result = sqlite3_prepare_v2(dbInstance, select.c_str(), -1, &stmt, NULL);
+        
+        // cicle the selectted row
+        while((result = sqlite3_step(stmt)) == SQLITE_ROW) {
+            //Allocate new result row struct info
+            KeyIdAndValue *record = new KeyIdAndValue();
+            
+            //get the id for the key
+            record->keyID = sqlite3_column_int(stmt, 0);
+            
+            // valorize the need field
+            switch (sqlite3_column_int(stmt, 1)) {
+                case 0:
+                    record->value.numValue = sqlite3_column_int64(stmt, 2);
+                    break;
+                case 1:
+                    record->value.doubleValue = sqlite3_column_double(stmt, 2);
+                    break;
+                case 2:
+                    //copy the string into memoery of the value
+                    strcpy(record->value.strValue, (const char *)sqlite3_column_text(stmt, 2));
+                    break;
+            }
+            //get foun ids
+            resultKeyAndValues.add(record);
+        }
+        
+    } catch (...) {
+        
+    }
+    //clear the statement
+    if(stmt) result = sqlite3_finalize(stmt);
+    return result;
 }
 
 /*!
@@ -490,12 +557,12 @@ int16_t SQLiteEntityDB::updatePropertyForEntity(int32_t propertyID, const char *
  */
 int16_t SQLiteEntityDB::deleteEntityProperty(int32_t propertyID) {
     int16_t result = 0;
-    
+    sqlite3_reset(stmt[18]);
     // set key id
     result = sqlite3_bind_int(stmt[18], 1, propertyID);
     if(result != SQLITE_OK) return result;
-
-    return sqlite3_step(stmt[17]);;
+    
+    return DONE_TO_OK_RESULT(result, sqlite3_step(stmt[21]));
 }
 
 //----------------------private db api------------------------
@@ -524,15 +591,18 @@ int16_t SQLiteEntityDB::makeInsertUpdateDelete(const char *sql) {
 
 int16_t SQLiteEntityDB::getNextIDOnTable(const char * tableName, int32_t &seqID) {
     int16_t error = SQLITE_OK;
-    mutex::scoped_lock  lock(nextSeqID);
-    CHAOS_ASSERT(stmt[0])
-    CHAOS_ASSERT(dbInstance)
+    mutex::scoped_lock  lock(seqWorkMutext);
+    sqlite3_reset(stmt[0]);
+    sqlite3_reset(stmt[1]);
     
     //set table name
-    sqlite3_bind_text(stmt[0], 1, tableName, -1, NULL);
+    if((error = sqlite3_bind_text(stmt[0], 1, tableName, -1, NULL)) != SQLITE_OK) {
+        return error;
+    }
+    
     
     // update the sequence
-    if((error = sqlite3_step(stmt[0])) != SQLITE_ROW) {
+    if((error = sqlite3_step(stmt[0])) != SQLITE_DONE) {
         return error;
     }
     
@@ -542,5 +612,46 @@ int16_t SQLiteEntityDB::getNextIDOnTable(const char * tableName, int32_t &seqID)
     }
     
     seqID = sqlite3_column_int(stmt[1], 0);
-    return error;
+    return SQLITE_OK;
+}
+
+int16_t SQLiteEntityDB::initSequence(const char *tableName) {
+    int16_t error = SQLITE_OK;
+    sqlite3_stmt *insertStmt = NULL;
+    if((error = sqlite3_prepare_v2(dbInstance, "insert into seq values (?,?)", -1, &insertStmt, NULL)) != SQLITE_OK) {
+        return error;
+    }
+    
+    if((error = sqlite3_bind_text(insertStmt, 2, tableName, -1, NULL)) != SQLITE_OK) {
+        sqlite3_finalize(insertStmt);
+        return error;
+    }
+    
+    if((error = sqlite3_bind_int(insertStmt, 1, 0)) != SQLITE_OK) {
+        sqlite3_finalize(insertStmt);
+        return error;
+    }
+    
+    error = sqlite3_step(insertStmt);
+    sqlite3_finalize(insertStmt);
+    return 0;
+}
+
+bool SQLiteEntityDB::hasSequence(const char *tableName) {
+    int16_t error = SQLITE_OK;
+    int result = 0;
+    sqlite3_stmt *hasStmt = NULL;
+    if((error = sqlite3_prepare_v2(dbInstance, "select count(*) from seq where seq_name = ?", -1, &hasStmt, NULL)) != SQLITE_OK) {
+        return error;
+    }
+    
+    if((error = sqlite3_bind_text(hasStmt, 1, tableName, -1, NULL)) != SQLITE_OK) {
+        sqlite3_finalize(hasStmt);
+        return error;
+    }
+    
+    error = sqlite3_step(hasStmt);
+    result = sqlite3_column_int(hasStmt, 0);
+    sqlite3_finalize(hasStmt);
+    return result >= 1;
 }
