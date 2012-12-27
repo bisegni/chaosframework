@@ -1,10 +1,23 @@
-//
-//  SQLiteEntityDB.cpp
-//  CHAOSFramework
-//
-//  Created by Claudio Bisegni on 21/12/12.
-//  Copyright (c) 2012 INFN. All rights reserved.
-//
+/*
+ *	SQLiteEntityDB.cpp
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
+
 
 #include "SQLiteEntityDB.h"
 
@@ -106,6 +119,8 @@ int16_t SQLiteEntityDB::initDB(const char* name, bool temporary)  throw (CExcept
     //search
     SET_CHECK_AND_TROW_ERROR(result, "select key_id, key_type, CASE (key_type) when 0 then num_value when 1 then double_value else str_value end from property where entity_id = ?", stmt[19])
     SET_CHECK_AND_TROW_ERROR(result, "select id from entity where key_id = ?", stmt[20])
+    
+    SET_CHECK_AND_TROW_ERROR(result, "delete from property where entity_id = ?", stmt[21])
     
     //init the sequence
     if(!result && !hasSequence("key")){
@@ -555,16 +570,28 @@ int16_t SQLiteEntityDB::searchPropertyForEntity(int32_t entityID, std::vector<in
 /*!
  Delete a property for a entity
  */
-int16_t SQLiteEntityDB::deleteEntityProperty(int32_t propertyID) {
+int16_t SQLiteEntityDB::deleteProperty(int32_t propertyID) {
     int16_t result = 0;
     sqlite3_reset(stmt[18]);
     // set key id
     result = sqlite3_bind_int(stmt[18], 1, propertyID);
     if(result != SQLITE_OK) return result;
     
-    return DONE_TO_OK_RESULT(result, sqlite3_step(stmt[21]));
+    return DONE_TO_OK_RESULT(result, sqlite3_step(stmt[18]));
 }
 
+/*
+ Delete all property for an entity
+ */
+int16_t SQLiteEntityDB::deleteAllPropertyForEntity(int32_t entityID) {
+    int16_t result = 0;
+    sqlite3_reset(stmt[21]);
+    // set key id
+    result = sqlite3_bind_int(stmt[21], 1, entityID);
+    if(result != SQLITE_OK) return result;
+    
+    return DONE_TO_OK_RESULT(result, sqlite3_step(stmt[21]));
+}
 //----------------------private db api------------------------
 
 int16_t SQLiteEntityDB::openDatabase(const char *databasePath) {

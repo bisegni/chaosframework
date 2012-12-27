@@ -1,5 +1,5 @@
 /*
- *	EntityDB.cpp
+ *	EntityDataset.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,26 +17,23 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "EntityDB.h"
-#include <chaos/common/data/entity/Entity.h>
 
-using namespace chaos;
-using namespace chaos::edb;
+#ifndef __CHAOSFramework__EntityDataset__
+#define __CHAOSFramework__EntityDataset__
 
-/*!
- Default constructor
- */
-EntityDB::EntityDB() {
+#include <choas/common/data/entity/Entity.h>
 
+namespace chaos {
+    namespace entity {
+        
+        /*!
+         Implement the dataset (device) as entity for store it on entity db
+         */
+        class EntityDataset : public Entity {
+            
+        }
+        
+    }
 }
 
-/*!
- Default destructor
- */
-EntityDB::~EntityDB() {
-
-}
-
-entity::Entity* EntityDB::getNewEntityInstance() {
-    return new entity::Entity(this);
-}
+#endif /* defined(__CHAOSFramework__EntityDataset__) */

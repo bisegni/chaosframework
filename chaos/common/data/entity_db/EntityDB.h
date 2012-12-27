@@ -28,7 +28,12 @@
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/utility/ArrayPointer.h>
 
+
 namespace chaos {
+    
+    namespace entity {
+        class Entity;
+    }
     
     /*!
      The namespace edb group all code for the managment of a the abstract entity database.
@@ -187,9 +192,18 @@ namespace chaos {
              Delete a property for a entity
              \param propertyID is the id of the property
              */
-            virtual int16_t deleteEntityProperty(int32_t propertyID) = 0;
+            virtual int16_t deleteProperty(int32_t propertyID) = 0;
             
-
+            /*!
+             Delete all property for an entity
+             \param entityID is the id of the entity
+             */
+            virtual int16_t deleteAllPropertyForEntity(int32_t entityID) = 0;
+            
+            /*!
+             return a nre isntance of an Entity class
+             */
+            entity::Entity* getNewEntityInstance();
             
         };
     }

@@ -1,5 +1,5 @@
 /*
- *	EntityDB.cpp
+ *	Property.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,26 +17,26 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "EntityDB.h"
-#include <chaos/common/data/entity/Entity.h>
 
-using namespace chaos;
-using namespace chaos::edb;
+#include "Property.h"
 
-/*!
- Default constructor
- */
-EntityDB::EntityDB() {
 
+Property::Property(int32_t entityID, edb::EntityDB::KeyIdAndValue _eyValueInfo) {
+    
 }
 
-/*!
- Default destructor
+/*
+ The subclasses need to implement this method for persister their information
+ on entity db
  */
-EntityDB::~EntityDB() {
-
+void Property::storeData(EntityDB& eDB) throw (CException) {
+    
 }
 
-entity::Entity* EntityDB::getNewEntityInstance() {
-    return new entity::Entity(this);
+/*
+ The subclasses need to implement this method for read their information
+ on entity db
+ */
+void Property::readData(EntityDB& eDB) throw (CException) {
+    
 }
