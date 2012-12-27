@@ -206,17 +206,17 @@ int16_t SQLiteEntityDB::getIDForEntity(KeyIdAndValue& keyInfo, int32_t& newEntit
     }
 
     switch (keyInfo.type) {
-        case EntityDB::NUM_VALUE:
+        case KEY_NUM_VALUE:
             targetStmt = stmt[5];
             sqlite3_reset(targetStmt);
             result = sqlite3_bind_int64(targetStmt, 4, keyInfo.value.numValue);
             if(result != SQLITE_OK) return result;
             break;
-        case EntityDB::DOUBLE_VALUE:
+        case KEY_DOUBLE_VALUE:
             //not managed
             return -1;
             break;
-        case EntityDB::STR_VALUE: {
+        case KEY_STR_VALUE: {
             targetStmt = stmt[4];
             sqlite3_reset(targetStmt);
             result = sqlite3_bind_text(targetStmt, 4, keyInfo.value.strValue, -1, NULL);
@@ -276,21 +276,21 @@ int16_t SQLiteEntityDB::addNewPropertyForEntity(int32_t entityID, KeyIdAndValue&
     if((result =  getNextIDOnTable("property", newEntityPropertyID)) != SQLITE_OK) return result;
     
     switch (keyInfo.type) {
-        case EntityDB::NUM_VALUE:
+        case KEY_NUM_VALUE:
             targetStmt = stmt[13];
             sqlite3_reset(targetStmt);
 
             // set key id
             result = sqlite3_bind_int64(targetStmt, 5, keyInfo.value.numValue);
             break;
-        case EntityDB::DOUBLE_VALUE:
+        case KEY_DOUBLE_VALUE:
             //not managed
             targetStmt = stmt[14];
             sqlite3_reset(targetStmt);
 
             result = sqlite3_bind_double(targetStmt, 5, keyInfo.value.doubleValue);
             break;
-        case EntityDB::STR_VALUE: {
+        case KEY_STR_VALUE: {
             targetStmt = stmt[12];
             sqlite3_reset(targetStmt);
 
@@ -331,21 +331,21 @@ int16_t SQLiteEntityDB::updatePropertyForEntity(int32_t propertyID, KeyIdAndValu
     sqlite3_stmt *targetStmt = NULL;
         
     switch (newTypeAndValue.type) {
-        case EntityDB::NUM_VALUE:
+        case KEY_NUM_VALUE:
             targetStmt = stmt[16];
             sqlite3_reset(targetStmt);
 
             // set key id
             result = sqlite3_bind_int64(targetStmt, 1, newTypeAndValue.value.numValue);
             break;
-        case EntityDB::DOUBLE_VALUE:
+        case KEY_DOUBLE_VALUE:
             //not managed
             targetStmt = stmt[17];
             sqlite3_reset(targetStmt);
 
             result = sqlite3_bind_double(targetStmt, 1, newTypeAndValue.value.doubleValue);
             break;
-        case EntityDB::STR_VALUE: {
+        case KEY_STR_VALUE: {
             targetStmt = stmt[15];
             sqlite3_reset(targetStmt);
 
@@ -387,17 +387,17 @@ int16_t SQLiteEntityDB::searchEntityByKeyAndValue(KeyIdAndValue& keyInfo, std::v
         sqlite3_reset(targetStmt);
     }else{
         switch (keyInfo.type) {
-            case EntityDB::NUM_VALUE:
+            case KEY_NUM_VALUE:
                 targetStmt = stmt[7];
                 sqlite3_reset(targetStmt);
                 result = sqlite3_bind_int64(targetStmt, 2, keyInfo.value.numValue);
                 if(result != SQLITE_OK) return result;
                 break;
-            case EntityDB::DOUBLE_VALUE:
+            case KEY_DOUBLE_VALUE:
                 //not managed
                 return -1;
                 break;
-            case EntityDB::STR_VALUE: {
+            case KEY_STR_VALUE: {
                 targetStmt = stmt[6];
                 sqlite3_reset(targetStmt);
                 // set key id
@@ -430,7 +430,7 @@ int16_t SQLiteEntityDB::searchEntityByPropertyKeyAndValue(KeyIdAndValue& keyInfo
     sqlite3_stmt *targetStmt = NULL;
     
     switch (keyInfo.type) {
-        case EntityDB::NUM_VALUE:
+        case KEY_NUM_VALUE:
             targetStmt = stmt[9];
             sqlite3_reset(targetStmt);
             
@@ -438,14 +438,14 @@ int16_t SQLiteEntityDB::searchEntityByPropertyKeyAndValue(KeyIdAndValue& keyInfo
             result = sqlite3_bind_int64(targetStmt, 2, keyInfo.value.numValue);
             if(result != SQLITE_OK) return result;
             break;
-        case EntityDB::DOUBLE_VALUE:
+        case KEY_DOUBLE_VALUE:
             //not managed
             targetStmt = stmt[10];
             sqlite3_reset(targetStmt);
             result = sqlite3_bind_double(targetStmt, 2, keyInfo.value.doubleValue);
             if(result != SQLITE_OK) return result;
             break;
-        case EntityDB::STR_VALUE: {
+        case KEY_STR_VALUE: {
             targetStmt = stmt[8];
             sqlite3_reset(targetStmt);
             result = sqlite3_bind_text(targetStmt, 2, keyInfo.value.strValue, -1, NULL);

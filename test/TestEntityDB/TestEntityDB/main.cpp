@@ -20,29 +20,27 @@ int main(int argc, const char * argv[])
         auto_ptr<chaos::edb::EntityDB> testDB (new chaos::edb::SQLiteEntityDB());
         testDB->initDB("test", false);
         
-        chaos::edb::EntityDB::KeyIdAndValue keyInfo;
+        chaos::edb::KeyIdAndValue deviceInfo;
+        chaos::edb::KeyIdAndValue propertyInfo;
         int32_t keyDevice = 0;
         int32_t keyDataset = 0;
-        int32_t idDevice = 0;
-        int32_t idDataset = 0;
+
         
         testDB->getIDForKey("device", keyDevice);
         testDB->getIDForKey("dataset", keyDataset);
         
-        keyInfo.keyID = keyDevice;
-        keyInfo.type = chaos::edb::EntityDB::STR_VALUE;
-        strcpy(keyInfo.value.strValue, "device_1");
+        deviceInfo.keyID = keyDevice;
+        deviceInfo.type = chaos::edb::KEY_STR_VALUE;
+        strcpy(deviceInfo.value.strValue, "device_1");
         
-            //add new device
-        testDB->getIDForEntity(keyInfo, idDevice);
-        
-        keyInfo.keyID = keyDataset;
-        keyInfo.type = chaos::edb::EntityDB::STR_VALUE;
-        strcpy(keyInfo.value.strValue, "device_1");
-        //add new device
-        testDB->getIDForEntity(keyInfo, idDataset);
+        chaos::entity::Entity *entity = testDB->getNewEntityInstance(deviceInfo);
+        if(entity) {
+            propertyInfo.keyID = keyDevice;
+            propertyInfo.type = chaos::edb::KEY_NUM_VALUE;
+            propertyInfo.value.numValue = 23;
 
-        
+            entity->addProperty(propertyInfo);
+        }
         testDB->deinitDB();
         
     } catch (chaos::CException& e) {

@@ -23,29 +23,41 @@
 
 #include <vector>
 #include <chaos/common/data/entity/Record.h>
-
+#include <chaos/common/utility/Atomic.h>
 namespace chaos {
 
+    namespace edb {
+        //forward declaration
+        class EntityDB;
+        struct KeyIdAndValue;
+    }
+    
     namespace entity {
        
+        
         /*!
          This represent the base class for the entity
          */
         class Entity  : protected Record {
+            friend class edb::EntityDB;
+            
+            atomic_int_type instanceID;
             
             int32_t entityID;
             std::vector<int32_t> prepertyIDs;
             
+            Entity(edb::EntityDB *_database, atomic_int_type _instanceID);
+            
+            ~Entity();
+            
+            int32_t setEntityKeyAndInfo(chaos::edb::KeyIdAndValue& keyInfo);
         public:
-            Entity(edb::EntityDB *_database);
-            
-            void setEntityKeyAndInfo(chaos::edb::EntityDB::KeyIdAndValue keyInfo);
-            
-            void addProperty(chaos::edb::EntityDB::KeyIdAndValue keyInfo);
 
-            void reset();
+            int32_t addProperty(chaos::edb::KeyIdAndValue& keyInfo);
+
+            int32_t reset();
             
-            void getAllProperty(chaos::ArrayPointer<chaos::edb::EntityDB::KeyIdAndValue>& propertys);
+            int32_t getAllProperty(chaos::ArrayPointer<chaos::edb::KeyIdAndValue>& propertys);
         };
         
     }

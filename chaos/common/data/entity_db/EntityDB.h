@@ -25,9 +25,10 @@
 #include <stddef.h>
 #include <string>
 #include <vector>
+#include <map>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/utility/ArrayPointer.h>
-
+#include <chaos/common/utility/Atomic.h>
 
 namespace chaos {
     
@@ -40,6 +41,34 @@ namespace chaos {
      */
     namespace edb {
         
+        
+        /*!
+         Define the type of the value for a key
+         */
+        typedef enum {
+            KEY_NUM_VALUE = 0,
+            KEY_DOUBLE_VALUE,
+            KEY_STR_VALUE
+        } ValueType;
+        
+        /*!
+         Define an union for contain temporaly, the value for a key
+         */
+        typedef union {
+            int64_t numValue;
+            double doubleValue;
+            char strValue[256];
+        } KeyValue;
+        
+        /*!
+         Define the infromation for the type, id and value for a key
+         */
+        typedef struct KeyIdAndValue {
+            ValueType   type;
+            int32_t     keyID;
+            KeyValue    value;
+        } KeyIdAndValue;
+
         /*!
          An entity will be
          specialized from other class to realize, device, node, etc. Every entity can have many different property, and is identified by a key and a string value.
@@ -63,38 +92,15 @@ namespace chaos {
         
         
         class EntityDB {
+            //! Entity instance counter
+            atomic_int_type entityInstanceSequence;
+            
+            std::map<atomic_int_type, entity::Entity*> entityInstancesMap;
         protected:
             bool    _temporaryAllocation;
             std::string  _name;
         public:
-            
-            /*!
-             Define the type of the value for a key
-             */
-            typedef enum {
-                NUM_VALUE = 0,
-                DOUBLE_VALUE,
-                STR_VALUE
-            } ValueType;
-            
-            /*!
-             Define an union for contain temporaly, the value for a key
-             */
-            typedef union {
-                int64_t numValue;
-                double doubleValue;
-                char strValue[256];
-            } KeyValue;
-            
-            /*!
-             Define the infromation for the type, id and value for a key
-             */
-            typedef struct {
-                ValueType   type;
-                int32_t     keyID;
-                KeyValue    value;
-            } KeyIdAndValue;
-            
+
             /*!
              Default constructor
              */
@@ -201,12 +207,19 @@ namespace chaos {
             virtual int16_t deleteAllPropertyForEntity(int32_t entityID) = 0;
             
             /*!
-             return a nre isntance of an Entity class
+             Allocate and return a new instance of an Entity class
+             \param keyInfo the information for the key taht will represent the entity
              */
-            entity::Entity* getNewEntityInstance();
+            entity::Entity* getNewEntityInstance(KeyIdAndValue& keyInfo);
+            
+            /*!
+             Delete the isntance of an Entity class
+             \param entity the instance to delete
+             */
+            void deleteEntityInstance(entity::Entity* entity);
             
         };
     }
 }
-
+#include <chaos/common/data/entity/Entity.h>
 #endif /* defined(__CHAOSFramework__EntityDB__) */

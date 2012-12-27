@@ -28,10 +28,6 @@ namespace chaos{
     //forward declaration
     class CException;
     
-    namespace edb {
-        class EntityDB;
-    }
-    
     /*!
      The namespace entity group all code for the managment of a the abstract and specified chaos entity.
      */
@@ -41,7 +37,7 @@ namespace chaos{
          Base class for all Record that need to be persisted on EntityDB Implementation
          */
         class Record {
-            friend class edb::EntityDB;
+            friend class chaos::edb::EntityDB;
         protected:
             
             edb::EntityDB *database;
@@ -50,7 +46,7 @@ namespace chaos{
             int32_t _id;
             
             //! information about the key of the current entity db record
-            edb::EntityDB::KeyIdAndValue _keyValueInfo;
+            edb::KeyIdAndValue _keyValueInfo;
             
             Record(edb::EntityDB *_database):database(_database){};
             

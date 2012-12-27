@@ -24,28 +24,39 @@
 using namespace chaos;
 using namespace chaos::entity;
 
-Entity::Entity(edb::EntityDB *_database):Record(_database){
-
+Entity::Entity(edb::EntityDB *_database,  atomic_int_type _instanceID):Record(_database),instanceID(_instanceID){
 }
 
-void Entity::setEntityKeyAndInfo(edb::EntityDB::KeyIdAndValue keyInfo) {
+Entity::~Entity(){
+    
+}
+
+int32_t Entity::setEntityKeyAndInfo(chaos::edb::KeyIdAndValue& keyInfo) {
     //register the information for the entity
-    database->getIDForEntity(keyInfo, entityID);
+    return database->getIDForEntity(keyInfo, entityID);
 }
 
-void Entity::addProperty(edb::EntityDB::KeyIdAndValue keyInfo) {
+int32_t Entity::addProperty(edb::KeyIdAndValue& keyInfo) {
+    int32_t error = 0;
     int32_t idNewProperty = 0;
-    if(!database->addNewPropertyForEntity(entityID, keyInfo, idNewProperty)) {
-        prepertyIDs.push_back(idNewProperty);
+    if(!(error = database->addNewPropertyForEntity(entityID, keyInfo, idNewProperty))) {
+        return error;
     }
+    
+    prepertyIDs.push_back(idNewProperty);
+    return error;
 }
 
-void Entity::getAllProperty(chaos::ArrayPointer<chaos::edb::EntityDB::KeyIdAndValue>& propertys) {
-    if(!database->searchPropertyForEntity(entityID, propertys)) {
-        prepertyIDs.clear();
+int32_t Entity::getAllProperty(chaos::ArrayPointer<chaos::edb::KeyIdAndValue>& propertys) {
+    int32_t error = 0;
+    if(!(error = database->searchPropertyForEntity(entityID, propertys))) {
+        return error;
     }
+    
+    prepertyIDs.clear();
+    return error;
 }
 
-void Entity::reset() {
-    database->deleteAllPropertyForEntity(entityID);
+int32_t Entity::reset() {
+    return database->deleteAllPropertyForEntity(entityID);
 }
