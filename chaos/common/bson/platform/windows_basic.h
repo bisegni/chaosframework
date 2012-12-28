@@ -1,6 +1,7 @@
-// nonce.h
+// windows_basic.h
 
-/*    Copyright 2009 10gen Inc.
+/*
+ *    Copyright 2010 10gen Inc.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,30 +18,17 @@
 
 #pragma once
 
-#include <iostream>
-#include <fstream>
-
-namespace Nonce {
-
-    typedef unsigned long long nonce;
-
-    struct Security {
-        Security();
-
-        nonce getNonce();
-        /** safe during global var initialization */
-        nonce getNonceInitSafe() {
-            init();
-            return getNonce();
-        }
-
-    private:
-        std::ifstream *_devrandom;
-        static bool _initialized;
-        void init();
-
-    };
-
-    extern Security security;
-
-} // namespace mongo
+#if defined(_WIN32)
+// for rand_s() usage:
+# define _CRT_RAND_S
+# ifndef NOMINMAX
+#  define NOMINMAX
+# endif
+// tell windows.h not to include a bunch of headers we don't need:
+# define WIN32_LEAN_AND_MEAN
+# include "bson/targetver.h"
+# include <winsock2.h> //this must be included before the first windows.h include
+# include <ws2tcpip.h>
+# include <wspiapi.h>
+# include <windows.h>
+#endif

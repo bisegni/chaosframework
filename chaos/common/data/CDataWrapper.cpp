@@ -52,9 +52,9 @@ vector<BSONElement>::size_type CMultiTypeDataArrayWrapper::size() const{
 CDataWrapper::CDataWrapper():bsonArrayBuilder(new BSONArrayBuilder()),bsonBuilder(new BSONObjBuilder()){
 }
 
-CDataWrapper::CDataWrapper(const char* serializationBuffer, bool bson, bool owned):bsonArrayBuilder(new BSONArrayBuilder()),bsonBuilder(new BSONObjBuilder()){
+CDataWrapper::CDataWrapper(const char* serializationBuffer, bool bson):bsonArrayBuilder(new BSONArrayBuilder()),bsonBuilder(new BSONObjBuilder()){
         //bsonBuilder->appendElements(BSONObj(serializationBuffer));
-    setSerializedData(serializationBuffer, bson, owned);
+    setSerializedData(serializationBuffer, bson);
 }
 
 CDataWrapper *CDataWrapper::clone() {
@@ -237,8 +237,8 @@ string CDataWrapper::getJSONString() {
     return bsonBuilder->asTempObj().jsonString();
 }
     //reinitialize the object with bson data
-void CDataWrapper::setSerializedData(const char* bsonData, bool bson, bool owned) {
-    bsonBuilder->appendElements(bson?BSONObj(bsonData, owned):fromjson(bsonData));
+void CDataWrapper::setSerializedData(const char* bsonData, bool bson) {
+    bsonBuilder->appendElements(/*bson?*/BSONObj(bsonData)/*:fromjson(bsonData)*/);
 }
 
     //append all elemento of an

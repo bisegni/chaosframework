@@ -17,11 +17,12 @@
 
 #pragma once
 
-#include "../bsonassert.h"
-#include "builder.h"
+#include <string>
 
+#include <chaos/common/bson/base/string_data.h>
+#include <chaos/common/bson/util/builder.h>
+#include <chaos/common/bson/util/assert_util.h>
 namespace bson {
-
     //can't use hex namespace because it conflicts with hex iostream function
     inline int fromHex( char c ) {
         if ( '0' <= c && c <= '9' )
@@ -30,14 +31,17 @@ namespace bson {
             return c - 'a' + 10;
         if ( 'A' <= c && c <= 'F' )
             return c - 'A' + 10;
-        assert( false );
+        MONGO_verify( false );
         return 0xff;
     }
     inline char fromHex( const char *c ) {
         return (char)(( fromHex( c[ 0 ] ) << 4 ) | fromHex( c[ 1 ] ));
     }
+    inline char fromHex( const StringData& c ) {
+        return (char)(( fromHex( c[ 0 ] ) << 4 ) | fromHex( c[ 1 ] ));
+    }
 
-    inline string toHex(const void* inRaw, int len) {
+    inline std::string toHex(const void* inRaw, int len) {
         static const char hexchars[] = "0123456789ABCDEF";
 
         StringBuilder out;
@@ -53,7 +57,7 @@ namespace bson {
         return out.str();
     }
 
-    inline string toHexLower(const void* inRaw, int len) {
+    inline std::string toHexLower(const void* inRaw, int len) {
         static const char hexchars[] = "0123456789abcdef";
 
         StringBuilder out;

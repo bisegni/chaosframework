@@ -23,7 +23,7 @@
 #include <string>
 #include <vector>
 #include <chaos/common/bson/bson.h>
-#include <chaos/common/bson/util/json.h>
+//#include <chaos/common/bson/util/json.h>
 #include <chaos/common/pool/CPoolMemoryObject.h>
 
 namespace chaos {
@@ -89,7 +89,7 @@ namespace chaos {
     public:
         
         CDataWrapper();
-        CDataWrapper(const char* serializationBuffer, bool bson=true, bool owned = false);
+        CDataWrapper(const char* serializationBuffer, bool bson=true);
         
         CDataWrapper *clone();
             //add a csdata value
@@ -162,7 +162,7 @@ namespace chaos {
         string getJSONString();
         
             //reinitialize the object with bson data
-        void setSerializedData(const char* bsonData, bool bson=true, bool owned = false);
+        void setSerializedData(const char* bsonData, bool bson=true);
         
             //check if the key is present in data wrapper
         bool hasKey(const char*) const;

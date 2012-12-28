@@ -19,32 +19,41 @@
 #pragma once
 
 #if defined(_WIN32)
-#  include <windows.h>
+#include <chaos/common/bson/platform/windows_basic.h>
 #endif
+
+#include <chaos/common/bson/platform/compiler.h>
 
 namespace bson {
 
-    struct AtomicUInt {
+    /**
+     * An unsigned integer supporting atomic read-modify-write operations.
+     *
+     * Many operations on these types depend on natural alignment (4 byte alignment for 4-byte
+     * words, i.e.).
+     */
+    struct MONGO_COMPILER_ALIGN_TYPE( 4 ) AtomicUInt {
         AtomicUInt() : x(0) {}
         AtomicUInt(unsigned z) : x(z) { }
 
         operator unsigned() const { return x; }
         unsigned get() const { return x; }
+        inline void set(unsigned newX);
 
         inline AtomicUInt operator++(); // ++prefix
         inline AtomicUInt operator++(int);// postfix++
         inline AtomicUInt operator--(); // --prefix
         inline AtomicUInt operator--(int); // postfix--
-
-        inline void zero();
-
+        inline void signedAdd(int by);
+        inline void zero() { set(0); }
         volatile unsigned x;
     };
 
 #if defined(_WIN32)
-    void AtomicUInt::zero() { 
-        InterlockedExchange((volatile long*)&x, 0);
+    void AtomicUInt::set(unsigned newX) {
+        InterlockedExchange((volatile long *)&x, newX);
     }
+
     AtomicUInt AtomicUInt::operator++() {
         return InterlockedIncrement((volatile long*)&x);
     }
@@ -57,9 +66,15 @@ namespace bson {
     AtomicUInt AtomicUInt::operator--(int) {
         return InterlockedDecrement((volatile long*)&x)+1;
     }
+# if defined(_WIN64)
+    // don't see an InterlockedAdd for _WIN32...hmmm
+    void AtomicUInt::signedAdd(int by) {
+        InterlockedAdd((volatile long *)&x,by);
+    }
+# endif
 #elif defined(__GCC_HAVE_SYNC_COMPARE_AND_SWAP_4)
     // this is in GCC >= 4.1
-    inline void AtomicUInt::zero() { x = 0; } // TODO: this isn't thread safe - maybe
+    inline void AtomicUInt::set(unsigned newX) { __sync_synchronize(); x = newX; }
     AtomicUInt AtomicUInt::operator++() {
         return __sync_add_and_fetch(&x, 1);
     }
@@ -72,8 +87,15 @@ namespace bson {
     AtomicUInt AtomicUInt::operator--(int) {
         return __sync_fetch_and_add(&x, -1);
     }
-#elif defined(__GNUC__)  && (defined(__i386__) || defined(__x86_64__)) 
-    inline void AtomicUInt::zero() { x = 0; } // TODO: this isn't thread safe
+    void AtomicUInt::signedAdd(int by) {
+        __sync_fetch_and_add(&x, by);
+    }
+#elif defined(__GNUC__)  && (defined(__i386__) || defined(__x86_64__))
+    inline void AtomicUInt::set(unsigned newX) {
+        asm volatile("mfence" ::: "memory");
+        x = newX;
+    }
+
     // from boost 1.39 interprocess/detail/atomic.hpp
     inline unsigned atomic_int_helper(volatile unsigned *x, int val) {
         int r;
@@ -99,23 +121,11 @@ namespace bson {
     AtomicUInt AtomicUInt::operator--(int) {
         return atomic_int_helper(&x, -1);
     }
-#elif defined(__GNUC__)  && __GNUC__ >= 4 && __GNUC_MINOR__ >=1
-        // this is in GCC >= 4.1
-    inline void AtomicUInt::zero() { x = 0; } // TODO: this isn't thread safe - maybe
-    AtomicUInt AtomicUInt::operator++() {
-        return __sync_add_and_fetch(&x, 1);
-    }
-    AtomicUInt AtomicUInt::operator++(int) {
-        return __sync_fetch_and_add(&x, 1);
-    }
-    AtomicUInt AtomicUInt::operator--() {
-        return __sync_add_and_fetch(&x, -1);
-    }
-    AtomicUInt AtomicUInt::operator--(int) {
-        return __sync_fetch_and_add(&x, -1);
+    void AtomicUInt::signedAdd(int by) {
+        atomic_int_helper(&x, by);
     }
 #else
 #  error "unsupported compiler or platform"
 #endif
 
-} // namespace mongo
+} // namespace bson

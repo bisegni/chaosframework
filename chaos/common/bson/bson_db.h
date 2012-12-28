@@ -1,12 +1,4 @@
-/** @file bson_db.h
-
-    This file contains the implementation of BSON-related methods that are required
-    by the MongoDB database server.
-
-    Normally, for standalone BSON usage, you do not want this file - it will tend to
-    pull in some other files from the MongoDB project. Thus, bson.h (the main file
-    one would use) does not include this file.
-*/
+/** @file bson_db.h */
 
 /*    Copyright 2009 10gen Inc.
  *
@@ -23,68 +15,84 @@
  *    limitations under the License.
  */
 
+/*
+    This file contains the implementation of BSON-related methods that are required
+    by the MongoDB database server.
+
+    Normally, for standalone BSON usage, you do not want this file - it will tend to
+    pull in some other files from the MongoDB project. Thus, bson.h (the main file
+    one would use) does not include this file.
+*/
+
 #pragma once
 
-#include "util/optime.h"
-#include "util/time_support.h"
-
-#ifndef log
-#define log(...) std::cerr
-#endif
+#include <chaos/common/bson/util/optime.h>
+#include <chaos/common/bson/util/time_support.h>
 
 namespace bson {
 
     /**
-    Timestamps are a special BSON datatype that is used internally for
-    replication. Append a timestamp element to the object being ebuilt.
+    Timestamps are a special BSON datatype that is used internally for replication.
+    Append a timestamp element to the object being ebuilt.
     @param time - in millis (but stored in seconds)
     */
-    inline BSONObjBuilder& BSONObjBuilder::appendTimestamp(
-      const StringData& fieldName, unsigned long long time, unsigned int inc) {
+    inline BSONObjBuilder& BSONObjBuilder::appendTimestamp( const StringData& fieldName , unsigned long long time , unsigned int inc ) {
         OpTime t( (unsigned) (time / 1000) , inc );
         appendTimestamp( fieldName , t.asDate() );
         return *this;
     }
 
+    inline BSONObjBuilder& BSONObjBuilder::append(const StringData& fieldName, OpTime optime) {
+        appendTimestamp(fieldName, optime.asDate());
+        return *this;
+    }
+
     inline OpTime BSONElement::_opTime() const {
-      if(type() == bson::Date || type() == Timestamp)
-        return OpTime(*reinterpret_cast< const unsigned long long* >(value()));
+        if( type() == bson::Date || type() == Timestamp )
+            return OpTime( *reinterpret_cast< const unsigned long long* >( value() ) );
         return OpTime();
     }
 
-    inline string BSONElement::_asCode() const {
+    inline std::string BSONElement::_asCode() const {
         switch( type() ) {
         case bson::String:
         case Code:
-            return string(valuestr(), valuestrsize()-1);
+            return std::string(valuestr(), valuestrsize()-1);
         case CodeWScope:
-            return string(codeWScopeCode(), *(int*)(valuestr())-1);
-        default:
-            log() << "can't convert type: " << (int)(type()) << " to code"
-                  << endl;
+            return std::string(codeWScopeCode(), *(int*)(valuestr())-1);
         }
-        uassert( 10062 ,  "not code" , 0 );
+        assert(  0 );
         return "";
     }
 
-    inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<(
-      DateNowLabeler& id) {
+    inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<(const DateNowLabeler& id) {
         _builder->appendDate(_fieldName, jsTime());
-        _fieldName = 0;
+        _fieldName = StringData();
         return *_builder;
     }
 
-    inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<(
-      MinKeyLabeler& id) {
+    inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<(const NullLabeler& id) {
+        _builder->appendNull(_fieldName);
+        _fieldName = StringData();
+        return *_builder;
+    }
+
+    inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<(const UndefinedLabeler& id) {
+        _builder->appendUndefined(_fieldName);
+        _fieldName = StringData();
+        return *_builder;
+    }
+
+
+    inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<(const MinKeyLabeler& id) {
         _builder->appendMinKey(_fieldName);
-        _fieldName = 0;
+        _fieldName = StringData();
         return *_builder;
     }
 
-    inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<(
-      MaxKeyLabeler& id) {
+    inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<(const MaxKeyLabeler& id) {
         _builder->appendMaxKey(_fieldName);
-        _fieldName = 0;
+        _fieldName = StringData();
         return *_builder;
     }
 

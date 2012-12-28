@@ -17,6 +17,10 @@
 
 #pragma once
 
+#include <memory>
+
+#include <chaos/common/bson/bsonelement.h>
+
 namespace bson {
 
     int getGtLtOp(const BSONElement& e);
@@ -38,7 +42,7 @@ namespace bson {
         BSONObj _order;
     };
 
-    typedef set<BSONObj,BSONObjCmp> BSONObjSet;
+    typedef std::set<BSONObj,BSONObjCmp> BSONObjSet;
 
     enum FieldCompareResult {
         LEFT_SUBFIELD = -2,
@@ -48,8 +52,9 @@ namespace bson {
         RIGHT_SUBFIELD = 2
     };
 
-    FieldCompareResult
-      compareDottedFieldNames( const string& l , const string& r );
+    class LexNumCmp;
+    FieldCompareResult compareDottedFieldNames( const std::string& l , const std::string& r ,
+                                               const LexNumCmp& cmp );
 
     /** Use BSON macro to build a BSONObj from a stream
 
@@ -59,39 +64,47 @@ namespace bson {
         with auto-generated object id:
            BSON( GENOID << "name" << "joe" << "age" << 33 )
 
-        The labels GT, GTE, LT, LTE, NE can be helpful for stream-oriented
-        construction of a BSONObj, particularly when assembling a Query.  For
-        example,
-          BSON( "a" << GT << 23.4 << NE << 30 << "b" << 2 )
-        produces the object
-          { a: { \$gt: 23.4, \$ne: 30 }, b: 2 }.
+        The labels GT, GTE, LT, LTE, NE can be helpful for stream-oriented construction
+        of a BSONObj, particularly when assembling a Query.  For example,
+        BSON( "a" << GT << 23.4 << NE << 30 << "b" << 2 ) produces the object
+        { a: { \$gt: 23.4, \$ne: 30 }, b: 2 }.
     */
 #define BSON(x) (( bson::BSONObjBuilder(64) << x ).obj())
 
     /** Use BSON_ARRAY macro like BSON macro, but without keys
 
-        BSONArray arr = BSON_ARRAY( "hello" << 1 << BSON( "foo" <<
-          BSON_ARRAY( "bar" << "baz" << "qux" ) ) );
+        BSONArray arr = BSON_ARRAY( "hello" << 1 << BSON( "foo" << BSON_ARRAY( "bar" << "baz" << "qux" ) ) );
 
      */
 #define BSON_ARRAY(x) (( bson::BSONArrayBuilder() << x ).arr())
 
     /* Utility class to auto assign object IDs.
        Example:
-         cout << BSON( GENOID << "z" << 3 ); // { _id : ..., z : 3 }
+         std::cout << BSON( GENOID << "z" << 3 ); // { _id : ..., z : 3 }
     */
     extern struct GENOIDLabeler { } GENOID;
 
     /* Utility class to add a Date element with the current time
        Example:
-         cout << BSON( "created" << DATENOW );
-          // { created : "2009-10-09 11:41:42" }
+         std::cout << BSON( "created" << DATENOW ); // { created : "2009-10-09 11:41:42" }
     */
     extern struct DateNowLabeler { } DATENOW;
 
+    /* Utility class to assign a NULL value to a given attribute
+       Example:
+         std::cout << BSON( "a" << BSONNULL ); // { a : null }
+    */
+    extern struct NullLabeler { } BSONNULL;
+
+    /* Utility class to assign an Undefined value to a given attribute
+       Example:
+         std::cout << BSON( "a" << BSONUndefined ); // { a : undefined }
+    */
+    extern struct UndefinedLabeler { } BSONUndefined;
+
     /* Utility class to add the minKey (minus infinity) to a given attribute
        Example:
-         cout << BSON( "a" << MINKEY ); // { "a" : { "$minKey" : 1 } }
+         std::cout << BSON( "a" << MINKEY ); // { "a" : { "$minKey" : 1 } }
     */
     extern struct MinKeyLabeler { } MINKEY;
     extern struct MaxKeyLabeler { } MAXKEY;
@@ -100,12 +113,10 @@ namespace bson {
     class Labeler {
     public:
         struct Label {
-            Label( const char *l ) : l_( l ) {}
+            explicit Label( const char *l ) : l_( l ) {}
             const char *l_;
         };
-        Labeler( const Label &l, BSONObjBuilderValueStream *s )
-          : l_( l ), s_( s ) {}
-
+        Labeler( const Label &l, BSONObjBuilderValueStream *s ) : l_( l ), s_( s ) {}
         template<class T>
         BSONObjBuilder& operator<<( T value );
 
@@ -120,24 +131,63 @@ namespace bson {
         BSONObjBuilderValueStream *s_;
     };
 
+    // Utility class to allow adding a string to BSON as a Symbol
+    struct BSONSymbol {
+        explicit BSONSymbol(const StringData& sym) :symbol(sym) {}
+        StringData symbol;
+    };
+
+    // Utility class to allow adding a string to BSON as Code
+    struct BSONCode {
+        explicit BSONCode(const StringData& str) :code(str) {}
+        StringData code;
+    };
+
+    // Utility class to allow adding CodeWScope to BSON
+    struct BSONCodeWScope {
+        explicit BSONCodeWScope(const StringData& str, const BSONObj& obj) :code(str), scope(obj) {}
+        StringData code;
+        BSONObj scope;
+    };
+
+    // Utility class to allow adding a RegEx to BSON
+    struct BSONRegEx {
+        explicit BSONRegEx(const StringData& pat, const StringData& f="") :pattern(pat), flags(f) {}
+        StringData pattern;
+        StringData flags;
+    };
+
+    // Utility class to allow adding binary data to BSON
+    struct BSONBinData {
+        BSONBinData(const void* d, int l, BinDataType t) :data(d), length(l), type(t) {}
+        const void* data;
+        int length;
+        BinDataType type;
+    };
+
+    // Utility class to allow adding deprecated DBRef type to BSON
+    struct BSONDBRef {
+        BSONDBRef(const StringData& nameSpace, const OID& o) :ns(nameSpace), oid(o) {}
+        StringData ns;
+        OID oid;
+    };
+
     extern Labeler::Label GT;
     extern Labeler::Label GTE;
     extern Labeler::Label LT;
     extern Labeler::Label LTE;
     extern Labeler::Label NE;
-    extern Labeler::Label SIZE;
+    extern Labeler::Label NIN;
+    extern Labeler::Label BSIZE;
 
 
     // $or helper: OR(BSON("x" << GT << 7), BSON("y" << LT << 6));
     // becomes   : {$or: [{x: {$gt: 7}}, {y: {$lt: 6}}]}
     inline BSONObj OR(const BSONObj& a, const BSONObj& b);
     inline BSONObj OR(const BSONObj& a, const BSONObj& b, const BSONObj& c);
-    inline BSONObj OR(const BSONObj& a, const BSONObj& b, const BSONObj& c,
-      const BSONObj& d);
-    inline BSONObj OR(const BSONObj& a, const BSONObj& b, const BSONObj& c,
-      const BSONObj& d, const BSONObj& e);
-    inline BSONObj OR(const BSONObj& a, const BSONObj& b, const BSONObj& c,
-      const BSONObj& d, const BSONObj& e, const BSONObj& f);
+    inline BSONObj OR(const BSONObj& a, const BSONObj& b, const BSONObj& c, const BSONObj& d);
+    inline BSONObj OR(const BSONObj& a, const BSONObj& b, const BSONObj& c, const BSONObj& d, const BSONObj& e);
+    inline BSONObj OR(const BSONObj& a, const BSONObj& b, const BSONObj& c, const BSONObj& d, const BSONObj& e, const BSONObj& f);
     // definitions in bsonobjbuilder.h b/c of incomplete types
 
     // Utility class to implement BSON( key << val ) as described above.
@@ -151,28 +201,38 @@ namespace bson {
         template<class T>
         BSONObjBuilder& operator<<( T value );
 
-        BSONObjBuilder& operator<<(DateNowLabeler& id);
+        BSONObjBuilder& operator<<(const DateNowLabeler& id);
 
-        BSONObjBuilder& operator<<(MinKeyLabeler& id);
-        BSONObjBuilder& operator<<(MaxKeyLabeler& id);
+        BSONObjBuilder& operator<<(const NullLabeler& id);
+        BSONObjBuilder& operator<<(const UndefinedLabeler& id);
+
+        BSONObjBuilder& operator<<(const MinKeyLabeler& id);
+        BSONObjBuilder& operator<<(const MaxKeyLabeler& id);
 
         Labeler operator<<( const Labeler::Label &l );
 
-        void endField( const char *nextFieldName = 0 );
+        void endField( const StringData& nextFieldName = StringData() );
         bool subobjStarted() const { return _fieldName != 0; }
 
+        // The following methods provide API compatibility with BSONArrayBuilder
+        BufBuilder& subobjStart();
+        BufBuilder& subarrayStart();
+
+        // This method should only be called from inside of implementations of
+        // BSONObjBuilder& operator<<(BSONObjBuilderValueStream&, SOME_TYPE)
+        // to provide the return value.
+        BSONObjBuilder& builder() { return *_builder; }
     private:
-        const char * _fieldName;
+        StringData _fieldName;
         BSONObjBuilder * _builder;
 
         bool haveSubobj() const { return _subobj.get() != 0; }
         BSONObjBuilder *subobj();
-        auto_ptr< BSONObjBuilder > _subobj;
+        std::auto_ptr< BSONObjBuilder > _subobj;
     };
 
     /**
-       used in conjuction with BSONObjBuilder, allows for proper buffer size to
-       prevent crazy memory usage
+       used in conjuction with BSONObjBuilder, allows for proper buffer size to prevent crazy memory usage
      */
     class BSONSizeTracker {
     public:
@@ -186,9 +246,8 @@ namespace bson {
         }
 
         void got( int size ) {
-            _sizes[_pos++] = size;
-            if ( _pos >= SIZE )
-                _pos = 0;
+            _sizes[_pos] = size;
+            _pos = (_pos + 1) % SIZE; // thread safe at least on certain compilers
         }
 
         /**
@@ -209,4 +268,6 @@ namespace bson {
         int _sizes[SIZE];
     };
 
+    // considers order
+    bool fieldsMatch(const BSONObj& lhs, const BSONObj& rhs);
 }

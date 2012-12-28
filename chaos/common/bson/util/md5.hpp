@@ -16,12 +16,10 @@
  */
 
 #pragma once
-
-#include "md5.h"
 #include <sstream>
-#include <string>
+#include <chaos/common/bson/util/md5.h>
 
-namespace md5 {
+namespace bson {
 
     typedef unsigned char md5digest[16];
 
@@ -35,7 +33,7 @@ namespace md5 {
     inline void md5(const char *str, md5digest digest) {
         md5(str, strlen(str), digest);
     }
-
+    
     inline std::string digestToString( md5digest digest ){
         static const char * letters = "0123456789abcdef";
         std::stringstream ss;
@@ -52,9 +50,9 @@ namespace md5 {
         return digestToString( d );
     }
 
-    inline std::string md5simpledigest( std::string s ){
+    inline std::string md5simpledigest( const std::string& s ){
         return md5simpledigest(s.data(), s.size());
     }
 
 
-} // namespace md5
+} // namespace mongo

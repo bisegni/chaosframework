@@ -1,6 +1,6 @@
 /** @file bsoninlines.h
-  a goal here is that the most common bson methods can be used inline-only, a
-  la boost. thus some things are inline that wouldn't necessarily be otherwise.
+          a goal here is that the most common bson methods can be used inline-only, a la boost.
+          thus some things are inline that wouldn't necessarily be otherwise.
 */
 
 /*    Copyright 2009 10gen Inc.
@@ -22,8 +22,7 @@
 
 #include <map>
 #include <limits>
-#include "util/misc.h"
-#include "util/hex.h"
+
 
 #if defined(_WIN32)
 #undef max
@@ -32,10 +31,125 @@
 
 namespace bson {
 
-    /* TODO(jbenet) evaluate whether 'int bson::compareElementValues(const
-        bson::BSONElement&, const bson::BSONElement&)' does belong here. */
+    /* must be same type when called, unless both sides are #s 
+       this large function is in header to facilitate inline-only use of bson
+    */
+    inline int compareElementValues(const BSONElement& l, const BSONElement& r) {
+        int f;
 
-    /* wo = "well ordered" */
+        switch ( l.type() ) {
+        case EOO:
+        case Undefined: // EOO and Undefined are same canonicalType
+        case jstNULL:
+        case MaxKey:
+        case MinKey:
+            f = l.canonicalType() - r.canonicalType();
+            if ( f<0 ) return -1;
+            return f==0 ? 0 : 1;
+        case Bool:
+            return *l.value() - *r.value();
+        case Timestamp:
+            // unsigned compare for timestamps - note they are not really dates but (ordinal + time_t)
+            if ( l.date() < r.date() )
+                return -1;
+            return l.date() == r.date() ? 0 : 1;
+        case Date:
+            {
+                long long a = (long long) l.Date().millis;
+                long long b = (long long) r.Date().millis;
+                if( a < b ) 
+                    return -1;
+                return a == b ? 0 : 1;
+            }
+        case NumberLong:
+            if( r.type() == NumberLong ) {
+                long long L = l._numberLong();
+                long long R = r._numberLong();
+                if( L < R ) return -1;
+                if( L == R ) return 0;
+                return 1;
+            }
+            goto dodouble;
+        case NumberInt:
+            if( r.type() == NumberInt ) {
+                int L = l._numberInt();
+                int R = r._numberInt();
+                if( L < R ) return -1;
+                return L == R ? 0 : 1;
+            }
+            // else fall through
+        case NumberDouble: 
+dodouble:
+            {
+                double left = l.number();
+                double right = r.number();
+                if( left < right ) 
+                    return -1;
+                if( left == right )
+                    return 0;
+                if( isNaN(left) )
+                    return isNaN(right) ? 0 : -1;
+                return 1;
+            }
+        case jstOID:
+            return memcmp(l.value(), r.value(), 12);
+        case Code:
+        case Symbol:
+        case String:
+            /* todo: a utf sort order version one day... */
+            {
+                // we use memcmp as we allow zeros in UTF8 strings
+                int lsz = l.valuestrsize();
+                int rsz = r.valuestrsize();
+                int common = std::min(lsz, rsz);
+                int res = memcmp(l.valuestr(), r.valuestr(), common);
+                if( res ) 
+                    return res;
+                // longer string is the greater one
+                return lsz-rsz;
+            }
+        case Object:
+        case Array:
+            return l.embeddedObject().woCompare( r.embeddedObject() );
+        case DBRef: {
+            int lsz = l.valuesize();
+            int rsz = r.valuesize();
+            if ( lsz - rsz != 0 ) return lsz - rsz;
+            return memcmp(l.value(), r.value(), lsz);
+        }
+        case BinData: {
+            int lsz = l.objsize(); // our bin data size in bytes, not including the subtype byte
+            int rsz = r.objsize();
+            if ( lsz - rsz != 0 ) return lsz - rsz;
+            return memcmp(l.value()+4, r.value()+4, lsz+1 /*+1 for subtype byte*/);
+        }
+        case RegEx: {
+            int c = strcmp(l.regex(), r.regex());
+            if ( c )
+                return c;
+            return strcmp(l.regexFlags(), r.regexFlags());
+        }
+        case CodeWScope : {
+            f = l.canonicalType() - r.canonicalType();
+            if ( f )
+                return f;
+            f = strcmp( l.codeWScopeCode() , r.codeWScopeCode() );
+            if ( f )
+                return f;
+            f = strcmp( l.codeWScopeScopeDataUnsafe() , r.codeWScopeScopeDataUnsafe() );
+            if ( f )
+                return f;
+            return 0;
+        }
+        default:
+            assert( false);
+        }
+        return -1;
+    }
+
+    /* wo = "well ordered" 
+       note: (mongodb related) : this can only change in behavior when index version # changes
+    */
     inline int BSONElement::woCompare( const BSONElement &e,
                                 bool considerFieldName ) const {
         int lt = (int) canonicalType();
@@ -57,21 +171,21 @@ namespace bson {
     }
 
     inline BSONObj BSONElement::embeddedObjectUserCheck() const {
-        if ( isABSONObj() )
+        if ( MONGO_likely(isABSONObj()) )
             return BSONObj(value());
-        stringstream ss;
+        std::stringstream ss;
         ss << "invalid parameter: expected an object (" << fieldName() << ")";
         uasserted( 10065 , ss.str() );
         return BSONObj(); // never reachable
     }
 
     inline BSONObj BSONElement::embeddedObject() const {
-        assert( isABSONObj() );
+        //verify( isABSONObj() );
         return BSONObj(value());
     }
 
     inline BSONObj BSONElement::codeWScopeObject() const {
-        assert( type() == CodeWScope );
+        //verify( type() == CodeWScope );
         int strSizeWNull = *(int *)( value() + 4 );
         return BSONObj( value() + 4 + 4 + strSizeWNull );
     }
@@ -94,14 +208,15 @@ namespace bson {
     inline NOINLINE_DECL void BSONObj::_assertInvalid() const {
         StringBuilder ss;
         int os = objsize();
-        ss << "Invalid BSONObj size: " << os << " (0x"
-           << toHex( &os, 4 ) << ')';
+        ss << "BSONObj size: " << os << " (0x" << toHex( &os, 4 ) << ") is invalid. "
+           << "Size must be between 0 and " << BSONObjMaxInternalSize
+           << "(" << ( BSONObjMaxInternalSize/(1024*1024) ) << "MB)";
         try {
             BSONElement e = firstElement();
-            ss << " first element: " << e.toString();
+            ss << " First element: " << e.toString();
         }
         catch ( ... ) { }
-        massert( 10334 , ss.str() , 0 );
+        assert( 0 );
     }
 
     /* the idea with NOINLINE_DECL here is to keep this from inlining in the
@@ -127,13 +242,13 @@ namespace bson {
         return b.obj();
     }
 
-    inline BSONObj BSONElement::wrap( const char * newName ) const {
-        BSONObjBuilder b(size()+6+(int)strlen(newName));
+    inline BSONObj BSONElement::wrap( const StringData& newName ) const {
+        BSONObjBuilder b(size() + 6 + newName.size());
         b.appendAs(*this,newName);
         return b.obj();
     }
 
-    inline void BSONObj::getFields(unsigned n, const char **fieldNames, BSONElement *fields) const {
+    inline void BSONObj::getFields(unsigned n, const char **fieldNames, BSONElement *fields) const { 
         BSONObjIterator i(*this);
         while ( i.more() ) {
             BSONElement e = i.next();
@@ -151,7 +266,7 @@ namespace bson {
         BSONObjIterator i(*this);
         while ( i.more() ) {
             BSONElement e = i.next();
-            if ( strcmp(e.fieldName(), name.data()) == 0 )
+            if ( name == e.fieldName() )
                 return e;
         }
         return BSONElement();
@@ -183,16 +298,15 @@ namespace bson {
         return *this;
     }
 
-    /* add all the fields from the object specified to this object if they don't
-       exist */
+    /* add all the fields from the object specified to this object if they don't exist */
     inline BSONObjBuilder& BSONObjBuilder::appendElementsUnique(BSONObj x) {
-        set<string> have;
+        std::set<std::string> have;
         {
             BSONObjIterator i = iterator();
             while ( i.more() )
                 have.insert( i.next().fieldName() );
         }
-
+        
         BSONObjIterator it(x);
         while ( it.more() ) {
             BSONElement e = it.next();
@@ -204,7 +318,7 @@ namespace bson {
     }
 
 
-    inline bool BSONObj::isValid() {
+    inline bool BSONObj::isValid() const {
         int x = objsize();
         return x > 0 && x <= BSONObjMaxInternalSize;
     }
@@ -218,33 +332,42 @@ namespace bson {
         return false;
     }
 
-    inline BSONObjBuilderValueStream::BSONObjBuilderValueStream(
-      BSONObjBuilder * builder ) {
-        _fieldName = 0;
+    inline BSONObjBuilderValueStream::BSONObjBuilderValueStream( BSONObjBuilder * builder ) {
         _builder = builder;
     }
 
     template<class T>
     inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<( T value ) {
         _builder->append(_fieldName, value);
-        _fieldName = 0;
+        _fieldName = StringData();
         return *_builder;
     }
 
-    inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<(
-      const BSONElement& e ) {
+    inline BSONObjBuilder& BSONObjBuilderValueStream::operator<<( const BSONElement& e ) {
         _builder->appendAs( e , _fieldName );
-        _fieldName = 0;
+        _fieldName = StringData();
         return *_builder;
     }
 
-    inline Labeler BSONObjBuilderValueStream::operator<<(
-      const Labeler::Label &l ) {
+    inline BufBuilder& BSONObjBuilderValueStream::subobjStart() {
+        StringData tmp = _fieldName;
+        _fieldName = StringData();
+        return _builder->subobjStart(tmp);
+    }
+
+    inline BufBuilder& BSONObjBuilderValueStream::subarrayStart() {
+        StringData tmp = _fieldName;
+        _fieldName = StringData();
+        return _builder->subarrayStart(tmp);
+    }
+
+    inline Labeler BSONObjBuilderValueStream::operator<<( const Labeler::Label &l ) {
         return Labeler( l, this );
     }
 
-    inline void BSONObjBuilderValueStream::endField(const char *nextFieldName) {
-        if ( _fieldName && haveSubobj() ) {
+    inline void BSONObjBuilderValueStream::endField( const StringData& nextFieldName ) {
+        if ( haveSubobj() ) {
+            assert( _fieldName.rawData() );
             _builder->append( _fieldName, subobj()->done() );
         }
         _subobj.reset();
@@ -270,8 +393,7 @@ namespace bson {
     }
 
     // {a: {b:1}} -> {a.b:1}
-    void nested2dotted(BSONObjBuilder& b, const BSONObj& obj, const string&
-      base="");
+    void nested2dotted(BSONObjBuilder& b, const BSONObj& obj, const std::string& base="");
     inline BSONObj nested2dotted(const BSONObj& obj) {
         BSONObjBuilder b;
         nested2dotted(b, obj);
@@ -295,7 +417,7 @@ namespace bson {
     inline bool BSONObjBuilder::hasField( const StringData& name ) const {
         BSONObjIterator i = iterator();
         while ( i.more() )
-            if ( strcmp( name.data() , i.next().fieldName() ) == 0 )
+            if ( name == i.next().fieldName() )
                 return true;
         return false;
     }
@@ -305,7 +427,7 @@ namespace bson {
      * also, dotted2nested ignores order
      */
 
-    typedef map<string, BSONElement> BSONMap;
+    typedef std::map<std::string, BSONElement> BSONMap;
     inline BSONMap bson2map(const BSONObj& obj) {
         BSONMap m;
         BSONObjIterator it(obj);
@@ -322,7 +444,7 @@ namespace bson {
         }
     };
 
-    typedef set<BSONElement, BSONElementFieldNameCmp> BSONSortedElements;
+    typedef std::set<BSONElement, BSONElementFieldNameCmp> BSONSortedElements;
     inline BSONSortedElements bson2set( const BSONObj& obj ) {
         BSONSortedElements s;
         BSONObjIterator it(obj);
@@ -331,14 +453,13 @@ namespace bson {
         return s;
     }
 
-    inline string BSONObj::toString( bool isArray, bool full ) const {
+    inline std::string BSONObj::toString( bool isArray, bool full ) const {
         if ( isEmpty() ) return "{}";
         StringBuilder s;
         toString(s, isArray, full);
         return s.str();
     }
-    inline void BSONObj::toString(StringBuilder& s,  bool isArray, bool full )
-      const {
+    inline void BSONObj::toString( StringBuilder& s,  bool isArray, bool full, int depth ) const {
         if ( isEmpty() ) {
             s << "{}";
             return;
@@ -348,24 +469,23 @@ namespace bson {
         BSONObjIterator i(*this);
         bool first = true;
         while ( 1 ) {
-            massert( 10327 ,  "Object does not end with EOO", i.moreWithEOO() );
+            assert( i.moreWithEOO() );
             BSONElement e = i.next( true );
-            massert( 10328 ,  "Invalid element size", e.size() > 0 );
-            massert( 10329 ,  "Element too large", e.size() < ( 1 << 30 ) );
+            assert( e.size() > 0 );
+            assert( e.size() < ( 1 << 30 ) );
             int offset = (int) (e.rawdata() - this->objdata());
-            massert( 10330 ,  "Element extends past end of object",
-                     e.size() + offset <= this->objsize() );
+            assert( e.size() + offset <= this->objsize() );
             e.validate();
             bool end = ( e.size() + offset == this->objsize() );
             if ( e.eoo() ) {
-                massert( 10331 ,  "EOO Before end of object", end );
+                assert( end );
                 break;
             }
             if ( first )
                 first = false;
             else
                 s << ", ";
-            e.toString(s, !isArray, full );
+            e.toString( s, !isArray, full, depth );
         }
         s << ( isArray ? " ]" : " }" );
     }
@@ -391,19 +511,14 @@ namespace bson {
         }
         case CodeWScope: {
             int totalSize = *( int * )( value() );
-            massert( 10322 ,  "Invalid CodeWScope size", totalSize >= 8 );
+            assert( totalSize >= 8 );
             int strSizeWNull = *( int * )( value() + 4 );
-            massert( 10323 ,  "Invalid CodeWScope string size",
-              totalSize >= strSizeWNull + 4 + 4 );
-            massert( 10324 ,  "Invalid CodeWScope string size",
-                     strSizeWNull > 0 &&
-                     (strSizeWNull - 1) ==
-                      bson::strnlen( codeWScopeCode(), strSizeWNull ) );
-            massert( 10325 ,  "Invalid CodeWScope size",
-              totalSize >= strSizeWNull + 4 + 4 + 4 );
+            assert( totalSize >= strSizeWNull + 4 + 4 );
+            assert( strSizeWNull > 0 &&
+                     (strSizeWNull - 1) == bson::strnlen( codeWScopeCode(), strSizeWNull ) );
+            assert( totalSize >= strSizeWNull + 4 + 4 + 4 );
             int objSize = *( int * )( value() + 4 + 4 + strSizeWNull );
-            massert( 10326 ,  "Invalid CodeWScope object size",
-              totalSize == 4 + 4 + strSizeWNull + objSize );
+            assert( totalSize == 4 + 4 + strSizeWNull + objSize );
             // Subobject validation handled elsewhere.
         }
         case Object:
@@ -445,38 +560,31 @@ namespace bson {
         case Symbol:
         case Code:
         case bson::String:
-            massert( 10313 ,  "Insufficient bytes to calculate element size",
-              maxLen == -1 || remain > 3 );
+            assert( maxLen == -1 || remain > 3 );
             x = valuestrsize() + 4;
             break;
         case CodeWScope:
-            massert( 10314 ,  "Insufficient bytes to calculate element size",
-              maxLen == -1 || remain > 3 );
+            assert( maxLen == -1 || remain > 3 );
             x = objsize();
             break;
 
         case DBRef:
-            massert( 10315 ,  "Insufficient bytes to calculate element size",
-              maxLen == -1 || remain > 3 );
+            assert( maxLen == -1 || remain > 3 );
             x = valuestrsize() + 4 + 12;
             break;
         case Object:
         case bson::Array:
-            massert( 10316 ,  "Insufficient bytes to calculate element size",
-              maxLen == -1 || remain > 3 );
+            assert(maxLen == -1 || remain > 3 );
             x = objsize();
             break;
         case BinData:
-            massert( 10317 ,  "Insufficient bytes to calculate element size",
-              maxLen == -1 || remain > 3 );
+            assert( maxLen == -1 || remain > 3 );
             x = valuestrsize() + 4 + 1/*subtype*/;
             break;
         case RegEx: {
             const char *p = value();
-            size_t len1 = ( maxLen == -1 ) ? strlen( p ) :
-              (size_t)bson::strnlen( p, remain );
-            //massert( 10318 ,  "Invalid regex string", len1 != -1 );
-            // ERH - 4/28/10 - don't think this does anything
+            size_t len1 = ( maxLen == -1 ) ? strlen( p ) : (size_t)bson::strnlen( p, remain );
+            //massert( 10318 ,  "Invalid regex string", len1 != -1 ); // ERH - 4/28/10 - don't think this does anything
             p = p + len1 + 1;
             size_t len2;
             if( maxLen == -1 )
@@ -486,16 +594,15 @@ namespace bson {
                 assert( x <= 0x7fffffff );
                 len2 = bson::strnlen( p, (int) x );
             }
-            //massert( 10319 ,  "Invalid regex options string", len2 != -1 );
-            // ERH - 4/28/10 - don't think this does anything
+            //massert( 10319 ,  "Invalid regex options string", len2 != -1 ); // ERH - 4/28/10 - don't think this does anything
             x = (int) (len1 + 1 + len2 + 1);
         }
         break;
         default: {
             StringBuilder ss;
             ss << "BSONElement: bad type " << (int) type();
-            string msg = ss.str();
-            massert( 13655 , msg.c_str(),false);
+            std::string msg = ss.str();
+            assert(false);
         }
         }
         totalSize =  x + fieldNameSize() + 1; // BSONType
@@ -546,7 +653,7 @@ namespace bson {
         case BinData:
             x = valuestrsize() + 4 + 1/*subtype*/;
             break;
-        case RegEx:
+        case RegEx: 
             {
                 const char *p = value();
                 size_t len1 = strlen(p);
@@ -556,12 +663,12 @@ namespace bson {
                 x = (int) (len1 + 1 + len2 + 1);
             }
             break;
-        default:
+        default: 
             {
                 StringBuilder ss;
                 ss << "BSONElement: bad type " << (int) type();
-                string msg = ss.str();
-                massert(10320 , msg.c_str(),false);
+                std::string msg = ss.str();
+                assert(false);
             }
         }
         totalSize =  x + fieldNameSize() + 1; // BSONType
@@ -569,14 +676,25 @@ namespace bson {
         return totalSize;
     }
 
-    inline string BSONElement::toString( bool includeFieldName, bool full )
-      const {
+    inline std::string BSONElement::toString( bool includeFieldName, bool full ) const {
         StringBuilder s;
         toString(s, includeFieldName, full);
         return s.str();
     }
-    inline void BSONElement::toString(StringBuilder& s, bool includeFieldName,
-      bool full ) const {
+    inline void BSONElement::toString( StringBuilder& s, bool includeFieldName, bool full, int depth ) const {
+
+        if ( depth > BSONObj::maxToStringRecursionDepth ) {
+            // check if we want the full/complete string
+            if ( full ) {
+                StringBuilder s;
+                s << "Reached maximum recursion depth of ";
+                s << BSONObj::maxToStringRecursionDepth;
+                assert(full != true);
+            }
+            s << "...";
+            return;
+        }
+
         if ( includeFieldName && type() != EOO )
             s << fieldName() << ": ";
         switch ( type() ) {
@@ -584,7 +702,7 @@ namespace bson {
             s << "EOO";
             break;
         case bson::Date:
-            s << "new Date(" << (long long)date() << ')';
+            s << "new Date(" << (long long) date() << ')';
             break;
         case RegEx: {
             s << "/" << regex() << '/';
@@ -605,10 +723,10 @@ namespace bson {
             s << ( boolean() ? "true" : "false" );
             break;
         case Object:
-            embeddedObject().toString(s, false, full);
+            embeddedObject().toString(s, false, full, depth+1);
             break;
         case bson::Array:
-            embeddedObject().toString(s, true, full);
+            embeddedObject().toString(s, true, full, depth+1);
             break;
         case Undefined:
             s << "undefined";
@@ -624,8 +742,7 @@ namespace bson {
             break;
         case CodeWScope:
             s << "CodeWScope( "
-              << codeWScopeCode() << ", "
-              << codeWScopeObject().toString(false, full) << ")";
+              << codeWScopeCode() << ", " << codeWScopeObject().toString(false, full) << ")";
             break;
         case Code:
             if ( !full &&  valuestrsize() > 80 ) {
@@ -664,8 +781,7 @@ namespace bson {
             if (full) {
                 int len;
                 const char* data = binDataClean(len);
-                s << '(' << binDataType() << ", "
-                  << toHex(data, len) << ')';
+                s << '(' << binDataType() << ", " << toHex(data, len) << ')';
             }
             break;
         case Timestamp:
@@ -685,7 +801,7 @@ namespace bson {
         if ( e.eoo() ) {
             const char *p = strchr(name, '.');
             if ( p ) {
-                string left(name, p-name);
+                std::string left(name, p-name);
                 BSONObj sub = getObjectField(left.c_str());
                 return sub.isEmpty() ? BSONElement() : sub.getFieldDotted(p+1);
             }
@@ -713,10 +829,9 @@ namespace bson {
     }
 
     inline BSONObj::BSONObj() {
-        /* little endian ordering here, but perhaps that is ok regardless as
-           BSON is spec'd to be little endian external to the system. (i.e. the
-           rest of the implementation of bson, not this part, fails to support
-           big endian)
+        /* little endian ordering here, but perhaps that is ok regardless as BSON is spec'd
+           to be little endian external to the system. (i.e. the rest of the implementation of bson,
+           not this part, fails to support big endian)
         */
         static char p[] = { /*size*/5, 0, 0, 0, /*eoo*/0 };
         _objdata = p;
@@ -724,25 +839,25 @@ namespace bson {
 
     inline BSONObj BSONElement::Obj() const { return embeddedObjectUserCheck(); }
 
-    inline BSONElement BSONElement::operator[] (const string& field) const {
+    inline BSONElement BSONElement::operator[] (const std::string& field) const {
         BSONObj o = Obj();
         return o[field];
     }
 
-    inline void BSONObj::elems(vector<BSONElement> &v) const {
+    inline void BSONObj::elems(std::vector<BSONElement> &v) const {
         BSONObjIterator i(*this);
         while( i.more() )
             v.push_back(i.next());
     }
 
-    inline void BSONObj::elems(list<BSONElement> &v) const {
+    inline void BSONObj::elems(std::list<BSONElement> &v) const {
         BSONObjIterator i(*this);
         while( i.more() )
             v.push_back(i.next());
     }
 
     template <class T>
-    void BSONObj::Vals(vector<T>& v) const {
+    void BSONObj::Vals(std::vector<T>& v) const {
         BSONObjIterator i(*this);
         while( i.more() ) {
             T t;
@@ -751,7 +866,7 @@ namespace bson {
         }
     }
     template <class T>
-    void BSONObj::Vals(list<T>& v) const {
+    void BSONObj::Vals(std::list<T>& v) const {
         BSONObjIterator i(*this);
         while( i.more() ) {
             T t;
@@ -761,7 +876,7 @@ namespace bson {
     }
 
     template <class T>
-    void BSONObj::vals(vector<T>& v) const {
+    void BSONObj::vals(std::vector<T>& v) const {
         BSONObjIterator i(*this);
         while( i.more() ) {
             try {
@@ -773,7 +888,7 @@ namespace bson {
         }
     }
     template <class T>
-    void BSONObj::vals(list<T>& v) const {
+    void BSONObj::vals(std::list<T>& v) const {
         BSONObjIterator i(*this);
         while( i.more() ) {
             try {
@@ -785,11 +900,11 @@ namespace bson {
         }
     }
 
-    inline ostream& operator<<( ostream &s, const BSONObj &o ) {
+    inline std::ostream& operator<<( std::ostream &s, const BSONObj &o ) {
         return s << o.toString();
     }
 
-    inline ostream& operator<<( ostream &s, const BSONElement &e ) {
+    inline std::ostream& operator<<( std::ostream &s, const BSONElement &e ) {
         return s << e.toString();
     }
 
@@ -806,10 +921,139 @@ namespace bson {
     inline void BSONElement::Val(BSONObj& v) const { v = Obj(); }
 
     template<typename T>
-    inline BSONFieldValue<BSONObj> BSONField<T>::query( const char * q ,
-      const T& t ) const {
+    inline BSONFieldValue<BSONObj> BSONField<T>::query( const char * q , const T& t ) const {
         BSONObjBuilder b;
         b.append( q , t );
         return BSONFieldValue<BSONObj>( _name , b.obj() );
     }
+
+    // used by jsonString()
+    inline std::string escape( const std::string& s , bool escape_slash=false) {
+        StringBuilder ret;
+        for ( std::string::const_iterator i = s.begin(); i != s.end(); ++i ) {
+            switch ( *i ) {
+            case '"':
+                ret << "\\\"";
+                break;
+            case '\\':
+                ret << "\\\\";
+                break;
+            case '/':
+                ret << (escape_slash ? "\\/" : "/");
+                break;
+            case '\b':
+                ret << "\\b";
+                break;
+            case '\f':
+                ret << "\\f";
+                break;
+            case '\n':
+                ret << "\\n";
+                break;
+            case '\r':
+                ret << "\\r";
+                break;
+            case '\t':
+                ret << "\\t";
+                break;
+            default:
+                if ( *i >= 0 && *i <= 0x1f ) {
+                    //TODO: these should be utf16 code-units not bytes
+                    char c = *i;
+                    ret << "\\u00" << toHexLower(&c, 1);
+                }
+                else {
+                    ret << *i;
+                }
+            }
+        }
+        return ret.str();
+    }
+
+    inline std::string BSONObj::hexDump() const {
+        std::stringstream ss;
+        const char *d = objdata();
+        int size = objsize();
+        for( int i = 0; i < size; ++i ) {
+            ss.width( 2 );
+            ss.fill( '0' );
+            ss << std::hex << (unsigned)(unsigned char)( d[ i ] ) << std::dec;
+            if ( ( d[ i ] >= '0' && d[ i ] <= '9' ) || ( d[ i ] >= 'A' && d[ i ] <= 'z' ) )
+                ss << '\'' << d[ i ] << '\'';
+            if ( i != size - 1 )
+                ss << ' ';
+        }
+        return ss.str();
+    }
+
+    inline void BSONObjBuilder::appendKeys( const BSONObj& keyPattern , const BSONObj& values ) {
+        BSONObjIterator i(keyPattern);
+        BSONObjIterator j(values);
+
+        while ( i.more() && j.more() ) {
+            appendAs( j.next() , i.next().fieldName() );
+        }
+
+        assert( ! i.more() );
+        assert( ! j.more() );
+    }
+
+    inline BSONObj BSONObj::removeField(const StringData& name) const {
+        BSONObjBuilder b;
+        BSONObjIterator i(*this);
+        while ( i.more() ) {
+            BSONElement e = i.next();
+            const char *fname = e.fieldName();
+            if ( name != fname )
+                b.append(e);
+        }
+        return b.obj();
+    }
+
+    template<typename T> bool BSONObj::coerceVector( std::vector<T>* out ) const {
+        BSONObjIterator i( *this );
+        while ( i.more() ) {
+            BSONElement e = i.next();
+            T t;
+            if ( ! e.coerce<T>( &t ) )
+                return false;
+            out->push_back( t );
+        }
+        return true;
+    }
+
+
+    template<> inline bool BSONElement::coerce<std::string>( std::string* out ) const {
+        if ( type() != bson::String )
+            return false;
+        *out = String();
+        return true;
+    }
+
+    template<> inline bool BSONElement::coerce<int>( int* out ) const {
+        if ( !isNumber() )
+            return false;
+        *out = numberInt();
+        return true;
+    }
+
+    template<> inline bool BSONElement::coerce<double>( double* out ) const {
+        if ( !isNumber() )
+            return false;
+        *out = numberDouble();
+        return true;
+    }
+
+    template<> inline bool BSONElement::coerce<bool>( bool* out ) const {
+        *out = trueValue();
+        return true;
+    }
+
+    template<> inline bool BSONElement::coerce< std::vector<std::string> >( std::vector<std::string>* out ) const {
+        if ( type() != bson::Array )
+            return false;
+        return Obj().coerceVector<std::string>( out );
+    }
+
+
 }

@@ -15,57 +15,59 @@
  *    limitations under the License.
  */
 
-#include "oid.h"
-#include "lib/atomic_int.h"
-#include "lib/nonce.h"
+#include <ostream>
+#include <boost/functional/hash.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <chaos/common/bson/platform/atomic_word.h>
+#include <chaos/common/bson/platform/random.h>
+#include <chaos/common/bson/bsonobjbuilder.h>
+#include <chaos/common/bson/oid.h>
+#include <chaos/common/bson/util/atomic_int.h>
 
-#include <boost/static_assert.hpp>
+#define verify MONGO_verify
 
+BOOST_STATIC_ASSERT( sizeof(bson::OID) == bson::OID::kOIDSize );
 BOOST_STATIC_ASSERT( sizeof(bson::OID) == 12 );
 
-using namespace Nonce;
-
 namespace bson {
+
+    void OID::hash_combine(size_t &seed) const {
+        boost::hash_combine(seed, x);
+        boost::hash_combine(seed, y);
+        boost::hash_combine(seed, z);
+    }
 
     // machine # before folding in the process id
     OID::MachineAndPid OID::ourMachine;
 
+    std::ostream& operator<<( std::ostream &s, const OID &o ) {
+        s << o.str();
+        return s;
+    }
+
     unsigned OID::ourPid() {
-        unsigned pid;
-#if defined(_WIN32)
-        pid = (unsigned short) GetCurrentProcessId();
-#elif defined(__linux__) || defined(__APPLE__) || defined(__sunos__)
-        pid = (unsigned short) getpid();
+#ifdef _WIN32
+        return static_cast<unsigned>( GetCurrentProcessId() );
 #else
-        pid = (unsigned short) Security::getNonce();
+        return static_cast<unsigned>( getpid() );
 #endif
-        return pid;
     }
 
     void OID::foldInPid(OID::MachineAndPid& x) {
         unsigned p = ourPid();
         x._pid ^= (unsigned short) p;
-        // when the pid is greater than 16 bits, let the high bits modulate the
-        // machine id field.
+        // when the pid is greater than 16 bits, let the high bits modulate the machine id field.
         unsigned short& rest = (unsigned short &) x._machineNumber[1];
         rest ^= p >> 16;
     }
 
     OID::MachineAndPid OID::genMachineAndPid() {
-        BOOST_STATIC_ASSERT( sizeof(OID::MachineAndPid) == 5 );
+        BOOST_STATIC_ASSERT( sizeof(bson::OID::MachineAndPid) == 5 );
 
-        // this is not called often, so the following is not expensive, and
-        // gives us some testing that nonce generation is working right and that
-        // our OIDs are (perhaps) ok.
-        {
-            Nonce::nonce a = Nonce::security.getNonceInitSafe();
-            Nonce::nonce b = Nonce::security.getNonceInitSafe();
-            Nonce::nonce c = Nonce::security.getNonceInitSafe();
-            assert( !(a==b && b==c) );
-        }
-
-        unsigned long long n = Nonce::security.getNonceInitSafe();
-        OID::MachineAndPid x = ourMachine = (OID::MachineAndPid&) n;
+        // we only call this once per process
+        boost::scoped_ptr<SecureRandom> sr( SecureRandom::create() );
+        int64_t n = sr->nextInt64();
+        OID::MachineAndPid x = ourMachine = reinterpret_cast<OID::MachineAndPid&>(n);
         foldInPid(x);
         return x;
     }
@@ -77,8 +79,7 @@ namespace bson {
         ourMachineAndPid = genMachineAndPid();
     }
 
-    inline bool OID::MachineAndPid::operator!=(const OID::MachineAndPid& rhs)
-      const {
+    inline bool OID::MachineAndPid::operator!=(const OID::MachineAndPid& rhs) const {
         return _pid != rhs._pid || _machineNumber != rhs._machineNumber;
     }
 
@@ -93,23 +94,23 @@ namespace bson {
 
     void OID::justForked() {
         MachineAndPid x = ourMachine;
-        // we let the random # for machine go into all 5 bytes of MachineAndPid,
-        // and the xor in the pid into _pid.  this reduces the probability of
-        // collisions.
+        // we let the random # for machine go into all 5 bytes of MachineAndPid, and then
+        // xor in the pid into _pid.  this reduces the probability of collisions.
         foldInPid(x);
         ourMachineAndPid = genMachineAndPid();
-        assert( x != ourMachineAndPid );
+        verify( x != ourMachineAndPid );
         ourMachineAndPid = x;
     }
 
     void OID::init() {
-        static bson::AtomicUInt inc = (unsigned) security.getNonce();
+        boost::scoped_ptr<SecureRandom> sr( SecureRandom::create() );
+        static AtomicUInt inc = static_cast<unsigned>( sr->nextInt64() );
 
         {
             unsigned t = (unsigned) time(0);
             unsigned char *T = (unsigned char *) &t;
-            _time[0] = T[3]; // big endian order because we use memcmp() to
-            _time[1] = T[2]; // compare OID's
+            _time[0] = T[3]; // big endian order because we use memcmp() to compare OID's
+            _time[1] = T[2];
             _time[2] = T[1];
             _time[3] = T[0];
         }
@@ -125,10 +126,31 @@ namespace bson {
         }
     }
 
-    void OID::init( string s ) {
-        assert( s.size() == 24 );
+    static AtomicUInt64 _initSequential_sequence;
+    void OID::initSequential() {
+
+        {
+            unsigned t = (unsigned) time(0);
+            unsigned char *T = (unsigned char *) &t;
+            _time[0] = T[3]; // big endian order because we use memcmp() to compare OID's
+            _time[1] = T[2];
+            _time[2] = T[1];
+            _time[3] = T[0];
+        }
+        
+        {
+            unsigned long long nextNumber = _initSequential_sequence.fetchAndAdd(1);
+            unsigned char* numberData = reinterpret_cast<unsigned char*>(&nextNumber);
+            for ( int i=0; i<8; i++ ) {
+                data[4+i] = numberData[7-i];
+            }
+        }
+    }
+
+    void OID::init( const std::string& s ) {
+        verify( s.size() == 24 );
         const char *p = s.c_str();
-        for( int i = 0; i < 12; i++ ) {
+        for( size_t i = 0; i < kOIDSize; i++ ) {
             data[i] = fromHex(p);
             p += 2;
         }
@@ -157,5 +179,23 @@ namespace bson {
         T[3] = data[0];
         return time;
     }
+
+    const string BSONObjBuilder::numStrs[] = {
+        "0",  "1",  "2",  "3",  "4",  "5",  "6",  "7",  "8",  "9",
+        "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+        "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
+        "30", "31", "32", "33", "34", "35", "36", "37", "38", "39",
+        "40", "41", "42", "43", "44", "45", "46", "47", "48", "49",
+        "50", "51", "52", "53", "54", "55", "56", "57", "58", "59",
+        "60", "61", "62", "63", "64", "65", "66", "67", "68", "69",
+        "70", "71", "72", "73", "74", "75", "76", "77", "78", "79",
+        "80", "81", "82", "83", "84", "85", "86", "87", "88", "89",
+        "90", "91", "92", "93", "94", "95", "96", "97", "98", "99",
+    };
+
+    // This is to ensure that BSONObjBuilder doesn't try to use numStrs before the strings have been constructed
+    // I've tested just making numStrs a char[][], but the overhead of constructing the strings each time was too high
+    // numStrsReady will be 0 until after numStrs is initialized because it is a static variable
+    bool BSONObjBuilder::numStrsReady = (numStrs[0].size() > 0);
 
 }
