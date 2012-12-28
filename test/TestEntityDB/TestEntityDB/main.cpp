@@ -17,6 +17,7 @@ int main(int argc, const char * argv[])
         // insert code here...
     try {
         
+        chaos::ArrayPointer<chaos::edb::KeyIdAndValue> properties;
         auto_ptr<chaos::edb::EntityDB> testDB (new chaos::edb::SQLiteEntityDB());
         testDB->initDB("test", false);
         
@@ -35,6 +36,9 @@ int main(int argc, const char * argv[])
         
         chaos::entity::Entity *entity = testDB->getNewEntityInstance(deviceInfo);
         if(entity) {
+            
+            entity->getAllProperty(properties);
+            
             propertyInfo.keyID = keyDevice;
             propertyInfo.type = chaos::edb::KEY_NUM_VALUE;
             propertyInfo.value.numValue = 23;

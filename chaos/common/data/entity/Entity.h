@@ -44,7 +44,6 @@ namespace chaos {
             atomic_int_type instanceID;
             
             int32_t entityID;
-            std::vector<int32_t> prepertyIDs;
             
             Entity(edb::EntityDB *_database, atomic_int_type _instanceID);
             

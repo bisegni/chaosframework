@@ -476,7 +476,7 @@ int16_t SQLiteEntityDB::searchPropertyForEntity(int32_t entityID, chaos::ArrayPo
     sqlite3_reset(stmt[19]);
     
     //set the entity id
-    result = sqlite3_bind_int64(stmt[19], 3, entityID);
+    result = sqlite3_bind_int64(stmt[19], 1, entityID);
     if(result != SQLITE_OK) return result;
     
     // cicle the selectted row

@@ -42,8 +42,6 @@ int32_t Entity::addProperty(edb::KeyIdAndValue& keyInfo) {
     if(!(error = database->addNewPropertyForEntity(entityID, keyInfo, idNewProperty))) {
         return error;
     }
-    
-    prepertyIDs.push_back(idNewProperty);
     return error;
 }
 
@@ -52,8 +50,6 @@ int32_t Entity::getAllProperty(chaos::ArrayPointer<chaos::edb::KeyIdAndValue>& p
     if(!(error = database->searchPropertyForEntity(entityID, propertys))) {
         return error;
     }
-    
-    prepertyIDs.clear();
     return error;
 }
 
