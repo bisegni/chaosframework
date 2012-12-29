@@ -174,6 +174,9 @@ namespace bson {
         void appendNum(long long j) {
             *((long long*)grow(sizeof(long long))) = j;
         }
+        void appendNum(long int j) {
+            *((long int*)grow(sizeof(long int))) = j;
+        }
         void appendNum(unsigned long long j) {
             *((unsigned long long*)grow(sizeof(unsigned long long))) = j;
         }

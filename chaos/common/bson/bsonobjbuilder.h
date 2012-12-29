@@ -191,6 +191,14 @@ namespace bson {
             return *this;
         }
 
+        /** Append a NumberLong */
+        BSONObjBuilder& append(const StringData& fieldName, long int n) {
+            _b.appendNum((char) NumberLong);
+            _b.appendStr(fieldName);
+            _b.appendNum(n);
+            return *this;
+        }
+        
         /** appends a number.  if n < max(int)/2 then uses int, otherwise long long */
         BSONObjBuilder& appendIntOrLL( const StringData& fieldName , long long n ) {
             long long x = n;
