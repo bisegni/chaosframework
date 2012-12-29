@@ -84,12 +84,13 @@ namespace bson {
         return ! compareCode(other);
     }
 
+    
     void Status::ref(ErrorInfo* error) {
         // okInfo is never deallocated, so no need to bump ref here.
         if (error == getOKInfo()) {
             return;
         }
-        error->refs.fetchAndAdd(1);
+        chaos::atomic_increment(&error->ref);
     }
 
     void Status::unref(ErrorInfo* error) {
@@ -98,7 +99,7 @@ namespace bson {
             return;
         }
 
-        if (error->refs.subtractAndFetch(1) == 0) {
+        if (chaos::atomic_decrement(&error->ref) == 0) {
             delete error;
         }
     }

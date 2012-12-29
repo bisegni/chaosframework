@@ -18,7 +18,7 @@
 #include <ostream>
 #include <boost/functional/hash.hpp>
 #include <boost/scoped_ptr.hpp>
-#include <chaos/common/bson/platform/atomic_word.h>
+#include <chaos/common/utility/Atomic.h>
 #include <chaos/common/bson/platform/random.h>
 #include <chaos/common/bson/bsonobjbuilder.h>
 #include <chaos/common/bson/oid.h>
@@ -126,7 +126,7 @@ namespace bson {
         }
     }
 
-    static AtomicUInt64 _initSequential_sequence;
+    static chaos::atomic_int_type _initSequential_sequence;
     void OID::initSequential() {
 
         {
@@ -139,7 +139,7 @@ namespace bson {
         }
         
         {
-            unsigned long long nextNumber = _initSequential_sequence.fetchAndAdd(1);
+            unsigned long long nextNumber = chaos::atomic_increment(&_initSequential_sequence);
             unsigned char* numberData = reinterpret_cast<unsigned char*>(&nextNumber);
             for ( int i=0; i<8; i++ ) {
                 data[4+i] = numberData[7-i];

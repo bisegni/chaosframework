@@ -19,7 +19,7 @@
 #include <string>
 
 #include <chaos/common/bson/base/error_codes.h>
-#include <chaos/common/bson//platform/atomic_word.h>
+#include <chaos/common/utility/Atomic.h>
 
 namespace bson {
 
@@ -94,11 +94,11 @@ namespace bson {
         // Below interface used for testing code only.
         //
 
-        int refCount() const { return _error->refs.load(); }
+        int refCount() const { return _error->ref; }
 
     private:
         struct ErrorInfo {
-            AtomicUInt32 refs;       // reference counter
+            chaos::atomic_int_type ref;       // reference counter
             ErrorCodes::Error code;  // error code
             std::string reason;      // description of error cause
             int location;            // unique location of the triggering line in the code

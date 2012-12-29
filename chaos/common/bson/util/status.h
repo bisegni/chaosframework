@@ -94,11 +94,11 @@ namespace bson {
         // Below interface used for testing code only.
         //
 
-        int refCount() const { return _error->refs.load(); }
+        int refCount() const { return 0; }
 
     private:
         struct ErrorInfo {
-            AtomicUInt32 refs;       // reference counter
+            //AtomicUInt32 refs;       // reference counter
             ErrorCodes::Error code;  // error code
             std::string reason;      // description of error cause
             int location;            // unique location of the triggering line in the code

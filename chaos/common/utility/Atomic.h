@@ -40,7 +40,13 @@ namespace chaos {
         {
             return  __gnu_cxx::__exchange_and_add(p, 1);
         }
-        
+    
+        static inline
+        atomic_int_type atomic_decrement(volatile atomic_int_type* p)
+        {
+            return  __gnu_cxx::__exchange_and_add(p, -1);
+        }
+    
 #elif defined(__GNUC__) && ((__GNUC__*10 + __GNUC_MINOR__) >= 41)
         
         typedef int atomic_int_type;
@@ -50,9 +56,14 @@ namespace chaos {
         {
             return __sync_fetch_and_add(p, 1);
         }
-        
+    
+        static inline
+        atomic_int_type atomic_decrement(volatile atomic_int_type* p)
+        {
+            return __sync_fetch_and_add(p, -1);
+        }
 #else
-        
+    
         typedef boost::uint32_t atomic_int_type;
         
         static inline
@@ -60,7 +71,12 @@ namespace chaos {
         {
             return boost::interprocess::detail::atomic_inc32(p);
         }
-        
+    
+        static inline
+        atomic_int_type atomic_decrement(volatile atomic_int_type* p)
+        {
+            return boost::interprocess::detail::atomic_decrement(p);
+        }
 #endif
 }
 #endif

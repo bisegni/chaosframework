@@ -180,10 +180,6 @@
 		32B57178168DF4750002A198 /* misc.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B57151168DF4750002A198 /* misc.h */; };
 		32B5717E168DF5C00002A198 /* status.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B5717D168DF5C00002A198 /* status.h */; };
 		32B57180168DF9380002A198 /* optime.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B5717F168DF9380002A198 /* optime.h */; };
-		32B5719B168DFA530002A198 /* atomic_intrinsics.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B57186168DFA530002A198 /* atomic_intrinsics.h */; };
-		32B5719C168DFA530002A198 /* atomic_intrinsics_gcc.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B57187168DFA530002A198 /* atomic_intrinsics_gcc.h */; };
-		32B5719D168DFA530002A198 /* atomic_intrinsics_win32.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B57188168DFA530002A198 /* atomic_intrinsics_win32.h */; };
-		32B5719E168DFA530002A198 /* atomic_word.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B57189168DFA530002A198 /* atomic_word.h */; };
 		32B571A0168DFA530002A198 /* basic.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B5718B168DFA530002A198 /* basic.h */; };
 		32B571A1168DFA530002A198 /* bits.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B5718C168DFA530002A198 /* bits.h */; };
 		32B571A3168DFA530002A198 /* compiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B5718E168DFA530002A198 /* compiler.h */; };
@@ -500,10 +496,6 @@
 		32B57151168DF4750002A198 /* misc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = misc.h; sourceTree = "<group>"; };
 		32B5717D168DF5C00002A198 /* status.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = status.h; sourceTree = "<group>"; };
 		32B5717F168DF9380002A198 /* optime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = optime.h; sourceTree = "<group>"; };
-		32B57186168DFA530002A198 /* atomic_intrinsics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atomic_intrinsics.h; sourceTree = "<group>"; };
-		32B57187168DFA530002A198 /* atomic_intrinsics_gcc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atomic_intrinsics_gcc.h; sourceTree = "<group>"; };
-		32B57188168DFA530002A198 /* atomic_intrinsics_win32.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atomic_intrinsics_win32.h; sourceTree = "<group>"; };
-		32B57189168DFA530002A198 /* atomic_word.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atomic_word.h; sourceTree = "<group>"; };
 		32B5718B168DFA530002A198 /* basic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = basic.h; sourceTree = "<group>"; };
 		32B5718C168DFA530002A198 /* bits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bits.h; sourceTree = "<group>"; };
 		32B5718E168DFA530002A198 /* compiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compiler.h; sourceTree = "<group>"; };
@@ -1200,10 +1192,6 @@
 		32B57185168DFA530002A198 /* platform */ = {
 			isa = PBXGroup;
 			children = (
-				32B57186168DFA530002A198 /* atomic_intrinsics.h */,
-				32B57187168DFA530002A198 /* atomic_intrinsics_gcc.h */,
-				32B57188168DFA530002A198 /* atomic_intrinsics_win32.h */,
-				32B57189168DFA530002A198 /* atomic_word.h */,
 				32B5718B168DFA530002A198 /* basic.h */,
 				32B5718C168DFA530002A198 /* bits.h */,
 				32B5718E168DFA530002A198 /* compiler.h */,
@@ -1386,10 +1374,6 @@
 				32B57178168DF4750002A198 /* misc.h in Headers */,
 				32B5717E168DF5C00002A198 /* status.h in Headers */,
 				32B57180168DF9380002A198 /* optime.h in Headers */,
-				32B5719B168DFA530002A198 /* atomic_intrinsics.h in Headers */,
-				32B5719C168DFA530002A198 /* atomic_intrinsics_gcc.h in Headers */,
-				32B5719D168DFA530002A198 /* atomic_intrinsics_win32.h in Headers */,
-				32B5719E168DFA530002A198 /* atomic_word.h in Headers */,
 				32B571A0168DFA530002A198 /* basic.h in Headers */,
 				32B571A1168DFA530002A198 /* bits.h in Headers */,
 				32B571A3168DFA530002A198 /* compiler.h in Headers */,
