@@ -17,7 +17,13 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+#include  <QtGui>
+#if ( QT_VERSION < QT_VERSION_CHECK(5, 0, 0) )
 #include <QtGui/QApplication>
+#else
+#include <QtWidgets/QApplication>
+#endif
+
 #include "mainwindow.h"
 #include <chaos/ui_toolkit/ChaosUIToolkit.h>
 

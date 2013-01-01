@@ -158,7 +158,7 @@ namespace chaos {
             /*!
              Get range valu einfo for attrbiute name
              */
-            void getDeviceAttributeRangeValueInfo(string& attributesName, CUSchemaDB::RangeValueInfo& rangeInfo);
+            void getDeviceAttributeRangeValueInfo(string& attributesName, chaos::RangeValueInfo& rangeInfo);
             /*!
              Get the direction of the attribute
              */

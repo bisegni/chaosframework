@@ -25,12 +25,25 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <vector>
 
-#include "CDataWrapper.h"
 #include <chaos/common/cconstants.h>
 
 namespace chaos {
     using namespace std;
     using namespace boost;
+    
+    //!Describe the range of the value for an attribute of the dataset
+    typedef struct RangeValueInfo {
+        //!max value of the range
+        string maxRange;
+        //!minimum value of the range
+        string minRange;
+        //!defaultValue
+        string defaultValue;
+        //!Type of the value
+        DataType::DataType valueType;
+    } RangeValueInfo;
+    
+    class CDataWrapper;
     
     /*!
      Class for contain all field for the CU Dataset
@@ -42,17 +55,6 @@ namespace chaos {
         void clearDatasetForDeviceID(string&);
         
     public:
-            //!Describe the range of the value for an attribute of the dataset
-        typedef struct {
-                //!max value of the range
-            string maxRange;
-                //!minimum value of the range
-            string minRange;
-                //!defaultValue
-            string defaultValue;
-                //!Type of the value
-            DataType::DataType valueType;
-        } RangeValueInfo;
         
         /*!
          */

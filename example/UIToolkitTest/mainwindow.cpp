@@ -17,10 +17,15 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+#include  <QtGui>
+#if ( QT_VERSION < QT_VERSION_CHECK(5, 0, 0) )
+#include <QtGui/QApplication>
+#else
+#include <QtWidgets/QApplication>
+#endif
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDebug>
-#include <QtGui/QApplication>
 #include <QMessageBox>
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
@@ -233,12 +238,12 @@ void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
     updateDeviceState();
 
     QHeaderView *header = ui->tableView->horizontalHeader();
-    header->setResizeMode(QHeaderView::Stretch);
+    header->resizeSections(QHeaderView::Stretch);
 }
 
 QString  MainWindow::returnAttributeTypeInString(string& attributeName) {
     QString result;
-    chaos::CUSchemaDB::RangeValueInfo attributeInfo;
+    chaos::RangeValueInfo attributeInfo;
     deviceController->getDeviceAttributeRangeValueInfo(attributeName, attributeInfo);
 
     switch(attributeInfo.valueType){
@@ -269,7 +274,7 @@ void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
     if(index.column() != 0) return;
     QString selectedAttribute = ui->tableView->model()->data(index, Qt::DisplayRole).toString();
     std::string attributeName =  selectedAttribute.toStdString() ;
-    chaos::CUSchemaDB::RangeValueInfo rangeInfo;
+    chaos::RangeValueInfo rangeInfo;
     // check the type of attribute
     chaos::DataType::DataSetAttributeIOAttribute direction;
     if(deviceController->getDeviceAttributeDirection(attributeName, direction)!=0){

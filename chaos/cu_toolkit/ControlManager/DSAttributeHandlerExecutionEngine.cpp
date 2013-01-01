@@ -128,7 +128,7 @@ bool DSAttributeHandlerExecutionEngine::executeHandler(CDataWrapper *message) th
     int binv_dim;
     void *abstractValuePtr;
     CDataWrapper *cdatv;
-    CUSchemaDB::RangeValueInfo attributeInfo;
+    chaos::RangeValueInfo attributeInfo;
     if((result = message->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID))) {
         std::string _messageDeiveID = message->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
         

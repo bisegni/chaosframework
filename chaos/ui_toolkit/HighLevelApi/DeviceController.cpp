@@ -129,7 +129,7 @@ void DeviceController::getDeviceDatasetAttributesName(vector<string>& attributes
 /*!
  Get range valu einfo for attrbiute name
  */
-void DeviceController::getDeviceAttributeRangeValueInfo(string& attributesName, CUSchemaDB::RangeValueInfo& rangeInfo) {
+void DeviceController::getDeviceAttributeRangeValueInfo(string& attributesName, chaos::RangeValueInfo& rangeInfo) {
     datasetDB.getDeviceAttributeRangeValueInfo(deviceID, attributesName, rangeInfo);
 }
 

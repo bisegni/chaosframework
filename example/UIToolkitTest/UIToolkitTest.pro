@@ -4,14 +4,17 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT += core gui svg
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = testui
 TEMPLATE = app
 
-INCLUDEPATH += /usr/local/qwt-6.0.2-svn/lib/qwt.framework/Versions/6/Headers/
-INCLUDEPATH += /usr/local/qwt-6.0.2-svn/include
-LIBS += -L/usr/lib -L/usr/local/lib -L/usr/local/qwt-6.0.2-svn/lib -lqwt -lchaos_common -lchaos_uitoolkit -lboost_chrono -lmemcached -lboost_log -lboost_log_setup -lboost_system -lboost_thread -lboost_program_options -lboost_regex -lboost_filesystem -Levent -lmpio -lmsgpack -lmsgpack-rpc
+INCLUDEPATH += /usr/local/qwt/include
+INCLUDEPATH += $$PWD/../../
+INCLUDEPATH += $$PWD/../../usr/local/include
+
+LIBS += -L$$PWD/../../usr/local/lib -L/usr/local/qwt/lib -lqwt -lzmq -lchaos_common -lchaos_uitoolkit -lboost_chrono -lmemcached -lboost_log -lboost_log_setup -lboost_system -lboost_thread -lboost_program_options -lboost_regex -lboost_filesystem -levent -lmpio -lmsgpack -lmsgpack-rpc
 
 
 SOURCES += main.cpp\

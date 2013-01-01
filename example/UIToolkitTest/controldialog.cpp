@@ -19,6 +19,7 @@
  */
 #include "controldialog.h"
 #include "ui_controldialog.h"
+#include <chaos/ui_toolkit/HighLevelApi/DeviceController.h>
 #include <qspinbox.h>
 #include <limits>
 ControlDialog::ControlDialog(QWidget *parent) :

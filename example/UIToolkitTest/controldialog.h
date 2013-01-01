@@ -21,18 +21,29 @@
 #define CONTROLDIALOG_H
 
 #include <QDialog>
-#include <chaos/ui_toolkit/HighLevelApi/DeviceController.h>
 #include <boost/shared_ptr.hpp>
+#include <chaos/common/data/CUSchemaDB.h>
+#include <string>
 
 namespace Ui {
 class ControlDialog;
 }
 
+namespace chaos {
+   // class   CUSchemaDB;
+   // struct  RangeValueInfo;
+
+    namespace ui {
+        class DeviceController;
+    }
+}
+
+
 class ControlDialog : public QDialog
 {
     Q_OBJECT
     chaos::ui::DeviceController *deviceController;
-    chaos::CUSchemaDB::RangeValueInfo attributerange;
+    chaos::RangeValueInfo attributerange;
     std::string attributeName;
     std::string deviceID;
     QWidget *controlWidget;
@@ -40,7 +51,7 @@ public:
     explicit ControlDialog(QWidget *parent = 0);
     ~ControlDialog();
     
-    void initDialog( chaos::ui::DeviceController *_deviceController, string& _attributeName);
+    void initDialog( chaos::ui::DeviceController *_deviceController, std::string& _attributeName);
 private slots:
     void on_buttonCommit_clicked();
 

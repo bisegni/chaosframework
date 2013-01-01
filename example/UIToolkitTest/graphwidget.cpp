@@ -21,7 +21,7 @@
 #include <chaos/common/global.h>
 #include <boost/pointer_cast.hpp>
 #include <qwt_symbol.h>
-#include <qwt_legend_item.h>
+#include <qwt_legend.h>
 #include <qwt_plot_directpainter.h>
 #include <qevent.h>
 using namespace boost;
@@ -43,8 +43,8 @@ GraphWidget::GraphWidget(QWidget *parent) :
     grid->enableY(true);
 
     //set the X and Y division and scale to that of the channels
-    grid->setXDiv(*(plot->axisScaleDiv(QwtPlot::xBottom)));
-    grid->setYDiv(*(plot->axisScaleDiv(QwtPlot::yLeft)));
+    grid->setXDiv(plot->axisScaleDiv(QwtPlot::xBottom));
+    grid->setYDiv(plot->axisScaleDiv(QwtPlot::yLeft));
     grid->attach(plot);
     setPointNumber(30);
     d_timerId = -1;

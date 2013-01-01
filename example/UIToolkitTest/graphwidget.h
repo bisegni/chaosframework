@@ -32,6 +32,8 @@
 #include <boost/random.hpp>
 #include <chaos/common/cconstants.h>
 #include <qwt_system_clock.h>
+
+
 class QwtPlotDirectPainter;
 
 class GraphWidget : public QWidget
