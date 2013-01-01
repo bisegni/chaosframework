@@ -17,10 +17,11 @@
 
 #pragma once
 
-#include "util/misc.h"
+#include <chaos/common/bson/util/assert_util.h>
+
+namespace bson { }
 
 namespace bson {
-    using namespace std;
 
     class BSONArrayBuilder;
     class BSONElement;
@@ -29,6 +30,7 @@ namespace bson {
     class BSONObjBuilderValueStream;
     class BSONObjIterator;
     class Ordering;
+    class Record;
     struct BSONArray; // empty subclass of BSONObj useful for overloading
     struct BSONElementCmpWithoutField;
 
@@ -86,6 +88,12 @@ namespace bson {
         MaxKey=127
     };
 
+    /**
+     * returns the name of the argument's type
+     * defined in jsobj.cpp
+     */
+    const char* typeName (BSONType type);
+
     /* subtypes of BinData.
        bdtCustom and above are ones that the JS compiler understands, but are
        opaque to the database.
@@ -94,10 +102,58 @@ namespace bson {
         BinDataGeneral=0,
         Function=1,
         ByteArrayDeprecated=2, /* use BinGeneral instead */
-        bdtUUID = 3,
+        bdtUUID = 3, /* deprecated */
+        newUUID=4, /* language-independent UUID format across all drivers */
         MD5Type=5,
         bdtCustom=128
     };
 
+    /** Returns a number for where a given type falls in the sort order.
+     *  Elements with the same return value should be compared for value equality.
+     *  The return value is not a BSONType and should not be treated as one.
+     *  Note: if the order changes, indexes have to be re-built or than can be corruption
+     */
+    inline int canonicalizeBSONType(BSONType type) {
+        switch (type) {
+        case MinKey:
+        case MaxKey:
+            return type;
+        case EOO:
+        case Undefined:
+            return 0;
+        case jstNULL:
+            return 5;
+        case NumberDouble:
+        case NumberInt:
+        case NumberLong:
+            return 10;
+        case bson::String:
+        case Symbol:
+            return 15;
+        case Object:
+            return 20;
+        case bson::Array:
+            return 25;
+        case BinData:
+            return 30;
+        case jstOID:
+            return 35;
+        case bson::Bool:
+            return 40;
+        case bson::Date:
+        case Timestamp:
+            return 45;
+        case RegEx:
+            return 50;
+        case DBRef:
+            return 55;
+        case Code:
+            return 60;
+        case CodeWScope:
+            return 65;
+        default:
+            MONGO_verify(0);
+            return -1;
+        }
+    }
 }
-

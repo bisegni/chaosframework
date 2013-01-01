@@ -38,7 +38,7 @@ public:
     CException(int eCode, const char * eMessage,  const char * eDomain){
         errorCode=eCode;
         if(eMessage)errorMessage = eMessage;
-        if(eMessage)errorDomain = eDomain;
+        if(eDomain)errorDomain = eDomain;
         
     };
 };

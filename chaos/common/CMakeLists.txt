@@ -1,37 +1,7 @@
-SET(common_lib_src log/LogManager.cpp action/ActionExecutionSafetySystem.cpp action/EventAction.cpp action/ActionDescriptor.cpp action/DeclareAction.cpp action/DomainActions.cpp bson/bsonobj.cpp bson/oid.cpp bson/lib/base64.cpp bson/lib/md5.c bson/lib/nonce.cpp bson/util/json.cpp configuration/GlobalConfiguration.cpp data/CDataWrapper.cpp data/CUSchemaDB.cpp dispatcher/DefaultEventDispatcher.cpp dispatcher/EventTypeScheduler.cpp dispatcher/AbstractEventDispatcher.cpp dispatcher/AbstractCommandDispatcher.cpp dispatcher/DefaultCommandDispatcher.cpp dispatcher/DomainActionsScheduler.cpp  dispatcher/AbstractEventDispatcher.cpp event/EventClient.cpp event/AsioImplEventClient event/AsioEventForwarder.cpp event/EventServer.cpp event/AsioImplEventServer.cpp event/AsioEventHandler.cpp event/evt_desc/EventDescriptor.cpp event/evt_desc/AlertEventDescriptor.cpp event/evt_desc/InstrumentEventDescriptor.cpp event/evt_desc/CommandEventDescriptor.cpp event/evt_desc/CustomEventDescriptor.cpp event/channel/EventChannel.cpp event/channel/AlertEventChannel.cpp event/channel/InstrumentEventChannel.cpp io/IODataDriver.cpp io/IOMemcachedDriver.cpp io/OutputMongoDataDriver.cpp message/DeviceMessageChannel.cpp message/MDSMessageChannel.cpp network/NetworkBroker.cpp message/MessageChannel.cpp rpc/RpcClient.cpp rpc/RpcServer.cpp rpc/msgpack/MsgPackClient.cpp rpc//msgpack/MsgPackServer.cpp thread/CThread.cpp thread/CThreadGroup.cpp utility/NamedService.cpp utility/ISDInterface.cpp)
+SET(common_lib_src log/LogManager.cpp action/ActionExecutionSafetySystem.cpp action/EventAction.cpp action/ActionDescriptor.cpp action/DeclareAction.cpp action/DomainActions.cpp bson/oid.cpp bson/bson_validate.cpp bson/base/parse_number.cpp bson/base/string_data.cpp bson/base/status.cpp bson/base/error_codes.cpp bson/platform/random.cpp bson/util/stringutils.cpp bson/util/md5.cpp bson/util/base64.cpp bson/util/timer.cpp bson/util/time_support.cpp bson/util/jsobj.cpp bson/util/json.cpp bson/util/assert_util.cpp bson/util/bson_extract.cpp configuration/GlobalConfiguration.cpp data/CDataWrapper.cpp data/CUSchemaDB.cpp data/entity_db/EntityDB.cpp data/entity_db/sqlite_impl/sqlite3.c data/entity_db/sqlite_impl/SQLiteEntityDB.cpp data/entity/Entity.cpp dispatcher/DefaultEventDispatcher.cpp dispatcher/EventTypeScheduler.cpp dispatcher/AbstractEventDispatcher.cpp dispatcher/AbstractCommandDispatcher.cpp dispatcher/DefaultCommandDispatcher.cpp dispatcher/DomainActionsScheduler.cpp  dispatcher/AbstractEventDispatcher.cpp event/EventClient.cpp event/AsioImplEventClient event/AsioEventForwarder.cpp event/EventServer.cpp event/AsioImplEventServer.cpp event/AsioEventHandler.cpp event/evt_desc/EventDescriptor.cpp event/evt_desc/AlertEventDescriptor.cpp event/evt_desc/InstrumentEventDescriptor.cpp event/evt_desc/CommandEventDescriptor.cpp event/evt_desc/CustomEventDescriptor.cpp event/channel/EventChannel.cpp event/channel/AlertEventChannel.cpp event/channel/InstrumentEventChannel.cpp io/IODataDriver.cpp io/IOMemcachedDriver.cpp io/OutputMongoDataDriver.cpp message/DeviceMessageChannel.cpp message/MDSMessageChannel.cpp network/NetworkBroker.cpp message/MessageChannel.cpp rpc/RpcClient.cpp rpc/RpcServer.cpp rpc/msgpack/MsgPackClient.cpp rpc//msgpack/MsgPackServer.cpp thread/CThread.cpp thread/CThreadGroup.cpp utility/NamedService.cpp utility/ISDInterface.cpp)
 
 SET(common_lib_library boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached msgpack msgpack-rpc mpio)
 
-find_package (Boost 1.39 REQUIRED
-    COMPONENTS  program_options system thread chrono regex log log_setup)
-
-find_library(MEMCACHED_LIB memcached PATHS /usr/lib,/usr/local/lib,usr/local/lib DOC "memcached library")
-if(NOT MEMCACHED_LIB)
-    message(FATAL_ERROR "Library memcached required, but not found!")
-endif(NOT MEMCACHED_LIB)
-
-find_library(MSGPACK_LIB msgpack PATHS /usr/lib,/usr/local/lib,usr/local/lib  DOC "msgpack library")
-if(NOT MSGPACK_LIB)
-    message(FATAL_ERROR "Library msgpack required, but not found!")
-endif(NOT MSGPACK_LIB)
-
-find_library(MSGPACK_RPC_LIB msgpack-rpc PATHS /usr/lib,/usr/local/lib,usr/local/lib  DOC "msgpack-rpc library")
-if(NOT MSGPACK_RPC_LIB)
-    message(FATAL_ERROR "Library msgpack-rpc required, but not found!")
-endif(NOT MSGPACK_RPC_LIB)
-
-find_library(MPIO_LIB mpio PATHS /usr/lib,/usr/local/lib,usr/local/lib  DOC "mpio library")
-if(NOT MPIO_LIB)
-    message(FATAL_ERROR "Library mpio required, but not found!")
-endif(NOT MPIO_LIB)
-
-find_library(ZMQ_LIB zmq PATHS /usr/lib,/usr/local/lib,usr/local/lib  DOC "zmq library for additional option in rpc and event")
-if(ZMQ_LIB)
-    message(STATUS "ZMQ library is found so additional rpc and event driver will be compiled")
-     SET(DEV_WITH_ZMQ on)
-    SET(common_lib_src ${common_lib_src} rpc/zmq/ZMQClient.cpp rpc/zmq/ZMQServer.cpp)
-    SET(common_lib_library ${common_lib_library} zmq)
-endif(ZMQ_LIB)
 
 ADD_LIBRARY(chaos_common SHARED ${common_lib_src})
 
@@ -54,6 +24,8 @@ FILE(GLOB files "configuration/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/configuration)
 FILE(GLOB files "data/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/data)
+FILE(GLOB files "data/entity_db/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/data/entity_db)
 FILE(GLOB files "dhfsm/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/dhfsm)
 FILE(GLOB files "dispatcher/*.h")

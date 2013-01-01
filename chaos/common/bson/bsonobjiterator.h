@@ -19,12 +19,16 @@
 
 #include <boost/preprocessor/cat.hpp> // like the ## operator but works with __LINE__
 
+#include <chaos/common/bson/bsonobj.h>
+
 namespace bson {
 
     /** iterator for a BSONObj
 
-       Note each BSONObj ends with an EOO element: so you will get more() on an
-       empty object, although next().eoo() will be true.
+       Note each BSONObj ends with an EOO element: so you will get more() on an empty
+       object, although next().eoo() will be true.
+
+       The BSONObj must stay in scope for the duration of the iterator's execution.
 
        todo: we may want to make a more stl-like iterator interface for this
              with things like begin() and end()
@@ -35,7 +39,7 @@ namespace bson {
         */
         BSONObjIterator(const BSONObj& jso) {
             int sz = jso.objsize();
-            if ( sz == 0 ) {
+            if ( MONGO_unlikely(sz == 0) ) {
                 _pos = _theend = 0;
                 return;
             }
@@ -51,16 +55,24 @@ namespace bson {
         /** @return true if more elements exist to be enumerated. */
         bool more() { return _pos < _theend; }
 
-        /** @return true if more elements exist to be enumerated INCLUDING the
-            EOO element which is always at the end. */
+        /** @return true if more elements exist to be enumerated INCLUDING the EOO element which is always at the end. */
         bool moreWithEOO() { return _pos <= _theend; }
 
-        /** @return the next element in the object. For the final element,
-            element.eoo() will be true. */
+        /** @return the next element in the object. For the final element, element.eoo() will be true. */
         BSONElement next( bool checkEnd ) {
             assert( _pos <= _theend );
-            BSONElement e( _pos, checkEnd ? (int)(_theend + 1 - _pos) : -1 );
-            _pos += e.size( checkEnd ? (int)(_theend + 1 - _pos) : -1 );
+            
+            int maxLen = -1;
+            if ( checkEnd ) {
+                maxLen = _theend + 1 - _pos;
+                assert( maxLen > 0 );
+            }
+
+            BSONElement e( _pos, maxLen );
+            int esize = e.size( maxLen );
+            assert(esize > 0 );
+            _pos += esize;
+
             return e;
         }
         BSONElement next() {
@@ -82,11 +94,10 @@ namespace bson {
         const char* _theend;
     };
 
-    class BSONObjIteratorSorted {
+    /** Base class implementing ordered iteration through BSONElements. */
+    class BSONIteratorSorted {
     public:
-        BSONObjIteratorSorted( const BSONObj& o );
-
-        ~BSONObjIteratorSorted() {
+        ~BSONIteratorSorted() {
             assert( _fields );
             delete[] _fields;
             _fields = 0;
@@ -103,16 +114,36 @@ namespace bson {
             return BSONElement();
         }
 
+    protected:
+        class ElementFieldCmp;
+        BSONIteratorSorted( const BSONObj &o, const ElementFieldCmp &cmp );
+        
     private:
         const char ** _fields;
         int _nfields;
         int _cur;
     };
 
+    /** Provides iteration of a BSONObj's BSONElements in lexical field order. */
+    class BSONObjIteratorSorted : public BSONIteratorSorted {
+    public:
+        BSONObjIteratorSorted( const BSONObj &object );
+    };
+
+    /**
+     * Provides iteration of a BSONArray's BSONElements in numeric field order.
+     * The elements of a bson array should always be numerically ordered by field name, but this
+     * implementation re-sorts them anyway.
+     */
+    class BSONArrayIteratorSorted : public BSONIteratorSorted {
+    public:
+        BSONArrayIteratorSorted( const BSONArray &array );
+    };
+
     /** Similar to BOOST_FOREACH
      *
-     *  because the iterator is defined outside of the for, you must use {}
-     *  around the surrounding scope. Don't do this:
+     *  because the iterator is defined outside of the for, you must use {} around
+     *  the surrounding scope. Don't do this:
      *
      *  if (foo)
      *      BSONForEach(e, obj)

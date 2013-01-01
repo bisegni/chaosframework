@@ -16,16 +16,16 @@
  */
 
 #pragma once
-
+#include <vector>
+#include <string>
 #include <boost/shared_ptr.hpp>
-
 namespace bson {
 
     // utility class for assembling hierarchical objects
     class EmbeddedBuilder {
     public:
         EmbeddedBuilder( BSONObjBuilder *b ) {
-            _builders.push_back( make_pair( "", b ) );
+            _builders.push_back( std::make_pair( "", b ) );
         }
         // It is assumed that the calls to prepareContext will be made with the 'name'
         // parameter in lex ascending order.
@@ -63,7 +63,7 @@ namespace bson {
                 popBuilder();
         }
 
-        static string splitDot( string & str ) {
+        static std::string splitDot( std::string & str ) {
             size_t pos = str.find( '.' );
             if ( pos == string::npos )
                 return "";
@@ -73,7 +73,7 @@ namespace bson {
         }
 
     private:
-        void addBuilder( const string &name ) {
+        void addBuilder( const std::string &name ) {
             boost::shared_ptr< BSONObjBuilder > newBuilder( new BSONObjBuilder( back()->subobjStart( name ) ) );
             _builders.push_back( make_pair( name, newBuilder.get() ) );
             _builderStorage.push_back( newBuilder );
@@ -86,8 +86,8 @@ namespace bson {
 
         BSONObjBuilder *back() { return _builders.back().second; }
 
-        vector< pair< string, BSONObjBuilder * > > _builders;
-        vector< boost::shared_ptr< BSONObjBuilder > > _builderStorage;
+        std::vector< std::pair< string, BSONObjBuilder * > > _builders;
+        std::vector< boost::shared_ptr< BSONObjBuilder > > _builderStorage;
 
     };
 

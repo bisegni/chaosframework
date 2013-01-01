@@ -16,76 +16,81 @@
  */
 
 #pragma once
+#include <sstream>
+#include <boost/thread/condition.hpp>
+#include <chaos/common/bson/util/mutex.h>
 
 namespace bson {
 
-    /* replsets use RSOpTime.
+    struct ClockSkewException : public DBException {
+        ClockSkewException() : DBException( "clock skew exception" , 20001 ) {}
+    };
+
+    /* replsets used to use RSOpTime.
        M/S uses OpTime.
        But this is useable from both.
        */
     typedef unsigned long long ReplTime;
 
-    /* Operation sequence #.  A combination of current second plus an ordinal
-       value.
+    /* Operation sequence #.  A combination of current second plus an ordinal value.
      */
 #pragma pack(4)
     class OpTime {
-        unsigned i;
+        unsigned i; // ordinal comes first so we can do a single 64 bit compare on little endian
         unsigned secs;
         static OpTime last;
+        static OpTime skewed();
     public:
         static void setLast(const Date_t &date) {
+            mutex::scoped_lock lk(m);
+            notifier.notify_all(); // won't really do anything until write-lock released
             last = OpTime(date);
         }
         unsigned getSecs() const {
             return secs;
         }
+        unsigned getInc() const {
+            return i;
+        }
         OpTime(Date_t date) {
             reinterpret_cast<unsigned long long&>(*this) = date.millis;
+            assert( (int)secs >= 0 );
         }
         OpTime(ReplTime x) {
             reinterpret_cast<unsigned long long&>(*this) = x;
+            assert( (int)secs >= 0 );
         }
         OpTime(unsigned a, unsigned b) {
             secs = a;
             i = b;
+            assert( (int)secs >= 0 );
+        }
+        OpTime( const OpTime& other ) { 
+            secs = other.secs;
+            i = other.i;
+            assert( (int)secs >= 0 );
         }
         OpTime() {
             secs = 0;
             i = 0;
         }
-        static OpTime now() {
-            unsigned t = (unsigned) time(0);
-            if ( t < last.secs ) {
-                // bool toLog = false;
-                // ONCE toLog = true;
-                // RARELY toLog = true;
-                // if ( last.i & 0x80000000 )
-                //     toLog = true;
-                // if ( toLog )
-                //     log() << "clock skew detected  prev: " << last.secs
-                //           << " now: " << t << " trying to handle..." << endl;
-                // if ( last.i & 0x80000000 ) {
-                //     log() << "ERROR Large clock skew detected, shutting down"
-                //           << endl;
-                //     throw ClockSkewException();
-                // }
-                t = last.secs;
-            }
-            if ( last.secs == t ) {
-                last.i++;
-                return last;
-            }
-            last = OpTime(t, 1);
-            return last;
-        }
+        // it isn't generally safe to not be locked for this. so use now(). some tests use this.
+        static OpTime _now();
 
-        /* We store OpTime's in the database as BSON Date datatype -- we needed
-            some sort of 64 bit "container" for these values.  While these are
-            not really "Dates", that seems a better choice for now than say,
-            Number, which is floating point.  Note the BinData type is perhaps
-            the cleanest choice, lacking a true unsigned64 datatype, but BinData
-            has 5 bytes of overhead.
+        static bson::mutex m;
+
+        static OpTime now(const bson::mutex::scoped_lock&);
+
+        static OpTime getLast(const bson::mutex::scoped_lock&);
+
+        // Waits for global OpTime to be different from *this
+        void waitForDifferent(unsigned millis);
+
+        /* We store OpTime's in the database as BSON Date datatype -- we needed some sort of
+         64 bit "container" for these values.  While these are not really "Dates", that seems a
+         better choice for now than say, Number, which is floating point.  Note the BinData type
+         is perhaps the cleanest choice, lacking a true unsigned64 datatype, but BinData has 5
+         bytes of overhead.
          */
         unsigned long long asDate() const {
             return reinterpret_cast<const unsigned long long*>(&i)[0];
@@ -99,21 +104,21 @@ namespace bson {
         string toStringLong() const {
             char buf[64];
             time_t_to_String(secs, buf);
-            stringstream ss;
+            std::stringstream ss;
             ss << time_t_to_String_short(secs) << ' ';
-            ss << hex << secs << ':' << i;
+            ss << std::hex << secs << ':' << i;
             return ss.str();
         }
 
         string toStringPretty() const {
-            stringstream ss;
-            ss << time_t_to_String_short(secs) << ':' << hex << i;
+            std::stringstream ss;
+            ss << time_t_to_String_short(secs) << ':' << std::hex << i;
             return ss.str();
         }
 
         string toString() const {
-            stringstream ss;
-            ss << hex << secs << ':' << i;
+            std::stringstream ss;
+            ss << std::hex << secs << ':' << i;
             return ss.str();
         }
 
@@ -137,7 +142,9 @@ namespace bson {
         bool operator>=(const OpTime& r) const {
             return !(*this < r);
         }
+    private:
+        static boost::condition notifier;
     };
 #pragma pack()
 
-} // namespace mongo
+} // namespace bson

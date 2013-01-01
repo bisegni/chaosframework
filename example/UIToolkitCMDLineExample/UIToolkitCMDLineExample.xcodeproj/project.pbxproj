@@ -181,14 +181,14 @@
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = (
 					../../,
+					../../usr/local/include,
 					/usr/local/include,
-					usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug\"",
 					/usr/local/lib,
-					"$(SRCROOT)/usr/local/lib",
+					"$(SRCROOT)/../../usr/local/lib",
 				);
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
@@ -214,14 +214,14 @@
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = (
 					../../,
+					../../usr/local/include,
 					/usr/local/include,
-					usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug\"",
 					/usr/local/lib,
-					"$(SRCROOT)/usr/local/lib",
+					"$(SRCROOT)/../../usr/local/lib",
 				);
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",

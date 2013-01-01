@@ -18,18 +18,21 @@
 #pragma once
 
 #include <boost/intrusive_ptr.hpp>
+#include <boost/noncopyable.hpp>
 #include <set>
 #include <list>
+#include <string>
 #include <vector>
-#include "lib/atomic_int.h"
-#include "util/builder.h"
-#include "stringdata.h"
-#include "bsonelement.h"
+
+#include <chaos/common/bson/bsonelement.h>
+#include <chaos/common/bson/base/string_data.h>
+#include <chaos/common/bson/util/atomic_int.h>
+#include <chaos/common/bson/util/builder.h>
 
 namespace bson {
 
-    typedef set< BSONElement, BSONElementCmpWithoutField > BSONElementSet;
-    typedef multiset< BSONElement, BSONElementCmpWithoutField > BSONElementMSet;
+    typedef std::set< BSONElement, BSONElementCmpWithoutField > BSONElementSet;
+    typedef std::multiset< BSONElement, BSONElementCmpWithoutField > BSONElementMSet;
 
     /**
        C++ representation of a "BSON" object -- that is, an extended JSON-style
@@ -37,10 +40,10 @@ namespace bson {
 
        See bsonspec.org.
 
-       Note that BSONObj's have a smart pointer capability built in -- so you
-       can pass them around by value.  The reference counts used to implement
-       this do not use locking, so copying and destroying BSONObj's are not
-       thread-safe operations.
+       Note that BSONObj's have a smart pointer capability built in -- so you can
+       pass them around by value.  The reference counts used to implement this
+       do not use locking, so copying and destroying BSONObj's are not thread-safe
+       operations.
 
      BSON object format:
 
@@ -59,12 +62,10 @@ namespace bson {
      String:    <unsigned32 strsizewithnull><cstring>
      Date:      <8bytes>
      Regex:     <cstring regex><cstring options>
-     Object:    a nested object, leading with its entire size, which terminates
-                with EOO.
+     Object:    a nested object, leading with its entire size, which terminates with EOO.
      Array:     same as object
      DBRef:     <strlen> <cstring ns> <oid>
-     DBRef:     a database reference: basically a collection name plus an Object
-                ID
+     DBRef:     a database reference: basically a collection name plus an Object ID
      BinData:   <int len> <byte subtype> <byte[len] data>
      Code:      a function (not a closure): same format as String.
      Symbol:    a language symbol (say a python symbol).  same format as String.
@@ -73,12 +74,12 @@ namespace bson {
      */
     class BSONObj {
     public:
-
+        
         /** Construct a BSONObj from data in the proper format.
-        * owned = whether this object owns this buffer.
+         *  Use this constructor when something else owns msgdata's buffer
         */
-        explicit BSONObj(const char *msgdata, bool owned = false) {
-          init(msgdata, owned);
+        explicit BSONObj(const char *msgdata) {
+            init(msgdata);
         }
 
         /** Construct a BSONObj from data in the proper format.
@@ -93,47 +94,43 @@ namespace bson {
         /** Construct an empty BSONObj -- that is, {}. */
         BSONObj();
 
-        ~BSONObj() { /*defensive:*/ _objdata = 0; }
+        static BSONObj make( const Record* r );
+
+        ~BSONObj() { 
+            _objdata = 0; // defensive
+        }
 
         /**
            A BSONObj can use a buffer it "owns" or one it does not.
 
            OWNED CASE
-           If the BSONObj owns the buffer, the buffer can be shared among
-           several BSONObj's (by assignment).
+           If the BSONObj owns the buffer, the buffer can be shared among several BSONObj's (by assignment).
            In this case the buffer is basically implemented as a shared_ptr.
            Since BSONObj's are typically immutable, this works well.
 
            UNOWNED CASE
-           A BSONObj can also point to BSON data in some other data structure it
-           does not "own" or free later. For example, in a memory mapped file.
-           In this case, it is important the original data stays in scope for as
-           long as the BSONObj is in use.  If you think the original data may go
-           out of scope, call BSONObj::getOwned() to promote your BSONObj to
-           having its own copy.
+           A BSONObj can also point to BSON data in some other data structure it does not "own" or free later.
+           For example, in a memory mapped file.  In this case, it is important the original data stays in
+           scope for as long as the BSONObj is in use.  If you think the original data may go out of scope,
+           call BSONObj::getOwned() to promote your BSONObj to having its own copy.
 
-           On a BSONObj assignment, if the source is unowned, both the source
-           and dest will have unowned pointers to the original buffer after the
-           assignment.
+           On a BSONObj assignment, if the source is unowned, both the source and dest will have unowned
+           pointers to the original buffer after the assignment.
 
-           If you are not sure about ownership but need the buffer to last as
-           long as the BSONObj, call getOwned().  getOwned() is a no-op if the
-           buffer is already owned.  If not already owned, a malloc and memcpy
-           will result.
+           If you are not sure about ownership but need the buffer to last as long as the BSONObj, call
+           getOwned().  getOwned() is a no-op if the buffer is already owned.  If not already owned, a malloc
+           and memcpy will result.
 
-           Most ways to create BSONObj's create 'owned' variants.  Unowned
-           versions can be created with:
+           Most ways to create BSONObj's create 'owned' variants.  Unowned versions can be created with:
            (1) specifying true for the ifree parameter in the constructor
-           (2) calling BSONObjBuilder::done().  Use BSONObjBuilder::obj() to get
-               an owned copy
-           (3) retrieving a subobject retrieves an unowned pointer into the
-               parent BSON object
+           (2) calling BSONObjBuilder::done().  Use BSONObjBuilder::obj() to get an owned copy
+           (3) retrieving a subobject retrieves an unowned pointer into the parent BSON object
 
            @return true if this is in owned mode
         */
         bool isOwned() const { return _holder.get() != 0; }
 
-        /** assure the data buffer is under the control of this BSONObj and not a remote buffer
+        /** assure the data buffer is under the control of this BSONObj and not a remote buffer 
             @see isOwned()
         */
         BSONObj getOwned() const;
@@ -141,31 +138,34 @@ namespace bson {
         /** @return a new full (and owned) copy of the object. */
         BSONObj copy() const;
 
-        /** Readable representation of a BSON object in an extended JSON-style
-            notation. This is an abbreviated representation which might be used
-            for logging.
+        /** Readable representation of a BSON object in an extended JSON-style notation.
+            This is an abbreviated representation which might be used for logging.
         */
-        string toString( bool isArray = false, bool full=false ) const;
-        void toString(StringBuilder& s, bool isArray = false, bool full=false )
-          const;
+        enum { maxToStringRecursionDepth = 100 };
+
+        std::string toString( bool isArray = false, bool full=false ) const;
+        void toString( StringBuilder& s, bool isArray = false, bool full=false, int depth=0 ) const;
 
         /** Properly formatted JSON string.
             @param pretty if true we try to add some lf's and indentation
         */
-        string jsonString( JsonStringFormat format = Strict, int pretty = 0 )
-          const;
+        std::string jsonString( JsonStringFormat format = Strict, int pretty = 0 ) const;
 
         /** note: addFields always adds _id even if not specified */
-        int addFields(BSONObj& from, set<string>& fields); /* returns n added */
+        int addFields(BSONObj& from, std::set<std::string>& fields); /* returns n added */
+
+        /** remove specified field and return a new object with the remaining fields.
+            slowish as builds a full new object
+         */
+        BSONObj removeField(const StringData& name) const;
 
         /** returns # of top level fields in the object
            note: iterates to count the fields
         */
         int nFields() const;
 
-        /** adds the field names to the fields set.  does NOT clear it
-            (appends). */
-        int getFieldNames(set<string>& fields) const;
+        /** adds the field names to the fields set.  does NOT clear it (appends). */
+        int getFieldNames(std::set<std::string>& fields) const;
 
         /** @return the specified element.  element.eoo() will be true if not found.
             @param name field to find. supports dot (".") notation to reach into embedded objects.
@@ -176,15 +176,16 @@ namespace bson {
             @param name field to find. supports dot (".") notation to reach into embedded objects.
              for example "x.y" means "in the nested object in field x, retrieve field y"
         */
-        BSONElement getFieldDotted(const string& name) const {
+        BSONElement getFieldDotted(const std::string& name) const {
             return getFieldDotted( name.c_str() );
         }
 
         /** Like getFieldDotted(), but expands arrays and returns all matching objects.
-         *  TODO(jbenet). trace bool expandLastArray param.
+         *  Turning off expandLastArray allows you to retrieve nested array objects instead of
+         *  their contents.
          */
-        void getFieldsDotted(const StringData& name, BSONElementSet &ret) const;
-        void getFieldsDotted(const StringData& name, BSONElementMSet &ret)const;
+        void getFieldsDotted(const StringData& name, BSONElementSet &ret, bool expandLastArray = true ) const;
+        void getFieldsDotted(const StringData& name, BSONElementMSet &ret, bool expandLastArray = true ) const;
 
         /** Like getFieldDotted(), but returns first array encountered while traversing the
             dotted fields of name.  The name variable is updated to represent field
@@ -196,7 +197,7 @@ namespace bson {
         */
         BSONElement getField(const StringData& name) const;
 
-        /** Get several fields at once. This is faster than separate getField() calls as the size of
+        /** Get several fields at once. This is faster than separate getField() calls as the size of 
             elements iterated can then be calculated only once each.
             @param n number of fieldNames, and number of elements in the fields array
             @param fields if a field is found its element is stored in its corresponding position in this array.
@@ -211,23 +212,21 @@ namespace bson {
             return getField(field);
         }
 
-        BSONElement operator[] (const string& field) const {
+        BSONElement operator[] (const std::string& field) const {
             return getField(field);
         }
 
         BSONElement operator[] (int field) const {
             StringBuilder ss;
             ss << field;
-            string s = ss.str();
+            std::string s = ss.str();
             return getField(s.c_str());
         }
 
         /** @return true if field exists */
-        bool hasField( const char * name ) const
-          { return !getField(name).eoo(); }
+        bool hasField( const StringData& name ) const { return !getField(name).eoo(); }
         /** @return true if field exists */
-        bool hasElement(const char *name) const
-          { return hasField(name); }
+        bool hasElement(const StringData& name) const { return hasField(name); }
 
         /** @return "" if DNE or wrong type */
         const char * getStringField(const char *name) const;
@@ -238,42 +237,50 @@ namespace bson {
         /** @return INT_MIN if not present - does some type conversions */
         int getIntField(const char *name) const;
 
-        /** @return false if not present
+        /** @return false if not present 
             @see BSONElement::trueValue()
          */
         bool getBoolField(const char *name) const;
 
-        /**
-           sets element field names to empty string
-           If a field in pattern is missing, it is omitted from the returned
-           object.
+        /** @param pattern a BSON obj indicating a set of (un-dotted) field
+         *  names.  Element values are ignored.
+         *  @return a BSON obj constructed by taking the elements of this obj
+         *  that correspond to the fields in pattern. Field names of the
+         *  returned object are replaced with the empty string. If field in
+         *  pattern is missing, it is omitted from the returned object.
+         *
+         *  Example: if this = {a : 4 , b : 5 , c : 6})
+         *    this.extractFieldsUnDotted({a : 1 , c : 1}) -> {"" : 4 , "" : 6 }
+         *    this.extractFieldsUnDotted({b : "blah"}) -> {"" : 5}
+         *
         */
-        BSONObj extractFieldsUnDotted(BSONObj pattern) const;
+        BSONObj extractFieldsUnDotted(const BSONObj& pattern) const;
 
         /** extract items from object which match a pattern object.
             e.g., if pattern is { x : 1, y : 1 }, builds an object with
             x and y elements of this object, if they are present.
            returns elements with original field names
         */
-        BSONObj extractFields(const BSONObj &pattern , bool fillWithNull=false)
-          const;
+        BSONObj extractFields(const BSONObj &pattern , bool fillWithNull=false) const;
 
-        BSONObj filterFieldsUndotted(const BSONObj &filter, bool inFilter)
-          const;
+        BSONObj filterFieldsUndotted(const BSONObj &filter, bool inFilter) const;
 
-        BSONElement getFieldUsingIndexNames(const char *fieldName,
-          const BSONObj &indexKey) const;
+        BSONElement getFieldUsingIndexNames(const char *fieldName, const BSONObj &indexKey) const;
+
+        /** arrays are bson objects with numeric and increasing field names
+            @return true if field names are numeric and increasing
+         */
+        bool couldBeArray() const;
 
         /** @return the raw data of the object */
         const char *objdata() const {
             return _objdata;
         }
         /** @return total size of the BSON object in bytes */
-        int objsize() const
-          { return *(reinterpret_cast<const int*>(objdata())); }
+        int objsize() const { return *(reinterpret_cast<const int*>(objdata())); }
 
         /** performs a cursory check on the object's size only. */
-        bool isValid();
+        bool isValid() const;
 
         /** @return if the user is a valid user doc
             criter: isValid() no . or $ field names
@@ -286,7 +293,7 @@ namespace bson {
         void dump() const;
 
         /** Alternative output format */
-        string hexDump() const;
+        std::string hexDump() const;
 
         /**wo='well ordered'.  fields must be in same order in each object.
            Ordering is with respect to the signs of the elements
@@ -304,28 +311,38 @@ namespace bson {
         int woCompare(const BSONObj& r, const BSONObj &ordering = BSONObj(),
                       bool considerFieldName=true) const;
 
-        bool operator<( const BSONObj& other ) const
-          { return woCompare( other ) < 0; }
-        bool operator<=( const BSONObj& other ) const
-          { return woCompare( other ) <= 0; }
-        bool operator>( const BSONObj& other ) const
-          { return woCompare( other ) > 0; }
-        bool operator>=( const BSONObj& other ) const
-          { return woCompare( other ) >= 0; }
+        bool operator<( const BSONObj& other ) const { return woCompare( other ) < 0; }
+        bool operator<=( const BSONObj& other ) const { return woCompare( other ) <= 0; }
+        bool operator>( const BSONObj& other ) const { return woCompare( other ) > 0; }
+        bool operator>=( const BSONObj& other ) const { return woCompare( other ) >= 0; }
 
         /**
-         * @param useDotted whether to treat sort key fields as possibly dotted
-            and expand into them
+         * @param useDotted whether to treat sort key fields as possibly dotted and expand into them
          */
-        int woSortOrder( const BSONObj& r , const BSONObj& sortKey ,
-          bool useDotted=false ) const;
+        int woSortOrder( const BSONObj& r , const BSONObj& sortKey , bool useDotted=false ) const;
 
         bool equal(const BSONObj& r) const;
+
+        /**
+         * @param otherObj
+         * @return true if 'this' is a prefix of otherObj- in other words if
+         * otherObj contains the same field names and field vals in the same
+         * order as 'this', plus optionally some additional elements.
+         */
+        bool isPrefixOf( const BSONObj& otherObj ) const;
+
+        /**
+         * @param otherObj
+         * @return returns true if the list of field names in 'this' is a prefix
+         * of the list of field names in otherObj.  Similar to 'isPrefixOf',
+         * but ignores the field values and only looks at field names.
+         */
+        bool isFieldNamePrefixOf( const BSONObj& otherObj ) const;
 
         /** This is "shallow equality" -- ints and doubles won't match.  for a
            deep equality test use woCompare (which is slower).
         */
-        bool shallowEqual(const BSONObj& r) const {
+        bool binaryEqual(const BSONObj& r) const {
             int os = objsize();
             if ( os == r.objsize() ) {
                 return (os == 0 || memcmp(objdata(),r.objdata(),os)==0);
@@ -336,17 +353,22 @@ namespace bson {
         /** @return first field of the object */
         BSONElement firstElement() const { return BSONElement(objdata() + 4); }
 
-        /** faster than firstElement().fieldName() - for the first element we can easily find the fieldname without
+        /** faster than firstElement().fieldName() - for the first element we can easily find the fieldname without 
             computing the element size.
         */
-        const char * firstElementFieldName() const {
+        const char * firstElementFieldName() const { 
             const char *p = objdata() + 4;
             return *p == EOO ? "" : p+1;
         }
 
-        /** Get the _id field from the object.  For good performance drivers
-            should assure that _id is the first element of the object; however,
-            correct operation is assured regardless.
+        BSONType firstElementType() const { 
+            const char *p = objdata() + 4;
+            return (BSONType) *p;
+        }
+
+        /** Get the _id field from the object.  For good performance drivers should
+            assure that _id is the first element of the object; however, correct operation
+            is assured regardless.
             @return true if found
         */
         bool getObjectID(BSONElement& e) const;
@@ -374,9 +396,10 @@ namespace bson {
         bool valid() const;
 
         /** @return an md5 value for this object. */
-        string md5() const;
+        std::string md5() const;
 
         bool operator==( const BSONObj& other ) const { return equal( other ); }
+        bool operator!=(const BSONObj& other) const { return !operator==( other); }
 
         enum MatchType {
             Equality = 0,
@@ -397,38 +420,35 @@ namespace bson {
             opELEM_MATCH = 0x12,
             opNEAR = 0x13,
             opWITHIN = 0x14,
-            opMAX_DISTANCE=0x15
+            opMAX_DISTANCE = 0x15,
+            opGEO_INTERSECTS = 0x16,
         };
 
         /** add all elements of the object to the specified vector */
-        void elems(vector<BSONElement> &) const;
+        void elems(std::vector<BSONElement> &) const;
         /** add all elements of the object to the specified list */
-        void elems(list<BSONElement> &) const;
+        void elems(std::list<BSONElement> &) const;
 
-        /** add all values of the object to the specified vector.  If type
-            mismatches, exception. this is most useful when the BSONObj is an
-            array, but can be used with non-arrays too in theory.
+        /** add all values of the object to the specified vector.  If type mismatches, exception.
+            this is most useful when the BSONObj is an array, but can be used with non-arrays too in theory.
 
             example:
               bo sub = y["subobj"].Obj();
-              vector<int> myints;
+              std::vector<int> myints;
               sub.Vals(myints);
         */
         template <class T>
-        void Vals(vector<T> &) const;
-        /** add all values of the object to the specified list.  If type
-            mismatches, exception. */
+        void Vals(std::vector<T> &) const;
+        /** add all values of the object to the specified list.  If type mismatches, exception. */
         template <class T>
-        void Vals(list<T> &) const;
+        void Vals(std::list<T> &) const;
 
-        /** add all values of the object to the specified vector.  If type
-            mismatches, skip. */
+        /** add all values of the object to the specified vector.  If type mismatches, skip. */
         template <class T>
-        void vals(vector<T> &) const;
-        /** add all values of the object to the specified list.  If type
-            mismatches, skip. */
+        void vals(std::vector<T> &) const;
+        /** add all values of the object to the specified list.  If type mismatches, skip. */
         template <class T>
-        void vals(list<T> &) const;
+        void vals(std::list<T> &) const;
 
         friend class BSONObjIterator;
         typedef BSONObjIterator iterator;
@@ -446,11 +466,13 @@ namespace bson {
             b.appendBuf(reinterpret_cast<const void *>( objdata() ), objsize());
         }
 
+        template<typename T> bool coerceVector( std::vector<T>* out ) const;
+
 #pragma pack(1)
         class Holder : boost::noncopyable {
         private:
             Holder(); // this class should never be explicitly created
-            bson::AtomicUInt refCount;
+            AtomicUInt refCount;
         public:
             char data[4]; // start of object
 
@@ -460,14 +482,31 @@ namespace bson {
             friend void intrusive_ptr_add_ref(Holder* h) { h->refCount++; }
             friend void intrusive_ptr_release(Holder* h) {
 #if defined(_DEBUG) // cant use dassert or DEV here
-                assert((int)h->refCount > 0); // make sure we haven't already freed the buffer
+                verify((int)h->refCount > 0); // make sure we haven't already freed the buffer
 #endif
                 if(--(h->refCount) == 0){
+#if defined(_DEBUG)
+                    unsigned sz = (unsigned&) *h->data;
+                    verify(sz < BSONObjMaxInternalSize * 3);
+                    memset(h->data, 0xdd, sz);
+#endif
                     free(h);
                 }
             }
         };
 #pragma pack()
+
+    BSONObj(const BSONObj &rO):
+        _objdata(rO._objdata), _holder(rO._holder) {
+        }
+
+    BSONObj &operator=(const BSONObj &rRHS) {
+        if (this != &rRHS) {
+            _objdata = rRHS._objdata;
+            _holder = rRHS._holder;
+        }
+        return *this;
+    }
 
     private:
         const char *_objdata;
@@ -484,20 +523,10 @@ namespace bson {
             if ( !isValid() )
                 _assertInvalid();
         }
-
-        void init(const char *data, bool ownership) {
-          if (ownership) {
-            Holder *h = (Holder*) malloc(objsize() + sizeof(unsigned));
-            h->zero();
-            init(h);
-          } else {
-            init(data);
-          }
-        }
     };
 
-    ostream& operator<<( ostream &s, const BSONObj &o );
-    ostream& operator<<( ostream &s, const BSONElement &e );
+    std::ostream& operator<<( std::ostream &s, const BSONObj &o );
+    std::ostream& operator<<( std::ostream &s, const BSONElement &e );
 
     StringBuilder& operator<<( StringBuilder &s, const BSONObj &o );
     StringBuilder& operator<<( StringBuilder &s, const BSONElement &e );

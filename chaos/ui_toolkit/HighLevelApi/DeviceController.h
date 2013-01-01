@@ -48,8 +48,6 @@ namespace chaos {
             uint32_t millisecToWait;
                 //! represent the device id controlled by this instance
             string deviceID;
-                //! the haos address of device
-            auto_ptr<CDeviceNetworkAddress> deviceAddress;
                 //! Metadata Server channel for get device information
             MDSMessageChannel *mdsChannel;
                 //! Device MEssage channel to control via chaos rpc the device
@@ -227,7 +225,7 @@ namespace chaos {
             /*!
              the returned object is not own by requester but only by DeviceController isntance
              */
-            CDataWrapper* getLiveCDataWrapperPtr();
+            const CDataWrapper * getLiveCDataWrapperPtr();
             
             /*!
              Fetch the current live value form live storage

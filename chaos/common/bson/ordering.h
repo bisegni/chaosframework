@@ -19,16 +19,22 @@
 
 namespace bson {
 
-    /** A precomputation of a BSON key pattern.
-        The constructor is private to make conversion more explicit so we notice
-        where we call make(). Over time we should push this up higher and
-        higher.
+    // todo: ideally move to db/ instead of bson/, but elim any dependencies first
+
+    /** A precomputation of a BSON index or sort key pattern.  That is something like: 
+           { a : 1, b : -1 }
+        The constructor is private to make conversion more explicit so we notice where we call make().
+        Over time we should push this up higher and higher.
     */
     class Ordering {
-        const unsigned bits;
-        const unsigned nkeys;
-        Ordering(unsigned b,unsigned n) : bits(b),nkeys(n) { }
+        unsigned bits;
+        Ordering(unsigned b) : bits(b) { }
     public:
+        Ordering(const Ordering& r) : bits(r.bits) { }
+        void operator=(const Ordering& r) {
+            bits = r.bits;
+        }
+
         /** so, for key pattern { a : 1, b : -1 }
             get(0) == 1
             get(1) == -1
@@ -40,12 +46,12 @@ namespace bson {
         // for woCompare...
         unsigned descending(unsigned mask) const { return bits & mask; }
 
-        operator string() const {
-            StringBuilder buf(32);
+        /*operator std::string() const {
+            StringBuilder buf;
             for ( unsigned i=0; i<nkeys; i++)
                 buf.append( get(i) > 0 ? "+" : "-" );
             return buf.str();
-        }
+        }*/
 
         static Ordering make(const BSONObj& obj) {
             unsigned b = 0;
@@ -55,12 +61,12 @@ namespace bson {
                 BSONElement e = k.next();
                 if( e.eoo() )
                     break;
-                uassert( 13103, "too many compound keys", n <= 31 );
+                assert( n <= 31 );
                 if( e.number() < 0 )
                     b |= (1 << n);
                 n++;
             }
-            return Ordering(b,n);
+            return Ordering(b);
         }
     };
 

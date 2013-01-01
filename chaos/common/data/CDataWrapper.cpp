@@ -52,9 +52,9 @@ vector<BSONElement>::size_type CMultiTypeDataArrayWrapper::size() const{
 CDataWrapper::CDataWrapper():bsonArrayBuilder(new BSONArrayBuilder()),bsonBuilder(new BSONObjBuilder()){
 }
 
-CDataWrapper::CDataWrapper(const char* serializationBuffer, bool bson, bool owned):bsonArrayBuilder(new BSONArrayBuilder()),bsonBuilder(new BSONObjBuilder()){
+CDataWrapper::CDataWrapper(const char* serializationBuffer, bool bson):bsonArrayBuilder(new BSONArrayBuilder()),bsonBuilder(new BSONObjBuilder()){
         //bsonBuilder->appendElements(BSONObj(serializationBuffer));
-    setSerializedData(serializationBuffer, bson, owned);
+    setSerializedData(serializationBuffer, bson);
 }
 
 CDataWrapper *CDataWrapper::clone() {
@@ -68,19 +68,6 @@ void CDataWrapper::addCSDataValue(const char *key, CDataWrapper& csData) {
     bsonBuilder->append(key, csData.bsonBuilder->asTempObj());
         //reset the added object
         //csData.bsonBuilder.reset(new BSONObjBuilder());
-}
-
-    //get a csdata value
-CDataWrapper *CDataWrapper::getCSDataValue(const char *key) {
-        //allocate the pointer for the result
-    CDataWrapper *result = new CDataWrapper();
-    if(result){
-            //get the subobject
-        BSONObj subObject = bsonBuilder->asTempObj().getObjectField(key);
-            //set the serialization data in resul datawrapper
-        result->setSerializedData(subObject.objdata());
-    }
-    return result;
 }
 
     //add a string value
@@ -129,13 +116,8 @@ void CDataWrapper::finalizeArrayForKey(const char *key) {
     bsonArrayBuilder.reset(new BSONArrayBuilder());
 }
 
-    //get string value
-string  CDataWrapper::getStringValue(const char *key) {
-    return bsonBuilder->asTempObj().getField(key).String();
-}
-
     //return a vectorvalue for a key
-CMultiTypeDataArrayWrapper* CDataWrapper::getVectorValue(const char *key) {
+CMultiTypeDataArrayWrapper* CDataWrapper::getVectorValue(const char *key) const {
     return new CMultiTypeDataArrayWrapper(bsonBuilder->asTempObj().getField(key).Array());
 }
 
@@ -158,28 +140,42 @@ void CDataWrapper::addInt64Value(const char *key, int64_t i64Value) {
 #endif
 }
 
+    //get a csdata value
+CDataWrapper *CDataWrapper::getCSDataValue(const char *key) const {
+        //allocate the pointer for the result
+    CDataWrapper *result = new CDataWrapper();
+    if(result){
+            //get the subobject
+        BSONObj subObject = bsonBuilder->asTempObj().getObjectField(key);
+            //set the serialization data in resul datawrapper
+        result->setSerializedData(subObject.objdata());
+    }
+    return result;
+}
+
+
+    //get string value
+string  CDataWrapper::getStringValue(const char *key) const {
+    return bsonBuilder->asTempObj().getField(key).String();
+}
+
     //add a integer value
-int32_t CDataWrapper::getInt32Value(const char *key) {
+int32_t CDataWrapper::getInt32Value(const char *key) const {
     return (int32_t)bsonBuilder->asTempObj().getField(key).Int();
 }
 
     //add a integer value
-int64_t CDataWrapper::getInt64Value(const char *key) {
+int64_t CDataWrapper::getInt64Value(const char *key) const {
     return bsonBuilder->asTempObj().getField(key).Long();
 }
 
     //add a integer value
-double_t CDataWrapper::getDoubleValue(const char *key) {
+double_t CDataWrapper::getDoubleValue(const char *key)  const {
     return bsonBuilder->asTempObj().getField(key).Double();
 }
 
-    //add a bool value
-void CDataWrapper::addBoolValue(const char *key, bool boolValue) {
-    bsonBuilder->appendBool(key, boolValue);
-}
-
     //get a bool value
-bool  CDataWrapper::getBoolValue(const char *key) {
+bool  CDataWrapper::getBoolValue(const char *key)  const {
     return bsonBuilder->asTempObj().getField(key).Bool();
 }
 
@@ -189,8 +185,18 @@ void CDataWrapper::addBinaryValue(const char *key, const char *buff, int bufLen)
 }
 
     //return the binary data value
-const char* CDataWrapper::getBinaryValue(const char *key, int& bufLen) {
+const char* CDataWrapper::getBinaryValue(const char *key, int& bufLen)  const  {
     return bsonBuilder->asTempObj().getField(key).binData(bufLen);
+}
+
+    //check if the key is present in data wrapper
+bool CDataWrapper::hasKey(const char* key)  const {
+    return bsonBuilder->asTempObj().hasElement(key);
+}
+
+    //add a bool value
+void CDataWrapper::addBoolValue(const char *key, bool boolValue) {
+    bsonBuilder->appendBool(key, boolValue);
 }
 
     /*
@@ -231,8 +237,8 @@ string CDataWrapper::getJSONString() {
     return bsonBuilder->asTempObj().jsonString();
 }
     //reinitialize the object with bson data
-void CDataWrapper::setSerializedData(const char* bsonData, bool bson, bool owned) {
-    bsonBuilder->appendElements(bson?BSONObj(bsonData, owned):fromjson(bsonData));
+void CDataWrapper::setSerializedData(const char* bsonData, bool bson) {
+    bsonBuilder->appendElements(/*bson?*/BSONObj(bsonData)/*:fromjson(bsonData)*/);
 }
 
     //append all elemento of an
@@ -240,10 +246,6 @@ void CDataWrapper::appendAllElement(CDataWrapper& srcDataWrapper) {
     bsonBuilder->appendElements(srcDataWrapper.bsonBuilder->asTempObj());
 }
 
-    //check if the key is present in data wrapper
-bool CDataWrapper::hasKey(const char* key) {
-    return bsonBuilder->asTempObj().hasElement(key);
-}
     //reset the datawrapper
 void CDataWrapper::reset() {
     bsonBuilder.reset(new BSONObjBuilder()); 

@@ -1,4 +1,4 @@
-/* @file misc.h 
+/* @file misc.h
 */
 
 /*
@@ -20,10 +20,12 @@
 #pragma once
 
 #include <ctime>
+#include <limits>
+#include <string>
+
+#include <chaos/common/bson/util/assert_util.h>
 
 namespace bson {
-
-    using namespace std;
 
     inline void time_t_to_String(time_t t, char *buf) {
 #if defined(_WIN32)
@@ -34,7 +36,7 @@ namespace bson {
         buf[24] = 0; // don't want the \n
     }
 
-    inline string time_t_to_String(time_t t = time(0) ) {
+    inline std::string time_t_to_String(time_t t = time(0) ) {
         char buf[64];
 #if defined(_WIN32)
         ctime_s(buf, sizeof(buf), &t);
@@ -45,7 +47,7 @@ namespace bson {
         return buf;
     }
 
-    inline string time_t_to_String_no_year(time_t t) {
+    inline std::string time_t_to_String_no_year(time_t t) {
         char buf[64];
 #if defined(_WIN32)
         ctime_s(buf, sizeof(buf), &t);
@@ -56,7 +58,7 @@ namespace bson {
         return buf;
     }
 
-    inline string time_t_to_String_short(time_t t) {
+    inline std::string time_t_to_String_short(time_t t) {
         char buf[64];
 #if defined(_WIN32)
         ctime_s(buf, sizeof(buf), &t);
@@ -76,10 +78,24 @@ namespace bson {
         Date_t(unsigned long long m): millis(m) {}
         operator unsigned long long&() { return millis; }
         operator const unsigned long long&() const { return millis; }
-        string toString() const {
+        void toTm (tm *buf) {
+            time_t dtime = toTimeT();
+#if defined(_WIN32)
+            gmtime_s(buf, &dtime);
+#else
+            gmtime_r(&dtime, buf);
+#endif
+        }
+        std::string toString() const {
             char buf[64];
-            time_t_to_String(millis/1000, buf);
+            time_t_to_String(toTimeT(), buf);
             return buf;
+        }
+        time_t toTimeT() const {
+            // cant use uassert from bson/util
+            MONGO_verify((long long)millis >= 0); // TODO when millis is signed, delete
+            MONGO_verify(((long long)millis/1000) < (std::numeric_limits<time_t>::max)());
+            return millis / 1000;
         }
     };
 
@@ -91,4 +107,5 @@ namespace bson {
                 return i;
         return -1;
     }
+
 }
