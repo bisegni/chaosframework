@@ -62,6 +62,8 @@ MainWindow::MainWindow(QWidget *parent) :
     d_timerId = -1;
     lostPack = 0;
     checkSequentialIDKey.assign(ui->lineEdit->text().toStdString());
+
+    deviceController = NULL;
 }
 
 MainWindow::~MainWindow()
