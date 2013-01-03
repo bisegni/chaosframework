@@ -18,7 +18,6 @@
 #include <chaos/common/caching_system/caching_thread/trackers/ConcreteDeviceTracker.h>
 
 
-//may this is not useful
 #include <chaos/common/caching_system/common_buffer/helper/MillisTime.h>
 
 
@@ -88,8 +87,8 @@ int run(int argc, const char * argv[]){
     //logging to file
     std::stringstream path;
     path<<basePath;
-    time_t inizio =time(0);
-    path<<"_"<<inizio<<"/";
+    time_t startTime =time(0);
+    path<<"_"<<startTime<<"/";
     basePath=path.str();
     mkdir(basePath.c_str(),0777);
     
@@ -102,7 +101,7 @@ int run(int argc, const char * argv[]){
     // then, create an istance of your tracker, passing all needed parameters and the fetcher
     caching_thread::ConcreteDeviceTracker<Magnete>* myTracker=new ConcreteDeviceTracker<Magnete>(fetcher,hzGetData,millisTimeCaching,dev);
     
-    
+    std::cout<<"Starting tracker\n";
     boost::thread threadTracker(boost::ref(*myTracker));
     threadTracker.detach();
     
@@ -116,6 +115,7 @@ int run(int argc, const char * argv[]){
         threadReaders.push_back(threadLettore);
         
     }
+    std::cout<<"Staring thread readers\n";
 
     //Starting thread
     for(int i=0;i<threadReaders.size();i++){
@@ -128,26 +128,25 @@ int run(int argc, const char * argv[]){
     }
     
     
-        
+    std::cout<<"now i will sleep for about "<<timeOfSimulation<<" seconds... \n";
+    
     // now thread main will sleep for designed time
     
-    boost::posix_time::seconds timeFakeWork(timeOfSimulation);
+    boost::posix_time::seconds timeFakeWork(timeOfSimulation+5);
     boost::this_thread::sleep(timeFakeWork);
     
-    //wait for closing all thread (only to permit to close all resources)
-    boost::posix_time::seconds tempoWork2(5);
-    boost::this_thread::sleep(tempoWork2);
+ 
     
-    
+    std::cout <<"end of simulation time, i'm trying to close tracker\n";
     // try to close, if false, it means that there is some thread holding the buffer
     if(myTracker->tryInterruptTracking()){
         std::cout<<"closed with success\n";
     }else{
         
-        std::cout<<"something goes wrong";
+        std::cout<<"something goes wrong, maybe there are some thread that are holding buffers..\n";
     }
     
-    std::cout<<"finished\n";
+    std::cout<<"finished, you can check the result in you execution path\n";
     return 0;
     
 }

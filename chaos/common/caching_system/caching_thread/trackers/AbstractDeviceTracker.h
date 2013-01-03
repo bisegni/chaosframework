@@ -20,17 +20,16 @@
 
 #ifndef CachingSystem_DeviceTracker_h
 #define CachingSystem_DeviceTracker_h
-//#include <string>
 #include <map>
 #include <string>
 #include <boost/thread.hpp>
-
 #include <chaos/common/caching_system/common_buffer/CommonBuffer.h>
 #include <chaos/common/caching_system/caching_thread/tracker_interface/DataFetcherInterface.h>
 #include <chaos/common/caching_system/caching_thread/GarbageThread.h>
 #include <chaos/common/caching_system/caching_thread/BufferTracker.h>
 #include <chaos/common/caching_system/common_buffer/helper/IdFactory.h>
 #include <chaos/common/caching_system/common_buffer/data_element/SmartData.h>
+
 namespace chaos {
 
 namespace caching_system {
@@ -66,14 +65,9 @@ namespace caching_system {
                     
                     BufferTracker<T>* subBuffer=it->second;
                     if(subBuffer->needNextData(newElement->getTimestamp())){
-                        //std::cout<<"aggiungo\n";
                         SmartPointer<T>* localData=new SmartPointer<T>(elementToAdd->getElement());
                         SmartData<T >* smartData=new SmartData<T>(localData,newElement->getTimestamp());
                         subBuffer->getControlledBuffer()->enqueue(smartData,false);
-                    }else{
-                        //std::cout<<"ancora no\n";
-
-                    
                     }
                     
                 }
@@ -97,12 +91,9 @@ namespace caching_system {
                 this->timeToFetchData= 1000*((((double)1)/((double)hertz)));
 
                 this->garbageCollector=new GarbageThread<T>(validity,&closedCondition,closingLockMutex);
-
-                //lowResQueuesVector=new std::vector<BufferTracker<T>* >();
-               // this->idReader=0;
             
             }
-          //  AbstractDeviceTracker(DataFetcherInterface<T>* fetcher ){}
+
     
             IteratorReader<T>* openMaxResBuffer(){
                 return new IteratorReader<T>(highResQueue);
@@ -113,7 +104,6 @@ namespace caching_system {
                 //first take a mutex lock on this queue
                 boost::mutex::scoped_lock  lock(*bufferMapMutex);
                 
-                //ATTENTO: PER ORA LOCCA TUTTA LA FUNZIONE, POI FALLO BENE
                 
                 std::stringstream key;
                 key<<validity<<":"<<discretization;
@@ -198,7 +188,6 @@ namespace caching_system {
             
             void operator()(){
                 
-                std::cout<<"parto\n";
 
                 boost::thread collector(( boost::ref(*this->garbageCollector) ));
                 garbageCollector->putQueueToGarbage(this->highResQueue->getIteratorGarbage());
@@ -222,9 +211,7 @@ namespace caching_system {
 
                 garbageCollector->interrupt();
                
-                std::cout<<"attendo la notify\n";
                 this->closedCondition.wait(closingLock);
-                std::cout<<"ok, mi posso chiudere\n";
 
                 //TODO before begin to testing
         
@@ -239,7 +226,6 @@ namespace caching_system {
             
             bool tryInterruptTracking(){
                 
-           //     std::cout<<"size: "<<this->iteratorIdToBufferTracker.size()<<"\n";
                 if(this->iteratorIdToBufferTracker.size()>0){
                     return false;
                 }else{
