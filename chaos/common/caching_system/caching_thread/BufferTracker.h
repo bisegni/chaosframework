@@ -29,23 +29,48 @@
 namespace chaos {
     namespace caching_system {
         namespace caching_thread{
-            // static int idReader=0;
             
             template <typename T>
+            
+            /*!
+             * This class maintains information for a low resolution buffer. These buffer are istanced by tracker
+             * when a clinet request a buffer of a different resolution with respect to principal buffer in highest resolution, which is mantained by the tracker directly. Informations are:
+             * 1) a reference to the buffer
+             * 2) The number of reader, this is compulsory for decide if a buffer must be deleted because
+             *    is no longer used
+             * 3) A reference to an iterator used by the garbage collector to delete old data
+             * 4) The value of discretization, which if used to calculate the next minimum timestamp for insert a 
+             *     new value.
+             */
             class BufferTracker{
                 
             private:
                 
+                //!< This is a pointer to the low resolution buffer
                 CommonBuffer<T>* controlledBuffer;
+                //!< This is the actual numnber of readers
                 uint32_t numberOfReader;
+                
+                //!< The value representig the discretization of this buffer
                 uint64_t discretization;
+                //!< pointer to iterator
                 IteratorGarbage<T>* iteratorGarbage;
+                
+                //!< next timeout for new data
                 uint64_t nextTimeout;
-                //std::string keyId;
                 
                 
             public:
                 
+                /*!
+                 * Creates the data structure to maintain data related to input buffer, you have to
+                 * insert as input parameter:
+                 * \param  CommonBuffer<T>* $controlledBuffer
+                 * The low resolution buffer to be controlled
+                 * \param uint64_t $discretization 
+                 * the value of the discretization
+                 * 
+                 */
                 BufferTracker(CommonBuffer<T>* controlledBuffer,uint64_t discretization){
                     this->nextTimeout=0;
                     this->controlledBuffer=controlledBuffer;
@@ -55,8 +80,13 @@ namespace chaos {
                     
                 }
                 
+                /*!
+                 * It returns a new iterator for the controlled Buffer. This also increment the number 
+                 * of actual readers and gives to it a new Id
+                 */
                 IteratorReader<T>* getIterator(){
-                    //increments reader count atomically
+                    
+                    //increments reader count atomically, so in this way we can prevent form locking
                     __sync_fetch_and_add(&this->numberOfReader,1);
                     
                     //request for new id
@@ -70,19 +100,31 @@ namespace chaos {
                     
                 }
                 
+                
+                /*!
+                 * Removes the iterator passed as argument by decrementing reader count and deleting it
+                 */
                 void deleteIterator(IteratorReader<T>* iterator){
                     
+                    //decrement the number of reader and dealloc iterator
                     __sync_fetch_and_sub(&this->numberOfReader,1);
                     
                     delete iterator;
                 }
                 
+                
+                /*!
+                 * Returns the iteratore used for garbaging
+                 */
                 IteratorGarbage<T>* getIteratorGarbage(){
                     
                     return this->iteratorGarbage;
                     
                 }
                 
+                /*!
+                 * Returns the actual number of readers. if it is zero, you can dealloc this buffer
+                 */
                 int getNumberOfReader(){
                     return this->numberOfReader;
                     
@@ -91,21 +133,33 @@ namespace chaos {
                 // removeIterator(IteretorReader<T>)
                 
                 
-                
+                /*!
+                 * Returns the validity of this controlled buffer. It wraps the base function of the class CommonBuffer
+                 */
                 uint64_t getValidity(){
                     return this->controlledBuffer->getValidity();
                     
                     
                 }
                 
+                /*!
+                 * Returns the value of discretization managed for this buffer
+                 */
                 uint64_t inline getDiscretization(){
                     return this->discretization;
                 }
                 
+                /*!
+                 * Returns a pointer to the controlled buffer
+                 */
                 CommonBuffer<T>* getControlledBuffer(){
                     return this->controlledBuffer;
                 }
                 
+                
+                /*!
+                 * Decides whether or not this buffer needs new data. 
+                 */
                 bool needNextData(uint64_t timestamp){
                     if(timestamp>=this->nextTimeout){
                         this->nextTimeout=this->discretization+timestamp;

@@ -46,7 +46,7 @@ string basePath="./log";
 
 bool processInput(int argc, const char * argv[]);
 void printHelp();
-
+//fdf
 
 //questo test crea 4 lettori in alta risoluzione, 4 in bassa risoluzione, un sub lettore , un tracker che crea un dato
 //aggregato e 4 lettori che leggono il dato aggragato
