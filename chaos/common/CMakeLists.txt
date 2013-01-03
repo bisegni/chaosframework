@@ -59,6 +59,23 @@ INSTALL(FILES ${files} DESTINATION include/chaos/common/thread)
 FILE(GLOB files "utility/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/utility)
 
+FILE(GLOB files "caching_system/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/caching_system)
+
+FILE(GLOB files "caching_system/caching_thread/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/caching_system/caching_thread)
+FILE(GLOB files "caching_system/caching_thread/tracker_interface/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/caching_system/caching_thread/tracker_interface)
+FILE(GLOB files "caching_system/caching_thread/trackers/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/caching_system/caching_thread/trackers)
+
+FILE(GLOB files "caching_system/common_buffer/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/caching_system/common_buffer)
+FILE(GLOB files "caching_system/common_buffer/data_element/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/caching_system/common_buffer/data_element)
+FILE(GLOB files "caching_system/common_buffer/helper/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/caching_system/common_buffer/helper)
+
 INSTALL(TARGETS chaos_common
         DESTINATION "lib"
         PERMISSIONS OWNER_WRITE GROUP_READ WORLD_READ)

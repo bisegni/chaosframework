@@ -41,4 +41,7 @@
    <FileRef
       location = "group:test/BSONTestPerf/BSONTestPerf.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:test/CachingTest/CachingTest.xcodeproj">
+   </FileRef>
 </Workspace>
