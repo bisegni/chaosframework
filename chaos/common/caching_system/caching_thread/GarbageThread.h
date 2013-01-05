@@ -36,17 +36,25 @@ namespace chaos {
         namespace caching_thread{
             
             template<typename T>
+            /*!
+             * This class represent the Garbage collector thread for an entire device tracker. It has the responsability
+             * of deleting old object and refreshing the pointer to last valid element. It is istanced direclty from 
+             * AbstractDeviceTracker. When you create a new buffer, remeber to add it to this object, so you can be sure
+             * that it will be managed
+             */
             
             class GarbageThread{
                 
                 
                 
             private:
-                // CommonBuffer<T>* highResQueue;
-                // long hertz;
+
+                 //!< Iterator for all queues gave to this istance of Gabage collector
                 std::vector<IteratorGarbage<T>* > queues;
+                //!< Mutex lock for operation of deleting and inserting new queue to purge
                 boost::mutex* _access;
                 bool interrupted;
+                
                 boost::posix_time::milliseconds* timeToSleep;
                 boost::condition_variable* conditionClose;
                 boost::mutex* closingLockMutex;
@@ -57,6 +65,9 @@ namespace chaos {
                 
             public:
                 
+                /*!
+                 * 
+                 */
                 GarbageThread(uint64_t millisToSleep,boost::condition_variable* conditionClose, boost::mutex* closingLockMutex){
                     // this->queues=new std::vector<IteratorGarbage<T>* >();
                     interrupted=false;
