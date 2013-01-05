@@ -22,32 +22,30 @@
 #define CachingSystem_DataFetcherInterface_h
 #include <chaos/common/caching_system/common_buffer/data_element/DataElement.h>
 #include <chaos/common/caching_system/common_buffer/CommonBuffer.h>
-#include <chaos/common/caching_system/caching_thread/trackers/AbstractDeviceTracker.h>
+//#include <chaos/common/caching_system/caching_thread/trackers/AbstractDeviceTracker.h>
 
 namespace chaos {
     
     
     namespace caching_system {
         // template<typename T>
-        //  class DeviceTracker;
+        class AbstractDeviceTracker;
         
         template <typename T>
         class DataFetcherInterface{
             
-            /*template <typename TT>*/friend class AbstractDeviceTracker;
+            friend class AbstractDeviceTracker;
             
         public:
             // DataFetcherInterface(){}
             CommonBuffer<T>* buffer;
             
             DataElement<T>* _getData() {
-                T* data=new T();
                 uint64_t timestamp;
-                getData(data,&timestamp);
-                //std::cout<<"tempo:"<<timestamp;
-                //  std::cout<<*data;
-                DataElement<T>* ritorno= new DataElement<T>(data,timestamp);
-                return ritorno;
+                T *newData = new T();
+                getData(*newData, timestamp);
+                //DataElement<T>* ritorno= ;
+                return new DataElement<T>(newData,timestamp);
                 
             }
             
@@ -60,7 +58,7 @@ namespace chaos {
             }
             
             
-            virtual void getData(T *newData, uint64_t* ts)=0;
+            virtual void getData(T& newData, uint64_t& ts)=0;
         };
         
     }

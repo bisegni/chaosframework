@@ -31,11 +31,11 @@ namespace chaos {
             
             template <typename T>
             
-            class ConcreteDeviceTracker : public AbstractDeviceTracker<T>{
+            class ConcreteDeviceTracker : public AbstractDeviceTracker<T> {
                 
             public:
                 
-                ConcreteDeviceTracker(caching_system::DataFetcherInterface<T>* fetcher,uint64_t hertz,uint64_t validity,std::string dev_id): AbstractDeviceTracker<T>( fetcher, hertz,validity,dev_id){}
+                ConcreteDeviceTracker(caching_system::DataFetcherInterface<T>* fetcher,uint64_t hertz,uint64_t validity): AbstractDeviceTracker<T>( fetcher, hertz,validity){}
                 
                 
                 void doTracking(DataElement<T>* newElement){

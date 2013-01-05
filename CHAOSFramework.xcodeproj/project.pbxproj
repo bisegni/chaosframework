@@ -12,6 +12,8 @@
 		320C218C151B556E00BD0F41 /* EventServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320C218B151B556E00BD0F41 /* EventServer.cpp */; };
 		320DF98D14E17E2700251621 /* DeviceController.h in Headers */ = {isa = PBXBuildFile; fileRef = 320DF98C14E17E2700251621 /* DeviceController.h */; };
 		320DF99114E190BB00251621 /* DeviceController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320DF98F14E17E3D00251621 /* DeviceController.cpp */; };
+		3211FD1D1698699D00424A3C /* LiveDataFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3211FD1B1698699D00424A3C /* LiveDataFetcher.cpp */; };
+		3211FD1E1698699D00424A3C /* LiveDataFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 3211FD1C1698699D00424A3C /* LiveDataFetcher.h */; };
 		322E1579161B629700C3003C /* NetworkAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = 322E1577161B629700C3003C /* NetworkAddress.h */; };
 		322E157A161B629700C3003C /* NetworkBroker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322E1578161B629700C3003C /* NetworkBroker.cpp */; };
 		322E157D161B62A900C3003C /* NetworkBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 322E157C161B62A900C3003C /* NetworkBroker.h */; };
@@ -341,6 +343,8 @@
 		320C218B151B556E00BD0F41 /* EventServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventServer.cpp; sourceTree = "<group>"; };
 		320DF98C14E17E2700251621 /* DeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceController.h; sourceTree = "<group>"; };
 		320DF98F14E17E3D00251621 /* DeviceController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceController.cpp; sourceTree = "<group>"; };
+		3211FD1B1698699D00424A3C /* LiveDataFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LiveDataFetcher.cpp; sourceTree = "<group>"; };
+		3211FD1C1698699D00424A3C /* LiveDataFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveDataFetcher.h; sourceTree = "<group>"; };
 		3216601014D49D0F008DADD2 /* ObjectWaitSemaphore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectWaitSemaphore.h; sourceTree = "<group>"; };
 		322E1577161B629700C3003C /* NetworkAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkAddress.h; sourceTree = "<group>"; };
 		322E1578161B629700C3003C /* NetworkBroker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkBroker.cpp; sourceTree = "<group>"; };
@@ -715,6 +719,15 @@
 				32DD885215E2681F000AF740 /* EventHandler.h */,
 			);
 			path = event;
+			sourceTree = "<group>";
+		};
+		3211FD061698666700424A3C /* caching */ = {
+			isa = PBXGroup;
+			children = (
+				3211FD1B1698699D00424A3C /* LiveDataFetcher.cpp */,
+				3211FD1C1698699D00424A3C /* LiveDataFetcher.h */,
+			);
+			path = caching;
 			sourceTree = "<group>";
 		};
 		323236C9164573C60052CE06 /* ChaosNodeDirectory */ = {
@@ -1137,6 +1150,7 @@
 				3265BF4515D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h */,
 				326DB4D914B3B0070018A8D0 /* HighLevelApi */,
 				326DB4E014B3B0070018A8D0 /* LowLevelApi */,
+				3211FD061698666700424A3C /* caching */,
 			);
 			path = ui_toolkit;
 			sourceTree = "<group>";
@@ -1603,6 +1617,7 @@
 				326DB4F614B3B0070018A8D0 /* LLRpcApi.h in Headers */,
 				320DF98D14E17E2700251621 /* DeviceController.h in Headers */,
 				3265BF4615D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h in Headers */,
+				3211FD1E1698699D00424A3C /* LiveDataFetcher.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1863,6 +1878,7 @@
 				326DB4F514B3B0070018A8D0 /* LLRpcApi.cpp in Sources */,
 				320DF99114E190BB00251621 /* DeviceController.cpp in Sources */,
 				3265BF4915D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc in Sources */,
+				3211FD1D1698699D00424A3C /* LiveDataFetcher.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

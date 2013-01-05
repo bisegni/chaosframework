@@ -58,12 +58,6 @@ int main(int argc, const char * argv[]){
     run(argc,argv);
 }
 
-
-
-
-
-
-
 int run(int argc, const char * argv[]){
     
     //duration time of the run
@@ -99,11 +93,10 @@ int run(int argc, const char * argv[]){
     caching_system::DataFetcherInterface<Magnete>* fetcher=new SimpleDataFetcher();
     
     // then, create an istance of your tracker, passing all needed parameters and the fetcher
-    caching_thread::ConcreteDeviceTracker<Magnete>* myTracker=new ConcreteDeviceTracker<Magnete>(fetcher,hzGetData,millisTimeCaching,dev);
+    caching_thread::ConcreteDeviceTracker<Magnete>* myTracker=new ConcreteDeviceTracker<Magnete>(fetcher,hzGetData,millisTimeCaching);
     
     std::cout<<"Starting tracker\n";
-    boost::thread threadTracker(boost::ref(*myTracker));
-    threadTracker.detach();
+    myTracker->startTracking();
     
     //now it will start some threads
     vector<SimpleDataReader*> threadReaders ;
@@ -139,7 +132,7 @@ int run(int argc, const char * argv[]){
     
     std::cout <<"end of simulation time, i'm trying to close tracker\n";
     // try to close, if false, it means that there is some thread holding the buffer
-    if(myTracker->tryInterruptTracking()){
+    if(myTracker->stopTracking()){
         std::cout<<"closed with success\n";
     }else{
         

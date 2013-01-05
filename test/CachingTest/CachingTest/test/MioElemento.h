@@ -13,14 +13,16 @@
 
 
 class Magnete{
+
+    
+public:
     double top;
     double down;
     double left;
     double right;
-    // long timeout;
+        // long timeout;
     long timestamp;
     
-public:
     Magnete(double top,double down,double left,double right,long timestamp);
     
     Magnete(){}

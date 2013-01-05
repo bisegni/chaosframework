@@ -1,10 +1,10 @@
-//
-//  SimpleDataFetcher.h
-//  CachingSystem
-//
-//  Created by Flaminio Antonucci on 15/11/12.
-//
-//
+    //
+    //  SimpleDataFetcher.h
+    //  CachingSystem
+    //
+    //  Created by Flaminio Antonucci on 15/11/12.
+    //
+    //
 
 #ifndef CachingSystem_SimpleDataFetcher_h
 #define CachingSystem_SimpleDataFetcher_h
@@ -18,7 +18,7 @@ class SimpleDataFetcher : public chaos::caching_system::DataFetcherInterface<Mag
 private:
     double val;
     
-   
+    
     
 public:
     SimpleDataFetcher(){
@@ -26,15 +26,16 @@ public:
     }
     
     
-    void getData(Magnete *newData, uint64_t* ts){
-       // val=4;
-        *ts = chaos::my_time::getMillisTimestamp();
-        *newData=Magnete(val,val+1,val+2,val+3,*ts);
+    void getData(Magnete& newData, uint64_t& ts){
+            // val=4;
+        ts = chaos::my_time::getMillisTimestamp();
         val++;
-       // val=((int)val)%13;
-    
+            // val=((int)val)%13;
+        newData.top = val;
+        newData.down = val+1;
+        newData.left = val+2;
+        newData.right = val+3;
+        newData.timestamp = ts;
     }
 };
-
-
 #endif

@@ -63,8 +63,7 @@ namespace caching_system {
             
             AggregateDeviceTracker(caching_system::DataAggregationFilterInterface<T,U>* aggregator,
                                    caching_system::DataFetcherInterface<T>* fetcher,
-                                   uint64_t hertz,uint64_t validity,std::string dev_id,
-                                   uint64_t bufferLenght): AbstractDeviceTracker<U,T>( fetcher, hertz,validity,dev_id){
+                                   uint64_t hertz, uint64_t validity, uint64_t bufferLenght): AbstractDeviceTracker<U,T>( fetcher, hertz,validity){
                 
                 this->bufferLenght=bufferLenght;
                 buffer=new std::vector<DataElement<T>* >();
