@@ -28,10 +28,10 @@ private:
     double timeInterval;
     std::string basePath;
     int id;
-    caching_system::caching_thread::ConcreteDeviceTracker<Magnete>* deviceTracker;
+    caching_system::caching_thread::CombinedTrackers<Magnete>* deviceTracker;
     
 public:
-    SimpleDataReader(IteratorReader<Magnete>* it, long fps,    std::string basePath,int id ,caching_system::caching_thread::ConcreteDeviceTracker<Magnete>* deviceTracker){
+    SimpleDataReader(IteratorReader<Magnete>* it, long fps,    std::string basePath,int id ,caching_system::caching_thread::CombinedTrackers<Magnete>* deviceTracker){
         
         this->iteratore=it;
         interrupted=false;

@@ -163,6 +163,7 @@
 		328D2FBA1660EADC007F482E /* DSAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328D2FB11660E3EC007F482E /* DSAttributeHandler.h */; };
 		328D2FBE1660EF71007F482E /* TDSAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328D2FBC1660EF71007F482E /* TDSAttributeHandler.h */; };
 		328D2FC316612AB3007F482E /* DSInt32Handler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328D2FC116612AB3007F482E /* DSInt32Handler.h */; };
+		328F355F169A0759007EBAFD /* CombinedTrackers.h in Headers */ = {isa = PBXBuildFile; fileRef = 328F355E169A0758007EBAFD /* CombinedTrackers.h */; };
 		328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */; };
 		3297F22614D96F31004FFE4F /* DeviceMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3297F22514D96F31004FFE4F /* DeviceMessageChannel.cpp */; };
 		3297F22914D96F43004FFE4F /* DeviceMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3297F22814D96F43004FFE4F /* DeviceMessageChannel.h */; };
@@ -499,6 +500,7 @@
 		328D2FB61660EACD007F482E /* DSAttributeHandlerExecutionEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSAttributeHandlerExecutionEngine.h; sourceTree = "<group>"; };
 		328D2FBC1660EF71007F482E /* TDSAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSAttributeHandler.h; sourceTree = "<group>"; };
 		328D2FC116612AB3007F482E /* DSInt32Handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSInt32Handler.h; sourceTree = "<group>"; };
+		328F355E169A0758007EBAFD /* CombinedTrackers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombinedTrackers.h; sourceTree = "<group>"; };
 		328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcServerHandler.h; sourceTree = "<group>"; };
 		3294905A159AF4BF00E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		3294905B159AF4D700E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -1358,6 +1360,7 @@
 				8AF8EA4E16948C9B009CC4DD /* AgregateDeviceTracker.h */,
 				8AF8EA4F16948C9B009CC4DD /* ConcreteDeviceTracker.h */,
 				8AF8EA5016948C9B009CC4DD /* TransformDeviceTracker.h */,
+				328F355E169A0758007EBAFD /* CombinedTrackers.h */,
 			);
 			path = trackers;
 			sourceTree = "<group>";
@@ -1579,6 +1582,7 @@
 				8AF8EA7F16948C9B009CC4DD /* IteratorReader.h in Headers */,
 				8AF8EA8016948C9B009CC4DD /* MemoryAllocator.h in Headers */,
 				8AF8EA8116948C9B009CC4DD /* SmartPointer.h in Headers */,
+				328F355F169A0759007EBAFD /* CombinedTrackers.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

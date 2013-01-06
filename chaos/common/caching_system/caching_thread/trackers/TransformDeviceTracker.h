@@ -33,7 +33,6 @@ namespace chaos {
             // template<typename T> class DataTransformFilterInterface;
             
             template <typename T>
-            
             class TransformDeviceTracker : public AbstractDeviceTracker<T> {
             private:
                 DataTransformFilterInterface<T>* dataTransform;

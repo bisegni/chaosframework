@@ -35,9 +35,6 @@ namespace chaos {
 
 namespace caching_system {
     
-    template<typename U>
-    
-    // template<typename Element>
     /*!
      * This class represents the queue. It takes pointers to the head,
      * tail and pivot. Iterators can be attached to this object. This queue is lock free,
@@ -50,6 +47,7 @@ namespace caching_system {
      * see full documentation on the website
      *
      */
+    template<typename U>
     class CommonBuffer{
         friend class IteratorBase<U>;
         friend class IteratorReader<U>;
@@ -75,7 +73,7 @@ namespace caching_system {
         boost::uint32_t numeroOsservazioni;
         
         
-        MemoryAllocator<Element<AbstractDataElement<U> > >* allocator; //!< you can use custom memory allocator for this container.
+        MemoryAllocator< Element< AbstractDataElement<U> > >* allocator; //!< you can use custom memory allocator for this container.
         
         /*!
          * Allocs memory to a new node.
@@ -329,23 +327,13 @@ namespace caching_system {
             
             
         }
-        
-        
-        
-        
-        
-        
-        
+
         /*!
          * It unlink an iterator from queue. You can do this also on the iterator directly.
          */
         void inline detachStream(IteratorBase<U>* iterator){
-            
             iterator->leaveStream();
-            
-            
         }
-        
         
         /*!
          * This function is called by Garbage collector. Deletes elements on the tail.
@@ -354,29 +342,15 @@ namespace caching_system {
          */
         bool dequeue(){
             Element<AbstractDataElement<U> >* temp=tail;
-            
-            
             if(temp==pivot||temp==head/*||temp->next==pivot*/){
                 return false;
             }
-            
-            
-            //cambio la coda e dealloco il nodo
+             //cambio la coda e dealloco il nodo
             compareAndSwap(&tail,temp,temp->next);
-            
             deAllocNode(temp);
-            
-            
-            
             return true;
-            
         }
-        
-        
-        
-        
-        
-        
+
         /*!
          * Writer must be unique. Do not expect concurrence on this procedure
          * Garbage collector works until pivot, and readers read from pivot to the head (except
@@ -411,7 +385,6 @@ namespace caching_system {
             if(validity<1)
                 validity=1;
             this->validita=validity;
-            
         }
         
         uint64_t getValidity(){
@@ -420,11 +393,9 @@ namespace caching_system {
         
         int inline getCounter(){
             return  elementiInCodaCorrenti;
-            
         }
         
         int inline getElementInValidity(){
-        
             return elementiInCodaValidiCorrenti;
         }
         
@@ -433,7 +404,6 @@ namespace caching_system {
          */
         
         double inline getNumeroMedioElementiInGc(){
-            
             double media;
             media = ((double)elementiInGarbage)/((double)numeroOsservazioni);
             return media;
@@ -442,7 +412,6 @@ namespace caching_system {
         
         
         double inline getNumeroMedioElementiInCodaValidi(){
-            
             double media;
             media = ((double)elementiInCodaValidi)/((double)numeroOsservazioni);
             return media;
@@ -450,7 +419,6 @@ namespace caching_system {
         }
         
         double inline getNumeroMedioElementiInCodaTotali(){
-            
             double media;
             media = ((double)elementiInCoda)/((double)numeroOsservazioni);
             return media;
@@ -458,29 +426,23 @@ namespace caching_system {
         }
         
         double inline getNumeroMedioElementiInCodaEliminati(){
-            
             double media;
             media = ((double)elementiInEliminati)/((double)numeroOsservazioni);
             return media;
-            
         }
         
         double inline getNumeroMedioElementiEliminati(){
-            
             double media;
             media = ((double)percentualeEliminati)/*/((double)numeroOsservazioni)*/;
             return media;
-            
         }
         
         int inline getOsservazioni(){
-            
             return numeroOsservazioni;
         }
         
         
         bool inline compareAndSwap(Element<AbstractDataElement<U> >** mem,Element<AbstractDataElement<U> >* with , Element<AbstractDataElement<U> >* ex){
-            
             return __sync_bool_compare_and_swap(mem,with,ex);
         }
         

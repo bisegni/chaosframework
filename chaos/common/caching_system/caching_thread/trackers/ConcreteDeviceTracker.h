@@ -39,20 +39,10 @@ namespace chaos {
                 
                 
                 void doTracking(DataElement<T>* newElement){
-                    
                     SmartPointer<T>* mySmartData=this->highResQueue->enqueue(newElement,true);
-                    
-                    
                     this->insertInSubBuffers(mySmartData,newElement);
-                    
                     delete mySmartData;
-                    
-                    
-                    
                 }
-                
-                
-                
             };
             
         }
