@@ -27,7 +27,7 @@
 #include <chaos/common/data/entity_db/EntityDB.h>
 #include <chaos/common/data/entity_db/sqlite_impl/sqlite3.h>
 
-#define NUM_STMT 22
+#define NUM_STMT 25
 
 namespace chaos {
     namespace edb {
@@ -89,6 +89,19 @@ namespace chaos {
             int16_t getIDForEntity(KeyIdAndValue& keyInfo, int32_t& newEntityID);
             
             /*
+             Attach an entity to another
+             */
+            int16_t attachEntityChildToEntityParent(int32_t parentEntity, int32_t childEntity);
+            
+            /*
+             Remove an attache entity entity to another
+             */
+            int16_t removeEntityChildFromEntityParent(int32_t parentEntity, int32_t childEntity);
+            /*
+             Check if the parent and child are joined togheter
+             */
+            int16_t checkParentChildJoined(int32_t parentEntity, int32_t childEntity, bool& joined);
+            /*
              search the entitys with key and value
              */
             int16_t searchEntityByKeyAndValue(KeyIdAndValue& keyInfo, std::vector<int32_t>& resultEntityIDs);
@@ -97,7 +110,6 @@ namespace chaos {
              search the entitys using property key and value
              */
             int16_t searchEntityByPropertyKeyAndValue(KeyIdAndValue& keyInfo, std::vector<int32_t>& resultEntityIDs);
-
             
             /*
              Delete the entity and all associated property

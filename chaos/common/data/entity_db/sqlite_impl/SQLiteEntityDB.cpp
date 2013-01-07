@@ -43,7 +43,7 @@ if(var != SQLITE_OK) throw CException(var, sqlite3_errstr(var), "SQLiteEntityDB:
 "create table if not exists property (id integer primary key , entity_id integer, key_id integer,  key_type integer, str_value char(256), num_value integer,  double_value double, FOREIGN KEY(entity_id) REFERENCES entity(id) ON DELETE CASCADE, FOREIGN KEY(key_id) REFERENCES key(id) ON DELETE RESTRICT)"
 
 #define CREATE_ENTITY_RELATION_TABLE \
-"create table if not exists entity (id_entity_parent integer primary key, id_entity_child integer primary key, FOREIGN KEY(id_entity_parent) REFERENCES entity(id) ON DELETE CASCADE, FOREIGN KEY(id_entity_child) REFERENCES entity(id) ON DELETE RESTRICT)"
+"create table if not exists entity_group (id_entity_parent integer primary key, id_entity_child integer primary key, FOREIGN KEY(id_entity_parent) REFERENCES entity(id) ON DELETE CASCADE, FOREIGN KEY(id_entity_child) REFERENCES entity(id) ON DELETE RESTRICT)"
 
 /*!
  Default constructor
@@ -121,6 +121,11 @@ int16_t SQLiteEntityDB::initDB(const char* name, bool temporary)  throw (CExcept
     SET_CHECK_AND_TROW_ERROR(result, "select id from entity where key_id = ?", stmt[20])
     
     SET_CHECK_AND_TROW_ERROR(result, "delete from property where entity_id = ?", stmt[21])
+    
+    //entity group
+    SET_CHECK_AND_TROW_ERROR(result, "insert into entity_group values (?,?)", stmt[22])
+    SET_CHECK_AND_TROW_ERROR(result, "delete from entity_group where id_entity_parent = ? and id_entity_child = ?", stmt[23])
+    SET_CHECK_AND_TROW_ERROR(result, "select count(*) from entity_group where id_entity_parent = ? and id_entity_child = ?", stmt[24])
     
     //init the sequence
     if(!result && !hasSequence("key")){
@@ -245,6 +250,77 @@ int16_t SQLiteEntityDB::getIDForEntity(KeyIdAndValue& keyInfo, int32_t& newEntit
     if(result != SQLITE_DONE) return result;
     
     return  SQLITE_OK;
+}
+
+/*
+ Attach an entity to another
+ */
+int16_t SQLiteEntityDB::attachEntityChildToEntityParent(int32_t parentEntity, int32_t childEntity) {
+    int16_t result = 0;
+    sqlite3_reset(stmt[22]);
+    
+    // set parent
+    result = sqlite3_bind_int(stmt[22], 1, parentEntity);
+    if(result != SQLITE_OK) return result;
+    
+    // set child
+    result = sqlite3_bind_int(stmt[22], 2, childEntity);
+    if(result != SQLITE_OK) return result;
+    
+    //insert
+    result = sqlite3_step(stmt[22]);
+    if(result != SQLITE_DONE) return result;
+    
+    return  SQLITE_OK;
+
+}
+
+/*
+ Remove an attache entity entity to another
+ */
+int16_t SQLiteEntityDB::removeEntityChildFromEntityParent(int32_t parentEntity, int32_t childEntity) {
+    int16_t result = 0;
+    sqlite3_reset(stmt[23]);
+    
+    // set parent
+    result = sqlite3_bind_int(stmt[23], 1, parentEntity);
+    if(result != SQLITE_OK) return result;
+    
+    //set child
+    result = sqlite3_bind_int(stmt[23], 2, childEntity);
+    if(result != SQLITE_OK) return result;
+    
+    
+    //Delete
+    result = sqlite3_step(stmt[23]);
+    if(result != SQLITE_DONE) return result;
+    
+    return  SQLITE_OK;
+}
+
+/*
+ Check if the parent and child are joined togheter
+ */
+int16_t SQLiteEntityDB::checkParentChildJoined(int32_t parentEntity, int32_t childEntity, bool& joined) {
+    int16_t result = 0;
+    sqlite3_reset(stmt[24]);
+    
+    //set parent
+    result = sqlite3_bind_int(stmt[24], 1, parentEntity);
+    if(result != SQLITE_OK) return result;
+    
+    //set child
+    result = sqlite3_bind_int(stmt[24], 2, childEntity);
+    if(result != SQLITE_OK) return result;
+    
+    //search
+    if( (result = sqlite3_step(stmt[24])) == SQLITE_ROW ){
+        joined = (sqlite3_column_int(stmt[24], 0) == 1);
+    } else {
+        joined = false;
+    }
+    
+    return SQLITE_OK;
 }
 
 /*!

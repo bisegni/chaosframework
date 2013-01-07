@@ -145,6 +145,27 @@ namespace chaos {
             virtual int16_t getIDForEntity(KeyIdAndValue& keyInfo, int32_t& newEntityID) = 0;
             
             /*!
+             Attach an entity to another
+             \param parentEntity parent of the new child entity
+             \param childEntity child entity
+             */
+            virtual int16_t attachEntityChildToEntityParent(int32_t parentEntity, int32_t childEntity) = 0;
+
+            /*!
+             Remove an attache entity entity to another
+             \param parentEntity parent of the new child entity
+             \param childEntity child entity
+             */
+            virtual int16_t removeEntityChildFromEntityParent(int32_t parentEntity, int32_t childEntity) = 0;
+            
+            /*!
+             Check if the parent and child are joined togheter
+            \param parentEntity parent of the new child entity
+            \param childEntity child entity
+            */
+            virtual int16_t checkParentChildJoined(int32_t parentEntity, int32_t childEntity, bool& joined) = 0;
+            
+            /*!
              search the entitys with key and value
             \param keyInfo the key information for the new entity
              \param resultEntityIDs the vector containing the retrived id
