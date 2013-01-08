@@ -126,6 +126,10 @@ int16_t SQLiteEntityDB::initDB(const char* name, bool temporary)  throw (CExcept
     SET_CHECK_AND_TROW_ERROR(result, "insert into entity_group values (?,?)", stmt[22])
     SET_CHECK_AND_TROW_ERROR(result, "delete from entity_group where id_entity_parent = ? and id_entity_child = ?", stmt[23])
     SET_CHECK_AND_TROW_ERROR(result, "select count(*) from entity_group where id_entity_parent = ? and id_entity_child = ?", stmt[24])
+    SET_CHECK_AND_TROW_ERROR(result, "select id_entity_child from entity_group where id_entity_parent = ?", stmt[25])
+    
+    SET_CHECK_AND_TROW_ERROR(result, "select key_id, key_type, CASE (key_type) when 0 then num_value when 1 then double_value else str_value end from entity where id = ?", stmt[26])
+    SET_CHECK_AND_TROW_ERROR(result, "delete from entity_group where id_entity_parent = ? ", stmt[27])
     
     //init the sequence
     if(!result && !hasSequence("key")){
@@ -160,7 +164,7 @@ int16_t SQLiteEntityDB::deinitDB()  throw (CException) {
 /*!
  add a new Key returning the associated ID.
  */
-int16_t SQLiteEntityDB::getIDForKey(const char *newKey, int32_t& keyID) {
+int16_t SQLiteEntityDB::getIDForKey(const char *newKey, unsigned int32_t& keyID) {
     int16_t result = 0;
     
     sqlite3_reset(stmt[3]);
@@ -197,10 +201,10 @@ int16_t SQLiteEntityDB::getIDForKey(const char *newKey, int32_t& keyID) {
 /*
  add a new entity with his key/value returning the associated ID.
  */
-int16_t SQLiteEntityDB::getIDForEntity(KeyIdAndValue& keyInfo, int32_t& newEntityID) {
+int16_t SQLiteEntityDB::getIDForEntity(KeyIdAndValue& keyInfo, unsigned int32_t& newEntityID) {
     int16_t result = 0;
     sqlite3_stmt *targetStmt = NULL;
-    std::vector<int32_t> resultEntityIDs;
+    std::vector<unsigned int32_t> resultEntityIDs;
     
     result = searchEntityByKeyAndValue(keyInfo, resultEntityIDs);
     if(result != SQLITE_OK) return result;
@@ -255,7 +259,7 @@ int16_t SQLiteEntityDB::getIDForEntity(KeyIdAndValue& keyInfo, int32_t& newEntit
 /*
  Attach an entity to another
  */
-int16_t SQLiteEntityDB::attachEntityChildToEntityParent(int32_t parentEntity, int32_t childEntity) {
+int16_t SQLiteEntityDB::attachEntityChildToEntityParent(unsigned int32_t parentEntity, unsigned int32_t childEntity) {
     int16_t result = 0;
     sqlite3_reset(stmt[22]);
     
@@ -278,7 +282,7 @@ int16_t SQLiteEntityDB::attachEntityChildToEntityParent(int32_t parentEntity, in
 /*
  Remove an attache entity entity to another
  */
-int16_t SQLiteEntityDB::removeEntityChildFromEntityParent(int32_t parentEntity, int32_t childEntity) {
+int16_t SQLiteEntityDB::removeEntityChildFromEntityParent(unsigned int32_t parentEntity, unsigned int32_t childEntity) {
     int16_t result = 0;
     sqlite3_reset(stmt[23]);
     
@@ -298,10 +302,27 @@ int16_t SQLiteEntityDB::removeEntityChildFromEntityParent(int32_t parentEntity, 
     return  SQLITE_OK;
 }
 
+/*!
+ */
+int16_t SQLiteEntityDB::removeAllEntityChild(unsigned int32_t parentEntity) {
+    int16_t result = 0;
+    sqlite3_reset(stmt[27]);
+    
+    // set parent
+    result = sqlite3_bind_int(stmt[27], 1, parentEntity);
+    if(result != SQLITE_OK) return result;
+    
+    //Delete
+    result = sqlite3_step(stmt[27]);
+    if(result != SQLITE_DONE) return result;
+    
+    return  SQLITE_OK;
+}
+
 /*
  Check if the parent and child are joined togheter
  */
-int16_t SQLiteEntityDB::checkParentChildJoined(int32_t parentEntity, int32_t childEntity, bool& joined) {
+int16_t SQLiteEntityDB::checkParentChildJoined(unsigned int32_t parentEntity, unsigned int32_t childEntity, bool& joined) {
     int16_t result = 0;
     sqlite3_reset(stmt[24]);
     
@@ -324,9 +345,45 @@ int16_t SQLiteEntityDB::checkParentChildJoined(int32_t parentEntity, int32_t chi
 }
 
 /*!
+ 
+ */
+int16_t SQLiteEntityDB::getAllChildEntity(unsigned int32_t parentEntity, std::vector<unsigned int32_t> child) {
+    int16_t result = 0;
+    sqlite3_reset(stmt[25]);
+    
+    //set parent
+    result = sqlite3_bind_int(stmt[25], 1, parentEntity);
+    if(result != SQLITE_OK) return result;
+
+    //search
+    while( (result = sqlite3_step(stmt[25])) == SQLITE_ROW ) {
+        child.push_back(sqlite3_column_int(stmt[24], 0));
+    }
+    return SQLITE_OK;
+}
+
+/*!
+ 
+ */
+int16_t SQLiteEntityDB::getEntityKeyInfoByID(unsigned int32_t entityID, KeyIdAndValue& keyInfo) {
+    int16_t result = 0;
+    sqlite3_reset(stmt[26]);
+    
+    //set parent
+    result = sqlite3_bind_int(stmt[26], 1, parentEntity);
+    if(result != SQLITE_OK) return result;
+    
+    //search
+    while( (result = sqlite3_step(stmt[26])) == SQLITE_ROW ) {
+        child.push_back(createNewKeyInfoFromStatement(stmt[25]));
+    }
+    return SQLITE_OK;
+}
+
+/*!
  Delete the entity and all associated property
  */
-int16_t SQLiteEntityDB::deleteEntity(int32_t entityID) {
+int16_t SQLiteEntityDB::deleteEntity(unsigned int32_t entityID) {
     int16_t result = 0;
     sqlite3_reset(stmt[11]);
 
@@ -343,7 +400,7 @@ int16_t SQLiteEntityDB::deleteEntity(int32_t entityID) {
 /*
  add a new number property for entity with his key/value returning the associated ID.
  */
-int16_t SQLiteEntityDB::addNewPropertyForEntity(int32_t entityID, KeyIdAndValue& keyInfo, int32_t& newEntityPropertyID) {
+int16_t SQLiteEntityDB::addNewPropertyForEntity(unsigned int32_t entityID, KeyIdAndValue& keyInfo, unsigned int32_t& newEntityPropertyID) {
     int16_t result = 0;
     
     sqlite3_stmt *targetStmt = NULL;
@@ -401,7 +458,7 @@ int16_t SQLiteEntityDB::addNewPropertyForEntity(int32_t entityID, KeyIdAndValue&
 /*
  update the integer value for a property of an entity
  */
-int16_t SQLiteEntityDB::updatePropertyForEntity(int32_t propertyID, KeyIdAndValue& newTypeAndValue) {
+int16_t SQLiteEntityDB::updatePropertyForEntity(unsigned int32_t propertyID, KeyIdAndValue& newTypeAndValue) {
     int16_t result = 0;
     
     sqlite3_stmt *targetStmt = NULL;
@@ -449,7 +506,7 @@ int16_t SQLiteEntityDB::updatePropertyForEntity(int32_t propertyID, KeyIdAndValu
 /*
  search the entitys with key and value
  */
-int16_t SQLiteEntityDB::searchEntityByKeyAndValue(KeyIdAndValue& keyInfo, std::vector<int32_t>& resultEntityIDs) {
+int16_t SQLiteEntityDB::searchEntityByKeyAndValue(KeyIdAndValue& keyInfo, std::vector<unsigned int32_t>& resultEntityIDs) {
     int16_t result = 0;
     
     bool onlyKeyID = keyInfo.value.numValue == 0;
@@ -500,7 +557,7 @@ int16_t SQLiteEntityDB::searchEntityByKeyAndValue(KeyIdAndValue& keyInfo, std::v
 /*
  search the entitys using property key and value
  */
-int16_t SQLiteEntityDB::searchEntityByPropertyKeyAndValue(KeyIdAndValue& keyInfo, std::vector<int32_t>& resultEntityIDs) {
+int16_t SQLiteEntityDB::searchEntityByPropertyKeyAndValue(KeyIdAndValue& keyInfo, std::vector<unsigned int32_t>& resultEntityIDs) {
     int16_t result = 0;
     
     sqlite3_stmt *targetStmt = NULL;
@@ -546,7 +603,7 @@ int16_t SQLiteEntityDB::searchEntityByPropertyKeyAndValue(KeyIdAndValue& keyInfo
 /*
  update the integer value for a property of an entity
  */
-int16_t SQLiteEntityDB::searchPropertyForEntity(int32_t entityID, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues) {
+int16_t SQLiteEntityDB::searchPropertyForEntity(unsigned int32_t entityID, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues) {
     int16_t result = 0;
     
     sqlite3_reset(stmt[19]);
@@ -557,28 +614,7 @@ int16_t SQLiteEntityDB::searchPropertyForEntity(int32_t entityID, chaos::ArrayPo
     
     // cicle the selectted row
     while((result = sqlite3_step(stmt[19])) == SQLITE_ROW) {
-        //Allocate new result row struct info
-        KeyIdAndValue *record = new KeyIdAndValue();
-        
-        
-        //get the id for the key
-        record->keyID = sqlite3_column_int(stmt[19], 0);
-        
-        // valorize the need field
-        switch (sqlite3_column_int(stmt[19], 1)) {
-            case 0:
-                record->value.numValue = sqlite3_column_int64(stmt[19], 2);
-                break;
-            case 1:
-                record->value.doubleValue = sqlite3_column_int64(stmt[19], 2);
-                break;
-            case 2:
-                //copy the string into memoery of the value
-                strcpy(record->value.strValue, (const char *)sqlite3_column_text(stmt[19], 2));
-                break;
-        }
-        //get foun ids
-        resultKeyAndValues.add(record);
+        resultKeyAndValues.add(createNewKeyInfoFromStatement(stmt));
     }
     return result;
 }
@@ -586,7 +622,7 @@ int16_t SQLiteEntityDB::searchPropertyForEntity(int32_t entityID, chaos::ArrayPo
 /*
  update the integer value for a property of an entity
  */
-int16_t SQLiteEntityDB::searchPropertyForEntity(int32_t entityID, std::vector<int32_t>& keysIDs, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues) {
+int16_t SQLiteEntityDB::searchPropertyForEntity(unsigned int32_t entityID, std::vector<unsigned int32_t>& keysIDs, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues) {
     int16_t result = 0;
     
     sqlite3_stmt *stmt = NULL;
@@ -612,27 +648,7 @@ int16_t SQLiteEntityDB::searchPropertyForEntity(int32_t entityID, std::vector<in
         
         // cicle the selectted row
         while((result = sqlite3_step(stmt)) == SQLITE_ROW) {
-            //Allocate new result row struct info
-            KeyIdAndValue *record = new KeyIdAndValue();
-            
-            //get the id for the key
-            record->keyID = sqlite3_column_int(stmt, 0);
-            
-            // valorize the need field
-            switch (sqlite3_column_int(stmt, 1)) {
-                case 0:
-                    record->value.numValue = sqlite3_column_int64(stmt, 2);
-                    break;
-                case 1:
-                    record->value.doubleValue = sqlite3_column_double(stmt, 2);
-                    break;
-                case 2:
-                    //copy the string into memoery of the value
-                    strcpy(record->value.strValue, (const char *)sqlite3_column_text(stmt, 2));
-                    break;
-            }
-            //get foun ids
-            resultKeyAndValues.add(record);
+            resultKeyAndValues.add(createNewKeyInfoFromStatement(stmt));
         }
         
     } catch (...) {
@@ -646,7 +662,7 @@ int16_t SQLiteEntityDB::searchPropertyForEntity(int32_t entityID, std::vector<in
 /*!
  Delete a property for a entity
  */
-int16_t SQLiteEntityDB::deleteProperty(int32_t propertyID) {
+int16_t SQLiteEntityDB::deleteProperty(unsigned int32_t propertyID) {
     int16_t result = 0;
     sqlite3_reset(stmt[18]);
     // set key id
@@ -659,7 +675,7 @@ int16_t SQLiteEntityDB::deleteProperty(int32_t propertyID) {
 /*
  Delete all property for an entity
  */
-int16_t SQLiteEntityDB::deleteAllPropertyForEntity(int32_t entityID) {
+int16_t SQLiteEntityDB::deleteAllPropertyForEntity(unsigned int32_t entityID) {
     int16_t result = 0;
     sqlite3_reset(stmt[21]);
     // set key id
@@ -692,7 +708,7 @@ int16_t SQLiteEntityDB::makeInsertUpdateDelete(const char *sql) {
     return error;
 }
 
-int16_t SQLiteEntityDB::getNextIDOnTable(const char * tableName, int32_t &seqID) {
+int16_t SQLiteEntityDB::getNextIDOnTable(const char * tableName, unsigned int32_t &seqID) {
     int16_t error = SQLITE_OK;
     mutex::scoped_lock  lock(seqWorkMutext);
     sqlite3_reset(stmt[0]);
@@ -757,4 +773,28 @@ bool SQLiteEntityDB::hasSequence(const char *tableName) {
     result = sqlite3_column_int(hasStmt, 0);
     sqlite3_finalize(hasStmt);
     return result >= 1;
+}
+
+KeyIdAndValue* createNewKeyInfoFromStatement(sqlite3_stmt *stmt) {
+    //Allocate new result row struct info
+    KeyIdAndValue *result = new KeyIdAndValue();
+    
+    
+    //get the id for the key
+    record->keyID = sqlite3_column_int(stmt], 0);
+    
+    // valorize the need field
+    switch (sqlite3_column_int(stmt, 1)) {
+        case 0:
+            record->value.numValue = sqlite3_column_int64(stmt, 2);
+            break;
+        case 1:
+            record->value.doubleValue = sqlite3_column_int64(stmt, 2);
+            break;
+        case 2:
+            //copy the string into memoery of the value
+            strcpy(record->value.strValue, (const char *)sqlite3_column_text(stmt, 2));
+            break;
+    }
+    return result;
 }
