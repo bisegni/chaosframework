@@ -38,7 +38,7 @@ int32_t Entity::setEntityKeyAndInfo(chaos::edb::KeyIdAndValue& keyInfo) {
 
 int32_t Entity::addProperty(edb::KeyIdAndValue& keyInfo) {
     int32_t error = 0;
-    int32_t idNewProperty = 0;
+    uint32_t idNewProperty = 0;
     if(!(error = database->addNewPropertyForEntity(entityID, keyInfo, idNewProperty))) {
         return error;
     }
@@ -55,4 +55,16 @@ int32_t Entity::getAllProperty(chaos::ArrayPointer<chaos::edb::KeyIdAndValue>& p
 
 int32_t Entity::reset() {
     return database->deleteAllPropertyForEntity(entityID);
+}
+
+int32_t Entity::addChild(Entity& entityChild) {
+    return database->attachEntityChildToEntityParent(entityID, entityChild.entityID);
+}
+
+int32_t Entity::removeChild(Entity& entityChild) {
+    return database->removeEntityChildFromEntityParent(entityID, entityChild.entityID);
+}
+
+int32_t Entity::removeAllChild() {
+    return database->removeAllEntityChild(entityID);
 }

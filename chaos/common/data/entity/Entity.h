@@ -43,7 +43,7 @@ namespace chaos {
             
             atomic_int_type instanceID;
             
-            int32_t entityID;
+            uint32_t entityID;
             
             Entity(edb::EntityDB *_database, atomic_int_type _instanceID);
             
@@ -52,6 +52,12 @@ namespace chaos {
             int32_t setEntityKeyAndInfo(chaos::edb::KeyIdAndValue& keyInfo);
         public:
 
+            int32_t addChild(Entity& entityChild);
+            
+            int32_t removeChild(Entity& entityChild);
+            
+            int32_t removeAllChild();
+            
             int32_t addProperty(chaos::edb::KeyIdAndValue& keyInfo);
 
             int32_t reset();

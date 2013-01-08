@@ -52,13 +52,13 @@ namespace chaos {
             
             inline int16_t makeInsertUpdateDelete(const char *sql);
             
-            inline int16_t getNextIDOnTable(const char * tableName, unsigned int32_t &seqID);
+            inline int16_t getNextIDOnTable(const char * tableName, uint32_t &seqID);
             
             int16_t initSequence(const char *tableName);
             
             bool hasSequence(const char *tableName);
             
-            inline KeyIdAndValue* createNewKeyInfoFromStatement(sqlite3_stmt *stmt);
+            inline void fillKeyInfoFromStatement(sqlite3_stmt *stmt, KeyIdAndValue& keyValueInfo);
         public:
             /*!
              Default constructor
@@ -83,83 +83,83 @@ namespace chaos {
             /*
              add a new Key returning the associated ID.
              */
-            int16_t getIDForKey(const char *newKey, unsigned int32_t& keyID);
+            int16_t getIDForKey(const char *newKey, uint32_t& keyID);
             
             /*
              add a new entity with his key/value returning the associated ID.
              */
-            int16_t getIDForEntity(KeyIdAndValue& keyInfo, unsigned int32_t& newEntityID);
+            int16_t getIDForEntity(KeyIdAndValue& keyInfo, uint32_t& newEntityID);
             
             /*
              Attach an entity to another
              */
-            int16_t attachEntityChildToEntityParent(unsigned int32_t parentEntity, unsigned int32_t childEntity);
+            int16_t attachEntityChildToEntityParent(uint32_t parentEntity, uint32_t childEntity);
             
             /*
              Remove an attache entity entity to another
              */
-            int16_t removeEntityChildFromEntityParent(unsigned int32_t parentEntity, unsigned int32_t childEntity);
+            int16_t removeEntityChildFromEntityParent(uint32_t parentEntity, uint32_t childEntity);
             /*
              Check if the parent and child are joined togheter
              */
-            int16_t checkParentChildJoined(unsigned int32_t parentEntity, unsigned int32_t childEntity, bool& joined);
+            int16_t checkParentChildJoined(uint32_t parentEntity, uint32_t childEntity, bool& joined);
             
             /*!
              */
-            int16_t removeAllEntityChild(unsigned int32_t parentEntity);
+            int16_t removeAllEntityChild(uint32_t parentEntity);
 
             /*!
              */
-            int16_t getAllChildEntity(unsigned int32_t parentEntity, std::vector<unsigned int32_t> child);
+            int16_t getAllChildEntity(uint32_t parentEntity, std::vector<uint32_t> child);
             
             /*!
              */
-            int16_t getEntityKeyInfoByID(unsigned int32_t entityID, KeyIdAndValue& keyInfo);
+            int16_t getEntityKeyInfoByID(uint32_t entityID, KeyIdAndValue& keyInfo);
             
             /*
              search the entitys with key and value
              */
-            int16_t searchEntityByKeyAndValue(KeyIdAndValue& keyInfo, std::vector<unsigned int32_t>& resultEntityIDs);
+            int16_t searchEntityByKeyAndValue(KeyIdAndValue& keyInfo, std::vector<uint32_t>& resultEntityIDs);
             
             /*
              search the entitys using property key and value
              */
-            int16_t searchEntityByPropertyKeyAndValue(KeyIdAndValue& keyInfo, std::vector<unsigned int32_t>& resultEntityIDs);
+            int16_t searchEntityByPropertyKeyAndValue(KeyIdAndValue& keyInfo, std::vector<uint32_t>& resultEntityIDs);
             
             /*
              Delete the entity and all associated property
              */
-            int16_t deleteEntity(unsigned int32_t entityID);
+            int16_t deleteEntity(uint32_t entityID);
             
             /*
              add a new number property for entity with his key/value returning the associated ID.
              */
-            int16_t addNewPropertyForEntity(unsigned int32_t entityID, KeyIdAndValue& keyInfo, unsigned int32_t& newEntityPropertyID);
+            int16_t addNewPropertyForEntity(uint32_t entityID, KeyIdAndValue& keyInfo, uint32_t& newEntityPropertyID);
             
             /*
              update the integer value for a property of an entity
              */
-            int16_t updatePropertyForEntity(unsigned int32_t propertyID, KeyIdAndValue& newTypeAndValue);
+            int16_t updatePropertyForEntity(uint32_t propertyID, KeyIdAndValue& newTypeAndValue);
             
             /*
              return all property of an entity
              */
-            int16_t searchPropertyForEntity(unsigned int32_t entityID, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues);
+            int16_t searchPropertyForEntity(uint32_t entityID, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues);
             
             /*
              eturn al lprorerty for an entity for wich the ids are contained into the keysIDs array
              */
-            int16_t searchPropertyForEntity(unsigned int32_t entityID, std::vector<unsigned int32_t>& keysIDs, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues);
+            int16_t searchPropertyForEntity(uint32_t entityID, std::vector<uint32_t>& keysIDs, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues);
 
             /*
              Delete a property for a entity
              */
-            int16_t deleteProperty(unsigned int32_t propertyID);
+            int16_t deleteProperty(uint32_t propertyID);
             
             /*
              Delete all property for an entity
              */
-            int16_t deleteAllPropertyForEntity(unsigned int32_t entityID);
+            int16_t deleteAllPropertyForEntity(uint32_t entityID);
 
         };
     }

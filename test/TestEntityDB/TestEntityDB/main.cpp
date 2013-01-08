@@ -23,8 +23,8 @@ int main(int argc, const char * argv[])
         
         chaos::edb::KeyIdAndValue deviceInfo;
         chaos::edb::KeyIdAndValue propertyInfo;
-        int32_t keyDevice = 0;
-        int32_t keyDataset = 0;
+        uint32_t keyDevice = 0;
+        uint32_t keyDataset = 0;
 
         
         testDB->getIDForKey("device", keyDevice);
@@ -34,17 +34,23 @@ int main(int argc, const char * argv[])
         deviceInfo.type = chaos::edb::KEY_STR_VALUE;
         strcpy(deviceInfo.value.strValue, "device_1");
         
-        chaos::entity::Entity *entity = testDB->getNewEntityInstance(deviceInfo);
-        if(entity) {
+        chaos::entity::Entity *entityA = testDB->getNewEntityInstance(deviceInfo);
+        if(entityA) {
             
-            entity->getAllProperty(properties);
+            entityA->getAllProperty(properties);
             
             propertyInfo.keyID = keyDevice;
             propertyInfo.type = chaos::edb::KEY_NUM_VALUE;
             propertyInfo.value.numValue = 23;
 
-            entity->addProperty(propertyInfo);
+            entityA->addProperty(propertyInfo);
         }
+        
+        strcpy(deviceInfo.value.strValue, "device_2");
+        chaos::entity::Entity *entityB = testDB->getNewEntityInstance(deviceInfo);
+        
+        entityA->addChild(*entityB);
+        
         testDB->deinitDB();
         
     } catch (chaos::CException& e) {

@@ -64,9 +64,9 @@ namespace chaos {
          Define the infromation for the type, id and value for a key
          */
         typedef struct KeyIdAndValue {
-            ValueType           type;
-            unsigned int32_t    keyID;
-            KeyValue            value;
+            ValueType       type;
+            uint32_t        keyID;
+            KeyValue        value;
         } KeyIdAndValue;
 
         /*!
@@ -134,7 +134,7 @@ namespace chaos {
              \param newKey is the string associate to a key
              \param keyID is the new returned ID for the key
              */
-            virtual int16_t getIDForKey(const char *newKey, unsigned int32_t& keyID) = 0;
+            virtual int16_t getIDForKey(const char *newKey, uint32_t& keyID) = 0;
             
             /*!
              try to find the key and id value on entity, if no entity is found, new one
@@ -142,60 +142,60 @@ namespace chaos {
              \param keyInfo the key information for the new entity
              \param newEntityID is the new returned ID for the entity
              */
-            virtual int16_t getIDForEntity(KeyIdAndValue& keyInfo, unsigned int32_t& newEntityID) = 0;
+            virtual int16_t getIDForEntity(KeyIdAndValue& keyInfo, uint32_t& newEntityID) = 0;
             
             /*!
              Attach an entity to another
              \param parentEntity parent of the new child entity
              \param childEntity child entity
              */
-            virtual int16_t attachEntityChildToEntityParent(unsigned int32_t parentEntity, unsigned int32_t childEntity) = 0;
+            virtual int16_t attachEntityChildToEntityParent(uint32_t parentEntity, uint32_t childEntity) = 0;
 
             /*!
              Remove an attache entity entity to another
              \param parentEntity parent of the new child entity
              \param childEntity child entity
              */
-            virtual int16_t removeEntityChildFromEntityParent(unsigned int32_t parentEntity, unsigned int32_t childEntity) = 0;
+            virtual int16_t removeEntityChildFromEntityParent(uint32_t parentEntity, uint32_t childEntity) = 0;
             
             /*!
              */
-            virtual int16_t removeAllEntityChild(unsigned int32_t parentEntity) = 0;
+            virtual int16_t removeAllEntityChild(uint32_t parentEntity) = 0;
             
             /*!
              */
-            virtual int16_t getAllChildEntity(unsigned int32_t parentEntity, std::vector<unsigned int32_t> child) = 0;
+            virtual int16_t getAllChildEntity(uint32_t parentEntity, std::vector<uint32_t> child) = 0;
             
             /*!
              */
-            virtual int16_t getEntityKeyInfoByID(unsigned int32_t entityID, KeyIdAndValue& keyInfo) = 0;
+            virtual int16_t getEntityKeyInfoByID(uint32_t entityID, KeyIdAndValue& keyInfo) = 0;
             
             /*!
              Check if the parent and child are joined togheter
             \param parentEntity parent of the new child entity
             \param childEntity child entity
             */
-            virtual int16_t checkParentChildJoined(unsigned int32_t parentEntity, unsigned int32_t childEntity, bool& joined) = 0;
+            virtual int16_t checkParentChildJoined(uint32_t parentEntity, uint32_t childEntity, bool& joined) = 0;
             
             /*!
              search the entitys with key and value
             \param keyInfo the key information for the new entity
              \param resultEntityIDs the vector containing the retrived id
              */
-            virtual int16_t searchEntityByKeyAndValue(KeyIdAndValue& keyInfo, std::vector<unsigned int32_t>& resultEntityIDs) = 0;
+            virtual int16_t searchEntityByKeyAndValue(KeyIdAndValue& keyInfo, std::vector<uint32_t>& resultEntityIDs) = 0;
             
             /*!
              search the entitys using property key and value
              \param keyInfo is the string associate to a key
              \param resultEntityIDs the vector containing the retrived id
              */
-            virtual int16_t searchEntityByPropertyKeyAndValue(KeyIdAndValue& keyInfo, std::vector<unsigned int32_t>& resultEntityIDs) = 0;
+            virtual int16_t searchEntityByPropertyKeyAndValue(KeyIdAndValue& keyInfo, std::vector<uint32_t>& resultEntityIDs) = 0;
             
             /*!
              Delete the entity and all associated property
              \param entityID is the id of the key to delete
              */
-            virtual int16_t deleteEntity(unsigned int32_t entityID) = 0;
+            virtual int16_t deleteEntity(uint32_t entityID) = 0;
             
             /*!
              add a new number property for entity with his key/value returning the associated ID.
@@ -203,21 +203,21 @@ namespace chaos {
              \param keyInfo the key information for the new entity
              \param newEntityPropertyID is the new id for the entity/property 
              */
-            virtual int16_t addNewPropertyForEntity(unsigned int32_t entityID, KeyIdAndValue& keyInfo, unsigned int32_t& newEntityPropertyID) = 0;
+            virtual int16_t addNewPropertyForEntity(uint32_t entityID, KeyIdAndValue& keyInfo, uint32_t& newEntityPropertyID) = 0;
             
             /*!
              update the integer value for a property of an entity
              \param propertyID is the id of the property
              \param newTypeAndValue is the string associate to a key
              */
-            virtual int16_t updatePropertyForEntity(unsigned int32_t propertyID, KeyIdAndValue& newTypeAndValue) = 0;
+            virtual int16_t updatePropertyForEntity(uint32_t propertyID, KeyIdAndValue& newTypeAndValue) = 0;
             
             /*!
              return all property of an entity
              \param propertyID is the id of the property
              \param resultKeyAndValues the information of the key found
              */
-            virtual int16_t searchPropertyForEntity(unsigned int32_t entityID, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues) = 0;
+            virtual int16_t searchPropertyForEntity(uint32_t entityID, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues) = 0;
             
             /*!
              return al lprorerty for an entity for wich the ids are contained into the keysIDs array
@@ -225,19 +225,19 @@ namespace chaos {
              \param keysIDs the vector that contain the id for the key to that must be returned
              \param resultKeyAndValues the information of the key found
              */
-            virtual int16_t searchPropertyForEntity(unsigned int32_t entityID, std::vector<unsigned int32_t>& keysIDs, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues) = 0;
+            virtual int16_t searchPropertyForEntity(uint32_t entityID, std::vector<uint32_t>& keysIDs, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues) = 0;
             
             /*!
              Delete a property for a entity
              \param propertyID is the id of the property
              */
-            virtual int16_t deleteProperty(unsigned int32_t propertyID) = 0;
+            virtual int16_t deleteProperty(uint32_t propertyID) = 0;
             
             /*!
              Delete all property for an entity
              \param entityID is the id of the entity
              */
-            virtual int16_t deleteAllPropertyForEntity(unsigned int32_t entityID) = 0;
+            virtual int16_t deleteAllPropertyForEntity(uint32_t entityID) = 0;
             
             /*!
              Allocate and return a new instance of an Entity class
