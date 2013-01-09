@@ -19,6 +19,11 @@ if [ -n "$1" ]; then
 else
     PREFIX=$CHAOS_DIR/usr/local
 fi
+if [ -n "$CHAOS32" ]; then
+export CFLAGS="-m32 -arch i386"
+export CXXFLAGS="-m32 -arch i386"
+echo "Force 32 bit binaries"
+fi
 
 echo "Using $CHAOS_DIR as chaos folder"
 echo "Using $BASE_EXTERNAL as external library folder"
@@ -34,13 +39,16 @@ else
 fi
 
 if [ ! -d "$PREFIX/include/boost" ]; then
-    if [ ! -d "$BASE_EXTERNAL/boost" ]; then
+    if [ ! -e "$BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz" ]; then
         echo "Download boost source"
-        wget --no-check-certificate -O $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz "http://downloads.sourceforge.net/project/boost/boost/1.50.0/boost_$BOOST_VERSION.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F1.51.0%2F&ts=1350734344&use_mirror=freefr"
-        tar zxvf $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz -C $BASE_EXTERNAL
-        mv $BASE_EXTERNAL/boost_$BOOST_VERSION $BASE_EXTERNAL/boost
+        wget --no-check-certificate -O  "http://downloads.sourceforge.net/project/boost/boost/1.50.0/boost_$BOOST_VERSION.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F1.51.0%2F&ts=1350734344&use_mirror=freefr"
+        
     fi
 
+    if [ ! -e $BASE_EXTERNAL/boost ]; then
+	tar zxvf $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz -C $BASE_EXTERNAL
+        mv $BASE_EXTERNAL/boost_$BOOST_VERSION $BASE_EXTERNAL/boost
+    fi
 
     if [ ! -L "$BASE_EXTERNAL/boost/boost/log" ]; then
         echo "link boost/log into boost source"
@@ -66,23 +74,28 @@ if [ ! -d "$PREFIX/include/boost" ]; then
 
     cd $BASE_EXTERNAL/boost
     echo "Compile and install boost libraries into $PREFIX/"
-    ./b2 --prefix=$PREFIX link=shared --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread install
+if [ -n "$CHAOS32" ]; then
+    	echo "INSTALLING BOOST X86 32"
+    	./b2 cflags=-m32 cxxflags=-m32 architecture=x86 address-model=32 --prefix=$PREFIX link=shared --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread install
+    else
+    	./b2 --prefix=$PREFIX link=shared --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-threadinstall
+    fi
 else
     echo "Boost Already present"
 fi
 
 
-if [ ! -d "$BASE_EXTERNAL/msgpack" ]; then
-    echo "Install masgpack"
-    git clone https://github.com/msgpack/msgpack.git $BASE_EXTERNAL/msgpack
-    cd $BASE_EXTERNAL/msgpack/cpp
+if [ ! -d "$BASE_EXTERNAL/msgpack-c" ]; then
+    echo "Install msgpack-c"
+    git clone https://github.com/msgpack/msgpack-c.git $BASE_EXTERNAL/msgpack-c
+    cd $BASE_EXTERNAL/msgpack-c/cpp
 else
     echo "Update masgpack"
-    cd $BASE_EXTERNAL/msgpack/cpp
+    cd $BASE_EXTERNAL/msgpack-c/
     git pull
 fi
 ./bootstrap
-./configure --prefix=$PREFIX
+./configure --prefix=$PREFIX 
 make clean
 make
 make install
