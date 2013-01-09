@@ -25,6 +25,7 @@
 #include <chaos/common/caching_system/common_buffer/helper/IdFactory.h>
 #include <chaos/common/caching_system/common_buffer/CommonBuffer.h>
 #include <chaos/common/caching_system/common_buffer/IteratorReader.h>
+#include <vector>
 
 namespace chaos {
     namespace caching_system {
@@ -55,7 +56,7 @@ namespace chaos {
                 uint64_t discretization;
                 //!< pointer to iterator
                 IteratorGarbage<T>* iteratorGarbage;
-                
+                std::vector<IteratorReader<T>* >* relatedIterators;
                 //!< next timeout for new data
                 uint64_t nextTimeout;
                 
@@ -78,6 +79,9 @@ namespace chaos {
                     iteratorGarbage=controlledBuffer->getIteratorGarbage();
                     iteratorGarbage->setId(caching_system::helper::getNewId());
                     
+                    relatedIterators=new std::vector<IteratorReader<T>* >();
+                    
+                    
                 }
                 
                 /*!
@@ -95,6 +99,8 @@ namespace chaos {
                     //create new iterator
                     IteratorReader<T>* ritorno= new IteratorReader<T>(controlledBuffer);
                     ritorno->setId(id);
+                    relatedIterators->push_back(ritorno);
+                    
                     return ritorno;
                     
                     
@@ -108,6 +114,20 @@ namespace chaos {
                     
                     //decrement the number of reader and dealloc iterator
                     __sync_fetch_and_sub(&this->numberOfReader,1);
+                    
+                    //look for id, and remove it from vector, then delete iterator.
+                    for(int i = 0;i<relatedIterators->size();i++){
+                        
+                        if(iterator->getId()==relatedIterators->at(i)->getId()){
+                            
+                            this->relatedIterators->erase(relatedIterators->begin()+i);
+                           // delete iterator;
+                            
+                            
+                        }
+                    }
+
+                    
                     
                     delete iterator;
                 }
@@ -177,6 +197,10 @@ namespace chaos {
                 //   }
                 
                 ~BufferTracker(){
+                    
+                    for(int i=0;i<relatedIterators->size();i++){
+                        deleteIterator(relatedIterators->at(i));
+                    }
                     delete this->controlledBuffer;
                     delete this->iteratorGarbage;
                 }

@@ -29,17 +29,17 @@ namespace chaos {
     namespace caching_system {
         namespace caching_thread{
             //template <typename T>
-            template<typename T> class DataFetcherInterface;
+            template<typename D> class DataFetcherInterface;
             // template<typename T> class DataTransformFilterInterface;
             
-            template <typename T>
+            template <typename T,typename D>
             class TransformDeviceTracker : public AbstractDeviceTracker<T> {
             private:
-                DataTransformFilterInterface<T>* dataTransform;
+                DataTransformFilterInterface<D>* dataTransform;
                 
             public:
                 
-                TransformDeviceTracker(caching_system::DataTransformFilterInterface<T>* dataTransform,caching_system::DataFetcherInterface<T>* fetcher,uint64_t hertz,uint64_t validity): AbstractDeviceTracker<T>( fetcher, hertz,validity){
+                TransformDeviceTracker(caching_system::DataTransformFilterInterface<T>* dataTransform,caching_system::DataFetcherInterface<D>* fetcher,uint64_t hertz,uint64_t validity,GarbageThread<T> garbage): AbstractDeviceTracker<T>( fetcher, hertz,validity,garbage){
                     this->dataTransform=dataTransform;
                 }
                 

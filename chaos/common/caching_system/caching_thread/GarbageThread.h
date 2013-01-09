@@ -27,6 +27,8 @@
 
 #include <chaos/common/caching_system/common_buffer/IteratorGarbage.h>
 #include <chaos/common/caching_system/common_buffer/CommonBuffer.h>
+#include <chaos/common/caching_system/common_buffer/helper/IdFactory.h>
+
 
 namespace chaos {
     
