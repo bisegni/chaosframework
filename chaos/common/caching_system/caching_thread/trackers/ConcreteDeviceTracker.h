@@ -34,19 +34,8 @@ namespace chaos {
             class ConcreteDeviceTracker : public AbstractDeviceTracker<T> {
                 
             public:
-                
-                ConcreteDeviceTracker(caching_system::DataFetcherInterface<T>* fetcher,uint64_t hertz,uint64_t validity): AbstractDeviceTracker<T>( fetcher, hertz,validity){}
-                
-                
-                /* void doTracking(DataElement<T>* newElement){
-                 SmartPointer<T>* mySmartData=this->highResQueue->enqueue(newElement,true);
-                 this->insertInSubBuffers(mySmartData,newElement);
-                 delete mySmartData;
-                 }*/
-                
-                
-                
-                           };
+                ConcreteDeviceTracker(caching_system::DataFetcherInterface<T>* fetcher,uint64_t msecSampleInterval,uint64_t validity): AbstractDeviceTracker<T>( fetcher, msecSampleInterval, validity){}
+            };
             
         }
     }

@@ -65,19 +65,18 @@ namespace chaos {
                 bool interrupted;
                 
                 
-                void init( uint64_t hertz,uint64_t validity){
-                    this->highResHertz=hertz;
+                void init( uint64_t usecSampleInterval, uint64_t validity){
+                    this->highResHertz=usecSampleInterval;
                     this->highResValidity=validity;
                     this->highResQueue=new CommonBuffer<T>(validity);
                     this->interrupted=false;
                     bufferMapMutex=new boost::mutex();
                     // closingLockMutex=new boost::mutex();
-                    highResIterator=new std::vector<IteratorReader<T>*  >();
-                    
-                    setSleepTimeInHZ(hertz);
+                    highResIterator=new std::vector< IteratorReader<T>* >();
+                    setSleepTimeInUS(usecSampleInterval);
                     this->garbageCollector=new GarbageThread<T>(validity,&closedCondition,&closingLockMutex);
                     threadTracker = NULL;
-                    trackerListeners=new std::vector<TrackerListener<T>* >();
+                    trackerListeners=new std::vector< TrackerListener<T>* >();
                     
                 }
                 
@@ -127,44 +126,26 @@ namespace chaos {
                 
                 
                 
-                AbstractDeviceTracker( uint64_t hertz,uint64_t validity){
-                    //this->fetcher=fetcher;
-                    init(hertz,validity);
+                AbstractDeviceTracker(uint64_t usecSampleInterval, uint64_t validity){
+                    init(usecSampleInterval, validity);
                     
                 }
                 
                 
                 
-                AbstractDeviceTracker(DataFetcherInterface<U>* fetcher, uint64_t hertz,uint64_t validity){
-                    
-                    init(hertz,validity);
+                AbstractDeviceTracker(DataFetcherInterface<U>* fetcher, uint64_t usecSampleInterval, uint64_t validity){
+                    init(usecSampleInterval, validity);
                     this->fetcher=fetcher;
-                    /* this->highResHertz=hertz;
-                     this->highResValidity=validity;
-                     this->highResQueue=new CommonBuffer<T>(validity);
-                     this->interrupted=false;
-                     bufferMapMutex=new boost::mutex();
-                     closingLockMutex=new boost::mutex();
-                     highResIterator=new std::vector<IteratorReader<T>*  >();
-                     
-                     
-                     setSleepTimeInHZ(hertz);
-                     this->garbageCollector=new GarbageThread<T>(validity,&closedCondition,closingLockMutex);
-                     threadTracker = NULL;
-                     trackerListeners=new std::vector<TrackerListener<T>* >();*/
                 }
                 
                 
                 template<typename D>
-                TransformTracker<T,D>* getNewTranformerBuffer(EmbeddedDataTransform<T,D>* filter,uint64_t hertz,uint64_t validity ) {
+                TransformTracker<T,D>* getNewTranformTracker(EmbeddedDataTransform<T,D>* filter,uint64_t usecSampleInterval,uint64_t validity ) {
                     
                     //caching_system::DataFetcherInterface<T>* fetcher,uint64_t hertz,uint64_t validity
                     
                     //create a new tracker with basic transformation
-                    TransformTracker<T,D>* transformTracker = new TransformTracker<T,D>(
-                                                                                        filter,
-                                                                                        hertz,
-                                                                                        validity);
+                    TransformTracker<T,D>* transformTracker = new TransformTracker<T,D>(filter, usecSampleInterval, validity);
                     
                     //add it on listners vector
                     addListener(transformTracker);

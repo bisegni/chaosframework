@@ -68,7 +68,7 @@ int run(int argc, const char * argv[]){
     int timeOfSimulation=120;
 
     // hertz to get data
-    long hzGetData =50;
+    long usecGetData = 20000; //20 milli seconds
     
     //caching time for the hig resolution buffer
     long millisTimeCaching= 500;
@@ -97,13 +97,13 @@ int run(int argc, const char * argv[]){
     caching_system::DataFetcherInterface<Magnete>* fetcher= new SimpleDataFetcher();
     
     // then, create an istance of your tracker, passing all needed parameters and the fetcher
-    caching_thread::ConcreteDeviceTracker<Magnete>* myTracker=new caching_thread::ConcreteDeviceTracker<Magnete>(fetcher,hzGetData,millisTimeCaching);
+    caching_thread::ConcreteDeviceTracker<Magnete>* myTracker=new caching_thread::ConcreteDeviceTracker<Magnete>(fetcher,usecGetData,millisTimeCaching);
     
     std::cout<<"Starting tracker\n";
     myTracker->startTracking();
     SimpleDataTransform* trasformata=new SimpleDataTransform();
     // TransformTracker<T,D>* getNewTranformerBuffer(EmbeddedDataTransform<T,D>* filter,uint64_t hertz,uint64_t validity ) 
-    TransformTracker<Magnete,FilteredMagnet>* transformTracker=myTracker->getNewTranformerBuffer(trasformata, hzGetData, millisTimeCaching);
+    TransformTracker<Magnete,FilteredMagnet>* transformTracker=myTracker->getNewTranformTracker(trasformata, usecGetData, millisTimeCaching);
     
     
     //now it will start some threads
