@@ -1,37 +1,39 @@
 //
-//  MaxResReader.h
-//  CachingSystem
+//  TransformReader.h
+//  CachingTest
 //
-//  Created by Flaminio Antonucci on 19/11/12.
-//
+//  Created by Flaminio Antonucci on 08/01/13.
+//  Copyright (c) 2013 infn. All rights reserved.
 //
 
-#ifndef CachingSystem_MaxResReader_h
-#define CachingSystem_MaxResReader_h
+#ifndef CachingTest_TransformReader_h
+#define CachingTest_TransformReader_h
+
+
 
 #include <sys/time.h>
 #include <boost/thread.hpp>
 #include <boost/date_time.hpp>
 #include <fstream>
 #include <chaos/common/caching_system/common_buffer/CommonBuffer.h>
-#include "MioElemento.h"
+#include "FilteredMagnet.h"
 #include <chaos/common/caching_system/common_buffer/IteratorReader.h>
 #include <chaos/common/caching_system/common_buffer/SmartPointer.h>
 #include <iostream>
 using namespace std;
-class SimpleDataReader {
+class TransformReader {
     
 private:
-    IteratorReader<Magnete>* iteratore;
+    IteratorReader<FilteredMagnet>* iteratore;
     bool interrupted;
     long fps;
     double timeInterval;
     std::string basePath;
     int id;
-    caching_system::caching_thread::ConcreteDeviceTracker<Magnete>* deviceTracker;
+    caching_system::caching_thread::TransformTracker<Magnete,FilteredMagnet>* deviceTracker;
     
 public:
-    SimpleDataReader(IteratorReader<Magnete>* it, long fps,    std::string basePath,int id ,caching_system::caching_thread::ConcreteDeviceTracker<Magnete>* deviceTracker){
+    TransformReader(IteratorReader<FilteredMagnet>* it, long fps,    std::string basePath,int id ,caching_system::caching_thread::TransformTracker<Magnete,FilteredMagnet>* deviceTracker){
         
         this->iteratore=it;
         interrupted=false;
@@ -40,7 +42,7 @@ public:
         this->id=id;
         timeInterval= (1/((double) fps))*1000;
         this->deviceTracker=deviceTracker;
-       
+        
         
     }
     
@@ -48,19 +50,19 @@ public:
         //std::cout <<timeInterval;
         clock_t t1, t2;
         boost::posix_time::milliseconds waitingData(timeInterval);
-
+        
         std::ofstream output;
         std::stringstream path;
-        std::vector<SmartPointer<Magnete >* >* buffer= new std::vector<SmartPointer<Magnete> * >();
+        std::vector<SmartPointer<FilteredMagnet >* >* buffer= new std::vector<SmartPointer<FilteredMagnet> * >();
         
         
         
-        path<<basePath<<"reader_"<<id;
+        path<<basePath<<"transformReader_"<<id;
         output.open(path.str().c_str());
         time_t inizio =time(0);
         
         
-        output << "lettore di dati\n" << std::endl;
+        output << "lettore di dati modificati\n" << std::endl;
         output<<"start time: "<<inizio<<"\n";
         
         while(!interrupted){
@@ -69,18 +71,18 @@ public:
             t1 = clock();
             int count=iteratore->bufferedReader(-1,buffer );
             t2 = clock();
-           // std::cout<<"count: "<<count;
-
+            // std::cout<<"count: "<<count;
+            
             if(count==0){
                 boost::this_thread::sleep(waitingData);
                 sched_yield();
-               // cout<<"non ho nulla da leggere\n";
+                // cout<<"non ho nulla da leggere\n";
                 
             }else{
-            //  cout<<"ho da leggere\n";
-
+                //  cout<<"ho da leggere\n";
+                
                 for(int i =0; i<buffer->size();i++){
-                    SmartPointer<Magnete >* temp=buffer->at(i);
+                    SmartPointer<FilteredMagnet >* temp=buffer->at(i);
                     
                     
                     ss<< id << " : "<<(*(temp->operator->()));
@@ -95,7 +97,7 @@ public:
             }
             
             output<<ss.str();
-           // output.flush();
+            // output.flush();
         }
         
         //delete iteratore;
@@ -107,21 +109,22 @@ public:
         output<<"end time: "<<fine<<"\n";
         
         output << "Chiuso il lettore: finished\n" << std::endl;
-
+        
         output.close();
-
         
-    }
-    
-    
-            
-    void interrupt(){
-        this->interrupted=true;
-    }
-            
-            
         
-            
-};
+        }
+        
+        
+        
+        void interrupt(){
+            this->interrupted=true;
+        }
+        
+        
+        
+        
+        };
+        
 
 #endif

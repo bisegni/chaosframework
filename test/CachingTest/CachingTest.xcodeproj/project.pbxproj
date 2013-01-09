@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		32D5F7FF169598E000C32347 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D5F7FE169598E000C32347 /* main.cpp */; };
+		32640A42169DD14C00450962 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32640A41169DD14C00450962 /* main.cpp */; };
+		32640A52169DD16C00450962 /* MioElemento.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32640A46169DD16C00450962 /* MioElemento.cpp */; };
 		32D5F801169598E000C32347 /* CachingTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 32D5F800169598E000C32347 /* CachingTest.1 */; };
-		32D5F81316959D8F00C32347 /* MioElemento.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D5F809169598F300C32347 /* MioElemento.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,18 +26,21 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		32640A41169DD14C00450962 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		32640A44169DD16C00450962 /* DataAggregate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataAggregate.h; sourceTree = "<group>"; };
+		32640A45169DD16C00450962 /* FilteredMagnet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilteredMagnet.h; sourceTree = "<group>"; };
+		32640A46169DD16C00450962 /* MioElemento.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MioElemento.cpp; sourceTree = "<group>"; };
+		32640A47169DD16C00450962 /* MioElemento.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MioElemento.h; sourceTree = "<group>"; };
+		32640A49169DD16C00450962 /* LocalDataFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalDataFetcher.h; sourceTree = "<group>"; };
+		32640A4A169DD16C00450962 /* SimpleDataAggregator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleDataAggregator.h; sourceTree = "<group>"; };
+		32640A4B169DD16C00450962 /* SimpleDataFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleDataFetcher.h; sourceTree = "<group>"; };
+		32640A4C169DD16C00450962 /* SimpleDataTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleDataTransform.h; sourceTree = "<group>"; };
+		32640A4D169DD16C00450962 /* SimpleEmbeddedDataTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleEmbeddedDataTransform.h; sourceTree = "<group>"; };
+		32640A4F169DD16C00450962 /* AggregateReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AggregateReader.h; sourceTree = "<group>"; };
+		32640A50169DD16C00450962 /* SimpleReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleReader.h; sourceTree = "<group>"; };
+		32640A51169DD16C00450962 /* TransformReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformReader.h; sourceTree = "<group>"; };
 		32D5F7FA169598E000C32347 /* CachingTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CachingTest; sourceTree = BUILT_PRODUCTS_DIR; };
-		32D5F7FE169598E000C32347 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		32D5F800169598E000C32347 /* CachingTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = CachingTest.1; sourceTree = "<group>"; };
-		32D5F808169598F300C32347 /* DataAggregate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataAggregate.h; sourceTree = "<group>"; };
-		32D5F809169598F300C32347 /* MioElemento.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MioElemento.cpp; sourceTree = "<group>"; };
-		32D5F80A169598F300C32347 /* MioElemento.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MioElemento.h; sourceTree = "<group>"; };
-		32D5F80C169598F300C32347 /* LocalDataFetcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LocalDataFetcher.h; sourceTree = "<group>"; };
-		32D5F80D169598F300C32347 /* SimpleDataAggregator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimpleDataAggregator.h; sourceTree = "<group>"; };
-		32D5F80E169598F300C32347 /* SimpleDataFetcher.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimpleDataFetcher.h; sourceTree = "<group>"; };
-		32D5F80F169598F300C32347 /* SimpleDataTransform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimpleDataTransform.h; sourceTree = "<group>"; };
-		32D5F811169598F300C32347 /* AggregateReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AggregateReader.h; sourceTree = "<group>"; };
-		32D5F812169598F300C32347 /* SimpleReader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SimpleReader.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -51,6 +54,41 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		32640A43169DD16C00450962 /* test */ = {
+			isa = PBXGroup;
+			children = (
+				32640A44169DD16C00450962 /* DataAggregate.h */,
+				32640A45169DD16C00450962 /* FilteredMagnet.h */,
+				32640A46169DD16C00450962 /* MioElemento.cpp */,
+				32640A47169DD16C00450962 /* MioElemento.h */,
+				32640A48169DD16C00450962 /* myimpl */,
+				32640A4E169DD16C00450962 /* testcachingSystem */,
+			);
+			path = test;
+			sourceTree = "<group>";
+		};
+		32640A48169DD16C00450962 /* myimpl */ = {
+			isa = PBXGroup;
+			children = (
+				32640A49169DD16C00450962 /* LocalDataFetcher.h */,
+				32640A4A169DD16C00450962 /* SimpleDataAggregator.h */,
+				32640A4B169DD16C00450962 /* SimpleDataFetcher.h */,
+				32640A4C169DD16C00450962 /* SimpleDataTransform.h */,
+				32640A4D169DD16C00450962 /* SimpleEmbeddedDataTransform.h */,
+			);
+			path = myimpl;
+			sourceTree = "<group>";
+		};
+		32640A4E169DD16C00450962 /* testcachingSystem */ = {
+			isa = PBXGroup;
+			children = (
+				32640A4F169DD16C00450962 /* AggregateReader.h */,
+				32640A50169DD16C00450962 /* SimpleReader.h */,
+				32640A51169DD16C00450962 /* TransformReader.h */,
+			);
+			path = testcachingSystem;
+			sourceTree = "<group>";
+		};
 		32D5F7EF169598E000C32347 = {
 			isa = PBXGroup;
 			children = (
@@ -70,43 +108,11 @@
 		32D5F7FD169598E000C32347 /* CachingTest */ = {
 			isa = PBXGroup;
 			children = (
-				32D5F807169598F300C32347 /* test */,
-				32D5F7FE169598E000C32347 /* main.cpp */,
+				32640A43169DD16C00450962 /* test */,
+				32640A41169DD14C00450962 /* main.cpp */,
 				32D5F800169598E000C32347 /* CachingTest.1 */,
 			);
 			path = CachingTest;
-			sourceTree = "<group>";
-		};
-		32D5F807169598F300C32347 /* test */ = {
-			isa = PBXGroup;
-			children = (
-				32D5F808169598F300C32347 /* DataAggregate.h */,
-				32D5F809169598F300C32347 /* MioElemento.cpp */,
-				32D5F80A169598F300C32347 /* MioElemento.h */,
-				32D5F80B169598F300C32347 /* myimpl */,
-				32D5F810169598F300C32347 /* testcachingSystem */,
-			);
-			path = test;
-			sourceTree = "<group>";
-		};
-		32D5F80B169598F300C32347 /* myimpl */ = {
-			isa = PBXGroup;
-			children = (
-				32D5F80C169598F300C32347 /* LocalDataFetcher.h */,
-				32D5F80D169598F300C32347 /* SimpleDataAggregator.h */,
-				32D5F80E169598F300C32347 /* SimpleDataFetcher.h */,
-				32D5F80F169598F300C32347 /* SimpleDataTransform.h */,
-			);
-			path = myimpl;
-			sourceTree = "<group>";
-		};
-		32D5F810169598F300C32347 /* testcachingSystem */ = {
-			isa = PBXGroup;
-			children = (
-				32D5F811169598F300C32347 /* AggregateReader.h */,
-				32D5F812169598F300C32347 /* SimpleReader.h */,
-			);
-			path = testcachingSystem;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -160,8 +166,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				32D5F7FF169598E000C32347 /* main.cpp in Sources */,
-				32D5F81316959D8F00C32347 /* MioElemento.cpp in Sources */,
+				32640A42169DD14C00450962 /* main.cpp in Sources */,
+				32640A52169DD16C00450962 /* MioElemento.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
