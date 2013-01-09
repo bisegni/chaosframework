@@ -52,7 +52,7 @@ namespace chaos {
                 std::map<int,BufferTracker<T>* > iteratorIdToBufferTracker;
                 boost::thread *threadTracker;
                 boost::condition_variable closedCondition;
-                boost::mutex* closingLockMutex;
+                boost::mutex closingLockMutex;
                 int64_t timeToFetchData;
                 
                 //this vector is used to account listeners for this tracker
@@ -65,11 +65,27 @@ namespace chaos {
                 bool interrupted;
                 
                 
-                                
+                void init( uint64_t hertz,uint64_t validity){
+                    this->highResHertz=hertz;
+                    this->highResValidity=validity;
+                    this->highResQueue=new CommonBuffer<T>(validity);
+                    this->interrupted=false;
+                    bufferMapMutex=new boost::mutex();
+                    // closingLockMutex=new boost::mutex();
+                    highResIterator=new std::vector<IteratorReader<T>*  >();
+                    
+                    setSleepTimeInHZ(hertz);
+                    this->garbageCollector=new GarbageThread<T>(validity,&closedCondition,&closingLockMutex);
+                    threadTracker = NULL;
+                    trackerListeners=new std::vector<TrackerListener<T>* >();
+                    
+                }
+                
+                
             protected:
                 CommonBuffer<T>* highResQueue;
                 boost::mutex* bufferMapMutex;
-
+                
                 std::map<std::string, BufferTracker<T>* > lowResQueues;
                 
                 void insertInSubBuffers(SmartPointer<T>* elementToAdd ,DataElement<T>* newElement){
@@ -102,51 +118,42 @@ namespace chaos {
                 void inline addListener(TrackerListener<T>* listener){
                     
                     //push it in listeners
-                  this->trackerListeners->push_back(listener);
+                    this->trackerListeners->push_back(listener);
                     
                 }
                 
-                               
+                
             public:
                 
                 
                 
                 AbstractDeviceTracker( uint64_t hertz,uint64_t validity){
                     //this->fetcher=fetcher;
-                    this->highResHertz=hertz;
-                    this->highResValidity=validity;
-                    this->highResQueue=new CommonBuffer<T>(validity);
-                    this->interrupted=false;
-                    bufferMapMutex=new boost::mutex();
-                    closingLockMutex=new boost::mutex();
-                    highResIterator=new std::vector<IteratorReader<T>*  >();
-                    
-                    setSleepTimeInHZ(hertz);
-                    this->garbageCollector=new GarbageThread<T>(validity,&closedCondition,closingLockMutex);
-                    threadTracker = NULL;
-                    trackerListeners=new std::vector<TrackerListener<T>* >();
+                    init(hertz,validity);
                     
                 }
-
+                
                 
                 
                 AbstractDeviceTracker(DataFetcherInterface<U>* fetcher, uint64_t hertz,uint64_t validity){
-                    this->fetcher=fetcher;
-                    this->highResHertz=hertz;
-                    this->highResValidity=validity;
-                    this->highResQueue=new CommonBuffer<T>(validity);
-                    this->interrupted=false;
-                    bufferMapMutex=new boost::mutex();
-                    closingLockMutex=new boost::mutex();
-                    highResIterator=new std::vector<IteratorReader<T>*  >();
-
                     
-                    setSleepTimeInHZ(hertz);
-                    this->garbageCollector=new GarbageThread<T>(validity,&closedCondition,closingLockMutex);
-                    threadTracker = NULL;
-                    trackerListeners=new std::vector<TrackerListener<T>* >();
+                    init(hertz,validity);
+                    this->fetcher=fetcher;
+                    /* this->highResHertz=hertz;
+                     this->highResValidity=validity;
+                     this->highResQueue=new CommonBuffer<T>(validity);
+                     this->interrupted=false;
+                     bufferMapMutex=new boost::mutex();
+                     closingLockMutex=new boost::mutex();
+                     highResIterator=new std::vector<IteratorReader<T>*  >();
+                     
+                     
+                     setSleepTimeInHZ(hertz);
+                     this->garbageCollector=new GarbageThread<T>(validity,&closedCondition,closingLockMutex);
+                     threadTracker = NULL;
+                     trackerListeners=new std::vector<TrackerListener<T>* >();*/
                 }
-                               
+                
                 
                 template<typename D>
                 TransformTracker<T,D>* getNewTranformerBuffer(EmbeddedDataTransform<T,D>* filter,uint64_t hertz,uint64_t validity ) {
@@ -166,7 +173,7 @@ namespace chaos {
                     return transformTracker;
                     
                 }
-       
+                
                 void setSleepTimeInHZ(double hertz) {
                     this->timeToFetchData = 1000000*((((double)1)/((double)hertz)));
                 }
@@ -179,7 +186,7 @@ namespace chaos {
                 IteratorReader<T>* openMaxResBuffer(){
                     
                     int id=caching_system::helper::getNewId();
-
+                    
                     IteratorReader<T>* newIterator= new IteratorReader<T>(highResQueue);
                     
                     this->highResIterator->push_back(newIterator);
@@ -233,23 +240,23 @@ namespace chaos {
                         
                         //look for id, and remove it from vector, then delete iterator.
                         for(int i = 0;i<highResIterator->size();i++){
-                        
+                            
                             if(iterator->getId()==highResIterator->at(i)->getId()){
                                 
                                 this->highResIterator->erase(highResIterator->begin()+i);
                                 delete iterator;
                                 
-
+                                
                             }
                         }
-                    
+                        
                         
                         return;
                     }
                     
                     //if it is a low resolution iterator, i have to remove from BufferTracker and,
                     //if BufferTracker is not related to any others iterator, i have to destroy it
-                    // destroyng BufferTracker implies to put away the subqueue also from garbagign 
+                    // destroyng BufferTracker implies to put away the subqueue also from garbagign
                     key<<buffer->getValidity()<<":"<<buffer->getDiscretization();
                     
                     
@@ -308,18 +315,18 @@ namespace chaos {
                         doTracking(newElement);
                     }
                     shutDownTracking();
-                  
+                    
                     
                 }
                 
                 void shutDownTracking(){
-                
+                    
                     
                     //this shutdown works, but it is very slow... it must be revisited...
                     
                     
-                    boost::mutex::scoped_lock  closingLock(*closingLockMutex);
-              
+                    boost::mutex::scoped_lock  closingLock(closingLockMutex);
+                    
                     
                     //stopping garbaging and his iterators
                     stopGarbaging();
@@ -330,7 +337,7 @@ namespace chaos {
                     //delete all listener
                     for(int i=0;i<this->trackerListeners->size();i++){
                         delete this->trackerListeners->at(i);
-                    
+                        
                     }
                     this->trackerListeners->clear();
                     delete this->trackerListeners;
@@ -339,17 +346,17 @@ namespace chaos {
                     
                     for(int i=0;i<highResIterator->size();i++){
                         closeBuffer(highResIterator->at(i));
-                    
+                        
                     }
                     //delete all buffer trackers
-                   
+                    
                     // iteratorIdToBufferTracker
                     
                     //now i take from map all keys
                     std::map<int, BufferTracker<T>* > m;
                     typename std::map<int,BufferTracker<T>* >::iterator it;
                     for( it = m.begin(); it != m.end(); ++it) {
-                      //  v.push_back(it->first);
+                        //  v.push_back(it->first);
                         delete it->second;
                     }
                     
@@ -357,20 +364,19 @@ namespace chaos {
                     delete highResQueue;
                     
                     //delete all stuff, including garbage, buffertracker (if any) and other references
-                   
-                    delete closingLockMutex;
                     
-                    delete trackerListeners;
                     
-                    delete highResIterator;
+                    //delete closingLockMutex;
+                    
+                    
                     
                     delete garbageCollector;
-
-                        
+                    
+                    
                     
                     //delete last high resolution queue
-                    delete this->highResQueue;
-                
+                    //  delete this->highResQueue;
+                    
                 }
                 
                 
@@ -393,7 +399,7 @@ namespace chaos {
                     return result;
                 }
                 
-
+                
                 
                 
                 
@@ -418,7 +424,7 @@ namespace chaos {
                     garbageCollector->interrupt();
                     
                 }
-
+                
                 
             };
         }
