@@ -41,7 +41,7 @@ fi
 if [ ! -d "$PREFIX/include/boost" ]; then
     if [ ! -e "$BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz" ]; then
         echo "Download boost source"
-        wget --no-check-certificate -O  "http://downloads.sourceforge.net/project/boost/boost/1.50.0/boost_$BOOST_VERSION.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F1.51.0%2F&ts=1350734344&use_mirror=freefr"
+        wget --no-check-certificate -O $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz "http://downloads.sourceforge.net/project/boost/boost/1.50.0/boost_$BOOST_VERSION.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F1.51.0%2F&ts=1350734344&use_mirror=freefr"
         
     fi
 
@@ -78,7 +78,7 @@ if [ -n "$CHAOS32" ]; then
     	echo "INSTALLING BOOST X86 32"
     	./b2 cflags=-m32 cxxflags=-m32 architecture=x86 address-model=32 --prefix=$PREFIX link=shared --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread install
     else
-    	./b2 --prefix=$PREFIX link=shared --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-threadinstall
+    	./b2 --prefix=$PREFIX link=shared --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread install
     fi
 else
     echo "Boost Already present"
@@ -88,9 +88,9 @@ fi
 if [ ! -d "$BASE_EXTERNAL/msgpack-c" ]; then
     echo "Install msgpack-c"
     git clone https://github.com/msgpack/msgpack-c.git $BASE_EXTERNAL/msgpack-c
-    cd $BASE_EXTERNAL/msgpack-c/cpp
+    cd $BASE_EXTERNAL/msgpack-c/
 else
-    echo "Update masgpack"
+    echo "Update msgpack-c"
     cd $BASE_EXTERNAL/msgpack-c/
     git pull
 fi
@@ -159,7 +159,7 @@ fi
 
 if [ ! -d "$BASE_EXTERNAL/zeromq3-x" ]; then
 echo "Download zmq source"
-git clonegit clone https://github.com/zeromq/zeromq3-x.git $BASE_EXTERNAL/zeromq3-x
+git clone https://github.com/zeromq/zeromq3-x.git $BASE_EXTERNAL/zeromq3-x
 else
 echo "Update zmq source"
 cd $BASE_EXTERNAL/zeromq3-x
@@ -171,8 +171,12 @@ cd $BASE_EXTERNAL/zeromq3-x
 make
 make install
 
-echo "Compile !CHOAS"
+echo "Compile !CHAOS"
 cd $CHAOS_DIR
-cmake -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX .
+if [ -n "$CHAOS32" ]; then
+cmake -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_FORCE_32=true -DBUILD_PREFIX=$PREFIX .
+else
+cmake -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_PREFIX=$PREFIX .
+fi
 make
 make install
