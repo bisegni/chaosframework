@@ -49,6 +49,31 @@
 		325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F86EB14D9E59D00CDF35F /* InetUtility.h */; };
 		3260276A14B306BA00C906CE /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 326026E914B301F600C906CE /* libchaos_common.dylib */; };
 		3260278B14B307E400C906CE /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 326026E914B301F600C906CE /* libchaos_common.dylib */; };
+		32640A27169DCC5800450962 /* BufferTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A09169DCC5800450962 /* BufferTracker.h */; };
+		32640A28169DCC5800450962 /* GarbageThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A0A169DCC5800450962 /* GarbageThread.h */; };
+		32640A29169DCC5800450962 /* DataAggregationInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A0C169DCC5800450962 /* DataAggregationInterface.h */; };
+		32640A2A169DCC5800450962 /* DataFetcherInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A0D169DCC5800450962 /* DataFetcherInterface.h */; };
+		32640A2B169DCC5800450962 /* DataTransformFilterInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A0E169DCC5800450962 /* DataTransformFilterInterface.h */; };
+		32640A2C169DCC5800450962 /* EmbeddedDataTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A0F169DCC5800450962 /* EmbeddedDataTransform.h */; };
+		32640A2D169DCC5800450962 /* AbstractDeviceTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A11169DCC5800450962 /* AbstractDeviceTracker.h */; };
+		32640A2E169DCC5800450962 /* AgregateDeviceTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A12169DCC5800450962 /* AgregateDeviceTracker.h */; };
+		32640A2F169DCC5800450962 /* CombinedTrackers.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A13169DCC5800450962 /* CombinedTrackers.h */; };
+		32640A30169DCC5800450962 /* ConcreteDeviceTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A14169DCC5800450962 /* ConcreteDeviceTracker.h */; };
+		32640A31169DCC5800450962 /* TrackerListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A15169DCC5800450962 /* TrackerListener.h */; };
+		32640A32169DCC5800450962 /* TransformDeviceTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A16169DCC5800450962 /* TransformDeviceTracker.h */; };
+		32640A33169DCC5800450962 /* TransformTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A17169DCC5800450962 /* TransformTracker.h */; };
+		32640A34169DCC5800450962 /* CommonBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A19169DCC5800450962 /* CommonBuffer.h */; };
+		32640A35169DCC5800450962 /* AbstractDataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A1B169DCC5800450962 /* AbstractDataElement.h */; };
+		32640A36169DCC5800450962 /* DataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A1C169DCC5800450962 /* DataElement.h */; };
+		32640A37169DCC5800450962 /* SmartData.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A1D169DCC5800450962 /* SmartData.h */; };
+		32640A38169DCC5800450962 /* Element.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A1E169DCC5800450962 /* Element.h */; };
+		32640A39169DCC5800450962 /* IdFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A20169DCC5800450962 /* IdFactory.h */; };
+		32640A3A169DCC5800450962 /* MillisTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A21169DCC5800450962 /* MillisTime.h */; };
+		32640A3B169DCC5800450962 /* IteratorBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A22169DCC5800450962 /* IteratorBase.h */; };
+		32640A3C169DCC5800450962 /* IteratorGarbage.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A23169DCC5800450962 /* IteratorGarbage.h */; };
+		32640A3D169DCC5800450962 /* IteratorReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A24169DCC5800450962 /* IteratorReader.h */; };
+		32640A3E169DCC5800450962 /* MemoryAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A25169DCC5800450962 /* MemoryAllocator.h */; };
+		32640A3F169DCC5800450962 /* SmartPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A26169DCC5800450962 /* SmartPointer.h */; };
 		3264B05C1673623F002E87FA /* TDSObjectHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3264B05B1673623E002E87FA /* TDSObjectHandler.h */; };
 		3265BF4615D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3265BF4515D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h */; };
 		3265BF4915D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3265BF4815D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc */; };
@@ -163,7 +188,6 @@
 		328D2FBA1660EADC007F482E /* DSAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328D2FB11660E3EC007F482E /* DSAttributeHandler.h */; };
 		328D2FBE1660EF71007F482E /* TDSAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328D2FBC1660EF71007F482E /* TDSAttributeHandler.h */; };
 		328D2FC316612AB3007F482E /* DSInt32Handler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328D2FC116612AB3007F482E /* DSInt32Handler.h */; };
-		328F355F169A0759007EBAFD /* CombinedTrackers.h in Headers */ = {isa = PBXBuildFile; fileRef = 328F355E169A0758007EBAFD /* CombinedTrackers.h */; };
 		328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */; };
 		3297F22614D96F31004FFE4F /* DeviceMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3297F22514D96F31004FFE4F /* DeviceMessageChannel.cpp */; };
 		3297F22914D96F43004FFE4F /* DeviceMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3297F22814D96F43004FFE4F /* DeviceMessageChannel.h */; };
@@ -282,27 +306,6 @@
 		32E9F48D16485012006EAF37 /* ChaosNodeDirectory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9F48B16485012006EAF37 /* ChaosNodeDirectory.cpp */; };
 		32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */; };
 		32F466DE155EDBDE00AD3D81 /* IODataDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F466DD155EDBDE00AD3D81 /* IODataDriver.cpp */; };
-		8AF8EA6D16948C9B009CC4DD /* BufferTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8EA4616948C9B009CC4DD /* BufferTracker.h */; };
-		8AF8EA6E16948C9B009CC4DD /* GarbageThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8EA4716948C9B009CC4DD /* GarbageThread.h */; };
-		8AF8EA6F16948C9B009CC4DD /* DataAggregationInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8EA4916948C9B009CC4DD /* DataAggregationInterface.h */; };
-		8AF8EA7016948C9B009CC4DD /* DataFetcherInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8EA4A16948C9B009CC4DD /* DataFetcherInterface.h */; };
-		8AF8EA7116948C9B009CC4DD /* DataTransformFilterInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8EA4B16948C9B009CC4DD /* DataTransformFilterInterface.h */; };
-		8AF8EA7216948C9B009CC4DD /* AbstractDeviceTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8EA4D16948C9B009CC4DD /* AbstractDeviceTracker.h */; };
-		8AF8EA7316948C9B009CC4DD /* AgregateDeviceTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8EA4E16948C9B009CC4DD /* AgregateDeviceTracker.h */; };
-		8AF8EA7416948C9B009CC4DD /* ConcreteDeviceTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8EA4F16948C9B009CC4DD /* ConcreteDeviceTracker.h */; };
-		8AF8EA7516948C9B009CC4DD /* TransformDeviceTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8EA5016948C9B009CC4DD /* TransformDeviceTracker.h */; };
-		8AF8EA7616948C9B009CC4DD /* CommonBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8EA5216948C9B009CC4DD /* CommonBuffer.h */; };
-		8AF8EA7716948C9B009CC4DD /* AbstractDataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8EA5416948C9B009CC4DD /* AbstractDataElement.h */; };
-		8AF8EA7816948C9B009CC4DD /* DataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8EA5516948C9B009CC4DD /* DataElement.h */; };
-		8AF8EA7916948C9B009CC4DD /* SmartData.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8EA5616948C9B009CC4DD /* SmartData.h */; };
-		8AF8EA7A16948C9B009CC4DD /* Element.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8EA5716948C9B009CC4DD /* Element.h */; };
-		8AF8EA7B16948C9B009CC4DD /* IdFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8EA5916948C9B009CC4DD /* IdFactory.h */; };
-		8AF8EA7C16948C9B009CC4DD /* MillisTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8EA5A16948C9B009CC4DD /* MillisTime.h */; };
-		8AF8EA7D16948C9B009CC4DD /* IteratorBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8EA5B16948C9B009CC4DD /* IteratorBase.h */; };
-		8AF8EA7E16948C9B009CC4DD /* IteratorGarbage.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8EA5C16948C9B009CC4DD /* IteratorGarbage.h */; };
-		8AF8EA7F16948C9B009CC4DD /* IteratorReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8EA5D16948C9B009CC4DD /* IteratorReader.h */; };
-		8AF8EA8016948C9B009CC4DD /* MemoryAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8EA5E16948C9B009CC4DD /* MemoryAllocator.h */; };
-		8AF8EA8116948C9B009CC4DD /* SmartPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF8EA5F16948C9B009CC4DD /* SmartPointer.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -384,6 +387,31 @@
 		326026E914B301F600C906CE /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_common.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3260276614B3068100C906CE /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_cutoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3260278714B307DA00C906CE /* libchaos_uitoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_uitoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		32640A09169DCC5800450962 /* BufferTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BufferTracker.h; sourceTree = "<group>"; };
+		32640A0A169DCC5800450962 /* GarbageThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GarbageThread.h; sourceTree = "<group>"; };
+		32640A0C169DCC5800450962 /* DataAggregationInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataAggregationInterface.h; sourceTree = "<group>"; };
+		32640A0D169DCC5800450962 /* DataFetcherInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataFetcherInterface.h; sourceTree = "<group>"; };
+		32640A0E169DCC5800450962 /* DataTransformFilterInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataTransformFilterInterface.h; sourceTree = "<group>"; };
+		32640A0F169DCC5800450962 /* EmbeddedDataTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmbeddedDataTransform.h; sourceTree = "<group>"; };
+		32640A11169DCC5800450962 /* AbstractDeviceTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDeviceTracker.h; sourceTree = "<group>"; };
+		32640A12169DCC5800450962 /* AgregateDeviceTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgregateDeviceTracker.h; sourceTree = "<group>"; };
+		32640A13169DCC5800450962 /* CombinedTrackers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombinedTrackers.h; sourceTree = "<group>"; };
+		32640A14169DCC5800450962 /* ConcreteDeviceTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConcreteDeviceTracker.h; sourceTree = "<group>"; };
+		32640A15169DCC5800450962 /* TrackerListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackerListener.h; sourceTree = "<group>"; };
+		32640A16169DCC5800450962 /* TransformDeviceTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformDeviceTracker.h; sourceTree = "<group>"; };
+		32640A17169DCC5800450962 /* TransformTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformTracker.h; sourceTree = "<group>"; };
+		32640A19169DCC5800450962 /* CommonBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonBuffer.h; sourceTree = "<group>"; };
+		32640A1B169DCC5800450962 /* AbstractDataElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDataElement.h; sourceTree = "<group>"; };
+		32640A1C169DCC5800450962 /* DataElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataElement.h; sourceTree = "<group>"; };
+		32640A1D169DCC5800450962 /* SmartData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartData.h; sourceTree = "<group>"; };
+		32640A1E169DCC5800450962 /* Element.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Element.h; sourceTree = "<group>"; };
+		32640A20169DCC5800450962 /* IdFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IdFactory.h; sourceTree = "<group>"; };
+		32640A21169DCC5800450962 /* MillisTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MillisTime.h; sourceTree = "<group>"; };
+		32640A22169DCC5800450962 /* IteratorBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorBase.h; sourceTree = "<group>"; };
+		32640A23169DCC5800450962 /* IteratorGarbage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorGarbage.h; sourceTree = "<group>"; };
+		32640A24169DCC5800450962 /* IteratorReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorReader.h; sourceTree = "<group>"; };
+		32640A25169DCC5800450962 /* MemoryAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryAllocator.h; sourceTree = "<group>"; };
+		32640A26169DCC5800450962 /* SmartPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartPointer.h; sourceTree = "<group>"; };
 		3264B05B1673623E002E87FA /* TDSObjectHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSObjectHandler.h; sourceTree = "<group>"; };
 		3265BF4515D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosUIToolkitCWrapper.h; sourceTree = "<group>"; };
 		3265BF4815D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosUIToolkitCWrapper.cc; sourceTree = "<group>"; };
@@ -500,7 +528,6 @@
 		328D2FB61660EACD007F482E /* DSAttributeHandlerExecutionEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSAttributeHandlerExecutionEngine.h; sourceTree = "<group>"; };
 		328D2FBC1660EF71007F482E /* TDSAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSAttributeHandler.h; sourceTree = "<group>"; };
 		328D2FC116612AB3007F482E /* DSInt32Handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSInt32Handler.h; sourceTree = "<group>"; };
-		328F355E169A0758007EBAFD /* CombinedTrackers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombinedTrackers.h; sourceTree = "<group>"; };
 		328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcServerHandler.h; sourceTree = "<group>"; };
 		3294905A159AF4BF00E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		3294905B159AF4D700E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -623,27 +650,6 @@
 		32E9F48C16485012006EAF37 /* ChaosNodeDirectory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosNodeDirectory.h; sourceTree = "<group>"; };
 		32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleBufferCircularBuffer.h; sourceTree = "<group>"; };
 		32F466DD155EDBDE00AD3D81 /* IODataDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IODataDriver.cpp; sourceTree = "<group>"; };
-		8AF8EA4616948C9B009CC4DD /* BufferTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BufferTracker.h; sourceTree = "<group>"; };
-		8AF8EA4716948C9B009CC4DD /* GarbageThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GarbageThread.h; sourceTree = "<group>"; };
-		8AF8EA4916948C9B009CC4DD /* DataAggregationInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataAggregationInterface.h; sourceTree = "<group>"; };
-		8AF8EA4A16948C9B009CC4DD /* DataFetcherInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataFetcherInterface.h; sourceTree = "<group>"; };
-		8AF8EA4B16948C9B009CC4DD /* DataTransformFilterInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataTransformFilterInterface.h; sourceTree = "<group>"; };
-		8AF8EA4D16948C9B009CC4DD /* AbstractDeviceTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDeviceTracker.h; sourceTree = "<group>"; };
-		8AF8EA4E16948C9B009CC4DD /* AgregateDeviceTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgregateDeviceTracker.h; sourceTree = "<group>"; };
-		8AF8EA4F16948C9B009CC4DD /* ConcreteDeviceTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConcreteDeviceTracker.h; sourceTree = "<group>"; };
-		8AF8EA5016948C9B009CC4DD /* TransformDeviceTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformDeviceTracker.h; sourceTree = "<group>"; };
-		8AF8EA5216948C9B009CC4DD /* CommonBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonBuffer.h; sourceTree = "<group>"; };
-		8AF8EA5416948C9B009CC4DD /* AbstractDataElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDataElement.h; sourceTree = "<group>"; };
-		8AF8EA5516948C9B009CC4DD /* DataElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataElement.h; sourceTree = "<group>"; };
-		8AF8EA5616948C9B009CC4DD /* SmartData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartData.h; sourceTree = "<group>"; };
-		8AF8EA5716948C9B009CC4DD /* Element.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Element.h; sourceTree = "<group>"; };
-		8AF8EA5916948C9B009CC4DD /* IdFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IdFactory.h; sourceTree = "<group>"; };
-		8AF8EA5A16948C9B009CC4DD /* MillisTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MillisTime.h; sourceTree = "<group>"; };
-		8AF8EA5B16948C9B009CC4DD /* IteratorBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorBase.h; sourceTree = "<group>"; };
-		8AF8EA5C16948C9B009CC4DD /* IteratorGarbage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorGarbage.h; sourceTree = "<group>"; };
-		8AF8EA5D16948C9B009CC4DD /* IteratorReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorReader.h; sourceTree = "<group>"; };
-		8AF8EA5E16948C9B009CC4DD /* MemoryAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryAllocator.h; sourceTree = "<group>"; };
-		8AF8EA5F16948C9B009CC4DD /* SmartPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartPointer.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -800,6 +806,86 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		32640A07169DCC1B00450962 /* caching_system */ = {
+			isa = PBXGroup;
+			children = (
+				32640A08169DCC5800450962 /* caching_thread */,
+				32640A18169DCC5800450962 /* common_buffer */,
+			);
+			path = caching_system;
+			sourceTree = "<group>";
+		};
+		32640A08169DCC5800450962 /* caching_thread */ = {
+			isa = PBXGroup;
+			children = (
+				32640A09169DCC5800450962 /* BufferTracker.h */,
+				32640A0A169DCC5800450962 /* GarbageThread.h */,
+				32640A0B169DCC5800450962 /* tracker_interface */,
+				32640A10169DCC5800450962 /* trackers */,
+			);
+			path = caching_thread;
+			sourceTree = "<group>";
+		};
+		32640A0B169DCC5800450962 /* tracker_interface */ = {
+			isa = PBXGroup;
+			children = (
+				32640A0C169DCC5800450962 /* DataAggregationInterface.h */,
+				32640A0D169DCC5800450962 /* DataFetcherInterface.h */,
+				32640A0E169DCC5800450962 /* DataTransformFilterInterface.h */,
+				32640A0F169DCC5800450962 /* EmbeddedDataTransform.h */,
+			);
+			path = tracker_interface;
+			sourceTree = "<group>";
+		};
+		32640A10169DCC5800450962 /* trackers */ = {
+			isa = PBXGroup;
+			children = (
+				32640A11169DCC5800450962 /* AbstractDeviceTracker.h */,
+				32640A12169DCC5800450962 /* AgregateDeviceTracker.h */,
+				32640A13169DCC5800450962 /* CombinedTrackers.h */,
+				32640A14169DCC5800450962 /* ConcreteDeviceTracker.h */,
+				32640A15169DCC5800450962 /* TrackerListener.h */,
+				32640A16169DCC5800450962 /* TransformDeviceTracker.h */,
+				32640A17169DCC5800450962 /* TransformTracker.h */,
+			);
+			path = trackers;
+			sourceTree = "<group>";
+		};
+		32640A18169DCC5800450962 /* common_buffer */ = {
+			isa = PBXGroup;
+			children = (
+				32640A19169DCC5800450962 /* CommonBuffer.h */,
+				32640A1A169DCC5800450962 /* data_element */,
+				32640A1E169DCC5800450962 /* Element.h */,
+				32640A1F169DCC5800450962 /* helper */,
+				32640A22169DCC5800450962 /* IteratorBase.h */,
+				32640A23169DCC5800450962 /* IteratorGarbage.h */,
+				32640A24169DCC5800450962 /* IteratorReader.h */,
+				32640A25169DCC5800450962 /* MemoryAllocator.h */,
+				32640A26169DCC5800450962 /* SmartPointer.h */,
+			);
+			path = common_buffer;
+			sourceTree = "<group>";
+		};
+		32640A1A169DCC5800450962 /* data_element */ = {
+			isa = PBXGroup;
+			children = (
+				32640A1B169DCC5800450962 /* AbstractDataElement.h */,
+				32640A1C169DCC5800450962 /* DataElement.h */,
+				32640A1D169DCC5800450962 /* SmartData.h */,
+			);
+			path = data_element;
+			sourceTree = "<group>";
+		};
+		32640A1F169DCC5800450962 /* helper */ = {
+			isa = PBXGroup;
+			children = (
+				32640A20169DCC5800450962 /* IdFactory.h */,
+				32640A21169DCC5800450962 /* MillisTime.h */,
+			);
+			path = helper;
+			sourceTree = "<group>";
+		};
 		3268CE261616081000FCDB10 /* zmq */ = {
 			isa = PBXGroup;
 			children = (
@@ -859,7 +945,7 @@
 				326DB41914B38BC00018A8D0 /* network */,
 				326DB41D14B38BC00018A8D0 /* thread */,
 				326DB42414B38BC00018A8D0 /* utility */,
-				8AF8EA4416948C9B009CC4DD /* caching_system */,
+				32640A07169DCC1B00450962 /* caching_system */,
 			);
 			path = common;
 			sourceTree = "<group>";
@@ -1323,83 +1409,6 @@
 			path = evt_desc;
 			sourceTree = "<group>";
 		};
-		8AF8EA4416948C9B009CC4DD /* caching_system */ = {
-			isa = PBXGroup;
-			children = (
-				8AF8EA4516948C9B009CC4DD /* caching_thread */,
-				8AF8EA5116948C9B009CC4DD /* common_buffer */,
-			);
-			path = caching_system;
-			sourceTree = "<group>";
-		};
-		8AF8EA4516948C9B009CC4DD /* caching_thread */ = {
-			isa = PBXGroup;
-			children = (
-				8AF8EA4616948C9B009CC4DD /* BufferTracker.h */,
-				8AF8EA4716948C9B009CC4DD /* GarbageThread.h */,
-				8AF8EA4816948C9B009CC4DD /* tracker_interface */,
-				8AF8EA4C16948C9B009CC4DD /* trackers */,
-			);
-			path = caching_thread;
-			sourceTree = "<group>";
-		};
-		8AF8EA4816948C9B009CC4DD /* tracker_interface */ = {
-			isa = PBXGroup;
-			children = (
-				8AF8EA4916948C9B009CC4DD /* DataAggregationInterface.h */,
-				8AF8EA4A16948C9B009CC4DD /* DataFetcherInterface.h */,
-				8AF8EA4B16948C9B009CC4DD /* DataTransformFilterInterface.h */,
-			);
-			path = tracker_interface;
-			sourceTree = "<group>";
-		};
-		8AF8EA4C16948C9B009CC4DD /* trackers */ = {
-			isa = PBXGroup;
-			children = (
-				8AF8EA4D16948C9B009CC4DD /* AbstractDeviceTracker.h */,
-				8AF8EA4E16948C9B009CC4DD /* AgregateDeviceTracker.h */,
-				8AF8EA4F16948C9B009CC4DD /* ConcreteDeviceTracker.h */,
-				8AF8EA5016948C9B009CC4DD /* TransformDeviceTracker.h */,
-				328F355E169A0758007EBAFD /* CombinedTrackers.h */,
-			);
-			path = trackers;
-			sourceTree = "<group>";
-		};
-		8AF8EA5116948C9B009CC4DD /* common_buffer */ = {
-			isa = PBXGroup;
-			children = (
-				8AF8EA5216948C9B009CC4DD /* CommonBuffer.h */,
-				8AF8EA5716948C9B009CC4DD /* Element.h */,
-				8AF8EA5B16948C9B009CC4DD /* IteratorBase.h */,
-				8AF8EA5C16948C9B009CC4DD /* IteratorGarbage.h */,
-				8AF8EA5D16948C9B009CC4DD /* IteratorReader.h */,
-				8AF8EA5E16948C9B009CC4DD /* MemoryAllocator.h */,
-				8AF8EA5F16948C9B009CC4DD /* SmartPointer.h */,
-				8AF8EA5316948C9B009CC4DD /* data_element */,
-				8AF8EA5816948C9B009CC4DD /* helper */,
-			);
-			path = common_buffer;
-			sourceTree = "<group>";
-		};
-		8AF8EA5316948C9B009CC4DD /* data_element */ = {
-			isa = PBXGroup;
-			children = (
-				8AF8EA5416948C9B009CC4DD /* AbstractDataElement.h */,
-				8AF8EA5516948C9B009CC4DD /* DataElement.h */,
-				8AF8EA5616948C9B009CC4DD /* SmartData.h */,
-			);
-			path = data_element;
-			sourceTree = "<group>";
-		};
-		8AF8EA5816948C9B009CC4DD /* helper */ = {
-			isa = PBXGroup;
-			children = (
-				8AF8EA5916948C9B009CC4DD /* IdFactory.h */,
-				8AF8EA5A16948C9B009CC4DD /* MillisTime.h */,
-			);
-			path = helper;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1561,28 +1570,31 @@
 				32B57235168E50550002A198 /* md5.hpp in Headers */,
 				32B57239168E50980002A198 /* md5.h in Headers */,
 				32B5723D168E547B0002A198 /* stringutils.h in Headers */,
-				8AF8EA6D16948C9B009CC4DD /* BufferTracker.h in Headers */,
-				8AF8EA6E16948C9B009CC4DD /* GarbageThread.h in Headers */,
-				8AF8EA6F16948C9B009CC4DD /* DataAggregationInterface.h in Headers */,
-				8AF8EA7016948C9B009CC4DD /* DataFetcherInterface.h in Headers */,
-				8AF8EA7116948C9B009CC4DD /* DataTransformFilterInterface.h in Headers */,
-				8AF8EA7216948C9B009CC4DD /* AbstractDeviceTracker.h in Headers */,
-				8AF8EA7316948C9B009CC4DD /* AgregateDeviceTracker.h in Headers */,
-				8AF8EA7416948C9B009CC4DD /* ConcreteDeviceTracker.h in Headers */,
-				8AF8EA7516948C9B009CC4DD /* TransformDeviceTracker.h in Headers */,
-				8AF8EA7616948C9B009CC4DD /* CommonBuffer.h in Headers */,
-				8AF8EA7716948C9B009CC4DD /* AbstractDataElement.h in Headers */,
-				8AF8EA7816948C9B009CC4DD /* DataElement.h in Headers */,
-				8AF8EA7916948C9B009CC4DD /* SmartData.h in Headers */,
-				8AF8EA7A16948C9B009CC4DD /* Element.h in Headers */,
-				8AF8EA7B16948C9B009CC4DD /* IdFactory.h in Headers */,
-				8AF8EA7C16948C9B009CC4DD /* MillisTime.h in Headers */,
-				8AF8EA7D16948C9B009CC4DD /* IteratorBase.h in Headers */,
-				8AF8EA7E16948C9B009CC4DD /* IteratorGarbage.h in Headers */,
-				8AF8EA7F16948C9B009CC4DD /* IteratorReader.h in Headers */,
-				8AF8EA8016948C9B009CC4DD /* MemoryAllocator.h in Headers */,
-				8AF8EA8116948C9B009CC4DD /* SmartPointer.h in Headers */,
-				328F355F169A0759007EBAFD /* CombinedTrackers.h in Headers */,
+				32640A27169DCC5800450962 /* BufferTracker.h in Headers */,
+				32640A28169DCC5800450962 /* GarbageThread.h in Headers */,
+				32640A29169DCC5800450962 /* DataAggregationInterface.h in Headers */,
+				32640A2A169DCC5800450962 /* DataFetcherInterface.h in Headers */,
+				32640A2B169DCC5800450962 /* DataTransformFilterInterface.h in Headers */,
+				32640A2C169DCC5800450962 /* EmbeddedDataTransform.h in Headers */,
+				32640A2D169DCC5800450962 /* AbstractDeviceTracker.h in Headers */,
+				32640A2E169DCC5800450962 /* AgregateDeviceTracker.h in Headers */,
+				32640A2F169DCC5800450962 /* CombinedTrackers.h in Headers */,
+				32640A30169DCC5800450962 /* ConcreteDeviceTracker.h in Headers */,
+				32640A31169DCC5800450962 /* TrackerListener.h in Headers */,
+				32640A32169DCC5800450962 /* TransformDeviceTracker.h in Headers */,
+				32640A33169DCC5800450962 /* TransformTracker.h in Headers */,
+				32640A34169DCC5800450962 /* CommonBuffer.h in Headers */,
+				32640A35169DCC5800450962 /* AbstractDataElement.h in Headers */,
+				32640A36169DCC5800450962 /* DataElement.h in Headers */,
+				32640A37169DCC5800450962 /* SmartData.h in Headers */,
+				32640A38169DCC5800450962 /* Element.h in Headers */,
+				32640A39169DCC5800450962 /* IdFactory.h in Headers */,
+				32640A3A169DCC5800450962 /* MillisTime.h in Headers */,
+				32640A3B169DCC5800450962 /* IteratorBase.h in Headers */,
+				32640A3C169DCC5800450962 /* IteratorGarbage.h in Headers */,
+				32640A3D169DCC5800450962 /* IteratorReader.h in Headers */,
+				32640A3E169DCC5800450962 /* MemoryAllocator.h in Headers */,
+				32640A3F169DCC5800450962 /* SmartPointer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

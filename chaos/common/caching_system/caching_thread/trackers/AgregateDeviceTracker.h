@@ -26,86 +26,86 @@
 #include <chaos/common/caching_system/common_buffer/helper/MillisTime.h>
 //#include "MillisTime.h"
 namespace chaos {
-
-namespace caching_system {
-    namespace caching_thread{
-        //template <typename T>
-        //template<typename T> class DataFetcherInterface;
-        //template<class T,class T2> class DataAggregationFilterInterface;
-
-        
-        template <typename T,typename U>
-        
-        class AggregateDeviceTracker : public AbstractDeviceTracker<U,T>{
-            
-        private:
-            uint64_t bufferLenght;
-            
-            DataAggregationFilterInterface<T,U>* dataAggregation;
+    
+    namespace caching_system {
+        namespace caching_thread{
+            //template <typename T>
+            //template<typename T> class DataFetcherInterface;
+            //template<class T,class T2> class DataAggregationFilterInterface;
             
             
-            std::vector<DataElement<T>*>*  buffer;
+            template <typename T,typename U>
             
-            
-            void clearBuffer(){
-            
-                for (int i=0; i<buffer->size(); i++) {
+            class AggregateDeviceTracker : public AbstractDeviceTracker<U,T>{
+                
+            private:
+                uint64_t bufferLenght;
+                
+                DataAggregationFilterInterface<T,U>* dataAggregation;
+                
+                
+                std::vector<DataElement<T>*>*  buffer;
+                
+                
+                void clearBuffer(){
                     
-                    DataElement<T>* temp=buffer->at(i);
-                    delete temp;
+                    for (int i=0; i<buffer->size(); i++) {
+                        
+                        DataElement<T>* temp=buffer->at(i);
+                        delete temp;
+                    }
+                    
+                    buffer->clear();
                 }
                 
-                buffer->clear();
-            }
-
-        public:
-            
-            
-            AggregateDeviceTracker(caching_system::DataAggregationFilterInterface<T,U>* aggregator,
-                                   caching_system::DataFetcherInterface<T>* fetcher,
-                                   uint64_t hertz, uint64_t validity, uint64_t bufferLenght): AbstractDeviceTracker<U,T>( fetcher, hertz,validity){
+            public:
                 
-                this->bufferLenght=bufferLenght;
-                buffer=new std::vector<DataElement<T>* >();
-                dataAggregation=aggregator;
-            
-            }
-            
-            //ConcreteDeviceTracker(caching_system::DataFetcherInterface<T>* fetcher): AbstractDeviceTracker<T>(fetcher){}
-            
-            void doTracking(DataElement<T>* newElement){
                 
-                //std::cout<<"Arrivato\n";
-                this->buffer->push_back(newElement);
-                if(this->buffer->size()==bufferLenght){
-                    //std::cout<<"svuoto\n";
-
-                    U* newToAdd= this->dataAggregation->aggregateData(this->buffer);
-                    uint64_t timestamp= my_time::getMillisTimestamp();
-                    DataElement<U>* modifiedData=new DataElement<U>(newToAdd,timestamp);
+                AggregateDeviceTracker(caching_system::DataAggregationFilterInterface<T,U>* aggregator,
+                                       caching_system::DataFetcherInterface<T>* fetcher,
+                                       uint64_t hertz, uint64_t validity, uint64_t bufferLenght): AbstractDeviceTracker<U,T>( fetcher, hertz,validity){
                     
-                    SmartPointer<U> * mySmartData=this->highResQueue->enqueue(modifiedData,true);
+                    this->bufferLenght=bufferLenght;
+                    buffer=new std::vector<DataElement<T>* >();
+                    dataAggregation=aggregator;
                     
-                    this->insertInSubBuffers(mySmartData,modifiedData);
-            
-                    delete mySmartData;
-                    clearBuffer();
-                    //svuota il buffer
-
+                }
                 
+                //ConcreteDeviceTracker(caching_system::DataFetcherInterface<T>* fetcher): AbstractDeviceTracker<T>(fetcher){}
+                
+                void doTracking(DataElement<T>* newElement){
+                    
+                    //std::cout<<"Arrivato\n";
+                    this->buffer->push_back(newElement);
+                    if(this->buffer->size()==bufferLenght){
+                        //std::cout<<"svuoto\n";
+                        
+                        U* newToAdd= this->dataAggregation->aggregateData(this->buffer);
+                        uint64_t timestamp= my_time::getMillisTimestamp();
+                        DataElement<U>* modifiedData=new DataElement<U>(newToAdd,timestamp);
+                        
+                        SmartPointer<U> * mySmartData=this->highResQueue->enqueue(modifiedData,true);
+                        
+                        this->insertInSubBuffers(mySmartData,modifiedData);
+                        
+                        delete mySmartData;
+                        clearBuffer();
+                        //svuota il buffer
+                        
+                        
+                    }
+                    
+                    
                 }
                 
                 
-            }
+                
+                
+                
+            };
             
-            
-            
-            
-            
-        };
-        
+        }
     }
-}
 }
 
 

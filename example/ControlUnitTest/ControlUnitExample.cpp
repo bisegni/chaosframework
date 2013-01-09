@@ -31,7 +31,7 @@
  *  \subsection page_example_cue_sec_sub1 Toolkit usage
  *  ChaosCUToolkit has private constructor so it can be used only using singleton pattern,
  *  the only way to get unique isntance is; ChaosCUToolkit::getInstance(). So the first call of
- *  getInstance method will rpovide the CUToolkit and Common layer initial setup.
+ *  getInstance method will provide the CUToolkit and Common layer initial setup.
  *  \snippet example/ControlUnitTest/ControlUnitExample.cpp Custom Option
  *
  *  Then it must be initialized, in this method can be passed the main argument

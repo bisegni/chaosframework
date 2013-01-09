@@ -34,6 +34,9 @@
 namespace chaos {
 
 namespace caching_system {
+   /* template <class T, class U>
+    class AbstractDeviceTracker;*/
+
     
     template <typename V>
     /*!
@@ -41,8 +44,10 @@ namespace caching_system {
      * Also garbage collector should have this object to mark old elements.
      * \note with this object, you have read-only access to the queue.
      */
+    
+    
     class IteratorReader : public IteratorBase<V>{
-        
+       // friend class AbstractDeviceTracker<V,V>;
     protected:
         bool chooseCurrent(){
             Element<AbstractDataElement<V> >* testa=this->queue->head;
@@ -158,16 +163,16 @@ namespace caching_system {
         
         
         
-        
+       
         
     public:
-        
-        
-        
         IteratorReader(CommonBuffer<V>* queue):IteratorBase<V>(queue){
             
             
         }
+        
+        
+        
         /*!
          * It reads an amount of valid elements not readed.
          * It returns a vector of smart pointer to data.
