@@ -56,8 +56,9 @@ namespace chaos {
                 //!< Mutex lock for operation of deleting and inserting new queue to purge
                 boost::mutex* _access;
                 bool interrupted;
-                
+                //!< This time represent time interval for gabageThread to perform an update
                 boost::posix_time::milliseconds* timeToSleep;
+                //!<condition used to sincronize closing beetween gatbageTrhead and TrackerThread
                 boost::condition_variable* conditionClose;
                 boost::mutex* closingLockMutex;
                 
@@ -68,41 +69,42 @@ namespace chaos {
             public:
                 
                 /*!
-                 * 
+                 * This thread should be instanced by a tracker. parameters are:
+                 * \param millisToSleep time needed to perform a garbagin on the queue
+                 * \param conditionClose condition for closing thread
+                 * \param closingLockMutex mutex to syncronize closing with tracker
+                 *  
                  */
                 GarbageThread(uint64_t millisToSleep,boost::condition_variable* conditionClose, boost::mutex* closingLockMutex){
                     // this->queues=new std::vector<IteratorGarbage<T>* >();
                     interrupted=false;
                     timeToSleep=new boost::posix_time::milliseconds(millisToSleep);
-                    // timeToSleep(millisToSleep);
-                    //aggiungi la creazione del lock
+                    //creating acces lock to data structure
                     _access=new boost::mutex();
                     this->conditionClose=conditionClose;
                     this->closingLockMutex=closingLockMutex;
                 }
                 
                 void operator()(){
-                    // std::cout<<"parto il garbage\n";
+
                     
+                    //this function implements the behaviour of the garbagin thread
                     while(!interrupted){
-                        //  std::cout<<"cominicio sleep\n";
-                        
+
+                        //sleep n millisecond 
                         boost::this_thread::sleep(*timeToSleep);
                         
+                        //gain lock on data structure to avoid change to them during garbaging
                         boost::mutex::scoped_lock  lock(*_access);
-                        
-                        
                         for(int j=0; j<queues.size();j++){
-                            //   std::cout<<"cancello\n";
+                            
+                            //clear queue i 
                             queues.at(j)->clearQueue();
-                            
-                            //  std::cout<<"elementi "<<j<<": "<<queues.at(j)->getValidityWindowSize()<<"\n";
-                            
-                            
                         }
                         
-                        //  std::cout<<"finisco lavoro e mi riaddormo\n";
                     }
+                    
+                    //it's time to end work
                     
                     for(int i=0;i<queues.size();i++){
                         delete queues.at(i);
@@ -112,21 +114,24 @@ namespace chaos {
                     
                     boost::mutex::scoped_lock  closingLock(*closingLockMutex);
                     
-                    // std::cout<<"invio la notify\n";;
+                   // now i notify to tracker thaht my work is finished
                     this->conditionClose->notify_one();
                     
                     
                 }
                 
-                // make this call blocking
-                void interrupt(){
-                    
-                    
-                    
+                /*!
+                 * Interrupt the garbage thread, imposing bool interrupt to true.  
+                 * In conseguence of this call, GarbageThread will stop and close all his data structure
+                 */
+                void interrupt(){   
                     this->interrupted=true;
-                    
                 }
                 
+                
+                /*!
+                 * Add a queue to purging list of garbageCollector. 
+                 */
                 void putQueueToGarbage(IteratorGarbage<T>* queueToPurge){
                     
                     boost::mutex::scoped_lock  lock(*_access);
@@ -136,6 +141,10 @@ namespace chaos {
                 }
                 
                 
+                /*!
+                 * Removes a queue from the purging list of GarbageCollector. So this queue
+                 * will not be cleared anymore. 
+                 */
                 void removeQueueToGarbage(IteratorGarbage<T>* queueToPurge){
                     
                     boost::mutex::scoped_lock  lock(*_access);

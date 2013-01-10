@@ -53,10 +53,9 @@
 		32640A28169DCC5800450962 /* GarbageThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A0A169DCC5800450962 /* GarbageThread.h */; };
 		32640A29169DCC5800450962 /* DataAggregationInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A0C169DCC5800450962 /* DataAggregationInterface.h */; };
 		32640A2A169DCC5800450962 /* DataFetcherInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A0D169DCC5800450962 /* DataFetcherInterface.h */; };
-		32640A2B169DCC5800450962 /* DataTransformFilterInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A0E169DCC5800450962 /* DataTransformFilterInterface.h */; };
 		32640A2C169DCC5800450962 /* EmbeddedDataTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A0F169DCC5800450962 /* EmbeddedDataTransform.h */; };
 		32640A2D169DCC5800450962 /* AbstractDeviceTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A11169DCC5800450962 /* AbstractDeviceTracker.h */; };
-		32640A30169DCC5800450962 /* ConcreteDeviceTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A14169DCC5800450962 /* ConcreteDeviceTracker.h */; };
+		32640A30169DCC5800450962 /* FetcherDeviceTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A14169DCC5800450962 /* FetcherDeviceTracker.h */; };
 		32640A31169DCC5800450962 /* TrackerListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A15169DCC5800450962 /* TrackerListener.h */; };
 		32640A33169DCC5800450962 /* TransformTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A17169DCC5800450962 /* TransformTracker.h */; };
 		32640A34169DCC5800450962 /* CommonBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A19169DCC5800450962 /* CommonBuffer.h */; };
@@ -388,10 +387,9 @@
 		32640A0A169DCC5800450962 /* GarbageThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GarbageThread.h; sourceTree = "<group>"; };
 		32640A0C169DCC5800450962 /* DataAggregationInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataAggregationInterface.h; sourceTree = "<group>"; };
 		32640A0D169DCC5800450962 /* DataFetcherInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataFetcherInterface.h; sourceTree = "<group>"; };
-		32640A0E169DCC5800450962 /* DataTransformFilterInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataTransformFilterInterface.h; sourceTree = "<group>"; };
 		32640A0F169DCC5800450962 /* EmbeddedDataTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmbeddedDataTransform.h; sourceTree = "<group>"; };
 		32640A11169DCC5800450962 /* AbstractDeviceTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDeviceTracker.h; sourceTree = "<group>"; };
-		32640A14169DCC5800450962 /* ConcreteDeviceTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConcreteDeviceTracker.h; sourceTree = "<group>"; };
+		32640A14169DCC5800450962 /* FetcherDeviceTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FetcherDeviceTracker.h; sourceTree = "<group>"; };
 		32640A15169DCC5800450962 /* TrackerListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackerListener.h; sourceTree = "<group>"; };
 		32640A17169DCC5800450962 /* TransformTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformTracker.h; sourceTree = "<group>"; };
 		32640A19169DCC5800450962 /* CommonBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonBuffer.h; sourceTree = "<group>"; };
@@ -825,7 +823,6 @@
 			children = (
 				32640A0C169DCC5800450962 /* DataAggregationInterface.h */,
 				32640A0D169DCC5800450962 /* DataFetcherInterface.h */,
-				32640A0E169DCC5800450962 /* DataTransformFilterInterface.h */,
 				32640A0F169DCC5800450962 /* EmbeddedDataTransform.h */,
 			);
 			path = tracker_interface;
@@ -835,7 +832,7 @@
 			isa = PBXGroup;
 			children = (
 				32640A11169DCC5800450962 /* AbstractDeviceTracker.h */,
-				32640A14169DCC5800450962 /* ConcreteDeviceTracker.h */,
+				32640A14169DCC5800450962 /* FetcherDeviceTracker.h */,
 				32640A15169DCC5800450962 /* TrackerListener.h */,
 				32640A17169DCC5800450962 /* TransformTracker.h */,
 			);
@@ -1565,10 +1562,9 @@
 				32640A28169DCC5800450962 /* GarbageThread.h in Headers */,
 				32640A29169DCC5800450962 /* DataAggregationInterface.h in Headers */,
 				32640A2A169DCC5800450962 /* DataFetcherInterface.h in Headers */,
-				32640A2B169DCC5800450962 /* DataTransformFilterInterface.h in Headers */,
 				32640A2C169DCC5800450962 /* EmbeddedDataTransform.h in Headers */,
 				32640A2D169DCC5800450962 /* AbstractDeviceTracker.h in Headers */,
-				32640A30169DCC5800450962 /* ConcreteDeviceTracker.h in Headers */,
+				32640A30169DCC5800450962 /* FetcherDeviceTracker.h in Headers */,
 				32640A31169DCC5800450962 /* TrackerListener.h in Headers */,
 				32640A33169DCC5800450962 /* TransformTracker.h in Headers */,
 				32640A34169DCC5800450962 /* CommonBuffer.h in Headers */,

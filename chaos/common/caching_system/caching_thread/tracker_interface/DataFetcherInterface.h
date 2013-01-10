@@ -22,32 +22,43 @@
 #define CachingSystem_DataFetcherInterface_h
 #include <chaos/common/caching_system/common_buffer/data_element/DataElement.h>
 #include <chaos/common/caching_system/common_buffer/CommonBuffer.h>
-//#include <chaos/common/caching_system/caching_thread/trackers/AbstractDeviceTracker.h>
 
 namespace chaos {
     
     
     namespace caching_system {
-        // template<typename T>
+
         class AbstractDeviceTracker;
         
         template <typename T>
+        
+        
+        /*!
+         * This class represents abstraction for feetching data. It is used from a tracker to perform retrieving of
+         * data . So tracker can be decoupled from the logic of how effectively data have to be retrieved. To create
+         * your particular driver, you need to inherit this class and implements :
+         * virtual void getData(T& newData, uint64_t& ts)=0;
+         *
+         */
         class DataFetcherInterface{
             
             friend class AbstractDeviceTracker;
             
         public:
-            // DataFetcherInterface(){}
             CommonBuffer<T>* buffer;
             
+            /*!
+             * Template method uesd to wrap two information needed (timestamp and data) in 
+             * a DataElement object.
+             */
             DataElement<T>* _getData() {
                 uint64_t timestamp;
                 T *newData = new T();
                 getData(*newData, timestamp);
-                //DataElement<T>* ritorno= ;
                 return new DataElement<T>(newData,timestamp);
                 
             }
+            
             
             void setBuffer(CommonBuffer<T>* buffer){
                 this->buffer=buffer;
@@ -57,7 +68,9 @@ namespace chaos {
                 return this->buffer;
             }
             
-            
+            /*!
+             * Implements this function to serve the needed informations.
+             */
             virtual void getData(T& newData, uint64_t& ts)=0;
         };
         
