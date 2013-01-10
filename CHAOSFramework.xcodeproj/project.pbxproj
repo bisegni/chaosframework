@@ -56,11 +56,8 @@
 		32640A2B169DCC5800450962 /* DataTransformFilterInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A0E169DCC5800450962 /* DataTransformFilterInterface.h */; };
 		32640A2C169DCC5800450962 /* EmbeddedDataTransform.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A0F169DCC5800450962 /* EmbeddedDataTransform.h */; };
 		32640A2D169DCC5800450962 /* AbstractDeviceTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A11169DCC5800450962 /* AbstractDeviceTracker.h */; };
-		32640A2E169DCC5800450962 /* AgregateDeviceTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A12169DCC5800450962 /* AgregateDeviceTracker.h */; };
-		32640A2F169DCC5800450962 /* CombinedTrackers.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A13169DCC5800450962 /* CombinedTrackers.h */; };
 		32640A30169DCC5800450962 /* ConcreteDeviceTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A14169DCC5800450962 /* ConcreteDeviceTracker.h */; };
 		32640A31169DCC5800450962 /* TrackerListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A15169DCC5800450962 /* TrackerListener.h */; };
-		32640A32169DCC5800450962 /* TransformDeviceTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A16169DCC5800450962 /* TransformDeviceTracker.h */; };
 		32640A33169DCC5800450962 /* TransformTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A17169DCC5800450962 /* TransformTracker.h */; };
 		32640A34169DCC5800450962 /* CommonBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A19169DCC5800450962 /* CommonBuffer.h */; };
 		32640A35169DCC5800450962 /* AbstractDataElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A1B169DCC5800450962 /* AbstractDataElement.h */; };
@@ -394,11 +391,8 @@
 		32640A0E169DCC5800450962 /* DataTransformFilterInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataTransformFilterInterface.h; sourceTree = "<group>"; };
 		32640A0F169DCC5800450962 /* EmbeddedDataTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EmbeddedDataTransform.h; sourceTree = "<group>"; };
 		32640A11169DCC5800450962 /* AbstractDeviceTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDeviceTracker.h; sourceTree = "<group>"; };
-		32640A12169DCC5800450962 /* AgregateDeviceTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AgregateDeviceTracker.h; sourceTree = "<group>"; };
-		32640A13169DCC5800450962 /* CombinedTrackers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombinedTrackers.h; sourceTree = "<group>"; };
 		32640A14169DCC5800450962 /* ConcreteDeviceTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConcreteDeviceTracker.h; sourceTree = "<group>"; };
 		32640A15169DCC5800450962 /* TrackerListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackerListener.h; sourceTree = "<group>"; };
-		32640A16169DCC5800450962 /* TransformDeviceTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformDeviceTracker.h; sourceTree = "<group>"; };
 		32640A17169DCC5800450962 /* TransformTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformTracker.h; sourceTree = "<group>"; };
 		32640A19169DCC5800450962 /* CommonBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonBuffer.h; sourceTree = "<group>"; };
 		32640A1B169DCC5800450962 /* AbstractDataElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDataElement.h; sourceTree = "<group>"; };
@@ -841,11 +835,8 @@
 			isa = PBXGroup;
 			children = (
 				32640A11169DCC5800450962 /* AbstractDeviceTracker.h */,
-				32640A12169DCC5800450962 /* AgregateDeviceTracker.h */,
-				32640A13169DCC5800450962 /* CombinedTrackers.h */,
 				32640A14169DCC5800450962 /* ConcreteDeviceTracker.h */,
 				32640A15169DCC5800450962 /* TrackerListener.h */,
-				32640A16169DCC5800450962 /* TransformDeviceTracker.h */,
 				32640A17169DCC5800450962 /* TransformTracker.h */,
 			);
 			path = trackers;
@@ -1577,11 +1568,8 @@
 				32640A2B169DCC5800450962 /* DataTransformFilterInterface.h in Headers */,
 				32640A2C169DCC5800450962 /* EmbeddedDataTransform.h in Headers */,
 				32640A2D169DCC5800450962 /* AbstractDeviceTracker.h in Headers */,
-				32640A2E169DCC5800450962 /* AgregateDeviceTracker.h in Headers */,
-				32640A2F169DCC5800450962 /* CombinedTrackers.h in Headers */,
 				32640A30169DCC5800450962 /* ConcreteDeviceTracker.h in Headers */,
 				32640A31169DCC5800450962 /* TrackerListener.h in Headers */,
-				32640A32169DCC5800450962 /* TransformDeviceTracker.h in Headers */,
 				32640A33169DCC5800450962 /* TransformTracker.h in Headers */,
 				32640A34169DCC5800450962 /* CommonBuffer.h in Headers */,
 				32640A35169DCC5800450962 /* AbstractDataElement.h in Headers */,
