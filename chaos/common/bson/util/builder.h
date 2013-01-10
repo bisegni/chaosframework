@@ -171,6 +171,10 @@ namespace bson {
         void appendNum(double j) {
             (reinterpret_cast< PackedDouble* >(grow(sizeof(double))))->d = j;
         }
+        void appendNum(long double j) {
+            (reinterpret_cast< PackedDouble* >(grow(sizeof(long double))))->d = j;
+        }
+        
         void appendNum(long long j) {
             *((long long*)grow(sizeof(long long))) = j;
         }

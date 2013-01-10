@@ -255,6 +255,14 @@ namespace bson {
             return *this;
         }
 
+        BSONObjBuilder& append(const StringData& fieldName, long double n) {
+            //TODO: handle long double???
+            _b.appendNum((char) NumberDouble);
+            _b.appendStr(fieldName);
+            _b.appendNum(n);
+            return *this;
+        }
+        
         /** tries to append the data as a number
          * @return true if the data was able to be converted to a number
          */
@@ -743,6 +751,13 @@ namespace bson {
         BSONArrayBuilder& append(const StringData& name, long long n) {
             fill( name );
             append( n );
+            return *this;
+        }
+
+        BSONArrayBuilder& append(const StringData& name, long double n) {
+            // TODO: handle long double? 
+            fill( name );
+            append( (double)n );
             return *this;
         }
 
