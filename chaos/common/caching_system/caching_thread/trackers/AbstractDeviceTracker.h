@@ -25,7 +25,6 @@
 #include <vector>
 #include <boost/thread.hpp>
 #include <chaos/common/caching_system/common_buffer/CommonBuffer.h>
-#include <chaos/common/caching_system/caching_thread/tracker_interface/DataFetcherInterface.h>
 #include <chaos/common/caching_system/caching_thread/GarbageThread.h>
 #include <chaos/common/caching_system/caching_thread/BufferTracker.h>
 #include <chaos/common/caching_system/common_buffer/helper/IdFactory.h>
@@ -42,49 +41,53 @@ namespace chaos {
             class TransformTracker;
             
             template <class T, class U = T>
+            
+            /*!
+             * This class represents an abstraction of Tracker. It has responsability to mantain sub buffer information
+             * and the logic needed for management, including garbaging of controlled buffer.
+             */
             class AbstractDeviceTracker{
                 
             private:
-                DataFetcherInterface<U>* fetcher;
                 
+                //!< Validity for an element inserted in the queue
                 uint64_t highResValidity;
+                //!< 
                 uint64_t highResHertz;
-                std::map<int,BufferTracker<T>* > iteratorIdToBufferTracker;
-                boost::thread *threadTracker;
                 boost::condition_variable closedCondition;
                 boost::mutex closingLockMutex;
-                int64_t timeToFetchData;
-                
-                //this vector is used to account listeners for this tracker
+                //!<this vector is used to account listeners for this tracker
                 std::vector<TrackerListener<T>* > * trackerListeners;
-                
-                std::vector<IteratorReader<T>*  >* highResIterator;
-                
-                //  int idReader;
+                //!< reference to current istance of garbage collector
                 GarbageThread<T>* garbageCollector;
-                bool interrupted;
                 
+                //!< reference to high res queue, that is the principal queue
+                CommonBuffer<T>* highResQueue;
+
                 
+                /*!
+                 * Utility function for initializing this data structure, called by costructor
+                 */
                 void init( uint64_t usecSampleInterval, uint64_t validity){
                     this->highResHertz=usecSampleInterval;
                     this->highResValidity=validity;
                     this->highResQueue=new CommonBuffer<T>(validity);
-                    this->interrupted=false;
                     bufferMapMutex=new boost::mutex();
                     // closingLockMutex=new boost::mutex();
                     highResIterator=new std::vector< IteratorReader<T>* >();
                     setSleepTimeInUS(usecSampleInterval);
                     this->garbageCollector=new GarbageThread<T>(validity,&closedCondition,&closingLockMutex);
-                    threadTracker = NULL;
                     trackerListeners=new std::vector< TrackerListener<T>* >();
                     
                 }
                 
                 
             protected:
-                CommonBuffer<T>* highResQueue;
+
+                int64_t timeToFetchData;
+                std::map<int,BufferTracker<T>* > iteratorIdToBufferTracker;
+                std::vector<IteratorReader<T>*  >* highResIterator;
                 boost::mutex* bufferMapMutex;
-                
                 std::map<std::string, BufferTracker<T>* > lowResQueues;
                 
                 void insertInSubBuffers(SmartPointer<T>* elementToAdd ,DataElement<T>* newElement){
@@ -131,14 +134,7 @@ namespace chaos {
                     
                 }
                 
-                
-                
-                AbstractDeviceTracker(DataFetcherInterface<U>* fetcher, uint64_t usecSampleInterval, uint64_t validity){
-                    init(usecSampleInterval, validity);
-                    this->fetcher=fetcher;
-                }
-                
-                
+           
                 template<typename D>
                 TransformTracker<T,D>* getNewTranformTracker(EmbeddedDataTransform<T,D>* filter,uint64_t usecSampleInterval,uint64_t validity ) {
                     
@@ -278,28 +274,7 @@ namespace chaos {
                 }
                 
                 
-                
-                
-                void track() {
-                    startGarbaging();
-                    
-                    // std::cout<<"";
-                    while(!interrupted){
-                        boost::posix_time::microseconds workTime(timeToFetchData);
-                        boost::this_thread::sleep(workTime);
-                        sched_yield();
-                        
-                        
-                        boost::mutex::scoped_lock  lock(*bufferMapMutex);
-                        DataElement<U>* newElement= this->fetcher->_getData();
-                        
-                        doTracking(newElement);
-                    }
-                    shutDownTracking();
-                    
-                    
-                }
-                
+                               
                 void shutDownTracking(){
                     
                     
@@ -364,42 +339,19 @@ namespace chaos {
                 
                 
                 
-                bool startTracking() {
-                    this->threadTracker = new boost::thread(boost::bind(&AbstractDeviceTracker::track, this));
-                    if(threadTracker) threadTracker->detach();
-                    return threadTracker != NULL;
-                }
-                
-                bool stopTracking() {
-                    if(!this->threadTracker) return false;
-                    
-                    bool result = tryInterruptTracking();
-                    if(result) {
-                        this->threadTracker->join();
-                    }
-                    return result;
-                }
                 
                 
+                                
                 
-                
-                
-                bool tryInterruptTracking(){
-                    if(this->iteratorIdToBufferTracker.size()>0){
-                        return false;
-                    }else{
-                        
-                        this->interrupted=true;
-                        return true;
-                        
-                    }
-                }
                 void startGarbaging(){
                     
                     boost::thread collector(( boost::ref(*this->garbageCollector) ));
-                    garbageCollector->putQueueToGarbage(this->highResQueue->getIteratorGarbage());
+                    this->garbageCollector->putQueueToGarbage(this->highResQueue->getIteratorGarbage());
                     collector.detach();
                 }
+
+                
+             
                 
                 void stopGarbaging(){
                     garbageCollector->interrupt();

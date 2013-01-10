@@ -40,7 +40,7 @@ namespace chaos {
              * 2) The number of reader, this is compulsory for decide if a buffer must be deleted because
              *    is no longer used
              * 3) A reference to an iterator used by the garbage collector to delete old data
-             * 4) The value of discretization, which if used to calculate the next minimum timestamp for insert a 
+             * 4) The value of discretization, which if used to calculate the next minimum timestamp for insert a
              *     new value.
              */
             class BufferTracker{
@@ -68,9 +68,9 @@ namespace chaos {
                  * insert as input parameter:
                  * \param  CommonBuffer<T>* $controlledBuffer
                  * The low resolution buffer to be controlled
-                 * \param uint64_t $discretization 
+                 * \param uint64_t $discretization
                  * the value of the discretization
-                 * 
+                 *
                  */
                 BufferTracker(CommonBuffer<T>* controlledBuffer,uint64_t discretization){
                     this->nextTimeout=0;
@@ -85,7 +85,7 @@ namespace chaos {
                 }
                 
                 /*!
-                 * It returns a new iterator for the controlled Buffer. This also increment the number 
+                 * It returns a new iterator for the controlled Buffer. This also increment the number
                  * of actual readers and gives to it a new Id
                  */
                 IteratorReader<T>* getIterator(){
@@ -121,12 +121,9 @@ namespace chaos {
                         if(iterator->getId()==relatedIterators->at(i)->getId()){
                             
                             this->relatedIterators->erase(relatedIterators->begin()+i);
-                           // delete iterator;
-                            
-                            
                         }
                     }
-
+                    
                     
                     
                     delete iterator;
@@ -178,7 +175,7 @@ namespace chaos {
                 
                 
                 /*!
-                 * Decides whether or not this buffer needs new data. 
+                 * Decides whether or not this buffer needs new data.
                  */
                 bool needNextData(uint64_t timestamp){
                     if(timestamp>=this->nextTimeout){
@@ -189,13 +186,10 @@ namespace chaos {
                     
                     
                 }
-                
-                //  void insertedNewData(long timestamp){
-                
-                
-                
-                //   }
-                
+                /*!
+                 * This destructor deletes all related iterators, the controlled buffer and the iterator
+                 * garbage of actual controlled buffer.
+                 */
                 ~BufferTracker(){
                     
                     for(int i=0;i<relatedIterators->size();i++){

@@ -8,6 +8,7 @@
 
 #ifndef CHAOSFramework_TranformTracker_h
 #define CHAOSFramework_TranformTracker_h
+#include <chaos/common/caching_system/caching_thread/tracker_interface/DataFetcherInterface.h>
 
 namespace chaos {
     
@@ -35,6 +36,7 @@ namespace chaos {
                     this->filter=filter;
                 }
                 ~TransformTracker(){
+                    std::cout<<"chiamo distrutture transform\n";
                     this->shutDownTracking();
                 
                 }

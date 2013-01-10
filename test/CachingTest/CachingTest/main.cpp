@@ -17,7 +17,7 @@
 
 #include <chaos/common/caching_system/caching_thread/trackers/AgregateDeviceTracker.h>
 #include <chaos/common/caching_system/common_buffer/CommonBuffer.h>
-#include <chaos/common/caching_system/caching_thread/trackers/ConcreteDeviceTracker.h>
+#include <chaos/common/caching_system/caching_thread/trackers/FetcherDeviceTracker.h>
 //#include <chaos/common/caching_system/caching_thread/trackers/TransformTracker.h>
 
 #include <chaos/common/caching_system/common_buffer/helper/MillisTime.h>
@@ -97,7 +97,7 @@ int run(int argc, const char * argv[]){
     caching_system::DataFetcherInterface<Magnete>* fetcher= new SimpleDataFetcher();
     
     // then, create an istance of your tracker, passing all needed parameters and the fetcher
-    caching_thread::ConcreteDeviceTracker<Magnete>* myTracker=new caching_thread::ConcreteDeviceTracker<Magnete>(fetcher,usecGetData,millisTimeCaching);
+    caching_thread::FetcherDeviceTracker<Magnete>* myTracker=new caching_thread::FetcherDeviceTracker<Magnete>(fetcher,usecGetData,millisTimeCaching);
     
     std::cout<<"Starting tracker\n";
     myTracker->startTracking();
