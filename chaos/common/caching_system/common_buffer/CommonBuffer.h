@@ -56,6 +56,7 @@ namespace caching_system {
     private:
         Element<AbstractDataElement<U> >* head;//!<  owned by the writer.
         Element<AbstractDataElement<U> >* tail;//!<  owned by Garbage collector.
+        Element<AbstractDataElement<U> >* last;
         
         Element<AbstractDataElement<U> >* pivot;//!< owned by readers.
         
@@ -237,7 +238,7 @@ namespace caching_system {
             tail=head;
             pivot=head;
             //numElement=0;
-            
+            last=NULL;
             //stats
             elementiInCoda=0;
             elementiInCodaCorrenti=0;
@@ -352,6 +353,25 @@ namespace caching_system {
         }
 
         /*!
+         * 
+         */
+        SmartPointer< U >* getLast(){
+            
+            //avoiding to delete any elment
+            this->lockPivot();
+            //getting last element
+            
+            Element<AbstractDataElement<U> >* lastElement=this->last;
+            //create a smart pointer to last element
+            SmartPointer<U>* smartPointerLast=new SmartPointer<U>(lastElement);
+            //restore pivot
+            this->unlockPivot();
+            return smartPointerLast;
+        }
+        
+        
+        
+        /*!
          * Writer must be unique. Do not expect concurrence on this procedure
          * Garbage collector works until pivot, and readers read from pivot to the head (except
          * head)
@@ -366,7 +386,8 @@ namespace caching_system {
             long timeout=data->getTimestamp()+this->validita;
             testa->setData(data,timeout);
             ritorno=testa;
-            
+            //mantaining the last element inserted
+            last=testa;
             if(smartPointer){
                 rit= new SmartPointer<U>(ritorno);
                 //return rit;

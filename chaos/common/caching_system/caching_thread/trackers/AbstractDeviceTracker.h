@@ -33,7 +33,6 @@
 #include <chaos/common/caching_system/caching_thread/tracker_interface/EmbeddedDataTransform.h>
 
 namespace chaos {
-    
     namespace caching_system {
         namespace caching_thread{
             template <typename T, typename D>
@@ -52,7 +51,7 @@ namespace chaos {
                 
                 //!< Validity for an element inserted in the queue
                 uint64_t highResValidity;
-                //!< 
+                //!<
                 uint64_t highResHertz;
                 boost::condition_variable closedCondition;
                 boost::mutex closingLockMutex;
@@ -63,7 +62,7 @@ namespace chaos {
                 
                 //!< reference to high res queue, that is the principal queue
                 CommonBuffer<T>* highResQueue;
-
+                
                 
                 /*!
                  * Utility function for initializing this data structure, called by costructor
@@ -83,15 +82,15 @@ namespace chaos {
                 
                 
             protected:
-
                 int64_t timeToFetchData;
                 std::map<int,BufferTracker<T>* > iteratorIdToBufferTracker;
                 std::vector<IteratorReader<T>*  >* highResIterator;
                 boost::mutex* bufferMapMutex;
                 std::map<std::string, BufferTracker<T>* > lowResQueues;
                 
+                
+                
                 void insertInSubBuffers(SmartPointer<T>* elementToAdd ,DataElement<T>* newElement){
-                    
                     for(typename std::map<std::string, BufferTracker<T>* >::iterator it = this->lowResQueues.begin(); it != this->lowResQueues.end(); ++it){
                         
                         BufferTracker<T>* subBuffer=it->second;
@@ -104,6 +103,9 @@ namespace chaos {
                     }
                 }
                 
+                
+                
+                
                 /*!
                  * Utility Function used to give new data to all listener registered in this tracker
                  */
@@ -114,31 +116,26 @@ namespace chaos {
                         
                         current->addedNewelement(elementToAdd,newElement->getTimestamp());
                     }
-                    
                 }
                 
+                
+                
                 void inline addListener(TrackerListener<T>* listener){
-                    
                     //push it in listeners
                     this->trackerListeners->push_back(listener);
-                    
                 }
                 
                 
             public:
-                
-                
                 
                 AbstractDeviceTracker(uint64_t usecSampleInterval, uint64_t validity){
                     init(usecSampleInterval, validity);
                     
                 }
                 
-           
+                
                 template<typename D>
                 TransformTracker<T,D>* getNewTranformTracker(EmbeddedDataTransform<T,D>* filter,uint64_t usecSampleInterval,uint64_t validity ) {
-                    
-                    //caching_system::DataFetcherInterface<T>* fetcher,uint64_t hertz,uint64_t validity
                     
                     //create a new tracker with basic transformation
                     TransformTracker<T,D>* transformTracker = new TransformTracker<T,D>(filter, usecSampleInterval, validity);
@@ -148,12 +145,15 @@ namespace chaos {
                     
                     transformTracker->startGarbaging();
                     return transformTracker;
-                    
                 }
+                
+                
                 
                 void setSleepTimeInHZ(double hertz) {
                     this->timeToFetchData = 1000000*((((double)1)/((double)hertz)));
                 }
+                
+                
                 
                 void setSleepTimeInUS(uint64_t ms) {
                     this->timeToFetchData = ms;
@@ -163,11 +163,8 @@ namespace chaos {
                 IteratorReader<T>* openMaxResBuffer(){
                     
                     int id=caching_system::helper::getNewId();
-                    
                     IteratorReader<T>* newIterator= new IteratorReader<T>(highResQueue);
-                    
                     this->highResIterator->push_back(newIterator);
-                    
                     newIterator->setId(id);
                     return newIterator;
                     
@@ -176,16 +173,11 @@ namespace chaos {
                 IteratorReader<T>* openBuffer(uint64_t validity,uint64_t discretization){
                     //first take a mutex lock on this queue
                     boost::mutex::scoped_lock  lock(*bufferMapMutex);
-                    
-                    
                     std::stringstream key;
                     key<<validity<<":"<<discretization;
-                    
                     BufferTracker<T>* buffer=lowResQueues[key.str()];
                     if(buffer==NULL){
-                        
                         //if the key doesn't exists, create it
-                        
                         CommonBuffer<T>* newBuffer= new CommonBuffer<T>(validity/**/);
                         buffer=new BufferTracker<T>(newBuffer,discretization);
                         lowResQueues[key.str()]=buffer;
@@ -198,7 +190,6 @@ namespace chaos {
                     }else{
                         IteratorReader<T>* iteratore = buffer->getIterator();
                         iteratorIdToBufferTracker[iteratore->getId()]=buffer;
-                        
                         return iteratore;
                     }
                 }
@@ -211,23 +202,15 @@ namespace chaos {
                     std::stringstream key;
                     if(buffer==NULL){
                         //it is a max res buffer, i have di delete it explicitally
-                        
                         //removes from map element accidentally created
                         iteratorIdToBufferTracker.erase(iteratorIdToBufferTracker.find(idIterator));
-                        
                         //look for id, and remove it from vector, then delete iterator.
                         for(int i = 0;i<highResIterator->size();i++){
-                            
                             if(iterator->getId()==highResIterator->at(i)->getId()){
-                                
                                 this->highResIterator->erase(highResIterator->begin()+i);
                                 delete iterator;
-                                
-                                
                             }
                         }
-                        
-                        
                         return;
                     }
                     
@@ -235,79 +218,52 @@ namespace chaos {
                     //if BufferTracker is not related to any others iterator, i have to destroy it
                     // destroyng BufferTracker implies to put away the subqueue also from garbagign
                     key<<buffer->getValidity()<<":"<<buffer->getDiscretization();
-                    
-                    
-                    
                     buffer->deleteIterator(iterator);
                     //if a buffer has no readers, you have to delete it.
                     if(buffer->getNumberOfReader()==0){
                         //delete unused buffer
                         //i have to notify to garbage collector to remove this queue from his garbage.
                         this->garbageCollector->removeQueueToGarbage(buffer->getIteratorGarbage());
-                        
                         //  std::cout<<"deleto il buffer\n";
                         delete buffer;
-                        
                         //delete it from the map, so it won't be update
                         lowResQueues.erase(lowResQueues.find(key.str()));
-                        
                     }
-                    
                     iteratorIdToBufferTracker.erase(iteratorIdToBufferTracker.find(idIterator));
                 }
                 
                 
+                
                 virtual void doTracking(DataElement<U>* newElement){
-                    
                     //enqueue new element in high res queue
                     SmartPointer<T>* mySmartData=this->highResQueue->enqueue(newElement,true);
-                    
                     //then, insert it in subBuffer
                     this->insertInSubBuffers(mySmartData,newElement);
-                    
                     //finally, give new data to listeners objects.
-                    
                     this->insertInListener(mySmartData,newElement);
-                    
                     delete mySmartData;
-                    
                 }
                 
                 
-                               
+                
                 void shutDownTracking(){
-                    
-                    
                     //this shutdown works, but it is very slow... it must be revisited...
-                    
-                    
                     boost::mutex::scoped_lock  closingLock(closingLockMutex);
-                    
-                    
                     //stopping garbaging and his iterators
                     stopGarbaging();
-                    
-                    
                     this->closedCondition.wait(closingLock);
-                    
                     //delete all listener
                     for(int i=0;i<this->trackerListeners->size();i++){
                         delete this->trackerListeners->at(i);
-                        
                     }
                     this->trackerListeners->clear();
                     delete this->trackerListeners;
-                    
                     //delete all high res iterator
-                    
                     for(int i=0;i<highResIterator->size();i++){
                         closeBuffer(highResIterator->at(i));
-                        
                     }
                     //delete all buffer trackers
-                    
                     // iteratorIdToBufferTracker
-                    
                     //now i take from map all keys
                     std::map<int, BufferTracker<T>* > m;
                     typename std::map<int,BufferTracker<T>* >::iterator it;
@@ -315,49 +271,22 @@ namespace chaos {
                         //  v.push_back(it->first);
                         delete it->second;
                     }
-                    
                     //then i will close all Buffer
                     delete highResQueue;
-                    
                     //delete all stuff, including garbage, buffertracker (if any) and other references
-                    
-                    
-                    //delete closingLockMutex;
-                    
-                    
-                    
                     delete garbageCollector;
-                    
-                    
-                    
-                    //delete last high resolution queue
-                    //  delete this->highResQueue;
-                    
                 }
                 
-                
-                
-                
-                
-                
-                
-                                
-                
                 void startGarbaging(){
-                    
                     boost::thread collector(( boost::ref(*this->garbageCollector) ));
                     this->garbageCollector->putQueueToGarbage(this->highResQueue->getIteratorGarbage());
                     collector.detach();
                 }
-
-                
-             
                 
                 void stopGarbaging(){
                     garbageCollector->interrupt();
                     
                 }
-                
                 
             };
         }
