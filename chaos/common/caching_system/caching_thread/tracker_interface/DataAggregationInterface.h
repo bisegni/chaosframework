@@ -25,26 +25,26 @@
 #include <chaos/common/caching_system/common_buffer/CommonBuffer.h>
 
 namespace chaos {
-
-namespace caching_system {
-    // template<typename T>
-    //  class DeviceTracker;
-    template <class T, class T2>
-    //template <typename T>
-    class DataAggregationFilterInterface{
-        
-      //  template <typename TT>friend class DeviceTracker;
-        
-    public:
-        //DataAggregationFilterInterface(){}
-        
-        /*copy your data, vector  will be destroyed after this call*/
-        virtual T2* aggregateData(std::vector<DataElement<T>* >* data)=0;
-
-        
-    };
     
-}
+    namespace caching_system {
+        // template<typename T>
+        //  class DeviceTracker;
+        template <class T, class T2>
+        //template <typename T>
+        class DataAggregationFilterInterface{
+            
+            //  template <typename TT>friend class DeviceTracker;
+            
+        public:
+            //DataAggregationFilterInterface(){}
+            
+            /*copy your data, vector  will be destroyed after this call*/
+            virtual T2* aggregateData(std::vector<DataElement<T>* >* data)=0;
+            
+            
+        };
+        
+    }
     
 }
 

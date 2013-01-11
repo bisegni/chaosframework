@@ -14,13 +14,13 @@ namespace chaos {
     namespace caching_system {
         namespace caching_thread{
             
-           
+            
             template <class T>
             class TrackerListener {
             public:
                 
                 TrackerListener(){}
-               virtual void addedNewelement(SmartPointer<T>* n,uint64_t timeStamp) = 0;
+                virtual void addedNewelement(SmartPointer<T>* n,uint64_t timeStamp) = 0;
             };
             
             

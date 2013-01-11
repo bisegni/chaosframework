@@ -23,47 +23,47 @@
 
 #include <chaos/common/caching_system/common_buffer/data_element/AbstractDataElement.h>
 namespace chaos {
-
-namespace caching_system {
-    template <typename T>
-    class DataElement  : public caching_system::AbstractDataElement<T>{
-        long timeStamp;
-        T* payload;
-        
-    public:
-        
-        DataElement(){
-          
-            
-        }
-        DataElement(T* payload,long timeStamp){
-            this->timeStamp=timeStamp;
-            this->payload=payload;
-            
-        }
-        
-        ~DataElement(){
-            delete payload;
-        }
-        
-        T* getData(){
-            return payload;
-        }
-        
-        long getTimestamp(){
-            
-            return this->timeStamp;
-        }
-        
-        void setData(T* payload,long timeStamp){
-            this->timeStamp=timeStamp;
-            this->payload=payload;
-
-        }
     
-        
-        
-    };
-}
+    namespace caching_system {
+        template <typename T>
+        class DataElement  : public caching_system::AbstractDataElement<T>{
+            long timeStamp;
+            T* payload;
+            
+        public:
+            
+            DataElement(){
+                
+                
+            }
+            DataElement(T* payload,long timeStamp){
+                this->timeStamp=timeStamp;
+                this->payload=payload;
+                
+            }
+            
+            ~DataElement(){
+                delete payload;
+            }
+            
+            T* getData(){
+                return payload;
+            }
+            
+            long getTimestamp(){
+                
+                return this->timeStamp;
+            }
+            
+            void setData(T* payload,long timeStamp){
+                this->timeStamp=timeStamp;
+                this->payload=payload;
+                
+            }
+            
+            
+            
+        };
+    }
 }
 #endif

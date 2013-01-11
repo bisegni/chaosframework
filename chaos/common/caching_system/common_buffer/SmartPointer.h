@@ -26,65 +26,65 @@
 //#include <MioElemento.h>
 namespace chaos {
     
-
-namespace caching_system{
     
-    template <typename T>
-    class SmartPointer  {
+    namespace caching_system{
         
-    private:
-        Element<AbstractDataElement<T>  >* elemento;
-        
-    public:
-        
-        SmartPointer(Element<AbstractDataElement<T>  >* e){
-            elemento=NULL;
+        template <typename T>
+        class SmartPointer  {
             
-            e->incrementReferenceCount();
-            this->elemento=e;
+        private:
+            Element<AbstractDataElement<T>  >* elemento;
+            
+        public:
+            
+            SmartPointer(Element<AbstractDataElement<T>  >* e){
+                elemento=NULL;
+                
+                e->incrementReferenceCount();
+                this->elemento=e;
+                
+                
+                
+            }
             
             
             
-        }
-        
-        
-        
-        ~SmartPointer(){
+            ~SmartPointer(){
+                
+                elemento->decrementReferenceCount();
+                //delete elemento;
+                
+            }
             
-            elemento->decrementReferenceCount();
-            //delete elemento;
+            T *operator->(){
+                //elemento->data->getData
+                return elemento->data->getData();
+            }
             
-        }
-      
-        T *operator->(){
-            //elemento->data->getData
-            return elemento->data->getData();
-        }
-        
-        T* getData(){
+            T* getData(){
+                
+                return elemento->data->getData();
+            }
             
-            return elemento->data->getData();
-        }
+            void incrementsReference(){
+                this->elemento->incrementReferenceCount();
+            }
+            Element<AbstractDataElement<T>  >* getElement(){
+                return this->elemento;
+            }
+            
+            /* long getTimestamp(){
+             
+             return elemento->getTimestamp();
+             }*/
+            
+            /*  T* getDataDriver(){
+             return elemento->data->getData();
+             
+             }*/
+        };
         
-        void incrementsReference(){
-            this->elemento->incrementReferenceCount();
-        }
-        Element<AbstractDataElement<T>  >* getElement(){
-            return this->elemento;
-        }
         
-       /* long getTimestamp(){
-        
-            return elemento->getTimestamp();
-        }*/
-        
-      /*  T* getDataDriver(){
-            return elemento->data->getData();
-        
-        }*/
-    };
-    
-    
     }
     
 }

@@ -40,7 +40,7 @@ namespace chaos {
             template<typename T>
             /*!
              * This class represent the Garbage collector thread for an entire device tracker. It has the responsability
-             * of deleting old object and refreshing the pointer to last valid element. It is istanced direclty from 
+             * of deleting old object and refreshing the pointer to last valid element. It is istanced direclty from
              * AbstractDeviceTracker. When you create a new buffer, remeber to add it to this object, so you can be sure
              * that it will be managed
              */
@@ -50,8 +50,8 @@ namespace chaos {
                 
                 
             private:
-
-                 //!< Iterator for all queues gave to this istance of Gabage collector
+                
+                //!< Iterator for all queues gave to this istance of Gabage collector
                 std::vector<IteratorGarbage<T>* > queues;
                 //!< Mutex lock for operation of deleting and inserting new queue to purge
                 boost::mutex* _access;
@@ -73,7 +73,7 @@ namespace chaos {
                  * \param millisToSleep time needed to perform a garbagin on the queue
                  * \param conditionClose condition for closing thread
                  * \param closingLockMutex mutex to syncronize closing with tracker
-                 *  
+                 *
                  */
                 GarbageThread(uint64_t millisToSleep,boost::condition_variable* conditionClose, boost::mutex* closingLockMutex){
                     // this->queues=new std::vector<IteratorGarbage<T>* >();
@@ -86,19 +86,19 @@ namespace chaos {
                 }
                 
                 void operator()(){
-
+                    
                     
                     //this function implements the behaviour of the garbagin thread
                     while(!interrupted){
-
-                        //sleep n millisecond 
+                        
+                        //sleep n millisecond
                         boost::this_thread::sleep(*timeToSleep);
                         
                         //gain lock on data structure to avoid change to them during garbaging
                         boost::mutex::scoped_lock  lock(*_access);
                         for(int j=0; j<queues.size();j++){
                             
-                            //clear queue i 
+                            //clear queue i
                             queues.at(j)->clearQueue();
                         }
                         
@@ -114,23 +114,23 @@ namespace chaos {
                     
                     boost::mutex::scoped_lock  closingLock(*closingLockMutex);
                     
-                   // now i notify to tracker thaht my work is finished
+                    // now i notify to tracker thaht my work is finished
                     this->conditionClose->notify_one();
                     
                     
                 }
                 
                 /*!
-                 * Interrupt the garbage thread, imposing bool interrupt to true.  
+                 * Interrupt the garbage thread, imposing bool interrupt to true.
                  * In conseguence of this call, GarbageThread will stop and close all his data structure
                  */
-                void interrupt(){   
+                void interrupt(){
                     this->interrupted=true;
                 }
                 
                 
                 /*!
-                 * Add a queue to purging list of garbageCollector. 
+                 * Add a queue to purging list of garbageCollector.
                  */
                 void putQueueToGarbage(IteratorGarbage<T>* queueToPurge){
                     
@@ -143,7 +143,7 @@ namespace chaos {
                 
                 /*!
                  * Removes a queue from the purging list of GarbageCollector. So this queue
-                 * will not be cleared anymore. 
+                 * will not be cleared anymore.
                  */
                 void removeQueueToGarbage(IteratorGarbage<T>* queueToPurge){
                     

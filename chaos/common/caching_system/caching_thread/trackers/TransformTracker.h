@@ -38,13 +38,13 @@ namespace chaos {
                 ~TransformTracker(){
                     std::cout<<"chiamo distrutture transform\n";
                     this->shutDownTracking();
-                
+                    
                 }
                 
             public:
                 
-                              
-              
+                
+                
                 
                 void addedNewelement(SmartPointer<T>* n,uint64_t timeStamp) {
                     //calculate new value with passed filter
@@ -54,7 +54,7 @@ namespace chaos {
                     
                     //create a new data element
                     DataElement<D>*  filteredData=new DataElement<D>(newData,timeStamp);
-
+                    
                     
                     
                     //then, add it to the tracker

@@ -23,20 +23,20 @@
 
 #include <iostream>
 namespace chaos {
-
-namespace caching_system {
-
     
-    template <typename T>
-    class AbstractDataElement {
-    protected:
+    namespace caching_system {
         
-    public:
-        virtual  T* getData()=0;
-        virtual long getTimestamp()=0;
-        virtual ~AbstractDataElement(){}
         
-    };
-}
+        template <typename T>
+        class AbstractDataElement {
+        protected:
+            
+        public:
+            virtual  T* getData()=0;
+            virtual long getTimestamp()=0;
+            virtual ~AbstractDataElement(){}
+            
+        };
+    }
 }
 #endif /* defined(__CachingSystem__AbstractDevice__) */

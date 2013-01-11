@@ -23,115 +23,115 @@
 #include <chaos/common/caching_system/common_buffer/IteratorBase.h>
 
 namespace chaos {
-
-namespace caching_system {
     
-    template <typename T>
-    class IteratorGarbage : public IteratorBase<T> {
-        friend class CommonBuffer<T>;
+    namespace caching_system {
         
-        
-    protected:
-        
-        /*!
-         * It creates a new iterator for the stream.
-         * this constructur can be called safely only by common buffer,
-         * so do not use it. Use IteratorReader(queue) instead of this.
-         */
-        IteratorGarbage(CommonBuffer<T>* queue,Element<AbstractDataElement<T> >* pivot){
-            
-            this->queue=queue;
-            this->current=pivot;
-            // current->incrementReferenceCount();
-            this->stopAndResume=NULL;
-            this->lastDiv=NULL;
+        template <typename T>
+        class IteratorGarbage : public IteratorBase<T> {
+            friend class CommonBuffer<T>;
             
             
-        }
-        
-        
-        /*!
-         * Starting by pivot, it marks unused object if out-of-date, if any.
-         * Use isReady() before to avoid bad memory access
-         */
-        bool markOldData(){
+        protected:
             
-            
-            Element<AbstractDataElement<T> >* tempDiv=this->queue->pivot;
-            Element<AbstractDataElement<T> >* head=this->queue->head;
-            
-            Element<AbstractDataElement<T> >* next;
-            
-            
-            
-            if((!tempDiv->isValid())&&tempDiv->next!=NULL&&tempDiv!=head&&tempDiv->next!=head){
-                //if i am on pivot, and it is not valid, decrement reader count on it
-                if(this->lastDiv!=tempDiv){
-                    this->lastDiv=tempDiv;
-                    next=tempDiv->next;
-                    //first i increment next os no one can delete it
-                    next->increment();
-                    //now decrement acutl object
-                    
-                    //   if(tempDiv->readerCount>0){
-                    tempDiv->decrementCounter();
-                    this->current=next;
-                    
-                    
-                }
+            /*!
+             * It creates a new iterator for the stream.
+             * this constructur can be called safely only by common buffer,
+             * so do not use it. Use IteratorReader(queue) instead of this.
+             */
+            IteratorGarbage(CommonBuffer<T>* queue,Element<AbstractDataElement<T> >* pivot){
                 
-                // }
+                this->queue=queue;
+                this->current=pivot;
+                // current->incrementReferenceCount();
+                this->stopAndResume=NULL;
+                this->lastDiv=NULL;
                 
-                if(tempDiv->readerCount<=0){
-                    
-                    //update pivot if no one have done it
-                    
-                    this->queue->compareAndSwap(&(this->queue->pivot),tempDiv,tempDiv->next);
-                    
-                    
-                    return true;
-                    
-                }
-                
-                //if the counter is ont to zero, it means that someone is reading it.
-                //so pivot will be switched by him.
                 
             }
             
-            return false;
+            
+            /*!
+             * Starting by pivot, it marks unused object if out-of-date, if any.
+             * Use isReady() before to avoid bad memory access
+             */
+            bool markOldData(){
+                
+                
+                Element<AbstractDataElement<T> >* tempDiv=this->queue->pivot;
+                Element<AbstractDataElement<T> >* head=this->queue->head;
+                
+                Element<AbstractDataElement<T> >* next;
+                
+                
+                
+                if((!tempDiv->isValid())&&tempDiv->next!=NULL&&tempDiv!=head&&tempDiv->next!=head){
+                    //if i am on pivot, and it is not valid, decrement reader count on it
+                    if(this->lastDiv!=tempDiv){
+                        this->lastDiv=tempDiv;
+                        next=tempDiv->next;
+                        //first i increment next os no one can delete it
+                        next->increment();
+                        //now decrement acutl object
+                        
+                        //   if(tempDiv->readerCount>0){
+                        tempDiv->decrementCounter();
+                        this->current=next;
+                        
+                        
+                    }
+                    
+                    // }
+                    
+                    if(tempDiv->readerCount<=0){
+                        
+                        //update pivot if no one have done it
+                        
+                        this->queue->compareAndSwap(&(this->queue->pivot),tempDiv,tempDiv->next);
+                        
+                        
+                        return true;
+                        
+                    }
+                    
+                    //if the counter is ont to zero, it means that someone is reading it.
+                    //so pivot will be switched by him.
+                    
+                }
+                
+                return false;
+                
+                
+                
+            }
+            
+            
+        public:
             
             
             
-        }
-        
-        
-    public:
-        
-        
-        
-        
-        
-        
-        void clearQueue(){
             
             
             
-            
-            this->queue->clearUnusedData();
-            
-            if(this->isReady()){
-                while(this->markOldData()){}
+            void clearQueue(){
+                
+                
+                
+                
+                this->queue->clearUnusedData();
+                
+                if(this->isReady()){
+                    while(this->markOldData()){}
+                }
+                
+                
+                
             }
             
             
             
-        }
+        };
         
-        
-        
-    };
-    
-}
+    }
     
     
 }

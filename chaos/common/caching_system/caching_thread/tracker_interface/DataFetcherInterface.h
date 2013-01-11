@@ -27,7 +27,7 @@ namespace chaos {
     
     
     namespace caching_system {
-
+        
         class AbstractDeviceTracker;
         
         template <typename T>
@@ -48,7 +48,7 @@ namespace chaos {
             CommonBuffer<T>* buffer;
             
             /*!
-             * Template method uesd to wrap two information needed (timestamp and data) in 
+             * Template method uesd to wrap two information needed (timestamp and data) in
              * a DataElement object.
              */
             DataElement<T>* _getData() {

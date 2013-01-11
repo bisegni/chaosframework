@@ -23,38 +23,38 @@
 #include <chaos/common/caching_system/common_buffer/data_element/AbstractDataElement.h>
 namespace chaos {
     namespace caching_system {
-
-template <typename T>
-class SmartData : public AbstractDataElement<T> {
-    T* originalData;
-    
-    SmartPointer<T >* originalElement;
-    long timestamp;
-    
-public:
-    
-    SmartData(SmartPointer<T >* originalElement,long timestamp){
-        this->originalElement=originalElement;
-        this->originalData= originalElement->getData();
-        this->timestamp=timestamp;
+        
+        template <typename T>
+        class SmartData : public AbstractDataElement<T> {
+            T* originalData;
+            
+            SmartPointer<T >* originalElement;
+            long timestamp;
+            
+        public:
+            
+            SmartData(SmartPointer<T >* originalElement,long timestamp){
+                this->originalElement=originalElement;
+                this->originalData= originalElement->getData();
+                this->timestamp=timestamp;
+            }
+            
+            long getTimeout(){
+                return  this->originalData->getTimeout();
+            }
+            T* getData(){
+                return this->originalData/*->getData()*/;
+            }
+            long getTimestamp(){
+                return this->timestamp;
+            }
+            
+            ~SmartData(){
+                delete originalElement;
+            }
+            
+            
+        };
     }
-    
-    long getTimeout(){
-        return  this->originalData->getTimeout();
-    }
-    T* getData(){
-        return this->originalData/*->getData()*/;
-    }
-    long getTimestamp(){
-        return this->timestamp;
-    }
-    
-    ~SmartData(){
-        delete originalElement;
-    }
-    
-    
-};
-}
 }
 #endif

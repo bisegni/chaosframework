@@ -72,7 +72,6 @@ namespace chaos {
                     this->highResValidity=validity;
                     this->highResQueue=new CommonBuffer<T>(validity);
                     bufferMapMutex=new boost::mutex();
-                    // closingLockMutex=new boost::mutex();
                     highResIterator=new std::vector< IteratorReader<T>* >();
                     setSleepTimeInUS(usecSampleInterval);
                     this->garbageCollector=new GarbageThread<T>(validity,&closedCondition,&closingLockMutex);
@@ -82,14 +81,28 @@ namespace chaos {
                 
                 
             protected:
+                //!< Time beetween two call to fetcher interface
                 int64_t timeToFetchData;
+                
+                //!< This map is used to retrive a BufferTracker connected to a specific iterator, using his id
                 std::map<int,BufferTracker<T>* > iteratorIdToBufferTracker;
+                
+                //!< This vector mantain reference to high resolution iterator produced by the tracker.
                 std::vector<IteratorReader<T>*  >* highResIterator;
+                
+                
                 boost::mutex* bufferMapMutex;
+                
+                //!< revers mapping from a string id to a BufferTracker
                 std::map<std::string, BufferTracker<T>* > lowResQueues;
                 
                 
                 
+                /*!
+                 * Utility function used to insert data element in a related buffer, using the discretization
+                 * time needed for ech queue. This means that a new value will be inserted in a sub queue iff
+                 * is satified the timed condition requested for actual buffer.
+                 */
                 void insertInSubBuffers(SmartPointer<T>* elementToAdd ,DataElement<T>* newElement){
                     for(typename std::map<std::string, BufferTracker<T>* >::iterator it = this->lowResQueues.begin(); it != this->lowResQueues.end(); ++it){
                         
@@ -120,6 +133,9 @@ namespace chaos {
                 
                 
                 
+                /*!
+                 * This function add a new Trakcker Listener to the list of listener for this tracker
+                 */
                 void inline addListener(TrackerListener<T>* listener){
                     //push it in listeners
                     this->trackerListeners->push_back(listener);
@@ -128,12 +144,22 @@ namespace chaos {
                 
             public:
                 
+                
+                /*!
+                 * Create a new Device tracker. You need to provide:
+                 * \param usecSampleInterval time of how often data must be retrieved in microseconds
+                 * \param validity validity for a new data for caching
+                 */
                 AbstractDeviceTracker(uint64_t usecSampleInterval, uint64_t validity){
                     init(usecSampleInterval, validity);
                     
                 }
                 
                 
+                /*!
+                 * This function creates a subtracker connected to this tracker. The new tracker will be added
+                 * to the listner list for this tracker, and will be provided to it new data available automatically.
+                 */
                 template<typename D>
                 TransformTracker<T,D>* getNewTranformTracker(EmbeddedDataTransform<T,D>* filter,uint64_t usecSampleInterval,uint64_t validity ) {
                     
@@ -160,6 +186,11 @@ namespace chaos {
                 }
                 
                 
+                /*!
+                 * It Returns a new iterator at the maximum resolution avalaible for this buffer.
+                 * That is, all value will be presented.
+                 *
+                 */
                 IteratorReader<T>* openMaxResBuffer(){
                     
                     int id=caching_system::helper::getNewId();
@@ -170,6 +201,12 @@ namespace chaos {
                     
                 }
                 
+                
+                /*!
+                 * It opens a buffer with a validity and a discretization requested. If it is
+                 * avalaible, it returns a new iterator to this one, else a new buffer will
+                 * be created.
+                 */
                 IteratorReader<T>* openBuffer(uint64_t validity,uint64_t discretization){
                     //first take a mutex lock on this queue
                     boost::mutex::scoped_lock  lock(*bufferMapMutex);
@@ -184,7 +221,6 @@ namespace chaos {
                         IteratorReader<T>* iteratore=buffer->getIterator();
                         iteratorIdToBufferTracker[iteratore->getId()]=buffer;
                         this->garbageCollector->putQueueToGarbage(buffer->getIteratorGarbage());
-                        //this->lowResQueuesVector
                         return iteratore;
                         
                     }else{
@@ -195,6 +231,14 @@ namespace chaos {
                 }
                 
                 
+                
+                
+                /*!
+                 * This function delete safely an iterator and closes its stream.
+                 * Notice: if it is an iterator to a subbuffer, and there are no others
+                 * iterator for that subbuffer, it will be destroyed, instead of maximum
+                 * resolution buffer that will remain alive until you close the tracker.
+                 */
                 void closeBuffer(IteratorReader<T>* iterator){
                     boost::mutex::scoped_lock  lock(*bufferMapMutex);
                     uint64_t idIterator=iterator->getId();
@@ -234,6 +278,11 @@ namespace chaos {
                 
                 
                 
+                /*!
+                 * This function is called to realize il tracking of a new data.
+                 * It will add new data provided as argument to this function in all buffer (high resolution
+                 * and subbuffer) and in all listener registered (eventually other trackers).
+                 */
                 virtual void doTracking(DataElement<U>* newElement){
                     //enqueue new element in high res queue
                     SmartPointer<T>* mySmartData=this->highResQueue->enqueue(newElement,true);
@@ -245,7 +294,10 @@ namespace chaos {
                 }
                 
                 
-                
+                /*!
+                 * This stops tracker, listener registered, buffer and iterator.
+                 * this close Tracking safely.
+                 */
                 void shutDownTracking(){
                     //this shutdown works, but it is very slow... it must be revisited...
                     boost::mutex::scoped_lock  closingLock(closingLockMutex);
@@ -277,12 +329,20 @@ namespace chaos {
                     delete garbageCollector;
                 }
                 
+                
+                /*!
+                 * This function starts garbage collector thread related to this tracker.
+                 */
                 void startGarbaging(){
                     boost::thread collector(( boost::ref(*this->garbageCollector) ));
                     this->garbageCollector->putQueueToGarbage(this->highResQueue->getIteratorGarbage());
                     collector.detach();
                 }
                 
+                
+                /*!
+                 * This function stops garbage collector thread related to this tracker.
+                 */
                 void stopGarbaging(){
                     garbageCollector->interrupt();
                     

@@ -54,8 +54,8 @@ namespace chaos {
                 allocatore->destroy(pointer);
                 allocatore->deallocate(pointer,1);
                 // delete pointer;
-             }
-
+            }
+            
         };
     }
 }
