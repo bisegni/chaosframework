@@ -109,3 +109,6 @@ ADD_SUBDIRECTORY(example/UIToolkitCMDLineExample bin/bin_example_uicmdline_test)
 
 message(STATUS "Configure UIToolkit c-wrapper command line example")
 ADD_SUBDIRECTORY(example/UIToolkitCMDLineCWrapperExample bin/bin_example_uicmdline_cwrapper_test)
+
+message(STATUS "Configure BenchTest simulation excutable")
+ADD_SUBDIRECTORY(example/BenchTest bin/bench_test)

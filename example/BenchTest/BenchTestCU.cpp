@@ -20,6 +20,7 @@
 #include <boost/thread.hpp>
 
 #include "BenchTestCU.h"
+#include "config.h"
 #include <chaos/common/global.h>
 #include <chaos/common/cconstants.h>
 #include <chaos/common/bson/bson.h>
@@ -37,16 +38,12 @@
 using namespace chaos;
 
 
-#define CU_DELAY_FROM_TASKS     20000 //20msec
-
 /*
  Construct a new CU with an identifier
  */
 BenchTestCU::BenchTestCU(std::string& rName, Batch_Reactor *rInstance) {
     reactorName = rName;
     reactorInstance = rInstance;
-    lastInputControl[0] = 0;
-    lastInputControl[1] = 0;
 }
 
 /*
@@ -95,6 +92,12 @@ void BenchTestCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException
                                                   "Reactor Output B",
                                                   this,
                                                   &BenchTestCU::setControlB);
+    
+    addInputDoubleAttributeToDataSet<BenchTestCU>(devIDInChar,
+                                                  "pseed",
+                                                  "Pertubastion seed applied to reactor state",
+                                                  this,
+                                                  &BenchTestCU::perturbateState);
 }
 
 /*
@@ -122,9 +125,11 @@ void BenchTestCU::run(const string& deviceID) throw(CException) {
     
     acquiredData->addDoubleValue("output_a", reactorInstance->y[0]);
     acquiredData->addDoubleValue("output_b", reactorInstance->y[1]);
+    LAPP_ << "Output_A=" << reactorInstance->y[0] << " reactor Output_B="<< reactorInstance->y[1];
+    pushDataSetForKey(devIDInChar, acquiredData);
     
     reactorInstance->compute_state();
-    
+
 }
 
 /*
@@ -143,12 +148,19 @@ void BenchTestCU::deinit(const string& deviceID) throw(CException) {
  */
 void BenchTestCU::setControlA(const std::string& deviceID, const double& dValue) {
     boost::unique_lock< boost::shared_mutex > lock(_setControlValueMutext);
-    lastInputControl[0] = dValue;
+    reactorInstance->u[0] = dValue;
 }
 
 /*
  */
 void BenchTestCU::setControlB(const std::string& deviceID, const double& dValue) {
     boost::unique_lock< boost::shared_mutex > lock(_setControlValueMutext);
-    lastInputControl[1] = dValue;
+    reactorInstance->u[1] = dValue;
+}
+
+/*
+ */
+void BenchTestCU::perturbateState(const std::string& deviceID, const double& dValue) {
+    boost::unique_lock< boost::shared_mutex > lock(_setControlValueMutext);
+    reactorInstance->perturbateState(dValue);
 }

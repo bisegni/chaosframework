@@ -134,71 +134,48 @@ bool DSAttributeHandlerExecutionEngine::executeHandler(CDataWrapper *message) th
         
             //compare the message device id and the local
         if(!_messageDeiveID.compare(deviceID)) {
-            LDSAHEE_ << "the message is for this device->" << deviceID;
             for (std::set<std::string>::iterator iter = managedAttributesName.begin();
                  iter != managedAttributesName.end();
                  iter++) {
                     //execute attribute handler
                 const char * cAttrName = iter->c_str();
-                LDSAHEE_ << "get the type of the attribute " << cAttrName;
 
                 if(message->hasKey(cAttrName)) {
-                    LDSAHEE_ << "The attribute " << cAttrName << " has been found in message";
                         //get attribute info
                     referenceCUSchemeDB->getDeviceAttributeRangeValueInfo(deviceID, *iter, attributeInfo);
-                    
-                    LDSAHEE_ << "The information for attribute " << cAttrName << " has been found";
-                    
                         //call handler
                     switch (attributeInfo.valueType) {
                         case DataType::TYPE_INT32: {
-                            LDSAHEE_ << "get int32 value for " << cAttrName;
                             i32v = message->getInt32Value(cAttrName);
-                            LDSAHEE_ << "The attribute " << cAttrName << " is an int32 =" << i32v;
                             abstractValuePtr = &i32v;
                             break;
                         }
                         case DataType::TYPE_INT64: {
-                            LDSAHEE_ << "get int64 value for " << cAttrName;
                             i64v = message->getInt64Value(cAttrName);
-                            LDSAHEE_ << "The attribute " << cAttrName << " is an int64 =" << i64v;
                             abstractValuePtr = &i64v;
                             break;
                         }
                         case DataType::TYPE_STRING: {
-                            LDSAHEE_ << "get string value for " << cAttrName;
                             sv = message->getStringValue(cAttrName);
-                            LDSAHEE_ << "The attribute " << cAttrName << " is a string =" << sv;
                             abstractValuePtr = &sv;
                             break;
                         }
                         case DataType::TYPE_DOUBLE: {
-                            LDSAHEE_ << "get double value for " << cAttrName;
                             dv = message->getDoubleValue(cAttrName);
-                            LDSAHEE_ << "The attribute " << cAttrName << " is an double =" << dv;
                             abstractValuePtr = &dv;
                             break;
                         }
                         case DataType::TYPE_BYTEARRAY: {
-                            LDSAHEE_ << "get bitearray value for " << cAttrName;
                             binv = message->getBinaryValue(cAttrName, binv_dim);
-                            LDSAHEE_ << "The attribute " << cAttrName << " is a binary";
                             abstractValuePtr = &binv;
                             break;
                         }
                         case DataType::TYPE_STRUCT: {
-                            LDSAHEE_ << "get struct value for " << cAttrName;
                             cdatv = message->getCSDataValue(cAttrName);
-                            LDSAHEE_ << "The attribute " << cAttrName << " is a struct";
                             abstractValuePtr = &cdatv;
                             break;
                         }
                     }
-                    
-                        //call every handler for the current attribute
-
-                    LDSAHEE_ << "Pre call all handler";
-
 
                     std::vector< handler::DSAttributeHandler* > *tmpVector = attrNameHandlerMap[*iter];
                     for (std::vector< handler::DSAttributeHandler* >::iterator iter = tmpVector->begin();
@@ -207,9 +184,6 @@ bool DSAttributeHandlerExecutionEngine::executeHandler(CDataWrapper *message) th
                         handler::DSAttributeHandler *handlerPtr = *iter;
                         handlerPtr->handle(abstractValuePtr);
                     }
-                    LDSAHEE_ << "Post call all handler";
-                } else {
-                    LDSAHEE_ << "The attribute " << cAttrName << " is NOT FOUND in message";
                 }
             }
         }

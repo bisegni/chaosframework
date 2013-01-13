@@ -34,7 +34,6 @@ using namespace boost;
 class BenchTestCU : public AbstractControlUnit {
     string reactorName;
     Batch_Reactor *reactorInstance;
-    double lastInputControl[P];
     boost::shared_mutex _setControlValueMutext;
 public:
 
@@ -49,6 +48,7 @@ public:
 
     inline void setControlA(const std::string& deviceID, const double& dValue);
     inline void setControlB(const std::string& deviceID, const double& dValue);
+    inline void perturbateState(const std::string& deviceID, const double& dValue);
 protected:
     /*
      Define the Control Unit Dataset and Actions

@@ -13,7 +13,9 @@ const int N = 4; //Dimensione stato del sistema Reattore;
 const int P = 2; //Numero ingressi di controllo;
 const int Q = 2; //Numero uscite sistema Reattore;
 
-#define REACTOR_NAMES    "reactor_names"
-#define OPT_START_STATE  "state_initial_condition"
+#define REACTOR_NAMES               "reactor_names"
+#define OPT_START_STATE             "state_initial_condition"
+#define REACTOR_REFEREMENT_VALUE    "referement_value"
+#define CU_DELAY_FROM_TASKS         20000 //20msec
 
 #endif

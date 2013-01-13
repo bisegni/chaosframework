@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		328E76B314CEE4F500A3EA95 /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 328E76B114CEE4F500A3EA95 /* libchaos_common.dylib */; };
-		328E76B414CEE4F500A3EA95 /* libchaos_uitoolkit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 328E76B214CEE4F500A3EA95 /* libchaos_uitoolkit.dylib */; };
 		328E76B614CEE92D00A3EA95 /* UIToolkitCMDLineExample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E76B514CEE92D00A3EA95 /* UIToolkitCMDLineExample.cpp */; };
 /* End PBXBuildFile section */
 
@@ -37,8 +35,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				328E76B314CEE4F500A3EA95 /* libchaos_common.dylib in Frameworks */,
-				328E76B414CEE4F500A3EA95 /* libchaos_uitoolkit.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -203,6 +199,8 @@
 					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
+					"-lchaos_uitoolkit",
+					"-lchaos_common",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -236,6 +234,8 @@
 					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
+					"-lchaos_uitoolkit",
+					"-lchaos_common",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

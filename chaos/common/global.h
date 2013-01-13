@@ -52,7 +52,12 @@ using namespace boost;
 
 
 
-
+enum severity_level
+{
+    normal,
+    error,
+    debug
+};
 
     //src::logger chaosLogger;
 BOOST_LOG_DECLARE_GLOBAL_LOGGER(chaosLogger, boost::log::sources::logger)

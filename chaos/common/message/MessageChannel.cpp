@@ -75,7 +75,6 @@ CDataWrapper *MessageChannel::response(CDataWrapper *responseData, bool& detachD
         
             //lock lk(waith_asnwer_mutex);
         atomic_int_type requestID = responseData->getInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID);
-        LDBG_ << "new requestd id arrived:" << requestID;
             //call the handler
         if(responsIdHandlerMap.count(requestID)>0){
             responsIdHandlerMap[requestID](responseData);
@@ -94,7 +93,6 @@ atomic_int_type MessageChannel::prepareRequestPackAndSend(const char * const nod
     CHAOS_ASSERT(nodeID && actionName && requestPack)
         //get new reqeust id
     atomic_int_type currentRequestID = atomic_increment(&channelRequestIDCounter);
-    LDBG_ << "new requestd id to send:" << currentRequestID;
 
     requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, nodeID);
     requestPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, actionName);

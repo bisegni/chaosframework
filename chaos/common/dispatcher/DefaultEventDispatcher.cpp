@@ -111,7 +111,6 @@ void DefaultEventDispatcher::deregisterEventAction(EventAction *eventAction)  th
  by dispatcher
  */
 void DefaultEventDispatcher::executeAlertHandler(alert::AlertEventDescriptor *eventDescription)  throw(CException) {
-    EVTDISPAPP_ << "Received and alert event";
     alertEventScheduler->push(eventDescription);
 }
 
@@ -121,7 +120,6 @@ void DefaultEventDispatcher::executeAlertHandler(alert::AlertEventDescriptor *ev
  by dispatcher
  */
 void DefaultEventDispatcher::executeInstrumentHandler(instrument::InstrumentEventDescriptor *eventDescription)  throw(CException) {
-     EVTDISPAPP_ << "Received an instrument event";
     alertEventScheduler->push(eventDescription);
 }
 
@@ -131,7 +129,6 @@ void DefaultEventDispatcher::executeInstrumentHandler(instrument::InstrumentEven
  by dispatcher
  */
 void DefaultEventDispatcher::executeCommandHandler(command::CommandEventDescriptor *eventDescription)  throw(CException) {
-     EVTDISPAPP_ << "executeCommandHandler";
 }
 
     //!Handler execution method
@@ -140,5 +137,5 @@ void DefaultEventDispatcher::executeCommandHandler(command::CommandEventDescript
  by dispatcher
  */
 void DefaultEventDispatcher::executeCustomHandler(custom::CustomEventDescriptor* eventDescription)  throw(CException) {
-     EVTDISPAPP_ << "executeCustomHandler";
+
 }

@@ -9,25 +9,27 @@
  
  */
 
+#include <string>
 #include "Batch_Controller.h"
 
 
 Batch_Controller::Batch_Controller()
 {
-	for(int i=0;i<Q;i++)
-    {rif[i]=0.0;
-  	    e_precedente[i]=0.0;
-	    u_precedente[i]=0.0;
-    }
-    
-	//scrivi sul MDS come valore di default per il controllo 0;
+
+    memset(rif, 0, Q * sizeof(double));
+    memset(y, 0, Q * sizeof(double));
+    memset(u, 0, P * sizeof(double));
+    memset(e_precedente, 0, Q * sizeof(double));
+    memset(u_precedente, 0, Q * sizeof(double));
+    memset(e_precedente, 0, Q * sizeof(double));
+}
+
+Batch_Controller::~Batch_Controller() {
     
 }
 
 
-
-void Batch_Controller::compute_controllo()
-{
+void Batch_Controller::compute_controllo() {
     
 	e[0] = rif[0] - y[0];
 	e[1] = rif[1] - y[1];

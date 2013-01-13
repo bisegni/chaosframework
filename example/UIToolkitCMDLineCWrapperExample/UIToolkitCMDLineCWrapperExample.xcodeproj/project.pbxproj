@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		324D67DC15DA58A300D60BC0 /* libchaos_uitoolkit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 324D67DB15DA58A300D60BC0 /* libchaos_uitoolkit.dylib */; };
 		324D67E615DA5AE100D60BC0 /* UIToolkitCMDLineCWapperExample.c in Sources */ = {isa = PBXBuildFile; fileRef = 324D67E515DA5AE100D60BC0 /* UIToolkitCMDLineCWapperExample.c */; };
 /* End PBXBuildFile section */
 
@@ -35,7 +34,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				324D67DC15DA58A300D60BC0 /* libchaos_uitoolkit.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -191,6 +189,7 @@
 					/usr/local/lib,
 					"$(SRCROOT)/usr/local/lib",
 				);
+				OTHER_LDFLAGS = "-lchaos_uitoolkit";
 				PRODUCT_NAME = UIToolkitCMDLineCWrapperExample;
 			};
 			name = Debug;
@@ -209,6 +208,7 @@
 					/usr/local/lib,
 					"$(SRCROOT)/usr/local/lib",
 				);
+				OTHER_LDFLAGS = "-lchaos_uitoolkit";
 				PRODUCT_NAME = UIToolkitCMDLineCWrapperExample;
 			};
 			name = Release;

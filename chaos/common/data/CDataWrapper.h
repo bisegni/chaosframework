@@ -81,10 +81,10 @@ namespace chaos {
      Class that wrap the serializaiton system for data storage
      */
     class CDataWrapper/*: public CPoolMemoryObject<CDataWrapper> */{
-        scoped_ptr<BSONArrayBuilder> bsonArrayBuilder;
+        auto_ptr<BSONArrayBuilder> bsonArrayBuilder;
         
     protected:
-        scoped_ptr<BSONObjBuilder> bsonBuilder;
+        auto_ptr<BSONObjBuilder> bsonBuilder;
         
     public:
         

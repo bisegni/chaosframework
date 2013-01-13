@@ -523,13 +523,7 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
             //send dataset attribute change pack to control unit implementation
         executionResult = setDatasetAttribute(datasetAttributeValues, detachParam);
         if(attributeHandlerEngineForDeviceIDMap.count(deviceID) > 0) {
-#if DEBUG
-            LAPP_ << "pre attributeHandlerEngineForDeviceIDMap[deviceID]->executeHandler(datasetAttributeValues);";
-#endif
             attributeHandlerEngineForDeviceIDMap[deviceID]->executeHandler(datasetAttributeValues);
-#if DEBUG
-            LAPP_ << "post attributeHandlerEngineForDeviceIDMap[deviceID]->executeHandler(datasetAttributeValues);";
-#endif
         }
             //at this time notify the wel gone setting of comand
         if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(deviceID.c_str(), 0);
@@ -579,7 +573,6 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
         throw CException(-3, "Device Not Initilized", "AbstractControlUnit::updateConfiguration");
     }
     
-    
         //check to see if the device can ben initialized
     if(keyDataStorageMap.count(deviceID)!=0) {
         keyDataStorageMap[deviceID]->updateConfiguration(updatePack);
@@ -587,7 +580,7 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
     
     if(updatePack->hasKey(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY)){
             //we need to configure the delay  from a run() call and the next
-        int32_t uSecdelay = updatePack->getInt32Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY);
+        int64_t uSecdelay = updatePack->getInt32Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY);
             //check if we need to update the scehdule time
         CThread *taskThread = schedulerDeviceMap[deviceID];
         if(uSecdelay != taskThread->getDelayBeetwenTask()){

@@ -56,60 +56,64 @@ using namespace chaos;
 
 int main (int argc, char* argv[] )
 {
-    int64_t reactorsNumber = 1;
+    int64_t reactorsNumber = 0;
     std::vector< std::string > names;
     string tmpDeviceID("bench_reactor");
     
     //initial state value
     vector<double> stateOption;
-    
-    //! [Custom Option]
-    ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(REACTOR_NAMES, po::value< std::vector< std::string > >()->multitoken(), "The name (and implicit the number) of the rectors");
-    ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_START_STATE, po::value< std::vector<double> >()->multitoken(), "Initila condition for the Rector internal state");
-    //! [Custom Option]
-    
-    //! [CUTOOLKIT Init]
-    ChaosCUToolkit::getInstance()->init(argc, argv);
-    //! [CUTOOLKIT Init]
-    
-    
-    
-    
-    //! [Adding the CustomControlUnit]
-    if(ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(REACTOR_NAMES)){
-        names = ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->getOption< std::vector< std::string > >(REACTOR_NAMES);
-        reactorsNumber = names.size();
-    }
-    
-    if(ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_START_STATE)){
-        stateOption =  ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->getOption< std::vector< double > >(OPT_START_STATE);
-    } else {
-        for (int i = 0; i < N; i++) {
-            stateOption[i] = 0.0;
+    try {
+        //! [Custom Option]
+        ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(REACTOR_NAMES, po::value< std::vector< std::string > >()->multitoken(), "The name (and implicit the number) of the rectors");
+        ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_START_STATE, po::value< std::vector<double> >()->multitoken(), "Initila condition for the Rector internal state");
+        //! [Custom Option]
+        
+        //! [CUTOOLKIT Init]
+        ChaosCUToolkit::getInstance()->init(argc, argv);
+        //! [CUTOOLKIT Init]
+        
+        
+        
+        
+        //! [Adding the CustomControlUnit]
+        if(ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(REACTOR_NAMES)){
+            names = ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->getOption< std::vector< std::string > >(REACTOR_NAMES);
+            reactorsNumber = names.size();
         }
-    }
-    
-    //allocate the reactor isnstance
-    if(reactorsNumber >= 1) {
-        for (int idx1 = 0; idx1 < reactorsNumber; idx1++) {
-            Batch_Reactor *rInstance = new Batch_Reactor();
-            for (int idx2 = 0; idx2 < N; idx2++) {
-                rInstance->x[idx2] = stateOption[idx2];
+        
+        if(ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_START_STATE)){
+            stateOption =  ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->getOption< std::vector< double > >(OPT_START_STATE);
+        } else {
+            for (int i = 0; i < N; i++) {
+                stateOption.push_back(0.0);
             }
-            ChaosCUToolkit::getInstance()->addControlUnit(new BenchTestCU(names[idx1], rInstance));
         }
-    } else {
-        Batch_Reactor *rInstance = new Batch_Reactor();
-        for (int idx = 0; idx < N; idx++) {
-            rInstance->x[idx] = stateOption[idx];
+        
+        //allocate the reactor isnstance
+        if(reactorsNumber >= 1) {
+            for (int idx1 = 0; idx1 < reactorsNumber; idx1++) {
+                Batch_Reactor *rInstance = new Batch_Reactor();
+                for (int idx2 = 0; idx2 < N; idx2++) {
+                    rInstance->x[idx2] = stateOption[idx2];
+                }
+                ChaosCUToolkit::getInstance()->addControlUnit(new BenchTestCU(names[idx1], rInstance));
+            }
+        } else {
+            Batch_Reactor *rInstance = new Batch_Reactor();
+            for (int idx = 0; idx < N; idx++) {
+                rInstance->x[idx] = stateOption[idx];
+            }
+            ChaosCUToolkit::getInstance()->addControlUnit(new BenchTestCU(tmpDeviceID, rInstance));
         }
-        ChaosCUToolkit::getInstance()->addControlUnit(new BenchTestCU(tmpDeviceID, rInstance));
+        
+        //! [Adding the CustomControlUnit]
+        
+        //! [Starting the Framework]
+        ChaosCUToolkit::getInstance()->start();
+        //! [Starting the Framework]
+    } catch (CException& e) {
+        std::cerr<< e.errorDomain << std::endl;
+        std::cerr<< e.errorMessage << std::endl;
     }
-    
-    //! [Adding the CustomControlUnit]
-    
-    //! [Starting the Framework]
-    ChaosCUToolkit::getInstance()->start();
-    //! [Starting the Framework]
     return 0;
 }

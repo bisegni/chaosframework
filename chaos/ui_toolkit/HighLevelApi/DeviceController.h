@@ -142,7 +142,7 @@ namespace chaos {
             /*!
              Set the control unit run method scheduling delay
              */
-            int setScheduleDelay(int32_t millisecDelay);
+            int setScheduleDelay(int32_t microsecondsDelay);
             /*!
              Get attribute name filtered by direction type
              */

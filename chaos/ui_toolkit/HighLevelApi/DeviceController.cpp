@@ -105,9 +105,9 @@ void DeviceController::updateChannel() throw(CException) {
     }
 }
 
-int DeviceController::setScheduleDelay(int32_t millisecDelay) {
+int DeviceController::setScheduleDelay(int32_t microseconds) {
     CHAOS_ASSERT(deviceChannel)
-    return deviceChannel->setScheduleDelay(millisecDelay, millisecToWait);
+    return deviceChannel->setScheduleDelay(microseconds, millisecToWait);
 }
 
 

@@ -13,6 +13,7 @@
 		322F363716A1E9C500731C3F /* Batch_Reactor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322F363516A1E9C000731C3F /* Batch_Reactor.cpp */; };
 		322F363916A1EA9400731C3F /* Batch_Controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322F363816A1EA9400731C3F /* Batch_Controller.cpp */; };
 		322F363C16A1EB8B00731C3F /* ReactorController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322F363A16A1EB8B00731C3F /* ReactorController.cpp */; };
+		32B928B516A2DD32004064E4 /* MainOrkestrator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B928B116A2D7B8004064E4 /* MainOrkestrator.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,6 +41,8 @@
 		322F363816A1EA9400731C3F /* Batch_Controller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Batch_Controller.cpp; sourceTree = "<group>"; };
 		322F363A16A1EB8B00731C3F /* ReactorController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReactorController.cpp; sourceTree = "<group>"; };
 		322F363B16A1EB8B00731C3F /* ReactorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactorController.h; sourceTree = "<group>"; };
+		32B928B116A2D7B8004064E4 /* MainOrkestrator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainOrkestrator.cpp; sourceTree = "<group>"; };
+		32B928B216A2D7B8004064E4 /* MainOrkestrator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainOrkestrator.h; sourceTree = "<group>"; };
 		32BE864A15A0E3C500818C39 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		32F7448F14B49CCB0025638B /* BenchTestReactor */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = BenchTestReactor; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -69,6 +72,8 @@
 				322F363816A1EA9400731C3F /* Batch_Controller.cpp */,
 				322F363B16A1EB8B00731C3F /* ReactorController.h */,
 				322F363A16A1EB8B00731C3F /* ReactorController.cpp */,
+				32B928B216A2D7B8004064E4 /* MainOrkestrator.h */,
+				32B928B116A2D7B8004064E4 /* MainOrkestrator.cpp */,
 				322F362016A1D1F500731C3F /* main_controller.cpp */,
 			);
 			name = src_controller;
@@ -99,8 +104,8 @@
 			children = (
 				322F363016A1DBA600731C3F /* Batch_Reactor.h */,
 				322F363516A1E9C000731C3F /* Batch_Reactor.cpp */,
-				322F360916A1CEE000731C3F /* BenchTestCU.cpp */,
 				322F360A16A1CEE000731C3F /* BenchTestCU.h */,
+				322F360916A1CEE000731C3F /* BenchTestCU.cpp */,
 				322F360B16A1CEE000731C3F /* main_reactor.cpp */,
 			);
 			name = src_reactor;
@@ -178,6 +183,7 @@
 				322F362116A1D1F500731C3F /* main_controller.cpp in Sources */,
 				322F363916A1EA9400731C3F /* Batch_Controller.cpp in Sources */,
 				322F363C16A1EB8B00731C3F /* ReactorController.cpp in Sources */,
+				32B928B516A2DD32004064E4 /* MainOrkestrator.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -428,6 +434,7 @@
 				322F361F16A1D1C200731C3F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		326027A214B309ED00C906CE /* Build configuration list for PBXProject "BenchTest" */ = {
 			isa = XCConfigurationList;

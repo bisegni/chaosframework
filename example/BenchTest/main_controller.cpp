@@ -69,7 +69,7 @@ using namespace boost::date_time;
 #include <vector>
 #include <string>
 #include "config.h"
-
+#include "MainOrkestrator.h"
 inline ptime utcToLocalPTime(ptime utcPTime){
 	c_local_adjustor<ptime> utcToLocalAdjustor;
 	ptime t11 = utcToLocalAdjustor.utc_to_local(utcPTime);
@@ -79,8 +79,8 @@ inline ptime utcToLocalPTime(ptime utcPTime){
 int main (int argc, char* argv[] )
 {
     try {
-        int64_t reactorsNumber = 1;
         std::vector< std::string > names;
+        std::vector< double > referements;
         string tmpDeviceID("bench_reactor");
         
         //initial state value
@@ -88,9 +88,8 @@ int main (int argc, char* argv[] )
         posix_time::time_duration currentTime;
         
         //! [UIToolkit Attribute Init]
-        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(REACTOR_NAMES, po::value< std::vector< std::string > >()->multitoken(), "The name (and implicit the number) of the rectors");
-
-
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(REACTOR_NAMES, po::value< std::vector< std::string > >()->multitoken(), "The id (and implicit the number) of the rectors");
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(REACTOR_REFEREMENT_VALUE, po::value< std::vector< double > >()->multitoken(), "The name (and implicit the number) of the rectors");
         //! [UIToolkit Attribute Init]
         
         //! [UIToolkit Init]
@@ -98,14 +97,31 @@ int main (int argc, char* argv[] )
         
         if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(REACTOR_NAMES)){
             names = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption< std::vector< std::string > >(REACTOR_NAMES);
-            reactorsNumber = names.size();
+        } else {
+            names.push_back(tmpDeviceID);
         }
-
         
-        //! [UIToolkit ChannelCreation]
-        CDeviceNetworkAddress deviceNetworkAddress;
-        //! [Datapack sent]
+        if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(REACTOR_REFEREMENT_VALUE)){
+            referements = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption< std::vector< double > >(REACTOR_REFEREMENT_VALUE);
+        } else {
+            for(int idx = 0; idx < Q; idx++) {
+                referements.push_back(1.0);
+            }
+        }
         
+        if(referements.size() != names.size() * Q) {
+            char error[128];
+            sprintf ( error, "every reactor identified need to have %d referement", Q );
+            throw chaos::CException(0, error, "main");
+        }
+        
+        //! [UIToolkit Init]
+        
+        //! [Allocate the main orkestrator]
+        auto_ptr<MainOrkestrator> ork(new MainOrkestrator(&names, &referements));
+        ork->init();
+        ork->join();
+        //! [Allocate the main orkestrator]
         
         //! [UIToolkit Deinit]
         ChaosUIToolkit::getInstance()->deinit();

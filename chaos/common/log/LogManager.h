@@ -23,11 +23,12 @@
 
 #include <iostream>
 #include <chaos/common/exception/CException.h>
-
+#include <boost/log/sources/severity_logger.hpp>
 namespace chaos {
     class LogManager {
         template<class T>
         friend class ChaosCommon;
+        boost::log::sources::severity_logger< severity_level > slg;
         
         LogManager(){}
     public:

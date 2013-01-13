@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		32D078DB159A504D0053BB3A /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 32D078D9159A504D0053BB3A /* libchaos_common.dylib */; };
-		32D078DC159A504D0053BB3A /* libchaos_cutoolkit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 32D078DA159A504D0053BB3A /* libchaos_cutoolkit.dylib */; };
 		32F7449C14B49CFA0025638B /* ControlUnitExample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F7449914B49CFA0025638B /* ControlUnitExample.cpp */; };
 		32F7449D14B49CFA0025638B /* WorkerCU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F7449A14B49CFA0025638B /* WorkerCU.cpp */; };
 /* End PBXBuildFile section */
@@ -28,8 +26,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				32D078DB159A504D0053BB3A /* libchaos_common.dylib in Frameworks */,
-				32D078DC159A504D0053BB3A /* libchaos_cutoolkit.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -161,10 +157,9 @@
 					/usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug\"",
+					"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug",
 					/usr/local/lib,
-					"\"$(SRCROOT)/../../usr/local/lib",
+					"$(SRCROOT)/../../usr/local/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
@@ -181,6 +176,8 @@
 					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
+					"-lchaos_cutoolkit",
+					"-lchaos_common",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -207,10 +204,9 @@
 					/usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug\"",
+					"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug",
 					/usr/local/lib,
-					"\"$(SRCROOT)/../../usr/local/lib",
+					"$(SRCROOT)/../../usr/local/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
@@ -226,6 +222,8 @@
 					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
+					"-lchaos_cutoolkit",
+					"-lchaos_common",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
