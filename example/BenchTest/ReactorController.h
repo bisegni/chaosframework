@@ -11,6 +11,7 @@
 
 #include <string>
 #include <iostream>
+#include <boost/chrono.hpp>
 #include <boost/shared_ptr.hpp>
 #include <chaos/common/thread/ChaosThread.h>
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
@@ -31,6 +32,9 @@ class ReactorController : public chaos::CThreadExecutionTask, private Batch_Cont
     chaos::ui::DeviceController *chaosReactorController;
     int32_t simulationSpeed;
     ControllerState state;
+    high_resolution_clock::time_point lastExecutionTime;
+    high_resolution_clock::time_point currentExecutionTime;
+    int cycleCount;
 protected:
     virtual void executeOnThread(const string&) throw(CException);
     

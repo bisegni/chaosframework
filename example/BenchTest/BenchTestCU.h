@@ -24,6 +24,7 @@
 
 #include <string>
 #include <boost/thread.hpp>
+#include <boost/chrono.hpp>
 #include <chaos/common/utility/Atomic.h>
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 
@@ -35,6 +36,9 @@ class BenchTestCU : public AbstractControlUnit {
     string reactorName;
     Batch_Reactor *reactorInstance;
     boost::shared_mutex _setControlValueMutext;
+    high_resolution_clock::time_point lastExecutionTime;
+    high_resolution_clock::time_point currentExecutionTime;
+    int cycleCount;
 public:
 
     /*

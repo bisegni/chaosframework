@@ -12,7 +12,7 @@
 
 ReactorController::ReactorController(string& _rName, vector<double> *refVec, int refIdx, int32_t _simulationSpeed):reactorID(_rName) {
     chaosThread.reset(new chaos::CThread(this));
-    chaosThread->setDelayBeetwenTask(CU_DELAY_FROM_TASKS);
+    chaosThread->setDelayBeetwenTask(_simulationSpeed);
     simulationSpeed = _simulationSpeed;
     //set the referement for this reactor controller
     for(int idx = 0; idx < Q; idx++) {
@@ -46,6 +46,9 @@ void ReactorController::init() {
     chaosReactorController->setScheduleDelay(simulationSpeed);
     //start the controller
     chaosThread->start();
+    cycleCount = 0;
+    lastExecutionTime = steady_clock::now();
+
 }
 
 void ReactorController::deinit() {
@@ -68,7 +71,7 @@ void ReactorController::joinThread(){
                       
 void ReactorController::executeOnThread(const string&) throw(CException) {
     //state of the reactor
-
+    cycleCount++;
     //execute the control of the reactor
     
     chaosReactorController->fetchCurrentDeviceValue();
@@ -82,8 +85,15 @@ void ReactorController::executeOnThread(const string&) throw(CException) {
     
     Batch_Controller::compute_controllo();
     
-    LAPP_ << "Control_A=" << Batch_Controller::u[0] << " reactor Control_B="<< Batch_Controller::u[1];
-    
+    //LAPP_ << "Control_A=" << Batch_Controller::u[0] << " reactor Control_B="<< Batch_Controller::u[1];
+    boost::chrono::microseconds diff = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now() - lastExecutionTime);
+    if(diff.count() >= 1000000) {
+        //print every second the value
+        LAPP_ << "Cycle count =" << cycleCount << " micro sec passed=" << diff.count() << " Control_A=" << Batch_Controller::u[0] << " reactor Control_B="<< Batch_Controller::u[1];
+        cycleCount = 0;
+        lastExecutionTime = boost::chrono::steady_clock::now();
+    }
+
     chaosReactorController->setDoubleAttributeValue("input_a", Batch_Controller::u[0]);
     chaosReactorController->setDoubleAttributeValue("input_b", Batch_Controller::u[1]);
 }

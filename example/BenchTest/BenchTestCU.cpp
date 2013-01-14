@@ -1,8 +1,8 @@
-/*	
+/*
  *	BenchTestCU.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,7 +33,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <iomanip>
-#include <time.h> 
+#include <time.h>
 #include <stdlib.h>
 using namespace chaos;
 
@@ -65,8 +65,8 @@ void BenchTestCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException
     
     //add managed device di
     addDeviceId(devIDInChar);
-
-
+    
+    
     //setup the dataset
     addAttributeToDataSet(devIDInChar,
                           "output_a",
@@ -79,13 +79,13 @@ void BenchTestCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException
                           "Reactor Output B",
                           DataType::TYPE_DOUBLE,
                           DataType::Output);
-
-
+    
+    
     addInputDoubleAttributeToDataSet<BenchTestCU>(devIDInChar,
-                                               "input_a",
-                                               "Reactor Output A",
-                                               this,
-                                               &BenchTestCU::setControlA);
+                                                  "input_a",
+                                                  "Reactor Output A",
+                                                  this,
+                                                  &BenchTestCU::setControlA);
     
     addInputDoubleAttributeToDataSet<BenchTestCU>(devIDInChar,
                                                   "input_b",
@@ -104,7 +104,8 @@ void BenchTestCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException
  Initialize the Custom Contro Unit and return the configuration
  */
 void BenchTestCU::init(CDataWrapper *newConfiguration) throw(CException) {
-   
+    cycleCount = 0;
+    lastExecutionTime = steady_clock::now();
 }
 
 /*
@@ -112,6 +113,7 @@ void BenchTestCU::init(CDataWrapper *newConfiguration) throw(CException) {
  */
 void BenchTestCU::run(const string& deviceID) throw(CException) {
     const char *devIDInChar = reactorName.c_str();
+    cycleCount++;
     
     //get new data wrapper instance filled
     //with mandatory data
@@ -125,11 +127,19 @@ void BenchTestCU::run(const string& deviceID) throw(CException) {
     
     acquiredData->addDoubleValue("output_a", reactorInstance->y[0]);
     acquiredData->addDoubleValue("output_b", reactorInstance->y[1]);
-    LAPP_ << "Output_A=" << reactorInstance->y[0] << " reactor Output_B="<< reactorInstance->y[1];
+    //LAPP_ << " Output_A=" << reactorInstance->y[0] << " Output_B="<< reactorInstance->y[1];
+    //check microseconds diff
+    boost::chrono::microseconds diff = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now() - lastExecutionTime);
+    if(diff.count() >= 1000000) {
+        //print every second the value
+        LAPP_ << "Cycle count =" << cycleCount << " micro sec passed=" << diff.count() << " Output_A=" << reactorInstance->y[0] << " Output_B="<< reactorInstance->y[1];
+        cycleCount = 0;
+        lastExecutionTime = boost::chrono::steady_clock::now();
+    }
     pushDataSetForKey(devIDInChar, acquiredData);
     
     reactorInstance->compute_state();
-
+    
 }
 
 /*

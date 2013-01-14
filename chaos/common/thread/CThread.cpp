@@ -162,9 +162,9 @@ void CThread::executeWork() {
             //se if we need to whait for the nex execution
             if(waithTimeInMicrosecond.count()>=0 && !m_stop) {
                 //count the nanosecond to waith
-                if(waithTimeInMicrosecond.count() > 0){
+                if(waithTimeInMicrosecond.count() > 1000){
                     toWaith = duration_cast<microseconds>(statisticData.ptimeNextStart - boost::chrono::steady_clock::now());
-                    boost::this_thread::sleep(boost::posix_time::microseconds(toWaith.count() - 500));
+                    boost::this_thread::sleep(boost::posix_time::microseconds(toWaith.count()));
                 }
             } else {
                 //if m_stop==true or waithTimeInMicrosecond is < 0
