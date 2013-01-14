@@ -19,3 +19,6 @@ ADD_EXECUTABLE(BenchTestController ${reactor_controller_exe_src})
 
 TARGET_LINK_LIBRARIES(BenchTestReactor chaos_cutoolkit chaos_common boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached msgpack msgpack-rpc mpio) 
 TARGET_LINK_LIBRARIES(BenchTestController chaos_uitoolkit chaos_common boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached msgpack msgpack-rpc mpio) 
+
+INSTALL_TARGETS(/bin BenchTestReactor)
+INSTALL_TARGETS(/bin BenchTestController)

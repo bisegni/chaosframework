@@ -70,6 +70,7 @@ using namespace boost::date_time;
 #include <string>
 #include "config.h"
 #include "MainOrkestrator.h"
+
 inline ptime utcToLocalPTime(ptime utcPTime){
 	c_local_adjustor<ptime> utcToLocalAdjustor;
 	ptime t11 = utcToLocalAdjustor.utc_to_local(utcPTime);
@@ -81,6 +82,8 @@ int main (int argc, char* argv[] )
     try {
         std::vector< std::string > names;
         std::vector< double > referements;
+        std::vector< int32_t > simulated_speed;
+        
         string tmpDeviceID("bench_reactor");
         
         //initial state value
@@ -90,6 +93,7 @@ int main (int argc, char* argv[] )
         //! [UIToolkit Attribute Init]
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(REACTOR_NAMES, po::value< std::vector< std::string > >()->multitoken(), "The id (and implicit the number) of the rectors");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(REACTOR_REFEREMENT_VALUE, po::value< std::vector< double > >()->multitoken(), "The name (and implicit the number) of the rectors");
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(SIMULATION_SPEED_USEC, po::value< std::vector< int32_t > >()->multitoken(), "The speed of simulation of the rectors");
         //! [UIToolkit Attribute Init]
         
         //! [UIToolkit Init]
@@ -109,16 +113,24 @@ int main (int argc, char* argv[] )
             }
         }
         
+        if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(SIMULATION_SPEED_USEC)){
+            simulated_speed = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption< std::vector< int32_t > >(SIMULATION_SPEED_USEC);
+        } else {
+            simulated_speed.push_back(20000);
+        }
+        
         if(referements.size() != names.size() * Q) {
             char error[128];
             sprintf ( error, "every reactor identified need to have %d referement", Q );
             throw chaos::CException(0, error, "main");
         }
-        
+        if(names.size() != simulated_speed.size()) {
+            throw chaos::CException(1, "every reactor identified need to have default speed", "main");
+        }
         //! [UIToolkit Init]
         
         //! [Allocate the main orkestrator]
-        auto_ptr<MainOrkestrator> ork(new MainOrkestrator(&names, &referements));
+        auto_ptr<MainOrkestrator> ork(new MainOrkestrator(&names, &referements, &simulated_speed));
         ork->init();
         ork->join();
         //! [Allocate the main orkestrator]

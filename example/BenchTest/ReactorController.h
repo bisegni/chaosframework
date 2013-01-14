@@ -29,12 +29,13 @@ class ReactorController : public chaos::CThreadExecutionTask, private Batch_Cont
     string reactorID;
     boost::shared_ptr<CThread> chaosThread;
     chaos::ui::DeviceController *chaosReactorController;
+    int32_t simulationSpeed;
     ControllerState state;
 protected:
     virtual void executeOnThread(const string&) throw(CException);
     
 public:
-    ReactorController(string& _rName, vector<double> *refVec, int refIdx);
+    ReactorController(string& _rName, vector<double> *refVec, int refIdx, int32_t _simulationSpeed);
     ~ReactorController();
     void init();
     void deinit();

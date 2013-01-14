@@ -16,6 +16,7 @@ const int Q = 2; //Numero uscite sistema Reattore;
 #define REACTOR_NAMES               "reactor_names"
 #define OPT_START_STATE             "state_initial_condition"
 #define REACTOR_REFEREMENT_VALUE    "referement_value"
+#define SIMULATION_SPEED_USEC       "simulation_speed"
 #define CU_DELAY_FROM_TASKS         20000 //20msec
 
 #endif

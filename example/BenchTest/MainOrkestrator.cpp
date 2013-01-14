@@ -7,13 +7,17 @@
 //
 
 #include "MainOrkestrator.h"
+#include <cstring>
+#include <signal.h>
+using namespace std;
 
 chaos::WaitSemaphore MainOrkestrator::waitCloseSemaphore;
 
-MainOrkestrator::MainOrkestrator(std::vector< std::string > *_reactordeviceIDs, std::vector< double > *_reactorsReferements) {
+MainOrkestrator::MainOrkestrator(std::vector< std::string > *_reactordeviceIDs, std::vector< double > *_reactorsReferements, std::vector< int32_t > *_reactorSimulatedSpeed) {
     waithUntilEnd = true;
     reactordeviceIDs = _reactordeviceIDs;
     reactorsReferements = _reactorsReferements;
+    reactorSimulatedSpeed = _reactorSimulatedSpeed;
     
     if (signal((int) SIGINT, MainOrkestrator::signalHanlder) == SIG_ERR){
         LERR_ << "SIGINT Signal handler registraiton error";
@@ -30,7 +34,7 @@ MainOrkestrator::~MainOrkestrator() {
 
 void MainOrkestrator::init() {
     for(int idx = 0, refIdx = 0; idx < reactordeviceIDs->size(); idx++, refIdx+=Q) {
-        ReactorController *ctrl = new ReactorController((*reactordeviceIDs)[idx], reactorsReferements, refIdx);
+        ReactorController *ctrl = new ReactorController((*reactordeviceIDs)[idx], reactorsReferements, refIdx, (*reactorSimulatedSpeed)[idx]);
         if(ctrl) ctrl->init();
         reactorControllerList.add(ctrl);
     }

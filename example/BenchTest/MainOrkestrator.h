@@ -19,6 +19,7 @@ class MainOrkestrator {
     bool waithUntilEnd;
     std::vector< std::string > *reactordeviceIDs;
     std::vector< double > *reactorsReferements;
+    std::vector< int32_t > *reactorSimulatedSpeed;
     chaos::ArrayPointer< ReactorController > reactorControllerList;
     
     static chaos::WaitSemaphore waitCloseSemaphore;
@@ -29,7 +30,7 @@ class MainOrkestrator {
 public:
     typedef boost::mutex::scoped_lock lock;
  
-    MainOrkestrator(std::vector< std::string > *_reactordeviceIDs, std::vector< double > *_reactorsReferements);
+    MainOrkestrator(std::vector< std::string > *_reactordeviceIDs, std::vector< double > *_reactorsReferements, std::vector< int32_t > *_simulatedSpeed);
     ~MainOrkestrator();
     void init();
     void join();

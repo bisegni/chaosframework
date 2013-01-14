@@ -10,10 +10,10 @@
 #include "ReactorController.h"
 
 
-ReactorController::ReactorController(string& _rName, vector<double> *refVec, int refIdx):reactorID(_rName) {
+ReactorController::ReactorController(string& _rName, vector<double> *refVec, int refIdx, int32_t _simulationSpeed):reactorID(_rName) {
     chaosThread.reset(new chaos::CThread(this));
     chaosThread->setDelayBeetwenTask(CU_DELAY_FROM_TASKS);
-    
+    simulationSpeed = _simulationSpeed;
     //set the referement for this reactor controller
     for(int idx = 0; idx < Q; idx++) {
         rif[idx] = (*refVec)[refIdx + idx];
@@ -43,7 +43,7 @@ void ReactorController::init() {
         }
     }
     
-    chaosReactorController->setScheduleDelay(CU_DELAY_FROM_TASKS);
+    chaosReactorController->setScheduleDelay(simulationSpeed);
     //start the controller
     chaosThread->start();
 }
