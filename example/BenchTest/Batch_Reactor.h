@@ -32,6 +32,7 @@ class Batch_Reactor {
 	double u[P]; // control value
 	
     Batch_Reactor();
+    void reset();
 	void compute_output();
 	void compute_state(); //non modificare il tempo di campionamente DeltaT!!!
 	void update_output();

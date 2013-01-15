@@ -104,6 +104,7 @@ void BenchTestCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException
  Initialize the Custom Contro Unit and return the configuration
  */
 void BenchTestCU::init(CDataWrapper *newConfiguration) throw(CException) {
+    reactorInstance->reset();
     cycleCount = 0;
     lastExecutionTime = steady_clock::now();
 }

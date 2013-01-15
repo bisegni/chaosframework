@@ -13,11 +13,16 @@
  
  */
 
-
+#include <cstring>
 #include <math.h>
 #include "Batch_Reactor.h"
 
+using namespace std;
+
 Batch_Reactor::Batch_Reactor() {
+}
+
+void Batch_Reactor::reset() {
     memset(x, 0, N * sizeof(double));
     memset(y, 0, Q * sizeof(double));
     memset(u, 0, P * sizeof(double));

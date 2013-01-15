@@ -9,9 +9,10 @@
  
  */
 
-#include <string>
+#include <cstring>
 #include "Batch_Controller.h"
 
+using namespace std;
 
 Batch_Controller::Batch_Controller()
 {
