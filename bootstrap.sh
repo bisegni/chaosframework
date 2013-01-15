@@ -8,7 +8,8 @@ pushd `dirname $0` > /dev/null
 SCRIPTPATH=`pwd -P`
 popd > /dev/null
 
-BOOST_VERSION=1_50_0
+BOOST_VERSION=1_52_0
+BOOST_VERSION_IN_PATH=1.52.0
 LMEM_VERSION=1.0.14
 CHAOS_DIR=$SCRIPTPATH
 BASE_EXTERNAL=$CHAOS_DIR/external
@@ -41,7 +42,7 @@ fi
 if [ ! -d "$PREFIX/include/boost" ]; then
     if [ ! -e "$BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz" ]; then
         echo "Download boost source"
-        wget --no-check-certificate -O $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz "http://downloads.sourceforge.net/project/boost/boost/1.50.0/boost_$BOOST_VERSION.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F1.51.0%2F&ts=1350734344&use_mirror=freefr"
+        wget --no-check-certificate -O $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz "http://downloads.sourceforge.net/project/boost/boost/$BOOST_VERSION_IN_PATH/boost_$BOOST_VERSION.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F$BOOST_VERSION_IN_PATH%2F&ts=1350734344&use_mirror=freefr"
         
     fi
 

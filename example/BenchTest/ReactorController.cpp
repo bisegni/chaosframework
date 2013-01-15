@@ -78,8 +78,7 @@ void ReactorController::executeOnThread(const string&) throw(CException) {
     
     chaos::CDataWrapper *reactorCurrentState = chaosReactorController->getCurrentData();
     
-    if(!reactorCurrentState) return; // no data found
-    //fill the array 
+    if(!reactorCurrentState) return; // no data found     //fill the array 
     Batch_Controller::y[0] = reactorCurrentState->getDoubleValue("output_a");
     Batch_Controller::y[1] = reactorCurrentState->getDoubleValue("output_b");
     
