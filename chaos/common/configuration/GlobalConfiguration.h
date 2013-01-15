@@ -129,9 +129,13 @@ x = hasOption(y);
         
         
         template<typename T>
-        T getOption(const char* optName){
+        T getOption(const char* optName) throw (CException){
+            if(vm.count(optName)==0) {
+                string opt=string("option:") + "\""+optName + "\"" + string(" not given");
+                throw CException(2,opt.c_str(),"GlobalConfiguration::getOption");
+            }
             return vm[optName].as<T>();
-        }
+            }
         
         /**
          *return the cdatawrapper that contains the global configuraiton
@@ -147,7 +151,7 @@ x = hasOption(y);
             bool isHostnameAndPort = regex_match(mdsAddress, ServerHostNameRegExp);
             bool isIpAndPort  = regex_match(mdsAddress, ServerIPAndPortRegExp);
             if(!isHostnameAndPort && !isIpAndPort)
-                throw new CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
+                throw CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
             
                 //address can be added
             configuration.addStringValue(LiveHistoryMDSConfiguration::CS_LIB_METADATASET_ADDRESS, mdsAddress);
@@ -159,7 +163,7 @@ x = hasOption(y);
         void addLocalServerAddress(const char * mdsAddress) throw (CException) {
             bool isIp = regex_match(mdsAddress, ServerIPRegExp);
             if(!isIp)
-                throw new CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
+                throw CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
             
                 //address can be added
             configuration.addStringValue("local_ip", mdsAddress);
