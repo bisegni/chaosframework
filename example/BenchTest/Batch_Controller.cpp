@@ -36,7 +36,7 @@ void Batch_Controller::compute_controllo() {
 	e[1] = rif[1] - y[1];
     
 	u[0] = u_precedente[0] + 2.01*e[1] - 1.99*e_precedente[1];
-	u[1] = u_precedente[1] -5.04*e[0] +  4.96*e_precedente[0];
+	u[1] = u_precedente[1] - 5.04*e[0] +  4.96*e_precedente[0];
     
 	u_precedente[0] = u[0];
 	u_precedente[1] = u[1];

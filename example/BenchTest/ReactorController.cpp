@@ -93,7 +93,7 @@ void ReactorController::executeOnThread(const string&) throw(CException) {
         lastExecutionTime = boost::chrono::steady_clock::now();
     }
 
-    chaosReactorController->setDoubleAttributeValue("input_a", Batch_Controller::u[0]);
-    chaosReactorController->setDoubleAttributeValue("input_b", Batch_Controller::u[1]);
+    chaosReactorController->setAttributeToValue("input_a", DataType::TYPE_DOUBLE, (void*)&Batch_Controller::u[0], true);
+    chaosReactorController->setAttributeToValue("input_b", DataType::TYPE_DOUBLE, (void*)&Batch_Controller::u[1], true);
 }
 

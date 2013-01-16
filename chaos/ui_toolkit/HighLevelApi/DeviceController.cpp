@@ -207,6 +207,48 @@ int DeviceController::setDoubleAttributeValue(const char *attributeName, double 
     return deviceChannel->setAttributeValue(attributeValuePack, millisecToWait);
 }
 
+int DeviceController::setAttributeToValue(const char *attributeName, DataType::DataType attributeType, void *attributeValue, bool noWait, int32_t bufferValuedDim) {
+    CDataWrapper attributeValuePack;
+    switch (attributeType) {
+        case DataType::TYPE_BOOLEAN: {
+            bool *boolValuePtr = static_cast<bool *>(attributeValue);
+            attributeValuePack.addBoolValue(attributeName, *boolValuePtr);
+            break;
+        }
+        case DataType::TYPE_STRING:{
+            const char *strValuePtr = static_cast<const char *>(attributeValue);
+            attributeValuePack.addStringValue(attributeName, strValuePtr);
+            break;
+        }
+        case DataType::TYPE_DOUBLE:{
+            double *doubleValuePtr = static_cast<double*>(attributeValue);
+            attributeValuePack.addDoubleValue(attributeName, *doubleValuePtr);
+            break;
+        }
+        case DataType::TYPE_INT32:{
+            int32_t *i32ValuePtr = static_cast<int32_t*>(attributeValue);
+            attributeValuePack.addInt32Value(attributeName, *i32ValuePtr);
+            break;
+        }
+        case DataType::TYPE_INT64:{
+            int64_t *i64ValuePtr = static_cast<int64_t*>(attributeValue);
+            attributeValuePack.addInt64Value(attributeName, *i64ValuePtr);
+            break;
+        }
+        case DataType::TYPE_STRUCT:{
+            CDataWrapper *cdValuePtr = static_cast<CDataWrapper*>(attributeValue);
+            attributeValuePack.appendAllElement(*cdValuePtr);
+            break;
+        }
+        case DataType::TYPE_BYTEARRAY:{
+            const char *byteArrayValuePtr = static_cast<const char*>(attributeValue);
+            attributeValuePack.addBinaryValue(attributeName, byteArrayValuePtr, bufferValuedDim);
+            break;
+        }
+    }
+    return deviceChannel->setAttributeValue(attributeValuePack, noWait, millisecToWait);
+}
+
 /*!
  Initialize the map for the devices
  \param initiDevicedescription the reference to CDataWrapper that contain device initialization information

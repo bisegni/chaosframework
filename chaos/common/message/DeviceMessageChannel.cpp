@@ -110,16 +110,19 @@ int DeviceMessageChannel::getState(CUStateKey::ControlUnitState& deviceState, ui
 }
 
     //------------------------------------
-int DeviceMessageChannel::setAttributeValue(CDataWrapper& attributesValues, uint32_t millisecToWait) {
+int DeviceMessageChannel::setAttributeValue(CDataWrapper& attributesValues, bool noWait, uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
         //create the pack
     //CDataWrapper deviceAttributeValues;
         //setup with the deviceID code
     attributesValues.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, deviceNetworkAddress->deviceID);
     //deviceAttributeValues.addCSDataValue(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION, attributesValues);
-
-    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), "setDatasetAttribute", &attributesValues, millisecToWait));
-    CHECK_TIMEOUT_AND_RESULT_CODE(initResult, err)
+    if(noWait){
+        MessageChannel::sendMessage(deviceNetworkAddress->nodeID.c_str(), "setDatasetAttribute", &attributesValues);
+    } else {
+        auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), "setDatasetAttribute", &attributesValues, millisecToWait));
+        CHECK_TIMEOUT_AND_RESULT_CODE(initResult, err)
+    }
     return err;
 }
 

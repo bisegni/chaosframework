@@ -198,6 +198,7 @@ namespace chaos {
             int setDoubleAttributeValue(string& attributeName, double attributeValue);
             int setDoubleAttributeValue(const char *attributeName, double attributeValue); 
             
+            int setAttributeToValue(const char *attributeName, DataType::DataType attributeType, void *attributeValue, bool noWait = false, int32_t bufferValuedDim = 0);
                 //!Get device state
             /*!
              Return the current device state

@@ -83,7 +83,7 @@ namespace chaos {
          All the CDataWrapper is sent as pack for the device attributes values, no check is done
          \param attributesValues the container for the values of some dataset attributes
          */
-        int setAttributeValue(CDataWrapper& attributesValues, uint32_t millisecToWait = 0);
+        int setAttributeValue(CDataWrapper& attributesValues, bool noWait = false, uint32_t millisecToWait = 0);
         
             //!Set the device thread schedule delay
         /*!
