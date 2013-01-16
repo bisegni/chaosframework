@@ -119,17 +119,17 @@ namespace bson {
     void UserException::appendPrefix( stringstream& ss ) const { ss << "userassert:"; }
     void MsgAssertionException::appendPrefix( stringstream& ss ) const { ss << "massert:"; }
 
-    NOINLINE_DECL void uasserted(int msgid, const char *msg) {
+    MONGO_COMPILER_NORETURN NOINLINE_DECL void uasserted(int msgid, const char *msg) {
         assertionCount.condrollover( ++assertionCount.user );
         
         throw UserException(msgid, msg);
     }
 
-    void msgasserted(int msgid, const string &msg) {
+    MONGO_COMPILER_NORETURN void msgasserted(int msgid, const string &msg) {
         msgasserted(msgid, msg.c_str());
     }
 
-    NOINLINE_DECL void msgasserted(int msgid, const char *msg) {
+    MONGO_COMPILER_NORETURN NOINLINE_DECL void msgasserted(int msgid, const char *msg) {
         assertionCount.condrollover( ++assertionCount.warning );
         throw MsgAssertionException(msgid, msg);
     }

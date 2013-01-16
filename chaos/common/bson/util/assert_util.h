@@ -166,18 +166,18 @@ namespace bson {
     /** a "user assertion".  throws UserAssertion.  logs.  typically used for errors that a user
         could cause, such as duplicate key, disk full, etc.
     */
-    MONGO_COMPILER_NORETURN void uasserted(int msgid, const char *msg);
-    MONGO_COMPILER_NORETURN void uasserted(int msgid , const std::string &msg);
+     void uasserted(int msgid, const char *msg);
+     void uasserted(int msgid , const std::string &msg);
 
     /** msgassert and massert are for errors that are internal but have a well defined error text std::string.
         a stack trace is logged.
     */
-    MONGO_COMPILER_NORETURN void msgassertedNoTrace(int msgid, const char *msg);
-    MONGO_COMPILER_NORETURN inline void msgassertedNoTrace(int msgid, const std::string& msg) {
+     void msgassertedNoTrace(int msgid, const char *msg);
+     inline void msgassertedNoTrace(int msgid, const std::string& msg) {
         msgassertedNoTrace( msgid , msg.c_str() );
     }
-    MONGO_COMPILER_NORETURN void msgasserted(int msgid, const char *msg);
-    MONGO_COMPILER_NORETURN void msgasserted(int msgid, const std::string &msg);
+     void msgasserted(int msgid, const char *msg);
+     void msgasserted(int msgid, const std::string &msg);
 
     /* convert various types of exceptions to strings */
     inline std::string causedBy( const char* e ){ return (std::string)" :: caused by :: " + e; }
