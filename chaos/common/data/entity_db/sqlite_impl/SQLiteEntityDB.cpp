@@ -69,7 +69,10 @@ int16_t SQLiteEntityDB::initDB(const char* name, bool temporary)  throw (CExcept
     std::string uriPath = "file:";
     uriPath.append(name);
     
-    if(_temporaryAllocation) {
+    //init superclass
+    EntityDB::initDB(name, temporary);
+    
+    if((_temporaryAllocation)) {
         //use mermory database for temporary
         uriPath.append("?mode=memory&cache=shared");
     }
@@ -79,11 +82,8 @@ int16_t SQLiteEntityDB::initDB(const char* name, bool temporary)  throw (CExcept
         stmt[i] = NULL;
     }
     
-    EntityDB::initDB(name, temporary);
-    
-    
     //open database
-    if(openDatabase(name) != SQLITE_OK) throw CException(errorSequence++, "Error openening database", "SQLiteEntityDB::initDB");
+    if(openDatabase(uriPath.c_str()) != SQLITE_OK) throw CException(errorSequence++, "Error openening database", "SQLiteEntityDB::initDB");
     
     //create tables
     if(makeInsertUpdateDelete(CREATE_SEQ_TABLE) != SQLITE_DONE) throw CException(1, "Error initializing sequence table", "SQLiteEntityDB::initDB");

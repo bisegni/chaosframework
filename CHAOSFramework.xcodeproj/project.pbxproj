@@ -279,6 +279,8 @@
 		32BF74AE167CEB57007F8A57 /* EntityDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 32BF74AC167CEB57007F8A57 /* EntityDB.h */; };
 		32C0CC98168CC16400BC2DA7 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C0CC96168CC16400BC2DA7 /* Entity.cpp */; };
 		32C0CC99168CC16400BC2DA7 /* Entity.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C0CC97168CC16400BC2DA7 /* Entity.h */; };
+		32CF054816AB23C200E86CC7 /* PerfTestCU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CF054616AB23C200E86CC7 /* PerfTestCU.cpp */; };
+		32CF054916AB23C200E86CC7 /* PerfTestCU.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CF054716AB23C200E86CC7 /* PerfTestCU.h */; };
 		32CFF95B15E4D950005D607E /* EventDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95915E4D950005D607E /* EventDescriptor.cpp */; };
 		32CFF95C15E4D950005D607E /* EventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFF95A15E4D950005D607E /* EventDescriptor.h */; };
 		32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95D15E4DBD3005D607E /* EventFactory.cpp */; };
@@ -618,6 +620,8 @@
 		32BF74AC167CEB57007F8A57 /* EntityDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityDB.h; sourceTree = "<group>"; };
 		32C0CC96168CC16400BC2DA7 /* Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = "<group>"; };
 		32C0CC97168CC16400BC2DA7 /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
+		32CF054616AB23C200E86CC7 /* PerfTestCU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerfTestCU.cpp; sourceTree = "<group>"; };
+		32CF054716AB23C200E86CC7 /* PerfTestCU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerfTestCU.h; sourceTree = "<group>"; };
 		32CFF95915E4D950005D607E /* EventDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventDescriptor.cpp; sourceTree = "<group>"; };
 		32CFF95A15E4D950005D607E /* EventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDescriptor.h; sourceTree = "<group>"; };
 		32CFF95D15E4DBD3005D607E /* EventFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventFactory.cpp; sourceTree = "<group>"; };
@@ -1180,6 +1184,7 @@
 		326DB4A414B3A3E50018A8D0 /* ControlManager */ = {
 			isa = PBXGroup;
 			children = (
+				32CF054416AB235100E86CC7 /* perf_test */,
 				328D2FBF16612A15007F482E /* handler */,
 				328D2FB51660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp */,
 				328D2FB61660EACD007F482E /* DSAttributeHandlerExecutionEngine.h */,
@@ -1376,6 +1381,15 @@
 				3289F9A4168508460080D93F /* SQLiteEntityDB.h */,
 			);
 			path = sqlite_impl;
+			sourceTree = "<group>";
+		};
+		32CF054416AB235100E86CC7 /* perf_test */ = {
+			isa = PBXGroup;
+			children = (
+				32CF054616AB23C200E86CC7 /* PerfTestCU.cpp */,
+				32CF054716AB23C200E86CC7 /* PerfTestCU.h */,
+			);
+			path = perf_test;
 			sourceTree = "<group>";
 		};
 		32DF602B15E14B1900312C94 /* evt_desc */ = {
@@ -1603,6 +1617,7 @@
 				328D2FC316612AB3007F482E /* DSInt32Handler.h in Headers */,
 				32DB1188166267FB0036D1B9 /* DSDoubleHandler.h in Headers */,
 				3264B05C1673623F002E87FA /* TDSObjectHandler.h in Headers */,
+				32CF054916AB23C200E86CC7 /* PerfTestCU.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1864,6 +1879,7 @@
 				326DB4CD14B3A3E50018A8D0 /* MultiBufferDataStorage.cpp in Sources */,
 				328D2FB71660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp in Sources */,
 				328D2FB91660EAD6007F482E /* DSAttributeHandler.cpp in Sources */,
+				32CF054816AB23C200E86CC7 /* PerfTestCU.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -19,7 +19,7 @@ int main(int argc, const char * argv[])
         
         chaos::ArrayPointer<chaos::edb::KeyIdAndValue> properties;
         auto_ptr<chaos::edb::EntityDB> testDB (new chaos::edb::SQLiteEntityDB());
-        testDB->initDB("test", false);
+        testDB->initDB("test_one", true);
         
         chaos::edb::KeyIdAndValue deviceInfo;
         chaos::edb::KeyIdAndValue propertyInfo;

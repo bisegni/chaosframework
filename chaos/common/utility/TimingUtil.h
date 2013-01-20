@@ -19,7 +19,7 @@
  */
 #ifndef ChaosFramework_TimingUtil_h
 #define ChaosFramework_TimingUtil_h
-
+#include <chaos/common/global.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace chaos {

@@ -1,8 +1,8 @@
-/*	
+/*
  *	ControlException.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,25 +22,26 @@
 #include <string>
 using namespace std;
 namespace chaos{
-/*
- Base class for exception in control system library
- */
-class CException {
-
-public:
-        //identify the number for the error
-    int errorCode;
-        //describe the error that occour
-    string errorMessage;
-        //identify the domain(ControlUnit, DataManager, ....)
-    string errorDomain;
-
-    CException(int eCode, const char * eMessage,  const char * eDomain){
-        errorCode=eCode;
-        if(eMessage)errorMessage = eMessage;
-        if(eDomain)errorDomain = eDomain;
+    /*
+     Base class for exception in control system library
+     */
+    class CException {
         
+    public:
+        //identify the number for the error
+        int errorCode;
+        //describe the error that occour
+        string errorMessage;
+        //identify the domain(ControlUnit, DataManager, ....)
+        string errorDomain;
+        
+        explicit CException(int eCode, const char * eMessage,  const char * eDomain):errorCode(eCode),
+        errorMessage( eMessage, strlen( eMessage )),
+        errorDomain( eDomain, strlen( eDomain )){};
+        
+        explicit CException(int eCode, std::string& eMessage,  std::string& eDomain):errorCode(eCode),
+        errorMessage(eMessage),
+        errorDomain(eDomain) {};
     };
-};
 }
 #endif
