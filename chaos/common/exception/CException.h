@@ -20,6 +20,7 @@
 #ifndef ControlException_H
 #define ControlException_H
 #include <string>
+#include <cstring>
 using namespace std;
 namespace chaos{
     /*
