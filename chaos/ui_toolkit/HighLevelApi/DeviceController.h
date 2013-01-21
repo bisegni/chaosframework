@@ -1,4 +1,4 @@
-/*	
+/*
  *	DeviceLiveDataFetcher.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
@@ -192,11 +192,16 @@ namespace chaos {
              */
             int deinitDevice();
             
-            int setInt32AttributeValue(string& attributeName, int32_t attributeValue);
-            int setInt32AttributeValue(const char *attributeName, int32_t attributeValue);
+            int setAttributeValue(string& attributeName, int32_t attributeValue);
+            int setAttributeValue(const char *attributeName, int32_t attributeValue);
             
-            int setDoubleAttributeValue(string& attributeName, double attributeValue);
-            int setDoubleAttributeValue(const char *attributeName, double attributeValue); 
+            int setAttributeValue(string& attributeName, double attributeValue);
+            int setAttributeValue(const char *attributeName, double attributeValue);
+            
+            int setAttributeValue(string& attributeName, string& attributeValue);
+            int setAttributeValue(string& attributeName, const char* attributeValue);
+            // buffer
+            int setAttributeValue(string& attributeName, const char* attributeValue,int size);
             
             int setAttributeToValue(const char *attributeName, DataType::DataType attributeType, void *attributeValue, bool noWait = false, int32_t bufferValuedDim = 0);
                 //!Get device state
