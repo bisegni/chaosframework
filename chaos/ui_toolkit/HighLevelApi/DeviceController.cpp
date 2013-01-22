@@ -186,22 +186,22 @@ int DeviceController::getState(CUStateKey::ControlUnitState& deviceState) {
     return deviceChannel->getState(deviceState, millisecToWait); 
 }
 
-int DeviceController::setInt32AttributeValue(string& attributeName, int32_t attributeValue) {
-    return setInt32AttributeValue(attributeName.c_str(), attributeValue);
+
+int DeviceController::setAttributeValue(string& attributeName, int32_t attributeValue) {
+    return setAttributeValue(attributeName.c_str(), attributeValue);
 }
 
-int DeviceController::setInt32AttributeValue(const char *attributeName, int32_t attributeValue) {
+int DeviceController::setAttributeValue(const char *attributeName, int32_t attributeValue) {
     CDataWrapper attributeValuePack;
     attributeValuePack.addInt32Value(attributeName, attributeValue);
     return deviceChannel->setAttributeValue(attributeValuePack, millisecToWait);
 }
 
-int DeviceController::setDoubleAttributeValue(string& attributeName, double attributeValue) {
-    CDataWrapper attributeValuePack;
-    return setDoubleAttributeValue(attributeName.c_str(), attributeValue);
+int DeviceController::setAttributeValue(string& attributeName, double attributeValue) {
+    return setAttributeValue(attributeName.c_str(), attributeValue);
 }
 
-int DeviceController::setDoubleAttributeValue(const char *attributeName, double attributeValue) {
+int DeviceController::setAttributeValue(const char *attributeName, double attributeValue) {
     CDataWrapper attributeValuePack;
     attributeValuePack.addDoubleValue(attributeName, attributeValue);
     return deviceChannel->setAttributeValue(attributeValuePack, millisecToWait);
@@ -247,6 +247,50 @@ int DeviceController::setAttributeToValue(const char *attributeName, DataType::D
         }
     }
     return deviceChannel->setAttributeValue(attributeValuePack, noWait, millisecToWait);
+}
+
+int DeviceController::setAttributeValue(string& attributeName, string& attributeValue) {
+    return setAttributeValue(attributeName, attributeValue.c_str(),attributeValue.size());
+}
+
+int DeviceController::setAttributeValue(string& attributeName, const char* attributeValue) {
+    return setAttributeValue(attributeName, attributeValue,strlen(attributeValue));
+}
+
+int DeviceController::setAttributeValue(string& attributeName, const char* attributeValue,int size) {
+    CDataWrapper attributeValuePack;
+    const char *attrname=attributeName.c_str();
+    
+    if(attributeTypeMap.find(attributeName) == attributeTypeMap.end() )
+        return ErrorCode::EC_ATTRIBUTE_NOT_FOUND;
+    
+    if((attributeDirectionMap[attributeName]==DataType::Output))
+        return ErrorCode::EC_ATTRIBUTE_BAD_DIR;
+    
+    switch (attributeTypeMap[attributeName]) {
+        
+        case DataType::TYPE_INT64:
+            attributeValuePack.addInt64Value(attrname, boost::lexical_cast<int64_t>(attributeValue));
+            return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
+            
+        case DataType::TYPE_INT32:
+            attributeValuePack.addInt32Value(attrname, boost::lexical_cast<int32_t>(attributeValue));
+            return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
+            
+        case DataType::TYPE_DOUBLE:
+            attributeValuePack.addDoubleValue(attrname, boost::lexical_cast<double>(attributeValue));
+            return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
+            
+        case DataType::TYPE_BYTEARRAY:
+            attributeValuePack.addBinaryValue(attrname,attributeValue,size);
+            return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
+            
+        case DataType::TYPE_STRING:
+            attributeValuePack.addStringValue(attrname,attributeValue);
+            return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
+    };
+    return ErrorCode::EC_ATTRIBUTE_TYPE_NOT_SUPPORTED;
+
 }
 
 /*!

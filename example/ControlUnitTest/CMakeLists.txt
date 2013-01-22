@@ -7,7 +7,7 @@ IF( ($ENV{CHAOS32}) OR (BUILD_FORCE_32) )
     set (CMAKE_CXX_FLAGS "-m32")
     set (CMAKE_LINK_FLAGS "-m32")
 ENDIF()
-
+ADD_DEFINITIONS(-g -O2 -Wall)
 SET(cutest_exe_src ControlUnitExample.cpp WorkerCU.cpp)
 INCLUDE_DIRECTORIES(. ${PROJECT_SOURCE_DIR}/../../usr/local/include /usr/local/include /usr/include) 
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../usr/local/lib /usr/local/lib)
