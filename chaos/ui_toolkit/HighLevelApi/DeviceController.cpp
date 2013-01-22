@@ -264,7 +264,7 @@ int DeviceController::setAttributeValue(string& attributeName, const char* attri
     if(attributeTypeMap.find(attributeName) == attributeTypeMap.end() )
         return ErrorCode::EC_ATTRIBUTE_NOT_FOUND;
     
-    if((attributeDirectionMap[attributeName]==DataType::Output))
+    if(attributeDirectionMap[attributeName]==DataType::Output)
         return ErrorCode::EC_ATTRIBUTE_BAD_DIR;
     
     switch (attributeTypeMap[attributeName]) {
