@@ -256,7 +256,7 @@ extern "C" {
         try{
             DeviceController *dCtrl = getDeviceControllerFromID(devID);
             if(dCtrl && dsAttrName && dsAttrValueHandle) {
-                const CDataWrapper *  dataWrapper = ((DeviceController*)dCtrl)->getLiveCDataWrapperPtr();
+                CDataWrapper *  dataWrapper = ((DeviceController*)dCtrl)->getLiveCDataWrapperPtr();
                 if(dataWrapper && dataWrapper->hasKey(dsAttrName)) {
                     DataType::DataType attributeType;
                     string attributesName = dsAttrName;

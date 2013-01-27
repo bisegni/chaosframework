@@ -5,6 +5,8 @@ SET(common_lib_library boost_program_options boost_system boost_thread boost_chr
 
 ADD_LIBRARY(chaos_common SHARED ${common_lib_src})
 
+set_target_properties(chaos_common PROPERTIES VERSION 1.0.0 SOVERSION 1) 
+
 TARGET_LINK_LIBRARIES(chaos_common ${common_lib_library}) 
 
         

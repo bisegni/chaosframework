@@ -464,7 +464,7 @@ void DeviceController::addAttributeToTrack(string& attrbiuteName) {
 /*!
  the returned object is not own by requester but only by DeviceController isntance
  */
-const CDataWrapper * DeviceController::getLiveCDataWrapperPtr() {
+CDataWrapper * DeviceController::getLiveCDataWrapperPtr() {
     return currentLiveValue.get();
 }
 

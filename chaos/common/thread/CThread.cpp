@@ -164,7 +164,7 @@ void CThread::executeWork() {
                 //count the nanosecond to waith
                 if(waithTimeInMicrosecond.count()){
                     toWaith = duration_cast<microseconds>(statisticData.ptimeNextStart - boost::chrono::steady_clock::now());
-                    boost::this_thread::sleep(boost::posix_time::microseconds(toWaith.count()));
+                    boost::this_thread::sleep_for(toWaith);
                 }
             } else {
                 //if m_stop==true or waithTimeInMicrosecond is < 0

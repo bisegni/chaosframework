@@ -1,6 +1,8 @@
 SET(ui_lib_src ChaosUIToolkit.cpp ChaosUIToolkitCWrapper.cc HighLevelApi/DeviceController.cpp HighLevelApi/HLDataApi.cpp HighLevelApi/HLInfrastructureApi.cpp LowLevelApi/LLDataApi.cpp LowLevelApi/LLRpcApi.cpp)
 
 ADD_LIBRARY(chaos_uitoolkit SHARED ${ui_lib_src})
+set_target_properties(chaos_uitoolkit PROPERTIES VERSION 1.0.0 SOVERSION 1) 
+
 TARGET_LINK_LIBRARIES(chaos_uitoolkit chaos_common boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached msgpack msgpack-rpc mpio) 
 
 FILE(GLOB files "*.h")

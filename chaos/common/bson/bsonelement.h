@@ -66,6 +66,7 @@ namespace bson {
             std::string foo = obj["foo"].String(); // std::exception if not a std::string type or DNE
         */
         std::string String()        const { return chk(bson::String).valuestr(); }
+        const char * CString()       const { return chk(bson::String).valuestr(); }
         Date_t Date()               const { return chk(bson::Date).date(); }
         double Number()             const { return chk(isNumber()).number(); }
         double Double()             const { return chk(NumberDouble)._numberDouble(); }

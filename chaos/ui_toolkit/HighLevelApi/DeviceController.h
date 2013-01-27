@@ -231,7 +231,7 @@ namespace chaos {
             /*!
              the returned object is not own by requester but only by DeviceController isntance
              */
-            const CDataWrapper * getLiveCDataWrapperPtr();
+            CDataWrapper * getLiveCDataWrapperPtr();
             
             /*!
              Fetch the current live value form live storage

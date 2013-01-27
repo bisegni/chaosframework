@@ -3,6 +3,7 @@ SET(cu_lib_src  ChaosCUToolkit.cpp CommandManager/CommandManager.cpp Configurati
                 DataManager/KeyDataStorage.cpp DataManager/MultiBufferDataStorage.cpp DataManager/DataBuffer/OutputDataBuffer.cpp ) 
 
 ADD_LIBRARY(chaos_cutoolkit SHARED ${cu_lib_src})
+set_target_properties(chaos_cutoolkit PROPERTIES VERSION 1.0.0 SOVERSION 1) 
 TARGET_LINK_LIBRARIES(chaos_cutoolkit chaos_common boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached msgpack msgpack-rpc mpio) 
 
 FILE(GLOB files "*.h")
