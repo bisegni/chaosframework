@@ -8,7 +8,7 @@ IF( ($ENV{CHAOS32}) OR (BUILD_FORCE_32) )
     set (CMAKE_LINK_FLAGS "-m32")
 ENDIF()
 
-SET(reactor_device_exe_src main_reactor.cpp Batch_Reactor.cpp BenchTestCU.cpp)
+SET(reactor_device_exe_src main_reactor.cpp Batch_Reactor.cpp BenchTestCU.cpp Disturbo.cpp)
 SET(reactor_controller_exe_src main_controller.cpp Batch_Controller.cpp ReactorController.cpp MainOrkestrator.cpp)
 
 INCLUDE_DIRECTORIES(. ${PROJECT_SOURCE_DIR}/../../usr/local/include /usr/local/include /usr/include) 
