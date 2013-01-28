@@ -10,25 +10,29 @@
  */
 
 #include "config.h"
+#include <math.h>
+#include <boost/random.hpp>
 
 class Batch_Controller {
 	
 	
-	double e[Q]; //variabile ausiliaria per il calcolo del valore del controllo;
+	double w[Pc]; //variabile ausiliaria per il calcolo del valore del controllo;
 	
-	double e_precedente[Q]; // variabile ausiliaria;
-	double u_precedente[Q]; // vairabile ausiliaria;
+	
 protected:
     double rif[Q]; //variabile per impostare un riferimento da far inseguire all'impianto;
-
+    
 public:
-    double u[P]; //variabile contenente il valore del controllo
-	double y[Q]; //variabile contenente il valore dell'uscita misurata dell'impianto
-
+    
+	double xc[Nc]; //vettore di stato del controllo;
+    double u[Qc]; //variabile contenente il valore del controllo;
+	double y[Q]; //variabile contenente il valore dell'uscita misurata dell'impianto;
+    
 	Batch_Controller();
 	virtual ~Batch_Controller();
 	
 	void read();
+	void compute_state();
 	void compute_controllo();
 	
 	

@@ -13,6 +13,7 @@
 		322F363716A1E9C500731C3F /* Batch_Reactor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322F363516A1E9C000731C3F /* Batch_Reactor.cpp */; };
 		322F363916A1EA9400731C3F /* Batch_Controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322F363816A1EA9400731C3F /* Batch_Controller.cpp */; };
 		322F363C16A1EB8B00731C3F /* ReactorController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322F363A16A1EB8B00731C3F /* ReactorController.cpp */; };
+		3281BB9216B6CF96000C4FCD /* Disturbo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3281BB9016B6CF96000C4FCD /* Disturbo.cpp */; };
 		32B928B516A2DD32004064E4 /* MainOrkestrator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B928B116A2D7B8004064E4 /* MainOrkestrator.cpp */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +42,8 @@
 		322F363816A1EA9400731C3F /* Batch_Controller.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Batch_Controller.cpp; sourceTree = "<group>"; };
 		322F363A16A1EB8B00731C3F /* ReactorController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReactorController.cpp; sourceTree = "<group>"; };
 		322F363B16A1EB8B00731C3F /* ReactorController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReactorController.h; sourceTree = "<group>"; };
+		3281BB9016B6CF96000C4FCD /* Disturbo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Disturbo.cpp; sourceTree = SOURCE_ROOT; };
+		3281BB9116B6CF96000C4FCD /* Disturbo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Disturbo.h; sourceTree = SOURCE_ROOT; };
 		32B928B116A2D7B8004064E4 /* MainOrkestrator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MainOrkestrator.cpp; sourceTree = "<group>"; };
 		32B928B216A2D7B8004064E4 /* MainOrkestrator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainOrkestrator.h; sourceTree = "<group>"; };
 		32BE864A15A0E3C500818C39 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
@@ -102,6 +105,8 @@
 		326DB50714B3B7890018A8D0 /* src_reactor */ = {
 			isa = PBXGroup;
 			children = (
+				3281BB9116B6CF96000C4FCD /* Disturbo.h */,
+				3281BB9016B6CF96000C4FCD /* Disturbo.cpp */,
 				322F363016A1DBA600731C3F /* Batch_Reactor.h */,
 				322F363516A1E9C000731C3F /* Batch_Reactor.cpp */,
 				322F360A16A1CEE000731C3F /* BenchTestCU.h */,
@@ -194,6 +199,7 @@
 				322F360C16A1CEE000731C3F /* BenchTestCU.cpp in Sources */,
 				322F360D16A1CEE000731C3F /* main_reactor.cpp in Sources */,
 				322F363716A1E9C500731C3F /* Batch_Reactor.cpp in Sources */,
+				3281BB9216B6CF96000C4FCD /* Disturbo.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

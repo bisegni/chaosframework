@@ -83,7 +83,7 @@ void ReactorController::executeOnThread(const string&) throw(CException) {
     Batch_Controller::y[1] = reactorCurrentState->getDoubleValue("output_b");
     
     Batch_Controller::compute_controllo();
-    
+    Batch_Controller::compute_state();
     //LAPP_ << "Control_A=" << Batch_Controller::u[0] << " reactor Control_B="<< Batch_Controller::u[1];
     boost::chrono::microseconds diff = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now() - lastExecutionTime);
     if(diff.count() >= 1000000) {

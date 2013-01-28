@@ -17,26 +17,25 @@
 #include <boost/random.hpp>
 #include <math.h>
 #include "config.h"
-
+#include "Disturbo.h"
 
 using namespace boost;
 
 class Batch_Reactor {
     double error;
-	double y_trasmessa[Q];
-	double perturbation[N]; // initial condition
-    
-	public:
+    Disturbo noise;
+public:
     double x[N]; // initial condition
 	double y[Q]; // reactor output
 	double u[P]; // control value
+    double y_trasmessa[Q];
+	double d;
 	
     Batch_Reactor();
-    void reset();
 	void compute_output();
 	void compute_state(); //non modificare il tempo di campionamente DeltaT!!!
 	void update_output();
-	void perturbateState(double seed);
+    void reset();
 };
 #endif
 
