@@ -33,11 +33,16 @@ Batch_Controller::~Batch_Controller() {
 
 void Batch_Controller::compute_state() {
 	
+	double xc1[Nc];
+	
 	for(int i=0;i<Nc;i++)
-        xc[i] = Ac[i*Nc]*xc[0]+Ac[i*Nc+1]*xc[1]+Ac[i*Nc+2]*xc[2]+Ac[i*Nc+3]*xc[3]+Ac[i*Nc+4]*xc[4]+Ac[i*Nc+5]*xc[5]+Ac[i*Nc+6]*xc[6]
+        xc1[i] = Ac[i*Nc]*xc[0]+Ac[i*Nc+1]*xc[1]+Ac[i*Nc+2]*xc[2]+Ac[i*Nc+3]*xc[3]+Ac[i*Nc+4]*xc[4]+Ac[i*Nc+5]*xc[5]+Ac[i*Nc+6]*xc[6]
         +Ac[i*Nc+7]*xc[7]+Ac[i*Nc+8]*xc[8]+Ac[i*Nc+9]*xc[9]+Ac[i*Nc+10]*xc[10]+Ac[i*Nc+11]*xc[11]
         +Bc[i*Pc]*w[0]+Bc[i*Pc+1]*w[1]+Bc[i*Pc+2]*w[2]+Bc[i*Pc+3]*w[3];
-	
+    
+    for(int i=0;i<Nc;i++)
+     xc[i]=xc1[i];
+     
 }
 
 

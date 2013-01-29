@@ -10,12 +10,13 @@
 class Disturbo {
     double xd[2];
 	double d[2];
+	double omega;
 	int n;
     
     public:
     
     Disturbo();
-	void getNoise(double&);
+	void getNoise(double []);
 };
 #endif
 

@@ -29,7 +29,7 @@ public:
 	double y[Q]; // reactor output
 	double u[P]; // control value
     double y_trasmessa[Q];
-	double d;
+	double d[2];
 	
     Batch_Reactor();
 	void compute_output();

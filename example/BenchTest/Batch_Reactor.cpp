@@ -25,10 +25,16 @@ Batch_Reactor::Batch_Reactor() {
 // FUNZIONE MODIFICATA!!!
 
 void Batch_Reactor::compute_state() {
+	
+	double x1[N];
+	
 	noise.getNoise(d);
 	for(int i=0;i<N;i++)
-        x[i] = A[i*N]*x[0]+A[i*N+1]*x[1]+A[i*N+2]*x[2]+A[i*N+3]*x[3]+B[i*P]*u[0]+B[i*P+1]*u[1]+B[i*P+2]*d;
+        x1[i] = A[i*N]*x[0]+A[i*N+1]*x[1]+A[i*N+2]*x[2]+A[i*N+3]*x[3]+B[i*P]*u[0]+B[i*P+1]*u[1]+B[i*P+2]*d[0]+B[i*P+3]*d[1];
     
+    for(int i=0;i<N;i++)
+     x[i]=x1[i];
+	
 }
 
 
