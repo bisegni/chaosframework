@@ -24,7 +24,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <vector>
-
+#include <chaos/common/data/entity_db/EntityDB.h>
 #include <chaos/common/cconstants.h>
 
 namespace chaos {
@@ -49,11 +49,27 @@ namespace chaos {
      Class for contain all field for the CU Dataset
      */
     class CUSchemaDB {
+        map<string, entity::Entity*> deviceEntityMap;
         map<string, vector< CDataWrapper* > >deviceIDDataset;
         
-        void clearAllDatasetsVectors();
-        void clearDatasetForDeviceID(string&);
+        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, string& attributeValue);
+        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, int64_t attributeValue);
+        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, double attributeValue);
+        entity::Entity *getDatasetElement(entity::Entity *device, string& attributeName);
         
+        /*!
+         return the vector containing the atrtibute list for a domain
+         */
+        entity::Entity* getDeviceEntity(const string& deviceID);
+        edb::EntityDB *entityDB;
+        uint32_t keyIdDevice;
+        uint32_t keyIdDataset;
+        uint32_t keyIdAttrName;
+        uint32_t keyIdAttrDesc;
+        uint32_t keyIdAttrType;
+        uint32_t keyIdAttrDir;
+        uint32_t keyIdAttrMaxRng;
+        uint32_t keyIdAttrMinRng;
     public:
         
         /*!
@@ -63,11 +79,6 @@ namespace chaos {
         /*!
          */
         virtual ~CUSchemaDB();
-        
-        /*!
-         return the vector containing the atrtibute list for a domain
-         */
-        vector< CDataWrapper* >& getDatasetForDeviceID(const string& deviceID);
         
         /*!
          add a new device id
