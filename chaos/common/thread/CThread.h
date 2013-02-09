@@ -75,10 +75,10 @@ namespace chaos{
     bool isStopped();
     
         //sec to waith beetwen task execution
-    void setDelayBeetwenTask(int64_t microsecond);
+    void setDelayBeetwenTask(uint64_t microsecond);
     
         //!Return the microsend of delay between a task and another
-    int64_t getDelayBeetwenTask();
+    uint64_t getDelayBeetwenTask();
     
         //join to thread execution
     void join();

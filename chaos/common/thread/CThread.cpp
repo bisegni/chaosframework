@@ -68,11 +68,11 @@ bool CThread::isStopped() {
     return m_stop;
 }
 
-void CThread::setDelayBeetwenTask(int64_t msec) {
+void CThread::setDelayBeetwenTask(uint64_t msec) {
     waithTimeInMicrosecond = microseconds(msec);
 }
 
-int64_t CThread::getDelayBeetwenTask() {
+uint64_t CThread::getDelayBeetwenTask() {
     return waithTimeInMicrosecond.count();
 }
 

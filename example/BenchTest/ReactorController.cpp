@@ -10,7 +10,7 @@
 #include "ReactorController.h"
 
 
-ReactorController::ReactorController(string& _rName, vector<double> *refVec, int refIdx, int32_t _simulationSpeed):reactorID(_rName) {
+ReactorController::ReactorController(string& _rName, vector<double> *refVec, int refIdx, uint64_t _simulationSpeed):reactorID(_rName) {
     chaosThread.reset(new chaos::CThread(this));
     chaosThread->setDelayBeetwenTask(_simulationSpeed);
     simulationSpeed = _simulationSpeed;

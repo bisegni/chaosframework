@@ -82,7 +82,7 @@ int main (int argc, char* argv[] )
     try {
         std::vector< std::string > names;
         std::vector< double > referements;
-        std::vector< int32_t > simulated_speed;
+        std::vector< uint64_t > simulated_speed;
         
         string tmpDeviceID("bench_reactor");
         
@@ -93,7 +93,7 @@ int main (int argc, char* argv[] )
         //! [UIToolkit Attribute Init]
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(REACTOR_NAMES, po::value< std::vector< std::string > >()->multitoken(), "The id (and implicit the number) of the rectors");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(REACTOR_REFEREMENT_VALUE, po::value< std::vector< double > >()->multitoken(), "The name (and implicit the number) of the rectors");
-        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(SIMULATION_SPEED_USEC, po::value< std::vector< int32_t > >()->multitoken(), "The speed of simulation of the rectors");
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(SIMULATION_SPEED_USEC, po::value< std::vector< uint64_t > >()->multitoken(), "The speed of simulation of the rectors");
         //! [UIToolkit Attribute Init]
         
         //! [UIToolkit Init]
@@ -114,7 +114,7 @@ int main (int argc, char* argv[] )
         }
         
         if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(SIMULATION_SPEED_USEC)){
-            simulated_speed = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption< std::vector< int32_t > >(SIMULATION_SPEED_USEC);
+            simulated_speed = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption< std::vector< uint64_t > >(SIMULATION_SPEED_USEC);
         } else {
             simulated_speed.push_back(20000);
         }

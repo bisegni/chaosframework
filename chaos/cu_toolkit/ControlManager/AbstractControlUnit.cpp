@@ -580,7 +580,7 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
     
     if(updatePack->hasKey(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY)){
             //we need to configure the delay  from a run() call and the next
-        int64_t uSecdelay = updatePack->getInt32Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY);
+        uint64_t uSecdelay = updatePack->getUInt64Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY);
             //check if we need to update the scehdule time
         CThread *taskThread = schedulerDeviceMap[deviceID];
         if(uSecdelay != taskThread->getDelayBeetwenTask()){

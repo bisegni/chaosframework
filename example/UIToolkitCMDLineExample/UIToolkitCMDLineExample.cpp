@@ -88,7 +88,7 @@ int main (int argc, char* argv[] )
     try {
         int err = 0;
         int iteration = 10;
-        unsigned int sleep = 1000000;
+        uint64_t sleep = 1000000;
         istringstream optionStream;
         string devID;
         vector<string> setAttrsOpt;
@@ -101,7 +101,7 @@ int main (int argc, char* argv[] )
         DataBuffer *tsBuffer;
         //! [UIToolkit Attribute Init]
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_ITERATION, po::value<int>()->default_value(10), "Set the number of acquiring iteration");
-        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SLEEP_TIME, po::value<unsigned int>()->default_value(1000000), "Set the number of microsecond between an acquisition and th eother");
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SLEEP_TIME, po::value<uint64_t>()->default_value(1000000), "Set the number of microsecond between an acquisition and th eother");
     
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SET_ATTRIBUTE_ID, po::value<vector<string> > (), "Set the initial attributes of a device");
       
@@ -131,7 +131,7 @@ int main (int argc, char* argv[] )
         }
         
         if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SLEEP_TIME)){
-            sleep = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_SLEEP_TIME);
+            sleep = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<uint64_t>(OPT_SLEEP_TIME);
         }
         
         cout << "Query for:"<<devID<<endl;
