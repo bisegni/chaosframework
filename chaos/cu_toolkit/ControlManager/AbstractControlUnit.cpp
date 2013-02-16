@@ -265,8 +265,11 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
     
     LCU_ << "Get Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
         //grab dataset description
-    CUSchemaDB::fillDataWrpperWithDataSetDescirption(setupConfiguration);
+    CUSchemaDB::fillDataWrapperWithDataSetDescription(setupConfiguration);
     
+#if DEBUG
+    LCU_ << setupConfiguration.getJSONString();
+#endif
     
         //grab action description
     LCU_ << "Get Action Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;

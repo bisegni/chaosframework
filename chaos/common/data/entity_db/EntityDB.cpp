@@ -34,33 +34,23 @@ EntityDB::EntityDB() {
  Default destructor
  */
 EntityDB::~EntityDB() {
-    for (std::map<atomic_int_type, entity::Entity*>::iterator iter = entityInstancesMap.begin();
+    /*for (std::map<atomic_int_type, entity::Entity*>::iterator iter = entityInstancesMap.begin();
          iter != entityInstancesMap.end(); iter++) {
         
         
         entity::Entity* entityToDelete = iter->second;
         delete entityToDelete;
     }
-    entityInstancesMap.clear();
+    entityInstancesMap.clear();*/
 }
 
 /*!
  Allocate and return a new instance of an Entity class
  */
 entity::Entity* EntityDB::getNewEntityInstance(KeyIdAndValue& keyInfo) {
-    atomic_int_type instance = atomic_increment(&entityInstanceSequence);
-    entity::Entity *result = new entity::Entity(this, instance);
-
-    if(result && !result->setEntityKeyAndInfo(keyInfo)) {
-        //all is gone ok so i can add the isntance to the hash
-        entityInstancesMap.insert(make_pair(instance, result));
-    } else {
-        //something is gone wrong, delete the instance
-        if(result) {
-            delete result;
-            result = NULL;
-        }
-    }
+    //atomic_int_type instance = atomic_increment(&entityInstanceSequence);
+    entity::Entity *result = new entity::Entity(this);
+    if(result) result->setEntityKeyAndInfo(keyInfo);
     return result;
 }
 
@@ -70,7 +60,7 @@ entity::Entity* EntityDB::getNewEntityInstance(KeyIdAndValue& keyInfo) {
 void EntityDB::deleteEntityInstance(entity::Entity* entity) {
     if(!entity) return;
     
-    entityInstancesMap.erase(entity->instanceID);
+        //entityInstancesMap.erase(entity->instanceID);
     //delete the instance
     delete entity;
 }

@@ -23,13 +23,17 @@
 #include <map>
 #include <boost/shared_ptr.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <boost/ptr_container/ptr_map.hpp>
 #include <vector>
-
+#include <chaos/common/data/entity_db/EntityDB.h>
 #include <chaos/common/cconstants.h>
 
 namespace chaos {
     using namespace std;
     using namespace boost;
+            //map<string, entity::Entity*> deviceEntityMap;
+    typedef map<string, entity::Entity*> EntityPtrMap;
+    typedef EntityPtrMap::iterator EntityPtrMapIterator;
     
     //!Describe the range of the value for an attribute of the dataset
     typedef struct RangeValueInfo {
@@ -49,39 +53,62 @@ namespace chaos {
      Class for contain all field for the CU Dataset
      */
     class CUSchemaDB {
-        map<string, vector< CDataWrapper* > >deviceIDDataset;
+        edb::EntityDB *entityDB;
+        uint32_t keyIdDevice;
+        uint32_t keyIdDataset;
+        uint32_t keyIdAttrName;
+        uint32_t keyIdAttrDesc;
+        uint32_t keyIdAttrType;
+        uint32_t keyIdAttrDir;
+        uint32_t keyIdAttrMaxRng;
+        uint32_t keyIdAttrMinRng;
+        uint32_t keyIdDefaultValue;
+        uint32_t keyIdServerAddress;
         
-        void clearAllDatasetsVectors();
-        void clearDatasetForDeviceID(string&);
+        EntityPtrMap deviceEntityMap;
         
+        void fillCDataWrapperDSAtribute(CDataWrapper *dsAttribute,  entity::Entity *attrEntity, ptr_vector<edb::KeyIdAndValue>& attrProperty);
+        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, const char * attributeValue);
+        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, string& attributeValue);
+        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, int64_t attributeValue);
+        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, double attributeValue);
+        entity::Entity *getDatasetElement(entity::Entity *device, string& attributeName);
+        entity::Entity *getDatasetElement(entity::Entity *device, const char * attributeName);
+        /*!
+         return the vector containing the atrtibute list for a domain
+         */
+        entity::Entity* getDeviceEntity(const string& deviceID);
+
     public:
         
         /*!
+         Default constructor
          */
         CUSchemaDB();
         
         /*!
+         Default destructor
          */
         virtual ~CUSchemaDB();
         
         /*!
-         return the vector containing the atrtibute list for a domain
-         */
-        vector< CDataWrapper* >& getDatasetForDeviceID(const string& deviceID);
-        
-        /*!
-         add a new device id
+         Add a new device id to the database
          */
         void addDeviceId(string);
         
         /*!
-         Add the new field at the CU dataset
+         Add the new attribute to the dataset
+         \param deviceID the id of the device
+         \param attributeName the name of the new attribute
+         \param attributeDescription the description of the attribute
+         \param attributeType the type of the new attribute
+         \param attributeDirection the direction of the new attribute
          */
-        void addAttributeToDataSet(const char*const,
-                                   const char*const,
-                                   const char*const,
-                                   DataType::DataType,
-                                   DataType::DataSetAttributeIOAttribute);
+        void addAttributeToDataSet(const char*const deviceID,
+                                   const char*const attributeName,
+                                   const char*const attributeDescription,
+                                   DataType::DataType attributeType,
+                                   DataType::DataSetAttributeIOAttribute attributeDirection);
         
         /*!
          Add the new field at the CU dataset from the CDataWrapper
@@ -91,7 +118,7 @@ namespace chaos {
         /*!
          fill a CDataWrapper with the dataset decode
          */
-        void fillDataWrpperWithDataSetDescirption(CDataWrapper&);
+        void fillDataWrapperWithDataSetDescription(CDataWrapper&);
         
         /*!
          * Return the attribute array for a specified direction
@@ -101,9 +128,9 @@ namespace chaos {
                                       vector< boost::shared_ptr<CDataWrapper> >&);
         
         /*!
-         REturn all the setupped device id
+         Return all the setupped device id
          */
-        void getAllDeviceId(vector<string>& domainNames);
+        void getAllDeviceId(vector<string>& deviceNames);
         
         /*!
          Return true if the device id is found

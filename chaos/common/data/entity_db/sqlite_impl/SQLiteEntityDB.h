@@ -21,22 +21,24 @@
 #ifndef __CHAOSFramework__SQLiteEntityDB__
 #define __CHAOSFramework__SQLiteEntityDB__
 
-#include <boost/thread.hpp>
 #include <string>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/data/entity_db/EntityDB.h>
 #include <chaos/common/data/entity_db/sqlite_impl/sqlite3.h>
+#include <boost/thread.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 
-#define NUM_STMT 28
+#define NUM_STMT 35
 
 namespace chaos {
     namespace edb {
-        
+        using namespace boost;
         
         /*!
          SQLite implementation for the entity db
          */
-        class SQLiteEntityDB : public EntityDB {
+        
+        REGISTER_AND_DEFINE_NOALIAS_DERIVED_CLASS_FACTORY(SQLiteEntityDB,EntityDB) {
             string alias;
             sqlite3 *dbInstance;
             
@@ -63,7 +65,7 @@ namespace chaos {
             /*!
              Default constructor
              */
-            SQLiteEntityDB();
+            SQLiteEntityDB(/*string *_alias*/);
 
             /*!
              Default destructor
@@ -110,7 +112,7 @@ namespace chaos {
 
             /*!
              */
-            int16_t getAllChildEntity(uint32_t parentEntity, std::vector<uint32_t> child);
+            int16_t getAllChildEntity(uint32_t parentEntity, std::vector<uint32_t>& child);
             
             /*!
              */
@@ -120,6 +122,20 @@ namespace chaos {
              search the entitys with key and value
              */
             int16_t searchEntityByKeyAndValue(KeyIdAndValue& keyInfo, std::vector<uint32_t>& resultEntityIDs);
+            
+            /*!
+             search the entitys with key and value
+             */
+            int16_t searchEntityByParentIDAndKeyID(uint32_t parentID, uint32_t keyID, std::vector<uint32_t>& resultEntityIDs);
+            
+            /*!
+             search the entitys with key and value
+             */
+            int16_t searchEntityByParentIDAndKeyValue(uint32_t parentID, KeyIdAndValue& keyInfo, std::vector<uint32_t>& resultEntityIDs);
+            
+            /*
+             */
+            int16_t searchEntityByParentAndPropertyIDAndKeyValue(uint32_t parentID, KeyIdAndValue& keyInfo, std::vector<uint32_t>& resultEntityIDs);
             
             /*
              search the entitys using property key and value
@@ -144,12 +160,12 @@ namespace chaos {
             /*
              return all property of an entity
              */
-            int16_t searchPropertyForEntity(uint32_t entityID, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues);
+            int16_t searchPropertyForEntity(uint32_t entityID, ptr_vector<KeyIdAndValue>& resultKeyAndValues);
             
             /*
              eturn al lprorerty for an entity for wich the ids are contained into the keysIDs array
              */
-            int16_t searchPropertyForEntity(uint32_t entityID, std::vector<uint32_t>& keysIDs, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues);
+            int16_t searchPropertyForEntity(uint32_t entityID, std::vector<uint32_t>& keysIDs, ptr_vector<KeyIdAndValue>& resultKeyAndValues);
 
             /*
              Delete a property for a entity

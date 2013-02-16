@@ -51,6 +51,8 @@ namespace chaos{
             Record(edb::EntityDB *_database):database(_database){};
             
             virtual ~Record(){};
+        public:
+            const edb::KeyIdAndValue& getKeyInfo(){return _keyValueInfo;};
         };
         
     }

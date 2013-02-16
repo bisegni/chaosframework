@@ -20,11 +20,11 @@
 
 #include <chaos/common/data/entity/Entity.h>
 #include <chaos/common/data/entity_db/EntityDB.h>
-
+using namespace boost;
 using namespace chaos;
 using namespace chaos::entity;
 
-Entity::Entity(edb::EntityDB *_database,  atomic_int_type _instanceID):Record(_database),instanceID(_instanceID){
+Entity::Entity(edb::EntityDB *_database):Record(_database){
 }
 
 Entity::~Entity(){
@@ -32,22 +32,71 @@ Entity::~Entity(){
 }
 
 int32_t Entity::setEntityKeyAndInfo(chaos::edb::KeyIdAndValue& keyInfo) {
-    //register the information for the entity
-    return database->getIDForEntity(keyInfo, entityID);
+        //register the information for the entity
+    int32_t err = database->getIDForEntity(keyInfo, entityID);
+    if(!err) {
+        memcpy(&_keyValueInfo, &keyInfo, sizeof(chaos::edb::KeyIdAndValue));
+    }
+    return err;
 }
 
-int32_t Entity::addProperty(edb::KeyIdAndValue& keyInfo) {
+int32_t Entity::addProperty(uint32_t keyID, const char * propertyVal) {
     int32_t error = 0;
     uint32_t idNewProperty = 0;
+    chaos::edb::KeyIdAndValue keyInfo;
+    keyInfo.keyID = keyID;
+    keyInfo.type = edb::KEY_STR_VALUE;
+    strcpy(keyInfo.value.strValue, propertyVal);
     if(!(error = database->addNewPropertyForEntity(entityID, keyInfo, idNewProperty))) {
         return error;
     }
     return error;
 }
 
-int32_t Entity::getAllProperty(chaos::ArrayPointer<chaos::edb::KeyIdAndValue>& propertys) {
+int32_t Entity::addProperty(uint32_t keyID, string& propertyVal) {
+        return addProperty(keyID, propertyVal.c_str());
+}
+
+int32_t Entity::addProperty(uint32_t keyID, int64_t propertyVal) {
+    int32_t error = 0;
+    uint32_t idNewProperty = 0;
+    chaos::edb::KeyIdAndValue keyInfo;
+    keyInfo.keyID = keyID;
+    keyInfo.type = edb::KEY_NUM_VALUE;
+    keyInfo.value.numValue = propertyVal;
+    if(!(error = database->addNewPropertyForEntity(entityID, keyInfo, idNewProperty))) {
+        return error;
+    }
+    return error;
+}
+
+int32_t Entity::addProperty(uint32_t keyID, double propertyVal) {
+    int32_t error = 0;
+    uint32_t idNewProperty = 0;
+    chaos::edb::KeyIdAndValue keyInfo;
+    keyInfo.keyID = keyID;
+    keyInfo.type = edb::KEY_DOUBLE_VALUE;
+    keyInfo.value.doubleValue = propertyVal;
+    if(!(error = database->addNewPropertyForEntity(entityID, keyInfo, idNewProperty))) {
+        return error;
+    }
+    return error;
+
+}
+
+int32_t Entity::getAllProperty(ptr_vector<chaos::edb::KeyIdAndValue>& propertys) {
     int32_t error = 0;
     if(!(error = database->searchPropertyForEntity(entityID, propertys))) {
+        return error;
+    }
+    return error;
+}
+
+int32_t Entity::getPropertyByKeyID(uint32_t keyID, ptr_vector<chaos::edb::KeyIdAndValue>& propertys) {
+    int32_t error = 0;
+    vector<uint32_t> keys;
+    keys.push_back(keyID);
+    if(!(error = database->searchPropertyForEntity(entityID, keys, propertys))) {
         return error;
     }
     return error;
@@ -67,4 +116,71 @@ int32_t Entity::removeChild(Entity& entityChild) {
 
 int32_t Entity::removeAllChild() {
     return database->removeAllEntityChild(entityID);
+}
+
+int32_t Entity::getAllChild(ptr_vector<Entity>& childs) {
+    vector<uint32_t> childIDS;
+    int32_t err = database->getAllChildEntity(entityID, childIDS);
+    if(!err) {
+        for (vector<uint32_t>::iterator iter = childIDS.begin();
+             iter!= childIDS.end();
+             iter++) {
+            chaos::edb::KeyIdAndValue infoEntity;
+            database->getEntityKeyInfoByID(*iter, infoEntity);
+            childs.push_back(database->getNewEntityInstance(infoEntity));
+        }
+    }
+    return err;
+}
+
+int32_t Entity::getChildsWithKeyID(uint32_t keyID, ptr_vector<Entity>& childs) {
+    vector<uint32_t> childIDS;
+    int32_t err = database->searchEntityByParentIDAndKeyID(entityID, keyID, childIDS);
+    if(!err) {
+        for (vector<uint32_t>::iterator iter = childIDS.begin();
+             iter!= childIDS.end();
+             iter++) {
+            chaos::edb::KeyIdAndValue infoEntity;
+            database->getEntityKeyInfoByID(*iter, infoEntity);
+            childs.push_back(database->getNewEntityInstance(infoEntity));
+        }
+    }
+    return err;
+}
+
+int32_t Entity::getChildWithPropertyKeyIDandValue(edb::KeyIdAndValue& keyInfo, ptr_vector<Entity>& childs) {
+    vector<uint32_t> childIDS;
+    int32_t err = database->searchEntityByParentAndPropertyIDAndKeyValue(entityID, keyInfo, childIDS);
+    if(!err) {
+        for (vector<uint32_t>::iterator iter = childIDS.begin();
+             iter!= childIDS.end();
+             iter++) {
+            chaos::edb::KeyIdAndValue infoEntity;
+            database->getEntityKeyInfoByID(*iter, infoEntity);
+            childs.push_back(database->getNewEntityInstance(infoEntity));
+        }
+    }
+    return err;
+}
+
+int32_t Entity::getHasChildByKeyInfo(edb::KeyIdAndValue& keyInfo, bool& hasChild) {
+    vector<uint32_t> childIDS;
+    int32_t err = database->searchEntityByParentIDAndKeyValue(entityID, keyInfo, childIDS);
+    hasChild = childIDS.size()>=1;
+    return err;
+}
+
+int32_t Entity::getChildsWithKeyInfo(edb::KeyIdAndValue& keyInfo, ::ptr_vector<Entity>& childs) {
+    vector<uint32_t> childIDS;
+    int32_t err = database->searchEntityByParentIDAndKeyValue(entityID, keyInfo, childIDS);
+    if(!err) {
+        for (vector<uint32_t>::iterator iter = childIDS.begin();
+             iter!= childIDS.end();
+             iter++) {
+            chaos::edb::KeyIdAndValue infoEntity;
+            database->getEntityKeyInfoByID(*iter, infoEntity);
+            childs.push_back(database->getNewEntityInstance(infoEntity));
+        }
+    }
+    return err;
 }

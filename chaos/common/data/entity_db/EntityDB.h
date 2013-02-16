@@ -29,8 +29,9 @@
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/utility/ArrayPointer.h>
 #include <chaos/common/utility/Atomic.h>
-
+#include <boost/ptr_container/ptr_vector.hpp>
 namespace chaos {
+    using namespace boost;
     
     namespace entity {
         class Entity;
@@ -164,7 +165,7 @@ namespace chaos {
             
             /*!
              */
-            virtual int16_t getAllChildEntity(uint32_t parentEntity, std::vector<uint32_t> child) = 0;
+            virtual int16_t getAllChildEntity(uint32_t parentEntity, std::vector<uint32_t>& child) = 0;
             
             /*!
              */
@@ -183,6 +184,21 @@ namespace chaos {
              \param resultEntityIDs the vector containing the retrived id
              */
             virtual int16_t searchEntityByKeyAndValue(KeyIdAndValue& keyInfo, std::vector<uint32_t>& resultEntityIDs) = 0;
+            
+            virtual int16_t searchEntityByParentIDAndKeyID(uint32_t parentID, uint32_t keyID, std::vector<uint32_t>& resultEntityIDs) = 0;
+            
+            /*!
+             search the entitys with key and value
+             \param keyInfo the key information for the new entity
+             \param resultEntityIDs the vector containing the retrived id
+             */
+            virtual int16_t searchEntityByParentIDAndKeyValue(uint32_t parentID, KeyIdAndValue& keyInfo, std::vector<uint32_t>& resultEntityIDs) = 0;
+            
+            
+            /*!
+             search the entitys with key and value
+             */
+            virtual int16_t searchEntityByParentAndPropertyIDAndKeyValue(uint32_t parentID, KeyIdAndValue& keyInfo, std::vector<uint32_t>& resultEntityIDs) = 0;
             
             /*!
              search the entitys using property key and value
@@ -217,7 +233,7 @@ namespace chaos {
              \param propertyID is the id of the property
              \param resultKeyAndValues the information of the key found
              */
-            virtual int16_t searchPropertyForEntity(uint32_t entityID, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues) = 0;
+            virtual int16_t searchPropertyForEntity(uint32_t entityID, ptr_vector<KeyIdAndValue>& resultKeyAndValues) = 0;
             
             /*!
              return al lprorerty for an entity for wich the ids are contained into the keysIDs array
@@ -225,7 +241,7 @@ namespace chaos {
              \param keysIDs the vector that contain the id for the key to that must be returned
              \param resultKeyAndValues the information of the key found
              */
-            virtual int16_t searchPropertyForEntity(uint32_t entityID, std::vector<uint32_t>& keysIDs, chaos::ArrayPointer<KeyIdAndValue>& resultKeyAndValues) = 0;
+            virtual int16_t searchPropertyForEntity(uint32_t entityID, std::vector<uint32_t>& keysIDs, ptr_vector<KeyIdAndValue>& resultKeyAndValues) = 0;
             
             /*!
              Delete a property for a entity
