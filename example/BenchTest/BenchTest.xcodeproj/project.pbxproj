@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3203D8BD16D373D8005EFB97 /* WriteFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3203D8BB16D373D8005EFB97 /* WriteFile.cpp */; };
 		322F360C16A1CEE000731C3F /* BenchTestCU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322F360916A1CEE000731C3F /* BenchTestCU.cpp */; };
 		322F360D16A1CEE000731C3F /* main_reactor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322F360B16A1CEE000731C3F /* main_reactor.cpp */; };
 		322F362116A1D1F500731C3F /* main_controller.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322F362016A1D1F500731C3F /* main_controller.cpp */; };
@@ -30,6 +31,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3203D8BB16D373D8005EFB97 /* WriteFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WriteFile.cpp; sourceTree = "<group>"; };
+		3203D8BC16D373D8005EFB97 /* WriteFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WriteFile.h; sourceTree = "<group>"; };
 		322F360916A1CEE000731C3F /* BenchTestCU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BenchTestCU.cpp; sourceTree = SOURCE_ROOT; };
 		322F360A16A1CEE000731C3F /* BenchTestCU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BenchTestCU.h; sourceTree = SOURCE_ROOT; };
 		322F360B16A1CEE000731C3F /* main_reactor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main_reactor.cpp; sourceTree = SOURCE_ROOT; };
@@ -87,6 +90,8 @@
 			children = (
 				322F362416A1D41900731C3F /* config.h */,
 				32BE864A15A0E3C500818C39 /* CMakeLists.txt */,
+				3203D8BB16D373D8005EFB97 /* WriteFile.cpp */,
+				3203D8BC16D373D8005EFB97 /* WriteFile.h */,
 				322F362316A1D25300731C3F /* src_controller */,
 				326DB50714B3B7890018A8D0 /* src_reactor */,
 				326027B914B30A2400C906CE /* Products */,
@@ -189,6 +194,7 @@
 				322F363916A1EA9400731C3F /* Batch_Controller.cpp in Sources */,
 				322F363C16A1EB8B00731C3F /* ReactorController.cpp in Sources */,
 				32B928B516A2DD32004064E4 /* MainOrkestrator.cpp in Sources */,
+				3203D8BD16D373D8005EFB97 /* WriteFile.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

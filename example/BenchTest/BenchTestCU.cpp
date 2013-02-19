@@ -80,6 +80,31 @@ void BenchTestCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException
                           DataType::TYPE_DOUBLE,
                           DataType::Output);
     
+    //setup the dataset
+    addAttributeToDataSet(devIDInChar,
+                          "real_output_a",
+                          "Reactor Output A",
+                          DataType::TYPE_DOUBLE,
+                          DataType::Output);
+    
+    addAttributeToDataSet(devIDInChar,
+                          "real_output_b",
+                          "Reactor Output B",
+                          DataType::TYPE_DOUBLE,
+                          DataType::Output);
+    
+    addAttributeToDataSet(devIDInChar,
+                          "noise_a",
+                          "Computed noise",
+                          DataType::TYPE_DOUBLE,
+                          DataType::Output);
+    
+    addAttributeToDataSet(devIDInChar,
+                          "noise_b",
+                          "Computed noise",
+                          DataType::TYPE_DOUBLE,
+                          DataType::Output);
+    
     
     addInputDoubleAttributeToDataSet<BenchTestCU>(devIDInChar,
                                                   "input_a",
@@ -122,6 +147,11 @@ void BenchTestCU::run(const string& deviceID) throw(CException) {
     
     acquiredData->addDoubleValue("output_a", reactorInstance->y_trasmessa[0]);
     acquiredData->addDoubleValue("output_b", reactorInstance->y_trasmessa[1]);
+    acquiredData->addDoubleValue("real_output_a", reactorInstance->y[0]);
+    acquiredData->addDoubleValue("real_output_b", reactorInstance->y[1]);
+    acquiredData->addDoubleValue("noise_a", reactorInstance->d[0]);
+    acquiredData->addDoubleValue("noise_b", reactorInstance->d[1]);
+
     //LAPP_ << " Output_A=" << reactorInstance->y[0] << " Output_B="<< reactorInstance->y[1];
     //check microseconds diff
     boost::chrono::microseconds diff = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now() - lastExecutionTime);

@@ -109,14 +109,14 @@ int main (int argc, char* argv[] )
             referements = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption< std::vector< double > >(REACTOR_REFEREMENT_VALUE);
         } else {
             for(int idx = 0; idx < Q; idx++) {
-                referements.push_back(1.0);
+                referements.push_back(0.0);
             }
         }
         
         if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(SIMULATION_SPEED_USEC)){
             simulated_speed = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption< std::vector< uint64_t > >(SIMULATION_SPEED_USEC);
         } else {
-            simulated_speed.push_back(20000);
+            simulated_speed.push_back(5000);
         }
         
         if(referements.size() != names.size() * Q) {

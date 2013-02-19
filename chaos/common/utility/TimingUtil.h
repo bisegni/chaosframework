@@ -34,7 +34,7 @@ namespace chaos {
          Return the current timestamp
          */
         inline int64_t getTimeStamp() {
-            return (microsec_clock::universal_time()-EPOCH).total_milliseconds();
+            return (boost::posix_time::microsec_clock::universal_time()-EPOCH).total_milliseconds();
         }
     };
 }

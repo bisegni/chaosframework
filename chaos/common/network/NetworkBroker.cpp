@@ -30,6 +30,7 @@
 #include <chaos/common/dispatcher/AbstractEventDispatcher.h>
 #include <chaos/common/event/channel/AlertEventChannel.h>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
+
 #define MB_LAPP LAPP_ << "[NetworkBroker]- "
 
 #define INIT_STEP   0
@@ -317,6 +318,14 @@ event::channel::AlertEventChannel *NetworkBroker::getNewAlertEventChannel() {
     return static_cast<event::channel::AlertEventChannel*>(NetworkBroker::getNewEventChannelFromType(event::EventTypeAlert));
 }
 
+//!Device channel creation
+/*!
+ Performe the creation of device channel
+ \param deviceNetworkAddress device node address
+ */
+event::channel::InstrumentEventChannel *NetworkBroker::getNewInstrumentEventChannel() {
+    return static_cast<event::channel::InstrumentEventChannel*>(NetworkBroker::getNewEventChannelFromType(event::EventTypeInstrument));
+}
 
     //!Event channel deallocation
 /*!

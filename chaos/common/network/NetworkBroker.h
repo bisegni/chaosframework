@@ -59,6 +59,7 @@ namespace chaos {
     namespace event {
         namespace channel {
             class AlertEventChannel;
+            class InstrumentEventChannel;
         }
         class EventServer;
         class EventClient;
@@ -179,6 +180,9 @@ namespace chaos {
         
             //! Alert Event Creation
         event::channel::AlertEventChannel *getNewAlertEventChannel();
+        
+            //! Instrument Event Creation
+        event::channel::InstrumentEventChannel *getNewInstrumentEventChannel();
         
             //!Event channel deallocation
         /*!

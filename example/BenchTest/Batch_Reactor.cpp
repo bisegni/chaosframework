@@ -62,7 +62,8 @@ void Batch_Reactor::update_output() {
 }
 
 void Batch_Reactor::reset() {
-    memset(x, 0, N * sizeof(double));
+    x[0] = 0.5;x[1] = 1;x[2] = 2;x[0] = 0.2;
+    //memset(x, 0, N * sizeof(double));
     memset(y, 0, Q * sizeof(double));
     memset(u, 0, P * sizeof(double));
     memset(y_trasmessa, 0, Q * sizeof(double));
