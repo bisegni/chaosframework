@@ -69,6 +69,11 @@ namespace chaos {
             void start() throw(CException);
             
             /*
+             stop the event adapter
+             */
+            void stop() throw(CException);
+            
+            /*
              register or deregister for a kynd of event
              */
             virtual void listeForEventType(event::EventType type,  bool listen) throw(CException);

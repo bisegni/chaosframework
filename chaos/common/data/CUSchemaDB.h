@@ -53,10 +53,10 @@ namespace chaos {
      Class for contain all field for the CU Dataset
      */
     class CUSchemaDB {
+        
         edb::EntityDB *entityDB;
         uint32_t keyIdDevice;
-        uint32_t keyIdDataset;
-        uint32_t keyIdAttrName;
+        uint32_t keyIdDatasetAttrName;
         uint32_t keyIdAttrDesc;
         uint32_t keyIdAttrType;
         uint32_t keyIdAttrDir;
@@ -67,7 +67,7 @@ namespace chaos {
         
         EntityPtrMap deviceEntityMap;
         
-        void fillCDataWrapperDSAtribute(CDataWrapper *dsAttribute,  entity::Entity *attrEntity, ptr_vector<edb::KeyIdAndValue>& attrProperty);
+        void fillCDataWrapperDSAtribute(CDataWrapper *dsAttribute,  entity::Entity *deviceIDEntity, entity::Entity *attrEntity, ptr_vector<edb::KeyIdAndValue>& attrProperty);
         void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, const char * attributeValue);
         void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, string& attributeValue);
         void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, int64_t attributeValue);
@@ -79,25 +79,78 @@ namespace chaos {
          */
         entity::Entity* getDeviceEntity(const string& deviceID);
 
-    public:
+        void initDB(const char* name, bool onMemory);
         
         /*!
-         Default constructor
+         fill a CDataWrapper with the dataset decode
+         */
+        void fillDataWrapperWithDataSetDescription(entity::Entity*, CDataWrapper&);
+        
+        inline void composeAttributeName(const char *deviceID, const char *attributeName, string& composedName);
+        inline const char * decomposeAttributeName(string& deviceID, string& attributeName);
+    public:
+        //!Default Contructor
+        /*!
+         The database is created with the default parameter
          */
         CUSchemaDB();
         
+        //!Contructor for specify the onMemory flag
         /*!
-         Default destructor
+         The database is create with onMemory option enable.This 
+         permit to use only the computer memory to store the data 
+         and the index.
+         
+         \param onMemory flag for specify the use of only memory
          */
+        CUSchemaDB(bool onMemory);
+     
+        //!Contructor for specify the name of the database and onMemory flag
+        /*!
+         The database is create with onMemory option enable and with
+         the name specified. This permit to use only the computer memory 
+         to store the data and the index.
+         
+         \param databaseName the name of the database
+         \param onMemory flag for specify the use of only memory
+         */
+        CUSchemaDB(const char *databaseName, bool onMemory);
+        
+        //!Default Destructor
         virtual ~CUSchemaDB();
         
+            //! Add device dataset definitio by serialized form
         /*!
-         Add a new device id to the database
+         Fill the database with the devices and their dataset with the content
+         of the serialized data
+         
+         \param serializedDataset serialze dataset
          */
-        void addDeviceId(string);
+        void addAttributeToDataSetFromDataWrapper(CDataWrapper& serializedDataset);
         
         /*!
-         Add the new attribute to the dataset
+         fill a CDataWrapper with the dataset decode
+         */
+        void fillDataWrapperWithDataSetDescription(CDataWrapper&);
+        
+        /*!
+         fill a CDataWrapper with the dataset decode
+         */
+        void fillDataWrapperWithDataSetDescription(string&, CDataWrapper&);
+        
+            //! New device creation
+        /*!
+         Add a new device to the database with a specified deviceID
+         
+         \param deviceID the the device identification string
+         */
+        void addDeviceId(const string& deviceID);
+        
+            //! Add dataset attribute
+        /*!
+         Add the new attribute to the deviceID dataset specifing
+         the default parameter
+         
          \param deviceID the id of the device
          \param attributeName the name of the new attribute
          \param attributeDescription the description of the attribute
@@ -109,23 +162,6 @@ namespace chaos {
                                    const char*const attributeDescription,
                                    DataType::DataType attributeType,
                                    DataType::DataSetAttributeIOAttribute attributeDirection);
-        
-        /*!
-         Add the new field at the CU dataset from the CDataWrapper
-         */
-        void addAttributeToDataSetFromDataWrapper(CDataWrapper&);
-        
-        /*!
-         fill a CDataWrapper with the dataset decode
-         */
-        void fillDataWrapperWithDataSetDescription(CDataWrapper&);
-        
-        /*!
-         * Return the attribute array for a specified direction
-         */
-        void getAttributeForDirection(string& deviceID,
-                                      DataType::DataSetAttributeIOAttribute,
-                                      vector< boost::shared_ptr<CDataWrapper> >&);
         
         /*!
          Return all the setupped device id
@@ -145,7 +181,8 @@ namespace chaos {
         /*!
          */
        void getDeviceDatasetAttributesName(const string& deviceID,
-                                           DataType::DataSetAttributeIOAttribute directionType, vector<string>& attributesName);
+                                           DataType::DataSetAttributeIOAttribute directionType,
+                                           vector<string>& attributesName);
         
         /*!
          */

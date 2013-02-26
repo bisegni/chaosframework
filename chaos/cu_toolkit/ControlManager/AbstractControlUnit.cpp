@@ -46,11 +46,11 @@ using namespace boost::uuids;
 
 #pragma mark constructor
 
-AbstractControlUnit::AbstractControlUnit(){
+AbstractControlUnit::AbstractControlUnit():CUSchemaDB(false) {
     _sharedInit();
 }
 
-AbstractControlUnit::AbstractControlUnit(const char *descJsonPath){
+AbstractControlUnit::AbstractControlUnit(const char *descJsonPath):CUSchemaDB(false) {
     _sharedInit();
     initWithJsonFilePath(descJsonPath);
 }
@@ -311,7 +311,10 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     KeyDataStorage *tmpKDS = 0L;
     auto_ptr<CDataWrapper> updateResult;
-    if(!initConfiguration || !initConfiguration->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID) || !initConfiguration->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION)) {
+        
+    if(!initConfiguration ||
+       !initConfiguration->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID) ||
+       !initConfiguration->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION)) {
         throw CException(-1, "No Device Init information in param", "AbstractControlUnit::_init");
     }
     

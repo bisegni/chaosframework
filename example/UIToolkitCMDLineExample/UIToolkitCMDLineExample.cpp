@@ -160,8 +160,13 @@ int main (int argc, char* argv[] )
         //------------------------------------------------------------------------------------
         //List all attribute of dataset without use BSON
         vector<string> allOutAttrName;
+        chaos::RangeValueInfo rangeInfo;
+        // check the type of attribute
+        chaos::DataType::DataSetAttributeIOAttribute direction;
         controller->getDeviceDatasetAttributesName(allOutAttrName, chaos::DataType::Output);
         for(vector<string>::iterator i=allOutAttrName.begin();i!=allOutAttrName.end();i++){
+            controller->getDeviceAttributeDirection(*i, direction);
+            controller->getDeviceAttributeRangeValueInfo(*i, rangeInfo);
             cout<<" attributes to track:\""<<*i<<"\""<<endl;
         }
        // intValue1Buff = controller->getBufferForAttribute(key);
@@ -257,13 +262,13 @@ int main (int argc, char* argv[] )
             }
             for(map<string,PointerBuffer*>::iterator i=OutBufs.begin();i!=OutBufs.end();i++){
             if(i->second){
-                int32_t BufLen = 0;
+                int32_t bufLen = 0;
                 
-                boost::shared_ptr<char> Ptr = i->second->getPtr(BufLen);
-                if(Ptr.get()){
-                    std::cout << "Buffer received len:" << BufLen << std::endl;
-                    for(int32_t idx = 0; idx < BufLen; idx++){
-                        std::cout << Ptr.get()[idx];
+                boost::shared_ptr<double> doublePtr = i->second->getTypedPtr<double>(bufLen);
+                if(doublePtr.get()){
+                    std::cout << "Buffer received len:" << bufLen << std::endl;
+                    for(int32_t idx = 0; idx < bufLen; idx++){
+                        std::cout << doublePtr.get()[idx];
                     }
                     
                     std::cout << std::endl;

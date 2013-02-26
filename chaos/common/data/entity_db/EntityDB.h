@@ -24,8 +24,6 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <string>
-#include <vector>
-#include <map>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/utility/ArrayPointer.h>
 #include <chaos/common/utility/Atomic.h>
@@ -93,13 +91,7 @@ namespace chaos {
         
         
         class EntityDB {
-            //! Entity instance counter
-            atomic_int_type entityInstanceSequence;
-            
-            std::map<atomic_int_type, entity::Entity*> entityInstancesMap;
-        protected:
-            bool    _temporaryAllocation;
-            std::string  _name;
+
         public:
 
             /*!
@@ -119,11 +111,7 @@ namespace chaos {
              \param temporary if true instruct the driver to create a temporary database
              that will be deleted when the object will be destroyed
              */
-            virtual int16_t initDB(const char* name, bool temporary = true) throw (CException) {
-                _name.assign(name);
-                _temporaryAllocation = temporary;
-                return 0;
-            }
+            virtual int16_t initDB(const char* name, bool temporary = true) throw (CException) = 0;
             
             /*!
              Initialize the db implementation
@@ -151,7 +139,7 @@ namespace chaos {
              \param childEntity child entity
              */
             virtual int16_t attachEntityChildToEntityParent(uint32_t parentEntity, uint32_t childEntity) = 0;
-
+            
             /*!
              Remove an attache entity entity to another
              \param parentEntity parent of the new child entity

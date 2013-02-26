@@ -64,6 +64,13 @@ void MsgPackClient::start() throw(CException) {
 }
 
 /*
+ start the rpc adapter
+ */
+void MsgPackClient::stop() throw(CException) {
+    
+}
+
+/*
  Deinitialization method for output buffer
  */
 void MsgPackClient::deinit() throw(CException) {

@@ -57,6 +57,8 @@ namespace chaos {
             
             int32_t addChild(Entity& entityChild);
             
+            int32_t isChild(Entity& entityChild, bool& isChild);
+            
             int32_t removeChild(Entity& entityChild);
             
             int32_t removeAllChild();
@@ -84,6 +86,8 @@ namespace chaos {
             int32_t getAllProperty(ptr_vector<chaos::edb::KeyIdAndValue>& propertys);
             
             int32_t getPropertyByKeyID(uint32_t keyID, ptr_vector<chaos::edb::KeyIdAndValue>& propertys);
+            
+            int32_t getPropertyByKeyID(vector<uint32_t>& keyIDs, ptr_vector<chaos::edb::KeyIdAndValue>& propertys);
         };
         
     }

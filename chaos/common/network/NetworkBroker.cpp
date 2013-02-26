@@ -63,7 +63,7 @@ NetworkBroker::~NetworkBroker() {
  * Initzialize the Message Broker. In this step are taken the configured implementation
  * for the rpc client and server and for the dispatcher. All these are here initialized
  */
-void NetworkBroker::init() throw(CException) {
+void NetworkBroker::init(CDataWrapper *initData) throw(CException) {
         //check if initialized
     SetupStateManager::levelUpFrom(INIT_STEP, "NetworkBroker already initialized");
     
@@ -238,6 +238,13 @@ void NetworkBroker::start() throw(CException){
     MB_LAPP << "get the published host and port from rpc server";
     getPublishedHostAndPort(publishedHostAndPort);
     MB_LAPP << "Rpc server has been published in: " << publishedHostAndPort;
+}
+
+/*!
+ * all part are started
+ */
+void NetworkBroker::stop() throw(CException) {
+    
 }
 
 /*!

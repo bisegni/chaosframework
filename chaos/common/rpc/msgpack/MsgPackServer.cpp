@@ -82,6 +82,10 @@ void MsgPackServer::start() throw(CException) {
     }
 }
 
+//start the rpc adapter
+void MsgPackServer::stop() throw(CException) {
+}
+
 //deinit the rpc adapter
 void MsgPackServer::deinit() throw(CException) {
     msgpackServer.close();
