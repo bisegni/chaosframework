@@ -102,12 +102,25 @@ int32_t Entity::getPropertyByKeyID(uint32_t keyID, ptr_vector<chaos::edb::KeyIdA
     return error;
 }
 
+
+int32_t Entity::getPropertyByKeyID(vector<uint32_t>& keyIDs, ptr_vector<chaos::edb::KeyIdAndValue>& propertys) {
+    int32_t error = 0;
+    if(!(error = database->searchPropertyForEntity(entityID, keyIDs, propertys))) {
+        return error;
+    }
+    return error;
+}
+
 int32_t Entity::reset() {
     return database->deleteAllPropertyForEntity(entityID);
 }
 
 int32_t Entity::addChild(Entity& entityChild) {
     return database->attachEntityChildToEntityParent(entityID, entityChild.entityID);
+}
+
+int32_t Entity::isChild(Entity& entityChild, bool& isChild) {
+    return database->checkParentChildJoined(entityID, entityChild.entityID, isChild);
 }
 
 int32_t Entity::removeChild(Entity& entityChild) {

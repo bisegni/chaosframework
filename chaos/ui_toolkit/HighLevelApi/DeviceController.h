@@ -57,7 +57,7 @@ namespace chaos {
                 //!Dataset database
             CUSchemaDB datasetDB;
                 //!point to the freashest live value for this device dataset
-            auto_ptr<CDataWrapper> lastDeviceDefinition;
+            //auto_ptr<CDataWrapper> lastDeviceDefinition;
             
                 //!point to the freashest live value for this device dataset
             auto_ptr<CDataWrapper> currentLiveValue;
@@ -98,7 +98,7 @@ namespace chaos {
              Initialize the map for the devices
              \param initiDevicedescription the reference to CDataWrapper that contain device initialization information
              */
-            void initializeAttributeIndexMap(CDataWrapper& initiDevicedescription);
+            void initializeAttributeIndexMap();
                
                 //!DeInitialize the map for the devices
             /*!

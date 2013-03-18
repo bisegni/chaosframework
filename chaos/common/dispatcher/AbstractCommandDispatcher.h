@@ -73,6 +73,9 @@ namespace chaos{
             //-----------------------
         virtual void start() throw(CException);
         
+        //-----------------------
+        virtual void stop() throw(CException){};
+        
             //! Dispatch deinitialization with default value
         virtual void deinit() throw(CException);
         

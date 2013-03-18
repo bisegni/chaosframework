@@ -37,7 +37,7 @@ if(var != SQLITE_OK) throw CException(var, sqlite3_errstr(var), "SQLiteEntityDB:
 "create table if not exists key (id integer primary key , key_name char(256))"
 
 #define CREATE_ENTITY_TABLE \
-"create table if not exists entity (id integer primary key , key_id integer, key_type integer, str_value char(256), num_value integer,  double_value double, FOREIGN KEY(key_id) REFERENCES key(id) ON DELETE RESTRICT)"
+"create table if not exists entity (id integer primary key , key_id integer, key_type integer, str_value char(256), num_value integer,  double_value double, UNIQUE(key_id, key_type, str_value, num_value, double_value), FOREIGN KEY(key_id) REFERENCES key(id) ON DELETE RESTRICT)"
 
 #define CREATE_PROPERTY_TABLE \
 "create table if not exists property (id integer primary key , entity_id integer, key_id integer,  key_type integer, str_value char(256), num_value integer,  double_value double, FOREIGN KEY(entity_id) REFERENCES entity(id) ON DELETE CASCADE, FOREIGN KEY(key_id) REFERENCES key(id) ON DELETE RESTRICT)"
@@ -69,10 +69,7 @@ int16_t SQLiteEntityDB::initDB(const char* name, bool temporary)  throw (CExcept
     std::string uriPath = "file:";
     uriPath.append(name);
     
-    //init superclass
-    EntityDB::initDB(name, temporary);
-    
-    if((_temporaryAllocation)) {
+    if(temporary) {
         //use mermory database for temporary
         uriPath.append("?mode=memory&cache=shared");
     }
@@ -138,6 +135,8 @@ int16_t SQLiteEntityDB::initDB(const char* name, bool temporary)  throw (CExcept
     SET_CHECK_AND_TROW_ERROR(result, "select distinct(e.id) from entity e, property p, entity_group g where p.key_id = ? and p.str_value like ? and id_entity_parent = ? and e.id = p.entity_id and e.id=g.id_entity_child", stmt[32])
     SET_CHECK_AND_TROW_ERROR(result, "select distinct(e.id) from entity e, property p, entity_group g where p.key_id = ? and p.num_value = ? and id_entity_parent = ? and e.id = p.entity_id and e.id=g.id_entity_child ", stmt[33])
     SET_CHECK_AND_TROW_ERROR(result, "select distinct(e.id) from entity e, property p, entity_group g where p.key_id = ? and p.double_value = ? and id_entity_parent = ? and e.id = p.entity_id and e.id=g.id_entity_child", stmt[34])
+    
+    SET_CHECK_AND_TROW_ERROR(result, "select distinct(e.id) from entity e, property p, entity_group g where p.key_id = ? and p.double_value = ? and id_entity_parent = ? and e.id = p.entity_id and e.id=g.id_entity_child", stmt[35])
     
     //init the sequence
     if(!result && !hasSequence("key")){

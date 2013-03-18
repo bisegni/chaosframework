@@ -61,6 +61,12 @@ namespace chaos{
              start the rpc adapter
              */
         void start() throw(CException);
+        
+        /*
+         start the rpc adapter
+         */
+        void stop() throw(CException);
+        
             /*
              deinit the rpc adapter
              */

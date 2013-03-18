@@ -28,14 +28,31 @@ using namespace std;
 using namespace boost;
 
 CUSchemaDB::CUSchemaDB() {
-        //create a database
+    initDB("CUSchemaDB", false);
+}
+
+/*!
+ Parametrized constructor
+ */
+CUSchemaDB::CUSchemaDB(bool onMemory) {
+    initDB("CUSchemaDB", onMemory);
+}
+
+/*!
+ Parametrized constructor
+ */
+CUSchemaDB::CUSchemaDB(const char *databaseName, bool onMemory) {
+    initDB(databaseName, onMemory);
+}
+
+void CUSchemaDB::initDB(const char *name, bool onMemory) {
+    //create a database
     entityDB = ObjectFactoryRegister<edb::EntityDB>::getInstance()->getNewInstanceByName("SQLiteEntityDB");
     if(!entityDB) return;
     
-    entityDB->initDB("CUSchema", false);
+    entityDB->initDB(name, onMemory);
     entityDB->getIDForKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, keyIdDevice);
-    entityDB->getIDForKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION, keyIdDataset);
-    entityDB->getIDForKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME, keyIdAttrName);
+    entityDB->getIDForKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION, keyIdDatasetAttrName);
     entityDB->getIDForKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DESCRIPTION, keyIdAttrDesc);
     entityDB->getIDForKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE, keyIdAttrType);
     entityDB->getIDForKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION, keyIdAttrDir);
@@ -61,6 +78,20 @@ CUSchemaDB::~CUSchemaDB() {
 }
 
 /*
+ Compose the attribute name
+*/
+void CUSchemaDB::composeAttributeName(const char *deviceID, const char *attributeName, string& composedName) {
+    composedName.assign(deviceID).append(":").append(attributeName);
+} 
+
+/*
+ Compose the attribute name
+*/ 
+const char * CUSchemaDB::decomposeAttributeName(string& deviceID, string& attributeName) {
+    return attributeName.substr(deviceID.size()+1).c_str();
+}
+
+/*
  return the vector containing the atrtibute list for a domain
  */
 entity::Entity* CUSchemaDB::getDeviceEntity(const string& deviceID) {
@@ -77,7 +108,7 @@ entity::Entity* CUSchemaDB::getDeviceEntity(const string& deviceID) {
 /*
  return the vector containing the atrtibute list for a domain
  */
-void CUSchemaDB::addDeviceId(string deviceID) {
+void CUSchemaDB::addDeviceId(const string& deviceID) {
     if(deviceEntityMap.count(deviceID) > 0){
         return;
     }
@@ -95,12 +126,12 @@ entity::Entity *CUSchemaDB::getDatasetElement(entity::Entity *device, string& at
 
 entity::Entity *CUSchemaDB::getDatasetElement(entity::Entity *device, const char * attributeName) {
     bool alreadyAdded = false;
+    string a_name;
     edb::KeyIdAndValue kiv;
-    kiv.keyID = keyIdDataset;
+    kiv.keyID = keyIdDatasetAttrName;
     kiv.type = chaos::edb::KEY_STR_VALUE;
-    string a_name(device->getKeyInfo().value.strValue);
-    a_name.append(":");
-    a_name.append(attributeName);
+    composeAttributeName(device->getKeyInfo().value.strValue, attributeName, a_name);
+    
     strcpy(kiv.value.strValue, a_name.c_str());
     
     ptr_vector<entity::Entity> childs;
@@ -130,27 +161,27 @@ void CUSchemaDB::addAttributeToDataSet(const char*const attributeDeviceID,
                                        DataType::DataSetAttributeIOAttribute attributeDirection) {
     
     
-    
+    bool isChild = false;
     entity::Entity *device = getDeviceEntity(attributeDeviceID);
     
         //add the attribute
+    string a_name;
     edb::KeyIdAndValue kiv;
-    kiv.keyID = keyIdDataset;
+    kiv.keyID = keyIdDatasetAttrName;
     kiv.type = chaos::edb::KEY_STR_VALUE;
-    string a_name(attributeDeviceID);
-    a_name.append(":");
-    a_name.append(attributeName);
+    
+    composeAttributeName(attributeDeviceID, attributeName, a_name);
+    
     strcpy(kiv.value.strValue, a_name.c_str());
     
     auto_ptr<entity::Entity> elementDst(entityDB->getNewEntityInstance(kiv));
     
     if(elementDst.get()) {
-        elementDst->addProperty(keyIdAttrName, attributeName);
-        elementDst->addProperty(keyIdAttrDesc, attributeDescription);
-        elementDst->addProperty(keyIdAttrType, (int64_t)attributeType);
-        elementDst->addProperty(keyIdAttrDir, (int64_t)attributeDirection);
-        
-        device->addChild(*elementDst);
+        addUniqueAttributeProperty(elementDst.get(), keyIdAttrDesc, attributeDescription);
+        addUniqueAttributeProperty(elementDst.get(), keyIdAttrType, (int64_t)attributeType);
+        addUniqueAttributeProperty(elementDst.get(), keyIdAttrDir, (int64_t)attributeDirection);
+        device->isChild(*elementDst.get(), isChild);
+        if(!isChild) device->addChild(*elementDst);
     }
 }
 
@@ -310,8 +341,6 @@ void CUSchemaDB::fillDataWrapperWithDataSetDescription(CDataWrapper& datasetDesc
     if(deviceEntityMap.size()){
         shared_ptr<CDataWrapper> datasetElementCDW;
         shared_ptr<CDataWrapper> domainDatasetDescription;
-        ptr_vector<entity::Entity> deviceDatasetAttribute;
-        ptr_vector<edb::KeyIdAndValue> attrProperty;
         
             //there are some parameter for this action, need to be added to rapresentation
         for (EntityPtrMapIterator deviceEntityIter = deviceEntityMap.begin();
@@ -321,60 +350,95 @@ void CUSchemaDB::fillDataWrapperWithDataSetDescription(CDataWrapper& datasetDesc
             string deviceId = deviceEntityIter->first;
             entity::Entity *deviceEntity = deviceEntityIter->second;
 
-
-            //allocate new CDatawrapper container for current device
-            domainDatasetDescription.reset(new CDataWrapper());
-            //add deviceID to description data
-            domainDatasetDescription->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, deviceId);
+            auto_ptr<CDataWrapper> domainDatasetDescription(new CDataWrapper());
             
-            //try to get all dataset attribute for device entity
-            deviceDatasetAttribute.release();
-            deviceEntity->getChildsWithKeyID(keyIdDataset, deviceDatasetAttribute);
+            fillDataWrapperWithDataSetDescription(deviceEntity, *domainDatasetDescription.get());
             
-            //get dataset attribute for domain name
-            
-            //convenient array for element porperty
-
-            for (ptr_vector<entity::Entity>::iterator dstElmtIterator = deviceDatasetAttribute.begin();
-                 dstElmtIterator != deviceDatasetAttribute.end();
-                 dstElmtIterator++) {
-                
-                //get next dst element entity for get the attribute
-                entity::Entity *dstAttrEntity = &(*dstElmtIterator);
-                
-                //get all entity property
-                attrProperty.release();
-                dstAttrEntity->getAllProperty(attrProperty);
-                if(attrProperty.size() == 0) continue;
-                
-                //cicle all dataset element
-                datasetElementCDW.reset(new CDataWrapper());
-
-                fillCDataWrapperDSAtribute(datasetElementCDW.get(), dstAttrEntity, attrProperty);
-                
-                // add parametere representation object to main action representation
-                domainDatasetDescription->appendCDataWrapperToArray(*datasetElementCDW.get());
-                //CDataWrapper *data = *datasetIterator;
-            }
-
-
-            
-            domainDatasetDescription->finalizeArrayForKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION);
                 // add parametere representation object to main action representation
             datasetDescription.appendCDataWrapperToArray(*domainDatasetDescription.get());
         }
         
-            //cloese the array
+        //close array for all device description [IN CASE DATA FOR INITIALIZE THE DEVICE ONLY one description need to be returne SO THIS FUNCTION NEED TO BE CHANGED TO SUPPORT ALSO ONE ONLY DEVICE DS CREATION]
         datasetDescription.finalizeArrayForKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION);
     }
 }
 
+/*!
+ fill a CDataWrapper with the dataset decode
+ */
+void CUSchemaDB::fillDataWrapperWithDataSetDescription(string& deviceID, CDataWrapper& datasetDescription) {
+    if(!deviceEntityMap.count(deviceID)) return;
+    
+    //get the netity for devceID
+    entity::Entity *deviceEntity = deviceEntityMap[deviceID];
+    
+    fillDataWrapperWithDataSetDescription(deviceEntity, datasetDescription);
+}
+
+/*!
+ fill a CDataWrapper with the dataset decode
+ */
+void CUSchemaDB::fillDataWrapperWithDataSetDescription(entity::Entity *deviceEntity, CDataWrapper& deviceDatasetDescription) {
+    ptr_vector<edb::KeyIdAndValue> attrProperty;
+    ptr_vector<entity::Entity> deviceDatasetAttribute;
+    
+    //add deviceID to description data
+    deviceDatasetDescription.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, deviceEntity->getKeyInfo().value.strValue);
+    
+    //try to get all dataset attribute for device entity
+    deviceEntity->getChildsWithKeyID(keyIdDatasetAttrName, deviceDatasetAttribute);
+    
+    //get dataset attribute for domain name
+    
+    //convenient array for element porperty
+    
+    for (ptr_vector<entity::Entity>::iterator dstElmtIterator = deviceDatasetAttribute.begin();
+         dstElmtIterator != deviceDatasetAttribute.end();
+         dstElmtIterator++) {
+        
+        //get next dst element entity for get the attribute
+        entity::Entity *dstAttrEntity = &(*dstElmtIterator);
+        
+        //get all entity property
+        attrProperty.release();
+        dstAttrEntity->getAllProperty(attrProperty);
+        if(attrProperty.size() == 0) continue;
+        
+        //cicle all dataset element
+        auto_ptr<CDataWrapper> datasetElementCDW(new CDataWrapper());
+        
+        fillCDataWrapperDSAtribute(datasetElementCDW.get(), deviceEntity, dstAttrEntity, attrProperty);
+        
+        // add parametere representation object to main action representation
+        deviceDatasetDescription.appendCDataWrapperToArray(*datasetElementCDW.get());
+        //CDataWrapper *data = *datasetIterator;
+    }
+    
+    //close the dataset attribute array
+    deviceDatasetDescription.finalizeArrayForKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION);
+    
+    //add now the server address for this device if sent
+    attrProperty.clear();
+    deviceEntity->getPropertyByKeyID(keyIdServerAddress, attrProperty);
+    for (ptr_vector<edb::KeyIdAndValue>::iterator iter = attrProperty.begin();
+         iter != attrProperty.end();
+         iter++) {
+        edb::KeyIdAndValue *kivPtr = &(*iter);
+        deviceDatasetDescription.appendStringToArray(kivPtr->value.strValue);
+    }
+    deviceDatasetDescription.finalizeArrayForKey(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS);
+}
+
 /*
  */
-void CUSchemaDB::fillCDataWrapperDSAtribute(CDataWrapper *dsAttribute, entity::Entity *attrEntity, ptr_vector<edb::KeyIdAndValue>& attrProperty) {
+void CUSchemaDB::fillCDataWrapperDSAtribute(CDataWrapper *dsAttribute, entity::Entity *deviceIDEntity, entity::Entity *attrEntity, ptr_vector<edb::KeyIdAndValue>& attrProperty) {
     
     //add name
-    dsAttribute->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME, attrEntity->getKeyInfo().value.strValue);
+    string dID = deviceIDEntity->getKeyInfo().value.strValue;
+    string attr = attrEntity->getKeyInfo().value.strValue;
+    string attrDecomposed = attr.substr(dID.size()+1);
+    
+    dsAttribute->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME, attrDecomposed);
     
     for (ptr_vector<edb::KeyIdAndValue>::iterator dstElmtIterator = attrProperty.begin();
          dstElmtIterator != attrProperty.end();
@@ -389,8 +453,6 @@ void CUSchemaDB::fillCDataWrapperDSAtribute(CDataWrapper *dsAttribute, entity::E
             dsAttribute->addStringValue(DatasetDefinitionkey::CS_CMDM_ACTION_DESC_MAX_RANGE, curKIV->value.strValue);
         } else if(curKIV->keyID == keyIdAttrMinRng) {
             dsAttribute->addStringValue(DatasetDefinitionkey::CS_CMDM_ACTION_DESC_MIN_RANGE, curKIV->value.strValue);
-        } else if(curKIV->keyID == keyIdAttrName) {
-            dsAttribute->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME, curKIV->value.strValue);
         } else if(curKIV->keyID == keyIdAttrType) {
             dsAttribute->addInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE, (int32_t)curKIV->value.numValue);
         } else {
@@ -414,7 +476,7 @@ void CUSchemaDB::getAllDeviceId(vector<string>& deviceNames) {
 
 /*
  * Return the attribute array for a specified direction
- */
+ 
 void CUSchemaDB::getAttributeForDirection(string& deviceID, DataType::DataSetAttributeIOAttribute attributeDiretion, vector< shared_ptr<CDataWrapper> >& resultVector) {
     //get the device entity
     ptr_vector<entity::Entity> entityVec;
@@ -439,11 +501,11 @@ void CUSchemaDB::getAttributeForDirection(string& deviceID, DataType::DataSetAtt
         if(elementProperty.size() == 0) continue;
         
         shared_ptr<CDataWrapper> dsAttr(new CDataWrapper());
-        fillCDataWrapperDSAtribute(dsAttr.get(), e, elementProperty);
+        fillCDataWrapperDSAtribute(dsAttr.get(), deviceEntity, e, elementProperty);
         resultVector.push_back(dsAttr);
     }
 }
-
+*/
 /*
  return al domain
  */
@@ -454,7 +516,7 @@ bool CUSchemaDB::deviceIsPresent(const string& deviceID) {
 void CUSchemaDB::getDeviceDatasetAttributesName(const string& deviceID, vector<string>& attributesName) {
     entity::Entity *deviceEntity = getDeviceEntity(deviceID);
     ptr_vector<entity::Entity> attrDst;
-    deviceEntity->getChildsWithKeyID(keyIdDataset, attrDst);
+    deviceEntity->getChildsWithKeyID(keyIdDatasetAttrName, attrDst);
     for (ptr_vector<entity::Entity>::iterator attrEntityIter = attrDst.begin();
          attrEntityIter != attrDst.end();
          attrEntityIter++) {
@@ -500,12 +562,19 @@ void CUSchemaDB::getDeviceAttributeDescription(const string& deviceID, const str
 }
 
 void CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID, const string& attributesName, RangeValueInfo& rangeInfo) {
+    
+    string a_name;
     edb::KeyIdAndValue kiv;
-    kiv.keyID = keyIdAttrName;
-    kiv.type = edb::KEY_STR_VALUE;
-    strcpy(kiv.value.strValue, attributesName.c_str());
-    ptr_vector<edb::KeyIdAndValue> attrPropertyVec;
+    vector<uint32_t> keyToGot;
     ptr_vector<entity::Entity> attrEntityVec;
+    ptr_vector<edb::KeyIdAndValue> attrPropertyVec;
+
+    kiv.keyID = keyIdDatasetAttrName;
+    kiv.type = edb::KEY_STR_VALUE;
+    
+    composeAttributeName(deviceID.c_str(), attributesName.c_str(), a_name);
+    
+    strcpy(kiv.value.strValue, a_name.c_str());
     entity::Entity *deviceEntity = getDeviceEntity(deviceID);
     
     //get all
@@ -514,7 +583,13 @@ void CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID, const 
     //check if we ha found the attribute
     if(!attrEntityVec.size()) return;
     
-    (&attrEntityVec[0])->getPropertyByKeyID(keyIdAttrDesc, attrPropertyVec);
+    keyToGot.push_back(keyIdAttrMaxRng);
+    keyToGot.push_back(keyIdAttrMinRng);
+    keyToGot.push_back(keyIdAttrType);
+    keyToGot.push_back(keyIdDefaultValue);
+    
+    
+    (&attrEntityVec[0])->getPropertyByKeyID(keyToGot, attrPropertyVec);
     if(!attrPropertyVec.size()) return;
     
     for (ptr_vector<edb::KeyIdAndValue>::iterator attrPropertyIterator = attrPropertyVec.begin();

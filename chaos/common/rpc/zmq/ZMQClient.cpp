@@ -74,6 +74,13 @@ void ZMQClient::start() throw(CException) {
 }
 
 /*
+ start the rpc adapter
+ */
+void ZMQClient::stop() throw(CException) {
+    
+}
+
+/*
  Deinitialization method for output buffer
  */
 void ZMQClient::deinit() throw(CException) {

@@ -31,7 +31,7 @@ using namespace std;
 //timestamp string variable definition
 string timestampAttributeNameStr = DataPackKey::CS_CSV_TIME_STAMP;
 
-DeviceController::DeviceController(string& _deviceID):deviceID(_deviceID) {
+DeviceController::DeviceController(string& _deviceID):deviceID(_deviceID),datasetDB(false) {
     mdsChannel = NULL;
     deviceChannel = NULL;
     ioLiveDataDriver = NULL;
@@ -82,7 +82,7 @@ void DeviceController::updateChannel() throw(CException) {
     err = mdsChannel->getLastDatasetForDevice(deviceID, &devDefHandler, millisecToWait);
     if(err!=ErrorCode::EC_NO_ERROR || !devDefHandler) throw CException(-2, "No device dataset received", "DeviceController::updateChannel");
     
-    lastDeviceDefinition.reset(devDefHandler);
+    auto_ptr<CDataWrapper> lastDeviceDefinition(devDefHandler);
     
     datasetDB.addAttributeToDataSetFromDataWrapper(*lastDeviceDefinition.get());
     
@@ -153,10 +153,11 @@ int DeviceController::getDeviceAttributeType(string& attributesName, DataType::D
 int DeviceController::initDevice() {
     CHAOS_ASSERT(mdsChannel && deviceChannel)
     int err = 0;
-    if(!lastDeviceDefinition.get()) return -1;
+    CDataWrapper initConf;
+    datasetDB.fillDataWrapperWithDataSetDescription(deviceID, initConf);
     
         //initialize the devica with the metadataserver data
-    err = deviceChannel->initDevice(lastDeviceDefinition.get(), millisecToWait);
+    err = deviceChannel->initDevice(&initConf, millisecToWait);
         //configure the live data with the same server where the device write
     return err;
 }
@@ -257,7 +258,7 @@ int DeviceController::setAttributeValue(string& attributeName, const char* attri
     return setAttributeValue(attributeName, attributeValue,strlen(attributeValue));
 }
 
-int DeviceController::setAttributeValue(string& attributeName, const char* attributeValue,int size) {
+int DeviceController::setAttributeValue(string& attributeName, const char* attributeValue, int size) {
     CDataWrapper attributeValuePack;
     const char *attrname=attributeName.c_str();
     
@@ -297,33 +298,39 @@ int DeviceController::setAttributeValue(string& attributeName, const char* attri
  Initialize the map for the devices
  \param initiDevicedescription the reference to CDataWrapper that contain device initialization information
  */
-void DeviceController::initializeAttributeIndexMap(CDataWrapper& initiDevicedescription) {
+void DeviceController::initializeAttributeIndexMap() {
          boost::recursive_mutex::scoped_lock lock(trackMutext);
-    if(!initiDevicedescription.hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID) || !initiDevicedescription.hasKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION)) {
-        return;
-    }
-    string attributeName;
+    
     int32_t attributeType = 0;
     int32_t attributeDirection = 0;
-    auto_ptr<CDataWrapper> attributeDescription;
-    
+    vector<string> attributeNames;
+    RangeValueInfo attributerangeInfo;
+   
     attributeTypeMap.clear();
     attributeDirectionMap.clear();
-    auto_ptr<CMultiTypeDataArrayWrapper> datasetDesription(initiDevicedescription.getVectorValue(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION));
-    for (int idx=0; idx < datasetDesription->size(); idx++) {
-        attributeDescription.reset(datasetDesription->getCDataWrapperElementAtIndex(idx));
-        if(!attributeDescription->hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME) || 
-           !attributeDescription->hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION) ||
-           !attributeDescription->hasKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE)) continue;
+    
+    //get all attribute name from db
+    datasetDB.getDeviceDatasetAttributesName(deviceID, DataType::Input, attributeNames);
+    for (vector<string>::iterator iter = attributeNames.begin();
+         iter != attributeNames.end();
+         iter++) {
         
-            //alocate the buffer for realtime data
-        attributeName = attributeDescription->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_NAME);
-        attributeType = attributeDescription->getInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE);
-        attributeDirection = attributeDescription->getInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION);
-        
-        attributeDirectionMap.insert(make_pair(attributeName, (DataType::DataSetAttributeIOAttribute)attributeDirection));
-        attributeTypeMap.insert(make_pair(attributeName, (DataType::DataType)attributeType));
+        datasetDB.getDeviceAttributeRangeValueInfo(deviceID, *iter, attributerangeInfo);
+        attributeDirectionMap.insert(make_pair(*iter, (DataType::DataSetAttributeIOAttribute)DataType::Input));
+        attributeTypeMap.insert(make_pair(*iter, (DataType::DataType)attributerangeInfo.valueType));
     }
+    
+    attributeNames.clear();
+    datasetDB.getDeviceDatasetAttributesName(deviceID, DataType::Output, attributeNames);
+    for (vector<string>::iterator iter = attributeNames.begin();
+         iter != attributeNames.end();
+         iter++) {
+        
+        datasetDB.getDeviceAttributeRangeValueInfo(deviceID, *iter, attributerangeInfo);
+        attributeDirectionMap.insert(make_pair(*iter, (DataType::DataSetAttributeIOAttribute)DataType::Output));
+        attributeTypeMap.insert(make_pair(*iter, (DataType::DataType)attributerangeInfo.valueType));
+    }
+
 }
 
     //! allocata new circular buffer for attribute and type
@@ -472,7 +479,7 @@ void DeviceController::setupTracking() {
     boost::recursive_mutex::scoped_lock lock(trackMutext);
     
         //init live buffer
-    initializeAttributeIndexMap(*lastDeviceDefinition.get());
+    initializeAttributeIndexMap();
     
     //initialize timestamp buffer
     chaos::SingleBufferCircularBuffer<int64_t> *newBuffer = new chaos::SingleBufferCircularBuffer<int64_t>(10);

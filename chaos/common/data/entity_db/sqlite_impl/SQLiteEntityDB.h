@@ -28,7 +28,7 @@
 #include <boost/thread.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 
-#define NUM_STMT 35
+#define NUM_STMT 36
 
 namespace chaos {
     namespace edb {
@@ -109,7 +109,7 @@ namespace chaos {
             /*!
              */
             int16_t removeAllEntityChild(uint32_t parentEntity);
-
+            
             /*!
              */
             int16_t getAllChildEntity(uint32_t parentEntity, std::vector<uint32_t>& child);

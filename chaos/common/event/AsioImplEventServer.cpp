@@ -68,6 +68,13 @@ void AsioImplEventServer::start() throw(CException) {
 /*
  start the event adapter
  */
+void AsioImplEventServer::stop() throw(CException) {
+    
+}
+
+/*
+ start the event adapter
+ */
 void AsioImplEventServer::listeForEventType(event::EventType type,  bool listen) throw(CException) {
     switch (type) {
         case event::EventTypeAlert:

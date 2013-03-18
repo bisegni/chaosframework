@@ -42,6 +42,11 @@ namespace chaos {
          start the rpc adapter
          */
         virtual void start() throw(CException);
+
+        /*
+         start the rpc adapter
+         */
+        virtual void stop() throw(CException);
         
         /*
          deinit the rpc adapter

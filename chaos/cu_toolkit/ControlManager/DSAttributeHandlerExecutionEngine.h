@@ -78,6 +78,9 @@ namespace chaos{
                 //! Start the implementation
             void start() throw(chaos::CException);
             
+            //-----------------------
+            void stop() throw(CException){};
+            
                 //! Deinit the implementation
             void deinit() throw(chaos::CException);
             

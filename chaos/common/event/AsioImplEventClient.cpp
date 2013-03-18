@@ -79,6 +79,11 @@ void AsioImplEventClient::start() throw(CException) {
     }
 }
 
+//-----------------------
+void AsioImplEventClient::stop() throw(CException) {
+    
+}
+
 /*
  deinit the event adapter
  */

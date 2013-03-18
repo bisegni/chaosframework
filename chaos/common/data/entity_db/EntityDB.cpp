@@ -27,21 +27,12 @@ using namespace chaos::edb;
  Default constructor
  */
 EntityDB::EntityDB() {
-    entityInstanceSequence = 0;
 }
 
 /*!
  Default destructor
  */
 EntityDB::~EntityDB() {
-    /*for (std::map<atomic_int_type, entity::Entity*>::iterator iter = entityInstancesMap.begin();
-         iter != entityInstancesMap.end(); iter++) {
-        
-        
-        entity::Entity* entityToDelete = iter->second;
-        delete entityToDelete;
-    }
-    entityInstancesMap.clear();*/
 }
 
 /*!
@@ -52,15 +43,4 @@ entity::Entity* EntityDB::getNewEntityInstance(KeyIdAndValue& keyInfo) {
     entity::Entity *result = new entity::Entity(this);
     if(result) result->setEntityKeyAndInfo(keyInfo);
     return result;
-}
-
-/*!
- Delete the isntance of an Entity class
- */
-void EntityDB::deleteEntityInstance(entity::Entity* entity) {
-    if(!entity) return;
-    
-        //entityInstancesMap.erase(entity->instanceID);
-    //delete the instance
-    delete entity;
 }

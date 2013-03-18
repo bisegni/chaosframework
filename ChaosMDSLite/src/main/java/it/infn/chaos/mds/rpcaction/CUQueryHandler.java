@@ -98,7 +98,7 @@ public class CUQueryHandler extends RPCActionHadler {
 			// check for CU presence
 			String controlUnitNetAddress = actionData.containsField(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS) ? actionData.getString(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS) : null;
 			if (controlUnitNetAddress == null)
-				throw new RefException("No control unit instance found", 1, "DeviceDA::controlUnitValidationAndRegistration");
+				throw new RefException("No network address found", 0, "DeviceDA::controlUnitValidationAndRegistration");
 			String controlUnitInstance = actionData.containsField(RPCConstants.CONTROL_UNIT_INSTANCE) ? actionData.getString(RPCConstants.CONTROL_UNIT_INSTANCE) : null;
 			if (controlUnitInstance == null)
 				throw new RefException("No control unit instance found", 1, "DeviceDA::controlUnitValidationAndRegistration");
@@ -153,13 +153,13 @@ public class CUQueryHandler extends RPCActionHadler {
 				closeDataAccess(dDA, false);
 			} catch (SQLException e1) {
 			}
-			throw new RefException("RegisterControUnit error", 1, "CUQueryHandler::registerControUnit");
+			throw new RefException(e.getMessage(), 3, "CUQueryHandler::registerControUnit");
 		} catch (Throwable e) {
 			try {
 				closeDataAccess(dDA, false);
 			} catch (SQLException e1) {
 			}
-			throw new RefException("RegisterControUnit error", 1, "CUQueryHandler::registerControUnit");
+			throw new RefException(e.getMessage(), 4, "CUQueryHandler::registerControUnit");
 		}
 		return result;
 	}

@@ -51,6 +51,8 @@ namespace chaos {
              */
             virtual void start() throw(CException) = 0;
             
+            virtual void stop() throw(CException) = 0;
+            
             /*
              start the event adapter
              */
