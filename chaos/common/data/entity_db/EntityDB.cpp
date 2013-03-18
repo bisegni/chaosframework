@@ -48,8 +48,9 @@ EntityDB::~EntityDB() {
  Allocate and return a new instance of an Entity class
  */
 entity::Entity* EntityDB::getNewEntityInstance(KeyIdAndValue& keyInfo) {
-    atomic_int_type instance = atomic_increment(&entityInstanceSequence);
-    entity::Entity *result = new entity::Entity(this, instance);
+    //atomic_int_type instance = atomic_increment(&entityInstanceSequence);
+    entity::Entity *result = new entity::Entity(this);
+    if(result) result->setEntityKeyAndInfo(keyInfo);
     return result;
 }
 

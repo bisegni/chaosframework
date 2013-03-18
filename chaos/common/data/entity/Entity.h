@@ -23,9 +23,13 @@
 
 #include <vector>
 #include <chaos/common/data/entity/Record.h>
-#include <chaos/common/utility/Atomic.h>
-namespace chaos {
+//#include <chaos/common/utility/Atomic.h>
+#include <boost/ptr_container/ptr_vector.hpp>
 
+namespace chaos {
+    
+    using namespace boost;
+    
     namespace edb {
         //forward declaration
         class EntityDB;
@@ -38,14 +42,12 @@ namespace chaos {
         /*!
          This represent the base class for the entity
          */
-        class Entity  : protected Record {
+        class Entity  : public Record {
             friend class edb::EntityDB;
-            
-            atomic_int_type instanceID;
             
             uint32_t entityID;
             
-            Entity(edb::EntityDB *_database, atomic_int_type _instanceID);
+            Entity(edb::EntityDB *_database);
 
             
             int32_t setEntityKeyAndInfo(chaos::edb::KeyIdAndValue& keyInfo);
@@ -59,13 +61,17 @@ namespace chaos {
             
             int32_t removeAllChild();
             
-            int32_t getAllChild(vector<Entity*>& childs);
+            int32_t getAllChild(ptr_vector<Entity>& childs);
             
-            int32_t getChildsWithKeyID(uint32_t keyID, vector<Entity*>& childs);
+            int32_t getChildsWithKeyID(uint32_t keyID, ptr_vector<Entity>& childs);
+            
+            int32_t getChildWithPropertyKeyIDandValue(edb::KeyIdAndValue& keyInfo, ptr_vector<Entity>& childs);
             
             int32_t getHasChildByKeyInfo(edb::KeyIdAndValue& keyInfo, bool& hasChild);
             
-            int32_t getChildsWithKeyInfo(edb::KeyIdAndValue& keyInfo, vector<Entity*>& childs);
+            int32_t getChildsWithKeyInfo(edb::KeyIdAndValue& keyInfo, ptr_vector<Entity>& childs);
+            
+            int32_t addProperty(uint32_t keyID, const char * propertyVal);
             
             int32_t addProperty(uint32_t keyID, string& propertyVal);
 
@@ -75,9 +81,9 @@ namespace chaos {
             
             int32_t reset();
             
-            int32_t getAllProperty(chaos::ArrayPointer<chaos::edb::KeyIdAndValue>& propertys);
+            int32_t getAllProperty(ptr_vector<chaos::edb::KeyIdAndValue>& propertys);
             
-            int32_t getPropertyByKeyID(uint32_t keyID, chaos::ArrayPointer<chaos::edb::KeyIdAndValue>& propertys);
+            int32_t getPropertyByKeyID(uint32_t keyID, ptr_vector<chaos::edb::KeyIdAndValue>& propertys);
         };
         
     }

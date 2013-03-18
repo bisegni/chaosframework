@@ -161,7 +161,7 @@ int main (int argc, char* argv[] )
         //List all attribute of dataset without use BSON
         vector<string> allOutAttrName;
         controller->getDeviceDatasetAttributesName(allOutAttrName, chaos::DataType::Output);
-        for(vector<string>::iterator i=getAttrs.begin();i!=getAttrs.end();i++){
+        for(vector<string>::iterator i=allOutAttrName.begin();i!=allOutAttrName.end();i++){
             cout<<" attributes to track:\""<<*i<<"\""<<endl;
         }
        // intValue1Buff = controller->getBufferForAttribute(key);
