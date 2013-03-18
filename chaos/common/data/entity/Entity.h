@@ -46,23 +46,38 @@ namespace chaos {
             uint32_t entityID;
             
             Entity(edb::EntityDB *_database, atomic_int_type _instanceID);
-            
-            ~Entity();
+
             
             int32_t setEntityKeyAndInfo(chaos::edb::KeyIdAndValue& keyInfo);
         public:
-
+            
+            ~Entity();
+            
             int32_t addChild(Entity& entityChild);
             
             int32_t removeChild(Entity& entityChild);
             
             int32_t removeAllChild();
             
-            int32_t addProperty(chaos::edb::KeyIdAndValue& keyInfo);
+            int32_t getAllChild(vector<Entity*>& childs);
+            
+            int32_t getChildsWithKeyID(uint32_t keyID, vector<Entity*>& childs);
+            
+            int32_t getHasChildByKeyInfo(edb::KeyIdAndValue& keyInfo, bool& hasChild);
+            
+            int32_t getChildsWithKeyInfo(edb::KeyIdAndValue& keyInfo, vector<Entity*>& childs);
+            
+            int32_t addProperty(uint32_t keyID, string& propertyVal);
 
+            int32_t addProperty(uint32_t keyID, int64_t propertyVal);
+            
+            int32_t addProperty(uint32_t keyID, double propertyVal);
+            
             int32_t reset();
             
             int32_t getAllProperty(chaos::ArrayPointer<chaos::edb::KeyIdAndValue>& propertys);
+            
+            int32_t getPropertyByKeyID(uint32_t keyID, chaos::ArrayPointer<chaos::edb::KeyIdAndValue>& propertys);
         };
         
     }

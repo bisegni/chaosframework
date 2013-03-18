@@ -27,7 +27,7 @@
 #include <chaos/common/data/entity_db/EntityDB.h>
 #include <chaos/common/data/entity_db/sqlite_impl/sqlite3.h>
 
-#define NUM_STMT 28
+#define NUM_STMT 31
 
 namespace chaos {
     namespace edb {
@@ -36,7 +36,8 @@ namespace chaos {
         /*!
          SQLite implementation for the entity db
          */
-        class SQLiteEntityDB : public EntityDB {
+        
+        REGISTER_AND_DEFINE_NOALIAS_DERIVED_CLASS_FACTORY(SQLiteEntityDB,EntityDB) {
             string alias;
             sqlite3 *dbInstance;
             
@@ -63,7 +64,7 @@ namespace chaos {
             /*!
              Default constructor
              */
-            SQLiteEntityDB();
+            SQLiteEntityDB(/*string *_alias*/);
 
             /*!
              Default destructor
@@ -110,7 +111,7 @@ namespace chaos {
 
             /*!
              */
-            int16_t getAllChildEntity(uint32_t parentEntity, std::vector<uint32_t> child);
+            int16_t getAllChildEntity(uint32_t parentEntity, std::vector<uint32_t>& child);
             
             /*!
              */
@@ -120,7 +121,10 @@ namespace chaos {
              search the entitys with key and value
              */
             int16_t searchEntityByKeyAndValue(KeyIdAndValue& keyInfo, std::vector<uint32_t>& resultEntityIDs);
-            
+            /*!
+             search the entitys with key and value
+             */
+            int16_t searchEntityByParentIDAndKeyValue(uint32_t parentID, KeyIdAndValue& keyInfo, std::vector<uint32_t>& resultEntityIDs);
             /*
              search the entitys using property key and value
              */

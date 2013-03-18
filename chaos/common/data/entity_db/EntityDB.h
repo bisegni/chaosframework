@@ -164,7 +164,7 @@ namespace chaos {
             
             /*!
              */
-            virtual int16_t getAllChildEntity(uint32_t parentEntity, std::vector<uint32_t> child) = 0;
+            virtual int16_t getAllChildEntity(uint32_t parentEntity, std::vector<uint32_t>& child) = 0;
             
             /*!
              */
@@ -183,6 +183,13 @@ namespace chaos {
              \param resultEntityIDs the vector containing the retrived id
              */
             virtual int16_t searchEntityByKeyAndValue(KeyIdAndValue& keyInfo, std::vector<uint32_t>& resultEntityIDs) = 0;
+ 
+            /*!
+             search the entitys with key and value
+             \param keyInfo the key information for the new entity
+             \param resultEntityIDs the vector containing the retrived id
+             */
+            virtual int16_t searchEntityByParentIDAndKeyValue(uint32_t parentID, KeyIdAndValue& keyInfo, std::vector<uint32_t>& resultEntityIDs) = 0;
             
             /*!
              search the entitys using property key and value

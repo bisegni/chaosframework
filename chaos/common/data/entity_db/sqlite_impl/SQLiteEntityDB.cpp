@@ -48,8 +48,8 @@ if(var != SQLITE_OK) throw CException(var, sqlite3_errstr(var), "SQLiteEntityDB:
 /*!
  Default constructor
  */
-SQLiteEntityDB::SQLiteEntityDB() {
-    
+SQLiteEntityDB::SQLiteEntityDB(/*string *_alias*/) {
+    //alias = *_alias;
 }
 
 /*!
@@ -130,6 +130,9 @@ int16_t SQLiteEntityDB::initDB(const char* name, bool temporary)  throw (CExcept
     
     SET_CHECK_AND_TROW_ERROR(result, "select key_id, key_type, CASE (key_type) when 0 then num_value when 1 then double_value else str_value end from entity where id = ?", stmt[26])
     SET_CHECK_AND_TROW_ERROR(result, "delete from entity_group where id_entity_parent = ? ", stmt[27])
+    SET_CHECK_AND_TROW_ERROR(result, "select id from entity e, entity_group g where e.id = g.id_entity_child and e.key_id = ? and e.str_value like ? and g.id_entity_parent = ?", stmt[28])
+    SET_CHECK_AND_TROW_ERROR(result, "select id from entity e, entity_group g where e.id = g.id_entity_child and e.key_id = ? and e.num_value = ? and g.id_entity_parent = ?", stmt[29])
+    SET_CHECK_AND_TROW_ERROR(result, "select id from entity e, entity_group g where e.id = g.id_entity_child and e.key_id = ? and e.double_value = ? and g.id_entity_parent = ?", stmt[30])
     
     //init the sequence
     if(!result && !hasSequence("key")){
@@ -347,7 +350,7 @@ int16_t SQLiteEntityDB::checkParentChildJoined(uint32_t parentEntity, uint32_t c
 /*!
  
  */
-int16_t SQLiteEntityDB::getAllChildEntity(uint32_t parentEntity, std::vector<uint32_t> child) {
+int16_t SQLiteEntityDB::getAllChildEntity(uint32_t parentEntity, std::vector<uint32_t>& child) {
     int16_t result = 0;
     sqlite3_reset(stmt[25]);
     
@@ -552,6 +555,55 @@ int16_t SQLiteEntityDB::searchEntityByKeyAndValue(KeyIdAndValue& keyInfo, std::v
     
     return  SQLITE_OK;
     
+}
+
+/*!
+ search the entitys with key and value
+ */
+int16_t SQLiteEntityDB::searchEntityByParentIDAndKeyValue(uint32_t parentID, KeyIdAndValue& keyInfo, std::vector<uint32_t>& resultEntityIDs) {
+    int16_t result = 0;
+    
+    sqlite3_stmt *targetStmt = NULL;
+        switch (keyInfo.type) {
+            case KEY_STR_VALUE: {
+                targetStmt = stmt[28];
+                sqlite3_reset(targetStmt);
+                    // set key id
+                result = sqlite3_bind_text(targetStmt, 2, keyInfo.value.strValue, -1, NULL);
+                if(result != SQLITE_OK) return result;
+                break;
+            }
+            case KEY_NUM_VALUE:
+                targetStmt = stmt[29];
+                sqlite3_reset(targetStmt);
+                result = sqlite3_bind_int64(targetStmt, 2, keyInfo.value.numValue);
+                if(result != SQLITE_OK) return result;
+                break;
+            case KEY_DOUBLE_VALUE:
+                targetStmt = stmt[30];
+                sqlite3_reset(targetStmt);
+                result = sqlite3_bind_double(targetStmt, 2, keyInfo.value.doubleValue);
+                if(result != SQLITE_OK) return result;
+                break;
+            
+        }
+    
+        // set new entity id
+    result = sqlite3_bind_int(stmt[28], 1, keyID);
+    if(result != SQLITE_OK) return result;
+    
+    result = sqlite3_bind_int(stmt[28], 3, parentID);
+    if(result != SQLITE_OK) return result;
+    
+        // cicle the row
+    while((result = sqlite3_step(stmt[28])) == SQLITE_ROW) {
+            //get found ids
+        resultEntityIDs.push_back(sqlite3_column_int(stmt[28], 0));
+    }
+    
+    return  SQLITE_OK;
+    
+
 }
 
 /*
