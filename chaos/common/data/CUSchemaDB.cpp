@@ -53,6 +53,7 @@ void CUSchemaDB::initDB(const char *name, bool onMemory) {
     entityDB->initDB(name, onMemory);
     entityDB->getIDForKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, keyIdDevice);
     entityDB->getIDForKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION, keyIdDatasetAttrName);
+    entityDB->getIDForKey(DatasetDefinitionkey::CS_CM_DATASET_TIMESTAMP, keyIdDatasetTimestamp);
     entityDB->getIDForKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DESCRIPTION, keyIdAttrDesc);
     entityDB->getIDForKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE, keyIdAttrType);
     entityDB->getIDForKey(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION, keyIdAttrDir);
@@ -98,7 +99,6 @@ entity::Entity* CUSchemaDB::getDeviceEntity(const string& deviceID) {
     if(deviceEntityMap.count(deviceID) > 0){
         return deviceEntityMap[deviceID];
     }
-    
         //a new vector need to be added
     addDeviceId(deviceID);
     return deviceEntityMap[deviceID];
@@ -117,7 +117,11 @@ void CUSchemaDB::addDeviceId(const string& deviceID) {
     kiv.type = chaos::edb::KEY_STR_VALUE;
     strcpy(kiv.value.strValue, deviceID.c_str());
         //add the entity for device
-    deviceEntityMap.insert(make_pair<string, entity::Entity*>(deviceID, entityDB->getNewEntityInstance(kiv)));
+    entity::Entity *dsEntity = entityDB->getNewEntityInstance(kiv);
+    if(dsEntity) {
+        deviceEntityMap.insert(make_pair<string, entity::Entity*>(deviceID, dsEntity));
+        dsEntity->addProperty(keyIdDatasetTimestamp, timingUtils.getTimeStamp());
+    }
 }
 
 entity::Entity *CUSchemaDB::getDatasetElement(entity::Entity *device, string& attributeName) {
@@ -189,11 +193,12 @@ void CUSchemaDB::addAttributeToDataSet(const char*const attributeDeviceID,
 void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, const char * attributeValue) {
     ptr_vector<edb::KeyIdAndValue> keysAndValues;
     attributeEntity->getPropertyByKeyID(keyIDToAdd, keysAndValues);
+    int idx = 0;
     bool found = keysAndValues.size() != 0;
     
     if(found) {
         found = false;
-        for ( int idx = 0; idx< keysAndValues.size(); idx++) {
+        for (; idx< keysAndValues.size(); idx++) {
             if(!strcmp((&keysAndValues[idx])->value.strValue, attributeValue)) {
                 found = true;
                 break;
@@ -201,17 +206,22 @@ void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uin
         }
     }
     
-    if(!found) attributeEntity->addProperty(keyIDToAdd, attributeValue);
+    if(!found) {
+        attributeEntity->addProperty(keyIDToAdd, attributeValue);
+    } else {
+        attributeEntity->updateProperty((&keysAndValues[idx])->elementID, keyIDToAdd, attributeValue);
+    }
 }
 
 void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, string& attributeValue) {
     ptr_vector<edb::KeyIdAndValue> keysAndValues;
     attributeEntity->getPropertyByKeyID(keyIDToAdd, keysAndValues);
+    int idx = 0;
     bool found = keysAndValues.size() != 0;
     
     if(found) {
         found = false;
-        for ( int idx = 0; idx< keysAndValues.size(); idx++) {
+        for (; idx< keysAndValues.size(); idx++) {
             if(!strcmp((&keysAndValues[idx])->value.strValue, attributeValue.c_str())) {
                 found = true;
                 break;
@@ -219,18 +229,23 @@ void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uin
         }
     }
     
-    if(!found) attributeEntity->addProperty(keyIDToAdd, attributeValue);
+    //if(!found) attributeEntity->addProperty(keyIDToAdd, attributeValue);
+    if(!found) {
+        attributeEntity->addProperty(keyIDToAdd, attributeValue);
+    } else {
+        attributeEntity->updateProperty((&keysAndValues[idx])->elementID, keyIDToAdd, attributeValue);
+    }
 }
 
 void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, int64_t attributeValue) {
     ptr_vector<edb::KeyIdAndValue> keysAndValues;
     attributeEntity->getPropertyByKeyID(keyIDToAdd, keysAndValues);
-    
+    int idx = 0;
     bool found = keysAndValues.size() != 0;
     
     if(found) {
         found = false;
-        for ( int idx = 0; idx< keysAndValues.size(); idx++) {
+        for (; idx< keysAndValues.size(); idx++) {
             if((&keysAndValues[idx])->value.numValue == attributeValue) {
                 found = true;
                 break;
@@ -238,18 +253,23 @@ void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uin
         }
     }
     
-    if(!found)  attributeEntity->addProperty(keyIDToAdd, attributeValue);
+    //if(!found)  attributeEntity->addProperty(keyIDToAdd, attributeValue);
+    if(!found) {
+        attributeEntity->addProperty(keyIDToAdd, attributeValue);
+    } else {
+        attributeEntity->updateProperty((&keysAndValues[idx])->elementID, keyIDToAdd, attributeValue);
+    }
 }
 
 void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, double attributeValue) {
     ptr_vector<edb::KeyIdAndValue> keysAndValues;
     attributeEntity->getPropertyByKeyID(keyIDToAdd, keysAndValues);
-    
+    int idx = 0;
     bool found = keysAndValues.size() != 0;
     
     if(found) {
         found = false;
-        for ( int idx = 0; idx< keysAndValues.size(); idx++) {
+        for (; idx< keysAndValues.size(); idx++) {
             if((&keysAndValues[idx])->value.doubleValue == attributeValue) {
                 found = true;
                 break;
@@ -257,7 +277,12 @@ void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uin
         }
     }
     
-    if(!found)  attributeEntity->addProperty(keyIDToAdd, attributeValue);
+    //if(!found)  attributeEntity->addProperty(keyIDToAdd, attributeValue);
+    if(!found) {
+        attributeEntity->addProperty(keyIDToAdd, attributeValue);
+    } else {
+        attributeEntity->updateProperty((&keysAndValues[idx])->elementID, keyIDToAdd, attributeValue);
+    }
 }
 /*
  Add the new field at the CU dataset from the CDataWrapper

@@ -31,7 +31,7 @@ namespace chaos {
                 ~DataManagment();
                 
                 //! Initialize instance
-                void init(CDataWrapper *initData = NULL) throw(chaos::CException);
+                void init(void *initData = NULL) throw(chaos::CException);
                 
                 //! Start the implementation
                 void start() throw(chaos::CException);

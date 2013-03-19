@@ -64,7 +64,7 @@ NetworkBroker::~NetworkBroker() {
  * Initzialize the Message Broker. In this step are taken the configured implementation
  * for the rpc client and server and for the dispatcher. All these are here initialized
  */
-void NetworkBroker::init(CDataWrapper *initData) throw(CException) {
+void NetworkBroker::init(void *initData) throw(CException) {
         //check if initialized
     SetupStateManager::levelUpFrom(INIT_STEP, "NetworkBroker already initialized");
     
@@ -85,7 +85,7 @@ void NetworkBroker::init(CDataWrapper *initData) throw(CException) {
         if(!eventDispatcher)
             throw CException(2, "Event dispatcher implementation not found", "NetworkBroker::init");
         
-        if(!utility::ISDInterface::initImplementation(eventDispatcher, globalConfiguration, "DefaultEventDispatcher", "NetworkBroker::init"))
+        if(!utility::ISDInterface::initImplementation(eventDispatcher, static_cast<void*>(globalConfiguration), "DefaultEventDispatcher", "NetworkBroker::init"))
             throw CException(3, "Event dispatcher has not been initialized due an error", "NetworkBroker::init");
         
         
@@ -96,7 +96,7 @@ void NetworkBroker::init(CDataWrapper *initData) throw(CException) {
         
         MB_LAPP  << "Trying to initilize Event Server: " << eventServerName;
         eventServer = ObjectFactoryRegister<EventServer>::getInstance()->getNewInstanceByName(eventServerName.c_str());
-        if(utility::ISDInterface::initImplementation(eventServer, globalConfiguration, eventServer->getName(), "NetworkBroker::init")){
+        if(utility::ISDInterface::initImplementation(eventServer, static_cast<void*>(globalConfiguration), eventServer->getName(), "NetworkBroker::init")){
                 //register the root handler on event server
             eventServer->setEventHanlder(eventDispatcher);
         }
@@ -104,7 +104,7 @@ void NetworkBroker::init(CDataWrapper *initData) throw(CException) {
         
         MB_LAPP  << "Trying to initilize Event Client: " << eventClientName;
         eventClient = ObjectFactoryRegister<EventClient>::getInstance()->getNewInstanceByName(eventClientName.c_str());
-        utility::ISDInterface::initImplementation(eventClient, globalConfiguration, eventClientName.c_str(), "NetworkBroker::init");
+        utility::ISDInterface::initImplementation(eventClient, static_cast<void*>(globalConfiguration), eventClientName.c_str(), "NetworkBroker::init");
     }
         //---------------------------- E V E N T ----------------------------
     
@@ -116,7 +116,7 @@ void NetworkBroker::init(CDataWrapper *initData) throw(CException) {
         if(!commandDispatcher)
             throw CException(2, "Command dispatcher implementation not found", "NetworkBroker::init");
         
-        if(!utility::ISDInterface::initImplementation(commandDispatcher, globalConfiguration, "DefaultCommandDispatcher", "NetworkBroker::init"))
+        if(!utility::ISDInterface::initImplementation(commandDispatcher, static_cast<void*>(globalConfiguration), "DefaultCommandDispatcher", "NetworkBroker::init"))
             throw CException(3, "Command dispatcher has not been initialized due an error", "NetworkBroker::init");
         
         
@@ -128,7 +128,7 @@ void NetworkBroker::init(CDataWrapper *initData) throw(CException) {
         
         MB_LAPP  << "Trying to initilize RPC Server: " << rpcServerName;
         rpcServer = ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(rpcServerName.c_str());
-        if(utility::ISDInterface::initImplementation(rpcServer, globalConfiguration, rpcServer->getName(), "NetworkBroker::init")) {
+        if(utility::ISDInterface::initImplementation(rpcServer, static_cast<void*>(globalConfiguration), rpcServer->getName(), "NetworkBroker::init")) {
                 //set the handler on the rpc server
             rpcServer->setCommandDispatcher(commandDispatcher);
         }
@@ -136,7 +136,7 @@ void NetworkBroker::init(CDataWrapper *initData) throw(CException) {
         
         MB_LAPP  << "Trying to initilize RPC Client: " << rpcClientName;
         rpcClient = ObjectFactoryRegister<RpcClient>::getInstance()->getNewInstanceByName(rpcClientName.c_str());
-        if(utility::ISDInterface::initImplementation(rpcClient, globalConfiguration, rpcClient->getName(), "NetworkBroker::init")) {
+        if(utility::ISDInterface::initImplementation(rpcClient, static_cast<void*>(globalConfiguration), rpcClient->getName(), "NetworkBroker::init")) {
                 //set the forwarder into dispatcher for answere
             if(commandDispatcher) commandDispatcher->setRpcForwarder(rpcClient);
         }

@@ -126,7 +126,8 @@ namespace chaos {
     namespace DatasetDefinitionkey {
             //!key for dataset descriptors array {[domain, name, paramteres....]}
         static const char * const CS_CM_DATASET_DESCRIPTION                     = "cs|cm|ds_desc";
-        
+            //!key for dataset timestampt validity
+        static const char * const CS_CM_DATASET_TIMESTAMP                       = "cs|cm|ds_timestamp";
             //!key for the domain of the attribute dataset
         static const char * const CS_CM_DATASET_DEVICE_ID                       = "cs|cm|ds_attr_dom";
         

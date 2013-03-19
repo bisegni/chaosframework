@@ -35,9 +35,7 @@ namespace chaos {
         class Entity;
     }
     
-    /*!
-     The namespace edb group all code for the managment of a the abstract entity database.
-     */
+     //!The namespace edb group all code for the managment of a the abstract entity database.
     namespace edb {
         
         
@@ -63,6 +61,7 @@ namespace chaos {
          Define the infromation for the type, id and value for a key
          */
         typedef struct KeyIdAndValue {
+            uint32_t        elementID;
             ValueType       type;
             uint32_t        keyID;
             KeyValue        value;

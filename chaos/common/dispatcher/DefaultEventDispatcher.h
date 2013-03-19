@@ -46,7 +46,7 @@ namespace chaos {
         /*!
          * Initzialize the Event Broker
          */
-        void init(CDataWrapper *initData) throw(CException);
+        void init(void *initData) throw(CException);
         
             //!Event dispatcher initialization
         /*!

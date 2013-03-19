@@ -47,7 +47,7 @@ namespace chaos {
          /*
           init the rpc adapter
           */
-         void init(CDataWrapper*) throw(CException);
+         void init(void*) throw(CException);
          
          /*
           start the rpc adapter

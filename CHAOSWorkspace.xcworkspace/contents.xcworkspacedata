@@ -47,4 +47,7 @@
    <FileRef
       location = "group:example/BenchTest/BenchTest.xcodeproj">
    </FileRef>
+   <FileRef
+      location = "group:test/MemcachedEmbeddedTest/MemcachedEmbeddedTest.xcodeproj">
+   </FileRef>
 </Workspace>

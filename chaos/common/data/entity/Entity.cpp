@@ -24,6 +24,19 @@ using namespace boost;
 using namespace chaos;
 using namespace chaos::entity;
 
+#define KIV_MAKE(_n, _i, _t) chaos::edb::KeyIdAndValue _n;\
+_n.keyID = _i;\
+_n.type = _t;\
+
+#define KIV_MAKE_STR(_n, _i, _t, _s) KIV_MAKE(_n, _i, _t)\
+strcpy(_n.value.strValue, _s);
+
+#define KIV_MAKE_NUM(_n, _i, _t, _num) KIV_MAKE(_n, _i, _t)\
+_n.value.numValue = _num;
+
+#define KIV_MAKE_DOUB(_n, _i, _t, _doub) KIV_MAKE(_n, _i, _t)\
+_n.value.doubleValue = _doub;
+
 Entity::Entity(edb::EntityDB *_database):Record(_database){
 }
 
@@ -41,47 +54,44 @@ int32_t Entity::setEntityKeyAndInfo(chaos::edb::KeyIdAndValue& keyInfo) {
 }
 
 int32_t Entity::addProperty(uint32_t keyID, const char * propertyVal) {
-    int32_t error = 0;
     uint32_t idNewProperty = 0;
-    chaos::edb::KeyIdAndValue keyInfo;
-    keyInfo.keyID = keyID;
-    keyInfo.type = edb::KEY_STR_VALUE;
-    strcpy(keyInfo.value.strValue, propertyVal);
-    if(!(error = database->addNewPropertyForEntity(entityID, keyInfo, idNewProperty))) {
-        return error;
-    }
-    return error;
+    KIV_MAKE_STR(keyInfo, keyID, edb::KEY_STR_VALUE, propertyVal);
+    return database->addNewPropertyForEntity(entityID, keyInfo, idNewProperty);
+}
+
+int32_t Entity::updateProperty(uint32_t propertyID, uint32_t keyID, const char * propertyVal) {
+    KIV_MAKE_STR(keyInfo, keyID, edb::KEY_STR_VALUE, propertyVal);
+    return database->updatePropertyForEntity(propertyID, keyInfo);
 }
 
 int32_t Entity::addProperty(uint32_t keyID, string& propertyVal) {
-        return addProperty(keyID, propertyVal.c_str());
+    return addProperty(keyID, propertyVal.c_str());
+}
+
+int32_t Entity::updateProperty(uint32_t propertyID, uint32_t keyID, string& propertyVal) {
+    return updateProperty(propertyID, keyID, propertyVal.c_str());
 }
 
 int32_t Entity::addProperty(uint32_t keyID, int64_t propertyVal) {
-    int32_t error = 0;
     uint32_t idNewProperty = 0;
-    chaos::edb::KeyIdAndValue keyInfo;
-    keyInfo.keyID = keyID;
-    keyInfo.type = edb::KEY_NUM_VALUE;
-    keyInfo.value.numValue = propertyVal;
-    if(!(error = database->addNewPropertyForEntity(entityID, keyInfo, idNewProperty))) {
-        return error;
-    }
-    return error;
+    KIV_MAKE_NUM(keyInfo, keyID, edb::KEY_NUM_VALUE, propertyVal)
+    return database->addNewPropertyForEntity(entityID, keyInfo, idNewProperty);
+}
+
+int32_t Entity::updateProperty(uint32_t propertyID, uint32_t keyID, int64_t propertyVal) {
+    KIV_MAKE_NUM(keyInfo, keyID, edb::KEY_NUM_VALUE, propertyVal)
+    return database->updatePropertyForEntity(propertyID, keyInfo);
 }
 
 int32_t Entity::addProperty(uint32_t keyID, double propertyVal) {
-    int32_t error = 0;
     uint32_t idNewProperty = 0;
-    chaos::edb::KeyIdAndValue keyInfo;
-    keyInfo.keyID = keyID;
-    keyInfo.type = edb::KEY_DOUBLE_VALUE;
-    keyInfo.value.doubleValue = propertyVal;
-    if(!(error = database->addNewPropertyForEntity(entityID, keyInfo, idNewProperty))) {
-        return error;
-    }
-    return error;
+    KIV_MAKE_NUM(keyInfo, keyID, edb::KEY_DOUBLE_VALUE, propertyVal)
+    return database->addNewPropertyForEntity(entityID, keyInfo, idNewProperty);
+}
 
+int32_t Entity::updateProperty(uint32_t propertyID, uint32_t keyID, double propertyVal) {
+    KIV_MAKE_NUM(keyInfo, keyID, edb::KEY_DOUBLE_VALUE, propertyVal)
+    return database->updatePropertyForEntity(propertyID, keyInfo);
 }
 
 int32_t Entity::getAllProperty(ptr_vector<chaos::edb::KeyIdAndValue>& propertys) {

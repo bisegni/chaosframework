@@ -114,7 +114,7 @@ int16_t SQLiteEntityDB::initDB(const char* name, bool temporary)  throw (CExcept
     SET_CHECK_AND_TROW_ERROR(result, "delete from property where id = ?", stmt[18])
     
     //search
-    SET_CHECK_AND_TROW_ERROR(result, "select key_id, key_type, CASE (key_type) when 0 then num_value when 1 then double_value else str_value end from property where entity_id = ?", stmt[19])
+    SET_CHECK_AND_TROW_ERROR(result, "select id, key_id, key_type, CASE (key_type) when 0 then num_value when 1 then double_value else str_value end from property where entity_id = ?", stmt[19])
     SET_CHECK_AND_TROW_ERROR(result, "select id from entity where key_id = ?", stmt[20])
     
     SET_CHECK_AND_TROW_ERROR(result, "delete from property where entity_id = ?", stmt[21])
@@ -125,7 +125,7 @@ int16_t SQLiteEntityDB::initDB(const char* name, bool temporary)  throw (CExcept
     SET_CHECK_AND_TROW_ERROR(result, "select count(*) from entity_group where id_entity_parent = ? and id_entity_child = ?", stmt[24])
     SET_CHECK_AND_TROW_ERROR(result, "select id_entity_child from entity_group where id_entity_parent = ?", stmt[25])
     
-    SET_CHECK_AND_TROW_ERROR(result, "select key_id, key_type, CASE (key_type) when 0 then num_value when 1 then double_value else str_value end from entity where id = ?", stmt[26])
+    SET_CHECK_AND_TROW_ERROR(result, "select id, key_id, key_type, CASE (key_type) when 0 then num_value when 1 then double_value else str_value end from entity where id = ?", stmt[26])
     SET_CHECK_AND_TROW_ERROR(result, "delete from entity_group where id_entity_parent = ? ", stmt[27])
     SET_CHECK_AND_TROW_ERROR(result, "select id from entity e, entity_group g where e.id = g.id_entity_child and e.key_id = ? and e.str_value like ? and g.id_entity_parent = ?", stmt[28])
     SET_CHECK_AND_TROW_ERROR(result, "select id from entity e, entity_group g where e.id = g.id_entity_child and e.key_id = ? and e.num_value = ? and g.id_entity_parent = ?", stmt[29])
@@ -757,7 +757,7 @@ int16_t SQLiteEntityDB::searchPropertyForEntity(uint32_t entityID, std::vector<u
     if(keysIDs.size() == 0) return searchPropertyForEntity(entityID, resultKeyAndValues);
     
     // i have key id
-    std::string select("select key_id, key_type, CASE (key_type) when 0 then num_value when 1 then double_value else str_value end from property where entity_id = ? and key_id in (");
+    std::string select("select id, key_id, key_type, CASE (key_type) when 0 then num_value when 1 then double_value else str_value end from property where entity_id = ? and key_id in (");
     
     for(int i = 0; i< keysIDs.size(); i++) {select.append("?,");}
     
@@ -923,19 +923,20 @@ bool SQLiteEntityDB::hasSequence(const char *tableName) {
 
 void SQLiteEntityDB::fillKeyInfoFromStatement(sqlite3_stmt *stmt, KeyIdAndValue& keyValueInfo) {
     //get the id for the key
-    keyValueInfo.keyID = sqlite3_column_int(stmt, 0);
+    keyValueInfo.elementID = sqlite3_column_int(stmt, 0);
+    keyValueInfo.keyID = sqlite3_column_int(stmt, 1);
     
     // valorize the need field
-    switch (keyValueInfo.type = (ValueType) sqlite3_column_int(stmt, 1)) {
+    switch (keyValueInfo.type = (ValueType) sqlite3_column_int(stmt, 2)) {
         case 0:
-            keyValueInfo.value.numValue = sqlite3_column_int64(stmt, 2);
+            keyValueInfo.value.numValue = sqlite3_column_int64(stmt, 3);
             break;
         case 1:
-            keyValueInfo.value.doubleValue = sqlite3_column_double(stmt, 2);
+            keyValueInfo.value.doubleValue = sqlite3_column_double(stmt, 3);
             break;
         case 2:
             //copy the string into memoery of the value
-            strcpy(keyValueInfo.value.strValue, (const char *)sqlite3_column_text(stmt, 2));
+            strcpy(keyValueInfo.value.strValue, (const char *)sqlite3_column_text(stmt, 3));
             break;
     }
 }

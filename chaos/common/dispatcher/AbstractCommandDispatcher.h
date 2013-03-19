@@ -68,7 +68,7 @@ namespace chaos{
     protected:
         
             //! Dispatch initialization with default value
-        virtual void init(CDataWrapper*) throw(CException);
+        virtual void init(void*) throw(CException);
         
             //-----------------------
         virtual void start() throw(CException);

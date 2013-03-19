@@ -333,7 +333,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     }
     
     LCU_ << "Initialize the DSAttribute handler engine for device:" << deviceID;
-    utility::ISDInterface::initImplementation(attributeHandlerEngineForDeviceIDMap[deviceID], initConfiguration, "DSAttribute handler engine", "AbstractControlUnit::_init");
+    utility::ISDInterface::initImplementation(attributeHandlerEngineForDeviceIDMap[deviceID], static_cast<void*>(initConfiguration), "DSAttribute handler engine", "AbstractControlUnit::_init");
     
     
     LCU_ << "Create schedule thread for device:" << deviceID;

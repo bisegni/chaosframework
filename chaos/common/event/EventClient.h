@@ -48,7 +48,7 @@ namespace chaos {
             /*
              init the event adapter
              */
-            virtual void init(CDataWrapper*) throw(CException);
+            virtual void init(void*) throw(CException);
             
             /*
              start the event adapter

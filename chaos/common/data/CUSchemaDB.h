@@ -27,7 +27,7 @@
 #include <vector>
 #include <chaos/common/data/entity_db/EntityDB.h>
 #include <chaos/common/cconstants.h>
-
+#include <chaos/common/utility/TimingUtil.h>
 namespace chaos {
     using namespace std;
     using namespace boost;
@@ -58,6 +58,7 @@ namespace chaos {
         uint32_t keyIdDevice;
         uint32_t keyIdDatasetAttrName;
         uint32_t keyIdAttrDesc;
+        uint32_t keyIdDatasetTimestamp;
         uint32_t keyIdAttrType;
         uint32_t keyIdAttrDir;
         uint32_t keyIdAttrMaxRng;
@@ -65,6 +66,7 @@ namespace chaos {
         uint32_t keyIdDefaultValue;
         uint32_t keyIdServerAddress;
         
+        TimingUtil timingUtils;
         EntityPtrMap deviceEntityMap;
         
         void fillCDataWrapperDSAtribute(CDataWrapper *dsAttribute,  entity::Entity *deviceIDEntity, entity::Entity *attrEntity, ptr_vector<edb::KeyIdAndValue>& attrProperty);

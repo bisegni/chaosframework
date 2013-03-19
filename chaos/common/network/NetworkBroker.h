@@ -133,7 +133,7 @@ namespace chaos {
          * Initzialize the Message Broker. In this step are taken the configured implementation
          * for the rpc client and server and for the dispatcher. All these are here initialized
          */
-        virtual void init(CDataWrapper *initData = NULL) throw(CException);
+        virtual void init(void *initData = NULL) throw(CException);
         
             //!NetworkBroker deinitialization
         /*!

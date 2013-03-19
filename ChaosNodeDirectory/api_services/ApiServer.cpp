@@ -34,7 +34,7 @@ ApiServer::~ApiServer() {
 }
 
 // Initialize instance
-void ApiServer::init(CDataWrapper *initData) throw(chaos::CException) {
+void ApiServer::init(void *initData) throw(chaos::CException) {
     AS_LAPP_ << "Init";
     SetupStateManager::levelUpFrom(INIT_STEP, "Already initialized");
     

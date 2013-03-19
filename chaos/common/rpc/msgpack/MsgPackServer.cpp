@@ -38,17 +38,18 @@ namespace rpc {
 
 
 //init the server getting the configuration value
-void MsgPackServer::init(CDataWrapper *adapterConfiguration) throw(CException) {
+void MsgPackServer::init(void *cfg) throw(CException) {
     //get portnumber and thread number
-    
-    LAPP_ << "MsgPackServer initialization"; 
+    CDataWrapper *configuration = static_cast<CDataWrapper*>(cfg);
+
+    LAPP_ << "MsgPackServer initialization";
     try {
-        portNumber = adapterConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT)?
-        adapterConfiguration->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT ):
+        portNumber = configuration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT)?
+        configuration->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT ):
         DEFAULT_MSGPACK_DISPATCHER_PORT;
         
-        threadNumber = adapterConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER)?
-        adapterConfiguration->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER):
+        threadNumber = configuration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER)?
+        configuration->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER):
         DEFAULT_MSGPACK_DISPATCHER_THREAD_NUMBER;
         
         LAPP_ << "MsgPackServer Configuration";

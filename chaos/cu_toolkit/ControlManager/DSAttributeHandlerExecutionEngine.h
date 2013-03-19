@@ -73,7 +73,7 @@ namespace chaos{
             ~DSAttributeHandlerExecutionEngine();
             
                 //! Initialize instance
-            void init(CDataWrapper*) throw(chaos::CException);
+            void init(void*) throw(chaos::CException);
             
                 //! Start the implementation
             void start() throw(chaos::CException);

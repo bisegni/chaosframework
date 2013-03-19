@@ -23,7 +23,7 @@ DataManagment::~DataManagment() {
 }
 
 //! Initialize instance
-void DataManagment::init(CDataWrapper *initData) throw(chaos::CException) {
+void DataManagment::init(void *initData) throw(chaos::CException) {
     deviceDB = new CUSchemaDB(false);
     if(deviceDB) throw CException(0, "Error allocating device database", "DataManagment::init");
 }

@@ -36,9 +36,8 @@ namespace chaos {
         struct KeyIdAndValue;
     }
     
+        //! Namespace for collecting the entity description used by chaos entity database
     namespace entity {
-       
-        
         /*!
          This represent the base class for the entity
          */
@@ -75,12 +74,20 @@ namespace chaos {
             
             int32_t addProperty(uint32_t keyID, const char * propertyVal);
             
+            int32_t updateProperty(uint32_t propertyID, uint32_t keyID, const char * propertyVal);
+
             int32_t addProperty(uint32_t keyID, string& propertyVal);
+
+            int32_t updateProperty(uint32_t propertyID, uint32_t keyID, string& propertyVal);
 
             int32_t addProperty(uint32_t keyID, int64_t propertyVal);
             
+            int32_t updateProperty(uint32_t propertyID, uint32_t keyID, int64_t propertyVal);
+
             int32_t addProperty(uint32_t keyID, double propertyVal);
             
+            int32_t updateProperty(uint32_t propertyID, uint32_t keyID, double propertyVal);
+
             int32_t reset();
             
             int32_t getAllProperty(ptr_vector<chaos::edb::KeyIdAndValue>& propertys);

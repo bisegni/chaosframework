@@ -43,7 +43,7 @@ ISDInterface::~ISDInterface() {
 
 /*!
  */
-bool ISDInterface::initImplementation(ISDInterface *impl, CDataWrapper *initData, const char * const implName,  const char * const domainString)  {
+bool ISDInterface::initImplementation(ISDInterface *impl, void *initData, const char * const implName,  const char * const domainString)  {
     bool result = true;
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);

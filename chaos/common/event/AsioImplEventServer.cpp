@@ -45,7 +45,7 @@ AsioImplEventServer::AsioImplEventServer(string *alias):EventServer(alias) {
 /*
  init the event adapter
  */
-void AsioImplEventServer::init(CDataWrapper*) throw(CException) {
+void AsioImplEventServer::init(void*) throw(CException) {
     threadNumber = 1;
 }
 
