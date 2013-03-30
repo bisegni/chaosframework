@@ -7,12 +7,36 @@
 //
 #include <iostream>
 #include <chaos/common/global.h>
+#include <chaos/common/memory/ManagedMemory.h>
 #include <chaos/common/data/cache/DataCache.h>
+
+typedef struct DemoStruct{
+    int32_t a;
+    int64_t b[20];
+} DemoStruct;
 
 int main(int argc, const char * argv[])
 {
     int32_t bsize;
     void *buff = NULL;
+    
+    
+    
+    chaos::memory::ManagedMemory *mm = new chaos::memory::ManagedMemory(48, 1*1024*1024, 4*1024*1024, 1.12, 0);
+    mm->init();
+    unsigned int sID = mm->getSlabIdBySize(sizeof(DemoStruct));
+    
+    DemoStruct *structPtr[1000];
+    for (int idx = 0; idx < 1000; idx++) {
+        structPtr[idx] = static_cast<DemoStruct*>(mm->allocate(sizeof(DemoStruct), sID));
+        structPtr[idx]->a = idx;
+        structPtr[idx]->b[5] = idx*3;
+    }
+    for (int idx = 0; idx < 1000; idx++) {
+        mm->deallocate(structPtr[idx], sizeof(DemoStruct), sID);
+    }
+
+    delete mm;
     
     chaos::datacache::CacheInitParameter memCacheSettings;
     memCacheSettings.factor = 1.25;

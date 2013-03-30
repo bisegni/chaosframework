@@ -286,7 +286,7 @@ static void do_slabs_free(void *ptr, const size_t size, unsigned int id) {
 }
 
 static int nz_strcmp(int nzlength, const char *nz, const char *z) {
-    int zlength=strlen(z);
+    size_t zlength=strlen(z);
     return (zlength == nzlength) && (strncmp(nz, z, zlength) == 0) ? 0 : -1;
 }
 

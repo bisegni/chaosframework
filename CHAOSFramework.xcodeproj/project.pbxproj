@@ -191,6 +191,8 @@
 		3297F22614D96F31004FFE4F /* DeviceMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3297F22514D96F31004FFE4F /* DeviceMessageChannel.cpp */; };
 		3297F22914D96F43004FFE4F /* DeviceMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3297F22814D96F43004FFE4F /* DeviceMessageChannel.h */; };
 		3297F22B14D96F8D004FFE4F /* NetworkAddressMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3297F22A14D96F8D004FFE4F /* NetworkAddressMessageChannel.h */; };
+		329FFFD1170712CE00D69CDE /* ManagedMemory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329FFFCF170712CE00D69CDE /* ManagedMemory.cpp */; };
+		329FFFD2170712CE00D69CDE /* ManagedMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 329FFFD0170712CE00D69CDE /* ManagedMemory.h */; };
 		32A51AFE167F95B30007E25A /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 32A51AFC167F95B30007E25A /* sqlite3.c */; };
 		32A51AFF167F95B30007E25A /* sqlite3.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A51AFD167F95B30007E25A /* sqlite3.h */; };
 		32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */; };
@@ -558,6 +560,8 @@
 		3297F22514D96F31004FFE4F /* DeviceMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceMessageChannel.cpp; sourceTree = "<group>"; };
 		3297F22814D96F43004FFE4F /* DeviceMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceMessageChannel.h; sourceTree = "<group>"; };
 		3297F22A14D96F8D004FFE4F /* NetworkAddressMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkAddressMessageChannel.h; sourceTree = "<group>"; };
+		329FFFCF170712CE00D69CDE /* ManagedMemory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ManagedMemory.cpp; sourceTree = "<group>"; };
+		329FFFD0170712CE00D69CDE /* ManagedMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ManagedMemory.h; sourceTree = "<group>"; };
 		32A51AFC167F95B30007E25A /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sqlite3.c; sourceTree = "<group>"; };
 		32A51AFD167F95B30007E25A /* sqlite3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlite3.h; sourceTree = "<group>"; };
 		32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaitSemaphore.h; sourceTree = "<group>"; };
@@ -1010,6 +1014,7 @@
 				326DB3B514B38BC00018A8D0 /* action */,
 				326DB3BD14B38BC00018A8D0 /* bson */,
 				326DB3E314B38BC00018A8D0 /* configuration */,
+				329FFFCE1707128600D69CDE /* memory */,
 				326DB3E614B38BC00018A8D0 /* data */,
 				326DB3EB14B38BC00018A8D0 /* dhfsm */,
 				326DB3EF14B38BC00018A8D0 /* dispatcher */,
@@ -1360,6 +1365,15 @@
 				3264B05B1673623E002E87FA /* TDSObjectHandler.h */,
 			);
 			path = handler;
+			sourceTree = "<group>";
+		};
+		329FFFCE1707128600D69CDE /* memory */ = {
+			isa = PBXGroup;
+			children = (
+				329FFFCF170712CE00D69CDE /* ManagedMemory.cpp */,
+				329FFFD0170712CE00D69CDE /* ManagedMemory.h */,
+			);
+			path = memory;
 			sourceTree = "<group>";
 		};
 		32AAD78114CD630D005A097C /* message */ = {
@@ -1739,6 +1753,7 @@
 				32CB73CD16FE48DB008575F0 /* util.h in Headers */,
 				32CB73D116FE4A5A008575F0 /* DataCache.h in Headers */,
 				32CB73D316FE4ED3008575F0 /* memcached.h in Headers */,
+				329FFFD2170712CE00D69CDE /* ManagedMemory.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2022,6 +2037,7 @@
 				32CB73CC16FE48DB008575F0 /* util.c in Sources */,
 				32CB73D016FE4A5A008575F0 /* DataCache.cpp in Sources */,
 				32CB73D516FE5247008575F0 /* globals.c in Sources */,
+				329FFFD1170712CE00D69CDE /* ManagedMemory.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
