@@ -52,7 +52,10 @@ namespace chaos{
     public:
         typedef rpc::request request;
         
-        MsgPackServer(string *alias):RpcServer(alias){};
+        MsgPackServer(string *alias);
+        
+        virtual ~MsgPackServer();
+        
             /*
              init the rpc adapter
              */

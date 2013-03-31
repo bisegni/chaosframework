@@ -66,7 +66,7 @@ namespace chaos {
          
     public:
          MsgPackClient(string *alias);
-         ~MsgPackClient();
+         virtual ~MsgPackClient();
         
         
         /*

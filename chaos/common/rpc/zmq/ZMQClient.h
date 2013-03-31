@@ -32,26 +32,26 @@ namespace chaos {
         void *zmqContext;
     public:
         ZMQClient(string *alias);
-        ~ZMQClient();
+        virtual ~ZMQClient();
         /*
          init the rpc adapter
          */
-        virtual void init(CDataWrapper*) throw(CException);
+        void init(CDataWrapper*) throw(CException);
         
         /*
          start the rpc adapter
          */
-        virtual void start() throw(CException);
+        void start() throw(CException);
 
         /*
          start the rpc adapter
          */
-        virtual void stop() throw(CException);
+        void stop() throw(CException);
         
         /*
          deinit the rpc adapter
          */
-        virtual void deinit() throw(CException);
+        void deinit() throw(CException);
         
         /*
          Submit the message to be send to a certain ip, the datawrapper must contains

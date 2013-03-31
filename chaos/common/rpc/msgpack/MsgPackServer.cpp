@@ -37,6 +37,12 @@ namespace rpc {
 }
 
 
+MsgPackServer::MsgPackServer(string *alias):RpcServer(alias){
+}
+
+MsgPackServer::~MsgPackServer(){
+}
+
 //init the server getting the configuration value
 void MsgPackServer::init(void *cfg) throw(CException) {
     //get portnumber and thread number

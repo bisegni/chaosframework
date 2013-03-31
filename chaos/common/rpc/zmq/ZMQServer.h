@@ -47,7 +47,8 @@ namespace chaos {
         boost::shared_mutex socketMutex;
         
     public:
-        ZMQServer(string *alias):RpcServer(alias){};
+        ZMQServer(string *alias):RpcServer(alias);
+        virtual ~ZMQServer();
         /*
          init the rpc adapter
          */

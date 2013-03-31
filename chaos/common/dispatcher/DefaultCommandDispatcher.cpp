@@ -27,6 +27,13 @@ using namespace boost;
 
 #define LDEF_CMD_DISPTC_APP_ LAPP_ << "[DefaultCommandDispatcher] - " 
 
+DefaultCommandDispatcher::DefaultCommandDispatcher(string *alias) : AbstractCommandDispatcher(alias) {
+}
+
+DefaultCommandDispatcher::~DefaultCommandDispatcher(){
+    
+}
+
 /*
  Initialization method for output buffer
  */

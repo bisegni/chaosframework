@@ -27,6 +27,10 @@ AbstractCommandDispatcher::AbstractCommandDispatcher(string *alias){
     typeName = alias;
 }
 
+AbstractCommandDispatcher::~AbstractCommandDispatcher() {
+    
+}
+
 /*
  init the rpc adapter
  */

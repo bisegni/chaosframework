@@ -97,6 +97,8 @@ namespace chaos{
             //! Constructor
         AbstractCommandDispatcher(string *alias);
         
+        ~AbstractCommandDispatcher();
+        
         /*
          update the dispatcher configuration
          */

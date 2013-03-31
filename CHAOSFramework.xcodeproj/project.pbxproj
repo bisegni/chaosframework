@@ -110,7 +110,6 @@
 		326DB46E14B38BC00018A8D0 /* DomainActionsScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3FB14B38BC00018A8D0 /* DomainActionsScheduler.h */; };
 		326DB46F14B38BC00018A8D0 /* CException.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3FD14B38BC00018A8D0 /* CException.h */; };
 		326DB47014B38BC00018A8D0 /* Configurable.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3FF14B38BC00018A8D0 /* Configurable.h */; };
-		326DB47114B38BC00018A8D0 /* Manager.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40014B38BC00018A8D0 /* Manager.h */; };
 		326DB47214B38BC00018A8D0 /* global.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40114B38BC00018A8D0 /* global.h */; };
 		326DB47314B38BC00018A8D0 /* IODataDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40314B38BC00018A8D0 /* IODataDriver.h */; };
 		326DB47414B38BC00018A8D0 /* IOMemcachedDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB40414B38BC00018A8D0 /* IOMemcachedDriver.cpp */; };
@@ -179,6 +178,11 @@
 		327967D915E030C40003C6DA /* AsioEventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967D715E030C30003C6DA /* AsioEventHandler.cpp */; };
 		327967DA15E030C40003C6DA /* AsioEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 327967D815E030C30003C6DA /* AsioEventHandler.h */; };
 		327CFF041708B54F0069497B /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 326026E914B301F600C906CE /* libchaos_common.dylib */; };
+		327CFF091708C4EB0069497B /* FastHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327CFF071708C4EA0069497B /* FastHash.cpp */; };
+		327CFF0A1708C4EB0069497B /* FastHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF081708C4EB0069497B /* FastHash.h */; };
+		327CFF0F1708D5410069497B /* FastCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327CFF0D1708D5380069497B /* FastCache.cpp */; };
+		327CFF101708D5410069497B /* FastCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF0E1708D53A0069497B /* FastCache.h */; };
+		327CFF121708D7760069497B /* CacheGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF111708D7740069497B /* CacheGlobal.h */; };
 		3289F9A5168508460080D93F /* SQLiteEntityDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */; };
 		3289F9A6168508460080D93F /* SQLiteEntityDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 3289F9A4168508460080D93F /* SQLiteEntityDB.h */; };
 		328D2FB71660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328D2FB51660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp */; };
@@ -475,7 +479,6 @@
 		326DB3FB14B38BC00018A8D0 /* DomainActionsScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DomainActionsScheduler.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB3FD14B38BC00018A8D0 /* CException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CException.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB3FF14B38BC00018A8D0 /* Configurable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Configurable.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB40014B38BC00018A8D0 /* Manager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Manager.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB40114B38BC00018A8D0 /* global.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = global.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB40314B38BC00018A8D0 /* IODataDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = IODataDriver.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB40414B38BC00018A8D0 /* IOMemcachedDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = IOMemcachedDriver.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -545,6 +548,11 @@
 		327967D715E030C30003C6DA /* AsioEventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsioEventHandler.cpp; sourceTree = "<group>"; };
 		327967D815E030C30003C6DA /* AsioEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsioEventHandler.h; sourceTree = "<group>"; };
 		327CB2D8167E44D700AED2C6 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		327CFF071708C4EA0069497B /* FastHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastHash.cpp; sourceTree = "<group>"; };
+		327CFF081708C4EB0069497B /* FastHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastHash.h; sourceTree = "<group>"; };
+		327CFF0D1708D5380069497B /* FastCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastCache.cpp; sourceTree = "<group>"; };
+		327CFF0E1708D53A0069497B /* FastCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastCache.h; sourceTree = "<group>"; };
+		327CFF111708D7740069497B /* CacheGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheGlobal.h; sourceTree = "<group>"; };
 		3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteEntityDB.cpp; sourceTree = "<group>"; };
 		3289F9A4168508460080D93F /* SQLiteEntityDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteEntityDB.h; sourceTree = "<group>"; };
 		328D2FB01660E3EC007F482E /* DSAttributeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DSAttributeHandler.cpp; sourceTree = "<group>"; };
@@ -1145,7 +1153,6 @@
 			isa = PBXGroup;
 			children = (
 				326DB3FF14B38BC00018A8D0 /* Configurable.h */,
-				326DB40014B38BC00018A8D0 /* Manager.h */,
 			);
 			path = general;
 			sourceTree = "<group>";
@@ -1510,6 +1517,11 @@
 		32CB737116FE40F9008575F0 /* cache */ = {
 			isa = PBXGroup;
 			children = (
+				327CFF111708D7740069497B /* CacheGlobal.h */,
+				327CFF071708C4EA0069497B /* FastHash.cpp */,
+				327CFF081708C4EB0069497B /* FastHash.h */,
+				327CFF0D1708D5380069497B /* FastCache.cpp */,
+				327CFF0E1708D53A0069497B /* FastCache.h */,
 				32CB73D416FE5246008575F0 /* globals.c */,
 				32CB739A16FE48DB008575F0 /* assoc.c */,
 				32CB739B16FE48DB008575F0 /* assoc.h */,
@@ -1584,7 +1596,6 @@
 				326DB46E14B38BC00018A8D0 /* DomainActionsScheduler.h in Headers */,
 				326DB46F14B38BC00018A8D0 /* CException.h in Headers */,
 				326DB47014B38BC00018A8D0 /* Configurable.h in Headers */,
-				326DB47114B38BC00018A8D0 /* Manager.h in Headers */,
 				326DB47214B38BC00018A8D0 /* global.h in Headers */,
 				326DB47314B38BC00018A8D0 /* IODataDriver.h in Headers */,
 				326DB47514B38BC00018A8D0 /* IOMemcachedDriver.h in Headers */,
@@ -1754,6 +1765,9 @@
 				32CB73D116FE4A5A008575F0 /* DataCache.h in Headers */,
 				32CB73D316FE4ED3008575F0 /* memcached.h in Headers */,
 				329FFFD2170712CE00D69CDE /* ManagedMemory.h in Headers */,
+				327CFF0A1708C4EB0069497B /* FastHash.h in Headers */,
+				327CFF101708D5410069497B /* FastCache.h in Headers */,
+				327CFF121708D7760069497B /* CacheGlobal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2038,6 +2052,8 @@
 				32CB73D016FE4A5A008575F0 /* DataCache.cpp in Sources */,
 				32CB73D516FE5247008575F0 /* globals.c in Sources */,
 				329FFFD1170712CE00D69CDE /* ManagedMemory.cpp in Sources */,
+				327CFF091708C4EB0069497B /* FastHash.cpp in Sources */,
+				327CFF0F1708D5410069497B /* FastCache.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -36,6 +36,14 @@ static void my_free (void *data, void *hint)
     delete (char*)data;
 }
 
+ZMQServer::ZMQServer(string *alias) {
+    
+}
+
+ZMQServer::~ZMQServer() {
+    
+}
+
     //init the server getting the configuration value
 void ZMQServer::init(CDataWrapper *adapterConfiguration) throw(CException) {
         //get portnumber and thread number
