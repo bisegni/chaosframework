@@ -10,6 +10,8 @@
 #include <chaos/common/memory/ManagedMemory.h>
 #include <chaos/common/data/cache/DataCache.h>
 
+#define STRUCT_NUM 1000
+
 typedef struct DemoStruct{
     int32_t a;
     int64_t b[20];
@@ -22,18 +24,26 @@ int main(int argc, const char * argv[])
     
     
     
-    chaos::memory::ManagedMemory *mm = new chaos::memory::ManagedMemory(48, 1*1024*1024, 4*1024*1024, 1.12, 0);
+    chaos::memory::ManagedMemory *mm = new chaos::memory::ManagedMemory(168, 512*1024, 0, 1.12, 1);
     mm->init();
     unsigned int sID = mm->getSlabIdBySize(sizeof(DemoStruct));
     
-    DemoStruct *structPtr[1000];
+    DemoStruct *structPtr[STRUCT_NUM];
+    
+    size_t structDim = sizeof(DemoStruct);
+    memset(structPtr, 0, sizeof(DemoStruct*)*STRUCT_NUM);
+    
     for (int idx = 0; idx < 1000; idx++) {
-        structPtr[idx] = static_cast<DemoStruct*>(mm->allocate(sizeof(DemoStruct), sID));
-        structPtr[idx]->a = idx;
-        structPtr[idx]->b[5] = idx*3;
+        structPtr[idx] = static_cast<DemoStruct*>(mm->allocate(structDim, sID));
+        if(structPtr[idx] != NULL) {
+            structPtr[idx]->a = idx;
+            structPtr[idx]->b[5] = idx*3;
+        } else {
+            //not enougth memory in slabs class
+        }
     }
     for (int idx = 0; idx < 1000; idx++) {
-        mm->deallocate(structPtr[idx], sizeof(DemoStruct), sID);
+        if(structPtr[idx] != NULL) mm->deallocate(structPtr[idx], structDim, sID);
     }
 
     delete mm;

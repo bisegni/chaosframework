@@ -70,10 +70,10 @@ unsigned int ManagedMemory::getSlabIdBySize(const size_t size) {
     int res = POWER_SMALLEST;
     
     if (size == 0)
-        return 0;
+        return -1;
     while (size > slabclass[res].size)
         if (res++ == power_largest)     /* won't fit in the biggest slab */
-            return 0;
+            return -1;
     return res;
 }
 
@@ -84,16 +84,8 @@ unsigned int ManagedMemory::getSlabIdBySize(const size_t size) {
 void ManagedMemory::init() {
     int i = POWER_SMALLEST - 1;
     unsigned int size = chunk_size;
+    size_t calculated_all_slabs_mem =0;
     MM_LAPP_ <<  "chunk size:" << chunk_size;
-    
-        /* Allocate everything in a big chunk with malloc */
-    mem_base = std::malloc(memoryLimit);
-    if (mem_base != NULL) {
-            mem_current = mem_base;
-            mem_avail = memoryLimit;
-    } else {
-            MM_LERR_ <<  "Warning: Failed to allocate requested memory in one large chunk.Will allocate in smaller chunks";
-    }
     
     memset(slabclass, 0, sizeof(slabclass));
     
@@ -103,6 +95,9 @@ void ManagedMemory::init() {
         
         slabclass[i].size = size;
         slabclass[i].perslab = (unsigned int)(item_size_max / slabclass[i].size);
+        
+        calculated_all_slabs_mem += slabclass[i].size*slabclass[i].perslab;
+        
         size = (unsigned int)(size * growFactor);
         MM_LAPP_ <<  "slab class: "<< i <<" chunk size:" << slabclass[i].size << " perslab:" << slabclass[i].perslab;
     }
@@ -110,8 +105,23 @@ void ManagedMemory::init() {
     power_largest = i;
     slabclass[power_largest].size = (unsigned int)item_size_max;
     slabclass[power_largest].perslab = 1;
+    calculated_all_slabs_mem += slabclass[power_largest].size*slabclass[power_largest].perslab;
     MM_LAPP_ <<  "slab class: "<< i <<" chunk size:" << slabclass[i].size << " perslab:" << slabclass[i].perslab;
-       
+    
+    /* Allocate everything in a big chunk with malloc */
+    if(memoryLimit <= 0) {
+        //allocate all memoryneeded by all calculated slabs
+        memoryLimit = calculated_all_slabs_mem;
+    }
+    
+    mem_base = std::malloc(memoryLimit);
+    if (mem_base != NULL) {
+        mem_current = mem_base;
+        mem_avail = memoryLimit;
+    } else {
+        MM_LERR_ <<  "Warning: Failed to allocate requested memory in one large chunk.Will allocate in smaller chunks";
+    }
+    
     if(prealloc) {
         for (i = POWER_SMALLEST; i <= POWER_LARGEST; i++) {
             if (++prealloc > power_largest)
