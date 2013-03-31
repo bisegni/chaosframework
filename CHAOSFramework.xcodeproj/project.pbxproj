@@ -51,7 +51,6 @@
 		325DE9F615EC03F800D6F34E /* EventAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 325DE9F415EC03F800D6F34E /* EventAction.h */; };
 		325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F86EB14D9E59D00CDF35F /* InetUtility.h */; };
 		3260276A14B306BA00C906CE /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 326026E914B301F600C906CE /* libchaos_common.dylib */; };
-		3260278B14B307E400C906CE /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 326026E914B301F600C906CE /* libchaos_common.dylib */; };
 		32640A27169DCC5800450962 /* BufferTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A09169DCC5800450962 /* BufferTracker.h */; };
 		32640A28169DCC5800450962 /* GarbageThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A0A169DCC5800450962 /* GarbageThread.h */; };
 		32640A29169DCC5800450962 /* DataAggregationInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A0C169DCC5800450962 /* DataAggregationInterface.h */; };
@@ -179,6 +178,7 @@
 		327967D615E029C70003C6DA /* AsioImplEventServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 327967D415E029C70003C6DA /* AsioImplEventServer.h */; };
 		327967D915E030C40003C6DA /* AsioEventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967D715E030C30003C6DA /* AsioEventHandler.cpp */; };
 		327967DA15E030C40003C6DA /* AsioEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 327967D815E030C30003C6DA /* AsioEventHandler.h */; };
+		327CFF041708B54F0069497B /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 326026E914B301F600C906CE /* libchaos_common.dylib */; };
 		3289F9A5168508460080D93F /* SQLiteEntityDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */; };
 		3289F9A6168508460080D93F /* SQLiteEntityDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 3289F9A4168508460080D93F /* SQLiteEntityDB.h */; };
 		328D2FB71660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328D2FB51660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp */; };
@@ -743,7 +743,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3260278B14B307E400C906CE /* libchaos_common.dylib in Frameworks */,
+				327CFF041708B54F0069497B /* libchaos_common.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

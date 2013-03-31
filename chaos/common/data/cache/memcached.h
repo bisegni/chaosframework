@@ -196,7 +196,7 @@ extern volatile rel_time_t current_time;
 #include <chaos/common/data/cache/util.h>
 #include <pthread.h>
 /* Lock for cache operations (item_*, assoc_*) */
-pthread_mutex_t cache_lock;
+pthread_mutex_t mc_cache_lock;
 
 
 /* If supported, give compiler hints for branch prediction. */

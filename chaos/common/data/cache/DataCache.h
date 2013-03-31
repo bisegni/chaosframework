@@ -22,7 +22,6 @@
 #define __CHAOSFramework__DataCache__
 
 #include <chaos/common/utility/Singleton.h>
-#include <chaos/common/data/cache/memcached.h>
 #include <chaos/common/utility/ISDInterface.h>
 namespace chaos {
     namespace datacache {

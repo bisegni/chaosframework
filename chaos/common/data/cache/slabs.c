@@ -99,7 +99,6 @@ unsigned int slabs_clsid(const size_t size) {
 void slabs_init(const size_t limit, const double factor, const int prealloc) {
     int i = POWER_SMALLEST - 1;
     unsigned int size = sizeof(item) + settings.chunk_size;
-    fprintf(stderr, "item size %3d: chunk size %9u\n", sizeof(item), settings.chunk_size);
 
     mem_limit = limit;
 
@@ -110,8 +109,7 @@ void slabs_init(const size_t limit, const double factor, const int prealloc) {
             mem_current = mem_base;
             mem_avail = mem_limit;
         } else {
-            fprintf(stderr, "Warning: Failed to allocate requested memory in"
-                    " one large chunk.\nWill allocate in smaller chunks\n");
+            
         }
     }
 
@@ -125,15 +123,11 @@ void slabs_init(const size_t limit, const double factor, const int prealloc) {
         slabclass[i].size = size;
         slabclass[i].perslab = settings.item_size_max / slabclass[i].size;
         size *= factor;
-        fprintf(stderr, "slab class %3d: chunk size %9u perslab %7u\n",
-                i, slabclass[i].size, slabclass[i].perslab);
     }
 
     power_largest = i;
     slabclass[power_largest].size = settings.item_size_max;
     slabclass[power_largest].perslab = 1;
-    fprintf(stderr, "slab class %3d: chunk size %9u perslab %7u\n",
-            i, slabclass[i].size, slabclass[i].perslab);
     /* for the test suite:  faking of how much we've already malloc'd */
     {
         char *t_initial_malloc = getenv("T_MEMD_INITIAL_MALLOC");
@@ -339,7 +333,6 @@ void slabs_adjust_mem_requested(unsigned int id, size_t old, size_t ntotal)
     pthread_mutex_lock(&slabs_lock);
     slabclass_t *p;
     if (id < POWER_SMALLEST || id > power_largest) {
-        fprintf(stderr, "Internal error! Invalid slab class\n");
         abort();
     }
 

@@ -39,6 +39,8 @@ namespace chaos {
             friend class EventServer;
             friend class AbstractEventDispatcer;
         protected:
+            EventHandler(){};
+            virtual ~EventHandler(){};
                 //!Alert handler execution method
             /*!
              Thsi is the methdo that is called when the specified event is recognized

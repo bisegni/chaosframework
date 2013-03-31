@@ -1,6 +1,5 @@
 #ifndef ITEM_H
 #define ITEM_H
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -30,5 +29,4 @@ void item_stats_reset(void);
 #ifdef __cplusplus
 }
 #endif
-
 #endif

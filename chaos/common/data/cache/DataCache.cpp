@@ -75,10 +75,10 @@ void DataCache::deinit() throw(chaos::CException) {
 int DataCache::getItem(const char *key, int32_t& buffLen, void **returnBuffer) {
     item *it = NULL;
     
-    pthread_mutex_lock(&cache_lock);
+    pthread_mutex_lock(&mc_cache_lock);
     it = assoc_find(key, strlen(key));
     it->refcount++;
-    pthread_mutex_unlock(&cache_lock);
+    pthread_mutex_unlock(&mc_cache_lock);
     if (!it) {
          return -1;
     }
@@ -107,12 +107,12 @@ int DataCache::storeItem(const char *key, const void *buffer, int32_t bufferLen)
         memcpy(ITEM_data(new_it), buffer, bufferLen);
     }
     
-    pthread_mutex_lock(&cache_lock);
+    pthread_mutex_lock(&mc_cache_lock);
     if (old_it != NULL)
         do_item_replace(old_it, new_it);
     else
         do_item_link(new_it);
-    pthread_mutex_unlock(&cache_lock);
+    pthread_mutex_unlock(&mc_cache_lock);
     
     if (old_it != NULL)
         do_item_remove(old_it);
@@ -128,9 +128,9 @@ int DataCache::deleteItem(const char *key) {
     if(!it) {
         return -1;
     }
-    pthread_mutex_lock(&cache_lock);
+    pthread_mutex_lock(&mc_cache_lock);
     do_item_unlink(it);
     do_item_remove(it);
-    pthread_mutex_unlock(&cache_lock);
+    pthread_mutex_unlock(&mc_cache_lock);
     return 0;
 }

@@ -11,7 +11,6 @@
  * The rest of the file is licensed under the BSD license.  See LICENSE.
  */
 
-
 #include <chaos/common/data/cache/memcached.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
@@ -25,7 +24,6 @@
 #include <string.h>
 #include <assert.h>
 #include <pthread.h>
-
 
 static pthread_cond_t maintenance_cond = PTHREAD_COND_INITIALIZER;
 
@@ -63,7 +61,6 @@ static unsigned int expand_bucket = 0;
 void assoc_init(void) {
     primary_hashtable = (item**)calloc(hashsize(hashpower), sizeof(void *));
     if (! primary_hashtable) {
-        fprintf(stderr, "Failed to init hashtable.\n");
         exit(EXIT_FAILURE);
     }
 }
@@ -190,7 +187,7 @@ static void *assoc_maintenance_thread(void *arg) {
 
         /* Lock the cache, and bulk move multiple buckets to the new
          * hash table. */
-        pthread_mutex_lock(&cache_lock);
+        pthread_mutex_lock(&mc_cache_lock);
 
         for (ii = 0; ii < hash_bulk_move && expanding; ++ii) {
             item *it, *next;
@@ -215,10 +212,10 @@ static void *assoc_maintenance_thread(void *arg) {
 
         if (!expanding) {
             /* We are done expanding.. just wait for next invocation */
-            pthread_cond_wait(&maintenance_cond, &cache_lock);
+            pthread_cond_wait(&maintenance_cond, &mc_cache_lock);
         }
 
-        pthread_mutex_unlock(&cache_lock);
+        pthread_mutex_unlock(&mc_cache_lock);
     }
     return NULL;
 }
@@ -236,17 +233,16 @@ int start_assoc_maintenance_thread() {
     }
     if ((ret = pthread_create(&maintenance_tid, NULL,
                               assoc_maintenance_thread, NULL)) != 0) {
-        fprintf(stderr, "Can't create thread: %s\n", strerror(ret));
         return -1;
     }
     return 0;
 }
 
 void stop_assoc_maintenance_thread() {
-    pthread_mutex_lock(&cache_lock);
+    pthread_mutex_lock(&mc_cache_lock);
     do_run_maintenance_thread = 0;
     pthread_cond_signal(&maintenance_cond);
-    pthread_mutex_unlock(&cache_lock);
+    pthread_mutex_unlock(&mc_cache_lock);
 
     /* Wait for the maintenance thread to stop */
     pthread_join(maintenance_tid, NULL);
