@@ -9,7 +9,7 @@
 #include <chaos/common/global.h>
 #include <chaos/common/memory/ManagedMemory.h>
 #include <chaos/common/data/cache/DataCache.h>
-
+#include <chaos/common/data/cache/DataCache.h>
 #define STRUCT_NUM 1000
 
 typedef struct DemoStruct{
@@ -24,8 +24,8 @@ int main(int argc, const char * argv[])
     
     
     
-    chaos::memory::ManagedMemory *mm = new chaos::memory::ManagedMemory(168, 512*1024, 0, 1.12, 1);
-    mm->init();
+    chaos::memory::ManagedMemory *mm = new chaos::memory::ManagedMemory();
+    mm->init(168, 512*1024, 0, 1.12, 0);
     unsigned int sID = mm->getSlabIdBySize(sizeof(DemoStruct));
     
     DemoStruct *structPtr[STRUCT_NUM];
@@ -48,39 +48,36 @@ int main(int argc, const char * argv[])
 
     delete mm;
     
-    chaos::datacache::CacheInitParameter memCacheSettings;
-    memCacheSettings.factor = 1.25;
-    memCacheSettings.maxByte = 1 * 1024 * 1024; //default is 64MB
-    memCacheSettings.chunkSize = 48; //48;         /* space for a modest key and value */
-    memCacheSettings.maxItemByte = 1024 * 1024; //1024 * 1024;
-  
-    chaos::datacache::DataCache::getInstance()->init(&memCacheSettings);
     
-    chaos::datacache::DataCache::getInstance()->start();
+    //param for cache
+    chaos::data::cache::CacheSettings settings;
     
-    chaos::datacache::DataCache::getInstance()->storeItem("key", "value", (int32_t)strlen("value"));
-    
-    chaos::datacache::DataCache::getInstance()->getItem("key", bsize, &buff);
-    
+    settings.factor = 1.25;
+    settings.maxbytes = 1 * 1024 * 1024; //default is 64MB
+    settings.chunk_size = 48; //48;         /* space for a modest key and value */
+    settings.item_size_max = 1024 * 1024; //1024 * 1024;
+    settings.evict_to_free = 1;
+    settings.oldest_live = 0;
+    settings.use_cas = 1;
+    settings.preallocation = 0;
+    auto_ptr<chaos::data::cache::DataCache> fc(new chaos::data::cache::DataCache());
+    fc->init(&settings);
+    fc->start();
+    fc->storeItem("key", "value", (int32_t)strlen("value"));
+    fc->getItem("key", bsize, &buff);
     std::cout << (const char *)buff << std::endl;
     
-    chaos::datacache::DataCache::getInstance()->storeItem("key", "value2", (int32_t)strlen("value2"));
-    
-    chaos::datacache::DataCache::getInstance()->getItem("key", bsize, &buff);
-    
+    fc->storeItem("key", "value2", (int32_t)strlen("value2"));
+    fc->getItem("key", bsize, &buff);
     std::cout << (const char *)buff  << std::endl;
     
-    chaos::datacache::DataCache::getInstance()->deleteItem("key");
-    
-    chaos::datacache::DataCache::getInstance()->storeItem("key", "value2", (int32_t)strlen("value2"));
-    
-    chaos::datacache::DataCache::getInstance()->getItem("key", bsize, &buff);
-    
+    fc->deleteItem("key");
+    fc->storeItem("key", "value3", (int32_t)strlen("value3"));
+    fc->getItem("key", bsize, &buff);
     std::cout << (const char *)buff  << std::endl;
+    fc->stop();
+    fc->deinit();
     
-    chaos::datacache::DataCache::getInstance()->stop();
-    
-    chaos::datacache::DataCache::getInstance()->deinit();
     return 0;
 }
 

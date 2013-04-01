@@ -38,24 +38,21 @@ using namespace chaos::memory;
 #define MM_LAPP_ LAPP_ << "[ManagedMemory] - "
 #define MM_LERR_ LERR_ << "[ERROR:ManagedMemory] - "
 
-ManagedMemory::ManagedMemory(int _chunkSize, size_t _itemMaxSize, size_t _memoryLimit, double _growFactor, int _prealloc) {
+ManagedMemory::ManagedMemory() {
     mem_malloced = 0;
     power_largest = 0;
-    
     mem_base = NULL;
     mem_current = NULL;
     mem_avail = 0;
-    
-    chunk_size = _chunkSize;
-    item_size_max = _itemMaxSize;
-    memoryLimit = _memoryLimit;
-    growFactor = _growFactor;
-    prealloc = _prealloc >= 1 ?1:0;
+    chunk_size = 0;
+    item_size_max = 0;
+    memoryLimit = 0;
+    growFactor = 0;
+    prealloc = 0;
 }
 
 ManagedMemory::~ManagedMemory() {
-    //deallocate all slab
-    if(mem_base) std::free(mem_base);
+    deinit();
 }
 
 /*
@@ -81,11 +78,18 @@ unsigned int ManagedMemory::getSlabIdBySize(const size_t size) {
  * Determines the chunk sizes and initializes the slab class descriptors
  * accordingly.
  */
-void ManagedMemory::init() {
+void ManagedMemory::init(int _chunkSize, size_t _itemMaxSize, size_t _memoryLimit, double _growFactor, int _prealloc) {
+    //setup parameter
+    chunk_size = _chunkSize;
+    item_size_max = _itemMaxSize;
+    memoryLimit = _memoryLimit;
+    growFactor = _growFactor;
+    prealloc = _prealloc >= 1 ?1:0;
+    
     int i = POWER_SMALLEST - 1;
     unsigned int size = chunk_size;
     size_t calculated_all_slabs_mem =0;
-    MM_LAPP_ <<  "chunk size:" << chunk_size;
+    MM_LAPP_ <<  "usign chunk size:" << chunk_size;
     
     memset(slabclass, 0, sizeof(slabclass));
     
@@ -128,6 +132,14 @@ void ManagedMemory::init() {
                     return;
             do_slabs_newslab(i);
         }
+    }
+}
+
+void ManagedMemory::deinit() {
+    //deallocate all slab
+    if(mem_base) {
+        std::free(mem_base);
+        mem_base = NULL;
     }
 }
 

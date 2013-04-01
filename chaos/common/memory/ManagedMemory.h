@@ -95,7 +95,7 @@ namespace chaos {
             inline void do_slabs_free(void *ptr, const size_t size, unsigned int id);
         public:
             
-            ManagedMemory(int _chunkSize, size_t _itemMaxSize, size_t _memoryLimit, double _growFactor, int _prealloc);
+            ManagedMemory();
             ~ManagedMemory();
             
             /** Init the subsystem. 1st argument is the limit on no. of bytes to allocate,
@@ -104,7 +104,10 @@ namespace chaos {
              3rd argument specifies if the slab allocator should allocate all memory
              up front (if 1), or allocate memory in chunks as it is needed (if 0)
              */
-            void init();
+            void init(int _chunkSize, size_t _itemMaxSize, size_t _memoryLimit, double _growFactor, int _prealloc);
+            
+            void deinit();
+            
             /**
              * Given object size, return id to use when allocating/freeing memory for object
              * 0 means error: can't store such a large object
