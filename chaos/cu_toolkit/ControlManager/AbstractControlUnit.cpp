@@ -63,7 +63,16 @@ AbstractControlUnit::~AbstractControlUnit() {
  abstract control unit
  */
 void AbstractControlUnit::_sharedInit() {
+    deviceSchedulePolicy = DeviceSchedulePolicyMultithreaded;
     cuInstance = UUIDUtil::generateUUIDLite();
+}
+
+void AbstractControlUnit::setDeviceSchedulePolicy(DeviceSchedulePolicy policy) {
+    deviceSchedulePolicy = policy;
+}
+
+DeviceSchedulePolicy AbstractControlUnit::getDeviceSchedulePolicy() {
+    return deviceSchedulePolicy;
 }
 
 /*
@@ -303,7 +312,37 @@ void AbstractControlUnit::_undefineActionAndDataset() throw(CException) {
     
 }
 
-#pragma mark protected initi/deinit method
+/*!
+ return the appropriate thread for the device
+ */
+CThread *AbstractControlUnit::getThreadForDevice(string& deviceID) throw(chaos::CException) {
+    CThread *csThread = NULL;
+    string devID = "sequenced_thread";
+    
+    if(deviceSchedulePolicy == DeviceSchedulePolicyMultithreaded) {
+        devID = deviceID;
+    }
+    
+    //initialize device scheduler
+    if(!schedulerDeviceMap.count(devID)) {
+         LCU_ << "Create schedule thread for device:" << devID;
+        schedulerDeviceMap.insert(make_pair(devID, csThread = new CThread(this)));
+        schedulerDeviceMap[devID]->setThreadIdentification(devID);
+        //set the defautl scehduling rate to 1 sec
+        schedulerDeviceMap[devID]->setDelayBeetwenTask(1000000);
+        
+        if(!csThread) {
+            LCU_ << "No thread defined for device "<< deviceID;
+            throw CException(-4, "No thread defined for device", "AbstractControlUnit::_start");
+        }
+    } else {
+        csThread = schedulerDeviceMap[devID];
+    }
+    
+    return csThread;
+}
+
+//----------------------------------------- protected initi/deinit method ------------------------------------------------
 /*
  Initialize the Custom Contro Unit and return the configuration
  */
@@ -332,19 +371,16 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
         throw CException(-3, "Device Already Initialized", "AbstractControlUnit::_init");
     }
     
+    LCU_ << "Initialize CU Database for device:" << deviceID;
+    CUSchemaDB::addAttributeToDataSetFromDataWrapper(*initConfiguration);
+    
     LCU_ << "Initialize the DSAttribute handler engine for device:" << deviceID;
     utility::ISDInterface::initImplementation(attributeHandlerEngineForDeviceIDMap[deviceID], static_cast<void*>(initConfiguration), "DSAttribute handler engine", "AbstractControlUnit::_init");
     
-    
-    LCU_ << "Create schedule thread for device:" << deviceID;
-        //initialize device scheduler
-    schedulerDeviceMap.insert(make_pair(deviceID, new CThread(this)));
-    schedulerDeviceMap[deviceID]->setThreadIdentification(deviceID);
-        //set the defautl scehduling rate to 1 sec
-    schedulerDeviceMap[deviceID]->setDelayBeetwenTask(1000000);
-        //initialize key data storage for device id
+      //initialize key data storage for device id
     LCU_ << "Create KeyDataStorage device:" << deviceID;
     tmpKDS = DataManager::getInstance()->getKeyDataStorageNewInstanceForKey(deviceID);
+
     tmpKDS->init(initConfiguration);
     
     keyDataStorageMap.insert(make_pair(deviceID, tmpKDS));
@@ -441,19 +477,11 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
         throw CException(-3, "Device already started", "AbstractControlUnit::_start");
     }
     
-    
-    CThread *csThread = schedulerDeviceMap[deviceID];
-    
-    if(!csThread) {
-        LCU_ << "No thread defined for device "<< deviceID;
-        throw CException(-4, "No thread defined for device", "AbstractControlUnit::_start");
-    }
-    
+    CThread *csThread = getThreadForDevice(deviceID);
     if(!csThread->isStopped()){
         LCU_ << "thread for "<< deviceID << "already running";
         throw CException(-5, "Thread for device already running", "AbstractControlUnit::_start");
     }
-    
     
     LCU_ << "Start Thread for device id:" << deviceID;
     csThread->start();
@@ -487,12 +515,7 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachPa
     
     stop(deviceID);
     
-    CThread *csThread = schedulerDeviceMap[deviceID];
-    
-    if(!csThread) {
-        LCU_ << "No thread defined for device "<< deviceID;
-        throw CException(-4, "No thread defined for device", "AbstractControlUnit::_stop");
-    }
+    CThread *csThread = getThreadForDevice(deviceID);
     
     if(csThread->isStopped()){
         LCU_ << "thread for "<< deviceID << "already runnign";
@@ -588,7 +611,7 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
             //we need to configure the delay  from a run() call and the next
         uint64_t uSecdelay = updatePack->getUInt64Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY);
             //check if we need to update the scehdule time
-        CThread *taskThread = schedulerDeviceMap[deviceID];
+        CThread *taskThread = getThreadForDevice(deviceID);
         if(uSecdelay != taskThread->getDelayBeetwenTask()){
             LCU_ << "Update schedule delay in:" << uSecdelay << " microsecond";
             schedulerDeviceMap[deviceID]->setDelayBeetwenTask(uSecdelay);

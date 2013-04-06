@@ -75,14 +75,23 @@ abstractPointer = typedHandler = new TDSObjectHandler<T, double>(objectPointer, 
         boost::function<CDataWrapper*(CDataWrapper*, bool)> actionDef;
     };
     
-    /*
+    /*!
+     
+     */
+    typedef enum DeviceSchedulePolicy {
+        DeviceSchedulePolicySequential,
+        DeviceSchedulePolicyMultithreaded
+    } DeviceSchedulePolicy;
+    
+    /*!
      Base class for control unit execution task
      */
     class AbstractControlUnit:public DeclareAction, protected CUSchemaDB, public CThreadExecutionTask {
         friend class ControlManager;
-        
+        friend class DomainActionsScheduler;
         int32_t scheduleDelay;
         string jsonSetupFilePath;
+        DeviceSchedulePolicy deviceSchedulePolicy;
         boost::chrono::seconds  lastAcquiredTime;
         
         std::map<std::string, cu::DSAttributeHandlerExecutionEngine*> attributeHandlerEngineForDeviceIDMap;
@@ -96,9 +105,11 @@ abstractPointer = typedHandler = new TDSObjectHandler<T, double>(objectPointer, 
             //
         map<string, KeyDataStorage*>  keyDataStorageMap;
         
-        map<string, CObjectHandlerProcessingQueue<ActionData*>* >  actionParamForDeviceMap;
+        map<string, CObjectHandlerProcessingQueue< ActionData*>* >  actionParamForDeviceMap;
         
         map<string, CThread* >  schedulerDeviceMap;
+        
+        vector< string > sequenceDeviceIDSchedule;
         
         map<string, boost::chrono::seconds >  heartBeatDeviceMap;
         
@@ -114,28 +125,11 @@ abstractPointer = typedHandler = new TDSObjectHandler<T, double>(objectPointer, 
         void addKeyDataStorage(const char *, KeyDataStorage*);
         
         void _sharedInit();
-    public:
-        /*!
-         Construct a new CU with an identifier
-         */
-        AbstractControlUnit(const char *);
-        /*!
-         Construct a new CU with an identifier
-         */
-        AbstractControlUnit();
-        /*!
-         Destructor a new CU with an identifier
-         */
-        virtual ~AbstractControlUnit();
         
-        /*!
-         return the CU name
-         */
-        const char * getCUName();
-        /*!
-         return the CU instance
-         */
-        const char * getCUInstance();
+        void setDeviceSchedulePolicy(DeviceSchedulePolicy policy);
+        
+        DeviceSchedulePolicy getDeviceSchedulePolicy();
+        
         /*!
          Define the control unit DataSet and Action into
          a CDataWrapper
@@ -177,6 +171,34 @@ abstractPointer = typedHandler = new TDSObjectHandler<T, double>(objectPointer, 
          Get the current control unit state
          */
         CDataWrapper* _getState(CDataWrapper*, bool& detachParam) throw(CException);
+        
+        /*!
+         return the appropriate thread for the device
+         */
+        inline CThread *getThreadForDevice(string& deviceID) throw(CException);
+    public:
+        /*!
+         Construct a new CU with an identifier
+         */
+        AbstractControlUnit(const char *);
+        /*!
+         Construct a new CU with an identifier
+         */
+        AbstractControlUnit();
+        /*!
+         Destructor a new CU with an identifier
+         */
+        virtual ~AbstractControlUnit();
+        
+        /*!
+         return the CU name
+         */
+        const char * getCUName();
+        /*!
+         return the CU instance
+         */
+        const char * getCUInstance();
+
 
     protected:
             //CU Identifier

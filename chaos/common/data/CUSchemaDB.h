@@ -49,31 +49,27 @@ namespace chaos {
     
     class CDataWrapper;
     
+        //!Control Unit Device Database
     /*!
-     Class for contain all field for the CU Dataset
+     This is a database fo manage the dataset and property implemented using EntityDB
      */
     class CUSchemaDB {
         
+            //! Entity Database pointer
         edb::EntityDB *entityDB;
-        uint32_t keyIdDevice;
-        uint32_t keyIdDatasetAttrName;
-        uint32_t keyIdAttrDesc;
-        uint32_t keyIdDatasetTimestamp;
-        uint32_t keyIdAttrType;
-        uint32_t keyIdAttrDir;
-        uint32_t keyIdAttrMaxRng;
-        uint32_t keyIdAttrMinRng;
-        uint32_t keyIdDefaultValue;
-        uint32_t keyIdServerAddress;
         
         TimingUtil timingUtils;
+        
+            //! Map that contains all device entity
         EntityPtrMap deviceEntityMap;
         
+        std::map<const char *, uint32_t> mapDatasetKeyForID;
+        
         void fillCDataWrapperDSAtribute(CDataWrapper *dsAttribute,  entity::Entity *deviceIDEntity, entity::Entity *attrEntity, ptr_vector<edb::KeyIdAndValue>& attrProperty);
-        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, const char * attributeValue);
-        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, string& attributeValue);
-        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, int64_t attributeValue);
-        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, double attributeValue);
+        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, const char * attributeValue, bool checkValueForUnicity = true);
+        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, string& attributeValue, bool checkValueForUnicity = true);
+        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, int64_t attributeValue, bool checkValueForUnicity = true);
+        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, double attributeValue, bool checkValueForUnicity = true);
         entity::Entity *getDatasetElement(entity::Entity *device, string& attributeName);
         entity::Entity *getDatasetElement(entity::Entity *device, const char * attributeName);
         /*!
@@ -176,29 +172,48 @@ namespace chaos {
         bool deviceIsPresent(const string& deviceID);
         
         /*!
+         Return all dataset attribute name
+         \param deviceID the identification of the device
+         \param attributesName the array that will be filled with the name
          */
         void getDeviceDatasetAttributesName(const string& deviceID,
                                             vector<string>& attributesName);
         
         /*!
+         Return all dataset attribute name
+         \param deviceID the identification of the device
+         \param directionType the direction for attribute filtering
+         \param attributesName the array that will be filled with the name
          */
        void getDeviceDatasetAttributesName(const string& deviceID,
                                            DataType::DataSetAttributeIOAttribute directionType,
                                            vector<string>& attributesName);
         
         /*!
+         Return the dataset description
+         \param deviceID the identification of the device
+         \param attributesName the name of the attribute
+         \param attributeDescription the returned description
          */
        void getDeviceAttributeDescription(const string& deviceID,
                                           const string& attributesName,
                                           string& attributeDescription);
         
         /*!
+         Return the range value for the attribute
+         \param deviceID the identification of the device
+         \param attributesName the name of the attribute
+         \param rangeInfo the range and default value of the attribute
          */
        void getDeviceAttributeRangeValueInfo(const string& deviceID,
                                              const string& attributesName,
                                              RangeValueInfo& rangeInfo);
         
         /*!
+         Return the direcion of the attribute
+         \param deviceID the identification of the device
+         \param attributesName the name of the attribute
+         \param directionType the direction of the attribute
          */
         int getDeviceAttributeDirection(const string& deviceID,
                                         const string& attributesName,
