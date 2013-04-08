@@ -73,11 +73,11 @@ WorkerCU::~WorkerCU() {
 /*
  Return the default configuration
  */
-void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
+void WorkerCU::defineActionAndDataset() throw(CException) {
     //set the base information
     const char *devIDInChar = _deviceID.c_str();
-    cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_NAME, "SIN_CU");
-    cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_DESCRIPTION, "This is a beautifull CU");
+    cuName = "SIN_CU";
+    //cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_DESCRIPTION, "This is a beautifull CU");
     
     
     //set the default delay for the CU
@@ -157,7 +157,7 @@ void WorkerCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
 /*
  Initialize the Custom Contro Unit and return the configuration
  */
-void WorkerCU::init(CDataWrapper *newConfiguration) throw(CException) {
+void WorkerCU::init(const string& deviceID) throw(CException) {
     LAPP_ << "init WorkerCU";
     
     initTime = steady_clock::now();

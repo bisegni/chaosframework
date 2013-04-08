@@ -23,7 +23,6 @@
 #include <map>
 #include <string>
 #include <boost/thread.hpp>
-#include <chaos/common/general/Manager.h>
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/io/IODataDriver.h>
@@ -37,7 +36,7 @@ namespace chaos{
      * This class manage and organize the creation of output pipeline, 
      * there is only one instance of this class
      */
-    DEFINE_CLASS_AS_SINGLETON_WITH_OTHER_SUBCLASS(DataManager, Manager)
+    DEFINE_CLASS_AS_SINGLETON(DataManager)
         //mutex for lock operation on service request
     boost::mutex managing_data_mutex;
     shared_ptr<IODataDriver> liveDriver;

@@ -214,7 +214,7 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
         //first call the setup abstract method used by the implementing CU to define action, dataset and other
         //usefull value
     LCU_ << "Define Actions and Dataset for:" << CU_IDENTIFIER_C_STREAM;
-    defineActionAndDataset(setupConfiguration);
+    defineActionAndDataset();
     
     
         //add the scekdule dalay for the sandbox
@@ -381,13 +381,14 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     LCU_ << "Create KeyDataStorage device:" << deviceID;
     tmpKDS = DataManager::getInstance()->getKeyDataStorageNewInstanceForKey(deviceID);
 
+    LCU_ << "Call init implementation for deviceID:" << deviceID;
     tmpKDS->init(initConfiguration);
     
     keyDataStorageMap.insert(make_pair(deviceID, tmpKDS));
     
     LCU_ << "Start custom inititialization" << deviceID;
         //initializing the device in control unit
-    init(initConfiguration);
+    init(deviceID);
     
         //advance status
     deviceStateMap[deviceID]++;
@@ -631,7 +632,28 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
  Execute the scehduling for the device
  */
 void AbstractControlUnit::executeOnThread( const string& deviceIDToSchedule) throw(CException) {
-    run(deviceIDToSchedule);
+    
+    switch (deviceSchedulePolicy) {
+        case DeviceSchedulePolicyMultithreaded:
+            run(deviceIDToSchedule);
+            break;
+        case DeviceSchedulePolicySequential:
+            recursive_mutex::scoped_lock  lock(managing_cu_mutex);
+            for(std::map<string,int>::iterator iter = deviceStateMap.begin(); iter != deviceStateMap.end(); ++iter) {
+                //check if the contorl unit is in the start state for this we need to lock
+                if(!lock) lock.lock();
+                if(iter->second == START_STATE) {
+                    //
+                    lock.unlock();
+                    run(iter->first);
+                }
+                if(lock) lock.unlock();
+            }
+            break;
+    }
+    
+    
+    //check if we are in sequential or in threaded mode
     
     lastAcquiredTime = boost::chrono::duration_cast<boost::chrono::seconds>(boost::chrono::steady_clock::now().time_since_epoch());
         //check if we need to sendthe heartbeat

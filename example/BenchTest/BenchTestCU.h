@@ -62,7 +62,7 @@ protected:
     /*(Optional)
      Initialize the Control Unit and all driver, with received param from MetadataServer
      */
-    void init(CDataWrapper*) throw(CException);
+    void init(const string&) throw(CException);
     
     /*
      Execute the work, this is called with a determinated delay, it must be as fast as possible

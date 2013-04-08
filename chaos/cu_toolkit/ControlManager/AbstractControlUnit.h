@@ -109,8 +109,6 @@ abstractPointer = typedHandler = new TDSObjectHandler<T, double>(objectPointer, 
         
         map<string, CThread* >  schedulerDeviceMap;
         
-        vector< string > sequenceDeviceIDSchedule;
-        
         map<string, boost::chrono::seconds >  heartBeatDeviceMap;
         
         map<string, int >  deviceStateMap;
@@ -165,7 +163,7 @@ abstractPointer = typedHandler = new TDSObjectHandler<T, double>(objectPointer, 
         /*!
          Receive the evento for set the dataset input element
          */
-        virtual CDataWrapper* _setDatasetAttribute(CDataWrapper*, bool&) throw (CException);
+        CDataWrapper* _setDatasetAttribute(CDataWrapper*, bool&) throw (CException);
         
         /*!
          Get the current control unit state
@@ -213,27 +211,27 @@ abstractPointer = typedHandler = new TDSObjectHandler<T, double>(objectPointer, 
         /*!
          Return the tart configuration for the Control Unit instance
          */
-        virtual void defineActionAndDataset(CDataWrapper&) throw(CException)   = 0;
+        virtual void defineActionAndDataset() throw(CException)   = 0;
         
         /*!
          Initialize the Custom Contro Unit and return the configuration
          */
-        virtual void init(CDataWrapper*) throw(CException) = 0;
+        virtual void init(const string& deviceID) throw(CException) = 0;
         
         /*!
          Execute the Control Unit work
          */
-        virtual void run(const string&) throw(CException) = 0;
+        virtual void run(const string& deviceID) throw(CException) = 0;
         
         /*!
          Execute the Control Unit work
          */
-        virtual void stop(const string&) throw(CException) = 0;
+        virtual void stop(const string& deviceID) throw(CException) = 0;
         
         /*!
          Deinit the Control Unit
          */
-        virtual void deinit(const string&) throw(CException) = 0;
+        virtual void deinit(const string& deviceID) throw(CException) = 0;
         
         /*!
          Receive the event for set the dataset input element, this virtual method

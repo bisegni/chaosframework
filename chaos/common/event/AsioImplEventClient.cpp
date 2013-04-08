@@ -40,7 +40,7 @@ AsioImplEventClient::~AsioImplEventClient() {
 /*
  init the event adapter
  */
-void AsioImplEventClient::init(CDataWrapper*) throw(CException) {
+void AsioImplEventClient::init(void* initParameter) throw(CException) {
     threadNumber = 4;
         //alertForwrder
     alertForwarder = new AsioEventForwarder(asio::ip::address::from_string(event::EventConfiguration::CONF_EVENT_ALERT_MADDRESS),
