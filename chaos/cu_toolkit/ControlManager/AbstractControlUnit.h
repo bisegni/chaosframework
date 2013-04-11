@@ -22,6 +22,7 @@
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 #include <boost/shared_ptr.hpp>
@@ -101,7 +102,7 @@ abstractPointer = typedHandler = new TDSObjectHandler<T, double>(objectPointer, 
          The muthex is needed because the call to the action can occours in different thread
          */
         boost::recursive_mutex managing_cu_mutex;
-        
+        boost::mutex sequetial_scheduler_mutex;
             //
         map<string, KeyDataStorage*>  keyDataStorageMap;
         
@@ -109,11 +110,14 @@ abstractPointer = typedHandler = new TDSObjectHandler<T, double>(objectPointer, 
         
         map<string, CThread* >  schedulerDeviceMap;
         
+        set<string>  sequentialScheduler;
+        
         map<string, boost::chrono::seconds >  heartBeatDeviceMap;
         
         map<string, int >  deviceStateMap;
         
         map<string, CUStateKey::ControlUnitState > deviceExplicitStateMap;
+        
         
         event::channel::InstrumentEventChannel *deviceEventChannel;
         
@@ -171,9 +175,14 @@ abstractPointer = typedHandler = new TDSObjectHandler<T, double>(objectPointer, 
         CDataWrapper* _getState(CDataWrapper*, bool& detachParam) throw(CException);
         
         /*!
+         Return the appropriate thread for the device
+         */
+        inline CThread *getThreadForDevice(const string& deviceID) throw(CException);
+        
+        /*!
          return the appropriate thread for the device
          */
-        inline CThread *getThreadForDevice(string& deviceID) throw(CException);
+        inline void threadStartStopManagment(const string& deviceID, CThread *csThread, bool startAction) throw(CException);
     public:
         /*!
          Construct a new CU with an identifier
