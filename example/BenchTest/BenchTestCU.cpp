@@ -56,7 +56,7 @@ BenchTestCU::~BenchTestCU() {
 /*
  Return the default configuration
  */
-void BenchTestCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
+void BenchTestCU::defineActionAndDataset() throw(CException) {
     //set the base information
     const char *devIDInChar = reactorName.c_str();
     

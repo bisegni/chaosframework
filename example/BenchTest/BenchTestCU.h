@@ -57,7 +57,7 @@ protected:
     /*
      Define the Control Unit Dataset and Actions
      */
-    virtual void defineActionAndDataset(CDataWrapper&)throw(CException);
+    virtual void defineActionAndDataset()throw(CException);
     
     /*(Optional)
      Initialize the Control Unit and all driver, with received param from MetadataServer
