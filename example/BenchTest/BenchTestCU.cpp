@@ -56,7 +56,7 @@ BenchTestCU::~BenchTestCU() {
 /*
  Return the default configuration
  */
-void BenchTestCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException) {
+void BenchTestCU::defineActionAndDataset() throw(CException) {
     //set the base information
     const char *devIDInChar = reactorName.c_str();
     
@@ -122,7 +122,7 @@ void BenchTestCU::defineActionAndDataset(CDataWrapper& cuSetup) throw(CException
 /*
  Initialize the Custom Contro Unit and return the configuration
  */
-void BenchTestCU::init(CDataWrapper *newConfiguration) throw(CException) {
+void BenchTestCU::init(const string& deviceID) throw(CException) {
     reactorInstance->reset();
     cycleCount = 0;
     lastExecutionTime = steady_clock::now();

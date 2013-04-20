@@ -49,55 +49,103 @@ namespace chaos {
     
     class CDataWrapper;
     
+        //!Control Unit Device Database
     /*!
-     Class for contain all field for the CU Dataset
+     This is a database for the management of the dataset and property, of a device, implemented using EntityDB
      */
     class CUSchemaDB {
         
+            //! Entity Database pointer
         edb::EntityDB *entityDB;
-        uint32_t keyIdDevice;
-        uint32_t keyIdDatasetAttrName;
-        uint32_t keyIdAttrDesc;
-        uint32_t keyIdDatasetTimestamp;
-        uint32_t keyIdAttrType;
-        uint32_t keyIdAttrDir;
-        uint32_t keyIdAttrMaxRng;
-        uint32_t keyIdAttrMinRng;
-        uint32_t keyIdDefaultValue;
-        uint32_t keyIdServerAddress;
         
+            //! Timing utils
         TimingUtil timingUtils;
+        
+            //! Map that contains all device entity
         EntityPtrMap deviceEntityMap;
         
+            //! entity poitner for all device defined withing the control unit
+        std::map<const char *, uint32_t> mapDatasetKeyForID;
+        
+            //! fill a CDatawrapper with the device description
         void fillCDataWrapperDSAtribute(CDataWrapper *dsAttribute,  entity::Entity *deviceIDEntity, entity::Entity *attrEntity, ptr_vector<edb::KeyIdAndValue>& attrProperty);
-        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, const char * attributeValue);
-        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, string& attributeValue);
-        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, int64_t attributeValue);
-        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, double attributeValue);
-        entity::Entity *getDatasetElement(entity::Entity *device, string& attributeName);
-        entity::Entity *getDatasetElement(entity::Entity *device, const char * attributeName);
+        
+            //! add an attribute in unique mode
         /*!
-         return the vector containing the atrtibute list for a domain
+          Before add and attribute, is checked if it is present.
+         \param attributeEntity the entity where attacch the attribute
+         \param attributeValue the string attribute value
+         \param checkValueForUnicity check also the value for identify the presence
+         */
+        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, const char * attributeValue, bool checkValueForUnicity = true);
+        
+            //! add an attribute in unique mode
+        /*!
+         Before add and attribute, is checked if it is present.
+         \param attributeEntity the entity where attacch the attribute
+         \param attributeValue the string attribute value
+         \param checkValueForUnicity check also the value for identify the presence
+         */
+        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, string& attributeValue, bool checkValueForUnicity = true);
+
+            //! add an attribute in unique mode
+        /*!
+         Before add and attribute, is checked if it is present.
+         \param attributeEntity the entity where attacch the attribute
+         \param attributeValue the int64_t attribute value
+         \param checkValueForUnicity check also the value for identify the presence
+         */
+        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, int64_t attributeValue, bool checkValueForUnicity = true);
+        
+            //! add an attribute in unique mode
+        /*!
+         Before add and attribute, is checked if it is present.
+         \param attributeEntity the entity where attacch the attribute
+         \param attributeValue the double attribute value
+         \param checkValueForUnicity check also the value for identify the presence
+         */
+        void addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, double attributeValue, bool checkValueForUnicity = true);
+        
+            //! Get the entity reporesenting the dataset element
+        /*!
+         Before add and attribute, is checked if it is present.
+         \param device the entity represent the device
+         \param attributeName the name of the attribute
+         */
+        entity::Entity *getDatasetElement(entity::Entity *device, string& attributeName);
+        
+            //! Get the entity representing the dataset element
+        /*!
+         Before add and attribute, is checked if it is present.
+         \param device the entity represent the device
+         \param attributeName the name of the attribute
+         */
+        entity::Entity *getDatasetElement(entity::Entity *device, const char * attributeName);
+        
+            //! Get the entity representing the device
+        /*!
+         Return entity object of a device
          */
         entity::Entity* getDeviceEntity(const string& deviceID);
 
         void initDB(const char* name, bool onMemory);
         
-        /*!
-         fill a CDataWrapper with the dataset decode
-         */
+            //!Fill a CDataWrapper with the dataset decode
         void fillDataWrapperWithDataSetDescription(entity::Entity*, CDataWrapper&);
         
+            //!Compose the name of the attribute
         inline void composeAttributeName(const char *deviceID, const char *attributeName, string& composedName);
+        
+            //!Decompose the attribute name
         inline const char * decomposeAttributeName(string& deviceID, string& attributeName);
     public:
-        //!Default Contructor
+            //!Default Contructor
         /*!
          The database is created with the default parameter
          */
         CUSchemaDB();
         
-        //!Contructor for specify the onMemory flag
+            //!Contructor for specify the onMemory flag
         /*!
          The database is create with onMemory option enable.This 
          permit to use only the computer memory to store the data 
@@ -107,7 +155,7 @@ namespace chaos {
          */
         CUSchemaDB(bool onMemory);
      
-        //!Contructor for specify the name of the database and onMemory flag
+            //!Contructor for specify the name of the database and onMemory flag
         /*!
          The database is create with onMemory option enable and with
          the name specified. This permit to use only the computer memory 
@@ -118,7 +166,7 @@ namespace chaos {
          */
         CUSchemaDB(const char *databaseName, bool onMemory);
         
-        //!Default Destructor
+            //!Default Destructor
         virtual ~CUSchemaDB();
         
             //! Add device dataset definitio by serialized form
@@ -176,29 +224,48 @@ namespace chaos {
         bool deviceIsPresent(const string& deviceID);
         
         /*!
+         Return all dataset attribute name
+         \param deviceID the identification of the device
+         \param attributesName the array that will be filled with the name
          */
         void getDeviceDatasetAttributesName(const string& deviceID,
                                             vector<string>& attributesName);
         
         /*!
+         Return all dataset attribute name
+         \param deviceID the identification of the device
+         \param directionType the direction for attribute filtering
+         \param attributesName the array that will be filled with the name
          */
        void getDeviceDatasetAttributesName(const string& deviceID,
                                            DataType::DataSetAttributeIOAttribute directionType,
                                            vector<string>& attributesName);
         
         /*!
+         Return the dataset description
+         \param deviceID the identification of the device
+         \param attributesName the name of the attribute
+         \param attributeDescription the returned description
          */
        void getDeviceAttributeDescription(const string& deviceID,
                                           const string& attributesName,
                                           string& attributeDescription);
         
         /*!
+         Return the range value for the attribute
+         \param deviceID the identification of the device
+         \param attributesName the name of the attribute
+         \param rangeInfo the range and default value of the attribute
          */
        void getDeviceAttributeRangeValueInfo(const string& deviceID,
                                              const string& attributesName,
                                              RangeValueInfo& rangeInfo);
         
         /*!
+         Return the direcion of the attribute
+         \param deviceID the identification of the device
+         \param attributesName the name of the attribute
+         \param directionType the direction of the attribute
          */
         int getDeviceAttributeDirection(const string& deviceID,
                                         const string& attributesName,

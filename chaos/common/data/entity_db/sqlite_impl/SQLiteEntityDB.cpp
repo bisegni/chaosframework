@@ -108,9 +108,9 @@ int16_t SQLiteEntityDB::initDB(const char* name, bool temporary)  throw (CExcept
     SET_CHECK_AND_TROW_ERROR(result, "insert into property(id, entity_id, key_id, key_type, str_value) values (?,?,?,?,?)", stmt[12])
     SET_CHECK_AND_TROW_ERROR(result, "insert into property(id, entity_id, key_id, key_type, num_value) values (?,?,?,?,?)", stmt[13])
     SET_CHECK_AND_TROW_ERROR(result, "insert into property(id, entity_id, key_id, key_type, double_value) values (?,?,?,?,?)", stmt[14])
-    SET_CHECK_AND_TROW_ERROR(result, "update property set str_value = ?, entity_id = ? where id = ?", stmt[15])
-    SET_CHECK_AND_TROW_ERROR(result, "update property set num_value = ?, entity_id = ? where id = ?", stmt[16])
-    SET_CHECK_AND_TROW_ERROR(result, "update property set double_value = ?, entity_id = ? where id = ?", stmt[17])
+    SET_CHECK_AND_TROW_ERROR(result, "update property set str_value = ?, key_id = ? where id = ?", stmt[15])
+    SET_CHECK_AND_TROW_ERROR(result, "update property set num_value = ?, key_id = ? where id = ?", stmt[16])
+    SET_CHECK_AND_TROW_ERROR(result, "update property set double_value = ?, key_id = ? where id = ?", stmt[17])
     SET_CHECK_AND_TROW_ERROR(result, "delete from property where id = ?", stmt[18])
     
     //search
@@ -457,7 +457,7 @@ int16_t SQLiteEntityDB::addNewPropertyForEntity(uint32_t entityID, KeyIdAndValue
     if(result != SQLITE_OK) return result;
     
     result = sqlite3_step(targetStmt);
-    if(result != SQLITE_OK) return result;
+    if(result != SQLITE_DONE) return result;
     
     return  SQLITE_OK;
 }
@@ -495,7 +495,7 @@ int16_t SQLiteEntityDB::updatePropertyForEntity(uint32_t propertyID, KeyIdAndVal
     }
     if(result != SQLITE_OK) return result;
     
-    result = sqlite3_bind_int64(targetStmt, 2, newTypeAndValue.keyID);
+    result = sqlite3_bind_int(targetStmt, 2, newTypeAndValue.keyID);
     if(result != SQLITE_OK) return result;
     
     // set key id
@@ -503,7 +503,7 @@ int16_t SQLiteEntityDB::updatePropertyForEntity(uint32_t propertyID, KeyIdAndVal
     if(result != SQLITE_OK) return result;
     
     result = sqlite3_step(targetStmt);
-    if(result != SQLITE_OK) return result;
+    if(result != SQLITE_DONE) return result;
 
     return  SQLITE_OK;
     
@@ -712,7 +712,7 @@ int16_t SQLiteEntityDB::searchEntityByPropertyKeyAndValue(KeyIdAndValue& keyInfo
     }
     
     // set new entity id
-    result = sqlite3_bind_int64(targetStmt, 1, keyInfo.keyID);
+    result = sqlite3_bind_int(targetStmt, 1, keyInfo.keyID);
     if(result != SQLITE_OK) return result;
     
     // cicle the row

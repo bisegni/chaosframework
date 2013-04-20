@@ -22,6 +22,7 @@
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 #include <boost/shared_ptr.hpp>
@@ -75,14 +76,23 @@ abstractPointer = typedHandler = new TDSObjectHandler<T, double>(objectPointer, 
         boost::function<CDataWrapper*(CDataWrapper*, bool)> actionDef;
     };
     
-    /*
+    /*!
+     
+     */
+    typedef enum DeviceSchedulePolicy {
+        DeviceSchedulePolicySequential,
+        DeviceSchedulePolicyMultithreaded
+    } DeviceSchedulePolicy;
+    
+    /*!
      Base class for control unit execution task
      */
     class AbstractControlUnit:public DeclareAction, protected CUSchemaDB, public CThreadExecutionTask {
         friend class ControlManager;
-        
+        friend class DomainActionsScheduler;
         int32_t scheduleDelay;
         string jsonSetupFilePath;
+        DeviceSchedulePolicy deviceSchedulePolicy;
         boost::chrono::seconds  lastAcquiredTime;
         
         std::map<std::string, cu::DSAttributeHandlerExecutionEngine*> attributeHandlerEngineForDeviceIDMap;
@@ -92,19 +102,22 @@ abstractPointer = typedHandler = new TDSObjectHandler<T, double>(objectPointer, 
          The muthex is needed because the call to the action can occours in different thread
          */
         boost::recursive_mutex managing_cu_mutex;
-        
+        boost::mutex sequetial_scheduler_mutex;
             //
         map<string, KeyDataStorage*>  keyDataStorageMap;
         
-        map<string, CObjectHandlerProcessingQueue<ActionData*>* >  actionParamForDeviceMap;
+        map<string, CObjectHandlerProcessingQueue< ActionData*>* >  actionParamForDeviceMap;
         
         map<string, CThread* >  schedulerDeviceMap;
+        
+        set<string>  sequentialScheduler;
         
         map<string, boost::chrono::seconds >  heartBeatDeviceMap;
         
         map<string, int >  deviceStateMap;
         
         map<string, CUStateKey::ControlUnitState > deviceExplicitStateMap;
+        
         
         event::channel::InstrumentEventChannel *deviceEventChannel;
         
@@ -114,28 +127,11 @@ abstractPointer = typedHandler = new TDSObjectHandler<T, double>(objectPointer, 
         void addKeyDataStorage(const char *, KeyDataStorage*);
         
         void _sharedInit();
-    public:
-        /*!
-         Construct a new CU with an identifier
-         */
-        AbstractControlUnit(const char *);
-        /*!
-         Construct a new CU with an identifier
-         */
-        AbstractControlUnit();
-        /*!
-         Destructor a new CU with an identifier
-         */
-        virtual ~AbstractControlUnit();
         
-        /*!
-         return the CU name
-         */
-        const char * getCUName();
-        /*!
-         return the CU instance
-         */
-        const char * getCUInstance();
+        void setDeviceSchedulePolicy(DeviceSchedulePolicy policy);
+        
+        DeviceSchedulePolicy getDeviceSchedulePolicy();
+        
         /*!
          Define the control unit DataSet and Action into
          a CDataWrapper
@@ -171,12 +167,45 @@ abstractPointer = typedHandler = new TDSObjectHandler<T, double>(objectPointer, 
         /*!
          Receive the evento for set the dataset input element
          */
-        virtual CDataWrapper* _setDatasetAttribute(CDataWrapper*, bool&) throw (CException);
+        CDataWrapper* _setDatasetAttribute(CDataWrapper*, bool&) throw (CException);
         
         /*!
          Get the current control unit state
          */
         CDataWrapper* _getState(CDataWrapper*, bool& detachParam) throw(CException);
+        
+        /*!
+         Return the appropriate thread for the device
+         */
+        inline CThread *getThreadForDevice(const string& deviceID) throw(CException);
+        
+        /*!
+         return the appropriate thread for the device
+         */
+        inline void threadStartStopManagment(const string& deviceID, CThread *csThread, bool startAction) throw(CException);
+    public:
+        /*!
+         Construct a new CU with an identifier
+         */
+        AbstractControlUnit(const char *);
+        /*!
+         Construct a new CU with an identifier
+         */
+        AbstractControlUnit();
+        /*!
+         Destructor a new CU with an identifier
+         */
+        virtual ~AbstractControlUnit();
+        
+        /*!
+         return the CU name
+         */
+        const char * getCUName();
+        /*!
+         return the CU instance
+         */
+        const char * getCUInstance();
+
 
     protected:
             //CU Identifier
@@ -191,27 +220,27 @@ abstractPointer = typedHandler = new TDSObjectHandler<T, double>(objectPointer, 
         /*!
          Return the tart configuration for the Control Unit instance
          */
-        virtual void defineActionAndDataset(CDataWrapper&) throw(CException)   = 0;
+        virtual void defineActionAndDataset() throw(CException)   = 0;
         
         /*!
          Initialize the Custom Contro Unit and return the configuration
          */
-        virtual void init(CDataWrapper*) throw(CException) = 0;
+        virtual void init(const string& deviceID) throw(CException) = 0;
         
         /*!
          Execute the Control Unit work
          */
-        virtual void run(const string&) throw(CException) = 0;
+        virtual void run(const string& deviceID) throw(CException) = 0;
         
         /*!
          Execute the Control Unit work
          */
-        virtual void stop(const string&) throw(CException) = 0;
+        virtual void stop(const string& deviceID) throw(CException) = 0;
         
         /*!
          Deinit the Control Unit
          */
-        virtual void deinit(const string&) throw(CException) = 0;
+        virtual void deinit(const string& deviceID) throw(CException) = 0;
         
         /*!
          Receive the event for set the dataset input element, this virtual method

@@ -20,6 +20,7 @@
 #ifndef Common_CObjectProcessingPriorityQueue_h
 #define Common_CObjectProcessingPriorityQueue_h
 
+#include <boost/thread.hpp>
 #include <chaos/common/pqueue/CObjectProcessingQueue.h>
 #include <queue>
 #include <vector>
@@ -74,7 +75,7 @@ namespace chaos {
                 priority_queue< PRIORITY_ELEMENT(T)*, std::vector< PRIORITY_ELEMENT(T)* >, pless< PRIORITY_ELEMENT(T) > > bufferQueue;
                 bool inDeinit;
                 int outputThreadNumber;
-                mutable boost::mutex qMutex;
+                boost::mutex qMutex;
                 boost::condition_variable liveThreadConditionLock;
                 boost::condition_variable emptyQueueConditionLock;
                 
@@ -140,6 +141,7 @@ namespace chaos {
                  Initialization method for output buffer
                  */
                 virtual void init(int threadNumber) throw(CException) {
+                    boost::unique_lock<boost::mutex>  lock(qMutex);
                     inDeinit = false;
                     COPPQUEUE_LAPP_ << "init";
                         //add the n thread on the threadgroup
@@ -157,7 +159,7 @@ namespace chaos {
                  Deinitialization method for output buffer
                  */
                 virtual void deinit(bool waithForEmptyQueue=true) throw(CException) {
-                    boost::mutex::scoped_lock lock(qMutex);
+                    boost::unique_lock<boost::mutex>  lock(qMutex);
                     inDeinit = true;
                     COPPQUEUE_LAPP_ << "Deinitialization";
                         //stopping the group
@@ -182,7 +184,7 @@ namespace chaos {
                 }
                 
                 bool push(T* elementToPush, unsigned int _priority = 50, bool _disposeOnDestroy = true){
-                    boost::mutex::scoped_lock lock(qMutex);
+                    boost::unique_lock<boost::mutex>  lock(qMutex);
                     if(inDeinit) return false;
                     PriorityQueuedElement<T> *_element = new PriorityQueuedElement<T>(elementToPush, _priority, _disposeOnDestroy);
                     bufferQueue.push(_element);
@@ -195,7 +197,7 @@ namespace chaos {
                  get the last insert data
                  */
                 PRIORITY_ELEMENT(T)* waitAndPop() {
-                    boost::mutex::scoped_lock lock(qMutex);
+                    boost::unique_lock<boost::mutex> lock(qMutex);
                         //output result poitner
                     PriorityQueuedElement<T> *prioritizedElement = NULL;
                     
@@ -219,7 +221,7 @@ namespace chaos {
                  check for empty buffer
                  */
                 bool isEmpty() const {
-                    boost::mutex::scoped_lock lock(qMutex);
+                    boost::unique_lock<boost::mutex>  lock(qMutex);
                     return bufferQueue.empty();
                 }
                 
@@ -227,7 +229,7 @@ namespace chaos {
                  check for empty buffer
                  */
                 void waitForEmpty() {
-                    boost::mutex::scoped_lock lock(qMutex);
+                    boost::unique_lock<boost::mutex>  lock(qMutex);
                     while( bufferQueue.empty()){
                         emptyQueueConditionLock.wait(lock);
                     }
@@ -239,7 +241,7 @@ namespace chaos {
                  clear the queue, remove all non processed element
                  */
                 void clear() {
-                    boost::mutex::scoped_lock lock(qMutex);
+                    boost::unique_lock<boost::mutex>  lock(qMutex);
                     
                         //remove all element
                     while (!bufferQueue.empty()) {
@@ -251,7 +253,7 @@ namespace chaos {
                  Return le number of elementi into live data
                  */
                 unsigned long elementInLiveBuffer() const {
-                    boost::mutex::scoped_lock lock(qMutex);
+                    boost::unique_lock<boost::mutex>  lock(qMutex);
                     return bufferQueue.size();
                 }
                 
