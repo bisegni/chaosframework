@@ -25,7 +25,6 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/interprocess/sync/interprocess_semaphore.hpp>
 
-#include <chaos/common/general/Manager.h>
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/thread/ChaosThread.h>
@@ -40,7 +39,7 @@ namespace chaos {
     /*
      Manager for the Control Unit execution
      */
-    class ControlManager : public CThreadExecutionTask, public DeclareAction,  public Manager, public Singleton<ControlManager> {
+    class ControlManager : public CThreadExecutionTask, public DeclareAction, public Singleton<ControlManager> {
         friend class Singleton<ControlManager>;
         mutable boost::mutex qMutex;
         condition_variable lockCondition;

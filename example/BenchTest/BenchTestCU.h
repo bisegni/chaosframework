@@ -57,12 +57,12 @@ protected:
     /*
      Define the Control Unit Dataset and Actions
      */
-    virtual void defineActionAndDataset(CDataWrapper&)throw(CException);
+    virtual void defineActionAndDataset()throw(CException);
     
     /*(Optional)
      Initialize the Control Unit and all driver, with received param from MetadataServer
      */
-    void init(CDataWrapper*) throw(CException);
+    void init(const string&) throw(CException);
     
     /*
      Execute the work, this is called with a determinated delay, it must be as fast as possible

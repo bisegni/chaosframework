@@ -29,7 +29,6 @@
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/RpcServer.h>
 #include <chaos/common/rpc/RpcClient.h>
-#include <chaos/common/general/Manager.h>
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/data/CDataWrapper.h>
@@ -53,7 +52,7 @@ namespace chaos{
      * - Command Manager is the central class for the registration and execution of the custom command
      *
      */
-    class CommandManager : public DeclareAction,  public Manager, public Configurable, public Singleton<CommandManager> {
+    class CommandManager : public DeclareAction,  public Configurable, public Singleton<CommandManager> {
         friend class RpcAdapterRegister;
         friend class CommandDispatcherRegister;
         friend class ServerDelegator;

@@ -54,12 +54,14 @@ void EventServer::dispatchEventToHandler(const unsigned char * const serializedE
                 result->setEventData(serializedEvent, length);
                 rootEventHandler->executeAlertHandler(result);
             }
+                break;
+                
             case EventTypeInstrument:  {
                 instrument::InstrumentEventDescriptor *result = new instrument::InstrumentEventDescriptor();
                 result->setEventData(serializedEvent, length);
                 rootEventHandler->executeInstrumentHandler(result);
             }
-            break;
+                break;
             default:
                 throw CException(3, "Event not yet implemented", "EventFactory::getEventInstance");
                 break;
