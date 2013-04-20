@@ -18,12 +18,11 @@
  *    	limitations under the License.
  */
 
-#include "ChaosUIToolkitCWrapper.h"
 #include <string.h>
 #include <map>
-#include <chaos/common/cconstants.h>
 #include <chaos/ui_toolkit/ChaosUIToolkit.h>
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
+#include <chaos/ui_toolkit/ChaosUIToolkitCWrapper.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
 #include <boost/lexical_cast.hpp>
 
@@ -256,7 +255,7 @@ extern "C" {
         try{
             DeviceController *dCtrl = getDeviceControllerFromID(devID);
             if(dCtrl && dsAttrName && dsAttrValueHandle) {
-                const CDataWrapper *  dataWrapper = ((DeviceController*)dCtrl)->getLiveCDataWrapperPtr();
+                CDataWrapper *  dataWrapper = ((DeviceController*)dCtrl)->getLiveCDataWrapperPtr();
                 if(dataWrapper && dataWrapper->hasKey(dsAttrName)) {
                     DataType::DataType attributeType;
                     string attributesName = dsAttrName;
@@ -303,34 +302,11 @@ extern "C" {
     int setStrValueForAttribute(uint32_t devID, const char * const dsAttrName, const char * const dsAttrValueCStr) {
         int err = 0;
         string attributeName = dsAttrName;
-        DataType::DataType attributeType;
-        try{
-            DeviceController *dCtrl = getDeviceControllerFromID(devID);
-            if(dCtrl && dsAttrName && dsAttrValueCStr) {
-
-                    err = ((DeviceController*)dCtrl)->getDeviceAttributeType(attributeName, attributeType);
-                    if(err == 0){
-                        switch (attributeType) {
-                               
-                            case DataType::TYPE_INT32:
-                                ((DeviceController*)dCtrl)->setInt32AttributeValue(dsAttrName, boost::lexical_cast<int32_t>(dsAttrValueCStr));
-                                break;
-                                
-                            case DataType::TYPE_DOUBLE:
-                                ((DeviceController*)dCtrl)->setDoubleAttributeValue(dsAttrName, boost::lexical_cast<double>(dsAttrValueCStr));
-                                break;
-                                
-                            default:
-                                err = 1;
-                        }
-                } else {
-                    err = -1001;
-                }
-            } else {
-                err = -1000;
-            }
-        } catch (bad_lexical_cast& e) {
-            err = -1002;
+        DeviceController *dCtrl = getDeviceControllerFromID(devID);
+        if(dCtrl && dsAttrName && dsAttrValueCStr) {
+            err = dCtrl->setAttributeValue(attributeName,dsAttrValueCStr);
+        } else {
+            err = -1001;
         }
         return err;
     }

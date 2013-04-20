@@ -41,9 +41,12 @@ MsgPackClient::~MsgPackClient(){
 /*
  Initialization method for output buffer
  */
-void MsgPackClient::init(CDataWrapper *cfg) throw(CException) {
+void MsgPackClient::init(void *cfg) throw(CException) {
+    
+    CDataWrapper *configuration = static_cast<CDataWrapper*>(cfg);
+    
     LAPP_ << "Msgpack RpcSender initialization";
-    int32_t threadNumber = cfg->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER)? cfg->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER):1;
+    int32_t threadNumber = configuration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER)? configuration->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER):1;
     LAPP_ << "Msgpack RpcSender ObjectProcessingQueue<CDataWrapper> initialization with "<< threadNumber <<" thread";
     CObjectProcessingQueue<NetworkForwardInfo>::init(threadNumber);
     LAPP_ << "Msgpack RpcSender ObjectProcessingQueue<CDataWrapper> initialized";
@@ -60,6 +63,13 @@ void MsgPackClient::init(CDataWrapper *cfg) throw(CException) {
  start the rpc adapter
  */
 void MsgPackClient::start() throw(CException) {
+    
+}
+
+/*
+ start the rpc adapter
+ */
+void MsgPackClient::stop() throw(CException) {
     
 }
 

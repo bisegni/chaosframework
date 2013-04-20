@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		324707D016878FA8002F8187 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 324707CF16878FA8002F8187 /* main.cpp */; };
 		324707D216878FA8002F8187 /* TestEntityDB.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 324707D116878FA8002F8187 /* TestEntityDB.1 */; };
-		324707D916879031002F8187 /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 324707D816879031002F8187 /* libchaos_common.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,7 +28,6 @@
 		324707CB16878FA8002F8187 /* TestEntityDB */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestEntityDB; sourceTree = BUILT_PRODUCTS_DIR; };
 		324707CF16878FA8002F8187 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		324707D116878FA8002F8187 /* TestEntityDB.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = TestEntityDB.1; sourceTree = "<group>"; };
-		324707D816879031002F8187 /* libchaos_common.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libchaos_common.dylib; path = "../../../../../Library/Developer/Xcode/DerivedData/CHAOSWorkspace-fenstxfuubolasdyqfgxbhoutoyv/Build/Products/Debug/libchaos_common.dylib"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,7 +35,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				324707D916879031002F8187 /* libchaos_common.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -47,7 +44,6 @@
 		324707C016878FA8002F8187 = {
 			isa = PBXGroup;
 			children = (
-				324707D816879031002F8187 /* libchaos_common.dylib */,
 				324707CE16878FA8002F8187 /* TestEntityDB */,
 				324707CC16878FA8002F8187 /* Products */,
 			);
@@ -177,6 +173,7 @@
 					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
+					"-lchaos_common",
 				);
 				SDKROOT = macosx;
 			};
@@ -224,6 +221,7 @@
 					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
+					"-lchaos_common",
 				);
 				SDKROOT = macosx;
 			};
@@ -238,9 +236,9 @@
 					/usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug\"",
-					"\"$(SRCROOT)/../../usr/local/lib",
+					"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug",
+					/usr/local/lib,
+					"$(SRCROOT)/../../usr/local/lib",
 				);
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
@@ -255,6 +253,7 @@
 					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
+					"-lchaos_common",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -269,9 +268,9 @@
 					/usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug\"",
-					"\"$(SRCROOT)/../../usr/local/lib",
+					"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug",
+					/usr/local/lib,
+					"$(SRCROOT)/../../usr/local/lib",
 				);
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
@@ -286,6 +285,7 @@
 					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
+					"-lchaos_common",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

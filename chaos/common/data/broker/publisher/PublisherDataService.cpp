@@ -1,8 +1,8 @@
-/*	
- *	Manager.h
+/*
+ *	PublishDataService.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,28 +17,18 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef CManager_H
-#define CManager_H
 
-#include <chaos/common/exception/CException.h>
-namespace chaos{
-    
-    class Manager {
-    public:
-        /*
-         * Initzialize the dataCManager
-         */
-        virtual void init() throw(CException) = 0;
-        
-        /*
-         * Deinitzialize the dataCManager
-         */
-        virtual void deinit() throw(CException) = 0;
-        
-        /*
-         * Start all sub process
-         */
-        virtual void start() throw(CException) = 0;
-    };
+#include <chaos/common/data/broker/publisher/PublisherDataService.h>
+
+using namespace chaos;
+using namespace chaos::databroker::publisher;
+
+PublisherDataService::PublisherDataService(const char *keyName):publisServiceName(keyName) {
 }
-#endif
+
+PublisherDataService::PublisherDataService(std::string& keyName):publisServiceName(keyName) {
+}
+
+PublisherDataService::~PublisherDataService() {
+    
+}

@@ -22,6 +22,7 @@
 #define CHAOSFramework_DefaultEventDispatcher_h
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
+#include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/dispatcher/AbstractEventDispatcher.h>
 #include <boost/thread.hpp>
 
@@ -45,13 +46,16 @@ namespace chaos {
         /*!
          * Initzialize the Event Broker
          */
-        void init(CDataWrapper *initData) throw(CException);
+        void init(void *initData) throw(CException);
         
             //!Event dispatcher initialization
         /*!
          * Initzialize the Event Broker
          */
         void start() throw(CException);
+        
+        //-----------------------
+        void stop() throw(CException){};
         
             //!Event dispatcher deinitialization
         /*!

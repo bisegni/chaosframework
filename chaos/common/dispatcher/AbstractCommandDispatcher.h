@@ -68,10 +68,13 @@ namespace chaos{
     protected:
         
             //! Dispatch initialization with default value
-        virtual void init(CDataWrapper*) throw(CException);
+        virtual void init(void*) throw(CException);
         
             //-----------------------
         virtual void start() throw(CException);
+        
+        //-----------------------
+        virtual void stop() throw(CException){};
         
             //! Dispatch deinitialization with default value
         virtual void deinit() throw(CException);
@@ -93,6 +96,8 @@ namespace chaos{
     public:
             //! Constructor
         AbstractCommandDispatcher(string *alias);
+        
+        ~AbstractCommandDispatcher();
         
         /*
          update the dispatcher configuration

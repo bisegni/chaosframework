@@ -20,12 +20,13 @@
 #ifndef ChaosFramework_ActionDescriptor_h
 #define ChaosFramework_ActionDescriptor_h
 
-#include "../global.h"
 
 #include <string>
 #include <vector>
 #include <boost/thread.hpp>
 #include <boost/thread/locks.hpp>
+
+#include <chaos/common/global.h>
 #include <chaos/common/cconstants.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/exception/CException.h>

@@ -19,7 +19,7 @@ int main(int argc, const char * argv[])
         
         chaos::ArrayPointer<chaos::edb::KeyIdAndValue> properties;
         auto_ptr<chaos::edb::EntityDB> testDB (new chaos::edb::SQLiteEntityDB());
-        testDB->initDB("test", false);
+        testDB->initDB("test_one", true);
         
         chaos::edb::KeyIdAndValue deviceInfo;
         chaos::edb::KeyIdAndValue propertyInfo;
@@ -34,20 +34,15 @@ int main(int argc, const char * argv[])
         deviceInfo.type = chaos::edb::KEY_STR_VALUE;
         strcpy(deviceInfo.value.strValue, "device_1");
         
-        chaos::entity::Entity *entityA = testDB->getNewEntityInstance(deviceInfo);
-        if(entityA) {
+         auto_ptr<chaos::entity::Entity> entityA(testDB->getNewEntityInstance(deviceInfo));
+        if(entityA.get()) {
             
             entityA->getAllProperty(properties);
-            
-            propertyInfo.keyID = keyDevice;
-            propertyInfo.type = chaos::edb::KEY_NUM_VALUE;
-            propertyInfo.value.numValue = 23;
-
-            entityA->addProperty(propertyInfo);
+            entityA->addNumberProperty(keyDevice, 23);
         }
         
         strcpy(deviceInfo.value.strValue, "device_2");
-        chaos::entity::Entity *entityB = testDB->getNewEntityInstance(deviceInfo);
+        auto_ptr<chaos::entity::Entity> entityB(testDB->getNewEntityInstance(deviceInfo));
         
         entityA->addChild(*entityB);
         

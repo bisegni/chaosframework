@@ -45,7 +45,7 @@ AsioImplEventServer::AsioImplEventServer(string *alias):EventServer(alias) {
 /*
  init the event adapter
  */
-void AsioImplEventServer::init(CDataWrapper*) throw(CException) {
+void AsioImplEventServer::init(void*) throw(CException) {
     threadNumber = 1;
 }
 
@@ -63,6 +63,13 @@ void AsioImplEventServer::start() throw(CException) {
         shared_ptr<thread> thread(new boost::thread(bind(&asio::io_service::run, &io_service)));
         serviceThread.push_back(thread);
     }
+}
+
+/*
+ start the event adapter
+ */
+void AsioImplEventServer::stop() throw(CException) {
+    
 }
 
 /*

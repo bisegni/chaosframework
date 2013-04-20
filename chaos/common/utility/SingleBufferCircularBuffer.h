@@ -105,7 +105,7 @@ namespace chaos {
         //! PointerBuffer is utility class that contain pointer to some data
     /*! 
       This class is used to share some contaier of data poitner that cha be changed. When the
-     pointer is requested with getPtr method, a shared point is given. This permit to manage different allcoaiton
+     pointer is requested with getPtr method, a shared point is given. This permit to manage different allocation
      of memory in the same container.
      */
     class PointerBuffer {

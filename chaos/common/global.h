@@ -30,13 +30,16 @@
  * \section install_sec Installation
  * Read the README.txt file in the root of source code folder
  */
-
 #include <boost/version.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <boost/log/sources/basic_logger.hpp>
 #include <boost/log/sources/record_ostream.hpp>
 #include <boost/log/sources/global_logger_storage.hpp>
+
+
+#include <chaos/common/endian.h>
+
 using namespace boost;
 
 /*#include <boost/shared_ptr.hpp>
@@ -117,7 +120,6 @@ LAPP_ << CSLIB_VERSION_HEADER;\
 LAPP_ << CSLIB_VERSION_NUMBER;\
 LAPP_ << CSLIB_VERSION_LAST_COMMITTER;\
 LAPP_ << "-----------------------------------------";
-
 
 /*
  Abstraction for the server delegator

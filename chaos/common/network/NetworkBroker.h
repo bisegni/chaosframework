@@ -34,10 +34,13 @@
 #include <chaos/common/event/channel/EventChannel.h>
 #include <chaos/common/event/evt_desc/EventDescriptor.h>
 #include <chaos/common/network/NetworkForwardInfo.h>
+#include <chaos/common/utility/ISDInterface.h>
 namespace chaos {
 
     using namespace std;
     using namespace boost;
+    
+    class CDataWrapper;
     
     //! Channel Type Enumeration
     /*!
@@ -59,6 +62,7 @@ namespace chaos {
     namespace event {
         namespace channel {
             class AlertEventChannel;
+            class InstrumentEventChannel;
         }
         class EventServer;
         class EventClient;
@@ -72,7 +76,7 @@ namespace chaos {
      chaos rpc client and server abstract class and to the message dispatcher abstract class. 
      It abstract the !CHAOS rule for sending message and wait for answer and other facility.
      */
-    class NetworkBroker: private SetupStateManager {
+    class NetworkBroker: private SetupStateManager, public utility::ISDInterface {
         
             //!Event Client for event forwarding
         event::EventClient *eventClient;
@@ -129,7 +133,7 @@ namespace chaos {
          * Initzialize the Message Broker. In this step are taken the configured implementation
          * for the rpc client and server and for the dispatcher. All these are here initialized
          */
-        virtual void init() throw(CException);
+        virtual void init(void *initData = NULL) throw(CException);
         
             //!NetworkBroker deinitialization
         /*!
@@ -142,6 +146,12 @@ namespace chaos {
          * all part are started
          */
         virtual void start() throw(CException);
+     
+        //!start all internal engine for client, server and message dispatcher
+        /*!
+         * all part are started
+         */
+        virtual void stop() throw(CException);
         
             //!Get the published port
         /*!
@@ -179,6 +189,9 @@ namespace chaos {
         
             //! Alert Event Creation
         event::channel::AlertEventChannel *getNewAlertEventChannel();
+        
+            //! Instrument Event Creation
+        event::channel::InstrumentEventChannel *getNewInstrumentEventChannel();
         
             //!Event channel deallocation
         /*!

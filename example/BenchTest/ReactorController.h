@@ -16,7 +16,10 @@
 #include <chaos/common/thread/ChaosThread.h>
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
+#include <chaos/common/utility/TimingUtil.h>
 #include "Batch_Controller.h"
+#include "WriteFile.h"
+
 using namespace chaos;
 using namespace std;
 
@@ -28,9 +31,13 @@ typedef enum ControllerState {
 
 class ReactorController : public chaos::CThreadExecutionTask, private Batch_Controller{
     string reactorID;
+    WriteFile *logFile;
+    TimingUtil timingUtil;
+    int64_t lastSampledTimestamp;
+    chaos::event::channel::InstrumentEventChannel *instrumentEvtCh;
     boost::shared_ptr<CThread> chaosThread;
     chaos::ui::DeviceController *chaosReactorController;
-    int32_t simulationSpeed;
+    uint64_t simulationSpeed;
     ControllerState state;
     high_resolution_clock::time_point lastExecutionTime;
     high_resolution_clock::time_point currentExecutionTime;
@@ -39,7 +46,7 @@ protected:
     virtual void executeOnThread(const string&) throw(CException);
     
 public:
-    ReactorController(string& _rName, vector<double> *refVec, int refIdx, int32_t _simulationSpeed);
+    ReactorController(string& _rName, vector<double> *refVec, int refIdx, uint64_t _simulationSpeed);
     ~ReactorController();
     void init();
     void deinit();

@@ -1,0 +1,667 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+		D7BA7D76DAB5DD13389D6332 = {
+			buildActionMask = 2147483647;
+			files = (
+				);
+			generatedFileNames = (
+				);
+			isa = PBXShellScriptBuildPhase;
+			name = "Qt Qmake";
+			neededFileNames = (
+				);
+			shellPath = "/bin/sh";
+			shellScript = "make\ -C\ /Volumes/DeepData/Sorgenti/gitrepo/chaosframework/example/UIToolkitTest\ -f\ \'testui.xcodeproj/qt_makeqmake.mak\'";
+		};
+		118FCBAABA162BA17933C789 = {
+			isa = PBXFileReference;
+			name = "main.cpp";
+			path = "main.cpp";
+			refType = 4;
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		2B093CA6F071B023A473CED0 = {
+			fileRef = "118FCBAABA162BA17933C789";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		EA177DE95BF7D3EF58EE43F7 = {
+			isa = PBXFileReference;
+			name = "mainwindow.cpp";
+			path = "mainwindow.cpp";
+			refType = 4;
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		462C0F34BBEF2375A9469BB5 = {
+			fileRef = "EA177DE95BF7D3EF58EE43F7";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		EA8AA3188D3799C82A36FB92 = {
+			isa = PBXFileReference;
+			name = "graphwidget.cpp";
+			path = "graphwidget.cpp";
+			refType = 4;
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		2CE32CCF9B4B54B722DB0586 = {
+			fileRef = "EA8AA3188D3799C82A36FB92";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		AB5B824FAF082185CF18F8F8 = {
+			isa = PBXFileReference;
+			name = "controldialog.cpp";
+			path = "controldialog.cpp";
+			refType = 4;
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		4ABF3CA04168A2AB5B98293C = {
+			fileRef = "AB5B824FAF082185CF18F8F8";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		336D3C48DD3B44974395C633 = {
+			isa = PBXFileReference;
+			name = "moc_mainwindow.cpp";
+			path = "moc_mainwindow.cpp";
+			refType = 4;
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		26C2BED6C570C95F5243C556 = {
+			fileRef = "336D3C48DD3B44974395C633";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		75B7801174E07113E82F8DD5 = {
+			isa = PBXFileReference;
+			name = "moc_graphwidget.cpp";
+			path = "moc_graphwidget.cpp";
+			refType = 4;
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		A60BEF943CE47382D0407BEB = {
+			fileRef = "75B7801174E07113E82F8DD5";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		C0F0D2410C5D9EB2E253EA63 = {
+			isa = PBXFileReference;
+			name = "moc_controldialog.cpp";
+			path = "moc_controldialog.cpp";
+			refType = 4;
+			lastKnownFileType = "sourcecode.cpp.cpp";
+		};
+		726ACFB8C74D6FFED89BFA56 = {
+			fileRef = "C0F0D2410C5D9EB2E253EA63";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		AFB98B37FF0012B837A2131C = {
+			isa = PBXFileReference;
+			name = "ui_mainwindow.h";
+			path = "ui_mainwindow.h";
+			refType = 4;
+		};
+		E09CC376D6D84BC66BE71AFD = {
+			isa = PBXFileReference;
+			name = "ui_controldialog.h";
+			path = "ui_controldialog.h";
+			refType = 4;
+		};
+		C63FA392C61F27B1B13369C1 = {
+			isa = PBXFileReference;
+			name = "mainwindow.h";
+			path = "mainwindow.h";
+			refType = 4;
+		};
+		C297847CA4770FD875DBECF9 = {
+			isa = PBXFileReference;
+			name = "graphwidget.h";
+			path = "graphwidget.h";
+			refType = 4;
+		};
+		0AE2408B4962B8547E94DE47 = {
+			isa = PBXFileReference;
+			name = "controldialog.h";
+			path = "controldialog.h";
+			refType = 4;
+		};
+		2728F1351D52A63F6CEFD07C = {
+			isa = PBXFileReference;
+			name = "UIToolkitTest.pro";
+			path = "UIToolkitTest.pro";
+			refType = 4;
+		};
+		AB241F823D3821A41AAC4BDE = {
+			isa = PBXFileReference;
+			name = "mainwindow.ui";
+			path = "mainwindow.ui";
+			refType = 4;
+		};
+		A5DB83BD78FE4205FDAD3FC5 = {
+			fileRef = "AB241F823D3821A41AAC4BDE";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		E4DF5FB56FB7972792967FE7 = {
+			isa = PBXFileReference;
+			name = "controldialog.ui";
+			path = "controldialog.ui";
+			refType = 4;
+		};
+		8D3B5308FC611730D06D820E = {
+			fileRef = "E4DF5FB56FB7972792967FE7";
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					);
+			};
+		};
+		883D7615C4D2DE3FA1218F12 = {
+			isa = PBXGroup;
+			children = (
+				"C63FA392C61F27B1B13369C1",
+				"C297847CA4770FD875DBECF9",
+				"0AE2408B4962B8547E94DE47");
+			name = "Headers";
+			refType = 4;
+		};
+		FB61758D0F0FDA4BA867C3D5 = {
+			isa = PBXGroup;
+			children = (
+				"118FCBAABA162BA17933C789",
+				"EA177DE95BF7D3EF58EE43F7",
+				"EA8AA3188D3799C82A36FB92",
+				"AB5B824FAF082185CF18F8F8");
+			name = "Sources";
+			refType = 4;
+		};
+		EEC299C65D5017EB9DD513B0 = {
+			isa = PBXGroup;
+			children = (
+				"AB241F823D3821A41AAC4BDE",
+				"E4DF5FB56FB7972792967FE7");
+			name = "Sources [UIC]";
+			refType = 4;
+		};
+		7CABE3C80E79AD2B307756D2 = {
+			isa = PBXGroup;
+			children = (
+				"2728F1351D52A63F6CEFD07C");
+			name = "Sources [qmake]";
+			refType = 4;
+		};
+		46E892BBB6BB6952967E0561 = {
+			isa = PBXGroup;
+			children = (
+				"336D3C48DD3B44974395C633",
+				"75B7801174E07113E82F8DD5",
+				"C0F0D2410C5D9EB2E253EA63",
+				"AFB98B37FF0012B837A2131C",
+				"E09CC376D6D84BC66BE71AFD");
+			name = "Temporary Sources";
+			refType = 4;
+		};
+		A0A52A2ADF7A1E2A99738674 = {
+			buildActionMask = 2147483647;
+			files = (
+				);
+			generatedFileNames = (
+				"2B093CA6F071B023A473CED0",
+				"462C0F34BBEF2375A9469BB5",
+				"2CE32CCF9B4B54B722DB0586",
+				"4ABF3CA04168A2AB5B98293C",
+				"26C2BED6C570C95F5243C556",
+				"A60BEF943CE47382D0407BEB",
+				"726ACFB8C74D6FFED89BFA56");
+			isa = PBXShellScriptBuildPhase;
+			name = "Qt Preprocessors";
+			neededFileNames = (
+				"2B093CA6F071B023A473CED0",
+				"462C0F34BBEF2375A9469BB5",
+				"2CE32CCF9B4B54B722DB0586",
+				"4ABF3CA04168A2AB5B98293C",
+				"26C2BED6C570C95F5243C556",
+				"A60BEF943CE47382D0407BEB",
+				"726ACFB8C74D6FFED89BFA56");
+			shellPath = "/bin/sh";
+			shellScript = "make\ -C\ /Volumes/DeepData/Sorgenti/gitrepo/chaosframework/example/UIToolkitTest\ -f\ \'testui.xcodeproj/qt_preprocess.mak\'";
+		};
+		C29B8785722055ED95EF7B57 = {
+			buildActionMask = 2147483647;
+			files = (
+				"2B093CA6F071B023A473CED0",
+				"462C0F34BBEF2375A9469BB5",
+				"2CE32CCF9B4B54B722DB0586",
+				"4ABF3CA04168A2AB5B98293C",
+				"26C2BED6C570C95F5243C556",
+				"A60BEF943CE47382D0407BEB",
+				"726ACFB8C74D6FFED89BFA56");
+			isa = PBXSourcesBuildPhase;
+			name = "Build Sources";
+		};
+		2D7FF9EBB69BCF2C19DC629B = {
+			isa = PBXFrameworkReference;
+			name = "QtSvg.framework";
+			path = "/Library/Frameworks/QtSvg.framework";
+			refType = 0;
+		};
+		08D8EC4D0C273BC5E194E43D = {
+			fileRef = "2D7FF9EBB69BCF2C19DC629B";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9B36DA7E32F0304E780E7972 = {
+			isa = PBXFrameworkReference;
+			name = "QtGui.framework";
+			path = "/Library/Frameworks/QtGui.framework";
+			refType = 0;
+		};
+		501667F26B3C1FF6767A7C12 = {
+			fileRef = "9B36DA7E32F0304E780E7972";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		7BC2E65A5E699A5E5D834CA2 = {
+			isa = PBXFrameworkReference;
+			name = "QtCore.framework";
+			path = "/Library/Frameworks/QtCore.framework";
+			refType = 0;
+		};
+		069D05B0128AE5DC7EE31738 = {
+			fileRef = "7BC2E65A5E699A5E5D834CA2";
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		ED1E82605DD74B483AF3C982 = {
+			children = (
+				"2D7FF9EBB69BCF2C19DC629B",
+				"9B36DA7E32F0304E780E7972",
+				"7BC2E65A5E699A5E5D834CA2");
+			isa = PBXGroup;
+			name = "External Frameworks and Libraries";
+			path = "";
+			refType = 4;
+		};
+		2A1043669E6E5A7426EA502A = {
+			buildActionMask = 2147483647;
+			files = (
+				"08D8EC4D0C273BC5E194E43D",
+				"501667F26B3C1FF6767A7C12",
+				"069D05B0128AE5DC7EE31738");
+			isa = PBXFrameworksBuildPhase;
+			name = "Frameworks & Libraries";
+		};
+		3787F99312C85FF0073FD7BA = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXResourcesBuildPhase;
+			name = "Bundle Resources";
+		};
+		05596AB53D8D521C69802C27 = {
+			children = (
+				"FB61758D0F0FDA4BA867C3D5",
+				"46E892BBB6BB6952967E0561",
+				"883D7615C4D2DE3FA1218F12",
+				"7CABE3C80E79AD2B307756D2",
+				"EEC299C65D5017EB9DD513B0",
+				"ED1E82605DD74B483AF3C982");
+			isa = PBXGroup;
+			name = "testui";
+			path = "";
+			refType = 4;
+		};
+		3D5364EFACF230A43D3AB5DA = {
+			isa = PBXFileReference;
+			explicitFileType = "wrapper.application";
+			path = "testui.app";
+			refType = 3;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		068F80C7519D0528FB08E821 = {
+			children = (
+				"3D5364EFACF230A43D3AB5DA");
+			isa = PBXGroup;
+			name = "Products";
+			refType = 4;
+		};
+		AE3CBBCC4A9C401AD24E0D19 = {
+			buildPhases = (
+				"D7BA7D76DAB5DD13389D6332",
+				"A0A52A2ADF7A1E2A99738674",
+				"C29B8785722055ED95EF7B57",
+				"2A1043669E6E5A7426EA502A",
+				"3787F99312C85FF0073FD7BA");
+			buildSettings = {
+				CC = "/usr/bin/gcc";
+				CPLUSPLUS = "/usr/bin/g++";
+				LEXFLAGS = "";
+				YACCFLAGS = "-d";
+				OTHER_REZFLAGS = "";
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "";
+				PREBINDING = NO;
+				INFOPLIST_FILE = "Info.plist";
+				BUILD_ROOT = "/Volumes/DeepData/Sorgenti/gitrepo/chaosframework/example/UIToolkitTest";
+				OTHER_LDFLAGS = (
+						"-headerpad_max_install_names",
+						"-L/Library/Frameworks",
+						"-F/Library/Frameworks",
+						"-L/Volumes/DeepData/Sorgenti/gitrepo/chaosframework/example/UIToolkitTest/../../usr/local/lib",
+						"-L/usr/local/qwt/lib",
+						"-lqwt",
+						"-lzmq",
+						"-lchaos_common",
+						"-lchaos_uitoolkit",
+						"-lboost_chrono",
+						"-lmemcached",
+						"-lboost_log",
+						"-lboost_log_setup",
+						"-lboost_system",
+						"-lboost_thread",
+						"-lboost_program_options",
+						"-lboost_regex",
+						"-lboost_filesystem",
+						"-levent",
+						"-lmpio",
+						"-lmsgpack",
+						"-lmsgpack-rpc");
+				DYLIB_CURRENT_VERSION = "1.0.0";
+				DYLIB_COMPATIBILITY_VERSION = "1.0";
+				MACOSX_DEPLOYMENT_TARGET = "10.4";
+				PRODUCT_NAME = "testui";
+			};
+			conditionalBuildSettings = {
+			};
+			dependencies = (
+				);
+			productReference = "3D5364EFACF230A43D3AB5DA";
+			shouldUseHeadermap = 1;
+			buildConfigurationList = 17B3380A4D6A7D415E7F2E1E;
+			isa = PBXNativeTarget;
+			productType = "com.apple.product-type.application";
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
+<plist version=\"0.9\">
+<dict>
+	<key>CFBundleIconFile</key>
+	<string></string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+ 	<key>CFBundleGetInfoString</key>
+	<string>Created by Qt/QMake</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleExecutable</key>
+	<string>testui</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.yourcompany.testui</string>
+	<key>NOTE</key>
+	<string>This file was generated by Qt/QMake.</string>
+</dict>
+</plist>
+";
+			name = "testui";
+			productName = "testui";
+			startupPath = "<<ProjectDirectory>>";
+		};
+		4B72B24813252891014BCF61 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = "NO";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "YES";
+				GCC_OPTIMIZATION_LEVEL = "0";
+				PRODUCT_NAME = "testui";
+				HEADER_SEARCH_PATHS = (
+					"/Library/Frameworks/QtCore.framework/Versions/4/Headers",
+					"/usr/include/QtCore",
+					"/Library/Frameworks/QtGui.framework/Versions/4/Headers",
+					"/usr/include/QtGui",
+					"/Library/Frameworks/QtSvg.framework/Versions/4/Headers",
+					"/usr/include/QtSvg",
+					"/usr/include",
+					"/usr/local/qwt/include",
+					"../../../chaosframework",
+					"/Volumes/DeepData/Sorgenti/gitrepo/chaosframework/example/UIToolkitTest/../../usr/local/include",
+					".",
+					".",
+					"/usr/local/include",
+					"/System/Library/Frameworks/CarbonCore.framework/Headers",
+					"/usr/local/Qt4.8/mkspecs/macx-xcode");
+				LIBRARY_SEARCH_PATHS = (
+					"/Library/Frameworks",
+					"/Volumes/DeepData/Sorgenti/gitrepo/chaosframework/example/UIToolkitTest/../../usr/local/lib",
+					"/usr/local/qwt/lib");
+				FRAMEWORK_SEARCH_PATHS = (
+					"/Library/Frameworks",
+					"/Library/Frameworks");
+				INFOPLIST_FILE = "Info.plist";
+				OTHER_CFLAGS = (
+					"-pipe",
+					"-g",
+					"-Wall",
+					"-W",
+					"-DQT_SVG_LIB",
+					"-DQT_GUI_LIB",
+					"-DQT_CORE_LIB",
+					"-DQT_SHARED");
+				OTHER_CPLUSPLUSFLAGS = (
+					"-pipe",
+					"-g",
+					"-Wall",
+					"-W",
+					"-DQT_SVG_LIB",
+					"-DQT_GUI_LIB",
+					"-DQT_CORE_LIB",
+					"-DQT_SHARED");
+				OTHER_LDFLAGS = (
+						"-headerpad_max_install_names",
+						"-L/Library/Frameworks",
+						"-F/Library/Frameworks",
+						"-L/Volumes/DeepData/Sorgenti/gitrepo/chaosframework/example/UIToolkitTest/../../usr/local/lib",
+						"-L/usr/local/qwt/lib",
+						"-lqwt",
+						"-lzmq",
+						"-lchaos_common",
+						"-lchaos_uitoolkit",
+						"-lboost_chrono",
+						"-lmemcached",
+						"-lboost_log",
+						"-lboost_log_setup",
+						"-lboost_system",
+						"-lboost_thread",
+						"-lboost_program_options",
+						"-lboost_regex",
+						"-lboost_filesystem",
+						"-levent",
+						"-lmpio",
+						"-lmsgpack",
+						"-lmsgpack-rpc");
+				ARCHS = "x86_64";
+			};
+			name = "Debug";
+		};
+		BEC09A62E69C3553534FF35E = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = "NO";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "YES";
+				GCC_OPTIMIZATION_LEVEL = "0";
+				PRODUCT_NAME = "testui";
+				PRODUCT_NAME = "testui";
+			};
+			name = "Debug";
+		};
+		2C641C3335766025DD51B7BD = {
+			buildRules = (
+				);
+			buildSettings = {
+				COPY_PHASE_STRIP = "NO";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "YES";
+				GCC_OPTIMIZATION_LEVEL = "0";
+				PRODUCT_NAME = "testui";
+			};
+			isa = "PBXBuildStyle";
+			name = "Debug";
+		};
+		D70590BEB531B51029F711BB = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = "YES";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "NO";
+				PRODUCT_NAME = "testui";
+				HEADER_SEARCH_PATHS = (
+					"/Library/Frameworks/QtCore.framework/Versions/4/Headers",
+					"/usr/include/QtCore",
+					"/Library/Frameworks/QtGui.framework/Versions/4/Headers",
+					"/usr/include/QtGui",
+					"/Library/Frameworks/QtSvg.framework/Versions/4/Headers",
+					"/usr/include/QtSvg",
+					"/usr/include",
+					"/usr/local/qwt/include",
+					"../../../chaosframework",
+					"/Volumes/DeepData/Sorgenti/gitrepo/chaosframework/example/UIToolkitTest/../../usr/local/include",
+					".",
+					".",
+					"/usr/local/include",
+					"/System/Library/Frameworks/CarbonCore.framework/Headers",
+					"/usr/local/Qt4.8/mkspecs/macx-xcode");
+				LIBRARY_SEARCH_PATHS = (
+					"/Library/Frameworks",
+					"/Volumes/DeepData/Sorgenti/gitrepo/chaosframework/example/UIToolkitTest/../../usr/local/lib",
+					"/usr/local/qwt/lib");
+				FRAMEWORK_SEARCH_PATHS = (
+					"/Library/Frameworks",
+					"/Library/Frameworks");
+				INFOPLIST_FILE = "Info.plist";
+				OTHER_CFLAGS = (
+					"-pipe",
+					"-g",
+					"-Wall",
+					"-W",
+					"-DQT_SVG_LIB",
+					"-DQT_GUI_LIB",
+					"-DQT_CORE_LIB",
+					"-DQT_SHARED");
+				OTHER_CPLUSPLUSFLAGS = (
+					"-pipe",
+					"-g",
+					"-Wall",
+					"-W",
+					"-DQT_SVG_LIB",
+					"-DQT_GUI_LIB",
+					"-DQT_CORE_LIB",
+					"-DQT_SHARED");
+				OTHER_LDFLAGS = (
+						"-headerpad_max_install_names",
+						"-L/Library/Frameworks",
+						"-F/Library/Frameworks",
+						"-L/Volumes/DeepData/Sorgenti/gitrepo/chaosframework/example/UIToolkitTest/../../usr/local/lib",
+						"-L/usr/local/qwt/lib",
+						"-lqwt",
+						"-lzmq",
+						"-lchaos_common",
+						"-lchaos_uitoolkit",
+						"-lboost_chrono",
+						"-lmemcached",
+						"-lboost_log",
+						"-lboost_log_setup",
+						"-lboost_system",
+						"-lboost_thread",
+						"-lboost_program_options",
+						"-lboost_regex",
+						"-lboost_filesystem",
+						"-levent",
+						"-lmpio",
+						"-lmsgpack",
+						"-lmsgpack-rpc");
+				ARCHS = "x86_64";
+			};
+			name = "Release";
+		};
+		8C7174830A1E4DCBA0332EC1 = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = "YES";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "NO";
+				PRODUCT_NAME = "testui";
+				PRODUCT_NAME = "testui";
+			};
+			name = "Release";
+		};
+		26DE8D2AEA4B3714B41E931F = {
+			buildRules = (
+				);
+			buildSettings = {
+				COPY_PHASE_STRIP = "YES";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = "NO";
+				PRODUCT_NAME = "testui";
+			};
+			isa = "PBXBuildStyle";
+			name = "Release";
+		};
+		CC82A9286117DFED018F418F = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				"4B72B24813252891014BCF61",
+				"D70590BEB531B51029F711BB");
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationIsName = "Debug";
+		};
+		17B3380A4D6A7D415E7F2E1E = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				"BEC09A62E69C3553534FF35E",
+				"8C7174830A1E4DCBA0332EC1");
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationIsName = "Debug";
+		};
+		91B15E841AA80083484172DE = {
+			buildStyles = (
+				"2C641C3335766025DD51B7BD",
+				"26DE8D2AEA4B3714B41E931F");
+			hasScannedForEncodings = 1;
+			isa = PBXProject;
+			mainGroup = "05596AB53D8D521C69802C27";
+			buildConfigurationList = "CC82A9286117DFED018F418F";
+			projectDirPath = "";
+			targets = (
+				"AE3CBBCC4A9C401AD24E0D19");
+		};
+	};
+	rootObject = "91B15E841AA80083484172DE";
+}

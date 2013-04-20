@@ -31,6 +31,8 @@
 
 #include "LogManager.h"
 
+#define BASE_LOG_FORMAT "[%TimeStamp%]: %_%"
+
 using namespace chaos;
 namespace logging = boost::BOOST_LOG_NAMESPACE;
 namespace fmt = boost::log::formatters;
@@ -43,7 +45,7 @@ void LogManager::init() throw(CException) {
     
     if(logOnConsole){
         logging::init_log_to_console(std::clog,
-                                     logging::keywords::format = "[%TimeStamp%]: %_%"); //(format=\"%y-%m-%d %H:%M:%S\")
+                                     logging::keywords::format = BASE_LOG_FORMAT); //(format=\"%y-%m-%d %H:%M:%S\")
     }
     
     if(logOnFile){
@@ -53,7 +55,7 @@ void LogManager::init() throw(CException) {
          logging::keywords::rotation_size = 10 * 1024 * 1024,         // rotate files every 10 MiB...
          // ...or at midnight
          logging::keywords::time_based_rotation = logging::sinks::file::rotation_at_time_point(0, 0, 0),
-         logging::keywords::format = "[%TimeStamp%]: %_%");//(format=\"%y-%m-%d %H:%M:%S\")
+         logging::keywords::format = BASE_LOG_FORMAT);//(format=\"%y-%m-%d %H:%M:%S\")
     }
     
         //enable the log in case of needs

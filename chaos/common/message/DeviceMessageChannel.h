@@ -89,7 +89,7 @@ namespace chaos {
         /*!
          Set the delay between a schedule and the next
          */
-        int setScheduleDelay(int32_t scheduledDealy, uint32_t millisecToWait = 0);
+        int setScheduleDelay(uint64_t scheduledDealy, uint32_t millisecToWait = 0);
         
         /*! 
          \brief send a message to a custom action

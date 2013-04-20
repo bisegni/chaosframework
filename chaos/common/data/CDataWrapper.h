@@ -1,8 +1,8 @@
-/*	
+/*
  *	CDataWrapper.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -52,7 +52,7 @@ namespace chaos {
     
     /*
      Class for contain the serialization buffer
-     the class deallocation will dealloc all the 
+     the class deallocation will dealloc all the
      serialization buffer
      */
     class SerializationBuffer {
@@ -82,7 +82,7 @@ namespace chaos {
      */
     class CDataWrapper/*: public CPoolMemoryObject<CDataWrapper> */{
         auto_ptr<BSONArrayBuilder> bsonArrayBuilder;
-        
+
     protected:
         auto_ptr<BSONObjBuilder> bsonBuilder;
         
@@ -92,89 +92,98 @@ namespace chaos {
         CDataWrapper(const char* serializationBuffer, bool bson=true);
         
         CDataWrapper *clone();
-            //add a csdata value
+        //add a csdata value
         void addCSDataValue(const char *, CDataWrapper&);
         
-            //get a csdata value
-        CDataWrapper *getCSDataValue(const char *)const;
+        //get a csdata value
+        CDataWrapper *getCSDataValue(const char *);
         
-            //add a string value
+        //add a string value
         void addStringValue(const char *, const char *);
         
-            //add a string value
+        //add a string value
         void addStringValue(const char *, string&);
         
-            //add a string to array
+        //add a string to array
         void appendStringToArray(const char *);
         
-            //add a strin gto array
+        //add a strin gto array
         void appendStringToArray(string&);
         void appendInt32ToArray(int32_t int32ArrayElement);
         void appendInt64ToArray(int64_t int64ArrayElement);
         void appendDoubleToArray(double_t doubleArrayElement);
         void appendCDataWrapperToArray(CDataWrapper& srcDataWrapper, bool finalize=false);
-            //finalize the array into a key for the current dataobject
+        //finalize the array into a key for the current dataobject
         void finalizeArrayForKey(const char *);
         
-            //get a string value
-        string  getStringValue(const char *)const;
+        //get a string value
+        string  getStringValue(const char *);
+        const char *  getCStringValue(const char *key);
+        //return a vectorvalue for a key
+        CMultiTypeDataArrayWrapper* getVectorValue(const char *);
         
-            //return a vectorvalue for a key
-        CMultiTypeDataArrayWrapper* getVectorValue(const char *)const;
-        
-            //add a integer value
+        //add a integer value
         void addInt32Value(const char *, int32_t);
-            
-            //add a double value
-        void addDoubleValue(const char *key, double dValue);
-
-            //add a integer value
+        //add a integer value
+        void addInt32Value(const char *, uint32_t);
+        //add a integer value
         void addInt64Value(const char *, int64_t);
+        //add a integer value
+        void addInt64Value(const char *, uint64_t);
         
-            //add a integer value
-        int32_t getInt32Value(const char *key)const;
+        //add a double value
+        void addDoubleValue(const char *key, double dValue);
         
-            //add a integer value
-        int64_t getInt64Value(const char *key)const;
-        
-            //add a integer value
-        double_t getDoubleValue(const char *key)const;
-        
-            //add a bool value
+        //add a bool value
         void addBoolValue(const char *, bool);
         
-            //get a bool value
-        bool getBoolValue(const char *) const;
-        
-            //set a binary data value
+        //set a binary data value
         void addBinaryValue(const char *, const char *, int);
         
-            //return the binary data value
-        const char* getBinaryValue(const char *, int&)const;
+        //get a integer value
+        int32_t getInt32Value(const char *key);
         
-            //return the bson data
+        //get a integer value
+        int64_t getInt64Value(const char *key);
+        
+        //get a integer value
+        uint32_t getUInt32Value(const char *key);
+        
+        //get a integer value
+        uint64_t getUInt64Value(const char *key);
+        
+        //add a integer value
+        double_t getDoubleValue(const char *key);
+        
+        //get a bool value
+        bool getBoolValue(const char *);
+        
+        //return the binary data value
+        const char* getBinaryValue(const char *, int&);
+        
+        //return the bson data
         SerializationBuffer* getBSONData();
         
-            //return the json data
+        //return the json data
         SerializationBuffer* getJSONData();
         
-            //return the json representation for this data wrapper
+        //return the json representation for this data wrapper
         string getJSONString();
         
-            //reinitialize the object with bson data
+        //reinitialize the object with bson data
         void setSerializedData(const char* bsonData, bool bson=true);
         
-            //check if the key is present in data wrapper
-        bool hasKey(const char*) const;
+        //check if the key is present in data wrapper
+        bool hasKey(const char*);
         
-            //reset the datawrapper
+        //reset the datawrapper
         void reset();
         
-            //append all element of an data wrapper
+        //append all element of an data wrapper
         void appendAllElement(CDataWrapper&);
     };
     
-        //! MutableCDataWrapper for field update
+    //! MutableCDataWrapper for field update
     /*! \class MutableCDataWrapper
      This implementation permit to modify the existent field value
      */
@@ -185,7 +194,7 @@ namespace chaos {
         void updateStringValue(const char * key, string& newvalue) {
             BSONElement element = bsonBuilder->asTempObj()[key];
             if(element.String().size() != newvalue.size()) return;
-                //*reinterpret_cast< char* >( element.value() ) = newvalue.c_str;
+            //*reinterpret_cast< char* >( element.value() ) = newvalue.c_str;
         }
         
         void updateInt32Value(const char * key, int32_t newvalue) {

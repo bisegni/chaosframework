@@ -13,7 +13,7 @@ using namespace std;
 
 chaos::WaitSemaphore MainOrkestrator::waitCloseSemaphore;
 
-MainOrkestrator::MainOrkestrator(std::vector< std::string > *_reactordeviceIDs, std::vector< double > *_reactorsReferements, std::vector< int32_t > *_reactorSimulatedSpeed) {
+MainOrkestrator::MainOrkestrator(std::vector< std::string > *_reactordeviceIDs, std::vector< double > *_reactorsReferements, std::vector< uint64_t > *_reactorSimulatedSpeed) {
     waithUntilEnd = true;
     reactordeviceIDs = _reactordeviceIDs;
     reactorsReferements = _reactorsReferements;

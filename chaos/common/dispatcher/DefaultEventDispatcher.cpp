@@ -37,7 +37,7 @@ DefaultEventDispatcher::~DefaultEventDispatcher() {
     
 }
 
-void DefaultEventDispatcher::init(CDataWrapper* initData) throw(CException) {
+void DefaultEventDispatcher::init(void* initData) throw(CException) {
     EVTDISPAPP_ << "Init";
     alertEventScheduler = new EventTypeScheduler();
     if(!alertEventScheduler) throw CException(0, "Error allocating Alert Event Scheduler", "DefaultEventDispatcher::init");

@@ -37,16 +37,20 @@ namespace chaos {
             ~ISDInterface();
             
                 //! Initialize instance
-            virtual void init(CDataWrapper*) throw(chaos::CException) = 0;
+            virtual void init(void*) throw(chaos::CException) = 0;
             
                 //! Start the implementation
             virtual void start() throw(chaos::CException) = 0;
             
+            //! Start the implementation
+            virtual void stop() throw(chaos::CException) = 0;
+            
                 //! Deinit the implementation
             virtual void deinit() throw(chaos::CException) = 0;
 
-            static bool initImplementation(ISDInterface *impl, CDataWrapper *initData, const char * const implName,  const char * const domainString);
+            static bool initImplementation(ISDInterface *impl, void *initData, const char * const implName,  const char * const domainString);
             static bool startImplementation(ISDInterface *impl, const char * const implName,  const char * const domainString);
+            static bool stopImplementation(ISDInterface *impl, const char * const implName,  const char * const domainString);
             static bool deinitImplementation(ISDInterface *impl, const char * const implName,  const char * const domainString);
         protected:
             ISDState isdState;

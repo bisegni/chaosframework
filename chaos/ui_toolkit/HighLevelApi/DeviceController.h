@@ -1,4 +1,4 @@
-/*	
+/*
  *	DeviceLiveDataFetcher.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
@@ -57,7 +57,7 @@ namespace chaos {
                 //!Dataset database
             CUSchemaDB datasetDB;
                 //!point to the freashest live value for this device dataset
-            auto_ptr<CDataWrapper> lastDeviceDefinition;
+            //auto_ptr<CDataWrapper> lastDeviceDefinition;
             
                 //!point to the freashest live value for this device dataset
             auto_ptr<CDataWrapper> currentLiveValue;
@@ -98,7 +98,7 @@ namespace chaos {
              Initialize the map for the devices
              \param initiDevicedescription the reference to CDataWrapper that contain device initialization information
              */
-            void initializeAttributeIndexMap(CDataWrapper& initiDevicedescription);
+            void initializeAttributeIndexMap();
                
                 //!DeInitialize the map for the devices
             /*!
@@ -142,7 +142,7 @@ namespace chaos {
             /*!
              Set the control unit run method scheduling delay
              */
-            int setScheduleDelay(int32_t microsecondsDelay);
+            int setScheduleDelay(uint64_t microsecondsDelay);
             /*!
              Get attribute name filtered by direction type
              */
@@ -192,11 +192,16 @@ namespace chaos {
              */
             int deinitDevice();
             
-            int setInt32AttributeValue(string& attributeName, int32_t attributeValue);
-            int setInt32AttributeValue(const char *attributeName, int32_t attributeValue);
+            int setAttributeValue(string& attributeName, int32_t attributeValue);
+            int setAttributeValue(const char *attributeName, int32_t attributeValue);
             
-            int setDoubleAttributeValue(string& attributeName, double attributeValue);
-            int setDoubleAttributeValue(const char *attributeName, double attributeValue); 
+            int setAttributeValue(string& attributeName, double attributeValue);
+            int setAttributeValue(const char *attributeName, double attributeValue);
+            
+            int setAttributeValue(string& attributeName, string& attributeValue);
+            int setAttributeValue(string& attributeName, const char* attributeValue);
+            // buffer
+            int setAttributeValue(string& attributeName, const char* attributeValue,int size);
             
             int setAttributeToValue(const char *attributeName, DataType::DataType attributeType, void *attributeValue, bool noWait = false, int32_t bufferValuedDim = 0);
                 //!Get device state
@@ -226,7 +231,7 @@ namespace chaos {
             /*!
              the returned object is not own by requester but only by DeviceController isntance
              */
-            const CDataWrapper * getLiveCDataWrapperPtr();
+            CDataWrapper * getLiveCDataWrapperPtr();
             
             /*!
              Fetch the current live value form live storage

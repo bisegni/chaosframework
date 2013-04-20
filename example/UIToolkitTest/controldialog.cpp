@@ -120,12 +120,13 @@ void ControlDialog::on_buttonCommit_clicked()
     switch(attributerange.valueType){
     case chaos::DataType::TYPE_INT32:{
         QSpinBox *int32SpinBox = (QSpinBox*)controlWidget;
-        err = deviceController->setInt32AttributeValue(attributeName, int32SpinBox->value());
+        int i = int32SpinBox->value();
+        err = deviceController->setAttributeToValue(attributeName.c_str(), chaos::DataType::TYPE_INT32, &i);
         break;}
     case chaos::DataType::TYPE_DOUBLE:{
         QDoubleSpinBox *doubleSpinBox = (QDoubleSpinBox*)controlWidget;
         double val = doubleSpinBox->value();
-        err = deviceController->setDoubleAttributeValue(attributeName, val);
+        err = deviceController->setAttributeToValue(attributeName.c_str(), chaos::DataType::TYPE_DOUBLE, &val);
         break;}
     }
 }

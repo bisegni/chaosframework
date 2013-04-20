@@ -93,6 +93,10 @@ event::channel::AlertEventChannel *LLRpcApi::getNewAlertEventChannel() throw (CE
     return rpcMessageBroker->getNewAlertEventChannel();
 }
 
+event::channel::InstrumentEventChannel *LLRpcApi::getNewInstrumentEventChannel() throw (CException) {
+    return rpcMessageBroker->getNewInstrumentEventChannel();
+}
+
 void LLRpcApi::disposeEventChannel(event::channel::EventChannel *eventChannel) throw (CException) {
     rpcMessageBroker->disposeEventChannel(eventChannel);
 }

@@ -68,11 +68,11 @@ bool CThread::isStopped() {
     return m_stop;
 }
 
-void CThread::setDelayBeetwenTask(int64_t msec) {
+void CThread::setDelayBeetwenTask(uint64_t msec) {
     waithTimeInMicrosecond = microseconds(msec);
 }
 
-int64_t CThread::getDelayBeetwenTask() {
+uint64_t CThread::getDelayBeetwenTask() {
     return waithTimeInMicrosecond.count();
 }
 
@@ -164,7 +164,7 @@ void CThread::executeWork() {
                 //count the nanosecond to waith
                 if(waithTimeInMicrosecond.count()){
                     toWaith = duration_cast<microseconds>(statisticData.ptimeNextStart - boost::chrono::steady_clock::now());
-                    boost::this_thread::sleep(boost::posix_time::microseconds(toWaith.count()));
+                    boost::this_thread::sleep_for(toWaith);
                 }
             } else {
                 //if m_stop==true or waithTimeInMicrosecond is < 0

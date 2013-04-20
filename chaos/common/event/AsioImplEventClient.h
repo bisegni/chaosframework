@@ -50,6 +50,9 @@ namespace chaos {
              */
             void start() throw(CException);
             
+            //-----------------------
+            void stop() throw(CException);
+            
             /*
              deinit the event adapter
              */

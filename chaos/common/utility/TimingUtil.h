@@ -19,7 +19,7 @@
  */
 #ifndef ChaosFramework_TimingUtil_h
 #define ChaosFramework_TimingUtil_h
-
+#include <chaos/common/global.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 namespace chaos {
@@ -34,7 +34,7 @@ namespace chaos {
          Return the current timestamp
          */
         inline int64_t getTimeStamp() {
-            return (microsec_clock::universal_time()-EPOCH).total_milliseconds();
+            return (boost::posix_time::microsec_clock::universal_time()-EPOCH).total_milliseconds();
         }
     };
 }

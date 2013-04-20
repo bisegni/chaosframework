@@ -29,7 +29,7 @@ EventClient::EventClient(string *alias): NamedService(alias) {
 /*
  init the event adapter
  */
-void EventClient::init(CDataWrapper*) throw(CException) {
+void EventClient::init(void*) throw(CException) {
 }
 
 /*

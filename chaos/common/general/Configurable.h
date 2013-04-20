@@ -32,6 +32,7 @@ namespace chaos {
     class Configurable {
         
     public:
+        virtual ~Configurable(){};
         virtual CDataWrapper* updateConfiguration(CDataWrapper*) = 0;
     };
 }

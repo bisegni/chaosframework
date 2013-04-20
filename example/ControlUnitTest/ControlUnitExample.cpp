@@ -56,6 +56,7 @@ int main (int argc, char* argv[] )
 {
     string tmpDeviceID;
     //! [Custom Option]
+    try {
     ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_CUSTOM_DEVICE_ID_A, po::value<string>(), "Device A identification string");
     ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_CUSTOM_DEVICE_ID_B, po::value<string>(), "Device B identification string");
     //! [Custom Option]
@@ -79,5 +80,15 @@ int main (int argc, char* argv[] )
     //! [Starting the Framework]
     ChaosCUToolkit::getInstance()->start();
     //! [Starting the Framework]
+    } catch (CException& e) {
+        cerr<<"Exception::"<<endl;
+        std::cerr<< "in:"<<e.errorDomain << std::endl;
+        std::cerr<< "cause:"<<e.errorMessage << std::endl;
+    } catch (program_options::error &e){
+        cerr << "Unable to parse command line: " << e.what() << endl;
+    } catch (...){
+        cerr << "unexpected exception caught.. " << endl;
+    }
+
     return 0;
 }

@@ -61,12 +61,17 @@ namespace chaos {
             /*
              init the event adapter
              */
-            void init(CDataWrapper*) throw(CException);
+            void init(void*) throw(CException);
             
             /*
              start the event adapter
              */
             void start() throw(CException);
+            
+            /*
+             stop the event adapter
+             */
+            void stop() throw(CException);
             
             /*
              register or deregister for a kynd of event

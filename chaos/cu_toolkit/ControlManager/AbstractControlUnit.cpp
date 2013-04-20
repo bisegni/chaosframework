@@ -46,11 +46,11 @@ using namespace boost::uuids;
 
 #pragma mark constructor
 
-AbstractControlUnit::AbstractControlUnit(){
+AbstractControlUnit::AbstractControlUnit():CUSchemaDB(false) {
     _sharedInit();
 }
 
-AbstractControlUnit::AbstractControlUnit(const char *descJsonPath){
+AbstractControlUnit::AbstractControlUnit(const char *descJsonPath):CUSchemaDB(false) {
     _sharedInit();
     initWithJsonFilePath(descJsonPath);
 }
@@ -265,8 +265,11 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
     
     LCU_ << "Get Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
         //grab dataset description
-    CUSchemaDB::fillDataWrpperWithDataSetDescirption(setupConfiguration);
+    CUSchemaDB::fillDataWrapperWithDataSetDescription(setupConfiguration);
     
+#if DEBUG
+    LCU_ << setupConfiguration.getJSONString();
+#endif
     
         //grab action description
     LCU_ << "Get Action Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
@@ -308,7 +311,10 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     KeyDataStorage *tmpKDS = 0L;
     auto_ptr<CDataWrapper> updateResult;
-    if(!initConfiguration || !initConfiguration->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID) || !initConfiguration->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION)) {
+        
+    if(!initConfiguration ||
+       !initConfiguration->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID) ||
+       !initConfiguration->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION)) {
         throw CException(-1, "No Device Init information in param", "AbstractControlUnit::_init");
     }
     
@@ -327,7 +333,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     }
     
     LCU_ << "Initialize the DSAttribute handler engine for device:" << deviceID;
-    utility::ISDInterface::initImplementation(attributeHandlerEngineForDeviceIDMap[deviceID], initConfiguration, "DSAttribute handler engine", "AbstractControlUnit::_init");
+    utility::ISDInterface::initImplementation(attributeHandlerEngineForDeviceIDMap[deviceID], static_cast<void*>(initConfiguration), "DSAttribute handler engine", "AbstractControlUnit::_init");
     
     
     LCU_ << "Create schedule thread for device:" << deviceID;
@@ -580,7 +586,7 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
     
     if(updatePack->hasKey(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY)){
             //we need to configure the delay  from a run() call and the next
-        int64_t uSecdelay = updatePack->getInt32Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY);
+        uint64_t uSecdelay = updatePack->getUInt64Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY);
             //check if we need to update the scehdule time
         CThread *taskThread = schedulerDeviceMap[deviceID];
         if(uSecdelay != taskThread->getDelayBeetwenTask()){

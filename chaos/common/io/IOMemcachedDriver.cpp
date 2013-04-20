@@ -156,14 +156,12 @@ namespace chaos{
             configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_BINARY_PROTOCOL, (uint64_t)1);
             configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_NO_BLOCK, (uint64_t)1);
             configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_NOREPLY, (uint64_t)1);
-            configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_KETAMA_WEIGHTED, 1);
-            configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_KETAMA_HASH, MEMCACHED_HASH_MD5);
-            configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_REMOVE_FAILED_SERVERS, 0);
-            configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_RETRY_TIMEOUT,3600);
-            configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_TCP_NODELAY,1);
-                //configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_SERVER_FAILURE_LIMIT, 1);
-                //configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_REMOVE_FAILED_SERVERS, 0);
-                //configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_RETRY_TIMEOUT,1);
+            configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_KETAMA, (uint64_t)1);
+            configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_KETAMA,(uint64_t)1);
+            configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_TCP_NODELAY,(uint64_t)1);
+            configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_SERVER_FAILURE_LIMIT, (uint64_t)1);
+            configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_REMOVE_FAILED_SERVERS, (uint64_t)1);
+            configResult = memcached_behavior_set(memClient, MEMCACHED_BEHAVIOR_RETRY_TIMEOUT,(uint64_t)1);
         }
         return NULL; 
     }

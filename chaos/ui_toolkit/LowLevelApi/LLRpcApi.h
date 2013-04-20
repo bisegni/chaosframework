@@ -31,7 +31,7 @@
 #include <chaos/common/message/DeviceMessageChannel.h>
 #include <chaos/common/utility/SetupStateManager.h>
 #include <chaos/common/event/channel/AlertEventChannel.h>
-
+#include <chaos/common/event/channel/InstrumentEventChannel.h>
 namespace chaos {
     namespace ui{
         using namespace boost;  
@@ -79,6 +79,7 @@ namespace chaos {
             void deleteMessageChannel(NetworkAddressMessageChannel*);
             
             event::channel::AlertEventChannel *getNewAlertEventChannel() throw (CException);
+            event::channel::InstrumentEventChannel *getNewInstrumentEventChannel() throw (CException);
             void disposeEventChannel(event::channel::EventChannel *) throw (CException);
         };
     }

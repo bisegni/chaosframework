@@ -27,10 +27,14 @@ AbstractCommandDispatcher::AbstractCommandDispatcher(string *alias){
     typeName = alias;
 }
 
+AbstractCommandDispatcher::~AbstractCommandDispatcher() {
+    
+}
+
 /*
  init the rpc adapter
  */
-void AbstractCommandDispatcher::init(CDataWrapper *initConfiguration) throw(CException) {
+void AbstractCommandDispatcher::init(void *initConfiguration) throw(CException) {
 }
 
     //-----------------------

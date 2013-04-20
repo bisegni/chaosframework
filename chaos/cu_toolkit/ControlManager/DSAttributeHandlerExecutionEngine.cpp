@@ -50,7 +50,7 @@ DSAttributeHandlerExecutionEngine::~DSAttributeHandlerExecutionEngine() {
 }
 
     //! Initialize instance
-void DSAttributeHandlerExecutionEngine::init(CDataWrapper*) throw(chaos::CException) {
+void DSAttributeHandlerExecutionEngine::init(void*) throw(chaos::CException) {
     LDSAHEE_ << "Init for device id:" << deviceID;
 }
 

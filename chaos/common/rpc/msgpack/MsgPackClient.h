@@ -47,12 +47,17 @@ namespace chaos {
          /*
           init the rpc adapter
           */
-         void init(CDataWrapper*) throw(CException);
+         void init(void*) throw(CException);
          
          /*
           start the rpc adapter
           */
          void start() throw(CException);
+         
+         /*
+          start the rpc adapter
+          */
+         void stop() throw(CException);
          
          /*
           deinit the rpc adapter
@@ -61,7 +66,7 @@ namespace chaos {
          
     public:
          MsgPackClient(string *alias);
-         ~MsgPackClient();
+         virtual ~MsgPackClient();
         
         
         /*

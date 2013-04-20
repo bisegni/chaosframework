@@ -39,31 +39,11 @@ namespace chaos {
    
     class AbstractEventDispatcher : public utility::ISDInterface, event::EventHandler, NamedService {
         friend class NetworkBroker;
-    protected:
-      /*
-            //-----------------------
-        void init(CDataWrapper *initData) throw(CException) = 0;
-        
-            //-----------------------
-        void start() throw(CException) = 0;
-        
-            //-----------------------
-        void deinit() throw(CException) = 0;
-        
-            //-----------------------
-        virtual void executeAlertHandler(alert::AlertEventDescriptor *eventDescription)  throw(CException) = 0;
-        
-            //-----------------------
-        virtual void executeInstrumentHandler(instrument::InstrumentEventDescriptor *eventDescription)  throw(CException) = 0;
-        
-            //-----------------------
-        virtual void executeCommandHandler(command::CommandEventDescriptor *eventDescription)  throw(CException) = 0;
-        
-            //-----------------------
-        virtual void executeCustomHandler(custom::CustomEventDescriptor* eventDescription)  throw(CException) = 0;*/
+
     public:
         AbstractEventDispatcher(string *alias);
         
+        ~AbstractEventDispatcher();
             //! Event handler registration
         /*
             Perform the registration of an handler

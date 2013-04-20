@@ -126,7 +126,8 @@ namespace chaos {
     namespace DatasetDefinitionkey {
             //!key for dataset descriptors array {[domain, name, paramteres....]}
         static const char * const CS_CM_DATASET_DESCRIPTION                     = "cs|cm|ds_desc";
-        
+            //!key for dataset timestampt validity
+        static const char * const CS_CM_DATASET_TIMESTAMP                       = "cs|cm|ds_timestamp";
             //!key for the domain of the attribute dataset
         static const char * const CS_CM_DATASET_DEVICE_ID                       = "cs|cm|ds_attr_dom";
         
@@ -205,7 +206,10 @@ namespace chaos {
         typedef enum {
                 //!Integer 32 bit length
             EC_NO_ERROR = 0,
-            EC_TIMEOUT = 1
+            EC_TIMEOUT = 1,
+            EC_ATTRIBUTE_NOT_FOUND,
+            EC_ATTRIBUTE_BAD_DIR,
+            EC_ATTRIBUTE_TYPE_NOT_SUPPORTED
         } ErrorCode;
     }
     /** @} */ // end of ChaosDataType

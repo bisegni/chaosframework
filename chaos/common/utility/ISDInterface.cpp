@@ -43,7 +43,7 @@ ISDInterface::~ISDInterface() {
 
 /*!
  */
-bool ISDInterface::initImplementation(ISDInterface *impl, CDataWrapper *initData, const char * const implName,  const char * const domainString)  {
+bool ISDInterface::initImplementation(ISDInterface *impl, void *initData, const char * const implName,  const char * const domainString)  {
     bool result = true;
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
@@ -86,6 +86,22 @@ bool ISDInterface::startImplementation(ISDInterface *impl, const char * const im
         ISD_LAPP  << "Starting " << implName;
         impl->start();
         ISD_LAPP  << implName << "Started";
+    } catch (CException ex) {
+        ISD_LAPP  << "Error Starting " << implName;
+        DECODE_CHAOS_EXCEPTION(ex);
+    }
+    return result;
+}
+
+/*!
+ */
+bool ISDInterface::stopImplementation(ISDInterface *impl, const char * const implName,  const char * const domainString) {
+    bool result = true;
+    try {
+        if(impl == NULL) throw CException(0, "Implementation is null", domainString);
+        ISD_LAPP  << "Stopping " << implName;
+        impl->stop();
+        ISD_LAPP  << implName << "Stopped";
     } catch (CException ex) {
         ISD_LAPP  << "Error Starting " << implName;
         DECODE_CHAOS_EXCEPTION(ex);

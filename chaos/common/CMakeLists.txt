@@ -1,9 +1,11 @@
-SET(common_lib_src log/LogManager.cpp action/ActionExecutionSafetySystem.cpp action/EventAction.cpp action/ActionDescriptor.cpp action/DeclareAction.cpp action/DomainActions.cpp bson/oid.cpp bson/bson_validate.cpp bson/base/parse_number.cpp bson/base/string_data.cpp bson/base/status.cpp bson/base/error_codes.cpp bson/platform/random.cpp bson/util/stringutils.cpp bson/util/md5.cpp bson/util/base64.cpp bson/util/timer.cpp bson/util/time_support.cpp bson/util/jsobj.cpp bson/util/json.cpp bson/util/assert_util.cpp bson/util/bson_extract.cpp configuration/GlobalConfiguration.cpp data/CDataWrapper.cpp data/CUSchemaDB.cpp data/entity_db/EntityDB.cpp data/entity_db/sqlite_impl/sqlite3.c data/entity_db/sqlite_impl/SQLiteEntityDB.cpp data/entity/Entity.cpp dispatcher/DefaultEventDispatcher.cpp dispatcher/EventTypeScheduler.cpp dispatcher/AbstractEventDispatcher.cpp dispatcher/AbstractCommandDispatcher.cpp dispatcher/DefaultCommandDispatcher.cpp dispatcher/DomainActionsScheduler.cpp  dispatcher/AbstractEventDispatcher.cpp event/EventClient.cpp event/AsioImplEventClient event/AsioEventForwarder.cpp event/EventServer.cpp event/AsioImplEventServer.cpp event/AsioEventHandler.cpp event/evt_desc/EventDescriptor.cpp event/evt_desc/AlertEventDescriptor.cpp event/evt_desc/InstrumentEventDescriptor.cpp event/evt_desc/CommandEventDescriptor.cpp event/evt_desc/CustomEventDescriptor.cpp event/channel/EventChannel.cpp event/channel/AlertEventChannel.cpp event/channel/InstrumentEventChannel.cpp io/IODataDriver.cpp io/IOMemcachedDriver.cpp io/OutputMongoDataDriver.cpp message/DeviceMessageChannel.cpp message/MDSMessageChannel.cpp network/NetworkBroker.cpp message/MessageChannel.cpp rpc/RpcClient.cpp rpc/RpcServer.cpp rpc/msgpack/MsgPackClient.cpp rpc//msgpack/MsgPackServer.cpp thread/CThread.cpp thread/CThreadGroup.cpp utility/NamedService.cpp utility/ISDInterface.cpp)
+SET(common_lib_src log/LogManager.cpp action/ActionExecutionSafetySystem.cpp action/EventAction.cpp action/ActionDescriptor.cpp action/DeclareAction.cpp action/DomainActions.cpp bson/oid.cpp bson/bson_validate.cpp bson/base/parse_number.cpp bson/base/string_data.cpp bson/base/status.cpp bson/base/error_codes.cpp bson/platform/random.cpp bson/util/stringutils.cpp bson/util/md5.cpp bson/util/base64.cpp bson/util/timer.cpp bson/util/time_support.cpp bson/util/jsobj.cpp bson/util/json.cpp bson/util/assert_util.cpp bson/util/bson_extract.cpp configuration/GlobalConfiguration.cpp data/CDataWrapper.cpp data/CUSchemaDB.cpp data/entity_db/EntityDB.cpp data/entity_db/sqlite_impl/sqlite3.c data/entity_db/sqlite_impl/SQLiteEntityDB.cpp data/entity/Entity.cpp data/broker/DataBroker.cpp data/broker/publisher/PublisherDataService.cpp data/broker/reader/ReaderDataService.cpp data/cache/FastHash.cpp data/cache/DataCache.cpp memory/ManagedMemory.cpp dispatcher/DefaultEventDispatcher.cpp dispatcher/EventTypeScheduler.cpp dispatcher/AbstractEventDispatcher.cpp dispatcher/AbstractCommandDispatcher.cpp dispatcher/DefaultCommandDispatcher.cpp dispatcher/DomainActionsScheduler.cpp dispatcher/AbstractEventDispatcher.cpp event/EventClient.cpp event/AsioImplEventClient event/AsioEventForwarder.cpp event/EventServer.cpp event/AsioImplEventServer.cpp event/AsioEventHandler.cpp event/evt_desc/EventDescriptor.cpp event/evt_desc/AlertEventDescriptor.cpp event/evt_desc/InstrumentEventDescriptor.cpp event/evt_desc/CommandEventDescriptor.cpp event/evt_desc/CustomEventDescriptor.cpp event/channel/EventChannel.cpp event/channel/AlertEventChannel.cpp event/channel/InstrumentEventChannel.cpp io/IODataDriver.cpp io/IOMemcachedDriver.cpp io/OutputMongoDataDriver.cpp message/DeviceMessageChannel.cpp message/MDSMessageChannel.cpp network/NetworkBroker.cpp message/MessageChannel.cpp rpc/RpcClient.cpp rpc/RpcServer.cpp rpc/msgpack/MsgPackClient.cpp rpc//msgpack/MsgPackServer.cpp thread/CThread.cpp thread/CThreadGroup.cpp utility/NamedService.cpp utility/ISDInterface.cpp)
 
 SET(common_lib_library boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached msgpack msgpack-rpc mpio)
 
 
 ADD_LIBRARY(chaos_common SHARED ${common_lib_src})
+
+set_target_properties(chaos_common PROPERTIES VERSION 1.0.0 SOVERSION 1) 
 
 TARGET_LINK_LIBRARIES(chaos_common ${common_lib_library}) 
 
@@ -24,8 +26,12 @@ FILE(GLOB files "bson/platform/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/bson/platform)
 FILE(GLOB files "configuration/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/configuration)
+FILE(GLOB files "memory/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/memory)
 FILE(GLOB files "data/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/data)
+FILE(GLOB files "data/cache/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/data/cache)
 FILE(GLOB files "data/entity_db/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/data/entity_db)
 FILE(GLOB files "dhfsm/*.h")
@@ -78,4 +84,4 @@ INSTALL(FILES ${files} DESTINATION include/chaos/common/caching_system/common_bu
 
 INSTALL(TARGETS chaos_common
         DESTINATION "lib"
-        PERMISSIONS OWNER_WRITE GROUP_READ WORLD_READ)
+        PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)

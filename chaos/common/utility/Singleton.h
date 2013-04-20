@@ -44,11 +44,11 @@ friend class Singleton<ClassName>;
     public:
         static T* getInstance() {
                 //static T singletonInstance;
-            call_once(init, flag);
+            call_once(_singletonInit, flag);
             return t;
         }
         
-        static void init() {
+        static void _singletonInit() {
             if(!t){
                 t = new T();
             }
