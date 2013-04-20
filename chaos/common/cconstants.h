@@ -31,25 +31,27 @@ namespace chaos {
         //! Name space for grupping option used for commandline or in config file
     namespace InitOption{
             //! @Option for print the help
-        static const char * const   OPT_HELP                          = "help";
+        static const char * const   OPT_HELP                            = "help";
             //!  @Option Specify the implementation to use for rp messaging
-        static const char * const   OPT_RPC_IMPLEMENTATION           ="rpc-server-impl";
+        static const char * const   OPT_RPC_IMPLEMENTATION              = "rpc-server-impl";
             //!  @Option Specify the network port where rpc system will publish al the service
-        static const char * const   OPT_RPC_SERVER_PORT              ="rpc-server-port";
+        static const char * const   OPT_RPC_SERVER_PORT                 = "rpc-server-port";
             //! @Option Specify the number of the thread that the rpc ssytem must use to process the request
-        static const char * const   OPT_RPC_SERVER_THREAD_NUMBER     ="rpc-server-thread-number";
+        static const char * const   OPT_RPC_SERVER_THREAD_NUMBER        = "rpc-server-thread-number";
             //! @Option Specify the live data servers address with the type host:port it is a multitoken parameter
-        static const char * const   OPT_LIVE_DATA_SERVER_ADDRESS     ="live-data-servers";
+        static const char * const   OPT_LIVE_DATA_SERVER_ADDRESS        = "live-data-servers";
             //! @Option Specify the metadata address for the metadataserver
-        static const char * const   OPT_METADATASERVER_ADDRESS       ="metadata-server";
+        static const char * const   OPT_METADATASERVER_ADDRESS          = "metadata-server";
             //! @Option Specify when the log must be forwarded on console
-        static const char * const   OPT_LOG_ON_CONSOLE               ="log-on-console";
+        static const char * const   OPT_LOG_ON_CONSOLE                  = "log-on-console";
             //! @Option Specify when the log must be forwarded on file
-        static const char * const   OPT_LOG_ON_FILE                  ="log-on-file";
+        static const char * const   OPT_LOG_ON_FILE                     = "log-on-file";
             //! @Option Specify when the file path of the log
-        static const char * const   OPT_LOG_FILE                     ="log-file";
+        static const char * const   OPT_LOG_FILE                        = "log-file";
+            //! @Option Specifi the level of the log going 
+        static const char * const   OPT_LOG_LEVEL                       = "log-level";
             //! @Option Specify the ip where publish the framework
-        static const char * const   OPT_PUBLISHING_IP                ="publishing-ip";
+        static const char * const   OPT_PUBLISHING_IP                   = "publishing-ip";
     }
     /** @} */ // end of ParamOption
     

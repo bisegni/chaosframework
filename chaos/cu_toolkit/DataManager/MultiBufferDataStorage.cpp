@@ -63,11 +63,11 @@ void MultiBufferDataStorage::init(CDataWrapper *configuration) {
     if(dmStartupConfiguration->hasKey(LiveHistoryMDSConfiguration::CS_DM_OUTPUT_BUFFER_THREAD_NUM)){
         liveThreadNumber = dmStartupConfiguration->getInt32Value(LiveHistoryMDSConfiguration::CS_DM_OUTPUT_BUFFER_THREAD_NUM);
     } else {
-        LAPP_CFG_ << "No configuration for thread number found, use the default value";
+        LDBG_ << "No configuration for thread number found, use the default value";
         liveThreadNumber = DEFAULT_OBUFFER_THREAD_NUMEBR;
     }
     
-    LAPP_CFG_ << "Configure Output buffer with " << liveThreadNumber << " thread each one";
+    LDBG_ << "Configure Output buffer with " << liveThreadNumber << " thread each one";
     if(liveOBuffer) liveOBuffer->init(liveThreadNumber);
     if(hstOBuffer) hstOBuffer->init(liveThreadNumber);
 
@@ -139,7 +139,7 @@ bool MultiBufferDataStorage::elementWillBeProcessed(int bufferTag, CDataWrapper 
  Permit to be live configurable, all parameter are here configured
  */
 CDataWrapper* MultiBufferDataStorage::updateConfiguration(CDataWrapper *newConfiguration) {
-    LAPP_CFG_ << "Configuration for Multi Sequencial Buffer";
+    LDBG_ << "Configuration for Multi Sequencial Buffer";
         //chec if is present the DataManager configuration
     
     if(newConfiguration->hasKey(LiveHistoryMDSConfiguration::CS_DM_OUTPUT_BUFFER_LIVE_TIME))

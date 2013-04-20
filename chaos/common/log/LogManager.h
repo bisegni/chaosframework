@@ -25,14 +25,36 @@
 #include <chaos/common/exception/CException.h>
 #include <boost/log/sources/severity_logger.hpp>
 namespace chaos {
-    class LogManager {
-        template<class T>
-        friend class ChaosCommon;
-        boost::log::sources::severity_logger< severity_level > slg;
+    template<class T>
+    class ChaosCommon;
+    
+    //! Define the level of the log
+    namespace log {
         
-        LogManager(){}
-    public:
-        void init() throw(CException);
-    };
+        namespace level {
+            
+            typedef enum LogSeverityLevel {
+                /// Enable the debugging information
+                LSLDebug = 0,    // 1
+                /// Normal debugging information
+                LSLInfo  = 1,    // 2
+                /// Log all error that occour but that don't prevent the killing of the toolkit
+                LSLError = 3,    // 3
+                /// Log the error the force the toolkit process to closs
+                LSLFatal = 4      // 4
+            } LogSeverityLevel;
+        }
+        
+        class LogManager {
+            template<class T>
+            friend class chaos::ChaosCommon;
+            
+            LogManager(){}
+        public:
+            void init() throw(CException);
+        };
+        
+        
+    }
 }
 #endif /* defined(__CHAOSFramework__LogManager__) */

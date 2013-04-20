@@ -43,7 +43,7 @@ namespace chaos {
      */
     template<class T>
     class ChaosCommon : public Singleton<T>{
-        LogManager logManager;
+        log::LogManager logManager;
     protected:
             //! Constructor Method
         /*!

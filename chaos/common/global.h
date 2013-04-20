@@ -20,6 +20,8 @@
 #ifndef ChaosFramework_global_h
 #define ChaosFramework_global_h
 
+
+
 /*! \mainpage !Chaos - Control system based on a Highly Abstracted and Open Structure
  *
  * \section intro_sec Introduction
@@ -33,42 +35,21 @@
 #include <boost/version.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
-#include <boost/log/sources/basic_logger.hpp>
+#include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/sources/record_ostream.hpp>
 #include <boost/log/sources/global_logger_storage.hpp>
 
 
 #include <chaos/common/endian.h>
+#include <chaos/common/log/LogManager.h>
+    
+    //allocate the logger
+BOOST_LOG_DECLARE_GLOBAL_LOGGER(chaosLogger, boost::log::sources::severity_logger_mt < chaos::log::level::LogSeverityLevel > )
 
-using namespace boost;
-
-/*#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
-
-#include <boost/log/common.hpp>
-#include <boost/log/formatters.hpp>
-#include <boost/log/filters.hpp>
-
-#include <boost/log/utility/init/to_file.hpp>
-#include <boost/log/utility/init/to_console.hpp>
-#include <boost/log/utility/init/common_attributes.hpp>*/
-
-
-
-enum severity_level
-{
-    normal,
-    error,
-    debug
-};
-
-    //src::logger chaosLogger;
-BOOST_LOG_DECLARE_GLOBAL_LOGGER(chaosLogger, boost::log::sources::logger)
-
-#define LDBG_       BOOST_LOG(chaosLogger::get())
-#define LERR_       BOOST_LOG(chaosLogger::get())
-#define LAPP_       BOOST_LOG(chaosLogger::get())
-#define LAPP_CFG_   BOOST_LOG(chaosLogger::get())
+#define LFTL_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLFatal)
+#define LDBG_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLDebug)
+#define LERR_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLError)
+#define LAPP_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLInfo)
     //define for chaos assert macro, it print the basiclay infromation to find
     //the error when the condition is not true
 #ifndef DEBUG
@@ -131,4 +112,5 @@ public:
     virtual void stop() = 0;
 };
 }
+
 #endif

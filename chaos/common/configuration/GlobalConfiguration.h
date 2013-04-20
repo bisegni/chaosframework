@@ -91,6 +91,11 @@ x = hasOption(y);
          */
         void parseParameter(const po::basic_parsed_options<char>& optionsParser) throw (CException);
         
+        //! recognize the
+        /*!
+         Generalized parser option function
+         */
+        int32_t filterLogLevel(string& levelStr) throw (CException);
     public:
             //! startup parameter pre setup
         /*
