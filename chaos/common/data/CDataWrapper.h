@@ -32,7 +32,7 @@ namespace chaos {
     using namespace boost;
     
     class CDataWrapper;
-    /*
+    /*!
      Class to read the and arry of multivalue
      */
     class CMultiTypeDataArrayWrapper {
@@ -50,7 +50,7 @@ namespace chaos {
         vector<BSONElement>::size_type size() const;
     };
     
-    /*
+    /*!
      Class for contain the serialization buffer
      the class deallocation will dealloc all the
      serialization buffer
@@ -77,7 +77,7 @@ namespace chaos {
         const char *getBufferPtr(){return buffer;};
     };
     
-    /*
+    /*!
      Class that wrap the serializaiton system for data storage
      */
     class CDataWrapper/*: public CPoolMemoryObject<CDataWrapper> */{

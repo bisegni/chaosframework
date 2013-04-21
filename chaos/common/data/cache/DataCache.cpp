@@ -78,7 +78,7 @@ void DataCache::deinit() throw(chaos::CException) {
 
 
 //! get item
-int DataCache::getItem(const char *key, int32_t& buffLen, void **returnBuffer) {
+int DataCache::getItem(const char *key, uint32_t& buffLen, void **returnBuffer) {
     item *it = NULL;
     
     pthread_mutex_lock(&mc_cache_lock);
@@ -99,7 +99,7 @@ int DataCache::getItem(const char *key, int32_t& buffLen, void **returnBuffer) {
 
 
 //! store item
-int DataCache::storeItem(const char *key, const void *buffer, int32_t bufferLen) {
+int DataCache::storeItem(const char *key, const void *buffer, uint32_t bufferLen) {
     item *old_it = do_item_get(key, strlen(key));
     
     item *new_it = do_item_alloc(key, strlen(key), 0, 0, bufferLen);
@@ -141,6 +141,11 @@ int DataCache::deleteItem(const char *key) {
     return 0;
 }
 
+//! check if an item is present
+bool DataCache::isItemPresent(const char *key) {
+    item *it = do_item_get(key, strlen(key));
+    return it !=NULL;
+}
 #pragma GCC visibility push(hidden)
 
 void DataCache::assoc_init(void) {
@@ -325,89 +330,6 @@ void DataCache::stop_assoc_maintenance_thread() {
     
     /* Wait for the maintenance thread to stop */
     pthread_join(maintenance_tid, NULL);
-}
-
-
-cache_t* DataCache::cache_create(const char *name, size_t bufsize, size_t align,
-                                 cache_constructor_t* constructor,
-                                 cache_destructor_t* destructor) {
-    cache_t* ret = (cache_t*)calloc(1, sizeof(cache_t));
-    char* nm = strdup(name);
-    void** ptr = (void**)calloc(initial_pool_size, sizeof(void*));
-    if (ret == NULL || nm == NULL || ptr == NULL ||
-        pthread_mutex_init(&ret->mutex, NULL) == -1) {
-        free(ret);
-        free(nm);
-        free(ptr);
-        return NULL;
-    }
-    
-    ret->name = nm;
-    ret->ptr = ptr;
-    ret->freetotal = initial_pool_size;
-    ret->constructor = constructor;
-    ret->destructor = destructor;
-    ret->bufsize = bufsize;
-    return ret;
-}
-
-void DataCache::cache_destroy(cache_t *cache) {
-    while (cache->freecurr > 0) {
-        void *ptr = cache->ptr[--cache->freecurr];
-        if (cache->destructor) {
-            cache->destructor(ptr, NULL);
-        }
-        free(ptr);
-    }
-    free(cache->name);
-    free(cache->ptr);
-    pthread_mutex_destroy(&cache->mutex);
-}
-
-void* DataCache::cache_alloc(cache_t *cache) {
-    void *ret;
-    void *object;
-    pthread_mutex_lock(&cache->mutex);
-    if (cache->freecurr > 0) {
-        ret = cache->ptr[--cache->freecurr];
-        object = ret;
-    } else {
-        object = ret = malloc(cache->bufsize);
-        if (ret != NULL) {
-            object = ret;
-            
-            if (cache->constructor != NULL &&
-                cache->constructor(object, NULL, 0) != 0) {
-                free(ret);
-                object = NULL;
-            }
-        }
-    }
-    pthread_mutex_unlock(&cache->mutex);
-    return object;
-}
-
-void DataCache::cache_free(cache_t *cache, void *ptr) {
-    pthread_mutex_lock(&cache->mutex);
-    if (cache->freecurr < cache->freetotal) {
-        cache->ptr[cache->freecurr++] = ptr;
-    } else {
-        /* try to enlarge free connections array */
-        size_t newtotal = cache->freetotal * 2;
-        void **new_free = (void **)realloc(cache->ptr, sizeof(char *) * newtotal);
-        if (new_free) {
-            cache->freetotal = newtotal;
-            cache->ptr = new_free;
-            cache->ptr[cache->freecurr++] = ptr;
-        } else {
-            if (cache->destructor) {
-                cache->destructor(ptr, NULL);
-            }
-            free(ptr);
-            
-        }
-    }
-    pthread_mutex_unlock(&cache->mutex);
 }
 
 /**

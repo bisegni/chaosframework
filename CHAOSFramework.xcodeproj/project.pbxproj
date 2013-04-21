@@ -181,6 +181,8 @@
 		327CFF091708C4EB0069497B /* FastHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327CFF071708C4EA0069497B /* FastHash.cpp */; };
 		327CFF0A1708C4EB0069497B /* FastHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF081708C4EB0069497B /* FastHash.h */; };
 		327CFF121708D7760069497B /* CacheGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF111708D7740069497B /* CacheGlobal.h */; };
+		3282314017246F4400FA0B88 /* DatasetCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3282313E17246F4300FA0B88 /* DatasetCache.cpp */; };
+		3282314117246F4400FA0B88 /* DatasetCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 3282313F17246F4400FA0B88 /* DatasetCache.h */; };
 		3289F9A5168508460080D93F /* SQLiteEntityDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */; };
 		3289F9A6168508460080D93F /* SQLiteEntityDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 3289F9A4168508460080D93F /* SQLiteEntityDB.h */; };
 		328D2FB71660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328D2FB51660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp */; };
@@ -534,6 +536,8 @@
 		327CFF071708C4EA0069497B /* FastHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastHash.cpp; sourceTree = "<group>"; };
 		327CFF081708C4EB0069497B /* FastHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastHash.h; sourceTree = "<group>"; };
 		327CFF111708D7740069497B /* CacheGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheGlobal.h; sourceTree = "<group>"; };
+		3282313E17246F4300FA0B88 /* DatasetCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatasetCache.cpp; sourceTree = "<group>"; };
+		3282313F17246F4400FA0B88 /* DatasetCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetCache.h; sourceTree = "<group>"; };
 		3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteEntityDB.cpp; sourceTree = "<group>"; };
 		3289F9A4168508460080D93F /* SQLiteEntityDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteEntityDB.h; sourceTree = "<group>"; };
 		328D2FB01660E3EC007F482E /* DSAttributeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DSAttributeHandler.cpp; sourceTree = "<group>"; };
@@ -1073,6 +1077,8 @@
 				326DB3E814B38BC00018A8D0 /* CDataWrapper.h */,
 				326DB3E914B38BC00018A8D0 /* CUSchemaDB.cpp */,
 				326DB3EA14B38BC00018A8D0 /* CUSchemaDB.h */,
+				3282313E17246F4300FA0B88 /* DatasetCache.cpp */,
+				3282313F17246F4400FA0B88 /* DatasetCache.h */,
 			);
 			path = data;
 			sourceTree = "<group>";
@@ -1708,6 +1714,7 @@
 				327CFF0A1708C4EB0069497B /* FastHash.h in Headers */,
 				327CFF121708D7760069497B /* CacheGlobal.h in Headers */,
 				32CB7CE117099C8D00767FC1 /* DataCache.h in Headers */,
+				3282314117246F4400FA0B88 /* DatasetCache.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1986,6 +1993,7 @@
 				329FFFD1170712CE00D69CDE /* ManagedMemory.cpp in Sources */,
 				327CFF091708C4EB0069497B /* FastHash.cpp in Sources */,
 				32CB7CE017099C8D00767FC1 /* DataCache.cpp in Sources */,
+				3282314017246F4400FA0B88 /* DatasetCache.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

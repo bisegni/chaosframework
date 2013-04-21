@@ -12,7 +12,7 @@ EXECUTE_PROCESS(COMMAND chaos/common/version.sh)
 
 INCLUDE_DIRECTORIES(. ${BUILD_PREFIX}/include /usr/local/include /usr/include) 
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/usr/local/lib /usr/local/lib /usr/lib)
-ADD_DEFINITIONS(-g -O2 -Wall)
+ADD_DEFINITIONS(-O3 -Wall)
     
 IF( BUILD_FORCE_32 ) 
     MESSAGE( STATUS "Forcing 32 bit compilation" )

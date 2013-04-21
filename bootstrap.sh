@@ -10,7 +10,7 @@ popd > /dev/null
 
 BOOST_VERSION=1_53_0
 BOOST_VERSION_IN_PATH=1.53.0
-LMEM_VERSION=1.0.17
+LMEM_VERSION=1.0.16
 CHAOS_DIR=$SCRIPTPATH
 BASE_EXTERNAL=$CHAOS_DIR/external
 PREFIX=$CHAOS_DIR/usr/local
@@ -152,7 +152,7 @@ if [ ! -d "$PREFIX/include/libmemcached" ]; then
     wget --no-check-certificate -O $BASE_EXTERNAL/libmemcached.tar.gz https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz
     tar zxvf $BASE_EXTERNAL/libmemcached.tar.gz -C $BASE_EXTERNAL
     cd $BASE_EXTERNAL/libmemcached-$LMEM_VERSION
-    ./configure --disable-sasl --prefix=$PREFIX
+    ./configure --disable-sasl --without-memcached --prefix=$PREFIX
     make clean
     make
     make install
