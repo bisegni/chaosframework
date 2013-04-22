@@ -12,6 +12,7 @@
 #include <map>
 #include <string>
 #include <chaos/common/data/cache/DataCache.h>
+#include <chaos/common/bson/util/builder.h>
 
 namespace chaos {
     
@@ -31,6 +32,9 @@ namespace chaos {
                 
                 //! the maximum size of the channel
                 uint32_t maximumChannelSize;
+                
+                //! bson generator
+                bson::BufBuilder bsonBuilder;
             protected:
                 //! this map associate the name of the channel to it's position
                 std::map<std::string, int> channelPostionMap;
