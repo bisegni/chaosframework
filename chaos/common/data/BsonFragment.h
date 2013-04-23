@@ -27,7 +27,7 @@ namespace chaos {
             /*!
              Return the pointer of the fragment and prepare the buffer for the next fragment
              \param fragmetDimension the dimension of the fragment
-             \return the pointer to the fragment
+             \return the pointer to the fragment it is anyway managed by BsonFragment Class
              */
             const char *getFragmentPtr(uint32_t& fragmetDimension);
         };

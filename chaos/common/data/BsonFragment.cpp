@@ -17,7 +17,6 @@ BsonFragment::BsonFragment():BSONObjBuilder(true, 512) {
 const char *BsonFragment::getFragmentPtr(uint32_t& fragmetDimension) {
     const char *result = BSONObjBuilder::_b.buf();
     fragmetDimension = BSONObjBuilder::_b.len();
-    BSONObjBuilder::_b.decouple();
     BSONObjBuilder::_b.reset();
     return result;
 }

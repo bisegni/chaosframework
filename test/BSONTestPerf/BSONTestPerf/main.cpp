@@ -55,7 +55,10 @@ int main(int argc, const char * argv[]) {
     uint32_t fragmentDimension = 0;
     
     bFragment.append("ui64_max", static_cast<int64_t>(ui64Max = std::numeric_limits<uint64_t>::max()));
-    auto_ptr<const char> fragmentPtr(bFragment.getFragmentPtr(fragmentDimension));
+    const char *fragmentPtr = bFragment.getFragmentPtr(fragmentDimension);
+    
+    bFragment.append("ui32_max", static_cast<int32_t>(ui32Max = std::numeric_limits<uint32_t>::max()));
+    fragmentPtr = bFragment.getFragmentPtr(fragmentDimension);
     
     current_utc_time(&prevTS);
     
