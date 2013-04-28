@@ -52,14 +52,12 @@ namespace chaos {
         typedef int atomic_int_type;
         
         static inline
-        atomic_int_type atomic_increment(volatile atomic_int_type* p)
-        {
+        atomic_int_type atomic_increment(volatile atomic_int_type* p) {
             return __sync_fetch_and_add(p, 1);
         }
     
         static inline
-        atomic_int_type atomic_decrement(volatile atomic_int_type* p)
-        {
+        atomic_int_type atomic_decrement(volatile atomic_int_type* p) {
             return __sync_fetch_and_add(p, -1);
         }
 #else

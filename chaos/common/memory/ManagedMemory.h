@@ -104,7 +104,7 @@ namespace chaos {
              3rd argument specifies if the slab allocator should allocate all memory
              up front (if 1), or allocate memory in chunks as it is needed (if 0)
              */
-            void init(int _chunkSize, size_t _itemMaxSize, size_t _memoryLimit, double _growFactor, int _prealloc);
+            void init(int _chunkSize, size_t _itemMaxSize, size_t _memoryLimit, double _growFactor, int _prealloc, int _fixedNumberOfSlab = 0);
             
             void init(int _chunkSize, size_t _memoryLimit, int fixedNumberOfSlabPerClass, int _prealloc);
             

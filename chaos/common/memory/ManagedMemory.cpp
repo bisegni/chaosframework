@@ -78,13 +78,14 @@ unsigned int ManagedMemory::getSlabIdBySize(const size_t size) {
  * Determines the chunk sizes and initializes the slab class descriptors
  * accordingly.
  */
-void ManagedMemory::init(int _chunkSize, size_t _itemMaxSize, size_t _memoryLimit, double _growFactor, int _prealloc) {
+void ManagedMemory::init(int _chunkSize, size_t _itemMaxSize, size_t _memoryLimit, double _growFactor, int _prealloc, int _fixedNumberOfSlab) {
     //setup parameter
     chunk_size = _chunkSize;
     item_size_max = _itemMaxSize;
     memoryLimit = _memoryLimit;
     growFactor = _growFactor;
     prealloc = _prealloc >= 1 ?1:0;
+    bool useFixedSlabNumber = _fixedNumberOfSlab != 0;
     
     int i = POWER_SMALLEST - 1;
     unsigned int size = chunk_size;
@@ -100,7 +101,7 @@ void ManagedMemory::init(int _chunkSize, size_t _itemMaxSize, size_t _memoryLimi
         if (size % (unsigned int)CHUNK_ALIGN_BYTES) size += (unsigned int)CHUNK_ALIGN_BYTES - (size % (unsigned int)CHUNK_ALIGN_BYTES);
         
         slabclass[i].size = size;
-        slabclass[i].perslab = (unsigned int)(item_size_max / slabclass[i].size);
+        slabclass[i].perslab = useFixedSlabNumber ? _fixedNumberOfSlab:(unsigned int)(item_size_max / slabclass[i].size);
         
         calculated_all_slabs_mem += slabclass[i].size*slabclass[i].perslab;
         
@@ -110,7 +111,7 @@ void ManagedMemory::init(int _chunkSize, size_t _itemMaxSize, size_t _memoryLimi
     
     power_largest = i;
     slabclass[power_largest].size = (unsigned int)item_size_max;
-    slabclass[power_largest].perslab = 1;
+    slabclass[power_largest].perslab = useFixedSlabNumber ? _fixedNumberOfSlab:1;
     calculated_all_slabs_mem += slabclass[power_largest].size*slabclass[power_largest].perslab;
     MM_LAPP_ <<  "slab class: "<< i <<" chunk size:" << slabclass[i].size << " perslab:" << slabclass[i].perslab;
     

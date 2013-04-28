@@ -18,9 +18,21 @@
 #include <chaos/common/global.h>
 #include <chaos/common/memory/ManagedMemory.h>
 #include <chaos/common/data/cache/DataCache.h>
-#include <chaos/common/data/cache/DataCache.h>
+#include <chaos/common/data/cache/DatasetCache.h>
+
+#include <boost/thread.hpp>
+#include <boost/chrono.hpp>
+#include <boost/random.hpp>
+#include <boost/shared_ptr.hpp>
 #define STRUCT_NUM 200000
 
+#define WRITE_THREAD_NUMBER_OF_UPDATE 10
+#define WRITE_THREAD_UPDATE_RATE 10
+#define READ_THREAD_NUMBER 1
+#define READ_THREAD_UPDATE_RATE_MS 10
+#define GARBAGE_THREAD_UPDATE_RATE_MS 250
+bool threadWriteExecution = true;
+bool threadReadExecution = true;
 
 uint64_t diff(struct timespec* ts_prev, struct timespec* ts){
     return (ts->tv_sec - ts_prev->tv_sec) * 1000 + (ts->tv_nsec - ts_prev->tv_nsec) / 1000000;
@@ -47,7 +59,39 @@ typedef struct DemoStruct{
     int64_t b[20];
 } DemoStruct;
 
+void cacheUpdaterI32(chaos::data::cache::DatasetCache *cPtr) {
+    int32_t tmp = 0;
+    boost::random::mt19937 rng;         // produces randomness out of thin air
+    // see pseudo-random number generators
+    boost::random::uniform_int_distribution<> randI32(std::numeric_limits<int32_t>::min(),std::numeric_limits<int32_t>::max());
+    // distribution that maps to 1..6
+    // see random number distributions
+
+    do{
+        tmp = randI32(rng);
+        cPtr->updateChannelValue((uint16_t)0, &tmp);
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(WRITE_THREAD_UPDATE_RATE));
+    } while (threadWriteExecution);
+}
+
+void cacheReader(chaos::data::cache::DatasetCache *cPtr) {
+    do {
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(READ_THREAD_UPDATE_RATE_MS));
+    } while (threadReadExecution);
+}
+
+
+void cacheGarbage(chaos::data::cache::DatasetCache *cPtr) {
+    do {
+        cPtr->garbageCache();
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(GARBAGE_THREAD_UPDATE_RATE_MS));
+    } while (threadWriteExecution);
+}
+
 int main(int argc, const char * argv[]) {
+    boost::shared_ptr<boost::thread> tWriter;
+    boost::shared_ptr<boost::thread> tGarbage;
+    boost::shared_ptr<boost::thread> tReaders[READ_THREAD_NUMBER];
     uint32_t faultAllocation = 0;
     timespec prevTS = {0,0};
     timespec ts = {0,0};
@@ -55,8 +99,8 @@ int main(int argc, const char * argv[]) {
     void *buff = NULL;
     
     
-    
-    chaos::memory::ManagedMemory *mm = new chaos::memory::ManagedMemory();
+    //test slab memory allocation
+    boost::shared_ptr<chaos::memory::ManagedMemory> mm(new chaos::memory::ManagedMemory());
     mm->init(sizeof(DemoStruct), 0, STRUCT_NUM, 0);
     unsigned int sID = mm->getSlabIdBySize(sizeof(DemoStruct));
     
@@ -82,10 +126,41 @@ int main(int argc, const char * argv[]) {
     printf("fault allocations: %d\n", faultAllocation);
     printf("%lld.%.9ld\n", (long long)prevTS.tv_sec, prevTS.tv_nsec);
     printf("%lld.%.9ld (%lld)\n", (long long)ts.tv_sec, ts.tv_nsec, d);
-    delete mm;
+    mm.reset();
+    
+    //test dataset chache
+    boost::shared_ptr<chaos::data::cache::DatasetCache> dsCache(new chaos::data::cache::DatasetCache());
+    dsCache->addChannel("ch_i32", chaos::DataType::TYPE_INT32);
+    dsCache->init(NULL);
+    dsCache->start();
     
     
-    //param for cache
+    // allocate and start writer thread
+    tWriter.reset(new boost::thread(boost::bind(cacheUpdaterI32, dsCache.get())));
+    //start garbage thread
+    tGarbage.reset(new boost::thread( boost::bind(cacheGarbage, dsCache.get())));
+    //start all reader thread
+    for (int idx = 0; idx < READ_THREAD_NUMBER; idx++) {
+        tReaders[idx].reset(new boost::thread( boost::bind(cacheReader, dsCache.get())));
+    }
+    
+    boost::this_thread::sleep_for(boost::chrono::seconds(10));
+    threadReadExecution = false;
+    //join on read thread
+    for (int idx = 0; idx < READ_THREAD_NUMBER; idx++) {
+        tReaders[idx]->join();
+    }
+    
+    //stop writer and garbag thread
+    threadWriteExecution = false;
+    tGarbage->join();
+    tWriter->join();
+    
+    //deinit all cache
+    dsCache->stop();
+    dsCache->deinit();
+    
+    //test memcached implementation
     chaos::data::cache::CacheSettings settings;
     
     settings.factor = 1.25;
