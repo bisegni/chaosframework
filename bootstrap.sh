@@ -8,6 +8,10 @@ pushd `dirname $0` > /dev/null
 SCRIPTPATH=`pwd -P`
 popd > /dev/null
 
+OS=$(uname -s)
+ARCH=$(uname -m)
+KERNEL_VER=$(uname -r)
+KERNEL_SHORT_VER=$(uname -r|cut -d\- -f1|tr -d '.'| tr -d '[A-Z][a-z]')
 BOOST_VERSION=1_53_0
 BOOST_VERSION_IN_PATH=1.53.0
 LMEM_VERSION=1.0.16
@@ -26,6 +30,10 @@ export CXXFLAGS="-m32 -arch i386"
 echo "Force 32 bit binaries"
 fi
 
+echo "Operating system version: $OS"
+echo "Current architecture: $ARCH"
+echo "Current kernel version: $KERNEL_VER"
+echo "Current short kernel version: $KERNEL_SHORT_VER"
 echo "Using $CHAOS_DIR as chaos folder"
 echo "Using $BASE_EXTERNAL as external library folder"
 echo "Using $PREFIX as prefix folder"
@@ -112,7 +120,11 @@ else
     git pull
 fi
 ./bootstrap
+if [ $KERNEL_SHORT_VER -gt $("2625") ]; then
 ./configure --prefix=$PREFIX
+else
+./configure --disable-timerfd --disable-signalfd --prefix=$PREFIX
+fi
 make clean
 make
 make install
