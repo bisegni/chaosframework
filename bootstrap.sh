@@ -103,7 +103,8 @@ make install
 
 if [ ! -d "$BASE_EXTERNAL/mpio" ]; then
     echo "Install mpio"
-    git clone https://github.com/frsyuki/mpio.git $BASE_EXTERNAL/mpio
+#    git clone https://github.com/frsyuki/mpio.git $BASE_EXTERNAL/mpio
+    git clone git@github.com:bisegni/mpio.git $BASE_EXTERNAL/mpio
     cd $BASE_EXTERNAL/mpio
 else
     echo "Update mpio"
