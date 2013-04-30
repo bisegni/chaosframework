@@ -10,7 +10,7 @@ OPTION( BUILD_PREFIX "Build Prefix" usr/local/lib )
 
 EXECUTE_PROCESS(COMMAND chaos/common/version.sh)
 
-INCLUDE_DIRECTORIES(. ${BUILD_PREFIX}/include /usr/local/include /usr/include) 
+INCLUDE_DIRECTORIES(. ${PROJECT_SOURCE_DIR}/usr/local/include /usr/local/include /usr/include) 
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/usr/local/lib /usr/local/lib /usr/lib)
 ADD_DEFINITIONS(-O3 -Wall)
     
