@@ -112,7 +112,7 @@ make install
 if [ ! -d "$BASE_EXTERNAL/mpio" ]; then
     echo "Install mpio"
 #    git clone https://github.com/frsyuki/mpio.git $BASE_EXTERNAL/mpio
-    git clone git@github.com:bisegni/mpio.git $BASE_EXTERNAL/mpio
+    git clone https://github.com/bisegni/mpio.git $BASE_EXTERNAL/mpio
     cd $BASE_EXTERNAL/mpio
 else
     echo "Update mpio"
@@ -148,7 +148,8 @@ make install
 
 if [ ! -f "$BASE_EXTERNAL/libevent" ]; then
     echo "Installing LibEvent"
-    git clone git://levent.git.sourceforge.net/gitroot/levent/libevent $BASE_EXTERNAL/libevent
+#    git clone git://levent.git.sourceforge.net/gitroot/levent/libevent $BASE_EXTERNAL/libevent
+    git clone http://git.code.sf.net/p/levent/libevent $BASE_EXTERNAL/libevent
     cd $BASE_EXTERNAL/libevent
 else
     cd $BASE_EXTERNAL/libevent
