@@ -93,6 +93,8 @@ void ManagedMemory::init(int _chunkSize, size_t _itemMaxSize, size_t _memoryLimi
     
     memset(slabclass, 0, sizeof(slabclass));
     
+    
+    
     while (++i < POWER_LARGEST && size <= item_size_max / growFactor) {
         /* Make sure items are always n-byte aligned */
         if (size % (unsigned int)CHUNK_ALIGN_BYTES) size += (unsigned int)CHUNK_ALIGN_BYTES - (size % (unsigned int)CHUNK_ALIGN_BYTES);
@@ -133,6 +135,50 @@ void ManagedMemory::init(int _chunkSize, size_t _itemMaxSize, size_t _memoryLimi
             do_slabs_newslab(i);
         }
     }
+}
+
+void ManagedMemory::init(int _chunkSize, size_t _memoryLimit, int fixedNumberOfSlabPerClass, int _prealloc) {
+    bool slabFixedNumber = fixedNumberOfSlabPerClass!=0;
+    chunk_size = _chunkSize;
+    item_size_max = 0;
+    memoryLimit = _memoryLimit;
+    growFactor = 1;
+    prealloc = _prealloc >= 1 ?1:0;
+    
+    unsigned int size = chunk_size;
+    size_t calculated_all_slabs_mem =0;
+    MM_LAPP_ <<  "usign chunk size:" << chunk_size;
+    
+    memset(slabclass, 0, sizeof(slabclass));
+    
+    /* Make sure items are always n-byte aligned */
+    if (size % (unsigned int)CHUNK_ALIGN_BYTES) size += (unsigned int)CHUNK_ALIGN_BYTES - (size % (unsigned int)CHUNK_ALIGN_BYTES);
+    
+    slabclass[POWER_SMALLEST].size = size;
+    slabclass[POWER_SMALLEST].perslab = slabFixedNumber?fixedNumberOfSlabPerClass:(unsigned int)(item_size_max / slabclass[POWER_SMALLEST].size);
+    
+    calculated_all_slabs_mem += slabclass[POWER_SMALLEST].size*slabclass[POWER_SMALLEST].perslab;
+    
+    size = (unsigned int)(size * growFactor);
+    MM_LAPP_ <<  "slab class: "<< POWER_SMALLEST <<" chunk size:" << slabclass[POWER_SMALLEST].size << " perslab:" << slabclass[POWER_SMALLEST].perslab;
+    /* Allocate everything in a big chunk with malloc */
+    if(memoryLimit <= 0) {
+        //allocate all memoryneeded by all calculated slabs
+        memoryLimit = calculated_all_slabs_mem;
+    }
+    
+    mem_base = std::malloc(memoryLimit);
+    if (mem_base != NULL) {
+        mem_current = mem_base;
+        mem_avail = memoryLimit;
+    } else {
+        MM_LERR_ <<  "Warning: Failed to allocate requested memory in one large chunk.Will allocate in smaller chunks";
+    }
+    
+    if(prealloc) {
+        do_slabs_newslab(POWER_SMALLEST);
+    }
+
 }
 
 void ManagedMemory::deinit() {

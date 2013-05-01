@@ -21,13 +21,15 @@
 #define ControlException_H
 #include <string>
 #include <cstring>
+#include <exception>
+#include <sstream>
+
 using namespace std;
 namespace chaos{
     /*
      Base class for exception in control system library
      */
-    class CException {
-        
+    class CException : public std::exception {
     public:
         //identify the number for the error
         int errorCode;
@@ -43,6 +45,18 @@ namespace chaos{
         explicit CException(int eCode, std::string& eMessage,  std::string& eDomain):errorCode(eCode),
         errorMessage(eMessage),
         errorDomain(eDomain) {};
+        
+        virtual ~CException() throw() {};
+        
+        virtual const char* what() const throw() {
+            std::stringstream ss;
+            ss << "-----------Exception------------";\
+            ss << "Domain:" << errorDomain;\
+            ss << "Message:" << errorMessage;\
+            ss << "Error Code;" << errorCode;\
+            ss << "-----------Exception------------";
+            return ss.str().c_str();
+        }
     };
 }
 #endif

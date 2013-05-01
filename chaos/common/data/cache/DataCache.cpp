@@ -48,7 +48,7 @@ DataCache::~DataCache() {
 //! Initialize instance
 void DataCache::init(void* initParam) throw(chaos::CException) {
     CacheSettings *cp = initParam ? static_cast<CacheSettings*>(initParam):NULL;
-    
+    if(!cp) throw CException(1, "Error retriving init parameter", "DataCache::init");
     memcpy(&settings, cp, sizeof(CacheSettings));
         
     memory::ManagedMemory::init(settings.chunk_size, settings.item_size_max, settings.maxbytes, settings.factor, settings.preallocation);
@@ -149,7 +149,7 @@ bool DataCache::isItemPresent(const char *key) {
 #pragma GCC visibility push(hidden)
 
 void DataCache::assoc_init(void) {
-    primary_hashtable = (item**)calloc(hashsize(hashpower), sizeof(void *));
+    primary_hashtable = (item**)calloc(hashsize(hashpower), sizeof(item**));
     if (! primary_hashtable) {
         exit(EXIT_FAILURE);
     }

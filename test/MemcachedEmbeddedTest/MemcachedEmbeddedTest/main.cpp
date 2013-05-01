@@ -6,46 +6,82 @@
 //  Copyright (c) 2013 Claudio Bisegni. All rights reserved.
 //
 #include <iostream>
+#include <time.h>
+#include <sys/time.h>
+#include <stdio.h>
+#include <string>
+#ifdef __MACH__
+#include <mach/clock.h>
+#include <mach/mach.h>
+#endif
+
 #include <chaos/common/global.h>
 #include <chaos/common/memory/ManagedMemory.h>
 #include <chaos/common/data/cache/DataCache.h>
 #include <chaos/common/data/cache/DataCache.h>
-#define STRUCT_NUM 1000
+#define STRUCT_NUM 200000
+
+
+uint64_t diff(struct timespec* ts_prev, struct timespec* ts){
+    return (ts->tv_sec - ts_prev->tv_sec) * 1000 + (ts->tv_nsec - ts_prev->tv_nsec) / 1000000;
+}
+
+void current_utc_time(struct timespec *ts) {
+    
+#ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
+    clock_serv_t cclock;
+    mach_timespec_t mts;
+    host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
+    clock_get_time(cclock, &mts);
+    mach_port_deallocate(mach_task_self(), cclock);
+    ts->tv_sec = mts.tv_sec;
+    ts->tv_nsec = mts.tv_nsec;
+#else
+    clock_gettime(CLOCK_REALTIME, ts);
+#endif
+    
+}
 
 typedef struct DemoStruct{
     int32_t a;
     int64_t b[20];
 } DemoStruct;
 
-int main(int argc, const char * argv[])
-{
-    int32_t bsize;
+int main(int argc, const char * argv[]) {
+    uint32_t faultAllocation = 0;
+    timespec prevTS = {0,0};
+    timespec ts = {0,0};
+    uint32_t bsize;
     void *buff = NULL;
     
     
     
     chaos::memory::ManagedMemory *mm = new chaos::memory::ManagedMemory();
-    mm->init(168, 512*1024, 0, 1.12, 0);
+    mm->init(sizeof(DemoStruct), 0, STRUCT_NUM, 0);
     unsigned int sID = mm->getSlabIdBySize(sizeof(DemoStruct));
     
     DemoStruct *structPtr[STRUCT_NUM];
     
     size_t structDim = sizeof(DemoStruct);
     memset(structPtr, 0, sizeof(DemoStruct*)*STRUCT_NUM);
-    
-    for (int idx = 0; idx < 1000; idx++) {
+    current_utc_time(&prevTS);
+    for (int idx = 0; idx < STRUCT_NUM; idx++) {
         structPtr[idx] = static_cast<DemoStruct*>(mm->allocate(structDim, sID));
         if(structPtr[idx] != NULL) {
             structPtr[idx]->a = idx;
             structPtr[idx]->b[5] = idx*3;
         } else {
-            //not enougth memory in slabs class
+            faultAllocation++;
         }
     }
     for (int idx = 0; idx < 1000; idx++) {
         if(structPtr[idx] != NULL) mm->deallocate(structPtr[idx], structDim, sID);
     }
-
+    current_utc_time(&ts);
+    uint64_t d = diff(&prevTS, &ts);
+    printf("fault allocations: %d\n", faultAllocation);
+    printf("%lld.%.9ld\n", (long long)prevTS.tv_sec, prevTS.tv_nsec);
+    printf("%lld.%.9ld (%lld)\n", (long long)ts.tv_sec, ts.tv_nsec, d);
     delete mm;
     
     

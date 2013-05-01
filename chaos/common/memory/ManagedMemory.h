@@ -106,6 +106,8 @@ namespace chaos {
              */
             void init(int _chunkSize, size_t _itemMaxSize, size_t _memoryLimit, double _growFactor, int _prealloc);
             
+            void init(int _chunkSize, size_t _memoryLimit, int fixedNumberOfSlabPerClass, int _prealloc);
+            
             void deinit();
             
             /**
