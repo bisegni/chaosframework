@@ -12,6 +12,7 @@
 #include <vector>
 
 #include <boost/atomic/atomic.hpp>
+#include <boost/lockfree/queue.hpp>
 #include <boost/detail/atomic_count.hpp>
 #include <boost/thread.hpp>
 
@@ -99,7 +100,7 @@ namespace chaos {
                 chaos::DataType::DataType channelType;
                 
                     //! used slab array cache slab
-                std::vector<SlbCachedInfoPtr> garbageableSlab;
+                boost::lockfree::queue<SlbCachedInfoPtr, boost::lockfree::fixed_sized<false> > garbageableSlab;
                 
                 //! set the readable index of the ptr array
                 /*!

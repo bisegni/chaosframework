@@ -26,10 +26,9 @@
 #include <boost/shared_ptr.hpp>
 #define STRUCT_NUM 200000
 
-#define WRITE_THREAD_NUMBER_OF_UPDATE 10
-#define WRITE_THREAD_UPDATE_RATE 10
+#define WRITE_THREAD_UPDATE_RATE 500
 #define READ_THREAD_NUMBER 1
-#define READ_THREAD_UPDATE_RATE_MS 10
+#define READ_THREAD_UPDATE_RATE_MS 500
 #define GARBAGE_THREAD_UPDATE_RATE_MS 250
 bool threadWriteExecution = true;
 bool threadReadExecution = true;
@@ -89,9 +88,9 @@ void cacheGarbage(chaos::data::cache::DatasetCache *cPtr) {
 }
 
 int main(int argc, const char * argv[]) {
-    boost::shared_ptr<boost::thread> tWriter;
-    boost::shared_ptr<boost::thread> tGarbage;
-    boost::shared_ptr<boost::thread> tReaders[READ_THREAD_NUMBER];
+    auto_ptr<boost::thread> tWriter;
+    auto_ptr<boost::thread> tGarbage;
+    auto_ptr<boost::thread> tReaders[READ_THREAD_NUMBER];
     uint32_t faultAllocation = 0;
     timespec prevTS = {0,0};
     timespec ts = {0,0};
@@ -100,7 +99,7 @@ int main(int argc, const char * argv[]) {
     
     
     //test slab memory allocation
-    boost::shared_ptr<chaos::memory::ManagedMemory> mm(new chaos::memory::ManagedMemory());
+    auto_ptr<chaos::memory::ManagedMemory> mm(new chaos::memory::ManagedMemory());
     mm->init(sizeof(DemoStruct), 0, STRUCT_NUM, 0);
     unsigned int sID = mm->getSlabIdBySize(sizeof(DemoStruct));
     
@@ -129,7 +128,7 @@ int main(int argc, const char * argv[]) {
     mm.reset();
     
     //test dataset chache
-    boost::shared_ptr<chaos::data::cache::DatasetCache> dsCache(new chaos::data::cache::DatasetCache());
+    auto_ptr<chaos::data::cache::DatasetCache> dsCache(new chaos::data::cache::DatasetCache());
     dsCache->addChannel("ch_i32", chaos::DataType::TYPE_INT32);
     dsCache->init(NULL);
     dsCache->start();
@@ -144,7 +143,7 @@ int main(int argc, const char * argv[]) {
         tReaders[idx].reset(new boost::thread( boost::bind(cacheReader, dsCache.get())));
     }
     
-    boost::this_thread::sleep_for(boost::chrono::seconds(10));
+    boost::this_thread::sleep_for(boost::chrono::seconds(1000));
     threadReadExecution = false;
     //join on read thread
     for (int idx = 0; idx < READ_THREAD_NUMBER; idx++) {
