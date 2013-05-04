@@ -26,7 +26,7 @@
 #include <boost/shared_ptr.hpp>
 #define STRUCT_NUM 200000
 
-#define WRITE_THREAD_UPDATE_RATE 500
+#define WRITE_THREAD_UPDATE_RATE 250
 #define READ_THREAD_NUMBER 1
 #define READ_THREAD_UPDATE_RATE_MS 500
 #define GARBAGE_THREAD_UPDATE_RATE_MS 250
@@ -88,9 +88,9 @@ void cacheGarbage(chaos::data::cache::DatasetCache *cPtr) {
 }
 
 int main(int argc, const char * argv[]) {
-    auto_ptr<boost::thread> tWriter;
-    auto_ptr<boost::thread> tGarbage;
-    auto_ptr<boost::thread> tReaders[READ_THREAD_NUMBER];
+    boost::thread_group tWriterGroup;
+    boost::thread_group tGarbageGroup;
+    boost::thread_group tReadersGroup;
     uint32_t faultAllocation = 0;
     timespec prevTS = {0,0};
     timespec ts = {0,0};
@@ -135,25 +135,24 @@ int main(int argc, const char * argv[]) {
     
     
     // allocate and start writer thread
-    tWriter.reset(new boost::thread(boost::bind(cacheUpdaterI32, dsCache.get())));
+    //tWriter.reset(new boost::thread(boost::bind(cacheUpdaterI32, dsCache.get())));
+    tWriterGroup.create_thread(boost::bind(cacheUpdaterI32, dsCache.get()));
     //start garbage thread
-    tGarbage.reset(new boost::thread( boost::bind(cacheGarbage, dsCache.get())));
+    tGarbageGroup.create_thread(boost::bind(cacheGarbage, dsCache.get()));
     //start all reader thread
     for (int idx = 0; idx < READ_THREAD_NUMBER; idx++) {
-        tReaders[idx].reset(new boost::thread( boost::bind(cacheReader, dsCache.get())));
+        tReadersGroup.create_thread(boost::bind(cacheReader, dsCache.get()));
     }
     
-    boost::this_thread::sleep_for(boost::chrono::seconds(1000));
+    boost::this_thread::sleep_for(boost::chrono::seconds(10));
     threadReadExecution = false;
     //join on read thread
-    for (int idx = 0; idx < READ_THREAD_NUMBER; idx++) {
-        tReaders[idx]->join();
-    }
+    tReadersGroup.join_all();
     
     //stop writer and garbag thread
     threadWriteExecution = false;
-    tGarbage->join();
-    tWriter->join();
+    tGarbageGroup.join_all();
+    tWriterGroup.join_all();
     
     //deinit all cache
     dsCache->stop();
