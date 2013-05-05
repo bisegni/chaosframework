@@ -31,14 +31,12 @@ namespace chaos{
      */
     class CException : public std::exception {
     public:
-        //! identify the number for the error
+        //identify the number for the error
         int errorCode;
-        //! describe the error that occour
+        //describe the error that occour
         string errorMessage;
-        //! identify the domain(ControlUnit, DataManager, ....)
+        //identify the domain(ControlUnit, DataManager, ....)
         string errorDomain;
-        //! string stream for compose the "what" message
-        std::stringstream ss;
         
         explicit CException(int eCode, const char * eMessage,  const char * eDomain):errorCode(eCode),
         errorMessage( eMessage, strlen( eMessage )),
@@ -51,6 +49,7 @@ namespace chaos{
         virtual ~CException() throw() {};
         
         virtual const char* what() const throw() {
+            std::stringstream ss;
             ss << "-----------Exception------------";\
             ss << "Domain:" << errorDomain;\
             ss << "Message:" << errorMessage;\
