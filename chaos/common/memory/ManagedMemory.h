@@ -24,6 +24,7 @@
 
 #include <unistd.h>
 #include <pthread.h>
+#include <boost/atomic/atomic.hpp>
 
 namespace chaos {
     
@@ -68,6 +69,7 @@ namespace chaos {
          * memcached protocol.
          */
         class ManagedMemory {
+            boost::atomic_flag atomicFlagLock;
             
             slabclass_t slabclass[MAX_NUMBER_OF_SLAB_CLASSES];
             size_t mem_malloced;
@@ -98,14 +100,25 @@ namespace chaos {
             ManagedMemory();
             ~ManagedMemory();
             
-            /** Init the subsystem. 1st argument is the limit on no. of bytes to allocate,
-             0 if no limit. 2nd argument is the growth factor; each slab will use a chunk
-             size equal to the previous slab's chunk size times this factor.
-             3rd argument specifies if the slab allocator should allocate all memory
-             up front (if 1), or allocate memory in chunks as it is needed (if 0)
+                //! Inizialization of slab engine
+            /*! Init the slab memory engine
+             \param _chunkSize  is the minimal number of byte for the slab 
+             \param _itemMaxSize is the maximum size in byte of the slab
+             \param _memoryLimit if > 0 will put a barrier to the max memory to use
+             \param _growFactor argument is the growth factor; each slab will use a chunk
+                                size equal to the previous slab's chunk size times this factor.
+             \param _prealloc allocate all mermoy for all slab (if 1) or allocate memory in chunks as it is needed (if 0)
+             \param _fixedNumberOfSlab if > 0 give a fixed number of slba to every class
              */
             void init(int _chunkSize, size_t _itemMaxSize, size_t _memoryLimit, double _growFactor, int _prealloc, int _fixedNumberOfSlab = 0);
             
+                //! Inizialization of slab engine
+            /*! Init the slab memory engine for only one class of slab
+             \param _chunkSize  is the minimal number of byte for the slab
+             \param _memoryLimit if > 0 will put a barrier to the max memory to use
+             \param _prealloc allocate all mermoy for all slab (if 1) or allocate memory in chunks as it is needed (if 0)
+             \param _fixedNumberOfSlab if > 0 give a fixed number of slba to every class
+             */
             void init(int _chunkSize, size_t _memoryLimit, int fixedNumberOfSlabPerClass, int _prealloc);
             
             void deinit();

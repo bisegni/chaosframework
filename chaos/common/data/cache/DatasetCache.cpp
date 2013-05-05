@@ -184,3 +184,20 @@ SlbCachedInfoPtr DatasetCache::getCurrentChannelCachedValue(uint16_t channelInde
     if(!ptr) return NULL;
     return ptr->getCurrentCachedPtr();
 }
+
+void DatasetCache::getCurrentChannelValueAccessor(const char *channelName, ChannelValueAccessor& accessorPtr) {
+    if(!channelInfoMap.count(channelName)) {
+        accessorPtr.reset(NULL);
+        return;
+    }
+    getCurrentChannelValueAccessor(channelInfoMap[channelName]->index, accessorPtr);
+}
+
+void DatasetCache::getCurrentChannelValueAccessor(uint16_t channelIndex, ChannelValueAccessor& accessorPtr) {
+    ChannelCache *ptr = chCachePtrArray[channelIndex];
+    if(!ptr) {
+        accessorPtr.reset(NULL);
+        return;
+    }
+    ptr->fillAccessorWithCurrentValue(accessorPtr);
+}

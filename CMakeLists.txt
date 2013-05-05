@@ -112,3 +112,6 @@ ADD_SUBDIRECTORY(example/UIToolkitCMDLineCWrapperExample bin/bin_example_uicmdli
 
 message(STATUS "Configure BenchTest simulation excutable")
 ADD_SUBDIRECTORY(example/BenchTest bin/bench_test)
+
+message(STATUS "Configure ChaosMemCacheTest test excutable")
+ADD_SUBDIRECTORY(test/MemcachedEmbeddedTest/MemcachedEmbeddedTest bin/memcache_test)

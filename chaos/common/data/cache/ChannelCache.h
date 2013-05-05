@@ -16,8 +16,10 @@
 #include <boost/detail/atomic_count.hpp>
 #include <boost/thread.hpp>
 
-#include <chaos/common/memory/ManagedMemory.h>
 #include <chaos/common/cconstants.h>
+#include <chaos/common/memory/ManagedMemory.h>
+#include <chaos/common/data/cache/SlbCachedInfo.h>
+#include <chaos/common/data/cache/ChannelValueAccessor.h>
 
 namespace chaos {
     
@@ -27,34 +29,6 @@ namespace chaos {
             
                 //forward declaration
             class DatasetCache;
-            
-            /*!
-             Define the cached slab taht contain channel description
-             */
-            typedef struct SlbCachedInfo {
-                    //! busy flag indication
-                    /*!
-                     It is used to up the reference count at the moment that
-                     rptr is read by array. It possible that the rptr that 
-                     is getting becam old and so the clean thread will try to clean
-                     before the count is up of one.
-                     Using this flag the thread can be hald in the moment 
-                     */
-                //boost::atomic_flag busyFlag;
-                
-                    //! element reference count
-                /*!
-                 Mantain the number of the object that refere to this element of the cache,
-                 the default value for the reference is "1" when it is 0 it ca be deallocated
-                 */
-                boost::uint32_t references;
-                
-                    //!slab ptr for cached value
-                /*!
-                 This ptr is the base address where the value is wrote to be cached
-                 */
-                void *valPtr;
-            } SlbCachedInfo, *SlbCachedInfoPtr;
             
             
                 //!Channel cache
@@ -68,15 +42,13 @@ namespace chaos {
                     //!permit the DatasetCache class to use the private variable
                 friend class DatasetCache;
                 
-                boost::mutex garbageMutext;
-                
                     //!index to identity the write ptr
                 int writeIndex;
                 
                     //! index for identify read ptr
                 boost::atomic_ushort readIndex;
                 
-                //! writeble and readeble pointer array
+                    //! writeble and readeble pointer array
                 /*!
                  The two element array is used to select where, the principal thread write
                  the next "current" value, and the other is used for read the current value.
@@ -94,6 +66,7 @@ namespace chaos {
                     //! slab size
                 uint32_t slabRequiredSize;
                 
+                    //!slab id to use
                 uint16_t slabID;
                 
                     //! the type of the channel
@@ -109,9 +82,22 @@ namespace chaos {
                  */
                 inline void swapRWIndex();
                 
+                //! allocate and prepare a new slab
+                /*!
+                 Allocate a new slab and prepare it to be used
+                 \return a new SlbCachedInfo structure to cache
+                         a new valu efor the channel
+                 */
                 inline SlbCachedInfoPtr makeNewChachedInfoPtr();
             public:
+                
+                    //! Default constructor
+                /*!
+                 Creathe the object with the memory manager assigned
+                 */
                 ChannelCache(memory::ManagedMemory *_memoryPool);
+                
+                    //! Default destructor
                 ~ChannelCache();
                 
                 /*!
@@ -139,6 +125,11 @@ namespace chaos {
                 /*!
                  */
                 SlbCachedInfoPtr getCurrentCachedPtr();
+                
+                    //! return the current cached accessor
+                /*!
+                 */
+                void fillAccessorWithCurrentValue(ChannelValueAccessor&  accessorPtr);
             };
             
         }

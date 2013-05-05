@@ -30,9 +30,7 @@ void ChannelCache::swapRWIndex() {
     writeIndex = (writeIndex + 1) % 2;
 
     // put old readeable slba into garbageable index
-    boost::unique_lock<boost::mutex> lock(garbageMutext);
     garbageableSlab.push(rwPtr[writeIndex]);
-    lock.unlock();
     
     // alloc new slab info
     rwPtr[writeIndex] = makeNewChachedInfoPtr();
@@ -53,14 +51,12 @@ void ChannelCache::garbageCache() {
     bool needToBeGarbaged = false;
     volatile boost::uint32_t *mem;
     boost::uint32_t oldMem, oldValue;
-    //lock the critical section
-    boost::unique_lock<boost::mutex> lock(garbageMutext);
-    
-    if(garbageableSlab.empty()) return;
 
     
+    if(garbageableSlab.empty()) return;
+    
     //cicle all slab to make it garbaged
-    SlbCachedInfoPtr tmpPtr;
+    SlbCachedInfoPtr tmpPtr = NULL;
     do {
         if((needToBeGarbaged=garbageableSlab.pop(tmpPtr))){
             counter++;
@@ -78,8 +74,6 @@ void ChannelCache::garbageCache() {
             }
         }
     } while(needToBeGarbaged);
-    
-    std::cout << counter << "garbage operation" << std::endl;
 }
 
 //! Initialize the channel cache
@@ -161,4 +155,8 @@ SlbCachedInfoPtr ChannelCache::getCurrentCachedPtr() {
     
     //we have suceed to udpate the reference count without noone has modified it
     return result;
+}
+
+void ChannelCache::fillAccessorWithCurrentValue(ChannelValueAccessor&  accessorPtr) {
+    accessorPtr.reset(getCurrentCachedPtr());
 }

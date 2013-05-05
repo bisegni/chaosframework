@@ -11,11 +11,13 @@
 
 #include <map>
 #include <string>
-#include <chaos/common/memory/ManagedMemory.h>
-#include <chaos/common/data/cache/ChannelCache.h>
-#include <chaos/common/bson/util/builder.h>
-#include <chaos/common/utility/ISDInterface.h>
+
 #include <chaos/common/cconstants.h>
+#include <chaos/common/bson/util/builder.h>
+#include <chaos/common/memory/ManagedMemory.h>
+#include <chaos/common/utility/ISDInterface.h>
+#include <chaos/common/data/cache/ChannelCache.h>
+#include <chaos/common/data/cache/ChannelValueAccessor.h>
 
 namespace chaos {
     
@@ -99,6 +101,10 @@ namespace chaos {
                 SlbCachedInfoPtr getCurrentChannelCachedValue(const char *channelName);
                 
                 SlbCachedInfoPtr getCurrentChannelCachedValue(uint16_t channelIndex);
+                
+                void getCurrentChannelValueAccessor(const char *channelName, ChannelValueAccessor& accessorPtr);
+                
+                void getCurrentChannelValueAccessor(uint16_t channelIndex, ChannelValueAccessor& accessorPtr);
             };
             
         }
