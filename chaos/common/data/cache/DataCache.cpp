@@ -39,6 +39,9 @@ DataCache::DataCache(){
     hash_bulk_move = DEFAULT_HASH_BULK_MOVE;
     
     memset(&settings, 0, sizeof(CacheSettings));
+    
+    //init the muthex
+    pthread_mutex_init(&mc_cache_lock, NULL);
 }
 
 DataCache::~DataCache() {
@@ -80,61 +83,63 @@ void DataCache::deinit() throw(chaos::CException) {
 //! get item
 int DataCache::getItem(const char *key, uint32_t& buffLen, void **returnBuffer) {
     item *it = NULL;
-    
     pthread_mutex_lock(&mc_cache_lock);
-    it = assoc_find(key, strlen(key));
-    it->refcount++;
-    pthread_mutex_unlock(&mc_cache_lock);
+    it = do_item_get(key, strlen(key));
     if (!it) {
+        pthread_mutex_unlock(&mc_cache_lock);
         return -1;
     }
-    
     /* Add the data minus the CRLF */
     buffLen = it->nbytes;
     *returnBuffer = ITEM_data(it);
-    it->refcount--;
-    
+    do_item_remove(it);
+    pthread_mutex_unlock(&mc_cache_lock);
     return 0;
 }
 
 
 //! store item
 int DataCache::storeItem(const char *key, const void *buffer, uint32_t bufferLen) {
+    pthread_mutex_lock(&mc_cache_lock);
+    
     item *old_it = do_item_get(key, strlen(key));
     
     item *new_it = do_item_alloc(key, strlen(key), 0, 0, bufferLen);
+
     if (new_it == NULL) {
         /* SERVER_ERROR out of memory */
         if (old_it != NULL) {
             do_item_remove(old_it);
         }
+        pthread_mutex_unlock(&mc_cache_lock);
         return -1;
     }else{
         memcpy(ITEM_data(new_it), buffer, bufferLen);
     }
     
-    pthread_mutex_lock(&mc_cache_lock);
     if (old_it != NULL)
         do_item_replace(old_it, new_it);
     else
         do_item_link(new_it);
-    pthread_mutex_unlock(&mc_cache_lock);
+
     
     if (old_it != NULL)
         do_item_remove(old_it);
     if (new_it != NULL)
         do_item_remove(new_it);
     
+    pthread_mutex_unlock(&mc_cache_lock);
     return 0;
 }
 
 //! delete item
 int DataCache::deleteItem(const char *key) {
+    pthread_mutex_lock(&mc_cache_lock);
     item *it = do_item_get(key, strlen(key));
     if(!it) {
+        pthread_mutex_unlock(&mc_cache_lock);
         return -1;
     }
-    pthread_mutex_lock(&mc_cache_lock);
     do_item_unlink(it);
     do_item_remove(it);
     pthread_mutex_unlock(&mc_cache_lock);

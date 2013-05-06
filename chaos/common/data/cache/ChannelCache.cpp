@@ -111,22 +111,9 @@ void ChannelCache::initChannel(const char *name, chaos::DataType::DataType type,
 //! Set (and cache) the new value of the channel
 void ChannelCache::updateValue(const void* channelValue, uint32_t valueLegth) {
     SlbCachedInfoPtr tmpPtr = rwPtr[writeIndex];
-    uint32_t length = 0;
-    switch (channelType) {
-        case chaos::DataType::TYPE_BOOLEAN:
-        case chaos::DataType::TYPE_DOUBLE:
-        case chaos::DataType::TYPE_INT32:
-        case chaos::DataType::TYPE_INT64:
-            length = channelMaxLength;
-            break;
-        case chaos::DataType::TYPE_STRING:
-        case chaos::DataType::TYPE_BYTEARRAY:
-            //fix to remain into the maximum length
-            length = min(valueLegth, channelMaxLength);
-            break;
-    }
+    
     //copy the value into cache
-    memcpy(tmpPtr->valPtr, channelValue, length);
+    memcpy(tmpPtr->valPtr, channelValue, valueLegth==0?channelMaxLength:valueLegth);
     
     //swap the wPtr with rPtr
     swapRWIndex();
