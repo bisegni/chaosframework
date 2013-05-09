@@ -55,6 +55,6 @@ if(NOT MPIO_LIB)
 endif(NOT MPIO_LIB)
 
 ADD_EXECUTABLE(ChaosNodeDirectory ${cnd_src})
-TARGET_LINK_LIBRARIES(ChaosNodeDirectory chaos_common boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached msgpack msgpack-rpc mpio) 
+TARGET_LINK_LIBRARIES(ChaosNodeDirectory chaos_common boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup boost_atomic memcached msgpack msgpack-rpc mpio) 
 
 INSTALL_TARGETS(/bin ChaosNodeDirectory)
