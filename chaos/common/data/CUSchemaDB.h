@@ -178,11 +178,13 @@ namespace chaos {
          */
         void addAttributeToDataSetFromDataWrapper(CDataWrapper& serializedDataset);
         
+            //! Fill a CDataWrapper with all device information
         /*!
          fill a CDataWrapper with the dataset decode
          */
         void fillDataWrapperWithDataSetDescription(CDataWrapper&);
         
+            //! Fill a CDataWrapper with a single device information
         /*!
          fill a CDataWrapper with the dataset decode
          */
@@ -212,17 +214,19 @@ namespace chaos {
                                    const char*const attributeDescription,
                                    DataType::DataType attributeType,
                                    DataType::DataSetAttributeIOAttribute attributeDirection);
-        
+            //!Get al device id
         /*!
          Return all the setupped device id
          */
         void getAllDeviceId(vector<string>& deviceNames);
         
+            //!Check if a device is present
         /*!
          Return true if the device id is found
          */
         bool deviceIsPresent(const string& deviceID);
         
+            //!Get device dataset attribute names
         /*!
          Return all dataset attribute name
          \param deviceID the identification of the device
@@ -231,6 +235,7 @@ namespace chaos {
         void getDeviceDatasetAttributesName(const string& deviceID,
                                             vector<string>& attributesName);
         
+            //!Get device attribute name that has a specified direction
         /*!
          Return all dataset attribute name
          \param deviceID the identification of the device
@@ -241,6 +246,7 @@ namespace chaos {
                                            DataType::DataSetAttributeIOAttribute directionType,
                                            vector<string>& attributesName);
         
+            //!Get device attribute description
         /*!
          Return the dataset description
          \param deviceID the identification of the device
@@ -251,6 +257,7 @@ namespace chaos {
                                           const string& attributesName,
                                           string& attributeDescription);
         
+            //!Get the value information for a specified attribute name
         /*!
          Return the range value for the attribute
          \param deviceID the identification of the device
@@ -261,6 +268,7 @@ namespace chaos {
                                              const string& attributesName,
                                              RangeValueInfo& rangeInfo);
         
+            //!Get the direction of an attribute
         /*!
          Return the direcion of the attribute
          \param deviceID the identification of the device
