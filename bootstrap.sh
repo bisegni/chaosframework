@@ -85,9 +85,9 @@ if [ ! -d "$PREFIX/include/boost" ]; then
     echo "Compile and install boost libraries into $PREFIX/"
 if [ -n "$CHAOS32" ]; then
     	echo "INSTALLING BOOST X86 32"
-    	./b2 cflags=-m32 cxxflags=-m32 architecture=x86 address-model=32 --prefix=$PREFIX link=shared --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread --with-atomic install
+    	./b2 cflags=-m32 cxxflags=-m32 architecture=x86 address-model=32 --prefix=$PREFIX link=shared --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread --with-atomic --with-timer install
     else
-    	./b2 --prefix=$PREFIX link=shared --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread --with-atomic install
+    	./b2 --prefix=$PREFIX link=shared --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread --with-atomic --with-timer install
     fi
 else
     echo "Boost Already present"

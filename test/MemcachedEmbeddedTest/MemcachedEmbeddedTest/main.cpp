@@ -24,13 +24,17 @@
 #include <boost/chrono.hpp>
 #include <boost/random.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/timer/timer.hpp>
 #define STRUCT_NUM 10
 
-#define WRITE_THREAD_UPDATE_RATE 10
+#define WRITE_THREAD_UPDATE_RATE 2
 #define READ_THREAD_NUMBER 10
-#define READ_THREAD_UPDATE_RATE_MS_MAX 10
+#define READ_THREAD_UPDATE_RATE_MS_MAX 2
 #define GARBAGE_THREAD_UPDATE_RATE_MS 100
 #define TEST_DURATION_IN_SEC 10
+
+#define INT32_TEST_VALUE numeric_limits<int32_t>::max()
+
 bool threadWriteExecution = true;
 bool threadReadExecution = true;
 
@@ -54,22 +58,16 @@ void current_utc_time(struct timespec *ts) {
     
 }
 
+int32_t i32TVal = INT32_TEST_VALUE;
+
 typedef struct DemoStruct{
     int32_t a;
     int64_t b[20];
 } DemoStruct;
 
 void cacheUpdaterI32(chaos::data::cache::DatasetCache *cPtr) {
-    int32_t tmp = 0;
-    boost::random::mt19937 rng;         // produces randomness out of thin air
-    // see pseudo-random number generators
-    boost::random::uniform_int_distribution<> randI32(std::numeric_limits<int32_t>::min(),std::numeric_limits<int32_t>::max());
-    // distribution that maps to 1..6
-    // see random number distributions
-
     do{
-        tmp = randI32(rng);
-        cPtr->updateChannelValue((uint16_t)0, &tmp);
+        cPtr->updateChannelValue((uint16_t)0, &i32TVal);
         //std::cout << "cached int32 value->" << tmp << " on thread ->" << boost::this_thread::get_id() << std::endl;
         boost::this_thread::sleep_for(boost::chrono::milliseconds(WRITE_THREAD_UPDATE_RATE));
     } while (threadWriteExecution);
@@ -80,6 +78,7 @@ void cacheReader(chaos::data::cache::DatasetCache *cPtr) {
     do {
         cPtr->getCurrentChannelValueAccessor((uint16_t)0, accessor);
         int32_t readed = *accessor.getValuePtr<int32_t>();
+        if(readed) assert(readed == i32TVal);
         //std::cout << "read int32 value->" << readed << " on thread->" << boost::this_thread::get_id() << std::endl;
         boost::this_thread::sleep_for(boost::chrono::milliseconds(READ_THREAD_UPDATE_RATE_MS_MAX));
     } while (threadReadExecution);
@@ -93,6 +92,27 @@ void cacheGarbage(chaos::data::cache::DatasetCache *cPtr) {
     } while (threadWriteExecution);
 }
 
+void mcedbCacheUpdaterI32(chaos::data::cache::DataCache *cPtr) {
+     
+    do{
+
+        cPtr->storeItem("i32k", &i32TVal, sizeof(int32_t));
+        //std::cout << "cached int32 value->" << tmp << " on thread ->" << boost::this_thread::get_id() << std::endl;
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(WRITE_THREAD_UPDATE_RATE));
+    } while (threadWriteExecution);
+}
+
+void mcedbCacheReader(chaos::data::cache::DataCache *cPtr) {
+    do {
+        uint32_t dim = 0;
+        int32_t *val = 0;
+        cPtr->getItem("i32k", dim, (void**)&val);
+        assert(*val == i32TVal);
+        //std::cout << "read int32 value->" << readed << " on thread->" << boost::this_thread::get_id() << std::endl;
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(READ_THREAD_UPDATE_RATE_MS_MAX));
+    } while (threadReadExecution);
+}
+
 int main(int argc, const char * argv[]) {
     boost::thread_group tWriterGroup;
     boost::thread_group tGarbageGroup;
@@ -101,16 +121,18 @@ int main(int argc, const char * argv[]) {
     uint32_t bsize;
     void *buff = NULL;
     try {
+        boost::timer::cpu_timer cpuTimer;
         //test dataset chache
         std::cout << "Start DatasetCache with " << " for " << TEST_DURATION_IN_SEC << " seconds " << std::endl;
-        std::cout << "Number of writer " << 1 << std::endl;
-        std::cout << "Number of reader " << READ_THREAD_NUMBER << std::endl;
+        std::cout << "Number of writer " << 1 << " at rate of " << WRITE_THREAD_UPDATE_RATE << " ms" << std::endl;
+        std::cout << "Number of reader " << READ_THREAD_NUMBER << " at rate of " << READ_THREAD_UPDATE_RATE_MS_MAX << " ms" << std::endl;
         auto_ptr<chaos::data::cache::DatasetCache> dsCache(new chaos::data::cache::DatasetCache());
         dsCache->addChannel("ch_i32", chaos::DataType::TYPE_INT32);
         dsCache->init(NULL);
         dsCache->start();
         
         
+        cpuTimer.start();
         // allocate and start writer thread
         //tWriter.reset(new boost::thread(boost::bind(cacheUpdaterI32, dsCache.get())));
         tWriterGroup.create_thread(boost::bind(cacheUpdaterI32, dsCache.get()));
@@ -131,11 +153,19 @@ int main(int argc, const char * argv[]) {
         threadWriteExecution = false;
         tGarbageGroup.join_all();
         tWriterGroup.join_all();
+        cpuTimer.stop();
+        std::cout << cpuTimer.format() << std::endl;
         
         //deinit all cache
         dsCache->stop();
         dsCache->deinit();
+        
         std::cout << "Thread stopped and DatasetCache deinitialized" << std::endl;
+        
+        
+        std::cout << "\nStart DataCache test (Memcached embedded) with " << " for " << TEST_DURATION_IN_SEC << " seconds " << std::endl;
+        std::cout << "Number of writer " << 1 << " at rate of " << WRITE_THREAD_UPDATE_RATE << " ms" << std::endl;
+        std::cout << "Number of reader " << READ_THREAD_NUMBER << " at rate of " << READ_THREAD_UPDATE_RATE_MS_MAX << " ms" << std::endl;
         
         //test memcached implementation
         chaos::data::cache::CacheSettings settings;
@@ -148,25 +178,33 @@ int main(int argc, const char * argv[]) {
         settings.oldest_live = 0;
         settings.use_cas = 1;
         settings.preallocation = 0;
-        std::cout << "Start DataCache test (Memcached embedded)" << std::endl;
+
         auto_ptr<chaos::data::cache::DataCache> fc(new chaos::data::cache::DataCache());
         fc->init(&settings);
         fc->start();
-        fc->storeItem("key", "value", (int32_t)strlen("value"));
-        fc->getItem("key", bsize, &buff);
-        std::cout << (const char *)buff << std::endl;
         
-        fc->storeItem("key", "value2", (int32_t)strlen("value2"));
-        fc->getItem("key", bsize, &buff);
-        std::cout << (const char *)buff  << std::endl;
+        cpuTimer.start();
+        // allocate and start writer thread
+        tWriterGroup.create_thread(boost::bind(mcedbCacheUpdaterI32, fc.get()));
+        //start all reader thread
+        for (int idx = 0; idx < READ_THREAD_NUMBER; idx++) {
+            tReadersGroup.create_thread(boost::bind(mcedbCacheReader, fc.get()));
+        }
         
-        fc->deleteItem("key");
-        fc->storeItem("key", "value3", (int32_t)strlen("value3"));
-        fc->getItem("key", bsize, &buff);
-        std::cout << (const char *)buff  << std::endl;
+        boost::this_thread::sleep_for(boost::chrono::seconds(TEST_DURATION_IN_SEC));
+        threadReadExecution = false;
+        std::cout << "Stop all threads" << std::endl;
+        //join on read thread
+        tReadersGroup.join_all();
+        
+        //stop writer and garbag thread
+        threadWriteExecution = false;
+        tWriterGroup.join_all();
+        cpuTimer.stop();
+        std::cout << cpuTimer.format() << std::endl;
+        std::cout << "DataCache test ended" << std::endl;
         fc->stop();
         fc->deinit();
-        std::cout << "DataCache test ended" << std::endl;
     } catch(chaos::CException& ex) {
         std::cout << ex.what() << std::endl;
         return 1;

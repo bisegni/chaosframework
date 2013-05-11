@@ -27,7 +27,7 @@ void ChannelCache::swapRWIndex() {
     readIndex.store(writeIndex, boost::memory_order_release);
     
     //compute new write index
-    writeIndex = (writeIndex + 1) % 2;
+    writeIndex ^= 0x00000001;
 
     // put old readeable slba into garbageable index
     garbageableSlab.push(rwPtr[writeIndex]);
