@@ -25,6 +25,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		329848811736C52300C158DF /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		32BFCAB316FF1D3200C93D76 /* MemcachedEmbeddedTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MemcachedEmbeddedTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		32BFCAB616FF1D3200C93D76 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		32BFCAB816FF1D3200C93D76 /* MemcachedEmbeddedTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = MemcachedEmbeddedTest.1; sourceTree = "<group>"; };
@@ -60,6 +61,7 @@
 		32BFCAB516FF1D3200C93D76 /* MemcachedEmbeddedTest */ = {
 			isa = PBXGroup;
 			children = (
+				329848811736C52300C158DF /* CMakeLists.txt */,
 				32BFCAB616FF1D3200C93D76 /* main.cpp */,
 				32BFCAB816FF1D3200C93D76 /* MemcachedEmbeddedTest.1 */,
 			);
@@ -264,6 +266,7 @@
 				32BFCABE16FF1D3200C93D76 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

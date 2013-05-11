@@ -78,13 +78,14 @@ unsigned int ManagedMemory::getSlabIdBySize(const size_t size) {
  * Determines the chunk sizes and initializes the slab class descriptors
  * accordingly.
  */
-void ManagedMemory::init(int _chunkSize, size_t _itemMaxSize, size_t _memoryLimit, double _growFactor, int _prealloc) {
+void ManagedMemory::init(int _chunkSize, size_t _itemMaxSize, size_t _memoryLimit, double _growFactor, int _prealloc, int _fixedNumberOfSlab) {
     //setup parameter
     chunk_size = _chunkSize;
     item_size_max = _itemMaxSize;
     memoryLimit = _memoryLimit;
     growFactor = _growFactor;
     prealloc = _prealloc >= 1 ?1:0;
+    bool useFixedSlabNumber = _fixedNumberOfSlab != 0;
     
     int i = POWER_SMALLEST - 1;
     unsigned int size = chunk_size;
@@ -93,12 +94,14 @@ void ManagedMemory::init(int _chunkSize, size_t _itemMaxSize, size_t _memoryLimi
     
     memset(slabclass, 0, sizeof(slabclass));
     
+    
+    
     while (++i < POWER_LARGEST && size <= item_size_max / growFactor) {
         /* Make sure items are always n-byte aligned */
         if (size % (unsigned int)CHUNK_ALIGN_BYTES) size += (unsigned int)CHUNK_ALIGN_BYTES - (size % (unsigned int)CHUNK_ALIGN_BYTES);
         
         slabclass[i].size = size;
-        slabclass[i].perslab = (unsigned int)(item_size_max / slabclass[i].size);
+        slabclass[i].perslab = useFixedSlabNumber ? _fixedNumberOfSlab:(unsigned int)(item_size_max / slabclass[i].size);
         
         calculated_all_slabs_mem += slabclass[i].size*slabclass[i].perslab;
         
@@ -108,7 +111,7 @@ void ManagedMemory::init(int _chunkSize, size_t _itemMaxSize, size_t _memoryLimi
     
     power_largest = i;
     slabclass[power_largest].size = (unsigned int)item_size_max;
-    slabclass[power_largest].perslab = 1;
+    slabclass[power_largest].perslab = useFixedSlabNumber ? _fixedNumberOfSlab:1;
     calculated_all_slabs_mem += slabclass[power_largest].size*slabclass[power_largest].perslab;
     MM_LAPP_ <<  "slab class: "<< i <<" chunk size:" << slabclass[i].size << " perslab:" << slabclass[i].perslab;
     
@@ -135,6 +138,50 @@ void ManagedMemory::init(int _chunkSize, size_t _itemMaxSize, size_t _memoryLimi
     }
 }
 
+void ManagedMemory::init(int _chunkSize, size_t _memoryLimit, int fixedNumberOfSlabPerClass, int _prealloc) {
+    bool slabFixedNumber = fixedNumberOfSlabPerClass!=0;
+    chunk_size = _chunkSize;
+    item_size_max = 0;
+    memoryLimit = _memoryLimit;
+    growFactor = 1;
+    prealloc = _prealloc >= 1 ?1:0;
+    
+    unsigned int size = chunk_size;
+    size_t calculated_all_slabs_mem =0;
+    MM_LAPP_ <<  "usign chunk size:" << chunk_size;
+    
+    memset(slabclass, 0, sizeof(slabclass));
+    
+    /* Make sure items are always n-byte aligned */
+    if (size % (unsigned int)CHUNK_ALIGN_BYTES) size += (unsigned int)CHUNK_ALIGN_BYTES - (size % (unsigned int)CHUNK_ALIGN_BYTES);
+    
+    slabclass[POWER_SMALLEST].size = size;
+    slabclass[POWER_SMALLEST].perslab = slabFixedNumber?fixedNumberOfSlabPerClass:(unsigned int)(item_size_max / slabclass[POWER_SMALLEST].size);
+    
+    calculated_all_slabs_mem += slabclass[POWER_SMALLEST].size*slabclass[POWER_SMALLEST].perslab;
+    
+    size = (unsigned int)(size * growFactor);
+    MM_LAPP_ <<  "slab class: "<< POWER_SMALLEST <<" chunk size:" << slabclass[POWER_SMALLEST].size << " perslab:" << slabclass[POWER_SMALLEST].perslab;
+    /* Allocate everything in a big chunk with malloc */
+    if(memoryLimit <= 0) {
+        //allocate all memoryneeded by all calculated slabs
+        memoryLimit = calculated_all_slabs_mem;
+    }
+    
+    mem_base = std::malloc(memoryLimit);
+    if (mem_base != NULL) {
+        mem_current = mem_base;
+        mem_avail = memoryLimit;
+    } else {
+        MM_LERR_ <<  "Warning: Failed to allocate requested memory in one large chunk.Will allocate in smaller chunks";
+    }
+    
+    if(prealloc) {
+        do_slabs_newslab(POWER_SMALLEST);
+    }
+
+}
+
 void ManagedMemory::deinit() {
     //deallocate all slab
     if(mem_base) {
@@ -146,14 +193,18 @@ void ManagedMemory::deinit() {
 void *ManagedMemory::allocate(size_t size, unsigned int id) {
     void *ret;
     pthread_mutex_lock(&slabs_lock);
+    //while (atomicFlagLock.test_and_set(boost::memory_order_acquire)) {};
     ret = do_slabs_alloc(size, id);
+    //atomicFlagLock.clear(boost::memory_order_release);
     pthread_mutex_unlock(&slabs_lock);
     return ret;
 }
 
 void ManagedMemory::deallocate(void *ptr, size_t size, unsigned int id) {
     pthread_mutex_lock(&slabs_lock);
+    //while (atomicFlagLock.test_and_set(boost::memory_order_acquire)) {};
     do_slabs_free(ptr, size, id);
+    //atomicFlagLock.clear(boost::memory_order_release);
     pthread_mutex_unlock(&slabs_lock);
 }
 

@@ -8,9 +8,13 @@ pushd `dirname $0` > /dev/null
 SCRIPTPATH=`pwd -P`
 popd > /dev/null
 
+OS=$(uname -s)
+ARCH=$(uname -m)
+KERNEL_VER=$(uname -r)
+KERNEL_SHORT_VER=$(uname -r|cut -d\- -f1|tr -d '.'| tr -d '[A-Z][a-z]')
 BOOST_VERSION=1_53_0
 BOOST_VERSION_IN_PATH=1.53.0
-LMEM_VERSION=1.0.14
+LMEM_VERSION=1.0.16
 CHAOS_DIR=$SCRIPTPATH
 BASE_EXTERNAL=$CHAOS_DIR/external
 PREFIX=$CHAOS_DIR/usr/local
@@ -26,6 +30,10 @@ export CXXFLAGS="-m32 -arch i386"
 echo "Force 32 bit binaries"
 fi
 
+echo "Operating system version: $OS"
+echo "Current architecture: $ARCH"
+echo "Current kernel version: $KERNEL_VER"
+echo "Current short kernel version: $KERNEL_SHORT_VER"
 echo "Using $CHAOS_DIR as chaos folder"
 echo "Using $BASE_EXTERNAL as external library folder"
 echo "Using $PREFIX as prefix folder"
@@ -77,9 +85,9 @@ if [ ! -d "$PREFIX/include/boost" ]; then
     echo "Compile and install boost libraries into $PREFIX/"
 if [ -n "$CHAOS32" ]; then
     	echo "INSTALLING BOOST X86 32"
-    	./b2 cflags=-m32 cxxflags=-m32 architecture=x86 address-model=32 --prefix=$PREFIX link=shared --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread install
+    	./b2 cflags=-m32 cxxflags=-m32 architecture=x86 address-model=32 --prefix=$PREFIX link=shared --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread --with-atomic install
     else
-    	./b2 --prefix=$PREFIX link=shared --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread install
+    	./b2 --prefix=$PREFIX link=shared --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread --with-atomic install
     fi
 else
     echo "Boost Already present"
@@ -103,7 +111,8 @@ make install
 
 if [ ! -d "$BASE_EXTERNAL/mpio" ]; then
     echo "Install mpio"
-    git clone https://github.com/frsyuki/mpio.git $BASE_EXTERNAL/mpio
+#    git clone https://github.com/frsyuki/mpio.git $BASE_EXTERNAL/mpio
+    git clone https://github.com/bisegni/mpio.git $BASE_EXTERNAL/mpio
     cd $BASE_EXTERNAL/mpio
 else
     echo "Update mpio"
@@ -111,7 +120,11 @@ else
     git pull
 fi
 ./bootstrap
+if [ $KERNEL_SHORT_VER -gt $("2625") ]; then
 ./configure --prefix=$PREFIX
+else
+./configure --disable-timerfd --disable-signalfd --prefix=$PREFIX
+fi
 make clean
 make
 make install
@@ -135,7 +148,8 @@ make install
 
 if [ ! -f "$BASE_EXTERNAL/libevent" ]; then
     echo "Installing LibEvent"
-    git clone git://levent.git.sourceforge.net/gitroot/levent/libevent $BASE_EXTERNAL/libevent
+#    git clone git://levent.git.sourceforge.net/gitroot/levent/libevent $BASE_EXTERNAL/libevent
+    git clone http://git.code.sf.net/p/levent/libevent $BASE_EXTERNAL/libevent
     cd $BASE_EXTERNAL/libevent
 else
     cd $BASE_EXTERNAL/libevent
@@ -148,11 +162,11 @@ make
 make install
 
 if [ ! -d "$PREFIX/include/libmemcached" ]; then
-    echo "Install libmemcached into  $BASE_EXTERNAL/libmemcached-1.0.12"
+    echo "Install libmemcached into  $BASE_EXTERNAL/libmemcached"
     wget --no-check-certificate -O $BASE_EXTERNAL/libmemcached.tar.gz https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz
     tar zxvf $BASE_EXTERNAL/libmemcached.tar.gz -C $BASE_EXTERNAL
     cd $BASE_EXTERNAL/libmemcached-$LMEM_VERSION
-    ./configure --disable-sasl --prefix=$PREFIX
+    ./configure --disable-sasl --without-memcached --prefix=$PREFIX
     make clean
     make
     make install

@@ -41,6 +41,11 @@ ISDInterface::~ISDInterface() {
     
 }
 
+//! Return the state
+ISDInterface::ISDState& ISDInterface::getISDState() {
+    return isdState;
+}
+
 /*!
  */
 bool ISDInterface::initImplementation(ISDInterface *impl, void *initData, const char * const implName,  const char * const domainString)  {

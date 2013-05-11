@@ -51,27 +51,6 @@ if ((i)->it_flags & ITEM_CAS) { \
 + (item)->nsuffix + (item)->nbytes \
 + (((item)->it_flags & ITEM_CAS) ? sizeof(uint64_t) : 0))
             
-            
-            /**
-             * Constructor used to initialize allocated objects
-             *
-             * @param obj pointer to the object to initialized.
-             * @param notused1 This parameter is currently not used.
-             * @param notused2 This parameter is currently not used.
-             * @return you should return 0, but currently this is not checked
-             */
-            typedef int cache_constructor_t(void* obj, void* notused1, int notused2);
-            /**
-             * Destructor used to clean up allocated objects before they are
-             * returned to the operating system.
-             *
-             * @param obj pointer to the object to initialized.
-             * @param notused1 This parameter is currently not used.
-             * @param notused2 This parameter is currently not used.
-             * @return you should return 0, but currently this is not checked
-             */
-            typedef void cache_destructor_t(void* obj, void* notused);
-            
             /**
              * Structure for storing items within memcached.
              */
@@ -98,31 +77,6 @@ if ((i)->it_flags & ITEM_CAS) { \
                 /* then " flags length\r\n" (no terminating null) */
                 /* then data with terminating \r\n (no terminating null; it's binary!) */
             } item;
-            
-            
-            /**
-             * Definition of the structure to keep track of the internal details of
-             * the cache allocator. Touching any of these variables results in
-             * undefined behavior.
-             */
-            typedef struct {
-                /** Mutex to protect access to the structure */
-                pthread_mutex_t mutex;
-                /** Name of the cache objects in this cache (provided by the caller) */
-                char *name;
-                /** List of pointers to available buffers in this cache */
-                void **ptr;
-                /** The size of each element in this cache */
-                size_t bufsize;
-                /** The capacity of the list of elements */
-                int freetotal;
-                /** The current number of free elements */
-                int freecurr;
-                /** The constructor to be called each time we allocate more memory */
-                cache_constructor_t* constructor;
-                /** The destructor to be called each time before we release memory */
-                cache_destructor_t* destructor;
-            } cache_t;
             
             typedef struct settings {
                 size_t maxbytes;

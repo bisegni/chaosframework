@@ -17,6 +17,7 @@
 #endif
 
 #include <chaos/common/bson/bson.h>
+#include <chaos/common/data/BsonFragment.h>
 #include <chaos/common/data/CDataWrapper.h>
 
 int diff(struct timespec* ts_prev, struct timespec* ts){
@@ -39,9 +40,10 @@ void current_utc_time(struct timespec *ts) {
     
 }
 
-int main(int argc, const char * argv[])
-{
-    
+
+int main(int argc, const char * argv[]) {
+    chaos::data::BsonFragment bFragment;
+
     // insert code here...
     timespec prevTS = {0,0};
     timespec ts = {0,0};
@@ -50,6 +52,16 @@ int main(int argc, const char * argv[])
     int32_t i32Max, i32Min = 0;
     uint32_t ui32Max, ui32Min = 0;
     std::string strvalue;
+
+    uint32_t fragmentDimension = 0;
+    
+    bFragment.append("ui64_max", static_cast<int64_t>(ui64Max = std::numeric_limits<uint64_t>::max()));
+    const char *fragmentPtr = bFragment.getFragmentPtr(fragmentDimension);
+    
+    bFragment.append("ui32_max", static_cast<int32_t>(ui32Max = std::numeric_limits<uint32_t>::max()));
+    fragmentPtr = bFragment.getFragmentPtr(fragmentDimension);
+
+    
     current_utc_time(&prevTS);
     
     // for (int i = 0; i < 10000; i++) {
@@ -77,8 +89,8 @@ int main(int argc, const char * argv[])
     // }
     current_utc_time(&ts);
     int d = diff(&prevTS, &ts);
-    printf("%d.%d\n", prevTS.tv_sec, prevTS.tv_nsec / 1000000);
-    printf("%d.%d (%d)\n", ts.tv_sec, ts.tv_nsec / 1000000, d);
+    printf("%ld.%ld\n", prevTS.tv_sec, prevTS.tv_nsec / 1000000);
+    printf("%ld.%ld (%d)\n", ts.tv_sec, ts.tv_nsec / 1000000, d);
     current_utc_time(&prevTS);
     //test CDataWrapper
     

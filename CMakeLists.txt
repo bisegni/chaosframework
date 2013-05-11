@@ -10,9 +10,9 @@ OPTION( BUILD_PREFIX "Build Prefix" usr/local/lib )
 
 EXECUTE_PROCESS(COMMAND chaos/common/version.sh)
 
-INCLUDE_DIRECTORIES(. ${BUILD_PREFIX}/include /usr/local/include /usr/include) 
+INCLUDE_DIRECTORIES(. ${PROJECT_SOURCE_DIR}/usr/local/include /usr/local/include /usr/include) 
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/usr/local/lib /usr/local/lib /usr/lib)
-ADD_DEFINITIONS(-g -O2 -Wall)
+ADD_DEFINITIONS(-O3 -Wall)
     
 IF( BUILD_FORCE_32 ) 
     MESSAGE( STATUS "Forcing 32 bit compilation" )
@@ -112,3 +112,6 @@ ADD_SUBDIRECTORY(example/UIToolkitCMDLineCWrapperExample bin/bin_example_uicmdli
 
 message(STATUS "Configure BenchTest simulation excutable")
 ADD_SUBDIRECTORY(example/BenchTest bin/bench_test)
+
+message(STATUS "Configure ChaosMemCacheTest test excutable")
+ADD_SUBDIRECTORY(test/MemcachedEmbeddedTest/MemcachedEmbeddedTest bin/memcache_test)

@@ -46,6 +46,14 @@ namespace bson {
         See also the BSON() and BSON_ARRAY() macros.
     */
     class BSONObjBuilder : public BSONBuilderBase, private boost::noncopyable {
+    protected:
+        /** @param initsize this is just a hint as to the final size of the object */
+        BSONObjBuilder(bool partialBSON, int initsize) : _b(_buf), _buf(initsize + sizeof(unsigned)), _offset( sizeof(unsigned) ), _s( this ) , _tracker(0) , _doneCalled(false) {
+            if(!partialBSON) {
+                _b.appendNum((unsigned)0); // ref-count
+                _b.skip(4); /*leave room for size field and ref-count*/
+            }
+        }
     public:
         /** @param initsize this is just a hint as to the final size of the object */
         BSONObjBuilder(int initsize=512) : _b(_buf), _buf(initsize + sizeof(unsigned)), _offset( sizeof(unsigned) ), _s( this ) , _tracker(0) , _doneCalled(false) {
@@ -612,7 +620,7 @@ namespace bson {
         void decouple() {
             _b.decouple();    // post done() call version.  be sure jsobj frees...
         }
-
+        
         void appendKeys( const BSONObj& keyPattern , const BSONObj& values );
 
         static std::string numStr( int i ) {
@@ -669,6 +677,9 @@ namespace bson {
 
         BufBuilder& bb() { return _b; }
 
+    protected:
+        BufBuilder &_b;
+            
     private:
         char* _done() {
             if ( _doneCalled )
@@ -685,7 +696,7 @@ namespace bson {
             return data;
         }
 
-        BufBuilder &_b;
+        //BufBuilder &_b;
         BufBuilder _buf;
         int _offset;
         BSONObjBuilderValueStream _s;

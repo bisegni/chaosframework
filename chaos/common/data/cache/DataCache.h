@@ -26,13 +26,17 @@ namespace chaos {
             typedef  unsigned long  int  ub4;   /* unsigned 4-byte quantities */
             typedef  unsigned       char ub1;   /* unsigned 1-byte quantities */
             /** Maximum length of a key. */
+            
             #define hashsize(n) ((ub4)1<<(n))
             #define hashmask(n) (hashsize(n)-1)
             
             #define LARGEST_ID POWER_LARGEST
             
-            
-            class DataCache : public FastHash, memory::ManagedMemory, utility::ISDInterface  {
+            //! Memcached mebedded implementation
+            /*!
+             This class is the embedded version of memcached, all code for networking has been keeped out.
+             */
+            class DataCache : private FastHash, private memory::ManagedMemory, protected utility::ISDInterface  {
                 
                 /* current time of day (updated periodically) */
                 volatile rel_time_t current_time;
@@ -76,7 +80,7 @@ namespace chaos {
                 static void* maintenance_thread(void *arg);
                 
                 item** _hashitem_before(const char *key, const size_t nkey);
-
+                
                 
                 /* grows the hashtable to the next power of 2. */
                 void assoc_expand(void);
@@ -100,56 +104,6 @@ namespace chaos {
                 void do_item_flush_expired(void);
                 item *do_item_get_nocheck(const char *key, const size_t nkey);
                 void item_stats_reset(void);
-                /**
-                 * Create an object cache.
-                 *
-                 * The object cache will let you allocate objects of the same size. It is fully
-                 * MT safe, so you may allocate objects from multiple threads without having to
-                 * do any syncrhonization in the application code.
-                 *
-                 * @param name the name of the object cache. This name may be used for debug purposes
-                 *             and may help you track down what kind of object you have problems with
-                 *             (buffer overruns, leakage etc)
-                 * @param bufsize the size of each object in the cache
-                 * @param align the alignment requirements of the objects in the cache.
-                 * @param constructor the function to be called to initialize memory when we need
-                 *                    to allocate more memory from the os.
-                 * @param destructor the function to be called before we release the memory back
-                 *                   to the os.
-                 * @return a handle to an object cache if successful, NULL otherwise.
-                 */
-                cache_t* cache_create(const char* name, size_t bufsize, size_t align,
-                                      cache_constructor_t* constructor,
-                                      cache_destructor_t* destructor);
-                /**
-                 * Destroy an object cache.
-                 *
-                 * Destroy and invalidate an object cache. You should return all buffers allocated
-                 * with cache_alloc by using cache_free before calling this function. Not doing
-                 * so results in undefined behavior (the buffers may or may not be invalidated)
-                 *
-                 * @param handle the handle to the object cache to destroy.
-                 */
-                void cache_destroy(cache_t* handle);
-                /**
-                 * Allocate an object from the cache.
-                 *
-                 * @param handle the handle to the object cache to allocate from
-                 * @return a pointer to an initialized object from the cache, or NULL if
-                 *         the allocation cannot be satisfied.
-                 */
-                void* cache_alloc(cache_t* handle);
-                /**
-                 * Return an object back to the cache.
-                 *
-                 * The caller should return the object in an initialized state so that
-                 * the object may be returned in an expected state from cache_alloc.
-                 *
-                 * @param handle handle to the object cache to return the object to
-                 * @param ptr pointer to the object to return.
-                 */
-                void cache_free(cache_t* handle, void* ptr);
-                
             protected:
                 CacheSettings settings;
                 pthread_t maintenance_tid;
@@ -164,14 +118,14 @@ namespace chaos {
                 inline item *assoc_find(const char *key, const size_t nkey);
                 inline item *do_item_alloc(const char *key, const size_t nkey, const int flags, const rel_time_t exptime, const int nbytes);
                 inline item *do_item_get(const char *key, const size_t nkey);
-
+                
             public:
                 
                 //!Constructor
                 DataCache();
                 
                 //!Destructor
-                ~DataCache();
+                virtual ~DataCache();
                 
                 //! Initialize instance
                 void init(void* initParam) throw(chaos::CException);
@@ -186,13 +140,16 @@ namespace chaos {
                 void deinit() throw(chaos::CException);
                 
                 //! get item
-                int getItem(const char *key, int32_t& buffLen, void **returnBuffer);
+                virtual int getItem(const char *key, uint32_t& buffLen, void **returnBuffer);
                 
                 //! store item
-                int storeItem(const char *key, const void *buffer, int32_t bufferLen);
+                virtual int storeItem(const char *key, const void *buffer, uint32_t bufferLen);
                 
                 //! delete item
-                int deleteItem(const char *key);
+                virtual int deleteItem(const char *key);
+                
+                //! check if an item is present
+                virtual bool isItemPresent(const char *key);
             };
             
         }

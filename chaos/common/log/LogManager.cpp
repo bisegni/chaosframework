@@ -31,39 +31,66 @@
 
 #include "LogManager.h"
 
-#define BASE_LOG_FORMAT "[%TimeStamp%]: %_%"
+#define BASE_LOG_FORMAT         "[%TimeStamp%][%Severity%]: %_%"
+#define EXTENDEND_LOG_FORMAT    "[%TimeStamp%][%Severity%][%ProcessID%][%ThreadID%]: %_%"
 
 using namespace chaos;
+using namespace chaos::log;
 namespace logging = boost::BOOST_LOG_NAMESPACE;
 namespace fmt = boost::log::formatters;
 
+std::ostream& operator<<(std::ostream& out, const level::LogSeverityLevel& level )
+{
+    switch (level)
+    {
+        case level::LSLDebug:
+            out << "DEBUG";
+            break;
+        case level::LSLInfo:
+            out << "INFO";
+            break;
+        case level::LSLError:
+            out << "ERROR";
+            break;
+        case level::LSLFatal:
+            out << "FATAL";
+            break;
+    }
+    return out;
+}
+
 void LogManager::init() throw(CException) {
-    bool logOnConsole = GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_CONSOLE);
-    bool logOnFile = GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_FILE);
-    string logFileName = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_FILE);
     
+    //get the log configuration
+    level::LogSeverityLevel     logLevel        = static_cast<level::LogSeverityLevel>(GlobalConfiguration::getInstance()->getConfiguration()->getInt32Value(InitOption::OPT_LOG_LEVEL));
+    bool                        logOnConsole    = GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_CONSOLE);
+    bool                        logOnFile       = GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_FILE);
+    string                      logFileName     = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_FILE);
+    
+    boost::log::add_common_attributes();
+    
+    boost::shared_ptr< logging::core > pCore = boost::log::core::get();
+    
+    logging::register_simple_formatter_factory< level::LogSeverityLevel  >("Severity");
+    logging::core::get()->set_filter(logging::filters::attr< level::LogSeverityLevel >("Severity") >= logLevel);
     
     if(logOnConsole){
-        logging::init_log_to_console(std::clog,
-                                     logging::keywords::format = BASE_LOG_FORMAT); //(format=\"%y-%m-%d %H:%M:%S\")
+        logging::init_log_to_console(std::clog, logging::keywords::format = EXTENDEND_LOG_FORMAT);
     }
     
     if(logOnFile){
-        logging::init_log_to_file
-        (
-         logging::keywords::file_name = logFileName,                  // file name pattern
-         logging::keywords::rotation_size = 10 * 1024 * 1024,         // rotate files every 10 MiB...
-         // ...or at midnight
-         logging::keywords::time_based_rotation = logging::sinks::file::rotation_at_time_point(0, 0, 0),
-         logging::keywords::format = BASE_LOG_FORMAT);//(format=\"%y-%m-%d %H:%M:%S\")
+        logging::init_log_to_file(logging::keywords::file_name = logFileName,                  // file name pattern
+                                  logging::keywords::rotation_size = 10 * 1024 * 1024,         // rotate files every 10 MiB...
+                                  logging::keywords::time_based_rotation = logging::sinks::file::rotation_at_time_point(0, 0, 0),// ...or at midnight
+                                  logging::keywords::format = EXTENDEND_LOG_FORMAT,
+                                  logging::keywords::auto_flush=true);
     }
     
-        //enable the log in case of needs
-        //boost::log::add_common_attributes();
-    boost::log::core::get()->set_logging_enabled(logOnConsole || logOnFile);
-    boost::log::core::get()->add_global_attribute("TimeStamp", boost::make_shared< logging::attributes::local_clock >());
-    /*
-     if(logOnConsole || logOnFile) {
-     logging::core::get()->set_filter (logging::filters::attr< logging::trivial::severity_level >("Severity") >= logging::trivial::info);
-     }*/
+    //enable the log in case of needs
+    //boost::log::add_common_attributes();
+    pCore->set_logging_enabled(logOnConsole || logOnFile);
+
+
+
+
  }

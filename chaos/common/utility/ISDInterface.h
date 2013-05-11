@@ -36,6 +36,9 @@ namespace chaos {
              */
             ~ISDInterface();
             
+                //! Return the state
+            ISDState &getISDState();
+            
                 //! Initialize instance
             virtual void init(void*) throw(chaos::CException) = 0;
             
