@@ -6,7 +6,6 @@ SET( ${PROJECT_NAME}_MINOR_VERSION 1 )
 SET( ${PROJECT_NAME}_PATCH_LEVEL 0 )
 
 OPTION( BUILD_FORCE_32 "Force 32 bit compilation" OFF )
-OPTION( BUILD_PREFIX "Build Prefix" usr/local/lib )
 
 EXECUTE_PROCESS(COMMAND chaos/common/version.sh)
 
@@ -21,7 +20,11 @@ IF( BUILD_FORCE_32 )
     set (CMAKE_LINK_FLAGS "-m32 -march=i686")
 ENDIF()
 
+IF(NOT BUILD_PREFIX)
+set (BUILD_PREFIX usr/local)
+ENDIF()
 
+message(STATUS "Using ${BUILD_PREFIX} as installation directory")
 
 find_library(BOOST_PO boost_program_options PATHS ${BUILD_PREFIX}/lib,/usr/lib,/usr/local/lib DOC "boost_program_options library")
 if(NOT BOOST_PO)
@@ -101,7 +104,10 @@ ADD_SUBDIRECTORY(ChaosNodeDirectory bin/bin_cnd)
 message(STATUS "Configure Chaos HST Service")
 ADD_SUBDIRECTORY(ChaosHSTService bin/bin_chst)
 
-message(STATUS "Configure Control Unit Test example")
+message(STATUS "Configure chaosDeviceDriver (chaosDD) library")
+ADD_SUBDIRECTORY(chaosDeviceDriver bin/bin_dd)
+
+message(STATUS "Configure Control Unit Test examples")
 ADD_SUBDIRECTORY(example/ControlUnitTest bin/bin_example_cutest)
 
 message(STATUS "Configure UIToolkit command line example")
@@ -115,3 +121,4 @@ ADD_SUBDIRECTORY(example/BenchTest bin/bench_test)
 
 message(STATUS "Configure ChaosMemCacheTest test excutable")
 ADD_SUBDIRECTORY(test/MemcachedEmbeddedTest/MemcachedEmbeddedTest bin/memcache_test)
+
