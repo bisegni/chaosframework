@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		32943668174400A7002A2BDA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32943667174400A7002A2BDA /* main.cpp */; };
+		3294366917440100002A2BDA /* SWAlim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53AD03C7173013A10058E5A6 /* SWAlim.cpp */; };
+		3294366A17440106002A2BDA /* TcpChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5356D32A1726B7F900362426 /* TcpChannel.cpp */; };
+		3294366B17440109002A2BDA /* ModbusProtocol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53962F6D1727DA790051032A /* ModbusProtocol.cpp */; };
+		3294366C1744010D002A2BDA /* basichw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5356D322171EB52200362426 /* basichw.cpp */; };
+		3294366D1744010F002A2BDA /* ProtocolDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5356D326171FD54600362426 /* ProtocolDriver.cpp */; };
+		3294366E17440112002A2BDA /* device_proxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5356D31F171EB4AD00362426 /* device_proxy.cpp */; };
+		3294366F17440115002A2BDA /* CommunicationChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5356D31A171EB3C900362426 /* CommunicationChannel.cpp */; };
+		3294367017440118002A2BDA /* attribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5356D316171EA13B00362426 /* attribute.cpp */; };
 		5356D318171EA13B00362426 /* attribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5356D316171EA13B00362426 /* attribute.cpp */; };
 		5356D319171EA13B00362426 /* attribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 5356D317171EA13B00362426 /* attribute.h */; settings = {ATTRIBUTES = (); }; };
 		5356D31C171EB3C900362426 /* CommunicationChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5356D31A171EB3C900362426 /* CommunicationChannel.cpp */; };
@@ -19,16 +28,11 @@
 		5356D329171FD54600362426 /* ProtocolDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 5356D327171FD54600362426 /* ProtocolDriver.h */; settings = {ATTRIBUTES = (); }; };
 		5356D32C1726B7F900362426 /* TcpChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5356D32A1726B7F900362426 /* TcpChannel.cpp */; };
 		5356D32D1726B7F900362426 /* TcpChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5356D32B1726B7F900362426 /* TcpChannel.h */; settings = {ATTRIBUTES = (); }; };
-		5356D32F1726E85500362426 /* libboost_system-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5356D32E1726E85500362426 /* libboost_system-mt.dylib */; };
-		5381FF9A1737DDF6000777D6 /* libcurses.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5381FF991737DDF6000777D6 /* libcurses.dylib */; };
 		53962F6F1727DA790051032A /* ModbusProtocol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53962F6D1727DA790051032A /* ModbusProtocol.cpp */; };
 		53962F701727DA790051032A /* ModbusProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 53962F6E1727DA790051032A /* ModbusProtocol.h */; settings = {ATTRIBUTES = (); }; };
-		53AD03C1173013420058E5A6 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53AD03C0173013420058E5A6 /* main.cpp */; };
-		53AD03C3173013420058E5A6 /* testSWAlim.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 53AD03C2173013420058E5A6 /* testSWAlim.1 */; };
 		53AD03C9173013A10058E5A6 /* SWAlim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53AD03C7173013A10058E5A6 /* SWAlim.cpp */; };
 		53AD03CA173013A10058E5A6 /* SWAlim.h in Headers */ = {isa = PBXBuildFile; fileRef = 53AD03C8173013A10058E5A6 /* SWAlim.h */; settings = {ATTRIBUTES = (); }; };
-		53AD03CB173278270058E5A6 /* libchaosDeviceDriver.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5356D30B171DAB9100362426 /* libchaosDeviceDriver.dylib */; };
-		53D96ECA17329AF40051E7B7 /* libboost_system-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5356D32E1726E85500362426 /* libboost_system-mt.dylib */; };
+		53AD03CB173278270058E5A6 /* libchaosDD.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5356D30B171DAB9100362426 /* libchaosDD.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,14 +61,15 @@
 			dstPath = usr/share/man/man1;
 			dstSubfolderSpec = 0;
 			files = (
-				53AD03C3173013420058E5A6 /* testSWAlim.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		5356D30B171DAB9100362426 /* libchaosDeviceDriver.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaosDeviceDriver.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		32943667174400A7002A2BDA /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		3294367117440EC2002A2BDA /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		5356D30B171DAB9100362426 /* libchaosDD.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaosDD.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		5356D316171EA13B00362426 /* attribute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = attribute.cpp; sourceTree = "<group>"; };
 		5356D317171EA13B00362426 /* attribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = attribute.h; sourceTree = "<group>"; };
 		5356D31A171EB3C900362426 /* CommunicationChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommunicationChannel.cpp; sourceTree = "<group>"; };
@@ -77,14 +82,10 @@
 		5356D327171FD54600362426 /* ProtocolDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProtocolDriver.h; sourceTree = "<group>"; };
 		5356D32A1726B7F900362426 /* TcpChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TcpChannel.cpp; sourceTree = "<group>"; };
 		5356D32B1726B7F900362426 /* TcpChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TcpChannel.h; sourceTree = "<group>"; };
-		5356D32E1726E85500362426 /* libboost_system-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_system-mt.dylib"; path = "../../../../opt/local/lib/libboost_system-mt.dylib"; sourceTree = "<group>"; };
-		5381FF991737DDF6000777D6 /* libcurses.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurses.dylib; path = usr/lib/libcurses.dylib; sourceTree = SDKROOT; };
 		53962F6D1727DA790051032A /* ModbusProtocol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModbusProtocol.cpp; sourceTree = "<group>"; };
 		53962F6E1727DA790051032A /* ModbusProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModbusProtocol.h; sourceTree = "<group>"; };
 		53962F711727DBD90051032A /* DriverUID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DriverUID.h; sourceTree = "<group>"; };
 		53AD03BE173013420058E5A6 /* testSWAlim */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testSWAlim; sourceTree = BUILT_PRODUCTS_DIR; };
-		53AD03C0173013420058E5A6 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		53AD03C2173013420058E5A6 /* testSWAlim.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = testSWAlim.1; sourceTree = "<group>"; };
 		53AD03C7173013A10058E5A6 /* SWAlim.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SWAlim.cpp; sourceTree = "<group>"; };
 		53AD03C8173013A10058E5A6 /* SWAlim.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWAlim.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -94,7 +95,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5356D32F1726E85500362426 /* libboost_system-mt.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,9 +102,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5381FF9A1737DDF6000777D6 /* libcurses.dylib in Frameworks */,
-				53D96ECA17329AF40051E7B7 /* libboost_system-mt.dylib in Frameworks */,
-				53AD03CB173278270058E5A6 /* libchaosDeviceDriver.dylib in Frameworks */,
+				53AD03CB173278270058E5A6 /* libchaosDD.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -114,11 +112,10 @@
 		5356D302171DAB9100362426 = {
 			isa = PBXGroup;
 			children = (
-				5381FF991737DDF6000777D6 /* libcurses.dylib */,
+				3294367117440EC2002A2BDA /* CMakeLists.txt */,
 				53AD03C7173013A10058E5A6 /* SWAlim.cpp */,
 				53AD03C8173013A10058E5A6 /* SWAlim.h */,
 				53962F711727DBD90051032A /* DriverUID.h */,
-				5356D32E1726E85500362426 /* libboost_system-mt.dylib */,
 				5356D32A1726B7F900362426 /* TcpChannel.cpp */,
 				5356D32B1726B7F900362426 /* TcpChannel.h */,
 				53962F6D1727DA790051032A /* ModbusProtocol.cpp */,
@@ -133,7 +130,7 @@
 				5356D31B171EB3C900362426 /* CommunicationChannel.h */,
 				5356D316171EA13B00362426 /* attribute.cpp */,
 				5356D317171EA13B00362426 /* attribute.h */,
-				53AD03BF173013420058E5A6 /* testSWAlim */,
+				32943667174400A7002A2BDA /* main.cpp */,
 				5356D30C171DAB9100362426 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -141,19 +138,10 @@
 		5356D30C171DAB9100362426 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				5356D30B171DAB9100362426 /* libchaosDeviceDriver.dylib */,
+				5356D30B171DAB9100362426 /* libchaosDD.dylib */,
 				53AD03BE173013420058E5A6 /* testSWAlim */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		53AD03BF173013420058E5A6 /* testSWAlim */ = {
-			isa = PBXGroup;
-			children = (
-				53AD03C0173013420058E5A6 /* main.cpp */,
-				53AD03C2173013420058E5A6 /* testSWAlim.1 */,
-			);
-			path = testSWAlim;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -177,9 +165,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		5356D30A171DAB9100362426 /* chaosDeviceDriver */ = {
+		5356D30A171DAB9100362426 /* chaosDD */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 5356D30F171DAB9100362426 /* Build configuration list for PBXNativeTarget "chaosDeviceDriver" */;
+			buildConfigurationList = 5356D30F171DAB9100362426 /* Build configuration list for PBXNativeTarget "chaosDD" */;
 			buildPhases = (
 				5356D307171DAB9100362426 /* Sources */,
 				5356D308171DAB9100362426 /* Frameworks */,
@@ -189,9 +177,9 @@
 			);
 			dependencies = (
 			);
-			name = chaosDeviceDriver;
+			name = chaosDD;
 			productName = chaosDeviceDriver;
-			productReference = 5356D30B171DAB9100362426 /* libchaosDeviceDriver.dylib */;
+			productReference = 5356D30B171DAB9100362426 /* libchaosDD.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		53AD03BD173013420058E5A6 /* testSWAlim */ = {
@@ -222,7 +210,7 @@
 				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = "andrea michelotti";
 			};
-			buildConfigurationList = 5356D306171DAB9100362426 /* Build configuration list for PBXProject "chaosDeviceDriver" */;
+			buildConfigurationList = 5356D306171DAB9100362426 /* Build configuration list for PBXProject "ChaosDeviceDriver" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -234,7 +222,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				5356D30A171DAB9100362426 /* chaosDeviceDriver */,
+				5356D30A171DAB9100362426 /* chaosDD */,
 				53AD03BD173013420058E5A6 /* testSWAlim */,
 			);
 		};
@@ -260,7 +248,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				53AD03C1173013420058E5A6 /* main.cpp in Sources */,
+				32943668174400A7002A2BDA /* main.cpp in Sources */,
+				3294366917440100002A2BDA /* SWAlim.cpp in Sources */,
+				3294366A17440106002A2BDA /* TcpChannel.cpp in Sources */,
+				3294366B17440109002A2BDA /* ModbusProtocol.cpp in Sources */,
+				3294366C1744010D002A2BDA /* basichw.cpp in Sources */,
+				3294366D1744010F002A2BDA /* ProtocolDriver.cpp in Sources */,
+				3294366E17440112002A2BDA /* device_proxy.cpp in Sources */,
+				3294366F17440115002A2BDA /* CommunicationChannel.cpp in Sources */,
+				3294367017440118002A2BDA /* attribute.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,7 +265,7 @@
 /* Begin PBXTargetDependency section */
 		53AD03CD173278300058E5A6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 5356D30A171DAB9100362426 /* chaosDeviceDriver */;
+			target = 5356D30A171DAB9100362426 /* chaosDD */;
 			targetProxy = 53AD03CC173278300058E5A6 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -298,6 +294,7 @@
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -325,6 +322,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -337,12 +335,37 @@
 		5356D310171DAB9100362426 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				EXECUTABLE_PREFIX = lib;
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
-				HEADER_SEARCH_PATHS = /opt/local/include;
-				LIBRARY_SEARCH_PATHS = /opt/local/lib;
-				PRIVATE_HEADERS_FOLDER_PATH = usr/local/include;
+				HEADER_SEARCH_PATHS = (
+					../../,
+					../../usr/local/include,
+					/usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug",
+					"$(SRCROOT)/../../usr/local/lib",
+					/usr/local/lib,
+				);
+				OTHER_LDFLAGS = (
+					"-lboost_chrono",
+					"-lmemcached",
+					"-lboost_system",
+					"-lboost_thread",
+					"-lboost_program_options",
+					"-lboost_regex",
+					"-lboost_filesystem",
+					"-lmpio",
+					"-lmsgpack",
+					"-lmsgpack-rpc",
+					"-lboost_log",
+					"-lboost_log_setup",
+					"-lchaos_cutoolkit",
+					"-lchaos_common",
+				);
+				PRIVATE_HEADERS_FOLDER_PATH = "
+";
 				PRODUCT_NAME = chaosDD;
 			};
 			name = Debug;
@@ -350,12 +373,37 @@
 		5356D311171DAB9100362426 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = YES;
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				EXECUTABLE_PREFIX = lib;
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
-				HEADER_SEARCH_PATHS = /opt/local/include;
-				LIBRARY_SEARCH_PATHS = /opt/local/lib;
-				PRIVATE_HEADERS_FOLDER_PATH = usr/local/include;
+				HEADER_SEARCH_PATHS = (
+					../../,
+					../../usr/local/include,
+					/usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug",
+					"$(SRCROOT)/../../usr/local/lib",
+					/usr/local/lib,
+				);
+				OTHER_LDFLAGS = (
+					"-lboost_chrono",
+					"-lmemcached",
+					"-lboost_system",
+					"-lboost_thread",
+					"-lboost_program_options",
+					"-lboost_regex",
+					"-lboost_filesystem",
+					"-lmpio",
+					"-lmsgpack",
+					"-lmsgpack-rpc",
+					"-lboost_log",
+					"-lboost_log_setup",
+					"-lchaos_cutoolkit",
+					"-lchaos_common",
+				);
+				PRIVATE_HEADERS_FOLDER_PATH = "
+";
 				PRODUCT_NAME = chaosDD;
 			};
 			name = Release;
@@ -364,9 +412,33 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
-				HEADER_SEARCH_PATHS = /opt/local/include;
-				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				HEADER_SEARCH_PATHS = (
+					../../,
+					../../usr/local/include,
+					/usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug",
+					"$(SRCROOT)/../../usr/local/lib",
+					/usr/local/lib,
+				);
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"-lboost_chrono",
+					"-lmemcached",
+					"-lboost_system",
+					"-lboost_thread",
+					"-lboost_program_options",
+					"-lboost_regex",
+					"-lboost_filesystem",
+					"-lmpio",
+					"-lmsgpack",
+					"-lmsgpack-rpc",
+					"-lboost_log",
+					"-lboost_log_setup",
+					"-lchaos_cutoolkit",
+					"-lchaos_common",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -375,9 +447,33 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GCC_VERSION = com.apple.compilers.llvmgcc42;
-				HEADER_SEARCH_PATHS = /opt/local/include;
-				LIBRARY_SEARCH_PATHS = /opt/local/lib;
+				HEADER_SEARCH_PATHS = (
+					../../,
+					../../usr/local/include,
+					/usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug",
+					"$(SRCROOT)/../../usr/local/lib",
+					/usr/local/lib,
+				);
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = (
+					"-lboost_chrono",
+					"-lmemcached",
+					"-lboost_system",
+					"-lboost_thread",
+					"-lboost_program_options",
+					"-lboost_regex",
+					"-lboost_filesystem",
+					"-lmpio",
+					"-lmsgpack",
+					"-lmsgpack-rpc",
+					"-lboost_log",
+					"-lboost_log_setup",
+					"-lchaos_cutoolkit",
+					"-lchaos_common",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -385,7 +481,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5356D306171DAB9100362426 /* Build configuration list for PBXProject "chaosDeviceDriver" */ = {
+		5356D306171DAB9100362426 /* Build configuration list for PBXProject "ChaosDeviceDriver" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5356D30D171DAB9100362426 /* Debug */,
@@ -394,7 +490,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		5356D30F171DAB9100362426 /* Build configuration list for PBXNativeTarget "chaosDeviceDriver" */ = {
+		5356D30F171DAB9100362426 /* Build configuration list for PBXNativeTarget "chaosDD" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5356D310171DAB9100362426 /* Debug */,

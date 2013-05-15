@@ -2,9 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:chaosDeviceDriver/chaosDeviceDriver.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:bootstrap.sh">
    </FileRef>
    <FileRef
@@ -52,5 +49,8 @@
    </FileRef>
    <FileRef
       location = "group:test/MemcachedEmbeddedTest/MemcachedEmbeddedTest.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:example/ChaosDeviceDriver/ChaosDeviceDriver.xcodeproj">
    </FileRef>
 </Workspace>

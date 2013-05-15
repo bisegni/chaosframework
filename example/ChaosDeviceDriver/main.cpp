@@ -39,18 +39,7 @@ void run(SWAlim& myalim){
     }
 }
 
-int main(int argc, const char * argv[])
-{
-    
-   /* 
-    boost::asio::io_service io;
-    boost::asio::deadline_timer tim(io);
-    tim.expires_from_now(boost::posix_time::seconds(1));
-    std::cout<<"wait"<<std::endl;
-    tim.wait();
-    std::cout<<"hello"<<std::endl;
-     */                    
-
+int main(int argc, const char * argv[]) {
     // insert code here...
     TcpChannel tcpChan("LocalTcp");
     ModbusProtocol prot("my modbus");

@@ -10,22 +10,8 @@
 		32F7449C14B49CFA0025638B /* ControlUnitExample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F7449914B49CFA0025638B /* ControlUnitExample.cpp */; };
 		32F7449D14B49CFA0025638B /* WorkerCU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F7449A14B49CFA0025638B /* WorkerCU.cpp */; };
 		539510D7174116F500ECF627 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539510D6174116F500ECF627 /* main.cpp */; };
-		539510D9174116F500ECF627 /* SWAlim.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 539510D8174116F500ECF627 /* SWAlim.1 */; };
 		539510DF1741174400ECF627 /* SWAlimCU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539510DD1741174400ECF627 /* SWAlimCU.cpp */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		539510D2174116F500ECF627 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-				539510D9174116F500ECF627 /* SWAlim.1 in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		32BE864A15A0E3C500818C39 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
@@ -33,9 +19,8 @@
 		32F7449914B49CFA0025638B /* ControlUnitExample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ControlUnitExample.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		32F7449A14B49CFA0025638B /* WorkerCU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = WorkerCU.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		32F7449B14B49CFA0025638B /* WorkerCU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = WorkerCU.h; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		539510D4174116F500ECF627 /* SWAlim */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = SWAlim; sourceTree = BUILT_PRODUCTS_DIR; };
+		539510D4174116F500ECF627 /* CUSWAlim */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CUSWAlim; sourceTree = BUILT_PRODUCTS_DIR; };
 		539510D6174116F500ECF627 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		539510D8174116F500ECF627 /* SWAlim.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = SWAlim.1; sourceTree = "<group>"; };
 		539510DD1741174400ECF627 /* SWAlimCU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SWAlimCU.cpp; sourceTree = "<group>"; };
 		539510DE1741174400ECF627 /* SWAlimCU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SWAlimCU.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -61,6 +46,7 @@
 		3260279D14B309ED00C906CE = {
 			isa = PBXGroup;
 			children = (
+				32BE864A15A0E3C500818C39 /* CMakeLists.txt */,
 				326DB50714B3B7890018A8D0 /* ControlUnitTest */,
 				539510D5174116F500ECF627 /* SWAlim */,
 				326027B914B30A2400C906CE /* Products */,
@@ -71,7 +57,7 @@
 			isa = PBXGroup;
 			children = (
 				32F7448F14B49CCB0025638B /* ControlUnitTest */,
-				539510D4174116F500ECF627 /* SWAlim */,
+				539510D4174116F500ECF627 /* CUSWAlim */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -79,7 +65,6 @@
 		326DB50714B3B7890018A8D0 /* ControlUnitTest */ = {
 			isa = PBXGroup;
 			children = (
-				32BE864A15A0E3C500818C39 /* CMakeLists.txt */,
 				32F7449914B49CFA0025638B /* ControlUnitExample.cpp */,
 				32F7449A14B49CFA0025638B /* WorkerCU.cpp */,
 				32F7449B14B49CFA0025638B /* WorkerCU.h */,
@@ -93,7 +78,6 @@
 				539510DD1741174400ECF627 /* SWAlimCU.cpp */,
 				539510DE1741174400ECF627 /* SWAlimCU.h */,
 				539510D6174116F500ECF627 /* main.cpp */,
-				539510D8174116F500ECF627 /* SWAlim.1 */,
 			);
 			path = SWAlim;
 			sourceTree = "<group>";
@@ -117,21 +101,20 @@
 			productReference = 32F7448F14B49CCB0025638B /* ControlUnitTest */;
 			productType = "com.apple.product-type.tool";
 		};
-		539510D3174116F500ECF627 /* SWAlim */ = {
+		539510D3174116F500ECF627 /* CUSWAlim */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 539510DA174116F500ECF627 /* Build configuration list for PBXNativeTarget "SWAlim" */;
+			buildConfigurationList = 539510DA174116F500ECF627 /* Build configuration list for PBXNativeTarget "CUSWAlim" */;
 			buildPhases = (
 				539510D0174116F500ECF627 /* Sources */,
 				539510D1174116F500ECF627 /* Frameworks */,
-				539510D2174116F500ECF627 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
-			name = SWAlim;
+			name = CUSWAlim;
 			productName = SWAlim;
-			productReference = 539510D4174116F500ECF627 /* SWAlim */;
+			productReference = 539510D4174116F500ECF627 /* CUSWAlim */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -156,7 +139,7 @@
 			projectRoot = "";
 			targets = (
 				32F7448E14B49CCB0025638B /* ControlUnitTest */,
-				539510D3174116F500ECF627 /* SWAlim */,
+				539510D3174116F500ECF627 /* CUSWAlim */,
 			);
 		};
 /* End PBXProject section */
@@ -325,7 +308,7 @@
 				HEADER_SEARCH_PATHS = (
 					../../,
 					../../usr/local/include,
-					"$(SRCROOT)/../../chaosDeviceDriver",
+					"$(SRCROOT)/../../example/ChaosDeviceDriver",
 					/usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
@@ -382,7 +365,7 @@
 				HEADER_SEARCH_PATHS = (
 					../../,
 					../../usr/local/include,
-					"$(SRCROOT)/../../chaosDeviceDriver",
+					"$(SRCROOT)/../../example/ChaosDeviceDriver",
 					/usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
@@ -434,13 +417,14 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		539510DA174116F500ECF627 /* Build configuration list for PBXNativeTarget "SWAlim" */ = {
+		539510DA174116F500ECF627 /* Build configuration list for PBXNativeTarget "CUSWAlim" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				539510DB174116F500ECF627 /* Debug */,
 				539510DC174116F500ECF627 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
