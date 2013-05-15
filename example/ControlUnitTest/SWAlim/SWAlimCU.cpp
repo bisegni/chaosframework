@@ -62,7 +62,9 @@ SWAlimCU::SWAlimCU(string &customDeviceID):rng((const uint_fast32_t) time(0) ),o
     numberOfResponse = 0;
     tcpChan = new TcpChannel("LocalTcp");
     prot = new ModbusProtocol("modbus");
-    myalim = new SWAlim(_deviceID.c_str(),"192.84.131.17:8083");
+    myalim = new SWAlim(_deviceID.c_str(),"localhost:8083");
+    LAPP_ << "Created Channel:"<<tcpChan->getName()<<endl<<"Created Protocol:"<<prot->getName()<<endl<<"Created device:"<<myalim->getName()<<endl;
+
 }
 
 /*
@@ -162,7 +164,8 @@ void SWAlimCU::run(const string& deviceID) throw(CException) {
     acquiredData->addInt32Value("Current", current);
     acquiredData->addInt32Value("Voltage", voltage);
     //adding some interesting random data
-
+    LAPP_<<"Current:"<<current<<endl<<"Voltage:"<<voltage<<endl;
+    
     //submit acquired data
     pushDataSetForKey(devIDInChar, acquiredData);
     

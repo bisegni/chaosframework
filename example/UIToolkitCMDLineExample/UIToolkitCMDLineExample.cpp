@@ -167,6 +167,7 @@ int main (int argc, char* argv[] )
         for(vector<string>::iterator i=allOutAttrName.begin();i!=allOutAttrName.end();i++){
             controller->getDeviceAttributeDirection(*i, direction);
             controller->getDeviceAttributeRangeValueInfo(*i, rangeInfo);
+            
             cout<<" attributes to track:\""<<*i<<"\""<<endl;
         }
        // intValue1Buff = controller->getBufferForAttribute(key);
@@ -199,14 +200,13 @@ int main (int argc, char* argv[] )
         std::cout << "Print all output attribute for the device to read:" << std::endl;
         for (int idx = 0; idx < allOutAttrName.size(); idx++) {
             if(std::find(getAttrs.begin(),getAttrs.end(),allOutAttrName[idx])!=getAttrs.end()){
+                DataType::DataType t;
+                PointerBuffer*tmp=NULL;
                 // if the direction and type are defined, it allocates buffers
                 controller->addAttributeToTrack(allOutAttrName[idx]);
+                controller->getDeviceAttributeType(allOutAttrName[idx], t);
                 // get the buffers
-                PointerBuffer*tmp=controller->getPtrBufferForAttribute(allOutAttrName[idx]);
-                if(tmp==NULL){
-                    cerr<<"cannot allocate memory for attribute \""<<allOutAttrName[idx]<<"\""<<endl;
-                    return -2;
-                }
+              //  PointerBuffer*tmp=controller->getPtrBufferForAttribute(allOutAttrName[idx]);
                 
                 std::cout << "OUT:"<<allOutAttrName[idx] << "(Tracking)"<<std::endl;
                 OutBufs[allOutAttrName[idx]]=tmp;
@@ -250,17 +250,29 @@ int main (int argc, char* argv[] )
         
         for (int idx = 0; idx < iteration; idx++) {
             controller->fetchCurrentDeviceValue();
-            
+            chaos::CDataWrapper *cdata = controller->getCurrentData();
+            if(cdata==NULL){
+                cout<<"No data received at interaction:"<<idx<<endl;
+                usleep(sleep);
+
+                continue;
+            }
             if(tsBuffer){
                 int64_t *bPtr = static_cast<int64_t*>(tsBuffer->getBasePointer());
                 int64_t *wPtr = static_cast<int64_t*>(tsBuffer->getWritePointer());
                 int64_t *lastTimestamp = bPtr==wPtr?bPtr+tsBuffer->getDimension()-1:wPtr-1;
                 if(lastTimestamp){
                     currentTime = boost::posix_time::milliseconds(*lastTimestamp);
-                    std::cout << "Buffer received ts:" << utcToLocalPTime(EPOCH + currentTime) << std::endl;
+                 //   std::cout << "Buffer received ts:" << utcToLocalPTime(EPOCH + currentTime) << std::endl;
                 }
             }
             for(map<string,PointerBuffer*>::iterator i=OutBufs.begin();i!=OutBufs.end();i++){
+                DataType::DataType t;
+                string attr= i->first;
+                // if the direction and type are defined, it allocates buffers
+                controller->getDeviceAttributeType(attr , t);
+                
+                
             if(i->second){
                 int32_t bufLen = 0;
                 
@@ -273,6 +285,9 @@ int main (int argc, char* argv[] )
                     
                     std::cout << std::endl;
                 }
+            } else if(t==DataType::TYPE_INT32){
+                int32_t d=cdata->getInt32Value(i->first.c_str());
+                std::cout<<i->first<<"[INT32]="<<d<<endl;
             }
             usleep(sleep);
         }
