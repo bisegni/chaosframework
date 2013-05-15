@@ -12,7 +12,7 @@ ADD_DEFINITIONS(-g -O2 -Wall)
 SET(cutest_exe_src ControlUnitExample.cpp WorkerCU.cpp)
 SET(swalim_src SWAlim/main.cpp SWAlim/SWAlimCU.cpp)
 
-INCLUDE_DIRECTORIES(. ${PROJECT_SOURCE_DIR}/../../usr/local/include /usr/local/include /usr/include ${PROJECT_SOURCE_DIR}/example/chaosDeviceDriver/) 
+INCLUDE_DIRECTORIES(. ${PROJECT_SOURCE_DIR}/../../usr/local/include /usr/local/include /usr/include ${PROJECT_SOURCE_DIR}/example/ChaosDeviceDriver/) 
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../usr/local/lib /usr/local/lib)
 
 ADD_EXECUTABLE(ControlUnitTest ${cutest_exe_src})
