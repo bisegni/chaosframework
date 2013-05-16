@@ -191,21 +191,19 @@ void ManagedMemory::deinit() {
 }
 
 void *ManagedMemory::allocate(size_t size, unsigned int id) {
-    void *ret;
-    (&slabs_lock);
+    void *ret = NULL;
+    boost::lock_guard<boost::shared_mutex> lock(accessMutex);
     //while (atomicFlagLock.test_and_set(boost::memory_order_acquire)) {};
     ret = do_slabs_alloc(size, id);
     //atomicFlagLock.clear(boost::memory_order_release);
-    pthread_mutex_unlock(&slabs_lock);
     return ret;
 }
 
 void ManagedMemory::deallocate(void *ptr, size_t size, unsigned int id) {
-    pthread_mutex_lock(&slabs_lock);
+    boost::lock_guard<boost::shared_mutex> lock(accessMutex);
     //while (atomicFlagLock.test_and_set(boost::memory_order_acquire)) {};
     do_slabs_free(ptr, size, id);
     //atomicFlagLock.clear(boost::memory_order_release);
-    pthread_mutex_unlock(&slabs_lock);
 }
 
 //----------------- private --------------

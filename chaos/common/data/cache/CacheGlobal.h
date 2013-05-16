@@ -58,8 +58,6 @@ if ((i)->it_flags & ITEM_CAS) { \
                 struct _stritem *next;
                 struct _stritem *prev;
                 struct _stritem *h_next;    /* hash chain next */
-                rel_time_t      time;       /* least recent access */
-                rel_time_t      exptime;    /* expire time */
                 int             nbytes;     /* size of data */
                 unsigned short  refcount;
                 uint8_t         nsuffix;    /* length of flags-and-length string */

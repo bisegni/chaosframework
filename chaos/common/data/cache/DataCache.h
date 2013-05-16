@@ -40,9 +40,6 @@ namespace chaos {
              */
             class DataCache : private FastHash, private memory::ManagedMemory, protected utility::ISDInterface  {
                 
-                /* current time of day (updated periodically) */
-                volatile rel_time_t current_time;
-                
                 /* how many powers of 2's worth of buckets we use */
                 unsigned int hashpower;
                 
@@ -98,17 +95,11 @@ namespace chaos {
                                         char *suffix, uint8_t *nsuffix);
                 void item_free(item *it);
                 int item_size_ok(const size_t nkey, const int flags, const int nbytes);
-                
-                
-                /*@null@*/
-                char *do_item_cachedump(const unsigned int slabs_clsid, const unsigned int limit, unsigned int *bytes);
-                
-                void do_item_flush_expired(void);
                 item *do_item_get_nocheck(const char *key, const size_t nkey);
                 void item_stats_reset(void);
             protected:
                 CacheSettings settings;
-                boost::mutex mc_mutex;
+                boost::shared_mutex mc_mutex;
                 pthread_t maintenance_tid;
                 pthread_cond_t maintenance_cond;
                 pthread_mutex_t mc_cache_lock;
@@ -116,7 +107,6 @@ namespace chaos {
                 inline int  do_item_link(item *it);     /** may fail if transgresses limits */
                 inline void do_item_unlink(item *it);
                 inline void do_item_remove(item *it);
-                inline void do_item_update(item *it);   /** update LRU time to current and reposition */
                 inline int  do_item_replace(item *it, item *new_it);
                 inline item *assoc_find(const char *key, const size_t nkey);
                 inline item *do_item_alloc(const char *key, const size_t nkey, const int flags, const rel_time_t exptime, const int nbytes);

@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		32BFCAB716FF1D3200C93D76 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BFCAB616FF1D3200C93D76 /* main.cpp */; };
 		32BFCAB916FF1D3200C93D76 /* MemcachedEmbeddedTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 32BFCAB816FF1D3200C93D76 /* MemcachedEmbeddedTest.1 */; };
+		32CCBC5B1745572B00583BAA /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CCBC5A1745572B00583BAA /* main.cpp */; };
+		32CCBC5D1745572B00583BAA /* LockfreeCacheEmbeddedTest.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 32CCBC5C1745572B00583BAA /* LockfreeCacheEmbeddedTest.1 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -22,17 +24,37 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		32CCBC561745572B00583BAA /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				32CCBC5D1745572B00583BAA /* LockfreeCacheEmbeddedTest.1 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		329848811736C52300C158DF /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		32BFCAB316FF1D3200C93D76 /* MemcachedEmbeddedTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MemcachedEmbeddedTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		32BFCAB616FF1D3200C93D76 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		32BFCAB816FF1D3200C93D76 /* MemcachedEmbeddedTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = MemcachedEmbeddedTest.1; sourceTree = "<group>"; };
+		32CCBC581745572B00583BAA /* LockfreeCacheEmbeddedTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = LockfreeCacheEmbeddedTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		32CCBC5A1745572B00583BAA /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		32CCBC5C1745572B00583BAA /* LockfreeCacheEmbeddedTest.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = LockfreeCacheEmbeddedTest.1; sourceTree = "<group>"; };
+		32CCBC61174557BC00583BAA /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		32BFCAB016FF1D3200C93D76 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		32CCBC551745572B00583BAA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -45,7 +67,9 @@
 		32BFCAAA16FF1D3200C93D76 = {
 			isa = PBXGroup;
 			children = (
+				32CCBC61174557BC00583BAA /* CMakeLists.txt */,
 				32BFCAB516FF1D3200C93D76 /* MemcachedEmbeddedTest */,
+				32CCBC591745572B00583BAA /* LockfreeCacheEmbeddedTest */,
 				32BFCAB416FF1D3200C93D76 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,6 +78,7 @@
 			isa = PBXGroup;
 			children = (
 				32BFCAB316FF1D3200C93D76 /* MemcachedEmbeddedTest */,
+				32CCBC581745572B00583BAA /* LockfreeCacheEmbeddedTest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -61,11 +86,19 @@
 		32BFCAB516FF1D3200C93D76 /* MemcachedEmbeddedTest */ = {
 			isa = PBXGroup;
 			children = (
-				329848811736C52300C158DF /* CMakeLists.txt */,
 				32BFCAB616FF1D3200C93D76 /* main.cpp */,
 				32BFCAB816FF1D3200C93D76 /* MemcachedEmbeddedTest.1 */,
 			);
 			path = MemcachedEmbeddedTest;
+			sourceTree = "<group>";
+		};
+		32CCBC591745572B00583BAA /* LockfreeCacheEmbeddedTest */ = {
+			isa = PBXGroup;
+			children = (
+				32CCBC5A1745572B00583BAA /* main.cpp */,
+				32CCBC5C1745572B00583BAA /* LockfreeCacheEmbeddedTest.1 */,
+			);
+			path = LockfreeCacheEmbeddedTest;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -86,6 +119,23 @@
 			name = MemcachedEmbeddedTest;
 			productName = MemcachedEmbeddedTest;
 			productReference = 32BFCAB316FF1D3200C93D76 /* MemcachedEmbeddedTest */;
+			productType = "com.apple.product-type.tool";
+		};
+		32CCBC571745572B00583BAA /* LockfreeCacheEmbeddedTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 32CCBC601745572B00583BAA /* Build configuration list for PBXNativeTarget "LockfreeCacheEmbeddedTest" */;
+			buildPhases = (
+				32CCBC541745572B00583BAA /* Sources */,
+				32CCBC551745572B00583BAA /* Frameworks */,
+				32CCBC561745572B00583BAA /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LockfreeCacheEmbeddedTest;
+			productName = LockfreeCacheEmbeddedTest;
+			productReference = 32CCBC581745572B00583BAA /* LockfreeCacheEmbeddedTest */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -110,6 +160,7 @@
 			projectRoot = "";
 			targets = (
 				32BFCAB216FF1D3200C93D76 /* MemcachedEmbeddedTest */,
+				32CCBC571745572B00583BAA /* LockfreeCacheEmbeddedTest */,
 			);
 		};
 /* End PBXProject section */
@@ -120,6 +171,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				32BFCAB716FF1D3200C93D76 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		32CCBC541745572B00583BAA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				32CCBC5B1745572B00583BAA /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,6 +308,70 @@
 			};
 			name = Release;
 		};
+		32CCBC5E1745572B00583BAA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					../../,
+					../../usr/local/include,
+					/usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					"\"$(SRCROOT)/../../usr/local/lib",
+				);
+				OTHER_LDFLAGS = (
+					"-lboost_chrono",
+					"-lmemcached",
+					"-lboost_system",
+					"-lboost_thread",
+					"-lboost_program_options",
+					"-lboost_regex",
+					"-lboost_filesystem",
+					"-lmpio",
+					"-lmsgpack",
+					"-lmsgpack-rpc",
+					"-lboost_log",
+					"-lchaos_common",
+					"-lboost_log_setup",
+					"-lboost_timer",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		32CCBC5F1745572B00583BAA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				HEADER_SEARCH_PATHS = (
+					../../,
+					../../usr/local/include,
+					/usr/local/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					"\"$(SRCROOT)/../../usr/local/lib",
+				);
+				OTHER_LDFLAGS = (
+					"-lboost_chrono",
+					"-lmemcached",
+					"-lboost_system",
+					"-lboost_thread",
+					"-lboost_program_options",
+					"-lboost_regex",
+					"-lboost_filesystem",
+					"-lmpio",
+					"-lmsgpack",
+					"-lmsgpack-rpc",
+					"-lboost_log",
+					"-lchaos_common",
+					"-lboost_log_setup",
+					"-lboost_timer",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -269,6 +392,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		32CCBC601745572B00583BAA /* Build configuration list for PBXNativeTarget "LockfreeCacheEmbeddedTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				32CCBC5E1745572B00583BAA /* Debug */,
+				32CCBC5F1745572B00583BAA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};

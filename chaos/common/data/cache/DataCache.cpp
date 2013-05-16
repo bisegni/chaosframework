@@ -39,9 +39,6 @@ DataCache::DataCache(){
     hash_bulk_move = DEFAULT_HASH_BULK_MOVE;
     
     memset(&settings, 0, sizeof(CacheSettings));
-    
-    //init the muthex
-    //pthread_mutex_init(&mc_cache_lock, NULL);
 }
 
 DataCache::~DataCache() {
@@ -64,14 +61,14 @@ void DataCache::init(void* initParam) throw(chaos::CException) {
 //! Start the implementation
 void DataCache::start() throw(chaos::CException) {
     
-    if( start_assoc_maintenance_thread() ) {
-        throw CException(-1, "start_assoc_maintenance_thread", "FastCache::start");
-    }
+   // if( start_assoc_maintenance_thread() ) {
+     //   throw CException(-1, "start_assoc_maintenance_thread", "FastCache::start");
+   // }
 }
 
 //! Start the implementation
 void DataCache::stop() throw(chaos::CException) {
-    stop_assoc_maintenance_thread();
+    //stop_assoc_maintenance_thread();
 }
 
 //! Deinit the implementation
@@ -83,27 +80,22 @@ void DataCache::deinit() throw(chaos::CException) {
 //! get item
 int DataCache::getItem(const char *key, uint32_t& buffLen, void *returnBuffer) {
     item *it = NULL;
-    boost::unique_lock<boost::mutex>(mc_mutex);
-    //pthread_mutex_lock(&mc_cache_lock);
+    boost::unique_lock<boost::shared_mutex> lock(mc_mutex);
     it = do_item_get(key, strlen(key));
     if (!it) {
-        //pthread_mutex_unlock(&mc_cache_lock);
         return -1;
     }
     /* Add the data minus the CRLF */
     buffLen = it->nbytes;
-    //*returnBuffer = ITEM_data(it);
     memcpy(returnBuffer, ITEM_data(it), buffLen);
     do_item_remove(it);
-    //pthread_mutex_unlock(&mc_cache_lock);
     return 0;
 }
 
 
 //! store item
 int DataCache::storeItem(const char *key, const void *buffer, uint32_t bufferLen) {
-    //pthread_mutex_lock(&mc_cache_lock);
-    boost::unique_lock<boost::mutex>(mc_mutex);
+    boost::unique_lock<boost::shared_mutex> lock(mc_mutex);
     item *old_it = do_item_get(key, strlen(key));
     
     item *new_it = do_item_alloc(key, strlen(key), 0, 0, bufferLen);
@@ -113,15 +105,17 @@ int DataCache::storeItem(const char *key, const void *buffer, uint32_t bufferLen
         if (old_it != NULL) {
             do_item_remove(old_it);
         }
-        //pthread_mutex_unlock(&mc_cache_lock);
         return -1;
     }else{
         memcpy(ITEM_data(new_it), buffer, bufferLen);
     }
     
-    if (old_it != NULL)
-        do_item_replace(old_it, new_it);
-    else
+    if (old_it != NULL) {
+        //do_item_replace(old_it, new_it);
+        assert((old_it->it_flags & ITEM_SLABBED) == 0);
+        do_item_unlink(old_it);
+        do_item_link(new_it);
+    } else
         do_item_link(new_it);
 
     
@@ -129,23 +123,18 @@ int DataCache::storeItem(const char *key, const void *buffer, uint32_t bufferLen
         do_item_remove(old_it);
     if (new_it != NULL)
         do_item_remove(new_it);
-    
-    //pthread_mutex_unlock(&mc_cache_lock);
     return 0;
 }
 
 //! delete item
 int DataCache::deleteItem(const char *key) {
-    //pthread_mutex_lock(&mc_cache_lock);
-    boost::unique_lock<boost::mutex>(mc_mutex);
+    boost::unique_lock<boost::shared_mutex>(mc_mutex);
     item *it = do_item_get(key, strlen(key));
     if(!it) {
-        //pthread_mutex_unlock(&mc_cache_lock);
         return -1;
     }
     do_item_unlink(it);
     do_item_remove(it);
-    //pthread_mutex_unlock(&mc_cache_lock);
     return 0;
 }
 
@@ -281,7 +270,7 @@ void *DataCache::maintenance_thread(void *arg) {
         
         /* Lock the cache, and bulk move multiple buckets to the new
          * hash table. */
-        boost::unique_lock<boost::mutex>(fcObjPtr->mc_mutex);
+        boost::unique_lock<boost::shared_mutex>(fcObjPtr->mc_mutex);
         //pthread_mutex_lock(&fcObjPtr->mc_cache_lock);
         
         for (ii = 0; ii < fcObjPtr->hash_bulk_move && fcObjPtr->expanding; ++ii) {
@@ -332,11 +321,9 @@ int DataCache::start_assoc_maintenance_thread() {
 }
 
 void DataCache::stop_assoc_maintenance_thread() {
-    //pthread_mutex_lock(&mc_cache_lock);
     boost::unique_lock<boost::mutex>(mc_mutex);
     do_run_maintenance_thread = 0;
     pthread_cond_signal(&maintenance_cond);
-    //pthread_mutex_unlock(&mc_cache_lock);
     
     /* Wait for the maintenance thread to stop */
     pthread_join(maintenance_tid, NULL);
@@ -412,44 +399,7 @@ item *DataCache::do_item_alloc(const char *key, const size_t nkey, const int fla
             return NULL;
         }
         
-        for (search = tails[id]; tries > 0 && search != NULL; tries--, search=search->prev) {
-            if (search->refcount == 0) {
-                if (search->exptime == 0 || search->exptime > current_time) {
-                    itemstats[id].evicted++;
-                    itemstats[id].evicted_time = current_time - search->time;
-                    if (search->exptime != 0)
-                        itemstats[id].evicted_nonzero++;
-                } else {
-                    itemstats[id].reclaimed++;
-                }
-                do_item_unlink(search);
-                break;
-            }
-        }
         it = (item *)allocate(ntotal, id);
-        if (it == 0) {
-            itemstats[id].outofmemory++;
-            /* Last ditch effort. There is a very rare bug which causes
-             * refcount leaks. We've fixed most of them, but it still happens,
-             * and it may happen in the future.
-             * We can reasonably assume no item can stay locked for more than
-             * three hours, so if we find one in the tail which is that old,
-             * free it anyway.
-             */
-            tries = 50;
-            for (search = tails[id]; tries > 0 && search != NULL; tries--, search=search->prev) {
-                if (search->refcount != 0 && search->time + TAIL_REPAIR_TIME < current_time) {
-                    itemstats[id].tailrepairs++;
-                    search->refcount = 0;
-                    do_item_unlink(search);
-                    break;
-                }
-            }
-            it = (item *)allocate(ntotal, id);
-            if (it == 0) {
-                return NULL;
-            }
-        }
     }
     
     assert(it->slabs_clsid == 0);
@@ -464,7 +414,6 @@ item *DataCache::do_item_alloc(const char *key, const size_t nkey, const int fla
     it->nkey = nkey;
     it->nbytes = nbytes;
     memcpy(ITEM_key(it), key, nkey);
-    it->exptime = exptime;
     memcpy(ITEM_suffix(it), suffix, (size_t)nsuffix);
     it->nsuffix = nsuffix;
     return it;
@@ -543,73 +492,12 @@ void DataCache::item_unlink_q(item *it) {
     return;
 }
 
-/*@null@*/
-char *DataCache::do_item_cachedump(const unsigned int slabs_clsid, const unsigned int limit, unsigned int *bytes) {
-    unsigned int memlimit = 2 * 1024 * 1024;   /* 2MB max response size */
-    char *buffer;
-    unsigned int bufcurr;
-    item *it;
-    unsigned int len;
-    unsigned int shown = 0;
-    char key_temp[KEY_MAX_LENGTH + 1];
-    char temp[512];
-    
-    it = heads[slabs_clsid];
-    
-    buffer = (char*)malloc((size_t)memlimit);
-    if (buffer == 0) return NULL;
-    bufcurr = 0;
-    
-    while (it != NULL && (limit == 0 || shown < limit)) {
-        assert(it->nkey <= KEY_MAX_LENGTH);
-        /* Copy the key since it may not be null-terminated in the struct */
-        strncpy(key_temp, ITEM_key(it), it->nkey);
-        key_temp[it->nkey] = 0x00; /* terminate */
-        len = snprintf(temp, sizeof(temp), "ITEM %s [%d b; %lu s]\r\n",
-                       key_temp, it->nbytes - 2,
-                       (unsigned long)it->exptime);
-        if (bufcurr + len + 6 > memlimit)  /* 6 is END\r\n\0 */
-            break;
-        memcpy(buffer + bufcurr, temp, len);
-        bufcurr += len;
-        shown++;
-        it = it->next;
-    }
-    
-    memcpy(buffer + bufcurr, "END\r\n", 6);
-    bufcurr += 5;
-    
-    *bytes = bufcurr;
-    return buffer;
-}
-
 /** wrapper around assoc_find which does the lazy expiration logic */
 item *DataCache::do_item_get(const char *key, const size_t nkey) {
     item *it = assoc_find(key, nkey);
-    int was_found = 0;
-    
-    if (it == NULL && was_found) {
-        was_found--;
-    }
-    
-    if (it != NULL && it->exptime != 0 && it->exptime <= current_time) {
-        do_item_unlink(it);
-        it = NULL;
-    }
-    
-    if (it == NULL && was_found) {
-        //fprintf(stderr, " -nuked by expire");
-        was_found--;
-    }
-    
     if (it != NULL) {
         it->refcount++;
-        //DEBUG_REFCNT(it, '+');
     }
-    
-    /*   if (settings.verbose > 2)
-     fprintf(stderr, "\n");*/
-    
     return it;
 }
 
@@ -622,43 +510,10 @@ item *DataCache::do_item_get_nocheck(const char *key, const size_t nkey) {
     return it;
 }
 
-/* expires items that are more recent than the oldest_live setting. */
-void DataCache::do_item_flush_expired(void) {
-    int i;
-    item *iter, *next;
-    if (settings.oldest_live == 0)
-        return;
-    for (i = 0; i < LARGEST_ID; i++) {
-        /* The LRU is sorted in decreasing time order, and an item's timestamp
-         * is never newer than its last access time, so we only need to walk
-         * back until we hit an item older than the oldest_live time.
-         * The oldest_live checking will auto-expire the remaining items.
-         */
-        for (iter = heads[i]; iter != NULL; iter = next) {
-            if (iter->time >= settings.oldest_live) {
-                next = iter->next;
-                if ((iter->it_flags & ITEM_SLABBED) == 0) {
-                    do_item_unlink(iter);
-                }
-            } else {
-                /* We've hit the first old item. Continue to the next queue. */
-                break;
-            }
-        }
-    }
-}
-
 int DataCache::do_item_link(item *it) {
     assert((it->it_flags & (ITEM_LINKED|ITEM_SLABBED)) == 0);
     it->it_flags |= ITEM_LINKED;
-    it->time = current_time;
     assoc_insert(it);
-    
-    /*  STATS_LOCK();
-     stats.curr_bytes += ITEM_ntotal(it);
-     stats.curr_items += 1;
-     stats.total_items += 1;
-     STATS_UNLOCK();*/
     
     /* Allocate a new CAS ID on link. */
     ITEM_set_cas(it, (settings.use_cas) ? get_cas_id() : 0);
@@ -671,10 +526,6 @@ int DataCache::do_item_link(item *it) {
 void DataCache::do_item_unlink(item *it) {
     if ((it->it_flags & ITEM_LINKED) != 0) {
         it->it_flags &= ~ITEM_LINKED;
-        /* STATS_LOCK();
-         stats.curr_bytes -= ITEM_ntotal(it);
-         stats.curr_items -= 1;
-         STATS_UNLOCK();*/
         assoc_delete(ITEM_key(it), it->nkey);
         item_unlink_q(it);
         if (it->refcount == 0) item_free(it);
@@ -688,18 +539,6 @@ void DataCache::do_item_remove(item *it) {
     }
     if (it->refcount == 0 && (it->it_flags & ITEM_LINKED) == 0) {
         item_free(it);
-    }
-}
-
-void DataCache::do_item_update(item *it) {
-    if (it->time < current_time - ITEM_UPDATE_INTERVAL) {
-        assert((it->it_flags & ITEM_SLABBED) == 0);
-        
-        if ((it->it_flags & ITEM_LINKED) != 0) {
-            item_unlink_q(it);
-            it->time = current_time;
-            item_link_q(it);
-        }
     }
 }
 

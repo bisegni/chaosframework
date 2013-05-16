@@ -9,8 +9,14 @@ IF( ($ENV{CHAOS32}) OR (BUILD_FORCE_32) )
 ENDIF()
 ADD_DEFINITIONS(-g -O2 -Wall)
 
-SET(memcache_test main.cpp)
+SET(memcache_test MemcachedEmbeddedTest/main.cpp)
+SET(lockfree_test LockfreeCacheEmbeddedTest/main.cpp)
+
 INCLUDE_DIRECTORIES(. ${PROJECT_SOURCE_DIR}/../../usr/local/include /usr/local/include /usr/include) 
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../usr/local/lib /usr/local/lib)
-ADD_EXECUTABLE(ChaosMemCacheTest ${memcache_test})
-TARGET_LINK_LIBRARIES(ChaosMemCacheTest chaos_common boost_program_options boost_system boost_thread boost_atomic boost_timer) 
+
+ADD_EXECUTABLE(MemcachedEmbeddedTest ${memcache_test})
+TARGET_LINK_LIBRARIES(MemcachedEmbeddedTest chaos_common boost_program_options boost_system boost_thread boost_atomic boost_timer) 
+
+ADD_EXECUTABLE(ChaosLockfreeCacheTest ${lockfree_test})
+TARGET_LINK_LIBRARIES(ChaosLockfreeCacheTest chaos_common boost_program_options boost_system boost_thread boost_atomic boost_timer) 

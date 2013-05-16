@@ -25,7 +25,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <boost/atomic/atomic.hpp>
-
+#include <boost/thread.hpp>
 namespace chaos {
     
     namespace memory {
@@ -70,7 +70,7 @@ namespace chaos {
          */
         class ManagedMemory {
             boost::atomic_flag atomicFlagLock;
-            
+            boost::shared_mutex accessMutex;
             slabclass_t slabclass[MAX_NUMBER_OF_SLAB_CLASSES];
             size_t mem_malloced;
             int power_largest;

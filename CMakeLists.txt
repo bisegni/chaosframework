@@ -120,5 +120,5 @@ message(STATUS "Configure BenchTest simulation excutable")
 ADD_SUBDIRECTORY(example/BenchTest bin/bench_test)
 
 message(STATUS "Configure ChaosMemCacheTest test excutable")
-ADD_SUBDIRECTORY(test/MemcachedEmbeddedTest/MemcachedEmbeddedTest bin/memcache_test)
+ADD_SUBDIRECTORY(test/MemcachedEmbeddedTest bin/cache_test)
 
