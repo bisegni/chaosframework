@@ -105,9 +105,9 @@ void mcedbCacheUpdaterI32(chaos::data::cache::DataCache *cPtr) {
 void mcedbCacheReader(chaos::data::cache::DataCache *cPtr) {
     do {
         uint32_t dim = 0;
-        int32_t *val = 0;
-        cPtr->getItem("i32k", dim, (void**)&val);
-        if(val)assert(*val == i32TVal);
+        int32_t val = 0;
+        cPtr->getItem("i32k", dim, &val);
+        if(val)assert(val == i32TVal);
         //std::cout << "read int32 value->" << readed << " on thread->" << boost::this_thread::get_id() << std::endl;
         boost::this_thread::sleep_for(boost::chrono::milliseconds(READ_THREAD_UPDATE_RATE_MS_MAX));
     } while (threadReadExecution);

@@ -81,7 +81,7 @@ void DataCache::deinit() throw(chaos::CException) {
 
 
 //! get item
-int DataCache::getItem(const char *key, uint32_t& buffLen, void **returnBuffer) {
+int DataCache::getItem(const char *key, uint32_t& buffLen, void *returnBuffer) {
     item *it = NULL;
     boost::unique_lock<boost::mutex>(mc_mutex);
     //pthread_mutex_lock(&mc_cache_lock);
@@ -92,7 +92,8 @@ int DataCache::getItem(const char *key, uint32_t& buffLen, void **returnBuffer) 
     }
     /* Add the data minus the CRLF */
     buffLen = it->nbytes;
-    *returnBuffer = ITEM_data(it);
+    //*returnBuffer = ITEM_data(it);
+    memcpy(returnBuffer, ITEM_data(it), buffLen);
     do_item_remove(it);
     //pthread_mutex_unlock(&mc_cache_lock);
     return 0;

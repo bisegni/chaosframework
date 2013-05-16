@@ -143,7 +143,7 @@ namespace chaos {
                 void deinit() throw(chaos::CException);
                 
                 //! get item
-                virtual int getItem(const char *key, uint32_t& buffLen, void **returnBuffer);
+                virtual int getItem(const char *key, uint32_t& buffLen, void *returnBuffer);
                 
                 //! store item
                 virtual int storeItem(const char *key, const void *buffer, uint32_t bufferLen);
