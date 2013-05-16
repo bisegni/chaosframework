@@ -58,7 +58,7 @@ void current_utc_time(struct timespec *ts) {
     
 }
 
-int32_t i32TVal = INT32_TEST_VALUE;
+
 
 typedef struct DemoStruct {
     int32_t a;
@@ -67,6 +67,7 @@ typedef struct DemoStruct {
 
 void cacheUpdaterI32(chaos::data::cache::DatasetCache *cPtr) {
     do{
+        int32_t i32TVal = INT32_TEST_VALUE;
         cPtr->updateChannelValue((uint16_t)0, &i32TVal);
         //std::cout << "cached int32 value->" << tmp << " on thread ->" << boost::this_thread::get_id() << std::endl;
         boost::this_thread::sleep_for(boost::chrono::milliseconds(WRITE_THREAD_UPDATE_RATE));
@@ -78,7 +79,11 @@ void cacheReader(chaos::data::cache::DatasetCache *cPtr) {
     do {
         cPtr->getCurrentChannelValueAccessor((uint16_t)0, accessor);
         int32_t readed = *accessor.getValuePtr<int32_t>();
-        if(readed) assert(readed == i32TVal);
+        if(readed) {
+            if(readed != INT32_TEST_VALUE) {
+                std::cout << " wrong value revelated " << readed << std::endl;
+            }
+        }
         //std::cout << "read int32 value->" << readed << " on thread->" << boost::this_thread::get_id() << std::endl;
         boost::this_thread::sleep_for(boost::chrono::milliseconds(READ_THREAD_UPDATE_RATE_MS_MAX));
     } while (threadReadExecution);
