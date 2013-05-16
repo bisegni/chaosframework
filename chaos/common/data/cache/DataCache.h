@@ -11,12 +11,14 @@
 
 #include <stdint.h>
 #include <unistd.h>
-#include <pthread.h>
+//#include <pthread.h>
 #include <chaos/common/data/cache/CacheGlobal.h>
 #include <chaos/common/data/cache/FastHash.h>
 #include <chaos/common/memory/ManagedMemory.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/utility/ISDInterface.h>
+#include <boost/thread.hpp>
+
 namespace chaos {
     namespace data {
         namespace cache {
@@ -106,6 +108,7 @@ namespace chaos {
                 void item_stats_reset(void);
             protected:
                 CacheSettings settings;
+                boost::mutex mc_mutex;
                 pthread_t maintenance_tid;
                 pthread_cond_t maintenance_cond;
                 pthread_mutex_t mc_cache_lock;

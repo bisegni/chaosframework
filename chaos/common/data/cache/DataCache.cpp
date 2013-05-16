@@ -41,7 +41,7 @@ DataCache::DataCache(){
     memset(&settings, 0, sizeof(CacheSettings));
     
     //init the muthex
-    pthread_mutex_init(&mc_cache_lock, NULL);
+    //pthread_mutex_init(&mc_cache_lock, NULL);
 }
 
 DataCache::~DataCache() {
@@ -83,25 +83,26 @@ void DataCache::deinit() throw(chaos::CException) {
 //! get item
 int DataCache::getItem(const char *key, uint32_t& buffLen, void **returnBuffer) {
     item *it = NULL;
-    pthread_mutex_lock(&mc_cache_lock);
+    boost::unique_lock<boost::mutex>(mc_mutex);
+    //pthread_mutex_lock(&mc_cache_lock);
     it = do_item_get(key, strlen(key));
     if (!it) {
-        pthread_mutex_unlock(&mc_cache_lock);
+        //pthread_mutex_unlock(&mc_cache_lock);
         return -1;
     }
     /* Add the data minus the CRLF */
     buffLen = it->nbytes;
     *returnBuffer = ITEM_data(it);
     do_item_remove(it);
-    pthread_mutex_unlock(&mc_cache_lock);
+    //pthread_mutex_unlock(&mc_cache_lock);
     return 0;
 }
 
 
 //! store item
 int DataCache::storeItem(const char *key, const void *buffer, uint32_t bufferLen) {
-    pthread_mutex_lock(&mc_cache_lock);
-    
+    //pthread_mutex_lock(&mc_cache_lock);
+    boost::unique_lock<boost::mutex>(mc_mutex);
     item *old_it = do_item_get(key, strlen(key));
     
     item *new_it = do_item_alloc(key, strlen(key), 0, 0, bufferLen);
@@ -111,7 +112,7 @@ int DataCache::storeItem(const char *key, const void *buffer, uint32_t bufferLen
         if (old_it != NULL) {
             do_item_remove(old_it);
         }
-        pthread_mutex_unlock(&mc_cache_lock);
+        //pthread_mutex_unlock(&mc_cache_lock);
         return -1;
     }else{
         memcpy(ITEM_data(new_it), buffer, bufferLen);
@@ -128,21 +129,22 @@ int DataCache::storeItem(const char *key, const void *buffer, uint32_t bufferLen
     if (new_it != NULL)
         do_item_remove(new_it);
     
-    pthread_mutex_unlock(&mc_cache_lock);
+    //pthread_mutex_unlock(&mc_cache_lock);
     return 0;
 }
 
 //! delete item
 int DataCache::deleteItem(const char *key) {
-    pthread_mutex_lock(&mc_cache_lock);
+    //pthread_mutex_lock(&mc_cache_lock);
+    boost::unique_lock<boost::mutex>(mc_mutex);
     item *it = do_item_get(key, strlen(key));
     if(!it) {
-        pthread_mutex_unlock(&mc_cache_lock);
+        //pthread_mutex_unlock(&mc_cache_lock);
         return -1;
     }
     do_item_unlink(it);
     do_item_remove(it);
-    pthread_mutex_unlock(&mc_cache_lock);
+    //pthread_mutex_unlock(&mc_cache_lock);
     return 0;
 }
 
@@ -278,7 +280,8 @@ void *DataCache::maintenance_thread(void *arg) {
         
         /* Lock the cache, and bulk move multiple buckets to the new
          * hash table. */
-        pthread_mutex_lock(&fcObjPtr->mc_cache_lock);
+        boost::unique_lock<boost::mutex>(fcObjPtr->mc_mutex);
+        //pthread_mutex_lock(&fcObjPtr->mc_cache_lock);
         
         for (ii = 0; ii < fcObjPtr->hash_bulk_move && fcObjPtr->expanding; ++ii) {
             item *it, *next;
@@ -306,7 +309,7 @@ void *DataCache::maintenance_thread(void *arg) {
             pthread_cond_wait(&fcObjPtr->maintenance_cond, &fcObjPtr->mc_cache_lock);
         }
         
-        pthread_mutex_unlock(&fcObjPtr->mc_cache_lock);
+        //pthread_mutex_unlock(&fcObjPtr->mc_cache_lock);
     }
     return NULL;
 }
@@ -328,10 +331,11 @@ int DataCache::start_assoc_maintenance_thread() {
 }
 
 void DataCache::stop_assoc_maintenance_thread() {
-    pthread_mutex_lock(&mc_cache_lock);
+    //pthread_mutex_lock(&mc_cache_lock);
+    boost::unique_lock<boost::mutex>(mc_mutex);
     do_run_maintenance_thread = 0;
     pthread_cond_signal(&maintenance_cond);
-    pthread_mutex_unlock(&mc_cache_lock);
+    //pthread_mutex_unlock(&mc_cache_lock);
     
     /* Wait for the maintenance thread to stop */
     pthread_join(maintenance_tid, NULL);

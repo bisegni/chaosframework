@@ -192,7 +192,7 @@ void ManagedMemory::deinit() {
 
 void *ManagedMemory::allocate(size_t size, unsigned int id) {
     void *ret;
-    pthread_mutex_lock(&slabs_lock);
+    (&slabs_lock);
     //while (atomicFlagLock.test_and_set(boost::memory_order_acquire)) {};
     ret = do_slabs_alloc(size, id);
     //atomicFlagLock.clear(boost::memory_order_release);
