@@ -62,8 +62,8 @@ SWAlimCU::SWAlimCU(string &customDeviceID):rng((const uint_fast32_t) time(0) ),o
     numberOfResponse = 0;
     tcpChan = new TcpChannel("LocalTcp");
     prot = new ModbusProtocol("modbus");
-    myalim = new SWAlim(_deviceID.c_str(),"localhost:8083");
-    LAPP_ << "Created Channel:"<<tcpChan->getName()<<endl<<"Created Protocol:"<<prot->getName()<<endl<<"Created device:"<<myalim->getName()<<endl;
+    myalim = new SWAlim(_deviceID.c_str());
+    LAPP_ << "Created Channel:"<<tcpChan->getName()<<endl<<"Created Protocol:"<<prot->getName()<<endl;
 
 }
 
@@ -112,6 +112,14 @@ void SWAlimCU::defineActionAndDataset() throw(CException) {
     
 
     //setup the dataset
+    /*
+      addAttributeToDataSet(devIDInChar,
+                          "DeviceTCPAddress",
+                          "SWAlim Address in the form [<ip>:<port>]",
+                          DataType::TYPE_STRING,
+                          DataType::Input);
+    */
+
     addAttributeToDataSet(devIDInChar,
                           "Current",
                           "SWAlim current",
@@ -130,6 +138,18 @@ void SWAlimCU::defineActionAndDataset() throw(CException) {
                                               this,
                                               &SWAlimCU::setCurrent);
 
+
+    std::vector<const char*> alim_attr;
+    alim_attr = myalim->getAttributes();
+    for(std::vector<const char*>::iterator i = alim_attr.begin();i!=alim_attr.end();i++){
+      addAttributeToDataSet(devIDInChar,
+			    *i,
+			    "parameter",
+			    DataType::TYPE_STRING,
+			    DataType::Input);
+      
+    }
+
 }
 
 /*
@@ -137,6 +157,20 @@ void SWAlimCU::defineActionAndDataset() throw(CException) {
  */
 void SWAlimCU::init(const string& deviceID) throw(CException) {
     LAPP_ << "init SWAlimCU";
+    RangeValueInfo param;
+    std::vector<const char*> alim_attr;
+    alim_attr = myalim->getAttributes();
+    for(std::vector<const char*>::iterator i =  alim_attr.begin();i!= alim_attr.end();i++){
+
+      getDeviceAttributeRangeValueInfo( _deviceID.c_str(), *i,param);
+      LAPP_<< "Parameter: "<<*i<<" val="<<param.defaultValue<<endl; 
+      myalim->setAttribute(*i,param.defaultValue);
+    }
+
+    /*    myalim = new SWAlim(_deviceID.c_str(),param.defaultValue.c_str());
+	  if(myalim==NULL)
+	  throw new CException(0,"cannot create SWAlim",__FUNCTION__);
+    */
     initTime = steady_clock::now();
     lastExecutionTime = steady_clock::now();
     numberOfResponse = 0;

@@ -38,6 +38,7 @@ namespace chaos {
         BUS_INVALID,
         
         DEVICE_ERROR,
+	DEVICE_BAD_ADDRESS,
         DEVICE_ATTACH_ERROR,
         DEVICE_DETACH_ERROR,
         DEVICE_INVALID
@@ -56,7 +57,11 @@ namespace chaos {
         device_proxy(const char*n,const char*_busid,uint32_t uid=DeviceUid::NO_DEVICE):basichw(n,uid),m_busid(_busid){
             
         }
-        
+
+    device_proxy(const char*n):basichw(n,DeviceUid::NO_DEVICE){
+            
+        }
+
         const char* getBusID();
         void setBusID(const char*busid);
         template<typename T>

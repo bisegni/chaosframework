@@ -30,6 +30,7 @@ namespace chaos{
         
     public:
          
+	SWAlim(const char*name);
         SWAlim(const char*name,const char* busid);
         int init();
         int deinit();
