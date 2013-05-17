@@ -34,10 +34,11 @@
 
 #define INT32_TEST_VALUE numeric_limits<int32_t>::max()
 
-bool threadWriteExecution = true;
-bool threadReadExecution = true;
 uint64_t readCount = 0;
 uint64_t writeCount = 0;
+bool threadWriteExecution = true;
+bool threadReadExecution = true;
+
 
 
 uint64_t diff(struct timespec* ts_prev, struct timespec* ts){
@@ -59,13 +60,6 @@ void current_utc_time(struct timespec *ts) {
 #endif
     
 }
-
-
-
-typedef struct DemoStruct {
-    int32_t a;
-    int64_t b[20];
-} DemoStruct;
 
 void cacheUpdaterI32(chaos::data::cache::DatasetCache *cPtr) {
     do{
@@ -107,7 +101,7 @@ int main(int argc, const char * argv[]) {
     try {
             boost::timer::auto_cpu_timer cpuTimer;
             //test dataset chache
-            std::cout << "Start DatasetCache with " << " for " << TEST_DURATION_IN_SEC << " seconds " << std::endl;
+            std::cout << "Start DatasetCache with for " << TEST_DURATION_IN_SEC << " seconds " << std::endl;
             std::cout << "Number of writer " << 1 << " at rate of " << WRITE_THREAD_UPDATE_RATE << " ms" << std::endl;
             std::cout << "Number of reader " << READ_THREAD_NUMBER << " at rate of " << READ_THREAD_UPDATE_RATE_MS_MAX << " ms" << std::endl;
             auto_ptr<chaos::data::cache::DatasetCache> dsCache(new chaos::data::cache::DatasetCache());
@@ -134,14 +128,12 @@ int main(int argc, const char * argv[]) {
             tGarbageGroup.join_all();
         
             tWriterGroup.join_all();
-            //cpuTimer.stop();
-            //std::cout << cpuTimer.format() << std::endl;
             
             //deinit all cache
             dsCache->stop();
             dsCache->deinit();
-            std::cout << "Total write operation" << writeCount << std::endl;
-            std::cout << "Total read operation" << readCount << std::endl;
+            std::cout << "Total write operation " << writeCount << std::endl;
+            std::cout << "Total read operation " << readCount << std::endl;
             std::cout << "Thread stopped and DatasetCache deinitialized" << std::endl;
     } catch(chaos::CException& ex) {
         std::cout << ex.what() << std::endl;
