@@ -75,7 +75,7 @@ void mcedbCacheReader(chaos::data::cache::DataCache *cPtr) {
     int32_t val = 0;
     do {
         cPtr->getItem("i32k", dim, &val);
-        assert(val == INT32_TEST_VALUE);
+        if(val)assert(val == INT32_TEST_VALUE);
         readCount++;
         boost::this_thread::sleep_for(boost::chrono::milliseconds(READ_THREAD_UPDATE_RATE_MS_MAX));
     } while (threadReadExecution);
