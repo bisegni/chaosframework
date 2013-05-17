@@ -18,8 +18,12 @@ namespace chaos {
 
 
     
-
-    SWAlim::SWAlim(const char*name,const char* busid):device_proxy(name,busid){
+  SWAlim::SWAlim(const char*name):device_proxy(name,""){
+    //create and initialize attributes of this device
+    setAttribute("address",std::string(""));
+    setAttribute("port",std::string(""));
+  }
+  SWAlim::SWAlim(const char*name,const char* busid):device_proxy(name,busid){
         // TCP busid = <address>:port
         // RTU busid = <address>
         size_t found = m_busid.find(":");
@@ -39,7 +43,18 @@ namespace chaos {
         }
     }
     int SWAlim::init(){
-        return device_proxy::init();
+      std::string address,port;
+      if(getAttribute("address",address)==false){
+	DERR ("Address not set\n");
+	return DevError::DEVICE_BAD_ADDRESS;
+      }
+      if(getAttribute("port",port)==false){
+	setUID(DeviceUid::DEVICE_SWALIM_RTU);
+      } else {
+	setUID(DeviceUid::DEVICE_SWALIM_TCP);
+      }
+      m_busid = address + ":" + port;
+      return device_proxy::init();
     }
     int SWAlim::deinit(){
         return device_proxy::deinit();

@@ -49,7 +49,14 @@ namespace chaos{
          */
         void setDeadLine(int milli);
         virtual void deadLineHandler();
-        
+	std::vector<const char*> getAttributes(){
+	  std::vector<const char*> ret;
+	  std::map<const char* ,Attribute::basic_attribute*>::iterator i;
+	  for(i=m_attr.begin();i!=m_attr.end();i++){
+	    ret.push_back(i->first);
+	  }
+	  return ret;
+	}
         template<typename T>
         bool getAttribute(const char*name,T&def){
             std::map<const char* ,Attribute::basic_attribute*>::iterator i;

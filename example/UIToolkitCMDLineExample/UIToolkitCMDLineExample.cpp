@@ -199,24 +199,31 @@ int main (int argc, char* argv[] )
         }
         std::cout << "Print all output attribute for the device to read:" << std::endl;
         for (int idx = 0; idx < allOutAttrName.size(); idx++) {
+	  DataType::DataType t;
+	  PointerBuffer*tmp=NULL;
+	  // if the direction and type are defined, it allocates buffers
+	  controller->addAttributeToTrack(allOutAttrName[idx]);
+	  controller->getDeviceAttributeType(allOutAttrName[idx], t);
+	  // get the buffers
+	  
+	  if(getAttrs.empty()){
+	    // no output attributes trace all 
+	    OutBufs[allOutAttrName[idx]]=tmp;
+	    std::cout << "OUT:"<<allOutAttrName[idx] << "(Tracking)"<<std::endl;
+	  } else {
             if(std::find(getAttrs.begin(),getAttrs.end(),allOutAttrName[idx])!=getAttrs.end()){
-                DataType::DataType t;
-                PointerBuffer*tmp=NULL;
-                // if the direction and type are defined, it allocates buffers
-                controller->addAttributeToTrack(allOutAttrName[idx]);
-                controller->getDeviceAttributeType(allOutAttrName[idx], t);
-                // get the buffers
               //  PointerBuffer*tmp=controller->getPtrBufferForAttribute(allOutAttrName[idx]);
-                
-                std::cout << "OUT:"<<allOutAttrName[idx] << "(Tracking)"<<std::endl;
-                OutBufs[allOutAttrName[idx]]=tmp;
-                
+	      
+	      std::cout << "OUT:"<<allOutAttrName[idx] << "(Tracking)"<<std::endl;
+	      OutBufs[allOutAttrName[idx]]=tmp;
+              
             } else {
-                std::cout << "OUT:"<<allOutAttrName[idx] <<std::endl;
-                
+	      std::cout << "OUT:"<<allOutAttrName[idx] <<std::endl;
+              
             }
-        }
-
+	  }
+	} 
+	
         /*
          set the run schedule delay for the CU
          */
@@ -247,9 +254,12 @@ int main (int argc, char* argv[] )
          */
         err = controller->startDevice();
         
-        
+	cout<<"MAKING : "<<iteration<<endl; 
         for (int idx = 0; idx < iteration; idx++) {
-            controller->fetchCurrentDeviceValue();
+
+	  cout<<"Fetch : "<<idx<<endl; 
+	  controller->fetchCurrentDeviceValue();
+
             chaos::CDataWrapper *cdata = controller->getCurrentData();
             if(cdata==NULL){
                 cout<<"No data received at interaction:"<<idx<<endl;
@@ -273,25 +283,26 @@ int main (int argc, char* argv[] )
                 controller->getDeviceAttributeType(attr , t);
                 
                 
-            if(i->second){
-                int32_t bufLen = 0;
-                
-                boost::shared_ptr<double> doublePtr = i->second->getTypedPtr<double>(bufLen);
-                if(doublePtr.get()){
+		if(i->second){
+		  int32_t bufLen = 0;
+		  
+		  boost::shared_ptr<double> doublePtr = i->second->getTypedPtr<double>(bufLen);
+		  if(doublePtr.get()){
                     std::cout << "Buffer received len:" << bufLen << std::endl;
                     for(int32_t idx = 0; idx < bufLen; idx++){
-                        std::cout << doublePtr.get()[idx];
+		      std::cout << doublePtr.get()[idx];
                     }
                     
                     std::cout << std::endl;
-                }
-            } else if(t==DataType::TYPE_INT32){
-                int32_t d=cdata->getInt32Value(i->first.c_str());
-                std::cout<<i->first<<"[INT32]="<<d<<endl;
-            }
-            usleep(sleep);
+		  }
+		} else if(t==DataType::TYPE_INT32){
+		  int32_t d=cdata->getInt32Value(i->first.c_str());
+		  std::cout<<i->first<<"[INT32]="<<d<<endl;
+		}
+		usleep(sleep);
+	    }
         }
-        }
+	cout<<"FINISHED"<<endl;
         controller->stopTracking();
         //---------------------------------------------------------------------------------------------------------
         
