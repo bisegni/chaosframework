@@ -25,10 +25,9 @@
 #include <boost/random.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/timer/timer.hpp>
-#define STRUCT_NUM 10
 
 #define WRITE_THREAD_UPDATE_RATE 2
-#define READ_THREAD_NUMBER 10
+#define READ_THREAD_NUMBER 1
 #define READ_THREAD_UPDATE_RATE_MS_MAX 2
 #define GARBAGE_THREAD_UPDATE_RATE_MS 100
 #define TEST_DURATION_IN_SEC 10
@@ -37,6 +36,9 @@
 
 bool threadWriteExecution = true;
 bool threadReadExecution = true;
+uint64_t readCount = 0;
+uint64_t writeCount = 0;
+
 
 uint64_t diff(struct timespec* ts_prev, struct timespec* ts){
     return (ts->tv_sec - ts_prev->tv_sec) * 1000 + (ts->tv_nsec - ts_prev->tv_nsec) / 1000000;
@@ -69,7 +71,7 @@ void cacheUpdaterI32(chaos::data::cache::DatasetCache *cPtr) {
     do{
         int32_t i32TVal = INT32_TEST_VALUE;
         cPtr->updateChannelValue((uint16_t)0, &i32TVal);
-        //std::cout << "cached int32 value->" << tmp << " on thread ->" << boost::this_thread::get_id() << std::endl;
+        writeCount++;
         boost::this_thread::sleep_for(boost::chrono::milliseconds(WRITE_THREAD_UPDATE_RATE));
     } while (threadWriteExecution);
 }
@@ -81,10 +83,10 @@ void cacheReader(chaos::data::cache::DatasetCache *cPtr) {
         int32_t readed = *accessor.getValuePtr<int32_t>();
         if(readed) {
             if(readed != INT32_TEST_VALUE) {
-                std::cout << " wrong value revelated " << readed << std::endl;
+                std::cout << "wrong value readed " << readed << std::endl;
             }
         }
-        //std::cout << "read int32 value->" << readed << " on thread->" << boost::this_thread::get_id() << std::endl;
+        readCount++;
         boost::this_thread::sleep_for(boost::chrono::milliseconds(READ_THREAD_UPDATE_RATE_MS_MAX));
     } while (threadReadExecution);
 }
@@ -113,10 +115,6 @@ int main(int argc, const char * argv[]) {
             dsCache->init(NULL);
             dsCache->start();
             
-            
-            //cpuTimer.start();
-            // allocate and start writer thread
-            //tWriter.reset(new boost::thread(boost::bind(cacheUpdaterI32, dsCache.get())));
             tWriterGroup.create_thread(boost::bind(cacheUpdaterI32, dsCache.get()));
             //start garbage thread
             tGarbageGroup.create_thread(boost::bind(cacheGarbage, dsCache.get()));
@@ -142,7 +140,8 @@ int main(int argc, const char * argv[]) {
             //deinit all cache
             dsCache->stop();
             dsCache->deinit();
-            
+            std::cout << "Total write operation" << writeCount << std::endl;
+            std::cout << "Total read operation" << readCount << std::endl;
             std::cout << "Thread stopped and DatasetCache deinitialized" << std::endl;
     } catch(chaos::CException& ex) {
         std::cout << ex.what() << std::endl;

@@ -10,21 +10,11 @@
 #define CHAOSFramework_SlbCachedInfo_h
 
 #include <boost/cstdint.hpp>
-
+//#pragma pack(push, 4)
 /*!
  Define the cached slab taht contain channel description
  */
 typedef struct SlbCachedInfo {
-    //! busy flag indication
-    /*!
-     It is used to up the reference count at the moment that
-     rptr is read by array. It possible that the rptr that
-     is getting becam old and so the clean thread will try to clean
-     before the count is up of one.
-     Using this flag the thread can be hald in the moment
-     */
-    //boost::atomic_flag busyFlag;
-    
     //! element reference count
     /*!
      Mantain the number of the object that refere to this element of the cache,
@@ -38,5 +28,5 @@ typedef struct SlbCachedInfo {
      */
     void *valPtr;
 } SlbCachedInfo, *SlbCachedInfoPtr;
-
+//#pragma pack(pop)
 #endif

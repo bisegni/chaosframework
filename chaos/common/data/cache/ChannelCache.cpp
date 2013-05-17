@@ -40,9 +40,10 @@ inline SlbCachedInfoPtr ChannelCache::makeNewChachedInfoPtr() {
     SlbCachedInfoPtr result = static_cast<SlbCachedInfoPtr>(memoryPool->allocate(slabRequiredSize, slabID));
     if(!result) return NULL;
     //clear all memory
-    memset(result, 0, slabRequiredSize);
+    //memset(result, 0, slabRequiredSize);
     result->references = 1;
-    result->valPtr = (SlbCachedInfoPtr)((char*)result+sizeof(boost::uint32_t));
+    //result->valPtr = (SlbCachedInfoPtr)((char*)result+sizeof(boost::uint32_t));
+    result->valPtr = (void*)((char*)result+sizeof(SlbCachedInfo));
     return result;
 }
 
@@ -97,8 +98,8 @@ void ChannelCache::initChannel(const char *name, chaos::DataType::DataType type,
             channelMaxLength = maxLength;
             break;
     }
-    
-    slabRequiredSize = (uint32_t)sizeof(SlbCachedInfo) + channelMaxLength;
+    uint32_t structSize = (uint32_t)sizeof(SlbCachedInfo);
+    slabRequiredSize = structSize + channelMaxLength;
     
     // retrive the rigth slab class info
     slabID = memoryPool->getSlabIdBySize(slabRequiredSize);
@@ -111,8 +112,8 @@ void ChannelCache::initChannel(const char *name, chaos::DataType::DataType type,
 //! Set (and cache) the new value of the channel
 void ChannelCache::updateValue(const void* channelValue, uint32_t valueLegth) {
     SlbCachedInfoPtr tmpPtr = rwPtr[writeIndex];
-    
     //copy the value into cache
+    
     memcpy(tmpPtr->valPtr, channelValue, valueLegth==0?channelMaxLength:valueLegth);
     
     //swap the wPtr with rPtr
