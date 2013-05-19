@@ -257,15 +257,11 @@
 				);
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
-					"-lmemcached",
 					"-lboost_system",
 					"-lboost_thread",
 					"-lboost_program_options",
 					"-lboost_regex",
 					"-lboost_filesystem",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lchaos_common",
 					"-lboost_log_setup",
@@ -290,15 +286,11 @@
 				);
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
-					"-lmemcached",
 					"-lboost_system",
 					"-lboost_thread",
 					"-lboost_program_options",
 					"-lboost_regex",
 					"-lboost_filesystem",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lchaos_common",
 					"-lboost_log_setup",
@@ -311,6 +303,7 @@
 		32CCBC5E1745572B00583BAA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = (
 					../../,
 					../../usr/local/include,
@@ -322,19 +315,15 @@
 				);
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
-					"-lmemcached",
 					"-lboost_system",
 					"-lboost_thread",
-					"-lboost_program_options",
 					"-lboost_regex",
 					"-lboost_filesystem",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lchaos_common",
 					"-lboost_log_setup",
 					"-lboost_timer",
+					"-lboost_program_options",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -343,6 +332,7 @@
 		32CCBC5F1745572B00583BAA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				HEADER_SEARCH_PATHS = (
 					../../,
 					../../usr/local/include,
@@ -354,19 +344,15 @@
 				);
 				OTHER_LDFLAGS = (
 					"-lboost_chrono",
-					"-lmemcached",
 					"-lboost_system",
 					"-lboost_thread",
-					"-lboost_program_options",
 					"-lboost_regex",
 					"-lboost_filesystem",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lchaos_common",
 					"-lboost_log_setup",
 					"-lboost_timer",
+					"-lboost_program_options",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -400,6 +386,7 @@
 				32CCBC5F1745572B00583BAA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

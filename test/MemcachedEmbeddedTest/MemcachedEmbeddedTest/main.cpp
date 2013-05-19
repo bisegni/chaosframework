@@ -25,6 +25,13 @@
 #include <boost/random.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/timer/timer.hpp>
+#include <boost/program_options/option.hpp>
+#include <boost/program_options/options_description.hpp>
+#include <boost/program_options/variables_map.hpp>
+#include <boost/program_options/parsers.hpp>
+
+namespace po = boost::program_options;
+
 #define STRUCT_NUM 10
 
 #define WRITE_THREAD_UPDATE_RATE 2
@@ -37,6 +44,10 @@
 
 uint64_t readCount = 0;
 uint64_t writeCount = 0;
+
+uint16_t rUpdateMs = READ_THREAD_UPDATE_RATE_MS_MAX;
+uint16_t wUpdateMs = WRITE_THREAD_UPDATE_RATE;
+
 bool threadWriteExecution = true;
 bool threadReadExecution = true;
 
@@ -66,7 +77,7 @@ void mcedbCacheUpdaterI32(chaos::data::cache::DataCache *cPtr) {
     do{
         cPtr->storeItem("i32k", &i32TVal, sizeof(int32_t));
         writeCount++;
-        boost::this_thread::sleep_for(boost::chrono::milliseconds(WRITE_THREAD_UPDATE_RATE));
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(wUpdateMs));
     } while (threadWriteExecution);
 }
 
@@ -77,7 +88,7 @@ void mcedbCacheReader(chaos::data::cache::DataCache *cPtr) {
         cPtr->getItem("i32k", dim, &val);
         if(val)assert(val == INT32_TEST_VALUE);
         readCount++;
-        boost::this_thread::sleep_for(boost::chrono::milliseconds(READ_THREAD_UPDATE_RATE_MS_MAX));
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(rUpdateMs));
     } while (threadReadExecution);
 }
 
@@ -85,12 +96,32 @@ int main(int argc, const char * argv[]) {
     boost::thread_group tWriterGroup;
     boost::thread_group tGarbageGroup;
     boost::thread_group tReadersGroup;
+    po::variables_map vm;
+    po::options_description desc("Allowed options");
     
+    //test dataset chache
+    
+    desc.add_options()("help", "Help Message");
+    desc.add_options()("n_reader", po::value< uint16_t >()->default_value(READ_THREAD_NUMBER));
+    desc.add_options()("r_update_ms", po::value< uint16_t >()->default_value(READ_THREAD_UPDATE_RATE_MS_MAX));
+    desc.add_options()("w_update_ms", po::value< uint16_t >()->default_value(WRITE_THREAD_UPDATE_RATE));
+    po::store(po::parse_command_line(argc, argv, desc), vm);
+    po::notify(vm);
+    
+    if (vm.count("help")) {
+        cout << desc << "\n";
+        return 1;
+    }
+
     try {
         boost::timer::auto_cpu_timer cpuTimer;
+        uint16_t readersNumber = vm["n_reader"].as<uint16_t>();
+        rUpdateMs = vm["r_update_ms"].as<uint16_t>();
+        wUpdateMs = vm["w_update_ms"].as<uint16_t>();
+        
         std::cout << "Start DataCache test (Memcached embedded) with for " << TEST_DURATION_IN_SEC << " seconds " << std::endl;
-        std::cout << "Number of writer " << 1 << " at rate of " << WRITE_THREAD_UPDATE_RATE << " ms" << std::endl;
-        std::cout << "Number of reader " << READ_THREAD_NUMBER << " at rate of " << READ_THREAD_UPDATE_RATE_MS_MAX << " ms" << std::endl;
+        std::cout << "Number of writer " << 1 << " at rate of " << wUpdateMs << " ms" << std::endl;
+        std::cout << "Number of reader " << readersNumber << " at rate of " << rUpdateMs << " ms" << std::endl;
         
         //test memcached implementation
         chaos::data::cache::CacheSettings settings;
@@ -111,7 +142,7 @@ int main(int argc, const char * argv[]) {
         // allocate and start writer thread
         tWriterGroup.create_thread(boost::bind(mcedbCacheUpdaterI32, fc.get()));
         //start all reader thread
-        for (int idx = 0; idx < READ_THREAD_NUMBER; idx++) {
+        for (int idx = 0; idx < readersNumber; idx++) {
             tReadersGroup.create_thread(boost::bind(mcedbCacheReader, fc.get()));
         }
         
