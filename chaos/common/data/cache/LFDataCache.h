@@ -1,13 +1,13 @@
 //
-//  ChannelCache.h
+//  LFDataCache.h
 //  CHAOSFramework
 //
 //  Created by Claudio Bisegni on 4/24/13.
 //  Copyright (c) 2013 INFN. All rights reserved.
 //
 
-#ifndef __CHAOSFramework__ChannelCache__
-#define __CHAOSFramework__ChannelCache__
+#ifndef __CHAOSFramework__LFDataCache__
+#define __CHAOSFramework__LFDataCache__
 
 #include <vector>
 
@@ -16,7 +16,6 @@
 #include <boost/detail/atomic_count.hpp>
 #include <boost/thread.hpp>
 
-#include <chaos/common/cconstants.h>
 #include <chaos/common/memory/ManagedMemory.h>
 #include <chaos/common/data/cache/SlbCachedInfo.h>
 #include <chaos/common/data/cache/ChannelValueAccessor.h>
@@ -28,7 +27,7 @@ namespace chaos {
         namespace cache {
             
                 //forward declaration
-            class DatasetCache;
+            class KeyGroupCache;
             
             
                 //!Channel cache
@@ -38,9 +37,9 @@ namespace chaos {
              ReadPTR is remove and the index is swapped. this permit to promote the WritePtr as new Read Ptr
              and a new slab is create for permit the new value storage.
              */
-            class ChannelCache {
-                    //!permit the DatasetCache class to use the private variable
-                friend class DatasetCache;
+            class LFDataCache {
+                    //!permit the KeyGroupCache class to use the private variable
+                friend class KeyGroupCache;
                 
                     //!index to identity the write ptr
                 int writeIndex;
@@ -61,16 +60,13 @@ namespace chaos {
                 int slabClassForCachedInfo;
                 
                     //! the max length of the channel
-                uint32_t channelMaxLength;
+                uint32_t maxLength;
                 
                     //! slab size
                 uint32_t slabRequiredSize;
                 
                     //!slab id to use
                 uint16_t slabID;
-                
-                    //! the type of the channel
-                chaos::DataType::DataType channelType;
                 
                     //! used slab array cache slab
                 boost::lockfree::queue<SlbCachedInfoPtr, boost::lockfree::fixed_sized<false> > garbageableSlab;
@@ -95,10 +91,10 @@ namespace chaos {
                 /*!
                  Creathe the object with the memory manager assigned
                  */
-                ChannelCache(memory::ManagedMemory *_memoryPool);
+                LFDataCache(memory::ManagedMemory *_memoryPool);
                 
                     //! Default destructor
-                ~ChannelCache();
+                ~LFDataCache();
                 
                 /*!
                  Delete the unused cached slab
@@ -110,7 +106,7 @@ namespace chaos {
                  Inizialize all the structure necassary to cache the serialized fragment for the 
                  channel value
                  */
-                void initChannel(const char *name, chaos::DataType::DataType type, uint32_t maxLength = 0);
+                void init(const char *name, uint32_t maxLength = 0);
                 
                 //! Set (and cache) the new value of the channel
                 /*!
@@ -119,7 +115,7 @@ namespace chaos {
                         into the writeable slab pointer;
                     - swap the writeable with the readeable pointer using the index array
                  */
-                void updateValue(const void* channelValue, uint32_t valueLegth = 0);
+                void updateValue(const void* value, uint32_t legth = 0);
                 
                     //! return the current cached memory
                 /*!
@@ -136,4 +132,4 @@ namespace chaos {
     }
 }
 
-#endif /* defined(__CHAOSFramework__ChannelCache__) */
+#endif /* defined(__CHAOSFramework__LFDataCache__) */

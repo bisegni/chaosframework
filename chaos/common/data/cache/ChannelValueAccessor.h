@@ -17,10 +17,10 @@ namespace chaos {
         
         namespace cache {
             
-            class ChannelCache;
+            class LFDataCache;
             
             class ChannelValueAccessor {
-                friend class ChannelCache;
+                friend class LFDataCache;
                 
                 SlbCachedInfoPtr slbPtr;
                 

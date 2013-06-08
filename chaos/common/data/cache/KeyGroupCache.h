@@ -1,13 +1,13 @@
 //
-//  DatasetCache.h
+//  KeyGroupCache.h
 //  CHAOSFramework
 //
 //  Created by Claudio Bisegni on 4/21/13.
 //  Copyright (c) 2013 INFN. All rights reserved.
 //
 
-#ifndef __CHAOSFramework__DatasetCache__
-#define __CHAOSFramework__DatasetCache__
+#ifndef __CHAOSFramework__KeyGroupCache__
+#define __CHAOSFramework__KeyGroupCache__
 
 #include <map>
 #include <string>
@@ -16,7 +16,7 @@
 #include <chaos/common/bson/util/builder.h>
 #include <chaos/common/memory/ManagedMemory.h>
 #include <chaos/common/utility/ISDInterface.h>
-#include <chaos/common/data/cache/ChannelCache.h>
+#include <chaos/common/data/cache/LFDataCache.h>
 #include <chaos/common/data/cache/ChannelValueAccessor.h>
 
 namespace chaos {
@@ -28,7 +28,7 @@ namespace chaos {
                 //! summary infromatio about channel
             typedef struct ChannelInfo {
                 uint                        index;
-                uint32_t                    dimension;
+                uint32_t                    maxLength;
                 chaos::DataType::DataType   type;
             } ChannelInfo;
             
@@ -38,7 +38,7 @@ namespace chaos {
              A channel is identified by a name, at the initizialization phase the
              all channel are organized by position and all value are se to null.
              */
-            class DatasetCache: protected utility::ISDInterface  {
+            class KeyGroupCache: protected utility::ISDInterface  {
                     //! slab managed memory pool
                 memory::ManagedMemory memoryPool;
                 
@@ -55,18 +55,18 @@ namespace chaos {
                 /*!
                  This array is create after all channel are be setuped before the init method call
                  */
-                ChannelCache **chCachePtrArray;
+                LFDataCache **chCachePtrArray;
             protected:
                 //! this map associate the name of the channel to it's position
                 std::map<std::string, ChannelInfo*> channelInfoMap;
                 
             public:
-                DatasetCache();
-                virtual ~DatasetCache();
+                KeyGroupCache();
+                virtual ~KeyGroupCache();
                 //! initializatin of the channel cache
                 /*!
                  Initialize the channel caching infrastructure
-                 \param initParam is the pointer to a ChannelCacheSettings
+                 \param initParam is the pointer to a LFDataCacheSettings
                  structure
                  */
                 void init(void* initParam) throw(chaos::CException);
@@ -89,22 +89,22 @@ namespace chaos {
                  mehtod need to be called before init method
                  \param channelName is the string representation of the channel
                  \param the type of the channel
-                 \param channelDimension is the channel dimension in case his type is note a base type
+                 \param channelMaxLength is the channel maximum length in case his type is note a base type
                  \return error status (0 = NOERR)
                  */
-                int addChannel(const char *channelName,  chaos::DataType::DataType type, uint32_t channelDimension = 0);
+                int addKeyInfo(const char *key,  chaos::DataType::DataType type, uint32_t channelMaxLength = 0);
                 
-                void updateChannelValue(const char *channelName, const void* channelValue, uint32_t valueLegth = 0);
+                void updateKeyValue(const char *key, const void* channelValue, uint32_t valueLegth = 0);
                 
-                void updateChannelValue(uint16_t channelIndex, const void* channelValue, uint32_t valueLegth = 0);
+                void updateKeyValue(uint16_t keyIndex, const void* channelValue, uint32_t valueLegth = 0);
                 
-                SlbCachedInfoPtr getCurrentChannelCachedValue(const char *channelName);
+                SlbCachedInfoPtr getCurrentKeyValue(const char *key);
                 
-                SlbCachedInfoPtr getCurrentChannelCachedValue(uint16_t channelIndex);
+                SlbCachedInfoPtr getCurrentKeyValue(uint16_t keyIndex);
                 
-                void getCurrentChannelValueAccessor(const char *channelName, ChannelValueAccessor& accessorPtr);
+                void getCurrentKeyAccessor(const char *key, ChannelValueAccessor& accessorPtr);
                 
-                void getCurrentChannelValueAccessor(uint16_t channelIndex, ChannelValueAccessor& accessorPtr);
+                void getCurrentKeyAccessor(uint16_t keyIndex, ChannelValueAccessor& accessorPtr);
             };
             
         }
@@ -112,4 +112,4 @@ namespace chaos {
     
 }
 
-#endif /* defined(__CHAOSFramework__DatasetCache__) */
+#endif /* defined(__CHAOSFramework__KeyGroupCache__) */

@@ -189,8 +189,8 @@
 		328D2FBA1660EADC007F482E /* DSAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328D2FB11660E3EC007F482E /* DSAttributeHandler.h */; };
 		328D2FBE1660EF71007F482E /* TDSAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328D2FBC1660EF71007F482E /* TDSAttributeHandler.h */; };
 		328D2FC316612AB3007F482E /* DSInt32Handler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328D2FC116612AB3007F482E /* DSInt32Handler.h */; };
-		328E405D17287B82004E5938 /* ChannelCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E405B17287B82004E5938 /* ChannelCache.cpp */; };
-		328E405E17287B82004E5938 /* ChannelCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 328E405C17287B82004E5938 /* ChannelCache.h */; };
+		328E405D17287B82004E5938 /* LFDataCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E405B17287B82004E5938 /* LFDataCache.cpp */; };
+		328E405E17287B82004E5938 /* LFDataCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 328E405C17287B82004E5938 /* LFDataCache.h */; };
 		328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */; };
 		3297F22614D96F31004FFE4F /* DeviceMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3297F22514D96F31004FFE4F /* DeviceMessageChannel.cpp */; };
 		3297F22914D96F43004FFE4F /* DeviceMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3297F22814D96F43004FFE4F /* DeviceMessageChannel.h */; };
@@ -205,8 +205,8 @@
 		32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */; };
 		32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */; };
 		32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */; };
-		32A8F7D1172BE3FD0090DB78 /* DatasetCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A8F7CF172BE3FD0090DB78 /* DatasetCache.cpp */; };
-		32A8F7D2172BE3FD0090DB78 /* DatasetCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A8F7D0172BE3FD0090DB78 /* DatasetCache.h */; };
+		32A8F7D1172BE3FD0090DB78 /* KeyGroupCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A8F7CF172BE3FD0090DB78 /* KeyGroupCache.cpp */; };
+		32A8F7D2172BE3FD0090DB78 /* KeyGroupCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A8F7D0172BE3FD0090DB78 /* KeyGroupCache.h */; };
 		32AAD78814CD660B005A097C /* RpcClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AAD78714CD660B005A097C /* RpcClient.h */; };
 		32AAD78A14CD772F005A097C /* MessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AAD78914CD772F005A097C /* MessageChannel.h */; };
 		32AAD78C14CD773F005A097C /* MessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AAD78B14CD773F005A097C /* MessageChannel.cpp */; };
@@ -551,8 +551,8 @@
 		328D2FB61660EACD007F482E /* DSAttributeHandlerExecutionEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSAttributeHandlerExecutionEngine.h; sourceTree = "<group>"; };
 		328D2FBC1660EF71007F482E /* TDSAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSAttributeHandler.h; sourceTree = "<group>"; };
 		328D2FC116612AB3007F482E /* DSInt32Handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSInt32Handler.h; sourceTree = "<group>"; };
-		328E405B17287B82004E5938 /* ChannelCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChannelCache.cpp; sourceTree = "<group>"; };
-		328E405C17287B82004E5938 /* ChannelCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChannelCache.h; sourceTree = "<group>"; };
+		328E405B17287B82004E5938 /* LFDataCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LFDataCache.cpp; sourceTree = "<group>"; };
+		328E405C17287B82004E5938 /* LFDataCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFDataCache.h; sourceTree = "<group>"; };
 		328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcServerHandler.h; sourceTree = "<group>"; };
 		3294905A159AF4BF00E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		3294905B159AF4D700E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -570,8 +570,8 @@
 		32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaitSemaphore.h; sourceTree = "<group>"; };
 		32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MDSMessageChannel.h; sourceTree = "<group>"; };
 		32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSMessageChannel.cpp; sourceTree = "<group>"; };
-		32A8F7CF172BE3FD0090DB78 /* DatasetCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatasetCache.cpp; sourceTree = "<group>"; };
-		32A8F7D0172BE3FD0090DB78 /* DatasetCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetCache.h; sourceTree = "<group>"; };
+		32A8F7CF172BE3FD0090DB78 /* KeyGroupCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyGroupCache.cpp; sourceTree = "<group>"; };
+		32A8F7D0172BE3FD0090DB78 /* KeyGroupCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyGroupCache.h; sourceTree = "<group>"; };
 		32AAD78714CD660B005A097C /* RpcClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcClient.h; sourceTree = "<group>"; };
 		32AAD78914CD772F005A097C /* MessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageChannel.h; sourceTree = "<group>"; };
 		32AAD78B14CD773F005A097C /* MessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageChannel.cpp; sourceTree = "<group>"; };
@@ -1508,10 +1508,10 @@
 				327CFF081708C4EB0069497B /* FastHash.h */,
 				32CB7CDE17099C8D00767FC1 /* DataCache.cpp */,
 				32CB7CDF17099C8D00767FC1 /* DataCache.h */,
-				32A8F7CF172BE3FD0090DB78 /* DatasetCache.cpp */,
-				32A8F7D0172BE3FD0090DB78 /* DatasetCache.h */,
-				328E405B17287B82004E5938 /* ChannelCache.cpp */,
-				328E405C17287B82004E5938 /* ChannelCache.h */,
+				32A8F7CF172BE3FD0090DB78 /* KeyGroupCache.cpp */,
+				32A8F7D0172BE3FD0090DB78 /* KeyGroupCache.h */,
+				328E405B17287B82004E5938 /* LFDataCache.cpp */,
+				328E405C17287B82004E5938 /* LFDataCache.h */,
 				3298487B1736814700C158DF /* ChannelValueAccessor.cpp */,
 				3298487C1736814700C158DF /* ChannelValueAccessor.h */,
 				3298487F173681BB00C158DF /* SlbCachedInfo.h */,
@@ -1736,8 +1736,8 @@
 				327CFF121708D7760069497B /* CacheGlobal.h in Headers */,
 				32CB7CE117099C8D00767FC1 /* DataCache.h in Headers */,
 				32D421B417271572008A326E /* BsonFragment.h in Headers */,
-				328E405E17287B82004E5938 /* ChannelCache.h in Headers */,
-				32A8F7D2172BE3FD0090DB78 /* DatasetCache.h in Headers */,
+				328E405E17287B82004E5938 /* LFDataCache.h in Headers */,
+				32A8F7D2172BE3FD0090DB78 /* KeyGroupCache.h in Headers */,
 				3298487E1736814700C158DF /* ChannelValueAccessor.h in Headers */,
 				32984880173681BB00C158DF /* SlbCachedInfo.h in Headers */,
 			);
@@ -2019,8 +2019,8 @@
 				327CFF091708C4EB0069497B /* FastHash.cpp in Sources */,
 				32CB7CE017099C8D00767FC1 /* DataCache.cpp in Sources */,
 				32D421B317271572008A326E /* BsonFragment.cpp in Sources */,
-				328E405D17287B82004E5938 /* ChannelCache.cpp in Sources */,
-				32A8F7D1172BE3FD0090DB78 /* DatasetCache.cpp in Sources */,
+				328E405D17287B82004E5938 /* LFDataCache.cpp in Sources */,
+				32A8F7D1172BE3FD0090DB78 /* KeyGroupCache.cpp in Sources */,
 				3298487D1736814700C158DF /* ChannelValueAccessor.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

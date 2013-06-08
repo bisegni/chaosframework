@@ -6,19 +6,11 @@
 //  Copyright (c) 2013 Claudio Bisegni. All rights reserved.
 //
 #include <iostream>
-#include <time.h>
-#include <sys/time.h>
-#include <stdio.h>
 #include <string>
-#ifdef __MACH__
-#include <mach/clock.h>
-#include <mach/mach.h>
-#endif
 
-#include <chaos/common/global.h>
 #include <chaos/common/memory/ManagedMemory.h>
 #include <chaos/common/data/cache/DataCache.h>
-#include <chaos/common/data/cache/DatasetCache.h>
+#include <chaos/common/data/cache/KeyGroupCache.h>
 
 #include <boost/thread.hpp>
 #include <boost/chrono.hpp>
@@ -50,26 +42,6 @@ uint16_t wUpdateMs = WRITE_THREAD_UPDATE_RATE;
 
 bool threadWriteExecution = true;
 bool threadReadExecution = true;
-
-uint64_t diff(struct timespec* ts_prev, struct timespec* ts){
-    return (ts->tv_sec - ts_prev->tv_sec) * 1000 + (ts->tv_nsec - ts_prev->tv_nsec) / 1000000;
-}
-
-void current_utc_time(struct timespec *ts) {
-    
-#ifdef __MACH__ // OS X does not have clock_gettime, use clock_get_time
-    clock_serv_t cclock;
-    mach_timespec_t mts;
-    host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
-    clock_get_time(cclock, &mts);
-    mach_port_deallocate(mach_task_self(), cclock);
-    ts->tv_sec = mts.tv_sec;
-    ts->tv_nsec = mts.tv_nsec;
-#else
-    clock_gettime(CLOCK_REALTIME, ts);
-#endif
-    
-}
 
 
 void mcedbCacheUpdaterI32(chaos::data::cache::DataCache *cPtr) {

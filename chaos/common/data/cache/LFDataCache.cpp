@@ -1,5 +1,5 @@
 //
-//  ChannelCache.cpp
+//  LFDataCache.cpp
 //  CHAOSFramework
 //
 //  Created by Claudio Bisegni on 4/24/13.
@@ -7,22 +7,22 @@
 //
 
 #include <chaos/common/global.h>
-#include <chaos/common/data/cache/ChannelCache.h>
+#include <chaos/common/data/cache/LFDataCache.h>
 #include <boost/interprocess/detail/atomic.hpp>
 
 using namespace chaos::data::cache;
 
-ChannelCache::ChannelCache(memory::ManagedMemory *_memoryPool):readIndex(1),writeIndex(0),memoryPool(_memoryPool),garbageableSlab(1000) {
+LFDataCache::LFDataCache(memory::ManagedMemory *_memoryPool):readIndex(1),writeIndex(0),memoryPool(_memoryPool),garbageableSlab(1) {
     
     //clear the array
     rwPtr[0] = rwPtr[1] = NULL;
 }
 
-ChannelCache::~ChannelCache() {
+LFDataCache::~LFDataCache() {
 }
 
 //! set the readable index of the ptr array
-void ChannelCache::swapRWIndex() {
+void LFDataCache::swapRWIndex() {
     //swap read and write
     readIndex.store(writeIndex, boost::memory_order_release);
     
@@ -36,7 +36,7 @@ void ChannelCache::swapRWIndex() {
     rwPtr[writeIndex] = makeNewChachedInfoPtr();
 }
 
-inline SlbCachedInfoPtr ChannelCache::makeNewChachedInfoPtr() {
+inline SlbCachedInfoPtr LFDataCache::makeNewChachedInfoPtr() {
     SlbCachedInfoPtr result = static_cast<SlbCachedInfoPtr>(memoryPool->allocate(slabRequiredSize, slabID));
     if(!result) return NULL;
     //clear all memory
@@ -47,7 +47,7 @@ inline SlbCachedInfoPtr ChannelCache::makeNewChachedInfoPtr() {
     return result;
 }
 
-void ChannelCache::garbageCache() {
+void LFDataCache::garbageCache() {
     int counter = 0;
     bool needToBeGarbaged = false;
     volatile boost::uint32_t *mem;
@@ -78,28 +78,11 @@ void ChannelCache::garbageCache() {
 }
 
 //! Initialize the channel cache
-void ChannelCache::initChannel(const char *name, chaos::DataType::DataType type, uint32_t maxLength) {
+void LFDataCache::init(const char *name, uint32_t maxLength) {
     CHAOS_ASSERT(memoryPool)
-    switch (channelType=type) {
-        case chaos::DataType::TYPE_BOOLEAN:
-            channelMaxLength = sizeof(char);
-            break;
-        case chaos::DataType::TYPE_DOUBLE:
-            channelMaxLength = sizeof(double);
-            break;
-        case chaos::DataType::TYPE_INT32:
-            channelMaxLength = sizeof(int32_t);
-            break;
-        case chaos::DataType::TYPE_INT64:
-            channelMaxLength = sizeof(int64_t);
-            break;
-        case chaos::DataType::TYPE_STRING:
-        case chaos::DataType::TYPE_BYTEARRAY:
-            channelMaxLength = maxLength;
-            break;
-    }
+    maxLength = maxLength;
     uint32_t structSize = (uint32_t)sizeof(SlbCachedInfo);
-    slabRequiredSize = structSize + channelMaxLength;
+    slabRequiredSize = structSize + maxLength;
     
     // retrive the rigth slab class info
     slabID = memoryPool->getSlabIdBySize(slabRequiredSize);
@@ -110,17 +93,17 @@ void ChannelCache::initChannel(const char *name, chaos::DataType::DataType type,
 }
 
 //! Set (and cache) the new value of the channel
-void ChannelCache::updateValue(const void* channelValue, uint32_t valueLegth) {
+void LFDataCache::updateValue(const void* value, uint32_t legth) {
     SlbCachedInfoPtr tmpPtr = rwPtr[writeIndex];
     //copy the value into cache
     
-    memcpy(tmpPtr->valPtr, channelValue, valueLegth==0?channelMaxLength:valueLegth);
+    memcpy(tmpPtr->valPtr, value, legth==0?maxLength:legth);
     
     //swap the wPtr with rPtr
     swapRWIndex();
 }
 
-SlbCachedInfoPtr ChannelCache::getCurrentCachedPtr() {
+SlbCachedInfoPtr LFDataCache::getCurrentCachedPtr() {
     SlbCachedInfoPtr result = NULL;
     volatile boost::uint32_t *mem;
     boost::uint32_t oldMem, oldValue;
@@ -145,6 +128,6 @@ SlbCachedInfoPtr ChannelCache::getCurrentCachedPtr() {
     return result;
 }
 
-void ChannelCache::fillAccessorWithCurrentValue(ChannelValueAccessor&  accessorPtr) {
+void LFDataCache::fillAccessorWithCurrentValue(ChannelValueAccessor&  accessorPtr) {
     accessorPtr.reset(getCurrentCachedPtr());
 }
