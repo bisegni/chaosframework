@@ -1,5 +1,5 @@
 /*
- *	BsonFragment.cpp
+ *	AbstractDriver.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,17 +18,6 @@
  *    	limitations under the License.
  */
 
-#include <chaos/common/data/BsonFragment.h>
+#include <chaos/cu_toolkit/ControlManager/driver/AbstractDriver.h>
 
-using namespace chaos::data;
-
-BsonFragment::BsonFragment():BSONObjBuilder(true, 512) {
-    
-}
-
-const char *BsonFragment::getFragmentPtr(uint32_t& fragmetDimension) {
-    const char *result = BSONObjBuilder::_b.buf();
-    fragmetDimension = BSONObjBuilder::_b.len();
-    BSONObjBuilder::_b.reset();
-    return result;
-}
+using namespace chaos::cu::cm::driver;

@@ -1,7 +1,7 @@
 /*
  *	ManagedMemory.h
  *	!CHOAS
- *	Create by Memcached team
+ *	Assembled by Bisegni Claudio getting the code from http://www.memcached.org
  *  Update by Bisegni Claudio.
  *
  *    	Copyright 2013 INFN, National Institute of Nuclear Physics

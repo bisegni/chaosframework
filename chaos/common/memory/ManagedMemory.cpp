@@ -1,7 +1,7 @@
 /*
  *	ManagedMemory.cpp
  *	!CHOAS
- *	Created by Bisegni Claudio.
+ *	Assembled by Bisegni Claudio getting the code from http://www.memcached.org
  *
  *    	Copyright 2013 INFN, National Institute of Nuclear Physics
  *

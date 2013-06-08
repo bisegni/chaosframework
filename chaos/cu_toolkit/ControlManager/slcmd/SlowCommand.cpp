@@ -1,5 +1,5 @@
 /*
- *	BsonFragment.cpp
+ *	SlowCommand.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,17 +18,27 @@
  *    	limitations under the License.
  */
 
-#include <chaos/common/data/BsonFragment.h>
+#include <chaos/cu_toolkit/ControlManager/slcmd/SlowCommand.h>
 
-using namespace chaos::data;
+using namespace chaos::cu::cm::slcmd;
 
-BsonFragment::BsonFragment():BSONObjBuilder(true, 512) {
+/*
+ Start the slow command sequence
+ */
+int SlowCommand::setHandler() {
     
 }
 
-const char *BsonFragment::getFragmentPtr(uint32_t& fragmetDimension) {
-    const char *result = BSONObjBuilder::_b.buf();
-    fragmetDimension = BSONObjBuilder::_b.len();
-    BSONObjBuilder::_b.reset();
-    return result;
+/*
+ implemente thee data acquisition for the command
+ */
+int SlowCommand::acquireHandler() {
+    
+}
+
+/*
+ Performe correlation and send command to the driver
+ */
+int SlowCommand::ccHandler() {
+    
 }

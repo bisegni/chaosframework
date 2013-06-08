@@ -50,6 +50,8 @@
 		325DE9F215EC031E00D6F34E /* EventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 325DE9F015EC031E00D6F34E /* EventChannel.h */; };
 		325DE9F615EC03F800D6F34E /* EventAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 325DE9F415EC03F800D6F34E /* EventAction.h */; };
 		325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F86EB14D9E59D00CDF35F /* InetUtility.h */; };
+		325F8B511763AF2300EFE616 /* SlowCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F8B4F1763AF2300EFE616 /* SlowCommand.cpp */; };
+		325F8B521763AF2300EFE616 /* SlowCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F8B501763AF2300EFE616 /* SlowCommand.h */; };
 		3260276A14B306BA00C906CE /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 326026E914B301F600C906CE /* libchaos_common.dylib */; };
 		32640A27169DCC5800450962 /* BufferTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A09169DCC5800450962 /* BufferTracker.h */; };
 		32640A28169DCC5800450962 /* GarbageThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A0A169DCC5800450962 /* GarbageThread.h */; };
@@ -183,6 +185,8 @@
 		327CFF121708D7760069497B /* CacheGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF111708D7740069497B /* CacheGlobal.h */; };
 		3289F9A5168508460080D93F /* SQLiteEntityDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */; };
 		3289F9A6168508460080D93F /* SQLiteEntityDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 3289F9A4168508460080D93F /* SQLiteEntityDB.h */; };
+		328CC9D61763CCC7000B30B6 /* AbstractDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328CC9D41763CCC7000B30B6 /* AbstractDriver.cpp */; };
+		328CC9D71763CCC7000B30B6 /* AbstractDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 328CC9D51763CCC7000B30B6 /* AbstractDriver.h */; };
 		328D2FB71660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328D2FB51660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp */; };
 		328D2FB81660EACD007F482E /* DSAttributeHandlerExecutionEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 328D2FB61660EACD007F482E /* DSAttributeHandlerExecutionEngine.h */; };
 		328D2FB91660EAD6007F482E /* DSAttributeHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328D2FB01660E3EC007F482E /* DSAttributeHandler.cpp */; };
@@ -409,6 +413,8 @@
 		325DE9F015EC031E00D6F34E /* EventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventChannel.h; sourceTree = "<group>"; };
 		325DE9F415EC03F800D6F34E /* EventAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventAction.h; sourceTree = "<group>"; };
 		325F86EB14D9E59D00CDF35F /* InetUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InetUtility.h; sourceTree = "<group>"; };
+		325F8B4F1763AF2300EFE616 /* SlowCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SlowCommand.cpp; sourceTree = "<group>"; };
+		325F8B501763AF2300EFE616 /* SlowCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlowCommand.h; sourceTree = "<group>"; };
 		326026E914B301F600C906CE /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_common.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3260276614B3068100C906CE /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_cutoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3260278714B307DA00C906CE /* libchaos_uitoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_uitoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -545,6 +551,8 @@
 		327CFF111708D7740069497B /* CacheGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheGlobal.h; sourceTree = "<group>"; };
 		3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteEntityDB.cpp; sourceTree = "<group>"; };
 		3289F9A4168508460080D93F /* SQLiteEntityDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteEntityDB.h; sourceTree = "<group>"; };
+		328CC9D41763CCC7000B30B6 /* AbstractDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractDriver.cpp; sourceTree = "<group>"; };
+		328CC9D51763CCC7000B30B6 /* AbstractDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDriver.h; sourceTree = "<group>"; };
 		328D2FB01660E3EC007F482E /* DSAttributeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DSAttributeHandler.cpp; sourceTree = "<group>"; };
 		328D2FB11660E3EC007F482E /* DSAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSAttributeHandler.h; sourceTree = "<group>"; };
 		328D2FB51660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DSAttributeHandlerExecutionEngine.cpp; sourceTree = "<group>"; };
@@ -862,6 +870,15 @@
 			path = channel;
 			sourceTree = "<group>";
 		};
+		325F8B4E1763AED200EFE616 /* slcmd */ = {
+			isa = PBXGroup;
+			children = (
+				325F8B4F1763AF2300EFE616 /* SlowCommand.cpp */,
+				325F8B501763AF2300EFE616 /* SlowCommand.h */,
+			);
+			path = slcmd;
+			sourceTree = "<group>";
+		};
 		3260260B14B300FE00C906CE = {
 			isa = PBXGroup;
 			children = (
@@ -996,10 +1013,10 @@
 			isa = PBXGroup;
 			children = (
 				3294905A159AF4BF00E86BD1 /* CMakeLists.txt */,
-				32DA666F1700DBB6004FC02B /* endian.h */,
 				326DB3E214B38BC00018A8D0 /* ChaosCommon.h */,
 				326DB3E014B38BC00018A8D0 /* cconstants.h */,
 				326DB40114B38BC00018A8D0 /* global.h */,
+				32DA666F1700DBB6004FC02B /* endian.h */,
 				326DB42E14B38BC00018A8D0 /* version.h */,
 				326DB42F14B38BC00018A8D0 /* version.sh */,
 				32BE864415A0CDC200818C39 /* log */,
@@ -1271,6 +1288,8 @@
 		326DB4A414B3A3E50018A8D0 /* ControlManager */ = {
 			isa = PBXGroup;
 			children = (
+				328CC9D31763CC50000B30B6 /* driver */,
+				325F8B4E1763AED200EFE616 /* slcmd */,
 				32CF054416AB235100E86CC7 /* perf_test */,
 				328D2FBF16612A15007F482E /* handler */,
 				328D2FB51660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp */,
@@ -1345,6 +1364,15 @@
 				326DB4E414B3B0070018A8D0 /* LLRpcApi.h */,
 			);
 			path = LowLevelApi;
+			sourceTree = "<group>";
+		};
+		328CC9D31763CC50000B30B6 /* driver */ = {
+			isa = PBXGroup;
+			children = (
+				328CC9D41763CCC7000B30B6 /* AbstractDriver.cpp */,
+				328CC9D51763CCC7000B30B6 /* AbstractDriver.h */,
+			);
+			path = driver;
 			sourceTree = "<group>";
 		};
 		328D2FBF16612A15007F482E /* handler */ = {
@@ -1765,6 +1793,8 @@
 				32DB1188166267FB0036D1B9 /* DSDoubleHandler.h in Headers */,
 				3264B05C1673623F002E87FA /* TDSObjectHandler.h in Headers */,
 				32CF054916AB23C200E86CC7 /* PerfTestCU.h in Headers */,
+				325F8B521763AF2300EFE616 /* SlowCommand.h in Headers */,
+				328CC9D71763CCC7000B30B6 /* AbstractDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2040,6 +2070,8 @@
 				328D2FB71660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp in Sources */,
 				328D2FB91660EAD6007F482E /* DSAttributeHandler.cpp in Sources */,
 				32CF054816AB23C200E86CC7 /* PerfTestCU.cpp in Sources */,
+				325F8B511763AF2300EFE616 /* SlowCommand.cpp in Sources */,
+				328CC9D61763CCC7000B30B6 /* AbstractDriver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
