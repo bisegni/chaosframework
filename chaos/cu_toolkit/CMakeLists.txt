@@ -1,5 +1,5 @@
 SET(cu_lib_src  ChaosCUToolkit.cpp CommandManager/CommandManager.cpp ConfigurationManager/ConfigurationManager.cpp ControlManager/DSAttributeHandlerExecutionEngine.cpp 
-                ControlManager/handler/DSAttributeHandler.cpp ControlManager/AbstractControlUnit.cpp ControlManager/ControlManager.cpp ControlManager/slcmd/SlowCommand.cpp DataManager/DataManager.cpp 
+                ControlManager/handler/DSAttributeHandler.cpp ControlManager/AbstractControlUnit.cpp ControlManager/ControlManager.cpp ControlManager/slcmd/SlowCommand.cpp ControlManager/slcmd/AbstractDriver.cpp ControlManager/slcmd/DriverAccessor.cpp DataManager/DataManager.cpp 
                 DataManager/KeyDataStorage.cpp DataManager/MultiBufferDataStorage.cpp DataManager/DataBuffer/OutputDataBuffer.cpp ) 
 
 ADD_LIBRARY(chaos_cutoolkit SHARED ${cu_lib_src})

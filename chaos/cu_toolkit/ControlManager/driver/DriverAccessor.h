@@ -1,5 +1,5 @@
 /*
- *	AbstractDriver.h
+ *	DriverAccessor.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,37 +18,45 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__AbstractDriver__
-#define __CHAOSFramework__AbstractDriver__
+#ifndef __CHAOSFramework__DriverAccessor__
+#define __CHAOSFramework__DriverAccessor__
 
-#include <map>
 #include <chaos/cu_toolkit/ControlManager/driver/DriverGlobal.h>
 
 namespace chaos{
+    
+    //! forward declaration
+    template <typename T>
+    class PriorityQueuedElement;
+    
     namespace cu {
         namespace cm {
             namespace driver {
-            
-                class DriverAccessor;
                 
-                class AbstractDriver {
+                class DriverAccessor {
+                    friend class AbstractDriver;
+   
+                    //! input shared queue
+                    InputSharedQueuePtr inputQueue;
                     
-                    //! input queue
-                    //! used slab array cache slab
-                    InputSharedQueue inputQueue;
+                    //! output queue
+                    OutputAccessorQueuePtr outputQueue;
                     
+                    //Private constructor
+                    DriverAccessor();
+                    
+                    //Private destructor
+                    ~DriverAccessor();
                 public:
+
                     
-                    DriverAccessor *getNewAccessor();
+                    int read();
                     
-                    void disposeAccessor(DriverAccessor *accessor);
-                    
+                    int writeOpcode(uint16_t opcode, uint16_t property, void *data, uint16_t& cmdCode);
                 };
-                
-                
             }
         }
     }
 }
 
-#endif /* defined(__CHAOSFramework__AbstractDriver__) */
+#endif /* defined(__CHAOSFramework__DriverAccessor__) */

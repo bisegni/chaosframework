@@ -36,10 +36,10 @@ namespace chaos{
                  * \brief Describe the state in which the command can be found
                  */
                 typedef enum HandlerType {
-                    HT_Set      = 1     /**< Set handler */
+                    HT_Set      = 1,    /**< Set handler */
                     HT_Acq      = 2,    /**< Acquire handler */
-                    HT_CrCm     = 4,    /**< Commit and Correlation handler */
-                } RunningState;
+                    HT_CrCm     = 4     /**< Commit and Correlation handler */
+                } HandlerType;
                 
                 
                 /*!
@@ -47,7 +47,7 @@ namespace chaos{
                  * \brief Describe the state in which the command can be found
                  */
                 typedef enum RunningState {
-                    RS_Set      = 1     /**< The command is the set state */
+                    RS_Set      = 1,    /**< The command is the set state */
                     RS_Kill     = 2,    /**< The command can be killed */
                     RS_Over     = 4,    /**< The command can killed by an equal command */
                     RS_Stack    = 8,    /**< The command can be stacked (paused) */
@@ -95,7 +95,7 @@ namespace chaos{
                         that has been implemented. If all handler has been implemented
                         the result will be "HT_Set | HT_Acq | HT_CrCm"
                      */
-                    uint8_t implementedHandler() = 0;
+                    virtual uint8_t implementedHandler() = 0;
                     
                         //! Start the command execution
                     /*!

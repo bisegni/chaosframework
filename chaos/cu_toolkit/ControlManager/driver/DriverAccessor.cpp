@@ -1,5 +1,5 @@
 /*
- *	AbstractDriver.cpp
+ *	DriverAccessor.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,23 +18,27 @@
  *    	limitations under the License.
  */
 
-#include <chaos/cu_toolkit/ControlManager/driver/AbstractDriver.h>
 #include <chaos/cu_toolkit/ControlManager/driver/DriverAccessor.h>
+#include <chaos/cu_toolkit/ControlManager/driver/AbstractDriver.h>
 
 using namespace chaos::cu::cm::driver;
 
-DriverAccessor *AbstractDriver::getNewAccessor() {
+DriverAccessor::DriverAccessor() {
     
-    //allocate new accessor;
-    DriverAccessor *result = new DriverAccessor();
-    if(result) {
-        //share the input queue ptr
-        result->inputQueue = &inputQueue;
-        result->outputQueue = new OutputAccessorQueue();
-    }
-    return result;
 }
 
-void AbstractDriver::disposeAccessor(DriverAccessor *accessor) {
-    delete accessor;
+DriverAccessor::~DriverAccessor() {
+    if(outputQueue) {
+        //TODO flush all response
+        
+        delete(outputQueue);
+    }
+}
+
+int DriverAccessor::read() {
+    return 0;
+}
+
+int DriverAccessor::writeOpcode(uint16_t opcode, uint16_t property, void *data, uint16_t& cmdCode) {
+    return 0;
 }

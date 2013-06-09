@@ -1,5 +1,5 @@
 /*
- *	AbstractDriver.h
+ *	DriverGlobal.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,37 +18,33 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__AbstractDriver__
-#define __CHAOSFramework__AbstractDriver__
+#ifndef CHAOSFramework_DriverGlobal_h
+#define CHAOSFramework_DriverGlobal_h
 
-#include <map>
-#include <chaos/cu_toolkit/ControlManager/driver/DriverGlobal.h>
+#include <boost/lockfree/queue.hpp>
+#include <boost/lockfree/spsc_queue.hpp>
 
 namespace chaos{
     namespace cu {
         namespace cm {
-            namespace driver {
             
-                class DriverAccessor;
+            //! The name space that group all foundamental class need by driver implementation on chaos
+            namespace driver {
                 
-                class AbstractDriver {
-                    
-                    //! input queue
-                    //! used slab array cache slab
-                    InputSharedQueue inputQueue;
-                    
-                public:
-                    
-                    DriverAccessor *getNewAccessor();
-                    
-                    void disposeAccessor(DriverAccessor *accessor);
-                    
-                };
+                typedef boost::lockfree::queue<int, boost::lockfree::fixed_sized<false> > OutputAccessorQueue, *OutputAccessorQueuePtr;
+
+                typedef struct DrvCmd {
+                    uint16_t opcode;
+                    uint16_t property;
+                    void *data;
+                    OutputAccessorQueuePtr *responseQueue;
+                } DrvMsg, *DrvMsgPtr;
                 
-                
+                typedef boost::lockfree::queue<DrvMsgPtr, boost::lockfree::fixed_sized<false> > InputSharedQueue, *InputSharedQueuePtr;
+
             }
         }
     }
 }
 
-#endif /* defined(__CHAOSFramework__AbstractDriver__) */
+#endif
