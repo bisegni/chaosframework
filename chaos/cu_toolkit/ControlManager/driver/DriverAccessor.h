@@ -21,6 +21,8 @@
 #ifndef __CHAOSFramework__DriverAccessor__
 #define __CHAOSFramework__DriverAccessor__
 
+#include <set>
+#include <boost/atomic/atomic.hpp>
 #include <chaos/cu_toolkit/ControlManager/driver/DriverGlobal.h>
 
 namespace chaos{
@@ -35,24 +37,34 @@ namespace chaos{
                 
                 class DriverAccessor {
                     friend class AbstractDriver;
-   
-                    //! input shared queue
-                    InputSharedQueuePtr inputQueue;
                     
-                    //! output queue
-                    OutputAccessorQueuePtr outputQueue;
+                    boost::atomic_uint64_t messagesCount;
+                    
+                    boost::interprocess::message_queue *accessorAsyncMQ;
+                    
+                    boost::interprocess::message_queue *driverAsyncMQ;
+                    
+                    boost::interprocess::message_queue *accessorSyncMQ;
+                    
+                    boost::interprocess::message_queue *driverSyncMQ;
+                    
+                    //! input shared queue
+                    boost::interprocess::message_queue *commandQueue;
                     
                     //Private constructor
                     DriverAccessor();
                     
-                    //Private destructor
-                    ~DriverAccessor();
                 public:
 
+                    //Private destructor
+                    ~DriverAccessor();
                     
-                    int read();
+                    bool send(DrvMsgPtr driverCmd, uint priority = 0);
                     
-                    int writeOpcode(uint16_t opcode, uint16_t property, void *data, uint16_t& cmdCode);
+                    bool sendAsync(DrvMsgPtr driverCmd, MQAccessorMessageType& forwardingCode, uint priority = 0);
+                    
+                    bool getLastAsyncMsg(MQAccessorMessageType& forwardingCode);
+
                 };
             }
         }

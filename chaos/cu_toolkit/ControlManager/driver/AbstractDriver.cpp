@@ -18,23 +18,65 @@
  *    	limitations under the License.
  */
 
+#include <chaos/common/utility/UUIDUtil.h>
+
 #include <chaos/cu_toolkit/ControlManager/driver/AbstractDriver.h>
 #include <chaos/cu_toolkit/ControlManager/driver/DriverAccessor.h>
 
 using namespace chaos::cu::cm::driver;
 
-DriverAccessor *AbstractDriver::getNewAccessor() {
+/*------------------------------------------------------
+
+------------------------------------------------------*/
+AbstractDriver::AbstractDriver() {
+    driverUUID = chaos::UUIDUtil::generateUUID();
+    commandQueue = new boost::interprocess::message_queue(boost::interprocess::open_or_create         // open or create
+                                                          ,driverUUID.c_str()                         // name queue  with casual UUID
+                                                          ,1000                                       // max driver message queue
+                                                          ,sizeof(MQAccessorMessageType)              // dimension of the message
+                                                          );
+}
+
+/*------------------------------------------------------
+ 
+ ------------------------------------------------------*/
+AbstractDriver::~AbstractDriver() {
+    
+}
+
+/*------------------------------------------------------
+ 
+ ------------------------------------------------------*/
+bool AbstractDriver::getNewAccessor(DriverAccessor **newAccessor) {
     
     //allocate new accessor;
     DriverAccessor *result = new DriverAccessor();
     if(result) {
-        //share the input queue ptr
-        result->inputQueue = &inputQueue;
-        result->outputQueue = new OutputAccessorQueue();
+            //share the input queue ptr
+        result->commandQueue = new boost::interprocess::message_queue(boost::interprocess::open_only    // open or create
+                                                                      ,driverUUID.c_str()               // name queue  with casual UUID
+                                                                      );
     }
-    return result;
+    return result != NULL;
 }
 
-void AbstractDriver::disposeAccessor(DriverAccessor *accessor) {
-    delete accessor;
+/*------------------------------------------------------
+ 
+ ------------------------------------------------------*/
+void AbstractDriver::scanForMessage() {
+    DrvMsgPtr currentMessagePtr;
+    unsigned int messagePriority = 0;
+    boost::interprocess::message_queue::size_type recvd_size = 0;
+    boost::interprocess::message_queue::size_type sent_size = sizeof(MQAccessorMessageType);
+    do {
+        //wait for the new command
+        commandQueue->receive(&currentMessagePtr, sent_size, recvd_size, messagePriority);
+        
+        //broadcast the execution
+        execOpcode(currentMessagePtr);
+        
+        //notify the caller
+        currentMessagePtr->drvResponseMQ->send(&currentMessagePtr->id, sizeof(MQAccessorMessageType), messagePriority);
+    } while (currentMessagePtr->opcode == OP_END);
+    
 }

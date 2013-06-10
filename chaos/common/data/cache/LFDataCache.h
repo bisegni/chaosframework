@@ -23,10 +23,11 @@
 
 #include <vector>
 
+#include <boost/thread.hpp>
 #include <boost/atomic/atomic.hpp>
 #include <boost/lockfree/queue.hpp>
 #include <boost/detail/atomic_count.hpp>
-#include <boost/thread.hpp>
+
 
 #include <chaos/common/memory/ManagedMemory.h>
 #include <chaos/common/data/cache/SlbCachedInfo.h>

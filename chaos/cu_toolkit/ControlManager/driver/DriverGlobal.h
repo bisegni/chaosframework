@@ -23,6 +23,9 @@
 
 #include <boost/lockfree/queue.hpp>
 #include <boost/lockfree/spsc_queue.hpp>
+#include <boost/interprocess/ipc/message_queue.hpp>
+
+#include <chaos/common/utility/Atomic.h>
 
 namespace chaos{
     namespace cu {
@@ -30,18 +33,26 @@ namespace chaos{
             
             //! The name space that group all foundamental class need by driver implementation on chaos
             namespace driver {
-                
-                typedef boost::lockfree::queue<int, boost::lockfree::fixed_sized<false> > OutputAccessorQueue, *OutputAccessorQueuePtr;
 
-                typedef struct DrvCmd {
+                typedef enum {
+                    OP_START = 0,
+                    OP_END = UINT16_MAX
+                } Opcode;
+                
+                
+                typedef struct {
+                    uint64_t id;
                     uint16_t opcode;
                     uint16_t property;
                     void *data;
-                    OutputAccessorQueuePtr *responseQueue;
+                    boost::interprocess::message_queue *drvResponseMQ;
                 } DrvMsg, *DrvMsgPtr;
                 
-                typedef boost::lockfree::queue<DrvMsgPtr, boost::lockfree::fixed_sized<false> > InputSharedQueue, *InputSharedQueuePtr;
+                //! The input queue used by the driver to receive command by all the users
+                //typedef boost::lockfree::queue<DrvMsgPtr, boost::lockfree::fixed_sized<false> > InputSharedDriverQueue, *InputSharedQueueDriverPtr;
 
+                
+                typedef uint64_t MQAccessorMessageType;
             }
         }
     }

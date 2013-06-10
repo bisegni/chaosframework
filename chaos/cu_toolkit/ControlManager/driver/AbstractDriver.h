@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__AbstractDriver__
 #define __CHAOSFramework__AbstractDriver__
 
-#include <map>
+#include <string>
 #include <chaos/cu_toolkit/ControlManager/driver/DriverGlobal.h>
 
 namespace chaos{
@@ -31,18 +31,49 @@ namespace chaos{
             
                 class DriverAccessor;
                 
+                
+                    //! !CHAOS Driver abstract class
+                /*!
+                    This represent the base class for all driver in !CHOAS. For standardize the comunicacetion 
+                    a message queue is used for receive DrvMsg pack.
+                 */
                 class AbstractDriver {
                     
-                    //! input queue
-                    //! used slab array cache slab
-                    InputSharedQueue inputQueue;
+                    std::string driverUUID;
+                    
+                    //! command queue used for receive DrvMsg pack
+                    boost::interprocess::message_queue *commandQueue;
+                    
+                    //!Private constructor
+                    AbstractDriver();
+                    
+                    //!Private destructor
+                    virtual ~AbstractDriver();
+                    
+                    //! Wait the new command and broadcast it
+                    /*!
+                        This method waith for the next command, broadcast it
+                        and check if the opcode is the "end of work" opcode, 
+                        in this case it will quit.
+                     */
+                    void scanForMessage();
                     
                 public:
-                    
-                    DriverAccessor *getNewAccessor();
-                    
-                    void disposeAccessor(DriverAccessor *accessor);
-                    
+                    //! Create a new accessor
+                    /*!
+                        A new accessor is allocate. In the allocation process
+                        the message queue for comunicating with this driver is
+                        allocated.
+                     */
+                    bool getNewAccessor(DriverAccessor **newAccessor);
+
+                    //! Execute a command
+                    /*!
+                        The driver implementation must use the opcode to recognize the
+                        command to execute and then write it on th ememory allocate
+                        by the issuer of the command.
+                     */
+                    virtual void execOpcode(DrvMsgPtr cmd) = 0;
                 };
                 
                 
