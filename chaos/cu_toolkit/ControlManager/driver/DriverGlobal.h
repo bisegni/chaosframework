@@ -41,18 +41,19 @@ namespace chaos{
                 
                 
                 typedef struct {
-                    uint64_t id;
-                    uint16_t opcode;
-                    uint16_t property;
-                    void *data;
+                    uint64_t    id;
+                    uint16_t    opcode;
+                    uint16_t    property;
+                    uint32_t    dataLength;
                     boost::interprocess::message_queue *drvResponseMQ;
+                    void        *data;
                 } DrvMsg, *DrvMsgPtr;
                 
                 //! The input queue used by the driver to receive command by all the users
                 //typedef boost::lockfree::queue<DrvMsgPtr, boost::lockfree::fixed_sized<false> > InputSharedDriverQueue, *InputSharedQueueDriverPtr;
 
                 
-                typedef uint64_t MQAccessorMessageType;
+                typedef uint64_t MQAccessorResponseMessageType;
             }
         }
     }

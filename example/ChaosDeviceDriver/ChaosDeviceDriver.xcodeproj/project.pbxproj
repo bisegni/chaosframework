@@ -336,8 +336,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
+				CLANG_CXX_LIBRARY = "libstdc++";
 				EXECUTABLE_PREFIX = lib;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
 					../../,
 					../../usr/local/include,
@@ -374,8 +376,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
+				CLANG_CXX_LIBRARY = "libstdc++";
 				EXECUTABLE_PREFIX = lib;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
 					../../,
 					../../usr/local/include,
@@ -411,7 +415,9 @@
 		53AD03C4173013420058E5A6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
+				CLANG_CXX_LIBRARY = "libstdc++";
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
 					../../,
 					../../usr/local/include,
@@ -446,7 +452,9 @@
 		53AD03C5173013420058E5A6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
+				CLANG_CXX_LIBRARY = "libstdc++";
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
 					../../,
 					../../usr/local/include,

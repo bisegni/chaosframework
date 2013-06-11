@@ -206,7 +206,7 @@
 					"-lboost_log_setup",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.7;
+				SDKROOT = macosx10.8;
 			};
 			name = Debug;
 		};
@@ -239,7 +239,7 @@
 					"-lboost_log_setup",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.7;
+				SDKROOT = macosx10.8;
 			};
 			name = Release;
 		};

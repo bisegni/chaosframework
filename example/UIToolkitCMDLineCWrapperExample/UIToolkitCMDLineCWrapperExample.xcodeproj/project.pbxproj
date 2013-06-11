@@ -178,6 +178,8 @@
 		324D67D015DA579200D60BC0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
+				CLANG_CXX_LIBRARY = "libstdc++";
 				HEADER_SEARCH_PATHS = (
 					../../,
 					/usr/local/include,
@@ -191,12 +193,15 @@
 				);
 				OTHER_LDFLAGS = "-lchaos_uitoolkit";
 				PRODUCT_NAME = UIToolkitCMDLineCWrapperExample;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
 		324D67D115DA579200D60BC0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
+				CLANG_CXX_LIBRARY = "libstdc++";
 				HEADER_SEARCH_PATHS = (
 					../../,
 					/usr/local/include,
@@ -210,6 +215,7 @@
 				);
 				OTHER_LDFLAGS = "-lchaos_uitoolkit";
 				PRODUCT_NAME = UIToolkitCMDLineCWrapperExample;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};

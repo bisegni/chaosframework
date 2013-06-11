@@ -230,6 +230,8 @@
 		324707D616878FA8002F8187 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
+				CLANG_CXX_LIBRARY = "libstdc++";
 				HEADER_SEARCH_PATHS = (
 					../../,
 					../../usr/local/include,
@@ -256,12 +258,15 @@
 					"-lchaos_common",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.8;
 			};
 			name = Debug;
 		};
 		324707D716878FA8002F8187 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
+				CLANG_CXX_LIBRARY = "libstdc++";
 				HEADER_SEARCH_PATHS = (
 					../../,
 					../../usr/local/include,
@@ -288,6 +293,7 @@
 					"-lchaos_common",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.8;
 			};
 			name = Release;
 		};

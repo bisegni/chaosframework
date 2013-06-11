@@ -33,7 +33,7 @@ AbstractDriver::AbstractDriver() {
     commandQueue = new boost::interprocess::message_queue(boost::interprocess::open_or_create         // open or create
                                                           ,driverUUID.c_str()                         // name queue  with casual UUID
                                                           ,1000                                       // max driver message queue
-                                                          ,sizeof(MQAccessorMessageType)              // dimension of the message
+                                                          ,sizeof(DrvMsgPtr)                          // dimension of the message
                                                           );
 }
 
@@ -67,7 +67,7 @@ void AbstractDriver::scanForMessage() {
     DrvMsgPtr currentMessagePtr;
     unsigned int messagePriority = 0;
     boost::interprocess::message_queue::size_type recvd_size = 0;
-    boost::interprocess::message_queue::size_type sent_size = sizeof(MQAccessorMessageType);
+    boost::interprocess::message_queue::size_type sent_size = sizeof(DrvMsgPtr);
     do {
         //wait for the new command
         commandQueue->receive(&currentMessagePtr, sent_size, recvd_size, messagePriority);
@@ -76,7 +76,7 @@ void AbstractDriver::scanForMessage() {
         execOpcode(currentMessagePtr);
         
         //notify the caller
-        currentMessagePtr->drvResponseMQ->send(&currentMessagePtr->id, sizeof(MQAccessorMessageType), messagePriority);
+        currentMessagePtr->drvResponseMQ->send(&currentMessagePtr->id, sizeof(DrvMsgPtr), messagePriority);
     } while (currentMessagePtr->opcode == OP_END);
     
 }

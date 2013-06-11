@@ -303,7 +303,9 @@
 		32CCBC5E1745572B00583BAA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
+				CLANG_CXX_LIBRARY = "libstdc++";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					../../,
 					../../usr/local/include,
@@ -326,13 +328,16 @@
 					"-lboost_program_options",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
 		32CCBC5F1745572B00583BAA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
+				CLANG_CXX_LIBRARY = "libstdc++";
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					../../,
 					../../usr/local/include,
@@ -355,6 +360,7 @@
 					"-lboost_program_options",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};

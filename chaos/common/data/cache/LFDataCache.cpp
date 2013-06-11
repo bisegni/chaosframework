@@ -92,7 +92,7 @@ void LFDataCache::garbageCache() {
 //! Initialize the channel cache
 void LFDataCache::init(const char *name, uint32_t maxLength) {
     CHAOS_ASSERT(memoryPool)
-    maxLength = maxLength;
+    this->maxLength = maxLength;
     uint32_t structSize = (uint32_t)sizeof(SlbCachedInfo);
     slabRequiredSize = structSize + maxLength;
     

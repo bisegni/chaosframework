@@ -24,13 +24,16 @@
       location = "group:CHAOSFramework.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:example/ControlUnitTest/ControlUnitTest.xcodeproj">
+      location = "group:example/ChaosDeviceDriver/ChaosDeviceDriver.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:example/UIToolkitCMDLineCWrapperExample/UIToolkitCMDLineCWrapperExample.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:example/UIToolkitCMDLineExample/UIToolkitCMDLineExample.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:example/UIToolkitCMDLineCWrapperExample/UIToolkitCMDLineCWrapperExample.xcodeproj">
+      location = "group:example/ControlUnitTest/ControlUnitTest.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:example/UIToolkitCMDLineCWrapperExample/../../test/TestEventDescriptor/TestEventDescriptor.xcodeproj">
@@ -49,8 +52,5 @@
    </FileRef>
    <FileRef
       location = "group:test/MemcachedEmbeddedTest/MemcachedEmbeddedTest.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:example/ChaosDeviceDriver/ChaosDeviceDriver.xcodeproj">
    </FileRef>
 </Workspace>

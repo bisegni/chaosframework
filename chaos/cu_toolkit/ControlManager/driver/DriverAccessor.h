@@ -35,20 +35,59 @@ namespace chaos{
         namespace cm {
             namespace driver {
                 
+                //! Driver accessor comminication class
+                /*!
+                    The accessor class represent the way used by another class for communiate with the driver.
+                    Three queue are used; two for receive sync and async result, and another to send command 
+                    to the driver.
+                 */
                 class DriverAccessor {
+                    
+                    //make driver friendly
                     friend class AbstractDriver;
                     
+                    //! Number of the command sent
+                    /*!
+                        This index is updated avery time a command is issued to the driver. It
+                        used for check whenever the driver has finiscehd to execute the command
+                        related to it.
+                     */
                     boost::atomic_uint64_t messagesCount;
                     
+                    //! Asynchronous accessor queue
+                    /*!
+                     This queue is used by the accessor to check whenever
+                     a command, identified by his id, has been processed.
+                     */
                     boost::interprocess::message_queue *accessorAsyncMQ;
                     
+                    //! Asynchronous driver queue
+                    /*!
+                        This queue is forwarded to the driver, within the
+                        command pack, to permit to it to give the response
+                        to an synchronous command.
+                     */
                     boost::interprocess::message_queue *driverAsyncMQ;
                     
+                    //! Synchronous accessor queue
+                    /*!
+                     This queue is used by the accessor to Synchronous check whenever
+                     a command, identified by his id, has been processed.
+                     */
                     boost::interprocess::message_queue *accessorSyncMQ;
                     
+                    //! Synchronous driver queue
+                    /*!
+                     This queue is forwarded to the driver, within the
+                     command pack, to permit to it to give the response
+                     to an synchronous command.
+                     */
                     boost::interprocess::message_queue *driverSyncMQ;
                     
-                    //! input shared queue
+                    //! input driver shared queue
+                    /*!
+                     This queue is to forward command to the driver
+                     */
                     boost::interprocess::message_queue *commandQueue;
                     
                     //Private constructor
@@ -59,11 +98,39 @@ namespace chaos{
                     //Private destructor
                     ~DriverAccessor();
                     
-                    bool send(DrvMsgPtr driverCmd, uint priority = 0);
+                    //! Send synchronous command
+                    /*!
+                        A command is sent to the driver and a synchronous
+                        answere is waith from the driver.
+                        \param cmd a command pack filled with all infromation
+                                for the command.
+                        \param priority the priority permit to be forward a message
+                                before message with minor priority.
+                        \return true if operation has been done sucessfull.
+                     */
+                    bool send(DrvMsgPtr cmd, uint priority = 0);
                     
-                    bool sendAsync(DrvMsgPtr driverCmd, MQAccessorMessageType& forwardingCode, uint priority = 0);
+                    //! Send an asynchronous command
+                    /*!
+                        A command is sent to the driver and a synchronous
+                        answere is waith from the driver.
+                        \param cmd a command pack filled with all infromation
+                            for the command.
+                        \param messageID is the code associated to the async command.
+                        \param priority the priority permit to be forward a message
+                            before message with minor priority.
+                        \return true if operation has been done sucessfull.
+                     */
+                    bool sendAsync(DrvMsgPtr cmd, MQAccessorResponseMessageType& messageID, uint priority = 0);
                     
-                    bool getLastAsyncMsg(MQAccessorMessageType& forwardingCode);
+                    //! Check last processed code
+                    /*!
+                        The asynchronous queue is checked for a result code. If one
+                        is found it s returned.
+                     \param messageID is filled with the found code.
+                     \return true if a code has been found.
+                     */
+                    bool getLastAsyncMsg(MQAccessorResponseMessageType& messageID);
 
                 };
             }

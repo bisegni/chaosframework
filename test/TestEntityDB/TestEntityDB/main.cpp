@@ -17,7 +17,7 @@ int main(int argc, const char * argv[])
         // insert code here...
     try {
         
-        chaos::ArrayPointer<chaos::edb::KeyIdAndValue> properties;
+        boost::ptr_vector<chaos::edb::KeyIdAndValue> properties;
         auto_ptr<chaos::edb::EntityDB> testDB (new chaos::edb::SQLiteEntityDB());
         testDB->initDB("test_one", true);
         
@@ -38,7 +38,7 @@ int main(int argc, const char * argv[])
         if(entityA.get()) {
             
             entityA->getAllProperty(properties);
-            entityA->addNumberProperty(keyDevice, 23);
+            entityA->addProperty(keyDevice, (int64_t)23);
         }
         
         strcpy(deviceInfo.value.strValue, "device_2");
