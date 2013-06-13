@@ -34,9 +34,7 @@
 		32640A49169DD16C00450962 /* LocalDataFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalDataFetcher.h; sourceTree = "<group>"; };
 		32640A4A169DD16C00450962 /* SimpleDataAggregator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleDataAggregator.h; sourceTree = "<group>"; };
 		32640A4B169DD16C00450962 /* SimpleDataFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleDataFetcher.h; sourceTree = "<group>"; };
-		32640A4C169DD16C00450962 /* SimpleDataTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleDataTransform.h; sourceTree = "<group>"; };
 		32640A4D169DD16C00450962 /* SimpleEmbeddedDataTransform.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleEmbeddedDataTransform.h; sourceTree = "<group>"; };
-		32640A4F169DD16C00450962 /* AggregateReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AggregateReader.h; sourceTree = "<group>"; };
 		32640A50169DD16C00450962 /* SimpleReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SimpleReader.h; sourceTree = "<group>"; };
 		32640A51169DD16C00450962 /* TransformReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransformReader.h; sourceTree = "<group>"; };
 		32D5F7FA169598E000C32347 /* CachingTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CachingTest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -73,7 +71,6 @@
 				32640A49169DD16C00450962 /* LocalDataFetcher.h */,
 				32640A4A169DD16C00450962 /* SimpleDataAggregator.h */,
 				32640A4B169DD16C00450962 /* SimpleDataFetcher.h */,
-				32640A4C169DD16C00450962 /* SimpleDataTransform.h */,
 				32640A4D169DD16C00450962 /* SimpleEmbeddedDataTransform.h */,
 			);
 			path = myimpl;
@@ -82,7 +79,6 @@
 		32640A4E169DD16C00450962 /* testcachingSystem */ = {
 			isa = PBXGroup;
 			children = (
-				32640A4F169DD16C00450962 /* AggregateReader.h */,
 				32640A50169DD16C00450962 /* SimpleReader.h */,
 				32640A51169DD16C00450962 /* TransformReader.h */,
 			);
@@ -283,6 +279,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libstdc++";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -292,7 +290,7 @@
 					"$(inherited)",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
@@ -331,10 +329,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				CLANG_CXX_LIBRARY = "libstdc++";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_VERSION = com.apple.compilers.llvmgcc42;
+				GCC_VERSION = "";
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;

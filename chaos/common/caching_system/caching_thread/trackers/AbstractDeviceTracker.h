@@ -39,13 +39,13 @@ namespace chaos {
             
             class TransformTracker;
             
-            template <class T, class U = T>
+            template <class T, class U>
             
             /*!
              * This class represents an abstraction of Tracker. It has responsability to mantain sub buffer information
              * and the logic needed for management, including garbaging of controlled buffer.
              */
-            class AbstractDeviceTracker{
+            class AbstractDeviceTracker {
                 
             private:
                 
@@ -161,7 +161,7 @@ namespace chaos {
                  * to the listner list for this tracker, and will be provided to it new data available automatically.
                  */
                 template<typename D>
-                TransformTracker<T,D>* getNewTranformTracker(EmbeddedDataTransform<T,D>* filter,uint64_t usecSampleInterval,uint64_t validity ) {
+                TransformTracker<T,D>* getNewTranformTracker(caching_system::EmbeddedDataTransform<T,D>* filter,uint64_t usecSampleInterval,uint64_t validity ) {
                     
                     //create a new tracker with basic transformation
                     TransformTracker<T,D>* transformTracker = new TransformTracker<T,D>(filter, usecSampleInterval, validity);

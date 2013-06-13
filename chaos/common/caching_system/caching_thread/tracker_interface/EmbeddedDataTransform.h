@@ -21,12 +21,16 @@
 #define CHAOSFramework_EmbeddedDataTransform_h
 
 #include <chaos/common/caching_system/common_buffer/data_element/DataElement.h>
-#include <chaos/common/caching_system/caching_thread/trackers/AbstractDeviceTracker.h>
+
 
 namespace chaos {
     
     
-    namespace caching_system {        
+    namespace caching_system {
+        namespace caching_thread{
+            template <class T, class U = T>
+            class AbstractDeviceTracker;
+        }
         template <typename T,typename D>
         
         /*!

@@ -8,21 +8,27 @@
 
 #ifndef CHAOSFramework_TranformTracker_h
 #define CHAOSFramework_TranformTracker_h
+
+#include <chaos/common/caching_system/caching_thread/tracker_interface/EmbeddedDataTransform.h>
+#include <chaos/common/caching_system/caching_thread/trackers/TrackerListener.h>
 #include <chaos/common/caching_system/caching_thread/tracker_interface/DataFetcherInterface.h>
 
 namespace chaos {
     
     namespace caching_system {
         namespace caching_thread{
-            template<typename T> class DataFetcherInterface;
+            
+            template<typename T>
+            class DataFetcherInterface;
+            
             template <class T, class U>
             class AbstractDeviceTracker;
             
             template <typename T, typename D>
-            
             class TransformTracker : public TrackerListener<T>, public AbstractDeviceTracker<D,D>
             {
-                friend class AbstractDeviceTracker<T>;
+             template <class U, class E>
+             friend class AbstractDeviceTracker;
                 
                 
             private:
@@ -36,15 +42,11 @@ namespace chaos {
                     this->filter=filter;
                 }
                 ~TransformTracker(){
-                    std::cout<<"chiamo distrutture transform\n";
                     this->shutDownTracking();
                     
                 }
                 
             public:
-                
-                
-                
                 
                 void addedNewelement(SmartPointer<T>* n,uint64_t timeStamp) {
                     //calculate new value with passed filter
@@ -60,7 +62,7 @@ namespace chaos {
                     //then, add it to the tracker
                     boost::mutex::scoped_lock  lock(*this->bufferMapMutex);
                     
-                    doTracking(filteredData);
+                    this->doTracking(filteredData);
                     
                 }
                 

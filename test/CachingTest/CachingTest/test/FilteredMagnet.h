@@ -24,14 +24,10 @@ public:
     
     
     friend void operator<<(std::ostream& out,const FilteredMagnet& mag){
-        
-        
         out<<"canale1: "<<mag.canale1<<"; ";
         out<<"canale2: "<<mag.canale2<<"; ";
       
-        
-        
-        }
+    }
 
     
 };

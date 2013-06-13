@@ -27,7 +27,7 @@
 namespace chaos {
     
     
-    namespace caching_system{
+    namespace caching_system {
         
         template <typename T>
         class SmartPointer  {

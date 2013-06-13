@@ -64,7 +64,7 @@ namespace chaos {
                         boost::mutex::scoped_lock  lock(*this->bufferMapMutex);
                         DataElement<T>* newElement= this->fetcher->_getData();
                         
-                        doTracking(newElement);
+                        this->doTracking(newElement);
                     }
                     this->shutDownTracking();
                     

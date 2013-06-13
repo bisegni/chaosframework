@@ -12,10 +12,9 @@
 #include <sys/stat.h>
 
 //includes for caching system
-#include <chaos/common/caching_system/caching_thread/trackers/TransformDeviceTracker.h>
 #include <chaos/common/caching_system/caching_thread/trackers/TransformTracker.h>
 
-#include <chaos/common/caching_system/caching_thread/trackers/AgregateDeviceTracker.h>
+//#include <chaos/common/caching_system/caching_thread/trackers/AgregateDeviceTracker.h>
 #include <chaos/common/caching_system/common_buffer/CommonBuffer.h>
 #include <chaos/common/caching_system/caching_thread/trackers/FetcherDeviceTracker.h>
 
@@ -23,18 +22,14 @@
 
 //implemented interfaces
 #include "SimpleDataFetcher.h"
-//#include "SimpleDataTransform.h"
-#include "SimpleEmbeddedDataTransform.h";
+#include "SimpleEmbeddedDataTransform.h"
 #include "SimpleDataAggregator.h"
-#include "LocalDataFetcher.h"
 #include "SimpleReader.h"
-#include "AggregateReader.h"
 #include "TransformReader.h"
 #include "FilteredMagnet.h"
 
 //data structure
 #include "MioElemento.h"
-#include "DataAggregate.h"
 
 
 
@@ -63,7 +58,7 @@ int main(int argc, const char * argv[]){
 int run(int argc, const char * argv[]){
     
     //duration time of the run
-    int timeOfSimulation=120;
+    int timeOfSimulation=10;
 
     // hertz to get data
     long usecGetData = 20000; //20 milli seconds
