@@ -20,21 +20,22 @@
 
 #include <chaos/common/utility/UUIDUtil.h>
 
-#include <chaos/cu_toolkit/ControlManager/driver/AbstractDriver.h>
-#include <chaos/cu_toolkit/ControlManager/driver/DriverAccessor.h>
+#include <chaos/cu_toolkit/driver_manager/driver/AbstractDriver.h>
+#include <chaos/cu_toolkit/driver_manager/driver/DriverAccessor.h>
 
-using namespace chaos::cu::cm::driver;
+using namespace chaos::cu::dm::driver;
 
 /*------------------------------------------------------
 
 ------------------------------------------------------*/
 AbstractDriver::AbstractDriver() {
+    accessorCount = 0;
     driverUUID = chaos::UUIDUtil::generateUUID();
     commandQueue = new boost::interprocess::message_queue(boost::interprocess::open_or_create         // open or create
                                                           ,driverUUID.c_str()                         // name queue  with casual UUID
                                                           ,1000                                       // max driver message queue
-                                                          ,sizeof(DrvMsgPtr)                          // dimension of the message
-                                                          );
+                                                          ,sizeof(DrvMsgPtr));                        // dimension of the message
+                                                          
 }
 
 /*------------------------------------------------------
@@ -50,14 +51,33 @@ AbstractDriver::~AbstractDriver() {
 bool AbstractDriver::getNewAccessor(DriverAccessor **newAccessor) {
     
     //allocate new accessor;
-    DriverAccessor *result = new DriverAccessor();
+    DriverAccessor *result = new DriverAccessor(accessorCount++);
     if(result) {
             //share the input queue ptr
         result->commandQueue = new boost::interprocess::message_queue(boost::interprocess::open_only    // open or create
-                                                                      ,driverUUID.c_str()               // name queue  with casual UUID
-                                                                      );
+                                                                      ,driverUUID.c_str());             // name queue  with casual UUID
+        
+        
+        boost::unique_lock<boost::shared_mutex> lock(accessoListShrMux);
+        accessors.push_back(result);
+        lock.unlock();
+        
+        *newAccessor = result;
     }
     return result != NULL;
+}
+
+/*------------------------------------------------------
+ 
+ ------------------------------------------------------*/
+void AbstractDriver::releaseAccessor(DriverAccessor *accessor) {
+    if(!accessor) return;
+    
+    boost::unique_lock<boost::shared_mutex> lock(accessoListShrMux);
+    accessors.erase(std::find(accessors.begin(), accessors.end(), accessor));
+    lock.unlock();
+    
+    delete(accessor);
 }
 
 /*------------------------------------------------------

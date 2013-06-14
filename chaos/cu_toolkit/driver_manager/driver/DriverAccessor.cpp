@@ -21,15 +21,15 @@
 #include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>
 
-#include <chaos/cu_toolkit/ControlManager/driver/DriverAccessor.h>
-#include <chaos/cu_toolkit/ControlManager/driver/AbstractDriver.h>
+#include <chaos/cu_toolkit/driver_manager/driver/DriverAccessor.h>
+#include <chaos/cu_toolkit/driver_manager/driver/AbstractDriver.h>
 
-using namespace chaos::cu::cm::driver;
+using namespace chaos::cu::dm::driver;
 
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
-DriverAccessor::DriverAccessor() {
+DriverAccessor::DriverAccessor(uint _accessorIndex):accessorIndex(_accessorIndex) {
     messagesCount = 0;
     
     //Allocate async message queue
@@ -119,4 +119,11 @@ bool DriverAccessor::getLastAsyncMsg(MQAccessorResponseMessageType& messageID) {
     boost::interprocess::message_queue::size_type sent_size = sizeof(MQAccessorResponseMessageType);
     bool result = accessorAsyncMQ->try_receive(&messageID, sent_size, recvd_size, messagePriority);
     return result && recvd_size == sent_size;
+}
+
+/*------------------------------------------------------
+ 
+ ------------------------------------------------------*/
+bool DriverAccessor::operator== (const DriverAccessor &a) {
+    return this->accessorIndex = a.accessorIndex;
 }

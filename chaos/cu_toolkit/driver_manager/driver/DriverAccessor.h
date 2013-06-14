@@ -23,16 +23,16 @@
 
 #include <set>
 #include <boost/atomic/atomic.hpp>
-#include <chaos/cu_toolkit/ControlManager/driver/DriverGlobal.h>
+#include <chaos/cu_toolkit/driver_manager/driver/DriverGlobal.h>
 
 namespace chaos{
     
-    //! forward declaration
+    // forward declaration
     template <typename T>
     class PriorityQueuedElement;
     
     namespace cu {
-        namespace cm {
+        namespace dm {
             namespace driver {
                 
                 //! Driver accessor comminication class
@@ -45,6 +45,8 @@ namespace chaos{
                     
                     //make driver friendly
                     friend class AbstractDriver;
+                    
+                    uint accessorIndex;
                     
                     //! Number of the command sent
                     /*!
@@ -91,12 +93,12 @@ namespace chaos{
                     boost::interprocess::message_queue *commandQueue;
                     
                     //Private constructor
-                    DriverAccessor();
+                    DriverAccessor(uint _accessorIndex);
                     
-                public:
-
                     //Private destructor
                     ~DriverAccessor();
+                    
+                public:
                     
                     //! Send synchronous command
                     /*!
@@ -131,7 +133,9 @@ namespace chaos{
                      \return true if a code has been found.
                      */
                     bool getLastAsyncMsg(MQAccessorResponseMessageType& messageID);
-
+                    
+                    //! Equals operator overloading
+                    bool operator== (const DriverAccessor &a);
                 };
             }
         }

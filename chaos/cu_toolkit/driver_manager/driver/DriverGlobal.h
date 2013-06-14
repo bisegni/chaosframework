@@ -29,24 +29,31 @@
 
 namespace chaos{
     namespace cu {
-        namespace cm {
+        namespace dm {
             
             //! The name space that group all foundamental class need by driver implementation on chaos
             namespace driver {
 
+                typedef boost::interprocess::message_queue DrvQueueType;
+                
                 typedef enum {
                     OP_START = 0,
                     OP_END = UINT16_MAX
                 } Opcode;
                 
-                
+                    //! Driver message information
+                /*!
+                 * This structure represent the message that is sent to the driver to perform 
+                 * it's work. 
+                 */
                 typedef struct {
-                    uint64_t    id;
-                    uint16_t    opcode;
-                    uint16_t    property;
-                    uint32_t    dataLength;
-                    boost::interprocess::message_queue *drvResponseMQ;
-                    void        *data;
+                    uint64_t      id;               /**< The identification of the command (it is used to check the response). */
+                    uint16_t      opcode;           /**< The ocode represent the code associated to a determinated command of the driver. */
+                    uint16_t      property;         /**< The proprety are additional (optional) feature associated to an opcode */
+                    DrvQueueType  *drvResponseMQ;   /**< thi represent the queue whre the command need to sent backward the "id" when the 
+                                                            command assocaited to the opcode has ben terminated. */
+                    uint32_t      dataLength;       /**< the length of the data (input/output) contained into the "data" field. */
+                    void          *data;            /**< the pointer to the memory containing the data for and from the command */
                 } DrvMsg, *DrvMsgPtr;
                 
                 //! The input queue used by the driver to receive command by all the users

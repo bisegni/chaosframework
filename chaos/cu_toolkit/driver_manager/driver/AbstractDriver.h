@@ -22,11 +22,15 @@
 #define __CHAOSFramework__AbstractDriver__
 
 #include <string>
-#include <chaos/cu_toolkit/ControlManager/driver/DriverGlobal.h>
+#include <vector>
+
+#include <boost/thread.hpp>
+
+#include <chaos/cu_toolkit/driver_manager/driver/DriverGlobal.h>
 
 namespace chaos{
     namespace cu {
-        namespace cm {
+        namespace dm {
             namespace driver {
             
                 class DriverAccessor;
@@ -40,6 +44,13 @@ namespace chaos{
                 class AbstractDriver {
                     
                     std::string driverUUID;
+                    
+                    boost::atomic_uint accessorCount;
+                    
+                    //! the list of all generated accessor
+                    std::vector<DriverAccessor*> accessors;
+                    
+                    boost::shared_mutex accessoListShrMux;
                     
                     //! command queue used for receive DrvMsg pack
                     boost::interprocess::message_queue *commandQueue;
@@ -66,6 +77,12 @@ namespace chaos{
                         allocated.
                      */
                     bool getNewAccessor(DriverAccessor **newAccessor);
+                    
+                    //! Dispose and accessor
+                    /*!
+                        A driver accessor is relased and all resource are free.
+                     */
+                    void releaseAccessor(DriverAccessor *newAccessor);
 
                     //! Execute a command
                     /*!
