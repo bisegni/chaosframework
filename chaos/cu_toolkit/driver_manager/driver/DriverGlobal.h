@@ -21,6 +21,8 @@
 #ifndef CHAOSFramework_DriverGlobal_h
 #define CHAOSFramework_DriverGlobal_h
 
+#include <stdint.h>
+
 #include <boost/lockfree/queue.hpp>
 #include <boost/lockfree/spsc_queue.hpp>
 #include <boost/interprocess/ipc/message_queue.hpp>
