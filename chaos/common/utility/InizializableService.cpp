@@ -30,7 +30,7 @@ using namespace chaos::utility;
  */
 InizializableService::InizializableService() {
         //set the default value
-    serviceState = IS_DEINTIATED;
+    serviceState = InizializableServiceType::IS_DEINTIATED;
 }
 
 /*!
@@ -51,9 +51,9 @@ bool InizializableService::initImplementation(InizializableService *impl, void *
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
         IS_LAPP  << "Initializing " << implName;
-        impl->serviceState = IS_INITING;
+        impl->serviceState = InizializableServiceType::IS_INITING;
         impl->init(initData);
-        impl->serviceState = IS_INITIATED;
+        impl->serviceState = InizializableServiceType::IS_INITIATED;
         IS_LAPP  << implName << "Initialized";
     } catch (CException ex) {
         IS_LAPP  << "Error initializing " << implName;
@@ -69,9 +69,9 @@ bool InizializableService::deinitImplementation(InizializableService *impl, cons
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
         IS_LAPP  << "Deinitializing " << implName;
-        impl->serviceState = IS_DEINITING;
+        impl->serviceState = InizializableServiceType::IS_DEINITING;
         impl->deinit();
-        impl->serviceState = IS_DEINTIATED;
+        impl->serviceState = InizializableServiceType::IS_DEINTIATED;
         IS_LAPP  << implName << "Deinitialized";
     } catch (CException ex) {
         IS_LAPP  << "Error Deinitializing " << implName;

@@ -27,15 +27,14 @@
 
 namespace chaos {
     namespace utility {
-        
-        
-        typedef enum {
-            IS_INITING,
-            IS_INITIATED,
-            IS_DEINITING,
-            IS_DEINTIATED
-        } InizializableServiceState;
-        
+        namespace InizializableServiceType {
+            typedef enum {
+                IS_INITING,
+                IS_INITIATED,
+                IS_DEINITING,
+                IS_DEINTIATED
+            } InizializableServiceState;
+        }
         class InizializableService {
         protected:
             uint8_t serviceState;

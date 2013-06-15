@@ -432,7 +432,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     CUSchemaDB::addAttributeToDataSetFromDataWrapper(*initConfiguration);
     
     LCU_ << "Initialize the DSAttribute handler engine for device:" << deviceID;
-    utility::ISDInterface::initImplementation(attributeHandlerEngineForDeviceIDMap[deviceID], static_cast<void*>(initConfiguration), "DSAttribute handler engine", "AbstractControlUnit::_init");
+    utility::StartableService::initImplementation(attributeHandlerEngineForDeviceIDMap[deviceID], static_cast<void*>(initConfiguration), "DSAttribute handler engine", "AbstractControlUnit::_init");
     
     //initialize key data storage for device id
     LCU_ << "Create KeyDataStorage device:" << deviceID;
@@ -492,7 +492,7 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
     deinit(deviceID);
     
     LCU_ << "Deinitialize the DSAttribute handler engine for device:" << deviceID;
-    utility::ISDInterface::deinitImplementation(attributeHandlerEngineForDeviceIDMap[deviceID], "DSAttribute handler engine", "AbstractControlUnit::_deinit");
+    utility::StartableService::deinitImplementation(attributeHandlerEngineForDeviceIDMap[deviceID], "DSAttribute handler engine", "AbstractControlUnit::_deinit");
     
     //remove scheduler
     tmpThread = schedulerDeviceMap[deviceID];

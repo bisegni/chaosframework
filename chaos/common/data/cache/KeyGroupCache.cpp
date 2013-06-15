@@ -123,7 +123,7 @@ void KeyGroupCache::garbageCache() {
 int KeyGroupCache::addKeyInfo(const char * key, chaos::DataType::DataType type, uint32_t channelMaxLength) {
     int err = 0;
         //check if we can receive other new channel
-    if(getISDState() != chaos::utility::ISDInterface::ISD_DEINTIATED)
+    if(getServiceState() != ::chaos::utility::InizializableServiceType::IS_DEINTIATED)
         throw CException(1, "Operation not permited, the cache is not initialized","KeyGroupCache::addChannel");
     
         //check if is already present into the hash
@@ -134,7 +134,7 @@ int KeyGroupCache::addKeyInfo(const char * key, chaos::DataType::DataType type, 
     if(!chInfo)
         throw CException(2, "Channel infor creation error","KeyGroupCache::addChannel");
     
-    chInfo->index = (uint)channelInfoMap.size();
+    chInfo->index = (uint8_t)channelInfoMap.size();
     switch (chInfo->type = type) {
         case chaos::DataType::TYPE_BOOLEAN:
             chInfo->maxLength = sizeof(char);
@@ -156,7 +156,7 @@ int KeyGroupCache::addKeyInfo(const char * key, chaos::DataType::DataType type, 
 
     channelInfoMap.insert(make_pair(key, chInfo));
     
-        //check the size and memorize the mAximum and minimum size
+        //check the size and memorize the msximum and minimum size
     maximumChannelSize = std::max(chInfo->maxLength, maximumChannelSize);
     minimumChannelSize = std::min(chInfo->maxLength, (minimumChannelSize==0)?maximumChannelSize:minimumChannelSize);
     return err;

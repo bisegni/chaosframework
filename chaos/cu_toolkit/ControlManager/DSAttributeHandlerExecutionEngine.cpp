@@ -62,7 +62,7 @@ void DSAttributeHandlerExecutionEngine::start() throw(chaos::CException) {
 
     //! Deinit the implementation
 void DSAttributeHandlerExecutionEngine::deinit() throw(chaos::CException) {
-    if(isdState != utility::ISDInterface::ISD_INITIATED) throw CException(0, "Engine need to be initialized to be deinitilized", "DSAttributeHandlerExecutionEngine::deinit");
+    if(serviceState != ::chaos::utility::InizializableServiceType::IS_INITIATED) throw CException(0, "Engine need to be initialized to be deinitilized", "DSAttributeHandlerExecutionEngine::deinit");
         //lock all engine
     boost::shared_lock< boost::shared_mutex >(engineManagmentLock);
     LDSAHEE_ << "Deinit for device id:" << deviceID;
@@ -91,7 +91,7 @@ void DSAttributeHandlerExecutionEngine::deinit() throw(chaos::CException) {
 void DSAttributeHandlerExecutionEngine::addHandlerForDSAttribute(handler::DSAttributeHandler* classHandler)  throw (CException) {
     if(!classHandler) throw CException(0, "The class handler need to be a valid pointer", "DSAttributeHandlerExecutionEngine::addHandlerForDSAttribute");
 
-    if(isdState != utility::ISDInterface::ISD_DEINTIATED) throw CException(1, "Engine need to be in deinitialized state to accept new hander", "DSAttributeHandlerExecutionEngine::addHandlerForDSAttribute");
+    if(serviceState != ::chaos::utility::InizializableServiceType::IS_DEINTIATED) throw CException(1, "Engine need to be in deinitialized state to accept new hander", "DSAttributeHandlerExecutionEngine::addHandlerForDSAttribute");
     
     std::string& attrName = classHandler->getAttributeName();
     

@@ -34,9 +34,9 @@ bool StartableService::startImplementation(StartableService *impl, const char * 
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
         SS_LAPP  << "Starting " << implName;
-        impl->serviceState = SS_STARTING;
+        impl->serviceState = StartableServiceType::SS_STARTING;
         impl->start();
-        impl->serviceState = SS_STARTED;
+        impl->serviceState = StartableServiceType::SS_STARTED;
         SS_LAPP  << implName << "Started";
     } catch (CException ex) {
         SS_LAPP  << "Error Starting " << implName;
@@ -52,9 +52,9 @@ bool StartableService::stopImplementation(StartableService *impl, const char * c
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
         SS_LAPP  << "Stopping " << implName;
-        impl->serviceState = SS_STOPPING;
+        impl->serviceState = StartableServiceType::SS_STOPPING;
         impl->stop();
-        impl->serviceState = SS_STOPPED;
+        impl->serviceState = StartableServiceType::SS_STOPPED;
         SS_LAPP  << implName << "Stopped";
     } catch (CException ex) {
         SS_LAPP  << "Error Starting " << implName;

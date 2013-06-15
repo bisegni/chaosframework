@@ -38,7 +38,7 @@ void ApiServer::init(void *initData) throw(chaos::CException) {
     AS_LAPP_ << "Init";
     SetupStateManager::levelUpFrom(INIT_STEP, "Already initialized");
     
-    utility::ISDInterface::initImplementation(dm, initData, "chaos::cnd::data::DataManagment", "ApiServer::init");
+    utility::StartableService::initImplementation(dm, initData, "chaos::cnd::data::DataManagment", "ApiServer::init");
     
     AS_LAPP_ << "Init NetworkBroker";
     networkBroker->init();
@@ -50,7 +50,7 @@ void ApiServer::init(void *initData) throw(chaos::CException) {
 void ApiServer::start() throw(chaos::CException) {
     SetupStateManager::levelUpFrom(START_STEP, "Already started");
     
-    utility::ISDInterface::startImplementation(dm, "chaos::cnd::data::DataManagment", "ApiServer::start");
+    utility::StartableService::startImplementation(dm, "chaos::cnd::data::DataManagment", "ApiServer::start");
     
     AS_LAPP_ << "Starting DataManagment";
     networkBroker->start();
@@ -65,7 +65,7 @@ void ApiServer::stop() throw(chaos::CException) {
     networkBroker->stop();
     AS_LAPP_ << "NetworkBroker Started";
     
-    utility::ISDInterface::stopImplementation(dm, "chaos::cnd::data::DataManagment", "ApiServer::stop");
+    utility::StartableService::stopImplementation(dm, "chaos::cnd::data::DataManagment", "ApiServer::stop");
 }
 
 // Deinit the implementation
@@ -75,7 +75,7 @@ void ApiServer::deinit() throw(chaos::CException) {
     networkBroker->deinit();
     AS_LAPP_ << "NetworkBroker Started";
     
-    utility::ISDInterface::deinitImplementation(dm, "chaos::cnd::data::DataManagment", "ApiServer::deinit");
+    utility::StartableService::deinitImplementation(dm, "chaos::cnd::data::DataManagment", "ApiServer::deinit");
 }
 
 /*!

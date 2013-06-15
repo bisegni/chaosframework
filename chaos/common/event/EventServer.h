@@ -25,7 +25,7 @@
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/event/EventHandler.h>
-#include <chaos/common/utility/ISDInterface.h>
+#include <chaos/common/utility/StartableService.h>
 
 
 namespace chaos {
@@ -33,7 +33,7 @@ namespace chaos {
     
     namespace event{
         
-        class EventServer : public NamedService , chaos::utility::ISDInterface {
+        class EventServer : public NamedService , chaos::utility::StartableService {
             friend class chaos::NetworkBroker;
                 //! handler that can manage the event reception
             EventHandler *rootEventHandler;

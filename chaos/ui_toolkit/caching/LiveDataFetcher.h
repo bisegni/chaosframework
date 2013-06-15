@@ -11,7 +11,7 @@
 
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/general/Configurable.h>
-#include <chaos/common/utility/ISDInterface.h>
+#include <chaos/common/utility/StartableService.h>
 #include <chaos/common/caching_system/caching_thread/tracker_interface/DataFetcherInterface.h>
 
 namespace chaos {
@@ -24,7 +24,7 @@ namespace chaos {
             /*!
              Class that implemnt the CDatawrapper fetcher from !CHOAS live data.
              */
-            class LiveDataFetcher : public chaos::caching_system::DataFetcherInterface<CDataWrapper>, public chaos::Configurable, public chaos::utility::ISDInterface {
+            class LiveDataFetcher : public chaos::caching_system::DataFetcherInterface<CDataWrapper>, public chaos::Configurable, public chaos::utility::StartableService {
                 auto_ptr<char> currentRawDataPtr;
                 
                 chaos::IODataDriver *dataDriver;

@@ -34,7 +34,7 @@
 #include <chaos/common/event/channel/EventChannel.h>
 #include <chaos/common/event/evt_desc/EventDescriptor.h>
 #include <chaos/common/network/NetworkForwardInfo.h>
-#include <chaos/common/utility/ISDInterface.h>
+#include <chaos/common/utility/StartableService.h>
 namespace chaos {
 
     using namespace std;
@@ -76,7 +76,7 @@ namespace chaos {
      chaos rpc client and server abstract class and to the message dispatcher abstract class. 
      It abstract the !CHAOS rule for sending message and wait for answer and other facility.
      */
-    class NetworkBroker: private SetupStateManager, public utility::ISDInterface {
+    class NetworkBroker: private SetupStateManager, public utility::StartableService {
         
             //!Event Client for event forwarding
         event::EventClient *eventClient;

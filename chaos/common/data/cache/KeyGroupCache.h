@@ -27,7 +27,7 @@
 #include <chaos/common/cconstants.h>
 #include <chaos/common/bson/util/builder.h>
 #include <chaos/common/memory/ManagedMemory.h>
-#include <chaos/common/utility/ISDInterface.h>
+#include <chaos/common/utility/StartableService.h>
 #include <chaos/common/data/cache/LFDataCache.h>
 #include <chaos/common/data/cache/ChannelValueAccessor.h>
 
@@ -39,7 +39,7 @@ namespace chaos {
             
                 //! summary infromatio about channel
             typedef struct ChannelInfo {
-                uint                        index;
+                uint8_t                     index;
                 uint32_t                    maxLength;
                 chaos::DataType::DataType   type;
             } ChannelInfo;
@@ -50,7 +50,7 @@ namespace chaos {
              A channel is identified by a name, at the initizialization phase the
              all channel are organized by position and all value are se to null.
              */
-            class KeyGroupCache: protected utility::ISDInterface  {
+            class KeyGroupCache: protected utility::StartableService  {
                     //! slab managed memory pool
                 memory::ManagedMemory memoryPool;
                 

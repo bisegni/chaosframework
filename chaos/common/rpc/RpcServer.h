@@ -28,7 +28,7 @@
 #include <chaos/common/rpc/RpcServerHandler.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/event/EventHandler.h>
-#include <chaos/common/utility/ISDInterface.h>
+#include <chaos/common/utility/StartableService.h>
 
 namespace chaos {
     using namespace std;
@@ -38,7 +38,7 @@ namespace chaos {
      Abstract class for standard adapter method for permit, to CommandManager
      the correct initialization for the adapter instance
      */
-    class RpcServer : public chaos::utility::ISDInterface {
+    class RpcServer : public chaos::utility::StartableService {
         friend class NetworkBroker;
         string *typeName;
     protected:

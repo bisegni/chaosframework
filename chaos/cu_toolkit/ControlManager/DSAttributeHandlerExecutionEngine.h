@@ -29,7 +29,7 @@
 #include <chaos/cu_toolkit/ControlManager/handler/DSAttributeHandler.h>
 #include <chaos/common/data/CUSchemaDB.h>
 #include <chaos/common/data/CDataWrapper.h>
-#include <chaos/common/utility/ISDInterface.h>
+#include <chaos/common/utility/StartableService.h>
 #include <boost/thread/thread.hpp>
 #include <boost/shared_ptr.hpp>
 
@@ -41,7 +41,7 @@ namespace chaos{
          \brief
          This class is the inegine for the execetuion of the handler on the device attribute
          */
-        class DSAttributeHandlerExecutionEngine : public chaos::utility::ISDInterface {
+        class DSAttributeHandlerExecutionEngine : public chaos::utility::StartableService {
                 //! device identification
             std::string deviceID;
             

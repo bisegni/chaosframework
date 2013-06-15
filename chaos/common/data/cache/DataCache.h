@@ -16,7 +16,7 @@
 #include <chaos/common/data/cache/FastHash.h>
 #include <chaos/common/memory/ManagedMemory.h>
 #include <chaos/common/exception/CException.h>
-#include <chaos/common/utility/ISDInterface.h>
+#include <chaos/common/utility/StartableService.h>
 #include <boost/thread.hpp>
 
 namespace chaos {
@@ -38,7 +38,7 @@ namespace chaos {
             /*!
              This class is the embedded version of memcached, all code for networking has been keeped out.
              */
-            class DataCache : private FastHash, private memory::ManagedMemory, protected utility::ISDInterface  {
+            class DataCache : private FastHash, private memory::ManagedMemory, protected utility::StartableService  {
                 
                 /* how many powers of 2's worth of buckets we use */
                 unsigned int hashpower;

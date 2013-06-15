@@ -26,13 +26,14 @@ namespace chaos {
     
     namespace utility {
         
-        typedef enum {
-            SS_STARTING = 5,
-            SS_STARTED,
-            SS_STOPPING,
-            SS_STOPPED
-        } StartableServiceState;
-        
+        namespace StartableServiceType {
+            typedef enum {
+                SS_STARTING = 5,
+                SS_STARTED,
+                SS_STOPPING,
+                SS_STOPPED
+            } StartableServiceState;
+        }
         class StartableService : public InizializableService {
         public:
             
@@ -47,6 +48,6 @@ namespace chaos {
         };
         
     }
-
+    
 }
 #endif /* defined(__CHAOSFramework__StartableService__) */

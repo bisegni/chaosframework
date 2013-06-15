@@ -33,7 +33,7 @@
 #include <chaos/common/action/DomainActions.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/general/Configurable.h>
-#include <chaos/common/utility/ISDInterface.h>
+#include <chaos/common/utility/StartableService.h>
 
 /*
  Base class for the command implementation
@@ -52,7 +52,7 @@ namespace chaos{
      to manage the priority execution all the registration of the domain and action are managed
      by this base class
      */
-    class AbstractCommandDispatcher : public RpcServerHandler, Configurable, utility::ISDInterface {
+    class AbstractCommandDispatcher : public RpcServerHandler, Configurable, utility::StartableService {
         friend class NetworkBroker;
             //friend class RpcClient;
         string *typeName;

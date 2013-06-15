@@ -85,7 +85,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         if(!eventDispatcher)
             throw CException(2, "Event dispatcher implementation not found", "NetworkBroker::init");
         
-        if(!utility::ISDInterface::initImplementation(eventDispatcher, static_cast<void*>(globalConfiguration), "DefaultEventDispatcher", "NetworkBroker::init"))
+        if(!utility::StartableService::initImplementation(eventDispatcher, static_cast<void*>(globalConfiguration), "DefaultEventDispatcher", "NetworkBroker::init"))
             throw CException(3, "Event dispatcher has not been initialized due an error", "NetworkBroker::init");
         
         
@@ -96,7 +96,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         MB_LAPP  << "Trying to initilize Event Server: " << eventServerName;
         eventServer = ObjectFactoryRegister<EventServer>::getInstance()->getNewInstanceByName(eventServerName.c_str());
-        if(utility::ISDInterface::initImplementation(eventServer, static_cast<void*>(globalConfiguration), eventServer->getName(), "NetworkBroker::init")){
+        if(utility::StartableService::initImplementation(eventServer, static_cast<void*>(globalConfiguration), eventServer->getName(), "NetworkBroker::init")){
                 //register the root handler on event server
             eventServer->setEventHanlder(eventDispatcher);
         }
@@ -104,7 +104,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         MB_LAPP  << "Trying to initilize Event Client: " << eventClientName;
         eventClient = ObjectFactoryRegister<EventClient>::getInstance()->getNewInstanceByName(eventClientName.c_str());
-        utility::ISDInterface::initImplementation(eventClient, static_cast<void*>(globalConfiguration), eventClientName.c_str(), "NetworkBroker::init");
+        utility::StartableService::initImplementation(eventClient, static_cast<void*>(globalConfiguration), eventClientName.c_str(), "NetworkBroker::init");
     }
         //---------------------------- E V E N T ----------------------------
     
@@ -116,7 +116,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         if(!commandDispatcher)
             throw CException(2, "Command dispatcher implementation not found", "NetworkBroker::init");
         
-        if(!utility::ISDInterface::initImplementation(commandDispatcher, static_cast<void*>(globalConfiguration), "DefaultCommandDispatcher", "NetworkBroker::init"))
+        if(!utility::StartableService::initImplementation(commandDispatcher, static_cast<void*>(globalConfiguration), "DefaultCommandDispatcher", "NetworkBroker::init"))
             throw CException(3, "Command dispatcher has not been initialized due an error", "NetworkBroker::init");
         
         
@@ -128,7 +128,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         MB_LAPP  << "Trying to initilize RPC Server: " << rpcServerName;
         rpcServer = ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(rpcServerName.c_str());
-        if(utility::ISDInterface::initImplementation(rpcServer, static_cast<void*>(globalConfiguration), rpcServer->getName(), "NetworkBroker::init")) {
+        if(utility::StartableService::initImplementation(rpcServer, static_cast<void*>(globalConfiguration), rpcServer->getName(), "NetworkBroker::init")) {
                 //set the handler on the rpc server
             rpcServer->setCommandDispatcher(commandDispatcher);
         }
@@ -136,7 +136,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         MB_LAPP  << "Trying to initilize RPC Client: " << rpcClientName;
         rpcClient = ObjectFactoryRegister<RpcClient>::getInstance()->getNewInstanceByName(rpcClientName.c_str());
-        if(utility::ISDInterface::initImplementation(rpcClient, static_cast<void*>(globalConfiguration), rpcClient->getName(), "NetworkBroker::init")) {
+        if(utility::StartableService::initImplementation(rpcClient, static_cast<void*>(globalConfiguration), rpcClient->getName(), "NetworkBroker::init")) {
                 //set the forwarder into dispatcher for answere
             if(commandDispatcher) commandDispatcher->setRpcForwarder(rpcClient);
         }
@@ -175,13 +175,13 @@ void NetworkBroker::deinit() throw(CException) {
     activeEventChannel.clear();
     
     MB_LAPP  << "Deinit event client: " << eventClient->getName();
-    utility::ISDInterface::deinitImplementation(eventClient, eventClient->getName(), "NetworkBroker::deinit");
+    utility::StartableService::deinitImplementation(eventClient, eventClient->getName(), "NetworkBroker::deinit");
     
     MB_LAPP  << "Deinit event server: " << eventServer->getName();
-    utility::ISDInterface::deinitImplementation(eventServer, eventServer->getName(), "NetworkBroker::deinit");
+    utility::StartableService::deinitImplementation(eventServer, eventServer->getName(), "NetworkBroker::deinit");
     
     MB_LAPP  << "Deinit Event dispatcher";
-    utility::ISDInterface::deinitImplementation(eventDispatcher, "DefaultEventDispatcher", "NetworkBroker::deinit");
+    utility::StartableService::deinitImplementation(eventDispatcher, "DefaultEventDispatcher", "NetworkBroker::deinit");
         //---------------------------- E V E N T ----------------------------
 
     
@@ -203,13 +203,13 @@ void NetworkBroker::deinit() throw(CException) {
     activeRpcChannel.clear();
     
     MB_LAPP  << "Deinit rpc client: " << rpcClient->getName();
-    utility::ISDInterface::deinitImplementation(rpcClient, rpcClient->getName(), "NetworkBroker::deinit");
+    utility::StartableService::deinitImplementation(rpcClient, rpcClient->getName(), "NetworkBroker::deinit");
     
     MB_LAPP  << "Deinit rpc server: " << rpcServer->getName();
-    utility::ISDInterface::deinitImplementation(rpcServer, rpcServer->getName(), "NetworkBroker::deinit");
+    utility::StartableService::deinitImplementation(rpcServer, rpcServer->getName(), "NetworkBroker::deinit");
 
     MB_LAPP  << "Deinit Command Dispatcher";
-    utility::ISDInterface::deinitImplementation(commandDispatcher, "DefaultCommandDispatcher", "NetworkBroker::deinit");
+    utility::StartableService::deinitImplementation(commandDispatcher, "DefaultCommandDispatcher", "NetworkBroker::deinit");
         //---------------------------- R P C ----------------------------
 
 }
@@ -219,22 +219,22 @@ void NetworkBroker::deinit() throw(CException) {
  */
 void NetworkBroker::start() throw(CException){
     MB_LAPP  << "Start event dispathcer ";
-    utility::ISDInterface::startImplementation(eventDispatcher, "DefaultEventDispatcher", "NetworkBroker::start");
+    utility::StartableService::startImplementation(eventDispatcher, "DefaultEventDispatcher", "NetworkBroker::start");
     
     MB_LAPP  << "Start event server: " << eventServer->getName();
-    utility::ISDInterface::startImplementation(eventServer, eventServer->getName(), "NetworkBroker::start");
+    utility::StartableService::startImplementation(eventServer, eventServer->getName(), "NetworkBroker::start");
     
     MB_LAPP  << "Start event client: " << eventClient->getName();
-    utility::ISDInterface::startImplementation(eventClient, eventClient->getName(), "NetworkBroker::start");
+    utility::StartableService::startImplementation(eventClient, eventClient->getName(), "NetworkBroker::start");
     
     MB_LAPP  << "Start command dispathcer ";
-    utility::ISDInterface::startImplementation(commandDispatcher, "DefaultCommandDispatcher", "NetworkBroker::start");
+    utility::StartableService::startImplementation(commandDispatcher, "DefaultCommandDispatcher", "NetworkBroker::start");
 
     MB_LAPP  << "Start rpc server: " << rpcServer->getName();
-    utility::ISDInterface::startImplementation(rpcServer, rpcServer->getName(), "NetworkBroker::start");
+    utility::StartableService::startImplementation(rpcServer, rpcServer->getName(), "NetworkBroker::start");
     
     MB_LAPP  << "Start rpc server: " << rpcClient->getName();
-    utility::ISDInterface::startImplementation(rpcClient, rpcClient->getName(), "NetworkBroker::start");
+    utility::StartableService::startImplementation(rpcClient, rpcClient->getName(), "NetworkBroker::start");
     
     MB_LAPP << "get the published host and port from rpc server";
     getPublishedHostAndPort(publishedHostAndPort);

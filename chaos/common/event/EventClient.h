@@ -26,7 +26,7 @@
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/event/EventForwarder.h>
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
-#include <chaos/common/utility/ISDInterface.h>
+#include <chaos/common/utility/StartableService.h>
 namespace chaos {
     
     class NetworkBroker;
@@ -37,7 +37,7 @@ namespace chaos {
         /*!
          
          */
-        class EventClient : public NamedService, EventForwarder, chaos::utility::ISDInterface {
+        class EventClient : public NamedService, EventForwarder, chaos::utility::StartableService {
             friend class chaos::NetworkBroker;
             
         protected:

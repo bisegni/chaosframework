@@ -21,7 +21,7 @@
 #define __CHAOSFramework__DataBroker__
 
 #include <chaos/common/action/DeclareAction.h>
-#include <chaos/common/utility/ISDInterface.h>
+#include <chaos/common/utility/StartableService.h>
 
 namespace chaos {
      //! Namespace for grouping all class needed by the DataBroker services
@@ -66,7 +66,7 @@ namespace chaos {
          
          This is also the class where is managed the handshake for registration of the remote listeners.
          */
-        class DataBroker : public chaos::utility::ISDInterface, chaos::DeclareAction {
+        class DataBroker : public chaos::utility::StartableService, chaos::DeclareAction {
             
         public:
                 //! Initialize the data broker

@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__AbstractEventDispatcher__
 #define __CHAOSFramework__AbstractEventDispatcher__
 
-#include <chaos/common/utility/ISDInterface.h>
+#include <chaos/common/utility/StartableService.h>
 #include <chaos/common/event/EventHandler.h>
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/action/EventAction.h>
@@ -37,7 +37,7 @@ namespace chaos {
      that has been register for specified kind of event.
      */
    
-    class AbstractEventDispatcher : public utility::ISDInterface, event::EventHandler, NamedService {
+    class AbstractEventDispatcher : public utility::StartableService, event::EventHandler, NamedService {
         friend class NetworkBroker;
 
     public:

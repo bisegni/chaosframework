@@ -39,8 +39,6 @@
 		325013DD15E9843D00DCB13E /* AsioEventForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 325013DB15E9843D00DCB13E /* AsioEventForwarder.h */; };
 		3253E09515F27A180079B40E /* EventTypeScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3253E09315F27A180079B40E /* EventTypeScheduler.h */; };
 		3253E09815F28A270079B40E /* EventTypeScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3253E09715F28A270079B40E /* EventTypeScheduler.cpp */; };
-		3255E71615EA66A6005C96CA /* ISDInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3255E71515EA66A6005C96CA /* ISDInterface.h */; };
-		3255E71815EA6A16005C96CA /* ISDInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3255E71715EA6A16005C96CA /* ISDInterface.cpp */; };
 		3255E72415EA86F2005C96CA /* DefaultEventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3255E72315EA86F1005C96CA /* DefaultEventDispatcher.cpp */; };
 		3255E72715EA87D2005C96CA /* AbstractEventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3255E72515EA87D1005C96CA /* AbstractEventDispatcher.cpp */; };
 		3255E72815EA87D2005C96CA /* AbstractEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 3255E72615EA87D1005C96CA /* AbstractEventDispatcher.h */; };
@@ -406,8 +404,6 @@
 		325013DB15E9843D00DCB13E /* AsioEventForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsioEventForwarder.h; sourceTree = "<group>"; };
 		3253E09315F27A180079B40E /* EventTypeScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTypeScheduler.h; sourceTree = "<group>"; };
 		3253E09715F28A270079B40E /* EventTypeScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTypeScheduler.cpp; sourceTree = "<group>"; };
-		3255E71515EA66A6005C96CA /* ISDInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ISDInterface.h; sourceTree = "<group>"; };
-		3255E71715EA6A16005C96CA /* ISDInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ISDInterface.cpp; sourceTree = "<group>"; };
 		3255E72315EA86F1005C96CA /* DefaultEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DefaultEventDispatcher.cpp; sourceTree = "<group>"; };
 		3255E72515EA87D1005C96CA /* AbstractEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractEventDispatcher.cpp; sourceTree = "<group>"; };
 		3255E72615EA87D1005C96CA /* AbstractEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractEventDispatcher.h; sourceTree = "<group>"; };
@@ -1265,8 +1261,6 @@
 				32DF603515E14C7700312C94 /* NamedService.cpp */,
 				32DF603615E14C7700312C94 /* NamedService.h */,
 				32DD886515E2C313000AF740 /* endianess.h */,
-				3255E71715EA6A16005C96CA /* ISDInterface.cpp */,
-				3255E71515EA66A6005C96CA /* ISDInterface.h */,
 				32BFF90C176C842E00D27A04 /* InizializableService.cpp */,
 				32BFF90D176C842E00D27A04 /* InizializableService.h */,
 				32BFF910176C862A00D27A04 /* StartableService.cpp */,
@@ -1683,7 +1677,6 @@
 				325013BD15E9258C00DCB13E /* EventClient.h in Headers */,
 				325013D815E980C800DCB13E /* AsioImplEventClient.h in Headers */,
 				325013DD15E9843D00DCB13E /* AsioEventForwarder.h in Headers */,
-				3255E71615EA66A6005C96CA /* ISDInterface.h in Headers */,
 				3255E72815EA87D2005C96CA /* AbstractEventDispatcher.h in Headers */,
 				325DE9F215EC031E00D6F34E /* EventChannel.h in Headers */,
 				325DE9F615EC03F800D6F34E /* EventAction.h in Headers */,
@@ -2035,7 +2028,6 @@
 				325013BC15E9258C00DCB13E /* EventClient.cpp in Sources */,
 				325013D715E980C800DCB13E /* AsioImplEventClient.cpp in Sources */,
 				325013DC15E9843D00DCB13E /* AsioEventForwarder.cpp in Sources */,
-				3255E71815EA6A16005C96CA /* ISDInterface.cpp in Sources */,
 				3255E72415EA86F2005C96CA /* DefaultEventDispatcher.cpp in Sources */,
 				3255E72715EA87D2005C96CA /* AbstractEventDispatcher.cpp in Sources */,
 				325DE9F115EC031E00D6F34E /* EventChannel.cpp in Sources */,

@@ -11,7 +11,7 @@
 
 #include <chaos/common/data/CUSchemaDB.h>
 #include <chaos/common/utility/SetupStateManager.h>
-#include <chaos/common/utility/ISDInterface.h>
+#include <chaos/common/utility/StartableService.h>
 
 namespace chaos {
     namespace cnd {
@@ -21,7 +21,7 @@ namespace chaos {
             /*!
              
              */
-            class DataManagment: public utility::ISDInterface, private SetupStateManager  {
+            class DataManagment: public utility::StartableService, private SetupStateManager  {
                 
                 CUSchemaDB *deviceDB;
             public:

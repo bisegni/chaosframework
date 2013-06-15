@@ -13,7 +13,7 @@
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/utility/SetupStateManager.h>
-#include <chaos/common/utility/ISDInterface.h>
+#include <chaos/common/utility/StartableService.h>
 
 #include "ApiProvider.h"
 #include "../data/DataManagment.h"
@@ -27,7 +27,7 @@ namespace chaos {
             /*!
              
              */
-            class ApiServer : public Singleton<ApiServer>, public utility::ISDInterface, private SetupStateManager {
+            class ApiServer : public Singleton<ApiServer>, public utility::StartableService, private SetupStateManager {
                 friend class Singleton<ApiServer>;
                 chaos::cnd::data::DataManagment *dm;
                 chaos::NetworkBroker *networkBroker;
