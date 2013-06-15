@@ -21,6 +21,7 @@
 #ifndef __CHAOSFramework__SlowCommand__
 #define __CHAOSFramework__SlowCommand__
 
+#include <stdint.h>
 #include <string>
 
 namespace chaos{
