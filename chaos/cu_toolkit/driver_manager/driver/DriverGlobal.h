@@ -22,12 +22,15 @@
 #define CHAOSFramework_DriverGlobal_h
 
 #include <stdint.h>
-
 #include <boost/lockfree/queue.hpp>
 #include <boost/lockfree/spsc_queue.hpp>
 #include <boost/interprocess/ipc/message_queue.hpp>
 
 #include <chaos/common/utility/Atomic.h>
+
+#ifdef __GNUC__
+    #define UINT16_MAX 65535
+#endif
 
 namespace chaos{
     namespace cu {
