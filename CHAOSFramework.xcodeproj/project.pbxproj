@@ -295,6 +295,10 @@
 		32BE864815A0CEAF00818C39 /* LogManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32BE864615A0CEAF00818C39 /* LogManager.h */; };
 		32BF74AD167CEB57007F8A57 /* EntityDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BF74AB167CEB57007F8A57 /* EntityDB.cpp */; };
 		32BF74AE167CEB57007F8A57 /* EntityDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 32BF74AC167CEB57007F8A57 /* EntityDB.h */; };
+		32BFF90E176C842E00D27A04 /* InizializableService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BFF90C176C842E00D27A04 /* InizializableService.cpp */; };
+		32BFF90F176C842E00D27A04 /* InizializableService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32BFF90D176C842E00D27A04 /* InizializableService.h */; };
+		32BFF912176C862A00D27A04 /* StartableService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BFF910176C862A00D27A04 /* StartableService.cpp */; };
+		32BFF913176C862A00D27A04 /* StartableService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32BFF911176C862A00D27A04 /* StartableService.h */; };
 		32C0CC98168CC16400BC2DA7 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C0CC96168CC16400BC2DA7 /* Entity.cpp */; };
 		32C0CC99168CC16400BC2DA7 /* Entity.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C0CC97168CC16400BC2DA7 /* Entity.h */; };
 		32C7B8FD16DD362A005B3B21 /* ApiServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7B8FB16DD362A005B3B21 /* ApiServer.cpp */; };
@@ -667,6 +671,10 @@
 		32BE864615A0CEAF00818C39 /* LogManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogManager.h; sourceTree = "<group>"; };
 		32BF74AB167CEB57007F8A57 /* EntityDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityDB.cpp; sourceTree = "<group>"; };
 		32BF74AC167CEB57007F8A57 /* EntityDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityDB.h; sourceTree = "<group>"; };
+		32BFF90C176C842E00D27A04 /* InizializableService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InizializableService.cpp; sourceTree = "<group>"; };
+		32BFF90D176C842E00D27A04 /* InizializableService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InizializableService.h; sourceTree = "<group>"; };
+		32BFF910176C862A00D27A04 /* StartableService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StartableService.cpp; sourceTree = "<group>"; };
+		32BFF911176C862A00D27A04 /* StartableService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StartableService.h; sourceTree = "<group>"; };
 		32C0CC96168CC16400BC2DA7 /* Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = "<group>"; };
 		32C0CC97168CC16400BC2DA7 /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
 		32C7B8FB16DD362A005B3B21 /* ApiServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApiServer.cpp; sourceTree = "<group>"; };
@@ -1259,6 +1267,10 @@
 				32DD886515E2C313000AF740 /* endianess.h */,
 				3255E71715EA6A16005C96CA /* ISDInterface.cpp */,
 				3255E71515EA66A6005C96CA /* ISDInterface.h */,
+				32BFF90C176C842E00D27A04 /* InizializableService.cpp */,
+				32BFF90D176C842E00D27A04 /* InizializableService.h */,
+				32BFF910176C862A00D27A04 /* StartableService.cpp */,
+				32BFF911176C862A00D27A04 /* StartableService.h */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -1641,6 +1653,7 @@
 				32AAD78814CD660B005A097C /* RpcClient.h in Headers */,
 				32AAD78A14CD772F005A097C /* MessageChannel.h in Headers */,
 				32AAD78E14CD95FD005A097C /* Atomic.h in Headers */,
+				32BFF90F176C842E00D27A04 /* InizializableService.h in Headers */,
 				326EA57814D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h in Headers */,
 				32D68AD014D5D5A7009F290A /* SetupStateManager.h in Headers */,
 				32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */,
@@ -1648,6 +1661,7 @@
 				3297F22B14D96F8D004FFE4F /* NetworkAddressMessageChannel.h in Headers */,
 				325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */,
 				32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */,
+				32BFF913176C862A00D27A04 /* StartableService.h in Headers */,
 				320192BA14DEEAC000318F00 /* CObjectHandlerProcessingQueue.h in Headers */,
 				32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */,
 				320C218A151B555A00BD0F41 /* EventServer.h in Headers */,
@@ -2043,6 +2057,7 @@
 				32B571A8168DFA530002A198 /* random.cpp in Sources */,
 				32B571B2168DFBAD0002A198 /* error_codes.cpp in Sources */,
 				32B571B6168DFBF10002A198 /* assert_util.cpp in Sources */,
+				32BFF912176C862A00D27A04 /* StartableService.cpp in Sources */,
 				32B571BA168DFC400002A198 /* status.cpp in Sources */,
 				32B571BE168DFCD50002A198 /* string_data.cpp in Sources */,
 				32B571C4168DFF0C0002A198 /* parse_number.cpp in Sources */,
@@ -2054,6 +2069,7 @@
 				32B57226168E44060002A198 /* base64.cpp in Sources */,
 				32B57231168E4E010002A198 /* jsobj.cpp in Sources */,
 				32B57238168E50980002A198 /* md5.cpp in Sources */,
+				32BFF90E176C842E00D27A04 /* InizializableService.cpp in Sources */,
 				32B5723C168E547B0002A198 /* stringutils.cpp in Sources */,
 				32279F8416F8DEAF009EC7B9 /* DataBroker.cpp in Sources */,
 				32279F8B16FA36B6009EC7B9 /* PublisherDataService.cpp in Sources */,
