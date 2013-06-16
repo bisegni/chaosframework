@@ -1,8 +1,8 @@
-/*	
+/*
  *	KeyDataStorage.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,39 +26,43 @@
 #include <chaos/common/utility/ArrayPointer.h>
 
 namespace chaos{
-    using namespace std;
     
-    class KeyDataStorage : public MultiBufferDataStorage {
-        string dataSetKey;
-        IODataDriver *liveIODriver;
-        auto_ptr<CDataWrapper> keyData;
-    public:
-        KeyDataStorage(const char*);
-        KeyDataStorage(string&);
-        virtual ~KeyDataStorage();
+    namespace cu {
         
-        void init(CDataWrapper*);
+        using namespace std;
         
-        /*
-         Return a new instace for the CSDatawrapped
-         */
-        CDataWrapper* getNewDataWrapper();
-
-        /*
-         Retrive the data from Live Storage
-         */
-        ArrayPointer<CDataWrapper>* getLastDataSet();
-        
-        /*
-         Retrive the data from History Storage
-         */
-         ArrayPointer<CDataWrapper>*  getHistoricalDataSet(CDataWrapper*);
-        
-        /*
-         Permit to be live configurable
-         */
-        CDataWrapper* updateConfiguration(CDataWrapper *);
-
-    };
+        class KeyDataStorage : public MultiBufferDataStorage {
+            string dataSetKey;
+            IODataDriver *liveIODriver;
+            auto_ptr<CDataWrapper> keyData;
+        public:
+            KeyDataStorage(const char*);
+            KeyDataStorage(string&);
+            virtual ~KeyDataStorage();
+            
+            void init(CDataWrapper*);
+            
+            /*
+             Return a new instace for the CSDatawrapped
+             */
+            CDataWrapper* getNewDataWrapper();
+            
+            /*
+             Retrive the data from Live Storage
+             */
+            ArrayPointer<CDataWrapper>* getLastDataSet();
+            
+            /*
+             Retrive the data from History Storage
+             */
+            ArrayPointer<CDataWrapper>*  getHistoricalDataSet(CDataWrapper*);
+            
+            /*
+             Permit to be live configurable
+             */
+            CDataWrapper* updateConfiguration(CDataWrapper *);
+            
+        };
+    }
 }
 #endif

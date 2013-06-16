@@ -1,8 +1,8 @@
-/*	
+/*
  *	ChaosCUToolkit.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,45 +33,47 @@
 
 
 namespace chaos{
-    /*! \page page_cut The Control Unit Toolkit
-     *  \section page_cut_sec This toolkit represent the chaos driver for the real hardware to control
-     *  
-     */
-    
+    namespace cu {
+        /*! \page page_cut The Control Unit Toolkit
+         *  \section page_cut_sec This toolkit represent the chaos driver for the real hardware to control
+         *
+         */
+        
         //! Chaos Contorl Unit Framework Master Class
-    /*! 
-     This class is a Singleton that need to be used to setup environment,
-     add Custom Control unit, and start all Contro Unit environment
-     */
-    class ChaosCUToolkit : public ChaosCommon<ChaosCUToolkit>, public ServerDelegator, public SetupStateManager {
-        friend class Singleton<ChaosCUToolkit>;
+        /*!
+         This class is a Singleton that need to be used to setup environment,
+         add Custom Control unit, and start all Contro Unit environment
+         */
+        class ChaosCUToolkit : public ChaosCommon<ChaosCUToolkit>, public ServerDelegator, public SetupStateManager {
+            friend class Singleton<ChaosCUToolkit>;
             //static boost::mutex monitor;
             //static boost::condition endWaithCondition;
-        
-        static WaitSemaphore waitCloseSemaphore;
-        
-        ChaosCUToolkit(){};
-        ~ChaosCUToolkit(){};
-        static void signalHanlder(int);
-        
-    public:
-        typedef boost::mutex::scoped_lock lock;
+            
+            static WaitSemaphore waitCloseSemaphore;
+            
+            ChaosCUToolkit(){};
+            ~ChaosCUToolkit(){};
+            static void signalHanlder(int);
+            
+        public:
+            typedef boost::mutex::scoped_lock lock;
             //! C and C++ attribute parser
-        /*!
-         Specialized option for startup c and cpp program main options parameter
-         */
-        void init(int argc, char* argv[] = NULL) throw (CException);
+            /*!
+             Specialized option for startup c and cpp program main options parameter
+             */
+            void init(int argc, char* argv[] = NULL) throw (CException);
             //!stringbuffer parser
-        /*
-         specialized option for string stream buffer with boost semantics
-         */
-        void init(istringstream &initStringStream) throw (CException);
-        void init()  throw(CException);
-        void start(bool waithUntilEnd=true, bool deinitiOnEnd=true);
-        void stop();
-        void deinit();
-        void addControlUnit(AbstractControlUnit*);
-    };
+            /*
+             specialized option for string stream buffer with boost semantics
+             */
+            void init(istringstream &initStringStream) throw (CException);
+            void init()  throw(CException);
+            void start(bool waithUntilEnd=true, bool deinitiOnEnd=true);
+            void stop();
+            void deinit();
+            void addControlUnit(AbstractControlUnit*);
+        };
+    }
 }
-    //#pragma GCC visibility pop
+//#pragma GCC visibility pop
 #endif

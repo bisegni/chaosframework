@@ -1,8 +1,8 @@
-/*	
+/*
  *	DataManagerException.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,16 +24,18 @@
 #include <chaos/common/exception/CException.h>
 
 namespace chaos{
-    /*
-     Exception class for DataManager package
-     */
-    class DataManagerException : public CException{
-        
-        
-    public:
-        DataManagerException(int eCode, const char * eMessage):ControlException(eCode, eMessage, "DataManager") {
+    
+    namespace cu {
+        /*
+         Exception class for DataManager package
+         */
+        class DataManagerException : public CException{
             
-        }
-    };
+            
+        public:
+            DataManagerException(int eCode, const char * eMessage):CException(eCode, eMessage, "DataManager") {
+            }
+        };
+    }
 }
 #endif

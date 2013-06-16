@@ -26,6 +26,7 @@
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
 
 using namespace chaos;
+using namespace chaos::cu;
 using namespace std;
 
 #define INIT_DEINIT_ACTION_CU_PARAM_NAME            "cu_uuid"

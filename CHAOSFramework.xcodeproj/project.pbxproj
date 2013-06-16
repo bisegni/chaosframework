@@ -17,6 +17,9 @@
 		3215860D178756B40090E7E6 /* AbstractDriverPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3215860C178756B40090E7E6 /* AbstractDriverPlugin.cpp */; };
 		3215861017875FDB0090E7E6 /* DriverPluginLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3215860E17875FDB0090E7E6 /* DriverPluginLoader.cpp */; };
 		3215861117875FDB0090E7E6 /* DriverPluginLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3215860F17875FDB0090E7E6 /* DriverPluginLoader.h */; };
+		32234D3F176E045100525E0C /* SlowCommandExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32234D3D176E045100525E0C /* SlowCommandExecutor.cpp */; };
+		32234D40176E045100525E0C /* SlowCommandExecutor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32234D3E176E045100525E0C /* SlowCommandExecutor.h */; };
+		32234D42176E106B00525E0C /* SlowCommandException.h in Headers */ = {isa = PBXBuildFile; fileRef = 32234D41176E106B00525E0C /* SlowCommandException.h */; };
 		32279F8416F8DEAF009EC7B9 /* DataBroker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32279F8216F8DEAF009EC7B9 /* DataBroker.cpp */; };
 		32279F8516F8DEAF009EC7B9 /* DataBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32279F8316F8DEAF009EC7B9 /* DataBroker.h */; };
 		32279F8B16FA36B6009EC7B9 /* PublisherDataService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32279F8916FA36B6009EC7B9 /* PublisherDataService.cpp */; };
@@ -397,6 +400,9 @@
 		3215860E17875FDB0090E7E6 /* DriverPluginLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DriverPluginLoader.cpp; sourceTree = "<group>"; };
 		3215860F17875FDB0090E7E6 /* DriverPluginLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DriverPluginLoader.h; sourceTree = "<group>"; };
 		3216601014D49D0F008DADD2 /* ObjectWaitSemaphore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectWaitSemaphore.h; sourceTree = "<group>"; };
+		32234D3D176E045100525E0C /* SlowCommandExecutor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SlowCommandExecutor.cpp; sourceTree = "<group>"; };
+		32234D3E176E045100525E0C /* SlowCommandExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlowCommandExecutor.h; sourceTree = "<group>"; };
+		32234D41176E106B00525E0C /* SlowCommandException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlowCommandException.h; sourceTree = "<group>"; };
 		32279F8216F8DEAF009EC7B9 /* DataBroker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataBroker.cpp; sourceTree = "<group>"; };
 		32279F8316F8DEAF009EC7B9 /* DataBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBroker.h; sourceTree = "<group>"; };
 		32279F8916FA36B6009EC7B9 /* PublisherDataService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PublisherDataService.cpp; sourceTree = "<group>"; };
@@ -914,8 +920,11 @@
 		325F8B4E1763AED200EFE616 /* slcmd */ = {
 			isa = PBXGroup;
 			children = (
+				32234D3D176E045100525E0C /* SlowCommandExecutor.cpp */,
+				32234D3E176E045100525E0C /* SlowCommandExecutor.h */,
 				325F8B4F1763AF2300EFE616 /* SlowCommand.cpp */,
 				325F8B501763AF2300EFE616 /* SlowCommand.h */,
+				32234D41176E106B00525E0C /* SlowCommandException.h */,
 			);
 			path = slcmd;
 			sourceTree = "<group>";
@@ -1882,8 +1891,10 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32234D42176E106B00525E0C /* SlowCommandException.h in Headers */,
 				326DB4B914B3A3E50018A8D0 /* ChaosCUToolkit.h in Headers */,
 				326DB4BB14B3A3E50018A8D0 /* CommandManager.h in Headers */,
+				32234D40176E045100525E0C /* SlowCommandExecutor.h in Headers */,
 				326DB4BC14B3A3E50018A8D0 /* CommandManagerDefaultAdapters.h in Headers */,
 				3215861117875FDB0090E7E6 /* DriverPluginLoader.h in Headers */,
 				326DB4C014B3A3E50018A8D0 /* AbstractControlUnit.h in Headers */,
@@ -2189,6 +2200,7 @@
 				32CF054816AB23C200E86CC7 /* PerfTestCU.cpp in Sources */,
 				325F8B511763AF2300EFE616 /* SlowCommand.cpp in Sources */,
 				328CC9D61763CCC7000B30B6 /* AbstractDriver.cpp in Sources */,
+				32234D3F176E045100525E0C /* SlowCommandExecutor.cpp in Sources */,
 				32919A0B1764E68F00724874 /* DriverAccessor.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -26,10 +26,21 @@
 
 namespace chaos{
     namespace cu {
+        
+        //forward declaration
+        namespace dm {
+            namespace driver {
+                class DriverAccessor;
+            }
+        }
+        
         namespace cm {
             
             //! The name space that group all foundamental class need by slow control !CHOAS implementation
             namespace slcmd {
+                
+                //forward declaration
+                class SlowCommandExecutor;
                 
                     //! Namespace for the handler types
                 namespace HandlerType {
@@ -95,7 +106,7 @@ namespace chaos{
                  - Correlation and Commit handler, make the neccessary correlation and send the necessary command to the driver
                  */
                 class SlowCommand {
-                    
+                    friend class SlowCommandExecutor;
                     //! Running state
                     /*!
                      A value composed by a set of RunningState element.
@@ -105,7 +116,19 @@ namespace chaos{
                     //! Fault description
                     FaultDescription fDescription;
                     
+                    typedef uint8_t (SlowCommand::*SetHandlerPtr)();
+                    
+                    typedef uint8_t (SlowCommand::*AcquireHandlerPtr)();
+                    
+                    typedef uint8_t (SlowCommand::*CCHandlerPtr)();
+                    
                 protected:
+                    
+                    //!The accessor that permit to to contorl the needed driver
+                    /*!
+                     This is a variable length array where the dimension is given by the driver declared by the CU
+                     */
+                    dm::driver::DriverAccessor *driverAccessor;
                     
                     //! return the implemented handler
                     /*!
@@ -120,20 +143,20 @@ namespace chaos{
                      Set handler has the main purpose to initiate the command. All the operration need to avviate
                      the command sequence need to made here.
                      */
-                    virtual int setHandler();
+                    virtual uint8_t setHandler();
                     
                     //! Aquire the necessary data for the command
                     /*!
                      The acquire handler has the purpose to get all necessary data need the by CC handler.
                      */
-                    virtual int acquireHandler();
+                    virtual uint8_t acquireHandler();
                     
                     //! Correlation and commit phase
                     /*!
                      The correlation and commit handlers has the purpose to check whenever the command has ended or for
                      send further commands to the hardware, through the driver, to accomplish the command steps.
                      */
-                    virtual int ccHandler();
+                    virtual uint8_t ccHandler();
                 };
             }
         }

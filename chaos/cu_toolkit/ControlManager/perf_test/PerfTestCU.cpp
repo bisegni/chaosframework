@@ -10,7 +10,8 @@
 #include <chaos/cu_toolkit/ControlManager/perf_test/PerfTestCU.h>
 
 using namespace chaos;
-using namespace chaos::perf_test;
+using namespace chaos::cu;
+using namespace chaos::cu::perf_test;
 
 #define WORK_SIMULATION_TIME 20000
 

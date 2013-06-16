@@ -23,9 +23,11 @@
 #include "DataManager.h"
 #include "../../common/io/IOMemcachedDriver.h"
 #include "DataBuffer/OutputDataBuffer.h"
-using namespace chaos;
+
 using namespace std;
 using namespace boost;
+using namespace chaos;
+using namespace chaos::cu;
 
 /*
  * 

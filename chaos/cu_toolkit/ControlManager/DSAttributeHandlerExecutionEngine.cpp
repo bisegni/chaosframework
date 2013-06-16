@@ -120,6 +120,7 @@ bool DSAttributeHandlerExecutionEngine::executeHandler(CDataWrapper *message) th
     boost::shared_lock< boost::shared_mutex >(engineManagmentLock);
     bool result = false;
     CHAOS_ASSERT(message)
+    bool bv = false;
     int32_t i32v = 0;
     int64_t i64v = 0;
     double  dv = 0.0F;
@@ -145,6 +146,11 @@ bool DSAttributeHandlerExecutionEngine::executeHandler(CDataWrapper *message) th
                     referenceCUSchemeDB->getDeviceAttributeRangeValueInfo(deviceID, *iter, attributeInfo);
                         //call handler
                     switch (attributeInfo.valueType) {
+                        case DataType::TYPE_BOOLEAN: {
+                            bv = message->getBoolValue(cAttrName);
+                            abstractValuePtr = &bv;
+                            break;
+                        }
                         case DataType::TYPE_INT32: {
                             i32v = message->getInt32Value(cAttrName);
                             abstractValuePtr = &i32v;

@@ -28,9 +28,11 @@
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
 
 
-using namespace chaos;
 using namespace std;
 using namespace boost;
+using namespace chaos;
+using namespace chaos::cu;
+
 
 #pragma mark Public Method
 /*
@@ -63,7 +65,7 @@ void CommandManager::init() throw(CException) {
     actionDescription = DeclareAction::addActionDescritionInstance<CommandManager>(this, 
                                                                                    &CommandManager::shutdown, 
                                                                                    ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN, 
-                                                                                   ChaosSystemDomainAndActionLabel::ACTION_SYSTEM_SHUTDOWN,                                                                                "Shutdown the chaos control unit library instance");
+                                                                                   ChaosSystemDomainAndActionLabel::ACTION_SYSTEM_SHUTDOWN, "Shutdown the chaos control unit library instance");
     
         //registering the comman manager action
     broker->registerAction(this);

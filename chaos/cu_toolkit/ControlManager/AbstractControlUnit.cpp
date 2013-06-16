@@ -36,6 +36,7 @@
 
 
 using namespace chaos;
+using namespace chaos::cu;
 using namespace std;
 using namespace boost;
 using namespace boost::uuids;

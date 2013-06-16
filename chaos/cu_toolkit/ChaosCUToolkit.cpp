@@ -27,6 +27,7 @@
 
 using namespace std;
 using namespace chaos;
+using namespace chaos::cu;
 using boost::shared_ptr;
 
 //boost::mutex ChaosCUToolkit::monitor;

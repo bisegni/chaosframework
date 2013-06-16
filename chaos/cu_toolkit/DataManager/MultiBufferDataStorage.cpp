@@ -23,8 +23,10 @@
 #include "../../common/cconstants.h"
 #include "../../common/global.h"
 
-using namespace chaos;
+
 using namespace std;
+using namespace chaos;
+using namespace chaos::cu;
 
 /*
  Constructor

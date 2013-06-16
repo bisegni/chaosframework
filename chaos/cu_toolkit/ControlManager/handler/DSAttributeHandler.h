@@ -27,10 +27,9 @@
 
 namespace chaos {
     
-        //Forward declaration
-    class AbstractControlUnit;
-    
     namespace cu {
+            //Forward declaration
+        class AbstractControlUnit;
         
             //Forward declaration
         class DSAttributeHandlerExecutionEngine;
@@ -47,7 +46,7 @@ namespace chaos {
              */
             class DSAttributeHandler {
                 friend class chaos::cu::DSAttributeHandlerExecutionEngine;
-                friend class chaos::AbstractControlUnit;
+                friend class chaos::cu::AbstractControlUnit;
                 
                     //!handle the abstract call to the specialize handler
                 /*!

@@ -1,8 +1,8 @@
-/*	
+/*
  *	ControlManager.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,84 +33,87 @@
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/message/MDSMessageChannel.h>
 namespace chaos {
-    using namespace std;
-    using namespace boost;
     
-    /*
-     Manager for the Control Unit execution
-     */
-    class ControlManager : public CThreadExecutionTask, public DeclareAction, public Singleton<ControlManager> {
-        friend class Singleton<ControlManager>;
-        mutable boost::mutex qMutex;
-        condition_variable lockCondition;
-        CThread *selfThreadPtr;
-        queue< AbstractControlUnit* > submittedCUQueue;
-        map<string, shared_ptr<AbstractControlUnit> > controlUnitInstanceMap;
-        MDSMessageChannel *mdsChannel;
-        
-        int sendConfPackToMDS(CDataWrapper&);
+    namespace cu {
+        using namespace std;
+        using namespace boost;
         
         /*
-         Thread method that work on buffer item
+         Manager for the Control Unit execution
          */
-        void executeOnThread(const string&) throw(CException);
-        
-        /*
-         get the last insert data
-         */
-        AbstractControlUnit* waitAndPop();
-        
-        /*
-         check for empty buffer
-         */
-        bool isEmpty() const;
-        
-    public:
-        
-        /*
-         Constructor
-         */
-        ControlManager();
-        
-        /*
-         Desctructor
-         */
-        ~ControlManager();
-        
-        /*
-         Initialize the Control Manager
-         */
-        void init() throw(CException);
-        
-        /*
-         Start the Control Manager
-         */
-        void start() throw(CException);
-        
-        /*
-         Deinitialize the Control Manager
-         */
-        void deinit() throw(CException);
-        
-        /*
-         Submit a new Control unit for operation
-         */
-        void submitControlUnit(AbstractControlUnit*) throw(CException); 
-        
-        /*
-         Init the sandbox
-         */
-        CDataWrapper* loadControlUnit(CDataWrapper*, bool&) throw (CException);
-        
-        /*
-         Deinit the sandbox
-         */
-        CDataWrapper* unloadControlUnit(CDataWrapper*, bool&) throw (CException);
-        
-        /*
-         Configure the sandbox and all subtree of the CU
-         */
-        CDataWrapper* updateConfiguration(CDataWrapper*, bool&);
-    };
+        class ControlManager : public CThreadExecutionTask, public DeclareAction, public Singleton<ControlManager> {
+            friend class Singleton<ControlManager>;
+            mutable boost::mutex qMutex;
+            condition_variable lockCondition;
+            CThread *selfThreadPtr;
+            queue< AbstractControlUnit* > submittedCUQueue;
+            map<string, shared_ptr<AbstractControlUnit> > controlUnitInstanceMap;
+            MDSMessageChannel *mdsChannel;
+            
+            int sendConfPackToMDS(CDataWrapper&);
+            
+            /*
+             Thread method that work on buffer item
+             */
+            void executeOnThread(const string&) throw(CException);
+            
+            /*
+             get the last insert data
+             */
+            AbstractControlUnit* waitAndPop();
+            
+            /*
+             check for empty buffer
+             */
+            bool isEmpty() const;
+            
+        public:
+            
+            /*
+             Constructor
+             */
+            ControlManager();
+            
+            /*
+             Desctructor
+             */
+            ~ControlManager();
+            
+            /*
+             Initialize the Control Manager
+             */
+            void init() throw(CException);
+            
+            /*
+             Start the Control Manager
+             */
+            void start() throw(CException);
+            
+            /*
+             Deinitialize the Control Manager
+             */
+            void deinit() throw(CException);
+            
+            /*
+             Submit a new Control unit for operation
+             */
+            void submitControlUnit(AbstractControlUnit*) throw(CException);
+            
+            /*
+             Init the sandbox
+             */
+            CDataWrapper* loadControlUnit(CDataWrapper*, bool&) throw (CException);
+            
+            /*
+             Deinit the sandbox
+             */
+            CDataWrapper* unloadControlUnit(CDataWrapper*, bool&) throw (CException);
+            
+            /*
+             Configure the sandbox and all subtree of the CU
+             */
+            CDataWrapper* updateConfiguration(CDataWrapper*, bool&);
+        };
+    }
 }
 #endif

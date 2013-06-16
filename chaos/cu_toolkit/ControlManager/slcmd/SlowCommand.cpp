@@ -25,20 +25,20 @@ using namespace chaos::cu::cm::slcmd;
 /*
  Start the slow command sequence
  */
-int SlowCommand::setHandler() {
+uint8_t SlowCommand::setHandler() {
     return 0;
 }
 
 /*
  implemente thee data acquisition for the command
  */
-int SlowCommand::acquireHandler() {
+uint8_t SlowCommand::acquireHandler() {
     return 0;
 }
 
 /*
  Performe correlation and send command to the driver
  */
-int SlowCommand::ccHandler() {
+uint8_t SlowCommand::ccHandler() {
     return 0;
 }

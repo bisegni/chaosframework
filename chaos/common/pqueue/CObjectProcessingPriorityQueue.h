@@ -233,7 +233,7 @@ namespace chaos {
                     while( bufferQueue.empty()){
                         emptyQueueConditionLock.wait(lock);
                     }
-                    return bufferQueue.empty();
+                    //return bufferQueue.empty();
                 }
                 
                 
@@ -245,14 +245,21 @@ namespace chaos {
                     
                         //remove all element
                     while (!bufferQueue.empty()) {
+                        //delete the next element
+                        PRIORITY_ELEMENT(T) *toDelete =  bufferQueue.top();
+                        if(!toDelete) return;
+                        //remove upper element
                         bufferQueue.pop();
+                        
+                        //delete element
+                        DELETE_OBJ_POINTER(toDelete);
                     }
                 }
                 
                 /*
                  Return le number of elementi into live data
                  */
-                unsigned long elementInLiveBuffer() const {
+                unsigned long elementInQueue() const {
                     boost::unique_lock<boost::mutex>  lock(qMutex);
                     return bufferQueue.size();
                 }
