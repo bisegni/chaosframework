@@ -26,6 +26,7 @@
 
 #include <boost/thread.hpp>
 
+#include <chaos/common/utility/InizializableService.h>
 #include <chaos/cu_toolkit/driver_manager/driver/DriverGlobal.h>
 
 namespace chaos{
@@ -41,7 +42,7 @@ namespace chaos{
                     This represent the base class for all driver in !CHOAS. For standardize the comunicacetion 
                     a message queue is used for receive DrvMsg pack.
                  */
-                class AbstractDriver {
+                class AbstractDriver : public utility::InizializableService {
                     
                     std::string driverUUID;
                     
@@ -70,6 +71,13 @@ namespace chaos{
                     void scanForMessage();
                     
                 public:
+                    
+                    // Initialize instance
+                    void init(void *initParamPtr) throw(chaos::CException);
+                    
+                    // Deinit the implementation
+                    void deinit() throw(chaos::CException);
+                    
                     //! Create a new accessor
                     /*!
                         A new accessor is allocate. In the allocation process

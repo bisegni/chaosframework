@@ -45,6 +45,16 @@ AbstractDriver::~AbstractDriver() {
     
 }
 
+// Initialize instance
+void AbstractDriver::init(void *initParamPtr) throw(chaos::CException) {
+    
+}
+
+// Deinit the implementation
+void AbstractDriver::deinit() throw(chaos::CException) {
+    
+}
+
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
