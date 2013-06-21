@@ -37,7 +37,7 @@ using namespace boost;
 using namespace boost::posix_time;
 
 
-class SWAlimCU : public AbstractControlUnit {
+class SWAlimCU : public chaos::cu::AbstractControlUnit {
     typedef boost::mt19937 RNGType; 
     RNGType rng;
     uniform_int<> one_to_hundred;    

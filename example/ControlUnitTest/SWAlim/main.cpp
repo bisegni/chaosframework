@@ -14,7 +14,7 @@
 #include <string>
 using namespace std;
 using namespace chaos;
-
+using namespace chaos::cu;
 #define OPT_CUSTOM_DEVICE_ID_A "device_a"
 #define OPT_CUSTOM_DEVICE_ID_B "device_b"
 

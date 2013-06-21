@@ -48,6 +48,7 @@
  */
 using namespace std;
 using namespace chaos;
+using namespace chaos::cu;
 
 #include <vector>
 #include <string>

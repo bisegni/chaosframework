@@ -33,7 +33,7 @@ using namespace boost;
 using namespace boost::posix_time;
 
 
-class WorkerCU : public AbstractControlUnit {
+class WorkerCU : public chaos::cu::AbstractControlUnit {
     typedef boost::mt19937 RNGType; 
     RNGType rng;
     uniform_int<> one_to_hundred;    

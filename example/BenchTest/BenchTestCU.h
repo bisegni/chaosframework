@@ -32,7 +32,7 @@ using namespace std;
 using namespace chaos;
 using namespace boost;
 
-class BenchTestCU : public AbstractControlUnit {
+class BenchTestCU : public chaos::cu::AbstractControlUnit {
     string reactorName;
     Batch_Reactor *reactorInstance;
     boost::shared_mutex _setControlValueMutext;

@@ -24,7 +24,7 @@
 
 using namespace chaos::data::cache;
 
-LFDataCache::LFDataCache(memory::ManagedMemory *_memoryPool):readIndex(1),writeIndex(0),memoryPool(_memoryPool),garbageableSlab(1) {
+LFDataCache::LFDataCache(memory::ManagedMemory *_memoryPool):writeIndex(0),readIndex(1),memoryPool(_memoryPool),garbageableSlab(1) {
     
     //clear the array
     rwPtr[0] = rwPtr[1] = NULL;
