@@ -84,10 +84,6 @@ namespace chaos {
             size_t memoryLimit;
             double growFactor;
             int prealloc;
-            /**
-             * Access to the slab allocator is protected by this lock
-             */
-            pthread_mutex_t slabs_lock;
             
             inline int nz_strcmp(int nzlength, const char *nz, const char *z);
             inline void *memory_allocate(size_t size);
