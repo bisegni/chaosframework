@@ -179,6 +179,7 @@
 		327CFF091708C4EB0069497B /* FastHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327CFF071708C4EA0069497B /* FastHash.cpp */; };
 		327CFF0A1708C4EB0069497B /* FastHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF081708C4EB0069497B /* FastHash.h */; };
 		327CFF121708D7760069497B /* CacheGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF111708D7740069497B /* CacheGlobal.h */; };
+		32875F97177634AF00E33D6F /* PluginDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 32875F96177634AF00E33D6F /* PluginDefinition.h */; };
 		3289F9A5168508460080D93F /* SQLiteEntityDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */; };
 		3289F9A6168508460080D93F /* SQLiteEntityDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 3289F9A4168508460080D93F /* SQLiteEntityDB.h */; };
 		328CC9D61763CCC7000B30B6 /* AbstractDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328CC9D41763CCC7000B30B6 /* AbstractDriver.cpp */; };
@@ -549,6 +550,9 @@
 		327CFF071708C4EA0069497B /* FastHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastHash.cpp; sourceTree = "<group>"; };
 		327CFF081708C4EB0069497B /* FastHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastHash.h; sourceTree = "<group>"; };
 		327CFF111708D7740069497B /* CacheGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheGlobal.h; sourceTree = "<group>"; };
+		32875F96177634AF00E33D6F /* PluginDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginDefinition.h; sourceTree = "<group>"; };
+		32875F9817763AE200E33D6F /* PluginAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginAllocator.h; sourceTree = "<group>"; };
+		32875F9917763B0800E33D6F /* AbstractPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractPlugin.h; sourceTree = "<group>"; };
 		3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteEntityDB.cpp; sourceTree = "<group>"; };
 		3289F9A4168508460080D93F /* SQLiteEntityDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteEntityDB.h; sourceTree = "<group>"; };
 		328CC9D41763CCC7000B30B6 /* AbstractDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractDriver.cpp; sourceTree = "<group>"; };
@@ -1024,6 +1028,7 @@
 				32DA666F1700DBB6004FC02B /* endian.h */,
 				326DB42E14B38BC00018A8D0 /* version.h */,
 				326DB42F14B38BC00018A8D0 /* version.sh */,
+				32875F951776317F00E33D6F /* plugin */,
 				32BE864415A0CDC200818C39 /* log */,
 				326DB3B514B38BC00018A8D0 /* action */,
 				326DB3BD14B38BC00018A8D0 /* bson */,
@@ -1371,6 +1376,16 @@
 				326DB4E414B3B0070018A8D0 /* LLRpcApi.h */,
 			);
 			path = LowLevelApi;
+			sourceTree = "<group>";
+		};
+		32875F951776317F00E33D6F /* plugin */ = {
+			isa = PBXGroup;
+			children = (
+				32875F9917763B0800E33D6F /* AbstractPlugin.h */,
+				32875F96177634AF00E33D6F /* PluginDefinition.h */,
+				32875F9817763AE200E33D6F /* PluginAllocator.h */,
+			);
+			path = plugin;
 			sourceTree = "<group>";
 		};
 		328CC9D31763CC50000B30B6 /* driver */ = {
@@ -1775,6 +1790,7 @@
 				32640A3D169DCC5800450962 /* IteratorReader.h in Headers */,
 				32640A3E169DCC5800450962 /* MemoryAllocator.h in Headers */,
 				32640A3F169DCC5800450962 /* SmartPointer.h in Headers */,
+				32875F97177634AF00E33D6F /* PluginDefinition.h in Headers */,
 				32279F8516F8DEAF009EC7B9 /* DataBroker.h in Headers */,
 				32279F8C16FA36B6009EC7B9 /* PublisherDataService.h in Headers */,
 				32CB737016FE3432008575F0 /* ReaderDataService.h in Headers */,

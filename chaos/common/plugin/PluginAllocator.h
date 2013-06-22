@@ -1,0 +1,66 @@
+//
+//  PluginAllocator.h
+//  CHAOSFramework
+//
+//  Created by Claudio Bisegni on 6/22/13.
+//  Copyright (c) 2013 INFN. All rights reserved.
+//
+
+#ifndef CHAOSFramework_PluginAllocator_h
+#define CHAOSFramework_PluginAllocator_h
+
+#include <string>
+#include <iostream>
+
+#include <boost/function.hpp>
+#include <boost/extension/shared_library.hpp>
+
+#include <chaos/common/plugin/AbstractPlugin.h>
+
+namespace chaos {
+    namespace plugin {
+        
+        using namespace std;
+        using namespace boost::extensions;
+        
+        //! Plugin class loader and allocator
+        /*!
+            Plugins Allcoator class try to find th elibrary and permit to allocate instance
+            of plugin class.
+         */
+        class PluginAllocator {
+            
+            //Allocator plugin exported function
+            boost::function<AbstractPlugin*()> allocatorFunction;
+        public:
+            PluginAllocator(const char *pluginName, const char *pluginPath) {
+                //compose name
+                string extensionName = pluginName;
+                extensionName.append("Allocator");
+                
+                if(pluginPath) {
+                    
+                    //find library
+                    shared_library lib(pluginPath);
+                    
+                    if (lib.open()) {
+                        
+                        //try to get function allocator
+                        allocatorFunction = lib.get<AbstractPlugin*>(extensionName);
+                    }
+                }
+            }
+            
+            bool loaded() {
+                return allocatorFunction != NULL;
+            }
+            
+            AbstractPlugin* newInstance() {
+                return allocatorFunction();
+            }
+            
+        };
+        
+    }
+}
+#endif
