@@ -33,7 +33,10 @@ namespace chaos{
 class n;\
 ALLOCATOR(a,v,n)\
 class n : protected AbstractDriverPlugin
-                
+     
+#define CU_DRIVER_CONSTRUCTOR(n) \
+n():AbstractDriverPlugin(this){};
+
                 //! Plugin abstraction for the control unit driver
                 /*!
                  
@@ -43,6 +46,20 @@ class n : protected AbstractDriverPlugin
                     
                     AbstractDriverPlugin(AbstractDriver *_driverReference);
                     ~ AbstractDriverPlugin();
+                    
+                    //! Proxy for create a new accessor to the driver
+                    /*!
+                     A new accessor is allocate. In the allocation process
+                     the message queue for comunicating with this driver is
+                     allocated.
+                     */
+                    bool getNewAccessor(DriverAccessor **newAccessor);
+                    
+                    //! Proxy for dispose an accessor
+                    /*!
+                     A driver accessor is relased and all resource are free.
+                     */
+                    void releaseAccessor(DriverAccessor *accessor);
                 };
                 
             }

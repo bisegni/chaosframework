@@ -29,3 +29,13 @@ AbstractDriverPlugin::AbstractDriverPlugin(AbstractDriver *_driverReference) {
 AbstractDriverPlugin::~ AbstractDriverPlugin() {
     
 }
+
+//! Proxy for create a new accessor to the driver
+bool AbstractDriverPlugin::getNewAccessor(DriverAccessor **newAccessor) {
+    return driverReference->getNewAccessor(newAccessor);
+}
+
+//! Proxy for dispose an accessor
+void AbstractDriverPlugin::releaseAccessor(DriverAccessor *accessor) {
+    return driverReference->releaseAccessor(accessor);
+}
