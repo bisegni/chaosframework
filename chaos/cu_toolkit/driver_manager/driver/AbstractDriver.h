@@ -26,7 +26,6 @@
 
 #include <boost/thread.hpp>
 
-#include <chaos/common/plugin/PluginDefinition.h>
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/cu_toolkit/driver_manager/driver/DriverGlobal.h>
 
