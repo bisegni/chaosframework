@@ -7,18 +7,21 @@
 //
 
 #include <chaos/common/plugin/PluginAllocator.h>
-
-using namespace chaos::plugin;
+#define PLUGIN_NUMBERS 1000
+using namespace chaos::common::plugin;
 
 int main(int argc, const char * argv[]) {
-    
-    PluginAllocator allocator("PLUG_TEST_ALIAS","libPluginDefinition.extension");
+    AbstractPlugin *plugin[PLUGIN_NUMBERS];
+    PluginAllocator allocator("PLUGIN_ALIAS","libPluginDefinition.extension");
     
     if(allocator.loaded()) {
-        for (int idx = 0; idx < 100; idx++) {
-            AbstractPlugin *pluginInstance = allocator.newInstance();
-            allocator.releaseInstance(pluginInstance);
+        for (int idx = 0; idx < PLUGIN_NUMBERS; idx++) {
+            plugin[idx] = allocator.newInstance();
         }
-        std::cout << "test\n";        
+     
+        for (int idx = 0; idx < PLUGIN_NUMBERS; idx++) {
+            std::cout << plugin[idx]->getName() << "-" << plugin[idx]->getVersion() << "-\n";// <<  ptest->printTest() << endl;
+            delete plugin[idx];
+        }
     }
 }

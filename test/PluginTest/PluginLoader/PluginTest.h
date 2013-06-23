@@ -11,12 +11,12 @@
 
 #include <chaos/common/plugin/PluginDefinition.h>
 
-using namespace chaos::plugin;
+using namespace chaos::common::plugin;
 
 
-DEFINE_PLUGIN_CLASS(PLUG_TEST_ALIAS, PluginTest) {
+DEFINE_PLUGIN_CLASS(PLUGIN_ALIAS, 1.0, PluginTest) {
 public:
-    const char *printTest();
+    virtual const char *printTest();
 };
 
 

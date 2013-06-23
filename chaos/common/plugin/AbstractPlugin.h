@@ -26,32 +26,51 @@
 #include <stdint.h>
 
 namespace chaos {
-    namespace plugin {
-        
+    namespace common {
+        namespace plugin {
+            
 #define SYM_ALLOC_POSTFIX   "_allocator"
 #define SYM_DEALLOC_POSTFIX "_deallocator"
-        
-        
-        using namespace std;
-        
-        template <typename T>
-        class PluginInstancer {
-        public:
-            T* getInstance() {
-                new T();
-            }
-        };
-        
-        class AbstractPlugin {
             
-        public:
             
-            AbstractPlugin() {}
+            using namespace std;
             
-            virtual ~AbstractPlugin() {}
+            template <typename T>
+            class PluginInstancer;
             
-        };
-        
+            class AbstractPlugin {
+                template <typename T>
+                friend class PluginInstancer;
+                string name;
+                string version;
+            public:
+                
+                AbstractPlugin() {}
+                
+                virtual ~AbstractPlugin() {}
+                
+                string& getName(){return name;}
+                string& getVersion(){return version;}
+            };
+            
+            template <typename T>
+            class PluginInstancer {
+                string name;
+                string version;
+            public:
+                PluginInstancer(const char *_name, const char *_version):name(_name), version(_version){}
+                
+                void* getInstance() {
+                    AbstractPlugin* instance = static_cast<AbstractPlugin*>(new T());
+                    if(instance) {
+                        instance->name = name;
+                        instance->version = version;
+                    }
+                    return static_cast<void*>(instance);
+                }
+            };
+            
+        }
     }
 }
 #endif

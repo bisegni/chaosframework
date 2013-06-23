@@ -16,25 +16,25 @@
 
 
 namespace chaos {
-    namespace plugin {
-        
-       
-        
-#define DEFINE_PLUGIN_CLASS(a, n)\
-class n;\
-\
+    namespace common{
+        namespace plugin {
+            
+#define ALLOCATOR(a,v,n) \
 extern "C" \
-PluginInstancer<n>* BOOST_EXTENSION_EXPORT_DECL \
+void* BOOST_EXTENSION_EXPORT_DECL \
 a ## _allocator() {\
-    return new PluginInstancer<n>();\
-}\
-extern "C" \
-void BOOST_EXTENSION_EXPORT_DECL \
-a ## _deallocator(n *ptrInstance) {\
-    if(ptrInstance)delete ptrInstance;\
-}\
-class PluginTest : public AbstractPlugin\
-
+PluginInstancer<n> instancer(#a,#v);\
+return instancer.getInstance();\
+}
+            
+            
+#define DEFINE_PLUGIN_CLASS(a, v, n)\
+class n;\
+ALLOCATOR(a,v,n) \
+\
+class n : public AbstractPlugin
+            
+        }
     }
 }
 

@@ -28,6 +28,8 @@
 		323236CD164573C60052CE06 /* ChaosNodeDirectory.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 323236CC164573C60052CE06 /* ChaosNodeDirectory.1 */; };
 		323236DA164573F50052CE06 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323236D9164573F50052CE06 /* main.cpp */; };
 		323236DC164573F50052CE06 /* ChaosHSTService.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 323236DB164573F50052CE06 /* ChaosHSTService.1 */; };
+		3232F458177743DC003E1D4A /* AbstractDriverPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 3232F457177743DC003E1D4A /* AbstractDriverPlugin.h */; };
+		3232F45A177746E0003E1D4A /* AbstractDriverPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3232F459177746E0003E1D4A /* AbstractDriverPlugin.cpp */; };
 		3244C0C6168CB96B007C802C /* Record.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244C0C5168CB96B007C802C /* Record.h */; };
 		3244D11D15ECC25800FE2F86 /* AlertEventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */; };
 		3244D11E15ECC25800FE2F86 /* AlertEventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */; };
@@ -394,6 +396,8 @@
 		323236D6164573F50052CE06 /* ChaosHSTService */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosHSTService; sourceTree = BUILT_PRODUCTS_DIR; };
 		323236D9164573F50052CE06 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		323236DB164573F50052CE06 /* ChaosHSTService.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ChaosHSTService.1; sourceTree = "<group>"; };
+		3232F457177743DC003E1D4A /* AbstractDriverPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDriverPlugin.h; sourceTree = "<group>"; };
+		3232F459177746E0003E1D4A /* AbstractDriverPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractDriverPlugin.cpp; sourceTree = "<group>"; };
 		3244C0C5168CB96B007C802C /* Record.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Record.h; sourceTree = "<group>"; };
 		3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlertEventChannel.cpp; sourceTree = "<group>"; };
 		3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertEventChannel.h; sourceTree = "<group>"; };
@@ -1396,6 +1400,8 @@
 				32919A091764E68F00724874 /* DriverAccessor.cpp */,
 				32919A0A1764E68F00724874 /* DriverAccessor.h */,
 				32919A0D17650F4500724874 /* DriverGlobal.h */,
+				3232F459177746E0003E1D4A /* AbstractDriverPlugin.cpp */,
+				3232F457177743DC003E1D4A /* AbstractDriverPlugin.h */,
 			);
 			path = driver;
 			sourceTree = "<group>";
@@ -1815,6 +1821,7 @@
 				326DB4BC14B3A3E50018A8D0 /* CommandManagerDefaultAdapters.h in Headers */,
 				326DB4C014B3A3E50018A8D0 /* AbstractControlUnit.h in Headers */,
 				326DB4C214B3A3E50018A8D0 /* ControlManager.h in Headers */,
+				3232F458177743DC003E1D4A /* AbstractDriverPlugin.h in Headers */,
 				326DB4C514B3A3E50018A8D0 /* OBufferListener.h in Headers */,
 				326DB4C714B3A3E50018A8D0 /* OutputDataBuffer.h in Headers */,
 				326DB4C914B3A3E50018A8D0 /* DataManager.h in Headers */,
@@ -2102,6 +2109,7 @@
 				326DB4C114B3A3E50018A8D0 /* ControlManager.cpp in Sources */,
 				326DB4C614B3A3E50018A8D0 /* OutputDataBuffer.cpp in Sources */,
 				326DB4C814B3A3E50018A8D0 /* DataManager.cpp in Sources */,
+				3232F45A177746E0003E1D4A /* AbstractDriverPlugin.cpp in Sources */,
 				326DB4CB14B3A3E50018A8D0 /* KeyDataStorage.cpp in Sources */,
 				326DB4CD14B3A3E50018A8D0 /* MultiBufferDataStorage.cpp in Sources */,
 				328D2FB71660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp in Sources */,
