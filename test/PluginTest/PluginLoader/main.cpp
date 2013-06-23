@@ -12,10 +12,13 @@ using namespace chaos::plugin;
 
 int main(int argc, const char * argv[]) {
     
-    PluginAllocator allocator("PLUG_TEST_ALIAS","/Coding/Sorgenti/gitrepos/chaos/DerivedData/CHAOSWorkspace/Build/Products/Debug/libPluginDefinition.dylib");
+    PluginAllocator allocator("PLUG_TEST_ALIAS","libPluginDefinition.extension");
     
     if(allocator.loaded()) {
-        AbstractPlugin *pluginInstance = allocator.newInstance();
-        std::cout << "test\n";
+        for (int idx = 0; idx < 100; idx++) {
+            AbstractPlugin *pluginInstance = allocator.newInstance();
+            allocator.releaseInstance(pluginInstance);
+        }
+        std::cout << "test\n";        
     }
 }

@@ -22,9 +22,16 @@ namespace chaos {
         
 #define DEFINE_PLUGIN_CLASS(a, n)\
 class n;\
+\
+extern "C" \
 PluginInstancer<n>* BOOST_EXTENSION_EXPORT_DECL \
-a##Allocator() {\
-return new PluginInstancer<n>();\
+a ## _allocator() {\
+    return new PluginInstancer<n>();\
+}\
+extern "C" \
+void BOOST_EXTENSION_EXPORT_DECL \
+a ## _deallocator(n *ptrInstance) {\
+    if(ptrInstance)delete ptrInstance;\
 }\
 class PluginTest : public AbstractPlugin\
 

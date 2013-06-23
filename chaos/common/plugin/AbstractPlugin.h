@@ -28,6 +28,10 @@
 namespace chaos {
     namespace plugin {
         
+#define SYM_ALLOC_POSTFIX   "_allocator"
+#define SYM_DEALLOC_POSTFIX "_deallocator"
+        
+        
         using namespace std;
         
         template <typename T>

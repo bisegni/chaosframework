@@ -32,11 +32,13 @@ namespace chaos {
             
             //Allocator plugin exported function
             boost::function<AbstractPlugin*()> allocatorFunction;
+            boost::function<void (AbstractPlugin*)> deallocatorFunction;
         public:
             PluginAllocator(const char *pluginName, const char *pluginPath) {
                 //compose name
                 string extensionName = pluginName;
-                extensionName.append("Allocator");
+                string allocatorName = extensionName + SYM_ALLOC_POSTFIX;
+                string deallocatorName = extensionName + SYM_DEALLOC_POSTFIX;
                 
                 if(pluginPath) {
                     
@@ -46,19 +48,23 @@ namespace chaos {
                     if (lib.open()) {
                         
                         //try to get function allocator
-                        allocatorFunction = lib.get<AbstractPlugin*>(extensionName);
+                        allocatorFunction = lib.get<AbstractPlugin*>(allocatorName);
+                        deallocatorFunction = lib.get<void, AbstractPlugin*>(deallocatorName);
                     }
                 }
             }
             
             bool loaded() {
-                return allocatorFunction != NULL;
+                return allocatorFunction != NULL && allocatorFunction != NULL;
             }
             
             AbstractPlugin* newInstance() {
                 return allocatorFunction();
             }
             
+            void releaseInstance(AbstractPlugin *instance) {
+                deallocatorFunction(instance);
+            }
         };
         
     }

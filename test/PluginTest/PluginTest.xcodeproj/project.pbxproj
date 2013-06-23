@@ -26,7 +26,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		32875FA5177640D000E33D6F /* libPluginDefinition.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libPluginDefinition.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		32875FA5177640D000E33D6F /* libPluginDefinition.extension */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libPluginDefinition.extension; sourceTree = BUILT_PRODUCTS_DIR; };
 		32875FAE177640DF00E33D6F /* PluginLoader */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PluginLoader; sourceTree = BUILT_PRODUCTS_DIR; };
 		32875FB0177640DF00E33D6F /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		32875FB2177640DF00E33D6F /* PluginLoader.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = PluginLoader.1; sourceTree = "<group>"; };
@@ -63,7 +63,7 @@
 		32875FA6177640D000E33D6F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				32875FA5177640D000E33D6F /* libPluginDefinition.dylib */,
+				32875FA5177640D000E33D6F /* libPluginDefinition.extension */,
 				32875FAE177640DF00E33D6F /* PluginLoader */,
 			);
 			name = Products;
@@ -107,7 +107,7 @@
 			);
 			name = PluginDefinition;
 			productName = PluginDefinition;
-			productReference = 32875FA5177640D000E33D6F /* libPluginDefinition.dylib */;
+			productReference = 32875FA5177640D000E33D6F /* libPluginDefinition.extension */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		32875FAD177640DF00E33D6F /* PluginLoader */ = {
@@ -202,6 +202,7 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				EXECUTABLE_EXTENSION = extension;
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -249,6 +250,7 @@
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
+				EXECUTABLE_EXTENSION = extension;
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -370,6 +372,7 @@
 				32875FA9177640D000E33D6F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		32875FB4177640DF00E33D6F /* Build configuration list for PBXNativeTarget "PluginLoader" */ = {
 			isa = XCConfigurationList;
@@ -378,6 +381,7 @@
 				32875FB6177640DF00E33D6F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
