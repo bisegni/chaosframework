@@ -19,18 +19,18 @@ namespace chaos {
     namespace common{
         namespace plugin {
             
-#define ALLOCATOR(a,v,n) \
+#define ALLOCATOR(a,v,t,n) \
 extern "C" \
 void* BOOST_EXTENSION_EXPORT_DECL \
 a ## _allocator() {\
-PluginInstancer<n> instancer(#a,#v);\
+PluginInstancer<n> instancer(#a,#v,#t);\
 return instancer.getInstance();\
 }
             
             
-#define DEFINE_PLUGIN_CLASS(a, v, n)\
+#define DEFINE_PLUGIN_CLASS(a, v, t, n)\
 class n;\
-ALLOCATOR(a,v,n) \
+ALLOCATOR(a,v,t,n) \
 \
 class n : public AbstractPlugin
             

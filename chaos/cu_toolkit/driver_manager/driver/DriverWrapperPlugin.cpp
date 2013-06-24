@@ -1,5 +1,5 @@
 /*
- *	AbstractDriverPlugin.cpp
+ *	DriverWrapperPlugin.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,24 +18,7 @@
  *    	limitations under the License.
  */
 
-#include <chaos/cu_toolkit/driver_manager/driver/AbstractDriverPlugin.h>
+#include <chaos/cu_toolkit/driver_manager/driver/DriverWrapperPlugin.h>
 
 using namespace chaos::cu::dm::driver;
 
-AbstractDriverPlugin::AbstractDriverPlugin(AbstractDriver *_driverReference) {
-    
-}
-
-AbstractDriverPlugin::~ AbstractDriverPlugin() {
-    
-}
-
-//! Proxy for create a new accessor to the driver
-bool AbstractDriverPlugin::getNewAccessor(DriverAccessor **newAccessor) {
-    return driverReference->getNewAccessor(newAccessor);
-}
-
-//! Proxy for dispose an accessor
-void AbstractDriverPlugin::releaseAccessor(DriverAccessor *accessor) {
-    return driverReference->releaseAccessor(accessor);
-}

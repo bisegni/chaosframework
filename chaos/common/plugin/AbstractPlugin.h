@@ -35,14 +35,19 @@ namespace chaos {
             
             using namespace std;
             
+            // forward declaration
             template <typename T>
             class PluginInstancer;
             
+            /*!
+              Plugin abstract class
+             */
             class AbstractPlugin {
                 template <typename T>
                 friend class PluginInstancer;
                 string name;
                 string version;
+                string type;
             public:
                 
                 AbstractPlugin() {}
@@ -51,20 +56,23 @@ namespace chaos {
                 
                 string& getName(){return name;}
                 string& getVersion(){return version;}
+                string& getType(){return type;}
             };
             
             template <typename T>
             class PluginInstancer {
                 string name;
                 string version;
+                string type;
             public:
-                PluginInstancer(const char *_name, const char *_version):name(_name), version(_version){}
+                PluginInstancer(const char *_name, const char *_version, const char *_type):name(_name), version(_version), type(_type){}
                 
                 void* getInstance() {
                     AbstractPlugin* instance = static_cast<AbstractPlugin*>(new T());
                     if(instance) {
                         instance->name = name;
                         instance->version = version;
+                        instance->type = type;
                     }
                     return static_cast<void*>(instance);
                 }

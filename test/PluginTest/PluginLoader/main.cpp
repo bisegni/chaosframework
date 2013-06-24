@@ -20,7 +20,7 @@ int main(int argc, const char * argv[]) {
         }
      
         for (int idx = 0; idx < PLUGIN_NUMBERS; idx++) {
-            std::cout << plugin[idx]->getName() << "-" << plugin[idx]->getVersion() << "-\n";// <<  ptest->printTest() << endl;
+            std::cout << plugin[idx]->getName() << "-" << plugin[idx]->getVersion() << "-"<< plugin[idx]->getType() <<"\n";// <<  ptest->printTest() << endl;
             delete plugin[idx];
         }
     }

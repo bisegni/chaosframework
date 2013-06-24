@@ -1,5 +1,5 @@
 /*
- *	AbstractDriverPlugin.h
+ *	DriverWrapperPlugin.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef CHAOSFramework_AbstractDriverPlugin_h
-#define CHAOSFramework_AbstractDriverPlugin_h
+#ifndef CHAOSFramework_DriverWrapperPlugin_h
+#define CHAOSFramework_DriverWrapperPlugin_h
 
 #include <chaos/common/plugin/AbstractPlugin.h>
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractDriver.h>
@@ -28,24 +28,23 @@ namespace chaos{
     namespace cu {
         namespace dm {
             namespace driver {
-                
-#define REGISTER_CU_DRIVER_CLASS(a, v, n)\
-class n;\
-ALLOCATOR(a,v,n)\
-class n : protected AbstractDriverPlugin
-     
-#define CU_DRIVER_CONSTRUCTOR(n) \
-n():AbstractDriverPlugin(this){};
-
-                //! Plugin abstraction for the control unit driver
+                    //! Plugin abstraction for the control unit driver
                 /*!
                  
                  */
-                class AbstractDriverPlugin: public chaos::common::plugin::AbstractPlugin {
+                template<typename T>
+                class DriverWrapperPlugin : public chaos::common::plugin::AbstractPlugin {
                     AbstractDriver *driverReference;
+                
+                public:
+                    DriverWrapperPlugin(){
+                        driverReference = new T();
+                    }
                     
-                    AbstractDriverPlugin(AbstractDriver *_driverReference);
-                    ~ AbstractDriverPlugin();
+                    ~ DriverWrapperPlugin() {
+                        if(driverReference)
+                            delete(driverReference);
+                    }
                     
                     //! Proxy for create a new accessor to the driver
                     /*!
@@ -53,14 +52,36 @@ n():AbstractDriverPlugin(this){};
                      the message queue for comunicating with this driver is
                      allocated.
                      */
-                    bool getNewAccessor(DriverAccessor **newAccessor);
+                    bool getNewAccessor(DriverAccessor **newAccessor) {
+                        return driverReference->getNewAccessor(newAccessor);
+                    }
                     
                     //! Proxy for dispose an accessor
                     /*!
                      A driver accessor is relased and all resource are free.
                      */
-                    void releaseAccessor(DriverAccessor *accessor);
+                    void releaseAccessor(DriverAccessor *accessor) {
+                        return driverReference->releaseAccessor(accessor);
+                    }
                 };
+                
+#define DRIVER_ALLOCATOR(a, v, t, n) \
+class n; \
+extern "C" \
+void* BOOST_EXTENSION_EXPORT_DECL \
+a ## _allocator() {\
+PluginInstancer< DriverWrapperPlugin< n > > instancer(#a,#v,#t);\
+return instancer.getInstance();\
+}
+                
+#define REGISTER_CU_DRIVER_CLASS(a, v, t, n)\
+DRIVER_ALLOCATOR(a, v, t, n) \
+class n : public AbstractDriver {\
+            template<typename T>\
+            friend class DriverWrapperPlugin;\
+            protected:\
+                Sl7TcpDriver(){}\
+                ~Sl7TcpDriver(){}\
                 
             }
         }

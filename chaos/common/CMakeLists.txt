@@ -12,6 +12,8 @@ TARGET_LINK_LIBRARIES(chaos_common ${common_lib_library})
         
 FILE(GLOB files "*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common)
+FILE(GLOB files "plugin/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/plugin)
 FILE(GLOB files "action/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/action)
 FILE(GLOB files "log/*.h")

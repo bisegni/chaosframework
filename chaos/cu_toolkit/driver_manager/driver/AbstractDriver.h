@@ -34,8 +34,12 @@ namespace chaos{
         namespace dm {
             namespace driver {
             
+                //! forward declaration
                 class DriverAccessor;
                 
+                //! forward declaration
+                template<typename T>
+                class DriverWrapperPlugin;
                 
                     //! !CHAOS Driver abstract class
                 /*!
@@ -43,6 +47,9 @@ namespace chaos{
                     a message queue is used for receive DrvMsg pack.
                  */
                 class AbstractDriver : public utility::InizializableService {
+                    
+                    template<typename T>
+                    friend class DriverWrapperPlugin;
                     
                     std::string driverUUID;
                     
@@ -56,6 +63,7 @@ namespace chaos{
                     //! command queue used for receive DrvMsg pack
                     boost::interprocess::message_queue *commandQueue;
                     
+                protected:
                     //!Private constructor
                     AbstractDriver();
                     
