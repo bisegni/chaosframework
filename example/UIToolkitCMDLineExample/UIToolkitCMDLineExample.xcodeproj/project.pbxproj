@@ -177,6 +177,11 @@
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++98";
 				CLANG_CXX_LIBRARY = "libstdc++";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					BOOST_ALL_DYN_LINK,
+				);
 				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
 					../../,

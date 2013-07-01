@@ -33,11 +33,9 @@ namespace chaos{
     namespace cu {
         namespace dm {
             namespace driver {
-            
-                //! forward declaration
-                class DriverAccessor;
                 
                 //! forward declaration
+                class DriverAccessor;
                 template<typename T>
                 class DriverWrapperPlugin;
                 
@@ -47,7 +45,6 @@ namespace chaos{
                     a message queue is used for receive DrvMsg pack.
                  */
                 class AbstractDriver : public utility::InizializableService {
-                    
                     template<typename T>
                     friend class DriverWrapperPlugin;
                     

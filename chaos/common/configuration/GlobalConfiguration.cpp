@@ -41,7 +41,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_LOG_ON_CONSOLE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on console");
         addOption(InitOption::OPT_LOG_ON_FILE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on file");
         addOption(InitOption::OPT_LOG_FILE, po::value< string >()->default_value("chaos_frameowrk.log"), "Specify when the file path of the log");
-        addOption(InitOption::OPT_LOG_LEVEL, po::value< string >()->default_value("info"), "Specify the level of the log using the value [debug, info, error, fatal]"),
+        addOption(InitOption::OPT_LOG_LEVEL, po::value< string >()->default_value("info"), "Specify the level of the log using the value [debug, info, notice, warning, fatal]"),
         addOption(InitOption::OPT_PUBLISHING_IP, po::value< string >(), "Specify the ip address where to publish the framework rpc system");
     }catch (po::error &e) {
         throw CException(0, e.what(), "GlobalConfiguration::preParseStartupParameters");
@@ -73,8 +73,10 @@ int32_t GlobalConfiguration::filterLogLevel(string& levelStr) throw (CException)
         level = chaos::log::level::LSLInfo;
     else if (levelStr == "debug")
         level = chaos::log::level::LSLDebug;
-    else if (levelStr == "error")
-        level = chaos::log::level::LSLError;
+    else if (levelStr == "notice")
+        level = chaos::log::level::LSLNotice;
+    else if (levelStr == "warning")
+        level = chaos::log::level::LSLWarning;
     else if (levelStr == "fatal")
         level = chaos::log::level::LSLFatal;
     else

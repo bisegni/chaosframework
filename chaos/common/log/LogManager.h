@@ -23,7 +23,6 @@
 
 #include <iostream>
 #include <chaos/common/exception/CException.h>
-#include <boost/log/sources/severity_logger.hpp>
 namespace chaos {
     template<class T>
     class ChaosCommon;
@@ -38,8 +37,10 @@ namespace chaos {
                 LSLDebug = 0,    // 1
                 /// Normal debugging information
                 LSLInfo  = 1,    // 2
+                /// Normal debugging information
+                LSLNotice  = 2,    // 2
                 /// Log all error that occour but that don't prevent the killing of the toolkit
-                LSLError = 3,    // 3
+                LSLWarning = 3,    // 3
                 /// Log the error the force the toolkit process to closs
                 LSLFatal = 4      // 4
             } LogSeverityLevel;

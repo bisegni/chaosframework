@@ -1,5 +1,5 @@
 /*
- *	DriverWrapperPlugin.cpp
+ *	AbstractPlugin.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,7 +18,19 @@
  *    	limitations under the License.
  */
 
-#include <chaos/cu_toolkit/driver_manager/driver/DriverWrapperPlugin.h>
 
-using namespace chaos::cu::dm::driver;
+#include <chaos/common/plugin/AbstractPlugin.h>
 
+using namespace chaos::common::plugin;
+
+const char * const AbstractPlugin::getName() {
+    return info.name.c_str();
+}
+
+const char * const AbstractPlugin::getVersion() {
+    return info.type.c_str();
+}
+
+const char * const AbstractPlugin::getType() {
+    return info.version.c_str();
+}

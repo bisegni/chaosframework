@@ -27,11 +27,9 @@
 
 namespace chaos {
     namespace common {
+        
+        //! Name space for grupping class for the plugin managment system of !CHOAS framework
         namespace plugin {
-            
-#define SYM_ALLOC_POSTFIX   "_allocator"
-#define SYM_DEALLOC_POSTFIX "_deallocator"
-            
             
             using namespace std;
             
@@ -39,44 +37,68 @@ namespace chaos {
             template <typename T>
             class PluginInstancer;
             
+            //! Basic information of the plugin
+            typedef struct PluginInfo {
+                //! the alias of the plugin used for create the instance
+                std::string name;
+                //! the type of the plugin
+                std::string type;
+                //! The version of the plugin
+                std::string version;
+            } PluginInfo, *PluginInfoPtr;
+            
+                //! Plugin abstract class
             /*!
-              Plugin abstract class
+              The base class for all other plugin. His scope is to standardize
+             the sharing of the basic information of a plugin.
              */
             class AbstractPlugin {
                 template <typename T>
                 friend class PluginInstancer;
-                string name;
-                string version;
-                string type;
+                
+                //! Information for the current plugin
+                PluginInfo info;
+
             public:
+                //! Return the name of the plugin
+                const char * const getName();
                 
-                AbstractPlugin() {}
+                //! Return the version of the plugin
+                const char * const getVersion();
                 
-                virtual ~AbstractPlugin() {}
-                
-                string& getName(){return name;}
-                string& getVersion(){return version;}
-                string& getType(){return type;}
+                //! Return the type of the plugin
+                const char * const getType();
             };
             
+            
+            //! Permit the instantiation process of the plugin
+            /*!
+                This factory is used in the method created ad hoc for every plugin
+                within the exported (by dll) c function named "Plugin_Name"_allocator
+             */
             template <typename T>
             class PluginInstancer {
-                string name;
-                string version;
-                string type;
             public:
-                PluginInstancer(const char *_name, const char *_version, const char *_type):name(_name), version(_version), type(_type){}
                 
-                void* getInstance() {
-                    AbstractPlugin* instance = static_cast<AbstractPlugin*>(new T());
+                //! Return the instance of the plugin
+                /*!
+                    This method return an instance of the plugin with his information filled.
+                    \param name is the name of the plugin
+                    \param version is the version of the plugin accordi to the type "XX.XX.XX"
+                    \param type is the type of the plugin expressed by a string
+                    \return the isntance of the plugin
+                 */
+                static T* getInstance(const char *name, const char *version, const char *type) {
+                    T* instance = new T();
                     if(instance) {
-                        instance->name = name;
-                        instance->version = version;
-                        instance->type = type;
+                        instance->info.name = name;
+                        instance->info.type = type;
+                        instance->info.version = version;
                     }
-                    return static_cast<void*>(instance);
+                    return instance;
                 }
             };
+            
             
         }
     }

@@ -12,8 +12,8 @@ OS=$(uname -s)
 ARCH=$(uname -m)
 KERNEL_VER=$(uname -r)
 KERNEL_SHORT_VER=$(uname -r|cut -d\- -f1|tr -d '.'| tr -d '[A-Z][a-z]')
-BOOST_VERSION=1_53_0
-BOOST_VERSION_IN_PATH=1.53.0
+BOOST_VERSION=1_54_0
+BOOST_VERSION_IN_PATH=1.54.0
 LMEM_VERSION=1.0.16
 CHAOS_DIR=$SCRIPTPATH
 BASE_EXTERNAL=$CHAOS_DIR/external
@@ -38,13 +38,8 @@ echo "Using $CHAOS_DIR as chaos folder"
 echo "Using $BASE_EXTERNAL as external library folder"
 echo "Using $PREFIX as prefix folder"
 
-if [ ! -d "$BASE_EXTERNAL/boost-log" ]; then
- echo "Download boost-log source"
- svn co https://boost-log.svn.sourceforge.net/svnroot/boost-log/branches/v1 $BASE_EXTERNAL/boost-log
-else
- echo "Update boost-log source"
- cd $BASE_EXTERNAL/boost-log
- svn update
+if [ ! -d "$BASE_EXTERNAL" ]; then
+    mkdir -p $BASE_EXTERNAL
 fi
 
 if [ ! -d "$PREFIX/include/boost" ]; then
@@ -59,21 +54,6 @@ if [ ! -d "$PREFIX/include/boost" ]; then
         mv $BASE_EXTERNAL/boost_$BOOST_VERSION $BASE_EXTERNAL/boost
     fi
 
-    if [ ! -L "$BASE_EXTERNAL/boost/boost/log" ]; then
-        echo "link boost/log into boost source"
-        ln -s $BASE_EXTERNAL/boost-log/boost/log $BASE_EXTERNAL/boost/boost/
-        if [[ $? -ne 0 ]] ; then
-            exit 1
-        fi
-    fi
-
-    if [ ! -L "$BASE_EXTERNAL/boost/libs/log" ]; then
-        echo "link libs/log into boost source"
-        ln -s $BASE_EXTERNAL/boost-log/libs/log $BASE_EXTERNAL/boost/libs/
-        if [[ $? -ne 0 ]] ; then
-            exit 1
-        fi
-    fi
 
     if [ ! -f "$BASE_EXTERNAL/boost/b2" ]; then
         echo "Boostrapping boost"
@@ -85,9 +65,9 @@ if [ ! -d "$PREFIX/include/boost" ]; then
     echo "Compile and install boost libraries into $PREFIX/"
 if [ -n "$CHAOS32" ]; then
     	echo "INSTALLING BOOST X86 32"
-    	./b2 cflags=-m32 cxxflags=-m32 architecture=x86 address-model=32 --prefix=$PREFIX link=shared --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread --with-atomic --with-timer install
+    	./b2 link=shared cflags=-m32 cxxflags=-m32 architecture=x86 address-model=32 --prefix=$PREFIX --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread --with-atomic --with-timer install
     else
-    	./b2 --prefix=$PREFIX link=shared --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread --with-atomic --with-timer install
+    	./b2 link=shared --prefix=$PREFIX --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread --with-atomic --with-timer install
     fi
 else
     echo "Boost Already present"
@@ -96,6 +76,7 @@ fi
 echo "Add boost extension to the defautl boost installation"
 svn co http://svn.boost.org/svn/boost/sandbox/boost/extension $PREFIX/include/boost/extension
 
+echo "Setup MSGPACK"
 if [ ! -d "$BASE_EXTERNAL/msgpack-c" ]; then
     echo "Install msgpack-c"
     git clone https://github.com/msgpack/msgpack-c.git $BASE_EXTERNAL/msgpack-c
@@ -110,7 +91,9 @@ fi
 make clean
 make
 make install
+echo "MSGPACK Setupped"
 
+echo "Setup MPIO"
 if [ ! -d "$BASE_EXTERNAL/mpio" ]; then
     echo "Install mpio"
 #    git clone https://github.com/frsyuki/mpio.git $BASE_EXTERNAL/mpio
@@ -130,7 +113,9 @@ fi
 make clean
 make
 make install
+echo "MPIO Setupped"
 
+echo "Setup MSGPACK-RPC"
 if [ ! -d "$BASE_EXTERNAL/msgpack-rpc" ]; then
     echo "Install msgpack-rpc"
     git clone https://github.com/msgpack/msgpack-rpc.git $BASE_EXTERNAL/msgpack-rpc
@@ -146,8 +131,9 @@ fi
 make clean
 make
 make install
+echo "MSGPACK-RPC Setupped"
 
-
+echo "Setup LIBEVENT"
 if [ ! -f "$BASE_EXTERNAL/libevent" ]; then
     echo "Installing LibEvent"
 #    git clone git://levent.git.sourceforge.net/gitroot/levent/libevent $BASE_EXTERNAL/libevent
@@ -162,7 +148,9 @@ fi
 make clean
 make
 make install
+echo "LIBEVENT Setupped"
 
+echo "Setup LIBMEMCACHED"
 if [ ! -d "$PREFIX/include/libmemcached" ]; then
     echo "Install libmemcached into  $BASE_EXTERNAL/libmemcached"
     wget --no-check-certificate -O $BASE_EXTERNAL/libmemcached.tar.gz https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz
@@ -173,7 +161,9 @@ if [ ! -d "$PREFIX/include/libmemcached" ]; then
     make
     make install
 fi
+echo "LIBMEMCACHED Setupped"
 
+echo "Setup ZMQ"
 if [ ! -d "$BASE_EXTERNAL/zeromq3-x" ]; then
 echo "Download zmq source"
 git clone https://github.com/zeromq/zeromq3-x.git $BASE_EXTERNAL/zeromq3-x
@@ -187,6 +177,7 @@ cd $BASE_EXTERNAL/zeromq3-x
 ./configure --prefix=$PREFIX
 make
 make install
+echo "ZMQ Setupped"
 
 echo "Compile !CHAOS"
 cd $CHAOS_DIR

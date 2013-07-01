@@ -20,11 +20,21 @@
 
 #include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>
-#include <boost/log/filters.hpp>
-#include <boost/log/utility/init/to_file.hpp>
-#include <boost/log/utility/init/to_console.hpp>
-#include <boost/log/utility/init/common_attributes.hpp>
-#include <boost/log/formatters.hpp>
+#include <boost/log/sources/severity_logger.hpp>
+#include <boost/log/utility/setup/common_attributes.hpp>
+#include <boost/log/utility/setup/console.hpp>
+#include <boost/log/utility/setup/file.hpp>
+#include <boost/log/sources/severity_logger.hpp>
+#include <boost/log/attributes/attribute_name.hpp>
+#include <boost/log/sinks/sync_frontend.hpp>
+#include <boost/log/sinks/syslog_backend.hpp>
+#include <boost/log/attributes.hpp>
+#include <boost/log/expressions.hpp>
+#include <boost/log/utility/setup/formatter_parser.hpp>
+//#include <boost/log/sources/filters.hpp>
+//#include <boost/log/sources/utility/init/to_file.hpp>
+//#include <boost/log/sources/utility/init/common_attributes.hpp>
+//#include <boost/log/sources/formatters.hpp>
 
 #include <chaos/common/global.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
@@ -36,9 +46,11 @@
 
 using namespace chaos;
 using namespace chaos::log;
-namespace logging = boost::BOOST_LOG_NAMESPACE;
-namespace fmt = boost::log::formatters;
-
+namespace logging = boost::log;
+namespace keywords = boost::log::keywords;
+namespace attrs = boost::log::attributes;
+namespace sinks = boost::log::sinks;
+namespace expr = boost::log::expressions;
 std::ostream& operator<<(std::ostream& out, const level::LogSeverityLevel& level )
 {
     switch (level)
@@ -49,8 +61,11 @@ std::ostream& operator<<(std::ostream& out, const level::LogSeverityLevel& level
         case level::LSLInfo:
             out << "INFO";
             break;
-        case level::LSLError:
-            out << "ERROR";
+        case level::LSLNotice:
+            out << "NOTICE";
+            break;
+        case level::LSLWarning:
+            out << "WARNING";
             break;
         case level::LSLFatal:
             out << "FATAL";
@@ -67,30 +82,25 @@ void LogManager::init() throw(CException) {
     bool                        logOnFile       = GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_FILE);
     string                      logFileName     = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_FILE);
     
-    boost::log::add_common_attributes();
+    logging::add_common_attributes();
     
     boost::shared_ptr< logging::core > pCore = boost::log::core::get();
     
-    logging::register_simple_formatter_factory< level::LogSeverityLevel  >("Severity");
-    logging::core::get()->set_filter(logging::filters::attr< level::LogSeverityLevel >("Severity") >= logLevel);
+    //logging::register_simple_formatter_factory< level::LogSeverityLevel, char  >("Severity");
+    logging::core::get()->set_filter(expr::attr< level::LogSeverityLevel >("Severity") >= logLevel);
     
     if(logOnConsole){
-        logging::init_log_to_console(std::clog, logging::keywords::format = EXTENDEND_LOG_FORMAT);
+        logging::add_console_log(std::clog, logging::keywords::format = EXTENDEND_LOG_FORMAT);
     }
     
     if(logOnFile){
-        logging::init_log_to_file(logging::keywords::file_name = logFileName,                  // file name pattern
-                                  logging::keywords::rotation_size = 10 * 1024 * 1024,         // rotate files every 10 MiB...
-                                  logging::keywords::time_based_rotation = logging::sinks::file::rotation_at_time_point(0, 0, 0),// ...or at midnight
-                                  logging::keywords::format = EXTENDEND_LOG_FORMAT,
-                                  logging::keywords::auto_flush=true);
+        logging::add_file_log(keywords::file_name = logFileName,                  // file name pattern
+                              keywords::rotation_size = 10 * 1024 * 1024,         // rotate files every 10 MiB...
+                              keywords::time_based_rotation = logging::sinks::file::rotation_at_time_point(0, 0, 0),// ...or at midnight
+                              keywords::format = EXTENDEND_LOG_FORMAT,
+                              keywords::auto_flush=true);
     }
     
     //enable the log in case of needs
-    //boost::log::add_common_attributes();
     pCore->set_logging_enabled(logOnConsole || logOnFile);
-
-
-
-
  }

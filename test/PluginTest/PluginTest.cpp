@@ -8,21 +8,21 @@
 
 #include "PluginTest.h"
 
-//define the plugin
-DEFINE_PLUGIN_CLASS(PluginAlias, 1.0, DRV, PluginTest)
+//define the general plugin
 
-DEFINE_CU_DRIVER_PLUGIN_CLASS(DriverAlias, 1.0, Sl7TcpDriver)
+OPEN_PLUGIN_CLASS_DEFINITION(PluginAlias, 1.0, DRV, PluginTest)
+CLOSE_PLUGIN_CLASS_DEFINITION
 
+//define the cu driver plugin
+OPEN_CU_DRIVER_PLUGIN_CLASS_DEFINITION(DriverAlias, 1.0, Sl7TcpDriver)
+REGISTER_CU_DRIVER_PLUGIN_CLASS_INIT_ATTRIBUTE(DriverAlias,http_address)
+REGISTER_CU_DRIVER_PLUGIN_CLASS_INIT_ATTRIBUTE(DriverAlias,http_port)
+CLOSE_CU_DRIVER_PLUGIN_CLASS_DEFINITION
 
-//register the plugin with his init attribute
+//register the two plugin
 OPEN_REGISTER_PLUGIN
     REGISTER_PLUGIN(PluginAlias)
     REGISTER_PLUGIN(DriverAlias)
-
-    REGISTER_PLUGIN_INIT_ATTRIBUTE(PluginAlias,http_address)
-    REGISTER_PLUGIN_INIT_ATTRIBUTE(PluginAlias,http_port)
-    REGISTER_PLUGIN_INIT_ATTRIBUTE(DriverAlias,http_address)
-    REGISTER_PLUGIN_INIT_ATTRIBUTE(DriverAlias,http_port)
 CLOSE_REGISTER_PLUGIN
 
 PluginTest::PluginTest() {

@@ -5,6 +5,8 @@ SET( ${PROJECT_NAME}_MAJOR_VERSION 0 )
 SET( ${PROJECT_NAME}_MINOR_VERSION 1 ) 
 SET( ${PROJECT_NAME}_PATCH_LEVEL 0 )
 
+ add_definitions(-DBOOST_ALL_DYN_LINK)
+
 OPTION( BUILD_FORCE_32 "Force 32 bit compilation" OFF )
 
 EXECUTE_PROCESS(COMMAND chaos/common/version.sh)
@@ -122,3 +124,5 @@ ADD_SUBDIRECTORY(example/BenchTest bin/bench_test)
 message(STATUS "Configure ChaosMemCacheTest test excutable")
 ADD_SUBDIRECTORY(test/MemcachedEmbeddedTest bin/cache_test)
 
+message(STATUS "Configure Plugin Test")
+ADD_SUBDIRECTORY(test/PluginTest bin/plugin_test)

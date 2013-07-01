@@ -184,6 +184,11 @@
 		32B9C97E1692E90800B87834 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					BOOST_ALL_DYN_LINK,
+				);
 				HEADER_SEARCH_PATHS = (
 					../../,
 					../../usr/local/include,
@@ -266,6 +271,7 @@
 				32B9C97F1692E90800B87834 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

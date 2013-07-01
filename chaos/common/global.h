@@ -20,8 +20,6 @@
 #ifndef ChaosFramework_global_h
 #define ChaosFramework_global_h
 
-
-
 /*! \mainpage !Chaos - Control system based on a Highly Abstracted and Open Structure
  *
  * \section intro_sec Introduction
@@ -35,6 +33,7 @@
 #include <boost/version.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
+#include <boost/log/common.hpp>
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/sources/record_ostream.hpp>
 #include <boost/log/sources/global_logger_storage.hpp>
@@ -42,13 +41,14 @@
 
 #include <chaos/common/endian.h>
 #include <chaos/common/log/LogManager.h>
-    
+
     //allocate the logger
-BOOST_LOG_DECLARE_GLOBAL_LOGGER(chaosLogger, boost::log::sources::severity_logger_mt < chaos::log::level::LogSeverityLevel > )
+BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(chaosLogger, boost::log::sources::severity_logger_mt < chaos::log::level::LogSeverityLevel > )
 
 #define LFTL_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLFatal)
 #define LDBG_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLDebug)
-#define LERR_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLError)
+#define LWRN_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLWarning)
+#define LERR_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLNotice)
 #define LAPP_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLInfo)
     //define for chaos assert macro, it print the basiclay infromation to find
     //the error when the condition is not true

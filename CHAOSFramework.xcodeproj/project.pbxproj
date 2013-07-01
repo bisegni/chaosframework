@@ -14,6 +14,9 @@
 		320DF99114E190BB00251621 /* DeviceController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320DF98F14E17E3D00251621 /* DeviceController.cpp */; };
 		3211FD1D1698699D00424A3C /* LiveDataFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3211FD1B1698699D00424A3C /* LiveDataFetcher.cpp */; };
 		3211FD1E1698699D00424A3C /* LiveDataFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 3211FD1C1698699D00424A3C /* LiveDataFetcher.h */; };
+		3215860D178756B40090E7E6 /* AbstractDriverPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3215860C178756B40090E7E6 /* AbstractDriverPlugin.cpp */; };
+		3215861017875FDB0090E7E6 /* DriverPluginLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3215860E17875FDB0090E7E6 /* DriverPluginLoader.cpp */; };
+		3215861117875FDB0090E7E6 /* DriverPluginLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3215860F17875FDB0090E7E6 /* DriverPluginLoader.h */; };
 		32279F8416F8DEAF009EC7B9 /* DataBroker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32279F8216F8DEAF009EC7B9 /* DataBroker.cpp */; };
 		32279F8516F8DEAF009EC7B9 /* DataBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32279F8316F8DEAF009EC7B9 /* DataBroker.h */; };
 		32279F8B16FA36B6009EC7B9 /* PublisherDataService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32279F8916FA36B6009EC7B9 /* PublisherDataService.cpp */; };
@@ -28,8 +31,7 @@
 		323236CD164573C60052CE06 /* ChaosNodeDirectory.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 323236CC164573C60052CE06 /* ChaosNodeDirectory.1 */; };
 		323236DA164573F50052CE06 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323236D9164573F50052CE06 /* main.cpp */; };
 		323236DC164573F50052CE06 /* ChaosHSTService.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 323236DB164573F50052CE06 /* ChaosHSTService.1 */; };
-		3232F458177743DC003E1D4A /* DriverWrapperPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 3232F457177743DC003E1D4A /* DriverWrapperPlugin.h */; };
-		3232F45A177746E0003E1D4A /* DriverWrapperPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3232F459177746E0003E1D4A /* DriverWrapperPlugin.cpp */; };
+		3232F458177743DC003E1D4A /* AbstractDriverPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 3232F457177743DC003E1D4A /* AbstractDriverPlugin.h */; };
 		3244C0C6168CB96B007C802C /* Record.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244C0C5168CB96B007C802C /* Record.h */; };
 		3244D11D15ECC25800FE2F86 /* AlertEventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */; };
 		3244D11E15ECC25800FE2F86 /* AlertEventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */; };
@@ -74,6 +76,8 @@
 		32640A3E169DCC5800450962 /* MemoryAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A25169DCC5800450962 /* MemoryAllocator.h */; };
 		32640A3F169DCC5800450962 /* SmartPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A26169DCC5800450962 /* SmartPointer.h */; };
 		3264B05C1673623F002E87FA /* TDSObjectHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3264B05B1673623E002E87FA /* TDSObjectHandler.h */; };
+		3264BBD51784887900E2F5A0 /* AbstractPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264BBD41784887900E2F5A0 /* AbstractPlugin.cpp */; };
+		3264BBD71784BFE400E2F5A0 /* PluginInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264BBD61784BFE400E2F5A0 /* PluginInspector.cpp */; };
 		3265BF4615D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3265BF4515D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h */; };
 		3265BF4915D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3265BF4815D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc */; };
 		3268CE2D1616086800FCDB10 /* MsgPackClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3268CE291616086800FCDB10 /* MsgPackClient.cpp */; };
@@ -181,7 +185,7 @@
 		327CFF091708C4EB0069497B /* FastHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327CFF071708C4EA0069497B /* FastHash.cpp */; };
 		327CFF0A1708C4EB0069497B /* FastHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF081708C4EB0069497B /* FastHash.h */; };
 		327CFF121708D7760069497B /* CacheGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF111708D7740069497B /* CacheGlobal.h */; };
-		32875F97177634AF00E33D6F /* PluginDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 32875F96177634AF00E33D6F /* PluginDefinition.h */; };
+		32875F97177634AF00E33D6F /* PluginInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 32875F96177634AF00E33D6F /* PluginInspector.h */; };
 		3289F9A5168508460080D93F /* SQLiteEntityDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */; };
 		3289F9A6168508460080D93F /* SQLiteEntityDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 3289F9A4168508460080D93F /* SQLiteEntityDB.h */; };
 		328CC9D61763CCC7000B30B6 /* AbstractDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328CC9D41763CCC7000B30B6 /* AbstractDriver.cpp */; };
@@ -192,6 +196,8 @@
 		328D2FBA1660EADC007F482E /* DSAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328D2FB11660E3EC007F482E /* DSAttributeHandler.h */; };
 		328D2FBE1660EF71007F482E /* TDSAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328D2FBC1660EF71007F482E /* TDSAttributeHandler.h */; };
 		328D2FC316612AB3007F482E /* DSInt32Handler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328D2FC116612AB3007F482E /* DSInt32Handler.h */; };
+		328E36EB1786B89500C1564D /* PluginLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E36EA1786B89500C1564D /* PluginLoader.cpp */; };
+		328E36ED1786C00D00C1564D /* PluginDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 328E36EC1786C00D00C1564D /* PluginDefinition.h */; };
 		328E405D17287B82004E5938 /* LFDataCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E405B17287B82004E5938 /* LFDataCache.cpp */; };
 		328E405E17287B82004E5938 /* LFDataCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 328E405C17287B82004E5938 /* LFDataCache.h */; };
 		328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */; };
@@ -302,6 +308,8 @@
 		32BFF913176C862A00D27A04 /* StartableService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32BFF911176C862A00D27A04 /* StartableService.h */; };
 		32C0CC98168CC16400BC2DA7 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C0CC96168CC16400BC2DA7 /* Entity.cpp */; };
 		32C0CC99168CC16400BC2DA7 /* Entity.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C0CC97168CC16400BC2DA7 /* Entity.h */; };
+		32C353F21788015B009ED581 /* PluginDiscover.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C353F01788015B009ED581 /* PluginDiscover.cpp */; };
+		32C353F31788015B009ED581 /* PluginDiscover.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C353F11788015B009ED581 /* PluginDiscover.h */; };
 		32C7B8FD16DD362A005B3B21 /* ApiServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7B8FB16DD362A005B3B21 /* ApiServer.cpp */; };
 		32C7B90116DD365D005B3B21 /* DataManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7B8FF16DD365D005B3B21 /* DataManagment.cpp */; };
 		32C7B90516DD6159005B3B21 /* DeviceApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7B90316DD6159005B3B21 /* DeviceApi.cpp */; };
@@ -379,6 +387,9 @@
 		320DF98F14E17E3D00251621 /* DeviceController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceController.cpp; sourceTree = "<group>"; };
 		3211FD1B1698699D00424A3C /* LiveDataFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LiveDataFetcher.cpp; sourceTree = "<group>"; };
 		3211FD1C1698699D00424A3C /* LiveDataFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveDataFetcher.h; sourceTree = "<group>"; };
+		3215860C178756B40090E7E6 /* AbstractDriverPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractDriverPlugin.cpp; sourceTree = "<group>"; };
+		3215860E17875FDB0090E7E6 /* DriverPluginLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DriverPluginLoader.cpp; sourceTree = "<group>"; };
+		3215860F17875FDB0090E7E6 /* DriverPluginLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DriverPluginLoader.h; sourceTree = "<group>"; };
 		3216601014D49D0F008DADD2 /* ObjectWaitSemaphore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectWaitSemaphore.h; sourceTree = "<group>"; };
 		32279F8216F8DEAF009EC7B9 /* DataBroker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataBroker.cpp; sourceTree = "<group>"; };
 		32279F8316F8DEAF009EC7B9 /* DataBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBroker.h; sourceTree = "<group>"; };
@@ -396,8 +407,7 @@
 		323236D6164573F50052CE06 /* ChaosHSTService */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosHSTService; sourceTree = BUILT_PRODUCTS_DIR; };
 		323236D9164573F50052CE06 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		323236DB164573F50052CE06 /* ChaosHSTService.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ChaosHSTService.1; sourceTree = "<group>"; };
-		3232F457177743DC003E1D4A /* DriverWrapperPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DriverWrapperPlugin.h; sourceTree = "<group>"; };
-		3232F459177746E0003E1D4A /* DriverWrapperPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DriverWrapperPlugin.cpp; sourceTree = "<group>"; };
+		3232F457177743DC003E1D4A /* AbstractDriverPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDriverPlugin.h; sourceTree = "<group>"; };
 		3244C0C5168CB96B007C802C /* Record.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Record.h; sourceTree = "<group>"; };
 		3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlertEventChannel.cpp; sourceTree = "<group>"; };
 		3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertEventChannel.h; sourceTree = "<group>"; };
@@ -445,6 +455,8 @@
 		32640A25169DCC5800450962 /* MemoryAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryAllocator.h; sourceTree = "<group>"; };
 		32640A26169DCC5800450962 /* SmartPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartPointer.h; sourceTree = "<group>"; };
 		3264B05B1673623E002E87FA /* TDSObjectHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSObjectHandler.h; sourceTree = "<group>"; };
+		3264BBD41784887900E2F5A0 /* AbstractPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractPlugin.cpp; sourceTree = "<group>"; };
+		3264BBD61784BFE400E2F5A0 /* PluginInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInspector.cpp; sourceTree = "<group>"; };
 		3265BF4515D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosUIToolkitCWrapper.h; sourceTree = "<group>"; };
 		3265BF4815D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosUIToolkitCWrapper.cc; sourceTree = "<group>"; };
 		3268CE291616086800FCDB10 /* MsgPackClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MsgPackClient.cpp; sourceTree = "<group>"; };
@@ -554,8 +566,8 @@
 		327CFF071708C4EA0069497B /* FastHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastHash.cpp; sourceTree = "<group>"; };
 		327CFF081708C4EB0069497B /* FastHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastHash.h; sourceTree = "<group>"; };
 		327CFF111708D7740069497B /* CacheGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheGlobal.h; sourceTree = "<group>"; };
-		32875F96177634AF00E33D6F /* PluginDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginDefinition.h; sourceTree = "<group>"; };
-		32875F9817763AE200E33D6F /* PluginAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginAllocator.h; sourceTree = "<group>"; };
+		32875F96177634AF00E33D6F /* PluginInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInspector.h; sourceTree = "<group>"; };
+		32875F9817763AE200E33D6F /* PluginLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginLoader.h; sourceTree = "<group>"; };
 		32875F9917763B0800E33D6F /* AbstractPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractPlugin.h; sourceTree = "<group>"; };
 		3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteEntityDB.cpp; sourceTree = "<group>"; };
 		3289F9A4168508460080D93F /* SQLiteEntityDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteEntityDB.h; sourceTree = "<group>"; };
@@ -567,6 +579,8 @@
 		328D2FB61660EACD007F482E /* DSAttributeHandlerExecutionEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSAttributeHandlerExecutionEngine.h; sourceTree = "<group>"; };
 		328D2FBC1660EF71007F482E /* TDSAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSAttributeHandler.h; sourceTree = "<group>"; };
 		328D2FC116612AB3007F482E /* DSInt32Handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSInt32Handler.h; sourceTree = "<group>"; };
+		328E36EA1786B89500C1564D /* PluginLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginLoader.cpp; sourceTree = "<group>"; };
+		328E36EC1786C00D00C1564D /* PluginDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginDefinition.h; sourceTree = "<group>"; };
 		328E405B17287B82004E5938 /* LFDataCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LFDataCache.cpp; sourceTree = "<group>"; };
 		328E405C17287B82004E5938 /* LFDataCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFDataCache.h; sourceTree = "<group>"; };
 		328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcServerHandler.h; sourceTree = "<group>"; };
@@ -681,6 +695,8 @@
 		32BFF911176C862A00D27A04 /* StartableService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StartableService.h; sourceTree = "<group>"; };
 		32C0CC96168CC16400BC2DA7 /* Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = "<group>"; };
 		32C0CC97168CC16400BC2DA7 /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
+		32C353F01788015B009ED581 /* PluginDiscover.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginDiscover.cpp; sourceTree = "<group>"; };
+		32C353F11788015B009ED581 /* PluginDiscover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginDiscover.h; sourceTree = "<group>"; };
 		32C7B8FB16DD362A005B3B21 /* ApiServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApiServer.cpp; sourceTree = "<group>"; };
 		32C7B8FC16DD362A005B3B21 /* ApiServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiServer.h; sourceTree = "<group>"; };
 		32C7B8FF16DD365D005B3B21 /* DataManagment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataManagment.cpp; sourceTree = "<group>"; };
@@ -1385,9 +1401,15 @@
 		32875F951776317F00E33D6F /* plugin */ = {
 			isa = PBXGroup;
 			children = (
+				3264BBD41784887900E2F5A0 /* AbstractPlugin.cpp */,
 				32875F9917763B0800E33D6F /* AbstractPlugin.h */,
-				32875F96177634AF00E33D6F /* PluginDefinition.h */,
-				32875F9817763AE200E33D6F /* PluginAllocator.h */,
+				32C353F01788015B009ED581 /* PluginDiscover.cpp */,
+				32C353F11788015B009ED581 /* PluginDiscover.h */,
+				3264BBD61784BFE400E2F5A0 /* PluginInspector.cpp */,
+				32875F96177634AF00E33D6F /* PluginInspector.h */,
+				328E36EA1786B89500C1564D /* PluginLoader.cpp */,
+				32875F9817763AE200E33D6F /* PluginLoader.h */,
+				328E36EC1786C00D00C1564D /* PluginDefinition.h */,
 			);
 			path = plugin;
 			sourceTree = "<group>";
@@ -1400,8 +1422,10 @@
 				32919A091764E68F00724874 /* DriverAccessor.cpp */,
 				32919A0A1764E68F00724874 /* DriverAccessor.h */,
 				32919A0D17650F4500724874 /* DriverGlobal.h */,
-				3232F459177746E0003E1D4A /* DriverWrapperPlugin.cpp */,
-				3232F457177743DC003E1D4A /* DriverWrapperPlugin.h */,
+				3215860E17875FDB0090E7E6 /* DriverPluginLoader.cpp */,
+				3215860F17875FDB0090E7E6 /* DriverPluginLoader.h */,
+				3215860C178756B40090E7E6 /* AbstractDriverPlugin.cpp */,
+				3232F457177743DC003E1D4A /* AbstractDriverPlugin.h */,
 			);
 			path = driver;
 			sourceTree = "<group>";
@@ -1667,6 +1691,7 @@
 				326DB49714B38BC00018A8D0 /* version.h in Headers */,
 				32AAD78814CD660B005A097C /* RpcClient.h in Headers */,
 				32AAD78A14CD772F005A097C /* MessageChannel.h in Headers */,
+				32C353F31788015B009ED581 /* PluginDiscover.h in Headers */,
 				32AAD78E14CD95FD005A097C /* Atomic.h in Headers */,
 				32BFF90F176C842E00D27A04 /* InizializableService.h in Headers */,
 				326EA57814D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h in Headers */,
@@ -1744,6 +1769,7 @@
 				32B571C5168DFF0C0002A198 /* parse_number.h in Headers */,
 				32B571C7168E01680002A198 /* builder.h in Headers */,
 				32B571E2168E02240002A198 /* hex.h in Headers */,
+				328E36ED1786C00D00C1564D /* PluginDefinition.h in Headers */,
 				32B571ED168E02C30002A198 /* bson_builder_base.h in Headers */,
 				32B571EE168E02C30002A198 /* bson_db.h in Headers */,
 				32B571F0168E02C30002A198 /* bson_field.h in Headers */,
@@ -1796,7 +1822,7 @@
 				32640A3D169DCC5800450962 /* IteratorReader.h in Headers */,
 				32640A3E169DCC5800450962 /* MemoryAllocator.h in Headers */,
 				32640A3F169DCC5800450962 /* SmartPointer.h in Headers */,
-				32875F97177634AF00E33D6F /* PluginDefinition.h in Headers */,
+				32875F97177634AF00E33D6F /* PluginInspector.h in Headers */,
 				32279F8516F8DEAF009EC7B9 /* DataBroker.h in Headers */,
 				32279F8C16FA36B6009EC7B9 /* PublisherDataService.h in Headers */,
 				32CB737016FE3432008575F0 /* ReaderDataService.h in Headers */,
@@ -1819,9 +1845,10 @@
 				326DB4B914B3A3E50018A8D0 /* ChaosCUToolkit.h in Headers */,
 				326DB4BB14B3A3E50018A8D0 /* CommandManager.h in Headers */,
 				326DB4BC14B3A3E50018A8D0 /* CommandManagerDefaultAdapters.h in Headers */,
+				3215861117875FDB0090E7E6 /* DriverPluginLoader.h in Headers */,
 				326DB4C014B3A3E50018A8D0 /* AbstractControlUnit.h in Headers */,
 				326DB4C214B3A3E50018A8D0 /* ControlManager.h in Headers */,
-				3232F458177743DC003E1D4A /* DriverWrapperPlugin.h in Headers */,
+				3232F458177743DC003E1D4A /* AbstractDriverPlugin.h in Headers */,
 				326DB4C514B3A3E50018A8D0 /* OBufferListener.h in Headers */,
 				326DB4C714B3A3E50018A8D0 /* OutputDataBuffer.h in Headers */,
 				326DB4C914B3A3E50018A8D0 /* DataManager.h in Headers */,
@@ -2036,6 +2063,7 @@
 				320C218C151B556E00BD0F41 /* EventServer.cpp in Sources */,
 				32F466DE155EDBDE00AD3D81 /* IODataDriver.cpp in Sources */,
 				32BE864715A0CEAF00818C39 /* LogManager.cpp in Sources */,
+				3264BBD71784BFE400E2F5A0 /* PluginInspector.cpp in Sources */,
 				327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */,
 				327967B815DFAAF40003C6DA /* RpcServer.cpp in Sources */,
 				327967D515E029C70003C6DA /* AsioImplEventServer.cpp in Sources */,
@@ -2049,11 +2077,13 @@
 				32CFF95B15E4D950005D607E /* EventDescriptor.cpp in Sources */,
 				32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */,
 				325013BC15E9258C00DCB13E /* EventClient.cpp in Sources */,
+				32C353F21788015B009ED581 /* PluginDiscover.cpp in Sources */,
 				325013D715E980C800DCB13E /* AsioImplEventClient.cpp in Sources */,
 				325013DC15E9843D00DCB13E /* AsioEventForwarder.cpp in Sources */,
 				3255E72415EA86F2005C96CA /* DefaultEventDispatcher.cpp in Sources */,
 				3255E72715EA87D2005C96CA /* AbstractEventDispatcher.cpp in Sources */,
 				325DE9F115EC031E00D6F34E /* EventChannel.cpp in Sources */,
+				328E36EB1786B89500C1564D /* PluginLoader.cpp in Sources */,
 				3244D11D15ECC25800FE2F86 /* AlertEventChannel.cpp in Sources */,
 				325CA6BB15EE10B3007FCC12 /* EventAction.cpp in Sources */,
 				3253E09815F28A270079B40E /* EventTypeScheduler.cpp in Sources */,
@@ -2087,6 +2117,7 @@
 				32BFF90E176C842E00D27A04 /* InizializableService.cpp in Sources */,
 				32B5723C168E547B0002A198 /* stringutils.cpp in Sources */,
 				32279F8416F8DEAF009EC7B9 /* DataBroker.cpp in Sources */,
+				3264BBD51784887900E2F5A0 /* AbstractPlugin.cpp in Sources */,
 				32279F8B16FA36B6009EC7B9 /* PublisherDataService.cpp in Sources */,
 				32CB736F16FE3432008575F0 /* ReaderDataService.cpp in Sources */,
 				329FFFD1170712CE00D69CDE /* ManagedMemory.cpp in Sources */,
@@ -2106,10 +2137,11 @@
 				326DB4B814B3A3E50018A8D0 /* ChaosCUToolkit.cpp in Sources */,
 				326DB4BA14B3A3E50018A8D0 /* CommandManager.cpp in Sources */,
 				326DB4BF14B3A3E50018A8D0 /* AbstractControlUnit.cpp in Sources */,
+				3215860D178756B40090E7E6 /* AbstractDriverPlugin.cpp in Sources */,
 				326DB4C114B3A3E50018A8D0 /* ControlManager.cpp in Sources */,
 				326DB4C614B3A3E50018A8D0 /* OutputDataBuffer.cpp in Sources */,
 				326DB4C814B3A3E50018A8D0 /* DataManager.cpp in Sources */,
-				3232F45A177746E0003E1D4A /* DriverWrapperPlugin.cpp in Sources */,
+				3215861017875FDB0090E7E6 /* DriverPluginLoader.cpp in Sources */,
 				326DB4CB14B3A3E50018A8D0 /* KeyDataStorage.cpp in Sources */,
 				326DB4CD14B3A3E50018A8D0 /* MultiBufferDataStorage.cpp in Sources */,
 				328D2FB71660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp in Sources */,
@@ -2152,7 +2184,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "libstdc++";
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -2211,7 +2243,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "libstdc++";
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -2263,7 +2295,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "libstdc++";
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -2294,7 +2326,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "libstdc++";
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -2317,7 +2349,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LIBRARY = "libstdc++";
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = BOOST_ALL_DYN_LINK;
 			};
 			name = Debug;
 		};
@@ -2325,7 +2357,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LIBRARY = "libstdc++";
-				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_PREPROCESSOR_DEFINITIONS = BOOST_ALL_DYN_LINK;
 			};
 			name = Release;
 		};
@@ -2378,7 +2410,7 @@
 					"-lboost_log_setup",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -2424,7 +2456,7 @@
 					"-lboost_log_setup",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.8;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
