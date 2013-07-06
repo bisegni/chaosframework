@@ -24,7 +24,6 @@
 #include <map>
 #include <vector>
 #include <iostream>
-#include <boost/extension/extension.hpp>
 #include <chaos/common/plugin/AbstractPlugin.h>
 
 

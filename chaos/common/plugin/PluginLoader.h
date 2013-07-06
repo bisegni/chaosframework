@@ -27,7 +27,7 @@
 #include <iostream>
 
 #include <boost/function.hpp>
-#include <boost/extension/shared_library.hpp>
+#include <chaos/common/extension/shared_library.hpp>
 #include <chaos/common/plugin/PluginInspector.h>
 #include <chaos/common/plugin/PluginDiscover.h>
 #include <chaos/common/plugin/AbstractPlugin.h>
@@ -49,7 +49,6 @@ namespace chaos {
             class PluginLoader {
                 //Allocator plugin exported function
                 boost::function<PluginDiscover*()> getDiscoverFunction;
-                std::map<string, boost::function<AbstractPlugin*()> > allocatorFunctions;
                 
             protected:
                 shared_library lib;

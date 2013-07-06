@@ -73,9 +73,6 @@ else
     echo "Boost Already present"
 fi
 
-echo "Add boost extension to the defautl boost installation"
-svn co http://svn.boost.org/svn/boost/sandbox/boost/extension $PREFIX/include/boost/extension
-
 echo "Setup MSGPACK"
 if [ ! -d "$BASE_EXTERNAL/msgpack-c" ]; then
     echo "Install msgpack-c"

@@ -24,14 +24,11 @@
 #include <map>
 #include <vector>
 #include <iostream>
-#include <boost/extension/extension.hpp>
-#include <chaos/common/plugin/AbstractPlugin.h>
-
 
 namespace chaos {
     namespace common{
         namespace plugin {
-            
+            using namespace std;
             //! Postifix of the allocator
             /*!
              Define the postifx of the allocator "c" function, exported by the ddl.
@@ -41,7 +38,7 @@ namespace chaos {
             class PluginDiscover {
                 friend PluginDiscover* getInspector();
                 
-                std::vector<string> names;
+                std::vector<std::string> names;
 
             public:
                 PluginDiscover();

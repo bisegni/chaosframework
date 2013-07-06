@@ -14,7 +14,7 @@ using namespace chaos::common::plugin;
 using namespace chaos::cu::dm::driver;
 int main(int argc, const char * argv[]) {
     AbstractPlugin *plugin = NULL;
-    std::cout << "Start general plugin test" << std::endl;
+    std::cout << "----------------------------------Start general plugin test----------------------------------" << std::endl;
     PluginLoader loader("PluginTest.extension");
     if(loader.loaded()) {
         auto_ptr<PluginDiscover> discover(loader.getDiscover());
@@ -45,8 +45,9 @@ int main(int argc, const char * argv[]) {
         std::cerr << "Plugin not found" << std::endl;
         return EXIT_FAILURE;
     }
-    
-    std::cout << "Start driver plugin test" << std::endl;
+    std::cout << "----------------------------------End general plugin test----------------------------------" << std::endl;
+    std::cout << std::endl;
+    std::cout << "----------------------------------Start driver plugin test----------------------------------" << std::endl;
     DriverPluginLoader driverLoader("PluginTest.extension");
     if(driverLoader.loaded()) {
         auto_ptr<PluginInspector> inspector(driverLoader.getInspectorForName("DriverAlias"));
@@ -73,6 +74,7 @@ int main(int argc, const char * argv[]) {
         std::cerr << "Plugin not found" << std::endl;
         return EXIT_FAILURE;
     }
+    std::cout << "----------------------------------End driver plugin test----------------------------------" << std::endl;
 
     return EXIT_SUCCESS;
 }

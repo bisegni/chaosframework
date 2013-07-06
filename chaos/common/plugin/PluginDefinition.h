@@ -21,9 +21,11 @@
 #ifndef CHAOSFramework_PluginDefinition_h
 #define CHAOSFramework_PluginDefinition_h
 
+#include <chaos/common/extension/extension.hpp>
+
 #include <chaos/common/plugin/PluginDiscover.h>
 #include <chaos/common/plugin/PluginInspector.h>
-
+#include <chaos/common/plugin/AbstractPlugin.h>
 namespace chaos {
     namespace common {
         

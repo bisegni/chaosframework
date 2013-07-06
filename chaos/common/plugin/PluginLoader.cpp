@@ -37,7 +37,6 @@ PluginLoader::PluginLoader(const char *pluginPath):lib(pluginPath) {
 }
 
 PluginLoader::~PluginLoader() {
-    allocatorFunctions.clear();
 }
 
 bool PluginLoader::checkPluginInstantiableForSubclass(const char * pluginName, const char * subclass) {
@@ -83,15 +82,9 @@ AbstractPlugin* PluginLoader::newInstance(const char *pluginName) {
     if(!checkPluginInstantiableForSubclass(pluginName, "AbstractPlugin")) return NULL;
     
     //we can instantiate the plugin
-    boost::function<AbstractPlugin*()> instancer;
-    if(allocatorFunctions.count(pluginName)) {
-        instancer = allocatorFunctions[pluginName];
-    } else {
-        string allocatorName = string(pluginName) + SYM_ALLOC_POSTFIX;
+    string allocatorName = string(pluginName) + SYM_ALLOC_POSTFIX;
         
-        //try to get function allocator
-        instancer = lib.get<AbstractPlugin*>(allocatorName);
-        allocatorFunctions.insert( make_pair<string, boost::function<AbstractPlugin*()> >(pluginName, instancer));
-    }
-    return instancer();
+    //try to get function allocator
+    boost::function<AbstractPlugin*()>  instancer = lib.get<AbstractPlugin*>(allocatorName);
+    return instancer != NULL ? instancer():NULL;
 }

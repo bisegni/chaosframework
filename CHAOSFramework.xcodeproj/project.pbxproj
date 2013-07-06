@@ -310,6 +310,12 @@
 		32C0CC99168CC16400BC2DA7 /* Entity.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C0CC97168CC16400BC2DA7 /* Entity.h */; };
 		32C353F21788015B009ED581 /* PluginDiscover.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C353F01788015B009ED581 /* PluginDiscover.cpp */; };
 		32C353F31788015B009ED581 /* PluginDiscover.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C353F11788015B009ED581 /* PluginDiscover.h */; };
+		32C3544E17885A37009ED581 /* common.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32C3543517885A37009ED581 /* common.hpp */; };
+		32C3545D17885A37009ED581 /* library_impl.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32C3544517885A37009ED581 /* library_impl.hpp */; };
+		32C3545E17885A37009ED581 /* shared_library.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32C3544617885A37009ED581 /* shared_library.hpp */; };
+		32C3546317885A37009ED581 /* shared_library.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32C3544B17885A37009ED581 /* shared_library.hpp */; };
+		32C35467178860E5009ED581 /* extension.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32C35465178860E5009ED581 /* extension.hpp */; };
+		32C3546A178860EB009ED581 /* decl.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32C35469178860EB009ED581 /* decl.hpp */; };
 		32C7B8FD16DD362A005B3B21 /* ApiServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7B8FB16DD362A005B3B21 /* ApiServer.cpp */; };
 		32C7B90116DD365D005B3B21 /* DataManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7B8FF16DD365D005B3B21 /* DataManagment.cpp */; };
 		32C7B90516DD6159005B3B21 /* DeviceApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7B90316DD6159005B3B21 /* DeviceApi.cpp */; };
@@ -697,6 +703,12 @@
 		32C0CC97168CC16400BC2DA7 /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
 		32C353F01788015B009ED581 /* PluginDiscover.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginDiscover.cpp; sourceTree = "<group>"; };
 		32C353F11788015B009ED581 /* PluginDiscover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginDiscover.h; sourceTree = "<group>"; };
+		32C3543517885A37009ED581 /* common.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = common.hpp; sourceTree = "<group>"; };
+		32C3544517885A37009ED581 /* library_impl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = library_impl.hpp; sourceTree = "<group>"; };
+		32C3544617885A37009ED581 /* shared_library.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = shared_library.hpp; sourceTree = "<group>"; };
+		32C3544B17885A37009ED581 /* shared_library.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = shared_library.hpp; sourceTree = "<group>"; };
+		32C35465178860E5009ED581 /* extension.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = extension.hpp; sourceTree = "<group>"; };
+		32C35469178860EB009ED581 /* decl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = decl.hpp; sourceTree = "<group>"; };
 		32C7B8FB16DD362A005B3B21 /* ApiServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApiServer.cpp; sourceTree = "<group>"; };
 		32C7B8FC16DD362A005B3B21 /* ApiServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiServer.h; sourceTree = "<group>"; };
 		32C7B8FF16DD365D005B3B21 /* DataManagment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataManagment.cpp; sourceTree = "<group>"; };
@@ -1048,6 +1060,7 @@
 				32DA666F1700DBB6004FC02B /* endian.h */,
 				326DB42E14B38BC00018A8D0 /* version.h */,
 				326DB42F14B38BC00018A8D0 /* version.sh */,
+				32C3543317885A36009ED581 /* extension */,
 				32875F951776317F00E33D6F /* plugin */,
 				32BE864415A0CDC200818C39 /* log */,
 				326DB3B514B38BC00018A8D0 /* action */,
@@ -1570,6 +1583,27 @@
 			path = sqlite_impl;
 			sourceTree = "<group>";
 		};
+		32C3543317885A36009ED581 /* extension */ = {
+			isa = PBXGroup;
+			children = (
+				32C35465178860E5009ED581 /* extension.hpp */,
+				32C3543517885A37009ED581 /* common.hpp */,
+				32C3544B17885A37009ED581 /* shared_library.hpp */,
+				32C3543B17885A37009ED581 /* impl */,
+			);
+			path = extension;
+			sourceTree = "<group>";
+		};
+		32C3543B17885A37009ED581 /* impl */ = {
+			isa = PBXGroup;
+			children = (
+				32C35469178860EB009ED581 /* decl.hpp */,
+				32C3544517885A37009ED581 /* library_impl.hpp */,
+				32C3544617885A37009ED581 /* shared_library.hpp */,
+			);
+			path = impl;
+			sourceTree = "<group>";
+		};
 		32C7B8FA16DD35D7005B3B21 /* api_services */ = {
 			isa = PBXGroup;
 			children = (
@@ -1673,6 +1707,7 @@
 				326DB47B14B38BC00018A8D0 /* ChaosProcessingQueue.h in Headers */,
 				326DB47C14B38BC00018A8D0 /* CObjectProcessingPriorityQueue.h in Headers */,
 				326DB47D14B38BC00018A8D0 /* CObjectProcessingQueue.h in Headers */,
+				32C3546A178860EB009ED581 /* decl.hpp in Headers */,
 				326DB47E14B38BC00018A8D0 /* CObjectProcessingQueueListener.h in Headers */,
 				326DB47F14B38BC00018A8D0 /* ChaosRpc.h in Headers */,
 				326DB48514B38BC00018A8D0 /* RpcServer.h in Headers */,
@@ -1719,6 +1754,7 @@
 				32DD885415E2681F000AF740 /* EventHandler.h in Headers */,
 				32DD886615E2C313000AF740 /* endianess.h in Headers */,
 				32CFF95C15E4D950005D607E /* EventDescriptor.h in Headers */,
+				32C3546317885A37009ED581 /* shared_library.hpp in Headers */,
 				32CFF96015E4DBD3005D607E /* EventFactory.h in Headers */,
 				325013BD15E9258C00DCB13E /* EventClient.h in Headers */,
 				325013D815E980C800DCB13E /* AsioImplEventClient.h in Headers */,
@@ -1738,6 +1774,7 @@
 				322E1579161B629700C3003C /* NetworkAddress.h in Headers */,
 				322E157D161B62A900C3003C /* NetworkBroker.h in Headers */,
 				3230DA0A1652C41D00113C93 /* NetworkForwardInfo.h in Headers */,
+				32C3545E17885A37009ED581 /* shared_library.hpp in Headers */,
 				3230DA0D1652C44B00113C93 /* RpcMessageForwarder.h in Headers */,
 				32BF74AE167CEB57007F8A57 /* EntityDB.h in Headers */,
 				32A51AFF167F95B30007E25A /* sqlite3.h in Headers */,
@@ -1781,12 +1818,14 @@
 				32B571FF168E02CE0002A198 /* bsonobj.h in Headers */,
 				32B57200168E02CE0002A198 /* bsonobjbuilder.h in Headers */,
 				32B57201168E02CE0002A198 /* bsonobjiterator.h in Headers */,
+				32C3544E17885A37009ED581 /* common.hpp in Headers */,
 				32B57202168E02CE0002A198 /* bsontypes.h in Headers */,
 				32B57203168E02CE0002A198 /* inline_decls.h in Headers */,
 				32B57208168E02D10002A198 /* oid.h in Headers */,
 				32B57209168E02D10002A198 /* ordering.h in Headers */,
 				32B57210168E07AB0002A198 /* jsobj.h in Headers */,
 				32B57211168E07AB0002A198 /* jsobjmanipulator.h in Headers */,
+				32C35467178860E5009ED581 /* extension.hpp in Headers */,
 				32B57213168E07AB0002A198 /* json.h in Headers */,
 				32B57215168E087D0002A198 /* str.h in Headers */,
 				32B57219168E13FC0002A198 /* time_support.h in Headers */,
@@ -1820,6 +1859,7 @@
 				32640A3B169DCC5800450962 /* IteratorBase.h in Headers */,
 				32640A3C169DCC5800450962 /* IteratorGarbage.h in Headers */,
 				32640A3D169DCC5800450962 /* IteratorReader.h in Headers */,
+				32C3545D17885A37009ED581 /* library_impl.hpp in Headers */,
 				32640A3E169DCC5800450962 /* MemoryAllocator.h in Headers */,
 				32640A3F169DCC5800450962 /* SmartPointer.h in Headers */,
 				32875F97177634AF00E33D6F /* PluginInspector.h in Headers */,

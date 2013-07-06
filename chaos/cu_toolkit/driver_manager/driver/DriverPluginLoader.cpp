@@ -1,5 +1,5 @@
 /*
- *	PluginLoader.cpp
+ *	DriverPLuginLoader.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -51,16 +51,11 @@ AbstractDriverPlugin* DriverPluginLoader::newDriverInstance(const char *pluginNa
     
     //check if subclass is the rigrth one
     if(!checkPluginInstantiableForSubclass(pluginName, "AbstractDriverPlugin")) return NULL;
+
+    string allocatorName = string(pluginName) + SYM_ALLOC_POSTFIX;
+    //try to get function allocator
+    boost::function<AbstractDriverPlugin*()> driverInstancer = lib.get<AbstractDriverPlugin*>(allocatorName);
     
-    boost::function<AbstractDriverPlugin*()> driverInstancer;
-    if(driverAllocatorFunctions.count(pluginName)) {
-        driverInstancer = driverAllocatorFunctions[pluginName];
-    } else {
-        string allocatorName = string(pluginName) + SYM_ALLOC_POSTFIX;
-        
-        //try to get function allocator
-        driverInstancer = lib.get<AbstractDriverPlugin*>(allocatorName);
-        driverAllocatorFunctions.insert( make_pair<string, boost::function<AbstractDriverPlugin*()> >(pluginName, driverInstancer));
-    }
-    return driverInstancer();
+    //return instanc if we have found the instancer symbol
+    return (driverInstancer != NULL)?driverInstancer():NULL;
 }
