@@ -40,9 +40,9 @@
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
 #include "LogManager.h"
-
-#define BASE_LOG_FORMAT         "[%TimeStamp%][%Severity%]: %_%"
-#define EXTENDEND_LOG_FORMAT    "[%TimeStamp%][%Severity%][%ProcessID%][%ThreadID%]: %_%"
+//[%Severity%]
+#define BASE_LOG_FORMAT         "[%TimeStamp%]: %_%"
+#define EXTENDEND_LOG_FORMAT    "[%TimeStamp%][%ProcessID%][%ThreadID%]: %_%"
 
 using namespace chaos;
 using namespace chaos::log;
@@ -86,7 +86,8 @@ void LogManager::init() throw(CException) {
     
     boost::shared_ptr< logging::core > pCore = boost::log::core::get();
     
-    //logging::register_simple_formatter_factory< level::LogSeverityLevel, char  >("Severity");
+
+    logging::register_simple_formatter_factory< level::LogSeverityLevel, char  >("Severity");
     logging::core::get()->set_filter(expr::attr< level::LogSeverityLevel >("Severity") >= logLevel);
     
     if(logOnConsole){

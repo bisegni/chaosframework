@@ -23,7 +23,7 @@ namespace chaos {
                     
                     
                 public:
-                    SlowCommandException(int eCode, const char * eMessage):CException(eCode, eMessage, "DataManager") {
+                    SlowCommandException(int eCode, const char * eMessage):CException(eCode, eMessage, "ControlManager::SlowControl") {
                     }
                 };
                 

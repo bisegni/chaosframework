@@ -80,9 +80,9 @@ namespace chaos{
                      */
                     typedef enum SubmissionRule {
                         SUBMIT_NORMAL       = 0,    /**< The new command will waith the end of the current executed command */
-                        SUBMIT_AND_Kill,            /**< The new command will kill the current command */
-                        SUBMIT_AND_Overload,        /**< The new command will overload the current command if it is the same*/
-                        SUBMIT_AND_Stack            /**< The new command wil stack (pause some or all hadnler) the current executing command */
+                        SUBMIT_AND_Kill     = 1,    /**< The new command will kill the current command */
+                        SUBMIT_AND_Overload = 2,    /**< The new command will overload the current command if it is the same*/
+                        SUBMIT_AND_Stack    = 3     /**< The new command wil stack (pause some or all hadnler) the current executing command */
                     } SubmissionRule;
                 }
                 
@@ -116,10 +116,13 @@ namespace chaos{
                     //! Fault description
                     FaultDescription fDescription;
                     
+                    //!Set Handlers definition
                     typedef uint8_t (SlowCommand::*SetHandlerPtr)();
                     
+                    //!Acquire Handlers definition
                     typedef uint8_t (SlowCommand::*AcquireHandlerPtr)();
                     
+                    //!Correlation and Commit handler definition
                     typedef uint8_t (SlowCommand::*CCHandlerPtr)();
                     
                 protected:
