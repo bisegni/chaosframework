@@ -15,7 +15,7 @@
 #ifndef BOOST_EXTENSION_DECL_HPP
 #define BOOST_EXTENSION_DECL_HPP
 
-#if #if defined(__linux__) || defined(__APPLE__)
+#if defined(__linux__) || defined(__APPLE__)
 #  define BOOST_EXTENSION_EXPORT_DECL __attribute__((visibility("default")))
 #  define BOOST_EXTENSION_IMPORT_DECL __attribute__((visibility("hidden")))
 #elif defined(_WIN32) || defined(__WIN32__) || defined(WIN32) || defined(MSC_VER)
