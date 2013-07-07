@@ -25,24 +25,34 @@
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractDriverPlugin.h>
 namespace chaos {
     namespace cu{
-        namespace dm {
+        namespace driver_manager {
             namespace driver {
                 
                 using namespace chaos::common::plugin;
                 
+                //! Control Unit plugin loader
+                /*!
+                    PluginLoader subclass for the loading of the control unit driver plugin
+                 */
                 class DriverPluginLoader : private chaos::common::plugin::PluginLoader {
                     std::map<string, boost::function<AbstractDriverPlugin*()> > driverAllocatorFunctions;
                 public:
+                    //! default constructor
                     DriverPluginLoader(const char *pluginPath);
                     
+                    //! default desctructor
                     ~DriverPluginLoader();
                     
-                     bool loaded();
+                    //! give infromation about the load operation of the dll
+                    bool loaded();
                     
+                    //! Get the inspector for the name
                     PluginInspector* getInspectorForName(const char *pluginName);
                     
+                    //! Return the instance of the driver
                     AbstractDriverPlugin* newDriverInstance(std::string pluginName);
                     
+                    //! Return the instance of the driver
                     AbstractDriverPlugin* newDriverInstance(const char *pluginName);
                     
                 };

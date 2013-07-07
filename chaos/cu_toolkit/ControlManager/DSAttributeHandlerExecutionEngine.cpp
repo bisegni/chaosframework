@@ -29,18 +29,14 @@ using namespace chaos::cu;
  */
 DSAttributeHandlerExecutionEngine::DSAttributeHandlerExecutionEngine(std::string& _deviceID,
                                                                      chaos::CUSchemaDB *_schemaDB): deviceID(_deviceID),
-                                                                                                    referenceCUSchemeDB(_schemaDB) {
-    
-}
+                                                                                                    referenceCUSchemeDB(_schemaDB) {}
 
 /*!
  Default constructor with c string
  */
 DSAttributeHandlerExecutionEngine::DSAttributeHandlerExecutionEngine(const char * _deviceID,
                                                                      chaos::CUSchemaDB *_schemaDB): deviceID(std::string(_deviceID)),
-                                                                                                    referenceCUSchemeDB(_schemaDB) {
-    
-}
+                                                                                                    referenceCUSchemeDB(_schemaDB) {}
 
 /*!
  Default destructor

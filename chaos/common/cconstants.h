@@ -295,7 +295,7 @@ namespace chaos {
      */
     namespace ChaosSystemDomainAndActionLabel {
             //! The chaos action domain for system message
-        static const char * const SYSTEM_DOMAIN         = "system";
+        static const char * const SYSTEM_DOMAIN             = "system";
             //! This action provide to the shutdown porcess of the enteir daemon
             //! that runt the active contorl units. All it will be gracefull shutten down
             //! before daemon exit
@@ -311,7 +311,7 @@ namespace chaos {
             //! pause the run method for a determinated device
         static const char * const ACTION_DEVICE_STOP        = "stopDevice";
             //! return the state of the device
-        static const char * const ACTION_DEVICE_GET_STATE        = "getState";
+        static const char * const ACTION_DEVICE_GET_STATE   = "getState";
     }
     /** @} */ // end of ChaosSystemDomainAndActionLabel
     
@@ -386,6 +386,5 @@ namespace chaos {
         }
         /** @} */ // end of EventConfiguration
     }
-    
 }
 #endif

@@ -23,7 +23,7 @@
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractDriver.h>
 #include <chaos/cu_toolkit/driver_manager/driver/DriverAccessor.h>
 
-using namespace chaos::cu::dm::driver;
+using namespace chaos::cu::driver_manager::driver;
 
 /*------------------------------------------------------
 

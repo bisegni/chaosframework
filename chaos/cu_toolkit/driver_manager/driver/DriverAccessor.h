@@ -32,7 +32,7 @@ namespace chaos{
     class PriorityQueuedElement;
     
     namespace cu {
-        namespace dm {
+        namespace driver_manager {
             namespace driver {
                 
                 //! Driver accessor comminication class

@@ -23,29 +23,32 @@
 
 using namespace std;
 using namespace boost::extensions;
-using namespace chaos::cu::dm::driver;
+using namespace chaos::cu::driver_manager::driver;
 using namespace chaos::common::plugin;
 
-DriverPluginLoader::DriverPluginLoader(const char *pluginPath) : PluginLoader(pluginPath) {
-    
-}
+//! default constructor
+DriverPluginLoader::DriverPluginLoader(const char *pluginPath) : PluginLoader(pluginPath) {}
 
+//! default desctructor
 DriverPluginLoader::~DriverPluginLoader() {
     driverAllocatorFunctions.clear();
 }
 
+//! give infromation about the load operation of the dll
 bool DriverPluginLoader::loaded() {
     return PluginLoader::loaded();
 }
 
+//! Return the instance of the driver
 PluginInspector* DriverPluginLoader::getInspectorForName(const char *pluginName) {
     return PluginLoader::getInspectorForName(pluginName);
 }
 
+//! Get the inspector for the name
 AbstractDriverPlugin* DriverPluginLoader::newDriverInstance(std::string pluginName) {
     return  DriverPluginLoader::newDriverInstance(pluginName.c_str());
 }
-
+//! Return the instance of the driver
 AbstractDriverPlugin* DriverPluginLoader::newDriverInstance(const char *pluginName) {
     if(!loaded()) return NULL;
     

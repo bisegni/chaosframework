@@ -31,7 +31,7 @@
 
 namespace chaos{
     namespace cu {
-        namespace dm {
+        namespace driver_manager {
             namespace driver {
                 
                 //! forward declaration

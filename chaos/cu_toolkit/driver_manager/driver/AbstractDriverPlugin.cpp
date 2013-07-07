@@ -20,7 +20,7 @@
 
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractDriverPlugin.h>
 
-using namespace chaos::cu::dm::driver;
+using namespace chaos::cu::driver_manager::driver;
 
 AbstractDriverPlugin::AbstractDriverPlugin(AbstractDriver *_abstractDriver):abstractDriver(_abstractDriver) {
     

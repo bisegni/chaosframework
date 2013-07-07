@@ -201,6 +201,9 @@
 		328D2FC316612AB3007F482E /* DSInt32Handler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328D2FC116612AB3007F482E /* DSInt32Handler.h */; };
 		328E36EB1786B89500C1564D /* PluginLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E36EA1786B89500C1564D /* PluginLoader.cpp */; };
 		328E36ED1786C00D00C1564D /* PluginDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 328E36EC1786C00D00C1564D /* PluginDefinition.h */; };
+		328E36F0178AE14E00C1564D /* SlowCommandConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 328E36EF178AE14E00C1564D /* SlowCommandConstants.h */; };
+		328E36F3178AFE0D00C1564D /* SlowCommandSandbox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E36F1178AFE0D00C1564D /* SlowCommandSandbox.cpp */; };
+		328E36F4178AFE0D00C1564D /* SlowCommandSandbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 328E36F2178AFE0D00C1564D /* SlowCommandSandbox.h */; };
 		328E405D17287B82004E5938 /* LFDataCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E405B17287B82004E5938 /* LFDataCache.cpp */; };
 		328E405E17287B82004E5938 /* LFDataCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 328E405C17287B82004E5938 /* LFDataCache.h */; };
 		328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */; };
@@ -209,6 +212,7 @@
 		3297F22614D96F31004FFE4F /* DeviceMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3297F22514D96F31004FFE4F /* DeviceMessageChannel.cpp */; };
 		3297F22914D96F43004FFE4F /* DeviceMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3297F22814D96F43004FFE4F /* DeviceMessageChannel.h */; };
 		3297F22B14D96F8D004FFE4F /* NetworkAddressMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3297F22A14D96F8D004FFE4F /* NetworkAddressMessageChannel.h */; };
+		32983F7517896FE1004599A3 /* ObjectInstancer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32983F7417896FE1004599A3 /* ObjectInstancer.h */; };
 		3298487D1736814700C158DF /* ChannelValueAccessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3298487B1736814700C158DF /* ChannelValueAccessor.cpp */; };
 		3298487E1736814700C158DF /* ChannelValueAccessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 3298487C1736814700C158DF /* ChannelValueAccessor.h */; };
 		32984880173681BB00C158DF /* SlbCachedInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3298487F173681BB00C158DF /* SlbCachedInfo.h */; };
@@ -593,6 +597,9 @@
 		328D2FC116612AB3007F482E /* DSInt32Handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSInt32Handler.h; sourceTree = "<group>"; };
 		328E36EA1786B89500C1564D /* PluginLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginLoader.cpp; sourceTree = "<group>"; };
 		328E36EC1786C00D00C1564D /* PluginDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginDefinition.h; sourceTree = "<group>"; };
+		328E36EF178AE14E00C1564D /* SlowCommandConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlowCommandConstants.h; sourceTree = "<group>"; };
+		328E36F1178AFE0D00C1564D /* SlowCommandSandbox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SlowCommandSandbox.cpp; sourceTree = "<group>"; };
+		328E36F2178AFE0D00C1564D /* SlowCommandSandbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlowCommandSandbox.h; sourceTree = "<group>"; };
 		328E405B17287B82004E5938 /* LFDataCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LFDataCache.cpp; sourceTree = "<group>"; };
 		328E405C17287B82004E5938 /* LFDataCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFDataCache.h; sourceTree = "<group>"; };
 		328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcServerHandler.h; sourceTree = "<group>"; };
@@ -605,6 +612,7 @@
 		3297F22514D96F31004FFE4F /* DeviceMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceMessageChannel.cpp; sourceTree = "<group>"; };
 		3297F22814D96F43004FFE4F /* DeviceMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceMessageChannel.h; sourceTree = "<group>"; };
 		3297F22A14D96F8D004FFE4F /* NetworkAddressMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkAddressMessageChannel.h; sourceTree = "<group>"; };
+		32983F7417896FE1004599A3 /* ObjectInstancer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectInstancer.h; sourceTree = "<group>"; };
 		3298487B1736814700C158DF /* ChannelValueAccessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChannelValueAccessor.cpp; sourceTree = "<group>"; };
 		3298487C1736814700C158DF /* ChannelValueAccessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChannelValueAccessor.h; sourceTree = "<group>"; };
 		3298487F173681BB00C158DF /* SlbCachedInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlbCachedInfo.h; sourceTree = "<group>"; };
@@ -922,9 +930,12 @@
 			children = (
 				32234D3D176E045100525E0C /* SlowCommandExecutor.cpp */,
 				32234D3E176E045100525E0C /* SlowCommandExecutor.h */,
+				328E36F1178AFE0D00C1564D /* SlowCommandSandbox.cpp */,
+				328E36F2178AFE0D00C1564D /* SlowCommandSandbox.h */,
 				325F8B4F1763AF2300EFE616 /* SlowCommand.cpp */,
 				325F8B501763AF2300EFE616 /* SlowCommand.h */,
 				32234D41176E106B00525E0C /* SlowCommandException.h */,
+				328E36EF178AE14E00C1564D /* SlowCommandConstants.h */,
 			);
 			path = slcmd;
 			sourceTree = "<group>";
@@ -1312,6 +1323,7 @@
 				32BFF90D176C842E00D27A04 /* InizializableService.h */,
 				32BFF910176C862A00D27A04 /* StartableService.cpp */,
 				32BFF911176C862A00D27A04 /* StartableService.h */,
+				32983F7417896FE1004599A3 /* ObjectInstancer.h */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -1848,6 +1860,7 @@
 				32B57233168E504B0002A198 /* embedded_builder.h in Headers */,
 				32B57235168E50550002A198 /* md5.hpp in Headers */,
 				32B57239168E50980002A198 /* md5.h in Headers */,
+				32983F7517896FE1004599A3 /* ObjectInstancer.h in Headers */,
 				32B5723D168E547B0002A198 /* stringutils.h in Headers */,
 				32640A27169DCC5800450962 /* BufferTracker.h in Headers */,
 				32640A28169DCC5800450962 /* GarbageThread.h in Headers */,
@@ -1906,8 +1919,10 @@
 				326DB4CA14B3A3E50018A8D0 /* DataManagerException.h in Headers */,
 				326DB4CC14B3A3E50018A8D0 /* KeyDataStorage.h in Headers */,
 				326DB4CE14B3A3E50018A8D0 /* MultiBufferDataStorage.h in Headers */,
+				328E36F4178AFE0D00C1564D /* SlowCommandSandbox.h in Headers */,
 				328D2FB81660EACD007F482E /* DSAttributeHandlerExecutionEngine.h in Headers */,
 				328D2FBA1660EADC007F482E /* DSAttributeHandler.h in Headers */,
+				328E36F0178AE14E00C1564D /* SlowCommandConstants.h in Headers */,
 				328D2FBE1660EF71007F482E /* TDSAttributeHandler.h in Headers */,
 				328D2FC316612AB3007F482E /* DSInt32Handler.h in Headers */,
 				32DB1188166267FB0036D1B9 /* DSDoubleHandler.h in Headers */,
@@ -2199,6 +2214,7 @@
 				328D2FB91660EAD6007F482E /* DSAttributeHandler.cpp in Sources */,
 				32CF054816AB23C200E86CC7 /* PerfTestCU.cpp in Sources */,
 				325F8B511763AF2300EFE616 /* SlowCommand.cpp in Sources */,
+				328E36F3178AFE0D00C1564D /* SlowCommandSandbox.cpp in Sources */,
 				328CC9D61763CCC7000B30B6 /* AbstractDriver.cpp in Sources */,
 				32234D3F176E045100525E0C /* SlowCommandExecutor.cpp in Sources */,
 				32919A0B1764E68F00724874 /* DriverAccessor.cpp in Sources */,

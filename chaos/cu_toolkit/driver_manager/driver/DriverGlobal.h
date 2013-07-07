@@ -34,7 +34,7 @@
 
 namespace chaos{
     namespace cu {
-        namespace dm {
+        namespace driver_manager {
             
             //! The name space that group all foundamental class need by driver implementation on chaos
             namespace driver {

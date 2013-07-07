@@ -1,5 +1,5 @@
 /*
- *	SlowCommand.cpp
+ *	ObjectInstancer.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,27 +18,30 @@
  *    	limitations under the License.
  */
 
-#include <chaos/cu_toolkit/ControlManager/slcmd/SlowCommand.h>
+#ifndef CHAOSFramework_ObjectInstancer_h
+#define CHAOSFramework_ObjectInstancer_h
 
-using namespace chaos::cu::control_manager::slow_command;
-
-/*
- Start the slow command sequence
- */
-uint8_t SlowCommand::setHandler() {
-    return 0;
+namespace chaos {
+    namespace common {
+        namespace utility {
+            
+            template <typename R >
+            class ObjectInstancer {
+            public:
+                virtual ~ObjectInstancer(){};
+                virtual R* getInstance() = 0;
+            };
+            
+          template <typename T, typename R >
+            class TypedObjectInstancer : public ObjectInstancer<R> {
+            public:
+                R* getInstance() {
+                    return new T();
+                }
+            };
+            
+        }
+    }
 }
 
-/*
- implemente thee data acquisition for the command
- */
-uint8_t SlowCommand::acquireHandler() {
-    return 0;
-}
-
-/*
- Performe correlation and send command to the driver
- */
-uint8_t SlowCommand::ccHandler() {
-    return 0;
-}
+#endif

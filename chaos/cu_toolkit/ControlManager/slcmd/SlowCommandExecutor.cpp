@@ -18,14 +18,18 @@
  *    	limitations under the License.
  */
 
-#include "SlowCommandExecutor.h"
+#include <chaos/common/global.h>
+#include <chaos/cu_toolkit/ControlManager/slcmd/SlowCommand.h>
+#include <chaos/cu_toolkit/ControlManager/slcmd/SlowCommandExecutor.h>
+#include <chaos/cu_toolkit/ControlManager/slcmd/SlowCommandConstants.h>
 
 
-using namespace chaos::cu::cm::slcmd;
+using namespace chaos;
+using namespace chaos::cu::control_manager::slow_command;
 
-SlowCommandExecutor::SlowCommandExecutor(AbstractControlUnit *_controUnitReference):controUnitReference(_controUnitReference) {
-    
-}
+#define SCELAPP_ LAPP_ << "[SlowCommandExecutor-" << executorID << "]"
+#define SCELERR_ LERR_ << "[SlowCommandExecutor-" << executorID << "]"
+SlowCommandExecutor::SlowCommandExecutor(CThread *_cuThreadForExecutor, std::string _executorID):executorID(_executorID), cuThreadForExecutor(_cuThreadForExecutor) {}
 
 SlowCommandExecutor::~SlowCommandExecutor() {
     
@@ -33,6 +37,9 @@ SlowCommandExecutor::~SlowCommandExecutor() {
 
 // Initialize instance
 void SlowCommandExecutor::init(void*) throw(chaos::CException) {
+    performQueueCheck = true;
+    
+    
 }
 
 
@@ -46,14 +53,14 @@ void SlowCommandExecutor::start() throw(chaos::CException) {
     struct sched_param param;
     pthread_t threadID = (pthread_t) incomingCheckThreadPtr->native_handle();
     if ((retcode = pthread_getschedparam(threadID, &policy, &param)) != 0)  {
-        throw CException(retcode, "Get Thread schedule param", "SlowCommandExecutor::init");
+        throw CException(retcode, "Get Thread schedule param", "SlowCommandExecutor::start");
     }
     
     
     policy = SCHED_RR;
     param.sched_priority = sched_get_priority_max(SCHED_RR);
     if ((retcode = pthread_setschedparam(threadID, policy, &param)) != 0) {
-        throw CException(retcode, "Set Thread schedule param", "SlowCommandExecutor::init");
+        throw CException(retcode, "Set Thread schedule param", "SlowCommandExecutor::start");
     }
 #endif
 }
@@ -61,7 +68,7 @@ void SlowCommandExecutor::start() throw(chaos::CException) {
 // Start the implementation
 void SlowCommandExecutor::stop() throw(chaos::CException) {
     //lock for queue access
-    boost::unique_lock<boost::mutex> lock(queueMutext);
+    boost::unique_lock<boost::mutex> lock(mutextQueueManagment);
 }
 
 // Deinit the implementation
@@ -70,35 +77,87 @@ void SlowCommandExecutor::deinit() throw(chaos::CException) {
 }
 
 //! Perform a command registration
-void SlowCommandExecutor::setDefaultCommand(const char *defaultCommandAlias) {
+void SlowCommandExecutor::setDefaultCommand(string& alias) {
     
+}
+
+//! Install a command associated with a type
+void SlowCommandExecutor::installCommand(string& alias, chaos::common::utility::ObjectInstancer<SlowCommand>* instancer) {
+    mapCommandInstancer.insert(make_pair<string, chaos::common::utility::ObjectInstancer<SlowCommand>*>(alias, instancer));
 }
 
 //! Check the incoming command rule
 void SlowCommandExecutor::performIncomingCommandCheck() {
     //lock for queue access
-    boost::unique_lock<boost::mutex> lock(queueMutext);
-    
-    bool canBeUsed = false;
-    
-    PRIORITY_ELEMENT(CDataWrapper) *element = commandSubmittedQueue.top();
-    //-------------------check if we can use the command-------------------------
-     boost::posix_time::time_duration delay(0,0,0,0);
-    while(commandSubmittedQueue.empty() && !incomingCheckThreadPtr->timed_join(delay)) {
-        emptyQueueConditionLock.notify_one();
-        readThreadWhait.wait(lock);
+    boost::unique_lock<boost::mutex> lock(mutextQueueManagment);
+    while(performQueueCheck) {
+        
+        boost::posix_time::time_duration delay(0,0,0,0);
+        while(commandSubmittedQueue.empty() && !incomingCheckThreadPtr->timed_join(delay)) {
+            emptyQueueConditionLock.notify_one();
+            readThreadWhait.wait(lock);
+        }
+        
+        //-------------------check if we can use the command-------------------------
+        
+        PRIORITY_ELEMENT(CDataWrapper) *element = commandSubmittedQueue.top();
+        // we need to check if there is a "waiting command" and so we need to lock the scheduler
+        
+        try {
+            //lock the command scheduler
+            boost::unique_lock<boost::recursive_mutex> lockScheduler(commandSandbox.mutextCommandScheduler);
+            if(commandSandbox.nextAvailableCommand == NULL) {
+                
+                // no waiting command so set the next available wit the info and instance
+                // if something goes wrong an axception is fired and element is fired
+                commandSandbox.setNextAvailableCommand(element, instanceCommandInfo(element->element));
+                //remove command form the queue
+                commandSubmittedQueue.pop();
+                
+            } else if(element != commandSandbox.nextAvailableCommand->cmdInfo &&
+                      element->getPriority() > commandSandbox.nextAvailableCommand->cmdInfo->getPriority()) {
+                
+                //We ave a new, higer priority, command to submit
+                commandSubmittedQueue.push(commandSandbox.nextAvailableCommand->cmdInfo);
+                commandSandbox.setNextAvailableCommand(element, instanceCommandInfo(element->element));
+                //remove command form the queue
+                commandSubmittedQueue.pop();
+                
+            } else {
+                //current top command can be used and is left into the queue
+            }
+            
+            lockScheduler.unlock();
+        }catch (CException& setupEx) {
+            SCELERR_ << setupEx.what();
+            //somenthing is gone worng with the current element and need to be free
+            if(element) delete element;
+        }
+        //-------------------check if we can use the command-------------------------
     }
-    //-------------------check if we can use the command-------------------------
-    //remove commando form the queue
-    if(canBeUsed) commandSubmittedQueue.pop();
 }
 
+//! Check if the waithing command can be installed
+SlowCommand *SlowCommandExecutor::instanceCommandInfo(CDataWrapper *submissionInfo) {
+    std::string commandAlias;
+    if(!submissionInfo->hasKey(SlowCommandSubmissionKey::COMMAND_ALIAS)) {
+        throw CException(1, "The alias of the slow command is mandatory", "SlowCommandExecutor::setupCommand");
+    }
+    commandAlias = submissionInfo->getStringValue(SlowCommandSubmissionKey::COMMAND_ALIAS);
+    if(mapCommandInstancer.count(commandAlias)) {
+        return mapCommandInstancer[commandAlias]->getInstance();
+    } else {
+        std::string message = string("No command found for the alias ") + commandAlias;
+        std::string domain = "SlowCommandExecutor::setupCommand";
+        throw CException(2, message, domain);
+    }
+}
 
 //! Submite the new sloc command information
-bool SlowCommandExecutor::submitCommandInfo(CDataWrapper *commandDescription, uint8_t priority, bool disposeOnDestroy) {
-    boost::unique_lock<boost::mutex> lock(queueMutext);
+bool SlowCommandExecutor::submitCommand(CDataWrapper *commandDescription, uint8_t priority) {
+    boost::unique_lock<boost::mutex> lock(mutextQueueManagment);
     if(serviceState != utility::StartableServiceType::SS_STARTED) return false;
-    PriorityQueuedElement<CDataWrapper> *_element = new PriorityQueuedElement<CDataWrapper>(commandDescription, priority, disposeOnDestroy);
+    PriorityQueuedElement<CDataWrapper> *_element = new PriorityQueuedElement<CDataWrapper>(commandDescription, priority, true);
     commandSubmittedQueue.push(_element);
     lock.unlock();
     readThreadWhait.notify_one();

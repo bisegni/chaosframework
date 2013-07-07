@@ -13,8 +13,8 @@
 
 namespace chaos {
     namespace cu {
-        namespace cm {
-            namespace slcmd {
+        namespace control_manager {
+            namespace slow_command {
                 
                 /*
                  Exception class for Slowc command package

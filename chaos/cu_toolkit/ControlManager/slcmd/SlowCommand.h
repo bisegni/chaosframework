@@ -21,23 +21,26 @@
 #ifndef __CHAOSFramework__SlowCommand__
 #define __CHAOSFramework__SlowCommand__
 
-#include <stdint.h>
+#include <map>
+#include <vector>
 #include <string>
+#include <stdint.h>
 
 namespace chaos{
     namespace cu {
         
-        //forward declaration
+        //forward declarations
+        class AbstractedControlUnit;
         namespace dm {
             namespace driver {
                 class DriverAccessor;
             }
         }
         
-        namespace cm {
+        namespace control_manager {
             
             //! The name space that group all foundamental class need by slow control !CHOAS implementation
-            namespace slcmd {
+            namespace slow_command {
                 
                 //forward declaration
                 class SlowCommandExecutor;
@@ -56,19 +59,18 @@ namespace chaos{
                 }
                 
                     //! Namespace for the running state tyoes
-                namespace RunningStateTyoe {
+                namespace RunningStateType {
                     /*!
                      * \enum RunningState
                      * \brief Describe the state in which the command can be found
                      */
                     typedef enum RunningState {
-                        RS_Set      = 1,    /**< The command is the set state */
-                        RS_Kill     = 2,    /**< The command can be killed */
-                        RS_Over     = 4,    /**< The command can killed by an equal command */
-                        RS_Stack    = 8,    /**< The command can be stacked (paused) */
-                        RS_Exsc     = 16,   /**< The command cannot be killed or removed, it need to run */
-                        RS_End      = 32,   /**< The command has ended his work */
-                        RS_Fault    = 64    /**< The command has had a fault */
+                        RS_Exsc     = 0,    /**< The command cannot be killed or removed, it need to run */
+                        RS_Kill     = 1,    /**< The command can be killed */
+                        RS_Over     = 2,    /**< The command can killed by an equal command */
+                        RS_Stack    = 4,    /**< The command can be stacked (paused) */
+                        RS_End      = 8,    /**< The command has ended his work */
+                        RS_Fault    = 16    /**< The command has had a fault */
                     } RunningState;
                 }
                 
@@ -106,12 +108,14 @@ namespace chaos{
                  - Correlation and Commit handler, make the neccessary correlation and send the necessary command to the driver
                  */
                 class SlowCommand {
+                    friend class SlowCommandSandbox;
                     friend class SlowCommandExecutor;
+
                     //! Running state
                     /*!
                      A value composed by a set of RunningState element.
                      */
-                    uint8_t rState;
+                    uint8_t runningState;
                     
                     //! Fault description
                     FaultDescription fDescription;
@@ -125,13 +129,14 @@ namespace chaos{
                     //!Correlation and Commit handler definition
                     typedef uint8_t (SlowCommand::*CCHandlerPtr)();
                     
-                protected:
-                    
-                    //!The accessor that permit to to contorl the needed driver
+                    //! Map that assocaite the alias to the driver accessor
                     /*!
-                     This is a variable length array where the dimension is given by the driver declared by the CU
+                     The map is only a pointer becaouse someone else need to set it.
+                     The subclass ca access it for get the accessor.
                      */
-                    dm::driver::DriverAccessor *driverAccessor;
+                    std::map<std::string, dm::driver::DriverAccessor*> *driversAccessorMap;
+                    
+                protected:
                     
                     //! return the implemented handler
                     /*!
@@ -160,6 +165,9 @@ namespace chaos{
                      send further commands to the hardware, through the driver, to accomplish the command steps.
                      */
                     virtual uint8_t ccHandler();
+                    
+                public:
+
                 };
             }
         }

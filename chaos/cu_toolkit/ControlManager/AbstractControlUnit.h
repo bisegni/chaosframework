@@ -53,7 +53,7 @@ abstractPointer = typedHandler = new TDSObjectHandler<T, double>(objectPointer, 
 
 namespace chaos{
     
-    //forward evenc channel declaration
+    //forward event channel declaration
     namespace event{
         namespace channel {
             class InstrumentEventChannel;
@@ -77,24 +77,16 @@ namespace chaos{
             CDataWrapper *actionData;
             boost::function<CDataWrapper*(CDataWrapper*, bool)> actionDef;
         };
-        
-        /*!
-         
-         */
-        typedef enum DeviceSchedulePolicy {
-            DeviceSchedulePolicySequential,
-            DeviceSchedulePolicyMultithreaded
-        } DeviceSchedulePolicy;
-        
+
         /*!
          Base class for control unit execution task
          */
         class AbstractControlUnit:public DeclareAction, protected CUSchemaDB, public CThreadExecutionTask {
             friend class ControlManager;
             friend class DomainActionsScheduler;
+            
             int32_t scheduleDelay;
             string jsonSetupFilePath;
-            DeviceSchedulePolicy deviceSchedulePolicy;
             boost::chrono::seconds  lastAcquiredTime;
             
             std::map<std::string, cu::DSAttributeHandlerExecutionEngine*> attributeHandlerEngineForDeviceIDMap;
@@ -104,15 +96,12 @@ namespace chaos{
              The muthex is needed because the call to the action can occours in different thread
              */
             boost::recursive_mutex managing_cu_mutex;
-            boost::mutex sequetial_scheduler_mutex;
             //
             map<string, KeyDataStorage*>  keyDataStorageMap;
             
             map<string, CObjectHandlerProcessingQueue< ActionData*>* >  actionParamForDeviceMap;
             
             map<string, CThread* >  schedulerDeviceMap;
-            
-            set<string>  sequentialScheduler;
             
             map<string, boost::chrono::seconds >  heartBeatDeviceMap;
             
@@ -129,10 +118,6 @@ namespace chaos{
             void addKeyDataStorage(const char *, KeyDataStorage*);
             
             void _sharedInit();
-            
-            void setDeviceSchedulePolicy(DeviceSchedulePolicy policy);
-            
-            DeviceSchedulePolicy getDeviceSchedulePolicy();
             
             /*!
              Define the control unit DataSet and Action into

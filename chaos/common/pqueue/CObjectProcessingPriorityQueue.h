@@ -39,10 +39,11 @@ namespace chaos {
         template<typename U>
         friend class CObjectProcessingPriorityQueue;
         
-        T *element;
+
         bool disposeOnDestroy;
         int priority;
     public:
+        T *element;
         PriorityQueuedElement(T *_element, int _priority = 50, bool _disposeOnDestroy = true):element(_element), disposeOnDestroy(_disposeOnDestroy), priority(_priority) {}
         ~PriorityQueuedElement(){
             if (disposeOnDestroy && element) {
@@ -55,7 +56,11 @@ namespace chaos {
          */
         bool operator < (const PriorityQueuedElement& b) const {
             return priority < b.priority;
-            }
+        }
+        
+        inline int getPriority() {
+            return priority;
+        }
      };
             
     template<typename Type, typename Compare = std::less<Type> >

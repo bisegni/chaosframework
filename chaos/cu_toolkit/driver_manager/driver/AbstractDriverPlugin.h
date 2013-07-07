@@ -26,7 +26,7 @@
 
 namespace chaos{
     namespace cu {
-        namespace dm {
+        namespace driver_manager {
             namespace driver {
                 
                 class AbstractDriverPlugin: public chaos::common::plugin::AbstractPlugin {

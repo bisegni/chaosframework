@@ -64,16 +64,7 @@ AbstractControlUnit::~AbstractControlUnit() {
  abstract control unit
  */
 void AbstractControlUnit::_sharedInit() {
-    deviceSchedulePolicy = DeviceSchedulePolicyMultithreaded;
     cuInstance = UUIDUtil::generateUUIDLite();
-}
-
-void AbstractControlUnit::setDeviceSchedulePolicy(DeviceSchedulePolicy policy) {
-    deviceSchedulePolicy = policy;
-}
-
-DeviceSchedulePolicy AbstractControlUnit::getDeviceSchedulePolicy() {
-    return deviceSchedulePolicy;
 }
 
 /*
@@ -318,26 +309,21 @@ void AbstractControlUnit::_undefineActionAndDataset() throw(CException) {
  */
 CThread *AbstractControlUnit::getThreadForDevice(const string& deviceID) throw(chaos::CException) {
     CThread *csThread = NULL;
-    string devID = "sequenced_thread";
-    
-    if(deviceSchedulePolicy == DeviceSchedulePolicyMultithreaded) {
-        devID = deviceID;
-    }
     
     //initialize device scheduler
-    if(!schedulerDeviceMap.count(devID)) {
-        LCU_ << "Create schedule thread for device:" << devID;
-        schedulerDeviceMap.insert(make_pair(devID, csThread = new CThread(this)));
-        schedulerDeviceMap[devID]->setThreadIdentification(devID);
+    if(!schedulerDeviceMap.count(deviceID)) {
+        LCU_ << "Create schedule thread for device:" << deviceID;
+        schedulerDeviceMap.insert(make_pair(deviceID, csThread = new CThread(this)));
+        schedulerDeviceMap[deviceID]->setThreadIdentification((string&)deviceID);
         //set the defautl scehduling rate to 1 sec
-        schedulerDeviceMap[devID]->setDelayBeetwenTask(1000000);
+        schedulerDeviceMap[deviceID]->setDelayBeetwenTask(1000000);
         
         if(!csThread) {
             LCU_ << "No thread defined for device "<< deviceID;
             throw CException(-4, "No thread defined for device", "AbstractControlUnit::_start");
         }
     } else {
-        csThread = schedulerDeviceMap[devID];
+        csThread = schedulerDeviceMap[deviceID];
     }
     
     return csThread;
@@ -349,53 +335,23 @@ CThread *AbstractControlUnit::getThreadForDevice(const string& deviceID) throw(c
 void AbstractControlUnit::threadStartStopManagment(const string& deviceID, CThread *csThread, bool startAction) throw(CException) {
     CHAOS_ASSERT(csThread)
     if(startAction) {
-        switch (deviceSchedulePolicy) {
-            case DeviceSchedulePolicySequential:
-                //check if already preset
-                if( sequentialScheduler.find(deviceID) == sequentialScheduler.end() ) {
-                    boost::unique_lock<mutex>  lock(sequetial_scheduler_mutex);
-                    sequentialScheduler.insert(deviceID);
-                    lock.unlock();
-                }
-                //check if we are at the first device, if we have
-                //other device we don't need to starthe the unique thread
-                if(sequentialScheduler.size()>1)
-                    break;
-                
-            case DeviceSchedulePolicyMultithreaded:
-                if(!csThread->isStopped()){
-                    LCU_ << "thread for "<< deviceID << "already running";
-                    throw CException(-5, "Thread for device already running", "AbstractControlUnit::threadStartStopManagment");
-                }
-                
-                LCU_ << "Start Thread for device id:" << deviceID;
-                csThread->start();
-                csThread->setThreadPriorityLevel(sched_get_priority_max(SCHED_RR), SCHED_RR);
-                break;
+        
+        if(!csThread->isStopped()){
+            LCU_ << "thread for "<< deviceID << "already running";
+            throw CException(-5, "Thread for device already running", "AbstractControlUnit::threadStartStopManagment");
         }
+        
+        LCU_ << "Start Thread for device id:" << deviceID;
+        csThread->start();
+        csThread->setThreadPriorityLevel(sched_get_priority_max(SCHED_RR), SCHED_RR);
     } else {
-        switch (deviceSchedulePolicy) {
-            case DeviceSchedulePolicySequential:
-                if( sequentialScheduler.find(deviceID) != sequentialScheduler.end() ) {
-                    boost::unique_lock<mutex>  lock(sequetial_scheduler_mutex);
-                    sequentialScheduler.erase(deviceID);
-                    lock.unlock();
-                }
-                //check if we are out of device, if we don't have
-                //more device we don't need to starthe the unique thread
-                if(sequentialScheduler.size()>1)
-                    break;
-                
-            case DeviceSchedulePolicyMultithreaded:
-                if(csThread->isStopped()){
-                    LCU_ << "thread for "<< deviceID << "already runnign";
-                    throw CException(-5, "Thread for device already running", "AbstractControlUnit::threadStartStopManagment");
-                }
-                LCU_ << "Stopping Device ID:" << deviceID;
-                csThread->stop();
-                LCU_ << "Stopped Thread for Device ID:" << deviceID;
-                break;
+        if(csThread->isStopped()){
+            LCU_ << "thread for "<< deviceID << "already runnign";
+            throw CException(-5, "Thread for device already running", "AbstractControlUnit::threadStartStopManagment");
         }
+        LCU_ << "Stopping Device ID:" << deviceID;
+        csThread->stop();
+        LCU_ << "Stopped Thread for Device ID:" << deviceID;
     }
     
 }
@@ -574,13 +530,13 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachPa
     
     //manage the thread
     threadStartStopManagment(deviceID, csThread, false);
-
+    
     //set device state
     deviceStateMap[deviceID]--;
     
     //set the explicit state
     deviceExplicitStateMap[deviceID] = CUStateKey::STOP;
-
+    
     return NULL;
 }
 
@@ -685,21 +641,7 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
  */
 void AbstractControlUnit::executeOnThread( const string& deviceIDToSchedule) throw(CException) {
     
-    switch (deviceSchedulePolicy) {
-        case DeviceSchedulePolicyMultithreaded:
-            run(deviceIDToSchedule);
-            break;
-        case DeviceSchedulePolicySequential:
-            //check if the contorl unit is in the start state for this we need to lock
-            boost::unique_lock<mutex>  lock(sequetial_scheduler_mutex);
-            for(std::set<string>::iterator iter = sequentialScheduler.begin(); iter != sequentialScheduler.end(); ++iter) {
-                run(*iter);
-            }
-            lock.unlock();
-            break;
-    }
-    
-    
+    run(deviceIDToSchedule);
     //check if we are in sequential or in threaded mode
     
     lastAcquiredTime = boost::chrono::duration_cast<boost::chrono::seconds>(boost::chrono::steady_clock::now().time_since_epoch());
