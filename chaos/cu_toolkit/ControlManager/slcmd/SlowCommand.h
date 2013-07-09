@@ -81,10 +81,11 @@ namespace chaos{
                      * \brief Describe the state in which the command can be found
                      */
                     typedef enum SubmissionRule {
-                        SUBMIT_NORMAL       = 0,    /**< The new command will waith the end of the current executed command */
-                        SUBMIT_AND_Kill     = 1,    /**< The new command will kill the current command */
-                        SUBMIT_AND_Overload = 2,    /**< The new command will overload the current command if it is the same*/
-                        SUBMIT_AND_Stack    = 3     /**< The new command wil stack (pause some or all hadnler) the current executing command */
+                        SUBMIT_NORMAL       = 0,    /**< The new command will waith the end of the current executed command and if an handler is implemented it is installed*/
+                        SUBMIT_AND_Kill     = 1,    /**< The new command will kill the current command, all hadnler ol killed one are erased and substituted */
+                        SUBMIT_AND_Overload = 2,    /**< The new command will overload the current command if it is the same */
+                        SUBMIT_AND_Stack    = 3     /**< The new command wil stack the current executing command that consist in 
+                                                     install all implemented handler of the new one without touch the handler that are not implemented */
                     } SubmissionRule;
                 }
                 
@@ -110,24 +111,27 @@ namespace chaos{
                 class SlowCommand {
                     friend class SlowCommandSandbox;
                     friend class SlowCommandExecutor;
-
+                    friend class SetFunctor;
+                    friend class AcquireFunctor;
+                    friend class CorrelationFunctor;
+                    
                     //! Running state
                     /*!
                      A value composed by a set of RunningState element.
                      */
                     uint8_t runningState;
                     
+                    //! Submission state
+                    /*!
+                     A value that represent the submiossion state
+                     */
+                    uint8_t submissionRule;
+                    
                     //! Fault description
                     FaultDescription fDescription;
                     
                     //!Set Handlers definition
-                    typedef uint8_t (SlowCommand::*SetHandlerPtr)();
-                    
-                    //!Acquire Handlers definition
-                    typedef uint8_t (SlowCommand::*AcquireHandlerPtr)();
-                    
-                    //!Correlation and Commit handler definition
-                    typedef uint8_t (SlowCommand::*CCHandlerPtr)();
+                    typedef uint8_t (SlowCommand::*HandlerPointer)();
                     
                     //! Map that assocaite the alias to the driver accessor
                     /*!
@@ -137,6 +141,11 @@ namespace chaos{
                     std::map<std::string, dm::driver::DriverAccessor*> *driversAccessorMap;
                     
                 protected:
+                    //! default constructor
+                    SlowCommand();
+                    
+                    //! default destructor
+                    virtual ~SlowCommand();
                     
                     //! return the implemented handler
                     /*!

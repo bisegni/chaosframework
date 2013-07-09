@@ -45,10 +45,10 @@ namespace chaos {
             const uint8_t getServiceState() const;
             
                 //! Initialize instance
-            virtual void init(void*) throw(chaos::CException) = 0;
+            virtual void init(void*) throw(chaos::CException);
             
                 //! Deinit the implementation
-            virtual void deinit() throw(chaos::CException) = 0;
+            virtual void deinit() throw(chaos::CException);
             
             static bool initImplementation(InizializableService *impl, void *initData, const char * const implName,  const char * const domainString);
             static bool deinitImplementation(InizializableService *impl, const char * const implName,  const char * const domainString);

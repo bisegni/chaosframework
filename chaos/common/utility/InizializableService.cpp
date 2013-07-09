@@ -39,6 +39,16 @@ InizializableService::~InizializableService() {
     
 }
 
+//! Initialize instance
+void InizializableService::init(void*) throw(chaos::CException) {
+    
+}
+
+//! Deinit the implementation
+void InizializableService::deinit() throw(chaos::CException) {
+    
+}
+
     //! Return the state
 const uint8_t InizializableService::getServiceState() const {
     return serviceState;
@@ -57,7 +67,7 @@ bool InizializableService::initImplementation(InizializableService *impl, void *
         IS_LAPP  << implName << "Initialized";
     } catch (CException ex) {
         IS_LAPP  << "Error initializing " << implName;
-        DECODE_CHAOS_EXCEPTION(ex);
+        throw ex;
     }
     return result;
 }
@@ -75,7 +85,7 @@ bool InizializableService::deinitImplementation(InizializableService *impl, cons
         IS_LAPP  << implName << "Deinitialized";
     } catch (CException ex) {
         IS_LAPP  << "Error Deinitializing " << implName;
-        DECODE_CHAOS_EXCEPTION(ex);
+        throw ex;
     }
     return result;
 }

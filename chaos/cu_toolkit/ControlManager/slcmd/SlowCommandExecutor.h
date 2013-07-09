@@ -96,17 +96,6 @@ namespace chaos{
                     
                     //! this map correlate the alias to the object instancer
                     std::map<string, chaos::common::utility::ObjectInstancer<SlowCommand>* > mapCommandInstancer;
-                    
-                    //-------------------- handler poiter --------------------
-                    //! Pointer to the set phase handler's of the current command
-                    SlowCommand::SetHandlerPtr setHandler;
-                    
-                    //! Pointer to the acquire pahse handler's of the current command
-                    SlowCommand::AcquireHandlerPtr acquireHandler;
-                    
-                    //! Pointer to the correlation and commit pahse handler's of the current command
-                    SlowCommand::CCHandlerPtr correlationAndCommitHandler;
-                    //-------------------- handler poiter --------------------
                   
                     //! Private constructor
                     SlowCommandExecutor(CThread *_cuThreadForExecutor, std::string _executorID);
@@ -122,9 +111,20 @@ namespace chaos{
                     void performIncomingCommandCheck();
                     
                     //! Check if the waithing command can be installed
+                    /*!
+                     Perform the instantiation of the command instace assocaite
+                     to the alias contained into the submissionInfo param.
+                     \param the submission param of the command
+                     */
                     SlowCommand *instanceCommandInfo(CDataWrapper *submissionInfo);
                     
-                    
+                    //! Check if the waithing command can be installed
+                    /*!
+                     peform the isntantiation of the command associated to the alias in input, if not preset
+                     an exception are fired
+                     \param commandAlias the alias of the command
+                     */
+                    SlowCommand *instanceCommandInfo(std::string& commandAlias);
                 public:
                     
                     // Initialize instance
@@ -149,9 +149,12 @@ namespace chaos{
                     /*!
                      Install the isntancer for a determinated SlowCommand, for an easly way to do this can be used
                      the macro SLOWCOMMAND_INSTANCER(SlowCommandClass) where "SlowCommandClass" is the calss that 
-                     extend SlowCommand to implement a new command
+                     extend SlowCommand to implement a new command. The access to the internal map is not sincornized
+                     and need to be made befor the executor will be started
+                     \param alias the name associated to the command
+                     \param instancer the instance of the instancer that will produce the "instance" of the command
                      */
-                    void installCommand(string& alias, chaos::common::utility::ObjectInstancer<SlowCommand>* instancer);
+                    void installCommand(string& alias, chaos::common::utility::ObjectInstancer<SlowCommand> *instancer);
                     
                     //! Submite the new sloc command information
                     /*!

@@ -38,10 +38,10 @@ namespace chaos {
         public:
             
                 //! Start the implementation
-            virtual void start() throw(chaos::CException) = 0;
+            virtual void start() throw(chaos::CException);
             
                 //! Start the implementation
-            virtual void stop() throw(chaos::CException) = 0;
+            virtual void stop() throw(chaos::CException);
             
             static bool startImplementation(StartableService *impl, const char * const implName,  const char * const domainString);
             static bool stopImplementation(StartableService *impl, const char * const implName,  const char * const domainString);

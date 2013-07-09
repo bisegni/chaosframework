@@ -26,6 +26,15 @@ using namespace chaos::utility;
 
 #define SS_LAPP LAPP_ << "[StartableService]- "
 
+//! Start the implementation
+void StartableService::start() throw(chaos::CException) {
+    
+}
+
+//! Start the implementation
+void StartableService::stop() throw(chaos::CException) {
+    
+}
 
 /*!
  */
@@ -40,7 +49,7 @@ bool StartableService::startImplementation(StartableService *impl, const char * 
         SS_LAPP  << implName << "Started";
     } catch (CException ex) {
         SS_LAPP  << "Error Starting " << implName;
-        DECODE_CHAOS_EXCEPTION(ex);
+        throw ex;
     }
     return result;
 }
@@ -58,7 +67,7 @@ bool StartableService::stopImplementation(StartableService *impl, const char * c
         SS_LAPP  << implName << "Stopped";
     } catch (CException ex) {
         SS_LAPP  << "Error Starting " << implName;
-        DECODE_CHAOS_EXCEPTION(ex);
+        throw ex;
     }
     return result;
 }

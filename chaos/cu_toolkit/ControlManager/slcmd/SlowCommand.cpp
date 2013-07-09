@@ -22,6 +22,17 @@
 
 using namespace chaos::cu::control_manager::slow_command;
 
+//! default constructor
+SlowCommand::SlowCommand() {
+    runningState = RunningStateType::RS_Exsc;
+    submissionRule = SubmissionRuleType::SUBMIT_NORMAL;
+}
+
+//! default destructor
+SlowCommand::~SlowCommand() {
+    
+}
+
 /*
  Start the slow command sequence
  */

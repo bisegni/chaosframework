@@ -36,15 +36,18 @@ SlowCommandExecutor::~SlowCommandExecutor() {
 }
 
 // Initialize instance
-void SlowCommandExecutor::init(void*) throw(chaos::CException) {
+void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
+    utility::StartableService::init(initData);
+    
     performQueueCheck = true;
     
-    
+    utility::InizializableService::initImplementation(&commandSandbox, initData, "SlowCommandSandbox", "SlowCommandExecutor::init");
 }
 
 
 // Start the implementation
 void SlowCommandExecutor::start() throw(chaos::CException) {
+    utility::StartableService::start();
     // thread creation
     incomingCheckThreadPtr.reset(new boost::thread(boost::bind(&SlowCommandExecutor::performIncomingCommandCheck, this)));
 #if defined(__linux__) || defined(__APPLE__)
@@ -63,35 +66,67 @@ void SlowCommandExecutor::start() throw(chaos::CException) {
         throw CException(retcode, "Set Thread schedule param", "SlowCommandExecutor::start");
     }
 #endif
+    
+    utility::StartableService::startImplementation(&commandSandbox, "SlowCommandSandbox", "SlowCommandExecutor::start");
 }
 
 // Start the implementation
 void SlowCommandExecutor::stop() throw(chaos::CException) {
+    
+    utility::StartableService::stopImplementation(&commandSandbox, "SlowCommandSandbox", "SlowCommandExecutor::stop");
+    
     //lock for queue access
     boost::unique_lock<boost::mutex> lock(mutextQueueManagment);
+    
+    performQueueCheck = false;
+    
+    //notify the thread to start
+    readThreadWhait.notify_one();
+    
+    //wait the thread
+    incomingCheckThreadPtr->join();
+    
+    utility::StartableService::stop();
 }
 
 // Deinit the implementation
 void SlowCommandExecutor::deinit() throw(chaos::CException) {
+    //clear all instancer
+    for(std::map<string, chaos::common::utility::ObjectInstancer<SlowCommand>* >::iterator it = mapCommandInstancer.begin();
+        it != mapCommandInstancer.end();
+        it++) {
+        SCELAPP_ << "Dispose instancer " << it->first;
+        if(it->second) delete(it->second);
+    }
+    mapCommandInstancer.clear();
     
+    utility::InizializableService::deinitImplementation(&commandSandbox, "SlowCommandSandbox", "SlowCommandExecutor::deinit");
+    
+    utility::StartableService::deinit();
 }
 
 //! Perform a command registration
 void SlowCommandExecutor::setDefaultCommand(string& alias) {
+    // check if we can set the default, the condition are:
+    // the executor and the sandbox are in the init state or in stop state
+    if(utility::StartableService::serviceState == utility::StartableServiceType::SS_STARTED) {
+        throw CException(1, "The command infrastructure is in running state", "SlowCommandExecutor::setDefaultCommand");
+    }
     
+    commandSandbox.setDefaultCommand(instanceCommandInfo(alias));
 }
 
 //! Install a command associated with a type
-void SlowCommandExecutor::installCommand(string& alias, chaos::common::utility::ObjectInstancer<SlowCommand>* instancer) {
-    mapCommandInstancer.insert(make_pair<string, chaos::common::utility::ObjectInstancer<SlowCommand>*>(alias, instancer));
+void SlowCommandExecutor::installCommand(string& alias, chaos::common::utility::ObjectInstancer<SlowCommand> *instancer) {
+    mapCommandInstancer.insert(make_pair<string, chaos::common::utility::ObjectInstancer<SlowCommand>* >(alias, instancer));
 }
 
 //! Check the incoming command rule
 void SlowCommandExecutor::performIncomingCommandCheck() {
     //lock for queue access
     boost::unique_lock<boost::mutex> lock(mutextQueueManagment);
+    
     while(performQueueCheck) {
-        
         boost::posix_time::time_duration delay(0,0,0,0);
         while(commandSubmittedQueue.empty() && !incomingCheckThreadPtr->timed_join(delay)) {
             emptyQueueConditionLock.notify_one();
@@ -106,7 +141,7 @@ void SlowCommandExecutor::performIncomingCommandCheck() {
         try {
             //lock the command scheduler
             boost::unique_lock<boost::recursive_mutex> lockScheduler(commandSandbox.mutextCommandScheduler);
-            if(commandSandbox.nextAvailableCommand == NULL) {
+            if(commandSandbox.nextAvailableCommand.cmdImpl == NULL && commandSandbox.nextAvailableCommand.cmdInfo == NULL) {
                 
                 // no waiting command so set the next available wit the info and instance
                 // if something goes wrong an axception is fired and element is fired
@@ -114,11 +149,11 @@ void SlowCommandExecutor::performIncomingCommandCheck() {
                 //remove command form the queue
                 commandSubmittedQueue.pop();
                 
-            } else if(element != commandSandbox.nextAvailableCommand->cmdInfo &&
-                      element->getPriority() > commandSandbox.nextAvailableCommand->cmdInfo->getPriority()) {
+            } else if(element != commandSandbox.nextAvailableCommand.cmdInfo &&
+                      element->getPriority() > commandSandbox.nextAvailableCommand.cmdInfo->getPriority()) {
                 
                 //We ave a new, higer priority, command to submit
-                commandSubmittedQueue.push(commandSandbox.nextAvailableCommand->cmdInfo);
+                commandSubmittedQueue.push(commandSandbox.nextAvailableCommand.cmdInfo);
                 commandSandbox.setNextAvailableCommand(element, instanceCommandInfo(element->element));
                 //remove command form the queue
                 commandSubmittedQueue.pop();
@@ -135,6 +170,22 @@ void SlowCommandExecutor::performIncomingCommandCheck() {
         }
         //-------------------check if we can use the command-------------------------
     }
+    
+    //whe are terminating and we need to erase the command information not elaborated
+    //we still protected by the lock on mutextQueueManagment mutext
+    while (commandSubmittedQueue.empty()) {
+        //get the command on top
+        PRIORITY_ELEMENT(CDataWrapper) *element = commandSubmittedQueue.top();
+        if(element) {
+            //remove from the queue
+            commandSubmittedQueue.pop();
+            
+            //release it
+            delete(element);
+        }
+    }
+    
+    //end of the thread
 }
 
 //! Check if the waithing command can be installed
@@ -144,6 +195,15 @@ SlowCommand *SlowCommandExecutor::instanceCommandInfo(CDataWrapper *submissionIn
         throw CException(1, "The alias of the slow command is mandatory", "SlowCommandExecutor::setupCommand");
     }
     commandAlias = submissionInfo->getStringValue(SlowCommandSubmissionKey::COMMAND_ALIAS);
+    SlowCommand *instance = instanceCommandInfo(commandAlias);
+    if(!submissionInfo->hasKey(SlowCommandSubmissionKey::SUBMISSION_FLAG)) {
+        if(instance) instance->submissionRule = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SUBMISSION_FLAG);
+    }
+    return instance;
+}
+
+//! Check if the waithing command can be installed
+SlowCommand *SlowCommandExecutor::instanceCommandInfo(std::string& commandAlias) {
     if(mapCommandInstancer.count(commandAlias)) {
         return mapCommandInstancer[commandAlias]->getInstance();
     } else {
