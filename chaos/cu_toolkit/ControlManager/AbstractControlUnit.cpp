@@ -37,34 +37,27 @@
 
 using namespace chaos;
 using namespace chaos::cu;
+using namespace chaos::cu::control_manager::slow_command;
 using namespace std;
 using namespace boost;
 using namespace boost::uuids;
 
-
 #define LCU_ LAPP_ << "[Control Unit:"<<getCUInstance()<<"] - "
 
 
-#pragma mark constructor
-
-AbstractControlUnit::AbstractControlUnit():CUSchemaDB(false) {
-    _sharedInit();
+AbstractControlUnit::AbstractControlUnit():CUSchemaDB(false), cuInstance(UUIDUtil::generateUUIDLite()) {
+    SlowCommandExecutor::executorID = cuInstance;
 }
 
-AbstractControlUnit::AbstractControlUnit(const char *descJsonPath):CUSchemaDB(false) {
-    _sharedInit();
+AbstractControlUnit::AbstractControlUnit(const char *descJsonPath):CUSchemaDB(false), cuInstance(UUIDUtil::generateUUIDLite()) {
     initWithJsonFilePath(descJsonPath);
 }
 
-AbstractControlUnit::~AbstractControlUnit() {
-}
-
-/*
- thi is the shared intiialization phase of the
- abstract control unit
+/*!
+ Destructor a new CU with an identifier
  */
-void AbstractControlUnit::_sharedInit() {
-    cuInstance = UUIDUtil::generateUUIDLite();
+AbstractControlUnit::~AbstractControlUnit() {
+    
 }
 
 /*
@@ -84,8 +77,8 @@ const char * AbstractControlUnit::getCUInstance(){
 /*
  Add a new KeyDataStorage for a specific key
  */
-void AbstractControlUnit::addKeyDataStorage(const char *key, KeyDataStorage* keyDatStorafePointer) {
-    keyDataStorageMap.insert(make_pair(key, keyDatStorafePointer));
+void AbstractControlUnit::setKeyDataStorage(KeyDataStorage* keyDatStorafePointer) {
+    keyDataStorage = keyDatStorafePointer;
 }
 
 /*!
@@ -284,13 +277,7 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
      _internalSetupConfiguration.reset(new CDataWrapper(ser->getBufferPtr()));*/
     
     //setup all state for device
-    vector<string> domainNames;
-    CUSchemaDB::getAllDeviceId(domainNames);
-    for(vector<string>::iterator iter = domainNames.begin();
-        iter != domainNames.end();
-        iter++){
-        deviceExplicitStateMap[*iter] = CUStateKey::DEINIT;
-    }
+    deviceExplicitState = CUStateKey::DEINIT;
 }
 
 /*
@@ -307,51 +294,34 @@ void AbstractControlUnit::_undefineActionAndDataset() throw(CException) {
 /*!
  return the appropriate thread for the device
  */
-CThread *AbstractControlUnit::getThreadForDevice(const string& deviceID) throw(chaos::CException) {
-    CThread *csThread = NULL;
-    
-    //initialize device scheduler
-    if(!schedulerDeviceMap.count(deviceID)) {
-        LCU_ << "Create schedule thread for device:" << deviceID;
-        schedulerDeviceMap.insert(make_pair(deviceID, csThread = new CThread(this)));
-        schedulerDeviceMap[deviceID]->setThreadIdentification((string&)deviceID);
-        //set the defautl scehduling rate to 1 sec
-        schedulerDeviceMap[deviceID]->setDelayBeetwenTask(1000000);
-        
-        if(!csThread) {
-            LCU_ << "No thread defined for device "<< deviceID;
-            throw CException(-4, "No thread defined for device", "AbstractControlUnit::_start");
-        }
-    } else {
-        csThread = schedulerDeviceMap[deviceID];
-    }
-    
-    return csThread;
-}
-
-/*!
- return the appropriate thread for the device
- */
-void AbstractControlUnit::threadStartStopManagment(const string& deviceID, CThread *csThread, bool startAction) throw(CException) {
-    CHAOS_ASSERT(csThread)
+void AbstractControlUnit::threadStartStopManagment(bool startAction) throw(CException) {
+    CHAOS_ASSERT(schedulerThread)
     if(startAction) {
         
-        if(!csThread->isStopped()){
-            LCU_ << "thread for "<< deviceID << "already running";
+        if(schedulerThread && !schedulerThread->isStopped()){
+            LCU_ << "thread already running";
             throw CException(-5, "Thread for device already running", "AbstractControlUnit::threadStartStopManagment");
         }
         
-        LCU_ << "Start Thread for device id:" << deviceID;
-        csThread->start();
-        csThread->setThreadPriorityLevel(sched_get_priority_max(SCHED_RR), SCHED_RR);
+        if(schedulerThread) {
+            schedulerThread->start();
+            return;
+        }
+        
+        LCU_ << "Start Thread";
+        schedulerThread = new CThread(this);
+        //set the defautl scehduling rate to 1 sec
+        schedulerThread->setDelayBeetwenTask(1000000);
+        schedulerThread->start();
+        schedulerThread->setThreadPriorityLevel(sched_get_priority_max(SCHED_RR), SCHED_RR);
     } else {
-        if(csThread->isStopped()){
-            LCU_ << "thread for "<< deviceID << "already runnign";
+        if(schedulerThread->isStopped()){
+            LCU_ << "thread already runnign";
             throw CException(-5, "Thread for device already running", "AbstractControlUnit::threadStartStopManagment");
         }
-        LCU_ << "Stopping Device ID:" << deviceID;
-        csThread->stop();
-        LCU_ << "Stopped Thread for Device ID:" << deviceID;
+        LCU_ << "Stopping thread";
+        schedulerThread->stop();
+        LCU_ << "Thread stopped";
     }
     
 }
@@ -380,7 +350,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     }
     
     //check to see if the device can ben initialized
-    if(deviceStateMap[deviceID] != INIT_STATE) {
+    if(deviceState != INIT_STATE) {
         LCU_ << "device:" << deviceID << " already initialized";
         throw CException(-3, "Device Already Initialized", "AbstractControlUnit::_init");
     }
@@ -398,23 +368,23 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     LCU_ << "Call init implementation for deviceID:" << deviceID;
     tmpKDS->init(initConfiguration);
     
-    keyDataStorageMap.insert(make_pair(deviceID, tmpKDS));
+    keyDataStorage = tmpKDS;
     
     LCU_ << "Start custom inititialization" << deviceID;
     //initializing the device in control unit
     init(deviceID);
     
     //advance status
-    deviceStateMap[deviceID]++;
+    deviceState++;
     
     
     //call update param function
     updateConfiguration(initConfiguration, detachParam);
     
     //reset run schedule heartbeat
-    heartBeatDeviceMap[deviceID] = boost::chrono::seconds(0);
+    heartBeatIntervall = boost::chrono::seconds(0);
     
-    deviceExplicitStateMap[deviceID] = CUStateKey::INIT;
+    deviceExplicitState = CUStateKey::INIT;
     return NULL;
 }
 
@@ -424,8 +394,6 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
 CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& detachParam) throw(CException) {
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     LCU_ << "Deinitializating AbstractControlUnit";
-    CThread *tmpThread = 0L;
-    KeyDataStorage *tmpKDS = 0L;
     
     if(!deinitParam || !deinitParam->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
         throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_deinit");
@@ -439,7 +407,7 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
     }
     
     //check to see if the device can ben initialized
-    if(deviceStateMap[deviceID] != INIT_STATE+1) {
+    if(deviceState != INIT_STATE+1) {
         LCU_ << "device:" << deviceID << " already initialized";
         throw CException(-3, "Device Not Initialized", "AbstractControlUnit::_deinit");
     }
@@ -452,21 +420,17 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
     utility::StartableService::deinitImplementation(attributeHandlerEngineForDeviceIDMap[deviceID], "DSAttribute handler engine", "AbstractControlUnit::_deinit");
     
     //remove scheduler
-    tmpThread = schedulerDeviceMap[deviceID];
-    delete(tmpThread);
-    tmpThread = 0L;
-    schedulerDeviceMap.erase(deviceID);
+    delete(schedulerThread);
+    schedulerThread = NULL;
     
     //remove key data storage
-    tmpKDS = keyDataStorageMap[deviceID];
-    tmpKDS->deinit();
-    delete(tmpKDS);
-    tmpKDS = 0L;
-    keyDataStorageMap.erase(deviceID);
+    keyDataStorage->deinit();
+    delete(keyDataStorage);
+    keyDataStorage = NULL;
     
-    deviceStateMap[deviceID]--;
+    deviceState--;
     
-    deviceExplicitStateMap[deviceID] = CUStateKey::DEINIT;
+    deviceExplicitState = CUStateKey::DEINIT;
     return NULL;
 }
 
@@ -487,18 +451,16 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
     }
     
     //check to see if the device can ben initialized
-    if(deviceStateMap[deviceID] != START_STATE) {
+    if(deviceState != START_STATE) {
         LCU_ << "device:" << deviceID << " already strted";
         throw CException(-3, "Device already started", "AbstractControlUnit::_start");
     }
     
-    CThread *csThread = getThreadForDevice(deviceID);
+    threadStartStopManagment(true);
     
-    threadStartStopManagment(deviceID, csThread, true);
+    deviceState++;
     
-    deviceStateMap[deviceID]++;
-    
-    deviceExplicitStateMap[deviceID] = CUStateKey::START;
+    deviceExplicitState = CUStateKey::START;
     return NULL;
 }
 
@@ -517,7 +479,7 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachPa
     }
     
     //check to see if the device can ben initialized
-    if(deviceStateMap[deviceID] != START_STATE+1) {
+    if(deviceState != START_STATE+1) {
         LCU_ << "device:" << deviceID << " not started";
         throw CException(-3, "Device not startded", "AbstractControlUnit::_stop");
     }
@@ -525,17 +487,14 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachPa
     //call custom stop method
     stop(deviceID);
     
-    //get thread for this device
-    CThread *csThread = getThreadForDevice(deviceID);
-    
     //manage the thread
-    threadStartStopManagment(deviceID, csThread, false);
+    threadStartStopManagment(false);
     
     //set device state
-    deviceStateMap[deviceID]--;
+    deviceState--;
     
     //set the explicit state
-    deviceExplicitStateMap[deviceID] = CUStateKey::STOP;
+    deviceExplicitState = CUStateKey::STOP;
     
     return NULL;
 }
@@ -554,7 +513,7 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
     }
     //retrive the deviceid
     string deviceID = datasetAttributeValues->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
-    if(deviceExplicitStateMap[deviceID] == CUStateKey::DEINIT) {
+    if(deviceExplicitState == CUStateKey::DEINIT) {
         throw CException(-2, "The Control Unit is in deinit state", "AbstractControlUnit::_setDatasetAttribute");
     }
     try {
@@ -585,7 +544,7 @@ CDataWrapper* AbstractControlUnit::_getState(CDataWrapper* getStatedParam, bool&
     }
     CDataWrapper *stateResult = new CDataWrapper();
     string deviceID = getStatedParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
-    stateResult->addInt32Value(CUStateKey::CONTROL_UNIT_STATE, deviceExplicitStateMap[deviceID]);
+    stateResult->addInt32Value(CUStateKey::CONTROL_UNIT_STATE, deviceExplicitState);
     return stateResult;
 }
 /*
@@ -606,25 +565,24 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
     }
     
     //check to see if the device can ben initialized
-    if(deviceStateMap[deviceID] == INIT_STATE) {
+    if(deviceState == INIT_STATE) {
         LCU_ << "device:" << deviceID << " not initialized";
         throw CException(-3, "Device Not Initilized", "AbstractControlUnit::updateConfiguration");
     }
     
     //check to see if the device can ben initialized
-    if(keyDataStorageMap.count(deviceID)!=0) {
-        keyDataStorageMap[deviceID]->updateConfiguration(updatePack);
+    if(keyDataStorage) {
+        keyDataStorage->updateConfiguration(updatePack);
     }
     
     if(updatePack->hasKey(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY)){
         //we need to configure the delay  from a run() call and the next
         uint64_t uSecdelay = updatePack->getUInt64Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY);
         //check if we need to update the scehdule time
-        CThread *taskThread = getThreadForDevice(deviceID);
-        if(uSecdelay != taskThread->getDelayBeetwenTask()){
+        if(uSecdelay != schedulerThread->getDelayBeetwenTask()){
             LCU_ << "Update schedule delay in:" << uSecdelay << " microsecond";
-            schedulerDeviceMap[deviceID]->setDelayBeetwenTask(uSecdelay);
-            //send enve to fro update
+            schedulerThread->setDelayBeetwenTask(uSecdelay);
+            //send envet for the update
             //----------------------
             // we need to optimize and be sure that event channel
             // is mandatory so we can left over the 'if' check
@@ -646,9 +604,9 @@ void AbstractControlUnit::executeOnThread( const string& deviceIDToSchedule) thr
     
     lastAcquiredTime = boost::chrono::duration_cast<boost::chrono::seconds>(boost::chrono::steady_clock::now().time_since_epoch());
     //check if we need to sendthe heartbeat
-    if(deviceEventChannel && ((lastAcquiredTime - heartBeatDeviceMap[deviceIDToSchedule]) > boost::chrono::seconds(60))){
+    if(deviceEventChannel && ((lastAcquiredTime - heartBeatIntervall) > boost::chrono::seconds(60))){
         deviceEventChannel->notifyHeartbeat(deviceIDToSchedule.c_str());
-        heartBeatDeviceMap[deviceIDToSchedule] = lastAcquiredTime;
+        heartBeatIntervall = lastAcquiredTime;
     }
 }
 
@@ -658,23 +616,23 @@ void AbstractControlUnit::executeOnThread( const string& deviceIDToSchedule) thr
 /*
  Send device data to output buffer
  */
-void AbstractControlUnit::pushDataSetForKey(const char *key, CDataWrapper *acquiredData) {
+void AbstractControlUnit::pushDataSet(CDataWrapper *acquiredData) {
     //send data to related buffer
-    keyDataStorageMap[key]->pushDataSet(acquiredData);
+    keyDataStorage->pushDataSet(acquiredData);
 }
 
 /*
  get last dataset for a specified key
  */
-ArrayPointer<CDataWrapper> *AbstractControlUnit::getLastDataSetForKey(const char *key) {
+ArrayPointer<CDataWrapper> *AbstractControlUnit::getLastDataSet() {
     //use keydatastorage from map
-    return keyDataStorageMap[key]->getLastDataSet();
+    return keyDataStorage->getLastDataSet();
 }
 
 /*
  Return a new instance of CDataWrapper filled with a mandatory data
  according to key
  */
-CDataWrapper *AbstractControlUnit::getNewDataWrapperForKey(const char *key) {
-    return keyDataStorageMap[key]->getNewDataWrapper();
+CDataWrapper *AbstractControlUnit::getNewDataWrapper() {
+    return keyDataStorage->getNewDataWrapper();
 }

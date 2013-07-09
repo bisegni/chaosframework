@@ -65,7 +65,7 @@ namespace chaos{
                     This class is the environment where the exeecution of the slow command handlers take place.
                  */
                 class SlowCommandExecutor : public utility::StartableService {
-                    friend class AbstractControlUnit;
+                    friend class chaos::cu::AbstractControlUnit;
                     
                     std::string executorID;
                     
@@ -96,12 +96,6 @@ namespace chaos{
                     
                     //! this map correlate the alias to the object instancer
                     std::map<string, chaos::common::utility::ObjectInstancer<SlowCommand>* > mapCommandInstancer;
-                  
-                    //! Private constructor
-                    SlowCommandExecutor(CThread *_cuThreadForExecutor, std::string _executorID);
-                    
-                    //! Private deconstructor
-                    ~SlowCommandExecutor();
                     
                     //! Check the incoming command rule
                     /*!
@@ -125,6 +119,15 @@ namespace chaos{
                      \param commandAlias the alias of the command
                      */
                     SlowCommand *instanceCommandInfo(std::string& commandAlias);
+                protected:
+                    //! Private constructor
+                    SlowCommandExecutor();
+                    
+                    //! Private constructor
+                    SlowCommandExecutor(CThread *_cuThreadForExecutor, std::string _executorID);
+                    
+                    //! Private deconstructor
+                    ~SlowCommandExecutor();
                 public:
                     
                     // Initialize instance
@@ -161,7 +164,7 @@ namespace chaos{
                      The information for the command are contained into the DataWrapper data serialization,
                      they are put into the commandSubmittedQueue for to wait to be executed.
                      */
-                    bool submitCommand(CDataWrapper *commandDescription, uint8_t priority = 50);
+                    bool submitCommand(CDataWrapper *commandDescription);
                 };
             }
         }

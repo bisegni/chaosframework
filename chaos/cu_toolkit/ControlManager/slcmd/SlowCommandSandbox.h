@@ -32,6 +32,7 @@ namespace chaos{
             }
         }
         
+                
         namespace control_manager {
             namespace slow_command {
                 //forward declaration
@@ -66,20 +67,32 @@ namespace chaos{
                     }
                 };
                 
+                //! SAndbox fo the slow command execution
+                /*!
+                    This is the sandbox where the command are executed. Here are checked the
+                    submission rule of the incoming command and the execution state of the current one.
+                    when they are compatible the current command will be killed or paused and new one
+                    come in.
+                 */
                 class SlowCommandSandbox : public utility::StartableService {
                     friend class AbstractControlUnit;
                     friend class SlowCommandExecutor;
                     
+                    //! point to the time for the next check for the available command
                     high_resolution_clock::time_point  timeLastCheckCommand;
                     
                     //!Mutex used for sincronize the introspection of the current command
                     boost::recursive_mutex  mutextCommandScheduler;
                     
-                    SlowCommand *currentExecutingCommand;
-                    
+                    //! POinte to the next available command
                     CommandInfoAndImplementation nextAvailableCommand;
                     
-                    //! the stack for the command, The top commans is the one in execution
+                    //point to the current executing command
+                    SlowCommand *currentExecutingCommand;
+                    
+                    uint32_t checkTimeIntervall;
+                    
+                    //! contain the paused command
                     boost::lockfree::stack<SlowCommand*, boost::lockfree::fixed_sized<false> > commandStack;
                     
                     //-------------------- handler poiter --------------------
@@ -111,6 +124,9 @@ namespace chaos{
                      */
                     inline void installHandler(SlowCommand *cmdImpl);
                     
+                    SlowCommandSandbox();
+                    ~SlowCommandSandbox();
+                    
                 protected:
                     
                     //! Initialize instance
@@ -131,7 +147,7 @@ namespace chaos{
                      */
                     void runCommand();
 
-                    void setNextAvailableCommand(PRIORITY_ELEMENT(CDataWrapper) *cmdInfo, SlowCommand *cmdImpl);
+                    bool setNextAvailableCommand(PRIORITY_ELEMENT(CDataWrapper) *cmdInfo, SlowCommand *cmdImpl);
                     
                     //set the dafault startup command
                     /*!

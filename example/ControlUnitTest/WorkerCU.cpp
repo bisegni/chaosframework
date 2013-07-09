@@ -179,11 +179,9 @@ void WorkerCU::init(const string& deviceID) throw(CException) {
  Execute the Control Unit work
  */
 void WorkerCU::run(const string& deviceID) throw(CException) {
-    const char *devIDInChar = _deviceID.c_str();
-    
     //get new data wrapper instance filled
     //with mandatory data
-    CDataWrapper *acquiredData = getNewDataWrapperForKey(devIDInChar);
+    CDataWrapper *acquiredData = getNewDataWrapper();
     if(!acquiredData) return;
     
     //put the messageID for test the lost of package
@@ -192,7 +190,7 @@ void WorkerCU::run(const string& deviceID) throw(CException) {
     //adding some interesting random data
 
     //submit acquired data
-    pushDataSetForKey(devIDInChar, acquiredData);
+    pushDataSet(acquiredData);
     
 }
 

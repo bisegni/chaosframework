@@ -185,11 +185,10 @@ void SWAlimCU::init(const string& deviceID) throw(CException) {
  Execute the Control Unit work
  */
 void SWAlimCU::run(const string& deviceID) throw(CException) {
-    const char *devIDInChar = _deviceID.c_str();
     int current,voltage;
     //get new data wrapper instance filled
     //with mandatory data
-    CDataWrapper *acquiredData = getNewDataWrapperForKey(devIDInChar);
+    CDataWrapper *acquiredData = getNewDataWrapper();
     if(!acquiredData) return;
     myalim->readCurrent(current);
     myalim->readVoltage(voltage);
@@ -201,7 +200,7 @@ void SWAlimCU::run(const string& deviceID) throw(CException) {
     LAPP_<<"Current:"<<current<<endl<<"Voltage:"<<voltage<<endl;
     
     //submit acquired data
-    pushDataSetForKey(devIDInChar, acquiredData);
+    pushDataSet(acquiredData);
     
 }
 

@@ -66,11 +66,10 @@ namespace chaos{
                      */
                     typedef enum RunningState {
                         RS_Exsc     = 0,    /**< The command cannot be killed or removed, it need to run */
-                        RS_Kill     = 1,    /**< The command can be killed */
-                        RS_Over     = 2,    /**< The command can killed by an equal command */
-                        RS_Stack    = 4,    /**< The command can be stacked (paused) */
-                        RS_End      = 8,    /**< The command has ended his work */
-                        RS_Fault    = 16    /**< The command has had a fault */
+                        RS_Stack    = 1,    /**< The command can be stacked (paused) */
+                        RS_Kill     = 2,    /**< The command can be killed */
+                        RS_End      = 4,    /**< The command has ended his work */
+                        RS_Fault    = 8    /**< The command has had a fault */
                     } RunningState;
                 }
                 
@@ -81,11 +80,10 @@ namespace chaos{
                      * \brief Describe the state in which the command can be found
                      */
                     typedef enum SubmissionRule {
-                        SUBMIT_NORMAL       = 0,    /**< The new command will waith the end of the current executed command and if an handler is implemented it is installed*/
-                        SUBMIT_AND_Kill     = 1,    /**< The new command will kill the current command, all hadnler ol killed one are erased and substituted */
-                        SUBMIT_AND_Overload = 2,    /**< The new command will overload the current command if it is the same */
-                        SUBMIT_AND_Stack    = 3     /**< The new command wil stack the current executing command that consist in 
+                        SUBMIT_AND_Stack    = 1,    /**< The new command wil stack the current executing command that consist in
                                                      install all implemented handler of the new one without touch the handler that are not implemented */
+                        SUBMIT_AND_Kill     = 2,    /**< The new command will kill the current command, all hadnler ol killed one are erased and substituted */
+                        SUBMIT_NORMAL       = 4     /**< The new command will waith the end of the current executed command and if an handler is implemented it is installed*/
                     } SubmissionRule;
                 }
                 

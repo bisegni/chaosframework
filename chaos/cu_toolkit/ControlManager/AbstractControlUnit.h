@@ -25,6 +25,8 @@
 #include <set>
 #include <string>
 #include <vector>
+
+#include <boost/chrono.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
@@ -35,12 +37,13 @@
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/utility/ArrayPointer.h>
 #include <chaos/common/thread/CThread.h>
-#include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/common/pqueue/CObjectHandlerProcessingQueue.h>
 #include <chaos/common/thread/CThreadExecutionTask.h>
+
+#include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/ControlManager/DSAttributeHandlerExecutionEngine.h>
 #include <chaos/cu_toolkit/ControlManager/handler/TDSObjectHandler.h>
-#include <boost/chrono.hpp>
+#include <chaos/cu_toolkit/ControlManager/slcmd/SlowCommandExecutor.h>
 
 #define CU_IDENTIFIER_C_STREAM getCUName() << "_" << getCUInstance()
 #define INIT_STATE      0
@@ -67,6 +70,7 @@ namespace chaos{
         
         using namespace std;
         using namespace cu::handler;
+        //using namespace cu::control_manager::slow_command;
         
         class ActionData {
             
@@ -81,7 +85,7 @@ namespace chaos{
         /*!
          Base class for control unit execution task
          */
-        class AbstractControlUnit:public DeclareAction, protected CUSchemaDB, public CThreadExecutionTask {
+        class AbstractControlUnit : protected cu::control_manager::slow_command::SlowCommandExecutor, public DeclareAction, protected CUSchemaDB, public CThreadExecutionTask {
             friend class ControlManager;
             friend class DomainActionsScheduler;
             
@@ -97,17 +101,17 @@ namespace chaos{
              */
             boost::recursive_mutex managing_cu_mutex;
             //
-            map<string, KeyDataStorage*>  keyDataStorageMap;
+            KeyDataStorage*  keyDataStorage;
             
-            map<string, CObjectHandlerProcessingQueue< ActionData*>* >  actionParamForDeviceMap;
+            CObjectHandlerProcessingQueue< ActionData*>*  actionParamForDeviceMap;
             
-            map<string, CThread* >  schedulerDeviceMap;
+            CThread*   schedulerThread;
             
-            map<string, boost::chrono::seconds >  heartBeatDeviceMap;
+            boost::chrono::seconds  heartBeatIntervall;
             
-            map<string, int >  deviceStateMap;
+            int  deviceState;
             
-            map<string, CUStateKey::ControlUnitState > deviceExplicitStateMap;
+            CUStateKey::ControlUnitState deviceExplicitState;
             
             
             event::channel::InstrumentEventChannel *deviceEventChannel;
@@ -115,9 +119,8 @@ namespace chaos{
             /*!
              Add a new KeyDataStorage for a specific key
              */
-            void addKeyDataStorage(const char *, KeyDataStorage*);
-            
-            void _sharedInit();
+            void setKeyDataStorage(KeyDataStorage*);
+
             
             /*!
              Define the control unit DataSet and Action into
@@ -162,14 +165,9 @@ namespace chaos{
             CDataWrapper* _getState(CDataWrapper*, bool& detachParam) throw(CException);
             
             /*!
-             Return the appropriate thread for the device
-             */
-            inline CThread *getThreadForDevice(const string& deviceID) throw(CException);
-            
-            /*!
              return the appropriate thread for the device
              */
-            inline void threadStartStopManagment(const string& deviceID, CThread *csThread, bool startAction) throw(CException);
+            inline void threadStartStopManagment(bool startAction) throw(CException);
         public:
             /*!
              Construct a new CU with an identifier
@@ -409,18 +407,18 @@ namespace chaos{
             /*!
              Send device data to output buffer
              */
-            void pushDataSetForKey(const char *key, CDataWrapper*);
+            void pushDataSet(CDataWrapper*);
             
             /*!
              get latest device data 
              */
-            ArrayPointer<CDataWrapper> *getLastDataSetForKey(const char *key);
+            ArrayPointer<CDataWrapper> *getLastDataSet();
             
             /*!
              return a new instance of CDataWrapper filled with a mandatory data
              according to key
              */
-            CDataWrapper *getNewDataWrapperForKey(const char*);        
+            CDataWrapper *getNewDataWrapper();        
         };
     }
 }

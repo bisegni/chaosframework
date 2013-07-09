@@ -132,12 +132,11 @@ void BenchTestCU::init(const string& deviceID) throw(CException) {
  Execute the Control Unit work
  */
 void BenchTestCU::run(const string& deviceID) throw(CException) {
-    const char *devIDInChar = reactorName.c_str();
     cycleCount++;
     
     //get new data wrapper instance filled
     //with mandatory data
-    CDataWrapper *acquiredData = getNewDataWrapperForKey(devIDInChar);
+    CDataWrapper *acquiredData = getNewDataWrapper();
     if(!acquiredData) return;
     
     boost::shared_lock<boost::shared_mutex> lock(_setControlValueMutext);
@@ -161,7 +160,7 @@ void BenchTestCU::run(const string& deviceID) throw(CException) {
         cycleCount = 0;
         lastExecutionTime = boost::chrono::steady_clock::now();
     }
-    pushDataSetForKey(devIDInChar, acquiredData);
+    pushDataSet(acquiredData);
     
     reactorInstance->compute_state();
     

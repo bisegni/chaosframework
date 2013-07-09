@@ -95,13 +95,13 @@ void PerfTestCU::run(const string&) throw(CException) {
     }
     
     //prepare data for push
-    CDataWrapper *acquiredData = getNewDataWrapperForKey(deviceName.c_str());
+    CDataWrapper *acquiredData = getNewDataWrapper();
     acquiredData->addInt64Value("rt_average", averageRoundTrip/lastSequenceComputed);
     acquiredData->addInt64Value("seq_lost", lostSequences);
     acquiredData->addInt64Value("last_sequence", lastSequence);
     
     //push data on cache
-    pushDataSetForKey(deviceName.c_str(), acquiredData);
+    pushDataSet(acquiredData);
 }
 
 
