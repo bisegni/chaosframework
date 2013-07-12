@@ -11,7 +11,7 @@
 #include <chaos/common/plugin/PluginLoader.h>
 
 using namespace chaos::common::plugin;
-using namespace chaos::cu::dm::driver;
+using namespace chaos::cu::driver_manager::driver;
 int main(int argc, const char * argv[]) {
     AbstractPlugin *plugin = NULL;
     std::cout << "----------------------------------Start general plugin test----------------------------------" << std::endl;

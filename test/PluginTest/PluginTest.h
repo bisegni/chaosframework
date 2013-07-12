@@ -21,7 +21,7 @@ public:
     void test(int num);
 };
 
-using namespace chaos::cu::dm::driver;
+using namespace chaos::cu::driver_manager::driver;
 class Sl7TcpDriver: ADD_CU_DRIVER_PLUGIN_SUPERCLASS {
     
 public:

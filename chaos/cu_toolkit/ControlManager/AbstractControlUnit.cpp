@@ -98,13 +98,8 @@ void AbstractControlUnit::addAttributeToDataSet(const char*const deviceID,
  */
 void AbstractControlUnit::addHandlerForDSAttribute(const char * deviceID, cu::handler::DSAttributeHandler * classHandler)  throw (CException) {
     if(!classHandler) return;
-    
-    //check if the handler engine has been previously created
-    if(attributeHandlerEngineForDeviceIDMap.count(deviceID) == 0){
-        attributeHandlerEngineForDeviceIDMap.insert(make_pair(deviceID, new cu::DSAttributeHandlerExecutionEngine(deviceID, this)));
-    }
     //add the handler
-    attributeHandlerEngineForDeviceIDMap[deviceID]->addHandlerForDSAttribute(classHandler);
+    attributeHandlerEngine->addHandlerForDSAttribute(classHandler);
 }
 
 /*
@@ -359,7 +354,10 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     CUSchemaDB::addAttributeToDataSetFromDataWrapper(*initConfiguration);
     
     LCU_ << "Initialize the DSAttribute handler engine for device:" << deviceID;
-    utility::StartableService::initImplementation(attributeHandlerEngineForDeviceIDMap[deviceID], static_cast<void*>(initConfiguration), "DSAttribute handler engine", "AbstractControlUnit::_init");
+    if(!attributeHandlerEngine) {
+        attributeHandlerEngine = new cu::DSAttributeHandlerExecutionEngine(deviceID, this);
+    }
+    utility::StartableService::initImplementation(attributeHandlerEngine, static_cast<void*>(initConfiguration), "DSAttribute handler engine", "AbstractControlUnit::_init");
     
     //initialize key data storage for device id
     LCU_ << "Create KeyDataStorage device:" << deviceID;
@@ -370,13 +368,15 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     
     keyDataStorage = tmpKDS;
     
+    LCU_ << "Initializing slow command sandbox" << deviceID;
+    cu::control_manager::slow_command::SlowCommandExecutor::init(static_cast<void*>(initConfiguration));
+    
     LCU_ << "Start custom inititialization" << deviceID;
     //initializing the device in control unit
     init(deviceID);
     
     //advance status
     deviceState++;
-    
     
     //call update param function
     updateConfiguration(initConfiguration, detachParam);
@@ -416,17 +416,29 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
     LCU_ << "Start custom deinitialization for device:" << deviceID;
     deinit(deviceID);
     
-    LCU_ << "Deinitialize the DSAttribute handler engine for device:" << deviceID;
-    utility::StartableService::deinitImplementation(attributeHandlerEngineForDeviceIDMap[deviceID], "DSAttribute handler engine", "AbstractControlUnit::_deinit");
+    LCU_ << "Start sandbox deinitialization for device:" << deviceID;
+    cu::control_manager::slow_command::SlowCommandExecutor::deinit();
+    
+    LCU_ << "Deinitializing the DSAttribute handler engine for device:" << deviceID;
+    if(attributeHandlerEngine) {
+        utility::StartableService::deinitImplementation(attributeHandlerEngine, "DSAttribute handler engine", "AbstractControlUnit::_deinit");
+        delete(attributeHandlerEngine);
+    }
     
     //remove scheduler
-    delete(schedulerThread);
-    schedulerThread = NULL;
+    if(schedulerThread) {
+        LCU_ << "Delete scehduler thread for device:" << deviceID;
+        delete(schedulerThread);
+        schedulerThread = NULL;
+    }
     
     //remove key data storage
-    keyDataStorage->deinit();
-    delete(keyDataStorage);
-    keyDataStorage = NULL;
+    if(keyDataStorage) {
+        LCU_ << "Delete data storage driver for device:" << deviceID;
+        keyDataStorage->deinit();
+        delete(keyDataStorage);
+        keyDataStorage = NULL;
+    }
     
     deviceState--;
     
@@ -457,6 +469,9 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
     }
     
     threadStartStopManagment(true);
+    
+    LCU_ << "Start sandbox for device:" << deviceID;
+    cu::control_manager::slow_command::SlowCommandExecutor::deinit();
     
     deviceState++;
     
@@ -519,9 +534,10 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
     try {
         //send dataset attribute change pack to control unit implementation
         executionResult = setDatasetAttribute(datasetAttributeValues, detachParam);
-        if(attributeHandlerEngineForDeviceIDMap.count(deviceID) > 0) {
-            attributeHandlerEngineForDeviceIDMap[deviceID]->executeHandler(datasetAttributeValues);
-        }
+        
+        //serach and execute handler
+        attributeHandlerEngine->executeHandler(datasetAttributeValues);
+        
         //at this time notify the wel gone setting of comand
         if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(deviceID.c_str(), 0);
         

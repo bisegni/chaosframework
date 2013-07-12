@@ -25,7 +25,10 @@
 #endif
 
 #include "mainwindow.h"
+#ifndef Q_MOC_RUN
 #include <chaos/ui_toolkit/ChaosUIToolkit.h>
+#endif
+
 
 int main(int argc, char *argv[])
 {

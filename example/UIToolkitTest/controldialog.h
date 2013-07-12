@@ -21,8 +21,11 @@
 #define CONTROLDIALOG_H
 
 #include <QDialog>
+
+#ifndef Q_MOC_RUN
 #include <boost/shared_ptr.hpp>
 #include <chaos/common/data/CUSchemaDB.h>
+#endif
 #include <string>
 
 namespace Ui {

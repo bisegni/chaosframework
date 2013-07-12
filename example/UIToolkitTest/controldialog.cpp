@@ -19,9 +19,13 @@
  */
 #include "controldialog.h"
 #include "ui_controldialog.h"
+
+#ifndef Q_MOC_RUN
 #include <chaos/ui_toolkit/HighLevelApi/DeviceController.h>
+#endif
 #include <qspinbox.h>
 #include <limits>
+
 ControlDialog::ControlDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ControlDialog)

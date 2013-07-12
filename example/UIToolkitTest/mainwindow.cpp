@@ -34,11 +34,15 @@
 #include <QStandardItemModel>
 #include <vector>
 #include <string>
+#ifndef Q_MOC_RUN
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
 #include <controldialog.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
+#endif
+
+
 #include <qevent.h>
 #include <QTableWidgetItem>
 

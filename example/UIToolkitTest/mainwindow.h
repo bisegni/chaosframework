@@ -24,11 +24,15 @@
 #include <QMainWindow>
 #include <graphwidget.h>
 #include <QModelIndex>
+
+#ifndef Q_MOC_RUN
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/ui_toolkit/HighLevelApi/DeviceController.h>
 #include <chaos/common/thread/ChaosThread.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
+#endif
+
 #include <qwt_system_clock.h>
 namespace Ui {
 class MainWindow;

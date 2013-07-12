@@ -46,7 +46,7 @@ namespace chaos{
  
 #define ADD_CU_DRIVER_PLUGIN_SUPERCLASS public AbstractDriver, public AbstractDriverPlugin
             
-#define DEFAULT_CU_DRIVER_PLUGIN_CONSTRUCTOR(t) t::t():chaos::cu::dm::driver::AbstractDriverPlugin(this)
+#define DEFAULT_CU_DRIVER_PLUGIN_CONSTRUCTOR(t) t::t():chaos::cu::driver_manager::driver::AbstractDriverPlugin(this)
                 
                 //! Define a plugin for a driver
                 /*!

@@ -29,7 +29,7 @@
 #include <chaos/common/utility/InetUtility.h>
 #include <chaos/common/log/LogManager.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
-#include <chaos/common/data/cache/DataCache.h>
+//#include <chaos/common/data/cache/DataCache.h>
 
     //! Default chaos namespace used to group all common api
 namespace chaos {

@@ -26,11 +26,13 @@
 #include <qwt_plot_grid.h>
 #include <cmath>
 #include <QVBoxLayout>
+#ifndef Q_MOC_RUN
 #include <chaos/common/utility/SingleBufferCircularBuffer.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 #include <boost/random.hpp>
 #include <chaos/common/cconstants.h>
+#endif
 #include <qwt_system_clock.h>
 
 

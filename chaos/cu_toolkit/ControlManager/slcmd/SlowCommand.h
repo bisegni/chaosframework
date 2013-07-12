@@ -109,9 +109,9 @@ namespace chaos{
                 class SlowCommand {
                     friend class SlowCommandSandbox;
                     friend class SlowCommandExecutor;
-                    friend class SetFunctor;
-                    friend class AcquireFunctor;
-                    friend class CorrelationFunctor;
+                    friend struct SetFunctor;
+                    friend struct AcquireFunctor;
+                    friend struct CorrelationFunctor;
                     
                     //! Running state
                     /*!
