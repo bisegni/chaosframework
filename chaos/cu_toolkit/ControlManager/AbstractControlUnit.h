@@ -93,7 +93,7 @@ namespace chaos{
             string jsonSetupFilePath;
             boost::chrono::seconds  lastAcquiredTime;
             
-            cu::DSAttributeHandlerExecutionEngine* attributeHandlerEngine;
+            cu::DSAttributeHandlerExecutionEngine *attributeHandlerEngine;
             
             //!mutex for multithreading managment of sand box
             /*!

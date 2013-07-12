@@ -119,7 +119,7 @@ void SlowCommandSandbox::manageAvailableCommand() {
         }
         
         //install the new command handler
-        installHandler(nextAvailableCommand.cmdImpl);
+        installHandler(nextAvailableCommand.cmdImpl, nextAvailableCommand.cmdInfo->element);
         
         //delete the command description
         if(nextAvailableCommand.cmdInfo) delete (nextAvailableCommand.cmdInfo);
@@ -146,12 +146,12 @@ void SlowCommandSandbox::manageAvailableCommand() {
             }
         }
         
-        installHandler(popedCommand);
+        installHandler(popedCommand, NULL);
     }
 }
 
 //!install the command
-void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl) {
+void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setData) {
     CHAOS_ASSERT(cmdImpl)
     boost::unique_lock<boost::recursive_mutex> lockScheduler(mutextCommandScheduler);
     
@@ -166,7 +166,7 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl) {
         if(handlerMask & HandlerType::HT_Set) {
             setHandlerFunctor.cmdInstance = currentExecutingCommand;
             //at this point the set need to bee called
-            setHandlerFunctor();
+            setHandlerFunctor(setData);
         }
         
         //acquire handler
@@ -211,5 +211,5 @@ void SlowCommandSandbox::setDefaultCommand(SlowCommand *cmdImpl) {
     
     
     //we can setup the base default command
-    installHandler(cmdImpl);
+    installHandler(cmdImpl, NULL);
 }

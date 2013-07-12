@@ -26,6 +26,8 @@
 #include <string>
 #include <stdint.h>
 
+#include <chaos/common/data/CDataWrapper.h>
+
 namespace chaos{
     namespace cu {
         
@@ -157,12 +159,15 @@ namespace chaos{
                     /*!
                      Set handler has the main purpose to initiate the command. All the operration need to avviate
                      the command sequence need to made here.
+                     \param data CDatawrapper object taht containing a set of initial data for the command
+                     \return the mask for the runnign state
                      */
-                    virtual uint8_t setHandler();
+                    virtual uint8_t setHandler(CDataWrapper *data);
                     
                     //! Aquire the necessary data for the command
                     /*!
                      The acquire handler has the purpose to get all necessary data need the by CC handler.
+                     \return the mask for the runnign state
                      */
                     virtual uint8_t acquireHandler();
                     
@@ -170,6 +175,7 @@ namespace chaos{
                     /*!
                      The correlation and commit handlers has the purpose to check whenever the command has ended or for
                      send further commands to the hardware, through the driver, to accomplish the command steps.
+                     \return the mask for the runnign state
                      */
                     virtual uint8_t ccHandler();
                     

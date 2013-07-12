@@ -44,26 +44,27 @@ namespace chaos{
                     SlowCommand *cmdImpl;
                 } CommandInfoAndImplementation;
 
-                
+                //! Base functor for the command handler
                 struct BaseFunctor {
                     SlowCommand *cmdInstance;
                 };
                 
+                //! Functor implementation
                 struct SetFunctor : public BaseFunctor {
-                    uint8_t operator()() {
-                        return cmdInstance?(cmdInstance->setHandler()):0;
+                    uint8_t operator()(CDataWrapper *commandInfo) {
+                        return cmdInstance?(cmdInstance->setHandler(commandInfo)):cmdInstance->runningState;
                     }
                 };
                 
                 struct AcquireFunctor : public BaseFunctor {
                     uint8_t operator()() {
-                        return cmdInstance?(cmdInstance->acquireHandler()):0;
+                        return cmdInstance?(cmdInstance->acquireHandler()):cmdInstance->runningState;
                     }
                 };
                 
                 struct CorrelationFunctor : public BaseFunctor {
                     uint8_t operator()() {
-                        return cmdInstance?(cmdInstance->ccHandler()):0;
+                        return cmdInstance?(cmdInstance->ccHandler()):cmdInstance->runningState;
                     }
                 };
                 
@@ -122,7 +123,7 @@ namespace chaos{
                      Perform th ecommand isntallation without check the condition. The handler
                      that are not implemented are managed according to the submition rule
                      */
-                    inline void installHandler(SlowCommand *cmdImpl);
+                    inline void installHandler(SlowCommand *cmdImpl, CDataWrapper* setData);
                     
                     SlowCommandSandbox();
                     ~SlowCommandSandbox();

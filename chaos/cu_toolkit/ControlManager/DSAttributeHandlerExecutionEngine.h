@@ -60,6 +60,10 @@ namespace chaos{
             /*!
              Default constructor with std string
              */
+            DSAttributeHandlerExecutionEngine();
+            /*!
+             Default constructor with std string
+             */
             DSAttributeHandlerExecutionEngine(std::string& _deviceID, chaos::CUSchemaDB *);
             
             /*!
@@ -83,6 +87,10 @@ namespace chaos{
             
                 //! Deinit the implementation
             void deinit() throw(chaos::CException);
+            
+            void setDeviceID(std::string& _deviceID);
+            
+            void setCUSchemaDB(chaos::CUSchemaDB *_referenceCUSchemeDB);
             
                 //!addHandlerForDSAttribute
             /*!

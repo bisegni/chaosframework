@@ -27,6 +27,10 @@ using namespace chaos::cu;
 /*!
  Default constructor with std string
  */
+DSAttributeHandlerExecutionEngine::DSAttributeHandlerExecutionEngine(){}
+/*!
+ Default constructor with std string
+ */
 DSAttributeHandlerExecutionEngine::DSAttributeHandlerExecutionEngine(std::string& _deviceID,
                                                                      chaos::CUSchemaDB *_schemaDB): deviceID(_deviceID),
                                                                                                     referenceCUSchemeDB(_schemaDB) {}
@@ -43,6 +47,14 @@ DSAttributeHandlerExecutionEngine::DSAttributeHandlerExecutionEngine(const char 
  */
 DSAttributeHandlerExecutionEngine::~DSAttributeHandlerExecutionEngine() {
     
+}
+
+void DSAttributeHandlerExecutionEngine::setDeviceID(std::string& _deviceID) {
+    deviceID = _deviceID;
+}
+
+void DSAttributeHandlerExecutionEngine::setCUSchemaDB(chaos::CUSchemaDB *_referenceCUSchemeDB) {
+    referenceCUSchemeDB = _referenceCUSchemeDB;
 }
 
     //! Initialize instance

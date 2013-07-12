@@ -36,7 +36,7 @@ SlowCommand::~SlowCommand() {
 /*
  Start the slow command sequence
  */
-uint8_t SlowCommand::setHandler() {
+uint8_t SlowCommand::setHandler(CDataWrapper *data) {
     return 0;
 }
 

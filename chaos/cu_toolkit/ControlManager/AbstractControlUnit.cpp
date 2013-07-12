@@ -46,10 +46,9 @@ using namespace boost::uuids;
 
 
 AbstractControlUnit::AbstractControlUnit():CUSchemaDB(false), cuInstance(UUIDUtil::generateUUIDLite()) {
-    SlowCommandExecutor::executorID = cuInstance;
 }
 
-AbstractControlUnit::AbstractControlUnit(const char *descJsonPath):CUSchemaDB(false), cuInstance(UUIDUtil::generateUUIDLite()) {
+AbstractControlUnit::AbstractControlUnit(const char *descJsonPath):CUSchemaDB(false), cuInstance(UUIDUtil::generateUUIDLite())  {
     initWithJsonFilePath(descJsonPath);
 }
 
@@ -98,6 +97,9 @@ void AbstractControlUnit::addAttributeToDataSet(const char*const deviceID,
  */
 void AbstractControlUnit::addHandlerForDSAttribute(const char * deviceID, cu::handler::DSAttributeHandler * classHandler)  throw (CException) {
     if(!classHandler) return;
+    if(!attributeHandlerEngine) {
+        attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(deviceID, this);
+    }
     //add the handler
     attributeHandlerEngine->addHandlerForDSAttribute(classHandler);
 }
@@ -354,9 +356,6 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     CUSchemaDB::addAttributeToDataSetFromDataWrapper(*initConfiguration);
     
     LCU_ << "Initialize the DSAttribute handler engine for device:" << deviceID;
-    if(!attributeHandlerEngine) {
-        attributeHandlerEngine = new cu::DSAttributeHandlerExecutionEngine(deviceID, this);
-    }
     utility::StartableService::initImplementation(attributeHandlerEngine, static_cast<void*>(initConfiguration), "DSAttribute handler engine", "AbstractControlUnit::_init");
     
     //initialize key data storage for device id
@@ -420,7 +419,7 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
     cu::control_manager::slow_command::SlowCommandExecutor::deinit();
     
     LCU_ << "Deinitializing the DSAttribute handler engine for device:" << deviceID;
-    if(attributeHandlerEngine) {
+    if(!attributeHandlerEngine) {
         utility::StartableService::deinitImplementation(attributeHandlerEngine, "DSAttribute handler engine", "AbstractControlUnit::_deinit");
         delete(attributeHandlerEngine);
     }

@@ -106,6 +106,9 @@ ADD_SUBDIRECTORY(ChaosNodeDirectory bin/bin_cnd)
 message(STATUS "Configure Chaos HST Service")
 ADD_SUBDIRECTORY(ChaosHSTService bin/bin_chst)
 
+message(STATUS "Configure Chaos CLI")
+ADD_SUBDIRECTORY(example/ChaosCLI bin/chaos_cli)
+
 message(STATUS "Configure ChaosDeviceDriver (chaosDD) Library")
 ADD_SUBDIRECTORY(example/ChaosDeviceDriver bin/bin_dd)
 
