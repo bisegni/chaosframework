@@ -46,17 +46,27 @@ using namespace boost::uuids;
 
 
 AbstractControlUnit::AbstractControlUnit():CUSchemaDB(false), cuInstance(UUIDUtil::generateUUIDLite()) {
+    attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
+    slowCommandExecutor = new cu::control_manager::slow_command::SlowCommandExecutor(cuInstance);
 }
 
 AbstractControlUnit::AbstractControlUnit(const char *descJsonPath):CUSchemaDB(false), cuInstance(UUIDUtil::generateUUIDLite())  {
     initWithJsonFilePath(descJsonPath);
+    attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
+    slowCommandExecutor = new cu::control_manager::slow_command::SlowCommandExecutor(cuInstance);
 }
 
 /*!
  Destructor a new CU with an identifier
  */
 AbstractControlUnit::~AbstractControlUnit() {
+    if(slowCommandExecutor) {
+        delete(slowCommandExecutor);
+    }
     
+    if(attributeHandlerEngine) {
+        delete attributeHandlerEngine;
+    }
 }
 
 /*
@@ -97,9 +107,6 @@ void AbstractControlUnit::addAttributeToDataSet(const char*const deviceID,
  */
 void AbstractControlUnit::addHandlerForDSAttribute(const char * deviceID, cu::handler::DSAttributeHandler * classHandler)  throw (CException) {
     if(!classHandler) return;
-    if(!attributeHandlerEngine) {
-        attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(deviceID, this);
-    }
     //add the handler
     attributeHandlerEngine->addHandlerForDSAttribute(classHandler);
 }
@@ -292,9 +299,7 @@ void AbstractControlUnit::_undefineActionAndDataset() throw(CException) {
  return the appropriate thread for the device
  */
 void AbstractControlUnit::threadStartStopManagment(bool startAction) throw(CException) {
-    CHAOS_ASSERT(schedulerThread)
     if(startAction) {
-        
         if(schedulerThread && !schedulerThread->isStopped()){
             LCU_ << "thread already running";
             throw CException(-5, "Thread for device already running", "AbstractControlUnit::threadStartStopManagment");
@@ -316,8 +321,10 @@ void AbstractControlUnit::threadStartStopManagment(bool startAction) throw(CExce
             LCU_ << "thread already runnign";
             throw CException(-5, "Thread for device already running", "AbstractControlUnit::threadStartStopManagment");
         }
-        LCU_ << "Stopping thread";
-        schedulerThread->stop();
+        LCU_ << "Stopping and joining scheduling thread";
+        schedulerThread->stop(true);
+        delete(schedulerThread);
+        schedulerThread = NULL;
         LCU_ << "Thread stopped";
     }
     
@@ -358,6 +365,10 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     LCU_ << "Initialize the DSAttribute handler engine for device:" << deviceID;
     utility::StartableService::initImplementation(attributeHandlerEngine, static_cast<void*>(initConfiguration), "DSAttribute handler engine", "AbstractControlUnit::_init");
     
+    LCU_ << "Initializing slow command sandbox" << deviceID;
+    utility::StartableService::initImplementation(slowCommandExecutor, static_cast<void*>(initConfiguration), "Slow Command Executor", "AbstractControlUnit::_init");
+
+    
     //initialize key data storage for device id
     LCU_ << "Create KeyDataStorage device:" << deviceID;
     tmpKDS = DataManager::getInstance()->getKeyDataStorageNewInstanceForKey(deviceID);
@@ -367,12 +378,9 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     
     keyDataStorage = tmpKDS;
     
-    LCU_ << "Initializing slow command sandbox" << deviceID;
-    cu::control_manager::slow_command::SlowCommandExecutor::init(static_cast<void*>(initConfiguration));
-    
     LCU_ << "Start custom inititialization" << deviceID;
     //initializing the device in control unit
-    init(deviceID);
+    init();
     
     //advance status
     deviceState++;
@@ -413,23 +421,13 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
     
     //deinit the control unit
     LCU_ << "Start custom deinitialization for device:" << deviceID;
-    deinit(deviceID);
+    deinit();
     
-    LCU_ << "Start sandbox deinitialization for device:" << deviceID;
-    cu::control_manager::slow_command::SlowCommandExecutor::deinit();
+    LCU_ << "Deinitialize sandbox deinitialization for device:" << deviceID;
+    utility::StartableService::deinitImplementation(slowCommandExecutor, "Slow Command Executor", "AbstractControlUnit::_deinit");
     
     LCU_ << "Deinitializing the DSAttribute handler engine for device:" << deviceID;
-    if(!attributeHandlerEngine) {
-        utility::StartableService::deinitImplementation(attributeHandlerEngine, "DSAttribute handler engine", "AbstractControlUnit::_deinit");
-        delete(attributeHandlerEngine);
-    }
-    
-    //remove scheduler
-    if(schedulerThread) {
-        LCU_ << "Delete scehduler thread for device:" << deviceID;
-        delete(schedulerThread);
-        schedulerThread = NULL;
-    }
+    utility::StartableService::deinitImplementation(attributeHandlerEngine, "DSAttribute handler engine", "AbstractControlUnit::_deinit");
     
     //remove key data storage
     if(keyDataStorage) {
@@ -467,10 +465,13 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
         throw CException(-3, "Device already started", "AbstractControlUnit::_start");
     }
     
+    LCU_ << "Start sandbox deinitialization for device:" << deviceID;
+    utility::StartableService::startImplementation(slowCommandExecutor, "Slow Command Executor", "AbstractControlUnit::_start");
+    
     threadStartStopManagment(true);
     
     LCU_ << "Start sandbox for device:" << deviceID;
-    cu::control_manager::slow_command::SlowCommandExecutor::deinit();
+    
     
     deviceState++;
     
@@ -499,7 +500,11 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachPa
     }
     
     //call custom stop method
-    stop(deviceID);
+    stop();
+    
+    
+    LCU_ << "Stop sandbox deinitialization for device:" << deviceID;
+    utility::StartableService::stopImplementation(slowCommandExecutor, "Slow Command Executor", "AbstractControlUnit::_stop");
     
     //manage the thread
     threadStartStopManagment(false);
@@ -535,7 +540,7 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
         executionResult = setDatasetAttribute(datasetAttributeValues, detachParam);
         
         //serach and execute handler
-        attributeHandlerEngine->executeHandler(datasetAttributeValues);
+        attributeHandlerEngine->executeHandler(deviceID, datasetAttributeValues);
         
         //at this time notify the wel gone setting of comand
         if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(deviceID.c_str(), 0);
@@ -612,15 +617,15 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
 /*
  Execute the scehduling for the device
  */
-void AbstractControlUnit::executeOnThread( const string& deviceIDToSchedule) throw(CException) {
+void AbstractControlUnit::executeOnThread() throw(CException) {
     
-    run(deviceIDToSchedule);
+    run();
     //check if we are in sequential or in threaded mode
     
     lastAcquiredTime = boost::chrono::duration_cast<boost::chrono::seconds>(boost::chrono::steady_clock::now().time_since_epoch());
     //check if we need to sendthe heartbeat
     if(deviceEventChannel && ((lastAcquiredTime - heartBeatIntervall) > boost::chrono::seconds(60))){
-        deviceEventChannel->notifyHeartbeat(deviceIDToSchedule.c_str());
+        //deviceEventChannel->notifyHeartbeat(deviceIDToSchedule.c_str());
         heartBeatIntervall = lastAcquiredTime;
     }
 }

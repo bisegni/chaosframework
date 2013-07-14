@@ -32,6 +32,7 @@
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/message/MDSMessageChannel.h>
+
 namespace chaos {
     
     namespace cu {
@@ -55,7 +56,7 @@ namespace chaos {
             /*
              Thread method that work on buffer item
              */
-            void executeOnThread(const string&) throw(CException);
+            void executeOnThread() throw(CException);
             
             /*
              get the last insert data

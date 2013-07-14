@@ -94,7 +94,7 @@ namespace chaos {
                 /*
                  Thread method that work on buffer item
                  */
-                void executeOnThread(const string& threadIdentification) throw(CException) {
+                void executeOnThread() throw(CException) {
                         //get the oldest element
                     PRIORITY_ELEMENT(T)* dataRow = NULL;
                     ElementManagingPolicy elementPolicy;

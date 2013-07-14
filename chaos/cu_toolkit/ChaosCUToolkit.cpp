@@ -17,10 +17,10 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "ChaosCUToolkit.h"
-#include "DataManager/DataManager.h"
-#include "CommandManager/CommandManager.h"
-#include "ControlManager/ControlManager.h"
+#include <chaos/cu_toolkit/ChaosCUToolkit.h>
+#include <chaos/cu_toolkit/DataManager/DataManager.h>
+#include <chaos/cu_toolkit/CommandManager/CommandManager.h>
+#include <chaos/cu_toolkit/ControlManager/ControlManager.h>
 
 #include <csignal>
 
@@ -28,6 +28,7 @@
 using namespace std;
 using namespace chaos;
 using namespace chaos::cu;
+
 using boost::shared_ptr;
 
 //boost::mutex ChaosCUToolkit::monitor;

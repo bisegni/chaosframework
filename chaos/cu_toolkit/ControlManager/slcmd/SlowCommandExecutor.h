@@ -76,7 +76,7 @@ namespace chaos{
                     //!the contro unit thread associated with this executor
                     CThread         *cuThreadForExecutor;
                     
-                    shared_ptr<boost::thread>   incomingCheckThreadPtr;
+                    boost::thread   *incomingCheckThreadPtr;
                     
                     //!Mutex for priority queue managment
                     boost::mutex    mutextQueueManagment;
@@ -124,7 +124,7 @@ namespace chaos{
                     SlowCommandExecutor();
                     
                     //! Private constructor
-                    SlowCommandExecutor(CThread *_cuThreadForExecutor, std::string _executorID);
+                    SlowCommandExecutor(std::string _executorID);
                     
                     //! Private deconstructor
                     ~SlowCommandExecutor();

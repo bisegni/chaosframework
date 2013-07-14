@@ -28,7 +28,7 @@ namespace chaos {
         friend class CThread;
     protected:
         virtual ~CThreadExecutionTask(){};
-        virtual void executeOnThread(const string&) throw(CException) = 0;
+        virtual void executeOnThread() throw(CException) = 0;
     };
 }
 #endif

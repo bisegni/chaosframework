@@ -219,7 +219,7 @@ void ControlManager::submitControlUnit(AbstractControlUnit *data) throw(CExcepti
 /*
  Thread method that work on buffer item
  */
-void ControlManager::executeOnThread(const string& threadIdentification) throw(CException) {
+void ControlManager::executeOnThread() throw(CException) {
         //initialize the Control Unit
     int registrationError = ErrorCode::EC_NO_ERROR;
     AbstractControlUnit *curCU = 0L;

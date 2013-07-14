@@ -31,36 +31,49 @@ void SlowCommandSandbox::init(void*) throw(chaos::CException) {
     nextAvailableCommand.cmdInfo = NULL;
     nextAvailableCommand.cmdImpl = NULL;
     
-    checkTimeIntervall = DEFAULT_CHECK_TIME;
+    checkTimeIntervall = milliseconds(DEFAULT_CHECK_TIME);
+    
+    schedulerThread = NULL;
+    scheduleWorkFlag = true;
     
 }
 
 // Start the implementation
 void SlowCommandSandbox::start() throw(chaos::CException) {
-    timeLastCheckCommand = boost::chrono::steady_clock::now() + milliseconds(checkTimeIntervall);
+    //allocate threa
+    schedulerThread = new boost::thread(boost::bind(&SlowCommandSandbox::runCommand, this));
 }
 
 // Start the implementation
 void SlowCommandSandbox::stop() throw(chaos::CException) {
     //we ned to get the lock on the scheduler
-    boost::unique_lock<boost::recursive_mutex> lockScheduler(mutextCommandScheduler);
+    boost::recursive_mutex::scoped_lock lockScheduler(mutextCommandScheduler);
+    
+    //se the flag to the end o fthe scheduler
+    scheduleWorkFlag = true;
+    
+    //waith that the current command will terminate the work
+    conditionWaithSchedulerEnd.wait(lockScheduler);
     
     //reset all the handler
     setHandlerFunctor.cmdInstance = NULL;
-    
-    //acquire handler
     acquireHandlerFunctor.cmdInstance = NULL;
-    
-    //correlation commit
     correlationHandlerFunctor.cmdInstance = NULL;
 }
 
 //! Deinit the implementation
 void SlowCommandSandbox::deinit() throw(chaos::CException) {
-    SlowCommand *instance = NULL;
     
     //we ned to get the lock on the scheduler
-    boost::unique_lock<boost::recursive_mutex> lockScheduler(mutextCommandScheduler);
+    boost::recursive_mutex::scoped_lock lockScheduler(mutextCommandScheduler);
+    
+    if(schedulerThread) {
+        schedulerThread->join();
+        delete(schedulerThread);
+        schedulerThread = NULL;
+    }
+    
+    SlowCommand *instance = NULL;
     
     //free the remained commands into the stack
     while (!commandStack.empty()) {
@@ -72,33 +85,65 @@ void SlowCommandSandbox::deinit() throw(chaos::CException) {
 }
 
 void SlowCommandSandbox::runCommand() {
-    // call the acquire phase
-    acquireHandlerFunctor();
+    bool canWork = true;
+    bool currentStateEnd = false;
     
-    //call the correlation and commit phase();
-    correlationHandlerFunctor();
-
-    if( (((currentExecutingCommand->runningState) << 2) >> 2) ||
-        boost::chrono::steady_clock::now() >= timeLastCheckCommand ) {
+    boost::mutex::scoped_lock pauseLock(pauseMutex);
+    
+    //point to the time for the next check for the available command
+    high_resolution_clock::time_point timeLastCheckCommand = boost::chrono::steady_clock::now() + boost::chrono::milliseconds(checkTimeIntervall);
+    high_resolution_clock::time_point runStart;
+    high_resolution_clock::time_point runEnd;
+    
+    while(canWork) {
+        runStart = boost::chrono::steady_clock::now();
+        // call the acquire phase
+        acquireHandlerFunctor();
         
-        //try to get the lock otherwhise continue with the current control
-        boost::unique_lock<boost::recursive_mutex> lockScheduler(mutextCommandScheduler, boost::try_to_lock);
-        if(lockScheduler && nextAvailableCommand.cmdImpl) {
-            manageAvailableCommand();
-            lockScheduler.unlock();
+        //call the correlation and commit phase();
+        correlationHandlerFunctor();
+        
+        //compute the runnig stateor fault
+        currentStateEnd = currentExecutingCommand?(((currentExecutingCommand->runningState) << 2) >> 2):RunningStateType::RS_End;
+        
+        if( currentStateEnd ||
+           boost::chrono::steady_clock::now() >= timeLastCheckCommand ) {
+            //see if the next available or an old push command need to be installed
+            if(currentStateEnd) {
+                if(!scheduleWorkFlag) {
+                    // the command has end and the scehduler has been stopped
+                    canWork = false;
+                    continue;
+                } else {
+                    //wait until it continue
+                    pauseCondition.wait(pauseLock);
+                }
+            }
+            //try to get the lock otherwhise continue with the current control
+            boost::recursive_mutex::scoped_lock lockScheduler(mutextCommandScheduler, boost::try_to_lock);
+            if(lockScheduler && nextAvailableCommand.cmdImpl) {
+                manageAvailableCommand();
+                lockScheduler.unlock();
+            }
+            
+            //we need to check for a new
+            timeLastCheckCommand = boost::chrono::steady_clock::now() + checkTimeIntervall;
         }
         
-        //we need to check for a new
-        timeLastCheckCommand = boost::chrono::steady_clock::now() + milliseconds(checkTimeIntervall);
+        runEnd = boost::chrono::steady_clock::now();
+        milliseconds m = schedulerStepDelay - boost::chrono::duration_cast<boost::chrono::milliseconds>(runEnd-runStart);
+        boost::this_thread::sleep_for(m);
     }
     
+    //notify the end of the thread
+    conditionWaithSchedulerEnd.notify_all();
 }
 
 //! Check if the new command can be installed
 void SlowCommandSandbox::manageAvailableCommand() {
     
     // get the command submission info
-    boost::unique_lock<boost::recursive_mutex> lockScheduler(mutextCommandScheduler);
+    boost::recursive_mutex::scoped_lock lockScheduler(mutextCommandScheduler);
     
     if(nextAvailableCommand.cmdImpl) {
         uint8_t submissionState = nextAvailableCommand.cmdImpl->submissionRule;
@@ -153,7 +198,7 @@ void SlowCommandSandbox::manageAvailableCommand() {
 //!install the command
 void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setData) {
     CHAOS_ASSERT(cmdImpl)
-    boost::unique_lock<boost::recursive_mutex> lockScheduler(mutextCommandScheduler);
+    boost::recursive_mutex::scoped_lock lockScheduler(mutextCommandScheduler);
     
     //set current command
     currentExecutingCommand = cmdImpl;
@@ -183,7 +228,7 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
 
 bool SlowCommandSandbox::setNextAvailableCommand(PRIORITY_ELEMENT(CDataWrapper) *cmdInfo, SlowCommand *cmdImpl) {
     
-    boost::unique_lock<boost::recursive_mutex> lockScheduler(mutextCommandScheduler);
+    boost::recursive_mutex::scoped_lock lockScheduler(mutextCommandScheduler);
     if(utility::StartableService::serviceState != utility::StartableServiceType::SS_STARTED) return false;
     //delete the waiting command
     if(nextAvailableCommand.cmdImpl) delete (nextAvailableCommand.cmdImpl);
@@ -200,7 +245,7 @@ void SlowCommandSandbox::setDefaultCommand(SlowCommand *cmdImpl) {
     if(!cmdImpl) return;
     
     //lock the scehduler
-    boost::unique_lock<boost::recursive_mutex> lockScheduler(mutextCommandScheduler);
+    boost::recursive_mutex::scoped_lock lockScheduler(mutextCommandScheduler);
     
     if(utility::StartableService::serviceState == utility::StartableServiceType::SS_STARTED ||
        utility::StartableService::serviceState == utility::StartableServiceType::SS_STARTING) {

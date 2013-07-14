@@ -157,7 +157,7 @@ void WorkerCU::defineActionAndDataset() throw(CException) {
 /*
  Initialize the Custom Contro Unit and return the configuration
  */
-void WorkerCU::init(const string& deviceID) throw(CException) {
+void WorkerCU::init() throw(CException) {
     LAPP_ << "init WorkerCU";
     
     initTime = steady_clock::now();
@@ -178,7 +178,7 @@ void WorkerCU::init(const string& deviceID) throw(CException) {
 /*
  Execute the Control Unit work
  */
-void WorkerCU::run(const string& deviceID) throw(CException) {
+void WorkerCU::run() throw(CException) {
     //get new data wrapper instance filled
     //with mandatory data
     CDataWrapper *acquiredData = getNewDataWrapper();
@@ -208,15 +208,15 @@ void WorkerCU::computeWave(CDataWrapper *acquiredData) {
 /*
  Execute the Control Unit work
  */
-void WorkerCU::stop(const string& deviceID) throw(CException) {
-    LAPP_ << "stop WorkerCU for device " << deviceID;
+void WorkerCU::stop() throw(CException) {
+    LAPP_ << "stop WorkerCU";
 }
 
 /*
  Deinit the Control Unit
  */
-void WorkerCU::deinit(const string& deviceID) throw(CException) {
-    LAPP_ << "deinit WorkerCU for device " << deviceID;
+void WorkerCU::deinit() throw(CException) {
+    LAPP_ << "deinit WorkerCU";
     if(sinevalue){
         free(sinevalue);
     }

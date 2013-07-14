@@ -155,7 +155,7 @@ void SWAlimCU::defineActionAndDataset() throw(CException) {
 /*
  Initialize the Custom Contro Unit and return the configuration
  */
-void SWAlimCU::init(const string& deviceID) throw(CException) {
+void SWAlimCU::init() throw(CException) {
     LAPP_ << "init SWAlimCU";
     RangeValueInfo param;
     std::vector<const char*> alim_attr;
@@ -184,7 +184,7 @@ void SWAlimCU::init(const string& deviceID) throw(CException) {
 /*
  Execute the Control Unit work
  */
-void SWAlimCU::run(const string& deviceID) throw(CException) {
+void SWAlimCU::run() throw(CException) {
     int current,voltage;
     //get new data wrapper instance filled
     //with mandatory data
@@ -208,15 +208,15 @@ void SWAlimCU::run(const string& deviceID) throw(CException) {
 /*
  Execute the Control Unit work
  */
-void SWAlimCU::stop(const string& deviceID) throw(CException) {
-    LAPP_ << "stop SWAlimCU for device " << deviceID;
+void SWAlimCU::stop() throw(CException) {
+    LAPP_ << "stop SWAlimCU";
 }
 
 /*
  Deinit the Control Unit
  */
-void SWAlimCU::deinit(const string& deviceID) throw(CException) {
-    LAPP_ << "deinit SWAlimCU for device " << deviceID;
+void SWAlimCU::deinit() throw(CException) {
+    LAPP_ << "deinit SWAlimCU";
     myalim->deinit();
 }
 

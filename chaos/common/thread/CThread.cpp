@@ -156,7 +156,7 @@ void CThread::executeWork() {
             statisticData.ptimeNextStart = boost::chrono::steady_clock::now() + waithTimeInMicrosecond;
             
             //call scheduled function
-            taskUnit->executeOnThread(threadIdentification);
+            taskUnit->executeOnThread();
             //taskUnit->executeOnThread();
             
             //se if we need to whait for the nex execution

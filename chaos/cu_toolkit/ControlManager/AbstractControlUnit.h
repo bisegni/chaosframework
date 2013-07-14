@@ -85,7 +85,7 @@ namespace chaos{
         /*!
          Base class for control unit execution task
          */
-        class AbstractControlUnit : protected cu::control_manager::slow_command::SlowCommandExecutor, public DeclareAction, protected CUSchemaDB, public CThreadExecutionTask {
+        class AbstractControlUnit : public DeclareAction, protected CUSchemaDB, public CThreadExecutionTask {
             friend class ControlManager;
             friend class DomainActionsScheduler;
             
@@ -94,6 +94,7 @@ namespace chaos{
             boost::chrono::seconds  lastAcquiredTime;
             
             cu::DSAttributeHandlerExecutionEngine *attributeHandlerEngine;
+            cu::control_manager::slow_command::SlowCommandExecutor *slowCommandExecutor;
             
             //!mutex for multithreading managment of sand box
             /*!
@@ -210,22 +211,22 @@ namespace chaos{
             /*!
              Initialize the Custom Contro Unit and return the configuration
              */
-            virtual void init(const string& deviceID) throw(CException) = 0;
+            virtual void init() throw(CException) = 0;
+            
+            /*!
+             Internal implementation of the runmethod, that (for now) will schedule the slowcommand sandbox
+             */
+            virtual void run() throw(CException) = 0;
             
             /*!
              Execute the Control Unit work
              */
-            virtual void run(const string& deviceID) throw(CException) = 0;
-            
-            /*!
-             Execute the Control Unit work
-             */
-            virtual void stop(const string& deviceID) throw(CException) = 0;
+            virtual void stop() throw(CException) = 0;
             
             /*!
              Deinit the Control Unit
              */
-            virtual void deinit(const string& deviceID) throw(CException) = 0;
+            virtual void deinit() throw(CException) = 0;
             
             /*!
              Receive the event for set the dataset input element, this virtual method
@@ -242,7 +243,7 @@ namespace chaos{
             /*!
              Execute the scehduling for the device
              */
-            void executeOnThread(const string&) throw(CException);
+            void executeOnThread() throw(CException);
             
             
             //---------------------utility API-------------

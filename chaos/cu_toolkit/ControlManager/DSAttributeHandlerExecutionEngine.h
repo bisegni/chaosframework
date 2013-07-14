@@ -42,8 +42,6 @@ namespace chaos{
          This class is the inegine for the execetuion of the handler on the device attribute
          */
         class DSAttributeHandlerExecutionEngine : public chaos::utility::StartableService {
-                //! device identification
-            std::string deviceID;
             
             boost::shared_mutex engineManagmentLock;
             
@@ -64,12 +62,7 @@ namespace chaos{
             /*!
              Default constructor with std string
              */
-            DSAttributeHandlerExecutionEngine(std::string& _deviceID, chaos::CUSchemaDB *);
-            
-            /*!
-             Default constructor with c string
-             */
-            DSAttributeHandlerExecutionEngine(const char * _deviceID,  chaos::CUSchemaDB *);
+            DSAttributeHandlerExecutionEngine(chaos::CUSchemaDB *);
             
             /*!
              Default destructor with std string
@@ -88,8 +81,6 @@ namespace chaos{
                 //! Deinit the implementation
             void deinit() throw(chaos::CException);
             
-            void setDeviceID(std::string& _deviceID);
-            
             void setCUSchemaDB(chaos::CUSchemaDB *_referenceCUSchemeDB);
             
                 //!addHandlerForDSAttribute
@@ -106,14 +97,15 @@ namespace chaos{
             
                 //!execute one o more handler according with the message information
             /*!
+             *  \param deviceID device ID target of the hadnler execution
              *  \param message is the RPC message tha that need to be constructed in a determinated why to be
              * worked by engine
              *
-             *  \exception <#excetion description#>
+             *  \exception excetion description
              *  \return boolean value that is true if one o more attribute has been processed, false if the device identification
              *          is not equal on the device id in the essage or it is not present
              */
-            bool executeHandler(CDataWrapper *message) throw (CException);
+            bool executeHandler(const std::string& deviceID, CDataWrapper *message) throw (CException);
         };
     }
 }

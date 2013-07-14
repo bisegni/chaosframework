@@ -76,22 +76,22 @@ protected:
     /*(Optional)
      Initialize the Control Unit and all driver, with received param from MetadataServer
      */
-    void init(const string&) throw(CException);
+    void init() throw(CException);
     
     /*
      Execute the work, this is called with a determinated delay, it must be as fast as possible
      */
-    void run(const string&) throw(CException);
+    void run() throw(CException);
     
     /*
      The Control Unit will be stopped
      */
-    void stop(const string&) throw(CException);
+    void stop() throw(CException);
     
     /*(Optional)
      The Control Unit will be deinitialized and disposed
      */
-    void deinit(const string&) throw(CException);
+    void deinit() throw(CException);
     
     /*
         Test Action Handler

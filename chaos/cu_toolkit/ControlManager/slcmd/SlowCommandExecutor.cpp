@@ -33,7 +33,7 @@ using namespace chaos::cu::control_manager::slow_command;
 
 SlowCommandExecutor::SlowCommandExecutor() {}
 
-SlowCommandExecutor::SlowCommandExecutor(CThread *_cuThreadForExecutor, std::string _executorID):executorID(_executorID), cuThreadForExecutor(_cuThreadForExecutor) {}
+SlowCommandExecutor::SlowCommandExecutor(std::string _executorID):executorID(_executorID){}
 
 SlowCommandExecutor::~SlowCommandExecutor() {
     
@@ -41,80 +41,63 @@ SlowCommandExecutor::~SlowCommandExecutor() {
 
 // Initialize instance
 void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
-    SCELAPP_ << "Initializating ";
     utility::StartableService::init(initData);
     
     performQueueCheck = true;
+    incomingCheckThreadPtr = NULL;
     
-    SCELAPP_ << "Initializating Sandbox";    
     utility::InizializableService::initImplementation(&commandSandbox, initData, "SlowCommandSandbox", "SlowCommandExecutor::init");
-    SCELAPP_ << "Sandbox inizializated"; 
 }
 
 
 // Start the implementation
 void SlowCommandExecutor::start() throw(chaos::CException) {
-    SCELAPP_ << "Starting";
-
-    utility::StartableService::start();
-    // thread creation
-    
-    SCELAPP_ << "Starting thread";
-    incomingCheckThreadPtr.reset(new boost::thread(boost::bind(&SlowCommandExecutor::performIncomingCommandCheck, this)));
-#if defined(__linux__) || defined(__APPLE__)
-    int retcode;
-    int policy;
-    struct sched_param param;
-    pthread_t threadID = (pthread_t) incomingCheckThreadPtr->native_handle();
-    if ((retcode = pthread_getschedparam(threadID, &policy, &param)) != 0)  {
-        throw CException(retcode, "Get Thread schedule param", "SlowCommandExecutor::start");
+    try {
+        utility::StartableService::start();
+        // thread creation
+        
+        utility::StartableService::startImplementation(&commandSandbox, "SlowCommandSandbox", "SlowCommandExecutor::start");
+        
+        SCELAPP_ << "Starting thread";
+        boost::mutex::scoped_lock lock(mutextQueueManagment);
+        CHAOS_ASSERT(!incomingCheckThreadPtr)
+        incomingCheckThreadPtr = new boost::thread(boost::bind(&SlowCommandExecutor::performIncomingCommandCheck, this));
+        if(!incomingCheckThreadPtr) throw CException(1, "Error allocating incoming check thread", "SlowCommandExecutor::start");
+        SCELAPP_ << "Thread started";
+    } catch (...) {
+        throw CException(1000, "Generic Error", "SlowCommandExecutor::start");
+        SCELAPP_ << "Error starting";
     }
-    
-    
-    policy = SCHED_RR;
-    param.sched_priority = sched_get_priority_max(SCHED_RR);
-    if ((retcode = pthread_setschedparam(threadID, policy, &param)) != 0) {
-        throw CException(retcode, "Set Thread schedule param", "SlowCommandExecutor::start");
-    }
-#endif
-    
-    SCELAPP_ << "Starting sandbox";
-    utility::StartableService::startImplementation(&commandSandbox, "SlowCommandSandbox", "SlowCommandExecutor::start");
-    SCELAPP_ << "Sandbox started";
-    
-    SCELAPP_ << "Started";
 }
 
 // Start the implementation
 void SlowCommandExecutor::stop() throw(chaos::CException) {
-    SCELAPP_ << "Stopping";
     
-    SCELAPP_ << "Stopping sandbox";
     utility::StartableService::stopImplementation(&commandSandbox, "SlowCommandSandbox", "SlowCommandExecutor::stop");
-    SCELAPP_ << "Stopped";
+
     
     //lock for queue access
-    boost::unique_lock<boost::mutex> lock(mutextQueueManagment);
+    boost::mutex::scoped_lock lock(mutextQueueManagment);
     
     performQueueCheck = false;
     
     //notify the thread to start
     SCELAPP_ << "Stopping queue thread";
-    readThreadWhait.notify_one();
+    readThreadWhait.notify_all();
     
     //wait the thread
     SCELAPP_ << "Join queue thread";
+    emptyQueueConditionLock.wait(lock);
     incomingCheckThreadPtr->join();
+    delete(incomingCheckThreadPtr);
+    incomingCheckThreadPtr = NULL;
     SCELAPP_ << "Queue thread ended";
 
     utility::StartableService::stop();
-    
-    SCELAPP_ << "Stopped";
 }
 
 // Deinit the implementation
 void SlowCommandExecutor::deinit() throw(chaos::CException) {
-    SCELAPP_ << "Deinitializing";
     //clear all instancer
     SCELAPP_ << "Removing all the instacer of the command";
     for(std::map<string, chaos::common::utility::ObjectInstancer<SlowCommand>* >::iterator it = mapCommandInstancer.begin();
@@ -124,12 +107,10 @@ void SlowCommandExecutor::deinit() throw(chaos::CException) {
         if(it->second) delete(it->second);
     }
     mapCommandInstancer.clear();
-    SCELAPP_ << "Deinitializing sandbox";
+
     utility::InizializableService::deinitImplementation(&commandSandbox, "SlowCommandSandbox", "SlowCommandExecutor::deinit");
-    SCELAPP_ << "Sandbox Deinitialized";
     
     utility::StartableService::deinit();
-    SCELAPP_ << "Deinitialized";
 }
 
 //! Perform a command registration
@@ -153,13 +134,17 @@ void SlowCommandExecutor::installCommand(string& alias, chaos::common::utility::
 //! Check the incoming command rule
 void SlowCommandExecutor::performIncomingCommandCheck() {
     //lock for queue access
-    boost::unique_lock<boost::mutex> lock(mutextQueueManagment);
+
+    boost::mutex::scoped_lock lock(mutextQueueManagment);
     
     while(performQueueCheck) {
-        boost::posix_time::time_duration delay(0,0,0,0);
-        while(commandSubmittedQueue.empty() && !incomingCheckThreadPtr->timed_join(delay)) {
-            emptyQueueConditionLock.notify_one();
+        while(commandSubmittedQueue.empty() && performQueueCheck) {
             readThreadWhait.wait(lock);
+        }
+        
+        //probable error or quit condition
+        if(commandSubmittedQueue.empty()) {
+            continue;
         }
         
         //-------------------check if we can use the command-------------------------
@@ -227,10 +212,14 @@ void SlowCommandExecutor::performIncomingCommandCheck() {
             }
             
             lockScheduler.unlock();
-        }catch (CException& setupEx) {
+        } catch (CException& setupEx) {
             SCELERR_ << setupEx.what();
             //somenthing is gone worng with the current element and need to be free
             if(element) delete element;
+        } catch(...) {
+            if(element) delete element;
+            boost::exception_ptr error = boost::current_exception();
+            SCELERR_ << error;
         }
         //-------------------check if we can use the command-------------------------
     }
@@ -240,7 +229,7 @@ void SlowCommandExecutor::performIncomingCommandCheck() {
    
     //whe are terminating and we need to erase the command information not elaborated
     //we still protected by the lock on mutextQueueManagment mutext
-    while (commandSubmittedQueue.empty()) {
+    while (!commandSubmittedQueue.empty()) {
         //get the command on top
         PRIORITY_ELEMENT(CDataWrapper) *element = commandSubmittedQueue.top();
         if(element) {
@@ -261,6 +250,7 @@ void SlowCommandExecutor::performIncomingCommandCheck() {
     }
     
     //end of the thread
+    emptyQueueConditionLock.notify_all();
 }
 
 //! Check if the waithing command can be installed
@@ -299,7 +289,7 @@ SlowCommand *SlowCommandExecutor::instanceCommandInfo(std::string& commandAlias)
 //! Submite the new sloc command information
 bool SlowCommandExecutor::submitCommand(CDataWrapper *commandDescription) {
     CHAOS_ASSERT(commandDescription)
-    boost::unique_lock<boost::mutex> lock(mutextQueueManagment);
+    boost::mutex::scoped_lock lock(mutextQueueManagment);
     if(serviceState != utility::StartableServiceType::SS_STARTED) return false;
     uint32_t priority = commandDescription->hasKey(SlowCommandSubmissionKey::SUBMISSION_PRIORITY) ? commandDescription->getUInt32Value(SlowCommandSubmissionKey::SUBMISSION_PRIORITY):50;
 #if DEBUG

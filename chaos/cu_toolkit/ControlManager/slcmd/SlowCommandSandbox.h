@@ -52,19 +52,19 @@ namespace chaos{
                 //! Functor implementation
                 struct SetFunctor : public BaseFunctor {
                     uint8_t operator()(CDataWrapper *commandInfo) {
-                        return cmdInstance?(cmdInstance->setHandler(commandInfo)):cmdInstance->runningState;
+                        return cmdInstance?(cmdInstance->setHandler(commandInfo)):RunningStateType::RS_End;
                     }
                 };
                 
                 struct AcquireFunctor : public BaseFunctor {
                     uint8_t operator()() {
-                        return cmdInstance?(cmdInstance->acquireHandler()):cmdInstance->runningState;
+                        return cmdInstance?(cmdInstance->acquireHandler()):RunningStateType::RS_End;
                     }
                 };
                 
                 struct CorrelationFunctor : public BaseFunctor {
                     uint8_t operator()() {
-                        return cmdInstance?(cmdInstance->ccHandler()):cmdInstance->runningState;
+                        return cmdInstance?(cmdInstance->ccHandler()):RunningStateType::RS_End;
                     }
                 };
                 
@@ -76,22 +76,37 @@ namespace chaos{
                     come in.
                  */
                 class SlowCommandSandbox : public utility::StartableService {
-                    friend class AbstractControlUnit;
+                    friend class chaos::cu::AbstractControlUnit;
                     friend class SlowCommandExecutor;
                     
-                    //! point to the time for the next check for the available command
-                    high_resolution_clock::time_point  timeLastCheckCommand;
+                    //internal ascheduling thread
+                    boost::thread *schedulerThread;
+                    
+                    bool scheduleWorkFlag;
+                    
                     
                     //!Mutex used for sincronize the introspection of the current command
                     boost::recursive_mutex  mutextCommandScheduler;
+                    
+                    //! Thread for whait until the queue is empty
+                    boost::condition_variable_any  conditionWaithSchedulerEnd;
+                    
+                    //!Mutex used for sincronize the introspection of the current command
+                    boost::mutex  pauseMutex;
+                    
+                    //! Thread for whait until the queue is empty
+                    boost::condition_variable  pauseCondition;
+                    
+                    boost::chrono::milliseconds checkTimeIntervall;
+                    
+                    boost::chrono::milliseconds schedulerStepDelay;
+
                     
                     //! POinte to the next available command
                     CommandInfoAndImplementation nextAvailableCommand;
                     
                     //point to the current executing command
                     SlowCommand *currentExecutingCommand;
-                    
-                    uint32_t checkTimeIntervall;
                     
                     //! contain the paused command
                     boost::lockfree::stack<SlowCommand*, boost::lockfree::fixed_sized<false> > commandStack;
