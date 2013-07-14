@@ -58,8 +58,8 @@ namespace chaos{
                 class SlowCommandSandbox;
                 
                 //! Macro for helping the allocation of the isntancer of the class implementing the slow command
-#define SLOWCOMMAND_INSTANCER(SlowCommandClass) new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, SlowCommand>());
-                
+#define SLOWCOMMAND_INSTANCER(SlowCommandClass) new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::control_manager::slow_command::SlowCommand>()
+
                 //! Slow command execution sand box
                 /*!
                     This class is the environment where the exeecution of the slow command handlers take place.
@@ -146,7 +146,7 @@ namespace chaos{
                     /*!
                      An instance of the command si registered within the executor.
                      */
-                    void setDefaultCommand(string& alias);
+                    void setDefaultCommand(string alias);
                     
                     //! Install a command associated with a type
                     /*!
@@ -157,7 +157,7 @@ namespace chaos{
                      \param alias the name associated to the command
                      \param instancer the instance of the instancer that will produce the "instance" of the command
                      */
-                    void installCommand(string& alias, chaos::common::utility::ObjectInstancer<SlowCommand> *instancer);
+                    void installCommand(string alias, chaos::common::utility::ObjectInstancer<SlowCommand> *instancer);
                     
                     //! Submite the new sloc command information
                     /*!

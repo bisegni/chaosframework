@@ -114,7 +114,7 @@ void SlowCommandExecutor::deinit() throw(chaos::CException) {
 }
 
 //! Perform a command registration
-void SlowCommandExecutor::setDefaultCommand(string& alias) {
+void SlowCommandExecutor::setDefaultCommand(string alias) {
     // check if we can set the default, the condition are:
     // the executor and the sandbox are in the init state or in stop state
     if(utility::StartableService::serviceState == utility::StartableServiceType::SS_STARTED) {
@@ -126,7 +126,7 @@ void SlowCommandExecutor::setDefaultCommand(string& alias) {
 }
 
 //! Install a command associated with a type
-void SlowCommandExecutor::installCommand(string& alias, chaos::common::utility::ObjectInstancer<SlowCommand> *instancer) {
+void SlowCommandExecutor::installCommand(string alias, chaos::common::utility::ObjectInstancer<SlowCommand> *instancer) {
     SCELAPP_ << "Install new command with alias" << alias;
     mapCommandInstancer.insert(make_pair<string, chaos::common::utility::ObjectInstancer<SlowCommand>* >(alias, instancer));
 }

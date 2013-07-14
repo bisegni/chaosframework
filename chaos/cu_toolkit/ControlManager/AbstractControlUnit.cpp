@@ -365,10 +365,6 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     LCU_ << "Initialize the DSAttribute handler engine for device:" << deviceID;
     utility::StartableService::initImplementation(attributeHandlerEngine, static_cast<void*>(initConfiguration), "DSAttribute handler engine", "AbstractControlUnit::_init");
     
-    LCU_ << "Initializing slow command sandbox" << deviceID;
-    utility::StartableService::initImplementation(slowCommandExecutor, static_cast<void*>(initConfiguration), "Slow Command Executor", "AbstractControlUnit::_init");
-
-    
     //initialize key data storage for device id
     LCU_ << "Create KeyDataStorage device:" << deviceID;
     tmpKDS = DataManager::getInstance()->getKeyDataStorageNewInstanceForKey(deviceID);
@@ -377,6 +373,11 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     tmpKDS->init(initConfiguration);
     
     keyDataStorage = tmpKDS;
+    
+    LCU_ << "Initializing slow command sandbox" << deviceID;
+    utility::StartableService::initImplementation(slowCommandExecutor, static_cast<void*>(initConfiguration), "Slow Command Executor", "AbstractControlUnit::_init");
+    //associate the data storage
+    slowCommandExecutor->commandSandbox.keyDataStorage = keyDataStorage;
     
     LCU_ << "Start custom inititialization" << deviceID;
     //initializing the device in control unit
@@ -425,9 +426,8 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
     
     LCU_ << "Deinitialize sandbox deinitialization for device:" << deviceID;
     utility::StartableService::deinitImplementation(slowCommandExecutor, "Slow Command Executor", "AbstractControlUnit::_deinit");
-    
-    LCU_ << "Deinitializing the DSAttribute handler engine for device:" << deviceID;
-    utility::StartableService::deinitImplementation(attributeHandlerEngine, "DSAttribute handler engine", "AbstractControlUnit::_deinit");
+    //deassociate the data storage
+    slowCommandExecutor->commandSandbox.keyDataStorage = NULL;
     
     //remove key data storage
     if(keyDataStorage) {
@@ -437,6 +437,9 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
         keyDataStorage = NULL;
     }
     
+    LCU_ << "Deinitializing the DSAttribute handler engine for device:" << deviceID;
+    utility::StartableService::deinitImplementation(attributeHandlerEngine, "DSAttribute handler engine", "AbstractControlUnit::_deinit");
+
     deviceState--;
     
     deviceExplicitState = CUStateKey::DEINIT;
@@ -656,3 +659,13 @@ ArrayPointer<CDataWrapper> *AbstractControlUnit::getLastDataSet() {
 CDataWrapper *AbstractControlUnit::getNewDataWrapper() {
     return keyDataStorage->getNewDataWrapper();
 }
+
+//! Perform a command registration
+/*!
+ An instance of the command si registered within the executor.
+ */
+void AbstractControlUnit::setDefaultCommand(const char * dafaultCommandName) {
+    CHAOS_ASSERT(slowCommandExecutor)
+    slowCommandExecutor->setDefaultCommand(dafaultCommandName);
+}
+

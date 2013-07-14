@@ -419,7 +419,15 @@ namespace chaos{
              return a new instance of CDataWrapper filled with a mandatory data
              according to key
              */
-            CDataWrapper *getNewDataWrapper();        
+            CDataWrapper *getNewDataWrapper();
+            
+            void setDefaultCommand(const char * dafaultCommandName);
+            
+            template<typename T>
+            void installCommand(const char * commandName) {
+                CHAOS_ASSERT(slowCommandExecutor)
+                slowCommandExecutor->installCommand(std::string(commandName), SLOWCOMMAND_INSTANCER(T));
+            }
         };
     }
 }

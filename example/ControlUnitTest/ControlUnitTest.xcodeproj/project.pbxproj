@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3252C9DB179330A800A17C7C /* SinWaveCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3252C9D9179330A800A17C7C /* SinWaveCommand.cpp */; };
 		32F7449C14B49CFA0025638B /* ControlUnitExample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F7449914B49CFA0025638B /* ControlUnitExample.cpp */; };
 		32F7449D14B49CFA0025638B /* WorkerCU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F7449A14B49CFA0025638B /* WorkerCU.cpp */; };
 		539510D7174116F500ECF627 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539510D6174116F500ECF627 /* main.cpp */; };
@@ -14,6 +15,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3252C9D9179330A800A17C7C /* SinWaveCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SinWaveCommand.cpp; sourceTree = SOURCE_ROOT; };
+		3252C9DA179330A800A17C7C /* SinWaveCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SinWaveCommand.h; sourceTree = SOURCE_ROOT; };
 		32BE864A15A0E3C500818C39 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		32F7448F14B49CCB0025638B /* ControlUnitTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ControlUnitTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		32F7449914B49CFA0025638B /* ControlUnitExample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ControlUnitExample.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -68,6 +71,8 @@
 				32F7449914B49CFA0025638B /* ControlUnitExample.cpp */,
 				32F7449A14B49CFA0025638B /* WorkerCU.cpp */,
 				32F7449B14B49CFA0025638B /* WorkerCU.h */,
+				3252C9D9179330A800A17C7C /* SinWaveCommand.cpp */,
+				3252C9DA179330A800A17C7C /* SinWaveCommand.h */,
 			);
 			path = ControlUnitTest;
 			sourceTree = "<group>";
@@ -151,6 +156,7 @@
 			files = (
 				32F7449C14B49CFA0025638B /* ControlUnitExample.cpp in Sources */,
 				32F7449D14B49CFA0025638B /* WorkerCU.cpp in Sources */,
+				3252C9DB179330A800A17C7C /* SinWaveCommand.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

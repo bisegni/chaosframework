@@ -27,7 +27,7 @@
 #include <stdint.h>
 
 #include <chaos/common/data/CDataWrapper.h>
-
+#include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 namespace chaos{
     namespace cu {
         
@@ -56,7 +56,7 @@ namespace chaos{
                     typedef enum Handler {
                         HT_Set              = 1,    /**< Set handler */
                         HT_Acquisition      = 2,    /**< Acquire handler */
-                        HT_Crorrelation     = 4     /**< Commit and Correlation handler */
+                        HT_Correlation     = 4     /**< Commit and Correlation handler */
                     } Handler;
                 }
                 
@@ -100,7 +100,6 @@ namespace chaos{
                     std::string domain;         /**< The domain identify the context where the fault is occured */
                 } FaultDescription;
                 
-                
                 //! Base cass for the slow command implementation
                 /*!
                  The slow command implementation in !CHAOS permit the definition of the three foundamental phase in "control" as seen by !CHAOS logic:
@@ -127,6 +126,8 @@ namespace chaos{
                      */
                     uint8_t submissionRule;
                     
+                    KeyDataStorage *keyDataStorage;
+                    
                     //! Fault description
                     FaultDescription fDescription;
                     
@@ -147,6 +148,17 @@ namespace chaos{
                     //! default destructor
                     virtual ~SlowCommand();
                     
+                    /*
+                     Send device data to output buffer
+                     */
+                    void pushDataSet(chaos::CDataWrapper *acquiredData);
+                    
+                    /*
+                     Return a new instance of CDataWrapper filled with a mandatory data
+                     according to key
+                     */
+                    chaos::CDataWrapper *getNewDataWrapper();
+                    
                     //! return the implemented handler
                     /*!
                      The implementation need to give information about the handler
@@ -162,7 +174,7 @@ namespace chaos{
                      \param data CDatawrapper object taht containing a set of initial data for the command
                      \return the mask for the runnign state
                      */
-                    virtual uint8_t setHandler(CDataWrapper *data);
+                    virtual uint8_t setHandler(chaos::CDataWrapper *data);
                     
                     //! Aquire the necessary data for the command
                     /*!

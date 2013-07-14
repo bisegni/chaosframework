@@ -31,7 +31,7 @@ void SlowCommandSandbox::init(void*) throw(chaos::CException) {
     nextAvailableCommand.cmdInfo = NULL;
     nextAvailableCommand.cmdImpl = NULL;
     
-    checkTimeIntervall = milliseconds(DEFAULT_CHECK_TIME);
+    checkTimeIntervall = boost::chrono::milliseconds(DEFAULT_CHECK_TIME);
     
     schedulerThread = NULL;
     scheduleWorkFlag = true;
@@ -131,7 +131,7 @@ void SlowCommandSandbox::runCommand() {
         }
         
         runEnd = boost::chrono::steady_clock::now();
-        milliseconds m = schedulerStepDelay - boost::chrono::duration_cast<boost::chrono::milliseconds>(runEnd-runStart);
+        boost::chrono::milliseconds m = schedulerStepDelay - boost::chrono::duration_cast<boost::chrono::milliseconds>(runEnd-runStart);
         boost::this_thread::sleep_for(m);
     }
     
@@ -203,6 +203,9 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
     //set current command
     currentExecutingCommand = cmdImpl;
     
+    //associate the keydata storage to the command
+    currentExecutingCommand->keyDataStorage = keyDataStorage;
+    
     if(currentExecutingCommand) {
         uint8_t handlerMask = currentExecutingCommand->implementedHandler();
         //install the pointer of th ecommand into the respective handler functor
@@ -218,7 +221,7 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
         if(handlerMask & HandlerType::HT_Acquisition) acquireHandlerFunctor.cmdInstance = currentExecutingCommand;
         
         //correlation commit
-        if(handlerMask & HandlerType::HT_Crorrelation) correlationHandlerFunctor.cmdInstance = currentExecutingCommand;
+        if(handlerMask & HandlerType::HT_Correlation) correlationHandlerFunctor.cmdInstance = currentExecutingCommand;
     } else {
         setHandlerFunctor.cmdInstance = NULL;
         acquireHandlerFunctor.cmdInstance = NULL;

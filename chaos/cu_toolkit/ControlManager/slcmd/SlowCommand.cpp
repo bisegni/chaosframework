@@ -19,7 +19,7 @@
  */
 
 #include <chaos/cu_toolkit/ControlManager/slcmd/SlowCommand.h>
-
+using namespace chaos;
 using namespace chaos::cu::control_manager::slow_command;
 
 //! default constructor
@@ -34,9 +34,25 @@ SlowCommand::~SlowCommand() {
 }
 
 /*
+ Send device data to output buffer
+ */
+void SlowCommand::pushDataSet(CDataWrapper *acquiredData) {
+    //send data to related buffer
+    keyDataStorage->pushDataSet(acquiredData);
+}
+
+/*
+ Return a new instance of CDataWrapper filled with a mandatory data
+ according to key
+ */
+CDataWrapper *SlowCommand::getNewDataWrapper() {
+    return keyDataStorage->getNewDataWrapper();
+}
+
+/*
  Start the slow command sequence
  */
-uint8_t SlowCommand::setHandler(CDataWrapper *data) {
+uint8_t SlowCommand::setHandler(chaos::CDataWrapper *data) {
     return 0;
 }
 

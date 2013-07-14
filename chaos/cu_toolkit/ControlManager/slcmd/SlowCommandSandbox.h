@@ -17,6 +17,7 @@
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
 
+#include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/ControlManager/slcmd/SlowCommand.h>
 
 namespace chaos{
@@ -84,6 +85,8 @@ namespace chaos{
                     
                     bool scheduleWorkFlag;
                     
+                    
+                    KeyDataStorage*  keyDataStorage;
                     
                     //!Mutex used for sincronize the introspection of the current command
                     boost::recursive_mutex  mutextCommandScheduler;
