@@ -46,12 +46,8 @@ using namespace boost::uuids;
 
 
 AbstractControlUnit::AbstractControlUnit():DeviceSchemaDB(false), cuInstance(UUIDUtil::generateUUIDLite()) {
-    attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
-    slowCommandExecutor = new cu::control_manager::slow_command::SlowCommandExecutor(cuInstance, this);
-}
-
-AbstractControlUnit::AbstractControlUnit(const char *descJsonPath):DeviceSchemaDB(false), cuInstance(UUIDUtil::generateUUIDLite())  {
-    initWithJsonFilePath(descJsonPath);
+    deviceState = 0;
+    schedulerThread = NULL;
     attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
     slowCommandExecutor = new cu::control_manager::slow_command::SlowCommandExecutor(cuInstance, this);
 }
@@ -97,9 +93,10 @@ void AbstractControlUnit::addAttributeToDataSet(const char*const deviceID,
                                                 const char*const attributeName,
                                                 const char*const attributeDescription,
                                                 DataType::DataType attributeType,
-                                                DataType::DataSetAttributeIOAttribute attributeDirection) {
+                                                DataType::DataSetAttributeIOAttribute attributeDirection,
+                                                uint32_t maxDimension) {
     //add the attribute
-    CUSchemaDB::addAttributeToDataSet(deviceID, attributeName, attributeDescription, attributeType, attributeDirection);
+    DeviceSchemaDB::addAttributeToDataSet(attributeName, attributeDescription, attributeType, attributeDirection, maxDimension);
 }
 
 /*
@@ -263,7 +260,7 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
     
     LCU_ << "Get Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
     //grab dataset description
-    CUSchemaDB::fillDataWrapperWithDataSetDescription(setupConfiguration);
+    DeviceSchemaDB::fillDataWrapperWithDataSetDescription(setupConfiguration);
     
 #if DEBUG
     LCU_ << setupConfiguration.getJSONString();
@@ -348,7 +345,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     string deviceID = initConfiguration->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
     LCU_ << "Initializating Phase for device:" << deviceID;
     
-    if(!CUSchemaDB::deviceIsPresent(deviceID)) {
+    if(deviceID.compare(DeviceSchemaDB::getDeviceID())) {
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
         throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_init");
     }
@@ -360,7 +357,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     }
     
     LCU_ << "Initialize CU Database for device:" << deviceID;
-    CUSchemaDB::addAttributeToDataSetFromDataWrapper(*initConfiguration);
+    DeviceSchemaDB::addAttributeToDataSetFromDataWrapper(*initConfiguration);
     
     LCU_ << "Initialize the DSAttribute handler engine for device:" << deviceID;
     utility::StartableService::initImplementation(attributeHandlerEngine, static_cast<void*>(initConfiguration), "DSAttribute handler engine", "AbstractControlUnit::_init");
@@ -409,7 +406,7 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
     
     string deviceID = deinitParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
     LCU_ << "Deinitialization Phase for device:" << deviceID;
-    if(!CUSchemaDB::deviceIsPresent(deviceID)) {
+    if(deviceID.compare(DeviceSchemaDB::getDeviceID())) {
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
         throw CException(-2, "Deviuce not known by this control unit", "AbstractControlUnit::_deinit");
     }
@@ -457,7 +454,7 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
     }
     
     string deviceID = startParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
-    if(!CUSchemaDB::deviceIsPresent(deviceID)) {
+    if(deviceID.compare(DeviceSchemaDB::getDeviceID())) {
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
         throw CException(-2, "Deviuce not known by this control unit", "AbstractControlUnit::_start");
     }
@@ -491,7 +488,7 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachPa
         throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_stop");
     }
     string deviceID = stopParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
-    if(!CUSchemaDB::deviceIsPresent(deviceID)) {
+    if(deviceID.compare(DeviceSchemaDB::getDeviceID())) {
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
         throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_stop");
     }
@@ -582,7 +579,7 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
     
     string deviceID = updatePack->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
     
-    if(!CUSchemaDB::deviceIsPresent(deviceID)) {
+    if(deviceID.compare(DeviceSchemaDB::getDeviceID())) {
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
         throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_stop");
     }

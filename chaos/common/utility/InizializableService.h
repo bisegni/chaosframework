@@ -50,6 +50,9 @@ namespace chaos {
                 //! Deinit the implementation
             virtual void deinit() throw(chaos::CException);
             
+            static bool initImplementation(InizializableService& impl, void *initData, const char * const implName,  const char * const domainString);
+            static bool deinitImplementation(InizializableService& impl, const char * const implName,  const char * const domainString);
+            
             static bool initImplementation(InizializableService *impl, void *initData, const char * const implName,  const char * const domainString);
             static bool deinitImplementation(InizializableService *impl, const char * const implName,  const char * const domainString);
         };

@@ -132,28 +132,22 @@ namespace chaos {
         static const char * const CS_CM_DATASET_TIMESTAMP                       = "cs|cm|ds_timestamp";
             //!key for the domain of the attribute dataset
         static const char * const CS_CM_DATASET_DEVICE_ID                       = "cs|cm|ds_attr_dom";
-        
             //!key for the name of dataset attribute
         static const char * const CS_CM_DATASET_ATTRIBUTE_NAME                  = "cs|cm|ds_attr_name";
-        
             //!key for the name of dataset attribute
-        static const char * const CS_CM_DATASET_ATTRIBUTE_VALUE                  = "cs|cm|ds_attr_value";
-        
+        static const char * const CS_CM_DATASET_ATTRIBUTE_VALUE                  = "cs|cm|ds_attr_value";        
             //!key for the tag of the dataset attrbiute
         static const char * const CS_CM_DATASET_ATTRIBUTE_TAG                   = "cs|cm|ds_attr_tag";
-        
             //!key representing the type of parameter
         static const char * const CS_CM_DATASET_ATTRIBUTE_TYPE                  = "cs|cm|ds_attr_type";
-        
             //!key for the units ofr the attrbiute(ampere, volts)
         static const char * const CS_CM_DATASET_ATTRIBUTE_UNIT                  = "cs|cm|ds_attr_unit";
-        
             //!key representing the name of the parameter
         static const char * const CS_CM_DATASET_ATTRIBUTE_DESCRIPTION           = "cs|cm|ds_attr_desc";
-        
             //!key representig the information for the parameter
         static const char * const CS_CM_DATASET_ATTRIBUTE_DIRECTION             = "cs|cm|ds_attr_dir";
-        
+            //!key representing the value max size where need (type different from rawd data type ex: int32)
+        static const char * const CS_CMDM_ACTION_DESC_VALUE_MAX_SIZE            = "cs|cmdm|act_desc_par_value_max_size";
             //!key representing the default value
         static const char * const CS_CMDM_ACTION_DESC_DEFAULT_VALUE             = "cs|cmdm|act_desc_par_default_value";
             //!key representing the default value

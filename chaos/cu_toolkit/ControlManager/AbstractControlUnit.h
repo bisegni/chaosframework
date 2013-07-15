@@ -174,10 +174,6 @@ namespace chaos{
             /*!
              Construct a new CU with an identifier
              */
-            AbstractControlUnit(const char *);
-            /*!
-             Construct a new CU with an identifier
-             */
             AbstractControlUnit();
             /*!
              Destructor a new CU with an identifier
@@ -254,7 +250,8 @@ namespace chaos{
                                        const char*const attributeName,
                                        const char*const attributeDescription,
                                        DataType::DataType attributeType,
-                                       DataType::DataSetAttributeIOAttribute attributeDirection);
+                                       DataType::DataSetAttributeIOAttribute attributeDirection,
+                                       uint32_t maxDimension = 0);
             
             /*!
              Add the new attribute in the dataset for at the CU dataset with an associated handler
@@ -268,7 +265,7 @@ namespace chaos{
                                                 TDSAttributeHandler<T>* handler) {
                 
                 //first add the attribute information in the schema
-                CUSchemaDB::addAttributeToDataSet(deviceID, attributeName, attributeDescription, attributeType, attributeDirection);
+                DeviceSchemaDB::addAttributeToDataSet(attributeName, attributeDescription, attributeType, attributeDirection);
                 
                 
                 //check if there is a valid handler

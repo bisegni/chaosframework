@@ -31,7 +31,7 @@ DSAttributeHandlerExecutionEngine::DSAttributeHandlerExecutionEngine(){}
 /*!
  Default constructor with std string
  */
-DSAttributeHandlerExecutionEngine::DSAttributeHandlerExecutionEngine(chaos::CUSchemaDB *_schemaDB): referenceCUSchemeDB(_schemaDB) {}
+DSAttributeHandlerExecutionEngine::DSAttributeHandlerExecutionEngine(chaos::cu::DeviceSchemaDB *_schemaDB): referenceDeviceSchemaDB(_schemaDB) {}
 
 /*!
  Default destructor
@@ -40,8 +40,8 @@ DSAttributeHandlerExecutionEngine::~DSAttributeHandlerExecutionEngine() {
     
 }
 
-void DSAttributeHandlerExecutionEngine::setCUSchemaDB(chaos::CUSchemaDB *_referenceCUSchemeDB) {
-    referenceCUSchemeDB = _referenceCUSchemeDB;
+void DSAttributeHandlerExecutionEngine::setDeviceSchemaDB(chaos::cu::DeviceSchemaDB *_referenceDeviceSchemeDB) {
+    referenceDeviceSchemaDB = _referenceDeviceSchemeDB;
 }
 
 //! Initialize instance
@@ -120,6 +120,9 @@ bool DSAttributeHandlerExecutionEngine::executeHandler(const std::string& device
     void *abstractValuePtr;
     CDataWrapper *cdatv;
     chaos::RangeValueInfo attributeInfo;
+    
+    if(deviceID.compare(referenceDeviceSchemaDB->getDeviceID())) return false;
+    
     if((result = message->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID))) {
         std::string _messageDeiveID = message->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
         
@@ -131,7 +134,7 @@ bool DSAttributeHandlerExecutionEngine::executeHandler(const std::string& device
             const char * cAttrName = iter->c_str();
             if(message->hasKey(cAttrName)) {
                 //get attribute info
-                referenceCUSchemeDB->getDeviceAttributeRangeValueInfo(deviceID, *iter, attributeInfo);
+                referenceDeviceSchemaDB->getAttributeRangeValueInfo(*iter, attributeInfo);
                 //call handler
                 switch (attributeInfo.valueType) {
                     case DataType::TYPE_BOOLEAN: {

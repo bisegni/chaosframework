@@ -45,7 +45,7 @@ int main(int argc, const char * argv[]) {
         std::cerr << "Plugin not found" << std::endl;
         return EXIT_FAILURE;
     }
-    std::cout << "----------------------------------End general plugin test----------------------------------" << std::endl;
+    std::cout << "----------------------------------End general plugin test-----------------------------------" << std::endl;
     std::cout << std::endl;
     std::cout << "----------------------------------Start driver plugin test----------------------------------" << std::endl;
     DriverPluginLoader driverLoader("PluginTest.extension");

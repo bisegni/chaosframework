@@ -54,7 +54,9 @@ void DeviceSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& serializ
  fill a CDataWrapper with the dataset decode
  */
 void DeviceSchemaDB::fillDataWrapperWithDataSetDescription(CDataWrapper& dw) {
-    CUSchemaDB::fillDataWrapperWithDataSetDescription(deviceID, dw);
+    /* NOTE this need to be changed becase this funciton retuan many device but now al is
+     single device centric. So we need to use a new bson structure for descibe the device, so we need a new root key*/
+    CUSchemaDB::fillDataWrapperWithDataSetDescription(dw);
 }
 
 //! Add dataset attribute
@@ -70,8 +72,9 @@ void DeviceSchemaDB::fillDataWrapperWithDataSetDescription(CDataWrapper& dw) {
 void DeviceSchemaDB::addAttributeToDataSet(const char*const attributeName,
                                            const char*const attributeDescription,
                                            DataType::DataType attributeType,
-                                           DataType::DataSetAttributeIOAttribute attributeDirection) {
-    CUSchemaDB::addAttributeToDataSet(deviceID.c_str(), attributeName, attributeDescription, attributeType, attributeDirection);
+                                           DataType::DataSetAttributeIOAttribute attributeDirection,
+                                           uint32_t maxSize) {
+    CUSchemaDB::addAttributeToDataSet(deviceID.c_str(), attributeName, attributeDescription, attributeType, attributeDirection, maxSize);
 }
 
 

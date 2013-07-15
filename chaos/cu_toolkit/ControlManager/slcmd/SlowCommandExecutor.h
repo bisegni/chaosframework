@@ -75,6 +75,7 @@ namespace chaos{
                     //! sandbox for the execution of the handler
                     SlowCommandSandbox  commandSandbox;
                     
+                    //! the reference to the master device database
                     DeviceSchemaDB *deviceSchemaDbPtr;
                     
                     boost::thread   *incomingCheckThreadPtr;

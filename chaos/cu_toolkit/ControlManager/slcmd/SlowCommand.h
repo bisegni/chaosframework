@@ -28,6 +28,7 @@
 
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
+#include <chaos/cu_toolkit/ControlManager/slcmd/ChannelSetting.h>
 #include <chaos/cu_toolkit/ControlManager/slcmd/SlowCommandTypes.h>
 namespace chaos{
     namespace cu {
@@ -78,6 +79,9 @@ namespace chaos{
                     
                     //! Fault description
                     FaultDescription fDescription;
+                    
+                    //! shared setting across all slow command
+                    ChannelSetting *sharedChannelSettingPtr;
                     
                     //!Set Handlers definition
                     typedef uint8_t (SlowCommand::*HandlerPointer)();

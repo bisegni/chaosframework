@@ -29,9 +29,9 @@
 using namespace chaos;
 using namespace chaos::cu::control_manager::slow_command;
 
-#define SCELAPP_ LAPP_ << "[SlowCommandExecutor-" << executorID << "]"
-#define SCELDBG_ LDBG_ << "[SlowCommandExecutor-" << executorID << "]"
-#define SCELERR_ LERR_ << "[SlowCommandExecutor-" << executorID << "]"
+#define SCELAPP_ LAPP_ << "[SlowCommandExecutor-" << executorID << "] "
+#define SCELDBG_ LDBG_ << "[SlowCommandExecutor-" << executorID << "] "
+#define SCELERR_ LERR_ << "[SlowCommandExecutor-" << executorID << "] "
 
 SlowCommandExecutor::SlowCommandExecutor() {}
 
@@ -50,16 +50,23 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
     
     //at this point, befor the sandbox initialization we need to setup the shared setting memory
     CHAOS_ASSERT(deviceSchemaDbPtr)
+    
+    SCELAPP_ << "Populating sandbox shared setting for device input attribute";
     deviceSchemaDbPtr->getDatasetAttributesName(DataType::Input, inputAttributeNames);
-    SCELAPP_ << "Allocating setting shared memory for command";
-
+    
+    RangeValueInfo attributeInfo;
     for(std::vector<string>::iterator it = inputAttributeNames.begin();
         it != inputAttributeNames.end();
         it++) {
         
+        // retrive the attribute description from the device database
+        deviceSchemaDbPtr->getAttributeRangeValueInfo(*it, attributeInfo);
+        
+        // add the attribute to the shared setting object
+        commandSandbox.sharedChannelSetting.addAttribute(*it, attributeInfo.maxSize);
     }
     
-    utility::InizializableService::initImplementation(&commandSandbox, initData, "SlowCommandSandbox", "SlowCommandExecutor::init");
+    utility::InizializableService::initImplementation(commandSandbox, initData, "SlowCommandSandbox", "SlowCommandExecutor::init");
 }
 
 
@@ -69,7 +76,8 @@ void SlowCommandExecutor::start() throw(chaos::CException) {
         utility::StartableService::start();
         // thread creation
         
-        utility::StartableService::startImplementation(&commandSandbox, "SlowCommandSandbox", "SlowCommandExecutor::start");
+        //frist we need to add all input
+        utility::StartableService::startImplementation(commandSandbox, "SlowCommandSandbox", "SlowCommandExecutor::start");
         
         SCELAPP_ << "Starting thread";
         boost::mutex::scoped_lock lock(mutextQueueManagment);
@@ -86,9 +94,6 @@ void SlowCommandExecutor::start() throw(chaos::CException) {
 // Start the implementation
 void SlowCommandExecutor::stop() throw(chaos::CException) {
     
-    utility::StartableService::stopImplementation(&commandSandbox, "SlowCommandSandbox", "SlowCommandExecutor::stop");
-
-    
     //lock for queue access
     boost::mutex::scoped_lock lock(mutextQueueManagment);
     
@@ -96,16 +101,18 @@ void SlowCommandExecutor::stop() throw(chaos::CException) {
     
     //notify the thread to start
     SCELAPP_ << "Stopping queue thread";
-    readThreadWhait.notify_all();
+    readThreadWhait.notify_one();
     
     //wait the thread
-    SCELAPP_ << "Join queue thread";
     emptyQueueConditionLock.wait(lock);
+    SCELAPP_ << "Join queue thread";
     incomingCheckThreadPtr->join();
     delete(incomingCheckThreadPtr);
     incomingCheckThreadPtr = NULL;
     SCELAPP_ << "Queue thread ended";
 
+    utility::StartableService::stopImplementation(commandSandbox, "SlowCommandSandbox", "SlowCommandExecutor::stop");
+    
     utility::StartableService::stop();
 }
 
@@ -121,7 +128,7 @@ void SlowCommandExecutor::deinit() throw(chaos::CException) {
     }
     mapCommandInstancer.clear();
 
-    utility::InizializableService::deinitImplementation(&commandSandbox, "SlowCommandSandbox", "SlowCommandExecutor::deinit");
+    utility::InizializableService::deinitImplementation(commandSandbox, "SlowCommandSandbox", "SlowCommandExecutor::deinit");
     
     utility::StartableService::deinit();
 }
@@ -263,7 +270,7 @@ void SlowCommandExecutor::performIncomingCommandCheck() {
     }
     
     //end of the thread
-    emptyQueueConditionLock.notify_all();
+    emptyQueueConditionLock.notify_one();
 }
 
 //! Check if the waithing command can be installed

@@ -31,7 +31,7 @@ namespace chaos {
         class AbstractControlUnit;
         
         class DeviceSchemaDB : private CUSchemaDB {
-            friend class AbstractControlUnit;
+            //friend class AbstractControlUnit;
             
             std::string deviceID;
             
@@ -72,7 +72,8 @@ namespace chaos {
             void addAttributeToDataSet(const char*const attributeName,
                                        const char*const attributeDescription,
                                        DataType::DataType attributeType,
-                                       DataType::DataSetAttributeIOAttribute attributeDirection);
+                                       DataType::DataSetAttributeIOAttribute attributeDirection,
+                                       uint32_t maxSize = 0);
             
             
             

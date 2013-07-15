@@ -71,6 +71,7 @@ void CUSchemaDB::initDB(const char *name, bool onMemory) {
     MAKE_KEY(DatasetDefinitionkey::CS_CMDM_ACTION_DESC_MAX_RANGE, keyTmp);
     MAKE_KEY(DatasetDefinitionkey::CS_CMDM_ACTION_DESC_MIN_RANGE, keyTmp);
     MAKE_KEY(DatasetDefinitionkey::CS_CMDM_ACTION_DESC_DEFAULT_VALUE, keyTmp);
+    MAKE_KEY(DatasetDefinitionkey::CS_CMDM_ACTION_DESC_VALUE_MAX_SIZE, keyTmp);
     MAKE_KEY(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS, keyTmp);
 }
 
@@ -173,8 +174,38 @@ void CUSchemaDB::addAttributeToDataSet(const char*const attributeDeviceID,
                                        const char*const attributeName,
                                        const char*const attributeDescription,
                                        DataType::DataType attributeType,
-                                       DataType::DataSetAttributeIOAttribute attributeDirection) {
+                                       DataType::DataSetAttributeIOAttribute attributeDirection,
+                                       uint32_t maxDimension) {
     
+    uint32_t typeMaxDimension = 0;
+    
+    switch (attributeType) {
+        case DataType::TYPE_BOOLEAN:
+            typeMaxDimension = 1;
+            break;
+        case DataType::TYPE_DOUBLE:
+            typeMaxDimension = 8;	//8 bytes (64-bit IEEE 754 floating point)
+            break;
+        case DataType::TYPE_INT32:
+            typeMaxDimension = sizeof(int32_t);
+            break;
+        case DataType::TYPE_INT64:
+            typeMaxDimension = sizeof(int64_t);
+            break;
+        case DataType::TYPE_STRING:
+            if(maxDimension == 0)
+                throw CException(1, "for byte array type need to be specified the max value", "CUSchemaDB::addAttributeToDataSet");
+            typeMaxDimension = maxDimension;
+            break;
+        case DataType::TYPE_BYTEARRAY:
+            if(maxDimension == 0)
+                throw CException(1, "for byte array type need to be specified the max value", "CUSchemaDB::addAttributeToDataSet");
+            typeMaxDimension = maxDimension;
+            break;
+        default:
+                throw CException(2, "unmanaged type", "CUSchemaDB::addAttributeToDataSet");
+            break;
+    }
     
     bool isChild = false;
     entity::Entity *device = getDeviceEntity(attributeDeviceID);
@@ -195,6 +226,7 @@ void CUSchemaDB::addAttributeToDataSet(const char*const attributeDeviceID,
         addUniqueAttributeProperty(elementDst.get(), mapDatasetKeyForID[DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DESCRIPTION], attributeDescription);
         addUniqueAttributeProperty(elementDst.get(), mapDatasetKeyForID[DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE], (int64_t)attributeType);
         addUniqueAttributeProperty(elementDst.get(), mapDatasetKeyForID[DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION], (int64_t)attributeDirection);
+        addUniqueAttributeProperty(elementDst.get(), mapDatasetKeyForID[DatasetDefinitionkey::CS_CMDM_ACTION_DESC_VALUE_MAX_SIZE], (int64_t)typeMaxDimension);
         device->isChild(*elementDst.get(), isChild);
         if(!isChild) device->addChild(*elementDst);
     }
@@ -359,6 +391,10 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
             if(elementDescription->hasKey(DatasetDefinitionkey::CS_CMDM_ACTION_DESC_DEFAULT_VALUE)){
                 addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[DatasetDefinitionkey::CS_CMDM_ACTION_DESC_DEFAULT_VALUE], elementDescription->getStringValue(DatasetDefinitionkey::CS_CMDM_ACTION_DESC_DEFAULT_VALUE).c_str());
             }
+            
+            if(elementDescription->hasKey(DatasetDefinitionkey::CS_CMDM_ACTION_DESC_VALUE_MAX_SIZE)){
+                addUniqueAttributeProperty(attributeEntity.get(), mapDatasetKeyForID[DatasetDefinitionkey::CS_CMDM_ACTION_DESC_VALUE_MAX_SIZE], (int64_t)elementDescription->getInt32Value(DatasetDefinitionkey::CS_CMDM_ACTION_DESC_VALUE_MAX_SIZE));
+            }
         }
      }
     
@@ -495,6 +531,8 @@ void CUSchemaDB::fillCDataWrapperDSAtribute(CDataWrapper *dsAttribute, entity::E
             dsAttribute->addStringValue(DatasetDefinitionkey::CS_CMDM_ACTION_DESC_MIN_RANGE, curKIV->value.strValue);
         } else if(curKIV->keyID == mapDatasetKeyForID[DatasetDefinitionkey::CS_CMDM_ACTION_DESC_DEFAULT_VALUE]){
             dsAttribute->addStringValue(DatasetDefinitionkey::CS_CMDM_ACTION_DESC_DEFAULT_VALUE, curKIV->value.strValue);
+        } else if(curKIV->keyID == mapDatasetKeyForID[DatasetDefinitionkey::CS_CMDM_ACTION_DESC_VALUE_MAX_SIZE]){
+            dsAttribute->addInt32Value(DatasetDefinitionkey::CS_CMDM_ACTION_DESC_VALUE_MAX_SIZE, (int32_t)curKIV->value.numValue);
         } else if(curKIV->keyID == mapDatasetKeyForID[DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE]) {
             dsAttribute->addInt32Value(DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE, (int32_t)curKIV->value.numValue);
         } else {
@@ -598,12 +636,13 @@ void CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID, const 
     uint32_t keyIdAttrMinRng = mapDatasetKeyForID[DatasetDefinitionkey::CS_CMDM_ACTION_DESC_MIN_RANGE];
     uint32_t keyIdAttrDefaultValue = mapDatasetKeyForID[DatasetDefinitionkey::CS_CMDM_ACTION_DESC_DEFAULT_VALUE];
     uint32_t keyIdAttrType = mapDatasetKeyForID[DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_TYPE];
+    uint32_t keyIdAttrMaxSize = mapDatasetKeyForID[DatasetDefinitionkey::CS_CMDM_ACTION_DESC_VALUE_MAX_SIZE];
     
     keyToGot.push_back(keyIdAttrMaxRng);
     keyToGot.push_back(keyIdAttrMinRng);
     keyToGot.push_back(keyIdAttrDefaultValue);
     keyToGot.push_back(keyIdAttrType);
-    
+    keyToGot.push_back(keyIdAttrMaxSize);
     
     (&attrEntityVec[0])->getPropertyByKeyID(keyToGot, attrPropertyVec);
     if(!attrPropertyVec.size()) return;
@@ -614,7 +653,9 @@ void CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID, const 
         
         edb::KeyIdAndValue *kivPtr = &(*attrPropertyIterator);
         
-        if(kivPtr->keyID == keyIdAttrMaxRng) {
+        if(kivPtr->keyID == keyIdAttrMaxSize) {
+            rangeInfo.maxSize = (uint32_t)kivPtr->value.numValue;
+        } else if(kivPtr->keyID == keyIdAttrMaxRng) {
             rangeInfo.maxRange = kivPtr->value.strValue;
         } else if(kivPtr->keyID == keyIdAttrMinRng) {
             rangeInfo.minRange = kivPtr->value.strValue;

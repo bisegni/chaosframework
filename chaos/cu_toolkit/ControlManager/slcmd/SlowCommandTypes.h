@@ -23,48 +23,26 @@
 
 #include <string>
 
+#include <boost/dynamic_bitset.hpp>
+
+#include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
+
 namespace chaos{
     namespace cu {
         namespace control_manager {
             namespace slow_command {
-                
                 class SlowCommand;
                 
-                typedef void * SettingValuePtr;
-                
-                struct ChannelSetting {
-                    uint32_t size;
-                    SettingValuePtr currentValue;
-                    SettingValuePtr nextValue;
-                    
-                    ChannelSetting(uint32_t _size):currentValue(NULL), nextValue(NULL) {
-                        size = _size;
-                        currentValue = malloc(size);
-                        nextValue = malloc(size);
-                    }
-                    
-                    ~ChannelSetting() {
-                        if(currentValue) free(currentValue);
-                        if(nextValue) free(nextValue);
-                    }
-                    
-                    void completed() {
-                        std::memcpy(currentValue, nextValue, size);
-                        std::memset(nextValue, 0, size);
-                    }
-                    
-                    void* setDestinationValue(void* valPtr, uint32_t _size) {
-                        if(_size>size) return NULL;
-                        return std::memcpy(currentValue, nextValue, _size);
-                    }
-                };
+#define BIT_BLOCK_DIMENSION uint8_t
+#define ATTRIBUTE_INDEX_TYPE uint16_t
                 
                 /*!
                  Type used for the next available command impl and description 
                  into the sandbox
                  */
                 typedef struct {
-                    PRIORITY_ELEMENT(CDataWrapper) *cmdInfo;
+                    chaos::PRIORITY_ELEMENT(chaos::CDataWrapper) *cmdInfo;
                     SlowCommand *cmdImpl;
                 } CommandInfoAndImplementation;
                 

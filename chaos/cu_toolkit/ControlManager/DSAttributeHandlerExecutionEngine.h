@@ -27,7 +27,8 @@
 #include <map>
 #include <vector>
 #include <chaos/cu_toolkit/ControlManager/handler/DSAttributeHandler.h>
-#include <chaos/common/data/CUSchemaDB.h>
+#include <chaos/cu_toolkit/ControlManager/DeviceSchemaDB.h>
+//#include <chaos/common/data/CUSchemaDB.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/StartableService.h>
 #include <boost/thread/thread.hpp>
@@ -46,7 +47,7 @@ namespace chaos{
             boost::shared_mutex engineManagmentLock;
             
                 //!has the infromatin schema for the control unit
-            chaos::CUSchemaDB *referenceCUSchemeDB;
+            chaos::cu::DeviceSchemaDB *referenceDeviceSchemaDB;
             
                 //! point to the name of the attribute manage by this environment
             std::set<std::string> managedAttributesName;
@@ -62,7 +63,7 @@ namespace chaos{
             /*!
              Default constructor with std string
              */
-            DSAttributeHandlerExecutionEngine(chaos::CUSchemaDB *);
+            DSAttributeHandlerExecutionEngine(chaos::cu::DeviceSchemaDB  *);
             
             /*!
              Default destructor with std string
@@ -81,7 +82,7 @@ namespace chaos{
                 //! Deinit the implementation
             void deinit() throw(chaos::CException);
             
-            void setCUSchemaDB(chaos::CUSchemaDB *_referenceCUSchemeDB);
+            void setDeviceSchemaDB(chaos::cu::DeviceSchemaDB  *_referenceDeviceSchemeDB);
             
                 //!addHandlerForDSAttribute
             /*!

@@ -38,6 +38,8 @@ namespace chaos {
     //!Describe the range of the value for an attribute of the dataset
     typedef struct RangeValueInfo {
         //!max value of the range
+        uint32_t maxSize;
+        //!max value of the range
         string maxRange;
         //!minimum value of the range
         string minRange;
@@ -208,12 +210,14 @@ namespace chaos {
          \param attributeDescription the description of the attribute
          \param attributeType the type of the new attribute
          \param attributeDirection the direction of the new attribute
+         \param maxSize maximum size for the type that are not raw (ex string, buffert, etc...)
          */
         void addAttributeToDataSet(const char*const deviceID,
                                    const char*const attributeName,
                                    const char*const attributeDescription,
                                    DataType::DataType attributeType,
-                                   DataType::DataSetAttributeIOAttribute attributeDirection);
+                                   DataType::DataSetAttributeIOAttribute attributeDirection,
+                                   uint32_t maxSize = 0);
             //!Get al device id
         /*!
          Return all the setupped device id
@@ -262,7 +266,9 @@ namespace chaos {
          Return the range value for the attribute
          \param deviceID the identification of the device
          \param attributesName the name of the attribute
-         \param rangeInfo the range and default value of the attribute
+         \param rangeInfo the range and default value of the attribute, the fields 
+                of the struct are not cleaned, so if an attrbute doesn't has
+                some finromation, relative field are not touched.
          */
        void getDeviceAttributeRangeValueInfo(const string& deviceID,
                                              const string& attributesName,

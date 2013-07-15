@@ -36,6 +36,14 @@ void StartableService::stop() throw(chaos::CException) {
     
 }
 
+bool StartableService::startImplementation(StartableService& impl, const char * const implName,  const char * const domainString) {
+    return startImplementation(&impl, implName,  domainString);
+}
+
+bool StartableService::stopImplementation(StartableService& impl, const char * const implName,  const char * const domainString) {
+    return stopImplementation(&impl, implName,  domainString);
+}
+
 /*!
  */
 bool StartableService::startImplementation(StartableService *impl, const char * const implName,  const char * const domainString) {

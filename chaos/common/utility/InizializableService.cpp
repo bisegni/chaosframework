@@ -54,6 +54,14 @@ const uint8_t InizializableService::getServiceState() const {
     return serviceState;
 }
 
+bool InizializableService::initImplementation(InizializableService& impl, void *initData, const char * const implName,  const char * const domainString) {
+    return initImplementation(&impl, initData, implName,  domainString);
+}
+
+bool InizializableService::deinitImplementation(InizializableService& impl, const char * const implName,  const char * const domainString) {
+    return deinitImplementation(&impl, implName,  domainString);
+}
+
 /*!
  */
 bool InizializableService::initImplementation(InizializableService *impl, void *initData, const char * const implName,  const char * const domainString)  {

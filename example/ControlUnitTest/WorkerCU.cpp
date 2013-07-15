@@ -114,7 +114,8 @@ void WorkerCU::defineActionAndDataset() throw(CException) {
                           "sinWave",
                           "The sin waveform",
                           DataType::TYPE_BYTEARRAY, 
-                          DataType::Output);
+                          DataType::Output,
+                          10000);
     
     addInputInt32AttributeToDataSet<WorkerCU>(devIDInChar,
                                               "points",

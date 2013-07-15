@@ -19,6 +19,7 @@
 
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/ControlManager/slcmd/SlowCommand.h>
+#include <chaos/cu_toolkit/ControlManager/slcmd/ChannelSetting.h>
 #include <chaos/cu_toolkit/ControlManager/slcmd/SlowCommandTypes.h>
 
 namespace chaos{
@@ -76,6 +77,7 @@ namespace chaos{
                     friend class chaos::cu::AbstractControlUnit;
                     friend class SlowCommandExecutor;
                     
+                    
                     //internal ascheduling thread
                     boost::thread *schedulerThread;
                     
@@ -104,8 +106,16 @@ namespace chaos{
                     //! POinte to the next available command
                     CommandInfoAndImplementation nextAvailableCommand;
                     
-                    //point to the current executing command
+                    //!point to the current executing command
                     SlowCommand *currentExecutingCommand;
+                    
+                    //! Shared Channel Setting 
+                    /*!
+                        Shared aree to store the current and nex value
+                        of the input channel or shared variable setting,
+                        used into the control algoritm.
+                     */
+                    ChannelSetting sharedChannelSetting;
                     
                     //! contain the paused command
                     boost::lockfree::stack<SlowCommand*, boost::lockfree::fixed_sized<false> > commandStack;

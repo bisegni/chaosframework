@@ -19,7 +19,11 @@ using namespace chaos::cu::control_manager::slow_command;
 #define DEFAULT_CHECK_TIME 500
 
 SlowCommandSandbox::SlowCommandSandbox():commandStack(DEFAULT_STACK_ELEMENT) {
-    
+    //reset all the handler
+    currentExecutingCommand = NULL;
+    setHandlerFunctor.cmdInstance = NULL;
+    acquireHandlerFunctor.cmdInstance = NULL;
+    correlationHandlerFunctor.cmdInstance = NULL;
 }
 
 SlowCommandSandbox::~SlowCommandSandbox() {
@@ -27,9 +31,12 @@ SlowCommandSandbox::~SlowCommandSandbox() {
 }
 
 //! Initialize instance
-void SlowCommandSandbox::init(void*) throw(chaos::CException) {
+void SlowCommandSandbox::init(void *initData) throw(chaos::CException) {
     nextAvailableCommand.cmdInfo = NULL;
     nextAvailableCommand.cmdImpl = NULL;
+    
+    //initialize the shared channel setting
+    utility::InizializableService::initImplementation(sharedChannelSetting, initData, "ChannelSetting", "SlowCommandSandbox::init");
     
     checkTimeIntervall = boost::chrono::milliseconds(DEFAULT_CHECK_TIME);
     
@@ -40,6 +47,9 @@ void SlowCommandSandbox::init(void*) throw(chaos::CException) {
 
 // Start the implementation
 void SlowCommandSandbox::start() throw(chaos::CException) {
+    //se the flag to the end o fthe scheduler
+    scheduleWorkFlag = true;
+    
     //allocate threa
     schedulerThread = new boost::thread(boost::bind(&SlowCommandSandbox::runCommand, this));
 }
@@ -50,11 +60,14 @@ void SlowCommandSandbox::stop() throw(chaos::CException) {
     boost::recursive_mutex::scoped_lock lockScheduler(mutextCommandScheduler);
     
     //se the flag to the end o fthe scheduler
-    scheduleWorkFlag = true;
+    scheduleWorkFlag = false;
+    
+    pauseCondition.notify_one();
     
     //waith that the current command will terminate the work
     conditionWaithSchedulerEnd.wait(lockScheduler);
     
+    schedulerThread->join();
     //reset all the handler
     setHandlerFunctor.cmdInstance = NULL;
     acquireHandlerFunctor.cmdInstance = NULL;
@@ -82,10 +95,12 @@ void SlowCommandSandbox::deinit() throw(chaos::CException) {
         }
     }
     
+    //initialize the shared channel setting
+    utility::InizializableService::deinitImplementation(sharedChannelSetting, "ChannelSetting", "SlowCommandSandbox::init");
 }
 
 void SlowCommandSandbox::runCommand() {
-    bool canWork = true;
+    bool canWork = scheduleWorkFlag;
     bool currentStateEnd = false;
     
     boost::mutex::scoped_lock pauseLock(pauseMutex);
@@ -136,10 +151,10 @@ void SlowCommandSandbox::runCommand() {
     }
     
     //notify the end of the thread
-    conditionWaithSchedulerEnd.notify_all();
+    conditionWaithSchedulerEnd.notify_one();
 }
 
-//! Check if the new command can be installed
+// Check if the new command can be installed
 void SlowCommandSandbox::manageAvailableCommand() {
     
     // get the command submission info
@@ -202,7 +217,7 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
     
     //set current command
     currentExecutingCommand = cmdImpl;
-    
+    currentExecutingCommand->sharedChannelSettingPtr = &sharedChannelSetting;
     //associate the keydata storage to the command
     currentExecutingCommand->keyDataStorage = keyDataStorage;
     
