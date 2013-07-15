@@ -18,6 +18,8 @@
  *    	limitations under the License.
  */
 
+#include <vector>
+
 #include <chaos/common/global.h>
 #include <chaos/cu_toolkit/ControlManager/slcmd/SlowCommand.h>
 #include <chaos/cu_toolkit/ControlManager/slcmd/SlowCommandExecutor.h>
@@ -33,18 +35,29 @@ using namespace chaos::cu::control_manager::slow_command;
 
 SlowCommandExecutor::SlowCommandExecutor() {}
 
-SlowCommandExecutor::SlowCommandExecutor(std::string _executorID):executorID(_executorID){}
+SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DeviceSchemaDB *_deviceSchemaDbPtr):executorID(_executorID), deviceSchemaDbPtr(_deviceSchemaDbPtr){}
 
-SlowCommandExecutor::~SlowCommandExecutor() {
-    
-}
+SlowCommandExecutor::~SlowCommandExecutor() {}
 
 // Initialize instance
 void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
+    std::vector<string> inputAttributeNames;
+
     utility::StartableService::init(initData);
     
     performQueueCheck = true;
     incomingCheckThreadPtr = NULL;
+    
+    //at this point, befor the sandbox initialization we need to setup the shared setting memory
+    CHAOS_ASSERT(deviceSchemaDbPtr)
+    deviceSchemaDbPtr->getDatasetAttributesName(DataType::Input, inputAttributeNames);
+    SCELAPP_ << "Allocating setting shared memory for command";
+
+    for(std::vector<string>::iterator it = inputAttributeNames.begin();
+        it != inputAttributeNames.end();
+        it++) {
+        
+    }
     
     utility::InizializableService::initImplementation(&commandSandbox, initData, "SlowCommandSandbox", "SlowCommandExecutor::init");
 }

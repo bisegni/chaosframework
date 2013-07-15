@@ -19,6 +19,7 @@
 
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/ControlManager/slcmd/SlowCommand.h>
+#include <chaos/cu_toolkit/ControlManager/slcmd/SlowCommandTypes.h>
 
 namespace chaos{
     namespace cu {
@@ -39,11 +40,6 @@ namespace chaos{
                 //forward declaration
                 class SlowCommand;
                 class SlowCommandExecutor;
-                
-                typedef struct {
-                    PRIORITY_ELEMENT(CDataWrapper) *cmdInfo;
-                    SlowCommand *cmdImpl;
-                } CommandInfoAndImplementation;
 
                 //! Base functor for the command handler
                 struct BaseFunctor {
@@ -147,6 +143,8 @@ namespace chaos{
                     ~SlowCommandSandbox();
                     
                 protected:
+                    
+                    void* sharedSettingPtr;
                     
                     //! Initialize instance
                     void init(void*) throw(chaos::CException);

@@ -30,7 +30,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
-#include <chaos/common/data/CUSchemaDB.h>
+//#include <chaos/common/data/CUSchemaDB.h>
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/action/ActionDescriptor.h>
 #include <chaos/common/exception/CException.h>
@@ -44,6 +44,7 @@
 #include <chaos/cu_toolkit/ControlManager/DSAttributeHandlerExecutionEngine.h>
 #include <chaos/cu_toolkit/ControlManager/handler/TDSObjectHandler.h>
 #include <chaos/cu_toolkit/ControlManager/slcmd/SlowCommandExecutor.h>
+#include <chaos/cu_toolkit/ControlManager/DeviceSchemaDB.h>
 
 #define CU_IDENTIFIER_C_STREAM getCUName() << "_" << getCUInstance()
 #define INIT_STATE      0
@@ -85,7 +86,7 @@ namespace chaos{
         /*!
          Base class for control unit execution task
          */
-        class AbstractControlUnit : public DeclareAction, protected CUSchemaDB, public CThreadExecutionTask {
+        class AbstractControlUnit : public DeclareAction, protected DeviceSchemaDB, public CThreadExecutionTask {
             friend class ControlManager;
             friend class DomainActionsScheduler;
             
@@ -199,8 +200,6 @@ namespace chaos{
             //CU instance, this te fine the current isntance code
             //it's dynamically assigned
             string cuInstance;
-            
-            boost::shared_ptr<CDataWrapper> _internalSetupConfiguration;
             
             //------standard call-------------------------
             /*!

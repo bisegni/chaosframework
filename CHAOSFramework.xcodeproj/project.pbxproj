@@ -336,6 +336,11 @@
 		32CFF95C15E4D950005D607E /* EventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFF95A15E4D950005D607E /* EventDescriptor.h */; };
 		32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95D15E4DBD3005D607E /* EventFactory.cpp */; };
 		32CFF96015E4DBD3005D607E /* EventFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFF95E15E4DBD3005D607E /* EventFactory.h */; };
+		32D3EAAB1793F70000405A3E /* DeviceSchemaDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D3EAA91793F70000405A3E /* DeviceSchemaDB.h */; };
+		32D3EAAC1793F70000405A3E /* DeviceSchemaDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D3EAAA1793F70000405A3E /* DeviceSchemaDB.cpp */; };
+		32D3EAAE1794340200405A3E /* SlowCommandTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D3EAAD1794340200405A3E /* SlowCommandTypes.h */; };
+		32D3EAB517943EBC00405A3E /* ChannelSharedSetting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D3EAB317943EBC00405A3E /* ChannelSharedSetting.cpp */; };
+		32D3EAB617943EBC00405A3E /* ChannelSharedSetting.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D3EAB417943EBC00405A3E /* ChannelSharedSetting.h */; };
 		32D421B317271572008A326E /* BsonFragment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D421B117271572008A326E /* BsonFragment.cpp */; };
 		32D421B417271572008A326E /* BsonFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D421B217271572008A326E /* BsonFragment.h */; };
 		32D68AD014D5D5A7009F290A /* SetupStateManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D68ACF14D5D5A7009F290A /* SetupStateManager.h */; };
@@ -740,6 +745,11 @@
 		32CFF95A15E4D950005D607E /* EventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDescriptor.h; sourceTree = "<group>"; };
 		32CFF95D15E4DBD3005D607E /* EventFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventFactory.cpp; sourceTree = "<group>"; };
 		32CFF95E15E4DBD3005D607E /* EventFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventFactory.h; sourceTree = "<group>"; };
+		32D3EAA91793F70000405A3E /* DeviceSchemaDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSchemaDB.h; sourceTree = "<group>"; };
+		32D3EAAA1793F70000405A3E /* DeviceSchemaDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceSchemaDB.cpp; sourceTree = "<group>"; };
+		32D3EAAD1794340200405A3E /* SlowCommandTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlowCommandTypes.h; sourceTree = "<group>"; };
+		32D3EAB317943EBC00405A3E /* ChannelSharedSetting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChannelSharedSetting.cpp; sourceTree = "<group>"; };
+		32D3EAB417943EBC00405A3E /* ChannelSharedSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChannelSharedSetting.h; sourceTree = "<group>"; };
 		32D421B117271572008A326E /* BsonFragment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BsonFragment.cpp; sourceTree = "<group>"; };
 		32D421B217271572008A326E /* BsonFragment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BsonFragment.h; sourceTree = "<group>"; };
 		32D68ACF14D5D5A7009F290A /* SetupStateManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetupStateManager.h; sourceTree = "<group>"; };
@@ -936,6 +946,9 @@
 				325F8B501763AF2300EFE616 /* SlowCommand.h */,
 				32234D41176E106B00525E0C /* SlowCommandException.h */,
 				328E36EF178AE14E00C1564D /* SlowCommandConstants.h */,
+				32D3EAAD1794340200405A3E /* SlowCommandTypes.h */,
+				32D3EAB317943EBC00405A3E /* ChannelSharedSetting.cpp */,
+				32D3EAB417943EBC00405A3E /* ChannelSharedSetting.h */,
 			);
 			path = slcmd;
 			sourceTree = "<group>";
@@ -1362,6 +1375,8 @@
 				328D2FB61660EACD007F482E /* DSAttributeHandlerExecutionEngine.h */,
 				326DB4A514B3A3E50018A8D0 /* AbstractControlUnit.cpp */,
 				326DB4A614B3A3E50018A8D0 /* AbstractControlUnit.h */,
+				32D3EAAA1793F70000405A3E /* DeviceSchemaDB.cpp */,
+				32D3EAA91793F70000405A3E /* DeviceSchemaDB.h */,
 				326DB4A714B3A3E50018A8D0 /* ControlManager.cpp */,
 				326DB4A814B3A3E50018A8D0 /* ControlManager.h */,
 			);
@@ -1904,12 +1919,14 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32D3EAB617943EBC00405A3E /* ChannelSharedSetting.h in Headers */,
 				32234D42176E106B00525E0C /* SlowCommandException.h in Headers */,
 				326DB4B914B3A3E50018A8D0 /* ChaosCUToolkit.h in Headers */,
 				326DB4BB14B3A3E50018A8D0 /* CommandManager.h in Headers */,
 				32234D40176E045100525E0C /* SlowCommandExecutor.h in Headers */,
 				326DB4BC14B3A3E50018A8D0 /* CommandManagerDefaultAdapters.h in Headers */,
 				3215861117875FDB0090E7E6 /* DriverPluginLoader.h in Headers */,
+				32D3EAAE1794340200405A3E /* SlowCommandTypes.h in Headers */,
 				326DB4C014B3A3E50018A8D0 /* AbstractControlUnit.h in Headers */,
 				326DB4C214B3A3E50018A8D0 /* ControlManager.h in Headers */,
 				3232F458177743DC003E1D4A /* AbstractDriverPlugin.h in Headers */,
@@ -1929,6 +1946,7 @@
 				3264B05C1673623F002E87FA /* TDSObjectHandler.h in Headers */,
 				32CF054916AB23C200E86CC7 /* PerfTestCU.h in Headers */,
 				325F8B521763AF2300EFE616 /* SlowCommand.h in Headers */,
+				32D3EAAB1793F70000405A3E /* DeviceSchemaDB.h in Headers */,
 				328CC9D71763CCC7000B30B6 /* AbstractDriver.h in Headers */,
 				32919A0C1764E68F00724874 /* DriverAccessor.h in Headers */,
 			);
@@ -2203,6 +2221,7 @@
 				326DB4B814B3A3E50018A8D0 /* ChaosCUToolkit.cpp in Sources */,
 				326DB4BA14B3A3E50018A8D0 /* CommandManager.cpp in Sources */,
 				326DB4BF14B3A3E50018A8D0 /* AbstractControlUnit.cpp in Sources */,
+				32D3EAB517943EBC00405A3E /* ChannelSharedSetting.cpp in Sources */,
 				3215860D178756B40090E7E6 /* AbstractDriverPlugin.cpp in Sources */,
 				326DB4C114B3A3E50018A8D0 /* ControlManager.cpp in Sources */,
 				326DB4C614B3A3E50018A8D0 /* OutputDataBuffer.cpp in Sources */,
@@ -2212,6 +2231,7 @@
 				326DB4CD14B3A3E50018A8D0 /* MultiBufferDataStorage.cpp in Sources */,
 				328D2FB71660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp in Sources */,
 				328D2FB91660EAD6007F482E /* DSAttributeHandler.cpp in Sources */,
+				32D3EAAC1793F70000405A3E /* DeviceSchemaDB.cpp in Sources */,
 				32CF054816AB23C200E86CC7 /* PerfTestCU.cpp in Sources */,
 				325F8B511763AF2300EFE616 /* SlowCommand.cpp in Sources */,
 				328E36F3178AFE0D00C1564D /* SlowCommandSandbox.cpp in Sources */,

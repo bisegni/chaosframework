@@ -33,7 +33,7 @@ void PerfTestCU::defineActionAndDataset(CDataWrapper&)throw(CException) {
     setDefaultScheduleDelay(20000);
     
     //add managed device di
-    addDeviceId(deviceName.c_str());
+    setDeviceID(deviceName);
     
     
     //setup the dataset

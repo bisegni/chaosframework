@@ -28,6 +28,7 @@
 
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
+#include <chaos/cu_toolkit/ControlManager/slcmd/SlowCommandTypes.h>
 namespace chaos{
     namespace cu {
         
@@ -46,59 +47,6 @@ namespace chaos{
                 
                 //forward declaration
                 class SlowCommandExecutor;
-                
-                    //! Namespace for the handler types
-                namespace HandlerType {
-                    /*!
-                     * \enum RunningState
-                     * \brief Describe the state in which the command can be found
-                     */
-                    typedef enum Handler {
-                        HT_Set              = 1,    /**< Set handler */
-                        HT_Acquisition      = 2,    /**< Acquire handler */
-                        HT_Correlation     = 4     /**< Commit and Correlation handler */
-                    } Handler;
-                }
-                
-                    //! Namespace for the running state tyoes
-                namespace RunningStateType {
-                    /*!
-                     * \enum RunningState
-                     * \brief Describe the state in which the command can be found
-                     */
-                    typedef enum RunningState {
-                        RS_Exsc     = 0,    /**< The command cannot be killed or removed, it need to run */
-                        RS_Stack    = 1,    /**< The command can be stacked (paused) */
-                        RS_Kill     = 2,    /**< The command can be killed */
-                        RS_End      = 4,    /**< The command has ended his work */
-                        RS_Fault    = 8    /**< The command has had a fault */
-                    } RunningState;
-                }
-                
-                //! Namespace for the submisison type
-                namespace SubmissionRuleType {
-                    /*!
-                     * \enum SubmissionRule
-                     * \brief Describe the state in which the command can be found
-                     */
-                    typedef enum SubmissionRule {
-                        SUBMIT_AND_Stack    = 1,    /**< The new command wil stack the current executing command that consist in
-                                                     install all implemented handler of the new one without touch the handler that are not implemented */
-                        SUBMIT_AND_Kill     = 2,    /**< The new command will kill the current command, all hadnler ol killed one are erased and substituted */
-                        SUBMIT_NORMAL       = 4     /**< The new command will waith the end of the current executed command and if an handler is implemented it is installed*/
-                    } SubmissionRule;
-                }
-                
-                /*!
-                 \struct FaultDescription
-                 \brief  Describe the fault of the command. This fileds need to be valorized
-                 before to set the rState to RunningState::RS_Fault option
-                 */
-                typedef struct FaultDescription {
-                    uint32_t    code;           /**< The numer code of the error */
-                    std::string description;    /**< The description of the fault */
-                    std::string domain;         /**< The domain identify the context where the fault is occured */
-                } FaultDescription;
                 
                 //! Base cass for the slow command implementation
                 /*!

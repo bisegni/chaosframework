@@ -157,7 +157,7 @@ void ControlManager::deinit() throw(CException) {
         shared_ptr<AbstractControlUnit> cu = (*cuIter).second;
         LCMAPP_  << "Deinit Control Unit. " << cu->getCUInstance();
             //load all device id for this cu
-        cu->getAllDeviceId(allCUDeviceIDToStop);
+        allCUDeviceIDToStop.push_back(cu->getDeviceID());
         
         for (vector<string>::iterator iter =  allCUDeviceIDToStop.begin();
              iter != allCUDeviceIDToStop.end();

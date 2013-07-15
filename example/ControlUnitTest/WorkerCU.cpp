@@ -84,7 +84,7 @@ void WorkerCU::defineActionAndDataset() throw(CException) {
     setDefaultScheduleDelay(CU_DELAY_FROM_TASKS);
     
     //add managed device di
-    addDeviceId(_deviceID);
+    setDeviceID(_deviceID);
     
     //add custom action
     AbstActionDescShrPtr  

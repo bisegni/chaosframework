@@ -30,10 +30,12 @@
 #include <boost/atomic.hpp>
 
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/data/CUSchemaDB.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
 
+#include <chaos/cu_toolkit/ControlManager/DeviceSchemaDB.h>
 #include <chaos/cu_toolkit/ControlManager/slcmd/SlowCommandSandbox.h>
 
 #define COMMAND_QUEUE_DEFAULT_LENGTH 1024
@@ -73,8 +75,7 @@ namespace chaos{
                     //! sandbox for the execution of the handler
                     SlowCommandSandbox  commandSandbox;
                     
-                    //!the contro unit thread associated with this executor
-                    CThread         *cuThreadForExecutor;
+                    DeviceSchemaDB *deviceSchemaDbPtr;
                     
                     boost::thread   *incomingCheckThreadPtr;
                     
@@ -124,7 +125,7 @@ namespace chaos{
                     SlowCommandExecutor();
                     
                     //! Private constructor
-                    SlowCommandExecutor(std::string _executorID);
+                    SlowCommandExecutor(std::string _executorID, DeviceSchemaDB *_deviceSchemaDbPtr);
                     
                     //! Private deconstructor
                     ~SlowCommandExecutor();

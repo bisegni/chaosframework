@@ -86,7 +86,7 @@ void SWAlimCU::defineActionAndDataset() throw(CException) {
     setDefaultScheduleDelay(CU_DELAY_FROM_TASKS);
     
     //add managed device di
-    addDeviceId(_deviceID);
+    setDeviceID(_deviceID);
     
     //add custom action
     AbstActionDescShrPtr  
@@ -162,7 +162,7 @@ void SWAlimCU::init() throw(CException) {
     alim_attr = myalim->getAttributes();
     for(std::vector<const char*>::iterator i =  alim_attr.begin();i!= alim_attr.end();i++){
 
-      getDeviceAttributeRangeValueInfo( _deviceID.c_str(), *i,param);
+      getAttributeRangeValueInfo(*i, param);
       LAPP_<< "Parameter: "<<*i<<" val="<<param.defaultValue<<endl; 
       myalim->setAttribute(*i,param.defaultValue);
     }

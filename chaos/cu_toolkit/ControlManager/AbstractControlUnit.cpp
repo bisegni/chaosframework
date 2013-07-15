@@ -45,15 +45,15 @@ using namespace boost::uuids;
 #define LCU_ LAPP_ << "[Control Unit:"<<getCUInstance()<<"] - "
 
 
-AbstractControlUnit::AbstractControlUnit():CUSchemaDB(false), cuInstance(UUIDUtil::generateUUIDLite()) {
+AbstractControlUnit::AbstractControlUnit():DeviceSchemaDB(false), cuInstance(UUIDUtil::generateUUIDLite()) {
     attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
-    slowCommandExecutor = new cu::control_manager::slow_command::SlowCommandExecutor(cuInstance);
+    slowCommandExecutor = new cu::control_manager::slow_command::SlowCommandExecutor(cuInstance, this);
 }
 
-AbstractControlUnit::AbstractControlUnit(const char *descJsonPath):CUSchemaDB(false), cuInstance(UUIDUtil::generateUUIDLite())  {
+AbstractControlUnit::AbstractControlUnit(const char *descJsonPath):DeviceSchemaDB(false), cuInstance(UUIDUtil::generateUUIDLite())  {
     initWithJsonFilePath(descJsonPath);
     attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
-    slowCommandExecutor = new cu::control_manager::slow_command::SlowCommandExecutor(cuInstance);
+    slowCommandExecutor = new cu::control_manager::slow_command::SlowCommandExecutor(cuInstance, this);
 }
 
 /*!

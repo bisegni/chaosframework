@@ -103,8 +103,8 @@ void SlowCommandSandbox::runCommand() {
         //call the correlation and commit phase();
         correlationHandlerFunctor();
         
-        //compute the runnig stateor fault
-        currentStateEnd = currentExecutingCommand?(((currentExecutingCommand->runningState) << 2) >> 2):RunningStateType::RS_End;
+        //compute the runnig state or fault
+        currentStateEnd = currentExecutingCommand?(((currentExecutingCommand->runningState) & (RunningStateType::RS_End|RunningStateType::RS_Fault))):RunningStateType::RS_End;
         
         if( currentStateEnd ||
            boost::chrono::steady_clock::now() >= timeLastCheckCommand ) {
