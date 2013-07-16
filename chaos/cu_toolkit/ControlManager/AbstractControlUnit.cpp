@@ -465,13 +465,12 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
         throw CException(-3, "Device already started", "AbstractControlUnit::_start");
     }
     
-    LCU_ << "Start sandbox deinitialization for device:" << deviceID;
+    LCU_ << "Start sandbox for device:" << deviceID;
     utility::StartableService::startImplementation(slowCommandExecutor, "Slow Command Executor", "AbstractControlUnit::_start");
     
+    LCU_ << "Starting thread for device:" << deviceID;
     threadStartStopManagment(true);
-    
-    LCU_ << "Start sandbox for device:" << deviceID;
-    
+    LCU_ << "Thread started for device:" << deviceID;
     
     deviceState++;
     
@@ -503,7 +502,7 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachPa
     stop();
     
     
-    LCU_ << "Stop sandbox deinitialization for device:" << deviceID;
+    LCU_ << "Stop slow command executor for device:" << deviceID;
     utility::StartableService::stopImplementation(slowCommandExecutor, "Slow Command Executor", "AbstractControlUnit::_stop");
     
     //manage the thread

@@ -31,6 +31,7 @@
 
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/CUSchemaDB.h>
+//#include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
@@ -122,6 +123,7 @@ namespace chaos{
                      */
                     SlowCommand *instanceCommandInfo(std::string& commandAlias);
                 protected:
+                    
                     //! Private constructor
                     SlowCommandExecutor();
                     
@@ -130,6 +132,7 @@ namespace chaos{
                     
                     //! Private deconstructor
                     ~SlowCommandExecutor();
+                    
                 public:
                     
                     // Initialize instance

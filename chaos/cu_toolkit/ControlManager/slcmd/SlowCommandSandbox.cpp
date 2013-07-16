@@ -18,6 +18,10 @@ using namespace chaos::cu::control_manager::slow_command;
 #define DEFAULT_STACK_ELEMENT 100
 #define DEFAULT_CHECK_TIME 500
 
+#define SCSLAPP_ LAPP_ << "[SlowCommandSandbox-" << "] "
+#define SCSLDBG_ LDBG_ << "[SlowCommandSandbox-" << "] "
+#define SCSLERR_ LERR_ << "[SlowCommandSandbox-" << "] "
+
 SlowCommandSandbox::SlowCommandSandbox():commandStack(DEFAULT_STACK_ELEMENT) {
     //reset all the handler
     currentExecutingCommand = NULL;
@@ -32,12 +36,14 @@ SlowCommandSandbox::~SlowCommandSandbox() {
 
 //! Initialize instance
 void SlowCommandSandbox::init(void *initData) throw(chaos::CException) {
+    
     nextAvailableCommand.cmdInfo = NULL;
     nextAvailableCommand.cmdImpl = NULL;
     
     //initialize the shared channel setting
     utility::InizializableService::initImplementation(sharedChannelSetting, initData, "ChannelSetting", "SlowCommandSandbox::init");
     
+    SCSLDBG_ << "Get base check time intervall for the scheduler";
     checkTimeIntervall = boost::chrono::milliseconds(DEFAULT_CHECK_TIME);
     
     schedulerThread = NULL;
@@ -47,27 +53,37 @@ void SlowCommandSandbox::init(void *initData) throw(chaos::CException) {
 
 // Start the implementation
 void SlowCommandSandbox::start() throw(chaos::CException) {
+    
     //se the flag to the end o fthe scheduler
+    SCSLDBG_ << "Set scheduler work flag to true";
     scheduleWorkFlag = true;
     
-    //allocate threa
+    //allocate thread
+    SCSLDBG_ << "Allocate new thread for the scheduler";
     schedulerThread = new boost::thread(boost::bind(&SlowCommandSandbox::runCommand, this));
 }
 
 // Start the implementation
 void SlowCommandSandbox::stop() throw(chaos::CException) {
     //we ned to get the lock on the scheduler
+    SCSLDBG_ << "Try to lock mutext for command scheduler";
     boost::recursive_mutex::scoped_lock lockScheduler(mutextCommandScheduler);
     
     //se the flag to the end o fthe scheduler
+    SCSLDBG_ << "Set scheduler work flag to false";
     scheduleWorkFlag = false;
     
-    pauseCondition.notify_one();
+    SCSLDBG_ << "Notify pauseCondition variable";
+    pauseCondition.unlock();
     
     //waith that the current command will terminate the work
-    conditionWaithSchedulerEnd.wait(lockScheduler);
+    //SCSLDBG_ << "Wait on conditionWaithSchedulerEnd";
+    //conditionWaithSchedulerEnd.wait(lockScheduler);
     
+    SCSLDBG_ << "Join on schedulerThread";
     schedulerThread->join();
+    SCSLDBG_ << "schedulerThread terminated";
+
     //reset all the handler
     setHandlerFunctor.cmdInstance = NULL;
     acquireHandlerFunctor.cmdInstance = NULL;
@@ -103,7 +119,7 @@ void SlowCommandSandbox::runCommand() {
     bool canWork = scheduleWorkFlag;
     bool currentStateEnd = false;
     
-    boost::mutex::scoped_lock pauseLock(pauseMutex);
+    //boost::mutex::scoped_lock pauseLock(pauseMutex);
     
     //point to the time for the next check for the available command
     high_resolution_clock::time_point timeLastCheckCommand = boost::chrono::steady_clock::now() + boost::chrono::milliseconds(checkTimeIntervall);
@@ -131,11 +147,24 @@ void SlowCommandSandbox::runCommand() {
                     continue;
                 } else {
                     //wait until it continue
-                    pauseCondition.wait(pauseLock);
+                    SCSLDBG_ << "waith on pauseCondition";
+                    pauseCondition.wait();
+                    if(!scheduleWorkFlag) {
+                        // the command has end and the scehduler has been stopped
+                        canWork = false;
+                        continue;
+                    }
+                    SCSLDBG_ << "respawn after pauseCondition";
                 }
             }
             //try to get the lock otherwhise continue with the current control
+            SCSLDBG_ << "Acquiring lock on mutextCommandScheduler";
             boost::recursive_mutex::scoped_lock lockScheduler(mutextCommandScheduler, boost::try_to_lock);
+#ifdef DEBUG
+            if(!lockScheduler) {
+                SCSLDBG_ << "FAILURE Acquiring lock on mutextCommandScheduler";
+            }
+#endif
             if(lockScheduler && nextAvailableCommand.cmdImpl) {
                 manageAvailableCommand();
                 lockScheduler.unlock();
@@ -149,9 +178,9 @@ void SlowCommandSandbox::runCommand() {
         boost::chrono::milliseconds m = schedulerStepDelay - boost::chrono::duration_cast<boost::chrono::milliseconds>(runEnd-runStart);
         boost::this_thread::sleep_for(m);
     }
-    
+    SCSLDBG_ << "Thread terminating so notify conditionWaithSchedulerEnd";
     //notify the end of the thread
-    conditionWaithSchedulerEnd.notify_one();
+    //conditionWaithSchedulerEnd.notify_one();
 }
 
 // Check if the new command can be installed

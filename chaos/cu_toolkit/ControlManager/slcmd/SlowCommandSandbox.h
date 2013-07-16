@@ -15,6 +15,7 @@
 
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/StartableService.h>
+#include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
 
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
@@ -93,17 +94,18 @@ namespace chaos{
                     boost::condition_variable_any  conditionWaithSchedulerEnd;
                     
                     //!Mutex used for sincronize the introspection of the current command
-                    boost::mutex  pauseMutex;
+                    //boost::mutex  pauseMutex;
                     
                     //! Thread for whait until the queue is empty
-                    boost::condition_variable  pauseCondition;
+                    WaitSemaphore  pauseCondition;
                     
+                    //! check time intervall for the valutate the jobs (next, current and paused) state
                     boost::chrono::milliseconds checkTimeIntervall;
                     
+                    //! delay for the next beat of scheduler
                     boost::chrono::milliseconds schedulerStepDelay;
 
-                    
-                    //! POinte to the next available command
+                    //! Pointers to the next available command implementation and information
                     CommandInfoAndImplementation nextAvailableCommand;
                     
                     //!point to the current executing command
