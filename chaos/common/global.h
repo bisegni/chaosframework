@@ -71,6 +71,8 @@ const boost::posix_time::ptime EPOCH(boost::gregorian::date(1970,1,1));
 
     //chaos assert to debug real badthing
 
+#define CHAOS_UNUSED __attribute__((unused))
+
 #include <chaos/common/version.h>
 
     //macro for decode the chaos exception

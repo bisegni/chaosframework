@@ -20,6 +20,8 @@
 #include <boost/thread.hpp>
 
 #include "WorkerCU.h"
+#include "SinWaveCommand.h"
+
 #include <chaos/common/global.h>
 #include <chaos/common/cconstants.h>
 #include <chaos/common/bson/bson.h>
@@ -85,6 +87,8 @@ void WorkerCU::defineActionAndDataset() throw(CException) {
     
     //add managed device di
     setDeviceID(_deviceID);
+    
+    installCommand<SinWaveCommand>("sinwave_base");
     
     //add custom action
     AbstActionDescShrPtr  

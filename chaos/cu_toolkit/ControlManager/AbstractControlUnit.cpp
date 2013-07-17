@@ -661,7 +661,7 @@ CDataWrapper *AbstractControlUnit::getNewDataWrapper() {
  An instance of the command si registered within the executor.
  */
 void AbstractControlUnit::setDefaultCommand(const char * dafaultCommandName) {
-    CHAOS_ASSERT(slowCommandExecutor)
+    CHAOS_ASSERT(slowCommandExecutor);
     slowCommandExecutor->setDefaultCommand(dafaultCommandName);
 }
 

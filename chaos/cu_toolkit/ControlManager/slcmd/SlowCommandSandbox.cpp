@@ -83,7 +83,7 @@ void SlowCommandSandbox::stop() throw(chaos::CException) {
     SCSLDBG_ << "Join on schedulerThread";
     schedulerThread->join();
     SCSLDBG_ << "schedulerThread terminated";
-
+    
     //reset all the handler
     setHandlerFunctor.cmdInstance = NULL;
     acquireHandlerFunctor.cmdInstance = NULL;
@@ -94,22 +94,27 @@ void SlowCommandSandbox::stop() throw(chaos::CException) {
 void SlowCommandSandbox::deinit() throw(chaos::CException) {
     
     //we ned to get the lock on the scheduler
+    SCSLDBG_ << "Aquiring lock on mutextCommandScheduler";
     boost::recursive_mutex::scoped_lock lockScheduler(mutextCommandScheduler);
+    SCSLDBG_ << "Lock on mutextCommandScheduler acquired";
     
+    SCSLDBG_ << "Delete scheduler thread";
     if(schedulerThread) {
-        schedulerThread->join();
         delete(schedulerThread);
         schedulerThread = NULL;
     }
+    SCSLDBG_ << "Scheduler deleted";
     
     SlowCommand *instance = NULL;
     
     //free the remained commands into the stack
+    SCSLDBG_ << "Remove command into the stack";
     while (!commandStack.empty()) {
         if(commandStack.pop(instance) && instance) {
             delete instance;
         }
     }
+    SCSLDBG_ << "Command into the stack removed";
     
     //initialize the shared channel setting
     utility::InizializableService::deinitImplementation(sharedChannelSetting, "ChannelSetting", "SlowCommandSandbox::init");
@@ -220,22 +225,18 @@ void SlowCommandSandbox::manageAvailableCommand() {
             
             //for now we delete it after we need to manage it
             delete(currentExecutingCommand);
+            currentExecutingCommand = NULL;
             
-            // command has finisced or has fault
-            if(!commandStack.pop(popedCommand)) {
-                //"Error popping the command form stack"
+            //pop the latest command
+            if(!commandStack.empty()) {
+                if(!commandStack.pop(popedCommand)) {
+                    //"Error popping the command form stack"
+                }
             }
             
+            installHandler(popedCommand, NULL);
         }
-        
-        //pop the latest command
-        if(!commandStack.empty()) {
-            if(!commandStack.pop(popedCommand)) {
-                //"Error popping the command form stack"
-            }
-        }
-        
-        installHandler(popedCommand, NULL);
+
     }
 }
 
@@ -246,11 +247,11 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
     
     //set current command
     currentExecutingCommand = cmdImpl;
-    currentExecutingCommand->sharedChannelSettingPtr = &sharedChannelSetting;
-    //associate the keydata storage to the command
-    currentExecutingCommand->keyDataStorage = keyDataStorage;
-    
     if(currentExecutingCommand) {
+        currentExecutingCommand->sharedChannelSettingPtr = &sharedChannelSetting;
+        //associate the keydata storage to the command
+        currentExecutingCommand->keyDataStorage = keyDataStorage;
+
         uint8_t handlerMask = currentExecutingCommand->implementedHandler();
         //install the pointer of th ecommand into the respective handler functor
         

@@ -21,6 +21,10 @@
 #include <string>
 #include <chaos/cu_toolkit/ControlManager/slcmd/ChannelSetting.h>
 
+#define CSLAPP_ LAPP_ << "[ChannelSetting-" << "] "
+#define CSLDBG_ LDBG_ << "[ChannelSetting-" << "] "
+#define CSLERR_ LERR_ << "[ChannelSetting-" << "] "
+
 using namespace std;
 using namespace chaos::cu::control_manager::slow_command;
 
@@ -68,7 +72,7 @@ void ChannelSetting::init(void *initData) throw(chaos::CException) {
     bitmapChangedAttribute = new boost::dynamic_bitset<BIT_BLOCK_DIMENSION>(mapAttributeIndexSettings.size());
     if(!bitmapChangedAttribute) throw CException(1, "Error allocating memory for map bit", "ChannelSetting::init");
    
-    for (map<ATTRIBUTE_INDEX_TYPE, ValueSetting*>::iterator it = mapAttributeIndexSettings.begin() ;
+    for (map<ATTRIBUTE_INDEX_TYPE, boost::shared_ptr<ValueSetting> >::iterator it = mapAttributeIndexSettings.begin() ;
          it != mapAttributeIndexSettings.end();
          it++) {
         it->second->sharedBitmapChangedAttribute = bitmapChangedAttribute;
@@ -80,12 +84,12 @@ void ChannelSetting::init(void *initData) throw(chaos::CException) {
 //! Deinit the implementation
 void ChannelSetting::deinit() throw(chaos::CException) {
     //remove all ValueSetting instance
-    for (map<ATTRIBUTE_INDEX_TYPE, ValueSetting*>::iterator it = mapAttributeIndexSettings.begin() ;
+   /* for (map<ATTRIBUTE_INDEX_TYPE, boost::shared_ptr<ValueSetting> >::iterator it = mapAttributeIndexSettings.begin() ;
          it != mapAttributeIndexSettings.end();
          it++) {
         delete(it->second);
-    }
-    
+    }*/
+    mapAttributeIndexSettings.clear();
     if(bitmapChangedAttribute) {
        delete(bitmapChangedAttribute);
         bitmapChangedAttribute = NULL;
@@ -107,7 +111,8 @@ void ChannelSetting::addAttribute(string name, uint32_t size) {
     mapAttributeNameIndex.insert(make_pair<string, ATTRIBUTE_INDEX_TYPE>(name, (tmpIndex=index++)));
     
     //add channel setting
-    mapAttributeIndexSettings.insert(make_pair<ATTRIBUTE_INDEX_TYPE, ValueSetting*>(tmpIndex, new ValueSetting(size, tmpIndex)));
+    boost::shared_ptr<ValueSetting> tmpSP(new ValueSetting(size, tmpIndex));
+    mapAttributeIndexSettings.insert(make_pair<ATTRIBUTE_INDEX_TYPE, boost::shared_ptr<ValueSetting> >(tmpIndex, tmpSP));
     
     //add the relative bit
 

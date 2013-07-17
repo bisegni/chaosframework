@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-
-#include "DSAttributeHandlerExecutionEngine.h"
+#include <chaos/common/global.h>
+#include <chaos/cu_toolkit/ControlManager/DSAttributeHandlerExecutionEngine.h>
 
 #define LDSAHEE_ LAPP_ << "[DSAttributeHandlerExecutionEngine] - "
 using namespace chaos;
@@ -45,7 +45,7 @@ void DSAttributeHandlerExecutionEngine::setDeviceSchemaDB(chaos::cu::DeviceSchem
 }
 
 //! Initialize instance
-void DSAttributeHandlerExecutionEngine::init(void*) throw(chaos::CException) {
+void DSAttributeHandlerExecutionEngine::init(void *initData) throw(chaos::CException) {
 }
 
 //! Start the implementation
@@ -70,9 +70,11 @@ void DSAttributeHandlerExecutionEngine::deinit() throw(chaos::CException) {
             handler::DSAttributeHandler *handlerPtr = *iter;
             delete(handlerPtr);
         }
-        
+        tmpVec->clear();
         delete(tmpVec);
     }
+    
+    attrNameHandlerMap.clear();
 }
 
 /*!

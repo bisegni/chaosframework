@@ -146,6 +146,9 @@ void MsgPackClient::processBufferElement(NetworkForwardInfo *messageInfo, Elemen
     } catch (std::exception& e) {
         LAPP_ << "Error during message forwarding:"<< e.what();
         return;
+    } catch (...) {
+        LAPP_ << "Error during message forwarding:";
+        return;
     }
             //localSession.notify(CommandManagerConstant::CS_CMDM_RPC_TAG, rawMsg);
     if(rawResult.size>0){

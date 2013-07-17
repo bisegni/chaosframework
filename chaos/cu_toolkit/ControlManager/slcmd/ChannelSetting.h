@@ -25,6 +25,7 @@
 #include <string>
 
 #include <boost/thread.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/dynamic_bitset.hpp>
 
 #include <chaos/common/utility/InizializableService.h>
@@ -72,7 +73,7 @@ namespace chaos{
                     boost::dynamic_bitset<BIT_BLOCK_DIMENSION> *bitmapChangedAttribute;
                     
                     map<string, ATTRIBUTE_INDEX_TYPE> mapAttributeNameIndex;
-                    map<ATTRIBUTE_INDEX_TYPE, ValueSetting*> mapAttributeIndexSettings;
+                    map<ATTRIBUTE_INDEX_TYPE, boost::shared_ptr<ValueSetting> > mapAttributeIndexSettings;
                 public:
                     
                     ChannelSetting();

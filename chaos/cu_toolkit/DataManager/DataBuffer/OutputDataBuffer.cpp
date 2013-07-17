@@ -90,7 +90,6 @@ IODataDriver *OutputDataBuffer::getIODataDriver() {
  Update the configuration
  */
 CDataWrapper* OutputDataBuffer::updateConfiguration(CDataWrapper *newConfigration) {
-    CHAOS_ASSERT(ioDriver);
-    ioDriver->updateConfiguration(newConfigration);
+    if(ioDriver) ioDriver->updateConfiguration(newConfigration);
     return NULL;
 }
