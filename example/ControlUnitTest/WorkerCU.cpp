@@ -90,6 +90,8 @@ void WorkerCU::defineActionAndDataset() throw(CException) {
     
     installCommand<SinWaveCommand>("sinwave_base");
     
+    setDefaultCommand("sinwave_base");
+    
     //add custom action
     AbstActionDescShrPtr  
     actionDescription = addActionDescritionInstance<WorkerCU>(this, 

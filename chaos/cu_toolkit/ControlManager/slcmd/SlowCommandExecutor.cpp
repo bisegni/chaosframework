@@ -39,10 +39,15 @@ SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DeviceSchemaDB
 
 SlowCommandExecutor::~SlowCommandExecutor() {}
 
+//! get access to the custom data pointer of the channel setting instance
+void SlowCommandExecutor::setSharedCustomDataPtr(void *customDataPtr) {
+    commandSandbox.sharedChannelSetting.customData = customDataPtr;
+}
+
 // Initialize instance
 void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
     std::vector<string> inputAttributeNames;
-
+    
     utility::StartableService::init(initData);
     
     performQueueCheck = true;
@@ -84,7 +89,7 @@ void SlowCommandExecutor::start() throw(chaos::CException) {
         SCELDBG_ << "Acquire lock on mutextQueueManagment";
         boost::mutex::scoped_lock lock(mutextQueueManagment);
         SCELDBG_ << "Lock on mutextQueueManagment acquired";
-
+        
         CHAOS_ASSERT(!incomingCheckThreadPtr)
         incomingCheckThreadPtr = new boost::thread(boost::bind(&SlowCommandExecutor::performIncomingCommandCheck, this));
         if(!incomingCheckThreadPtr) throw CException(1, "Error allocating incoming check thread", "SlowCommandExecutor::start");
@@ -98,14 +103,14 @@ void SlowCommandExecutor::start() throw(chaos::CException) {
 }
 
 // Start the implementation
-void SlowCommandExecutor::stop() throw(chaos::CException) {    
+void SlowCommandExecutor::stop() throw(chaos::CException) {
     //lock for queue access
     SCELDBG_ << "Acquire lock on mutextQueueManagment";
     boost::mutex::scoped_lock lock(mutextQueueManagment);
     SCELDBG_ << "Lock on mutextQueueManagment acquired";
     
     utility::StartableService::stopImplementation(commandSandbox, "SlowCommandSandbox", "SlowCommandExecutor::stop");
-
+    
     // set thread run flag for finish work
     SCELDBG_ << "Set performQueueCheck to false";
     performQueueCheck = false;
@@ -123,7 +128,7 @@ void SlowCommandExecutor::stop() throw(chaos::CException) {
     delete(incomingCheckThreadPtr);
     incomingCheckThreadPtr = NULL;
     SCELAPP_ << "Queue thread ended";
-
+    
     
     utility::StartableService::stop();
 }
@@ -139,7 +144,7 @@ void SlowCommandExecutor::deinit() throw(chaos::CException) {
         if(it->second) delete(it->second);
     }
     mapCommandInstancer.clear();
-
+    
     utility::InizializableService::deinitImplementation(commandSandbox, "SlowCommandSandbox", "SlowCommandExecutor::deinit");
     
     utility::StartableService::deinit();
@@ -166,86 +171,56 @@ void SlowCommandExecutor::installCommand(string alias, chaos::common::utility::O
 //! Check the incoming command rule
 void SlowCommandExecutor::performIncomingCommandCheck() {
     //lock for queue access
-#ifdef DEBUG
-    SCELDBG_ << "Start thread";
-#endif
+    
+    DEBUG_CODE(SCELDBG_ << "Start thread";)
     boost::mutex::scoped_lock lock(mutextQueueManagment);
     
     while(performQueueCheck) {
         while(commandSubmittedQueue.empty() && performQueueCheck) {
-#ifdef DEBUG
-            SCELDBG_ << "Start waith on the readThreadWhait";
-#endif
+            DEBUG_CODE(SCELDBG_ << "Start waith on the readThreadWhait";)
             readThreadWhait.wait(lock);
-#ifdef DEBUG
-            SCELDBG_ << "Respawn on the readThreadWhait";
-#endif
+            DEBUG_CODE(SCELDBG_ << "Respawn on the readThreadWhait";)
         }
         
         //probable error or quit condition
         if(commandSubmittedQueue.empty() || !performQueueCheck) {
-#ifdef DEBUG
-            SCELDBG_ << "commandSubmittedQueue.empty()=" << commandSubmittedQueue.empty() <<" || " << "!performQueueCheck=" << !performQueueCheck;
-#endif
+            DEBUG_CODE(SCELDBG_ << "commandSubmittedQueue.empty()=" << commandSubmittedQueue.empty() <<" || " << "!performQueueCheck=" << !performQueueCheck;)
             continue;
         }
         
         //-------------------check if we can use the command-------------------------
-#ifdef DEBUG
-        SCELDBG_ << "Check new queue command";
-#endif
+        DEBUG_CODE(SCELDBG_ << "Check new queue command";)
         PRIORITY_ELEMENT(CDataWrapper) *element = commandSubmittedQueue.top();
         // we need to check if there is a "waiting command" and so we need to lock the scheduler
         if(!element) {
             //never need to happen
-#ifdef DEBUG
-            SCELDBG_ << "COmmand pointer NULL";
-#endif
+            DEBUG_CODE(SCELDBG_ << "Cmmand pointer NULL";)
             commandSubmittedQueue.pop();
             continue;
         }
         
         try {
-#ifdef DEBUG
-            SCELDBG_ << "Install new command locking the sandbox";
-#endif
+            DEBUG_CODE(    SCELDBG_ << "Install new command locking the sandbox";)
             //lock the command scheduler
             boost::unique_lock<boost::recursive_mutex> lockScheduler(commandSandbox.mutextCommandScheduler);
             if(commandSandbox.nextAvailableCommand.cmdImpl == NULL && commandSandbox.nextAvailableCommand.cmdInfo == NULL) {
-#ifdef DEBUG
-                SCELDBG_ << "No waiting command into sandbox, try to install new one";
-#endif
-                
+                DEBUG_CODE(SCELDBG_ << "No waiting command into sandbox, try to install new one";)
                 // no waiting command so set the next available wit the info and instance
                 // if something goes wrong an axception is fired and element is fired
                 if(commandSandbox.setNextAvailableCommand(element, instanceCommandInfo(element->element))){
-#ifdef DEBUG
-                    SCELDBG_ << "Command installed";
-#endif
-
+                    DEBUG_CODE(SCELDBG_ << "Command installed";)
                     //remove command form the queue
                     commandSubmittedQueue.pop();
-#ifdef DEBUG
-                    SCELDBG_ << "Command popped from the queue";
-#endif
+                    DEBUG_CODE(SCELDBG_ << "Command popped from the queue";)
                 }
-                
             } else if(element != commandSandbox.nextAvailableCommand.cmdInfo &&
                       element->getPriority() > commandSandbox.nextAvailableCommand.cmdInfo->getPriority()) {
-#ifdef DEBUG
-                SCELDBG_ << "There is a waiting command into sandbox, but ne one have more priority";
-#endif
-
+                DEBUG_CODE(SCELDBG_ << "There is a waiting command into sandbox, but ne one have more priority";)
                 //We ave a new, higer priority, command to submit
-#ifdef DEBUG
-                SCELDBG_ << "Swap waithing command whith new one";
-#endif
-
+                DEBUG_CODE(SCELDBG_ << "Swap waithing command whith new one";)
                 commandSubmittedQueue.push(commandSandbox.nextAvailableCommand.cmdInfo);
                 if(commandSandbox.setNextAvailableCommand(element, instanceCommandInfo(element->element))) {
-#ifdef DEBUG
-                    SCELDBG_ << "New command installed";
-#endif
+                    DEBUG_CODE(SCELDBG_ << "New command installed";)
                     //remove command form the queue
                     commandSubmittedQueue.pop();
                 }
@@ -266,38 +241,27 @@ void SlowCommandExecutor::performIncomingCommandCheck() {
         }
         //-------------------check if we can use the command-------------------------
     }
-#ifdef DEBUG
-    SCELDBG_ << "Queue thread has been shutting down.. cleaning the queue";
-#endif
-   
+    DEBUG_CODE(SCELDBG_ << "Queue thread has been shutting down.. cleaning the queue";)
     //whe are terminating and we need to erase the command information not elaborated
     //we still protected by the lock on mutextQueueManagment mutext
     while (!commandSubmittedQueue.empty()) {
         //get the command on top
         PRIORITY_ELEMENT(CDataWrapper) *element = commandSubmittedQueue.top();
         if(element) {
-#ifdef DEBUG
-            SCELDBG_ << "----------------------------------------------------------------------------";
-            SCELDBG_ << "Removeing element " << element->element->getJSONString();
-#endif
-            //remove from the queue
+            DEBUG_CODE( SCELDBG_ << "----------------------------------------------------------------------------";
+                       SCELDBG_ << "Removeing element " << element->element->getJSONString();)            //remove from the queue
             commandSubmittedQueue.pop();
             
             //release it
             delete(element);
-#ifdef DEBUG
-            SCELDBG_ << "element deleted";
-            SCELDBG_ << "----------------------------------------------------------------------------";
-#endif
+            DEBUG_CODE( SCELDBG_ << "element deleted";
+                       SCELDBG_ << "----------------------------------------------------------------------------";)
         }
     }
     
     //end of the thread
     emptyQueueConditionLock.notify_one();
-#ifdef DEBUG
-    SCELDBG_ << "Thread terminated";
-#endif
-
+    DEBUG_CODE(SCELDBG_ << "Thread terminated";)
 }
 
 //! Check if the waithing command can be installed
@@ -307,15 +271,11 @@ SlowCommand *SlowCommandExecutor::instanceCommandInfo(CDataWrapper *submissionIn
         throw CException(1, "The alias of the slow command is mandatory", "SlowCommandExecutor::setupCommand");
     }
     commandAlias = submissionInfo->getStringValue(SlowCommandSubmissionKey::COMMAND_ALIAS);
-#if DEBUG
-    SCELDBG_ << "Instancing command " << commandAlias;
-#endif
+    DEBUG_CODE(SCELDBG_ << "Instancing command " << commandAlias;)
     SlowCommand *instance = instanceCommandInfo(commandAlias);
     if(!submissionInfo->hasKey(SlowCommandSubmissionKey::SUBMISSION_RULE)) {
         if(instance) instance->submissionRule = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SUBMISSION_RULE);
-#if DEBUG
-        SCELDBG_ << "Submizzion rule for command " << commandAlias << " is: " << instance->submissionRule;
-#endif
+        DEBUG_CODE(SCELDBG_ << "Submizzion rule for command " << commandAlias << " is: " << instance->submissionRule;)
     }
     return instance;
 }
@@ -324,11 +284,9 @@ SlowCommand *SlowCommandExecutor::instanceCommandInfo(CDataWrapper *submissionIn
 SlowCommand *SlowCommandExecutor::instanceCommandInfo(std::string& commandAlias) {
     SlowCommand *result = NULL;
     if(mapCommandInstancer.count(commandAlias)) {
-         result = mapCommandInstancer[commandAlias]->getInstance();
+        result = mapCommandInstancer[commandAlias]->getInstance();
     } else {
-#if DEBUG
-        SCELDBG_ << "No command found for alias " << commandAlias;
-#endif
+        DEBUG_CODE(SCELDBG_ << "No command found for alias " << commandAlias;)
     }
     return result;
 }
@@ -339,10 +297,8 @@ bool SlowCommandExecutor::submitCommand(CDataWrapper *commandDescription) {
     boost::mutex::scoped_lock lock(mutextQueueManagment);
     if(serviceState != utility::StartableServiceType::SS_STARTED) return false;
     uint32_t priority = commandDescription->hasKey(SlowCommandSubmissionKey::SUBMISSION_PRIORITY) ? commandDescription->getUInt32Value(SlowCommandSubmissionKey::SUBMISSION_PRIORITY):50;
-#if DEBUG
-    SCELDBG_ << "Submit new command " << commandDescription->getJSONString();
-    SCELDBG_ << "Submit priority: " << priority;
-#endif
+    DEBUG_CODE(SCELDBG_ << "Submit new command " << commandDescription->getJSONString();
+               SCELDBG_ << "Submit priority: " << priority;)
     commandSubmittedQueue.push(new PriorityQueuedElement<CDataWrapper>(commandDescription, priority, true));
     lock.unlock();
     readThreadWhait.notify_one();

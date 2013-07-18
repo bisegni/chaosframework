@@ -132,17 +132,6 @@ namespace chaos{
                     //! Pointer to the correlation and commit pahse handler's of the current command
                     CorrelationFunctor correlationHandlerFunctor;
                     //-------------------- handler poiter --------------------
-                                        
-                    //! Check if the new command can be installed
-                    /*!
-                     Perform all check using the submission rule of the new command according
-                     to the Running State of the current command. In case all goes weel the new
-                     command is installed and the old one is managed accordint to the submissione rule
-                     \param newCommandDescription the new command description that contain the submission rule
-                     and the alias of the command to instantiate.
-                     \return true if the command is successfull installed, false otherwise
-                     */
-                    inline void manageAvailableCommand();
                     
                     //!install the handler of the command
                     /*!
@@ -167,12 +156,17 @@ namespace chaos{
                     // Start the implementation
                     virtual void stop() throw(chaos::CException);
                     
-                    //! Deinit the implementation
+                    // Deinit the implementation
                     void deinit() throw(chaos::CException);
                     
-                    //! Execute a compelte step of the command
+                    //! execute a complete step of the command (acquire -> correlation) and check if the new command can be installed
                     /*!
-                     Make a schedule cicle (acquire phase -> correlation phase -> check new command)
+                     Perform all check using the submission rule of the new command according
+                     to the Running State of the current command. In case all goes weel the new
+                     command is installed and the old one is managed accordint to the submissione rule
+                     \param newCommandDescription the new command description that contain the submission rule
+                     and the alias of the command to instantiate.
+                     \return true if the command is successfull installed, false otherwise
                      */
                     void runCommand();
 

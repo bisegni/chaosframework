@@ -170,6 +170,9 @@ namespace chaos{
                      they are put into the commandSubmittedQueue for to wait to be executed.
                      */
                     bool submitCommand(CDataWrapper *commandDescription);
+                    
+                    //! set the custom data pointer of the channel setting instance to custom allocated memory
+                    void setSharedCustomDataPtr(void *customDataPtr);
                 };
             }
         }

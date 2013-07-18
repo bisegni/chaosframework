@@ -46,8 +46,10 @@ namespace chaos{
             
                 struct ValueSetting {
                     friend class ChannelSetting;
-                    uint32_t index;
-                    uint32_t size;
+                    const uint32_t index;
+                    const uint32_t size;
+                    
+                    boost::mutex mutextAccessSetting;
                     
                     SettingValuePtr currentValue;
                     SettingValuePtr nextValue;
@@ -68,13 +70,15 @@ namespace chaos{
                 class ChannelSetting : public utility::InizializableService {
                     
                     ATTRIBUTE_INDEX_TYPE index;
-                    boost::mutex mutextAccessMap;
 
                     boost::dynamic_bitset<BIT_BLOCK_DIMENSION> *bitmapChangedAttribute;
                     
                     map<string, ATTRIBUTE_INDEX_TYPE> mapAttributeNameIndex;
                     map<ATTRIBUTE_INDEX_TYPE, boost::shared_ptr<ValueSetting> > mapAttributeIndexSettings;
                 public:
+                    
+                    //! This field point to a custom memory shared by cu and all command
+                    void *customData;
                     
                     ChannelSetting();
                     

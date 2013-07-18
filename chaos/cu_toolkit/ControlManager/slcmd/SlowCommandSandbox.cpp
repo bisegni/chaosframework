@@ -122,7 +122,7 @@ void SlowCommandSandbox::deinit() throw(chaos::CException) {
 
 void SlowCommandSandbox::runCommand() {
     bool canWork = scheduleWorkFlag;
-    bool currentStateEnd = false;
+    uint8_t curCmdRunningState = 0;
     
     //boost::mutex::scoped_lock pauseLock(pauseMutex);
     
@@ -140,43 +140,91 @@ void SlowCommandSandbox::runCommand() {
         correlationHandlerFunctor();
         
         //compute the runnig state or fault
-        currentStateEnd = currentExecutingCommand?(((currentExecutingCommand->runningState) & (RunningStateType::RS_End|RunningStateType::RS_Fault))):RunningStateType::RS_End;
-        
-        if( currentStateEnd ||
+        curCmdRunningState = currentExecutingCommand?currentExecutingCommand->runningState&(RunningStateType::RS_End|RunningStateType::RS_Fault):RunningStateType::RS_End;
+        if(curCmdRunningState ||
            boost::chrono::steady_clock::now() >= timeLastCheckCommand ) {
-            //see if the next available or an old push command need to be installed
-            if(currentStateEnd) {
-                if(!scheduleWorkFlag) {
-                    // the command has end and the scehduler has been stopped
-                    canWork = false;
-                    continue;
-                } else {
-                    //wait until it continue
-                    SCSLDBG_ << "waith on pauseCondition";
-                    pauseCondition.wait();
-                    if(!scheduleWorkFlag) {
-                        // the command has end and the scehduler has been stopped
-                        canWork = false;
-                        continue;
-                    }
-                    SCSLDBG_ << "respawn after pauseCondition";
-                }
-            }
             //try to get the lock otherwhise continue with the current control
             SCSLDBG_ << "Acquiring lock on mutextCommandScheduler";
             boost::recursive_mutex::scoped_lock lockScheduler(mutextCommandScheduler, boost::try_to_lock);
-#ifdef DEBUG
-            if(!lockScheduler) {
-                SCSLDBG_ << "FAILURE Acquiring lock on mutextCommandScheduler";
-            }
-#endif
-            if(lockScheduler && nextAvailableCommand.cmdImpl) {
-                manageAvailableCommand();
-                lockScheduler.unlock();
+
+            DEBUG_CODE(if(lockScheduler) {SCSLDBG_ << "FAILURE Acquiring lock on mutextCommandScheduler";})
+            if(lockScheduler) {
+                DEBUG_CODE(SCSLDBG_ << "lock on mutextCommandScheduler ACQUIRED";)
+                curCmdRunningState = currentExecutingCommand?currentExecutingCommand->runningState:RunningStateType::RS_End;
+                DEBUG_CODE(SCSLDBG_ << "The running porcess has execution state = " << curCmdRunningState;)
+                
+                uint8_t submissionRule = nextAvailableCommand.cmdImpl->submissionRule;
+                DEBUG_CODE(SCSLDBG_ << "We have a waiting command with submiossion rule = " << submissionRule;)
+                if(nextAvailableCommand.cmdImpl && nextAvailableCommand.cmdImpl->submissionRule >= submissionRule) {
+                    //if the current command is null we simulate and END state
+                    if ( curCmdRunningState >= 2 || submissionRule & SubmissionRuleType::SUBMIT_AND_Kill) {
+                        DEBUG_CODE(SCSLDBG_ << "New command that want kill the current one";)
+                        //for now we delete it after we need to manage it
+                        if(currentExecutingCommand) {
+                            delete(currentExecutingCommand);
+                            currentExecutingCommand = NULL;
+                            DEBUG_CODE(SCSLDBG_ << "Current executed command is deleted";)
+                        }
+                    }else if( currentExecutingCommand && (submissionRule & SubmissionRuleType::SUBMIT_AND_Stack)) {
+                        DEBUG_CODE(SCSLDBG_ << "New command that want kill the current one";)
+                        //push current command into the stack
+                        commandStack.push(currentExecutingCommand);
+                        DEBUG_CODE(SCSLDBG_ << "Command stacked";)
+                    }
+                    
+                    //install the new command handler
+                    DEBUG_CODE(SCSLDBG_ << "Install next available command";)
+                    installHandler(nextAvailableCommand.cmdImpl, nextAvailableCommand.cmdInfo->element);
+                    DEBUG_CODE(SCSLDBG_ << "Next available command installed";)
+
+                    //delete the command description
+                    if(nextAvailableCommand.cmdInfo) delete (nextAvailableCommand.cmdInfo);
+                    DEBUG_CODE(SCSLDBG_ << "nextAvailableCommand.cmdInfo deleted";)
+                } else {
+                    DEBUG_CODE(SCSLDBG_ << "We don'have any next available command";)
+                    SlowCommand *popedCommand = NULL;
+                    //we don't have new command so i need to view only if the current command has halted or faulted
+                    if (currentExecutingCommand && currentExecutingCommand->runningState > RunningStateType::RS_End) {
+                        DEBUG_CODE(SCSLDBG_ << "We need to delete current one and";)
+                        //for now we delete it after we need to manage it
+                        delete(currentExecutingCommand);
+                        DEBUG_CODE(SCSLDBG_ << "We need to delete current one and";)
+                        // command has finisced or has fault
+                        if(!commandStack.empty() && !commandStack.pop(popedCommand)) {
+                            //"Error popping the command form stack"
+                        }
+                        
+                    }
+                    
+                    //pop the latest command
+                    if(!commandStack.empty()) {
+                        if(!commandStack.pop(popedCommand)) {
+                            //"Error popping the command form stack"
+                        }
+                    }
+                    
+                    installHandler(popedCommand, NULL);
+                }
             }
             
             //we need to check for a new
             timeLastCheckCommand = boost::chrono::steady_clock::now() + checkTimeIntervall;
+        }
+        
+        if(!scheduleWorkFlag) {
+            // the command has end and the scehduler has been stopped
+            canWork = false;
+            continue;
+        } else {
+            //wait until it continue
+            SCSLDBG_ << "waith on pauseCondition";
+            pauseCondition.wait();
+            if(!scheduleWorkFlag) {
+                // the command has end and the scehduler has been stopped
+                canWork = false;
+                continue;
+            }
+            SCSLDBG_ << "respawn after pauseCondition";
         }
         
         runEnd = boost::chrono::steady_clock::now();
@@ -186,58 +234,6 @@ void SlowCommandSandbox::runCommand() {
     SCSLDBG_ << "Thread terminating so notify conditionWaithSchedulerEnd";
     //notify the end of the thread
     //conditionWaithSchedulerEnd.notify_one();
-}
-
-// Check if the new command can be installed
-void SlowCommandSandbox::manageAvailableCommand() {
-    
-    // get the command submission info
-    boost::recursive_mutex::scoped_lock lockScheduler(mutextCommandScheduler);
-    
-    if(nextAvailableCommand.cmdImpl) {
-        uint8_t submissionState = nextAvailableCommand.cmdImpl->submissionRule;
-        
-        //if the current command is null we simulate and END state
-        uint8_t curCmdRunningState = (currentExecutingCommand?currentExecutingCommand->runningState:RunningStateType::RS_End);
-        bool toRemoveOrStak = submissionState >= curCmdRunningState;
-        if(!toRemoveOrStak) return; //we don't need to touch anthing
-        if ( curCmdRunningState >= 2 || submissionState & SubmissionRuleType::SUBMIT_AND_Kill) {
-            //for now we delete it after we need to manage it
-            if(currentExecutingCommand) {
-                delete(currentExecutingCommand);
-                currentExecutingCommand = NULL;
-            }
-        }else if( currentExecutingCommand && (submissionState & SubmissionRuleType::SUBMIT_AND_Stack)) {
-            //push current command into the stack
-            commandStack.push(currentExecutingCommand);
-        }
-        
-        //install the new command handler
-        installHandler(nextAvailableCommand.cmdImpl, nextAvailableCommand.cmdInfo->element);
-        
-        //delete the command description
-        if(nextAvailableCommand.cmdInfo) delete (nextAvailableCommand.cmdInfo);
-        
-    } else {
-        SlowCommand *popedCommand = NULL;
-        //we don't have new command so i need to view only if the current command has halted or faulted
-        if ( currentExecutingCommand->runningState > 4) {
-            
-            //for now we delete it after we need to manage it
-            delete(currentExecutingCommand);
-            currentExecutingCommand = NULL;
-            
-            //pop the latest command
-            if(!commandStack.empty()) {
-                if(!commandStack.pop(popedCommand)) {
-                    //"Error popping the command form stack"
-                }
-            }
-            
-            installHandler(popedCommand, NULL);
-        }
-
-    }
 }
 
 //!install the command
@@ -251,7 +247,7 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
         currentExecutingCommand->sharedChannelSettingPtr = &sharedChannelSetting;
         //associate the keydata storage to the command
         currentExecutingCommand->keyDataStorage = keyDataStorage;
-
+        
         uint8_t handlerMask = currentExecutingCommand->implementedHandler();
         //install the pointer of th ecommand into the respective handler functor
         
