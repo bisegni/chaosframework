@@ -72,6 +72,13 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
     }
     
     utility::InizializableService::initImplementation(commandSandbox, initData, "SlowCommandSandbox", "SlowCommandExecutor::init");
+    
+    SCELAPP_ << "Check if we need to use the dafult command or we have pause instance";
+    if(defaultCommandAlias.size()) {
+        SCELAPP_ << "Set the default command ->"<<defaultCommandAlias;
+        commandSandbox.setNextAvailableCommand(NULL, instanceCommandInfo(defaultCommandAlias));
+        DEBUG_CODE(SCELDBG_ << "Command " << defaultCommandAlias << " successfull installed";)
+    }
 }
 
 
@@ -151,20 +158,21 @@ void SlowCommandExecutor::deinit() throw(chaos::CException) {
 }
 
 //! Perform a command registration
-void SlowCommandExecutor::setDefaultCommand(string alias) {
+void SlowCommandExecutor::setDefaultCommand(string commandAlias) {
     // check if we can set the default, the condition are:
     // the executor and the sandbox are in the init state or in stop state
     if(utility::StartableService::serviceState == utility::StartableServiceType::SS_STARTED) {
         throw CException(1, "The command infrastructure is in running state", "SlowCommandExecutor::setDefaultCommand");
     }
     
-    SCELAPP_ << "Install the default command with alias: " << alias;
-    commandSandbox.setDefaultCommand(instanceCommandInfo(alias));
+    SCELAPP_ << "Install the default command with alias: " << commandAlias;
+    defaultCommandAlias = commandAlias;
 }
 
 //! Install a command associated with a type
 void SlowCommandExecutor::installCommand(string alias, chaos::common::utility::ObjectInstancer<SlowCommand> *instancer) {
     SCELAPP_ << "Install new command with alias" << alias;
+    boost::mutex::scoped_lock lock(mutextQueueManagment);
     mapCommandInstancer.insert(make_pair<string, chaos::common::utility::ObjectInstancer<SlowCommand>* >(alias, instancer));
 }
 

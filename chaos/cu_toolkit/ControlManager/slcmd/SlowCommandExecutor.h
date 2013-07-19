@@ -73,6 +73,9 @@ namespace chaos{
                     std::string executorID;
                     
                     
+                    //!point to the current executing command
+                    std::string defaultCommandAlias;
+                    
                     //! sandbox for the execution of the handler
                     SlowCommandSandbox  commandSandbox;
                     

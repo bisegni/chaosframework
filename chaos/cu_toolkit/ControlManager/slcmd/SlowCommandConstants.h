@@ -36,6 +36,8 @@ namespace chaos {
                     static const char * const   SUBMISSION_RULE     = "submission_rule";
                     //! @The key represent the option to the command submission priority, the value is an uint32
                     static const char * const   SUBMISSION_PRIORITY     = "submission_priority";
+                    //! @The key represent intervall between step of the scheduler expressed in milliseconds, the value is an uint32
+                    static const char * const   SCHEDULER_STEP_TIME_INTERVALL     = "scehd_step_time_int";
                 }
                 /** @} */ // end of SlowCommandSubmissionKey
             }

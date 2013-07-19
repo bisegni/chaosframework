@@ -9,8 +9,9 @@
 #ifndef __CHAOSFramework__SlowCommandSandbox__
 #define __CHAOSFramework__SlowCommandSandbox__
 
+#include <stack>
+
 #include <boost/thread.hpp>
-#include <boost/lockfree/stack.hpp>
 #include <boost/chrono.hpp>
 
 #include <chaos/common/data/CDataWrapper.h>
@@ -50,20 +51,20 @@ namespace chaos{
                 
                 //! Functor implementation
                 struct SetFunctor : public BaseFunctor {
-                    uint8_t operator()(CDataWrapper *commandInfo) {
-                        return cmdInstance?(cmdInstance->setHandler(commandInfo)):RunningStateType::RS_End;
+                    void operator()(CDataWrapper *commandInfo) {
+                        if(cmdInstance) cmdInstance->setHandler(commandInfo);
                     }
                 };
                 
                 struct AcquireFunctor : public BaseFunctor {
-                    uint8_t operator()() {
-                        return cmdInstance?(cmdInstance->acquireHandler()):RunningStateType::RS_End;
+                    void operator()() {
+                        if(cmdInstance) cmdInstance->acquireHandler();
                     }
                 };
                 
                 struct CorrelationFunctor : public BaseFunctor {
-                    uint8_t operator()() {
-                        return cmdInstance?(cmdInstance->ccHandler()):RunningStateType::RS_End;
+                    void operator()() {
+                        if(cmdInstance) (cmdInstance->ccHandler());
                     }
                 };
                 
@@ -120,7 +121,7 @@ namespace chaos{
                     ChannelSetting sharedChannelSetting;
                     
                     //! contain the paused command
-                    boost::lockfree::stack<SlowCommand*, boost::lockfree::fixed_sized<false> > commandStack;
+                    std::stack<SlowCommand*> commandStack;
                     
                     //-------------------- handler poiter --------------------
                     //! Pointer to the set phase handler's of the current command
@@ -139,6 +140,8 @@ namespace chaos{
                      that are not implemented are managed according to the submition rule
                      */
                     inline void installHandler(SlowCommand *cmdImpl, CDataWrapper* setData);
+                    
+                    inline SlowCommand* getStackTopOrWaithOnMutext(boost::recursive_mutex::scoped_lock& lockScheduler);
                     
                     SlowCommandSandbox();
                     ~SlowCommandSandbox();
@@ -171,13 +174,6 @@ namespace chaos{
                     void runCommand();
 
                     bool setNextAvailableCommand(PRIORITY_ELEMENT(CDataWrapper) *cmdInfo, SlowCommand *cmdImpl);
-                    
-                    //set the dafault startup command
-                    /*!
-                     If the command can't be installed it isfree and an exception is fired
-                     \param the SlowCommand implementation
-                     */
-                    void setDefaultCommand(SlowCommand *cmdImpl);
                 };
             }
         }

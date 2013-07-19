@@ -52,20 +52,14 @@ CDataWrapper *SlowCommand::getNewDataWrapper() {
 /*
  Start the slow command sequence
  */
-uint8_t SlowCommand::setHandler(chaos::CDataWrapper *data) {
-    return 0;
-}
+void SlowCommand::setHandler(chaos::CDataWrapper *data) {}
 
 /*
  implemente thee data acquisition for the command
  */
-uint8_t SlowCommand::acquireHandler() {
-    return 0;
-}
+void SlowCommand::acquireHandler() {}
 
 /*
  Performe correlation and send command to the driver
  */
-uint8_t SlowCommand::ccHandler() {
-    return 0;
-}
+void SlowCommand::ccHandler() {}

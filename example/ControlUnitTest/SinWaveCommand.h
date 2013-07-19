@@ -51,17 +51,17 @@ protected:
     uint8_t implementedHandler();
     
     // Start the command execution
-    uint8_t setHandler(chaos::CDataWrapper *data);
+    void setHandler(chaos::CDataWrapper *data);
     
     // Aquire the necessary data for the command
     /*!
      The acquire handler has the purpose to get all necessary data need the by CC handler.
      \return the mask for the runnign state
      */
-    uint8_t acquireHandler();
+    void acquireHandler();
     
     // Correlation and commit phase
-    uint8_t ccHandler();
+    void ccHandler();
     
 public:
     SinWaveCommand();

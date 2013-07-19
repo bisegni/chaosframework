@@ -88,8 +88,10 @@ void WorkerCU::defineActionAndDataset() throw(CException) {
     //add managed device di
     setDeviceID(_deviceID);
     
+    //install a command
     installCommand<SinWaveCommand>("sinwave_base");
     
+    //set it has default
     setDefaultCommand("sinwave_base");
     
     //add custom action

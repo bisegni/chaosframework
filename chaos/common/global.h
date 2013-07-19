@@ -54,7 +54,9 @@ BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(chaosLogger, boost::log::sources::severit
     //the error when the condition is not true
 #ifndef DEBUG
 #define CHAOS_ASSERT(x)
+#define DEBUG_CODE(x)
 #else
+#define DEBUG_CODE(x) x
 #define CHAOS_ASSERT(x) \
 if (! (x)) \
 { \
@@ -72,12 +74,6 @@ const boost::posix_time::ptime EPOCH(boost::gregorian::date(1970,1,1));
     //chaos assert to debug real badthing
 
 #define CHAOS_UNUSED __attribute__((unused))
-
-#ifdef DEBUG
-#define DEBUG_CODE(x) x
-#else
-#define DEBUG_CODE(x)
-#endif
 
 #include <chaos/common/version.h>
 

@@ -37,7 +37,7 @@ uint8_t SinWaveCommand::implementedHandler() {
 }
 
 // Start the command execution
-uint8_t SinWaveCommand::setHandler(chaos::CDataWrapper *data) {
+void SinWaveCommand::setHandler(chaos::CDataWrapper *data) {
     srand((unsigned)time(0));
     PI = acos((long double) -1);
     sinevalue = NULL;
@@ -47,7 +47,6 @@ uint8_t SinWaveCommand::setHandler(chaos::CDataWrapper *data) {
     phase = 0.0;
     bias = 0.0;
     gainNoise = 0.5;
-    return 0;
 }
 
 // Aquire the necessary data for the command
@@ -55,10 +54,9 @@ uint8_t SinWaveCommand::setHandler(chaos::CDataWrapper *data) {
  The acquire handler has the purpose to get all necessary data need the by CC handler.
  \return the mask for the runnign state
  */
-uint8_t SinWaveCommand::acquireHandler() {
-    uint8_t state = slowcmd::RunningStateType::RS_Stack;
+void SinWaveCommand::acquireHandler() {
     CDataWrapper *acquiredData = getNewDataWrapper();
-    if(!acquiredData) return state;
+    if(!acquiredData) return;
     
     //put the messageID for test the lost of package
     acquiredData->addInt32Value("id", ++messageID);
@@ -68,12 +66,12 @@ uint8_t SinWaveCommand::acquireHandler() {
     //submit acquired data
     pushDataSet(acquiredData);
     
-    return state;
+    SL_STACK_RUNNIG_STATE;
 }
 
 // Correlation and commit phase
-uint8_t SinWaveCommand::ccHandler() {
-    return slowcmd::RunningStateType::RS_Stack;
+void SinWaveCommand::ccHandler() {
+    SL_STACK_RUNNIG_STATE;
 }
 
 void SinWaveCommand::computeWave(CDataWrapper *acquiredData) {

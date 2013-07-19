@@ -49,6 +49,12 @@ namespace chaos{
                 //forward declaration
                 class SlowCommandExecutor;
                 
+#define SL_EXEC_RUNNIG_STATE chaos::cu::control_manager::slow_command::SlowCommand::runningState = chaos::cu::control_manager::slow_command::RunningStateType::RS_Exsc;
+#define SL_STACK_RUNNIG_STATE chaos::cu::control_manager::slow_command::SlowCommand::runningState = chaos::cu::control_manager::slow_command::RunningStateType::RS_Stack;
+#define SL_KILL_RUNNIG_STATE chaos::cu::control_manager::slow_command::SlowCommand::runningState = chaos::cu::control_manager::slow_command::RunningStateType::RS_Kill;
+#define SL_END_RUNNIG_STATE chaos::cu::control_manager::slow_command::SlowCommand::runningState = chaos::cu::control_manager::slow_command::RunningStateType::RS_End;
+#define SL_FAULT_RUNNIG_STATE chaos::cu::control_manager::slow_command::SlowCommand::runningState = chaos::cu::control_manager::slow_command::RunningStateType::RS_Fault;
+                
                 //! Base cass for the slow command implementation
                 /*!
                  The slow command implementation in !CHAOS permit the definition of the three foundamental phase in "control" as seen by !CHAOS logic:
@@ -62,12 +68,6 @@ namespace chaos{
                     friend struct SetFunctor;
                     friend struct AcquireFunctor;
                     friend struct CorrelationFunctor;
-                    
-                    //! Running state
-                    /*!
-                     A value composed by a set of RunningState element.
-                     */
-                    uint8_t runningState;
                     
                     //! Submission state
                     /*!
@@ -94,6 +94,12 @@ namespace chaos{
                     std::map<std::string, dm::driver::DriverAccessor*> *driversAccessorMap;
                     
                 protected:
+                    //! Running state
+                    /*!
+                     A value composed by a set of RunningState element.
+                     */
+                    uint8_t runningState;
+                    
                     //! default constructor
                     SlowCommand();
                     
@@ -126,14 +132,14 @@ namespace chaos{
                      \param data CDatawrapper object taht containing a set of initial data for the command
                      \return the mask for the runnign state
                      */
-                    virtual uint8_t setHandler(chaos::CDataWrapper *data);
+                    virtual void setHandler(chaos::CDataWrapper *data);
                     
                     //! Aquire the necessary data for the command
                     /*!
                      The acquire handler has the purpose to get all necessary data need the by CC handler.
                      \return the mask for the runnign state
                      */
-                    virtual uint8_t acquireHandler();
+                    virtual void acquireHandler();
                     
                     //! Correlation and commit phase
                     /*!
@@ -141,7 +147,7 @@ namespace chaos{
                      send further commands to the hardware, through the driver, to accomplish the command steps.
                      \return the mask for the runnign state
                      */
-                    virtual uint8_t ccHandler();
+                    virtual void ccHandler();
                     
                 public:
 
