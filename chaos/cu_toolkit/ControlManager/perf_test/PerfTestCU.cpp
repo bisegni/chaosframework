@@ -72,7 +72,7 @@ void PerfTestCU::defineActionAndDataset(CDataWrapper&)throw(CException) {
 /*(Optional)
  Initialize the Control Unit and all driver, with received param from MetadataServer
  */
-void PerfTestCU::init(CDataWrapper*) throw(CException) {
+void PerfTestCU::init() throw(CException) {
     lastSequence = 0;
     averageRoundTrip = 0;
     lostSequences = 0;
@@ -80,11 +80,17 @@ void PerfTestCU::init(CDataWrapper*) throw(CException) {
     sequenceOverSample = 0;
 }
 
+/*(Optional)
+ Initialize the Control Unit and all driver, with received param from MetadataServer
+ */
+void PerfTestCU::start() throw(CException) {
+
+}
 
 /*
  Execute the work, this is called with a determinated delay, it must be as fast as possible
  */
-void PerfTestCU::run(const string&) throw(CException) {
+void PerfTestCU::run() throw(CException) {
     lastSequence++;
     boost::chrono::microseconds msecDiff(0);
     
@@ -108,7 +114,7 @@ void PerfTestCU::run(const string&) throw(CException) {
 /*
  The Control Unit will be stopped
  */
-void PerfTestCU::stop(const string&) throw(CException) {
+void PerfTestCU::stop() throw(CException) {
     
 }
 
@@ -116,7 +122,7 @@ void PerfTestCU::stop(const string&) throw(CException) {
 /*(Optional)
  The Control Unit will be deinitialized and disposed
  */
-void PerfTestCU::deinit(const string&) throw(CException) {
+void PerfTestCU::deinit() throw(CException) {
     //remove all old data
     sequenceTimestampedMap.clear();
 }

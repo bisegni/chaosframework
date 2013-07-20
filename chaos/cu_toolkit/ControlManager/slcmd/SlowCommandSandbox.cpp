@@ -31,10 +31,6 @@ continue; \
 
 SlowCommandSandbox::SlowCommandSandbox():checkTimeIntervall(posix_time::milliseconds(DEFAULT_CHECK_TIME)) {
     //reset all the handler
-    currentExecutingCommand = NULL;
-    setHandlerFunctor.cmdInstance = NULL;
-    acquireHandlerFunctor.cmdInstance = NULL;
-    correlationHandlerFunctor.cmdInstance = NULL;
 }
 
 SlowCommandSandbox::~SlowCommandSandbox() {
@@ -45,6 +41,11 @@ void SlowCommandSandbox::init(void *initData) throw(chaos::CException) {
     
     nextAvailableCommand.cmdInfo = NULL;
     nextAvailableCommand.cmdImpl = NULL;
+    
+    currentExecutingCommand = NULL;
+    setHandlerFunctor.cmdInstance = NULL;
+    acquireHandlerFunctor.cmdInstance = NULL;
+    correlationHandlerFunctor.cmdInstance = NULL;
     
     //initialize the shared channel setting
     utility::InizializableService::initImplementation(sharedChannelSetting, initData, "ChannelSetting", "SlowCommandSandbox::init");
@@ -92,11 +93,6 @@ void SlowCommandSandbox::stop() throw(chaos::CException) {
     threadScheduler->join();
     threadNextCommandChecker->join();
     SCSLAPP_ << "schedulerThread terminated";
-    
-    //reset all the handler
-    setHandlerFunctor.cmdInstance = NULL;
-    acquireHandlerFunctor.cmdInstance = NULL;
-    correlationHandlerFunctor.cmdInstance = NULL;
 }
 
 //! Deinit the implementation
@@ -118,6 +114,7 @@ void SlowCommandSandbox::deinit() throw(chaos::CException) {
     //deinit next availabe commad if preset
     DELETE_OBJ_POINTER(nextAvailableCommand.cmdInfo)
     DELETE_OBJ_POINTER(nextAvailableCommand.cmdImpl)
+    DELETE_OBJ_POINTER(currentExecutingCommand)
     
     //free the remained commands into the stack
     SCSLAPP_ << "Remove command into the stack";
@@ -129,6 +126,11 @@ void SlowCommandSandbox::deinit() throw(chaos::CException) {
     
     //initialize the shared channel setting
     utility::InizializableService::deinitImplementation(sharedChannelSetting, "ChannelSetting", "SlowCommandSandbox::init");
+    
+    //reset all the handler
+    setHandlerFunctor.cmdInstance = NULL;
+    acquireHandlerFunctor.cmdInstance = NULL;
+    correlationHandlerFunctor.cmdInstance = NULL;
 }
 
 void SlowCommandSandbox::checkNextCommand() {

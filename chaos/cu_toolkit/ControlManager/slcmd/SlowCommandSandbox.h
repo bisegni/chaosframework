@@ -29,7 +29,7 @@ namespace chaos{
     namespace cu {
         
         //forward declaration
-        class AbstractControlUnit;
+        class SCAbstractControlUnit;
         
         //forward declaration
         namespace dm {
@@ -77,7 +77,7 @@ namespace chaos{
                     come in.
                  */
                 class SlowCommandSandbox : public utility::StartableService {
-                    friend class chaos::cu::AbstractControlUnit;
+                    friend class chaos::cu::SCAbstractControlUnit;
                     friend class SlowCommandExecutor;
                     
                     

@@ -45,7 +45,7 @@ namespace chaos{
     namespace cu {
         
         //forward declaration
-        class AbstractControlUnit;
+        class SCAbstractControlUnit;
         
         //forward declaration
         namespace dm {
@@ -68,7 +68,7 @@ namespace chaos{
                     This class is the environment where the exeecution of the slow command handlers take place.
                  */
                 class SlowCommandExecutor : public utility::StartableService {
-                    friend class chaos::cu::AbstractControlUnit;
+                    friend class chaos::cu::SCAbstractControlUnit;
                     
                     std::string executorID;
                     

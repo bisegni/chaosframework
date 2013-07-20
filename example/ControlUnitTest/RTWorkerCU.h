@@ -1,5 +1,5 @@
 /*	
- *	WorkerCU.h
+ *	RTWorkerCU.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *	
@@ -17,15 +17,15 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef ChaosFramework_WorkerCU_h
-#define ChaosFramework_WorkerCU_h
+#ifndef ChaosFramework_RTWorkerCU_h
+#define ChaosFramework_RTWorkerCU_h
 
 #include <string>
 #include <boost/random.hpp>
 #include <boost/chrono.hpp>
 #include <boost/thread.hpp>
 #include <chaos/common/utility/Atomic.h>
-#include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
+#include <chaos/cu_toolkit/ControlManager/RTAbstractControlUnit.h>
 
 using namespace std;
 using namespace chaos;
@@ -33,7 +33,7 @@ using namespace boost;
 using namespace boost::posix_time;
 
 
-class WorkerCU : public chaos::cu::AbstractControlUnit {
+class RTWorkerCU : public chaos::cu::RTAbstractControlUnit {
     typedef boost::mt19937 RNGType; 
     RNGType rng;
     uniform_int<> one_to_hundred;    
@@ -60,15 +60,11 @@ public:
     /*
      Construct a new CU with an identifier
      */
-    WorkerCU();
-    /*
-     Construct a new CU with an identifier
-     */
-    WorkerCU(string&);
+    RTWorkerCU(string&);
     /*
      Destructor a new CU with an identifier
      */
-    ~WorkerCU();
+    ~RTWorkerCU();
     
     inline void computeWave(CDataWrapper *acquiredData);
     
@@ -85,7 +81,10 @@ protected:
      Initialize the Control Unit and all driver, with received param from MetadataServer
      */
     void init() throw(CException);
-    
+    /*
+     Execute the work, this is called with a determinated delay, it must be as fast as possible
+     */
+    void start() throw(CException);
     /*
      Execute the work, this is called with a determinated delay, it must be as fast as possible
      */

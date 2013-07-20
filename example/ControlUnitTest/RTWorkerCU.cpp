@@ -1,8 +1,8 @@
-/*	
- *	WorkerCU.cpp
+/*
+ *	RTWorkerCU.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,8 +19,7 @@
  */
 #include <boost/thread.hpp>
 
-#include "WorkerCU.h"
-#include "SinWaveCommand.h"
+#include "RTWorkerCU.h"
 
 #include <chaos/common/global.h>
 #include <chaos/common/cconstants.h>
@@ -34,7 +33,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <iomanip>
-#include <time.h> 
+#include <time.h>
 #include <stdlib.h>
 using namespace chaos;
 
@@ -47,19 +46,10 @@ using namespace chaos;
 #define CU_DELAY_FROM_TASKS     1000000 //1Sec
 #define ACTION_TWO_PARAM_NAME   "actionTestTwo_paramName"
 
-
-
-WorkerCU::WorkerCU():AbstractControlUnit(),rng((const uint_fast32_t) time(0) ),one_to_hundred( -100, 100 ),randInt(rng, one_to_hundred) {
-    //first we make some write
-    _deviceID.assign(SIMULATED_DEVICE_ID);
-    cuName = "WORKER_CU";
-    numberOfResponse = 0;
-}
-
 /*
  Construct a new CU with an identifier
  */
-WorkerCU::WorkerCU(string &customDeviceID):rng((const uint_fast32_t) time(0) ),one_to_hundred( -100, 100 ),randInt(rng, one_to_hundred){
+RTWorkerCU::RTWorkerCU(string &customDeviceID):rng((const uint_fast32_t) time(0) ),one_to_hundred( -100, 100 ),randInt(rng, one_to_hundred){
     _deviceID = customDeviceID;
     cuName = "WORKER_CU";
     numberOfResponse = 0;
@@ -68,14 +58,14 @@ WorkerCU::WorkerCU(string &customDeviceID):rng((const uint_fast32_t) time(0) ),o
 /*
  Destructor a new CU with an identifier
  */
-WorkerCU::~WorkerCU() {
+RTWorkerCU::~RTWorkerCU() {
     
 }
 
 /*
  Return the default configuration
  */
-void WorkerCU::defineActionAndDataset() throw(CException) {
+void RTWorkerCU::defineActionAndDataset() throw(CException) {
     //set the base information
     const char *devIDInChar = _deviceID.c_str();
     cuName = "SIN_CU";
@@ -88,86 +78,82 @@ void WorkerCU::defineActionAndDataset() throw(CException) {
     //add managed device di
     setDeviceID(_deviceID);
     
-    //install a command
-    installCommand<SinWaveCommand>("sinwave_base");
-    
-    //set it has default
-    setDefaultCommand("sinwave_base");
     
     //add custom action
-    AbstActionDescShrPtr  
-    actionDescription = addActionDescritionInstance<WorkerCU>(this, 
-                                                              &WorkerCU::actionTestOne, 
-                                                              "actionTestOne", 
-                                                              "comandTestOne this action will do some beautifull things!");
+    AbstActionDescShrPtr
+    actionDescription = addActionDescritionInstance<RTWorkerCU>(this,
+                                                                &RTWorkerCU::actionTestOne,
+                                                                "actionTestOne",
+                                                                "comandTestOne this action will do some beautifull things!");
     
-    actionDescription = addActionDescritionInstance<WorkerCU>(this, 
-                                                              &WorkerCU::resetStatistic, 
-                                                              "resetStatistic", 
-                                                              "resetStatistic this action will reset  all cu statistic!");
+    actionDescription = addActionDescritionInstance<RTWorkerCU>(this,
+                                                                &RTWorkerCU::resetStatistic,
+                                                                "resetStatistic",
+                                                                "resetStatistic this action will reset  all cu statistic!");
     
-    actionDescription = addActionDescritionInstance<WorkerCU>(this, 
-                                                              &WorkerCU::actionTestTwo, 
-                                                              "actionTestTwo", 
-                                                              "comandTestTwo, this action will do some beautifull things!");
+    actionDescription = addActionDescritionInstance<RTWorkerCU>(this,
+                                                                &RTWorkerCU::actionTestTwo,
+                                                                "actionTestTwo",
+                                                                "comandTestTwo, this action will do some beautifull things!");
     
     //add param to second action
-    actionDescription->addParam(ACTION_TWO_PARAM_NAME, 
-                                DataType::TYPE_INT32, 
+    actionDescription->addParam(ACTION_TWO_PARAM_NAME,
+                                DataType::TYPE_INT32,
                                 "integer 32bit action param description for testing purpose");
     
-
+    
     //setup the dataset
     addAttributeToDataSet(devIDInChar,
                           "sinWave",
                           "The sin waveform",
-                          DataType::TYPE_BYTEARRAY, 
+                          DataType::TYPE_BYTEARRAY,
                           DataType::Output,
                           10000);
     
-    addInputInt32AttributeToDataSet<WorkerCU>(devIDInChar,
-                                              "points",
-                                              "The number of point that compose the wave",
-                                              this,
-                                              &WorkerCU::setWavePoint);
-
-    addInputDoubleAttributeToDataSet<WorkerCU>(devIDInChar,
-                                               "frequency",
-                                               "The frequency of the wave [1-10Mhz]",
-                                               this,
-                                               &WorkerCU::setDoubleValue);
-
-    addInputDoubleAttributeToDataSet<WorkerCU>(devIDInChar,
-                                               "bias",
-                                               "The bias of the wave",
-                                               this,
-                                               &WorkerCU::setDoubleValue);
-
+    addInputInt32AttributeToDataSet<RTWorkerCU>(devIDInChar,
+                                                "points",
+                                                "The number of point that compose the wave",
+                                                this,
+                                                &RTWorkerCU::setWavePoint);
     
-    addInputDoubleAttributeToDataSet<WorkerCU>(devIDInChar,
-                                               "gain",
-                                               "The gain of the wave",
-                                               this,
-                                               &WorkerCU::setDoubleValue);
-
-    addInputDoubleAttributeToDataSet<WorkerCU>(devIDInChar,
-                                               "phase",
-                                               "The phase of the wave",
-                                               this,
-                                               &WorkerCU::setDoubleValue);
-
-    addInputDoubleAttributeToDataSet<WorkerCU>(devIDInChar,
-                                               "gain_noise",
-                                               "The gain of the noise of the wave",
-                                               this,
-                                               &WorkerCU::setDoubleValue);
+    addInputDoubleAttributeToDataSet<RTWorkerCU>(devIDInChar,
+                                                 "frequency",
+                                                 "The frequency of the wave [1-10Mhz]",
+                                                 this,
+                                                 &RTWorkerCU::setDoubleValue);
+    
+    addInputDoubleAttributeToDataSet<RTWorkerCU>(devIDInChar,
+                                                 "bias",
+                                                 "The bias of the wave",
+                                                 this,
+                                                 &RTWorkerCU::setDoubleValue);
+    
+    
+    addInputDoubleAttributeToDataSet<RTWorkerCU>(devIDInChar,
+                                                 "gain",
+                                                 "The gain of the wave",
+                                                 this,
+                                                 &RTWorkerCU::setDoubleValue);
+    
+    addInputDoubleAttributeToDataSet<RTWorkerCU>(devIDInChar,
+                                                 "phase",
+                                                 "The phase of the wave",
+                                                 this,
+                                                 &RTWorkerCU::setDoubleValue);
+    
+    addInputDoubleAttributeToDataSet<RTWorkerCU>(devIDInChar,
+                                                 "gain_noise",
+                                                 "The gain of the noise of the wave",
+                                                 this,
+                                                 &RTWorkerCU::setDoubleValue);
 }
 
 /*
  Initialize the Custom Contro Unit and return the configuration
  */
-void WorkerCU::init() throw(CException) {
-    LAPP_ << "init WorkerCU";
+void RTWorkerCU::init() throw(CException) {
+    LAPP_ << "init RTWorkerCU";
+    RTAbstractControlUnit::init();
     
     initTime = steady_clock::now();
     lastExecutionTime = steady_clock::now();
@@ -185,25 +171,31 @@ void WorkerCU::init() throw(CException) {
 }
 
 /*
+ Execute the work, this is called with a determinated delay, it must be as fast as possible
+ */
+void RTWorkerCU::start() throw(CException) {
+    RTAbstractControlUnit::start();
+}
+
+/*
  Execute the Control Unit work
  */
-void WorkerCU::run() throw(CException) {
+void RTWorkerCU::run() throw(CException) {
     //get new data wrapper instance filled
     //with mandatory data
-  //  CDataWrapper *acquiredData = getNewDataWrapper();
- //   if(!acquiredData) return;
+    CDataWrapper *acquiredData = getNewDataWrapper();
+    if(!acquiredData) return;
     
     //put the messageID for test the lost of package
- //   acquiredData->addInt32Value("id", ++messageID);
- //   computeWave(acquiredData);
-    //adding some interesting random data
-
+    acquiredData->addInt32Value("id", ++messageID);
+    computeWave(acquiredData);
+    
     //submit acquired data
- //   pushDataSet(acquiredData);
+    pushDataSet(acquiredData);
     
 }
 
-void WorkerCU::computeWave(CDataWrapper *acquiredData) {
+void RTWorkerCU::computeWave(CDataWrapper *acquiredData) {
     if(sinevalue == NULL) return;
     double interval = (2*PI)/points;
     boost::mutex::scoped_lock lock(pointChangeMutex);
@@ -217,23 +209,25 @@ void WorkerCU::computeWave(CDataWrapper *acquiredData) {
 /*
  Execute the Control Unit work
  */
-void WorkerCU::stop() throw(CException) {
-    LAPP_ << "stop WorkerCU";
+void RTWorkerCU::stop() throw(CException) {
+    LAPP_ << "stop RTWorkerCU";
+    RTAbstractControlUnit::stop();
 }
 
 /*
  Deinit the Control Unit
  */
-void WorkerCU::deinit() throw(CException) {
-    LAPP_ << "deinit WorkerCU";
+void RTWorkerCU::deinit() throw(CException) {
+    LAPP_ << "deinit RTWorkerCU";
     if(sinevalue){
         free(sinevalue);
     }
+    RTAbstractControlUnit::deinit();
 }
 
 /*
  */
-void WorkerCU::setWavePoint(const std::string& deviceID, const int32_t& newNumberOfPoints) {
+void RTWorkerCU::setWavePoint(const std::string& deviceID, const int32_t& newNumberOfPoints) {
     boost::mutex::scoped_lock lock(pointChangeMutex);
     int32_t tmpNOP = newNumberOfPoints;
     if(tmpNOP < 1) tmpNOP = 0;
@@ -241,7 +235,7 @@ void WorkerCU::setWavePoint(const std::string& deviceID, const int32_t& newNumbe
     if(!tmpNOP){
         if(sinevalue){
             free(sinevalue);
-            sinevalue = NULL;  
+            sinevalue = NULL;
         }
     }else{
         size_t byteSize = sizeof(double) * tmpNOP;
@@ -250,8 +244,8 @@ void WorkerCU::setWavePoint(const std::string& deviceID, const int32_t& newNumbe
             sinevalue = tmpPtr;
             memset(sinevalue, 0, byteSize);
         }else{
-                //memory can't be enlarged so pointer ramin the same
-                //so all remain unchanged
+            //memory can't be enlarged so pointer ramin the same
+            //so all remain unchanged
             tmpNOP = points;
         }
     }
@@ -260,7 +254,7 @@ void WorkerCU::setWavePoint(const std::string& deviceID, const int32_t& newNumbe
 
 /*
  */
-void WorkerCU::setDoubleValue(const std::string& deviceID, const double& dValue) {
+void RTWorkerCU::setDoubleValue(const std::string& deviceID, const double& dValue) {
     LAPP_ <<  "setDoubleValue for " << deviceID << " = " << dValue;
     if(!deviceID.compare("frequency")){
         freq = dValue;
@@ -278,7 +272,7 @@ void WorkerCU::setDoubleValue(const std::string& deviceID, const double& dValue)
 /*
  Test Action Handler
  */
-CDataWrapper* WorkerCU::actionTestOne(CDataWrapper *actionParam, bool& detachParam) {
+CDataWrapper* RTWorkerCU::actionTestOne(CDataWrapper *actionParam, bool& detachParam) {
     CDataWrapper *result = new CDataWrapper();
     result->addStringValue("result_key", "result_key_value");
     return result;
@@ -287,8 +281,8 @@ CDataWrapper* WorkerCU::actionTestOne(CDataWrapper *actionParam, bool& detachPar
 /*
  Test Action Handler
  */
-CDataWrapper* WorkerCU::resetStatistic(CDataWrapper *actionParam, bool& detachParam) {
-    LAPP_ << "resetStatistic in WorkerCU called from rpc";
+CDataWrapper* RTWorkerCU::resetStatistic(CDataWrapper *actionParam, bool& detachParam) {
+    LAPP_ << "resetStatistic in RTWorkerCU called from rpc";
     numberOfResponse = 0;
     return NULL;
 }
@@ -296,8 +290,8 @@ CDataWrapper* WorkerCU::resetStatistic(CDataWrapper *actionParam, bool& detachPa
 /*
  Test Action Handler
  */
-CDataWrapper* WorkerCU::actionTestTwo(CDataWrapper *actionParam, bool& detachParam) {
-    LAPP_ << "resetStatistic in WorkerCU called from rpc";
+CDataWrapper* RTWorkerCU::actionTestTwo(CDataWrapper *actionParam, bool& detachParam) {
+    LAPP_ << "resetStatistic in RTWorkerCU called from rpc";
     if(actionParam->hasKey(ACTION_TWO_PARAM_NAME)){
         int32_t sleepTime =  actionParam->getInt32Value(ACTION_TWO_PARAM_NAME);
         

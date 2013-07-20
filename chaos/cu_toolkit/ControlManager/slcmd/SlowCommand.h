@@ -34,7 +34,6 @@ namespace chaos{
     namespace cu {
         
         //forward declarations
-        class AbstractedControlUnit;
         namespace dm {
             namespace driver {
                 class DriverAccessor;

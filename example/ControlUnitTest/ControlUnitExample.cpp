@@ -18,7 +18,8 @@
  *    	limitations under the License.
  */
 
-#include "WorkerCU.h"
+#include "RTWorkerCU.h"
+#include "SCWorkerCU.h"
 #include <chaos/common/cconstants.h>
 #include <chaos/cu_toolkit/ChaosCUToolkit.h>
 
@@ -57,8 +58,8 @@ int main (int argc, char* argv[] )
     string tmpDeviceID;
     //! [Custom Option]
     try {
-    ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_CUSTOM_DEVICE_ID_A, po::value<string>(), "Device A identification string");
-    ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_CUSTOM_DEVICE_ID_B, po::value<string>(), "Device B identification string");
+    ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_CUSTOM_DEVICE_ID_A, po::value<string>(), "Real Time wave simultaion Device A identification string");
+    ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_CUSTOM_DEVICE_ID_B, po::value<string>(), "Slow Controlled wave simulation Device B identification string");
     //! [Custom Option]
     
     //! [CUTOOLKIT Init]
@@ -68,12 +69,12 @@ int main (int argc, char* argv[] )
     //! [Adding the CustomControlUnit]
     if(ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CUSTOM_DEVICE_ID_A)){
         tmpDeviceID = ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<string>(OPT_CUSTOM_DEVICE_ID_A);
-        ChaosCUToolkit::getInstance()->addControlUnit(new WorkerCU(tmpDeviceID));
+        ChaosCUToolkit::getInstance()->addControlUnit(new RTWorkerCU(tmpDeviceID));
     }
     
     if(ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CUSTOM_DEVICE_ID_B)){
         tmpDeviceID = ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<string>(OPT_CUSTOM_DEVICE_ID_B);
-        ChaosCUToolkit::getInstance()->addControlUnit(new WorkerCU(tmpDeviceID));
+        ChaosCUToolkit::getInstance()->addControlUnit(new SCWorkerCU(tmpDeviceID));
     }
     //! [Adding the CustomControlUnit]
     

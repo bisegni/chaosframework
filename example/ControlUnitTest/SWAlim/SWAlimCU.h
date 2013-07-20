@@ -25,7 +25,7 @@
 #include <boost/chrono.hpp>
 #include <boost/thread.hpp>
 #include <chaos/common/utility/Atomic.h>
-#include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
+#include <chaos/cu_toolkit/ControlManager/RTAbstractControlUnit.h>
 #include "SWAlim.h"
 #include "TcpChannel.h"
 #include "ModbusProtocol.h"
@@ -37,7 +37,7 @@ using namespace boost;
 using namespace boost::posix_time;
 
 
-class SWAlimCU : public chaos::cu::AbstractControlUnit {
+class SWAlimCU : public chaos::cu::RTAbstractControlUnit {
     typedef boost::mt19937 RNGType; 
     RNGType rng;
     uniform_int<> one_to_hundred;    

@@ -8,8 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		3252C9DB179330A800A17C7C /* SinWaveCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3252C9D9179330A800A17C7C /* SinWaveCommand.cpp */; };
+		32F22423179AFF3600853F62 /* SCWorkerCU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F22421179AFF3500853F62 /* SCWorkerCU.cpp */; };
 		32F7449C14B49CFA0025638B /* ControlUnitExample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F7449914B49CFA0025638B /* ControlUnitExample.cpp */; };
-		32F7449D14B49CFA0025638B /* WorkerCU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F7449A14B49CFA0025638B /* WorkerCU.cpp */; };
+		32F7449D14B49CFA0025638B /* RTWorkerCU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F7449A14B49CFA0025638B /* RTWorkerCU.cpp */; };
 		539510D7174116F500ECF627 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539510D6174116F500ECF627 /* main.cpp */; };
 		539510DF1741174400ECF627 /* SWAlimCU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 539510DD1741174400ECF627 /* SWAlimCU.cpp */; };
 /* End PBXBuildFile section */
@@ -18,10 +19,12 @@
 		3252C9D9179330A800A17C7C /* SinWaveCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SinWaveCommand.cpp; sourceTree = SOURCE_ROOT; };
 		3252C9DA179330A800A17C7C /* SinWaveCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SinWaveCommand.h; sourceTree = SOURCE_ROOT; };
 		32BE864A15A0E3C500818C39 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		32F22421179AFF3500853F62 /* SCWorkerCU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SCWorkerCU.cpp; sourceTree = SOURCE_ROOT; };
+		32F22422179AFF3500853F62 /* SCWorkerCU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCWorkerCU.h; sourceTree = SOURCE_ROOT; };
 		32F7448F14B49CCB0025638B /* ControlUnitTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ControlUnitTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		32F7449914B49CFA0025638B /* ControlUnitExample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ControlUnitExample.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		32F7449A14B49CFA0025638B /* WorkerCU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = WorkerCU.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		32F7449B14B49CFA0025638B /* WorkerCU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = WorkerCU.h; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		32F7449A14B49CFA0025638B /* RTWorkerCU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = RTWorkerCU.cpp; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		32F7449B14B49CFA0025638B /* RTWorkerCU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = RTWorkerCU.h; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		539510D4174116F500ECF627 /* CUSWAlim */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CUSWAlim; sourceTree = BUILT_PRODUCTS_DIR; };
 		539510D6174116F500ECF627 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		539510DD1741174400ECF627 /* SWAlimCU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SWAlimCU.cpp; sourceTree = "<group>"; };
@@ -69,8 +72,10 @@
 			isa = PBXGroup;
 			children = (
 				32F7449914B49CFA0025638B /* ControlUnitExample.cpp */,
-				32F7449A14B49CFA0025638B /* WorkerCU.cpp */,
-				32F7449B14B49CFA0025638B /* WorkerCU.h */,
+				32F7449A14B49CFA0025638B /* RTWorkerCU.cpp */,
+				32F7449B14B49CFA0025638B /* RTWorkerCU.h */,
+				32F22421179AFF3500853F62 /* SCWorkerCU.cpp */,
+				32F22422179AFF3500853F62 /* SCWorkerCU.h */,
 				3252C9D9179330A800A17C7C /* SinWaveCommand.cpp */,
 				3252C9DA179330A800A17C7C /* SinWaveCommand.h */,
 			);
@@ -155,8 +160,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				32F7449C14B49CFA0025638B /* ControlUnitExample.cpp in Sources */,
-				32F7449D14B49CFA0025638B /* WorkerCU.cpp in Sources */,
+				32F7449D14B49CFA0025638B /* RTWorkerCU.cpp in Sources */,
 				3252C9DB179330A800A17C7C /* SinWaveCommand.cpp in Sources */,
+				32F22423179AFF3600853F62 /* SCWorkerCU.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

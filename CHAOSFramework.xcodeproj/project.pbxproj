@@ -361,6 +361,10 @@
 		32DF604815E1505F00312C94 /* CustomEventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DF604615E1505F00312C94 /* CustomEventDescriptor.h */; };
 		32E9F48D16485012006EAF37 /* ChaosNodeDirectory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32E9F48B16485012006EAF37 /* ChaosNodeDirectory.cpp */; };
 		32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */; };
+		32F2241B179AE3BC00853F62 /* RTAbstractControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F22419179AE3BC00853F62 /* RTAbstractControlUnit.cpp */; };
+		32F2241C179AE3BC00853F62 /* RTAbstractControlUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F2241A179AE3BC00853F62 /* RTAbstractControlUnit.h */; };
+		32F2241F179AEED500853F62 /* SCAbstractControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F2241D179AEED500853F62 /* SCAbstractControlUnit.cpp */; };
+		32F22420179AEED500853F62 /* SCAbstractControlUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F2241E179AEED500853F62 /* SCAbstractControlUnit.h */; };
 		32F466DE155EDBDE00AD3D81 /* IODataDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F466DD155EDBDE00AD3D81 /* IODataDriver.cpp */; };
 /* End PBXBuildFile section */
 
@@ -772,6 +776,10 @@
 		32E9F48B16485012006EAF37 /* ChaosNodeDirectory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosNodeDirectory.cpp; sourceTree = "<group>"; };
 		32E9F48C16485012006EAF37 /* ChaosNodeDirectory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosNodeDirectory.h; sourceTree = "<group>"; };
 		32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleBufferCircularBuffer.h; sourceTree = "<group>"; };
+		32F22419179AE3BC00853F62 /* RTAbstractControlUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTAbstractControlUnit.cpp; sourceTree = "<group>"; };
+		32F2241A179AE3BC00853F62 /* RTAbstractControlUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTAbstractControlUnit.h; sourceTree = "<group>"; };
+		32F2241D179AEED500853F62 /* SCAbstractControlUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SCAbstractControlUnit.cpp; sourceTree = "<group>"; };
+		32F2241E179AEED500853F62 /* SCAbstractControlUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCAbstractControlUnit.h; sourceTree = "<group>"; };
 		32F466DD155EDBDE00AD3D81 /* IODataDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IODataDriver.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1375,6 +1383,10 @@
 				328D2FB61660EACD007F482E /* DSAttributeHandlerExecutionEngine.h */,
 				326DB4A514B3A3E50018A8D0 /* AbstractControlUnit.cpp */,
 				326DB4A614B3A3E50018A8D0 /* AbstractControlUnit.h */,
+				32F2241D179AEED500853F62 /* SCAbstractControlUnit.cpp */,
+				32F2241E179AEED500853F62 /* SCAbstractControlUnit.h */,
+				32F22419179AE3BC00853F62 /* RTAbstractControlUnit.cpp */,
+				32F2241A179AE3BC00853F62 /* RTAbstractControlUnit.h */,
 				32D3EAAA1793F70000405A3E /* DeviceSchemaDB.cpp */,
 				32D3EAA91793F70000405A3E /* DeviceSchemaDB.h */,
 				326DB4A714B3A3E50018A8D0 /* ControlManager.cpp */,
@@ -1949,6 +1961,8 @@
 				32D3EAAB1793F70000405A3E /* DeviceSchemaDB.h in Headers */,
 				328CC9D71763CCC7000B30B6 /* AbstractDriver.h in Headers */,
 				32919A0C1764E68F00724874 /* DriverAccessor.h in Headers */,
+				32F2241C179AE3BC00853F62 /* RTAbstractControlUnit.h in Headers */,
+				32F22420179AEED500853F62 /* SCAbstractControlUnit.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2238,6 +2252,8 @@
 				328CC9D61763CCC7000B30B6 /* AbstractDriver.cpp in Sources */,
 				32234D3F176E045100525E0C /* SlowCommandExecutor.cpp in Sources */,
 				32919A0B1764E68F00724874 /* DriverAccessor.cpp in Sources */,
+				32F2241B179AE3BC00853F62 /* RTAbstractControlUnit.cpp in Sources */,
+				32F2241F179AEED500853F62 /* SCAbstractControlUnit.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
