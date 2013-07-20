@@ -103,7 +103,7 @@ namespace chaos{
 	bool simulationMode;
     boost::chrono::microseconds waithTimeInMicrosecond;
     boost::chrono::nanoseconds computedWaithTimeInNanoseconds;
-    boost::scoped_ptr<thread> m_thread;
+    boost::scoped_ptr<boost::thread> m_thread;
 	boost::mutex statMutex;
     bool firstLoop;
         //statistic data

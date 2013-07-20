@@ -190,16 +190,16 @@ void WorkerCU::init() throw(CException) {
 void WorkerCU::run() throw(CException) {
     //get new data wrapper instance filled
     //with mandatory data
-    CDataWrapper *acquiredData = getNewDataWrapper();
-    if(!acquiredData) return;
+  //  CDataWrapper *acquiredData = getNewDataWrapper();
+ //   if(!acquiredData) return;
     
     //put the messageID for test the lost of package
-    acquiredData->addInt32Value("id", ++messageID);
-    computeWave(acquiredData);
+ //   acquiredData->addInt32Value("id", ++messageID);
+ //   computeWave(acquiredData);
     //adding some interesting random data
 
     //submit acquired data
-    pushDataSet(acquiredData);
+ //   pushDataSet(acquiredData);
     
 }
 

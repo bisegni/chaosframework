@@ -10,6 +10,7 @@
 #define __CHAOSFramework__SlowCommandSandbox__
 
 #include <stack>
+#include <memory>
 
 #include <boost/thread.hpp>
 #include <boost/chrono.hpp>
@@ -52,19 +53,19 @@ namespace chaos{
                 //! Functor implementation
                 struct SetFunctor : public BaseFunctor {
                     void operator()(CDataWrapper *commandInfo) {
-                        if(cmdInstance) cmdInstance->setHandler(commandInfo);
+                        if(cmdInstance && (cmdInstance->runningState < RunningStateType::RS_End)) cmdInstance->setHandler(commandInfo);
                     }
                 };
                 
                 struct AcquireFunctor : public BaseFunctor {
                     void operator()() {
-                        if(cmdInstance) cmdInstance->acquireHandler();
+                        if(cmdInstance && (cmdInstance->runningState < RunningStateType::RS_End)) cmdInstance->acquireHandler();
                     }
                 };
                 
                 struct CorrelationFunctor : public BaseFunctor {
                     void operator()() {
-                        if(cmdInstance) (cmdInstance->ccHandler());
+                        if(cmdInstance && (cmdInstance->runningState < RunningStateType::RS_End)) (cmdInstance->ccHandler());
                     }
                 };
                 
@@ -80,16 +81,34 @@ namespace chaos{
                     friend class SlowCommandExecutor;
                     
                     
-                    //internal ascheduling thread
-                    boost::thread *schedulerThread;
+                    //-------shared data beetwen scheduler and checker thread------
+                    bool            scheduleWorkFlag;
+                    uint8_t         curCmdRunningState;
                     
-                    bool scheduleWorkFlag;
+                    //!point to the current executing command
+                    SlowCommand     *currentExecutingCommand;
+                    
+                    boost::mutex                    mutextAccessCurrentCommand;
+                    boost::condition_variable_any   waithForNextCheck;
+                    
+                    //------------------scheduler---------------------
+                    //internal ascheduling thread
+                    std::auto_ptr<boost::thread> threadScheduler;
+                    //! Thread for whait until the queue is empty
+                    WaitSemaphore  threadSchedulerPauseCondition;
+                    
+                    //------------------next command checker---------------------
+
+                    //!Mutex used for sincronize the introspection of the current command
+                    boost::recursive_mutex          mutexNextCommandChecker;
+                    //! check time intervall for the valutate the jobs (next, current and paused) state
+                    posix_time::milliseconds        checkTimeIntervall;
+                    std::auto_ptr<boost::thread>    threadNextCommandChecker;
                     
                     
                     KeyDataStorage*  keyDataStorage;
                     
-                    //!Mutex used for sincronize the introspection of the current command
-                    boost::recursive_mutex  mutextCommandScheduler;
+
                     
                     //! Thread for whait until the queue is empty
                     boost::condition_variable_any  conditionWaithSchedulerEnd;
@@ -97,20 +116,16 @@ namespace chaos{
                     //!Mutex used for sincronize the introspection of the current command
                     //boost::mutex  pauseMutex;
                     
-                    //! Thread for whait until the queue is empty
-                    WaitSemaphore  pauseCondition;
+
                     
-                    //! check time intervall for the valutate the jobs (next, current and paused) state
-                    boost::chrono::milliseconds checkTimeIntervall;
+
                     
                     //! delay for the next beat of scheduler
                     boost::chrono::milliseconds schedulerStepDelay;
 
                     //! Pointers to the next available command implementation and information
                     CommandInfoAndImplementation nextAvailableCommand;
-                    
-                    //!point to the current executing command
-                    SlowCommand *currentExecutingCommand;
+
                     
                     //! Shared Channel Setting 
                     /*!
@@ -141,11 +156,21 @@ namespace chaos{
                      */
                     inline void installHandler(SlowCommand *cmdImpl, CDataWrapper* setData);
                     
-                    inline SlowCommand* getStackTopOrWaithOnMutext(boost::recursive_mutex::scoped_lock& lockScheduler);
-                    
                     SlowCommandSandbox();
                     ~SlowCommandSandbox();
                     
+                    //! execute a complete step of the command (acquire -> correlation) and check if the new command can be installed
+                    /*!
+                     Perform all check using the submission rule of the new command according
+                     to the Running State of the current command. In case all goes weel the new
+                     command is installed and the old one is managed accordint to the submissione rule
+                     \param newCommandDescription the new command description that contain the submission rule
+                     and the alias of the command to instantiate.
+                     \return true if the command is successfull installed, false otherwise
+                     */
+                    void runCommand();
+                    
+                    void checkNextCommand();
                 protected:
                     
                     void* sharedSettingPtr;
@@ -161,17 +186,6 @@ namespace chaos{
                     
                     // Deinit the implementation
                     void deinit() throw(chaos::CException);
-                    
-                    //! execute a complete step of the command (acquire -> correlation) and check if the new command can be installed
-                    /*!
-                     Perform all check using the submission rule of the new command according
-                     to the Running State of the current command. In case all goes weel the new
-                     command is installed and the old one is managed accordint to the submissione rule
-                     \param newCommandDescription the new command description that contain the submission rule
-                     and the alias of the command to instantiate.
-                     \return true if the command is successfull installed, false otherwise
-                     */
-                    void runCommand();
 
                     bool setNextAvailableCommand(PRIORITY_ELEMENT(CDataWrapper) *cmdInfo, SlowCommand *cmdImpl);
                 };

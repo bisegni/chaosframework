@@ -210,7 +210,7 @@ void SlowCommandExecutor::performIncomingCommandCheck() {
         try {
             DEBUG_CODE(    SCELDBG_ << "Install new command locking the sandbox";)
             //lock the command scheduler
-            boost::unique_lock<boost::recursive_mutex> lockScheduler(commandSandbox.mutextCommandScheduler);
+            boost::unique_lock<boost::recursive_mutex> lockScheduler(commandSandbox.mutexNextCommandChecker);
             if(commandSandbox.nextAvailableCommand.cmdImpl == NULL && commandSandbox.nextAvailableCommand.cmdInfo == NULL) {
                 DEBUG_CODE(SCELDBG_ << "No waiting command into sandbox, try to install new one";)
                 // no waiting command so set the next available wit the info and instance
