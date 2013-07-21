@@ -112,11 +112,11 @@ namespace chaos {
          */
         class EventDescriptor {
             friend class EventFactory;
-
+            uint8_t     tmp8;
+            uint32_t    tmp32;
         protected:
             EventType instanceType;
             uint8_t instancePriority;
-            
                 //! event data pointer
             unsigned char eventData[EVENT_DATA_BYTE_LENGTH];
             
@@ -186,13 +186,13 @@ namespace chaos {
             /*
              Return the version of the protocol wrapped on pack
              */
-            uint8_t getEventHeaderVersion();
+            uint16_t getEventHeaderVersion();
             
                 //!Return the data length of the event
             /*
              Return the data length of the event contextually to the event type
              */
-            uint8_t getEventDataLength();
+            uint16_t getEventDataLength();
             
                 //!Return the data  of the event
             /*

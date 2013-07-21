@@ -21,7 +21,7 @@
 #include <iostream>
 #include <chaos/cu_toolkit/CommandManager/CommandManager.h>
 #include <chaos/common/global.h>
-#include <chaos/common/cconstants.h>
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>

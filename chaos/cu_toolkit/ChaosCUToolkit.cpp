@@ -172,7 +172,7 @@ void ChaosCUToolkit::addControlUnit(AbstractControlUnit *newCU) {
     //call command manager to submit Custom Control Unit
     ControlManager::getInstance()->submitControlUnit(newCU);
     
-    LAPP_ << "A new Control Unit " << newCU->getCUName() << " has been submitted";
+    LAPP_ << "A new Control Unit " << newCU->getCUInstance() << " has been submitted";
 }
 
 /*

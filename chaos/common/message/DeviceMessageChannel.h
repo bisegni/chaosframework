@@ -21,7 +21,7 @@
 #define CHAOSFramework_DeviceMessageChannel_h
 
 #include <string>
-#include <chaos/common/message/NetworkAddressMessageChannel.h>
+#include <chaos/common/message/NodeMessageChannel.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
 
 namespace chaos {
@@ -32,7 +32,7 @@ namespace chaos {
     /*! 
      This class represent a message chanel for comunication with a device
      */
-    class DeviceMessageChannel : public NetworkAddressMessageChannel {
+    class DeviceMessageChannel : public NodeMessageChannel {
         friend class NetworkBroker;
         CDeviceNetworkAddress *deviceNetworkAddress;
         

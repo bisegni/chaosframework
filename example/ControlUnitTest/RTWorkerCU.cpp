@@ -22,7 +22,7 @@
 #include "RTWorkerCU.h"
 
 #include <chaos/common/global.h>
-#include <chaos/common/cconstants.h>
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/bson/bson.h>
 #include <chaos/common/bson/util/hex.h>
 #include <chaos/common/action/ActionDescriptor.h>
@@ -51,7 +51,6 @@ using namespace chaos;
  */
 RTWorkerCU::RTWorkerCU(string &customDeviceID):rng((const uint_fast32_t) time(0) ),one_to_hundred( -100, 100 ),randInt(rng, one_to_hundred){
     _deviceID = customDeviceID;
-    cuName = "WORKER_CU";
     numberOfResponse = 0;
 }
 
@@ -68,7 +67,6 @@ RTWorkerCU::~RTWorkerCU() {
 void RTWorkerCU::defineActionAndDataset() throw(CException) {
     //set the base information
     const char *devIDInChar = _deviceID.c_str();
-    cuName = "SIN_CU";
     //cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_DESCRIPTION, "This is a beautifull CU");
     
     

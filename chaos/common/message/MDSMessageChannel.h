@@ -21,7 +21,7 @@
 #ifndef CHAOSFramework_MDSMessageChannel_h
 #define CHAOSFramework_MDSMessageChannel_h
 
-#include <chaos/common/message/NetworkAddressMessageChannel.h>
+#include <chaos/common/message/NodeMessageChannel.h>
 
 #include <vector>
 
@@ -33,7 +33,7 @@ namespace chaos {
     /*! 
      This class represent a message chanel for comunication with the Metadata Server 
      */
-    class MDSMessageChannel : public NetworkAddressMessageChannel {
+    class MDSMessageChannel : public NodeMessageChannel {
         friend class NetworkBroker;
     protected:
         //! base constructor
@@ -41,7 +41,7 @@ namespace chaos {
          The base constructor prepare the base class constructor call to be adapted for metadataserver comunication. For the MDS the node address is
          "system"(ip:port:system)
          */
-        MDSMessageChannel(NetworkBroker *msgBroker, CNodeNetworkAddress *mdsNodeAddress):NetworkAddressMessageChannel(msgBroker, mdsNodeAddress){}
+        MDSMessageChannel(NetworkBroker *msgBroker, CNodeNetworkAddress *mdsNodeAddress):NodeMessageChannel(msgBroker, mdsNodeAddress){}
         
     public:
         

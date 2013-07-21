@@ -23,7 +23,7 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/msgpack/MsgPackServer.h>
-#include <chaos/common/cconstants.h>
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/exception/CException.h>
 
 using namespace chaos;

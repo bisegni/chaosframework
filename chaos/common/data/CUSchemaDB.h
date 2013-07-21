@@ -26,7 +26,7 @@
 #include <boost/ptr_container/ptr_map.hpp>
 #include <vector>
 #include <chaos/common/data/entity_db/EntityDB.h>
-#include <chaos/common/cconstants.h>
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/utility/TimingUtil.h>
 namespace chaos {
     using namespace std;
@@ -273,6 +273,19 @@ namespace chaos {
        void getDeviceAttributeRangeValueInfo(const string& deviceID,
                                              const string& attributesName,
                                              RangeValueInfo& rangeInfo);
+        
+        //!Set the range values for an attribute
+        /*!
+         set the range value for the attribute
+         \param deviceID the identification of the device
+         \param attributesName the name of the attribute
+         \param rangeInfo the range and default value of the attribute, the fields
+         of the struct are not cleaned, so if an attrbute doesn't has
+         some finromation, relative field are not touched.
+         */
+        void setDeviceAttributeRangeValueInfo(const string& deviceID,
+                                              const string& attributesName,
+                                              RangeValueInfo& rangeInfo);
         
             //!Get the direction of an attribute
         /*!

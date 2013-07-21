@@ -165,13 +165,17 @@ void RTAbstractControlUnit::executeOnThread() throw(CException) {
     //check if we are in sequential or in threaded mode
 }
 
-/*!
+/*
  Receive the evento for set the dataset input element
  */
-CDataWrapper* RTAbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
-    CDataWrapper *result = AbstractControlUnit::_setDatasetAttribute(datasetAttributeValues, detachParam);
+CDataWrapper* RTAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAttributeValues) throw (CException) {
     //serach and execute handler
-    string deviceID = datasetAttributeValues->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
-    attributeHandlerEngine->executeHandler(deviceID, datasetAttributeValues);
-    return result;
+    //lock shared access to control unit
+    recursive_mutex::scoped_lock  lock(managing_cu_mutex);
+    
+    attributeHandlerEngine->executeHandler(datasetAttributeValues);
+    
+    //at this time notify the wel gone setting of comand
+    if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(DeviceSchemaDB::getDeviceID(), 0);
+    return datasetAttributeValues;
 }

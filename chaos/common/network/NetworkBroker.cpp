@@ -490,7 +490,7 @@ void NetworkBroker::disposeMessageChannel(MessageChannel *messageChannelToDispos
 /*!
  Perform the message channel deallocation
  */
-void NetworkBroker::disposeMessageChannel(NetworkAddressMessageChannel *messageChannelToDispose) {
+void NetworkBroker::disposeMessageChannel(NodeMessageChannel *messageChannelToDispose) {
     NetworkBroker::disposeMessageChannel((MessageChannel*)messageChannelToDispose);
 }
 

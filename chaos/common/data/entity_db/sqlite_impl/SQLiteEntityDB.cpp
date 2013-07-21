@@ -66,12 +66,14 @@ SQLiteEntityDB::~SQLiteEntityDB() {
 int16_t SQLiteEntityDB::initDB(const char* name, bool temporary)  throw (CException) {
     int16_t result = 0;
     int errorSequence = 0;
-    std::string uriPath = "file:";
-    uriPath.append(name);
+    std::string uriPath;
+    
     
     if(temporary) {
         //use mermory database for temporary
-        uriPath.append("?mode=memory&cache=shared");
+        uriPath.append(":memory:");
+    } else {
+        uriPath.append(name);
     }
     
     //clean all statement pointer

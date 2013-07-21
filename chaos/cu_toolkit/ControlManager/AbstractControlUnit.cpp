@@ -35,50 +35,48 @@
 #include <boost/lexical_cast.hpp>
 
 
-using namespace chaos;
-using namespace chaos::cu;
-using namespace std;
-using namespace boost;
-using namespace boost::uuids;
+namespace cu = chaos::cu;
+namespace uuid = boost::uuids;
 
 #define LCU_ LAPP_ << "[Control Unit:"<<getCUInstance()<<"] - "
 
 
-AbstractControlUnit::AbstractControlUnit():DeviceSchemaDB(false), cuInstance(UUIDUtil::generateUUIDLite()) {
+cu::AbstractControlUnit::AbstractControlUnit():DeviceSchemaDB(false), cuInstance(UUIDUtil::generateUUIDLite()) {
     deviceState = 0;
+    scheduleDelay = 0;
 }
 
 /*!
  Destructor a new CU with an identifier
  */
-AbstractControlUnit::~AbstractControlUnit() {
+cu::AbstractControlUnit::~AbstractControlUnit() {
 }
 
 /*
  return the CU name
  */
-const char * AbstractControlUnit::getCUName(){
-    return cuName.size()?cuName.c_str():"Name no yet configured";
-};
-
-/*
- return the CU name
- */
-const char * AbstractControlUnit::getCUInstance(){
+const char * cu::AbstractControlUnit::getCUInstance(){
     return cuInstance.size()?cuInstance.c_str():"Instance no yet configured";
 };
+
+/*!
+ Set the default schedule delay for the sandbox
+ */
+void  cu::AbstractControlUnit::setDefaultScheduleDelay(int32_t _sDelay){
+    scheduleDelay = _sDelay;
+}
 
 /*
  Add a new KeyDataStorage for a specific key
  */
-void AbstractControlUnit::setKeyDataStorage(KeyDataStorage* keyDatStorafePointer) {
-    keyDataStorage = keyDatStorafePointer;
+void cu::AbstractControlUnit::setKeyDataStorage(KeyDataStorage* _keyDatStorage) {
+    keyDataStorage = _keyDatStorage;
 }
 
 /*!
  Add the new attribute in the dataset for at the CU dataset
  */
-void AbstractControlUnit::addAttributeToDataSet(const char*const deviceID,
+void cu::AbstractControlUnit::addAttributeToDataSet(const char*const deviceID,
                                                 const char*const attributeName,
                                                 const char*const attributeDescription,
                                                 DataType::DataType attributeType,
@@ -89,86 +87,12 @@ void AbstractControlUnit::addAttributeToDataSet(const char*const deviceID,
 }
 
 /*
- load the json file setupped into jsonSetupFilePath class attributed
- */
-void AbstractControlUnit::loadCDataWrapperForJsonFile(CDataWrapper& setupConfiguration)  throw (CException)  {
-    int tmpInt;
-    string tmpStr;
-    auto_ptr<CDataWrapper> csDWFromJson;
-    //CHAOS_ASSERT(setupConfiguration)
-    //check if the path is filled
-    if(!jsonSetupFilePath.size()) return;
-    
-    FILE *cfgFile = fopen(jsonSetupFilePath.c_str(), "r");
-    //inFile.open(jsonSetupFilePath.c_str(), ios::binary );
-    if(cfgFile){
-        //check if the shared pointer if allcoated
-        fseek (cfgFile, 0, SEEK_END	 );
-        long length = ftell(cfgFile);
-        rewind (cfgFile);
-        
-        //need to make 1 byte larger for simualte c string
-        char *buffer = new char[length];
-        memset(buffer, 0, length);
-        fread(buffer, 1, length, cfgFile);
-        fclose (cfgFile);
-        
-        while(buffer[length-1]=='\r' || buffer[length-1]=='\n'){
-            buffer[(length--)-1]=(char)0;
-        }
-        
-        //create the csdatafrapper and append all elemento to the input setupConfiguration
-        csDWFromJson.reset(new CDataWrapper(buffer, false));
-        //delete the buffer
-        delete[] buffer;
-        
-        
-        //add default value from jfg file
-        if(csDWFromJson->hasKey(CUDefinitionKey::CS_CM_CU_NAME)){
-        	tmpStr = csDWFromJson->getStringValue(CUDefinitionKey::CS_CM_CU_NAME);
-        	setupConfiguration.addStringValue(CUDefinitionKey::CS_CM_CU_NAME, tmpStr);
-        }
-        
-        if(csDWFromJson->hasKey(CUDefinitionKey::CS_CM_CU_DESCRIPTION)){
-        	tmpStr = csDWFromJson->getStringValue(CUDefinitionKey::CS_CM_CU_DESCRIPTION);
-        	setupConfiguration.addStringValue(CUDefinitionKey::CS_CM_CU_DESCRIPTION, tmpStr);
-        }
-        if(csDWFromJson->hasKey(CUDefinitionKey::CS_CM_CU_CLASS)){
-            tmpStr = csDWFromJson->getStringValue(CUDefinitionKey::CS_CM_CU_CLASS);
-            setupConfiguration.addStringValue(CUDefinitionKey::CS_CM_CU_CLASS, tmpStr);
-        }
-        
-        if(csDWFromJson->hasKey(CUDefinitionKey::CS_CM_CU_AUTOSTART)){
-            tmpInt = csDWFromJson->getInt32Value(CUDefinitionKey::CS_CM_CU_AUTOSTART);
-            setupConfiguration.addInt32Value(CUDefinitionKey::CS_CM_CU_AUTOSTART, tmpInt);
-        }
-        if(csDWFromJson->hasKey(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY)){
-            tmpStr = csDWFromJson->getStringValue(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY);
-            setupConfiguration.addStringValue(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY, tmpStr);
-        }
-        
-        
-        //auto_add all possible dataset attribute from the configuration file
-        if(csDWFromJson->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION)) {
-            //in the configuration file there are some attribute for the dataset we need to register it
-        	auto_ptr<CMultiTypeDataArrayWrapper> datasetAttributes (csDWFromJson->getVectorValue(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION));
-        	for (unsigned int i = 0;  i < datasetAttributes->size() ; i++) {
-        		addAttributeToDataSetFromDataWrapper(*datasetAttributes->getCDataWrapperElementAtIndex(i));
-			}
-        }
-    }
-}
-
-
-/*
  fill the CDataWrapper with AbstractCU system configuration, this method
  is called after getStartConfiguration directly by sandbox. in this method
  are defined the action for the input element of the dataset
  */
-void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfiguration)  throw(CException) {
-    vector<string> tempStringVector;
-    //global var initialization
-    scheduleDelay = 0;
+void cu::AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfiguration)  throw(CException) {
+    vector<std::string> tempStringVector;
     
     //add the CU isntance, this can be redefinide by user in the defineActionAndDataset method
     //for let the CU have the same instance at every run
@@ -265,7 +189,7 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
  Define the control unit DataSet and Action into
  a CDataWrapper
  */
-void AbstractControlUnit::_undefineActionAndDataset() throw(CException) {
+void cu::AbstractControlUnit::_undefineActionAndDataset() throw(CException) {
     LCU_ << "Remove Action Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
     //register command manager action
     CommandManager::getInstance()->deregisterAction(this);
@@ -276,7 +200,7 @@ void AbstractControlUnit::_undefineActionAndDataset() throw(CException) {
 /*
  Initialize the Custom Contro Unit and return the configuration
  */
-CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& detachParam) throw(CException) {
+chaos::CDataWrapper* cu::AbstractControlUnit::_init(chaos::CDataWrapper *initConfiguration, bool& detachParam) throw(CException) {
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     auto_ptr<CDataWrapper> updateResult;
     
@@ -286,13 +210,12 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
         throw CException(-1, "No Device Init information in param", "AbstractControlUnit::_init");
     }
     
-    string deviceID = initConfiguration->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
-    LCU_ << "Initializating Phase for device:" << deviceID;
-    
+    std::string deviceID = initConfiguration->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
     if(deviceID.compare(DeviceSchemaDB::getDeviceID())) {
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
         throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_init");
     }
+    LCU_ << "Initializating Phase for device:" << deviceID;
     
     //check to see if the device can ben initialized
     if(deviceState != INIT_STATE) {
@@ -327,7 +250,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
 /*
  deinit all datastorage
  */
-CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& detachParam) throw(CException) {
+chaos::CDataWrapper* cu::AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& detachParam) throw(CException) {
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     LCU_ << "Deinitializating AbstractControlUnit";
     
@@ -336,25 +259,25 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
     }
     
     string deviceID = deinitParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
-    LCU_ << "Deinitialization Phase for device:" << deviceID;
-    if(deviceID.compare(DeviceSchemaDB::getDeviceID())) {
-        LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
+    if(deviceID.compare(cu::DeviceSchemaDB::getDeviceID())) {
+        LCU_ << "device:" << cu::DeviceSchemaDB::getDeviceID() << "not known by this ContorlUnit";
         throw CException(-2, "Deviuce not known by this control unit", "AbstractControlUnit::_deinit");
     }
-    
+    LCU_ << "Deinitialization Phase for device:" << deviceID;
+  
     //check to see if the device can ben initialized
     if(deviceState != INIT_STATE+1) {
-        LCU_ << "device:" << deviceID << " already initialized";
+        LCU_ << "device:" << cu::DeviceSchemaDB::getDeviceID() << " already initialized";
         throw CException(-3, "Device Not Initialized", "AbstractControlUnit::_deinit");
     }
     
     //deinit the control unit
-    LCU_ << "Deinit custom deinitialization for device:" << deviceID;
+    LCU_ << "Deinit custom deinitialization for device:" << cu::DeviceSchemaDB::getDeviceID();
     deinit();
         
     //remove key data storage
     if(keyDataStorage) {
-        LCU_ << "Delete data storage driver for device:" << deviceID;
+        LCU_ << "Delete data storage driver for device:" << cu::DeviceSchemaDB::getDeviceID();
         keyDataStorage->deinit();
         delete(keyDataStorage);
         keyDataStorage = NULL;
@@ -369,7 +292,7 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
 /*
  Starto the  Control Unit scheduling for device
  */
-CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detachParam) throw(CException) {
+chaos::CDataWrapper* cu::AbstractControlUnit::_start(chaos::CDataWrapper *startParam, bool& detachParam) throw(CException) {
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     
     if(!startParam || !startParam->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
@@ -377,18 +300,19 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
     }
     
     string deviceID = startParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
-    if(deviceID.compare(DeviceSchemaDB::getDeviceID())) {
+    if(deviceID.compare(cu::DeviceSchemaDB::getDeviceID())) {
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
         throw CException(-2, "Deviuce not known by this control unit", "AbstractControlUnit::_start");
     }
     
+    LCU_ << "Start Phase for device:" << cu::DeviceSchemaDB::getDeviceID();
     //check to see if the device can ben initialized
     if(deviceState != START_STATE) {
-        LCU_ << "device:" << deviceID << " already strted";
+        LCU_ << "device:" << cu::DeviceSchemaDB::getDeviceID() << " already strted";
         throw CException(-3, "Device already started", "AbstractControlUnit::_start");
     }
 
-    LCU_ << "Start sublass for deviceID:" << deviceID;
+    LCU_ << "Start sublass for deviceID:" << cu::DeviceSchemaDB::getDeviceID();
     start();
     
     deviceState++;
@@ -400,24 +324,25 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
 /*
  Stop the Custom Control Unit scheduling for device
  */
-CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachParam) throw(CException) {
+chaos::CDataWrapper* cu::AbstractControlUnit::_stop(chaos::CDataWrapper *stopParam, bool& detachParam) throw(CException) {
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     if(!stopParam || !stopParam->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
         throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_stop");
     }
     string deviceID = stopParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
-    if(deviceID.compare(DeviceSchemaDB::getDeviceID())) {
+    if(deviceID.compare(cu::DeviceSchemaDB::getDeviceID())) {
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
         throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_stop");
     }
-    
+ 
+    LCU_ << "Stop Phase for device:" << cu::DeviceSchemaDB::getDeviceID();
     //check to see if the device can ben initialized
     if(deviceState != START_STATE+1) {
-        LCU_ << "device:" << deviceID << " not started";
+        LCU_ << "device:" << cu::DeviceSchemaDB::getDeviceID() << " not started";
         throw CException(-3, "Device not startded", "AbstractControlUnit::_stop");
     }
     
-    LCU_ << "Stop sublass for deviceID:" << deviceID;
+    LCU_ << "Stop sublass for deviceID:" << cu::DeviceSchemaDB::getDeviceID();
     stop();
     
     //set device state
@@ -432,30 +357,26 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachPa
 /*
  Receive the evento for set the dataset input element
  */
-CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAttributeValues,  bool& detachParam) throw (CException) {
+chaos::CDataWrapper* cu::AbstractControlUnit::_setDatasetAttribute(chaos::CDataWrapper *datasetAttributeValues,  bool& detachParam) throw (CException) {
     CDataWrapper *executionResult = NULL;
-    //lock shared access to control unit
-    recursive_mutex::scoped_lock  lock(managing_cu_mutex);
-    
-    //load all keyDataStorageMap for the registered devices
-    if(!datasetAttributeValues || !datasetAttributeValues->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
-        throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_setDatasetAttribute");
-    }
-    //retrive the deviceid
-    string deviceID = datasetAttributeValues->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
-    if(deviceExplicitState == CUStateKey::DEINIT) {
-        throw CException(-2, "The Control Unit is in deinit state", "AbstractControlUnit::_setDatasetAttribute");
-    }
     try {
+        if(!datasetAttributeValues) {
+            throw CException(-1, "No Input parameter", "AbstractControlUnit::_setDatasetAttribute");
+        }
+        if(datasetAttributeValues->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
+            throw CException(-2, "No Device Defined in param", "AbstractControlUnit::setDatasetAttribute");
+        }
+        //retrive the deviceid
+        string deviceID = datasetAttributeValues->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
+        if(deviceExplicitState == CUStateKey::DEINIT) {
+            throw CException(-3, "The Control Unit is in deinit state", "AbstractControlUnit::_setDatasetAttribute");
+        }
         //send dataset attribute change pack to control unit implementation
-        executionResult = setDatasetAttribute(datasetAttributeValues, detachParam);
-                
-        //at this time notify the wel gone setting of comand
-        if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(deviceID.c_str(), 0);
+        executionResult = setDatasetAttribute(datasetAttributeValues);
         
     } catch (CException& ex) {
         //at this time notify the wel gone setting of comand
-        if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(deviceID.c_str(), ex.errorCode);
+        if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(cu::DeviceSchemaDB::getDeviceID(), ex.errorCode);
         
         throw ex;
     }
@@ -466,7 +387,7 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
 /*
  Get the current control unit state
  */
-CDataWrapper* AbstractControlUnit::_getState(CDataWrapper* getStatedParam, bool& detachParam) throw(CException) {
+chaos::CDataWrapper* cu::AbstractControlUnit::_getState(CDataWrapper* getStatedParam, bool& detachParam) throw(CException) {
     if(!getStatedParam->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)){
         throw CException(-1, "Get State Pack without DeviceID", "AbstractControlUnit::getState");
     }
@@ -478,7 +399,7 @@ CDataWrapper* AbstractControlUnit::_getState(CDataWrapper* getStatedParam, bool&
 /*
  Update the configuration for all descendand tree in the Control Uniti class struccture
  */
-CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack, bool& detachParam) throw (CException) {
+chaos::CDataWrapper*  cu::AbstractControlUnit::updateConfiguration(chaos::CDataWrapper* updatePack, bool& detachParam) throw (CException) {
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     //load all keyDataStorageMap for the registered devices
     if(!updatePack || !updatePack->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
@@ -487,14 +408,14 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
     
     string deviceID = updatePack->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
     
-    if(deviceID.compare(DeviceSchemaDB::getDeviceID())) {
-        LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
+    if(deviceID.compare(cu::DeviceSchemaDB::getDeviceID())) {
+        LCU_ << "device:" << DeviceSchemaDB::getDeviceID() << "not known by this ContorlUnit";
         throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_stop");
     }
     
     //check to see if the device can ben initialized
     if(deviceState == INIT_STATE) {
-        LCU_ << "device:" << deviceID << " not initialized";
+        LCU_ << "device:" << cu::DeviceSchemaDB::getDeviceID() << " not initialized";
         throw CException(-3, "Device Not Initilized", "AbstractControlUnit::updateConfiguration");
     }
     

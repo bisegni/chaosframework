@@ -22,7 +22,7 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/zmq/ZMQServer.h>
-#include <chaos/common/cconstants.h>
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/exception/CException.h>
 
 #define ZMQS_LAPP LAPP_ << "[ZMQServer] - "

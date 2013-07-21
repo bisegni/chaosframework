@@ -84,7 +84,7 @@ DeviceMessageChannel *LLRpcApi::getNewDeviceMessageChannel(CDeviceNetworkAddress
     return rpcMessageBroker->getDeviceMessageChannelFromAddress(deviceNetworkAddress);
 }
 
-void LLRpcApi::deleteMessageChannel(NetworkAddressMessageChannel *channelToDispose) {
+void LLRpcApi::deleteMessageChannel(NodeMessageChannel *channelToDispose) {
     rpcMessageBroker->disposeMessageChannel(channelToDispose);
 }
 

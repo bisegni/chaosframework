@@ -21,7 +21,7 @@
 #include <string>
 #include <vector>
 #include <chaos/common/global.h>
-#include <chaos/common/cconstants.h>
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
 #include <chaos/ui_toolkit/ChaosUIToolkit.h>
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>

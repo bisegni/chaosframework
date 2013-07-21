@@ -39,36 +39,18 @@ const char * DeviceSchemaDB::getDeviceID() {
 }
 
 //! Add device dataset definitio by serialized form
-/*!
- Fill the database with the devices and their dataset with the content
- of the serialized data
- 
- \param serializedDataset serialze dataset
- */
 void DeviceSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& serializedDW) {
     CUSchemaDB::addAttributeToDataSetFromDataWrapper(serializedDW);
 }
 
 //! Fill a CDataWrapper with a single device information
-/*!
- fill a CDataWrapper with the dataset decode
- */
 void DeviceSchemaDB::fillDataWrapperWithDataSetDescription(CDataWrapper& dw) {
-    /* NOTE this need to be changed becase this funciton retuan many device but now al is
+    /* NOTE this need to be changed becase this funciton retuan many device but now all is
      single device centric. So we need to use a new bson structure for descibe the device, so we need a new root key*/
     CUSchemaDB::fillDataWrapperWithDataSetDescription(dw);
 }
 
 //! Add dataset attribute
-/*!
- Add the new attribute to the deviceID dataset specifing
- the default parameter
- 
- \param attributeName the name of the new attribute
- \param attributeDescription the description of the attribute
- \param attributeType the type of the new attribute
- \param attributeDirection the direction of the new attribute
- */
 void DeviceSchemaDB::addAttributeToDataSet(const char*const attributeName,
                                            const char*const attributeDescription,
                                            DataType::DataType attributeType,
@@ -80,53 +62,35 @@ void DeviceSchemaDB::addAttributeToDataSet(const char*const attributeName,
 
 
 //!Get dataset attribute names
-/*!
- Return all dataset attribute name
- \param attributesName the array that will be filled with the name
- */
 void DeviceSchemaDB::getDatasetAttributesName(vector<string>& attributesName) {
     CUSchemaDB::getDeviceDatasetAttributesName(deviceID, attributesName);
 }
 
 //!Get device attribute name that has a specified direction
-/*!
- Return all dataset attribute name
- \param directionType the direction for attribute filtering
- \param attributesName the array that will be filled with the name
- */
 void DeviceSchemaDB::getDatasetAttributesName(DataType::DataSetAttributeIOAttribute directionType,
                                               vector<string>& attributesName) {
     CUSchemaDB::getDeviceDatasetAttributesName(deviceID, directionType, attributesName);
 }
 
 //!Get  attribute description
-/*!
- Return the dataset description
- \param attributesName the name of the attribute
- \param attributeDescription the returned description
- */
 void DeviceSchemaDB::getAttributeDescription(const string& attributesName,
                                              string& attributeDescription) {
     CUSchemaDB::getDeviceAttributeDescription(deviceID, attributesName, attributeDescription);
 }
 
 //!Get the value information for a specified attribute name
-/*!
- Return the range value for the attribute
- \param attributesName the name of the attribute
- \param rangeInfo the range and default value of the attribute
- */
 void DeviceSchemaDB::getAttributeRangeValueInfo(const string& attributesName,
                                                 RangeValueInfo& rangeInfo) {
     CUSchemaDB::getDeviceAttributeRangeValueInfo(deviceID, attributesName, rangeInfo);    
 }
 
+//!Set the range values for an attribute of the device
+void DeviceSchemaDB::setAttributeRangeValueInfo(const string& attributesName,
+                                                RangeValueInfo& rangeInfo) {
+    CUSchemaDB::setDeviceAttributeRangeValueInfo(deviceID, attributesName, rangeInfo);
+}
+
 //!Get the direction of an attribute
-/*!
- Return the direcion of the attribute
- \param attributesName the name of the attribute
- \param directionType the direction of the attribute
- */
 int DeviceSchemaDB::getAttributeDirection(const string& attributesName,
                                           DataType::DataSetAttributeIOAttribute& directionType) {
     return CUSchemaDB::getDeviceAttributeDirection(deviceID, attributesName, directionType);

@@ -17,9 +17,10 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "../global.h"
-#include "DomainActions.h"
-#include "../cconstants.h"
+#include <chaos/common/global.h>
+#include <chaos/common/chaos_constants.h>
+#include <chaos/common/action/DomainActions.h>
+
 
 using namespace chaos;
 using namespace boost;

@@ -108,7 +108,7 @@ void DSAttributeHandlerExecutionEngine::addHandlerForDSAttribute(handler::DSAttr
 /*!
  Default destructor
  */
-bool DSAttributeHandlerExecutionEngine::executeHandler(const std::string& deviceID , CDataWrapper *message) throw (CException)  {
+bool DSAttributeHandlerExecutionEngine::executeHandler(CDataWrapper *message) throw (CException)  {
     boost::shared_lock< boost::shared_mutex >(engineManagmentLock);
     bool result = false;
     CHAOS_ASSERT(message)
@@ -123,7 +123,7 @@ bool DSAttributeHandlerExecutionEngine::executeHandler(const std::string& device
     CDataWrapper *cdatv;
     chaos::RangeValueInfo attributeInfo;
     
-    if(deviceID.compare(referenceDeviceSchemaDB->getDeviceID())) return false;
+    //if(deviceID.compare(referenceDeviceSchemaDB->getDeviceID())) return false;
     
     if((result = message->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID))) {
         std::string _messageDeiveID = message->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);

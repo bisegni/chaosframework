@@ -22,7 +22,7 @@
 #include "BenchTestCU.h"
 #include "config.h"
 #include <chaos/common/global.h>
-#include <chaos/common/cconstants.h>
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/bson/bson.h>
 #include <chaos/common/bson/util/hex.h>
 #include <chaos/common/action/ActionDescriptor.h>
@@ -64,7 +64,7 @@ void BenchTestCU::defineActionAndDataset() throw(CException) {
     setDefaultScheduleDelay(CU_DELAY_FROM_TASKS);
     
     //add managed device di
-    addDeviceId(devIDInChar);
+    setDeviceID(devIDInChar);
     
     
     //setup the dataset
@@ -122,7 +122,14 @@ void BenchTestCU::defineActionAndDataset() throw(CException) {
 /*
  Initialize the Custom Contro Unit and return the configuration
  */
-void BenchTestCU::init(const string& deviceID) throw(CException) {
+void BenchTestCU::start() throw(CException) {
+
+}
+
+/*
+ Initialize the Custom Contro Unit and return the configuration
+ */
+void BenchTestCU::init() throw(CException) {
     reactorInstance->reset();
     cycleCount = 0;
     lastExecutionTime = steady_clock::now();
@@ -131,7 +138,7 @@ void BenchTestCU::init(const string& deviceID) throw(CException) {
 /*
  Execute the Control Unit work
  */
-void BenchTestCU::run(const string& deviceID) throw(CException) {
+void BenchTestCU::run() throw(CException) {
     cycleCount++;
     
     //get new data wrapper instance filled
@@ -169,13 +176,13 @@ void BenchTestCU::run(const string& deviceID) throw(CException) {
 /*
  Execute the Control Unit work
  */
-void BenchTestCU::stop(const string& deviceID) throw(CException) {
+void BenchTestCU::stop() throw(CException) {
 }
 
 /*
  Deinit the Control Unit
  */
-void BenchTestCU::deinit(const string& deviceID) throw(CException) {
+void BenchTestCU::deinit() throw(CException) {
 }
 
 /*

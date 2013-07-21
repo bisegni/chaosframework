@@ -18,7 +18,7 @@
  *    	limitations under the License.
  */
 #include "../global.h"
-#include "../cconstants.h"
+#include <chaos/common/chaos_constants.h>
 #include "DefaultCommandDispatcher.h"
 
 using namespace chaos;

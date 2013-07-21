@@ -23,7 +23,7 @@
 #include <stdint.h>
 #include <string>
 #include <chaos/common/data/CDataWrapper.h>
-#include <chaos/common/cconstants.h>
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/network/NetworkForwardInfo.h>
 
 namespace chaos {

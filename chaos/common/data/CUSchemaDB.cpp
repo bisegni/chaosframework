@@ -561,7 +561,8 @@ bool CUSchemaDB::deviceIsPresent(const string& deviceID) {
     return deviceEntityMap.count(deviceID)==1;
 }
 
-void CUSchemaDB::getDeviceDatasetAttributesName(const string& deviceID, vector<string>& attributesName) {
+void CUSchemaDB::getDeviceDatasetAttributesName(const string& deviceID,
+                                                vector<string>& attributesName) {
     entity::Entity *deviceEntity = getDeviceEntity(deviceID);
     ptr_vector<entity::Entity> attrDst;
     deviceEntity->getChildsWithKeyID(mapDatasetKeyForID[DatasetDefinitionkey::CS_CM_DATASET_ATTRIBUTE_DIRECTION], attrDst);
@@ -573,7 +574,9 @@ void CUSchemaDB::getDeviceDatasetAttributesName(const string& deviceID, vector<s
     }
 }
 
-void CUSchemaDB::getDeviceDatasetAttributesName(const string& deviceID,  DataType::DataSetAttributeIOAttribute directionType, vector<string>& attributesName) {
+void CUSchemaDB::getDeviceDatasetAttributesName(const string& deviceID,
+                                                DataType::DataSetAttributeIOAttribute directionType,
+                                                vector<string>& attributesName) {
     //get the device entity
     ptr_vector<entity::Entity> entityVec;
     entity::Entity *deviceEntity = getDeviceEntity(deviceID);
@@ -596,7 +599,9 @@ void CUSchemaDB::getDeviceDatasetAttributesName(const string& deviceID,  DataTyp
     }
 }
 
-void CUSchemaDB::getDeviceAttributeDescription(const string& deviceID, const string& attributesName, string& attributeDescription) {
+void CUSchemaDB::getDeviceAttributeDescription(const string& deviceID,
+                                               const string& attributesName,
+                                               string& attributeDescription) {
     ptr_vector<edb::KeyIdAndValue> attrPropertyVec;
     entity::Entity *deviceEntity = getDeviceEntity(deviceID);
 
@@ -609,7 +614,9 @@ void CUSchemaDB::getDeviceAttributeDescription(const string& deviceID, const str
     attributeDescription = (&attrPropertyVec[0])->value.strValue;
 }
 
-void CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID, const string& attributesName, RangeValueInfo& rangeInfo) {
+void CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
+                                                  const string& attributesName,
+                                                  RangeValueInfo& rangeInfo) {
     
     string a_name;
     edb::KeyIdAndValue kiv;
@@ -678,7 +685,36 @@ void CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID, const 
     }
 }
 
-int CUSchemaDB::getDeviceAttributeDirection(const string& deviceID, const string& attributesName, DataType::DataSetAttributeIOAttribute& directionType) {
+//!Set the range values for an attribute
+/*!
+ set the range value for the attribute
+ \param deviceID the identification of the device
+ \param attributesName the name of the attribute
+ \param rangeInfo the range and default value of the attribute, the fields
+ of the struct are not cleaned, so if an attrbute doesn't has
+ some finromation, relative field are not touched.
+ */
+void CUSchemaDB::setDeviceAttributeRangeValueInfo(const string& deviceID,
+                                                  const string& attributesName,
+                                                  RangeValueInfo& rangeInfo) {
+
+    entity::Entity *deviceEntity = getDeviceEntity(deviceID);
+
+    //get the attribute
+    auto_ptr<entity::Entity> attributeEntity(getDatasetElement(deviceEntity, attributesName.c_str()));
+    
+    uint32_t keyIdAttrMaxRng = mapDatasetKeyForID[DatasetDefinitionkey::CS_CMDM_ACTION_DESC_MAX_RANGE];
+    uint32_t keyIdAttrMinRng = mapDatasetKeyForID[DatasetDefinitionkey::CS_CMDM_ACTION_DESC_MIN_RANGE];
+    uint32_t keyIdAttrDefaultValue = mapDatasetKeyForID[DatasetDefinitionkey::CS_CMDM_ACTION_DESC_DEFAULT_VALUE];
+
+    addUniqueAttributeProperty(attributeEntity.get(), keyIdAttrMaxRng, rangeInfo.maxRange);
+    addUniqueAttributeProperty(attributeEntity.get(), keyIdAttrMinRng, rangeInfo.minRange);
+    addUniqueAttributeProperty(attributeEntity.get(), keyIdAttrDefaultValue, rangeInfo.defaultValue);
+}
+
+int CUSchemaDB::getDeviceAttributeDirection(const string& deviceID,
+                                            const string& attributesName,
+                                            DataType::DataSetAttributeIOAttribute& directionType) {
 
     ptr_vector<edb::KeyIdAndValue> attrPropertyVec;
     entity::Entity *deviceEntity = getDeviceEntity(deviceID);

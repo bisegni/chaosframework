@@ -6,7 +6,7 @@
 //  Copyright (c) 2013 INFN. All rights reserved.
 //
 
-#include <chaos/common/cconstants.h>
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/io/IODataDriver.h>
 #include <chaos/ui_toolkit/caching/LiveDataFetcher.h>
 

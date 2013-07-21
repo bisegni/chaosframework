@@ -30,7 +30,6 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
-//#include <chaos/common/data/CUSchemaDB.h>
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/action/ActionDescriptor.h>
 #include <chaos/common/exception/CException.h>
@@ -41,7 +40,7 @@
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/ControlManager/DeviceSchemaDB.h>
 
-#define CU_IDENTIFIER_C_STREAM getCUName() << "_" << getCUInstance()
+#define CU_IDENTIFIER_C_STREAM "_" << getCUInstance()
 #define INIT_STATE      0
 #define START_STATE     1
 
@@ -57,20 +56,9 @@ namespace chaos{
     
     namespace cu {
         
+        namespace ec = event::channel;
+        
         class ControManager;
-        
-        using namespace std;
-        //using namespace cu::control_manager::slow_command;
-        
-        class ActionData {
-            
-        public:
-            void purge(){
-                if(actionData) delete(actionData);
-            }
-            CDataWrapper *actionData;
-            boost::function<CDataWrapper*(CDataWrapper*, bool)> actionDef;
-        };
 
         /*!
          Base class for control unit execution task
@@ -82,22 +70,11 @@ namespace chaos{
             int32_t scheduleDelay;
             string jsonSetupFilePath;
             boost::chrono::seconds  lastAcquiredTime;
-
-            
-            //!mutex for multithreading managment of sand box
-            /*!
-             The muthex is needed because the call to the action can occours in different thread
-             */
-            boost::recursive_mutex managing_cu_mutex;
-            
-            int  deviceState;
-            
-            CUStateKey::ControlUnitState deviceExplicitState;
             
             /*!
              Add a new KeyDataStorage for a specific key
              */
-            void setKeyDataStorage(KeyDataStorage*);
+            void setKeyDataStorage(KeyDataStorage *_keyDatStorage);
 
             
             /*!
@@ -132,16 +109,22 @@ namespace chaos{
              */
             void _undefineActionAndDataset() throw(CException);
         protected:
-            
-            //CU Identifier
-            string cuName;
             //CU instance, this te fine the current isntance code
             //it's dynamically assigned
             string cuInstance;
             //
             KeyDataStorage*  keyDataStorage;
             
-            event::channel::InstrumentEventChannel *deviceEventChannel;
+            int  deviceState;
+            
+            CUStateKey::ControlUnitState deviceExplicitState;
+            //!mutex for multithreading managment of sand box
+            /*!
+             The muthex is needed because the call to the action can occours in different thread
+             */
+            boost::recursive_mutex managing_cu_mutex;
+            
+            ec::InstrumentEventChannel *deviceEventChannel;
             
             /*!
              Receive the evento for set the dataset input element
@@ -178,38 +161,20 @@ namespace chaos{
              Deinit the Control Unit
              */
             virtual void deinit() throw(CException) = 0;
-
             /*!
              Receive the event for set the dataset input element, this virtual method
              is empty because can be used by controlunit implementation
              */
-            virtual CDataWrapper* setDatasetAttribute(CDataWrapper*, bool&) throw (CException){return NULL;};
-            
+            virtual CDataWrapper* setDatasetAttribute(CDataWrapper*) throw (CException) = 0;
             /*!
              Event for update some CU configuration
              */
             virtual CDataWrapper* updateConfiguration(CDataWrapper*, bool&) throw (CException);
             
-            
-            
-            //--------------Contro Unit Service Method----------------
-            /*!
-             Init the dataset ad other values by a json file
-             */
-            void initWithJsonFilePath(const char*const _jsonSetupFilePath) {
-                jsonSetupFilePath.assign(_jsonSetupFilePath);
-            }
-            
             /*!
              Set the default schedule delay for the sandbox
              */
-            void setDefaultScheduleDelay(int32_t _sDelay){scheduleDelay = _sDelay;};
-            
-            /*!
-             load the json file setupped into jsonSetupFilePath class attributed
-             */
-            void loadCDataWrapperForJsonFile(CDataWrapper&)  throw (CException);
-            
+            void setDefaultScheduleDelay(int32_t _sDelay);
             
         public:
             /*!
@@ -246,10 +211,6 @@ namespace chaos{
                 return DeclareAction::addActionDescritionInstance(actonObjectPointer, actionHandler, cuInstance.c_str(), actionAliasName, actionDescription);
             }
             
-            /*!
-             return the CU name
-             */
-            const char * getCUName();
             /*!
              return the CU instance
              */

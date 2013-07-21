@@ -25,6 +25,8 @@
 
 #include <chaos/common/data/CUSchemaDB.h>
 
+#include <boost/lexical_cast.hpp>
+
 namespace chaos {
     namespace cu {
         
@@ -109,6 +111,17 @@ namespace chaos {
              \param rangeInfo the range and default value of the attribute
              */
             void getAttributeRangeValueInfo(const string& attributesName,
+                                            RangeValueInfo& rangeInfo);
+            
+            //!Set the range values for an attribute of the device
+            /*!
+             set the range value for the attribute of the device
+             \param attributesName the name of the attribute
+             \param rangeInfo the range and default value of the attribute, the fields
+             of the struct are not cleaned, so if an attrbute doesn't has
+             some finromation, relative field are not touched.
+             */
+            void setAttributeRangeValueInfo(const string& attributesName,
                                             RangeValueInfo& rangeInfo);
             
             //!Get the direction of an attribute

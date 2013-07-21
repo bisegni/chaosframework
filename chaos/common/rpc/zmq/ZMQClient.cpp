@@ -20,7 +20,7 @@
 #ifdef DEV_WITH_ZMQ
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/zmq/ZMQClient.h>
-#include <chaos/common/cconstants.h>
+#include <chaos/common/chaos_constants.h>
 
 #include <string>
 #include <boost/lexical_cast.hpp>

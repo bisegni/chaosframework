@@ -31,7 +31,7 @@ using namespace std;
 //timestamp string variable definition
 string timestampAttributeNameStr = DataPackKey::CS_CSV_TIME_STAMP;
 
-DeviceController::DeviceController(string& _deviceID):deviceID(_deviceID),datasetDB(false) {
+DeviceController::DeviceController(string& _deviceID):deviceID(_deviceID),datasetDB(true) {
     mdsChannel = NULL;
     deviceChannel = NULL;
     ioLiveDataDriver = NULL;

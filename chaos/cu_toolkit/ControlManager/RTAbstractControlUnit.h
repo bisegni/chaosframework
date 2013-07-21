@@ -208,11 +208,11 @@ namespace chaos {
             void addHandlerForDSAttribute(const char * deviceID,
                                           cu::handler::DSAttributeHandler * classHandler)  throw (CException);
             
-            /*!
-             Receive the evento for set the dataset input element
+            /*
+             Receive the event for set the dataset input element, this virtual method
+             is empty because can be used by controlunit implementation
              */
-            CDataWrapper* _setDatasetAttribute(CDataWrapper *datasetAttributeValues, bool&) throw (CException);
-            
+            CDataWrapper* setDatasetAttribute(CDataWrapper*) throw (CException);
         public:
             
             RTAbstractControlUnit();

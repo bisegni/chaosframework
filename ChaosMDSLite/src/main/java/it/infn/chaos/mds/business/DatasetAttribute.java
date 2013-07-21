@@ -188,7 +188,7 @@ public class DatasetAttribute extends BSONBusinessObject {
 	 * @throws RefException
 	 */
 	public void setRangeMin(String rangeMin) throws RefException {
-		checkDefaultValueForType(rangeMax);
+		checkDefaultValueForType(rangeMin);
 		this.rangeMin = rangeMin;
 	}
 
@@ -290,14 +290,18 @@ public class DatasetAttribute extends BSONBusinessObject {
 			setType(bsonAttributeDescription.getInt(RPCConstants.DATASET_ATTRIBUTE_TYPE));
 		}
 		if (bsonAttributeDescription.containsField(RPCConstants.DATASET_ATTRIBUTE_MAX_RANGE)) {
-			setRangeMax(bsonAttributeDescription.getString(RPCConstants.DATASET_ATTRIBUTE_MAX_RANGE));
+			setRangeMax(checkEmptyString(bsonAttributeDescription.getString(RPCConstants.DATASET_ATTRIBUTE_MAX_RANGE)));
 		}
 		if (bsonAttributeDescription.containsField(RPCConstants.DATASET_ATTRIBUTE_MIN_RANGE)) {
-			setRangeMin(bsonAttributeDescription.getString(RPCConstants.DATASET_ATTRIBUTE_MIN_RANGE));
+			setRangeMin(checkEmptyString(bsonAttributeDescription.getString(RPCConstants.DATASET_ATTRIBUTE_MIN_RANGE)));
 		}
 		if (bsonAttributeDescription.containsField(RPCConstants.DATASET_ATTRIBUTE_DEFAULT_VALUE)) {
-			setDefaultValue(bsonAttributeDescription.getString(RPCConstants.DATASET_ATTRIBUTE_DEFAULT_VALUE));
+			setDefaultValue(checkEmptyString(bsonAttributeDescription.getString(RPCConstants.DATASET_ATTRIBUTE_DEFAULT_VALUE)));
 		}
+	}
+
+	private String checkEmptyString(String string) {
+		return (string != null && !string.trim().equals(""))?string:null;
 	}
 
 	/*
@@ -450,22 +454,22 @@ public class DatasetAttribute extends BSONBusinessObject {
 			switch (getType()) {
 				case 0:{
 					int defv = Integer.parseInt(defaultValue);
-					int maxv = Integer.parseInt(getRangeMax());
-					int minv = Integer.parseInt(getRangeMin());
+					int maxv = getRangeMax()!=null?Integer.parseInt(getRangeMax()):Integer.MAX_VALUE;
+					int minv = getRangeMin()!=null?Integer.parseInt(getRangeMin()):Integer.MIN_VALUE;
 					defMinMinValue = defv<minv;
 					defMaxMaxValue = defv>maxv;
 				}break;
 				case 1:{
 					long defv = Long.parseLong(defaultValue);
-					long maxv = Long.parseLong(getRangeMax());
-					long minv = Long.parseLong(getRangeMin());
+					long maxv = getRangeMax()!=null?Long.parseLong(getRangeMax()):Long.MAX_VALUE;
+					long minv = getRangeMin()!=null?Long.parseLong(getRangeMin()):Long.MIN_VALUE;
 					defMinMinValue = defv<minv;
 					defMaxMaxValue = defv>maxv;
 				}break;
 				case 2:{
 					double defv = Double.parseDouble(defaultValue);
-					double maxv = Double.parseDouble(getRangeMax());
-					double minv = Double.parseDouble(getRangeMin());
+					double maxv = getRangeMax()!=null? Double.parseDouble(getRangeMax()):Double.MAX_VALUE;
+					double minv = getRangeMin()!=null? Double.parseDouble(getRangeMin()):Double.MIN_VALUE;
 					defMinMinValue = defv<minv;
 					defMaxMaxValue = defv>maxv;
 				}break;

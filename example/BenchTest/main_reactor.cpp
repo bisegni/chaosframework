@@ -19,7 +19,7 @@
  */
 
 #include "BenchTestCU.h"
-#include <chaos/common/cconstants.h>
+#include <chaos/common/chaos_constants.h>
 #include <chaos/cu_toolkit/ChaosCUToolkit.h>
 
 #include <iostream>

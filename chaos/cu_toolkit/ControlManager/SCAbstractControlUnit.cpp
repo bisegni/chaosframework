@@ -17,15 +17,18 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
 #include <chaos/cu_toolkit/ControlManager/SCAbstractControlUnit.h>
+#include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandConstants.h>
+
 using namespace chaos;
 using namespace chaos::cu;
-using namespace cu::control_manager::slow_command;
+namespace cucs = chaos::cu::control_manager::slow_command;
 
-#define LCCU_ LAPP_ << "[Slow Command Control Unit:"<<getCUInstance()<<"] - "
+#define LCCU_ LAPP_ << "[Slow Command Control Unit:" << getCUInstance() <<"] - "
 
 SCAbstractControlUnit::SCAbstractControlUnit() {
-    slowCommandExecutor = new cu::control_manager::slow_command::SlowCommandExecutor(cuInstance, this);
+    slowCommandExecutor = new cucs::SlowCommandExecutor(cuInstance, this);
 
 }
 
@@ -35,27 +38,29 @@ SCAbstractControlUnit::~SCAbstractControlUnit() {
     }
 }
 
-/*!
+/*
  Initialize the Custom Contro Unit and return the configuration
  */
 void SCAbstractControlUnit::init() throw(CException) {
     LCCU_ << "Initializing slow command sandbox" << DeviceSchemaDB::getDeviceID();
     utility::StartableService::initImplementation(slowCommandExecutor, (void*)NULL, "Slow Command Executor", "SCAbstractControlUnit::init");
     //associate the data storage
-    slowCommandExecutor->commandSandbox.keyDataStorage = AbstractControlUnit::keyDataStorage;
+    slowCommandExecutor->commandSandbox.keyDataStoragePtr = AbstractControlUnit::keyDataStorage;
+    slowCommandExecutor->commandSandbox.deviceSchemaDbPtr = this; //control unit is it'self the database
 }
 
-/*!
+/*
  Deinit the Control Unit
  */
 void SCAbstractControlUnit::deinit() throw(CException) {
     LCCU_ << "Deinitialize sandbox deinitialization for device:" << DeviceSchemaDB::getDeviceID();
     utility::StartableService::deinitImplementation(slowCommandExecutor, "Slow Command Executor", "SCAbstractControlUnit::deinit");
     //deassociate the data storage
-    slowCommandExecutor->commandSandbox.keyDataStorage = NULL;
+    slowCommandExecutor->commandSandbox.keyDataStoragePtr = NULL;
+    slowCommandExecutor->commandSandbox.deviceSchemaDbPtr = NULL;
 }
 
-/*!
+/*
  Starto the  Control Unit scheduling for device
  */
 void SCAbstractControlUnit::start() throw(CException) {
@@ -64,7 +69,7 @@ void SCAbstractControlUnit::start() throw(CException) {
 
 }
 
-/*!
+/*
  Stop the Custom Control Unit scheduling for device
  */
 void SCAbstractControlUnit::stop() throw(CException) {
@@ -73,11 +78,19 @@ void SCAbstractControlUnit::stop() throw(CException) {
 
 }
 
-//! Perform a command registration
-/*!
- An instance of the command si registered within the executor.
- */
+// Perform a command registration
 void SCAbstractControlUnit::setDefaultCommand(const char * dafaultCommandName) {
     CHAOS_ASSERT(slowCommandExecutor);
     slowCommandExecutor->setDefaultCommand(dafaultCommandName);
+}
+/*
+ Receive the evento for set the dataset input element
+ */
+CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAttributeValues) throw (CException) {
+    if(!datasetAttributeValues->hasKey(cucs::SlowCommandSubmissionKey::COMMAND_ALIAS)) {
+        throw CException(-4, "The alias of the slow command is mandatory", "SlowCommandExecutor::setupCommand");
+    }
+    //submit command
+    slowCommandExecutor->submitCommand(datasetAttributeValues);
+    return datasetAttributeValues;
 }

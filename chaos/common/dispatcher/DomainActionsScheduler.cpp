@@ -19,7 +19,7 @@
  */
 #include "../global.h"
 #include "DomainActionsScheduler.h"
-#include "../cconstants.h"
+#include <chaos/common/chaos_constants.h>
 
 using namespace chaos;
 

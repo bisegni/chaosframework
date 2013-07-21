@@ -53,7 +53,7 @@ namespace chaos {
     } EntityType;
 
     class MessageChannel;
-    class NetworkAddressMessageChannel;
+    class NodeMessageChannel;
     class MDSMessageChannel;
     class DeviceMessageChannel;
     class AbstractCommandDispatcher;
@@ -262,7 +262,7 @@ namespace chaos {
          */
         void disposeMessageChannel(MessageChannel *messageChannelToDispose);
         
-        void disposeMessageChannel(NetworkAddressMessageChannel *messageChannelToDispose);
+        void disposeMessageChannel(NodeMessageChannel *messageChannelToDispose);
     };
 }
 #endif

@@ -8,13 +8,12 @@
 
 #include "SCWorkerCU.h"
 #include "SinWaveCommand.h"
-
+namespace cucs = chaos::cu::control_manager::slow_command;
 /*
  Construct a new CU with an identifier
  */
 SCWorkerCU::SCWorkerCU(string &customDeviceID) {
     _deviceID = customDeviceID;
-    cuName = "WORKER_CU";
 }
 
 /*
@@ -22,8 +21,8 @@ SCWorkerCU::SCWorkerCU(string &customDeviceID) {
  */
 void SCWorkerCU::defineActionAndDataset() throw(CException) {
     //set the base information
+    RangeValueInfo rangeInfoTemp;
     const char *devIDInChar = _deviceID.c_str();
-    cuName = "SIN_CU";
     //cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_DESCRIPTION, "This is a beautifull CU");
     
     //add managed device di
@@ -43,14 +42,16 @@ void SCWorkerCU::defineActionAndDataset() throw(CException) {
                           DataType::Output,
                           10000);
     
-
     addAttributeToDataSet(devIDInChar,
                           "points",
                           "The number of point that compose the wave",
                           DataType::TYPE_INT32,
                           DataType::Input);
+    rangeInfoTemp.defaultValue = "30";
+    rangeInfoTemp.maxRange = "";
+    rangeInfoTemp.minRange = "30";
+    setAttributeRangeValueInfo("points", rangeInfoTemp);
     
-
     addAttributeToDataSet(devIDInChar,
                           "frequency",
                           "The frequency of the wave [1-10Mhz]",

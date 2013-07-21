@@ -18,6 +18,8 @@
  *    	limitations under the License.
  */
 #include "SinWaveCommand.h"
+#include <boost/lexical_cast.hpp>
+
 using namespace chaos;
 namespace slowcmd = chaos::cu::control_manager::slow_command;
 
@@ -38,10 +40,27 @@ uint8_t SinWaveCommand::implementedHandler() {
 
 // Start the command execution
 void SinWaveCommand::setHandler(chaos::CDataWrapper *data) {
+    chaos::cu::DeviceSchemaDB *deviceDB = NULL;
+    
     srand((unsigned)time(0));
     PI = acos((long double) -1);
     sinevalue = NULL;
-    setWavePoint(30);
+    
+    if(data == NULL) {
+        //we are at default submition of the command
+        deviceDB = getDeviceDatabase();
+        if(deviceDB) {
+            RangeValueInfo attributeInfo;
+            std::string pName = "points";
+            deviceDB->getAttributeRangeValueInfo(pName, attributeInfo);
+            if(attributeInfo.defaultValue.size()) {
+                setWavePoint(boost::lexical_cast<uint32_t>(attributeInfo.defaultValue));
+            }else {
+                setWavePoint(30);
+            }
+        }
+    }
+    
     freq = 1.0;
     gain = 5.0;
     phase = 0.0;

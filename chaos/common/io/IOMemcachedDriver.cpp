@@ -22,7 +22,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include "IOMemcachedDriver.h"
-#include "../cconstants.h"
+#include <chaos/common/chaos_constants.h>
 #include "../global.h"
 
 #define LMEMDRIVER_ LAPP_ << "[Memcached IO Driver] - "

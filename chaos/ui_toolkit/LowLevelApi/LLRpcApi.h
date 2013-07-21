@@ -76,7 +76,7 @@ namespace chaos {
             /*!
              Delete a previously instantiatedchannel
              */
-            void deleteMessageChannel(NetworkAddressMessageChannel*);
+            void deleteMessageChannel(NodeMessageChannel*);
             
             event::channel::AlertEventChannel *getNewAlertEventChannel() throw (CException);
             event::channel::InstrumentEventChannel *getNewInstrumentEventChannel() throw (CException);

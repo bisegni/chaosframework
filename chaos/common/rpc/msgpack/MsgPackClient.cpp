@@ -19,7 +19,7 @@
  */
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/msgpack/MsgPackClient.h>
-#include <chaos/common/cconstants.h>
+#include <chaos/common/chaos_constants.h>
 #include <string>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>

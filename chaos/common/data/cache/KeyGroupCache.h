@@ -24,7 +24,7 @@
 #include <map>
 #include <string>
 
-#include <chaos/common/cconstants.h>
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/bson/util/builder.h>
 #include <chaos/common/memory/ManagedMemory.h>
 #include <chaos/common/utility/StartableService.h>

@@ -21,7 +21,7 @@
 
 #include "SWAlimCU.h"
 #include <chaos/common/global.h>
-#include <chaos/common/cconstants.h>
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/bson/bson.h>
 #include <chaos/common/bson/util/hex.h>
 #include <chaos/common/action/ActionDescriptor.h>
@@ -46,7 +46,7 @@ using namespace chaos;
 
 
 
-SWAlimCU::SWAlimCU():AbstractControlUnit(),rng((const uint_fast32_t) time(0) ),one_to_hundred( -100, 100 ),randInt(rng, one_to_hundred) {
+SWAlimCU::SWAlimCU():rng((const uint_fast32_t) time(0) ),one_to_hundred( -100, 100 ),randInt(rng, one_to_hundred) {
     //first we make some write
     _deviceID.assign(SIMULATED_DEVICE_ID);
     cuName = "SWAlim_CU";

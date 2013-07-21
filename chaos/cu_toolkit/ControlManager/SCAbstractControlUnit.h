@@ -23,10 +23,12 @@
 
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 
-#include <chaos/cu_toolkit/ControlManager/slcmd/SlowCommandExecutor.h>
+#include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandExecutor.h>
 
 namespace chaos {
     namespace cu {
+        
+        namespace cs = control_manager::slow_command;
         
         class ControManager;
         
@@ -56,6 +58,12 @@ namespace chaos {
              Deinit the Control Unit
              */
             void deinit() throw(CException);
+            
+            /*
+             Receive the event for set the dataset input element, this virtual method
+             is empty because can be used by controlunit implementation
+             */
+            CDataWrapper* setDatasetAttribute(CDataWrapper*) throw (CException);
             
         public:
             

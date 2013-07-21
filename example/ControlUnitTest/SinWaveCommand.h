@@ -23,7 +23,7 @@
 
 #include <boost/random.hpp>
 #include <boost/thread.hpp>
-#include <chaos/cu_toolkit/ControlManager/slcmd/SlowCommand.h>
+#include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommand.h>
 
 using namespace chaos;
 namespace slowcmd = chaos::cu::control_manager::slow_command;

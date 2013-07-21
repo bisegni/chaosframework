@@ -59,23 +59,23 @@ EventDescriptor::~EventDescriptor() {
 }
 
     //--------------------------------------------------------------
-uint8_t EventDescriptor::getEventHeaderVersion() {
-    uint32_t tmp32 = byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)eventData));
-    return static_cast<uint8_t>(((EventHeader*)&tmp32)->version);
+uint16_t EventDescriptor::getEventHeaderVersion() {
+    tmp32 = byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)eventData));
+    return static_cast<uint16_t>(((EventHeader*)&tmp32)->version);
 }
 
     //--------------------------------------------------------------
 void EventDescriptor::setEventDataLength(uint8_t newSize) {
-    uint32_t tmp32 = byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)eventData));
+    tmp32 = byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)eventData));
         //get header converting endianess
     ((EventHeader*)&tmp32)->length = newSize;
     *((uint32_t*)eventData) = byte_swap<host_endian, little_endian, uint32_t>(tmp32);
 }
 
     //--------------------------------------------------------------
-uint8_t EventDescriptor::getEventDataLength() {
-    uint32_t tmp32 = byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)eventData));
-    return static_cast<uint8_t>(((EventHeader*)&tmp32)->length);
+uint16_t EventDescriptor::getEventDataLength() {
+    tmp32 = byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)eventData));
+    return static_cast<uint16_t>(((EventHeader*)&tmp32)->length);
 }
 
     //--------------------------------------------------------------
@@ -96,13 +96,13 @@ void EventDescriptor::setEventData(const unsigned char *serializedEvent, uint16_
 
     //--------------------------------------------------------------
 uint8_t EventDescriptor::getEventType() {
-    uint8_t tmp8 = byte_swap<little_endian, host_endian, uint8_t>(*((uint8_t*)(eventData+EVT_HEADER_BYTE_LENGTH)));
+    tmp8 = byte_swap<little_endian, host_endian, uint8_t>(*((uint8_t*)(eventData+EVT_HEADER_BYTE_LENGTH)));
     return ((EventTypeAndPriority*)&tmp8)->type;
 }
 
     //--------------------------------------------------------------
 uint8_t EventDescriptor::getEventPriority() {
-    uint8_t tmp8 = byte_swap<little_endian, host_endian, uint8_t>(*((uint8_t*)(eventData+EVT_HEADER_BYTE_LENGTH)));
+    tmp8 = byte_swap<little_endian, host_endian, uint8_t>(*((uint8_t*)(eventData+EVT_HEADER_BYTE_LENGTH)));
     return ((EventTypeAndPriority*)&tmp8)->priority;
 }
 

@@ -17,8 +17,9 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "DeclareAction.h"
-#include "../cconstants.h"
+
+#include <chaos/common/action/DeclareAction.h>
+#include <chaos/common/chaos_constants.h>
 
 using namespace chaos;
 

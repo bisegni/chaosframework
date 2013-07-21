@@ -19,7 +19,7 @@
  */
 
 #include <chaos/common/global.h>
-#include <chaos/common/cconstants.h>
+#include <chaos/common/chaos_constants.h>
 #include <chaos/cu_toolkit/ControlManager/ControlManager.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManager.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
@@ -237,17 +237,18 @@ void ControlManager::executeOnThread() throw(CException) {
             //associate the event channel to the control unit
         cuPtr->deviceEventChannel = CommandManager::getInstance()->getDeviceEventChannel();
         
-        LCMAPP_  << "Setup Control Unit Sanbox for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
+        LCMAPP_  << "Setup Control Unit Sanbox for cu with instance:" << cuPtr->getCUInstance();
         cuPtr->_defineActionAndDataset(cuActionAndDataset);
         
-        LCMAPP_  << "Setup finished for Control Unit Sanbox:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
+        LCMAPP_  << "Setup finished for Control Unit with instance:" << cuPtr->getCUInstance();
             //sendConfPackToMDS(cuPtr->defaultInternalConf.get());
-        LCMAPP_  << "Talk with MDS for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
+        LCMAPP_  << "Talk with MDS for cu with instance:" << cuPtr->getCUInstance();
         registrationError = sendConfPackToMDS(cuActionAndDataset);
         if(registrationError == ErrorCode::EC_NO_ERROR){
-            LCMAPP_  << "Configuration pack has been sent to MDS for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
+            LCMAPP_  << "Configuration pack has been sent to MDS for cu with instance:" << cuPtr->getCUInstance();
+            LCMAPP_  << "Control Unit Sanbox:" << cuPtr->getCUInstance() << " ready to work";
         } else {
-            LCMAPP_  << "ERROR sending configuration pack has been sent to MDS for cu:" << cuPtr->getCUName() << " with instance:" << cuPtr->getCUInstance();
+            LCMAPP_  << "ERROR sending configuration pack has been sent to MDS for cu with instance:" << cuPtr->getCUInstance();
         }
        
             //the sandbox name now is the real CUName_CUInstance before the initSandbox method call the CUInstance is
@@ -256,7 +257,7 @@ void ControlManager::executeOnThread() throw(CException) {
             LCMERR_  << "Duplicated control unit instance " << cuPtr->getCUInstance();
             return;
         }
-        LCMAPP_  << "Control Unit Sanbox:" << cuPtr->getCUInstance() << " ready to work";
+
             //add sandbox to all map of running cu
         controlUnitInstanceMap.insert(make_pair(cuPtr->getCUInstance(), cuPtr));
         

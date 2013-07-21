@@ -98,7 +98,6 @@ namespace chaos{
             
                 //!execute one o more handler according with the message information
             /*!
-             *  \param deviceID device ID target of the hadnler execution
              *  \param message is the RPC message tha that need to be constructed in a determinated why to be
              * worked by engine
              *
@@ -106,7 +105,7 @@ namespace chaos{
              *  \return boolean value that is true if one o more attribute has been processed, false if the device identification
              *          is not equal on the device id in the essage or it is not present
              */
-            bool executeHandler(const std::string& deviceID, CDataWrapper *message) throw (CException);
+            bool executeHandler(CDataWrapper *message) throw (CException);
         };
     }
 }

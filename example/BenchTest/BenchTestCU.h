@@ -26,13 +26,13 @@
 #include <boost/thread.hpp>
 #include <boost/chrono.hpp>
 #include <chaos/common/utility/Atomic.h>
-#include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
+#include <chaos/cu_toolkit/ControlManager/RTAbstractControlUnit.h>
 
 using namespace std;
 using namespace chaos;
 using namespace boost;
 
-class BenchTestCU : public chaos::cu::AbstractControlUnit {
+class BenchTestCU : public chaos::cu::RTAbstractControlUnit {
     string reactorName;
     Batch_Reactor *reactorInstance;
     boost::shared_mutex _setControlValueMutext;
@@ -62,22 +62,27 @@ protected:
     /*(Optional)
      Initialize the Control Unit and all driver, with received param from MetadataServer
      */
-    void init(const string&) throw(CException);
+    void init() throw(CException);
     
     /*
      Execute the work, this is called with a determinated delay, it must be as fast as possible
      */
-    void run(const string&) throw(CException);
+    void start() throw(CException);
+    
+    /*
+     Execute the work, this is called with a determinated delay, it must be as fast as possible
+     */
+    void run() throw(CException);
     
     /*
      The Control Unit will be stopped
      */
-    void stop(const string&) throw(CException);
+    void stop() throw(CException);
     
     /*(Optional)
      The Control Unit will be deinitialized and disposed
      */
-    void deinit(const string&) throw(CException);
+    void deinit() throw(CException);
 };
 
 #endif
