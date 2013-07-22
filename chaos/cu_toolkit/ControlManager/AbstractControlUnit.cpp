@@ -363,7 +363,12 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_setDatasetAttribute(chaos::CDataW
         if(!datasetAttributeValues) {
             throw CException(-1, "No Input parameter", "AbstractControlUnit::_setDatasetAttribute");
         }
-        if(datasetAttributeValues->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
+        
+#if DEBUG
+        LCU_ << datasetAttributeValues->getJSONString();
+#endif
+        
+        if(!datasetAttributeValues->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
             throw CException(-2, "No Device Defined in param", "AbstractControlUnit::setDatasetAttribute");
         }
         //retrive the deviceid

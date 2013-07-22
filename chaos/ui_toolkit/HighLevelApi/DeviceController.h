@@ -21,6 +21,10 @@
 #ifndef CHAOSFramework_DeviceLiveDataFetcher_h
 #define CHAOSFramework_DeviceLiveDataFetcher_h
 
+#include <map>
+
+#include <boost/thread/mutex.hpp>
+
 #include <chaos/common/network/CNodeNetworkAddress.h>
 #include <chaos/common/io/IODataDriver.h>
 #include <chaos/common/message/MDSMessageChannel.h>
@@ -30,9 +34,10 @@
 #include <chaos/common/thread/CThreadExecutionTask.h>
 #include <chaos/common/utility/SingleBufferCircularBuffer.h>
 #include <chaos/common/data/CUSchemaDB.h>            
+#include <chaos/common/chaos_types.h>
 
-#include <boost/thread/mutex.hpp>
-#include <map>
+
+namespace cccs = chaos::cu::control_manager::slow_command;
 
 namespace chaos {
     namespace ui{
@@ -111,6 +116,7 @@ namespace chaos {
              
              */
             void allocateNewLiveBufferForAttributeAndType(string& attributeName, DataType::DataSetAttributeIOAttribute type, DataType::DataType attrbiuteType);
+            
         protected:
                 //! the fetcher thread method
             void executeOnThread(const string&) throw(CException);
@@ -201,9 +207,36 @@ namespace chaos {
             int setAttributeValue(string& attributeName, string& attributeValue);
             int setAttributeValue(string& attributeName, const char* attributeValue);
             // buffer
-            int setAttributeValue(string& attributeName, const char* attributeValue,int size);
+            int setAttributeValue(string& attributeName, const char* attributeValue, uint32_t size);
             
             int setAttributeToValue(const char *attributeName, DataType::DataType attributeType, void *attributeValue, bool noWait = false, int32_t bufferValuedDim = 0);
+            
+            //! Submit a new slow command
+            /*!
+                The submition of slow command is made collection all the information that permit to submit it
+                \param commandAlias represent the alias of the command the the control unit expost from RPC subsystem
+                \param submissionRule determinate the rule with which the command is submitted. This can determinate the
+                    the execution of the current execution command in the control unit, according with his running state
+                \param priority represent the priority beetwen the submitted command and all command in the queue that are
+                    waiting to be submitted in the scheduler
+                \param scheduleInterval rapresent the intervall beetween the step of the scehduler [...acquisition -> correlation -> scheduleInterval...]
+                \param slowCommandData is the abstraction of the command data that is passed to the set handler befor the scheduler loop of the new command
+                        take palce. The memory of that parameter is not free
+             */
+            int submitSlowControlCommand(string commandAlias, cccs::SubmissionRuleType::SubmissionRule submissionRule, uint32_t priority, uint32_t scheduleInterval, CDataWrapper *slowCommandData = NULL);
+            
+            //! Submit a new slow command
+            /*!
+             The submition of slow command is made collection all the information that permit to submit it
+             \param commandAlias represent the alias of the command the the control unit expost from RPC subsystem
+             \param submissionRule determinate the rule with which the command is submitted. This can determinate the
+             the execution of the current execution command in the control unit, according with his running state
+             \param scheduleInterval rapresent the intervall beetween the step of the scehduler [...acquisition -> correlation -> scheduleInterval...]
+             \param slowCommandData is the abstraction of the command data that is passed to the set handler befor the scheduler loop of the new command
+             take palce. The memory of that parameter is not free
+             */
+            int submitSlowControlCommand(string commandAlias, cccs::SubmissionRuleType::SubmissionRule submissionRule, uint32_t scheduleInterval, CDataWrapper *slowCommandData = NULL);
+            
                 //!Get device state
             /*!
              Return the current device state

@@ -17,12 +17,13 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "../global.h"
-#include "CDataWrapper.h"
+#include <chaos/common/global.h>
+#include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/bson/util/json.h>
+
 using namespace chaos;
 using namespace bson;
 
-#pragma mark Public Methods For CMultiTypeDataArrayWrapper
 CMultiTypeDataArrayWrapper::CMultiTypeDataArrayWrapper(vector< BSONElement > src) {
     elementsArray = src;
 }
@@ -48,13 +49,11 @@ vector<BSONElement>::size_type CMultiTypeDataArrayWrapper::size() const{
     return elementsArray.size();
 }
 
-#pragma mark Public Methods
 CDataWrapper::CDataWrapper():bsonArrayBuilder(new BSONArrayBuilder()),bsonBuilder(new BSONObjBuilder()){
 }
 
-CDataWrapper::CDataWrapper(const char* serializationBuffer, bool bson):bsonArrayBuilder(new BSONArrayBuilder()),bsonBuilder(new BSONObjBuilder()){
-    //bsonBuilder->appendElements(BSONObj(serializationBuffer));
-    setSerializedData(serializationBuffer, bson);
+CDataWrapper::CDataWrapper(const char* serializationBuffer):bsonArrayBuilder(new BSONArrayBuilder()),bsonBuilder(new BSONObjBuilder()){
+    bsonBuilder->appendElements(BSONObj(serializationBuffer));
 }
 
 CDataWrapper *CDataWrapper::clone() {
@@ -258,8 +257,14 @@ string CDataWrapper::getJSONString() {
     return bsonBuilder->asTempObj().jsonString();
 }
 //reinitialize the object with bson data
-void CDataWrapper::setSerializedData(const char* bsonData, bool bson) {
-    bsonBuilder->appendElements(/*bson?*/BSONObj(bsonData)/*:fromjson(bsonData)*/);
+void CDataWrapper::setSerializedData(const char* bsonData) {
+    //bsonBuilder->appendElements(bson?BSONObj(bsonData):fromjson(bsonData));
+    bsonBuilder->appendElements(BSONObj(bsonData));
+}
+
+//reinitialize the object with bson data
+void CDataWrapper::setSerializedJsonData(const char* jsonData) {
+    bsonBuilder->appendElements(fromjson(jsonData));
 }
 
 //append all elemento of an

@@ -38,12 +38,18 @@ using namespace bson;
 using namespace boost;
 using namespace boost::posix_time;
 using namespace boost::date_time;
-
+namespace cccs = chaos::cu::control_manager::slow_command;
 
 #define OPT_STATE           "op"
 #define OPT_DEVICE_ID       "deviceid"
 #define OPT_SCHEDULE_TIME   "stime"
 #define OPT_PRINT_STATE     "print-state"
+//--------------slow contorol option------------------
+#define OPT_SL_ALIAS                    "sc-alias"
+#define OPT_SL_PRIORITY                 "sc-priority"
+#define OPT_SL_SUBMISSION_RULE          "sc-sub-rule"
+#define OPT_SL_COMMAND_DATA             "sc-cmd-data"
+#define OPT_SL_COMMAND_SCHEDULE_DELAY   "sc-cmd-sched-delay"
 
 inline ptime utcToLocalPTime(ptime utcPTime){
 	c_local_adjustor<ptime> utcToLocalAdjustor;
@@ -68,6 +74,16 @@ void print_state(CUStateKey::ControlUnitState state) {
     }
 }
 
+int checkSubmissionRule(std::string scSubmissionRule) {
+    if( scSubmissionRule.compare("normal") ) {
+        return cccs::SubmissionRuleType::SUBMIT_NORMAL;
+    } else if( scSubmissionRule.compare("stack") ) {
+        return cccs::SubmissionRuleType::SUBMIT_AND_Stack;
+    } else if( scSubmissionRule.compare("kill") ) {
+        return cccs::SubmissionRuleType::SUBMIT_AND_Kill;
+    } else return -1;
+}
+
 int main (int argc, char* argv[] )
 {
     try {
@@ -76,19 +92,29 @@ int main (int argc, char* argv[] )
         bool printState = false;
         long scheduleTime;
         string deviceID;
+        string scAlias;
+        string scSubmissionRule;
+        string scUserData;
+        uint32_t scSubmissionPriority;
+        uint32_t scSubmissionSchedulerDelay;
         CDeviceNetworkAddress deviceNetworkAddress;
         CUStateKey::ControlUnitState deviceState;
-
-            //! [UIToolkit Attribute Init]
+       
+        //! [UIToolkit Attribute Init]
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_DEVICE_ID, po::value<string>(), "The identification string of the device");
-        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_STATE, po::value<int>()->default_value(0), "The state to set on the device{init = 1, start=2, stop=3, deinit=4, set schedule time=5}");
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_STATE, po::value<int>()->default_value(0), "The state to set on the device{init = 1, start=2, stop=3, deinit=4, set schedule time=5, submite slow command=6}");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SCHEDULE_TIME, po::value<long>(), "the time in microseconds for devide schedule time");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_PRINT_STATE, po::value<bool>(&printState)->default_value(false), "Print the state of the device");
-            //! [UIToolkit Attribute Init]
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_ALIAS, po::value<string>(&scAlias)->default_value(""), "The alias associted to the command for the slow control cu");
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_SUBMISSION_RULE, po::value<string>(&scSubmissionRule)->default_value("normal"), "The rule used for submit the command for the slow control cu [normal, stack, kill]");
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_PRIORITY, po::value<uint32_t>(&scSubmissionPriority)->default_value(50), "The priority used for submit the command for the slow control cu");
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_DATA, po::value<string>(&scUserData), "The bson pack (in text format) sent to the set handler of the command for the slow");
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_SCHEDULE_DELAY, po::value<uint32_t>(&scSubmissionSchedulerDelay)->default_value(1000), "The millisecond beetwen a step an the next of the scheduler[in milliseconds]");
+        //! [UIToolkit Attribute Init]
         
-            //! [UIToolkit Init]
+        //! [UIToolkit Init]
         ChaosUIToolkit::getInstance()->init(argc, argv);
-            //! [UIToolkit Init]
+        //! [UIToolkit Init]
         
         if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_STATE)){
             op = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<int>(OPT_STATE);
@@ -112,7 +138,7 @@ int main (int argc, char* argv[] )
         DeviceController *controller = HLDataApi::getInstance()->getControllerForDeviceID(deviceID);
         if(!controller) throw CException(4, "Error allcoating decive controller", "device controller creation");
         
-            //get the actual state of device
+        //get the actual state of device
         err = controller->getState(deviceState);
         if(err == ErrorCode::EC_TIMEOUT) throw CException(5, "Time out on connection", "Get state for device");
         
@@ -172,16 +198,41 @@ int main (int argc, char* argv[] )
                     /*
                      Start the control unit
                      */
-                    err = controller->setScheduleDelay(1000000);
+                    err = controller->setScheduleDelay(scheduleTime);
                     if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to deinit state");
                 } else {
                     throw CException(29, "Device can't be in deinit state", "Set device schedule time");
                 }
                 break;
+            case 6:
+                if(deviceState == CUStateKey::START) {
+                    //check sc
+                    auto_ptr<CDataWrapper> userData;
+                    bool canBeExecuted = scAlias.size() > 0;
+                    canBeExecuted = canBeExecuted && (checkSubmissionRule(scSubmissionRule) != -1);
+                    if(canBeExecuted) {
+                        if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_DATA)) {
+                            userData.reset(new CDataWrapper());
+                            if(userData.get())userData->setSerializedJsonData("{\"points\":4}");
+                            std::cout << "User data submitted" << std::endl;
+                            std::cout << "-----------------------------------------" << std::endl;
+                            std::cout << userData->getJSONString() << std::endl;
+                            std::cout << "-----------------------------------------" << std::endl;
+                        }
+                        err = controller->submitSlowControlCommand(scAlias, static_cast<cccs::SubmissionRuleType::SubmissionRule>(checkSubmissionRule(scSubmissionRule)), scSubmissionPriority, scSubmissionSchedulerDelay, userData.get());
+                        if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to deinit state");
+                    } else {
+                        throw CException(29, "Device can't be in deinit state", "Set device schedule time");
+                    }
+                } else {
+                    throw CException(29, "Device can't be in deinit state", "Set device schedule time");
+                }
+                break;
+                
         }
         
         if( printState && (op>=1 && op<=4)){
-                //get the actual state of device
+            //get the actual state of device
             err = controller->getState(deviceState);
             if(err == ErrorCode::EC_TIMEOUT) throw CException(5, "Time out on connection", "Get state for device");
             std::cout << "State after operation:";
@@ -193,9 +244,9 @@ int main (int argc, char* argv[] )
         std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
     }
     try {
-            //! [UIToolkit Deinit]
+        //! [UIToolkit Deinit]
         ChaosUIToolkit::getInstance()->deinit();
-            //! [UIToolkit Deinit]
+        //! [UIToolkit Deinit]
     } catch (CException& e) {
         std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
     }

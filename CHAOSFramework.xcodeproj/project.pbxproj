@@ -343,6 +343,7 @@
 		32D3EAB617943EBC00405A3E /* ChannelSetting.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D3EAB417943EBC00405A3E /* ChannelSetting.h */; };
 		32D421B317271572008A326E /* BsonFragment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D421B117271572008A326E /* BsonFragment.cpp */; };
 		32D421B417271572008A326E /* BsonFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D421B217271572008A326E /* BsonFragment.h */; };
+		32D5CB32179D233E00A8427E /* chaos_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D5CB31179D233E00A8427E /* chaos_types.h */; };
 		32D68AD014D5D5A7009F290A /* SetupStateManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D68ACF14D5D5A7009F290A /* SetupStateManager.h */; };
 		32DB1188166267FB0036D1B9 /* DSDoubleHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DB1187166267FB0036D1B9 /* DSDoubleHandler.h */; };
 		32DD884F15E2663B000AF740 /* DefaultEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DD884D15E2663B000AF740 /* DefaultEventDispatcher.h */; };
@@ -756,6 +757,7 @@
 		32D3EAB417943EBC00405A3E /* ChannelSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChannelSetting.h; sourceTree = "<group>"; };
 		32D421B117271572008A326E /* BsonFragment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BsonFragment.cpp; sourceTree = "<group>"; };
 		32D421B217271572008A326E /* BsonFragment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BsonFragment.h; sourceTree = "<group>"; };
+		32D5CB31179D233E00A8427E /* chaos_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chaos_types.h; sourceTree = "<group>"; };
 		32D68ACF14D5D5A7009F290A /* SetupStateManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetupStateManager.h; sourceTree = "<group>"; };
 		32DA666F1700DBB6004FC02B /* endian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
 		32DB1187166267FB0036D1B9 /* DSDoubleHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSDoubleHandler.h; sourceTree = "<group>"; };
@@ -1097,6 +1099,7 @@
 				3294905A159AF4BF00E86BD1 /* CMakeLists.txt */,
 				326DB3E214B38BC00018A8D0 /* ChaosCommon.h */,
 				326DB3E014B38BC00018A8D0 /* chaos_constants.h */,
+				32D5CB31179D233E00A8427E /* chaos_types.h */,
 				326DB40114B38BC00018A8D0 /* global.h */,
 				32DA666F1700DBB6004FC02B /* endian.h */,
 				326DB42E14B38BC00018A8D0 /* version.h */,
@@ -1738,6 +1741,7 @@
 				326DB45F14B38BC00018A8D0 /* CUSchemaDB.h in Headers */,
 				326DB46014B38BC00018A8D0 /* CMPtrFSMState.h in Headers */,
 				326DB46114B38BC00018A8D0 /* DynamicHierarchicalFSM.h in Headers */,
+				32D5CB32179D233E00A8427E /* chaos_types.h in Headers */,
 				326DB46214B38BC00018A8D0 /* FSMState.h in Headers */,
 				32460521179C55FC00B075DA /* sqlite3.h in Headers */,
 				326DB46614B38BC00018A8D0 /* ChaosDispatcher.h in Headers */,

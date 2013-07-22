@@ -25,6 +25,7 @@
 
 #include <boost/dynamic_bitset.hpp>
 
+#include <chaos/common/chaos_types.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
 
@@ -56,7 +57,7 @@ namespace chaos{
                     typedef enum Handler {
                         HT_Set              = 1,    /**< Set handler */
                         HT_Acquisition      = 2,    /**< Acquire handler */
-                        HT_Correlation     = 4     /**< Commit and Correlation handler */
+                        HT_Correlation      = 4     /**< Commit and Correlation handler */
                     } Handler;
                 }
                 
@@ -74,21 +75,7 @@ namespace chaos{
                         RS_Fault    = 8    /**< The command has had a fault */
                     } RunningState;
                 }
-                
-                //! Namespace for the submisison type
-                namespace SubmissionRuleType {
-                    /*!
-                     * \enum SubmissionRule
-                     * \brief Describe the state in which the command can be found
-                     */
-                    typedef enum SubmissionRule {
-                        SUBMIT_AND_Stack    = 1,    /**< The new command wil stack the current executing command that consist in
-                                                     install all implemented handler of the new one without touch the handler that are not implemented */
-                        SUBMIT_AND_Kill     = 2,    /**< The new command will kill the current command, all hadnler ol killed one are erased and substituted */
-                        SUBMIT_NORMAL       = 4     /**< The new command will waith the end of the current executed command and if an handler is implemented it is installed*/
-                    } SubmissionRule;
-                }
-                
+
                 /*!
                  \struct FaultDescription
                  \brief  Describe the fault of the command. This fileds need to be valorized

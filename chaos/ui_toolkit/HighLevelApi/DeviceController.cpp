@@ -1,8 +1,8 @@
-/*	
+/*
  *	DeviceLiveDataFetcher.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,9 +22,11 @@
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
 #include <chaos/common/io/IOMemcachedDriver.h>
 
+using namespace std;
 using namespace chaos;
 using namespace chaos::ui;
-using namespace std;
+namespace cccs = chaos::cu::control_manager::slow_command;
+
 
 #define MSEC_WAIT_OPERATION 1000
 
@@ -73,7 +75,7 @@ void DeviceController::updateChannel() throw(CException) {
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper *devDefHandler = NULL;
     CDeviceNetworkAddress *devAddress = NULL;
-        //make the live driver    
+    //make the live driver
     if(!mdsChannel){
         mdsChannel = LLRpcApi::getInstance()->getNewMetadataServerChannel();
         if(!mdsChannel) throw CException(-1, "No MDS Channel created", "DeviceController::init");
@@ -89,19 +91,19 @@ void DeviceController::updateChannel() throw(CException) {
     err = mdsChannel->getNetworkAddressForDevice(deviceID, &devAddress, millisecToWait);
     if(err!=ErrorCode::EC_NO_ERROR || !devAddress) throw CException(-3, "No Address found for device", "DeviceController::init");
     
-        //update live data driver
+    //update live data driver
     ioLiveDataDriver = new IOMemcachedDriver();
     if(ioLiveDataDriver) {
         ioLiveDataDriver->init();
         ioLiveDataDriver->updateConfiguration(lastDeviceDefinition.get());
     }
-
-        //allocate device channel the memory of the CDeviceNetworkAddress * is managed by channel
+    
+    //allocate device channel the memory of the CDeviceNetworkAddress * is managed by channel
     if(!deviceChannel){
         deviceChannel = LLRpcApi::getInstance()->getNewDeviceMessageChannel(devAddress);
         if(!deviceChannel) throw CException(-4, "Invalid device channel created", "DeviceController::init");
     }else{
-        deviceChannel->setNewAddress(devAddress);  
+        deviceChannel->setNewAddress(devAddress);
     }
 }
 
@@ -123,7 +125,7 @@ void DeviceController::getAttributeDescription(string& attributesName, string& a
  Get all attribute name
  */
 void DeviceController::getDeviceDatasetAttributesName(vector<string>& attributesName, DataType::DataSetAttributeIOAttribute directionType) {
-     datasetDB.getDeviceDatasetAttributesName(deviceID, directionType, attributesName);
+    datasetDB.getDeviceDatasetAttributesName(deviceID, directionType, attributesName);
 }
 
 /*!
@@ -156,35 +158,35 @@ int DeviceController::initDevice() {
     CDataWrapper initConf;
     datasetDB.fillDataWrapperWithDataSetDescription(deviceID, initConf);
     
-        //initialize the devica with the metadataserver data
+    //initialize the devica with the metadataserver data
     err = deviceChannel->initDevice(&initConf, millisecToWait);
-        //configure the live data with the same server where the device write
+    //configure the live data with the same server where the device write
     return err;
 }
 
 
 int DeviceController::startDevice() {
     CHAOS_ASSERT(deviceChannel)
-    return deviceChannel->startDevice(millisecToWait);    
+    return deviceChannel->startDevice(millisecToWait);
 }
 
 int DeviceController::stopDevice() {
     CHAOS_ASSERT(deviceChannel)
-    return deviceChannel->stopDevice(millisecToWait);  
+    return deviceChannel->stopDevice(millisecToWait);
 }
 
 int DeviceController::deinitDevice() {
     CHAOS_ASSERT(deviceChannel)
-    return deviceChannel->deinitDevice(millisecToWait); 
+    return deviceChannel->deinitDevice(millisecToWait);
 }
 
-    //!Get device state
+//!Get device state
 /*!
  Return the current device state
  */
 int DeviceController::getState(CUStateKey::ControlUnitState& deviceState) {
     CHAOS_ASSERT(deviceChannel)
-    return deviceChannel->getState(deviceState, millisecToWait); 
+    return deviceChannel->getState(deviceState, millisecToWait);
 }
 
 
@@ -250,15 +252,46 @@ int DeviceController::setAttributeToValue(const char *attributeName, DataType::D
     return deviceChannel->setAttributeValue(attributeValuePack, noWait, millisecToWait);
 }
 
+int DeviceController::submitSlowControlCommand(string commandAlias, cccs::SubmissionRuleType::SubmissionRule submissionRule, uint32_t priority, uint32_t scheduleInterval, CDataWrapper *slowCommandData) {
+    CDataWrapper localCommandPack;
+    if(slowCommandData) {
+        localCommandPack.appendAllElement(*slowCommandData);
+    }
+    
+    
+    // set the default slow command information
+    localCommandPack.addStringValue(cccs::SlowCommandSubmissionKey::COMMAND_ALIAS, commandAlias);
+    localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RULE, (uint32_t) submissionRule);
+    localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_PRIORITY, (uint32_t) priority);
+    localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL, (uint32_t) scheduleInterval);
+    
+    //forward the request
+    return deviceChannel->setAttributeValue(localCommandPack, false, millisecToWait);
+}
+
+int DeviceController::submitSlowControlCommand(string commandAlias, cccs::SubmissionRuleType::SubmissionRule submissionRule, uint32_t scheduleInterval, CDataWrapper *slowCommandData) {
+    CDataWrapper localCommandPack;
+    if(slowCommandData) {
+        localCommandPack.appendAllElement(*slowCommandData);
+    }
+    // set the default slow command information
+    localCommandPack.addStringValue(cccs::SlowCommandSubmissionKey::COMMAND_ALIAS, commandAlias);
+    localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RULE, (uint32_t) submissionRule);
+    localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL, (uint32_t) scheduleInterval);
+    
+    //forward the request
+    return deviceChannel->setAttributeValue(localCommandPack, false, millisecToWait);
+}
+
 int DeviceController::setAttributeValue(string& attributeName, string& attributeValue) {
-    return setAttributeValue(attributeName, attributeValue.c_str(),attributeValue.size());
+    return setAttributeValue(attributeName, attributeValue.c_str(),(uint32_t)attributeValue.size());
 }
 
 int DeviceController::setAttributeValue(string& attributeName, const char* attributeValue) {
-    return setAttributeValue(attributeName, attributeValue,strlen(attributeValue));
+    return setAttributeValue(attributeName, attributeValue,(uint32_t)strlen(attributeValue));
 }
 
-int DeviceController::setAttributeValue(string& attributeName, const char* attributeValue, int size) {
+int DeviceController::setAttributeValue(string& attributeName, const char* attributeValue, uint32_t size) {
     CDataWrapper attributeValuePack;
     const char *attrname=attributeName.c_str();
     
@@ -269,7 +302,7 @@ int DeviceController::setAttributeValue(string& attributeName, const char* attri
         return ErrorCode::EC_ATTRIBUTE_BAD_DIR;
     
     switch (attributeTypeMap[attributeName]) {
-        
+            
         case DataType::TYPE_INT64:
             attributeValuePack.addInt64Value(attrname, boost::lexical_cast<int64_t>(attributeValue));
             return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
@@ -291,7 +324,7 @@ int DeviceController::setAttributeValue(string& attributeName, const char* attri
             return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
     };
     return ErrorCode::EC_ATTRIBUTE_TYPE_NOT_SUPPORTED;
-
+    
 }
 
 /*!
@@ -299,13 +332,13 @@ int DeviceController::setAttributeValue(string& attributeName, const char* attri
  \param initiDevicedescription the reference to CDataWrapper that contain device initialization information
  */
 void DeviceController::initializeAttributeIndexMap() {
-         boost::recursive_mutex::scoped_lock lock(trackMutext);
+    boost::recursive_mutex::scoped_lock lock(trackMutext);
     
     int32_t attributeType = 0;
     int32_t attributeDirection = 0;
     vector<string> attributeNames;
     RangeValueInfo attributerangeInfo;
-   
+    
     attributeTypeMap.clear();
     attributeDirectionMap.clear();
     
@@ -330,16 +363,16 @@ void DeviceController::initializeAttributeIndexMap() {
         attributeDirectionMap.insert(make_pair(*iter, (DataType::DataSetAttributeIOAttribute)DataType::Output));
         attributeTypeMap.insert(make_pair(*iter, (DataType::DataType)attributerangeInfo.valueType));
     }
-
+    
 }
 
-    //! allocata new circular buffer for attribute and type
+//! allocata new circular buffer for attribute and type
 /*
  
  */
 void DeviceController::allocateNewLiveBufferForAttributeAndType(string& attributeName, DataType::DataSetAttributeIOAttribute attributeDirection, DataType::DataType attrbiuteType) {
     boost::recursive_mutex::scoped_lock  lock(trackMutext);
-    if(attributeDirection == DataType::Output || 
+    if(attributeDirection == DataType::Output ||
        attributeDirection == DataType::Bidirectional ){
         
         switch (attributeTypeMap[attributeName]) {
@@ -367,7 +400,7 @@ void DeviceController::allocateNewLiveBufferForAttributeAndType(string& attribut
             }
                 break;
         }
-    } else if(attributeDirection == DataType::Input || 
+    } else if(attributeDirection == DataType::Input ||
               attributeDirection == DataType::Bidirectional ){
         
     }
@@ -378,7 +411,7 @@ void DeviceController::allocateNewLiveBufferForAttributeAndType(string& attribut
 chaos::DataBuffer *DeviceController::getBufferForAttribute(string& attributeName) {
     boost::recursive_mutex::scoped_lock lock(trackMutext);
     chaos::DataBuffer * result = NULL;
-        //allocate attribute traccking
+    //allocate attribute traccking
     if(attributeTypeMap.count(attributeName) == 0 || attributeDirectionMap.count(attributeName) == 0 ) return result;
     
     switch (attributeTypeMap[attributeName]) {
@@ -415,55 +448,55 @@ chaos::DataBuffer *DeviceController::getPtrBufferForTimestamp(const int initialD
     return int64AttributeLiveBuffer.count(timestampAttributeNameStr)>0? int64AttributeLiveBuffer[timestampAttributeNameStr]:NULL;
 }
 
-    //!DeInitialize the map for the devices
+//!DeInitialize the map for the devices
 /*!
  Dispose all memory used for live data buffer
  */
 void DeviceController::deinitializeAttributeIndexMap() {
-         //boost::recursive_mutex::scoped_lock lock(trackMutext);
-        //dispose circula buffer
-    for (std::map<string,  chaos::SingleBufferCircularBuffer<int32_t> *>::iterator iter = int32AttributeLiveBuffer.begin(); 
+    //boost::recursive_mutex::scoped_lock lock(trackMutext);
+    //dispose circula buffer
+    for (std::map<string,  chaos::SingleBufferCircularBuffer<int32_t> *>::iterator iter = int32AttributeLiveBuffer.begin();
          iter != int32AttributeLiveBuffer.end();
          iter++) {
         delete(iter->second);
     }
     int32AttributeLiveBuffer.clear();
     
-    for (std::map<string,  chaos::SingleBufferCircularBuffer<int64_t> *>::iterator iter = int64AttributeLiveBuffer.begin(); 
+    for (std::map<string,  chaos::SingleBufferCircularBuffer<int64_t> *>::iterator iter = int64AttributeLiveBuffer.begin();
          iter != int64AttributeLiveBuffer.end();
          iter++) {
         delete(iter->second);
     }
     int64AttributeLiveBuffer.clear();
     
-    for (std::map<string,  chaos::SingleBufferCircularBuffer<double_t> *>::iterator iter = doubleAttributeLiveBuffer.begin(); 
+    for (std::map<string,  chaos::SingleBufferCircularBuffer<double_t> *>::iterator iter = doubleAttributeLiveBuffer.begin();
          iter != doubleAttributeLiveBuffer.end();
          iter++) {
         delete(iter->second);
     }
     doubleAttributeLiveBuffer.clear();
     
-    for (std::map<string,  PointerBuffer*>::iterator iter = pointerAttributeLiveBuffer.begin(); 
+    for (std::map<string,  PointerBuffer*>::iterator iter = pointerAttributeLiveBuffer.begin();
          iter != pointerAttributeLiveBuffer.end();
          iter++) {
         delete(iter->second);
     }
     pointerAttributeLiveBuffer.clear();
 }
-    //add attrbiute to track
+//add attrbiute to track
 /*!
  Add attribute to tracking
  */
 void DeviceController::addAttributeToTrack(string& attrbiuteName) {
     boost::recursive_mutex::scoped_lock lock(trackMutext);
     
-        //add attribute name to list of tracking attribute
+    //add attribute name to list of tracking attribute
     trackingAttribute.push_back(attrbiuteName);
     
-        //allocate attribute traccking
+    //allocate attribute traccking
     if(attributeTypeMap.count(attrbiuteName) == 0 || attributeDirectionMap.count(attrbiuteName) == 0 ) return;
     
-        //allcoate the buffer for the new attribute to track
+    //allcoate the buffer for the new attribute to track
     allocateNewLiveBufferForAttributeAndType(attrbiuteName, attributeDirectionMap[attrbiuteName], attributeTypeMap[attrbiuteName]);
 }
 
@@ -478,7 +511,7 @@ CDataWrapper * DeviceController::getLiveCDataWrapperPtr() {
 void DeviceController::setupTracking() {
     boost::recursive_mutex::scoped_lock lock(trackMutext);
     
-        //init live buffer
+    //init live buffer
     initializeAttributeIndexMap();
     
     //initialize timestamp buffer
@@ -492,10 +525,10 @@ void DeviceController::stopTracking() {
 }
 
 void DeviceController::fetchCurrentDeviceValue() {
-     boost::recursive_mutex::scoped_lock lock(trackMutext);
+    boost::recursive_mutex::scoped_lock lock(trackMutext);
     
     char *value = ioLiveDataDriver->retriveRawData();
-        //check if some value has bee fetcher
+    //check if some value has bee fetcher
     if(!value) return;
     
     currentLiveValue.reset(new CDataWrapper(value));
@@ -507,9 +540,9 @@ void DeviceController::fetchCurrentDeviceValue() {
     //add timestamp value
     int64AttributeLiveBuffer[timestampAttributeNameStr]->addValue(tmpPtr->getInt64Value(DataPackKey::CS_CSV_TIME_STAMP));
     
-        //update buffer for tracked attribute
-    for (std::vector<string>::iterator iter = trackingAttribute.begin(); 
-         iter != trackingAttribute.end(); 
+    //update buffer for tracked attribute
+    for (std::vector<string>::iterator iter = trackingAttribute.begin();
+         iter != trackingAttribute.end();
          iter++) {
         const char *key = (*iter).c_str();
         if(!tmpPtr->hasKey(key)) continue;
@@ -517,7 +550,7 @@ void DeviceController::fetchCurrentDeviceValue() {
         switch (attributeTypeMap[*iter]) {
             case DataType::TYPE_INT32:
                 int32AttributeLiveBuffer[*iter]->addValue(tmpPtr->getInt32Value(key));
-            break;
+                break;
                 
             case DataType::TYPE_INT64:
                 int64AttributeLiveBuffer[*iter]->addValue(tmpPtr->getInt64Value(key));
