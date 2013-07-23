@@ -87,7 +87,7 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
     auto_ptr<CDataWrapper>  actionResult;
     
     bool    needAnswer = false;
-    bool    detachParam = false;
+    //bool    detachParam = false;
     int     answerID;
     string  answerIP;
     string  answerDomain;
@@ -148,7 +148,7 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
                 remoteActionResult.reset(new CDataWrapper());
             }
                 //syncronously call the action in the current thread 
-            actionResult.reset(actionDescriptionPtr->call(actionMessage.get(), detachParam));
+            actionResult.reset(actionDescriptionPtr->call(actionMessage.get(), elementPolicy.elementHasBeenDetached));
             
                 //check if we need to submit a sub command
             if( subCommand ) {
@@ -209,7 +209,7 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
         DECODE_CHAOS_EXCEPTION(ex);
     }
         //check if we need to detach the action message
-    if(detachParam){
+    if(elementPolicy.elementHasBeenDetached){
         actionMessage.release();
     }
     

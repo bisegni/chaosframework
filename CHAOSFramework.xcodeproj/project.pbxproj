@@ -93,6 +93,8 @@
 		3268CE36161608D100FCDB10 /* ZMQClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3268CE32161608D100FCDB10 /* ZMQClient.h */; };
 		3268CE37161608D100FCDB10 /* ZMQServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3268CE33161608D100FCDB10 /* ZMQServer.cpp */; };
 		3268CE38161608D100FCDB10 /* ZMQServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3268CE34161608D100FCDB10 /* ZMQServer.h */; };
+		32698D49179E8CD100D6638C /* SetAttributeCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32698D47179E8CD100D6638C /* SetAttributeCommand.cpp */; };
+		32698D4A179E8CD100D6638C /* SetAttributeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 32698D48179E8CD100D6638C /* SetAttributeCommand.h */; };
 		326DB43014B38BC00018A8D0 /* ActionDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB3B614B38BC00018A8D0 /* ActionDescriptor.cpp */; };
 		326DB43114B38BC00018A8D0 /* ActionDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3B714B38BC00018A8D0 /* ActionDescriptor.h */; };
 		326DB43214B38BC00018A8D0 /* ChaosAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3B814B38BC00018A8D0 /* ChaosAction.h */; };
@@ -495,6 +497,8 @@
 		3268CE32161608D100FCDB10 /* ZMQClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQClient.h; sourceTree = "<group>"; };
 		3268CE33161608D100FCDB10 /* ZMQServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQServer.cpp; sourceTree = "<group>"; };
 		3268CE34161608D100FCDB10 /* ZMQServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQServer.h; sourceTree = "<group>"; };
+		32698D47179E8CD100D6638C /* SetAttributeCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetAttributeCommand.cpp; sourceTree = "<group>"; };
+		32698D48179E8CD100D6638C /* SetAttributeCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetAttributeCommand.h; sourceTree = "<group>"; };
 		326DB3B614B38BC00018A8D0 /* ActionDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ActionDescriptor.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB3B714B38BC00018A8D0 /* ActionDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ActionDescriptor.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB3B814B38BC00018A8D0 /* ChaosAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ChaosAction.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -948,6 +952,7 @@
 		325F8B4E1763AED200EFE616 /* slow_command */ = {
 			isa = PBXGroup;
 			children = (
+				32698D46179E8C3300D6638C /* command */,
 				32234D3D176E045100525E0C /* SlowCommandExecutor.cpp */,
 				32234D3E176E045100525E0C /* SlowCommandExecutor.h */,
 				328E36F1178AFE0D00C1564D /* SlowCommandSandbox.cpp */,
@@ -1081,6 +1086,15 @@
 				3268CE2C1616086800FCDB10 /* MsgPackServer.h */,
 			);
 			path = msgpack;
+			sourceTree = "<group>";
+		};
+		32698D46179E8C3300D6638C /* command */ = {
+			isa = PBXGroup;
+			children = (
+				32698D47179E8CD100D6638C /* SetAttributeCommand.cpp */,
+				32698D48179E8CD100D6638C /* SetAttributeCommand.h */,
+			);
+			path = command;
 			sourceTree = "<group>";
 		};
 		326DB3B114B38BC00018A8D0 /* chaos */ = {
@@ -1935,6 +1949,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32698D4A179E8CD100D6638C /* SetAttributeCommand.h in Headers */,
 				32D3EAB617943EBC00405A3E /* ChannelSetting.h in Headers */,
 				32234D42176E106B00525E0C /* SlowCommandException.h in Headers */,
 				326DB4B914B3A3E50018A8D0 /* ChaosCUToolkit.h in Headers */,
@@ -2242,6 +2257,7 @@
 				32D3EAB517943EBC00405A3E /* ChannelSetting.cpp in Sources */,
 				3215860D178756B40090E7E6 /* AbstractDriverPlugin.cpp in Sources */,
 				326DB4C114B3A3E50018A8D0 /* ControlManager.cpp in Sources */,
+				32698D49179E8CD100D6638C /* SetAttributeCommand.cpp in Sources */,
 				326DB4C614B3A3E50018A8D0 /* OutputDataBuffer.cpp in Sources */,
 				326DB4C814B3A3E50018A8D0 /* DataManager.cpp in Sources */,
 				3215861017875FDB0090E7E6 /* DriverPluginLoader.cpp in Sources */,

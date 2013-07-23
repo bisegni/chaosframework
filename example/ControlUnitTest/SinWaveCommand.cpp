@@ -80,8 +80,7 @@ void SinWaveCommand::acquireHandler() {
     //put the messageID for test the lost of package
     acquiredData->addInt32Value("id", ++messageID);
     computeWave(acquiredData);
-    //adding some interesting random data
-    
+
     //submit acquired data
     pushDataSet(acquiredData);
     

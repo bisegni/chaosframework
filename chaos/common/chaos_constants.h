@@ -174,6 +174,11 @@ namespace chaos {
                     static const char * const   SUBMISSION_PRIORITY             = "submission_priority";
                     //! @The key represent intervall between step of the scheduler expressed in milliseconds, the value is an uint32
                     static const char * const   SCHEDULER_STEP_TIME_INTERVALL   = "sched_step_time_int";
+                    //! @The key represent intervall between step of the scheduler expressed in milliseconds, the value is an uint32
+                    
+                    static const char * const   ATTRIBUTE_SET_VALUE_CMD_ALIAS   = "set_attr_val";
+                    static const char * const   ATTRIBUTE_SET_NAME              = "attr_set_name";
+                    static const char * const   ATTRIBUTE_SET_VALUE             = "attr_set_value";
                 }
                 /** @} */ // end of SlowCommandSubmissionKey
             }

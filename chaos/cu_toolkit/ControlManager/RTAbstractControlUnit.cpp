@@ -168,7 +168,7 @@ void RTAbstractControlUnit::executeOnThread() throw(CException) {
 /*
  Receive the evento for set the dataset input element
  */
-CDataWrapper* RTAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAttributeValues) throw (CException) {
+CDataWrapper* RTAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
     //serach and execute handler
     //lock shared access to control unit
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);

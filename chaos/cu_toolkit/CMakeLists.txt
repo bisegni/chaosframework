@@ -2,7 +2,8 @@ SET(cu_lib_src  ChaosCUToolkit.cpp CommandManager/CommandManager.cpp)
 SET(cu_lib_src  ${cu_lib_src} ConfigurationManager/ConfigurationManager.cpp)
 SET(cu_lib_src  ${cu_lib_src} driver_manager/driver/AbstractDriver.cpp driver_manager/driver/DriverAccessor.cpp driver_manager/driver/DriverPluginLoader.cpp driver_manager/driver/AbstractDriverPlugin.cpp)
 SET(cu_lib_src  ${cu_lib_src} DataManager/DataManager.cpp DataManager/KeyDataStorage.cpp DataManager/MultiBufferDataStorage.cpp DataManager/DataBuffer/OutputDataBuffer.cpp)
-SET(cu_lib_src  ${cu_lib_src} ControlManager/slcmd/SlowCommandExecutor.cpp ControlManager/slcmd/SlowCommand.cpp ControlManager/slcmd/SlowCommandSandbox.cpp ControlManager/slcmd/ChannelSetting.cpp ControlManager/DSAttributeHandlerExecutionEngine.cpp ControlManager/handler/DSAttributeHandler.cpp ControlManager/AbstractControlUnit.cpp ControlManager/ControlManager.cpp)
+SET(cu_lib_src  ${cu_lib_src} ControlManager/slow_command/SlowCommandExecutor.cpp ControlManager/slow_command/SlowCommand.cpp ControlManager/slow_command/SlowCommandSandbox.cpp ControlManager/slow_command/ChannelSetting.cpp ControlManager/DSAttributeHandlerExecutionEngine.cpp ControlManager/handler/DSAttributeHandler.cpp ControlManager/AbstractControlUnit.cpp ControlManager/ControlManager.cpp)
+SET(cu_lib_src  ${cu_lib_src} ControlManager/slow_command/command/SetAttributeCommand.cpp )
 
 
 ADD_LIBRARY(chaos_cutoolkit SHARED ${cu_lib_src})
@@ -28,6 +29,9 @@ INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/ControlManager)
 
 FILE(GLOB files "ControlManager/handler/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/ControlManager/handler)
+
+FILE(GLOB files "ControlManager/slow_control/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/ControlManager/slow_command)
 
 FILE(GLOB files "DataManager/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/DataManager)

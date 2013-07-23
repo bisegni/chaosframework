@@ -165,7 +165,7 @@ namespace chaos{
              Receive the event for set the dataset input element, this virtual method
              is empty because can be used by controlunit implementation
              */
-            virtual CDataWrapper* setDatasetAttribute(CDataWrapper*) throw (CException) = 0;
+            virtual CDataWrapper* setDatasetAttribute(CDataWrapper*, bool& detachParam) throw (CException) = 0;
             /*!
              Event for update some CU configuration
              */

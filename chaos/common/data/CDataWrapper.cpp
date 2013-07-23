@@ -56,6 +56,9 @@ CDataWrapper::CDataWrapper(const char* serializationBuffer):bsonArrayBuilder(new
     bsonBuilder->appendElements(BSONObj(serializationBuffer));
 }
 
+CDataWrapper::~CDataWrapper() {
+}
+
 CDataWrapper *CDataWrapper::clone() {
     CDataWrapper *result = new CDataWrapper(bsonBuilder->asTempObj().objdata());
     return result;

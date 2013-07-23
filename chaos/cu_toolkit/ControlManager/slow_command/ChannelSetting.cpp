@@ -28,7 +28,7 @@
 using namespace std;
 using namespace chaos::cu::control_manager::slow_command;
 
-ValueSetting::ValueSetting(uint32_t _size, uint32_t _index):currentValue(NULL), nextValue(NULL), size(_size),index(_index) {
+ValueSetting::ValueSetting(uint32_t _size, uint32_t _index, chaos::DataType::DataType _type):currentValue(NULL), nextValue(NULL), size(_size),index(_index), type(_type) {
     currentValue = malloc(size);
     nextValue = malloc(size);
 }
@@ -44,7 +44,7 @@ void ValueSetting::completed() {
     (*sharedBitmapChangedAttribute)[index]=0;
 }
 
-bool ValueSetting::setDestinationValue(void* valPtr, uint32_t _size) {
+bool ValueSetting::setDestinationValue(const void* valPtr, uint32_t _size) {
     if(_size>size) return false;
     
     //copy the new value
@@ -96,7 +96,7 @@ void ChannelSetting::deinit() throw(chaos::CException) {
 }
 
 //!
-void ChannelSetting::addAttribute(string name, uint32_t size) {
+void ChannelSetting::addAttribute(string name, uint32_t size, chaos::DataType::DataType type) {
     
     if(InizializableService::serviceState != utility::InizializableServiceType::IS_DEINTIATED)
         throw CException(1, "Attribute can be added only in deinitilized state", "ChannelSetting::addAttribute");
@@ -109,7 +109,7 @@ void ChannelSetting::addAttribute(string name, uint32_t size) {
     mapAttributeNameIndex.insert(make_pair<string, AttributeIndexType>(name, (tmpIndex=index++)));
     
     //add channel setting
-    boost::shared_ptr<ValueSetting> tmpSP(new ValueSetting(size, tmpIndex));
+    boost::shared_ptr<ValueSetting> tmpSP(new ValueSetting(size, tmpIndex, type));
     mapAttributeIndexSettings.insert(make_pair<AttributeIndexType, boost::shared_ptr<ValueSetting> >(tmpIndex, tmpSP));
     
     //add the relative bit
@@ -117,7 +117,7 @@ void ChannelSetting::addAttribute(string name, uint32_t size) {
 }
 
 //! set the value for the index
-void ChannelSetting::setValueForAttribute(AttributeIndexType n, void * value, uint32_t size) {
+void ChannelSetting::setValueForAttribute(AttributeIndexType n, const void * value, uint32_t size) {
     mapAttributeIndexSettings[n]->setDestinationValue(value, size);
 }
 

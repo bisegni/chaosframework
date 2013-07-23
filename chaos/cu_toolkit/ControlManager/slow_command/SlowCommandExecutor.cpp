@@ -68,7 +68,7 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
         deviceSchemaDbPtr->getAttributeRangeValueInfo(*it, attributeInfo);
         
         // add the attribute to the shared setting object
-        commandSandbox.sharedChannelSetting.addAttribute(*it, attributeInfo.maxSize);
+        commandSandbox.sharedChannelSetting.addAttribute(*it, attributeInfo.maxSize, attributeInfo.valueType);
     }
     
     utility::InizializableService::initImplementation(commandSandbox, initData, "SlowCommandSandbox", "SlowCommandExecutor::init");
@@ -171,7 +171,7 @@ void SlowCommandExecutor::setDefaultCommand(string commandAlias) {
 
 //! Install a command associated with a type
 void SlowCommandExecutor::installCommand(string alias, chaos::common::utility::ObjectInstancer<SlowCommand> *instancer) {
-    SCELAPP_ << "Install new command with alias" << alias;
+    SCELAPP_ << "Install new command with alias -> " << alias;
     boost::mutex::scoped_lock lock(mutextQueueManagment);
     mapCommandInstancer.insert(make_pair<string, chaos::common::utility::ObjectInstancer<SlowCommand>* >(alias, instancer));
 }
@@ -206,7 +206,6 @@ void SlowCommandExecutor::performIncomingCommandCheck() {
             commandSubmittedQueue.pop();
             continue;
         }
-        
         try {
             DEBUG_CODE(    SCELDBG_ << "Install new command locking the sandbox";)
             //lock the command scheduler
@@ -215,11 +214,18 @@ void SlowCommandExecutor::performIncomingCommandCheck() {
                 DEBUG_CODE(SCELDBG_ << "No waiting command into sandbox, try to install new one";)
                 // no waiting command so set the next available wit the info and instance
                 // if something goes wrong an axception is fired and element is fired
+                
+                DEBUG_CODE(SCELDBG_ << "Command popped from the queue";)
+                
+                //remove command form the queue
+                commandSubmittedQueue.pop();
+                
                 if(commandSandbox.setNextAvailableCommand(element, instanceCommandInfo(element->element))){
                     DEBUG_CODE(SCELDBG_ << "Command installed";)
-                    //remove command form the queue
-                    commandSubmittedQueue.pop();
-                    DEBUG_CODE(SCELDBG_ << "Command popped from the queue";)
+                } else {
+                    //delete the non submitted command
+                    DEBUG_CODE(SCELDBG_ << "Error installing command";)
+                    delete(element);
                 }
             } else if(element != commandSandbox.nextAvailableCommand.cmdInfo &&
                       element->getPriority() > commandSandbox.nextAvailableCommand.cmdInfo->getPriority()) {
@@ -227,10 +233,16 @@ void SlowCommandExecutor::performIncomingCommandCheck() {
                 //We ave a new, higer priority, command to submit
                 DEBUG_CODE(SCELDBG_ << "Swap waithing command whith new one";)
                 commandSubmittedQueue.push(commandSandbox.nextAvailableCommand.cmdInfo);
+                
+                //remove command form the queue
+                commandSubmittedQueue.pop();
+                
                 if(commandSandbox.setNextAvailableCommand(element, instanceCommandInfo(element->element))) {
                     DEBUG_CODE(SCELDBG_ << "New command installed";)
-                    //remove command form the queue
-                    commandSubmittedQueue.pop();
+                } else {
+                    //delete the non submitted command
+                    DEBUG_CODE(SCELDBG_ << "Error installing command";)
+                    delete(element);
                 }
                 
             } else {
@@ -278,9 +290,13 @@ SlowCommand *SlowCommandExecutor::instanceCommandInfo(CDataWrapper *submissionIn
     commandAlias = submissionInfo->getStringValue(SlowCommandSubmissionKey::COMMAND_ALIAS);
     DEBUG_CODE(SCELDBG_ << "Instancing command " << commandAlias;)
     SlowCommand *instance = instanceCommandInfo(commandAlias);
-    if(!submissionInfo->hasKey(SlowCommandSubmissionKey::SUBMISSION_RULE)) {
-        if(instance) instance->submissionRule = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SUBMISSION_RULE);
-        DEBUG_CODE(SCELDBG_ << "Submizzion rule for command " << commandAlias << " is: " << instance->submissionRule;)
+    if(instance) {
+        if(submissionInfo->hasKey(SlowCommandSubmissionKey::SUBMISSION_RULE)) {
+            instance->submissionRule = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SUBMISSION_RULE);
+            DEBUG_CODE(SCELDBG_ << "Submizzion rule for command " << commandAlias << " is: " << instance->submissionRule;)
+        } else {
+            instance->submissionRule = SubmissionRuleType::SUBMIT_NORMAL;
+        }
     }
     return instance;
 }
@@ -302,8 +318,8 @@ bool SlowCommandExecutor::submitCommand(CDataWrapper *commandDescription) {
     boost::mutex::scoped_lock lock(mutextQueueManagment);
     if(serviceState != utility::StartableServiceType::SS_STARTED) return false;
     uint32_t priority = commandDescription->hasKey(SlowCommandSubmissionKey::SUBMISSION_PRIORITY) ? commandDescription->getUInt32Value(SlowCommandSubmissionKey::SUBMISSION_PRIORITY):50;
-    DEBUG_CODE(SCELDBG_ << "Submit new command " << commandDescription->getJSONString();
-               SCELDBG_ << "Submit priority: " << priority;)
+    //DEBUG_CODE(SCELDBG_ << "Submit new command " << commandDescription->getJSONString();)
+    DEBUG_CODE(SCELDBG_ << commandDescription->getStringValue(SlowCommandSubmissionKey::COMMAND_ALIAS);)
     commandSubmittedQueue.push(new PriorityQueuedElement<CDataWrapper>(commandDescription, priority, true));
     lock.unlock();
     readThreadWhait.notify_one();

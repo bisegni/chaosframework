@@ -43,7 +43,7 @@ void SlowCommandSandbox::init(void *initData) throw(chaos::CException) {
     nextAvailableCommand.cmdImpl = NULL;
     
     currentExecutingCommand = NULL;
-    setHandlerFunctor.cmdInstance = NULL;
+    //setHandlerFunctor.cmdInstance = NULL;
     acquireHandlerFunctor.cmdInstance = NULL;
     correlationHandlerFunctor.cmdInstance = NULL;
     
@@ -125,7 +125,7 @@ void SlowCommandSandbox::deinit() throw(chaos::CException) {
     utility::InizializableService::deinitImplementation(sharedChannelSetting, "ChannelSetting", "SlowCommandSandbox::init");
     
     //reset all the handler
-    setHandlerFunctor.cmdInstance = NULL;
+    //setHandlerFunctor.cmdInstance = NULL;
     acquireHandlerFunctor.cmdInstance = NULL;
     correlationHandlerFunctor.cmdInstance = NULL;
 }
@@ -159,8 +159,10 @@ void SlowCommandSandbox::checkNextCommand() {
                     //we need to submit thewaiting new command
                     boost::mutex::scoped_lock lockForCurrentCommand(mutextAccessCurrentCommand);
                     
+                    bool hasAcquireOrCC = nextAvailableCommand.cmdImpl->implementedHandler() > 1;
+                    
                     //if the current command is null we simulate and END state
-                    if ( curCmdRunningState >= 2 || nextAvailableCommand.cmdImpl->submissionRule & SubmissionRuleType::SUBMIT_AND_Kill) {
+                    if ( hasAcquireOrCC && (curCmdRunningState >= SubmissionRuleType::SUBMIT_AND_Kill || nextAvailableCommand.cmdImpl->submissionRule & SubmissionRuleType::SUBMIT_AND_Kill)) {
                         DEBUG_CODE(SCSLDBG_ << "New command that want kill the current one";)
                         //for now we delete it after we need to manage it
                         if(currentExecutingCommand) {
@@ -171,7 +173,7 @@ void SlowCommandSandbox::checkNextCommand() {
                         
                         CHECK_END_OF_SCHEDULER_WORK_AND_CONTINUE()
                         
-                    } else if( currentExecutingCommand && (nextAvailableCommand.cmdImpl->submissionRule & SubmissionRuleType::SUBMIT_AND_Stack)) {
+                    } else if( hasAcquireOrCC && (currentExecutingCommand && (nextAvailableCommand.cmdImpl->submissionRule & SubmissionRuleType::SUBMIT_AND_Stack))) {
                         DEBUG_CODE(SCSLDBG_ << "New command that want kill the current one";)
                         //push current command into the stack
                         commandStack.push(currentExecutingCommand);
@@ -188,6 +190,7 @@ void SlowCommandSandbox::checkNextCommand() {
                     //delete the command description
                     nextAvailableCommand.cmdImpl = NULL;
                     DELETE_OBJ_POINTER(nextAvailableCommand.cmdInfo)
+                    if(!hasAcquireOrCC) DELETE_OBJ_POINTER(nextAvailableCommand.cmdInfo)
                     DEBUG_CODE(SCSLDBG_ << "nextAvailableCommand.cmdInfo deleted";)
                     
                 } else {
@@ -228,7 +231,11 @@ void SlowCommandSandbox::checkNextCommand() {
             CHECK_END_OF_SCHEDULER_WORK_AND_CONTINUE()
             
             //waith for the next schedule
-            waithForNextCheck.timed_wait(lockOnNextCommandMutex, checkTimeIntervall);
+            if(nextAvailableCommand.cmdImpl) {
+                waithForNextCheck.timed_wait(lockOnNextCommandMutex, checkTimeIntervall);
+            } else {
+                waithForNextCheck.wait(lockOnNextCommandMutex);
+            }
         }
         
     }
@@ -293,9 +300,12 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
         
         //check set handler
         if(handlerMask & HandlerType::HT_Set) {
-            setHandlerFunctor.cmdInstance = currentExecutingCommand;
-            //at this point the set need to bee called
-            setHandlerFunctor(setData);
+            currentExecutingCommand->setHandler(setData);
+        }
+        
+        if(handlerMask <= 1) {
+            //there is only the set handler so we finish here.
+            return;
         }
         
         //acquire handler
@@ -312,14 +322,14 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
         }
         
     } else {
-        setHandlerFunctor.cmdInstance = NULL;
+        //setHandlerFunctor.cmdInstance = NULL;
         acquireHandlerFunctor.cmdInstance = NULL;
         correlationHandlerFunctor.cmdInstance = NULL;
     }
 }
 
 bool SlowCommandSandbox::setNextAvailableCommand(PRIORITY_ELEMENT(CDataWrapper) *cmdInfo, SlowCommand *cmdImpl) {
-    
+    if(!cmdImpl) return false;
     boost::recursive_mutex::scoped_lock lockScheduler(mutexNextCommandChecker);
     if(utility::StartableService::serviceState == utility::InizializableServiceType::IS_DEINTIATED ||
        utility::StartableService::serviceState == utility::InizializableServiceType::IS_DEINITING) return false;

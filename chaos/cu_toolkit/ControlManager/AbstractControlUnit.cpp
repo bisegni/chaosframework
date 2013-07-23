@@ -377,7 +377,7 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_setDatasetAttribute(chaos::CDataW
             throw CException(-3, "The Control Unit is in deinit state", "AbstractControlUnit::_setDatasetAttribute");
         }
         //send dataset attribute change pack to control unit implementation
-        executionResult = setDatasetAttribute(datasetAttributeValues);
+        executionResult = setDatasetAttribute(datasetAttributeValues, detachParam);
         
     } catch (CException& ex) {
         //at this time notify the wel gone setting of comand

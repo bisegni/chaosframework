@@ -28,6 +28,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/dynamic_bitset.hpp>
 
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/utility/InizializableService.h>
 
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandTypes.h>
@@ -46,22 +47,22 @@ namespace chaos{
             
                 struct ValueSetting {
                     friend class ChannelSetting;
-                    const uint32_t index;
-                    const uint32_t size;
-                    
+                    const uint32_t                      index;
+                    const uint32_t                      size;
+                    const chaos::DataType::DataType     type;
                     boost::mutex mutextAccessSetting;
                     
                     SettingValuePtr currentValue;
                     SettingValuePtr nextValue;
                     boost::dynamic_bitset<BitBlockDimension> * sharedBitmapChangedAttribute;
 
-                    ValueSetting(uint32_t _size, uint32_t _index);
+                    ValueSetting(uint32_t _size, uint32_t _index, chaos::DataType::DataType type);
                     
                     ~ValueSetting();
                     
                     void completed();
                     
-                    bool setDestinationValue(void* valPtr, uint32_t _size);
+                    bool setDestinationValue(const void* valPtr, uint32_t _size);
                 };
 
                 //-----------------------------------------------------------------------------------------------------------------------------
@@ -84,9 +85,9 @@ namespace chaos{
                     
                     ~ChannelSetting();
                     
-                    void addAttribute(string name, uint32_t size);
+                    void addAttribute(string name, uint32_t size, chaos::DataType::DataType type);
                     
-                    void setValueForAttribute(AttributeIndexType n, void * value, uint32_t size);
+                    void setValueForAttribute(AttributeIndexType n, const void * value, uint32_t size);
                     
                     AttributeIndexType getIndexForName( string name );
                     

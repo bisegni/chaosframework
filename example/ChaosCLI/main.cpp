@@ -213,7 +213,7 @@ int main (int argc, char* argv[] )
                     if(canBeExecuted) {
                         if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_DATA)) {
                             userData.reset(new CDataWrapper());
-                            if(userData.get())userData->setSerializedJsonData("{\"points\":4}");
+                            if(userData.get())userData->setSerializedJsonData(scUserData.c_str());
                             std::cout << "User data submitted" << std::endl;
                             std::cout << "-----------------------------------------" << std::endl;
                             std::cout << userData->getJSONString() << std::endl;

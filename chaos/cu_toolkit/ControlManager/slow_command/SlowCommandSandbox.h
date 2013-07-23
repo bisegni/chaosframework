@@ -140,7 +140,7 @@ namespace chaos{
                     
                     //-------------------- handler poiter --------------------
                     //! Pointer to the set phase handler's of the current command
-                    SetFunctor setHandlerFunctor;
+                    //SetFunctor setHandlerFunctor;
 
                     //! Pointer to the acquire pahse handler's of the current command
                     AcquireFunctor acquireHandlerFunctor;

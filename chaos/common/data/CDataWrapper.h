@@ -90,6 +90,7 @@ namespace chaos {
         
         CDataWrapper();
         CDataWrapper(const char* serializationBuffer/*, bool bson=true*/);
+        ~CDataWrapper();
         
         CDataWrapper *clone();
         //add a csdata value
