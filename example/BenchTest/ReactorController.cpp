@@ -77,7 +77,7 @@ void ReactorController::joinThread(){
     if(chaosThread.get()) chaosThread->join();
 }
                       
-void ReactorController::executeOnThread(const string&) throw(CException) {
+void ReactorController::executeOnThread() throw(CException) {
     //state of the reactor
     cycleCount++;
     //execute the control of the reactor

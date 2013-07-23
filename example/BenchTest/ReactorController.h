@@ -29,7 +29,7 @@ typedef enum ControllerState {
     DEINIT
 } ControllerState;
 
-class ReactorController : public chaos::CThreadExecutionTask, private Batch_Controller{
+class ReactorController : public chaos::CThreadExecutionTask, private Batch_Controller {
     string reactorID;
     WriteFile *logFile;
     TimingUtil timingUtil;
@@ -43,7 +43,7 @@ class ReactorController : public chaos::CThreadExecutionTask, private Batch_Cont
     high_resolution_clock::time_point currentExecutionTime;
     int cycleCount;
 protected:
-    virtual void executeOnThread(const string&) throw(CException);
+    virtual void executeOnThread() throw(CException);
     
 public:
     ReactorController(string& _rName, vector<double> *refVec, int refIdx, uint64_t _simulationSpeed);

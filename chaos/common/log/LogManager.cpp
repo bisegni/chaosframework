@@ -21,6 +21,9 @@
 #include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/log/sources/severity_logger.hpp>
+#if (BOOST_VERSION / 100000) >= 1 && ((BOOST_VERSION / 100) % 1000) >= 54
+//allocate the logger
+#include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
 #include <boost/log/utility/setup/console.hpp>
 #include <boost/log/utility/setup/file.hpp>
@@ -31,26 +34,33 @@
 #include <boost/log/attributes.hpp>
 #include <boost/log/expressions.hpp>
 #include <boost/log/utility/setup/formatter_parser.hpp>
-//#include <boost/log/sources/filters.hpp>
-//#include <boost/log/sources/utility/init/to_file.hpp>
-//#include <boost/log/sources/utility/init/common_attributes.hpp>
-//#include <boost/log/sources/formatters.hpp>
-
-#include <chaos/common/global.h>
-#include <chaos/common/configuration/GlobalConfiguration.h>
-
-#include "LogManager.h"
-//[%Severity%]
-#define BASE_LOG_FORMAT         "[%TimeStamp%]: %_%"
-#define EXTENDEND_LOG_FORMAT    "[%TimeStamp%][%ProcessID%][%ThreadID%]: %_%"
-
-using namespace chaos;
-using namespace chaos::log;
 namespace logging = boost::log;
 namespace keywords = boost::log::keywords;
 namespace attrs = boost::log::attributes;
 namespace sinks = boost::log::sinks;
 namespace expr = boost::log::expressions;
+#else
+#include <boost/log/filters.hpp>
+#include <boost/log/utility/init/to_file.hpp>
+#include <boost/log/utility/init/to_console.hpp>
+#include <boost/log/utility/init/common_attributes.hpp>
+#include <boost/log/formatters.hpp>
+namespace logging = boost::BOOST_LOG_NAMESPACE;
+namespace fmt = boost::log::formatters;
+#endif
+
+
+#include <chaos/common/global.h>
+#include <chaos/common/configuration/GlobalConfiguration.h>
+
+#include "LogManager.h"
+//
+#define BASE_LOG_FORMAT         "[%TimeStamp%][%Severity%]: %_%"
+#define EXTENDEND_LOG_FORMAT    "[%TimeStamp%][%Severity%][%ProcessID%][%ThreadID%]: %_%"
+
+using namespace chaos;
+using namespace chaos::log;
+
 std::ostream& operator<<(std::ostream& out, const level::LogSeverityLevel& level )
 {
     switch (level)
@@ -86,20 +96,38 @@ void LogManager::init() throw(CException) {
     
     boost::shared_ptr< logging::core > pCore = boost::log::core::get();
     
-
+#if (BOOST_VERSION / 100000) >= 1 && ((BOOST_VERSION / 100) % 1000) >= 54
     logging::register_simple_formatter_factory< level::LogSeverityLevel, char  >("Severity");
     logging::core::get()->set_filter(expr::attr< level::LogSeverityLevel >("Severity") >= logLevel);
+#else
+    logging::register_simple_formatter_factory< level::LogSeverityLevel  >("Severity");
+    logging::core::get()->set_filter(logging::filters::attr< level::LogSeverityLevel >("Severity") >= logLevel);
+#endif
+
     
     if(logOnConsole){
+#if (BOOST_VERSION / 100000) >= 1 && ((BOOST_VERSION / 100) % 1000) >= 54
         logging::add_console_log(std::clog, logging::keywords::format = EXTENDEND_LOG_FORMAT);
+#else
+        logging::init_log_to_console(std::clog, logging::keywords::format = EXTENDEND_LOG_FORMAT);
+#endif
     }
     
     if(logOnFile){
+#if (BOOST_VERSION / 100000) >= 1 && ((BOOST_VERSION / 100) % 1000) >= 54
         logging::add_file_log(keywords::file_name = logFileName,                  // file name pattern
                               keywords::rotation_size = 10 * 1024 * 1024,         // rotate files every 10 MiB...
                               keywords::time_based_rotation = logging::sinks::file::rotation_at_time_point(0, 0, 0),// ...or at midnight
                               keywords::format = EXTENDEND_LOG_FORMAT,
                               keywords::auto_flush=true);
+#else
+        logging::init_log_to_file(logging::keywords::file_name = logFileName,                  // file name pattern
+                                  logging::keywords::rotation_size = 10 * 1024 * 1024,         // rotate files every 10 MiB...
+                                  logging::keywords::time_based_rotation = logging::sinks::file::rotation_at_time_point(0, 0, 0),// ...or at midnight
+                                  logging::keywords::format = EXTENDEND_LOG_FORMAT,
+                                  logging::keywords::auto_flush=true);
+#endif
+        
     }
     
     //enable the log in case of needs

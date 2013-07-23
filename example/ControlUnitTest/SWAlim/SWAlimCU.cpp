@@ -49,7 +49,6 @@ using namespace chaos;
 SWAlimCU::SWAlimCU():rng((const uint_fast32_t) time(0) ),one_to_hundred( -100, 100 ),randInt(rng, one_to_hundred) {
     //first we make some write
     _deviceID.assign(SIMULATED_DEVICE_ID);
-    cuName = "SWAlim_CU";
     numberOfResponse = 0;
 }
 
@@ -58,7 +57,6 @@ SWAlimCU::SWAlimCU():rng((const uint_fast32_t) time(0) ),one_to_hundred( -100, 1
  */
 SWAlimCU::SWAlimCU(string &customDeviceID):rng((const uint_fast32_t) time(0) ),one_to_hundred( -100, 100 ),randInt(rng, one_to_hundred){
     _deviceID = customDeviceID;
-    cuName = "SWAlim_CU";
     numberOfResponse = 0;
     tcpChan = new TcpChannel("LocalTcp");
     prot = new ModbusProtocol("modbus");

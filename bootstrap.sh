@@ -12,8 +12,8 @@ OS=$(uname -s)
 ARCH=$(uname -m)
 KERNEL_VER=$(uname -r)
 KERNEL_SHORT_VER=$(uname -r|cut -d\- -f1|tr -d '.'| tr -d '[A-Z][a-z]')
-BOOST_VERSION=1_54_0
-BOOST_VERSION_IN_PATH=1.54.0
+BOOST_VERSION=1_53_0
+BOOST_VERSION_IN_PATH=1.53.0
 LMEM_VERSION=1.0.16
 CHAOS_DIR=$SCRIPTPATH
 BASE_EXTERNAL=$CHAOS_DIR/external
@@ -42,6 +42,7 @@ if [ ! -d "$BASE_EXTERNAL" ]; then
     mkdir -p $BASE_EXTERNAL
 fi
 
+
 if [ ! -d "$PREFIX/include/boost" ]; then
     if [ ! -e "$BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz" ]; then
         echo "Download boost source"
@@ -50,9 +51,15 @@ if [ ! -d "$PREFIX/include/boost" ]; then
     fi
 
     if [ ! -e $BASE_EXTERNAL/boost ]; then
-	tar zxvf $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz -C $BASE_EXTERNAL
+        tar zxvf $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz -C $BASE_EXTERNAL
         mv $BASE_EXTERNAL/boost_$BOOST_VERSION $BASE_EXTERNAL/boost
     fi
+
+#install old version of boost log
+    cd $BASE_EXTERNAL/boost/boost/
+    svn co https://boost-log.svn.sourceforge.net/svnroot/boost-log/branches/v1/boost/log
+    cd  $BASE_EXTERNAL/boost/libs/
+    svn co https://boost-log.svn.sourceforge.net/svnroot/boost-log/branches/v1/libs/log
 
 
     if [ ! -f "$BASE_EXTERNAL/boost/b2" ]; then
