@@ -40,12 +40,19 @@ chaos::cu::DeviceSchemaDB  *SlowCommand::getDeviceDatabase() {
     return deviceDatabasePtr;
 }
 
+void SlowCommand::getChangedAttributeIndex(std::vector<AttributeIndexType>& changedIndex) {
+    CHAOS_ASSERT(sharedChannelSettingPtr)
+    return sharedChannelSettingPtr->getChangedIndex(changedIndex);
+}
+
 ValueSetting *SlowCommand::getValueSettingForKey(const char *keyName){
+    CHAOS_ASSERT(sharedChannelSettingPtr)
     AttributeIndexType index = sharedChannelSettingPtr->getIndexForName(keyName);
     return sharedChannelSettingPtr->getValueSettingForIndex(index);
 }
 
 void SlowCommand::setValueSettingForKey(const char *keyName, void * value, uint32_t size) {
+    CHAOS_ASSERT(sharedChannelSettingPtr)
     AttributeIndexType index = sharedChannelSettingPtr->getIndexForName(keyName);
     sharedChannelSettingPtr->setValueForAttribute(index, value, size);
 }

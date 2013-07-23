@@ -74,6 +74,13 @@ void SinWaveCommand::setHandler(chaos::CDataWrapper *data) {
  \return the mask for the runnign state
  */
 void SinWaveCommand::acquireHandler() {
+
+    //chech if some parameter has changed
+    changedIndex.clear();
+    getChangedAttributeIndex(changedIndex);
+    if(changedIndex.size()) {
+        LAPP_ << "We have " << changedIndex.size() << " changed attribute";
+    }
     CDataWrapper *acquiredData = getNewDataWrapper();
     if(!acquiredData) return;
     

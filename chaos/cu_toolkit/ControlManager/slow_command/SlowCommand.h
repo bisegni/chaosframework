@@ -120,6 +120,8 @@ namespace chaos{
                     
                     void setValueSettingForKey(const char *keyName, void * value, uint32_t size);
                     
+                    void getChangedAttributeIndex(std::vector<AttributeIndexType>& changedIndex);
+                    
                     /*
                      Send device data to output buffer
                      */
