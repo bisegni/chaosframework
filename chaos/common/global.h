@@ -42,7 +42,7 @@
 #include <chaos/common/endian.h>
 #include <chaos/common/log/LogManager.h>
 
-#if (BOOST_VERSION / 100000) >= 1 && ((BOOST_VERSION / 100) % 1000) >= 54
+#if BOOST_VERSION > 105300
     //allocate the logger
     BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(chaosLogger, boost::log::sources::severity_logger_mt < chaos::log::level::LogSeverityLevel > )
 #else 

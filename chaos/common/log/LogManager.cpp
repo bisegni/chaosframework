@@ -18,10 +18,14 @@
  *    	limitations under the License.
  */
 
+
+#include <chaos/common/global.h>
+#include <chaos/common/configuration/GlobalConfiguration.h>
+
 #include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/log/sources/severity_logger.hpp>
-#if (BOOST_VERSION / 100000) >= 1 && ((BOOST_VERSION / 100) % 1000) >= 54
+#if BOOST_VERSION > 105300
 //allocate the logger
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
@@ -49,9 +53,6 @@ namespace logging = boost::BOOST_LOG_NAMESPACE;
 namespace fmt = boost::log::formatters;
 #endif
 
-
-#include <chaos/common/global.h>
-#include <chaos/common/configuration/GlobalConfiguration.h>
 
 #include "LogManager.h"
 //
