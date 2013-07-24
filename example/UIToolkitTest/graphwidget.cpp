@@ -49,9 +49,10 @@ GraphWidget::GraphWidget(QWidget *parent) :
     grid->enableY(true);
 
     //set the X and Y division and scale to that of the channels
-
-    grid->setXDiv(*plot->axisScaleDiv(QwtPlot::xBottom));
-    grid->setYDiv(*plot->axisScaleDiv(QwtPlot::yLeft));
+    QwtScaleDiv axisInfo = plot->axisScaleDiv(QwtPlot::xBottom);
+    grid->setXDiv(axisInfo);
+    axisInfo = plot->axisScaleDiv(QwtPlot::yLeft);
+    grid->setYDiv(axisInfo);
     grid->attach(plot);
     setPointNumber(30);
     d_timerId = -1;

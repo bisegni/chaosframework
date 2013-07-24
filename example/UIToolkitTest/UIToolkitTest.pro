@@ -13,11 +13,11 @@ TEMPLATE = app
 
 INCLUDEPATH += $$PWD/../../
 INCLUDEPATH += $$PWD/../../usr/local/include
-LIBS += -L$$PWD/../../DerivedData/CHAOSWorkspace/Build/Products/Debug
+#LIBS += -L$$PWD/../../DerivedData/CHAOSWorkspace/Build/Products/Debug
 LIBS += -L$$PWD/../../usr/local/lib
 
-macx:INCLUDEPATH += /usr/local/qwt/lib/qwt.framework/Headers
-macx:LIBS += -F/usr/local/qwt/lib/ -framework qwt
+macx:INCLUDEPATH += /usr/local/qwt/qwt.framework/Headers
+macx:LIBS +=  -F/usr/local/qwt -framework qwt
 
 unix:!macx::INCLUDEPATH += /usr/local/qwt/include
 unix:!macx:LIBS += -L/usr/local/qwt/lib -lqwt
