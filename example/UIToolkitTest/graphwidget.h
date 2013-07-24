@@ -31,7 +31,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 #include <boost/random.hpp>
-#include <chaos/common/cconstants.h>
+#include <chaos/common/chaos_constants.h>
 #endif
 #include <qwt_system_clock.h>
 

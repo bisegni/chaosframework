@@ -62,7 +62,19 @@ namespace chaos{
                     
                     void completed();
                     
-                    bool setDestinationValue(const void* valPtr, uint32_t _size);
+                    void completedWithError();
+                    
+                    bool setNextValue(const void* valPtr, uint32_t _size);
+                    
+                    template<typename T>
+                    T* getNextValue() {
+                        return static_cast<T*>(nextValue);
+                    }
+                    
+                    template<typename T>
+                    T* getCurrentValue() {
+                        return static_cast<T*>(currentValue);
+                    }
                 };
 
                 //-----------------------------------------------------------------------------------------------------------------------------
@@ -90,6 +102,8 @@ namespace chaos{
                     void setValueForAttribute(AttributeIndexType n, const void * value, uint32_t size);
                     
                     AttributeIndexType getIndexForName( string name );
+                    
+                    void getAttributeNames(std::vector<std::string>& names);
                     
                     //! Initialize instance
                     void init(void *initData) throw(chaos::CException);

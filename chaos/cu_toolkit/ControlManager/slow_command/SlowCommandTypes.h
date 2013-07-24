@@ -48,6 +48,18 @@ namespace chaos{
                 } CommandInfoAndImplementation;
                 
                 
+                //! Namespace for the features of the slow command
+                namespace FeatureFlagTypes {
+                    /*!
+                     * \enum FeatureFlag
+                     * \brief The feature represent the custumoziation 
+                     * of the sandbox ad the moment the slowcommadn is installed
+                     */
+                    typedef enum FeatureFlag {
+                        FF_SET_SCHEDULER_DELAY  = 1,    /**< Notify that the command brig his own scheduler delay time */
+                    } Handler;
+                }
+                
                 //! Namespace for the handler types
                 namespace HandlerType {
                     /*!

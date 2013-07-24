@@ -216,7 +216,6 @@ void SlowCommandExecutor::performIncomingCommandCheck() {
                 // if something goes wrong an axception is fired and element is fired
                 
                 DEBUG_CODE(SCELDBG_ << "Command popped from the queue";)
-                
                 //remove command form the queue
                 commandSubmittedQueue.pop();
                 
@@ -233,7 +232,8 @@ void SlowCommandExecutor::performIncomingCommandCheck() {
                 //We ave a new, higer priority, command to submit
                 DEBUG_CODE(SCELDBG_ << "Swap waithing command whith new one";)
                 commandSubmittedQueue.push(commandSandbox.nextAvailableCommand.cmdInfo);
-                
+                //delete the waiting implementation
+                DELETE_OBJ_POINTER(commandSandbox.nextAvailableCommand.cmdImpl)
                 //remove command form the queue
                 commandSubmittedQueue.pop();
                 
@@ -296,6 +296,13 @@ SlowCommand *SlowCommandExecutor::instanceCommandInfo(CDataWrapper *submissionIn
             DEBUG_CODE(SCELDBG_ << "Submizzion rule for command " << commandAlias << " is: " << instance->submissionRule;)
         } else {
             instance->submissionRule = SubmissionRuleType::SUBMIT_NORMAL;
+        }
+        
+        //che if a new scheduler delay has been passed in the info
+        if(submissionInfo->hasKey(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL)) {
+            instance->featuresFlag |= FeatureFlagTypes::FF_SET_SCHEDULER_DELAY;
+            instance->schedulerStepsDelay = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL);
+            
         }
     }
     return instance;

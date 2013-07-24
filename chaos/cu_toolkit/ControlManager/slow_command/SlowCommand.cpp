@@ -20,47 +20,57 @@
 
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommand.h>
 using namespace chaos;
-using namespace chaos::cu::control_manager::slow_command;
+namespace cccs = chaos::cu::control_manager::slow_command;
 
 //! default constructor
-SlowCommand::SlowCommand() {
+cccs::SlowCommand::SlowCommand() {
     runningState = RunningStateType::RS_Exsc;
     submissionRule = SubmissionRuleType::SUBMIT_NORMAL;
 }
 
 //! default destructor
-SlowCommand::~SlowCommand() {
+cccs::SlowCommand::~SlowCommand() {
     
 }
 
 /*!
  return the device database with the dafualt device information
  */
-chaos::cu::DeviceSchemaDB  *SlowCommand::getDeviceDatabase() {
+chaos::cu::DeviceSchemaDB  *cccs::SlowCommand::getDeviceDatabase() {
     return deviceDatabasePtr;
 }
 
-void SlowCommand::getChangedAttributeIndex(std::vector<AttributeIndexType>& changedIndex) {
+void cccs::SlowCommand::getChangedAttributeIndex(std::vector<AttributeIndexType>& changedIndex) {
     CHAOS_ASSERT(sharedChannelSettingPtr)
     return sharedChannelSettingPtr->getChangedIndex(changedIndex);
 }
 
-ValueSetting *SlowCommand::getValueSettingForKey(const char *keyName){
+cccs::ValueSetting *cccs::SlowCommand::getValueSetting(cccs::AttributeIndexType attributeIndex) {
     CHAOS_ASSERT(sharedChannelSettingPtr)
-    AttributeIndexType index = sharedChannelSettingPtr->getIndexForName(keyName);
+    return sharedChannelSettingPtr->getValueSettingForIndex(attributeIndex);
+}
+
+cccs::ValueSetting *cccs::SlowCommand::getValueSetting(const char *keyName) {
+    CHAOS_ASSERT(sharedChannelSettingPtr)
+    cccs::AttributeIndexType index = sharedChannelSettingPtr->getIndexForName(keyName);
     return sharedChannelSettingPtr->getValueSettingForIndex(index);
 }
 
-void SlowCommand::setValueSettingForKey(const char *keyName, void * value, uint32_t size) {
+void cccs::SlowCommand::setValueSettingForKey(const char *keyName, void * value, uint32_t size) {
     CHAOS_ASSERT(sharedChannelSettingPtr)
-    AttributeIndexType index = sharedChannelSettingPtr->getIndexForName(keyName);
+    cccs::AttributeIndexType index = sharedChannelSettingPtr->getIndexForName(keyName);
     sharedChannelSettingPtr->setValueForAttribute(index, value, size);
+}
+
+void cccs::SlowCommand::getAttributeNames(std::vector<std::string>& names) {
+    CHAOS_ASSERT(sharedChannelSettingPtr)
+    sharedChannelSettingPtr->getAttributeNames(names);
 }
 
 /*
  Send device data to output buffer
  */
-void SlowCommand::pushDataSet(CDataWrapper *acquiredData) {
+void cccs::SlowCommand::pushDataSet(CDataWrapper *acquiredData) {
     //send data to related buffer
     keyDataStoragePtr->pushDataSet(acquiredData);
 }
@@ -69,21 +79,21 @@ void SlowCommand::pushDataSet(CDataWrapper *acquiredData) {
  Return a new instance of CDataWrapper filled with a mandatory data
  according to key
  */
-CDataWrapper *SlowCommand::getNewDataWrapper() {
+CDataWrapper *cccs::SlowCommand::getNewDataWrapper() {
     return keyDataStoragePtr->getNewDataWrapper();
 }
 
 /*
  Start the slow command sequence
  */
-void SlowCommand::setHandler(chaos::CDataWrapper *data) {}
+void cccs::SlowCommand::setHandler(chaos::CDataWrapper *data) {}
 
 /*
  implemente thee data acquisition for the command
  */
-void SlowCommand::acquireHandler() {}
+void cccs::SlowCommand::acquireHandler() {}
 
 /*
  Performe correlation and send command to the driver
  */
-void SlowCommand::ccHandler() {}
+void cccs::SlowCommand::ccHandler() {}

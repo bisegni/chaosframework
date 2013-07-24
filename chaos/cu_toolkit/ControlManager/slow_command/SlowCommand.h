@@ -68,6 +68,16 @@ namespace chaos{
                     friend struct SetFunctor;
                     friend struct AcquireFunctor;
                     friend struct CorrelationFunctor;
+  
+                    //! Features flags
+                    /*!
+                     A value that represent the submiossion state
+                     */
+                    uint8_t  featuresFlag;
+                    
+                    //features variable
+                    uint32_t schedulerStepsDelay;
+                    
                     
                     //! Submission state
                     /*!
@@ -116,11 +126,14 @@ namespace chaos{
                      */
                     DeviceSchemaDB  *getDeviceDatabase();
                     
-                    ValueSetting *getValueSettingForKey(const char *keyName);
+                    ValueSetting *getValueSetting(const char *keyName);
+                    ValueSetting *getValueSetting(AttributeIndexType attributeIndex);
                     
                     void setValueSettingForKey(const char *keyName, void * value, uint32_t size);
-                    
+
                     void getChangedAttributeIndex(std::vector<AttributeIndexType>& changedIndex);
+                    
+                    void getAttributeNames(std::vector<std::string>& names);
                     
                     /*
                      Send device data to output buffer

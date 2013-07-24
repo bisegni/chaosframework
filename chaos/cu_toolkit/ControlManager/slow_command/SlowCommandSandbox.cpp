@@ -190,7 +190,7 @@ void SlowCommandSandbox::checkNextCommand() {
                     //delete the command description
                     nextAvailableCommand.cmdImpl = NULL;
                     DELETE_OBJ_POINTER(nextAvailableCommand.cmdInfo)
-                    if(!hasAcquireOrCC) DELETE_OBJ_POINTER(nextAvailableCommand.cmdInfo)
+                    if(!hasAcquireOrCC) DELETE_OBJ_POINTER(nextAvailableCommand.cmdImpl)
                     DEBUG_CODE(SCSLDBG_ << "nextAvailableCommand.cmdInfo deleted";)
                     
                 } else {
@@ -314,11 +314,11 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
         //correlation commit
         if(handlerMask & HandlerType::HT_Correlation) correlationHandlerFunctor.cmdInstance = currentExecutingCommand;
         
-        //set the scehdule step delay (time intervall between twp sequnece of the scehduler step)
-        if(setData && setData->hasKey(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL)) {
+        //set the schedule step delay (time intervall between twp sequnece of the scehduler step)
+        if(cmdImpl->featuresFlag & FeatureFlagTypes::FF_SET_SCHEDULER_DELAY) {
+            //we need to set a new delay between steps
+            DEBUG_CODE(SCSLDBG_ << "New scheduler time has been installed";)
             schedulerStepDelay = boost::chrono::milliseconds(setData->getUInt32Value(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL));
-        } else {
-            schedulerStepDelay = boost::chrono::milliseconds(DEFAULT_TIME_STEP_INTERVALL);
         }
         
     } else {
@@ -333,9 +333,6 @@ bool SlowCommandSandbox::setNextAvailableCommand(PRIORITY_ELEMENT(CDataWrapper) 
     boost::recursive_mutex::scoped_lock lockScheduler(mutexNextCommandChecker);
     if(utility::StartableService::serviceState == utility::InizializableServiceType::IS_DEINTIATED ||
        utility::StartableService::serviceState == utility::InizializableServiceType::IS_DEINITING) return false;
-    //delete the waiting command
-    DELETE_OBJ_POINTER(nextAvailableCommand.cmdImpl)
-    DELETE_OBJ_POINTER(nextAvailableCommand.cmdInfo)
     
     nextAvailableCommand.cmdInfo = cmdInfo;
     nextAvailableCommand.cmdImpl = cmdImpl;

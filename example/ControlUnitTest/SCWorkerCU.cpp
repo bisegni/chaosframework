@@ -63,16 +63,16 @@ void SCWorkerCU::defineActionAndDataset() throw(CException) {
                           "The bias of the wave",
                           DataType::TYPE_DOUBLE,
                           DataType::Input);
-
-    addAttributeToDataSet(devIDInChar,
-                          "gain",
-                          "The gain of the wave",
-                          DataType::TYPE_DOUBLE,
-                          DataType::Input);
-
+    
     addAttributeToDataSet(devIDInChar,
                           "phase",
                           "The phase of the wave",
+                          DataType::TYPE_DOUBLE,
+                          DataType::Input);
+    
+    addAttributeToDataSet(devIDInChar,
+                          "gain",
+                          "The gain of the wave",
                           DataType::TYPE_DOUBLE,
                           DataType::Input);
 

@@ -41,17 +41,22 @@ ValueSetting::~ValueSetting() {
 void ValueSetting::completed() {
     std::memcpy(currentValue, nextValue, size);
     std::memset(nextValue, 0, size);
-    (*sharedBitmapChangedAttribute)[index]=0;
+    sharedBitmapChangedAttribute->reset(index);
 }
 
-bool ValueSetting::setDestinationValue(const void* valPtr, uint32_t _size) {
+void ValueSetting::completedWithError() {
+    std::memset(nextValue, 0, size);
+    sharedBitmapChangedAttribute->reset(index);
+}
+
+bool ValueSetting::setNextValue(const void* valPtr, uint32_t _size) {
     if(_size>size) return false;
     
     //copy the new value
-    std::memcpy(currentValue, nextValue, _size);
+    std::memcpy(nextValue, valPtr, _size);
     
     //set the relative field for set has changed
-    (*sharedBitmapChangedAttribute)[index]=1;
+    sharedBitmapChangedAttribute->set(index);
     return true;
 }
 
@@ -75,8 +80,6 @@ void ChannelSetting::init(void *initData) throw(chaos::CException) {
          it++) {
         it->second->sharedBitmapChangedAttribute = bitmapChangedAttribute;
     }
-    
-    bitmapChangedAttribute->clear();
 }
 
 //! Deinit the implementation
@@ -116,9 +119,19 @@ void ChannelSetting::addAttribute(string name, uint32_t size, chaos::DataType::D
 
 }
 
+void ChannelSetting::getAttributeNames(std::vector<std::string>& names) {
+    
+    //get all names
+    for(map<string, AttributeIndexType>::iterator it = mapAttributeNameIndex.begin();
+        it != mapAttributeNameIndex.end();
+        it++) {
+        names.push_back(it->first);
+    }
+}
+
 //! set the value for the index
 void ChannelSetting::setValueForAttribute(AttributeIndexType n, const void * value, uint32_t size) {
-    mapAttributeIndexSettings[n]->setDestinationValue(value, size);
+    mapAttributeIndexSettings[n]->setNextValue(value, size);
 }
 
 AttributeIndexType ChannelSetting::getIndexForName( string name ) {
@@ -134,9 +147,9 @@ ValueSetting *ChannelSetting::getValueSettingForIndex(AttributeIndexType index) 
 //!
 void ChannelSetting::getChangedIndex(std::vector<AttributeIndexType>& changedIndex) {
     size_t index = 0;
-    changedIndex.push_back(index = bitmapChangedAttribute->find_first());
-    while(index != boost::dynamic_bitset<BitBlockDimension>::npos)
-    {
+    index = bitmapChangedAttribute->find_first();
+    while(index != boost::dynamic_bitset<BitBlockDimension>::npos) {
+        changedIndex.push_back(index);
         /* do something */
         index = bitmapChangedAttribute->find_next(index);
     }
