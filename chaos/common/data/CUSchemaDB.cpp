@@ -181,10 +181,10 @@ void CUSchemaDB::addAttributeToDataSet(const char*const attributeDeviceID,
     
     switch (attributeType) {
         case DataType::TYPE_BOOLEAN:
-            typeMaxDimension = 1;
+            typeMaxDimension = sizeof(bool);   //bson type
             break;
         case DataType::TYPE_DOUBLE:
-            typeMaxDimension = 8;	//8 bytes (64-bit IEEE 754 floating point)
+            typeMaxDimension = sizeof(double);	//8 bytes (64-bit IEEE 754 floating point)
             break;
         case DataType::TYPE_INT32:
             typeMaxDimension = sizeof(int32_t);

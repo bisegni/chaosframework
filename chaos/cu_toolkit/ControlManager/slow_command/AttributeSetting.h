@@ -1,5 +1,5 @@
 /*
- *	ChannelSetting.h
+ *	AttributeSetting.h
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__ChannelSetting__
-#define __CHAOSFramework__ChannelSetting__
+#ifndef __CHAOSFramework__AttributeSetting__
+#define __CHAOSFramework__AttributeSetting__
 
 #include <map>
 #include <string>
@@ -40,13 +40,13 @@ namespace chaos{
                 
                 using namespace std;
                 
-                class ChannelSetting;
+                class AttributeSetting;
 
                 typedef void * SettingValuePtr;
                 
             
                 struct ValueSetting {
-                    friend class ChannelSetting;
+                    friend class AttributeSetting;
                     const uint32_t                      index;
                     const uint32_t                      size;
                     const chaos::DataType::DataType     type;
@@ -66,6 +66,8 @@ namespace chaos{
                     
                     bool setNextValue(const void* valPtr, uint32_t _size);
                     
+                    bool setDefaultValue(const void* valPtr, uint32_t _size);
+                    
                     template<typename T>
                     T* getNextValue() {
                         return static_cast<T*>(nextValue);
@@ -80,7 +82,7 @@ namespace chaos{
                 //-----------------------------------------------------------------------------------------------------------------------------
 
                 
-                class ChannelSetting : public utility::InizializableService {
+                class AttributeSetting : public utility::InizializableService {
                     
                     AttributeIndexType index;
 
@@ -93,13 +95,14 @@ namespace chaos{
                     //! This field point to a custom memory shared by cu and all command
                     void *customData;
                     
-                    ChannelSetting();
+                    AttributeSetting();
                     
-                    ~ChannelSetting();
+                    ~AttributeSetting();
                     
                     void addAttribute(string name, uint32_t size, chaos::DataType::DataType type);
                     
                     void setValueForAttribute(AttributeIndexType n, const void * value, uint32_t size);
+                    void setDefaultValueForAttribute(AttributeIndexType n, const void * value, uint32_t size);
                     
                     AttributeIndexType getIndexForName( string name );
                     
@@ -121,4 +124,4 @@ namespace chaos{
     }
 }
 
-#endif /* defined(__CHAOSFramework__ChannelSetting__) */
+#endif /* defined(__CHAOSFramework__AttributeSetting__) */

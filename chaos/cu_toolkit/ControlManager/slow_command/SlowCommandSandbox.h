@@ -22,7 +22,7 @@
 
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommand.h>
-#include <chaos/cu_toolkit/ControlManager/slow_command/ChannelSetting.h>
+#include <chaos/cu_toolkit/ControlManager/slow_command/AttributeSetting.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandTypes.h>
 
 namespace chaos{
@@ -133,7 +133,7 @@ namespace chaos{
                         of the input channel or shared variable setting,
                         used into the control algoritm.
                      */
-                    ChannelSetting sharedChannelSetting;
+                    AttributeSetting sharedAttributeSetting;
                     
                     //! contain the paused command
                     std::stack<SlowCommand*> commandStack;

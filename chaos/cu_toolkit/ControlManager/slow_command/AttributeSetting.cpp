@@ -1,5 +1,5 @@
 /*
- *	ChannelSetting.cpp
+ *	AttributeSetting.cpp
  *	!CHAOS
  *	Created by Bisegni Claudio.
  *
@@ -19,11 +19,11 @@
  */
 
 #include <string>
-#include <chaos/cu_toolkit/ControlManager/slow_command/ChannelSetting.h>
+#include <chaos/cu_toolkit/ControlManager/slow_command/AttributeSetting.h>
 
-#define CSLAPP_ LAPP_ << "[ChannelSetting-" << "] "
-#define CSLDBG_ LDBG_ << "[ChannelSetting-" << "] "
-#define CSLERR_ LERR_ << "[ChannelSetting-" << "] "
+#define CSLAPP_ LAPP_ << "[AttributeSetting-" << "] "
+#define CSLDBG_ LDBG_ << "[AttributeSetting-" << "] "
+#define CSLERR_ LERR_ << "[AttributeSetting-" << "] "
 
 using namespace std;
 using namespace chaos::cu::control_manager::slow_command;
@@ -60,20 +60,31 @@ bool ValueSetting::setNextValue(const void* valPtr, uint32_t _size) {
     return true;
 }
 
+bool ValueSetting::setDefaultValue(const void* valPtr, uint32_t _size) {
+    if(_size>size) return false;
+    
+    //copy the new value
+    std::memcpy(currentValue, valPtr, _size);
+    
+    //set the relative field for set has changed
+    sharedBitmapChangedAttribute->reset(index);
+    return true;
+}
+
 //-----------------------------------------------------------------------------------------------------------------------------
 
-ChannelSetting::ChannelSetting() {
+AttributeSetting::AttributeSetting() {
     bitmapChangedAttribute = NULL;
 }
 
-ChannelSetting::~ChannelSetting() {
+AttributeSetting::~AttributeSetting() {
     if(bitmapChangedAttribute) delete(bitmapChangedAttribute);
 }
 
 //! Initialize instance
-void ChannelSetting::init(void *initData) throw(chaos::CException) {
+void AttributeSetting::init(void *initData) throw(chaos::CException) {
     bitmapChangedAttribute = new boost::dynamic_bitset<BitBlockDimension>(mapAttributeIndexSettings.size());
-    if(!bitmapChangedAttribute) throw CException(1, "Error allocating memory for map bit", "ChannelSetting::init");
+    if(!bitmapChangedAttribute) throw CException(1, "Error allocating memory for map bit", "AttributeSetting::init");
    
     for (map<AttributeIndexType, boost::shared_ptr<ValueSetting> >::iterator it = mapAttributeIndexSettings.begin() ;
          it != mapAttributeIndexSettings.end();
@@ -83,7 +94,7 @@ void ChannelSetting::init(void *initData) throw(chaos::CException) {
 }
 
 //! Deinit the implementation
-void ChannelSetting::deinit() throw(chaos::CException) {
+void AttributeSetting::deinit() throw(chaos::CException) {
     //remove all ValueSetting instance
    /* for (map<AttributeIndexType, boost::shared_ptr<ValueSetting> >::iterator it = mapAttributeIndexSettings.begin() ;
          it != mapAttributeIndexSettings.end();
@@ -99,10 +110,10 @@ void ChannelSetting::deinit() throw(chaos::CException) {
 }
 
 //!
-void ChannelSetting::addAttribute(string name, uint32_t size, chaos::DataType::DataType type) {
+void AttributeSetting::addAttribute(string name, uint32_t size, chaos::DataType::DataType type) {
     
     if(InizializableService::serviceState != utility::InizializableServiceType::IS_DEINTIATED)
-        throw CException(1, "Attribute can be added only in deinitilized state", "ChannelSetting::addAttribute");
+        throw CException(1, "Attribute can be added only in deinitilized state", "AttributeSetting::addAttribute");
     
     if(mapAttributeNameIndex.count(name)) return;
     
@@ -119,7 +130,7 @@ void ChannelSetting::addAttribute(string name, uint32_t size, chaos::DataType::D
 
 }
 
-void ChannelSetting::getAttributeNames(std::vector<std::string>& names) {
+void AttributeSetting::getAttributeNames(std::vector<std::string>& names) {
     
     //get all names
     for(map<string, AttributeIndexType>::iterator it = mapAttributeNameIndex.begin();
@@ -130,22 +141,27 @@ void ChannelSetting::getAttributeNames(std::vector<std::string>& names) {
 }
 
 //! set the value for the index
-void ChannelSetting::setValueForAttribute(AttributeIndexType n, const void * value, uint32_t size) {
+void AttributeSetting::setDefaultValueForAttribute(AttributeIndexType n, const void * value, uint32_t size) {
+    mapAttributeIndexSettings[n]->setDefaultValue(value, size);
+}
+
+//! set the value for the index
+void AttributeSetting::setValueForAttribute(AttributeIndexType n, const void * value, uint32_t size) {
     mapAttributeIndexSettings[n]->setNextValue(value, size);
 }
 
-AttributeIndexType ChannelSetting::getIndexForName( string name ) {
+AttributeIndexType AttributeSetting::getIndexForName( string name ) {
     return mapAttributeNameIndex[name];
 }
 
-ValueSetting *ChannelSetting::getValueSettingForIndex(AttributeIndexType index) {
+ValueSetting *AttributeSetting::getValueSettingForIndex(AttributeIndexType index) {
     if(!mapAttributeIndexSettings.count(index)) return NULL;
         
     return mapAttributeIndexSettings[index].get();
 }
 
 //!
-void ChannelSetting::getChangedIndex(std::vector<AttributeIndexType>& changedIndex) {
+void AttributeSetting::getChangedIndex(std::vector<AttributeIndexType>& changedIndex) {
     size_t index = 0;
     index = bitmapChangedAttribute->find_first();
     while(index != boost::dynamic_bitset<BitBlockDimension>::npos) {

@@ -41,30 +41,30 @@ chaos::cu::DeviceSchemaDB  *cccs::SlowCommand::getDeviceDatabase() {
 }
 
 void cccs::SlowCommand::getChangedAttributeIndex(std::vector<AttributeIndexType>& changedIndex) {
-    CHAOS_ASSERT(sharedChannelSettingPtr)
-    return sharedChannelSettingPtr->getChangedIndex(changedIndex);
+    CHAOS_ASSERT(sharedAttributeSettingPtr)
+    return sharedAttributeSettingPtr->getChangedIndex(changedIndex);
 }
 
 cccs::ValueSetting *cccs::SlowCommand::getValueSetting(cccs::AttributeIndexType attributeIndex) {
-    CHAOS_ASSERT(sharedChannelSettingPtr)
-    return sharedChannelSettingPtr->getValueSettingForIndex(attributeIndex);
+    CHAOS_ASSERT(sharedAttributeSettingPtr)
+    return sharedAttributeSettingPtr->getValueSettingForIndex(attributeIndex);
 }
 
 cccs::ValueSetting *cccs::SlowCommand::getValueSetting(const char *keyName) {
-    CHAOS_ASSERT(sharedChannelSettingPtr)
-    cccs::AttributeIndexType index = sharedChannelSettingPtr->getIndexForName(keyName);
-    return sharedChannelSettingPtr->getValueSettingForIndex(index);
+    CHAOS_ASSERT(sharedAttributeSettingPtr)
+    cccs::AttributeIndexType index = sharedAttributeSettingPtr->getIndexForName(keyName);
+    return sharedAttributeSettingPtr->getValueSettingForIndex(index);
 }
 
 void cccs::SlowCommand::setValueSettingForKey(const char *keyName, void * value, uint32_t size) {
-    CHAOS_ASSERT(sharedChannelSettingPtr)
-    cccs::AttributeIndexType index = sharedChannelSettingPtr->getIndexForName(keyName);
-    sharedChannelSettingPtr->setValueForAttribute(index, value, size);
+    CHAOS_ASSERT(sharedAttributeSettingPtr)
+    cccs::AttributeIndexType index = sharedAttributeSettingPtr->getIndexForName(keyName);
+    sharedAttributeSettingPtr->setValueForAttribute(index, value, size);
 }
 
 void cccs::SlowCommand::getAttributeNames(std::vector<std::string>& names) {
-    CHAOS_ASSERT(sharedChannelSettingPtr)
-    sharedChannelSettingPtr->getAttributeNames(names);
+    CHAOS_ASSERT(sharedAttributeSettingPtr)
+    sharedAttributeSettingPtr->getAttributeNames(names);
 }
 
 /*

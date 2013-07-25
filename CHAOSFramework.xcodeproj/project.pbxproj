@@ -341,8 +341,8 @@
 		32D3EAAB1793F70000405A3E /* DeviceSchemaDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D3EAA91793F70000405A3E /* DeviceSchemaDB.h */; };
 		32D3EAAC1793F70000405A3E /* DeviceSchemaDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D3EAAA1793F70000405A3E /* DeviceSchemaDB.cpp */; };
 		32D3EAAE1794340200405A3E /* SlowCommandTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D3EAAD1794340200405A3E /* SlowCommandTypes.h */; };
-		32D3EAB517943EBC00405A3E /* ChannelSetting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D3EAB317943EBC00405A3E /* ChannelSetting.cpp */; };
-		32D3EAB617943EBC00405A3E /* ChannelSetting.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D3EAB417943EBC00405A3E /* ChannelSetting.h */; };
+		32D3EAB517943EBC00405A3E /* AttributeSetting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D3EAB317943EBC00405A3E /* AttributeSetting.cpp */; };
+		32D3EAB617943EBC00405A3E /* AttributeSetting.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D3EAB417943EBC00405A3E /* AttributeSetting.h */; };
 		32D421B317271572008A326E /* BsonFragment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D421B117271572008A326E /* BsonFragment.cpp */; };
 		32D421B417271572008A326E /* BsonFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D421B217271572008A326E /* BsonFragment.h */; };
 		32D5CB32179D233E00A8427E /* chaos_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D5CB31179D233E00A8427E /* chaos_types.h */; };
@@ -757,8 +757,8 @@
 		32D3EAA91793F70000405A3E /* DeviceSchemaDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSchemaDB.h; sourceTree = "<group>"; };
 		32D3EAAA1793F70000405A3E /* DeviceSchemaDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceSchemaDB.cpp; sourceTree = "<group>"; };
 		32D3EAAD1794340200405A3E /* SlowCommandTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlowCommandTypes.h; sourceTree = "<group>"; };
-		32D3EAB317943EBC00405A3E /* ChannelSetting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChannelSetting.cpp; sourceTree = "<group>"; };
-		32D3EAB417943EBC00405A3E /* ChannelSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChannelSetting.h; sourceTree = "<group>"; };
+		32D3EAB317943EBC00405A3E /* AttributeSetting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AttributeSetting.cpp; sourceTree = "<group>"; };
+		32D3EAB417943EBC00405A3E /* AttributeSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeSetting.h; sourceTree = "<group>"; };
 		32D421B117271572008A326E /* BsonFragment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BsonFragment.cpp; sourceTree = "<group>"; };
 		32D421B217271572008A326E /* BsonFragment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BsonFragment.h; sourceTree = "<group>"; };
 		32D5CB31179D233E00A8427E /* chaos_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chaos_types.h; sourceTree = "<group>"; };
@@ -957,8 +957,8 @@
 				32234D3E176E045100525E0C /* SlowCommandExecutor.h */,
 				328E36F1178AFE0D00C1564D /* SlowCommandSandbox.cpp */,
 				328E36F2178AFE0D00C1564D /* SlowCommandSandbox.h */,
-				32D3EAB317943EBC00405A3E /* ChannelSetting.cpp */,
-				32D3EAB417943EBC00405A3E /* ChannelSetting.h */,
+				32D3EAB317943EBC00405A3E /* AttributeSetting.cpp */,
+				32D3EAB417943EBC00405A3E /* AttributeSetting.h */,
 				325F8B4F1763AF2300EFE616 /* SlowCommand.cpp */,
 				325F8B501763AF2300EFE616 /* SlowCommand.h */,
 				32234D41176E106B00525E0C /* SlowCommandException.h */,
@@ -1950,7 +1950,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				32698D4A179E8CD100D6638C /* SetAttributeCommand.h in Headers */,
-				32D3EAB617943EBC00405A3E /* ChannelSetting.h in Headers */,
+				32D3EAB617943EBC00405A3E /* AttributeSetting.h in Headers */,
 				32234D42176E106B00525E0C /* SlowCommandException.h in Headers */,
 				326DB4B914B3A3E50018A8D0 /* ChaosCUToolkit.h in Headers */,
 				326DB4BB14B3A3E50018A8D0 /* CommandManager.h in Headers */,
@@ -2254,7 +2254,7 @@
 				326DB4B814B3A3E50018A8D0 /* ChaosCUToolkit.cpp in Sources */,
 				326DB4BA14B3A3E50018A8D0 /* CommandManager.cpp in Sources */,
 				326DB4BF14B3A3E50018A8D0 /* AbstractControlUnit.cpp in Sources */,
-				32D3EAB517943EBC00405A3E /* ChannelSetting.cpp in Sources */,
+				32D3EAB517943EBC00405A3E /* AttributeSetting.cpp in Sources */,
 				3215860D178756B40090E7E6 /* AbstractDriverPlugin.cpp in Sources */,
 				326DB4C114B3A3E50018A8D0 /* ControlManager.cpp in Sources */,
 				32698D49179E8CD100D6638C /* SetAttributeCommand.cpp in Sources */,

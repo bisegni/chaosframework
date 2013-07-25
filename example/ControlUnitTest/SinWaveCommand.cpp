@@ -40,7 +40,7 @@ uint8_t SinWaveCommand::implementedHandler() {
 
 // Start the command execution
 void SinWaveCommand::setHandler(chaos::CDataWrapper *data) {
-    chaos::cu::DeviceSchemaDB *deviceDB = NULL;
+   // chaos::cu::DeviceSchemaDB *deviceDB = NULL;
     
     srand((unsigned)time(0));
     PI = acos((long double) -1);
@@ -49,7 +49,7 @@ void SinWaveCommand::setHandler(chaos::CDataWrapper *data) {
     
     pointSetting = getValueSetting((cccs::AttributeIndexType)0);
     points = pointSetting->getCurrentValue<uint32_t>();
-    if(data == NULL) {
+  /*  if(data == NULL) {
         //we are at default submition of the command
         deviceDB = getDeviceDatabase();
         if(deviceDB) {
@@ -62,7 +62,7 @@ void SinWaveCommand::setHandler(chaos::CDataWrapper *data) {
             }
             pointSetting->setNextValue(&defaultPointValue, sizeof(uint32_t));
         }
-    }
+    }*/
     setWavePoint();
 
     *(freq = getValueSetting((cccs::AttributeIndexType)1)->getCurrentValue<double>()) = 1.0;

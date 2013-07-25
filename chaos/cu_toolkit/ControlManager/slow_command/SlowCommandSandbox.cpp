@@ -48,7 +48,7 @@ void SlowCommandSandbox::init(void *initData) throw(chaos::CException) {
     correlationHandlerFunctor.cmdInstance = NULL;
     
     //initialize the shared channel setting
-    utility::InizializableService::initImplementation(sharedChannelSetting, initData, "ChannelSetting", "SlowCommandSandbox::init");
+    utility::InizializableService::initImplementation(sharedAttributeSetting, initData, "AttributeSetting", "SlowCommandSandbox::init");
     
     SCSLDBG_ << "Get base check time intervall for the scheduler";
     checkTimeIntervall = posix_time::milliseconds(DEFAULT_CHECK_TIME);
@@ -122,7 +122,7 @@ void SlowCommandSandbox::deinit() throw(chaos::CException) {
     SCSLAPP_ << "Command into the stack removed";
     
     //initialize the shared channel setting
-    utility::InizializableService::deinitImplementation(sharedChannelSetting, "ChannelSetting", "SlowCommandSandbox::init");
+    utility::InizializableService::deinitImplementation(sharedAttributeSetting, "AttributeSetting", "SlowCommandSandbox::init");
     
     //reset all the handler
     //setHandlerFunctor.cmdInstance = NULL;
@@ -290,7 +290,7 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
     //set current command
     currentExecutingCommand = cmdImpl;
     if(currentExecutingCommand) {
-        currentExecutingCommand->sharedChannelSettingPtr = &sharedChannelSetting;
+        currentExecutingCommand->sharedAttributeSettingPtr = &sharedAttributeSetting;
         //associate the keydata storage and the device database to the command
         currentExecutingCommand->keyDataStoragePtr = keyDataStoragePtr;
         currentExecutingCommand->deviceDatabasePtr = deviceSchemaDbPtr;

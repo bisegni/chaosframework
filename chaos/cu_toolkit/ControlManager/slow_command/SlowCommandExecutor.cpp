@@ -20,6 +20,8 @@
 
 #include <vector>
 
+#include <boost/lexical_cast.hpp>
+
 #include <chaos/common/global.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommand.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandExecutor.h>
@@ -41,7 +43,7 @@ SlowCommandExecutor::~SlowCommandExecutor() {}
 
 //! get access to the custom data pointer of the channel setting instance
 void SlowCommandExecutor::setSharedCustomDataPtr(void *customDataPtr) {
-    commandSandbox.sharedChannelSetting.customData = customDataPtr;
+    commandSandbox.sharedAttributeSetting.customData = customDataPtr;
 }
 
 // Initialize instance
@@ -59,19 +61,61 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
     SCELAPP_ << "Populating sandbox shared setting for device input attribute";
     deviceSchemaDbPtr->getDatasetAttributesName(DataType::Input, inputAttributeNames);
     
+    //add input attribute to shared setting
     RangeValueInfo attributeInfo;
-    for(std::vector<string>::iterator it = inputAttributeNames.begin();
-        it != inputAttributeNames.end();
-        it++) {
+    
+    for(int idx = 0;
+        idx < inputAttributeNames.size();
+        idx++) {
         
         // retrive the attribute description from the device database
-        deviceSchemaDbPtr->getAttributeRangeValueInfo(*it, attributeInfo);
+        deviceSchemaDbPtr->getAttributeRangeValueInfo(inputAttributeNames[idx], attributeInfo);
         
         // add the attribute to the shared setting object
-        commandSandbox.sharedChannelSetting.addAttribute(*it, attributeInfo.maxSize, attributeInfo.valueType);
+        commandSandbox.sharedAttributeSetting.addAttribute(inputAttributeNames[idx], attributeInfo.maxSize, attributeInfo.valueType);
     }
     
     utility::InizializableService::initImplementation(commandSandbox, initData, "SlowCommandSandbox", "SlowCommandExecutor::init");
+    
+    // we need to redo the cicle on the input attribute becaus we need to store the daulft values
+    // this is needed at this time because commandSandbox has been fully initializate
+    // and all memory space for the shared settings has been allocated
+    for(int idx = 0;
+        idx < inputAttributeNames.size();
+        idx++) {
+        // retrive the attribute description from the device database
+        deviceSchemaDbPtr->getAttributeRangeValueInfo(inputAttributeNames[idx], attributeInfo);
+
+        if(!attributeInfo.defaultValue.size()) continue;
+        
+        //setting value using index (the index into the sharedAttributeSetting are sequencial to the inserted order)
+        switch (attributeInfo.valueType) {
+            case DataType::TYPE_BOOLEAN : {
+                bool val = boost::lexical_cast<bool>(attributeInfo.defaultValue);
+                commandSandbox.sharedAttributeSetting.setValueForAttribute(idx, &val, sizeof(bool));
+                break;}
+            case DataType::TYPE_DOUBLE : {
+                double val = boost::lexical_cast<double>(attributeInfo.defaultValue);
+                commandSandbox.sharedAttributeSetting.setValueForAttribute(idx, &val, sizeof(double));
+                break;}
+            case DataType::TYPE_INT32 : {
+                int32_t val = boost::lexical_cast<int32_t>(attributeInfo.defaultValue);
+                commandSandbox.sharedAttributeSetting.setValueForAttribute(idx, &val, sizeof(int32_t));
+                break;}
+            case DataType::TYPE_INT64 : {
+                int64_t val = boost::lexical_cast<int64_t>(attributeInfo.defaultValue);
+                commandSandbox.sharedAttributeSetting.setValueForAttribute(idx, &val, sizeof(int64_t));
+                break;}
+            case DataType::TYPE_STRING : {
+                const char * val = attributeInfo.defaultValue.c_str();
+                commandSandbox.sharedAttributeSetting.setValueForAttribute(idx, val, (uint32_t)attributeInfo.defaultValue.size());
+                break;}
+            default:
+                break;
+                
+        }
+
+    }
     
     SCELAPP_ << "Check if we need to use the dafult command or we have pause instance";
     if(defaultCommandAlias.size()) {

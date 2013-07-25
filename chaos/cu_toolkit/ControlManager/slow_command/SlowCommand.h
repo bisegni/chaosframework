@@ -29,7 +29,7 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/ControlManager/DeviceSchemaDB.h>
-#include <chaos/cu_toolkit/ControlManager/slow_command/ChannelSetting.h>
+#include <chaos/cu_toolkit/ControlManager/slow_command/AttributeSetting.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandTypes.h>
 namespace chaos{
     namespace cu {
@@ -94,7 +94,7 @@ namespace chaos{
                     FaultDescription fDescription;
                     
                     //! shared setting across all slow command
-                    ChannelSetting *sharedChannelSettingPtr;
+                    AttributeSetting *sharedAttributeSettingPtr;
 
                     
                     //!Set Handlers definition
