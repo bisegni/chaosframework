@@ -101,6 +101,8 @@ void AttributeSetting::deinit() throw(chaos::CException) {
          it++) {
         delete(it->second);
     }*/
+    index = 0;
+    mapAttributeNameIndex.clear();
     mapAttributeIndexSettings.clear();
     if(bitmapChangedAttribute) {
        delete(bitmapChangedAttribute);
