@@ -190,9 +190,11 @@ void SlowCommandSandbox::checkNextCommand() {
                     //delete the command description
                     nextAvailableCommand.cmdImpl = NULL;
                     DELETE_OBJ_POINTER(nextAvailableCommand.cmdInfo)
-                    if(!hasAcquireOrCC) DELETE_OBJ_POINTER(nextAvailableCommand.cmdImpl)
                     DEBUG_CODE(SCSLDBG_ << "nextAvailableCommand.cmdInfo deleted";)
-                    
+                    if(!hasAcquireOrCC) {
+                        DELETE_OBJ_POINTER(nextAvailableCommand.cmdImpl)
+                        DEBUG_CODE(SCSLDBG_ << "cmdImpl deleted";)
+                    }
                 } else {
                     //submisison rule can't permit to remove the command
                     
@@ -288,19 +290,18 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
     CHAOS_ASSERT(cmdImpl)
     
     //set current command
-    currentExecutingCommand = cmdImpl;
-    if(currentExecutingCommand) {
-        currentExecutingCommand->sharedAttributeSettingPtr = &sharedAttributeSetting;
+    if(cmdImpl) {
+        cmdImpl->sharedAttributeSettingPtr = &sharedAttributeSetting;
         //associate the keydata storage and the device database to the command
-        currentExecutingCommand->keyDataStoragePtr = keyDataStoragePtr;
-        currentExecutingCommand->deviceDatabasePtr = deviceSchemaDbPtr;
+        cmdImpl->keyDataStoragePtr = keyDataStoragePtr;
+        cmdImpl->deviceDatabasePtr = deviceSchemaDbPtr;
         
-        uint8_t handlerMask = currentExecutingCommand->implementedHandler();
+        uint8_t handlerMask = cmdImpl->implementedHandler();
         //install the pointer of th ecommand into the respective handler functor
         
         //check set handler
         if(handlerMask & HandlerType::HT_Set) {
-            currentExecutingCommand->setHandler(setData);
+            cmdImpl->setHandler(setData);
         }
         
         if(handlerMask <= 1) {
@@ -309,10 +310,10 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
         }
         
         //acquire handler
-        if(handlerMask & HandlerType::HT_Acquisition) acquireHandlerFunctor.cmdInstance = currentExecutingCommand;
+        if(handlerMask & HandlerType::HT_Acquisition) acquireHandlerFunctor.cmdInstance = cmdImpl;
         
         //correlation commit
-        if(handlerMask & HandlerType::HT_Correlation) correlationHandlerFunctor.cmdInstance = currentExecutingCommand;
+        if(handlerMask & HandlerType::HT_Correlation) correlationHandlerFunctor.cmdInstance = cmdImpl;
         
         //set the schedule step delay (time intervall between twp sequnece of the scehduler step)
         if(cmdImpl->featuresFlag & FeatureFlagTypes::FF_SET_SCHEDULER_DELAY) {
@@ -320,9 +321,9 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
             DEBUG_CODE(SCSLDBG_ << "New scheduler time has been installed";)
             schedulerStepDelay = boost::chrono::milliseconds(setData->getUInt32Value(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL));
         }
-        
+        currentExecutingCommand = cmdImpl;
     } else {
-        //setHandlerFunctor.cmdInstance = NULL;
+        currentExecutingCommand = NULL;
         acquireHandlerFunctor.cmdInstance = NULL;
         correlationHandlerFunctor.cmdInstance = NULL;
     }

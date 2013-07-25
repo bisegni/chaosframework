@@ -31,8 +31,18 @@ using namespace std;
 using namespace boost;
 
 
+
+
 #define MAKE_KEY(key, tmp) entityDB->getIDForKey(key, tmp);\
                            mapDatasetKeyForID.insert(make_pair<const char *, uint32_t>(key, tmp));
+
+void RangeValueInfo::reset() {
+    defaultValue.clear();
+    maxRange.clear();
+    minRange.clear();
+    maxSize = 0;
+    valueType = (DataType::DataType)0;
+}
 
 CUSchemaDB::CUSchemaDB() {
     initDB("CUSchemaDB", false);

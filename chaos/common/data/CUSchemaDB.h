@@ -47,6 +47,9 @@ namespace chaos {
         string defaultValue;
         //!Type of the value
         DataType::DataType valueType;
+        
+        //! reset all filed
+        void reset();
     } RangeValueInfo;
     
     class CDataWrapper;

@@ -66,9 +66,9 @@ void SinWaveCommand::setHandler(chaos::CDataWrapper *data) {
     setWavePoint();
 
     *(freq = getValueSetting((cccs::AttributeIndexType)1)->getCurrentValue<double>()) = 1.0;
-    *(bias = getValueSetting((cccs::AttributeIndexType)2)->getCurrentValue<double>()) = 5.0;
+    *(bias = getValueSetting((cccs::AttributeIndexType)2)->getCurrentValue<double>()) = 0.0;
     *(phase = getValueSetting((cccs::AttributeIndexType)3)->getCurrentValue<double>()) = 0.0;
-    *(gain = getValueSetting((cccs::AttributeIndexType)4)->getCurrentValue<double>()) = 0.0;
+    *(gain = getValueSetting((cccs::AttributeIndexType)4)->getCurrentValue<double>()) = 5.0;
     *(gainNoise = getValueSetting((cccs::AttributeIndexType)5)->getCurrentValue<double>()) = 0.5;
     
    /*

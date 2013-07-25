@@ -68,6 +68,8 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
         idx < inputAttributeNames.size();
         idx++) {
         
+        attributeInfo.reset();
+        
         // retrive the attribute description from the device database
         deviceSchemaDbPtr->getAttributeRangeValueInfo(inputAttributeNames[idx], attributeInfo);
         
@@ -83,6 +85,9 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
     for(int idx = 0;
         idx < inputAttributeNames.size();
         idx++) {
+        
+        attributeInfo.reset();
+        
         // retrive the attribute description from the device database
         deviceSchemaDbPtr->getAttributeRangeValueInfo(inputAttributeNames[idx], attributeInfo);
 
