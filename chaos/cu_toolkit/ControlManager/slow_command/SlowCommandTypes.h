@@ -38,6 +38,12 @@ namespace chaos{
                 typedef  uint8_t BitBlockDimension;
                 typedef  uint16_t AttributeIndexType;
                 
+                
+                typedef struct {
+                    uint64_t lastCmdStepStart;
+                    uint64_t lastCmdStepTime;
+                } SandboxStat;
+                
                 /*!
                  Type used for the next available command impl and description 
                  into the sandbox

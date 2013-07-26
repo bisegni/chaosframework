@@ -33,12 +33,12 @@ namespace chaos {
         class ControManager;
         
         class SCAbstractControlUnit : public AbstractControlUnit {
-            cu::control_manager::slow_command::SlowCommandExecutor *slowCommandExecutor;
-
-        protected:
             friend class ControlManager;
             friend class DomainActionsScheduler;
 
+            //! Slow command executor pointer
+            cu::control_manager::slow_command::SlowCommandExecutor *slowCommandExecutor;
+            
             /*!
              Initialize the Custom Contro Unit and return the configuration
              */
@@ -54,17 +54,22 @@ namespace chaos {
              */
             void stop() throw(CException);
             
-            /*! 
+            /*!
              Deinit the Control Unit
              */
             void deinit() throw(CException);
-            
             /*
              Receive the event for set the dataset input element, this virtual method
              is empty because can be used by controlunit implementation
              */
             CDataWrapper* setDatasetAttribute(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException);
             
+        protected:
+            
+            virtual void defineSharedVariable();
+            
+            void addSharedVariable(std::string name, uint32_t max_size, chaos::DataType::DataType type);
+            void setSharedVariableValue(std::string name, void *value, uint32_t value_size);
         public:
             
             SCAbstractControlUnit();

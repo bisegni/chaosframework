@@ -80,6 +80,8 @@ namespace chaos{
                     friend class chaos::cu::SCAbstractControlUnit;
                     friend class SlowCommandExecutor;
                     
+                    //stat for the single step of the command execution
+                    SandboxStat stat;
                     
                     //-------shared data beetwen scheduler and checker thread------
                     bool            scheduleWorkFlag;
@@ -116,12 +118,8 @@ namespace chaos{
                     //!Mutex used for sincronize the introspection of the current command
                     //boost::mutex  pauseMutex;
                     
-
-                    
-
-                    
                     //! delay for the next beat of scheduler
-                    boost::chrono::milliseconds schedulerStepDelay;
+                    uint64_t schedulerStepDelay;
 
                     //! Pointers to the next available command implementation and information
                     CommandInfoAndImplementation nextAvailableCommand;

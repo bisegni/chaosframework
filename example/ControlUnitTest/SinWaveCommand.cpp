@@ -20,6 +20,9 @@
 #include "SinWaveCommand.h"
 #include <boost/lexical_cast.hpp>
 
+#define CMDCU_ LAPP_ << "[SinWaveCommand] - "
+
+
 using namespace chaos;
 namespace cccs = chaos::cu::control_manager::slow_command;
 
@@ -34,13 +37,13 @@ SinWaveCommand::~SinWaveCommand() {
 // return the implemented handler
 uint8_t SinWaveCommand::implementedHandler() {
     return  cccs::HandlerType::HT_Set |
-            cccs::HandlerType::HT_Acquisition |
-            cccs::HandlerType::HT_Correlation;
+    cccs::HandlerType::HT_Acquisition |
+    cccs::HandlerType::HT_Correlation;
 }
 
 // Start the command execution
 void SinWaveCommand::setHandler(chaos::CDataWrapper *data) {
-   // chaos::cu::DeviceSchemaDB *deviceDB = NULL;
+    // chaos::cu::DeviceSchemaDB *deviceDB = NULL;
     
     srand((unsigned)time(0));
     PI = acos((long double) -1);
@@ -49,35 +52,18 @@ void SinWaveCommand::setHandler(chaos::CDataWrapper *data) {
     
     pointSetting = getValueSetting((cccs::AttributeIndexType)0);
     points = pointSetting->getCurrentValue<uint32_t>();
-  /*  if(data == NULL) {
-        //we are at default submition of the command
-        deviceDB = getDeviceDatabase();
-        if(deviceDB) {
-            RangeValueInfo attributeInfo;
-            std::string pName = "points";
-            uint32_t defaultPointValue = 30;
-            deviceDB->getAttributeRangeValueInfo(pName, attributeInfo);
-            if(attributeInfo.defaultValue.size()) {
-                defaultPointValue = boost::lexical_cast<uint32_t>(attributeInfo.defaultValue);
-            }
-            pointSetting->setNextValue(&defaultPointValue, sizeof(uint32_t));
-        }
-    }*/
-    setWavePoint();
-
+    //setWavePoint();
     *(freq = getValueSetting((cccs::AttributeIndexType)1)->getCurrentValue<double>()) = 1.0;
     *(bias = getValueSetting((cccs::AttributeIndexType)2)->getCurrentValue<double>()) = 0.0;
     *(phase = getValueSetting((cccs::AttributeIndexType)3)->getCurrentValue<double>()) = 0.0;
     *(gain = getValueSetting((cccs::AttributeIndexType)4)->getCurrentValue<double>()) = 5.0;
     *(gainNoise = getValueSetting((cccs::AttributeIndexType)5)->getCurrentValue<double>()) = 0.5;
     
-   /*
-    freq = 1.0;
-    gain = 5.0;
-    phase = 0.0;
-    bias = 0.0;
-    gainNoise = 0.5;*/
-    LAPP_ << "SinWaveCommand::setHandler";
+    //custom variable
+    quitSharedVariable = getValueSetting((cccs::AttributeIndexType)6)->getCurrentValue<bool>();
+    
+    lastStartTime = 0;
+    CMDCU_ << "SinWaveCommand::setHandler";
 }
 
 // Aquire the necessary data for the command
@@ -86,42 +72,72 @@ void SinWaveCommand::setHandler(chaos::CDataWrapper *data) {
  \return the mask for the runnign state
  */
 void SinWaveCommand::acquireHandler() {
-    //chech if some parameter has changed
-    changedIndex.clear();
-    getChangedAttributeIndex(changedIndex);
-    if(changedIndex.size()) {
-        LAPP_ << "We have " << changedIndex.size() << " changed attribute";
-        for (int idx =0; idx < changedIndex.size(); idx++) {
-            cccs::ValueSetting *vSet = getValueSetting(changedIndex[idx]);
-            
-            //the index is correlated to the creation sequence so
-            //the index 0 is the first input parameter "frequency"
-            switch (vSet->index) {
-                case 0://points
-                    // apply the modification
-                    setWavePoint();
+    uint64_t timeDiff = shared_stat->lastCmdStepStart - lastStartTime;
+    
+    if(timeDiff > 10000 || (*quitSharedVariable)) {
+        //every ten seconds ste the state until reac the killable and
+        //the return to exec
+        lastStartTime = shared_stat->lastCmdStepStart;
+        if(!(*quitSharedVariable)) {
+            switch (SlowCommand::runningState) {
+                case chaos::cu::control_manager::slow_command::RunningStateType::RS_Exsc:
+                    SL_STACK_RUNNIG_STATE
+                    CMDCU_ << "Change to SL_STACK_RUNNIG_STATE";
                     break;
-                    
-                case 1:// frequency
-                   
+                case chaos::cu::control_manager::slow_command::RunningStateType::RS_Stack:
+                    SL_KILL_RUNNIG_STATE
+                    CMDCU_ << "Change to SL_KILL_RUNNIG_STATE";
                     break;
-                    
-                case 2:// bias
-                    
-                    break;
-                    
-                case 3:// phase
-                    break;
-                    
-                case 4:// gain
-                    
-                    break;
-                case 5:// gain_noise
-                    
+                case chaos::cu::control_manager::slow_command::RunningStateType::RS_Kill:
+                    SL_EXEC_RUNNIG_STATE
+                    CMDCU_ << "Change to SL_EXEC_RUNNIG_STATE";
                     break;
             }
+        } else {
+            SL_END_RUNNIG_STATE;
         }
-        
+    }
+    
+    //check if some parameter has changed every 100 msec
+    if(timeDiff > 100) {
+        getChangedAttributeIndex(changedIndex);
+        if(changedIndex.size()) {
+            CMDCU_ << "We have " << changedIndex.size() << " changed attribute";
+            for (int idx =0; idx < changedIndex.size(); idx++) {
+                cccs::ValueSetting *vSet = getValueSetting(changedIndex[idx]);
+                
+                //the index is correlated to the creation sequence so
+                //the index 0 is the first input parameter "frequency"
+                switch (vSet->index) {
+                    case 0://points
+                        // apply the modification
+                        setWavePoint();
+                        break;
+                        
+                    case 1:// frequency
+                        
+                        break;
+                        
+                    case 2:// bias
+                        
+                        break;
+                        
+                    case 3:// phase
+                        break;
+                        
+                    case 4:// gain
+                        
+                        break;
+                    case 5:// gain_noise
+                        
+                        break;
+                    case 6:// custom quit variable
+                        vSet->completed();
+                        break;
+                }
+            }
+            changedIndex.clear();
+        }
     }
     CDataWrapper *acquiredData = getNewDataWrapper();
     if(!acquiredData) return;
@@ -129,16 +145,14 @@ void SinWaveCommand::acquireHandler() {
     //put the messageID for test the lost of package
     acquiredData->addInt32Value("id", ++messageID);
     computeWave(acquiredData);
-
+    
     //submit acquired data
     pushDataSet(acquiredData);
-    
-    SL_STACK_RUNNIG_STATE;
 }
 
 // Correlation and commit phase
 void SinWaveCommand::ccHandler() {
-    SL_STACK_RUNNIG_STATE;
+    
 }
 
 void SinWaveCommand::computeWave(CDataWrapper *acquiredData) {

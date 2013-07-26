@@ -52,7 +52,7 @@ void SlowCommandSandbox::init(void *initData) throw(chaos::CException) {
     
     SCSLDBG_ << "Get base check time intervall for the scheduler";
     checkTimeIntervall = posix_time::milliseconds(DEFAULT_CHECK_TIME);
-    schedulerStepDelay = boost::chrono::milliseconds(DEFAULT_TIME_STEP_INTERVALL);
+    schedulerStepDelay = DEFAULT_TIME_STEP_INTERVALL;
     
     scheduleWorkFlag = false;
 }
@@ -146,16 +146,20 @@ void SlowCommandSandbox::checkNextCommand() {
         boost::recursive_mutex::scoped_lock lockOnNextCommandMutex(mutexNextCommandChecker);
         
         //compute the runnig state or fault
-        boost::mutex::scoped_lock lockForCurrentCommandMutex(mutextAccessCurrentCommand);
-        curCmdRunningState = currentExecutingCommand?currentExecutingCommand->runningState:RunningStateType::RS_End;
-        lockForCurrentCommandMutex.unlock();
+        boost::mutex::scoped_lock lockForCurrentCommandMutex(mutextAccessCurrentCommand, boost::try_to_lock);
+        if(lockForCurrentCommandMutex) {
+            curCmdRunningState = currentExecutingCommand?currentExecutingCommand->runningState:RunningStateType::RS_End;
+            lockForCurrentCommandMutex.unlock();
+        }else {
+            continue;
+        };
         
         if(curCmdRunningState) {
             
             //we have a state that permit to kill ora pause the command
             //check if the next comand need to besubmitted
             if(nextAvailableCommand.cmdImpl){  //we have a next available command
-                if(nextAvailableCommand.cmdImpl->submissionRule >= curCmdRunningState) {
+                if(curCmdRunningState >= nextAvailableCommand.cmdImpl->submissionRule) {
                     //we need to submit thewaiting new command
                     boost::mutex::scoped_lock lockForCurrentCommand(mutextAccessCurrentCommand);
                     
@@ -186,7 +190,6 @@ void SlowCommandSandbox::checkNextCommand() {
                     DEBUG_CODE(SCSLDBG_ << "Install next available command";)
                     installHandler(nextAvailableCommand.cmdImpl, nextAvailableCommand.cmdInfo?nextAvailableCommand.cmdInfo->element:NULL);
                     DEBUG_CODE(SCSLDBG_ << "Next available command installed";)
-                    
                     //delete the command description
                     nextAvailableCommand.cmdImpl = NULL;
                     DELETE_OBJ_POINTER(nextAvailableCommand.cmdInfo)
@@ -250,36 +253,33 @@ void SlowCommandSandbox::checkNextCommand() {
 void SlowCommandSandbox::runCommand() {
     bool canWork = scheduleWorkFlag;
     
-    //point to the time for the next check for the available command
-    high_resolution_clock::time_point runStart;
-    high_resolution_clock::time_point runEnd;
-    
+    //check if the current command has ended or need to be substitute
+    boost::mutex::scoped_lock lockForCurrentCommand(mutextAccessCurrentCommand);
     while(canWork) {
-        runStart = boost::chrono::steady_clock::now();
+        stat.lastCmdStepStart = boost::chrono::duration_cast<boost::chrono::milliseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count();
+        if(!lockForCurrentCommand) lockForCurrentCommand.lock();
         // call the acquire phase
         acquireHandlerFunctor();
         
         //call the correlation and commit phase();
         correlationHandlerFunctor();
         
-        //check if the current command has ended or need to be substitute
-        boost::mutex::scoped_lock lockForCurrentCommand(mutextAccessCurrentCommand,  boost::try_to_lock);
-        if(lockForCurrentCommand) {
-            curCmdRunningState = currentExecutingCommand?currentExecutingCommand->runningState:RunningStateType::RS_End;
+        curCmdRunningState = currentExecutingCommand?currentExecutingCommand->runningState:RunningStateType::RS_End;
+        if(!scheduleWorkFlag && curCmdRunningState) {
+            DEBUG_CODE(SCSLDBG_ << "The command is not int the state of exec and thread need to be stopped";)
+            canWork = false;
+            continue;
             
-            if(!scheduleWorkFlag && curCmdRunningState) {
-                DEBUG_CODE(SCSLDBG_ << "The command is not int the state of exec and thread nned to be stopped";)
-                canWork = false;
-                continue;
-                
-                if(curCmdRunningState & (RunningStateType::RS_End|RunningStateType::RS_Fault)) {
-                    threadSchedulerPauseCondition.wait();
-                }
+            if(curCmdRunningState & (RunningStateType::RS_End|RunningStateType::RS_Fault)) {
+                threadSchedulerPauseCondition.wait();
             }
         }
-        runEnd = boost::chrono::steady_clock::now();
-        // - boost::chrono::duration_cast<boost::chrono::milliseconds>(runEnd-runStart)
-        boost::this_thread::sleep_for(schedulerStepDelay);
+        //unloc
+        lockForCurrentCommand.unlock();
+        stat.lastCmdStepTime = boost::chrono::duration_cast<boost::chrono::milliseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count()-stat.lastCmdStepStart;
+        //
+        boost::this_thread::sleep_for(boost::chrono::milliseconds(schedulerStepDelay - stat.lastCmdStepTime));
+        
     }
     
     DEBUG_CODE(SCSLDBG_ << "Scheduler thread has finiscehd";)
@@ -319,8 +319,9 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
         if(cmdImpl->featuresFlag & FeatureFlagTypes::FF_SET_SCHEDULER_DELAY) {
             //we need to set a new delay between steps
             DEBUG_CODE(SCSLDBG_ << "New scheduler time has been installed";)
-            schedulerStepDelay = boost::chrono::milliseconds(setData->getUInt32Value(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL));
+            schedulerStepDelay = cmdImpl->schedulerStepsDelay;
         }
+        cmdImpl->shared_stat = &stat;
         currentExecutingCommand = cmdImpl;
     } else {
         currentExecutingCommand = NULL;

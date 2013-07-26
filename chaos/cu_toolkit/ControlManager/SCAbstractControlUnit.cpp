@@ -39,6 +39,12 @@ SCAbstractControlUnit::~SCAbstractControlUnit() {
     }
 }
 
+
+
+void SCAbstractControlUnit::defineSharedVariable() {
+    
+}
+
 /*
  Initialize the Custom Contro Unit and return the configuration
  */
@@ -46,8 +52,13 @@ void SCAbstractControlUnit::init() throw(CException) {
     LCCU_ << "Install default slow command for device " << DeviceSchemaDB::getDeviceID();
     installCommand<cucs::command::SetAttributeCommand>(cucs::SlowCommandSubmissionKey::ATTRIBUTE_SET_VALUE_CMD_ALIAS);
     
-    LCCU_ << "Initializing slow command sandbox" << DeviceSchemaDB::getDeviceID();
+    LCCU_ << "Initializing slow command sandbox for device " << DeviceSchemaDB::getDeviceID();
     utility::StartableService::initImplementation(slowCommandExecutor, (void*)NULL, "Slow Command Executor", "SCAbstractControlUnit::init");
+    
+    //now we can call funciton for custom definition of the shared variable
+    LCCU_ << "Setting up custom shared variable for device " << DeviceSchemaDB::getDeviceID();
+    defineSharedVariable();
+    
     //associate the data storage
     slowCommandExecutor->commandSandbox.keyDataStoragePtr = AbstractControlUnit::keyDataStorage;
     slowCommandExecutor->commandSandbox.deviceSchemaDbPtr = this; //control unit is it'self the database
@@ -101,3 +112,17 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAt
     slowCommandExecutor->submitCommand(datasetAttributeValues);
     return NULL;
 }
+
+void SCAbstractControlUnit::addSharedVariable(std::string name, uint32_t max_size, chaos::DataType::DataType type) {
+    // add the attribute to the shared setting object
+    slowCommandExecutor->commandSandbox.sharedAttributeSetting.addAttribute(name, max_size, type);
+}
+
+void SCAbstractControlUnit::setSharedVariableValue(std::string name, void *value, uint32_t value_size) {
+    // add the attribute to the shared setting object
+    cucs::AttributeIndexType attribute_index = 0;
+    if((attribute_index = slowCommandExecutor->commandSandbox.sharedAttributeSetting.getIndexForName(name))) {
+        slowCommandExecutor->commandSandbox.sharedAttributeSetting.setValueForAttribute(attribute_index, value, value_size);
+    }
+}
+

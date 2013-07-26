@@ -41,7 +41,9 @@ class SinWaveCommand : public cccs::SlowCommand {
     double *phase;
     double *bias;
     double *gainNoise;
-
+    bool *quitSharedVariable;
+    uint64_t lastStartTime;
+    
     long double PI;
     int32_t messageID;
     boost::mutex pointChangeMutex;

@@ -35,7 +35,8 @@ protected:
     /*
      Define the Control Unit Dataset and Actions
      */
-    virtual void defineActionAndDataset()throw(CException);
+    void defineActionAndDataset()throw(CException);
+    void defineSharedVariable();
 public:
     /*
      Construct a new CU with an identifier

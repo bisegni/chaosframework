@@ -49,11 +49,17 @@ namespace chaos{
                 //forward declaration
                 class SlowCommandExecutor;
                 
-#define SL_EXEC_RUNNIG_STATE chaos::cu::control_manager::slow_command::SlowCommand::runningState = chaos::cu::control_manager::slow_command::RunningStateType::RS_Exsc;
-#define SL_STACK_RUNNIG_STATE chaos::cu::control_manager::slow_command::SlowCommand::runningState = chaos::cu::control_manager::slow_command::RunningStateType::RS_Stack;
-#define SL_KILL_RUNNIG_STATE chaos::cu::control_manager::slow_command::SlowCommand::runningState = chaos::cu::control_manager::slow_command::RunningStateType::RS_Kill;
-#define SL_END_RUNNIG_STATE chaos::cu::control_manager::slow_command::SlowCommand::runningState = chaos::cu::control_manager::slow_command::RunningStateType::RS_End;
-#define SL_FAULT_RUNNIG_STATE chaos::cu::control_manager::slow_command::SlowCommand::runningState = chaos::cu::control_manager::slow_command::RunningStateType::RS_Fault;
+#define SL_EXEC_RUNNIG_STATE    chaos::cu::control_manager::slow_command::SlowCommand::runningState = chaos::cu::control_manager::slow_command::RunningStateType::RS_Exsc;
+#define SL_STACK_RUNNIG_STATE   chaos::cu::control_manager::slow_command::SlowCommand::runningState = chaos::cu::control_manager::slow_command::RunningStateType::RS_Stack;
+#define SL_KILL_RUNNIG_STATE    chaos::cu::control_manager::slow_command::SlowCommand::runningState = chaos::cu::control_manager::slow_command::RunningStateType::RS_Kill;
+#define SL_END_RUNNIG_STATE     chaos::cu::control_manager::slow_command::SlowCommand::runningState = chaos::cu::control_manager::slow_command::RunningStateType::RS_End;
+#define SL_FAULT_RUNNIG_STATE   chaos::cu::control_manager::slow_command::SlowCommand::runningState = chaos::cu::control_manager::slow_command::RunningStateType::RS_Fault;
+                
+#define SL_CHECK_EXEC_RUNNIG_STATE  (chaos::cu::control_manager::slow_command::SlowCommand::runningState & chaos::cu::control_manager::slow_command::RunningStateType::RS_Exsc)
+#define SL_CHECK_STACK_RUNNIG_STATE (chaos::cu::control_manager::slow_command::SlowCommand::runningState & chaos::cu::control_manager::slow_command::RunningStateType::RS_Stack)
+#define SL_CHECK_KILL_RUNNIG_STATE  (chaos::cu::control_manager::slow_command::SlowCommand::runningState & chaos::cu::control_manager::slow_command::RunningStateType::RS_Kill)
+#define SL_CHECK_END_RUNNIG_STATE   (chaos::cu::control_manager::slow_command::SlowCommand::runningState & chaos::cu::control_manager::slow_command::RunningStateType::RS_End)
+#define SL_CHECK_FAULT_RUNNIG_STATE (chaos::cu::control_manager::slow_command::SlowCommand::runningState & chaos::cu::control_manager::slow_command::RunningStateType::RS_Fault)
                 
                 //! Base cass for the slow command implementation
                 /*!
@@ -68,7 +74,8 @@ namespace chaos{
                     friend struct SetFunctor;
                     friend struct AcquireFunctor;
                     friend struct CorrelationFunctor;
-  
+
+                    
                     //! Features flags
                     /*!
                      A value that represent the submiossion state
@@ -77,7 +84,6 @@ namespace chaos{
                     
                     //features variable
                     uint32_t schedulerStepsDelay;
-                    
                     
                     //! Submission state
                     /*!
@@ -108,6 +114,10 @@ namespace chaos{
                     std::map<std::string, dm::driver::DriverAccessor*> *driversAccessorMap;
                     
                 protected:
+                    
+                    //Shared sandbox stat
+                    const SandboxStat *shared_stat;
+                    
                     //! Running state
                     /*!
                      A value composed by a set of RunningState element.
