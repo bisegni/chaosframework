@@ -124,7 +124,7 @@ entity::Entity* CUSchemaDB::getDeviceEntity(const string& deviceID) {
         //a new vector need to be added
     addDeviceId(deviceID);
     return deviceEntityMap[deviceID];
-}
+} 
 
 
 /*

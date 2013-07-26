@@ -26,6 +26,13 @@ using namespace chaos::utility;
 
 #define SS_LAPP LAPP_ << "[StartableService]- "
 
+StartableService::StartableService() {
+}
+
+StartableService::~StartableService() {
+    //memory for state machine is release by base class
+}
+
 //! Start the implementation
 void StartableService::start() throw(chaos::CException) {
     
@@ -44,6 +51,55 @@ bool StartableService::stopImplementation(StartableService& impl, const char * c
     return stopImplementation(&impl, implName,  domainString);
 }
 
+bool StartableService::initImplementation(StartableService& impl, void *initData, const char * const implName,  const char * const domainString) {
+    return initImplementation(&impl, initData, implName,  domainString);
+}
+
+bool StartableService::deinitImplementation(StartableService& impl, const char * const implName,  const char * const domainString) {
+    return deinitImplementation(&impl, implName,  domainString);
+}
+
+/*!
+ */
+bool StartableService::initImplementation(StartableService *impl, void *initData, const char * const implName,  const char * const domainString)  {
+    bool result = true;
+    try {
+        if(impl == NULL) throw CException(0, "Implementation is null", domainString);
+        SS_LAPP  << "Initializing " << implName;
+        if(impl->StartableService::state_machine.process_event(service_state_machine::EventType::initialize()) == boost::msm::back::HANDLED_TRUE) {
+            impl->init(initData);
+            impl->serviceState = InizializableServiceType::IS_INITIATED;
+        }else {
+            throw CException(0, "Service cant be initialized", domainString);
+        }
+        SS_LAPP  << implName << "Initialized";
+    } catch (CException ex) {
+        SS_LAPP  << "Error initializing " << implName;
+        throw ex;
+    }
+    return result;
+}
+
+/*!
+ */
+bool StartableService::deinitImplementation(StartableService *impl, const char * const implName,  const char * const domainString) {
+    bool result = true;
+    try {
+        if(impl == NULL) throw CException(0, "Implementation is null", domainString);
+        SS_LAPP  << "Deinitializing " << implName;
+        if(impl->StartableService::state_machine.process_event(service_state_machine::EventType::deinitialize()) == boost::msm::back::HANDLED_TRUE) {
+            impl->deinit();
+            impl->serviceState = InizializableServiceType::IS_DEINTIATED;
+        }else {
+            throw CException(0, "Service cant be deinitialize", domainString);
+        }
+        SS_LAPP  << implName << "Deinitialized";
+    } catch (CException ex) {
+        SS_LAPP  << "Error Deinitializing " << implName;
+        throw ex;
+    }
+    return result;
+}
 /*!
  */
 bool StartableService::startImplementation(StartableService *impl, const char * const implName,  const char * const domainString) {
@@ -51,9 +107,12 @@ bool StartableService::startImplementation(StartableService *impl, const char * 
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
         SS_LAPP  << "Starting " << implName;
-        impl->serviceState = StartableServiceType::SS_STARTING;
-        impl->start();
-        impl->serviceState = StartableServiceType::SS_STARTED;
+        if(impl->StartableService::state_machine.process_event(service_state_machine::EventType::start()) == boost::msm::back::HANDLED_TRUE) {
+            impl->start();
+            impl->serviceState = StartableServiceType::SS_STARTED;
+        }else {
+            throw CException(0, "Service cant be started", domainString);
+        }
         SS_LAPP  << implName << " Started";
     } catch (CException ex) {
         SS_LAPP  << "Error Starting " << implName;
@@ -69,9 +128,12 @@ bool StartableService::stopImplementation(StartableService *impl, const char * c
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
         SS_LAPP  << "Stopping " << implName;
-        impl->serviceState = StartableServiceType::SS_STOPPING;
-        impl->stop();
-        impl->serviceState = StartableServiceType::SS_STOPPED;
+        if(impl->StartableService::state_machine.process_event(service_state_machine::EventType::stop())  == boost::msm::back::HANDLED_TRUE) {
+            impl->stop();
+            impl->serviceState = StartableServiceType::SS_STOPPED;
+        }else {
+            throw CException(0, "Service cant be stopped", domainString);
+        }
         SS_LAPP  << implName << " Stopped";
     } catch (CException ex) {
         SS_LAPP  << "Error Starting " << implName;

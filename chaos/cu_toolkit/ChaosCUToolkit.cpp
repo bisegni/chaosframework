@@ -127,17 +127,24 @@ void ChaosCUToolkit::start(bool waithUntilEnd, bool deinitiOnEnd){
         exit(1);
     }
         //execute the deinitialization of CU
-    if(waithUntilEnd && deinitiOnEnd)deinit();
+    if(waithUntilEnd && deinitiOnEnd) {
+        stop();
+        deinit();
+    }
 }
 
 /*
  Stop the toolkit execution
  */
 void ChaosCUToolkit::stop() {
-    SetupStateManager::levelDownFrom(2, "ChaosCUToolkit already stoped");
-    //lock lk(monitor);
-        //unlock the condition for end start method
-    //endWaithCondition.notify_one();
+    //SetupStateManager::levelDownFrom(2, "ChaosCUToolkit already stoped");
+
+    
+    //stop command manager, this manager must be the last to startup
+    LAPP_ << "Starting Command Manager";
+    CommandManager::getInstance()->stop();
+    LAPP_ << "Command Manager Started";
+    
     waitCloseSemaphore.unlock();
 }
 

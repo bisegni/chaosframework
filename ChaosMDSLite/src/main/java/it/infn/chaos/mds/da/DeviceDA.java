@@ -43,7 +43,6 @@ public class DeviceDA extends DataAccess {
 	}
 
 	/**
-	 * 
 	 * @param deviceIdentification
 	 * @return
 	 * @throws Exception
@@ -72,7 +71,6 @@ public class DeviceDA extends DataAccess {
 	}
 
 	/**
-	 * 
 	 * @param deviceIdentification
 	 * @param init
 	 * @throws SQLException
@@ -99,7 +97,6 @@ public class DeviceDA extends DataAccess {
 	}
 
 	/**
-	 * 
 	 * @param deviceIdentifiation
 	 * @return
 	 * @throws Throwable
@@ -109,7 +106,6 @@ public class DeviceDA extends DataAccess {
 	}
 
 	/**
-	 * 
 	 * @param deviceIdentifiation
 	 * @return
 	 * @throws Exception
@@ -153,9 +149,8 @@ public class DeviceDA extends DataAccess {
 	}
 
 	/**
-	 * 
 	 * @return
-	 * @throws Throwable 
+	 * @throws Throwable
 	 */
 	public List<Device> getAllActiveDevice() throws Throwable {
 		return getAllDevice();
@@ -163,7 +158,6 @@ public class DeviceDA extends DataAccess {
 	}
 
 	/**
-	 * 
 	 * @param deviceIdentification
 	 * @throws Throwable
 	 */
@@ -172,7 +166,6 @@ public class DeviceDA extends DataAccess {
 	}
 
 	/**
-	 * 
 	 * @param deviceIdentification
 	 * @throws SQLException
 	 */
@@ -321,7 +314,6 @@ public class DeviceDA extends DataAccess {
 	}
 
 	/**
-	 * 
 	 * @param deviceIdentification
 	 * @throws SQLException
 	 */
@@ -364,7 +356,7 @@ public class DeviceDA extends DataAccess {
 	 */
 	public Dataset insertNewDataset(Dataset ds) throws Exception {
 		InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder();
-		iuBuilder.addColumnAndValue("timestamp", (ds.getTimestamp()!=null?ds.getTimestamp():"$CURRENT_TIMESTAMP"));
+		iuBuilder.addColumnAndValue("timestamp", (ds.getTimestamp() != null ? new java.sql.Timestamp(ds.getTimestamp().getDate().getTime()) : "$CURRENT_TIMESTAMP"));
 		iuBuilder.fillWithBusinessClass(ds);
 		PreparedStatement ps = getPreparedStatementForInputUpdateBuilder(iuBuilder);
 		iuBuilder.fillPreparedStatement(ps);
@@ -389,11 +381,13 @@ public class DeviceDA extends DataAccess {
 	 */
 	public boolean isDSChanged(String devicedeviceIdentification, Vector<DatasetAttribute> dsAttrbiuteToUpdate) throws Throwable {
 		boolean result = false;
-		if (devicedeviceIdentification == null
-			|| dsAttrbiuteToUpdate == null || dsAttrbiuteToUpdate.size() == 0)
+		if (devicedeviceIdentification == null || dsAttrbiuteToUpdate == null || dsAttrbiuteToUpdate.size() == 0)
 			return false;
 		boolean matchHasBeenFound = false;
 		Dataset storedDS = getLastDatasetForDeviceIdentification(devicedeviceIdentification);
+
+		if (storedDS == null)
+			return true;
 
 		// check the num of the element
 		if (dsAttrbiuteToUpdate.size() != storedDS.getAttributes().size())
@@ -436,7 +430,6 @@ public class DeviceDA extends DataAccess {
 	}
 
 	/**
-	 * 
 	 * @param idDevice
 	 * @throws SQLException
 	 */
@@ -450,7 +443,6 @@ public class DeviceDA extends DataAccess {
 	}
 
 	/**
-	 * 
 	 * @param datasetAttribute
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException

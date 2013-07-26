@@ -45,11 +45,12 @@ namespace cccs = chaos::cu::control_manager::slow_command;
 #define OPT_SCHEDULE_TIME   "stime"
 #define OPT_PRINT_STATE     "print-state"
 //--------------slow contorol option------------------
-#define OPT_SL_ALIAS                    "sc-alias"
-#define OPT_SL_PRIORITY                 "sc-priority"
-#define OPT_SL_SUBMISSION_RULE          "sc-sub-rule"
-#define OPT_SL_COMMAND_DATA             "sc-cmd-data"
-#define OPT_SL_COMMAND_SCHEDULE_DELAY   "sc-cmd-sched-delay"
+#define OPT_SL_ALIAS                            "sc-alias"
+#define OPT_SL_PRIORITY                         "sc-priority"
+#define OPT_SL_SUBMISSION_RULE                  "sc-sub-rule"
+#define OPT_SL_COMMAND_DATA                     "sc-cmd-data"
+#define OPT_SL_COMMAND_SCHEDULE_DELAY           "sc-cmd-sched-delay"
+#define OPT_SL_COMMAND_SUBMISSION_RETRY_DELAY   "sc-cmd-submission-retry-delay"
 
 inline ptime utcToLocalPTime(ptime utcPTime){
 	c_local_adjustor<ptime> utcToLocalAdjustor;
@@ -97,6 +98,8 @@ int main (int argc, char* argv[] )
         string scUserData;
         uint32_t scSubmissionPriority;
         uint32_t scSubmissionSchedulerDelay;
+        uint32_t scSubmissionSubmissionRetryDelay;
+        
         CDeviceNetworkAddress deviceNetworkAddress;
         CUStateKey::ControlUnitState deviceState;
        
@@ -110,6 +113,7 @@ int main (int argc, char* argv[] )
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_PRIORITY, po::value<uint32_t>(&scSubmissionPriority)->default_value(50), "The priority used for submit the command for the slow control cu");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_DATA, po::value<string>(&scUserData), "The bson pack (in text format) sent to the set handler of the command for the slow");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_SCHEDULE_DELAY, po::value<uint32_t>(&scSubmissionSchedulerDelay)->default_value(1000), "The millisecond beetwen a step an the next of the scheduler[in milliseconds]");
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_SUBMISSION_RETRY_DELAY, po::value<uint32_t>(&scSubmissionSubmissionRetryDelay)->default_value(0), "The millisecond beetwen submission checker run");
         //! [UIToolkit Attribute Init]
         
         //! [UIToolkit Init]
@@ -211,6 +215,10 @@ int main (int argc, char* argv[] )
                     bool canBeExecuted = scAlias.size() > 0;
                     canBeExecuted = canBeExecuted && (checkSubmissionRule(scSubmissionRule) != -1);
                     if(canBeExecuted) {
+                        if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_SUBMISSION_RETRY_DELAY)) {
+                            std::cout << "Custom checker delay submitted -> " << scSubmissionSubmissionRetryDelay << std::endl;
+                        }
+                        
                         if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_DATA)) {
                             userData.reset(new CDataWrapper());
                             if(userData.get())userData->setSerializedJsonData(scUserData.c_str());
@@ -219,7 +227,7 @@ int main (int argc, char* argv[] )
                             std::cout << userData->getJSONString() << std::endl;
                             std::cout << "-----------------------------------------" << std::endl;
                         }
-                        err = controller->submitSlowControlCommand(scAlias, static_cast<cccs::SubmissionRuleType::SubmissionRule>(checkSubmissionRule(scSubmissionRule)), scSubmissionPriority, scSubmissionSchedulerDelay, userData.get());
+                        err = controller->submitSlowControlCommand(scAlias, static_cast<cccs::SubmissionRuleType::SubmissionRule>(checkSubmissionRule(scSubmissionRule)), scSubmissionPriority, scSubmissionSchedulerDelay, scSubmissionSubmissionRetryDelay, userData.get());
                         if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to deinit state");
                     } else {
                         throw CException(29, "Device can't be in deinit state", "Set device schedule time");

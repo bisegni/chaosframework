@@ -86,7 +86,7 @@ namespace chaos{
                     
                     AttributeIndexType index;
 
-                    boost::dynamic_bitset<BitBlockDimension> *bitmapChangedAttribute;
+                    boost::dynamic_bitset<BitBlockDimension> bitmapChangedAttribute;
                     
                     map<string, AttributeIndexType> mapAttributeNameIndex;
                     map<AttributeIndexType, boost::shared_ptr<ValueSetting> > mapAttributeIndexSettings;

@@ -83,3 +83,9 @@ void SCWorkerCU::defineActionAndDataset() throw(CException) {
                           DataType::Input);
 
 }
+
+void SCWorkerCU::defineSharedVariable() {
+    bool quit = false;
+    addSharedVariable("quit", 1, chaos::DataType::TYPE_BOOLEAN);
+    setSharedVariableValue("quit", &quit, sizeof(bool));
+}

@@ -26,7 +26,7 @@ using namespace std;
 using namespace chaos;
 using namespace chaos::ui;
 
-#define UI_LAPP_ LAPP_ << "[UIToolkit] "
+#define UI_LAPP_ LAPP_ << "[UIToolkit] -"
 /*
  
  */
@@ -60,10 +60,6 @@ void ChaosUIToolkit::init(istringstream &initStringStream) throw (CException) {
  */
 void ChaosUIToolkit::init() throw(CException) {
     try{
-        
-        UI_LAPP_ << "Init ChaosUIToolkit";
-         //init common substrate
-        UI_LAPP_ << "Init Common substrate";
         ChaosCommon<ChaosUIToolkit>::init();
         
         UI_LAPP_ << "Init LLRpcApi";

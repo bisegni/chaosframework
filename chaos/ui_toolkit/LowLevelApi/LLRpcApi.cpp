@@ -52,6 +52,8 @@ void LLRpcApi::init()  throw (CException) {
 void LLRpcApi::deinit()  throw (CException) {
     LLRA_LAPP_ << "Deinit LLRpcApi";
     SetupStateManager::levelDownFrom(DEINIT_STEP, "LLRpcApi already deinitialized");
+    LLRA_LAPP_ << "Stop NetworkBroker";
+    rpcMessageBroker->stop();
     LLRA_LAPP_ << "Deinit NetworkBroker";
     rpcMessageBroker->deinit();
     LLRA_LAPP_ << "NetworkBroker deinitialized";

@@ -74,23 +74,23 @@ bool ValueSetting::setDefaultValue(const void* valPtr, uint32_t _size) {
 //-----------------------------------------------------------------------------------------------------------------------------
 
 AttributeSetting::AttributeSetting() {
-    bitmapChangedAttribute = NULL;
+   // bitmapChangedAttribute = new boost::dynamic_bitset<BitBlockDimension>(mapAttributeIndexSettings.size());
 }
 
 AttributeSetting::~AttributeSetting() {
-    if(bitmapChangedAttribute) delete(bitmapChangedAttribute);
+   // if(bitmapChangedAttribute) delete(bitmapChangedAttribute);
 }
 
 //! Initialize instance
 void AttributeSetting::init(void *initData) throw(chaos::CException) {
-    bitmapChangedAttribute = new boost::dynamic_bitset<BitBlockDimension>(mapAttributeIndexSettings.size());
-    if(!bitmapChangedAttribute) throw CException(1, "Error allocating memory for map bit", "AttributeSetting::init");
+    //bitmapChangedAttribute = new boost::dynamic_bitset<BitBlockDimension>(mapAttributeIndexSettings.size());
+    /*if(!bitmapChangedAttribute) throw CException(1, "Error allocating memory for map bit", "AttributeSetting::init");
    
     for (map<AttributeIndexType, boost::shared_ptr<ValueSetting> >::iterator it = mapAttributeIndexSettings.begin() ;
          it != mapAttributeIndexSettings.end();
          it++) {
         it->second->sharedBitmapChangedAttribute = bitmapChangedAttribute;
-    }
+    }*/
 }
 
 //! Deinit the implementation
@@ -104,18 +104,19 @@ void AttributeSetting::deinit() throw(chaos::CException) {
     index = 0;
     mapAttributeNameIndex.clear();
     mapAttributeIndexSettings.clear();
-    if(bitmapChangedAttribute) {
+    bitmapChangedAttribute.clear();
+   /* if(bitmapChangedAttribute) {
        delete(bitmapChangedAttribute);
         bitmapChangedAttribute = NULL;
-    }
+    }*/
    
 }
 
 //!
 void AttributeSetting::addAttribute(string name, uint32_t size, chaos::DataType::DataType type) {
     
-    if(InizializableService::serviceState != utility::InizializableServiceType::IS_DEINTIATED)
-        throw CException(1, "Attribute can be added only in deinitilized state", "AttributeSetting::addAttribute");
+    //if(InizializableService::serviceState == utility::InizializableServiceType::IS_DEINTIATED)
+    //    throw CException(1, "Attribute can be added only in deinitilized state", "AttributeSetting::addAttribute");
     
     if(mapAttributeNameIndex.count(name)) return;
     
@@ -126,10 +127,12 @@ void AttributeSetting::addAttribute(string name, uint32_t size, chaos::DataType:
     
     //add channel setting
     boost::shared_ptr<ValueSetting> tmpSP(new ValueSetting(size, tmpIndex, type));
-    mapAttributeIndexSettings.insert(make_pair<AttributeIndexType, boost::shared_ptr<ValueSetting> >(tmpIndex, tmpSP));
     
     //add the relative bit
-
+    bitmapChangedAttribute.push_back(false);
+    tmpSP->sharedBitmapChangedAttribute = &bitmapChangedAttribute;
+    
+    mapAttributeIndexSettings.insert(make_pair<AttributeIndexType, boost::shared_ptr<ValueSetting> >(tmpIndex, tmpSP));
 }
 
 void AttributeSetting::getAttributeNames(std::vector<std::string>& names) {
@@ -165,11 +168,11 @@ ValueSetting *AttributeSetting::getValueSettingForIndex(AttributeIndexType index
 //!
 void AttributeSetting::getChangedIndex(std::vector<AttributeIndexType>& changedIndex) {
     size_t index = 0;
-    index = bitmapChangedAttribute->find_first();
+    index = bitmapChangedAttribute.find_first();
     while(index != boost::dynamic_bitset<BitBlockDimension>::npos) {
         changedIndex.push_back(index);
         /* do something */
-        index = bitmapChangedAttribute->find_next(index);
+        index = bitmapChangedAttribute.find_next(index);
     }
 }
 

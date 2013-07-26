@@ -84,7 +84,7 @@ namespace chaos{
             void start() throw(CException);
             
             //-----------------------
-            void stop() throw(CException){};
+            void stop() throw(CException);
             
             /*
              Configure the sandbox and all subtree of the CU

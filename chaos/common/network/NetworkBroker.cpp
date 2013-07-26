@@ -218,7 +218,7 @@ void NetworkBroker::deinit() throw(CException) {
  * all part are started
  */
 void NetworkBroker::start() throw(CException){
-    MB_LAPP  << "Start event dispathcer ";
+    MB_LAPP  << "Start event dispatcher ";
     utility::StartableService::startImplementation(eventDispatcher, "DefaultEventDispatcher", "NetworkBroker::start");
     
     MB_LAPP  << "Start event server: " << eventServer->getName();
@@ -227,7 +227,7 @@ void NetworkBroker::start() throw(CException){
     MB_LAPP  << "Start event client: " << eventClient->getName();
     utility::StartableService::startImplementation(eventClient, eventClient->getName(), "NetworkBroker::start");
     
-    MB_LAPP  << "Start command dispathcer ";
+    MB_LAPP  << "Start command dispatcher ";
     utility::StartableService::startImplementation(commandDispatcher, "DefaultCommandDispatcher", "NetworkBroker::start");
 
     MB_LAPP  << "Start rpc server: " << rpcServer->getName();
@@ -245,7 +245,24 @@ void NetworkBroker::start() throw(CException){
  * all part are started
  */
 void NetworkBroker::stop() throw(CException) {
-    
+    MB_LAPP  << "Stop rpc server: " << rpcClient->getName();
+    utility::StartableService::stopImplementation(rpcClient, rpcClient->getName(), "NetworkBroker::stop");
+
+    MB_LAPP  << "Stop rpc server: " << rpcServer->getName();
+    utility::StartableService::stopImplementation(rpcServer, rpcServer->getName(), "NetworkBroker::stop");
+
+    MB_LAPP  << "Stop command dispatcher ";
+    utility::StartableService::stopImplementation(commandDispatcher, "DefaultCommandDispatcher", "NetworkBroker::stop");
+
+    MB_LAPP  << "Stop event client: " << eventClient->getName();
+    utility::StartableService::stopImplementation(eventClient, eventClient->getName(), "NetworkBroker::stop");
+
+    MB_LAPP  << "Stop event server: " << eventServer->getName();
+    utility::StartableService::stopImplementation(eventServer, eventServer->getName(), "NetworkBroker::stop");
+
+    MB_LAPP  << "Stop event dispatcher ";
+    utility::StartableService::stopImplementation(eventDispatcher, "DefaultEventDispatcher", "NetworkBroker::stop");
+
 }
 
 /*!

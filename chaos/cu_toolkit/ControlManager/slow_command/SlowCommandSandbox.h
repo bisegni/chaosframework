@@ -80,6 +80,8 @@ namespace chaos{
                     friend class chaos::cu::SCAbstractControlUnit;
                     friend class SlowCommandExecutor;
                     
+                    //stat for the single step of the command execution
+                    SandboxStat stat;
                     
                     //-------shared data beetwen scheduler and checker thread------
                     bool            scheduleWorkFlag;
@@ -101,8 +103,9 @@ namespace chaos{
 
                     //!Mutex used for sincronize the introspection of the current command
                     boost::recursive_mutex          mutexNextCommandChecker;
-                    //! check time intervall for the valutate the jobs (next, current and paused) state
-                    posix_time::milliseconds        checkTimeIntervall;
+                    //! delay between two submiossion check
+                    posix_time::milliseconds        submissionRetryDelay;
+                    //! instance to the checker thread
                     std::auto_ptr<boost::thread>    threadNextCommandChecker;
                     
                     
@@ -116,12 +119,8 @@ namespace chaos{
                     //!Mutex used for sincronize the introspection of the current command
                     //boost::mutex  pauseMutex;
                     
-
-                    
-
-                    
                     //! delay for the next beat of scheduler
-                    boost::chrono::milliseconds schedulerStepDelay;
+                    uint64_t schedulerStepDelay;
 
                     //! Pointers to the next available command implementation and information
                     CommandInfoAndImplementation nextAvailableCommand;
@@ -139,9 +138,6 @@ namespace chaos{
                     std::stack<SlowCommand*> commandStack;
                     
                     //-------------------- handler poiter --------------------
-                    //! Pointer to the set phase handler's of the current command
-                    //SetFunctor setHandlerFunctor;
-
                     //! Pointer to the acquire pahse handler's of the current command
                     AcquireFunctor acquireHandlerFunctor;
                     
