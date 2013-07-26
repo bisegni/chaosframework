@@ -125,8 +125,8 @@ bool DSAttributeHandlerExecutionEngine::executeHandler(CDataWrapper *message) th
     
     //if(deviceID.compare(referenceDeviceSchemaDB->getDeviceID())) return false;
     
-    if((result = message->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID))) {
-        std::string _messageDeiveID = message->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
+    if((result = message->hasKey(DatasetDefinitionkey::DEVICE_ID))) {
+        std::string _messageDeiveID = message->getStringValue(DatasetDefinitionkey::DEVICE_ID);
         
         //compare the message device id and the local
         for (std::set<std::string>::iterator iter = managedAttributesName.begin();

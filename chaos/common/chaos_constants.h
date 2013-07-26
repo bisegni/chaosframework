@@ -127,33 +127,33 @@ namespace chaos {
         //! Name space for grupping option used for define the dataset of the device abstraction
     namespace DatasetDefinitionkey {
             //!key for dataset descriptors array {[domain, name, paramteres....]}
-        static const char * const CS_CM_DATASET_DESCRIPTION                     = "cs|cm|ds_desc";
+        static const char * const DESCRIPTION                       = "ds_desc";
             //!key for dataset timestampt validity
-        static const char * const CS_CM_DATASET_TIMESTAMP                       = "cs|cm|ds_timestamp";
+        static const char * const TIMESTAMP                         = "ds_timestamp";
             //!key for the domain of the attribute dataset
-        static const char * const CS_CM_DATASET_DEVICE_ID                       = "cs|cm|ds_attr_dom";
+        static const char * const DEVICE_ID                         = "ds_attr_dom";
             //!key for the name of dataset attribute
-        static const char * const CS_CM_DATASET_ATTRIBUTE_NAME                  = "cs|cm|ds_attr_name";
+        static const char * const ATTRIBUTE_NAME                    = "ds_attr_name";
             //!key for the name of dataset attribute
-        static const char * const CS_CM_DATASET_ATTRIBUTE_VALUE                  = "cs|cm|ds_attr_value";        
+        static const char * const ATTRIBUTE_VALUE                   = "ds_attr_value";
             //!key for the tag of the dataset attrbiute
-        static const char * const CS_CM_DATASET_ATTRIBUTE_TAG                   = "cs|cm|ds_attr_tag";
+        static const char * const ATTRIBUTE_TAG                     = "ds_attr_tag";
             //!key representing the type of parameter
-        static const char * const CS_CM_DATASET_ATTRIBUTE_TYPE                  = "cs|cm|ds_attr_type";
+        static const char * const ATTRIBUTE_TYPE                    = "ds_attr_type";
             //!key for the units ofr the attrbiute(ampere, volts)
-        static const char * const CS_CM_DATASET_ATTRIBUTE_UNIT                  = "cs|cm|ds_attr_unit";
+        static const char * const ATTRIBUTE_UNIT                    = "ds_attr_unit";
             //!key representing the name of the parameter
-        static const char * const CS_CM_DATASET_ATTRIBUTE_DESCRIPTION           = "cs|cm|ds_attr_desc";
+        static const char * const ATTRIBUTE_DESCRIPTION             = "ds_attr_desc";
             //!key representig the information for the parameter
-        static const char * const CS_CM_DATASET_ATTRIBUTE_DIRECTION             = "cs|cm|ds_attr_dir";
+        static const char * const ATTRIBUTE_DIRECTION               = "ds_attr_dir";
             //!key representing the value max size where need (type different from rawd data type ex: int32)
-        static const char * const CS_CMDM_ACTION_DESC_VALUE_MAX_SIZE            = "cs|cmdm|act_desc_par_value_max_size";
+        static const char * const VALUE_MAX_SIZE                    = "ds_max_size";
             //!key representing the default value
-        static const char * const CS_CMDM_ACTION_DESC_DEFAULT_VALUE             = "cs|cmdm|act_desc_par_default_value";
+        static const char * const DEFAULT_VALUE                     = "ds_default_value";
             //!key representing the default value
-        static const char * const CS_CMDM_ACTION_DESC_MAX_RANGE                 = "cs|cmdm|act_desc_par_max_range";
+        static const char * const MAX_RANGE                         = "ds_max_range";
             //!key representing the default value
-        static const char * const CS_CMDM_ACTION_DESC_MIN_RANGE                 = "cs|cmdm|act_desc_par_min_range";
+        static const char * const MIN_RANGE                         = "ds_min_range";
         
     }
     

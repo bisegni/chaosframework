@@ -117,8 +117,8 @@ namespace chaos{
         if(!memClient) throw CException(0, "Write memcached structure not allocated", "IOMemcachedDriver::updateConfiguration");
         
             //checkif someone has passed us the device indetification
-        if(newConfigration->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)){
-            dataKey = newConfigration->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
+        if(newConfigration->hasKey(DatasetDefinitionkey::DEVICE_ID)){
+            dataKey = newConfigration->getStringValue(DatasetDefinitionkey::DEVICE_ID);
             LMEMDRIVER_ << "The key for memory cache is: " << dataKey;
         }
         

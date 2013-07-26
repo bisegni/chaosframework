@@ -46,15 +46,16 @@ public class RPCConstants {
 	public static final String	CS_CMDM_REMOTE_HOST_ANSWER_MESSAGE_ID	= "cs|cmdm|rh_ans_msg_id";
 
 	// dataset
-	public static final String	DATASET_DEVICE_ID						= "cs|cm|ds_attr_dom";
-	public static final String	DATASET_DESCRIPTION						= "cs|cm|ds_desc";
-	public static final String	DATASET_ATTRIBUTE_NAME					= "cs|cm|ds_attr_name";
-	public static final String	DATASET_ATTRIBUTE_DESCRIPTION			= "cs|cm|ds_attr_desc";
-	public static final String	DATASET_ATTRIBUTE_DIRECTION				= "cs|cm|ds_attr_dir";
-	public static final String	DATASET_ATTRIBUTE_TYPE					= "cs|cm|ds_attr_type";
-	public static final String	DATASET_ATTRIBUTE_DEFAULT_VALUE			= "cs|cmdm|act_desc_par_default_value";
-	public static final String	DATASET_ATTRIBUTE_MAX_RANGE				= "cs|cmdm|act_desc_par_max_range";
-	public static final String	DATASET_ATTRIBUTE_MIN_RANGE				= "cs|cmdm|act_desc_par_min_range";
+	public static final String	DATASET_DEVICE_ID						= "ds_attr_dom";
+	public static final String	DATASET_DESCRIPTION						= "ds_desc";
+	public static final String	DATASET_TIMESTAMP						= "ds_timestamp";
+	public static final String	DATASET_ATTRIBUTE_NAME					= "ds_attr_name";
+	public static final String	DATASET_ATTRIBUTE_DESCRIPTION			= "ds_attr_desc";
+	public static final String	DATASET_ATTRIBUTE_DIRECTION				= "ds_attr_dir";
+	public static final String	DATASET_ATTRIBUTE_TYPE					= "ds_attr_type";
+	public static final String	DATASET_ATTRIBUTE_DEFAULT_VALUE			= "ds_default_value";
+	public static final String	DATASET_ATTRIBUTE_MAX_RANGE				= "ds_max_range";
+	public static final String	DATASET_ATTRIBUTE_MIN_RANGE				= "ds_min_range";
 	public static final String	CONTROL_UNIT_INSTANCE					= "cs|cm|cu_instance";
 	public static final String	CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS	= "cs|cm|cu_instance_net_address";
 	public static final String	CONTROL_UNIT_NAME						= "cs|cm|cu_name";

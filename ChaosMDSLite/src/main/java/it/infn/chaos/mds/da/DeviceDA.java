@@ -364,7 +364,7 @@ public class DeviceDA extends DataAccess {
 	 */
 	public Dataset insertNewDataset(Dataset ds) throws Exception {
 		InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder();
-		iuBuilder.addColumnAndValue("timestamp", "$CURRENT_TIMESTAMP");
+		iuBuilder.addColumnAndValue("timestamp", (ds.getTimestamp()!=null?ds.getTimestamp():"$CURRENT_TIMESTAMP"));
 		iuBuilder.fillWithBusinessClass(ds);
 		PreparedStatement ps = getPreparedStatementForInputUpdateBuilder(iuBuilder);
 		iuBuilder.fillPreparedStatement(ps);

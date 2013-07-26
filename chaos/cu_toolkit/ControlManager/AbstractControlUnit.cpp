@@ -205,12 +205,12 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_init(chaos::CDataWrapper *initCon
     auto_ptr<CDataWrapper> updateResult;
     
     if(!initConfiguration ||
-       !initConfiguration->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID) ||
-       !initConfiguration->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DESCRIPTION)) {
+       !initConfiguration->hasKey(DatasetDefinitionkey::DEVICE_ID) ||
+       !initConfiguration->hasKey(DatasetDefinitionkey::DESCRIPTION)) {
         throw CException(-1, "No Device Init information in param", "AbstractControlUnit::_init");
     }
     
-    std::string deviceID = initConfiguration->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
+    std::string deviceID = initConfiguration->getStringValue(DatasetDefinitionkey::DEVICE_ID);
     if(deviceID.compare(DeviceSchemaDB::getDeviceID())) {
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
         throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_init");
@@ -254,11 +254,11 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     LCU_ << "Deinitializating AbstractControlUnit";
     
-    if(!deinitParam || !deinitParam->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
+    if(!deinitParam || !deinitParam->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
         throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_deinit");
     }
     
-    string deviceID = deinitParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
+    string deviceID = deinitParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
     if(deviceID.compare(cu::DeviceSchemaDB::getDeviceID())) {
         LCU_ << "device:" << cu::DeviceSchemaDB::getDeviceID() << "not known by this ContorlUnit";
         throw CException(-2, "Deviuce not known by this control unit", "AbstractControlUnit::_deinit");
@@ -295,11 +295,11 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
 chaos::CDataWrapper* cu::AbstractControlUnit::_start(chaos::CDataWrapper *startParam, bool& detachParam) throw(CException) {
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     
-    if(!startParam || !startParam->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
+    if(!startParam || !startParam->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
         throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_start");
     }
     
-    string deviceID = startParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
+    string deviceID = startParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
     if(deviceID.compare(cu::DeviceSchemaDB::getDeviceID())) {
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
         throw CException(-2, "Deviuce not known by this control unit", "AbstractControlUnit::_start");
@@ -326,10 +326,10 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_start(chaos::CDataWrapper *startP
  */
 chaos::CDataWrapper* cu::AbstractControlUnit::_stop(chaos::CDataWrapper *stopParam, bool& detachParam) throw(CException) {
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
-    if(!stopParam || !stopParam->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
+    if(!stopParam || !stopParam->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
         throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_stop");
     }
-    string deviceID = stopParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
+    string deviceID = stopParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
     if(deviceID.compare(cu::DeviceSchemaDB::getDeviceID())) {
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
         throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_stop");
@@ -368,11 +368,11 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_setDatasetAttribute(chaos::CDataW
         LCU_ << datasetAttributeValues->getJSONString();
 #endif
         
-        if(!datasetAttributeValues->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
+        if(!datasetAttributeValues->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
             throw CException(-2, "No Device Defined in param", "AbstractControlUnit::setDatasetAttribute");
         }
         //retrive the deviceid
-        string deviceID = datasetAttributeValues->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
+        string deviceID = datasetAttributeValues->getStringValue(DatasetDefinitionkey::DEVICE_ID);
         if(deviceExplicitState == CUStateKey::DEINIT) {
             throw CException(-3, "The Control Unit is in deinit state", "AbstractControlUnit::_setDatasetAttribute");
         }
@@ -393,11 +393,11 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_setDatasetAttribute(chaos::CDataW
  Get the current control unit state
  */
 chaos::CDataWrapper* cu::AbstractControlUnit::_getState(CDataWrapper* getStatedParam, bool& detachParam) throw(CException) {
-    if(!getStatedParam->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)){
+    if(!getStatedParam->hasKey(DatasetDefinitionkey::DEVICE_ID)){
         throw CException(-1, "Get State Pack without DeviceID", "AbstractControlUnit::getState");
     }
     CDataWrapper *stateResult = new CDataWrapper();
-    string deviceID = getStatedParam->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
+    string deviceID = getStatedParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
     stateResult->addInt32Value(CUStateKey::CONTROL_UNIT_STATE, deviceExplicitState);
     return stateResult;
 }
@@ -407,11 +407,11 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_getState(CDataWrapper* getStatedP
 chaos::CDataWrapper*  cu::AbstractControlUnit::updateConfiguration(chaos::CDataWrapper* updatePack, bool& detachParam) throw (CException) {
     recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     //load all keyDataStorageMap for the registered devices
-    if(!updatePack || !updatePack->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)) {
+    if(!updatePack || !updatePack->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
         throw CException(-1, "Update pack without DeviceID", "AbstractControlUnit::updateConfiguration");
     }
     
-    string deviceID = updatePack->getStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID);
+    string deviceID = updatePack->getStringValue(DatasetDefinitionkey::DEVICE_ID);
     
     if(deviceID.compare(cu::DeviceSchemaDB::getDeviceID())) {
         LCU_ << "device:" << DeviceSchemaDB::getDeviceID() << "not known by this ContorlUnit";

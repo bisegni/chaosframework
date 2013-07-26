@@ -34,6 +34,14 @@ public class Dataset extends BSONBusinessObject {
 						primaryKey = { "ID_DATASET", "ID_DEVICE" })
 	private Vector<DatasetAttribute>	attributes			= new Vector<DatasetAttribute>();
 
+	public Dataset() {
+		
+	}
+	
+	public Dataset(Long devTS) {
+		timestamp = devTS !=null?new Timestamp(devTS.longValue()):null;
+	}
+
 	/**
 	 * @return the device
 	 */

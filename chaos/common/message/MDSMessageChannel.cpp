@@ -35,7 +35,7 @@ e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_COD
  */
 void MDSMessageChannel::sendHeartBeatForDeviceID(string& identificationID) {
     CDataWrapper hbMessage;
-    hbMessage.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, identificationID);
+    hbMessage.addStringValue(DatasetDefinitionkey::DEVICE_ID, identificationID);
     MessageChannel::sendMessage(nodeAddress->nodeID.c_str(), "heartbeat", &hbMessage);
 }
 
@@ -73,9 +73,9 @@ int MDSMessageChannel::getAllDeviceID(vector<string>&  deviceIDVec, uint32_t mil
     CHECK_TIMEOUT_AND_RESULT_CODE(resultAnswer, err)
     if(err == ErrorCode::EC_NO_ERROR && resultAnswer->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)){
         auto_ptr<CDataWrapper> allDeviceInfo(resultAnswer->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
-        if(allDeviceInfo->hasKey(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID)){
+        if(allDeviceInfo->hasKey(DatasetDefinitionkey::DEVICE_ID)){
                 //there is a result
-            auto_ptr<CMultiTypeDataArrayWrapper> allDeviceInfoVec(allDeviceInfo->getVectorValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID));
+            auto_ptr<CMultiTypeDataArrayWrapper> allDeviceInfoVec(allDeviceInfo->getVectorValue(DatasetDefinitionkey::DEVICE_ID));
             
             for (int idx = 0; idx < allDeviceInfoVec->size(); idx++) {
                 deviceIDVec.push_back(allDeviceInfoVec->getStringElementAtIndex(idx));
@@ -94,7 +94,7 @@ int MDSMessageChannel::getNetworkAddressForDevice(string& identificationID, CDev
     int err = ErrorCode::EC_NO_ERROR;
     if(!deviceNetworkAddress) return -1;
     CDataWrapper *callData = new CDataWrapper();
-    callData->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, identificationID);
+    callData->addStringValue(DatasetDefinitionkey::DEVICE_ID, identificationID);
         //send request and wait the response
     auto_ptr<CDataWrapper> resultAnswer( MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), "getNodeNetworkAddress", callData, millisecToWait));
     CHECK_TIMEOUT_AND_RESULT_CODE(resultAnswer, err)
@@ -123,7 +123,7 @@ int MDSMessageChannel::getLastDatasetForDevice(string& identificationID, CDataWr
     int err = ErrorCode::EC_NO_ERROR;
     if(!deviceDefinition) return -1;
     CDataWrapper *callData = new CDataWrapper();
-    callData->addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, identificationID);
+    callData->addStringValue(DatasetDefinitionkey::DEVICE_ID, identificationID);
         //send request and wait the response
     auto_ptr<CDataWrapper> deviceInitInformation(MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), "getCurrentDataset", callData, millisecToWait));
     CHECK_TIMEOUT_AND_RESULT_CODE(deviceInitInformation, err)

@@ -166,7 +166,7 @@ void ControlManager::deinit() throw(CException) {
                 //stop all itnerna device
             
             CDataWrapper fakeDWForDeinit;
-            fakeDWForDeinit.addStringValue(DatasetDefinitionkey::CS_CM_DATASET_DEVICE_ID, *iter);
+            fakeDWForDeinit.addStringValue(DatasetDefinitionkey::DEVICE_ID, *iter);
             try{
                 LCMAPP_  << "Stopping deviceid:" << *iter;
                 cu->_stop(&fakeDWForDeinit, detachFake);

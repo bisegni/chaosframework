@@ -166,7 +166,7 @@ public class Device extends BSONBusinessObject {
 		}
 		if (bbObject.containsField(RPCConstants.DATASET_DESCRIPTION)) {
 			// there is the description of the dataset
-			Dataset ds = new Dataset();
+			Dataset ds = new Dataset(bbObject.containsField(RPCConstants.DATASET_TIMESTAMP)?bbObject.getLong(RPCConstants.DATASET_TIMESTAMP):null);
 			ds.setDevice(this);
 			ds.fillFromBson(bbObject.get(RPCConstants.DATASET_DESCRIPTION));
 			setDataset(ds);
