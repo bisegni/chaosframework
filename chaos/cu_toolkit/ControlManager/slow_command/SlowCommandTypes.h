@@ -62,7 +62,9 @@ namespace chaos{
                      * of the sandbox ad the moment the slowcommadn is installed
                      */
                     typedef enum FeatureFlag {
-                        FF_SET_SCHEDULER_DELAY  = 1,    /**< Notify that the command brig his own scheduler delay time */
+                        FF_SET_SCHEDULER_DELAY      = 1,    /**< The command bring his own scheduler delay time */
+                        FF_SET_SUBMISSION_RETRY     = 2,    /**< The delay between a submiossion check and another, submiossion chek consist to check the current command running state to determinate
+                                                                when the new command can be installed */
                     } Handler;
                 }
                 

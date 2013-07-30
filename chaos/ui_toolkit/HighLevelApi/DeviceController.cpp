@@ -252,7 +252,7 @@ int DeviceController::setAttributeToValue(const char *attributeName, DataType::D
     return deviceChannel->setAttributeValue(attributeValuePack, noWait, millisecToWait);
 }
 
-int DeviceController::submitSlowControlCommand(string commandAlias, cccs::SubmissionRuleType::SubmissionRule submissionRule, uint32_t priority, uint32_t scheduleInterval, CDataWrapper *slowCommandData) {
+int DeviceController::submitSlowControlCommand(string commandAlias, cccs::SubmissionRuleType::SubmissionRule submissionRule, uint32_t priority,  uint32_t schedulerStepsDelay, uint32_t submissionCheckerStepsDelay, CDataWrapper *slowCommandData) {
     CDataWrapper localCommandPack;
     if(slowCommandData) {
         localCommandPack.appendAllElement(*slowCommandData);
@@ -263,13 +263,13 @@ int DeviceController::submitSlowControlCommand(string commandAlias, cccs::Submis
     localCommandPack.addStringValue(cccs::SlowCommandSubmissionKey::COMMAND_ALIAS, commandAlias);
     localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RULE, (uint32_t) submissionRule);
     localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_PRIORITY, (uint32_t) priority);
-    localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL, (uint32_t) scheduleInterval);
-    
+    if(schedulerStepsDelay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL, (uint32_t) schedulerStepsDelay);
+    if(submissionCheckerStepsDelay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY, (uint32_t) submissionCheckerStepsDelay);
     //forward the request
     return deviceChannel->setAttributeValue(localCommandPack, false, millisecToWait);
 }
 
-int DeviceController::submitSlowControlCommand(string commandAlias, cccs::SubmissionRuleType::SubmissionRule submissionRule, uint32_t scheduleInterval, CDataWrapper *slowCommandData) {
+int DeviceController::submitSlowControlCommand(string commandAlias, cccs::SubmissionRuleType::SubmissionRule submissionRule,  uint32_t schedulerStepsDelay, uint32_t submissionCheckerStepsDelay, CDataWrapper *slowCommandData) {
     CDataWrapper localCommandPack;
     if(slowCommandData) {
         localCommandPack.appendAllElement(*slowCommandData);
@@ -277,8 +277,9 @@ int DeviceController::submitSlowControlCommand(string commandAlias, cccs::Submis
     // set the default slow command information
     localCommandPack.addStringValue(cccs::SlowCommandSubmissionKey::COMMAND_ALIAS, commandAlias);
     localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RULE, (uint32_t) submissionRule);
-    localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL, (uint32_t) scheduleInterval);
-    
+    if(schedulerStepsDelay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL, (uint32_t) schedulerStepsDelay);
+    if(submissionCheckerStepsDelay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY, (uint32_t) submissionCheckerStepsDelay);
+
     //forward the request
     return deviceChannel->setAttributeValue(localCommandPack, false, millisecToWait);
 }
@@ -302,7 +303,6 @@ int DeviceController::setAttributeValue(string& attributeName, const char* attri
         return ErrorCode::EC_ATTRIBUTE_BAD_DIR;
     
     switch (attributeTypeMap[attributeName]) {
-            
         case DataType::TYPE_INT64:
             attributeValuePack.addInt64Value(attrname, boost::lexical_cast<int64_t>(attributeValue));
             return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
@@ -322,9 +322,10 @@ int DeviceController::setAttributeValue(string& attributeName, const char* attri
         case DataType::TYPE_STRING:
             attributeValuePack.addStringValue(attrname,attributeValue);
             return deviceChannel->setAttributeValue(attributeValuePack,millisecToWait);
+        default:
+            break;
     };
     return ErrorCode::EC_ATTRIBUTE_TYPE_NOT_SUPPORTED;
-    
 }
 
 /*!

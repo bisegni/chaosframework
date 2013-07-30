@@ -25,6 +25,7 @@
 #include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/log/sources/severity_logger.hpp>
+
 #if BOOST_VERSION > 105300
 //allocate the logger
 #include <boost/log/sources/severity_logger.hpp>
@@ -94,9 +95,8 @@ void LogManager::init() throw(CException) {
     string                      logFileName     = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_FILE);
     
     logging::add_common_attributes();
-    
     boost::shared_ptr< logging::core > pCore = boost::log::core::get();
-    
+    // Create a backend
 #if (BOOST_VERSION / 100000) >= 1 && ((BOOST_VERSION / 100) % 1000) >= 54
     logging::register_simple_formatter_factory< level::LogSeverityLevel, char  >("Severity");
     logging::core::get()->set_filter(expr::attr< level::LogSeverityLevel >("Severity") >= logLevel);

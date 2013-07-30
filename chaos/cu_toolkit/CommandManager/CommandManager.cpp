@@ -93,6 +93,13 @@ void CommandManager::start() throw(CException) {
     LAPP_ << "Message Broker started";
 }
 
+//-----------------------
+void CommandManager::stop() throw(CException) {
+    LAPP_ << "Stop Message Broker";
+    broker->stop();
+    LAPP_ << "Stop Message Broker";
+}
+
 /*
  Configure the sandbox and all subtree of the CU
  */

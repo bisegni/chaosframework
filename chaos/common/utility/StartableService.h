@@ -26,17 +26,50 @@ namespace chaos {
     
     namespace utility {
         
+        namespace service_state_machine {
+            //SM Event
+            namespace EventType {
+                struct start {};
+                struct stop {};
+            }
+            
+            // States
+            struct Started : public boost::msm::front::state<> {};
+            struct Stopped : public boost::msm::front::state<> {};
+            
+            // front-end: define the FSM structure
+            struct ss_state_machine : public boost::msm::front::state_machine_def<ss_state_machine>  {
+
+                
+                typedef boost::msm::front::Row <  service_state_machine::Deinitilized  ,  EventType::initialize    , service_state_machine::Initialized   , boost::msm::front::none , boost::msm::front::none > deinit_init_row;
+                typedef boost::msm::front::Row <  service_state_machine::Initialized   ,  EventType::deinitialize  , service_state_machine::Deinitilized  , boost::msm::front::none , boost::msm::front::none > init_deinit_row;
+                typedef boost::msm::front::Row <  service_state_machine::Initialized   ,  EventType::start         , service_state_machine::Started       , boost::msm::front::none , boost::msm::front::none > init_start_row;
+                typedef boost::msm::front::Row <  service_state_machine::Started       ,  EventType::stop          , service_state_machine::Stopped       , boost::msm::front::none , boost::msm::front::none > start_stop_row;
+                typedef boost::msm::front::Row <  service_state_machine::Stopped       ,  EventType::start         , service_state_machine::Started       , boost::msm::front::none , boost::msm::front::none > stop_start_row;
+                typedef boost::msm::front::Row <  service_state_machine::Stopped       ,  EventType::deinitialize  , service_state_machine::Deinitilized  , boost::msm::front::none , boost::msm::front::none > stop_deinit_row;
+
+                // the initial state of the player SM. Must be defined
+                typedef Deinitilized initial_state;
+                
+                // Transition table for Startable services and his subclass
+                struct transition_table : boost::mpl::vector< deinit_init_row, init_deinit_row, init_start_row, start_stop_row, stop_start_row, stop_deinit_row > {};
+                
+                template <class FSM,class Event>
+                void no_transition(Event const& ,FSM&, int ) {}
+            };
+        }
+        
         namespace StartableServiceType {
             typedef enum {
-                SS_STARTING = 5,
-                SS_STARTED,
-                SS_STOPPING,
+                SS_STARTED = 3,
                 SS_STOPPED
             } StartableServiceState;
         }
         class StartableService : public InizializableService {
+            boost::msm::back::state_machine< service_state_machine::ss_state_machine > state_machine;
         public:
-            
+            StartableService();
+            virtual ~StartableService();
                 //! Start the implementation
             virtual void start() throw(chaos::CException);
             
@@ -47,6 +80,12 @@ namespace chaos {
             
             static bool startImplementation(StartableService *impl, const char * const implName,  const char * const domainString);
             static bool stopImplementation(StartableService *impl, const char * const implName,  const char * const domainString);
+            
+            static bool initImplementation(StartableService& impl, void *initData, const char * const implName,  const char * const domainString);
+            static bool deinitImplementation(StartableService& impl, const char * const implName,  const char * const domainString);
+            
+            static bool initImplementation(StartableService *impl, void *initData, const char * const implName,  const char * const domainString);
+            static bool deinitImplementation(StartableService *impl, const char * const implName,  const char * const domainString);
         };
         
     }

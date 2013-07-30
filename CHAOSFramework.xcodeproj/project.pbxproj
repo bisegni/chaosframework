@@ -110,9 +110,6 @@
 		326DB45D14B38BC00018A8D0 /* CDataWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3E814B38BC00018A8D0 /* CDataWrapper.h */; };
 		326DB45E14B38BC00018A8D0 /* CUSchemaDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB3E914B38BC00018A8D0 /* CUSchemaDB.cpp */; };
 		326DB45F14B38BC00018A8D0 /* CUSchemaDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3EA14B38BC00018A8D0 /* CUSchemaDB.h */; };
-		326DB46014B38BC00018A8D0 /* CMPtrFSMState.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3EC14B38BC00018A8D0 /* CMPtrFSMState.h */; };
-		326DB46114B38BC00018A8D0 /* DynamicHierarchicalFSM.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3ED14B38BC00018A8D0 /* DynamicHierarchicalFSM.h */; };
-		326DB46214B38BC00018A8D0 /* FSMState.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3EE14B38BC00018A8D0 /* FSMState.h */; };
 		326DB46614B38BC00018A8D0 /* ChaosDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3F314B38BC00018A8D0 /* ChaosDispatcher.h */; };
 		326DB46714B38BC00018A8D0 /* AbstractCommandDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB3F414B38BC00018A8D0 /* AbstractCommandDispatcher.cpp */; };
 		326DB46814B38BC00018A8D0 /* AbstractCommandDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3F514B38BC00018A8D0 /* AbstractCommandDispatcher.h */; };
@@ -514,9 +511,6 @@
 		326DB3E814B38BC00018A8D0 /* CDataWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CDataWrapper.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB3E914B38BC00018A8D0 /* CUSchemaDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = CUSchemaDB.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB3EA14B38BC00018A8D0 /* CUSchemaDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CUSchemaDB.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB3EC14B38BC00018A8D0 /* CMPtrFSMState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMPtrFSMState.h; sourceTree = "<group>"; };
-		326DB3ED14B38BC00018A8D0 /* DynamicHierarchicalFSM.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicHierarchicalFSM.h; sourceTree = "<group>"; };
-		326DB3EE14B38BC00018A8D0 /* FSMState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = FSMState.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB3F314B38BC00018A8D0 /* ChaosDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ChaosDispatcher.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB3F414B38BC00018A8D0 /* AbstractCommandDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = AbstractCommandDispatcher.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB3F514B38BC00018A8D0 /* AbstractCommandDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = AbstractCommandDispatcher.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -779,6 +773,8 @@
 		32DF604215E1502700312C94 /* CommandEventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommandEventDescriptor.h; sourceTree = "<group>"; };
 		32DF604515E1505E00312C94 /* CustomEventDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomEventDescriptor.cpp; sourceTree = "<group>"; };
 		32DF604615E1505F00312C94 /* CustomEventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomEventDescriptor.h; sourceTree = "<group>"; };
+		32E2561717A67564000F4E20 /* FinalStateMachine.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FinalStateMachine.cpp; sourceTree = "<group>"; };
+		32E2561817A67564000F4E20 /* FinalStateMachine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FinalStateMachine.h; sourceTree = "<group>"; };
 		32E9F48B16485012006EAF37 /* ChaosNodeDirectory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosNodeDirectory.cpp; sourceTree = "<group>"; };
 		32E9F48C16485012006EAF37 /* ChaosNodeDirectory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosNodeDirectory.h; sourceTree = "<group>"; };
 		32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleBufferCircularBuffer.h; sourceTree = "<group>"; };
@@ -1126,7 +1122,7 @@
 				326DB3E314B38BC00018A8D0 /* configuration */,
 				329FFFCE1707128600D69CDE /* memory */,
 				326DB3E614B38BC00018A8D0 /* data */,
-				326DB3EB14B38BC00018A8D0 /* dhfsm */,
+				326DB3EB14B38BC00018A8D0 /* fsm */,
 				326DB3EF14B38BC00018A8D0 /* dispatcher */,
 				326DB3FC14B38BC00018A8D0 /* exception */,
 				326DB3FE14B38BC00018A8D0 /* general */,
@@ -1215,14 +1211,13 @@
 			path = data;
 			sourceTree = "<group>";
 		};
-		326DB3EB14B38BC00018A8D0 /* dhfsm */ = {
+		326DB3EB14B38BC00018A8D0 /* fsm */ = {
 			isa = PBXGroup;
 			children = (
-				326DB3EC14B38BC00018A8D0 /* CMPtrFSMState.h */,
-				326DB3ED14B38BC00018A8D0 /* DynamicHierarchicalFSM.h */,
-				326DB3EE14B38BC00018A8D0 /* FSMState.h */,
+				32E2561717A67564000F4E20 /* FinalStateMachine.cpp */,
+				32E2561817A67564000F4E20 /* FinalStateMachine.h */,
 			);
-			path = dhfsm;
+			path = fsm;
 			sourceTree = "<group>";
 		};
 		326DB3EF14B38BC00018A8D0 /* dispatcher */ = {
@@ -1753,10 +1748,7 @@
 				326DB45B14B38BC00018A8D0 /* GlobalConfiguration.h in Headers */,
 				326DB45D14B38BC00018A8D0 /* CDataWrapper.h in Headers */,
 				326DB45F14B38BC00018A8D0 /* CUSchemaDB.h in Headers */,
-				326DB46014B38BC00018A8D0 /* CMPtrFSMState.h in Headers */,
-				326DB46114B38BC00018A8D0 /* DynamicHierarchicalFSM.h in Headers */,
 				32D5CB32179D233E00A8427E /* chaos_types.h in Headers */,
-				326DB46214B38BC00018A8D0 /* FSMState.h in Headers */,
 				32460521179C55FC00B075DA /* sqlite3.h in Headers */,
 				326DB46614B38BC00018A8D0 /* ChaosDispatcher.h in Headers */,
 				326DB46814B38BC00018A8D0 /* AbstractCommandDispatcher.h in Headers */,

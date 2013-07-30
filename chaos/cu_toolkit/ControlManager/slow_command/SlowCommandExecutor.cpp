@@ -77,7 +77,7 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
         commandSandbox.sharedAttributeSetting.addAttribute(inputAttributeNames[idx], attributeInfo.maxSize, attributeInfo.valueType);
     }
     
-    utility::InizializableService::initImplementation(commandSandbox, initData, "SlowCommandSandbox", "SlowCommandExecutor::init");
+    utility::StartableService::initImplementation(commandSandbox, initData, "SlowCommandSandbox", "SlowCommandExecutor::init");
     
     // we need to redo the cicle on the input attribute becaus we need to store the daulft values
     // this is needed at this time because commandSandbox has been fully initializate
@@ -201,7 +201,7 @@ void SlowCommandExecutor::deinit() throw(chaos::CException) {
     }
     mapCommandInstancer.clear();
     
-    utility::InizializableService::deinitImplementation(commandSandbox, "SlowCommandSandbox", "SlowCommandExecutor::deinit");
+    utility::StartableService::deinitImplementation(commandSandbox, "SlowCommandSandbox", "SlowCommandExecutor::deinit");
     
     utility::StartableService::deinit();
 }
@@ -346,12 +346,18 @@ SlowCommand *SlowCommandExecutor::instanceCommandInfo(CDataWrapper *submissionIn
         } else {
             instance->submissionRule = SubmissionRuleType::SUBMIT_NORMAL;
         }
-        
+    
         //che if a new scheduler delay has been passed in the info
         if(submissionInfo->hasKey(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL)) {
             instance->featuresFlag |= FeatureFlagTypes::FF_SET_SCHEDULER_DELAY;
-            instance->schedulerStepsDelay = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL);
-            
+            instance->featureSchedulerStepsDelay = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL);
+            DEBUG_CODE(SCELDBG_ << "Set custom  SCHEDULER_STEP_TIME_INTERVALL";)
+        }
+        
+        if(submissionInfo->hasKey(SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY)) {
+            instance->featuresFlag |= FeatureFlagTypes::FF_SET_SUBMISSION_RETRY;
+            instance->featureSubmissionRetryDelay = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY);
+            DEBUG_CODE(SCELDBG_ << "Set custom  SUBMISSION_RETRY_DELAY";)
         }
     }
     return instance;

@@ -26,6 +26,7 @@
 
 
 using namespace chaos::utility;
+
 /*!
  */
 InizializableService::InizializableService() {
@@ -36,12 +37,11 @@ InizializableService::InizializableService() {
 /*!
  */
 InizializableService::~InizializableService() {
-    
+    //if(state_machine) delete (state_machine);
 }
 
 //! Initialize instance
 void InizializableService::init(void*) throw(chaos::CException) {
-    
 }
 
 //! Deinit the implementation
@@ -69,9 +69,12 @@ bool InizializableService::initImplementation(InizializableService *impl, void *
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
         IS_LAPP  << "Initializing " << implName;
-        impl->serviceState = InizializableServiceType::IS_INITING;
-        impl->init(initData);
-        impl->serviceState = InizializableServiceType::IS_INITIATED;
+        if(impl->state_machine.process_event(service_state_machine::EventType::initialize()) == boost::msm::back::HANDLED_TRUE) {
+            impl->init(initData);
+            impl->serviceState = InizializableServiceType::IS_INITIATED;
+        } else {
+           throw CException(0, "Service cant be initialized", domainString);
+        }
         IS_LAPP  << implName << "Initialized";
     } catch (CException ex) {
         IS_LAPP  << "Error initializing " << implName;
@@ -87,8 +90,11 @@ bool InizializableService::deinitImplementation(InizializableService *impl, cons
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
         IS_LAPP  << "Deinitializing " << implName;
-        impl->serviceState = InizializableServiceType::IS_DEINITING;
-        impl->deinit();
+        if(impl->state_machine.process_event(service_state_machine::EventType::deinitialize()) == boost::msm::back::HANDLED_TRUE) {
+            impl->deinit();
+        } else {
+            throw CException(0, "Service cant be started", domainString);
+        }
         impl->serviceState = InizializableServiceType::IS_DEINTIATED;
         IS_LAPP  << implName << "Deinitialized";
     } catch (CException ex) {

@@ -39,7 +39,7 @@ public class Dataset extends BSONBusinessObject {
 	}
 	
 	public Dataset(Long devTS) {
-		timestamp = devTS !=null?new Timestamp(devTS.longValue()):null;
+		timestamp = devTS !=null ? new Timestamp(devTS.longValue()):null;
 	}
 
 	/**

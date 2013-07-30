@@ -83,8 +83,13 @@ namespace chaos{
                     uint8_t  featuresFlag;
                     
                     //features variable
-                    uint32_t schedulerStepsDelay;
+                    //! Command specific delay beetween two sequence of the commadn step (acquire->correlation)
+                    uint32_t featureSchedulerStepsDelay;
                     
+                    //! Command specific delay between runninc command state and
+                    //! submission rule for install new command
+                    uint32_t featureSubmissionRetryDelay;
+
                     //! Submission state
                     /*!
                      A value that represent the submiossion state

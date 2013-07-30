@@ -103,8 +103,9 @@ namespace chaos{
 
                     //!Mutex used for sincronize the introspection of the current command
                     boost::recursive_mutex          mutexNextCommandChecker;
-                    //! check time intervall for the valutate the jobs (next, current and paused) state
-                    posix_time::milliseconds        checkTimeIntervall;
+                    //! delay between two submiossion check
+                    posix_time::milliseconds        submissionRetryDelay;
+                    //! instance to the checker thread
                     std::auto_ptr<boost::thread>    threadNextCommandChecker;
                     
                     
@@ -137,9 +138,6 @@ namespace chaos{
                     std::stack<SlowCommand*> commandStack;
                     
                     //-------------------- handler poiter --------------------
-                    //! Pointer to the set phase handler's of the current command
-                    //SetFunctor setHandlerFunctor;
-
                     //! Pointer to the acquire pahse handler's of the current command
                     AcquireFunctor acquireHandlerFunctor;
                     

@@ -29,7 +29,7 @@ continue; \
 #define SCSLDBG_ LDBG_ << "[SlowCommandSandbox-" << "] "
 #define SCSLERR_ LERR_ << "[SlowCommandSandbox-" << "] "
 
-SlowCommandSandbox::SlowCommandSandbox():checkTimeIntervall(posix_time::milliseconds(DEFAULT_CHECK_TIME)) {
+SlowCommandSandbox::SlowCommandSandbox():submissionRetryDelay(posix_time::milliseconds(DEFAULT_CHECK_TIME)) {
     //reset all the handler
 }
 
@@ -51,7 +51,11 @@ void SlowCommandSandbox::init(void *initData) throw(chaos::CException) {
     utility::InizializableService::initImplementation(sharedAttributeSetting, initData, "AttributeSetting", "SlowCommandSandbox::init");
     
     SCSLDBG_ << "Get base check time intervall for the scheduler";
+<<<<<<< HEAD
     checkTimeIntervall = posix_time::milliseconds(DEFAULT_CHECK_TIME);
+=======
+    submissionRetryDelay = posix_time::milliseconds(DEFAULT_CHECK_TIME);
+>>>>>>> 09eaeaa1c73abad82bc169a7f9238ae85ed92e5a
     schedulerStepDelay = DEFAULT_TIME_STEP_INTERVALL;
     
     scheduleWorkFlag = false;
@@ -205,7 +209,7 @@ void SlowCommandSandbox::checkNextCommand() {
                     CHECK_END_OF_SCHEDULER_WORK_AND_CONTINUE()
                     
                     //we don't have any available next command ad wee need to sleep for some times
-                    waithForNextCheck.timed_wait(lockOnNextCommandMutex, checkTimeIntervall);
+                    waithForNextCheck.timed_wait(lockOnNextCommandMutex, submissionRetryDelay);
                 }
             }else {
                 //check if we need to end
@@ -237,7 +241,7 @@ void SlowCommandSandbox::checkNextCommand() {
             
             //waith for the next schedule
             if(nextAvailableCommand.cmdImpl) {
-                waithForNextCheck.timed_wait(lockOnNextCommandMutex, checkTimeIntervall);
+                waithForNextCheck.timed_wait(lockOnNextCommandMutex, submissionRetryDelay);
             } else {
                 waithForNextCheck.wait(lockOnNextCommandMutex);
             }
@@ -318,8 +322,10 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
         //set the schedule step delay (time intervall between twp sequnece of the scehduler step)
         if(cmdImpl->featuresFlag & FeatureFlagTypes::FF_SET_SCHEDULER_DELAY) {
             //we need to set a new delay between steps
+            schedulerStepDelay = cmdImpl->featureSchedulerStepsDelay;
             DEBUG_CODE(SCSLDBG_ << "New scheduler time has been installed";)
             schedulerStepDelay = cmdImpl->schedulerStepsDelay;
+
         }
         cmdImpl->shared_stat = &stat;
         currentExecutingCommand = cmdImpl;
@@ -333,11 +339,20 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
 bool SlowCommandSandbox::setNextAvailableCommand(PRIORITY_ELEMENT(CDataWrapper) *cmdInfo, SlowCommand *cmdImpl) {
     if(!cmdImpl) return false;
     boost::recursive_mutex::scoped_lock lockScheduler(mutexNextCommandChecker);
-    if(utility::StartableService::serviceState == utility::InizializableServiceType::IS_DEINTIATED ||
-       utility::StartableService::serviceState == utility::InizializableServiceType::IS_DEINITING) return false;
+    if(utility::StartableService::serviceState == utility::InizializableServiceType::IS_DEINTIATED) return false;
     
     nextAvailableCommand.cmdInfo = cmdInfo;
     nextAvailableCommand.cmdImpl = cmdImpl;
+    
+    //check if the command has it's own time for the checker
+    if(cmdImpl->featuresFlag & FeatureFlagTypes::FF_SET_SUBMISSION_RETRY) {
+        //we need to set a new delay between steps
+        submissionRetryDelay = posix_time::milliseconds(cmdImpl->featureSubmissionRetryDelay);
+        DEBUG_CODE(SCSLDBG_ << "New checker delay has been installed with value of " << cmdImpl->featureSubmissionRetryDelay << " milliseconds";)
+    }else {
+        submissionRetryDelay = posix_time::milliseconds(DEFAULT_CHECK_TIME);
+        DEBUG_CODE(SCSLDBG_ << "Default checker delay has been used with value of " << DEFAULT_CHECK_TIME  << " milliseconds";)
+    }
     
     waithForNextCheck.notify_one();
     return true;

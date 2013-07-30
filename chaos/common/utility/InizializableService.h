@@ -23,19 +23,70 @@
 
 #include <inttypes.h>
 
+// back-end
+#include <boost/msm/back/state_machine.hpp>
+//front-end
+#include <boost/msm/front/state_machine_def.hpp>
+#include <boost/msm/front/functor_row.hpp>
+#include <boost/msm/front/euml/common.hpp>
+// for And_ operator
+#include <boost/msm/front/euml/operator.hpp>
+
+#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/exception/CException.h>
+
+using namespace std;
+namespace msm = boost::msm;
+using namespace msm::front;
+namespace mpl = boost::mpl;
+// for And_ operator
+using namespace msm::front::euml;
 
 namespace chaos {
     namespace utility {
+        
+        namespace service_state_machine {
+            //SM Event
+            namespace EventType {
+                struct initialize {};
+                struct deinitialize {};
+            }
+            
+            // The list of FSM states
+            struct Deinitilized : public boost::msm::front::state<>{};
+            
+            struct Initialized : public boost::msm::front::state<> {};
+            
+            // front-end: define the FSM structure
+            struct id_states_machine : public boost::msm::front::state_machine_def<id_states_machine> {
+
+                // the initial state of the player SM. Must be defined
+                typedef Deinitilized initial_state;
+                
+                typedef boost::msm::front::Row <  Deinitilized   ,  EventType::initialize  , Initialized, boost::msm::front::none , boost::msm::front::none > deinit_init_row;
+                typedef boost::msm::front::Row <  Initialized   ,  EventType::deinitialize  , Deinitilized, boost::msm::front::none , boost::msm::front::none > init_deinit_row;
+
+                // Transition table for initialization services
+                struct transition_table : boost::mpl::vector<
+                deinit_init_row,
+                init_deinit_row > {};
+                
+                template <class FSM,class Event>
+                void no_transition(Event const& ,FSM&, int )
+                {
+                    std::cout << "no trnasition";
+                }
+            };
+        }
+        
         namespace InizializableServiceType {
             typedef enum {
-                IS_INITING,
                 IS_INITIATED,
-                IS_DEINITING,
                 IS_DEINTIATED
             } InizializableServiceState;
         }
         class InizializableService {
+            boost::msm::back::state_machine< service_state_machine::id_states_machine > state_machine;
         protected:
             uint8_t serviceState;
         public:
