@@ -39,7 +39,22 @@ SlowCommandExecutor::SlowCommandExecutor() {}
 
 SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DeviceSchemaDB *_deviceSchemaDbPtr):executorID(_executorID), deviceSchemaDbPtr(_deviceSchemaDbPtr){}
 
-SlowCommandExecutor::~SlowCommandExecutor() {}
+SlowCommandExecutor::~SlowCommandExecutor() {
+    // the instancer of the command can't be uninstalled at deinit step
+    // because the executor live  one o one with the contro unit.
+    // In teh CU the commadn are installed at the definition step
+    // this mean that until executor live the command remain installed
+    // and the CU is not redefined unti it is reloaded but startup
+    // a and so new executor will be used
+    SCELAPP_ << "Removing all the instacer of the command";
+    for(std::map<string, chaos::common::utility::ObjectInstancer<SlowCommand>* >::iterator it = mapCommandInstancer.begin();
+        it != mapCommandInstancer.end();
+        it++) {
+        SCELAPP_ << "Dispose instancer " << it->first;
+        if(it->second) delete(it->second);
+    }
+    mapCommandInstancer.clear();
+}
 
 //! get access to the custom data pointer of the channel setting instance
 void SlowCommandExecutor::setSharedCustomDataPtr(void *customDataPtr) {
@@ -191,16 +206,6 @@ void SlowCommandExecutor::stop() throw(chaos::CException) {
 
 // Deinit the implementation
 void SlowCommandExecutor::deinit() throw(chaos::CException) {
-    //clear all instancer
-    SCELAPP_ << "Removing all the instacer of the command";
-    for(std::map<string, chaos::common::utility::ObjectInstancer<SlowCommand>* >::iterator it = mapCommandInstancer.begin();
-        it != mapCommandInstancer.end();
-        it++) {
-        SCELAPP_ << "Dispose instancer " << it->first;
-        if(it->second) delete(it->second);
-    }
-    mapCommandInstancer.clear();
-    
     utility::StartableService::deinitImplementation(commandSandbox, "SlowCommandSandbox", "SlowCommandExecutor::deinit");
     
     utility::StartableService::deinit();
@@ -347,17 +352,17 @@ SlowCommand *SlowCommandExecutor::instanceCommandInfo(CDataWrapper *submissionIn
             instance->submissionRule = SubmissionRuleType::SUBMIT_NORMAL;
         }
     
-        //che if a new scheduler delay has been passed in the info
+        //check if the comamnd pack has some feature to setup in the command instance
         if(submissionInfo->hasKey(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL)) {
             instance->featuresFlag |= FeatureFlagTypes::FF_SET_SCHEDULER_DELAY;
             instance->featureSchedulerStepsDelay = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL);
-            DEBUG_CODE(SCELDBG_ << "Set custom  SCHEDULER_STEP_TIME_INTERVALL";)
+            DEBUG_CODE(SCELDBG_ << "Set custom  SCHEDULER_STEP_TIME_INTERVALL to " << instance->featureSchedulerStepsDelay << " milliseconds";)
         }
         
         if(submissionInfo->hasKey(SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY)) {
             instance->featuresFlag |= FeatureFlagTypes::FF_SET_SUBMISSION_RETRY;
             instance->featureSubmissionRetryDelay = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY);
-            DEBUG_CODE(SCELDBG_ << "Set custom  SUBMISSION_RETRY_DELAY";)
+            DEBUG_CODE(SCELDBG_ << "Set custom  SUBMISSION_RETRY_DELAY to " << instance->featureSubmissionRetryDelay << " milliseconds";)
         }
     }
     return instance;

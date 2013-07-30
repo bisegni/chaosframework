@@ -22,22 +22,42 @@
 using namespace chaos;
 namespace cccs = chaos::cu::control_manager::slow_command;
 
-//! default constructor
+// default constructor
 cccs::SlowCommand::SlowCommand() {
+    featuresFlag = 0;
     runningState = RunningStateType::RS_Exsc;
     submissionRule = SubmissionRuleType::SUBMIT_NORMAL;
 }
 
-//! default destructor
+// default destructor
 cccs::SlowCommand::~SlowCommand() {
     
 }
 
-/*!
+/*
  return the device database with the dafualt device information
  */
 chaos::cu::DeviceSchemaDB  *cccs::SlowCommand::getDeviceDatabase() {
     return deviceDatabasePtr;
+}
+
+// set the features with the ui32 value
+void cccs::SlowCommand::setFeatures(cccs::FeatureFlagTypes::FeatureFlag features, uint32_t featuresValue) {
+    if(featuresValue == 0) return;
+
+    featuresFlag |= features;
+    switch (features) {
+        case cccs::FeatureFlagTypes::FF_SET_SCHEDULER_DELAY:
+            featureSchedulerStepsDelay = featuresValue;
+            break;
+            
+        case cccs::FeatureFlagTypes::FF_SET_SUBMISSION_RETRY:
+            featureSubmissionRetryDelay = featuresValue;
+            break;
+            
+        default:
+            break;
+    }
 }
 
 void cccs::SlowCommand::getChangedAttributeIndex(std::vector<AttributeIndexType>& changedIndex) {

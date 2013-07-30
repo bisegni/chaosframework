@@ -96,6 +96,8 @@ namespace chaos{
                     //------------------scheduler---------------------
                     //internal ascheduling thread
                     std::auto_ptr<boost::thread> threadScheduler;
+                    //! delay for the next beat of scheduler
+                    //uint64_t schedulerStepDelay;
                     //! Thread for whait until the queue is empty
                     WaitSemaphore  threadSchedulerPauseCondition;
                     
@@ -118,9 +120,6 @@ namespace chaos{
                     
                     //!Mutex used for sincronize the introspection of the current command
                     //boost::mutex  pauseMutex;
-                    
-                    //! delay for the next beat of scheduler
-                    uint64_t schedulerStepDelay;
 
                     //! Pointers to the next available command implementation and information
                     CommandInfoAndImplementation nextAvailableCommand;

@@ -51,12 +51,9 @@ void SlowCommandSandbox::init(void *initData) throw(chaos::CException) {
     utility::InizializableService::initImplementation(sharedAttributeSetting, initData, "AttributeSetting", "SlowCommandSandbox::init");
     
     SCSLDBG_ << "Get base check time intervall for the scheduler";
-<<<<<<< HEAD
-    checkTimeIntervall = posix_time::milliseconds(DEFAULT_CHECK_TIME);
-=======
     submissionRetryDelay = posix_time::milliseconds(DEFAULT_CHECK_TIME);
->>>>>>> 09eaeaa1c73abad82bc169a7f9238ae85ed92e5a
-    schedulerStepDelay = DEFAULT_TIME_STEP_INTERVALL;
+
+    //schedulerStepDelay = DEFAULT_TIME_STEP_INTERVALL;
     
     scheduleWorkFlag = false;
 }
@@ -170,7 +167,7 @@ void SlowCommandSandbox::checkNextCommand() {
                     bool hasAcquireOrCC = nextAvailableCommand.cmdImpl->implementedHandler() > 1;
                     
                     //if the current command is null we simulate and END state
-                    if ( hasAcquireOrCC && (curCmdRunningState >= SubmissionRuleType::SUBMIT_AND_Kill || nextAvailableCommand.cmdImpl->submissionRule & SubmissionRuleType::SUBMIT_AND_Kill)) {
+                    if ( hasAcquireOrCC && (curCmdRunningState >= SubmissionRuleType::SUBMIT_AND_Kill || (nextAvailableCommand.cmdImpl->submissionRule & SubmissionRuleType::SUBMIT_AND_Kill))) {
                         DEBUG_CODE(SCSLDBG_ << "New command that want kill the current one";)
                         //for now we delete it after we need to manage it
                         if(currentExecutingCommand) {
@@ -202,6 +199,8 @@ void SlowCommandSandbox::checkNextCommand() {
                         DELETE_OBJ_POINTER(nextAvailableCommand.cmdImpl)
                         DEBUG_CODE(SCSLDBG_ << "cmdImpl deleted";)
                     }
+                    //fire the scheduler
+                    threadSchedulerPauseCondition.unlock();
                 } else {
                     //submisison rule can't permit to remove the command
                     
@@ -282,7 +281,17 @@ void SlowCommandSandbox::runCommand() {
         lockForCurrentCommand.unlock();
         stat.lastCmdStepTime = boost::chrono::duration_cast<boost::chrono::milliseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count()-stat.lastCmdStepStart;
         //
-        boost::this_thread::sleep_for(boost::chrono::milliseconds(schedulerStepDelay - stat.lastCmdStepTime));
+        switch ((uint64_t)currentExecutingCommand) {
+            case 0:
+                DEBUG_CODE(SCSLDBG_ << "Scheduler need sleep because no command to run";)
+                threadSchedulerPauseCondition.wait();
+                break;
+                
+            default:
+                boost::this_thread::sleep_for(boost::chrono::milliseconds(currentExecutingCommand->featureSchedulerStepsDelay - stat.lastCmdStepTime));
+                break;
+        }
+       
         
     }
     
@@ -319,14 +328,6 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
         //correlation commit
         if(handlerMask & HandlerType::HT_Correlation) correlationHandlerFunctor.cmdInstance = cmdImpl;
         
-        //set the schedule step delay (time intervall between twp sequnece of the scehduler step)
-        if(cmdImpl->featuresFlag & FeatureFlagTypes::FF_SET_SCHEDULER_DELAY) {
-            //we need to set a new delay between steps
-            schedulerStepDelay = cmdImpl->featureSchedulerStepsDelay;
-            DEBUG_CODE(SCSLDBG_ << "New scheduler time has been installed";)
-            schedulerStepDelay = cmdImpl->schedulerStepsDelay;
-
-        }
         cmdImpl->shared_stat = &stat;
         currentExecutingCommand = cmdImpl;
     } else {
@@ -343,7 +344,13 @@ bool SlowCommandSandbox::setNextAvailableCommand(PRIORITY_ELEMENT(CDataWrapper) 
     
     nextAvailableCommand.cmdInfo = cmdInfo;
     nextAvailableCommand.cmdImpl = cmdImpl;
-    
+    //set the schedule step delay (time intervall between twp sequnece of the scehduler step)
+    if((cmdImpl->featuresFlag & FeatureFlagTypes::FF_SET_SCHEDULER_DELAY) == 0) {
+        //we need to set a new delay between steps
+        cmdImpl->featureSchedulerStepsDelay =  DEFAULT_TIME_STEP_INTERVALL;
+        DEBUG_CODE(SCSLDBG_ << "default scheduler delay has been installed with " << DEFAULT_TIME_STEP_INTERVALL << " milliseconds";)
+        
+    }
     //check if the command has it's own time for the checker
     if(cmdImpl->featuresFlag & FeatureFlagTypes::FF_SET_SUBMISSION_RETRY) {
         //we need to set a new delay between steps

@@ -32,7 +32,7 @@ void SCWorkerCU::defineActionAndDataset() throw(CException) {
     installCommand<SinWaveCommand>("sinwave_base");
     
     //set it has default
-    setDefaultCommand("sinwave_base");
+   // setDefaultCommand("sinwave_base");
     
     //setup the dataset
     addAttributeToDataSet(devIDInChar,

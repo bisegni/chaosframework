@@ -26,6 +26,8 @@
 #include <string>
 #include <stdint.h>
 
+#include <boost/chrono.hpp>
+
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/ControlManager/DeviceSchemaDB.h>
@@ -96,6 +98,7 @@ namespace chaos{
                      */
                     uint8_t submissionRule;
                     
+                    //! key data storage to forwsard data to central memory (momentary until directi/O will be created)
                     KeyDataStorage *keyDataStoragePtr;
                     
                     //! point to the in memory device database
@@ -106,15 +109,11 @@ namespace chaos{
                     
                     //! shared setting across all slow command
                     AttributeSetting *sharedAttributeSettingPtr;
-
-                    
-                    //!Set Handlers definition
-                    typedef uint8_t (SlowCommand::*HandlerPointer)();
                     
                     //! Map that assocaite the alias to the driver accessor
                     /*!
                      The map is only a pointer becaouse someone else need to set it.
-                     The subclass ca access it for get the accessor.
+                     The subclass can access it for get the accessor.
                      */
                     std::map<std::string, dm::driver::DriverAccessor*> *driversAccessorMap;
                     
@@ -135,6 +134,14 @@ namespace chaos{
                     
                     //! default destructor
                     virtual ~SlowCommand();
+                    
+                    //! set the features with the uint32 value
+                    /*!
+                     Feature rappresented by an uint32 can be setupped with this api. The value can be 
+                     overloaded by submition feature flag and anyway the are keept in consideration onlyat installation time
+                     of the command.
+                     */
+                    void setFeatures(FeatureFlagTypes::FeatureFlag features, uint32_t featuresValue);
                     
                     /*!
                      return the device database with the dafualt device information

@@ -48,6 +48,7 @@ namespace chaos {
         ~PriorityQueuedElement(){
             if (disposeOnDestroy && element) {
                 delete(element);
+                element = NULL;
             }
         }
         
