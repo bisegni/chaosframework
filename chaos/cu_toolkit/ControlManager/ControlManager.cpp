@@ -136,6 +136,7 @@ void ControlManager::start() throw(CException) {
  */
 void ControlManager::deinit() throw(CException) {
     bool detachFake = false;
+    std::vector<const chaos::DeclareAction * > cuDeclareActionsInstance;
     vector<string> allCUDeviceIDToStop;
     LCMAPP_  << "Deinit the Control Manager";
     LCMAPP_  << "system action deinitialization";
@@ -155,6 +156,13 @@ void ControlManager::deinit() throw(CException) {
     map<string, shared_ptr<AbstractControlUnit> >::iterator cuIter = controlUnitInstanceMap.begin();
     for ( ; cuIter != controlUnitInstanceMap.end(); cuIter++ ){
         shared_ptr<AbstractControlUnit> cu = (*cuIter).second;
+        
+        LCMAPP_  << "Deregister RPC action for cu whith instance:" << cu->getCUInstance();
+        cu->_getDeclareActionInstance(cuDeclareActionsInstance);
+        for(int idx = 0; idx < cuDeclareActionsInstance.size(); idx++) {
+            CommandManager::getInstance()->deregisterAction((chaos::DeclareAction *)cuDeclareActionsInstance[idx]);
+        }
+        
         LCMAPP_  << "Deinit Control Unit. " << cu->getCUInstance();
             //load all device id for this cu
         allCUDeviceIDToStop.push_back(cu->getDeviceID());
@@ -199,6 +207,7 @@ void ControlManager::deinit() throw(CException) {
         LCMAPP_  << "Dispose event channel for Control Unit Sanbox:" << cu->getCUInstance();
         CommandManager::getInstance()->deleteEventChannel(cu->deviceEventChannel);
         cu->deviceEventChannel = NULL;
+        cuDeclareActionsInstance.clear();
         LCMAPP_  << "Deinitilized Control Unit Sanbox:" << cu->getCUInstance();
     }
     controlUnitInstanceMap.clear();
@@ -224,7 +233,7 @@ void ControlManager::executeOnThread() throw(CException) {
     int registrationError = ErrorCode::EC_NO_ERROR;
     AbstractControlUnit *curCU = 0L;
     CDataWrapper cuActionAndDataset;
-    
+    std::vector<const chaos::DeclareAction * > cuDeclareActionsInstance;
     
     try {
         curCU = waitAndPop();
@@ -240,7 +249,12 @@ void ControlManager::executeOnThread() throw(CException) {
         LCMAPP_  << "Setup Control Unit Sanbox for cu with instance:" << cuPtr->getCUInstance();
         cuPtr->_defineActionAndDataset(cuActionAndDataset);
         
-        LCMAPP_  << "Setup finished for Control Unit with instance:" << cuPtr->getCUInstance();
+        LCMAPP_  << "Register RPC action for cu whith instance:" << cuPtr->getCUInstance();
+        cuPtr->_getDeclareActionInstance(cuDeclareActionsInstance);
+        for(int idx = 0; idx < cuDeclareActionsInstance.size(); idx++) {
+            CommandManager::getInstance()->registerAction((chaos::DeclareAction *)cuDeclareActionsInstance[idx]);
+        }
+        
             //sendConfPackToMDS(cuPtr->defaultInternalConf.get());
         LCMAPP_  << "Talk with MDS for cu with instance:" << cuPtr->getCUInstance();
         registrationError = sendConfPackToMDS(cuActionAndDataset);
@@ -274,6 +288,10 @@ void ControlManager::executeOnThread() throw(CException) {
             LDBG_ << masterConfiguration->getJSONString();
 #endif
         }
+        
+        
+        //clear
+        cuDeclareActionsInstance.clear();
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
     }

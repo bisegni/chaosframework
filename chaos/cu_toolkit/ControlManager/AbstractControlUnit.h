@@ -108,6 +108,8 @@ namespace chaos{
              a CDataWrapper
              */
             void _undefineActionAndDataset() throw(CException);
+            
+
         protected:
             //CU instance, this te fine the current isntance code
             //it's dynamically assigned
@@ -125,6 +127,13 @@ namespace chaos{
             boost::recursive_mutex managing_cu_mutex;
             
             ec::InstrumentEventChannel *deviceEventChannel;
+            
+            //! Get all managem declare action instance
+            /*!
+             Return all theinstance that implement action to be published into network broker.
+             Subclass can override this method to inclued his cation instancer
+             */
+            virtual void _getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance);
             
             /*!
              Receive the evento for set the dataset input element

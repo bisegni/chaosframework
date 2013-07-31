@@ -30,14 +30,26 @@
 
 using namespace chaos;
 using namespace chaos::cu::control_manager::slow_command;
+namespace cccs = chaos::cu::control_manager::slow_command;
 
 #define SCELAPP_ LAPP_ << "[SlowCommandExecutor-" << executorID << "] "
 #define SCELDBG_ LDBG_ << "[SlowCommandExecutor-" << executorID << "] "
 #define SCELERR_ LERR_ << "[SlowCommandExecutor-" << executorID << "] "
 
-SlowCommandExecutor::SlowCommandExecutor() {}
+SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DeviceSchemaDB *_deviceSchemaDbPtr):executorID(_executorID), deviceSchemaDbPtr(_deviceSchemaDbPtr){
+    //this need to be removed from here need to be implemented the def undef services
+    // register the public rpc api
+    std::string rpcActionDomain = executorID + cccs::SlowCommandSubmissionKey::COMMAND_EXECUTOR_POSTFIX_DOMAIN;
+    
+    //
+    SCELAPP_ << "Register updateConfiguration action";
+    DeclareAction::addActionDescritionInstance<SlowCommandExecutor>(this,
+                                                                    &SlowCommandExecutor::getQueuedCommand,
+                                                                    rpcActionDomain.c_str(),
+                                                                    "getQueuedCommand",
+                                                                    "Return the number and the infromation of the queued command via RPC");
 
-SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DeviceSchemaDB *_deviceSchemaDbPtr):executorID(_executorID), deviceSchemaDbPtr(_deviceSchemaDbPtr){}
+}
 
 SlowCommandExecutor::~SlowCommandExecutor() {
     // the instancer of the command can't be uninstalled at deinit step
@@ -90,22 +102,7 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
         
         // add the attribute to the shared setting object
         commandSandbox.sharedAttributeSetting.addAttribute(inputAttributeNames[idx], attributeInfo.maxSize, attributeInfo.valueType);
-    }
-    
-    utility::StartableService::initImplementation(commandSandbox, initData, "SlowCommandSandbox", "SlowCommandExecutor::init");
-    
-    // we need to redo the cicle on the input attribute becaus we need to store the daulft values
-    // this is needed at this time because commandSandbox has been fully initializate
-    // and all memory space for the shared settings has been allocated
-    for(int idx = 0;
-        idx < inputAttributeNames.size();
-        idx++) {
         
-        attributeInfo.reset();
-        
-        // retrive the attribute description from the device database
-        deviceSchemaDbPtr->getAttributeRangeValueInfo(inputAttributeNames[idx], attributeInfo);
-
         if(!attributeInfo.defaultValue.size()) continue;
         
         //setting value using index (the index into the sharedAttributeSetting are sequencial to the inserted order)
@@ -134,15 +131,18 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
                 break;
                 
         }
-
     }
-    
+
+    //start the sand box
+    utility::StartableService::initImplementation(commandSandbox, initData, "SlowCommandSandbox", "SlowCommandExecutor::init");
+
     SCELAPP_ << "Check if we need to use the dafult command or we have pause instance";
     if(defaultCommandAlias.size()) {
         SCELAPP_ << "Set the default command ->"<<defaultCommandAlias;
         commandSandbox.setNextAvailableCommand(NULL, instanceCommandInfo(defaultCommandAlias));
         DEBUG_CODE(SCELDBG_ << "Command " << defaultCommandAlias << " successfull installed";)
     }
+    
 }
 
 
@@ -391,4 +391,13 @@ bool SlowCommandExecutor::submitCommand(CDataWrapper *commandDescription) {
     lock.unlock();
     readThreadWhait.notify_one();
     return true;
+}
+
+
+//! Get queued command via rpc command
+/*
+ Return the number and the infromation of the queued command via RPC
+ */
+CDataWrapper* SlowCommandExecutor::getQueuedCommand(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
+    
 }

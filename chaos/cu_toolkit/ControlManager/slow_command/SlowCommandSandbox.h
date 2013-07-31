@@ -15,6 +15,7 @@
 #include <boost/thread.hpp>
 #include <boost/chrono.hpp>
 
+#include <chaos/common/exception/CException.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/thread/WaitSemaphore.h>
@@ -51,22 +52,12 @@ namespace chaos{
                 };
                 
                 //! Functor implementation
-                struct SetFunctor : public BaseFunctor {
-                    void operator()(CDataWrapper *commandInfo) {
-                        if(cmdInstance && (cmdInstance->runningState < RunningStateType::RS_End)) cmdInstance->setHandler(commandInfo);
-                    }
-                };
-                
                 struct AcquireFunctor : public BaseFunctor {
-                    void operator()() {
-                        if(cmdInstance && (cmdInstance->runningState < RunningStateType::RS_End)) cmdInstance->acquireHandler();
-                    }
+                    void operator()();
                 };
                 
                 struct CorrelationFunctor : public BaseFunctor {
-                    void operator()() {
-                        if(cmdInstance && (cmdInstance->runningState < RunningStateType::RS_End)) (cmdInstance->ccHandler());
-                    }
+                    void operator()();
                 };
                 
                 //! SAndbox fo the slow command execution

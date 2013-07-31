@@ -69,7 +69,7 @@ namespace chaos {
         /*!
          Return the description of all action into a CDataWrapper
          */
-        void getActionDescrionsInDataWrapper(CDataWrapper&);
+        void getActionDescrionsInDataWrapper(CDataWrapper&, bool close = true);
     };
 }
 #endif

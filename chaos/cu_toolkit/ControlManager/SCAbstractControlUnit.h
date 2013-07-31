@@ -70,6 +70,8 @@ namespace chaos {
             
             void addSharedVariable(std::string name, uint32_t max_size, chaos::DataType::DataType type);
             void setSharedVariableValue(std::string name, void *value, uint32_t value_size);
+            // Get all managem declare action instance
+            void _getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance);
         public:
             
             SCAbstractControlUnit();

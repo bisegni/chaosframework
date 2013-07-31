@@ -170,12 +170,12 @@ void cu::AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigu
     LCU_ << setupConfiguration.getJSONString();
 #endif
     
-    //grab action description
-    LCU_ << "Get Action Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
-    DeclareAction::getActionDescrionsInDataWrapper(setupConfiguration);
+    //for now the action description are not managed
+    //LCU_ << "Get Action Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
+    //DeclareAction::getActionDescrionsInDataWrapper(setupConfiguration);
     
     //register command manager action
-    CommandManager::getInstance()->registerAction(this);
+    //CommandManager::getInstance()->registerAction(this);
     
     /*auto_ptr<SerializationBuffer> ser(setupConfiguration.getBSONData());
      //copy configuration for internal use
@@ -192,10 +192,14 @@ void cu::AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigu
 void cu::AbstractControlUnit::_undefineActionAndDataset() throw(CException) {
     LCU_ << "Remove Action Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
     //register command manager action
-    CommandManager::getInstance()->deregisterAction(this);
+    //CommandManager::getInstance()->deregisterAction(this);
     
 }
 
+//! Get all managem declare action instance
+void cu::AbstractControlUnit::_getDeclareActionInstance(std::vector<const chaos::DeclareAction *>& declareActionInstance) {
+    declareActionInstance.push_back(this);
+}
 //----------------------------------------- protected initi/deinit method ------------------------------------------------
 /*
  Initialize the Custom Contro Unit and return the configuration

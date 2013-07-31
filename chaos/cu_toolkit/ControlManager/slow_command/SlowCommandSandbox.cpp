@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 INFN. All rights reserved.
 //
 
+#include <exception>
+
 #include <chaos/common/global.h>
 
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandSandbox.h>
@@ -15,6 +17,45 @@
 using namespace chaos::chrono;
 using namespace chaos::cu::control_manager::slow_command;
 
+namespace cccs = chaos::cu::control_manager::slow_command;
+
+//------------------------------------------------------------------------------------------------------------
+#define FUNCTORLERR_ LERR_ << "[SlowCommandSandbox-" << "] "
+
+#define SET_FAULT(c, m, d) \
+FUNCTORLERR_ << c << m << d; \
+cmdInstance->runningState |= cccs::RunningStateType::RS_Fault; \
+cmdInstance->faultDescription.code = c; \
+cmdInstance->faultDescription.description = m; \
+cmdInstance->faultDescription.domain = d;
+
+//! Functor implementation
+void AcquireFunctor::operator()() {
+    try{
+        if(cmdInstance && (cmdInstance->runningState < RunningStateType::RS_End)) cmdInstance->acquireHandler();
+    } catch(chaos::CException& ex) {
+        SET_FAULT(ex.errorCode, ex.errorMessage, ex.errorDomain)
+    } catch(std::exception& ex) {
+        SET_FAULT(-1, ex.what(), "Acquisition Handler");
+    } catch(...) {
+        SET_FAULT(-2, "Unmanaged exception", "Acquisition Handler");
+    }
+}
+
+
+void CorrelationFunctor::operator()() {
+    try {
+        if(cmdInstance && (cmdInstance->runningState < RunningStateType::RS_End)) (cmdInstance->ccHandler());
+    } catch(chaos::CException& ex) {
+        SET_FAULT(ex.errorCode, ex.errorMessage, ex.errorDomain)
+    } catch(std::exception& ex) {
+        SET_FAULT(-1, ex.what(), "Acquisition Handler");
+    } catch(...) {
+        SET_FAULT(-2, "Unmanaged exception", "Acquisition Handler");
+    }
+}
+
+//------------------------------------------------------------------------------------------------------------
 #define DEFAULT_STACK_ELEMENT 100
 #define DEFAULT_TIME_STEP_INTERVALL 1000
 #define DEFAULT_CHECK_TIME 500
@@ -28,6 +69,7 @@ continue; \
 #define SCSLAPP_ LAPP_ << "[SlowCommandSandbox-" << "] "
 #define SCSLDBG_ LDBG_ << "[SlowCommandSandbox-" << "] "
 #define SCSLERR_ LERR_ << "[SlowCommandSandbox-" << "] "
+
 
 SlowCommandSandbox::SlowCommandSandbox():submissionRetryDelay(posix_time::milliseconds(DEFAULT_CHECK_TIME)) {
     //reset all the handler
@@ -52,7 +94,7 @@ void SlowCommandSandbox::init(void *initData) throw(chaos::CException) {
     
     SCSLDBG_ << "Get base check time intervall for the scheduler";
     submissionRetryDelay = posix_time::milliseconds(DEFAULT_CHECK_TIME);
-
+    
     //schedulerStepDelay = DEFAULT_TIME_STEP_INTERVALL;
     
     scheduleWorkFlag = false;
@@ -258,9 +300,8 @@ void SlowCommandSandbox::runCommand() {
     
     //check if the current command has ended or need to be substitute
     boost::mutex::scoped_lock lockForCurrentCommand(mutextAccessCurrentCommand);
-    while(canWork) {
+    do{
         stat.lastCmdStepStart = boost::chrono::duration_cast<boost::chrono::milliseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count();
-        if(!lockForCurrentCommand) lockForCurrentCommand.lock();
         // call the acquire phase
         acquireHandlerFunctor();
         
@@ -281,7 +322,8 @@ void SlowCommandSandbox::runCommand() {
         lockForCurrentCommand.unlock();
         stat.lastCmdStepTime = boost::chrono::duration_cast<boost::chrono::milliseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count()-stat.lastCmdStepStart;
         //
-        switch ((uint64_t)currentExecutingCommand) {
+        uint64_t sw = (uint64_t)currentExecutingCommand;
+        switch (sw) {
             case 0:
                 DEBUG_CODE(SCSLDBG_ << "Scheduler need sleep because no command to run";)
                 threadSchedulerPauseCondition.wait();
@@ -291,9 +333,9 @@ void SlowCommandSandbox::runCommand() {
                 boost::this_thread::sleep_for(boost::chrono::milliseconds(currentExecutingCommand->featureSchedulerStepsDelay - stat.lastCmdStepTime));
                 break;
         }
-       
         
-    }
+        lockForCurrentCommand.lock();
+    } while(canWork);
     
     DEBUG_CODE(SCSLDBG_ << "Scheduler thread has finiscehd";)
 }

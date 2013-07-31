@@ -73,7 +73,6 @@ namespace chaos{
                 class SlowCommand {
                     friend class SlowCommandSandbox;
                     friend class SlowCommandExecutor;
-                    friend struct SetFunctor;
                     friend struct AcquireFunctor;
                     friend struct CorrelationFunctor;
 
@@ -105,7 +104,7 @@ namespace chaos{
                     DeviceSchemaDB  *deviceDatabasePtr;
                     
                     //! Fault description
-                    FaultDescription fDescription;
+                    FaultDescription faultDescription;
                     
                     //! shared setting across all slow command
                     AttributeSetting *sharedAttributeSettingPtr;

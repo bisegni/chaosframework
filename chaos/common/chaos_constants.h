@@ -166,6 +166,8 @@ namespace chaos {
                  */
                 //! Name space for grupping option used for regulate the submission of the slow control
                 namespace SlowCommandSubmissionKey {
+                    //! @The key represent the postfix to the CU instance to identify his slow command executor.
+                    static const char * const   COMMAND_EXECUTOR_POSTFIX_DOMAIN   = "_scexec";
                     //! @The key represent the alis of the comand to instantiate, the value is a string
                     static const char * const   COMMAND_ALIAS                   = "command_alias";
                     //! @The key represent the option to the command submission, the value is an uint32

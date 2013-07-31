@@ -45,6 +45,14 @@ void SCAbstractControlUnit::defineSharedVariable() {
     
 }
 
+void  SCAbstractControlUnit::_getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance) {
+    //broadcast to the parent the method call
+    AbstractControlUnit::_getDeclareActionInstance(declareActionInstance);
+    
+    //fill the vecto rwith the local declare action instance
+    declareActionInstance.push_back(slowCommandExecutor);
+}
+
 /*
  Initialize the Custom Contro Unit and return the configuration
  */

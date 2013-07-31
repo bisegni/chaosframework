@@ -36,7 +36,7 @@ vector<AbstActionDescShrPtr>& DeclareAction::getActionDescriptors() {
 /*
  Return the description of all action into a CDataWrapper
  */
-void DeclareAction::getActionDescrionsInDataWrapper(CDataWrapper& actionsDescription) {
+void DeclareAction::getActionDescrionsInDataWrapper(CDataWrapper& actionsDescription, bool close) {
     shared_ptr<CDataWrapper> actionDescription;
     vector<AbstActionDescShrPtr>::iterator actionIter;
     
@@ -53,7 +53,7 @@ void DeclareAction::getActionDescrionsInDataWrapper(CDataWrapper& actionsDescrip
     }
     
         //finalize the vector with the appropiate key
-    actionsDescription.finalizeArrayForKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DESC);
+    if(close)actionsDescription.finalizeArrayForKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DESC);
 }
 
 /*

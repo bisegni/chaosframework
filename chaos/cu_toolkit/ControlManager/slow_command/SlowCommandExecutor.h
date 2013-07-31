@@ -31,7 +31,7 @@
 
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/CUSchemaDB.h>
-//#include <chaos/common/thread/WaitSemaphore.h>
+#include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
@@ -67,7 +67,7 @@ namespace chaos{
                 /*!
                     This class is the environment where the exeecution of the slow command handlers take place.
                  */
-                class SlowCommandExecutor : public utility::StartableService {
+                class SlowCommandExecutor : public utility::StartableService, public chaos::DeclareAction {
                     friend class chaos::cu::SCAbstractControlUnit;
                     
                     std::string executorID;
@@ -128,14 +128,17 @@ namespace chaos{
                 protected:
                     
                     //! Private constructor
-                    SlowCommandExecutor();
-                    
-                    //! Private constructor
                     SlowCommandExecutor(std::string _executorID, DeviceSchemaDB *_deviceSchemaDbPtr);
                     
                     //! Private deconstructor
                     ~SlowCommandExecutor();
                     
+                    
+                    //! Get queued command via rpc command
+                    /*
+                     Return the number and the infromation of the queued command via RPC
+                     */
+                    CDataWrapper* getQueuedCommand(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException);
                 public:
                     
                     // Initialize instance
