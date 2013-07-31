@@ -38,6 +38,24 @@ RTAbstractControlUnit::~RTAbstractControlUnit() {
 
 }
 
+void RTAbstractControlUnit::setDefaultScheduleDelay(uint32_t _defaultScheduleDelay) {
+    defaultScheduleDelay = _defaultScheduleDelay;
+}
+
+/*
+ fill the CDataWrapper with AbstractCU system configuration, this method
+ is called after getStartConfiguration directly by sandbox. in this method
+ are defined the action for the input element of the dataset
+ */
+void RTAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfiguration)  throw(CException) {
+    AbstractControlUnit::_defineActionAndDataset(setupConfiguration);
+    //add the scekdule dalay for the sandbox
+    if(defaultScheduleDelay){
+        //in this case ovverrride the config file
+    	setupConfiguration.addInt32Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY , defaultScheduleDelay);
+    }
+}
+
 /*!
  Init the  RT Control Unit scheduling for device
  */
@@ -169,10 +187,6 @@ void RTAbstractControlUnit::executeOnThread() throw(CException) {
  Receive the evento for set the dataset input element
  */
 CDataWrapper* RTAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
-    //serach and execute handler
-    //lock shared access to control unit
-    recursive_mutex::scoped_lock  lock(managing_cu_mutex);
-    
     attributeHandlerEngine->executeHandler(datasetAttributeValues);
     
     //at this time notify the wel gone setting of comand

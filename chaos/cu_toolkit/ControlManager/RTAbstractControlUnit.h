@@ -46,8 +46,15 @@ namespace chaos {
             friend class DomainActionsScheduler;
             CThread*   schedulerThread;
             
+            uint32_t defaultScheduleDelay;
             
             cu::DSAttributeHandlerExecutionEngine *attributeHandlerEngine;
+            
+            /*!
+             Define the control unit DataSet and Action into
+             a CDataWrapper
+             */
+            void _defineActionAndDataset(CDataWrapper&) throw(CException);
             
         protected:
 
@@ -70,7 +77,7 @@ namespace chaos {
             
             void pushDataSet(CDataWrapper *acquiredData);
             
-            
+            void setDefaultScheduleDelay(uint32_t _defaultScheduleDelay);
             /*!
              return a new instance of CDataWrapper filled with a mandatory data
              according to key
@@ -88,6 +95,9 @@ namespace chaos {
              */
             virtual CDataWrapper* updateConfiguration(CDataWrapper*, bool&) throw (CException);
             
+            /*!
+             Thread method for the scheduler
+             */
             void executeOnThread() throw(CException);
             
             /*!

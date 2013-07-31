@@ -43,7 +43,6 @@ namespace uuid = boost::uuids;
 
 cu::AbstractControlUnit::AbstractControlUnit():DeviceSchemaDB(false), cuInstance(UUIDUtil::generateUUIDLite()) {
     deviceState = 0;
-    scheduleDelay = 0;
 }
 
 /*!
@@ -58,13 +57,6 @@ cu::AbstractControlUnit::~AbstractControlUnit() {
 const char * cu::AbstractControlUnit::getCUInstance(){
     return cuInstance.size()?cuInstance.c_str():"Instance no yet configured";
 };
-
-/*!
- Set the default schedule delay for the sandbox
- */
-void  cu::AbstractControlUnit::setDefaultScheduleDelay(int32_t _sDelay){
-    scheduleDelay = _sDelay;
-}
 
 /*
  Add a new KeyDataStorage for a specific key
@@ -106,12 +98,6 @@ void cu::AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigu
     LCU_ << "Define Actions and Dataset for:" << CU_IDENTIFIER_C_STREAM;
     defineActionAndDataset();
     
-    
-    //add the scekdule dalay for the sandbox
-    if(scheduleDelay){
-        //in this case ovverrride the config file
-    	setupConfiguration.addInt32Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY , scheduleDelay);
-    }
     //for now we need only to add custom action for expose to rpc
     //input element of the dataset
     LCU_ << "Define the base action for map the input attribute of the dataset of the CU:" << CU_IDENTIFIER_C_STREAM;
@@ -205,7 +191,6 @@ void cu::AbstractControlUnit::_getDeclareActionInstance(std::vector<const chaos:
  Initialize the Custom Contro Unit and return the configuration
  */
 chaos::CDataWrapper* cu::AbstractControlUnit::_init(chaos::CDataWrapper *initConfiguration, bool& detachParam) throw(CException) {
-    recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     auto_ptr<CDataWrapper> updateResult;
     
     if(!initConfiguration ||
@@ -255,7 +240,6 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_init(chaos::CDataWrapper *initCon
  deinit all datastorage
  */
 chaos::CDataWrapper* cu::AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& detachParam) throw(CException) {
-    recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     LCU_ << "Deinitializating AbstractControlUnit";
     
     if(!deinitParam || !deinitParam->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
@@ -297,8 +281,6 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
  Starto the  Control Unit scheduling for device
  */
 chaos::CDataWrapper* cu::AbstractControlUnit::_start(chaos::CDataWrapper *startParam, bool& detachParam) throw(CException) {
-    recursive_mutex::scoped_lock  lock(managing_cu_mutex);
-    
     if(!startParam || !startParam->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
         throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_start");
     }
@@ -329,7 +311,6 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_start(chaos::CDataWrapper *startP
  Stop the Custom Control Unit scheduling for device
  */
 chaos::CDataWrapper* cu::AbstractControlUnit::_stop(chaos::CDataWrapper *stopParam, bool& detachParam) throw(CException) {
-    recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     if(!stopParam || !stopParam->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
         throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_stop");
     }
@@ -409,7 +390,6 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_getState(CDataWrapper* getStatedP
  Update the configuration for all descendand tree in the Control Uniti class struccture
  */
 chaos::CDataWrapper*  cu::AbstractControlUnit::updateConfiguration(chaos::CDataWrapper* updatePack, bool& detachParam) throw (CException) {
-    recursive_mutex::scoped_lock  lock(managing_cu_mutex);
     //load all keyDataStorageMap for the registered devices
     if(!updatePack || !updatePack->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
         throw CException(-1, "Update pack without DeviceID", "AbstractControlUnit::updateConfiguration");

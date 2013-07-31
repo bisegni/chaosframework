@@ -60,28 +60,28 @@ namespace chaos{
         
         class ControManager;
 
+            //!  Base class for control unit !CHAOS node
         /*!
-         Base class for control unit execution task
+            This is the abstraction of the contorl unit node of CHAOS. This class extends DeclareAction
+            class that permit to publish rpc method for control the control unit life cycle. Most of the API
+            that needs to be used to create device and his dataset are contained into the DeviceSchemaDB class.
          */
         class AbstractControlUnit : public DeclareAction, protected DeviceSchemaDB {
+            
+            //frinedly class declaration
             friend class ControlManager;
             friend class DomainActionsScheduler;
             
-            int32_t scheduleDelay;
-            string jsonSetupFilePath;
-            boost::chrono::seconds  lastAcquiredTime;
+            //! numerical state of the cu
+            int  deviceState;
+            
+            //! Explicit state of the CU
+            CUStateKey::ControlUnitState deviceExplicitState;
             
             /*!
              Add a new KeyDataStorage for a specific key
              */
             void setKeyDataStorage(KeyDataStorage *_keyDatStorage);
-
-            
-            /*!
-             Define the control unit DataSet and Action into
-             a CDataWrapper
-             */
-            void _defineActionAndDataset(CDataWrapper&) throw(CException);
             
             /*!
              Initialize the Custom Contro Unit and return the configuration
@@ -111,94 +111,105 @@ namespace chaos{
             
 
         protected:
-            //CU instance, this te fine the current isntance code
-            //it's dynamically assigned
+            //  It's is the dynamically assigned instance of the CU. it will be used
+            // as domain for the rpc action.
             string cuInstance;
-            //
+            
+            //! Momentary driver for push data into the central memory
             KeyDataStorage*  keyDataStorage;
             
-            int  deviceState;
-            
-            CUStateKey::ControlUnitState deviceExplicitState;
-            //!mutex for multithreading managment of sand box
-            /*!
-             The muthex is needed because the call to the action can occours in different thread
-             */
-            boost::recursive_mutex managing_cu_mutex;
-            
+            //! Event channel to permit the fire of the device event
             ec::InstrumentEventChannel *deviceEventChannel;
             
-            //! Get all managem declare action instance
+            //! Define the dataset information of the device implementeted into the CU
             /*!
-             Return all theinstance that implement action to be published into network broker.
-             Subclass can override this method to inclued his cation instancer
+                This method configure the CDataWrapper whit all th einromation for describe the implemented device
+             */
+            virtual void _defineActionAndDataset(CDataWrapper&) throw(CException);
+            
+            //! Get all managed declare action instance
+            /*!
+                Return all the instance that implements actions to be published into network broker.
+                Subclass can override this method to inclued their action instancer
              */
             virtual void _getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance);
             
+                //! Set the dataset input element values
             /*!
-             Receive the evento for set the dataset input element
+                This method is called when the input attribute of the dataset need to be valorized,
+                subclass need to perform all the appropiate action to set these attribute
              */
             CDataWrapper* _setDatasetAttribute(CDataWrapper*, bool&) throw (CException);
             
+                //! Return the state of the control unit
             /*!
-             Get the current control unit state
+                Return the current control unit state identifyed by ControlUnitState types
+                fitted into the CDatawrapper with the key CUStateKey::CONTROL_UNIT_STATE
              */
             CDataWrapper* _getState(CDataWrapper*, bool& detachParam) throw(CException);
 
-            
-            //------standard call-------------------------
+                //! Abstract Method that need to be used by the sublcass to define the dataset
             /*!
-             Return the tart configuration for the Control Unit instance
+                Subclass, in this method can call the api to create the dataset, after this method
+                this class will collet all the information and send all to the MDS server.
              */
-            virtual void defineActionAndDataset() throw(CException)   = 0;
+            virtual void defineActionAndDataset() throw(CException) = 0;
+            
+                //! Abstract method for the initialization of the control unit
             /*!
-             Initialize the Custom Contro Unit and return the configuration
+                This is where the subclass need to be inizialize their environment, usually the hardware initialization. An exception
+                will stop the Control Unit live.
              */
             virtual void init() throw(CException) = 0;
             
+                //! Abstract method for the start of the control unit
             /*!
-             Internal implementation of the runmethod, that (for now) will schedule the slowcommand sandbox
+                This is where the subclass need to be start all the staff needed by normal control process. An exception
+                will stop the Control Unit live and perform the deinitialization of the control unit.
              */
             virtual void start() throw(CException) = 0;
             
+            //! Abstract method for the stop of the control unit
             /*!
-             Execute the Control Unit work
+                This is where the subclass need to be stop all the staff needed for pause the control process. An exception
+                will stop the Control Unit live and perform the deinitialization of the control unit.
              */
             virtual void stop() throw(CException) = 0;
             
+            //! Abstract method for the deinit of the control unit
             /*!
-             Deinit the Control Unit
+                This is where the subclass need to be deinit all the staff that has been allocatate into the init method.
+                Usually the hardware deallocation etc..
              */
             virtual void deinit() throw(CException) = 0;
+            
+                //Abstract method used to sublcass to set theri needs
             /*!
-             Receive the event for set the dataset input element, this virtual method
-             is empty because can be used by controlunit implementation
+                Receive the event for set the dataset input element, this virtual method
+                is empty because can be used by controlunit implementation
              */
             virtual CDataWrapper* setDatasetAttribute(CDataWrapper*, bool& detachParam) throw (CException) = 0;
+            
+                // Infrastructure configuration update
             /*!
-             Event for update some CU configuration
+                This methdo is called when some configuration is received. All the Control Unit subsystem is
+                checked to control waht is needed to update. Subclass that override this method need first inherited
+                the parent one and the check if the CDataWrapper contains something usefull for it.
              */
             virtual CDataWrapper* updateConfiguration(CDataWrapper*, bool&) throw (CException);
             
-            /*!
-             Set the default schedule delay for the sandbox
-             */
-            void setDefaultScheduleDelay(int32_t _sDelay);
-            
         public:
-            /*!
-             Construct a new CU with an identifier
-             */
+            
+            //! Default Contructor
             AbstractControlUnit();
-            /*!
-             Destructor a new CU with an identifier
-             */
+            
+            //! default destructor
             virtual ~AbstractControlUnit();
             
-            //---------------------utility API-------------
-            
+                //![API] Api to add and attribute to the dataset
             /*!
-             Add the new attribute in the dataset for at the CU dataset
+                Simplify the add of the attributo into the dataset, proxing the API contained
+                into the DeviceSchemaDB
              */
             void addAttributeToDataSet(const char*const deviceID,
                                        const char*const attributeName,
@@ -207,9 +218,9 @@ namespace chaos{
                                        DataType::DataSetAttributeIOAttribute attributeDirection,
                                        uint32_t maxDimension = 0);
             
-            
+                //![API] Api for publish a lass method as RPC action
             /*!
-             Create a new action description, return the description for let the user to add parameter
+                Publish a class method as RPC action giving the control unit isntance as domain
              */
             template<typename T>
             AbstActionDescShrPtr addActionDescritionInstance(T* actonObjectPointer,
@@ -220,9 +231,7 @@ namespace chaos{
                 return DeclareAction::addActionDescritionInstance(actonObjectPointer, actionHandler, cuInstance.c_str(), actionAliasName, actionDescription);
             }
             
-            /*!
-             return the CU instance
-             */
+            //! Return the contro unit instance
             const char * getCUInstance();
         };
     }
