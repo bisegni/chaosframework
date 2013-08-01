@@ -206,29 +206,20 @@ namespace chaos{
             //! default destructor
             virtual ~AbstractControlUnit();
             
-                //![API] Api to add and attribute to the dataset
-            /*!
-                Simplify the add of the attributo into the dataset, proxing the API contained
-                into the DeviceSchemaDB
-             */
-            void addAttributeToDataSet(const char*const deviceID,
-                                       const char*const attributeName,
-                                       const char*const attributeDescription,
-                                       DataType::DataType attributeType,
-                                       DataType::DataSetAttributeIOAttribute attributeDirection,
-                                       uint32_t maxDimension = 0);
             
                 //![API] Api for publish a lass method as RPC action
             /*!
-                Publish a class method as RPC action giving the control unit isntance as domain
+                This is a convenient method to register actiona associated to this instance of the class, class pointer
+                is associated directly to the current instance of this class and domain is fixed to the Control Unit instance.
+                Developer can use this method or the more flexible DeclareAction::addActionDescritionInstance.
              */
             template<typename T>
-            AbstActionDescShrPtr addActionDescritionInstance(T* actonObjectPointer,
+            AbstActionDescShrPtr addActionDescritionInstance(T* objectReference,
                                                              typename ActionDescriptor<T>::ActionPointerDef actionHandler,
                                                              const char*const actionAliasName,
                                                              const char*const actionDescription) {
                 //call the DeclareAction action register method, the domain will be associated to the control unit isntance
-                return DeclareAction::addActionDescritionInstance(actonObjectPointer, actionHandler, cuInstance.c_str(), actionAliasName, actionDescription);
+                return DeclareAction::addActionDescritionInstance(objectReference, actionHandler, cuInstance.c_str(), actionAliasName, actionDescription);
             }
             
             //! Return the contro unit instance

@@ -139,6 +139,13 @@ namespace chaos{
                      Return the number and the infromation of the queued command via RPC
                      */
                     CDataWrapper* getQueuedCommand(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException);
+					
+					//! Get the statistic for the current running command
+                    /*!
+						Return infromation about the execution statistic for the current running command, collected into the 
+						chaos::cu::control_manager::slow_command::SandboxStat structure.
+                     */
+					CDataWrapper* getCommandSandboxStatistics(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException);
                 public:
                     
                     // Initialize instance

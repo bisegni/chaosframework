@@ -28,14 +28,25 @@ using namespace chaos::cu;
 #define RTCULAPP_ LAPP_ << "[Real Time Control Unit:"<<getCUInstance()<<"] - "
 
 RTAbstractControlUnit::RTAbstractControlUnit() {
+    //allocate the thread for the scheduler
+    schedulerThread = new CThread(this);
+    schedulerThread->setDelayBeetwenTask(1000000);
+
+    //allocate the handler engine
     attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
 }
 
 RTAbstractControlUnit::~RTAbstractControlUnit() {
+    //release handler engine
     if(attributeHandlerEngine) {
         delete attributeHandlerEngine;
     }
 
+    //release scheduler thread
+    if(schedulerThread) {
+        delete(schedulerThread);
+        schedulerThread = NULL;
+    }
 }
 
 void RTAbstractControlUnit::setDefaultScheduleDelay(uint32_t _defaultScheduleDelay) {
@@ -94,7 +105,7 @@ void RTAbstractControlUnit::deinit() throw(CException) {
 /*
  Add a new handler
  */
-void RTAbstractControlUnit::addHandlerForDSAttribute(const char * deviceID, cu::handler::DSAttributeHandler * classHandler)  throw (CException) {
+void RTAbstractControlUnit::addHandlerForDSAttribute(cu::handler::DSAttributeHandler * classHandler)  throw (CException) {
     if(!classHandler) return;
     //add the handler
     attributeHandlerEngine->addHandlerForDSAttribute(classHandler);
@@ -115,10 +126,7 @@ void RTAbstractControlUnit::threadStartStopManagment(bool startAction) throw(CEx
             return;
         }
         
-        RTCULAPP_ << "Start Thread";
-        schedulerThread = new CThread(this);
         //set the defautl scehduling rate to 1 sec
-        schedulerThread->setDelayBeetwenTask(1000000);
         schedulerThread->start();
         schedulerThread->setThreadPriorityLevel(sched_get_priority_max(SCHED_RR), SCHED_RR);
     } else {
@@ -128,8 +136,6 @@ void RTAbstractControlUnit::threadStartStopManagment(bool startAction) throw(CEx
         }
         RTCULAPP_ << "Stopping and joining scheduling thread";
         schedulerThread->stop(true);
-        delete(schedulerThread);
-        schedulerThread = NULL;
         RTCULAPP_ << "Thread stopped";
     }
     
@@ -191,5 +197,5 @@ CDataWrapper* RTAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAt
     
     //at this time notify the wel gone setting of comand
     if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(DeviceSchemaDB::getDeviceID(), 0);
-    return datasetAttributeValues;
+    return NULL;
 }

@@ -32,6 +32,15 @@ namespace chaos {
         
         class ControManager;
         
+        //! Abstract class for Slow Control Unit
+        /*!
+            This class is the base for the slow control unit. It manage the all
+            customization of the base class AbstractControlUnit necessary to implement
+            slow control. With this term is intended a command that when it is executed,
+            it can run in a unterminated period of time.
+         
+            Subclass need to install commands and, optionally, set the default one.
+         */
         class SCAbstractControlUnit : public AbstractControlUnit {
             friend class ControlManager;
             friend class DomainActionsScheduler;

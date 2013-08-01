@@ -49,9 +49,11 @@ namespace chaos {
          Create a new action description, returning it's shared pointer that can be used to configura the parametter
          */
         template<typename T>
-        AbstActionDescShrPtr addActionDescritionInstance(T* actonObjectPointer, typename ActionDescriptor<T>::ActionPointerDef actionHandler, const char*const actionDomainName, const char*const actionAliasName, const char*const actionDescription) {
-            
-            
+        AbstActionDescShrPtr addActionDescritionInstance(T* actonObjectPointer,
+                                                         typename ActionDescriptor<T>::ActionPointerDef actionHandler,
+                                                         const char*const actionDomainName,
+                                                         const char*const actionAliasName,
+                                                         const char*const actionDescription) {
             AbstActionDescShrPtr newActionDesc(new ActionDescriptor<T>(actonObjectPointer, actionHandler, actionDomainName, actionAliasName));
             newActionDesc->setTypeValue(ActionDescriptor<T>::ActionDescription, actionDescription);
             //add action description to vector

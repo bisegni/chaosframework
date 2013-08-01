@@ -46,9 +46,14 @@ SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DeviceSchemaDB
     DeclareAction::addActionDescritionInstance<SlowCommandExecutor>(this,
                                                                     &SlowCommandExecutor::getQueuedCommand,
                                                                     rpcActionDomain.c_str(),
-                                                                    "getQueuedCommand",
-                                                                    "Return the number and the infromation of the queued command via RPC");
-
+                                                                    cccs::SlowControlExecutorRpcActionKey::RPC_GET_QUEUED_COMMAND,
+                                                                    "Return the number and the information of the queued command");
+    SCELAPP_ << "Register getCommandSandboxStatistics action";
+    DeclareAction::addActionDescritionInstance<SlowCommandExecutor>(this,
+                                                                    &SlowCommandExecutor::getCommandSandboxStatistics,
+                                                                    rpcActionDomain.c_str(),
+                                                                    cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_SANDBOX_STATISTICS,
+                                                                    "Return the statistics of the sandbox reguaring to the current running command");
 }
 
 SlowCommandExecutor::~SlowCommandExecutor() {
@@ -341,27 +346,27 @@ void SlowCommandExecutor::performIncomingCommandCheck() {
 //! Check if the waithing command can be installed
 SlowCommand *SlowCommandExecutor::instanceCommandInfo(CDataWrapper *submissionInfo) {
     std::string commandAlias;
-    commandAlias = submissionInfo->getStringValue(SlowCommandSubmissionKey::COMMAND_ALIAS);
+    commandAlias = submissionInfo->getStringValue(SlowCommandSubmissionKey::COMMAND_ALIAS_STR);
     DEBUG_CODE(SCELDBG_ << "Instancing command " << commandAlias;)
     SlowCommand *instance = instanceCommandInfo(commandAlias);
     if(instance) {
-        if(submissionInfo->hasKey(SlowCommandSubmissionKey::SUBMISSION_RULE)) {
-            instance->submissionRule = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SUBMISSION_RULE);
+        if(submissionInfo->hasKey(SlowCommandSubmissionKey::SUBMISSION_RULE_UI32)) {
+            instance->submissionRule = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SUBMISSION_RULE_UI32);
             DEBUG_CODE(SCELDBG_ << "Submizzion rule for command " << commandAlias << " is: " << instance->submissionRule;)
         } else {
             instance->submissionRule = SubmissionRuleType::SUBMIT_NORMAL;
         }
     
         //check if the comamnd pack has some feature to setup in the command instance
-        if(submissionInfo->hasKey(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL)) {
+        if(submissionInfo->hasKey(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI32)) {
             instance->featuresFlag |= FeatureFlagTypes::FF_SET_SCHEDULER_DELAY;
-            instance->featureSchedulerStepsDelay = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL);
+            instance->featureSchedulerStepsDelay = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI32);
             DEBUG_CODE(SCELDBG_ << "Set custom  SCHEDULER_STEP_TIME_INTERVALL to " << instance->featureSchedulerStepsDelay << " milliseconds";)
         }
         
-        if(submissionInfo->hasKey(SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY)) {
+        if(submissionInfo->hasKey(SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32)) {
             instance->featuresFlag |= FeatureFlagTypes::FF_SET_SUBMISSION_RETRY;
-            instance->featureSubmissionRetryDelay = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY);
+            instance->featureSubmissionRetryDelay = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32);
             DEBUG_CODE(SCELDBG_ << "Set custom  SUBMISSION_RETRY_DELAY to " << instance->featureSubmissionRetryDelay << " milliseconds";)
         }
     }
@@ -384,9 +389,9 @@ bool SlowCommandExecutor::submitCommand(CDataWrapper *commandDescription) {
     CHAOS_ASSERT(commandDescription)
     boost::mutex::scoped_lock lock(mutextQueueManagment);
     if(serviceState != utility::StartableServiceType::SS_STARTED) return false;
-    uint32_t priority = commandDescription->hasKey(SlowCommandSubmissionKey::SUBMISSION_PRIORITY) ? commandDescription->getUInt32Value(SlowCommandSubmissionKey::SUBMISSION_PRIORITY):50;
+    uint32_t priority = commandDescription->hasKey(SlowCommandSubmissionKey::SUBMISSION_PRIORITY_UI32) ? commandDescription->getUInt32Value(SlowCommandSubmissionKey::SUBMISSION_PRIORITY_UI32):50;
     //DEBUG_CODE(SCELDBG_ << "Submit new command " << commandDescription->getJSONString();)
-    DEBUG_CODE(SCELDBG_ << commandDescription->getStringValue(SlowCommandSubmissionKey::COMMAND_ALIAS);)
+    DEBUG_CODE(SCELDBG_ << commandDescription->getStringValue(SlowCommandSubmissionKey::COMMAND_ALIAS_STR);)
     commandSubmittedQueue.push(new PriorityQueuedElement<CDataWrapper>(commandDescription, priority, true));
     lock.unlock();
     readThreadWhait.notify_one();
@@ -399,5 +404,27 @@ bool SlowCommandExecutor::submitCommand(CDataWrapper *commandDescription) {
  Return the number and the infromation of the queued command via RPC
  */
 CDataWrapper* SlowCommandExecutor::getQueuedCommand(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
-    
+	boost::mutex::scoped_lock lock(mutextQueueManagment);
+	chaos::CDataWrapper *result = new chaos::CDataWrapper();
+	//get the number
+	result->addInt32Value(cccs::SlowControlExecutorRpcActionKey::RPC_GET_QUEUED_COMMAND_NUMBER_UI32, static_cast<uint32_t>(commandSubmittedQueue.size()));
+	
+	//get last command name
+	std::string name = commandSubmittedQueue.top()->element->getStringValue(SlowCommandSubmissionKey::COMMAND_ALIAS_STR);
+	result->addStringValue(cccs::SlowControlExecutorRpcActionKey::RPC_GET_QUEUED_COMMAND_TOP_ALIAS_STR, name);
+    return result;
+}
+
+//! Get queued command via rpc command
+/*
+ Return the number and the infromation of the queued command via RPC
+ */
+CDataWrapper* SlowCommandExecutor::getCommandSandboxStatistics(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
+	boost::mutex::scoped_lock lock(mutextQueueManagment);
+	chaos::CDataWrapper *result = new chaos::CDataWrapper();
+	
+	//add statistic to result
+	result->addInt64Value(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_SANDBOX_STATISTICS_START_TIME_UI64, commandSandbox.stat.lastCmdStepStart);
+	result->addInt64Value(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_SANDBOX_STATISTICS_END_TIME_UI64, commandSandbox.stat.lastCmdStepTime);
+    return result;
 }

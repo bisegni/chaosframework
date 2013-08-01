@@ -169,21 +169,49 @@ namespace chaos {
                     //! @The key represent the postfix to the CU instance to identify his slow command executor.
                     static const char * const   COMMAND_EXECUTOR_POSTFIX_DOMAIN   = "_scexec";
                     //! @The key represent the alis of the comand to instantiate, the value is a string
-                    static const char * const   COMMAND_ALIAS                   = "command_alias";
+                    static const char * const   COMMAND_ALIAS_STR                   = "command_alias";
                     //! @The key represent the option to the command submission, the value is an uint32
-                    static const char * const   SUBMISSION_RULE                 = "submission_rule";
+                    static const char * const   SUBMISSION_RULE_UI32              = "submission_rule";
                     //! @The key represent the option to the command submission priority, the value is an uint32
-                    static const char * const   SUBMISSION_PRIORITY             = "submission_priority";
+                    static const char * const   SUBMISSION_PRIORITY_UI32             = "submission_priority";
                     //! @The key represent intervall between step of the scheduler expressed in milliseconds, the value is an uint32
-                    static const char * const   SCHEDULER_STEP_TIME_INTERVALL   = "sched_step_time_int";
+                    static const char * const   SCHEDULER_STEP_TIME_INTERVALL_UI32   = "sched_step_time_int";
                     //! @Set the command specific delay between submission retry SlowCommand::submissionRetryDelay, the value is an uint32
-                    static const char * const   SUBMISSION_RETRY_DELAY          = "sbms_ret_dly";
-                    
+                    static const char * const   SUBMISSION_RETRY_DELAY_UI32         = "sbms_ret_dly";
+				}
+                /** @} */ // end of SlowCommandSubmissionKey
+				
+				/** @defgroup SlowCommandsKey chaos slow control default command keys
+                 @{
+                 */
+                //! Name space for grupping the key nedded for the custom slow control commands
+                namespace SlowCommandsKey {
                     static const char * const   ATTRIBUTE_SET_VALUE_CMD_ALIAS   = "set_attr_val";
                     static const char * const   ATTRIBUTE_SET_NAME              = "attr_set_name";
                     static const char * const   ATTRIBUTE_SET_VALUE             = "attr_set_value";
-                }
-                /** @} */ // end of SlowCommandSubmissionKey
+				}
+				/** @} */ // end of SlowCommandsKey
+				
+				/** @defgroup SlowControlExecutorRpcActionKey chaos slow control executor  rpc keys
+                 @{
+                 */
+                //! Name space for grupping the key nedded for call rpc action exposed by slow control executor layer
+                namespace SlowControlExecutorRpcActionKey {
+					//! @The key represent the rpc alias for SlowCommandExecutor::getQueuedCommand method
+                    static const char * const   RPC_GET_QUEUED_COMMAND				= "getQueuedCommand";
+					//! @The key represent the field of the return pack of the command RPC_GET_QUEUED_COMMAND for retrive the number of the queued command, value is and uint32_t
+					static const char * const   RPC_GET_QUEUED_COMMAND_NUMBER_UI32		= "cmd_number";
+					//! @The key represent the field of the return pack of the command RPC_GET_QUEUED_COMMAND for retrive the alias of the command on the top of the queue, value is a string
+					static const char * const   RPC_GET_QUEUED_COMMAND_TOP_ALIAS_STR	= "top_cmd_alias";
+
+					//! @The key represent the rpc alias for SlowCommandExecutor::getCommandSandboxStatistics method
+					static const char * const   RPC_GET_COMMAND_SANDBOX_STATISTICS = "getCmdStatistic";
+					//! @The key represent the field of the return pack of the command RPC_GET_COMMAND_SANDBOX_STATISTICS for retrive the start milliseconds of scheduler step, value is and uint64_t
+					static const char * const   RPC_GET_COMMAND_SANDBOX_STATISTICS_START_TIME_UI64 = "start_time";
+					//! @The key represent the field of the return pack of the command RPC_GET_COMMAND_SANDBOX_STATISTICS for retrive the end milliseconds of scheduler step, value is and uint64_t
+					static const char * const   RPC_GET_COMMAND_SANDBOX_STATISTICS_END_TIME_UI64 = "end_time";
+				}
+				/** @} */ // end of SlowControlExecutorKey
             }
         }
     }

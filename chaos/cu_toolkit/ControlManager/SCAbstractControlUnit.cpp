@@ -58,7 +58,7 @@ void  SCAbstractControlUnit::_getDeclareActionInstance(std::vector<const Declare
  */
 void SCAbstractControlUnit::init() throw(CException) {
     LCCU_ << "Install default slow command for device " << DeviceSchemaDB::getDeviceID();
-    installCommand<cucs::command::SetAttributeCommand>(cucs::SlowCommandSubmissionKey::ATTRIBUTE_SET_VALUE_CMD_ALIAS);
+    installCommand<cucs::command::SetAttributeCommand>(control_manager::slow_command::SlowCommandsKey::ATTRIBUTE_SET_VALUE_CMD_ALIAS);
     
     LCCU_ << "Initializing slow command sandbox for device " << DeviceSchemaDB::getDeviceID();
     utility::StartableService::initImplementation(slowCommandExecutor, (void*)NULL, "Slow Command Executor", "SCAbstractControlUnit::init");
@@ -110,7 +110,7 @@ void SCAbstractControlUnit::setDefaultCommand(const char * dafaultCommandName) {
  Receive the evento for set the dataset input element
  */
 CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
-    if(!datasetAttributeValues->hasKey(cucs::SlowCommandSubmissionKey::COMMAND_ALIAS)) {
+    if(!datasetAttributeValues->hasKey(cucs::SlowCommandSubmissionKey::COMMAND_ALIAS_STR)) {
         throw CException(-4, "The alias of the slow command is mandatory", "SlowCommandExecutor::setupCommand");
     }
     // in slow control cu the CDataWrapper instance received from rpc is internally managed

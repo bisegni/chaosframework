@@ -37,32 +37,28 @@ void PerfTestCU::defineActionAndDataset(CDataWrapper&)throw(CException) {
     
     
     //setup the dataset
-    addAttributeToDataSet(deviceName.c_str(),
-                          "rt_average",
+    addAttributeToDataSet("rt_average",
                           "Round trip average time",
                           DataType::TYPE_INT32,
                           DataType::Output);
     
-    addAttributeToDataSet(deviceName.c_str(),
-                          "seq_lost",
+    addAttributeToDataSet("seq_lost",
                           "Number of packet lost",
                           DataType::TYPE_INT32,
                           DataType::Output);
     
-    addAttributeToDataSet(deviceName.c_str(),
-                          "last_sequence",
+    addAttributeToDataSet("last_sequence",
                           "Current Sequence",
                           DataType::TYPE_INT64,
                           DataType::Output);
     
-    addInputInt64AttributeToDataSet<PerfTestCU>(deviceName.c_str(),
-                                                  "rt_seq",
-                                                  "Input sequence for computing round trip time",
-                                                  this,
-                                                  &PerfTestCU::computeSequence);
     
-    addInputInt64AttributeToDataSet<PerfTestCU>(deviceName.c_str(),
-                                                "work_time",
+    addInputInt64AttributeToDataSet<PerfTestCU>("rt_seq",
+                                                "Input sequence for computing round trip time",
+                                                this,
+                                                &PerfTestCU::computeSequence);
+    
+    addInputInt64AttributeToDataSet<PerfTestCU>("work_time",
                                                 "time in milliseconds spent to simualte the work",
                                                 this,
                                                 &PerfTestCU::setWorkTime);

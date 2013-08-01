@@ -6,6 +6,7 @@
 //  Copyright (c) 2013 INFN. All rights reserved.
 //
 
+#include <sched.h>
 #include <exception>
 
 #include <chaos/common/global.h>
@@ -111,6 +112,34 @@ void SlowCommandSandbox::start() throw(chaos::CException) {
     SCSLDBG_ << "Allocate thread for the scheduler and checker";
     threadScheduler.reset(new boost::thread(boost::bind(&SlowCommandSandbox::runCommand, this)));
     threadNextCommandChecker.reset(new boost::thread(boost::bind(&SlowCommandSandbox::checkNextCommand, this)));
+	
+	//set the scheduler thread priority
+#if defined(__linux__) || defined(__APPLE__)
+    int policy;
+    struct sched_param param;
+    pthread_t threadID = (pthread_t) threadScheduler->native_handle();
+    if (!pthread_getschedparam(threadID, &policy, &param))  {
+		DEBUG_CODE(SCSLDBG_ << "Default thread scheduler policy";)
+        DEBUG_CODE(SCSLDBG_ << "policy=" << ((policy == SCHED_FIFO)  ? "SCHED_FIFO" :
+											 (policy == SCHED_RR)    ? "SCHED_RR" :
+											 (policy == SCHED_OTHER) ? "SCHED_OTHER" :
+											 "???");)
+		DEBUG_CODE(SCSLDBG_ << "priority " << param.sched_priority;)
+		
+		policy = SCHED_RR;
+		param.sched_priority = sched_get_priority_max(SCHED_RR);
+		if (!pthread_setschedparam(threadID, policy, &param)) {
+			//successfull setting schedule priority to the thread
+			DEBUG_CODE(SCSLDBG_ << "new thread scheduler policy";)
+			DEBUG_CODE(SCSLDBG_ << "policy=" << ((policy == SCHED_FIFO)  ? "SCHED_FIFO" :
+												 (policy == SCHED_RR)    ? "SCHED_RR" :
+												 (policy == SCHED_OTHER) ? "SCHED_OTHER" :
+												 "???");)
+			DEBUG_CODE(SCSLDBG_ << "priority " << param.sched_priority;)
+
+		}
+	}
+#endif
 }
 
 // Start the implementation

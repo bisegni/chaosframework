@@ -104,8 +104,7 @@ namespace chaos {
              Add the new attribute in the dataset for at the CU dataset with an associated handler
              */
             template<typename T>
-            void addTemplatedAttributeToDataSet(const char*const deviceID,
-                                                const char*const attributeName,
+            void addTemplatedAttributeToDataSet(const char*const attributeName,
                                                 const char*const attributeDescription,
                                                 DataType::DataType attributeType,
                                                 DataType::DataSetAttributeIOAttribute attributeDirection,
@@ -122,7 +121,7 @@ namespace chaos {
                         handler->attributeName.assign(attributeName);
                     }
                     //the ad the handler for that
-                    addHandlerForDSAttribute(deviceID, handler);
+                    addHandlerForDSAttribute(handler);
                 }
             }
             
@@ -131,78 +130,72 @@ namespace chaos {
              Add the new attribute in the dataset for at the CU dataset with an associated handler
              */
             template<typename T>
-            void addInputInt32AttributeToDataSet(const char*const deviceID,
-                                                 const char*const attributeName,
+            void addInputInt32AttributeToDataSet(const char*const attributeName,
                                                  const char*const attributeDescription,
                                                  T* objectPointer,
                                                  typename TDSObjectHandler<T, int32_t>::TDSHandler  objectHandler) {
                 
-                addTemplatedAttributeToDataSet(deviceID, attributeName, attributeDescription, DataType::TYPE_INT32, DataType::Input, new TDSObjectHandler<T, int32_t>(objectPointer, objectHandler));
+                addTemplatedAttributeToDataSet(attributeName, attributeDescription, DataType::TYPE_INT32, DataType::Input, new TDSObjectHandler<T, int32_t>(objectPointer, objectHandler));
             }
             
             /*!
              Add the new attribute in the dataset for at the CU dataset with an associated handler
              */
             template<typename T>
-            void addInputInt64AttributeToDataSet(const char*const deviceID,
-                                                 const char*const attributeName,
+            void addInputInt64AttributeToDataSet(const char*const attributeName,
                                                  const char*const attributeDescription,
                                                  T* objectPointer,
                                                  typename TDSObjectHandler<T, int64_t>::TDSHandler  objectHandler) {
                 
-                addTemplatedAttributeToDataSet(deviceID, attributeName, attributeDescription, DataType::TYPE_INT64, DataType::Input, new TDSObjectHandler<T, int64_t>(objectPointer, objectHandler));
+                addTemplatedAttributeToDataSet(attributeName, attributeDescription, DataType::TYPE_INT64, DataType::Input, new TDSObjectHandler<T, int64_t>(objectPointer, objectHandler));
             }
             
             /*!
              Add the new attribute in the dataset for at the CU dataset with an associated handler
              */
             template<typename T>
-            void addInputDoubleAttributeToDataSet(const char*const deviceID,
-                                                  const char*const attributeName,
+            void addInputDoubleAttributeToDataSet(const char*const attributeName,
                                                   const char*const attributeDescription,
                                                   T* objectPointer,
                                                   typename TDSObjectHandler<T, double>::TDSHandler  objectHandler) {
                 
-                addTemplatedAttributeToDataSet(deviceID, attributeName, attributeDescription, DataType::TYPE_DOUBLE, DataType::Input, new TDSObjectHandler<T, double>(objectPointer, objectHandler));
+                addTemplatedAttributeToDataSet(attributeName, attributeDescription, DataType::TYPE_DOUBLE, DataType::Input, new TDSObjectHandler<T, double>(objectPointer, objectHandler));
             }
             
             /*!
              Add the new attribute in the dataset for at the CU dataset with an associated handler
              */
             template<typename T>
-            void addInputBooleanAttributeToDataSet(const char*const deviceID,
-                                                   const char*const attributeName,
+            void addInputBooleanAttributeToDataSet(const char*const attributeName,
                                                    const char*const attributeDescription,
                                                    T* objectPointer,
                                                    typename TDSObjectHandler<T, bool>::TDSHandler  objectHandler) {
                 
-                addTemplatedAttributeToDataSet(deviceID, attributeName, attributeDescription, DataType::TYPE_BOOLEAN, DataType::Input, new TDSObjectHandler<T, bool>(objectPointer, objectHandler));
+                addTemplatedAttributeToDataSet(attributeName, attributeDescription, DataType::TYPE_BOOLEAN, DataType::Input, new TDSObjectHandler<T, bool>(objectPointer, objectHandler));
             }
             
             /*!
              Add the new attribute in the dataset for at the CU dataset with an associated handler
              */
             template<typename T>
-            void addInputStringAttributeToDataSet(const char*const deviceID,
-                                                  const char*const attributeName,
+            void addInputStringAttributeToDataSet(const char*const attributeName,
                                                   const char*const attributeDescription,
                                                   T* objectPointer,
                                                   typename TDSObjectHandler<T, std::string>::TDSHandler  objectHandler) {
                 
-                addTemplatedAttributeToDataSet(deviceID, attributeName, attributeDescription, DataType::TYPE_STRING, DataType::Input, new TDSObjectHandler<T, std::string>(objectPointer, objectHandler));
+                addTemplatedAttributeToDataSet(attributeName, attributeDescription, DataType::TYPE_STRING, DataType::Input, new TDSObjectHandler<T, std::string>(objectPointer, objectHandler));
             }
             
             /*!
              Add the new attribute in the dataset for at the CU dataset with an associated handler
              */
             template<typename T>
-            void addInputStructAttributeToDataSet(const char*const deviceID,
-                                                  const char*const attributeName,
+            void addInputStructAttributeToDataSet(const char*const attributeName,
                                                   const char*const attributeDescription,
                                                   T* objectPointer,
                                                   typename TDSObjectHandler<T, CDataWrapper>::TDSHandler  objectHandler) {
                 
-                addTemplatedAttributeToDataSet(deviceID, attributeName, attributeDescription, DataType::TYPE_STRUCT, DataType::Input, new TDSObjectHandler<T, CDataWrapper>(objectPointer, objectHandler));
+                addTemplatedAttributeToDataSet(attributeName, attributeDescription, DataType::TYPE_STRUCT, DataType::Input, new TDSObjectHandler<T, CDataWrapper>(objectPointer, objectHandler));
             }
             
             //! add an handler for a determinate device id and attribute set
@@ -210,13 +203,11 @@ namespace chaos {
              *  This function permit to attach an handler to an attribute name. When the control unit
              *  receive by RPC an evento to set, a determinate attribute, to an specified value, this
              *  handler will be called.
-             *  \param deviceID is the identification of the device that contain the attribute
              *  \param attrName is the name of the attribute where the handler need to be attached
              *  \param classHandler is the pointer to handler that need to be attached
              *  \exception something is gone wrong
              */
-            void addHandlerForDSAttribute(const char * deviceID,
-                                          cu::handler::DSAttributeHandler * classHandler)  throw (CException);
+            void addHandlerForDSAttribute(cu::handler::DSAttributeHandler * classHandler)  throw (CException);
             
             /*
              Receive the event for set the dataset input element, this virtual method

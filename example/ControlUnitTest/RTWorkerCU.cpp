@@ -65,8 +65,6 @@ RTWorkerCU::~RTWorkerCU() {
  Return the default configuration
  */
 void RTWorkerCU::defineActionAndDataset() throw(CException) {
-    //set the base information
-    const char *devIDInChar = _deviceID.c_str();
     //cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_DESCRIPTION, "This is a beautifull CU");
     
     
@@ -101,46 +99,39 @@ void RTWorkerCU::defineActionAndDataset() throw(CException) {
     
     
     //setup the dataset
-    addAttributeToDataSet(devIDInChar,
-                          "sinWave",
+    addAttributeToDataSet("sinWave",
                           "The sin waveform",
                           DataType::TYPE_BYTEARRAY,
                           DataType::Output,
                           10000);
     
-    addInputInt32AttributeToDataSet<RTWorkerCU>(devIDInChar,
-                                                "points",
+    addInputInt32AttributeToDataSet<RTWorkerCU>("points",
                                                 "The number of point that compose the wave",
                                                 this,
                                                 &RTWorkerCU::setWavePoint);
     
-    addInputDoubleAttributeToDataSet<RTWorkerCU>(devIDInChar,
-                                                 "frequency",
+    addInputDoubleAttributeToDataSet<RTWorkerCU>("frequency",
                                                  "The frequency of the wave [1-10Mhz]",
                                                  this,
                                                  &RTWorkerCU::setDoubleValue);
     
-    addInputDoubleAttributeToDataSet<RTWorkerCU>(devIDInChar,
-                                                 "bias",
+    addInputDoubleAttributeToDataSet<RTWorkerCU>("bias",
                                                  "The bias of the wave",
                                                  this,
                                                  &RTWorkerCU::setDoubleValue);
     
     
-    addInputDoubleAttributeToDataSet<RTWorkerCU>(devIDInChar,
-                                                 "gain",
+    addInputDoubleAttributeToDataSet<RTWorkerCU>("gain",
                                                  "The gain of the wave",
                                                  this,
                                                  &RTWorkerCU::setDoubleValue);
     
-    addInputDoubleAttributeToDataSet<RTWorkerCU>(devIDInChar,
-                                                 "phase",
+    addInputDoubleAttributeToDataSet<RTWorkerCU>("phase",
                                                  "The phase of the wave",
                                                  this,
                                                  &RTWorkerCU::setDoubleValue);
     
-    addInputDoubleAttributeToDataSet<RTWorkerCU>(devIDInChar,
-                                                 "gain_noise",
+    addInputDoubleAttributeToDataSet<RTWorkerCU>("gain_noise",
                                                  "The gain of the noise of the wave",
                                                  this,
                                                  &RTWorkerCU::setDoubleValue);

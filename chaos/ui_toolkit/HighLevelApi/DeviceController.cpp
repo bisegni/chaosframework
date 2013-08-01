@@ -260,11 +260,11 @@ int DeviceController::submitSlowControlCommand(string commandAlias, cccs::Submis
     
     
     // set the default slow command information
-    localCommandPack.addStringValue(cccs::SlowCommandSubmissionKey::COMMAND_ALIAS, commandAlias);
-    localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RULE, (uint32_t) submissionRule);
-    localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_PRIORITY, (uint32_t) priority);
-    if(schedulerStepsDelay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL, (uint32_t) schedulerStepsDelay);
-    if(submissionCheckerStepsDelay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY, (uint32_t) submissionCheckerStepsDelay);
+    localCommandPack.addStringValue(cccs::SlowCommandSubmissionKey::COMMAND_ALIAS_STR, commandAlias);
+    localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RULE_UI32, (uint32_t) submissionRule);
+    localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_PRIORITY_UI32, (uint32_t) priority);
+    if(schedulerStepsDelay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI32, (uint32_t) schedulerStepsDelay);
+    if(submissionCheckerStepsDelay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, (uint32_t) submissionCheckerStepsDelay);
     //forward the request
     return deviceChannel->setAttributeValue(localCommandPack, false, millisecToWait);
 }
@@ -275,10 +275,10 @@ int DeviceController::submitSlowControlCommand(string commandAlias, cccs::Submis
         localCommandPack.appendAllElement(*slowCommandData);
     }
     // set the default slow command information
-    localCommandPack.addStringValue(cccs::SlowCommandSubmissionKey::COMMAND_ALIAS, commandAlias);
-    localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RULE, (uint32_t) submissionRule);
-    if(schedulerStepsDelay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL, (uint32_t) schedulerStepsDelay);
-    if(submissionCheckerStepsDelay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY, (uint32_t) submissionCheckerStepsDelay);
+    localCommandPack.addStringValue(cccs::SlowCommandSubmissionKey::COMMAND_ALIAS_STR, commandAlias);
+    localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RULE_UI32, (uint32_t) submissionRule);
+    if(schedulerStepsDelay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI32, (uint32_t) schedulerStepsDelay);
+    if(submissionCheckerStepsDelay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, (uint32_t) submissionCheckerStepsDelay);
 
     //forward the request
     return deviceChannel->setAttributeValue(localCommandPack, false, millisecToWait);
@@ -334,9 +334,6 @@ int DeviceController::setAttributeValue(string& attributeName, const char* attri
  */
 void DeviceController::initializeAttributeIndexMap() {
     boost::recursive_mutex::scoped_lock lock(trackMutext);
-    
-    int32_t attributeType = 0;
-    int32_t attributeDirection = 0;
     vector<string> attributeNames;
     RangeValueInfo attributerangeInfo;
     

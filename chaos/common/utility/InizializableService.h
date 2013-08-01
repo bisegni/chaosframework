@@ -36,11 +36,9 @@
 #include <chaos/common/exception/CException.h>
 
 using namespace std;
-namespace msm = boost::msm;
-using namespace msm::front;
+using namespace boost::msm::front::euml;
+using namespace boost::msm::front;
 namespace mpl = boost::mpl;
-// for And_ operator
-using namespace msm::front::euml;
 
 namespace chaos {
     namespace utility {

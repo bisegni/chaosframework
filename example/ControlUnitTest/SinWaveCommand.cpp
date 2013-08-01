@@ -114,25 +114,8 @@ void SinWaveCommand::acquireHandler() {
                         // apply the modification
                         setWavePoint();
                         break;
-                        
-                    case 1:// frequency
-                        
-                        break;
-                        
-                    case 2:// bias
-                        
-                        break;
-                        
-                    case 3:// phase
-                        break;
-                        
-                    case 4:// gain
-                        
-                        break;
-                    case 5:// gain_noise
-                        
-                        break;
-                    case 6:// custom quit variable
+
+                    default:// all other parameter are managed into the function that create the sine waveform
                         vSet->completed();
                         break;
                 }

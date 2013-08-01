@@ -68,52 +68,44 @@ void BenchTestCU::defineActionAndDataset() throw(CException) {
     
     
     //setup the dataset
-    addAttributeToDataSet(devIDInChar,
-                          "output_a",
+    addAttributeToDataSet("output_a",
                           "Reactor Output A",
                           DataType::TYPE_DOUBLE,
                           DataType::Output);
     
-    addAttributeToDataSet(devIDInChar,
-                          "output_b",
+    addAttributeToDataSet("output_b",
                           "Reactor Output B",
                           DataType::TYPE_DOUBLE,
                           DataType::Output);
     
     //setup the dataset
-    addAttributeToDataSet(devIDInChar,
-                          "real_output_a",
+    addAttributeToDataSet("real_output_a",
                           "Reactor Output A",
                           DataType::TYPE_DOUBLE,
                           DataType::Output);
     
-    addAttributeToDataSet(devIDInChar,
-                          "real_output_b",
+    addAttributeToDataSet("real_output_b",
                           "Reactor Output B",
                           DataType::TYPE_DOUBLE,
                           DataType::Output);
     
-    addAttributeToDataSet(devIDInChar,
-                          "noise_a",
+    addAttributeToDataSet("noise_a",
                           "Computed noise",
                           DataType::TYPE_DOUBLE,
                           DataType::Output);
     
-    addAttributeToDataSet(devIDInChar,
-                          "noise_b",
+    addAttributeToDataSet("noise_b",
                           "Computed noise",
                           DataType::TYPE_DOUBLE,
                           DataType::Output);
     
     
-    addInputDoubleAttributeToDataSet<BenchTestCU>(devIDInChar,
-                                                  "input_a",
+    addInputDoubleAttributeToDataSet<BenchTestCU>("input_a",
                                                   "Reactor Output A",
                                                   this,
                                                   &BenchTestCU::setControlA);
     
-    addInputDoubleAttributeToDataSet<BenchTestCU>(devIDInChar,
-                                                  "input_b",
+    addInputDoubleAttributeToDataSet<BenchTestCU>("input_b",
                                                   "Reactor Output B",
                                                   this,
                                                   &BenchTestCU::setControlB);

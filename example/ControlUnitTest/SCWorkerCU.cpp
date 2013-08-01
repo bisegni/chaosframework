@@ -22,7 +22,6 @@ SCWorkerCU::SCWorkerCU(string &customDeviceID) {
 void SCWorkerCU::defineActionAndDataset() throw(CException) {
     //set the base information
     RangeValueInfo rangeInfoTemp;
-    const char *devIDInChar = _deviceID.c_str();
     //cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_DESCRIPTION, "This is a beautifull CU");
     
     //add managed device di
@@ -35,15 +34,13 @@ void SCWorkerCU::defineActionAndDataset() throw(CException) {
    // setDefaultCommand("sinwave_base");
     
     //setup the dataset
-    addAttributeToDataSet(devIDInChar,
-                          "sinWave",
+    addAttributeToDataSet("sinWave",
                           "The sin waveform",
                           DataType::TYPE_BYTEARRAY,
                           DataType::Output,
                           10000);
     
-    addAttributeToDataSet(devIDInChar,
-                          "points",
+    addAttributeToDataSet("points",
                           "The number of point that compose the wave",
                           DataType::TYPE_INT32,
                           DataType::Input);
@@ -52,32 +49,27 @@ void SCWorkerCU::defineActionAndDataset() throw(CException) {
     rangeInfoTemp.minRange = "30";
     setAttributeRangeValueInfo("points", rangeInfoTemp);
     
-    addAttributeToDataSet(devIDInChar,
-                          "frequency",
+    addAttributeToDataSet("frequency",
                           "The frequency of the wave [1-10Mhz]",
                           DataType::TYPE_DOUBLE,
                           DataType::Input);
     
-    addAttributeToDataSet(devIDInChar,
-                          "bias",
+    addAttributeToDataSet("bias",
                           "The bias of the wave",
                           DataType::TYPE_DOUBLE,
                           DataType::Input);
     
-    addAttributeToDataSet(devIDInChar,
-                          "phase",
+    addAttributeToDataSet("phase",
                           "The phase of the wave",
                           DataType::TYPE_DOUBLE,
                           DataType::Input);
     
-    addAttributeToDataSet(devIDInChar,
-                          "gain",
+    addAttributeToDataSet("gain",
                           "The gain of the wave",
                           DataType::TYPE_DOUBLE,
                           DataType::Input);
 
-    addAttributeToDataSet(devIDInChar,
-                          "gain_noise",
+    addAttributeToDataSet("gain_noise",
                           "The gain of the noise of the wave",
                           DataType::TYPE_DOUBLE,
                           DataType::Input);

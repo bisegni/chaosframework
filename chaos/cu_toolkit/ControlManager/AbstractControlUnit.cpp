@@ -65,19 +65,6 @@ void cu::AbstractControlUnit::setKeyDataStorage(KeyDataStorage* _keyDatStorage) 
     keyDataStorage = _keyDatStorage;
 }
 
-/*!
- Add the new attribute in the dataset for at the CU dataset
- */
-void cu::AbstractControlUnit::addAttributeToDataSet(const char*const deviceID,
-                                                const char*const attributeName,
-                                                const char*const attributeDescription,
-                                                DataType::DataType attributeType,
-                                                DataType::DataSetAttributeIOAttribute attributeDirection,
-                                                uint32_t maxDimension) {
-    //add the attribute
-    DeviceSchemaDB::addAttributeToDataSet(attributeName, attributeDescription, attributeType, attributeDirection, maxDimension);
-}
-
 /*
  fill the CDataWrapper with AbstractCU system configuration, this method
  is called after getStartConfiguration directly by sandbox. in this method
@@ -109,44 +96,38 @@ void cu::AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigu
     
     //expose updateConfiguration Methdo to rpc
     LCU_ << "Register updateConfiguration action";
-    DeclareAction::addActionDescritionInstance<AbstractControlUnit>(this,
-                                                                    &AbstractControlUnit::updateConfiguration,
-                                                                    getCUInstance(),
-                                                                    "updateConfiguration",
-                                                                    "Update Configuration");
+    addActionDescritionInstance<AbstractControlUnit>(this,
+                                                     &AbstractControlUnit::updateConfiguration,
+                                                     "updateConfiguration",
+                                                     "Update Configuration");
     
     LCU_ << "Register initDevice action";
-    DeclareAction::addActionDescritionInstance<AbstractControlUnit>(this,
-                                                                    &AbstractControlUnit::_init,
-                                                                    getCUInstance(),
-                                                                    ChaosSystemDomainAndActionLabel::ACTION_DEVICE_INIT,
-                                                                    "Perform the device initialization");
+    addActionDescritionInstance<AbstractControlUnit>(this,
+                                                     &AbstractControlUnit::_init,
+                                                     ChaosSystemDomainAndActionLabel::ACTION_DEVICE_INIT,
+                                                     "Perform the device initialization");
     
     LCU_ << "Register deinitDevice action";
-    DeclareAction::addActionDescritionInstance<AbstractControlUnit>(this,
-                                                                    &AbstractControlUnit::_deinit,
-                                                                    getCUInstance(),
-                                                                    ChaosSystemDomainAndActionLabel::ACTION_DEVICE_DEINIT,
-                                                                    "Perform the device deinitialization");
+    addActionDescritionInstance<AbstractControlUnit>(this,
+                                                     &AbstractControlUnit::_deinit,
+                                                     ChaosSystemDomainAndActionLabel::ACTION_DEVICE_DEINIT,
+                                                     "Perform the device deinitialization");
     LCU_ << "Register startDevice action";
-    DeclareAction::addActionDescritionInstance<AbstractControlUnit>(this,
-                                                                    &AbstractControlUnit::_start,
-                                                                    getCUInstance(),
-                                                                    ChaosSystemDomainAndActionLabel::ACTION_DEVICE_START,
-                                                                    "Sart the device scheduling");
+    addActionDescritionInstance<AbstractControlUnit>(this,
+                                                     &AbstractControlUnit::_start,
+                                                     ChaosSystemDomainAndActionLabel::ACTION_DEVICE_START,
+                                                     "Sart the device scheduling");
     
     LCU_ << "Register stopDevice action";
-    DeclareAction::addActionDescritionInstance<AbstractControlUnit>(this,
-                                                                    &AbstractControlUnit::_stop,
-                                                                    getCUInstance(),
-                                                                    ChaosSystemDomainAndActionLabel::ACTION_DEVICE_STOP,
-                                                                    "Stop the device scheduling");
+    addActionDescritionInstance<AbstractControlUnit>(this,
+                                                     &AbstractControlUnit::_stop,
+                                                     ChaosSystemDomainAndActionLabel::ACTION_DEVICE_STOP,
+                                                     "Stop the device scheduling");
     LCU_ << "Register getState action";
-    DeclareAction::addActionDescritionInstance<AbstractControlUnit>(this,
-                                                                    &AbstractControlUnit::_getState,
-                                                                    getCUInstance(),
-                                                                    ChaosSystemDomainAndActionLabel::ACTION_DEVICE_GET_STATE,
-                                                                    "Get the state of the device");
+    addActionDescritionInstance<AbstractControlUnit>(this,
+                                                     &AbstractControlUnit::_getState,
+                                                     ChaosSystemDomainAndActionLabel::ACTION_DEVICE_GET_STATE,
+                                                     "Get the state of the device");
     
     LCU_ << "Get Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
     //grab dataset description
@@ -214,7 +195,7 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_init(chaos::CDataWrapper *initCon
     
     LCU_ << "Initialize CU Database for device:" << deviceID;
     DeviceSchemaDB::addAttributeToDataSetFromDataWrapper(*initConfiguration);
-        
+    
     //initialize key data storage for device id
     LCU_ << "Create KeyDataStorage device:" << deviceID;
     keyDataStorage = DataManager::getInstance()->getKeyDataStorageNewInstanceForKey(deviceID);
@@ -225,7 +206,7 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_init(chaos::CDataWrapper *initCon
     LCU_ << "Init sublass for deviceID:" << deviceID;
     init();
     LCU_ << "Start custom inititialization" << deviceID;
-
+    
     //advance status
     deviceState++;
     
@@ -252,7 +233,7 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
         throw CException(-2, "Deviuce not known by this control unit", "AbstractControlUnit::_deinit");
     }
     LCU_ << "Deinitialization Phase for device:" << deviceID;
-  
+    
     //check to see if the device can ben initialized
     if(deviceState != INIT_STATE+1) {
         LCU_ << "device:" << cu::DeviceSchemaDB::getDeviceID() << " already initialized";
@@ -262,7 +243,7 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
     //deinit the control unit
     LCU_ << "Deinit custom deinitialization for device:" << cu::DeviceSchemaDB::getDeviceID();
     deinit();
-        
+    
     //remove key data storage
     if(keyDataStorage) {
         LCU_ << "Delete data storage driver for device:" << cu::DeviceSchemaDB::getDeviceID();
@@ -297,7 +278,7 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_start(chaos::CDataWrapper *startP
         LCU_ << "device:" << cu::DeviceSchemaDB::getDeviceID() << " already strted";
         throw CException(-3, "Device already started", "AbstractControlUnit::_start");
     }
-
+    
     LCU_ << "Start sublass for deviceID:" << cu::DeviceSchemaDB::getDeviceID();
     start();
     
@@ -319,7 +300,7 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_stop(chaos::CDataWrapper *stopPar
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
         throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_stop");
     }
- 
+    
     LCU_ << "Stop Phase for device:" << cu::DeviceSchemaDB::getDeviceID();
     //check to see if the device can ben initialized
     if(deviceState != START_STATE+1) {
