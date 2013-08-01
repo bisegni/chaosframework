@@ -111,26 +111,21 @@ void BenchTestCU::defineActionAndDataset() throw(CException) {
                                                   &BenchTestCU::setControlB);
 }
 
-/*
- Initialize the Custom Contro Unit and return the configuration
- */
-void BenchTestCU::start() throw(CException) {
 
-}
-
-/*
- Initialize the Custom Contro Unit and return the configuration
- */
-void BenchTestCU::init() throw(CException) {
+//From base class
+void BenchTestCU::unitInit() throw(CException) {
     reactorInstance->reset();
     cycleCount = 0;
     lastExecutionTime = steady_clock::now();
 }
 
-/*
- Execute the Control Unit work
- */
-void BenchTestCU::run() throw(CException) {
+//From base class
+void BenchTestCU::unitStart() throw(CException) {
+    
+}
+
+//From base class
+void BenchTestCU::unitRun() throw(CException) {
     cycleCount++;
     
     //get new data wrapper instance filled
@@ -165,16 +160,12 @@ void BenchTestCU::run() throw(CException) {
     
 }
 
-/*
- Execute the Control Unit work
- */
-void BenchTestCU::stop() throw(CException) {
+//From base class
+void BenchTestCU::unitStop() throw(CException) {
 }
 
-/*
- Deinit the Control Unit
- */
-void BenchTestCU::deinit() throw(CException) {
+//From base class
+void BenchTestCU::unitDeinit() throw(CException) {
 }
 
 /*

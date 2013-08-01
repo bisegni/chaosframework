@@ -411,7 +411,7 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
 bool SlowCommandSandbox::setNextAvailableCommand(PRIORITY_ELEMENT(CDataWrapper) *cmdInfo, SlowCommand *cmdImpl) {
     if(!cmdImpl) return false;
     boost::recursive_mutex::scoped_lock lockScheduler(mutexNextCommandChecker);
-    if(utility::StartableService::serviceState == utility::InizializableServiceType::IS_DEINTIATED) return false;
+    if(utility::StartableService::serviceState == ::chaos::utility::service_state_machine::InizializableServiceType::IS_DEINTIATED) return false;
     
     nextAvailableCommand.cmdInfo = cmdInfo;
     nextAvailableCommand.cmdImpl = cmdImpl;

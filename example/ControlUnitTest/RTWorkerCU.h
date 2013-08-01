@@ -80,25 +80,25 @@ protected:
     /*(Optional)
      Initialize the Control Unit and all driver, with received param from MetadataServer
      */
-    void init() throw(CException);
+    void unitInit() throw(CException);
     /*
      Execute the work, this is called with a determinated delay, it must be as fast as possible
      */
-    void start() throw(CException);
+    void unitStart() throw(CException);
     /*
      Execute the work, this is called with a determinated delay, it must be as fast as possible
      */
-    void run() throw(CException);
+    void unitRun() throw(CException);
     
     /*
      The Control Unit will be stopped
      */
-    void stop() throw(CException);
+    void unitStop() throw(CException);
     
     /*(Optional)
      The Control Unit will be deinitialized and disposed
      */
-    void deinit() throw(CException);
+    void unitDeinit() throw(CException);
     
     /*
         Test Action Handler

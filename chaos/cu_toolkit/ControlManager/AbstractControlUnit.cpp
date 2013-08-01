@@ -137,17 +137,6 @@ void cu::AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigu
     LCU_ << setupConfiguration.getJSONString();
 #endif
     
-    //for now the action description are not managed
-    //LCU_ << "Get Action Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
-    //DeclareAction::getActionDescrionsInDataWrapper(setupConfiguration);
-    
-    //register command manager action
-    //CommandManager::getInstance()->registerAction(this);
-    
-    /*auto_ptr<SerializationBuffer> ser(setupConfiguration.getBSONData());
-     //copy configuration for internal use
-     _internalSetupConfiguration.reset(new CDataWrapper(ser->getBufferPtr()));*/
-    
     //setup all state for device
     deviceExplicitState = CUStateKey::DEINIT;
 }
@@ -172,11 +161,9 @@ void cu::AbstractControlUnit::_getDeclareActionInstance(std::vector<const chaos:
  Initialize the Custom Contro Unit and return the configuration
  */
 chaos::CDataWrapper* cu::AbstractControlUnit::_init(chaos::CDataWrapper *initConfiguration, bool& detachParam) throw(CException) {
-    auto_ptr<CDataWrapper> updateResult;
     
     if(!initConfiguration ||
-       !initConfiguration->hasKey(DatasetDefinitionkey::DEVICE_ID) ||
-       !initConfiguration->hasKey(DatasetDefinitionkey::DESCRIPTION)) {
+       !initConfiguration->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
         throw CException(-1, "No Device Init information in param", "AbstractControlUnit::_init");
     }
     
@@ -185,35 +172,13 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_init(chaos::CDataWrapper *initCon
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
         throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_init");
     }
-    LCU_ << "Initializating Phase for device:" << deviceID;
-    
-    //check to see if the device can ben initialized
-    if(deviceState != INIT_STATE) {
-        LCU_ << "device:" << deviceID << " already initialized";
-        throw CException(-3, "Device Already Initialized", "AbstractControlUnit::_init");
-    }
-    
-    LCU_ << "Initialize CU Database for device:" << deviceID;
-    DeviceSchemaDB::addAttributeToDataSetFromDataWrapper(*initConfiguration);
-    
-    //initialize key data storage for device id
-    LCU_ << "Create KeyDataStorage device:" << deviceID;
-    keyDataStorage = DataManager::getInstance()->getKeyDataStorageNewInstanceForKey(deviceID);
-    
-    LCU_ << "Call init implementation for deviceID:" << deviceID;
-    keyDataStorage->init(initConfiguration);
-    
-    LCU_ << "Init sublass for deviceID:" << deviceID;
-    init();
-    LCU_ << "Start custom inititialization" << deviceID;
-    
-    //advance status
-    deviceState++;
+
+    //call init method of the startable interface
+    utility::StartableService::initImplementation(this, static_cast<void*>(initConfiguration), "AbstractControlUnit", "AbstractControlUnit::_init");
+
     
     //call update param function
     updateConfiguration(initConfiguration, detachParam);
-    
-    deviceExplicitState = CUStateKey::INIT;
     return NULL;
 }
 
@@ -223,7 +188,8 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_init(chaos::CDataWrapper *initCon
 chaos::CDataWrapper* cu::AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& detachParam) throw(CException) {
     LCU_ << "Deinitializating AbstractControlUnit";
     
-    if(!deinitParam || !deinitParam->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
+    if(!deinitParam ||
+       !deinitParam->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
         throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_deinit");
     }
     
@@ -232,29 +198,9 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
         LCU_ << "device:" << cu::DeviceSchemaDB::getDeviceID() << "not known by this ContorlUnit";
         throw CException(-2, "Deviuce not known by this control unit", "AbstractControlUnit::_deinit");
     }
-    LCU_ << "Deinitialization Phase for device:" << deviceID;
     
-    //check to see if the device can ben initialized
-    if(deviceState != INIT_STATE+1) {
-        LCU_ << "device:" << cu::DeviceSchemaDB::getDeviceID() << " already initialized";
-        throw CException(-3, "Device Not Initialized", "AbstractControlUnit::_deinit");
-    }
-    
-    //deinit the control unit
-    LCU_ << "Deinit custom deinitialization for device:" << cu::DeviceSchemaDB::getDeviceID();
-    deinit();
-    
-    //remove key data storage
-    if(keyDataStorage) {
-        LCU_ << "Delete data storage driver for device:" << cu::DeviceSchemaDB::getDeviceID();
-        keyDataStorage->deinit();
-        delete(keyDataStorage);
-        keyDataStorage = NULL;
-    }
-    
-    deviceState--;
-    
-    deviceExplicitState = CUStateKey::DEINIT;
+    //call deinit method of the startable interface
+    utility::StartableService::deinitImplementation(this, "AbstractControlUnit", "AbstractControlUnit::_deinit");
     return NULL;
 }
 
@@ -262,7 +208,8 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
  Starto the  Control Unit scheduling for device
  */
 chaos::CDataWrapper* cu::AbstractControlUnit::_start(chaos::CDataWrapper *startParam, bool& detachParam) throw(CException) {
-    if(!startParam || !startParam->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
+    if(!startParam ||
+       !startParam->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
         throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_start");
     }
     
@@ -272,19 +219,8 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_start(chaos::CDataWrapper *startP
         throw CException(-2, "Deviuce not known by this control unit", "AbstractControlUnit::_start");
     }
     
-    LCU_ << "Start Phase for device:" << cu::DeviceSchemaDB::getDeviceID();
-    //check to see if the device can ben initialized
-    if(deviceState != START_STATE) {
-        LCU_ << "device:" << cu::DeviceSchemaDB::getDeviceID() << " already strted";
-        throw CException(-3, "Device already started", "AbstractControlUnit::_start");
-    }
-    
-    LCU_ << "Start sublass for deviceID:" << cu::DeviceSchemaDB::getDeviceID();
-    start();
-    
-    deviceState++;
-    
-    deviceExplicitState = CUStateKey::START;
+    //call start method of the startable interface
+    utility::StartableService::startImplementation(this, "AbstractControlUnit", "AbstractControlUnit::_start");
     return NULL;
 }
 
@@ -292,7 +228,8 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_start(chaos::CDataWrapper *startP
  Stop the Custom Control Unit scheduling for device
  */
 chaos::CDataWrapper* cu::AbstractControlUnit::_stop(chaos::CDataWrapper *stopParam, bool& detachParam) throw(CException) {
-    if(!stopParam || !stopParam->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
+    if(!stopParam ||
+       !stopParam->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
         throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_stop");
     }
     string deviceID = stopParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
@@ -301,22 +238,8 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_stop(chaos::CDataWrapper *stopPar
         throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_stop");
     }
     
-    LCU_ << "Stop Phase for device:" << cu::DeviceSchemaDB::getDeviceID();
-    //check to see if the device can ben initialized
-    if(deviceState != START_STATE+1) {
-        LCU_ << "device:" << cu::DeviceSchemaDB::getDeviceID() << " not started";
-        throw CException(-3, "Device not startded", "AbstractControlUnit::_stop");
-    }
-    
-    LCU_ << "Stop sublass for deviceID:" << cu::DeviceSchemaDB::getDeviceID();
-    stop();
-    
-    //set device state
-    deviceState--;
-    
-    //set the explicit state
-    deviceExplicitState = CUStateKey::STOP;
-    
+    //call start method of the startable interface
+    utility::StartableService::stopImplementation(this, "AbstractControlUnit", "AbstractControlUnit::_stop");
     return NULL;
 }
 
@@ -355,6 +278,101 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_setDatasetAttribute(chaos::CDataW
     return executionResult;
 }
 
+// Startable Service method
+void cu::AbstractControlUnit::init(void *initData) throw(CException) {
+    //cast to the CDatawrapper instance
+    std::string deviceID = cu::DeviceSchemaDB::getDeviceID();
+    CDataWrapper *initConfiguration = static_cast<CDataWrapper*>(initData);
+       LCU_ << "Initializating Phase for device:" << deviceID;
+    
+    //check to see if the device can ben initialized
+    if(deviceState != INIT_STATE) {
+        LCU_ << "device:" << deviceID << " already initialized";
+        throw CException(-3, "Device Already Initialized", "AbstractControlUnit::_init");
+    }
+    
+    LCU_ << "Initialize CU Database for device:" << deviceID;
+    DeviceSchemaDB::addAttributeToDataSetFromDataWrapper(*initConfiguration);
+    
+    //initialize key data storage for device id
+    LCU_ << "Create KeyDataStorage device:" << deviceID;
+    keyDataStorage = DataManager::getInstance()->getKeyDataStorageNewInstanceForKey(deviceID);
+    
+    LCU_ << "Call KeyDataStorage init implementation for deviceID:" << deviceID;
+    keyDataStorage->init(initConfiguration);
+    
+    LCU_ << "Start custom inititialization" << deviceID;
+    unitInit();
+
+    //advance status
+    deviceState++;
+    
+    deviceExplicitState = CUStateKey::INIT;
+}
+
+// Startable Service method
+void cu::AbstractControlUnit::start() throw(CException) {
+    LCU_ << "Start Phase for device:" << cu::DeviceSchemaDB::getDeviceID();
+    //check to see if the device can ben initialized
+    if(deviceState != START_STATE) {
+        LCU_ << "device:" << cu::DeviceSchemaDB::getDeviceID() << " already strted";
+        throw CException(-3, "Device already started", "AbstractControlUnit::_start");
+    }
+    
+    LCU_ << "Start sublass for deviceID:" << cu::DeviceSchemaDB::getDeviceID();
+    unitStart();
+    
+    deviceState++;
+    
+    deviceExplicitState = CUStateKey::START;
+}
+
+// Startable Service method
+void cu::AbstractControlUnit::stop() throw(CException) {
+    LCU_ << "Stop Phase for device:" << cu::DeviceSchemaDB::getDeviceID();
+    //check to see if the device can ben initialized
+    if(deviceState != START_STATE+1) {
+        LCU_ << "device:" << cu::DeviceSchemaDB::getDeviceID() << " not started";
+        throw CException(-3, "Device not startded", "AbstractControlUnit::_stop");
+    }
+    
+    LCU_ << "Stop sublass for deviceID:" << cu::DeviceSchemaDB::getDeviceID();
+    unitStop();
+    
+    //set device state
+    deviceState--;
+    
+    //set the explicit state
+    deviceExplicitState = CUStateKey::STOP;
+}
+
+// Startable Service method
+void cu::AbstractControlUnit::deinit() throw(CException) {
+    LCU_ << "Deinitialization Phase for device:" << cu::DeviceSchemaDB::getDeviceID();
+    
+    //check to see if the device can ben initialized
+    if(deviceState != INIT_STATE+1) {
+        LCU_ << "device:" << cu::DeviceSchemaDB::getDeviceID() << " already initialized";
+        throw CException(-3, "Device Not Initialized", "AbstractControlUnit::_deinit");
+    }
+    
+    //deinit the control unit
+    LCU_ << "Deinit custom deinitialization for device:" << cu::DeviceSchemaDB::getDeviceID();
+    unitDeinit();
+    
+    //remove key data storage
+    if(keyDataStorage) {
+        LCU_ << "Delete data storage driver for device:" << cu::DeviceSchemaDB::getDeviceID();
+        keyDataStorage->deinit();
+        delete(keyDataStorage);
+        keyDataStorage = NULL;
+    }
+    
+    deviceState--;
+    
+    deviceExplicitState = CUStateKey::DEINIT;
+}
+
 /*
  Get the current control unit state
  */
@@ -364,9 +382,12 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_getState(CDataWrapper* getStatedP
     }
     CDataWrapper *stateResult = new CDataWrapper();
     string deviceID = getStatedParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
-    stateResult->addInt32Value(CUStateKey::CONTROL_UNIT_STATE, deviceExplicitState);
+    
+    //stateResult->addInt32Value(CUStateKey::CONTROL_UNIT_STATE, deviceExplicitState);
+    stateResult->addInt32Value(CUStateKey::CONTROL_UNIT_STATE, static_cast<CUStateKey::ControlUnitState>(utility::StartableService::getServiceState()));
     return stateResult;
 }
+
 /*
  Update the configuration for all descendand tree in the Control Uniti class struccture
  */

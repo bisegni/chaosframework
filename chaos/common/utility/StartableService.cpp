@@ -68,7 +68,7 @@ bool StartableService::initImplementation(StartableService *impl, void *initData
         SS_LAPP  << "Initializing " << implName;
         if(impl->StartableService::state_machine.process_event(service_state_machine::EventType::initialize()) == boost::msm::back::HANDLED_TRUE) {
             impl->init(initData);
-            impl->serviceState = InizializableServiceType::IS_INITIATED;
+            impl->serviceState = impl->state_machine.current_state()[0]; //service_state_machine::InizializableServiceType::IS_INITIATED;
         }else {
             throw CException(0, "Service cant be initialized", domainString);
         }
@@ -89,7 +89,7 @@ bool StartableService::deinitImplementation(StartableService *impl, const char *
         SS_LAPP  << "Deinitializing " << implName;
         if(impl->StartableService::state_machine.process_event(service_state_machine::EventType::deinitialize()) == boost::msm::back::HANDLED_TRUE) {
             impl->deinit();
-            impl->serviceState = InizializableServiceType::IS_DEINTIATED;
+            impl->serviceState = impl->state_machine.current_state()[0];//service_state_machine::InizializableServiceType::IS_DEINTIATED;
         }else {
             throw CException(0, "Service cant be deinitialize", domainString);
         }
@@ -109,7 +109,7 @@ bool StartableService::startImplementation(StartableService *impl, const char * 
         SS_LAPP  << "Starting " << implName;
         if(impl->StartableService::state_machine.process_event(service_state_machine::EventType::start()) == boost::msm::back::HANDLED_TRUE) {
             impl->start();
-            impl->serviceState = StartableServiceType::SS_STARTED;
+            impl->serviceState = impl->state_machine.current_state()[0];//service_state_machine::StartableServiceType::SS_STARTED;
         }else {
             throw CException(0, "Service cant be started", domainString);
         }
@@ -130,7 +130,7 @@ bool StartableService::stopImplementation(StartableService *impl, const char * c
         SS_LAPP  << "Stopping " << implName;
         if(impl->StartableService::state_machine.process_event(service_state_machine::EventType::stop())  == boost::msm::back::HANDLED_TRUE) {
             impl->stop();
-            impl->serviceState = StartableServiceType::SS_STOPPED;
+            impl->serviceState = impl->state_machine.current_state()[0];//service_state_machine::StartableServiceType::SS_STOPPED;
         }else {
             throw CException(0, "Service cant be stopped", domainString);
         }

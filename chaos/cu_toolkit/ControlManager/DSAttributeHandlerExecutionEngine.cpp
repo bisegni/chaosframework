@@ -83,7 +83,7 @@ void DSAttributeHandlerExecutionEngine::deinit() throw(chaos::CException) {
 void DSAttributeHandlerExecutionEngine::addHandlerForDSAttribute(handler::DSAttributeHandler* classHandler)  throw (CException) {
     if(!classHandler) throw CException(0, "The class handler need to be a valid pointer", "DSAttributeHandlerExecutionEngine::addHandlerForDSAttribute");
     
-    if(serviceState != ::chaos::utility::InizializableServiceType::IS_DEINTIATED) throw CException(1, "Engine need to be in deinitialized state to accept new hander", "DSAttributeHandlerExecutionEngine::addHandlerForDSAttribute");
+    if(serviceState != ::chaos::utility::service_state_machine::InizializableServiceType::IS_DEINTIATED) throw CException(1, "Engine need to be in deinitialized state to accept new hander", "DSAttributeHandlerExecutionEngine::addHandlerForDSAttribute");
     
     std::string& attrName = classHandler->getAttributeName();
     

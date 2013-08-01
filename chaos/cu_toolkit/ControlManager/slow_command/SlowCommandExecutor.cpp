@@ -220,7 +220,7 @@ void SlowCommandExecutor::deinit() throw(chaos::CException) {
 void SlowCommandExecutor::setDefaultCommand(string commandAlias) {
     // check if we can set the default, the condition are:
     // the executor and the sandbox are in the init state or in stop state
-    if(utility::StartableService::serviceState == utility::StartableServiceType::SS_STARTED) {
+    if(utility::StartableService::serviceState == ::chaos::utility::service_state_machine::StartableServiceType::SS_STARTED) {
         throw CException(1, "The command infrastructure is in running state", "SlowCommandExecutor::setDefaultCommand");
     }
     
@@ -388,7 +388,7 @@ SlowCommand *SlowCommandExecutor::instanceCommandInfo(std::string& commandAlias)
 bool SlowCommandExecutor::submitCommand(CDataWrapper *commandDescription) {
     CHAOS_ASSERT(commandDescription)
     boost::mutex::scoped_lock lock(mutextQueueManagment);
-    if(serviceState != utility::StartableServiceType::SS_STARTED) return false;
+    if(serviceState != ::chaos::utility::service_state_machine::StartableServiceType::SS_STARTED) return false;
     uint32_t priority = commandDescription->hasKey(SlowCommandSubmissionKey::SUBMISSION_PRIORITY_UI32) ? commandDescription->getUInt32Value(SlowCommandSubmissionKey::SUBMISSION_PRIORITY_UI32):50;
     //DEBUG_CODE(SCELDBG_ << "Submit new command " << commandDescription->getJSONString();)
     DEBUG_CODE(SCELDBG_ << commandDescription->getStringValue(SlowCommandSubmissionKey::COMMAND_ALIAS_STR);)

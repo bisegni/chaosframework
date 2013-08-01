@@ -146,10 +146,8 @@ void SWAlimCU::defineActionAndDataset() throw(CException) {
 	
 }
 
-/*
- Initialize the Custom Contro Unit and return the configuration
- */
-void SWAlimCU::init() throw(CException) {
+// from abstract class
+void SWAlimCU::unitInit() throw(CException) {
     LAPP_ << "init SWAlimCU";
     RangeValueInfo param;
     std::vector<const char*> alim_attr;
@@ -175,10 +173,13 @@ void SWAlimCU::init() throw(CException) {
         throw new CException(0,"cannot init SWAlim",__FUNCTION__);
 }
 
-/*
- Execute the Control Unit work
- */
-void SWAlimCU::run() throw(CException) {
+// from abstract class
+void SWAlimCU::unitStart() throw(CException) {
+    
+}
+
+// from abstract class
+void SWAlimCU::unitRun() throw(CException) {
     int current,voltage;
     //get new data wrapper instance filled
     //with mandatory data
@@ -199,17 +200,13 @@ void SWAlimCU::run() throw(CException) {
 }
 
 
-/*
- Execute the Control Unit work
- */
-void SWAlimCU::stop() throw(CException) {
+// from abstract class
+void SWAlimCU::unitStop() throw(CException) {
     LAPP_ << "stop SWAlimCU";
 }
 
-/*
- Deinit the Control Unit
- */
-void SWAlimCU::deinit() throw(CException) {
+// from abstract class
+void SWAlimCU::unitDeinit() throw(CException) {
     LAPP_ << "deinit SWAlimCU";
     myalim->deinit();
 }

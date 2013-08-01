@@ -56,8 +56,6 @@ namespace chaos {
              */
             void _defineActionAndDataset(CDataWrapper&) throw(CException);
             
-        protected:
-
             
             void init() throw(CException);
             
@@ -70,10 +68,12 @@ namespace chaos {
              Execute the Control Unit work
              */
             void stop() throw(CException);
-
-            virtual void run() throw(CException) = 0;
             
             void deinit() throw(CException);
+        protected:
+
+            virtual void unitRun() throw(CException) = 0;
+
             
             void pushDataSet(CDataWrapper *acquiredData);
             

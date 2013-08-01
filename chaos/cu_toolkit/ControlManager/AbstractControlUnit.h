@@ -36,6 +36,7 @@
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/utility/ArrayPointer.h>
 #include <chaos/common/pqueue/CObjectHandlerProcessingQueue.h>
+#include <chaos/common/utility/StartableService.h>
 
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/ControlManager/DeviceSchemaDB.h>
@@ -66,7 +67,7 @@ namespace chaos{
             class that permit to publish rpc method for control the control unit life cycle. Most of the API
             that needs to be used to create device and his dataset are contained into the DeviceSchemaDB class.
          */
-        class AbstractControlUnit : public DeclareAction, protected DeviceSchemaDB {
+        class AbstractControlUnit : public DeclareAction, protected DeviceSchemaDB, public utility::StartableService {
             
             //frinedly class declaration
             friend class ControlManager;
@@ -102,6 +103,18 @@ namespace chaos{
              Stop the Custom Control Unit scheduling for device
              */
             virtual CDataWrapper* _stop(CDataWrapper*, bool& detachParam) throw(CException);
+            
+            // Startable Service method
+            void init(void *initData) throw(CException);
+            
+            // Startable Service method
+            void start() throw(CException);
+            
+            // Startable Service method
+            void stop() throw(CException);
+            
+            // Startable Service method
+            void deinit() throw(CException);
             
             /*!
              Define the control unit DataSet and Action into
@@ -160,28 +173,28 @@ namespace chaos{
                 This is where the subclass need to be inizialize their environment, usually the hardware initialization. An exception
                 will stop the Control Unit live.
              */
-            virtual void init() throw(CException) = 0;
+            virtual void unitInit() throw(CException) = 0;
             
                 //! Abstract method for the start of the control unit
             /*!
                 This is where the subclass need to be start all the staff needed by normal control process. An exception
                 will stop the Control Unit live and perform the deinitialization of the control unit.
              */
-            virtual void start() throw(CException) = 0;
+            virtual void unitStart() throw(CException) = 0;
             
             //! Abstract method for the stop of the control unit
             /*!
                 This is where the subclass need to be stop all the staff needed for pause the control process. An exception
                 will stop the Control Unit live and perform the deinitialization of the control unit.
              */
-            virtual void stop() throw(CException) = 0;
+            virtual void unitStop() throw(CException) = 0;
             
             //! Abstract method for the deinit of the control unit
             /*!
                 This is where the subclass need to be deinit all the staff that has been allocatate into the init method.
                 Usually the hardware deallocation etc..
              */
-            virtual void deinit() throw(CException) = 0;
+            virtual void unitDeinit() throw(CException) = 0;
             
                 //Abstract method used to sublcass to set theri needs
             /*!

@@ -32,6 +32,7 @@
 // for And_ operator
 #include <boost/msm/front/euml/operator.hpp>
 
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/exception/CException.h>
 
@@ -44,6 +45,7 @@ namespace chaos {
     namespace utility {
         
         namespace service_state_machine {
+            
             //SM Event
             namespace EventType {
                 struct initialize {};
@@ -76,13 +78,7 @@ namespace chaos {
                 }
             };
         }
-        
-        namespace InizializableServiceType {
-            typedef enum {
-                IS_INITIATED,
-                IS_DEINTIATED
-            } InizializableServiceState;
-        }
+
         class InizializableService {
             boost::msm::back::state_machine< service_state_machine::id_states_machine > state_machine;
         protected:

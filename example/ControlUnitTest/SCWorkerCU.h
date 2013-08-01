@@ -37,6 +37,23 @@ protected:
      */
     void defineActionAndDataset()throw(CException);
     void defineSharedVariable();
+    
+    /*(Optional)
+     Initialize the Control Unit and all driver, with received param from MetadataServer
+     */
+    void unitInit() throw(CException);
+    /*(Optional)
+     Execute the work, this is called with a determinated delay, it must be as fast as possible
+     */
+    void unitStart() throw(CException);
+    /*(Optional)
+     The Control Unit will be stopped
+     */
+    void unitStop() throw(CException);
+    /*(Optional)
+     The Control Unit will be deinitialized and disposed
+     */
+    void unitDeinit() throw(CException);
 public:
     /*
      Construct a new CU with an identifier

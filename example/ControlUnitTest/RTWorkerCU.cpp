@@ -140,9 +140,9 @@ void RTWorkerCU::defineActionAndDataset() throw(CException) {
 /*
  Initialize the Custom Contro Unit and return the configuration
  */
-void RTWorkerCU::init() throw(CException) {
+void RTWorkerCU::unitInit() throw(CException) {
     LAPP_ << "init RTWorkerCU";
-    RTAbstractControlUnit::init();
+    //RTAbstractControlUnit::init();
     
     initTime = steady_clock::now();
     lastExecutionTime = steady_clock::now();
@@ -162,14 +162,14 @@ void RTWorkerCU::init() throw(CException) {
 /*
  Execute the work, this is called with a determinated delay, it must be as fast as possible
  */
-void RTWorkerCU::start() throw(CException) {
-    RTAbstractControlUnit::start();
+void RTWorkerCU::unitStart() throw(CException) {
+   // RTAbstractControlUnit::start();
 }
 
 /*
  Execute the Control Unit work
  */
-void RTWorkerCU::run() throw(CException) {
+void RTWorkerCU::unitRun() throw(CException) {
     //get new data wrapper instance filled
     //with mandatory data
     CDataWrapper *acquiredData = getNewDataWrapper();
@@ -198,20 +198,20 @@ void RTWorkerCU::computeWave(CDataWrapper *acquiredData) {
 /*
  Execute the Control Unit work
  */
-void RTWorkerCU::stop() throw(CException) {
+void RTWorkerCU::unitStop() throw(CException) {
     LAPP_ << "stop RTWorkerCU";
-    RTAbstractControlUnit::stop();
+    //RTAbstractControlUnit::stop();
 }
 
 /*
  Deinit the Control Unit
  */
-void RTWorkerCU::deinit() throw(CException) {
+void RTWorkerCU::unitDeinit() throw(CException) {
     LAPP_ << "deinit RTWorkerCU";
     if(sinevalue){
         free(sinevalue);
     }
-    RTAbstractControlUnit::deinit();
+    //RTAbstractControlUnit::deinit();
 }
 
 /*

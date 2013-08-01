@@ -73,25 +73,20 @@ protected:
      */
     virtual void defineActionAndDataset()throw(CException);
     
-    /*(Optional)
-     Initialize the Control Unit and all driver, with received param from MetadataServer
-     */
-    void init() throw(CException);
+    // from abstract class
+    void unitInit() throw(CException);
     
-    /*
-     Execute the work, this is called with a determinated delay, it must be as fast as possible
-     */
-    void run() throw(CException);
+    // from abstract class
+    void unitStart() throw(CException);
     
-    /*
-     The Control Unit will be stopped
-     */
-    void stop() throw(CException);
+    // from abstract class
+    void unitRun() throw(CException);
     
-    /*(Optional)
-     The Control Unit will be deinitialized and disposed
-     */
-    void deinit() throw(CException);
+    // from abstract class
+    void unitStop() throw(CException);
+    
+    // from abstract class
+    void unitDeinit() throw(CException);
     
     /*
         Test Action Handler

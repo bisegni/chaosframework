@@ -185,7 +185,7 @@ CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* updatePac
  Execute the scehduling for the device
  */
 void RTAbstractControlUnit::executeOnThread() throw(CException) {
-    run();
+    unitRun();
     //check if we are in sequential or in threaded mode
 }
 

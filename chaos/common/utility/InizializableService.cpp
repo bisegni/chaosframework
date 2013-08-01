@@ -31,7 +31,7 @@ using namespace chaos::utility;
  */
 InizializableService::InizializableService() {
         //set the default value
-    serviceState = InizializableServiceType::IS_DEINTIATED;
+    serviceState = service_state_machine::InizializableServiceType::IS_DEINTIATED;
 }
 
 /*!
@@ -48,7 +48,6 @@ void InizializableService::init(void*) throw(chaos::CException) {
 void InizializableService::deinit() throw(chaos::CException) {
     
 }
-
     //! Return the state
 const uint8_t InizializableService::getServiceState() const {
     return serviceState;
@@ -71,7 +70,7 @@ bool InizializableService::initImplementation(InizializableService *impl, void *
         IS_LAPP  << "Initializing " << implName;
         if(impl->state_machine.process_event(service_state_machine::EventType::initialize()) == boost::msm::back::HANDLED_TRUE) {
             impl->init(initData);
-            impl->serviceState = InizializableServiceType::IS_INITIATED;
+            impl->serviceState = impl->state_machine.current_state()[0];//service_state_machine::InizializableServiceType::IS_INITIATED;
         } else {
            throw CException(0, "Service cant be initialized", domainString);
         }
@@ -95,7 +94,7 @@ bool InizializableService::deinitImplementation(InizializableService *impl, cons
         } else {
             throw CException(0, "Service cant be started", domainString);
         }
-        impl->serviceState = InizializableServiceType::IS_DEINTIATED;
+        impl->serviceState = impl->state_machine.current_state()[0];//service_state_machine::InizializableServiceType::IS_DEINTIATED;
         IS_LAPP  << implName << "Deinitialized";
     } catch (CException ex) {
         IS_LAPP  << "Error Deinitializing " << implName;
