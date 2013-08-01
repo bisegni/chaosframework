@@ -1,8 +1,8 @@
-/*	
+/*
  *	SWAlimCU.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,7 +32,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <iomanip>
-#include <time.h> 
+#include <time.h>
 #include <stdlib.h>
 using namespace chaos;
 
@@ -62,7 +62,7 @@ SWAlimCU::SWAlimCU(string &customDeviceID):rng((const uint_fast32_t) time(0) ),o
     prot = new ModbusProtocol("modbus");
     myalim = new SWAlim(_deviceID.c_str());
     LAPP_ << "Created Channel:"<<tcpChan->getName()<<endl<<"Created Protocol:"<<prot->getName()<<endl;
-
+	
 }
 
 /*
@@ -87,67 +87,63 @@ void SWAlimCU::defineActionAndDataset() throw(CException) {
     setDeviceID(_deviceID);
     
     //add custom action
-    AbstActionDescShrPtr  
-    actionDescription = addActionDescritionInstance<SWAlimCU>(this, 
-                                                              &SWAlimCU::actionTestOne, 
-                                                              "actionTestOne", 
+    AbstActionDescShrPtr
+    actionDescription = addActionDescritionInstance<SWAlimCU>(this,
+                                                              &SWAlimCU::actionTestOne,
+                                                              "actionTestOne",
                                                               "comandTestOne this action will do some beautifull things!");
     
-    actionDescription = addActionDescritionInstance<SWAlimCU>(this, 
-                                                              &SWAlimCU::resetStatistic, 
-                                                              "resetStatistic", 
+    actionDescription = addActionDescritionInstance<SWAlimCU>(this,
+                                                              &SWAlimCU::resetStatistic,
+                                                              "resetStatistic",
                                                               "resetStatistic this action will reset  all cu statistic!");
     
-    actionDescription = addActionDescritionInstance<SWAlimCU>(this, 
-                                                              &SWAlimCU::actionTestTwo, 
-                                                              "actionTestTwo", 
+    actionDescription = addActionDescritionInstance<SWAlimCU>(this,
+                                                              &SWAlimCU::actionTestTwo,
+                                                              "actionTestTwo",
                                                               "comandTestTwo, this action will do some beautifull things!");
     
     //add param to second action
-    actionDescription->addParam(ACTION_TWO_PARAM_NAME, 
-                                DataType::TYPE_INT32, 
+    actionDescription->addParam(ACTION_TWO_PARAM_NAME,
+                                DataType::TYPE_INT32,
                                 "integer 32bit action param description for testing purpose");
     
-
+	
     //setup the dataset
     /*
-      addAttributeToDataSet(devIDInChar,
-                          "DeviceTCPAddress",
-                          "SWAlim Address in the form [<ip>:<port>]",
-                          DataType::TYPE_STRING,
-                          DataType::Input);
-    */
-
-    addAttributeToDataSet(devIDInChar,
-                          "Current",
+	 addAttributeToDataSet(devIDInChar,
+	 "DeviceTCPAddress",
+	 "SWAlim Address in the form [<ip>:<port>]",
+	 DataType::TYPE_STRING,
+	 DataType::Input);
+	 */
+	
+    addAttributeToDataSet("Current",
                           "SWAlim current",
                           DataType::TYPE_INT32,
                           DataType::Output);
     
-    addAttributeToDataSet(devIDInChar,
-                          "Voltage",
+    addAttributeToDataSet("Voltage",
                           "SWAlim voltage",
                           DataType::TYPE_INT32,
                           DataType::Output);
     
-    addInputInt32AttributeToDataSet<SWAlimCU>(devIDInChar,
-                                              "Setcurrent",
+    addInputInt32AttributeToDataSet<SWAlimCU>("Setcurrent",
                                               "Set The current",
                                               this,
                                               &SWAlimCU::setCurrent);
-
-
+	
+	
     std::vector<const char*> alim_attr;
     alim_attr = myalim->getAttributes();
     for(std::vector<const char*>::iterator i = alim_attr.begin();i!=alim_attr.end();i++){
-      addAttributeToDataSet(devIDInChar,
-			    *i,
-			    "parameter",
-			    DataType::TYPE_STRING,
-			    DataType::Input);
-      
+		addAttributeToDataSet(*i,
+							  "parameter",
+							  DataType::TYPE_STRING,
+							  DataType::Input);
+		
     }
-
+	
 }
 
 /*
@@ -159,16 +155,16 @@ void SWAlimCU::init() throw(CException) {
     std::vector<const char*> alim_attr;
     alim_attr = myalim->getAttributes();
     for(std::vector<const char*>::iterator i =  alim_attr.begin();i!= alim_attr.end();i++){
-
-      getAttributeRangeValueInfo(*i, param);
-      LAPP_<< "Parameter: "<<*i<<" val="<<param.defaultValue<<endl; 
-      myalim->setAttribute(*i,param.defaultValue);
+		
+		getAttributeRangeValueInfo(*i, param);
+		LAPP_<< "Parameter: "<<*i<<" val="<<param.defaultValue<<endl;
+		myalim->setAttribute(*i,param.defaultValue);
     }
-
+	
     /*    myalim = new SWAlim(_deviceID.c_str(),param.defaultValue.c_str());
-	  if(myalim==NULL)
-	  throw new CException(0,"cannot create SWAlim",__FUNCTION__);
-    */
+	 if(myalim==NULL)
+	 throw new CException(0,"cannot create SWAlim",__FUNCTION__);
+	 */
     initTime = steady_clock::now();
     lastExecutionTime = steady_clock::now();
     numberOfResponse = 0;
