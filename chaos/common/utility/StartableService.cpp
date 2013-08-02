@@ -25,6 +25,7 @@ using namespace chaos::utility;
 
 
 #define SS_LAPP LAPP_ << "[StartableService]- "
+#define SS_LDBG LDBG_ << "[StartableService]- "
 
 StartableService::StartableService() {
 }
@@ -65,14 +66,17 @@ bool StartableService::initImplementation(StartableService *impl, void *initData
     bool result = true;
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
-        SS_LAPP  << "Initializing " << implName;
+        SS_LDBG  << "Initializing " << implName;
+		DEBUG_CODE(SS_LDBG << implName << " old State ->" << impl->state_machine.current_state()[0];)
         if(impl->StartableService::state_machine.process_event(service_state_machine::EventType::initialize()) == boost::msm::back::HANDLED_TRUE) {
             impl->init(initData);
             impl->serviceState = impl->state_machine.current_state()[0]; //service_state_machine::InizializableServiceType::IS_INITIATED;
         }else {
+			DEBUG_CODE(SS_LDBG << "Service cant flow to next state and current is ->" << impl->state_machine.current_state()[0];)
             throw CException(0, "Service cant be initialized", domainString);
         }
-        SS_LAPP  << implName << "Initialized";
+		DEBUG_CODE(SS_LDBG << implName << " new State ->" << impl->state_machine.current_state()[0];)
+        SS_LDBG  << implName << "Initialized";
     } catch (CException ex) {
         SS_LAPP  << "Error initializing " << implName;
         throw ex;
@@ -86,14 +90,17 @@ bool StartableService::deinitImplementation(StartableService *impl, const char *
     bool result = true;
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
-        SS_LAPP  << "Deinitializing " << implName;
+        SS_LDBG  << "Deinitializing " << implName;
+		DEBUG_CODE(SS_LDBG << implName << " old State ->" << impl->state_machine.current_state()[0];)
         if(impl->StartableService::state_machine.process_event(service_state_machine::EventType::deinitialize()) == boost::msm::back::HANDLED_TRUE) {
             impl->deinit();
             impl->serviceState = impl->state_machine.current_state()[0];//service_state_machine::InizializableServiceType::IS_DEINTIATED;
         }else {
+			DEBUG_CODE(SS_LDBG << "Service cant flow to next state and current is ->" << impl->state_machine.current_state()[0];)
             throw CException(0, "Service cant be deinitialize", domainString);
         }
-        SS_LAPP  << implName << "Deinitialized";
+        SS_LDBG  << implName << "Deinitialized";
+		DEBUG_CODE(SS_LDBG << implName << " new State ->" << impl->state_machine.current_state()[0];)
     } catch (CException ex) {
         SS_LAPP  << "Error Deinitializing " << implName;
         throw ex;
@@ -106,14 +113,17 @@ bool StartableService::startImplementation(StartableService *impl, const char * 
     bool result = true;
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
-        SS_LAPP  << "Starting " << implName;
+        SS_LDBG  << "Starting " << implName;
+		DEBUG_CODE(SS_LDBG << implName << " old State ->" << impl->state_machine.current_state()[0];)
         if(impl->StartableService::state_machine.process_event(service_state_machine::EventType::start()) == boost::msm::back::HANDLED_TRUE) {
             impl->start();
             impl->serviceState = impl->state_machine.current_state()[0];//service_state_machine::StartableServiceType::SS_STARTED;
         }else {
+			DEBUG_CODE(SS_LDBG << "Service cant flow to next state and current is ->" << impl->state_machine.current_state()[0];)
             throw CException(0, "Service cant be started", domainString);
         }
-        SS_LAPP  << implName << " Started";
+		DEBUG_CODE(SS_LDBG << implName << " new State ->" << impl->state_machine.current_state()[0];)
+        SS_LDBG  << implName << " Started";
     } catch (CException ex) {
         SS_LAPP  << "Error Starting " << implName;
         throw ex;
@@ -127,14 +137,17 @@ bool StartableService::stopImplementation(StartableService *impl, const char * c
     bool result = true;
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
-        SS_LAPP  << "Stopping " << implName;
+        SS_LDBG  << "Stopping " << implName;
+		DEBUG_CODE(SS_LDBG << implName << " old State ->" << impl->state_machine.current_state()[0];)
         if(impl->StartableService::state_machine.process_event(service_state_machine::EventType::stop())  == boost::msm::back::HANDLED_TRUE) {
             impl->stop();
             impl->serviceState = impl->state_machine.current_state()[0];//service_state_machine::StartableServiceType::SS_STOPPED;
         }else {
+			DEBUG_CODE(SS_LDBG << "Service cant flow to next state and current is ->" << impl->state_machine.current_state()[0];)
             throw CException(0, "Service cant be stopped", domainString);
         }
-        SS_LAPP  << implName << " Stopped";
+		DEBUG_CODE(SS_LDBG << implName << " new State ->" << impl->state_machine.current_state()[0];)
+        SS_LDBG  << implName << " Stopped";
     } catch (CException ex) {
         SS_LAPP  << "Error Starting " << implName;
         throw ex;

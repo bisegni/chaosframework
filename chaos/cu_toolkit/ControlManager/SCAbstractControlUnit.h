@@ -48,25 +48,18 @@ namespace chaos {
             //! Slow command executor pointer
             cu::control_manager::slow_command::SlowCommandExecutor *slowCommandExecutor;
             
-            /*!
-             Initialize the Custom Contro Unit and return the configuration
-             */
-            void init() throw(CException);
+			// Startable Service method
+            void init(void *initData) throw(CException);
             
-            /*!
-             Internal implementation of the runmethod, that (for now) will schedule the slowcommand sandbox
-             */
+            // Startable Service method
             void start() throw(CException);
             
-            /*!
-             Execute the Control Unit work
-             */
+            // Startable Service method
             void stop() throw(CException);
             
-            /*!
-             Deinit the Control Unit
-             */
+            // Startable Service method
             void deinit() throw(CException);
+			
             /*
              Receive the event for set the dataset input element, this virtual method
              is empty because can be used by controlunit implementation

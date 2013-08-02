@@ -70,7 +70,10 @@ void RTAbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigura
 /*!
  Init the  RT Control Unit scheduling for device
  */
-void RTAbstractControlUnit::init() throw(CException) {
+void RTAbstractControlUnit::init(void *initData) throw(CException) {
+	//call parent impl
+	AbstractControlUnit::init(initData);
+	
     RTCULAPP_ << "Initialize the DSAttribute handler engine for device:" << DeviceSchemaDB::getDeviceID();
     utility::StartableService::initImplementation(attributeHandlerEngine, (void*)NULL, "DSAttribute handler engine", "RTAbstractControlUnit::init");
 }
@@ -79,6 +82,9 @@ void RTAbstractControlUnit::init() throw(CException) {
  Starto the  Control Unit scheduling for device
  */
 void RTAbstractControlUnit::start() throw(CException) {
+	//call parent impl
+	AbstractControlUnit::start();
+	
     RTCULAPP_ << "Starting thread for device:" << DeviceSchemaDB::getDeviceID();
     threadStartStopManagment(true);
     RTCULAPP_ << "Thread started for device:" << DeviceSchemaDB::getDeviceID();
@@ -88,6 +94,9 @@ void RTAbstractControlUnit::start() throw(CException) {
  Stop the Custom Control Unit scheduling for device
  */
 void RTAbstractControlUnit::stop() throw(CException) {
+	//call parent impl
+	AbstractControlUnit::stop();
+	
     //manage the thread
     RTCULAPP_ << "Stopping thread for device:" << DeviceSchemaDB::getDeviceID();
     threadStartStopManagment(false);
@@ -98,6 +107,9 @@ void RTAbstractControlUnit::stop() throw(CException) {
  Init the  RT Control Unit scheduling for device
  */
 void RTAbstractControlUnit::deinit() throw(CException) {
+	//call parent impl
+	AbstractControlUnit::deinit();
+	
     RTCULAPP_ << "Deinitializing the DSAttribute handler engine for device:" << DeviceSchemaDB::getDeviceID();
     utility::StartableService::deinitImplementation(attributeHandlerEngine, "DSAttribute handler engine", "RTAbstractControlUnit::deinit");
 }

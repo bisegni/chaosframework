@@ -56,7 +56,10 @@ void  SCAbstractControlUnit::_getDeclareActionInstance(std::vector<const Declare
 /*
  Initialize the Custom Contro Unit and return the configuration
  */
-void SCAbstractControlUnit::init() throw(CException) {
+void SCAbstractControlUnit::init(void *initData) throw(CException) {
+	//call parent impl
+	AbstractControlUnit::init(initData);
+	
     LCCU_ << "Install default slow command for device " << DeviceSchemaDB::getDeviceID();
     installCommand<cucs::command::SetAttributeCommand>(control_manager::slow_command::SlowCommandsKey::ATTRIBUTE_SET_VALUE_CMD_ALIAS);
     
@@ -76,6 +79,9 @@ void SCAbstractControlUnit::init() throw(CException) {
  Deinit the Control Unit
  */
 void SCAbstractControlUnit::deinit() throw(CException) {
+	//call parent impl
+	AbstractControlUnit::deinit();
+	
     LCCU_ << "Deinitialize sandbox deinitialization for device:" << DeviceSchemaDB::getDeviceID();
     utility::StartableService::deinitImplementation(slowCommandExecutor, "Slow Command Executor", "SCAbstractControlUnit::deinit");
     //deassociate the data storage
@@ -87,6 +93,9 @@ void SCAbstractControlUnit::deinit() throw(CException) {
  Starto the  Control Unit scheduling for device
  */
 void SCAbstractControlUnit::start() throw(CException) {
+	//call parent impl
+	AbstractControlUnit::start();
+	
     LCCU_ << "Start sandbox for device:" << DeviceSchemaDB::getDeviceID();
     utility::StartableService::startImplementation(slowCommandExecutor, "Slow Command Executor", "SCAbstractControlUnit::start");
 
@@ -96,6 +105,9 @@ void SCAbstractControlUnit::start() throw(CException) {
  Stop the Custom Control Unit scheduling for device
  */
 void SCAbstractControlUnit::stop() throw(CException) {
+	//call parent impl
+	AbstractControlUnit::stop();
+	
     LCCU_ << "Stop slow command executor for device:" << DeviceSchemaDB::getDeviceID();
     utility::StartableService::stopImplementation(slowCommandExecutor, "Slow Command Executor", "SCAbstractControlUnit::stop");
 

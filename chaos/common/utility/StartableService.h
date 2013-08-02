@@ -68,7 +68,7 @@ namespace chaos {
                 //! Start the implementation
             virtual void start() throw(chaos::CException);
             
-                //! Start the implementation
+                //! Stop the implementation
             virtual void stop() throw(chaos::CException);
             
             static bool startImplementation(StartableService& impl, const char * const implName,  const char * const domainString);

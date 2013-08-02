@@ -230,10 +230,10 @@ int main (int argc, char* argv[] )
                         err = controller->submitSlowControlCommand(scAlias, static_cast<cccs::SubmissionRuleType::SubmissionRule>(checkSubmissionRule(scSubmissionRule)), scSubmissionPriority, scSubmissionSchedulerDelay, scSubmissionSubmissionRetryDelay, userData.get());
                         if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to deinit state");
                     } else {
-                        throw CException(29, "Device can't be in deinit state", "Set device schedule time");
+                        throw CException(29, "Device can't be in deinit state", "Send slow command");
                     }
                 } else {
-                    throw CException(29, "Device can't be in deinit state", "Set device schedule time");
+                    throw CException(29, "Device need to be in start state", "Send slow command");
                 }
                 break;
                 

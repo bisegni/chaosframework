@@ -60,7 +60,7 @@ namespace chaos{
         namespace ec = event::channel;
         
         class ControManager;
-
+		
             //!  Base class for control unit !CHAOS node
         /*!
             This is the abstraction of the contorl unit node of CHAOS. This class extends DeclareAction
@@ -72,7 +72,9 @@ namespace chaos{
             //frinedly class declaration
             friend class ControlManager;
             friend class DomainActionsScheduler;
-            
+            friend class SCAbstractControlUnit;
+			friend class RTAbstractControlUnit;
+			
             //! numerical state of the cu
             int  deviceState;
             
@@ -104,7 +106,13 @@ namespace chaos{
              */
             virtual CDataWrapper* _stop(CDataWrapper*, bool& detachParam) throw(CException);
             
-            // Startable Service method
+            /*!
+             Define the control unit DataSet and Action into
+             a CDataWrapper
+             */
+            void _undefineActionAndDataset() throw(CException);
+			
+			// Startable Service method
             void init(void *initData) throw(CException);
             
             // Startable Service method
@@ -115,14 +123,7 @@ namespace chaos{
             
             // Startable Service method
             void deinit() throw(CException);
-            
-            /*!
-             Define the control unit DataSet and Action into
-             a CDataWrapper
-             */
-            void _undefineActionAndDataset() throw(CException);
-            
-
+			
         protected:
             //  It's is the dynamically assigned instance of the CU. it will be used
             // as domain for the rpc action.
@@ -168,6 +169,7 @@ namespace chaos{
              */
             virtual void defineActionAndDataset() throw(CException) = 0;
             
+			
                 //! Abstract method for the initialization of the control unit
             /*!
                 This is where the subclass need to be inizialize their environment, usually the hardware initialization. An exception

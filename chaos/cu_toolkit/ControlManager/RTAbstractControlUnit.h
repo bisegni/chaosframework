@@ -57,7 +57,7 @@ namespace chaos {
             void _defineActionAndDataset(CDataWrapper&) throw(CException);
             
             
-            void init() throw(CException);
+            void init(void *initData) throw(CException);
             
             /*
              Internal implementation of the runmethod, that (for now) will schedule the slowcommand sandbox
