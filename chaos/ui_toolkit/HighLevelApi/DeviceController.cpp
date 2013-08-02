@@ -284,6 +284,19 @@ int DeviceController::submitSlowControlCommand(string commandAlias, cccs::Submis
     return deviceChannel->setAttributeValue(localCommandPack, false, millisecToWait);
 }
 
+int DeviceController::setSlowCommandFeatures(cccs::features::Features& features) {
+	CDataWrapper localCommandPack;
+	if(features.featuresFlag & cccs::features::FeaturesFlagTypes::FF_LOCK_USER_MOD) {
+		localCommandPack.addBoolValue(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL, features.lockedOnUserModification);
+	}
+	
+	if(features.featuresFlag & cccs::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY) {
+		localCommandPack.addInt32Value(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI32, features.featureSchedulerStepsDelay);
+	}
+	
+	return deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES, &localCommandPack, NULL);
+}
+
 int DeviceController::setAttributeValue(string& attributeName, string& attributeValue) {
     return setAttributeValue(attributeName, attributeValue.c_str(),(uint32_t)attributeValue.size());
 }

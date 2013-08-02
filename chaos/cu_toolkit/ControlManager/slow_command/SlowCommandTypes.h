@@ -39,28 +39,13 @@ namespace chaos{
                 typedef  uint16_t AttributeIndexType;
                 
                 /*!
-                 Type used for the next available command impl and description 
+                 Type used for the next available command impl and description
                  into the sandbox
                  */
                 typedef struct {
                     chaos::PRIORITY_ELEMENT(chaos::CDataWrapper) *cmdInfo;
                     SlowCommand *cmdImpl;
                 } CommandInfoAndImplementation;
-                
-                
-                //! Namespace for the features of the slow command
-                namespace FeatureFlagTypes {
-                    /*!
-                     * \enum FeatureFlag
-                     * \brief The feature represent the custumoziation 
-                     * of the sandbox ad the moment the slowcommadn is installed
-                     */
-                    typedef enum FeatureFlag {
-                        FF_SET_SCHEDULER_DELAY      = 1,    /**< The command bring his own scheduler delay time */
-                        FF_SET_SUBMISSION_RETRY     = 2,    /**< The delay between a submiossion check and another, submiossion chek consist to check the current command running state to determinate
-                                                                when the new command can be installed */
-                    } Handler;
-                }
                 
                 //! Namespace for the handler types
                 namespace HandlerType {
@@ -89,7 +74,7 @@ namespace chaos{
                         RS_Fault    = 8    /**< The command has had a fault */
                     } RunningState;
                 }
-
+				
                 /*!
                  \struct FaultDescription
                  \brief  Describe the fault of the command. This fileds need to be valorized

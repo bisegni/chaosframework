@@ -239,6 +239,9 @@ namespace chaos {
              */
             int submitSlowControlCommand(string commandAlias, cccs::SubmissionRuleType::SubmissionRule submissionRule, uint32_t schedulerStepsDelay = 0, uint32_t submissionCheckerStepsDelay = 0, CDataWrapper *slowCommandData = NULL);
             
+			//! set the current slow command features
+			int setSlowCommandFeatures(cccs::features::Features& features);
+			
                 //!Get device state
             /*!
              Return the current device state

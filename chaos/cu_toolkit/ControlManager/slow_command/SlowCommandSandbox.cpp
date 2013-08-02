@@ -359,7 +359,7 @@ void SlowCommandSandbox::runCommand() {
                 break;
                 
             default:
-                boost::this_thread::sleep_for(boost::chrono::milliseconds(currentExecutingCommand->featureSchedulerStepsDelay - stat.lastCmdStepTime));
+                boost::this_thread::sleep_for(boost::chrono::milliseconds(currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay - stat.lastCmdStepTime));
                 break;
         }
         
@@ -416,17 +416,17 @@ bool SlowCommandSandbox::setNextAvailableCommand(PRIORITY_ELEMENT(CDataWrapper) 
     nextAvailableCommand.cmdInfo = cmdInfo;
     nextAvailableCommand.cmdImpl = cmdImpl;
     //set the schedule step delay (time intervall between twp sequnece of the scehduler step)
-    if((cmdImpl->featuresFlag & FeatureFlagTypes::FF_SET_SCHEDULER_DELAY) == 0) {
+    if((cmdImpl->commandFeatures.featuresFlag & features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY) == 0) {
         //we need to set a new delay between steps
-        cmdImpl->featureSchedulerStepsDelay =  DEFAULT_TIME_STEP_INTERVALL;
+        cmdImpl->commandFeatures.featureSchedulerStepsDelay =  DEFAULT_TIME_STEP_INTERVALL;
         DEBUG_CODE(SCSLDBG_ << "default scheduler delay has been installed with " << DEFAULT_TIME_STEP_INTERVALL << " milliseconds";)
         
     }
     //check if the command has it's own time for the checker
-    if(cmdImpl->featuresFlag & FeatureFlagTypes::FF_SET_SUBMISSION_RETRY) {
+    if(cmdImpl->commandFeatures.featuresFlag & features::FeaturesFlagTypes::FF_SET_SUBMISSION_RETRY) {
         //we need to set a new delay between steps
-        submissionRetryDelay = posix_time::milliseconds(cmdImpl->featureSubmissionRetryDelay);
-        DEBUG_CODE(SCSLDBG_ << "New checker delay has been installed with value of " << cmdImpl->featureSubmissionRetryDelay << " milliseconds";)
+        submissionRetryDelay = posix_time::milliseconds(cmdImpl->commandFeatures.featureSubmissionRetryDelay);
+        DEBUG_CODE(SCSLDBG_ << "New checker delay has been installed with value of " << cmdImpl->commandFeatures.featureSubmissionRetryDelay << " milliseconds";)
     }else {
         submissionRetryDelay = posix_time::milliseconds(DEFAULT_CHECK_TIME);
         DEBUG_CODE(SCSLDBG_ << "Default checker delay has been used with value of " << DEFAULT_CHECK_TIME  << " milliseconds";)

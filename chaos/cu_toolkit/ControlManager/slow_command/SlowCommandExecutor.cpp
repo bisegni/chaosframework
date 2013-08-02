@@ -39,7 +39,7 @@ namespace cccs = chaos::cu::control_manager::slow_command;
 SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DeviceSchemaDB *_deviceSchemaDbPtr):executorID(_executorID), deviceSchemaDbPtr(_deviceSchemaDbPtr){
     //this need to be removed from here need to be implemented the def undef services
     // register the public rpc api
-    std::string rpcActionDomain = executorID + cccs::SlowCommandSubmissionKey::COMMAND_EXECUTOR_POSTFIX_DOMAIN;
+    std::string rpcActionDomain = executorID; //+ cccs::SlowCommandSubmissionKey::COMMAND_EXECUTOR_POSTFIX_DOMAIN;
     
     //
     SCELAPP_ << "Register updateConfiguration action";
@@ -54,6 +54,12 @@ SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DeviceSchemaDB
                                                                     rpcActionDomain.c_str(),
                                                                     cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_SANDBOX_STATISTICS,
                                                                     "Return the statistics of the sandbox reguaring to the current running command");
+	SCELAPP_ << "Register setCommandFeatures action";
+    DeclareAction::addActionDescritionInstance<SlowCommandExecutor>(this,
+                                                                    &SlowCommandExecutor::setCommandFeatures,
+                                                                    rpcActionDomain.c_str(),
+                                                                    cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES,
+                                                                    "Set the features of the running command");
 }
 
 SlowCommandExecutor::~SlowCommandExecutor() {
@@ -359,15 +365,15 @@ SlowCommand *SlowCommandExecutor::instanceCommandInfo(CDataWrapper *submissionIn
     
         //check if the comamnd pack has some feature to setup in the command instance
         if(submissionInfo->hasKey(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI32)) {
-            instance->featuresFlag |= FeatureFlagTypes::FF_SET_SCHEDULER_DELAY;
-            instance->featureSchedulerStepsDelay = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI32);
-            DEBUG_CODE(SCELDBG_ << "Set custom  SCHEDULER_STEP_TIME_INTERVALL to " << instance->featureSchedulerStepsDelay << " milliseconds";)
+            instance->commandFeatures.featuresFlag |= features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY;
+            instance->commandFeatures.featureSchedulerStepsDelay = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI32);
+            DEBUG_CODE(SCELDBG_ << "Set custom  SCHEDULER_STEP_TIME_INTERVALL to " << instance->commandFeatures.featureSchedulerStepsDelay << " milliseconds";)
         }
         
         if(submissionInfo->hasKey(SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32)) {
-            instance->featuresFlag |= FeatureFlagTypes::FF_SET_SUBMISSION_RETRY;
-            instance->featureSubmissionRetryDelay = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32);
-            DEBUG_CODE(SCELDBG_ << "Set custom  SUBMISSION_RETRY_DELAY to " << instance->featureSubmissionRetryDelay << " milliseconds";)
+            instance->commandFeatures.featuresFlag |= features::FeaturesFlagTypes::FF_SET_SUBMISSION_RETRY;
+            instance->commandFeatures.featureSubmissionRetryDelay = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32);
+            DEBUG_CODE(SCELDBG_ << "Set custom  SUBMISSION_RETRY_DELAY to " << instance->commandFeatures.featureSubmissionRetryDelay << " milliseconds";)
         }
     }
     return instance;
@@ -398,12 +404,13 @@ bool SlowCommandExecutor::submitCommand(CDataWrapper *commandDescription) {
     return true;
 }
 
+//----------------------------public rpc command---------------------------
 
 //! Get queued command via rpc command
 /*
  Return the number and the infromation of the queued command via RPC
  */
-CDataWrapper* SlowCommandExecutor::getQueuedCommand(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
+CDataWrapper* SlowCommandExecutor::getQueuedCommand(CDataWrapper *params, bool& detachParam) throw (CException) {
 	boost::mutex::scoped_lock lock(mutextQueueManagment);
 	chaos::CDataWrapper *result = new chaos::CDataWrapper();
 	//get the number
@@ -419,7 +426,7 @@ CDataWrapper* SlowCommandExecutor::getQueuedCommand(CDataWrapper *datasetAttribu
 /*
  Return the number and the infromation of the queued command via RPC
  */
-CDataWrapper* SlowCommandExecutor::getCommandSandboxStatistics(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
+CDataWrapper* SlowCommandExecutor::getCommandSandboxStatistics(CDataWrapper *params, bool& detachParam) throw (CException) {
 	boost::mutex::scoped_lock lock(mutextQueueManagment);
 	chaos::CDataWrapper *result = new chaos::CDataWrapper();
 	
@@ -427,4 +434,30 @@ CDataWrapper* SlowCommandExecutor::getCommandSandboxStatistics(CDataWrapper *dat
 	result->addInt64Value(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_SANDBOX_STATISTICS_START_TIME_UI64, commandSandbox.stat.lastCmdStepStart);
 	result->addInt64Value(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_SANDBOX_STATISTICS_END_TIME_UI64, commandSandbox.stat.lastCmdStepTime);
     return result;
+}
+
+//! Get queued command via rpc command
+/*
+ Return the number and the infromation of the queued command via RPC
+ */
+CDataWrapper* SlowCommandExecutor::setCommandFeatures(CDataWrapper *params, bool& detachParam) throw (CException) {
+	if(!params || !commandSandbox.currentExecutingCommand) return NULL;
+	
+	//lock the scheduler
+	boost::unique_lock<boost::recursive_mutex> lockScheduler(commandSandbox.mutexNextCommandChecker);
+	
+	//recheck current command
+	if(!commandSandbox.currentExecutingCommand) return NULL;
+	
+	//check wath feature we need to setup
+	if(params->hasKey(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL)) {
+		//has lock information to setup
+		commandSandbox.currentExecutingCommand->commandFeatures.lockedOnUserModification = params->getBoolValue(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL);
+	}
+	
+	if(params->hasKey(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI32)) {
+		//has scheduler step wait
+		commandSandbox.currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay = params->getUInt32Value(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI32);
+	}
+    return NULL;
 }

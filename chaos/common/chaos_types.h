@@ -47,6 +47,44 @@ namespace chaos {
                     uint64_t lastCmdStepStart;	/**< Represent the time collected at the start of the scehduler step (before acquisition phase) */
                     uint64_t lastCmdStepTime;	/**< Represent the time collected at the end of the scehduler step (befor the sleep or pause of the thread) */
                 } SandboxStat;
+				
+				namespace features {
+					//! Namespace for the features of the slow command
+					namespace FeaturesFlagTypes {
+						/*!
+						 * \enum FeatureFlag
+						 * \brief The feature represent the custumoziation
+						 * of the sandbox ad the moment the slowcommadn is installed
+						 */
+						typedef enum {
+							FF_SET_SCHEDULER_DELAY      = 1,    /**< The command bring his own scheduler delay time */
+							FF_SET_SUBMISSION_RETRY     = 2,    /**< The delay between a submiossion check and another, submiossion chek consist to check the current command running state to determinate
+																 when the new command can be installed */
+							FF_LOCK_USER_MOD			= 4
+						} FeatureFlag;
+					}
+					
+					typedef struct {
+						
+						bool lockedOnUserModification;
+						
+						//! Features flags
+						/*!
+						 One or more active flag from FeaturesFlagTypes::FeatureFlag
+						 */
+						uint8_t  featuresFlag;
+						
+						//features variable
+						//! Command specific delay beetween two sequence of the commadn step (acquire->correlation)
+						uint32_t featureSchedulerStepsDelay;
+						
+						//! Command specific delay between runninc command state and
+						//! submission rule for install new command
+						uint32_t featureSubmissionRetryDelay;
+						
+					} Features;
+                }
+
             }
         }
     }

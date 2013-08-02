@@ -28,7 +28,7 @@ namespace cccs = chaos::cu::control_manager::slow_command;
 
 SinWaveCommand::SinWaveCommand():rng((const uint_fast32_t) time(0) ),one_to_hundred( -100, 100 ),randInt(rng, one_to_hundred) {
     //set default scheduler delay
-    setFeatures(cccs::FeatureFlagTypes::FF_SET_SCHEDULER_DELAY, 50);
+    setFeatures(cccs::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, 50);
 }
 
 SinWaveCommand::~SinWaveCommand() {

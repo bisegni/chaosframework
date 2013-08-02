@@ -45,12 +45,14 @@ namespace cccs = chaos::cu::control_manager::slow_command;
 #define OPT_SCHEDULE_TIME   "stime"
 #define OPT_PRINT_STATE     "print-state"
 //--------------slow contorol option------------------
-#define OPT_SL_ALIAS                            "sc-alias"
-#define OPT_SL_PRIORITY                         "sc-priority"
-#define OPT_SL_SUBMISSION_RULE                  "sc-sub-rule"
-#define OPT_SL_COMMAND_DATA                     "sc-cmd-data"
-#define OPT_SL_COMMAND_SCHEDULE_DELAY           "sc-cmd-sched-delay"
-#define OPT_SL_COMMAND_SUBMISSION_RETRY_DELAY   "sc-cmd-submission-retry-delay"
+#define OPT_SL_ALIAS									"sc-alias"
+#define OPT_SL_PRIORITY									"sc-priority"
+#define OPT_SL_SUBMISSION_RULE							"sc-sub-rule"
+#define OPT_SL_COMMAND_DATA								"sc-cmd-data"
+#define OPT_SL_COMMAND_SCHEDULE_DELAY					"sc-cmd-sched-wait"
+#define OPT_SL_COMMAND_SUBMISSION_RETRY_DELAY			"sc-cmd-submission-retry-delay"
+#define OPT_SL_COMMAND_SET_FEATURES_LOCK				"sc-cmd-features-lock"
+#define OPT_SL_COMMAND_SET_FEATURES_SCHEDULER_WAIT		"sc-cmd-features-sched-wait"
 
 inline ptime utcToLocalPTime(ptime utcPTime){
 	c_local_adjustor<ptime> utcToLocalAdjustor;
@@ -99,7 +101,10 @@ int main (int argc, char* argv[] )
         uint32_t scSubmissionPriority;
         uint32_t scSubmissionSchedulerDelay;
         uint32_t scSubmissionSubmissionRetryDelay;
-        
+
+		bool scFeaturesLock;
+		uint32_t scFeaturesSchedWait;
+		
         CDeviceNetworkAddress deviceNetworkAddress;
         CUStateKey::ControlUnitState deviceState;
        
@@ -114,6 +119,8 @@ int main (int argc, char* argv[] )
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_DATA, po::value<string>(&scUserData), "The bson pack (in text format) sent to the set handler of the command for the slow");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_SCHEDULE_DELAY, po::value<uint32_t>(&scSubmissionSchedulerDelay)->default_value(0), "The millisecond beetwen a step an the next of the scheduler[in milliseconds]");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_SUBMISSION_RETRY_DELAY, po::value<uint32_t>(&scSubmissionSubmissionRetryDelay)->default_value(0), "The millisecond beetwen submission checker run");
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_SET_FEATURES_LOCK, po::value<bool>(&scFeaturesLock), "if true will lock the feature to the command modification");
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_SET_FEATURES_SCHEDULER_WAIT, po::value<uint32_t>(&scFeaturesSchedWait), "The millisecond beetwen two step of the scheduler");
         //! [UIToolkit Attribute Init]
         
         //! [UIToolkit Init]
@@ -239,6 +246,27 @@ int main (int argc, char* argv[] )
                 
         }
         
+		if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_SET_FEATURES_LOCK) ||
+		   ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_SET_FEATURES_SCHEDULER_WAIT)){
+			
+			cccs::features::Features features;
+			
+			//we can set the features
+			if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_SET_FEATURES_LOCK)) {
+				features.featuresFlag |= cccs::features::FeaturesFlagTypes::FF_LOCK_USER_MOD;
+				features.lockedOnUserModification = scFeaturesLock;
+				std::cout << "Set the lock feature to -> " << scFeaturesLock << std::endl;
+			}
+			
+			if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_SET_FEATURES_SCHEDULER_WAIT)) {
+				features.featuresFlag |= cccs::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY;
+				features.featureSchedulerStepsDelay = scFeaturesSchedWait;
+				std::cout << "Set the sched wait feature to -> " << scFeaturesSchedWait << std::endl;
+			}
+			//se the features
+			err = controller->setSlowCommandFeatures(features);
+		}
+		
         if( printState && (op>=1 && op<=4)){
             //get the actual state of device
             err = controller->getState(deviceState);

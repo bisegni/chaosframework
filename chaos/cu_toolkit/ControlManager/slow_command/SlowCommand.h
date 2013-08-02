@@ -76,21 +76,11 @@ namespace chaos{
                     friend struct AcquireFunctor;
                     friend struct CorrelationFunctor;
 
-                    
-                    //! Features flags
-                    /*!
-                     A value that represent the submiossion state
-                     */
-                    uint8_t  featuresFlag;
-                    
-                    //features variable
-                    //! Command specific delay beetween two sequence of the commadn step (acquire->correlation)
-                    uint32_t featureSchedulerStepsDelay;
-                    
-                    //! Command specific delay between runninc command state and
-                    //! submission rule for install new command
-                    uint32_t featureSubmissionRetryDelay;
-
+                    bool featuresLocked;
+					
+					//! Command features
+					features::Features commandFeatures;
+					
                     //! Submission state
                     /*!
                      A value that represent the submiossion state
@@ -140,7 +130,7 @@ namespace chaos{
                      overloaded by submition feature flag and anyway the are keept in consideration onlyat installation time
                      of the command.
                      */
-                    void setFeatures(FeatureFlagTypes::FeatureFlag features, uint32_t featuresValue);
+                    void setFeatures(features::FeaturesFlagTypes::FeatureFlag features, uint32_t featuresValue);
                     
                     /*!
                      return the device database with the dafualt device information

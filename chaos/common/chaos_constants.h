@@ -225,16 +225,23 @@ namespace chaos {
 					//! @The key represent the rpc alias for SlowCommandExecutor::getQueuedCommand method
                     static const char * const   RPC_GET_QUEUED_COMMAND				= "getQueuedCommand";
 					//! @The key represent the field of the return pack of the command RPC_GET_QUEUED_COMMAND for retrive the number of the queued command, value is and uint32_t
-					static const char * const   RPC_GET_QUEUED_COMMAND_NUMBER_UI32		= "cmd_number";
+					static const char * const   RPC_GET_QUEUED_COMMAND_NUMBER_UI32		= "gqc_cmd_number";
 					//! @The key represent the field of the return pack of the command RPC_GET_QUEUED_COMMAND for retrive the alias of the command on the top of the queue, value is a string
-					static const char * const   RPC_GET_QUEUED_COMMAND_TOP_ALIAS_STR	= "top_cmd_alias";
+					static const char * const   RPC_GET_QUEUED_COMMAND_TOP_ALIAS_STR	= "gqc_top_cmd_alias";
                     
 					//! @The key represent the rpc alias for SlowCommandExecutor::getCommandSandboxStatistics method
 					static const char * const   RPC_GET_COMMAND_SANDBOX_STATISTICS = "getCmdStatistic";
 					//! @The key represent the field of the return pack of the command RPC_GET_COMMAND_SANDBOX_STATISTICS for retrive the start milliseconds of scheduler step, value is and uint64_t
-					static const char * const   RPC_GET_COMMAND_SANDBOX_STATISTICS_START_TIME_UI64 = "start_time";
+					static const char * const   RPC_GET_COMMAND_SANDBOX_STATISTICS_START_TIME_UI64 = "gcs_start_time";
 					//! @The key represent the field of the return pack of the command RPC_GET_COMMAND_SANDBOX_STATISTICS for retrive the end milliseconds of scheduler step, value is and uint64_t
-					static const char * const   RPC_GET_COMMAND_SANDBOX_STATISTICS_END_TIME_UI64 = "end_time";
+					static const char * const   RPC_GET_COMMAND_SANDBOX_STATISTICS_END_TIME_UI64 = "gcs_end_time";
+					
+					//! @The key represent the rpc alias for SlowCommandExecutor::setCommandFeatures method
+					static const char * const   RPC_SET_COMMAND_FEATURES = "setCommandFeatures";
+					//! @The key represent the the scheduler wait time for next step, value is and uint32_t
+					static const char * const   RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI32 = "scf_sched_waith_time";
+					//! @The key represent the lock option for the features, value is and boolean
+					static const char * const   RPC_SET_COMMAND_FEATURES_LOCK_BOOL = "scf_lock";
 				}
 				/** @} */ // end of SlowControlExecutorKey
             }

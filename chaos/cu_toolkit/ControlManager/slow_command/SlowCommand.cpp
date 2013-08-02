@@ -24,7 +24,11 @@ namespace cccs = chaos::cu::control_manager::slow_command;
 
 // default constructor
 cccs::SlowCommand::SlowCommand() {
-    featuresFlag = 0;
+    
+	//setup feautere fields
+	commandFeatures.featuresFlag = 0;
+	commandFeatures.lockedOnUserModification = false;
+	
     runningState = RunningStateType::RS_Exsc;
     submissionRule = SubmissionRuleType::SUBMIT_NORMAL;
 }
@@ -42,17 +46,18 @@ chaos::cu::DeviceSchemaDB  *cccs::SlowCommand::getDeviceDatabase() {
 }
 
 // set the features with the ui32 value
-void cccs::SlowCommand::setFeatures(cccs::FeatureFlagTypes::FeatureFlag features, uint32_t featuresValue) {
-    if(featuresValue == 0) return;
+void cccs::SlowCommand::setFeatures(cccs::features::FeaturesFlagTypes::FeatureFlag features, uint32_t featuresValue) {
+	//check if the features are locked for the user modifications
+    if(commandFeatures.lockedOnUserModification) return;
 
-    featuresFlag |= features;
+    commandFeatures.featuresFlag |= features;
     switch (features) {
-        case cccs::FeatureFlagTypes::FF_SET_SCHEDULER_DELAY:
-            featureSchedulerStepsDelay = featuresValue;
+        case cccs::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY:
+            commandFeatures.featureSchedulerStepsDelay = featuresValue;
             break;
             
-        case cccs::FeatureFlagTypes::FF_SET_SUBMISSION_RETRY:
-            featureSubmissionRetryDelay = featuresValue;
+        case cccs::features::FeaturesFlagTypes::FF_SET_SUBMISSION_RETRY:
+            commandFeatures.featureSubmissionRetryDelay = featuresValue;
             break;
             
         default:
