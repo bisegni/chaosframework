@@ -18,6 +18,7 @@
  *    	limitations under the License.
  */
 
+#include <chaos/common/global.h>
 #include "CThreadGroup.h"
 #include "CThread.h"
 using namespace chaos;
@@ -68,10 +69,7 @@ CThread *CThreadGroup::getThread(int idx) {
 }
 
 void CThreadGroup::joinGroup() {
-        //threadGroup.join_all();
-    for (vector<CThread*>::iterator simThrIter=threadVec.begin() ; simThrIter < threadVec.end(); simThrIter++ ){
-        (*simThrIter)->join();
-    }
+    threadGroup.join_all();
 }
 
 void CThreadGroup::setDelayBeetwenTask(long delayTime) {

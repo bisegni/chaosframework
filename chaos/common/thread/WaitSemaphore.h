@@ -90,8 +90,9 @@ namespace chaos {
             boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
             if(inWait) return;
             inWait = true;
-            wait_answer_condition.timed_wait(lock, posix_time::milliseconds(millisecToWait));
+            do {} while(wait_answer_condition.timed_wait(lock, posix_time::milliseconds(millisecToWait)) && !answered);
             inWait = false;
+            answered = false;
         }
         
         //!unlock

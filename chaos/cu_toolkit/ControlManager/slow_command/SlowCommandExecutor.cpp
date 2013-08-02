@@ -96,6 +96,10 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
     //at this point, befor the sandbox initialization we need to setup the shared setting memory
     CHAOS_ASSERT(deviceSchemaDbPtr)
     
+    
+    //init the sand box
+    utility::StartableService::initImplementation(commandSandbox, initData, "SlowCommandSandbox", "SlowCommandExecutor::init");
+    
     SCELAPP_ << "Populating sandbox shared setting for device input attribute";
     deviceSchemaDbPtr->getDatasetAttributesName(DataType::Input, inputAttributeNames);
     
@@ -144,8 +148,6 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
         }
     }
 
-    //start the sand box
-    utility::StartableService::initImplementation(commandSandbox, initData, "SlowCommandSandbox", "SlowCommandExecutor::init");
 
     SCELAPP_ << "Check if we need to use the dafult command or we have pause instance";
     if(defaultCommandAlias.size()) {
@@ -459,5 +461,7 @@ CDataWrapper* SlowCommandExecutor::setCommandFeatures(CDataWrapper *params, bool
 		//has scheduler step wait
 		commandSandbox.currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay = params->getUInt32Value(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI32);
 	}
+    lockScheduler.unlock();
+    commandSandbox.threadSchedulerPauseCondition.unlock();
     return NULL;
 }

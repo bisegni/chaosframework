@@ -178,4 +178,6 @@ void CThread::executeWork() {
         DECODE_CHAOS_EXCEPTION(exc);
     }
 	if(parentCThreadGroup) parentCThreadGroup->threadHasFinished(this);
+    
+    DEBUG_CODE(LDBG_ << "CThread has endend";)
 }

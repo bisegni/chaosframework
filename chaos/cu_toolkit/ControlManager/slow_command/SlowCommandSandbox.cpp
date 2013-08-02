@@ -344,7 +344,9 @@ void SlowCommandSandbox::runCommand() {
             continue;
             
             if(curCmdRunningState & (RunningStateType::RS_End|RunningStateType::RS_Fault)) {
+                DEBUG_CODE(SCSLDBG_ << "Scheduler need sleep because no command to run";)
                 threadSchedulerPauseCondition.wait();
+                DEBUG_CODE(SCSLDBG_ << "Scheduler is awaked";)
             }
         }
         //unloc
@@ -356,10 +358,12 @@ void SlowCommandSandbox::runCommand() {
             case 0:
                 DEBUG_CODE(SCSLDBG_ << "Scheduler need sleep because no command to run";)
                 threadSchedulerPauseCondition.wait();
+                DEBUG_CODE(SCSLDBG_ << "Scheduler is awaked";)
                 break;
                 
             default:
-                boost::this_thread::sleep_for(boost::chrono::milliseconds(currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay - stat.lastCmdStepTime));
+                threadSchedulerPauseCondition.wait(currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay - stat.lastCmdStepTime);
+                //boost::this_thread::sleep_for(boost::chrono::milliseconds(currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay - stat.lastCmdStepTime));
                 break;
         }
         

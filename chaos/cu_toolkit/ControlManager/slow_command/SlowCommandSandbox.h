@@ -91,6 +91,8 @@ namespace chaos{
                     //uint64_t schedulerStepDelay;
                     //! Thread for whait until the queue is empty
                     WaitSemaphore  threadSchedulerPauseCondition;
+                    //bool   threadSchedulerPauseConditionFlag;
+                    //boost::condition_variable   threadSchedulerPauseCondition;
                     
                     //------------------next command checker---------------------
 

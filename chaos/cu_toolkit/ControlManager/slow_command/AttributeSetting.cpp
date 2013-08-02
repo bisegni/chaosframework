@@ -19,6 +19,8 @@
  */
 
 #include <string>
+
+#include <chaos/common/global.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/AttributeSetting.h>
 
 #define CSLAPP_ LAPP_ << "[AttributeSetting-" << "] "
@@ -83,6 +85,7 @@ AttributeSetting::~AttributeSetting() {
 
 //! Initialize instance
 void AttributeSetting::init(void *initData) throw(chaos::CException) {
+    index = 0;
     //bitmapChangedAttribute = new boost::dynamic_bitset<BitBlockDimension>(mapAttributeIndexSettings.size());
     /*if(!bitmapChangedAttribute) throw CException(1, "Error allocating memory for map bit", "AttributeSetting::init");
    
@@ -133,6 +136,11 @@ void AttributeSetting::addAttribute(string name, uint32_t size, chaos::DataType:
     tmpSP->sharedBitmapChangedAttribute = &bitmapChangedAttribute;
     
     mapAttributeIndexSettings.insert(make_pair<AttributeIndexType, boost::shared_ptr<ValueSetting> >(tmpIndex, tmpSP));
+    
+    //if(mapAttributeIndexSettings.size()!=index) {
+        //error inserting the row;
+        //LDBG_ << "error inserting the row";
+    //}
 }
 
 void AttributeSetting::getAttributeNames(std::vector<std::string>& names) {

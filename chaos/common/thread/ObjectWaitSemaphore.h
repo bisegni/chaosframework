@@ -86,9 +86,11 @@ namespace chaos {
             boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
             if(inWait) return NULL;
             inWait = true;
+            answered = false;
             while ( ! answered )
                 wait_answer_condition.wait(lock);
             inWait = false;
+            answered = false;
             T result = objecForWait;
             objecForWait = NULL;
             return result;
@@ -106,8 +108,10 @@ namespace chaos {
             boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
             if(inWait) return NULL;
             inWait = true;
-            wait_answer_condition.timed_wait(lock, posix_time::milliseconds(millisecToWait));
+            answered = false;
+            do {} while(wait_answer_condition.timed_wait(lock, posix_time::milliseconds(millisecToWait)) && !answered);
             inWait = false;
+            answered = false;
             T result = objecForWait;
             objecForWait = NULL;
             return result;

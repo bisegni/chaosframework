@@ -30,6 +30,7 @@
 #include <boost/lexical_cast.hpp>
 
 #define COPQUEUE_LAPP_ LAPP_ << "[CObjectProcessingQueue] - "
+#define COPQUEUE_LDBG_ LDBG_ << "[CObjectProcessingQueue] - "
 
 namespace chaos {
     using namespace std;
@@ -67,7 +68,10 @@ namespace chaos {
             ElementManagingPolicy elementPolicy;
                 //retrive the oldest element
             dataRow = waitAndPop();
-            if(!dataRow) return;
+            if(!dataRow) {
+                DEBUG_CODE(COPQUEUE_LDBG_<< "waitAndPop() return NULL object so we return";)
+                return;
+            }
                 //Process the element
             try {
                 if(eventListener && !(*eventListener).elementWillBeProcessed(tag, dataRow)){
@@ -87,6 +91,7 @@ namespace chaos {
             if(eventListener && !(*eventListener).elementWillBeDiscarded(tag, dataRow))return;
             
             DELETE_OBJ_POINTER(dataRow);
+            DEBUG_CODE(COPQUEUE_LDBG_<< "thread method has ended";)
         }
         
         /*
@@ -176,10 +181,15 @@ namespace chaos {
             
             while(bufferQueue.empty() && !threadGroup.isStopped()) {
                 emptyQueueConditionLock.notify_one();
+                DEBUG_CODE(COPQUEUE_LDBG_<< "lock on liveThreadConditionLock";)
                 liveThreadConditionLock.wait(lock);
+                DEBUG_CODE(COPQUEUE_LDBG_<< "awake for liveThreadConditionLock";)
+                DEBUG_CODE(COPQUEUE_LDBG_<< "bufferQueue.empty() = " << bufferQueue.empty();)
+                DEBUG_CODE(COPQUEUE_LDBG_<< "!threadGroup.isStopped() = " << !threadGroup.isStopped();)
             }
                 //get the oldest data ad copy the ahsred_ptr
             if(bufferQueue.empty()) {
+                DEBUG_CODE(COPQUEUE_LDBG_<< "bufferQueue.empty() is empy so we go out";)
                 return NULL;
             }
                 //get the last pointer from the queue
