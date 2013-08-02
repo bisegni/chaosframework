@@ -59,6 +59,11 @@ public:
      Construct a new CU with an identifier
      */
     SCWorkerCU(string&);
+	
+	/*
+     Base destructor
+     */
+	~SCWorkerCU();
 };
 
 

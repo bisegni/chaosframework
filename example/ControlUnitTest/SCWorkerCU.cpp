@@ -16,6 +16,10 @@ SCWorkerCU::SCWorkerCU(string &customDeviceID) {
     _deviceID = customDeviceID;
 }
 
+SCWorkerCU::~SCWorkerCU() {
+	
+}
+
 /*
  Return the default configuration
  */
@@ -80,4 +84,24 @@ void SCWorkerCU::defineSharedVariable() {
     bool quit = false;
     addSharedVariable("quit", 1, chaos::DataType::TYPE_BOOLEAN);
     setSharedVariableValue("quit", &quit, sizeof(bool));
+}
+
+// Abstract method for the initialization of the control unit
+void SCWorkerCU::unitInit() throw(CException) {
+	
+}
+
+// Abstract method for the start of the control unit
+void SCWorkerCU::unitStart() throw(CException) {
+	
+}
+
+// Abstract method for the stop of the control unit
+void SCWorkerCU::unitStop() throw(CException) {
+	
+}
+
+// Abstract method for the deinit of the control unit
+void SCWorkerCU::unitDeinit() throw(CException) {
+	
 }

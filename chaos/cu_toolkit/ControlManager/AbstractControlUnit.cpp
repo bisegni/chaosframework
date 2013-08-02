@@ -383,7 +383,6 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_getState(CDataWrapper* getStatedP
     CDataWrapper *stateResult = new CDataWrapper();
     string deviceID = getStatedParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
     
-    //stateResult->addInt32Value(CUStateKey::CONTROL_UNIT_STATE, deviceExplicitState);
     stateResult->addInt32Value(CUStateKey::CONTROL_UNIT_STATE, static_cast<CUStateKey::ControlUnitState>(utility::StartableService::getServiceState()));
     return stateResult;
 }
@@ -417,4 +416,3 @@ chaos::CDataWrapper*  cu::AbstractControlUnit::updateConfiguration(chaos::CDataW
     
     return NULL;
 }
-
