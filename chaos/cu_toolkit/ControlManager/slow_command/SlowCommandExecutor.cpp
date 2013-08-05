@@ -478,11 +478,6 @@ CDataWrapper* SlowCommandExecutor::setCommandFeatures(CDataWrapper *params, bool
 CDataWrapper* SlowCommandExecutor::killCurrentCommand(CDataWrapper *params, bool& detachParam) throw (CException) {
 	if(!commandSandbox.currentExecutingCommand) return NULL;
 	
-	//lock the scheduler
-	boost::mutex::scoped_lock lockForCurrentCommand(commandSandbox.mutextAccessCurrentCommand);
-
-	// terminate the current command
-	DELETE_OBJ_POINTER(commandSandbox.currentExecutingCommand)
-	commandSandbox.installHandler(NULL, NULL);
+	commandSandbox.killCurrentCommand();
 	return NULL;
 }

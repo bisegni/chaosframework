@@ -412,6 +412,16 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
     }
 }
 
+
+void SlowCommandSandbox::killCurrentCommand() {
+	//lock the scheduler
+	boost::mutex::scoped_lock lockForCurrentCommand(mutextAccessCurrentCommand);
+	
+	// terminate the current command
+	DELETE_OBJ_POINTER(currentExecutingCommand)
+	installHandler(NULL, NULL);
+}
+
 bool SlowCommandSandbox::setNextAvailableCommand(PRIORITY_ELEMENT(CDataWrapper) *cmdInfo, SlowCommand *cmdImpl) {
     if(!cmdImpl) return false;
     boost::recursive_mutex::scoped_lock lockScheduler(mutexNextCommandChecker);

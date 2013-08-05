@@ -71,11 +71,6 @@ cout.flush();\
 }
 #endif
 
-#define DEFINE_API(group_Name)\
-//* \
-\ingroup group_Name \
-*\/
-
     //epoc for time stamp calculation
 const boost::posix_time::ptime EPOCH(boost::gregorian::date(1970,1,1));
 

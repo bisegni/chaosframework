@@ -2,8 +2,8 @@ SET(cu_lib_src  ChaosCUToolkit.cpp CommandManager/CommandManager.cpp)
 SET(cu_lib_src  ${cu_lib_src} ConfigurationManager/ConfigurationManager.cpp)
 SET(cu_lib_src  ${cu_lib_src} driver_manager/driver/AbstractDriver.cpp driver_manager/driver/DriverAccessor.cpp driver_manager/driver/DriverPluginLoader.cpp driver_manager/driver/AbstractDriverPlugin.cpp)
 SET(cu_lib_src  ${cu_lib_src} DataManager/DataManager.cpp DataManager/KeyDataStorage.cpp DataManager/MultiBufferDataStorage.cpp DataManager/DataBuffer/OutputDataBuffer.cpp)
-SET(cu_lib_src  ${cu_lib_src} ControlManager/slow_command/SlowCommandExecutor.cpp ControlManager/slow_command/SlowCommand.cpp ControlManager/slow_command/SlowCommandSandbox.cpp ControlManager/slow_command/AttributeSetting.cpp ControlManager/DSAttributeHandlerExecutionEngine.cpp ControlManager/handler/DSAttributeHandler.cpp ControlManager/AbstractControlUnit.cpp ControlManager/ControlManager.cpp ControlManager/SCAbstractControlUnit.cpp ControlManager/RTAbstractControlUnit.cpp ControlManager/DeviceSchemaDB.cpp)
-SET(cu_lib_src  ${cu_lib_src} ControlManager/slow_command/command/SetAttributeCommand.cpp )
+SET(cu_lib_src  ${cu_lib_src} ControlManager/DSAttributeHandlerExecutionEngine.cpp ControlManager/handler/DSAttributeHandler.cpp ControlManager/AbstractControlUnit.cpp ControlManager/ControlManager.cpp ControlManager/SCAbstractControlUnit.cpp ControlManager/RTAbstractControlUnit.cpp ControlManager/DeviceSchemaDB.cpp)
+SET(cu_lib_src  ${cu_lib_src} ControlManager/slow_command/SlowCommandExecutor.cpp ControlManager/slow_command/SlowCommand.cpp ControlManager/slow_command/SlowCommandSandbox.cpp ControlManager/slow_command/AttributeSetting.cpp ControlManager/slow_command/command/SetAttributeCommand.cpp )
 
 
 ADD_LIBRARY(chaos_cutoolkit SHARED ${cu_lib_src})

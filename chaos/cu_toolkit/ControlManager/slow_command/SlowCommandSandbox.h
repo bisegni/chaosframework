@@ -144,6 +144,8 @@ namespace chaos{
                      */
                     inline void installHandler(SlowCommand *cmdImpl, CDataWrapper* setData);
 					
+					void killCurrentCommand();
+					
                     SlowCommandSandbox();
                     ~SlowCommandSandbox();
                     
