@@ -64,6 +64,12 @@ void SinWaveCommand::setHandler(chaos::CDataWrapper *data) {
     quitSharedVariable = getValueSetting((cccs::AttributeIndexType)6)->getCurrentValue<bool>();
     
     lastStartTime = 0;
+	
+	//this is necessary becase if the command is installed after the first start the
+	//attribute is not anymore marched has "changed". so in every case at set handler
+	//we call the set point funciton that respect the actual value of poits pointer.
+	setWavePoint();
+	
     CMDCU_ << "SinWaveCommand::setHandler";
 }
 
@@ -106,19 +112,22 @@ void SinWaveCommand::acquireHandler() {
             CMDCU_ << "We have " << changedIndex.size() << " changed attribute";
             for (int idx =0; idx < changedIndex.size(); idx++) {
                 cccs::ValueSetting *vSet = getValueSetting(changedIndex[idx]);
-                
+				
+				//set change as completed
+				vSet->completed();
+				
                 //the index is correlated to the creation sequence so
                 //the index 0 is the first input parameter "frequency"
                 switch (vSet->index) {
                     case 0://points
+
                         // apply the modification
                         setWavePoint();
                         break;
-
                     default:// all other parameter are managed into the function that create the sine waveform
-                        vSet->completed();
                         break;
                 }
+
             }
             changedIndex.clear();
         }
@@ -153,7 +162,7 @@ void SinWaveCommand::computeWave(CDataWrapper *acquiredData) {
  */
 void SinWaveCommand::setWavePoint() {
     boost::mutex::scoped_lock lock(pointChangeMutex);
-    uint32_t tmpNOP = *pointSetting->getNextValue<uint32_t>();
+    uint32_t tmpNOP = *pointSetting->getCurrentValue<uint32_t>();
     if(tmpNOP < 1) tmpNOP = 0;
     
     if(!tmpNOP){
@@ -171,6 +180,4 @@ void SinWaveCommand::setWavePoint() {
             pointSetting->completedWithError();
         }
     }
-    //notify that someone take care to manage the modification
-    pointSetting->completed();
 }

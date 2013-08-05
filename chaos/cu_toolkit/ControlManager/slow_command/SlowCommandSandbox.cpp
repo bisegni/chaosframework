@@ -362,7 +362,8 @@ void SlowCommandSandbox::runCommand() {
                 break;
                 
             default:
-                threadSchedulerPauseCondition.wait(currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay - stat.lastCmdStepTime);
+				unsigned long timeToWaith = currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay - stat.lastCmdStepTime;
+                threadSchedulerPauseCondition.wait(timeToWaith>0?timeToWaith:0);
                 //boost::this_thread::sleep_for(boost::chrono::milliseconds(currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay - stat.lastCmdStepTime));
                 break;
         }
@@ -375,7 +376,6 @@ void SlowCommandSandbox::runCommand() {
 
 //!install the command
 void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setData) {
-    CHAOS_ASSERT(cmdImpl)
     
     //set current command
     if(cmdImpl) {

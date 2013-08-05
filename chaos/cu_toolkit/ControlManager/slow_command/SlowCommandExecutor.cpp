@@ -454,7 +454,7 @@ CDataWrapper* SlowCommandExecutor::setCommandFeatures(CDataWrapper *params, bool
 	if(!params || !commandSandbox.currentExecutingCommand) return NULL;
 	
 	//lock the scheduler
-	boost::unique_lock<boost::recursive_mutex> lockScheduler(commandSandbox.mutexNextCommandChecker);
+	boost::mutex::scoped_lock lockForCurrentCommand(commandSandbox.mutextAccessCurrentCommand);
 	
 	//recheck current command
 	if(!commandSandbox.currentExecutingCommand) return NULL;
@@ -469,17 +469,17 @@ CDataWrapper* SlowCommandExecutor::setCommandFeatures(CDataWrapper *params, bool
 		//has scheduler step wait
 		commandSandbox.currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay = params->getUInt32Value(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI32);
 	}
-    lockScheduler.unlock();
+    lockForCurrentCommand.unlock();
     commandSandbox.threadSchedulerPauseCondition.unlock();
     return NULL;
 }
 
 //! Kill current command rpc action
 CDataWrapper* SlowCommandExecutor::killCurrentCommand(CDataWrapper *params, bool& detachParam) throw (CException) {
-	if(!params || !commandSandbox.currentExecutingCommand) return NULL;
+	if(!commandSandbox.currentExecutingCommand) return NULL;
 	
 	//lock the scheduler
-	boost::unique_lock<boost::recursive_mutex> lockScheduler(commandSandbox.mutexNextCommandChecker);
+	boost::mutex::scoped_lock lockForCurrentCommand(commandSandbox.mutextAccessCurrentCommand);
 
 	// terminate the current command
 	DELETE_OBJ_POINTER(commandSandbox.currentExecutingCommand)

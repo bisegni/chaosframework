@@ -104,7 +104,7 @@ namespace chaos {
          if no one unlock it first
          \return the object that someone has associated at this semaphore
          */
-        T wait(unsigned int millisecToWait) {
+        T wait(unsigned long millisecToWait) {
             boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
             if(inWait) return NULL;
             inWait = true;

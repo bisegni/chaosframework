@@ -294,12 +294,12 @@ int DeviceController::setSlowCommandFeatures(cccs::features::Features& features)
 		localCommandPack.addInt32Value(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI32, features.featureSchedulerStepsDelay);
 	}
 	
-	return deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES, &localCommandPack, NULL);
+	return deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES, &localCommandPack, NULL, millisecToWait);
 }
 
 //! Kill the current executing command
 int DeviceController::killCurrentCommand() {
-	return deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_KILL_CURRENT_COMMAND, NULL, NULL);
+	return deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_KILL_CURRENT_COMMAND, NULL, NULL, millisecToWait);
 }
 
 int DeviceController::setAttributeValue(string& attributeName, string& attributeValue) {
