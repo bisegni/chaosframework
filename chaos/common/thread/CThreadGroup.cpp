@@ -69,7 +69,11 @@ CThread *CThreadGroup::getThread(int idx) {
 }
 
 void CThreadGroup::joinGroup() {
-    threadGroup.join_all();
+    //threadGroup.join_all();
+	for (vector<CThread*>::iterator simThrIter=threadVec.begin() ; simThrIter < threadVec.end(); simThrIter++ ){
+		(*simThrIter)->join();
+    }
+
 }
 
 void CThreadGroup::setDelayBeetwenTask(long delayTime) {

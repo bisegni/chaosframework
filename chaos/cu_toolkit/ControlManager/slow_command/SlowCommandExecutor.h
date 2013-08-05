@@ -137,23 +137,35 @@ namespace chaos{
                     
                     //! Get queued command via rpc command
                     /*
-                     Return the number and the infromation of the queued command via RPC
+						\ingroup API_Slow_Control
+						Return the number and the infromation of the queued command via RPC
                      */
                     CDataWrapper* getQueuedCommand(CDataWrapper *params, bool& detachParam) throw (CException);
 					
-					//! Get the statistic for the current running command
+					//! Get the statistic for the current running command rpc action
                     /*!
+						\ingroup API_Slow_Control
 						Return infromation about the execution statistic for the current running command, collected into the 
 						chaos::cu::control_manager::slow_command::SandboxStat structure.
                      */
 					CDataWrapper* getCommandSandboxStatistics(CDataWrapper *params, bool& detachParam) throw (CException);
 					
 					
-					//! Command features modification
+					//! Command features modification rpc action
                     /*!
+						\ingroup API_Slow_Control
 						Updat ethe modiable features of the running command
                      */
 					CDataWrapper* setCommandFeatures(CDataWrapper *params, bool& detachParam) throw (CException);
+					
+					//! Kill current command rpc action
+                    /*!
+						\ingroup API_Slow_Control
+						This METHOD perform the "brutal" remove of the current running command
+						from the scheduler. It waith the lock on the scehduler  and the provi to delete 
+						the current command "as is".
+                     */
+					CDataWrapper* killCurrentCommand(CDataWrapper *params, bool& detachParam) throw (CException);
                 public:
                     
                     // Initialize instance

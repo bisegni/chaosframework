@@ -60,8 +60,8 @@ void AsioImplEventServer::start() throw(CException) {
     
     for (int idx = 0; idx < threadNumber; idx++) {
             //create the handler
-        shared_ptr<thread> thread(new boost::thread(bind(&asio::io_service::run, &io_service)));
-        serviceThread.push_back(thread);
+        //shared_ptr<thread> thread(new boost::thread(bind(&asio::io_service::run, &io_service)));
+        serviceThreads.create_thread(bind(&asio::io_service::run, &io_service));
     }
 }
 
@@ -141,8 +141,9 @@ void AsioImplEventServer::deinit() throw(CException) {
     // delete al asio thread
     io_service.stop();
         // Wait for all threads in the pool to exit.
-    for (std::size_t i = 0; i < serviceThread.size(); ++i)
-        serviceThread[i]->join();
+    //for (std::size_t i = 0; i < serviceThread.size(); ++i)
+        //serviceThread[i]->join();
+	serviceThreads.join_all();
 }
 
     //-----------------------

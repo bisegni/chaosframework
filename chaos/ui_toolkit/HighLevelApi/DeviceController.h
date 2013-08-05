@@ -213,6 +213,7 @@ namespace chaos {
             
             //! Submit a new slow command
             /*!
+				\ingroup API_Slow_Control
                 The submition of slow command is made collection all the information that permit to submit it
                 \param commandAlias represent the alias of the command the the control unit expost from RPC subsystem
                 \param submissionRule determinate the rule with which the command is submitted. This can determinate the
@@ -228,19 +229,33 @@ namespace chaos {
             
             //! Submit a new slow command
             /*!
-             The submition of slow command is made collection all the information that permit to submit it
-             \param commandAlias represent the alias of the command the the control unit expost from RPC subsystem
-             \param submissionRule determinate the rule with which the command is submitted. This can determinate the
-             the execution of the current execution command in the control unit, according with his running state
-             \param schedulerStepsDelay rapresent the intervall beetween the step of the scehduler [...acquisition -> correlation -> scheduleInterval...]
-             \param submissionCheckerStepsDelay is the delay between two steps of the submission checker
-             \param slowCommandData is the abstraction of the command data that is passed to the set handler befor the scheduler loop of the new command
-             take palce. The memory of that parameter is not free
+				\ingroup API_Slow_Control
+				The submition of slow command is made collection all the information that permit to submit it
+				\param commandAlias represent the alias of the command the the control unit expost from RPC subsystem
+				\param submissionRule determinate the rule with which the command is submitted. This can determinate the
+				the execution of the current execution command in the control unit, according with his running state
+				\param schedulerStepsDelay rapresent the intervall beetween the step of the scehduler [...acquisition -> correlation -> scheduleInterval...]
+				\param submissionCheckerStepsDelay is the delay between two steps of the submission checker
+				\param slowCommandData is the abstraction of the command data that is passed to the set handler befor the scheduler loop of the new command
+				take palce. The memory of that parameter is not free
              */
             int submitSlowControlCommand(string commandAlias, cccs::SubmissionRuleType::SubmissionRule submissionRule, uint32_t schedulerStepsDelay = 0, uint32_t submissionCheckerStepsDelay = 0, CDataWrapper *slowCommandData = NULL);
             
-			//! set the current slow command features
+			//! Set the current slow command features
+			/*!
+				\ingroup API_Slow_Control
+				Permit to set the features of the current running command. During execution the chaos::cu::control_manager::slow_command::features::Features::featuresFlag
+				field is checked to see what feature need to be set. The enumeration chaos::cu::control_manager::slow_command::features::FeaturesFlagTypes::FeatureFlag need to
+				bee used to set the featuresFlag property.
+			 */
 			int setSlowCommandFeatures(cccs::features::Features& features);
+			
+			//! Kill the current executing command
+			/*!
+				\ingroup API_Slow_Control
+				Kill the current executing command in without respetting the running state.
+			 */
+			int killCurrentCommand();
 			
                 //!Get device state
             /*!

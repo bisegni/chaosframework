@@ -30,27 +30,27 @@ namespace chaos {
     
     //! Name space for grupping option used for commandline or in config file
     namespace InitOption{
-        //! @Option for print the help
+        //!  for print the help
         static const char * const   OPT_HELP                            = "help";
-        //!  @Option Specify the implementation to use for rp messaging
+        //!   Specify the implementation to use for rp messaging
         static const char * const   OPT_RPC_IMPLEMENTATION              = "rpc-server-impl";
-        //!  @Option Specify the network port where rpc system will publish al the service
+        //!   Specify the network port where rpc system will publish al the service
         static const char * const   OPT_RPC_SERVER_PORT                 = "rpc-server-port";
-        //! @Option Specify the number of the thread that the rpc ssytem must use to process the request
+        //!  Specify the number of the thread that the rpc ssytem must use to process the request
         static const char * const   OPT_RPC_SERVER_THREAD_NUMBER        = "rpc-server-thread-number";
-        //! @Option Specify the live data servers address with the type host:port it is a multitoken parameter
+        //!  Specify the live data servers address with the type host:port it is a multitoken parameter
         static const char * const   OPT_LIVE_DATA_SERVER_ADDRESS        = "live-data-servers";
-        //! @Option Specify the metadata address for the metadataserver
+        //!  Specify the metadata address for the metadataserver
         static const char * const   OPT_METADATASERVER_ADDRESS          = "metadata-server";
-        //! @Option Specify when the log must be forwarded on console
+        //!  Specify when the log must be forwarded on console
         static const char * const   OPT_LOG_ON_CONSOLE                  = "log-on-console";
-        //! @Option Specify when the log must be forwarded on file
+        //!  Specify when the log must be forwarded on file
         static const char * const   OPT_LOG_ON_FILE                     = "log-on-file";
-        //! @Option Specify when the file path of the log
+        //!  Specify when the file path of the log
         static const char * const   OPT_LOG_FILE                        = "log-file";
-        //! @Option Specifi the level of the log going
+        //!  Specifi the level of the log going
         static const char * const   OPT_LOG_LEVEL                       = "log-level";
-        //! @Option Specify the ip where publish the framework
+        //!  Specify the ip where publish the framework
         static const char * const   OPT_PUBLISHING_IP                   = "publishing-ip";
     }
     /** @} */ // end of ParamOption
@@ -61,11 +61,11 @@ namespace chaos {
      */
     //! Name space for grupping option used for rpc system configuration
     namespace RpcConfigurationKey {
-        //! @Option specify the type of the adatpre to be used
+        //!  specify the type of the adatpre to be used
         static const char * const CS_CMDM_RPC_ADAPTER_TYPE                = "cs|cmdm|rpc_adapter_type";
-        //! @Option specify the port where the rpc must publish the his socket
+        //!  specify the port where the rpc must publish the his socket
         static const char * const CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT        = "cs|cmdm|rpc_adapter_port";
-        //! @Option the number of the thread to user
+        //!  the number of the thread to user
         static const char * const CS_CMDM_RPC_ADAPTER_THREAD_NUMBER       = "cs|cmdm|rpc_adapter_tn";
     }
     /** @} */ // end of RpcConfigurationKey
@@ -217,10 +217,10 @@ namespace chaos {
 				}
 				/** @} */ // end of SlowCommandsKey
 				
-				/** @defgroup SlowControlExecutorRpcActionKey chaos slow control executor  rpc keys
+				/** @defgroup API_Slow_Control Slow Control API
                  @{
                  */
-                //! Name space for grupping the key nedded for call rpc action exposed by slow control executor layer
+                //! Name space for the key nedded for call rpc action exposed by slow control executor layer
                 namespace SlowControlExecutorRpcActionKey {
 					//! @The key represent the rpc alias for SlowCommandExecutor::getQueuedCommand method
                     static const char * const   RPC_GET_QUEUED_COMMAND				= "getQueuedCommand";
@@ -242,8 +242,13 @@ namespace chaos {
 					static const char * const   RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI32 = "scf_sched_waith_time";
 					//! @The key represent the lock option for the features, value is and boolean
 					static const char * const   RPC_SET_COMMAND_FEATURES_LOCK_BOOL = "scf_lock";
+					
+					//! @The key represent the rpc alias for SlowCommandExecutor::killCurrentCommand method
+					static const char * const   RPC_KILL_CURRENT_COMMAND = "killCurrentCommand";
+
+					
 				}
-				/** @} */ // end of SlowControlExecutorKey
+				/** @} */ // end of API_Slow_Control Slow Control API
             }
         }
     }
@@ -457,7 +462,7 @@ namespace chaos {
          */
         //! Name space for grupping option used for commandline or in config file
         namespace EventConfiguration {
-            //! @Option for choice the implementation
+            //!  for choice the implementation
             static const char * const   OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION     = "evt_adpt_impl";
             //! @Configuraiton for alert event multicast ip
             static const char * const   CONF_EVENT_ALERT_MADDRESS                   = "239.255.0.1";

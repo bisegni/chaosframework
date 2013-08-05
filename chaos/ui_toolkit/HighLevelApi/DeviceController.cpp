@@ -297,6 +297,11 @@ int DeviceController::setSlowCommandFeatures(cccs::features::Features& features)
 	return deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES, &localCommandPack, NULL);
 }
 
+//! Kill the current executing command
+int DeviceController::killCurrentCommand() {
+	return deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_KILL_CURRENT_COMMAND, NULL, NULL);
+}
+
 int DeviceController::setAttributeValue(string& attributeName, string& attributeValue) {
     return setAttributeValue(attributeName, attributeValue.c_str(),(uint32_t)attributeValue.size());
 }

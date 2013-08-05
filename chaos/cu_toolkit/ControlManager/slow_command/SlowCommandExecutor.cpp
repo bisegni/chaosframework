@@ -60,6 +60,14 @@ SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DeviceSchemaDB
                                                                     rpcActionDomain.c_str(),
                                                                     cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES,
                                                                     "Set the features of the running command");
+	SCELAPP_ << "Register killCurrentCommand action";
+    DeclareAction::addActionDescritionInstance<SlowCommandExecutor>(this,
+                                                                    &SlowCommandExecutor::killCurrentCommand,
+                                                                    rpcActionDomain.c_str(),
+                                                                    cccs::SlowControlExecutorRpcActionKey::RPC_KILL_CURRENT_COMMAND,
+                                                                    "Set the features of the running command");
+
+	
 }
 
 SlowCommandExecutor::~SlowCommandExecutor() {
@@ -464,4 +472,17 @@ CDataWrapper* SlowCommandExecutor::setCommandFeatures(CDataWrapper *params, bool
     lockScheduler.unlock();
     commandSandbox.threadSchedulerPauseCondition.unlock();
     return NULL;
+}
+
+//! Kill current command rpc action
+CDataWrapper* SlowCommandExecutor::killCurrentCommand(CDataWrapper *params, bool& detachParam) throw (CException) {
+	if(!params || !commandSandbox.currentExecutingCommand) return NULL;
+	
+	//lock the scheduler
+	boost::unique_lock<boost::recursive_mutex> lockScheduler(commandSandbox.mutexNextCommandChecker);
+
+	// terminate the current command
+	DELETE_OBJ_POINTER(commandSandbox.currentExecutingCommand)
+	commandSandbox.installHandler(NULL, NULL);
+	return NULL;
 }

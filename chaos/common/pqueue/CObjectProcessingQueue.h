@@ -91,7 +91,6 @@ namespace chaos {
             if(eventListener && !(*eventListener).elementWillBeDiscarded(tag, dataRow))return;
             
             DELETE_OBJ_POINTER(dataRow);
-            DEBUG_CODE(COPQUEUE_LDBG_<< "thread method has ended";)
         }
         
         /*
@@ -181,11 +180,7 @@ namespace chaos {
             
             while(bufferQueue.empty() && !threadGroup.isStopped()) {
                 emptyQueueConditionLock.notify_one();
-                DEBUG_CODE(COPQUEUE_LDBG_<< "lock on liveThreadConditionLock";)
                 liveThreadConditionLock.wait(lock);
-                DEBUG_CODE(COPQUEUE_LDBG_<< "awake for liveThreadConditionLock";)
-                DEBUG_CODE(COPQUEUE_LDBG_<< "bufferQueue.empty() = " << bufferQueue.empty();)
-                DEBUG_CODE(COPQUEUE_LDBG_<< "!threadGroup.isStopped() = " << !threadGroup.isStopped();)
             }
                 //get the oldest data ad copy the ahsred_ptr
             if(bufferQueue.empty()) {
