@@ -61,15 +61,18 @@ namespace chaos {
 
         class StartableService : public InizializableService {
             boost::msm::back::state_machine< service_state_machine::ss_state_machine > state_machine;
+		protected:
+			
+			//! Start the implementation
+            virtual void start() throw(chaos::CException);
+            
+			//! Stop the implementation
+            virtual void stop() throw(chaos::CException);
+			
         public:
             StartableService();
             virtual ~StartableService();
-            
-                //! Start the implementation
-            virtual void start() throw(chaos::CException);
-            
-                //! Stop the implementation
-            virtual void stop() throw(chaos::CException);
+
             
             static bool startImplementation(StartableService& impl, const char * const implName,  const char * const domainString);
             static bool stopImplementation(StartableService& impl, const char * const implName,  const char * const domainString);

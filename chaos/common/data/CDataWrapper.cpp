@@ -279,3 +279,7 @@ void CDataWrapper::appendAllElement(CDataWrapper& srcDataWrapper) {
 void CDataWrapper::reset() {
     bsonBuilder.reset(new BSONObjBuilder());
 }
+
+string CDataWrapper::toHash() const{
+	return  bsonBuilder->asTempObj().md5();
+}

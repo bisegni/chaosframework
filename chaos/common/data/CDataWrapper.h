@@ -185,6 +185,9 @@ namespace chaos {
         
         //append all element of an data wrapper
         void appendAllElement(CDataWrapper&);
+		
+		//! Return the Hashing represetnation of the CDataWrapper
+		string toHash() const;
     };
     
     //! MutableCDataWrapper for field update

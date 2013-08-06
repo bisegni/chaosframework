@@ -83,17 +83,19 @@ namespace chaos {
             boost::msm::back::state_machine< service_state_machine::id_states_machine > state_machine;
         protected:
             uint8_t serviceState;
+			
+			//! Initialize instance
+            virtual void init(void*) throw(chaos::CException);
+            
+			//! Deinit the implementation
+            virtual void deinit() throw(chaos::CException);
+			
         public:
             InizializableService();
             virtual ~InizializableService();
                 //! Return the state
             const uint8_t getServiceState() const;
-            
-                //! Initialize instance
-            virtual void init(void*) throw(chaos::CException);
-            
-                //! Deinit the implementation
-            virtual void deinit() throw(chaos::CException);
+
             
             static bool initImplementation(InizializableService& impl, void *initData, const char * const implName,  const char * const domainString);
             static bool deinitImplementation(InizializableService& impl, const char * const implName,  const char * const domainString);

@@ -26,6 +26,7 @@
 
 #include <boost/thread.hpp>
 
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/cu_toolkit/driver_manager/driver/DriverGlobal.h>
 
@@ -39,7 +40,14 @@ namespace chaos{
                 template<typename T>
                 class DriverWrapperPlugin;
                 
-                    //! !CHAOS Driver abstract class
+				typedef struct DriverInitParameterDesc {
+					std::string name;
+					std::string description;
+					chaos::DataType::DataType type;
+				} DriverInitParameterDesc, *DriverInitParameterDescPtr;
+				
+				
+                    //! !CHAOS Device Driver abstract class
                 /*!
                     This represent the base class for all driver in !CHOAS. For standardize the comunicacetion 
                     a message queue is used for receive DrvMsg pack.
@@ -74,7 +82,7 @@ namespace chaos{
                         in this case it will quit.
                      */
                     void scanForMessage();
-                    
+
                 public:
                     
                     // Initialize instance
@@ -97,6 +105,7 @@ namespace chaos{
                      */
                     void releaseAccessor(DriverAccessor *newAccessor);
 
+					
                     //! Execute a command
                     /*!
                         The driver implementation must use the opcode to recognize the

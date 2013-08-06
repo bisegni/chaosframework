@@ -25,7 +25,7 @@ namespace chaos {
     namespace common {
         namespace utility {
             
-            template <typename R >
+		template <typename R >
             class ObjectInstancer {
             public:
                 virtual ~ObjectInstancer(){};
