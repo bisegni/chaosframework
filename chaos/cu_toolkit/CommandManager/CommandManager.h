@@ -35,6 +35,7 @@
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/network/NetworkBroker.h>
+#include <chaos/common/utility/StartableService.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManagerDefaultAdapters.h>
 
 namespace chaos{
@@ -52,7 +53,7 @@ namespace chaos{
          * - Command Manager is the central class for the registration and execution of the custom command
          *
          */
-        class CommandManager : public DeclareAction,  public Configurable, public Singleton<CommandManager> {
+        class CommandManager : public DeclareAction,  public Configurable, public Singleton<CommandManager>, public chaos::utility::StartableService {
             friend class RpcAdapterRegister;
             friend class CommandDispatcherRegister;
             friend class ServerDelegator;
@@ -72,7 +73,7 @@ namespace chaos{
             /*
              * Initzialize the command manager
              */
-            void init() throw(CException);
+            void init(void *initParam) throw(CException);
             /*
              * Deinitzialize the command manager
              */

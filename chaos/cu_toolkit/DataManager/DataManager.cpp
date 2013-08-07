@@ -46,7 +46,7 @@ DataManager::~DataManager() {
 /*
  * Initzialize the datamanager
  */
-void DataManager::init() throw(CException) {
+void DataManager::init(void *initParameter) throw(CException) {
     LAPP_ << "Starting Data Manager";
 }
 

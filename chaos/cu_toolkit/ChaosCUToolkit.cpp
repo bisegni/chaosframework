@@ -31,6 +31,9 @@ using namespace chaos::cu;
 
 using boost::shared_ptr;
 
+namespace cu_driver_manager = chaos::cu::driver_manager;
+namespace common_utility = chaos::utility;
+
 //boost::mutex ChaosCUToolkit::monitor;
 //boost::condition ChaosCUToolkit::endWaithCondition;
 WaitSemaphore ChaosCUToolkit::waitCloseSemaphore;
@@ -69,19 +72,17 @@ void ChaosCUToolkit::init()  throw(CException) {
         }
     
 
-        LAPP_ << "Initialization Data Manager";
-        DataManager::getInstance()->init();
-        LAPP_ << "Data Manager Initialized";
+		chaos::utility::StartableService::initImplementation(cu_driver_manager::DriverManager::getInstance(), NULL, "DriverManager", "ChaosCUToolkit::init");
+
+		chaos::utility::StartableService::initImplementation(DataManager::getInstance(), NULL, "DataManager", "ChaosCUToolkit::init");
         
             //start command manager, this manager must be the last to startup
-        LAPP_ << "Initialization Command Manager";
-        CommandManager::getInstance()->init();
+        chaos::utility::StartableService::initImplementation(CommandManager::getInstance(), NULL, "CommandManager", "ChaosCUToolkit::init");
         CommandManager::getInstance()->privLibControllerPtr=this;
-        LAPP_ << "Command Manager Initialized";
         
             //start Control Manager
-        LAPP_ << "Initialization Control Manager";
-        ControlManager::getInstance()->init();
+		chaos::utility::StartableService::initImplementation(ControlManager::getInstance(), NULL, "ControlManager", "ChaosCUToolkit::init");
+
         
         LAPP_ << "Control Manager Initialized";
         
@@ -102,20 +103,18 @@ void ChaosCUToolkit::start(bool waithUntilEnd, bool deinitiOnEnd){
     SetupStateManager::levelUpFrom(1, "ChaosCUToolkit already started");
     try {
         LAPP_ << "Starting CHAOS Control System Library";
+		
+		chaos::utility::StartableService::startImplementation(cu_driver_manager::DriverManager::getInstance(), "DriverManager", "ChaosCUToolkit::start");
+		
             //start command manager, this manager must be the last to startup
-        LAPP_ << "Starting Data Manager";
-        DataManager::getInstance()->start();
-        LAPP_ << "Data Manager Started";
+        chaos::utility::StartableService::startImplementation(DataManager::getInstance(), "DataManager", "ChaosCUToolkit::start");
         
             //start command manager, this manager must be the last to startup
-        LAPP_ << "Starting Command Manager";
-        CommandManager::getInstance()->start();
-        LAPP_ << "Command Manager Started";
+		chaos::utility::StartableService::startImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::start");
         
             //start Control Manager
-        LAPP_ << "Starting Control Manager";
-        ControlManager::getInstance()->start();
-        LAPP_ << "Control Manager Started";
+		chaos::utility::StartableService::startImplementation(ControlManager::getInstance(), "ControlManager", "ChaosCUToolkit::start");
+
         LAPP_ << "-----------------------------------------";
         LAPP_ << "CHAOS Control System Library Started";
         LAPP_ << "-----------------------------------------";
@@ -137,14 +136,17 @@ void ChaosCUToolkit::start(bool waithUntilEnd, bool deinitiOnEnd){
  Stop the toolkit execution
  */
 void ChaosCUToolkit::stop() {
-    //SetupStateManager::levelDownFrom(2, "ChaosCUToolkit already stoped");
+	chaos::utility::StartableService::stopImplementation(ControlManager::getInstance(), "ControlManager", "ChaosCUToolkit::stop");
 
+	//stop command manager, this manager must be the last to startup
+    chaos::utility::StartableService::stopImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::stop");
+
+	//start command manager, this manager must be the last to startup
+	chaos::utility::StartableService::stopImplementation(DataManager::getInstance(), "DataManager", "ChaosCUToolkit::stop");
     
-    //stop command manager, this manager must be the last to startup
-    LAPP_ << "Starting Command Manager";
-    CommandManager::getInstance()->stop();
-    LAPP_ << "Command Manager Started";
-    
+	//stop driver manager
+	chaos::utility::StartableService::stopImplementation(cu_driver_manager::DriverManager::getInstance(), "DriverManager", "ChaosCUToolkit::stop");
+
     waitCloseSemaphore.unlock();
 }
 
@@ -156,19 +158,16 @@ void ChaosCUToolkit::deinit() {
     SetupStateManager::levelDownFrom(1, "ChaosCUToolkit already deinitialized");
         //start Control Manager
     LAPP_ << "Stopping Control Manager";
-    ControlManager::getInstance()->deinit();
+    chaos::utility::StartableService::deinitImplementation(ControlManager::getInstance(), "ControlManager", "ChaosCUToolkit::deinit");
     LAPP_ << "Control Manager Stopped";
     
         //start command manager, this manager must be the last to startup
-    LAPP_ << "Stopping Command Manager";
-    CommandManager::getInstance()->deinit();
-    LAPP_ << "Command Manager Stopped";
+    chaos::utility::StartableService::deinitImplementation(CommandManager::getInstance(), "CommandManager", "ChaosCUToolkit::deinit");
     
         //start data manager
-    LAPP_ << "Stopping Data Manager";
-    DataManager::getInstance()->deinit();
-    LAPP_ << "Data Manager Stopped";
+	chaos::utility::StartableService::deinitImplementation(DataManager::getInstance(), "DataManager", "ChaosCUToolkit::deinit");
     
+	chaos::utility::StartableService::deinitImplementation(cu_driver_manager::DriverManager::getInstance(), "DriverManager", "ChaosCUToolkit::deinit");
     LAPP_ << "CHAOS Control System Library Stopped";
 }
 

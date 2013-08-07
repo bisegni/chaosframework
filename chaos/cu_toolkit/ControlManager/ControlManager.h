@@ -32,6 +32,7 @@
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/message/MDSMessageChannel.h>
+#include <chaos/common/utility/StartableService.h>
 
 namespace chaos {
     
@@ -42,7 +43,7 @@ namespace chaos {
         /*
          Manager for the Control Unit execution
          */
-        class ControlManager : public CThreadExecutionTask, public DeclareAction, public Singleton<ControlManager> {
+        class ControlManager : public CThreadExecutionTask, public DeclareAction, public chaos::utility::StartableService, public Singleton<ControlManager> {
             friend class Singleton<ControlManager>;
             mutable boost::mutex qMutex;
             condition_variable lockCondition;
@@ -68,8 +69,7 @@ namespace chaos {
              */
             bool isEmpty() const;
             
-        public:
-            
+			
             /*
              Constructor
              */
@@ -79,11 +79,14 @@ namespace chaos {
              Desctructor
              */
             ~ControlManager();
+			
+        public:
+
             
             /*
              Initialize the Control Manager
              */
-            void init() throw(CException);
+            void init(void *initParameter) throw(CException);
             
             /*
              Start the Control Manager

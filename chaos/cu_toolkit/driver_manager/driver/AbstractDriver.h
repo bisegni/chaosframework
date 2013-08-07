@@ -33,6 +33,10 @@
 namespace chaos{
     namespace cu {
         namespace driver_manager {
+			
+			//forward declaration
+			class DriverManager;
+			
             namespace driver {
                 
                 //! forward declaration
@@ -40,11 +44,12 @@ namespace chaos{
                 template<typename T>
                 class DriverWrapperPlugin;
                 
-				typedef struct DriverInitParameterDesc {
-					std::string name;
+				typedef struct DriverDescirption {
+					std::string alias;
 					std::string description;
-					chaos::DataType::DataType type;
-				} DriverInitParameterDesc, *DriverInitParameterDescPtr;
+					std::string version;
+					std::string init_paramter_sintax;
+				} DriverDescirption;
 				
 				
                     //! !CHAOS Device Driver abstract class
@@ -55,7 +60,8 @@ namespace chaos{
                 class AbstractDriver : public utility::InizializableService {
                     template<typename T>
                     friend class DriverWrapperPlugin;
-                    
+                    friend class chaos::cu::driver_manager::DriverManager;
+					
                     std::string driverUUID;
                     
                     boost::atomic_uint accessorCount;

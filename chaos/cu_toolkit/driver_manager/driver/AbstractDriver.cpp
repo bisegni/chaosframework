@@ -107,6 +107,6 @@ void AbstractDriver::scanForMessage() {
         
         //notify the caller
         currentMessagePtr->drvResponseMQ->send(&currentMessagePtr->id, sizeof(DrvMsgPtr), messagePriority);
-    } while (currentMessagePtr->opcode == OP_END);
+    } while (currentMessagePtr->opcode == OpcodeType::OP_END);
     
 }

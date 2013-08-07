@@ -20,6 +20,8 @@
 
 #include "RTWorkerCU.h"
 #include "SCWorkerCU.h"
+#include "Sl7TcpDriver.h"
+
 #include <chaos/common/chaos_constants.h>
 #include <chaos/cu_toolkit/ChaosCUToolkit.h>
 
@@ -50,8 +52,14 @@
 using namespace std;
 using namespace chaos;
 using namespace chaos::cu;
+
+namespace common_plugin = chaos::common::plugin;
+namespace common_utility = chaos::common::utility;
+namespace cu_driver_manager = chaos::cu::driver_manager;
+
 #define OPT_CUSTOM_DEVICE_ID_A "device_a"
 #define OPT_CUSTOM_DEVICE_ID_B "device_b"
+
 
 int main (int argc, char* argv[] )
 {
@@ -62,7 +70,11 @@ int main (int argc, char* argv[] )
     ChaosCUToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_CUSTOM_DEVICE_ID_B, po::value<string>(), "Slow Controlled wave simulation Device B identification string");
     //! [Custom Option]
     
-    //! [CUTOOLKIT Init]
+	//! [Driver Registration]
+	MATERIALIZE_INSTANCE_AND_INSPECTOR(Sl7TcpDriver)
+	cu_driver_manager::DriverManager::getInstance()->registerDriver(Sl7TcpDriverInstancer, Sl7TcpDriverInspector);
+    //! [Driver Registration]
+		
     ChaosCUToolkit::getInstance()->init(argc, argv);
     //! [CUTOOLKIT Init]
     

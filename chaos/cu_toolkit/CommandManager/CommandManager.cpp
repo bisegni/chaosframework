@@ -55,7 +55,7 @@ CommandManager::~CommandManager(){
 /*
  * Initzialize the datamanager
  */
-void CommandManager::init() throw(CException) {
+void CommandManager::init(void *initParam) throw(CException) {
     LAPP_ << "Init Command Manager";
     broker->init();
     

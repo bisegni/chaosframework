@@ -41,10 +41,13 @@ namespace chaos{
 
                 typedef boost::interprocess::message_queue DrvQueueType;
                 
-                typedef enum {
-                    OP_START = 0,
-                    OP_END = UINT16_MAX
-                } Opcode;
+				namespace OpcodeType {
+					typedef enum {
+						OP_START = 0,
+						OP_USER = 100,
+						OP_END = UINT16_MAX
+					} Opcode;
+				}
                 
                     //! Driver message information
                 /*!

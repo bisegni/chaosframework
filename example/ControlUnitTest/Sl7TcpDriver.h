@@ -1,5 +1,5 @@
 /*
- *	AbstractDriverPLugin.cpp
+ *	Sl7TcpDriver.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,32 +17,25 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-
-#include <chaos/common/plugin/AbstractPlugin.h>
+#ifndef __ControlUnitTest__TestDeviceDriver__
+#define __ControlUnitTest__TestDeviceDriver__
 
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractDriverPlugin.h>
 
-using namespace chaos::cu::driver_manager::driver;
+namespace cu_driver = chaos::cu::driver_manager::driver;
 
-AbstractDriverPlugin::AbstractDriverPlugin(AbstractDriver *_abstractDriver):abstractDriver(_abstractDriver) {
+DEFINE_CU_DRIVER_DEFINITION_PROTOTYPE(Sl7TcpDriver)
+
+/*
+ driver definition
+ */
+class Sl7TcpDriver: ADD_CU_DRIVER_PLUGIN_SUPERCLASS {
     
-}
-
-AbstractDriverPlugin::~AbstractDriverPlugin() {
+public:
+    Sl7TcpDriver();
+	~Sl7TcpDriver();
+    //! Execute a command
+    void execOpcode(cu_driver::DrvMsgPtr cmd);
 };
 
-//! Proxy for create a new accessor to the driver
-
-DriverAccessor * const AbstractDriverPlugin::getNewAccessor() {
-    DriverAccessor *newAccessor;
-    if(abstractDriver->getNewAccessor(&newAccessor)) {
-        return newAccessor;
-    } else {
-        return NULL;
-    }
-}
-
-//! Proxy for dispose an accessor
-void AbstractDriverPlugin::releaseAccessor(DriverAccessor *accessor) {
-    abstractDriver->releaseAccessor(accessor);
-}
+#endif /* defined(__ControlUnitTest__Sl7TcpDriver__) */

@@ -27,7 +27,7 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/utility/StartableService.h>
-
+#include <chaos/common/plugin/PluginInspector.h>
 
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractDriver.h>
 #include <chaos/cu_toolkit/driver_manager/driver/DriverAccessor.h>
@@ -41,14 +41,21 @@ namespace chaos {
 			
 			namespace common_utility = chaos::common::utility;
 			namespace cu_driver = chaos::cu::driver_manager::driver;
+			namespace common_plugin = chaos::common::plugin;
+			
+			#define MATERIALIZE_INSTANCE_AND_INSPECTOR(DriverClass) \
+			boost::shared_ptr< common_plugin::PluginInspector> DriverClass ## Inspector(GET_PLUGIN_CLASS_DEFINITION(DriverClass)); \
+			boost::shared_ptr< common_utility::ObjectInstancer< cu_driver::AbstractDriver > > DriverClass ## Instancer(CU_DRIVER_INSTANCER(DriverClass));
+			
+			#define CU_DRIVER_INSTANCER(DriverClass) new chaos::common::utility::TypedObjectInstancer<DriverClass, chaos::cu::driver_manager::driver::AbstractDriver>()
 			
 			//! !CHAOS Driver infrastructure managment
 			class DriverManager : public chaos::utility::StartableService, public chaos::Singleton<DriverManager> {
-				
-				std::map<std::string, boost::shared_ptr< boost::ptr_vector<cu_driver::DriverInitParameterDesc> > > mapDriverNameParamter;
+				friend class chaos::Singleton<DriverManager>;
+				std::map<std::string, boost::shared_ptr< common_plugin::PluginInspector > > mapDriverAliasDescription;
 				
 				//! this map correlate the alias to the object instancer
-				std::map<std::string, boost::shared_ptr< common_utility::ObjectInstancer<cu_driver::AbstractDriver> > > mapDriverNameInstancer;
+				std::map<std::string, boost::shared_ptr< common_utility::ObjectInstancer<cu_driver::AbstractDriver> > > mapDriverAliasInstancer;
 				
 				//! this map correlate the param md5 to a live driver instance
 				/*!
@@ -57,7 +64,7 @@ namespace chaos {
 					is created, the hashing of the input parameter is checked if it is contained in the map. In case
 					of successfull test a live instance is returned.
 				 */
-				std::map<std::string, boost::shared_ptr< cu_driver::AbstractDriver > > mapParameterHashLiveInstance;
+				std::map<size_t, cu_driver::AbstractDriver*> mapParameterHashLiveInstance;
 				
 			protected:
 				
@@ -85,11 +92,11 @@ namespace chaos {
 				void deinit() throw(chaos::CException);
 				
 			public:
+
 				
 				//! Register a new driver
-				void registerDriver(std::string& alias,
-									common_utility::ObjectInstancer<cu_driver::AbstractDriver> *instancer,
-									boost::ptr_vector<cu_driver::DriverInitParameterDesc> *inputParameter) throw(chaos::CException);
+				void registerDriver(boost::shared_ptr< common_utility::ObjectInstancer<cu_driver::AbstractDriver> > instancer,
+									boost::shared_ptr< common_plugin::PluginInspector > description) throw(chaos::CException);
 				
 				//! Get a new driver accessor for a driver instance
 				/*!
@@ -97,7 +104,8 @@ namespace chaos {
 					from this a new driver accessor is created
 				 */
 				cu_driver::DriverAccessor *getNewAccessorForDriverInstance(std::string& alias,
-																		  const chaos::CDataWrapper *initParameter) throw (chaos::CExecption);
+																		   std::string& version,
+																		   std::string& init_paramter) throw (chaos::CException);
 			};
 		}
 	}

@@ -44,10 +44,12 @@ namespace chaos{
                     void releaseAccessor(DriverAccessor *accessor);
                 };
  
-#define ADD_CU_DRIVER_PLUGIN_SUPERCLASS public AbstractDriver, public AbstractDriverPlugin
+#define ADD_CU_DRIVER_PLUGIN_SUPERCLASS public chaos::cu::driver_manager::driver::AbstractDriver, public chaos::cu::driver_manager::driver::AbstractDriverPlugin
             
 #define DEFAULT_CU_DRIVER_PLUGIN_CONSTRUCTOR(t) t::t():chaos::cu::driver_manager::driver::AbstractDriverPlugin(this)
-                
+ 
+#define DEFINE_CU_DRIVER_DEFINITION_PROTOTYPE(a)  DEFINE_PLUGIN_DEFINITION_PROTOTYPE(a, chaos::cu::driver_manager::driver::AbstractDriverPlugin)
+				
                 //! Define a plugin for a driver
                 /*!
                  Define a class that implement the AbstractDriver as plugin
@@ -56,7 +58,7 @@ namespace chaos{
                  \param n the class that implement the AbstractDriver
                  */
 #define OPEN_CU_DRIVER_PLUGIN_CLASS_DEFINITION(a, v, n)\
-OPEN_GENERAL_PLUGIN_CLASS_DEFINITION(a, v, CUDRV, n, AbstractDriverPlugin)
+OPEN_GENERAL_PLUGIN_CLASS_DEFINITION(a, v, CUDRV, n, chaos::cu::driver_manager::driver::AbstractDriverPlugin)
   
 
 #define REGISTER_CU_DRIVER_PLUGIN_CLASS_INIT_ATTRIBUTE REGISTER_PLUGIN_CLASS_INIT_ATTRIBUTE

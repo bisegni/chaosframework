@@ -95,8 +95,6 @@
 		3268CE38161608D100FCDB10 /* ZMQServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3268CE34161608D100FCDB10 /* ZMQServer.h */; };
 		32698D49179E8CD100D6638C /* SetAttributeCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32698D47179E8CD100D6638C /* SetAttributeCommand.cpp */; };
 		32698D4A179E8CD100D6638C /* SetAttributeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 32698D48179E8CD100D6638C /* SetAttributeCommand.h */; };
-		326D3A6117B0CD01004601A8 /* DriverManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326D3A5F17B0CD01004601A8 /* DriverManager.cpp */; };
-		326D3A6217B0CD01004601A8 /* DriverManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 326D3A6017B0CD01004601A8 /* DriverManager.h */; };
 		326DB43014B38BC00018A8D0 /* ActionDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB3B614B38BC00018A8D0 /* ActionDescriptor.cpp */; };
 		326DB43114B38BC00018A8D0 /* ActionDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3B714B38BC00018A8D0 /* ActionDescriptor.h */; };
 		326DB43214B38BC00018A8D0 /* ChaosAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3B814B38BC00018A8D0 /* ChaosAction.h */; };
@@ -192,6 +190,8 @@
 		327CFF0A1708C4EB0069497B /* FastHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF081708C4EB0069497B /* FastHash.h */; };
 		327CFF121708D7760069497B /* CacheGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF111708D7740069497B /* CacheGlobal.h */; };
 		32875F97177634AF00E33D6F /* PluginInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 32875F96177634AF00E33D6F /* PluginInspector.h */; };
+		3287F7E617B2756C009DD6ED /* DriverManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326D3A5F17B0CD01004601A8 /* DriverManager.cpp */; };
+		3287F7E717B27621009DD6ED /* DriverManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 326D3A6017B0CD01004601A8 /* DriverManager.h */; };
 		3289F9A5168508460080D93F /* SQLiteEntityDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */; };
 		3289F9A6168508460080D93F /* SQLiteEntityDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 3289F9A4168508460080D93F /* SQLiteEntityDB.h */; };
 		328CC9D61763CCC7000B30B6 /* AbstractDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328CC9D41763CCC7000B30B6 /* AbstractDriver.cpp */; };
@@ -1805,7 +1805,6 @@
 				320192BA14DEEAC000318F00 /* CObjectHandlerProcessingQueue.h in Headers */,
 				32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */,
 				320C218A151B555A00BD0F41 /* EventServer.h in Headers */,
-				326D3A6217B0CD01004601A8 /* DriverManager.h in Headers */,
 				32BE864815A0CEAF00818C39 /* LogManager.h in Headers */,
 				328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */,
 				327967D615E029C70003C6DA /* AsioImplEventServer.h in Headers */,
@@ -1966,6 +1965,7 @@
 				326DB4CA14B3A3E50018A8D0 /* DataManagerException.h in Headers */,
 				326DB4CC14B3A3E50018A8D0 /* KeyDataStorage.h in Headers */,
 				326DB4CE14B3A3E50018A8D0 /* MultiBufferDataStorage.h in Headers */,
+				3287F7E717B27621009DD6ED /* DriverManager.h in Headers */,
 				328E36F4178AFE0D00C1564D /* SlowCommandSandbox.h in Headers */,
 				328D2FB81660EACD007F482E /* DSAttributeHandlerExecutionEngine.h in Headers */,
 				328D2FBA1660EADC007F482E /* DSAttributeHandler.h in Headers */,
@@ -2161,7 +2161,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				326DB43014B38BC00018A8D0 /* ActionDescriptor.cpp in Sources */,
-				326D3A6117B0CD01004601A8 /* DriverManager.cpp in Sources */,
 				326DB43314B38BC00018A8D0 /* DeclareAction.cpp in Sources */,
 				326DB43514B38BC00018A8D0 /* DomainActions.cpp in Sources */,
 				326DB45A14B38BC00018A8D0 /* GlobalConfiguration.cpp in Sources */,
@@ -2252,6 +2251,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				326DB4B814B3A3E50018A8D0 /* ChaosCUToolkit.cpp in Sources */,
+				3287F7E617B2756C009DD6ED /* DriverManager.cpp in Sources */,
 				326DB4BA14B3A3E50018A8D0 /* CommandManager.cpp in Sources */,
 				326DB4BF14B3A3E50018A8D0 /* AbstractControlUnit.cpp in Sources */,
 				32D3EAB517943EBC00405A3E /* AttributeSetting.cpp in Sources */,

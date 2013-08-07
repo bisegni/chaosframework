@@ -65,7 +65,7 @@ ControlManager::~ControlManager() {
 /*
  Initialize the CU Instantiator
  */
-void ControlManager::init() throw(CException) {
+void ControlManager::init(void *initParameter) throw(CException) {
     LCMAPP_  << "Inititializing";
         //CThreadExecutionTaskSPtr selfSharedPtr(this);
     

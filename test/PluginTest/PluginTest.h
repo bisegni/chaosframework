@@ -22,6 +22,7 @@ public:
 };
 
 using namespace chaos::cu::driver_manager::driver;
+DEFINE_CU_DRIVER_DEFINITION_PROTOTYPE(Sl7TcpDriver)
 class Sl7TcpDriver: ADD_CU_DRIVER_PLUGIN_SUPERCLASS {
     
 public:

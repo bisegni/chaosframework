@@ -27,6 +27,10 @@
 #include <chaos/common/general/Configurable.h>
 
 namespace chaos {
+#define SUBCLASS_AS_SINGLETON(ClassName) \
+public Singleton<ClassName>{\
+friend class Singleton<ClassName>;
+	
 #define DEFINE_CLASS_AS_SINGLETON(ClassName) \
 class ClassName : public Singleton<ClassName>{\
 friend class Singleton<ClassName>;
@@ -40,7 +44,6 @@ friend class Singleton<ClassName>;
      */
     template<class T>
     class Singleton : private noncopyable {
-        
     public:
         static T* getInstance() {
                 //static T singletonInstance;

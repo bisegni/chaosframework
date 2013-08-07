@@ -31,7 +31,7 @@ namespace chaos {
         
         //! Name space for grupping class for the plugin managment system of !CHOAS framework
         namespace plugin {
-     
+			
             //! Define a class as plugin
             /*!
              Every class that extend abstract plugin can be defined as plugin usign this macro.
@@ -44,16 +44,22 @@ namespace chaos {
 extern "C" \
 r* BOOST_EXTENSION_EXPORT_DECL \
 a ## _allocator() {\
-return PluginInstancer<n>::getInstance(#a,#v,#t);\
+return chaos::common::plugin::PluginInstancer<n>::getInstance(#a,#v,#t);\
 }
-            
+
+			//! retunr the plugin definition instance lcass for the driver alias in input
+#define GET_PLUGIN_CLASS_DEFINITION(a) a ## _inspector()
+	
+			
+#define DEFINE_PLUGIN_DEFINITION_PROTOTYPE(a,r) extern "C" chaos::common::plugin::PluginInspector* BOOST_EXTENSION_EXPORT_DECL a ## _inspector();
+			
             //!
 #define OPEN_GENERAL_PLUGIN_CLASS_DEFINITION(a,v,t,n,r) \
 DEFINE_PLUGIN_ALLOCATOR(a,v,t,n, r) \
 extern "C" \
-PluginInspector* BOOST_EXTENSION_EXPORT_DECL \
+chaos::common::plugin::PluginInspector* BOOST_EXTENSION_EXPORT_DECL \
 a ## _inspector() {\
-PluginInspector *inspector = new PluginInspector();\
+chaos::common::plugin::PluginInspector *inspector = new chaos::common::plugin::PluginInspector();\
 inspector->setName(#a); \
 inspector->setType(#t); \
 inspector->setVersion(#v); \
@@ -61,7 +67,7 @@ inspector->setSubclass(#r);
             
             //!
 #define OPEN_PLUGIN_CLASS_DEFINITION(a,v,t,n) \
-OPEN_GENERAL_PLUGIN_CLASS_DEFINITION(a,v,t,n, AbstractPlugin)
+OPEN_GENERAL_PLUGIN_CLASS_DEFINITION(a,v,t,n, chaos::common::plugin::AbstractPlugin)
 
 
             //! Register an init paramter
@@ -85,9 +91,9 @@ return inspector; \
              */
 #define OPEN_REGISTER_PLUGIN \
 extern "C" \
-PluginDiscover* BOOST_EXTENSION_EXPORT_DECL \
+chaos::common::plugin::PluginDiscover* BOOST_EXTENSION_EXPORT_DECL \
 getDiscover() {\
-PluginDiscover *discover = new PluginDiscover();
+chaos::common::plugin::PluginDiscover *discover = new chaos::common::plugin::PluginDiscover();
 
             //! Register a plugin
             /*!

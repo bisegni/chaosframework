@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		321B9F2617B24D650070D32D /* Sl7TcpDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 321B9F2417B24D650070D32D /* Sl7TcpDriver.cpp */; };
 		3252C9DB179330A800A17C7C /* SinWaveCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3252C9D9179330A800A17C7C /* SinWaveCommand.cpp */; };
 		32F22423179AFF3600853F62 /* SCWorkerCU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F22421179AFF3500853F62 /* SCWorkerCU.cpp */; };
 		32F7449C14B49CFA0025638B /* ControlUnitExample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F7449914B49CFA0025638B /* ControlUnitExample.cpp */; };
@@ -16,6 +17,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		321B9F2417B24D650070D32D /* Sl7TcpDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sl7TcpDriver.cpp; sourceTree = SOURCE_ROOT; };
+		321B9F2517B24D650070D32D /* Sl7TcpDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sl7TcpDriver.h; sourceTree = SOURCE_ROOT; };
 		3252C9D9179330A800A17C7C /* SinWaveCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SinWaveCommand.cpp; sourceTree = SOURCE_ROOT; };
 		3252C9DA179330A800A17C7C /* SinWaveCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SinWaveCommand.h; sourceTree = SOURCE_ROOT; };
 		32BE864A15A0E3C500818C39 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
@@ -78,6 +81,8 @@
 				32F22422179AFF3500853F62 /* SCWorkerCU.h */,
 				3252C9D9179330A800A17C7C /* SinWaveCommand.cpp */,
 				3252C9DA179330A800A17C7C /* SinWaveCommand.h */,
+				321B9F2417B24D650070D32D /* Sl7TcpDriver.cpp */,
+				321B9F2517B24D650070D32D /* Sl7TcpDriver.h */,
 			);
 			path = ControlUnitTest;
 			sourceTree = "<group>";
@@ -163,6 +168,7 @@
 				32F7449D14B49CFA0025638B /* RTWorkerCU.cpp in Sources */,
 				3252C9DB179330A800A17C7C /* SinWaveCommand.cpp in Sources */,
 				32F22423179AFF3600853F62 /* SCWorkerCU.cpp in Sources */,
+				321B9F2617B24D650070D32D /* Sl7TcpDriver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
