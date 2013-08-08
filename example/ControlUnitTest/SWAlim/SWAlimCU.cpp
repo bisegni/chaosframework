@@ -75,7 +75,7 @@ SWAlimCU::~SWAlimCU() {
 /*
  Return the default configuration
  */
-void SWAlimCU::defineActionAndDataset() throw(CException) {
+void SWAlimCU::unitDefineActionAndDataset() throw(CException) {
     //set the base information
     const char *devIDInChar = _deviceID.c_str();
     
@@ -143,6 +143,10 @@ void SWAlimCU::defineActionAndDataset() throw(CException) {
 							  DataType::Input);
 		
     }
+	
+}
+
+void SWAlimCU::unitDefineDriver(std::vector<chaos::cu::driver_manager::driver::DrvRequestInfo>& neededDriver) {
 	
 }
 

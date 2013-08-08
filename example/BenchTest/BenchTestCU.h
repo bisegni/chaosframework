@@ -57,8 +57,10 @@ protected:
     /*
      Define the Control Unit Dataset and Actions
      */
-    virtual void defineActionAndDataset()throw(CException);
+    void unitDefineActionAndDataset()throw(CException);
     
+	void unitDefineDriver(std::vector<chaos::cu::driver_manager::driver::DrvRequestInfo>& neededDriver);
+	
     //From base class
     void unitInit() throw(CException);
     

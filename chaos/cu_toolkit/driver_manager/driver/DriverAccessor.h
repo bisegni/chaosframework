@@ -23,7 +23,7 @@
 
 #include <set>
 #include <boost/atomic/atomic.hpp>
-#include <chaos/cu_toolkit/driver_manager/driver/DriverGlobal.h>
+#include <chaos/cu_toolkit/driver_manager/driver/DriverTypes.h>
 
 namespace chaos{
     
@@ -33,6 +33,10 @@ namespace chaos{
     
     namespace cu {
         namespace driver_manager {
+			
+			//forward declaration
+			class DriverManager;
+			
             namespace driver {
                 
                 //! Driver accessor comminication class
@@ -45,7 +49,10 @@ namespace chaos{
                     
                     //make driver friendly
                     friend class AbstractDriver;
-                    
+                    friend class chaos::cu::driver_manager::DriverManager;
+					
+					std::string driverUUID;
+					
                     uint accessorIndex;
                     
                     //! Number of the command sent
@@ -123,7 +130,7 @@ namespace chaos{
                             before message with minor priority.
                         \return true if operation has been done sucessfull.
                      */
-                    bool sendAsync(DrvMsgPtr cmd, MQAccessorResponseMessageType& messageID, uint priority = 0);
+                    bool sendAsync(DrvMsgPtr cmd, mq_accessor_response_message_t& messageID, uint priority = 0);
                     
                     //! Check last processed code
                     /*!
@@ -132,8 +139,8 @@ namespace chaos{
                      \param messageID is filled with the found code.
                      \return true if a code has been found.
                      */
-                    bool getLastAsyncMsg(MQAccessorResponseMessageType& messageID);
-                    
+                    bool getLastAsyncMsg(mq_accessor_response_message_t& messageID);
+					
                     //! Equals operator overloading
                     bool operator== (const DriverAccessor &a);
                 };

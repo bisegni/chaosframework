@@ -54,6 +54,7 @@
 #define LWRN_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLWarning)
 #define LERR_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLNotice)
 #define LAPP_       BOOST_LOG_SEV(chaosLogger::get(), chaos::log::level::LSLInfo)
+
     //define for chaos assert macro, it print the basiclay infromation to find
     //the error when the condition is not true
 #ifndef DEBUG

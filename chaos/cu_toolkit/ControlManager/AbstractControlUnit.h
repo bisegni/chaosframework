@@ -40,6 +40,8 @@
 
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/ControlManager/DeviceSchemaDB.h>
+#include <chaos/cu_toolkit/driver_manager/driver/DriverTypes.h>
+#include <chaos/cu_toolkit/driver_manager/driver/DriverAccessor.h>
 
 #define CU_IDENTIFIER_C_STREAM "_" << getCUInstance()
 #define INIT_STATE      0
@@ -57,6 +59,7 @@ namespace chaos{
     
     namespace cu {
         
+		namespace cu_driver = chaos::cu::driver_manager::driver;
         namespace ec = event::channel;
         
         class ControManager;
@@ -74,13 +77,10 @@ namespace chaos{
             friend class DomainActionsScheduler;
             friend class SCAbstractControlUnit;
 			friend class RTAbstractControlUnit;
+            
+			//! list of the accessor of the driver requested by the unit implementation
+			std::vector< cu_driver::DriverAccessor *> accessorInstances;
 			
-            //! numerical state of the cu
-            int  deviceState;
-            
-            //! Explicit state of the CU
-            CUStateKey::ControlUnitState deviceExplicitState;
-            
             /*!
              Add a new KeyDataStorage for a specific key
              */
@@ -167,8 +167,15 @@ namespace chaos{
                 Subclass, in this method can call the api to create the dataset, after this method
                 this class will collet all the information and send all to the MDS server.
              */
-            virtual void defineActionAndDataset() throw(CException) = 0;
+            virtual void unitDefineActionAndDataset() throw(CException) = 0;
             
+			//! Abstract method for the definition of the driver
+            /*!
+				This method permit to the control unit implementation to define the necessary drivers it needs
+			 \param neededDriver need to be filled with the structure DrvRequestInfo filled with the information
+			 about the needed driver [name, version and initialization param if preset statically]
+             */
+            virtual void unitDefineDriver(std::vector<cu_driver::DrvRequestInfo>& neededDriver) = 0;
 			
                 //! Abstract method for the initialization of the control unit
             /*!
@@ -213,6 +220,13 @@ namespace chaos{
              */
             virtual CDataWrapper* updateConfiguration(CDataWrapper*, bool&) throw (CException);
             
+			//! return the accessor by an index
+			/*
+				The index parameter correspond to the order that the driver infromation are
+				added by the unit implementation into the function AbstractControlUnit::unitDefineDriver.
+			 */
+			driver_manager::driver::DriverAccessor * getAccessoInstanceByIndex(int idx);
+			
         public:
             
             //! Default Contructor

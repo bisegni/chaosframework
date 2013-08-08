@@ -28,7 +28,7 @@ PerfTestCU::~PerfTestCU() {
 /*
  Define the Control Unit Dataset and Actions
  */
-void PerfTestCU::defineActionAndDataset(CDataWrapper&)throw(CException) {
+void PerfTestCU::unitDefineActionAndDataset(CDataWrapper&)throw(CException) {
     //set the default delay for the CU
     setDefaultScheduleDelay(20000);
     

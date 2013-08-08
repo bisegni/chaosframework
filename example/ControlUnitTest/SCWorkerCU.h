@@ -28,6 +28,7 @@ using namespace chaos;
 using namespace boost;
 using namespace boost::posix_time;
 
+namespace cu_driver = chaos::cu::driver_manager::driver;
 
 class SCWorkerCU : public chaos::cu::SCAbstractControlUnit {
     string _deviceID;
@@ -35,9 +36,9 @@ protected:
     /*
      Define the Control Unit Dataset and Actions
      */
-    void defineActionAndDataset()throw(CException);
+    void unitDefineActionAndDataset()throw(CException);
     void defineSharedVariable();
-    
+    void unitDefineDriver(std::vector<cu_driver::DrvRequestInfo>& neededDriver);
     /*(Optional)
      Initialize the Control Unit and all driver, with received param from MetadataServer
      */

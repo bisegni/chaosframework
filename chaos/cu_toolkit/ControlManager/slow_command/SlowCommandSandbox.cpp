@@ -362,7 +362,7 @@ void SlowCommandSandbox::runCommand() {
                 break;
                 
             default:
-				unsigned long timeToWaith = currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay - stat.lastCmdStepTime;
+				int64_t timeToWaith = currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay - stat.lastCmdStepTime;
                 threadSchedulerPauseCondition.wait(timeToWaith>0?timeToWaith:0);
                 //boost::this_thread::sleep_for(boost::chrono::milliseconds(currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay - stat.lastCmdStepTime));
                 break;

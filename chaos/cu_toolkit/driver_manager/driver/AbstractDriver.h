@@ -27,8 +27,9 @@
 #include <boost/thread.hpp>
 
 #include <chaos/common/chaos_constants.h>
+#include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/utility/InizializableService.h>
-#include <chaos/cu_toolkit/driver_manager/driver/DriverGlobal.h>
+#include <chaos/cu_toolkit/driver_manager/driver/DriverTypes.h>
 
 namespace chaos{
     namespace cu {
@@ -61,9 +62,12 @@ namespace chaos{
                     template<typename T>
                     friend class DriverWrapperPlugin;
                     friend class chaos::cu::driver_manager::DriverManager;
-					
+					//! unique uuid for the instance
                     std::string driverUUID;
-                    
+					
+					//! used by driver manager to identity the instance by the hashing
+                    size_t identificationHash;
+					
                     boost::atomic_uint accessorCount;
                     
                     //! the list of all generated accessor
@@ -74,6 +78,7 @@ namespace chaos{
                     //! command queue used for receive DrvMsg pack
                     boost::interprocess::message_queue *commandQueue;
                     
+					std::auto_ptr<boost::thread> threadMessageReceiver;
                 protected:
                     //!Private constructor
                     AbstractDriver();
@@ -109,7 +114,7 @@ namespace chaos{
                     /*!
                         A driver accessor is relased and all resource are free.
                      */
-                    void releaseAccessor(DriverAccessor *newAccessor);
+                    bool releaseAccessor(DriverAccessor *newAccessor);
 
 					
                     //! Execute a command
@@ -117,8 +122,10 @@ namespace chaos{
                         The driver implementation must use the opcode to recognize the
                         command to execute and then write it on th ememory allocate
                         by the issuer of the command.
+						\param cmd the message that needs to be executed by the driver implementation
+						\return the managment state of the message
                      */
-                    virtual void execOpcode(DrvMsgPtr cmd) = 0;
+                    virtual MsgManagmentResultType::MsgManagmentResult execOpcode(DrvMsgPtr cmd) = 0;
                 };
                 
                 

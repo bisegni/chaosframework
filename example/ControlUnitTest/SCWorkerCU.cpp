@@ -9,6 +9,9 @@
 #include "SCWorkerCU.h"
 #include "SinWaveCommand.h"
 namespace cucs = chaos::cu::control_manager::slow_command;
+namespace cu_driver = chaos::cu::driver_manager::driver;
+
+
 /*
  Construct a new CU with an identifier
  */
@@ -23,7 +26,7 @@ SCWorkerCU::~SCWorkerCU() {
 /*
  Return the default configuration
  */
-void SCWorkerCU::defineActionAndDataset() throw(CException) {
+void SCWorkerCU::unitDefineActionAndDataset() throw(CException) {
     //set the base information
     RangeValueInfo rangeInfoTemp;
     //cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_DESCRIPTION, "This is a beautifull CU");
@@ -84,6 +87,11 @@ void SCWorkerCU::defineSharedVariable() {
     bool quit = false;
     addSharedVariable("quit", 1, chaos::DataType::TYPE_BOOLEAN);
     setSharedVariableValue("quit", &quit, sizeof(bool));
+}
+
+void SCWorkerCU::unitDefineDriver(std::vector<cu_driver::DrvRequestInfo>& neededDriver) {
+	cu_driver::DrvRequestInfo drv1 = {"Sl7TcpDriver","1.0.0","plccalc.lnf.infn.it:102"};
+	neededDriver.push_back(drv1);
 }
 
 // Abstract method for the initialization of the control unit

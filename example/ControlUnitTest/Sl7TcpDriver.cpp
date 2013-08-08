@@ -19,15 +19,29 @@
  */
 #include "Sl7TcpDriver.h"
 
+#include <string>
+
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractDriverPlugin.h>
 
+#include <boost/regex.hpp>
+
 namespace cu_driver = chaos::cu::driver_manager::driver;
+
+#define SL7DRVLAPP_		LAPP_ << "[Sl7TcpDriver] "
+#define SL7DRVLDBG_		LDBG_ << "[Sl7TcpDriver] "
+#define SL7DRVLERR_		LERR_ << "[Sl7TcpDriver] "
+
+
+//! Regular expression for check server hostname and port
+static const boost::regex PlcHostNameAndPort("([a-zA-Z0-9]+(.[a-zA-Z0-9]+)+):([0-9]{3,5})");
+//! Regular expression for check server ip and port
+static const boost::regex PlcIpAnPort("(\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b):([0-9]{4,5})");
 
 
 //GET_PLUGIN_CLASS_DEFINITION
 //we need only to define the driver because we don't are makeing a plugin
 OPEN_CU_DRIVER_PLUGIN_CLASS_DEFINITION(Sl7TcpDriver, 1.0.0, Sl7TcpDriver)
-REGISTER_CU_DRIVER_PLUGIN_CLASS_INIT_ATTRIBUTE(Sl7Drv,http_address:port)
+REGISTER_CU_DRIVER_PLUGIN_CLASS_INIT_ATTRIBUTE(Sl7Drv,http_address/dnsname:port)
 CLOSE_CU_DRIVER_PLUGIN_CLASS_DEFINITION
 
 //default constructor definition
@@ -35,16 +49,81 @@ DEFAULT_CU_DRIVER_PLUGIN_CONSTRUCTOR(Sl7TcpDriver) {
 	
 }
 
+//default descrutcor
 Sl7TcpDriver::~Sl7TcpDriver() {
 	
 }
 
 //! Execute a command
-void Sl7TcpDriver::execOpcode(cu_driver::DrvMsgPtr cmd) {
+cu_driver::MsgManagmentResultType::MsgManagmentResult Sl7TcpDriver::execOpcode(cu_driver::DrvMsgPtr cmd) {
+	cu_driver::MsgManagmentResultType::MsgManagmentResult result = cu_driver::MsgManagmentResultType::MMR_EXECUTED;
 	switch (cmd->opcode) {
-		case cu_driver::OpcodeType::OP_START:
-			
+		case cu_driver::OpcodeType::OP_INIT:
+			initPLCConnection(cmd);
 			break;
-
+			
+		case cu_driver::OpcodeType::OP_DEINIT:
+			deinitPLCConnection();
+			break;
+			
 	}
+	return result;
+}
+
+cu_driver::MsgManagmentResultType::MsgManagmentResult Sl7TcpDriver::initPLCConnection(cu_driver::DrvMsgPtr cmd) {
+	SL7DRVLAPP_ << "Init siemens s7 plc driver";
+	//check the input parameter
+	boost::smatch match;
+	std::string inputStr((const char *)cmd->data, cmd->dataLength);
+	bool isIpAndPort		= regex_match(inputStr, match, PlcIpAnPort, boost::match_extra);
+	bool isHostnameAndPort  = isIpAndPort ? false:regex_match(inputStr, match, PlcHostNameAndPort, boost::match_extra);
+	
+	if(!isIpAndPort && !isHostnameAndPort) {
+		SL7DRVLERR_ << "The address " << inputStr << " is not well formed";
+		return cu_driver::MsgManagmentResultType::MMR_INIT_ERROR;
+	}
+	
+	std::string address = match[1];
+	std::string port = match[(int)(match.size()-1)];
+	
+	SL7DRVLAPP_ << "using address " << address << " and port " << port;
+	
+	
+	fds.rfd=openSocket(std::atoi(port.c_str()), address.c_str());
+    fds.wfd=fds.rfd;
+    
+    if (fds.rfd>0) {
+		di = daveNewInterface(fds,"IF1",0, daveProtoISOTCP, daveSpeed187k);
+		if(di) daveSetTimeout(di,10000000);
+		
+		dc = di ? daveNewConnection(di,2,0,0):NULL;  // insert your rack and slot here
+		
+		if(di && dc && (daveInitAdapter(di) == 0) && (daveConnectPLC(dc) == 0)) {
+			
+		} else {
+			if(dc) daveDisconnectPLC(dc);
+			if(fds.rfd)closeSocket(fds.rfd);
+			SL7DRVLERR_ << "Error opening address";
+			return cu_driver::MsgManagmentResultType::MMR_INIT_ERROR;
+		}
+	} else {
+		SL7DRVLERR_ << "Error opening address";
+		return cu_driver::MsgManagmentResultType::MMR_INIT_ERROR;
+	}
+	
+	return cu_driver::MsgManagmentResultType::MMR_EXECUTED;
+}
+
+cu_driver::MsgManagmentResultType::MsgManagmentResult Sl7TcpDriver::deinitPLCConnection() {
+	cu_driver::MsgManagmentResultType::MsgManagmentResult result = cu_driver::MsgManagmentResultType::MMR_EXECUTED;
+	SL7DRVLAPP_ << "Deinit siemens s7 plc driver";
+	if(dc) {
+		daveDisconnectPLC(dc);
+		dc = NULL;
+	}
+	if(fds.rfd) {
+		closeSocket(fds.rfd);
+		fds.rfd = fds.wfd = 0;
+	}
+	return result;
 }

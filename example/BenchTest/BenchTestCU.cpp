@@ -56,7 +56,7 @@ BenchTestCU::~BenchTestCU() {
 /*
  Return the default configuration
  */
-void BenchTestCU::defineActionAndDataset() throw(CException) {
+void BenchTestCU::unitDefineActionAndDataset() throw(CException) {
     //set the base information
     const char *devIDInChar = reactorName.c_str();
     
@@ -111,6 +111,9 @@ void BenchTestCU::defineActionAndDataset() throw(CException) {
                                                   &BenchTestCU::setControlB);
 }
 
+void BenchTestCU::unitDefineDriver(std::vector<chaos::cu::driver_manager::driver::DrvRequestInfo>& neededDriver) {
+	
+}
 
 //From base class
 void BenchTestCU::unitInit() throw(CException) {

@@ -46,7 +46,7 @@ namespace chaos {
                 /*
                  Define the Control Unit Dataset and Actions
                  */
-                virtual void defineActionAndDataset(CDataWrapper&)throw(CException);
+                virtual void unitDefineActionAndDataset(CDataWrapper&)throw(CException);
                 
                 /*(Optional)
                  Initialize the Control Unit and all driver, with received param from MetadataServer

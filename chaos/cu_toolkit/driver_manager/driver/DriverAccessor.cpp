@@ -37,7 +37,7 @@ DriverAccessor::DriverAccessor(uint _accessorIndex):accessorIndex(_accessorIndex
     accessorAsyncMQ = new boost::interprocess::message_queue(boost::interprocess::open_or_create    // open or create
                                                         ,randomUUID.c_str()                         // name queue  with casual UUID
                                                         ,100                                        // max trigger message
-                                                        ,sizeof(MQAccessorResponseMessageType)      // dimension of the message
+                                                        ,sizeof(mq_accessor_response_message_t)      // dimension of the message
                                                         );
     driverAsyncMQ = new boost::interprocess::message_queue(boost::interprocess::open_only           // open or create
                                                       ,randomUUID.c_str()                           // name queue  with casual UUID
@@ -48,7 +48,7 @@ DriverAccessor::DriverAccessor(uint _accessorIndex):accessorIndex(_accessorIndex
     accessorSyncMQ = new boost::interprocess::message_queue(boost::interprocess::open_or_create     // open or create
                                                             ,randomUUID.c_str()                     // name queue  with casual UUID
                                                             ,100                                    // max trigger message
-                                                            ,sizeof(MQAccessorResponseMessageType)  // dimension of the message
+                                                            ,sizeof(mq_accessor_response_message_t)  // dimension of the message
                                                             );
     driverSyncMQ = new boost::interprocess::message_queue(boost::interprocess::open_only            // open or create
                                                           ,randomUUID.c_str()                       // name queue  with casual UUID
@@ -77,16 +77,17 @@ bool DriverAccessor::send(DrvMsgPtr cmd, uint priority) {
     CHAOS_ASSERT(cmd)
 
     unsigned int messagePriority = 0;
-    MQAccessorResponseMessageType answerMessage = 0;
+    mq_accessor_response_message_t answerMessage = 0;
     boost::interprocess::message_queue::size_type recvd_size = 0;
-    boost::interprocess::message_queue::size_type sent_size = sizeof(MQAccessorResponseMessageType);
+    boost::interprocess::message_queue::size_type sent_size = sizeof(mq_accessor_response_message_t);
     
     //fill the cmd with the information for retrive it
     cmd->id = messagesCount++;
     cmd->drvResponseMQ = driverSyncMQ;
     
     //send command
-    commandQueue->send(&cmd, sizeof(DrvMsgPtr), priority);
+	drvqueuedata_t tmp = (drvqueuedata_t)&cmd;
+    commandQueue->send(&tmp, sizeof(drvqueuedata_t), priority);
     
     //whait the answer
     accessorSyncMQ->receive(&answerMessage, sent_size, recvd_size, messagePriority);
@@ -98,7 +99,7 @@ bool DriverAccessor::send(DrvMsgPtr cmd, uint priority) {
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
-bool DriverAccessor::sendAsync(DrvMsgPtr cmd, MQAccessorResponseMessageType& messageID, uint priority) {
+bool DriverAccessor::sendAsync(DrvMsgPtr cmd, mq_accessor_response_message_t& messageID, uint priority) {
     CHAOS_ASSERT(cmd)
     
     //fill the cmd with the information for retrive it
@@ -106,17 +107,18 @@ bool DriverAccessor::sendAsync(DrvMsgPtr cmd, MQAccessorResponseMessageType& mes
     cmd->drvResponseMQ = driverAsyncMQ;
     
     //send message
-    commandQueue->send(&cmd, sizeof(DrvMsgPtr), priority);
+	drvqueuedata_t tmp = (drvqueuedata_t)&cmd;
+    commandQueue->send(&tmp, sizeof(drvqueuedata_t), priority);
     return true;
 }
 
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
-bool DriverAccessor::getLastAsyncMsg(MQAccessorResponseMessageType& messageID) {
+bool DriverAccessor::getLastAsyncMsg(mq_accessor_response_message_t& messageID) {
     unsigned int messagePriority = 0;
     boost::interprocess::message_queue::size_type recvd_size = 0;
-    boost::interprocess::message_queue::size_type sent_size = sizeof(MQAccessorResponseMessageType);
+    boost::interprocess::message_queue::size_type sent_size = sizeof(mq_accessor_response_message_t);
     bool result = accessorAsyncMQ->try_receive(&messageID, sent_size, recvd_size, messagePriority);
     return result && recvd_size == sent_size;
 }

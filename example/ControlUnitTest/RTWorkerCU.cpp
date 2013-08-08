@@ -64,7 +64,7 @@ RTWorkerCU::~RTWorkerCU() {
 /*
  Return the default configuration
  */
-void RTWorkerCU::defineActionAndDataset() throw(CException) {
+void RTWorkerCU::unitDefineActionAndDataset() throw(CException) {
     //cuSetup.addStringValue(CUDefinitionKey::CS_CM_CU_DESCRIPTION, "This is a beautifull CU");
     
     
@@ -135,6 +135,10 @@ void RTWorkerCU::defineActionAndDataset() throw(CException) {
                                                  "The gain of the noise of the wave",
                                                  this,
                                                  &RTWorkerCU::setDoubleValue);
+}
+
+void RTWorkerCU::unitDefineDriver(std::vector<chaos::cu::driver_manager::driver::DrvRequestInfo>& neededDriver) {
+	
 }
 
 /*
