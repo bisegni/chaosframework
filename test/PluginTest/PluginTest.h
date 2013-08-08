@@ -28,8 +28,8 @@ class Sl7TcpDriver: ADD_CU_DRIVER_PLUGIN_SUPERCLASS {
 public:
     Sl7TcpDriver();
     //! Execute a command
-    void execOpcode(DrvMsgPtr cmd) {
-        
+    MsgManagmentResultType::MsgManagmentResult execOpcode(DrvMsgPtr cmd) {
+        return MsgManagmentResultType::MMR_EXECUTED;
     }
 };
 
