@@ -27,6 +27,14 @@ class Sl7TcpDriver: ADD_CU_DRIVER_PLUGIN_SUPERCLASS {
     
 public:
     Sl7TcpDriver();
+    void driverInit(const char *initParameter) throw(chaos::CException) {
+        
+    }
+    
+    void driverDeinit()  throw(chaos::CException) {
+        
+    }
+    
     //! Execute a command
     MsgManagmentResultType::MsgManagmentResult execOpcode(DrvMsgPtr cmd) {
         return MsgManagmentResultType::MMR_EXECUTED;
