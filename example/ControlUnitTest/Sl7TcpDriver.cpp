@@ -54,33 +54,17 @@ Sl7TcpDriver::~Sl7TcpDriver() {
 	
 }
 
-//! Execute a command
-cu_driver::MsgManagmentResultType::MsgManagmentResult Sl7TcpDriver::execOpcode(cu_driver::DrvMsgPtr cmd) {
-	cu_driver::MsgManagmentResultType::MsgManagmentResult result = cu_driver::MsgManagmentResultType::MMR_EXECUTED;
-	switch (cmd->opcode) {
-		case cu_driver::OpcodeType::OP_INIT:
-			initPLCConnection(cmd);
-			break;
-			
-		case cu_driver::OpcodeType::OP_DEINIT:
-			deinitPLCConnection();
-			break;
-			
-	}
-	return result;
-}
-
-cu_driver::MsgManagmentResultType::MsgManagmentResult Sl7TcpDriver::initPLCConnection(cu_driver::DrvMsgPtr cmd) {
+void Sl7TcpDriver::driverInit(const char *initParameter) throw(chaos::CException) {
 	SL7DRVLAPP_ << "Init siemens s7 plc driver";
 	//check the input parameter
 	boost::smatch match;
-	std::string inputStr((const char *)cmd->data, cmd->dataLength);
+	std::string inputStr = initParameter;
 	bool isIpAndPort		= regex_match(inputStr, match, PlcIpAnPort, boost::match_extra);
 	bool isHostnameAndPort  = isIpAndPort ? false:regex_match(inputStr, match, PlcHostNameAndPort, boost::match_extra);
 	
 	if(!isIpAndPort && !isHostnameAndPort) {
 		SL7DRVLERR_ << "The address " << inputStr << " is not well formed";
-		return cu_driver::MsgManagmentResultType::MMR_INIT_ERROR;
+		throw new chaos::CException(1, "the initialization paramter for the siemens sl7 is not well formed", "Sl7TcpDriver::driverInit");
 	}
 	
 	std::string address = match[1];
@@ -104,18 +88,15 @@ cu_driver::MsgManagmentResultType::MsgManagmentResult Sl7TcpDriver::initPLCConne
 			if(dc) daveDisconnectPLC(dc);
 			if(fds.rfd)closeSocket(fds.rfd);
 			SL7DRVLERR_ << "Error opening address";
-			return cu_driver::MsgManagmentResultType::MMR_INIT_ERROR;
+			throw new chaos::CException(2, "Error opening address", "Sl7TcpDriver::driverInit");
 		}
 	} else {
 		SL7DRVLERR_ << "Error opening address";
-		return cu_driver::MsgManagmentResultType::MMR_INIT_ERROR;
+		throw new chaos::CException(3, "Error opening address", "Sl7TcpDriver::driverInit");
 	}
-	
-	return cu_driver::MsgManagmentResultType::MMR_EXECUTED;
 }
 
-cu_driver::MsgManagmentResultType::MsgManagmentResult Sl7TcpDriver::deinitPLCConnection() {
-	cu_driver::MsgManagmentResultType::MsgManagmentResult result = cu_driver::MsgManagmentResultType::MMR_EXECUTED;
+void Sl7TcpDriver::driverDeinit() throw(chaos::CException) {
 	SL7DRVLAPP_ << "Deinit siemens s7 plc driver";
 	if(dc) {
 		daveDisconnectPLC(dc);
@@ -125,5 +106,11 @@ cu_driver::MsgManagmentResultType::MsgManagmentResult Sl7TcpDriver::deinitPLCCon
 		closeSocket(fds.rfd);
 		fds.rfd = fds.wfd = 0;
 	}
+
+}
+
+//! Execute a command
+cu_driver::MsgManagmentResultType::MsgManagmentResult Sl7TcpDriver::execOpcode(cu_driver::DrvMsgPtr cmd) {
+	cu_driver::MsgManagmentResultType::MsgManagmentResult result = cu_driver::MsgManagmentResultType::MMR_EXECUTED;
 	return result;
 }

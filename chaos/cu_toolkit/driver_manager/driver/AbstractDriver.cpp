@@ -28,16 +28,17 @@
 
 using namespace chaos::cu::driver_manager::driver;
 
-#define ADLAPP_ LAPP_ << "[AbstractDriver-" << "] "
-#define ADLDBG_ LDBG_ << "[SlowCommandSandbox-" << "] "
-#define ADLERR_ LERR_ << "[SlowCommandSandbox-" << "] "
+#define ADLAPP_ LAPP_ << "[AbstractDriver-" << driverUUID << "] "
+#define ADLDBG_ LDBG_ << "[AbstractDriver-" << driverUUID << "] "
+#define ADLERR_ LERR_ << "[AbstractDriver-" << driverUUID << "] "
 
 /*------------------------------------------------------
 
 ------------------------------------------------------*/
 AbstractDriver::AbstractDriver() {
     accessorCount = 0;
-    driverUUID = chaos::UUIDUtil::generateUUID();
+	driverNeedtoDeinitialize = false;
+    driverUUID = chaos::UUIDUtil::generateUUIDLite();
     commandQueue = new boost::interprocess::message_queue(boost::interprocess::open_or_create         // open or create
                                                           ,driverUUID.c_str()                         // name queue  with casual UUID
                                                           ,1000                                       // max driver message queue
@@ -57,14 +58,15 @@ void AbstractDriver::init(void *initParamPtr) throw(chaos::CException) {
 	DrvMsg initMsg;
 	std::memset(&initMsg, 0, sizeof(DrvMsg));
 	
+	driverNeedtoDeinitialize = false;
 	const char *initStr = (const char *)initParamPtr;
 	
 	initMsg.opcode = OpcodeType::OP_INIT;
 	initMsg.data = initParamPtr;
 	initMsg.dataLength = (uint32_t)strlen(initStr);
-    if(execOpcode(&initMsg) == MsgManagmentResultType::MMR_INIT_ERROR) {
-		throw CException(1, "Driver inititalization error", "AbstractDriver::init");
-	}
+    
+	ADLAPP_ << "Call custom driver initialization";
+	driverInit((const char*)initParamPtr);
 	
 	//start interna thread for the waithing of the message
 	threadMessageReceiver.reset(new boost::thread(boost::bind(&AbstractDriver::scanForMessage, this)));
@@ -102,6 +104,10 @@ void AbstractDriver::init(void *initParamPtr) throw(chaos::CException) {
 // Deinit the implementation
 void AbstractDriver::deinit() throw(chaos::CException) {
     DrvMsg deinitMsg;
+	driverNeedtoDeinitialize = true;
+	ADLAPP_ << "Call custom driver deinitialization";
+	driverDeinit();
+	
 	std::memset(&deinitMsg, 0, sizeof(DrvMsg));
 	deinitMsg.opcode = OpcodeType::OP_DEINIT;
 	
@@ -162,7 +168,7 @@ bool AbstractDriver::releaseAccessor(DriverAccessor *accessor) {
  
  ------------------------------------------------------*/
 void AbstractDriver::scanForMessage() {
-	ADLAPP_ << "scanForMessage thread started for uuid " << driverUUID;
+	ADLAPP_ << "scanForMessage thread started";
     DrvMsgPtr currentMessagePtr;
 	uintptr_t dataReceived;
     unsigned int messagePriority = 0;
@@ -178,6 +184,6 @@ void AbstractDriver::scanForMessage() {
         //notify the caller
         if(currentMessagePtr->drvResponseMQ)
 			currentMessagePtr->drvResponseMQ->send(&currentMessagePtr->id, sizeof(mq_accessor_response_message_t), messagePriority);
-    } while (currentMessagePtr->opcode != OpcodeType::OP_DEINIT);
-	ADLAPP_ << "scanForMessage thread ended for uuid " << driverUUID;
+    } while (currentMessagePtr->opcode != OpcodeType::OP_DEINIT && !driverNeedtoDeinitialize);
+	ADLAPP_ << "scanForMessage thread terminated";
 }

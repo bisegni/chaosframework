@@ -62,6 +62,9 @@ namespace chaos{
                     template<typename T>
                     friend class DriverWrapperPlugin;
                     friend class chaos::cu::driver_manager::DriverManager;
+					
+					bool driverNeedtoDeinitialize;
+					
 					//! unique uuid for the instance
                     std::string driverUUID;
 					
@@ -79,28 +82,34 @@ namespace chaos{
                     boost::interprocess::message_queue *commandQueue;
                     
 					std::auto_ptr<boost::thread> threadMessageReceiver;
+					
+					
+                    // Initialize instance
+                    void init(void *initParamPtr) throw(chaos::CException);
+                    
+                    // Deinit the implementation
+                    void deinit() throw(chaos::CException);
+					
+					
+                    //! Wait the new command and broadcast it
+                    /*!
+					 This method waith for the next command, broadcast it
+					 and check if the opcode is the "end of work" opcode,
+					 in this case it will quit.
+                     */
+                    void scanForMessage();
+					
                 protected:
                     //!Private constructor
                     AbstractDriver();
                     
                     //!Private destructor
                     virtual ~AbstractDriver();
-                    
-                    //! Wait the new command and broadcast it
-                    /*!
-                        This method waith for the next command, broadcast it
-                        and check if the opcode is the "end of work" opcode, 
-                        in this case it will quit.
-                     */
-                    void scanForMessage();
 
+					virtual void driverInit(const char *initParameter) throw(chaos::CException) = 0;
+					virtual void driverDeinit()  throw(chaos::CException) = 0;
                 public:
-                    
-                    // Initialize instance
-                    void init(void *initParamPtr) throw(chaos::CException);
-                    
-                    // Deinit the implementation
-                    void deinit() throw(chaos::CException);
+
                     
                     //! Create a new accessor
                     /*!

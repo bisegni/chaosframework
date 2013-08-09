@@ -42,6 +42,8 @@ class Sl7TcpDriver: ADD_CU_DRIVER_PLUGIN_SUPERCLASS {
 	inline cu_driver::MsgManagmentResultType::MsgManagmentResult initPLCConnection(cu_driver::DrvMsgPtr initPack);
 	inline cu_driver::MsgManagmentResultType::MsgManagmentResult deinitPLCConnection();
 	
+	void driverInit(const char *initParameter) throw(chaos::CException);
+	void driverDeinit() throw(chaos::CException);
 public:
     Sl7TcpDriver();
 	~Sl7TcpDriver();
