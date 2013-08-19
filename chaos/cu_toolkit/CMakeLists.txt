@@ -30,8 +30,10 @@ INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/ControlManager)
 FILE(GLOB files "ControlManager/handler/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/ControlManager/handler)
 
-FILE(GLOB files "ControlManager/slow_control/*.h")
+FILE(GLOB files "ControlManager/slow_command/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/ControlManager/slow_command)
+
+#we don't install default command header
 
 FILE(GLOB files "DataManager/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/DataManager)

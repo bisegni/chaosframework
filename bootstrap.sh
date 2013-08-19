@@ -15,9 +15,7 @@ KERNEL_SHORT_VER=$(uname -r|cut -d\- -f1|tr -d '.'| tr -d '[A-Z][a-z]')
 BOOST_VERSION=1_53_0
 BOOST_VERSION_IN_PATH=1.53.0
 LMEM_VERSION=1.0.16
-CHAOS_DIR=$SCRIPTPATH
-BASE_EXTERNAL=$CHAOS_DIR/external
-PREFIX=$CHAOS_DIR/usr/local
+
 
 if [ -n "$1" ]; then
     PREFIX=$1/usr/local
@@ -30,6 +28,19 @@ export CXXFLAGS="-m32 -arch i386"
 echo "Force 32 bit binaries"
 fi
 
+if [ -n "$CHAOS_DEVELOPMENT" ]; then
+	COMP_TYPE=Debug
+	CHAOS_DIR=$SCRIPTPATH/../
+	echo "Setup for chaos development folder structure"
+	echo "Shared libray prefix -> $CHAOS_DIR"
+else
+	COMP_TYPE=Release
+	CHAOS_DIR=$SCRIPTPATH
+fi
+
+BASE_EXTERNAL=$CHAOS_DIR/external
+PREFIX=$CHAOS_DIR/usr/local
+
 echo "Operating system version: $OS"
 echo "Current architecture: $ARCH"
 echo "Current kernel version: $KERNEL_VER"
@@ -37,6 +48,7 @@ echo "Current short kernel version: $KERNEL_SHORT_VER"
 echo "Using $CHAOS_DIR as chaos folder"
 echo "Using $BASE_EXTERNAL as external library folder"
 echo "Using $PREFIX as prefix folder"
+echo "Compilation type -> $COMP_TYPE"
 
 if [ ! -d "$BASE_EXTERNAL" ]; then
     mkdir -p $BASE_EXTERNAL
@@ -80,44 +92,48 @@ else
     echo "Boost Already present"
 fi
 
-echo "Setup MSGPACK"
-if [ ! -d "$BASE_EXTERNAL/msgpack-c" ]; then
-    echo "Install msgpack-c"
-    git clone https://github.com/msgpack/msgpack-c.git $BASE_EXTERNAL/msgpack-c
-    cd $BASE_EXTERNAL/msgpack-c/
-else
-    echo "Update msgpack-c"
-    cd $BASE_EXTERNAL/msgpack-c/
-    git pull
-fi
+if [ ! -d "$PREFIX/include/msgpack" ]; then
+	echo "Setup MSGPACK"
+	if [ ! -d "$BASE_EXTERNAL/msgpack-c" ]; then
+		echo "Install msgpack-c"
+		git clone https://github.com/msgpack/msgpack-c.git $BASE_EXTERNAL/msgpack-c
+		cd $BASE_EXTERNAL/msgpack-c/
+	else
+		echo "Update msgpack-c"
+		cd $BASE_EXTERNAL/msgpack-c/
+		git pull
+	fi
 ./bootstrap
 ./configure --prefix=$PREFIX 
 make clean
 make
 make install
 echo "MSGPACK Setupped"
+fi
 
-echo "Setup MPIO"
-if [ ! -d "$BASE_EXTERNAL/mpio" ]; then
-    echo "Install mpio"
-#    git clone https://github.com/frsyuki/mpio.git $BASE_EXTERNAL/mpio
-    git clone https://github.com/bisegni/mpio.git $BASE_EXTERNAL/mpio
-    cd $BASE_EXTERNAL/mpio
-else
-    echo "Update mpio"
-    cd $BASE_EXTERNAL/mpio
-    git pull
+if [ ! -d "$PREFIX/include/mp" ]; then
+	echo "Setup MPIO"
+	if [ ! -d "$BASE_EXTERNAL/mpio" ]; then
+		echo "Install mpio"
+	#    git clone https://github.com/frsyuki/mpio.git $BASE_EXTERNAL/mpio
+		git clone https://github.com/bisegni/mpio.git $BASE_EXTERNAL/mpio
+		cd $BASE_EXTERNAL/mpio
+	else
+		echo "Update mpio"
+		cd $BASE_EXTERNAL/mpio
+		git pull
+	fi
+	./bootstrap
+	if [ $KERNEL_SHORT_VER -gt $("2625") ]; then
+	./configure --prefix=$PREFIX
+	else
+	./configure --disable-timerfd --disable-signalfd --prefix=$PREFIX
+	fi
+	make clean
+	make
+	make install
+	echo "MPIO Setupped"
 fi
-./bootstrap
-if [ $KERNEL_SHORT_VER -gt $("2625") ]; then
-./configure --prefix=$PREFIX
-else
-./configure --disable-timerfd --disable-signalfd --prefix=$PREFIX
-fi
-make clean
-make
-make install
-echo "MPIO Setupped"
 
 echo "Setup MSGPACK-RPC"
 if [ ! -d "$BASE_EXTERNAL/msgpack-rpc" ]; then
@@ -138,21 +154,23 @@ make install
 echo "MSGPACK-RPC Setupped"
 
 echo "Setup LIBEVENT"
-if [ ! -f "$BASE_EXTERNAL/libevent" ]; then
-    echo "Installing LibEvent"
-#    git clone git://levent.git.sourceforge.net/gitroot/levent/libevent $BASE_EXTERNAL/libevent
-    git clone http://git.code.sf.net/p/levent/libevent $BASE_EXTERNAL/libevent
-    cd $BASE_EXTERNAL/libevent
-else
-    cd $BASE_EXTERNAL/libevent
-    git pull
+if [ ! -d "$PREFIX/include/event2" ]; then
+	if [ ! -f "$BASE_EXTERNAL/libevent" ]; then
+		echo "Installing LibEvent"
+	#    git clone git://levent.git.sourceforge.net/gitroot/levent/libevent $BASE_EXTERNAL/libevent
+		git clone http://git.code.sf.net/p/levent/libevent $BASE_EXTERNAL/libevent
+		cd $BASE_EXTERNAL/libevent
+	else
+		cd $BASE_EXTERNAL/libevent
+		git pull
+	fi
+	./autogen.sh
+	./configure --prefix=$PREFIX
+	make clean
+	make
+	make install
+	echo "LIBEVENT Setupped"
 fi
-./autogen.sh
-./configure --prefix=$PREFIX
-make clean
-make
-make install
-echo "LIBEVENT Setupped"
 
 echo "Setup LIBMEMCACHED"
 if [ ! -d "$PREFIX/include/libmemcached" ]; then
@@ -168,27 +186,29 @@ fi
 echo "LIBMEMCACHED Setupped"
 
 echo "Setup ZMQ"
-if [ ! -d "$BASE_EXTERNAL/zeromq3-x" ]; then
-echo "Download zmq source"
-git clone https://github.com/zeromq/zeromq3-x.git $BASE_EXTERNAL/zeromq3-x
-else
-echo "Update zmq source"
-cd $BASE_EXTERNAL/zeromq3-x
-git pull
+if [ ! -f "$PREFIX/include/zmq.h" ]; then
+	if [ ! -d "$BASE_EXTERNAL/zeromq3-x" ]; then
+	echo "Download zmq source"
+	git clone https://github.com/zeromq/zeromq3-x.git $BASE_EXTERNAL/zeromq3-x
+	else
+	echo "Update zmq source"
+	cd $BASE_EXTERNAL/zeromq3-x
+	git pull
+	fi
+	cd $BASE_EXTERNAL/zeromq3-x
+	./autogen.sh
+	./configure --prefix=$PREFIX
+	make
+	make install
+	echo "ZMQ Setupped"
 fi
-cd $BASE_EXTERNAL/zeromq3-x
-./autogen.sh
-./configure --prefix=$PREFIX
-make
-make install
-echo "ZMQ Setupped"
 
 echo "Compile !CHAOS"
-cd $CHAOS_DIR
+cd $SCRIPTPATH
 if [ -n "$CHAOS32" ]; then
-cmake -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_FORCE_32=true -DBUILD_PREFIX=$PREFIX .
+cmake -DCMAKE_BUILD_TYPE=$COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_FORCE_32=true -DBUILD_PREFIX=$PREFIX $SCRIPTPATH/.
 else
-cmake -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_PREFIX=$PREFIX .
+cmake -DCMAKE_BUILD_TYPE=$COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_PREFIX=$PREFIX $SCRIPTPATH/.
 fi
 make
 make install
