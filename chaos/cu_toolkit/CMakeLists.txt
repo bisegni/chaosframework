@@ -15,6 +15,9 @@ TARGET_LINK_LIBRARIES(chaos_cutoolkit chaos_common boost_program_options boost_s
 FILE(GLOB files "*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit)
 
+FILE(GLOB files "driver_manager/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/driver_manager)
+
 FILE(GLOB files "driver_manager/driver/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/driver_manager/driver)
 
