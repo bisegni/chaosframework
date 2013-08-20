@@ -69,9 +69,9 @@ if [ ! -d "$PREFIX/include/boost" ]; then
 
 #install old version of boost log
     cd $BASE_EXTERNAL/boost/boost/
-    svn co https://boost-log.svn.sourceforge.net/svnroot/boost-log/branches/v1/boost/log
+    svn co https://svn.code.sf.net/p/boost-log/code/trunk/boost-log/boost/log
     cd  $BASE_EXTERNAL/boost/libs/
-    svn co https://boost-log.svn.sourceforge.net/svnroot/boost-log/branches/v1/libs/log
+    svn co https://svn.code.sf.net/p/boost-log/code/trunk/boost-log/libs/log
 
 
     if [ ! -f "$BASE_EXTERNAL/boost/b2" ]; then
