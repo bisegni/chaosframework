@@ -30,14 +30,14 @@ fi
 
 if [ -n "$CHAOS_DEVELOPMENT" ]; then
 	COMP_TYPE=Debug
-	CHAOS_DIR=$SCRIPTPATH/../
+#CHAOS_DIR=$SCRIPTPATH/../
 	echo "Setup for chaos development folder structure"
-	echo "Shared libray prefix -> $CHAOS_DIR"
+#echo "Shared libray prefix -> $CHAOS_DIR"
 else
 	COMP_TYPE=Release
-	CHAOS_DIR=$SCRIPTPATH
 fi
 
+CHAOS_DIR=$SCRIPTPATH
 BASE_EXTERNAL=$CHAOS_DIR/external
 PREFIX=$CHAOS_DIR/usr/local
 
