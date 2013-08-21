@@ -12,8 +12,16 @@ OS=$(uname -s)
 ARCH=$(uname -m)
 KERNEL_VER=$(uname -r)
 KERNEL_SHORT_VER=$(uname -r|cut -d\- -f1|tr -d '.'| tr -d '[A-Z][a-z]')
-BOOST_VERSION=1_53_0
-BOOST_VERSION_IN_PATH=1.53.0
+
+if [ -n "$CHAOS_BOOST_VERSION" ]; then
+	BOOST_VERSION="1_"$CHAOS_BOOST_VERSION"_0"
+	BOOST_VERSION_IN_PATH="1.$CHAOS_BOOST_VERSION.0"
+else
+	BOOST_VERSION=1_54_0
+	BOOST_VERSION_IN_PATH=1.54.0
+fi
+
+BOOST_NUMBER_VERSION=$(echo $BOOST_VERSION_IN_PATH |sed "s/[^0-9]//g" )
 LMEM_VERSION=1.0.16
 
 
@@ -48,6 +56,7 @@ echo "Current short kernel version: $KERNEL_SHORT_VER"
 echo "Using $CHAOS_DIR as chaos folder"
 echo "Using $BASE_EXTERNAL as external library folder"
 echo "Using $PREFIX as prefix folder"
+echo "Using BOOST version $BOOST_VERSION/$BOOST_VERSION_IN_PATH ($BOOST_NUMBER_VERSION)"
 echo "Compilation type -> $COMP_TYPE"
 
 if [ ! -d "$BASE_EXTERNAL" ]; then
@@ -68,10 +77,12 @@ if [ ! -d "$PREFIX/include/boost" ]; then
     fi
 
 #install old version of boost log
-    cd $BASE_EXTERNAL/boost/boost/
-    svn co https://svn.code.sf.net/p/boost-log/code/trunk/boost-log/boost/log
-    cd  $BASE_EXTERNAL/boost/libs/
-    svn co https://svn.code.sf.net/p/boost-log/code/trunk/boost-log/libs/log
+	if [ $BOOST_NUMBER_VERSION -le 1530 ]; then
+		cd $BASE_EXTERNAL/boost/boost/
+		svn co https://svn.code.sf.net/p/boost-log/code/trunk/boost-log/boost/log
+		cd  $BASE_EXTERNAL/boost/libs/
+		svn co https://svn.code.sf.net/p/boost-log/code/trunk/boost-log/libs/log
+	fi
 
 
     if [ ! -f "$BASE_EXTERNAL/boost/b2" ]; then
@@ -124,7 +135,7 @@ if [ ! -d "$PREFIX/include/mp" ]; then
 		git pull
 	fi
 	./bootstrap
-	if [ $KERNEL_SHORT_VER -gt $("2625") ]; then
+	if [ `echo $OS | tr [:upper:] [:lower:]` = `echo "linux" | tr [:upper:] [:lower:]` ] && [ $KERNEL_SHORT_VER -le 2625 ]; then
 	./configure --prefix=$PREFIX
 	else
 	./configure --disable-timerfd --disable-signalfd --prefix=$PREFIX
@@ -135,23 +146,25 @@ if [ ! -d "$PREFIX/include/mp" ]; then
 	echo "MPIO Setupped"
 fi
 
-echo "Setup MSGPACK-RPC"
-if [ ! -d "$BASE_EXTERNAL/msgpack-rpc" ]; then
-    echo "Install msgpack-rpc"
-    git clone https://github.com/msgpack-rpc/msgpack-rpc-cpp.git $BASE_EXTERNAL/msgpack-rpc
-    cd $BASE_EXTERNAL/msgpack-rpc
-else
-    echo "Update msgpack-rpc"
-    cd $BASE_EXTERNAL/msgpack-rpc/
-    git pull
-    cd $BASE_EXTERNAL/msgpack-rpc/
+if [ ! -d "$PREFIX/include/msgpack/rpc" ]; then
+	echo "Setup MSGPACK-RPC"
+	if [ ! -d "$BASE_EXTERNAL/msgpack-rpc" ]; then
+		echo "Install msgpack-rpc"
+		git clone https://github.com/msgpack-rpc/msgpack-rpc-cpp.git $BASE_EXTERNAL/msgpack-rpc
+		cd $BASE_EXTERNAL/msgpack-rpc
+	else
+		echo "Update msgpack-rpc"
+		cd $BASE_EXTERNAL/msgpack-rpc/
+		git pull
+		cd $BASE_EXTERNAL/msgpack-rpc/
+	fi
+	./bootstrap
+	./configure --prefix=$PREFIX --with-mpio=$PREFIX --with-msgpack=$PREFIX
+	make clean
+	make
+	make install
+	echo "MSGPACK-RPC Setupped"
 fi
-./bootstrap
-./configure --prefix=$PREFIX --with-mpio=$PREFIX --with-msgpack=$PREFIX
-make clean
-make
-make install
-echo "MSGPACK-RPC Setupped"
 
 echo "Setup LIBEVENT"
 if [ ! -d "$PREFIX/include/event2" ]; then
