@@ -77,11 +77,18 @@ if [ ! -d "$PREFIX/include/boost" ]; then
     fi
 
 #install old version of boost log
-	if [ $BOOST_NUMBER_VERSION -le 1530 ]; then
-		cd $BASE_EXTERNAL/boost/boost/
-		svn co https://svn.code.sf.net/p/boost-log/code/trunk/boost-log/boost/log
-		cd  $BASE_EXTERNAL/boost/libs/
-		svn co https://svn.code.sf.net/p/boost-log/code/trunk/boost-log/libs/log
+	if [ $BOOST_NUMBER_VERSION -le 1530 ] && [ ! -d "$BASE_EXTERNAL/boost_log" ]; then
+		git clone https://cvs.lnf.infn.it/boost_log $BASE_EXTERNAL/boost_log
+
+		if [ ! -d "$BASE_EXTERNAL/boost/boost/log" ]; then
+			echo "link $BASE_EXTERNAL/boost/boost/log -> $BASE_EXTERNAL/boost_log/boost/log"
+			ln -s $BASE_EXTERNAL/boost_log/boost/log $BASE_EXTERNAL/boost/boost/log
+		fi
+
+		if [ ! -d "$BASE_EXTERNAL/boost/libs/log" ]; then
+			echo "link $BASE_EXTERNAL/boost/libs/log -> $BASE_EXTERNAL/boost_log/libs/log"
+			ln -s $BASE_EXTERNAL/boost_log/libs/log $BASE_EXTERNAL/boost/libs/log
+		fi
 	fi
 
 
