@@ -29,6 +29,8 @@
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/utility/InizializableService.h>
+#include <chaos/common/thread/TemplatedConcurrentQueue.h>
+
 #include <chaos/cu_toolkit/driver_manager/driver/DriverTypes.h>
 
 namespace chaos{
@@ -79,8 +81,8 @@ namespace chaos{
                     boost::shared_mutex accessoListShrMux;
                     
                     //! command queue used for receive DrvMsg pack
-                    boost::interprocess::message_queue *commandQueue;
-                    
+                    //boost::interprocess::message_queue *commandQueue;
+                    TemplatedConcurrentQueue<DrvMsgPtr> *commandQueue;
 					std::auto_ptr<boost::thread> threadMessageReceiver;
 					
 					

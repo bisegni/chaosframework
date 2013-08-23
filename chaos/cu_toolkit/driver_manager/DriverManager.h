@@ -52,8 +52,12 @@ namespace chaos {
 			boost::shared_ptr< common_plugin::PluginInspector> DriverClass ## Inspector(GET_PLUGIN_CLASS_DEFINITION(DriverClass)); \
 			boost::shared_ptr< common_utility::ObjectInstancer< chaos::cu::driver_manager::driver::AbstractDriver > > DriverClass ## Instancer(CU_DRIVER_INSTANCER(DriverClass));
 			
-			#define CU_DRIVER_INSTANCER(DriverClass) new chaos::common::utility::TypedObjectInstancer<DriverClass, chaos::cu::driver_manager::driver::AbstractDriver>()
+			#define MATERIALIZE_INSTANCE_AND_INSPECTOR_WITH_NS(n, DriverClass) \
+			boost::shared_ptr< common_plugin::PluginInspector> DriverClass ## Inspector(GET_PLUGIN_CLASS_DEFINITION(DriverClass)); \
+			boost::shared_ptr< common_utility::ObjectInstancer< chaos::cu::driver_manager::driver::AbstractDriver > > DriverClass ## Instancer(CU_DRIVER_INSTANCER(n::DriverClass));
 			
+			#define CU_DRIVER_INSTANCER(DriverClass) new chaos::common::utility::TypedObjectInstancer<DriverClass, chaos::cu::driver_manager::driver::AbstractDriver>()
+
 			//! !CHAOS Driver infrastructure managment
 			class DriverManager : public chaos::utility::StartableService, public chaos::Singleton<DriverManager> {
 				friend class chaos::Singleton<DriverManager>;

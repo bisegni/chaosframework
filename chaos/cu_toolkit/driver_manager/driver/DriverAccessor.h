@@ -24,7 +24,7 @@
 #include <set>
 #include <boost/atomic/atomic.hpp>
 #include <chaos/cu_toolkit/driver_manager/driver/DriverTypes.h>
-
+#include <chaos/common/thread/TemplatedConcurrentQueue.h>
 namespace chaos{
     
     // forward declaration
@@ -97,8 +97,8 @@ namespace chaos{
                     /*!
                      This queue is to forward command to the driver
                      */
-                    boost::interprocess::message_queue *commandQueue;
-                    
+                    //boost::interprocess::message_queue *commandQueue;
+                    TemplatedConcurrentQueue<DrvMsgPtr> *commandQueue;
                     //Private constructor
                     DriverAccessor(uint _accessorIndex);
                     

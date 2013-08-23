@@ -39,11 +39,13 @@ AbstractDriver::AbstractDriver() {
     accessorCount = 0;
 	driverNeedtoDeinitialize = false;
     driverUUID = chaos::UUIDUtil::generateUUIDLite();
+	commandQueue = new TemplatedConcurrentQueue<DrvMsgPtr>();
+	/*
     commandQueue = new boost::interprocess::message_queue(boost::interprocess::open_or_create         // open or create
                                                           ,driverUUID.c_str()                         // name queue  with casual UUID
                                                           ,1000                                       // max driver message queue
                                                           ,sizeof(drvqueuedata_t));                 // dimension of the message
-                                                          
+                                                          */
 }
 
 /*------------------------------------------------------
@@ -59,11 +61,6 @@ void AbstractDriver::init(void *initParamPtr) throw(chaos::CException) {
 	std::memset(&initMsg, 0, sizeof(DrvMsg));
 	
 	driverNeedtoDeinitialize = false;
-	const char *initStr = (const char *)initParamPtr;
-	
-	initMsg.opcode = OpcodeType::OP_INIT;
-	initMsg.data = initParamPtr;
-	initMsg.dataLength = (uint32_t)strlen(initStr);
     
 	ADLAPP_ << "Call custom driver initialization";
 	driverInit((const char*)initParamPtr);
@@ -112,10 +109,12 @@ void AbstractDriver::deinit() throw(chaos::CException) {
 	deinitMsg.opcode = OpcodeType::OP_DEINIT;
 	
 	//open a  temporary queue for send the deinit message to the thread
-	auto_ptr<boost::interprocess::message_queue> deinitQueue(new boost::interprocess::message_queue(boost::interprocess::open_only,driverUUID.c_str()));
+	//auto_ptr<boost::interprocess::message_queue> deinitQueue(new boost::interprocess::message_queue(boost::interprocess::open_only,driverUUID.c_str()));
 	//send deinit opcode to the queue
-	drvqueuedata_t tmp = (drvqueuedata_t)&deinitMsg;
-	deinitQueue->send(&tmp, sizeof(drvqueuedata_t), 0);
+	//drvqueuedata_t tmp = (drvqueuedata_t)&deinitMsg;
+	//deinitQueue->send(&tmp, sizeof(drvqueuedata_t), 0);
+	commandQueue->push(&deinitMsg);
+	
 	
 	//now join to  the thread if joinable
 	if(threadMessageReceiver->joinable()) threadMessageReceiver->join();
@@ -133,10 +132,11 @@ bool AbstractDriver::getNewAccessor(DriverAccessor **newAccessor) {
 			//set the parent uuid
 		result->driverUUID = driverUUID;
             //share the input queue ptr
-        result->commandQueue = new boost::interprocess::message_queue(boost::interprocess::open_only    // open or create
+       /* result->commandQueue = new boost::interprocess::message_queue(boost::interprocess::open_only    // open or create
                                                                       ,driverUUID.c_str());             // name queue  with casual UUID
-        
-        
+        */
+		
+        result->commandQueue = commandQueue;
         boost::unique_lock<boost::shared_mutex> lock(accessoListShrMux);
         accessors.push_back(result);
         lock.unlock();
@@ -176,14 +176,14 @@ void AbstractDriver::scanForMessage() {
     boost::interprocess::message_queue::size_type sent_size = sizeof(drvqueuedata_t);
     do {
         //wait for the new command
-        commandQueue->receive(&dataReceived, sent_size, recvd_size, messagePriority);
-        
+        //commandQueue->receive(&dataReceived, sent_size, recvd_size, messagePriority);
+        commandQueue->wait_and_pop(currentMessagePtr);
         //broadcast the execution
-        execOpcode(currentMessagePtr = (DrvMsgPtr)dataReceived);
+		//currentMessagePtr = static_cast<DrvMsgPtr>(dataReceived);
+        execOpcode(currentMessagePtr);
         
         //notify the caller
-        if(currentMessagePtr->drvResponseMQ)
-			currentMessagePtr->drvResponseMQ->send(&currentMessagePtr->id, sizeof(mq_accessor_response_message_t), messagePriority);
+        if(currentMessagePtr->drvResponseMQ) currentMessagePtr->drvResponseMQ->send(&currentMessagePtr->id, sizeof(mq_accessor_response_message_t), messagePriority);
     } while (currentMessagePtr->opcode != OpcodeType::OP_DEINIT && !driverNeedtoDeinitialize);
 	ADLAPP_ << "scanForMessage thread terminated";
 }

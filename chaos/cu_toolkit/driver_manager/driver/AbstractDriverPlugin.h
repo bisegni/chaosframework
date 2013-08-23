@@ -48,6 +48,8 @@ namespace chaos{
             
 #define DEFAULT_CU_DRIVER_PLUGIN_CONSTRUCTOR(t) t::t():chaos::cu::driver_manager::driver::AbstractDriverPlugin(this)
  
+#define DEFAULT_CU_DRIVER_PLUGIN_CONSTRUCTOR_WITH_NS(ns, t) ns::t::t():chaos::cu::driver_manager::driver::AbstractDriverPlugin(this)
+				
 #define DEFINE_CU_DRIVER_DEFINITION_PROTOTYPE(a)  DEFINE_PLUGIN_DEFINITION_PROTOTYPE(a, chaos::cu::driver_manager::driver::AbstractDriverPlugin)
 				
                 //! Define a plugin for a driver

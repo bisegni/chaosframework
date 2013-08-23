@@ -87,8 +87,8 @@ bool DriverAccessor::send(DrvMsgPtr cmd, uint priority) {
     
     //send command
 	drvqueuedata_t tmp = (drvqueuedata_t)&cmd;
-    commandQueue->send(&tmp, sizeof(drvqueuedata_t), priority);
-    
+    //commandQueue->send(&tmp, sizeof(drvqueuedata_t), priority);
+    commandQueue->push(cmd);
     //whait the answer
     accessorSyncMQ->receive(&answerMessage, sent_size, recvd_size, messagePriority);
     
@@ -108,7 +108,8 @@ bool DriverAccessor::sendAsync(DrvMsgPtr cmd, mq_accessor_response_message_t& me
     
     //send message
 	drvqueuedata_t tmp = (drvqueuedata_t)&cmd;
-    commandQueue->send(&tmp, sizeof(drvqueuedata_t), priority);
+    //commandQueue->send(&tmp, sizeof(drvqueuedata_t), priority);
+	commandQueue->push(cmd);
     return true;
 }
 

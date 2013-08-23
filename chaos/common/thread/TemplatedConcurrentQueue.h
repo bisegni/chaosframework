@@ -20,7 +20,7 @@
 
 #ifndef __CHAOSFramework__TemplatedConcurrentQueue__
 #define __CHAOSFramework__TemplatedConcurrentQueue__
-
+#include <queue>
 #include <boost/thread.hpp>
 namespace chaos {
 	template<typename T>
