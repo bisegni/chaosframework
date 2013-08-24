@@ -142,7 +142,7 @@ cu_driver::DriverAccessor *cu_driver_manager::DriverManager::getNewAccessorForDr
 
 		if(mapParameterHashLiveInstance[instanceHash]->getNewAccessor(&accessor)) {
 			//new accessor has been allocated
-			DMLAPP_ << "Got new driver accessor with index ="<< accessor->accessorIndex << " from driver with uuid =" << mapParameterHashLiveInstance[instanceHash];
+			DMLAPP_ << "Got new driver accessor with index ="<< accessor->accessor_index << " from driver with uuid =" << mapParameterHashLiveInstance[instanceHash];
 
 			return accessor;
 		} else {
@@ -167,7 +167,7 @@ cu_driver::DriverAccessor *cu_driver_manager::DriverManager::getNewAccessorForDr
 	mapDriverUUIDHashLiveInstance.insert(make_pair(driverInstance->driverUUID, driverInstance));
 	//now can get new accessor
 	if(driverInstance->getNewAccessor(&accessor)) {
-		DMLAPP_ << "Got new driver accessor with index ="<< accessor->accessorIndex << " from driver with uuid =" << driverInstance->driverUUID;
+		DMLAPP_ << "Got new driver accessor with index ="<< accessor->accessor_index << " from driver with uuid =" << driverInstance->driverUUID;
 	}
 	return accessor;
 }
@@ -176,9 +176,9 @@ cu_driver::DriverAccessor *cu_driver_manager::DriverManager::getNewAccessorForDr
 void cu_driver_manager::DriverManager::releaseAccessor(cu_driver::DriverAccessor *accessor) {
 	boost::mutex::scoped_lock lock(mutextMapAccess);
 
-	if(!mapDriverUUIDHashLiveInstance.count(accessor->driverUUID)) return;
+	if(!mapDriverUUIDHashLiveInstance.count(accessor->driver_uuid)) return;
 	
-	cu_driver::AbstractDriver *dInstance = mapDriverUUIDHashLiveInstance[accessor->driverUUID];
+	cu_driver::AbstractDriver *dInstance = mapDriverUUIDHashLiveInstance[accessor->driver_uuid];
 	//we can relase the accessor
 	if(!dInstance->releaseAccessor(accessor)) {
 		throw chaos::CException(1, "This errore never have to appen", "DriverManager::releaseAccessor");

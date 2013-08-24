@@ -9,7 +9,7 @@ IF( ($ENV{CHAOS32}) OR (BUILD_FORCE_32) )
 ENDIF()
 ADD_DEFINITIONS(-g -O2 -Wall)
 
-SET(cutest_exe_src ControlUnitExample.cpp RTWorkerCU.cpp SCWorkerCU.cpp SinWaveCommand.cpp Sl7TcpDriver.cpp sl7lib/nodave.c sl7lib/openSocket.c sl7lib/setport.c)
+SET(cutest_exe_src ControlUnitExample.cpp RTWorkerCU.cpp SCWorkerCU.cpp SinWaveCommand.cpp DummyDriver.cpp)
 SET(swalim_src SWAlim/main.cpp SWAlim/SWAlimCU.cpp)
 
 INCLUDE_DIRECTORIES(. ${PROJECT_SOURCE_DIR}/../../usr/local/include /usr/local/include /usr/include ${PROJECT_SOURCE_DIR}/example/ChaosDeviceDriver/) 

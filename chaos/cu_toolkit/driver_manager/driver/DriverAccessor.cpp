@@ -29,31 +29,10 @@ using namespace chaos::cu::driver_manager::driver;
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
-DriverAccessor::DriverAccessor(uint _accessorIndex):accessorIndex(_accessorIndex) {
-    messagesCount = 0;
-    
-    //Allocate async message queue
-    std::string randomUUID = UUIDUtil::generateUUID();
-    accessorAsyncMQ = new boost::interprocess::message_queue(boost::interprocess::open_or_create    // open or create
-                                                        ,randomUUID.c_str()                         // name queue  with casual UUID
-                                                        ,100                                        // max trigger message
-                                                        ,sizeof(mq_accessor_response_message_t)      // dimension of the message
-                                                        );
-    driverAsyncMQ = new boost::interprocess::message_queue(boost::interprocess::open_only           // open or create
-                                                      ,randomUUID.c_str()                           // name queue  with casual UUID
-                                                      );
-    
-    //Allocate sync message queue
-    randomUUID = UUIDUtil::generateUUID();
-    accessorSyncMQ = new boost::interprocess::message_queue(boost::interprocess::open_or_create     // open or create
-                                                            ,randomUUID.c_str()                     // name queue  with casual UUID
-                                                            ,100                                    // max trigger message
-                                                            ,sizeof(mq_accessor_response_message_t)  // dimension of the message
-                                                            );
-    driverSyncMQ = new boost::interprocess::message_queue(boost::interprocess::open_only            // open or create
-                                                          ,randomUUID.c_str()                       // name queue  with casual UUID
-                                                          );
-
+DriverAccessor::DriverAccessor(uint _accessor_index):accessor_index(_accessor_index),messages_count(0) {
+    //Allocate accessor message queue
+    accessor_async_mq = new AccessorQueueType();
+    accessor_sync_mq = new AccessorQueueType();
 }
 
 /*------------------------------------------------------
@@ -61,12 +40,10 @@ DriverAccessor::DriverAccessor(uint _accessorIndex):accessorIndex(_accessorIndex
  ------------------------------------------------------*/
 DriverAccessor::~DriverAccessor() {
     //delete async message queue
-    if(accessorAsyncMQ)  delete(accessorAsyncMQ);
-    if(driverAsyncMQ) delete(driverAsyncMQ);
+    if(accessor_async_mq)  delete(accessor_async_mq);
     
     //delete sync message queue
-    if(accessorSyncMQ)  delete(accessorSyncMQ);
-    if(driverSyncMQ) delete(driverSyncMQ);
+    if(accessor_sync_mq)  delete(accessor_sync_mq);
 
 }
 
@@ -76,57 +53,47 @@ DriverAccessor::~DriverAccessor() {
 bool DriverAccessor::send(DrvMsgPtr cmd, uint priority) {
     CHAOS_ASSERT(cmd)
 
-    unsigned int messagePriority = 0;
-    mq_accessor_response_message_t answerMessage = 0;
-    boost::interprocess::message_queue::size_type recvd_size = 0;
-    boost::interprocess::message_queue::size_type sent_size = sizeof(mq_accessor_response_message_t);
+    ResponseMessageType answer_message = 0;
     
     //fill the cmd with the information for retrive it
-    cmd->id = messagesCount++;
-    cmd->drvResponseMQ = driverSyncMQ;
+    cmd->id = messages_count++;
+    cmd->drvResponseMQ = accessor_sync_mq;
     
     //send command
-	drvqueuedata_t tmp = (drvqueuedata_t)&cmd;
-    //commandQueue->send(&tmp, sizeof(drvqueuedata_t), priority);
-    commandQueue->push(cmd);
+    command_queue->push(cmd);
     //whait the answer
-    accessorSyncMQ->receive(&answerMessage, sent_size, recvd_size, messagePriority);
+    accessor_sync_mq->wait_and_pop(answer_message);
     
     //check result
-    return recvd_size == sent_size;
-}
-
-/*------------------------------------------------------
- 
- ------------------------------------------------------*/
-bool DriverAccessor::sendAsync(DrvMsgPtr cmd, mq_accessor_response_message_t& messageID, uint priority) {
-    CHAOS_ASSERT(cmd)
-    
-    //fill the cmd with the information for retrive it
-    cmd->id = messageID = messagesCount++;
-    cmd->drvResponseMQ = driverAsyncMQ;
-    
-    //send message
-	drvqueuedata_t tmp = (drvqueuedata_t)&cmd;
-    //commandQueue->send(&tmp, sizeof(drvqueuedata_t), priority);
-	commandQueue->push(cmd);
     return true;
 }
 
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
-bool DriverAccessor::getLastAsyncMsg(mq_accessor_response_message_t& messageID) {
-    unsigned int messagePriority = 0;
-    boost::interprocess::message_queue::size_type recvd_size = 0;
-    boost::interprocess::message_queue::size_type sent_size = sizeof(mq_accessor_response_message_t);
-    bool result = accessorAsyncMQ->try_receive(&messageID, sent_size, recvd_size, messagePriority);
-    return result && recvd_size == sent_size;
+bool DriverAccessor::sendAsync(DrvMsgPtr cmd, ResponseMessageType& message_id, uint priority) {
+    CHAOS_ASSERT(cmd)
+    
+    //fill the cmd with the information for retrive it
+    cmd->id = message_id = messages_count++;
+    cmd->drvResponseMQ = accessor_async_mq;
+    
+    //send message
+
+	command_queue->push(cmd);
+    return true;
+}
+
+/*------------------------------------------------------
+ 
+ ------------------------------------------------------*/
+bool DriverAccessor::getLastAsyncMsg(ResponseMessageType& message_id) {
+    return accessor_sync_mq->try_pop(message_id);
 }
 
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
 bool DriverAccessor::operator== (const DriverAccessor &a) {
-    return this->accessorIndex = a.accessorIndex;
+    return this->accessor_index = a.accessor_index;
 }

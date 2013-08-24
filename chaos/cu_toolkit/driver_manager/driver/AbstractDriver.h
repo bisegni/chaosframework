@@ -27,11 +27,13 @@
 #include <boost/thread.hpp>
 
 #include <chaos/common/chaos_constants.h>
-#include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/thread/TemplatedConcurrentQueue.h>
 
 #include <chaos/cu_toolkit/driver_manager/driver/DriverTypes.h>
+
+
+namespace chaos_thread_ns = chaos::common::thread;
 
 namespace chaos{
     namespace cu {
@@ -53,7 +55,6 @@ namespace chaos{
 					std::string version;
 					std::string init_paramter_sintax;
 				} DriverDescirption;
-				
 				
                     //! !CHAOS Device Driver abstract class
                 /*!
@@ -82,7 +83,7 @@ namespace chaos{
                     
                     //! command queue used for receive DrvMsg pack
                     //boost::interprocess::message_queue *commandQueue;
-                    TemplatedConcurrentQueue<DrvMsgPtr> *commandQueue;
+                    DriverQueueType *commandQueue;
 					std::auto_ptr<boost::thread> threadMessageReceiver;
 					
 					

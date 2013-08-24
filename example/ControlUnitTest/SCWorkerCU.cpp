@@ -90,7 +90,7 @@ void SCWorkerCU::defineSharedVariable() {
 }
 
 void SCWorkerCU::unitDefineDriver(std::vector<cu_driver::DrvRequestInfo>& neededDriver) {
-	cu_driver::DrvRequestInfo drv1 = {"Sl7TcpDriver","1.0.0","plccalc.lnf.infn.it:102"};
+	cu_driver::DrvRequestInfo drv1 = {"DummyDriver","1.0.0","plccalc.lnf.infn.it:102"};
 	neededDriver.push_back(drv1);
 }
 

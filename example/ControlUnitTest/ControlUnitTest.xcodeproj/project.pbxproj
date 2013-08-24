@@ -7,10 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		321B9F2617B24D650070D32D /* Sl7TcpDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 321B9F2417B24D650070D32D /* Sl7TcpDriver.cpp */; };
-		3235110317B3A4A900E39E14 /* nodave.c in Sources */ = {isa = PBXBuildFile; fileRef = 323510FB17B3A4A900E39E14 /* nodave.c */; };
-		3235110517B3A4A900E39E14 /* openSocket.c in Sources */ = {isa = PBXBuildFile; fileRef = 323510FF17B3A4A900E39E14 /* openSocket.c */; };
-		3235110617B3A4A900E39E14 /* setport.c in Sources */ = {isa = PBXBuildFile; fileRef = 3235110117B3A4A900E39E14 /* setport.c */; };
+		321B9F2617B24D650070D32D /* DummyDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 321B9F2417B24D650070D32D /* DummyDriver.cpp */; };
 		3252C9DB179330A800A17C7C /* SinWaveCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3252C9D9179330A800A17C7C /* SinWaveCommand.cpp */; };
 		32F22423179AFF3600853F62 /* SCWorkerCU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F22421179AFF3500853F62 /* SCWorkerCU.cpp */; };
 		32F7449C14B49CFA0025638B /* ControlUnitExample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F7449914B49CFA0025638B /* ControlUnitExample.cpp */; };
@@ -20,15 +17,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		321B9F2417B24D650070D32D /* Sl7TcpDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Sl7TcpDriver.cpp; sourceTree = SOURCE_ROOT; };
-		321B9F2517B24D650070D32D /* Sl7TcpDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Sl7TcpDriver.h; sourceTree = SOURCE_ROOT; };
-		323510FA17B3A4A900E39E14 /* log2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = log2.h; sourceTree = "<group>"; };
-		323510FB17B3A4A900E39E14 /* nodave.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = nodave.c; sourceTree = "<group>"; };
-		323510FC17B3A4A900E39E14 /* nodave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nodave.h; sourceTree = "<group>"; };
-		323510FF17B3A4A900E39E14 /* openSocket.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = openSocket.c; sourceTree = "<group>"; };
-		3235110017B3A4A900E39E14 /* openSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = openSocket.h; sourceTree = "<group>"; };
-		3235110117B3A4A900E39E14 /* setport.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = setport.c; sourceTree = "<group>"; };
-		3235110217B3A4A900E39E14 /* setport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = setport.h; sourceTree = "<group>"; };
+		321B9F2417B24D650070D32D /* DummyDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DummyDriver.cpp; sourceTree = SOURCE_ROOT; };
+		321B9F2517B24D650070D32D /* DummyDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DummyDriver.h; sourceTree = SOURCE_ROOT; };
 		3252C9D9179330A800A17C7C /* SinWaveCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SinWaveCommand.cpp; sourceTree = SOURCE_ROOT; };
 		3252C9DA179330A800A17C7C /* SinWaveCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SinWaveCommand.h; sourceTree = SOURCE_ROOT; };
 		32BE864A15A0E3C500818C39 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
@@ -62,21 +52,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		323510F917B3A45600E39E14 /* sl7lib */ = {
-			isa = PBXGroup;
-			children = (
-				323510FA17B3A4A900E39E14 /* log2.h */,
-				323510FB17B3A4A900E39E14 /* nodave.c */,
-				323510FC17B3A4A900E39E14 /* nodave.h */,
-				323510FF17B3A4A900E39E14 /* openSocket.c */,
-				3235110017B3A4A900E39E14 /* openSocket.h */,
-				3235110117B3A4A900E39E14 /* setport.c */,
-				3235110217B3A4A900E39E14 /* setport.h */,
-			);
-			name = sl7lib;
-			path = ../sl7lib;
-			sourceTree = "<group>";
-		};
 		3260279D14B309ED00C906CE = {
 			isa = PBXGroup;
 			children = (
@@ -106,9 +81,8 @@
 				32F22422179AFF3500853F62 /* SCWorkerCU.h */,
 				3252C9D9179330A800A17C7C /* SinWaveCommand.cpp */,
 				3252C9DA179330A800A17C7C /* SinWaveCommand.h */,
-				321B9F2417B24D650070D32D /* Sl7TcpDriver.cpp */,
-				321B9F2517B24D650070D32D /* Sl7TcpDriver.h */,
-				323510F917B3A45600E39E14 /* sl7lib */,
+				321B9F2417B24D650070D32D /* DummyDriver.cpp */,
+				321B9F2517B24D650070D32D /* DummyDriver.h */,
 			);
 			path = ControlUnitTest;
 			sourceTree = "<group>";
@@ -190,14 +164,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3235110517B3A4A900E39E14 /* openSocket.c in Sources */,
-				3235110617B3A4A900E39E14 /* setport.c in Sources */,
 				32F7449C14B49CFA0025638B /* ControlUnitExample.cpp in Sources */,
 				32F7449D14B49CFA0025638B /* RTWorkerCU.cpp in Sources */,
 				3252C9DB179330A800A17C7C /* SinWaveCommand.cpp in Sources */,
 				32F22423179AFF3600853F62 /* SCWorkerCU.cpp in Sources */,
-				3235110317B3A4A900E39E14 /* nodave.c in Sources */,
-				321B9F2617B24D650070D32D /* Sl7TcpDriver.cpp in Sources */,
+				321B9F2617B24D650070D32D /* DummyDriver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

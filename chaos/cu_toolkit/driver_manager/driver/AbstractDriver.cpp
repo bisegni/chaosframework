@@ -26,7 +26,8 @@
 #include <chaos/cu_toolkit/driver_manager/driver/AbstractDriver.h>
 #include <chaos/cu_toolkit/driver_manager/driver/DriverAccessor.h>
 
-using namespace chaos::cu::driver_manager::driver;
+namespace chaos_thread_ns = chaos::common::thread;
+namespace chaos_driver_ns = chaos::cu::driver_manager::driver;
 
 #define ADLAPP_ LAPP_ << "[AbstractDriver-" << driverUUID << "] "
 #define ADLDBG_ LDBG_ << "[AbstractDriver-" << driverUUID << "] "
@@ -35,28 +36,22 @@ using namespace chaos::cu::driver_manager::driver;
 /*------------------------------------------------------
 
 ------------------------------------------------------*/
-AbstractDriver::AbstractDriver() {
+chaos_driver_ns::AbstractDriver::AbstractDriver() {
     accessorCount = 0;
 	driverNeedtoDeinitialize = false;
     driverUUID = chaos::UUIDUtil::generateUUIDLite();
-	commandQueue = new TemplatedConcurrentQueue<DrvMsgPtr>();
-	/*
-    commandQueue = new boost::interprocess::message_queue(boost::interprocess::open_or_create         // open or create
-                                                          ,driverUUID.c_str()                         // name queue  with casual UUID
-                                                          ,1000                                       // max driver message queue
-                                                          ,sizeof(drvqueuedata_t));                 // dimension of the message
-                                                          */
+	commandQueue = new DriverQueueType();
 }
 
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
-AbstractDriver::~AbstractDriver() {
+chaos_driver_ns::AbstractDriver::~AbstractDriver() {
     if(commandQueue) delete(commandQueue);
 }
 
 // Initialize instance
-void AbstractDriver::init(void *initParamPtr) throw(chaos::CException) {
+void chaos_driver_ns::AbstractDriver::init(void *initParamPtr) throw(chaos::CException) {
 	DrvMsg initMsg;
 	std::memset(&initMsg, 0, sizeof(DrvMsg));
 	
@@ -99,7 +94,7 @@ void AbstractDriver::init(void *initParamPtr) throw(chaos::CException) {
 }
 
 // Deinit the implementation
-void AbstractDriver::deinit() throw(chaos::CException) {
+void chaos_driver_ns::AbstractDriver::deinit() throw(chaos::CException) {
     DrvMsg deinitMsg;
 	driverNeedtoDeinitialize = true;
 	ADLAPP_ << "Call custom driver deinitialization";
@@ -124,19 +119,19 @@ void AbstractDriver::deinit() throw(chaos::CException) {
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
-bool AbstractDriver::getNewAccessor(DriverAccessor **newAccessor) {
+bool chaos_driver_ns::AbstractDriver::getNewAccessor(DriverAccessor **newAccessor) {
     
     //allocate new accessor;
     DriverAccessor *result = new DriverAccessor(accessorCount++);
     if(result) {
 			//set the parent uuid
-		result->driverUUID = driverUUID;
+		result->driver_uuid = driverUUID;
             //share the input queue ptr
        /* result->commandQueue = new boost::interprocess::message_queue(boost::interprocess::open_only    // open or create
                                                                       ,driverUUID.c_str());             // name queue  with casual UUID
         */
 		
-        result->commandQueue = commandQueue;
+        result->command_queue = commandQueue;
         boost::unique_lock<boost::shared_mutex> lock(accessoListShrMux);
         accessors.push_back(result);
         lock.unlock();
@@ -149,41 +144,46 @@ bool AbstractDriver::getNewAccessor(DriverAccessor **newAccessor) {
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
-bool AbstractDriver::releaseAccessor(DriverAccessor *accessor) {
+bool chaos_driver_ns::AbstractDriver::releaseAccessor(DriverAccessor *accessor) {
     if(!accessor) return false;
     
-	if(accessor->driverUUID.compare(driverUUID) != 0) {
-		ADLERR_ << "has been requested to relase an accessor with uuid=" << accessor->driverUUID << "that doesn't belong to this driver with uuid =" << driverUUID;
+	if(accessor->driver_uuid.compare(driverUUID) != 0) {
+		ADLERR_ << "has been requested to relase an accessor with uuid=" << accessor->driver_uuid << "that doesn't belong to this driver with uuid =" << driverUUID;
 		return false;
 	}
     boost::unique_lock<boost::shared_mutex> lock(accessoListShrMux);
+    
     accessors.erase(std::find(accessors.begin(), accessors.end(), accessor));
     lock.unlock();
-    
     delete(accessor);
+
 	return true;
 }
 
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
-void AbstractDriver::scanForMessage() {
+void chaos_driver_ns::AbstractDriver::scanForMessage() {
 	ADLAPP_ << "scanForMessage thread started";
-    DrvMsgPtr currentMessagePtr;
-	uintptr_t dataReceived;
-    unsigned int messagePriority = 0;
-    boost::interprocess::message_queue::size_type recvd_size = 0;
-    boost::interprocess::message_queue::size_type sent_size = sizeof(drvqueuedata_t);
+    DrvMsgPtr current_message_ptr;
+    MsgManagmentResultType::MsgManagmentResult opcode_submission_result;
     do {
         //wait for the new command
-        //commandQueue->receive(&dataReceived, sent_size, recvd_size, messagePriority);
-        commandQueue->wait_and_pop(currentMessagePtr);
-        //broadcast the execution
-		//currentMessagePtr = static_cast<DrvMsgPtr>(dataReceived);
-        execOpcode(currentMessagePtr);
+        commandQueue->wait_and_pop(current_message_ptr);
         
-        //notify the caller
-        if(currentMessagePtr->drvResponseMQ) currentMessagePtr->drvResponseMQ->send(&currentMessagePtr->id, sizeof(mq_accessor_response_message_t), messagePriority);
-    } while (currentMessagePtr->opcode != OpcodeType::OP_DEINIT && !driverNeedtoDeinitialize);
+        //forward the execution
+        opcode_submission_result = execOpcode(current_message_ptr);
+        switch (opcode_submission_result) {
+            case MsgManagmentResultType::MMR_ERROR:
+            case MsgManagmentResultType::MMR_EXECUTED:
+                //notify the caller
+                if(current_message_ptr->drvResponseMQ) current_message_ptr->drvResponseMQ->push(current_message_ptr->id);
+                break;
+                
+            default:
+                break;
+        }
+
+    } while (current_message_ptr->opcode != OpcodeType::OP_DEINIT && !driverNeedtoDeinitialize);
 	ADLAPP_ << "scanForMessage thread terminated";
 }

@@ -369,6 +369,8 @@
 		32F2241F179AEED500853F62 /* SCAbstractControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F2241D179AEED500853F62 /* SCAbstractControlUnit.cpp */; };
 		32F22420179AEED500853F62 /* SCAbstractControlUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F2241E179AEED500853F62 /* SCAbstractControlUnit.h */; };
 		32F466DE155EDBDE00AD3D81 /* IODataDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F466DD155EDBDE00AD3D81 /* IODataDriver.cpp */; };
+		32FA968317C894830000BE9E /* Semaphore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FA968117C894830000BE9E /* Semaphore.cpp */; };
+		32FA968417C894830000BE9E /* Semaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FA968217C894830000BE9E /* Semaphore.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -789,6 +791,8 @@
 		32F2241D179AEED500853F62 /* SCAbstractControlUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SCAbstractControlUnit.cpp; sourceTree = "<group>"; };
 		32F2241E179AEED500853F62 /* SCAbstractControlUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SCAbstractControlUnit.h; sourceTree = "<group>"; };
 		32F466DD155EDBDE00AD3D81 /* IODataDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IODataDriver.cpp; sourceTree = "<group>"; };
+		32FA968117C894830000BE9E /* Semaphore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Semaphore.cpp; sourceTree = "<group>"; };
+		32FA968217C894830000BE9E /* Semaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Semaphore.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1329,6 +1333,8 @@
 		326DB41D14B38BC00018A8D0 /* thread */ = {
 			isa = PBXGroup;
 			children = (
+				32FA968117C894830000BE9E /* Semaphore.cpp */,
+				32FA968217C894830000BE9E /* Semaphore.h */,
 				326DB41E14B38BC00018A8D0 /* ChaosThread.h */,
 				326DB41F14B38BC00018A8D0 /* CThread.cpp */,
 				326DB42014B38BC00018A8D0 /* CThread.h */,
@@ -1779,6 +1785,7 @@
 				326DB47E14B38BC00018A8D0 /* CObjectProcessingQueueListener.h in Headers */,
 				326DB47F14B38BC00018A8D0 /* ChaosRpc.h in Headers */,
 				326DB48514B38BC00018A8D0 /* RpcServer.h in Headers */,
+				32FA968417C894830000BE9E /* Semaphore.h in Headers */,
 				326DB48614B38BC00018A8D0 /* CNodeNetworkAddress.h in Headers */,
 				326DB48714B38BC00018A8D0 /* NetworkNode.h in Headers */,
 				326DB48814B38BC00018A8D0 /* ChaosThread.h in Headers */,
@@ -2234,6 +2241,7 @@
 				32460520179C55FC00B075DA /* sqlite3.c in Sources */,
 				32B57231168E4E010002A198 /* jsobj.cpp in Sources */,
 				32B57238168E50980002A198 /* md5.cpp in Sources */,
+				32FA968317C894830000BE9E /* Semaphore.cpp in Sources */,
 				32BFF90E176C842E00D27A04 /* InizializableService.cpp in Sources */,
 				32B5723C168E547B0002A198 /* stringutils.cpp in Sources */,
 				32279F8416F8DEAF009EC7B9 /* DataBroker.cpp in Sources */,

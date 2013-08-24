@@ -20,7 +20,7 @@
 
 #include "RTWorkerCU.h"
 #include "SCWorkerCU.h"
-#include "Sl7TcpDriver.h"
+#include "DummyDriver.h"
 
 #include <chaos/common/chaos_constants.h>
 #include <chaos/cu_toolkit/ChaosCUToolkit.h>
@@ -71,8 +71,8 @@ int main (int argc, char* argv[] )
     //! [Custom Option]
     
 	//! [Driver Registration]
-	MATERIALIZE_INSTANCE_AND_INSPECTOR(Sl7TcpDriver)
-	cu_driver_manager::DriverManager::getInstance()->registerDriver(Sl7TcpDriverInstancer, Sl7TcpDriverInspector);
+	MATERIALIZE_INSTANCE_AND_INSPECTOR(DummyDriver)
+	cu_driver_manager::DriverManager::getInstance()->registerDriver(DummyDriverInstancer, DummyDriverInspector);
     //! [Driver Registration]
 		
     ChaosCUToolkit::getInstance()->init(argc, argv);
