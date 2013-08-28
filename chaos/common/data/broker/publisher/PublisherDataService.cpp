@@ -20,15 +20,15 @@
 
 #include <chaos/common/data/broker/publisher/PublisherDataService.h>
 
-using namespace chaos;
-using namespace chaos::databroker::publisher;
 
-PublisherDataService::PublisherDataService(const char *keyName):publisServiceName(keyName) {
+namespace chaos_publisher = chaos::common::data::broker::publisher;
+
+chaos_publisher::PublisherDataService::PublisherDataService(const char *keyName):publisServiceName(keyName) {
 }
 
-PublisherDataService::PublisherDataService(std::string& keyName):publisServiceName(keyName) {
+chaos_publisher::PublisherDataService::PublisherDataService(std::string& keyName):publisServiceName(keyName) {
 }
 
-PublisherDataService::~PublisherDataService() {
+chaos_publisher::PublisherDataService::~PublisherDataService() {
     
 }

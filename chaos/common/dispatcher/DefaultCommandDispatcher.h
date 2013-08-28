@@ -28,6 +28,8 @@
 #include <chaos/common/dispatcher/DomainActionsScheduler.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
+namespace chaos_data = chaos::common::data;
+
 namespace chaos{
     
     using namespace std;
@@ -49,7 +51,7 @@ namespace chaos{
         /*!
          Initialization method for output buffer
          */
-        void init(CDataWrapper *initConfiguration) throw(CException);
+        void init(chaos_data::CDataWrapper *initConfiguration) throw(CException);
         
         /*!
          Deinitialization method for output buffer
@@ -74,7 +76,7 @@ namespace chaos{
          the multithreading push is managed by OBuffer that is the superclass of DomainActionsScheduler. This method
          will ever return an allocated object. The deallocaiton is demanded to caller
          */
-        virtual CDataWrapper* dispatchCommand(CDataWrapper*) throw(CException);
+        virtual chaos_data::CDataWrapper* dispatchCommand(chaos_data::CDataWrapper*) throw(CException);
 
     };
 }

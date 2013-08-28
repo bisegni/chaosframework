@@ -24,6 +24,8 @@
 #define LDSAHEE_ LAPP_ << "[DSAttributeHandlerExecutionEngine] - "
 using namespace chaos;
 using namespace chaos::cu;
+using namespace chaos::common::data;
+
 /*!
  Default constructor with std string
  */
@@ -31,7 +33,7 @@ DSAttributeHandlerExecutionEngine::DSAttributeHandlerExecutionEngine(){}
 /*!
  Default constructor with std string
  */
-DSAttributeHandlerExecutionEngine::DSAttributeHandlerExecutionEngine(chaos::cu::DeviceSchemaDB *_schemaDB): referenceDeviceSchemaDB(_schemaDB) {}
+DSAttributeHandlerExecutionEngine::DSAttributeHandlerExecutionEngine(DeviceSchemaDB *_schemaDB): referenceDeviceSchemaDB(_schemaDB) {}
 
 /*!
  Default destructor
@@ -40,7 +42,7 @@ DSAttributeHandlerExecutionEngine::~DSAttributeHandlerExecutionEngine() {
     
 }
 
-void DSAttributeHandlerExecutionEngine::setDeviceSchemaDB(chaos::cu::DeviceSchemaDB *_referenceDeviceSchemeDB) {
+void DSAttributeHandlerExecutionEngine::setDeviceSchemaDB(DeviceSchemaDB *_referenceDeviceSchemeDB) {
     referenceDeviceSchemaDB = _referenceDeviceSchemeDB;
 }
 
@@ -121,7 +123,7 @@ bool DSAttributeHandlerExecutionEngine::executeHandler(CDataWrapper *message) th
     int binv_dim;
     void *abstractValuePtr;
     CDataWrapper *cdatv;
-    chaos::RangeValueInfo attributeInfo;
+    RangeValueInfo attributeInfo;
     
     //if(deviceID.compare(referenceDeviceSchemaDB->getDeviceID())) return false;
     

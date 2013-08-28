@@ -33,7 +33,7 @@ namespace chaos {
         
     public:
         virtual ~Configurable(){};
-        virtual CDataWrapper* updateConfiguration(CDataWrapper*) = 0;
+        virtual common::data::CDataWrapper* updateConfiguration(common::data::CDataWrapper*) = 0;
     };
 }
 #endif

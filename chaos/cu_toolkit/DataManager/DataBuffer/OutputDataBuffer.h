@@ -26,12 +26,14 @@
 #include <chaos/common/data/CDataWrapper.h> 
 #include <chaos/common/pqueue/ChaosProcessingQueue.h>
 
+namespace chaos_data = chaos::common::data;
+
 namespace chaos {
     
     /*
      Output buffer for live data
      */
-    class OutputDataBuffer : public CObjectProcessingQueue<CDataWrapper>, public Configurable {
+    class OutputDataBuffer : public CObjectProcessingQueue<chaos_data::CDataWrapper>, public Configurable {
         IODataDriver *ioDriver;
         
     protected:
@@ -39,7 +41,7 @@ namespace chaos {
         /*
          Process the oldest element in buffer
          */
-        virtual void processBufferElement(CDataWrapper*, ElementManagingPolicy&) throw(CException);
+        virtual void processBufferElement(chaos_data::CDataWrapper*, ElementManagingPolicy&) throw(CException);
     
     public:
         OutputDataBuffer();
@@ -70,7 +72,7 @@ namespace chaos {
         /*
          Update the configuration
          */
-        CDataWrapper* updateConfiguration(CDataWrapper*);
+        chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*);
     };
     
 }

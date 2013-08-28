@@ -24,27 +24,27 @@
 #include <string>
 
 namespace chaos {
-    namespace databroker {
-        
-        class DataBroker;
-        
-        namespace publisher {
-            
-            //! Publisher Service
-            /*!
-                This class represent
-             */
-            class PublisherDataService {
-                friend class chaos::databroker::DataBroker;
-                
-                std::string publisServiceName;
-                
-                PublisherDataService(const char *keyName);
-                PublisherDataService(std::string& keyName);
-                ~PublisherDataService();
-            public:
-            };
-        }
+	namespace common {
+		namespace data {
+			namespace broker {
+				namespace publisher {
+					
+					//! Publisher Service
+					/*!
+					 This class represent
+					 */
+					class PublisherDataService {
+						
+						std::string publisServiceName;
+						
+						PublisherDataService(const char *keyName);
+						PublisherDataService(std::string& keyName);
+						~PublisherDataService();
+					public:
+					};
+				}
+			}
+		}
     }
 }
 

@@ -29,6 +29,8 @@
 #include <chaos/common/pqueue/ChaosProcessingQueue.h>
 #include <chaos/common/data/CDataWrapper.h>
 
+namespace chaos_data = chaos::common::data;
+
 namespace chaos {
     using namespace std;
     using namespace boost;
@@ -36,7 +38,7 @@ namespace chaos {
     /*!
      This class define an environment where an aciotn can be executed
      */
-    class DomainActionsScheduler: private CObjectProcessingQueue<CDataWrapper> {
+    class DomainActionsScheduler: private CObjectProcessingQueue<chaos_data::CDataWrapper> {
         friend class CommandDispatcher;
             //! indicate the armed stato of this scheduler
         bool armed;
@@ -49,7 +51,7 @@ namespace chaos {
             //!reference to global dispatcher used to resubmit sub command
         AbstractCommandDispatcher *dispatcher;
     protected:
-        virtual void processBufferElement(CDataWrapper*, ElementManagingPolicy&) throw(CException);
+        virtual void processBufferElement(chaos_data::CDataWrapper*, ElementManagingPolicy&) throw(CException);
         
     public:
         /*!
@@ -77,7 +79,7 @@ namespace chaos {
         /*!
          Push a new action pack into the queue
          */
-        bool push(CDataWrapper*) throw(CException);
+        bool push(chaos_data::CDataWrapper*) throw(CException);
         /*!
          Set the current dispatcher
          */

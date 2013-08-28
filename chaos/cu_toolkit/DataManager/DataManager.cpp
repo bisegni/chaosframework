@@ -19,15 +19,16 @@
  */
 
 #include <iostream>
-#include "../../common/global.h"
-#include "DataManager.h"
-#include "../../common/io/IOMemcachedDriver.h"
-#include "DataBuffer/OutputDataBuffer.h"
+#include <chaos/common/global.h>
+#include <chaos/cu_toolkit/DataManager/DataManager.h>
+#include <chaos/common/io/IOMemcachedDriver.h>
+#include <chaos/cu_toolkit/DataManager/DataBuffer/OutputDataBuffer.h>
 
 using namespace std;
 using namespace boost;
 using namespace chaos;
 using namespace chaos::cu;
+using namespace chaos::common::data;
 
 /*
  * 

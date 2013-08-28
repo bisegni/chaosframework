@@ -31,6 +31,8 @@ namespace chaos{
     using namespace std;
     using namespace boost;
     
+	namespace chaos_data = chaos::common::data;
+	
     class IOMemcachedDriver : public IODataDriver {
         boost::mutex useMCMutex;
         memcached_st *memClient;
@@ -62,7 +64,7 @@ namespace chaos{
         /*
          Update the driver configuration
          */
-        CDataWrapper* updateConfiguration(CDataWrapper*);
+        chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*);
     };
 }
 #endif

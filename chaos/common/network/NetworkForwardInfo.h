@@ -25,7 +25,10 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
 
+namespace chaos_data = chaos::common::data;
+
 namespace chaos {
+	
         //! Pointer function for error handler
     typedef void (*NetworkErrorHandler)(const char *  emitterIdentifier, int64_t tag, ErrorCode::ErrorCode errorCode);
  
@@ -40,7 +43,7 @@ namespace chaos {
             //!Define the information ip:port used to reach a remote chaos network broker
         std::string destinationAddr;
             //! the message data
-        CDataWrapper *message;
+        chaos_data::CDataWrapper *message;
             //! the error handler
         NetworkErrorHandler errorOpHandler;
             //! the handlet to informa the finisched operation

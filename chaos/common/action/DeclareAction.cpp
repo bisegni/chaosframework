@@ -22,6 +22,7 @@
 #include <chaos/common/chaos_constants.h>
 
 using namespace chaos;
+namespace chaos_data = chaos::common::data;
 
 DeclareAction::~DeclareAction() {
         //dispose all descriptors
@@ -36,8 +37,8 @@ vector<AbstActionDescShrPtr>& DeclareAction::getActionDescriptors() {
 /*
  Return the description of all action into a CDataWrapper
  */
-void DeclareAction::getActionDescrionsInDataWrapper(CDataWrapper& actionsDescription, bool close) {
-    shared_ptr<CDataWrapper> actionDescription;
+void DeclareAction::getActionDescrionsInDataWrapper(chaos_data::CDataWrapper& actionsDescription, bool close) {
+    shared_ptr<chaos_data::CDataWrapper> actionDescription;
     vector<AbstActionDescShrPtr>::iterator actionIter;
     
         //cycle all actions for construct the vector of param action
@@ -45,7 +46,7 @@ void DeclareAction::getActionDescrionsInDataWrapper(CDataWrapper& actionsDescrip
          actionIter != actionDescriptionVector.end(); 
          actionIter++) {
             //decode action into CDataWrapper
-        CDataWrapper actionDescription;
+        chaos_data::CDataWrapper actionDescription;
             //fill description with action value
         decodeAction(*actionIter, actionDescription);
             //add description to array of action for this declaring class
@@ -59,7 +60,7 @@ void DeclareAction::getActionDescrionsInDataWrapper(CDataWrapper& actionsDescrip
 /*
  Return the description of all action into a CDataWrapper
  */
-void DeclareAction::decodeAction(AbstActionDescShrPtr& actionDesc, CDataWrapper& actionDescription) {
+void DeclareAction::decodeAction(AbstActionDescShrPtr& actionDesc, chaos_data::CDataWrapper& actionDescription) {
         //add domain for the action 
     actionDescription.addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN, actionDesc->getTypeValue(AbstractActionDescriptor::ActionDomain));
     
@@ -74,7 +75,7 @@ void DeclareAction::decodeAction(AbstActionDescShrPtr& actionDesc, CDataWrapper&
     
     if(paramDescriptionVector.size()){
             //there are some parameter for this action, need to be added to rapresentation
-        shared_ptr<CDataWrapper> paramDescRepresentation(new CDataWrapper());
+        shared_ptr<chaos_data::CDataWrapper> paramDescRepresentation(new chaos_data::CDataWrapper());
         for (vector< shared_ptr<ActionParamDescription> >::iterator paramIter = paramDescriptionVector.begin();
              paramIter !=paramDescriptionVector.end();
              paramIter++) {

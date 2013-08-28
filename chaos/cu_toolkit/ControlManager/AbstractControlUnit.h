@@ -47,6 +47,7 @@
 #define INIT_STATE      0
 #define START_STATE     1
 
+namespace chaos_data = chaos::common::data;
 
 namespace chaos{
     
@@ -89,22 +90,22 @@ namespace chaos{
             /*!
              Initialize the Custom Contro Unit and return the configuration
              */
-            virtual CDataWrapper* _init(CDataWrapper*, bool& detachParam) throw(CException);
+            virtual chaos_data::CDataWrapper* _init(chaos_data::CDataWrapper*, bool& detachParam) throw(CException);
             
             /*!
              Deinit the Control Unit
              */
-            virtual CDataWrapper* _deinit(CDataWrapper*, bool& detachParam) throw(CException);
+            virtual chaos_data::CDataWrapper* _deinit(chaos_data::CDataWrapper*, bool& detachParam) throw(CException);
             
             /*!
              Starto the  Control Unit scheduling for device
              */
-            virtual CDataWrapper* _start(CDataWrapper*, bool& detachParam) throw(CException);
+            virtual chaos_data::CDataWrapper* _start(chaos_data::CDataWrapper*, bool& detachParam) throw(CException);
             
             /*!
              Stop the Custom Control Unit scheduling for device
              */
-            virtual CDataWrapper* _stop(CDataWrapper*, bool& detachParam) throw(CException);
+            virtual chaos_data::CDataWrapper* _stop(chaos_data::CDataWrapper*, bool& detachParam) throw(CException);
             
             /*!
              Define the control unit DataSet and Action into
@@ -139,7 +140,7 @@ namespace chaos{
             /*!
                 This method configure the CDataWrapper whit all th einromation for describe the implemented device
              */
-            virtual void _defineActionAndDataset(CDataWrapper&) throw(CException);
+            virtual void _defineActionAndDataset(chaos_data::CDataWrapper&) throw(CException);
             
             //! Get all managed declare action instance
             /*!
@@ -153,14 +154,14 @@ namespace chaos{
                 This method is called when the input attribute of the dataset need to be valorized,
                 subclass need to perform all the appropiate action to set these attribute
              */
-            CDataWrapper* _setDatasetAttribute(CDataWrapper*, bool&) throw (CException);
+            chaos_data::CDataWrapper* _setDatasetAttribute(chaos_data::CDataWrapper*, bool&) throw (CException);
             
                 //! Return the state of the control unit
             /*!
                 Return the current control unit state identifyed by ControlUnitState types
                 fitted into the CDatawrapper with the key CUStateKey::CONTROL_UNIT_STATE
              */
-            CDataWrapper* _getState(CDataWrapper*, bool& detachParam) throw(CException);
+            chaos_data::CDataWrapper* _getState(chaos_data::CDataWrapper*, bool& detachParam) throw(CException);
 
                 //! Abstract Method that need to be used by the sublcass to define the dataset
             /*!
@@ -210,7 +211,7 @@ namespace chaos{
                 Receive the event for set the dataset input element, this virtual method
                 is empty because can be used by controlunit implementation
              */
-            virtual CDataWrapper* setDatasetAttribute(CDataWrapper*, bool& detachParam) throw (CException) = 0;
+            virtual chaos_data::CDataWrapper* setDatasetAttribute(chaos_data::CDataWrapper*, bool& detachParam) throw (CException) = 0;
             
                 // Infrastructure configuration update
             /*!
@@ -218,7 +219,7 @@ namespace chaos{
                 checked to control waht is needed to update. Subclass that override this method need first inherited
                 the parent one and the check if the CDataWrapper contains something usefull for it.
              */
-            virtual CDataWrapper* updateConfiguration(CDataWrapper*, bool&) throw (CException);
+            virtual chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*, bool&) throw (CException);
             
 			//! return the accessor by an index
 			/*

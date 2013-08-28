@@ -33,6 +33,9 @@
 #include <chaos/cu_toolkit/ControlManager/DeviceSchemaDB.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/AttributeSetting.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandTypes.h>
+
+namespace chaos_data = chaos::common::data;
+
 namespace chaos{
     namespace cu {
         
@@ -149,13 +152,13 @@ namespace chaos{
                     /*
                      Send device data to output buffer
                      */
-                    void pushDataSet(chaos::CDataWrapper *acquiredData);
+                    void pushDataSet(chaos_data::CDataWrapper *acquiredData);
                     
                     /*
                      Return a new instance of CDataWrapper filled with a mandatory data
                      according to key
                      */
-                    chaos::CDataWrapper *getNewDataWrapper();
+                    chaos_data::CDataWrapper *getNewDataWrapper();
                     
                     //! return the implemented handler
                     /*!
@@ -172,7 +175,7 @@ namespace chaos{
                      \param data CDatawrapper object taht containing a set of initial data for the command
                      \return the mask for the runnign state
                      */
-                    virtual void setHandler(chaos::CDataWrapper *data);
+                    virtual void setHandler(chaos_data::CDataWrapper *data);
                     
                     //! Aquire the necessary data for the command
                     /*!

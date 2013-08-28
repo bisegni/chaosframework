@@ -29,42 +29,44 @@
 
 
 using namespace chaos;
+using namespace chaos::common::data;
 using namespace chaos::cu::control_manager::slow_command;
-namespace cccs = chaos::cu::control_manager::slow_command;
 
-#define SCELAPP_ LAPP_ << "[SlowCommandExecutor-" << executorID << "] "
-#define SCELDBG_ LDBG_ << "[SlowCommandExecutor-" << executorID << "] "
-#define SCELERR_ LERR_ << "[SlowCommandExecutor-" << executorID << "] "
+#define LOG_HEAD "[SlowCommandExecutor-" << executorID << "] "
+
+#define SCELAPP_ LAPP_ << LOG_HEAD
+#define SCELDBG_ LDBG_ << LOG_HEAD
+#define SCELERR_ LERR_ << LOG_HEAD
 
 SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DeviceSchemaDB *_deviceSchemaDbPtr):executorID(_executorID), deviceSchemaDbPtr(_deviceSchemaDbPtr){
     //this need to be removed from here need to be implemented the def undef services
     // register the public rpc api
-    std::string rpcActionDomain = executorID; //+ cccs::SlowCommandSubmissionKey::COMMAND_EXECUTOR_POSTFIX_DOMAIN;
+    std::string rpcActionDomain = executorID; //+ SlowCommandSubmissionKey::COMMAND_EXECUTOR_POSTFIX_DOMAIN;
     
     //
     SCELAPP_ << "Register updateConfiguration action";
     DeclareAction::addActionDescritionInstance<SlowCommandExecutor>(this,
                                                                     &SlowCommandExecutor::getQueuedCommand,
                                                                     rpcActionDomain.c_str(),
-                                                                    cccs::SlowControlExecutorRpcActionKey::RPC_GET_QUEUED_COMMAND,
+                                                                    SlowControlExecutorRpcActionKey::RPC_GET_QUEUED_COMMAND,
                                                                     "Return the number and the information of the queued command");
     SCELAPP_ << "Register getCommandSandboxStatistics action";
     DeclareAction::addActionDescritionInstance<SlowCommandExecutor>(this,
                                                                     &SlowCommandExecutor::getCommandSandboxStatistics,
                                                                     rpcActionDomain.c_str(),
-                                                                    cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_SANDBOX_STATISTICS,
+                                                                    SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_SANDBOX_STATISTICS,
                                                                     "Return the statistics of the sandbox reguaring to the current running command");
 	SCELAPP_ << "Register setCommandFeatures action";
     DeclareAction::addActionDescritionInstance<SlowCommandExecutor>(this,
                                                                     &SlowCommandExecutor::setCommandFeatures,
                                                                     rpcActionDomain.c_str(),
-                                                                    cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES,
+                                                                    SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES,
                                                                     "Set the features of the running command");
 	SCELAPP_ << "Register killCurrentCommand action";
     DeclareAction::addActionDescritionInstance<SlowCommandExecutor>(this,
                                                                     &SlowCommandExecutor::killCurrentCommand,
                                                                     rpcActionDomain.c_str(),
-                                                                    cccs::SlowControlExecutorRpcActionKey::RPC_KILL_CURRENT_COMMAND,
+                                                                    SlowControlExecutorRpcActionKey::RPC_KILL_CURRENT_COMMAND,
                                                                     "Set the features of the running command");
 
 	
@@ -422,13 +424,13 @@ bool SlowCommandExecutor::submitCommand(CDataWrapper *commandDescription) {
  */
 CDataWrapper* SlowCommandExecutor::getQueuedCommand(CDataWrapper *params, bool& detachParam) throw (CException) {
 	boost::mutex::scoped_lock lock(mutextQueueManagment);
-	chaos::CDataWrapper *result = new chaos::CDataWrapper();
+	CDataWrapper *result = new CDataWrapper();
 	//get the number
-	result->addInt32Value(cccs::SlowControlExecutorRpcActionKey::RPC_GET_QUEUED_COMMAND_NUMBER_UI32, static_cast<uint32_t>(commandSubmittedQueue.size()));
+	result->addInt32Value(SlowControlExecutorRpcActionKey::RPC_GET_QUEUED_COMMAND_NUMBER_UI32, static_cast<uint32_t>(commandSubmittedQueue.size()));
 	
 	//get last command name
 	std::string name = commandSubmittedQueue.top()->element->getStringValue(SlowCommandSubmissionKey::COMMAND_ALIAS_STR);
-	result->addStringValue(cccs::SlowControlExecutorRpcActionKey::RPC_GET_QUEUED_COMMAND_TOP_ALIAS_STR, name);
+	result->addStringValue(SlowControlExecutorRpcActionKey::RPC_GET_QUEUED_COMMAND_TOP_ALIAS_STR, name);
     return result;
 }
 
@@ -438,11 +440,11 @@ CDataWrapper* SlowCommandExecutor::getQueuedCommand(CDataWrapper *params, bool& 
  */
 CDataWrapper* SlowCommandExecutor::getCommandSandboxStatistics(CDataWrapper *params, bool& detachParam) throw (CException) {
 	boost::mutex::scoped_lock lock(mutextQueueManagment);
-	chaos::CDataWrapper *result = new chaos::CDataWrapper();
+	CDataWrapper *result = new CDataWrapper();
 	
 	//add statistic to result
-	result->addInt64Value(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_SANDBOX_STATISTICS_START_TIME_UI64, commandSandbox.stat.lastCmdStepStart);
-	result->addInt64Value(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_SANDBOX_STATISTICS_END_TIME_UI64, commandSandbox.stat.lastCmdStepTime);
+	result->addInt64Value(SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_SANDBOX_STATISTICS_START_TIME_UI64, commandSandbox.stat.lastCmdStepStart);
+	result->addInt64Value(SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_SANDBOX_STATISTICS_END_TIME_UI64, commandSandbox.stat.lastCmdStepTime);
     return result;
 }
 
@@ -460,14 +462,14 @@ CDataWrapper* SlowCommandExecutor::setCommandFeatures(CDataWrapper *params, bool
 	if(!commandSandbox.currentExecutingCommand) return NULL;
 	
 	//check wath feature we need to setup
-	if(params->hasKey(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL)) {
+	if(params->hasKey(SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL)) {
 		//has lock information to setup
-		commandSandbox.currentExecutingCommand->commandFeatures.lockedOnUserModification = params->getBoolValue(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL);
+		commandSandbox.currentExecutingCommand->commandFeatures.lockedOnUserModification = params->getBoolValue(SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL);
 	}
 	
-	if(params->hasKey(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI32)) {
+	if(params->hasKey(SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI32)) {
 		//has scheduler step wait
-		commandSandbox.currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay = params->getUInt32Value(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI32);
+		commandSandbox.currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay = params->getUInt32Value(SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI32);
 	}
     lockForCurrentCommand.unlock();
     commandSandbox.threadSchedulerPauseCondition.unlock();

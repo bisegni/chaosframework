@@ -30,6 +30,7 @@
 namespace chaos{ 
     using namespace std;
     
+	namespace chaos_data = chaos::common::data;
     /*!
      * History Output driver base abstract classe, that define two method to control
      * the initialization and history persistence of the data
@@ -51,19 +52,19 @@ namespace chaos{
         /*!
          * This method cache all object passed to driver
          */
-        void storeData(CDataWrapper *dataToStore) throw(CException);
+        void storeData(chaos_data::CDataWrapper *dataToStore) throw(CException);
         
         /*!
          * This method retrive the cached object by CSDawrapperUsed as query key and
          * return a pointer to the class ArrayPointer of CDataWrapper type
          */
-        virtual ArrayPointer<CDataWrapper>* retriveData(CDataWrapper*const)  throw(CException);
+        virtual ArrayPointer<chaos_data::CDataWrapper>* retriveData(chaos_data::CDataWrapper*const)  throw(CException);
         
         /*!
          * This method retrive the cached object by CSDawrapperUsed as query key and
          * return a pointer to the class ArrayPointer of CDataWrapper type
          */
-        virtual ArrayPointer<CDataWrapper>* retriveData()  throw(CException);
+        virtual ArrayPointer<chaos_data::CDataWrapper>* retriveData()  throw(CException);
   
         /*!
          * This method store a buffer into live cached
@@ -79,7 +80,7 @@ namespace chaos{
         /*!
          Update the driver configuration
          */
-        virtual CDataWrapper* updateConfiguration(CDataWrapper*);
+        virtual chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*);
     };
 }
 #endif

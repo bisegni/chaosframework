@@ -42,7 +42,7 @@ namespace chaos {
                         uint8_t implementedHandler();
                         
                         // Start the command execution
-                        void setHandler(chaos::CDataWrapper *data);
+                        void setHandler(chaos::common::data::CDataWrapper *data);
                     };
                     
                 }

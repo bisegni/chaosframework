@@ -35,6 +35,8 @@ namespace chaos {
     using namespace std;
     using namespace boost;
     
+	namespace chaos_data = chaos::common::data;
+	
     typedef boost::shared_mutex ActionSharedLock;
     typedef boost::unique_lock< boost::shared_mutex >   ActionWriteLock;
     typedef boost::shared_lock< boost::shared_mutex >   ActionReadLock;
@@ -96,7 +98,7 @@ namespace chaos {
          \param detachParam the action can set this param to true, in this case the deallocation is demanded to the action
          \return the result of the action
          */
-        virtual CDataWrapper* call(CDataWrapper *actionParam, bool& detachParam)  throw (CException) = 0;
+        virtual chaos_data::CDataWrapper* call(chaos_data::CDataWrapper *actionParam, bool& detachParam)  throw (CException) = 0;
         
         /*!
             set the string value for the determinated type
@@ -143,7 +145,7 @@ namespace chaos {
     template <typename T>
     class ActionDescriptor : public AbstractActionDescriptor {
     public:
-        typedef CDataWrapper* (T::*ActionPointerDef)(CDataWrapper*, bool&);
+        typedef chaos_data::CDataWrapper* (T::*ActionPointerDef)(chaos_data::CDataWrapper*, bool&);
 
         /*!
          construct the action class with objectClass pointer,object method pointer action domain name and action name
@@ -165,7 +167,7 @@ namespace chaos {
         /*!
             execute the action call
          */
-        CDataWrapper* call(CDataWrapper *actionParam, bool& detachParam)  throw (CException) {
+        chaos_data::CDataWrapper* call(chaos_data::CDataWrapper *actionParam, bool& detachParam)  throw (CException) {
                 //call the action with param
             CHAOS_ASSERT(objectReference)
             return ((*objectReference).*actionPointer)(actionParam, detachParam);

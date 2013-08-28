@@ -105,7 +105,7 @@ namespace chaos{
              *  \return boolean value that is true if one o more attribute has been processed, false if the device identification
              *          is not equal on the device id in the essage or it is not present
              */
-            bool executeHandler(CDataWrapper *message) throw (CException);
+            bool executeHandler(chaos::common::data::CDataWrapper *message) throw (CException);
         };
     }
 }

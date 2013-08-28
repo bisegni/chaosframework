@@ -30,6 +30,9 @@
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/rpc/RpcMessageForwarder.h>
+
+namespace chaos_data = chaos::common::data;
+
 namespace chaos {
     /*!
      Define the information for send a message to some server
@@ -38,7 +41,7 @@ namespace chaos {
         //! listO of the server where to send data
         vector<string> remoteServers;
         //message to forward to remote server
-        CDataWrapper *message;
+        chaos_data::CDataWrapper *message;
     } MessageForwardingInfo;
     
     class NetworkBroker;

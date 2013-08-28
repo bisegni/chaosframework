@@ -28,10 +28,11 @@
 #include <chaos/cu_toolkit/ControlManager/RTAbstractControlUnit.h>
 
 using namespace std;
-using namespace chaos;
 using namespace boost;
 using namespace boost::posix_time;
 
+using namespace chaos;
+using namespace chaos::common::data;
 
 class RTWorkerCU : public chaos::cu::RTAbstractControlUnit {
     typedef boost::mt19937 RNGType; 

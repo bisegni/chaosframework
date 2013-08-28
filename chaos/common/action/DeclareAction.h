@@ -25,6 +25,9 @@
 #include <chaos/common/data/CDataWrapper.h>
 
 namespace chaos {
+	
+	namespace chaos_data = chaos::common::data;
+	
         //!Base class for all other that need to expose an action
     /*!
      This class must manage the action description allocation and disposal
@@ -37,7 +40,7 @@ namespace chaos {
         /*!
          Encode action into his correspondend CDataWrapper
          */
-        void decodeAction(AbstActionDescShrPtr&, CDataWrapper&);
+        void decodeAction(AbstActionDescShrPtr&, chaos_data::CDataWrapper&);
     public:
         /*!
          Default destructor
@@ -71,7 +74,7 @@ namespace chaos {
         /*!
          Return the description of all action into a CDataWrapper
          */
-        void getActionDescrionsInDataWrapper(CDataWrapper&, bool close = true);
+        void getActionDescrionsInDataWrapper(chaos_data::CDataWrapper&, bool close = true);
     };
 }
 #endif

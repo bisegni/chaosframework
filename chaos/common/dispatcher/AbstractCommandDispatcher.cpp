@@ -17,11 +17,13 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "../global.h"
-    //#include "CommandDispatcher.h"
+
+#include <chaos/common/global.h>
 #include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
+
 using namespace chaos;
 using namespace std;
+
 
 AbstractCommandDispatcher::AbstractCommandDispatcher(string *alias){
     typeName = alias;
@@ -129,7 +131,7 @@ void AbstractCommandDispatcher::deregisterAction(DeclareAction* declareActionCla
 /*
  Send a message
  */
-bool AbstractCommandDispatcher::submitMessage(string& serverAndPort,  CDataWrapper* messageToSend, bool onThisThread)  throw(CException) {
+bool AbstractCommandDispatcher::submitMessage(string& serverAndPort,  chaos::common::data::CDataWrapper* messageToSend, bool onThisThread)  throw(CException) {
     CHAOS_ASSERT(messageToSend && rpcForwarderPtr)
     if(!messageToSend && serverAndPort.size()) return false;
     NetworkForwardInfo *nfi = new NetworkForwardInfo();
@@ -141,7 +143,7 @@ bool AbstractCommandDispatcher::submitMessage(string& serverAndPort,  CDataWrapp
 /*
  Update the configuration for the dispatcher
  */
-CDataWrapper* AbstractCommandDispatcher::updateConfiguration(CDataWrapper*)  throw(CException) {
+chaos::common::data::CDataWrapper* AbstractCommandDispatcher::updateConfiguration(chaos::common::data::CDataWrapper*)  throw(CException) {
     return NULL;
 }
 

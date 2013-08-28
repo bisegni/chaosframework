@@ -26,6 +26,7 @@
 #include <msgpack/rpc/transport/udp.h>
 
 using namespace chaos;
+using namespace chaos::common::data;
 using namespace std;
 using namespace boost;
 using namespace boost::algorithm;
@@ -136,7 +137,7 @@ void MsgPackClient::processBufferElement(NetworkForwardInfo *messageInfo, Elemen
         //msgpack::rpc::client msgPackClient(msgpack::rpc::udp_builder(), ));
     
         //serialize the call packet
-    auto_ptr<chaos::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
+    auto_ptr<SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
     msgpack::type::raw_ref rawMsg(callSerialization->getBufferPtr() , (uint32_t)callSerialization->getBufferLen());
     try{
         rawResult = localSession.call(RpcActionDefinitionKey::CS_CMDM_RPC_TAG, rawMsg).get<msgpack::type::raw_ref>();

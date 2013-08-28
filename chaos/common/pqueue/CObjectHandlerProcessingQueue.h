@@ -31,6 +31,8 @@
 
 #include <queue>
 
+namespace chaos_data = chaos::common::data;
+
 namespace chaos {
     using namespace std;
     using namespace boost;
@@ -47,7 +49,7 @@ namespace chaos {
         _heapEngine bufferQueue;
         boost::condition_variable liveThreadConditionLock;
         boost::condition_variable emptyQueueConditionLock;
-        boost::function<CDataWrapper*(CDataWrapper*)> handler;
+        boost::function<chaos_data::CDataWrapper*(chaos_data::CDataWrapper*)> handler;
             //thread group
         CThreadGroup threadGroup;
         
@@ -56,7 +58,7 @@ namespace chaos {
         /*!
          
          */
-        void setHandler(boost::function<CDataWrapper*(CDataWrapper*, bool)> _handler){
+        void setHandler(boost::function<chaos_data::CDataWrapper*(chaos_data::CDataWrapper*, bool)> _handler){
             handler = _handler;
         }
         

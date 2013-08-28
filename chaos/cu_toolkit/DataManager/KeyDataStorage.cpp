@@ -26,6 +26,7 @@
 using namespace std;
 using namespace chaos;
 using namespace chaos::cu;
+using namespace chaos::common::data;
 
 KeyDataStorage::KeyDataStorage(const char * key):dataSetKey(key),keyData(new CDataWrapper()) {
         //associate the key to datawrapper used for retrive last personal data

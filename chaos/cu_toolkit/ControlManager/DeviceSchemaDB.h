@@ -27,12 +27,14 @@
 
 #include <boost/lexical_cast.hpp>
 
+namespace chaos_data = chaos::common::data;
+
 namespace chaos {
     namespace cu {
         
         class AbstractControlUnit;
         
-        class DeviceSchemaDB : private CUSchemaDB {
+        class DeviceSchemaDB : private chaos_data::CUSchemaDB {
             //friend class AbstractControlUnit;
             
             std::string deviceID;
@@ -53,13 +55,13 @@ namespace chaos {
              
              \param serializedDataset serialze dataset
              */
-            void addAttributeToDataSetFromDataWrapper(CDataWrapper& serializedDataset);
+            void addAttributeToDataSetFromDataWrapper(chaos_data::CDataWrapper& serializedDataset);
             
             //! Fill a CDataWrapper with a single device information
             /*!
              fill a CDataWrapper with the dataset decode
              */
-            void fillDataWrapperWithDataSetDescription(CDataWrapper&);
+            void fillDataWrapperWithDataSetDescription(chaos_data::CDataWrapper&);
             
             //! Add dataset attribute
             /*!
@@ -111,7 +113,7 @@ namespace chaos {
              \param rangeInfo the range and default value of the attribute
              */
             void getAttributeRangeValueInfo(const string& attributesName,
-                                            RangeValueInfo& rangeInfo);
+                                            chaos_data::RangeValueInfo& rangeInfo);
             
             //!Set the range values for an attribute of the device
             /*!
@@ -122,7 +124,7 @@ namespace chaos {
              some finromation, relative field are not touched.
              */
             void setAttributeRangeValueInfo(const string& attributesName,
-                                            RangeValueInfo& rangeInfo);
+                                            chaos_data::RangeValueInfo& rangeInfo);
             
             //!Get the direction of an attribute
             /*!

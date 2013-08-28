@@ -31,6 +31,8 @@
 
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 
+namespace chaos_data = chaos::common::data;
+
 namespace chaos{
     namespace cu {
         using namespace boost;
@@ -75,7 +77,7 @@ namespace chaos{
 			/*
 			 Configure the sandbox and all subtree of the CU
 			 */
-			CDataWrapper* updateConfiguration(CDataWrapper*);
+			chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*);
 			/*
 			 *
 			 */
@@ -89,7 +91,7 @@ namespace chaos{
 			/*
 			 Initialize a device id KeyDataStorageBuffer
 			 */
-			void initDeviceIDKeyDataStorage(string&, CDataWrapper*) throw(CException);
+			void initDeviceIDKeyDataStorage(string&, chaos_data::CDataWrapper*) throw(CException);
 			
 			/*
 			 Initialize a device id KeyDataStorageBuffer
@@ -99,22 +101,22 @@ namespace chaos{
 			/*
 			 Submit a CDataWrapper on device id KeyDataStorage
 			 */
-			void pushDeviceDataByIdKey(string&, CDataWrapper*) throw(CException);
+			void pushDeviceDataByIdKey(string&, chaos_data::CDataWrapper*) throw(CException);
 			
 			/*
 			 Get the last CDataWrapper from the live data for the device id key
 			 */
-			ArrayPointer<CDataWrapper> *getLastCDataWrapperForDeviceIdKey(string&)  throw(CException);
+			ArrayPointer<chaos_data::CDataWrapper> *getLastCDataWrapperForDeviceIdKey(string&)  throw(CException);
 			/*
 			 return a new instance of CDataWrapper filled with a mandatory data
 			 according to key
 			 */
-			CDataWrapper *getNewDataWrapperForDeviceIdKey(string&);
+			chaos_data::CDataWrapper *getNewDataWrapperForDeviceIdKey(string&);
 			
 			/*
 			 Configure the datamanager
 			 */
-			void updateConfigurationForDeviceIdKey(string&, CDataWrapper*);
+			void updateConfigurationForDeviceIdKey(string&, chaos_data::CDataWrapper*);
 		};
 	}
 }

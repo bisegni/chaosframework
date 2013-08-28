@@ -21,6 +21,7 @@
 #include <chaos/common/chaos_constants.h>
 
 using namespace chaos;
+using namespace chaos::common::data;
 
 /*! \name Check Request Result Macro
  These macros are used to check the result of a syncronous request operation. 

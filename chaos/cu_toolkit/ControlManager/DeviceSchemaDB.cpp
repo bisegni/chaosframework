@@ -21,6 +21,7 @@
 #include <chaos/cu_toolkit/ControlManager/DeviceSchemaDB.h>
 
 using namespace chaos::cu;
+using namespace chaos::common::data;
 
 DeviceSchemaDB::DeviceSchemaDB(bool onMemory):CUSchemaDB(onMemory) {
     

@@ -21,6 +21,31 @@
 #ifndef __CHAOSFramework__ReaderDataService__
 #define __CHAOSFramework__ReaderDataService__
 
-#include <iostream>
+#include <string>
+
+namespace chaos {
+	namespace common {
+		namespace data {
+			namespace broker {
+				
+				class DataBroker;
+				
+				namespace reader {
+					
+					class ReaderDataService {
+						
+						friend class chaos::common::data::broker::DataBroker;
+						
+						std::string publisServiceName;
+						
+						ReaderDataService(const char *keyName);
+						ReaderDataService(std::string& keyName);
+						~ReaderDataService();
+					};
+				}
+			}
+		}
+	}
+}
 
 #endif /* defined(__CHAOSFramework__ReaderDataService__) */

@@ -7,7 +7,9 @@
 //
 
 #include <chaos/common/io/IODataDriver.h>
+
 using namespace chaos;
+using namespace chaos::common::data;
 
 /*
  * Init method, the has map has all received value for configuration
@@ -32,7 +34,7 @@ void IODataDriver::storeData(CDataWrapper *dataToStore) throw(CException){
     
         //get the key to store data on the memcached
         //string key = dataToStore->getStringValue(DataPackKey::CS_CSV_DEVICE_ID);
-    SerializationBuffer* serialization = dataToStore->getBSONData();
+	SerializationBuffer* serialization = dataToStore->getBSONData();
     if(!serialization) {
         return;
     }

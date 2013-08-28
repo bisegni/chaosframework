@@ -23,13 +23,16 @@
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandConstants.h>
 
 using namespace chaos;
+
+using namespace chaos::common::data;
+
 using namespace chaos::cu;
-namespace cucs = chaos::cu::control_manager::slow_command;
+using namespace chaos::cu::control_manager::slow_command;
 
 #define LCCU_ LAPP_ << "[Slow Command Control Unit:" << getCUInstance() <<"] - "
 
 SCAbstractControlUnit::SCAbstractControlUnit() {
-    slowCommandExecutor = new cucs::SlowCommandExecutor(cuInstance, this);
+    slowCommandExecutor = new SlowCommandExecutor(cuInstance, this);
 
 }
 
@@ -61,7 +64,7 @@ void SCAbstractControlUnit::init(void *initData) throw(CException) {
 	AbstractControlUnit::init(initData);
 	
     LCCU_ << "Install default slow command for device " << DeviceSchemaDB::getDeviceID();
-    installCommand<cucs::command::SetAttributeCommand>(control_manager::slow_command::SlowCommandsKey::ATTRIBUTE_SET_VALUE_CMD_ALIAS);
+    installCommand<command::SetAttributeCommand>(control_manager::slow_command::SlowCommandsKey::ATTRIBUTE_SET_VALUE_CMD_ALIAS);
     
     LCCU_ << "Initializing slow command sandbox for device " << DeviceSchemaDB::getDeviceID();
     utility::StartableService::initImplementation(slowCommandExecutor, (void*)NULL, "Slow Command Executor", "SCAbstractControlUnit::init");
@@ -122,7 +125,7 @@ void SCAbstractControlUnit::setDefaultCommand(const char * dafaultCommandName) {
  Receive the evento for set the dataset input element
  */
 CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
-    if(!datasetAttributeValues->hasKey(cucs::SlowCommandSubmissionKey::COMMAND_ALIAS_STR)) {
+    if(!datasetAttributeValues->hasKey(SlowCommandSubmissionKey::COMMAND_ALIAS_STR)) {
         throw CException(-4, "The alias of the slow command is mandatory", "SlowCommandExecutor::setupCommand");
     }
     // in slow control cu the CDataWrapper instance received from rpc is internally managed
@@ -140,7 +143,7 @@ void SCAbstractControlUnit::addSharedVariable(std::string name, uint32_t max_siz
 
 void SCAbstractControlUnit::setSharedVariableValue(std::string name, void *value, uint32_t value_size) {
     // add the attribute to the shared setting object
-    cucs::AttributeIndexType attribute_index = 0;
+    AttributeIndexType attribute_index = 0;
     if((attribute_index = slowCommandExecutor->commandSandbox.sharedAttributeSetting.getIndexForName(name))) {
         slowCommandExecutor->commandSandbox.sharedAttributeSetting.setValueForAttribute(attribute_index, value, value_size);
     }

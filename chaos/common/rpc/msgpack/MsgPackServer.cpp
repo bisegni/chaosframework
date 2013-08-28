@@ -27,6 +27,7 @@
 #include <chaos/common/exception/CException.h>
 
 using namespace chaos;
+using namespace chaos::common::data;
 
 #define DEFAULT_MSGPACK_DISPATCHER_PORT             8888
 #define DEFAULT_MSGPACK_DISPATCHER_THREAD_NUMBER    4

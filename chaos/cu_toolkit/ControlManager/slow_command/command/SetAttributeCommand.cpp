@@ -21,51 +21,52 @@
 #include <string>
 #include <chaos/cu_toolkit/ControlManager/slow_command/command/SetAttributeCommand.h>
 
-namespace cccs = chaos::cu::control_manager::slow_command;
-namespace cccsc = chaos::cu::control_manager::slow_command::command;
+using namespace chaos::common::data;
+using namespace chaos::cu::control_manager::slow_command;
+using namespace chaos::cu::control_manager::slow_command::command;
 
-uint8_t cccsc::SetAttributeCommand::implementedHandler() {
-    return cccs::HandlerType::HT_Set;
+uint8_t SetAttributeCommand::implementedHandler() {
+    return HandlerType::HT_Set;
 }
 
 // Start the command execution
-void cccsc::SetAttributeCommand::setHandler(chaos::CDataWrapper *data) {
+void SetAttributeCommand::setHandler(CDataWrapper *data) {
     if(!data) return;
     
     if(!data->hasKey(SlowCommandsKey::ATTRIBUTE_SET_NAME) ||
-       !data->hasKey(cccs::SlowCommandsKey::ATTRIBUTE_SET_VALUE)) {
+       !data->hasKey(SlowCommandsKey::ATTRIBUTE_SET_VALUE)) {
         throw CException(1, "No default key found!", __FUNCTION__);
     }
     
     //we can do the work
     
-    std::string name = data->getStringValue(cccs::SlowCommandsKey::ATTRIBUTE_SET_NAME);
-    cccs::ValueSetting *vs = getValueSetting(name.c_str());
+    std::string name = data->getStringValue(SlowCommandsKey::ATTRIBUTE_SET_NAME);
+    ValueSetting *vs = getValueSetting(name.c_str());
     
     switch (vs->type) {
         case chaos::DataType::TYPE_BOOLEAN:{
-            bool v = data->getBoolValue(cccs::SlowCommandsKey::ATTRIBUTE_SET_VALUE);
+            bool v = data->getBoolValue(SlowCommandsKey::ATTRIBUTE_SET_VALUE);
             vs->setNextValue(&v, 1);
             break;}
         case chaos::DataType::TYPE_BYTEARRAY:{
             int bin_size = 0;
-            const char * v = data->getBinaryValue(cccs::SlowCommandsKey::ATTRIBUTE_SET_VALUE, bin_size);
+            const char * v = data->getBinaryValue(SlowCommandsKey::ATTRIBUTE_SET_VALUE, bin_size);
             vs->setNextValue(static_cast<const void*>(v), bin_size);
             break;}
         case chaos::DataType::TYPE_DOUBLE:{
-            double v = data->getDoubleValue(cccs::SlowCommandsKey::ATTRIBUTE_SET_VALUE);
+            double v = data->getDoubleValue(SlowCommandsKey::ATTRIBUTE_SET_VALUE);
             vs->setNextValue(&v, sizeof(double));
             break;}
         case chaos::DataType::TYPE_INT32:{
-            int32_t v = data->getInt32Value(cccs::SlowCommandsKey::ATTRIBUTE_SET_VALUE);
+            int32_t v = data->getInt32Value(SlowCommandsKey::ATTRIBUTE_SET_VALUE);
             vs->setNextValue(&v, sizeof(int32_t));
             break;}
         case chaos::DataType::TYPE_INT64:{
-            int64_t v = data->getInt64Value(cccs::SlowCommandsKey::ATTRIBUTE_SET_VALUE);
+            int64_t v = data->getInt64Value(SlowCommandsKey::ATTRIBUTE_SET_VALUE);
             vs->setNextValue(&v, sizeof(int64_t));
             break;}
         case chaos::DataType::TYPE_STRING:{
-            string v = data->getStringValue(cccs::SlowCommandsKey::ATTRIBUTE_SET_VALUE);
+            string v = data->getStringValue(SlowCommandsKey::ATTRIBUTE_SET_VALUE);
             vs->setNextValue(v.c_str(), sizeof(int64_t));
             break;}
         case chaos::DataType::TYPE_STRUCT:

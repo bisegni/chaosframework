@@ -23,6 +23,9 @@
 #include <chaos/cu_toolkit/ControlManager/RTAbstractControlUnit.h>
 
 using namespace chaos;
+
+using namespace chaos::common::data;
+
 using namespace chaos::cu;
 
 #define RTCULAPP_ LAPP_ << "[Real Time Control Unit:"<<getCUInstance()<<"] - "

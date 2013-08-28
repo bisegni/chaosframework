@@ -27,10 +27,14 @@
 
 #define LMEMDRIVER_ LAPP_ << "[Memcached IO Driver] - "
 
+namespace chaos_data = chaos::common::data;
+
 namespace chaos{ 
     using namespace std;
     using namespace boost;
     using namespace boost::algorithm;
+
+	
     //using namespace memcache;
 
     /*
@@ -109,7 +113,7 @@ namespace chaos{
     /*
      Update the driver configuration
      */
-    CDataWrapper* IOMemcachedDriver::updateConfiguration(CDataWrapper* newConfigration) {
+    chaos_data::CDataWrapper* IOMemcachedDriver::updateConfiguration(chaos_data::CDataWrapper* newConfigration) {
         memcached_return_t configResult = MEMCACHED_SUCCESS;
         boost::mutex::scoped_lock lock(useMCMutex);
         LMEMDRIVER_ << "Update Configuration";
@@ -124,7 +128,7 @@ namespace chaos{
         
         if(newConfigration->hasKey(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS) && memClient){
             LMEMDRIVER_ << "Get the DataManager LiveData address value";
-            auto_ptr<CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS));
+            auto_ptr<chaos_data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS));
             //update the live data address
             
             //we need forst to reset all the server list 

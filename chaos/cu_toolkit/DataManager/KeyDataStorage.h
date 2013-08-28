@@ -25,6 +25,8 @@
 #include <chaos/cu_toolkit/DataManager/MultiBufferDataStorage.h>
 #include <chaos/common/utility/ArrayPointer.h>
 
+namespace chaos_data = chaos::common::data;
+
 namespace chaos{
     
     namespace cu {
@@ -34,33 +36,33 @@ namespace chaos{
         class KeyDataStorage : public MultiBufferDataStorage {
             string dataSetKey;
             IODataDriver *liveIODriver;
-            auto_ptr<CDataWrapper> keyData;
+            auto_ptr<chaos_data::CDataWrapper> keyData;
         public:
             KeyDataStorage(const char*);
             KeyDataStorage(string&);
             virtual ~KeyDataStorage();
             
-            void init(CDataWrapper*);
+            void init(chaos_data::CDataWrapper*);
             
             /*
              Return a new instace for the CSDatawrapped
              */
-            CDataWrapper* getNewDataWrapper();
+            chaos_data::CDataWrapper* getNewDataWrapper();
             
             /*
              Retrive the data from Live Storage
              */
-            ArrayPointer<CDataWrapper>* getLastDataSet();
+            ArrayPointer<chaos_data::CDataWrapper>* getLastDataSet();
             
             /*
              Retrive the data from History Storage
              */
-            ArrayPointer<CDataWrapper>*  getHistoricalDataSet(CDataWrapper*);
+            ArrayPointer<chaos_data::CDataWrapper>*  getHistoricalDataSet(chaos_data::CDataWrapper*);
             
             /*
              Permit to be live configurable
              */
-            CDataWrapper* updateConfiguration(CDataWrapper *);
+            chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper *);
             
         };
     }

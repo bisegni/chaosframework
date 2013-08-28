@@ -24,6 +24,8 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/exception/CException.h>
 
+namespace chaos_data = chaos::common::data;
+
 namespace chaos {
         //!Handle the rpc pack receivement event
     /*!
@@ -39,7 +41,7 @@ namespace chaos {
          @return the response to the pack, if there is one
          */
             //virtual CDataWrapper * newRpcPackHasArrived(CDataWrapper& newPack) throw(CException) = 0;
-        virtual CDataWrapper* dispatchCommand(CDataWrapper*)  throw(CException) = 0;
+        virtual chaos_data::CDataWrapper* dispatchCommand(chaos_data::CDataWrapper*)  throw(CException) = 0;
     };
 }
 #endif

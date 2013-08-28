@@ -33,6 +33,8 @@
 #define TAG_BUFFER_LIVE                 1
 #define TAG_BUFFER_HST                  2
 
+namespace chaos_data = chaos::common::data;
+
 namespace chaos {
     
     namespace cu {
@@ -42,7 +44,7 @@ namespace chaos {
          THis class implement the use of two OutputDataBuffer, to permit the CU
          to send data to the live and the history database
          */
-        class MultiBufferDataStorage : public CObjectProcessingQueueListener<CDataWrapper>, public Configurable {
+        class MultiBufferDataStorage : public CObjectProcessingQueueListener<chaos_data::CDataWrapper>, public Configurable {
             int32_t liveThreadNumber;
             //live data offset in msec to waith
             //according to pack timestamp
@@ -83,7 +85,7 @@ namespace chaos {
             /*
              Initialize the Multisequence buffer
              */
-            virtual void init(CDataWrapper*);
+            virtual void init(chaos_data::CDataWrapper*);
             
             /*
              Deinitialize the Multisequence buffer
@@ -92,15 +94,15 @@ namespace chaos {
             /*
              OBuffer listener
              */
-            virtual bool elementWillBeProcessed(int bufferTag, CDataWrapper*);
+            virtual bool elementWillBeProcessed(int bufferTag, chaos_data::CDataWrapper*);
             /*
              OBuffer listener
              */
-            virtual bool elementWillBeDiscarded(int, CDataWrapper*);
+            virtual bool elementWillBeDiscarded(int, chaos_data::CDataWrapper*);
             /*
              Push raw data in to buffer
              */
-            virtual void pushDataSet(CDataWrapper*);
+            virtual void pushDataSet(chaos_data::CDataWrapper*);
             
             /*
              Set the first buffer
@@ -115,7 +117,7 @@ namespace chaos {
             /*
              Permit to be live configurable
              */
-            virtual CDataWrapper* updateConfiguration(CDataWrapper*);
+            virtual chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*);
             
             /*
              Return the IODataDriver pointer for the input buffer tag

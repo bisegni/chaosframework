@@ -18,6 +18,9 @@
 #include <chaos/cu_toolkit/ControlManager/RTAbstractControlUnit.h>
 
 using namespace std;
+
+namespace chaos_data = chaos::common::data;
+
 namespace chaos {
     namespace cu {
         namespace perf_test {
@@ -46,7 +49,7 @@ namespace chaos {
                 /*
                  Define the Control Unit Dataset and Actions
                  */
-                virtual void unitDefineActionAndDataset(CDataWrapper&)throw(CException);
+                virtual void unitDefineActionAndDataset(chaos_data::CDataWrapper&)throw(CException);
                 
                 /*(Optional)
                  Initialize the Control Unit and all driver, with received param from MetadataServer

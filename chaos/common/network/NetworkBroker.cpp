@@ -38,7 +38,7 @@
 
 using namespace chaos;
 using namespace chaos::event;
-
+using namespace chaos::common::data;
 /*!
  
  */

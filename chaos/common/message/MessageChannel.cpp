@@ -22,6 +22,7 @@
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
 using namespace chaos;
+using namespace chaos::common::data;
 
 MessageChannel::MessageChannel(NetworkBroker *_broker, const char*const _remoteHost):broker(_broker){
     //create the network address

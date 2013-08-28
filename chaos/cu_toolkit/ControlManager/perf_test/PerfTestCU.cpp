@@ -10,6 +10,9 @@
 #include <chaos/cu_toolkit/ControlManager/perf_test/PerfTestCU.h>
 
 using namespace chaos;
+
+using namespace chaos::common::data;
+
 using namespace chaos::cu;
 using namespace chaos::cu::perf_test;
 

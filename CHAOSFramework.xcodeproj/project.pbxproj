@@ -27,13 +27,10 @@
 		322E1579161B629700C3003C /* NetworkAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = 322E1577161B629700C3003C /* NetworkAddress.h */; };
 		322E157A161B629700C3003C /* NetworkBroker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322E1578161B629700C3003C /* NetworkBroker.cpp */; };
 		322E157D161B62A900C3003C /* NetworkBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 322E157C161B62A900C3003C /* NetworkBroker.h */; };
-		3230D9D21652A38600113C93 /* libchaos_common.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 326026E914B301F600C906CE /* libchaos_common.dylib */; };
 		3230DA0A1652C41D00113C93 /* NetworkForwardInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3230DA091652C41D00113C93 /* NetworkForwardInfo.h */; };
 		3230DA0D1652C44B00113C93 /* RpcMessageForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3230DA0C1652C44B00113C93 /* RpcMessageForwarder.h */; };
 		323236CB164573C60052CE06 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323236CA164573C60052CE06 /* main.cpp */; };
-		323236CD164573C60052CE06 /* ChaosNodeDirectory.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 323236CC164573C60052CE06 /* ChaosNodeDirectory.1 */; };
 		323236DA164573F50052CE06 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323236D9164573F50052CE06 /* main.cpp */; };
-		323236DC164573F50052CE06 /* ChaosHSTService.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 323236DB164573F50052CE06 /* ChaosHSTService.1 */; };
 		3232F458177743DC003E1D4A /* AbstractDriverPlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 3232F457177743DC003E1D4A /* AbstractDriverPlugin.h */; };
 		3235110A17B3EAE500E39E14 /* TemplatedConcurrentQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 3235110817B3EAE500E39E14 /* TemplatedConcurrentQueue.h */; };
 		3244C0C6168CB96B007C802C /* Record.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244C0C5168CB96B007C802C /* Record.h */; };
@@ -373,39 +370,6 @@
 		32FA968417C894830000BE9E /* Semaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FA968217C894830000BE9E /* Semaphore.h */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		32E9F48F16485F8D006EAF37 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3260260D14B300FE00C906CE /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 326026E814B301F600C906CE;
-			remoteInfo = chaos_common;
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		323236C5164573C60052CE06 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-				323236CD164573C60052CE06 /* ChaosNodeDirectory.1 in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-		323236D4164573F50052CE06 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-				323236DC164573F50052CE06 /* ChaosHSTService.1 in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
 		320192B914DEEAC000318F00 /* CObjectHandlerProcessingQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CObjectHandlerProcessingQueue.h; sourceTree = "<group>"; };
 		320C2189151B555A00BD0F41 /* EventServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventServer.h; sourceTree = "<group>"; };
@@ -431,10 +395,10 @@
 		3230D9E81652AAF100113C93 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		3230DA091652C41D00113C93 /* NetworkForwardInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkForwardInfo.h; sourceTree = "<group>"; };
 		3230DA0C1652C44B00113C93 /* RpcMessageForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcMessageForwarder.h; sourceTree = "<group>"; };
-		323236C7164573C60052CE06 /* ChaosNodeDirectory */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosNodeDirectory; sourceTree = BUILT_PRODUCTS_DIR; };
+		323236C7164573C60052CE06 /* ChaosNodeDirectory */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = ChaosNodeDirectory; path = /Volumes/DeepData/Sorgenti/chaos_bundle_dev/chaosframework/usr/local/bin/ChaosNodeDirectory; sourceTree = "<absolute>"; };
 		323236CA164573C60052CE06 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		323236CC164573C60052CE06 /* ChaosNodeDirectory.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ChaosNodeDirectory.1; sourceTree = "<group>"; };
-		323236D6164573F50052CE06 /* ChaosHSTService */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosHSTService; sourceTree = BUILT_PRODUCTS_DIR; };
+		323236D6164573F50052CE06 /* ChaosHSTService */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = ChaosHSTService; path = /Volumes/DeepData/Sorgenti/chaos_bundle_dev/chaosframework/usr/local/bin/ChaosHSTService; sourceTree = "<absolute>"; };
 		323236D9164573F50052CE06 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		323236DB164573F50052CE06 /* ChaosHSTService.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ChaosHSTService.1; sourceTree = "<group>"; };
 		3232F457177743DC003E1D4A /* AbstractDriverPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDriverPlugin.h; sourceTree = "<group>"; };
@@ -463,9 +427,9 @@
 		325F86EB14D9E59D00CDF35F /* InetUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InetUtility.h; sourceTree = "<group>"; };
 		325F8B4F1763AF2300EFE616 /* SlowCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SlowCommand.cpp; sourceTree = "<group>"; };
 		325F8B501763AF2300EFE616 /* SlowCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlowCommand.h; sourceTree = "<group>"; };
-		326026E914B301F600C906CE /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_common.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		3260276614B3068100C906CE /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_cutoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		3260278714B307DA00C906CE /* libchaos_uitoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_uitoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		326026E914B301F600C906CE /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libchaos_common.dylib; path = /Volumes/DeepData/Sorgenti/chaos_bundle_dev/chaosframework/usr/local/lib/libchaos_common.dylib; sourceTree = "<absolute>"; };
+		3260276614B3068100C906CE /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libchaos_cutoolkit.dylib; path = /Volumes/DeepData/Sorgenti/chaos_bundle_dev/chaosframework/usr/local/lib/libchaos_cutoolkit.dylib; sourceTree = "<absolute>"; };
+		3260278714B307DA00C906CE /* libchaos_uitoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libchaos_uitoolkit.dylib; path = /Volumes/DeepData/Sorgenti/chaos_bundle_dev/chaosframework/usr/local/lib/libchaos_uitoolkit.dylib; sourceTree = "<absolute>"; };
 		32640A09169DCC5800450962 /* BufferTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BufferTracker.h; sourceTree = "<group>"; };
 		32640A0A169DCC5800450962 /* GarbageThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GarbageThread.h; sourceTree = "<group>"; };
 		32640A0C169DCC5800450962 /* DataAggregationInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataAggregationInterface.h; sourceTree = "<group>"; };
@@ -807,7 +771,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3230D9D21652A38600113C93 /* libchaos_common.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -980,20 +943,7 @@
 				326DB3B114B38BC00018A8D0 /* chaos */,
 				323236C9164573C60052CE06 /* ChaosNodeDirectory */,
 				323236D8164573F50052CE06 /* ChaosHSTService */,
-				326026EA14B301F600C906CE /* Products */,
 			);
-			sourceTree = "<group>";
-		};
-		326026EA14B301F600C906CE /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				326026E914B301F600C906CE /* libchaos_common.dylib */,
-				3260276614B3068100C906CE /* libchaos_cutoolkit.dylib */,
-				3260278714B307DA00C906CE /* libchaos_uitoolkit.dylib */,
-				323236C7164573C60052CE06 /* ChaosNodeDirectory */,
-				323236D6164573F50052CE06 /* ChaosHSTService */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		32640A07169DCC1B00450962 /* caching_system */ = {
@@ -2019,12 +1969,10 @@
 			buildPhases = (
 				323236C3164573C60052CE06 /* Sources */,
 				323236C4164573C60052CE06 /* Frameworks */,
-				323236C5164573C60052CE06 /* CopyFiles */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				32E9F49016485F8D006EAF37 /* PBXTargetDependency */,
 			);
 			name = ChaosNodeDirectory;
 			productName = ChaosNodeDirectory;
@@ -2037,7 +1985,6 @@
 			buildPhases = (
 				323236D2164573F50052CE06 /* Sources */,
 				323236D3164573F50052CE06 /* Frameworks */,
-				323236D4164573F50052CE06 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -2117,7 +2064,7 @@
 				en,
 			);
 			mainGroup = 3260260B14B300FE00C906CE;
-			productRefGroup = 326026EA14B301F600C906CE /* Products */;
+			productRefGroup = 3260260B14B300FE00C906CE;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -2306,14 +2253,6 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		32E9F49016485F8D006EAF37 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 326026E814B301F600C906CE /* chaos_common */;
-			targetProxy = 32E9F48F16485F8D006EAF37 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
 		323236CE164573C60052CE06 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -2324,6 +2263,7 @@
 				CLANG_CXX_LIBRARY = "libstdc++";
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/bin";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -2346,8 +2286,6 @@
 					/usr/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/chaos/common\"",
 					"$(SRCROOT)/usr/local/lib",
 					/usr/local/lib,
 				);
@@ -2383,6 +2321,7 @@
 				CLANG_CXX_LIBRARY = "libstdc++";
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/bin";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -2399,8 +2338,6 @@
 					/usr/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/chaos/common\"",
 					"$(SRCROOT)/usr/local/lib",
 					/usr/local/lib,
 				);
@@ -2435,6 +2372,7 @@
 				CLANG_CXX_LIBRARY = "libstdc++";
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/bin";
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -2450,6 +2388,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/usr/local/lib",
+					/usr/local/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2466,6 +2408,7 @@
 				CLANG_CXX_LIBRARY = "libstdc++";
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/bin";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -2475,6 +2418,10 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LIBRARY_SEARCH_PATHS = (
+					"$(SRCROOT)/usr/local/lib",
+					/usr/local/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -2502,6 +2449,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -2555,6 +2503,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = lib;
@@ -2601,6 +2550,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -2624,8 +2574,8 @@
 					/usr/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/usr/local/lib",
 					/usr/local/lib,
+					"$(SRCROOT)/usr/local/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
@@ -2655,6 +2605,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = lib;
@@ -2672,8 +2623,8 @@
 					/usr/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/usr/local/lib",
 					/usr/local/lib,
+					"$(SRCROOT)/usr/local/lib",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				OTHER_LDFLAGS = (
@@ -2702,6 +2653,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
 				COPY_PHASE_STRIP = NO;
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -2725,7 +2677,6 @@
 					/usr/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"\"$(SRCROOT)/chaos/common\"",
 					"$(SRCROOT)/usr/local/lib",
 					/usr/local/lib,
 				);
@@ -2757,6 +2708,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				EXECUTABLE_PREFIX = lib;
@@ -2774,7 +2726,6 @@
 					/usr/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"\"$(SRCROOT)/chaos/common\"",
 					"$(SRCROOT)/usr/local/lib",
 					/usr/local/lib,
 				);

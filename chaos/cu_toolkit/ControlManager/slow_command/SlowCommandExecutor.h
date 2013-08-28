@@ -41,6 +41,8 @@
 
 #define COMMAND_QUEUE_DEFAULT_LENGTH 1024
 
+namespace chaos_data = chaos::common::data;
+
 namespace chaos{
     namespace cu {
         
@@ -97,7 +99,7 @@ namespace chaos{
                     boost::condition_variable   emptyQueueConditionLock;
                     
                     //! queue for the arrived command
-                    boost::heap::priority_queue< PRIORITY_ELEMENT(CDataWrapper)* > commandSubmittedQueue;
+                    boost::heap::priority_queue< PRIORITY_ELEMENT(chaos_data::CDataWrapper)* > commandSubmittedQueue;
 
                     
                     //! this map correlate the alias to the object instancer
@@ -116,7 +118,7 @@ namespace chaos{
 						to the alias contained into the submissionInfo param.
 						\param the submission param of the command
                      */
-                    SlowCommand *instanceCommandInfo(CDataWrapper *submissionInfo);
+                    SlowCommand *instanceCommandInfo(chaos_data::CDataWrapper *submissionInfo);
                     
                     //! Check if the waithing command can be installed
                     /*!
@@ -140,7 +142,7 @@ namespace chaos{
 						\ingroup API_Slow_Control
 						Return the number and the infromation of the queued command via RPC
                      */
-                    CDataWrapper* getQueuedCommand(CDataWrapper *params, bool& detachParam) throw (CException);
+                    chaos_data::CDataWrapper* getQueuedCommand(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
 					
 					//! Get the statistic for the current running command rpc action
                     /*!
@@ -148,7 +150,7 @@ namespace chaos{
 						Return infromation about the execution statistic for the current running command, collected into the 
 						chaos::cu::control_manager::slow_command::SandboxStat structure.
                      */
-					CDataWrapper* getCommandSandboxStatistics(CDataWrapper *params, bool& detachParam) throw (CException);
+					chaos_data::CDataWrapper* getCommandSandboxStatistics(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
 					
 					
 					//! Command features modification rpc action
@@ -156,7 +158,7 @@ namespace chaos{
 						\ingroup API_Slow_Control
 						Updat ethe modiable features of the running command
                      */
-					CDataWrapper* setCommandFeatures(CDataWrapper *params, bool& detachParam) throw (CException);
+					chaos_data::CDataWrapper* setCommandFeatures(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
 					
 					//! Kill current command rpc action
                     /*!
@@ -165,7 +167,7 @@ namespace chaos{
 						from the scheduler. It waith the lock on the scehduler  and the provi to delete 
 						the current command "as is".
                      */
-					CDataWrapper* killCurrentCommand(CDataWrapper *params, bool& detachParam) throw (CException);
+					chaos_data::CDataWrapper* killCurrentCommand(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
                 public:
                     
                     // Initialize instance
@@ -202,7 +204,7 @@ namespace chaos{
                      The information for the command are contained into the DataWrapper data serialization,
                      they are put into the commandSubmittedQueue for to wait to be executed.
                      */
-                    bool submitCommand(CDataWrapper *commandDescription);
+                    bool submitCommand(chaos_data::CDataWrapper *commandDescription);
                     
                     //! set the custom data pointer of the channel setting instance to custom allocated memory
                     void setSharedCustomDataPtr(void *customDataPtr);

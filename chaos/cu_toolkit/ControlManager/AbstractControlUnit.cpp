@@ -35,33 +35,37 @@
 #include <boost/uuid/uuid_io.hpp>         // streaming operators etc.
 #include <boost/lexical_cast.hpp>
 
-namespace cu_driver = chaos::cu::driver_manager::driver;
-namespace cu = chaos::cu;
-namespace uuid = boost::uuids;
+using namespace boost::uuids;
+
+using namespace chaos::common::data;
+
+using namespace chaos::cu;
+using namespace chaos::cu::driver_manager::driver;
+
 
 #define LCU_ LAPP_ << "[Control Unit:"<<getCUInstance()<<"] - "
 
 
-cu::AbstractControlUnit::AbstractControlUnit():DeviceSchemaDB(false), cuInstance(UUIDUtil::generateUUIDLite()) {
+AbstractControlUnit::AbstractControlUnit():DeviceSchemaDB(false), cuInstance(UUIDUtil::generateUUIDLite()) {
 }
 
 /*!
  Destructor a new CU with an identifier
  */
-cu::AbstractControlUnit::~AbstractControlUnit() {
+AbstractControlUnit::~AbstractControlUnit() {
 }
 
 /*
  return the CU name
  */
-const char * cu::AbstractControlUnit::getCUInstance(){
+const char * AbstractControlUnit::getCUInstance(){
     return cuInstance.size()?cuInstance.c_str():"Instance no yet configured";
 };
 
 /*
  Add a new KeyDataStorage for a specific key
  */
-void cu::AbstractControlUnit::setKeyDataStorage(KeyDataStorage* _keyDatStorage) {
+void AbstractControlUnit::setKeyDataStorage(KeyDataStorage* _keyDatStorage) {
     keyDataStorage = _keyDatStorage;
 }
 
@@ -70,7 +74,7 @@ void cu::AbstractControlUnit::setKeyDataStorage(KeyDataStorage* _keyDatStorage) 
  is called after getStartConfiguration directly by sandbox. in this method
  are defined the action for the input element of the dataset
  */
-void cu::AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfiguration)  throw(CException) {
+void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfiguration)  throw(CException) {
     vector<std::string> tempStringVector;
     
     //add the CU isntance, this can be redefinide by user in the unitDefineActionAndDataset method
@@ -142,7 +146,7 @@ void cu::AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigu
  Define the control unit DataSet and Action into
  a CDataWrapper
  */
-void cu::AbstractControlUnit::_undefineActionAndDataset() throw(CException) {
+void AbstractControlUnit::_undefineActionAndDataset() throw(CException) {
     LCU_ << "Remove Action Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
     //register command manager action
     //CommandManager::getInstance()->deregisterAction(this);
@@ -150,14 +154,14 @@ void cu::AbstractControlUnit::_undefineActionAndDataset() throw(CException) {
 }
 
 //! Get all managem declare action instance
-void cu::AbstractControlUnit::_getDeclareActionInstance(std::vector<const chaos::DeclareAction *>& declareActionInstance) {
+void AbstractControlUnit::_getDeclareActionInstance(std::vector<const chaos::DeclareAction *>& declareActionInstance) {
     declareActionInstance.push_back(this);
 }
 //----------------------------------------- protected initi/deinit method ------------------------------------------------
 /*
  Initialize the Custom Contro Unit and return the configuration
  */
-chaos::CDataWrapper* cu::AbstractControlUnit::_init(chaos::CDataWrapper *initConfiguration, bool& detachParam) throw(CException) {
+CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& detachParam) throw(CException) {
     
     if(!initConfiguration ||
        !initConfiguration->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
@@ -201,14 +205,14 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_init(chaos::CDataWrapper *initCon
 /*
  Starto the  Control Unit scheduling for device
  */
-chaos::CDataWrapper* cu::AbstractControlUnit::_start(chaos::CDataWrapper *startParam, bool& detachParam) throw(CException) {
+CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detachParam) throw(CException) {
     if(!startParam ||
        !startParam->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
         throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_start");
     }
     
     string deviceID = startParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
-    if(deviceID.compare(cu::DeviceSchemaDB::getDeviceID())) {
+    if(deviceID.compare(DeviceSchemaDB::getDeviceID())) {
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
         throw CException(-2, "Deviuce not known by this control unit", "AbstractControlUnit::_start");
     }
@@ -217,7 +221,7 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_start(chaos::CDataWrapper *startP
     utility::StartableService::startImplementation(this, "AbstractControlUnit", "AbstractControlUnit::_start");
 	
 	//the start of the implementation unit goes after the infrastructure one
-    LCU_ << "Start sublass for deviceID:" << cu::DeviceSchemaDB::getDeviceID();
+    LCU_ << "Start sublass for deviceID:" << DeviceSchemaDB::getDeviceID();
     unitStart();
     return NULL;
 }
@@ -225,19 +229,19 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_start(chaos::CDataWrapper *startP
 /*
  Stop the Custom Control Unit scheduling for device
  */
-chaos::CDataWrapper* cu::AbstractControlUnit::_stop(chaos::CDataWrapper *stopParam, bool& detachParam) throw(CException) {
+CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachParam) throw(CException) {
     if(!stopParam ||
        !stopParam->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
         throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_stop");
     }
     string deviceID = stopParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
-    if(deviceID.compare(cu::DeviceSchemaDB::getDeviceID())) {
+    if(deviceID.compare(DeviceSchemaDB::getDeviceID())) {
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
         throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_stop");
     }
     
 	//first we need to stop the implementation unit
-    LCU_ << "Stop sublass for deviceID:" << cu::DeviceSchemaDB::getDeviceID();
+    LCU_ << "Stop sublass for deviceID:" << DeviceSchemaDB::getDeviceID();
     unitStop();
 	
     //call start method of the startable interface
@@ -249,7 +253,7 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_stop(chaos::CDataWrapper *stopPar
 /*
  deinit all datastorage
  */
-chaos::CDataWrapper* cu::AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& detachParam) throw(CException) {
+CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& detachParam) throw(CException) {
     LCU_ << "Deinitializating AbstractControlUnit";
     
     if(!deinitParam ||
@@ -258,14 +262,14 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
     }
     
     string deviceID = deinitParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
-    if(deviceID.compare(cu::DeviceSchemaDB::getDeviceID())) {
-        LCU_ << "device:" << cu::DeviceSchemaDB::getDeviceID() << "not known by this ContorlUnit";
+    if(deviceID.compare(DeviceSchemaDB::getDeviceID())) {
+        LCU_ << "device:" << DeviceSchemaDB::getDeviceID() << "not known by this ContorlUnit";
         throw CException(-2, "Deviuce not known by this control unit", "AbstractControlUnit::_deinit");
     }
     
 	
     //first we start the deinitializaiton of the implementation unit
-    LCU_ << "Deinit custom deinitialization for device:" << cu::DeviceSchemaDB::getDeviceID();
+    LCU_ << "Deinit custom deinitialization for device:" << DeviceSchemaDB::getDeviceID();
     unitDeinit();
 	
     //call deinit method of the startable interface
@@ -285,7 +289,7 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
 /*
  Receive the evento for set the dataset input element
  */
-chaos::CDataWrapper* cu::AbstractControlUnit::_setDatasetAttribute(chaos::CDataWrapper *datasetAttributeValues,  bool& detachParam) throw (CException) {
+CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAttributeValues,  bool& detachParam) throw (CException) {
     CDataWrapper *executionResult = NULL;
     try {
         if(!datasetAttributeValues) {
@@ -309,7 +313,7 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_setDatasetAttribute(chaos::CDataW
         
     } catch (CException& ex) {
         //at this time notify the wel gone setting of comand
-        if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(cu::DeviceSchemaDB::getDeviceID(), ex.errorCode);
+        if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(DeviceSchemaDB::getDeviceID(), ex.errorCode);
         
         throw ex;
     }
@@ -318,9 +322,9 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_setDatasetAttribute(chaos::CDataW
 }
 
 // Startable Service method
-void cu::AbstractControlUnit::init(void *initData) throw(CException) {
+void AbstractControlUnit::init(void *initData) throw(CException) {
     //cast to the CDatawrapper instance
-    std::string deviceID = cu::DeviceSchemaDB::getDeviceID();
+    std::string deviceID = DeviceSchemaDB::getDeviceID();
     CDataWrapper *initConfiguration = static_cast<CDataWrapper*>(initData);
 	LCU_ << "Initializating Phase for device:" << deviceID;
 
@@ -337,23 +341,23 @@ void cu::AbstractControlUnit::init(void *initData) throw(CException) {
 }
 
 // Startable Service method
-void cu::AbstractControlUnit::start() throw(CException) {
-    LCU_ << "Start Phase for device:" << cu::DeviceSchemaDB::getDeviceID();
+void AbstractControlUnit::start() throw(CException) {
+    LCU_ << "Start Phase for device:" << DeviceSchemaDB::getDeviceID();
 
 }
 
 // Startable Service method
-void cu::AbstractControlUnit::stop() throw(CException) {
-    LCU_ << "Stop Phase for device:" << cu::DeviceSchemaDB::getDeviceID();
+void AbstractControlUnit::stop() throw(CException) {
+    LCU_ << "Stop Phase for device:" << DeviceSchemaDB::getDeviceID();
 }
 
 // Startable Service method
-void cu::AbstractControlUnit::deinit() throw(CException) {
-    LCU_ << "Deinitialization Phase for device:" << cu::DeviceSchemaDB::getDeviceID();
+void AbstractControlUnit::deinit() throw(CException) {
+    LCU_ << "Deinitialization Phase for device:" << DeviceSchemaDB::getDeviceID();
     
     //remove key data storage
     if(keyDataStorage) {
-        LCU_ << "Delete data storage driver for device:" << cu::DeviceSchemaDB::getDeviceID();
+        LCU_ << "Delete data storage driver for device:" << DeviceSchemaDB::getDeviceID();
         keyDataStorage->deinit();
         delete(keyDataStorage);
         keyDataStorage = NULL;
@@ -363,7 +367,7 @@ void cu::AbstractControlUnit::deinit() throw(CException) {
 /*
  Get the current control unit state
  */
-chaos::CDataWrapper* cu::AbstractControlUnit::_getState(CDataWrapper* getStatedParam, bool& detachParam) throw(CException) {
+CDataWrapper* AbstractControlUnit::_getState(CDataWrapper* getStatedParam, bool& detachParam) throw(CException) {
     if(!getStatedParam->hasKey(DatasetDefinitionkey::DEVICE_ID)){
         throw CException(-1, "Get State Pack without DeviceID", "AbstractControlUnit::getState");
     }
@@ -377,7 +381,7 @@ chaos::CDataWrapper* cu::AbstractControlUnit::_getState(CDataWrapper* getStatedP
 /*
  Update the configuration for all descendand tree in the Control Uniti class struccture
  */
-chaos::CDataWrapper*  cu::AbstractControlUnit::updateConfiguration(chaos::CDataWrapper* updatePack, bool& detachParam) throw (CException) {
+CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack, bool& detachParam) throw (CException) {
     //load all keyDataStorageMap for the registered devices
     if(!updatePack || !updatePack->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
         throw CException(-1, "Update pack without DeviceID", "AbstractControlUnit::updateConfiguration");
@@ -385,14 +389,14 @@ chaos::CDataWrapper*  cu::AbstractControlUnit::updateConfiguration(chaos::CDataW
     
     string deviceID = updatePack->getStringValue(DatasetDefinitionkey::DEVICE_ID);
     
-    if(deviceID.compare(cu::DeviceSchemaDB::getDeviceID())) {
+    if(deviceID.compare(DeviceSchemaDB::getDeviceID())) {
         LCU_ << "device:" << DeviceSchemaDB::getDeviceID() << "not known by this ContorlUnit";
         throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_stop");
     }
     
     //check to see if the device can ben initialized
     if(utility::StartableService::getServiceState() == INIT_STATE) {
-        LCU_ << "device:" << cu::DeviceSchemaDB::getDeviceID() << " not initialized";
+        LCU_ << "device:" << DeviceSchemaDB::getDeviceID() << " not initialized";
         throw CException(-3, "Device Not Initilized", "AbstractControlUnit::updateConfiguration");
     }
     
@@ -409,7 +413,7 @@ chaos::CDataWrapper*  cu::AbstractControlUnit::updateConfiguration(chaos::CDataW
  The index parameter correspond to the order that the driver infromation are
  added by the unit implementation into the function AbstractControlUnit::unitDefineDriver.
  */
-cu_driver::DriverAccessor *cu::AbstractControlUnit::getAccessoInstanceByIndex(int idx) {
+cu_driver::DriverAccessor *AbstractControlUnit::getAccessoInstanceByIndex(int idx) {
 	if( idx >= accessorInstances.size() ) return NULL;
 	return accessorInstances[idx];
 }

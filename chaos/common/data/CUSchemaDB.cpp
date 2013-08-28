@@ -26,10 +26,11 @@
 #include <chaos/common/data/CUSchemaDB.h>
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/data/CDataWrapper.h>
-using namespace chaos;
+
 using namespace std;
 using namespace boost;
-
+using namespace chaos;
+using namespace chaos::common::data;
 
 
 

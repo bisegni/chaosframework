@@ -35,12 +35,15 @@
 #include <chaos/common/event/evt_desc/EventDescriptor.h>
 #include <chaos/common/network/NetworkForwardInfo.h>
 #include <chaos/common/utility/StartableService.h>
+
+namespace chaos_data = chaos::common::data;
 namespace chaos {
 
     using namespace std;
     using namespace boost;
-    
-    class CDataWrapper;
+	
+	class chaos_data::CDataWrapper;
+
     
     //! Channel Type Enumeration
     /*!
@@ -68,7 +71,6 @@ namespace chaos {
         class EventClient;
     }
     
-
 
         //! Message Broker
     /*! 
@@ -226,7 +228,7 @@ namespace chaos {
          \param message the message coded into key/value semantics
          \param onThisThread if true the message is forwarded in the same thread of the caller
          */
-        bool submitMessage(string& serverAndPort, CDataWrapper *message, NetworkErrorHandler handler = NULL, const char * senderIdentifier = NULL, int64_t senderTag = (int64_t)0, bool onThisThread=false);
+        bool submitMessage(string& serverAndPort, chaos_data::CDataWrapper *message, NetworkErrorHandler handler = NULL, const char * senderIdentifier = NULL, int64_t senderTag = (int64_t)0, bool onThisThread=false);
         
             //!message request
         /*!
@@ -235,7 +237,7 @@ namespace chaos {
          \param request the request coded into key/value semantics
          \param onThisThread if true the message is forwarded in the same thread of the caller
          */
-        bool submiteRequest(string& serverAndPort,  CDataWrapper *request, NetworkErrorHandler handler = NULL, const char * senderIdentifier = NULL, int64_t senderTag = (int64_t)0, bool onThisThread=false);
+        bool submiteRequest(string& serverAndPort,  chaos_data::CDataWrapper *request, NetworkErrorHandler handler = NULL, const char * senderIdentifier = NULL, int64_t senderTag = (int64_t)0, bool onThisThread=false);
         
             //!message submition
         /*!

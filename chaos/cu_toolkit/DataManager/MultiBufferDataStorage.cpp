@@ -27,7 +27,7 @@
 using namespace std;
 using namespace chaos;
 using namespace chaos::cu;
-
+using namespace chaos::common::data;
 /*
  Constructor
  */

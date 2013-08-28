@@ -38,6 +38,11 @@
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManagerDefaultAdapters.h>
 
+using namespace std;
+using namespace boost;
+
+namespace chaos_data = chaos::common::data;
+
 namespace chaos{
     namespace event {
         namespace channel {
@@ -46,8 +51,7 @@ namespace chaos{
     }
     
     namespace cu {
-        using namespace std;
-        using namespace boost;
+
         /*
          * CommandManager
          * - Command Manager is the central class for the registration and execution of the custom command
@@ -90,7 +94,7 @@ namespace chaos{
             /*
              Configure the sandbox and all subtree of the CU
              */
-            CDataWrapper* updateConfiguration(CDataWrapper*);
+			chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*);
             
             /*
              Get MEtadataserver channel
@@ -119,7 +123,7 @@ namespace chaos{
             /*
              Shutdown the chaos control library
              */
-            CDataWrapper* shutdown(CDataWrapper*, bool&) throw (CException);
+            chaos_data::CDataWrapper* shutdown(chaos_data::CDataWrapper*, bool&) throw (CException);
         private:
             CommandManager();
             ~CommandManager();

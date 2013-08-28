@@ -35,6 +35,8 @@
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/utility/StartableService.h>
 
+namespace chaos_data = chaos::common::data;
+
 /*
  Base class for the command implementation
  */
@@ -43,7 +45,6 @@ namespace chaos{
     using namespace bson;
     using namespace boost;
         //class RpcClient;
-    
     class NetworkBroker;
     
         //! Base class for the Chaos Action Dispatcher
@@ -102,7 +103,7 @@ namespace chaos{
         /*
          update the dispatcher configuration
          */
-        virtual CDataWrapper* updateConfiguration(CDataWrapper*)  throw(CException);
+        virtual chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*)  throw(CException);
         
             //! Send a message via RPC with the associated client
         /*! Send the message via rpc to a determinated node by ip and port.  If the message is a request, the pack need to
@@ -118,7 +119,7 @@ namespace chaos{
          deallocation is managed by rpc client, otherwise("true" value) the caller need to delete the object it self
          \return boolean value to informa is the mesage has been submitted
          */
-        bool submitMessage(string& serverAndPort,  CDataWrapper* messageToSend, bool onThisThread = false)  throw(CException);
+        bool submitMessage(string& serverAndPort,  chaos_data::CDataWrapper* messageToSend, bool onThisThread = false)  throw(CException);
         
             //! Action registration
         /*

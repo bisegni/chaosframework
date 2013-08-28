@@ -22,6 +22,9 @@
 #include "DefaultCommandDispatcher.h"
 
 using namespace chaos;
+using namespace chaos::common::data;
+//namespace chaos_data = chaos::common::data;
+
 using namespace std;
 using namespace boost;
 

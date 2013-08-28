@@ -16,16 +16,15 @@
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandConstants.h>
 
 using namespace chaos::chrono;
+using namespace chaos::common::data;
 using namespace chaos::cu::control_manager::slow_command;
-
-namespace cccs = chaos::cu::control_manager::slow_command;
 
 //------------------------------------------------------------------------------------------------------------
 #define FUNCTORLERR_ LERR_ << "[SlowCommandSandbox-" << "] "
 
 #define SET_FAULT(c, m, d) \
 FUNCTORLERR_ << c << m << d; \
-cmdInstance->runningState |= cccs::RunningStateType::RS_Fault; \
+cmdInstance->runningState |= RunningStateType::RS_Fault; \
 cmdInstance->faultDescription.code = c; \
 cmdInstance->faultDescription.description = m; \
 cmdInstance->faultDescription.domain = d;

@@ -19,3 +19,15 @@
  */
 
 #include <chaos/common/data/broker/reader/ReaderDataService.h>
+
+
+namespace chaos_reader = chaos::common::data::broker::reader;
+
+chaos_reader::ReaderDataService::ReaderDataService(const char *keyName):publisServiceName(keyName) {
+}
+
+chaos_reader::ReaderDataService::ReaderDataService(std::string& keyName):publisServiceName(keyName) {
+}
+
+chaos_reader::ReaderDataService::~ReaderDataService() {
+}

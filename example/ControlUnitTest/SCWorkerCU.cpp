@@ -8,8 +8,11 @@
 
 #include "SCWorkerCU.h"
 #include "SinWaveCommand.h"
-namespace cucs = chaos::cu::control_manager::slow_command;
-namespace cu_driver = chaos::cu::driver_manager::driver;
+
+using namespace chaos::common::data;
+
+using namespace chaos::cu::control_manager::slow_command;
+using namespace chaos::cu::driver_manager::driver;
 
 
 /*

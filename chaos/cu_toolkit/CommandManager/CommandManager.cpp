@@ -31,6 +31,9 @@
 using namespace std;
 using namespace boost;
 using namespace chaos;
+
+using namespace chaos::common::data;
+
 using namespace chaos::cu;
 
 

@@ -26,6 +26,8 @@
 #include <chaos/cu_toolkit/ControlManager/slow_command/AttributeSetting.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandTypes.h>
 
+namespace chaos_data = chaos::common::data;
+
 namespace chaos{
     namespace cu {
         
@@ -142,7 +144,7 @@ namespace chaos{
                      Perform th ecommand isntallation without check the condition. The handler
                      that are not implemented are managed according to the submition rule
                      */
-                    inline void installHandler(SlowCommand *cmdImpl, CDataWrapper* setData);
+                    inline void installHandler(SlowCommand *cmdImpl, chaos_data::CDataWrapper* setData);
 					
 					void killCurrentCommand();
 					
@@ -177,7 +179,7 @@ namespace chaos{
                     // Deinit the implementation
                     void deinit() throw(chaos::CException);
 
-                    bool setNextAvailableCommand(PRIORITY_ELEMENT(CDataWrapper) *cmdInfo, SlowCommand *cmdImpl);
+                    bool setNextAvailableCommand(PRIORITY_ELEMENT(chaos_data::CDataWrapper) *cmdInfo, SlowCommand *cmdImpl);
                 };
             }
         }

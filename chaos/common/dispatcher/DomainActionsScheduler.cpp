@@ -23,6 +23,8 @@
 
 using namespace chaos;
 
+namespace chaos_data = chaos::common::data;
+
 DomainActionsScheduler::DomainActionsScheduler(shared_ptr<DomainActions> _domainActionsContainer):armed(false){
     domainActionsContainer = _domainActionsContainer;
 }
@@ -38,7 +40,7 @@ DomainActionsScheduler::~DomainActionsScheduler() {
  */
 void DomainActionsScheduler::init(int threadNumber) throw(CException) {
     LAPP_ << "Initializing Domain Actions Scheduler for domain:" << domainActionsContainer->getDomainName();
-    CObjectProcessingQueue<CDataWrapper>::init(threadNumber);
+    CObjectProcessingQueue<chaos_data::CDataWrapper>::init(threadNumber);
     armed = true;
 }
 
@@ -48,17 +50,17 @@ void DomainActionsScheduler::init(int threadNumber) throw(CException) {
 void DomainActionsScheduler::deinit() throw(CException) {
     LAPP_ << "Deinitializing Domain Actions Scheduler for domain:" << domainActionsContainer->getDomainName();
         //mutex::scoped_lock lockAction(actionAccessMutext);
-    CObjectProcessingQueue<CDataWrapper>::clear();
-    CObjectProcessingQueue<CDataWrapper>::deinit();
+    CObjectProcessingQueue<chaos_data::CDataWrapper>::clear();
+    CObjectProcessingQueue<chaos_data::CDataWrapper>::deinit();
     armed = false;
 }
 
 /*
  override the push method for ObjectProcessingQueue<CDataWrapper> superclass
  */
-bool DomainActionsScheduler::push(CDataWrapper *actionParam) throw(CException) {
+bool DomainActionsScheduler::push(chaos_data::CDataWrapper *actionParam) throw(CException) {
     if(!armed) throw CException(0, "Action can't be submitted, scheduler is not armed", "DomainActionsScheduler::push");
-    return CObjectProcessingQueue<CDataWrapper>::push(actionParam);
+    return CObjectProcessingQueue<chaos_data::CDataWrapper>::push(actionParam);
 }
 
 /*
@@ -78,13 +80,13 @@ void DomainActionsScheduler::setDispatcher(AbstractCommandDispatcher *newDispatc
 /*
  process the element action to be executed
  */
-void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescription, ElementManagingPolicy& elementPolicy) throw(CException) {
+void DomainActionsScheduler::processBufferElement(chaos_data::CDataWrapper *actionDescription, ElementManagingPolicy& elementPolicy) throw(CException) {
         //the domain is securely the same is is mandatory for submition so i need to get the name of the action
-    CDataWrapper            *responsePack = NULL;
-    CDataWrapper            *subCommand = NULL;
-    auto_ptr<CDataWrapper>  actionMessage;
-    auto_ptr<CDataWrapper>  remoteActionResult;
-    auto_ptr<CDataWrapper>  actionResult;
+    chaos_data::CDataWrapper            *responsePack = NULL;
+    chaos_data::CDataWrapper            *subCommand = NULL;
+    auto_ptr<chaos_data::CDataWrapper>  actionMessage;
+    auto_ptr<chaos_data::CDataWrapper>  remoteActionResult;
+    auto_ptr<chaos_data::CDataWrapper>  actionResult;
     
     bool    needAnswer = false;
     //bool    detachParam = false;
@@ -145,7 +147,7 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
                 //call function core part
             if(needAnswer){
                     //we need a response, so allocate the memory for it
-                remoteActionResult.reset(new CDataWrapper());
+                remoteActionResult.reset(new chaos_data::CDataWrapper());
             }
                 //syncronously call the action in the current thread 
             actionResult.reset(actionDescriptionPtr->call(actionMessage.get(), elementPolicy.elementHasBeenDetached));
@@ -153,7 +155,7 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
                 //check if we need to submit a sub command
             if( subCommand ) {
                     //we can submit sub command
-                auto_ptr<CDataWrapper> dispatchSubCommandResult(dispatcher->dispatchCommand(subCommand));
+                auto_ptr<chaos_data::CDataWrapper> dispatchSubCommandResult(dispatcher->dispatchCommand(subCommand));
             }
             
             if(needAnswer){
@@ -178,7 +180,7 @@ void DomainActionsScheduler::processBufferElement(CDataWrapper *actionDescriptio
         
         if( needAnswer && remoteActionResult.get() ) {
                 //we need to construct the response pack
-            responsePack = new CDataWrapper();
+            responsePack = new chaos_data::CDataWrapper();
             
                 //fill answer with data for remote ip and request id
             remoteActionResult->addInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID, answerID);

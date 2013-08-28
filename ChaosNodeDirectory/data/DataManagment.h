@@ -13,6 +13,8 @@
 #include <chaos/common/utility/SetupStateManager.h>
 #include <chaos/common/utility/StartableService.h>
 
+namespace chaos_data = chaos::common::data;
+
 namespace chaos {
     namespace cnd {
         namespace data {
@@ -23,7 +25,7 @@ namespace chaos {
              */
             class DataManagment: public utility::StartableService, private SetupStateManager  {
                 
-                CUSchemaDB *deviceDB;
+				chaos_data::CUSchemaDB *deviceDB;
             public:
                 
                 DataManagment();
@@ -45,7 +47,7 @@ namespace chaos {
                 /*!
                  
                  */
-                CUSchemaDB *getDeviceDatabase();
+				chaos_data::CUSchemaDB *getDeviceDatabase();
             };
         }
     }

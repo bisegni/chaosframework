@@ -24,62 +24,67 @@
 #include <chaos/common/utility/StartableService.h>
 
 namespace chaos {
-     //! Namespace for grouping all class needed by the DataBroker services
-    /*!
-     The Data Broker represent the principal node that manage the data sharing between node.
-     It is composed by a reader layer and publisher layers. Both layers can operate, using either
-     RPC or DirectI/O protocoll, in two mode poll and push.
-     \image html data_broker_scheme.png
-     */
-    namespace databroker {
-        
-            //! the remote choas node id that want conenct to thedata broker
-        #define REMOTE_NODE_ID "nodeID"
-            //! the remote chaos node address
-        #define REMOTE_NODE_ADDR "nodeAddr"
-            //! the requested mode to be used in the handshake initialization
-        #define REQUESTED_MODE "mode"
-        
-        /*!
-         Define the mode used by data broker
-         */
-        typedef enum {
-            /*!
-             Poll is the mode in with the client ask, when t wan't, the last value
-            */
-            DATA_BROKER_POLL = 0,
-            
-            /*!
-             Push is the mode in with the client register it'self ofr receive the data updates
-             when it are present
-             */
-            DATA_BROKER_PUSH
-        } DataBrokerMode;
-        
-        
-            //! Data Broker central managment class
-        /*!
-         The data broker class is the central point where the push data service is managed.
-         Thsi class permit to create and ambiet(publisher) defined for a key(deviceID or domain)
-         where data is pushed and forwarded (push mode) to the remote listener or sent to the remote 
-         node that request it(poll mode).
-         
-         This is also the class where is managed the handshake for registration of the remote listeners.
-         */
-        class DataBroker : public chaos::utility::StartableService, chaos::DeclareAction {
-            
-        public:
-                //! Initialize the data broker
-            void init(void*) throw(chaos::CException);
-                //! start the data broker
-            void start() throw(chaos::CException);
-                //! stop the data broker
-            void stop() throw(chaos::CException);
-                //! deinit the data broker
-            void deinit() throw(chaos::CException);
-                //! action for start the handshake
-            CDataWrapper *startHandshake(CDataWrapper *handshakeData, bool& detach);
-        };
+	namespace common {
+		
+		namespace data {
+			//! Namespace for grouping all class needed by the DataBroker services
+			/*!
+			 The Data Broker represent the principal node that manage the data sharing between node.
+			 It is composed by a reader layer and publisher layers. Both layers can operate, using either
+			 RPC or DirectI/O protocoll, in two mode poll and push.
+			 \image html data_broker_scheme.png
+			 */
+			namespace broker {
+				
+				//! the remote choas node id that want conenct to thedata broker
+#define REMOTE_NODE_ID "nodeID"
+				//! the remote chaos node address
+#define REMOTE_NODE_ADDR "nodeAddr"
+				//! the requested mode to be used in the handshake initialization
+#define REQUESTED_MODE "mode"
+				
+				/*!
+				 Define the mode used by data broker
+				 */
+				typedef enum {
+					/*!
+					 Poll is the mode in with the client ask, when t wan't, the last value
+					 */
+					DATA_BROKER_POLL = 0,
+					
+					/*!
+					 Push is the mode in with the client register it'self ofr receive the data updates
+					 when it are present
+					 */
+					DATA_BROKER_PUSH
+				} DataBrokerMode;
+				
+				
+				//! Data Broker central managment class
+				/*!
+				 The data broker class is the central point where the push data service is managed.
+				 Thsi class permit to create and ambiet(publisher) defined for a key(deviceID or domain)
+				 where data is pushed and forwarded (push mode) to the remote listener or sent to the remote
+				 node that request it(poll mode).
+				 
+				 This is also the class where is managed the handshake for registration of the remote listeners.
+				 */
+				class DataBroker : public chaos::utility::StartableService, chaos::DeclareAction {
+					
+				public:
+					//! Initialize the data broker
+					void init(void*) throw(chaos::CException);
+					//! start the data broker
+					void start() throw(chaos::CException);
+					//! stop the data broker
+					void stop() throw(chaos::CException);
+					//! deinit the data broker
+					void deinit() throw(chaos::CException);
+					//! action for start the handshake
+					CDataWrapper *startHandshake(CDataWrapper *handshakeData, bool& detach);
+				};
+			}
+		}
     }
 }
 

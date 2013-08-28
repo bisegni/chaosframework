@@ -9,6 +9,9 @@
 #include "DeviceApi.h"
 
 using namespace chaos;
+
+using namespace chaos::common::data;
+
 using namespace chaos::cnd;
 using namespace chaos::cnd::api;
 

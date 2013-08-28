@@ -20,6 +20,7 @@
 #include "MDSMessageChannel.h"
 #include <chaos/common/network/NetworkBroker.h>
 using namespace chaos;
+using namespace chaos::common::data;
 
 #define CHECK_TIMEOUT_AND_RESULT_CODE(x,e) \
 if(!x.get()) {\

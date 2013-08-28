@@ -24,11 +24,14 @@
 
 
 using namespace chaos;
-namespace cccs = chaos::cu::control_manager::slow_command;
+
+using namespace chaos::common::data;
+
+using namespace chaos::cu::control_manager::slow_command;
 
 SinWaveCommand::SinWaveCommand():rng((const uint_fast32_t) time(0) ),one_to_hundred( -100, 100 ),randInt(rng, one_to_hundred) {
     //set default scheduler delay
-    setFeatures(cccs::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, 50);
+    setFeatures(features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY, 50);
 }
 
 SinWaveCommand::~SinWaveCommand() {
@@ -37,13 +40,13 @@ SinWaveCommand::~SinWaveCommand() {
 
 // return the implemented handler
 uint8_t SinWaveCommand::implementedHandler() {
-    return  cccs::HandlerType::HT_Set |
-    cccs::HandlerType::HT_Acquisition |
-    cccs::HandlerType::HT_Correlation;
+    return  HandlerType::HT_Set |
+    HandlerType::HT_Acquisition |
+	HandlerType::HT_Correlation;
 }
 
 // Start the command execution
-void SinWaveCommand::setHandler(chaos::CDataWrapper *data) {
+void SinWaveCommand::setHandler(CDataWrapper *data) {
     // chaos::cu::DeviceSchemaDB *deviceDB = NULL;
     
     srand((unsigned)time(0));
@@ -51,17 +54,17 @@ void SinWaveCommand::setHandler(chaos::CDataWrapper *data) {
     sinevalue = NULL;
     
     
-    pointSetting = getValueSetting((cccs::AttributeIndexType)0);
+    pointSetting = getValueSetting((AttributeIndexType)0);
     points = pointSetting->getCurrentValue<uint32_t>();
     //setWavePoint();
-    *(freq = getValueSetting((cccs::AttributeIndexType)1)->getCurrentValue<double>()) = 1.0;
-    *(bias = getValueSetting((cccs::AttributeIndexType)2)->getCurrentValue<double>()) = 0.0;
-    *(phase = getValueSetting((cccs::AttributeIndexType)3)->getCurrentValue<double>()) = 0.0;
-    *(gain = getValueSetting((cccs::AttributeIndexType)4)->getCurrentValue<double>()) = 5.0;
-    *(gainNoise = getValueSetting((cccs::AttributeIndexType)5)->getCurrentValue<double>()) = 0.5;
+    *(freq = getValueSetting((AttributeIndexType)1)->getCurrentValue<double>()) = 1.0;
+    *(bias = getValueSetting((AttributeIndexType)2)->getCurrentValue<double>()) = 0.0;
+    *(phase = getValueSetting((AttributeIndexType)3)->getCurrentValue<double>()) = 0.0;
+    *(gain = getValueSetting((AttributeIndexType)4)->getCurrentValue<double>()) = 5.0;
+    *(gainNoise = getValueSetting((AttributeIndexType)5)->getCurrentValue<double>()) = 0.5;
     
     //custom variable
-    quitSharedVariable = getValueSetting((cccs::AttributeIndexType)6)->getCurrentValue<bool>();
+    quitSharedVariable = getValueSetting((AttributeIndexType)6)->getCurrentValue<bool>();
     
     lastStartTime = 0;
 	
@@ -111,7 +114,7 @@ void SinWaveCommand::acquireHandler() {
         if(changedIndex.size()) {
             CMDCU_ << "We have " << changedIndex.size() << " changed attribute";
             for (int idx =0; idx < changedIndex.size(); idx++) {
-                cccs::ValueSetting *vSet = getValueSetting(changedIndex[idx]);
+                ValueSetting *vSet = getValueSetting(changedIndex[idx]);
 				
 				//set change as completed
 				vSet->completed();

@@ -11,6 +11,8 @@
 
 #include "ApiProvider.h"
 
+namespace chaos_data = chaos::common::data;
+
 namespace chaos {
     namespace cnd {
         namespace api {
@@ -28,7 +30,7 @@ namespace chaos {
                 /*!
                  Register a device
                  */
-                CDataWrapper* registerDevice(CDataWrapper *registrationdData, bool& detachParam) throw(CException);
+				chaos_data::CDataWrapper* registerDevice(chaos_data::CDataWrapper *registrationdData, bool& detachParam) throw(CException);
             };
         }
     }

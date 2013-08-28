@@ -21,8 +21,10 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/bson/util/json.h>
 
-using namespace chaos;
 using namespace bson;
+
+using namespace chaos;
+using namespace chaos::common::data;
 
 CMultiTypeDataArrayWrapper::CMultiTypeDataArrayWrapper(vector< BSONElement > src) {
     elementsArray = src;

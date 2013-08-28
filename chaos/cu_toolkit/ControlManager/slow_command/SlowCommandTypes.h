@@ -29,6 +29,8 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
 
+namespace chaos_data = chaos::common::data;
+
 namespace chaos{
     namespace cu {
         namespace control_manager {
@@ -43,7 +45,7 @@ namespace chaos{
                  into the sandbox
                  */
                 typedef struct {
-                    chaos::PRIORITY_ELEMENT(chaos::CDataWrapper) *cmdInfo;
+                    chaos::PRIORITY_ELEMENT(chaos_data::CDataWrapper) *cmdInfo;
                     SlowCommand *cmdImpl;
                 } CommandInfoAndImplementation;
                 

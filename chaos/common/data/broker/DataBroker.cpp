@@ -17,15 +17,15 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "DataBroker.h"
+#include <chaos/common/data/broker/DataBroker.h>
 
-using namespace chaos;
-using namespace chaos::databroker;
+namespace chaos_data = chaos::common::data;
+namespace chaos_databroker = chaos::common::data::broker;
 
 
 
     //! Initialize instance
-void DataBroker::init(void*) throw(chaos::CException) {
+void chaos_databroker::DataBroker::init(void*) throw(chaos::CException) {
     
         //define the action for start the hadnshake
     AbstActionDescShrPtr actionDescription = DeclareAction::addActionDescritionInstance(this,
@@ -40,20 +40,20 @@ void DataBroker::init(void*) throw(chaos::CException) {
 }
 
     //! Start the implementation
-void DataBroker::start() throw(chaos::CException) {
+void chaos_databroker::DataBroker::start() throw(chaos::CException) {
     
 }
 
     //! Start the implementation
-void DataBroker::stop() throw(chaos::CException) {
+void chaos_databroker::DataBroker::stop() throw(chaos::CException) {
 
 }
 
     //! Deinit the implementation
-void DataBroker::deinit() throw(chaos::CException) {
+void chaos_databroker::DataBroker::deinit() throw(chaos::CException) {
     
 }
 
-CDataWrapper *DataBroker::startHandshake(CDataWrapper *handshakeData, bool& detach) {
+chaos_data::CDataWrapper *chaos_databroker::DataBroker::startHandshake(chaos_data::CDataWrapper *handshakeData, bool& detach) {
     return NULL;
 }

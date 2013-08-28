@@ -52,7 +52,7 @@ namespace chaos {
          \param initData the pointer to the data for device initialization. The memory is not deallocate after the send operation
          \millisecToWait the number of millisecond for waith the answer
          */
-        int initDevice(CDataWrapper *initData, uint32_t millisecToWait = 0);
+        int initDevice(common::data::CDataWrapper *initData, uint32_t millisecToWait = 0);
             //!Device deinititalization
         /*!
          Perform the hardware deinitialization
@@ -83,7 +83,7 @@ namespace chaos {
          All the CDataWrapper is sent as pack for the device attributes values, no check is done
          \param attributesValues the container for the values of some dataset attributes
          */
-        int setAttributeValue(CDataWrapper& attributesValues, bool noWait = false, uint32_t millisecToWait = 0);
+        int setAttributeValue(common::data::CDataWrapper& attributesValues, bool noWait = false, uint32_t millisecToWait = 0);
         
             //!Set the device thread schedule delay
         /*!
@@ -94,12 +94,12 @@ namespace chaos {
         /*! 
          \brief send a message to a custom action
          */
-        void sendCustomMessage(const char * const, CDataWrapper* const);
+        void sendCustomMessage(const char * const, common::data::CDataWrapper* const);
         
         /*! 
          \brief send a request to a custom action
          */
-        int sendCustomRequest(const char * const, CDataWrapper* const, CDataWrapper**const,uint32_t millisecToWait = 0);
+        int sendCustomRequest(const char * const, common::data::CDataWrapper* const, common::data::CDataWrapper**const,uint32_t millisecToWait = 0);
     };
 }
 #endif

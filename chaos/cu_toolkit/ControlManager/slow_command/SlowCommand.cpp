@@ -20,10 +20,11 @@
 
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommand.h>
 using namespace chaos;
-namespace cccs = chaos::cu::control_manager::slow_command;
+using namespace chaos::common::data;
+using namespace chaos::cu::control_manager::slow_command;
 
 // default constructor
-cccs::SlowCommand::SlowCommand() {
+SlowCommand::SlowCommand() {
     
 	//setup feautere fields
 	commandFeatures.featuresFlag = 0;
@@ -34,29 +35,29 @@ cccs::SlowCommand::SlowCommand() {
 }
 
 // default destructor
-cccs::SlowCommand::~SlowCommand() {
+SlowCommand::~SlowCommand() {
     
 }
 
 /*
  return the device database with the dafualt device information
  */
-chaos::cu::DeviceSchemaDB  *cccs::SlowCommand::getDeviceDatabase() {
+chaos::cu::DeviceSchemaDB  *SlowCommand::getDeviceDatabase() {
     return deviceDatabasePtr;
 }
 
 // set the features with the ui32 value
-void cccs::SlowCommand::setFeatures(cccs::features::FeaturesFlagTypes::FeatureFlag features, uint32_t featuresValue) {
+void SlowCommand::setFeatures(features::FeaturesFlagTypes::FeatureFlag features, uint32_t featuresValue) {
 	//check if the features are locked for the user modifications
     if(commandFeatures.lockedOnUserModification) return;
 
     commandFeatures.featuresFlag |= features;
     switch (features) {
-        case cccs::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY:
+        case features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY:
             commandFeatures.featureSchedulerStepsDelay = featuresValue;
             break;
             
-        case cccs::features::FeaturesFlagTypes::FF_SET_SUBMISSION_RETRY:
+        case features::FeaturesFlagTypes::FF_SET_SUBMISSION_RETRY:
             commandFeatures.featureSubmissionRetryDelay = featuresValue;
             break;
             
@@ -65,29 +66,29 @@ void cccs::SlowCommand::setFeatures(cccs::features::FeaturesFlagTypes::FeatureFl
     }
 }
 
-void cccs::SlowCommand::getChangedAttributeIndex(std::vector<AttributeIndexType>& changedIndex) {
+void SlowCommand::getChangedAttributeIndex(std::vector<AttributeIndexType>& changedIndex) {
     CHAOS_ASSERT(sharedAttributeSettingPtr)
     return sharedAttributeSettingPtr->getChangedIndex(changedIndex);
 }
 
-cccs::ValueSetting *cccs::SlowCommand::getValueSetting(cccs::AttributeIndexType attributeIndex) {
+ValueSetting *SlowCommand::getValueSetting(AttributeIndexType attributeIndex) {
     CHAOS_ASSERT(sharedAttributeSettingPtr)
     return sharedAttributeSettingPtr->getValueSettingForIndex(attributeIndex);
 }
 
-cccs::ValueSetting *cccs::SlowCommand::getValueSetting(const char *keyName) {
+ValueSetting *SlowCommand::getValueSetting(const char *keyName) {
     CHAOS_ASSERT(sharedAttributeSettingPtr)
-    cccs::AttributeIndexType index = sharedAttributeSettingPtr->getIndexForName(keyName);
+    AttributeIndexType index = sharedAttributeSettingPtr->getIndexForName(keyName);
     return sharedAttributeSettingPtr->getValueSettingForIndex(index);
 }
 
-void cccs::SlowCommand::setValueSettingForKey(const char *keyName, void * value, uint32_t size) {
+void SlowCommand::setValueSettingForKey(const char *keyName, void * value, uint32_t size) {
     CHAOS_ASSERT(sharedAttributeSettingPtr)
-    cccs::AttributeIndexType index = sharedAttributeSettingPtr->getIndexForName(keyName);
+    AttributeIndexType index = sharedAttributeSettingPtr->getIndexForName(keyName);
     sharedAttributeSettingPtr->setValueForAttribute(index, value, size);
 }
 
-void cccs::SlowCommand::getAttributeNames(std::vector<std::string>& names) {
+void SlowCommand::getAttributeNames(std::vector<std::string>& names) {
     CHAOS_ASSERT(sharedAttributeSettingPtr)
     sharedAttributeSettingPtr->getAttributeNames(names);
 }
@@ -95,7 +96,7 @@ void cccs::SlowCommand::getAttributeNames(std::vector<std::string>& names) {
 /*
  Send device data to output buffer
  */
-void cccs::SlowCommand::pushDataSet(CDataWrapper *acquiredData) {
+void SlowCommand::pushDataSet(CDataWrapper *acquiredData) {
     //send data to related buffer
     keyDataStoragePtr->pushDataSet(acquiredData);
 }
@@ -104,21 +105,21 @@ void cccs::SlowCommand::pushDataSet(CDataWrapper *acquiredData) {
  Return a new instance of CDataWrapper filled with a mandatory data
  according to key
  */
-CDataWrapper *cccs::SlowCommand::getNewDataWrapper() {
+CDataWrapper *SlowCommand::getNewDataWrapper() {
     return keyDataStoragePtr->getNewDataWrapper();
 }
 
 /*
  Start the slow command sequence
  */
-void cccs::SlowCommand::setHandler(chaos::CDataWrapper *data) {}
+void SlowCommand::setHandler(CDataWrapper *data) {}
 
 /*
  implemente thee data acquisition for the command
  */
-void cccs::SlowCommand::acquireHandler() {}
+void SlowCommand::acquireHandler() {}
 
 /*
  Performe correlation and send command to the driver
  */
-void cccs::SlowCommand::ccHandler() {}
+void SlowCommand::ccHandler() {}

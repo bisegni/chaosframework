@@ -26,16 +26,18 @@
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommand.h>
 
 using namespace chaos;
-namespace cccs = chaos::cu::control_manager::slow_command;
 
-class SinWaveCommand : public cccs::SlowCommand {
+namespace c_data = chaos::common::data;
+namespace ccc_slow_command = chaos::cu::control_manager::slow_command;
+
+class SinWaveCommand : public ccc_slow_command::SlowCommand {
     typedef boost::mt19937 RNGType;
     RNGType rng;
     uniform_int<> one_to_hundred;
     variate_generator< RNGType, uniform_int<> > randInt;
     double *sinevalue;
     uint32_t *points;
-    cccs::ValueSetting *pointSetting;
+    ccc_slow_command::ValueSetting *pointSetting;
     double *freq;
     double *gain;
     double *phase;
@@ -47,16 +49,16 @@ class SinWaveCommand : public cccs::SlowCommand {
     long double PI;
     int32_t messageID;
     boost::mutex pointChangeMutex;
-    std::vector<cccs::AttributeIndexType> changedIndex;
+    std::vector<ccc_slow_command::AttributeIndexType> changedIndex;
     
-    inline void computeWave(CDataWrapper *acquiredData);
+    inline void computeWave(c_data::CDataWrapper *acquiredData);
     inline void setWavePoint();
 protected:
     // return the implemented handler
     uint8_t implementedHandler();
     
     // Start the command execution
-    void setHandler(chaos::CDataWrapper *data);
+    void setHandler(c_data::CDataWrapper *data);
     
     // Aquire the necessary data for the command
     /*!

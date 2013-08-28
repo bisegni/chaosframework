@@ -39,8 +39,10 @@ namespace chaos {
     
     using namespace std;
     using namespace boost;
+	
     namespace po = boost::program_options;
-    
+    namespace chaos_data = chaos::common::data;
+	
 #define CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(t,x,y,z)\
 t x;\
 if(hasOption(y)){\
@@ -79,7 +81,7 @@ x = hasOption(y);
         po::variables_map vm;
         po::options_description desc;
             //for contain program option value and other usefull think
-        CDataWrapper configuration;
+        chaos_data::CDataWrapper configuration;
         friend class Singleton<GlobalConfiguration>;
         
         
@@ -145,7 +147,7 @@ x = hasOption(y);
         /**
          *return the cdatawrapper that contains the global configuraiton
          */
-        CDataWrapper *getConfiguration(){
+        chaos_data::CDataWrapper *getConfiguration(){
             return &configuration;
         }
         

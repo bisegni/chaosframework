@@ -34,6 +34,8 @@ TDSObjectHandler<T, double> *typedHandler = NULL;\
 typename TDSObjectHandler<T, double>::TDSHandler handlerPointer = objectMethodHandler;\
 abstractPointer = typedHandler = new TDSObjectHandler<T, double>(objectPointer, handlerPointer);
 
+namespace chaos_data = chaos::common::data;
+
 namespace chaos {
     namespace cu {
         
@@ -54,7 +56,7 @@ namespace chaos {
              Define the control unit DataSet and Action into
              a CDataWrapper
              */
-            void _defineActionAndDataset(CDataWrapper&) throw(CException);
+            void _defineActionAndDataset(chaos_data::CDataWrapper&) throw(CException);
             
             
             void init(void *initData) throw(CException);
@@ -75,14 +77,14 @@ namespace chaos {
             virtual void unitRun() throw(CException) = 0;
 
             
-            void pushDataSet(CDataWrapper *acquiredData);
+            void pushDataSet(chaos_data::CDataWrapper *acquiredData);
             
             void setDefaultScheduleDelay(uint32_t _defaultScheduleDelay);
             /*!
              return a new instance of CDataWrapper filled with a mandatory data
              according to key
              */
-            CDataWrapper *getNewDataWrapper();
+            chaos_data::CDataWrapper *getNewDataWrapper();
             
             /*
              return the appropriate thread for the device
@@ -93,7 +95,7 @@ namespace chaos {
             /*!
              Event for update some CU configuration
              */
-            virtual CDataWrapper* updateConfiguration(CDataWrapper*, bool&) throw (CException);
+            virtual chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*, bool&) throw (CException);
             
             /*!
              Thread method for the scheduler
@@ -193,9 +195,9 @@ namespace chaos {
             void addInputStructAttributeToDataSet(const char*const attributeName,
                                                   const char*const attributeDescription,
                                                   T* objectPointer,
-                                                  typename TDSObjectHandler<T, CDataWrapper>::TDSHandler  objectHandler) {
+                                                  typename TDSObjectHandler<T, chaos_data::CDataWrapper>::TDSHandler  objectHandler) {
                 
-                addTemplatedAttributeToDataSet(attributeName, attributeDescription, DataType::TYPE_STRUCT, DataType::Input, new TDSObjectHandler<T, CDataWrapper>(objectPointer, objectHandler));
+                addTemplatedAttributeToDataSet(attributeName, attributeDescription, DataType::TYPE_STRUCT, DataType::Input, new TDSObjectHandler<T, chaos_data::CDataWrapper>(objectPointer, objectHandler));
             }
             
             //! add an handler for a determinate device id and attribute set
@@ -213,7 +215,7 @@ namespace chaos {
              Receive the event for set the dataset input element, this virtual method
              is empty because can be used by controlunit implementation
              */
-            CDataWrapper* setDatasetAttribute(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException);
+            chaos_data::CDataWrapper* setDatasetAttribute(chaos_data::CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException);
         public:
             
             RTAbstractControlUnit();

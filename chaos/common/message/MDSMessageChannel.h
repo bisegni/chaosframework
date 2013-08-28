@@ -28,7 +28,7 @@
 namespace chaos {
     
     using namespace std;
-    
+    using namespace chaos::common::data;
     //! Message Channel specialize for metadataserver comunication
     /*! 
      This class represent a message chanel for comunication with the Metadata Server 
