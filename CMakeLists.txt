@@ -121,8 +121,8 @@ ADD_SUBDIRECTORY(example/ChaosCLI bin/chaos_cli)
 #message(STATUS "Configure BenchTest simulation excutable")
 #ADD_SUBDIRECTORY(example/BenchTest bin/bench_test)
 
-#message(STATUS "Configure ChaosMemCacheTest test excutable")
-#ADD_SUBDIRECTORY(test/MemcachedEmbeddedTest bin/cache_test)
+message(STATUS "Configure ChaosMemCacheTest test excutable")
+ADD_SUBDIRECTORY(test/MemcachedEmbeddedTest bin/cache_test)
 
 #message(STATUS "Configure Plugin Test")
 #ADD_SUBDIRECTORY(test/PluginTest bin/plugin_test)
