@@ -35,6 +35,7 @@
 #include <time.h>
 #include <stdlib.h>
 using namespace chaos;
+using namespace chaos::common::data;
 
 #define SIMULATED_DEVICE_ID     "SWAlim"
 #define DS_ELEMENT_1            "current"

@@ -27,9 +27,6 @@
       location = "group:example/ChaosCLI/ChaosCLI.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:example/ControlUnitTest/ControlUnitTest.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:example/UIToolkitCMDLineCWrapperExample/UIToolkitCMDLineCWrapperExample.xcodeproj">
    </FileRef>
    <FileRef

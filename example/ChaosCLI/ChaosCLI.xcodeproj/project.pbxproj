@@ -205,7 +205,6 @@
 					../../usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug",
 					/usr/local/lib,
 					"$(SRCROOT)/../../usr/local/lib",
 				);
@@ -240,7 +239,6 @@
 					../../usr/local/include,
 				);
 				LIBRARY_SEARCH_PATHS = (
-					"$(SRCROOT)/../../DerivedData/CHAOSWorkspace/Build/Products/Debug",
 					/usr/local/lib,
 					"$(SRCROOT)/../../usr/local/lib",
 				);

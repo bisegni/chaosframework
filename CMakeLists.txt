@@ -109,23 +109,20 @@ ADD_SUBDIRECTORY(ChaosHSTService bin/bin_chst)
 message(STATUS "Configure Chaos CLI")
 ADD_SUBDIRECTORY(example/ChaosCLI bin/chaos_cli)
 
-message(STATUS "Configure ChaosDeviceDriver (chaosDD) Library")
-ADD_SUBDIRECTORY(example/ChaosDeviceDriver bin/bin_dd)
+#message(STATUS "Configure Control Unit Test examples")
+#ADD_SUBDIRECTORY(example/ControlUnitTest bin/bin_example_cutest)
 
-message(STATUS "Configure Control Unit Test examples")
-ADD_SUBDIRECTORY(example/ControlUnitTest bin/bin_example_cutest)
+#message(STATUS "Configure UIToolkit command line example")
+#ADD_SUBDIRECTORY(example/UIToolkitCMDLineExample bin/bin_example_uicmdline_test)
 
-message(STATUS "Configure UIToolkit command line example")
-ADD_SUBDIRECTORY(example/UIToolkitCMDLineExample bin/bin_example_uicmdline_test)
+#message(STATUS "Configure UIToolkit c-wrapper command line example")
+#ADD_SUBDIRECTORY(example/UIToolkitCMDLineCWrapperExample bin/bin_example_uicmdline_cwrapper_test)
 
-message(STATUS "Configure UIToolkit c-wrapper command line example")
-ADD_SUBDIRECTORY(example/UIToolkitCMDLineCWrapperExample bin/bin_example_uicmdline_cwrapper_test)
+#message(STATUS "Configure BenchTest simulation excutable")
+#ADD_SUBDIRECTORY(example/BenchTest bin/bench_test)
 
-message(STATUS "Configure BenchTest simulation excutable")
-ADD_SUBDIRECTORY(example/BenchTest bin/bench_test)
+#message(STATUS "Configure ChaosMemCacheTest test excutable")
+#ADD_SUBDIRECTORY(test/MemcachedEmbeddedTest bin/cache_test)
 
-message(STATUS "Configure ChaosMemCacheTest test excutable")
-ADD_SUBDIRECTORY(test/MemcachedEmbeddedTest bin/cache_test)
-
-message(STATUS "Configure Plugin Test")
-ADD_SUBDIRECTORY(test/PluginTest bin/plugin_test)
+#message(STATUS "Configure Plugin Test")
+#ADD_SUBDIRECTORY(test/PluginTest bin/plugin_test)

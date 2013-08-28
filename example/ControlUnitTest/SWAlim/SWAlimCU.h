@@ -36,6 +36,7 @@ using namespace chaos;
 using namespace boost;
 using namespace boost::posix_time;
 
+namespace c_data = chaos::common::data;
 
 class SWAlimCU : public chaos::cu::RTAbstractControlUnit {
     typedef boost::mt19937 RNGType; 
@@ -93,17 +94,17 @@ protected:
     /*
         Test Action Handler
      */
-    CDataWrapper* actionTestOne(CDataWrapper*, bool&);
+    c_data::CDataWrapper* actionTestOne(c_data::CDataWrapper*, bool&);
     
     /*
      Test Action Handler
      */
-    CDataWrapper* actionTestTwo(CDataWrapper*, bool&);
+    c_data::CDataWrapper* actionTestTwo(c_data::CDataWrapper*, bool&);
     
     /*
      Test Action Handler
      */
-    CDataWrapper* resetStatistic(CDataWrapper*, bool&);
+    c_data::CDataWrapper* resetStatistic(c_data::CDataWrapper*, bool&);
 
 };
 

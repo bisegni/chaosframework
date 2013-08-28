@@ -35,13 +35,14 @@
 #include <boost/program_options/variables_map.hpp>
 #include <boost/program_options/parsers.hpp>
 
+namespace po = boost::program_options;
+namespace chaos_data = chaos::common::data;
+
 namespace chaos {
     
     using namespace std;
     using namespace boost;
-	
-    namespace po = boost::program_options;
-    namespace chaos_data = chaos::common::data;
+
 	
 #define CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(t,x,y,z)\
 t x;\
