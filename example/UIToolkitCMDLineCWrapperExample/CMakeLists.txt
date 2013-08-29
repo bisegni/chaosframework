@@ -1,4 +1,0 @@
-SET(uicwrapper_example_exe_src UIToolkitCMDLineCWapperExample.c)
-
-ADD_EXECUTABLE(UICWrapperToolkitTest ${uicwrapper_example_exe_src})
-TARGET_LINK_LIBRARIES(UICWrapperToolkitTest chaos_uitoolkit) 

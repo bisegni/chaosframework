@@ -395,10 +395,8 @@
 		3230D9E81652AAF100113C93 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		3230DA091652C41D00113C93 /* NetworkForwardInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkForwardInfo.h; sourceTree = "<group>"; };
 		3230DA0C1652C44B00113C93 /* RpcMessageForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcMessageForwarder.h; sourceTree = "<group>"; };
-		323236C7164573C60052CE06 /* ChaosNodeDirectory */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = ChaosNodeDirectory; path = /Volumes/DeepData/Sorgenti/chaos_bundle_dev/chaosframework/usr/local/bin/ChaosNodeDirectory; sourceTree = "<absolute>"; };
 		323236CA164573C60052CE06 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		323236CC164573C60052CE06 /* ChaosNodeDirectory.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ChaosNodeDirectory.1; sourceTree = "<group>"; };
-		323236D6164573F50052CE06 /* ChaosHSTService */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = ChaosHSTService; path = /Volumes/DeepData/Sorgenti/chaos_bundle_dev/chaosframework/usr/local/bin/ChaosHSTService; sourceTree = "<absolute>"; };
 		323236D9164573F50052CE06 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		323236DB164573F50052CE06 /* ChaosHSTService.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ChaosHSTService.1; sourceTree = "<group>"; };
 		3232F457177743DC003E1D4A /* AbstractDriverPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDriverPlugin.h; sourceTree = "<group>"; };
@@ -427,9 +425,6 @@
 		325F86EB14D9E59D00CDF35F /* InetUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InetUtility.h; sourceTree = "<group>"; };
 		325F8B4F1763AF2300EFE616 /* SlowCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SlowCommand.cpp; sourceTree = "<group>"; };
 		325F8B501763AF2300EFE616 /* SlowCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlowCommand.h; sourceTree = "<group>"; };
-		326026E914B301F600C906CE /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libchaos_common.dylib; path = /Volumes/DeepData/Sorgenti/chaos_bundle_dev/chaosframework/usr/local/lib/libchaos_common.dylib; sourceTree = "<absolute>"; };
-		3260276614B3068100C906CE /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libchaos_cutoolkit.dylib; path = /Volumes/DeepData/Sorgenti/chaos_bundle_dev/chaosframework/usr/local/lib/libchaos_cutoolkit.dylib; sourceTree = "<absolute>"; };
-		3260278714B307DA00C906CE /* libchaos_uitoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libchaos_uitoolkit.dylib; path = /Volumes/DeepData/Sorgenti/chaos_bundle_dev/chaosframework/usr/local/lib/libchaos_uitoolkit.dylib; sourceTree = "<absolute>"; };
 		32640A09169DCC5800450962 /* BufferTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BufferTracker.h; sourceTree = "<group>"; };
 		32640A0A169DCC5800450962 /* GarbageThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GarbageThread.h; sourceTree = "<group>"; };
 		32640A0C169DCC5800450962 /* DataAggregationInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataAggregationInterface.h; sourceTree = "<group>"; };
@@ -569,6 +564,11 @@
 		32875F9917763B0800E33D6F /* AbstractPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractPlugin.h; sourceTree = "<group>"; };
 		3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteEntityDB.cpp; sourceTree = "<group>"; };
 		3289F9A4168508460080D93F /* SQLiteEntityDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteEntityDB.h; sourceTree = "<group>"; };
+		328CB63C17CF442F003EFD6D /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libchaos_common.dylib; path = /Volumes/DeepData/Sorgenti/chaos_bundle_dev/chaosframework/usr/local/lib/libchaos_common.dylib; sourceTree = "<absolute>"; };
+		328CB63D17CF442F003EFD6D /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libchaos_cutoolkit.dylib; path = /Volumes/DeepData/Sorgenti/chaos_bundle_dev/chaosframework/usr/local/lib/libchaos_cutoolkit.dylib; sourceTree = "<absolute>"; };
+		328CB63E17CF442F003EFD6D /* libchaos_uitoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libchaos_uitoolkit.dylib; path = /Volumes/DeepData/Sorgenti/chaos_bundle_dev/chaosframework/usr/local/lib/libchaos_uitoolkit.dylib; sourceTree = "<absolute>"; };
+		328CB63F17CF442F003EFD6D /* ChaosNodeDirectory */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = ChaosNodeDirectory; path = /Volumes/DeepData/Sorgenti/chaos_bundle_dev/chaosframework/usr/local/bin/ChaosNodeDirectory; sourceTree = "<absolute>"; };
+		328CB64017CF442F003EFD6D /* ChaosHSTService */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = ChaosHSTService; path = /Volumes/DeepData/Sorgenti/chaos_bundle_dev/chaosframework/usr/local/bin/ChaosHSTService; sourceTree = "<absolute>"; };
 		328CC9D41763CCC7000B30B6 /* AbstractDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractDriver.cpp; sourceTree = "<group>"; };
 		328CC9D51763CCC7000B30B6 /* AbstractDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDriver.h; sourceTree = "<group>"; };
 		328D2FB01660E3EC007F482E /* DSAttributeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DSAttributeHandler.cpp; sourceTree = "<group>"; };
@@ -1976,7 +1976,7 @@
 			);
 			name = ChaosNodeDirectory;
 			productName = ChaosNodeDirectory;
-			productReference = 323236C7164573C60052CE06 /* ChaosNodeDirectory */;
+			productReference = 328CB63F17CF442F003EFD6D /* ChaosNodeDirectory */;
 			productType = "com.apple.product-type.tool";
 		};
 		323236D5164573F50052CE06 /* ChaosHSTService */ = {
@@ -1992,7 +1992,7 @@
 			);
 			name = ChaosHSTService;
 			productName = ChaosHSTService;
-			productReference = 323236D6164573F50052CE06 /* ChaosHSTService */;
+			productReference = 328CB64017CF442F003EFD6D /* ChaosHSTService */;
 			productType = "com.apple.product-type.tool";
 		};
 		326026E814B301F600C906CE /* chaos_common */ = {
@@ -2010,7 +2010,7 @@
 			);
 			name = chaos_common;
 			productName = chaos_common;
-			productReference = 326026E914B301F600C906CE /* libchaos_common.dylib */;
+			productReference = 328CB63C17CF442F003EFD6D /* libchaos_common.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3260276514B3068100C906CE /* chaos_cutoolkit */ = {
@@ -2027,7 +2027,7 @@
 			);
 			name = chaos_cutoolkit;
 			productName = chaos_cutoolkit;
-			productReference = 3260276614B3068100C906CE /* libchaos_cutoolkit.dylib */;
+			productReference = 328CB63D17CF442F003EFD6D /* libchaos_cutoolkit.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3260278614B307DA00C906CE /* chaos_uitoolkit */ = {
@@ -2044,7 +2044,7 @@
 			);
 			name = chaos_uitoolkit;
 			productName = chaos_uitoolkit;
-			productReference = 3260278714B307DA00C906CE /* libchaos_uitoolkit.dylib */;
+			productReference = 328CB63E17CF442F003EFD6D /* libchaos_uitoolkit.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
