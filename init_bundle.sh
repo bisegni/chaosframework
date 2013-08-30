@@ -11,4 +11,4 @@ ln -s chaosframework/usr usr
 cd chaosframework
 doxygen Documentation/chaosdocs
 cd ..
-ln -s Documentation/html Documentation
+ln -s chaosframework/Documentation/html Documentation
