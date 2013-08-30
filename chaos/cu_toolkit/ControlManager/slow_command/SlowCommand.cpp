@@ -30,7 +30,7 @@ SlowCommand::SlowCommand() {
 	commandFeatures.featuresFlag = 0;
 	commandFeatures.lockedOnUserModification = false;
 	
-    runningState = RunningStateType::RS_Exsc;
+    runningProperty = RunningStateType::RS_Exsc;
     submissionRule = SubmissionRuleType::SUBMIT_NORMAL;
 }
 

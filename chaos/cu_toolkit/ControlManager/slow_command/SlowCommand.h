@@ -54,17 +54,17 @@ namespace chaos{
                 //forward declaration
                 class SlowCommandExecutor;
                 
-#define SL_EXEC_RUNNIG_STATE    chaos::cu::control_manager::slow_command::SlowCommand::runningState = chaos::cu::control_manager::slow_command::RunningStateType::RS_Exsc;
-#define SL_STACK_RUNNIG_STATE   chaos::cu::control_manager::slow_command::SlowCommand::runningState = chaos::cu::control_manager::slow_command::RunningStateType::RS_Stack;
-#define SL_KILL_RUNNIG_STATE    chaos::cu::control_manager::slow_command::SlowCommand::runningState = chaos::cu::control_manager::slow_command::RunningStateType::RS_Kill;
-#define SL_END_RUNNIG_STATE     chaos::cu::control_manager::slow_command::SlowCommand::runningState = chaos::cu::control_manager::slow_command::RunningStateType::RS_End;
-#define SL_FAULT_RUNNIG_STATE   chaos::cu::control_manager::slow_command::SlowCommand::runningState = chaos::cu::control_manager::slow_command::RunningStateType::RS_Fault;
+#define SL_EXEC_RUNNIG_STATE    setRunningProperty(chaos::cu::control_manager::slow_command::RunningStateType::RS_Exsc);
+#define SL_STACK_RUNNIG_STATE   setRunningProperty(chaos::cu::control_manager::slow_command::RunningStateType::RS_Stack);
+#define SL_KILL_RUNNIG_STATE    setRunningProperty(chaos::cu::control_manager::slow_command::RunningStateType::RS_Kill);
+#define SL_END_RUNNIG_STATE     setRunningProperty(chaos::cu::control_manager::slow_command::RunningStateType::RS_End);
+#define SL_FAULT_RUNNIG_STATE   setRunningProperty(chaos::cu::control_manager::slow_command::RunningStateType::RS_Fault);
                 
-#define SL_CHECK_EXEC_RUNNIG_STATE  (chaos::cu::control_manager::slow_command::SlowCommand::runningState & chaos::cu::control_manager::slow_command::RunningStateType::RS_Exsc)
-#define SL_CHECK_STACK_RUNNIG_STATE (chaos::cu::control_manager::slow_command::SlowCommand::runningState & chaos::cu::control_manager::slow_command::RunningStateType::RS_Stack)
-#define SL_CHECK_KILL_RUNNIG_STATE  (chaos::cu::control_manager::slow_command::SlowCommand::runningState & chaos::cu::control_manager::slow_command::RunningStateType::RS_Kill)
-#define SL_CHECK_END_RUNNIG_STATE   (chaos::cu::control_manager::slow_command::SlowCommand::runningState & chaos::cu::control_manager::slow_command::RunningStateType::RS_End)
-#define SL_CHECK_FAULT_RUNNIG_STATE (chaos::cu::control_manager::slow_command::SlowCommand::runningState & chaos::cu::control_manager::slow_command::RunningStateType::RS_Fault)
+#define SL_CHECK_EXEC_RUNNIG_STATE  (getRunningProperty() & chaos::cu::control_manager::slow_command::RunningStateType::RS_Exsc)
+#define SL_CHECK_STACK_RUNNIG_STATE (getRunningProperty() & chaos::cu::control_manager::slow_command::RunningStateType::RS_Stack)
+#define SL_CHECK_KILL_RUNNIG_STATE  (getRunningProperty() & chaos::cu::control_manager::slow_command::RunningStateType::RS_Kill)
+#define SL_CHECK_END_RUNNIG_STATE   (getRunningProperty() & chaos::cu::control_manager::slow_command::RunningStateType::RS_End)
+#define SL_CHECK_FAULT_RUNNIG_STATE (getRunningProperty() & chaos::cu::control_manager::slow_command::RunningStateType::RS_Fault)
                 
                 //! Base cass for the slow command implementation
                 /*!
@@ -83,6 +83,12 @@ namespace chaos{
 					
 					//! Command features
 					features::Features commandFeatures;
+					
+                    //! Running state
+                    /*!
+                     A value composed by a set of RunningState element.
+                     */
+                    uint8_t runningProperty;
 					
                     //! Submission state
                     /*!
@@ -113,12 +119,6 @@ namespace chaos{
                     
                     //Shared sandbox stat
                     const SandboxStat *shared_stat;
-                    
-                    //! Running state
-                    /*!
-                     A value composed by a set of RunningState element.
-                     */
-                    uint8_t runningState;
 
                     
                     //! default constructor
@@ -133,8 +133,18 @@ namespace chaos{
                      overloaded by submition feature flag and anyway the are keept in consideration onlyat installation time
                      of the command.
                      */
-                    void setFeatures(features::FeaturesFlagTypes::FeatureFlag features, uint32_t featuresValue);
+                    inline void setFeatures(features::FeaturesFlagTypes::FeatureFlag features, uint32_t featuresValue);
                     
+					//! set the running property
+					inline void setRunningProperty(uint8_t property)  {
+						runningProperty = property;
+					}
+					
+					//! return the current running property
+					uint8_t getRunningProperty() {
+						return runningProperty;
+					}
+					
                     /*!
                      return the device database with the dafualt device information
                      */

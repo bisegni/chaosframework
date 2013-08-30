@@ -24,7 +24,7 @@ using namespace chaos::cu::control_manager::slow_command;
 
 #define SET_FAULT(c, m, d) \
 FUNCTORLERR_ << c << m << d; \
-cmdInstance->runningState |= RunningStateType::RS_Fault; \
+cmdInstance->setRunningProperty(cmdInstance->getRunningProperty()|RunningStateType::RS_Fault); \
 cmdInstance->faultDescription.code = c; \
 cmdInstance->faultDescription.description = m; \
 cmdInstance->faultDescription.domain = d;
@@ -32,7 +32,7 @@ cmdInstance->faultDescription.domain = d;
 //! Functor implementation
 void AcquireFunctor::operator()() {
     try{
-        if(cmdInstance && (cmdInstance->runningState < RunningStateType::RS_End)) cmdInstance->acquireHandler();
+        if(cmdInstance && (cmdInstance->runningProperty < RunningStateType::RS_End)) cmdInstance->acquireHandler();
     } catch(chaos::CException& ex) {
         SET_FAULT(ex.errorCode, ex.errorMessage, ex.errorDomain)
     } catch(std::exception& ex) {
@@ -45,7 +45,7 @@ void AcquireFunctor::operator()() {
 
 void CorrelationFunctor::operator()() {
     try {
-        if(cmdInstance && (cmdInstance->runningState < RunningStateType::RS_End)) (cmdInstance->ccHandler());
+        if(cmdInstance && (cmdInstance->runningProperty < RunningStateType::RS_End)) (cmdInstance->ccHandler());
     } catch(chaos::CException& ex) {
         SET_FAULT(ex.errorCode, ex.errorMessage, ex.errorDomain)
     } catch(std::exception& ex) {
@@ -219,7 +219,7 @@ void SlowCommandSandbox::checkNextCommand() {
         //compute the runnig state or fault
         boost::mutex::scoped_lock lockForCurrentCommandMutex(mutextAccessCurrentCommand, boost::try_to_lock);
         if(lockForCurrentCommandMutex) {
-            curCmdRunningState = currentExecutingCommand?currentExecutingCommand->runningState:RunningStateType::RS_End;
+            curCmdRunningState = currentExecutingCommand?currentExecutingCommand->runningProperty:RunningStateType::RS_End;
             lockForCurrentCommandMutex.unlock();
         }else {
             continue;
@@ -336,7 +336,7 @@ void SlowCommandSandbox::runCommand() {
         //call the correlation and commit phase();
         correlationHandlerFunctor();
         
-        curCmdRunningState = currentExecutingCommand?currentExecutingCommand->runningState:RunningStateType::RS_End;
+        curCmdRunningState = currentExecutingCommand?currentExecutingCommand->runningProperty:RunningStateType::RS_End;
         if(!scheduleWorkFlag && curCmdRunningState) {
             DEBUG_CODE(SCSLDBG_ << "The command is not int the state of exec and thread need to be stopped";)
             canWork = false;
