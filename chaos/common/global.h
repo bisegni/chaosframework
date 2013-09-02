@@ -107,7 +107,6 @@ if (x){\
 LAPP_ << "-----------------------------------------";\
 LAPP_ << CSLIB_VERSION_HEADER;\
 LAPP_ << CSLIB_VERSION_NUMBER;\
-LAPP_ << CSLIB_VERSION_LAST_COMMITTER;\
 LAPP_ << "-----------------------------------------";
 
 /*
