@@ -8,7 +8,7 @@ export PATH=$PATH:/opt/local/bin:/usr/local/bin
 git log -n 1 --pretty="format:#define CSLIB_VERSION_HEADER \"!CHAOS Library Developed By Claudio Bisegni\"%n#define CSLIB_VERSION_NUMBER \"Version:%h\"%n" > /tmp/version.h
 stty -echo
 
-if ! diff /tmp/version.h $BASEDIR/version.h; then
+if ! diff /tmp/version.h $BASEDIR/version.h>/dev/null; then
     stty echo
     echo "Writing version header file" $BASEDIR
     cp /tmp/version.h $BASEDIR/version.h
