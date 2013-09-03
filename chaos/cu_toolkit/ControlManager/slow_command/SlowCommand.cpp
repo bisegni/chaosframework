@@ -25,10 +25,11 @@ using namespace chaos::cu::control_manager::slow_command;
 
 // default constructor
 SlowCommand::SlowCommand() {
-    
+	//reset all lock flag
+    lockFeaturePropertyFlag.reset();
 	//setup feautere fields
 	commandFeatures.featuresFlag = 0;
-	commandFeatures.lockedOnUserModification = false;
+	//commandFeatures.lockedOnUserModification = false;
 	
     runningProperty = RunningStateType::RS_Exsc;
     submissionRule = SubmissionRuleType::SUBMIT_NORMAL;

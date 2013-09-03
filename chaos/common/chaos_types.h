@@ -75,7 +75,7 @@ namespace chaos {
 						uint8_t  featuresFlag;
 						
 						//! If true the user modification to the features are denied
-						bool lockedOnUserModification;
+						//bool lockedOnUserModification;
 
 						//! Command specific delay beetween two sequence of the commadn step (acquire->correlation)
 						uint32_t featureSchedulerStepsDelay;
