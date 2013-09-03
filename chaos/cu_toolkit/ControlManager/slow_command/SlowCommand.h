@@ -133,7 +133,24 @@ namespace chaos{
                      overloaded by submition feature flag and anyway the are keept in consideration onlyat installation time
                      of the command.
                      */
-                    inline void setFeatures(features::FeaturesFlagTypes::FeatureFlag features, uint32_t featuresValue);
+					inline void setFeatures(features::FeaturesFlagTypes::FeatureFlag features, uint32_t featuresValue) {
+						//check if the features are locked for the user modifications
+						if(commandFeatures.lockedOnUserModification) return;
+						
+						commandFeatures.featuresFlag |= features;
+						switch (features) {
+							case features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY:
+								commandFeatures.featureSchedulerStepsDelay = featuresValue;
+								break;
+								
+							case features::FeaturesFlagTypes::FF_SET_SUBMISSION_RETRY:
+								commandFeatures.featureSubmissionRetryDelay = featuresValue;
+								break;
+								
+							default:
+								break;
+						}
+					}
                     
 					//! set the running property
 					inline void setRunningProperty(uint8_t property)  {

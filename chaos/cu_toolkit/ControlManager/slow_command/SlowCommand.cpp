@@ -46,26 +46,6 @@ chaos::cu::DeviceSchemaDB  *SlowCommand::getDeviceDatabase() {
     return deviceDatabasePtr;
 }
 
-// set the features with the ui32 value
-void SlowCommand::setFeatures(features::FeaturesFlagTypes::FeatureFlag features, uint32_t featuresValue) {
-	//check if the features are locked for the user modifications
-    if(commandFeatures.lockedOnUserModification) return;
-
-    commandFeatures.featuresFlag |= features;
-    switch (features) {
-        case features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY:
-            commandFeatures.featureSchedulerStepsDelay = featuresValue;
-            break;
-            
-        case features::FeaturesFlagTypes::FF_SET_SUBMISSION_RETRY:
-            commandFeatures.featureSubmissionRetryDelay = featuresValue;
-            break;
-            
-        default:
-            break;
-    }
-}
-
 void SlowCommand::getChangedAttributeIndex(std::vector<AttributeIndexType>& changedIndex) {
     CHAOS_ASSERT(sharedAttributeSettingPtr)
     return sharedAttributeSettingPtr->getChangedIndex(changedIndex);
