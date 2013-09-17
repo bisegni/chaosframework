@@ -21,6 +21,7 @@
 #ifndef __CHAOSFramework__SlowCommand__
 #define __CHAOSFramework__SlowCommand__
 
+#include <bitset>
 #include <map>
 #include <vector>
 #include <string>
@@ -78,8 +79,16 @@ namespace chaos{
                     friend class SlowCommandExecutor;
                     friend struct AcquireFunctor;
                     friend struct CorrelationFunctor;
+					
+					//! Locking flag
+					/*!
+						this set keep track of the lock state for the feature
+						or the running property for the mdification applyed by 
+						subclass developer lock=1/unlock=0
+						first bit is for features second bit is for runnign property
+					 */
+					std::bitset<2> lockFeaturePropertyFlag;
 
-                    bool featuresLocked;
 					
 					//! Command features
 					features::Features commandFeatures;
@@ -135,7 +144,7 @@ namespace chaos{
                      */
 					inline void setFeatures(features::FeaturesFlagTypes::FeatureFlag features, uint32_t featuresValue) {
 						//check if the features are locked for the user modifications
-						if(commandFeatures.lockedOnUserModification) return;
+						if(lockFeaturePropertyFlag.test(0)) return;
 						
 						commandFeatures.featuresFlag |= features;
 						switch (features) {
@@ -154,11 +163,12 @@ namespace chaos{
                     
 					//! set the running property
 					inline void setRunningProperty(uint8_t property)  {
+						if(lockFeaturePropertyFlag.test(1)) return;
 						runningProperty = property;
 					}
 					
 					//! return the current running property
-					uint8_t getRunningProperty() {
+					inline uint8_t getRunningProperty() {
 						return runningProperty;
 					}
 					

@@ -464,7 +464,7 @@ CDataWrapper* SlowCommandExecutor::setCommandFeatures(CDataWrapper *params, bool
 	//check wath feature we need to setup
 	if(params->hasKey(SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL)) {
 		//has lock information to setup
-		commandSandbox.currentExecutingCommand->commandFeatures.lockedOnUserModification = params->getBoolValue(SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL);
+		commandSandbox.currentExecutingCommand->lockFeaturePropertyFlag[0] = params->getBoolValue(SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL);
 	}
 	
 	if(params->hasKey(SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI32)) {
