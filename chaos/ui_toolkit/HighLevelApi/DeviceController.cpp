@@ -284,16 +284,23 @@ int DeviceController::submitSlowControlCommand(string commandAlias, cccs::Submis
     return deviceChannel->setAttributeValue(localCommandPack, false, millisecToWait);
 }
 
-int DeviceController::setSlowCommandFeatures(cccs::features::Features& features) {
+int DeviceController::setSlowCommandFeatures(cccs::features::Features& features, bool lock_features) {
 	CDataWrapper localCommandPack;
 	if(features.featuresFlag & cccs::features::FeaturesFlagTypes::FF_LOCK_USER_MOD) {
-		localCommandPack.addBoolValue(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL, features.lockedOnUserModification);
+		localCommandPack.addBoolValue(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL, lock_features);
 	}
 	
 	if(features.featuresFlag & cccs::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY) {
 		localCommandPack.addInt32Value(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI32, features.featureSchedulerStepsDelay);
 	}
 	
+	return deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES, &localCommandPack, NULL, millisecToWait);
+}
+
+//! Set the lock on slow command features
+int DeviceController::setSlowCommandLockOnFeatures(bool lock_features) {
+	CDataWrapper localCommandPack;
+	localCommandPack.addBoolValue(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL, lock_features);
 	return deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES, &localCommandPack, NULL, millisecToWait);
 }
 

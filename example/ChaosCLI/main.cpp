@@ -262,17 +262,21 @@ int main (int argc, char* argv[] )
 			//we can set the features
 			if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_SET_FEATURES_LOCK)) {
 				features.featuresFlag |= cccs::features::FeaturesFlagTypes::FF_LOCK_USER_MOD;
-				features.lockedOnUserModification = scFeaturesLock;
 				std::cout << "Set the lock feature to -> " << scFeaturesLock << std::endl;
+				//set the lock
+				err = controller->setSlowCommandLockOnFeatures(scFeaturesLock);
+				if(err == ErrorCode::EC_TIMEOUT) throw CException(5, "Time out on connection", "setSlowCommandLockOnFeatures");
 			}
 			
 			if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_SET_FEATURES_SCHEDULER_WAIT)) {
 				features.featuresFlag |= cccs::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY;
 				features.featureSchedulerStepsDelay = scFeaturesSchedWait;
 				std::cout << "Set the sched wait feature to -> " << scFeaturesSchedWait << std::endl;
+				//se the features
+				err = controller->setSlowCommandFeatures(features, scFeaturesLock);
+				if(err == ErrorCode::EC_TIMEOUT) throw CException(5, "Time out on connection", "setSlowCommandFeatures");
 			}
-			//se the features
-			err = controller->setSlowCommandFeatures(features);
+			
 		}
 		
         if( printState && (op>=1 && op<=4)){
