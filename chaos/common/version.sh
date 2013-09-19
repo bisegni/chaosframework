@@ -3,8 +3,7 @@
 BASEDIR=$(dirname $0)
 
 
-#export PATH=$PATH:/opt/local/bin:/usr/local/bin
-
+#check if we are using the script into xcode or no (in xcode the ssty give an error)
 if [ ! -n $XCODE_PRODUCT_BUILD_VERSION ]; then
 	git log -n 1 --pretty="format:#define CSLIB_VERSION_HEADER \"!CHAOS Library Developed By Claudio Bisegni\"%n#define CSLIB_VERSION_NUMBER \"Version:%h\"%n" > /tmp/version.h
 	stty -echo
