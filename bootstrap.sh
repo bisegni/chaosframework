@@ -1,9 +1,7 @@
 #!/bin/bash
 
 #####
-#	!CHAOS Bootstrap script
-#   create and managed by Claudio Bisegni and Andrea Michelotti
-#	Dipendence: automake libtool subversion git-core bzr ruby1.8-full cmake zlib1g-dev libcloog-ppl0 wget g++
+#Dipendence: automake libtool subversion git-core bzr ruby1.8-full cmake zlib1g-dev libcloog-ppl0 wget g++
 #####
 
 pushd `dirname $0` > /dev/null
