@@ -157,7 +157,8 @@ if [ ! -d "$PREFIX/include/msgpack/rpc" ]; then
 	echo "Setup MSGPACK-RPC"
 	if [ ! -d "$BASE_EXTERNAL/msgpack-rpc" ]; then
 		echo "Install msgpack-rpc"
-		git clone https://github.com/msgpack-rpc/msgpack-rpc-cpp.git $BASE_EXTERNAL/msgpack-rpc
+#git clone https://github.com/msgpack-rpc/msgpack-rpc-cpp.git $BASE_EXTERNAL/msgpack-rpc
+		git clone https://github.com/bisegni/msgpack-rpc-cpp.git $BASE_EXTERNAL/msgpack-rpc
 		cd $BASE_EXTERNAL/msgpack-rpc
 	else
 		echo "Update msgpack-rpc"
