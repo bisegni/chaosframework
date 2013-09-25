@@ -187,6 +187,11 @@
 		327CFF091708C4EB0069497B /* FastHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327CFF071708C4EA0069497B /* FastHash.cpp */; };
 		327CFF0A1708C4EB0069497B /* FastHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF081708C4EB0069497B /* FastHash.h */; };
 		327CFF121708D7760069497B /* CacheGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF111708D7740069497B /* CacheGlobal.h */; };
+		328556A017F2E33A00A64ED2 /* DirectIOClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3285569E17F2E33A00A64ED2 /* DirectIOClient.cpp */; };
+		328556A117F2E33A00A64ED2 /* DirectIOClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3285569F17F2E33A00A64ED2 /* DirectIOClient.h */; };
+		328556A417F2E36000A64ED2 /* DirectIOServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328556A217F2E36000A64ED2 /* DirectIOServer.cpp */; };
+		328556A517F2E36000A64ED2 /* DirectIOServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 328556A317F2E36000A64ED2 /* DirectIOServer.h */; };
+		328556A717F3039700A64ED2 /* DirectIOTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 328556A617F3039700A64ED2 /* DirectIOTypes.h */; };
 		32875F97177634AF00E33D6F /* PluginInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = 32875F96177634AF00E33D6F /* PluginInspector.h */; };
 		3287F7E617B2756C009DD6ED /* DriverManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326D3A5F17B0CD01004601A8 /* DriverManager.cpp */; };
 		3287F7E717B27621009DD6ED /* DriverManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 326D3A6017B0CD01004601A8 /* DriverManager.h */; };
@@ -559,16 +564,21 @@
 		327CFF071708C4EA0069497B /* FastHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastHash.cpp; sourceTree = "<group>"; };
 		327CFF081708C4EB0069497B /* FastHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastHash.h; sourceTree = "<group>"; };
 		327CFF111708D7740069497B /* CacheGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheGlobal.h; sourceTree = "<group>"; };
+		3285569817F2DD7800A64ED2 /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_common.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3285569917F2DD7800A64ED2 /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_cutoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3285569A17F2DD7800A64ED2 /* libchaos_uitoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_uitoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3285569B17F2DD7800A64ED2 /* ChaosNodeDirectory */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosNodeDirectory; sourceTree = BUILT_PRODUCTS_DIR; };
+		3285569C17F2DD7800A64ED2 /* ChaosHSTService */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosHSTService; sourceTree = BUILT_PRODUCTS_DIR; };
+		3285569E17F2E33A00A64ED2 /* DirectIOClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOClient.cpp; sourceTree = "<group>"; };
+		3285569F17F2E33A00A64ED2 /* DirectIOClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOClient.h; sourceTree = "<group>"; };
+		328556A217F2E36000A64ED2 /* DirectIOServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOServer.cpp; sourceTree = "<group>"; };
+		328556A317F2E36000A64ED2 /* DirectIOServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOServer.h; sourceTree = "<group>"; };
+		328556A617F3039700A64ED2 /* DirectIOTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOTypes.h; sourceTree = "<group>"; };
 		32875F96177634AF00E33D6F /* PluginInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginInspector.h; sourceTree = "<group>"; };
 		32875F9817763AE200E33D6F /* PluginLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PluginLoader.h; sourceTree = "<group>"; };
 		32875F9917763B0800E33D6F /* AbstractPlugin.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AbstractPlugin.h; sourceTree = "<group>"; };
 		3289F9A3168508460080D93F /* SQLiteEntityDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SQLiteEntityDB.cpp; sourceTree = "<group>"; };
 		3289F9A4168508460080D93F /* SQLiteEntityDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteEntityDB.h; sourceTree = "<group>"; };
-		328CB65C17D09050003EFD6D /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libchaos_common.dylib; path = /Users/bisegni/Desktop/chaos_bundle/chaosframework/usr/local/lib/libchaos_common.dylib; sourceTree = "<absolute>"; };
-		328CB65D17D09050003EFD6D /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libchaos_cutoolkit.dylib; path = /Users/bisegni/Desktop/chaos_bundle/chaosframework/usr/local/lib/libchaos_cutoolkit.dylib; sourceTree = "<absolute>"; };
-		328CB65E17D09050003EFD6D /* libchaos_uitoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libchaos_uitoolkit.dylib; path = /Users/bisegni/Desktop/chaos_bundle/chaosframework/usr/local/lib/libchaos_uitoolkit.dylib; sourceTree = "<absolute>"; };
-		328CB65F17D09050003EFD6D /* ChaosNodeDirectory */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = ChaosNodeDirectory; path = /Users/bisegni/Desktop/chaos_bundle/chaosframework/usr/local/bin/ChaosNodeDirectory; sourceTree = "<absolute>"; };
-		328CB66017D09050003EFD6D /* ChaosHSTService */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = ChaosHSTService; path = /Users/bisegni/Desktop/chaos_bundle/chaosframework/usr/local/bin/ChaosHSTService; sourceTree = "<absolute>"; };
 		328CC9D41763CCC7000B30B6 /* AbstractDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractDriver.cpp; sourceTree = "<group>"; };
 		328CC9D51763CCC7000B30B6 /* AbstractDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDriver.h; sourceTree = "<group>"; };
 		328D2FB01660E3EC007F482E /* DSAttributeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DSAttributeHandler.cpp; sourceTree = "<group>"; };
@@ -943,6 +953,11 @@
 				326DB3B114B38BC00018A8D0 /* chaos */,
 				323236C9164573C60052CE06 /* ChaosNodeDirectory */,
 				323236D8164573F50052CE06 /* ChaosHSTService */,
+				3285569817F2DD7800A64ED2 /* libchaos_common.dylib */,
+				3285569917F2DD7800A64ED2 /* libchaos_cutoolkit.dylib */,
+				3285569A17F2DD7800A64ED2 /* libchaos_uitoolkit.dylib */,
+				3285569B17F2DD7800A64ED2 /* ChaosNodeDirectory */,
+				3285569C17F2DD7800A64ED2 /* ChaosHSTService */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1087,6 +1102,7 @@
 				326DB3FC14B38BC00018A8D0 /* exception */,
 				326DB3FE14B38BC00018A8D0 /* general */,
 				326DB40214B38BC00018A8D0 /* io */,
+				3285569D17F2E20500A64ED2 /* direct_io */,
 				326DB40814B38BC00018A8D0 /* pool */,
 				326DB40C14B38BC00018A8D0 /* pqueue */,
 				326DB41114B38BC00018A8D0 /* rpc */,
@@ -1432,6 +1448,18 @@
 				326DB4E414B3B0070018A8D0 /* LLRpcApi.h */,
 			);
 			path = LowLevelApi;
+			sourceTree = "<group>";
+		};
+		3285569D17F2E20500A64ED2 /* direct_io */ = {
+			isa = PBXGroup;
+			children = (
+				3285569E17F2E33A00A64ED2 /* DirectIOClient.cpp */,
+				3285569F17F2E33A00A64ED2 /* DirectIOClient.h */,
+				328556A217F2E36000A64ED2 /* DirectIOServer.cpp */,
+				328556A317F2E36000A64ED2 /* DirectIOServer.h */,
+				328556A617F3039700A64ED2 /* DirectIOTypes.h */,
+			);
+			path = direct_io;
 			sourceTree = "<group>";
 		};
 		32875F951776317F00E33D6F /* plugin */ = {
@@ -1782,6 +1810,7 @@
 				32C3546317885A37009ED581 /* shared_library.hpp in Headers */,
 				32CFF96015E4DBD3005D607E /* EventFactory.h in Headers */,
 				325013BD15E9258C00DCB13E /* EventClient.h in Headers */,
+				328556A117F2E33A00A64ED2 /* DirectIOClient.h in Headers */,
 				325013D815E980C800DCB13E /* AsioImplEventClient.h in Headers */,
 				325013DD15E9843D00DCB13E /* AsioEventForwarder.h in Headers */,
 				3255E72815EA87D2005C96CA /* AbstractEventDispatcher.h in Headers */,
@@ -1814,6 +1843,7 @@
 				32B571A1168DFA530002A198 /* bits.h in Headers */,
 				32B571A3168DFA530002A198 /* compiler.h in Headers */,
 				3235110A17B3EAE500E39E14 /* TemplatedConcurrentQueue.h in Headers */,
+				328556A517F2E36000A64ED2 /* DirectIOServer.h in Headers */,
 				32B571A4168DFA530002A198 /* compiler_gcc.h in Headers */,
 				32B571A5168DFA530002A198 /* compiler_msvc.h in Headers */,
 				32B571A6168DFA530002A198 /* cstdint.h in Headers */,
@@ -1843,6 +1873,7 @@
 				32B571FF168E02CE0002A198 /* bsonobj.h in Headers */,
 				32B57200168E02CE0002A198 /* bsonobjbuilder.h in Headers */,
 				32B57201168E02CE0002A198 /* bsonobjiterator.h in Headers */,
+				328556A717F3039700A64ED2 /* DirectIOTypes.h in Headers */,
 				32C3544E17885A37009ED581 /* common.hpp in Headers */,
 				32B57202168E02CE0002A198 /* bsontypes.h in Headers */,
 				32B57203168E02CE0002A198 /* inline_decls.h in Headers */,
@@ -1976,7 +2007,7 @@
 			);
 			name = ChaosNodeDirectory;
 			productName = ChaosNodeDirectory;
-			productReference = 328CB65F17D09050003EFD6D /* ChaosNodeDirectory */;
+			productReference = 3285569B17F2DD7800A64ED2 /* ChaosNodeDirectory */;
 			productType = "com.apple.product-type.tool";
 		};
 		323236D5164573F50052CE06 /* ChaosHSTService */ = {
@@ -1992,7 +2023,7 @@
 			);
 			name = ChaosHSTService;
 			productName = ChaosHSTService;
-			productReference = 328CB66017D09050003EFD6D /* ChaosHSTService */;
+			productReference = 3285569C17F2DD7800A64ED2 /* ChaosHSTService */;
 			productType = "com.apple.product-type.tool";
 		};
 		326026E814B301F600C906CE /* chaos_common */ = {
@@ -2010,7 +2041,7 @@
 			);
 			name = chaos_common;
 			productName = chaos_common;
-			productReference = 328CB65C17D09050003EFD6D /* libchaos_common.dylib */;
+			productReference = 3285569817F2DD7800A64ED2 /* libchaos_common.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3260276514B3068100C906CE /* chaos_cutoolkit */ = {
@@ -2027,7 +2058,7 @@
 			);
 			name = chaos_cutoolkit;
 			productName = chaos_cutoolkit;
-			productReference = 328CB65D17D09050003EFD6D /* libchaos_cutoolkit.dylib */;
+			productReference = 3285569917F2DD7800A64ED2 /* libchaos_cutoolkit.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3260278614B307DA00C906CE /* chaos_uitoolkit */ = {
@@ -2044,7 +2075,7 @@
 			);
 			name = chaos_uitoolkit;
 			productName = chaos_uitoolkit;
-			productReference = 328CB65E17D09050003EFD6D /* libchaos_uitoolkit.dylib */;
+			productReference = 3285569A17F2DD7800A64ED2 /* libchaos_uitoolkit.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
@@ -2146,6 +2177,7 @@
 				32DF603B15E14D5F00312C94 /* AlertEventDescriptor.cpp in Sources */,
 				32DF603F15E14F5A00312C94 /* InstrumentEventDescriptor.cpp in Sources */,
 				32DF604315E1502700312C94 /* CommandEventDescriptor.cpp in Sources */,
+				328556A017F2E33A00A64ED2 /* DirectIOClient.cpp in Sources */,
 				32DF604715E1505F00312C94 /* CustomEventDescriptor.cpp in Sources */,
 				32DD885315E2681F000AF740 /* EventHandler.cpp in Sources */,
 				32CFF95B15E4D950005D607E /* EventDescriptor.cpp in Sources */,
@@ -2156,6 +2188,7 @@
 				325013DC15E9843D00DCB13E /* AsioEventForwarder.cpp in Sources */,
 				3255E72415EA86F2005C96CA /* DefaultEventDispatcher.cpp in Sources */,
 				3255E72715EA87D2005C96CA /* AbstractEventDispatcher.cpp in Sources */,
+				328556A417F2E36000A64ED2 /* DirectIOServer.cpp in Sources */,
 				325DE9F115EC031E00D6F34E /* EventChannel.cpp in Sources */,
 				328E36EB1786B89500C1564D /* PluginLoader.cpp in Sources */,
 				3244D11D15ECC25800FE2F86 /* AlertEventChannel.cpp in Sources */,

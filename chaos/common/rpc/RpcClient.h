@@ -38,7 +38,7 @@ namespace chaos {
      Define the information for send a message to some server
      */
     typedef struct {
-        //! listO of the server where to send data
+        //! list of the server where to send data
         vector<string> remoteServers;
         //message to forward to remote server
         chaos_data::CDataWrapper *message;
