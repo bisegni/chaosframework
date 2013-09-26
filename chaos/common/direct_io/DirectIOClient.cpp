@@ -19,3 +19,43 @@
  */
 
 #include <chaos/common/direct_io/DirectIOClient.h>
+
+using namespace chaos::common::direct_io;
+
+DirectIOClient::DirectIOClient() {
+	
+}
+
+DirectIOClient::~DirectIOClient() {
+	
+}
+
+// Initialize instance
+void DirectIOClient::init(void *init_data) throw(chaos::CException) {
+	if(!init_data) throw chaos::CException(0, "Invalid parameter", "DirectIOClient::init");
+	connection_info.reset(static_cast<DirectIOConnection*>(init_data));
+
+}
+
+// Start the implementation
+void DirectIOClient::start() throw(chaos::CException) {
+	
+}
+
+
+// Stop the implementation
+void DirectIOClient::stop() throw(chaos::CException) {
+	
+}
+
+
+// Deinit the implementation
+void DirectIOClient::deinit() throw(chaos::CException) {
+	
+}
+
+
+//! Send some data to the server
+int DirectIOClient::sendData(void *data, uint32_t len) {
+	return 0;
+}

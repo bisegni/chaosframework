@@ -20,7 +20,11 @@
 #ifndef __CHAOSFramework__DirectIOClient__
 #define __CHAOSFramework__DirectIOClient__
 
+#include <memory.h>
 #include <inttypes.h>
+
+#include <chaos/common/utility/StartableService.h>
+#include <chaos/common/direct_io/DirectIOTypes.h>
 
 namespace chaos {
 	namespace common {
@@ -33,9 +37,29 @@ namespace chaos {
 				may server and the same data will be forwarded to all server
 				dio_client---> data message -->dio_server
 			 */
-			class DirectIOClient {
+			class DirectIOClient : chaos::utility::StartableService {
+				
+				auto_ptr<DirectIOConnection> connection_info;
+				
 			public:
 				
+				DirectIOClient();
+				
+				virtual ~DirectIOClient();
+				
+				// Initialize instance
+				void init(void *init_data) throw(chaos::CException);
+				
+				// Start the implementation
+				void start() throw(chaos::CException);
+				
+				// Stop the implementation
+				void stop() throw(chaos::CException);
+				
+				// Deinit the implementation
+				void deinit() throw(chaos::CException);
+				
+				//! Send some data to the server
 				int sendData(void *data, uint32_t len);
 			};
 			

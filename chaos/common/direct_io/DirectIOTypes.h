@@ -9,6 +9,8 @@
 #ifndef CHAOSFramework_DirectIOTypes_h
 #define CHAOSFramework_DirectIOTypes_h
 
+#include <string>
+
 namespace chaos {
 	namespace common {
 		//! Namespace that enclose all direct io infrastructure.
@@ -21,6 +23,12 @@ namespace chaos {
 		 */
 		namespace direct_io {
 			
+			//! Structure to identify the target server of the client connection
+			typedef struct DirectIOConnection {
+				std::string connection_name;
+				std::string server_address;
+				
+			} DirectIOCOnnection;
 			
 		}
 	}
