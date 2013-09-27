@@ -21,9 +21,21 @@
 #ifndef __CHAOSFramework__DirectIOServer__
 #define __CHAOSFramework__DirectIOServer__
 
+#include <string>
+#include <map>
+
+#include <chaos/common/utility/StartableService.h>
+#include <chaos/common/direct_io/DirectIOTypes.h>
+
+
 namespace chaos {
 	namespace common {
 		namespace direct_io {
+			
+			
+			class DirectIOServerHandler {
+				std::string uuid;
+			};
 			
 			//! Direct IO server base class
 			/*!
@@ -32,8 +44,32 @@ namespace chaos {
 				by different client
 				dio_client---> data message -->dio_server
 			 */
-			class DirectIOServer {
+			class DirectIOServer : chaos::utility::StartableService {
 				
+				//! handler map
+				std::map<std::string, DirectIOServerHandler*> handlers;
+				
+			public:
+				DirectIOServer();
+				
+				virtual ~DirectIOServer();
+				
+				// Initialize instance
+				void init(void *init_data) throw(chaos::CException);
+				
+				// Start the implementation
+				void start() throw(chaos::CException);
+				
+				// Stop the implementation
+				void stop() throw(chaos::CException);
+				
+				// Deinit the implementation
+				void deinit() throw(chaos::CException);
+				
+				//! Send some data to the server
+				void addHandler(DirectIOServerHandler *handler);
+				
+				void removeHandler(DirectIOServerHandler *handler);
 			};
 			
 		}

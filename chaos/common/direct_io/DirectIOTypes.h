@@ -29,7 +29,6 @@ namespace chaos {
 				std::string server_address;
 				
 			} DirectIOCOnnection;
-			
 		}
 	}
 }
