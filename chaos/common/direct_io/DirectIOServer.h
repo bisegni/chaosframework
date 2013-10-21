@@ -26,16 +26,11 @@
 
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/direct_io/DirectIOTypes.h>
-
+#include <chaos/common/direct_io/DirectIOServerHandler.h>
 
 namespace chaos {
 	namespace common {
 		namespace direct_io {
-			
-			
-			class DirectIOServerHandler {
-				std::string uuid;
-			};
 			
 			//! Direct IO server base class
 			/*!
@@ -44,10 +39,9 @@ namespace chaos {
 				by different client
 				dio_client---> data message -->dio_server
 			 */
-			class DirectIOServer : chaos::utility::StartableService {
-				
-				//! handler map
-				std::map<std::string, DirectIOServerHandler*> handlers;
+			class DirectIOServer : chaos::utility::StartableService  {
+				//! handler implementation for the server instance
+				DirectIODataHandler *handler_impl;
 				
 			public:
 				DirectIOServer();
@@ -67,9 +61,10 @@ namespace chaos {
 				void deinit() throw(chaos::CException);
 				
 				//! Send some data to the server
-				void addHandler(DirectIOServerHandler *handler);
+				void setHandler(DirectIODataHandler *_handler_impl);
 				
-				void removeHandler(DirectIOServerHandler *handler);
+				//! Remove the handler pointer
+				void clearHandler();
 			};
 			
 		}

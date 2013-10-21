@@ -39,10 +39,11 @@ void DirectIOServer::deinit() throw(chaos::CException) {
 }
 
 //! Send some data to the server
-void DirectIOServer::addHandler(DirectIOServerHandler *handler) {
-	
+void DirectIOServer::setHandler(DirectIODataHandler *_handler_impl) {
+	handler_impl = _handler_impl;
 }
 
-void DirectIOServer::removeHandler(DirectIOServerHandler *handler) {
+//! Remove the handler pointer
+void DirectIOServer::clearHandler() {
 	
 }
