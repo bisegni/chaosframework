@@ -80,6 +80,8 @@ namespace chaos{
                     friend struct AcquireFunctor;
                     friend struct CorrelationFunctor;
 					
+					uint64_t unique_id;
+					
 					//! Locking flag
 					/*!
 						this set keep track of the lock state for the feature

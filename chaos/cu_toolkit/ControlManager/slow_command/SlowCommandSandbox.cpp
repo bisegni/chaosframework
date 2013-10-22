@@ -241,6 +241,14 @@ void SlowCommandSandbox::checkNextCommand() {
                         DEBUG_CODE(SCSLDBG_ << "New command that want kill the current one";)
                         //for now we delete it after we need to manage it
                         if(currentExecutingCommand) {
+							//send the rigth event
+							if(currentExecutingCommand->runningProperty & RunningStateType::RS_Fault) {
+								if(event_handler) event_handler->handleEvent(currentExecutingCommand->unique_id, SlowCommandEventType::EVT_FAULT, static_cast<void*>(&currentExecutingCommand->faultDescription));
+								
+							} else if(currentExecutingCommand->runningProperty & RunningStateType::RS_End) {
+								if(event_handler) event_handler->handleEvent(currentExecutingCommand->unique_id, SlowCommandEventType::EVT_COMPLETED, NULL);
+							}
+							
                             delete(currentExecutingCommand);
                             currentExecutingCommand = NULL;
                             DEBUG_CODE(SCSLDBG_ << "Current executed command is deleted";)
@@ -249,9 +257,12 @@ void SlowCommandSandbox::checkNextCommand() {
                         CHECK_END_OF_SCHEDULER_WORK_AND_CONTINUE()
                         
                     } else if( hasAcquireOrCC && (currentExecutingCommand && (nextAvailableCommand.cmdImpl->submissionRule & SubmissionRuleType::SUBMIT_AND_Stack))) {
-                        DEBUG_CODE(SCSLDBG_ << "New command that want kill the current one";)
+                        DEBUG_CODE(SCSLDBG_ << "New command that want stack the current one";)
                         //push current command into the stack
                         commandStack.push(currentExecutingCommand);
+						//fire the paused event
+						if(event_handler) event_handler->handleEvent(currentExecutingCommand->unique_id, SlowCommandEventType::EVT_PAUSED, NULL);
+
                         DEBUG_CODE(SCSLDBG_ << "Command stacked";)
                         
                         CHECK_END_OF_SCHEDULER_WORK_AND_CONTINUE()
@@ -404,6 +415,9 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
         
         cmdImpl->shared_stat = &stat;
         currentExecutingCommand = cmdImpl;
+		
+		//fire the running event
+		if(event_handler)event_handler->handleEvent(currentExecutingCommand->unique_id, SlowCommandEventType::EVT_RUNNING, NULL);
     } else {
         currentExecutingCommand = NULL;
         acquireHandlerFunctor.cmdInstance = NULL;
@@ -419,6 +433,9 @@ void SlowCommandSandbox::killCurrentCommand() {
 	// terminate the current command
 	DELETE_OBJ_POINTER(currentExecutingCommand)
 	installHandler(NULL, NULL);
+	
+	//fire the killed event
+	if(event_handler) event_handler->handleEvent(currentExecutingCommand->unique_id, SlowCommandEventType::EVT_KILLED, NULL);
 }
 
 bool SlowCommandSandbox::setNextAvailableCommand(PRIORITY_ELEMENT(CDataWrapper) *cmdInfo, SlowCommand *cmdImpl) {
@@ -444,7 +461,8 @@ bool SlowCommandSandbox::setNextAvailableCommand(PRIORITY_ELEMENT(CDataWrapper) 
         submissionRetryDelay = posix_time::milliseconds(DEFAULT_CHECK_TIME);
         DEBUG_CODE(SCSLDBG_ << "Default checker delay has been used with value of " << DEFAULT_CHECK_TIME  << " milliseconds";)
     }
-    
+	//fire the waiting command
+    if(event_handler) event_handler->handleEvent(currentExecutingCommand->unique_id, SlowCommandEventType::EVT_WAITING, NULL);
     waithForNextCheck.notify_one();
     return true;
 }

@@ -192,15 +192,15 @@ namespace chaos {
                 //! Name space for grupping option used for regulate the submission of the slow control
                 namespace SlowCommandSubmissionKey {
                     //! @The key represent the postfix to the CU instance to identify his slow command executor.
-                    static const char * const   COMMAND_EXECUTOR_POSTFIX_DOMAIN   = "_scexec";
+                    static const char * const   COMMAND_EXECUTOR_POSTFIX_DOMAIN		= "_scexec";
                     //! @The key represent the alis of the comand to instantiate, the value is a string
                     static const char * const   COMMAND_ALIAS_STR                   = "command_alias";
                     //! @The key represent the option to the command submission, the value is an uint32
-                    static const char * const   SUBMISSION_RULE_UI32              = "submission_rule";
+                    static const char * const   SUBMISSION_RULE_UI32				= "submission_rule";
                     //! @The key represent the option to the command submission priority, the value is an uint32
-                    static const char * const   SUBMISSION_PRIORITY_UI32             = "submission_priority";
+                    static const char * const   SUBMISSION_PRIORITY_UI32            = "submission_priority";
                     //! @The key represent intervall between step of the scheduler expressed in milliseconds, the value is an uint32
-                    static const char * const   SCHEDULER_STEP_TIME_INTERVALL_UI32   = "sched_step_time_int";
+                    static const char * const   SCHEDULER_STEP_TIME_INTERVALL_UI32  = "sched_step_time_int";
                     //! @Set the command specific delay between submission retry SlowCommand::submissionRetryDelay, the value is an uint32
                     static const char * const   SUBMISSION_RETRY_DELAY_UI32         = "sbms_ret_dly";
 				}
@@ -223,25 +223,30 @@ namespace chaos {
                 //! Name space for the key nedded for call rpc action exposed by slow control executor layer
                 namespace SlowControlExecutorRpcActionKey {
 					//! @The key represent the rpc alias for SlowCommandExecutor::getQueuedCommand method
-                    static const char * const   RPC_GET_QUEUED_COMMAND				= "getQueuedCommand";
+                    static const char * const   RPC_GET_QUEUED_COMMAND					= "getQueuedCommand";
 					//! @The key represent the field of the return pack of the command RPC_GET_QUEUED_COMMAND for retrive the number of the queued command, value is and uint32_t
 					static const char * const   RPC_GET_QUEUED_COMMAND_NUMBER_UI32		= "gqc_cmd_number";
 					//! @The key represent the field of the return pack of the command RPC_GET_QUEUED_COMMAND for retrive the alias of the command on the top of the queue, value is a string
 					static const char * const   RPC_GET_QUEUED_COMMAND_TOP_ALIAS_STR	= "gqc_top_cmd_alias";
                     
 					//! @The key represent the rpc alias for SlowCommandExecutor::getCommandSandboxStatistics method
-					static const char * const   RPC_GET_COMMAND_SANDBOX_STATISTICS = "getCmdStatistic";
-					//! @The key represent the field of the return pack of the command RPC_GET_COMMAND_SANDBOX_STATISTICS for retrive the start milliseconds of scheduler step, value is and uint64_t
-					static const char * const   RPC_GET_COMMAND_SANDBOX_STATISTICS_START_TIME_UI64 = "gcs_start_time";
-					//! @The key represent the field of the return pack of the command RPC_GET_COMMAND_SANDBOX_STATISTICS for retrive the end milliseconds of scheduler step, value is and uint64_t
-					static const char * const   RPC_GET_COMMAND_SANDBOX_STATISTICS_END_TIME_UI64 = "gcs_end_time";
-					
+					static const char * const   RPC_GET_COMMAND_STATE								= "getCmdState";
+					//! @The key represent the field of the input parameter tha identify the unique command id, the value is an uint64_t
+					static const char * const   RPC_GET_COMMAND_STATE_CMD_ID_UI64					= "command_id";
+					//! @The key represent the field of the return pack of the command RPC_GET_COMMAND_STATE for retrive the last event occurend on command, value is an uint32_t
+					static const char * const   RPC_GET_COMMAND_STATE_LAST_EVENT_UI32				= "gcs_last_event";
+					//! @The key represent the field of the return pack of the command RPC_GET_COMMAND_STATE for retrive the error on command, value is an int32_t
+					static const char * const   RPC_GET_COMMAND_STATE_ERROR_CODE_UI32				= "gcs_error_code";
+					//! @The key represent the field of the return pack of the command RPC_GET_COMMAND_STATE for retrive the error description on command, value is an string
+					static const char * const   RPC_GET_COMMAND_STATE_ERROR_DESC_STR				= "gcs_error_desc";
+					//! @The key represent the field of the return pack of the command RPC_GET_COMMAND_STATE for retrive the last event occurend on command, value is an string
+					static const char * const   RPC_GET_COMMAND_STATE_ERROR_DOMAIN_STR				= "gcs_error_domain";
 					//! @The key represent the rpc alias for SlowCommandExecutor::setCommandFeatures method
-					static const char * const   RPC_SET_COMMAND_FEATURES = "setCommandFeatures";
+					static const char * const   RPC_SET_COMMAND_FEATURES							= "setCommandFeatures";
 					//! @The key represent the the scheduler wait time for next step, value is and uint32_t
-					static const char * const   RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI32 = "scf_sched_waith_time";
+					static const char * const   RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI32	= "scf_sched_waith_time";
 					//! @The key represent the lock option for the features, value is and boolean
-					static const char * const   RPC_SET_COMMAND_FEATURES_LOCK_BOOL = "scf_lock";
+					static const char * const   RPC_SET_COMMAND_FEATURES_LOCK_BOOL					= "scf_lock";
 					
 					//! @The key represent the rpc alias for SlowCommandExecutor::killCurrentCommand method
 					static const char * const   RPC_KILL_CURRENT_COMMAND = "killCurrentCommand";

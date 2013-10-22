@@ -351,6 +351,7 @@
 		32D68AD014D5D5A7009F290A /* SetupStateManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D68ACF14D5D5A7009F290A /* SetupStateManager.h */; };
 		32D6C8981815293200E9689B /* DirectIOServerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C8971815293200E9689B /* DirectIOServerHandler.h */; };
 		32D6C89A1815294700E9689B /* DirectIODataForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C8991815294700E9689B /* DirectIODataForwarder.h */; };
+		32D6C89C1816588400E9689B /* SlowCommandSandboxEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C89B1816588400E9689B /* SlowCommandSandboxEventHandler.h */; };
 		32DB1188166267FB0036D1B9 /* DSDoubleHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DB1187166267FB0036D1B9 /* DSDoubleHandler.h */; };
 		32DD884F15E2663B000AF740 /* DefaultEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DD884D15E2663B000AF740 /* DefaultEventDispatcher.h */; };
 		32DD885315E2681F000AF740 /* EventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DD885115E2681F000AF740 /* EventHandler.cpp */; };
@@ -743,6 +744,7 @@
 		32D68ACF14D5D5A7009F290A /* SetupStateManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetupStateManager.h; sourceTree = "<group>"; };
 		32D6C8971815293200E9689B /* DirectIOServerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOServerHandler.h; sourceTree = "<group>"; };
 		32D6C8991815294700E9689B /* DirectIODataForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIODataForwarder.h; sourceTree = "<group>"; };
+		32D6C89B1816588400E9689B /* SlowCommandSandboxEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlowCommandSandboxEventHandler.h; sourceTree = "<group>"; };
 		32DA666F1700DBB6004FC02B /* endian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
 		32DB1187166267FB0036D1B9 /* DSDoubleHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSDoubleHandler.h; sourceTree = "<group>"; };
 		32DD884D15E2663B000AF740 /* DefaultEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultEventDispatcher.h; sourceTree = "<group>"; };
@@ -940,6 +942,7 @@
 				32234D3E176E045100525E0C /* SlowCommandExecutor.h */,
 				328E36F1178AFE0D00C1564D /* SlowCommandSandbox.cpp */,
 				328E36F2178AFE0D00C1564D /* SlowCommandSandbox.h */,
+				32D6C89B1816588400E9689B /* SlowCommandSandboxEventHandler.h */,
 				32D3EAB317943EBC00405A3E /* AttributeSetting.cpp */,
 				32D3EAB417943EBC00405A3E /* AttributeSetting.h */,
 				325F8B4F1763AF2300EFE616 /* SlowCommand.cpp */,
@@ -1960,6 +1963,7 @@
 				326DB4CA14B3A3E50018A8D0 /* DataManagerException.h in Headers */,
 				326DB4CC14B3A3E50018A8D0 /* KeyDataStorage.h in Headers */,
 				326DB4CE14B3A3E50018A8D0 /* MultiBufferDataStorage.h in Headers */,
+				32D6C89C1816588400E9689B /* SlowCommandSandboxEventHandler.h in Headers */,
 				3287F7E717B27621009DD6ED /* DriverManager.h in Headers */,
 				328E36F4178AFE0D00C1564D /* SlowCommandSandbox.h in Headers */,
 				328D2FB81660EACD007F482E /* DSAttributeHandlerExecutionEngine.h in Headers */,

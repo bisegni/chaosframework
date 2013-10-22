@@ -125,15 +125,21 @@ void SCAbstractControlUnit::setDefaultCommand(const char * dafaultCommandName) {
  Receive the evento for set the dataset input element
  */
 CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
+	uint64_t command_id =0;
     if(!datasetAttributeValues->hasKey(SlowCommandSubmissionKey::COMMAND_ALIAS_STR)) {
         throw CException(-4, "The alias of the slow command is mandatory", "SlowCommandExecutor::setupCommand");
     }
+
     // in slow control cu the CDataWrapper instance received from rpc is internally managed
     //so we need to detach it
     detachParam = true;
     // submit the detacched command to slow controll subsystem
-    slowCommandExecutor->submitCommand(datasetAttributeValues);
-    return NULL;
+    slowCommandExecutor->submitCommand(datasetAttributeValues, command_id);
+	
+	//construct the result
+	CDataWrapper *result = new CDataWrapper();
+	result->addInt64Value(SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_id);
+    return result;
 }
 
 void SCAbstractControlUnit::addSharedVariable(std::string name, uint32_t max_size, chaos::DataType::DataType type) {

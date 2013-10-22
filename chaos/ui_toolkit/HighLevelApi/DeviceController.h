@@ -220,12 +220,19 @@ namespace chaos {
                     the execution of the current execution command in the control unit, according with his running state
                 \param priority represent the priority beetwen the submitted command and all command in the queue that are
                     waiting to be submitted in the scheduler
+				\param command_id is the assigned command id to the submitted one
                 \param schedulerStepsDelay rapresent the intervall beetween the step of the scehduler [...acquisition -> correlation -> scheduleInterval...]
                 \param submissionCheckerStepsDelay is the delay between two steps of the submission checker
                 \param slowCommandData is the abstraction of the command data that is passed to the set handler befor the scheduler loop of the new command
                         take palce. The memory of that parameter is not free
              */
-            int submitSlowControlCommand(string commandAlias, cccs::SubmissionRuleType::SubmissionRule submissionRule, uint32_t priority, uint32_t schedulerStepsDelay = 0, uint32_t submissionCheckerStepsDelay = 0, CDataWrapper *slowCommandData = NULL);
+            int submitSlowControlCommand(string commandAlias,
+										 cccs::SubmissionRuleType::SubmissionRule submissionRule,
+										 uint32_t priority,
+										 uint64_t& command_id,
+										 uint32_t schedulerStepsDelay = 0,
+										 uint32_t submissionCheckerStepsDelay = 0,
+										 CDataWrapper *slowCommandData = NULL);
             
             //! Submit a new slow command
             /*!
@@ -233,13 +240,19 @@ namespace chaos {
 				The submition of slow command is made collection all the information that permit to submit it
 				\param commandAlias represent the alias of the command the the control unit expost from RPC subsystem
 				\param submissionRule determinate the rule with which the command is submitted. This can determinate the
-				the execution of the current execution command in the control unit, according with his running state
+				\param command_id is the assigned command id to the submitted one
+						the execution of the current execution command in the control unit, according with his running state
 				\param schedulerStepsDelay rapresent the intervall beetween the step of the scehduler [...acquisition -> correlation -> scheduleInterval...]
 				\param submissionCheckerStepsDelay is the delay between two steps of the submission checker
 				\param slowCommandData is the abstraction of the command data that is passed to the set handler befor the scheduler loop of the new command
-				take palce. The memory of that parameter is not free
+						take palce. The memory of that parameter is not free
              */
-            int submitSlowControlCommand(string commandAlias, cccs::SubmissionRuleType::SubmissionRule submissionRule, uint32_t schedulerStepsDelay = 0, uint32_t submissionCheckerStepsDelay = 0, CDataWrapper *slowCommandData = NULL);
+            int submitSlowControlCommand(string commandAlias,
+										 cccs::SubmissionRuleType::SubmissionRule submissionRule,
+										 uint64_t& command_id,
+										 uint32_t schedulerStepsDelay = 0,
+										 uint32_t submissionCheckerStepsDelay = 0,
+										 CDataWrapper *slowCommandData = NULL);
             
 			//! Set the current slow command features
 			/*!
@@ -259,6 +272,15 @@ namespace chaos {
 			 \param lock_features	set the lock on all features
 			 */
 			int setSlowCommandLockOnFeatures(bool lock_features);
+			
+			//! Get the statistick for a command
+			/*!
+			 \ingroup API_Slow_Control
+			 Permit to obtain the state of a command by it's unique id using the filed command_id of the command_state parameter
+			 \param command_state will be filled with the state of the command on success
+			 \return result of the execution
+			 */
+			int getCommandState(cccs::CommandState& command_state);
 			
 			//! Kill the current executing command
 			/*!

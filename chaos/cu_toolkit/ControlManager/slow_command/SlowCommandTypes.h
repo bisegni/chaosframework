@@ -49,6 +49,7 @@ namespace chaos{
                     SlowCommand *cmdImpl;
                 } CommandInfoAndImplementation;
                 
+				
                 //! Namespace for the handler types
                 namespace HandlerType {
                     /*!
@@ -76,19 +77,8 @@ namespace chaos{
                         RS_Fault    = 8    /**< The command has had a fault */
                     } RunningState;
                 }
-				
-                /*!
-                 \struct FaultDescription
-                 \brief  Describe the fault of the command. This fileds need to be valorized
-                 before to set the rState to RunningState::RS_Fault option
-                 */
-                typedef struct FaultDescription {
-                    uint32_t    code;           /**< The numer code of the error */
-                    std::string description;    /**< The description of the fault */
-                    std::string domain;         /**< The domain identify the context where the fault is occured */
-                } FaultDescription;
-                
-            }
+
+			}
         }
     }
 }

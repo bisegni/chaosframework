@@ -38,12 +38,15 @@ using namespace chaos::cu::control_manager::slow_command;
 #define SCELDBG_ LDBG_ << LOG_HEAD
 #define SCELERR_ LERR_ << LOG_HEAD
 
-SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DeviceSchemaDB *_deviceSchemaDbPtr):executorID(_executorID), deviceSchemaDbPtr(_deviceSchemaDbPtr){
-    //this need to be removed from here need to be implemented the def undef services
+SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DeviceSchemaDB *_deviceSchemaDbPtr):executorID(_executorID), deviceSchemaDbPtr(_deviceSchemaDbPtr), command_state_queue_max_size(COMMAND_STATE_QUEUE_DEFAULT_SIZE){
+    // this need to be removed from here need to be implemented the def undef services
     // register the public rpc api
     std::string rpcActionDomain = executorID; //+ SlowCommandSubmissionKey::COMMAND_EXECUTOR_POSTFIX_DOMAIN;
     
-    //
+	// add executor has event handler
+	commandSandbox.event_handler = this;
+    
+	
     SCELAPP_ << "Register updateConfiguration action";
     DeclareAction::addActionDescritionInstance<SlowCommandExecutor>(this,
                                                                     &SlowCommandExecutor::getQueuedCommand,
@@ -54,8 +57,8 @@ SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DeviceSchemaDB
     DeclareAction::addActionDescritionInstance<SlowCommandExecutor>(this,
                                                                     &SlowCommandExecutor::getCommandSandboxStatistics,
                                                                     rpcActionDomain.c_str(),
-                                                                    SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_SANDBOX_STATISTICS,
-                                                                    "Return the statistics of the sandbox reguaring to the current running command");
+                                                                    SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE,
+                                                                    "Return the state of the specified command");
 	SCELAPP_ << "Register setCommandFeatures action";
     DeclareAction::addActionDescritionInstance<SlowCommandExecutor>(this,
                                                                     &SlowCommandExecutor::setCommandFeatures,
@@ -86,7 +89,12 @@ SlowCommandExecutor::~SlowCommandExecutor() {
         SCELAPP_ << "Dispose instancer " << it->first;
         if(it->second) delete(it->second);
     }
+	
+	//clear the instancer command map
     mapCommandInstancer.clear();
+	
+	//clear the queue of the command state
+	command_state_queue.clear();
 }
 
 //! get access to the custom data pointer of the channel setting instance
@@ -154,7 +162,6 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
                 break;}
             default:
                 break;
-                
         }
     }
 
@@ -234,6 +241,79 @@ void SlowCommandExecutor::deinit() throw(chaos::CException) {
     utility::StartableService::deinit();
 }
 
+//Event handler
+void SlowCommandExecutor::handleEvent(uint64_t command_id, SlowCommandEventType::SlowCommandEventType type, void* type_attribute_ptr) {
+	ReadLock lock(command_state_rwmutex);
+	switch(type) {
+		case SlowCommandEventType::EVT_QUEUED:
+			addComamndState(command_id);
+			//cap the queue
+			capCommanaQueue();
+			break;
+
+		case SlowCommandEventType::EVT_FAULT: {
+			boost::shared_ptr<CommandState>  cmd_state = getCommandState(command_id);
+			if(cmd_state.get()) {
+				cmd_state->last_event = type;
+				cmd_state->fault_description = *static_cast<FaultDescription*>(type_attribute_ptr);
+			}
+			break;
+		}
+		default: {
+			boost::shared_ptr<CommandState>  cmd_state = getCommandState(command_id);
+			if(cmd_state.get()) {
+				cmd_state->last_event = type;
+			}
+			break;
+		}
+	}
+}
+
+
+//! Add a new command state structure to the queue (checking the alredy presence)
+void SlowCommandExecutor::addComamndState(uint64_t command_id) {
+	WriteLock write_lock(command_state_rwmutex);
+	boost::shared_ptr<CommandState> cmd_state(new CommandState());
+	cmd_state->command_id = command_id;
+	cmd_state->last_event = SlowCommandEventType::EVT_QUEUED;
+	
+	//add to the queue
+	command_state_queue.push_back(cmd_state);
+	//add also to the map for a fast access
+	command_state_fast_access_map.insert(std::make_pair(command_id, cmd_state));
+}
+
+//! Thanke care to limit the size of the queue to the max size permitted
+void SlowCommandExecutor::capCommanaQueue() {
+	WriteLock write_lock(command_state_rwmutex);
+	if(command_state_queue.size() <= command_state_queue_max_size) return;
+	
+	//we need to cap the queue
+	for (size_t idx = command_state_queue.size(); idx < command_state_queue_max_size; idx--) {
+		if(command_state_queue.empty()) break;
+		//get the state
+		boost::shared_ptr<CommandState> cmd_state = command_state_queue.back();
+		
+		//chec if the command can be removed it need to be terminate (complete, fault or killed)
+		if(cmd_state->last_event < SlowCommandEventType::EVT_COMPLETED) return;
+		//remove from the map
+		command_state_fast_access_map.erase(cmd_state->command_id);
+		
+		//delete it
+		command_state_queue.pop_back();
+	}
+}
+
+//! Add a new command state structure to the queue (checking the alredy presence)
+boost::shared_ptr<CommandState> SlowCommandExecutor::getCommandState(uint64_t command_sequence) {
+	boost::shared_ptr<CommandState> result;
+	ReadLock lock(command_state_rwmutex);
+	if(command_state_fast_access_map.count(command_sequence) > 0 ) {
+		result = command_state_fast_access_map[command_sequence];
+	}
+	return result;
+}
+
 //! Perform a command registration
 void SlowCommandExecutor::setDefaultCommand(string commandAlias) {
     // check if we can set the default, the condition are:
@@ -305,12 +385,17 @@ void SlowCommandExecutor::performIncomingCommandCheck() {
                 }
             } else if(element != commandSandbox.nextAvailableCommand.cmdInfo &&
                       element->getPriority() > commandSandbox.nextAvailableCommand.cmdInfo->getPriority()) {
-                DEBUG_CODE(SCELDBG_ << "There is a waiting command into sandbox, but ne one have more priority";)
+                DEBUG_CODE(SCELDBG_ << "There is a waiting command into sandbox, but new one have more priority";)
                 //We ave a new, higer priority, command to submit
                 DEBUG_CODE(SCELDBG_ << "Swap waithing command whith new one";)
                 commandSubmittedQueue.push(commandSandbox.nextAvailableCommand.cmdInfo);
+				
+				//handle the queued event
+				handleEvent(commandSandbox.nextAvailableCommand.cmdImpl->unique_id, SlowCommandEventType::EVT_QUEUED, NULL);
+				
                 //delete the waiting implementation
                 DELETE_OBJ_POINTER(commandSandbox.nextAvailableCommand.cmdImpl)
+				
                 //remove command form the queue
                 commandSubmittedQueue.pop();
                 
@@ -387,6 +472,9 @@ SlowCommand *SlowCommandExecutor::instanceCommandInfo(CDataWrapper *submissionIn
             instance->commandFeatures.featureSubmissionRetryDelay = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32);
             DEBUG_CODE(SCELDBG_ << "Set custom  SUBMISSION_RETRY_DELAY to " << instance->commandFeatures.featureSubmissionRetryDelay << " milliseconds";)
         }
+		
+		//get the assigned id
+		instance->unique_id = submissionInfo->getUInt64Value(SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
     }
     return instance;
 }
@@ -403,14 +491,24 @@ SlowCommand *SlowCommandExecutor::instanceCommandInfo(std::string& commandAlias)
 }
 
 //! Submite the new sloc command information
-bool SlowCommandExecutor::submitCommand(CDataWrapper *commandDescription) {
+bool SlowCommandExecutor::submitCommand(CDataWrapper *commandDescription, uint64_t& command_id) {
     CHAOS_ASSERT(commandDescription)
     boost::mutex::scoped_lock lock(mutextQueueManagment);
     if(serviceState != ::chaos::utility::service_state_machine::StartableServiceType::SS_STARTED) return false;
     uint32_t priority = commandDescription->hasKey(SlowCommandSubmissionKey::SUBMISSION_PRIORITY_UI32) ? commandDescription->getUInt32Value(SlowCommandSubmissionKey::SUBMISSION_PRIORITY_UI32):50;
     //DEBUG_CODE(SCELDBG_ << "Submit new command " << commandDescription->getJSONString();)
     DEBUG_CODE(SCELDBG_ << commandDescription->getStringValue(SlowCommandSubmissionKey::COMMAND_ALIAS_STR);)
+	
+	//add unique id for command
+	command_id = ++command_sequence_id;
+	commandDescription->addInt64Value(SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_id);
+	
+	//queue the command
     commandSubmittedQueue.push(new PriorityQueuedElement<CDataWrapper>(commandDescription, priority, true));
+	
+	//andle queue event
+	handleEvent(command_id, SlowCommandEventType::EVT_QUEUED, NULL);
+	
     lock.unlock();
     readThreadWhait.notify_one();
     return true;
@@ -440,11 +538,20 @@ CDataWrapper* SlowCommandExecutor::getQueuedCommand(CDataWrapper *params, bool& 
  */
 CDataWrapper* SlowCommandExecutor::getCommandSandboxStatistics(CDataWrapper *params, bool& detachParam) throw (CException) {
 	boost::mutex::scoped_lock lock(mutextQueueManagment);
-	CDataWrapper *result = new CDataWrapper();
 	
+	uint64_t command_id = params->getUInt64Value(SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
+	boost::shared_ptr<CommandState> cmd_state = getCommandState(command_id);
+	if(!cmd_state.get()) throw CException(1, "The command requested is not present", "SlowCommandExecutor::getCommandSandboxStatistics");
+	
+	CDataWrapper *result = new CDataWrapper();
+
 	//add statistic to result
-	result->addInt64Value(SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_SANDBOX_STATISTICS_START_TIME_UI64, commandSandbox.stat.lastCmdStepStart);
-	result->addInt64Value(SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_SANDBOX_STATISTICS_END_TIME_UI64, commandSandbox.stat.lastCmdStepTime);
+	result->addInt32Value(SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_LAST_EVENT_UI32, cmd_state->last_event);
+	if(cmd_state->last_event == SlowCommandEventType::EVT_FAULT) {
+		result->addInt32Value(SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_ERROR_CODE_UI32, cmd_state->fault_description.code);
+		result->addStringValue(SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_ERROR_DESC_STR, cmd_state->fault_description.description);
+		result->addStringValue(SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_ERROR_DOMAIN_STR, cmd_state->fault_description.domain);
+	}
     return result;
 }
 

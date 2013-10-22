@@ -25,6 +25,7 @@
 #include <memory>
 #include <stdint.h>
 
+
 #include <boost/thread.hpp>
 #include <boost/heap/priority_queue.hpp>
 #include <boost/atomic.hpp>
@@ -38,12 +39,18 @@
 
 #include <chaos/cu_toolkit/ControlManager/DeviceSchemaDB.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandSandbox.h>
+#include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandSandboxEventHandler.h>
 
-#define COMMAND_QUEUE_DEFAULT_LENGTH 1024
+#include <boost/container/deque.hpp>
+#include <boost/container/map.hpp>
+
+#define COMMAND_QUEUE_DEFAULT_LENGTH		1024
+#define COMMAND_STATE_QUEUE_DEFAULT_SIZE	100
 
 namespace chaos_data = chaos::common::data;
+namespace boost_cont = boost::container;
 
-namespace chaos{
+namespace chaos {
     namespace cu {
         
         //forward declaration
@@ -65,16 +72,23 @@ namespace chaos{
                 //! Macro for helping the allocation of the isntancer of the class implementing the slow command
 #define SLOWCOMMAND_INSTANCER(SlowCommandClass) new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::control_manager::slow_command::SlowCommand>()
 
+				
                 //! Slow command execution sand box
                 /*!
                     This class is the environment where the exeecution of the slow command handlers take place.
                  */
-                class SlowCommandExecutor : public utility::StartableService, public chaos::DeclareAction {
+                class SlowCommandExecutor : public utility::StartableService, public chaos::DeclareAction, public SlowCommandSandboxEventHandler {
+					typedef boost::shared_mutex			RWMutex;
+					typedef boost::shared_lock<RWMutex>	ReadLock;
+					typedef boost::unique_lock<RWMutex>	WriteLock;
+					
                     friend class chaos::cu::SCAbstractControlUnit;
                     
+					//! executor identifier
                     std::string executorID;
                     
-                    
+					boost::atomic_uint64_t command_sequence_id;
+					
                     //!point to the current executing command
                     std::string defaultCommandAlias;
                     
@@ -89,6 +103,14 @@ namespace chaos{
                     //!Mutex for priority queue managment
                     boost::mutex    mutextQueueManagment;
                     
+					//! shared mutext foe the command event history
+					RWMutex								command_state_rwmutex;
+					uint16_t							command_state_queue_max_size;
+					//the queue of the insert state (this permit to have an order by insertion time)
+					boost_cont::deque< boost::shared_ptr<CommandState> >			command_state_queue;
+					//the map is used for fast access id/pointer
+					boost_cont::map<uint64_t, boost::shared_ptr<CommandState> >		command_state_fast_access_map;
+					
                     //! until it is true the wueue is
                     bool performQueueCheck;
                     
@@ -128,6 +150,16 @@ namespace chaos{
                      */
                     SlowCommand *instanceCommandInfo(std::string& commandAlias);
 
+					//command queue utility
+					//! Add a new command state structure to the queue (checking the alredy presence)
+					inline void addComamndState(uint64_t command_id);
+					
+					//! Thanke care to limit the size of the queue to the max size permitted
+					inline void capCommanaQueue();
+					
+					//! Add a new command state structure to the queue (checking the alredy presence)
+					inline boost::shared_ptr<CommandState> getCommandState(uint64_t command_sequence);
+					
                 protected:
                     
                     //! Private constructor
@@ -136,6 +168,8 @@ namespace chaos{
                     //! Private deconstructor
                     ~SlowCommandExecutor();
                     
+					//command event handler
+					void handleEvent(uint64_t command_seq, SlowCommandEventType::SlowCommandEventType type, void* type_attribute_ptr);
                     
                     //! Get queued command via rpc command
                     /*
@@ -204,7 +238,7 @@ namespace chaos{
                      The information for the command are contained into the DataWrapper data serialization,
                      they are put into the commandSubmittedQueue for to wait to be executed.
                      */
-                    bool submitCommand(chaos_data::CDataWrapper *commandDescription);
+                    bool submitCommand(chaos_data::CDataWrapper *commandDescription, uint64_t& command_id);
                     
                     //! set the custom data pointer of the channel setting instance to custom allocated memory
                     void setSharedCustomDataPtr(void *customDataPtr);

@@ -24,7 +24,53 @@ namespace chaos {
     namespace cu {
         namespace control_manager {
             namespace slow_command {
+                //! Namespace for the slow command event type within the framework
+                namespace SlowCommandEventType {
+					
+					/*!
+                     * \enum SlowCommandEventType
+                     * \brief Describe the event that the sand box can forward for notify the current state of a command
+                     */
+					typedef enum SlowCommandEventType {
+						EVT_QUEUED = 0,		/**< The command is queued */
+						EVT_WAITING,		/**< The command is the next command to executed and i whaiting the end of the current */
+						EVT_RUNNING,		/**< The command is running */
+						EVT_PAUSED,			/**< The command is paused */
+						EVT_COMPLETED,		/**< The command has completed is work successfully */
+						EVT_FAULT,			/**< The command has fault */
+						EVT_KILLED			/**< The event has been killed */
+					} SlowCommandEventType;
+				}
+				
+                /*!
+                 \struct FaultDescription
+                 \brief  Describe the fault of the command. This fileds need to be valorized
+                 before to set the rState to RunningState::RS_Fault option
+                 */
+                typedef struct FaultDescription {
+                    uint32_t    code;           /**< The number code of the error */
+                    std::string description;    /**< The description of the fault */
+                    std::string domain;         /**< The domain identify the context where the fault is occured */
+                } FaultDescription;
                 
+				
+				/*!
+				 \struct CommandState
+				 \brief  The structure used for querying the command state, the slowcommand scheduler
+				 keep a queue for some numebr of command (also terminated) at every event @SlowCommandEventType::SlowCommandEventType
+				 the state is updated
+				 */
+				struct CommandState {
+					//! unique command identification number
+					uint64_t command_id;
+					
+					//! last event occurend on the command
+					SlowCommandEventType::SlowCommandEventType last_event;
+					
+					//! the fault description
+					FaultDescription fault_description;
+				};
+				
                 //! Namespace for the slow command submisison rule
                 namespace SubmissionRuleType {
                     /*!

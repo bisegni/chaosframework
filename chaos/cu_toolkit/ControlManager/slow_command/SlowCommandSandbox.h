@@ -25,7 +25,7 @@
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommand.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/AttributeSetting.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandTypes.h>
-
+#include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandSandboxEventHandler.h>
 namespace chaos_data = chaos::common::data;
 
 namespace chaos{
@@ -76,6 +76,9 @@ namespace chaos{
                     //stat for the single step of the command execution
                     SandboxStat stat;
                     
+					//handler for sandbox event
+					SlowCommandSandboxEventHandler *event_handler;
+					
                     //-------shared data beetwen scheduler and checker thread------
                     bool            scheduleWorkFlag;
                     uint8_t         curCmdRunningState;

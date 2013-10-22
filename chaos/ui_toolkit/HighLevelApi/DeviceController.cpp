@@ -252,8 +252,17 @@ int DeviceController::setAttributeToValue(const char *attributeName, DataType::D
     return deviceChannel->setAttributeValue(attributeValuePack, noWait, millisecToWait);
 }
 
-int DeviceController::submitSlowControlCommand(string commandAlias, cccs::SubmissionRuleType::SubmissionRule submissionRule, uint32_t priority,  uint32_t schedulerStepsDelay, uint32_t submissionCheckerStepsDelay, CDataWrapper *slowCommandData) {
+int DeviceController::submitSlowControlCommand(string commandAlias,
+											   cccs::SubmissionRuleType::SubmissionRule submissionRule,
+											   uint32_t priority,
+											   uint64_t& command_id,
+											   uint32_t schedulerStepsDelay,
+											   uint32_t submissionCheckerStepsDelay,
+											   CDataWrapper *slowCommandData) {
     CDataWrapper localCommandPack;
+	CDataWrapper *resultData = NULL;
+	int err = ErrorCode::EC_NO_ERROR;
+	
     if(slowCommandData) {
         localCommandPack.appendAllElement(*slowCommandData);
     }
@@ -265,12 +274,27 @@ int DeviceController::submitSlowControlCommand(string commandAlias, cccs::Submis
     localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_PRIORITY_UI32, (uint32_t) priority);
     if(schedulerStepsDelay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI32, (uint32_t) schedulerStepsDelay);
     if(submissionCheckerStepsDelay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, (uint32_t) submissionCheckerStepsDelay);
+	
+	err = deviceChannel->setAttributeValue(localCommandPack, false, millisecToWait);
+	if(err == ErrorCode::EC_NO_ERROR && resultData && resultData->hasKey(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64)) {
+		//fill the command id
+		command_id = resultData->getUInt64Value(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
+		delete(resultData);
+	}
     //forward the request
-    return deviceChannel->setAttributeValue(localCommandPack, false, millisecToWait);
+    return err;
 }
 
-int DeviceController::submitSlowControlCommand(string commandAlias, cccs::SubmissionRuleType::SubmissionRule submissionRule,  uint32_t schedulerStepsDelay, uint32_t submissionCheckerStepsDelay, CDataWrapper *slowCommandData) {
+int DeviceController::submitSlowControlCommand(string commandAlias,
+											   cccs::SubmissionRuleType::SubmissionRule submissionRule,
+											   uint64_t& command_id,
+											   uint32_t schedulerStepsDelay,
+											   uint32_t submissionCheckerStepsDelay,
+											   CDataWrapper *slowCommandData) {
     CDataWrapper localCommandPack;
+	CDataWrapper *resultData = NULL;
+	int err = ErrorCode::EC_NO_ERROR;
+	
     if(slowCommandData) {
         localCommandPack.appendAllElement(*slowCommandData);
     }
@@ -281,7 +305,14 @@ int DeviceController::submitSlowControlCommand(string commandAlias, cccs::Submis
     if(submissionCheckerStepsDelay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, (uint32_t) submissionCheckerStepsDelay);
 
     //forward the request
-    return deviceChannel->setAttributeValue(localCommandPack, false, millisecToWait);
+    err = deviceChannel->setAttributeValue(localCommandPack, false, millisecToWait);
+	if(err == ErrorCode::EC_NO_ERROR && resultData && resultData->hasKey(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64)) {
+		//fill the command id
+		command_id = resultData->getUInt64Value(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
+		delete(resultData);
+	}
+    //forward the request
+    return err;
 }
 
 int DeviceController::setSlowCommandFeatures(cccs::features::Features& features, bool lock_features) {
@@ -302,6 +333,28 @@ int DeviceController::setSlowCommandLockOnFeatures(bool lock_features) {
 	CDataWrapper localCommandPack;
 	localCommandPack.addBoolValue(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL, lock_features);
 	return deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES, &localCommandPack, NULL, millisecToWait);
+}
+
+//! Get the statistick for a command
+int DeviceController::getCommandState(cccs::CommandState& command_state) {
+	CDataWrapper localCommandPack;
+	CDataWrapper *resultData = NULL;
+	int err = ErrorCode::EC_NO_ERROR;
+	localCommandPack.addInt64Value(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_state.command_id);
+	err = deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE, &localCommandPack, &resultData, millisecToWait);
+	if(err == ErrorCode::EC_NO_ERROR && resultData) {
+		//fill the command state
+		command_state.last_event = static_cast<cccs::SlowCommandEventType::SlowCommandEventType>(resultData->getUInt32Value(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_LAST_EVENT_UI32));
+		if(command_state.last_event == cccs::SlowCommandEventType::EVT_FAULT) {
+			command_state.fault_description.code = resultData->getUInt32Value(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_ERROR_CODE_UI32);
+			command_state.fault_description.description = resultData->getStringValue(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_ERROR_DESC_STR);
+			command_state.fault_description.domain = resultData->getStringValue(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_ERROR_DOMAIN_STR);
+		} else {
+			std::memset(&command_state.fault_description, 0, sizeof(cccs::FaultDescription));
+		}
+		delete(resultData);
+	}
+	return err;
 }
 
 //! Kill the current executing command

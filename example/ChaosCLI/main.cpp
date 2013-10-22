@@ -218,6 +218,7 @@ int main (int argc, char* argv[] )
             case 6:
                 if(deviceState == CUStateKey::START) {
                     //check sc
+					uint64_t command_id = 0;
                     auto_ptr<CDataWrapper> userData;
                     bool canBeExecuted = scAlias.size() > 0;
                     canBeExecuted = canBeExecuted && (checkSubmissionRule(scSubmissionRule) != -1);
@@ -237,10 +238,12 @@ int main (int argc, char* argv[] )
                         err = controller->submitSlowControlCommand(scAlias,
 																   static_cast<cccs::SubmissionRuleType::SubmissionRule>(checkSubmissionRule(scSubmissionRule)),
 																   scSubmissionPriority,
+																   command_id,
 																   scSubmissionSchedulerDelay,
 																   scSubmissionSubmissionRetryDelay,
 																   userData.get());
                         if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to deinit state");
+						std::cout << "COmmand submitted successfully his command id is= " << command_id;
                     } else {
                         throw CException(29, "Device can't be in deinit state", "Send slow command");
                     }
