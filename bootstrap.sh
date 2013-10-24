@@ -30,6 +30,7 @@ if [ -n "$1" ]; then
 else
     PREFIX=$CHAOS_DIR/usr/local
 fi
+
 if [ -n "$CHAOS32" ]; then
 export CFLAGS="-m32 -arch i386"
 export CXXFLAGS="-m32 -arch i386"
@@ -100,6 +101,7 @@ if [ ! -d "$PREFIX/include/boost" ]; then
 
     cd $BASE_EXTERNAL/boost
     echo "Compile and install boost libraries into $PREFIX/"
+
 if [ -n "$CHAOS32" ]; then
     	echo "INSTALLING BOOST X86 32"
     	./b2 link=shared cflags=-m32 cxxflags=-m32 architecture=x86 address-model=32 --prefix=$PREFIX --with-iostreams --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread --with-atomic --with-timer install
@@ -108,6 +110,26 @@ if [ -n "$CHAOS32" ]; then
     fi
 else
     echo "Boost Already present"
+fi
+
+### install libmodbus
+if [ ! -d "$PREFIX/include/modbus" ]; then
+        echo "Setup libmodbus library"
+        if [ ! -d "$BASE_EXTERNAL/libmodbus" ]; then
+                echo "Install libmodbus"
+                git clone https://github.com/stephane/libmodbus.git $BASE_EXTERNAL/libmodbus
+                cd $BASE_EXTERNAL/libmodbus
+        else
+                echo "Update libmodbus"
+                cd $BASE_EXTERNAL/libmodbus/
+                git pull
+        fi
+./autogen.sh
+./configure --prefix=$PREFIX 
+make clean
+make
+make install
+echo "libmodbus done"
 fi
 
 if [ ! -d "$PREFIX/include/msgpack" ]; then
