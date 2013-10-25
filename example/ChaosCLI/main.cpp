@@ -44,7 +44,7 @@ namespace cccs = chaos::cu::control_manager::slow_command;
 #define OPT_DEVICE_ID       "deviceid"
 #define OPT_SCHEDULE_TIME   "stime"
 #define OPT_PRINT_STATE     "print-state"
-//--------------slow contorol option------------------
+//--------------slow contorol option----------------------------------------------------
 #define OPT_SL_ALIAS									"sc-alias"
 #define OPT_SL_PRIORITY									"sc-priority"
 #define OPT_SL_SUBMISSION_RULE							"sc-sub-rule"
@@ -53,6 +53,8 @@ namespace cccs = chaos::cu::control_manager::slow_command;
 #define OPT_SL_COMMAND_SUBMISSION_RETRY_DELAY			"sc-cmd-submission-retry-delay"
 #define OPT_SL_COMMAND_SET_FEATURES_LOCK				"sc-cmd-features-lock"
 #define OPT_SL_COMMAND_SET_FEATURES_SCHEDULER_WAIT		"sc-cmd-features-sched-wait"
+//--------------rt control unit option--------------------------------------------------
+#define OPT_RT_ATTRIBUTE_VALUE							"rt-attr-val"
 
 inline ptime utcToLocalPTime(ptime utcPTime){
 	c_local_adjustor<ptime> utcToLocalAdjustor;
@@ -102,6 +104,8 @@ int main (int argc, char* argv[] )
         uint32_t scSubmissionSchedulerDelay;
         uint32_t scSubmissionSubmissionRetryDelay;
 
+		string rtAttributeValue;
+		
 		bool scFeaturesLock;
 		uint32_t scFeaturesSchedWait;
 		
@@ -121,7 +125,8 @@ int main (int argc, char* argv[] )
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_SUBMISSION_RETRY_DELAY, po::value<uint32_t>(&scSubmissionSubmissionRetryDelay)->default_value(0), "The millisecond beetwen submission checker run");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_SET_FEATURES_LOCK, po::value<bool>(&scFeaturesLock), "if true will lock the feature to the command modification");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_SET_FEATURES_SCHEDULER_WAIT, po::value<uint32_t>(&scFeaturesSchedWait), "The millisecond beetwen two step of the scheduler");
-        //! [UIToolkit Attribute Init]
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_RT_ATTRIBUTE_VALUE, po::value<string>(&rtAttributeValue), "The attribute and value for the input attribute in rt control unit [attribute:value]");
+		//! [UIToolkit Attribute Init]
         
         //! [UIToolkit Init]
         ChaosUIToolkit::getInstance()->init(argc, argv);
@@ -257,7 +262,13 @@ int main (int argc, char* argv[] )
 				
 			case 8: {
 				//set an input attribute of the dataset(rtcu)
-				 controller->setAttributeToValue(<#const char *attributeName#>, <#DataType::DataType attributeType#>, <#void *attributeValue#>)
+				if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_RT_ATTRIBUTE_VALUE)) {
+					std::cout << "No attribute and value give." << std::endl;
+					break;
+				}
+				
+				//get name and value of the attribute
+				
 				break;
 			}
                 
