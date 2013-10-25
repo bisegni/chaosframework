@@ -1,5 +1,5 @@
 /*
- *	DeviceSchemaDB.cpp
+ *	DatasetDB.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,41 +18,41 @@
  *    	limitations under the License.
  */
 
-#include <chaos/cu_toolkit/ControlManager/DeviceSchemaDB.h>
+#include <chaos/common/data/DatasetDB.h>
 
 using namespace chaos::cu;
 using namespace chaos::common::data;
 
-DeviceSchemaDB::DeviceSchemaDB(bool onMemory):CUSchemaDB(onMemory) {
+DatasetDB::DatasetDB(bool onMemory):CUSchemaDB(onMemory) {
     
 }
 
-DeviceSchemaDB::~DeviceSchemaDB() {
+DatasetDB::~DatasetDB() {
     
 }
 
-void DeviceSchemaDB::setDeviceID(std::string _deviceID) {
+void DatasetDB::setDeviceID(std::string _deviceID) {
     deviceID = _deviceID;
 }
 
-const char * DeviceSchemaDB::getDeviceID() {
+const char * DatasetDB::getDeviceID() {
     return deviceID.c_str();
 }
 
 //! Add device dataset definitio by serialized form
-void DeviceSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& serializedDW) {
+void DatasetDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& serializedDW) {
     CUSchemaDB::addAttributeToDataSetFromDataWrapper(serializedDW);
 }
 
 //! Fill a CDataWrapper with a single device information
-void DeviceSchemaDB::fillDataWrapperWithDataSetDescription(CDataWrapper& dw) {
+void DatasetDB::fillDataWrapperWithDataSetDescription(CDataWrapper& dw) {
     /* NOTE this need to be changed becase this funciton retuan many device but now all is
      single device centric. So we need to use a new bson structure for descibe the device, so we need a new root key*/
     CUSchemaDB::fillDataWrapperWithDataSetDescription(dw);
 }
 
 //! Add dataset attribute
-void DeviceSchemaDB::addAttributeToDataSet(const char*const attributeName,
+void DatasetDB::addAttributeToDataSet(const char*const attributeName,
                                            const char*const attributeDescription,
                                            DataType::DataType attributeType,
                                            DataType::DataSetAttributeIOAttribute attributeDirection,
@@ -63,36 +63,36 @@ void DeviceSchemaDB::addAttributeToDataSet(const char*const attributeName,
 
 
 //!Get dataset attribute names
-void DeviceSchemaDB::getDatasetAttributesName(vector<string>& attributesName) {
+void DatasetDB::getDatasetAttributesName(vector<string>& attributesName) {
     CUSchemaDB::getDeviceDatasetAttributesName(deviceID, attributesName);
 }
 
 //!Get device attribute name that has a specified direction
-void DeviceSchemaDB::getDatasetAttributesName(DataType::DataSetAttributeIOAttribute directionType,
+void DatasetDB::getDatasetAttributesName(DataType::DataSetAttributeIOAttribute directionType,
                                               vector<string>& attributesName) {
     CUSchemaDB::getDeviceDatasetAttributesName(deviceID, directionType, attributesName);
 }
 
 //!Get  attribute description
-void DeviceSchemaDB::getAttributeDescription(const string& attributesName,
+void DatasetDB::getAttributeDescription(const string& attributesName,
                                              string& attributeDescription) {
     CUSchemaDB::getDeviceAttributeDescription(deviceID, attributesName, attributeDescription);
 }
 
 //!Get the value information for a specified attribute name
-void DeviceSchemaDB::getAttributeRangeValueInfo(const string& attributesName,
+void DatasetDB::getAttributeRangeValueInfo(const string& attributesName,
                                                 RangeValueInfo& rangeInfo) {
     CUSchemaDB::getDeviceAttributeRangeValueInfo(deviceID, attributesName, rangeInfo);    
 }
 
 //!Set the range values for an attribute of the device
-void DeviceSchemaDB::setAttributeRangeValueInfo(const string& attributesName,
+void DatasetDB::setAttributeRangeValueInfo(const string& attributesName,
                                                 RangeValueInfo& rangeInfo) {
     CUSchemaDB::setDeviceAttributeRangeValueInfo(deviceID, attributesName, rangeInfo);
 }
 
 //!Get the direction of an attribute
-int DeviceSchemaDB::getAttributeDirection(const string& attributesName,
+int DatasetDB::getAttributeDirection(const string& attributesName,
                                           DataType::DataSetAttributeIOAttribute& directionType) {
     return CUSchemaDB::getDeviceAttributeDirection(deviceID, attributesName, directionType);
 }

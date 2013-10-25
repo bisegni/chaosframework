@@ -33,7 +33,7 @@
 #include <chaos/common/thread/CThread.h>
 #include <chaos/common/thread/CThreadExecutionTask.h>
 #include <chaos/common/utility/SingleBufferCircularBuffer.h>
-#include <chaos/common/data/CUSchemaDB.h>            
+#include <chaos/common/data/DatasetDB.h>
 #include <chaos/common/chaos_types.h>
 
 
@@ -60,7 +60,7 @@ namespace chaos {
                 //! The io driver for accessing live data of the device
             IODataDriver *ioLiveDataDriver;
                 //!Dataset database
-            CUSchemaDB datasetDB;
+            DatasetDB datasetDB;
                 //!point to the freashest live value for this device dataset
             //auto_ptr<CDataWrapper> lastDeviceDefinition;
             
@@ -209,6 +209,8 @@ namespace chaos {
             // buffer
             int setAttributeValue(string& attributeName, const char* attributeValue, uint32_t size);
             
+			int setAttributeToValue(const char *attributeName, const char *attributeValue, bool noWait);
+			int setAttributeToValue(const char *attributeName, void *attributeValue, bool noWait, int32_t bufferValuedDim);
             int setAttributeToValue(const char *attributeName, DataType::DataType attributeType, void *attributeValue, bool noWait = false, int32_t bufferValuedDim = 0);
             
             //! Submit a new slow command

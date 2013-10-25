@@ -110,7 +110,7 @@ int main (int argc, char* argv[] )
        
         //! [UIToolkit Attribute Init]
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_DEVICE_ID, po::value<string>(), "The identification string of the device");
-        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_STATE, po::value<int>()->default_value(0), "The state to set on the device{init = 1, start=2, stop=3, deinit=4, set schedule time=5, submite slow command=6}");
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_STATE, po::value<int>()->default_value(0), "The state to set on the device{1=init, 2=start, 3=stop, 4=deinit, 5=set schedule time, 6=submite slow command(slcu), 7=kill current command(slcu), 8=set input channel(rtcu)}");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SCHEDULE_TIME, po::value<long>(), "the time in microseconds for devide schedule time");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_PRINT_STATE, po::value<bool>(&printState)->default_value(false), "Print the state of the device");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_ALIAS, po::value<string>(&scAlias)->default_value(""), "The alias associted to the command for the slow control cu");
@@ -254,6 +254,12 @@ int main (int argc, char* argv[] )
 			case 7:
 				err = controller->killCurrentCommand();
                 break;
+				
+			case 8: {
+				//set an input attribute of the dataset(rtcu)
+				 controller->setAttributeToValue(<#const char *attributeName#>, <#DataType::DataType attributeType#>, <#void *attributeValue#>)
+				break;
+			}
                 
         }
         

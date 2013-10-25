@@ -27,6 +27,8 @@
 		322E1579161B629700C3003C /* NetworkAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = 322E1577161B629700C3003C /* NetworkAddress.h */; };
 		322E157A161B629700C3003C /* NetworkBroker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322E1578161B629700C3003C /* NetworkBroker.cpp */; };
 		322E157D161B62A900C3003C /* NetworkBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 322E157C161B62A900C3003C /* NetworkBroker.h */; };
+		3230BEC2181A6ADB00EA5793 /* DatasetDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3230BEC0181A6ADB00EA5793 /* DatasetDB.cpp */; };
+		3230BEC3181A6ADB00EA5793 /* DatasetDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 3230BEC1181A6ADB00EA5793 /* DatasetDB.h */; };
 		3230DA0A1652C41D00113C93 /* NetworkForwardInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 3230DA091652C41D00113C93 /* NetworkForwardInfo.h */; };
 		3230DA0D1652C44B00113C93 /* RpcMessageForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3230DA0C1652C44B00113C93 /* RpcMessageForwarder.h */; };
 		323236CB164573C60052CE06 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 323236CA164573C60052CE06 /* main.cpp */; };
@@ -340,8 +342,6 @@
 		32CFF95C15E4D950005D607E /* EventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFF95A15E4D950005D607E /* EventDescriptor.h */; };
 		32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95D15E4DBD3005D607E /* EventFactory.cpp */; };
 		32CFF96015E4DBD3005D607E /* EventFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFF95E15E4DBD3005D607E /* EventFactory.h */; };
-		32D3EAAB1793F70000405A3E /* DeviceSchemaDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D3EAA91793F70000405A3E /* DeviceSchemaDB.h */; };
-		32D3EAAC1793F70000405A3E /* DeviceSchemaDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D3EAAA1793F70000405A3E /* DeviceSchemaDB.cpp */; };
 		32D3EAAE1794340200405A3E /* SlowCommandTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D3EAAD1794340200405A3E /* SlowCommandTypes.h */; };
 		32D3EAB517943EBC00405A3E /* AttributeSetting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D3EAB317943EBC00405A3E /* AttributeSetting.cpp */; };
 		32D3EAB617943EBC00405A3E /* AttributeSetting.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D3EAB417943EBC00405A3E /* AttributeSetting.h */; };
@@ -400,6 +400,13 @@
 		322E1577161B629700C3003C /* NetworkAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkAddress.h; sourceTree = "<group>"; };
 		322E1578161B629700C3003C /* NetworkBroker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = NetworkBroker.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		322E157C161B62A900C3003C /* NetworkBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = NetworkBroker.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		3230BEBB1817A9E100EA5793 /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_common.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3230BEBC1817A9E100EA5793 /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_cutoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3230BEBD1817A9E100EA5793 /* libchaos_uitoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_uitoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		3230BEBE1817A9E100EA5793 /* ChaosNodeDirectory */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosNodeDirectory; sourceTree = BUILT_PRODUCTS_DIR; };
+		3230BEBF1817A9E100EA5793 /* ChaosHSTService */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosHSTService; sourceTree = BUILT_PRODUCTS_DIR; };
+		3230BEC0181A6ADB00EA5793 /* DatasetDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatasetDB.cpp; sourceTree = "<group>"; };
+		3230BEC1181A6ADB00EA5793 /* DatasetDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetDB.h; sourceTree = "<group>"; };
 		3230D9E81652AAF100113C93 /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		3230DA091652C41D00113C93 /* NetworkForwardInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkForwardInfo.h; sourceTree = "<group>"; };
 		3230DA0C1652C44B00113C93 /* RpcMessageForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcMessageForwarder.h; sourceTree = "<group>"; };
@@ -567,11 +574,6 @@
 		327CFF071708C4EA0069497B /* FastHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastHash.cpp; sourceTree = "<group>"; };
 		327CFF081708C4EB0069497B /* FastHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastHash.h; sourceTree = "<group>"; };
 		327CFF111708D7740069497B /* CacheGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheGlobal.h; sourceTree = "<group>"; };
-		3285569817F2DD7800A64ED2 /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libchaos_common.dylib; path = /Volumes/DeepData/Sorgenti/chaos/chaos_bundle/chaosframework/usr/local/lib/libchaos_common.dylib; sourceTree = "<absolute>"; };
-		3285569917F2DD7800A64ED2 /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libchaos_cutoolkit.dylib; path = /Volumes/DeepData/Sorgenti/chaos/chaos_bundle/chaosframework/usr/local/lib/libchaos_cutoolkit.dylib; sourceTree = "<absolute>"; };
-		3285569A17F2DD7800A64ED2 /* libchaos_uitoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = libchaos_uitoolkit.dylib; path = /Volumes/DeepData/Sorgenti/chaos/chaos_bundle/chaosframework/usr/local/lib/libchaos_uitoolkit.dylib; sourceTree = "<absolute>"; };
-		3285569B17F2DD7800A64ED2 /* ChaosNodeDirectory */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = ChaosNodeDirectory; path = /Volumes/DeepData/Sorgenti/chaos/chaos_bundle/chaosframework/usr/local/bin/ChaosNodeDirectory; sourceTree = "<absolute>"; };
-		3285569C17F2DD7800A64ED2 /* ChaosHSTService */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = ChaosHSTService; path = /Volumes/DeepData/Sorgenti/chaos/chaos_bundle/chaosframework/usr/local/bin/ChaosHSTService; sourceTree = "<absolute>"; };
 		3285569E17F2E33A00A64ED2 /* DirectIOClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOClient.cpp; sourceTree = "<group>"; };
 		3285569F17F2E33A00A64ED2 /* DirectIOClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOClient.h; sourceTree = "<group>"; };
 		328556A217F2E36000A64ED2 /* DirectIOServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOServer.cpp; sourceTree = "<group>"; };
@@ -733,8 +735,6 @@
 		32CFF95A15E4D950005D607E /* EventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDescriptor.h; sourceTree = "<group>"; };
 		32CFF95D15E4DBD3005D607E /* EventFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventFactory.cpp; sourceTree = "<group>"; };
 		32CFF95E15E4DBD3005D607E /* EventFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventFactory.h; sourceTree = "<group>"; };
-		32D3EAA91793F70000405A3E /* DeviceSchemaDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSchemaDB.h; sourceTree = "<group>"; };
-		32D3EAAA1793F70000405A3E /* DeviceSchemaDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceSchemaDB.cpp; sourceTree = "<group>"; };
 		32D3EAAD1794340200405A3E /* SlowCommandTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlowCommandTypes.h; sourceTree = "<group>"; };
 		32D3EAB317943EBC00405A3E /* AttributeSetting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AttributeSetting.cpp; sourceTree = "<group>"; };
 		32D3EAB417943EBC00405A3E /* AttributeSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeSetting.h; sourceTree = "<group>"; };
@@ -960,6 +960,11 @@
 				326DB3B114B38BC00018A8D0 /* chaos */,
 				323236C9164573C60052CE06 /* ChaosNodeDirectory */,
 				323236D8164573F50052CE06 /* ChaosHSTService */,
+				3230BEBB1817A9E100EA5793 /* libchaos_common.dylib */,
+				3230BEBC1817A9E100EA5793 /* libchaos_cutoolkit.dylib */,
+				3230BEBD1817A9E100EA5793 /* libchaos_uitoolkit.dylib */,
+				3230BEBE1817A9E100EA5793 /* ChaosNodeDirectory */,
+				3230BEBF1817A9E100EA5793 /* ChaosHSTService */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1183,6 +1188,8 @@
 				326DB3E814B38BC00018A8D0 /* CDataWrapper.h */,
 				326DB3E914B38BC00018A8D0 /* CUSchemaDB.cpp */,
 				326DB3EA14B38BC00018A8D0 /* CUSchemaDB.h */,
+				3230BEC0181A6ADB00EA5793 /* DatasetDB.cpp */,
+				3230BEC1181A6ADB00EA5793 /* DatasetDB.h */,
 				32D421B117271572008A326E /* BsonFragment.cpp */,
 				32D421B217271572008A326E /* BsonFragment.h */,
 			);
@@ -1380,8 +1387,6 @@
 				32F2241E179AEED500853F62 /* SCAbstractControlUnit.h */,
 				32F22419179AE3BC00853F62 /* RTAbstractControlUnit.cpp */,
 				32F2241A179AE3BC00853F62 /* RTAbstractControlUnit.h */,
-				32D3EAAA1793F70000405A3E /* DeviceSchemaDB.cpp */,
-				32D3EAA91793F70000405A3E /* DeviceSchemaDB.h */,
 				326DB4A714B3A3E50018A8D0 /* ControlManager.cpp */,
 				326DB4A814B3A3E50018A8D0 /* ControlManager.h */,
 			);
@@ -1796,6 +1801,7 @@
 				32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */,
 				32BFF913176C862A00D27A04 /* StartableService.h in Headers */,
 				320192BA14DEEAC000318F00 /* CObjectHandlerProcessingQueue.h in Headers */,
+				3230BEC3181A6ADB00EA5793 /* DatasetDB.h in Headers */,
 				32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */,
 				320C218A151B555A00BD0F41 /* EventServer.h in Headers */,
 				32BE864815A0CEAF00818C39 /* LogManager.h in Headers */,
@@ -1975,7 +1981,6 @@
 				3264B05C1673623F002E87FA /* TDSObjectHandler.h in Headers */,
 				32CF054916AB23C200E86CC7 /* PerfTestCU.h in Headers */,
 				325F8B521763AF2300EFE616 /* SlowCommand.h in Headers */,
-				32D3EAAB1793F70000405A3E /* DeviceSchemaDB.h in Headers */,
 				328CC9D71763CCC7000B30B6 /* AbstractDriver.h in Headers */,
 				32919A0C1764E68F00724874 /* DriverAccessor.h in Headers */,
 				32F2241C179AE3BC00853F62 /* RTAbstractControlUnit.h in Headers */,
@@ -2014,7 +2019,7 @@
 			);
 			name = ChaosNodeDirectory;
 			productName = ChaosNodeDirectory;
-			productReference = 3285569B17F2DD7800A64ED2 /* ChaosNodeDirectory */;
+			productReference = 3230BEBE1817A9E100EA5793 /* ChaosNodeDirectory */;
 			productType = "com.apple.product-type.tool";
 		};
 		323236D5164573F50052CE06 /* ChaosHSTService */ = {
@@ -2030,7 +2035,7 @@
 			);
 			name = ChaosHSTService;
 			productName = ChaosHSTService;
-			productReference = 3285569C17F2DD7800A64ED2 /* ChaosHSTService */;
+			productReference = 3230BEBF1817A9E100EA5793 /* ChaosHSTService */;
 			productType = "com.apple.product-type.tool";
 		};
 		326026E814B301F600C906CE /* chaos_common */ = {
@@ -2048,7 +2053,7 @@
 			);
 			name = chaos_common;
 			productName = chaos_common;
-			productReference = 3285569817F2DD7800A64ED2 /* libchaos_common.dylib */;
+			productReference = 3230BEBB1817A9E100EA5793 /* libchaos_common.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3260276514B3068100C906CE /* chaos_cutoolkit */ = {
@@ -2065,7 +2070,7 @@
 			);
 			name = chaos_cutoolkit;
 			productName = chaos_cutoolkit;
-			productReference = 3285569917F2DD7800A64ED2 /* libchaos_cutoolkit.dylib */;
+			productReference = 3230BEBC1817A9E100EA5793 /* libchaos_cutoolkit.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		3260278614B307DA00C906CE /* chaos_uitoolkit */ = {
@@ -2082,7 +2087,7 @@
 			);
 			name = chaos_uitoolkit;
 			productName = chaos_uitoolkit;
-			productReference = 3285569A17F2DD7800A64ED2 /* libchaos_uitoolkit.dylib */;
+			productReference = 3230BEBD1817A9E100EA5793 /* libchaos_uitoolkit.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
@@ -2226,6 +2231,7 @@
 				32B5721E168E14650002A198 /* timer.cpp in Sources */,
 				32B57226168E44060002A198 /* base64.cpp in Sources */,
 				32460520179C55FC00B075DA /* sqlite3.c in Sources */,
+				3230BEC2181A6ADB00EA5793 /* DatasetDB.cpp in Sources */,
 				32B57231168E4E010002A198 /* jsobj.cpp in Sources */,
 				32B57238168E50980002A198 /* md5.cpp in Sources */,
 				32FA968317C894830000BE9E /* Semaphore.cpp in Sources */,
@@ -2264,7 +2270,6 @@
 				326DB4CD14B3A3E50018A8D0 /* MultiBufferDataStorage.cpp in Sources */,
 				328D2FB71660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp in Sources */,
 				328D2FB91660EAD6007F482E /* DSAttributeHandler.cpp in Sources */,
-				32D3EAAC1793F70000405A3E /* DeviceSchemaDB.cpp in Sources */,
 				32CF054816AB23C200E86CC7 /* PerfTestCU.cpp in Sources */,
 				325F8B511763AF2300EFE616 /* SlowCommand.cpp in Sources */,
 				328E36F3178AFE0D00C1564D /* SlowCommandSandbox.cpp in Sources */,

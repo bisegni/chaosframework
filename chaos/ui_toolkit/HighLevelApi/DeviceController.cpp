@@ -22,11 +22,13 @@
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
 #include <chaos/common/io/IOMemcachedDriver.h>
 
+#include <boost/lexical_cast.hpp>
+
 using namespace std;
 using namespace chaos;
 using namespace chaos::ui;
 namespace cccs = chaos::cu::control_manager::slow_command;
-
+namespace cc_data = chaos::common::data;
 
 #define MSEC_WAIT_OPERATION 1000
 
@@ -114,29 +116,29 @@ int DeviceController::setScheduleDelay(uint64_t microseconds) {
 
 
 void DeviceController::getDeviceDatasetAttributesName(vector<string>& attributesName) {
-    datasetDB.getDeviceDatasetAttributesName(deviceID, attributesName);
+    datasetDB.getDatasetAttributesName(attributesName);
 }
 
 void DeviceController::getAttributeDescription(string& attributesName, string& attributeDescription) {
-    datasetDB.getDeviceAttributeDescription(deviceID, attributesName, attributeDescription);
+    datasetDB.getAttributeDescription(attributesName, attributeDescription);
 }
 
 /*!
  Get all attribute name
  */
 void DeviceController::getDeviceDatasetAttributesName(vector<string>& attributesName, DataType::DataSetAttributeIOAttribute directionType) {
-    datasetDB.getDeviceDatasetAttributesName(deviceID, directionType, attributesName);
+    datasetDB.getDatasetAttributesName(directionType, attributesName);
 }
 
 /*!
  Get range valu einfo for attrbiute name
  */
 void DeviceController::getDeviceAttributeRangeValueInfo(string& attributesName, chaos::RangeValueInfo& rangeInfo) {
-    datasetDB.getDeviceAttributeRangeValueInfo(deviceID, attributesName, rangeInfo);
+    datasetDB.getAttributeRangeValueInfo(attributesName, rangeInfo);
 }
 
 int DeviceController::getDeviceAttributeDirection(string& attributesName, DataType::DataSetAttributeIOAttribute& directionType) {
-    return datasetDB.getDeviceAttributeDirection(deviceID, attributesName, directionType);
+    return datasetDB.getAttributeDirection(attributesName, directionType);
 }
 
 /*!
@@ -156,7 +158,7 @@ int DeviceController::initDevice() {
     CHAOS_ASSERT(mdsChannel && deviceChannel)
     int err = 0;
     CDataWrapper initConf;
-    datasetDB.fillDataWrapperWithDataSetDescription(deviceID, initConf);
+    datasetDB.fillDataWrapperWithDataSetDescription(initConf);
     
     //initialize the devica with the metadataserver data
     err = deviceChannel->initDevice(&initConf, millisecToWait);
@@ -208,6 +210,62 @@ int DeviceController::setAttributeValue(const char *attributeName, double attrib
     CDataWrapper attributeValuePack;
     attributeValuePack.addDoubleValue(attributeName, attributeValue);
     return deviceChannel->setAttributeValue(attributeValuePack, millisecToWait);
+}
+
+int DeviceController::setAttributeToValue(const char *attributeName, const char *attributeValue, bool noWait) {
+	CDataWrapper attributeValuePack;
+	cc_data::RangeValueInfo range_info;
+	
+	//get type for the value
+	datasetDB.getAttributeRangeValueInfo(attributeName, range_info);
+
+    switch (range_info.valueType) {
+        case DataType::TYPE_BOOLEAN: {
+            bool boolValuePtr = lexical_cast<bool>(attributeValue);
+            attributeValuePack.addBoolValue(attributeName, boolValuePtr);
+            break;
+        }
+        case DataType::TYPE_STRING:{
+            attributeValuePack.addStringValue(attributeName, attributeValue);
+            break;
+        }
+        case DataType::TYPE_DOUBLE:{
+            double doubleValuePtr = lexical_cast<double>(attributeValue);
+            attributeValuePack.addDoubleValue(attributeName, doubleValuePtr);
+            break;
+        }
+        case DataType::TYPE_INT32:{
+            int32_t i32ValuePtr = lexical_cast<int32_t>(attributeValue);
+            attributeValuePack.addInt32Value(attributeName, i32ValuePtr);
+            break;
+        }
+        case DataType::TYPE_INT64:{
+            int64_t i64ValuePtr = lexical_cast<int64_t>(attributeValue);
+            attributeValuePack.addInt64Value(attributeName, i64ValuePtr);
+            break;
+        }
+        case DataType::TYPE_STRUCT:{
+            CDataWrapper cdValue(attributeValue);
+            attributeValuePack.appendAllElement(cdValue);
+            break;
+        }
+        case DataType::TYPE_BYTEARRAY:{
+            //const char *byteArrayValuePtr = static_cast<const char*>(attributeValue);
+            //attributeValuePack.addBinaryValue(attributeName, byteArrayValuePtr, bufferValuedDim);
+            break;
+        }
+    }
+    return deviceChannel->setAttributeValue(attributeValuePack, noWait, millisecToWait);
+}
+
+int DeviceController::setAttributeToValue(const char *attributeName, void *attributeValue, bool noWait, int32_t bufferValuedDim) {
+	cc_data::RangeValueInfo range_info;
+
+	//get type for the value
+	datasetDB.getAttributeRangeValueInfo(attributeName, range_info);
+	
+	//call default API
+	return setAttributeToValue(attributeName, range_info.valueType, attributeValue, noWait, bufferValuedDim);
 }
 
 int DeviceController::setAttributeToValue(const char *attributeName, DataType::DataType attributeType, void *attributeValue, bool noWait, int32_t bufferValuedDim) {
@@ -419,23 +477,23 @@ void DeviceController::initializeAttributeIndexMap() {
     attributeDirectionMap.clear();
     
     //get all attribute name from db
-    datasetDB.getDeviceDatasetAttributesName(deviceID, DataType::Input, attributeNames);
+    datasetDB.getDatasetAttributesName(DataType::Input, attributeNames);
     for (vector<string>::iterator iter = attributeNames.begin();
          iter != attributeNames.end();
          iter++) {
         
-        datasetDB.getDeviceAttributeRangeValueInfo(deviceID, *iter, attributerangeInfo);
+        datasetDB.getAttributeRangeValueInfo(*iter, attributerangeInfo);
         attributeDirectionMap.insert(make_pair(*iter, (DataType::DataSetAttributeIOAttribute)DataType::Input));
         attributeTypeMap.insert(make_pair(*iter, (DataType::DataType)attributerangeInfo.valueType));
     }
     
     attributeNames.clear();
-    datasetDB.getDeviceDatasetAttributesName(deviceID, DataType::Output, attributeNames);
+    datasetDB.getDatasetAttributesName(DataType::Output, attributeNames);
     for (vector<string>::iterator iter = attributeNames.begin();
          iter != attributeNames.end();
          iter++) {
         
-        datasetDB.getDeviceAttributeRangeValueInfo(deviceID, *iter, attributerangeInfo);
+        datasetDB.getAttributeRangeValueInfo(*iter, attributerangeInfo);
         attributeDirectionMap.insert(make_pair(*iter, (DataType::DataSetAttributeIOAttribute)DataType::Output));
         attributeTypeMap.insert(make_pair(*iter, (DataType::DataType)attributerangeInfo.valueType));
     }

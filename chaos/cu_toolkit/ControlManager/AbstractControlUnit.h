@@ -37,9 +37,9 @@
 #include <chaos/common/utility/ArrayPointer.h>
 #include <chaos/common/pqueue/CObjectHandlerProcessingQueue.h>
 #include <chaos/common/utility/StartableService.h>
+#include <chaos/common/data/DatasetDB.h>
 
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
-#include <chaos/cu_toolkit/ControlManager/DeviceSchemaDB.h>
 #include <chaos/cu_toolkit/driver_manager/driver/DriverTypes.h>
 #include <chaos/cu_toolkit/driver_manager/driver/DriverAccessor.h>
 
@@ -71,7 +71,7 @@ namespace chaos{
             class that permit to publish rpc method for control the control unit life cycle. Most of the API
             that needs to be used to create device and his dataset are contained into the DeviceSchemaDB class.
          */
-        class AbstractControlUnit : public DeclareAction, protected DeviceSchemaDB, public utility::StartableService {
+        class AbstractControlUnit : public DeclareAction, protected DatasetDB, public utility::StartableService {
             
             //frinedly class declaration
             friend class ControlManager;

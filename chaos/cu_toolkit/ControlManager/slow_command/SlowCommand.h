@@ -30,8 +30,9 @@
 #include <boost/chrono.hpp>
 
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/data/DatasetDB.h>
+
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
-#include <chaos/cu_toolkit/ControlManager/DeviceSchemaDB.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/AttributeSetting.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandTypes.h>
 
@@ -111,7 +112,7 @@ namespace chaos{
                     KeyDataStorage *keyDataStoragePtr;
                     
                     //! point to the in memory device database
-                    DeviceSchemaDB  *deviceDatabasePtr;
+					chaos::common::data::DatasetDB  *deviceDatabasePtr;
                     
                     //! Fault description
                     FaultDescription faultDescription;
