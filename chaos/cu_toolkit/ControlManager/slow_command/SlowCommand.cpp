@@ -43,7 +43,7 @@ SlowCommand::~SlowCommand() {
 /*
  return the device database with the dafualt device information
  */
-chaos::cu::DeviceSchemaDB  *SlowCommand::getDeviceDatabase() {
+chaos::common::data::DatasetDB *SlowCommand::getDeviceDatabase() {
     return deviceDatabasePtr;
 }
 

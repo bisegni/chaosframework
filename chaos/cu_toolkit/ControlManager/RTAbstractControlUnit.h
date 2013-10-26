@@ -113,7 +113,7 @@ namespace chaos {
                                                 TDSAttributeHandler<T>* handler) {
                 
                 //first add the attribute information in the schema
-                DeviceSchemaDB::addAttributeToDataSet(attributeName, attributeDescription, attributeType, attributeDirection);
+                DatasetDB::addAttributeToDataSet(attributeName, attributeDescription, attributeType, attributeDirection);
                 
                 
                 //check if there is a valid handler

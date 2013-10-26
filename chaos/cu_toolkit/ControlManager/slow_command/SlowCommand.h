@@ -178,7 +178,7 @@ namespace chaos{
                     /*!
                      return the device database with the dafualt device information
                      */
-                    DeviceSchemaDB  *getDeviceDatabase();
+                    chaos_data::DatasetDB  *getDeviceDatabase();
                     
                     ValueSetting *getValueSetting(const char *keyName);
                     ValueSetting *getValueSetting(AttributeIndexType attributeIndex);

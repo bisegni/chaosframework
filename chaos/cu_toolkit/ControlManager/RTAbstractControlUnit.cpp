@@ -77,7 +77,7 @@ void RTAbstractControlUnit::init(void *initData) throw(CException) {
 	//call parent impl
 	AbstractControlUnit::init(initData);
 	
-    RTCULAPP_ << "Initialize the DSAttribute handler engine for device:" << DeviceSchemaDB::getDeviceID();
+    RTCULAPP_ << "Initialize the DSAttribute handler engine for device:" << DatasetDB::getDeviceID();
     utility::StartableService::initImplementation(attributeHandlerEngine, (void*)NULL, "DSAttribute handler engine", "RTAbstractControlUnit::init");
 }
 
@@ -88,9 +88,9 @@ void RTAbstractControlUnit::start() throw(CException) {
 	//call parent impl
 	AbstractControlUnit::start();
 	
-    RTCULAPP_ << "Starting thread for device:" << DeviceSchemaDB::getDeviceID();
+    RTCULAPP_ << "Starting thread for device:" << DatasetDB::getDeviceID();
     threadStartStopManagment(true);
-    RTCULAPP_ << "Thread started for device:" << DeviceSchemaDB::getDeviceID();
+    RTCULAPP_ << "Thread started for device:" << DatasetDB::getDeviceID();
 }
 
 /*!
@@ -101,9 +101,9 @@ void RTAbstractControlUnit::stop() throw(CException) {
 	AbstractControlUnit::stop();
 	
     //manage the thread
-    RTCULAPP_ << "Stopping thread for device:" << DeviceSchemaDB::getDeviceID();
+    RTCULAPP_ << "Stopping thread for device:" << DatasetDB::getDeviceID();
     threadStartStopManagment(false);
-    RTCULAPP_ << "Thread for device stopped:" << DeviceSchemaDB::getDeviceID();
+    RTCULAPP_ << "Thread for device stopped:" << DatasetDB::getDeviceID();
 }
 
 /*!
@@ -113,7 +113,7 @@ void RTAbstractControlUnit::deinit() throw(CException) {
 	//call parent impl
 	AbstractControlUnit::deinit();
 	
-    RTCULAPP_ << "Deinitializing the DSAttribute handler engine for device:" << DeviceSchemaDB::getDeviceID();
+    RTCULAPP_ << "Deinitializing the DSAttribute handler engine for device:" << DatasetDB::getDeviceID();
     utility::StartableService::deinitImplementation(attributeHandlerEngine, "DSAttribute handler engine", "RTAbstractControlUnit::deinit");
 }
 
@@ -190,7 +190,7 @@ CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* updatePac
             // we need to optimize and be sure that event channel
             // is mandatory so we can left over the 'if' check
             //----------------------
-            if(deviceEventChannel) deviceEventChannel->notifyForScheduleUpdateWithNewValue(DeviceSchemaDB::getDeviceID(), uSecdelay);
+            if(deviceEventChannel) deviceEventChannel->notifyForScheduleUpdateWithNewValue(DatasetDB::getDeviceID(), uSecdelay);
         }
     }
     return result;
@@ -211,6 +211,6 @@ CDataWrapper* RTAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAt
     attributeHandlerEngine->executeHandler(datasetAttributeValues);
     
     //at this time notify the wel gone setting of comand
-    if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(DeviceSchemaDB::getDeviceID(), 0);
+    if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(DatasetDB::getDeviceID(), 0);
     return NULL;
 }

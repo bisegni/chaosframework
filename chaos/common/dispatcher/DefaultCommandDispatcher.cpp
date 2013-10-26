@@ -55,7 +55,7 @@ void DefaultCommandDispatcher::init(CDataWrapper *initConfiguration) throw(CExce
 void DefaultCommandDispatcher::deinit() throw(CException) {
     LDEF_CMD_DISPTC_APP_ << "Deinitilizing Default Command Dispatcher";
         //we need to stop all das
-    map<string, shared_ptr<DomainActionsScheduler> >::iterator dasIter = dasMap.begin();
+    map<string, boost::shared_ptr<DomainActionsScheduler> >::iterator dasIter = dasMap.begin();
     for (; dasIter != dasMap.end(); dasIter++) {
         LDEF_CMD_DISPTC_APP_ << "Deinitilizing action scheduler for domain:"<< (*dasIter).second->getManagedDomainName();
             //th einitialization is enclosed into try/catch because we need to 
@@ -95,7 +95,7 @@ void DefaultCommandDispatcher::registerAction(DeclareAction *declareActionClass)
         string domainName = (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain);
         
         if(!dasMap.count(domainName)){
-            shared_ptr<DomainActionsScheduler> das(new DomainActionsScheduler(getDomainActionsFromName(domainName)));
+            boost::shared_ptr<DomainActionsScheduler> das(new DomainActionsScheduler(getDomainActionsFromName(domainName)));
 #if DEBUG
             LDEF_CMD_DISPTC_APP_ << "Allocated new  actions scheduler for domain:" << domainName;
             LDEF_CMD_DISPTC_APP_ << "Init actions scheduler for domain:" << domainName;

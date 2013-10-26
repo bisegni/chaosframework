@@ -70,7 +70,7 @@ namespace chaos {
                 //! mutext used for unlock and wait esclusive access
             boost::mutex wait_answer_mutex;
                 //! condition variable for wait the answer
-            condition_variable wait_answer_condition;
+            boost::condition_variable wait_answer_condition;
             boost::asio::ip::udp::socket _socket;
             boost::asio::ip::udp::endpoint _endpoint;
         };

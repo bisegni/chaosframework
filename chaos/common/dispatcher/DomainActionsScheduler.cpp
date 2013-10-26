@@ -25,7 +25,7 @@ using namespace chaos;
 
 namespace chaos_data = chaos::common::data;
 
-DomainActionsScheduler::DomainActionsScheduler(shared_ptr<DomainActions> _domainActionsContainer):armed(false){
+DomainActionsScheduler::DomainActionsScheduler(boost::shared_ptr<DomainActions> _domainActionsContainer):armed(false){
     domainActionsContainer = _domainActionsContainer;
 }
 

@@ -42,11 +42,10 @@ using namespace chaos::common::data;
 using namespace chaos::cu;
 using namespace chaos::cu::driver_manager::driver;
 
-
 #define LCU_ LAPP_ << "[Control Unit:"<<getCUInstance()<<"] - "
 
 
-AbstractControlUnit::AbstractControlUnit():DeviceSchemaDB(false), cuInstance(UUIDUtil::generateUUIDLite()) {
+AbstractControlUnit::AbstractControlUnit():DatasetDB(false), cuInstance(UUIDUtil::generateUUIDLite()) {
 }
 
 /*!
@@ -135,7 +134,7 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
     
     LCU_ << "Get Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
     //grab dataset description
-    DeviceSchemaDB::fillDataWrapperWithDataSetDescription(setupConfiguration);
+    DatasetDB::fillDataWrapperWithDataSetDescription(setupConfiguration);
     
 #if DEBUG
     LCU_ << setupConfiguration.getJSONString();
@@ -169,7 +168,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
     }
     
     std::string deviceID = initConfiguration->getStringValue(DatasetDefinitionkey::DEVICE_ID);
-    if(deviceID.compare(DeviceSchemaDB::getDeviceID())) {
+    if(deviceID.compare(DatasetDB::getDeviceID())) {
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
         throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_init");
     }
@@ -212,7 +211,7 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
     }
     
     string deviceID = startParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
-    if(deviceID.compare(DeviceSchemaDB::getDeviceID())) {
+    if(deviceID.compare(DatasetDB::getDeviceID())) {
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
         throw CException(-2, "Deviuce not known by this control unit", "AbstractControlUnit::_start");
     }
@@ -221,7 +220,7 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
     utility::StartableService::startImplementation(this, "AbstractControlUnit", "AbstractControlUnit::_start");
 	
 	//the start of the implementation unit goes after the infrastructure one
-    LCU_ << "Start sublass for deviceID:" << DeviceSchemaDB::getDeviceID();
+    LCU_ << "Start sublass for deviceID:" << DatasetDB::getDeviceID();
     unitStart();
     return NULL;
 }
@@ -235,13 +234,13 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachPa
         throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_stop");
     }
     string deviceID = stopParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
-    if(deviceID.compare(DeviceSchemaDB::getDeviceID())) {
+    if(deviceID.compare(DatasetDB::getDeviceID())) {
         LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
         throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_stop");
     }
     
 	//first we need to stop the implementation unit
-    LCU_ << "Stop sublass for deviceID:" << DeviceSchemaDB::getDeviceID();
+    LCU_ << "Stop sublass for deviceID:" << DatasetDB::getDeviceID();
     unitStop();
 	
     //call start method of the startable interface
@@ -262,14 +261,14 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
     }
     
     string deviceID = deinitParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
-    if(deviceID.compare(DeviceSchemaDB::getDeviceID())) {
-        LCU_ << "device:" << DeviceSchemaDB::getDeviceID() << "not known by this ContorlUnit";
+    if(deviceID.compare(DatasetDB::getDeviceID())) {
+        LCU_ << "device:" << DatasetDB::getDeviceID() << "not known by this ContorlUnit";
         throw CException(-2, "Deviuce not known by this control unit", "AbstractControlUnit::_deinit");
     }
     
 	
     //first we start the deinitializaiton of the implementation unit
-    LCU_ << "Deinit custom deinitialization for device:" << DeviceSchemaDB::getDeviceID();
+    LCU_ << "Deinit custom deinitialization for device:" << DatasetDB::getDeviceID();
     unitDeinit();
 	
     //call deinit method of the startable interface
@@ -313,7 +312,7 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
         
     } catch (CException& ex) {
         //at this time notify the wel gone setting of comand
-        if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(DeviceSchemaDB::getDeviceID(), ex.errorCode);
+        if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(DatasetDB::getDeviceID(), ex.errorCode);
         
         throw ex;
     }
@@ -324,13 +323,13 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
 // Startable Service method
 void AbstractControlUnit::init(void *initData) throw(CException) {
     //cast to the CDatawrapper instance
-    std::string deviceID = DeviceSchemaDB::getDeviceID();
+    std::string deviceID = DatasetDB::getDeviceID();
     CDataWrapper *initConfiguration = static_cast<CDataWrapper*>(initData);
 	LCU_ << "Initializating Phase for device:" << deviceID;
 
     
     LCU_ << "Initialize CU Database for device:" << deviceID;
-    DeviceSchemaDB::addAttributeToDataSetFromDataWrapper(*initConfiguration);
+    DatasetDB::addAttributeToDataSetFromDataWrapper(*initConfiguration);
     
     //initialize key data storage for device id
     LCU_ << "Create KeyDataStorage device:" << deviceID;
@@ -342,22 +341,22 @@ void AbstractControlUnit::init(void *initData) throw(CException) {
 
 // Startable Service method
 void AbstractControlUnit::start() throw(CException) {
-    LCU_ << "Start Phase for device:" << DeviceSchemaDB::getDeviceID();
+    LCU_ << "Start Phase for device:" << DatasetDB::getDeviceID();
 
 }
 
 // Startable Service method
 void AbstractControlUnit::stop() throw(CException) {
-    LCU_ << "Stop Phase for device:" << DeviceSchemaDB::getDeviceID();
+    LCU_ << "Stop Phase for device:" << DatasetDB::getDeviceID();
 }
 
 // Startable Service method
 void AbstractControlUnit::deinit() throw(CException) {
-    LCU_ << "Deinitialization Phase for device:" << DeviceSchemaDB::getDeviceID();
+    LCU_ << "Deinitialization Phase for device:" << DatasetDB::getDeviceID();
     
     //remove key data storage
     if(keyDataStorage) {
-        LCU_ << "Delete data storage driver for device:" << DeviceSchemaDB::getDeviceID();
+        LCU_ << "Delete data storage driver for device:" << DatasetDB::getDeviceID();
         keyDataStorage->deinit();
         delete(keyDataStorage);
         keyDataStorage = NULL;
@@ -389,14 +388,14 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
     
     string deviceID = updatePack->getStringValue(DatasetDefinitionkey::DEVICE_ID);
     
-    if(deviceID.compare(DeviceSchemaDB::getDeviceID())) {
-        LCU_ << "device:" << DeviceSchemaDB::getDeviceID() << "not known by this ContorlUnit";
+    if(deviceID.compare(DatasetDB::getDeviceID())) {
+        LCU_ << "device:" << DatasetDB::getDeviceID() << "not known by this ContorlUnit";
         throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_stop");
     }
     
     //check to see if the device can ben initialized
     if(utility::StartableService::getServiceState() == INIT_STATE) {
-        LCU_ << "device:" << DeviceSchemaDB::getDeviceID() << " not initialized";
+        LCU_ << "device:" << DatasetDB::getDeviceID() << " not initialized";
         throw CException(-3, "Device Not Initilized", "AbstractControlUnit::updateConfiguration");
     }
     

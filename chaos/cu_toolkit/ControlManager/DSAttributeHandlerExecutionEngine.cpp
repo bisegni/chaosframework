@@ -33,7 +33,7 @@ DSAttributeHandlerExecutionEngine::DSAttributeHandlerExecutionEngine(){}
 /*!
  Default constructor with std string
  */
-DSAttributeHandlerExecutionEngine::DSAttributeHandlerExecutionEngine(DeviceSchemaDB *_schemaDB): referenceDeviceSchemaDB(_schemaDB) {}
+DSAttributeHandlerExecutionEngine::DSAttributeHandlerExecutionEngine(chaos::common::data::DatasetDB *_schemaDB): referenceDeviceSchemaDB(_schemaDB) {}
 
 /*!
  Default destructor
@@ -42,7 +42,7 @@ DSAttributeHandlerExecutionEngine::~DSAttributeHandlerExecutionEngine() {
     
 }
 
-void DSAttributeHandlerExecutionEngine::setDeviceSchemaDB(DeviceSchemaDB *_referenceDeviceSchemeDB) {
+void DSAttributeHandlerExecutionEngine::setDeviceSchemaDB(chaos::common::data::DatasetDB *_referenceDeviceSchemeDB) {
     referenceDeviceSchemaDB = _referenceDeviceSchemeDB;
 }
 

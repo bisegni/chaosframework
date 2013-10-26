@@ -63,14 +63,14 @@ void SCAbstractControlUnit::init(void *initData) throw(CException) {
 	//call parent impl
 	AbstractControlUnit::init(initData);
 	
-    LCCU_ << "Install default slow command for device " << DeviceSchemaDB::getDeviceID();
+    LCCU_ << "Install default slow command for device " << DatasetDB::getDeviceID();
     installCommand<command::SetAttributeCommand>(control_manager::slow_command::SlowCommandsKey::ATTRIBUTE_SET_VALUE_CMD_ALIAS);
     
-    LCCU_ << "Initializing slow command sandbox for device " << DeviceSchemaDB::getDeviceID();
+    LCCU_ << "Initializing slow command sandbox for device " << DatasetDB::getDeviceID();
     utility::StartableService::initImplementation(slowCommandExecutor, (void*)NULL, "Slow Command Executor", "SCAbstractControlUnit::init");
     
     //now we can call funciton for custom definition of the shared variable
-    LCCU_ << "Setting up custom shared variable for device " << DeviceSchemaDB::getDeviceID();
+    LCCU_ << "Setting up custom shared variable for device " << DatasetDB::getDeviceID();
     defineSharedVariable();
     
     //associate the data storage
@@ -85,7 +85,7 @@ void SCAbstractControlUnit::deinit() throw(CException) {
 	//call parent impl
 	AbstractControlUnit::deinit();
 	
-    LCCU_ << "Deinitialize sandbox deinitialization for device:" << DeviceSchemaDB::getDeviceID();
+    LCCU_ << "Deinitialize sandbox deinitialization for device:" << DatasetDB::getDeviceID();
     utility::StartableService::deinitImplementation(slowCommandExecutor, "Slow Command Executor", "SCAbstractControlUnit::deinit");
     //deassociate the data storage
     slowCommandExecutor->commandSandbox.keyDataStoragePtr = NULL;
@@ -99,7 +99,7 @@ void SCAbstractControlUnit::start() throw(CException) {
 	//call parent impl
 	AbstractControlUnit::start();
 	
-    LCCU_ << "Start sandbox for device:" << DeviceSchemaDB::getDeviceID();
+    LCCU_ << "Start sandbox for device:" << DatasetDB::getDeviceID();
     utility::StartableService::startImplementation(slowCommandExecutor, "Slow Command Executor", "SCAbstractControlUnit::start");
 
 }
@@ -111,7 +111,7 @@ void SCAbstractControlUnit::stop() throw(CException) {
 	//call parent impl
 	AbstractControlUnit::stop();
 	
-    LCCU_ << "Stop slow command executor for device:" << DeviceSchemaDB::getDeviceID();
+    LCCU_ << "Stop slow command executor for device:" << DatasetDB::getDeviceID();
     utility::StartableService::stopImplementation(slowCommandExecutor, "Slow Command Executor", "SCAbstractControlUnit::stop");
 
 }

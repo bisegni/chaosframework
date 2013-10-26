@@ -22,6 +22,7 @@
 #include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
 
 using namespace chaos;
+using namespace boost;
 using namespace std;
 
 
@@ -55,10 +56,10 @@ void AbstractCommandDispatcher::deinit() throw(CException) {
  return an isntance of DomainActions pointer in relation to name
  but if the name is not present initialized it and add it to map
  */
-shared_ptr<DomainActions> AbstractCommandDispatcher::getDomainActionsFromName(string& domainName) {
+boost::shared_ptr<DomainActions> AbstractCommandDispatcher::getDomainActionsFromName(string& domainName) {
         //check if is not preset, so we can allocate it
     if(!actionDomainExecutorMap.count(domainName)){
-        shared_ptr<DomainActions>  result(new DomainActions(domainName));
+        boost::shared_ptr<DomainActions>  result(new DomainActions(domainName));
         if(result){;
             actionDomainExecutorMap.insert(make_pair(domainName, result));
 #if DEBUG
@@ -93,7 +94,7 @@ void AbstractCommandDispatcher::registerAction(DeclareAction* declareActionClass
         << " for domain " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain);
         
             //get the domain executor for this action descriptor
-        shared_ptr<DomainActions> domainExecutor = getDomainActionsFromName((*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain));
+        boost::shared_ptr<DomainActions> domainExecutor = getDomainActionsFromName((*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain));
         
             //if the domain executor has been returned, add this action to it
         if(domainExecutor) {
@@ -116,7 +117,7 @@ void AbstractCommandDispatcher::deregisterAction(DeclareAction* declareActionCla
         << " for domain " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain);
         
             //get the domain executor for this action descriptor
-        shared_ptr<DomainActions> domainExecutor = getDomainActionsFromName((*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain));
+        boost::shared_ptr<DomainActions> domainExecutor = getDomainActionsFromName((*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain));
         
             //if the domain executor has been returned, add this action to it
         if(domainExecutor) {

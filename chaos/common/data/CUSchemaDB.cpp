@@ -426,8 +426,8 @@ void CUSchemaDB::fillDataWrapperWithDataSetDescription(CDataWrapper& datasetDesc
         //now i must describe the param for this action
         // map<string, entity::Entity*> deviceEntityMap
     if(deviceEntityMap.size()){
-        shared_ptr<CDataWrapper> datasetElementCDW;
-        shared_ptr<CDataWrapper> domainDatasetDescription;
+        boost::shared_ptr<CDataWrapper> datasetElementCDW;
+        boost::shared_ptr<CDataWrapper> domainDatasetDescription;
         
             //there are some parameter for this action, need to be added to rapresentation
         for (EntityPtrMapIterator deviceEntityIter = deviceEntityMap.begin();

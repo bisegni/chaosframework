@@ -17,6 +17,7 @@
 
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/data/DatasetDB.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
@@ -110,7 +111,7 @@ namespace chaos{
                     
                     
                     KeyDataStorage  *keyDataStoragePtr;
-                    DeviceSchemaDB  *deviceSchemaDbPtr;
+                    chaos_data::DatasetDB  *deviceSchemaDbPtr;
 
                     
                     //! Thread for whait until the queue is empty

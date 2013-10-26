@@ -38,7 +38,7 @@ using namespace chaos::cu::control_manager::slow_command;
 #define SCELDBG_ LDBG_ << LOG_HEAD
 #define SCELERR_ LERR_ << LOG_HEAD
 
-SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DeviceSchemaDB *_deviceSchemaDbPtr):executorID(_executorID), deviceSchemaDbPtr(_deviceSchemaDbPtr), command_state_queue_max_size(COMMAND_STATE_QUEUE_DEFAULT_SIZE){
+SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DatasetDB *_deviceSchemaDbPtr):executorID(_executorID), deviceSchemaDbPtr(_deviceSchemaDbPtr), command_state_queue_max_size(COMMAND_STATE_QUEUE_DEFAULT_SIZE){
     // this need to be removed from here need to be implemented the def undef services
     // register the public rpc api
     std::string rpcActionDomain = executorID; //+ SlowCommandSubmissionKey::COMMAND_EXECUTOR_POSTFIX_DOMAIN;

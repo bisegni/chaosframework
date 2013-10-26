@@ -76,7 +76,7 @@ namespace chaos {
             AsioEventForwarder *customForwarder;
             
             boost::asio::io_service io_service;
-            vector< shared_ptr<boost::thread> > serviceThread;
+            vector< boost::shared_ptr<boost::thread> > serviceThread;
         };
     }
 }

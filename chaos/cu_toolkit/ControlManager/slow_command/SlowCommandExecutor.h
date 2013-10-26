@@ -31,13 +31,13 @@
 #include <boost/atomic.hpp>
 
 #include <chaos/common/data/CDataWrapper.h>
-#include <chaos/common/data/CUSchemaDB.h>
+#include <chaos/common/data/DatasetDB.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
 
-#include <chaos/cu_toolkit/ControlManager/DeviceSchemaDB.h>
+
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandSandbox.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandSandboxEventHandler.h>
 
@@ -96,7 +96,7 @@ namespace chaos {
                     SlowCommandSandbox  commandSandbox;
                     
                     //! the reference to the master device database
-                    DeviceSchemaDB *deviceSchemaDbPtr;
+                    chaos_data::DatasetDB *deviceSchemaDbPtr;
                     
                     boost::thread   *incomingCheckThreadPtr;
                     
@@ -163,7 +163,7 @@ namespace chaos {
                 protected:
                     
                     //! Private constructor
-                    SlowCommandExecutor(std::string _executorID, DeviceSchemaDB *_deviceSchemaDbPtr);
+                    SlowCommandExecutor(std::string _executorID, chaos_data::DatasetDB *_deviceSchemaDbPtr);
                     
                     //! Private deconstructor
                     ~SlowCommandExecutor();

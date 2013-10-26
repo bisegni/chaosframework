@@ -41,8 +41,6 @@ namespace chaos {
 
     using namespace std;
     using namespace boost;
-	
-	class chaos_data::CDataWrapper;
 
     
     //! Channel Type Enumeration

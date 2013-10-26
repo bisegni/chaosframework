@@ -47,7 +47,6 @@
 #define INIT_STATE      0
 #define START_STATE     1
 
-namespace chaos_data = chaos::common::data;
 
 namespace chaos{
     
@@ -62,7 +61,8 @@ namespace chaos{
         
 		namespace cu_driver = chaos::cu::driver_manager::driver;
         namespace ec = event::channel;
-        
+        namespace chaos_data = chaos::common::data;
+
         class ControManager;
 		
             //!  Base class for control unit !CHAOS node
@@ -71,7 +71,7 @@ namespace chaos{
             class that permit to publish rpc method for control the control unit life cycle. Most of the API
             that needs to be used to create device and his dataset are contained into the DeviceSchemaDB class.
          */
-        class AbstractControlUnit : public DeclareAction, protected DatasetDB, public utility::StartableService {
+        class AbstractControlUnit : public DeclareAction, protected chaos_data::DatasetDB, public utility::StartableService {
             
             //frinedly class declaration
             friend class ControlManager;

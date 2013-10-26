@@ -109,7 +109,7 @@ string& AbstractActionDescriptor::getTypeValue(ActionStringType sType)  {
 /*
  Return the array list of the param defined by this action
  */
-vector< shared_ptr<ActionParamDescription> >& AbstractActionDescriptor::getParamDescriptions() {
+vector< boost::shared_ptr<ActionParamDescription> >& AbstractActionDescriptor::getParamDescriptions() {
     return paramDescriptionVec;
 }
 
@@ -117,7 +117,7 @@ vector< shared_ptr<ActionParamDescription> >& AbstractActionDescriptor::getParam
  Add a new param
  */
 void AbstractActionDescriptor::addParam(const char*const paramName, DataType::DataType type, const char*const description){
-    shared_ptr<ActionParamDescription> desc (new ActionParamDescription(paramName));
+    boost::shared_ptr<ActionParamDescription> desc (new ActionParamDescription(paramName));
     desc->paramType = type;
     desc->paramDescription = description;
     paramDescriptionVec.push_back(desc);
