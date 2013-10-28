@@ -92,9 +92,6 @@ namespace chaos{
                     map<AttributeIndexType, boost::shared_ptr<ValueSetting> > mapAttributeIndexSettings;
                 public:
                     
-                    //! This field point to a custom memory shared by cu and all command
-                    void *customData;
-                    
                     AttributeSetting();
                     
                     ~AttributeSetting();
@@ -118,6 +115,54 @@ namespace chaos{
                     
                     ValueSetting *getValueSettingForIndex(AttributeIndexType index);
                 };
+				
+                //-----------------------------------------------------------------------------------------------------------------------------
+				
+				/*!
+				 Convenient class for grupping toghether the three different
+				 cache for the attirbute (input, output, custom).
+				 */
+				class IOCAttributeShareCache : public utility::InizializableService {
+					AttributeSetting inputAttribute;
+					AttributeSetting outputAttribute;
+					AttributeSetting customAttribute;
+					
+				public:
+					typedef enum SharedVeriableDomain {
+						SVD_INPUT,
+						SVD_OUTPUT,
+						SVD_CUSTOM
+					}SharedVeriableDomain;
+					
+					IOCAttributeShareCache();
+					~IOCAttributeShareCache();
+					
+					//! This field point to a custom memory shared by cu and all command
+                    void *customData;
+					
+					//! Initialize instance
+                    void init(void *initData) throw(chaos::CException);
+                    
+                    //! Deinit the implementation
+                    void deinit() throw(chaos::CException);
+
+					
+					inline AttributeSetting& getSharedDomain(SharedVeriableDomain domain) {
+						switch(domain) {
+							case SVD_INPUT:
+								return inputAttribute;
+								break;
+								
+							case SVD_OUTPUT:
+								return outputAttribute;
+								break;
+								
+							case SVD_CUSTOM:
+								return customAttribute;
+								break;
+						}
+					}
+				};
                 
             }
         }

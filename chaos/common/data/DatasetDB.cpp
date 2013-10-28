@@ -17,7 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-
+#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/DatasetDB.h>
 
 using namespace chaos::cu;
@@ -41,6 +41,13 @@ const char * DatasetDB::getDeviceID() {
 
 //! Add device dataset definitio by serialized form
 void DatasetDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& serializedDW) {
+	if(!serializedDW.hasKey(DatasetDefinitionkey::DEVICE_ID)) return;
+	if(!deviceID.length())
+		setDeviceID(serializedDW.getStringValue(DatasetDefinitionkey::DEVICE_ID));
+	else {
+		std::string tmp_dev_id = serializedDW.getStringValue(DatasetDefinitionkey::DEVICE_ID);
+		if(deviceID.compare(tmp_dev_id) != 0) return;
+	}
     CUSchemaDB::addAttributeToDataSetFromDataWrapper(serializedDW);
 }
 
@@ -48,7 +55,7 @@ void DatasetDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& serializedDW)
 void DatasetDB::fillDataWrapperWithDataSetDescription(CDataWrapper& dw) {
     /* NOTE this need to be changed becase this funciton retuan many device but now all is
      single device centric. So we need to use a new bson structure for descibe the device, so we need a new root key*/
-    CUSchemaDB::fillDataWrapperWithDataSetDescription(dw);
+    CUSchemaDB::fillDataWrapperWithDataSetDescription(deviceID, dw);
 }
 
 //! Add dataset attribute

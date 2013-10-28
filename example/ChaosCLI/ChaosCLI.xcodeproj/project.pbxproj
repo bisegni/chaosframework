@@ -199,6 +199,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "libstdc++";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../usr/local/bin";
 				HEADER_SEARCH_PATHS = (
 					../../,
 					/usr/local/include,
@@ -233,6 +234,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "libstdc++";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../usr/local/bin";
 				HEADER_SEARCH_PATHS = (
 					../../,
 					/usr/local/include,

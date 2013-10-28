@@ -47,31 +47,32 @@ chaos::common::data::DatasetDB *SlowCommand::getDeviceDatabase() {
     return deviceDatabasePtr;
 }
 
-void SlowCommand::getChangedAttributeIndex(std::vector<AttributeIndexType>& changedIndex) {
+void SlowCommand::getChangedAttributeIndex(IOCAttributeShareCache::SharedVeriableDomain domain, std::vector<AttributeIndexType>& changedIndex) {
     CHAOS_ASSERT(sharedAttributeSettingPtr)
-    return sharedAttributeSettingPtr->getChangedIndex(changedIndex);
+    return sharedAttributeSettingPtr->getSharedDomain(domain).getChangedIndex(changedIndex);
 }
 
-ValueSetting *SlowCommand::getValueSetting(AttributeIndexType attributeIndex) {
+ValueSetting *SlowCommand::getValueSetting(IOCAttributeShareCache::SharedVeriableDomain domain, AttributeIndexType attributeIndex) {
     CHAOS_ASSERT(sharedAttributeSettingPtr)
-    return sharedAttributeSettingPtr->getValueSettingForIndex(attributeIndex);
+    return sharedAttributeSettingPtr->getSharedDomain(domain).getValueSettingForIndex(attributeIndex);
 }
 
-ValueSetting *SlowCommand::getValueSetting(const char *keyName) {
+ValueSetting *SlowCommand::getValueSetting(IOCAttributeShareCache::SharedVeriableDomain domain, const char *keyName) {
     CHAOS_ASSERT(sharedAttributeSettingPtr)
-    AttributeIndexType index = sharedAttributeSettingPtr->getIndexForName(keyName);
-    return sharedAttributeSettingPtr->getValueSettingForIndex(index);
+	AttributeSetting& attribute_setting = sharedAttributeSettingPtr->getSharedDomain(domain);
+    AttributeIndexType index = attribute_setting.getIndexForName(keyName);
+    return attribute_setting.getValueSettingForIndex(index);
 }
 
-void SlowCommand::setValueSettingForKey(const char *keyName, void * value, uint32_t size) {
+void SlowCommand::setValueSettingForKey(IOCAttributeShareCache::SharedVeriableDomain domain, const char *keyName, void * value, uint32_t size) {
     CHAOS_ASSERT(sharedAttributeSettingPtr)
-    AttributeIndexType index = sharedAttributeSettingPtr->getIndexForName(keyName);
-    sharedAttributeSettingPtr->setValueForAttribute(index, value, size);
+    AttributeIndexType index = sharedAttributeSettingPtr->getSharedDomain(domain).getIndexForName(keyName);
+    sharedAttributeSettingPtr->getSharedDomain(domain).setValueForAttribute(index, value, size);
 }
 
-void SlowCommand::getAttributeNames(std::vector<std::string>& names) {
+void SlowCommand::getAttributeNames(IOCAttributeShareCache::SharedVeriableDomain domain, std::vector<std::string>& names) {
     CHAOS_ASSERT(sharedAttributeSettingPtr)
-    sharedAttributeSettingPtr->getAttributeNames(names);
+    sharedAttributeSettingPtr->getSharedDomain(domain).getAttributeNames(names);
 }
 
 /*

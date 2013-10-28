@@ -62,7 +62,7 @@ namespace chaos{
                 struct CorrelationFunctor : public BaseFunctor {
                     void operator()();
                 };
-                
+				
                 //! SAndbox fo the slow command execution
                 /*!
                     This is the sandbox where the command are executed. Here are checked the
@@ -130,7 +130,7 @@ namespace chaos{
                         of the input channel or shared variable setting,
                         used into the control algoritm.
                      */
-                    AttributeSetting sharedAttributeSetting;
+                    IOCAttributeShareCache sharedAttributeSetting;
                     
                     //! contain the paused command
                     std::stack<SlowCommand*> commandStack;

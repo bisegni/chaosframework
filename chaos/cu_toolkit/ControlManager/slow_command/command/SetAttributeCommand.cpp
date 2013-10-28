@@ -41,7 +41,8 @@ void SetAttributeCommand::setHandler(CDataWrapper *data) {
     //we can do the work
     
     std::string name = data->getStringValue(SlowCommandsKey::ATTRIBUTE_SET_NAME);
-    ValueSetting *vs = getValueSetting(name.c_str());
+	//get the name of the input shared variable
+    ValueSetting *vs = getValueSetting(IOCAttributeShareCache::SVD_INPUT, name.c_str());
     
     switch (vs->type) {
         case chaos::DataType::TYPE_BOOLEAN:{

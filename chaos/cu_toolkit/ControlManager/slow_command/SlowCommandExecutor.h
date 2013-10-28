@@ -160,6 +160,7 @@ namespace chaos {
 					//! Add a new command state structure to the queue (checking the alredy presence)
 					inline boost::shared_ptr<CommandState> getCommandState(uint64_t command_sequence);
 					
+					void initAttributeOnSahredVariableDomain(IOCAttributeShareCache::SharedVeriableDomain domain, std::vector<string>& attribute_names);
                 protected:
                     
                     //! Private constructor

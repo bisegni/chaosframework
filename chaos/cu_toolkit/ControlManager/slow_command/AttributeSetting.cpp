@@ -184,3 +184,32 @@ void AttributeSetting::getChangedIndex(std::vector<AttributeIndexType>& changedI
     }
 }
 
+//------------------------------------------------------------------------------------------------------------
+
+IOCAttributeShareCache::IOCAttributeShareCache() {
+	
+}
+
+IOCAttributeShareCache::~IOCAttributeShareCache() {
+	
+}
+
+//! Initialize instance
+void IOCAttributeShareCache::init(void *initData) throw(chaos::CException) {
+	//initialize the input channel setting
+    utility::InizializableService::initImplementation(inputAttribute, initData, "IOCAttributeShareCache[Input Attribute]", "SlowCommandSandbox::init");
+	//initialize the output channel setting
+    utility::InizializableService::initImplementation(outputAttribute, initData, "IOCAttributeShareCache[Output Attribute]", "SlowCommandSandbox::init");
+	//initialize the custom channel setting
+    utility::InizializableService::initImplementation(customAttribute, initData, "IOCAttributeShareCache[Custom Attribute]", "SlowCommandSandbox::init");
+}
+
+//! Deinit the implementation
+void IOCAttributeShareCache::deinit() throw(chaos::CException) {
+	//initialize the input channel setting
+    utility::InizializableService::deinitImplementation(inputAttribute, "IOCAttributeShareCache[Input Attribute]", "SlowCommandSandbox::deinit");
+	//initialize the output channel setting
+    utility::InizializableService::deinitImplementation(outputAttribute, "IOCAttributeShareCache[Output Attribute]", "SlowCommandSandbox::deinit");
+	//initialize the custom channel setting
+    utility::InizializableService::deinitImplementation(customAttribute, "IOCAttributeShareCache[Custom Attribute]", "SlowCommandSandbox::deinit");
+}

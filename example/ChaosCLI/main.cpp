@@ -244,6 +244,7 @@ int main (int argc, char* argv[] )
 																   static_cast<cccs::SubmissionRuleType::SubmissionRule>(checkSubmissionRule(scSubmissionRule)),
 																   scSubmissionPriority,
 																   command_id,
+															
 																   scSubmissionSchedulerDelay,
 																   scSubmissionSubmissionRetryDelay,
 																   userData.get());

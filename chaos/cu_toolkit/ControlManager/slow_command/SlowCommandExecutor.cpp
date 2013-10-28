@@ -104,7 +104,7 @@ void SlowCommandExecutor::setSharedCustomDataPtr(void *customDataPtr) {
 
 // Initialize instance
 void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
-    std::vector<string> inputAttributeNames;
+    std::vector<string> attribute_names;
     
     utility::StartableService::init(initData);
     
@@ -119,52 +119,14 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
     utility::StartableService::initImplementation(commandSandbox, initData, "SlowCommandSandbox", "SlowCommandExecutor::init");
     
     SCELAPP_ << "Populating sandbox shared setting for device input attribute";
-    deviceSchemaDbPtr->getDatasetAttributesName(DataType::Input, inputAttributeNames);
-    
-    //add input attribute to shared setting
-    RangeValueInfo attributeInfo;
-    
-    for(int idx = 0;
-        idx < inputAttributeNames.size();
-        idx++) {
-        
-        attributeInfo.reset();
-        
-        // retrive the attribute description from the device database
-        deviceSchemaDbPtr->getAttributeRangeValueInfo(inputAttributeNames[idx], attributeInfo);
-        
-        // add the attribute to the shared setting object
-        commandSandbox.sharedAttributeSetting.addAttribute(inputAttributeNames[idx], attributeInfo.maxSize, attributeInfo.valueType);
-        
-        if(!attributeInfo.defaultValue.size()) continue;
-        
-        //setting value using index (the index into the sharedAttributeSetting are sequencial to the inserted order)
-        switch (attributeInfo.valueType) {
-            case DataType::TYPE_BOOLEAN : {
-                bool val = boost::lexical_cast<bool>(attributeInfo.defaultValue);
-                commandSandbox.sharedAttributeSetting.setValueForAttribute(idx, &val, sizeof(bool));
-                break;}
-            case DataType::TYPE_DOUBLE : {
-                double val = boost::lexical_cast<double>(attributeInfo.defaultValue);
-                commandSandbox.sharedAttributeSetting.setValueForAttribute(idx, &val, sizeof(double));
-                break;}
-            case DataType::TYPE_INT32 : {
-                int32_t val = boost::lexical_cast<int32_t>(attributeInfo.defaultValue);
-                commandSandbox.sharedAttributeSetting.setValueForAttribute(idx, &val, sizeof(int32_t));
-                break;}
-            case DataType::TYPE_INT64 : {
-                int64_t val = boost::lexical_cast<int64_t>(attributeInfo.defaultValue);
-                commandSandbox.sharedAttributeSetting.setValueForAttribute(idx, &val, sizeof(int64_t));
-                break;}
-            case DataType::TYPE_STRING : {
-                const char * val = attributeInfo.defaultValue.c_str();
-                commandSandbox.sharedAttributeSetting.setValueForAttribute(idx, val, (uint32_t)attributeInfo.defaultValue.size());
-                break;}
-            default:
-                break;
-        }
-    }
+    deviceSchemaDbPtr->getDatasetAttributesName(DataType::Input, attribute_names);
+    initAttributeOnSahredVariableDomain(IOCAttributeShareCache::SVD_INPUT, attribute_names);
 
+	SCELAPP_ << "Populating sandbox shared setting for device output attribute";
+	attribute_names.clear();
+    deviceSchemaDbPtr->getDatasetAttributesName(DataType::Input, attribute_names);
+    initAttributeOnSahredVariableDomain(IOCAttributeShareCache::SVD_OUTPUT, attribute_names);
+    
 
     SCELAPP_ << "Check if we need to use the dafult command or we have pause instance";
     if(defaultCommandAlias.size()) {
@@ -175,6 +137,54 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
     
 }
 
+void SlowCommandExecutor::initAttributeOnSahredVariableDomain(IOCAttributeShareCache::SharedVeriableDomain domain, std::vector<string>& attribute_names) {
+	//add input attribute to shared setting
+    RangeValueInfo attributeInfo;
+	
+	AttributeSetting& attribute_setting = commandSandbox.sharedAttributeSetting.getSharedDomain(IOCAttributeShareCache::SVD_INPUT);
+	
+	for(int idx = 0;
+        idx < attribute_names.size();
+        idx++) {
+        
+        attributeInfo.reset();
+        
+        // retrive the attribute description from the device database
+        deviceSchemaDbPtr->getAttributeRangeValueInfo(attribute_names[idx], attributeInfo);
+        
+        // add the attribute to the shared setting object
+        attribute_setting.addAttribute(attribute_names[idx], attributeInfo.maxSize, attributeInfo.valueType);
+        
+        if(!attributeInfo.defaultValue.size()) continue;
+        
+        //setting value using index (the index into the sharedAttributeSetting are sequencial to the inserted order)
+        switch (attributeInfo.valueType) {
+            case DataType::TYPE_BOOLEAN : {
+                bool val = boost::lexical_cast<bool>(attributeInfo.defaultValue);
+                attribute_setting.setValueForAttribute(idx, &val, sizeof(bool));
+                break;}
+            case DataType::TYPE_DOUBLE : {
+                double val = boost::lexical_cast<double>(attributeInfo.defaultValue);
+                attribute_setting.setValueForAttribute(idx, &val, sizeof(double));
+                break;}
+            case DataType::TYPE_INT32 : {
+                int32_t val = boost::lexical_cast<int32_t>(attributeInfo.defaultValue);
+                attribute_setting.setValueForAttribute(idx, &val, sizeof(int32_t));
+                break;}
+            case DataType::TYPE_INT64 : {
+                int64_t val = boost::lexical_cast<int64_t>(attributeInfo.defaultValue);
+                attribute_setting.setValueForAttribute(idx, &val, sizeof(int64_t));
+                break;}
+            case DataType::TYPE_STRING : {
+                const char * val = attributeInfo.defaultValue.c_str();
+                attribute_setting.setValueForAttribute(idx, val, (uint32_t)attributeInfo.defaultValue.size());
+                break;}
+            default:
+                break;
+        }
+    }
+
+}
 
 // Start the implementation
 void SlowCommandExecutor::start() throw(chaos::CException) {

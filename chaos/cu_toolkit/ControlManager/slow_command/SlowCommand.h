@@ -118,7 +118,7 @@ namespace chaos{
                     FaultDescription faultDescription;
                     
                     //! shared setting across all slow command
-                    AttributeSetting *sharedAttributeSettingPtr;
+                    IOCAttributeShareCache *sharedAttributeSettingPtr;
                     
                     //! Map that assocaite the alias to the driver accessor
                     /*!
@@ -180,14 +180,14 @@ namespace chaos{
                      */
                     chaos_data::DatasetDB  *getDeviceDatabase();
                     
-                    ValueSetting *getValueSetting(const char *keyName);
-                    ValueSetting *getValueSetting(AttributeIndexType attributeIndex);
+                    ValueSetting *getValueSetting(IOCAttributeShareCache::SharedVeriableDomain domain, const char *keyName);
+                    ValueSetting *getValueSetting(IOCAttributeShareCache::SharedVeriableDomain domain, AttributeIndexType attributeIndex);
                     
-                    void setValueSettingForKey(const char *keyName, void * value, uint32_t size);
+                    void setValueSettingForKey(IOCAttributeShareCache::SharedVeriableDomain domain, const char *keyName, void * value, uint32_t size);
 
-                    void getChangedAttributeIndex(std::vector<AttributeIndexType>& changedIndex);
+                    void getChangedAttributeIndex(IOCAttributeShareCache::SharedVeriableDomain domain, std::vector<AttributeIndexType>& changedIndex);
                     
-                    void getAttributeNames(std::vector<std::string>& names);
+                    void getAttributeNames(IOCAttributeShareCache::SharedVeriableDomain domain, std::vector<std::string>& names);
                     
                     /*
                      Send device data to output buffer
