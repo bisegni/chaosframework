@@ -103,12 +103,12 @@ public class CUQueryHandler extends RPCActionHadler {
 			if (controlUnitInstance == null)
 				throw new RefException("No control unit instance found", 1, "DeviceDA::controlUnitValidationAndRegistration");
 			// get the device list for the single CU
-			BasicBSONList dsDesc = (BasicBSONList) (actionData.containsField(RPCConstants.DATASET_DESCRIPTION) ? actionData.get(RPCConstants.DATASET_DESCRIPTION) : null);
-			if (dsDesc == null)
-				throw new RefException("No device is defined in control unit", 2, "DeviceDA::controlUnitValidationAndRegistration");
-			ListIterator<Object> devicesDS = dsDesc.listIterator();
-			while (devicesDS.hasNext()) {
-				BasicBSONObject devDesc = (BasicBSONObject) devicesDS.next();
+			//BasicBSONList dsDesc = (BasicBSONList) (actionData.containsField(RPCConstants.DATASET_DESCRIPTION) ? actionData.get(RPCConstants.DATASET_DESCRIPTION) : null);
+			//if (dsDesc == null)
+			//	throw new RefException("No device is defined in control unit", 2, "DeviceDA::controlUnitValidationAndRegistration");
+			//ListIterator<Object> devicesDS = dsDesc.listIterator();
+			//while (devicesDS.hasNext()) {
+			//	BasicBSONObject devDesc = (BasicBSONObject) devicesDS.next();
 				d = new Device();
 				d.setCuInstance(controlUnitInstance);
 				d.setNetAddress(controlUnitNetAddress);
@@ -145,7 +145,7 @@ public class CUQueryHandler extends RPCActionHadler {
 						result.append(RPCConstants.CS_CMDM_ACTION_NAME, "initControlUnit");
 					}
 				}
-			}
+				//}
 
 			closeDataAccess(dDA, true);
 		} catch (RefException e) {
