@@ -463,7 +463,7 @@ bool SlowCommandSandbox::setNextAvailableCommand(PRIORITY_ELEMENT(CDataWrapper) 
         DEBUG_CODE(SCSLDBG_ << "Default checker delay has been used with value of " << DEFAULT_CHECK_TIME  << " milliseconds";)
     }
 	//fire the waiting command
-    if(event_handler) event_handler->handleEvent(currentExecutingCommand->unique_id, SlowCommandEventType::EVT_WAITING, NULL);
+    if(event_handler) event_handler->handleEvent(cmdImpl->unique_id, SlowCommandEventType::EVT_WAITING, NULL);
     waithForNextCheck.notify_one();
     return true;
 }

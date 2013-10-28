@@ -253,15 +253,22 @@ void SlowCommandExecutor::deinit() throw(chaos::CException) {
 
 //Event handler
 void SlowCommandExecutor::handleEvent(uint64_t command_id, SlowCommandEventType::SlowCommandEventType type, void* type_attribute_ptr) {
-	ReadLock lock(command_state_rwmutex);
 	switch(type) {
-		case SlowCommandEventType::EVT_QUEUED:
+		case SlowCommandEventType::EVT_QUEUED: {
+			// get upgradable access
+			boost::upgrade_lock<boost::shared_mutex> lock(command_state_rwmutex);
+			
+			// get exclusive access
+			boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
+			
 			addComamndState(command_id);
 			//cap the queue
 			capCommanaQueue();
 			break;
+		}
 
 		case SlowCommandEventType::EVT_FAULT: {
+			ReadLock lock(command_state_rwmutex);
 			boost::shared_ptr<CommandState>  cmd_state = getCommandState(command_id);
 			if(cmd_state.get()) {
 				cmd_state->last_event = type;
@@ -270,6 +277,7 @@ void SlowCommandExecutor::handleEvent(uint64_t command_id, SlowCommandEventType:
 			break;
 		}
 		default: {
+			ReadLock lock(command_state_rwmutex);
 			boost::shared_ptr<CommandState>  cmd_state = getCommandState(command_id);
 			if(cmd_state.get()) {
 				cmd_state->last_event = type;
@@ -282,7 +290,7 @@ void SlowCommandExecutor::handleEvent(uint64_t command_id, SlowCommandEventType:
 
 //! Add a new command state structure to the queue (checking the alredy presence)
 void SlowCommandExecutor::addComamndState(uint64_t command_id) {
-	WriteLock write_lock(command_state_rwmutex);
+	//WriteLock write_lock(command_state_rwmutex);
 	boost::shared_ptr<CommandState> cmd_state(new CommandState());
 	cmd_state->command_id = command_id;
 	cmd_state->last_event = SlowCommandEventType::EVT_QUEUED;
@@ -295,7 +303,6 @@ void SlowCommandExecutor::addComamndState(uint64_t command_id) {
 
 //! Thanke care to limit the size of the queue to the max size permitted
 void SlowCommandExecutor::capCommanaQueue() {
-	WriteLock write_lock(command_state_rwmutex);
 	if(command_state_queue.size() <= command_state_queue_max_size) return;
 	
 	//we need to cap the queue
@@ -317,7 +324,6 @@ void SlowCommandExecutor::capCommanaQueue() {
 //! Add a new command state structure to the queue (checking the alredy presence)
 boost::shared_ptr<CommandState> SlowCommandExecutor::getCommandState(uint64_t command_sequence) {
 	boost::shared_ptr<CommandState> result;
-	ReadLock lock(command_state_rwmutex);
 	if(command_state_fast_access_map.count(command_sequence) > 0 ) {
 		result = command_state_fast_access_map[command_sequence];
 	}
@@ -547,8 +553,8 @@ CDataWrapper* SlowCommandExecutor::getQueuedCommand(CDataWrapper *params, bool& 
  Return the number and the infromation of the queued command via RPC
  */
 CDataWrapper* SlowCommandExecutor::getCommandSandboxStatistics(CDataWrapper *params, bool& detachParam) throw (CException) {
-	boost::mutex::scoped_lock lock(mutextQueueManagment);
-	
+	//boost::mutex::scoped_lock lock(mutextQueueManagment);
+	ReadLock lock(command_state_rwmutex);
 	uint64_t command_id = params->getUInt64Value(SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
 	boost::shared_ptr<CommandState> cmd_state = getCommandState(command_id);
 	if(!cmd_state.get()) throw CException(1, "The command requested is not present", "SlowCommandExecutor::getCommandSandboxStatistics");

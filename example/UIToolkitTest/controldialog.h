@@ -46,7 +46,7 @@ class ControlDialog : public QDialog
 {
     Q_OBJECT
     chaos::ui::DeviceController *deviceController;
-    chaos::RangeValueInfo attributerange;
+    chaos::common::data::RangeValueInfo attributerange;
     std::string attributeName;
     std::string deviceID;
     QWidget *controlWidget;
