@@ -33,12 +33,12 @@ namespace chaos {
                      */
 					typedef enum SlowCommandEventType {
 						EVT_QUEUED = 0,		/**< The command is queued */
-						EVT_WAITING,		/**< The command is the next command to executed and i whaiting the end of the current */
-						EVT_RUNNING,		/**< The command is running */
-						EVT_PAUSED,			/**< The command is paused */
-						EVT_COMPLETED,		/**< The command has completed is work successfully */
-						EVT_FAULT,			/**< The command has fault */
-						EVT_KILLED			/**< The event has been killed */
+						EVT_WAITING=1,		/**< The command is the next command to executed and i whaiting the end of the current */
+						EVT_RUNNING=2,		/**< The command is running */
+						EVT_PAUSED=3,			/**< The command is paused */
+						EVT_COMPLETED=4,		/**< The command has completed is work successfully */
+						EVT_FAULT=5,			/**< The command has fault */
+						EVT_KILLED=6			/**< The event has been killed */
 					} SlowCommandEventType;
 				}
 				

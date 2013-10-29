@@ -87,9 +87,9 @@ void DatasetDB::getAttributeDescription(const string& attributesName,
 }
 
 //!Get the value information for a specified attribute name
-void DatasetDB::getAttributeRangeValueInfo(const string& attributesName,
+int DatasetDB::getAttributeRangeValueInfo(const string& attributesName,
                                                 RangeValueInfo& rangeInfo) {
-    CUSchemaDB::getDeviceAttributeRangeValueInfo(deviceID, attributesName, rangeInfo);    
+    return CUSchemaDB::getDeviceAttributeRangeValueInfo(deviceID, attributesName, rangeInfo);
 }
 
 //!Set the range values for an attribute of the device

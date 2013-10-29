@@ -275,7 +275,7 @@ namespace chaos {
 				 of the struct are not cleaned, so if an attrbute doesn't has
 				 some finromation, relative field are not touched.
 				 */
-				void getDeviceAttributeRangeValueInfo(const string& deviceID,
+				int getDeviceAttributeRangeValueInfo(const string& deviceID,
 													  const string& attributesName,
 													  RangeValueInfo& rangeInfo);
 				

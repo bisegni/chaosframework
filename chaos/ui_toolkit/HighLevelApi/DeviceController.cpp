@@ -213,11 +213,13 @@ int DeviceController::setAttributeValue(const char *attributeName, double attrib
 }
 
 int DeviceController::setAttributeToValue(const char *attributeName, const char *attributeValue, bool noWait) {
+	int err = ErrorCode::EC_NO_ERROR;
 	CDataWrapper attributeValuePack;
 	cc_data::RangeValueInfo range_info;
 	
 	//get type for the value
-	datasetDB.getAttributeRangeValueInfo(attributeName, range_info);
+	if((err = datasetDB.getAttributeRangeValueInfo(attributeName, range_info)))
+		return err;
 
     switch (range_info.valueType) {
         case DataType::TYPE_BOOLEAN: {
@@ -333,7 +335,9 @@ int DeviceController::submitSlowControlCommand(string commandAlias,
     if(schedulerStepsDelay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI32, (uint32_t) schedulerStepsDelay);
     if(submissionCheckerStepsDelay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, (uint32_t) submissionCheckerStepsDelay);
 	
-	err = deviceChannel->setAttributeValue(localCommandPack, false, millisecToWait);
+	//err = deviceChannel->setAttributeValue(localCommandPack, false, millisecToWait);
+	localCommandPack.addStringValue(DatasetDefinitionkey::DEVICE_ID, deviceID);
+	err = deviceChannel->sendCustomRequest("setDatasetAttribute", &localCommandPack, &resultData, millisecToWait);
 	if(err == ErrorCode::EC_NO_ERROR && resultData && resultData->hasKey(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64)) {
 		//fill the command id
 		command_id = resultData->getUInt64Value(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
@@ -363,7 +367,8 @@ int DeviceController::submitSlowControlCommand(string commandAlias,
     if(submissionCheckerStepsDelay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, (uint32_t) submissionCheckerStepsDelay);
 
     //forward the request
-    err = deviceChannel->setAttributeValue(localCommandPack, false, millisecToWait);
+	localCommandPack.addStringValue(DatasetDefinitionkey::DEVICE_ID, deviceID);
+	err = deviceChannel->sendCustomRequest("setDatasetAttribute", &localCommandPack, &resultData, millisecToWait);
 	if(err == ErrorCode::EC_NO_ERROR && resultData && resultData->hasKey(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64)) {
 		//fill the command id
 		command_id = resultData->getUInt64Value(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
@@ -408,7 +413,9 @@ int DeviceController::getCommandState(cccs::CommandState& command_state) {
 			command_state.fault_description.description = resultData->getStringValue(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_ERROR_DESC_STR);
 			command_state.fault_description.domain = resultData->getStringValue(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_ERROR_DOMAIN_STR);
 		} else {
-			std::memset(&command_state.fault_description, 0, sizeof(cccs::FaultDescription));
+			command_state.fault_description.code = 0;
+			command_state.fault_description.description.clear();
+			command_state.fault_description.domain.clear();
 		}
 		delete(resultData);
 	}
@@ -418,6 +425,11 @@ int DeviceController::getCommandState(cccs::CommandState& command_state) {
 //! Kill the current executing command
 int DeviceController::killCurrentCommand() {
 	return deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_KILL_CURRENT_COMMAND, NULL, NULL, millisecToWait);
+}
+
+//! Flush command states history
+int DeviceController::flushCommandStateHistory() {
+	return deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_FLUSH_COMMAND_HISTORY, NULL, NULL, millisecToWait);
 }
 
 int DeviceController::setAttributeValue(string& attributeName, string& attributeValue) {

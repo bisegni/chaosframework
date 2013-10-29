@@ -181,6 +181,7 @@ void SlowCommandSandbox::deinit() throw(chaos::CException) {
     SlowCommand *instance = NULL;
     
     //deinit next availabe commad if preset
+	if(event_handler && currentExecutingCommand) event_handler->handleEvent(currentExecutingCommand->unique_id, SlowCommandEventType::EVT_KILLED, NULL);
     DELETE_OBJ_POINTER(nextAvailableCommand.cmdInfo)
     DELETE_OBJ_POINTER(nextAvailableCommand.cmdImpl)
     DELETE_OBJ_POINTER(currentExecutingCommand)

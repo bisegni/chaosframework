@@ -633,7 +633,7 @@ void CUSchemaDB::getDeviceAttributeDescription(const string& deviceID,
     attributeDescription = (&attrPropertyVec[0])->value.strValue;
 }
 
-void CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
+int CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
                                                   const string& attributesName,
                                                   RangeValueInfo& rangeInfo) {
     
@@ -655,7 +655,7 @@ void CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
     deviceEntity->getChildsWithKeyInfo(kiv, attrEntityVec);
     
     //check if we ha found the attribute
-    if(!attrEntityVec.size()) return;
+    if(!attrEntityVec.size()) return 1;
     
     
     uint32_t keyIdAttrMaxRng = mapDatasetKeyForID[DatasetDefinitionkey::MAX_RANGE];
@@ -671,7 +671,7 @@ void CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
     keyToGot.push_back(keyIdAttrMaxSize);
     
     (&attrEntityVec[0])->getPropertyByKeyID(keyToGot, attrPropertyVec);
-    if(!attrPropertyVec.size()) return;
+    if(!attrPropertyVec.size()) return 1;
     
     for (ptr_vector<edb::KeyIdAndValue>::iterator attrPropertyIterator = attrPropertyVec.begin();
          attrPropertyIterator != attrPropertyVec.end();
@@ -702,6 +702,7 @@ void CUSchemaDB::getDeviceAttributeRangeValueInfo(const string& deviceID,
             
         }
     }
+	return 0;
 }
 
 //!Set the range values for an attribute

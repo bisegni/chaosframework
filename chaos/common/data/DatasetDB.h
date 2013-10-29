@@ -110,8 +110,8 @@ namespace chaos {
 				 \param attributesName the name of the attribute
 				 \param rangeInfo the range and default value of the attribute
 				 */
-				void getAttributeRangeValueInfo(const string& attributesName,
-												chaos_data::RangeValueInfo& rangeInfo);
+				int getAttributeRangeValueInfo(const string& attributesName,
+											   chaos_data::RangeValueInfo& rangeInfo);
 				
 				//!Set the range values for an attribute of the device
 				/*!

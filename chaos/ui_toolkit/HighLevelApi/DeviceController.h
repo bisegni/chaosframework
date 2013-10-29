@@ -291,6 +291,13 @@ namespace chaos {
 			 */
 			int killCurrentCommand();
 			
+			//! Flush command states history
+			/*!
+			 \ingroup API_Slow_Control
+			 Flush all the slow control command state history for non active command.
+			 */
+			int flushCommandStateHistory();
+			
                 //!Get device state
             /*!
              Return the current device state

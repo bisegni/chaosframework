@@ -55,7 +55,7 @@ SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DatasetDB *_de
                                                                     "Return the number and the information of the queued command");
     SCELAPP_ << "Register getCommandSandboxStatistics action";
     DeclareAction::addActionDescritionInstance<SlowCommandExecutor>(this,
-                                                                    &SlowCommandExecutor::getCommandSandboxStatistics,
+                                                                    &SlowCommandExecutor::getCommandState,
                                                                     rpcActionDomain.c_str(),
                                                                     SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE,
                                                                     "Return the state of the specified command");
@@ -71,6 +71,12 @@ SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DatasetDB *_de
                                                                     rpcActionDomain.c_str(),
                                                                     SlowControlExecutorRpcActionKey::RPC_KILL_CURRENT_COMMAND,
                                                                     "Set the features of the running command");
+	SCELAPP_ << "Register flushCommandStates action";
+    DeclareAction::addActionDescritionInstance<SlowCommandExecutor>(this,
+                                                                    &SlowCommandExecutor::flushCommandStates,
+                                                                    rpcActionDomain.c_str(),
+                                                                    SlowControlExecutorRpcActionKey::RPC_FLUSH_COMMAND_HISTORY,
+                                                                    "Flush the non active command history state");
 
 	
 }
@@ -253,6 +259,7 @@ void SlowCommandExecutor::deinit() throw(chaos::CException) {
 
 //Event handler
 void SlowCommandExecutor::handleEvent(uint64_t command_id, SlowCommandEventType::SlowCommandEventType type, void* type_attribute_ptr) {
+	DEBUG_CODE(SCELDBG_ << "Received event of type->" << type << "on command id>"<<command_id;)
 	switch(type) {
 		case SlowCommandEventType::EVT_QUEUED: {
 			// get upgradable access
@@ -312,7 +319,7 @@ void SlowCommandExecutor::capCommanaQueue() {
 		boost::shared_ptr<CommandState> cmd_state = command_state_queue.back();
 		
 		//chec if the command can be removed it need to be terminate (complete, fault or killed)
-		if(cmd_state->last_event < SlowCommandEventType::EVT_COMPLETED) return;
+		if(cmd_state->last_event < SlowCommandEventType::EVT_COMPLETED) break;
 		//remove from the map
 		command_state_fast_access_map.erase(cmd_state->command_id);
 		
@@ -552,7 +559,8 @@ CDataWrapper* SlowCommandExecutor::getQueuedCommand(CDataWrapper *params, bool& 
 /*
  Return the number and the infromation of the queued command via RPC
  */
-CDataWrapper* SlowCommandExecutor::getCommandSandboxStatistics(CDataWrapper *params, bool& detachParam) throw (CException) {
+CDataWrapper* SlowCommandExecutor::getCommandState(CDataWrapper *params, bool& detachParam) throw (CException) {
+	SCELAPP_ << "Get command state fromthe executor with id: " << executorID;
 	//boost::mutex::scoped_lock lock(mutextQueueManagment);
 	ReadLock lock(command_state_rwmutex);
 	uint64_t command_id = params->getUInt64Value(SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
@@ -577,7 +585,7 @@ CDataWrapper* SlowCommandExecutor::getCommandSandboxStatistics(CDataWrapper *par
  */
 CDataWrapper* SlowCommandExecutor::setCommandFeatures(CDataWrapper *params, bool& detachParam) throw (CException) {
 	if(!params || !commandSandbox.currentExecutingCommand) return NULL;
-	
+	SCELAPP_ << "Set command feature on current command into the executor with id: " << executorID;
 	//lock the scheduler
 	boost::mutex::scoped_lock lockForCurrentCommand(commandSandbox.mutextAccessCurrentCommand);
 	
@@ -602,7 +610,31 @@ CDataWrapper* SlowCommandExecutor::setCommandFeatures(CDataWrapper *params, bool
 //! Kill current command rpc action
 CDataWrapper* SlowCommandExecutor::killCurrentCommand(CDataWrapper *params, bool& detachParam) throw (CException) {
 	if(!commandSandbox.currentExecutingCommand) return NULL;
-	
+	SCELAPP_ << "Kill current command into the executor id: " << executorID;
 	commandSandbox.killCurrentCommand();
+	return NULL;
+}
+
+//! Flush the command state history
+CDataWrapper* SlowCommandExecutor::flushCommandStates(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException) {
+	SCELAPP_ << "Flushing all endend command state history for executr id:" << executorID;
+	// get upgradable access
+	boost::upgrade_lock<boost::shared_mutex> lock(command_state_rwmutex);
+	
+	while (!command_state_queue.empty() )  {
+		//remove command form
+		boost::shared_ptr<CommandState> cmd_state = command_state_queue.back();
+		
+		//chec if the command can be removed it need to be terminate (complete, fault or killed)
+		if(cmd_state->last_event < SlowCommandEventType::EVT_COMPLETED) break;
+		SCELAPP_ << "Flushing command with id:" << cmd_state->command_id ;
+		// get exclusive access
+		boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
+		//remove from the map
+		command_state_fast_access_map.erase(cmd_state->command_id);
+		
+		//delete it
+		command_state_queue.pop_back();
+	}
 	return NULL;
 }

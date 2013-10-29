@@ -251,7 +251,8 @@ namespace chaos {
 					//! @The key represent the rpc alias for SlowCommandExecutor::killCurrentCommand method
 					static const char * const   RPC_KILL_CURRENT_COMMAND = "killCurrentCommand";
 
-					
+					//! @The key represent the rpc alias for SlowCommandExecutor::flushCommandStates method
+					static const char * const   RPC_FLUSH_COMMAND_HISTORY = "flushCmdStateHst";
 				}
 				/** @} */ // end of API_Slow_Control Slow Control API
             }

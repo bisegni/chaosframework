@@ -185,7 +185,7 @@ namespace chaos {
 						Return infromation about the execution statistic for the current running command, collected into the 
 						chaos::cu::control_manager::slow_command::SandboxStat structure.
                      */
-					chaos_data::CDataWrapper* getCommandSandboxStatistics(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
+					chaos_data::CDataWrapper* getCommandState(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
 					
 					
 					//! Command features modification rpc action
@@ -203,6 +203,14 @@ namespace chaos {
 						the current command "as is".
                      */
 					chaos_data::CDataWrapper* killCurrentCommand(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
+					
+					//! Flush the command state history
+                    /*!
+					 \ingroup API_Slow_Control
+					 This METHOD perform the "flushing" of the command state queue (and hash). The flushing operation ensure that all,
+					 non ended command state, will be remove from the history.
+                     */
+					chaos_data::CDataWrapper* flushCommandStates(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
                 public:
                     
                     // Initialize instance
@@ -234,7 +242,7 @@ namespace chaos {
                      */
                     void installCommand(string alias, chaos::common::utility::ObjectInstancer<SlowCommand> *instancer);
                     
-                    //! Submite the new sloc command information
+                    //! Submite the new slow command information
                     /*!
                      The information for the command are contained into the DataWrapper data serialization,
                      they are put into the commandSubmittedQueue for to wait to be executed.

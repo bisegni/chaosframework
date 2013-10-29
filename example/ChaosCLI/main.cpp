@@ -49,6 +49,7 @@ namespace cccs = chaos::cu::control_manager::slow_command;
 #define OPT_SL_PRIORITY									"sc-priority"
 #define OPT_SL_SUBMISSION_RULE							"sc-sub-rule"
 #define OPT_SL_COMMAND_DATA								"sc-cmd-data"
+#define OPT_SL_COMMAND_ID								"sc-cmd-id"
 #define OPT_SL_COMMAND_SCHEDULE_DELAY					"sc-cmd-sched-wait"
 #define OPT_SL_COMMAND_SUBMISSION_RETRY_DELAY			"sc-cmd-submission-retry-delay"
 #define OPT_SL_COMMAND_SET_FEATURES_LOCK				"sc-cmd-features-lock"
@@ -100,6 +101,7 @@ int main (int argc, char* argv[] )
         string scAlias;
         string scSubmissionRule;
         string scUserData;
+		uint64_t scCmdID;
         uint32_t scSubmissionPriority;
         uint32_t scSubmissionSchedulerDelay;
         uint32_t scSubmissionSubmissionRetryDelay;
@@ -114,18 +116,20 @@ int main (int argc, char* argv[] )
        
         //! [UIToolkit Attribute Init]
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_DEVICE_ID, po::value<string>(), "The identification string of the device");
-        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_STATE, po::value<int>()->default_value(0), "The state to set on the device{1=init, 2=start, 3=stop, 4=deinit, 5=set schedule time, 6=submite slow command(slcu), 7=kill current command(slcu), 8=set input channel(rtcu)}");
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_STATE, po::value<int>()->default_value(0), "The state to set on the device{1=init, 2=start, 3=stop, 4=deinit, 5=set schedule time, 6=submite slow command(slcu), 7=kill current command(slcu), 8=get command state by id, 9=set input channel(rtcu)}, 10=flush history state(slcu)");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SCHEDULE_TIME, po::value<long>(), "the time in microseconds for devide schedule time");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_PRINT_STATE, po::value<bool>(&printState)->default_value(false), "Print the state of the device");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_ALIAS, po::value<string>(&scAlias)->default_value(""), "The alias associted to the command for the slow control cu");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_SUBMISSION_RULE, po::value<string>(&scSubmissionRule)->default_value("normal"), "The rule used for submit the command for the slow control cu [normal, stack, kill]");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_PRIORITY, po::value<uint32_t>(&scSubmissionPriority)->default_value(50), "The priority used for submit the command for the slow control cu");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_DATA, po::value<string>(&scUserData), "The bson pack (in text format) sent to the set handler of the command for the slow");
-        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_SCHEDULE_DELAY, po::value<uint32_t>(&scSubmissionSchedulerDelay)->default_value(0), "The millisecond beetwen a step an the next of the scheduler[in milliseconds]");
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_ID, po::value<uint64_t>(&scCmdID), "The command identification number(cidn)");
+		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_SCHEDULE_DELAY, po::value<uint32_t>(&scSubmissionSchedulerDelay)->default_value(0), "The millisecond beetwen a step an the next of the scheduler[in milliseconds]");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_SUBMISSION_RETRY_DELAY, po::value<uint32_t>(&scSubmissionSubmissionRetryDelay)->default_value(0), "The millisecond beetwen submission checker run");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_SET_FEATURES_LOCK, po::value<bool>(&scFeaturesLock), "if true will lock the feature to the command modification");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_SET_FEATURES_SCHEDULER_WAIT, po::value<uint32_t>(&scFeaturesSchedWait), "The millisecond beetwen two step of the scheduler");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_RT_ATTRIBUTE_VALUE, po::value<string>(&rtAttributeValue), "The attribute and value for the input attribute in rt control unit [attribute:value]");
+		
 		//! [UIToolkit Attribute Init]
         
         //! [UIToolkit Init]
@@ -220,8 +224,7 @@ int main (int argc, char* argv[] )
                     throw CException(29, "Device can't be in deinit state", "Set device schedule time");
                 }
                 break;
-            case 6:
-                if(deviceState == CUStateKey::START) {
+            case 6: {
                     //check sc
 					uint64_t command_id = 0;
                     auto_ptr<CDataWrapper> userData;
@@ -249,27 +252,79 @@ int main (int argc, char* argv[] )
 																   scSubmissionSubmissionRetryDelay,
 																   userData.get());
                         if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to deinit state");
-						std::cout << "COmmand submitted successfully his command id is= " << command_id;
+						std::cout << "Command submitted successfully his command idedentification number(cidn) is= " << command_id << std::endl;
                     } else {
                         throw CException(29, "Device can't be in deinit state", "Send slow command");
                     }
-                } else {
-                    throw CException(29, "Device need to be in start state", "Send slow command");
                 }
                 break;
-			case 7:
+			case 7:{
 				err = controller->killCurrentCommand();
                 break;
-				
-			case 8: {
+			}
+			case 8:{
+				//chec if has been porvided a command ID
+				if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_ID)) {
+					throw CException(1, "No command id provided", "OPCODE 8");
+				}
+				cccs::CommandState command_state;
+				command_state.command_id = scCmdID;
+				err = controller->getCommandState(command_state);
+				std::cout << "Device state start -------------------------------------------------------" << std::endl;
+				std::cout << "Command";
+				switch (command_state.last_event) {
+					case cccs::SlowCommandEventType::EVT_COMPLETED:
+						std::cout << " has completed"<< std::endl;;
+						break;
+					case cccs::SlowCommandEventType::EVT_FAULT:
+						std::cout << " has fault";
+						std::cout << "Error code		:"<<command_state.fault_description.code<< std::endl;
+						std::cout << "Error domain		:"<<command_state.fault_description.domain<< std::endl;
+						std::cout << "Error description	:"<<command_state.fault_description.description<< std::endl;
+						break;
+					case cccs::SlowCommandEventType::EVT_KILLED:
+						std::cout << " has been killed"<< std::endl;
+						break;
+					case cccs::SlowCommandEventType::EVT_PAUSED:
+						std::cout << " has been paused"<< std::endl;
+						break;
+					case cccs::SlowCommandEventType::EVT_QUEUED:
+						std::cout << " has been queued"<< std::endl;
+						break;
+					case cccs::SlowCommandEventType::EVT_RUNNING:
+						std::cout << " is running"<< std::endl;
+						break;
+					case cccs::SlowCommandEventType::EVT_WAITING:
+						std::cout << " is waiting"<< std::endl;
+						break;
+				}
+				std::cout << "Device state end ---------------------------------------------------------" << std::endl;
+				break;
+			}
+			case 9: {
 				//set an input attribute of the dataset(rtcu)
 				if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_RT_ATTRIBUTE_VALUE)) {
-					std::cout << "No attribute and value give." << std::endl;
-					break;
+					throw CException(1, "No attribute and value setupped", "OPCODE 9");
 				}
-				
+				if(rtAttributeValue.find(":")== string::npos) {
+					throw CException(2, "Attribute param not well formet, lak of ':' character (param_name:param_value)", "OPCODE 9");
+
+				}
+				std::string param_name = rtAttributeValue.substr(0, rtAttributeValue.find(":"));
+				std::string param_value = rtAttributeValue.substr(rtAttributeValue.find(":")+1);
 				//get name and value of the attribute
+				err = controller->setAttributeToValue(param_name.c_str(), param_value.c_str(), false);
+				if(err == ErrorCode::EC_TIMEOUT)
+					throw CException(3, "Time out on connection", "OPCODE 9");
+				else if(err != ErrorCode::EC_NO_ERROR)
+					throw CException(3, "General Error", "OPCODE 9");
 				
+				break;
+			}
+				
+			case 10:{
+				err = controller->flushCommandStateHistory();
+				if(err == ErrorCode::EC_TIMEOUT) throw CException(3, "Time out on connection", "OPCODE 10");
 				break;
 			}
                 
