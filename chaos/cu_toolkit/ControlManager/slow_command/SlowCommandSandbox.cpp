@@ -58,7 +58,7 @@ void CorrelationFunctor::operator()() {
 
 //------------------------------------------------------------------------------------------------------------
 #define DEFAULT_STACK_ELEMENT 100
-#define DEFAULT_TIME_STEP_INTERVALL 1000
+#define DEFAULT_TIME_STEP_INTERVALL 1000000 //1 seconds of delay
 #define DEFAULT_CHECK_TIME 500
 
 #define CHECK_END_OF_SCHEDULER_WORK_AND_CONTINUE() \
@@ -342,7 +342,7 @@ void SlowCommandSandbox::runCommand() {
     //check if the current command has ended or need to be substitute
     boost::mutex::scoped_lock lockForCurrentCommand(mutextAccessCurrentCommand);
     do{
-        stat.lastCmdStepStart = boost::chrono::duration_cast<boost::chrono::milliseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count();
+        stat.lastCmdStepStart = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count();
         // call the acquire phase
         acquireHandlerFunctor();
         
@@ -363,7 +363,7 @@ void SlowCommandSandbox::runCommand() {
         }
         //unloc
         lockForCurrentCommand.unlock();
-        stat.lastCmdStepTime = boost::chrono::duration_cast<boost::chrono::milliseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count()-stat.lastCmdStepStart;
+        stat.lastCmdStepTime = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count()-stat.lastCmdStepStart;
         //
         uint64_t sw = (uint64_t)currentExecutingCommand;
         switch (sw) {
@@ -375,7 +375,7 @@ void SlowCommandSandbox::runCommand() {
                 
             default:
 				int64_t timeToWaith = currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay - stat.lastCmdStepTime;
-                threadSchedulerPauseCondition.wait(timeToWaith>0?timeToWaith:0);
+                threadSchedulerPauseCondition.waitUSec(timeToWaith>0?timeToWaith:0);
                 //boost::this_thread::sleep_for(boost::chrono::milliseconds(currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay - stat.lastCmdStepTime));
                 break;
         }
@@ -451,7 +451,7 @@ bool SlowCommandSandbox::setNextAvailableCommand(PRIORITY_ELEMENT(CDataWrapper) 
     if((cmdImpl->commandFeatures.featuresFlag & features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY) == 0) {
         //we need to set a new delay between steps
         cmdImpl->commandFeatures.featureSchedulerStepsDelay =  DEFAULT_TIME_STEP_INTERVALL;
-        DEBUG_CODE(SCSLDBG_ << "default scheduler delay has been installed with " << DEFAULT_TIME_STEP_INTERVALL << " milliseconds";)
+        DEBUG_CODE(SCSLDBG_ << "default scheduler delay has been installed with " << DEFAULT_TIME_STEP_INTERVALL << " microseconds";)
         
     }
     //check if the command has it's own time for the checker

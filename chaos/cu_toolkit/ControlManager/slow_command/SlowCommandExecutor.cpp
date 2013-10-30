@@ -484,10 +484,10 @@ SlowCommand *SlowCommandExecutor::instanceCommandInfo(CDataWrapper *submissionIn
         }
     
         //check if the comamnd pack has some feature to setup in the command instance
-        if(submissionInfo->hasKey(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI32)) {
+        if(submissionInfo->hasKey(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI64)) {
             instance->commandFeatures.featuresFlag |= features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY;
-            instance->commandFeatures.featureSchedulerStepsDelay = submissionInfo->getInt32Value(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI32);
-            DEBUG_CODE(SCELDBG_ << "Set custom  SCHEDULER_STEP_TIME_INTERVALL to " << instance->commandFeatures.featureSchedulerStepsDelay << " milliseconds";)
+            instance->commandFeatures.featureSchedulerStepsDelay = submissionInfo->getInt64Value(SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI64);
+            DEBUG_CODE(SCELDBG_ << "Set custom  SCHEDULER_STEP_TIME_INTERVALL to " << instance->commandFeatures.featureSchedulerStepsDelay << " microseconds";)
         }
         
         if(submissionInfo->hasKey(SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32)) {
@@ -598,9 +598,9 @@ CDataWrapper* SlowCommandExecutor::setCommandFeatures(CDataWrapper *params, bool
 		commandSandbox.currentExecutingCommand->lockFeaturePropertyFlag[0] = params->getBoolValue(SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL);
 	}
 	
-	if(params->hasKey(SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI32)) {
+	if(params->hasKey(SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64)) {
 		//has scheduler step wait
-		commandSandbox.currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay = params->getUInt32Value(SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI32);
+		commandSandbox.currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay = params->getUInt64Value(SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64);
 	}
     lockForCurrentCommand.unlock();
     commandSandbox.threadSchedulerPauseCondition.unlock();
@@ -618,7 +618,7 @@ void SlowCommandExecutor::setCommandFeatures(features::Features features) throw 
 	//recheck current command
 	if(!commandSandbox.currentExecutingCommand) return;
 
-	commandSandbox.currentExecutingCommand->commandFeatures.featuresFlag &= features.featuresFlag;
+	commandSandbox.currentExecutingCommand->commandFeatures.featuresFlag |= features.featuresFlag;
 	commandSandbox.currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay = features.featureSchedulerStepsDelay;
 	//}
     lockForCurrentCommand.unlock();

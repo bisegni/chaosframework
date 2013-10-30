@@ -17,7 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-
+#include <string>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommand.h>
 using namespace chaos;
 using namespace chaos::common::data;
@@ -28,6 +28,7 @@ SlowCommand::SlowCommand() {
 	//reset all lock flag
     lockFeaturePropertyFlag.reset();
 	//setup feautere fields
+	std::memset(&commandFeatures, 0,sizeof(features::Features));
 	commandFeatures.featuresFlag = 0;
 	//commandFeatures.lockedOnUserModification = false;
 	

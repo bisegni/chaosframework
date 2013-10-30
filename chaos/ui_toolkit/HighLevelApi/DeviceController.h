@@ -232,7 +232,7 @@ namespace chaos {
 										 cccs::SubmissionRuleType::SubmissionRule submissionRule,
 										 uint32_t priority,
 										 uint64_t& command_id,
-										 uint32_t schedulerStepsDelay = 0,
+										 uint64_t schedulerStepsDelay = 0,
 										 uint32_t submissionCheckerStepsDelay = 0,
 										 CDataWrapper *slowCommandData = NULL);
             
@@ -252,7 +252,7 @@ namespace chaos {
             int submitSlowControlCommand(string commandAlias,
 										 cccs::SubmissionRuleType::SubmissionRule submissionRule,
 										 uint64_t& command_id,
-										 uint32_t schedulerStepsDelay = 0,
+										 uint64_t schedulerStepsDelay = 0,
 										 uint32_t submissionCheckerStepsDelay = 0,
 										 CDataWrapper *slowCommandData = NULL);
             

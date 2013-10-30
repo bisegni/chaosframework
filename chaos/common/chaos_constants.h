@@ -199,8 +199,8 @@ namespace chaos {
                     static const char * const   SUBMISSION_RULE_UI32				= "submission_rule";
                     //! @The key represent the option to the command submission priority, the value is an uint32
                     static const char * const   SUBMISSION_PRIORITY_UI32            = "submission_priority";
-                    //! @The key represent intervall between step of the scheduler expressed in milliseconds, the value is an uint32
-                    static const char * const   SCHEDULER_STEP_TIME_INTERVALL_UI32  = "sched_step_time_int";
+                    //! @The key represent intervall between step of the scheduler expressed in microseconds, the value is an uint32
+                    static const char * const   SCHEDULER_STEP_TIME_INTERVALL_UI64  = "sched_step_time_int";
                     //! @Set the command specific delay between submission retry SlowCommand::submissionRetryDelay, the value is an uint32
                     static const char * const   SUBMISSION_RETRY_DELAY_UI32         = "sbms_ret_dly";
 				}
@@ -244,7 +244,7 @@ namespace chaos {
 					//! @The key represent the rpc alias for SlowCommandExecutor::setCommandFeatures method
 					static const char * const   RPC_SET_COMMAND_FEATURES							= "setCommandFeatures";
 					//! @The key represent the the scheduler wait time for next step, value is and uint32_t
-					static const char * const   RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI32	= "scf_sched_waith_time";
+					static const char * const   RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64	= "scf_sched_waith_time";
 					//! @The key represent the lock option for the features, value is and boolean
 					static const char * const   RPC_SET_COMMAND_FEATURES_LOCK_BOOL					= "scf_lock";
 					

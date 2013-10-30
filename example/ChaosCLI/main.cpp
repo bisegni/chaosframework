@@ -247,7 +247,6 @@ int main (int argc, char* argv[] )
 																   static_cast<cccs::SubmissionRuleType::SubmissionRule>(checkSubmissionRule(scSubmissionRule)),
 																   scSubmissionPriority,
 																   command_id,
-															
 																   scSubmissionSchedulerDelay,
 																   scSubmissionSubmissionRetryDelay,
 																   userData.get());
@@ -317,7 +316,7 @@ int main (int argc, char* argv[] )
 				if(err == ErrorCode::EC_TIMEOUT)
 					throw CException(3, "Time out on connection", "OPCODE 9");
 				else if(err != ErrorCode::EC_NO_ERROR)
-					throw CException(3, "General Error", "OPCODE 9");
+					throw CException(3, "Time out on connection", "OPCODE 9");
 				
 				break;
 			}

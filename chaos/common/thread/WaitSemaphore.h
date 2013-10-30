@@ -95,6 +95,23 @@ namespace chaos {
             answered = false;
         }
         
+		//!wait
+        /*!
+         the thread that call this method will wait or an ammount of millisecond
+         or a unlock event
+         \param millisecToWait is the time, in milliseconds that the read will wait
+         if no one unlock it first
+         \return the object that someone has associated at this semaphore
+         */
+        void waitUSec(uint64_t microsecondsToWait) {
+            boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
+            if(inWait) return;
+            inWait = true;
+            do {} while(wait_answer_condition.timed_wait(lock, posix_time::microseconds(microsecondsToWait)) && !answered);
+            inWait = false;
+            answered = false;
+        }
+		
         //!unlock
         /*! 
          unlock the waiting thread
