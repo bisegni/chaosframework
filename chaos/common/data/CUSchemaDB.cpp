@@ -205,7 +205,7 @@ void CUSchemaDB::addAttributeToDataSet(const char*const attributeDeviceID,
             break;
         case DataType::TYPE_STRING:
             if(maxDimension == 0)
-                throw CException(1, "for byte array type need to be specified the max value", "CUSchemaDB::addAttributeToDataSet");
+                throw CException(1, "for string type need to be specified the max value", "CUSchemaDB::addAttributeToDataSet");
             typeMaxDimension = maxDimension;
             break;
         case DataType::TYPE_BYTEARRAY:

@@ -68,6 +68,10 @@ namespace chaos {
              */
 			chaos_data::CDataWrapper* setDatasetAttribute(chaos_data::CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException);
             
+			/*
+             Event for update some CU configuration
+             */
+            chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*, bool&) throw (CException);
         protected:
             
             virtual void defineSharedVariable();
@@ -76,6 +80,7 @@ namespace chaos {
             void setSharedVariableValue(std::string name, void *value, uint32_t value_size);
             // Get all managem declare action instance
             void _getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance);
+
         public:
             
             SCAbstractControlUnit();

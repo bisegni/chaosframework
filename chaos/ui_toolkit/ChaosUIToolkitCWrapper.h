@@ -149,6 +149,29 @@ extern "C" {
      */
     int setStrValueForAttribute(uint32_t devID, const char * const dsAttrName, const char * const dsAttrValueCStr);
     
+	//! Submit a new slow command
+	/*!
+	 \ingroup API_Slow_Control
+	 The submition of slow command is made collection all the information that permit to submit it
+	 \param dev_id is the identification number got from \link getNewControllerForDeviceID \endlink function
+	 \param command_alias represent the alias of the command the the control unit expost from RPC subsystem
+	 \param submissione_rule determinate the rule with which the command is submitted. @SubmissionRuleType::SubmissionRule
+	 \param command_id is the assigned command id to the submitted one
+	 the execution of the current execution command in the control unit, according with his running state
+	 \param scheduler_steps_delay rapresent the intervall beetween the step of the scehduler [...acquisition -> correlation -> scheduleInterval...]
+	 \param submission_checker_steps_delay is the delay between two steps of the submission checker
+	 \param slow_command_data is the abstraction of the command data that is passed to the set handler befor the scheduler loop of the new command
+	 take palce. The memory of that parameter is not free
+	 */
+	int submitSlowControlCommand(uint32_t dev_id,
+								 const char * const command_alias,
+								 uint16_t submissione_rule,
+								 uint32_t priority,
+								 uint64_t *command_id,
+								 uint32_t scheduler_steps_delay = 0,
+								 uint32_t submission_checker_steps_delay = 0,
+								 const char * const slow_command_data = NULL);
+	
         //! Device Control deinitialization
     /*!
      Perform deinitialization of a device control associated to an id

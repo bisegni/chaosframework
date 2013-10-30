@@ -607,6 +607,24 @@ CDataWrapper* SlowCommandExecutor::setCommandFeatures(CDataWrapper *params, bool
     return NULL;
 }
 
+//! Command features modification rpc action
+/*!
+ Updat ethe modiable features of the running command
+ */
+void SlowCommandExecutor::setCommandFeatures(features::Features features) throw (CException) {
+	//lock the scheduler
+	boost::mutex::scoped_lock lockForCurrentCommand(commandSandbox.mutextAccessCurrentCommand);
+	
+	//recheck current command
+	if(!commandSandbox.currentExecutingCommand) return;
+
+	commandSandbox.currentExecutingCommand->commandFeatures.featuresFlag &= features.featuresFlag;
+	commandSandbox.currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay = features.featureSchedulerStepsDelay;
+	//}
+    lockForCurrentCommand.unlock();
+    commandSandbox.threadSchedulerPauseCondition.unlock();
+}
+
 //! Kill current command rpc action
 CDataWrapper* SlowCommandExecutor::killCurrentCommand(CDataWrapper *params, bool& detachParam) throw (CException) {
 	if(!commandSandbox.currentExecutingCommand) return NULL;

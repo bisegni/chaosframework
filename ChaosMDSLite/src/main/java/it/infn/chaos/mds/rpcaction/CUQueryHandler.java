@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package it.infn.chaos.mds.rpcaction;
 
@@ -18,27 +18,27 @@ import org.ref.common.exception.RefException;
 
 /**
  * RPC actions for manage the Control Unit registration and device dataset retriving
- * 
+ *
  * @author bisegni
  */
 public class CUQueryHandler extends RPCActionHadler {
 	private static final String	SYSTEM					= "system";
 	private static final String	REGISTER_CONTROL_UNIT	= "registerControlUnit";
 	private static final String	HEARTBEAT_CONTROL_UNIT	= "heartbeatControlUnit";
-
+	
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.infn.chaos.mds.rpc.server.RPCActionHadler#intiHanlder()
 	 */
 	@Override
 	public void intiHanlder() throws RefException {
 		addDomainAction(SYSTEM, REGISTER_CONTROL_UNIT);
 	}
-
+	
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.infn.chaos.mds.rpc.server.RPCActionHadler#handleAction(java.lang.String ,
 	 * java.lang.String, org.bson.BasicBSONObject)
 	 */
@@ -54,10 +54,10 @@ public class CUQueryHandler extends RPCActionHadler {
 		}
 		return result;
 	}
-
+	
 	/**
 	 * Execute l'heartbeat of the control unit
-	 * 
+	 *
 	 * @param actionData
 	 * @return
 	 */
@@ -82,7 +82,7 @@ public class CUQueryHandler extends RPCActionHadler {
 		
 		return result;
 	}
-
+	
 	/**
 	 * @return
 	 * @throws Throwable
@@ -109,44 +109,44 @@ public class CUQueryHandler extends RPCActionHadler {
 			//ListIterator<Object> devicesDS = dsDesc.listIterator();
 			//while (devicesDS.hasNext()) {
 			//	BasicBSONObject devDesc = (BasicBSONObject) devicesDS.next();
-				d = new Device();
-				d.setCuInstance(controlUnitInstance);
-				d.setNetAddress(controlUnitNetAddress);
-				d.fillFromBson(devDesc);
-
-				// check for deviceID presence
-				if (dDA.isDeviceIDPresent(d.getDeviceIdentification())) {
-					// the device is already present i need to check for dataset
-					// change
-
-					if (dDA.isDSChanged(d.getDeviceIdentification(), d.getDataset().getAttributes())) {
-						Integer deviceID = dDA.getDeviceIdFormInstance(d.getDeviceIdentification());
-						// Dataset newDatasetToInsertForDevice =
-						// dDA.getLastDatasetForDeviceInstance(d.getDeviceInstance());
-						d.getDataset().setDeviceID(deviceID);
-						// add new dataset
-						dDA.insertNewDataset(d.getDataset());
-					}
-					// update the CU id for this device, it can be changed
-					dDA.updateCUInstanceAndAddressForDeviceID(d.getDeviceIdentification(), d.getCuInstance(), d.getNetAddress());
-				} else {
-					dDA.insertDevice(d);
+			d = new Device();
+			d.setCuInstance(controlUnitInstance);
+			d.setNetAddress(controlUnitNetAddress);
+			d.fillFromBson(actionData);
+			
+			// check for deviceID presence
+			if (dDA.isDeviceIDPresent(d.getDeviceIdentification())) {
+				// the device is already present i need to check for dataset
+				// change
+				
+				if (dDA.isDSChanged(d.getDeviceIdentification(), d.getDataset().getAttributes())) {
+					Integer deviceID = dDA.getDeviceIdFormInstance(d.getDeviceIdentification());
+					// Dataset newDatasetToInsertForDevice =
+					// dDA.getLastDatasetForDeviceInstance(d.getDeviceInstance());
+					d.getDataset().setDeviceID(deviceID);
+					// add new dataset
+					dDA.insertNewDataset(d.getDataset());
 				}
-
-				if (d != null) {
-					dDA.performDeviceHB(d.getDeviceIdentification());
-
-					// at this point i need to check if thedevice need to be initialized
-					if (dDA.isDeviceToBeInitialized(d.getDeviceIdentification())) {
-						// send rpc command to initialize the device
-						result = DeviceDescriptionUtility.composeStartupCommandForDeviceIdentification(d.getDeviceIdentification(),dDA , getDataAccessInstance(DataServerDA.class), true);
-						result.append(RPCConstants.CS_CMDM_REMOTE_HOST_IP, d.getNetAddress());
-						result.append(RPCConstants.CS_CMDM_ACTION_DOMAIN, "system");
-						result.append(RPCConstants.CS_CMDM_ACTION_NAME, "initControlUnit");
-					}
+				// update the CU id for this device, it can be changed
+				dDA.updateCUInstanceAndAddressForDeviceID(d.getDeviceIdentification(), d.getCuInstance(), d.getNetAddress());
+			} else {
+				dDA.insertDevice(d);
+			}
+			
+			if (d != null) {
+				dDA.performDeviceHB(d.getDeviceIdentification());
+				
+				// at this point i need to check if thedevice need to be initialized
+				if (dDA.isDeviceToBeInitialized(d.getDeviceIdentification())) {
+					// send rpc command to initialize the device
+					result = DeviceDescriptionUtility.composeStartupCommandForDeviceIdentification(d.getDeviceIdentification(),dDA , getDataAccessInstance(DataServerDA.class), true);
+					result.append(RPCConstants.CS_CMDM_REMOTE_HOST_IP, d.getNetAddress());
+					result.append(RPCConstants.CS_CMDM_ACTION_DOMAIN, "system");
+					result.append(RPCConstants.CS_CMDM_ACTION_NAME, "initControlUnit");
 				}
-				//}
-
+			}
+			//}
+			
 			closeDataAccess(dDA, true);
 		} catch (RefException e) {
 			try {

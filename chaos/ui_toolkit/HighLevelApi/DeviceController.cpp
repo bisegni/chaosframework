@@ -254,6 +254,7 @@ int DeviceController::setAttributeToValue(const char *attributeName, const char 
         case DataType::TYPE_BYTEARRAY:{
             //const char *byteArrayValuePtr = static_cast<const char*>(attributeValue);
             //attributeValuePack.addBinaryValue(attributeName, byteArrayValuePtr, bufferValuedDim);
+			throw CException(1, "The byte array set is not managed", "DeviceController::setAttributeToValue");
             break;
         }
     }

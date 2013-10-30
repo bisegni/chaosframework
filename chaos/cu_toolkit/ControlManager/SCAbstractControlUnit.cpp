@@ -142,6 +142,21 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAt
     return result;
 }
 
+/*
+ Event for update some CU configuration
+ */
+CDataWrapper* SCAbstractControlUnit::updateConfiguration(chaos_data::CDataWrapper *updatePack, bool& detachParam) throw (CException) {
+	CDataWrapper *result = AbstractControlUnit::updateConfiguration(updatePack, detachParam);
+    if(updatePack->hasKey(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY)){
+		features::Features features;
+		std::memset(&features, 0, sizeof(features::Features));
+		features.featuresFlag &= features::FeaturesFlagTypes::FF_LOCK_USER_MOD;
+		features.featureSchedulerStepsDelay = (uint32_t)updatePack->getUInt64Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY);
+		slowCommandExecutor->setCommandFeatures(features);
+	}
+	return result;
+}
+
 void SCAbstractControlUnit::addSharedVariable(std::string name, uint32_t max_size, chaos::DataType::DataType type) {
     // add the attribute to the shared setting object
     slowCommandExecutor->commandSandbox.sharedAttributeSetting.getSharedDomain(IOCAttributeShareCache::SVD_CUSTOM).addAttribute(name, max_size, type);

@@ -128,7 +128,7 @@ int DeviceMessageChannel::setAttributeValue(CDataWrapper& attributesValues, bool
 }
 
     //------------------------------------
-int DeviceMessageChannel::setScheduleDelay(uint64_t scheduledDealy, uint32_t millisecToWait){
+int DeviceMessageChannel::setScheduleDelay(uint64_t scheduledDealy, uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper startDeviceParam;
     startDeviceParam.addStringValue(DatasetDefinitionkey::DEVICE_ID, deviceNetworkAddress->deviceID);

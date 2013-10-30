@@ -195,6 +195,12 @@ namespace chaos {
                      */
 					chaos_data::CDataWrapper* setCommandFeatures(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
 					
+					//! Command features modification rpc action
+                    /*!
+					 Updat ethe modiable features of the running command
+                     */
+					void setCommandFeatures(features::Features features) throw (CException);
+					
 					//! Kill current command rpc action
                     /*!
 						\ingroup API_Slow_Control

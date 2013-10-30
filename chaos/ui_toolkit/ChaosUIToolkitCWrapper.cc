@@ -18,12 +18,16 @@
  *    	limitations under the License.
  */
 
-#include <string.h>
 #include <map>
+#include <string.h>
+#include <memory.h>
+
 #include <chaos/ui_toolkit/ChaosUIToolkit.h>
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
 #include <chaos/ui_toolkit/ChaosUIToolkitCWrapper.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
+#include <chaos/common/data/CDataWrapper.h>
+
 #include <boost/lexical_cast.hpp>
 
 using namespace std;
@@ -304,13 +308,55 @@ extern "C" {
         string attributeName = dsAttrName;
         DeviceController *dCtrl = getDeviceControllerFromID(devID);
         if(dCtrl && dsAttrName && dsAttrValueCStr) {
-            err = dCtrl->setAttributeValue(attributeName,dsAttrValueCStr);
+			//changed to use the new api
+            err = dCtrl->setAttributeToValue(dsAttrName, dsAttrValueCStr, false);
         } else {
             err = -1001;
         }
         return err;
     }
     
+	 //---------------------------------------------------------------
+	int submitSlowControlCommand(uint32_t dev_id,
+								 const char * const command_alias,
+								 uint16_t submissione_rule,
+								 uint32_t priority,
+								 uint64_t *command_id,
+								 uint32_t scheduler_steps_delay,
+								 uint32_t submission_checker_steps_delay,
+								 const char * const slow_command_data) {
+		int err = 0;
+		uint64_t cmd_id_tmp;
+        DeviceController *dCtrl = getDeviceControllerFromID(dev_id);
+        if(dCtrl && command_alias && submissione_rule) {
+			//changed to use the new api
+			std::auto_ptr<chaos::common::data::CDataWrapper> data_wrapper;
+			
+			std::string cmd_alias_str = command_alias;
+			if(slow_command_data) {
+				data_wrapper.reset(new chaos::common::data::CDataWrapper());
+				if(data_wrapper.get())
+					data_wrapper->setSerializedJsonData(slow_command_data);
+				else
+					return -1001;
+			}
+			
+            err = dCtrl->submitSlowControlCommand(cmd_alias_str,
+												  static_cast<chaos::cu::control_manager::slow_command::SubmissionRuleType::SubmissionRule>(submissione_rule),
+												  priority,
+												  cmd_id_tmp,
+												  scheduler_steps_delay,
+												  submission_checker_steps_delay,
+												  data_wrapper.get());
+			if(!err && command_id) {
+				*command_id = cmd_id_tmp;
+			}
+        } else {
+            err = -1002;
+        }
+        return err;
+	}
+	
         //---------------------------------------------------------------
     int deinitController(uint32_t devID) {
         int err = 0;
