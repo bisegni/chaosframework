@@ -261,4 +261,4 @@ if [ -n "$CHAOS_DEVELOPMENT" ]; then
 	rm -rf $CHAOS_DIR/usr/local/include/chaos
 	echo "Link !CHAOS source root directory for include because we are in development mode"
 	ln -sf $CHAOS_DIR/chaos $CHAOS_DIR/usr/local/include/chaos
-else
+fi
