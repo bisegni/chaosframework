@@ -38,7 +38,7 @@ namespace chaos{
                 class SlowCommand;
                 
                 typedef  uint8_t BitBlockDimension;
-                typedef  uint16_t AttributeIndexType;
+                typedef  uint16_t VariableIndexType;
                 
                 /*!
                  Type used for the next available command impl and description

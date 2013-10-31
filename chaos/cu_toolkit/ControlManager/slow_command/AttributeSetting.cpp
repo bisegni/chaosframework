@@ -89,7 +89,7 @@ void AttributeSetting::init(void *initData) throw(chaos::CException) {
     //bitmapChangedAttribute = new boost::dynamic_bitset<BitBlockDimension>(mapAttributeIndexSettings.size());
     /*if(!bitmapChangedAttribute) throw CException(1, "Error allocating memory for map bit", "AttributeSetting::init");
    
-    for (map<AttributeIndexType, boost::shared_ptr<ValueSetting> >::iterator it = mapAttributeIndexSettings.begin() ;
+    for (map<VariableIndexType, boost::shared_ptr<ValueSetting> >::iterator it = mapAttributeIndexSettings.begin() ;
          it != mapAttributeIndexSettings.end();
          it++) {
         it->second->sharedBitmapChangedAttribute = bitmapChangedAttribute;
@@ -99,7 +99,7 @@ void AttributeSetting::init(void *initData) throw(chaos::CException) {
 //! Deinit the implementation
 void AttributeSetting::deinit() throw(chaos::CException) {
     //remove all ValueSetting instance
-   /* for (map<AttributeIndexType, boost::shared_ptr<ValueSetting> >::iterator it = mapAttributeIndexSettings.begin() ;
+   /* for (map<VariableIndexType, boost::shared_ptr<ValueSetting> >::iterator it = mapAttributeIndexSettings.begin() ;
          it != mapAttributeIndexSettings.end();
          it++) {
         delete(it->second);
@@ -123,10 +123,10 @@ void AttributeSetting::addAttribute(string name, uint32_t size, chaos::DataType:
     
     if(mapAttributeNameIndex.count(name)) return;
     
-    AttributeIndexType tmpIndex;
+    VariableIndexType tmpIndex;
     
     //add name nad his index
-    mapAttributeNameIndex.insert(make_pair<string, AttributeIndexType>(name, (tmpIndex=index++)));
+    mapAttributeNameIndex.insert(make_pair<string, VariableIndexType>(name, (tmpIndex=index++)));
     
     //add channel setting
     boost::shared_ptr<ValueSetting> tmpSP(new ValueSetting(size, tmpIndex, type));
@@ -135,7 +135,7 @@ void AttributeSetting::addAttribute(string name, uint32_t size, chaos::DataType:
     bitmapChangedAttribute.push_back(false);
     tmpSP->sharedBitmapChangedAttribute = &bitmapChangedAttribute;
     
-    mapAttributeIndexSettings.insert(make_pair<AttributeIndexType, boost::shared_ptr<ValueSetting> >(tmpIndex, tmpSP));
+    mapAttributeIndexSettings.insert(make_pair<VariableIndexType, boost::shared_ptr<ValueSetting> >(tmpIndex, tmpSP));
     
     //if(mapAttributeIndexSettings.size()!=index) {
         //error inserting the row;
@@ -146,7 +146,7 @@ void AttributeSetting::addAttribute(string name, uint32_t size, chaos::DataType:
 void AttributeSetting::getAttributeNames(std::vector<std::string>& names) {
     
     //get all names
-    for(map<string, AttributeIndexType>::iterator it = mapAttributeNameIndex.begin();
+    for(map<string, VariableIndexType>::iterator it = mapAttributeNameIndex.begin();
         it != mapAttributeNameIndex.end();
         it++) {
         names.push_back(it->first);
@@ -154,27 +154,27 @@ void AttributeSetting::getAttributeNames(std::vector<std::string>& names) {
 }
 
 //! set the value for the index
-void AttributeSetting::setDefaultValueForAttribute(AttributeIndexType n, const void * value, uint32_t size) {
+void AttributeSetting::setDefaultValueForAttribute(VariableIndexType n, const void * value, uint32_t size) {
     mapAttributeIndexSettings[n]->setDefaultValue(value, size);
 }
 
 //! set the value for the index
-void AttributeSetting::setValueForAttribute(AttributeIndexType n, const void * value, uint32_t size) {
+void AttributeSetting::setValueForAttribute(VariableIndexType n, const void * value, uint32_t size) {
     mapAttributeIndexSettings[n]->setNextValue(value, size);
 }
 
-AttributeIndexType AttributeSetting::getIndexForName( string name ) {
+VariableIndexType AttributeSetting::getIndexForName( string name ) {
     return mapAttributeNameIndex[name];
 }
 
-ValueSetting *AttributeSetting::getValueSettingForIndex(AttributeIndexType index) {
+ValueSetting *AttributeSetting::getValueSettingForIndex(VariableIndexType index) {
     if(!mapAttributeIndexSettings.count(index)) return NULL;
         
     return mapAttributeIndexSettings[index].get();
 }
 
 //!
-void AttributeSetting::getChangedIndex(std::vector<AttributeIndexType>& changedIndex) {
+void AttributeSetting::getChangedIndex(std::vector<VariableIndexType>& changedIndex) {
     size_t index = 0;
     index = bitmapChangedAttribute.find_first();
     while(index != boost::dynamic_bitset<BitBlockDimension>::npos) {

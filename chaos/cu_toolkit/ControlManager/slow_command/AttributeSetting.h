@@ -84,12 +84,12 @@ namespace chaos{
                 
                 class AttributeSetting : public utility::InizializableService {
                     
-                    AttributeIndexType index;
+                    VariableIndexType index;
 
                     boost::dynamic_bitset<BitBlockDimension> bitmapChangedAttribute;
                     
-                    map<string, AttributeIndexType> mapAttributeNameIndex;
-                    map<AttributeIndexType, boost::shared_ptr<ValueSetting> > mapAttributeIndexSettings;
+                    map<string, VariableIndexType> mapAttributeNameIndex;
+                    map<VariableIndexType, boost::shared_ptr<ValueSetting> > mapAttributeIndexSettings;
                 public:
                     
                     AttributeSetting();
@@ -98,10 +98,10 @@ namespace chaos{
                     
                     void addAttribute(string name, uint32_t size, chaos::DataType::DataType type);
                     
-                    void setValueForAttribute(AttributeIndexType n, const void * value, uint32_t size);
-                    void setDefaultValueForAttribute(AttributeIndexType n, const void * value, uint32_t size);
+                    void setValueForAttribute(VariableIndexType n, const void * value, uint32_t size);
+                    void setDefaultValueForAttribute(VariableIndexType n, const void * value, uint32_t size);
                     
-                    AttributeIndexType getIndexForName( string name );
+                    VariableIndexType getIndexForName( string name );
                     
                     void getAttributeNames(std::vector<std::string>& names);
                     
@@ -111,9 +111,9 @@ namespace chaos{
                     //! Deinit the implementation
                     void deinit() throw(chaos::CException);
                     
-                    void getChangedIndex(std::vector<AttributeIndexType>& changedIndex);
+                    void getChangedIndex(std::vector<VariableIndexType>& changedIndex);
                     
-                    ValueSetting *getValueSettingForIndex(AttributeIndexType index);
+                    ValueSetting *getValueSettingForIndex(VariableIndexType index);
                 };
 				
                 //-----------------------------------------------------------------------------------------------------------------------------

@@ -145,18 +145,18 @@ namespace chaos{
                      overloaded by submition feature flag and anyway the are keept in consideration onlyat installation time
                      of the command.
                      */
-					inline void setFeatures(features::FeaturesFlagTypes::FeatureFlag features, uint32_t featuresValue) {
+					inline void setFeatures(features::FeaturesFlagTypes::FeatureFlag features, uint32_t features_value) {
 						//check if the features are locked for the user modifications
 						if(lockFeaturePropertyFlag.test(0)) return;
 						
 						commandFeatures.featuresFlag |= features;
 						switch (features) {
 							case features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY:
-								commandFeatures.featureSchedulerStepsDelay = featuresValue;
+								commandFeatures.featureSchedulerStepsDelay = features_value;
 								break;
 								
 							case features::FeaturesFlagTypes::FF_SET_SUBMISSION_RETRY:
-								commandFeatures.featureSubmissionRetryDelay = featuresValue;
+								commandFeatures.featureSubmissionRetryDelay = features_value;
 								break;
 								
 							default:
@@ -180,19 +180,29 @@ namespace chaos{
                      */
                     chaos_data::DatasetDB  *getDeviceDatabase();
                     
-                    ValueSetting *getValueSetting(IOCAttributeShareCache::SharedVeriableDomain domain, const char *keyName);
-                    ValueSetting *getValueSetting(IOCAttributeShareCache::SharedVeriableDomain domain, AttributeIndexType attributeIndex);
+					//! Return the value object for the domain and the string key
+					/*!
+						\param domain a domain identified by a value of @IOCAttributeShareCache::SharedVeriableDomain
+						\key_name a name that identify the variable
+					 */
+                    ValueSetting *getVariableValue(IOCAttributeShareCache::SharedVeriableDomain domain, const char *variable_name);
+					
+					//! Return the value object for the domain and the index of the variable
+                    ValueSetting *getVariableValue(IOCAttributeShareCache::SharedVeriableDomain domain, VariableIndexType variable_index);
                     
-                    void setValueSettingForKey(IOCAttributeShareCache::SharedVeriableDomain domain, const char *keyName, void * value, uint32_t size);
-
-                    void getChangedAttributeIndex(IOCAttributeShareCache::SharedVeriableDomain domain, std::vector<AttributeIndexType>& changedIndex);
+					//! Set the value for a determinated variable in a determinate domain
+                    void setVariableValueForKey(IOCAttributeShareCache::SharedVeriableDomain domain, const char *variable_name, void * value, uint32_t size);
+					
+					//! Get the index of the changed attribute
+                    void getChangedVariableIndex(IOCAttributeShareCache::SharedVeriableDomain domain, std::vector<VariableIndexType>& changed_index);
                     
-                    void getAttributeNames(IOCAttributeShareCache::SharedVeriableDomain domain, std::vector<std::string>& names);
+					//! Return the names of all variabl einto a determinated domain
+                    void getVariableNames(IOCAttributeShareCache::SharedVeriableDomain domain, std::vector<std::string>& names);
                     
                     /*
                      Send device data to output buffer
                      */
-                    void pushDataSet(chaos_data::CDataWrapper *acquiredData);
+                    void pushDataSet(chaos_data::CDataWrapper *acquired_data);
                     
                     /*
                      Return a new instance of CDataWrapper filled with a mandatory data
