@@ -255,3 +255,10 @@ cmake -DCMAKE_BUILD_TYPE=$COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_
 fi
 make -j4
 make install
+
+if [ -n "$CHAOS_DEVELOPMENT" ]; then
+	echo "Remove the installed header"
+	rm -rf $CHAOS_DIR/usr/local/include/chaos
+	echo "Link !CHAOS source root directory for include because we are in development mode"
+	ln -sf $CHAOS_DIR/chaos $CHAOS_DIR/usr/local/include/chaos
+else
