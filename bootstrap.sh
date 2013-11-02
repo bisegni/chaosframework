@@ -32,9 +32,9 @@ else
 fi
 
 if [ -n "$CHAOS32" ]; then
-export CFLAGS="-m32 -arch i386"
-export CXXFLAGS="-m32 -arch i386"
-echo "Force 32 bit binaries"
+    export CFLAGS="-m32 -arch i386"
+    export CXXFLAGS="-m32 -arch i386"
+    echo "Force 32 bit binaries"
 fi
 
 if [ -n "$CHAOS_DEVELOPMENT" ]; then
@@ -44,6 +44,12 @@ if [ -n "$CHAOS_DEVELOPMENT" ]; then
 #echo "Shared libray prefix -> $CHAOS_DIR"
 else
 	COMP_TYPE=Release
+fi
+
+if [ `echo $OS | tr [:upper:] [:lower:]` = `echo "Darwin" | tr [:upper:] [:lower:]` ] && [ $KERNEL_SHORT_VER -ge 1300 ]; then
+    export CC=clang
+    export CXX="clang++ -stdlib=libstdc++"
+    export LD=clang
 fi
 
 CHAOS_DIR=$SCRIPTPATH
@@ -106,7 +112,11 @@ if [ -n "$CHAOS32" ]; then
     	echo "INSTALLING BOOST X86 32"
     	./b2 link=shared cflags=-m32 cxxflags=-m32 architecture=x86 address-model=32 --prefix=$PREFIX --with-iostreams --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread --with-atomic --with-timer install
     else
-    	./b2 link=shared --prefix=$PREFIX --with-program_options --with-chrono --with-filesystem --with-iostreams --with-log --with-regex --with-system --with-thread --with-atomic --with-timer install
+        if [ `echo $OS | tr [:upper:] [:lower:]` = `echo "Darwin" | tr [:upper:] [:lower:]` ] && [ $KERNEL_SHORT_VER -ge 1300 ]; then
+            ./b2  toolset=clang cxxflags=-stdlib=libstdc++ linkflags=-stdlib=libstdc++ link=shared --prefix=$PREFIX --with-program_options --with-chrono --with-filesystem --with-iostreams --with-log --with-regex --with-system --with-thread --with-atomic --with-timer install
+        else
+            ./b2  link=shared --prefix=$PREFIX --with-program_options --with-chrono --with-filesystem --with-iostreams --with-log --with-regex --with-system --with-thread --with-atomic --with-timer install
+        fi
     fi
 else
     echo "Boost Already present"
@@ -125,7 +135,8 @@ if [ ! -d "$PREFIX/include/modbus" ]; then
                 git pull
         fi
 ./autogen.sh
-./configure --prefix=$PREFIX 
+
+./configure --prefix=$PREFIX
 make clean
 make
 make install
@@ -144,7 +155,7 @@ if [ ! -d "$PREFIX/include/msgpack" ]; then
 		git pull
 	fi
 ./bootstrap
-./configure --prefix=$PREFIX 
+./configure --prefix=$PREFIX
 make clean
 make
 make install
@@ -165,9 +176,9 @@ if [ ! -d "$PREFIX/include/mp" ]; then
 	fi
 	./bootstrap
 	if [ `echo $OS | tr [:upper:] [:lower:]` = `echo "linux" | tr [:upper:] [:lower:]` ] && [ $KERNEL_SHORT_VER -le 2625 ]; then
-	./configure --prefix=$PREFIX
+         ./configure --prefix=$PREFIX
 	else
-	./configure --disable-timerfd --disable-signalfd --prefix=$PREFIX
+         ./configure --disable-timerfd --disable-signalfd --prefix=$PREFIX
 	fi
 	make clean
 	make
@@ -249,9 +260,15 @@ fi
 echo "Compile !CHAOS"
 cd $SCRIPTPATH
 if [ -n "$CHAOS32" ]; then
-cmake -DCMAKE_BUILD_TYPE=$COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_FORCE_32=true -DBUILD_PREFIX=$PREFIX $SCRIPTPATH/.
+    cmake -DCMAKE_BUILD_TYPE=$COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_FORCE_32=true -DBUILD_PREFIX=$PREFIX $SCRIPTPATH/.
 else
-cmake -DCMAKE_BUILD_TYPE=$COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_PREFIX=$PREFIX $SCRIPTPATH/.
+    if [ `echo $OS | tr [:upper:] [:lower:]` = `echo "Darwin" | tr [:upper:] [:lower:]` ] && [ $KERNEL_SHORT_VER -ge 1300 ]; then
+        echo "Use standard CLIB with clang"
+        cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="-stdlib=libstdc++"  -DCMAKE_BUILD_TYPE=$COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_PREFIX=$PREFIX $SCRIPTPATH/.
+    else
+        cmake -DCMAKE_BUILD_TYPE=$COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_PREFIX=$PREFIX $SCRIPTPATH/.
+    fi
+
 fi
 make -j4
 make install
