@@ -5,7 +5,8 @@ SET( ${PROJECT_NAME}_MAJOR_VERSION 0 )
 SET( ${PROJECT_NAME}_MINOR_VERSION 1 ) 
 SET( ${PROJECT_NAME}_PATCH_LEVEL 0 )
 
- add_definitions(-DBOOST_ALL_DYN_LINK)
+
+add_definitions(-DBOOST_ALL_DYN_LINK)
 
 OPTION( BUILD_FORCE_32 "Force 32 bit compilation" OFF )
 

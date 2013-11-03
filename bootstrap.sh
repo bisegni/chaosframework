@@ -264,13 +264,17 @@ if [ -n "$CHAOS32" ]; then
 else
     if [ `echo $OS | tr [:upper:] [:lower:]` = `echo "Darwin" | tr [:upper:] [:lower:]` ] && [ $KERNEL_SHORT_VER -ge 1300 ]; then
         echo "Use standard CLIB with clang"
-        cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="-stdlib=libstdc++"  -DCMAKE_BUILD_TYPE=$COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_PREFIX=$PREFIX $SCRIPTPATH/.
+        cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="-stdlib=libstdc++" -DCMAKE_BUILD_TYPE=$COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_PREFIX=$PREFIX $SCRIPTPATH/.
     else
         cmake -DCMAKE_BUILD_TYPE=$COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_PREFIX=$PREFIX $SCRIPTPATH/.
     fi
 
 fi
-make -j4
+if [ -n "$CHAOS_DEVELOPMENT" ]; then
+    make -j4  VERBOSE=1
+else
+    make -j4
+fi
 make install
 
 if [ -n "$CHAOS_DEVELOPMENT" ]; then
