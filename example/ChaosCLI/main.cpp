@@ -44,6 +44,7 @@ namespace cccs = chaos::cu::control_manager::slow_command;
 #define OPT_DEVICE_ID       "deviceid"
 #define OPT_SCHEDULE_TIME   "stime"
 #define OPT_PRINT_STATE     "print-state"
+#define OPT_PRINT_TYPE		"print-type"
 //--------------slow contorol option----------------------------------------------------
 #define OPT_SL_ALIAS									"sc-alias"
 #define OPT_SL_PRIORITY									"sc-priority"
@@ -96,6 +97,7 @@ int main (int argc, char* argv[] )
         int err = 0;
         int op =-1;
         bool printState = false;
+		bool printType = false;
         long scheduleTime;
         string deviceID;
         string scAlias;
@@ -119,7 +121,8 @@ int main (int argc, char* argv[] )
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_STATE, po::value<int>()->default_value(0), "The state to set on the device{1=init, 2=start, 3=stop, 4=deinit, 5=set schedule time, 6=submite slow command(slcu), 7=kill current command(slcu), 8=get command state by id, 9=set input channel(rtcu)}, 10=flush history state(slcu)");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SCHEDULE_TIME, po::value<long>(), "the time in microseconds for devide schedule time");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_PRINT_STATE, po::value<bool>(&printState)->default_value(false), "Print the state of the device");
-        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_ALIAS, po::value<string>(&scAlias)->default_value(""), "The alias associted to the command for the slow control cu");
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_PRINT_TYPE, po::value<bool>(&printType)->default_value(false), "Print the type of the control unit of the device");
+		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_ALIAS, po::value<string>(&scAlias)->default_value(""), "The alias associted to the command for the slow control cu");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_SUBMISSION_RULE, po::value<string>(&scSubmissionRule)->default_value("normal"), "The rule used for submit the command for the slow control cu [normal, stack, kill]");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_PRIORITY, po::value<uint32_t>(&scSubmissionPriority)->default_value(50), "The priority used for submit the command for the slow control cu");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_DATA, po::value<string>(&scUserData), "The bson pack (in text format) sent to the set handler of the command for the slow");
@@ -168,6 +171,14 @@ int main (int argc, char* argv[] )
             std::cout << std::endl;
         }
         
+		if(printType) {
+			std::string control_unit_type;
+            std::cout << "Control unit type:";
+            err = controller->getType(control_unit_type);
+			if(err == ErrorCode::EC_TIMEOUT) throw CException(6, "Time out on connection", "Get type of the control unit");
+            std::cout << control_unit_type << std::endl;
+        }
+		
         switch (op) {
             case 1:
                 if(deviceState == CUStateKey::DEINIT) {

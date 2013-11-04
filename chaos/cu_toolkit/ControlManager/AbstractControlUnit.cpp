@@ -389,7 +389,6 @@ CDataWrapper* AbstractControlUnit::_getState(CDataWrapper* getStatedParam, bool&
  */
 CDataWrapper* AbstractControlUnit::_getInfo(CDataWrapper* getStatedParam, bool& detachParam) throw(CException) {
     CDataWrapper *stateResult = new CDataWrapper();
-    string deviceID = getStatedParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
     //set the string representing the type of the control unit
     stateResult->addStringValue(CUDefinitionKey::CS_CM_CU_TYPE, control_unit_type);
     return stateResult;
