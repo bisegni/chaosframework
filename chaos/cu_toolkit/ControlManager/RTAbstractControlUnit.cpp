@@ -30,7 +30,7 @@ using namespace chaos::cu;
 
 #define RTCULAPP_ LAPP_ << "[Real Time Control Unit:"<<getCUInstance()<<"] - "
 
-RTAbstractControlUnit::RTAbstractControlUnit() {
+RTAbstractControlUnit::RTAbstractControlUnit():AbstractControlUnit(CUType::RTCU) {
     //allocate the thread for the scheduler
     schedulerThread = new CThread(this);
     schedulerThread->setDelayBeetwenTask(1000000);

@@ -174,6 +174,13 @@ namespace chaos {
              */
             int getDeviceAttributeType(string& attributesName, DataType::DataType& type);
             
+			//! Get the type of the control unit
+			/*!
+			  Get the type of the contro unit
+			 \control_unit_type string that will be filled with the type of the control unit
+			 */
+			int getType(std::string& control_unit_type);
+			
                 //!Device initialization
             /*!
              Perform the device initialization phase

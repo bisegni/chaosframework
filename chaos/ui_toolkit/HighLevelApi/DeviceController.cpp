@@ -35,6 +35,7 @@ namespace cc_data = chaos::common::data;
 //timestamp string variable definition
 string timestampAttributeNameStr = DataPackKey::CS_CSV_TIME_STAMP;
 
+//---------------------------------------------------------------------------------------------------
 DeviceController::DeviceController(string& _deviceID):deviceID(_deviceID),datasetDB(true) {
     mdsChannel = NULL;
     deviceChannel = NULL;
@@ -43,6 +44,7 @@ DeviceController::DeviceController(string& _deviceID):deviceID(_deviceID),datase
     
 }
 
+//---------------------------------------------------------------------------------------------------
 DeviceController::~DeviceController() {
     stopTracking();
     
@@ -61,18 +63,22 @@ DeviceController::~DeviceController() {
     }
 }
 
+//---------------------------------------------------------------------------------------------------
 void DeviceController::setRequestTimeWaith(uint32_t newMillisecToWait){
     millisecToWait = newMillisecToWait;
 }
 
+//---------------------------------------------------------------------------------------------------
 uint32_t DeviceController::getRequestTimeWaith(){
     return millisecToWait;
 }
 
+//---------------------------------------------------------------------------------------------------
 void DeviceController::getDeviceId(string& dId) {
     dId.assign(deviceID);
 }
 
+//---------------------------------------------------------------------------------------------------
 void DeviceController::updateChannel() throw(CException) {
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper *devDefHandler = NULL;
@@ -109,41 +115,37 @@ void DeviceController::updateChannel() throw(CException) {
     }
 }
 
+//---------------------------------------------------------------------------------------------------
 int DeviceController::setScheduleDelay(uint64_t microseconds) {
     CHAOS_ASSERT(deviceChannel)
     return deviceChannel->setScheduleDelay(microseconds, millisecToWait);
 }
 
-
+//---------------------------------------------------------------------------------------------------
 void DeviceController::getDeviceDatasetAttributesName(vector<string>& attributesName) {
     datasetDB.getDatasetAttributesName(attributesName);
 }
 
+//---------------------------------------------------------------------------------------------------
 void DeviceController::getAttributeDescription(string& attributesName, string& attributeDescription) {
     datasetDB.getAttributeDescription(attributesName, attributeDescription);
 }
 
-/*!
- Get all attribute name
- */
+//---------------------------------------------------------------------------------------------------
 void DeviceController::getDeviceDatasetAttributesName(vector<string>& attributesName, DataType::DataSetAttributeIOAttribute directionType) {
     datasetDB.getDatasetAttributesName(directionType, attributesName);
 }
 
-/*!
- Get range valu einfo for attrbiute name
- */
+//---------------------------------------------------------------------------------------------------
 void DeviceController::getDeviceAttributeRangeValueInfo(string& attributesName, chaos::RangeValueInfo& rangeInfo) {
     datasetDB.getAttributeRangeValueInfo(attributesName, rangeInfo);
 }
-
+//---------------------------------------------------------------------------------------------------
 int DeviceController::getDeviceAttributeDirection(string& attributesName, DataType::DataSetAttributeIOAttribute& directionType) {
     return datasetDB.getAttributeDirection(attributesName, directionType);
 }
 
-/*!
- Get the direction of the attribute
- */
+//---------------------------------------------------------------------------------------------------
 int DeviceController::getDeviceAttributeType(string& attributesName, DataType::DataType& type) {
     int err = 0;
     if(attributeTypeMap.count(attributesName)){
@@ -154,6 +156,12 @@ int DeviceController::getDeviceAttributeType(string& attributesName, DataType::D
     return err;
 }
 
+//---------------------------------------------------------------------------------------------------
+int DeviceController::getType(std::string& control_unit_type) {
+	return deviceChannel->getType(control_unit_type, millisecToWait);
+}
+
+//---------------------------------------------------------------------------------------------------
 int DeviceController::initDevice() {
     CHAOS_ASSERT(mdsChannel && deviceChannel)
     int err = 0;
@@ -166,52 +174,55 @@ int DeviceController::initDevice() {
     return err;
 }
 
-
+//---------------------------------------------------------------------------------------------------
 int DeviceController::startDevice() {
     CHAOS_ASSERT(deviceChannel)
     return deviceChannel->startDevice(millisecToWait);
 }
 
+//---------------------------------------------------------------------------------------------------
 int DeviceController::stopDevice() {
     CHAOS_ASSERT(deviceChannel)
     return deviceChannel->stopDevice(millisecToWait);
 }
 
+//---------------------------------------------------------------------------------------------------
 int DeviceController::deinitDevice() {
     CHAOS_ASSERT(deviceChannel)
     return deviceChannel->deinitDevice(millisecToWait);
 }
 
-//!Get device state
-/*!
- Return the current device state
- */
+//---------------------------------------------------------------------------------------------------
 int DeviceController::getState(CUStateKey::ControlUnitState& deviceState) {
     CHAOS_ASSERT(deviceChannel)
     return deviceChannel->getState(deviceState, millisecToWait);
 }
 
-
+//---------------------------------------------------------------------------------------------------
 int DeviceController::setAttributeValue(string& attributeName, int32_t attributeValue) {
     return setAttributeValue(attributeName.c_str(), attributeValue);
 }
 
+//---------------------------------------------------------------------------------------------------
 int DeviceController::setAttributeValue(const char *attributeName, int32_t attributeValue) {
     CDataWrapper attributeValuePack;
     attributeValuePack.addInt32Value(attributeName, attributeValue);
     return deviceChannel->setAttributeValue(attributeValuePack, millisecToWait);
 }
 
+//---------------------------------------------------------------------------------------------------
 int DeviceController::setAttributeValue(string& attributeName, double attributeValue) {
     return setAttributeValue(attributeName.c_str(), attributeValue);
 }
 
+//---------------------------------------------------------------------------------------------------
 int DeviceController::setAttributeValue(const char *attributeName, double attributeValue) {
     CDataWrapper attributeValuePack;
     attributeValuePack.addDoubleValue(attributeName, attributeValue);
     return deviceChannel->setAttributeValue(attributeValuePack, millisecToWait);
 }
 
+//---------------------------------------------------------------------------------------------------
 int DeviceController::setAttributeToValue(const char *attributeName, const char *attributeValue, bool noWait) {
 	int err = ErrorCode::EC_NO_ERROR;
 	CDataWrapper attributeValuePack;
@@ -261,6 +272,7 @@ int DeviceController::setAttributeToValue(const char *attributeName, const char 
     return deviceChannel->setAttributeValue(attributeValuePack, noWait, millisecToWait);
 }
 
+//---------------------------------------------------------------------------------------------------
 int DeviceController::setAttributeToValue(const char *attributeName, void *attributeValue, bool noWait, int32_t bufferValuedDim) {
 	cc_data::RangeValueInfo range_info;
 
@@ -271,6 +283,7 @@ int DeviceController::setAttributeToValue(const char *attributeName, void *attri
 	return setAttributeToValue(attributeName, range_info.valueType, attributeValue, noWait, bufferValuedDim);
 }
 
+//---------------------------------------------------------------------------------------------------
 int DeviceController::setAttributeToValue(const char *attributeName, DataType::DataType attributeType, void *attributeValue, bool noWait, int32_t bufferValuedDim) {
     CDataWrapper attributeValuePack;
     switch (attributeType) {
@@ -313,6 +326,7 @@ int DeviceController::setAttributeToValue(const char *attributeName, DataType::D
     return deviceChannel->setAttributeValue(attributeValuePack, noWait, millisecToWait);
 }
 
+//---------------------------------------------------------------------------------------------------
 int DeviceController::submitSlowControlCommand(string commandAlias,
 											   cccs::SubmissionRuleType::SubmissionRule submissionRule,
 											   uint32_t priority,
@@ -348,6 +362,7 @@ int DeviceController::submitSlowControlCommand(string commandAlias,
     return err;
 }
 
+//---------------------------------------------------------------------------------------------------
 int DeviceController::submitSlowControlCommand(string commandAlias,
 											   cccs::SubmissionRuleType::SubmissionRule submissionRule,
 											   uint64_t& command_id,
@@ -379,6 +394,7 @@ int DeviceController::submitSlowControlCommand(string commandAlias,
     return err;
 }
 
+//---------------------------------------------------------------------------------------------------
 int DeviceController::setSlowCommandFeatures(cccs::features::Features& features, bool lock_features) {
 	CDataWrapper localCommandPack;
 	if(features.featuresFlag & cccs::features::FeaturesFlagTypes::FF_LOCK_USER_MOD) {
@@ -392,14 +408,14 @@ int DeviceController::setSlowCommandFeatures(cccs::features::Features& features,
 	return deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES, &localCommandPack, NULL, millisecToWait);
 }
 
-//! Set the lock on slow command features
+//---------------------------------------------------------------------------------------------------
 int DeviceController::setSlowCommandLockOnFeatures(bool lock_features) {
 	CDataWrapper localCommandPack;
 	localCommandPack.addBoolValue(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL, lock_features);
 	return deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES, &localCommandPack, NULL, millisecToWait);
 }
 
-//! Get the statistick for a command
+//---------------------------------------------------------------------------------------------------
 int DeviceController::getCommandState(cccs::CommandState& command_state) {
 	CDataWrapper localCommandPack;
 	CDataWrapper *resultData = NULL;
@@ -423,24 +439,27 @@ int DeviceController::getCommandState(cccs::CommandState& command_state) {
 	return err;
 }
 
-//! Kill the current executing command
+//---------------------------------------------------------------------------------------------------
 int DeviceController::killCurrentCommand() {
 	return deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_KILL_CURRENT_COMMAND, NULL, NULL, millisecToWait);
 }
 
-//! Flush command states history
+//---------------------------------------------------------------------------------------------------
 int DeviceController::flushCommandStateHistory() {
 	return deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_FLUSH_COMMAND_HISTORY, NULL, NULL, millisecToWait);
 }
 
+//---------------------------------------------------------------------------------------------------
 int DeviceController::setAttributeValue(string& attributeName, string& attributeValue) {
     return setAttributeValue(attributeName, attributeValue.c_str(),(uint32_t)attributeValue.size());
 }
 
+//---------------------------------------------------------------------------------------------------
 int DeviceController::setAttributeValue(string& attributeName, const char* attributeValue) {
     return setAttributeValue(attributeName, attributeValue,(uint32_t)strlen(attributeValue));
 }
 
+//---------------------------------------------------------------------------------------------------
 int DeviceController::setAttributeValue(string& attributeName, const char* attributeValue, uint32_t size) {
     CDataWrapper attributeValuePack;
     const char *attrname=attributeName.c_str();
@@ -477,10 +496,7 @@ int DeviceController::setAttributeValue(string& attributeName, const char* attri
     return ErrorCode::EC_ATTRIBUTE_TYPE_NOT_SUPPORTED;
 }
 
-/*!
- Initialize the map for the devices
- \param initiDevicedescription the reference to CDataWrapper that contain device initialization information
- */
+//---------------------------------------------------------------------------------------------------
 void DeviceController::initializeAttributeIndexMap() {
     boost::recursive_mutex::scoped_lock lock(trackMutext);
     vector<string> attributeNames;
@@ -513,10 +529,7 @@ void DeviceController::initializeAttributeIndexMap() {
     
 }
 
-//! allocata new circular buffer for attribute and type
-/*
- 
- */
+//---------------------------------------------------------------------------------------------------
 void DeviceController::allocateNewLiveBufferForAttributeAndType(string& attributeName, DataType::DataSetAttributeIOAttribute attributeDirection, DataType::DataType attrbiuteType) {
     boost::recursive_mutex::scoped_lock  lock(trackMutext);
     if(attributeDirection == DataType::Output ||
@@ -554,7 +567,7 @@ void DeviceController::allocateNewLiveBufferForAttributeAndType(string& attribut
     
 }
 
-
+//---------------------------------------------------------------------------------------------------
 chaos::DataBuffer *DeviceController::getBufferForAttribute(string& attributeName) {
     boost::recursive_mutex::scoped_lock lock(trackMutext);
     chaos::DataBuffer * result = NULL;
@@ -577,6 +590,7 @@ chaos::DataBuffer *DeviceController::getBufferForAttribute(string& attributeName
     return result;
 }
 
+//---------------------------------------------------------------------------------------------------
 chaos::PointerBuffer *DeviceController::getPtrBufferForAttribute(string& attributeName) {
     boost::recursive_mutex::scoped_lock lock(trackMutext);
     chaos::PointerBuffer * result = NULL;
@@ -591,14 +605,12 @@ chaos::PointerBuffer *DeviceController::getPtrBufferForAttribute(string& attribu
     return result;
 }
 
+//---------------------------------------------------------------------------------------------------
 chaos::DataBuffer *DeviceController::getPtrBufferForTimestamp(const int initialDimension) {
     return int64AttributeLiveBuffer.count(timestampAttributeNameStr)>0? int64AttributeLiveBuffer[timestampAttributeNameStr]:NULL;
 }
 
-//!DeInitialize the map for the devices
-/*!
- Dispose all memory used for live data buffer
- */
+//---------------------------------------------------------------------------------------------------
 void DeviceController::deinitializeAttributeIndexMap() {
     //boost::recursive_mutex::scoped_lock lock(trackMutext);
     //dispose circula buffer
@@ -630,10 +642,8 @@ void DeviceController::deinitializeAttributeIndexMap() {
     }
     pointerAttributeLiveBuffer.clear();
 }
-//add attrbiute to track
-/*!
- Add attribute to tracking
- */
+
+//---------------------------------------------------------------------------------------------------
 void DeviceController::addAttributeToTrack(string& attrbiuteName) {
     boost::recursive_mutex::scoped_lock lock(trackMutext);
     
@@ -647,14 +657,12 @@ void DeviceController::addAttributeToTrack(string& attrbiuteName) {
     allocateNewLiveBufferForAttributeAndType(attrbiuteName, attributeDirectionMap[attrbiuteName], attributeTypeMap[attrbiuteName]);
 }
 
-//get the CDatawrapper for the live value
-/*!
- the returned object is not own by requester but only by DeviceController isntance
- */
+//---------------------------------------------------------------------------------------------------
 CDataWrapper * DeviceController::getLiveCDataWrapperPtr() {
     return currentLiveValue.get();
 }
 
+//---------------------------------------------------------------------------------------------------
 void DeviceController::setupTracking() {
     boost::recursive_mutex::scoped_lock lock(trackMutext);
     
@@ -666,11 +674,13 @@ void DeviceController::setupTracking() {
     int64AttributeLiveBuffer.insert(make_pair(timestampAttributeNameStr, newBuffer));
 }
 
+//---------------------------------------------------------------------------------------------------
 void DeviceController::stopTracking() {
     boost::recursive_mutex::scoped_lock lock(trackMutext);
     deinitializeAttributeIndexMap();
 }
 
+//---------------------------------------------------------------------------------------------------
 void DeviceController::fetchCurrentDeviceValue() {
     boost::recursive_mutex::scoped_lock lock(trackMutext);
     

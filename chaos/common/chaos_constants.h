@@ -94,6 +94,11 @@ namespace chaos {
         static const char * const CS_CM_CU_CLASS                                = "cs|cm|cu_class";
         //!key representing the type of parameter
         static const char * const CS_CM_CU_UUID                                 = "cs|cm|cu_uuid";
+		//!key representing the type of control unit
+		/*!
+		 \ingroup CUStateKey
+		 */
+        static const char * const CS_CM_CU_TYPE									= "cs|cm|cu_type";
         
     }
     /** @} */ // end of CUDefinitionKey
@@ -144,7 +149,17 @@ namespace chaos {
     }
     /** @} */ // end of CUStateKey
     
-    
+	/** @defgroup CUType Control Unit Default Type
+     *  This is the collection of the key for the classification of the control unit types
+     *  @{
+     */
+    //! Name space for grupping control unit types
+	namespace CUType {
+		static const char * const RTCU	= "rtcu";
+		static const char * const SCCU  = "sccu";
+	}
+    /** @} */ // end of CUType
+	
     /** @defgroup DatasetDefinitionkey Dataset definition key
      *  This is the collection of the key for the device dataset
      *  @{
@@ -409,6 +424,8 @@ namespace chaos {
         static const char * const ACTION_DEVICE_STOP        = "stopDevice";
         //! return the state of the device
         static const char * const ACTION_DEVICE_GET_STATE   = "getState";
+		//! return the control unit information
+        static const char * const ACTION_CU_GET_INFO		= "getInfo";
     }
     /** @} */ // end of ChaosSystemDomainAndActionLabel
     

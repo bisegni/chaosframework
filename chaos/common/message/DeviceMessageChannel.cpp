@@ -37,21 +37,18 @@ e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_COD
 }
 /*! \} */
 
-    //! base constructor
-/*!
- The constructor create a channel for comunicate with the device that is contained in a Contro Unit, so the full network address is
- ip:port:cu_node_address(instance):deviceID
- */
+//------------------------------------
 DeviceMessageChannel::DeviceMessageChannel(NetworkBroker *msgBroker, CDeviceNetworkAddress *_deviceNetworkAddress) : NodeMessageChannel(msgBroker, _deviceNetworkAddress){
         //take the reference for avoid continue cast fro CNetwork and CDevice
     deviceNetworkAddress = _deviceNetworkAddress;
 }
+//------------------------------------
 
 void DeviceMessageChannel::setNewAddress(CDeviceNetworkAddress *_deviceAddress) {
     NodeMessageChannel::setNewAddress(_deviceAddress);
     deviceNetworkAddress = _deviceAddress;
 }
-    //------------------------------------
+//------------------------------------
 int DeviceMessageChannel::initDevice(CDataWrapper *initData, uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     CHAOS_ASSERT(initData)
@@ -60,7 +57,7 @@ int DeviceMessageChannel::initDevice(CDataWrapper *initData, uint32_t millisecTo
     return err;
 }
 
-    //------------------------------------
+//------------------------------------
 int DeviceMessageChannel::deinitDevice(uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper deinitDeviceData;
@@ -70,7 +67,7 @@ int DeviceMessageChannel::deinitDevice(uint32_t millisecToWait) {
     return err;
 }
 
-    //------------------------------------
+//------------------------------------
 int DeviceMessageChannel::startDevice(uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper startDeviceParam;
@@ -80,7 +77,7 @@ int DeviceMessageChannel::startDevice(uint32_t millisecToWait) {
     return err;
 }
 
-    //------------------------------------
+//------------------------------------
 int DeviceMessageChannel::stopDevice(uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper stopDeviceData;
@@ -90,11 +87,21 @@ int DeviceMessageChannel::stopDevice(uint32_t millisecToWait) {
     return err;
 }
 
-    //! Get device state
-/*!
- Get the current state of the hardware
- \millisecToWait the number of millisecond for waith the answer
- */
+//------------------------------------
+int DeviceMessageChannel::getType(std::string& control_unit_type, uint32_t millisecToWait) {
+	int err = ErrorCode::EC_NO_ERROR;
+    auto_ptr<CDataWrapper> info_result(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::ACTION_CU_GET_INFO, NULL, millisecToWait));
+    CHECK_TIMEOUT_AND_RESULT_CODE(info_result, err)
+	if(err == ErrorCode::EC_NO_ERROR) {
+        auto_ptr<CDataWrapper> info_pack(info_result->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
+        if(info_pack.get() && info_pack->hasKey(CUDefinitionKey::CS_CM_CU_TYPE)){
+            control_unit_type = info_pack->getStringValue(CUDefinitionKey::CS_CM_CU_TYPE);
+        }
+    }
+    return err;
+}
+
+//------------------------------------
 int DeviceMessageChannel::getState(CUStateKey::ControlUnitState& deviceState, uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper deviceStateData;
@@ -110,7 +117,7 @@ int DeviceMessageChannel::getState(CUStateKey::ControlUnitState& deviceState, ui
     return err;
 }
 
-    //------------------------------------
+//------------------------------------
 int DeviceMessageChannel::setAttributeValue(CDataWrapper& attributesValues, bool noWait, uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
         //create the pack
@@ -139,16 +146,12 @@ int DeviceMessageChannel::setScheduleDelay(uint64_t scheduledDealy, uint32_t mil
 
 }
 
-/*! 
- \brief send a message to a custom action
- */
+//------------------------------------
 void DeviceMessageChannel::sendCustomMessage(const char * const actAlias, CDataWrapper* const requestData) {
     MessageChannel::sendMessage(deviceNetworkAddress->nodeID.c_str(), actAlias, requestData);
 }
 
-/*! 
- \brief send a request to a custom action
- */
+//------------------------------------
 int DeviceMessageChannel::sendCustomRequest(const char * const actAlias, CDataWrapper* const requestData, CDataWrapper**const resultData, uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), actAlias, requestData, millisecToWait));

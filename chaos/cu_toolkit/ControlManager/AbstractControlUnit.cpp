@@ -45,7 +45,9 @@ using namespace chaos::cu::driver_manager::driver;
 #define LCU_ LAPP_ << "[Control Unit:"<<getCUInstance()<<"] - "
 
 
-AbstractControlUnit::AbstractControlUnit():DatasetDB(false), cuInstance(UUIDUtil::generateUUIDLite()) {
+AbstractControlUnit::AbstractControlUnit(std::string _control_unit_type):DatasetDB(false),
+																		cuInstance(UUIDUtil::generateUUIDLite()),
+																		control_unit_type(_control_unit_type) {
 }
 
 /*!
@@ -102,36 +104,41 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::updateConfiguration,
                                                      "updateConfiguration",
-                                                     "Update Configuration");
+                                                     "Update control unit configuration");
     
     LCU_ << "Register initDevice action";
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::_init,
                                                      ChaosSystemDomainAndActionLabel::ACTION_DEVICE_INIT,
-                                                     "Perform the device initialization");
+                                                     "Perform the control unit initialization");
     
     LCU_ << "Register deinitDevice action";
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::_deinit,
                                                      ChaosSystemDomainAndActionLabel::ACTION_DEVICE_DEINIT,
-                                                     "Perform the device deinitialization");
+                                                     "Perform the control unit deinitialization");
     LCU_ << "Register startDevice action";
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::_start,
                                                      ChaosSystemDomainAndActionLabel::ACTION_DEVICE_START,
-                                                     "Sart the device scheduling");
+                                                     "Sart the control unit scheduling");
     
     LCU_ << "Register stopDevice action";
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::_stop,
                                                      ChaosSystemDomainAndActionLabel::ACTION_DEVICE_STOP,
-                                                     "Stop the device scheduling");
+                                                     "Stop the control unit scheduling");
     LCU_ << "Register getState action";
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::_getState,
                                                      ChaosSystemDomainAndActionLabel::ACTION_DEVICE_GET_STATE,
-                                                     "Get the state of the device");
-    
+                                                     "Get the state of the running control unit");
+	LCU_ << "Register getInfo action";
+    addActionDescritionInstance<AbstractControlUnit>(this,
+                                                     &AbstractControlUnit::_getInfo,
+                                                     ChaosSystemDomainAndActionLabel::ACTION_CU_GET_INFO,
+                                                     "Get the information about running control unit");
+
     LCU_ << "Get Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
     //grab dataset description
     DatasetDB::fillDataWrapperWithDataSetDescription(setupConfiguration);
@@ -368,12 +375,23 @@ void AbstractControlUnit::deinit() throw(CException) {
  */
 CDataWrapper* AbstractControlUnit::_getState(CDataWrapper* getStatedParam, bool& detachParam) throw(CException) {
     if(!getStatedParam->hasKey(DatasetDefinitionkey::DEVICE_ID)){
-        throw CException(-1, "Get State Pack without DeviceID", "AbstractControlUnit::getState");
+        throw CException(-1, "Get State Pack without DeviceID", "AbstractControlUnit::_getState");
     }
     CDataWrapper *stateResult = new CDataWrapper();
     string deviceID = getStatedParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
     
     stateResult->addInt32Value(CUStateKey::CONTROL_UNIT_STATE, static_cast<CUStateKey::ControlUnitState>(utility::StartableService::getServiceState()));
+    return stateResult;
+}
+
+/*
+ Get the current control unit state
+ */
+CDataWrapper* AbstractControlUnit::_getInfo(CDataWrapper* getStatedParam, bool& detachParam) throw(CException) {
+    CDataWrapper *stateResult = new CDataWrapper();
+    string deviceID = getStatedParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
+    //set the string representing the type of the control unit
+    stateResult->addStringValue(CUDefinitionKey::CS_CM_CU_TYPE, control_unit_type);
     return stateResult;
 }
 

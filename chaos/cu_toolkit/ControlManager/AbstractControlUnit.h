@@ -79,6 +79,8 @@ namespace chaos{
             friend class SCAbstractControlUnit;
 			friend class RTAbstractControlUnit;
             
+			std::string control_unit_type;
+			
 			//! list of the accessor of the driver requested by the unit implementation
 			std::vector< cu_driver::DriverAccessor *> accessorInstances;
 			
@@ -163,6 +165,13 @@ namespace chaos{
              */
             chaos_data::CDataWrapper* _getState(chaos_data::CDataWrapper*, bool& detachParam) throw(CException);
 
+			//! Return the information about the type of the current instace of control unit
+            /*!
+			 Return unit fitted into cdata wrapper:
+				CU type: string type associated with the key @CUDefinitionKey::CS_CM_CU_TYPE
+             */
+            chaos_data::CDataWrapper* _getInfo(chaos_data::CDataWrapper*, bool& detachParam) throw(CException);
+			
                 //! Abstract Method that need to be used by the sublcass to define the dataset
             /*!
                 Subclass, in this method can call the api to create the dataset, after this method
@@ -231,7 +240,10 @@ namespace chaos{
         public:
             
             //! Default Contructor
-            AbstractControlUnit();
+			/*!
+			 \param _control_unit_type the superclass need to set the control unit type for his implementation
+			 */
+            AbstractControlUnit(std::string _control_unit_type);
             
             //! default destructor
             virtual ~AbstractControlUnit();

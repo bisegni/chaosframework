@@ -31,7 +31,7 @@ using namespace chaos::cu::control_manager::slow_command;
 
 #define LCCU_ LAPP_ << "[Slow Command Control Unit:" << getCUInstance() <<"] - "
 
-SCAbstractControlUnit::SCAbstractControlUnit() {
+SCAbstractControlUnit::SCAbstractControlUnit():AbstractControlUnit(CUType::SCCU) {
     slowCommandExecutor = new SlowCommandExecutor(cuInstance, this);
 
 }

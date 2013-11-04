@@ -71,6 +71,12 @@ namespace chaos {
          \millisecToWait the number of millisecond for waith the answer
          */
         int stopDevice(uint32_t millisecToWait = 0);
+		//! get type fo the control unit
+        /*!
+         Perform request for get the information of the control unit
+         \millisecToWait the number of millisecond for waith the answer
+         */
+        int getType(std::string& control_unit_type, uint32_t millisecToWait = 0);
             //! Get device state
         /*!
          Get the current state of the hardware
