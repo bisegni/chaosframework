@@ -311,6 +311,7 @@
 		32B89C9E15F39DB500B17AAA /* ActionExecutionSafetySystem.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B89C9C15F39DB500B17AAA /* ActionExecutionSafetySystem.h */; };
 		32B89CA115F3D1E100B17AAA /* InstrumentEventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B89C9F15F3D1E100B17AAA /* InstrumentEventChannel.cpp */; };
 		32B89CA215F3D1E100B17AAA /* InstrumentEventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B89CA015F3D1E100B17AAA /* InstrumentEventChannel.h */; };
+		32B8C1A018292E51001CF714 /* DriverErogatorInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B8C19F18292E51001CF714 /* DriverErogatorInterface.h */; };
 		32BE864715A0CEAF00818C39 /* LogManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BE864515A0CEAF00818C39 /* LogManager.cpp */; };
 		32BE864815A0CEAF00818C39 /* LogManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32BE864615A0CEAF00818C39 /* LogManager.h */; };
 		32BF74AD167CEB57007F8A57 /* EntityDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32BF74AB167CEB57007F8A57 /* EntityDB.cpp */; };
@@ -700,6 +701,7 @@
 		32B89C9C15F39DB500B17AAA /* ActionExecutionSafetySystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ActionExecutionSafetySystem.h; sourceTree = "<group>"; };
 		32B89C9F15F3D1E100B17AAA /* InstrumentEventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InstrumentEventChannel.cpp; sourceTree = "<group>"; };
 		32B89CA015F3D1E100B17AAA /* InstrumentEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InstrumentEventChannel.h; sourceTree = "<group>"; };
+		32B8C19F18292E51001CF714 /* DriverErogatorInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DriverErogatorInterface.h; sourceTree = "<group>"; };
 		32BE864515A0CEAF00818C39 /* LogManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LogManager.cpp; sourceTree = "<group>"; };
 		32BE864615A0CEAF00818C39 /* LogManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LogManager.h; sourceTree = "<group>"; };
 		32BF74AB167CEB57007F8A57 /* EntityDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityDB.cpp; sourceTree = "<group>"; };
@@ -1522,6 +1524,7 @@
 				328CC9D31763CC50000B30B6 /* driver */,
 				326D3A5F17B0CD01004601A8 /* DriverManager.cpp */,
 				326D3A6017B0CD01004601A8 /* DriverManager.h */,
+				32B8C19F18292E51001CF714 /* DriverErogatorInterface.h */,
 			);
 			path = driver_manager;
 			sourceTree = "<group>";
@@ -1800,6 +1803,7 @@
 				325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */,
 				32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */,
 				32BFF913176C862A00D27A04 /* StartableService.h in Headers */,
+				32B8C1A018292E51001CF714 /* DriverErogatorInterface.h in Headers */,
 				320192BA14DEEAC000318F00 /* CObjectHandlerProcessingQueue.h in Headers */,
 				3230BEC3181A6ADB00EA5793 /* DatasetDB.h in Headers */,
 				32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */,

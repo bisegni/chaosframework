@@ -33,7 +33,7 @@ using namespace chaos::cu::control_manager::slow_command;
 
 SCAbstractControlUnit::SCAbstractControlUnit():AbstractControlUnit(CUType::SCCU) {
     slowCommandExecutor = new SlowCommandExecutor(cuInstance, this);
-
+	slowCommandExecutor->driverAccessorsErogator = this;
 }
 
 SCAbstractControlUnit::~SCAbstractControlUnit() {

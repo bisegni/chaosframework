@@ -40,8 +40,7 @@
 #include <chaos/common/data/DatasetDB.h>
 
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
-#include <chaos/cu_toolkit/driver_manager/driver/DriverTypes.h>
-#include <chaos/cu_toolkit/driver_manager/driver/DriverAccessor.h>
+#include <chaos/cu_toolkit/driver_manager/DriverErogatorInterface.h>
 
 #define CU_IDENTIFIER_C_STREAM "_" << getCUInstance()
 #define INIT_STATE      0
@@ -71,7 +70,7 @@ namespace chaos{
             class that permit to publish rpc method for control the control unit life cycle. Most of the API
             that needs to be used to create device and his dataset are contained into the DeviceSchemaDB class.
          */
-        class AbstractControlUnit : public DeclareAction, protected chaos_data::DatasetDB, public utility::StartableService {
+        class AbstractControlUnit : public chaos::cu::driver_manager::DriverErogatorInterface, public DeclareAction, protected chaos_data::DatasetDB, public utility::StartableService {
             
             //frinedly class declaration
             friend class ControlManager;

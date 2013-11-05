@@ -22,7 +22,6 @@
 #define __CHAOSFramework__SlowCommand__
 
 #include <bitset>
-#include <map>
 #include <vector>
 #include <string>
 #include <stdint.h>
@@ -33,6 +32,7 @@
 #include <chaos/common/data/DatasetDB.h>
 
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
+#include <chaos/cu_toolkit/driver_manager/DriverErogatorInterface.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/AttributeSetting.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandTypes.h>
 
@@ -120,15 +120,10 @@ namespace chaos{
                     //! shared setting across all slow command
                     IOCAttributeShareCache *sharedAttributeSettingPtr;
                     
-                    //! Map that assocaite the alias to the driver accessor
-                    /*!
-                     The map is only a pointer becaouse someone else need to set it.
-                     The subclass can access it for get the accessor.
-                     */
-                    std::map<std::string, dm::driver::DriverAccessor*> *driversAccessorMap;
-                    
                 protected:
-                    
+					//! The erogator of the driver requested by the control unit
+					chaos::cu::driver_manager::DriverErogatorInterface *driverAccessorsErogator;
+					
                     //Shared sandbox stat
                     const SandboxStat *shared_stat;
 

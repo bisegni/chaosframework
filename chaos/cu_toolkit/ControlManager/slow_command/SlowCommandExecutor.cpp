@@ -507,6 +507,8 @@ SlowCommand *SlowCommandExecutor::instanceCommandInfo(std::string& commandAlias)
     SlowCommand *result = NULL;
     if(mapCommandInstancer.count(commandAlias)) {
         result = mapCommandInstancer[commandAlias]->getInstance();
+		//forward the pointer of the driver accessor
+		result->driverAccessorsErogator = driverAccessorsErogator;
     } else {
         DEBUG_CODE(SCELDBG_ << "No command found for alias " << commandAlias;)
     }

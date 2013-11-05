@@ -37,7 +37,7 @@
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
 
-
+#include <chaos/cu_toolkit/driver_manager/DriverErogatorInterface.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandSandbox.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandSandboxEventHandler.h>
 
@@ -127,6 +127,9 @@ namespace chaos {
                     //! this map correlate the alias to the object instancer
                     std::map<string, chaos::common::utility::ObjectInstancer<SlowCommand>* > mapCommandInstancer;
                     
+					//! The driver erogator
+					chaos::cu::driver_manager::DriverErogatorInterface *driverAccessorsErogator;
+					
                     //! Check the incoming command rule
                     /*!
                       In case there is a command in the top of the commandSubmittedQueue this method
