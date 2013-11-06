@@ -167,23 +167,23 @@ void SlowCommandExecutor::initAttributeOnSahredVariableDomain(IOCAttributeShareC
         switch (attributeInfo.valueType) {
             case DataType::TYPE_BOOLEAN : {
                 bool val = boost::lexical_cast<bool>(attributeInfo.defaultValue);
-                attribute_setting.setValueForAttribute(idx, &val, sizeof(bool));
+                attribute_setting.setDefaultValueForAttribute(idx, &val, sizeof(bool));
                 break;}
             case DataType::TYPE_DOUBLE : {
                 double val = boost::lexical_cast<double>(attributeInfo.defaultValue);
-                attribute_setting.setValueForAttribute(idx, &val, sizeof(double));
+                attribute_setting.setDefaultValueForAttribute(idx, &val, sizeof(double));
                 break;}
             case DataType::TYPE_INT32 : {
                 int32_t val = boost::lexical_cast<int32_t>(attributeInfo.defaultValue);
-                attribute_setting.setValueForAttribute(idx, &val, sizeof(int32_t));
+                attribute_setting.setDefaultValueForAttribute(idx, &val, sizeof(int32_t));
                 break;}
             case DataType::TYPE_INT64 : {
                 int64_t val = boost::lexical_cast<int64_t>(attributeInfo.defaultValue);
-                attribute_setting.setValueForAttribute(idx, &val, sizeof(int64_t));
+                attribute_setting.setDefaultValueForAttribute(idx, &val, sizeof(int64_t));
                 break;}
             case DataType::TYPE_STRING : {
                 const char * val = attributeInfo.defaultValue.c_str();
-                attribute_setting.setValueForAttribute(idx, val, (uint32_t)attributeInfo.defaultValue.size());
+                attribute_setting.setDefaultValueForAttribute(idx, val, (uint32_t)attributeInfo.defaultValue.size());
                 break;}
             default:
                 break;

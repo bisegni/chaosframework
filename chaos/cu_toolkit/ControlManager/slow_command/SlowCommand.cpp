@@ -30,8 +30,11 @@ SlowCommand::SlowCommand() {
 	//setup feautere fields
 	std::memset(&commandFeatures, 0,sizeof(features::Features));
 	commandFeatures.featuresFlag = 0;
-	//commandFeatures.lockedOnUserModification = false;
 	
+	//reset the timing flags
+	std::memset(&timing_stats,0,sizeof(CommandTimingStats));
+	
+	//set default value for running property and submission flag
     runningProperty = RunningStateType::RS_Exsc;
     submissionRule = SubmissionRuleType::SUBMIT_NORMAL;
 }
@@ -106,3 +109,38 @@ void SlowCommand::acquireHandler() {}
  Performe correlation and send command to the driver
  */
 void SlowCommand::ccHandler() {}
+
+//timeout handler
+bool SlowCommand::timeoutHandler() {return true;}
+
+//! called befor the command start the execution
+void SlowCommand::command_start() {
+	timing_stats.command_start_time_usec = shared_stat->lastCmdStepStart;
+}
+
+#define SET_FAULT(c, m, d) \
+SL_FAULT_RUNNIG_STATE \
+faultDescription.code = c; \
+faultDescription.description = m; \
+faultDescription.domain = d;
+//! called after the command step excecution
+void SlowCommand::command_post_step() {
+	if(commandFeatures.featuresFlag & features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT) {
+		timing_stats.command_running_time_usec += shared_stat->lastCmdStepTime;
+		//check timeout
+		if(timing_stats.command_running_time_usec  > commandFeatures.featureCommandTimeout) {
+			//call the timeout handler
+			try {
+				if(timeoutHandler()) {
+					SET_FAULT(-1, "Command timeout", __FUNCTION__)
+				}
+			} catch(chaos::CException& ex) {
+				SET_FAULT(ex.errorCode, ex.errorMessage, ex.errorDomain)
+			} catch(std::exception& ex) {
+				SET_FAULT(-2, ex.what(), "Acquisition Handler");
+			} catch(...) {
+				SET_FAULT(-3, "Unmanaged exception", "Acquisition Handler");
+			}
+		}
+	}
+}

@@ -55,19 +55,30 @@ namespace chaos{
                 
                 //forward declaration
                 class SlowCommandExecutor;
-                
+               
+				//!help macro for set the sate
 #define SL_EXEC_RUNNIG_STATE    setRunningProperty(chaos::cu::control_manager::slow_command::RunningStateType::RS_Exsc);
 #define SL_STACK_RUNNIG_STATE   setRunningProperty(chaos::cu::control_manager::slow_command::RunningStateType::RS_Stack);
 #define SL_KILL_RUNNIG_STATE    setRunningProperty(chaos::cu::control_manager::slow_command::RunningStateType::RS_Kill);
 #define SL_END_RUNNIG_STATE     setRunningProperty(chaos::cu::control_manager::slow_command::RunningStateType::RS_End);
 #define SL_FAULT_RUNNIG_STATE   setRunningProperty(chaos::cu::control_manager::slow_command::RunningStateType::RS_Fault);
                 
+				//help madro to get the state
 #define SL_CHECK_EXEC_RUNNIG_STATE  (getRunningProperty() & chaos::cu::control_manager::slow_command::RunningStateType::RS_Exsc)
 #define SL_CHECK_STACK_RUNNIG_STATE (getRunningProperty() & chaos::cu::control_manager::slow_command::RunningStateType::RS_Stack)
 #define SL_CHECK_KILL_RUNNIG_STATE  (getRunningProperty() & chaos::cu::control_manager::slow_command::RunningStateType::RS_Kill)
 #define SL_CHECK_END_RUNNIG_STATE   (getRunningProperty() & chaos::cu::control_manager::slow_command::RunningStateType::RS_End)
 #define SL_CHECK_FAULT_RUNNIG_STATE (getRunningProperty() & chaos::cu::control_manager::slow_command::RunningStateType::RS_Fault)
                 
+				//! Collect the command timing stats
+				typedef struct CommandTimingStats {
+					//! command start microsecond (sandbox time)
+					uint64_t command_start_time_usec;
+					
+					//! command running time sisnce it's started
+					uint64_t command_running_time_usec;
+				} CommandTimingStats;
+				
                 //! Base cass for the slow command implementation
                 /*!
                  The slow command implementation in !CHAOS permit the definition of the three foundamental phase in "control" as seen by !CHAOS logic:
@@ -81,7 +92,11 @@ namespace chaos{
                     friend struct AcquireFunctor;
                     friend struct CorrelationFunctor;
 					
+					//!unique command id
 					uint64_t unique_id;
+					
+					//!command timing stat
+					CommandTimingStats timing_stats;
 					
 					//! Locking flag
 					/*!
@@ -133,7 +148,15 @@ namespace chaos{
                     
                     //! default destructor
                     virtual ~SlowCommand();
-                    
+ 					//! called befor the command start the execution
+					void command_start();
+					
+					
+					//void command_pre_step();
+					
+					//! called after the command step excecution
+					void command_post_step();
+					
                     //! set the features with the uint32 value
                     /*!
                      Feature rappresented by an uint32 can be setupped with this api. The value can be 
@@ -154,11 +177,39 @@ namespace chaos{
 								commandFeatures.featureSubmissionRetryDelay = features_value;
 								break;
 								
+							case features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT:
+								commandFeatures.featureCommandTimeout = features_value;
 							default:
 								break;
 						}
 					}
                     
+					//! clear the features
+                    /*!
+                     Turn off the features
+					 \param features is the features that need to be cleared
+                     */
+					inline void clearFeatures(features::FeaturesFlagTypes::FeatureFlag features) {
+						//check if the features are locked for the user modifications
+						if(lockFeaturePropertyFlag.test(0)) return;
+						
+						commandFeatures.featuresFlag ^= features;
+						switch (features) {
+							case features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY:
+								commandFeatures.featureSchedulerStepsDelay = 0;
+								break;
+								
+							case features::FeaturesFlagTypes::FF_SET_SUBMISSION_RETRY:
+								commandFeatures.featureSubmissionRetryDelay = 0;
+								break;
+								
+							case features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT:
+								commandFeatures.featureCommandTimeout = 0;
+							default:
+								break;
+						}
+					}
+					
 					//! set the running property
 					inline void setRunningProperty(uint8_t property)  {
 						if(lockFeaturePropertyFlag.test(1)) return;
@@ -236,7 +287,13 @@ namespace chaos{
                      \return the mask for the runnign state
                      */
                     virtual void ccHandler();
-                    
+					
+					//! Handle the timeout
+                    /*!
+                     Permit to the command implementation to handle the timeout, timeout continue to be called untile command quit after timeout is reached
+					 \return true if a fault error, for the timeout, need to be set.
+                     */
+                    virtual bool timeoutHandler();
                 public:
 
                 };

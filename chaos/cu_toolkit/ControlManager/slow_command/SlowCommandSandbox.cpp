@@ -343,12 +343,16 @@ void SlowCommandSandbox::runCommand() {
     boost::mutex::scoped_lock lockForCurrentCommand(mutextAccessCurrentCommand);
     do{
         stat.lastCmdStepStart = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count();
+		
         // call the acquire phase
         acquireHandlerFunctor();
         
         //call the correlation and commit phase();
         correlationHandlerFunctor();
-        
+      
+		//fire post command step
+		if(currentExecutingCommand) currentExecutingCommand->command_post_step();
+
         curCmdRunningState = currentExecutingCommand?currentExecutingCommand->runningProperty:RunningStateType::RS_End;
         if(!scheduleWorkFlag && curCmdRunningState) {
             DEBUG_CODE(SCSLDBG_ << "The command is not int the state of exec and thread need to be stopped";)
@@ -420,6 +424,9 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
 		
 		//fire the running event
 		if(event_handler)event_handler->handleEvent(currentExecutingCommand->unique_id, SlowCommandEventType::EVT_RUNNING, NULL);
+		
+		//exec the signal start in command
+		cmdImpl->command_start();
     } else {
         currentExecutingCommand = NULL;
         acquireHandlerFunctor.cmdInstance = NULL;
