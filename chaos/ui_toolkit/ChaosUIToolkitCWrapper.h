@@ -38,7 +38,15 @@
 #define CHAOSFramework_UIToolkitCWrapper_h
 
 #include <stdint.h>
+#ifdef LABVIEW
+// labview unable to parse stdint
+typedef unsigned long uint32_t;
+typedef int int32_t;
 
+typedef unsigned short uint16_t;
+typedef short int16_t;
+typedef unsigned long long uint64_t;
+#endif
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -139,6 +147,16 @@ extern "C" {
      */
     int getStrValueForAttribute(uint32_t devID, const char * const dsAttrName, char ** dsAttrValueHandle);
     
+ /*!
+     Return the stirng representation of an attribute value. The current attribute value is keept from the
+     device control interna cache, that is filled with \link fetchLiveData \endlink 
+     \param devID is the identification number got from \link getNewControllerForDeviceID \endlink function
+     \param dsAttrName the name of the attribute
+     \param dsAttrValue a pointer to preallocated c string that will contain the attribute value
+     \return the error of operation, if all goes well the result is 0
+     */
+    int getStrValueForAttr(uint32_t devID, const char * const dsAttrName, char * dsAttrValue);
+   
         //! Set the value for an attribute
     /*!
      Set an attribute value using  a string reprpesentation for the new value to use.
