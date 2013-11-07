@@ -112,6 +112,8 @@ void SlowCommandExecutor::setSharedCustomDataPtr(void *customDataPtr) {
 void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
     std::vector<string> attribute_names;
     
+	command_sequence_id = 0;
+	
     utility::StartableService::init(initData);
     
     performQueueCheck = true;
@@ -521,8 +523,10 @@ bool SlowCommandExecutor::submitCommand(CDataWrapper *commandDescription, uint64
     boost::mutex::scoped_lock lock(mutextQueueManagment);
     if(serviceState != ::chaos::utility::service_state_machine::StartableServiceType::SS_STARTED) return false;
     uint32_t priority = commandDescription->hasKey(SlowCommandSubmissionKey::SUBMISSION_PRIORITY_UI32) ? commandDescription->getUInt32Value(SlowCommandSubmissionKey::SUBMISSION_PRIORITY_UI32):50;
-    //DEBUG_CODE(SCELDBG_ << "Submit new command " << commandDescription->getJSONString();)
-    DEBUG_CODE(SCELDBG_ << commandDescription->getStringValue(SlowCommandSubmissionKey::COMMAND_ALIAS_STR);)
+    
+	DEBUG_CODE(SCELDBG_ << "Submit new command " << commandDescription->getJSONString();)
+    
+	DEBUG_CODE(SCELDBG_ << commandDescription->getStringValue(SlowCommandSubmissionKey::COMMAND_ALIAS_STR);)
 	
 	//add unique id for command
 	command_id = ++command_sequence_id;
