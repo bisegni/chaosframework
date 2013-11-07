@@ -16,7 +16,7 @@ INCLUDE_DIRECTORIES(. ${PROJECT_SOURCE_DIR}/../../usr/local/include /usr/local/i
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../usr/local/lib /usr/local/lib)
 
 ADD_EXECUTABLE(MemcachedEmbeddedTest ${memcache_test})
-TARGET_LINK_LIBRARIES(MemcachedEmbeddedTest chaos_common boost_program_options boost_system boost_thread boost_atomic boost_timer) 
+TARGET_LINK_LIBRARIES(MemcachedEmbeddedTest chaos_common boost_program_options boost_system boost_thread boost_atomic boost_timer pthread dl) 
 
 ADD_EXECUTABLE(ChaosLockfreeCacheTest ${lockfree_test})
-TARGET_LINK_LIBRARIES(ChaosLockfreeCacheTest chaos_common boost_program_options boost_system boost_thread boost_atomic boost_timer) 
+TARGET_LINK_LIBRARIES(ChaosLockfreeCacheTest chaos_common boost_program_options boost_system boost_thread boost_atomic boost_timer pthread dl) 
