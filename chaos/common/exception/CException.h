@@ -58,7 +58,7 @@ namespace chaos{
         errorMessage( eMessage, strlen( eMessage )),
         errorDomain( eDomain, strlen( eDomain )) {composeMsg();};
         
-        explicit CException(int eCode, std::string& eMessage,  std::string& eDomain):errorCode(eCode),
+        explicit CException(int eCode, std::string eMessage,  std::string eDomain):errorCode(eCode),
         errorMessage(eMessage),
         errorDomain(eDomain) {composeMsg();};
         
