@@ -24,11 +24,14 @@ using namespace chaos::cu::control_manager::slow_command;
 #define FUNCTORLERR_ LERR_ << "[SlowCommandSandbox-" << "] "
 
 #define SET_FAULT(c, m, d) \
+SET_NAMED_FAULT(cmdInstance, c , m , d)
+
+#define SET_NAMED_FAULT(n, c, m, d) \
 FUNCTORLERR_ << c << m << d; \
-cmdInstance->setRunningProperty(cmdInstance->getRunningProperty()|RunningStateType::RS_Fault); \
-cmdInstance->faultDescription.code = c; \
-cmdInstance->faultDescription.description = m; \
-cmdInstance->faultDescription.domain = d;
+n->setRunningProperty(n->getRunningProperty()|RunningStateType::RS_Fault); \
+n->faultDescription.code = c; \
+n->faultDescription.description = m; \
+n->faultDescription.domain = d;
 
 //! Functor implementation
 void AcquireFunctor::operator()() {
@@ -405,7 +408,15 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
         
         //check set handler
         if(handlerMask & HandlerType::HT_Set) {
-            cmdImpl->setHandler(setData);
+			try {
+				cmdImpl->setHandler(setData);
+			} catch(chaos::CException& ex) {
+				SET_NAMED_FAULT(cmdImpl, ex.errorCode, ex.errorMessage, ex.errorDomain)
+			} catch(std::exception& ex) {
+				SET_NAMED_FAULT(cmdImpl, -1, ex.what(), "Acquisition Handler");
+			} catch(...) {
+				SET_NAMED_FAULT(cmdImpl, -2, "Unmanaged exception", "Acquisition Handler");
+			}
         }
         
         if(handlerMask <= 1) {
