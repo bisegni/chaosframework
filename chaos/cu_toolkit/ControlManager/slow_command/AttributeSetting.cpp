@@ -32,7 +32,10 @@ using namespace chaos::cu::control_manager::slow_command;
 
 ValueSetting::ValueSetting(uint32_t _size, uint32_t _index, chaos::DataType::DataType _type):currentValue(NULL), nextValue(NULL), size(_size),index(_index), type(_type) {
     currentValue = malloc(size);
+	if(currentValue) std::memset(currentValue,0 ,size);
+	
     nextValue = malloc(size);
+	if(nextValue) std::memset(nextValue,0 ,size);
 }
 
 ValueSetting::~ValueSetting() {
@@ -147,7 +150,7 @@ void AttributeSetting::getAttributeNames(std::vector<std::string>& names) {
     
     //get all names
     for(map<string, VariableIndexType>::iterator it = mapAttributeNameIndex.begin();
-        it != mapAttributeNameIndex.end();
+        it != mapAttributeNameIndex.end();  
         it++) {
         names.push_back(it->first);
     }

@@ -130,7 +130,7 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
 
 	SCELAPP_ << "Populating sandbox shared setting for device output attribute";
 	attribute_names.clear();
-    deviceSchemaDbPtr->getDatasetAttributesName(DataType::Input, attribute_names);
+    deviceSchemaDbPtr->getDatasetAttributesName(DataType::Output, attribute_names);
     initAttributeOnSahredVariableDomain(IOCAttributeShareCache::SVD_OUTPUT, attribute_names);
     
 
@@ -147,7 +147,7 @@ void SlowCommandExecutor::initAttributeOnSahredVariableDomain(IOCAttributeShareC
 	//add input attribute to shared setting
     RangeValueInfo attributeInfo;
 	
-	AttributeSetting& attribute_setting = commandSandbox.sharedAttributeSetting.getSharedDomain(IOCAttributeShareCache::SVD_INPUT);
+	AttributeSetting& attribute_setting = commandSandbox.sharedAttributeSetting.getSharedDomain(domain);
 	
 	for(int idx = 0;
         idx < attribute_names.size();

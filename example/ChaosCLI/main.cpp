@@ -41,6 +41,7 @@ using namespace boost::date_time;
 namespace cccs = chaos::cu::control_manager::slow_command;
 
 #define OPT_STATE           "op"
+#define OPT_TIMEOUT         "timeout"
 #define OPT_DEVICE_ID       "deviceid"
 #define OPT_SCHEDULE_TIME   "stime"
 #define OPT_PRINT_STATE     "print-state"
@@ -99,6 +100,8 @@ int main (int argc, char* argv[] )
         bool printState = false;
 		bool printType = false;
         long scheduleTime;
+		uint32_t timeout;
+		
         string deviceID;
         string scAlias;
         string scSubmissionRule;
@@ -118,6 +121,7 @@ int main (int argc, char* argv[] )
        
         //! [UIToolkit Attribute Init]
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_DEVICE_ID, po::value<string>(), "The identification string of the device");
+		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_TIMEOUT, po::value<uint32_t>(&timeout)->default_value(1000), "Timeout rpc in milliseconds");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_STATE, po::value<int>()->default_value(0), "The state to set on the device{1=init, 2=start, 3=stop, 4=deinit, 5=set schedule time, 6=submite slow command(slcu), 7=kill current command(slcu), 8=get command state by id, 9=set input channel(rtcu)}, 10=flush history state(slcu)");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SCHEDULE_TIME, po::value<long>(), "the time in microseconds for devide schedule time");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_PRINT_STATE, po::value<bool>(&printState)->default_value(false), "Print the state of the device");
@@ -162,6 +166,7 @@ int main (int argc, char* argv[] )
         if(!controller) throw CException(4, "Error allcoating decive controller", "device controller creation");
         
         //get the actual state of device
+		controller->setRequestTimeWaith(timeout);
         err = controller->getState(deviceState);
         if(err == ErrorCode::EC_TIMEOUT) throw CException(5, "Time out on connection", "Get state for device");
         
