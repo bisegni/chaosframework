@@ -301,6 +301,19 @@ extern "C" {
         }
         return err;
     }
+  int getStrValueForAttr(uint32_t devID, const char * const dsAttrName, char * dsAttrValueHandle){
+    char *pntS=0;
+    int ret;
+    ret=getStrValueForAttribute( devID, dsAttrName, &pntS);
+    if(dsAttrValueHandle && pntS){
+      strcpy(dsAttrValueHandle,pntS);
+      free(pntS);
+    } else {
+      ret =-1;
+    }
+    return ret;
+  }
+
     
         //---------------------------------------------------------------
     int setStrValueForAttribute(uint32_t devID, const char * const dsAttrName, const char * const dsAttrValueCStr) {
