@@ -339,8 +339,7 @@ void SlowCommandSandbox::checkNextCommand() {
                 waithForNextCheck.wait();
 				lockOnNextCommandMutex.lock();
             }
-        }
-        
+        }z
     }
     SCSLDBG_ << "Thread terminating so notify conditionWaithSchedulerEnd";
     //notify the end of the thread
@@ -382,7 +381,7 @@ void SlowCommandSandbox::runCommand() {
 		//unloc
         lockForCurrentCommand.unlock();
 		
-		if(currentExecutingCommand && curCmdRunningState & (RunningStateType::RS_End|RunningStateType::RS_Fault)) {
+		if(currentExecutingCommand && (curCmdRunningState & (RunningStateType::RS_End|RunningStateType::RS_Fault))) {
 			DEBUG_CODE(SCSLDBG_ << "Scheduler need sleep because no command to run";)
 			waithForNextCheck.unlock();
 			threadSchedulerPauseCondition.wait();
@@ -403,7 +402,6 @@ void SlowCommandSandbox::runCommand() {
             default:
 				int64_t timeToWaith = currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay - stat.lastCmdStepTime;
                 threadSchedulerPauseCondition.waitUSec(timeToWaith>0?timeToWaith:0);
-                //boost::this_thread::sleep_for(boost::chrono::milliseconds(currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay - stat.lastCmdStepTime));
                 break;
         }
         
