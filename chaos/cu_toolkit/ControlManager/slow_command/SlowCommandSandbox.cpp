@@ -139,7 +139,7 @@ void SlowCommandSandbox::start() throw(chaos::CException) {
 												 (policy == SCHED_OTHER) ? "SCHED_OTHER" :
 												 "???");)
 			DEBUG_CODE(SCSLDBG_ << "priority " << param.sched_priority;)
-
+			
 		}
 	}
 #endif
@@ -157,7 +157,7 @@ void SlowCommandSandbox::stop() throw(chaos::CException) {
     
     SCSLAPP_ << "Notify pauseCondition variable";
     threadSchedulerPauseCondition.unlock();
-    waithForNextCheck.notify_one();
+    waithForNextCheck.unlock();
     
     //waith that the current command will terminate the work
     //SCSLDBG_ << "Wait on conditionWaithSchedulerEnd";
@@ -179,7 +179,7 @@ void SlowCommandSandbox::deinit() throw(chaos::CException) {
     SCSLAPP_ << "Delete scheduler thread";
     threadScheduler.reset();
     threadNextCommandChecker.reset();
-    SCSLAPP_ << "Scheduler deleted";
+    SCSLAPP_ << "Scheduler thread deleted";
     
     SlowCommand *instance = NULL;
     
@@ -242,7 +242,8 @@ void SlowCommandSandbox::checkNextCommand() {
                     bool hasAcquireOrCC = nextAvailableCommand.cmdImpl->implementedHandler() > 1;
                     
                     //if the current command is null we simulate and END state
-                    if ( hasAcquireOrCC && (curCmdRunningState >= SubmissionRuleType::SUBMIT_AND_Kill || (nextAvailableCommand.cmdImpl->submissionRule & SubmissionRuleType::SUBMIT_AND_Kill))) {
+                    if ( hasAcquireOrCC &&	(curCmdRunningState >= SubmissionRuleType::SUBMIT_AND_Kill ||
+											 (nextAvailableCommand.cmdImpl->submissionRule & SubmissionRuleType::SUBMIT_AND_Kill))) {
                         DEBUG_CODE(SCSLDBG_ << "New command that want kill the current one";)
                         //for now we delete it after we need to manage it
                         if(currentExecutingCommand) {
@@ -261,13 +262,14 @@ void SlowCommandSandbox::checkNextCommand() {
                         
                         CHECK_END_OF_SCHEDULER_WORK_AND_CONTINUE()
                         
-                    } else if( hasAcquireOrCC && (currentExecutingCommand && (nextAvailableCommand.cmdImpl->submissionRule & SubmissionRuleType::SUBMIT_AND_Stack))) {
-                        DEBUG_CODE(SCSLDBG_ << "New command that want stack the current one";)
+                    } else if( hasAcquireOrCC && (currentExecutingCommand &&
+												  (nextAvailableCommand.cmdImpl->submissionRule & SubmissionRuleType::SUBMIT_AND_Stack))) {
+                        DEBUG_CODE(SCSLDBG_ << "New command that want pause the current one";)
                         //push current command into the stack
                         commandStack.push(currentExecutingCommand);
 						//fire the paused event
 						if(event_handler) event_handler->handleEvent(currentExecutingCommand->unique_id, SlowCommandEventType::EVT_PAUSED, NULL);
-
+						
                         DEBUG_CODE(SCSLDBG_ << "Command stacked";)
                         
                         CHECK_END_OF_SCHEDULER_WORK_AND_CONTINUE()
@@ -294,7 +296,9 @@ void SlowCommandSandbox::checkNextCommand() {
                     CHECK_END_OF_SCHEDULER_WORK_AND_CONTINUE()
                     
                     //we don't have any available next command ad wee need to sleep for some times
-                    waithForNextCheck.timed_wait(lockOnNextCommandMutex, submissionRetryDelay);
+					lockOnNextCommandMutex.unlock();
+                    waithForNextCheck.waitUSec(submissionRetryDelay.total_microseconds());
+					lockOnNextCommandMutex.lock();
                 }
             }else {
                 //check if we need to end
@@ -314,9 +318,8 @@ void SlowCommandSandbox::checkNextCommand() {
                     installHandler(popedCommand, NULL);
                     DEBUG_CODE(SCSLDBG_ << "Paused command installed";)
                 }
-                
-                //we don't have any available next command ad wee need to sleep until another command is preset
-                waithForNextCheck.wait(lockOnNextCommandMutex);
+                //fire the scheduler
+				threadSchedulerPauseCondition.unlock();
             }
         } else {
             //command state don't permit to make modification
@@ -326,9 +329,15 @@ void SlowCommandSandbox::checkNextCommand() {
             
             //waith for the next schedule
             if(nextAvailableCommand.cmdImpl) {
-                waithForNextCheck.timed_wait(lockOnNextCommandMutex, submissionRetryDelay);
+				DEBUG_CODE(SCSLDBG_ << "we have a waithing command so we need to wait for some time";)
+				lockOnNextCommandMutex.unlock();
+                waithForNextCheck.waitUSec(submissionRetryDelay.total_microseconds());
+				lockOnNextCommandMutex.lock();
             } else {
-                waithForNextCheck.wait(lockOnNextCommandMutex);
+				DEBUG_CODE(SCSLDBG_ << "we DON'T have a waithing command so we go to sleeping";)
+				lockOnNextCommandMutex.unlock();
+                waithForNextCheck.wait();
+				lockOnNextCommandMutex.lock();
             }
         }
         
@@ -352,30 +361,41 @@ void SlowCommandSandbox::runCommand() {
         
         //call the correlation and commit phase();
         correlationHandlerFunctor();
-      
+		
 		//fire post command step
 		if(currentExecutingCommand) currentExecutingCommand->command_post_step();
-
+		
         curCmdRunningState = currentExecutingCommand?currentExecutingCommand->runningProperty:RunningStateType::RS_End;
-        if(!scheduleWorkFlag && curCmdRunningState) {
+		if(!scheduleWorkFlag && curCmdRunningState) {
             DEBUG_CODE(SCSLDBG_ << "The command is not int the state of exec and thread need to be stopped";)
             canWork = false;
             continue;
             
             if(curCmdRunningState & (RunningStateType::RS_End|RunningStateType::RS_Fault)) {
                 DEBUG_CODE(SCSLDBG_ << "Scheduler need sleep because no command to run";)
+				waithForNextCheck.unlock();
                 threadSchedulerPauseCondition.wait();
                 DEBUG_CODE(SCSLDBG_ << "Scheduler is awaked";)
             }
         }
-        //unloc
+
+		//unloc
         lockForCurrentCommand.unlock();
+		
+		if(currentExecutingCommand && curCmdRunningState & (RunningStateType::RS_End|RunningStateType::RS_Fault)) {
+			DEBUG_CODE(SCSLDBG_ << "Scheduler need sleep because no command to run";)
+			waithForNextCheck.unlock();
+			threadSchedulerPauseCondition.wait();
+			DEBUG_CODE(SCSLDBG_ << "Scheduler is awaked";)
+		}
+		
         stat.lastCmdStepTime = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count()-stat.lastCmdStepStart;
         //
         uint64_t sw = (uint64_t)currentExecutingCommand;
         switch (sw) {
             case 0:
                 DEBUG_CODE(SCSLDBG_ << "Scheduler need sleep because no command to run";)
+				waithForNextCheck.unlock();
                 threadSchedulerPauseCondition.wait();
                 DEBUG_CODE(SCSLDBG_ << "Scheduler is awaked";)
                 break;
@@ -406,6 +426,9 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
         uint8_t handlerMask = cmdImpl->implementedHandler();
         //install the pointer of th ecommand into the respective handler functor
         
+		//set the shared stat befor cal set handler
+		cmdImpl->shared_stat = &stat;
+		
         //check set handler
         if(handlerMask & HandlerType::HT_Set) {
 			try {
@@ -429,8 +452,7 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
         
         //correlation commit
         if(handlerMask & HandlerType::HT_Correlation) correlationHandlerFunctor.cmdInstance = cmdImpl;
-        
-        cmdImpl->shared_stat = &stat;
+		
         currentExecutingCommand = cmdImpl;
 		
 		//fire the running event
@@ -483,6 +505,7 @@ bool SlowCommandSandbox::setNextAvailableCommand(PRIORITY_ELEMENT(CDataWrapper) 
     }
 	//fire the waiting command
     if(event_handler) event_handler->handleEvent(cmdImpl->unique_id, SlowCommandEventType::EVT_WAITING, NULL);
-    waithForNextCheck.notify_one();
+	lockScheduler.unlock();
+    waithForNextCheck.unlock();
     return true;
 }
