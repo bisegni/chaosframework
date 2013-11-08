@@ -88,7 +88,8 @@ namespace chaos{
                     SlowCommand     *currentExecutingCommand;
                     
                     boost::mutex                    mutextAccessCurrentCommand;
-                    boost::condition_variable_any   waithForNextCheck;
+                    //boost::condition_variable_any   waithForNextCheck;
+					WaitSemaphore					waithForNextCheck;
                     
                     //------------------scheduler---------------------
                     //internal ascheduling thread
