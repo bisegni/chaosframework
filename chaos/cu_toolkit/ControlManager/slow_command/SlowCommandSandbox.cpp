@@ -60,6 +60,30 @@ void CorrelationFunctor::operator()() {
 }
 
 //------------------------------------------------------------------------------------------------------------
+CommandInfoAndImplementation::CommandInfoAndImplementation(chaos_data::CDataWrapper *_cmdInfo, SlowCommand *_cmdImpl) {
+    cmdInfo = _cmdInfo;
+    cmdImpl = _cmdImpl;
+}
+
+CommandInfoAndImplementation::~CommandInfoAndImplementation() {
+    if(cmdInfo) delete(cmdInfo);
+    if(cmdImpl) delete(cmdImpl);
+}
+
+void CommandInfoAndImplementation::deleteInfo() {
+    if(!cmdInfo) return;
+    delete(cmdInfo);
+    cmdInfo = NULL;
+}
+
+void CommandInfoAndImplementation::deleteImpl() {
+    if(!cmdImpl) return;
+    delete(cmdImpl);
+    cmdImpl = NULL;
+}
+
+
+//------------------------------------------------------------------------------------------------------------
 #define DEFAULT_STACK_ELEMENT 100
 #define DEFAULT_TIME_STEP_INTERVALL 1000000 //1 seconds of delay
 #define DEFAULT_CHECK_TIME 500
@@ -75,8 +99,7 @@ continue; \
 #define SCSLERR_ LERR_ << "[SlowCommandSandbox-" << "] "
 
 
-SlowCommandSandbox::SlowCommandSandbox():submissionRetryDelay(posix_time::milliseconds(DEFAULT_CHECK_TIME)) {
-    //reset all the handler
+SlowCommandSandbox::SlowCommandSandbox() {
 }
 
 SlowCommandSandbox::~SlowCommandSandbox() {
@@ -84,10 +107,6 @@ SlowCommandSandbox::~SlowCommandSandbox() {
 
 //! Initialize instance
 void SlowCommandSandbox::init(void *initData) throw(chaos::CException) {
-    
-    nextAvailableCommand.cmdInfo = NULL;
-    nextAvailableCommand.cmdImpl = NULL;
-    
     currentExecutingCommand = NULL;
     //setHandlerFunctor.cmdInstance = NULL;
     acquireHandlerFunctor.cmdInstance = NULL;
@@ -95,11 +114,6 @@ void SlowCommandSandbox::init(void *initData) throw(chaos::CException) {
     
     //initialize the shared channel setting
     utility::InizializableService::initImplementation(sharedAttributeSetting, initData, "AttributeSetting", "SlowCommandSandbox::init");
-    
-    SCSLDBG_ << "Get base check time intervall for the scheduler";
-    submissionRetryDelay = posix_time::milliseconds(DEFAULT_CHECK_TIME);
-    
-    //schedulerStepDelay = DEFAULT_TIME_STEP_INTERVALL;
     
     scheduleWorkFlag = false;
 }
@@ -171,6 +185,7 @@ void SlowCommandSandbox::stop() throw(chaos::CException) {
 
 //! Deinit the implementation
 void SlowCommandSandbox::deinit() throw(chaos::CException) {
+    PRIORITY_ELEMENT(CommandInfoAndImplementation)  *nextAvailableCommand = NULL;
     
     //we ned to get the lock on the scheduler
     boost::recursive_mutex::scoped_lock lockScheduler(mutexNextCommandChecker);
@@ -181,21 +196,27 @@ void SlowCommandSandbox::deinit() throw(chaos::CException) {
     threadNextCommandChecker.reset();
     SCSLAPP_ << "Scheduler thread deleted";
     
-    SlowCommand *instance = NULL;
-    
-    //deinit next availabe commad if preset
-	if(event_handler && currentExecutingCommand) event_handler->handleEvent(currentExecutingCommand->unique_id, SlowCommandEventType::EVT_KILLED, NULL);
-    DELETE_OBJ_POINTER(nextAvailableCommand.cmdInfo)
-    DELETE_OBJ_POINTER(nextAvailableCommand.cmdImpl)
+    SCSLAPP_ << "clean all paused and waiting command";
+    SCSLAPP_ << "Clear the executing command";
+    if(event_handler && currentExecutingCommand) event_handler->handleEvent(currentExecutingCommand->element->cmdImpl->unique_id, SlowCommandEventType::EVT_KILLED, NULL);
     DELETE_OBJ_POINTER(currentExecutingCommand)
     
     //free the remained commands into the stack
-    SCSLAPP_ << "Remove command into the stack";
+    SCSLAPP_ << "Remove paused command into the stack";
     while (!commandStack.empty()) {
-        instance = commandStack.top();
-        DELETE_OBJ_POINTER(instance)
+        nextAvailableCommand = commandStack.top();
+        if(event_handler && currentExecutingCommand) event_handler->handleEvent(nextAvailableCommand->element->cmdImpl->unique_id, SlowCommandEventType::EVT_KILLED, NULL);
+        DELETE_OBJ_POINTER(nextAvailableCommand)
     }
-    SCSLAPP_ << "Command into the stack removed";
+    SCSLAPP_ << "Paused command into the stack removed";
+    
+    SCSLAPP_ << "Remove waiting command into the queue";
+    while (!command_submitted_queue.empty()) {
+        nextAvailableCommand = command_submitted_queue.top();
+        if(event_handler && currentExecutingCommand) event_handler->handleEvent(nextAvailableCommand->element->cmdImpl->unique_id, SlowCommandEventType::EVT_KILLED, NULL);
+        command_submitted_queue.pop();
+        DELETE_OBJ_POINTER(nextAvailableCommand)
+    }
     
     //initialize the shared channel setting
     utility::InizializableService::deinitImplementation(sharedAttributeSetting, "AttributeSetting", "SlowCommandSandbox::init");
@@ -209,7 +230,7 @@ void SlowCommandSandbox::deinit() throw(chaos::CException) {
 void SlowCommandSandbox::checkNextCommand() {
     bool canWork = scheduleWorkFlag;
     uint8_t curCmdRunningState = 0;
-    
+    PRIORITY_ELEMENT(CommandInfoAndImplementation)  *nextAvailableCommand = NULL;
     //boost::mutex::scoped_lock pauseLock(pauseMutex);
     
     //point to the time for the next check for the available command
@@ -218,89 +239,120 @@ void SlowCommandSandbox::checkNextCommand() {
     
     
     while(canWork) {
+        
         //manage the lock on next command mutex
         boost::recursive_mutex::scoped_lock lockOnNextCommandMutex(mutexNextCommandChecker);
         
         //compute the runnig state or fault
         boost::mutex::scoped_lock lockForCurrentCommandMutex(mutextAccessCurrentCommand, boost::try_to_lock);
         if(lockForCurrentCommandMutex) {
-            curCmdRunningState = currentExecutingCommand?currentExecutingCommand->runningProperty:RunningStateType::RS_End;
+            DEBUG_CODE(SCSLDBG_ << "Got lock for check new command";)
+            curCmdRunningState = currentExecutingCommand?currentExecutingCommand->element->cmdImpl->runningProperty:RunningStateType::RS_End;
             lockForCurrentCommandMutex.unlock();
         }else {
+            //waith some time
+            //boost::this_thread::sleep_for(boost::chrono::milliseconds(50));
             continue;
         };
         
-        if(curCmdRunningState) {
-            
+        
+        if(curCmdRunningState && (command_submitted_queue.size() ||
+                                  commandStack.size())) {
+            DEBUG_CODE(SCSLDBG_ << "We have or new command o paused and command state permit to check";)
+            //we need to manage the case in which the ueue is empty
+            nextAvailableCommand = command_submitted_queue.empty()?NULL: command_submitted_queue.top();
             //we have a state that permit to kill ora pause the command
             //check if the next comand need to besubmitted
-            if(nextAvailableCommand.cmdImpl){  //we have a next available command
-                if(curCmdRunningState >= nextAvailableCommand.cmdImpl->submissionRule) {
+            if(nextAvailableCommand){  //we have a next available command
+                DEBUG_CODE(SCSLDBG_ << "We have waiting command in queue";)
+                SlowCommand *tmp_impl = nextAvailableCommand->element->cmdImpl;
+                
+                if(curCmdRunningState >= tmp_impl->submissionRule) {
+                    DEBUG_CODE(SCSLDBG_ << "Submission rule match with running property of current command";)
                     //we need to submit thewaiting new command
                     boost::mutex::scoped_lock lockForCurrentCommand(mutextAccessCurrentCommand);
                     
-                    bool hasAcquireOrCC = nextAvailableCommand.cmdImpl->implementedHandler() > 1;
+                    bool hasAcquireOrCC = tmp_impl->implementedHandler() > 1;
                     
                     //if the current command is null we simulate and END state
-                    if ( hasAcquireOrCC &&	(curCmdRunningState >= SubmissionRuleType::SUBMIT_AND_Kill ||
-											 (nextAvailableCommand.cmdImpl->submissionRule & SubmissionRuleType::SUBMIT_AND_Kill))) {
+                    if ( hasAcquireOrCC &&	(curCmdRunningState >= SubmissionRuleType::SUBMIT_AND_Kill &&
+											 (tmp_impl->submissionRule & SubmissionRuleType::SUBMIT_AND_Kill))) {
                         DEBUG_CODE(SCSLDBG_ << "New command that want kill the current one";)
                         //for now we delete it after we need to manage it
                         if(currentExecutingCommand) {
 							//send the rigth event
-							if(currentExecutingCommand->runningProperty & RunningStateType::RS_Fault) {
-								if(event_handler) event_handler->handleEvent(currentExecutingCommand->unique_id, SlowCommandEventType::EVT_FAULT, static_cast<void*>(&currentExecutingCommand->faultDescription));
+							if(currentExecutingCommand->element->cmdImpl->runningProperty & RunningStateType::RS_Fault) {
+                                 DEBUG_CODE(SCSLDBG_ << "Current executed command will be deleted because it has fault";)
+								if(event_handler) event_handler->handleEvent(tmp_impl->unique_id, SlowCommandEventType::EVT_FAULT, static_cast<void*>(&tmp_impl->faultDescription));
 								
-							} else if(currentExecutingCommand->runningProperty & RunningStateType::RS_End) {
-								if(event_handler) event_handler->handleEvent(currentExecutingCommand->unique_id, SlowCommandEventType::EVT_COMPLETED, NULL);
+							} else if(currentExecutingCommand->element->cmdImpl->runningProperty & RunningStateType::RS_End) {
+                                DEBUG_CODE(SCSLDBG_ << "Current executed command will be deletedbecaus eit is ended";)
+								if(event_handler) event_handler->handleEvent(tmp_impl->unique_id, SlowCommandEventType::EVT_COMPLETED, NULL);
 							}
 							
-                            delete(currentExecutingCommand);
-                            currentExecutingCommand = NULL;
+                            DELETE_OBJ_POINTER(currentExecutingCommand);
                             DEBUG_CODE(SCSLDBG_ << "Current executed command is deleted";)
                         }
                         
                         CHECK_END_OF_SCHEDULER_WORK_AND_CONTINUE()
                         
                     } else if( hasAcquireOrCC && (currentExecutingCommand &&
-												  (nextAvailableCommand.cmdImpl->submissionRule & SubmissionRuleType::SUBMIT_AND_Stack))) {
+                                                  curCmdRunningState >= RunningStateType::RS_Stack &&
+												  (tmp_impl->submissionRule & SubmissionRuleType::SUBMIT_AND_Stack))) {
                         DEBUG_CODE(SCSLDBG_ << "New command that want pause the current one";)
-                        //push current command into the stack
-                        commandStack.push(currentExecutingCommand);
-						//fire the paused event
-						if(event_handler) event_handler->handleEvent(currentExecutingCommand->unique_id, SlowCommandEventType::EVT_PAUSED, NULL);
-						
+                        
+                    
+                        //send the rigth event
+                        if(currentExecutingCommand->element->cmdImpl->runningProperty & RunningStateType::RS_Fault) {
+								if(event_handler) event_handler->handleEvent(tmp_impl->unique_id, SlowCommandEventType::EVT_FAULT, static_cast<void*>(&tmp_impl->faultDescription));
+                                DELETE_OBJ_POINTER(currentExecutingCommand);
+                                DEBUG_CODE(SCSLDBG_ << "Current executed command is deleted because it has fault";)
+                        } else if(currentExecutingCommand->element->cmdImpl->runningProperty & RunningStateType::RS_End) {
+								if(event_handler) event_handler->handleEvent(tmp_impl->unique_id, SlowCommandEventType::EVT_COMPLETED, NULL);
+                                DELETE_OBJ_POINTER(currentExecutingCommand);
+                                DEBUG_CODE(SCSLDBG_ << "Current executed command is deletedbecaus eit is ended";)
+                        } else {
+                            //push current command into the stack
+                            commandStack.push(currentExecutingCommand);
+                            //fire the paused event
+                            if(event_handler) event_handler->handleEvent(tmp_impl->unique_id, SlowCommandEventType::EVT_PAUSED, NULL);
+                        }
+							
                         DEBUG_CODE(SCSLDBG_ << "Command stacked";)
+                        DEBUG_CODE(SCSLDBG_ << "Command in stack = " << commandStack.size();)
                         
                         CHECK_END_OF_SCHEDULER_WORK_AND_CONTINUE()
                     }
                     
                     //install the new command handler
                     DEBUG_CODE(SCSLDBG_ << "Install next available command";)
-                    installHandler(nextAvailableCommand.cmdImpl, nextAvailableCommand.cmdInfo?nextAvailableCommand.cmdInfo->element:NULL);
+                    //first curret element from queue (it is the element that we are checking)
+                    command_submitted_queue.pop();
+                    installHandler(nextAvailableCommand);
                     DEBUG_CODE(SCSLDBG_ << "Next available command installed";)
-                    //delete the command description
-                    nextAvailableCommand.cmdImpl = NULL;
-                    DELETE_OBJ_POINTER(nextAvailableCommand.cmdInfo)
-                    DEBUG_CODE(SCSLDBG_ << "nextAvailableCommand.cmdInfo deleted";)
+                    DEBUG_CODE(SCSLDBG_ << "Command in queue = " << command_submitted_queue.size();)
+                    
                     if(!hasAcquireOrCC) {
-                        DELETE_OBJ_POINTER(nextAvailableCommand.cmdImpl)
-                        DEBUG_CODE(SCSLDBG_ << "cmdImpl deleted";)
+                        DELETE_OBJ_POINTER(nextAvailableCommand)
+                        DEBUG_CODE(SCSLDBG_ << "Command has been delete it has composed only by set handler";)
                     }
                     //fire the scheduler
                     threadSchedulerPauseCondition.unlock();
                 } else {
                     //submisison rule can't permit to remove the command
-                    
+                    DEBUG_CODE(SCSLDBG_ << "Submission rule don't match with running property of current command";)
                     //check if we need to end
                     CHECK_END_OF_SCHEDULER_WORK_AND_CONTINUE()
                     
-                    //we don't have any available next command ad wee need to sleep for some times
+                    //waith the desidered command time before restry
 					lockOnNextCommandMutex.unlock();
-                    waithForNextCheck.waitUSec(submissionRetryDelay.total_microseconds());
+                    DEBUG_CODE(SCSLDBG_ << "whait " << (tmp_impl->commandFeatures.featureSubmissionRetryDelay*1000) << " microsecond and retry";)
+                    //delay of the retry is expressed in millisecond but waith class use micro...
+                    waithForNextCheck.waitUSec(tmp_impl->commandFeatures.featureSubmissionRetryDelay*1000);
 					lockOnNextCommandMutex.lock();
                 }
             }else {
+                DEBUG_CODE(SCSLDBG_ << "We can have paused command";)
                 //check if we need to end
                 CHECK_END_OF_SCHEDULER_WORK_AND_CONTINUE()
                 
@@ -309,102 +361,131 @@ void SlowCommandSandbox::checkNextCommand() {
                     boost::mutex::scoped_lock lockForCurrentCommandMutex(mutextAccessCurrentCommand);
                     
                     DEBUG_CODE(SCSLDBG_ << "We need to install a paused command";)
-                    SlowCommand *popedCommand = commandStack.top();
-                    
+                    nextAvailableCommand = commandStack.top();
                     commandStack.pop();
+                    DEBUG_CODE(SCSLDBG_ << "Command got from stack";)
+                    DEBUG_CODE(SCSLDBG_ << "Command in stack = " << commandStack.size();)
                     
                     //install it or nothing
                     DEBUG_CODE(SCSLDBG_ << "Install paused command";)
-                    installHandler(popedCommand, NULL);
+                    installHandler(nextAvailableCommand);
                     DEBUG_CODE(SCSLDBG_ << "Paused command installed";)
                 }
                 //fire the scheduler
 				threadSchedulerPauseCondition.unlock();
             }
         } else {
-            //command state don't permit to make modification
-            DEBUG_CODE(SCSLDBG_ << "command state don't permit to make modification";)
-            
-            CHECK_END_OF_SCHEDULER_WORK_AND_CONTINUE()
-            
-            //waith for the next schedule
-            if(nextAvailableCommand.cmdImpl) {
-				DEBUG_CODE(SCSLDBG_ << "we have a waithing command so we need to wait for some time";)
-				lockOnNextCommandMutex.unlock();
-                waithForNextCheck.waitUSec(submissionRetryDelay.total_microseconds());
-				lockOnNextCommandMutex.lock();
-            } else {
-				DEBUG_CODE(SCSLDBG_ << "we DON'T have a waithing command so we go to sleeping";)
-				lockOnNextCommandMutex.unlock();
+            if(currentExecutingCommand) {
+                DEBUG_CODE(SCSLDBG_ << "command state don't permit to make modification";)
+                
+                CHECK_END_OF_SCHEDULER_WORK_AND_CONTINUE()
+                
+                DEBUG_CODE(SCSLDBG_ << "waith some time before try to check incoming command";)
+                nextAvailableCommand = command_submitted_queue.empty()?NULL: command_submitted_queue.top();
+                
+                //waith for the next schedule
+                if(nextAvailableCommand) {
+                    DEBUG_CODE(SCSLDBG_ << "we have a waithing command so we need to wait for some time";)
+                    lockOnNextCommandMutex.unlock();
+                    //! delay between two submiossion check
+                    //delay of the retry is expressed in millisecond but waith class use micro...
+                    waithForNextCheck.waitUSec(nextAvailableCommand->element->cmdImpl->commandFeatures.featureSubmissionRetryDelay*1000);
+                    lockOnNextCommandMutex.lock();
+                } else {
+                    DEBUG_CODE(SCSLDBG_ << "we DON'T have a waithing command so we go to sleeping";)
+                    lockOnNextCommandMutex.unlock();
+                    waithForNextCheck.wait();
+                    lockOnNextCommandMutex.lock();
+                }
+            }else {
+                DEBUG_CODE(SCSLDBG_ << "we DON'T have a waithing command so we go to sleeping";)
+                lockOnNextCommandMutex.unlock();
                 waithForNextCheck.wait();
-				lockOnNextCommandMutex.lock();
+                lockOnNextCommandMutex.lock();
             }
-        }z
+        }
     }
-    SCSLDBG_ << "Thread terminating so notify conditionWaithSchedulerEnd";
+    
+    SCSLAPP_ << "Check next command thread ended";
+    DEBUG_CODE(SCSLDBG_ << "so we need to -> Notify conditionWaithSchedulerEnd";)
     //notify the end of the thread
     conditionWaithSchedulerEnd.notify_one();
+    
 }
 
 
 void SlowCommandSandbox::runCommand() {
     bool canWork = scheduleWorkFlag;
-    
+    SlowCommand *curr_executing_impl = NULL;
     //check if the current command has ended or need to be substitute
     boost::mutex::scoped_lock lockForCurrentCommand(mutextAccessCurrentCommand);
     do{
-        stat.lastCmdStepStart = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count();
-		
-        // call the acquire phase
-        acquireHandlerFunctor();
-        
-        //call the correlation and commit phase();
-        correlationHandlerFunctor();
-		
-		//fire post command step
-		if(currentExecutingCommand) currentExecutingCommand->command_post_step();
-		
-        curCmdRunningState = currentExecutingCommand?currentExecutingCommand->runningProperty:RunningStateType::RS_End;
-		if(!scheduleWorkFlag && curCmdRunningState) {
-            DEBUG_CODE(SCSLDBG_ << "The command is not int the state of exec and thread need to be stopped";)
-            canWork = false;
-            continue;
+        if(currentExecutingCommand) {
+            curr_executing_impl = currentExecutingCommand->element->cmdImpl;
+            stat.lastCmdStepStart = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count();
             
-            if(curCmdRunningState & (RunningStateType::RS_End|RunningStateType::RS_Fault)) {
-                DEBUG_CODE(SCSLDBG_ << "Scheduler need sleep because no command to run";)
-				waithForNextCheck.unlock();
-                threadSchedulerPauseCondition.wait();
-                DEBUG_CODE(SCSLDBG_ << "Scheduler is awaked";)
-            }
-        }
-
-		//unloc
-        lockForCurrentCommand.unlock();
-		
-		if(currentExecutingCommand && (curCmdRunningState & (RunningStateType::RS_End|RunningStateType::RS_Fault))) {
-			DEBUG_CODE(SCSLDBG_ << "Scheduler need sleep because no command to run";)
-			waithForNextCheck.unlock();
-			threadSchedulerPauseCondition.wait();
-			DEBUG_CODE(SCSLDBG_ << "Scheduler is awaked";)
-		}
-		
-        stat.lastCmdStepTime = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count()-stat.lastCmdStepStart;
-        //
-        uint64_t sw = (uint64_t)currentExecutingCommand;
-        switch (sw) {
-            case 0:
-                DEBUG_CODE(SCSLDBG_ << "Scheduler need sleep because no command to run";)
-				waithForNextCheck.unlock();
-                threadSchedulerPauseCondition.wait();
-                DEBUG_CODE(SCSLDBG_ << "Scheduler is awaked";)
-                break;
+            // call the acquire phase
+            acquireHandlerFunctor();
+            
+            //call the correlation and commit phase();
+            correlationHandlerFunctor();
+            
+            //fire post command step
+            curr_executing_impl->command_post_step();
+            
+            //check runnin property
+            if(!scheduleWorkFlag && curr_executing_impl->runningProperty) {
+                DEBUG_CODE(SCSLDBG_ << "[Valid Command Branch] - The command is not int the state of exec and thread need to be stopped";)
+                canWork = false;
+                continue;
                 
-            default:
-				int64_t timeToWaith = currentExecutingCommand->commandFeatures.featureSchedulerStepsDelay - stat.lastCmdStepTime;
-                threadSchedulerPauseCondition.waitUSec(timeToWaith>0?timeToWaith:0);
-                break;
+                if(curr_executing_impl->runningProperty & (RunningStateType::RS_End|RunningStateType::RS_Fault)) {
+                    DEBUG_CODE(SCSLDBG_ << "[Valid Command Branch] - Scheduler need sleep because no command to run";)
+                    waithForNextCheck.unlock();
+                    threadSchedulerPauseCondition.wait();
+                    DEBUG_CODE(SCSLDBG_ << "[Valid Command Branch] - Scheduler is awaked";)
+                }
+            }
+            
+            //unloc
+            lockForCurrentCommand.unlock();
+            
+            if(currentExecutingCommand && (curr_executing_impl->runningProperty & (RunningStateType::RS_End|RunningStateType::RS_Fault))) {
+                DEBUG_CODE(SCSLDBG_ << "[Valid Command Branch] - Scheduler need sleep because no command to run";)
+                waithForNextCheck.unlock();
+                threadSchedulerPauseCondition.wait();
+                DEBUG_CODE(SCSLDBG_ << "[Valid Command Branch] - Scheduler is awaked";)
+            }
+            
+            stat.lastCmdStepTime = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count()-stat.lastCmdStepStart;
+            //
+            uint64_t sw = (uint64_t)currentExecutingCommand;
+            switch (sw) {
+                case 0:
+                    DEBUG_CODE(SCSLDBG_ << "[Valid Command Branch] - Scheduler need sleep because no command to run";)
+                    waithForNextCheck.unlock();
+                    threadSchedulerPauseCondition.wait();
+                    DEBUG_CODE(SCSLDBG_ << "[Valid Command Branch] - Scheduler is awaked";)
+                    break;
+                    
+                default:
+                    int64_t timeToWaith = curr_executing_impl->commandFeatures.featureSchedulerStepsDelay - stat.lastCmdStepTime;
+                    threadSchedulerPauseCondition.waitUSec(timeToWaith>0?timeToWaith:0);
+                    break;
+            }
+        }else {
+            //unloc
+            if(!scheduleWorkFlag && curr_executing_impl->runningProperty) {
+                DEBUG_CODE(SCSLDBG_ << "[No Current Command set branch] - sand box has been stopped we need to exit";)
+                canWork = false;
+            }
+            
+            lockForCurrentCommand.unlock();
+            DEBUG_CODE(SCSLDBG_ << "[No Current Command set branch] - Scheduler need sleep because no command to run";)
+            waithForNextCheck.unlock();
+            threadSchedulerPauseCondition.wait();
+            DEBUG_CODE(SCSLDBG_ << "[No Current Command set branch] - Scheduler is awaked";)
         }
-        
         lockForCurrentCommand.lock();
     } while(canWork);
     
@@ -412,31 +493,35 @@ void SlowCommandSandbox::runCommand() {
 }
 
 //!install the command
-void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setData) {
+void SlowCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation)* cmd_to_install) {
     
     //set current command
-    if(cmdImpl) {
-        cmdImpl->sharedAttributeSettingPtr = &sharedAttributeSetting;
-        //associate the keydata storage and the device database to the command
-        cmdImpl->keyDataStoragePtr = keyDataStoragePtr;
-        cmdImpl->deviceDatabasePtr = deviceSchemaDbPtr;
+    if(cmd_to_install) {
         
-        uint8_t handlerMask = cmdImpl->implementedHandler();
+        chaos_data::CDataWrapper *tmp_info = cmd_to_install->element->cmdInfo;
+        SlowCommand *tmp_impl = cmd_to_install->element->cmdImpl;
+        
+        tmp_impl->sharedAttributeSettingPtr = &sharedAttributeSetting;
+        //associate the keydata storage and the device database to the command
+        tmp_impl->keyDataStoragePtr = keyDataStoragePtr;
+        tmp_impl->deviceDatabasePtr = deviceSchemaDbPtr;
+        
+        uint8_t handlerMask = tmp_impl->implementedHandler();
         //install the pointer of th ecommand into the respective handler functor
         
 		//set the shared stat befor cal set handler
-		cmdImpl->shared_stat = &stat;
+		tmp_impl->shared_stat = &stat;
 		
         //check set handler
         if(handlerMask & HandlerType::HT_Set) {
 			try {
-				cmdImpl->setHandler(setData);
+				tmp_impl->setHandler(tmp_info);
 			} catch(chaos::CException& ex) {
-				SET_NAMED_FAULT(cmdImpl, ex.errorCode, ex.errorMessage, ex.errorDomain)
+				SET_NAMED_FAULT(tmp_impl, ex.errorCode, ex.errorMessage, ex.errorDomain)
 			} catch(std::exception& ex) {
-				SET_NAMED_FAULT(cmdImpl, -1, ex.what(), "Acquisition Handler");
+				SET_NAMED_FAULT(tmp_impl, -1, ex.what(), "Acquisition Handler");
 			} catch(...) {
-				SET_NAMED_FAULT(cmdImpl, -2, "Unmanaged exception", "Acquisition Handler");
+				SET_NAMED_FAULT(tmp_impl, -2, "Unmanaged exception", "Acquisition Handler");
 			}
         }
         
@@ -446,18 +531,18 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
         }
         
         //acquire handler
-        if(handlerMask & HandlerType::HT_Acquisition) acquireHandlerFunctor.cmdInstance = cmdImpl;
+        if(handlerMask & HandlerType::HT_Acquisition) acquireHandlerFunctor.cmdInstance = tmp_impl;
         
         //correlation commit
-        if(handlerMask & HandlerType::HT_Correlation) correlationHandlerFunctor.cmdInstance = cmdImpl;
+        if(handlerMask & HandlerType::HT_Correlation) correlationHandlerFunctor.cmdInstance = tmp_impl;
 		
-        currentExecutingCommand = cmdImpl;
+        currentExecutingCommand = cmd_to_install;
 		
 		//fire the running event
-		if(event_handler)event_handler->handleEvent(currentExecutingCommand->unique_id, SlowCommandEventType::EVT_RUNNING, NULL);
+		if(event_handler)event_handler->handleEvent(tmp_impl->unique_id, SlowCommandEventType::EVT_RUNNING, NULL);
 		
 		//exec the signal start in command
-		cmdImpl->command_start();
+		tmp_impl->command_start();
     } else {
         currentExecutingCommand = NULL;
         acquireHandlerFunctor.cmdInstance = NULL;
@@ -465,6 +550,21 @@ void SlowCommandSandbox::installHandler(SlowCommand *cmdImpl, CDataWrapper* setD
     }
 }
 
+void SlowCommandSandbox::removeHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation)* cmd_to_install) {
+    if(!cmd_to_install) return;
+    SlowCommand *tmp_impl = cmd_to_install->element->cmdImpl;
+    uint8_t handlerMask = tmp_impl->implementedHandler();
+    if(handlerMask <= 1) {
+        //there is only the set handler so we finish here.
+        return;
+    }
+    
+    //acquire handler
+    if(handlerMask & HandlerType::HT_Acquisition) acquireHandlerFunctor.cmdInstance = NULL;
+    
+    //correlation commit
+    if(handlerMask & HandlerType::HT_Correlation) correlationHandlerFunctor.cmdInstance = NULL;
+}
 
 void SlowCommandSandbox::killCurrentCommand() {
 	//lock the scheduler
@@ -472,37 +572,22 @@ void SlowCommandSandbox::killCurrentCommand() {
 	
 	// terminate the current command
 	DELETE_OBJ_POINTER(currentExecutingCommand)
-	installHandler(NULL, NULL);
+	installHandler(NULL);
 	
 	//fire the killed event
-	if(event_handler) event_handler->handleEvent(currentExecutingCommand->unique_id, SlowCommandEventType::EVT_KILLED, NULL);
+	if(event_handler) event_handler->handleEvent(currentExecutingCommand->element->cmdImpl->unique_id, SlowCommandEventType::EVT_KILLED, NULL);
 }
 
-bool SlowCommandSandbox::setNextAvailableCommand(PRIORITY_ELEMENT(CDataWrapper) *cmdInfo, SlowCommand *cmdImpl) {
-    if(!cmdImpl) return false;
+bool SlowCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_info, SlowCommand *command_impl, uint32_t priority) {
+    CHAOS_ASSERT(command_impl)
     boost::recursive_mutex::scoped_lock lockScheduler(mutexNextCommandChecker);
     if(utility::StartableService::serviceState == ::chaos::utility::service_state_machine::InizializableServiceType::IS_DEINTIATED) return false;
     
-    nextAvailableCommand.cmdInfo = cmdInfo;
-    nextAvailableCommand.cmdImpl = cmdImpl;
-    //set the schedule step delay (time intervall between twp sequnece of the scehduler step)
-    if((cmdImpl->commandFeatures.featuresFlag & features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY) == 0) {
-        //we need to set a new delay between steps
-        cmdImpl->commandFeatures.featureSchedulerStepsDelay =  DEFAULT_TIME_STEP_INTERVALL;
-        DEBUG_CODE(SCSLDBG_ << "default scheduler delay has been installed with " << DEFAULT_TIME_STEP_INTERVALL << " microseconds";)
-        
-    }
-    //check if the command has it's own time for the checker
-    if(cmdImpl->commandFeatures.featuresFlag & features::FeaturesFlagTypes::FF_SET_SUBMISSION_RETRY) {
-        //we need to set a new delay between steps
-        submissionRetryDelay = posix_time::milliseconds(cmdImpl->commandFeatures.featureSubmissionRetryDelay);
-        DEBUG_CODE(SCSLDBG_ << "New checker delay has been installed with value of " << cmdImpl->commandFeatures.featureSubmissionRetryDelay << " milliseconds";)
-    }else {
-        submissionRetryDelay = posix_time::milliseconds(DEFAULT_CHECK_TIME);
-        DEBUG_CODE(SCSLDBG_ << "Default checker delay has been used with value of " << DEFAULT_CHECK_TIME  << " milliseconds";)
-    }
+    //
+    command_submitted_queue.push(new PriorityQueuedElement<CommandInfoAndImplementation>(new CommandInfoAndImplementation(command_to_info, command_impl), priority, true));
+    
 	//fire the waiting command
-    if(event_handler) event_handler->handleEvent(cmdImpl->unique_id, SlowCommandEventType::EVT_WAITING, NULL);
+    if(event_handler) event_handler->handleEvent(command_impl->unique_id, SlowCommandEventType::EVT_QUEUED, NULL);
 	lockScheduler.unlock();
     waithForNextCheck.unlock();
     return true;

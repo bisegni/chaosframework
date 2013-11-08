@@ -35,7 +35,6 @@
 #include <chaos/cu_toolkit/driver_manager/DriverErogatorInterface.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/AttributeSetting.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandTypes.h>
-
 namespace chaos_data = chaos::common::data;
 
 namespace chaos{
@@ -91,7 +90,7 @@ namespace chaos{
                     friend class SlowCommandExecutor;
                     friend struct AcquireFunctor;
                     friend struct CorrelationFunctor;
-					
+					friend class CommandInfoAndImplementation;
 					//!unique command id
 					uint64_t unique_id;
 					

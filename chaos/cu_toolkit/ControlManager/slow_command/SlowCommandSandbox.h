@@ -14,7 +14,7 @@
 
 #include <boost/thread.hpp>
 #include <boost/chrono.hpp>
-
+#include <boost/heap/priority_queue.hpp>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/DatasetDB.h>
@@ -63,6 +63,23 @@ namespace chaos{
                     void operator()();
                 };
 				
+                
+                /*!
+                 Type used for the next available command impl and description
+                 into the sandbox
+                 */
+                struct CommandInfoAndImplementation {
+                    chaos_data::CDataWrapper *cmdInfo;
+                    SlowCommand *cmdImpl;
+                    
+                    CommandInfoAndImplementation(chaos_data::CDataWrapper *_cmdInfo, SlowCommand *_cmdImpl);
+                    ~CommandInfoAndImplementation();
+                    
+                    void deleteInfo();
+                    void deleteImpl();
+                    
+                };
+                
                 //! SAndbox fo the slow command execution
                 /*!
                     This is the sandbox where the command are executed. Here are checked the
@@ -82,10 +99,9 @@ namespace chaos{
 					
                     //-------shared data beetwen scheduler and checker thread------
                     bool            scheduleWorkFlag;
-                    uint8_t         curCmdRunningState;
                     
                     //!point to the current executing command
-                    SlowCommand     *currentExecutingCommand;
+                    PRIORITY_ELEMENT(CommandInfoAndImplementation)   *currentExecutingCommand;
                     
                     boost::mutex                    mutextAccessCurrentCommand;
                     //boost::condition_variable_any   waithForNextCheck;
@@ -102,11 +118,12 @@ namespace chaos{
                     //boost::condition_variable   threadSchedulerPauseCondition;
                     
                     //------------------next command checker---------------------
-
+                    //testing the inclusion of the command queue directly in the sandbox
+                    boost::heap::priority_queue< PRIORITY_ELEMENT(CommandInfoAndImplementation)* > command_submitted_queue;
+                    
                     //!Mutex used for sincronize the introspection of the current command
                     boost::recursive_mutex          mutexNextCommandChecker;
-                    //! delay between two submiossion check
-                    posix_time::milliseconds        submissionRetryDelay;
+
                     //! instance to the checker thread
                     std::auto_ptr<boost::thread>    threadNextCommandChecker;
                     
@@ -117,14 +134,7 @@ namespace chaos{
                     
                     //! Thread for whait until the queue is empty
                     boost::condition_variable_any  conditionWaithSchedulerEnd;
-                    
-                    //!Mutex used for sincronize the introspection of the current command
-                    //boost::mutex  pauseMutex;
-
-                    //! Pointers to the next available command implementation and information
-                    CommandInfoAndImplementation nextAvailableCommand;
-
-                    
+                                        
                     //! Shared Channel Setting 
                     /*!
                         Shared aree to store the current and nex value
@@ -134,7 +144,7 @@ namespace chaos{
                     IOCAttributeShareCache sharedAttributeSetting;
                     
                     //! contain the paused command
-                    std::stack<SlowCommand*> commandStack;
+                    std::stack<PRIORITY_ELEMENT(CommandInfoAndImplementation)*> commandStack;
                     
                     //-------------------- handler poiter --------------------
                     //! Pointer to the acquire pahse handler's of the current command
@@ -149,8 +159,9 @@ namespace chaos{
                      Perform th ecommand isntallation without check the condition. The handler
                      that are not implemented are managed according to the submition rule
                      */
-                    inline void installHandler(SlowCommand *cmdImpl, chaos_data::CDataWrapper* setData);
-					
+                    inline void installHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation)* cmd_to_install);
+					inline void removeHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation)* cmd_to_install);
+                    
 					void killCurrentCommand();
 					
                     SlowCommandSandbox();
@@ -184,7 +195,7 @@ namespace chaos{
                     // Deinit the implementation
                     void deinit() throw(chaos::CException);
 
-                    bool setNextAvailableCommand(PRIORITY_ELEMENT(chaos_data::CDataWrapper) *cmdInfo, SlowCommand *cmdImpl);
+                    bool enqueueCommand(chaos_data::CDataWrapper *command_to_info, SlowCommand *command_impl, uint32_t priority);
                 };
             }
         }

@@ -98,11 +98,6 @@ namespace chaos {
                     //! the reference to the master device database
                     chaos_data::DatasetDB *deviceSchemaDbPtr;
                     
-                    boost::thread   *incomingCheckThreadPtr;
-                    
-                    //!Mutex for priority queue managment
-                    boost::mutex    mutextQueueManagment;
-                    
 					//! shared mutext foe the command event history
 					RWMutex								command_state_rwmutex;
 					uint16_t							command_state_queue_max_size;
@@ -110,32 +105,12 @@ namespace chaos {
 					boost_cont::deque< boost::shared_ptr<CommandState> >			command_state_queue;
 					//the map is used for fast access id/pointer
 					boost_cont::map<uint64_t, boost::shared_ptr<CommandState> >		command_state_fast_access_map;
-					
-                    //! until it is true the wueue is
-                    bool performQueueCheck;
-                    
-                    //! Read thread waithing variable for the new insert element in queue
-                    boost::condition_variable   readThreadWhait;
-                    
-                    //! Thread for whait until the queue is empty
-                    boost::condition_variable   emptyQueueConditionLock;
-                    
-                    //! queue for the arrived command
-                    boost::heap::priority_queue< PRIORITY_ELEMENT(chaos_data::CDataWrapper)* > commandSubmittedQueue;
-
                     
                     //! this map correlate the alias to the object instancer
                     std::map<string, chaos::common::utility::ObjectInstancer<SlowCommand>* > mapCommandInstancer;
                     
 					//! The driver erogator
 					chaos::cu::driver_manager::DriverErogatorInterface *driverAccessorsErogator;
-					
-                    //! Check the incoming command rule
-                    /*!
-                      In case there is a command in the top of the commandSubmittedQueue this method
-                      check if there are the condition to execute it
-                     */
-                    void performIncomingCommandCheck();
                     
                     //! Check if the waithing command can be installed
                     /*!
