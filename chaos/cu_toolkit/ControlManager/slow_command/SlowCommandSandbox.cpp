@@ -248,6 +248,26 @@ void SlowCommandSandbox::checkNextCommand() {
         if(lockForCurrentCommandMutex) {
             DEBUG_CODE(SCSLDBG_ << "Got lock for check new command";)
             curCmdRunningState = currentExecutingCommand?currentExecutingCommand->element->cmdImpl->runningProperty:RunningStateType::RS_End;
+            //chec if command has ended
+            if(currentExecutingCommand) {
+                
+                if(curCmdRunningState & RunningStateType::RS_Fault) {
+                    //remove handler
+                    removeHandler(currentExecutingCommand);
+                    DEBUG_CODE(SCSLDBG_ << "Current executed command will be deleted because it has fault";)
+                    if(event_handler) event_handler->handleEvent(currentExecutingCommand->element->cmdImpl->unique_id, SlowCommandEventType::EVT_FAULT, static_cast<void*>(&currentExecutingCommand->element->cmdImpl->faultDescription));
+                    DELETE_OBJ_POINTER(currentExecutingCommand);
+                    SCSLDBG_ << "Current executed has been is deleted";
+                    
+                } else if(curCmdRunningState & RunningStateType::RS_End) {
+                    //remove handler
+                    removeHandler(currentExecutingCommand);
+                    DEBUG_CODE(SCSLDBG_ << "Current executed command will be deleted because it is ended";)
+                    if(event_handler) event_handler->handleEvent(currentExecutingCommand->element->cmdImpl->unique_id, SlowCommandEventType::EVT_COMPLETED, NULL);
+                    DELETE_OBJ_POINTER(currentExecutingCommand);
+                    SCSLDBG_ << "Current executed has been deleted";
+                }
+            }
             lockForCurrentCommandMutex.unlock();
         }else {
             //waith some time
@@ -275,23 +295,16 @@ void SlowCommandSandbox::checkNextCommand() {
                     bool hasAcquireOrCC = tmp_impl->implementedHandler() > 1;
                     
                     //if the current command is null we simulate and END state
-                    if ( hasAcquireOrCC &&	(curCmdRunningState >= SubmissionRuleType::SUBMIT_AND_Kill &&
+                    if ( hasAcquireOrCC &&	(curCmdRunningState >= RunningStateType::RS_Kill &&
 											 (tmp_impl->submissionRule & SubmissionRuleType::SUBMIT_AND_Kill))) {
                         DEBUG_CODE(SCSLDBG_ << "New command that want kill the current one";)
                         //for now we delete it after we need to manage it
                         if(currentExecutingCommand) {
 							//send the rigth event
-							if(currentExecutingCommand->element->cmdImpl->runningProperty & RunningStateType::RS_Fault) {
-                                 DEBUG_CODE(SCSLDBG_ << "Current executed command will be deleted because it has fault";)
-								if(event_handler) event_handler->handleEvent(tmp_impl->unique_id, SlowCommandEventType::EVT_FAULT, static_cast<void*>(&tmp_impl->faultDescription));
-								
-							} else if(currentExecutingCommand->element->cmdImpl->runningProperty & RunningStateType::RS_End) {
-                                DEBUG_CODE(SCSLDBG_ << "Current executed command will be deletedbecaus eit is ended";)
-								if(event_handler) event_handler->handleEvent(tmp_impl->unique_id, SlowCommandEventType::EVT_COMPLETED, NULL);
-							}
-							
+							removeHandler(currentExecutingCommand);
                             DELETE_OBJ_POINTER(currentExecutingCommand);
-                            DEBUG_CODE(SCSLDBG_ << "Current executed command is deleted";)
+                            if(event_handler) event_handler->handleEvent(tmp_impl->unique_id, SlowCommandEventType::EVT_KILLED, NULL);
+                            SCSLDBG_ << "Current executed has been killed by submitted one";
                         }
                         
                         CHECK_END_OF_SCHEDULER_WORK_AND_CONTINUE()
@@ -300,24 +313,12 @@ void SlowCommandSandbox::checkNextCommand() {
                                                   curCmdRunningState >= RunningStateType::RS_Stack &&
 												  (tmp_impl->submissionRule & SubmissionRuleType::SUBMIT_AND_Stack))) {
                         DEBUG_CODE(SCSLDBG_ << "New command that want pause the current one";)
-                        
-                    
                         //send the rigth event
-                        if(currentExecutingCommand->element->cmdImpl->runningProperty & RunningStateType::RS_Fault) {
-								if(event_handler) event_handler->handleEvent(tmp_impl->unique_id, SlowCommandEventType::EVT_FAULT, static_cast<void*>(&tmp_impl->faultDescription));
-                                DELETE_OBJ_POINTER(currentExecutingCommand);
-                                DEBUG_CODE(SCSLDBG_ << "Current executed command is deleted because it has fault";)
-                        } else if(currentExecutingCommand->element->cmdImpl->runningProperty & RunningStateType::RS_End) {
-								if(event_handler) event_handler->handleEvent(tmp_impl->unique_id, SlowCommandEventType::EVT_COMPLETED, NULL);
-                                DELETE_OBJ_POINTER(currentExecutingCommand);
-                                DEBUG_CODE(SCSLDBG_ << "Current executed command is deletedbecaus eit is ended";)
-                        } else {
-                            //push current command into the stack
-                            commandStack.push(currentExecutingCommand);
-                            //fire the paused event
-                            if(event_handler) event_handler->handleEvent(tmp_impl->unique_id, SlowCommandEventType::EVT_PAUSED, NULL);
-                        }
-							
+                        //push current command into the stack
+                        commandStack.push(currentExecutingCommand);
+                        //fire the paused event
+                        if(event_handler) event_handler->handleEvent(tmp_impl->unique_id, SlowCommandEventType::EVT_PAUSED, NULL);
+                        
                         DEBUG_CODE(SCSLDBG_ << "Command stacked";)
                         DEBUG_CODE(SCSLDBG_ << "Command in stack = " << commandStack.size();)
                         
@@ -513,9 +514,10 @@ void SlowCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplement
 		tmp_impl->shared_stat = &stat;
 		
         //check set handler
-        if(handlerMask & HandlerType::HT_Set) {
+        if(!tmp_impl->already_setupped && (handlerMask & HandlerType::HT_Set)) {
 			try {
 				tmp_impl->setHandler(tmp_info);
+                tmp_impl->already_setupped = true;
 			} catch(chaos::CException& ex) {
 				SET_NAMED_FAULT(tmp_impl, ex.errorCode, ex.errorMessage, ex.errorDomain)
 			} catch(std::exception& ex) {

@@ -93,7 +93,10 @@ namespace chaos{
 					friend class CommandInfoAndImplementation;
 					//!unique command id
 					uint64_t unique_id;
-					
+                    
+                    //! keep track whenever set handler has been called
+                    bool already_setupped;
+                    
 					//!command timing stat
 					CommandTimingStats timing_stats;
 					

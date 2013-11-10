@@ -136,7 +136,9 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
     SCELAPP_ << "Check if we need to use the dafult command or we have pause instance";
     if(defaultCommandAlias.size()) {
         SCELAPP_ << "Set the default command ->"<<defaultCommandAlias;
-        commandSandbox.enqueueCommand(NULL, instanceCommandInfo(defaultCommandAlias), 50);
+        SlowCommand * def_cmd_impl = instanceCommandInfo(defaultCommandAlias);
+        def_cmd_impl->unique_id = ++command_sequence_id;
+        commandSandbox.enqueueCommand(NULL, def_cmd_impl, 50);
         DEBUG_CODE(SCELDBG_ << "Command " << defaultCommandAlias << " successfull installed";)
     }
     
@@ -222,7 +224,7 @@ void SlowCommandExecutor::deinit() throw(chaos::CException) {
 
 //Event handler
 void SlowCommandExecutor::handleEvent(uint64_t command_id, SlowCommandEventType::SlowCommandEventType type, void* type_attribute_ptr) {
-	DEBUG_CODE(SCELDBG_ << "Received event of type->" << type << "on command id>"<<command_id;)
+	DEBUG_CODE(SCELDBG_ << "Received event of type->" << type << "on command id -> "<<command_id;)
 	switch(type) {
 		case SlowCommandEventType::EVT_QUEUED: {
 			// get upgradable access

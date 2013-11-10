@@ -25,6 +25,9 @@ using namespace chaos::cu::control_manager::slow_command;
 
 // default constructor
 SlowCommand::SlowCommand() {
+    
+    already_setupped = false;
+    
 	//reset all lock flag
     lockFeaturePropertyFlag.reset();
 	//setup feautere fields
