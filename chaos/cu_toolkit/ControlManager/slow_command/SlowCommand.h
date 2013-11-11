@@ -172,11 +172,7 @@ namespace chaos{
 						
 						
 						switch (features) {
-							case features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY:
-								commandFeatures.featuresFlag |= features;
-								commandFeatures.featureSchedulerStepsDelay = features_value;
-								break;
-								
+
 							case features::FeaturesFlagTypes::FF_SET_SUBMISSION_RETRY:
 								commandFeatures.featuresFlag |= features;
 								commandFeatures.featureSubmissionRetryDelay = features_value;
@@ -199,6 +195,11 @@ namespace chaos{
 						
 						
 						switch (features) {
+							case features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY:
+								commandFeatures.featuresFlag |= features;
+								commandFeatures.featureSchedulerStepsDelay = features_value;
+								break;
+								
 							case features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT:
 								commandFeatures.featuresFlag |= features;
 								commandFeatures.featureCommandTimeout = (uint64_t)features_value;
