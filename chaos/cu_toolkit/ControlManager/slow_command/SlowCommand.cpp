@@ -52,6 +52,11 @@ SlowCommand::~SlowCommand() {
     
 }
 
+//return the unique id
+uint64_t SlowCommand::getUID() {
+	return unique_id;
+}
+
 /*
  return the device database with the dafualt device information
  */
@@ -137,7 +142,7 @@ void SlowCommand::command_post_step() {
 	if(commandFeatures.featuresFlag & features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT) {
 		timing_stats.command_running_time_usec += shared_stat->lastCmdStepTime;
 		//check timeout
-		if(timing_stats.command_running_time_usec  > commandFeatures.featureCommandTimeout) {
+		if(timing_stats.command_running_time_usec  >= commandFeatures.featureCommandTimeout) {
 			//call the timeout handler
 			try {
 				if(timeoutHandler()) {

@@ -430,13 +430,13 @@ void SlowCommandSandbox::runCommand() {
             
             //call the correlation and commit phase();
             correlationHandlerFunctor();
-            
-            //fire post command step
-            curr_executing_impl->command_post_step();
-            
+ 
 			//coompute step duration
 			stat.lastCmdStepTime = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count()-stat.lastCmdStepStart;
 			
+            //fire post command step
+            curr_executing_impl->command_post_step();
+            
             //check runnin property
             if(!scheduleWorkFlag && curr_executing_impl->runningProperty) {
                 DEBUG_CODE(SCSLDBG_ << "[runCommand need to exit] - The command is not int the exec state...we stop scheduler";)

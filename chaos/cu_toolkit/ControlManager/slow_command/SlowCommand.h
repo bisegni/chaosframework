@@ -150,7 +150,8 @@ namespace chaos{
                     
                     //! default destructor
                     virtual ~SlowCommand();
- 					//! called befor the command start the execution
+ 					
+					//! called befor the command start the execution
 					void command_start();
 					
 					
@@ -169,23 +170,43 @@ namespace chaos{
 						//check if the features are locked for the user modifications
 						if(lockFeaturePropertyFlag.test(0)) return;
 						
-						commandFeatures.featuresFlag |= features;
+						
 						switch (features) {
 							case features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY:
+								commandFeatures.featuresFlag |= features;
 								commandFeatures.featureSchedulerStepsDelay = features_value;
 								break;
 								
 							case features::FeaturesFlagTypes::FF_SET_SUBMISSION_RETRY:
+								commandFeatures.featuresFlag |= features;
 								commandFeatures.featureSubmissionRetryDelay = features_value;
 								break;
 								
-							case features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT:
-								commandFeatures.featureCommandTimeout = features_value;
 							default:
 								break;
 						}
 					}
                     
+					//! set the features with the uint32 value
+                    /*!
+                     Feature rappresented by an uint32 can be setupped with this api. The value can be
+                     overloaded by submition feature flag and anyway the are keept in consideration onlyat installation time
+                     of the command.
+                     */
+					inline void setFeatures(features::FeaturesFlagTypes::FeatureFlag features, uint64_t features_value) {
+						//check if the features are locked for the user modifications
+						if(lockFeaturePropertyFlag.test(0)) return;
+						
+						
+						switch (features) {
+							case features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT:
+								commandFeatures.featuresFlag |= features;
+								commandFeatures.featureCommandTimeout = (uint64_t)features_value;
+							default:
+								break;
+						}
+					}
+					
 					//! clear the features
                     /*!
                      Turn off the features
@@ -297,7 +318,8 @@ namespace chaos{
                      */
                     virtual bool timeoutHandler();
                 public:
-
+					//! return the unique id for the command instance
+					uint64_t getUID();
                 };
             }
         }
