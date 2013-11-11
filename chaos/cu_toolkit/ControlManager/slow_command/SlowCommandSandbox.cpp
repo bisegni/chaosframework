@@ -434,58 +434,47 @@ void SlowCommandSandbox::runCommand() {
             //fire post command step
             curr_executing_impl->command_post_step();
             
+			//coompute step duration
+			stat.lastCmdStepTime = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count()-stat.lastCmdStepStart;
+			
             //check runnin property
             if(!scheduleWorkFlag && curr_executing_impl->runningProperty) {
-                DEBUG_CODE(SCSLDBG_ << "[Valid Command Branch] - The command is not int the state of exec and thread need to be stopped";)
+                DEBUG_CODE(SCSLDBG_ << "[runCommand need to exit] - The command is not int the exec state...we stop scheduler";)
                 canWork = false;
-                continue;
-                
-                if(curr_executing_impl->runningProperty & (RunningStateType::RS_End|RunningStateType::RS_Fault)) {
-                    DEBUG_CODE(SCSLDBG_ << "[Valid Command Branch] - Scheduler need sleep because no command to run";)
-                    waithForNextCheck.unlock();
-                    threadSchedulerPauseCondition.wait();
-                    DEBUG_CODE(SCSLDBG_ << "[Valid Command Branch] - Scheduler is awaked";)
-                }
-            }
-            
-            //unloc
-            lockForCurrentCommand.unlock();
-            
-            if(currentExecutingCommand && (curr_executing_impl->runningProperty & (RunningStateType::RS_End|RunningStateType::RS_Fault))) {
-                DEBUG_CODE(SCSLDBG_ << "[Valid Command Branch] - Scheduler need sleep because no command to run";)
-                waithForNextCheck.unlock();
-                threadSchedulerPauseCondition.wait();
-                DEBUG_CODE(SCSLDBG_ << "[Valid Command Branch] - Scheduler is awaked";)
-            }
-            
-            stat.lastCmdStepTime = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count()-stat.lastCmdStepStart;
-            //
-            uint64_t sw = (uint64_t)currentExecutingCommand;
-            switch (sw) {
-                case 0:
-                    DEBUG_CODE(SCSLDBG_ << "[Valid Command Branch] - Scheduler need sleep because no command to run";)
-                    waithForNextCheck.unlock();
-                    threadSchedulerPauseCondition.wait();
-                    DEBUG_CODE(SCSLDBG_ << "[Valid Command Branch] - Scheduler is awaked";)
-                    break;
-                    
-                default:
-                    int64_t timeToWaith = curr_executing_impl->commandFeatures.featureSchedulerStepsDelay - stat.lastCmdStepTime;
-                    threadSchedulerPauseCondition.waitUSec(timeToWaith>0?timeToWaith:0);
-                    break;
-            }
+			}else {
+				//unloc
+				lockForCurrentCommand.unlock();
+				if(currentExecutingCommand) {
+					//we have a valid command running
+					if(curr_executing_impl->runningProperty & (RunningStateType::RS_End|RunningStateType::RS_Fault)) {
+						DEBUG_CODE(SCSLDBG_ << "[runCommand] - current has ended or fault scheduler is going to sleep";)
+						waithForNextCheck.unlock();
+						threadSchedulerPauseCondition.wait();
+						DEBUG_CODE(SCSLDBG_ << "[runCommand] - Scheduler is awaked";)
+					} else {
+						DEBUG_CODE(SCSLDBG_ << "[runCommand] - command is executing waith his scehdule delay";)
+						int64_t timeToWaith = curr_executing_impl->commandFeatures.featureSchedulerStepsDelay - stat.lastCmdStepTime;
+						threadSchedulerPauseCondition.waitUSec(timeToWaith>0?timeToWaith:0);
+					}
+				} else {
+					DEBUG_CODE(SCSLDBG_ << "[runCommand] - Scheduler need sleep because no command to run";)
+					waithForNextCheck.unlock();
+					threadSchedulerPauseCondition.wait();
+					DEBUG_CODE(SCSLDBG_ << "[runCommand] - Scheduler is awaked";)
+				}
+			}
         }else {
             //unloc
-            if(!scheduleWorkFlag && curr_executing_impl->runningProperty) {
-                DEBUG_CODE(SCSLDBG_ << "[No Current Command set branch] - sand box has been stopped we need to exit";)
+            if(!scheduleWorkFlag) {
+                DEBUG_CODE(SCSLDBG_ << "[runCommand] - no running command and scheduler has been stopped we need to exit";)
                 canWork = false;
-            }
-            
-            lockForCurrentCommand.unlock();
-            DEBUG_CODE(SCSLDBG_ << "[No Current Command set branch] - Scheduler need sleep because no command to run";)
-            waithForNextCheck.unlock();
-            threadSchedulerPauseCondition.wait();
-            DEBUG_CODE(SCSLDBG_ << "[No Current Command set branch] - Scheduler is awaked";)
+            } else {
+				lockForCurrentCommand.unlock();
+				DEBUG_CODE(SCSLDBG_ << "[runCommand] - Scheduler need sleep because no command to run";)
+				waithForNextCheck.unlock();
+				threadSchedulerPauseCondition.wait();
+				DEBUG_CODE(SCSLDBG_ << "[runCommand] - Scheduler is awaked";)
+			}
         }
         lockForCurrentCommand.lock();
     } while(canWork);
