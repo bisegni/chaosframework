@@ -23,6 +23,12 @@ using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::cu::control_manager::slow_command;
 
+#define LOG_HEAD "[SlowCommand-" << unique_id << "] "
+
+#define SCLAPP_ LAPP_ << LOG_HEAD
+#define SCLDBG_ LDBG_ << LOG_HEAD
+#define SCLERR_ LERR_ << LOG_HEAD
+
 // default constructor
 SlowCommand::SlowCommand() {
     
@@ -123,6 +129,7 @@ void SlowCommand::command_start() {
 
 #define SET_FAULT(c, m, d) \
 SL_FAULT_RUNNIG_STATE \
+SCLERR_ << "Exception -> err:" << c << " msg: "<<m<<" domain:"<<d; \
 faultDescription.code = c; \
 faultDescription.description = m; \
 faultDescription.domain = d;

@@ -224,7 +224,7 @@ void SlowCommandExecutor::deinit() throw(chaos::CException) {
 
 //Event handler
 void SlowCommandExecutor::handleEvent(uint64_t command_id, SlowCommandEventType::SlowCommandEventType type, void* type_attribute_ptr) {
-	DEBUG_CODE(SCELDBG_ << "Received event of type->" << type << "on command id -> "<<command_id;)
+	DEBUG_CODE(SCELDBG_ << "Received event of type->" << type << " on command id -> "<<command_id;)
 	switch(type) {
 		case SlowCommandEventType::EVT_QUEUED: {
 			// get upgradable access
