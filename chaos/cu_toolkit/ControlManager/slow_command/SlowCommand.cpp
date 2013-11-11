@@ -24,7 +24,6 @@ using namespace chaos::common::data;
 using namespace chaos::cu::control_manager::slow_command;
 
 #define LOG_HEAD "[SlowCommand-" << unique_id << "] "
-
 #define SCLAPP_ LAPP_ << LOG_HEAD
 #define SCLDBG_ LDBG_ << LOG_HEAD
 #define SCLERR_ LERR_ << LOG_HEAD
