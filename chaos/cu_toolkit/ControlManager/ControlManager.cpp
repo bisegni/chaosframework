@@ -31,7 +31,7 @@ using namespace std;
 
 #define INIT_DEINIT_ACTION_CU_PARAM_NAME            "cu_uuid"
 #define INIT_DEINIT_ACTION_CU_PARAM_DESCRIPTION     "The name of the Control Unit subject of the operation"
-#define WAITH_TIME_FOR_CU_REGISTRATION 2000
+#define WAITH_TIME_FOR_CU_REGISTRATION 2000000
 
 #define CHECK_AND_RETURN_CU_UUID_PARAM_OR_TROW(x, y)\
 string y;\
@@ -73,7 +73,7 @@ void ControlManager::init(void *initParameter) throw(CException) {
     selfThreadPtr = new CThread();
     if(!selfThreadPtr) throw CException(0, "Thread allocation failure", "ControlManager::init");
     selfThreadPtr->setTask(this);
-    selfThreadPtr->setDelayBeetwenTask(200000);
+    selfThreadPtr->setDelayBeetwenTask(10000);
     
         //control manager action initialization
     LCMAPP_  << "system action initialization";
