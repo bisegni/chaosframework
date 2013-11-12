@@ -439,53 +439,53 @@ void SlowCommandSandbox::runCommand() {
             
             //check runnin property
             if(!scheduleWorkFlag && curr_executing_impl->runningProperty) {
-                DEBUG_CODE(SCSLDBG_ << "[runCommand need to exit] - The command is not int the exec state...we stop scheduler";)
+                SCSLDBG_ << "[runCommand need to exit] - The command is not int the exec state...we stop scheduler";
                 canWork = false;
 			}else {
 				//unloc
-				DEBUG_CODE(SCSLDBG_ << "[runCommand] - unlock lockForCurrentCommand";)
+				SCSLDBG_ << "[runCommand] - unlock lockForCurrentCommand";
 				lockForCurrentCommand.unlock();
 				if(currentExecutingCommand) {
 					//we have a valid command running
 					if(curr_executing_impl->runningProperty & (RunningStateType::RS_End|RunningStateType::RS_Fault)) {
-						DEBUG_CODE(SCSLDBG_ << "[runCommand] - current has ended or fault scheduler is going to sleep";)
+						SCSLDBG_ << "[runCommand] - current has ended or fault scheduler is going to sleep";
 						waithForNextCheck.unlock();
 						threadSchedulerPauseCondition.wait();
-						DEBUG_CODE(SCSLDBG_ << "[runCommand] - Scheduler is awaked";)
+						SCSLDBG_ << "[runCommand] - Scheduler is awaked";
 					} else {
-						DEBUG_CODE(SCSLDBG_ << "[runCommand] - command is executing waith his scehdule delay";)
+						SCSLDBG_ << "[runCommand] - command is executing waith his scehdule delay";
 						int64_t timeToWaith = curr_executing_impl->commandFeatures.featureSchedulerStepsDelay - stat.lastCmdStepTime;
 						threadSchedulerPauseCondition.waitUSec(timeToWaith>0?timeToWaith:0);
 					}
 				} else {
-					DEBUG_CODE(SCSLDBG_ << "[runCommand] - Scheduler need sleep because no command to run";)
+					SCSLDBG_ << "[runCommand] - Scheduler need sleep because no command to run";
 					waithForNextCheck.unlock();
 					threadSchedulerPauseCondition.wait();
-					DEBUG_CODE(SCSLDBG_ << "[runCommand] - Scheduler is awaked";)
+					SCSLDBG_ << "[runCommand] - Scheduler is awaked";
 				}
-				DEBUG_CODE(SCSLDBG_ << "[runCommand] - lock lockForCurrentCommand";)
+				SCSLDBG_ << "[runCommand] - lock lockForCurrentCommand";
 				lockForCurrentCommand.lock();
 			}
         }else {
             //unloc
             if(!scheduleWorkFlag) {
-                DEBUG_CODE(SCSLDBG_ << "[runCommand] - no running command and scheduler has been stopped we need to exit";)
+                SCSLDBG_ << "[runCommand] - no running command and scheduler has been stopped we need to exit";
                 canWork = false;
             } else {
-				DEBUG_CODE(SCSLDBG_ << "[runCommand] - unlock lockForCurrentCommand";)
+				SCSLDBG_ << "[runCommand] - unlock lockForCurrentCommand";
 				lockForCurrentCommand.unlock();
-				DEBUG_CODE(SCSLDBG_ << "[runCommand] - Scheduler need sleep because no command to run";)
+				SCSLDBG_ << "[runCommand] - Scheduler need sleep because no command to run";
 				waithForNextCheck.unlock();
 				threadSchedulerPauseCondition.wait();
-				DEBUG_CODE(SCSLDBG_ << "[runCommand] - Scheduler is awaked";)
-				DEBUG_CODE(SCSLDBG_ << "[runCommand] - lock lockForCurrentCommand";)
+				SCSLDBG_ << "[runCommand] - Scheduler is awaked";
+				SCSLDBG_ << "[runCommand] - lock lockForCurrentCommand";
 				lockForCurrentCommand.lock();
 			}
         }
 
     } while(canWork);
     
-    DEBUG_CODE(SCSLDBG_ << "Scheduler thread has finiscehd";)
+    SCSLDBG_ << "Scheduler thread has finiscehd";
 }
 
 //!install the command
