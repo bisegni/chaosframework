@@ -443,6 +443,7 @@ void SlowCommandSandbox::runCommand() {
                 canWork = false;
 			}else {
 				//unloc
+				DEBUG_CODE(SCSLDBG_ << "[runCommand] - unlock lockForCurrentCommand";)
 				lockForCurrentCommand.unlock();
 				if(currentExecutingCommand) {
 					//we have a valid command running
@@ -462,6 +463,8 @@ void SlowCommandSandbox::runCommand() {
 					threadSchedulerPauseCondition.wait();
 					DEBUG_CODE(SCSLDBG_ << "[runCommand] - Scheduler is awaked";)
 				}
+				DEBUG_CODE(SCSLDBG_ << "[runCommand] - lock lockForCurrentCommand";)
+				lockForCurrentCommand.lock();
 			}
         }else {
             //unloc
@@ -469,14 +472,17 @@ void SlowCommandSandbox::runCommand() {
                 DEBUG_CODE(SCSLDBG_ << "[runCommand] - no running command and scheduler has been stopped we need to exit";)
                 canWork = false;
             } else {
+				DEBUG_CODE(SCSLDBG_ << "[runCommand] - unlock lockForCurrentCommand";)
 				lockForCurrentCommand.unlock();
 				DEBUG_CODE(SCSLDBG_ << "[runCommand] - Scheduler need sleep because no command to run";)
 				waithForNextCheck.unlock();
 				threadSchedulerPauseCondition.wait();
 				DEBUG_CODE(SCSLDBG_ << "[runCommand] - Scheduler is awaked";)
+				DEBUG_CODE(SCSLDBG_ << "[runCommand] - lock lockForCurrentCommand";)
+				lockForCurrentCommand.lock();
 			}
         }
-        lockForCurrentCommand.lock();
+
     } while(canWork);
     
     DEBUG_CODE(SCSLDBG_ << "Scheduler thread has finiscehd";)
