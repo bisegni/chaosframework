@@ -575,6 +575,7 @@ bool SlowCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_inf
     if(utility::StartableService::serviceState == ::chaos::utility::service_state_machine::InizializableServiceType::IS_DEINTIATED) return false;
     
     //
+	SCSLDBG_ << "New command enqueue";
     command_submitted_queue.push(new PriorityQueuedElement<CommandInfoAndImplementation>(new CommandInfoAndImplementation(command_to_info, command_impl), priority, true));
     
 	//fire the waiting command
