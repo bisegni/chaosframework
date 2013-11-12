@@ -118,9 +118,9 @@ namespace chaos {
          */
         void unlock(){
             boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
-            if(!inWait) return;
+                //if(!inWait) return;
             answered = true;
-            wait_answer_condition.notify_all();
+            wait_answer_condition.notify_one();
         }
     };
 }
