@@ -120,7 +120,7 @@ namespace chaos {
             boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
             if(!inWait) return;
             answered = true;
-            wait_answer_condition.notify_one();
+            wait_answer_condition.notify_all();
         }
     };
 }
