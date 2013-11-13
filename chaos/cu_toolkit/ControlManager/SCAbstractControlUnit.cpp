@@ -171,3 +171,11 @@ void SCAbstractControlUnit::setSharedVariableValue(std::string name, void *value
     }
 }
 
+void SCAbstractControlUnit::setVariableValue(IOCAttributeShareCache::SharedVeriableDomain domain, std::string name, void *value, uint32_t value_size) {
+        // add the attribute to the shared setting object
+    VariableIndexType attribute_index = 0;
+    if((attribute_index = slowCommandExecutor->commandSandbox.sharedAttributeSetting.getSharedDomain(domain).getIndexForName(name))) {
+        slowCommandExecutor->commandSandbox.sharedAttributeSetting.getSharedDomain(domain).setDefaultValueForAttribute(attribute_index, value, value_size);
+    }
+}
+
