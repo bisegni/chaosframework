@@ -240,10 +240,12 @@ void SlowCommandSandbox::checkNextCommand() {
     SCSLDBG_ << "[checkNextCommand] checkNextCommand started waith run scheduler notify";
     waithForNextCheck.wait();
     SCSLDBG_ << "[checkNextCommand] checkNextCommand can work";
-    while(canWork) {
-        
+    
+    
         //manage the lock on next command mutex
-        boost::recursive_mutex::scoped_lock lockOnNextCommandMutex(mutexNextCommandChecker);
+    boost::recursive_mutex::scoped_lock lockOnNextCommandMutex(mutexNextCommandChecker);
+    
+    while(canWork) {
         
         //compute the runnig state or fault
         boost::mutex::scoped_lock lockForCurrentCommandMutex(mutextAccessCurrentCommand, boost::try_to_lock);
@@ -381,7 +383,7 @@ void SlowCommandSandbox::checkNextCommand() {
             }
         } else {
             if(currentExecutingCommand) {
-                SCSLDBG_ << "[checkNextCommand] command state don't permit to make modification";
+                SCSLDBG_ << "[checkNextCommand] command state don't permit to make modification curCmdRunningState = "<<curCmdRunningState;
                 
                 CHECK_END_OF_SCHEDULER_WORK_AND_CONTINUE()
                 
@@ -452,7 +454,7 @@ void SlowCommandSandbox::runCommand() {
 				if(currentExecutingCommand) {
 					//we have a valid command running
 					if(curr_executing_impl->runningProperty & (RunningStateType::RS_End|RunningStateType::RS_Fault)) {
-						SCSLDBG_ << "[runCommand] - current has ended or fault scheduler is going to sleep";
+						SCSLDBG_ << "[runCommand] - current has ended or fault waithForNextCheck notify";
 						waithForNextCheck.unlock();
                         SCSLDBG_ << "[runCommand] - wait for new command";
 						threadSchedulerPauseCondition.wait();
@@ -463,7 +465,7 @@ void SlowCommandSandbox::runCommand() {
 						threadSchedulerPauseCondition.waitUSec(timeToWaith>0?timeToWaith:0);
 					}
 				} else {
-					SCSLDBG_ << "[runCommand] - Scheduler need sleep because no command to run";
+					SCSLDBG_ << "[runCommand] - Scheduler need sleep waithForNextCheck notify";
 					waithForNextCheck.unlock();
                     SCSLDBG_ << "[runCommand] - wait for new command";
 					threadSchedulerPauseCondition.wait();
@@ -480,7 +482,7 @@ void SlowCommandSandbox::runCommand() {
             } else {
 				SCSLDBG_ << "[runCommand] - unlock lockForCurrentCommand";
 				lockForCurrentCommand.unlock();
-				SCSLDBG_ << "[runCommand] - Scheduler need sleep because no command to run";
+				SCSLDBG_ << "[runCommand] - Scheduler need sleep because no command to run waithForNextCheck notify";
 				waithForNextCheck.unlock();
                 SCSLDBG_ << "[runCommand] - wait for new command";
 				threadSchedulerPauseCondition.wait();

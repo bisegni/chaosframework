@@ -72,7 +72,7 @@ namespace chaos {
             boost::unique_lock<boost::mutex> lock( wait_answer_mutex );
             if(inWait) return;
             inWait = true;
-            do {wait_answer_condition.wait(lock);} while( ! answered );
+            while(!answered) {wait_answer_condition.wait(lock);};
             inWait = false;
             answered = false;
         }
