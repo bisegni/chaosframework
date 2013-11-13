@@ -140,9 +140,9 @@ faultDescription.domain = d;
 //! called after the command step excecution
 void SlowCommand::command_post_step() {
 	if(commandFeatures.featuresFlag & features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT) {
-		timing_stats.command_running_time_usec += shared_stat->lastCmdStepTime;
+            //timing_stats.command_running_time_usec += shared_stat->lastCmdStepTime;
 		//check timeout
-		if(timing_stats.command_running_time_usec  >= commandFeatures.featureCommandTimeout) {
+		if((shared_stat->lastCmdStepStart - timing_stats.command_start_time_usec)  >= commandFeatures.featureCommandTimeout) {
 			//call the timeout handler
 			try {
 				if(timeoutHandler()) {
