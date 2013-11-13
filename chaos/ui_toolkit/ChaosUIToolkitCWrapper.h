@@ -181,6 +181,7 @@ extern "C" {
 	 \param slow_command_data is the abstraction of the command data that is passed to the set handler befor the scheduler loop of the new command
 	 take palce. The memory of that parameter is not free
 	 */
+#ifdef __cplusplus
 	int submitSlowControlCommand(uint32_t dev_id,
 								 const char * const command_alias,
 								 uint16_t submissione_rule,
@@ -189,7 +190,17 @@ extern "C" {
 								 uint32_t scheduler_steps_delay = 0,
 								 uint32_t submission_checker_steps_delay = 0,
 								 const char * const slow_command_data = NULL);
-	
+#else
+	int submitSlowControlCommand(uint32_t dev_id,
+								 const char * const command_alias,
+								 uint16_t submissione_rule,
+								 uint32_t priority,
+								 uint64_t *command_id,
+								 uint32_t scheduler_steps_delay ,
+								 uint32_t submission_checker_steps_delay ,
+								 const char * const slow_command_data );
+
+#endif
         //! Device Control deinitialization
     /*!
      Perform deinitialization of a device control associated to an id
