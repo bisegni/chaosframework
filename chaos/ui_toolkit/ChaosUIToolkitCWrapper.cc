@@ -88,6 +88,20 @@ extern "C" {
         }
         return err;
     }
+        //---------------------------------------------------------------
+    int setControllerTimeout(uint32_t devID, uint32_t timeout) {
+        int err = 0;
+        DeviceController *controller = NULL;
+        try{
+            DeviceController * controller = getDeviceControllerFromID(devID);
+            if(controller) {
+                controller->setRequestTimeWaith(timeout);
+            }
+        } catch (CException& e) {
+            err = e.errorCode;
+        }
+        return err;
+    }
     
         //---------------------------------------------------------------
     int getDeviceDatasetAttributeNameForDirection(uint32_t devID, int16_t attributeDirection, char***attributeNameArrayHandle, uint32_t *attributeNumberPtr) {

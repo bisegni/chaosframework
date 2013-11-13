@@ -72,6 +72,8 @@ extern "C" {
      */
     int getNewControllerForDeviceID(const char * const deviceID, uint32_t *devIDPtr);
     
+    int setControllerTimeout(uint32_t devID, uint32_t timeout);
+    
         //! Get device attribute names
     /*!
      Retrive the device attributes name giving a device identification string and a a direction.
