@@ -93,7 +93,7 @@ extern "C" {
         int err = 0;
         DeviceController *controller = NULL;
         try{
-            DeviceController * controller = getDeviceControllerFromID(devID);
+            controller = getDeviceControllerFromID(devID);
             if(controller) {
                 controller->setRequestTimeWaith(timeout);
             }
