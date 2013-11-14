@@ -334,20 +334,6 @@ void SlowCommandSandbox::checkNextCommand() {
                     //first curret element from queue (it is the element that we are checking)
                     command_submitted_queue.pop();
                     installHandler(nextAvailableCommand);
-                        //check set handler
-                    if(!tmp_impl->already_setupped &&
-                       (tmp_impl->implementedHandler() & HandlerType::HT_Set)) {
-                        try {
-                            nextAvailableCommand->element->cmdImpl->setHandler(nextAvailableCommand->element->cmdInfo);
-                            nextAvailableCommand->element->cmdImpl->already_setupped = true;
-                        } catch(chaos::CException& ex) {
-                            SET_NAMED_FAULT(tmp_impl, ex.errorCode, ex.errorMessage, ex.errorDomain)
-                        } catch(std::exception& ex) {
-                            SET_NAMED_FAULT(tmp_impl, -1, ex.what(), "Acquisition Handler");
-                        } catch(...) {
-                            SET_NAMED_FAULT(tmp_impl, -2, "Unmanaged exception", "Acquisition Handler");
-                        }
-                    }
                     
                     SCSLDBG_ << "[checkNextCommand] Next available command installed";
                     SCSLDBG_ << "[checkNextCommand] Command in queue = " << command_submitted_queue.size();
@@ -517,7 +503,7 @@ void SlowCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplement
     
     //set current command
     if(cmd_to_install) {
-        
+        chaos_data::CDataWrapper *tmp_info = cmd_to_install->element->cmdInfo;
         SlowCommand *tmp_impl = cmd_to_install->element->cmdImpl;
         
         tmp_impl->sharedAttributeSettingPtr = &sharedAttributeSetting;
@@ -531,6 +517,23 @@ void SlowCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplement
 		//set the shared stat befor cal set handler
 		tmp_impl->shared_stat = &stat;
         
+            //check set handler
+        if(!tmp_impl->already_setupped && (handlerMask & HandlerType::HT_Set)) {
+			try {
+				tmp_impl->setHandler(tmp_info);
+                tmp_impl->already_setupped = true;
+			} catch(chaos::CException& ex) {
+				SET_NAMED_FAULT(tmp_impl, ex.errorCode, ex.errorMessage, ex.errorDomain)
+			} catch(std::exception& ex) {
+				SET_NAMED_FAULT(tmp_impl, -1, ex.what(), "Acquisition Handler");
+			} catch(...) {
+				SET_NAMED_FAULT(tmp_impl, -2, "Unmanaged exception", "Acquisition Handler");
+			}
+        }
+        
+        if(handlerMask <= 1) {
+            return;
+        }
         //acquire handler
         if(handlerMask & HandlerType::HT_Acquisition) acquireHandlerFunctor.cmdInstance = tmp_impl;
         
