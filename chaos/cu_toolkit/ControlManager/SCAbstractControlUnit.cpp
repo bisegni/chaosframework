@@ -165,10 +165,11 @@ void SCAbstractControlUnit::addSharedVariable(std::string name, uint32_t max_siz
 
 void SCAbstractControlUnit::setSharedVariableValue(std::string name, void *value, uint32_t value_size) {
     // add the attribute to the shared setting object
-    VariableIndexType attribute_index = 0;
-    if((attribute_index = slowCommandExecutor->commandSandbox.sharedAttributeSetting.getSharedDomain(IOCAttributeShareCache::SVD_CUSTOM).getIndexForName(name))) {
-        slowCommandExecutor->commandSandbox.sharedAttributeSetting.getSharedDomain(IOCAttributeShareCache::SVD_CUSTOM).setDefaultValueForAttribute(attribute_index, value, value_size);
-    }
+	setVariableValue(IOCAttributeShareCache::SVD_CUSTOM, name, value, value_size);
+    //VariableIndexType attribute_index = 0;
+    //if((attribute_index = slowCommandExecutor->commandSandbox.sharedAttributeSetting.getSharedDomain(IOCAttributeShareCache::SVD_CUSTOM).getIndexForName(name))) {
+      //  slowCommandExecutor->commandSandbox.sharedAttributeSetting.getSharedDomain(IOCAttributeShareCache::SVD_CUSTOM).setDefaultValueForAttribute(attribute_index, value, value_size);
+    //}
 }
 
 void SCAbstractControlUnit::setVariableValue(IOCAttributeShareCache::SharedVeriableDomain domain, std::string name, void *value, uint32_t value_size) {
@@ -177,5 +178,11 @@ void SCAbstractControlUnit::setVariableValue(IOCAttributeShareCache::SharedVeria
     if((attribute_index = slowCommandExecutor->commandSandbox.sharedAttributeSetting.getSharedDomain(domain).getIndexForName(name))) {
         slowCommandExecutor->commandSandbox.sharedAttributeSetting.getSharedDomain(domain).setDefaultValueForAttribute(attribute_index, value, value_size);
     }
+}
+
+ValueSetting *SCAbstractControlUnit::getVariableValue(IOCAttributeShareCache::SharedVeriableDomain domain, const char *variable_name) {
+	AttributeSetting& attribute_setting = slowCommandExecutor->commandSandbox.sharedAttributeSetting.getSharedDomain(domain);
+    VariableIndexType index = attribute_setting.getIndexForName(variable_name);
+    return attribute_setting.getValueSettingForIndex(index);
 }
 
