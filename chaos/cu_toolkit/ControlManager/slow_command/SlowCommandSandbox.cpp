@@ -355,6 +355,7 @@ void SlowCommandSandbox::checkNextCommand() {
                     if(!hasAcquireOrCC) {
                         DELETE_OBJ_POINTER(nextAvailableCommand)
                         SCSLDBG_ << "[checkNextCommand] Command has been delete it has composed only by set handler";
+                        installHandler(NULL);
                     }
                     //fire the scheduler
                     threadSchedulerPauseCondition.unlock();
