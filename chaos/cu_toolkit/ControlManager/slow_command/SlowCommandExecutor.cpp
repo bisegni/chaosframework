@@ -32,7 +32,7 @@ using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::cu::control_manager::slow_command;
 
-#define LOG_HEAD "[SlowCommandExecutor-" << executorID << "] "
+#define LOG_HEAD "[SlowCommandExecutor-" << deviceSchemaDbPtr->getDeviceID() << "] "
 
 #define SCELAPP_ LAPP_ << LOG_HEAD
 #define SCELDBG_ LDBG_ << LOG_HEAD
@@ -122,7 +122,8 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
     
     //init the sand box
     utility::StartableService::initImplementation(commandSandbox, initData, "SlowCommandSandbox", "SlowCommandExecutor::init");
-    
+    commandSandbox.deviceSchemaDbPtr = deviceSchemaDbPtr;
+	
     SCELAPP_ << "Populating sandbox shared setting for device input attribute";
     deviceSchemaDbPtr->getDatasetAttributesName(DataType::Input, attribute_names);
     initAttributeOnSahredVariableDomain(IOCAttributeShareCache::SVD_INPUT, attribute_names);

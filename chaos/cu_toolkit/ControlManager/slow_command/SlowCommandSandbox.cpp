@@ -94,9 +94,12 @@ canWork = false; \
 continue; \
 }
 
-#define SCSLAPP_ LAPP_ << "[SlowCommandSandbox-" << "] "
-#define SCSLDBG_ LDBG_ << "[SlowCommandSandbox-" << "] "
-#define SCSLERR_ LERR_ << "[SlowCommandSandbox-" << "] "
+
+#define LOG_HEAD "[SlowCommandSandbox-" << deviceSchemaDbPtr->getDeviceID() << "] "
+
+#define SCSLAPP_ LAPP_ << LOG_HEAD
+#define SCSLDBG_ LDBG_ << LOG_HEAD
+#define SCSLERR_ LERR_ << LOG_HEAD
 
 
 SlowCommandSandbox::SlowCommandSandbox() {
