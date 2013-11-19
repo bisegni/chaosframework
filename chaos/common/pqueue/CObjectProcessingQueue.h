@@ -29,8 +29,11 @@
 #include <queue>
 #include <boost/lexical_cast.hpp>
 #include <boost/thread.hpp>
-#define COPQUEUE_LAPP_ LAPP_ << "[CObjectProcessingQueue] - "
-#define COPQUEUE_LDBG_ LDBG_ << "[CObjectProcessingQueue] - "
+
+#define LOG_HEAD uid << "[CObjectProcessingQueue] - "
+#define COPQUEUE_LAPP_ LAPP_ << LOG_HEAD
+#define COPQUEUE_LDBG_ LDBG_ << LOG_HEAD
+
 
 namespace chaos {
     using namespace std;
@@ -71,7 +74,7 @@ namespace chaos {
                 //retrive the oldest element
 				dataRow = waitAndPop();
 				if(!dataRow) {
-					DEBUG_CODE(COPQUEUE_LDBG_<< uid <<" waitAndPop() return NULL object so we return";)
+					DEBUG_CODE(COPQUEUE_LDBG_<<" waitAndPop() return NULL object so we return";)
 					continue;
 				}
                 //Process the element
@@ -86,7 +89,7 @@ namespace chaos {
 				} catch (CException& ex) {
 					DECODE_CHAOS_EXCEPTION(ex)
 				} catch (...) {
-					COPQUEUE_LAPP_ <<  uid <<" Unkown exception";
+					COPQUEUE_LAPP_ << " Unkown exception";
 				}
 				
                 //if weg got a listener notify it
@@ -94,7 +97,7 @@ namespace chaos {
 				
 				DELETE_OBJ_POINTER(dataRow);
 			}
-			DEBUG_CODE(COPQUEUE_LDBG_<<  uid <<" executeOnThread ended";)
+			DEBUG_CODE(COPQUEUE_LDBG_<< " executeOnThread ended";)
         }
         
         /*
@@ -123,16 +126,16 @@ namespace chaos {
          */
         virtual void init(int threadNumber) throw(CException) {
             inDeinit = false;
-            COPQUEUE_LAPP_ <<  uid <<" init";
+            COPQUEUE_LAPP_ << " init";
 			//add the n thread on the threadgroup
-            COPQUEUE_LAPP_ <<  uid <<" creating and starting" << threadNumber << " thread";
+            COPQUEUE_LAPP_ << " creating and starting" << threadNumber << " thread";
             for (int idx = 0; idx<threadNumber; idx++) {
                 t_group.create_thread(boost::bind(&CObjectProcessingQueue<T>::executeOnThread, this));
             }
             
             //COPQUEUE_LAPP_ << "Starting all thread";
             //threadGroup.startGroup();
-            COPQUEUE_LAPP_ <<  uid <<" Initialized";
+            COPQUEUE_LAPP_ << " Initialized";
 			}
 			
 			/*
@@ -141,26 +144,26 @@ namespace chaos {
 			virtual void deinit(bool waithForEmptyQueue=true) throw(CException) {
 				boost::mutex::scoped_lock lock(qMutex);
 				inDeinit = true;
-				COPQUEUE_LAPP_ <<  uid <<" Deinitialization";
+				COPQUEUE_LAPP_ << " Deinitialization";
                 //stopping the group
-				COPQUEUE_LAPP_ <<  uid <<" Deinitializing Threads";
+				COPQUEUE_LAPP_ << " Deinitializing Threads";
 				
 				if(waithForEmptyQueue){
-					COPQUEUE_LAPP_ <<  uid <<" wait until queue is empty";
+					COPQUEUE_LAPP_ << " wait until queue is empty";
 					while( !bufferQueue.empty()){
 						emptyQueueConditionLock.wait(lock);
 					}
-					COPQUEUE_LAPP_ <<  uid <<" queue is empty";
+					COPQUEUE_LAPP_ << " queue is empty";
 				}
 				
-				COPQUEUE_LAPP_ <<  uid <<" Stopping thread";
+				COPQUEUE_LAPP_ << " Stopping thread";
 				//threadGroup.stopGroup(false);
 				lock.unlock();
 				
 				liveThreadConditionLock.notify_all();
-				COPQUEUE_LAPP_ <<  uid <<" join internal thread group";
+				COPQUEUE_LAPP_ << " join internal thread group";
 				t_group.join_all();
-				COPQUEUE_LAPP_ <<  uid <<" deinitlized";
+				COPQUEUE_LAPP_ << " deinitlized";
 			}
 			
 			/*
@@ -182,15 +185,15 @@ namespace chaos {
 				boost::mutex::scoped_lock lock(qMutex);
                 //output result poitner
 				T *oldestElement = NULL;
-				DEBUG_CODE(COPQUEUE_LDBG_<<  uid <<" waitAndPop() begin to wait";)
+				DEBUG_CODE(COPQUEUE_LDBG_<< " waitAndPop() begin to wait";)
 				while(bufferQueue.empty() && !inDeinit) {
 					emptyQueueConditionLock.notify_one();
 					liveThreadConditionLock.wait(lock);
 				}
-				DEBUG_CODE(COPQUEUE_LDBG_<<  uid <<" waitAndPop() wakeup";)
+				DEBUG_CODE(COPQUEUE_LDBG_<< " waitAndPop() wakeup";)
                 //get the oldest data ad copy the ahsred_ptr
 				if(bufferQueue.empty()) {
-					DEBUG_CODE(COPQUEUE_LDBG_<<  uid <<" bufferQueue.empty() is empy so we go out";)
+					DEBUG_CODE(COPQUEUE_LDBG_<< " bufferQueue.empty() is empy so we go out";)
 					return NULL;
 				}
                 //get the last pointer from the queue

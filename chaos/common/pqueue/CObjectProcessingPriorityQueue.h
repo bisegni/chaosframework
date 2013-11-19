@@ -20,12 +20,14 @@
 #ifndef Common_CObjectProcessingPriorityQueue_h
 #define Common_CObjectProcessingPriorityQueue_h
 
-#include <boost/thread.hpp>
-#include <chaos/common/pqueue/CObjectProcessingQueue.h>
 #include <queue>
 #include <vector>
 
-#define COPPQUEUE_LAPP_ LAPP_ << "[CObjectProcessingPriorityQueue] - "
+#include <boost/thread.hpp>
+#include <chaos/common/pqueue/CObjectProcessingQueue.h>
+#include <chaos/common/utility/UUIDUtil.h>
+
+#define COPPQUEUE_LAPP_ LAPP_ << uid << "[CObjectProcessingPriorityQueue] - "
 
 namespace chaos {
     using namespace std;
@@ -77,7 +79,8 @@ namespace chaos {
                 Processing queue implemented with a priority_queue
              */
             template<typename T>
-            class CObjectProcessingPriorityQueue : public CThreadExecutionTask {
+            class CObjectProcessingPriorityQueue {
+                string uid;
                 priority_queue< PRIORITY_ELEMENT(T)*, std::vector< PRIORITY_ELEMENT(T)* >, pless< PRIORITY_ELEMENT(T) > > bufferQueue;
                 bool inDeinit;
                 int outputThreadNumber;
@@ -86,7 +89,7 @@ namespace chaos {
                 boost::condition_variable emptyQueueConditionLock;
                 
                     //thread group
-                CThreadGroup threadGroup;
+                boost::thread_group t_group;
                 
             protected:
                 
@@ -95,18 +98,22 @@ namespace chaos {
                 /*
                  Thread method that work on buffer item
                  */
-                void executeOnThread() throw(CException) {
+                void executeOnThread() {
+                    while(!inDeinit) {
                         //get the oldest element
                     PRIORITY_ELEMENT(T)* dataRow = NULL;
                     ElementManagingPolicy elementPolicy;
                         //retrive the oldest element
                     dataRow = waitAndPop();
-                    if(!dataRow) return;
+                        if(!dataRow) {
+                            DEBUG_CODE(COPPQUEUE_LAPP_<<" waitAndPop() return NULL object so we return";)
+                            continue;
+                        }
                         //Process the element
                     try {
                         if(eventListener && !(*eventListener).elementWillBeProcessed(tag, dataRow->element)){
                             DELETE_OBJ_POINTER(dataRow);
-                            return;
+                            continue;
                         }
                         elementPolicy.elementHasBeenDetached=false;
                         processBufferElement(dataRow->element, elementPolicy);
@@ -118,11 +125,12 @@ namespace chaos {
                     }
                     
                         //if weg got a listener notify it
-                    if(eventListener && !(*eventListener).elementWillBeDiscarded(tag, dataRow->element))return;
+                    if(eventListener && !(*eventListener).elementWillBeDiscarded(tag, dataRow->element))continue;
                     
                     DELETE_OBJ_POINTER(dataRow);
                 }
-                
+                    DEBUG_CODE(COPPQUEUE_LAPP_<< " executeOnThread ended";)
+                }
                 /*
                  Process the oldest element in buffer
                  */
@@ -134,14 +142,9 @@ namespace chaos {
                 CObjectProcessingPriorityQueue() {
                     inDeinit = false;
                     eventListener=0L;
+                    uid = chaos::UUIDUtil::generateUUIDLite();
                 }
                 
-                /*
-                 Set the internal thread delay for execute new task
-                 */
-                void setDelayBeetwenTask(long threadDelay){
-                    threadGroup.setDelayBeetwenTask(threadDelay);
-                }
                 
                 /*
                  Initialization method for output buffer
@@ -153,11 +156,8 @@ namespace chaos {
                         //add the n thread on the threadgroup
                     COPPQUEUE_LAPP_ << "creating " << threadNumber << " thread";
                     for (int idx = 0; idx<threadNumber; idx++) {
-                        threadGroup.addThread(new CThread(this));
+                        t_group.create_thread(boost::bind(&CObjectProcessingPriorityQueue<T>::executeOnThread, this));
                     }
-                    
-                    COPPQUEUE_LAPP_ << "Starting all thread";
-                    threadGroup.startGroup();
                     COPPQUEUE_LAPP_ << "Initialized";
                 }
                 
@@ -180,12 +180,11 @@ namespace chaos {
                     }
                     
                     COPPQUEUE_LAPP_ << "Stopping thread";
-                    threadGroup.stopGroup(false);
                     lock.unlock();
                     
                     liveThreadConditionLock.notify_all();
                     COPPQUEUE_LAPP_ << "join internal thread group";
-                    threadGroup.joinGroup();
+                    t_group.join_all();
                     COPPQUEUE_LAPP_ << "deinitlized";
                 }
                 
@@ -207,7 +206,7 @@ namespace chaos {
                         //output result poitner
                     PriorityQueuedElement<T> *prioritizedElement = NULL;
                     
-                    while(bufferQueue.empty() && !threadGroup.isStopped()) {
+                    while(bufferQueue.empty() && !inDeinit) {
                         emptyQueueConditionLock.notify_one();
                         liveThreadConditionLock.wait(lock);
                     }
@@ -281,7 +280,7 @@ namespace chaos {
                  Whait the thread termination
                  */
                 void joinBufferThread() {
-                    threadGroup.joinGroup();
+                    t_group.join_all();
                 }
             };
             }
