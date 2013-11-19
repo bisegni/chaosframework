@@ -67,7 +67,7 @@ int16_t SQLiteEntityDB::initDB(const char* name, bool temporary)  throw (CExcept
     int16_t result = 0;
     int errorSequence = 0;
     std::string uriPath;
-    
+    int ret;
     
     if(temporary) {
         //use mermory database for temporary
@@ -85,7 +85,7 @@ int16_t SQLiteEntityDB::initDB(const char* name, bool temporary)  throw (CExcept
     if(openDatabase(uriPath.c_str()) != SQLITE_OK) throw CException(errorSequence++, "Error openening database", "SQLiteEntityDB::initDB");
     
     //create tables
-    if(makeInsertUpdateDelete(CREATE_SEQ_TABLE) != SQLITE_DONE) throw CException(1, "Error initializing sequence table", "SQLiteEntityDB::initDB");
+    if((ret = makeInsertUpdateDelete(CREATE_SEQ_TABLE) ) != SQLITE_DONE) throw CException(ret, "Error initializing sequence table", "SQLiteEntityDB::initDB");
     if(makeInsertUpdateDelete(CREATE_KEY_TABLE) != SQLITE_DONE) throw CException(2, "Error initializing key table", "SQLiteEntityDB::initDB");
     if(makeInsertUpdateDelete(CREATE_ENTITY_TABLE) != SQLITE_DONE) throw CException(3, "Error initializing entity table", "SQLiteEntityDB::initDB");
     if(makeInsertUpdateDelete(CREATE_PROPERTY_TABLE) != SQLITE_DONE) throw CException(4, "Error initializing property table", "SQLiteEntityDB::initDB");
@@ -835,7 +835,13 @@ int16_t SQLiteEntityDB::deleteAllPropertyForEntity(uint32_t entityID) {
 //----------------------private db api------------------------
 
 int16_t SQLiteEntityDB::openDatabase(const char *databasePath) {
-	int16_t err = sqlite3_open(databasePath, &dbInstance);
+  int16_t err;
+  static unsigned long long pnt[1024*1024];
+
+  assert(sqlite3_config(SQLITE_CONFIG_HEAP,pnt,sizeof(pnt),8)== SQLITE_OK);
+  LDBG_<<"Opening database:"<<databasePath<<" allocated buffer "<<hex<<pnt<<" size "<<dec<<sizeof(pnt)<<endl;
+  err= sqlite3_open(databasePath, &dbInstance);
+
 	return err;
 }
 
@@ -848,12 +854,25 @@ int16_t  SQLiteEntityDB::closeDatabase() {
 int16_t SQLiteEntityDB::makeInsertUpdateDelete(const char *sql) {
 	int16_t error = SQLITE_OK;
 	sqlite3_stmt *insertStmt = NULL;
-    if((error = sqlite3_prepare_v2(dbInstance, sql, -1, &insertStmt, NULL)) != SQLITE_OK) {
-        return error;
-    }
+	LDBG_<<"makeInsertUpdateDelete :"<<sql<<endl;
+	if((error = sqlite3_prepare_v2(dbInstance, sql, -1, &insertStmt, NULL)) != SQLITE_OK) {
+	  LERR_<<"## makeInsertUpdateDelete, preparing statement: err:"<<sqlite3_errmsg(dbInstance)<<endl;
+	  return error;
+	}
+#if 0
     error = sqlite3_step(insertStmt);
-    sqlite3_finalize(insertStmt);
-    return error;
+    if(error!=SQLITE_OK){
+      LERR_<<"## makeInsertUpdateDelete, executing statement: err:"<<sqlite3_errmsg(dbInstance)<<endl;
+    }
+#else
+    sqlite3_step(insertStmt);
+#endif
+    error = sqlite3_finalize(insertStmt);
+    if(error!=SQLITE_OK){
+      LERR_<<"## makeInsertUpdateDelete, finalizing statement:\""<<sql<<"\" err:"<<error<<":"<<sqlite3_errmsg(dbInstance)<<endl;
+      return error;
+    } 
+    return SQLITE_DONE;
 }
 
 int16_t SQLiteEntityDB::getNextIDOnTable(const char * tableName, uint32_t &seqID) {
