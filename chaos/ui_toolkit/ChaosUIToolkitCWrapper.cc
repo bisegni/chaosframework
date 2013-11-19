@@ -84,6 +84,7 @@ extern "C" {
                 controller->setupTracking();
             }
         } catch (CException& e) {
+	  printf("eccezione %s\n",e.what());
             err = e.errorCode;
         }
         return err;
