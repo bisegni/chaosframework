@@ -162,11 +162,10 @@ int main (int argc, char* argv[] )
             }
         }
         
-        DeviceController *controller = HLDataApi::getInstance()->getControllerForDeviceID(deviceID);
+        DeviceController *controller = HLDataApi::getInstance()->getControllerForDeviceID(deviceID, timeout);
         if(!controller) throw CException(4, "Error allcoating decive controller", "device controller creation");
         
         //get the actual state of device
-		controller->setRequestTimeWaith(timeout);
         err = controller->getState(deviceState);
         if(err == ErrorCode::EC_TIMEOUT) throw CException(5, "Time out on connection", "Get state for device");
         
