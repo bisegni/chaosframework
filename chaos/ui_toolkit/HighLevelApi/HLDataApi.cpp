@@ -59,8 +59,9 @@ void HLDataApi::deinit() throw (CException) {
 }
 
 
-DeviceController *HLDataApi::getControllerForDeviceID(string& deviceID) throw (CException) {
+DeviceController *HLDataApi::getControllerForDeviceID(string& deviceID, uint32_t controller_timeout) throw (CException) {
     DeviceController *deviceController = new DeviceController(deviceID);
+	deviceController->setRequestTimeWaith(controller_timeout);
     deviceController->updateChannel();
     
     controllerMap.insert(make_pair(deviceID, deviceController));
