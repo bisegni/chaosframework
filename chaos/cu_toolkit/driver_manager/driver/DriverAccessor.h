@@ -56,9 +56,12 @@ namespace chaos{
                     friend class AbstractDriver;
                     friend class chaos::cu::driver_manager::DriverManager;
 					
+                    //! idnetificaiton of the driver that has created the accessor
 					std::string driver_uuid;
 					
+                    //! index of the accessor for the driver
                     uint accessor_index;
+
                     
                     //! Number of the command sent
                     /*!
@@ -98,17 +101,20 @@ namespace chaos{
                     
                 public:
                     
+                    //! base priority of the accessor(the default value is 50)
+                    uint32_t base_opcode_priority;
+                    
                     //! Send synchronous command
                     /*!
                         A command is sent to the driver and a synchronous
                         answere is waith from the driver.
                         \param cmd a command pack filled with all infromation
                                 for the command.
-                        \param priority the priority permit to be forward a message
+                        \param inc_priority the incremental priority repsect to the base that permit to be forward a message
                                 before message with minor priority.
                         \return true if operation has been done sucessfull.
                      */
-                    bool send(DrvMsgPtr cmd, uint priority = 0);
+                    bool send(DrvMsgPtr cmd, uint32_t inc_priority = 0);
                     
                     //! Send an asynchronous command
                     /*!
@@ -117,11 +123,11 @@ namespace chaos{
                         \param cmd a command pack filled with all infromation
                             for the command.
                         \param message_id is the code associated to the async command.
-                        \param priority the priority permit to be forward a message
+                        \param inc_priority the incremental priority repsect to the base that permit to be forward a message
                             before message with minor priority.
                         \return true if operation has been done sucessfull.
                      */
-                    bool sendAsync(DrvMsgPtr cmd, ResponseMessageType& message_id, uint priority = 0);
+                    bool sendAsync(DrvMsgPtr cmd, ResponseMessageType& message_id, uint32_t inc_priority = 0);
                     
                     //! Check last processed code
                     /*!

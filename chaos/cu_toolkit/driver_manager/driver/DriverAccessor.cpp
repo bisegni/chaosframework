@@ -29,7 +29,7 @@ using namespace chaos::cu::driver_manager::driver;
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
-DriverAccessor::DriverAccessor(uint _accessor_index):accessor_index(_accessor_index),messages_count(0) {
+DriverAccessor::DriverAccessor(uint _accessor_index):accessor_index(_accessor_index),messages_count(0), base_opcode_priority(50) {
     //Allocate accessor message queue
     accessor_async_mq = new AccessorQueueType();
     accessor_sync_mq = new AccessorQueueType();
@@ -50,7 +50,7 @@ DriverAccessor::~DriverAccessor() {
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
-bool DriverAccessor::send(DrvMsgPtr cmd, uint priority) {
+bool DriverAccessor::send(DrvMsgPtr cmd, uint32_t inc_priority) {
     CHAOS_ASSERT(cmd)
 
     ResponseMessageType answer_message = 0;
@@ -60,7 +60,7 @@ bool DriverAccessor::send(DrvMsgPtr cmd, uint priority) {
     cmd->drvResponseMQ = accessor_sync_mq;
     
     //send command
-    command_queue->push(cmd);
+    command_queue->push(cmd, base_opcode_priority + inc_priority);
     //whait the answer
     accessor_sync_mq->wait_and_pop(answer_message);
     
@@ -71,7 +71,7 @@ bool DriverAccessor::send(DrvMsgPtr cmd, uint priority) {
 /*------------------------------------------------------
  
  ------------------------------------------------------*/
-bool DriverAccessor::sendAsync(DrvMsgPtr cmd, ResponseMessageType& message_id, uint priority) {
+bool DriverAccessor::sendAsync(DrvMsgPtr cmd, ResponseMessageType& message_id, uint32_t inc_priority) {
     CHAOS_ASSERT(cmd)
     
     //fill the cmd with the information for retrive it
@@ -80,7 +80,7 @@ bool DriverAccessor::sendAsync(DrvMsgPtr cmd, ResponseMessageType& message_id, u
     
     //send message
 
-	command_queue->push(cmd);
+	command_queue->push(cmd, base_opcode_priority + inc_priority);
     return true;
 }
 
