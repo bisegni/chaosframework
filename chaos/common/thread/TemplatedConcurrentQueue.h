@@ -22,26 +22,58 @@
 #define __CHAOSFramework__TemplatedConcurrentQueue__
 #include <queue>
 
+#include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
+
 #include <boost/thread.hpp>
+#include <boost/heap/priority_queue.hpp>
 
 namespace chaos {
     namespace common  {
         namespace thread {
             
+            
+            template <typename T>
+            class TemplatedConcurrentQueueElement {
+
+                int priority;
+            public:
+                T element;
+                TemplatedConcurrentQueueElement(T _element, int _priority = 50):element(_element), priority(_priority) {}
+                ~TemplatedConcurrentQueueElement(){}
+                
+                /*
+                 Operator for heap
+                 */
+                bool operator < (const TemplatedConcurrentQueueElement& b) const {
+                    return priority < b.priority;
+                }
+                
+                inline int getPriority() {
+                    return priority;
+                }
+            };
+            
+            template<typename Type, typename Compare = std::less<Type> >
+            struct pless : public std::binary_function<Type *, Type *, bool> {
+                bool operator()(const Type *x, const Type *y) const {
+                    return Compare()(*x, *y);
+                }
+            };
+            
             template<typename T>
             class TemplatedConcurrentQueue
             {
             private:
-                std::queue<T> the_queue;
-                
+                //std::queue<T> the_queue;
+                boost::heap::priority_queue< TemplatedConcurrentQueueElement<T>* > element_queue;
                 mutable boost::mutex the_mutex;
                 
                 boost::condition_variable the_condition_variable;
             public:
-                void push(T const& data) {
+                void push(T const& data, uint32_t priority = 50) {
                     boost::mutex::scoped_lock lock(the_mutex);
                     
-                    the_queue.push(data);
+                    element_queue.push(new TemplatedConcurrentQueueElement<T>(data, priority));
                     
                     //free the mutex
                     lock.unlock();
@@ -52,31 +84,33 @@ namespace chaos {
                 
                 bool empty() const {
                     boost::mutex::scoped_lock lock(the_mutex);
-                    return the_queue.empty();
+                    return element_queue.empty();
                 }
                 
                 bool try_pop(T& popped_value) {
                     boost::mutex::scoped_lock lock(the_mutex);
-                    if(the_queue.empty()) {
+                    if(element_queue.empty()) {
                         return false;
                     }
-                    
-                    popped_value=the_queue.front();
-                    
-                    the_queue.pop();
+                    TemplatedConcurrentQueueElement<T> *popped_element = element_queue.top();
+                    element_queue.pop();
+                    popped_value=popped_element->element;
+                    delete(popped_element);
                     return true;
                 }
                 
                 void wait_and_pop(T& popped_value)
                 {
                     boost::mutex::scoped_lock lock(the_mutex);
-                    while(the_queue.empty())
+                    while(element_queue.empty())
                     {
                         the_condition_variable.wait(lock);
                     }
                     
-                    popped_value=the_queue.front();
-                    the_queue.pop();
+                    TemplatedConcurrentQueueElement<T> *popped_element = element_queue.top();
+                    element_queue.pop();
+                    popped_value=popped_element->element;
+                    delete(popped_element);
                 }
                 
             };
