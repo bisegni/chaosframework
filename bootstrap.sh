@@ -46,7 +46,7 @@ else
 	COMP_TYPE=Release
 fi
 
-if [ `echo $OS | tr [:upper:] [:lower:]` = `echo "Darwin" | tr [:upper:] [:lower:]` ] && [ $KERNEL_SHORT_VER -ge 1300 ]; then
+if [ `echo $OS | tr '[:upper:]' '[:lower:]'` = `echo "Darwin" | tr '[:upper:]' '[:lower:]'` ] && [ $KERNEL_SHORT_VER -ge 1300 ]; then
     export CC=clang
     export CXX="clang++ -stdlib=libstdc++"
     export LD=clang
@@ -262,7 +262,7 @@ cd $SCRIPTPATH
 if [ -n "$CHAOS32" ]; then
     cmake -DCMAKE_BUILD_TYPE=$COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_FORCE_32=true -DBUILD_PREFIX=$PREFIX $SCRIPTPATH/.
 else
-    if [ `echo $OS | tr [:upper:] [:lower:]` = `echo "Darwin" | tr [:upper:] [:lower:]` ] && [ $KERNEL_SHORT_VER -ge 1300 ]; then
+    if [ `echo $OS | tr '[:upper:]' '[:lower:]'` = `echo "Darwin" | tr '[:upper:]' '[:lower:]'` ] && [ $KERNEL_SHORT_VER -ge 1300 ]; then
         echo "Use standard CLIB with clang"
         cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="-stdlib=libstdc++" -DCMAKE_BUILD_TYPE=$COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_PREFIX=$PREFIX $SCRIPTPATH/.
     else

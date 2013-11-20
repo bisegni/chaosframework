@@ -1,4 +1,3 @@
-ADD_DEFINITIONS( -O2 -DSQLITE_ENABLE_MEMSYS5 -DSQLITE_MEMDEBUG -DSQLITE_DEBUG)
 SET(common_lib_src log/LogManager.cpp)
 SET(common_lib_src ${common_lib_src} plugin/AbstractPlugin.cpp plugin/PluginDiscover.cpp plugin/PluginInspector.cpp plugin/PluginLoader.cpp)
 SET(common_lib_src  ${common_lib_src} action/ActionExecutionSafetySystem.cpp action/EventAction.cpp action/ActionDescriptor.cpp action/DeclareAction.cpp action/DomainActions.cpp)

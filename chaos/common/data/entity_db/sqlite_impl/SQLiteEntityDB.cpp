@@ -836,10 +836,12 @@ int16_t SQLiteEntityDB::deleteAllPropertyForEntity(uint32_t entityID) {
 
 int16_t SQLiteEntityDB::openDatabase(const char *databasePath) {
   int16_t err;
+#ifdef CHAOS_SQLITE_NOMALLOC
   static unsigned long long pnt[1024*1024];
 
   assert(sqlite3_config(SQLITE_CONFIG_HEAP,pnt,sizeof(pnt),8)== SQLITE_OK);
   LDBG_<<"Opening database:"<<databasePath<<" allocated buffer "<<hex<<pnt<<" size "<<dec<<sizeof(pnt)<<endl;
+#endif
   err= sqlite3_open(databasePath, &dbInstance);
 
 	return err;
