@@ -45,6 +45,7 @@ namespace chaos {
                  Operator for heap
                  */
                 bool operator < (const TemplatedConcurrentQueueElement& b) const {
+		  LDBG_<<"Comparing prio "<<priority<<" "<<b.priority<<endl;
                     return priority < b.priority;
                 }
                 
@@ -56,6 +57,7 @@ namespace chaos {
             template<typename Type, typename Compare = std::less<Type> >
             struct pless : public std::binary_function<Type *, Type *, bool> {
                 bool operator()(const Type *x, const Type *y) const {
+		  LDBG_<<"Comparing prio x.. "<<endl;
                     return Compare()(*x, *y);
                 }
             };
@@ -65,15 +67,15 @@ namespace chaos {
             {
             private:
                 //std::queue<T> the_queue;
-                boost::heap::priority_queue< TemplatedConcurrentQueueElement<T>* > element_queue;
+                boost::heap::priority_queue< TemplatedConcurrentQueueElement<T> > element_queue;
                 mutable boost::mutex the_mutex;
                 
                 boost::condition_variable the_condition_variable;
             public:
                 void push(T const& data, uint32_t priority = 50) {
                     boost::mutex::scoped_lock lock(the_mutex);
-                    
-                    element_queue.push(new TemplatedConcurrentQueueElement<T>(data, priority));
+		    LDBG_<<"Pushing prio: "<<priority<<endl;
+                    element_queue.push(TemplatedConcurrentQueueElement<T>(data, priority));
                     
                     //free the mutex
                     lock.unlock();
@@ -92,10 +94,10 @@ namespace chaos {
                     if(element_queue.empty()) {
                         return false;
                     }
-                    TemplatedConcurrentQueueElement<T> *popped_element = element_queue.top();
+                    TemplatedConcurrentQueueElement<T> popped_element = element_queue.top();
                     element_queue.pop();
-                    popped_value=popped_element->element;
-                    delete(popped_element);
+                    popped_value=popped_element.element;
+		    //                    delete(popped_element);
                     return true;
                 }
                 
@@ -107,10 +109,10 @@ namespace chaos {
                         the_condition_variable.wait(lock);
                     }
                     
-                    TemplatedConcurrentQueueElement<T> *popped_element = element_queue.top();
+                    TemplatedConcurrentQueueElement<T> popped_element = element_queue.top();
                     element_queue.pop();
-                    popped_value=popped_element->element;
-                    delete(popped_element);
+                    popped_value=popped_element.element;
+		    //                    delete(popped_element);
                 }
                 
             };
