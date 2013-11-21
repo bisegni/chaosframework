@@ -153,6 +153,11 @@ namespace chaos {
              Get attribute name filtered by direction type
              */
             void getDeviceDatasetAttributesName(vector<string>& attributesName);
+
+	    /*!
+             Get time stamp of last packet
+             */
+	    int getTimeStamp(uint64_t& live);
             /*!
              Get description for attribute name
              */

@@ -266,6 +266,14 @@ extern "C" {
         }
         return err;
     }
+
+  int getTimeStamp(uint32_t devID,uint64_t*ts){
+       DeviceController *dCtrl = getDeviceControllerFromID(devID);
+       if(dCtrl){
+	 return dCtrl->getTimeStamp(*ts);
+       }
+       return -1;
+    }
     
         //---------------------------------------------------------------
     int getStrValueForAttribute(uint32_t devID, const char * const dsAttrName, char ** dsAttrValueHandle) {

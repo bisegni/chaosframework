@@ -662,6 +662,14 @@ CDataWrapper * DeviceController::getLiveCDataWrapperPtr() {
     return currentLiveValue.get();
 }
 
+int DeviceController::getTimeStamp(uint64_t& live){
+  CDataWrapper * d= currentLiveValue.get();
+  if(d){
+    live = d->getInt64Value(DataPackKey::CS_CSV_TIME_STAMP);
+    return 0;
+  }
+  return -1;
+}
 //---------------------------------------------------------------------------------------------------
 void DeviceController::setupTracking() {
     boost::recursive_mutex::scoped_lock lock(trackMutext);

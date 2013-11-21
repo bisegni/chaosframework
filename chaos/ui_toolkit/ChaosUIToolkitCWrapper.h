@@ -168,7 +168,8 @@ extern "C" {
      \return the error of operation, if all goes well the result is 0
      */
     int setStrValueForAttribute(uint32_t devID, const char * const dsAttrName, const char * const dsAttrValueCStr);
-    
+
+  int getTimeStamp(uint32_t devID,uint64_t*ts);
 	//! Submit a new slow command
 	/*!
 	 \ingroup API_Slow_Control
