@@ -43,8 +43,8 @@ namespace chaos {
         
 
         bool disposeOnDestroy;
-        int priority;
     public:
+        int priority;
         T *element;
         PriorityQueuedElement(T *_element, int _priority = 50, bool _disposeOnDestroy = true):element(_element), disposeOnDestroy(_disposeOnDestroy), priority(_priority) {}
         ~PriorityQueuedElement(){

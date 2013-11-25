@@ -703,7 +703,10 @@ void DeviceController::fetchCurrentDeviceValue() {
     CDataWrapper *tmpPtr = currentLiveValue.get();
     
     //add timestamp value
-    int64AttributeLiveBuffer[timestampAttributeNameStr]->addValue(tmpPtr->getInt64Value(DataPackKey::CS_CSV_TIME_STAMP));
+    int64_t got_ts = tmpPtr->getInt64Value(DataPackKey::CS_CSV_TIME_STAMP);
+    if(int64AttributeLiveBuffer[timestampAttributeNameStr]->getLastValue() == got_ts) return;
+    
+    int64AttributeLiveBuffer[timestampAttributeNameStr]->addValue(got_ts);
     
     //update buffer for tracked attribute
     for (std::vector<string>::iterator iter = trackingAttribute.begin();

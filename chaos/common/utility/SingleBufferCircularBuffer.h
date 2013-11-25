@@ -100,6 +100,10 @@ namespace chaos {
         void * const getWritePointer(){
             return writePointer;
         }
+        
+        T getLastValue() {
+            return (T)*(basePointer+((currentPostion - 1) % bufferDimension));
+        }
     };
     
         //! PointerBuffer is utility class that contain pointer to some data

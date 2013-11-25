@@ -54,18 +54,17 @@ namespace chaos{
                 }
                 
                 //! Namespace for the running state tyoes
-                namespace RunningStateType {
+                namespace RunningPropertyType {
                     /*!
                      * \enum RunningState
                      * \brief Describe the state in which the command can be found
                      */
-                    typedef enum RunningState {
-                        RS_Exsc     = 0,    /**< The command cannot be killed or removed, it need to run */
-                        RS_Stack    = 1,    /**< The command can be stacked (paused) */
-                        RS_Kill     = 2,    /**< The command can be killed */
-                        RS_End      = 4,    /**< The command has ended his work */
-                        RS_Fault    = 8    /**< The command has had a fault */
-                    } RunningState;
+                    typedef enum RunningProperty {
+                        RP_Exsc     = 0,    /**< The command cannot be killed or removed, it need to run */
+                        RP_Normal   = 1,    /**< The command can be stacked (paused) or killed*/
+                        RP_End      = 2,    /**< The command has ended his work */
+                        RP_Fault    = 3    /**< The command has had a fault */
+                    } RunningProperty;
                 }
 
 			}

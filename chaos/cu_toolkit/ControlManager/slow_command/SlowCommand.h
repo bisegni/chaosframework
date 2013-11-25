@@ -56,18 +56,16 @@ namespace chaos{
                 class SlowCommandExecutor;
                
 				//!help macro for set the sate
-#define SL_EXEC_RUNNIG_STATE    setRunningProperty(chaos::cu::control_manager::slow_command::RunningStateType::RS_Exsc);
-#define SL_STACK_RUNNIG_STATE   setRunningProperty(chaos::cu::control_manager::slow_command::RunningStateType::RS_Stack);
-#define SL_KILL_RUNNIG_STATE    setRunningProperty(chaos::cu::control_manager::slow_command::RunningStateType::RS_Kill);
-#define SL_END_RUNNIG_STATE     setRunningProperty(chaos::cu::control_manager::slow_command::RunningStateType::RS_End);
-#define SL_FAULT_RUNNIG_STATE   setRunningProperty(chaos::cu::control_manager::slow_command::RunningStateType::RS_Fault);
+#define SL_EXEC_RUNNIG_STATE    setRunningProperty(chaos::cu::control_manager::slow_command::RunningPropertyType::RP_Exsc);
+#define SL_NORMAL_RUNNIG_STATE   setRunningProperty(chaos::cu::control_manager::slow_command::RunningPropertyType::RP_Normal);
+#define SL_END_RUNNIG_STATE     setRunningProperty(chaos::cu::control_manager::slow_command::RunningPropertyType::RP_End);
+#define SL_FAULT_RUNNIG_STATE   setRunningProperty(chaos::cu::control_manager::slow_command::RunningPropertyType::RP_Fault);
                 
 				//help madro to get the state
-#define SL_CHECK_EXEC_RUNNIG_STATE  (getRunningProperty() & chaos::cu::control_manager::slow_command::RunningStateType::RS_Exsc)
-#define SL_CHECK_STACK_RUNNIG_STATE (getRunningProperty() & chaos::cu::control_manager::slow_command::RunningStateType::RS_Stack)
-#define SL_CHECK_KILL_RUNNIG_STATE  (getRunningProperty() & chaos::cu::control_manager::slow_command::RunningStateType::RS_Kill)
-#define SL_CHECK_END_RUNNIG_STATE   (getRunningProperty() & chaos::cu::control_manager::slow_command::RunningStateType::RS_End)
-#define SL_CHECK_FAULT_RUNNIG_STATE (getRunningProperty() & chaos::cu::control_manager::slow_command::RunningStateType::RS_Fault)
+#define SL_CHECK_EXEC_RUNNIG_STATE  (getRunningProperty() == chaos::cu::control_manager::slow_command::RunningPropertyType::RP_Exsc)
+#define SL_CHECK_NORMAL_RUNNIG_STATE (getRunningProperty() == chaos::cu::control_manager::slow_command::RunningPropertyType::RP_Normal)
+#define SL_CHECK_END_RUNNIG_STATE   (getRunningProperty() == chaos::cu::control_manager::slow_command::RunningPropertyType::RP_End)
+#define SL_CHECK_FAULT_RUNNIG_STATE (getRunningProperty() == chaos::cu::control_manager::slow_command::RunningPropertyType::RP_Fault)
                 
 				//! Collect the command timing stats
 				typedef struct CommandTimingStats {
@@ -93,6 +91,9 @@ namespace chaos{
 					friend class CommandInfoAndImplementation;
 					//!unique command id
 					uint64_t unique_id;
+
+                    //!unique command id
+                    std::string device_id;
                     
                     //! keep track whenever set handler has been called
                     bool already_setupped;
@@ -106,9 +107,9 @@ namespace chaos{
 						or the running property for the mdification applyed by 
 						subclass developer lock=1/unlock=0
 						first bit is for features second bit is for runnign property
+                        third bit is used by sandobox to lock all feature in th emiddle of the change of the command
 					 */
-					std::bitset<2> lockFeaturePropertyFlag;
-
+					std::bitset<3> lockFeaturePropertyFlag;
 					
 					//! Command features
 					features::Features commandFeatures;
@@ -151,14 +152,15 @@ namespace chaos{
                     //! default destructor
                     virtual ~SlowCommand();
  					
+                    
 					//! called befor the command start the execution
-					void command_start();
+					void commandStart();
 					
 					
 					//void command_pre_step();
 					
 					//! called after the command step excecution
-					void command_post_step();
+					void commandPostStep();
 					
                     //! set the features with the uint32 value
                     /*!
@@ -168,7 +170,7 @@ namespace chaos{
                      */
 					inline void setFeatures(features::FeaturesFlagTypes::FeatureFlag features, uint32_t features_value) {
 						//check if the features are locked for the user modifications
-						if(lockFeaturePropertyFlag.test(0)) return;
+						if(lockFeaturePropertyFlag.test(0) || lockFeaturePropertyFlag.test(2)) return;
 						
 						
 						switch (features) {
@@ -191,7 +193,7 @@ namespace chaos{
                      */
 					inline void setFeatures(features::FeaturesFlagTypes::FeatureFlag features, uint64_t features_value) {
 						//check if the features are locked for the user modifications
-						if(lockFeaturePropertyFlag.test(0)) return;
+						if(lockFeaturePropertyFlag.test(0) || lockFeaturePropertyFlag.test(2)) return;
 						
 						
 						switch (features) {
@@ -215,7 +217,7 @@ namespace chaos{
                      */
 					inline void clearFeatures(features::FeaturesFlagTypes::FeatureFlag features) {
 						//check if the features are locked for the user modifications
-						if(lockFeaturePropertyFlag.test(0)) return;
+						if(lockFeaturePropertyFlag.test(0) || lockFeaturePropertyFlag.test(2)) return;
 						
 						commandFeatures.featuresFlag ^= features;
 						switch (features) {
@@ -235,9 +237,10 @@ namespace chaos{
 					}
 					
 					//! set the running property
-					inline void setRunningProperty(uint8_t property)  {
-						if(lockFeaturePropertyFlag.test(1)) return;
+					inline bool setRunningProperty(uint8_t property)  {
+						if(lockFeaturePropertyFlag.test(1)) return false;
 						runningProperty = property;
+                        return true;
 					}
 					
 					//! return the current running property
@@ -321,6 +324,9 @@ namespace chaos{
                 public:
 					//! return the unique id for the command instance
 					uint64_t getUID();
+                    
+                    //! return the identification of the device
+                    std::string& getDeviceID();
                 };
             }
         }

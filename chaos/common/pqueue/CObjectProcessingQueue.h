@@ -185,15 +185,15 @@ namespace chaos {
 				boost::mutex::scoped_lock lock(qMutex);
                 //output result poitner
 				T *oldestElement = NULL;
-				DEBUG_CODE(COPQUEUE_LDBG_<< " waitAndPop() begin to wait";)
+				//DEBUG_CODE(COPQUEUE_LDBG_<< " waitAndPop() begin to wait";)
 				while(bufferQueue.empty() && !inDeinit) {
 					emptyQueueConditionLock.notify_one();
 					liveThreadConditionLock.wait(lock);
 				}
-				DEBUG_CODE(COPQUEUE_LDBG_<< " waitAndPop() wakeup";)
+				//DEBUG_CODE(COPQUEUE_LDBG_<< " waitAndPop() wakeup";)
                 //get the oldest data ad copy the ahsred_ptr
 				if(bufferQueue.empty()) {
-					DEBUG_CODE(COPQUEUE_LDBG_<< " bufferQueue.empty() is empy so we go out";)
+					//DEBUG_CODE(COPQUEUE_LDBG_<< " bufferQueue.empty() is empy so we go out";)
 					return NULL;
 				}
                 //get the last pointer from the queue

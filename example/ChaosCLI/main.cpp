@@ -83,11 +83,11 @@ void print_state(CUStateKey::ControlUnitState state) {
 }
 
 int checkSubmissionRule(std::string scSubmissionRule) {
-    if( scSubmissionRule.compare("normal") ) {
+    if( scSubmissionRule.compare("normal") == 0) {
         return cccs::SubmissionRuleType::SUBMIT_NORMAL;
-    } else if( scSubmissionRule.compare("stack") ) {
+    } else if( scSubmissionRule.compare("stack")  == 0) {
         return cccs::SubmissionRuleType::SUBMIT_AND_Stack;
-    } else if( scSubmissionRule.compare("kill") ) {
+    } else if( scSubmissionRule.compare("kill")  == 0) {
         return cccs::SubmissionRuleType::SUBMIT_AND_Kill;
     } else return -1;
 }
@@ -121,18 +121,18 @@ int main (int argc, char* argv[] )
        
         //! [UIToolkit Attribute Init]
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_DEVICE_ID, po::value<string>(), "The identification string of the device");
-		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_TIMEOUT, po::value<uint32_t>(&timeout)->default_value(1000), "Timeout rpc in milliseconds");
+		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_TIMEOUT, po::value<uint32_t>(&timeout)->default_value(2000), "Timeout rpc in milliseconds");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_STATE, po::value<int>()->default_value(0), "The state to set on the device{1=init, 2=start, 3=stop, 4=deinit, 5=set schedule time, 6=submite slow command(slcu), 7=kill current command(slcu), 8=get command state by id, 9=set input channel(rtcu)}, 10=flush history state(slcu)");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SCHEDULE_TIME, po::value<long>(), "the time in microseconds for devide schedule time");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_PRINT_STATE, po::value<bool>(&printState)->default_value(false), "Print the state of the device");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_PRINT_TYPE, po::value<bool>(&printType)->default_value(false), "Print the type of the control unit of the device");
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_ALIAS, po::value<string>(&scAlias)->default_value(""), "The alias associted to the command for the slow control cu");
-        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_SUBMISSION_RULE, po::value<string>(&scSubmissionRule)->default_value("normal"), "The rule used for submit the command for the slow control cu [normal, stack, kill]");
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_SUBMISSION_RULE, po::value<string>(&scSubmissionRule)->default_value("stack"), "The rule used for submit the command for the slow control cu [normal, stack, kill]");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_PRIORITY, po::value<uint32_t>(&scSubmissionPriority)->default_value(50), "The priority used for submit the command for the slow control cu");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_DATA, po::value<string>(&scUserData), "The bson pack (in text format) sent to the set handler of the command for the slow");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_ID, po::value<uint64_t>(&scCmdID), "The command identification number(cidn)");
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_SCHEDULE_DELAY, po::value<uint32_t>(&scSubmissionSchedulerDelay)->default_value(1000000), "The millisecond beetwen a step an the next of the scheduler[in milliseconds]");
-        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_SUBMISSION_RETRY_DELAY, po::value<uint32_t>(&scSubmissionSubmissionRetryDelay)->default_value(0), "The millisecond beetwen submission checker run");
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_SUBMISSION_RETRY_DELAY, po::value<uint32_t>(&scSubmissionSubmissionRetryDelay)->default_value(1000), "The millisecond beetwen submission checker run");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_SET_FEATURES_LOCK, po::value<bool>(&scFeaturesLock), "if true will lock the feature to the command modification");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_SET_FEATURES_SCHEDULER_WAIT, po::value<uint32_t>(&scFeaturesSchedWait), "The millisecond beetwen two step of the scheduler");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_RT_ATTRIBUTE_VALUE, po::value<string>(&rtAttributeValue), "The attribute and value for the input attribute in rt control unit [attribute:value]");

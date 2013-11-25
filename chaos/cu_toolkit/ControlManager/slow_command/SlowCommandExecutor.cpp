@@ -32,11 +32,11 @@ using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::cu::control_manager::slow_command;
 
-#define LOG_HEAD "[SlowCommandExecutor-" << deviceSchemaDbPtr->getDeviceID() << "] "
+#define LOG_HEAD_SBE "[SlowCommandExecutor-" << deviceSchemaDbPtr->getDeviceID() << "] "
 
-#define SCELAPP_ LAPP_ << LOG_HEAD
-#define SCELDBG_ LDBG_ << LOG_HEAD
-#define SCELERR_ LERR_ << LOG_HEAD
+#define SCELAPP_ LAPP_ << LOG_HEAD_SBE
+#define SCELDBG_ LDBG_ << LOG_HEAD_SBE
+#define SCELERR_ LERR_ << LOG_HEAD_SBE
 
 SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DatasetDB *_deviceSchemaDbPtr):executorID(_executorID), deviceSchemaDbPtr(_deviceSchemaDbPtr), command_state_queue_max_size(COMMAND_STATE_QUEUE_DEFAULT_SIZE){
     // this need to be removed from here need to be implemented the def undef services
@@ -139,6 +139,7 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
         SCELAPP_ << "Set the default command ->"<<defaultCommandAlias;
         SlowCommand * def_cmd_impl = instanceCommandInfo(defaultCommandAlias);
         def_cmd_impl->unique_id = ++command_sequence_id;
+        def_cmd_impl->device_id = deviceSchemaDbPtr->getDeviceID();
         commandSandbox.enqueueCommand(NULL, def_cmd_impl, 50);
         DEBUG_CODE(SCELDBG_ << "Command " << defaultCommandAlias << " successfull installed";)
     }
@@ -350,6 +351,9 @@ SlowCommand *SlowCommandExecutor::instanceCommandInfo(CDataWrapper *submissionIn
 		
 		//get the assigned id
 		instance->unique_id = submissionInfo->getUInt64Value(SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
+        
+        //associate the device id to the command
+        instance->device_id = deviceSchemaDbPtr->getDeviceID();
     }
     return instance;
 }
@@ -386,8 +390,6 @@ bool SlowCommandExecutor::submitCommand(CDataWrapper *commandDescription, uint64
     SlowCommand *cmd_instance = instanceCommandInfo(commandDescription);
     if(cmd_instance) {
         commandSandbox.enqueueCommand(commandDescription, cmd_instance, priority);
-        //andle queue event
-        handleEvent(command_id, SlowCommandEventType::EVT_QUEUED, NULL);
         return true;
     } else {
         return false;

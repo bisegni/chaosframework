@@ -91,12 +91,9 @@ void GraphWidget::addNewPlot(chaos::PointerBuffer *pointerBuffer, std::string& p
     QwtPlotCurve *c = new QwtPlotCurve(plotName.c_str());
     c->setPen(QPen(QColor(randInt(), randInt(), randInt())));
     c->setRenderHint(QwtPlotItem::RenderAntialiased);
-    c->setStyle(QwtPlotCurve::Lines);
+    c->setStyle(QwtPlotCurve::NoCurve);
     c->attach(plot);
-    c->setLegendAttribute(QwtPlotCurve::LegendShowSymbol);
-    c->setRenderHint(QwtPlotItem::RenderAntialiased, false);
-    c->setPaintAttribute(QwtPlotCurve::ClipPolygons, false);
-
+    c->setLegendAttribute(QwtPlotCurve::LegendShowLine);
     newPlotInfo->curve = c;
     newPlotInfo->curvePointer = pointerBuffer;
     newPlotInfo->dataType = dataType;
@@ -116,7 +113,7 @@ void GraphWidget::addNewPlot(chaos::DataBuffer *dataBuffer, std::string& plotNam
     c->setRenderHint(QwtPlotItem::RenderAntialiased);
     c->setStyle(QwtPlotCurve::Lines);
     c->attach(plot);
-    c->setLegendAttribute(QwtPlotCurve::LegendShowSymbol);
+    c->setLegendAttribute(QwtPlotCurve::LegendShowLine);
     c->setRenderHint(QwtPlotItem::RenderAntialiased, false);
     c->setPaintAttribute(QwtPlotCurve::ClipPolygons, false);
 

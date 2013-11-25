@@ -63,6 +63,10 @@ void SCAbstractControlUnit::init(void *initData) throw(CException) {
 	//call parent impl
 	AbstractControlUnit::init(initData);
 	
+    //associate the data storage
+    slowCommandExecutor->commandSandbox.keyDataStoragePtr = AbstractControlUnit::keyDataStorage;
+    slowCommandExecutor->commandSandbox.deviceSchemaDbPtr = this; //control unit is it'self the database
+    
     LCCU_ << "Install default slow command for device " << DatasetDB::getDeviceID();
     installCommand<command::SetAttributeCommand>(control_manager::slow_command::SlowCommandsKey::ATTRIBUTE_SET_VALUE_CMD_ALIAS);
     
@@ -72,10 +76,6 @@ void SCAbstractControlUnit::init(void *initData) throw(CException) {
     //now we can call funciton for custom definition of the shared variable
     LCCU_ << "Setting up custom shared variable for device " << DatasetDB::getDeviceID();
     defineSharedVariable();
-    
-    //associate the data storage
-    slowCommandExecutor->commandSandbox.keyDataStoragePtr = AbstractControlUnit::keyDataStorage;
-    slowCommandExecutor->commandSandbox.deviceSchemaDbPtr = this; //control unit is it'self the database
 }
 
 /*

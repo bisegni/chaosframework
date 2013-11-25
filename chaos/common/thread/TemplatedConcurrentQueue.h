@@ -33,19 +33,16 @@ namespace chaos {
             
             
             template <typename T>
-            class TemplatedConcurrentQueueElement {
-
-                int priority;
-            public:
+            struct TemplatedConcurrentQueueElement {
                 T element;
+                int priority;
+                
                 TemplatedConcurrentQueueElement(T _element, int _priority = 50):element(_element), priority(_priority) {}
-                ~TemplatedConcurrentQueueElement(){}
                 
                 /*
                  Operator for heap
                  */
                 bool operator < (const TemplatedConcurrentQueueElement& b) const {
-		  LDBG_<<"Comparing prio "<<priority<<" "<<b.priority<<endl;
                     return priority < b.priority;
                 }
                 
@@ -57,7 +54,6 @@ namespace chaos {
             template<typename Type, typename Compare = std::less<Type> >
             struct pless : public std::binary_function<Type *, Type *, bool> {
                 bool operator()(const Type *x, const Type *y) const {
-		  LDBG_<<"Comparing prio x.. "<<endl;
                     return Compare()(*x, *y);
                 }
             };
@@ -74,7 +70,6 @@ namespace chaos {
             public:
                 void push(T const& data, uint32_t priority = 50) {
                     boost::mutex::scoped_lock lock(the_mutex);
-		    LDBG_<<"Pushing prio: "<<priority<<endl;
                     element_queue.push(TemplatedConcurrentQueueElement<T>(data, priority));
                     
                     //free the mutex

@@ -9,12 +9,14 @@
 #ifndef __CHAOSFramework__SlowCommandSandbox__
 #define __CHAOSFramework__SlowCommandSandbox__
 
+#include <queue>
+#include <string>
 #include <stack>
 #include <memory>
 
 #include <boost/thread.hpp>
 #include <boost/chrono.hpp>
-#include <boost/heap/priority_queue.hpp>
+//#include <boost/heap/priority_queue.hpp>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/DatasetDB.h>
@@ -51,6 +53,7 @@ namespace chaos{
 
                 //! Base functor for the command handler
                 struct BaseFunctor {
+                    std::string sandbox_identifier;
                     SlowCommand *cmdInstance;
                 };
                 
@@ -80,6 +83,13 @@ namespace chaos{
                     
                 };
                 
+                // pulic class used into the sandbox for use the priority set into the lement that are pointer and not rela reference
+                struct PriorityCommandCompare {
+                    bool operator() (const PRIORITY_ELEMENT(CommandInfoAndImplementation)* lhs, const PRIORITY_ELEMENT(CommandInfoAndImplementation)* rhs) const {
+                        return (lhs->priority < rhs->priority);
+                    }
+                };
+                
                 //! SAndbox fo the slow command execution
                 /*!
                     This is the sandbox where the command are executed. Here are checked the
@@ -90,7 +100,8 @@ namespace chaos{
                 class SlowCommandSandbox : public utility::StartableService {
                     friend class chaos::cu::SCAbstractControlUnit;
                     friend class SlowCommandExecutor;
-                    
+                    friend class AcquireFunctor;
+                    friend class CorrelationFunctorb;
                     //stat for the single step of the command execution
                     SandboxStat stat;
                     
@@ -119,7 +130,9 @@ namespace chaos{
                     
                     //------------------next command checker---------------------
                     //testing the inclusion of the command queue directly in the sandbox
-                    boost::heap::priority_queue< PRIORITY_ELEMENT(CommandInfoAndImplementation)* > command_submitted_queue;
+                    std::priority_queue<PRIORITY_ELEMENT(CommandInfoAndImplementation)*,
+                                                std::vector<PRIORITY_ELEMENT(CommandInfoAndImplementation)*>,
+                                                PriorityCommandCompare > command_submitted_queue;
                     
                     //!Mutex used for sincronize the introspection of the current command
                     boost::recursive_mutex          mutexNextCommandChecker;
@@ -159,7 +172,7 @@ namespace chaos{
                      Perform th ecommand isntallation without check the condition. The handler
                      that are not implemented are managed according to the submition rule
                      */
-                    inline void installHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation)* cmd_to_install);
+                    inline bool installHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation)* cmd_to_install);
 					inline void removeHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation)* cmd_to_install);
                     
 					void killCurrentCommand();
@@ -179,6 +192,7 @@ namespace chaos{
                     void runCommand();
                     
                     void checkNextCommand();
+                    
                 protected:
                     
                     void* sharedSettingPtr;

@@ -23,10 +23,10 @@ using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::cu::control_manager::slow_command;
 
-#define LOG_HEAD "[SlowCommand-" << unique_id << "] "
-#define SCLAPP_ LAPP_ << LOG_HEAD
-#define SCLDBG_ LDBG_ << LOG_HEAD
-#define SCLERR_ LERR_ << LOG_HEAD
+#define LOG_HEAD_SL "[SlowCommand-" << device_id << "-" << unique_id << "] "
+#define SCLAPP_ LAPP_ << LOG_HEAD_SL
+#define SCLDBG_ LDBG_ << LOG_HEAD_SL
+#define SCLERR_ LERR_ << LOG_HEAD_SL
 
 // default constructor
 SlowCommand::SlowCommand() {
@@ -43,13 +43,17 @@ SlowCommand::SlowCommand() {
 	std::memset(&timing_stats,0,sizeof(CommandTimingStats));
 	
 	//set default value for running property and submission flag
-    runningProperty = RunningStateType::RS_Exsc;
+    runningProperty = RunningPropertyType::RP_Normal;
     submissionRule = SubmissionRuleType::SUBMIT_NORMAL;
 }
 
 // default destructor
 SlowCommand::~SlowCommand() {
     
+}
+
+std::string& SlowCommand::getDeviceID() {
+    return device_id;
 }
 
 //return the unique id
@@ -127,7 +131,7 @@ void SlowCommand::ccHandler() {}
 bool SlowCommand::timeoutHandler() {return true;}
 
 //! called befor the command start the execution
-void SlowCommand::command_start() {
+void SlowCommand::commandStart() {
 	timing_stats.command_start_time_usec = shared_stat->lastCmdStepStart;
 }
 
@@ -138,7 +142,7 @@ faultDescription.code = c; \
 faultDescription.description = m; \
 faultDescription.domain = d;
 //! called after the command step excecution
-void SlowCommand::command_post_step() {
+void SlowCommand::commandPostStep() {
 	if(commandFeatures.featuresFlag & features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT) {
             //timing_stats.command_running_time_usec += shared_stat->lastCmdStepTime;
 		//check timeout
