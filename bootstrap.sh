@@ -123,11 +123,11 @@ else
 fi
 
 ### install libmodbus
-if [ ! -d "$PREFIX/include/modbus" ]; then
+if [ ! -d "$PREFIX/include/modbus" ] || [ ! -d "$BASE_EXTERNAL/libmodbus" ]; then
         echo "Setup libmodbus library"
         if [ ! -d "$BASE_EXTERNAL/libmodbus" ]; then
                 echo "Install libmodbus"
-                git clone https://github.com/stephane/libmodbus.git $BASE_EXTERNAL/libmodbus
+                git clone -b v3.0.5 https://github.com/stephane/libmodbus.git $BASE_EXTERNAL/libmodbus
                 cd $BASE_EXTERNAL/libmodbus
         else
                 echo "Update libmodbus"
