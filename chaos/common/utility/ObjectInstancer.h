@@ -25,14 +25,21 @@ namespace chaos {
     namespace common {
         namespace utility {
             
-		template <typename R >
+            /*!
+             Templated interface that regolate the instantiation of a class.
+             */
+            template <typename R >
             class ObjectInstancer {
             public:
                 virtual ~ObjectInstancer(){};
                 virtual R* getInstance() = 0;
             };
             
-          template <typename T, typename R >
+            /*!
+             Templated class that permit to instantiate the superclas of
+             a base class. This class permit to check this rule at compiletime
+             */
+            template <typename T, typename R >
             class TypedObjectInstancer : public ObjectInstancer<R> {
             public:
                 R* getInstance() {
