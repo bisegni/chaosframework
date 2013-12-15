@@ -38,7 +38,7 @@ if [ -n "$CHAOS32" ]; then
 fi
 
 if [ -n "$CHAOS_DEVELOPMENT" ]; then
-	export COMP_TYPE=" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS_DEBUG=-DDEBUG=1ok "
+	export COMP_TYPE=" -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS_DEBUG=-DDEBUG=1 "
 #CHAOS_DIR=$SCRIPTPATH/../
 	echo "Setup for chaos development folder structure"
 #echo "Shared libray prefix -> $CHAOS_DIR"
