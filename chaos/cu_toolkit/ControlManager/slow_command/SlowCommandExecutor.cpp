@@ -38,13 +38,17 @@ using namespace chaos::cu::control_manager::slow_command;
 #define SCELDBG_ LDBG_ << LOG_HEAD_SBE
 #define SCELERR_ LERR_ << LOG_HEAD_SBE
 
-SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DatasetDB *_deviceSchemaDbPtr):executorID(_executorID), deviceSchemaDbPtr(_deviceSchemaDbPtr), command_state_queue_max_size(COMMAND_STATE_QUEUE_DEFAULT_SIZE){
+#define SETUP_CMD_POINTER(ist) \
+ist->device_id = deviceSchemaDbPtr->getDeviceID(); \
+ist->sharedAttributeSettingPtr = &global_attribute_cache; \
+ist->keyDataStoragePtr = keyDataStoragePtr; \
+ist->deviceDatabasePtr = deviceSchemaDbPtr;
+
+SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DatasetDB *_deviceSchemaDbPtr):executorID(_executorID), default_command_sandbox_instance(1), deviceSchemaDbPtr(_deviceSchemaDbPtr), command_state_queue_max_size(COMMAND_STATE_QUEUE_DEFAULT_SIZE) {
     // this need to be removed from here need to be implemented the def undef services
     // register the public rpc api
     std::string rpcActionDomain = executorID; //+ SlowCommandSubmissionKey::COMMAND_EXECUTOR_POSTFIX_DOMAIN;
-    
 	// add executor has event handler
-	commandSandbox.event_handler = this;
     
 	
     SCELAPP_ << "Register updateConfiguration action";
@@ -81,9 +85,43 @@ SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DatasetDB *_de
 	
 }
 
+void SlowCommandExecutor::addNewSandboxInstance() {
+    SlowCommandSandbox *tmp_ptr = new SlowCommandSandbox();
+    tmp_ptr->event_handler = this;
+    tmp_ptr->identification.append(deviceSchemaDbPtr->getDeviceID());
+    tmp_ptr->identification.append("-sandbox-");
+    
+    unsigned int new_size = ((unsigned int) sandbox_map.size()+1);
+    tmp_ptr->identification.append(lexical_cast<std::string>(new_size));
+    
+
+    sandbox_map.insert(make_pair(new_size, tmp_ptr));
+    SCELDBG_ << "Add new sandbox to the executor with identification ->" << tmp_ptr->identification;
+}
+
+//! Add a number of sandobx to this instance of executor
+void SlowCommandExecutor::addSandboxInstance(unsigned int _sandbox_number) {
+    //lock for map modification
+    WriteLock       lock(sandbox_map_mutex);
+    
+    //! add new instances
+    for(unsigned int idx = 0; idx < _sandbox_number; idx++) {
+        addNewSandboxInstance();
+    }
+}
+
 SlowCommandExecutor::~SlowCommandExecutor() {
+ 
+    SCELAPP_ << "Removing all the instance of sandbox";
+    for(std::map<unsigned int, SlowCommandSandbox*>::iterator it = sandbox_map.begin();
+        it != sandbox_map.end();
+        it++) {
+        SCELAPP_ << "Dispose instance " << it->first;
+        if(it->second) delete(it->second);
+    }
+    
     // the instancer of the command can't be uninstalled at deinit step
-    // because the executor live  one o one with the contro unit.
+    // because the executor live  one o one with the control unit.
     // In teh CU the commadn are installed at the definition step
     // this mean that until executor live the command remain installed
     // and the CU is not redefined unti it is reloaded but startup
@@ -103,15 +141,13 @@ SlowCommandExecutor::~SlowCommandExecutor() {
 	command_state_queue.clear();
 }
 
-//! get access to the custom data pointer of the channel setting instance
-void SlowCommandExecutor::setSharedCustomDataPtr(void *customDataPtr) {
-    commandSandbox.sharedAttributeSetting.customData = customDataPtr;
-}
-
 // Initialize instance
 void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
+    ReadLock       lock(sandbox_map_mutex);
+
     std::vector<string> attribute_names;
     
+    //reset the command sequence on initialization
 	command_sequence_id = 0;
 	
     utility::StartableService::init(initData);
@@ -119,38 +155,51 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
     //at this point, befor the sandbox initialization we need to setup the shared setting memory
     CHAOS_ASSERT(deviceSchemaDbPtr)
     
+    //initialize the shared channel setting
+    utility::InizializableService::initImplementation(global_attribute_cache, initData, "global_attribute_cache", "SlowCommandExecutor::init");
     
-    //init the sand box
-    utility::StartableService::initImplementation(commandSandbox, initData, "SlowCommandSandbox", "SlowCommandExecutor::init");
-    commandSandbox.deviceSchemaDbPtr = deviceSchemaDbPtr;
+    if(sandbox_map.size() == 0) {
+        //if not sandbox has been added force to create one
+        addNewSandboxInstance();
+    }
+    
+    SCELAPP_ << "Initializing all the instance of sandbox";
+    for(std::map<unsigned int, SlowCommandSandbox*>::iterator it = sandbox_map.begin();
+        it != sandbox_map.end();
+        it++) {
+        SlowCommandSandbox *tmp_ptr =  it->second;
+        //init the sand box
+        SCELAPP_ << "Initilize instance " << tmp_ptr->identification;
+        utility::StartableService::initImplementation(tmp_ptr, initData, "SlowCommandSandbox", "SlowCommandExecutor::init");
+    }
 	
     SCELAPP_ << "Populating sandbox shared setting for device input attribute";
     deviceSchemaDbPtr->getDatasetAttributesName(DataType::Input, attribute_names);
-    initAttributeOnSahredVariableDomain(IOCAttributeShareCache::SVD_INPUT, attribute_names);
+    initAttributeOnSahredVariableDomain(IOCAttributeSharedCache::SVD_INPUT, attribute_names);
 
 	SCELAPP_ << "Populating sandbox shared setting for device output attribute";
 	attribute_names.clear();
     deviceSchemaDbPtr->getDatasetAttributesName(DataType::Output, attribute_names);
-    initAttributeOnSahredVariableDomain(IOCAttributeShareCache::SVD_OUTPUT, attribute_names);
+    initAttributeOnSahredVariableDomain(IOCAttributeSharedCache::SVD_OUTPUT, attribute_names);
     
 
     SCELAPP_ << "Check if we need to use the dafult command or we have pause instance";
-    if(defaultCommandAlias.size()) {
-        SCELAPP_ << "Set the default command ->"<<defaultCommandAlias;
-        SlowCommand * def_cmd_impl = instanceCommandInfo(defaultCommandAlias);
+    if(default_command_alias.size()) {
+        SCELAPP_ << "Set the default command ->"<<default_command_alias;
+        SlowCommand * def_cmd_impl = instanceCommandInfo(default_command_alias);
+        SETUP_CMD_POINTER(def_cmd_impl)
         def_cmd_impl->unique_id = ++command_sequence_id;
-        def_cmd_impl->device_id = deviceSchemaDbPtr->getDeviceID();
-        commandSandbox.enqueueCommand(NULL, def_cmd_impl, 50);
-        DEBUG_CODE(SCELDBG_ << "Command " << defaultCommandAlias << " successfull installed";)
+        sandbox_map[default_command_sandbox_instance]->enqueueCommand(NULL, def_cmd_impl, 50);
+        DEBUG_CODE(SCELDBG_ << "Command " << default_command_alias << " successfull installed";)
     }
     
 }
 
-void SlowCommandExecutor::initAttributeOnSahredVariableDomain(IOCAttributeShareCache::SharedVeriableDomain domain, std::vector<string>& attribute_names) {
+void SlowCommandExecutor::initAttributeOnSahredVariableDomain(IOCAttributeSharedCache::SharedVeriableDomain domain, std::vector<string>& attribute_names) {
 	//add input attribute to shared setting
     RangeValueInfo attributeInfo;
 	
-	AttributeSetting& attribute_setting = commandSandbox.sharedAttributeSetting.getSharedDomain(domain);
+	AttributeSetting& attribute_setting = global_attribute_cache.getSharedDomain(domain);
 	
 	for(int idx = 0;
         idx < attribute_names.size();
@@ -197,11 +246,22 @@ void SlowCommandExecutor::initAttributeOnSahredVariableDomain(IOCAttributeShareC
 
 // Start the implementation
 void SlowCommandExecutor::start() throw(chaos::CException) {
+    ReadLock       lock(sandbox_map_mutex);
+
     try {
         // set thread run flag for work
         utility::StartableService::start();
-        // thread creation
-        utility::StartableService::startImplementation(commandSandbox, "SlowCommandSandbox", "SlowCommandExecutor::start");
+        
+        SCELAPP_ << "Starting all the instance of sandbox";
+        for(std::map<unsigned int, SlowCommandSandbox*>::iterator it = sandbox_map.begin();
+            it != sandbox_map.end();
+            it++) {
+            SlowCommandSandbox *tmp_ptr =  it->second;
+            SCELAPP_ << "Starting instance " << tmp_ptr->identification;
+            //starting the sand box
+            utility::StartableService::startImplementation(tmp_ptr, "SlowCommandSandbox", "SlowCommandExecutor::start");
+        }
+       
     } catch (...) {
         SCELAPP_ << "Error starting";
         throw CException(1000, "Generic Error", "SlowCommandExecutor::start");
@@ -210,16 +270,38 @@ void SlowCommandExecutor::start() throw(chaos::CException) {
 
 // Start the implementation
 void SlowCommandExecutor::stop() throw(chaos::CException) {
+    ReadLock       lock(sandbox_map_mutex);
+
     //lock for queue access
-    
-    utility::StartableService::stopImplementation(commandSandbox, "SlowCommandSandbox", "SlowCommandExecutor::stop");
-    
+    SCELAPP_ << "Stopping all the instance of sandbox";
+    for(std::map<unsigned int, SlowCommandSandbox*>::iterator it = sandbox_map.begin();
+        it != sandbox_map.end();
+        it++) {
+        SlowCommandSandbox *tmp_ptr =  it->second;
+        SCELAPP_ << "Stop instance " << tmp_ptr->identification;
+
+        //stopping the sand box
+        utility::StartableService::stopImplementation(tmp_ptr, "SlowCommandSandbox", "SlowCommandExecutor::stop");
+    }
     utility::StartableService::stop();
 }
 
 // Deinit the implementation
 void SlowCommandExecutor::deinit() throw(chaos::CException) {
-    utility::StartableService::deinitImplementation(commandSandbox, "SlowCommandSandbox", "SlowCommandExecutor::deinit");
+    ReadLock       lock(sandbox_map_mutex);
+
+    SCELAPP_ << "Deinitializing all the instance of sandbox";
+    for(std::map<unsigned int, SlowCommandSandbox*>::iterator it = sandbox_map.begin();
+        it != sandbox_map.end();
+        it++) {
+        SlowCommandSandbox *tmp_ptr =  it->second;
+        SCELAPP_ << "Deinitializing instance " << tmp_ptr->identification;
+        //deinit the sand box
+        utility::StartableService::deinitImplementation(tmp_ptr, "SlowCommandSandbox", "SlowCommandExecutor::deinit");
+    }
+    
+    //initialize the shared channel setting
+    utility::InizializableService::deinitImplementation(global_attribute_cache, "AttributeCache", "SlowCommandExecutor::deinit");
     
     utility::StartableService::deinit();
 }
@@ -305,15 +387,17 @@ boost::shared_ptr<CommandState> SlowCommandExecutor::getCommandState(uint64_t co
 }
 
 //! Perform a command registration
-void SlowCommandExecutor::setDefaultCommand(string commandAlias) {
+void SlowCommandExecutor::setDefaultCommand(string command_alias, unsigned int sandbox_instance) {
     // check if we can set the default, the condition are:
     // the executor and the sandbox are in the init state or in stop state
     if(utility::StartableService::serviceState == ::chaos::utility::service_state_machine::StartableServiceType::SS_STARTED) {
         throw CException(1, "The command infrastructure is in running state", "SlowCommandExecutor::setDefaultCommand");
     }
     
-    SCELAPP_ << "Install the default command with alias: " << commandAlias;
-    defaultCommandAlias = commandAlias;
+    SCELAPP_ << "Install the default command with alias: " << default_command_alias;
+
+    default_command_alias = command_alias;
+    default_command_sandbox_instance = sandbox_instance<1?1:sandbox_instance;
 }
 
 //! Install a command associated with a type
@@ -351,9 +435,16 @@ SlowCommand *SlowCommandExecutor::instanceCommandInfo(CDataWrapper *submissionIn
 		
 		//get the assigned id
 		instance->unique_id = submissionInfo->getUInt64Value(SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
-        
+        SETUP_CMD_POINTER(instance)
         //associate the device id to the command
-        instance->device_id = deviceSchemaDbPtr->getDeviceID();
+        //instance->device_id = deviceSchemaDbPtr->getDeviceID();
+        
+        // associate the global cache
+        //instance->sharedAttributeSettingPtr = &global_attribute_cache;
+        //associate the live data push services
+        //instance->keyDataStoragePtr = keyDataStoragePtr;
+        // assocaite the db pointer
+        //instance->deviceDatabasePtr = deviceSchemaDbPtr;
     }
     return instance;
 }
@@ -372,9 +463,23 @@ SlowCommand *SlowCommandExecutor::instanceCommandInfo(std::string& commandAlias)
 }
 
 //! Submite the new sloc command information
-bool SlowCommandExecutor::submitCommand(CDataWrapper *commandDescription, uint64_t& command_id) {
+void SlowCommandExecutor::submitCommand(CDataWrapper *commandDescription, uint64_t& command_id)  throw (CException) {
     CHAOS_ASSERT(commandDescription)
-    if(serviceState != ::chaos::utility::service_state_machine::StartableServiceType::SS_STARTED) return false;
+    if(serviceState != ::chaos::utility::service_state_machine::StartableServiceType::SS_STARTED)
+        throw CException(-1, "Slow command executor is not started", "SlowCommandExecutor::submitCommand");
+    
+    WriteLock       lock(sandbox_map_mutex);
+    
+    //get execution channel if submitted
+    uint32_t execution_channel = commandDescription->hasKey(SlowCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL) ? commandDescription->getUInt32Value(SlowCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL):1;
+    
+    //check if the channel is present
+    if(sandbox_map.count(execution_channel) == 0)
+        throw CException(-1, "Execution channel not found", "SlowCommandExecutor::submitCommand");
+    
+    SlowCommandSandbox *tmp_ptr = sandbox_map[execution_channel];
+
+    //get priority if submitted
     uint32_t priority = commandDescription->hasKey(SlowCommandSubmissionKey::SUBMISSION_PRIORITY_UI32) ? commandDescription->getUInt32Value(SlowCommandSubmissionKey::SUBMISSION_PRIORITY_UI32):50;
     
 	SCELDBG_ << "Submit new command " << commandDescription->getJSONString();
@@ -389,10 +494,10 @@ bool SlowCommandExecutor::submitCommand(CDataWrapper *commandDescription, uint64
     //commandSubmittedQueue.push(new PriorityQueuedElement<CDataWrapper>(commandDescription, priority, true));
     SlowCommand *cmd_instance = instanceCommandInfo(commandDescription);
     if(cmd_instance) {
-        commandSandbox.enqueueCommand(commandDescription, cmd_instance, priority);
-        return true;
+        tmp_ptr->enqueueCommand(commandDescription, cmd_instance, priority);
     } else {
-        return false;
+        throw CException(-1, "Command instantiation failed", "SlowCommandExecutor::submitCommand");
+
     }
 }
 
@@ -403,14 +508,18 @@ bool SlowCommandExecutor::submitCommand(CDataWrapper *commandDescription, uint64
  Return the number and the infromation of the queued command via RPC
  */
 CDataWrapper* SlowCommandExecutor::getQueuedCommand(CDataWrapper *params, bool& detachParam) throw (CException) {
+    ReadLock       lock(sandbox_map_mutex);
+    
+    SlowCommandSandbox *tmp_ptr = sandbox_map[1];
+    
     //lock the scheduler
-	boost::mutex::scoped_lock lockForCurrentCommand(commandSandbox.mutextAccessCurrentCommand);
+	boost::mutex::scoped_lock lockForCurrentCommand(tmp_ptr->mutextAccessCurrentCommand);
 	CDataWrapper *result = new CDataWrapper();
 	//get the number
-	result->addInt32Value(SlowControlExecutorRpcActionKey::RPC_GET_QUEUED_COMMAND_NUMBER_UI32, static_cast<uint32_t>(commandSandbox.command_submitted_queue.size()));
+	result->addInt32Value(SlowControlExecutorRpcActionKey::RPC_GET_QUEUED_COMMAND_NUMBER_UI32, static_cast<uint32_t>(tmp_ptr->command_submitted_queue.size()));
 	
 	//get last command name
-	std::string name = commandSandbox.command_submitted_queue.top()->element->cmdInfo->getStringValue(SlowCommandSubmissionKey::COMMAND_ALIAS_STR);
+	std::string name = tmp_ptr->command_submitted_queue.top()->element->cmdInfo->getStringValue(SlowCommandSubmissionKey::COMMAND_ALIAS_STR);
 	result->addStringValue(SlowControlExecutorRpcActionKey::RPC_GET_QUEUED_COMMAND_TOP_ALIAS_STR, name);
     return result;
 }
@@ -444,26 +553,33 @@ CDataWrapper* SlowCommandExecutor::getCommandState(CDataWrapper *params, bool& d
  Return the number and the infromation of the queued command via RPC
  */
 CDataWrapper* SlowCommandExecutor::setCommandFeatures(CDataWrapper *params, bool& detachParam) throw (CException) {
-	if(!params || !commandSandbox.currentExecutingCommand) return NULL;
+	if(!params || sandbox_map.size()==0) return NULL;
+    ReadLock       lock(sandbox_map_mutex);
+
 	SCELAPP_ << "Set command feature on current command into the executor with id: " << executorID;
-	//lock the scheduler
-	boost::mutex::scoped_lock lockForCurrentCommand(commandSandbox.mutextAccessCurrentCommand);
-	
-	//recheck current command
-	if(!commandSandbox.currentExecutingCommand) return NULL;
-	
-	//check wath feature we need to setup
+    
+    SlowCommandSandbox *tmp_ptr = sandbox_map[1];
+
+    //check wath feature we need to setup
 	if(params->hasKey(SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL)) {
 		//has lock information to setup
-		commandSandbox.currentExecutingCommand->element->cmdImpl->lockFeaturePropertyFlag[0] = params->getBoolValue(SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL);
+		tmp_ptr->currentExecutingCommand->element->cmdImpl->lockFeaturePropertyFlag[0] = params->getBoolValue(SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL);
 	}
 	
 	if(params->hasKey(SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64)) {
 		//has scheduler step wait
-		commandSandbox.currentExecutingCommand->element->cmdImpl->commandFeatures.featureSchedulerStepsDelay = params->getUInt64Value(SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64);
+		tmp_ptr->currentExecutingCommand->element->cmdImpl->commandFeatures.featureSchedulerStepsDelay = params->getUInt64Value(SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64);
 	}
+    
+	//lock the scheduler
+	boost::mutex::scoped_lock lockForCurrentCommand(tmp_ptr->mutextAccessCurrentCommand);
+	
+	//recheck current command
+	if(!tmp_ptr->currentExecutingCommand) return NULL;
+	
+	
     lockForCurrentCommand.unlock();
-    commandSandbox.threadSchedulerPauseCondition.unlock();
+    tmp_ptr->threadSchedulerPauseCondition.unlock();
     return NULL;
 }
 
@@ -472,24 +588,32 @@ CDataWrapper* SlowCommandExecutor::setCommandFeatures(CDataWrapper *params, bool
  Updat ethe modiable features of the running command
  */
 void SlowCommandExecutor::setCommandFeatures(features::Features features) throw (CException) {
+    ReadLock       lock(sandbox_map_mutex);
+    
+    SlowCommandSandbox *tmp_ptr = sandbox_map[1];
+    
 	//lock the scheduler
-	boost::mutex::scoped_lock lockForCurrentCommand(commandSandbox.mutextAccessCurrentCommand);
+	boost::mutex::scoped_lock lockForCurrentCommand(tmp_ptr->mutextAccessCurrentCommand);
 	
 	//recheck current command
-	if(!commandSandbox.currentExecutingCommand) return;
+	if(!tmp_ptr->currentExecutingCommand) return;
 
-	commandSandbox.currentExecutingCommand->element->cmdImpl->commandFeatures.featuresFlag |= features.featuresFlag;
-	commandSandbox.currentExecutingCommand->element->cmdImpl->commandFeatures.featureSchedulerStepsDelay = features.featureSchedulerStepsDelay;
+	tmp_ptr->currentExecutingCommand->element->cmdImpl->commandFeatures.featuresFlag |= features.featuresFlag;
+	tmp_ptr->currentExecutingCommand->element->cmdImpl->commandFeatures.featureSchedulerStepsDelay = features.featureSchedulerStepsDelay;
 	//}
     lockForCurrentCommand.unlock();
-    commandSandbox.threadSchedulerPauseCondition.unlock();
+    tmp_ptr->threadSchedulerPauseCondition.unlock();
 }
 
 //! Kill current command rpc action
 CDataWrapper* SlowCommandExecutor::killCurrentCommand(CDataWrapper *params, bool& detachParam) throw (CException) {
-	if(!commandSandbox.currentExecutingCommand) return NULL;
+    ReadLock       lock(sandbox_map_mutex);
+    
+    SlowCommandSandbox *tmp_ptr = sandbox_map[1];
+    
+	if(!tmp_ptr->currentExecutingCommand) return NULL;
 	SCELAPP_ << "Kill current command into the executor id: " << executorID;
-	commandSandbox.killCurrentCommand();
+	tmp_ptr->killCurrentCommand();
 	return NULL;
 }
 

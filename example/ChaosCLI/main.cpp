@@ -48,6 +48,7 @@ namespace cccs = chaos::cu::control_manager::slow_command;
 #define OPT_PRINT_TYPE		"print-type"
 //--------------slow contorol option----------------------------------------------------
 #define OPT_SL_ALIAS									"sc-alias"
+#define OPT_SL_EXEC_CHANNEL								"sc-exec-channel"
 #define OPT_SL_PRIORITY									"sc-priority"
 #define OPT_SL_SUBMISSION_RULE							"sc-sub-rule"
 #define OPT_SL_COMMAND_DATA								"sc-cmd-data"
@@ -110,7 +111,7 @@ int main (int argc, char* argv[] )
         uint32_t scSubmissionPriority;
         uint32_t scSubmissionSchedulerDelay;
         uint32_t scSubmissionSubmissionRetryDelay;
-
+        uint32_t scExecutionChannel;
 		string rtAttributeValue;
 		
 		bool scFeaturesLock;
@@ -127,6 +128,8 @@ int main (int argc, char* argv[] )
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_PRINT_STATE, po::value<bool>(&printState)->default_value(false), "Print the state of the device");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_PRINT_TYPE, po::value<bool>(&printType)->default_value(false), "Print the type of the control unit of the device");
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_ALIAS, po::value<string>(&scAlias)->default_value(""), "The alias associted to the command for the slow control cu");
+		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_EXEC_CHANNEL, po::value<uint32_t>(&scExecutionChannel)->default_value(0), "TThe alias used to execute the command [it's 1 based, 0 let choice the channel to the engine]");
+        
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_SUBMISSION_RULE, po::value<string>(&scSubmissionRule)->default_value("stack"), "The rule used for submit the command for the slow control cu [normal, stack, kill]");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_PRIORITY, po::value<uint32_t>(&scSubmissionPriority)->default_value(50), "The priority used for submit the command for the slow control cu");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption(OPT_SL_COMMAND_DATA, po::value<string>(&scUserData), "The bson pack (in text format) sent to the set handler of the command for the slow");
@@ -262,6 +265,7 @@ int main (int argc, char* argv[] )
 																   static_cast<cccs::SubmissionRuleType::SubmissionRule>(checkSubmissionRule(scSubmissionRule)),
 																   scSubmissionPriority,
 																   command_id,
+                                                                   scExecutionChannel,
 																   scSubmissionSchedulerDelay,
 																   scSubmissionSubmissionRetryDelay,
 																   userData.get());

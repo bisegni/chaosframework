@@ -22,6 +22,8 @@
 #ifndef __CHAOSFramework__SlowCommandExecutor__
 #define __CHAOSFramework__SlowCommandExecutor__
 
+#include <map>
+#include <deque>
 #include <memory>
 #include <stdint.h>
 
@@ -37,12 +39,13 @@
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
 
+#include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/driver_manager/DriverErogatorInterface.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandSandbox.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandSandboxEventHandler.h>
 
-#include <boost/container/deque.hpp>
-#include <boost/container/map.hpp>
+//#include <boost/container/deque.hpp>
+//#include <boost/container/map.hpp>
 
 #define COMMAND_QUEUE_DEFAULT_LENGTH		1024
 #define COMMAND_STATE_QUEUE_DEFAULT_SIZE	100
@@ -90,21 +93,30 @@ namespace chaos {
 					boost::atomic_uint64_t command_sequence_id;
 					
                     //!point to the current executing command
-                    std::string defaultCommandAlias;
+                    std::string     default_command_alias;
+                    unsigned int    default_command_sandbox_instance;
+
+                    //! Mutex for the map managment lock
+                    RWMutex                                     sandbox_map_mutex;
+                    //! Global cache shared across the sandbox
+                    IOCAttributeSharedCache                     global_attribute_cache;
+                    //! map for the sandbox instances
+                    std::map<unsigned int, SlowCommandSandbox*> sandbox_map;
                     
-                    //! sandbox for the execution of the handler
-                    SlowCommandSandbox  commandSandbox;
+                    //!Live push driver
+                    KeyDataStorage  *keyDataStoragePtr;
                     
                     //! the reference to the master device database
                     chaos_data::DatasetDB *deviceSchemaDbPtr;
                     
 					//! shared mutext foe the command event history
 					RWMutex								command_state_rwmutex;
+                    //! command state queue dimension
 					uint16_t							command_state_queue_max_size;
 					//the queue of the insert state (this permit to have an order by insertion time)
-					boost_cont::deque< boost::shared_ptr<CommandState> >			command_state_queue;
+					std::deque< boost::shared_ptr<CommandState> >			command_state_queue;
 					//the map is used for fast access id/pointer
-					boost_cont::map<uint64_t, boost::shared_ptr<CommandState> >		command_state_fast_access_map;
+					std::map<uint64_t, boost::shared_ptr<CommandState> >	command_state_fast_access_map;
                     
                     //! this map correlate the alias to the object instancer
                     std::map<string, chaos::common::utility::ObjectInstancer<SlowCommand>* > mapCommandInstancer;
@@ -138,7 +150,7 @@ namespace chaos {
 					//! Add a new command state structure to the queue (checking the alredy presence)
 					inline boost::shared_ptr<CommandState> getCommandState(uint64_t command_sequence);
 					
-					void initAttributeOnSahredVariableDomain(IOCAttributeShareCache::SharedVeriableDomain domain, std::vector<string>& attribute_names);
+					void initAttributeOnSahredVariableDomain(IOCAttributeSharedCache::SharedVeriableDomain domain, std::vector<string>& attribute_names);
                 protected:
                     
                     //! Private constructor
@@ -146,6 +158,9 @@ namespace chaos {
                     
                     //! Private deconstructor
                     ~SlowCommandExecutor();
+                    
+                    //!Allocate a new slow command sandbox
+                    void addNewSandboxInstance();
                     
 					//command event handler
 					void handleEvent(uint64_t command_seq, SlowCommandEventType::SlowCommandEventType type, void* type_attribute_ptr);
@@ -212,8 +227,10 @@ namespace chaos {
                     //! Perform a command registration
                     /*!
                      An instance of the command si registered within the executor.
+                     \param alias is the name of the command to use as default (started at startup)
+                     \param sandbox_instance is the 1-based index of the sandbox where install the command
                      */
-                    void setDefaultCommand(string alias);
+                    void setDefaultCommand(string alias, unsigned int sandbox_instance = 1);
                     
                     //! Install a command associated with a type
                     /*!
@@ -231,10 +248,10 @@ namespace chaos {
                      The information for the command are contained into the DataWrapper data serialization,
                      they are put into the commandSubmittedQueue for to wait to be executed.
                      */
-                    bool submitCommand(chaos_data::CDataWrapper *commandDescription, uint64_t& command_id);
+                    void submitCommand(chaos_data::CDataWrapper *commandDescription, uint64_t& command_id)  throw (CException) ;
                     
-                    //! set the custom data pointer of the channel setting instance to custom allocated memory
-                    void setSharedCustomDataPtr(void *customDataPtr);
+                    //! Add a number of sandobx to this instance of executor
+                    void addSandboxInstance(unsigned int _sandbox_number);
                 };
             }
         }

@@ -331,24 +331,26 @@ int DeviceController::submitSlowControlCommand(string commandAlias,
 											   cccs::SubmissionRuleType::SubmissionRule submissionRule,
 											   uint32_t priority,
 											   uint64_t& command_id,
-											   uint64_t schedulerStepsDelay,
-											   uint32_t submissionCheckerStepsDelay,
-											   CDataWrapper *slowCommandData) {
+                                               uint32_t execution_channel,
+											   uint64_t scheduler_steps_delay,
+											   uint32_t submission_checker_steps_delay,
+											   CDataWrapper *slow_command_data) {
     CDataWrapper localCommandPack;
 	CDataWrapper *resultData = NULL;
 	int err = ErrorCode::EC_NO_ERROR;
 	
-    if(slowCommandData) {
-        localCommandPack.appendAllElement(*slowCommandData);
+    if(slow_command_data) {
+        localCommandPack.appendAllElement(*slow_command_data);
     }
-    
     
     // set the default slow command information
     localCommandPack.addStringValue(cccs::SlowCommandSubmissionKey::COMMAND_ALIAS_STR, commandAlias);
     localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RULE_UI32, (uint32_t) submissionRule);
     localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_PRIORITY_UI32, (uint32_t) priority);
-    if(schedulerStepsDelay) localCommandPack.addInt64Value(cccs::SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI64, schedulerStepsDelay);
-    if(submissionCheckerStepsDelay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, submissionCheckerStepsDelay);
+    
+    if(execution_channel) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL, (uint32_t) execution_channel);
+    if(scheduler_steps_delay) localCommandPack.addInt64Value(cccs::SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI64, scheduler_steps_delay);
+    if(submission_checker_steps_delay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, submission_checker_steps_delay);
 	
 	//err = deviceChannel->setAttributeValue(localCommandPack, false, millisecToWait);
 	localCommandPack.addStringValue(DatasetDefinitionkey::DEVICE_ID, deviceID);
@@ -366,21 +368,24 @@ int DeviceController::submitSlowControlCommand(string commandAlias,
 int DeviceController::submitSlowControlCommand(string commandAlias,
 											   cccs::SubmissionRuleType::SubmissionRule submissionRule,
 											   uint64_t& command_id,
-											   uint64_t schedulerStepsDelay,
-											   uint32_t submissionCheckerStepsDelay,
-											   CDataWrapper *slowCommandData) {
+                                               uint32_t execution_channel,
+											   uint64_t scheduler_steps_delay,
+											   uint32_t submission_checker_steps_delay,
+											   CDataWrapper *slow_command_data) {
     CDataWrapper localCommandPack;
 	CDataWrapper *resultData = NULL;
 	int err = ErrorCode::EC_NO_ERROR;
 	
-    if(slowCommandData) {
-        localCommandPack.appendAllElement(*slowCommandData);
+    if(slow_command_data) {
+        localCommandPack.appendAllElement(*slow_command_data);
     }
     // set the default slow command information
     localCommandPack.addStringValue(cccs::SlowCommandSubmissionKey::COMMAND_ALIAS_STR, commandAlias);
     localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RULE_UI32, (uint32_t) submissionRule);
-    if(schedulerStepsDelay) localCommandPack.addInt64Value(cccs::SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI64, schedulerStepsDelay);
-    if(submissionCheckerStepsDelay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, (uint32_t) submissionCheckerStepsDelay);
+
+    if(execution_channel) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL, (uint32_t) execution_channel);
+    if(scheduler_steps_delay) localCommandPack.addInt64Value(cccs::SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI64, scheduler_steps_delay);
+    if(submission_checker_steps_delay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, (uint32_t) submission_checker_steps_delay);
 
     //forward the request
 	localCommandPack.addStringValue(DatasetDefinitionkey::DEVICE_ID, deviceID);

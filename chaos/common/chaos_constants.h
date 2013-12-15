@@ -206,18 +206,20 @@ namespace chaos {
                  */
                 //! Name space for grupping option used for regulate the submission of the slow control
                 namespace SlowCommandSubmissionKey {
-                    //! @The key represent the postfix to the CU instance to identify his slow command executor.
+                    //! @The key represent the postfix to the CU instance to identify his slow command executor {not used for now}.
                     static const char * const   COMMAND_EXECUTOR_POSTFIX_DOMAIN		= "_scexec";
                     //! @The key represent the alis of the comand to instantiate, the value is a string
-                    static const char * const   COMMAND_ALIAS_STR                   = "command_alias";
+                    static const char * const   COMMAND_ALIAS_STR                   = "cmd_alias";
+                    //! @The key represent the execution channel where submit the command, if not set, the first channel is used (1), the value is an uint32 [1-n]
+                    static const char * const   COMMAND_EXECUTION_CHANNEL                     = "cmd_exec_channel";
                     //! @The key represent the option to the command submission, the value is an uint32
-                    static const char * const   SUBMISSION_RULE_UI32				= "submission_rule";
+                    static const char * const   SUBMISSION_RULE_UI32				= "cmd_submssn_rule";
                     //! @The key represent the option to the command submission priority, the value is an uint32
-                    static const char * const   SUBMISSION_PRIORITY_UI32            = "submission_priority";
+                    static const char * const   SUBMISSION_PRIORITY_UI32            = "cmd_submssn_priority";
                     //! @The key represent intervall between step of the scheduler expressed in microseconds, the value is an uint32
-                    static const char * const   SCHEDULER_STEP_TIME_INTERVALL_UI64  = "sched_step_time_int";
+                    static const char * const   SCHEDULER_STEP_TIME_INTERVALL_UI64  = "cmd_sched_step_time_int";
                     //! @Set the command specific delay between submission retry SlowCommand::submissionRetryDelay, the value is an uint32
-                    static const char * const   SUBMISSION_RETRY_DELAY_UI32         = "sbms_ret_dly";
+                    static const char * const   SUBMISSION_RETRY_DELAY_UI32         = "cmd_submssn_ret_dly";
 				}
                 /** @} */ // end of SlowCommandSubmissionKey
 				

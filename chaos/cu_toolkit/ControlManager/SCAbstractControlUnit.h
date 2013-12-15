@@ -20,6 +20,7 @@
 
 #ifndef __CHAOSFramework__SCAbstractControlUnit__
 #define __CHAOSFramework__SCAbstractControlUnit__
+#include <string>
 
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 
@@ -48,7 +49,7 @@ namespace chaos {
             friend class DomainActionsScheduler;
 
             //! Slow command executor pointer
-            cu::control_manager::slow_command::SlowCommandExecutor *slowCommandExecutor;
+            cu::control_manager::slow_command::SlowCommandExecutor *slow_command_executor;
             
 			// Startable Service method
             void init(void *initData) throw(CException);
@@ -78,8 +79,8 @@ namespace chaos {
             
             void addSharedVariable(std::string name, uint32_t max_size, chaos::DataType::DataType type);
             void setSharedVariableValue(std::string name, void *value, uint32_t value_size);
-            void setVariableValue(control_manager::slow_command::IOCAttributeShareCache::SharedVeriableDomain domain, std::string name, void *value, uint32_t value_size);
-			control_manager::slow_command::ValueSetting *getVariableValue(control_manager::slow_command::IOCAttributeShareCache::SharedVeriableDomain domain, const char *variable_name);
+            void setVariableValue(control_manager::slow_command::IOCAttributeSharedCache::SharedVeriableDomain domain, std::string name, void *value, uint32_t value_size);
+			control_manager::slow_command::ValueSetting *getVariableValue(control_manager::slow_command::IOCAttributeSharedCache::SharedVeriableDomain domain, const char *variable_name);
             // Get all managem declare action instance
             void _getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance);
 
@@ -88,12 +89,13 @@ namespace chaos {
             SCAbstractControlUnit();
             ~SCAbstractControlUnit();
             
-            void setDefaultCommand(const char * dafaultCommandName);
+            void setDefaultCommand(std::string dafaultCommandName, unsigned int sandbox_instance = 0);
+            void addExecutionChannels(unsigned int execution_channels=1);
             
             template<typename T>
             void installCommand(const char * commandName) {
-                CHAOS_ASSERT(slowCommandExecutor)
-                slowCommandExecutor->installCommand(std::string(commandName), SLOWCOMMAND_INSTANCER(T));
+                CHAOS_ASSERT(slow_command_executor)
+                slow_command_executor->installCommand(std::string(commandName), SLOWCOMMAND_INSTANCER(T));
             }
         };
     }

@@ -24,7 +24,6 @@
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
 
-#include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommand.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/AttributeSetting.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandTypes.h>
@@ -105,6 +104,9 @@ namespace chaos{
                     //stat for the single step of the command execution
                     SandboxStat stat;
                     
+                    //sandbox identification string
+                    std::string identification;
+                    
 					//handler for sandbox event
 					SlowCommandSandboxEventHandler *event_handler;
 					
@@ -140,10 +142,7 @@ namespace chaos{
                     //! instance to the checker thread
                     std::auto_ptr<boost::thread>    threadNextCommandChecker;
                     
-                    
-                    KeyDataStorage  *keyDataStoragePtr;
                     chaos_data::DatasetDB  *deviceSchemaDbPtr;
-
                     
                     //! Thread for whait until the queue is empty
                     boost::condition_variable_any  conditionWaithSchedulerEnd;
@@ -154,7 +153,7 @@ namespace chaos{
                         of the input channel or shared variable setting,
                         used into the control algoritm.
                      */
-                    IOCAttributeShareCache sharedAttributeSetting;
+                    IOCAttributeSharedCache *shared_attribute_cache;
                     
                     //! contain the paused command
                     std::stack<PRIORITY_ELEMENT(CommandInfoAndImplementation)*> commandStack;

@@ -68,30 +68,30 @@ chaos::common::data::DatasetDB *SlowCommand::getDeviceDatabase() {
     return deviceDatabasePtr;
 }
 
-void SlowCommand::getChangedVariableIndex(IOCAttributeShareCache::SharedVeriableDomain domain, std::vector<VariableIndexType>& changed_index) {
+void SlowCommand::getChangedVariableIndex(IOCAttributeSharedCache::SharedVeriableDomain domain, std::vector<VariableIndexType>& changed_index) {
     CHAOS_ASSERT(sharedAttributeSettingPtr)
     return sharedAttributeSettingPtr->getSharedDomain(domain).getChangedIndex(changed_index);
 }
 
-ValueSetting *SlowCommand::getVariableValue(IOCAttributeShareCache::SharedVeriableDomain domain, VariableIndexType variable_index) {
+ValueSetting *SlowCommand::getVariableValue(IOCAttributeSharedCache::SharedVeriableDomain domain, VariableIndexType variable_index) {
     CHAOS_ASSERT(sharedAttributeSettingPtr)
     return sharedAttributeSettingPtr->getSharedDomain(domain).getValueSettingForIndex(variable_index);
 }
 
-ValueSetting *SlowCommand::getVariableValue(IOCAttributeShareCache::SharedVeriableDomain domain, const char *variable_name) {
+ValueSetting *SlowCommand::getVariableValue(IOCAttributeSharedCache::SharedVeriableDomain domain, const char *variable_name) {
     CHAOS_ASSERT(sharedAttributeSettingPtr)
 	AttributeSetting& attribute_setting = sharedAttributeSettingPtr->getSharedDomain(domain);
     VariableIndexType index = attribute_setting.getIndexForName(variable_name);
     return attribute_setting.getValueSettingForIndex(index);
 }
 
-void SlowCommand::setVariableValueForKey(IOCAttributeShareCache::SharedVeriableDomain domain, const char *variable_name, void * value, uint32_t size) {
+void SlowCommand::setVariableValueForKey(IOCAttributeSharedCache::SharedVeriableDomain domain, const char *variable_name, void * value, uint32_t size) {
     CHAOS_ASSERT(sharedAttributeSettingPtr)
     VariableIndexType index = sharedAttributeSettingPtr->getSharedDomain(domain).getIndexForName(variable_name);
     sharedAttributeSettingPtr->getSharedDomain(domain).setValueForAttribute(index, value, size);
 }
 
-void SlowCommand::getVariableNames(IOCAttributeShareCache::SharedVeriableDomain domain, std::vector<std::string>& names) {
+void SlowCommand::getVariableNames(IOCAttributeSharedCache::SharedVeriableDomain domain, std::vector<std::string>& names) {
     CHAOS_ASSERT(sharedAttributeSettingPtr)
     sharedAttributeSettingPtr->getSharedDomain(domain).getAttributeNames(names);
 }
@@ -131,8 +131,8 @@ void SlowCommand::ccHandler() {}
 bool SlowCommand::timeoutHandler() {return true;}
 
 //! called befor the command start the execution
-void SlowCommand::commandStart() {
-	timing_stats.command_start_time_usec = shared_stat->lastCmdStepStart;
+void SlowCommand::commandPre() {
+	timing_stats.command_set_time_usec = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count();
 }
 
 #define SET_FAULT(c, m, d) \
@@ -142,11 +142,11 @@ faultDescription.code = c; \
 faultDescription.description = m; \
 faultDescription.domain = d;
 //! called after the command step excecution
-void SlowCommand::commandPostStep() {
+void SlowCommand::commandPost() {
 	if(commandFeatures.featuresFlag & features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT) {
             //timing_stats.command_running_time_usec += shared_stat->lastCmdStepTime;
 		//check timeout
-		if((shared_stat->lastCmdStepStart - timing_stats.command_start_time_usec)  >= commandFeatures.featureCommandTimeout) {
+		if((shared_stat->lastCmdStepStart - timing_stats.command_set_time_usec)  >= commandFeatures.featureCommandTimeout) {
 			//call the timeout handler
 			try {
 				if(timeoutHandler()) {
@@ -161,4 +161,18 @@ void SlowCommand::commandPostStep() {
 			}
 		}
 	}
+}
+
+// return the set handler time
+uint64_t SlowCommand::getSetTime() {
+    return timing_stats.command_set_time_usec;
+}
+//! return the start step time of the sandbox
+uint64_t SlowCommand::getStartStepTime() {
+    return shared_stat->lastCmdStepStart;
+}
+
+//! return the last step time of the sandbox
+uint64_t SlowCommand::getLastStepTime() {
+    return shared_stat->lastCmdStepStart;
 }

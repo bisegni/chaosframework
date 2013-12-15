@@ -91,9 +91,10 @@ void GraphWidget::addNewPlot(chaos::PointerBuffer *pointerBuffer, std::string& p
     QwtPlotCurve *c = new QwtPlotCurve(plotName.c_str());
     c->setPen(QPen(QColor(randInt(), randInt(), randInt())));
     c->setRenderHint(QwtPlotItem::RenderAntialiased);
-    c->setStyle(QwtPlotCurve::NoCurve);
+    c->setStyle(QwtPlotCurve::Lines);
     c->attach(plot);
     c->setLegendAttribute(QwtPlotCurve::LegendShowLine);
+    c->setRenderHint(QwtPlotItem::RenderAntialiased, true);
     newPlotInfo->curve = c;
     newPlotInfo->curvePointer = pointerBuffer;
     newPlotInfo->dataType = dataType;
@@ -114,8 +115,8 @@ void GraphWidget::addNewPlot(chaos::DataBuffer *dataBuffer, std::string& plotNam
     c->setStyle(QwtPlotCurve::Lines);
     c->attach(plot);
     c->setLegendAttribute(QwtPlotCurve::LegendShowLine);
-    c->setRenderHint(QwtPlotItem::RenderAntialiased, false);
-    c->setPaintAttribute(QwtPlotCurve::ClipPolygons, false);
+    c->setRenderHint(QwtPlotItem::RenderAntialiased, true);
+   // c->setPaintAttribute(QwtPlotCurve::ClipPolygons, false);
 
     newPlotInfo->curve = c;
     newPlotInfo->curveBuffer = dataBuffer;
@@ -143,6 +144,7 @@ void GraphWidget::update() {
     PlotBufferAndCurve *tmpPlotInfoPtr = NULL;
     PlotPtrBufferAndCurve *tmpPointeInfoPtr = NULL;
     std::vector<double> ys;
+    std::cout << "update graph" << std::endl;
     for(std::map<std::string, boost::shared_ptr<PlotBufferAndCurve> >::iterator iter = plotMap.begin();
         iter != plotMap.end();
         iter++){

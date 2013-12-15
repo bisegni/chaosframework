@@ -70,10 +70,7 @@ namespace chaos{
 				//! Collect the command timing stats
 				typedef struct CommandTimingStats {
 					//! command start microsecond (sandbox time)
-					uint64_t command_start_time_usec;
-					
-					//! command running time sisnce it's started
-					uint64_t command_running_time_usec;
+					uint64_t command_set_time_usec;
 				} CommandTimingStats;
 				
                 //! Base cass for the slow command implementation
@@ -114,6 +111,9 @@ namespace chaos{
 					//! Command features
 					features::Features commandFeatures;
 					
+                    //!Shared sandbox stat
+                    const SandboxStat *shared_stat;
+                    
                     //! Running state
                     /*!
                      A value composed by a set of RunningState element.
@@ -136,32 +136,33 @@ namespace chaos{
                     FaultDescription faultDescription;
                     
                     //! shared setting across all slow command
-                    IOCAttributeShareCache *sharedAttributeSettingPtr;
+                    IOCAttributeSharedCache *sharedAttributeSettingPtr;
+                    
+					//! called befor the command start the execution
+					void commandPre();
+					
+					//! called after the command step excecution
+					void commandPost();
                     
                 protected:
 					//! The erogator of the driver requested by the control unit
 					chaos::cu::driver_manager::DriverErogatorInterface *driverAccessorsErogator;
-					
-                    //Shared sandbox stat
-                    const SandboxStat *shared_stat;
-
                     
                     //! default constructor
                     SlowCommand();
                     
                     //! default destructor
                     virtual ~SlowCommand();
- 					
+
+                    //! return the set handler time
+                    uint64_t getSetTime();
                     
-					//! called befor the command start the execution
-					void commandStart();
-					
-					
-					//void command_pre_step();
-					
-					//! called after the command step excecution
-					void commandPostStep();
-					
+                    //! return the start step time of the sandbox
+                    uint64_t getStartStepTime();
+
+                    //! return the last step time of the sandbox
+                    uint64_t getLastStepTime();
+                    
                     //! set the features with the uint32 value
                     /*!
                      Feature rappresented by an uint32 can be setupped with this api. The value can be 
@@ -255,22 +256,22 @@ namespace chaos{
                     
 					//! Return the value object for the domain and the string key
 					/*!
-						\param domain a domain identified by a value of @IOCAttributeShareCache::SharedVeriableDomain
+						\param domain a domain identified by a value of @IOCAttributeSharedCache::SharedVeriableDomain
 						\key_name a name that identify the variable
 					 */
-                    ValueSetting *getVariableValue(IOCAttributeShareCache::SharedVeriableDomain domain, const char *variable_name);
+                    ValueSetting *getVariableValue(IOCAttributeSharedCache::SharedVeriableDomain domain, const char *variable_name);
 					
 					//! Return the value object for the domain and the index of the variable
-                    ValueSetting *getVariableValue(IOCAttributeShareCache::SharedVeriableDomain domain, VariableIndexType variable_index);
+                    ValueSetting *getVariableValue(IOCAttributeSharedCache::SharedVeriableDomain domain, VariableIndexType variable_index);
                     
 					//! Set the value for a determinated variable in a determinate domain
-                    void setVariableValueForKey(IOCAttributeShareCache::SharedVeriableDomain domain, const char *variable_name, void * value, uint32_t size);
+                    void setVariableValueForKey(IOCAttributeSharedCache::SharedVeriableDomain domain, const char *variable_name, void * value, uint32_t size);
 					
 					//! Get the index of the changed attribute
-                    void getChangedVariableIndex(IOCAttributeShareCache::SharedVeriableDomain domain, std::vector<VariableIndexType>& changed_index);
+                    void getChangedVariableIndex(IOCAttributeSharedCache::SharedVeriableDomain domain, std::vector<VariableIndexType>& changed_index);
                     
 					//! Return the names of all variabl einto a determinated domain
-                    void getVariableNames(IOCAttributeShareCache::SharedVeriableDomain domain, std::vector<std::string>& names);
+                    void getVariableNames(IOCAttributeSharedCache::SharedVeriableDomain domain, std::vector<std::string>& names);
                     
                     /*
                      Send device data to output buffer

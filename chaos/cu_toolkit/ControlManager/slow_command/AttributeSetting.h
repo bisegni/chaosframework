@@ -122,7 +122,7 @@ namespace chaos{
 				 Convenient class for grupping toghether the three different
 				 cache for the attirbute (input, output, custom).
 				 */
-				class IOCAttributeShareCache : public utility::InizializableService {
+				class IOCAttributeSharedCache : public utility::InizializableService {
 					AttributeSetting inputAttribute;
 					AttributeSetting outputAttribute;
 					AttributeSetting customAttribute;
@@ -134,8 +134,8 @@ namespace chaos{
 						SVD_CUSTOM
 					}SharedVeriableDomain;
 					
-					IOCAttributeShareCache();
-					~IOCAttributeShareCache();
+					IOCAttributeSharedCache();
+					~IOCAttributeSharedCache();
 					
 					//! This field point to a custom memory shared by cu and all command
                     void *customData;

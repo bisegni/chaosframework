@@ -235,18 +235,20 @@ namespace chaos {
                 \param priority represent the priority beetwen the submitted command and all command in the queue that are
                     waiting to be submitted in the scheduler
 				\param command_id is the assigned command id to the submitted one
-                \param schedulerStepsDelay rapresent the intervall beetween the step of the scehduler [...acquisition -> correlation -> scheduleInterval...]
-                \param submissionCheckerStepsDelay is the delay between two steps of the submission checker
-                \param slowCommandData is the abstraction of the command data that is passed to the set handler befor the scheduler loop of the new command
+                \param execution_channel (optional) choose the excution channel where execute the command [1 based]
+                \param scheduler_steps_delay (optional) rapresent the intervall beetween the step of the scehduler [...acquisition -> correlation -> scheduleInterval...]
+                \param submission_checker_steps_delay (optional) is the delay between two steps of the submission checker
+                \param slow_command_data (optional) is the abstraction of the command data that is passed to the set handler befor the scheduler loop of the new command
                         take palce. The memory of that parameter is not free
              */
             int submitSlowControlCommand(string commandAlias,
 										 cccs::SubmissionRuleType::SubmissionRule submissionRule,
 										 uint32_t priority,
 										 uint64_t& command_id,
-										 uint64_t schedulerStepsDelay = 0,
-										 uint32_t submissionCheckerStepsDelay = 0,
-										 CDataWrapper *slowCommandData = NULL);
+                                         uint32_t execution_channel = 0,
+										 uint64_t scheduler_steps_delay = 0,
+										 uint32_t submission_checker_steps_delay = 0,
+										 CDataWrapper *slow_command_data = NULL);
             
             //! Submit a new slow command
             /*!
@@ -256,17 +258,19 @@ namespace chaos {
 				\param submissionRule determinate the rule with which the command is submitted. This can determinate the
 				\param command_id is the assigned command id to the submitted one
 						the execution of the current execution command in the control unit, according with his running state
-				\param schedulerStepsDelay rapresent the intervall beetween the step of the scehduler [...acquisition -> correlation -> scheduleInterval...]
-				\param submissionCheckerStepsDelay is the delay between two steps of the submission checker
-				\param slowCommandData is the abstraction of the command data that is passed to the set handler befor the scheduler loop of the new command
+                \param execution_channel (optional) choose the excution channel where execute the command [1 based]
+				\param scheduler_steps_delay (optional) rapresent the intervall beetween the step of the scehduler [...acquisition -> correlation -> scheduleInterval...]
+				\param submission_checker_steps_delay (optional) is the delay between two steps of the submission checker
+				\param slow_command_data (optional) is the abstraction of the command data that is passed to the set handler befor the scheduler loop of the new command
 						take palce. The memory of that parameter is not free
              */
             int submitSlowControlCommand(string commandAlias,
 										 cccs::SubmissionRuleType::SubmissionRule submissionRule,
 										 uint64_t& command_id,
-										 uint64_t schedulerStepsDelay = 0,
-										 uint32_t submissionCheckerStepsDelay = 0,
-										 CDataWrapper *slowCommandData = NULL);
+                                         uint32_t execution_channel = 0,
+										 uint64_t scheduler_steps_delay = 0,
+										 uint32_t submission_checker_steps_delay = 0,
+										 CDataWrapper *slow_command_data = NULL);
             
 			//! Set the current slow command features
 			/*!

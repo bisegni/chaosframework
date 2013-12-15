@@ -5,7 +5,7 @@
 //  Created by Claudio Bisegni on 7/8/13.
 //  Copyright (c) 2013 INFN. All rights reserved.
 //
-
+#include <string>
 #include <sched.h>
 #include <exception>
 
@@ -23,7 +23,7 @@ using namespace chaos::cu::control_manager::slow_command;
 //------------------------------------------------------------------------------------------------------------
 
 
-#define LOG_HEAD_SCS "[SlowCommandSandbox-" << deviceSchemaDbPtr->getDeviceID() << "] "
+#define LOG_HEAD_SCS "[SlowCommandSandbox-" << identification << "] "
 
 #define SCSLAPP_ LAPP_ << LOG_HEAD_SCS
 #define SCSLDBG_ LDBG_ << LOG_HEAD_SCS
@@ -124,10 +124,10 @@ typedef enum RunningVSSubmissioneResult {
 } RunningVSSubmissioneResult;
 
 static RunningVSSubmissioneResult running_vs_submition[4][3] = {
-    /*esclusive running property*/ RSR_TIMED_RETRY, RSR_TIMED_RETRY, RSR_NO_CHANGE,
-    /*normal running property*/    RSR_STACK_CURENT_COMMAND, RSR_KILL_KURRENT_COMMAND, RSR_NO_CHANGE,
-    /*end running property*/       RSR_CURRENT_CMD_HAS_ENDED, RSR_CURRENT_CMD_HAS_ENDED, RSR_CURRENT_CMD_HAS_ENDED,
-    /*fault running property*/     RSR_CURRENT_CMD_HAS_FAULTED, RSR_CURRENT_CMD_HAS_FAULTED, RSR_CURRENT_CMD_HAS_FAULTED
+    /*esclusive running property*/  {RSR_TIMED_RETRY, RSR_TIMED_RETRY, RSR_NO_CHANGE},
+    /*normal running property*/     {RSR_STACK_CURENT_COMMAND, RSR_KILL_KURRENT_COMMAND, RSR_NO_CHANGE},
+    /*end running property*/        {RSR_CURRENT_CMD_HAS_ENDED, RSR_CURRENT_CMD_HAS_ENDED, RSR_CURRENT_CMD_HAS_ENDED},
+    /*fault running property*/      {RSR_CURRENT_CMD_HAS_FAULTED, RSR_CURRENT_CMD_HAS_FAULTED, RSR_CURRENT_CMD_HAS_FAULTED}
     
 };
 
@@ -157,12 +157,10 @@ void SlowCommandSandbox::init(void *initData) throw(chaos::CException) {
     currentExecutingCommand = NULL;
     //setHandlerFunctor.cmdInstance = NULL;
     acquireHandlerFunctor.cmdInstance = NULL;
-    acquireHandlerFunctor.sandbox_identifier = deviceSchemaDbPtr->getDeviceID();
+    acquireHandlerFunctor.sandbox_identifier = identification;
     
     correlationHandlerFunctor.cmdInstance = NULL;
-    correlationHandlerFunctor.sandbox_identifier = deviceSchemaDbPtr->getDeviceID();
-    //initialize the shared channel setting
-    utility::InizializableService::initImplementation(sharedAttributeSetting, initData, "AttributeSetting", "SlowCommandSandbox::init");
+    correlationHandlerFunctor.sandbox_identifier = identification;
     
     scheduleWorkFlag = false;
 }
@@ -173,6 +171,9 @@ void SlowCommandSandbox::start() throw(chaos::CException) {
     //se the flag to the end o the scheduler
     SCSLDBG_ << "Set scheduler work flag to true";
     scheduleWorkFlag = true;
+    
+    //reset statistic
+    std::memset(&stat, 0, sizeof(SandboxStat));
     
     //allocate thread
     SCSLDBG_ << "Allocate thread for the scheduler and checker";
@@ -266,10 +267,7 @@ void SlowCommandSandbox::deinit() throw(chaos::CException) {
         command_submitted_queue.pop();
         DELETE_OBJ_POINTER(nextAvailableCommand)
     }
-    
-    //initialize the shared channel setting
-    utility::InizializableService::deinitImplementation(sharedAttributeSetting, "AttributeSetting", "SlowCommandSandbox::init");
-    
+        
     //reset all the handler
     //setHandlerFunctor.cmdInstance = NULL;
     acquireHandlerFunctor.cmdInstance = NULL;
@@ -423,9 +421,10 @@ void SlowCommandSandbox::checkNextCommand() {
             }
         } else {
             DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] queue is empty";)
+            bool curre_cmd_ended =  currentExecutingCommand && (currentExecutingCommand->element->cmdImpl->runningProperty>=RunningPropertyType::RP_End);
+
             if(!commandStack.empty()) {
                 DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] checking current running command";)
-                bool curre_cmd_ended =  currentExecutingCommand && (currentExecutingCommand->element->cmdImpl->runningProperty>=RunningPropertyType::RP_End);
                 if(curre_cmd_ended) {
                     PRIORITY_ELEMENT(CommandInfoAndImplementation)  *command_to_delete = currentExecutingCommand;
                     DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] we have no running or halted command";)
@@ -452,6 +451,25 @@ void SlowCommandSandbox::checkNextCommand() {
                                 break;
                     }
                     DELETE_OBJ_POINTER(command_to_delete);
+                }
+            } else {
+                if(curre_cmd_ended) {
+                    DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Cur command ended or fault without no other command to execute ";)
+                    removeHandler(currentExecutingCommand);
+                    switch(currentExecutingCommand->element->cmdImpl->runningProperty) {
+                        case RunningPropertyType::RP_End:
+                            if(event_handler) event_handler->handleEvent(currentExecutingCommand->element->cmdImpl->unique_id,
+                                                                         SlowCommandEventType::EVT_COMPLETED,
+                                                                         NULL);
+                            break;
+                        case RunningPropertyType::RP_Fault:
+                            if(event_handler) event_handler->handleEvent(currentExecutingCommand->element->cmdImpl->unique_id,
+                                                                         SlowCommandEventType::EVT_FAULT,
+                                                                         static_cast<FaultDescription*>(&currentExecutingCommand->element->cmdImpl->faultDescription));
+                            
+                            break;
+                    }
+                    DELETE_OBJ_POINTER(currentExecutingCommand);
                 }
             }
             DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] wait undefinitly";)
@@ -489,7 +507,7 @@ void SlowCommandSandbox::runCommand() {
 			stat.lastCmdStepTime = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count()-stat.lastCmdStepStart;
 			
             //fire post command step
-            curr_executing_impl->commandPostStep();
+            curr_executing_impl->commandPost();
             
             lockForCurrentCommand.unlock();
             
@@ -530,6 +548,11 @@ void SlowCommandSandbox::runCommand() {
                 DEBUG_CODE(SCSLDBG_ << "[runCommand] - no running command and scheduler has been stopped we need to exit";)
                 canWork = false;
             } else {
+                //no more command to scehdule
+                
+                //reset the statistic befor sleep
+                std::memset(&stat, 0, sizeof(SandboxStat));
+                
 				DEBUG_CODE(SCSLDBG_ << "[runCommand] - unlock lockForCurrentCommand";)
 				lockForCurrentCommand.unlock();
 				DEBUG_CODE(SCSLDBG_ << "[runCommand] - Scheduler need sleep because no command to run waithForNextCheck notify";)
@@ -555,16 +578,13 @@ bool SlowCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplement
         chaos_data::CDataWrapper *tmp_info = cmd_to_install->element->cmdInfo;
         SlowCommand *tmp_impl = cmd_to_install->element->cmdImpl;
         
-        tmp_impl->sharedAttributeSettingPtr = &sharedAttributeSetting;
-        //associate the keydata storage and the device database to the command
-        tmp_impl->keyDataStoragePtr = keyDataStoragePtr;
-        tmp_impl->deviceDatabasePtr = deviceSchemaDbPtr;
-        
         uint8_t handlerMask = tmp_impl->implementedHandler();
         //install the pointer of th ecommand into the respective handler functor
         
 		//set the shared stat befor cal set handler
 		tmp_impl->shared_stat = &stat;
+        
+        tmp_impl->commandPre();
         
         //check set handler
         if(!tmp_impl->already_setupped && (handlerMask & HandlerType::HT_Set)) {
@@ -597,8 +617,6 @@ bool SlowCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplement
 		//fire the running event
 		if(event_handler)event_handler->handleEvent(tmp_impl->unique_id, SlowCommandEventType::EVT_RUNNING, NULL);
 		
-		//exec the signal start in command
-		tmp_impl->commandStart();
     } else {
         currentExecutingCommand = NULL;
         acquireHandlerFunctor.cmdInstance = NULL;

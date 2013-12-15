@@ -32,13 +32,13 @@ using namespace chaos::cu::control_manager::slow_command;
 #define LCCU_ LAPP_ << "[Slow Command Control Unit:" << getCUInstance() <<"] - "
 
 SCAbstractControlUnit::SCAbstractControlUnit():AbstractControlUnit(CUType::SCCU) {
-    slowCommandExecutor = new SlowCommandExecutor(cuInstance, this);
-	slowCommandExecutor->driverAccessorsErogator = this;
+    slow_command_executor = new SlowCommandExecutor(cuInstance, this);
+	slow_command_executor->driverAccessorsErogator = this;
 }
 
 SCAbstractControlUnit::~SCAbstractControlUnit() {
-    if(slowCommandExecutor) {
-        delete(slowCommandExecutor);
+    if(slow_command_executor) {
+        delete(slow_command_executor);
     }
 }
 
@@ -53,7 +53,7 @@ void  SCAbstractControlUnit::_getDeclareActionInstance(std::vector<const Declare
     AbstractControlUnit::_getDeclareActionInstance(declareActionInstance);
     
     //fill the vecto rwith the local declare action instance
-    declareActionInstance.push_back(slowCommandExecutor);
+    declareActionInstance.push_back(slow_command_executor);
 }
 
 /*
@@ -64,14 +64,14 @@ void SCAbstractControlUnit::init(void *initData) throw(CException) {
 	AbstractControlUnit::init(initData);
 	
     //associate the data storage
-    slowCommandExecutor->commandSandbox.keyDataStoragePtr = AbstractControlUnit::keyDataStorage;
-    slowCommandExecutor->commandSandbox.deviceSchemaDbPtr = this; //control unit is it'self the database
+    slow_command_executor->keyDataStoragePtr = AbstractControlUnit::keyDataStorage;
+    slow_command_executor->deviceSchemaDbPtr = this; //control unit is it'self the database
     
     LCCU_ << "Install default slow command for device " << DatasetDB::getDeviceID();
     installCommand<command::SetAttributeCommand>(control_manager::slow_command::SlowCommandsKey::ATTRIBUTE_SET_VALUE_CMD_ALIAS);
     
     LCCU_ << "Initializing slow command sandbox for device " << DatasetDB::getDeviceID();
-    utility::StartableService::initImplementation(slowCommandExecutor, (void*)NULL, "Slow Command Executor", "SCAbstractControlUnit::init");
+    utility::StartableService::initImplementation(slow_command_executor, (void*)NULL, "Slow Command Executor", "SCAbstractControlUnit::init");
     
     //now we can call funciton for custom definition of the shared variable
     LCCU_ << "Setting up custom shared variable for device " << DatasetDB::getDeviceID();
@@ -86,10 +86,10 @@ void SCAbstractControlUnit::deinit() throw(CException) {
 	AbstractControlUnit::deinit();
 	
     LCCU_ << "Deinitialize sandbox deinitialization for device:" << DatasetDB::getDeviceID();
-    utility::StartableService::deinitImplementation(slowCommandExecutor, "Slow Command Executor", "SCAbstractControlUnit::deinit");
+    utility::StartableService::deinitImplementation(slow_command_executor, "Slow Command Executor", "SCAbstractControlUnit::deinit");
     //deassociate the data storage
-    slowCommandExecutor->commandSandbox.keyDataStoragePtr = NULL;
-    slowCommandExecutor->commandSandbox.deviceSchemaDbPtr = NULL;
+    slow_command_executor->keyDataStoragePtr = NULL;
+    slow_command_executor->deviceSchemaDbPtr = NULL;
 }
 
 /*
@@ -100,7 +100,7 @@ void SCAbstractControlUnit::start() throw(CException) {
 	AbstractControlUnit::start();
 	
     LCCU_ << "Start sandbox for device:" << DatasetDB::getDeviceID();
-    utility::StartableService::startImplementation(slowCommandExecutor, "Slow Command Executor", "SCAbstractControlUnit::start");
+    utility::StartableService::startImplementation(slow_command_executor, "Slow Command Executor", "SCAbstractControlUnit::start");
 
 }
 
@@ -112,15 +112,19 @@ void SCAbstractControlUnit::stop() throw(CException) {
 	AbstractControlUnit::stop();
 	
     LCCU_ << "Stop slow command executor for device:" << DatasetDB::getDeviceID();
-    utility::StartableService::stopImplementation(slowCommandExecutor, "Slow Command Executor", "SCAbstractControlUnit::stop");
+    utility::StartableService::stopImplementation(slow_command_executor, "Slow Command Executor", "SCAbstractControlUnit::stop");
 
 }
 
 // Perform a command registration
-void SCAbstractControlUnit::setDefaultCommand(const char * dafaultCommandName) {
-    CHAOS_ASSERT(slowCommandExecutor);
-    slowCommandExecutor->setDefaultCommand(dafaultCommandName);
+void SCAbstractControlUnit::setDefaultCommand(std::string dafaultCommandName, unsigned int sandbox_instance) {
+    slow_command_executor->setDefaultCommand(dafaultCommandName, sandbox_instance);
 }
+
+void SCAbstractControlUnit::addExecutionChannels(unsigned int execution_channels) {
+    slow_command_executor->addSandboxInstance(execution_channels);
+}
+
 /*
  Receive the evento for set the dataset input element
  */
@@ -133,10 +137,9 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAt
     // in slow control cu the CDataWrapper instance received from rpc is internally managed
     //so we need to detach it
     // submit the detacched command to slow controll subsystem
-    detachParam = slowCommandExecutor->submitCommand(datasetAttributeValues, command_id);
-	if(!detachParam) {
-        throw CException(-2, "Error submitting command", "SlowCommandExecutor::setDatasetAttribute");
-    }
+    slow_command_executor->submitCommand(datasetAttributeValues, command_id);
+    detachParam = true;
+
 	//construct the result
 	CDataWrapper *result = new CDataWrapper();
 	result->addInt64Value(SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_id);
@@ -153,35 +156,35 @@ CDataWrapper* SCAbstractControlUnit::updateConfiguration(chaos_data::CDataWrappe
 		std::memset(&features, 0, sizeof(features::Features));
 		features.featuresFlag &= features::FeaturesFlagTypes::FF_LOCK_USER_MOD;
 		features.featureSchedulerStepsDelay = (uint32_t)updatePack->getUInt64Value(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY);
-		slowCommandExecutor->setCommandFeatures(features);
+		slow_command_executor->setCommandFeatures(features);
 	}
 	return result;
 }
 
 void SCAbstractControlUnit::addSharedVariable(std::string name, uint32_t max_size, chaos::DataType::DataType type) {
     // add the attribute to the shared setting object
-    slowCommandExecutor->commandSandbox.sharedAttributeSetting.getSharedDomain(IOCAttributeShareCache::SVD_CUSTOM).addAttribute(name, max_size, type);
+    slow_command_executor->global_attribute_cache.getSharedDomain(IOCAttributeSharedCache::SVD_CUSTOM).addAttribute(name, max_size, type);
 }
 
 void SCAbstractControlUnit::setSharedVariableValue(std::string name, void *value, uint32_t value_size) {
     // add the attribute to the shared setting object
-	setVariableValue(IOCAttributeShareCache::SVD_CUSTOM, name, value, value_size);
+	setVariableValue(IOCAttributeSharedCache::SVD_CUSTOM, name, value, value_size);
     //VariableIndexType attribute_index = 0;
-    //if((attribute_index = slowCommandExecutor->commandSandbox.sharedAttributeSetting.getSharedDomain(IOCAttributeShareCache::SVD_CUSTOM).getIndexForName(name))) {
-      //  slowCommandExecutor->commandSandbox.sharedAttributeSetting.getSharedDomain(IOCAttributeShareCache::SVD_CUSTOM).setDefaultValueForAttribute(attribute_index, value, value_size);
+    //if((attribute_index = slow_command_executor->global_attribute_cache.getSharedDomain(IOCAttributeSharedCache::SVD_CUSTOM).getIndexForName(name))) {
+      //  slow_command_executor->global_attribute_cache.getSharedDomain(IOCAttributeSharedCache::SVD_CUSTOM).setDefaultValueForAttribute(attribute_index, value, value_size);
     //}
 }
 
-void SCAbstractControlUnit::setVariableValue(IOCAttributeShareCache::SharedVeriableDomain domain, std::string name, void *value, uint32_t value_size) {
+void SCAbstractControlUnit::setVariableValue(IOCAttributeSharedCache::SharedVeriableDomain domain, std::string name, void *value, uint32_t value_size) {
         // add the attribute to the shared setting object
     VariableIndexType attribute_index = 0;
-    if((attribute_index = slowCommandExecutor->commandSandbox.sharedAttributeSetting.getSharedDomain(domain).getIndexForName(name))) {
-        slowCommandExecutor->commandSandbox.sharedAttributeSetting.getSharedDomain(domain).setDefaultValueForAttribute(attribute_index, value, value_size);
+    if((attribute_index = slow_command_executor->global_attribute_cache.getSharedDomain(domain).getIndexForName(name))) {
+        slow_command_executor->global_attribute_cache.getSharedDomain(domain).setDefaultValueForAttribute(attribute_index, value, value_size);
     }
 }
 
-ValueSetting *SCAbstractControlUnit::getVariableValue(IOCAttributeShareCache::SharedVeriableDomain domain, const char *variable_name) {
-	AttributeSetting& attribute_setting = slowCommandExecutor->commandSandbox.sharedAttributeSetting.getSharedDomain(domain);
+ValueSetting *SCAbstractControlUnit::getVariableValue(IOCAttributeSharedCache::SharedVeriableDomain domain, const char *variable_name) {
+	AttributeSetting& attribute_setting = slow_command_executor->global_attribute_cache.getSharedDomain(domain);
     VariableIndexType index = attribute_setting.getIndexForName(variable_name);
     return attribute_setting.getValueSettingForIndex(index);
 }
