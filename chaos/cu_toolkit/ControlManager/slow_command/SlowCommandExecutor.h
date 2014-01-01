@@ -49,6 +49,7 @@
 
 #define COMMAND_QUEUE_DEFAULT_LENGTH		1024
 #define COMMAND_STATE_QUEUE_DEFAULT_SIZE	100
+#define COMMAND_BASE_SANDOXX_ID             1
 
 namespace chaos_data = chaos::common::data;
 namespace boost_cont = boost::container;
@@ -164,13 +165,6 @@ namespace chaos {
                     
 					//command event handler
 					void handleEvent(uint64_t command_seq, SlowCommandEventType::SlowCommandEventType type, void* type_attribute_ptr);
-                    
-                    //! Get queued command via rpc command
-                    /*
-						\ingroup API_Slow_Control
-						Return the number and the infromation of the queued command via RPC
-                     */
-                    chaos_data::CDataWrapper* getQueuedCommand(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
 					
 					//! Get the statistic for the current running command rpc action
                     /*!

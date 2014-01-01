@@ -121,6 +121,10 @@ namespace chaos {
             answered = true;
             wait_answer_condition.notify_one();
         }
+        
+        bool isInWait() {
+            return inWait;
+        }
     };
 }
 #endif

@@ -365,9 +365,9 @@ int main (int argc, char* argv[] )
 			if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_SET_FEATURES_SCHEDULER_WAIT)) {
 				features.featuresFlag |= cccs::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY;
 				features.featureSchedulerStepsDelay = scFeaturesSchedWait;
-				std::cout << "Set the sched wait feature to -> " << scFeaturesSchedWait << std::endl;
+				std::cout << "Set the sched wait feature to -> " << scFeaturesSchedWait << " on execution channel " << scExecutionChannel << std::endl;
 				//se the features
-				err = controller->setSlowCommandFeatures(features, scFeaturesLock);
+				err = controller->setSlowCommandFeatures(features, scFeaturesLock, scExecutionChannel);
 				if(err == ErrorCode::EC_TIMEOUT) throw CException(5, "Time out on connection", "setSlowCommandFeatures");
 			}
 			

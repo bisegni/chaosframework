@@ -204,6 +204,7 @@ void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
 
     std::string dName = selectedDevice.toStdString();
     deviceController = chaos::ui::HLDataApi::getInstance()->getControllerForDeviceID(dName);
+    deviceController->setRequestTimeWaith(4000);
     deviceController->setupTracking();
     //get only output o attribute
     deviceController->getDeviceDatasetAttributesName(attributesName, chaos::DataType::Output);

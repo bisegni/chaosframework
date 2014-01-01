@@ -51,12 +51,6 @@ SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DatasetDB *_de
 	// add executor has event handler
     
 	
-    SCELAPP_ << "Register updateConfiguration action";
-    DeclareAction::addActionDescritionInstance<SlowCommandExecutor>(this,
-                                                                    &SlowCommandExecutor::getQueuedCommand,
-                                                                    rpcActionDomain.c_str(),
-                                                                    SlowControlExecutorRpcActionKey::RPC_GET_QUEUED_COMMAND,
-                                                                    "Return the number and the information of the queued command");
     SCELAPP_ << "Register getCommandSandboxStatistics action";
     DeclareAction::addActionDescritionInstance<SlowCommandExecutor>(this,
                                                                     &SlowCommandExecutor::getCommandState,
@@ -91,7 +85,7 @@ void SlowCommandExecutor::addNewSandboxInstance() {
     tmp_ptr->identification.append(deviceSchemaDbPtr->getDeviceID());
     tmp_ptr->identification.append("-sandbox-");
     
-    unsigned int new_size = ((unsigned int) sandbox_map.size()+1);
+    unsigned int new_size = ((unsigned int) sandbox_map.size() + COMMAND_BASE_SANDOXX_ID);
     tmp_ptr->identification.append(lexical_cast<std::string>(new_size));
     
 
@@ -464,18 +458,20 @@ SlowCommand *SlowCommandExecutor::instanceCommandInfo(std::string& commandAlias)
 
 //! Submite the new sloc command information
 void SlowCommandExecutor::submitCommand(CDataWrapper *commandDescription, uint64_t& command_id)  throw (CException) {
-    CHAOS_ASSERT(commandDescription)
+    if(!commandDescription)
+        throw CException(-1, "Invalid parameter", "SlowCommandExecutor::setCommandFeatures");
+    
     if(serviceState != ::chaos::utility::service_state_machine::StartableServiceType::SS_STARTED)
-        throw CException(-1, "Slow command executor is not started", "SlowCommandExecutor::submitCommand");
+        throw CException(-2, "Slow command executor is not started", "SlowCommandExecutor::submitCommand");
     
     WriteLock       lock(sandbox_map_mutex);
     
     //get execution channel if submitted
-    uint32_t execution_channel = commandDescription->hasKey(SlowCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL) ? commandDescription->getUInt32Value(SlowCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL):1;
+    uint32_t execution_channel = commandDescription->hasKey(SlowCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL) ? commandDescription->getUInt32Value(SlowCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL):COMMAND_BASE_SANDOXX_ID;
     
     //check if the channel is present
     if(sandbox_map.count(execution_channel) == 0)
-        throw CException(-1, "Execution channel not found", "SlowCommandExecutor::submitCommand");
+        throw CException(-3, "Execution channel not found", "SlowCommandExecutor::submitCommand");
     
     SlowCommandSandbox *tmp_ptr = sandbox_map[execution_channel];
 
@@ -496,33 +492,12 @@ void SlowCommandExecutor::submitCommand(CDataWrapper *commandDescription, uint64
     if(cmd_instance) {
         tmp_ptr->enqueueCommand(commandDescription, cmd_instance, priority);
     } else {
-        throw CException(-1, "Command instantiation failed", "SlowCommandExecutor::submitCommand");
+        throw CException(-4, "Command instantiation failed", "SlowCommandExecutor::submitCommand");
 
     }
 }
 
 //----------------------------public rpc command---------------------------
-
-//! Get queued command via rpc command
-/*
- Return the number and the infromation of the queued command via RPC
- */
-CDataWrapper* SlowCommandExecutor::getQueuedCommand(CDataWrapper *params, bool& detachParam) throw (CException) {
-    ReadLock       lock(sandbox_map_mutex);
-    
-    SlowCommandSandbox *tmp_ptr = sandbox_map[1];
-    
-    //lock the scheduler
-	boost::mutex::scoped_lock lockForCurrentCommand(tmp_ptr->mutextAccessCurrentCommand);
-	CDataWrapper *result = new CDataWrapper();
-	//get the number
-	result->addInt32Value(SlowControlExecutorRpcActionKey::RPC_GET_QUEUED_COMMAND_NUMBER_UI32, static_cast<uint32_t>(tmp_ptr->command_submitted_queue.size()));
-	
-	//get last command name
-	std::string name = tmp_ptr->command_submitted_queue.top()->element->cmdInfo->getStringValue(SlowCommandSubmissionKey::COMMAND_ALIAS_STR);
-	result->addStringValue(SlowControlExecutorRpcActionKey::RPC_GET_QUEUED_COMMAND_TOP_ALIAS_STR, name);
-    return result;
-}
 
 //! Get queued command via rpc command
 /*
@@ -553,13 +528,23 @@ CDataWrapper* SlowCommandExecutor::getCommandState(CDataWrapper *params, bool& d
  Return the number and the infromation of the queued command via RPC
  */
 CDataWrapper* SlowCommandExecutor::setCommandFeatures(CDataWrapper *params, bool& detachParam) throw (CException) {
-	if(!params || sandbox_map.size()==0) return NULL;
+	if(!params || sandbox_map.size()==0)
+        throw CException(-1, "Invalid parameter", "SlowCommandExecutor::setCommandFeatures");
+    
     ReadLock       lock(sandbox_map_mutex);
 
 	SCELAPP_ << "Set command feature on current command into the executor with id: " << executorID;
-    
-    SlowCommandSandbox *tmp_ptr = sandbox_map[1];
+    //get execution channel if submitted
+    uint32_t execution_channel = params->hasKey(SlowCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL) ? params->getUInt32Value(SlowCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL):COMMAND_BASE_SANDOXX_ID;
 
+    SlowCommandSandbox *tmp_ptr = sandbox_map[execution_channel];
+
+    //lock the scheduler
+	boost::mutex::scoped_lock lockForCurrentCommand(tmp_ptr->mutextAccessCurrentCommand);
+    
+    if(!tmp_ptr->currentExecutingCommand)
+        throw CException(2, "No Current running command", "SlowCommandExecutor::setCommandFeatures");
+    
     //check wath feature we need to setup
 	if(params->hasKey(SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL)) {
 		//has lock information to setup
@@ -570,16 +555,14 @@ CDataWrapper* SlowCommandExecutor::setCommandFeatures(CDataWrapper *params, bool
 		//has scheduler step wait
 		tmp_ptr->currentExecutingCommand->element->cmdImpl->commandFeatures.featureSchedulerStepsDelay = params->getUInt64Value(SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64);
 	}
-    
-	//lock the scheduler
-	boost::mutex::scoped_lock lockForCurrentCommand(tmp_ptr->mutextAccessCurrentCommand);
 	
 	//recheck current command
 	if(!tmp_ptr->currentExecutingCommand) return NULL;
 	
 	
     lockForCurrentCommand.unlock();
-    tmp_ptr->threadSchedulerPauseCondition.unlock();
+    if(tmp_ptr->threadSchedulerPauseCondition.isInWait())
+        tmp_ptr->threadSchedulerPauseCondition.unlock();
     return NULL;
 }
 

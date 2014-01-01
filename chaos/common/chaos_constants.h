@@ -239,12 +239,6 @@ namespace chaos {
                  */
                 //! Name space for the key nedded for call rpc action exposed by slow control executor layer
                 namespace SlowControlExecutorRpcActionKey {
-					//! @The key represent the rpc alias for SlowCommandExecutor::getQueuedCommand method
-                    static const char * const   RPC_GET_QUEUED_COMMAND					= "getQueuedCommand";
-					//! @The key represent the field of the return pack of the command RPC_GET_QUEUED_COMMAND for retrive the number of the queued command, value is and uint32_t
-					static const char * const   RPC_GET_QUEUED_COMMAND_NUMBER_UI32		= "gqc_cmd_number";
-					//! @The key represent the field of the return pack of the command RPC_GET_QUEUED_COMMAND for retrive the alias of the command on the top of the queue, value is a string
-					static const char * const   RPC_GET_QUEUED_COMMAND_TOP_ALIAS_STR	= "gqc_top_cmd_alias";
                     
 					//! @The key represent the rpc alias for SlowCommandExecutor::getCommandSandboxStatistics method
 					static const char * const   RPC_GET_COMMAND_STATE								= "getCmdState";

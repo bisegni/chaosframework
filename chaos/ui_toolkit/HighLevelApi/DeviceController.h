@@ -278,10 +278,11 @@ namespace chaos {
 				Permit to set the features of the current running command. During execution the chaos::cu::control_manager::slow_command::features::Features::featuresFlag
 				field is checked to see what feature need to be set. The enumeration chaos::cu::control_manager::slow_command::features::FeaturesFlagTypes::FeatureFlag need to
 				bee used to set the featuresFlag property.
-				\param features			valorization
-				\param lock_features	set the lock on all features
+				\param features valorization of the features
+				\param lock_features set the lock on all features
+                \param execution_channel set the execution channel where set the features
 			 */
-			int setSlowCommandFeatures(cccs::features::Features& features, bool lock_features);
+			int setSlowCommandFeatures(cccs::features::Features& features, bool lock_features, uint32_t execution_channel = 0);
 			
 			//! Set the lock on slow command features
 			/*!
