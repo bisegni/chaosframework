@@ -1,5 +1,5 @@
 SET(common_lib_src log/LogManager.cpp)
-SET(common_lib_src ${common_lib_src} plugin/AbstractPlugin.cpp plugin/PluginDiscover.cpp plugin/PluginInspector.cpp plugin/PluginLoader.cpp)
+SET(common_lib_src  ${common_lib_src} plugin/AbstractPlugin.cpp plugin/PluginDiscover.cpp plugin/PluginInspector.cpp plugin/PluginLoader.cpp)
 SET(common_lib_src  ${common_lib_src} action/ActionExecutionSafetySystem.cpp action/EventAction.cpp action/ActionDescriptor.cpp action/DeclareAction.cpp action/DomainActions.cpp)
 SET(common_lib_src  ${common_lib_src} bson/oid.cpp bson/bson_validate.cpp bson/base/parse_number.cpp bson/base/string_data.cpp bson/base/status.cpp bson/base/error_codes.cpp bson/platform/random.cpp bson/util/stringutils.cpp bson/util/md5.cpp bson/util/base64.cpp bson/util/timer.cpp bson/util/time_support.cpp bson/util/jsobj.cpp bson/util/json.cpp bson/util/assert_util.cpp bson/util/bson_extract.cpp)
 SET(common_lib_src  ${common_lib_src} configuration/GlobalConfiguration.cpp)
@@ -13,6 +13,8 @@ SET(common_lib_src  ${common_lib_src} network/NetworkBroker.cpp)
 SET(common_lib_src  ${common_lib_src} rpc/RpcClient.cpp rpc/RpcServer.cpp rpc/msgpack/MsgPackClient.cpp rpc/msgpack/MsgPackServer.cpp)
 SET(common_lib_src  ${common_lib_src} thread/CThread.cpp thread/CThreadGroup.cpp)
 SET(common_lib_src  ${common_lib_src} utility/NamedService.cpp utility/StartableService.cpp utility/InizializableService.cpp)
+SET(common_lib_src  ${common_lib_src} batch_command/AttributeSetting.cpp batch_command/BatchCommandExecutor.cpp batch_command/BatchCommandSandbox.cpp batch_command/BatchCommand.cpp)
+
 
 SET(common_lib_library boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached msgpack msgpack-rpc mpio)
 

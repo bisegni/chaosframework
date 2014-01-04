@@ -37,7 +37,7 @@
 #include <chaos/common/chaos_types.h>
 
 
-namespace cccs = chaos::cu::control_manager::slow_command;
+namespace chaos_batch = chaos::common::batch_command;
 
 namespace chaos {
     namespace ui{
@@ -242,7 +242,7 @@ namespace chaos {
                         take palce. The memory of that parameter is not free
              */
             int submitSlowControlCommand(string commandAlias,
-										 cccs::SubmissionRuleType::SubmissionRule submissionRule,
+										 chaos_batch::SubmissionRuleType::SubmissionRule submissionRule,
 										 uint32_t priority,
 										 uint64_t& command_id,
                                          uint32_t execution_channel = 0,
@@ -265,7 +265,7 @@ namespace chaos {
 						take palce. The memory of that parameter is not free
              */
             int submitSlowControlCommand(string commandAlias,
-										 cccs::SubmissionRuleType::SubmissionRule submissionRule,
+										 chaos_batch::SubmissionRuleType::SubmissionRule submissionRule,
 										 uint64_t& command_id,
                                          uint32_t execution_channel = 0,
 										 uint64_t scheduler_steps_delay = 0,
@@ -282,7 +282,7 @@ namespace chaos {
 				\param lock_features set the lock on all features
                 \param execution_channel set the execution channel where set the features
 			 */
-			int setSlowCommandFeatures(cccs::features::Features& features, bool lock_features, uint32_t execution_channel = 0);
+			int setSlowCommandFeatures(chaos_batch::features::Features& features, bool lock_features, uint32_t execution_channel = 0);
 			
 			//! Set the lock on slow command features
 			/*!
@@ -299,7 +299,7 @@ namespace chaos {
 			 \param command_state will be filled with the state of the command on success
 			 \return result of the execution
 			 */
-			int getCommandState(cccs::CommandState& command_state);
+			int getCommandState(chaos_batch::CommandState& command_state);
 			
 			//! Kill the current executing command
 			/*!

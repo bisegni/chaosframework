@@ -20,6 +20,8 @@
 #ifndef ChaosFramework_ConstrolSystemConstants_h
 #define ChaosFramework_ConstrolSystemConstants_h
 
+#include <chaos/common/batch_command/BatchCommandConstants.h>
+
 //Constant for sandbox
 namespace chaos {
     
@@ -195,79 +197,6 @@ namespace chaos {
         //!key representing the default value
         static const char * const MIN_RANGE                         = "ds_min_range";
         
-    }
-    
-    namespace cu {
-        namespace control_manager {
-            namespace slow_command {
-                
-                /** @defgroup SlowCommandSubmissionKey chaos slow control submission key
-                 @{
-                 */
-                //! Name space for grupping option used for regulate the submission of the slow control
-                namespace SlowCommandSubmissionKey {
-                    //! @The key represent the postfix to the CU instance to identify his slow command executor {not used for now}.
-                    static const char * const   COMMAND_EXECUTOR_POSTFIX_DOMAIN		= "_scexec";
-                    //! @The key represent the alis of the comand to instantiate, the value is a string
-                    static const char * const   COMMAND_ALIAS_STR                   = "cmd_alias";
-                    //! @The key represent the execution channel where submit the command, if not set, the first channel is used (1), the value is an uint32 [1-n]
-                    static const char * const   COMMAND_EXECUTION_CHANNEL                     = "cmd_exec_channel";
-                    //! @The key represent the option to the command submission, the value is an uint32
-                    static const char * const   SUBMISSION_RULE_UI32				= "cmd_submssn_rule";
-                    //! @The key represent the option to the command submission priority, the value is an uint32
-                    static const char * const   SUBMISSION_PRIORITY_UI32            = "cmd_submssn_priority";
-                    //! @The key represent intervall between step of the scheduler expressed in microseconds, the value is an uint32
-                    static const char * const   SCHEDULER_STEP_TIME_INTERVALL_UI64  = "cmd_sched_step_time_int";
-                    //! @Set the command specific delay between submission retry SlowCommand::submissionRetryDelay, the value is an uint32
-                    static const char * const   SUBMISSION_RETRY_DELAY_UI32         = "cmd_submssn_ret_dly";
-				}
-                /** @} */ // end of SlowCommandSubmissionKey
-				
-				/** @defgroup SlowCommandsKey chaos slow control default command keys
-                 @{
-                 */
-                //! Name space for grupping the key nedded for the custom slow control commands
-                namespace SlowCommandsKey {
-                    static const char * const   ATTRIBUTE_SET_VALUE_CMD_ALIAS   = "set_attr_val";
-                    static const char * const   ATTRIBUTE_SET_NAME              = "attr_set_name";
-                    static const char * const   ATTRIBUTE_SET_VALUE             = "attr_set_value";
-				}
-				/** @} */ // end of SlowCommandsKey
-				
-				/** @defgroup API_Slow_Control Slow Control API
-                 @{
-                 */
-                //! Name space for the key nedded for call rpc action exposed by slow control executor layer
-                namespace SlowControlExecutorRpcActionKey {
-                    
-					//! @The key represent the rpc alias for SlowCommandExecutor::getCommandSandboxStatistics method
-					static const char * const   RPC_GET_COMMAND_STATE								= "getCmdState";
-					//! @The key represent the field of the input parameter tha identify the unique command id, the value is an uint64_t
-					static const char * const   RPC_GET_COMMAND_STATE_CMD_ID_UI64					= "command_id";
-					//! @The key represent the field of the return pack of the command RPC_GET_COMMAND_STATE for retrive the last event occurend on command, value is an uint32_t
-					static const char * const   RPC_GET_COMMAND_STATE_LAST_EVENT_UI32				= "gcs_last_event";
-					//! @The key represent the field of the return pack of the command RPC_GET_COMMAND_STATE for retrive the error on command, value is an int32_t
-					static const char * const   RPC_GET_COMMAND_STATE_ERROR_CODE_UI32				= "gcs_error_code";
-					//! @The key represent the field of the return pack of the command RPC_GET_COMMAND_STATE for retrive the error description on command, value is an string
-					static const char * const   RPC_GET_COMMAND_STATE_ERROR_DESC_STR				= "gcs_error_desc";
-					//! @The key represent the field of the return pack of the command RPC_GET_COMMAND_STATE for retrive the last event occurend on command, value is an string
-					static const char * const   RPC_GET_COMMAND_STATE_ERROR_DOMAIN_STR				= "gcs_error_domain";
-					//! @The key represent the rpc alias for SlowCommandExecutor::setCommandFeatures method
-					static const char * const   RPC_SET_COMMAND_FEATURES							= "setCommandFeatures";
-					//! @The key represent the the scheduler wait time for next step, value is and uint32_t
-					static const char * const   RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64	= "scf_sched_waith_time";
-					//! @The key represent the lock option for the features, value is and boolean
-					static const char * const   RPC_SET_COMMAND_FEATURES_LOCK_BOOL					= "scf_lock";
-					
-					//! @The key represent the rpc alias for SlowCommandExecutor::killCurrentCommand method
-					static const char * const   RPC_KILL_CURRENT_COMMAND = "killCurrentCommand";
-
-					//! @The key represent the rpc alias for SlowCommandExecutor::flushCommandStates method
-					static const char * const   RPC_FLUSH_COMMAND_HISTORY = "flushCmdStateHst";
-				}
-				/** @} */ // end of API_Slow_Control Slow Control API
-            }
-        }
     }
     
     /** @} */ // end of DatasetDefinitionkey

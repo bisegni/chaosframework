@@ -1,5 +1,5 @@
 //
-//  SlowCommandSandbox.cpp
+//  BatchCommandSandbox.cpp
 //  CHAOSFramework
 //
 //  Created by Claudio Bisegni on 7/8/13.
@@ -10,26 +10,25 @@
 #include <exception>
 
 #include <chaos/common/global.h>
-
-#include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandSandbox.h>
-#include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandExecutor.h>
-#include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandConstants.h>
+#include <chaos/common/batch_command/BatchCommandSandbox.h>
+#include <chaos/common/batch_command/BatchCommandExecutor.h>
+#include <chaos/common/batch_command/BatchCommandConstants.h>
 
 using namespace chaos::chrono;
 using namespace chaos::common::data;
-using namespace chaos::cu::control_manager::slow_command;
+using namespace chaos::common::batch_command;
 
 
 //------------------------------------------------------------------------------------------------------------
 
 
-#define LOG_HEAD_SCS "[SlowCommandSandbox-" << identification << "] "
+#define LOG_HEAD_SCS "[BatchCommandSandbox-" << identification << "] "
 
 #define SCSLAPP_ LAPP_ << LOG_HEAD_SCS
 #define SCSLDBG_ LDBG_ << LOG_HEAD_SCS
 #define SCSLERR_ LERR_ << LOG_HEAD_SCS
 
-#define FUNCTORLERR_ LERR_ << "[SlowCommandSandbox-" << sandbox_identifier <<"] "
+#define FUNCTORLERR_ LERR_ << "[BatchCommandSandbox-" << sandbox_identifier <<"] "
 
 #define SET_FAULT(l, c, m, d) \
 SET_NAMED_FAULT(l, cmdInstance, c , m , d)
@@ -68,7 +67,7 @@ void CorrelationFunctor::operator()() {
 }
 
 //------------------------------------------------------------------------------------------------------------
-CommandInfoAndImplementation::CommandInfoAndImplementation(chaos_data::CDataWrapper *_cmdInfo, SlowCommand *_cmdImpl) {
+CommandInfoAndImplementation::CommandInfoAndImplementation(chaos_data::CDataWrapper *_cmdInfo, BatchCommand *_cmdImpl) {
     cmdInfo = _cmdInfo;
     cmdImpl = _cmdImpl;
 }
@@ -146,14 +145,14 @@ continue; \
 
 
 
-SlowCommandSandbox::SlowCommandSandbox() {
+BatchCommandSandbox::BatchCommandSandbox() {
 }
 
-SlowCommandSandbox::~SlowCommandSandbox() {
+BatchCommandSandbox::~BatchCommandSandbox() {
 }
 
 //! Initialize instance
-void SlowCommandSandbox::init(void *initData) throw(chaos::CException) {
+void BatchCommandSandbox::init(void *initData) throw(chaos::CException) {
     currentExecutingCommand = NULL;
     //setHandlerFunctor.cmdInstance = NULL;
     acquireHandlerFunctor.cmdInstance = NULL;
@@ -166,7 +165,7 @@ void SlowCommandSandbox::init(void *initData) throw(chaos::CException) {
 }
 
 // Start the implementation
-void SlowCommandSandbox::start() throw(chaos::CException) {
+void BatchCommandSandbox::start() throw(chaos::CException) {
     
     //se the flag to the end o the scheduler
     SCSLDBG_ << "Set scheduler work flag to true";
@@ -177,8 +176,8 @@ void SlowCommandSandbox::start() throw(chaos::CException) {
     
     //allocate thread
     SCSLDBG_ << "Allocate thread for the scheduler and checker";
-    threadScheduler.reset(new boost::thread(boost::bind(&SlowCommandSandbox::runCommand, this)));
-    threadNextCommandChecker.reset(new boost::thread(boost::bind(&SlowCommandSandbox::checkNextCommand, this)));
+    threadScheduler.reset(new boost::thread(boost::bind(&BatchCommandSandbox::runCommand, this)));
+    threadNextCommandChecker.reset(new boost::thread(boost::bind(&BatchCommandSandbox::checkNextCommand, this)));
 	
 	//set the scheduler thread priority
 #if defined(__linux__) || defined(__APPLE__)
@@ -210,7 +209,7 @@ void SlowCommandSandbox::start() throw(chaos::CException) {
 }
 
 // Start the implementation
-void SlowCommandSandbox::stop() throw(chaos::CException) {
+void BatchCommandSandbox::stop() throw(chaos::CException) {
     //we ned to get the lock on the scheduler
     boost::recursive_mutex::scoped_lock lockScheduler(mutexNextCommandChecker);
     SCSLDBG_ << "Lock on mutexNextCommandChecker acquired for stop";
@@ -234,7 +233,7 @@ void SlowCommandSandbox::stop() throw(chaos::CException) {
 }
 
 //! Deinit the implementation
-void SlowCommandSandbox::deinit() throw(chaos::CException) {
+void BatchCommandSandbox::deinit() throw(chaos::CException) {
     PRIORITY_ELEMENT(CommandInfoAndImplementation)  *nextAvailableCommand = NULL;
     
     //we ned to get the lock on the scheduler
@@ -248,14 +247,14 @@ void SlowCommandSandbox::deinit() throw(chaos::CException) {
     
     SCSLAPP_ << "clean all paused and waiting command";
     SCSLAPP_ << "Clear the executing command";
-    if(event_handler && currentExecutingCommand) event_handler->handleEvent(currentExecutingCommand->element->cmdImpl->unique_id, SlowCommandEventType::EVT_KILLED, NULL);
+    if(event_handler && currentExecutingCommand) event_handler->handleEvent(currentExecutingCommand->element->cmdImpl->unique_id, BatchCommandEventType::EVT_KILLED, NULL);
     DELETE_OBJ_POINTER(currentExecutingCommand)
     
     //free the remained commands into the stack
     SCSLAPP_ << "Remove paused command into the stack";
     while (!commandStack.empty()) {
         nextAvailableCommand = commandStack.top();
-        if(event_handler && currentExecutingCommand) event_handler->handleEvent(nextAvailableCommand->element->cmdImpl->unique_id, SlowCommandEventType::EVT_KILLED, NULL);
+        if(event_handler && currentExecutingCommand) event_handler->handleEvent(nextAvailableCommand->element->cmdImpl->unique_id, BatchCommandEventType::EVT_KILLED, NULL);
         DELETE_OBJ_POINTER(nextAvailableCommand)
     }
     SCSLAPP_ << "Paused command into the stack removed";
@@ -263,7 +262,7 @@ void SlowCommandSandbox::deinit() throw(chaos::CException) {
     SCSLAPP_ << "Remove waiting command into the queue";
     while (!command_submitted_queue.empty()) {
         nextAvailableCommand = command_submitted_queue.top();
-        if(event_handler && currentExecutingCommand) event_handler->handleEvent(nextAvailableCommand->element->cmdImpl->unique_id, SlowCommandEventType::EVT_KILLED, NULL);
+        if(event_handler && currentExecutingCommand) event_handler->handleEvent(nextAvailableCommand->element->cmdImpl->unique_id, BatchCommandEventType::EVT_KILLED, NULL);
         command_submitted_queue.pop();
         DELETE_OBJ_POINTER(nextAvailableCommand)
     }
@@ -284,7 +283,7 @@ lockOnNextCommandMutex.unlock(); \
 waithForNextCheck.wait(x); \
 lockOnNextCommandMutex.lock();
 
-void SlowCommandSandbox::checkNextCommand() {
+void BatchCommandSandbox::checkNextCommand() {
     bool canWork = scheduleWorkFlag;
     RunningVSSubmissioneResult current_check_value;
 
@@ -355,7 +354,7 @@ void SlowCommandSandbox::checkNextCommand() {
                             DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] push last command into stack";)
                             commandStack.push(tmp_command);
                             DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] elemente in commandStack " << commandStack.size();)
-                            if(event_handler) event_handler->handleEvent(tmp_command->element->cmdImpl->unique_id, SlowCommandEventType::EVT_PAUSED, NULL);
+                            if(event_handler) event_handler->handleEvent(tmp_command->element->cmdImpl->unique_id, BatchCommandEventType::EVT_PAUSED, NULL);
                         }
                         
                         threadSchedulerPauseCondition.unlock();
@@ -389,19 +388,19 @@ void SlowCommandSandbox::checkNextCommand() {
                 switch (current_check_value) {
                     case RSR_KILL_KURRENT_COMMAND:
                         if(event_handler && command_to_delete) event_handler->handleEvent(command_to_delete->element->cmdImpl->unique_id,
-                                                                                          SlowCommandEventType::EVT_KILLED,
+                                                                                          BatchCommandEventType::EVT_KILLED,
                                                                                           NULL);
                         break;
                         
                     case RSR_CURRENT_CMD_HAS_ENDED:
                         if(event_handler && command_to_delete) event_handler->handleEvent(command_to_delete->element->cmdImpl->unique_id,
-                                                                                          SlowCommandEventType::EVT_COMPLETED,
+                                                                                          BatchCommandEventType::EVT_COMPLETED,
                                                                                           NULL);
                         break;
                         
                     case RSR_CURRENT_CMD_HAS_FAULTED:
                         if(event_handler && command_to_delete) event_handler->handleEvent(command_to_delete->element->cmdImpl->unique_id,
-                                                                                          SlowCommandEventType::EVT_FAULT,
+                                                                                          BatchCommandEventType::EVT_FAULT,
                                                                                           static_cast<FaultDescription*>(&command_to_delete->element->cmdImpl->faultDescription));
                         break;
                         
@@ -440,12 +439,12 @@ void SlowCommandSandbox::checkNextCommand() {
                     switch(command_to_delete->element->cmdImpl->runningProperty) {
                             case RunningPropertyType::RP_End:
                                 if(event_handler) event_handler->handleEvent(command_to_delete->element->cmdImpl->unique_id,
-                                                                             SlowCommandEventType::EVT_COMPLETED,
+                                                                             BatchCommandEventType::EVT_COMPLETED,
                                                                              NULL);
                                 break;
                             case RunningPropertyType::RP_Fault:
                                 if(event_handler) event_handler->handleEvent(command_to_delete->element->cmdImpl->unique_id,
-                                                                             SlowCommandEventType::EVT_FAULT,
+                                                                             BatchCommandEventType::EVT_FAULT,
                                                                              static_cast<FaultDescription*>(&command_to_delete->element->cmdImpl->faultDescription));
 
                                 break;
@@ -459,12 +458,12 @@ void SlowCommandSandbox::checkNextCommand() {
                     switch(currentExecutingCommand->element->cmdImpl->runningProperty) {
                         case RunningPropertyType::RP_End:
                             if(event_handler) event_handler->handleEvent(currentExecutingCommand->element->cmdImpl->unique_id,
-                                                                         SlowCommandEventType::EVT_COMPLETED,
+                                                                         BatchCommandEventType::EVT_COMPLETED,
                                                                          NULL);
                             break;
                         case RunningPropertyType::RP_Fault:
                             if(event_handler) event_handler->handleEvent(currentExecutingCommand->element->cmdImpl->unique_id,
-                                                                         SlowCommandEventType::EVT_FAULT,
+                                                                         BatchCommandEventType::EVT_FAULT,
                                                                          static_cast<FaultDescription*>(&currentExecutingCommand->element->cmdImpl->faultDescription));
                             
                             break;
@@ -487,9 +486,9 @@ void SlowCommandSandbox::checkNextCommand() {
     
 }
 
-void SlowCommandSandbox::runCommand() {
+void BatchCommandSandbox::runCommand() {
     bool canWork = scheduleWorkFlag;
-    SlowCommand *curr_executing_impl = NULL;
+    BatchCommand *curr_executing_impl = NULL;
     //check if the current command has ended or need to be substitute
     boost::mutex::scoped_lock lockForCurrentCommand(mutextAccessCurrentCommand);
     do{
@@ -571,12 +570,12 @@ void SlowCommandSandbox::runCommand() {
 }
 
 //!install the command
-bool SlowCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation)* cmd_to_install) {
+bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation)* cmd_to_install) {
     bool installed = true;
     //set current command
     if(cmd_to_install) {
         chaos_data::CDataWrapper *tmp_info = cmd_to_install->element->cmdInfo;
-        SlowCommand *tmp_impl = cmd_to_install->element->cmdImpl;
+        BatchCommand *tmp_impl = cmd_to_install->element->cmdImpl;
         
         uint8_t handlerMask = tmp_impl->implementedHandler();
         //install the pointer of th ecommand into the respective handler functor
@@ -615,7 +614,7 @@ bool SlowCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplement
         currentExecutingCommand = cmd_to_install;
 		
 		//fire the running event
-		if(event_handler)event_handler->handleEvent(tmp_impl->unique_id, SlowCommandEventType::EVT_RUNNING, NULL);
+		if(event_handler)event_handler->handleEvent(tmp_impl->unique_id, BatchCommandEventType::EVT_RUNNING, NULL);
 		
     } else {
         currentExecutingCommand = NULL;
@@ -625,9 +624,9 @@ bool SlowCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplement
     return installed;
 }
 
-void SlowCommandSandbox::removeHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation)* cmd_to_install) {
+void BatchCommandSandbox::removeHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation)* cmd_to_install) {
     if(!cmd_to_install) return;
-    SlowCommand *tmp_impl = cmd_to_install->element->cmdImpl;
+    BatchCommand *tmp_impl = cmd_to_install->element->cmdImpl;
     uint8_t handlerMask = tmp_impl->implementedHandler();
     if(handlerMask <= 1) {
         //there is only the set handler so we finish here.
@@ -643,7 +642,7 @@ void SlowCommandSandbox::removeHandler(PRIORITY_ELEMENT(CommandInfoAndImplementa
         correlationHandlerFunctor.cmdInstance == cmd_to_install->element->cmdImpl) correlationHandlerFunctor.cmdInstance = NULL;
 }
 
-void SlowCommandSandbox::killCurrentCommand() {
+void BatchCommandSandbox::killCurrentCommand() {
 	//lock the scheduler
 	boost::mutex::scoped_lock lockForCurrentCommand(mutextAccessCurrentCommand);
 	
@@ -652,20 +651,20 @@ void SlowCommandSandbox::killCurrentCommand() {
 	installHandler(NULL);
 	
 	//fire the killed event
-	if(event_handler) event_handler->handleEvent(currentExecutingCommand->element->cmdImpl->unique_id, SlowCommandEventType::EVT_KILLED, NULL);
+	if(event_handler) event_handler->handleEvent(currentExecutingCommand->element->cmdImpl->unique_id, BatchCommandEventType::EVT_KILLED, NULL);
 }
 
-bool SlowCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_info, SlowCommand *command_impl, uint32_t priority) {
+bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority) {
     CHAOS_ASSERT(command_impl)
     boost::recursive_mutex::scoped_lock lock_checker(mutexNextCommandChecker);
-    if(utility::StartableService::serviceState == ::chaos::utility::service_state_machine::InizializableServiceType::IS_DEINTIATED) return false;
+    if(chaos::utility::StartableService::serviceState == chaos::utility::service_state_machine::InizializableServiceType::IS_DEINTIATED) return false;
     
     //
 	SCSLDBG_ << "New command enqueue";
     command_submitted_queue.push(new PriorityQueuedElement<CommandInfoAndImplementation>(new CommandInfoAndImplementation(command_to_info, command_impl), priority, true));
     
 	//fire the waiting command
-    if(event_handler) event_handler->handleEvent(command_impl->unique_id, SlowCommandEventType::EVT_QUEUED, NULL);
+    if(event_handler) event_handler->handleEvent(command_impl->unique_id, BatchCommandEventType::EVT_QUEUED, NULL);
 	lock_checker.unlock();
     waithForNextCheck.unlock();
     return true;

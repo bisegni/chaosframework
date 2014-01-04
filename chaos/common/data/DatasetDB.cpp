@@ -20,7 +20,6 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/DatasetDB.h>
 
-using namespace chaos::cu;
 using namespace chaos::common::data;
 
 DatasetDB::DatasetDB(bool onMemory):CUSchemaDB(onMemory) {

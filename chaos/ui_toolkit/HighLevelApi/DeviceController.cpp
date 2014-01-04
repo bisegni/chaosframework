@@ -27,7 +27,7 @@
 using namespace std;
 using namespace chaos;
 using namespace chaos::ui;
-namespace cccs = chaos::cu::control_manager::slow_command;
+namespace chaos_batch = chaos::common::batch_command;
 namespace cc_data = chaos::common::data;
 
 #define MSEC_WAIT_OPERATION 1000
@@ -328,7 +328,7 @@ int DeviceController::setAttributeToValue(const char *attributeName, DataType::D
 
 //---------------------------------------------------------------------------------------------------
 int DeviceController::submitSlowControlCommand(string commandAlias,
-											   cccs::SubmissionRuleType::SubmissionRule submissionRule,
+											   chaos_batch::SubmissionRuleType::SubmissionRule submissionRule,
 											   uint32_t priority,
 											   uint64_t& command_id,
                                                uint32_t execution_channel,
@@ -344,20 +344,20 @@ int DeviceController::submitSlowControlCommand(string commandAlias,
     }
     
     // set the default slow command information
-    localCommandPack.addStringValue(cccs::SlowCommandSubmissionKey::COMMAND_ALIAS_STR, commandAlias);
-    localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RULE_UI32, (uint32_t) submissionRule);
-    localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_PRIORITY_UI32, (uint32_t) priority);
+    localCommandPack.addStringValue(chaos_batch::BatchCommandSubmissionKey::COMMAND_ALIAS_STR, commandAlias);
+    localCommandPack.addInt32Value(chaos_batch::BatchCommandSubmissionKey::SUBMISSION_RULE_UI32, (uint32_t) submissionRule);
+    localCommandPack.addInt32Value(chaos_batch::BatchCommandSubmissionKey::SUBMISSION_PRIORITY_UI32, (uint32_t) priority);
     
-    if(execution_channel) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL, (uint32_t) execution_channel);
-    if(scheduler_steps_delay) localCommandPack.addInt64Value(cccs::SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI64, scheduler_steps_delay);
-    if(submission_checker_steps_delay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, submission_checker_steps_delay);
+    if(execution_channel) localCommandPack.addInt32Value(chaos_batch::BatchCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL, (uint32_t) execution_channel);
+    if(scheduler_steps_delay) localCommandPack.addInt64Value(chaos_batch::BatchCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI64, scheduler_steps_delay);
+    if(submission_checker_steps_delay) localCommandPack.addInt32Value(chaos_batch::BatchCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, submission_checker_steps_delay);
 	
 	//err = deviceChannel->setAttributeValue(localCommandPack, false, millisecToWait);
 	localCommandPack.addStringValue(DatasetDefinitionkey::DEVICE_ID, deviceID);
 	err = deviceChannel->sendCustomRequest("setDatasetAttribute", &localCommandPack, &resultData, millisecToWait);
-	if(err == ErrorCode::EC_NO_ERROR && resultData && resultData->hasKey(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64)) {
+	if(err == ErrorCode::EC_NO_ERROR && resultData && resultData->hasKey(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64)) {
 		//fill the command id
-		command_id = resultData->getUInt64Value(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
+		command_id = resultData->getUInt64Value(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
 		delete(resultData);
 	}
     //forward the request
@@ -366,7 +366,7 @@ int DeviceController::submitSlowControlCommand(string commandAlias,
 
 //---------------------------------------------------------------------------------------------------
 int DeviceController::submitSlowControlCommand(string commandAlias,
-											   cccs::SubmissionRuleType::SubmissionRule submissionRule,
+											   chaos_batch::SubmissionRuleType::SubmissionRule submissionRule,
 											   uint64_t& command_id,
                                                uint32_t execution_channel,
 											   uint64_t scheduler_steps_delay,
@@ -380,19 +380,19 @@ int DeviceController::submitSlowControlCommand(string commandAlias,
         localCommandPack.appendAllElement(*slow_command_data);
     }
     // set the default slow command information
-    localCommandPack.addStringValue(cccs::SlowCommandSubmissionKey::COMMAND_ALIAS_STR, commandAlias);
-    localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RULE_UI32, (uint32_t) submissionRule);
+    localCommandPack.addStringValue(chaos_batch::BatchCommandSubmissionKey::COMMAND_ALIAS_STR, commandAlias);
+    localCommandPack.addInt32Value(chaos_batch::BatchCommandSubmissionKey::SUBMISSION_RULE_UI32, (uint32_t) submissionRule);
 
-    if(execution_channel) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL, (uint32_t) execution_channel);
-    if(scheduler_steps_delay) localCommandPack.addInt64Value(cccs::SlowCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI64, scheduler_steps_delay);
-    if(submission_checker_steps_delay) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, (uint32_t) submission_checker_steps_delay);
+    if(execution_channel) localCommandPack.addInt32Value(chaos_batch::BatchCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL, (uint32_t) execution_channel);
+    if(scheduler_steps_delay) localCommandPack.addInt64Value(chaos_batch::BatchCommandSubmissionKey::SCHEDULER_STEP_TIME_INTERVALL_UI64, scheduler_steps_delay);
+    if(submission_checker_steps_delay) localCommandPack.addInt32Value(chaos_batch::BatchCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, (uint32_t) submission_checker_steps_delay);
 
     //forward the request
 	localCommandPack.addStringValue(DatasetDefinitionkey::DEVICE_ID, deviceID);
 	err = deviceChannel->sendCustomRequest("setDatasetAttribute", &localCommandPack, &resultData, millisecToWait);
-	if(err == ErrorCode::EC_NO_ERROR && resultData && resultData->hasKey(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64)) {
+	if(err == ErrorCode::EC_NO_ERROR && resultData && resultData->hasKey(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64)) {
 		//fill the command id
-		command_id = resultData->getUInt64Value(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
+		command_id = resultData->getUInt64Value(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64);
 		delete(resultData);
 	}
     //forward the request
@@ -400,42 +400,44 @@ int DeviceController::submitSlowControlCommand(string commandAlias,
 }
 
 //---------------------------------------------------------------------------------------------------
-int DeviceController::setSlowCommandFeatures(cccs::features::Features& features, bool lock_features, uint32_t execution_channel) {
+int DeviceController::setSlowCommandFeatures(chaos_batch::features::Features& features, bool lock_features, uint32_t execution_channel) {
 	CDataWrapper localCommandPack;
-	if(features.featuresFlag & cccs::features::FeaturesFlagTypes::FF_LOCK_USER_MOD) {
-		localCommandPack.addBoolValue(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL, lock_features);
+	if(features.featuresFlag & chaos_batch::features::FeaturesFlagTypes::FF_LOCK_USER_MOD) {
+		localCommandPack.addBoolValue(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL, lock_features);
 	}
 	
-	if(features.featuresFlag & cccs::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY) {
-		localCommandPack.addInt64Value(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64, features.featureSchedulerStepsDelay);
+	if(features.featuresFlag & chaos_batch::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY) {
+		localCommandPack.addInt64Value(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_SCHEDULER_STEP_WAITH_UI64, features.featureSchedulerStepsDelay);
 	}
 	
-    if(execution_channel) localCommandPack.addInt32Value(cccs::SlowCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL, (uint32_t) execution_channel);
+    if(execution_channel) localCommandPack.addInt32Value(chaos_batch::BatchCommandSubmissionKey::COMMAND_EXECUTION_CHANNEL, (uint32_t) execution_channel);
     
-	return deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES, &localCommandPack, NULL, millisecToWait);
+	return deviceChannel->sendCustomRequest(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES, &localCommandPack, NULL, millisecToWait);
 }
 
 //---------------------------------------------------------------------------------------------------
 int DeviceController::setSlowCommandLockOnFeatures(bool lock_features) {
 	CDataWrapper localCommandPack;
-	localCommandPack.addBoolValue(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL, lock_features);
-	return deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES, &localCommandPack, NULL, millisecToWait);
+	localCommandPack.addBoolValue(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES_LOCK_BOOL, lock_features);
+	return deviceChannel->sendCustomRequest(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_SET_COMMAND_FEATURES, &localCommandPack, NULL, millisecToWait);
 }
 
 //---------------------------------------------------------------------------------------------------
-int DeviceController::getCommandState(cccs::CommandState& command_state) {
+int DeviceController::getCommandState(chaos_batch
+                                      
+                                      ::CommandState& command_state) {
 	CDataWrapper localCommandPack;
 	CDataWrapper *resultData = NULL;
 	int err = ErrorCode::EC_NO_ERROR;
-	localCommandPack.addInt64Value(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_state.command_id);
-	err = deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE, &localCommandPack, &resultData, millisecToWait);
+	localCommandPack.addInt64Value(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_state.command_id);
+	err = deviceChannel->sendCustomRequest(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE, &localCommandPack, &resultData, millisecToWait);
 	if(err == ErrorCode::EC_NO_ERROR && resultData) {
 		//fill the command state
-		command_state.last_event = static_cast<cccs::SlowCommandEventType::SlowCommandEventType>(resultData->getUInt32Value(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_LAST_EVENT_UI32));
-		if(command_state.last_event == cccs::SlowCommandEventType::EVT_FAULT) {
-			command_state.fault_description.code = resultData->getUInt32Value(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_ERROR_CODE_UI32);
-			command_state.fault_description.description = resultData->getStringValue(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_ERROR_DESC_STR);
-			command_state.fault_description.domain = resultData->getStringValue(cccs::SlowControlExecutorRpcActionKey::RPC_GET_COMMAND_STATE_ERROR_DOMAIN_STR);
+		command_state.last_event = static_cast<chaos_batch::BatchCommandEventType::BatchCommandEventType>(resultData->getUInt32Value(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_LAST_EVENT_UI32));
+		if(command_state.last_event == chaos_batch::BatchCommandEventType::EVT_FAULT) {
+			command_state.fault_description.code = resultData->getUInt32Value(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_ERROR_CODE_UI32);
+			command_state.fault_description.description = resultData->getStringValue(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_ERROR_DESC_STR);
+			command_state.fault_description.domain = chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_ERROR_DOMAIN_STR;
 		} else {
 			command_state.fault_description.code = 0;
 			command_state.fault_description.description.clear();
@@ -448,12 +450,12 @@ int DeviceController::getCommandState(cccs::CommandState& command_state) {
 
 //---------------------------------------------------------------------------------------------------
 int DeviceController::killCurrentCommand() {
-	return deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_KILL_CURRENT_COMMAND, NULL, NULL, millisecToWait);
+	return deviceChannel->sendCustomRequest(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_KILL_CURRENT_COMMAND, NULL, NULL, millisecToWait);
 }
 
 //---------------------------------------------------------------------------------------------------
 int DeviceController::flushCommandStateHistory() {
-	return deviceChannel->sendCustomRequest(cccs::SlowControlExecutorRpcActionKey::RPC_FLUSH_COMMAND_HISTORY, NULL, NULL, millisecToWait);
+	return deviceChannel->sendCustomRequest(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_FLUSH_COMMAND_HISTORY, NULL, NULL, millisecToWait);
 }
 
 //---------------------------------------------------------------------------------------------------

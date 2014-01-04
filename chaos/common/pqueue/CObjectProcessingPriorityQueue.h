@@ -46,7 +46,7 @@ namespace chaos {
     public:
         int priority;
         T *element;
-        PriorityQueuedElement(T *_element, int _priority = 50, bool _disposeOnDestroy = true):element(_element), disposeOnDestroy(_disposeOnDestroy), priority(_priority) {}
+        PriorityQueuedElement(T *_element, int _priority = 50, bool _disposeOnDestroy = true):disposeOnDestroy(_disposeOnDestroy), priority(_priority), element(_element) {}
         ~PriorityQueuedElement(){
             if (disposeOnDestroy && element) {
                 delete(element);

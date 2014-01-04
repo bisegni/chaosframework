@@ -38,7 +38,7 @@ using namespace bson;
 using namespace boost;
 using namespace boost::posix_time;
 using namespace boost::date_time;
-namespace cccs = chaos::cu::control_manager::slow_command;
+namespace chaos_batch = chaos::common::batch_command;
 
 #define OPT_STATE           "op"
 #define OPT_TIMEOUT         "timeout"
@@ -85,11 +85,11 @@ void print_state(CUStateKey::ControlUnitState state) {
 
 int checkSubmissionRule(std::string scSubmissionRule) {
     if( scSubmissionRule.compare("normal") == 0) {
-        return cccs::SubmissionRuleType::SUBMIT_NORMAL;
+        return chaos_batch::SubmissionRuleType::SUBMIT_NORMAL;
     } else if( scSubmissionRule.compare("stack")  == 0) {
-        return cccs::SubmissionRuleType::SUBMIT_AND_Stack;
+        return chaos_batch::SubmissionRuleType::SUBMIT_AND_Stack;
     } else if( scSubmissionRule.compare("kill")  == 0) {
-        return cccs::SubmissionRuleType::SUBMIT_AND_Kill;
+        return chaos_batch::SubmissionRuleType::SUBMIT_AND_Kill;
     } else return -1;
 }
 
@@ -262,7 +262,7 @@ int main (int argc, char* argv[] )
                             std::cout << "-----------------------------------------" << std::endl;
                         }
                         err = controller->submitSlowControlCommand(scAlias,
-																   static_cast<cccs::SubmissionRuleType::SubmissionRule>(checkSubmissionRule(scSubmissionRule)),
+																   static_cast<chaos_batch::SubmissionRuleType::SubmissionRule>(checkSubmissionRule(scSubmissionRule)),
 																   scSubmissionPriority,
 																   command_id,
                                                                    scExecutionChannel,
@@ -285,34 +285,34 @@ int main (int argc, char* argv[] )
 				if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_ID)) {
 					throw CException(1, "No command id provided", "OPCODE 8");
 				}
-				cccs::CommandState command_state;
+				chaos_batch::CommandState command_state;
 				command_state.command_id = scCmdID;
 				err = controller->getCommandState(command_state);
 				std::cout << "Device state start -------------------------------------------------------" << std::endl;
 				std::cout << "Command";
 				switch (command_state.last_event) {
-					case cccs::SlowCommandEventType::EVT_COMPLETED:
+					case chaos_batch::BatchCommandEventType::EVT_COMPLETED:
 						std::cout << " has completed"<< std::endl;;
 						break;
-					case cccs::SlowCommandEventType::EVT_FAULT:
+					case chaos_batch::BatchCommandEventType::EVT_FAULT:
 						std::cout << " has fault";
 						std::cout << "Error code		:"<<command_state.fault_description.code<< std::endl;
 						std::cout << "Error domain		:"<<command_state.fault_description.domain<< std::endl;
 						std::cout << "Error description	:"<<command_state.fault_description.description<< std::endl;
 						break;
-					case cccs::SlowCommandEventType::EVT_KILLED:
+					case chaos_batch::BatchCommandEventType::EVT_KILLED:
 						std::cout << " has been killed"<< std::endl;
 						break;
-					case cccs::SlowCommandEventType::EVT_PAUSED:
+					case chaos_batch::BatchCommandEventType::EVT_PAUSED:
 						std::cout << " has been paused"<< std::endl;
 						break;
-					case cccs::SlowCommandEventType::EVT_QUEUED:
+					case chaos_batch::BatchCommandEventType::EVT_QUEUED:
 						std::cout << " has been queued"<< std::endl;
 						break;
-					case cccs::SlowCommandEventType::EVT_RUNNING:
+					case chaos_batch::BatchCommandEventType::EVT_RUNNING:
 						std::cout << " is running"<< std::endl;
 						break;
-					case cccs::SlowCommandEventType::EVT_WAITING:
+					case chaos_batch::BatchCommandEventType::EVT_WAITING:
 						std::cout << " is waiting"<< std::endl;
 						break;
 				}
@@ -351,11 +351,11 @@ int main (int argc, char* argv[] )
 		if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_SET_FEATURES_LOCK) ||
 		   ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_SET_FEATURES_SCHEDULER_WAIT)){
 			
-			cccs::features::Features features;
+			chaos_batch::features::Features features;
 			
 			//we can set the features
 			if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_SET_FEATURES_LOCK)) {
-				features.featuresFlag |= cccs::features::FeaturesFlagTypes::FF_LOCK_USER_MOD;
+				features.featuresFlag |= chaos_batch::features::FeaturesFlagTypes::FF_LOCK_USER_MOD;
 				std::cout << "Set the lock feature to -> " << scFeaturesLock << std::endl;
 				//set the lock
 				err = controller->setSlowCommandLockOnFeatures(scFeaturesLock);
@@ -363,7 +363,7 @@ int main (int argc, char* argv[] )
 			}
 			
 			if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_SET_FEATURES_SCHEDULER_WAIT)) {
-				features.featuresFlag |= cccs::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY;
+				features.featuresFlag |= chaos_batch::features::FeaturesFlagTypes::FF_SET_SCHEDULER_DELAY;
 				features.featureSchedulerStepsDelay = scFeaturesSchedWait;
 				std::cout << "Set the sched wait feature to -> " << scFeaturesSchedWait << " on execution channel " << scExecutionChannel << std::endl;
 				//se the features

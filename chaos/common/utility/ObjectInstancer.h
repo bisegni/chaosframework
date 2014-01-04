@@ -36,6 +36,24 @@ namespace chaos {
             };
             
             /*!
+             Templated interface that regolate the instantiation of a class.
+             */
+            template <typename S , typename B >
+            class NestedObjectInstancer : public ObjectInstancer<B> {
+                ObjectInstancer<S> *instancer;
+            public:
+                NestedObjectInstancer(ObjectInstancer<S> *_instancer):instancer(_instancer){};
+                virtual ~NestedObjectInstancer(){
+                    if(instancer) {
+                        delete instancer;
+                    }
+                };
+                virtual B* getInstance() {
+                    return instancer->getInstance();
+                }
+            };
+            
+            /*!
              Templated class that permit to instantiate the superclas of
              a base class. This class permit to check this rule at compiletime
              */
@@ -46,7 +64,6 @@ namespace chaos {
                     return new T();
                 }
             };
-            
         }
     }
 }

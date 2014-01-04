@@ -26,6 +26,7 @@
 
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandExecutor.h>
 
+namespace chaos_batch = chaos::common::batch_command;
 namespace chaos_data = chaos::common::data;
 namespace cs = chaos::cu::control_manager::slow_command;
 
@@ -77,10 +78,9 @@ namespace chaos {
             
             virtual void defineSharedVariable();
             
-            void addSharedVariable(std::string name, uint32_t max_size, chaos::DataType::DataType type);
-            void setSharedVariableValue(std::string name, void *value, uint32_t value_size);
-            void setVariableValue(control_manager::slow_command::IOCAttributeSharedCache::SharedVeriableDomain domain, std::string name, void *value, uint32_t value_size);
-			control_manager::slow_command::ValueSetting *getVariableValue(control_manager::slow_command::IOCAttributeSharedCache::SharedVeriableDomain domain, const char *variable_name);
+            void addCustomSharedVariable(std::string name, uint32_t max_size, chaos::DataType::DataType type);
+            void setVariableValue(chaos_batch::IOCAttributeSharedCache::SharedVeriableDomain domain, std::string name, void *value, uint32_t value_size);
+			chaos_batch::ValueSetting *getVariableValue(chaos_batch::IOCAttributeSharedCache::SharedVeriableDomain domain, const char *variable_name);
             // Get all managem declare action instance
             void _getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance);
 

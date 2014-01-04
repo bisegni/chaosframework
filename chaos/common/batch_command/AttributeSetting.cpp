@@ -21,14 +21,14 @@
 #include <string>
 
 #include <chaos/common/global.h>
-#include <chaos/cu_toolkit/ControlManager/slow_command/AttributeSetting.h>
+#include <chaos/common/batch_command/AttributeSetting.h>
 
 #define CSLAPP_ LAPP_ << "[AttributeSetting-" << "] "
 #define CSLDBG_ LDBG_ << "[AttributeSetting-" << "] "
 #define CSLERR_ LERR_ << "[AttributeSetting-" << "] "
 
 using namespace std;
-using namespace chaos::cu::control_manager::slow_command;
+using namespace chaos::common::batch_command;
 
 ValueSetting::ValueSetting(uint32_t _size, uint32_t _index, chaos::DataType::DataType _type):currentValue(NULL), nextValue(NULL), size(_size),index(_index), type(_type) {
     currentValue = malloc(size);
@@ -215,4 +215,48 @@ void IOCAttributeSharedCache::deinit() throw(chaos::CException) {
     utility::InizializableService::deinitImplementation(outputAttribute, "IOCAttributeSharedCache[Output Attribute]", "SlowCommandSandbox::deinit");
 	//initialize the custom channel setting
     utility::InizializableService::deinitImplementation(customAttribute, "IOCAttributeSharedCache[Custom Attribute]", "SlowCommandSandbox::deinit");
+}
+
+//! Get a specified type of shared domain
+AttributeSetting& IOCAttributeSharedCache::getSharedDomain(SharedVeriableDomain domain) {
+    switch(domain) {
+        case SVD_INPUT:
+            return inputAttribute;
+            break;
+            
+        case SVD_OUTPUT:
+            return outputAttribute;
+            break;
+            
+        case SVD_CUSTOM:
+            return customAttribute;
+            break;
+    }
+}
+
+void IOCAttributeSharedCache::getChangedVariableIndex(IOCAttributeSharedCache::SharedVeriableDomain domain, std::vector<VariableIndexType>& changed_index) {
+    return getSharedDomain(domain).getChangedIndex(changed_index);
+}
+
+ValueSetting *IOCAttributeSharedCache::getVariableValue(IOCAttributeSharedCache::SharedVeriableDomain domain, VariableIndexType variable_index) {
+    return getSharedDomain(domain).getValueSettingForIndex(variable_index);
+}
+
+ValueSetting *IOCAttributeSharedCache::getVariableValue(IOCAttributeSharedCache::SharedVeriableDomain domain, const char *variable_name) {
+	AttributeSetting& attribute_setting = getSharedDomain(domain);
+    VariableIndexType index = attribute_setting.getIndexForName(variable_name);
+    return attribute_setting.getValueSettingForIndex(index);
+}
+
+void IOCAttributeSharedCache::setVariableValueForKey(IOCAttributeSharedCache::SharedVeriableDomain domain, const char *variable_name, void * value, uint32_t size) {
+    VariableIndexType index = getSharedDomain(domain).getIndexForName(variable_name);
+    getSharedDomain(domain).setValueForAttribute(index, value, size);
+}
+
+void IOCAttributeSharedCache::getVariableNames(IOCAttributeSharedCache::SharedVeriableDomain domain, std::vector<std::string>& names) {
+    getSharedDomain(domain).getAttributeNames(names);
+}
+
+void IOCAttributeSharedCache::addVariable(SharedCacheInterface::SharedVeriableDomain domain, std::string name, uint32_t max_size, chaos::DataType::DataType type) {
+    getSharedDomain(domain).addAttribute(name, max_size, type);
 }

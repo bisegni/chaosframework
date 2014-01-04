@@ -378,7 +378,7 @@ extern "C" {
 			}
 			
             err = dCtrl->submitSlowControlCommand(cmd_alias_str,
-												  static_cast<chaos::cu::control_manager::slow_command::SubmissionRuleType::SubmissionRule>(submissione_rule),
+												  static_cast<chaos::common::batch_command::SubmissionRuleType::SubmissionRule>(submissione_rule),
 												  priority,
 												  cmd_id_tmp,
                                                   0,
