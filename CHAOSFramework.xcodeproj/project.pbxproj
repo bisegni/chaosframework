@@ -17,6 +17,8 @@
 		3215860D178756B40090E7E6 /* AbstractDriverPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3215860C178756B40090E7E6 /* AbstractDriverPlugin.cpp */; };
 		3215861017875FDB0090E7E6 /* DriverPluginLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3215860E17875FDB0090E7E6 /* DriverPluginLoader.cpp */; };
 		3215861117875FDB0090E7E6 /* DriverPluginLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3215860F17875FDB0090E7E6 /* DriverPluginLoader.h */; };
+		32158DE5187D80D9004C25AA /* SetAttributeCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32158DE3187D80D9004C25AA /* SetAttributeCommand.cpp */; };
+		32158DE6187D80D9004C25AA /* SetAttributeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 32158DE4187D80D9004C25AA /* SetAttributeCommand.h */; };
 		32234D3F176E045100525E0C /* SlowCommandExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32234D3D176E045100525E0C /* SlowCommandExecutor.cpp */; };
 		32234D40176E045100525E0C /* SlowCommandExecutor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32234D3E176E045100525E0C /* SlowCommandExecutor.h */; };
 		32279F8416F8DEAF009EC7B9 /* DataBroker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32279F8216F8DEAF009EC7B9 /* DataBroker.cpp */; };
@@ -394,6 +396,8 @@
 		3215860C178756B40090E7E6 /* AbstractDriverPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractDriverPlugin.cpp; sourceTree = "<group>"; };
 		3215860E17875FDB0090E7E6 /* DriverPluginLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DriverPluginLoader.cpp; sourceTree = "<group>"; };
 		3215860F17875FDB0090E7E6 /* DriverPluginLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DriverPluginLoader.h; sourceTree = "<group>"; };
+		32158DE3187D80D9004C25AA /* SetAttributeCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetAttributeCommand.cpp; sourceTree = "<group>"; };
+		32158DE4187D80D9004C25AA /* SetAttributeCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetAttributeCommand.h; sourceTree = "<group>"; };
 		3216601014D49D0F008DADD2 /* ObjectWaitSemaphore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectWaitSemaphore.h; sourceTree = "<group>"; };
 		32234D3D176E045100525E0C /* SlowCommandExecutor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SlowCommandExecutor.cpp; sourceTree = "<group>"; };
 		32234D3E176E045100525E0C /* SlowCommandExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlowCommandExecutor.h; sourceTree = "<group>"; };
@@ -866,6 +870,16 @@
 			);
 			path = caching;
 			sourceTree = "<group>";
+		};
+		32158DE2187D80D9004C25AA /* command */ = {
+			isa = PBXGroup;
+			children = (
+				32158DE3187D80D9004C25AA /* SetAttributeCommand.cpp */,
+				32158DE4187D80D9004C25AA /* SetAttributeCommand.h */,
+			);
+			name = command;
+			path = chaos/cu_toolkit/ControlManager/slow_command/command;
+			sourceTree = SOURCE_ROOT;
 		};
 		32279F8616F8DEBA009EC7B9 /* broker */ = {
 			isa = PBXGroup;
@@ -1369,6 +1383,7 @@
 		326DB49D14B3A3E50018A8D0 /* CommandManager */ = {
 			isa = PBXGroup;
 			children = (
+				32158DE2187D80D9004C25AA /* command */,
 				326DB49E14B3A3E50018A8D0 /* CommandManager.cpp */,
 				326DB49F14B3A3E50018A8D0 /* CommandManager.h */,
 				326DB4A014B3A3E50018A8D0 /* CommandManagerDefaultAdapters.h */,
@@ -1997,6 +2012,7 @@
 				326DB4C914B3A3E50018A8D0 /* DataManager.h in Headers */,
 				326DB4CA14B3A3E50018A8D0 /* DataManagerException.h in Headers */,
 				326DB4CC14B3A3E50018A8D0 /* KeyDataStorage.h in Headers */,
+				32158DE6187D80D9004C25AA /* SetAttributeCommand.h in Headers */,
 				326DB4CE14B3A3E50018A8D0 /* MultiBufferDataStorage.h in Headers */,
 				3287F7E717B27621009DD6ED /* DriverManager.h in Headers */,
 				328D2FB81660EACD007F482E /* DSAttributeHandlerExecutionEngine.h in Headers */,
@@ -2290,6 +2306,7 @@
 				326DB4BA14B3A3E50018A8D0 /* CommandManager.cpp in Sources */,
 				326DB4BF14B3A3E50018A8D0 /* AbstractControlUnit.cpp in Sources */,
 				3215860D178756B40090E7E6 /* AbstractDriverPlugin.cpp in Sources */,
+				32158DE5187D80D9004C25AA /* SetAttributeCommand.cpp in Sources */,
 				326DB4C114B3A3E50018A8D0 /* ControlManager.cpp in Sources */,
 				32698D49179E8CD100D6638C /* SetAttributeCommand.cpp in Sources */,
 				326DB4C614B3A3E50018A8D0 /* OutputDataBuffer.cpp in Sources */,
