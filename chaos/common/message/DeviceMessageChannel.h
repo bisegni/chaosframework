@@ -105,7 +105,7 @@ namespace chaos {
         /*! 
          \brief send a request to a custom action
          */
-        int sendCustomRequest(const char * const, common::data::CDataWrapper* const, common::data::CDataWrapper**const,uint32_t millisecToWait = 0);
+        int sendCustomRequest(const char * const, common::data::CDataWrapper* const, common::data::CDataWrapper**const,uint32_t millisecToWait = 0, bool async = false);
     };
 }
 #endif

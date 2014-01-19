@@ -29,13 +29,19 @@
 #include <chaos/common/network/CNodeNetworkAddress.h>
 
 #include <boost/function.hpp>
-#include <boost/thread/condition.hpp>
+//#include <boost/thread/condition.hpp>
+#include <boost/thread.hpp>
 #include <map>
 
 namespace chaos {
 
 	
     class NetworkBroker;
+    
+    typedef void (*MessageHandler)(atomic_int_type, common::data::CDataWrapper*);
+    
+
+    //typedef boost::function<void(atomic_int_type, common::data::CDataWrapper*)> MessageHandler;
     
         //! MessageChannel
     /*! 
@@ -63,8 +69,11 @@ namespace chaos {
             //!multi key semaphore for manage the return of the action and result association to the reqeust id
         MultiKeyObjectWaitSemaphore<atomic_int_type,common::data::CDataWrapper*> sem;
         
+            //! Mutex for managing the maps manipulation
+        boost::shared_mutex mutext_answer_managment;
+        
             //!map to async request and handler
-        map<atomic_int_type, boost::function<void(common::data::CDataWrapper*)> > responsIdHandlerMap;
+        MessageHandler response_handler;
         
             //!map to sync request and result
         map<atomic_int_type, common::data::CDataWrapper* > responseIdSyncMap;
@@ -90,8 +99,8 @@ namespace chaos {
          \param requestPack the request pack to send
          \return the unique request id
          */
-        atomic_int_type prepareRequestPackAndSend(const char * const, const char * const, common::data::CDataWrapper*, boost::function<void(common::data::CDataWrapper*)>*);
-   
+        atomic_int_type prepareRequestPackAndSend(bool, const char * const, const char * const, common::data::CDataWrapper*);
+
     protected:
         /*!
          Private constructor called by NetworkBroker
@@ -131,14 +140,22 @@ namespace chaos {
         void sendMessage(const char * const, const char * const, common::data::CDataWrapper* const);
         
         /*! 
-         \brief send a request
-         \param nodeID id of the node into remote chaos rpc system
-         \param requestPack the data to send, the pointer is not deallocated and i scopied into the pack
-         \param handler the callback that need to be called when the answer arrive
+         \brief Set the handler for manage the rpc answer
+         \param async_handler the handler to be used
          */
-        void sendRequest(const char * const, const char * const, common::data::CDataWrapper* const, boost::function<void(common::data::CDataWrapper*)>);
+        void setHandler(MessageHandler async_handler);
         
-        /*! 
+        /*!
+         remove the handler
+         */
+        void clearHandler();
+        
+        /*!
+         Poll for see if the response is arrived
+         */
+        common::data::CDataWrapper* pollAnswer(atomic_int_type request_id, uint32_t millisec_to_wait = 0);
+        
+        /*!
          \brief send a syncronous request and can wait for a determinated number of milliseconds the answer. If it has not
          been received the method return with a NULL pointer
          \param nodeID id of the node into remote chaos rpc system
@@ -147,8 +164,9 @@ namespace chaos {
          \param millisecToWait waith the response for onli these number of millisec then return
          \return the answer of the request, a null value mean that the wait time is expired 
          */
-        common::data::CDataWrapper* sendRequest(const char * const, const char * const, common::data::CDataWrapper* const, uint32_t millisecToWait=0);
+        common::data::CDataWrapper* sendRequest(const char * const, const char * const, common::data::CDataWrapper* const, uint32_t millisecToWait=0, bool async = false);
         
+
     };
     
 }

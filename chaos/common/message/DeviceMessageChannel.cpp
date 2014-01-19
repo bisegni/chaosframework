@@ -152,9 +152,9 @@ void DeviceMessageChannel::sendCustomMessage(const char * const actAlias, CDataW
 }
 
 //------------------------------------
-int DeviceMessageChannel::sendCustomRequest(const char * const actAlias, CDataWrapper* const requestData, CDataWrapper**const resultData, uint32_t millisecToWait) {
+int DeviceMessageChannel::sendCustomRequest(const char * const actAlias, CDataWrapper* const requestData, CDataWrapper**const resultData, uint32_t millisecToWait, bool async) {
     int err = ErrorCode::EC_NO_ERROR;
-    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), actAlias, requestData, millisecToWait));
+    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), actAlias, requestData, millisecToWait, async));
     CHECK_TIMEOUT_AND_RESULT_CODE(initResult, err)
     if(err == ErrorCode::EC_NO_ERROR && resultData) {
         *resultData = initResult->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE);

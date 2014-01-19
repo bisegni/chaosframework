@@ -87,17 +87,19 @@ namespace chaos {
          *  \key is the key that represent the waiting thread for the object. Afther the unlock operation
          the struccure is removed from map
          */
-        void setWaithedObjectForKey(T key, A obj){
+        bool setWaithedObjectForKey(T key, A obj){
             boost::unique_lock< boost::mutex >  mapLock(mapAccessMutex);
+            if(!keySemaphoreMap.count(key)) return false;
+            
             ObjectWaitSemaphore<A> *ks = keySemaphoreMap[key];
             if(!ks) {
-                    //before i need to dealloc pointed data because noone wait for it
-                delete(obj);
-                return;
+                //before i need to dealloc pointed data because noone wait for it
+                return false;
             }
-                //set the waiting object
+            //set the waiting object
             ks->setWaithedObject(obj);
             ks->unlock();
+            return true;
         }
         
             //!wait

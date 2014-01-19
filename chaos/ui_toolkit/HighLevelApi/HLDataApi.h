@@ -56,7 +56,7 @@ namespace chaos {
             
         public:
             
-            DeviceController *getControllerForDeviceID(string& deviceID, uint32_t controller_timeout=1000) throw (CException);
+            DeviceController *getControllerForDeviceID(string deviceID, uint32_t controller_timeout=1000) throw (CException);
             void disposeDeviceControllerPtr(DeviceController *) throw (CException);
         };
     }

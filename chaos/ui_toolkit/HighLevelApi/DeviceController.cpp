@@ -459,6 +459,11 @@ int DeviceController::flushCommandStateHistory() {
 }
 
 //---------------------------------------------------------------------------------------------------
+int DeviceController::sendCustomRequest(const char * const action, common::data::CDataWrapper * const param, common::data::CDataWrapper**const result, bool async) {
+    return deviceChannel->sendCustomRequest(action, param, result, millisecToWait, async);
+}
+
+//---------------------------------------------------------------------------------------------------
 int DeviceController::setAttributeValue(string& attributeName, string& attributeValue) {
     return setAttributeValue(attributeName, attributeValue.c_str(),(uint32_t)attributeValue.size());
 }
@@ -744,4 +749,23 @@ void DeviceController::fetchCurrentDeviceValue() {
                 break;
         }
     }
+}
+
+CDataWrapper *DeviceController::getCurrentData(){
+    return currentLiveValue.get();
+}
+/*!
+ Set the handler for all answer received by the device
+ */
+void DeviceController::setHandler(MessageHandler async_handler) {
+    if(!deviceChannel) return;
+    deviceChannel->setHandler(async_handler);
+}
+
+/*!
+ Remove the handler for all answer received by the device
+ */
+void DeviceController::clearHandler() {
+    if(!deviceChannel) return;
+    deviceChannel->clearHandler();
 }

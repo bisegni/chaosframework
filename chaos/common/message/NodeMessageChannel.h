@@ -65,6 +65,27 @@ namespace chaos {
             nodeAddress.reset(_nodeAddress);
             if(_nodeAddress)setRemoteNodeAddress(nodeAddress->ipPort);
         }
+        
+        /*!
+         \brief Expose the set handler api
+         */
+        void setHandler(MessageHandler async_handler) {
+            MessageChannel::setHandler(async_handler);
+        }
+        
+        /*!
+         Expose the remove handler api
+         */
+        void clearHandler() {
+             MessageChannel::clearHandler();
+        }
+        
+        /*!
+         Expose the poll api
+         */
+        common::data::CDataWrapper* pollAnswer(atomic_int_type request_id, uint32_t millisec_to_wait = 0) {
+             return MessageChannel::pollAnswer(request_id, millisec_to_wait);
+        }
     };
 
 }

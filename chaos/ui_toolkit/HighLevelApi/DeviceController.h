@@ -353,9 +353,19 @@ namespace chaos {
             chaos::PointerBuffer *getPtrBufferForAttribute(string& attributeName);
             chaos::DataBuffer *getPtrBufferForTimestamp(const int initialDimension = 10);
             
-            CDataWrapper *getCurrentData(){
-                return currentLiveValue.get();
-            }
+            CDataWrapper *getCurrentData();
+            /*!
+                Set the handler for all answer received by the device
+             */
+            void setHandler(MessageHandler async_handler);
+            
+            /*!
+                Remove the handler for all answer received by the device
+             */
+            void clearHandler();
+            
+            int sendCustomRequest(const char * const action, common::data::CDataWrapper * const param, common::data::CDataWrapper**const result, bool async = false);
+            
         };
     }
 }
