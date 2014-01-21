@@ -364,7 +364,7 @@ extern "C" {
 		int err = 0;
 		uint64_t cmd_id_tmp;
         DeviceController *dCtrl = getDeviceControllerFromID(dev_id);
-        if(dCtrl && command_alias && submissione_rule) {
+        if(dCtrl && command_alias) {
 			//changed to use the new api
 			std::auto_ptr<chaos::common::data::CDataWrapper> data_wrapper;
 			
