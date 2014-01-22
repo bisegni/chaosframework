@@ -368,7 +368,6 @@ void BatchCommandSandbox::checkNextCommand() {
                         DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] elemente in command_submitted_queue " << command_submitted_queue.size();)
                         
                         removeHandler(tmp_command);
-                        installHandler(NULL);
                         
                         if(installHandler(next_available_command)) {
                             DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] installed command with pointer " << std::hex << next_available_command;)
@@ -529,6 +528,8 @@ void BatchCommandSandbox::runCommand() {
                         
                     case RunningPropertyType::RP_Fault:
                     case RunningPropertyType::RP_End:
+						//put this at null because someone can change it
+						curr_executing_impl = NULL;
                         DEBUG_CODE(SCSLDBG_ << "[runCommand] - current has ended or fault waithForNextCheck notify";)
                         DEBUG_CODE(SCSLDBG_ << "[runCommand] - unlock waithForNextCheck";)
 						waithForNextCheck.unlock();
@@ -541,6 +542,7 @@ void BatchCommandSandbox::runCommand() {
 				DEBUG_CODE(SCSLDBG_ << "[runCommand] - lock lockForCurrentCommand";)
 			}
             lockForCurrentCommand.lock();
+			DEBUG_CODE(SCSLDBG_ << "[runCommand] - lockForCurrentCommand acquired with currentExecutingCommand pointer ="<< std::hex << currentExecutingCommand;)
         }else {
             //unloc
             if(!scheduleWorkFlag) {
@@ -561,6 +563,7 @@ void BatchCommandSandbox::runCommand() {
 				DEBUG_CODE(SCSLDBG_ << "[runCommand] - Scheduler is awaked - 2";)
 				DEBUG_CODE(SCSLDBG_ << "[runCommand] - lock lockForCurrentCommand";)
 				lockForCurrentCommand.lock();
+				DEBUG_CODE(SCSLDBG_ << "[runCommand] - lockForCurrentCommand acquired with currentExecutingCommand pointer ="<< std::hex << currentExecutingCommand;)
 			}
         }
         
@@ -647,11 +650,7 @@ void BatchCommandSandbox::killCurrentCommand() {
 	boost::mutex::scoped_lock lockForCurrentCommand(mutextAccessCurrentCommand);
 	
 	// terminate the current command
-	DELETE_OBJ_POINTER(currentExecutingCommand)
-	installHandler(NULL);
-	
-	//fire the killed event
-	if(event_handler) event_handler->handleEvent(currentExecutingCommand->element->cmdImpl->unique_id, BatchCommandEventType::EVT_KILLED, NULL);
+	currentExecutingCommand->element->cmdImpl->setRunningProperty(RunningPropertyType::RP_End);
 }
 
 bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority) {
