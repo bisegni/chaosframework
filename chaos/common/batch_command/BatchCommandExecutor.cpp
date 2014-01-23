@@ -339,7 +339,7 @@ BatchCommand *BatchCommandExecutor::instanceCommandInfo(CDataWrapper *submission
     if(instance) {
         if(submissionInfo->hasKey(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32)) {
             instance->submissionRule = submissionInfo->getInt32Value(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32);
-            DEBUG_CODE(BCELDBG_ << "Submizzion rule for command " << commandAlias << " is: " << instance->submissionRule;)
+            DEBUG_CODE(BCELDBG_ << "Submission rule for command " << commandAlias << " is: " << ((uint16_t)instance->submissionRule);)
         } else {
             instance->submissionRule = SubmissionRuleType::SUBMIT_NORMAL;
         }
