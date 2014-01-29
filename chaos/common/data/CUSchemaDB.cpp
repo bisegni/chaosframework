@@ -377,6 +377,7 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
                 //get the attribute
             auto_ptr<entity::Entity> attributeEntity(getDatasetElement(deviceEntity, attrName));
             
+            attributeEntity->reset();
             
                 //attribute description
             if(elementDescription->hasKey(DatasetDefinitionkey::ATTRIBUTE_DESCRIPTION)){

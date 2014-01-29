@@ -22,7 +22,7 @@
 #define CHAOSFramework_DirectIOTypes_h
 
 #include <string>
-
+#include <chaos/common/network/CNodeNetworkAddress.h>
 namespace chaos {
 	namespace common {
 		//! Namespace that enclose all direct io infrastructure.
@@ -37,8 +37,8 @@ namespace chaos {
 			
 			//! Structure to identify the target server of the client connection
 			typedef struct DirectIOConnection {
-				std::string connection_name;
-				std::string server_address;
+				std::string			connection_name;
+				CNetworkAddress		server_address;
 				
 			} DirectIOCOnnection;
 			

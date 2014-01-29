@@ -46,8 +46,8 @@ using namespace chaos::cu::driver_manager::driver;
 
 
 AbstractControlUnit::AbstractControlUnit(std::string _control_unit_type):DatasetDB(false),
-																		cuInstance(UUIDUtil::generateUUIDLite()),
-																		control_unit_type(_control_unit_type) {
+cuInstance(UUIDUtil::generateUUIDLite()),
+control_unit_type(_control_unit_type) {
 }
 
 /*!
@@ -60,7 +60,7 @@ AbstractControlUnit::~AbstractControlUnit() {
  return the CU name
  */
 const char * AbstractControlUnit::getCUInstance(){
-    return cuInstance.size()?cuInstance.c_str():"Instance no yet configured";
+    return cuInstance.c_str();
 };
 
 /*
@@ -138,7 +138,7 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
                                                      &AbstractControlUnit::_getInfo,
                                                      ChaosSystemDomainAndActionLabel::ACTION_CU_GET_INFO,
                                                      "Get the information about running control unit");
-
+	
     LCU_ << "Get Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
     //grab dataset description
     DatasetDB::fillDataWrapperWithDataSetDescription(setupConfiguration);
@@ -168,43 +168,25 @@ void AbstractControlUnit::_getDeclareActionInstance(std::vector<const chaos::Dec
  Initialize the Custom Contro Unit and return the configuration
  */
 CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& detachParam) throw(CException) {
-    
-    if(!initConfiguration ||
-       !initConfiguration->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
-        throw CException(-1, "No Device Init information in param", "AbstractControlUnit::_init");
-    }
-    
-    std::string deviceID = initConfiguration->getStringValue(DatasetDefinitionkey::DEVICE_ID);
-    if(deviceID.compare(DatasetDB::getDeviceID())) {
-        LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
-        throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_init");
-    }
-
-	//at this point and before the unit implementation init i need to get
-	//the infromation about the needed drivers
-	std::vector<cu_driver::DrvRequestInfo> unitNeededDrivers;
-	
-	//got the needded driver definition
-	unitDefineDriver(unitNeededDrivers);
-	
-	accessorInstances.clear();
-	
-	for (int idx = 0;
-		 idx != unitNeededDrivers.size();
-		 idx++) {
-		driver_manager::driver::DriverAccessor *accessorInstance = driver_manager::DriverManager::getInstance()->getNewAccessorForDriverInstance(unitNeededDrivers[idx]);
-		accessorInstances.push_back(accessorInstance);
+    try {
+		//call init method of the startable interface
+		utility::StartableService::initImplementation(this, static_cast<void*>(initConfiguration), "AbstractControlUnit", "AbstractControlUnit::_init");
+		
+		//initialization has gone well
+		
+		//the init of the implementation unit goes after the infrastructure one
+		LCU_ << "Start custom inititialization";
+		unitInit();
+		
+		//call update param function
+		updateConfiguration(initConfiguration, detachParam);
+	} catch(CException& ex) {
+		//force the deinitialization on innit failure
+		_deinit(initConfiguration, detachParam);
+		
+		//trhow received exception
+		throw ex;
 	}
-	
-    //call init method of the startable interface
-    utility::StartableService::initImplementation(this, static_cast<void*>(initConfiguration), "AbstractControlUnit", "AbstractControlUnit::_init");
-	
-	//the init of the implementation unit goes after the infrastructure one
-    LCU_ << "Start custom inititialization" << deviceID;
-    unitInit();
-    
-    //call update param function
-    updateConfiguration(initConfiguration, detachParam);
     return NULL;
 }
 
@@ -212,23 +194,20 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
  Starto the  Control Unit scheduling for device
  */
 CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detachParam) throw(CException) {
-    if(!startParam ||
-       !startParam->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
-        throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_start");
-    }
-    
-    string deviceID = startParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
-    if(deviceID.compare(DatasetDB::getDeviceID())) {
-        LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
-        throw CException(-2, "Deviuce not known by this control unit", "AbstractControlUnit::_start");
-    }
-    
     //call start method of the startable interface
-    utility::StartableService::startImplementation(this, "AbstractControlUnit", "AbstractControlUnit::_start");
-	
-	//the start of the implementation unit goes after the infrastructure one
-    LCU_ << "Start sublass for deviceID:" << DatasetDB::getDeviceID();
-    unitStart();
+	try {
+		utility::StartableService::startImplementation(this, "AbstractControlUnit", "AbstractControlUnit::_start");
+		
+		//the start of the implementation unit goes after the infrastructure one
+		LCU_ << "Start sublass for deviceID:" << DatasetDB::getDeviceID();
+		unitStart();
+	} catch(CException& ex) {
+		//force the deinitialization on innit failure
+		_stop(startParam, detachParam);
+		
+		//trhow received exception
+		throw ex;
+	}
     return NULL;
 }
 
@@ -236,23 +215,13 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
  Stop the Custom Control Unit scheduling for device
  */
 CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachParam) throw(CException) {
-    if(!stopParam ||
-       !stopParam->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
-        throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_stop");
-    }
-    string deviceID = stopParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
-    if(deviceID.compare(DatasetDB::getDeviceID())) {
-        LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
-        throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_stop");
-    }
-    
 	//first we need to stop the implementation unit
     LCU_ << "Stop sublass for deviceID:" << DatasetDB::getDeviceID();
     unitStop();
 	
     //call start method of the startable interface
     utility::StartableService::stopImplementation(this, "AbstractControlUnit", "AbstractControlUnit::_stop");
-
+	
     return NULL;
 }
 
@@ -261,19 +230,6 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachPa
  */
 CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& detachParam) throw(CException) {
     LCU_ << "Deinitializating AbstractControlUnit";
-    
-    if(!deinitParam ||
-       !deinitParam->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
-        throw CException(-1, "No Device Defined in param", "AbstractControlUnit::_deinit");
-    }
-    
-    string deviceID = deinitParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
-    if(deviceID.compare(DatasetDB::getDeviceID())) {
-        LCU_ << "device:" << DatasetDB::getDeviceID() << "not known by this ContorlUnit";
-        throw CException(-2, "Deviuce not known by this control unit", "AbstractControlUnit::_deinit");
-    }
-    
-	
     //first we start the deinitializaiton of the implementation unit
     LCU_ << "Deinit custom deinitialization for device:" << DatasetDB::getDeviceID();
     unitDeinit();
@@ -329,11 +285,35 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
 
 // Startable Service method
 void AbstractControlUnit::init(void *initData) throw(CException) {
-    //cast to the CDatawrapper instance
-    std::string deviceID = DatasetDB::getDeviceID();
-    CDataWrapper *initConfiguration = static_cast<CDataWrapper*>(initData);
+	CDataWrapper *initConfiguration = static_cast<CDataWrapper*>(initData);
+	if(!initConfiguration ||
+	   !initConfiguration->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
+		throw CException(-1, "No Device Init information in param", "AbstractControlUnit::_init");
+	}
+	
+	std::string deviceID = initConfiguration->getStringValue(DatasetDefinitionkey::DEVICE_ID);
+	if(deviceID.compare(DatasetDB::getDeviceID())) {
+		LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
+		throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_init");
+	}
 	LCU_ << "Initializating Phase for device:" << deviceID;
-
+	//at this point and before the unit implementation init i need to get
+	//the infromation about the needed drivers
+	std::vector<cu_driver::DrvRequestInfo> unitNeededDrivers;
+	
+	//got the needded driver definition
+	unitDefineDriver(unitNeededDrivers);
+	
+	accessorInstances.clear();
+	
+	for (int idx = 0;
+		 idx != unitNeededDrivers.size();
+		 idx++) {
+		driver_manager::driver::DriverAccessor *accessorInstance = driver_manager::DriverManager::getInstance()->getNewAccessorForDriverInstance(unitNeededDrivers[idx]);
+		accessorInstances.push_back(accessorInstance);
+	}
+	
+    //cast to the CDatawrapper instance
     
     LCU_ << "Initialize CU Database for device:" << deviceID;
     DatasetDB::addAttributeToDataSetFromDataWrapper(*initConfiguration);
@@ -348,8 +328,7 @@ void AbstractControlUnit::init(void *initData) throw(CException) {
 
 // Startable Service method
 void AbstractControlUnit::start() throw(CException) {
-    LCU_ << "Start Phase for device:" << DatasetDB::getDeviceID();
-
+	LCU_ << "Start Phase for device:" << DatasetDB::getDeviceID();
 }
 
 // Startable Service method
