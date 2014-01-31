@@ -29,6 +29,7 @@
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/utility/StartableService.h>
+#include <chaos/common/utility/NamedService.h>
 #include <chaos/common/rpc/RpcMessageForwarder.h>
 
 namespace chaos_data = chaos::common::data;
@@ -50,9 +51,8 @@ namespace chaos {
      Abstract class for standard adapter method for permit, to CommandManager
      the correct initialization for the adapter instance
      */
-    class RpcClient: public RpcMessageForwarder, chaos::utility::StartableService {
+    class RpcClient: public RpcMessageForwarder, public chaos::utility::StartableService, public NamedService {
         friend class NetworkBroker;
-        string *typeName;
     protected:
         
         /*!
@@ -83,12 +83,7 @@ namespace chaos {
         /*!
          Constructor di default per i
          */
-        RpcClient(string *alias);
-        
-        /*!
-         Return the adapter alias
-         */
-        const char * getName() const;
+        RpcClient(string alias);
     };
 }
 #endif

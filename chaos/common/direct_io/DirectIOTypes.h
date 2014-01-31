@@ -27,21 +27,24 @@ namespace chaos {
 	namespace common {
 		//! Namespace that enclose all direct io infrastructure.
 		/*!
-			DirectIO infrastructure is an unidirectional channel that send data from client to server. Each
-			channel connet two node client -> server. A cient can connect to more server to send the same pachet
+			DirectIO infrastructure is an unidirectional double channel that permit to exange data between node. Each
+			channel connet two node client -> server. A client can connect to more server to send the same pachet
 			to every one of these. On the other side each server can accept connection form more client and receive 
 			data form everyone. At this layer data noto managed so waht is done with data is not discussed. Here
 			is specified how connection two node together.
 		 */
 		namespace direct_io {
 			
+            #define PRIORITY_PORT   1672
+            #define SERVICE_PORT    30175
+            
 			//! Structure to identify the target server of the client connection
 			typedef struct DirectIOConnection {
-				std::string			connection_name;
-				CNetworkAddress		server_address;
-				
+				std::string             connection_name;
+				CNodeNetworkAddress		server_address;
 			} DirectIOCOnnection;
 			
+            //! Namespace that enclose all type of data flow rule
 			namespace DirectIOConnectionModes {
 				typedef enum DirectIOConnectionModes{
 					DirectIOPoll,
@@ -49,6 +52,21 @@ namespace chaos {
 				} DirectIOConnectionModes;
 			}
 			
+            //! Namespace that enclose all type of spreadest of the data forwarding
+			namespace DirectIOConnectionSpreadType {
+				typedef enum DirectIOConnectionSpreadType{
+					DirectIOFailOver,
+					DirectIORoundRobin
+				} DirectIOConnectionSpreadType;
+			}
+            
+            //! Namespace that enclose all type of the channel
+            namespace DirectIOChannelType {
+				typedef enum DirectIOChannelType {
+					DirectIODataChannel,
+					DirectIOServiceChannel
+				} DirectIOChannelType;
+			}
 		}
 	}
 }

@@ -41,7 +41,7 @@ namespace chaos {
         friend class NetworkBroker;
 
     public:
-        AbstractEventDispatcher(string *alias);
+        AbstractEventDispatcher(string alias);
         
         ~AbstractEventDispatcher();
             //! Event handler registration

@@ -35,11 +35,11 @@
 namespace chaos {
     
         //! Regular expression for check server hostname and port
-    static const regex ServerHostNameRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}");
+    static const boost::regex ServerHostNameRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}");
         //! Regular expression for check server ip and port
-    static const regex ServerIPAndPortRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}");
+    static const boost::regex ServerIPAndPortRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}");
         //! Regular expression for check server ip
-    static const regex ServerIPRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b");
+    static const boost::regex ServerIPRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b");
 
     
     class InetUtility {
@@ -113,6 +113,10 @@ namespace chaos {
             }
             
             return portno;
+        }
+        
+        static bool checkWellFormedHostPort(std::string host_port) {
+            return regex_match(host_port, ServerIPRegExp);
         }
     };
 }

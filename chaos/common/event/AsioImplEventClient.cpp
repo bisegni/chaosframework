@@ -25,7 +25,7 @@
 using namespace chaos;
 using namespace chaos::event;
 
-AsioImplEventClient::AsioImplEventClient(string *alias):EventClient(alias) {
+AsioImplEventClient::AsioImplEventClient(string alias):EventClient(alias) {
     threadNumber = 0;
     alertForwarder = NULL;
     instrumentForwarder = NULL;

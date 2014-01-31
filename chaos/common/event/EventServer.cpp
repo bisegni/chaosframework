@@ -28,7 +28,7 @@
 using namespace chaos;
 using namespace chaos::event;
 
-EventServer::EventServer(string *alias):NamedService(alias){
+EventServer::EventServer(string alias):NamedService(alias){
 }
 
 void EventServer::setEventHanlder(EventHandler *newEventHanlder) {

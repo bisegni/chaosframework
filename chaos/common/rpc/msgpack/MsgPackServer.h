@@ -52,7 +52,7 @@ namespace chaos{
     public:
         typedef rpc::request request;
         
-        MsgPackServer(string *alias);
+        MsgPackServer(string alias);
         
         virtual ~MsgPackServer();
         

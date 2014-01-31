@@ -1,0 +1,64 @@
+//
+//  ZMQDirectIOServer.h
+//  CHAOSFramework
+//
+//  Created by Claudio Bisegni on 31/01/14.
+//  Copyright (c) 2014 INFN. All rights reserved.
+//
+
+#ifndef __CHAOSFramework__ZMQDirectIOServer__
+#define __CHAOSFramework__ZMQDirectIOServer__
+
+#include <string>
+
+#include <chaos/common/direct_io/DirectIOServer.h>
+#include <chaos/common/utility/ObjectFactoryRegister.h>
+
+#include <boost/thread.hpp>
+
+namespace chaos {
+	namespace common {
+		namespace direct_io {
+            namespace impl {
+                
+                REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(ZMQDirectIOServer, DirectIOServer) {
+                    
+                    void *zmq_context;
+                    
+                    void *priority_socket;
+                    
+                    void *service_socket;
+                    
+                    boost::thread_group server_threads_group;
+                    
+                    bool run_server;
+                    
+                    std::string priority_socket_bind_str;
+                    
+                    std::string service_socket_bind_str;
+                    
+                    void worker(void *socket, bool priority_service);
+                public:
+                    ZMQDirectIOServer(std::string alias);
+                    
+                    ~ZMQDirectIOServer();
+                    
+                    //! Initialize instance
+                    void init(void *init_data) throw(chaos::CException);
+                    
+                    //! Start the implementation
+                    void start() throw(chaos::CException);
+                    
+                    //! Stop the implementation
+                    void stop() throw(chaos::CException);
+                    
+                    //! Deinit the implementation
+                    void deinit() throw(chaos::CException);
+                };
+            }
+        }
+    }
+}
+
+
+#endif /* defined(__CHAOSFramework__ZMQDirectIOServer__) */

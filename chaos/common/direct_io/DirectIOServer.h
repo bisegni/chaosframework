@@ -25,8 +25,10 @@
 #include <map>
 
 #include <chaos/common/utility/StartableService.h>
+#include <chaos/common/utility/NamedService.h>
+
 #include <chaos/common/direct_io/DirectIOTypes.h>
-#include <chaos/common/direct_io/DirectIOServerHandler.h>
+#include <chaos/common/direct_io/DirectIOHandler.h>
 
 namespace chaos {
 	namespace common {
@@ -39,12 +41,13 @@ namespace chaos {
 				by different client
 				dio_client---> data message -->dio_server
 			 */
-			class DirectIOServer : chaos::utility::StartableService  {
+			class DirectIOServer : public chaos::utility::StartableService, public NamedService  {
 				//! handler implementation for the server instance
-				DirectIODataHandler *handler_impl;
+            protected:
+				DirectIOHandler *handler_impl;
 				
 			public:
-				DirectIOServer();
+				DirectIOServer(std::string alias);
 				
 				virtual ~DirectIOServer();
 				
@@ -61,7 +64,7 @@ namespace chaos {
 				void deinit() throw(chaos::CException);
 				
 				//! Send some data to the server
-				void setHandler(DirectIODataHandler *_handler_impl);
+				void setHandler(DirectIOHandler *_handler_impl);
 				
 				//! Remove the handler pointer
 				void clearHandler();

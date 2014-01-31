@@ -23,7 +23,7 @@
 using namespace chaos;
 using namespace chaos::event;
 
-EventClient::EventClient(string *alias): NamedService(alias) {
+EventClient::EventClient(string alias): NamedService(alias) {
 }
 
 /*

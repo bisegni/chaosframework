@@ -10,7 +10,7 @@
 
 using namespace chaos::common::direct_io;
 
-DirectIOServer::DirectIOServer() {
+DirectIOServer::DirectIOServer(std::string alias):NamedService(alias) {
 	
 }
 
@@ -20,7 +20,8 @@ DirectIOServer::~DirectIOServer() {
 
 // Initialize instance
 void DirectIOServer::init(void *init_data) throw(chaos::CException) {
-	
+	if(handler_impl == NULL) throw chaos::CException(-1, "handler has not been configured", __FUNCTION__);
+        
 }
 
 // Start the implementation
@@ -39,7 +40,7 @@ void DirectIOServer::deinit() throw(chaos::CException) {
 }
 
 //! Send some data to the server
-void DirectIOServer::setHandler(DirectIODataHandler *_handler_impl) {
+void DirectIOServer::setHandler(DirectIOHandler *_handler_impl) {
 	handler_impl = _handler_impl;
 }
 

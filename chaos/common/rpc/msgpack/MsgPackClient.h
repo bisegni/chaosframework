@@ -65,7 +65,7 @@ namespace chaos {
          void deinit() throw(CException);
          
     public:
-         MsgPackClient(string *alias);
+         MsgPackClient(string alias);
          virtual ~MsgPackClient();
         
         

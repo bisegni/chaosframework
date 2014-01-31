@@ -14,16 +14,8 @@ using namespace chaos;
 /*!
  Constructor di default per i
  */
-RpcClient::RpcClient(string *alias){
-    typeName = alias;
+RpcClient::RpcClient(string alias):NamedService(alias){
 };
-
-/*!
- Return the adapter alias
- */
-const char * RpcClient::getName() const {
-    return typeName->c_str();
-}
 
 /*!
  manage the call for the handler when nd error occours

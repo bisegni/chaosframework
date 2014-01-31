@@ -20,6 +20,7 @@
 #ifndef CHAOSFramework_DirectIOServerHandler_h
 #define CHAOSFramework_DirectIOServerHandler_h
 
+#include <stdint.h>
 
 namespace chaos {
 	namespace common {
@@ -29,7 +30,7 @@ namespace chaos {
 			 This class represent the public interface that need to used to abstract the direct io server implementation.
 			 Another class to became the server implementation need to be extends this interface to permit the data exchange data betwin the client.
 			 */
-			class DirectIODataHandler {
+			class DirectIOHandler {
 			public:
 				
 				//! Event for a new data received
@@ -39,7 +40,16 @@ namespace chaos {
 				 \param data_size the size of the received data
 				 \param detach inform the server that hte memory buffed doesn't need to be deallocated.
 				 */
-				void dataReceived(void **data_buffer, uint32_t data_size, bool& detach);
+				virtual void priorityDataReceived(void *data_buffer, uint32_t data_size);
+                
+                //! Event for a new data received
+				/*!
+				 This permit to inform the imlementator tha a new data has received by the server.
+				 \param data_buffer is an handle to avoid poiter that will contains the pointer to the received data.
+				 \param data_size the size of the received data
+				 \param detach inform the server that hte memory buffed doesn't need to be deallocated.
+				 */
+				virtual void serviceDataReceived(void *data_buffer, uint32_t data_size);
 			};
 		}
 	}

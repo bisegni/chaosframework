@@ -39,7 +39,7 @@ namespace chaos {
             EventHandler *rootEventHandler;
         protected:
                 //Default Server Constructor
-            EventServer(string *alias);
+            EventServer(string alias);
             
             /*
              init the event adapter

@@ -31,13 +31,28 @@ namespace chaos {
 			/*!
 				This class represent the public interface that need to used to abstract the direct io client implementation.
 			 */
-			class DirectIODataForwarder {
+			class DirectIOForwarder {
 			public:
-				//! send the data to the server layer
+				//! send the data to the server layer on priority channel
 				/*!
 				 Forward the data throught the client sub layer for to be sent to the other side
+                 using hte priority channel. This channel is to be used for the fast data push.
 				 */
-				int sendData(void *data_buffer, uint32_t data_size);
+				virtual uint32_t sendPriorityData(void *data_buffer, uint32_t data_size) = 0;
+                
+                
+                virtual uint32_t receiveFromPriorityChannel(void **data_buffer, uint32_t *data_size) = 0;
+                
+                //! send the data to the server layer on the service channel
+				/*!
+				 Forward the data throught the client sub layer for to be sent to the other side
+                 using the service channel. This channel is to be used for the data that doesn't need
+                 to be fast and accurate.
+				 */
+				virtual uint32_t sendServiceData(void *data_buffer, uint32_t data_size) = 0;
+                
+                
+                virtual uint32_t receiveFromServiceChannel(void **data_buffer, uint32_t *data_size) = 0;
 			};
 			
 		}

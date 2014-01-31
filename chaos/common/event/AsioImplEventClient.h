@@ -59,7 +59,7 @@ namespace chaos {
             void deinit() throw(CException);
 
         public:
-            AsioImplEventClient(string *alias);
+            AsioImplEventClient(string alias);
             ~AsioImplEventClient();
             bool submitEvent(EventDescriptor *event)  throw(CException);
         private:

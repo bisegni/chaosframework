@@ -89,7 +89,7 @@ namespace chaos {
         
     public:
             //! Basic Constructor
-        DefaultEventDispatcher(string *alias);
+        DefaultEventDispatcher(string alias);
         
             //! Basic Destructor
         virtual ~DefaultEventDispatcher();

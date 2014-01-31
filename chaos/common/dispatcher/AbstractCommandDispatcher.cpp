@@ -26,8 +26,7 @@ using namespace boost;
 using namespace std;
 
 
-AbstractCommandDispatcher::AbstractCommandDispatcher(string *alias){
-    typeName = alias;
+AbstractCommandDispatcher::AbstractCommandDispatcher(string alias):NamedService(alias){
 }
 
 AbstractCommandDispatcher::~AbstractCommandDispatcher() {
@@ -146,13 +145,6 @@ bool AbstractCommandDispatcher::submitMessage(string& serverAndPort,  chaos::com
  */
 chaos::common::data::CDataWrapper* AbstractCommandDispatcher::updateConfiguration(chaos::common::data::CDataWrapper*)  throw(CException) {
     return NULL;
-}
-
-/*
- Return the adapter alias
- */
-const char * AbstractCommandDispatcher::getName() const {
-    return typeName->c_str();
 }
 
 /*

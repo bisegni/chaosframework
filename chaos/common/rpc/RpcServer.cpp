@@ -10,8 +10,7 @@
 
 using namespace chaos;
 
-RpcServer::RpcServer(string *alias) {
-    typeName = alias;
+RpcServer::RpcServer(string alias):NamedService(alias) {
 }
 
 /*!
@@ -26,11 +25,4 @@ int RpcServer::getPublishedPort(){
  */
 void RpcServer::setCommandDispatcher(RpcServerHandler *newCommandHandler) {
     commandHandler = newCommandHandler;
-}
-
-/*
- Return the adapter alias
- */
-const char * RpcServer::getName() const {
-    return typeName->c_str();
 }

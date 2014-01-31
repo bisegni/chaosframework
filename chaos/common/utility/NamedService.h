@@ -30,9 +30,9 @@ namespace chaos {
      This class is a base class for all service that need to be recognized with an alias
      */
     class NamedService {
-        string *typeName;
+        string typeName;
     protected:
-        NamedService(string *alias);
+        NamedService(string alias);
     public:
         /*
          Return the alias of the current instance

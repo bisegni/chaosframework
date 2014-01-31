@@ -23,7 +23,7 @@
 using namespace chaos;
 using namespace std;
 
-NamedService::NamedService(string *alias) {
+NamedService::NamedService(string alias) {
     typeName = alias;
 }
 
@@ -31,5 +31,5 @@ NamedService::NamedService(string *alias) {
  Return the adapter alias
  */
 const char * NamedService::getName() const {
-    return typeName->c_str();
+    return typeName.c_str();
 }

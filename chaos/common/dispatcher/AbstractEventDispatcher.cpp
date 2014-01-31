@@ -21,7 +21,7 @@
 #include <chaos/common/dispatcher/AbstractEventDispatcher.h>
 using namespace chaos;
 
-AbstractEventDispatcher::AbstractEventDispatcher(string *alias) : NamedService(alias) {
+AbstractEventDispatcher::AbstractEventDispatcher(string alias) : NamedService(alias) {
 }
 
 AbstractEventDispatcher::~AbstractEventDispatcher() {

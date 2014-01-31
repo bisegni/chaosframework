@@ -21,7 +21,7 @@ namespace chaos {
             
             class FastHash {
             public:
-                uint32_t hash(const void *key, size_t length, const uint32_t initval);
+                static uint32_t hash(const void *key, size_t length, const uint32_t initval);
             };
             
         }

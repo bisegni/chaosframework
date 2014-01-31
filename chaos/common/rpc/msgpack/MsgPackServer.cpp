@@ -38,7 +38,7 @@ namespace rpc {
 }
 
 
-MsgPackServer::MsgPackServer(string *alias):RpcServer(alias){
+MsgPackServer::MsgPackServer(string alias):RpcServer(alias){
 }
 
 MsgPackServer::~MsgPackServer(){

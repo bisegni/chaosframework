@@ -32,7 +32,7 @@ using namespace boost;
 using namespace boost::algorithm;
 using namespace msgpack;
 
-MsgPackClient::MsgPackClient(string *alias):RpcClient(alias){
+MsgPackClient::MsgPackClient(string alias):RpcClient(alias){
     connectionPolling = NULL;
 };
 

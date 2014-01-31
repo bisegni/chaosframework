@@ -59,7 +59,7 @@ namespace chaos{
         void deinit() throw(CException);
 
     public:
-        DefaultCommandDispatcher(string *alias);
+        DefaultCommandDispatcher(string alias);
         virtual ~DefaultCommandDispatcher();
         /*!
          Register actions defined by AbstractActionDescriptor instance contained in the array

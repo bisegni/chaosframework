@@ -33,6 +33,8 @@
 #include <chaos/common/action/DomainActions.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/general/Configurable.h>
+
+#include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/StartableService.h>
 
 namespace chaos_data = chaos::common::data;
@@ -53,10 +55,8 @@ namespace chaos{
      to manage the priority execution all the registration of the domain and action are managed
      by this base class
      */
-    class AbstractCommandDispatcher : public RpcServerHandler, Configurable, utility::StartableService {
+    class AbstractCommandDispatcher : public RpcServerHandler, Configurable, utility::StartableService, NamedService {
         friend class NetworkBroker;
-            //friend class RpcClient;
-        string *typeName;
         
             //! Rpc Client for action result
         /*!Pointer to the associated rpc client, used to send the result of an action*/
@@ -96,7 +96,7 @@ namespace chaos{
         
     public:
             //! Constructor
-        AbstractCommandDispatcher(string *alias);
+        AbstractCommandDispatcher(string alias);
         
         ~AbstractCommandDispatcher();
         
@@ -136,12 +136,6 @@ namespace chaos{
          \param declareActionClass The object that expose the domain and action name
          */
         virtual void deregisterAction(DeclareAction *declareActionClass)  throw(CException) ;
-        
-        /*!
-         Ghet the name of tge dispatcher
-         \return the adapter alias
-         */
-        const char * getName() const;
         
         /*!
          Set the rpc forwarder implementation

@@ -42,7 +42,7 @@ namespace chaos {
     class ObjectFactoryAliasInstantiation : public ObjectFactory {
     public:
         ObjectFactoryAliasInstantiation(const char *alias):ObjectFactory(alias){};
-        virtual void* createInstance() { return (void*)new T(&sAlias); };
+        virtual void* createInstance() { return (void*)new T(sAlias); };
     };
 
     /*

@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		320192BA14DEEAC000318F00 /* CObjectHandlerProcessingQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 320192B914DEEAC000318F00 /* CObjectHandlerProcessingQueue.h */; };
+		3204EFBE189E4825000993A0 /* DirectIOServerDataPack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3204EFBC189E4825000993A0 /* DirectIOServerDataPack.cpp */; };
+		3204EFBF189E4825000993A0 /* DirectIOServerDataPack.h in Headers */ = {isa = PBXBuildFile; fileRef = 3204EFBD189E4825000993A0 /* DirectIOServerDataPack.h */; };
+		3204EFC2189E51A6000993A0 /* ZMQDirectIOServerDataPack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3204EFC0189E51A6000993A0 /* ZMQDirectIOServerDataPack.cpp */; };
+		3204EFC3189E51A6000993A0 /* ZMQDirectIOServerDataPack.h in Headers */ = {isa = PBXBuildFile; fileRef = 3204EFC1189E51A6000993A0 /* ZMQDirectIOServerDataPack.h */; };
 		320C218A151B555A00BD0F41 /* EventServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 320C2189151B555A00BD0F41 /* EventServer.h */; };
 		320C218C151B556E00BD0F41 /* EventServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320C218B151B556E00BD0F41 /* EventServer.cpp */; };
 		320DF98D14E17E2700251621 /* DeviceController.h in Headers */ = {isa = PBXBuildFile; fileRef = 320DF98C14E17E2700251621 /* DeviceController.h */; };
@@ -47,6 +51,10 @@
 		325013DD15E9843D00DCB13E /* AsioEventForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 325013DB15E9843D00DCB13E /* AsioEventForwarder.h */; };
 		3253E09515F27A180079B40E /* EventTypeScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3253E09315F27A180079B40E /* EventTypeScheduler.h */; };
 		3253E09815F28A270079B40E /* EventTypeScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3253E09715F28A270079B40E /* EventTypeScheduler.cpp */; };
+		3253F2FE189AEEFD00959CA7 /* DirectIOVirtualClientChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3253F2FC189AEEFD00959CA7 /* DirectIOVirtualClientChannel.cpp */; };
+		3253F2FF189AEEFD00959CA7 /* DirectIOVirtualClientChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3253F2FD189AEEFD00959CA7 /* DirectIOVirtualClientChannel.h */; };
+		3253F302189AEF8000959CA7 /* DirectIOVirtualServerChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3253F300189AEF8000959CA7 /* DirectIOVirtualServerChannel.cpp */; };
+		3253F303189AEF8000959CA7 /* DirectIOVirtualServerChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3253F301189AEF8000959CA7 /* DirectIOVirtualServerChannel.h */; };
 		3255E72415EA86F2005C96CA /* DefaultEventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3255E72315EA86F1005C96CA /* DefaultEventDispatcher.cpp */; };
 		3255E72715EA87D2005C96CA /* AbstractEventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3255E72515EA87D1005C96CA /* AbstractEventDispatcher.cpp */; };
 		3255E72815EA87D2005C96CA /* AbstractEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 3255E72615EA87D1005C96CA /* AbstractEventDispatcher.h */; };
@@ -235,6 +243,8 @@
 		32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */; };
 		32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */; };
 		32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */; };
+		32A886C6189C37EA00321D61 /* ServerFeeder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A886C4189C37EA00321D61 /* ServerFeeder.cpp */; };
+		32A886C7189C37EA00321D61 /* ServerFeeder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A886C5189C37EA00321D61 /* ServerFeeder.h */; };
 		32A8F7D1172BE3FD0090DB78 /* KeyGroupCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A8F7CF172BE3FD0090DB78 /* KeyGroupCache.cpp */; };
 		32A8F7D2172BE3FD0090DB78 /* KeyGroupCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A8F7D0172BE3FD0090DB78 /* KeyGroupCache.h */; };
 		32AAD78814CD660B005A097C /* RpcClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AAD78714CD660B005A097C /* RpcClient.h */; };
@@ -243,6 +253,12 @@
 		32AAD78E14CD95FD005A097C /* Atomic.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AAD78D14CD95FD005A097C /* Atomic.h */; };
 		32B10910188C1D6200969D3D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1090F188C1D6200969D3D /* main.cpp */; };
 		32B10912188C1D6200969D3D /* TestAsyncRpc.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 32B10911188C1D6200969D3D /* TestAsyncRpc.1 */; };
+		32B13784189BC37200B17CA4 /* DirectIOHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B13783189BC37200B17CA4 /* DirectIOHandler.cpp */; };
+		32B13786189BC38300B17CA4 /* DirectIOForwarder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B13785189BC38300B17CA4 /* DirectIOForwarder.cpp */; };
+		32B1378A189BEC3300B17CA4 /* ZMQDirectIOClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B13788189BEC3300B17CA4 /* ZMQDirectIOClient.cpp */; };
+		32B1378B189BEC3300B17CA4 /* ZMQDirectIOClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B13789189BEC3300B17CA4 /* ZMQDirectIOClient.h */; };
+		32B1378E189BEC4100B17CA4 /* ZMQDirectIOServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1378C189BEC4100B17CA4 /* ZMQDirectIOServer.cpp */; };
+		32B1378F189BEC4100B17CA4 /* ZMQDirectIOServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B1378D189BEC4100B17CA4 /* ZMQDirectIOServer.h */; };
 		32B57172168DF4750002A198 /* atomic_int.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B5714B168DF4750002A198 /* atomic_int.h */; };
 		32B57173168DF4750002A198 /* bson_extract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B5714C168DF4750002A198 /* bson_extract.cpp */; };
 		32B57174168DF4750002A198 /* bson_extract.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B5714D168DF4750002A198 /* bson_extract.h */; };
@@ -355,8 +371,8 @@
 		32D421B417271572008A326E /* BsonFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D421B217271572008A326E /* BsonFragment.h */; };
 		32D5CB32179D233E00A8427E /* chaos_types.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D5CB31179D233E00A8427E /* chaos_types.h */; };
 		32D68AD014D5D5A7009F290A /* SetupStateManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D68ACF14D5D5A7009F290A /* SetupStateManager.h */; };
-		32D6C8981815293200E9689B /* DirectIOServerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C8971815293200E9689B /* DirectIOServerHandler.h */; };
-		32D6C89A1815294700E9689B /* DirectIODataForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C8991815294700E9689B /* DirectIODataForwarder.h */; };
+		32D6C8981815293200E9689B /* DirectIOHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C8971815293200E9689B /* DirectIOHandler.h */; };
+		32D6C89A1815294700E9689B /* DirectIOForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C8991815294700E9689B /* DirectIOForwarder.h */; };
 		32DB1188166267FB0036D1B9 /* DSDoubleHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DB1187166267FB0036D1B9 /* DSDoubleHandler.h */; };
 		32DD884F15E2663B000AF740 /* DefaultEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DD884D15E2663B000AF740 /* DefaultEventDispatcher.h */; };
 		32DD885315E2681F000AF740 /* EventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DD885115E2681F000AF740 /* EventHandler.cpp */; };
@@ -398,6 +414,10 @@
 
 /* Begin PBXFileReference section */
 		320192B914DEEAC000318F00 /* CObjectHandlerProcessingQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CObjectHandlerProcessingQueue.h; sourceTree = "<group>"; };
+		3204EFBC189E4825000993A0 /* DirectIOServerDataPack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOServerDataPack.cpp; sourceTree = "<group>"; };
+		3204EFBD189E4825000993A0 /* DirectIOServerDataPack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOServerDataPack.h; sourceTree = "<group>"; };
+		3204EFC0189E51A6000993A0 /* ZMQDirectIOServerDataPack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQDirectIOServerDataPack.cpp; sourceTree = "<group>"; };
+		3204EFC1189E51A6000993A0 /* ZMQDirectIOServerDataPack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQDirectIOServerDataPack.h; sourceTree = "<group>"; };
 		320C2189151B555A00BD0F41 /* EventServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventServer.h; sourceTree = "<group>"; };
 		320C218B151B556E00BD0F41 /* EventServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventServer.cpp; sourceTree = "<group>"; };
 		320DF98C14E17E2700251621 /* DeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceController.h; sourceTree = "<group>"; };
@@ -447,6 +467,11 @@
 		325013DB15E9843D00DCB13E /* AsioEventForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsioEventForwarder.h; sourceTree = "<group>"; };
 		3253E09315F27A180079B40E /* EventTypeScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTypeScheduler.h; sourceTree = "<group>"; };
 		3253E09715F28A270079B40E /* EventTypeScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTypeScheduler.cpp; sourceTree = "<group>"; };
+		3253F2FC189AEEFD00959CA7 /* DirectIOVirtualClientChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOVirtualClientChannel.cpp; sourceTree = "<group>"; };
+		3253F2FD189AEEFD00959CA7 /* DirectIOVirtualClientChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOVirtualClientChannel.h; sourceTree = "<group>"; };
+		3253F300189AEF8000959CA7 /* DirectIOVirtualServerChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOVirtualServerChannel.cpp; sourceTree = "<group>"; };
+		3253F301189AEF8000959CA7 /* DirectIOVirtualServerChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOVirtualServerChannel.h; sourceTree = "<group>"; };
+		3253F304189AF0D500959CA7 /* DirectIODataPack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectIODataPack.h; sourceTree = "<group>"; };
 		3255E72315EA86F1005C96CA /* DefaultEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DefaultEventDispatcher.cpp; sourceTree = "<group>"; };
 		3255E72515EA87D1005C96CA /* AbstractEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractEventDispatcher.cpp; sourceTree = "<group>"; };
 		3255E72615EA87D1005C96CA /* AbstractEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractEventDispatcher.h; sourceTree = "<group>"; };
@@ -644,6 +669,8 @@
 		32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaitSemaphore.h; sourceTree = "<group>"; };
 		32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = MDSMessageChannel.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSMessageChannel.cpp; sourceTree = "<group>"; };
+		32A886C4189C37EA00321D61 /* ServerFeeder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServerFeeder.cpp; sourceTree = "<group>"; };
+		32A886C5189C37EA00321D61 /* ServerFeeder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerFeeder.h; sourceTree = "<group>"; };
 		32A8F7CF172BE3FD0090DB78 /* KeyGroupCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyGroupCache.cpp; sourceTree = "<group>"; };
 		32A8F7D0172BE3FD0090DB78 /* KeyGroupCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyGroupCache.h; sourceTree = "<group>"; };
 		32AAD78714CD660B005A097C /* RpcClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcClient.h; sourceTree = "<group>"; };
@@ -653,6 +680,12 @@
 		32B1090D188C1D6200969D3D /* TestAsyncRpc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestAsyncRpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		32B1090F188C1D6200969D3D /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		32B10911188C1D6200969D3D /* TestAsyncRpc.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = TestAsyncRpc.1; sourceTree = "<group>"; };
+		32B13783189BC37200B17CA4 /* DirectIOHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOHandler.cpp; sourceTree = "<group>"; };
+		32B13785189BC38300B17CA4 /* DirectIOForwarder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOForwarder.cpp; sourceTree = "<group>"; };
+		32B13788189BEC3300B17CA4 /* ZMQDirectIOClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQDirectIOClient.cpp; sourceTree = "<group>"; };
+		32B13789189BEC3300B17CA4 /* ZMQDirectIOClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQDirectIOClient.h; sourceTree = "<group>"; };
+		32B1378C189BEC4100B17CA4 /* ZMQDirectIOServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQDirectIOServer.cpp; sourceTree = "<group>"; };
+		32B1378D189BEC4100B17CA4 /* ZMQDirectIOServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQDirectIOServer.h; sourceTree = "<group>"; };
 		32B5714B168DF4750002A198 /* atomic_int.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atomic_int.h; sourceTree = "<group>"; };
 		32B5714C168DF4750002A198 /* bson_extract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bson_extract.cpp; sourceTree = "<group>"; };
 		32B5714D168DF4750002A198 /* bson_extract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bson_extract.h; sourceTree = "<group>"; };
@@ -769,8 +802,8 @@
 		32D421B217271572008A326E /* BsonFragment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BsonFragment.h; sourceTree = "<group>"; };
 		32D5CB31179D233E00A8427E /* chaos_types.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chaos_types.h; sourceTree = "<group>"; };
 		32D68ACF14D5D5A7009F290A /* SetupStateManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetupStateManager.h; sourceTree = "<group>"; };
-		32D6C8971815293200E9689B /* DirectIOServerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOServerHandler.h; sourceTree = "<group>"; };
-		32D6C8991815294700E9689B /* DirectIODataForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIODataForwarder.h; sourceTree = "<group>"; };
+		32D6C8971815293200E9689B /* DirectIOHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOHandler.h; sourceTree = "<group>"; };
+		32D6C8991815294700E9689B /* DirectIOForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOForwarder.h; sourceTree = "<group>"; };
 		32DA666F1700DBB6004FC02B /* endian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
 		32DB1187166267FB0036D1B9 /* DSDoubleHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSDoubleHandler.h; sourceTree = "<group>"; };
 		32DD884D15E2663B000AF740 /* DefaultEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultEventDispatcher.h; sourceTree = "<group>"; };
@@ -961,6 +994,17 @@
 				3244C0C5168CB96B007C802C /* Record.h */,
 			);
 			path = entity;
+			sourceTree = "<group>";
+		};
+		3253F2FB189AEECA00959CA7 /* channel */ = {
+			isa = PBXGroup;
+			children = (
+				3253F2FC189AEEFD00959CA7 /* DirectIOVirtualClientChannel.cpp */,
+				3253F2FD189AEEFD00959CA7 /* DirectIOVirtualClientChannel.h */,
+				3253F300189AEF8000959CA7 /* DirectIOVirtualServerChannel.cpp */,
+				3253F301189AEF8000959CA7 /* DirectIOVirtualServerChannel.h */,
+			);
+			path = channel;
 			sourceTree = "<group>";
 		};
 		325DE9EE15EC001900D6F34E /* channel */ = {
@@ -1497,13 +1541,22 @@
 		3285569D17F2E20500A64ED2 /* direct_io */ = {
 			isa = PBXGroup;
 			children = (
+				32B13787189BEBDD00B17CA4 /* impl */,
+				3253F2FB189AEECA00959CA7 /* channel */,
 				3285569E17F2E33A00A64ED2 /* DirectIOClient.cpp */,
 				3285569F17F2E33A00A64ED2 /* DirectIOClient.h */,
 				328556A217F2E36000A64ED2 /* DirectIOServer.cpp */,
 				328556A317F2E36000A64ED2 /* DirectIOServer.h */,
+				3204EFBC189E4825000993A0 /* DirectIOServerDataPack.cpp */,
+				3204EFBD189E4825000993A0 /* DirectIOServerDataPack.h */,
 				328556A617F3039700A64ED2 /* DirectIOTypes.h */,
-				32D6C8971815293200E9689B /* DirectIOServerHandler.h */,
-				32D6C8991815294700E9689B /* DirectIODataForwarder.h */,
+				32B13783189BC37200B17CA4 /* DirectIOHandler.cpp */,
+				32D6C8971815293200E9689B /* DirectIOHandler.h */,
+				32B13785189BC38300B17CA4 /* DirectIOForwarder.cpp */,
+				32D6C8991815294700E9689B /* DirectIOForwarder.h */,
+				3253F304189AF0D500959CA7 /* DirectIODataPack.h */,
+				32A886C4189C37EA00321D61 /* ServerFeeder.cpp */,
+				32A886C5189C37EA00321D61 /* ServerFeeder.h */,
 			);
 			path = direct_io;
 			sourceTree = "<group>";
@@ -1613,6 +1666,19 @@
 				32B10911188C1D6200969D3D /* TestAsyncRpc.1 */,
 			);
 			path = TestAsyncRpc;
+			sourceTree = "<group>";
+		};
+		32B13787189BEBDD00B17CA4 /* impl */ = {
+			isa = PBXGroup;
+			children = (
+				32B13788189BEC3300B17CA4 /* ZMQDirectIOClient.cpp */,
+				32B13789189BEC3300B17CA4 /* ZMQDirectIOClient.h */,
+				32B1378C189BEC4100B17CA4 /* ZMQDirectIOServer.cpp */,
+				32B1378D189BEC4100B17CA4 /* ZMQDirectIOServer.h */,
+				3204EFC0189E51A6000993A0 /* ZMQDirectIOServerDataPack.cpp */,
+				3204EFC1189E51A6000993A0 /* ZMQDirectIOServerDataPack.h */,
+			);
+			path = impl;
 			sourceTree = "<group>";
 		};
 		32B5714A168DF4750002A198 /* util */ = {
@@ -1817,7 +1883,7 @@
 				326DB45D14B38BC00018A8D0 /* CDataWrapper.h in Headers */,
 				326DB45F14B38BC00018A8D0 /* CUSchemaDB.h in Headers */,
 				32D5CB32179D233E00A8427E /* chaos_types.h in Headers */,
-				32D6C8981815293200E9689B /* DirectIOServerHandler.h in Headers */,
+				32D6C8981815293200E9689B /* DirectIOHandler.h in Headers */,
 				32460521179C55FC00B075DA /* sqlite3.h in Headers */,
 				326DB46614B38BC00018A8D0 /* ChaosDispatcher.h in Headers */,
 				326DB46814B38BC00018A8D0 /* AbstractCommandDispatcher.h in Headers */,
@@ -1861,6 +1927,7 @@
 				32BFF90F176C842E00D27A04 /* InizializableService.h in Headers */,
 				3296032B1876B45000CDCADA /* BatchCommandTypes.h in Headers */,
 				326EA57814D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h in Headers */,
+				3253F303189AEF8000959CA7 /* DirectIOVirtualServerChannel.h in Headers */,
 				329603271876B45000CDCADA /* BatchCommandExecutor.h in Headers */,
 				32D68AD014D5D5A7009F290A /* SetupStateManager.h in Headers */,
 				32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */,
@@ -1870,6 +1937,7 @@
 				32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */,
 				32BFF913176C862A00D27A04 /* StartableService.h in Headers */,
 				32B8C1A018292E51001CF714 /* DriverErogatorInterface.h in Headers */,
+				32A886C7189C37EA00321D61 /* ServerFeeder.h in Headers */,
 				320192BA14DEEAC000318F00 /* CObjectHandlerProcessingQueue.h in Headers */,
 				3230BEC3181A6ADB00EA5793 /* DatasetDB.h in Headers */,
 				32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */,
@@ -1883,8 +1951,10 @@
 				32DF603C15E14D5F00312C94 /* AlertEventDescriptor.h in Headers */,
 				32DF604015E14F5A00312C94 /* InstrumentEventDescriptor.h in Headers */,
 				32DF604415E1502700312C94 /* CommandEventDescriptor.h in Headers */,
+				32B1378F189BEC4100B17CA4 /* ZMQDirectIOServer.h in Headers */,
 				32DF604815E1505F00312C94 /* CustomEventDescriptor.h in Headers */,
 				32DD884F15E2663B000AF740 /* DefaultEventDispatcher.h in Headers */,
+				3204EFBF189E4825000993A0 /* DirectIOServerDataPack.h in Headers */,
 				32DD885415E2681F000AF740 /* EventHandler.h in Headers */,
 				32DD886615E2C313000AF740 /* endianess.h in Headers */,
 				32CFF95C15E4D950005D607E /* EventDescriptor.h in Headers */,
@@ -1894,15 +1964,17 @@
 				328556A117F2E33A00A64ED2 /* DirectIOClient.h in Headers */,
 				325013D815E980C800DCB13E /* AsioImplEventClient.h in Headers */,
 				325013DD15E9843D00DCB13E /* AsioEventForwarder.h in Headers */,
+				3204EFC3189E51A6000993A0 /* ZMQDirectIOServerDataPack.h in Headers */,
 				3255E72815EA87D2005C96CA /* AbstractEventDispatcher.h in Headers */,
 				325DE9F215EC031E00D6F34E /* EventChannel.h in Headers */,
 				325DE9F615EC03F800D6F34E /* EventAction.h in Headers */,
 				3244D11E15ECC25800FE2F86 /* AlertEventChannel.h in Headers */,
 				325CA6BC15EE10B3007FCC12 /* EventAction.h in Headers */,
 				3253E09515F27A180079B40E /* EventTypeScheduler.h in Headers */,
+				3253F2FF189AEEFD00959CA7 /* DirectIOVirtualClientChannel.h in Headers */,
 				32B89C9E15F39DB500B17AAA /* ActionExecutionSafetySystem.h in Headers */,
 				32B89CA215F3D1E100B17AAA /* InstrumentEventChannel.h in Headers */,
-				32D6C89A1815294700E9689B /* DirectIODataForwarder.h in Headers */,
+				32D6C89A1815294700E9689B /* DirectIOForwarder.h in Headers */,
 				3268CE2E1616086800FCDB10 /* MsgPackClient.h in Headers */,
 				3268CE301616086800FCDB10 /* MsgPackServer.h in Headers */,
 				3268CE36161608D100FCDB10 /* ZMQClient.h in Headers */,
@@ -2000,6 +2072,7 @@
 				32640A3A169DCC5800450962 /* MillisTime.h in Headers */,
 				32640A3B169DCC5800450962 /* IteratorBase.h in Headers */,
 				32640A3C169DCC5800450962 /* IteratorGarbage.h in Headers */,
+				32B1378B189BEC3300B17CA4 /* ZMQDirectIOClient.h in Headers */,
 				32640A3D169DCC5800450962 /* IteratorReader.h in Headers */,
 				32C3545D17885A37009ED581 /* library_impl.hpp in Headers */,
 				32640A3E169DCC5800450962 /* MemoryAllocator.h in Headers */,
@@ -2263,6 +2336,7 @@
 				32AAD78C14CD773F005A097C /* MessageChannel.cpp in Sources */,
 				32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */,
 				3297F22614D96F31004FFE4F /* DeviceMessageChannel.cpp in Sources */,
+				32B13786189BC38300B17CA4 /* DirectIOForwarder.cpp in Sources */,
 				320C218C151B556E00BD0F41 /* EventServer.cpp in Sources */,
 				32F466DE155EDBDE00AD3D81 /* IODataDriver.cpp in Sources */,
 				32BE864715A0CEAF00818C39 /* LogManager.cpp in Sources */,
@@ -2271,11 +2345,14 @@
 				327967B815DFAAF40003C6DA /* RpcServer.cpp in Sources */,
 				327967D515E029C70003C6DA /* AsioImplEventServer.cpp in Sources */,
 				327967D915E030C40003C6DA /* AsioEventHandler.cpp in Sources */,
+				3204EFBE189E4825000993A0 /* DirectIOServerDataPack.cpp in Sources */,
 				32DF603715E14C7700312C94 /* NamedService.cpp in Sources */,
 				32DF603B15E14D5F00312C94 /* AlertEventDescriptor.cpp in Sources */,
 				32DF603F15E14F5A00312C94 /* InstrumentEventDescriptor.cpp in Sources */,
+				3253F302189AEF8000959CA7 /* DirectIOVirtualServerChannel.cpp in Sources */,
 				32DF604315E1502700312C94 /* CommandEventDescriptor.cpp in Sources */,
 				328556A017F2E33A00A64ED2 /* DirectIOClient.cpp in Sources */,
+				3204EFC2189E51A6000993A0 /* ZMQDirectIOServerDataPack.cpp in Sources */,
 				32DF604715E1505F00312C94 /* CustomEventDescriptor.cpp in Sources */,
 				32DD885315E2681F000AF740 /* EventHandler.cpp in Sources */,
 				32CFF95B15E4D950005D607E /* EventDescriptor.cpp in Sources */,
@@ -2284,18 +2361,21 @@
 				325013BC15E9258C00DCB13E /* EventClient.cpp in Sources */,
 				32C353F21788015B009ED581 /* PluginDiscover.cpp in Sources */,
 				325013D715E980C800DCB13E /* AsioImplEventClient.cpp in Sources */,
+				3253F2FE189AEEFD00959CA7 /* DirectIOVirtualClientChannel.cpp in Sources */,
 				325013DC15E9843D00DCB13E /* AsioEventForwarder.cpp in Sources */,
 				3255E72415EA86F2005C96CA /* DefaultEventDispatcher.cpp in Sources */,
 				3255E72715EA87D2005C96CA /* AbstractEventDispatcher.cpp in Sources */,
 				328556A417F2E36000A64ED2 /* DirectIOServer.cpp in Sources */,
 				325DE9F115EC031E00D6F34E /* EventChannel.cpp in Sources */,
 				328E36EB1786B89500C1564D /* PluginLoader.cpp in Sources */,
+				32A886C6189C37EA00321D61 /* ServerFeeder.cpp in Sources */,
 				3244D11D15ECC25800FE2F86 /* AlertEventChannel.cpp in Sources */,
 				325CA6BB15EE10B3007FCC12 /* EventAction.cpp in Sources */,
 				3253E09815F28A270079B40E /* EventTypeScheduler.cpp in Sources */,
 				32B89C9D15F39DB500B17AAA /* ActionExecutionSafetySystem.cpp in Sources */,
 				32B89CA115F3D1E100B17AAA /* InstrumentEventChannel.cpp in Sources */,
 				3268CE2D1616086800FCDB10 /* MsgPackClient.cpp in Sources */,
+				32B13784189BC37200B17CA4 /* DirectIOHandler.cpp in Sources */,
 				3268CE2F1616086800FCDB10 /* MsgPackServer.cpp in Sources */,
 				3268CE35161608D100FCDB10 /* ZMQClient.cpp in Sources */,
 				3268CE37161608D100FCDB10 /* ZMQServer.cpp in Sources */,
@@ -2305,6 +2385,7 @@
 				32C0CC98168CC16400BC2DA7 /* Entity.cpp in Sources */,
 				32B57173168DF4750002A198 /* bson_extract.cpp in Sources */,
 				32B571A8168DFA530002A198 /* random.cpp in Sources */,
+				32B1378E189BEC4100B17CA4 /* ZMQDirectIOServer.cpp in Sources */,
 				32B571B2168DFBAD0002A198 /* error_codes.cpp in Sources */,
 				32B571B6168DFBF10002A198 /* assert_util.cpp in Sources */,
 				32BFF912176C862A00D27A04 /* StartableService.cpp in Sources */,
@@ -2322,6 +2403,7 @@
 				3230BEC2181A6ADB00EA5793 /* DatasetDB.cpp in Sources */,
 				32B57231168E4E010002A198 /* jsobj.cpp in Sources */,
 				32B57238168E50980002A198 /* md5.cpp in Sources */,
+				32B1378A189BEC3300B17CA4 /* ZMQDirectIOClient.cpp in Sources */,
 				32FA968317C894830000BE9E /* Semaphore.cpp in Sources */,
 				329603221876B45000CDCADA /* BatchCommand.cpp in Sources */,
 				32BFF90E176C842E00D27A04 /* InizializableService.cpp in Sources */,
@@ -2628,6 +2710,7 @@
 					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
+					"-lzmq",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -2674,6 +2757,7 @@
 					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
+					"-lzmq",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -2940,6 +3024,7 @@
 					"-lchaos_common",
 					"-lchaos_uitoolkit",
 					"-lboost_log_setup",
+					"-lzmq",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -2999,6 +3084,7 @@
 					"-lchaos_common",
 					"-lchaos_uitoolkit",
 					"-lboost_log_setup",
+					"-lzmq",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
