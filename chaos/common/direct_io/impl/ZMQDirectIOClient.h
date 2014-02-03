@@ -19,10 +19,14 @@ namespace chaos {
 		namespace direct_io {
             namespace impl {
                 REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(ZMQDirectIOClient, DirectIOClient) {
-                    void *zmq_context;
-                    
+                    int32_t priority_port;
+					
+					int32_t service_port;
+
                     boost::shared_mutex mutex_socket_manipolation;
-                    
+					
+					void *zmq_context;
+					
                     void *priority_socket;
                     
                     void *service_socket;

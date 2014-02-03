@@ -34,9 +34,6 @@ namespace chaos {
 			is specified how connection two node together.
 		 */
 		namespace direct_io {
-			
-            #define PRIORITY_PORT   1672
-            #define SERVICE_PORT    30175
             
 			//! Structure to identify the target server of the client connection
 			typedef struct DirectIOConnection {

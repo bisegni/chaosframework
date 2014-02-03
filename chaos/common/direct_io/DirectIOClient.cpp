@@ -23,7 +23,6 @@
 #include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/direct_io/channel/DirectIOVirtualClientChannel.h>
 
-#include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
 using namespace chaos::common::direct_io;
@@ -130,10 +129,7 @@ void DirectIOClient::updateConfiguration(void *init_data) throw(chaos::CExceptio
         for ( int idx = 0; idx < data_proxy_server_address->size(); idx++ ){
             vector<string> server_tokens;
             string server_desc = data_proxy_server_address->getStringElementAtIndex(idx);
-            if(chaos::InetUtility::checkWellFormedHostPort(server_desc)){
-                server_managment.addServer(server_desc);
-                DIOLAPP_ << "The server '" << server_desc << "' has been added to the list";
-            }else{
+            if(!server_managment.addServer(server_desc)) {
                 DIOLAPP_ << "Wrong Server Description '" << server_desc << "'";
             }
         }

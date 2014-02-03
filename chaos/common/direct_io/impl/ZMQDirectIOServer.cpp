@@ -34,13 +34,21 @@ ZMQDirectIOServer::~ZMQDirectIOServer(){
 //! Initialize instance
 void ZMQDirectIOServer::init(void *init_data) throw(chaos::CException) {
     DirectIOServer::init(init_data);
-    
-    //chaos_data::CDataWrapper *init_cw = static_cast<chaos_data::CDataWrapper*>(init_data);
-    
-    priority_socket_bind_str = boost::str( boost::format("tcp://*:%1%") % PRIORITY_PORT);
+    chaos_data::CDataWrapper *init_cw = static_cast<chaos_data::CDataWrapper*>(init_data);
+    if(!init_cw) throw chaos::CException(0, "No configration has been provided", __FUNCTION__);
+	
+	//get the port from configuration
+	int32_t priority_port = init_cw->getInt32Value(DirectIOConfigurationKey::DIRECT_IO_PRIORITY_PORT);
+	if(priority_port <= 0) throw chaos::CException(0, "Bad priority port configured", __FUNCTION__);
+
+	int32_t service_port = init_cw->getInt32Value(DirectIOConfigurationKey::DIRECT_IO_SERVICE_PORT);
+	if(service_port <= 0) throw chaos::CException(0, "Bad service port configured", __FUNCTION__);
+	
+	//create the endpoint strings
+    priority_socket_bind_str = boost::str( boost::format("tcp://*:%1%") % priority_port);
     ZMQDIO_SRV_LAPP_ << "priority socket bind url: " << priority_socket_bind_str;
     
-    service_socket_bind_str = boost::str( boost::format("tcp://*:%1%") % SERVICE_PORT);
+    service_socket_bind_str = boost::str( boost::format("tcp://*:%1%") % service_port);
     ZMQDIO_SRV_LAPP_ << "service socket bind url: " << service_socket_bind_str;
     
     //create the ZMQContext

@@ -40,23 +40,24 @@ namespace chaos {
                 std::vector<uint32_t>              vec_disable_hash_sequence;
                 
                 //! server hashes and address map
-                std::map<uint32_t, std::string>    map_server_address;
+                std::map<uint32_t, std::vector<std::string> >    map_server_address;
                 
                 inline void removeHashFromVector(std::vector<uint32_t>& hash_vec, uint32_t server_hash);
                 inline void addHashToVector(std::vector<uint32_t>& hash_vec, uint32_t server_hash);
+				inline void decoupleServerDescription(std::string server_desc,  std::vector<std::string>& servers_desc);
             public:
                 ServerFeeder();
                 ~ServerFeeder();
-                void addServer(std::string server_ip_port);
-                void removeServer(std::string server_ip_port);
+                bool addServer(std::string server_desc);
+                void removeServer(uint32_t server_hash);
                 void putOfflineServer(uint32_t server_hash);
                 void putOnlineServer(uint32_t server_hash);
                 void clear();
-                void getNextOnline(uint32_t& server_hash, std::string& server_ip_port);
-                inline void getCurrentOnline(uint32_t& server_hash, std::string& server_ip_port);
-                void getNextOffline(uint32_t& server_hash, std::string& server_ip_port);
-                inline void getCurrentOffline(uint32_t& server_hash, std::string& server_ip_port);
-                void getAllOnlineServer(std::vector<std::string>& server_list);
+                void getNextOnline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
+                inline void getCurrentOnline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
+                void getNextOffline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
+                inline void getCurrentOffline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
+                void getAllOnlineServer(std::vector< std::vector<std::string> >& server_list);
                 
             };
             

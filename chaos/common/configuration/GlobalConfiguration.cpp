@@ -25,6 +25,10 @@
 using namespace chaos;
 namespace po = boost::program_options;
 
+#define _RPC_PORT					8888
+#define _DIRECT_IO_PRIORITY_PORT		1672
+#define _DIRECT_IO_SERVICE_PORT		30175
+
 /*
  
  */
@@ -33,8 +37,13 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
     try{
         addOption(InitOption::OPT_HELP, "Produce help message");
         
+		addOption(InitOption::OPT_DIRECT_IO_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the direct io implementation");
+		addOption(InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, po::value<int>()->default_value(_DIRECT_IO_PRIORITY_PORT), "DirectIO priority server port");
+		addOption(InitOption::OPT_DIRECT_IO_SERVICE_SERVER_PORT, po::value<int>()->default_value(_DIRECT_IO_SERVICE_PORT), "DirectIO service server port");
+        addOption(InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER, po::value<int>()->default_value(2),"DirectIO server thread number");
+		
         addOption(InitOption::OPT_RPC_IMPLEMENTATION, po::value< string >()->default_value("MsgPack"), "Specify the rpc implementation");
-        addOption(InitOption::OPT_RPC_SERVER_PORT, po::value<int>()->default_value(8888), "RPC server port");
+		addOption(InitOption::OPT_RPC_SERVER_PORT, po::value<int>()->default_value(_RPC_PORT), "RPC server port");
         addOption(InitOption::OPT_RPC_SERVER_THREAD_NUMBER, po::value<int>()->default_value(2),"RPC server thread number");
         addOption(InitOption::OPT_LIVE_DATA_SERVER_ADDRESS, po::value< vector<string> >()->multitoken(), "Live server:port address");
         addOption(InitOption::OPT_METADATASERVER_ADDRESS, po::value< string >()->default_value("localhost:5000"), "Metadataserver server:port address");
@@ -130,17 +139,32 @@ void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& o
     
     //configure rpc
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, rpcServerPort, InitOption::OPT_RPC_SERVER_PORT, 8888)
-    int freeFoundPort = InetUtility::scanForLocalFreePort(rpcServerPort);
+    int32_t freeFoundPort = InetUtility::scanForLocalFreePort(rpcServerPort);
     addLocalServerBasePort(freeFoundPort);
     configuration.addInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT, freeFoundPort);
     
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, rpcServerThreadNumber, InitOption::OPT_RPC_SERVER_THREAD_NUMBER, 2)
     configuration.addInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER, rpcServerThreadNumber);
     
-    //configure the unique rpc plugin
     CHECK_AND_DEFINE_OPTION(string, rpcImpl, InitOption::OPT_RPC_IMPLEMENTATION)
     configuration.addStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE, rpcImpl);
-    //configure the unique rpc plugin
+	
+	//direct io
+	CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint32_t, direct_io_server_thread_number, InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER, 2)
+	configuration.addInt32Value(DirectIOConfigurationKey::DIRECT_IO_SERVER_THREAD_NUMBER, direct_io_server_thread_number);
+	
+	CHECK_AND_DEFINE_OPTION(string, direct_io_server_impl, InitOption::OPT_DIRECT_IO_IMPLEMENTATION)
+	configuration.addStringValue(DirectIOConfigurationKey::DIRECT_IO_IMPL_TYPE, direct_io_server_impl);
+	
+	CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint32_t, direct_io_priority_port, InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, _DIRECT_IO_PRIORITY_PORT)
+    freeFoundPort = InetUtility::scanForLocalFreePort(direct_io_priority_port);
+    configuration.addInt32Value(DirectIOConfigurationKey::DIRECT_IO_PRIORITY_PORT, (uint32_t)freeFoundPort);
+    
+	CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint32_t, direct_io_service_port, InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, _DIRECT_IO_SERVICE_PORT)
+    freeFoundPort = InetUtility::scanForLocalFreePort(direct_io_service_port);
+    configuration.addInt32Value(DirectIOConfigurationKey::DIRECT_IO_SERVICE_PORT, (uint32_t)freeFoundPort);
+	
+    //cevent
     configuration.addStringValue(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION, "AsioImpl");
     
     //configure the live data

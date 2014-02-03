@@ -40,6 +40,14 @@ namespace chaos {
         static const char * const   OPT_RPC_SERVER_PORT                 = "rpc-server-port";
         //!  Specify the number of the thread that the rpc ssytem must use to process the request
         static const char * const   OPT_RPC_SERVER_THREAD_NUMBER        = "rpc-server-thread-number";
+		//!   Specify the network port where the direct io subsystem publish i's priority channel
+        static const char * const   OPT_DIRECT_IO_PRIORITY_SERVER_PORT  = "direct_io-priority-server-port";
+		//!   Specify the network port where the direct io subsystem publish i's priority channel
+        static const char * const   OPT_DIRECT_IO_SERVICE_SERVER_PORT   = "direct_io-service-server-port";
+        //!  Specify the number of the thread that the direct io subsystem must use to process the request
+        static const char * const   OPT_DIRECT_IO_SERVER_THREAD_NUMBER  = "direct_io-server-thread-number";
+		//!   Specify the implementation to use for the direct io subsystem
+        static const char * const   OPT_DIRECT_IO_IMPLEMENTATION		= "direct_io-impl";
         //!  Specify the live data servers address with the type host:port it is a multitoken parameter
         static const char * const   OPT_LIVE_DATA_SERVER_ADDRESS        = "live-data-servers";
         //!  Specify the metadata address for the metadataserver
@@ -72,6 +80,24 @@ namespace chaos {
     }
     /** @} */ // end of RpcConfigurationKey
     
+	/** @defgroup DirectIOConfigurationKey DirectIO System Configuraiton
+     *  This is the collection of the key for the parameters used to configure the DirectIO system
+     *  @{
+     */
+    //! Name space for grupping option used for rpc system configuration
+    namespace DirectIOConfigurationKey {
+        //!  specify the type of the adatpre to be used
+        static const char * const DIRECT_IO_IMPL_TYPE						= "direct_io_impl_type";
+		//!  the number of the thread to user
+        static const char * const DIRECT_IO_SERVER_THREAD_NUMBER			= "direct_io_server_tn";
+		//!  specify the port where the rpc must publish the his socket
+        static const char * const DIRECT_IO_PRIORITY_PORT					= "direct_io_priority_port";
+        //!  specify the port where the rpc must publish the his socket
+        static const char * const DIRECT_IO_SERVICE_PORT					= "direct_io_service_port";
+
+    }
+    /** @} */ // end of DirectIOConfigurationKey
+	
     /** @defgroup CUDefinitionKey Control Unit Definition
      *  This is the collection of the key for the control unit definition
      *  @{

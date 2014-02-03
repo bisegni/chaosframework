@@ -31,6 +31,12 @@ void ZMQDirectIOClientFree (void *data, void *hint) {
 }
 
 ZMQDirectIOClient::ZMQDirectIOClient(string alias):DirectIOClient(alias){
+	priority_port = 0;
+	service_port = 0;
+	
+	zmq_context = NULL;
+	priority_socket = NULL;
+	service_socket = NULL;
 };
 
 ZMQDirectIOClient::~ZMQDirectIOClient(){
@@ -42,7 +48,7 @@ void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
     ZMQDIOLAPP_ << "Allocating zmq context";
     std::string priority_identity = UUIDUtil::generateUUIDLite();
     std::string service_identity = UUIDUtil::generateUUIDLite();
-    
+	
     zmq_context = zmq_ctx_new();
     if(zmq_context == NULL) throw chaos::CException(0, "Error creating zmq context", __FUNCTION__);
     
@@ -71,9 +77,10 @@ void ZMQDirectIOClient::start() throw(chaos::CException) {
 
 void ZMQDirectIOClient::switchMode(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType direct_io_spread_mode) {
     int err = 0;
-    std::string priority_end_point;
-    std::string service_end_point;
-    
+    std::string _priority_end_point;
+	std::string _service_end_point;
+    std::string priority_endpoint;
+    std::string service_endpoint;
     //check if are already on the same spred type
     if(direct_io_spread_mode == current_spread_forwarding_type) return;
     current_spread_forwarding_type = direct_io_spread_mode;
@@ -84,24 +91,24 @@ void ZMQDirectIOClient::switchMode(DirectIOConnectionSpreadType::DirectIOConnect
     switch (current_spread_forwarding_type) {
         case DirectIOConnectionSpreadType::DirectIOFailOver: {
             ZMQDIOLDBG_ << "Switch mod to DirectIOFailOver";
-            std::vector<std::string> all_online_server;
+            std::vector< std::vector<std::string> > all_online_server;
             server_managment.getAllOnlineServer(all_online_server);
-            for (std::vector<std::string>::iterator i = all_online_server.begin();
+            for (std::vector< std::vector<std::string> >::iterator i = all_online_server.begin();
                  i != all_online_server.end();
                  i++) {
-                priority_end_point = boost::str( boost::format("tcp://%1%:%2%") % *i % PRIORITY_PORT);
-                service_end_point = boost::str( boost::format("tcp://%1%:%2%") % *i % SERVICE_PORT);
+                priority_endpoint = boost::str( boost::format("tcp://%1%") % (*i)[0]);
+                service_endpoint = boost::str( boost::format("tcp://%1%") % (*i)[1]);
                 
-                ZMQDIOLDBG_ << "connect to priority endpoint " << priority_end_point;
-                err = zmq_connect(priority_socket, priority_end_point.c_str());
+                ZMQDIOLDBG_ << "connect to priority endpoint " << priority_endpoint;
+                err = zmq_connect(priority_socket, priority_endpoint.c_str());
                 if(err) {
-                    ZMQDIOLERR_ << "Error connecting priority socket to " << priority_end_point;
+                    ZMQDIOLERR_ << "Error connecting priority socket to " << priority_endpoint;
                 }
                 
-                ZMQDIOLDBG_ << "connect to service endpoint " << service_end_point;
-                err = zmq_connect(service_socket, service_end_point.c_str());
+                ZMQDIOLDBG_ << "connect to service endpoint " << service_endpoint;
+                err = zmq_connect(service_socket, service_endpoint.c_str());
                 if(err) {
-                    ZMQDIOLERR_ << "Error connecting service socket to " << service_end_point;
+                    ZMQDIOLERR_ << "Error connecting service socket to " << service_endpoint;
                 }
             }
             break;
@@ -110,21 +117,21 @@ void ZMQDirectIOClient::switchMode(DirectIOConnectionSpreadType::DirectIOConnect
         case DirectIOConnectionSpreadType::DirectIORoundRobin: {
             ZMQDIOLDBG_ << "Switch mod to DirectIORoundRobin";
             //try connecting to first server
-            server_managment.getCurrentOnline(current_server_hash, current_server_endpoint);
+            server_managment.getCurrentOnline(current_server_hash, _priority_end_point, _service_end_point);
             //connect the socket to server
-            priority_end_point = boost::str( boost::format("tcp://%1%:%2%") % current_server_endpoint % PRIORITY_PORT);
-            service_end_point = boost::str( boost::format("tcp://%1%:%2%") % current_server_endpoint % SERVICE_PORT);
+            priority_endpoint = boost::str( boost::format("tcp://%1%") % _priority_end_point);
+            service_endpoint = boost::str( boost::format("tcp://%1%") % _service_end_point);
             
-            ZMQDIOLDBG_ << "connect to priority endpoint " << priority_end_point;
-            err = zmq_connect(priority_socket, priority_end_point.c_str());
+            ZMQDIOLDBG_ << "connect to priority endpoint " << priority_endpoint;
+            err = zmq_connect(priority_socket, priority_endpoint.c_str());
             if(err) {
-                ZMQDIOLERR_ << "Error connecting priority socket to " << priority_end_point;
+                ZMQDIOLERR_ << "Error connecting priority socket to " << priority_endpoint;
             }
             
-            ZMQDIOLDBG_ << "connect to service endpoint " << service_end_point;
-            err = zmq_connect(service_socket, service_end_point.c_str());
+            ZMQDIOLDBG_ << "connect to service endpoint " << service_endpoint;
+            err = zmq_connect(service_socket, service_endpoint.c_str());
             if(err) {
-                ZMQDIOLERR_ << "Error connecting service socket to " << service_end_point;
+                ZMQDIOLERR_ << "Error connecting service socket to " << service_endpoint;
             }
             break;
         }
