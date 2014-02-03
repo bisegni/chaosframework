@@ -12,14 +12,14 @@ SET(common_lib_src  ${common_lib_src}	data/CDataWrapper.cpp data/CUSchemaDB.cpp 
 SET(common_lib_src  ${common_lib_src}	memory/ManagedMemory.cpp)
 SET(common_lib_src  ${common_lib_src}	dispatcher/DefaultEventDispatcher.cpp dispatcher/EventTypeScheduler.cpp dispatcher/AbstractEventDispatcher.cpp
 										dispatcher/AbstractCommandDispatcher.cpp dispatcher/DefaultCommandDispatcher.cpp dispatcher/DomainActionsScheduler.cpp)
-SET(common_lib_src  ${common_lib_src}	event/EventClient.cpp event/AsioImplEventClient event/AsioEventForwarder.cpp e
-										vent/EventServer.cpp event/AsioImplEventServer.cpp event/AsioEventHandler.cpp 
+SET(common_lib_src  ${common_lib_src}	event/EventClient.cpp event/AsioImplEventClient event/AsioEventForwarder.cpp
+										event/EventServer.cpp event/AsioImplEventServer.cpp event/AsioEventHandler.cpp
 										event/evt_desc/EventDescriptor.cpp event/evt_desc/AlertEventDescriptor.cpp 
 										event/evt_desc/InstrumentEventDescriptor.cpp event/evt_desc/CommandEventDescriptor.cpp 
 										event/evt_desc/CustomEventDescriptor.cpp event/channel/EventChannel.cpp 
 										event/channel/AlertEventChannel.cpp event/channel/InstrumentEventChannel.cpp)
 SET(common_lib_src  ${common_lib_src}	direct_io/DirectIOClient.cpp direct_io/DirectIOServer.cpp direct_io/DirectIOServerDataPack.cpp 
-										direct_io/DirectIOHandler.cpp direct_io/DirectIOForwarder.cpp direct_io/DirectIOServerFeeder.cpp 
+										direct_io/DirectIOHandler.cpp direct_io/DirectIOForwarder.cpp direct_io/ServerFeeder.cpp 
 										direct_io/channel/DirectIOVirtualClientChannel.cpp direct_io/channel/DirectIOVirtualServerChannel.cpp 
 										direct_io/impl/ZMQDirectIOClient.cpp direct_io/impl/ZMQDirectIOServer.cpp direct_io/impl/ZMQDirectIOServerDataPack.cpp)
 SET(common_lib_src  ${common_lib_src}	io/IODataDriver.cpp io/IOMemcachedDriver.cpp io/OutputMongoDataDriver.cpp)
@@ -28,7 +28,8 @@ SET(common_lib_src  ${common_lib_src}	network/NetworkBroker.cpp)
 SET(common_lib_src  ${common_lib_src}	rpc/RpcClient.cpp rpc/RpcServer.cpp rpc/msgpack/MsgPackClient.cpp rpc/msgpack/MsgPackServer.cpp)
 SET(common_lib_src  ${common_lib_src}	thread/CThread.cpp thread/CThreadGroup.cpp)
 SET(common_lib_src  ${common_lib_src}	utility/NamedService.cpp utility/StartableService.cpp utility/InizializableService.cpp)
-SET(common_lib_src  ${common_lib_src}	batch_command/AttributeSetting.cpp batch_command/BatchCommandExecutor.cpp batch_command/BatchCommandSandbox.cpp batch_command/BatchCommand.cpp)
+SET(common_lib_src  ${common_lib_src}	batch_command/AttributeSetting.cpp batch_command/BatchCommandExecutor.cpp batch_command/BatchCommandSandbox.cpp 
+                                        batch_command/BatchCommand.cpp)
 
 
 SET(common_lib_library boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached msgpack msgpack-rpc mpio)
