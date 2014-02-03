@@ -19,7 +19,7 @@ SET(common_lib_src  ${common_lib_src}	event/EventClient.cpp event/AsioImplEventC
 										event/evt_desc/CustomEventDescriptor.cpp event/channel/EventChannel.cpp 
 										event/channel/AlertEventChannel.cpp event/channel/InstrumentEventChannel.cpp)
 SET(common_lib_src  ${common_lib_src}	direct_io/DirectIOClient.cpp direct_io/DirectIOServer.cpp direct_io/DirectIOServerDataPack.cpp 
-										direct_io/DirectIOHandler.cpp direct_io/DirectIOForwarder.cpp direct_io/ServerFeeder.cpp 
+										direct_io/DirectIOHandler.cpp direct_io/DirectIOForwarder.cpp direct_io/ServerFeeder.cpp
 										direct_io/channel/DirectIOVirtualClientChannel.cpp direct_io/channel/DirectIOVirtualServerChannel.cpp 
 										direct_io/impl/ZMQDirectIOClient.cpp direct_io/impl/ZMQDirectIOServer.cpp direct_io/impl/ZMQDirectIOServerDataPack.cpp)
 SET(common_lib_src  ${common_lib_src}	io/IODataDriver.cpp io/IOMemcachedDriver.cpp io/OutputMongoDataDriver.cpp)
@@ -32,7 +32,7 @@ SET(common_lib_src  ${common_lib_src}	batch_command/AttributeSetting.cpp batch_c
                                         batch_command/BatchCommand.cpp)
 
 
-SET(common_lib_library boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached msgpack msgpack-rpc mpio)
+SET(common_lib_library boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached msgpack msgpack-rpc mpio zmq)
 
 
 ADD_LIBRARY(chaos_common SHARED ${common_lib_src})
