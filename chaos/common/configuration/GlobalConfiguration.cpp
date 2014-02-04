@@ -26,7 +26,7 @@ using namespace chaos;
 namespace po = boost::program_options;
 
 #define _RPC_PORT					8888
-#define _DIRECT_IO_PRIORITY_PORT		1672
+#define _DIRECT_IO_PRIORITY_PORT	1672
 #define _DIRECT_IO_SERVICE_PORT		30175
 
 /*
@@ -150,19 +150,19 @@ void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& o
     configuration.addStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE, rpcImpl);
 	
 	//direct io
-	CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint32_t, direct_io_server_thread_number, InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER, 2)
-	configuration.addInt32Value(DirectIOConfigurationKey::DIRECT_IO_SERVER_THREAD_NUMBER, direct_io_server_thread_number);
+	CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, direct_io_server_thread_number, InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER, 2)
+	configuration.addInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_SERVER_THREAD_NUMBER, direct_io_server_thread_number);
 	
 	CHECK_AND_DEFINE_OPTION(string, direct_io_server_impl, InitOption::OPT_DIRECT_IO_IMPLEMENTATION)
-	configuration.addStringValue(DirectIOConfigurationKey::DIRECT_IO_IMPL_TYPE, direct_io_server_impl);
+	configuration.addStringValue(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_IMPL_TYPE, direct_io_server_impl);
 	
-	CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint32_t, direct_io_priority_port, InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, _DIRECT_IO_PRIORITY_PORT)
+	CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, direct_io_priority_port, InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, _DIRECT_IO_PRIORITY_PORT)
     freeFoundPort = InetUtility::scanForLocalFreePort(direct_io_priority_port);
-    configuration.addInt32Value(DirectIOConfigurationKey::DIRECT_IO_PRIORITY_PORT, (uint32_t)freeFoundPort);
+    configuration.addInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_PRIORITY_PORT, (uint32_t)freeFoundPort);
     
-	CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(uint32_t, direct_io_service_port, InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, _DIRECT_IO_SERVICE_PORT)
+	CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, direct_io_service_port, InitOption::OPT_DIRECT_IO_SERVICE_SERVER_PORT, _DIRECT_IO_SERVICE_PORT)
     freeFoundPort = InetUtility::scanForLocalFreePort(direct_io_service_port);
-    configuration.addInt32Value(DirectIOConfigurationKey::DIRECT_IO_SERVICE_PORT, (uint32_t)freeFoundPort);
+    configuration.addInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_SERVICE_PORT, (uint32_t)freeFoundPort);
 	
     //cevent
     configuration.addStringValue(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION, "AsioImpl");

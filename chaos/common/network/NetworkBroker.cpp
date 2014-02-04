@@ -65,13 +65,13 @@ NetworkBroker::~NetworkBroker() {
  * for the rpc client and server and for the dispatcher. All these are here initialized
  */
 void NetworkBroker::init(void *initData) throw(CException) {
-        //check if initialized
+	//check if initialized
     SetupStateManager::levelUpFrom(INIT_STEP, "NetworkBroker already initialized");
     
     
     
     MB_LAPP << "Init pahse";
-        //get global configuration reference
+	//get global configuration reference
     CDataWrapper *globalConfiguration = GlobalConfiguration::getInstance()->getConfiguration();
     
     
@@ -79,7 +79,23 @@ void NetworkBroker::init(void *initData) throw(CException) {
         throw CException(1, "No global configuraiton found", "NetworkBroker::init");
     }
     
-        //---------------------------- E V E N T ----------------------------
+	//---------------------------- D I R E C T I/O ----------------------------
+	if(globalConfiguration->hasKey(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_IMPL_TYPE)) {
+        string direct_io_impl = globalConfiguration->getStringValue(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_IMPL_TYPE);
+		//construct the rpc server and client name
+        string directIOServerImpl = direct_io_impl+"DirectIOServer";
+        directIOClientImpl = direct_io_impl+"DirectIOCLient";
+        MB_LAPP  << "DirectIO Client implementation is configured has : " << directIOClientImpl;
+        MB_LAPP  << "Trying to initilize DirectIO Server: " << directIOServerImpl;
+        directIOServer = ObjectFactoryRegister<common::direct_io::DirectIOServer>::getInstance()->getNewInstanceByName(directIOServerImpl.c_str());
+		if(!directIOServer) throw CException(1, "Error creating direct io server implementation", __FUNCTION__);
+		
+		//initialize direct io server
+        utility::StartableService::initImplementation(eventServer, static_cast<void*>(globalConfiguration), directIOServer->getName(), __FUNCTION__);
+    }
+	//---------------------------- D I R E C T I/O ----------------------------
+	
+	//---------------------------- E V E N T ----------------------------
     if(globalConfiguration->hasKey(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION)) {
         eventDispatcher = ObjectFactoryRegister<AbstractEventDispatcher>::getInstance()->getNewInstanceByName("DefaultEventDispatcher");
         if(!eventDispatcher)
@@ -90,14 +106,14 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         
         string eventAdapterType = globalConfiguration->getStringValue(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION);
-            //construct the rpc server and client name
+		//construct the rpc server and client name
         string eventServerName = eventAdapterType+"EventServer";
         string eventClientName = eventAdapterType+"EventClient";
         
         MB_LAPP  << "Trying to initilize Event Server: " << eventServerName;
         eventServer = ObjectFactoryRegister<EventServer>::getInstance()->getNewInstanceByName(eventServerName.c_str());
         if(utility::StartableService::initImplementation(eventServer, static_cast<void*>(globalConfiguration), eventServer->getName(), "NetworkBroker::init")){
-                //register the root handler on event server
+			//register the root handler on event server
             eventServer->setEventHanlder(eventDispatcher);
         }
         
@@ -106,11 +122,11 @@ void NetworkBroker::init(void *initData) throw(CException) {
         eventClient = ObjectFactoryRegister<EventClient>::getInstance()->getNewInstanceByName(eventClientName.c_str());
         utility::StartableService::initImplementation(eventClient, static_cast<void*>(globalConfiguration), eventClientName.c_str(), "NetworkBroker::init");
     }
-        //---------------------------- E V E N T ----------------------------
+	//---------------------------- E V E N T ----------------------------
     
-        //---------------------------- R P C ----------------------------
+	//---------------------------- R P C ----------------------------
     if(globalConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE)){
-            //get the dispatcher
+		//get the dispatcher
         MB_LAPP  << "Get DefaultCommandDispatcher implementation";
         commandDispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher");
         if(!commandDispatcher)
@@ -120,16 +136,16 @@ void NetworkBroker::init(void *initData) throw(CException) {
             throw CException(3, "Command dispatcher has not been initialized due an error", "NetworkBroker::init");
         
         
-            // get the rpc type to instantiate
+		// get the rpc type to instantiate
         string rpcRapterType = globalConfiguration->getStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE);
-            //construct the rpc server and client name
+		//construct the rpc server and client name
         string rpcServerName = rpcRapterType+"Server";
         string rpcClientName = rpcRapterType+"Client";
         
         MB_LAPP  << "Trying to initilize RPC Server: " << rpcServerName;
         rpcServer = ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(rpcServerName.c_str());
         if(utility::StartableService::initImplementation(rpcServer, static_cast<void*>(globalConfiguration), rpcServer->getName(), "NetworkBroker::init")) {
-                //set the handler on the rpc server
+			//set the handler on the rpc server
             rpcServer->setCommandDispatcher(commandDispatcher);
         }
         
@@ -137,13 +153,13 @@ void NetworkBroker::init(void *initData) throw(CException) {
         MB_LAPP  << "Trying to initilize RPC Client: " << rpcClientName;
         rpcClient = ObjectFactoryRegister<RpcClient>::getInstance()->getNewInstanceByName(rpcClientName.c_str());
         if(utility::StartableService::initImplementation(rpcClient, static_cast<void*>(globalConfiguration), rpcClient->getName(), "NetworkBroker::init")) {
-                //set the forwarder into dispatcher for answere
+			//set the forwarder into dispatcher for answere
             if(commandDispatcher) commandDispatcher->setRpcForwarder(rpcClient);
         }
     } else {
         throw CException(4, "No RPC Adapter type found in configuration", "NetworkBroker::init");
     }
-        //---------------------------- R P C ----------------------------
+	//---------------------------- R P C ----------------------------
     MB_LAPP  << "Message Broker Initialized";
 }
 
@@ -152,12 +168,12 @@ void NetworkBroker::init(void *initData) throw(CException) {
  */
 void NetworkBroker::deinit() throw(CException) {
     
-        //lock esclusive access to init phase
+	//lock esclusive access to init phase
     SetupStateManager::levelDownFrom(DEINIT_STEP, "NetworkBroker already deinitialized");
     
     MB_LAPP  << "Deinitilizing Message Broker";
     
-        //---------------------------- E V E N T ----------------------------  
+	//---------------------------- E V E N T ----------------------------
     MB_LAPP  << "Deallocate all event channel";
     for (map<string, event::channel::EventChannel*>::iterator channnelIter = activeEventChannel.begin();
          channnelIter != activeEventChannel.end();
@@ -165,10 +181,10 @@ void NetworkBroker::deinit() throw(CException) {
         
         event::channel::EventChannel *eventChannelToDispose = channnelIter->second;
         
-            //deinit channel
+		//deinit channel
         eventChannelToDispose->deinit();
         
-            //dispose it
+		//dispose it
         delete(eventChannelToDispose);
     }
     MB_LAPP  << "Clear event channel map";
@@ -182,10 +198,10 @@ void NetworkBroker::deinit() throw(CException) {
     
     MB_LAPP  << "Deinit Event dispatcher";
     utility::StartableService::deinitImplementation(eventDispatcher, "DefaultEventDispatcher", "NetworkBroker::deinit");
-        //---------------------------- E V E N T ----------------------------
-
+	//---------------------------- E V E N T ----------------------------
+	
     
-        //---------------------------- R P C ----------------------------
+	//---------------------------- R P C ----------------------------
     MB_LAPP  << "Deallocate all rpc channel";
     for (map<string, MessageChannel*>::iterator channnelIter = activeRpcChannel.begin();
          channnelIter != activeRpcChannel.end();
@@ -193,10 +209,10 @@ void NetworkBroker::deinit() throw(CException) {
         
         MessageChannel *messageChannelToDispose = channnelIter->second;
         
-            //deinit channel
+		//deinit channel
         messageChannelToDispose->deinit();
         
-            //dispose it
+		//dispose it
         delete(messageChannelToDispose);
     }
     MB_LAPP  << "Clear rpc channel map";
@@ -207,11 +223,11 @@ void NetworkBroker::deinit() throw(CException) {
     
     MB_LAPP  << "Deinit rpc server: " << rpcServer->getName();
     utility::StartableService::deinitImplementation(rpcServer, rpcServer->getName(), "NetworkBroker::deinit");
-
+	
     MB_LAPP  << "Deinit Command Dispatcher";
     utility::StartableService::deinitImplementation(commandDispatcher, "DefaultCommandDispatcher", "NetworkBroker::deinit");
-        //---------------------------- R P C ----------------------------
-
+	//---------------------------- R P C ----------------------------
+	
 }
 
 /*!
@@ -229,7 +245,7 @@ void NetworkBroker::start() throw(CException){
     
     MB_LAPP  << "Start command dispatcher ";
     utility::StartableService::startImplementation(commandDispatcher, "DefaultCommandDispatcher", "NetworkBroker::start");
-
+	
     MB_LAPP  << "Start rpc server: " << rpcServer->getName();
     utility::StartableService::startImplementation(rpcServer, rpcServer->getName(), "NetworkBroker::start");
     
@@ -247,22 +263,22 @@ void NetworkBroker::start() throw(CException){
 void NetworkBroker::stop() throw(CException) {
     MB_LAPP  << "Stop rpc server: " << rpcClient->getName();
     utility::StartableService::stopImplementation(rpcClient, rpcClient->getName(), "NetworkBroker::stop");
-
+	
     MB_LAPP  << "Stop rpc server: " << rpcServer->getName();
     utility::StartableService::stopImplementation(rpcServer, rpcServer->getName(), "NetworkBroker::stop");
-
+	
     MB_LAPP  << "Stop command dispatcher ";
     utility::StartableService::stopImplementation(commandDispatcher, "DefaultCommandDispatcher", "NetworkBroker::stop");
-
+	
     MB_LAPP  << "Stop event client: " << eventClient->getName();
     utility::StartableService::stopImplementation(eventClient, eventClient->getName(), "NetworkBroker::stop");
-
+	
     MB_LAPP  << "Stop event server: " << eventServer->getName();
     utility::StartableService::stopImplementation(eventServer, eventServer->getName(), "NetworkBroker::stop");
-
+	
     MB_LAPP  << "Stop event dispatcher ";
     utility::StartableService::stopImplementation(eventDispatcher, "DefaultEventDispatcher", "NetworkBroker::stop");
-
+	
 }
 
 /*!
@@ -286,7 +302,7 @@ void NetworkBroker::getPublishedHostAndPort(string& hostAndPort) {
 }
 
 #pragma mark Event Registration and forwarding
-    //! event Action registration for the current instance of NetworkBroker
+//! event Action registration for the current instance of NetworkBroker
 /*!
  Register an event actions defined for a detgerminated event type
  \param eventAction the actio to register
@@ -297,7 +313,7 @@ void NetworkBroker::registerEventAction(EventAction *eventAction, event::EventTy
     eventDispatcher->registerEventAction(eventAction, eventType, identification);
 }
 
-    //!Event Action deregistration
+//!Event Action deregistration
 /*!
  Deregister an event action
  */
@@ -306,7 +322,7 @@ void NetworkBroker::deregisterEventAction(EventAction *eventAction) {
     eventDispatcher->deregisterEventAction(eventAction);
 }
 
-    //!Event channel creation
+//!Event channel creation
 /*!
  Performe the creation of an event channel of a desidered type
  \param eventType is one of the value listent in EventType enum that specify the
@@ -324,7 +340,7 @@ event::channel::EventChannel *NetworkBroker::getNewEventChannelFromType(event::E
         default:
             break;
     }
-        //check if the channel has been created
+	//check if the channel has been created
     if(newEventChannel){
         newEventChannel->init();
         boost::mutex::scoped_lock lock(mapEventChannelAccess);
@@ -333,7 +349,7 @@ event::channel::EventChannel *NetworkBroker::getNewEventChannelFromType(event::E
     
     return newEventChannel;
 }
-    //!Device channel creation
+//!Device channel creation
 /*!
  Performe the creation of device channel
  \param deviceNetworkAddress device node address
@@ -351,7 +367,7 @@ event::channel::InstrumentEventChannel *NetworkBroker::getNewInstrumentEventChan
     return static_cast<event::channel::InstrumentEventChannel*>(NetworkBroker::getNewEventChannelFromType(event::EventTypeInstrument));
 }
 
-    //!Event channel deallocation
+//!Event channel deallocation
 /*!
  Perform the event channel deallocation
  */
@@ -360,20 +376,20 @@ void NetworkBroker::disposeEventChannel(event::channel::EventChannel *eventChann
     
     boost::mutex::scoped_lock lock(mapEventChannelAccess);
     
-        //check if the channel is active
+	//check if the channel is active
     if(activeEventChannel.count(eventChannelToDispose->channelID) == 0) return;
     
-        //remove the channel as active
+	//remove the channel as active
     activeEventChannel.erase(eventChannelToDispose->channelID);
     
-        //deallocate it
+	//deallocate it
     eventChannelToDispose->deinit();
     
-        //dispose it
+	//dispose it
     delete(eventChannelToDispose);
 }
 
-    //!message event
+//!message event
 /*!
  Submit an event
  \param event the new evento to submit
@@ -418,7 +434,7 @@ bool NetworkBroker::submitMessage(string& serverAndPort, CDataWrapper *message, 
     NetworkForwardInfo *nfi = new NetworkForwardInfo();
     nfi->destinationAddr = serverAndPort;
     nfi->message = message;
-        //add answer id to datawrapper
+	//add answer id to datawrapper
     return rpcClient->submitMessage(nfi, onThisThread);
 }
 
@@ -453,7 +469,7 @@ MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNodeNetworkAdd
             channel = new DeviceMessageChannel(this, static_cast<CDeviceNetworkAddress*>(nodeNetworkAddress));
             break;
     }
-        //check if the channel has been created
+	//check if the channel has been created
     if(channel){
         channel->init();
         boost::mutex::scoped_lock lock(mapRpcChannelAcces);
@@ -462,7 +478,7 @@ MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNodeNetworkAdd
     return channel;
 }
 
-    //!Metadata server channel creation
+//!Metadata server channel creation
 /*!
  Performe the creation of metadata server
  */
@@ -473,7 +489,7 @@ MDSMessageChannel *NetworkBroker::getMetadataserverMessageChannel(string& remote
     return static_cast<MDSMessageChannel*>(getNewMessageChannelForRemoteHost(mdsNodeAddr, MDS));
 }
 
-    //!Device channel creation
+//!Device channel creation
 /*!
  Performe the creation of device channel
  \param deviceNetworkAddress device node address
@@ -482,7 +498,7 @@ DeviceMessageChannel *NetworkBroker::getDeviceMessageChannelFromAddress(CDeviceN
     return static_cast<DeviceMessageChannel*>(getNewMessageChannelForRemoteHost(deviceNetworkAddress, DEVICE));
 }
 
-    //!Channel deallocation
+//!Channel deallocation
 /*!
  Perform the message channel deallocation
  */
@@ -491,19 +507,19 @@ void NetworkBroker::disposeMessageChannel(MessageChannel *messageChannelToDispos
     
     boost::mutex::scoped_lock lock(mapRpcChannelAcces);
     
-        //check if the channel is active
+	//check if the channel is active
     if(activeRpcChannel.count(messageChannelToDispose->channelID) == 0) return;
     
-        //remove the channel as active
+	//remove the channel as active
     activeRpcChannel.erase(messageChannelToDispose->channelID);
     
-        //deallocate it
+	//deallocate it
     messageChannelToDispose->deinit();
     
-        //dispose it
+	//dispose it
     delete(messageChannelToDispose);
 }
-    //!Channel deallocation
+//!Channel deallocation
 /*!
  Perform the message channel deallocation
  */

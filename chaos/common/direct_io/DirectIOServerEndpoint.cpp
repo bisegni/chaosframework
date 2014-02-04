@@ -1,5 +1,5 @@
 /*
- *	ZMQDirectIOServerDataPack.cpp
+ *	DirectIOServerEndpoint.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,24 +17,32 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include <chaos/common/direct_io/impl/ZMQDirectIOServerDataPack.h>
-using namespace chaos::common::direct_io::impl;
+#include <chaos/common/direct_io/DirectIOServerEndpoint.h>
 
-ZMQDirectIOServerDataPack::ZMQDirectIOServerDataPack(ZMQSocketAndMessage *_socket_message):socket_message(_socket_message) {
-	
-}
-ZMQDirectIOServerDataPack::~ZMQDirectIOServerDataPack() {
-	
-}
+using namespace chaos::common::direct_io;
 
-void ZMQDirectIOServerDataPack::getDataPtr() {
+DirectIOServerEndpoint::DirectIOServerEndpoint() {
 	
 }
 
-uint32_t ZMQDirectIOServerDataPack::getDataSize() {
-	return 0;
+DirectIOServerEndpoint::~DirectIOServerEndpoint() {
+	
 }
 
-uint32_t ZMQDirectIOServerDataPack::sendAnswer(void *data_ptr, uint32_t data_len) {
-	return 0;
+void DirectIOServerEndpoint::addChannelInstancer(std::string channel_name, common::utility::ObjectInstancer<channel::DirectIOVirtualServerChannel> *instancer) {
+	
+}
+
+uint16_t DirectIOServerEndpoint::getRouteIndex() {
+	return endpoint_route_index;
+}
+
+// Event for a new data received
+void DirectIOServerEndpoint::priorityDataReceived(DirectIOServerDataPack *) {
+	
+}
+
+// Event for a new data received
+void DirectIOServerEndpoint::serviceDataReceived(DirectIOServerDataPack *) {
+	
 }

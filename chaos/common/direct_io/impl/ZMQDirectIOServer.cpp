@@ -1,14 +1,27 @@
-//
-//  DirectIOZMQServer.cpp
-//  CHAOSFramework
-//
-//  Created by Claudio Bisegni on 31/01/14.
-//  Copyright (c) 2014 INFN. All rights reserved.
-//
+/*
+ *	ZMQDirectIOServer.cpp
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
+
 
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/direct_io/impl/ZMQDirectIOServer.h>
-
+#include <chaos/common/direct_io/impl/ZMQDirectIOServerDataPack.h>
 #include <boost/format.hpp>
 
 #include <zmq.h>
@@ -25,7 +38,11 @@ namespace chaos_data = chaos::common::data;
 using namespace chaos::common::direct_io::impl;
 
 
-ZMQDirectIOServer::ZMQDirectIOServer(std::string alias):DirectIOServer(alias),run_server(false) {
+ZMQDirectIOServer::ZMQDirectIOServer(std::string alias):DirectIOServer(alias) {
+	zmq_context = NULL;
+	priority_socket = NULL;
+	service_socket = NULL;
+	run_server = false;
 };
 
 ZMQDirectIOServer::~ZMQDirectIOServer(){
@@ -38,10 +55,10 @@ void ZMQDirectIOServer::init(void *init_data) throw(chaos::CException) {
     if(!init_cw) throw chaos::CException(0, "No configration has been provided", __FUNCTION__);
 	
 	//get the port from configuration
-	int32_t priority_port = init_cw->getInt32Value(DirectIOConfigurationKey::DIRECT_IO_PRIORITY_PORT);
+	int32_t priority_port = init_cw->getInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_PRIORITY_PORT);
 	if(priority_port <= 0) throw chaos::CException(0, "Bad priority port configured", __FUNCTION__);
 
-	int32_t service_port = init_cw->getInt32Value(DirectIOConfigurationKey::DIRECT_IO_SERVICE_PORT);
+	int32_t service_port = init_cw->getInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_SERVICE_PORT);
 	if(service_port <= 0) throw chaos::CException(0, "Bad service port configured", __FUNCTION__);
 	
 	//create the endpoint strings
@@ -120,9 +137,9 @@ void ZMQDirectIOServer::worker(void *socket, bool priority_service) {
     zmq_msg_t request;
     
     //allcoate the delegate for this thread
-    boost::function2<void, void*, uint32_t> delegate = priority_service?
-            boost::bind(&DirectIOHandler::serviceDataReceived, handler_impl, _1, _2):
-            boost::bind(&DirectIOHandler::priorityDataReceived, handler_impl, _1, _2);
+    boost::function<void (DirectIOServerDataPack *)> delegate = priority_service?
+            boost::bind(&DirectIOHandler::serviceDataReceived, handler_impl, _1):
+            boost::bind(&DirectIOHandler::priorityDataReceived, handler_impl, _1);
     while (run_server) {
         try {
 
@@ -136,7 +153,7 @@ void ZMQDirectIOServer::worker(void *socket, bool priority_service) {
                 continue;
             }
             
-            delegate(zmq_msg_data(&request), (uint32_t)zmq_msg_size(&request));
+            //delegate(new ZMQDirectIOServerDataPack(new ZMQSocketAndMessage(socket, request));
             
             zmq_msg_close(&request);
             //  Send reply back to client

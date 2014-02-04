@@ -1,13 +1,25 @@
-//
-//  ZMQDirectIOClinet.h
-//  CHAOSFramework
-//
-//  Created by Claudio Bisegni on 31/01/14.
-//  Copyright (c) 2014 INFN. All rights reserved.
-//
 
-#ifndef __CHAOSFramework__ZMQDirectIOClinet__
-#define __CHAOSFramework__ZMQDirectIOClinet__
+/*
+ *	ZMQDirectIOClient.h
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
+#ifndef __CHAOSFramework__ZMQDirectIOClient__
+#define __CHAOSFramework__ZMQDirectIOClient__
 
 #include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
@@ -27,10 +39,12 @@ namespace chaos {
 					
 					void *zmq_context;
 					
-                    void *priority_socket;
+                    void *socket_priority;
                     
-                    void *service_socket;
+                    void *socket_service;
                     
+					void *socket_monitor;
+					
                     inline uint32_t writeToSocket(void *socket, void *data_buffer, uint32_t data_size);
                     
                     inline uint32_t readFromSocket(void *socket, void **data_buffer, uint32_t *data_size);
@@ -38,6 +52,8 @@ namespace chaos {
                     //set the spread functionality on zmq socket
                     void switchMode(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType direct_io_spread_mode);
                     
+					//! check the connection with the endpoint for the two socket
+					void monitorWorker();
                 public:
                     ZMQDirectIOClient(string alias);
                     

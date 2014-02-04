@@ -1,50 +1,65 @@
-//
-//  DirectIOServer.cpp
-//  CHAOSFramework
-//
-//  Created by Claudio Bisegni on 25/09/13.
-//  Copyright (c) 2013 INFN. All rights reserved.
-//
-
+/*
+ *	DirectIOServer.cpp
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
 #include <chaos/common/direct_io/DirectIOServer.h>
 
 using namespace chaos::common::direct_io;
 
 DirectIOServer::DirectIOServer(std::string alias):NamedService(alias) {
-	
+	handler_impl = NULL;
 }
 
 DirectIOServer::~DirectIOServer() {
-	
+	clearHandler();
 }
 
 // Initialize instance
 void DirectIOServer::init(void *init_data) throw(chaos::CException) {
 	if(handler_impl == NULL) throw chaos::CException(-1, "handler has not been configured", __FUNCTION__);
-        
+	StartableService::initImplementation(handler_impl, init_data, "DirectIOServer handler", __FUNCTION__);
 }
 
 // Start the implementation
 void DirectIOServer::start() throw(chaos::CException) {
-	
+	StartableService::startImplementation(handler_impl, "DirectIOServer handler", __FUNCTION__);
 }
 
 // Stop the implementation
 void DirectIOServer::stop() throw(chaos::CException) {
-	
+	StartableService::stopImplementation(handler_impl, "DirectIOServer handler", __FUNCTION__);
 }
 
 // Deinit the implementation
 void DirectIOServer::deinit() throw(chaos::CException) {
-	
+	StartableService::deinitImplementation(handler_impl, "DirectIOServer handler", __FUNCTION__);
 }
 
 //! Send some data to the server
-void DirectIOServer::setHandler(DirectIOHandler *_handler_impl) {
+void DirectIOServer::setHandler(DirectIODispatcher *_handler_impl) {
+	if(StartableService::getServiceState() != ::chaos::utility::service_state_machine::InizializableServiceType::IS_DEINTIATED)
+		return;
 	handler_impl = _handler_impl;
 }
 
 //! Remove the handler pointer
 void DirectIOServer::clearHandler() {
-	
+	if(StartableService::getServiceState() != ::chaos::utility::service_state_machine::InizializableServiceType::IS_DEINTIATED)
+		return;
+	if(handler_impl) delete(handler_impl);
 }

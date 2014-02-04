@@ -36,6 +36,9 @@
 #include <chaos/common/network/NetworkForwardInfo.h>
 #include <chaos/common/utility/StartableService.h>
 
+#include <chaos/common/direct_io/DirectIOClient.h>
+#include <chaos/common/direct_io/DirectIOServer.h>
+
 namespace chaos_data = chaos::common::data;
 namespace chaos {
 
@@ -77,7 +80,12 @@ namespace chaos {
      It abstract the !CHAOS rule for sending message and wait for answer and other facility.
      */
     class NetworkBroker: private SetupStateManager, public utility::StartableService {
+		//!Event Client for event forwarding
+		std::string directIOClientImpl;
         
+		//!Event server for event handlind
+		common::direct_io::DirectIOServer *directIOServer;
+		
             //!Event Client for event forwarding
         event::EventClient *eventClient;
         

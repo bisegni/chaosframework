@@ -138,12 +138,12 @@ x = hasOption(y);
         
         template<typename T>
         T getOption(const char* optName) throw (CException){
-            if(vm.count(optName)==0) {
+			if(vm.count(optName)==0) {
                 string opt=string("option:") + "\""+optName + "\"" + string(" not given");
                 throw CException(2,opt.c_str(),"GlobalConfiguration::getOption");
             }
-            return vm[optName].as<T>();
-            }
+			return vm[optName].as<T>();
+		}
         
         /**
          *return the cdatawrapper that contains the global configuraiton

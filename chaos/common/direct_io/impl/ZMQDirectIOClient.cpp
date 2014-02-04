@@ -1,11 +1,22 @@
-//
-//  ZMQDirectIOClinet.cpp
-//  CHAOSFramework
-//
-//  Created by Claudio Bisegni on 31/01/14.
-//  Copyright (c) 2014 INFN. All rights reserved.
-//
-
+/*
+ *	ZMQDirectIOClinet.cpp
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/direct_io/impl/ZMQDirectIOClient.h>
 
@@ -35,8 +46,9 @@ ZMQDirectIOClient::ZMQDirectIOClient(string alias):DirectIOClient(alias){
 	service_port = 0;
 	
 	zmq_context = NULL;
-	priority_socket = NULL;
-	service_socket = NULL;
+	socket_priority = NULL;
+	socket_service = NULL;
+	socket_monitor = NULL;
 };
 
 ZMQDirectIOClient::~ZMQDirectIOClient(){
@@ -48,6 +60,7 @@ void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
     ZMQDIOLAPP_ << "Allocating zmq context";
     std::string priority_identity = UUIDUtil::generateUUIDLite();
     std::string service_identity = UUIDUtil::generateUUIDLite();
+	int err = 0;
 	
     zmq_context = zmq_ctx_new();
     if(zmq_context == NULL) throw chaos::CException(0, "Error creating zmq context", __FUNCTION__);
@@ -56,17 +69,18 @@ void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
     zmq_ctx_set(zmq_context, ZMQ_IO_THREADS, 2);
     
     ZMQDIOLAPP_ << "Allocating priority socket";
-    priority_socket = zmq_socket (zmq_context, ZMQ_DEALER);
-    if(priority_socket == NULL) throw chaos::CException(1, "Error creating priority", __FUNCTION__);
+    socket_priority = zmq_socket (zmq_context, ZMQ_DEALER);
+    if(socket_priority == NULL) throw chaos::CException(1, "Error creating priority socket", __FUNCTION__);
     //set socket identity
-    zmq_setsockopt (priority_socket, ZMQ_IDENTITY, priority_identity.c_str(), priority_identity.size());
-    
+    err = zmq_setsockopt (socket_priority, ZMQ_IDENTITY, priority_identity.c_str(), priority_identity.size());
+	if(err) throw chaos::CException(err, "Error setting priority socket option", __FUNCTION__);
+	
     ZMQDIOLAPP_ << "Allocating priority socket";
-    service_socket = zmq_socket (zmq_context, ZMQ_DEALER);
-    if(service_socket == NULL) throw chaos::CException(2, "Error creating service socket", __FUNCTION__);
+    socket_service = zmq_socket (zmq_context, ZMQ_DEALER);
+    if(socket_service == NULL) throw chaos::CException(2, "Error creating service socket", __FUNCTION__);
     //set socket identity
-    zmq_setsockopt (service_socket, ZMQ_IDENTITY, service_identity.c_str(), service_identity.size());
-    
+    err = zmq_setsockopt(socket_service, ZMQ_IDENTITY, service_identity.c_str(), service_identity.size());
+	if(err) throw chaos::CException(err, "Error setting service socket option", __FUNCTION__);
     ZMQDIOLAPP_ << "Initialized";
 }
 
@@ -74,6 +88,40 @@ void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
 void ZMQDirectIOClient::start() throw(chaos::CException) {
     DirectIOClient::start();
 }
+
+//! Stop the implementation
+void ZMQDirectIOClient::stop() throw(chaos::CException) {
+    DirectIOClient::stop();
+}
+
+//! Deinit the implementation
+void ZMQDirectIOClient::deinit() throw(chaos::CException) {
+    ZMQDIOLAPP_ << "deinitialization";
+    
+    ZMQDirectIOClientWriteLock lock(mutex_socket_manipolation);
+    ZMQDIOLDBG_ << "Write lock acquired";
+
+    ZMQDIOLAPP_ << "Close priority socket";
+    zmq_close(socket_priority);
+    socket_priority = NULL;
+    
+    ZMQDIOLAPP_ << "Close service socket";
+    zmq_close(socket_service);
+    socket_service = NULL;
+    
+	ZMQDIOLAPP_ << "Close monitor socket";
+    zmq_close(socket_monitor);
+	socket_monitor = NULL;
+	
+    //destroy the zmq context
+    ZMQDIOLAPP_ << "Destroyed zmq context";
+    zmq_ctx_destroy(zmq_context);
+    zmq_context = NULL;
+    
+    DirectIOClient::deinit();
+    ZMQDIOLAPP_ << "Deinitialized";
+}
+
 
 void ZMQDirectIOClient::switchMode(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType direct_io_spread_mode) {
     int err = 0;
@@ -98,13 +146,13 @@ void ZMQDirectIOClient::switchMode(DirectIOConnectionSpreadType::DirectIOConnect
                 current_service_endpoint = boost::str( boost::format("tcp://%1%") % (*i)[1]);
                 
                 ZMQDIOLDBG_ << "connect to priority endpoint " << current_priority_endpoint;
-                err = zmq_connect(priority_socket, current_priority_endpoint.c_str());
+                err = zmq_connect(socket_priority, current_priority_endpoint.c_str());
                 if(err) {
                     ZMQDIOLERR_ << "Error connecting priority socket to " << current_priority_endpoint;
                 }
                 
                 ZMQDIOLDBG_ << "connect to service endpoint " << current_service_endpoint;
-                err = zmq_connect(service_socket, current_service_endpoint.c_str());
+                err = zmq_connect(socket_service, current_service_endpoint.c_str());
                 if(err) {
                     ZMQDIOLERR_ << "Error connecting service socket to " << current_service_endpoint;
                 }
@@ -121,13 +169,13 @@ void ZMQDirectIOClient::switchMode(DirectIOConnectionSpreadType::DirectIOConnect
             current_service_endpoint = boost::str( boost::format("tcp://%1%") % _service_end_point);
             
             ZMQDIOLDBG_ << "connect to priority endpoint " << current_priority_endpoint;
-            err = zmq_connect(priority_socket, current_priority_endpoint.c_str());
+            err = zmq_connect(socket_priority, current_priority_endpoint.c_str());
             if(err) {
                 ZMQDIOLERR_ << "Error connecting priority socket to " << current_priority_endpoint;
             }
             
             ZMQDIOLDBG_ << "connect to service endpoint " << current_service_endpoint;
-            err = zmq_connect(service_socket, current_service_endpoint.c_str());
+            err = zmq_connect(socket_service, current_service_endpoint.c_str());
             if(err) {
                 ZMQDIOLERR_ << "Error connecting service socket to " << current_service_endpoint;
             }
@@ -137,51 +185,22 @@ void ZMQDirectIOClient::switchMode(DirectIOConnectionSpreadType::DirectIOConnect
     
 }
 
-//! Stop the implementation
-void ZMQDirectIOClient::stop() throw(chaos::CException) {
-    DirectIOClient::stop();
-}
-
-//! Deinit the implementation
-void ZMQDirectIOClient::deinit() throw(chaos::CException) {
-    ZMQDIOLAPP_ << "deinitialization";
-    
-    ZMQDirectIOClientWriteLock lock(mutex_socket_manipolation);
-    ZMQDIOLDBG_ << "Write lock acquired";
-
-    ZMQDIOLAPP_ << "Close priority socket";
-    zmq_close(priority_socket);
-    priority_socket = NULL;
-    
-    ZMQDIOLAPP_ << "Close service socket";
-    zmq_close(service_socket);
-    service_socket = NULL;
-    
-    //destroy the zmq context
-    ZMQDIOLAPP_ << "Destroyed zmq context";
-    zmq_ctx_destroy(zmq_context);
-    zmq_context = NULL;
-    
-    DirectIOClient::deinit();
-    ZMQDIOLAPP_ << "Deinitialized";
-}
-
 // send the data to the server layer on priority channel
 uint32_t ZMQDirectIOClient::sendPriorityData(void *data_buffer, uint32_t data_size) {
-    return writeToSocket(priority_socket, data_buffer, data_size);
+    return writeToSocket(socket_priority, data_buffer, data_size);
 }
 
 // send the data to the server layer on the service channel
 uint32_t ZMQDirectIOClient::sendServiceData(void *data_buffer, uint32_t data_size) {
-    return writeToSocket(service_socket, data_buffer, data_size);
+    return writeToSocket(socket_service, data_buffer, data_size);
 }
 
 uint32_t ZMQDirectIOClient::receiveFromPriorityChannel(void **data_buffer, uint32_t *data_size) {
-    return readFromSocket(priority_socket, data_buffer, data_size);
+    return readFromSocket(socket_priority, data_buffer, data_size);
 }
 
 uint32_t ZMQDirectIOClient::receiveFromServiceChannel(void **data_buffer, uint32_t *data_size) {
-    return readFromSocket(service_socket, data_buffer, data_size);
+    return readFromSocket(socket_service, data_buffer, data_size);
 }
 
 uint32_t ZMQDirectIOClient::writeToSocket(void *socket, void *data_buffer, uint32_t data_size) {
@@ -190,17 +209,16 @@ uint32_t ZMQDirectIOClient::writeToSocket(void *socket, void *data_buffer, uint3
     ZMQDirectIOClientReadLock lock(mutex_socket_manipolation);
     ZMQDIOLDBG_ << "Read lock acquired";
     //send empty pack
-    int err = zmq_send(priority_socket, "", 0, ZMQ_SNDMORE);
+    int err = zmq_send(socket_priority, "", 0, ZMQ_SNDMORE);
     if(err) {
         return err;
     }
-    return zmq_send(priority_socket, data_buffer, data_size, 0);
+    return zmq_send(socket_priority, data_buffer, data_size, 0);
 
 }
 
 uint32_t ZMQDirectIOClient::readFromSocket(void *socket, void **data_buffer, uint32_t *data_size) {
     assert(socket && data_buffer && data_size);
-    
     ZMQDirectIOClientReadLock lock(mutex_socket_manipolation);
     zmq_msg_t message;
     zmq_msg_init (&message);

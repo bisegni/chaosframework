@@ -1,5 +1,5 @@
 /*
- *	DirectIODataForwarder.h
+ *	DirectIOForwarder.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,7 +17,6 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-
 #ifndef CHAOSFramework_DirectIODataForwarder_h
 #define CHAOSFramework_DirectIODataForwarder_h
 

@@ -1,5 +1,5 @@
 /*
- *	DirectIOServerHandler.h
+ *	DirectIOHandler.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,11 +17,11 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef CHAOSFramework_DirectIOServerHandler_h
-#define CHAOSFramework_DirectIOServerHandler_h
+#ifndef CHAOSFramework_DirectIOHandler_h
+#define CHAOSFramework_DirectIOHandler_h
 
 #include <stdint.h>
-
+#include <DirectIOServerDataPack.h>
 namespace chaos {
 	namespace common {
 		namespace direct_io {
@@ -40,7 +40,7 @@ namespace chaos {
 				 \param data_size the size of the received data
 				 \param detach inform the server that hte memory buffed doesn't need to be deallocated.
 				 */
-				virtual void priorityDataReceived(void *data_buffer, uint32_t data_size);
+				virtual void priorityDataReceived(DirectIOServerDataPack *) = 0;
                 
                 //! Event for a new data received
 				/*!
@@ -49,7 +49,7 @@ namespace chaos {
 				 \param data_size the size of the received data
 				 \param detach inform the server that hte memory buffed doesn't need to be deallocated.
 				 */
-				virtual void serviceDataReceived(void *data_buffer, uint32_t data_size);
+				virtual void serviceDataReceived(DirectIOServerDataPack *) = 0;
 			};
 		}
 	}
