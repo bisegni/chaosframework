@@ -79,8 +79,6 @@ void ZMQDirectIOClient::switchMode(DirectIOConnectionSpreadType::DirectIOConnect
     int err = 0;
     std::string _priority_end_point;
 	std::string _service_end_point;
-    std::string priority_endpoint;
-    std::string service_endpoint;
     //check if are already on the same spred type
     if(direct_io_spread_mode == current_spread_forwarding_type) return;
     current_spread_forwarding_type = direct_io_spread_mode;
@@ -96,19 +94,19 @@ void ZMQDirectIOClient::switchMode(DirectIOConnectionSpreadType::DirectIOConnect
             for (std::vector< std::vector<std::string> >::iterator i = all_online_server.begin();
                  i != all_online_server.end();
                  i++) {
-                priority_endpoint = boost::str( boost::format("tcp://%1%") % (*i)[0]);
-                service_endpoint = boost::str( boost::format("tcp://%1%") % (*i)[1]);
+                current_priority_endpoint = boost::str( boost::format("tcp://%1%") % (*i)[0]);
+                current_service_endpoint = boost::str( boost::format("tcp://%1%") % (*i)[1]);
                 
-                ZMQDIOLDBG_ << "connect to priority endpoint " << priority_endpoint;
-                err = zmq_connect(priority_socket, priority_endpoint.c_str());
+                ZMQDIOLDBG_ << "connect to priority endpoint " << current_priority_endpoint;
+                err = zmq_connect(priority_socket, current_priority_endpoint.c_str());
                 if(err) {
-                    ZMQDIOLERR_ << "Error connecting priority socket to " << priority_endpoint;
+                    ZMQDIOLERR_ << "Error connecting priority socket to " << current_priority_endpoint;
                 }
                 
-                ZMQDIOLDBG_ << "connect to service endpoint " << service_endpoint;
-                err = zmq_connect(service_socket, service_endpoint.c_str());
+                ZMQDIOLDBG_ << "connect to service endpoint " << current_service_endpoint;
+                err = zmq_connect(service_socket, current_service_endpoint.c_str());
                 if(err) {
-                    ZMQDIOLERR_ << "Error connecting service socket to " << service_endpoint;
+                    ZMQDIOLERR_ << "Error connecting service socket to " << current_service_endpoint;
                 }
             }
             break;
@@ -119,19 +117,19 @@ void ZMQDirectIOClient::switchMode(DirectIOConnectionSpreadType::DirectIOConnect
             //try connecting to first server
             server_managment.getCurrentOnline(current_server_hash, _priority_end_point, _service_end_point);
             //connect the socket to server
-            priority_endpoint = boost::str( boost::format("tcp://%1%") % _priority_end_point);
-            service_endpoint = boost::str( boost::format("tcp://%1%") % _service_end_point);
+            current_priority_endpoint = boost::str( boost::format("tcp://%1%") % _priority_end_point);
+            current_service_endpoint = boost::str( boost::format("tcp://%1%") % _service_end_point);
             
-            ZMQDIOLDBG_ << "connect to priority endpoint " << priority_endpoint;
-            err = zmq_connect(priority_socket, priority_endpoint.c_str());
+            ZMQDIOLDBG_ << "connect to priority endpoint " << current_priority_endpoint;
+            err = zmq_connect(priority_socket, current_priority_endpoint.c_str());
             if(err) {
-                ZMQDIOLERR_ << "Error connecting priority socket to " << priority_endpoint;
+                ZMQDIOLERR_ << "Error connecting priority socket to " << current_priority_endpoint;
             }
             
-            ZMQDIOLDBG_ << "connect to service endpoint " << service_endpoint;
-            err = zmq_connect(service_socket, service_endpoint.c_str());
+            ZMQDIOLDBG_ << "connect to service endpoint " << current_service_endpoint;
+            err = zmq_connect(service_socket, current_service_endpoint.c_str());
             if(err) {
-                ZMQDIOLERR_ << "Error connecting service socket to " << service_endpoint;
+                ZMQDIOLERR_ << "Error connecting service socket to " << current_service_endpoint;
             }
             break;
         }

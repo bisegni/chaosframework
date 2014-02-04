@@ -103,7 +103,7 @@ void ServerFeeder::clear() {
     map_server_address.clear();
 }
 
-void  ServerFeeder::getNextOnline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc) {
+void ServerFeeder::getNextOnline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc) {
     ReadLock Lock(mutex_server_manipolation);
     current_online_index = (current_online_index + 1) % vec_enable_hash_sequence.size();
     return getCurrentOnline(server_hash, priority_server_desc, service_server_desc);

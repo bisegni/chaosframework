@@ -73,7 +73,7 @@ namespace chaos{
                 friend class BatchCommandExecutor;
                 friend struct AcquireFunctor;
                 friend struct CorrelationFunctor;
-                friend class CommandInfoAndImplementation;
+                friend struct CommandInfoAndImplementation;
                 //!unique command id
                 uint64_t unique_id;
                 

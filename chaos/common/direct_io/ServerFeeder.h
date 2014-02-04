@@ -54,9 +54,9 @@ namespace chaos {
                 void putOnlineServer(uint32_t server_hash);
                 void clear();
                 void getNextOnline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
-                inline void getCurrentOnline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
+                void getCurrentOnline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
                 void getNextOffline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
-                inline void getCurrentOffline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
+                void getCurrentOffline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
                 void getAllOnlineServer(std::vector< std::vector<std::string> >& server_list);
                 
             };

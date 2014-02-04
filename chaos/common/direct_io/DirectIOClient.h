@@ -76,8 +76,9 @@ namespace chaos {
                 
                 uint32_t current_server_hash;
                 
-                std::string current_server_endpoint;
-                
+                std::string current_priority_endpoint;
+				
+				std::string current_service_endpoint;
                 //!current spread type
                 DirectIOConnectionSpreadType::DirectIOConnectionSpreadType current_spread_forwarding_type;
                 
