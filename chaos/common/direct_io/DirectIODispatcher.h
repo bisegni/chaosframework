@@ -23,10 +23,10 @@
 #include <chaos/common/direct_io/DirectIOHandler.h>
 #include <chaos/common/direct_io/DirectIOServerEndpoint.h>
 #include <chaos/common/utility/StartableService.h>
+
 #include <boost/thread.hpp>
 #include <boost/function.hpp>
-
-#define MAX_END_POINT_NUMBER 256
+#include <boost/lockfree/queue.hpp>
 
 namespace chaos {
 	namespace common {
@@ -38,16 +38,23 @@ namespace chaos {
            // boost::bind(&DirectIOHandler::priorityDataReceived, handler_impl, _1, _2);
 			//! Default dispatcher for the direct io system
 			class DirectIODispatcher : public common::direct_io::DirectIOHandler, public chaos::utility::StartableService {
+				
+				//! struct for fast delegation
 				struct EndpointFastDelegation {
 					DirectIOServerEndpoint *endpoint;
-					boost::function<void(DirectIOServerDataPack *)> priority_delegate;
-					boost::function<void(DirectIOServerDataPack *)> service_delegate;
+					boost::function<void(void *data_buffer, uint32_t data_len)> priority_delegate;
+					boost::function<void(void *data_buffer, uint32_t data_len)> service_delegate;
 				};
 
 				
-				//primary_hashtable = (item**)calloc(hashsize(hashpower), sizeof(item**));
-				EndpointFastDelegation * * endpoint_hash;
+				//! available endpoint slotc
+				EndpointFastDelegation * * endpoint_slot_array;
+				
+				//!available index queue
+				boost::lockfree::queue<unsigned int> available_endpoint_slot;
 			public:
+				DirectIODispatcher();
+				~DirectIODispatcher();
 				// Initialize instance
 				void init(void *init_data) throw(chaos::CException);
 				
@@ -60,14 +67,17 @@ namespace chaos {
 				// Deinit the implementation
 				void deinit() throw(chaos::CException);
 				
-				
+				//! Allocate a new endpoint
 				DirectIOServerEndpoint *getNewEndpoint();
 				
+				//! Relase the endpoint
+				void releaseEndpoint(DirectIOServerEndpoint *);
+				
 				// Event for a new data received
-				void priorityDataReceived(DirectIOServerDataPack *);
+				void priorityDataReceived(void *data_buffer, uint32_t data_len);
                 
                 // Event for a new data received
-				void serviceDataReceived(DirectIOServerDataPack *);
+				void serviceDataReceived(void *data_buffer, uint32_t data_len);
 
 			};
 		}

@@ -29,20 +29,16 @@ DirectIOServerEndpoint::~DirectIOServerEndpoint() {
 	
 }
 
-void DirectIOServerEndpoint::addChannelInstancer(std::string channel_name, common::utility::ObjectInstancer<channel::DirectIOVirtualServerChannel> *instancer) {
-	
-}
-
 uint16_t DirectIOServerEndpoint::getRouteIndex() {
 	return endpoint_route_index;
 }
 
 // Event for a new data received
-void DirectIOServerEndpoint::priorityDataReceived(DirectIOServerDataPack *) {
+void DirectIOServerEndpoint::priorityDataReceived(void *data_buffer, uint32_t data_len) {
 	
 }
 
 // Event for a new data received
-void DirectIOServerEndpoint::serviceDataReceived(DirectIOServerDataPack *) {
+void DirectIOServerEndpoint::serviceDataReceived(void *data_buffer, uint32_t data_len) {
 	
 }

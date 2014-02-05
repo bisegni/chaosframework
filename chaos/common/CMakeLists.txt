@@ -18,7 +18,7 @@ SET(common_lib_src  ${common_lib_src}	event/EventClient.cpp event/AsioImplEventC
 										event/evt_desc/InstrumentEventDescriptor.cpp event/evt_desc/CommandEventDescriptor.cpp 
 										event/evt_desc/CustomEventDescriptor.cpp event/channel/EventChannel.cpp 
 										event/channel/AlertEventChannel.cpp event/channel/InstrumentEventChannel.cpp)
-SET(common_lib_src  ${common_lib_src}	direct_io/DirectIOClient.cpp direct_io/DirectIOServer.cpp direct_io/DirectIOServerDataPack.cpp 
+SET(common_lib_src  ${common_lib_src}	direct_io/DirectIOClient.cpp direct_io/DirectIOServer.cpp 
 										direct_io/DirectIOForwarder.cpp direct_io/ServerFeeder.cpp direct_io/DirectIOServerEndpoint.cpp direct_io/DirectIODispatcher.cpp 
 										direct_io/channel/DirectIOVirtualClientChannel.cpp direct_io/channel/DirectIOVirtualServerChannel.cpp 
 										direct_io/impl/ZMQDirectIOClient.cpp direct_io/impl/ZMQDirectIOServer.cpp direct_io/impl/ZMQDirectIOServerDataPack.cpp)

@@ -135,8 +135,8 @@ void ZMQDirectIOClient::switchMode(DirectIOConnectionSpreadType::DirectIOConnect
     ZMQDirectIOClientWriteLock lock(mutex_socket_manipolation);
     ZMQDIOLDBG_ << "Write lock acquired";
     switch (current_spread_forwarding_type) {
-        case DirectIOConnectionSpreadType::DirectIOFailOver: {
-            ZMQDIOLDBG_ << "Switch mod to DirectIOFailOver";
+        case DirectIOConnectionSpreadType::DirectIORoundRobin: {
+            ZMQDIOLDBG_ << "Switch mod to DirectIORoundRobin";
             std::vector< std::vector<std::string> > all_online_server;
             server_managment.getAllOnlineServer(all_online_server);
             for (std::vector< std::vector<std::string> >::iterator i = all_online_server.begin();
@@ -160,8 +160,8 @@ void ZMQDirectIOClient::switchMode(DirectIOConnectionSpreadType::DirectIOConnect
             break;
         }
             
-        case DirectIOConnectionSpreadType::DirectIORoundRobin: {
-            ZMQDIOLDBG_ << "Switch mod to DirectIORoundRobin";
+        case DirectIOConnectionSpreadType::DirectIOFailOver: {
+            ZMQDIOLDBG_ << "Switch mod to DirectIOFailOver";
             //try connecting to first server
             server_managment.getCurrentOnline(current_server_hash, _priority_end_point, _service_end_point);
             //connect the socket to server

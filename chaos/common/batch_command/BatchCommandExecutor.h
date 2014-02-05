@@ -58,7 +58,7 @@ namespace chaos {
             class BatchCommandSandbox;
             
             //! Macro for helping the allocation of the isntancer of the class implementing the slow command
-#define BATCHCOMMAND_INSTANCER(SlowCommandClass) new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::control_manager::slow_command::BatchCommand>()
+//#define BATCHCOMMAND_INSTANCER(SlowCommandClass) new chaos::common::utility::TypedObjectInstancer<SlowCommandClass, chaos::cu::control_manager::slow_command::BatchCommand>()
             
             
             //! Slow command execution sand box

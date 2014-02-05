@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		320192BA14DEEAC000318F00 /* CObjectHandlerProcessingQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 320192B914DEEAC000318F00 /* CObjectHandlerProcessingQueue.h */; };
-		3204EFBE189E4825000993A0 /* DirectIOServerDataPack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3204EFBC189E4825000993A0 /* DirectIOServerDataPack.cpp */; };
 		3204EFBF189E4825000993A0 /* DirectIOServerDataPack.h in Headers */ = {isa = PBXBuildFile; fileRef = 3204EFBD189E4825000993A0 /* DirectIOServerDataPack.h */; };
 		3204EFC2189E51A6000993A0 /* ZMQDirectIOServerDataPack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3204EFC0189E51A6000993A0 /* ZMQDirectIOServerDataPack.cpp */; };
 		3204EFC3189E51A6000993A0 /* ZMQDirectIOServerDataPack.h in Headers */ = {isa = PBXBuildFile; fileRef = 3204EFC1189E51A6000993A0 /* ZMQDirectIOServerDataPack.h */; };
@@ -417,7 +416,6 @@
 
 /* Begin PBXFileReference section */
 		320192B914DEEAC000318F00 /* CObjectHandlerProcessingQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CObjectHandlerProcessingQueue.h; sourceTree = "<group>"; };
-		3204EFBC189E4825000993A0 /* DirectIOServerDataPack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOServerDataPack.cpp; sourceTree = "<group>"; };
 		3204EFBD189E4825000993A0 /* DirectIOServerDataPack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOServerDataPack.h; sourceTree = "<group>"; };
 		3204EFC0189E51A6000993A0 /* ZMQDirectIOServerDataPack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQDirectIOServerDataPack.cpp; sourceTree = "<group>"; };
 		3204EFC1189E51A6000993A0 /* ZMQDirectIOServerDataPack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQDirectIOServerDataPack.h; sourceTree = "<group>"; };
@@ -1557,7 +1555,6 @@
 				32EA501518A15BF000782435 /* DirectIODispatcher.h */,
 				328556A217F2E36000A64ED2 /* DirectIOServer.cpp */,
 				328556A317F2E36000A64ED2 /* DirectIOServer.h */,
-				3204EFBC189E4825000993A0 /* DirectIOServerDataPack.cpp */,
 				3204EFBD189E4825000993A0 /* DirectIOServerDataPack.h */,
 				328556A617F3039700A64ED2 /* DirectIOTypes.h */,
 				32D6C8971815293200E9689B /* DirectIOHandler.h */,
@@ -2357,7 +2354,6 @@
 				327967B815DFAAF40003C6DA /* RpcServer.cpp in Sources */,
 				327967D515E029C70003C6DA /* AsioImplEventServer.cpp in Sources */,
 				327967D915E030C40003C6DA /* AsioEventHandler.cpp in Sources */,
-				3204EFBE189E4825000993A0 /* DirectIOServerDataPack.cpp in Sources */,
 				32DF603715E14C7700312C94 /* NamedService.cpp in Sources */,
 				32DF603B15E14D5F00312C94 /* AlertEventDescriptor.cpp in Sources */,
 				32DF603F15E14F5A00312C94 /* InstrumentEventDescriptor.cpp in Sources */,

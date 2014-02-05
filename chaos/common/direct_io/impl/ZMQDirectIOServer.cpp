@@ -137,9 +137,9 @@ void ZMQDirectIOServer::worker(void *socket, bool priority_service) {
     zmq_msg_t request;
     
     //allcoate the delegate for this thread
-    boost::function<void (DirectIOServerDataPack *)> delegate = priority_service?
-            boost::bind(&DirectIOHandler::serviceDataReceived, handler_impl, _1):
-            boost::bind(&DirectIOHandler::priorityDataReceived, handler_impl, _1);
+    boost::function<void (void *, uint32_t)> delegate = priority_service?
+            boost::bind(&DirectIOHandler::serviceDataReceived, handler_impl, _1, _2):
+            boost::bind(&DirectIOHandler::priorityDataReceived, handler_impl, _1, _2);
     while (run_server) {
         try {
 
@@ -153,16 +153,11 @@ void ZMQDirectIOServer::worker(void *socket, bool priority_service) {
                 continue;
             }
             
-            //delegate(new ZMQDirectIOServerDataPack(new ZMQSocketAndMessage(socket, request));
+			//send data to first stage delegate
+            delegate(zmq_msg_data(&request), (uint32_t)zmq_msg_size(&request));
             
+			//close the request
             zmq_msg_close(&request);
-            //  Send reply back to client
-
-            //err = zmq_msg_init_data(&response, (void*)result->getBufferPtr(), result->getBufferLen(), my_free, NULL);
-            
-            //err = zmq_sendmsg(receiver, &response, 0);
-            //deallocate the data wrapper pack if it has been allocated
-            //if(cdataWrapperPack) delete(cdataWrapperPack);
         } catch (CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex)
         }

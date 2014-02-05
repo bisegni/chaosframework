@@ -21,10 +21,16 @@
 #define __CHAOSFramework__DirectIOServerDataPack__
 
 #include <stdint.h>
+
+#include <chaos/common/utility/endianess.h>
+
 namespace chaos {
 	namespace common {
 		namespace direct_io {
             
+//#define DIRECT_IO_GET_PACK_LEN (d) \
+//byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)d));
+			
             //! Contains the data received by the server and permit the reply
             /*!
              The DirectIOServerDataPack is an bastract class that contain the data received 

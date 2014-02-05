@@ -22,10 +22,13 @@
 
 #include <string>
 
+#include <chaos/common/direct_io/DirectIOServerDataPack.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/direct_io/DirectIOHandler.h>
 
 //#include <chaos/common/direct_io/channel/DirectIOVirtualServerChannel.h>
+
+#define ENDPOINT_READ_
 
 namespace chaos {
 	namespace common {
@@ -36,7 +39,7 @@ namespace chaos {
 			//forward declaration
 			class DirectIODispatcher;
 			
-			class DirectIOServerEndpoint : public DirectIOHandler {
+			class DirectIOServerEndpoint : public DirectIOHandler, private utility::InstancerContainer<channel::DirectIOVirtualServerChannel> {
 				friend class DirectIODispatcher;
 				
 				//! endpoint route index
@@ -50,13 +53,16 @@ namespace chaos {
 				~DirectIOServerEndpoint();
 				
 				// Event for a new data received
-				void priorityDataReceived(DirectIOServerDataPack *);
+				void priorityDataReceived(void *data_buffer, uint32_t data_len);
                 
                 // Event for a new data received
-				void serviceDataReceived(DirectIOServerDataPack *);
-			public:
+				void serviceDataReceived(void *data_buffer, uint32_t data_len);
 
-				void addChannelInstancer(std::string channel_name, common::utility::ObjectInstancer<channel::DirectIOVirtualServerChannel> *instancer);
+			public:
+				template<typename C>
+				void addTypedChannel(std::string channel_name) {
+					
+				}
 				
 				uint16_t getRouteIndex();
 			};
