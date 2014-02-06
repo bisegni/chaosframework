@@ -80,7 +80,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
     }
     
 	//---------------------------- D I R E C T I/O ----------------------------
-/*	if(globalConfiguration->hasKey(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_IMPL_TYPE)) {
+	if(globalConfiguration->hasKey(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_IMPL_TYPE)) {
         string direct_io_impl = globalConfiguration->getStringValue(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_IMPL_TYPE);
 		//construct the rpc server and client name
         string directIOServerImpl = direct_io_impl+"DirectIOServer";
@@ -91,8 +91,8 @@ void NetworkBroker::init(void *initData) throw(CException) {
 		if(!directIOServer) throw CException(1, "Error creating direct io server implementation", __FUNCTION__);
 		
 		//initialize direct io server
-        utility::StartableService::initImplementation(eventServer, static_cast<void*>(globalConfiguration), directIOServer->getName(), __FUNCTION__);
-    }*/
+        utility::StartableService::initImplementation(directIOServer, static_cast<void*>(globalConfiguration), directIOServer->getName(), __FUNCTION__);
+    }
 	//---------------------------- D I R E C T I/O ----------------------------
 	
 	//---------------------------- E V E N T ----------------------------
@@ -171,8 +171,14 @@ void NetworkBroker::deinit() throw(CException) {
 	//lock esclusive access to init phase
     SetupStateManager::levelDownFrom(DEINIT_STEP, "NetworkBroker already deinitialized");
     
-    MB_LAPP  << "Deinitilizing Message Broker";
-    
+    MB_LAPP  << "Deinitilizing Network Broker";
+
+	//---------------------------- D I R E C T I/O ----------------------------
+	MB_LAPP  << "Deinit DirectIO server: " << directIOServer->getName();
+    utility::StartableService::deinitImplementation(directIOServer, directIOServer->getName(), "NetworkBroker::deinit");
+	
+	//---------------------------- D I R E C T I/O ----------------------------
+	
 	//---------------------------- E V E N T ----------------------------
     MB_LAPP  << "Deallocate all event channel";
     for (map<string, event::channel::EventChannel*>::iterator channnelIter = activeEventChannel.begin();
@@ -234,6 +240,9 @@ void NetworkBroker::deinit() throw(CException) {
  * all part are started
  */
 void NetworkBroker::start() throw(CException){
+	MB_LAPP  << "Start DirectIO server: " << directIOServer->getName();
+    utility::StartableService::startImplementation(directIOServer, directIOServer->getName(), "NetworkBroker::start");
+	
     MB_LAPP  << "Start event dispatcher ";
     utility::StartableService::startImplementation(eventDispatcher, "DefaultEventDispatcher", "NetworkBroker::start");
     
@@ -279,6 +288,8 @@ void NetworkBroker::stop() throw(CException) {
     MB_LAPP  << "Stop event dispatcher ";
     utility::StartableService::stopImplementation(eventDispatcher, "DefaultEventDispatcher", "NetworkBroker::stop");
 	
+	MB_LAPP  << "Stop DirectIO server: " << directIOServer->getName();
+    utility::StartableService::startImplementation(directIOServer, directIOServer->getName(), "NetworkBroker::Stop");
 }
 
 /*!

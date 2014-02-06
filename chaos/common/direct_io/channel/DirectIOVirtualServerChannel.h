@@ -20,14 +20,19 @@
 #ifndef __CHAOSFramework__DirectIOVirtualServerChannel__
 #define __CHAOSFramework__DirectIOVirtualServerChannel__
 
-#include <chaos/common/direct_io/DirectIOHandler.h>
+#include <chaos/common/direct_io/DirectIODataPack.h>
 
 namespace chaos {
 	namespace common {
 		namespace direct_io {
             
-            class DirectIOVirtualServerChannel : public DirectIOHandler {
-                
+			class DirectIOServerEndpoint;
+			
+            class DirectIOVirtualServerChannel {
+				friend class DirectIOServerEndpoint;
+				
+			protected:
+				virtual void priorityDataReceived(DirectIODataPack *data_pack) = 0;
             };
             
         }
