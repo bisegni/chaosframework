@@ -816,7 +816,6 @@ int16_t SQLiteEntityDB::deleteProperty(uint32_t propertyID) {
     // set key id
     result = sqlite3_bind_int(stmt[18], 1, propertyID);
     if(result != SQLITE_OK) return result;
-    
     return DONE_TO_OK_RESULT(result, sqlite3_step(stmt[18]));
 }
 

@@ -88,7 +88,9 @@ namespace chaos {
             
             int32_t updateProperty(uint32_t propertyID, uint32_t keyID, double propertyVal);
 
-            int32_t reset();
+            int32_t resetAllProperty();
+			
+			int32_t deleteProrperty(uint32_t propertyID);
             
             int32_t getAllProperty(ptr_vector<chaos::edb::KeyIdAndValue>& propertys);
             

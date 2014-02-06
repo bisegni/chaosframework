@@ -121,7 +121,11 @@ int32_t Entity::getPropertyByKeyID(vector<uint32_t>& keyIDs, ptr_vector<chaos::e
     return error;
 }
 
-int32_t Entity::reset() {
+int32_t Entity::deleteProrperty(uint32_t propertyID) {
+	 return database->deleteProperty(propertyID);
+}
+
+int32_t Entity::resetAllProperty() {
     return database->deleteAllPropertyForEntity(entityID);
 }
 

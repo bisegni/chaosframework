@@ -256,15 +256,18 @@ void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uin
             if(!strcmp((&keysAndValues[idx])->value.strValue, attributeValue)) {
                 found = true;
                 break;
-            }
+            } else {
+				attributeEntity->deleteProrperty((&keysAndValues[idx])->elementID);
+			}
         }
     }
     
     if(!found) {
         attributeEntity->addProperty(keyIDToAdd, attributeValue);
-    } else {
-        attributeEntity->updateProperty((&keysAndValues[idx])->elementID, keyIDToAdd, attributeValue);
     }
+	//else {
+      //  attributeEntity->updateProperty((&keysAndValues[idx])->elementID, keyIDToAdd, attributeValue);
+ //   }
 }
 
 void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, string& attributeValue, bool checkValueForUnicity) {
@@ -279,16 +282,18 @@ void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uin
             if(!strcmp((&keysAndValues[idx])->value.strValue, attributeValue.c_str())) {
                 found = true;
                 break;
-            }
+            } else {
+				attributeEntity->deleteProrperty((&keysAndValues[idx])->elementID);
+			}
         }
     }
     
     //if(!found) attributeEntity->addProperty(keyIDToAdd, attributeValue);
     if(!found) {
         attributeEntity->addProperty(keyIDToAdd, attributeValue);
-    } else {
+    } /*else {
         attributeEntity->updateProperty((&keysAndValues[idx])->elementID, keyIDToAdd, attributeValue);
-    }
+    }*/
 }
 
 void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, int64_t attributeValue, bool checkValueForUnicity) {
@@ -303,16 +308,18 @@ void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uin
             if((&keysAndValues[idx])->value.numValue == attributeValue) {
                 found = true;
                 break;
-            }
+            } else {
+				attributeEntity->deleteProrperty((&keysAndValues[idx])->elementID);
+			}
         }
     }
     
     //if(!found)  attributeEntity->addProperty(keyIDToAdd, attributeValue);
     if(!found) {
         attributeEntity->addProperty(keyIDToAdd, attributeValue);
-    } else {
+    } /*else {
         attributeEntity->updateProperty((&keysAndValues[idx])->elementID, keyIDToAdd, attributeValue);
-    }
+    }*/
 }
 
 void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, double attributeValue, bool checkValueForUnicity) {
@@ -327,16 +334,18 @@ void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uin
             if((&keysAndValues[idx])->value.doubleValue == attributeValue) {
                 found = true;
                 break;
-            }
+            } else {
+				attributeEntity->deleteProrperty((&keysAndValues[idx])->elementID);
+			}
         }
     }
     
     //if(!found)  attributeEntity->addProperty(keyIDToAdd, attributeValue);
     if(!found) {
         attributeEntity->addProperty(keyIDToAdd, attributeValue);
-    } else {
+    } /*else {
         attributeEntity->updateProperty((&keysAndValues[idx])->elementID, keyIDToAdd, attributeValue);
-    }
+    }*/
 }
 /*
  Add the new field at the CU dataset from the CDataWrapper
@@ -376,8 +385,6 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
             
                 //get the attribute
             auto_ptr<entity::Entity> attributeEntity(getDatasetElement(deviceEntity, attrName));
-            
-            attributeEntity->reset();
             
                 //attribute description
             if(elementDescription->hasKey(DatasetDefinitionkey::ATTRIBUTE_DESCRIPTION)){
