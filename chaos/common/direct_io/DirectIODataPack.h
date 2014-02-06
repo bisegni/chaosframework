@@ -32,15 +32,20 @@
 |                               |
 +-------+-------+-------+-------+
  */
-
+#include <chaos/common/utility/endianess.h>
 namespace chaos {
     namespace common {
         namespace direct_io {
-            
+
+#define DIRECT_IO_HEADER_SIZE				4
+//#define DIRECT_IO_GET_PACK_LEN (d)          byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)d));
+#define DIRECT_IO_GET_DISPATCHER_DATA(d)    byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)(d)));
+//#define DIRECT_IO_GET_CHANNEL_DATA(d)       ((void*)(d+8));
+			
             //! DirectIO data pack structure. It is write in little endian
-            struct DirectIODataPack {
+            typedef struct DirectIODataPack {
                 //! define the length of pack
-                uint32_t    dio_pack_len;
+                //uint32_t    dio_pack_len;
                 union {
                     uint32_t    dispatcher_raw_data;
                     struct dispatcher_data {
@@ -50,12 +55,13 @@ namespace chaos {
                         uint16_t	channel_idx: 8;
                         //! channel tag
                         uint16_t    channel_tag: 8;
-                    }       fields;
-                }           header;
+                    } fields;
+                } header;
                 
                 //! channel data
-                void        *data;
-            };
+				uint32_t	data_size;
+				void        *data;
+            } DirectIODataPack;
         }
     }
 }

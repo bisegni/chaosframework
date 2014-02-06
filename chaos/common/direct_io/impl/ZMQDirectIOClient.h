@@ -45,9 +45,7 @@ namespace chaos {
                     
 					void *socket_monitor;
 					
-                    inline uint32_t writeToSocket(void *socket, void *data_buffer, uint32_t data_size);
-                    
-                    inline uint32_t readFromSocket(void *socket, void **data_buffer, uint32_t *data_size);
+                    inline uint32_t writeToSocket(void *socket, DirectIODataPack *data_pack);
                     
                     //set the spread functionality on zmq socket
                     void switchMode(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType direct_io_spread_mode);
@@ -72,14 +70,11 @@ namespace chaos {
                     void deinit() throw(chaos::CException);
                     
                     // send the data to the server layer on priority channel
-                    uint32_t sendPriorityData(void *data_buffer, uint32_t data_size);
+                    uint32_t sendPriorityData(DirectIODataPack *data_pack);
                     
                     // send the data to the server layer on the service channel
-                    uint32_t sendServiceData(void *data_buffer, uint32_t data_size);
-                    
-                    uint32_t receiveFromPriorityChannel(void **data_buffer, uint32_t *data_size);
-                    
-                    uint32_t receiveFromServiceChannel(void **data_buffer, uint32_t *data_size);
+                    uint32_t sendServiceData(DirectIODataPack *data_pack);
+
                 };
             }
         }

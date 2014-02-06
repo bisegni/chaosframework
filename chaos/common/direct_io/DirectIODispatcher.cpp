@@ -113,8 +113,8 @@ DirectIOServerEndpoint *DirectIODispatcher::getNewEndpoint() {
 	}
 	//associate to the endpoint his slot index
 	endpoint_slot_array[next_available_slot]->endpoint->endpoint_route_index = next_available_slot;
-	endpoint_slot_array[next_available_slot]->priority_delegate = boost::bind(&DirectIOServerEndpoint::priorityDataReceived, endpoint_slot_array[next_available_slot]->endpoint, _1, _2);
-	endpoint_slot_array[next_available_slot]->service_delegate = boost::bind(&DirectIOServerEndpoint::serviceDataReceived, endpoint_slot_array[next_available_slot]->endpoint, _1, _2);
+	endpoint_slot_array[next_available_slot]->priority_delegate = boost::bind(&DirectIOServerEndpoint::priorityDataReceived, endpoint_slot_array[next_available_slot]->endpoint, _1);
+	endpoint_slot_array[next_available_slot]->service_delegate = boost::bind(&DirectIOServerEndpoint::serviceDataReceived, endpoint_slot_array[next_available_slot]->endpoint, _1);
 	return endpoint_slot_array[next_available_slot]->endpoint;
 }
 
@@ -132,12 +132,12 @@ void DirectIODispatcher::releaseEndpoint(DirectIOServerEndpoint *endpoint_to_rel
 }
 
 // Event for a new data received
-void DirectIODispatcher::priorityDataReceived(void *data_buffer, uint32_t data_len) {
+void DirectIODispatcher::priorityDataReceived(DirectIODataPack *data_pack) {
 	//get route index and call delegator
 }
 
 // Event for a new data received
-void DirectIODispatcher::serviceDataReceived(void *data_buffer, uint32_t data_len) {
+void DirectIODispatcher::serviceDataReceived(DirectIODataPack *data_pack) {
 	//get route index and call delegator
 	
 }

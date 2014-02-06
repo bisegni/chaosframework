@@ -21,7 +21,7 @@
 #define CHAOSFramework_DirectIODataForwarder_h
 
 #include <stdint.h>
-
+#include <chaos/common/direct_io/DirectIODataPack.h>
 namespace chaos {
 	namespace common {
 		namespace direct_io {
@@ -37,10 +37,8 @@ namespace chaos {
 				 Forward the data throught the client sub layer for to be sent to the other side
                  using hte priority channel. This channel is to be used for the fast data push.
 				 */
-				virtual uint32_t sendPriorityData(void *data_buffer, uint32_t data_size) = 0;
-                
-                
-                virtual uint32_t receiveFromPriorityChannel(void **data_buffer, uint32_t *data_size) = 0;
+				virtual uint32_t sendPriorityData(DirectIODataPack *data_pack) = 0;
+
                 
                 //! send the data to the server layer on the service channel
 				/*!
@@ -48,10 +46,7 @@ namespace chaos {
                  using the service channel. This channel is to be used for the data that doesn't need
                  to be fast and accurate.
 				 */
-				virtual uint32_t sendServiceData(void *data_buffer, uint32_t data_size) = 0;
-                
-                
-                virtual uint32_t receiveFromServiceChannel(void **data_buffer, uint32_t *data_size) = 0;
+				virtual uint32_t sendServiceData(DirectIODataPack *data_pack) = 0;
 			};
 			
 		}

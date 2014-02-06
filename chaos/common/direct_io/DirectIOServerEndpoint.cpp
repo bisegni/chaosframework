@@ -34,11 +34,11 @@ uint16_t DirectIOServerEndpoint::getRouteIndex() {
 }
 
 // Event for a new data received
-void DirectIOServerEndpoint::priorityDataReceived(void *data_buffer, uint32_t data_len) {
+void DirectIOServerEndpoint::priorityDataReceived(DirectIODataPack *data_pack) {
 	
 }
 
 // Event for a new data received
-void DirectIOServerEndpoint::serviceDataReceived(void *data_buffer, uint32_t data_len) {
+void DirectIOServerEndpoint::serviceDataReceived(DirectIODataPack *data_pack) {
 	
 }

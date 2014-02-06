@@ -42,8 +42,8 @@ namespace chaos {
 				//! struct for fast delegation
 				struct EndpointFastDelegation {
 					DirectIOServerEndpoint *endpoint;
-					boost::function<void(void *data_buffer, uint32_t data_len)> priority_delegate;
-					boost::function<void(void *data_buffer, uint32_t data_len)> service_delegate;
+					boost::function<void(DirectIODataPack*)> priority_delegate;
+					boost::function<void(DirectIODataPack*)> service_delegate;
 				};
 
 				
@@ -74,10 +74,10 @@ namespace chaos {
 				void releaseEndpoint(DirectIOServerEndpoint *);
 				
 				// Event for a new data received
-				void priorityDataReceived(void *data_buffer, uint32_t data_len);
+				void priorityDataReceived(DirectIODataPack *data_pack);
                 
                 // Event for a new data received
-				void serviceDataReceived(void *data_buffer, uint32_t data_len);
+				void serviceDataReceived(DirectIODataPack *data_pack);
 
 			};
 		}

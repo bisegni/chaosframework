@@ -21,7 +21,7 @@
 #define CHAOSFramework_DirectIOHandler_h
 
 #include <stdint.h>
-
+#include <chaos/common/direct_io/DirectIODataPack.h>
 namespace chaos {
 	namespace common {
 		namespace direct_io {
@@ -40,7 +40,7 @@ namespace chaos {
 				 \param data_size the size of the received data
 				 \param detach inform the server that hte memory buffed doesn't need to be deallocated.
 				 */
-				virtual void priorityDataReceived(void *data_buffer, uint32_t data_len) = 0;
+				virtual void priorityDataReceived(DirectIODataPack *data_pack) = 0;
                 
                 //! Event for a new data received
 				/*!
@@ -49,7 +49,7 @@ namespace chaos {
 				 \param data_size the size of the received data
 				 \param detach inform the server that hte memory buffed doesn't need to be deallocated.
 				 */
-				virtual void serviceDataReceived(void *data_buffer, uint32_t data_len) = 0;
+				virtual void serviceDataReceived(DirectIODataPack *data_pack) = 0;
 			};
 		}
 	}

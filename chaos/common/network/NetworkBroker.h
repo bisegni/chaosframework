@@ -36,8 +36,7 @@
 #include <chaos/common/network/NetworkForwardInfo.h>
 #include <chaos/common/utility/StartableService.h>
 
-#include <chaos/common/direct_io/DirectIOClient.h>
-#include <chaos/common/direct_io/DirectIOServer.h>
+#include <chaos/common/direct_io/DirectIO.h>
 
 namespace chaos_data = chaos::common::data;
 namespace chaos {

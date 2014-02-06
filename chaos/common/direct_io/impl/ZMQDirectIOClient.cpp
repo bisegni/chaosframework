@@ -186,48 +186,26 @@ void ZMQDirectIOClient::switchMode(DirectIOConnectionSpreadType::DirectIOConnect
 }
 
 // send the data to the server layer on priority channel
-uint32_t ZMQDirectIOClient::sendPriorityData(void *data_buffer, uint32_t data_size) {
-    return writeToSocket(socket_priority, data_buffer, data_size);
+uint32_t ZMQDirectIOClient::sendPriorityData(DirectIODataPack *data_pack) {
+    return writeToSocket(socket_priority, data_pack);
 }
 
 // send the data to the server layer on the service channel
-uint32_t ZMQDirectIOClient::sendServiceData(void *data_buffer, uint32_t data_size) {
-    return writeToSocket(socket_service, data_buffer, data_size);
+uint32_t ZMQDirectIOClient::sendServiceData(DirectIODataPack *data_pack) {
+    return writeToSocket(socket_service, data_pack);
 }
 
-uint32_t ZMQDirectIOClient::receiveFromPriorityChannel(void **data_buffer, uint32_t *data_size) {
-    return readFromSocket(socket_priority, data_buffer, data_size);
-}
-
-uint32_t ZMQDirectIOClient::receiveFromServiceChannel(void **data_buffer, uint32_t *data_size) {
-    return readFromSocket(socket_service, data_buffer, data_size);
-}
-
-uint32_t ZMQDirectIOClient::writeToSocket(void *socket, void *data_buffer, uint32_t data_size) {
-    assert(socket && data_buffer && data_size);
-    
+uint32_t ZMQDirectIOClient::writeToSocket(void *socket, DirectIODataPack *data_pack) {
+    assert(socket && data_pack);
     ZMQDirectIOClientReadLock lock(mutex_socket_manipolation);
-    ZMQDIOLDBG_ << "Read lock acquired";
-    //send empty pack
-    int err = zmq_send(socket_priority, "", 0, ZMQ_SNDMORE);
-    if(err) {
-        return err;
-    }
-    return zmq_send(socket_priority, data_buffer, data_size, 0);
+	//send header
+	int err = zmq_send(socket, &data_pack->header.dispatcher_raw_data, 4, ZMQ_SNDMORE);
+	if(err) {
+		return err;
+	}
+	//send data
+    return zmq_send(socket, data_pack->data, data_pack->data_size, 0);
 
 }
 
-uint32_t ZMQDirectIOClient::readFromSocket(void *socket, void **data_buffer, uint32_t *data_size) {
-    assert(socket && data_buffer && data_size);
-    ZMQDirectIOClientReadLock lock(mutex_socket_manipolation);
-    zmq_msg_t message;
-    zmq_msg_init (&message);
-    int err = zmq_msg_recv (&message, socket, 0);
-    if(err) {
-        *data_buffer = zmq_msg_data(&message);
-        *data_size = static_cast<uint32_t>(err);
-    }
-    zmq_msg_close(&message);
-    return err;
-}
 

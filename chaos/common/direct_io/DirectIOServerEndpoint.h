@@ -22,7 +22,6 @@
 
 #include <string>
 
-#include <chaos/common/direct_io/DirectIOServerDataPack.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/direct_io/DirectIOHandler.h>
 
@@ -53,10 +52,10 @@ namespace chaos {
 				~DirectIOServerEndpoint();
 				
 				// Event for a new data received
-				void priorityDataReceived(void *data_buffer, uint32_t data_len);
+				void priorityDataReceived(DirectIODataPack *data_pack);
                 
                 // Event for a new data received
-				void serviceDataReceived(void *data_buffer, uint32_t data_len);
+				void serviceDataReceived(DirectIODataPack *data_pack);
 
 			public:
 				template<typename C>

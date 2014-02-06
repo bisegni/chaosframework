@@ -80,7 +80,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
     }
     
 	//---------------------------- D I R E C T I/O ----------------------------
-	if(globalConfiguration->hasKey(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_IMPL_TYPE)) {
+/*	if(globalConfiguration->hasKey(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_IMPL_TYPE)) {
         string direct_io_impl = globalConfiguration->getStringValue(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_IMPL_TYPE);
 		//construct the rpc server and client name
         string directIOServerImpl = direct_io_impl+"DirectIOServer";
@@ -92,7 +92,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
 		
 		//initialize direct io server
         utility::StartableService::initImplementation(eventServer, static_cast<void*>(globalConfiguration), directIOServer->getName(), __FUNCTION__);
-    }
+    }*/
 	//---------------------------- D I R E C T I/O ----------------------------
 	
 	//---------------------------- E V E N T ----------------------------

@@ -18,10 +18,9 @@
  *    	limitations under the License.
  */
 
-
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/direct_io/DirectIODataPack.h>
 #include <chaos/common/direct_io/impl/ZMQDirectIOServer.h>
-#include <chaos/common/direct_io/impl/ZMQDirectIOServerDataPack.h>
 #include <boost/format.hpp>
 
 #include <zmq.h>
@@ -133,31 +132,53 @@ void ZMQDirectIOServer::deinit() throw(chaos::CException) {
 }
 
 void ZMQDirectIOServer::worker(void *socket, bool priority_service) {
-    int err = 0;
-    zmq_msg_t request;
-    
+    zmq_msg_t			request;
+    int					err					= 0;
+    DirectIODataPack	*data_pack			= NULL;
+	void				*received_data		= NULL;
+	uint32_t			received_data_size	= 0;
     //allcoate the delegate for this thread
-    boost::function<void (void *, uint32_t)> delegate = priority_service?
-            boost::bind(&DirectIOHandler::serviceDataReceived, handler_impl, _1, _2):
-            boost::bind(&DirectIOHandler::priorityDataReceived, handler_impl, _1, _2);
+    boost::function<void (DirectIODataPack*)> delegate = priority_service?
+            boost::bind(&DirectIOHandler::serviceDataReceived, handler_impl, _1):
+            boost::bind(&DirectIOHandler::priorityDataReceived, handler_impl, _1);
     while (run_server) {
         try {
-
+			data_pack = new DirectIODataPack();
+			//read header
             err = zmq_msg_init(&request);
             if(err == -1) {
                 continue;
             }
             err = zmq_recvmsg(socket, &request, 0);
-            if(err == -1 || zmq_msg_size(&request)==0) {
+            if(err == -1 ||
+				zmq_msg_size(&request) != DIRECT_IO_HEADER_SIZE) {
                 zmq_msg_close(&request);
                 continue;
             }
-            
-			//send data to first stage delegate
-            delegate(zmq_msg_data(&request), (uint32_t)zmq_msg_size(&request));
-            
+			received_data = zmq_msg_data(&request);
+			received_data_size = (uint32_t)zmq_msg_size(&request);
+            //data_pack->dio_pack_len = DIRECT_IO_GET_PACK_LEN(received_data);
+			data_pack->header.dispatcher_raw_data = DIRECT_IO_GET_DISPATCHER_DATA(received_data);
 			//close the request
             zmq_msg_close(&request);
+			
+			err = zmq_msg_init(&request);
+            if(err == -1) {
+                continue;
+            }
+            err = zmq_recvmsg(socket, &request, 0);
+            if(err == -1 ||
+			   zmq_msg_size(&request)==0) {
+                zmq_msg_close(&request);
+                continue;
+            }
+			//send data to first stage delegate
+			data_pack->data = zmq_msg_data(&request);
+			data_pack->data_size = (uint32_t)zmq_msg_size(&request);
+            delegate(data_pack);
+            //close the request
+            zmq_msg_close(&request);
+
         } catch (CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex)
         }

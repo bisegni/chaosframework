@@ -1,5 +1,5 @@
 /*
- *	ZMQDirectIOServerDataPack.cpp
+ *	DirectIO.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,24 +17,11 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include <chaos/common/direct_io/impl/ZMQDirectIOServerDataPack.h>
-using namespace chaos::common::direct_io::impl;
+#ifndef ChaosFramework_ChaosRpc_h
+#define ChaosFramework_ChaosRpc_h
 
-ZMQDirectIOServerDataPack::ZMQDirectIOServerDataPack(ZMQSocketAndMessage *_socket_message):socket_message(_socket_message) {
-	
-}
-ZMQDirectIOServerDataPack::~ZMQDirectIOServerDataPack() {
-	
-}
 
-void ZMQDirectIOServerDataPack::getDataPtr() {
-	
-}
+#include <chaos/common/direct_io/impl/ZMQDirectIOClient.h>
+#include <chaos/common/direct_io/impl/ZMQDirectIOServer.h>
 
-uint32_t ZMQDirectIOServerDataPack::getDataSize() {
-	return 0;
-}
-
-uint32_t ZMQDirectIOServerDataPack::sendAnswer(void *data_ptr, uint32_t data_len) {
-	return 0;
-}
+#endif
