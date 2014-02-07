@@ -17,13 +17,26 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
+#include <chaos/common/direct_io/DirectIOForwarder.h>
 #include <chaos/common/direct_io/channel/DirectIOVirtualClientChannel.h>
 
 using namespace chaos::common::direct_io::channel;
 
-DirectIOVirtualClientChannel::DirectIOVirtualClientChannel() {
-    
+#define CALL_MEMBER_FN  ((*client_instance).*forward_handler)
+
+DirectIOVirtualClientChannel::DirectIOVirtualClientChannel(string channel_name, uint8_t channel_route_index, bool priority):DirectIOVirtualChannel(channel_name, channel_route_index) {
+    if(priority) {
+		forward_handler = &DirectIOForwarder::sendPriorityData;
+	} else {
+		forward_handler = &DirectIOForwarder::sendServiceData;
+	}
 }
+
 DirectIOVirtualClientChannel::~DirectIOVirtualClientChannel() {
     
+}
+
+uint32_t DirectIOVirtualClientChannel::sendData(chaos::common::direct_io::DirectIODataPack *data_pack) {
+	return CALL_MEMBER_FN(data_pack);
 }

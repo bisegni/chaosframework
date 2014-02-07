@@ -61,8 +61,6 @@ namespace chaos {
                 
                 boost::ptr_vector<DirectIOConnection> connections_info;
                 
-				std::map<string, chaos::common::utility::ObjectInstancer<channel::DirectIOVirtualClientChannel>* > channel_instancer;
-                
                 boost::shared_mutex mutex_channel_map;
                 std::map<unsigned int, channel::DirectIOVirtualClientChannel* > channel_map;
                 
@@ -104,13 +102,10 @@ namespace chaos {
 				void updateConfiguration(void *init_data) throw(chaos::CException);
                 
                 //! Add a new channel instantiator
-                void addChannelInstancer(std::string channel_name, utility::ObjectInstancer< channel::DirectIOVirtualClientChannel> *channel_instancer);
-                
-                //! Get channel instance by his name
-                channel::DirectIOVirtualClientChannel *getChannelInstance(std::string channel_name);
+                channel::DirectIOVirtualClientChannel *registerChannelInstance(channel::DirectIOVirtualClientChannel *channel_instance);
                 
                 //! Dispose the channel
-                void disposeChannelInstance( channel::DirectIOVirtualClientChannel *channel_instance);
+                void deregisterChannelInstance(channel::DirectIOVirtualClientChannel *channel_instance);
 			};
 			
 		}

@@ -17,25 +17,32 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef __CHAOSFramework__DirectIOVirtualChannel__
-#define __CHAOSFramework__DirectIOVirtualChannel__
+#ifndef __CHAOSFramework__DirectIOVirtualClientChannel__
+#define __CHAOSFramework__DirectIOVirtualClientChannel__
+
+#include <stdint.h>
+//#include <chaos/common/utility/FastDelegate.h>
+#include <chaos/common/direct_io/channel/DirectIOVirtualChannel.h>
 
 namespace chaos {
 	namespace common {
 		namespace direct_io {
-                class DirectIOClient;
-                class DirectIOForwarder;
-            
+			class DirectIOClient;
+			class DirectIOForwarder;
+			class DirectIODataPack;
+			
             namespace channel {
                 
-                class DirectIOVirtualClientChannel {
+                class DirectIOVirtualClientChannel : public virtual DirectIOVirtualChannel {
                     friend class chaos::common::direct_io::DirectIOClient;
-                    
-                    unsigned int channel_index;
-                    
-                    chaos::common::direct_io::DirectIOForwarder *client_instance;
-                    
-                    DirectIOVirtualClientChannel();
+					
+					typedef uint32_t (chaos::common::direct_io::DirectIOForwarder::*ForwardDelegate)(chaos::common::direct_io::DirectIODataPack *data_pack);
+					ForwardDelegate  forward_handler;
+					DirectIOForwarder *client_instance;
+				protected:
+					uint32_t sendData(chaos::common::direct_io::DirectIODataPack *data_pack);
+
+                    DirectIOVirtualClientChannel(std::string channel_name, uint8_t channel_route_index, bool priority);
                     ~DirectIOVirtualClientChannel();
                 };
                 

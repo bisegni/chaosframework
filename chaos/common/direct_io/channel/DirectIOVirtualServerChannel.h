@@ -21,20 +21,36 @@
 #define __CHAOSFramework__DirectIOVirtualServerChannel__
 
 #include <chaos/common/direct_io/DirectIODataPack.h>
+#include <chaos/common/direct_io/DirectIOEndpointHandler.h>
+#include <chaos/common/direct_io/channel/DirectIOVirtualChannel.h>
 
+#include <boost/function.hpp>
 namespace chaos {
 	namespace common {
 		namespace direct_io {
-            
+			
 			class DirectIOServerEndpoint;
 			
-            class DirectIOVirtualServerChannel {
-				friend class DirectIOServerEndpoint;
+            namespace channel {
 				
-			protected:
-				virtual void priorityDataReceived(DirectIODataPack *data_pack) = 0;
-            };
-            
+				class DirectIOVirtualServerChannel : public virtual DirectIOVirtualChannel {
+					friend class chaos::common::direct_io::DirectIOServerEndpoint;
+
+				public:
+					
+					//typedef boost::function<void(DirectIODataPack*)> ServerChannelDelegate;
+					typedef DirectIOEndpointHandler* ServerChannelDelegate;
+					void setDelegate(ServerChannelDelegate delegate_function);
+					void clearDelegate();
+					uint16_t getEndpointRouteIndex();
+				private:
+					ServerChannelDelegate server_channel_delegate;
+					uint16_t endpoint_route_index;
+				protected:
+					DirectIOVirtualServerChannel(std::string channel_name, uint8_t channel_route_index);
+                    ~DirectIOVirtualServerChannel();
+				};
+            }
         }
     }
 }

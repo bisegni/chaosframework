@@ -25,9 +25,9 @@
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/direct_io/DirectIOHandler.h>
 #include <chaos/common/utility/FastSlotArray.h>
-//#include <chaos/common/direct_io/channel/DirectIOVirtualServerChannel.h>
+#include <chaos/common/direct_io/channel/DirectIOVirtualServerChannel.h>
 
-#define MAX_CHANNEL_SLOT 16
+#include <boost/thread.hpp>
 
 namespace chaos {
 	namespace common {
@@ -38,10 +38,15 @@ namespace chaos {
 			//forward declaration
 			class DirectIODispatcher;
 			
-			class DirectIOServerEndpoint : public DirectIOHandler, private utility::InstancerContainer<channel::DirectIOVirtualServerChannel> {
+#define MAX_ENDPOINT_CHANNEL 256
+			
+			class DirectIOServerEndpoint : public DirectIOHandler {
 				friend class DirectIODispatcher;
 				
-				chaos::common::utility::FastSlotArray<channel::DirectIOVirtualServerChannel> *channel_slot;
+				boost::shared_mutex mutex_channel_slot;
+				
+				channel::DirectIOVirtualServerChannel **channel_slot;
+				
 				//! endpoint route index
 				/*!
 				 This is used by dispatcher to route the datapack to the right
@@ -59,10 +64,11 @@ namespace chaos {
 				void serviceDataReceived(DirectIODataPack *data_pack);
 
 			public:
-				template<typename C>
-				void addTypedChannel(std::string channel_name) {
-					InstancerContainer::addInstancer<C>();
-				}
+				//! Add a new channel instantiator
+                channel::DirectIOVirtualServerChannel *registerChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance);
+                
+                //! Dispose the channel
+                void deregisterChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance);
 				
 				uint16_t getRouteIndex();
 			};

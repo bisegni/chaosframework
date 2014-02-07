@@ -17,4 +17,28 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "DirectIOVirtualServerChannel.h"
+#include <boost/bind.hpp>
+#include <chaos/common/direct_io/channel/DirectIOVirtualServerChannel.h>
+
+using namespace chaos::common::direct_io::channel;
+
+void dummy_vsf(chaos::common::direct_io::DirectIODataPack *data_pack) { /* has differing behaviour */ }
+
+DirectIOVirtualServerChannel::DirectIOVirtualServerChannel(std::string channel_name, uint8_t channel_route_index):DirectIOVirtualChannel(channel_name, channel_route_index) {
+	clearDelegate();
+}
+DirectIOVirtualServerChannel::~DirectIOVirtualServerChannel() {
+	
+}
+
+void DirectIOVirtualServerChannel::setDelegate(ServerChannelDelegate delegate_function) {
+	server_channel_delegate = delegate_function;
+}
+
+void DirectIOVirtualServerChannel::clearDelegate() {
+	server_channel_delegate = NULL;
+}
+
+uint16_t DirectIOVirtualServerChannel::getEndpointRouteIndex() {
+	return endpoint_route_index;
+}

@@ -65,50 +65,31 @@ void DirectIOClient::deinit() throw(chaos::CException) {
 }
 
 void DirectIOClient::clearChannelInstancerAndInstance() {
-    for(std::map<string, chaos::common::utility::ObjectInstancer<channel::DirectIOVirtualClientChannel>* >::iterator it = channel_instancer.begin();
-        it != channel_instancer.end();
-        it++) {
-        DIOLAPP_ << "Remove instancer " << it->first;
-        if(it->second) delete(it->second);
-    }
-    
     boost::unique_lock<boost::shared_mutex>	Lock(mutex_channel_map);
-    for(std::map<unsigned int, channel::DirectIOVirtualClientChannel* >::iterator it = channel_map.begin();
+   /* for(std::map<unsigned int, channel::DirectIOVirtualClientChannel* >::iterator it = channel_map.begin();
         it != channel_map.end();
         it++) {
         DIOLAPP_ << "Remove channel index " << it->first;
         if(it->second) delete(it->second);
-    }
-}
-
-void DirectIOClient::addChannelInstancer(std::string channel_name, utility::ObjectInstancer<channel::DirectIOVirtualClientChannel> *instancer) {
-    if(chaos::utility::StartableService::serviceState == ::chaos::utility::service_state_machine::StartableServiceType::SS_STARTED)
-        return;
-    if(channel_instancer.count(channel_name)) return;
-    
-    channel_instancer.insert(make_pair(channel_name, instancer));
+    }*/
 }
 
 // allocate a new channel by the instancer
-channel::DirectIOVirtualClientChannel *DirectIOClient::getChannelInstance(std::string channel_name) {
-    if(!channel_instancer.count(channel_name)) return NULL;
-    
+channel::DirectIOVirtualClientChannel *DirectIOClient::registerChannelInstance(channel::DirectIOVirtualClientChannel *channel_instance) {
     boost::unique_lock<boost::shared_mutex>	Lock(mutex_channel_map);
-    channel::DirectIOVirtualClientChannel *tmp_instance = channel_instancer[channel_name]->getInstance();
-    if(tmp_instance == NULL) return NULL;
+    if(channel_instance == NULL) return NULL;
     
     //associate the instance
-    tmp_instance->channel_index = channel_counter++;
-    tmp_instance->client_instance = this;
-    channel_map.insert(make_pair(tmp_instance->channel_index, tmp_instance));
-    return tmp_instance;
+    channel_instance->client_instance = this;
+    channel_map.insert(make_pair(channel_instance->channel_route_index, channel_instance));
+    return channel_instance;
 }
 
 // dispose the channel instance
-void DirectIOClient::disposeChannelInstance(channel::DirectIOVirtualClientChannel *channel_instance) {
+void DirectIOClient::deregisterChannelInstance(channel::DirectIOVirtualClientChannel *channel_instance) {
     if(channel_instance == NULL) return;
     boost::unique_lock<boost::shared_mutex>	Lock(mutex_channel_map);
-    channel_map.erase(channel_instance->channel_index);
+    channel_map.erase(channel_instance->channel_route_index);
     delete channel_instance;
 }
 
