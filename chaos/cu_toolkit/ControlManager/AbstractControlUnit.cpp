@@ -168,6 +168,7 @@ void AbstractControlUnit::_getDeclareActionInstance(std::vector<const chaos::Dec
  Initialize the Custom Contro Unit and return the configuration
  */
 CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& detachParam) throw(CException) {
+	uint8_t last_service_state = chaos::utility::StartableService::serviceState;
     try {
 		//call init method of the startable interface
 		utility::StartableService::initImplementation(this, static_cast<void*>(initConfiguration), "AbstractControlUnit", "AbstractControlUnit::_init");
@@ -181,8 +182,10 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
 		//call update param function
 		updateConfiguration(initConfiguration, detachParam);
 	} catch(CException& ex) {
-		//force the deinitialization on innit failure
-		_deinit(initConfiguration, detachParam);
+		if(last_service_state != chaos::utility::service_state_machine::InizializableServiceType::IS_INITIATED) {
+			//force the deinitialization on innit failure
+			_deinit(initConfiguration, detachParam);
+		}
 		
 		//trhow received exception
 		throw ex;
@@ -195,6 +198,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
  */
 CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detachParam) throw(CException) {
     //call start method of the startable interface
+	uint8_t last_service_state = chaos::utility::StartableService::serviceState;
 	try {
 		utility::StartableService::startImplementation(this, "AbstractControlUnit", "AbstractControlUnit::_start");
 		
@@ -202,8 +206,10 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
 		LCU_ << "Start sublass for deviceID:" << DatasetDB::getDeviceID();
 		unitStart();
 	} catch(CException& ex) {
-		//force the deinitialization on innit failure
-		_stop(startParam, detachParam);
+		if(last_service_state != chaos::utility::service_state_machine::StartableServiceType::SS_STARTED) {
+			//force the deinitialization on innit failure
+			_stop(startParam, detachParam);
+		}
 		
 		//trhow received exception
 		throw ex;
