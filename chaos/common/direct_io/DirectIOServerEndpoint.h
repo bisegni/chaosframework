@@ -24,10 +24,10 @@
 
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/direct_io/DirectIOHandler.h>
-
+#include <chaos/common/utility/FastSlotArray.h>
 //#include <chaos/common/direct_io/channel/DirectIOVirtualServerChannel.h>
 
-#define ENDPOINT_READ_
+#define MAX_CHANNEL_SLOT 16
 
 namespace chaos {
 	namespace common {
@@ -41,6 +41,7 @@ namespace chaos {
 			class DirectIOServerEndpoint : public DirectIOHandler, private utility::InstancerContainer<channel::DirectIOVirtualServerChannel> {
 				friend class DirectIODispatcher;
 				
+				chaos::common::utility::FastSlotArray<channel::DirectIOVirtualServerChannel> *channel_slot;
 				//! endpoint route index
 				/*!
 				 This is used by dispatcher to route the datapack to the right
@@ -60,7 +61,7 @@ namespace chaos {
 			public:
 				template<typename C>
 				void addTypedChannel(std::string channel_name) {
-					
+					InstancerContainer::addInstancer<C>();
 				}
 				
 				uint16_t getRouteIndex();

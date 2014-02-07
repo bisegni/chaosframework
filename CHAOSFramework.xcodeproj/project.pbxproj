@@ -15,7 +15,6 @@
 		320FB0EC18A39E650014CDB3 /* DirectIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 320FB0EB18A39E650014CDB3 /* DirectIO.h */; };
 		320FB0EF18A3BF6D0014CDB3 /* DirectIOCDataWrapperChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320FB0ED18A3BF6D0014CDB3 /* DirectIOCDataWrapperChannel.cpp */; };
 		320FB0F018A3BF6D0014CDB3 /* DirectIOCDataWrapperChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 320FB0EE18A3BF6D0014CDB3 /* DirectIOCDataWrapperChannel.h */; };
-		320FB0F318A3C1D50014CDB3 /* FastSlotArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320FB0F118A3C1D50014CDB3 /* FastSlotArray.cpp */; };
 		320FB0F418A3C1D50014CDB3 /* FastSlotArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 320FB0F218A3C1D50014CDB3 /* FastSlotArray.h */; };
 		3211FD1D1698699D00424A3C /* LiveDataFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3211FD1B1698699D00424A3C /* LiveDataFetcher.cpp */; };
 		3211FD1E1698699D00424A3C /* LiveDataFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 3211FD1C1698699D00424A3C /* LiveDataFetcher.h */; };
@@ -424,7 +423,6 @@
 		320FB0EB18A39E650014CDB3 /* DirectIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIO.h; sourceTree = "<group>"; };
 		320FB0ED18A3BF6D0014CDB3 /* DirectIOCDataWrapperChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOCDataWrapperChannel.cpp; sourceTree = "<group>"; };
 		320FB0EE18A3BF6D0014CDB3 /* DirectIOCDataWrapperChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOCDataWrapperChannel.h; sourceTree = "<group>"; };
-		320FB0F118A3C1D50014CDB3 /* FastSlotArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastSlotArray.cpp; sourceTree = "<group>"; };
 		320FB0F218A3C1D50014CDB3 /* FastSlotArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastSlotArray.h; sourceTree = "<group>"; };
 		3211FD1B1698699D00424A3C /* LiveDataFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LiveDataFetcher.cpp; sourceTree = "<group>"; };
 		3211FD1C1698699D00424A3C /* LiveDataFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveDataFetcher.h; sourceTree = "<group>"; };
@@ -1433,7 +1431,6 @@
 				32BFF910176C862A00D27A04 /* StartableService.cpp */,
 				32BFF911176C862A00D27A04 /* StartableService.h */,
 				32983F7417896FE1004599A3 /* ObjectInstancer.h */,
-				320FB0F118A3C1D50014CDB3 /* FastSlotArray.cpp */,
 				320FB0F218A3C1D50014CDB3 /* FastSlotArray.h */,
 			);
 			path = utility;
@@ -2408,7 +2405,6 @@
 				32B57212168E07AB0002A198 /* json.cpp in Sources */,
 				32B57218168E13FC0002A198 /* time_support.cpp in Sources */,
 				329603261876B45000CDCADA /* BatchCommandExecutor.cpp in Sources */,
-				320FB0F318A3C1D50014CDB3 /* FastSlotArray.cpp in Sources */,
 				32B5721E168E14650002A198 /* timer.cpp in Sources */,
 				32B57226168E44060002A198 /* base64.cpp in Sources */,
 				32460520179C55FC00B075DA /* sqlite3.c in Sources */,
