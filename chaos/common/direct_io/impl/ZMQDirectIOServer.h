@@ -23,6 +23,7 @@
 #include <string>
 
 #include <chaos/common/direct_io/DirectIOServer.h>
+#include <chaos/common/direct_io/impl/ZMQBaseClass.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
 #include <boost/thread.hpp>
@@ -32,7 +33,7 @@ namespace chaos {
 		namespace direct_io {
             namespace impl {
 				
-                REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(ZMQDirectIOServer, DirectIOServer) {
+                REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(ZMQDirectIOServer, DirectIOServer) , private ZMQBaseClass {
                     
                     void *zmq_context;
                     

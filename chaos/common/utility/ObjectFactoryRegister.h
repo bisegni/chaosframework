@@ -115,6 +115,10 @@ namespace chaos {
 static const ObjectInstancer<BASE_CLASS_NAME> CMD_CLASS_NAME ## ObjectInstancer(new ObjectFactoryAliasInstantiation<CMD_CLASS_NAME>(#CMD_CLASS_NAME));\
 class CMD_CLASS_NAME : public BASE_CLASS_NAME
     
+#define REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(t) \
+    friend class chaos::ObjectFactoryAliasInstantiation<t>;
+    
+    
 #define REGISTER_AND_DEFINE_NOALIAS_DERIVED_CLASS_FACTORY(CMD_CLASS_NAME, BASE_CLASS_NAME) class CMD_CLASS_NAME;\
 static const ObjectInstancer<BASE_CLASS_NAME> CMD_CLASS_NAME ## ObjectInstancer(new ObjectFactoryInstantiation<CMD_CLASS_NAME>(#CMD_CLASS_NAME));\
 class CMD_CLASS_NAME : public BASE_CLASS_NAME

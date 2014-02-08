@@ -33,7 +33,7 @@ namespace chaos {
 			
             namespace channel {
 				
-				class DirectIOVirtualServerChannel : public virtual DirectIOVirtualChannel {
+				class DirectIOVirtualServerChannel : public DirectIOVirtualChannel {
 					friend class chaos::common::direct_io::DirectIOServerEndpoint;
 
 				public:

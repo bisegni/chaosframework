@@ -33,7 +33,7 @@ namespace chaos {
 			
             namespace channel {
                 
-                class DirectIOVirtualClientChannel : public virtual DirectIOVirtualChannel {
+                class DirectIOVirtualClientChannel : public DirectIOVirtualChannel {
                     friend class chaos::common::direct_io::DirectIOClient;
 					
 					typedef uint32_t (chaos::common::direct_io::DirectIOForwarder::*ForwardDelegate)(chaos::common::direct_io::DirectIODataPack *data_pack);

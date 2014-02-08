@@ -22,6 +22,7 @@
 #define __CHAOSFramework__ZMQDirectIOClient__
 
 #include <chaos/common/direct_io/DirectIOClient.h>
+#include <chaos/common/direct_io/impl/ZMQBaseClass.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
 #include <boost/thread.hpp>
@@ -30,7 +31,7 @@ namespace chaos {
 	namespace common {
 		namespace direct_io {
             namespace impl {
-                REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(ZMQDirectIOClient, DirectIOClient) {
+                REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(ZMQDirectIOClient, DirectIOClient), private ZMQBaseClass {
                     int32_t priority_port;
 					
 					int32_t service_port;
@@ -42,8 +43,6 @@ namespace chaos {
                     void *socket_priority;
                     
                     void *socket_service;
-                    
-					void *socket_monitor;
 					
                     inline uint32_t writeToSocket(void *socket, DirectIODataPack *data_pack);
                     

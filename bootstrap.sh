@@ -23,7 +23,7 @@ fi
 
 BOOST_NUMBER_VERSION=$(echo $BOOST_VERSION_IN_PATH |sed "s/[^0-9]//g" )
 LMEM_VERSION=1.0.16
-
+ZMQ_VERSION=zeromq4-x
 
 if [ -n "$1" ]; then
     PREFIX=$1/usr/local
@@ -241,19 +241,41 @@ echo "LIBMEMCACHED Setupped"
 
 echo "Setup ZMQ"
 if [ ! -f "$PREFIX/include/zmq.h" ]; then
-	if [ ! -d "$BASE_EXTERNAL/zeromq3-x" ]; then
+	if [ ! -d "$BASE_EXTERNAL/$ZMQ_VERSION" ]; then
 	echo "Download zmq source"
-	git clone https://github.com/zeromq/zeromq3-x.git $BASE_EXTERNAL/zeromq3-x
+	git clone https://github.com/zeromq/$ZMQ_VERSION.git $BASE_EXTERNAL/$ZMQ_VERSION
 	else
 	echo "Update zmq source"
-	cd $BASE_EXTERNAL/zeromq3-x
+	cd $BASE_EXTERNAL/$ZMQ_VERSION
 	git pull
 	fi
-	cd $BASE_EXTERNAL/zeromq3-x
-	./autogen.sh
-	./configure --prefix=$PREFIX
-	make
-	make install
+	cd $BASE_EXTERNAL/$ZMQ_VERSION
+
+    if [ -d "cmake-make" ]; then
+        rm -rf "cmake-make"
+    fi
+    rm -rf "CMakeFiles"
+
+    mkdir "cmake-make"
+    cd "cmake-make"
+
+    if [ `echo $OS | tr '[:upper:]' '[:lower:]'` = `echo "Darwin" | tr '[:upper:]' '[:lower:]'` ] && [ $KERNEL_SHORT_VER -ge 1300 ]; then
+        echo "Use standard CLIB with clang"
+        cmake -DZMQ_BUILD_FRAMEWORK=NO -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="-stdlib=libstdc++" $COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_PREFIX=$PREFIX ..
+    else
+        cmake $COMP_TYPE -DZMQ_BUILD_FRAMEWORK=NO -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_PREFIX=$PREFIX ..
+    fi
+    if [ -n "$CHAOS_DEVELOPMENT" ]; then
+        make -j4  VERBOSE=1
+    else
+        make -j4
+    fi
+
+    make install
+#	./autogen.sh
+#	./configure --prefix=$PREFIX
+#make
+#	make install
 	echo "ZMQ Setupped"
 fi
 

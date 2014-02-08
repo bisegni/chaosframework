@@ -48,7 +48,6 @@ ZMQDirectIOClient::ZMQDirectIOClient(string alias):DirectIOClient(alias){
 	zmq_context = NULL;
 	socket_priority = NULL;
 	socket_service = NULL;
-	socket_monitor = NULL;
 };
 
 ZMQDirectIOClient::~ZMQDirectIOClient(){
@@ -102,16 +101,14 @@ void ZMQDirectIOClient::deinit() throw(chaos::CException) {
     ZMQDIOLDBG_ << "Write lock acquired";
 
     ZMQDIOLAPP_ << "Close priority socket";
-    zmq_close(socket_priority);
+    ZMQBaseClass::closeSocketNoWhait(socket_priority);
+    //zmq_close(socket_priority);
     socket_priority = NULL;
     
     ZMQDIOLAPP_ << "Close service socket";
-    zmq_close(socket_service);
+    ZMQBaseClass::closeSocketNoWhait(socket_service);
+    //zmq_close(socket_service);
     socket_service = NULL;
-    
-	ZMQDIOLAPP_ << "Close monitor socket";
-    zmq_close(socket_monitor);
-	socket_monitor = NULL;
 	
     //destroy the zmq context
     ZMQDIOLAPP_ << "Destroyed zmq context";

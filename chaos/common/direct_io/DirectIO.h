@@ -20,8 +20,11 @@
 #ifndef ChaosFramework_ChaosRpc_h
 #define ChaosFramework_ChaosRpc_h
 
-
+//-------------------client/server implementations---------------------
 #include <chaos/common/direct_io/impl/ZMQDirectIOClient.h>
 #include <chaos/common/direct_io/impl/ZMQDirectIOServer.h>
 
+//-------------------channels implementations---------------------
+#include <chaos/common/direct_io/channel/DirectIOCDataWrapperClientChannel.h>
+#include <chaos/common/direct_io/channel/DirectIOCDataWrapperServerChannel.h>
 #endif

@@ -19,7 +19,7 @@
  */
 #include "../global.h"
 #include <chaos/common/chaos_constants.h>
-#include "DefaultCommandDispatcher.h"
+#include <chaos/common/dispatcher/DefaultCommandDispatcher.h>
 
 using namespace chaos;
 using namespace chaos::common::data;
