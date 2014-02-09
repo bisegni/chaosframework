@@ -42,7 +42,7 @@ namespace chaos {
      resource used for the base chaos function
      */
     template<class T>
-    class ChaosCommon : public Singleton<T>{
+    class ChaosCommon : public Singleton<T> {
         log::LogManager logManager;
     protected:
             //! Constructor Method
@@ -70,7 +70,7 @@ namespace chaos {
             if(argv != NULL) {
                 GlobalConfiguration::getInstance()->parseStartupParameters(argc, argv);
             }
-            init();
+            init(NULL);
         }
             //!stringbuffer parser
         /*
@@ -78,7 +78,7 @@ namespace chaos {
          */
         void init(istringstream &initStringStream) throw (CException) {
             GlobalConfiguration::getInstance()->parseStringStream(initStringStream);
-            init();
+            init(NULL);
         }
         
             //! Initialization methdo
@@ -86,7 +86,7 @@ namespace chaos {
          This virtual method can be extended by toolkit subclass for specialized initializaion
          in themain toolkit subclass of ChaosCommon
          */
-        virtual void init() throw (CException) {
+        virtual void init(void *init_data) throw (CException) {
             int err = 0;
             struct utsname u_name;
             
@@ -118,7 +118,7 @@ namespace chaos {
             }
             GlobalConfiguration::getInstance()->addLocalServerAddress(localIp.c_str());
                 
-            LAPP_ << "The local address chosen is:  " << GlobalConfiguration::getInstance()->getLocalServerAddress();
+            LAPP_ << "The local address choosen is:  " << GlobalConfiguration::getInstance()->getLocalServerAddress();
         }
                 
         //! Return the global configuration for the current singleton instance

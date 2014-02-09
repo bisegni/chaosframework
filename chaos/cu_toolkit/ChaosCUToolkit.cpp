@@ -57,12 +57,11 @@ void ChaosCUToolkit::init(istringstream &initStringStream) throw (CException) {
 /*
  *
  */
-void ChaosCUToolkit::init()  throw(CException) {
-    SetupStateManager::levelUpFrom(0, "ChaosCUToolkit already initialized");
+void ChaosCUToolkit::init(void *init_data)  throw(CException) {
     try {
         
         LAPP_ << "Initializing CHAOS Control System Library";
-        ChaosCommon<ChaosCUToolkit>::init();
+        ChaosCommon<ChaosCUToolkit>::init(init_data);
         if (signal((int) SIGINT, ChaosCUToolkit::signalHanlder) == SIG_ERR){
             LERR_ << "SIGINT Signal handler registraiton error";
         }
@@ -98,9 +97,7 @@ void ChaosCUToolkit::init()  throw(CException) {
 /*
  *
  */ 
-void ChaosCUToolkit::start(bool waithUntilEnd, bool deinitiOnEnd){
-        //lock o monitor for waith the end
-    SetupStateManager::levelUpFrom(1, "ChaosCUToolkit already started");
+void ChaosCUToolkit::start() throw(CException){
     try {
         LAPP_ << "Starting CHAOS Control System Library";
 		
@@ -119,23 +116,19 @@ void ChaosCUToolkit::start(bool waithUntilEnd, bool deinitiOnEnd){
         LAPP_ << "CHAOS Control System Library Started";
         LAPP_ << "-----------------------------------------";
         //at this point i must with for end signal
-        if(waithUntilEnd)/*endWaithCondition.wait(lk);*/
-            waitCloseSemaphore.wait();
+        waitCloseSemaphore.wait();
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         exit(1);
     }
-        //execute the deinitialization of CU
-    if(waithUntilEnd && deinitiOnEnd) {
-        stop();
-        deinit();
-    }
+    //execute the stop and the deinitialization of the toolkit
+    deinit();
 }
 
 /*
  Stop the toolkit execution
  */
-void ChaosCUToolkit::stop() {
+void ChaosCUToolkit::stop() throw(CException) {
 	chaos::utility::StartableService::stopImplementation(ControlManager::getInstance(), "ControlManager", "ChaosCUToolkit::stop");
 
 	//stop command manager, this manager must be the last to startup
@@ -153,9 +146,8 @@ void ChaosCUToolkit::stop() {
 /*
  Deiniti all the manager
  */
-void ChaosCUToolkit::deinit() {
+void ChaosCUToolkit::deinit() throw(CException) {
     LAPP_ << "Stopping CHAOS Control System Library";
-    SetupStateManager::levelDownFrom(1, "ChaosCUToolkit already deinitialized");
         //start Control Manager
     LAPP_ << "Stopping Control Manager";
     chaos::utility::StartableService::deinitImplementation(ControlManager::getInstance(), "ControlManager", "ChaosCUToolkit::deinit");
@@ -185,7 +177,6 @@ void ChaosCUToolkit::addControlUnit(AbstractControlUnit *newCU) {
  *
  */
 void ChaosCUToolkit::signalHanlder(int signalNumber) {
-    ChaosCUToolkit::getInstance()->levelDownFrom(2, "ChaosCUToolkit already stoped");
     //lock lk(monitor);
         //unlock the condition for end start method
     //endWaithCondition.notify_one();

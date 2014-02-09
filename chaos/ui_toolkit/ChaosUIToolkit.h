@@ -26,7 +26,7 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/ChaosCommon.h>
 #include <chaos/common/utility/Atomic.h>
-
+#include <chaos/common/utility/InizializableService.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLInfrastructureApi.h>
 
@@ -45,7 +45,7 @@ namespace chaos{
          Every developer that need to access chaos resource must use this pachecke to
          allocate and instantiate other api pachage
          */
-        class ChaosUIToolkit : public ChaosCommon<ChaosUIToolkit> {
+        class ChaosUIToolkit : public ChaosCommon<ChaosUIToolkit>, utility::InizializableService {
             friend class Singleton<ChaosUIToolkit>;
             /** \brief Client unique id */
             string clientInstanceUUID;
@@ -75,7 +75,7 @@ namespace chaos{
              \param argv the argv of main cpp program function
              \exception CException instance is created when something goes wrong
              */
-            void init() throw(CException);
+            void init(void *init_data) throw(CException);
             
                 //!Deinitializaiton Method
             /*!

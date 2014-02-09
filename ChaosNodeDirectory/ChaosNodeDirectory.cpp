@@ -48,12 +48,11 @@ void ChaosNodeDirectory::init(istringstream &initStringStream) throw (CException
 /*
  *
  */
-void ChaosNodeDirectory::init()  throw(CException) {
-    SetupStateManager::levelUpFrom(0, "ChaosNodeDirectory already initialized");
+void ChaosNodeDirectory::init(void *init_data)  throw(CException) {
     try {
         
         LCND_ << "Initializing";
-        ChaosCommon<ChaosNodeDirectory>::init();
+        ChaosCommon<ChaosNodeDirectory>::init(init_data);
         if (signal((int) SIGINT, ChaosNodeDirectory::signalHanlder) == SIG_ERR) {
             throw CException(0, "Error registering SIGINT signal", "ChaosNodeDirectory::init");
         }
@@ -72,9 +71,8 @@ void ChaosNodeDirectory::init()  throw(CException) {
 /*
  *
  */ 
-void ChaosNodeDirectory::start(bool waithUntilEnd, bool deinitiOnEnd){
+void ChaosNodeDirectory::start()  throw(CException) {
         //lock o monitor for waith the end
-    SetupStateManager::levelUpFrom(1, "ChaosNodeDirectory already started");
     try {
         LCND_ << "Starting";
 
@@ -82,21 +80,20 @@ void ChaosNodeDirectory::start(bool waithUntilEnd, bool deinitiOnEnd){
 
         LCND_ << "Started";
         //at this point i must with for end signal
-        if(waithUntilEnd)
-            waitCloseSemaphore.wait();
+        waitCloseSemaphore.wait();
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         exit(1);
     }
         //execute the deinitialization of CU
-    if(waithUntilEnd && deinitiOnEnd)deinit();
+    stop();
+    deinit();
 }
 
 /*
  Stop the toolkit execution
  */
-void ChaosNodeDirectory::stop() {
-    SetupStateManager::levelDownFrom(2, "ChaosNodeDirectory already stoped");
+void ChaosNodeDirectory::stop()   throw(CException) {
     //lock lk(monitor);
         //unlock the condition for end start method
     //endWaithCondition.notify_one();
@@ -106,9 +103,8 @@ void ChaosNodeDirectory::stop() {
 /*
  Deiniti all the manager
  */
-void ChaosNodeDirectory::deinit() {
+void ChaosNodeDirectory::deinit()   throw(CException) {
     LCND_ << "Stopping";
-    SetupStateManager::levelDownFrom(1, "ChaosNodeDirectory already deinitialized");
         //start Control Manager
       
     LCND_ << "Stopped";
@@ -118,7 +114,6 @@ void ChaosNodeDirectory::deinit() {
  *
  */
 void ChaosNodeDirectory::signalHanlder(int signalNumber) {
-    ChaosNodeDirectory::getInstance()->levelDownFrom(2, "ChaosNodeDirectory already stoped");
     //lock lk(monitor);
         //unlock the condition for end start method
     //endWaithCondition.notify_one();

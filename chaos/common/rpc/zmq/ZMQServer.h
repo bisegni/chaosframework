@@ -38,6 +38,7 @@ namespace chaos {
      Class that implement the Chaos RPC adapter for 0mq protocoll
      */
     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(ZMQServer, RpcServer), private SetupStateManager   {
+        REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ZMQServer)
         int threadNumber;
         void *zmqContext;
         vector<void*> socketsVector;
@@ -46,9 +47,10 @@ namespace chaos {
         bool runServer;
         boost::shared_mutex socketMutex;
         
-    public:
         ZMQServer(string *alias):RpcServer(alias);
         virtual ~ZMQServer();
+    public:
+
         /*
          init the rpc adapter
          */

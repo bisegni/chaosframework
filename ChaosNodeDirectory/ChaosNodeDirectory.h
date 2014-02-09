@@ -27,7 +27,7 @@
 #include <chaos/common/global.h>
 #include <chaos/common/ChaosCommon.h>
 #include <chaos/common/thread/WaitSemaphore.h>
-#include <chaos/common/utility/SetupStateManager.h>
+#include <chaos/common/utility/StartableService.h>
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManager.h>
 
@@ -38,7 +38,7 @@ namespace chaos {
         /*!
          
          */
-        class ChaosNodeDirectory : public ChaosCommon<ChaosNodeDirectory>, public ServerDelegator, public SetupStateManager {
+        class ChaosNodeDirectory : public ChaosCommon<ChaosNodeDirectory>, public ServerDelegator, public utility::StartableService {
             friend class Singleton<ChaosNodeDirectory>;
             
             static WaitSemaphore waitCloseSemaphore;
@@ -53,16 +53,16 @@ namespace chaos {
             /*!
              Specialized option for startup c and cpp program main options parameter
              */
-            void init(int argc, char* argv[] = NULL) throw (CException);
+            void init(int argc, char* argv[]) throw (CException);
                 //!stringbuffer parser
             /*
              specialized option for string stream buffer with boost semantics
              */
             void init(istringstream &initStringStream) throw (CException);
-            void init()  throw(CException);
-            void start(bool waithUntilEnd=true, bool deinitiOnEnd=true);
-            void stop();
-            void deinit();
+            void init(void *init_data)  throw(CException);
+            void start()throw(CException);
+            void stop()throw(CException);
+            void deinit()throw(CException);
         };
     }
 }

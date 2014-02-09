@@ -1,5 +1,6 @@
+
 /*
- *	ChaosCUToolkit.h
+ *	ChaosDataService.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +19,9 @@
  *    	limitations under the License.
  */
 
-#ifndef ChaosCUToolkit_H
-#define ChaosCUToolkit_H
+#ifndef __CHAOSFramework__ChaosDataService__
+#define __CHAOSFramework__ChaosDataService__
+
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <boost/thread/condition.hpp>
@@ -27,13 +29,13 @@
 #include <chaos/common/global.h>
 #include <chaos/common/ChaosCommon.h>
 #include <chaos/common/thread/WaitSemaphore.h>
-#include <chaos/common/utility/SetupStateManager.h>
-#include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
-#include <chaos/cu_toolkit/CommandManager/CommandManager.h>
-#include <chaos/cu_toolkit/driver_manager/DriverManager.h>
 #include <chaos/common/utility/StartableService.h>
+
+
+namespace common_utility = chaos::utility;
+
 namespace chaos{
-    namespace cu {
+    namespace data_service {
         /*! \page page_cut The Control Unit Toolkit
          *  \section page_cut_sec This toolkit represent the chaos driver for the real hardware to control
          *
@@ -44,19 +46,16 @@ namespace chaos{
          This class is a Singleton that need to be used to setup environment,
          add Custom Control unit, and start all Contro Unit environment
          */
-        class ChaosCUToolkit : public ChaosCommon<ChaosCUToolkit>, public ServerDelegator, public utility::StartableService {
-            friend class Singleton<ChaosCUToolkit>;
-            //static boost::mutex monitor;
-            //static boost::condition endWaithCondition;
+        class ChaosDataService : public ChaosCommon<ChaosDataService>, public common_utility::StartableService {
+            friend class Singleton<ChaosDataService>;
             
             static WaitSemaphore waitCloseSemaphore;
             
-            ChaosCUToolkit(){};
-            ~ChaosCUToolkit(){};
+            ChaosDataService(){};
+            ~ChaosDataService(){};
             static void signalHanlder(int);
             
         public:
-            typedef boost::mutex::scoped_lock lock;
             //! C and C++ attribute parser
             /*!
              Specialized option for startup c and cpp program main options parameter
@@ -68,13 +67,11 @@ namespace chaos{
              */
             void init(istringstream &initStringStream) throw (CException);
             void init(void *init_data)  throw(CException);
-            void start() throw(CException);
-            void stop()throw(CException);
-            void deinit()throw(CException);
-			
-            void addControlUnit(AbstractControlUnit*);
+            void start() throw(CException);;
+            void stop() throw(CException);;
+            void deinit() throw(CException);;
         };
     }
 }
-//#pragma GCC visibility pop
-#endif
+
+#endif /* defined(__CHAOSFramework__ChaosDataProxy__) */

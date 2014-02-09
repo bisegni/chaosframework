@@ -58,9 +58,9 @@ void ChaosUIToolkit::init(istringstream &initStringStream) throw (CException) {
 /*
  
  */
-void ChaosUIToolkit::init() throw(CException) {
+void ChaosUIToolkit::init(void *init_data) throw(CException) {
     try{
-        ChaosCommon<ChaosUIToolkit>::init();
+        ChaosCommon<ChaosUIToolkit>::init(init_data);
         
         UI_LAPP_ << "Init LLRpcApi";
         LLRpcApi::getInstance()->init();

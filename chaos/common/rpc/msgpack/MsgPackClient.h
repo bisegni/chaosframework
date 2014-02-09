@@ -39,8 +39,11 @@ namespace chaos {
      Class that manage the MessagePack message send.
      */
      REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(MsgPackClient, RpcClient), public CObjectProcessingQueue<NetworkForwardInfo> {
+         REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(MsgPackClient)
             //messagepack connection pooling
         msgpack::rpc::session_pool *connectionPolling;
+         MsgPackClient(string alias);
+         virtual ~MsgPackClient();
     protected:
         virtual void processBufferElement(NetworkForwardInfo*, ElementManagingPolicy&) throw(CException);
         
@@ -65,8 +68,7 @@ namespace chaos {
          void deinit() throw(CException);
          
     public:
-         MsgPackClient(string alias);
-         virtual ~MsgPackClient();
+
         
         
         /*

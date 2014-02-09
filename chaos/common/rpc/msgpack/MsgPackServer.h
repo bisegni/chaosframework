@@ -44,17 +44,17 @@ namespace chaos{
      Class that implement the Chaos RPC adapter for msgpack protocoll
      */
     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(MsgPackServer, RpcServer), public rpc::dispatcher {
-        
+        REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(MsgPackServer)
         int threadNumber;
             //msgpack server instance
         rpc::server msgpackServer;
         
-    public:
-        typedef rpc::request request;
-        
         MsgPackServer(string alias);
         
         virtual ~MsgPackServer();
+    public:
+        typedef rpc::request request;
+
         
             /*
              init the rpc adapter
