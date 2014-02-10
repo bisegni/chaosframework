@@ -86,6 +86,48 @@ namespace chaos {
             static bool initImplementation(StartableService *impl, void *initData, const char * const implName,  const char * const domainString);
             static bool deinitImplementation(StartableService *impl, const char * const implName,  const char * const domainString);
         };
+		
+#define IMPL_NAME(n) #n
+		
+		template<typename T>
+		class StartableServiceContainer {
+			bool delete_on_dispose;
+			StartableService *startable_service_instance;
+		public:
+			StartableServiceContainer(bool _delete_on_dispose):startable_service_instance(new T()), delete_on_dispose(_delete_on_dispose) {}
+			StartableServiceContainer(T *instance, bool _delete_on_dispose):startable_service_instance(instance), delete_on_dispose(_delete_on_dispose) {}
+			~StartableServiceContainer() {
+				if(delete_on_dispose) delete(startable_service_instance);
+			}
+			
+			bool init(void *init_data, const char * const domainString) {
+				return StartableService::initImplementation(startable_service_instance, init_data, IMPL_NAME(T), domainString);
+			}
+			
+			bool start(const char * const domainString) {
+				return StartableService::startImplementation(startable_service_instance, IMPL_NAME(T), domainString);
+			}
+			
+			bool stop(const char * const domainString) {
+				return StartableService::stopImplementation(startable_service_instance, IMPL_NAME(T), domainString);
+			}
+			
+			bool deinit(const char * const domainString) {
+				return StartableService::deinitImplementation(startable_service_instance, IMPL_NAME(T), domainString);
+			}
+			T& operator*() {
+				return *startable_service_instance;
+			}
+			const T& operator*() const {
+				return *startable_service_instance;
+			}
+			T* operator->() {
+				return startable_service_instance;
+			}
+			const T* operator->() const {
+				return startable_service_instance;
+			}
+		};
         
     }
     

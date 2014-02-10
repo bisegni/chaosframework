@@ -66,7 +66,13 @@ void ZMQDirectIOServer::init(void *init_data) throw(chaos::CException) {
     
     service_socket_bind_str = boost::str( boost::format("tcp://*:%1%") % service_port);
     ZMQDIO_SRV_LAPP_ << "service socket bind url: " << service_socket_bind_str;
-    
+}
+
+//! Start the implementation
+void ZMQDirectIOServer::start() throw(chaos::CException) {
+    DirectIOServer::start();
+    run_server = true;
+	
     //create the ZMQContext
     zmq_context = zmq_ctx_new();
     if(zmq_context == NULL) throw chaos::CException(0, "Error creating zmq context", __FUNCTION__);
@@ -74,47 +80,23 @@ void ZMQDirectIOServer::init(void *init_data) throw(chaos::CException) {
     //et the thread number
     zmq_ctx_set(zmq_context, ZMQ_IO_THREADS, 2);
     ZMQDIO_SRV_LAPP_ << "ZMQ context created";
-}
 
-//! Start the implementation
-void ZMQDirectIOServer::start() throw(chaos::CException) {
-    DirectIOServer::start();
-    run_server = true;
-    
     //queue thread
-    ZMQDIO_SRV_LAPP_ << "Allocating and binding priority socket";
-    priority_socket = zmq_socket (zmq_context, ZMQ_REP);
-    int err = zmq_bind(priority_socket, priority_socket_bind_str.c_str());
-    if(err) {
-        std::string msg = boost::str( boost::format("Error binding priority socket to  %1% ") % priority_socket_bind_str);
-        ZMQDIO_SRV_LAPP_ << msg;
-        throw chaos::CException(-1, msg, __FUNCTION__);
-    }
-    
-    ZMQDIO_SRV_LAPP_ << "Allocating and binding service socket";
-    service_socket = zmq_socket (zmq_context, ZMQ_REP);
-    err = zmq_bind(service_socket, service_socket_bind_str.c_str());
-    if(err) {
-        std::string msg = boost::str( boost::format("Error binding priority socket to  %1% ") % service_socket_bind_str);
-        ZMQDIO_SRV_LAPP_ << msg;
-        throw chaos::CException(-2, msg, __FUNCTION__);
-    }
-    
+    ZMQDIO_SRV_LAPP_ << "Allocating and binding priority socket to "<< priority_socket_bind_str;
     ZMQDIO_SRV_LAPP_ << "Allocating threads for manage the requests";
-    server_threads_group.add_thread(new thread(boost::bind(&ZMQDirectIOServer::worker, this, priority_socket, false)));
-    server_threads_group.add_thread(new thread(boost::bind(&ZMQDirectIOServer::worker, this, service_socket, true)));
+    server_threads_group.add_thread(new thread(boost::bind(&ZMQDirectIOServer::worker, this, false)));
+    server_threads_group.add_thread(new thread(boost::bind(&ZMQDirectIOServer::worker, this, true)));
     ZMQDIO_SRV_LAPP_ << "Threads allocated and started";
 }
 
 //! Stop the implementation
 void ZMQDirectIOServer::stop() throw(chaos::CException) {
     run_server = false;
-    ZMQDIO_SRV_LAPP_ << "Stopping priority socket";
-    if(priority_socket) zmq_close(priority_socket);
-    
-    ZMQDIO_SRV_LAPP_ << "Stopping service socket";
-    if(service_socket) zmq_close(service_socket);
-    
+	
+	ZMQDIO_SRV_LAPP_ << "Deallocating zmq context";
+    zmq_ctx_destroy (zmq_context);
+    ZMQDIO_SRV_LAPP_ << "ZMQ Context deallocated";
+
     //wiath all thread
      ZMQDIO_SRV_LAPP_ << "Join on all thread";
     server_threads_group.join_all();
@@ -125,22 +107,61 @@ void ZMQDirectIOServer::stop() throw(chaos::CException) {
 //! Deinit the implementation
 void ZMQDirectIOServer::deinit() throw(chaos::CException) {
     //serverThreadGroup.stopGroup(true);
-    ZMQDIO_SRV_LAPP_ << "Deallocating zmq context";
-    zmq_ctx_destroy (zmq_context);
-    ZMQDIO_SRV_LAPP_ << "ZMQ Context deallocated";
+
     DirectIOServer::deinit();
 }
 
-void ZMQDirectIOServer::worker(void *socket, bool priority_service) {
+#define PS_STR(x) (x?"service":"priority")
+void ZMQDirectIOServer::worker(bool priority_service) {
+	int linger = 0;
     zmq_msg_t			request;
+	void				*socket				= NULL;
     int					err					= 0;
     DirectIODataPack	*data_pack			= NULL;
 	void				*received_data		= NULL;
 	uint32_t			received_data_size	= 0;
+	
+	ZMQDIO_SRV_LAPP_ << "Startup thread for " << PS_STR(priority_service);
+	
     //allcoate the delegate for this thread
     boost::function<void (DirectIODataPack*)> delegate = priority_service?
             boost::bind(&DirectIOHandler::serviceDataReceived, handler_impl, _1):
             boost::bind(&DirectIOHandler::priorityDataReceived, handler_impl, _1);
+	
+	if(priority_service) {
+		ZMQDIO_SRV_LAPP_ << "Allocating and binding service socket to " << service_socket_bind_str;
+		socket = zmq_socket (zmq_context, ZMQ_REP);
+		err = zmq_setsockopt (socket, ZMQ_LINGER, &linger, sizeof(int));
+		if(err) {
+			std::string msg = boost::str( boost::format("Error Setting linget to priority socket"));
+			ZMQDIO_SRV_LAPP_ << msg;
+			return;
+		}
+		err = zmq_bind(socket, service_socket_bind_str.c_str());
+		if(err) {
+			std::string msg = boost::str( boost::format("Error binding priority socket to  %1% ") % service_socket_bind_str);
+			ZMQDIO_SRV_LAPP_ << msg;
+			return;
+		}
+	} else {
+		ZMQDIO_SRV_LAPP_ << "Allocating and binding priority socket to "<< priority_socket_bind_str;
+		socket = zmq_socket (zmq_context, ZMQ_REP);
+		int linger = 1;
+		int err = zmq_setsockopt (socket, ZMQ_LINGER, &linger, sizeof(int));
+		if(err) {
+			std::string msg = boost::str( boost::format("Error Setting linget to priority socket"));
+			ZMQDIO_SRV_LAPP_ << msg;
+			return;
+		}
+		
+		err = zmq_bind(socket, priority_socket_bind_str.c_str());
+		if(err) {
+			std::string msg = boost::str( boost::format("Error binding priority socket to  %1% ") % priority_socket_bind_str);
+			ZMQDIO_SRV_LAPP_ << msg;
+			return;
+		}
+	}
+	ZMQDIO_SRV_LAPP_ << "Entering in the thread loop for " << PS_STR(priority_service) << " socket";
     while (run_server) {
         try {
 			data_pack = new DirectIODataPack();
@@ -183,4 +204,11 @@ void ZMQDirectIOServer::worker(void *socket, bool priority_service) {
             DECODE_CHAOS_EXCEPTION(ex)
         }
     }
+	ZMQDIO_SRV_LAPP_ << "Leaving the thread loop for " << (priority_service?"service":"priority") << " socket";
+	ZMQDIO_SRV_LAPP_ << "Stopping priority socket";
+    if(socket) {
+		zmq_close(socket);
+		socket = NULL;
+	}
+
 }

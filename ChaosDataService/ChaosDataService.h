@@ -30,7 +30,7 @@
 #include <chaos/common/ChaosCommon.h>
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/utility/StartableService.h>
-
+#include <chaos/common/network/NetworkBroker.h>
 
 namespace common_utility = chaos::utility;
 
@@ -55,6 +55,8 @@ namespace chaos{
             ~ChaosDataService(){};
             static void signalHanlder(int);
             
+			utility::StartableServiceContainer<chaos::NetworkBroker> *network_broker;
+			 
         public:
             //! C and C++ attribute parser
             /*!

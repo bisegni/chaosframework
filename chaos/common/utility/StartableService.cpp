@@ -71,7 +71,7 @@ bool StartableService::initImplementation(StartableService *impl, void *initData
         if(impl->StartableService::state_machine.process_event(service_state_machine::EventType::initialize()) == boost::msm::back::HANDLED_TRUE) {
             impl->init(initData);
             impl->serviceState = impl->state_machine.current_state()[0]; //service_state_machine::InizializableServiceType::IS_INITIATED;
-        }else {
+        } else {
 			DEBUG_CODE(SS_LDBG << "Service cant flow to next state and current is ->" << impl->state_machine.current_state()[0];)
             throw CException(0, "Service cant be initialized", domainString);
         }
@@ -95,7 +95,7 @@ bool StartableService::deinitImplementation(StartableService *impl, const char *
         if(impl->StartableService::state_machine.process_event(service_state_machine::EventType::deinitialize()) == boost::msm::back::HANDLED_TRUE) {
             impl->deinit();
             impl->serviceState = impl->state_machine.current_state()[0];//service_state_machine::InizializableServiceType::IS_DEINTIATED;
-        }else {
+        } else {
 			DEBUG_CODE(SS_LDBG << "Service cant flow to next state and current is ->" << impl->state_machine.current_state()[0];)
             throw CException(0, "Service cant be deinitialize", domainString);
         }

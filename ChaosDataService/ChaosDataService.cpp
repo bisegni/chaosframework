@@ -54,7 +54,6 @@ void ChaosDataService::init(istringstream &initStringStream) throw (CException) 
  */
 void ChaosDataService::init(void *init_data)  throw(CException) {
     try {
-        
         LAPP_ << "Initializing CHAOS Control System Library";
         ChaosCommon<ChaosDataService>::init(init_data);
         if (signal((int) SIGINT, ChaosDataService::signalHanlder) == SIG_ERR){
@@ -65,7 +64,9 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
             LERR_ << "SIGQUIT Signal handler registraiton error";
         }
 
-        
+		LAPP_ << "Allocate Network Brocker";
+        network_broker = new utility::StartableServiceContainer<chaos::NetworkBroker>(true);
+		network_broker->init(NULL, __FUNCTION__);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         exit(1);
@@ -79,7 +80,8 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 void ChaosDataService::start() throw(CException) {
     try {
         LAPP_ << "Starting CHAOS Data Service";
-
+		network_broker->start(__FUNCTION__);
+		
         waitCloseSemaphore.wait();
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
@@ -100,15 +102,17 @@ void ChaosDataService::start() throw(CException) {
  Stop the toolkit execution
  */
 void ChaosDataService::stop() throw(CException) {
-    waitCloseSemaphore.unlock();
+	LAPP_ << "Stopping CHAOS Data Service";
+    network_broker->stop(__FUNCTION__);
 }
 
 /*
  Deiniti all the manager
  */
 void ChaosDataService::deinit() throw(CException) {
-    LAPP_ << "Stopping CHAOS Data Service";
-    
+    LAPP_ << "Deinitializing CHAOS Data Service";
+	network_broker->deinit(__FUNCTION__);
+	delete(network_broker);
 }
 
 

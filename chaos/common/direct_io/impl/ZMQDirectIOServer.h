@@ -49,7 +49,7 @@ namespace chaos {
                     
                     std::string service_socket_bind_str;
                     
-                    void worker(void *socket, bool priority_service);
+                    void worker(bool priority_service);
                 public:
                     ZMQDirectIOServer(std::string alias);
                     

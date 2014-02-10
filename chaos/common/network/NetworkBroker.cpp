@@ -90,6 +90,10 @@ void NetworkBroker::init(void *initData) throw(CException) {
         directIOServer = ObjectFactoryRegister<common::direct_io::DirectIOServer>::getInstance()->getNewInstanceByName(directIOServerImpl.c_str());
 		if(!directIOServer) throw CException(1, "Error creating direct io server implementation", __FUNCTION__);
 		
+		//allocate the dispatcher
+		MB_LAPP  << "Allocate DirectIODispatcher DirectIODispatcher";
+		directIOServer->setHandler(new common::direct_io::DirectIODispatcher());
+		
 		//initialize direct io server
         utility::StartableService::initImplementation(directIOServer, static_cast<void*>(globalConfiguration), directIOServer->getName(), __FUNCTION__);
     }
@@ -289,7 +293,7 @@ void NetworkBroker::stop() throw(CException) {
     utility::StartableService::stopImplementation(eventDispatcher, "DefaultEventDispatcher", "NetworkBroker::stop");
 	
 	MB_LAPP  << "Stop DirectIO server: " << directIOServer->getName();
-    utility::StartableService::startImplementation(directIOServer, directIOServer->getName(), "NetworkBroker::Stop");
+    utility::StartableService::stopImplementation(directIOServer, directIOServer->getName(), "NetworkBroker::Stop");
 }
 
 /*!
