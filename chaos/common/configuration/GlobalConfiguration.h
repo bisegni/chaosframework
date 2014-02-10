@@ -122,12 +122,67 @@ x = hasOption(y);
         void addOption(const char* name,
                        const po::value_semantic* s,
                        const char* description) throw (CException);
+		/*
+         Add a custom option
+         */
+        void addOption(const char* name,
+                       const char* description) throw (CException);
         /*
          Add a custom option
          */
+		template<typename T>
         void addOption(const char* name, 
-                       const char* description)  throw (CException);
-        
+                       const char* description)  throw (CException) {
+			try{//po::value<T>(&timeout)->default_value(2000)
+				const po::value_semantic* s = po::value<T>();
+				desc.add_options()(name, s, description);
+			}catch (po::error &e) {
+				throw CException(0, e.what(), "GlobalConfiguration::addOption");
+			}
+		}
+		/*
+         Add a custom option
+         */
+		template<typename T>
+        void addOption(const char* name,
+						const char* description,
+						T default_value)  throw (CException) {
+			try{//po::value<T>(&timeout)->default_value(2000)
+				const po::value_semantic* s = po::value<T>()->default_value(default_value);
+				desc.add_options()(name, s, description);
+			}catch (po::error &e) {
+				throw CException(0, e.what(), "GlobalConfiguration::addOption");
+			}
+		}
+		/*
+         Add a custom option
+         */
+		template<typename T>
+        void addOption(const char* name,
+						const char* description,
+						T default_value,
+						T *default_variable)  throw (CException) {
+			try{//po::value<T>(&timeout)->default_value(2000)
+				const po::value_semantic* s = po::value<T>(default_variable)->default_value(default_value);
+				desc.add_options()(name, s, description);
+			}catch (po::error &e) {
+				throw CException(0, e.what(), "GlobalConfiguration::addOption");
+			}
+		}
+		/*
+         Add a custom option
+         */
+		template<typename T>
+        void addOption(const char* name,
+					   const char* description,
+					   T *default_variable)  throw (CException) {
+			try{//po::value<T>(&timeout)->default_value(2000)
+				const po::value_semantic* s = po::value<T>(default_variable);
+				desc.add_options()(name, s, description);
+			}catch (po::error &e) {
+				throw CException(0, e.what(), "GlobalConfiguration::addOption");
+			}
+		}
         /*
          return the presence of the option name
          */

@@ -29,7 +29,7 @@ namespace chaos {
 		namespace direct_io {
 			class DirectIOClient;
 			class DirectIOForwarder;
-			class DirectIODataPack;
+			struct DirectIODataPack;
 			
             namespace channel {
                 

@@ -42,20 +42,14 @@ ADD_SUBDIRECTORY(chaos/ui_toolkit bin/bin_uitoolkit)
 message(STATUS "Configure Chaos Node Directory Service")
 ADD_SUBDIRECTORY(ChaosNodeDirectory bin/bin_cnd)
 
-message(STATUS "Configure Chaos HST Service")
-ADD_SUBDIRECTORY(ChaosHSTService bin/bin_chst)
+message(STATUS "Configure Chaos Data Service")
+ADD_SUBDIRECTORY(ChaosDataService bin/bin_chst)
 
 message(STATUS "Configure Chaos CLI")
 ADD_SUBDIRECTORY(example/ChaosCLI bin/chaos_cli)
 
 #message(STATUS "Configure Control Unit Test examples")
 #ADD_SUBDIRECTORY(example/ControlUnitTest bin/bin_example_cutest)
-
-#message(STATUS "Configure UIToolkit command line example")
-#ADD_SUBDIRECTORY(example/UIToolkitCMDLineExample bin/bin_example_uicmdline_test)
-
-#message(STATUS "Configure UIToolkit c-wrapper command line example")
-#ADD_SUBDIRECTORY(example/UIToolkitCMDLineCWrapperExample bin/bin_example_uicmdline_cwrapper_test)
 
 #message(STATUS "Configure BenchTest simulation excutable")
 #ADD_SUBDIRECTORY(example/BenchTest bin/bench_test)
