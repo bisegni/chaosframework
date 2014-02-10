@@ -67,6 +67,10 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		LAPP_ << "Allocate Network Brocker";
         network_broker = new utility::StartableServiceContainer<chaos::NetworkBroker>(true);
 		network_broker->init(NULL, __FUNCTION__);
+        
+        LAPP_ << "Allocate the Data Consumer";
+        data_consumer = new utility::StartableServiceContainer<dataConsumer>(true);
+        data_consumer->init(NULL, __FUNCTION__);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         exit(1);
@@ -82,6 +86,9 @@ void ChaosDataService::start() throw(CException) {
         LAPP_ << "Starting CHAOS Data Service";
 		network_broker->start(__FUNCTION__);
 		
+        LAPP_ << "Start the Data Consumer";
+        data_consumer->start(__FUNCTION__);
+        
         waitCloseSemaphore.wait();
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
@@ -102,6 +109,9 @@ void ChaosDataService::start() throw(CException) {
  Stop the toolkit execution
  */
 void ChaosDataService::stop() throw(CException) {
+    LAPP_ << "Stop the Data Consumer";
+    data_consumer->stop(__FUNCTION__);
+
 	LAPP_ << "Stopping CHAOS Data Service";
     network_broker->stop(__FUNCTION__);
 }
@@ -110,6 +120,9 @@ void ChaosDataService::stop() throw(CException) {
  Deiniti all the manager
  */
 void ChaosDataService::deinit() throw(CException) {
+    LAPP_ << "Stop the Data Consumer";
+    data_consumer->deinit(__FUNCTION__);
+
     LAPP_ << "Deinitializing CHAOS Data Service";
 	network_broker->deinit(__FUNCTION__);
 	delete(network_broker);

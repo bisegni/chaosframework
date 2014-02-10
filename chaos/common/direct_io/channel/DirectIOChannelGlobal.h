@@ -1,5 +1,5 @@
 /*
- *	main.cpp
+ *	DirectIOEndpointHandler.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,15 +17,15 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-
-#include "ChaosDataService.h"
-
-using namespace chaos::data_service;
-
-int main(int argc, char * argv[]) {
-    
-    ChaosDataService::getInstance()->init(argc, argv);
-    ChaosDataService::getInstance()->start();
-    return 0;
+#ifndef CHAOSFramework_ChannelGlobal_h
+#define CHAOSFramework_ChannelGlobal_h
+namespace chaos {
+	namespace common {
+		namespace direct_io {
+			namespace channel {
+#define DIOCDC_Channel_Index 1
+            }
+        }
+    }
 }
-
+#endif

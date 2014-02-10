@@ -45,9 +45,6 @@
       location = "group:test/MemcachedEmbeddedTest/MemcachedEmbeddedTest.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:example/ChaosDeviceDriver/ChaosDeviceDriver.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:test/PluginTest/PluginTest.xcodeproj">
    </FileRef>
 </Workspace>

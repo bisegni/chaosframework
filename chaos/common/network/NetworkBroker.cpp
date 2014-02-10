@@ -48,6 +48,9 @@ NetworkBroker::NetworkBroker(){
     rpcServer = NULL;
     rpcClient = NULL;
     commandDispatcher = NULL;
+    
+    directIODispatcher = NULL;
+    directIOServer = NULL;
     canUseMetadataServer = GlobalConfiguration::getInstance()->isMEtadataServerConfigured();
     if(canUseMetadataServer){
         metadataServerAddress = GlobalConfiguration::getInstance()->getMetadataServerAddress();
@@ -92,7 +95,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
 		
 		//allocate the dispatcher
 		MB_LAPP  << "Allocate DirectIODispatcher DirectIODispatcher";
-		directIOServer->setHandler(new common::direct_io::DirectIODispatcher());
+		directIOServer->setHandler(directIODispatcher = new common::direct_io::DirectIODispatcher());
 		
 		//initialize direct io server
         utility::StartableService::initImplementation(directIOServer, static_cast<void*>(globalConfiguration), directIOServer->getName(), __FUNCTION__);
@@ -180,7 +183,8 @@ void NetworkBroker::deinit() throw(CException) {
 	//---------------------------- D I R E C T I/O ----------------------------
 	MB_LAPP  << "Deinit DirectIO server: " << directIOServer->getName();
     utility::StartableService::deinitImplementation(directIOServer, directIOServer->getName(), "NetworkBroker::deinit");
-	
+	if(directIODispatcher) delete (directIODispatcher);
+    directIODispatcher = NULL;
 	//---------------------------- D I R E C T I/O ----------------------------
 	
 	//---------------------------- E V E N T ----------------------------
@@ -540,5 +544,19 @@ void NetworkBroker::disposeMessageChannel(MessageChannel *messageChannelToDispos
  */
 void NetworkBroker::disposeMessageChannel(NodeMessageChannel *messageChannelToDispose) {
     NetworkBroker::disposeMessageChannel((MessageChannel*)messageChannelToDispose);
+}
+
+chaos_directio::DirectIOServerEndpoint *NetworkBroker::getDirectIOServerChannel() {
+    chaos_directio::DirectIOServerEndpoint *result_endpoint = directIODispatcher->getNewEndpoint();
+    return result_endpoint;
+}
+
+void NetworkBroker::releaseDirectIOServerChannel(chaos_directio::DirectIOServerEndpoint *end_point) {
+    directIODispatcher->releaseEndpoint(end_point);
+}
+
+chaos_directio::DirectIOClient *NetworkBroker::getDirectIOClientInstance() {
+    MB_LAPP  << "Allcoate a new DirectIOClient of type " << directIOClientImpl;
+    return ObjectFactoryRegister<common::direct_io::DirectIOClient>::getInstance()->getNewInstanceByName(directIOClientImpl.c_str());
 }
 

@@ -39,6 +39,7 @@
 #include <chaos/common/direct_io/DirectIO.h>
 
 namespace chaos_data = chaos::common::data;
+namespace chaos_directio = chaos::common::direct_io;
 namespace chaos {
 
     using namespace std;
@@ -82,9 +83,11 @@ namespace chaos {
 		//!Event Client for event forwarding
 		std::string directIOClientImpl;
         
-		//!Event server for event handlind
+		//!Direct IO server interface
 		common::direct_io::DirectIOServer *directIOServer;
-		
+		//! Direct IO dispatcher
+        common::direct_io::DirectIODispatcher *directIODispatcher;
+        
             //!Event Client for event forwarding
         event::EventClient *eventClient;
         
@@ -270,6 +273,11 @@ namespace chaos {
         void disposeMessageChannel(MessageChannel *messageChannelToDispose);
         
         void disposeMessageChannel(NodeMessageChannel *messageChannelToDispose);
+        
+        chaos_directio::DirectIOServerEndpoint *getDirectIOServerChannel();
+        void releaseDirectIOServerChannel(chaos_directio::DirectIOServerEndpoint *end_point);
+        chaos_directio::DirectIOClient *getDirectIOClientInstance();
+
     };
 }
 #endif

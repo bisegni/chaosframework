@@ -25,7 +25,6 @@
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/direct_io/channel/DirectIOVirtualClientChannel.h>
-#include <chaos/common/direct_io/channel/DirectIOCDataWrapperChannelGlobal.h>
 
 namespace chaos_data = chaos::common::data;
 namespace chaos {

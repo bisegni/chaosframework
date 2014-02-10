@@ -30,6 +30,9 @@
 		32279F8516F8DEAF009EC7B9 /* DataBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32279F8316F8DEAF009EC7B9 /* DataBroker.h */; };
 		32279F8B16FA36B6009EC7B9 /* PublisherDataService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32279F8916FA36B6009EC7B9 /* PublisherDataService.cpp */; };
 		32279F8C16FA36B6009EC7B9 /* PublisherDataService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32279F8A16FA36B6009EC7B9 /* PublisherDataService.h */; };
+		322D990018A95F9200C0864C /* DataConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322D98FE18A95F9200C0864C /* DataConsumer.cpp */; };
+		322D990118A95F9200C0864C /* DataConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322D98FE18A95F9200C0864C /* DataConsumer.cpp */; };
+		322D990218A95F9200C0864C /* DataConsumer.h in Headers */ = {isa = PBXBuildFile; fileRef = 322D98FF18A95F9200C0864C /* DataConsumer.h */; };
 		322E157A161B629700C3003C /* NetworkBroker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322E1578161B629700C3003C /* NetworkBroker.cpp */; };
 		322E157D161B62A900C3003C /* NetworkBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 322E157C161B62A900C3003C /* NetworkBroker.h */; };
 		3230BEC2181A6ADB00EA5793 /* DatasetDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3230BEC0181A6ADB00EA5793 /* DatasetDB.cpp */; };
@@ -449,6 +452,8 @@
 		32279F8316F8DEAF009EC7B9 /* DataBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBroker.h; sourceTree = "<group>"; };
 		32279F8916FA36B6009EC7B9 /* PublisherDataService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PublisherDataService.cpp; sourceTree = "<group>"; };
 		32279F8A16FA36B6009EC7B9 /* PublisherDataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PublisherDataService.h; sourceTree = "<group>"; };
+		322D98FE18A95F9200C0864C /* DataConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataConsumer.cpp; sourceTree = "<group>"; };
+		322D98FF18A95F9200C0864C /* DataConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataConsumer.h; sourceTree = "<group>"; };
 		322E1578161B629700C3003C /* NetworkBroker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = NetworkBroker.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		322E157C161B62A900C3003C /* NetworkBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = NetworkBroker.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		3230BEBB1817A9E100EA5793 /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_common.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -632,7 +637,7 @@
 		327CFF111708D7740069497B /* CacheGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheGlobal.h; sourceTree = "<group>"; };
 		3281D35618A67EB4005A0828 /* DirectIOCDataWrapperClientChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOCDataWrapperClientChannel.cpp; sourceTree = "<group>"; };
 		3281D35718A67EB4005A0828 /* DirectIOCDataWrapperClientChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOCDataWrapperClientChannel.h; sourceTree = "<group>"; };
-		3281D35A18A68532005A0828 /* DirectIOCDataWrapperChannelGlobal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectIOCDataWrapperChannelGlobal.h; sourceTree = "<group>"; };
+		3281D35A18A68532005A0828 /* DirectIOChannelGlobal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectIOChannelGlobal.h; sourceTree = "<group>"; };
 		3285569E17F2E33A00A64ED2 /* DirectIOClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOClient.cpp; sourceTree = "<group>"; };
 		3285569F17F2E33A00A64ED2 /* DirectIOClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOClient.h; sourceTree = "<group>"; };
 		328556A217F2E36000A64ED2 /* DirectIOServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOServer.cpp; sourceTree = "<group>"; };
@@ -1007,6 +1012,8 @@
 				323236D9164573F50052CE06 /* main.cpp */,
 				3299363418A7C4F60093E7F2 /* ChaosDataService.cpp */,
 				3299363518A7C4F60093E7F2 /* ChaosDataService.h */,
+				322D98FE18A95F9200C0864C /* DataConsumer.cpp */,
+				322D98FF18A95F9200C0864C /* DataConsumer.h */,
 			);
 			path = ChaosDataService;
 			sourceTree = "<group>";
@@ -1034,7 +1041,7 @@
 				320FB0EE18A3BF6D0014CDB3 /* DirectIOCDataWrapperServerChannel.h */,
 				3281D35618A67EB4005A0828 /* DirectIOCDataWrapperClientChannel.cpp */,
 				3281D35718A67EB4005A0828 /* DirectIOCDataWrapperClientChannel.h */,
-				3281D35A18A68532005A0828 /* DirectIOCDataWrapperChannelGlobal.h */,
+				3281D35A18A68532005A0828 /* DirectIOChannelGlobal.h */,
 			);
 			path = channel;
 			sourceTree = "<group>";
@@ -2020,6 +2027,7 @@
 				3268CE36161608D100FCDB10 /* ZMQClient.h in Headers */,
 				3268CE38161608D100FCDB10 /* ZMQServer.h in Headers */,
 				329603291876B45000CDCADA /* BatchCommandSandbox.h in Headers */,
+				322D990218A95F9200C0864C /* DataConsumer.h in Headers */,
 				322E157D161B62A900C3003C /* NetworkBroker.h in Headers */,
 				3230DA0A1652C41D00113C93 /* NetworkForwardInfo.h in Headers */,
 				32C3545E17885A37009ED581 /* shared_library.hpp in Headers */,
@@ -2358,6 +2366,7 @@
 			files = (
 				323236DA164573F50052CE06 /* main.cpp in Sources */,
 				3299363618A7C4F60093E7F2 /* ChaosDataService.cpp in Sources */,
+				322D990118A95F9200C0864C /* DataConsumer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2459,6 +2468,7 @@
 				32279F8416F8DEAF009EC7B9 /* DataBroker.cpp in Sources */,
 				3264BBD51784887900E2F5A0 /* AbstractPlugin.cpp in Sources */,
 				32279F8B16FA36B6009EC7B9 /* PublisherDataService.cpp in Sources */,
+				322D990018A95F9200C0864C /* DataConsumer.cpp in Sources */,
 				32CB736F16FE3432008575F0 /* ReaderDataService.cpp in Sources */,
 				329FFFD1170712CE00D69CDE /* ManagedMemory.cpp in Sources */,
 				327CFF091708C4EB0069497B /* FastHash.cpp in Sources */,

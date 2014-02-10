@@ -24,6 +24,8 @@
 
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
+#include "DataConsumer.h"
+
 #include <boost/thread/condition.hpp>
 
 #include <chaos/common/global.h>
@@ -56,7 +58,7 @@ namespace chaos{
             static void signalHanlder(int);
             
 			utility::StartableServiceContainer<chaos::NetworkBroker> *network_broker;
-			 
+            utility::StartableServiceContainer<DataConsumer> *data_consumer;
         public:
             //! C and C++ attribute parser
             /*!

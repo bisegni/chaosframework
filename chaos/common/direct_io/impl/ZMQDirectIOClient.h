@@ -32,6 +32,8 @@ namespace chaos {
 		namespace direct_io {
             namespace impl {
                 REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(ZMQDirectIOClient, DirectIOClient), private ZMQBaseClass {
+                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ZMQDirectIOClient)
+
                     int32_t priority_port;
 					
 					int32_t service_port;
@@ -51,10 +53,12 @@ namespace chaos {
                     
 					//! check the connection with the endpoint for the two socket
 					void monitorWorker();
-                public:
+                    
                     ZMQDirectIOClient(string alias);
                     
                     ~ZMQDirectIOClient();
+                    
+                public:
                     
                     //! Initialize instance
                     void init(void *init_data) throw(chaos::CException);

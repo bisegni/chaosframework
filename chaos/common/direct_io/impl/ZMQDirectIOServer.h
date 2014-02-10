@@ -34,7 +34,7 @@ namespace chaos {
             namespace impl {
 				
                 REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(ZMQDirectIOServer, DirectIOServer) , private ZMQBaseClass {
-                    
+                    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ZMQDirectIOServer)
                     void *zmq_context;
                     
                     void *priority_socket;
@@ -50,10 +50,11 @@ namespace chaos {
                     std::string service_socket_bind_str;
                     
                     void worker(bool priority_service);
-                public:
+                    
                     ZMQDirectIOServer(std::string alias);
                     
                     ~ZMQDirectIOServer();
+                public:
                     
                     //! Initialize instance
                     void init(void *init_data) throw(chaos::CException);

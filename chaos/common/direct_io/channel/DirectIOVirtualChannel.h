@@ -23,7 +23,7 @@
 #include <string>
 #include <stdint.h>
 #include <chaos/common/utility/NamedService.h>
-
+#include <chaos/common/direct_io/channel/DirectIOChannelGlobal.h>
 namespace chaos {
 	namespace common {
 		namespace direct_io {

@@ -1,5 +1,5 @@
 /*
- *	main.cpp
+ *	DataConsumer.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,14 +18,35 @@
  *    	limitations under the License.
  */
 
-#include "ChaosDataService.h"
+#include "DataConsumer.h"
 
 using namespace chaos::data_service;
 
-int main(int argc, char * argv[]) {
+DataConsumer::DataConsumer(){
     
-    ChaosDataService::getInstance()->init(argc, argv);
-    ChaosDataService::getInstance()->start();
-    return 0;
 }
 
+DataConsumer::~DataConsumer() {
+    
+}
+
+void DataConsumer::init(void *init_data) throw (chaos::CException) {
+    server_channel = static_cast<DirectIOCDataWrapperServerChannel*>(init_data);
+}
+
+void DataConsumer::start() throw (chaos::CException) {
+    
+}
+
+void DataConsumer::stop() throw (chaos::CException) {
+    
+}
+
+void DataConsumer::deinit() throw (chaos::CException) {
+    
+}
+
+
+void DataConsumer::consumeCDataWrapper(uint8_t channel_tag, chaos::common::data::CDataWrapper *data_wrapper) {
+    
+}
