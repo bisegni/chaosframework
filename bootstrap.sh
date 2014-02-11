@@ -270,10 +270,18 @@ else
     fi
 
 fi
+
+NPROC=4
+
+if [ "$ARCH" = "armv7l" ]; then
+    NPROC=1
+    echo "ARM architecture using $NPROC processors"
+fi
+
 if [ -n "$CHAOS_DEVELOPMENT" ]; then
-    make -j4  VERBOSE=1
+    make -j$NPROC  VERBOSE=1
 else
-    make -j4
+    make -j$NPROC
 fi
 make install
 
