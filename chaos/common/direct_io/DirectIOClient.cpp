@@ -101,7 +101,7 @@ void DirectIOClient::updateConfiguration(void *init_data) throw(chaos::CExceptio
     DIOLAPP_ << "Receive new update for configuration";
     if(init_cdw->hasKey(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS)){
         DIOLAPP_ << "New servers configration has been provided";
-        server_managment.clear();
+        ServerFeeder::clear();
         DIOLAPP_ << "Old configuration has been removed";
 
         auto_ptr<chaos_data::CMultiTypeDataArrayWrapper> data_proxy_server_address(init_cdw->getVectorValue(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS));
@@ -110,7 +110,7 @@ void DirectIOClient::updateConfiguration(void *init_data) throw(chaos::CExceptio
         for ( int idx = 0; idx < data_proxy_server_address->size(); idx++ ){
             vector<string> server_tokens;
             string server_desc = data_proxy_server_address->getStringElementAtIndex(idx);
-            if(!server_managment.addServer(server_desc)) {
+            if(!ServerFeeder::addServer(server_desc)) {
                 DIOLAPP_ << "Wrong Server Description '" << server_desc << "'";
             }
         }

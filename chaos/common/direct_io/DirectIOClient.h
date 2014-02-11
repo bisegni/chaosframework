@@ -54,7 +54,7 @@ namespace chaos {
 				may server and the same data will be forwarded to all server
 				dio_client---> data message -->dio_server
 			 */
-			class DirectIOClient : public DirectIOForwarder, public chaos::utility::StartableService, public NamedService {
+			class DirectIOClient : public DirectIOForwarder, public chaos::utility::StartableService, public NamedService,  public ServerFeeder {
                 std::string impl_alias;
                 
                 boost::atomic_uint channel_counter;
@@ -69,8 +69,6 @@ namespace chaos {
                 
 
             protected:
-                //! server managment utility
-                ServerFeeder server_managment;
                 
                 uint32_t current_server_hash;
                 

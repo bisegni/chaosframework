@@ -18,14 +18,26 @@
  *    	limitations under the License.
  */
 
+#include <exception>
 #include "ChaosDataService.h"
 
 using namespace chaos::data_service;
 
 int main(int argc, char * argv[]) {
-    
-    ChaosDataService::getInstance()->init(argc, argv);
-    ChaosDataService::getInstance()->start();
+    try {
+        ChaosDataService::getInstance()->init(argc, argv);
+        ChaosDataService::getInstance()->start();
+    } catch(chaos::CException& ex) {
+        DECODE_CHAOS_EXCEPTION(ex)
+    } catch(boost::program_options::unknown_option& ex) {
+        std::cerr << ex.what() << std::endl;
+    } catch(std::exception& ex) {
+        std::cerr << ex.what() << std::endl;
+    } catch( ... ) {
+        std::cerr <<
+        "Unrecognized exception, diagnostic information follows\n" <<
+        boost::current_exception_diagnostic_information();
+    }
     return 0;
 }
 

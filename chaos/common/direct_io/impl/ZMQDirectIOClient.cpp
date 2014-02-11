@@ -135,7 +135,7 @@ void ZMQDirectIOClient::switchMode(DirectIOConnectionSpreadType::DirectIOConnect
         case DirectIOConnectionSpreadType::DirectIORoundRobin: {
             ZMQDIOLDBG_ << "Switch mod to DirectIORoundRobin";
             std::vector< std::vector<std::string> > all_online_server;
-            server_managment.getAllOnlineServer(all_online_server);
+            ServerFeeder::getAllOnlineServer(all_online_server);
             for (std::vector< std::vector<std::string> >::iterator i = all_online_server.begin();
                  i != all_online_server.end();
                  i++) {
@@ -160,7 +160,7 @@ void ZMQDirectIOClient::switchMode(DirectIOConnectionSpreadType::DirectIOConnect
         case DirectIOConnectionSpreadType::DirectIOFailOver: {
             ZMQDIOLDBG_ << "Switch mod to DirectIOFailOver";
             //try connecting to first server
-            server_managment.getCurrentOnline(current_server_hash, _priority_end_point, _service_end_point);
+            ServerFeeder::getCurrentOnline(current_server_hash, _priority_end_point, _service_end_point);
             //connect the socket to server
             current_priority_endpoint = boost::str( boost::format("tcp://%1%") % _priority_end_point);
             current_service_endpoint = boost::str( boost::format("tcp://%1%") % _service_end_point);
