@@ -35,12 +35,10 @@ namespace chaos {
 				
 				class DirectIOVirtualServerChannel : public DirectIOVirtualChannel {
 					friend class chaos::common::direct_io::DirectIOServerEndpoint;
-
 				public:
-					
 					//typedef boost::function<void(DirectIODataPack*)> ServerChannelDelegate;
 					typedef DirectIOEndpointHandler* ServerChannelDelegate;
-					void setDelegate(ServerChannelDelegate delegate_function);
+					
 					void clearDelegate();
 					uint16_t getEndpointRouteIndex();
 				private:
@@ -49,6 +47,9 @@ namespace chaos {
 				protected:
 					DirectIOVirtualServerChannel(std::string channel_name, uint8_t channel_route_index);
                     ~DirectIOVirtualServerChannel();
+					
+
+					void setDelegate(ServerChannelDelegate delegate_function);
 				};
             }
         }

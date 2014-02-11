@@ -545,16 +545,16 @@ void NetworkBroker::disposeMessageChannel(MessageChannel *messageChannelToDispos
 void NetworkBroker::disposeMessageChannel(NodeMessageChannel *messageChannelToDispose) {
     NetworkBroker::disposeMessageChannel((MessageChannel*)messageChannelToDispose);
 }
-
-chaos_directio::DirectIOServerEndpoint *NetworkBroker::getDirectIOServerChannel() {
+//Allocate a new endpoint in the direct io server
+chaos_directio::DirectIOServerEndpoint *NetworkBroker::getDirectIOServerEndpoint() {
     chaos_directio::DirectIOServerEndpoint *result_endpoint = directIODispatcher->getNewEndpoint();
     return result_endpoint;
 }
-
-void NetworkBroker::releaseDirectIOServerChannel(chaos_directio::DirectIOServerEndpoint *end_point) {
+//Dispose an endpoint of the direct io server
+void NetworkBroker::releaseDirectIOServerEndpoint(chaos_directio::DirectIOServerEndpoint *end_point) {
     directIODispatcher->releaseEndpoint(end_point);
 }
-
+//Return a new direct io client instance
 chaos_directio::DirectIOClient *NetworkBroker::getDirectIOClientInstance() {
     MB_LAPP  << "Allcoate a new DirectIOClient of type " << directIOClientImpl;
     return ObjectFactoryRegister<common::direct_io::DirectIOClient>::getInstance()->getNewInstanceByName(directIOClientImpl.c_str());

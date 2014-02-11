@@ -92,7 +92,7 @@ namespace chaos {
 		template<typename T>
 		class StartableServiceContainer {
 			bool delete_on_dispose;
-			StartableService *startable_service_instance;
+			T *startable_service_instance;
 		public:
 			StartableServiceContainer(bool _delete_on_dispose):startable_service_instance(new T()), delete_on_dispose(_delete_on_dispose) {}
 			StartableServiceContainer(T *instance, bool _delete_on_dispose):startable_service_instance(instance), delete_on_dispose(_delete_on_dispose) {}
@@ -115,16 +115,8 @@ namespace chaos {
 			bool deinit(const char * const domainString) {
 				return StartableService::deinitImplementation(startable_service_instance, IMPL_NAME(T), domainString);
 			}
-			T& operator*() {
-				return *startable_service_instance;
-			}
-			const T& operator*() const {
-				return *startable_service_instance;
-			}
-			T* operator->() {
-				return startable_service_instance;
-			}
-			const T* operator->() const {
+			
+			inline T* getPointer() {
 				return startable_service_instance;
 			}
 		};

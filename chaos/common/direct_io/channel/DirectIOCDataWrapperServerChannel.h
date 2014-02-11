@@ -35,7 +35,7 @@ namespace chaos {
 					DirectIOCDataWrapperServerChannel(std::string alias);
 					
 					void consumeDataPack(DirectIODataPack *dataPack);
-                    
+				public:
                     void setHandler(DirectIOCDataWrapperServerChannelHandler *handler);
 				};
 			}

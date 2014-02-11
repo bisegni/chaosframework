@@ -21,9 +21,11 @@
 #ifndef __CHAOSFramework__DataConsumer__
 #define __CHAOSFramework__DataConsumer__
 #include <chaos/common/utility/StartableService.h>
+#include <chaos/common/direct_io/DirectIOServerEndpoint.h>
 #include <chaos/common/direct_io/channel/DirectIOCDataWrapperServerChannel.h>
 
 using namespace chaos::utility;
+using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 
 namespace chaos{
@@ -33,7 +35,7 @@ namespace chaos{
         
         class DataConsumer : public DirectIOCDataWrapperServerChannel::DirectIOCDataWrapperServerChannelHandler, public utility::StartableService {
             friend class ChaosDataService;
-            
+            DirectIOServerEndpoint *server_endpoint;
             DirectIOCDataWrapperServerChannel *server_channel;
             
             DataConsumer();

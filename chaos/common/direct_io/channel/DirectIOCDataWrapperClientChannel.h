@@ -36,9 +36,9 @@ namespace chaos {
                      REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIOCDataWrapperClientChannel)
                  protected:
                      DirectIOCDataWrapperClientChannel(std::string alias);
-                     ~DirectIOCDataWrapperClientChannel();
                  public:
-                    uint32_t pushCDataWrapperSerializationBuffer(uint16_t endpoint_idx, uint8_t tag, chaos_data::SerializationBuffer *data_pack) ;
+					~DirectIOCDataWrapperClientChannel();
+                    uint32_t pushCDataWrapperSerializationBuffer(uint16_t endpoint_idx, uint8_t tag, chaos_data::SerializationBuffer *data_pack);
                  };
             }
         }

@@ -266,16 +266,38 @@ namespace chaos {
          */
         DeviceMessageChannel *getDeviceMessageChannelFromAddress(CDeviceNetworkAddress  *deviceNetworkAddress);
     
-        //!Channel deallocation
+        //!Rpc Channel deallocation
         /*!
          Perform the message channel deallocation
          */
         void disposeMessageChannel(MessageChannel *messageChannelToDispose);
         
+		//!Rpc Channel deallocation
+		/*!
+         Perform the node message channel deallocation
+         */
         void disposeMessageChannel(NodeMessageChannel *messageChannelToDispose);
-        
-        chaos_directio::DirectIOServerEndpoint *getDirectIOServerChannel();
-        void releaseDirectIOServerChannel(chaos_directio::DirectIOServerEndpoint *end_point);
+		
+        //!Allocate a new endpoint in the direct io server
+		/*!
+         Allcoate a new endpoint into the server act to receive directio data pack.
+		 \return The endpoint class or NULL in case the maximum number of endpoint is reached.
+         */
+        chaos_directio::DirectIOServerEndpoint *getDirectIOServerEndpoint();
+		
+		//!Dispose an endpoint of the direct io server
+		/*!
+         Allcoate a new endpoint into the server act to receive directio data pack.
+		 \param end_point The endpoint to relase
+         */
+        void releaseDirectIOServerEndpoint(chaos_directio::DirectIOServerEndpoint *end_point);
+		
+		//!Return a new direct io client instance
+		/*!
+         Allcoate and return a new direct io client instance. This isntance is totaly managed
+		 by the class that request for it. His deallocation is not done in automatic.
+		 \return A new instance of the direct io client
+         */
         chaos_directio::DirectIOClient *getDirectIOClientInstance();
 
     };

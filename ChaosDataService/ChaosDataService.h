@@ -53,8 +53,8 @@ namespace chaos{
             
             static WaitSemaphore waitCloseSemaphore;
             
-            ChaosDataService(){};
-            ~ChaosDataService(){};
+            ChaosDataService();
+            ~ChaosDataService();
             static void signalHanlder(int);
             
 			utility::StartableServiceContainer<chaos::NetworkBroker> *network_broker;

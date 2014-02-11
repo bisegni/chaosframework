@@ -20,7 +20,17 @@
 
 #include "DataConsumer.h"
 
+#include <chaos/common/utility/ObjectFactoryRegister.h>
+
 using namespace chaos::data_service;
+using namespace chaos::common::direct_io;
+using namespace chaos::common::direct_io::channel;
+
+#define DataConsumer_LOG_HEAD "[DataConsumer] - "
+
+#define DSLAPP_ LAPP_ << DataConsumer_LOG_HEAD
+#define DSLDBG_ LDBG_ << DataConsumer_LOG_HEAD
+#define DSLERR_ LERR_ << DataConsumer_LOG_HEAD
 
 DataConsumer::DataConsumer(){
     
@@ -31,7 +41,17 @@ DataConsumer::~DataConsumer() {
 }
 
 void DataConsumer::init(void *init_data) throw (chaos::CException) {
-    server_channel = static_cast<DirectIOCDataWrapperServerChannel*>(init_data);
+	if(!server_endpoint) throw chaos::CException(-1, "Invalid server endpoint", __FUNCTION__);
+	DSLAPP_ << "DataCOnsumer initialized with endpoint "<< server_endpoint->getRouteIndex();
+	
+	DSLAPP_ << "Allocating DirectIOCDataWrapperServerChannel";
+	server_channel = (DirectIOCDataWrapperServerChannel*)chaos::ObjectFactoryRegister<DirectIOVirtualServerChannel>::getInstance()->getNewInstanceByName("DirectIOCDataWrapperServerChannel");
+	if(!server_channel) throw chaos::CException(-2, "Error allocating rpc server channel", __FUNCTION__);
+	
+	DSLAPP_ << "Register DirectIOCDataWrapperServerChannel into the endpoint";
+	server_endpoint->registerChannelInstance(server_channel);
+	
+	server_channel->setHandler(this);
 }
 
 void DataConsumer::start() throw (chaos::CException) {
@@ -43,7 +63,11 @@ void DataConsumer::stop() throw (chaos::CException) {
 }
 
 void DataConsumer::deinit() throw (chaos::CException) {
-    
+	DSLAPP_ << "Deregister DirectIOCDataWrapperServerChannel into the endpoint";
+	server_endpoint->deregisterChannelInstance(server_channel);
+	
+	DSLAPP_ << "Delete DirectIOCDataWrapperServerChannel";
+    if(server_channel) delete(server_channel);
 }
 
 

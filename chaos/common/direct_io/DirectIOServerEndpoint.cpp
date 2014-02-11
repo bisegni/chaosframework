@@ -43,7 +43,7 @@ uint16_t DirectIOServerEndpoint::getRouteIndex() {
 channel::DirectIOVirtualServerChannel *DirectIOServerEndpoint::registerChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance) {
 	if(!channel_instance) return NULL;
 	boost::unique_lock<boost::shared_mutex>	Lock(mutex_channel_slot);
-	DIOSE_LDBG_ << "Register channel " << channel_instance->getName() << " with route index " << channel_instance->getChannelRouterIndex();
+	DIOSE_LDBG_ << "Register channel " << channel_instance->getName() << " with route index " << (int)channel_instance->getChannelRouterIndex();
 	if(channel_instance->getChannelRouterIndex() > (MAX_ENDPOINT_CHANNEL-1)) return NULL;
 	channel_slot[channel_instance->getChannelRouterIndex()] = channel_instance;
 	return channel_instance;
