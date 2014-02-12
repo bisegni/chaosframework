@@ -132,7 +132,7 @@ void ZMQDirectIOClient::switchMode(DirectIOConnectionSpreadType::DirectIOConnect
 	ZMQDIOLDBG_ << "Acquiring lock";
     ZMQDirectIOClientWriteLock lock(mutex_socket_manipolation);
     ZMQDIOLDBG_ << "Write lock acquired";
-    switch (current_spread_forwarding_type) {
+    switch (direct_io_spread_mode) {
         case DirectIOConnectionSpreadType::DirectIORoundRobin: {
             ZMQDIOLDBG_ << "Switch mod to DirectIORoundRobin";
             std::vector< std::vector<std::string> > all_online_server;
@@ -195,9 +195,6 @@ uint32_t ZMQDirectIOClient::sendServiceData(DirectIODataPack *data_pack) {
 
 uint32_t ZMQDirectIOClient::writeToSocket(void *socket, DirectIODataPack *data_pack) {
     assert(socket && data_pack);
-	ZMQDIOLDBG_ << "Acquiring lock";
-    ZMQDirectIOClientReadLock lock(mutex_socket_manipolation);
-	ZMQDIOLDBG_ << "Lock Acquired";
 	//send header
 	int err = zmq_send(socket, &data_pack->header.dispatcher_raw_data, 4, ZMQ_SNDMORE);
 	if(err == -1) {

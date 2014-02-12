@@ -75,8 +75,6 @@ namespace chaos {
                 std::string current_priority_endpoint;
 				
 				std::string current_service_endpoint;
-                //!current spread type
-                DirectIOConnectionSpreadType::DirectIOConnectionSpreadType current_spread_forwarding_type;
 
 			public:
                 DirectIOClient(string alias);

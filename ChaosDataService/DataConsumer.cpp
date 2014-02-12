@@ -60,13 +60,14 @@ void DataConsumer::init(void *init_data) throw (chaos::CException) {
 }
 
 void DataConsumer::start() throw (chaos::CException) {
+    DSLAPP_ << "Start Data Consumer";
     work = true;
-	
-
 }
 
 void DataConsumer::stop() throw (chaos::CException) {
-    
+    DSLAPP_ << "Stop Data Consumer";
+    work = false;
+    client_threads_group.join_all();
 }
 
 void DataConsumer::deinit() throw (chaos::CException) {
@@ -81,12 +82,13 @@ void DataConsumer::deinit() throw (chaos::CException) {
 void DataConsumer::consumeCDataWrapper(uint8_t channel_tag, chaos::common::data::CDataWrapper *data_wrapper) {
     DSLAPP_ << "CDataWrapper received:";
 	if(data_wrapper) DSLAPP_ << data_wrapper->getJSONString();
-	
 }
 
 void DataConsumer::simulateClient(DirectIOClient *client_instance) {
+    DSLAPP_ << "Entering client thread";
 	DirectIOCDataWrapperClientChannel *channel = (DirectIOCDataWrapperClientChannel*)chaos::ObjectFactoryRegister<DirectIOVirtualClientChannel>::getInstance()->getNewInstanceByName("DirectIOCDataWrapperClientChannel");
-	client_instance->registerChannelInstance(channel);
+    DSLAPP_ << "registering client";
+    client_instance->registerChannelInstance(channel);
 	client_instance->addServer("127.0.0.1:1672:30175");
 	client_instance->switchMode(DirectIOConnectionSpreadType::DirectIOFailOver);
 	while(work) {
@@ -94,7 +96,7 @@ void DataConsumer::simulateClient(DirectIOClient *client_instance) {
 		data.addInt32Value("int_val", 32);
 		data.addStringValue("string_val", "str data");
 		
-		chaos::common::data::SerializationBuffer *s = data.getJSONData();
+		chaos::common::data::SerializationBuffer *s = data.getBSONData();
 		
 		uint32_t err = channel->pushCDataWrapperSerializationBuffer(0, (uint8_t)1, s);
 		if(err==-1) {
@@ -105,10 +107,10 @@ void DataConsumer::simulateClient(DirectIOClient *client_instance) {
 		delete(s);
 		sleep(10);
 	}
+    DSLAPP_ << "deregistering client";
 	client_instance->deregisterChannelInstance(channel);
 }
 
 void DataConsumer::addClient(DirectIOClient *client) {
 	client_threads_group.add_thread(new thread(boost::bind(&DataConsumer::simulateClient, this, client)));
-
 }

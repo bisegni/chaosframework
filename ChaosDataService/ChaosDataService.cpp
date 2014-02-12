@@ -110,8 +110,10 @@ void ChaosDataService::start() throw(CException) {
 		
         CDSLAPP_ << "Start the Data Consumer";
         data_consumer->start(__PRETTY_FUNCTION__);
+        CDSLAPP_ << "Starting Client";
         client->start(__PRETTY_FUNCTION__);
 		//add simulation client
+        CDSLAPP_ << "Assocaite client";
 		data_consumer->getPointer()->addClient(client->getPointer());
 		
         waitCloseSemaphore.wait();

@@ -64,13 +64,6 @@ void DirectIOClient::deinit() throw(chaos::CException) {
 }
 
 void DirectIOClient::clearChannelInstancerAndInstance() {
-    boost::unique_lock<boost::shared_mutex>	Lock(mutex_channel_map);
-   /* for(std::map<unsigned int, channel::DirectIOVirtualClientChannel* >::iterator it = channel_map.begin();
-        it != channel_map.end();
-        it++) {
-        DIOLAPP_ << "Remove channel index " << it->first;
-        if(it->second) delete(it->second);
-    }*/
 }
 
 // allocate a new channel by the instancer
