@@ -36,9 +36,7 @@ if(endpoint_slot_array[i]->endpoint) { \
 delete endpoint_slot_array[i]->endpoint; \
 endpoint_slot_array[i]->endpoint = NULL; \
 } \
-endpoint_slot_array[i]->enable = false; \
-endpoint_slot_array[i]->priority_delegate = NULL; \
-endpoint_slot_array[i]->service_delegate = NULL;
+endpoint_slot_array[i]->enable = false;
 
 
 DirectIODispatcher::DirectIODispatcher():available_endpoint_slot(MAX_ENDPOINT_NUMBER) {
@@ -63,8 +61,6 @@ void DirectIODispatcher::init(void *init_data) throw(chaos::CException) {
 		endpoint_slot_array[idx] = new EndpointFastDelegation();
 		endpoint_slot_array[idx]->enable = false;
 		endpoint_slot_array[idx]->endpoint = NULL;
-		endpoint_slot_array[idx]->priority_delegate = NULL;
-		endpoint_slot_array[idx]->service_delegate = NULL;
 		
 		//add this endpoint to free slot queue
 		available_endpoint_slot.push(idx);
@@ -115,8 +111,6 @@ DirectIOServerEndpoint *DirectIODispatcher::getNewEndpoint() {
 	}
 	//associate to the endpoint his slot index
 	endpoint_slot_array[next_available_slot]->endpoint->endpoint_route_index = next_available_slot;
-	endpoint_slot_array[next_available_slot]->priority_delegate = boost::bind(&DirectIOServerEndpoint::priorityDataReceived, endpoint_slot_array[next_available_slot]->endpoint, _1);
-	endpoint_slot_array[next_available_slot]->service_delegate = boost::bind(&DirectIOServerEndpoint::serviceDataReceived, endpoint_slot_array[next_available_slot]->endpoint, _1);
 	endpoint_slot_array[next_available_slot]->enable = true;
 	return endpoint_slot_array[next_available_slot]->endpoint;
 }
@@ -137,15 +131,15 @@ void DirectIODispatcher::releaseEndpoint(DirectIOServerEndpoint *endpoint_to_rel
 // Event for a new data received
 void DirectIODispatcher::priorityDataReceived(DirectIODataPack *data_pack) {
 	//get route index and call delegator
-	if(endpoint_slot_array[data_pack->header.fields.channel_idx]->enable) {
-		endpoint_slot_array[data_pack->header.fields.channel_idx]->priority_delegate(data_pack);
+	if(endpoint_slot_array[data_pack->header.fields.route_addr]->enable) {
+		endpoint_slot_array[data_pack->header.fields.route_addr]->endpoint->priorityDataReceived(data_pack);
 	}
 }
 
 // Event for a new data received
 void DirectIODispatcher::serviceDataReceived(DirectIODataPack *data_pack) {
 	//get route index and call delegator
-	if(endpoint_slot_array[data_pack->header.fields.channel_idx]->enable) {
-		endpoint_slot_array[data_pack->header.fields.channel_idx]->service_delegate(data_pack);
+	if(endpoint_slot_array[data_pack->header.fields.route_addr]->enable) {
+		endpoint_slot_array[data_pack->header.fields.route_addr]->endpoint->serviceDataReceived(data_pack);
 	}
 }

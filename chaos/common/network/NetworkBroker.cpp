@@ -87,7 +87,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         string direct_io_impl = globalConfiguration->getStringValue(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_IMPL_TYPE);
 		//construct the rpc server and client name
         string directIOServerImpl = direct_io_impl+"DirectIOServer";
-        directIOClientImpl = direct_io_impl+"DirectIOCLient";
+        directIOClientImpl = direct_io_impl+"DirectIOClient";
         MB_LAPP  << "DirectIO Client implementation is configured has : " << directIOClientImpl;
         MB_LAPP  << "Trying to initilize DirectIO Server: " << directIOServerImpl;
         directIOServer = ObjectFactoryRegister<common::direct_io::DirectIOServer>::getInstance()->getNewInstanceByName(directIOServerImpl.c_str());

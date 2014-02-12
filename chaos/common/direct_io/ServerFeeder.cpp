@@ -36,7 +36,7 @@ using namespace chaos::common::direct_io;
 typedef boost::unique_lock<boost::shared_mutex>	WriteLock;
 typedef boost::shared_lock<boost::shared_mutex> ReadLock;
 
-ServerFeeder::ServerFeeder() {
+ServerFeeder::ServerFeeder():current_online_index(-1), current_offline_index(-1){
     
 }
 
@@ -62,8 +62,8 @@ void ServerFeeder::decoupleServerDescription(std::string server_desc, std::vecto
 	boost::algorithm::split(server_desc_tokens, server_desc, boost::algorithm::is_any_of(":"), boost::algorithm::token_compress_on);
 	
 	//create the two servers description
-	servers_desc.push_back(boost::str( boost::format("tcp://*:%1%:%2%") % server_desc_tokens[0] % server_desc_tokens[1]));
-	servers_desc.push_back(boost::str( boost::format("tcp://*:%1%:%2%") % server_desc_tokens[0] % server_desc_tokens[2]));
+	servers_desc.push_back(boost::str( boost::format("%1%:%2%") % server_desc_tokens[0] % server_desc_tokens[1]));
+	servers_desc.push_back(boost::str( boost::format("%1%:%2%") % server_desc_tokens[0] % server_desc_tokens[2]));
 }
 
 bool ServerFeeder::addServer(std::string server_desc) {
@@ -85,6 +85,8 @@ bool ServerFeeder::addServer(std::string server_desc) {
 	std::vector< std::string > servers_decopled;
 	decoupleServerDescription(normalized_server_desc, servers_decopled);
     map_server_address.insert(make_pair(s_hash, servers_decopled));
+	
+	if(current_online_index==-1) current_online_index = 0;
 	return true;
 }
 
@@ -93,6 +95,7 @@ void ServerFeeder::removeServer(uint32_t server_hash) {
     removeHashFromVector(vec_enable_hash_sequence, server_hash);
     removeHashFromVector(vec_disable_hash_sequence, server_hash);
     map_server_address.erase(server_hash);
+	if(map_server_address.size()==0) current_online_index = -1;
 }
 
 void ServerFeeder::putOfflineServer(uint32_t server_hash) {
@@ -114,33 +117,33 @@ void ServerFeeder::clear() {
     map_server_address.clear();
 }
 
-void ServerFeeder::getNextOnline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc) {
+bool ServerFeeder::getNextOnline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc) {
     ReadLock Lock(mutex_server_manipolation);
     current_online_index = (current_online_index + 1) % vec_enable_hash_sequence.size();
     return getCurrentOnline(server_hash, priority_server_desc, service_server_desc);
 }
 
-void ServerFeeder::getCurrentOnline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc) {
+bool ServerFeeder::getCurrentOnline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc) {
     ReadLock Lock(mutex_server_manipolation);
     server_hash = vec_enable_hash_sequence[current_online_index];
     priority_server_desc = map_server_address[server_hash][0];
 	service_server_desc = map_server_address[server_hash][1];
 }
 
-void ServerFeeder::getNextOffline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc) {
+bool ServerFeeder::getNextOffline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc) {
     ReadLock Lock(mutex_server_manipolation);
     current_offline_index = (current_offline_index + 1) % vec_disable_hash_sequence.size();
     getCurrentOffline(server_hash, priority_server_desc, service_server_desc);
 }
 
-void ServerFeeder::getCurrentOffline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc) {
+bool ServerFeeder::getCurrentOffline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc) {
     ReadLock Lock(mutex_server_manipolation);
     server_hash = vec_disable_hash_sequence[current_offline_index];
     priority_server_desc = map_server_address[server_hash][0];
 	service_server_desc = map_server_address[server_hash][1];
 }
 
-void ServerFeeder::getAllOnlineServer(std::vector< std::vector<std::string> >& server_list) {
+bool ServerFeeder::getAllOnlineServer(std::vector< std::vector<std::string> >& server_list) {
     server_list.clear();
     for (std::vector<uint32_t>::iterator i = vec_enable_hash_sequence.begin();
          i != vec_enable_hash_sequence.end();

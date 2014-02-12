@@ -43,8 +43,6 @@ namespace chaos {
 				struct EndpointFastDelegation {
 					bool enable;
 					DirectIOServerEndpoint *endpoint;
-					boost::function<void(DirectIODataPack*)> priority_delegate;
-					boost::function<void(DirectIODataPack*)> service_delegate;
 				};
 
 				

@@ -130,7 +130,7 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 	
 	if(priority_service) {
 		ZMQDIO_SRV_LAPP_ << "Allocating and binding service socket to " << service_socket_bind_str;
-		socket = zmq_socket (zmq_context, ZMQ_REP);
+		socket = zmq_socket (zmq_context, ZMQ_ROUTER);
 		err = zmq_setsockopt (socket, ZMQ_LINGER, &linger, sizeof(int));
 		if(err) {
 			std::string msg = boost::str( boost::format("Error Setting linget to priority socket"));
@@ -145,9 +145,9 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 		}
 	} else {
 		ZMQDIO_SRV_LAPP_ << "Allocating and binding priority socket to "<< priority_socket_bind_str;
-		socket = zmq_socket (zmq_context, ZMQ_REP);
+		socket = zmq_socket (zmq_context, ZMQ_ROUTER);
 		int linger = 1;
-		int err = zmq_setsockopt (socket, ZMQ_LINGER, &linger, sizeof(int));
+		err = zmq_setsockopt (socket, ZMQ_LINGER, &linger, sizeof(int));
 		if(err) {
 			std::string msg = boost::str( boost::format("Error Setting linget to priority socket"));
 			ZMQDIO_SRV_LAPP_ << msg;
@@ -164,13 +164,12 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 	ZMQDIO_SRV_LAPP_ << "Entering in the thread loop for " << PS_STR(priority_service) << " socket";
     while (run_server) {
         try {
-			data_pack = new DirectIODataPack();
 			//read header
             err = zmq_msg_init(&request);
             if(err == -1) {
                 continue;
             }
-            err = zmq_recvmsg(socket, &request, 0);
+            err = zmq_msg_recv(&request, socket, 0);
             if(err == -1 ||
 				zmq_msg_size(&request) != DIRECT_IO_HEADER_SIZE) {
                 zmq_msg_close(&request);
@@ -178,7 +177,8 @@ void ZMQDirectIOServer::worker(bool priority_service) {
             }
 			received_data = zmq_msg_data(&request);
 			received_data_size = (uint32_t)zmq_msg_size(&request);
-            //data_pack->dio_pack_len = DIRECT_IO_GET_PACK_LEN(received_data);
+			
+			data_pack = new DirectIODataPack();
 			data_pack->header.dispatcher_raw_data = DIRECT_IO_GET_DISPATCHER_DATA(received_data);
 			//close the request
             zmq_msg_close(&request);

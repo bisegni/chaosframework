@@ -34,7 +34,7 @@ using boost::shared_ptr;
 #define CDSLAPP_ LAPP_ << ChaosDataService_LOG_HEAD
 #define CDSLDBG_ LDBG_ << ChaosDataService_LOG_HEAD
 #define CDSLERR_ LERR_ << ChaosDataService_LOG_HEAD
-
+#define __METHOD_NAME__(x) x(__PRETTY_FUNCTION__)
 //boost::mutex ChaosCUToolkit::monitor;
 //boost::condition ChaosCUToolkit::endWaithCondition;
 WaitSemaphore ChaosDataService::waitCloseSemaphore;
@@ -79,17 +79,20 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 
 		CDSLAPP_ << "Allocate Network Brocker";
         network_broker = new utility::StartableServiceContainer<chaos::NetworkBroker>(true);
-		if(!network_broker) throw chaos::CException(-1, "Error instantiating network broker", __FUNCTION__);
-		network_broker->init(NULL, __FUNCTION__);
+		if(!network_broker) throw chaos::CException(-1, "Error instantiating network broker", __PRETTY_FUNCTION__);
+		network_broker->init(NULL, __PRETTY_FUNCTION__);
         
         CDSLAPP_ << "Allocate the Data Consumer";
         data_consumer = new utility::StartableServiceContainer<DataConsumer>(new DataConsumer(), true);
-		if(!data_consumer) throw chaos::CException(-1, "Error instantiating network broker", __FUNCTION__);
+		if(!data_consumer) throw chaos::CException(-1, "Error instantiating network broker", __PRETTY_FUNCTION__);
 		
 		CDSLAPP_ << "Get the endpoint and associate it to the Data Consumer";
 		data_consumer->getPointer()->server_endpoint = network_broker->getPointer()->getDirectIOServerEndpoint();
 		
-        data_consumer->init(NULL, __FUNCTION__);
+        data_consumer->init(NULL, __PRETTY_FUNCTION__);
+		
+		client = new utility::StartableServiceContainer<chaos::common::direct_io::DirectIOClient>(network_broker->getPointer()->getDirectIOClientInstance(), true);
+		client->init(NULL, __PRETTY_FUNCTION__);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         exit(1);
@@ -103,11 +106,14 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 void ChaosDataService::start() throw(CException) {
     try {
         CDSLAPP_ << "Starting CHAOS Data Service";
-		network_broker->start(__FUNCTION__);
+		network_broker->start(__PRETTY_FUNCTION__);
 		
         CDSLAPP_ << "Start the Data Consumer";
-        data_consumer->start(__FUNCTION__);
-        
+        data_consumer->start(__PRETTY_FUNCTION__);
+        client->start(__PRETTY_FUNCTION__);
+		//add simulation client
+		data_consumer->getPointer()->addClient(client->getPointer());
+		
         waitCloseSemaphore.wait();
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
@@ -129,10 +135,12 @@ void ChaosDataService::start() throw(CException) {
  */
 void ChaosDataService::stop() throw(CException) {
     CDSLAPP_ << "Stop the Data Consumer";
-    data_consumer->stop(__FUNCTION__);
+    data_consumer->stop(__PRETTY_FUNCTION__);
 
+	client->stop(__PRETTY_FUNCTION__);
+	
 	CDSLAPP_ << "Stopping CHAOS Data Service";
-    network_broker->stop(__FUNCTION__);
+    network_broker->stop(__PRETTY_FUNCTION__);
 }
 
 /*
@@ -143,10 +151,12 @@ void ChaosDataService::deinit() throw(CException) {
 	network_broker->getPointer()->releaseDirectIOServerEndpoint(data_consumer->getPointer()->server_endpoint);
 
     CDSLAPP_ << "Stop the Data Consumer";
-    data_consumer->deinit(__FUNCTION__);
+    data_consumer->deinit(__PRETTY_FUNCTION__);
 
+	client->deinit(__PRETTY_FUNCTION__);
+	
     CDSLAPP_ << "Deinitializing CHAOS Data Service";
-	network_broker->deinit(__FUNCTION__);
+	network_broker->deinit(__PRETTY_FUNCTION__);
 	delete(network_broker);
 }
 

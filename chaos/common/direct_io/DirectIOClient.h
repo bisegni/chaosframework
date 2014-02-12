@@ -77,8 +77,7 @@ namespace chaos {
 				std::string current_service_endpoint;
                 //!current spread type
                 DirectIOConnectionSpreadType::DirectIOConnectionSpreadType current_spread_forwarding_type;
-                
-                virtual void switchMode(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType direct_io_spread_mode) = 0;
+
 			public:
                 DirectIOClient(string alias);
 				
@@ -104,6 +103,9 @@ namespace chaos {
                 
                 //! Dispose the channel
                 void deregisterChannelInstance(channel::DirectIOVirtualClientChannel *channel_instance);
+				
+				
+                virtual void switchMode(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType direct_io_spread_mode) = 0;
 			};
 			
 		}

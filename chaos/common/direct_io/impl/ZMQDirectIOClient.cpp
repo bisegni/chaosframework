@@ -96,7 +96,7 @@ void ZMQDirectIOClient::stop() throw(chaos::CException) {
 //! Deinit the implementation
 void ZMQDirectIOClient::deinit() throw(chaos::CException) {
     ZMQDIOLAPP_ << "deinitialization";
-    
+    ZMQDIOLDBG_ << "Acquiring lock";
     ZMQDirectIOClientWriteLock lock(mutex_socket_manipolation);
     ZMQDIOLDBG_ << "Write lock acquired";
 
@@ -125,10 +125,11 @@ void ZMQDirectIOClient::switchMode(DirectIOConnectionSpreadType::DirectIOConnect
     std::string _priority_end_point;
 	std::string _service_end_point;
     //check if are already on the same spred type
-    if(direct_io_spread_mode == current_spread_forwarding_type) return;
-    current_spread_forwarding_type = direct_io_spread_mode;
+    //if(direct_io_spread_mode == current_spread_forwarding_type) return;
+    //current_spread_forwarding_type = direct_io_spread_mode;
     
     //lock for write
+	ZMQDIOLDBG_ << "Acquiring lock";
     ZMQDirectIOClientWriteLock lock(mutex_socket_manipolation);
     ZMQDIOLDBG_ << "Write lock acquired";
     switch (current_spread_forwarding_type) {
@@ -194,10 +195,12 @@ uint32_t ZMQDirectIOClient::sendServiceData(DirectIODataPack *data_pack) {
 
 uint32_t ZMQDirectIOClient::writeToSocket(void *socket, DirectIODataPack *data_pack) {
     assert(socket && data_pack);
+	ZMQDIOLDBG_ << "Acquiring lock";
     ZMQDirectIOClientReadLock lock(mutex_socket_manipolation);
+	ZMQDIOLDBG_ << "Lock Acquired";
 	//send header
 	int err = zmq_send(socket, &data_pack->header.dispatcher_raw_data, 4, ZMQ_SNDMORE);
-	if(err) {
+	if(err == -1) {
 		return err;
 	}
 	//send data

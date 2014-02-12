@@ -59,6 +59,7 @@ namespace chaos{
             
 			utility::StartableServiceContainer<chaos::NetworkBroker> *network_broker;
             utility::StartableServiceContainer<DataConsumer> *data_consumer;
+			utility::StartableServiceContainer<DirectIOClient> *client;
         public:
             //! C and C++ attribute parser
             /*!

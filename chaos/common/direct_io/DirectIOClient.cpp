@@ -46,7 +46,6 @@ DirectIOClient::~DirectIOClient() {
 
 // Initialize instance
 void DirectIOClient::init(void *init_data) throw(chaos::CException) {
-	if(!init_data) throw chaos::CException(0, "Invalid parameter", "DirectIOClient::init");
 }
 
 // Start the implementation

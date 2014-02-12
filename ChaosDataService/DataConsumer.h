@@ -37,16 +37,21 @@ namespace chaos{
             friend class ChaosDataService;
             DirectIOServerEndpoint *server_endpoint;
             DirectIOCDataWrapperServerChannel *server_channel;
-            
+			boost::thread_group client_threads_group;
+			
             DataConsumer();
             ~DataConsumer();
             
+			
+			void simulateClient(DirectIOClient *client_instance);
             void consumeCDataWrapper(uint8_t channel_tag, chaos::common::data::CDataWrapper *data_wrapper);
         public:
             void init(void *init_data) throw (chaos::CException);
             void start() throw (chaos::CException);
             void stop() throw (chaos::CException);
             void deinit() throw (chaos::CException);
+			
+			void addClient(DirectIOClient *client);
         };
     }
 }

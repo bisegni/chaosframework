@@ -18,8 +18,9 @@
  *    	limitations under the License.
  */
 
-#include <exception>
 #include "ChaosDataService.h"
+
+#include <exception>
 
 using namespace chaos::data_service;
 

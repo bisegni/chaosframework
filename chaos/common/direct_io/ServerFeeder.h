@@ -34,11 +34,11 @@ namespace chaos {
             class ServerFeeder {
                 
                 //! point to the current enable hash index
-                uint32_t current_online_index;
+                int32_t current_online_index;
                 
                 
                 //! point to the current disable hash index
-                uint32_t current_offline_index;
+                int32_t current_offline_index;
                 
                 boost::shared_mutex mutex_server_manipolation;
                 
@@ -64,11 +64,11 @@ namespace chaos {
                 void putOfflineServer(uint32_t server_hash);
                 void putOnlineServer(uint32_t server_hash);
                 void clear();
-                void getNextOnline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
-                void getCurrentOnline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
-                void getNextOffline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
-                void getCurrentOffline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
-                void getAllOnlineServer(std::vector< std::vector<std::string> >& server_list);
+                bool getNextOnline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
+                bool getCurrentOnline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
+                bool getNextOffline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
+                bool getCurrentOffline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
+                bool getAllOnlineServer(std::vector< std::vector<std::string> >& server_list);
                 
             };
             
