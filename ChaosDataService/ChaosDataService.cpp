@@ -92,6 +92,9 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
         data_consumer->init(NULL, __PRETTY_FUNCTION__);
 		
 		client = new utility::StartableServiceContainer<chaos::common::direct_io::DirectIOClient>(network_broker->getPointer()->getDirectIOClientInstance(), true);
+        client->getPointer()->addServer("127.0.0.1:1672:30175");
+        client->getPointer()->addServer("127.0.0.2:1672:30175");
+        client->getPointer()->setConnectionMode(DirectIOConnectionSpreadType::DirectIORoundRobin);
 		client->init(NULL, __PRETTY_FUNCTION__);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)

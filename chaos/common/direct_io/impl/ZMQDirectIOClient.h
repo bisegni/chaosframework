@@ -57,9 +57,9 @@ namespace chaos {
                     inline uint32_t writeToSocket(void *socket, DirectIODataPack *data_pack);
                     
                     //set the spread functionality on zmq socket
-                    void switchMode(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType direct_io_spread_mode);
+                    void switchModeTo(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType connection_mode);
                     
-					shared_ptr<boost::thread> monitor_thread;
+                    boost::shared_ptr<boost::thread> monitor_thread;
 					
 					//! check the connection with the endpoint for the two socket
 					void *monitorWorker();

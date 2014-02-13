@@ -36,7 +36,7 @@ namespace b_algo = boost::algorithm;
 #define DIOLDBG_ LDBG_ << DIO_LOG_HEAD
 #define DIOLERR_ LERR_ << DIO_LOG_HEAD
 
-DirectIOClient::DirectIOClient(string alias):NamedService(alias), direct_io_connection_mode(DirectIOConnectionSpreadType::DirectIONoSetting) {
+DirectIOClient::DirectIOClient(string alias):NamedService(alias), connection_mode(DirectIOConnectionSpreadType::DirectIONoSetting) {
 	
 }
 
@@ -86,6 +86,7 @@ void DirectIOClient::deregisterChannelInstance(channel::DirectIOVirtualClientCha
 }
 
 //! Initialize instance
+/*
 void DirectIOClient::updateConfiguration(void *init_data) throw(chaos::CException) {
     chaos_data::CDataWrapper *init_cdw =static_cast<chaos_data::CDataWrapper*>(init_data);
     if(init_cdw) return;
@@ -109,6 +110,8 @@ void DirectIOClient::updateConfiguration(void *init_data) throw(chaos::CExceptio
 	if(init_cdw->hasKey(DataProxyConfigurationKey::DATAPROXY_CLIENT_CONNECTION_MODE)) {
 		
 	}
-    switchMode(DirectIOConnectionSpreadType::DirectIOFailOver);
-}
+}*/
 
+void DirectIOClient::setConnectionMode(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType _connection_mode) {
+    connection_mode = _connection_mode;
+}

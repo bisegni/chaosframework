@@ -84,7 +84,7 @@ void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
     std::string priority_identity = UUIDUtil::generateUUIDLite();
     std::string service_identity = UUIDUtil::generateUUIDLite();
 	int err = 0;
-	
+	   
     zmq_context = zmq_ctx_new();
     if(zmq_context == NULL) throw chaos::CException(0, "Error creating zmq context", __FUNCTION__);
     
@@ -97,7 +97,7 @@ void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
     //set socket identity
     err = zmq_setsockopt (socket_priority, ZMQ_IDENTITY, priority_identity.c_str(), priority_identity.size());
 	if(err) throw chaos::CException(err, "Error setting priority socket option", __FUNCTION__);
-	
+    
     ZMQDIOLAPP_ << "Allocating priority socket";
     socket_service = zmq_socket (zmq_context, ZMQ_DEALER);
     if(socket_service == NULL) throw chaos::CException(2, "Error creating service socket", __FUNCTION__);
@@ -115,6 +115,10 @@ void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
 //! Start the implementation
 void ZMQDirectIOClient::start() throw(chaos::CException) {
     DirectIOClient::start();
+    if(connection_mode == DirectIOConnectionSpreadType::DirectIONoSetting)
+        throw CException(-1, "No connection mode setupped", __PRETTY_FUNCTION__);
+
+    switchModeTo(connection_mode);
 }
 
 //! Stop the implementation
@@ -190,7 +194,7 @@ void *ZMQDirectIOClient::monitorWorker() {
     return NULL;
 }
 
-void ZMQDirectIOClient::switchMode(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType direct_io_spread_mode) {
+void ZMQDirectIOClient::switchModeTo(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType connection_mode) {
     int err = 0;
     std::string _priority_end_point;
 	std::string _service_end_point;
@@ -202,7 +206,7 @@ void ZMQDirectIOClient::switchMode(DirectIOConnectionSpreadType::DirectIOConnect
 	ZMQDIOLDBG_ << "Acquiring lock";
     ZMQDirectIOClientWriteLock lock(mutex_socket_manipolation);
     ZMQDIOLDBG_ << "Write lock acquired";
-    switch (direct_io_spread_mode) {
+    switch (connection_mode) {
         case DirectIOConnectionSpreadType::DirectIORoundRobin: {
             ZMQDIOLDBG_ << "Switch mod to DirectIORoundRobin";
             std::vector< std::vector<std::string> > all_online_server;

@@ -89,23 +89,23 @@ void DataConsumer::simulateClient(DirectIOClient *client_instance) {
 	DirectIOCDataWrapperClientChannel *channel = (DirectIOCDataWrapperClientChannel*)chaos::ObjectFactoryRegister<DirectIOVirtualClientChannel>::getInstance()->getNewInstanceByName("DirectIOCDataWrapperClientChannel");
     DSLAPP_ << "registering client";
     client_instance->registerChannelInstance(channel);
-	client_instance->addServer("127.0.0.2:1672:30175");
-	client_instance->switchMode(DirectIOConnectionSpreadType::DirectIOFailOver);
+	//client_instance->switchMode(DirectIOConnectionSpreadType::DirectIOFailOver);
+    uint32_t count = 0;
 	while(work) {
 		chaos::common::data::CDataWrapper data;
-		data.addInt32Value("int_val", 32);
+		data.addInt32Value("int_val", count++);
 		data.addStringValue("string_val", "str data");
 		
 		chaos::common::data::SerializationBuffer *s = data.getBSONData();
 		
-		uint32_t err = channel->pushCDataWrapperSerializationBuffer(0, (uint8_t)1, s);
+		int32_t err = channel->pushCDataWrapperSerializationBuffer(0, (uint8_t)1, s);
 		if(err==-1) {
 			DSLAPP_ << "Error on send data";
 		}else if(err>0) {
 			DSLAPP_ << "Sent " << err << " byte of data";
 		}
 		delete(s);
-		sleep(10);
+		sleep(2);
 	}
     DSLAPP_ << "deregistering client";
 	client_instance->deregisterChannelInstance(channel);

@@ -76,7 +76,7 @@ namespace chaos {
 				
 				std::string current_service_endpoint;
 
-				DirectIOConnectionSpreadType::DirectIOConnectionSpreadType direct_io_connection_mode;
+				DirectIOConnectionSpreadType::DirectIOConnectionSpreadType connection_mode;
 			public:
                 DirectIOClient(string alias);
 				
@@ -95,7 +95,7 @@ namespace chaos {
 				void deinit() throw(chaos::CException);
 				
                 //! Initialize instance
-				void updateConfiguration(void *init_data) throw(chaos::CException);
+				//void updateConfiguration(void *init_data) throw(chaos::CException);
                 
                 //! Add a new channel instantiator
                 channel::DirectIOVirtualClientChannel *registerChannelInstance(channel::DirectIOVirtualClientChannel *channel_instance);
@@ -103,8 +103,12 @@ namespace chaos {
                 //! Dispose the channel
                 void deregisterChannelInstance(channel::DirectIOVirtualClientChannel *channel_instance);
 				
-				
-                virtual void switchMode(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType direct_io_spread_mode) = 0;
+				//! set the connection mode
+                /*!
+                 Set the connection mode of the client, the implementation will perform the switch in realtime or
+                 after the deinit-init procedure
+                 */
+                void setConnectionMode(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType _connection_mode);
 			};
 			
 		}
