@@ -36,7 +36,7 @@ namespace b_algo = boost::algorithm;
 #define DIOLDBG_ LDBG_ << DIO_LOG_HEAD
 #define DIOLERR_ LERR_ << DIO_LOG_HEAD
 
-DirectIOClient::DirectIOClient(string alias):NamedService(alias) {
+DirectIOClient::DirectIOClient(string alias):NamedService(alias), direct_io_connection_mode(DirectIOConnectionSpreadType::DirectIONoSetting) {
 	
 }
 
@@ -91,23 +91,24 @@ void DirectIOClient::updateConfiguration(void *init_data) throw(chaos::CExceptio
     if(init_cdw) return;
     
     DIOLAPP_ << "Receive new update for configuration";
-    if(init_cdw->hasKey(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS)){
+    if(init_cdw->hasKey(DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS)){
         DIOLAPP_ << "New servers configration has been provided";
         ServerFeeder::clear();
         DIOLAPP_ << "Old configuration has been removed";
 
-        auto_ptr<chaos_data::CMultiTypeDataArrayWrapper> data_proxy_server_address(init_cdw->getVectorValue(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS));
+        auto_ptr<chaos_data::CMultiTypeDataArrayWrapper> data_proxy_server_address(init_cdw->getVectorValue(DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS));
         //update the live data address
         DIOLAPP_ << "Scan "<< data_proxy_server_address->size() << " server descriptions";
         for ( int idx = 0; idx < data_proxy_server_address->size(); idx++ ){
-            vector<string> server_tokens;
             string server_desc = data_proxy_server_address->getStringElementAtIndex(idx);
             if(!ServerFeeder::addServer(server_desc)) {
                 DIOLAPP_ << "Wrong Server Description '" << server_desc << "'";
             }
         }
     }
-
+	if(init_cdw->hasKey(DataProxyConfigurationKey::DATAPROXY_CLIENT_CONNECTION_MODE)) {
+		
+	}
     switchMode(DirectIOConnectionSpreadType::DirectIOFailOver);
 }
 

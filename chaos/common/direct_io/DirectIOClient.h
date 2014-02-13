@@ -76,6 +76,7 @@ namespace chaos {
 				
 				std::string current_service_endpoint;
 
+				DirectIOConnectionSpreadType::DirectIOConnectionSpreadType direct_io_connection_mode;
 			public:
                 DirectIOClient(string alias);
 				

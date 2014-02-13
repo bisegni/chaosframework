@@ -87,7 +87,7 @@ ArrayPointer<CDataWrapper>* KeyDataStorage::getHistoricalDataSet(CDataWrapper *s
  */
 CDataWrapper* KeyDataStorage::updateConfiguration(CDataWrapper *newConfiguration) {
         //add in the configuration the key for the device
-    newConfiguration->addStringValue(LiveHistoryMDSConfiguration::CS_DM_LD_DEVICE_ADDRESS_KEY, dataSetKey);
+    newConfiguration->addStringValue(DataProxyConfigurationKey::CS_DM_LD_DEVICE_ADDRESS_KEY, dataSetKey);
     MultiBufferDataStorage::updateConfiguration(newConfiguration);
     return NULL;
 }

@@ -51,6 +51,7 @@ namespace chaos {
             //! Namespace that enclose all type of spreadest of the data forwarding
 			namespace DirectIOConnectionSpreadType {
 				typedef enum DirectIOConnectionSpreadType{
+					DirectIONoSetting,
 					DirectIOFailOver,
 					DirectIORoundRobin
 				} DirectIOConnectionSpreadType;

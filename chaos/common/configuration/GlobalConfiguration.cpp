@@ -176,7 +176,7 @@ void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& o
             configuration.appendStringToArray(liveDataServer[idx]);
         }
     }
-    configuration.finalizeArrayForKey(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS);
+    configuration.finalizeArrayForKey(DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS);
     
     //configure metadataserver
     CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(string, metadataServerAddress, InitOption::OPT_METADATASERVER_ADDRESS, "localhost:5000")

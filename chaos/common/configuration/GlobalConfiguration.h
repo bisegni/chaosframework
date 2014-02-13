@@ -217,7 +217,7 @@ x = hasOption(y);
                 throw CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
             
                 //address can be added
-            configuration.addStringValue(LiveHistoryMDSConfiguration::CS_LIB_METADATASET_ADDRESS, mdsAddress);
+            configuration.addStringValue(DataProxyConfigurationKey::CS_LIB_METADATASET_ADDRESS, mdsAddress);
         }
         
         /**
@@ -241,7 +241,7 @@ x = hasOption(y);
          return the address of metadataserver
          */
         string getMetadataServerAddress() {
-            return configuration.getStringValue(LiveHistoryMDSConfiguration::CS_LIB_METADATASET_ADDRESS);
+            return configuration.getStringValue(DataProxyConfigurationKey::CS_LIB_METADATASET_ADDRESS);
         }
         
         /*
@@ -270,7 +270,7 @@ x = hasOption(y);
          return the address of metadataserver
          */
         bool isMEtadataServerConfigured() {
-            return configuration.hasKey(LiveHistoryMDSConfiguration::CS_LIB_METADATASET_ADDRESS);
+            return configuration.hasKey(DataProxyConfigurationKey::CS_LIB_METADATASET_ADDRESS);
         }
     };  
 }

@@ -1,4 +1,4 @@
-/*
+ /*
  *	DataConsumer.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
@@ -89,7 +89,7 @@ void DataConsumer::simulateClient(DirectIOClient *client_instance) {
 	DirectIOCDataWrapperClientChannel *channel = (DirectIOCDataWrapperClientChannel*)chaos::ObjectFactoryRegister<DirectIOVirtualClientChannel>::getInstance()->getNewInstanceByName("DirectIOCDataWrapperClientChannel");
     DSLAPP_ << "registering client";
     client_instance->registerChannelInstance(channel);
-	client_instance->addServer("127.0.0.1:1672:30175");
+	client_instance->addServer("127.0.0.2:1672:30175");
 	client_instance->switchMode(DirectIOConnectionSpreadType::DirectIOFailOver);
 	while(work) {
 		chaos::common::data::CDataWrapper data;

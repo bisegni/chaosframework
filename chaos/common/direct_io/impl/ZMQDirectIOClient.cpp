@@ -23,7 +23,7 @@
 #include <boost/format.hpp>
 
 #include <zmq.h>
-
+#include <string.h>
 #include <assert.h>     /* assert */
 
 #define ZMQDIO_LOG_HEAD "["<<getName()<<"] - "
@@ -39,6 +39,30 @@ typedef boost::shared_lock<boost::shared_mutex> ZMQDirectIOClientReadLock;
 
 void ZMQDirectIOClientFree (void *data, void *hint) {
     free (data);
+}
+
+static int read_msg(void* s, zmq_event_t* event, char* ep)
+{
+    int rc ;
+    zmq_msg_t msg1;  // binary part
+    zmq_msg_init (&msg1);
+    zmq_msg_t msg2;  //  address part
+    zmq_msg_init (&msg2);
+    rc = zmq_msg_recv (&msg1, s, 0);
+    if (rc == -1 && zmq_errno() == ETERM)
+        return 1 ;
+    rc = zmq_msg_recv (&msg2, s, 0);
+    if (rc == -1 && zmq_errno() == ETERM)
+        return 1;
+    // copy binary data to event struct
+    const char* data = (char*)zmq_msg_data(&msg1);
+    memcpy(&(event->event), data, sizeof(event->event));
+    memcpy(&(event->value), data+sizeof(event->event), sizeof(event->value));
+    // copy address part
+    const size_t len = zmq_msg_size(&msg2) ;
+    ep = (char*)std::memcpy(ep, zmq_msg_data(&msg2), len);
+    *(ep + len) = 0 ;
+    return 0 ;
 }
 
 ZMQDirectIOClient::ZMQDirectIOClient(string alias):DirectIOClient(alias){
@@ -80,6 +104,11 @@ void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
     //set socket identity
     err = zmq_setsockopt(socket_service, ZMQ_IDENTITY, service_identity.c_str(), service_identity.size());
 	if(err) throw chaos::CException(err, "Error setting service socket option", __FUNCTION__);
+	
+	
+	err = zmq_socket_monitor(socket_priority, "inproc://monitor.req", ZMQ_EVENT_ALL);
+	monitor_thread.reset(new boost::thread(boost::bind(&ZMQDirectIOClient::monitorWorker, this)));
+	
     ZMQDIOLAPP_ << "Initialized";
 }
 
@@ -100,6 +129,11 @@ void ZMQDirectIOClient::deinit() throw(chaos::CException) {
     ZMQDirectIOClientWriteLock lock(mutex_socket_manipolation);
     ZMQDIOLDBG_ << "Write lock acquired";
 
+	ZMQDIOLAPP_ << "Close monitor socket";
+    ZMQBaseClass::closeSocketNoWhait(socket_monitor);
+    //zmq_close(socket_service);
+    socket_monitor = NULL;
+	
     ZMQDIOLAPP_ << "Close priority socket";
     ZMQBaseClass::closeSocketNoWhait(socket_priority);
     //zmq_close(socket_priority);
@@ -119,6 +153,42 @@ void ZMQDirectIOClient::deinit() throw(chaos::CException) {
     ZMQDIOLAPP_ << "Deinitialized";
 }
 
+//! check the connection with the endpoint for the two socket
+void *ZMQDirectIOClient::monitorWorker() {
+	zmq_event_t event;
+    int err = 0;
+	char addr[1025];
+    void *s = zmq_socket (zmq_context, ZMQ_PAIR);
+    assert (s);
+    err = zmq_connect(s, "inproc://monitor.req");
+    assert (err == 0);
+    while (!read_msg(s, &event, addr)) {
+        switch (event.event) {
+			case ZMQ_EVENT_CONNECTED:
+				ZMQDIOLDBG_ << "ZMQ_EVENT_CONNECTED:"<<addr;
+				break;
+			case ZMQ_EVENT_CONNECT_DELAYED:
+				ZMQDIOLDBG_ << "ZMQ_EVENT_CONNECT_DELAYED:"<<addr;
+				break;
+			case ZMQ_EVENT_CONNECT_RETRIED:
+				ZMQDIOLDBG_ << "ZMQ_EVENT_CONNECT_RETRIED:"<<addr;
+				break;
+			case ZMQ_EVENT_CLOSED:
+				ZMQDIOLDBG_ << "ZMQ_EVENT_CLOSED:"<<addr;
+				break;
+			case ZMQ_EVENT_CLOSE_FAILED:
+				ZMQDIOLDBG_ << "ZMQ_EVENT_CLOSE_FAILED:"<<addr;
+				break;
+			case ZMQ_EVENT_DISCONNECTED:
+				ZMQDIOLDBG_ << "ZMQ_EVENT_DISCONNECTED:"<<addr;
+				break;
+			default:
+				break;
+        }
+    }
+    zmq_close (s);
+    return NULL;
+}
 
 void ZMQDirectIOClient::switchMode(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType direct_io_spread_mode) {
     int err = 0;
@@ -171,7 +241,7 @@ void ZMQDirectIOClient::switchMode(DirectIOConnectionSpreadType::DirectIOConnect
             if(err) {
                 ZMQDIOLERR_ << "Error connecting priority socket to " << current_priority_endpoint;
             }
-            
+			//add monitor on priority socket
             ZMQDIOLDBG_ << "connect to service endpoint " << current_service_endpoint;
             err = zmq_connect(socket_service, current_service_endpoint.c_str());
             if(err) {

@@ -83,7 +83,7 @@ void CUSchemaDB::initDB(const char *name, bool onMemory) {
     MAKE_KEY(DatasetDefinitionkey::MIN_RANGE, keyTmp);
     MAKE_KEY(DatasetDefinitionkey::DEFAULT_VALUE, keyTmp);
     MAKE_KEY(DatasetDefinitionkey::VALUE_MAX_SIZE, keyTmp);
-    MAKE_KEY(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS, keyTmp);
+    MAKE_KEY(DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS, keyTmp);
 }
 
 CUSchemaDB::~CUSchemaDB() {
@@ -418,11 +418,11 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
      }
     
     //add now the server address for this device if sent
-    if(attributeDataWrapper.hasKey(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS)) {
+    if(attributeDataWrapper.hasKey(DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS)) {
         //in the package has been sent the address where fir the data for this device
-        auto_ptr<CMultiTypeDataArrayWrapper> serverVec(attributeDataWrapper.getVectorValue(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS));
+        auto_ptr<CMultiTypeDataArrayWrapper> serverVec(attributeDataWrapper.getVectorValue(DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS));
         for (int idx = 0; idx < serverVec->size(); idx++) {
-            addUniqueAttributeProperty(deviceEntity, mapDatasetKeyForID[LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS], serverVec->getStringElementAtIndex(idx).c_str());
+            addUniqueAttributeProperty(deviceEntity, mapDatasetKeyForID[DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS], serverVec->getStringElementAtIndex(idx).c_str());
         }
     }
 }
@@ -521,14 +521,14 @@ void CUSchemaDB::fillDataWrapperWithDataSetDescription(entity::Entity *deviceEnt
     
     //add now the server address for this device if sent
     attrProperty.clear();
-    deviceEntity->getPropertyByKeyID(mapDatasetKeyForID[LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS], attrProperty);
+    deviceEntity->getPropertyByKeyID(mapDatasetKeyForID[DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS], attrProperty);
     for (ptr_vector<edb::KeyIdAndValue>::iterator iter = attrProperty.begin();
          iter != attrProperty.end();
          iter++) {
         edb::KeyIdAndValue *kivPtr = &(*iter);
         deviceDatasetDescription.appendStringToArray(kivPtr->value.strValue);
     }
-    deviceDatasetDescription.finalizeArrayForKey(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS);
+    deviceDatasetDescription.finalizeArrayForKey(DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS);
 }
 
 /*

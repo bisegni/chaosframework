@@ -126,9 +126,9 @@ namespace chaos{
             LMEMDRIVER_ << "The key for memory cache is: " << dataKey;
         }
         
-        if(newConfigration->hasKey(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS) && memClient){
+        if(newConfigration->hasKey(DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS) && memClient){
             LMEMDRIVER_ << "Get the DataManager LiveData address value";
-            auto_ptr<chaos_data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(LiveHistoryMDSConfiguration::CS_DM_LD_SERVER_ADDRESS));
+            auto_ptr<chaos_data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS));
             //update the live data address
             
             //we need forst to reset all the server list 

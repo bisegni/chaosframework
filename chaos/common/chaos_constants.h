@@ -384,33 +384,32 @@ namespace chaos {
     }
     /** @} */ // end of ChaosSystemDomainAndActionLabel
     
-    /** @defgroup LiveHistoryMDSConfiguration Chaos Live and History configuration
-     *  This is the collection of the key to configura history and live channel
+    /** @defgroup DataProxyConfigurationKey Chaos data proxy configuration
+     *  This is the collection of the key used to configure the DataProxy server
+	 *  address and port and how the client's(cu and ui) need to access to it (round robin or fail over)
      *  @{
      */
     //! This is the collection of the key to configura history and live channel
-    namespace LiveHistoryMDSConfiguration {
-        static const char * const CS_LIB_METADATASET_ADDRESS            ="mds_network_addr";
+    namespace DataProxyConfigurationKey {
+        static const char * const CS_LIB_METADATASET_ADDRESS					="mds_network_addr";
         //!root key for DataManager Configuration
-        static const char * const CS_DM_CONFIGURATION                         = "cs|dm|configuration";
+        static const char * const CS_DM_CONFIGURATION							= "cs|dm|configuration";
         //!the numebr of the thread ofr the output buffer
-        static const char * const CS_DM_OUTPUT_BUFFER_THREAD_NUM              = "cs|dm|out_buf_thread_num";
+        static const char * const CS_DM_OUTPUT_BUFFER_THREAD_NUM				= "cs|dm|out_buf_thread_num";
         //!the numebr of the millisecond to wait untile the next
         //!data will be send to the live buffer
-        static const char * const CS_DM_OUTPUT_BUFFER_LIVE_TIME              = "cs|dm|out_buf_live_time";
+        static const char * const CS_DM_OUTPUT_BUFFER_LIVE_TIME					= "cs|dm|out_buf_live_time";
         //!the numebr of the microsecond to wait untile the next
         //!data will be send to the hst buffer
-        static const char * const CS_DM_OUTPUT_BUFFER_HST_TIME               = "cs|dm|out_buf_hst_time";
+        static const char * const CS_DM_OUTPUT_BUFFER_HST_TIME					= "cs|dm|out_buf_hst_time";
         //!live data address
-        static const char * const CS_DM_LD_SERVER_ADDRESS                 = "cs|dm|ld|server_address";
+        static const char * const CS_DM_LD_SERVER_ADDRESS						= "cs|dm|ld|server_address";
         //!key associated with the device identification in a k/v storage ien
-        static const char * const CS_DM_LD_DEVICE_ADDRESS_KEY                     = "ld.device_addr_key";
-        
-        //!history data address
-        static const char * const CS_DM_HD_SERVER_ADDRESS                 = "cs|dm|hd|server_address";
-        
+        static const char * const CS_DM_LD_DEVICE_ADDRESS_KEY                   = "ld.device_addr_key";
+		//!key associated with the device identification in a k/v storage ien
+        static const char * const DATAPROXY_CLIENT_CONNECTION_MODE				= "chaos:dp:conn_mode";
     }
-    /** @} */ // end of LiveHistoryMDSConfiguration
+    /** @} */ // end of DataProxyConfigurationKey
     
     
     /** @defgroup ChaosDataPackKey Chaos Data Pack standard for hardware instrument

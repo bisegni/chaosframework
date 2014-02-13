@@ -26,14 +26,20 @@
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
 #include <boost/thread.hpp>
+#include <boost/shared_ptr.hpp>
 
 namespace chaos {
 	namespace common {
 		namespace direct_io {
+			namespace channel {
+				class DirectIOVirtualClientChannel;
+			}
             namespace impl {
                 REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(ZMQDirectIOClient, DirectIOClient), private ZMQBaseClass {
                     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ZMQDirectIOClient)
 
+					friend class DirectIOVirtualClientChannel;
+					
                     int32_t priority_port;
 					
 					int32_t service_port;
@@ -46,18 +52,28 @@ namespace chaos {
                     
                     void *socket_service;
 					
+					void *socket_monitor;
+					
                     inline uint32_t writeToSocket(void *socket, DirectIODataPack *data_pack);
                     
                     //set the spread functionality on zmq socket
                     void switchMode(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType direct_io_spread_mode);
                     
+					shared_ptr<boost::thread> monitor_thread;
+					
 					//! check the connection with the endpoint for the two socket
-					void monitorWorker();
+					void *monitorWorker();
                     
                     ZMQDirectIOClient(string alias);
                     
                     ~ZMQDirectIOClient();
+				protected:
+					
+                    // send the data to the server layer on priority channel
+                    uint32_t sendPriorityData(DirectIODataPack *data_pack);
                     
+                    // send the data to the server layer on the service channel
+                    uint32_t sendServiceData(DirectIODataPack *data_pack);
                 public:
                     
                     //! Initialize instance
@@ -71,12 +87,6 @@ namespace chaos {
                     
                     //! Deinit the implementation
                     void deinit() throw(chaos::CException);
-                    
-                    // send the data to the server layer on priority channel
-                    uint32_t sendPriorityData(DirectIODataPack *data_pack);
-                    
-                    // send the data to the server layer on the service channel
-                    uint32_t sendServiceData(DirectIODataPack *data_pack);
 
                 };
             }
