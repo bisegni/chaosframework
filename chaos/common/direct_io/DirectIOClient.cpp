@@ -17,10 +17,10 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-
-#include <chaos/common/utility/InetUtility.h>
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/utility/InetUtility.h>
 #include <chaos/common/direct_io/DirectIOClient.h>
+#include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/direct_io/channel/DirectIOVirtualClientChannel.h>
 
 #include <boost/lexical_cast.hpp>
@@ -95,4 +95,18 @@ void DirectIOClient::updateConfiguration(void *init_data) throw(chaos::CExceptio
 
 void DirectIOClient::setConnectionMode(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType _connection_mode) {
     connection_mode = _connection_mode;
+}
+
+// New channel allocation by name
+channel::DirectIOVirtualClientChannel *DirectIOClient::getNewChannelInstance(std::string channel_name) throw (CException) {
+	channel::DirectIOVirtualClientChannel *channel = chaos::ObjectFactoryRegister<channel::DirectIOVirtualClientChannel>::getInstance()->getNewInstanceByName(channel_name.c_str());
+	registerChannelInstance(channel);
+	return channel;
+}
+
+// New channel allocation by name
+void DirectIOClient::releaseChannelInstance(channel::DirectIOVirtualClientChannel *channel_instance) throw (CException) {
+	if(!channel_instance) return;
+	releaseChannelInstance(channel_instance);
+	delete(channel_instance);
 }

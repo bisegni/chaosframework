@@ -25,6 +25,10 @@ namespace chaos {
 				public:
 					typedef class DirectIOCDataWrapperServerChannelHandler {
                     public:
+						//! Receive the CDataWrapper forwarded by the channel
+						/*!
+						 Receive the CdataWrapper forwarded by the channel, the deallocation is demanded to the handler
+						 */
 						virtual void consumeCDataWrapper(uint8_t channel_tag, chaos::common::data::CDataWrapper *data_wrapper) = 0;
 					} DirectIOCDataWrapperServerChannelHandler;
 					

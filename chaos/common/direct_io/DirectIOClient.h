@@ -66,11 +66,10 @@ namespace chaos {
                 
                 //! release all channel and instancer
                 void clearChannelInstancerAndInstance();
-                
-
+				
             protected:
-
 				DirectIOConnectionSpreadType::DirectIOConnectionSpreadType connection_mode;
+				
 			public:
                 DirectIOClient(string alias);
 				
@@ -91,6 +90,18 @@ namespace chaos {
                  after the deinit-init procedure
                  */
                 void setConnectionMode(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType _connection_mode);
+				
+				//! New channel allocation by name
+				/*!
+				 Allocate a new channel and initialize it
+				 */
+				channel::DirectIOVirtualClientChannel *getNewChannelInstance(std::string channel_name) throw (CException);
+				
+				//! New channel allocation by name
+				/*!
+				 Allocate a new channel and initialize it
+				 */
+				void releaseChannelInstance(channel::DirectIOVirtualClientChannel *channel_instance) throw (CException);
 			};
 			
 		}

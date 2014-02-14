@@ -83,38 +83,42 @@ void DataConsumer::deinit() throw (chaos::CException) {
 
 void DataConsumer::consumeCDataWrapper(uint8_t channel_tag, chaos::common::data::CDataWrapper *data_wrapper) {
 	received++;
-	if((received % 2000) == 0) {
+	if((received % 4000) == 0) {
 		uint64_t time_spent = timing_util.getTimeStamp()-last_received_ts;
 		DSLAPP_ << "received "<< (received - last_received) << " in " << time_spent << " msec";
 		last_received = received;
 		last_received_ts = timing_util.getTimeStamp();
 	}
+	
+	if(data_wrapper) delete(data_wrapper);
 }
 
 void DataConsumer::simulateClient(DirectIOClient *client_instance) {
     DSLAPP_ << "Entering client thread";
-	DirectIOCDataWrapperClientChannel *channel = (DirectIOCDataWrapperClientChannel*)chaos::ObjectFactoryRegister<DirectIOVirtualClientChannel>::getInstance()->getNewInstanceByName("DirectIOCDataWrapperClientChannel");
-    DSLAPP_ << "registering client";
-    client_instance->registerChannelInstance(channel);
+	
+	DSLAPP_ << "get DirectIOCDataWrapperClientChannel channel";
+	DirectIOCDataWrapperClientChannel *channel = (DirectIOCDataWrapperClientChannel*)client_instance->getNewChannelInstance("DirectIOCDataWrapperClientChannel");
+
 	while(work) {
 		chaos::common::data::CDataWrapper data;
 		data.addInt32Value("int_val", sent++);
 		data.addStringValue("string_val", "str data");
 		
 		chaos::common::data::SerializationBuffer *s = data.getBSONData();
-		
 		channel->pushCDataWrapperSerializationBuffer(0, (uint8_t)1, s);
 		delete(s);
 		
-		if((sent % 2000) == 0) {
+		if((sent % 4000) == 0) {
 			uint64_t time_spent = timing_util.getTimeStamp()-last_sent_ts;
 			DSLAPP_ << "sent "<< (sent - last_sent) << " in " << time_spent << " msec";
 			last_sent = sent;
 			last_sent_ts = timing_util.getTimeStamp();
 		}
 	}
-    DSLAPP_ << "deregistering client";
-	client_instance->deregisterChannelInstance(channel);
+	
+    DSLAPP_ << "deregistering channel";
+	client_instance->releaseChannelInstance(channel);
+	DSLAPP_ << "client channel deregistered";
 }
 
 void DataConsumer::addClient(DirectIOClient *client) {

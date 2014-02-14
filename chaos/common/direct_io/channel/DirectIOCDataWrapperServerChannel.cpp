@@ -22,9 +22,15 @@ DirectIOCDataWrapperServerChannel::DirectIOCDataWrapperServerChannel(std::string
 
 void DirectIOCDataWrapperServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
 	CHAOS_ASSERT(cdatawrapper_handler)
-	cdatawrapper_handler->consumeCDataWrapper(dataPack->header.fields.channel_tag, new chaos_data::CDataWrapper(static_cast<const char *>(dataPack->data)));
+	//get CData Wrapper
+	chaos_data::CDataWrapper *cdata = new chaos_data::CDataWrapper(static_cast<const char *>(dataPack->data));
+	
+	//forward to hanlde
+	cdatawrapper_handler->consumeCDataWrapper(dataPack->header.fields.channel_tag, cdata);
+																   
+	//delete pack
+	delete dataPack;
 }
-
 
 void DirectIOCDataWrapperServerChannel::setHandler(DirectIOCDataWrapperServerChannelHandler *handler) {
 	//associate the exepternal delegate
