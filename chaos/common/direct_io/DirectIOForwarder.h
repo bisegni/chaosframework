@@ -49,6 +49,9 @@ namespace chaos {
 				virtual uint32_t sendServiceData(DirectIODataPack *data_pack) = 0;
 			};
 			
+			typedef uint32_t (chaos::common::direct_io::DirectIOForwarder::*DirectIOForwarderHandler)(chaos::common::direct_io::DirectIODataPack *data_pack);
+			
+			#define DirectIOForwarderHandlerCaller(instance,variable) ((*instance).*variable)
 		}
 	}
 }

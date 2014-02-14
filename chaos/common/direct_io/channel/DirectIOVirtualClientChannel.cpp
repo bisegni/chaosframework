@@ -23,7 +23,6 @@
 
 using namespace chaos::common::direct_io::channel;
 
-#define CALL_MEMBER_FN  ((*client_instance).*forward_handler)
 
 DirectIOVirtualClientChannel::DirectIOVirtualClientChannel(string channel_name, uint8_t channel_route_index, bool priority):DirectIOVirtualChannel(channel_name, channel_route_index) {
     if(priority) {
@@ -38,5 +37,5 @@ DirectIOVirtualClientChannel::~DirectIOVirtualClientChannel() {
 }
 
 uint32_t DirectIOVirtualClientChannel::sendData(chaos::common::direct_io::DirectIODataPack *data_pack) {
-	return CALL_MEMBER_FN(data_pack);
+	return DirectIOForwarderHandlerCaller(client_instance,forward_handler)(data_pack);
 }

@@ -91,11 +91,9 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		
         data_consumer->init(NULL, __PRETTY_FUNCTION__);
 		
-		client = new utility::StartableServiceContainer<chaos::common::direct_io::DirectIOClient>(network_broker->getPointer()->getDirectIOClientInstance(), true);
-        client->getPointer()->addServer("127.0.0.1:1672:30175");
-        client->getPointer()->addServer("127.0.0.2:1672:30175");
-        client->getPointer()->setConnectionMode(DirectIOConnectionSpreadType::DirectIORoundRobin);
+		client = new utility::InizializableServiceContainer<chaos::common::direct_io::DirectIOClient>(network_broker->getPointer()->getDirectIOClientInstance(), true);
 		client->init(NULL, __PRETTY_FUNCTION__);
+        client->getPointer()->setConnectionMode(DirectIOConnectionSpreadType::DirectIORoundRobin);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         exit(1);
@@ -114,11 +112,15 @@ void ChaosDataService::start() throw(CException) {
         CDSLAPP_ << "Start the Data Consumer";
         data_consumer->start(__PRETTY_FUNCTION__);
         CDSLAPP_ << "Starting Client";
-        client->start(__PRETTY_FUNCTION__);
 		//add simulation client
         CDSLAPP_ << "Assocaite client";
+		client->getPointer()->addServer("127.0.0.1:1672:30175");
+        client->getPointer()->addServer("127.0.0.2:1672:30175");
 		data_consumer->getPointer()->addClient(client->getPointer());
 		
+		sleep(10);
+		client->getPointer()->removeServer("127.0.0.2:1672:30175");
+		sleep(10);
         waitCloseSemaphore.wait();
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
@@ -141,8 +143,6 @@ void ChaosDataService::start() throw(CException) {
 void ChaosDataService::stop() throw(CException) {
     CDSLAPP_ << "Stop the Data Consumer";
     data_consumer->stop(__PRETTY_FUNCTION__);
-
-	client->stop(__PRETTY_FUNCTION__);
 	
 	CDSLAPP_ << "Stopping CHAOS Data Service";
     network_broker->stop(__PRETTY_FUNCTION__);

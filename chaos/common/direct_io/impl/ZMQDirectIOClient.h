@@ -28,6 +28,8 @@
 #include <boost/thread.hpp>
 #include <boost/shared_ptr.hpp>
 
+
+
 namespace chaos {
 	namespace common {
 		namespace direct_io {
@@ -57,7 +59,7 @@ namespace chaos {
                     inline uint32_t writeToSocket(void *socket, DirectIODataPack *data_pack);
                     
                     //set the spread functionality on zmq socket
-                    void switchModeTo(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType connection_mode);
+                    //void switchModeTo(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType connection_mode);
                     
                     boost::shared_ptr<boost::thread> monitor_thread;
 					
@@ -78,15 +80,14 @@ namespace chaos {
                     
                     //! Initialize instance
                     void init(void *init_data) throw(chaos::CException);
-                    
-                    //! Start the implementation
-                    void start() throw(chaos::CException);
-                    
-                    //! Stop the implementation
-                    void stop() throw(chaos::CException);
+
                     
                     //! Deinit the implementation
                     void deinit() throw(chaos::CException);
+					
+					int addServer(std::string server_desc);
+					
+					int removeServer(std::string server_desc);
 
                 };
             }

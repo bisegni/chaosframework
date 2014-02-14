@@ -44,25 +44,6 @@ DirectIOClient::~DirectIOClient() {
     clearChannelInstancerAndInstance();
 }
 
-// Initialize instance
-void DirectIOClient::init(void *init_data) throw(chaos::CException) {
-}
-
-// Start the implementation
-void DirectIOClient::start() throw(chaos::CException) {
-	
-}
-
-// Stop the implementation
-void DirectIOClient::stop() throw(chaos::CException) {
-	
-}
-
-// Deinit the implementation
-void DirectIOClient::deinit() throw(chaos::CException) {
-	clearChannelInstancerAndInstance();
-}
-
 void DirectIOClient::clearChannelInstancerAndInstance() {
 }
 

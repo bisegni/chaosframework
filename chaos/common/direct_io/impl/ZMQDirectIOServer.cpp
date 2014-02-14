@@ -124,9 +124,7 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 	ZMQDIO_SRV_LAPP_ << "Startup thread for " << PS_STR(priority_service);
 	
     //allcoate the delegate for this thread
-    boost::function<void (DirectIODataPack*)> delegate = priority_service?
-            boost::bind(&DirectIOHandler::serviceDataReceived, handler_impl, _1):
-            boost::bind(&DirectIOHandler::priorityDataReceived, handler_impl, _1);
+    DirectIOHandlerPtr delegate = priority_service?&DirectIOHandler::serviceDataReceived:&DirectIOHandler::priorityDataReceived;
 	
 	if(priority_service) {
 		ZMQDIO_SRV_LAPP_ << "Allocating and binding service socket to " << service_socket_bind_str;
@@ -196,7 +194,7 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 			//send data to first stage delegate
 			data_pack->data = zmq_msg_data(&request);
 			data_pack->data_size = (uint32_t)zmq_msg_size(&request);
-            delegate(data_pack);
+			DirectIOHandlerPtrCaller(handler_impl, delegate)(data_pack);
             //close the request
             zmq_msg_close(&request);
 

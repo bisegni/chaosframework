@@ -21,7 +21,7 @@
 #define __CHAOSFramework__DirectIOVirtualClientChannel__
 
 #include <stdint.h>
-//#include <chaos/common/utility/FastDelegate.h>
+#include <chaos/common/direct_io/DirectIOForwarder.h>
 #include <chaos/common/direct_io/channel/DirectIOVirtualChannel.h>
 
 namespace chaos {
@@ -36,8 +36,7 @@ namespace chaos {
                 class DirectIOVirtualClientChannel : public DirectIOVirtualChannel {
                     friend class chaos::common::direct_io::DirectIOClient;
 					
-					typedef uint32_t (chaos::common::direct_io::DirectIOForwarder::*ForwardDelegate)(chaos::common::direct_io::DirectIODataPack *data_pack);
-					ForwardDelegate  forward_handler;
+					DirectIOForwarderHandler  forward_handler;
 					DirectIOForwarder *client_instance;
 				protected:
 					uint32_t sendData(chaos::common::direct_io::DirectIODataPack *data_pack);

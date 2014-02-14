@@ -104,6 +104,31 @@ namespace chaos {
             static bool deinitImplementation(InizializableService *impl, const char * const implName,  const char * const domainString);
         };
         
+#define IMPL_NAME(n) #n
+		
+		template<typename T>
+		class InizializableServiceContainer {
+			bool delete_on_dispose;
+			T *startable_service_instance;
+		public:
+			InizializableServiceContainer(bool _delete_on_dispose):startable_service_instance(new T()), delete_on_dispose(_delete_on_dispose) {}
+			InizializableServiceContainer(T *instance, bool _delete_on_dispose):startable_service_instance(instance), delete_on_dispose(_delete_on_dispose) {}
+			~InizializableServiceContainer() {
+				if(delete_on_dispose) delete(startable_service_instance);
+			}
+			
+			bool init(void *init_data, const char * const domainString) {
+				return InizializableService::initImplementation(startable_service_instance, init_data, IMPL_NAME(T), domainString);
+			}
+			
+			bool deinit(const char * const domainString) {
+				return InizializableService::deinitImplementation(startable_service_instance, IMPL_NAME(T), domainString);
+			}
+			
+			inline T* getPointer() {
+				return startable_service_instance;
+			}
+		};
     }
 }
 

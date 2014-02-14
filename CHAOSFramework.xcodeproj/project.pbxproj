@@ -266,6 +266,8 @@
 		32B1378B189BEC3300B17CA4 /* ZMQDirectIOClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B13789189BEC3300B17CA4 /* ZMQDirectIOClient.h */; };
 		32B1378E189BEC4100B17CA4 /* ZMQDirectIOServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1378C189BEC4100B17CA4 /* ZMQDirectIOServer.cpp */; };
 		32B1378F189BEC4100B17CA4 /* ZMQDirectIOServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B1378D189BEC4100B17CA4 /* ZMQDirectIOServer.h */; };
+		32B159CD18AE08720096B58B /* ZMQSocketFeeder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B159CB18AE08720096B58B /* ZMQSocketFeeder.cpp */; };
+		32B159CE18AE08720096B58B /* ZMQSocketFeeder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B159CC18AE08720096B58B /* ZMQSocketFeeder.h */; };
 		32B57172168DF4750002A198 /* atomic_int.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B5714B168DF4750002A198 /* atomic_int.h */; };
 		32B57173168DF4750002A198 /* bson_extract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B5714C168DF4750002A198 /* bson_extract.cpp */; };
 		32B57174168DF4750002A198 /* bson_extract.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B5714D168DF4750002A198 /* bson_extract.h */; };
@@ -708,6 +710,8 @@
 		32B13789189BEC3300B17CA4 /* ZMQDirectIOClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQDirectIOClient.h; sourceTree = "<group>"; };
 		32B1378C189BEC4100B17CA4 /* ZMQDirectIOServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQDirectIOServer.cpp; sourceTree = "<group>"; };
 		32B1378D189BEC4100B17CA4 /* ZMQDirectIOServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQDirectIOServer.h; sourceTree = "<group>"; };
+		32B159CB18AE08720096B58B /* ZMQSocketFeeder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQSocketFeeder.cpp; sourceTree = "<group>"; };
+		32B159CC18AE08720096B58B /* ZMQSocketFeeder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQSocketFeeder.h; sourceTree = "<group>"; };
 		32B5714B168DF4750002A198 /* atomic_int.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atomic_int.h; sourceTree = "<group>"; };
 		32B5714C168DF4750002A198 /* bson_extract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bson_extract.cpp; sourceTree = "<group>"; };
 		32B5714D168DF4750002A198 /* bson_extract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bson_extract.h; sourceTree = "<group>"; };
@@ -1721,6 +1725,8 @@
 				32B1378D189BEC4100B17CA4 /* ZMQDirectIOServer.h */,
 				3266A5DE18A631A800637592 /* ZMQBaseClass.cpp */,
 				3266A5DD18A6315600637592 /* ZMQBaseClass.h */,
+				32B159CB18AE08720096B58B /* ZMQSocketFeeder.cpp */,
+				32B159CC18AE08720096B58B /* ZMQSocketFeeder.h */,
 			);
 			path = impl;
 			sourceTree = "<group>";
@@ -1923,6 +1929,7 @@
 				326DB43614B38BC00018A8D0 /* DomainActions.h in Headers */,
 				32EA501718A15BF000782435 /* DirectIODispatcher.h in Headers */,
 				326DB45714B38BC00018A8D0 /* chaos_constants.h in Headers */,
+				32B159CE18AE08720096B58B /* ZMQSocketFeeder.h in Headers */,
 				326DB45914B38BC00018A8D0 /* ChaosCommon.h in Headers */,
 				326DB45B14B38BC00018A8D0 /* GlobalConfiguration.h in Headers */,
 				326DB45D14B38BC00018A8D0 /* CDataWrapper.h in Headers */,
@@ -2454,6 +2461,7 @@
 				32B57212168E07AB0002A198 /* json.cpp in Sources */,
 				32B57218168E13FC0002A198 /* time_support.cpp in Sources */,
 				329603261876B45000CDCADA /* BatchCommandExecutor.cpp in Sources */,
+				32B159CD18AE08720096B58B /* ZMQSocketFeeder.cpp in Sources */,
 				32B5721E168E14650002A198 /* timer.cpp in Sources */,
 				32B57226168E44060002A198 /* base64.cpp in Sources */,
 				32460520179C55FC00B075DA /* sqlite3.c in Sources */,

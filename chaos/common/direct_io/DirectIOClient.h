@@ -25,8 +25,8 @@
 #include <inttypes.h>
 
 #include <chaos/common/utility/ObjectInstancer.h>
-#include <chaos/common/utility/StartableService.h>
 #include <chaos/common/utility/NamedService.h>
+#include <chaos/common/utility/InizializableService.h>
 
 #include <chaos/common/direct_io/ServerFeeder.h>
 #include <chaos/common/direct_io/DirectIOTypes.h>
@@ -54,7 +54,7 @@ namespace chaos {
 				may server and the same data will be forwarded to all server
 				dio_client---> data message -->dio_server
 			 */
-			class DirectIOClient : public DirectIOForwarder, public chaos::utility::StartableService, public NamedService,  public ServerFeeder {
+			class DirectIOClient : public DirectIOForwarder, public NamedService, public chaos::utility::InizializableService, public ServerFeeder {
                 std::string impl_alias;
                 
                 boost::atomic_uint channel_counter;
@@ -69,30 +69,12 @@ namespace chaos {
                 
 
             protected:
-                
-                uint32_t current_server_hash;
-                
-                std::string current_priority_endpoint;
-				
-				std::string current_service_endpoint;
 
 				DirectIOConnectionSpreadType::DirectIOConnectionSpreadType connection_mode;
 			public:
                 DirectIOClient(string alias);
 				
 				virtual ~DirectIOClient();
-                
-				//! Initialize instance
-				void init(void *init_data) throw(chaos::CException);
-				
-				//! Start the implementation
-				void start() throw(chaos::CException);
-				
-				//! Stop the implementation
-				void stop() throw(chaos::CException);
-				
-				//! Deinit the implementation
-				void deinit() throw(chaos::CException);
 				
                 //! Initialize instance
 				//void updateConfiguration(void *init_data) throw(chaos::CException);

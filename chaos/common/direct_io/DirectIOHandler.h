@@ -51,6 +51,10 @@ namespace chaos {
 				 */
 				virtual void serviceDataReceived(DirectIODataPack *data_pack) = 0;
 			};
+			
+			typedef void (chaos::common::direct_io::DirectIOHandler::*DirectIOHandlerPtr)(chaos::common::direct_io::DirectIODataPack *data_pack);
+			
+			#define DirectIOHandlerPtrCaller(instance,variable) ((*instance).*variable)
 		}
 	}
 }

@@ -23,6 +23,7 @@
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/direct_io/DirectIOServerEndpoint.h>
 #include <chaos/common/direct_io/channel/DirectIOCDataWrapperServerChannel.h>
+#include <chaos/common/utility/TimingUtil.h>
 
 using namespace chaos::utility;
 using namespace chaos::common::direct_io;
@@ -38,7 +39,13 @@ namespace chaos{
             DirectIOServerEndpoint *server_endpoint;
             DirectIOCDataWrapperServerChannel *server_channel;
 			boost::thread_group client_threads_group;
-			
+			uint32_t	received;
+			uint32_t	last_received;
+			uint64_t	last_received_ts;
+			uint32_t	sent;
+			uint32_t	last_sent;
+			uint64_t	last_sent_ts;
+			chaos::TimingUtil timing_util;
             DataConsumer();
             ~DataConsumer();
             

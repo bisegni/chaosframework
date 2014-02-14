@@ -52,23 +52,28 @@ namespace chaos {
                 
                 //! server hashes and address map
                 std::map<uint32_t, std::vector<std::string> >    map_server_address;
-                
+			protected:
                 inline void removeHashFromVector(std::vector<uint32_t>& hash_vec, uint32_t server_hash);
                 inline void addHashToVector(std::vector<uint32_t>& hash_vec, uint32_t server_hash);
+				inline void decoupleServerDescription(std::string server_desc,  std::string& priority_desc, std::string& service_desc);
 				inline void decoupleServerDescription(std::string server_desc,  std::vector<std::string>& servers_desc);
-            public:
-                ServerFeeder();
-                ~ServerFeeder();
-                bool addServer(std::string server_desc);
-                void removeServer(uint32_t server_hash);
-                void putOfflineServer(uint32_t server_hash);
-                void putOnlineServer(uint32_t server_hash);
-                void clear();
-                bool getNextOnline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
+				
+				bool getNextOnline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
                 bool getCurrentOnline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
                 bool getNextOffline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
                 bool getCurrentOffline(uint32_t& server_hash, std::string& priority_server_desc, std::string& service_server_desc);
                 bool getAllOnlineServer(std::vector< std::vector<std::string> >& server_list);
+				
+				void putOfflineServer(uint32_t server_hash);
+                void putOnlineServer(uint32_t server_hash);
+				
+				void clear();
+            public:
+                ServerFeeder();
+                ~ServerFeeder();
+                virtual int addServer(std::string server_desc);
+                virtual int removeServer(std::string server_desc);
+
                 
             };
             

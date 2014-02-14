@@ -57,23 +57,31 @@ void ServerFeeder::addHashToVector(std::vector<uint32_t>& hash_vec, uint32_t ser
     }
 }
 
-void ServerFeeder::decoupleServerDescription(std::string server_desc, std::vector<std::string>& servers_desc) {
+void ServerFeeder::decoupleServerDescription(std::string server_desc,  std::string& priority_desc, std::string& service_desc) {
 	std::vector<std::string> server_desc_tokens;
 	boost::algorithm::split(server_desc_tokens, server_desc, boost::algorithm::is_any_of(":"), boost::algorithm::token_compress_on);
 	
 	//create the two servers description
-	servers_desc.push_back(boost::str( boost::format("%1%:%2%") % server_desc_tokens[0] % server_desc_tokens[1]));
-	servers_desc.push_back(boost::str( boost::format("%1%:%2%") % server_desc_tokens[0] % server_desc_tokens[2]));
+	priority_desc = boost::str( boost::format("%1%:%2%") % server_desc_tokens[0] % server_desc_tokens[1]);
+	service_desc = boost::str( boost::format("%1%:%2%") % server_desc_tokens[0] % server_desc_tokens[2]);
 }
 
-bool ServerFeeder::addServer(std::string server_desc) {
+void ServerFeeder::decoupleServerDescription(std::string server_desc, std::vector<std::string>& servers_desc) {
+	std::string p_desc;
+	std::string s_desc;
+	decoupleServerDescription(server_desc, p_desc, s_desc);
+	servers_desc.push_back(p_desc);
+	servers_desc.push_back(s_desc);
+}
+
+int ServerFeeder::addServer(std::string server_desc) {
     WriteLock	Lock(mutex_server_manipolation);
 	
 	boost::algorithm::trim(server_desc);
 	std::string normalized_server_desc = boost::algorithm::to_lower_copy(server_desc);
 	
 	//check if the description is well formed
-	if(!regex_match(server_desc, DirectIOHostNameRegExp) && !regex_match(server_desc, DirectIOIPAndPortRegExp)) return false;
+	if(!regex_match(server_desc, DirectIOHostNameRegExp) && !regex_match(server_desc, DirectIOIPAndPortRegExp)) return -1;
 	
     //generate server hash
     uint32_t s_hash = data::cache::FastHash::hash(normalized_server_desc.c_str(), normalized_server_desc.size(), 0);
@@ -87,15 +95,19 @@ bool ServerFeeder::addServer(std::string server_desc) {
     map_server_address.insert(make_pair(s_hash, servers_decopled));
 	
 	if(current_online_index==-1) current_online_index = 0;
-	return true;
+	return 0;
 }
 
-void ServerFeeder::removeServer(uint32_t server_hash) {
+int ServerFeeder::removeServer(std::string server_desc) {
     WriteLock	Lock(mutex_server_manipolation);
-    removeHashFromVector(vec_enable_hash_sequence, server_hash);
-    removeHashFromVector(vec_disable_hash_sequence, server_hash);
-    map_server_address.erase(server_hash);
+	boost::algorithm::trim(server_desc);
+	std::string normalized_server_desc = boost::algorithm::to_lower_copy(server_desc);
+	uint32_t s_hash = data::cache::FastHash::hash(normalized_server_desc.c_str(), normalized_server_desc.size(), 0);
+    removeHashFromVector(vec_enable_hash_sequence, s_hash);
+    removeHashFromVector(vec_disable_hash_sequence, s_hash);
+    map_server_address.erase(s_hash);
 	if(map_server_address.size()==0) current_online_index = -1;
+	return 0;
 }
 
 void ServerFeeder::putOfflineServer(uint32_t server_hash) {

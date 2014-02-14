@@ -37,7 +37,7 @@ using namespace chaos::common::direct_io::channel;
 
 bool work = false;
 
-DataConsumer::DataConsumer(){
+DataConsumer::DataConsumer():sent(0), received(0), last_sent(0), last_received(0) {
     
 }
 
@@ -57,6 +57,8 @@ void DataConsumer::init(void *init_data) throw (chaos::CException) {
 	server_endpoint->registerChannelInstance(server_channel);
 	
 	server_channel->setHandler(this);
+	
+	last_received_ts = last_sent_ts = timing_util.getTimeStamp();
 }
 
 void DataConsumer::start() throw (chaos::CException) {
@@ -80,8 +82,13 @@ void DataConsumer::deinit() throw (chaos::CException) {
 
 
 void DataConsumer::consumeCDataWrapper(uint8_t channel_tag, chaos::common::data::CDataWrapper *data_wrapper) {
-    DSLAPP_ << "CDataWrapper received:";
-	if(data_wrapper) DSLAPP_ << data_wrapper->getJSONString();
+	received++;
+	if((received % 2000) == 0) {
+		uint64_t time_spent = timing_util.getTimeStamp()-last_received_ts;
+		DSLAPP_ << "received "<< (received - last_received) << " in " << time_spent << " msec";
+		last_received = received;
+		last_received_ts = timing_util.getTimeStamp();
+	}
 }
 
 void DataConsumer::simulateClient(DirectIOClient *client_instance) {
@@ -89,23 +96,22 @@ void DataConsumer::simulateClient(DirectIOClient *client_instance) {
 	DirectIOCDataWrapperClientChannel *channel = (DirectIOCDataWrapperClientChannel*)chaos::ObjectFactoryRegister<DirectIOVirtualClientChannel>::getInstance()->getNewInstanceByName("DirectIOCDataWrapperClientChannel");
     DSLAPP_ << "registering client";
     client_instance->registerChannelInstance(channel);
-	//client_instance->switchMode(DirectIOConnectionSpreadType::DirectIOFailOver);
-    uint32_t count = 0;
 	while(work) {
 		chaos::common::data::CDataWrapper data;
-		data.addInt32Value("int_val", count++);
+		data.addInt32Value("int_val", sent++);
 		data.addStringValue("string_val", "str data");
 		
 		chaos::common::data::SerializationBuffer *s = data.getBSONData();
 		
-		int32_t err = channel->pushCDataWrapperSerializationBuffer(0, (uint8_t)1, s);
-		if(err==-1) {
-			DSLAPP_ << "Error on send data";
-		}else if(err>0) {
-			DSLAPP_ << "Sent " << err << " byte of data";
-		}
+		channel->pushCDataWrapperSerializationBuffer(0, (uint8_t)1, s);
 		delete(s);
-		sleep(2);
+		
+		if((sent % 2000) == 0) {
+			uint64_t time_spent = timing_util.getTimeStamp()-last_sent_ts;
+			DSLAPP_ << "sent "<< (sent - last_sent) << " in " << time_spent << " msec";
+			last_sent = sent;
+			last_sent_ts = timing_util.getTimeStamp();
+		}
 	}
     DSLAPP_ << "deregistering client";
 	client_instance->deregisterChannelInstance(channel);
