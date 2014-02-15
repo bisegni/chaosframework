@@ -1,5 +1,5 @@
 SET(cnd_src main.cpp)
-SET(cnd_src  ${cnd_src} ChaosDataService.cpp)
+SET(cnd_src  ${cnd_src} ChaosDataService.cpp DataConsumer.cpp)
 
 ADD_EXECUTABLE(ChaosDataService ${cnd_src})
 

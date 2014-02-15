@@ -85,7 +85,7 @@ void DataConsumer::consumeCDataWrapper(uint8_t channel_tag, chaos::common::data:
 	received++;
 	if((received % 4000) == 0) {
 		uint64_t time_spent = timing_util.getTimeStamp()-last_received_ts;
-		DSLAPP_ << "received "<< (received - last_received) << " in " << time_spent << " msec";
+		DSLAPP_ << "total received " << received << " - received "<< (received - last_received) << " in " << time_spent << " msec";
 		last_received = received;
 		last_received_ts = timing_util.getTimeStamp();
 	}
@@ -110,7 +110,7 @@ void DataConsumer::simulateClient(DirectIOClient *client_instance) {
 		
 		if((sent % 4000) == 0) {
 			uint64_t time_spent = timing_util.getTimeStamp()-last_sent_ts;
-			DSLAPP_ << "sent "<< (sent - last_sent) << " in " << time_spent << " msec";
+			DSLAPP_ << "total sent "<< sent << " - sent"<< (sent - last_sent) << " in " << time_spent << " msec";
 			last_sent = sent;
 			last_sent_ts = timing_util.getTimeStamp();
 		}

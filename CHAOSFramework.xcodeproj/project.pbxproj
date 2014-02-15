@@ -190,6 +190,7 @@
 		326DB4F514B3B0070018A8D0 /* LLRpcApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4E314B3B0070018A8D0 /* LLRpcApi.cpp */; };
 		326DB4F614B3B0070018A8D0 /* LLRpcApi.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4E414B3B0070018A8D0 /* LLRpcApi.h */; };
 		326EA57814D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 326EA57714D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h */; };
+		3272152418B006BC005AC8FD /* CacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3272152218B006BC005AC8FD /* CacheDriver.cpp */; };
 		3272FE1715E1053100B096FB /* EventForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3272FE1615E1053100B096FB /* EventForwarder.h */; };
 		327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B415DF99FB0003C6DA /* RpcClient.cpp */; };
 		327967B815DFAAF40003C6DA /* RpcServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B715DFAAF40003C6DA /* RpcServer.cpp */; };
@@ -626,6 +627,8 @@
 		326DB4E314B3B0070018A8D0 /* LLRpcApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = LLRpcApi.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB4E414B3B0070018A8D0 /* LLRpcApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = LLRpcApi.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326EA57714D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiKeyObjectWaitSemaphore.h; sourceTree = "<group>"; };
+		3272152218B006BC005AC8FD /* CacheDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheDriver.cpp; sourceTree = "<group>"; };
+		3272152318B006BC005AC8FD /* CacheDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheDriver.h; sourceTree = "<group>"; };
 		3272FE1615E1053100B096FB /* EventForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventForwarder.h; sourceTree = "<group>"; };
 		327967B415DF99FB0003C6DA /* RpcClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcClient.cpp; sourceTree = "<group>"; };
 		327967B715DFAAF40003C6DA /* RpcServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcServer.cpp; sourceTree = "<group>"; };
@@ -1018,6 +1021,7 @@
 				3299363518A7C4F60093E7F2 /* ChaosDataService.h */,
 				322D98FE18A95F9200C0864C /* DataConsumer.cpp */,
 				322D98FF18A95F9200C0864C /* DataConsumer.h */,
+				3272152118B00650005AC8FD /* cache_system */,
 			);
 			path = ChaosDataService;
 			sourceTree = "<group>";
@@ -1582,6 +1586,15 @@
 				326DB4E414B3B0070018A8D0 /* LLRpcApi.h */,
 			);
 			path = LowLevelApi;
+			sourceTree = "<group>";
+		};
+		3272152118B00650005AC8FD /* cache_system */ = {
+			isa = PBXGroup;
+			children = (
+				3272152218B006BC005AC8FD /* CacheDriver.cpp */,
+				3272152318B006BC005AC8FD /* CacheDriver.h */,
+			);
+			path = cache_system;
 			sourceTree = "<group>";
 		};
 		3285569D17F2E20500A64ED2 /* direct_io */ = {
@@ -2371,6 +2384,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3272152418B006BC005AC8FD /* CacheDriver.cpp in Sources */,
 				323236DA164573F50052CE06 /* main.cpp in Sources */,
 				3299363618A7C4F60093E7F2 /* ChaosDataService.cpp in Sources */,
 				322D990118A95F9200C0864C /* DataConsumer.cpp in Sources */,
