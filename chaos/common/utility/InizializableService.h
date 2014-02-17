@@ -103,32 +103,33 @@ namespace chaos {
             static bool initImplementation(InizializableService *impl, void *initData, const char * const implName,  const char * const domainString);
             static bool deinitImplementation(InizializableService *impl, const char * const implName,  const char * const domainString);
         };
-        
-#define IMPL_NAME(n) #n
 		
 		template<typename T>
 		class InizializableServiceContainer {
 			bool delete_on_dispose;
+            const char * service_name;
 			T *startable_service_instance;
 		public:
-			InizializableServiceContainer(bool _delete_on_dispose):startable_service_instance(new T()), delete_on_dispose(_delete_on_dispose) {}
-			InizializableServiceContainer(T *instance, bool _delete_on_dispose):startable_service_instance(instance), delete_on_dispose(_delete_on_dispose) {}
+			InizializableServiceContainer(bool _delete_on_dispose, const char * instance_name):delete_on_dispose(_delete_on_dispose), startable_service_instance(new T()), service_name(instance_name) {}
+			InizializableServiceContainer(T *instance, bool _delete_on_dispose, const char * instance_name):startable_service_instance(instance), delete_on_dispose(_delete_on_dispose), service_name(instance_name) {}
 			~InizializableServiceContainer() {
 				if(delete_on_dispose) delete(startable_service_instance);
 			}
 			
 			bool init(void *init_data, const char * const domainString) {
-				return InizializableService::initImplementation(startable_service_instance, init_data, IMPL_NAME(T), domainString);
+				return InizializableService::initImplementation(startable_service_instance, init_data, service_name, domainString);
 			}
 			
 			bool deinit(const char * const domainString) {
-				return InizializableService::deinitImplementation(startable_service_instance, IMPL_NAME(T), domainString);
+				return InizializableService::deinitImplementation(startable_service_instance, service_name, domainString);
 			}
 			
 			inline T* getPointer() {
 				return startable_service_instance;
 			}
 		};
+#define ALLOCATE_IS_CONTAINER(T, b) new chaos::utility::InizializableServiceContainer<T>(b, #T)
+#define ALLOCATE_IS_CONTAINER_WI(T, i, b) new chaos::utility::InizializableServiceContainer<T>(i, b, #T)
     }
 }
 

@@ -21,10 +21,9 @@
 #define __CHAOSFramework__DirectIOServerEndpoint__
 
 #include <string>
-
+#include <chaos/common/exception/CException.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/direct_io/DirectIOHandler.h>
-#include <chaos/common/utility/FastSlotArray.h>
 #include <chaos/common/direct_io/channel/DirectIOVirtualServerChannel.h>
 
 #include <boost/thread.hpp>
@@ -71,6 +70,18 @@ namespace chaos {
                 void deregisterChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance);
 				
 				uint16_t getRouteIndex();
+				
+				//! New channel allocation by name
+				/*!
+				 Allocate a new channel and initialize it
+				 */
+				channel::DirectIOVirtualServerChannel *getNewChannelInstance(std::string channel_name) throw (CException);
+				
+				//! New channel allocation by name
+				/*!
+				 Allocate a new channel and initialize it
+				 */
+				void releaseChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance) throw (CException);
 			};
 			
 		}

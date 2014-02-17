@@ -9,6 +9,8 @@
 #ifndef __CHAOSFramework__CacheDriver__
 #define __CHAOSFramework__CacheDriver__
 
+#include <string>
+
 namespace chaos {
     namespace data_service {
         namespace cache_system {

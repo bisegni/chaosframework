@@ -24,8 +24,8 @@
 using namespace chaos::utility;
 
 
-#define SS_LAPP LAPP_ << "[StartableService]- "
-#define SS_LDBG LDBG_ << "[StartableService]- "
+#define SS_LAPP LAPP_ << "["<<implName<<"]- "
+#define SS_LDBG LDBG_ << "["<<implName<<"]- "
 
 StartableService::StartableService() {
 }

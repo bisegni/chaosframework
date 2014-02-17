@@ -45,14 +45,14 @@ namespace chaos{
 			uint32_t	sent;
 			uint32_t	last_sent;
 			uint64_t	last_sent_ts;
+            uint32_t    last_seq;
 			chaos::TimingUtil timing_util;
-            DataConsumer();
-            ~DataConsumer();
-            
 			
 			void simulateClient(DirectIOClient *client_instance);
             void consumeCDataWrapper(uint8_t channel_tag, chaos::common::data::CDataWrapper *data_wrapper);
         public:
+			DataConsumer();
+            ~DataConsumer();
             void init(void *init_data) throw (chaos::CException);
             void start() throw (chaos::CException);
             void stop() throw (chaos::CException);

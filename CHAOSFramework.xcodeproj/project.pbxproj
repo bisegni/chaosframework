@@ -15,7 +15,6 @@
 		320FB0EC18A39E650014CDB3 /* DirectIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 320FB0EB18A39E650014CDB3 /* DirectIO.h */; };
 		320FB0EF18A3BF6D0014CDB3 /* DirectIOCDataWrapperServerChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320FB0ED18A3BF6D0014CDB3 /* DirectIOCDataWrapperServerChannel.cpp */; };
 		320FB0F018A3BF6D0014CDB3 /* DirectIOCDataWrapperServerChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 320FB0EE18A3BF6D0014CDB3 /* DirectIOCDataWrapperServerChannel.h */; };
-		320FB0F418A3C1D50014CDB3 /* FastSlotArray.h in Headers */ = {isa = PBXBuildFile; fileRef = 320FB0F218A3C1D50014CDB3 /* FastSlotArray.h */; };
 		3211FD1D1698699D00424A3C /* LiveDataFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3211FD1B1698699D00424A3C /* LiveDataFetcher.cpp */; };
 		3211FD1E1698699D00424A3C /* LiveDataFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 3211FD1C1698699D00424A3C /* LiveDataFetcher.h */; };
 		3215860D178756B40090E7E6 /* AbstractDriverPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3215860C178756B40090E7E6 /* AbstractDriverPlugin.cpp */; };
@@ -438,7 +437,6 @@
 		320FB0EB18A39E650014CDB3 /* DirectIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIO.h; sourceTree = "<group>"; };
 		320FB0ED18A3BF6D0014CDB3 /* DirectIOCDataWrapperServerChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOCDataWrapperServerChannel.cpp; sourceTree = "<group>"; };
 		320FB0EE18A3BF6D0014CDB3 /* DirectIOCDataWrapperServerChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOCDataWrapperServerChannel.h; sourceTree = "<group>"; };
-		320FB0F218A3C1D50014CDB3 /* FastSlotArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastSlotArray.h; sourceTree = "<group>"; };
 		3211FD1B1698699D00424A3C /* LiveDataFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LiveDataFetcher.cpp; sourceTree = "<group>"; };
 		3211FD1C1698699D00424A3C /* LiveDataFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveDataFetcher.h; sourceTree = "<group>"; };
 		3215860C178756B40090E7E6 /* AbstractDriverPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractDriverPlugin.cpp; sourceTree = "<group>"; };
@@ -1474,7 +1472,6 @@
 				32BFF910176C862A00D27A04 /* StartableService.cpp */,
 				32BFF911176C862A00D27A04 /* StartableService.h */,
 				32983F7417896FE1004599A3 /* ObjectInstancer.h */,
-				320FB0F218A3C1D50014CDB3 /* FastSlotArray.h */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -1962,7 +1959,6 @@
 				326DB47314B38BC00018A8D0 /* IODataDriver.h in Headers */,
 				326DB47514B38BC00018A8D0 /* IOMemcachedDriver.h in Headers */,
 				326DB47714B38BC00018A8D0 /* OutputMongoDataDriver.h in Headers */,
-				320FB0F418A3C1D50014CDB3 /* FastSlotArray.h in Headers */,
 				326DB47814B38BC00018A8D0 /* ChaosPool.h in Headers */,
 				326DB47914B38BC00018A8D0 /* CPoolMemory.h in Headers */,
 				326DB47A14B38BC00018A8D0 /* CPoolMemoryObject.h in Headers */,

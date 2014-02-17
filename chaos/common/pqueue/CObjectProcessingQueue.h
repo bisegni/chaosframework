@@ -30,7 +30,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/thread.hpp>
 
-#define LOG_HEAD uid << "[CObjectProcessingQueue] - "
+#define LOG_HEAD "[CObjectProcessingQueue] - "
 #define COPQUEUE_LAPP_ LAPP_ << LOG_HEAD
 #define COPQUEUE_LDBG_ LDBG_ << LOG_HEAD
 

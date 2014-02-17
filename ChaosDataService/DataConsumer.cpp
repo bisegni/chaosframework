@@ -50,11 +50,10 @@ void DataConsumer::init(void *init_data) throw (chaos::CException) {
 	DSLAPP_ << "DataCOnsumer initialized with endpoint "<< server_endpoint->getRouteIndex();
 	
 	DSLAPP_ << "Allocating DirectIOCDataWrapperServerChannel";
-	server_channel = (DirectIOCDataWrapperServerChannel*)chaos::ObjectFactoryRegister<DirectIOVirtualServerChannel>::getInstance()->getNewInstanceByName("DirectIOCDataWrapperServerChannel");
+	server_channel = (DirectIOCDataWrapperServerChannel*)server_endpoint->getNewChannelInstance("DirectIOCDataWrapperServerChannel");
 	if(!server_channel) throw chaos::CException(-2, "Error allocating rpc server channel", __FUNCTION__);
+
 	
-	DSLAPP_ << "Register DirectIOCDataWrapperServerChannel into the endpoint";
-	server_endpoint->registerChannelInstance(server_channel);
 	
 	server_channel->setHandler(this);
 	
@@ -73,16 +72,20 @@ void DataConsumer::stop() throw (chaos::CException) {
 }
 
 void DataConsumer::deinit() throw (chaos::CException) {
-	DSLAPP_ << "Deregister DirectIOCDataWrapperServerChannel into the endpoint";
-	server_endpoint->deregisterChannelInstance(server_channel);
-	
-	DSLAPP_ << "Delete DirectIOCDataWrapperServerChannel";
-    if(server_channel) delete(server_channel);
+	DSLAPP_ << "Release DirectIOCDataWrapperServerChannel into the endpoint";
+	server_endpoint->releaseChannelInstance(server_channel);
 }
 
 
 void DataConsumer::consumeCDataWrapper(uint8_t channel_tag, chaos::common::data::CDataWrapper *data_wrapper) {
 	received++;
+    uint32_t seq = data_wrapper->getUInt32Value("int_val");
+    if(received>0) {
+        if(seq > last_seq + 1) {
+            DSLAPP_ << "broke sequence of ->" << seq- last_seq;
+        }
+    }
+    
 	if((received % 4000) == 0) {
 		uint64_t time_spent = timing_util.getTimeStamp()-last_received_ts;
 		DSLAPP_ << "total received " << received << " - received "<< (received - last_received) << " in " << time_spent << " msec";
@@ -91,6 +94,8 @@ void DataConsumer::consumeCDataWrapper(uint8_t channel_tag, chaos::common::data:
 	}
 	
 	if(data_wrapper) delete(data_wrapper);
+    
+    last_seq = seq;
 }
 
 void DataConsumer::simulateClient(DirectIOClient *client_instance) {

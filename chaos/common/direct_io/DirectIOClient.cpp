@@ -106,7 +106,6 @@ channel::DirectIOVirtualClientChannel *DirectIOClient::getNewChannelInstance(std
 
 // New channel allocation by name
 void DirectIOClient::releaseChannelInstance(channel::DirectIOVirtualClientChannel *channel_instance) throw (CException) {
-	if(!channel_instance) return;
-	releaseChannelInstance(channel_instance);
-	delete(channel_instance);
+	deregisterChannelInstance(channel_instance);
+	//if(channel_instance) delete(channel_instance);
 }

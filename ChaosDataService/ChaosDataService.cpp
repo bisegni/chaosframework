@@ -78,20 +78,20 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
         }
 
 		CDSLAPP_ << "Allocate Network Brocker";
-        network_broker = new utility::StartableServiceContainer<chaos::NetworkBroker>(true);
+        network_broker = ALLOCATE_SS_CONTAINER(chaos::NetworkBroker, true);
 		if(!network_broker) throw chaos::CException(-1, "Error instantiating network broker", __PRETTY_FUNCTION__);
 		network_broker->init(NULL, __PRETTY_FUNCTION__);
         
         CDSLAPP_ << "Allocate the Data Consumer";
-        data_consumer = new utility::StartableServiceContainer<DataConsumer>(new DataConsumer(), true);
+        data_consumer = ALLOCATE_SS_CONTAINER_WI(DataConsumer, new DataConsumer(), true);
 		if(!data_consumer) throw chaos::CException(-1, "Error instantiating network broker", __PRETTY_FUNCTION__);
 		
 		CDSLAPP_ << "Get the endpoint and associate it to the Data Consumer";
 		data_consumer->getPointer()->server_endpoint = network_broker->getPointer()->getDirectIOServerEndpoint();
 		
         data_consumer->init(NULL, __PRETTY_FUNCTION__);
-		
-		client = new utility::InizializableServiceContainer<chaos::common::direct_io::DirectIOClient>(network_broker->getPointer()->getDirectIOClientInstance(), true);
+
+		client = ALLOCATE_IS_CONTAINER_WI(chaos::common::direct_io::DirectIOClient, network_broker->getPointer()->getDirectIOClientInstance(), true);
 		client->init(NULL, __PRETTY_FUNCTION__);
         client->getPointer()->setConnectionMode(DirectIOConnectionSpreadType::DirectIORoundRobin);
     } catch (CException& ex) {
@@ -152,17 +152,25 @@ void ChaosDataService::stop() throw(CException) {
  Deiniti all the manager
  */
 void ChaosDataService::deinit() throw(CException) {
-	CDSLAPP_ << "Release the endpoint associated to the Data Consumer";
-	network_broker->getPointer()->releaseDirectIOServerEndpoint(data_consumer->getPointer()->server_endpoint);
+	if(data_consumer) {
+		CDSLAPP_ << "Stop the Data Consumer";
+		data_consumer->deinit(__PRETTY_FUNCTION__);
+		CDSLAPP_ << "Release the endpoint associated to the Data Consumer";
+		network_broker->getPointer()->releaseDirectIOServerEndpoint(data_consumer->getPointer()->server_endpoint);
+		delete(data_consumer);
+	}
 
-    CDSLAPP_ << "Stop the Data Consumer";
-    data_consumer->deinit(__PRETTY_FUNCTION__);
-
-	client->deinit(__PRETTY_FUNCTION__);
+	if(client) {
+		client->deinit(__PRETTY_FUNCTION__);
+		delete(client);
+	}
 	
-    CDSLAPP_ << "Deinitializing CHAOS Data Service";
-	network_broker->deinit(__PRETTY_FUNCTION__);
-	delete(network_broker);
+	if(network_broker) {
+		CDSLAPP_ << "Deinitializing CHAOS Data Service";
+		network_broker->deinit(__PRETTY_FUNCTION__);
+		delete(network_broker);
+	}
+    CDSLAPP_ << "Deinitializated";
 }
 
 

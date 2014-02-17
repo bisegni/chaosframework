@@ -17,6 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+#include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/direct_io/DirectIOServerEndpoint.h>
 
 using namespace chaos::common::direct_io;
@@ -42,7 +43,10 @@ uint16_t DirectIOServerEndpoint::getRouteIndex() {
 //! Add a new channel instantiator
 channel::DirectIOVirtualServerChannel *DirectIOServerEndpoint::registerChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance) {
 	if(!channel_instance) return NULL;
-	boost::unique_lock<boost::shared_mutex>	Lock(mutex_channel_slot);
+	// gest exsclusive access
+	boost::upgrade_lock<boost::shared_mutex> lock(mutex_channel_slot);
+	boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
+	
 	DIOSE_LDBG_ << "Register channel " << channel_instance->getName() << " with route index " << (int)channel_instance->getChannelRouterIndex();
 	if(channel_instance->getChannelRouterIndex() > (MAX_ENDPOINT_CHANNEL-1)) return NULL;
 	channel_slot[channel_instance->getChannelRouterIndex()] = channel_instance;
@@ -52,9 +56,27 @@ channel::DirectIOVirtualServerChannel *DirectIOServerEndpoint::registerChannelIn
 //! Dispose the channel
 void DirectIOServerEndpoint::deregisterChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance) {
 	if(!channel_instance) return;
-	boost::unique_lock<boost::shared_mutex>	Lock(mutex_channel_slot);
+	// get exsclusive access
+	boost::upgrade_lock<boost::shared_mutex> lock(mutex_channel_slot);
+	boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
+	
+	// now we have exclusive access
 	if(channel_instance->getChannelRouterIndex() > (MAX_ENDPOINT_CHANNEL-1)) return;
 	channel_slot[channel_instance->getChannelRouterIndex()] = NULL;
+}
+
+
+// New channel allocation by name
+channel::DirectIOVirtualServerChannel *DirectIOServerEndpoint::getNewChannelInstance(std::string channel_name) throw (CException) {
+	channel::DirectIOVirtualServerChannel *channel = chaos::ObjectFactoryRegister<channel::DirectIOVirtualServerChannel>::getInstance()->getNewInstanceByName(channel_name.c_str());
+	registerChannelInstance(channel);
+	return channel;
+}
+
+// New channel allocation by name
+void DirectIOServerEndpoint::releaseChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance) throw (CException) {
+	deregisterChannelInstance(channel_instance);
+	if(channel_instance) delete(channel_instance);
 }
 
 // Event for a new data received

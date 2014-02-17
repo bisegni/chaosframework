@@ -61,6 +61,7 @@ namespace chaos {
                     //set the spread functionality on zmq socket
                     //void switchModeTo(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType connection_mode);
                     
+					bool thread_run;
                     boost::shared_ptr<boost::thread> monitor_thread;
 					
 					//! check the connection with the endpoint for the two socket

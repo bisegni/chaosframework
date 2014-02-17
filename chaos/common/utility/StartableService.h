@@ -87,33 +87,32 @@ namespace chaos {
             static bool deinitImplementation(StartableService *impl, const char * const implName,  const char * const domainString);
         };
 		
-#define IMPL_NAME(n) #n
-		
 		template<typename T>
 		class StartableServiceContainer {
 			bool delete_on_dispose;
+            const char * service_name;
 			T *startable_service_instance;
 		public:
-			StartableServiceContainer(bool _delete_on_dispose):startable_service_instance(new T()), delete_on_dispose(_delete_on_dispose) {}
-			StartableServiceContainer(T *instance, bool _delete_on_dispose):startable_service_instance(instance), delete_on_dispose(_delete_on_dispose) {}
+			StartableServiceContainer(bool _delete_on_dispose, const char * instance_name):delete_on_dispose(_delete_on_dispose), startable_service_instance(new T()), service_name(instance_name) {}
+			StartableServiceContainer(T *instance, bool _delete_on_dispose, const char * instance_name):startable_service_instance(instance), delete_on_dispose(_delete_on_dispose), service_name(instance_name) {}
 			~StartableServiceContainer() {
 				if(delete_on_dispose) delete(startable_service_instance);
 			}
 			
 			bool init(void *init_data, const char * const domainString) {
-				return StartableService::initImplementation(startable_service_instance, init_data, IMPL_NAME(T), domainString);
+				return StartableService::initImplementation(startable_service_instance, init_data, service_name, domainString);
 			}
 			
 			bool start(const char * const domainString) {
-				return StartableService::startImplementation(startable_service_instance, IMPL_NAME(T), domainString);
+				return StartableService::startImplementation(startable_service_instance, service_name, domainString);
 			}
 			
 			bool stop(const char * const domainString) {
-				return StartableService::stopImplementation(startable_service_instance, IMPL_NAME(T), domainString);
+				return StartableService::stopImplementation(startable_service_instance, service_name, domainString);
 			}
 			
 			bool deinit(const char * const domainString) {
-				return StartableService::deinitImplementation(startable_service_instance, IMPL_NAME(T), domainString);
+				return StartableService::deinitImplementation(startable_service_instance, service_name, domainString);
 			}
 			
 			inline T* getPointer() {
@@ -121,6 +120,9 @@ namespace chaos {
 			}
 		};
         
+        
+        #define ALLOCATE_SS_CONTAINER(T, b) new chaos::utility::StartableServiceContainer<T>(b, #T)
+        #define ALLOCATE_SS_CONTAINER_WI(T, i, b) new chaos::utility::StartableServiceContainer<T>(i, b, #T)
     }
     
 }

@@ -41,34 +41,10 @@ void ZMQDirectIOClientFree (void *data, void *hint) {
     free (data);
 }
 
-static int read_msg(void* s, zmq_event_t* event, char* ep)
-{
-    int rc ;
-    zmq_msg_t msg1;  // binary part
-    zmq_msg_init (&msg1);
-    zmq_msg_t msg2;  //  address part
-    zmq_msg_init (&msg2);
-    rc = zmq_msg_recv (&msg1, s, 0);
-    if (rc == -1 && zmq_errno() == ETERM)
-        return 1 ;
-    rc = zmq_msg_recv (&msg2, s, 0);
-    if (rc == -1 && zmq_errno() == ETERM)
-        return 1;
-    // copy binary data to event struct
-    const char* data = (char*)zmq_msg_data(&msg1);
-    memcpy(&(event->event), data, sizeof(event->event));
-    memcpy(&(event->value), data+sizeof(event->event), sizeof(event->value));
-    // copy address part
-    const size_t len = zmq_msg_size(&msg2) ;
-    ep = (char*)std::memcpy(ep, zmq_msg_data(&msg2), len);
-    *(ep + len) = 0 ;
-    return 0 ;
-}
-
 ZMQDirectIOClient::ZMQDirectIOClient(string alias):DirectIOClient(alias){
 	priority_port = 0;
 	service_port = 0;
-	
+	thread_run = false;
 	zmq_context = NULL;
 	socket_priority = NULL;
 	socket_service = NULL;
@@ -84,9 +60,11 @@ void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
     std::string service_identity = UUIDUtil::generateUUIDLite();
 	int err = 0;
 	int output_buffer_dim = 1;
+    int linger_period = 0;
     zmq_context = zmq_ctx_new();
     if(zmq_context == NULL) throw chaos::CException(0, "Error creating zmq context", __FUNCTION__);
     
+	ZMQDIOLAPP_ << "Inizilizing zmq implementation with zmq lib version = " << ZMQ_VERSION;
     ZMQDIOLAPP_ << "Set number of thread for the contex";
     zmq_ctx_set(zmq_context, ZMQ_IO_THREADS, 2);
     
@@ -96,6 +74,9 @@ void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
     //set socket identity
     err = zmq_setsockopt (socket_priority, ZMQ_IDENTITY, priority_identity.c_str(), priority_identity.size());
 	if(err) throw chaos::CException(err, "Error setting priority socket option", __FUNCTION__);
+    
+    err = zmq_setsockopt (socket_priority, ZMQ_LINGER, &linger_period, sizeof(int));
+	if(err) throw chaos::CException(err, "Error setting linger on priority socket option", __FUNCTION__);
     //set output queue dime
 	err = zmq_setsockopt (socket_priority, ZMQ_SNDHWM, &output_buffer_dim, sizeof(int));
 	if(err) throw chaos::CException(err, "Error setting ZMQ_SNDHWM on priority socket option", __FUNCTION__);
@@ -106,12 +87,24 @@ void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
     //set socket identity
     err = zmq_setsockopt(socket_service, ZMQ_IDENTITY, service_identity.c_str(), service_identity.size());
 	if(err) throw chaos::CException(err, "Error setting service socket option", __FUNCTION__);
+    
+    err = zmq_setsockopt (socket_service, ZMQ_LINGER, &linger_period, sizeof(int));
+	if(err) throw chaos::CException(err, "Error setting linger on service socket option", __FUNCTION__);
 	//set output queue dime
 	err = zmq_setsockopt (socket_service, ZMQ_SNDHWM, &output_buffer_dim, sizeof(int));
 	if(err) throw chaos::CException(err, "Error setting ZMQ_SNDHWM on priority socket option", __FUNCTION__);
 
-	
+    ZMQDIOLAPP_ << "Allocating monitor socket";
+    thread_run = true;
+    socket_monitor = zmq_socket (zmq_context, ZMQ_PAIR);
+    if(!socket_monitor) throw chaos::CException(err, "Error creating monitor socket", __FUNCTION__);
+    
 	err = zmq_socket_monitor(socket_priority, "inproc://monitor.req", ZMQ_EVENT_ALL);
+    if(err) throw chaos::CException(err, "Error activating monitor on priority socket", __FUNCTION__);
+    
+    err = zmq_connect(socket_monitor, "inproc://monitor.req");
+    if(err) throw chaos::CException(err, "Error connecting monitor socket", __FUNCTION__);
+
 	monitor_thread.reset(new boost::thread(boost::bind(&ZMQDirectIOClient::monitorWorker, this)));
 	
     ZMQDIOLAPP_ << "Initialized";
@@ -119,29 +112,36 @@ void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
 
 //! Deinit the implementation
 void ZMQDirectIOClient::deinit() throw(chaos::CException) {
+    int err = 0;
     ZMQDIOLAPP_ << "deinitialization";
     ZMQDIOLDBG_ << "Acquiring lock";
     ZMQDirectIOClientWriteLock lock(mutex_socket_manipolation);
     ZMQDIOLDBG_ << "Write lock acquired";
 
 	ZMQDIOLAPP_ << "Close monitor socket";
-    ZMQBaseClass::closeSocketNoWhait(socket_monitor);
-    //zmq_close(socket_service);
+	thread_run = false;
+    err = zmq_close(socket_monitor);
+    if(err) ZMQDIOLERR_ << "Error closing monitor socket";
     socket_monitor = NULL;
 	
     ZMQDIOLAPP_ << "Close priority socket";
-    ZMQBaseClass::closeSocketNoWhait(socket_priority);
+    err = zmq_close(socket_priority);
+    if(err) ZMQDIOLERR_ << "Error closing priority socket";
     //zmq_close(socket_priority);
     socket_priority = NULL;
     
     ZMQDIOLAPP_ << "Close service socket";
-    ZMQBaseClass::closeSocketNoWhait(socket_service);
+    err = zmq_close(socket_service);
+    if(err) ZMQDIOLERR_ << "Error closing service socket";
+
     //zmq_close(socket_service);
     socket_service = NULL;
 	
     //destroy the zmq context
     ZMQDIOLAPP_ << "Destroyed zmq context";
-    zmq_ctx_destroy(zmq_context);
+    err = zmq_ctx_destroy(zmq_context);
+    if(err) ZMQDIOLERR_ << "Error closing context";
+
     zmq_context = NULL;
     
     DirectIOClient::deinit();
@@ -152,36 +152,36 @@ void ZMQDirectIOClient::deinit() throw(chaos::CException) {
 void *ZMQDirectIOClient::monitorWorker() {
 	zmq_event_t event;
     int err = 0;
-	char addr[1025];
-    void *s = zmq_socket (zmq_context, ZMQ_PAIR);
-    assert (s);
-    err = zmq_connect(s, "inproc://monitor.req");
-    assert (err == 0);
-    while (!read_msg(s, &event, addr)) {
+    while (thread_run) {
+		zmq_msg_t msg;
+        zmq_msg_init (&msg);
+        err = zmq_recvmsg (socket_monitor, &msg, 0);
+        if (err == -1 && zmq_errno() == ETERM) break;
+        assert (err != -1);
+        memcpy (&event, zmq_msg_data (&msg), sizeof (event));
         switch (event.event) {
 			case ZMQ_EVENT_CONNECTED:
-				ZMQDIOLDBG_ << "ZMQ_EVENT_CONNECTED:"<<addr;
+				ZMQDIOLDBG_ << "ZMQ_EVENT_CONNECTED:"<<event.data.connected.addr;
 				break;
 			case ZMQ_EVENT_CONNECT_DELAYED:
-				ZMQDIOLDBG_ << "ZMQ_EVENT_CONNECT_DELAYED:"<<addr;
+				ZMQDIOLDBG_ << "ZMQ_EVENT_CONNECT_DELAYED:"<<event.data.connect_delayed.addr;
 				break;
 			case ZMQ_EVENT_CONNECT_RETRIED:
-				ZMQDIOLDBG_ << "ZMQ_EVENT_CONNECT_RETRIED:"<<addr;
+				ZMQDIOLDBG_ << "ZMQ_EVENT_CONNECT_RETRIED:"<<event.data.connect_retried.addr;
 				break;
 			case ZMQ_EVENT_CLOSED:
-				ZMQDIOLDBG_ << "ZMQ_EVENT_CLOSED:"<<addr;
+				ZMQDIOLDBG_ << "ZMQ_EVENT_CLOSED:"<<event.data.closed.addr;;
 				break;
 			case ZMQ_EVENT_CLOSE_FAILED:
-				ZMQDIOLDBG_ << "ZMQ_EVENT_CLOSE_FAILED:"<<addr;
+				ZMQDIOLDBG_ << "ZMQ_EVENT_CLOSE_FAILED:"<<event.data.close_failed.addr;
 				break;
 			case ZMQ_EVENT_DISCONNECTED:
-				ZMQDIOLDBG_ << "ZMQ_EVENT_DISCONNECTED:"<<addr;
+				ZMQDIOLDBG_ << "ZMQ_EVENT_DISCONNECTED:"<<event.data.disconnected.addr;
 				break;
 			default:
 				break;
         }
     }
-    zmq_close (s);
     return NULL;
 }
 /*
