@@ -29,7 +29,7 @@ namespace chaos {
 						/*!
 						 Receive the CdataWrapper forwarded by the channel, the deallocation is demanded to the handler
 						 */
-						virtual void consumeCDataWrapper(uint8_t channel_tag, chaos::common::data::CDataWrapper *data_wrapper) = 0;
+						virtual void consumeCDataWrapper(uint8_t channel_opcode, chaos::common::data::CDataWrapper *data_wrapper) = 0;
 					} DirectIOCDataWrapperServerChannelHandler;
 					
 					uint32_t pushCDataWrapperSerializationBuffer(uint16_t endpoint_idx, uint8_t tag, chaos_data::SerializationBuffer *data_pack) ;

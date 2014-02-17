@@ -49,7 +49,7 @@ namespace chaos{
 			chaos::TimingUtil timing_util;
 			
 			void simulateClient(DirectIOClient *client_instance);
-            void consumeCDataWrapper(uint8_t channel_tag, chaos::common::data::CDataWrapper *data_wrapper);
+            void consumeCDataWrapper(uint8_t channel_opcode, chaos::common::data::CDataWrapper *data_wrapper);
         public:
 			DataConsumer();
             ~DataConsumer();

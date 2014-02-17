@@ -82,11 +82,11 @@ void DirectIOServerEndpoint::releaseChannelInstance(channel::DirectIOVirtualServ
 // Event for a new data received
 void DirectIOServerEndpoint::priorityDataReceived(DirectIODataPack *data_pack) {
 	boost::shared_lock<boost::shared_mutex> Lock(mutex_channel_slot);
-	channel_slot[data_pack->header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack);
+	channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack);
 }
 
 // Event for a new data received
 void DirectIOServerEndpoint::serviceDataReceived(DirectIODataPack *data_pack) {
 	boost::shared_lock<boost::shared_mutex> Lock(mutex_channel_slot);
-	channel_slot[data_pack->header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack);
+	channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack);
 }

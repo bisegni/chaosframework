@@ -28,6 +28,8 @@
 
 #include <boost/thread.hpp>
 
+#include <zmq.h>
+
 namespace chaos {
 	namespace common {
 		namespace direct_io {
@@ -50,7 +52,7 @@ namespace chaos {
                     std::string service_socket_bind_str;
                     
                     void worker(bool priority_service);
-                    
+					
                     ZMQDirectIOServer(std::string alias);
                     
                     ~ZMQDirectIOServer();

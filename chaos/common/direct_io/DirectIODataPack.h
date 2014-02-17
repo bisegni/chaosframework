@@ -22,45 +22,78 @@
 
 /*
  
-+-------+-------+-------+-------+
-|             length = n        | 32
-+-------+-------+-------+-------+
-|	  route     + ch_id + ch_tag| 32
-+-------+-------+-------+-------+
-|                               |
-:         channel data          : n-64
-|                               |
-+-------+-------+-------+-------+
+ +-------+-------+-------+-------+
+ |             length = n        | 32
+ +-------+-------+-------+-------+
+ |	  route     + ch_id + ch_tag| 32
+ +-------+-------+-------+-------+
+ |                               |
+ :         channel data          : n-64
+ |                               |
+ +-------+-------+-------+-------+
  */
 #include <chaos/common/utility/endianess.h>
 namespace chaos {
     namespace common {
         namespace direct_io {
+			
+#define DIRECT_IO_HEADER_SIZE					12
+#define DIRECT_IO_DISPATCHER_HEADER_SIZE		4
 
-#define DIRECT_IO_HEADER_SIZE				4
-//#define DIRECT_IO_GET_PACK_LEN (d)          byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)d));
-#define DIRECT_IO_GET_DISPATCHER_DATA(d)    byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)(d)));
-//#define DIRECT_IO_GET_CHANNEL_DATA(d)       ((void*)(d+8));
+#define DIRECT_IO_GET_DISPATCHER_DATA(d)		byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)d));
+#define DIRECT_IO_GET_CHANNEL_HEADER_SIZE(d)    byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)((char*)d+4)));
+#define DIRECT_IO_GET_CHANNEL_DATA_SIZE(d)		byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)((char*)d+8)));
+			
+#define DIRECT_IO_SET_DISPATCHER_DATA(d)		byte_swap<host_endian, little_endian, uint32_t>(d);
+#define DIRECT_IO_SET_CHANNEL_HEADER_SIZE(d)    byte_swap<host_endian, little_endian, uint32_t>(d);
+#define DIRECT_IO_SET_CHANNEL_DATA_SIZE(d)		byte_swap<host_endian, little_endian, uint32_t>(d);
+			
+#define DIRECT_IO_CHANNEL_PART_EMPTY			0
+#define DIRECT_IO_CHANNEL_PART_HEADER_ONLY		1
+#define DIRECT_IO_CHANNEL_PART_DATA_ONLY		2
+#define DIRECT_IO_CHANNEL_PART_HEADER_DATA		3
+			
+
+#define DIRECT_IO_SET_CHANNEL_HEADER(pack_ptr, h_ptr, h_size)\
+pack_ptr.header.dispatcher_header.fields.channel_part = pack_ptr.header.dispatcher_header.fields.channel_part+DIRECT_IO_CHANNEL_PART_HEADER_ONLY;\
+pack_ptr.header.channel_header_size = DIRECT_IO_SET_CHANNEL_HEADER_SIZE(h_size);\
+pack_ptr.channel_header_data = h_ptr;
+
+#define DIRECT_IO_SET_CHANNEL_DATA(pack_ptr, d_ptr, d_size)\
+pack_ptr.header.dispatcher_header.fields.channel_part = pack_ptr.header.dispatcher_header.fields.channel_part+DIRECT_IO_CHANNEL_PART_DATA_ONLY;\
+pack_ptr.header.channel_data_size = DIRECT_IO_SET_CHANNEL_DATA_SIZE(d_size);\
+pack_ptr.channel_data = d_ptr;
 			
             //! DirectIO data pack structure. It is write in little endian
             typedef struct DirectIODataPack {
                 //! define the length of pack
-                //uint32_t    dio_pack_len;
-                union {
-                    uint32_t    dispatcher_raw_data;
-                    struct dispatcher_data {
-						//! destination routing address
-						uint16_t	route_addr;
-                        //! channel index
-                        uint16_t	channel_idx: 8;
-                        //! channel tag
-                        uint16_t    channel_tag: 8;
-                    } fields;
-                } header;
-                
-                //! channel data
-				uint32_t	data_size;
-				void        *data;
+                struct header {
+					union {
+						//!header raw data
+						uint32_t    raw_data;
+						struct dispatcher_header {
+							//! destination routing address
+							uint16_t	route_addr;
+							//! channel index
+							uint16_t	channel_idx: 8;
+							//! channel tag
+							uint16_t    channel_part: 8;
+							//! channel tag
+							uint16_t    channel_opcode: 8;
+							//! channel tag
+							uint16_t    channel_specified_tag: 8;
+						} fields;
+					} dispatcher_header;
+					
+					//! channel header size (if present > 0)
+					uint32_t    channel_header_size;
+					//! channel data  (if present > 0)
+					uint32_t	channel_data_size;
+				} header;
+				//!ptr to channel header data
+                void        *channel_header_data;
+				//!ptr to channel data
+				void        *channel_data;
             } DirectIODataPack;
         }
     }

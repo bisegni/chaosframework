@@ -23,7 +23,6 @@
 #include <chaos/common/direct_io/impl/ZMQDirectIOServer.h>
 #include <boost/format.hpp>
 
-#include <zmq.h>
 
 #define ZMQDIO_SRV_LOG_HEAD "["<<getName()<<"] - "
 
@@ -56,7 +55,7 @@ void ZMQDirectIOServer::init(void *init_data) throw(chaos::CException) {
 	//get the port from configuration
 	int32_t priority_port = init_cw->getInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_PRIORITY_PORT);
 	if(priority_port <= 0) throw chaos::CException(0, "Bad priority port configured", __FUNCTION__);
-
+	
 	int32_t service_port = init_cw->getInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_SERVICE_PORT);
 	if(service_port <= 0) throw chaos::CException(0, "Bad service port configured", __FUNCTION__);
 	
@@ -80,7 +79,7 @@ void ZMQDirectIOServer::start() throw(chaos::CException) {
     //et the thread number
     zmq_ctx_set(zmq_context, ZMQ_IO_THREADS, 2);
     ZMQDIO_SRV_LAPP_ << "ZMQ context created";
-
+	
     //queue thread
     ZMQDIO_SRV_LAPP_ << "Allocating and binding priority socket to "<< priority_socket_bind_str;
     ZMQDIO_SRV_LAPP_ << "Allocating threads for manage the requests";
@@ -96,9 +95,9 @@ void ZMQDirectIOServer::stop() throw(chaos::CException) {
 	ZMQDIO_SRV_LAPP_ << "Deallocating zmq context";
     zmq_ctx_destroy (zmq_context);
     ZMQDIO_SRV_LAPP_ << "ZMQ Context deallocated";
-
+	
     //wiath all thread
-     ZMQDIO_SRV_LAPP_ << "Join on all thread";
+	ZMQDIO_SRV_LAPP_ << "Join on all thread";
     server_threads_group.join_all();
     ZMQDIO_SRV_LAPP_ << "All thread stopped";
     DirectIOServer::stop();
@@ -107,14 +106,16 @@ void ZMQDirectIOServer::stop() throw(chaos::CException) {
 //! Deinit the implementation
 void ZMQDirectIOServer::deinit() throw(chaos::CException) {
     //serverThreadGroup.stopGroup(true);
-
+	
     DirectIOServer::deinit();
 }
 
 #define PS_STR(x) (x?"service":"priority")
 void ZMQDirectIOServer::worker(bool priority_service) {
 	int linger = 0;
-    zmq_msg_t			request;
+    zmq_msg_t			m_header;
+	zmq_msg_t			m_header_data;
+	zmq_msg_t			m_channel_data;
 	void				*socket				= NULL;
     int					err					= 0;
     DirectIODataPack	*data_pack			= NULL;
@@ -163,41 +164,85 @@ void ZMQDirectIOServer::worker(bool priority_service) {
     while (run_server) {
         try {
 			//read header
-            err = zmq_msg_init(&request);
-            if(err == -1) {
-                continue;
-            }
-            err = zmq_msg_recv(&request, socket, 0);
-            if(err == -1 ||
-				zmq_msg_size(&request) != DIRECT_IO_HEADER_SIZE) {
-                zmq_msg_close(&request);
-                continue;
-            }
-			received_data = zmq_msg_data(&request);
-			received_data_size = (uint32_t)zmq_msg_size(&request);
-			
-			data_pack = new DirectIODataPack();
-			data_pack->header.dispatcher_raw_data = DIRECT_IO_GET_DISPATCHER_DATA(received_data);
-			//close the request
-            zmq_msg_close(&request);
-			
-			err = zmq_msg_init(&request);
-            if(err == -1) {
-                continue;
-            }
-            err = zmq_recvmsg(socket, &request, 0);
-            if(err == -1 ||
-			   zmq_msg_size(&request)==0) {
-                zmq_msg_close(&request);
-                continue;
-            }
-			//send data to first stage delegate
-			data_pack->data = zmq_msg_data(&request);
-			data_pack->data_size = (uint32_t)zmq_msg_size(&request);
-			DirectIOHandlerPtrCaller(handler_impl, delegate)(data_pack);
-            //close the request
-            zmq_msg_close(&request);
+            err = zmq_msg_init(&m_header);
+			err = zmq_msg_init(&m_header_data);
+			err = zmq_msg_init(&m_channel_data);
 
+            err = zmq_msg_recv(&m_header, socket, 0);
+            if(err == -1 ||
+			   zmq_msg_size(&m_header) != DIRECT_IO_HEADER_SIZE) {
+                zmq_msg_close(&m_header);
+				zmq_msg_close(&m_header_data);
+				zmq_msg_close(&m_channel_data);
+                continue;
+            }
+			
+			received_data = zmq_msg_data(&m_header);
+			data_pack = new DirectIODataPack();
+			data_pack->header.dispatcher_header.raw_data = DIRECT_IO_GET_DISPATCHER_DATA(received_data);
+
+			//check what send
+			switch(data_pack->header.dispatcher_header.fields.channel_part) {
+				case DIRECT_IO_CHANNEL_PART_EMPTY:
+					break;
+				case DIRECT_IO_CHANNEL_PART_HEADER_ONLY:
+					data_pack->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(received_data);
+					err = zmq_msg_recv(&m_header_data, socket, 0);
+					if(err == -1) {
+						zmq_msg_close(&m_header);
+						zmq_msg_close(&m_header_data);
+						zmq_msg_close(&m_channel_data);
+						continue;
+					}
+					//get channel header data
+					data_pack->channel_header_data = zmq_msg_data(&m_header_data);
+					break;
+				case DIRECT_IO_CHANNEL_PART_DATA_ONLY:
+					data_pack->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(received_data);
+					err = zmq_msg_recv(&m_channel_data, socket, 0);
+					if(err == -1) {
+						zmq_msg_close(&m_header);
+						zmq_msg_close(&m_header_data);
+						zmq_msg_close(&m_channel_data);
+						continue;
+					}
+					//get channel data
+					data_pack->channel_data = zmq_msg_data(&m_channel_data);
+					break;
+				case DIRECT_IO_CHANNEL_PART_HEADER_DATA:
+					data_pack->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(received_data);
+					data_pack->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(received_data);
+
+					err = zmq_msg_recv(&m_header_data, socket, 0);
+					if(err == -1) {
+						zmq_msg_close(&m_header);
+						zmq_msg_close(&m_header_data);
+						zmq_msg_close(&m_channel_data);
+						continue;
+					}
+					err = zmq_msg_recv(&m_channel_data, socket, 0);
+					if(err == -1) {
+						zmq_msg_close(&m_header);
+						zmq_msg_close(&m_header_data);
+						zmq_msg_close(&m_channel_data);
+						continue;
+					}
+					
+					//get channel header data
+					data_pack->channel_data = zmq_msg_data(&m_channel_data);
+					//get channel data
+					data_pack->channel_header_data = zmq_msg_data(&m_header_data);
+					break;
+			}
+			
+			
+			
+			DirectIOHandlerPtrCaller(handler_impl, delegate)(data_pack);
+			//close the requests
+            zmq_msg_close(&m_header);
+			zmq_msg_close(&m_header_data);
+			zmq_msg_close(&m_channel_data);
+			
         } catch (CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex)
         }
@@ -208,5 +253,4 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 		zmq_close(socket);
 		socket = NULL;
 	}
-
 }

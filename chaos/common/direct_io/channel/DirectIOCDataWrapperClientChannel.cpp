@@ -28,11 +28,12 @@ DirectIOCDataWrapperClientChannel::DirectIOCDataWrapperClientChannel(std::string
 }
 DirectIOCDataWrapperClientChannel::~DirectIOCDataWrapperClientChannel() {
 }
-uint32_t DirectIOCDataWrapperClientChannel::pushCDataWrapperSerializationBuffer(uint16_t endpoint_idx, uint8_t tag, chaos_data::SerializationBuffer *data_pack) {
-	dio_data_pack.header.fields.route_addr = endpoint_idx;
-	dio_data_pack.header.fields.channel_idx = DIOCDC_Channel_Index;
-	dio_data_pack.header.fields.channel_tag = tag;
-	dio_data_pack.data = (void*)data_pack->getBufferPtr();
-	dio_data_pack.data_size = (uint32_t)data_pack->getBufferLen();
+uint32_t DirectIOCDataWrapperClientChannel::pushCDataWrapperSerializationBuffer(uint16_t endpoint_idx, uint8_t opcode, chaos_data::SerializationBuffer *data_pack) {
+	std::memset(&dio_data_pack, 0, sizeof(DirectIODataPack));
+	dio_data_pack.header.dispatcher_header.fields.route_addr = endpoint_idx;
+	dio_data_pack.header.dispatcher_header.fields.channel_idx = DIOCDC_Channel_Index;
+	dio_data_pack.header.dispatcher_header.fields.channel_opcode = opcode;
+	DIRECT_IO_SET_CHANNEL_DATA(dio_data_pack, (void*)data_pack->getBufferPtr(), (uint32_t)data_pack->getBufferLen())
+	
 	return sendData(&dio_data_pack);
 }
