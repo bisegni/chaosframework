@@ -18,6 +18,7 @@
  *    	limitations under the License.
  */
 
+#include <chaos/common/utility/endianess.h>
 #include <chaos/common/data/cache/FastHash.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceClientChannel.h>
 
@@ -44,89 +45,32 @@ void DirectIODeviceClientChannel::setDeviceID(std::string _device_id) {
 	device_id = _device_id;
 }
 
-int64_t DirectIODeviceClientChannel::sendOutputDeviceChannels(chaos_data::SerializationBuffer *serialized_output_channels) {
-	DirectIODataPack dio_data_pack;
+int64_t DirectIODeviceClientChannel::sendWithPriority(uint8_t opcode, chaos_data::SerializationBuffer *serialization) {
+	DirectIODataPack data_pack;
 	DirectIODeviceChannelHeaderData header_data;
-	std::memset(&dio_data_pack, 0, sizeof(DirectIODataPack));
-	std::memset(&header_data, 0, sizeof(DirectIODeviceChannelHeaderData));
 	
 	//set opcode
-	dio_data_pack.header.dispatcher_header.fields.channel_opcode = DIRECT_IO_DEVICE_CHANNEL_OPCODE_PUT_OUTPUT_CHANNEL;
+	data_pack.header.dispatcher_header.fields.channel_opcode = opcode;
 	
 	//set header
-	header_data.device_hash = device_hash;
-	DIRECT_IO_SET_CHANNEL_HEADER(dio_data_pack, &header_data, sizeof(DirectIODeviceChannelHeaderData))
-	DIRECT_IO_SET_CHANNEL_DATA(dio_data_pack, (void*)serialized_output_channels->getBufferPtr(), (uint32_t)serialized_output_channels->getBufferLen())
+	header_data.device_hash = byte_swap<little_endian, host_endian, uint32_t>(device_hash);
 	
-	return sendData(&dio_data_pack);
+	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, &header_data, sizeof(DirectIODeviceChannelHeaderData))
+	DIRECT_IO_SET_CHANNEL_DATA(data_pack, (void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen())
+	return client_instance->sendPriorityData(&data_pack);
 }
 
-int64_t DirectIODeviceClientChannel::sendOutputDeviceChannelsWithLive(chaos_data::SerializationBuffer *serialized_output_channels) {
-	DirectIODataPack dio_data_pack;
+int64_t DirectIODeviceClientChannel::sendWithService(uint8_t opcode, chaos_data::SerializationBuffer *serialization) {
+	DirectIODataPack data_pack;
 	DirectIODeviceChannelHeaderData header_data;
-	std::memset(&dio_data_pack, 0, sizeof(DirectIODataPack));
-	std::memset(&header_data, 0, sizeof(DirectIODeviceChannelHeaderData));
 	
 	//set opcode
-	dio_data_pack.header.dispatcher_header.fields.channel_opcode = DIRECT_IO_DEVICE_CHANNEL_OPCODE_PUT_OUTPUT_CHANNEL_WITH_LIVE;
+	data_pack.header.dispatcher_header.fields.channel_opcode = opcode;
 	//set header
-	header_data.device_hash = device_hash;
+	header_data.device_hash = byte_swap<little_endian, host_endian, uint32_t>(device_hash);
 	
-	//set header and data
-	DIRECT_IO_SET_CHANNEL_HEADER(dio_data_pack, &header_data, sizeof(DirectIODeviceChannelHeaderData))
-	DIRECT_IO_SET_CHANNEL_DATA(dio_data_pack, (void*)serialized_output_channels->getBufferPtr(), (uint32_t)serialized_output_channels->getBufferLen())
-	
-	return client_instance->sendPriorityData(&dio_data_pack);
-}
+	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, &header_data, sizeof(DirectIODeviceChannelHeaderData))
+	DIRECT_IO_SET_CHANNEL_DATA(data_pack, (void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen())
+	return client_instance->sendServiceData(&data_pack);
 
-int64_t DirectIODeviceClientChannel::sendInputDeviceChannels(chaos_data::SerializationBuffer *serialized_input_channels) {
-	DirectIODataPack dio_data_pack;
-	DirectIODeviceChannelHeaderData header_data;
-	std::memset(&dio_data_pack, 0, sizeof(DirectIODataPack));
-	std::memset(&header_data, 0, sizeof(DirectIODeviceChannelHeaderData));
-	
-	//dio_data_pack.header.dispatcher_header.fields.channel_opcode = opcode;
-	//DIRECT_IO_SET_CHANNEL_DATA(dio_data_pack, (void*)data_pack->getBufferPtr(), (uint32_t)data_pack->getBufferLen())
-	//set header
-	header_data.device_hash = device_hash;
-	return client_instance->sendServiceData(&dio_data_pack);
-}
-
-int64_t DirectIODeviceClientChannel::sendInputDeviceChannelsWithLive(chaos_data::SerializationBuffer *serialized_input_channels) {
-	DirectIODataPack dio_data_pack;
-	DirectIODeviceChannelHeaderData header_data;
-	std::memset(&dio_data_pack, 0, sizeof(DirectIODataPack));
-	std::memset(&header_data, 0, sizeof(DirectIODeviceChannelHeaderData));
-	
-	//dio_data_pack.header.dispatcher_header.fields.channel_opcode = opcode;
-	//DIRECT_IO_SET_CHANNEL_DATA(dio_data_pack, (void*)data_pack->getBufferPtr(), (uint32_t)data_pack->getBufferLen())
-	//set header
-	header_data.device_hash = device_hash;
-	return client_instance->sendServiceData(&dio_data_pack);
-}
-
-int64_t DirectIODeviceClientChannel::sendNewReceivedCommand(chaos_data::SerializationBuffer *serialized_received_command) {
-	DirectIODataPack dio_data_pack;
-	DirectIODeviceChannelHeaderData header_data;
-	std::memset(&dio_data_pack, 0, sizeof(DirectIODataPack));
-	std::memset(&header_data, 0, sizeof(DirectIODeviceChannelHeaderData));
-	
-	//dio_data_pack.header.dispatcher_header.fields.channel_opcode = opcode;
-	//DIRECT_IO_SET_CHANNEL_DATA(dio_data_pack, (void*)data_pack->getBufferPtr(), (uint32_t)data_pack->getBufferLen())
-	//set header
-	header_data.device_hash = device_hash;
-	return client_instance->sendServiceData(&dio_data_pack);
-}
-
-int64_t DirectIODeviceClientChannel::sendNewReceivedCommandWithLive(chaos_data::SerializationBuffer *serialized_received_command) {
-	DirectIODataPack dio_data_pack;
-	DirectIODeviceChannelHeaderData header_data;
-	std::memset(&dio_data_pack, 0, sizeof(DirectIODataPack));
-	std::memset(&header_data, 0, sizeof(DirectIODeviceChannelHeaderData));
-	
-	//dio_data_pack.header.dispatcher_header.fields.channel_opcode = opcode;
-	//DIRECT_IO_SET_CHANNEL_DATA(dio_data_pack, (void*)data_pack->getBufferPtr(), (uint32_t)data_pack->getBufferLen())
-	//set header
-	header_data.device_hash = device_hash;
-	return client_instance->sendServiceData(&dio_data_pack);
 }

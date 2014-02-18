@@ -17,6 +17,8 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+
+#include <chaos/common/utility/endianess.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>
 
 
@@ -31,8 +33,11 @@ DirectIODeviceServerChannel::DirectIODeviceServerChannel(std::string alias):Dire
 }
 
 void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
-	
+	uint8_t  opcode = dataPack->header.dispatcher_header.fields.channel_opcode;
+	uint32_t device_hash = byte_swap<host_endian, little_endian, uint32_t>(static_cast<DirectIODeviceChannelHeaderData*>(dataPack->channel_header_data)->device_hash);
+	chaos_data::CDataWrapper *data = new chaos_data::CDataWrapper(static_cast<const char *>(dataPack->channel_data));
 	
 	//delete pack
+	delete data;
 	delete dataPack;
 }

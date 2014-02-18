@@ -21,6 +21,7 @@
 #define __CHAOSFramework__DirectIODeviceClientChannel__
 
 #include <string>
+#include <stdint.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceChannelGlobal.h>
@@ -41,21 +42,21 @@ namespace chaos {
 					
 					uint32_t device_hash;
 					std::string device_id;
+
 				protected:
 					DirectIODeviceClientChannel(std::string alias);
 				public:
 					~DirectIODeviceClientChannel();
 					
+					//! Set the device id for this channel
 					void setDeviceID(std::string _device_id);
 					
-					int64_t sendOutputDeviceChannels(chaos_data::SerializationBuffer *serialized_output_channels);
-					int64_t sendOutputDeviceChannelsWithLive(chaos_data::SerializationBuffer *serialized_output_channels);
+					//! Send device serialization with priority
+					int64_t sendWithPriority(uint8_t opcode, chaos_data::SerializationBuffer *serialization);
 					
-					int64_t sendInputDeviceChannels(chaos_data::SerializationBuffer *serialized_input_channels);
-					int64_t sendInputDeviceChannelsWithLive(chaos_data::SerializationBuffer *serialized_input_channels);
+					//! Send device serialization with service
+					int64_t sendWithService(uint8_t opcode, chaos_data::SerializationBuffer *serialization);
 					
-					int64_t sendNewReceivedCommand(chaos_data::SerializationBuffer *serialized_received_command);
-					int64_t sendNewReceivedCommandWithLive(chaos_data::SerializationBuffer *serialized_received_command);
 				};
 
 				

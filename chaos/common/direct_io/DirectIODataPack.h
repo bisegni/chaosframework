@@ -21,11 +21,12 @@
 #define CHAOSFramework_DirectIODataPack_h
 
 /*
- 
  +-------+-------+-------+-------+
- |             length = n        | 32
+ | route |  part | ch_id | ch_tag| 32
  +-------+-------+-------+-------+
- |	  route     + ch_id + ch_tag| 32
+ |                               |
+ :         header data           : n-64
+ |                               |
  +-------+-------+-------+-------+
  |                               |
  :         channel data          : n-64
@@ -54,15 +55,15 @@ namespace chaos {
 #define DIRECT_IO_CHANNEL_PART_HEADER_DATA		3
 			
 
-#define DIRECT_IO_SET_CHANNEL_HEADER(pack_ptr, h_ptr, h_size)\
-pack_ptr.header.dispatcher_header.fields.channel_part = pack_ptr.header.dispatcher_header.fields.channel_part+DIRECT_IO_CHANNEL_PART_HEADER_ONLY;\
-pack_ptr.header.channel_header_size = DIRECT_IO_SET_CHANNEL_HEADER_SIZE(h_size);\
-pack_ptr.channel_header_data = h_ptr;
+#define DIRECT_IO_SET_CHANNEL_HEADER(pack, h_ptr, h_size)\
+pack.header.dispatcher_header.fields.channel_part = pack.header.dispatcher_header.fields.channel_part+DIRECT_IO_CHANNEL_PART_HEADER_ONLY;\
+pack.header.channel_header_size = DIRECT_IO_SET_CHANNEL_HEADER_SIZE(h_size);\
+pack.channel_header_data = h_ptr;
 
-#define DIRECT_IO_SET_CHANNEL_DATA(pack_ptr, d_ptr, d_size)\
-pack_ptr.header.dispatcher_header.fields.channel_part = pack_ptr.header.dispatcher_header.fields.channel_part+DIRECT_IO_CHANNEL_PART_DATA_ONLY;\
-pack_ptr.header.channel_data_size = DIRECT_IO_SET_CHANNEL_DATA_SIZE(d_size);\
-pack_ptr.channel_data = d_ptr;
+#define DIRECT_IO_SET_CHANNEL_DATA(pack, d_ptr, d_size)\
+pack.header.dispatcher_header.fields.channel_part = pack.header.dispatcher_header.fields.channel_part+DIRECT_IO_CHANNEL_PART_DATA_ONLY;\
+pack.header.channel_data_size = DIRECT_IO_SET_CHANNEL_DATA_SIZE(d_size);\
+pack.channel_data = d_ptr;
 			
             //! DirectIO data pack structure. It is write in little endian
             typedef struct DirectIODataPack {
