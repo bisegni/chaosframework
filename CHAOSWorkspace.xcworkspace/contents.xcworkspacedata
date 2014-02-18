@@ -27,19 +27,7 @@
       location = "group:example/ChaosCLI/ChaosCLI.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:example/UIToolkitCMDLineCWrapperExample/../../test/TestEventDescriptor/TestEventDescriptor.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:test/TestEntityDB/TestEntityDB.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:test/BSONTestPerf/BSONTestPerf.xcodeproj">
-   </FileRef>
-   <FileRef
       location = "group:test/CachingTest/CachingTest.xcodeproj">
-   </FileRef>
-   <FileRef
-      location = "group:example/BenchTest/BenchTest.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:test/MemcachedEmbeddedTest/MemcachedEmbeddedTest.xcodeproj">

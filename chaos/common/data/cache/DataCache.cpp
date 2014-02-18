@@ -24,7 +24,7 @@
  harvesting it on a low memory condition. */
 #define TAIL_REPAIR_TIME (3 * 3600)
 
-using namespace chaos::data::cache;
+using namespace chaos::common::data::cache;
 
 const int initial_pool_size = 64;
 

@@ -33,16 +33,21 @@ namespace chaos {
 			
             namespace channel {
                 
-                class DirectIOVirtualClientChannel : public DirectIOVirtualChannel {
+                class DirectIOVirtualClientChannel : protected DirectIOVirtualChannel {
                     friend class chaos::common::direct_io::DirectIOClient;
 					
 					DirectIOForwarderHandler  forward_handler;
-					DirectIOForwarder *client_instance;
+
 				protected:
-					uint32_t sendData(chaos::common::direct_io::DirectIODataPack *data_pack);
+					uint16_t endpoint;
+					DirectIOForwarder *client_instance;
+					
+					int64_t sendData(chaos::common::direct_io::DirectIODataPack *data_pack);
 
                     DirectIOVirtualClientChannel(std::string channel_name, uint8_t channel_route_index, bool priority);
                     ~DirectIOVirtualClientChannel();
+				public:
+					void setEndpoint(uint16_t _endpoint);
                 };
                 
             }

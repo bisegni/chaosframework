@@ -37,7 +37,7 @@ namespace chaos {
 				 Forward the data throught the client sub layer for to be sent to the other side
                  using hte priority channel. This channel is to be used for the fast data push.
 				 */
-				virtual uint32_t sendPriorityData(DirectIODataPack *data_pack) = 0;
+				virtual int64_t sendPriorityData(DirectIODataPack *data_pack) = 0;
 
                 
                 //! send the data to the server layer on the service channel
@@ -46,10 +46,10 @@ namespace chaos {
                  using the service channel. This channel is to be used for the data that doesn't need
                  to be fast and accurate.
 				 */
-				virtual uint32_t sendServiceData(DirectIODataPack *data_pack) = 0;
+				virtual int64_t sendServiceData(DirectIODataPack *data_pack) = 0;
 			};
 			
-			typedef uint32_t (chaos::common::direct_io::DirectIOForwarder::*DirectIOForwarderHandler)(chaos::common::direct_io::DirectIODataPack *data_pack);
+			typedef int64_t (chaos::common::direct_io::DirectIOForwarder::*DirectIOForwarderHandler)(chaos::common::direct_io::DirectIODataPack *data_pack);
 			
 			#define DirectIOForwarderHandlerCaller(instance,variable) ((*instance).*variable)
 		}

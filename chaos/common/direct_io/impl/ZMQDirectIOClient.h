@@ -56,7 +56,7 @@ namespace chaos {
 					
 					void *socket_monitor;
 					
-                    inline uint32_t writeToSocket(void *socket, DirectIODataPack *data_pack);
+                    inline int64_t writeToSocket(void *socket, DirectIODataPack *data_pack);
 
                     //set the spread functionality on zmq socket
                     //void switchModeTo(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType connection_mode);
@@ -73,10 +73,10 @@ namespace chaos {
 				protected:
 					
                     // send the data to the server layer on priority channel
-                    uint32_t sendPriorityData(DirectIODataPack *data_pack);
+                    int64_t sendPriorityData(DirectIODataPack *data_pack);
                     
                     // send the data to the server layer on the service channel
-                    uint32_t sendServiceData(DirectIODataPack *data_pack);
+                    int64_t sendServiceData(DirectIODataPack *data_pack);
                 public:
                     
                     //! Initialize instance

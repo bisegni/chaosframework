@@ -12,7 +12,7 @@
 #include <chaos/common/data/cache/FastHash.h>
 #include <chaos/common/endian.h>
 using namespace chaos;
-using namespace chaos::data::cache;
+using namespace ::chaos::common::data::cache;
 
 
 

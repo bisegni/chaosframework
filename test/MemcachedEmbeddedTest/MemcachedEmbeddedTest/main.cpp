@@ -44,7 +44,7 @@ bool threadWriteExecution = true;
 bool threadReadExecution = true;
 
 
-void mcedbCacheUpdaterI32(chaos::data::cache::DataCache *cPtr) {
+void mcedbCacheUpdaterI32(chaos::common::data::cache::DataCache *cPtr) {
     int32_t i32TVal = INT32_TEST_VALUE;
     do{
         cPtr->storeItem("i32k", &i32TVal, sizeof(int32_t));
@@ -53,7 +53,7 @@ void mcedbCacheUpdaterI32(chaos::data::cache::DataCache *cPtr) {
     } while (threadWriteExecution);
 }
 
-void mcedbCacheReader(chaos::data::cache::DataCache *cPtr) {
+void mcedbCacheReader(chaos::common::data::cache::DataCache *cPtr) {
     uint32_t dim = 0;
     int32_t val = 0;
     do {
@@ -96,7 +96,7 @@ int main(int argc, const char * argv[]) {
         std::cout << "Number of reader " << readersNumber << " at rate of " << rUpdateMs << " ms" << std::endl;
         
         //test memcached implementation
-        chaos::data::cache::CacheSettings settings;
+        chaos::common::data::cache::CacheSettings settings;
         
         settings.factor = 1.25;
         settings.maxbytes = 1 * 1024 * 1024;    // default is 64MB
@@ -107,7 +107,7 @@ int main(int argc, const char * argv[]) {
         settings.use_cas = 0;
         settings.preallocation = 0;
         
-        auto_ptr<chaos::data::cache::DataCache> fc(new chaos::data::cache::DataCache());
+        auto_ptr<chaos::common::data::cache::DataCache> fc(new chaos::common::data::cache::DataCache());
         fc->init(&settings);
         fc->start();
         

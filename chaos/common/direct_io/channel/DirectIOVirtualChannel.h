@@ -32,8 +32,9 @@ namespace chaos {
 			namespace channel {
 				class DirectIOVirtualChannel : public  NamedService {
 					friend class chaos::common::direct_io::DirectIOClient;
-					uint8_t channel_route_index;
+					
 				protected:
+					uint8_t channel_route_index;
 					DirectIOVirtualChannel(std::string _channel_name, uint8_t _channel_route_index);
 					virtual ~DirectIOVirtualChannel();
 				public:

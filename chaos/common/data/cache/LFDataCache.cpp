@@ -22,7 +22,7 @@
 #include <chaos/common/data/cache/LFDataCache.h>
 #include <boost/interprocess/detail/atomic.hpp>
 
-using namespace chaos::data::cache;
+using namespace chaos::common::data::cache;
 
 LFDataCache::LFDataCache(memory::ManagedMemory *_memoryPool):writeIndex(0),readIndex(1),memoryPool(_memoryPool),garbageableSlab(1) {
     

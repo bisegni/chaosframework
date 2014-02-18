@@ -1,5 +1,5 @@
 /*
- *	DirectIOEndpointHandler.h
+ *	DirectIODeviceServerChannel.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,16 +17,22 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef CHAOSFramework_ChannelGlobal_h
-#define CHAOSFramework_ChannelGlobal_h
-namespace chaos {
-	namespace common {
-		namespace direct_io {
-			namespace channel {
-#define DIOCDC_Channel_Index 1
-#define DIODataset_Channel_Index 2
-            }
-        }
-    }
+#include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>
+
+
+namespace chaos_data = chaos::common::data;
+using namespace chaos::common::direct_io;
+using namespace chaos::common::direct_io::channel;
+
+
+DirectIODeviceServerChannel::DirectIODeviceServerChannel(std::string alias):DirectIOVirtualServerChannel(alias, DIODataset_Channel_Index) {
+	//set this class as delegate for the endpoint
+	DirectIOVirtualServerChannel::setDelegate(this);
 }
-#endif
+
+void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
+	
+	
+	//delete pack
+	delete dataPack;
+}

@@ -133,7 +133,7 @@ void BenchTestCU::unitRun() throw(CException) {
     
     //get new data wrapper instance filled
     //with mandatory data
-    CDataWrapper *acquiredData = getNewDataWrapper();
+    chaos::common::data::CDataWrapper *acquiredData = getNewDataWrapper();
     if(!acquiredData) return;
     
     boost::shared_lock<boost::shared_mutex> lock(_setControlValueMutext);

@@ -42,7 +42,7 @@ uint16_t gUpdateMs = GARBAGE_THREAD_UPDATE_RATE_MS;
 bool threadWriteExecution = true;
 bool threadReadExecution = true;
 
-void cacheUpdaterI32(chaos::data::cache::KeyGroupCache *cPtr) {
+void cacheUpdaterI32(::chaos::common::data::cache::KeyGroupCache *cPtr) {
     do{
         int32_t i32TVal = INT32_TEST_VALUE;
         cPtr->updateKeyValue((uint16_t)0, &i32TVal);
@@ -51,8 +51,8 @@ void cacheUpdaterI32(chaos::data::cache::KeyGroupCache *cPtr) {
     } while (threadWriteExecution);
 }
 
-void cacheReader(chaos::data::cache::KeyGroupCache *cPtr) {
-    chaos::data::cache::ChannelValueAccessor accessor;
+void cacheReader(chaos::common::data::cache::KeyGroupCache *cPtr) {
+    chaos::common::data::cache::ChannelValueAccessor accessor;
     do {
         cPtr->getCurrentKeyAccessor((uint16_t)0, accessor);
         int32_t readed = *accessor.getValuePtr<int32_t>();
@@ -69,7 +69,7 @@ void cacheReader(chaos::data::cache::KeyGroupCache *cPtr) {
 }
 
 
-void cacheGarbage(chaos::data::cache::KeyGroupCache *cPtr) {
+void cacheGarbage(chaos::common::data::cache::KeyGroupCache *cPtr) {
     do {
         boost::this_thread::sleep_for(boost::chrono::milliseconds(gUpdateMs));
         cPtr->garbageCache();
@@ -111,7 +111,7 @@ int main(int argc, const char * argv[]) {
         std::cout << "Number of reader " << readersNumber << " at rate of " << rUpdateMs << " ms" << std::endl;
         std::cout << "Garbager at rate of " << gUpdateMs << " ms" << std::endl;
         
-        auto_ptr<chaos::data::cache::KeyGroupCache> dsCache(new chaos::data::cache::KeyGroupCache());
+        auto_ptr<chaos::common::data::cache::KeyGroupCache> dsCache(new chaos::common::data::cache::KeyGroupCache());
         dsCache->addKeyInfo("ch_i32", chaos::DataType::TYPE_INT32);
         dsCache->init(NULL);
         dsCache->start();

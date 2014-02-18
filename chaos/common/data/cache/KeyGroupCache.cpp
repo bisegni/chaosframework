@@ -20,7 +20,7 @@
 
 #include <chaos/common/data/cache/KeyGroupCache.h>
 
-using namespace chaos::data::cache;
+using namespace chaos::common::data::cache;
 
 KeyGroupCache::KeyGroupCache() {
     chCachePtrArray = NULL;

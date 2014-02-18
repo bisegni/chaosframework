@@ -11,7 +11,7 @@
 
 #include <chaos/common/data/cache/ChannelValueAccessor.h>
 
-using namespace chaos::data::cache;
+using namespace chaos::common::data::cache;
 
 ChannelValueAccessor::ChannelValueAccessor():slbPtr(NULL) {
     

@@ -252,16 +252,16 @@ void ZMQDirectIOClient::switchModeTo(DirectIOConnectionSpreadType::DirectIOConne
 }*/
 
 // send the data to the server layer on priority channel
-uint32_t ZMQDirectIOClient::sendPriorityData(DirectIODataPack *data_pack) {
+int64_t ZMQDirectIOClient::sendPriorityData(DirectIODataPack *data_pack) {
     return writeToSocket(socket_priority, data_pack);
 }
 
 // send the data to the server layer on the service channel
-uint32_t ZMQDirectIOClient::sendServiceData(DirectIODataPack *data_pack) {
+int64_t ZMQDirectIOClient::sendServiceData(DirectIODataPack *data_pack) {
     return writeToSocket(socket_service, data_pack);
 }
 
-uint32_t ZMQDirectIOClient::writeToSocket(void *socket, DirectIODataPack *data_pack) {
+int64_t ZMQDirectIOClient::writeToSocket(void *socket, DirectIODataPack *data_pack) {
     assert(socket && data_pack);
 	int err = 0;
 	ZMQDirectIOClientReadLock lock(mutex_socket_manipolation);
