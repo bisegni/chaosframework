@@ -9,6 +9,8 @@
 #ifndef __CHAOSFramework__CacheDriver__
 #define __CHAOSFramework__CacheDriver__
 
+#include "dataservice_global.h"
+
 #include <string>
 
 namespace chaos {
@@ -23,9 +25,9 @@ namespace chaos {
              */
             class CacheDriver {
             public:
-                virtual int putData(const char *key, void *value, void *value_len) = 0;
+                virtual int putData(uint32_t element_hash, void *value, void *value_len) = 0;
                 
-                virtual int getData(const char *key, void *value, void *value_len) = 0;
+                virtual int getData(uint32_t element_hash, void *value, void *value_len) = 0;
                 
                 virtual int addServer(std::string server_desc) = 0;
                 

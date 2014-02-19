@@ -24,29 +24,31 @@
 
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
+#include "dataservice_global.h"
 #include "DataConsumer.h"
+#include "worker/DataWorker.h"
+#include "cache_system/CacheDriver.h"
+
+#include <string>
+#include <vector>
 
 #include <boost/thread/condition.hpp>
 
 #include <chaos/common/global.h>
 #include <chaos/common/ChaosCommon.h>
 #include <chaos/common/thread/WaitSemaphore.h>
-#include <chaos/common/utility/StartableService.h>
 #include <chaos/common/network/NetworkBroker.h>
+#include <chaos/common/utility/StartableService.h>
+
 
 namespace common_utility = chaos::utility;
 
 namespace chaos{
     namespace data_service {
-        /*! \page page_cut The Control Unit Toolkit
-         *  \section page_cut_sec This toolkit represent the chaos driver for the real hardware to control
-         *
-         */
-        
-        //! Chaos Contorl Unit Framework Master Class
+
+		
+        //! Chaos Data Service singleton
         /*!
-         This class is a Singleton that need to be used to setup environment,
-         add Custom Control unit, and start all Contro Unit environment
          */
         class ChaosDataService : public ChaosCommon<ChaosDataService>, public common_utility::StartableService {
             friend class Singleton<ChaosDataService>;
@@ -56,11 +58,14 @@ namespace chaos{
             ChaosDataService();
             ~ChaosDataService();
             static void signalHanlder(int);
-            
+			
 			utility::StartableServiceContainer<chaos::NetworkBroker> *network_broker;
             utility::StartableServiceContainer<DataConsumer> *data_consumer;
 			utility::InizializableServiceContainer<DirectIOClient> *client;
         public:
+			//----------setting----------
+			ChaosDataServiceSetting settings;
+			
             //! C and C++ attribute parser
             /*!
              Specialized option for startup c and cpp program main options parameter

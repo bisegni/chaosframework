@@ -134,8 +134,6 @@
 		326DB47314B38BC00018A8D0 /* IODataDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40314B38BC00018A8D0 /* IODataDriver.h */; };
 		326DB47414B38BC00018A8D0 /* IOMemcachedDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB40414B38BC00018A8D0 /* IOMemcachedDriver.cpp */; };
 		326DB47514B38BC00018A8D0 /* IOMemcachedDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40514B38BC00018A8D0 /* IOMemcachedDriver.h */; };
-		326DB47614B38BC00018A8D0 /* OutputMongoDataDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB40614B38BC00018A8D0 /* OutputMongoDataDriver.cpp */; };
-		326DB47714B38BC00018A8D0 /* OutputMongoDataDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40714B38BC00018A8D0 /* OutputMongoDataDriver.h */; };
 		326DB47814B38BC00018A8D0 /* ChaosPool.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40914B38BC00018A8D0 /* ChaosPool.h */; };
 		326DB47914B38BC00018A8D0 /* CPoolMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40A14B38BC00018A8D0 /* CPoolMemory.h */; };
 		326DB47A14B38BC00018A8D0 /* CPoolMemoryObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB40B14B38BC00018A8D0 /* CPoolMemoryObject.h */; };
@@ -272,6 +270,9 @@
 		32B159D218B38C980096B58B /* DirectIODeviceClientChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B159D018B38C980096B58B /* DirectIODeviceClientChannel.h */; };
 		32B159D518B38CA50096B58B /* DirectIODeviceServerChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B159D318B38CA50096B58B /* DirectIODeviceServerChannel.cpp */; };
 		32B159D618B38CA50096B58B /* DirectIODeviceServerChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B159D418B38CA50096B58B /* DirectIODeviceServerChannel.h */; };
+		32B159DA18B4B9F90096B58B /* DataWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B159D818B4B9F90096B58B /* DataWorker.cpp */; };
+		32B159DE18B4D4210096B58B /* MemcachedCacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B159DC18B4D4200096B58B /* MemcachedCacheDriver.cpp */; };
+		32B159E218B4F66C0096B58B /* AnswerEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B159E018B4F66C0096B58B /* AnswerEngine.cpp */; };
 		32B57172168DF4750002A198 /* atomic_int.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B5714B168DF4750002A198 /* atomic_int.h */; };
 		32B57173168DF4750002A198 /* bson_extract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B5714C168DF4750002A198 /* bson_extract.cpp */; };
 		32B57174168DF4750002A198 /* bson_extract.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B5714D168DF4750002A198 /* bson_extract.h */; };
@@ -573,8 +574,6 @@
 		326DB40314B38BC00018A8D0 /* IODataDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = IODataDriver.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB40414B38BC00018A8D0 /* IOMemcachedDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = IOMemcachedDriver.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB40514B38BC00018A8D0 /* IOMemcachedDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = IOMemcachedDriver.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB40614B38BC00018A8D0 /* OutputMongoDataDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = OutputMongoDataDriver.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		326DB40714B38BC00018A8D0 /* OutputMongoDataDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = OutputMongoDataDriver.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB40914B38BC00018A8D0 /* ChaosPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ChaosPool.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB40A14B38BC00018A8D0 /* CPoolMemory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPoolMemory.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB40B14B38BC00018A8D0 /* CPoolMemoryObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CPoolMemoryObject.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -722,6 +721,13 @@
 		32B159D318B38CA50096B58B /* DirectIODeviceServerChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIODeviceServerChannel.cpp; sourceTree = "<group>"; };
 		32B159D418B38CA50096B58B /* DirectIODeviceServerChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIODeviceServerChannel.h; sourceTree = "<group>"; };
 		32B159D718B39FBB0096B58B /* DirectIODeviceChannelGlobal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectIODeviceChannelGlobal.h; sourceTree = "<group>"; };
+		32B159D818B4B9F90096B58B /* DataWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataWorker.cpp; sourceTree = "<group>"; };
+		32B159D918B4B9F90096B58B /* DataWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataWorker.h; sourceTree = "<group>"; };
+		32B159DC18B4D4200096B58B /* MemcachedCacheDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemcachedCacheDriver.cpp; sourceTree = "<group>"; };
+		32B159DD18B4D4210096B58B /* MemcachedCacheDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemcachedCacheDriver.h; sourceTree = "<group>"; };
+		32B159DF18B4F0DE0096B58B /* dataservice_global.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dataservice_global.h; sourceTree = "<group>"; };
+		32B159E018B4F66C0096B58B /* AnswerEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnswerEngine.cpp; sourceTree = "<group>"; };
+		32B159E118B4F66C0096B58B /* AnswerEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnswerEngine.h; sourceTree = "<group>"; };
 		32B5714B168DF4750002A198 /* atomic_int.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atomic_int.h; sourceTree = "<group>"; };
 		32B5714C168DF4750002A198 /* bson_extract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bson_extract.cpp; sourceTree = "<group>"; };
 		32B5714D168DF4750002A198 /* bson_extract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bson_extract.h; sourceTree = "<group>"; };
@@ -1024,10 +1030,14 @@
 			children = (
 				327CB2D8167E44D700AED2C6 /* CMakeLists.txt */,
 				323236D9164573F50052CE06 /* main.cpp */,
+				32B159DF18B4F0DE0096B58B /* dataservice_global.h */,
 				3299363418A7C4F60093E7F2 /* ChaosDataService.cpp */,
 				3299363518A7C4F60093E7F2 /* ChaosDataService.h */,
 				322D98FE18A95F9200C0864C /* DataConsumer.cpp */,
 				322D98FF18A95F9200C0864C /* DataConsumer.h */,
+				32B159E018B4F66C0096B58B /* AnswerEngine.cpp */,
+				32B159E118B4F66C0096B58B /* AnswerEngine.h */,
+				32B159DB18B4C46E0096B58B /* worker */,
 				3272152118B00650005AC8FD /* cache_system */,
 			);
 			path = ChaosDataService;
@@ -1389,8 +1399,6 @@
 				326DB40314B38BC00018A8D0 /* IODataDriver.h */,
 				326DB40414B38BC00018A8D0 /* IOMemcachedDriver.cpp */,
 				326DB40514B38BC00018A8D0 /* IOMemcachedDriver.h */,
-				326DB40614B38BC00018A8D0 /* OutputMongoDataDriver.cpp */,
-				326DB40714B38BC00018A8D0 /* OutputMongoDataDriver.h */,
 			);
 			path = io;
 			sourceTree = "<group>";
@@ -1602,6 +1610,8 @@
 		3272152118B00650005AC8FD /* cache_system */ = {
 			isa = PBXGroup;
 			children = (
+				32B159DC18B4D4200096B58B /* MemcachedCacheDriver.cpp */,
+				32B159DD18B4D4210096B58B /* MemcachedCacheDriver.h */,
 				3272152218B006BC005AC8FD /* CacheDriver.cpp */,
 				3272152318B006BC005AC8FD /* CacheDriver.h */,
 			);
@@ -1753,6 +1763,15 @@
 				32B159CC18AE08720096B58B /* ZMQSocketFeeder.h */,
 			);
 			path = impl;
+			sourceTree = "<group>";
+		};
+		32B159DB18B4C46E0096B58B /* worker */ = {
+			isa = PBXGroup;
+			children = (
+				32B159D818B4B9F90096B58B /* DataWorker.cpp */,
+				32B159D918B4B9F90096B58B /* DataWorker.h */,
+			);
+			path = worker;
 			sourceTree = "<group>";
 		};
 		32B5714A168DF4750002A198 /* util */ = {
@@ -1972,7 +1991,6 @@
 				326DB47214B38BC00018A8D0 /* global.h in Headers */,
 				326DB47314B38BC00018A8D0 /* IODataDriver.h in Headers */,
 				326DB47514B38BC00018A8D0 /* IOMemcachedDriver.h in Headers */,
-				326DB47714B38BC00018A8D0 /* OutputMongoDataDriver.h in Headers */,
 				326DB47814B38BC00018A8D0 /* ChaosPool.h in Headers */,
 				326DB47914B38BC00018A8D0 /* CPoolMemory.h in Headers */,
 				326DB47A14B38BC00018A8D0 /* CPoolMemoryObject.h in Headers */,
@@ -2397,8 +2415,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				3272152418B006BC005AC8FD /* CacheDriver.cpp in Sources */,
+				32B159E218B4F66C0096B58B /* AnswerEngine.cpp in Sources */,
 				323236DA164573F50052CE06 /* main.cpp in Sources */,
+				32B159DA18B4B9F90096B58B /* DataWorker.cpp in Sources */,
 				3299363618A7C4F60093E7F2 /* ChaosDataService.cpp in Sources */,
+				32B159DE18B4D4210096B58B /* MemcachedCacheDriver.cpp in Sources */,
 				322D990118A95F9200C0864C /* DataConsumer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2421,7 +2442,6 @@
 				320FB0EF18A3BF6D0014CDB3 /* DirectIOCDataWrapperServerChannel.cpp in Sources */,
 				326DB46D14B38BC00018A8D0 /* DomainActionsScheduler.cpp in Sources */,
 				326DB47414B38BC00018A8D0 /* IOMemcachedDriver.cpp in Sources */,
-				326DB47614B38BC00018A8D0 /* OutputMongoDataDriver.cpp in Sources */,
 				326DB48914B38BC00018A8D0 /* CThread.cpp in Sources */,
 				326DB48C14B38BC00018A8D0 /* CThreadGroup.cpp in Sources */,
 				32AAD78C14CD773F005A097C /* MessageChannel.cpp in Sources */,

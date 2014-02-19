@@ -24,7 +24,7 @@ SET(common_lib_src  ${common_lib_src}	direct_io/DirectIOClient.cpp direct_io/Dir
 										direct_io/channel/DirectIOVirtualChannel.cpp direct_io/channel/DirectIOVirtualClientChannel.cpp direct_io/channel/DirectIOVirtualServerChannel.cpp
 										direct_io/channel/DirectIOCDataWrapperClientChannel.cpp direct_io/channel/DirectIOCDataWrapperServerChannel.cpp 
 										direct_io/channel/DirectIODeviceClientChannel.cpp direct_io/channel/DirectIODeviceServerChannel.cpp)
-SET(common_lib_src  ${common_lib_src}	io/IODataDriver.cpp io/IOMemcachedDriver.cpp io/OutputMongoDataDriver.cpp)
+SET(common_lib_src  ${common_lib_src}	io/IODataDriver.cpp io/IOMemcachedDriver.cpp)
 SET(common_lib_src  ${common_lib_src}	message/DeviceMessageChannel.cpp message/MDSMessageChannel.cpp message/MessageChannel.cpp)
 SET(common_lib_src  ${common_lib_src}	network/NetworkBroker.cpp)
 SET(common_lib_src  ${common_lib_src}	rpc/RpcClient.cpp rpc/RpcServer.cpp rpc/msgpack/MsgPackClient.cpp rpc/msgpack/MsgPackServer.cpp)

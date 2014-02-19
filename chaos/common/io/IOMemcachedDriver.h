@@ -22,7 +22,7 @@
 #define IOMemcachedDriver_H
 
 #include <string>
-#include <libmemcached/memcached.hpp>
+#include <libmemcached/memcached.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 #include "IODataDriver.h"

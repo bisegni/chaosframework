@@ -81,7 +81,7 @@ int ServerFeeder::addServer(std::string server_desc) {
 	std::string normalized_server_desc = boost::algorithm::to_lower_copy(server_desc);
 	
 	//check if the description is well formed
-	if(!regex_match(server_desc, DirectIOHostNameRegExp) && !regex_match(server_desc, DirectIOIPAndPortRegExp)) return -1;
+	if(!regex_match(normalized_server_desc, DirectIOHostNameRegExp) && !regex_match(normalized_server_desc, DirectIOIPAndPortRegExp)) return -1;
 	
     //generate server hash
     uint32_t s_hash = data::cache::FastHash::hash(normalized_server_desc.c_str(), normalized_server_desc.size(), 0);

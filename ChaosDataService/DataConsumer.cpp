@@ -98,6 +98,20 @@ void DataConsumer::consumeCDataWrapper(uint8_t channel_tag, chaos::common::data:
     last_seq = seq;
 }
 
+
+void DataConsumer::consumeDeviceEvent(DeviceChannelOpcode::DeviceChannelOpcode channel_opcode, DirectIODeviceChannelHeaderData& channel_header, void *channel_data) {
+	chaos_data::CDataWrapper *serialized_data = NULL;
+	
+	switch (channel_opcode) {
+		case DeviceChannelOpcode::DeviceChannelOpcodePutOutput:
+			break;
+		case DeviceChannelOpcode::DeviceChannelOpcodePutOutputWithCache:
+			break;
+		default:
+			break;
+	}
+}
+
 void DataConsumer::simulateClient(DirectIOClient *client_instance) {
     DSLAPP_ << "Entering client thread";
 	

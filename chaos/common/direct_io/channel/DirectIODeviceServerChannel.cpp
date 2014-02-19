@@ -32,12 +32,23 @@ DirectIODeviceServerChannel::DirectIODeviceServerChannel(std::string alias):Dire
 	DirectIOVirtualServerChannel::setDelegate(this);
 }
 
+void DirectIODeviceServerChannel::setHandler(DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler *_handler) {
+	handler = _handler;
+}
+
 void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
-	uint8_t  opcode = dataPack->header.dispatcher_header.fields.channel_opcode;
-	uint32_t device_hash = byte_swap<host_endian, little_endian, uint32_t>(static_cast<DirectIODeviceChannelHeaderData*>(dataPack->channel_header_data)->device_hash);
-	chaos_data::CDataWrapper *data = new chaos_data::CDataWrapper(static_cast<const char *>(dataPack->channel_data));
+	CHAOS_ASSERT(handler)
 	
-	//delete pack
-	delete data;
+	DirectIODeviceChannelHeaderData channel_header;
+	
+	DeviceChannelOpcode::DeviceChannelOpcode  opcode = static_cast<DeviceChannelOpcode::DeviceChannelOpcode>(dataPack->header.dispatcher_header.fields.channel_opcode);
+
+	//convert hash
+	channel_header.device_hash = byte_swap<host_endian, little_endian, uint32_t>(static_cast<DirectIODeviceChannelHeaderData*>(dataPack->channel_header_data)->device_hash);
+
+	//forward event
+	handler->consumeDeviceEvent(opcode, channel_header, dataPack->channel_data);
+	
+	//delete datapack
 	delete dataPack;
 }

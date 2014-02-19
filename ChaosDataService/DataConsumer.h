@@ -20,9 +20,13 @@
 
 #ifndef __CHAOSFramework__DataConsumer__
 #define __CHAOSFramework__DataConsumer__
+
+#include "dataservice_global.h"
+
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/direct_io/DirectIOServerEndpoint.h>
 #include <chaos/common/direct_io/channel/DirectIOCDataWrapperServerChannel.h>
+#include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>
 #include <chaos/common/utility/TimingUtil.h>
 
 using namespace chaos::utility;
@@ -34,10 +38,14 @@ namespace chaos{
         
         class ChaosDataService;
         
-        class DataConsumer : public DirectIOCDataWrapperServerChannel::DirectIOCDataWrapperServerChannelHandler, public utility::StartableService {
+        class DataConsumer : public DirectIOCDataWrapperServerChannel::DirectIOCDataWrapperServerChannelHandler, public DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler, public utility::StartableService {
             friend class ChaosDataService;
+			
+			ChaosDataServiceSetting *settings;
             DirectIOServerEndpoint *server_endpoint;
+			DirectIODeviceServerChannel *device_channel;
             DirectIOCDataWrapperServerChannel *server_channel;
+			
 			boost::thread_group client_threads_group;
 			uint32_t	received;
 			uint32_t	last_received;
@@ -50,6 +58,7 @@ namespace chaos{
 			
 			void simulateClient(DirectIOClient *client_instance);
             void consumeCDataWrapper(uint8_t channel_opcode, chaos::common::data::CDataWrapper *data_wrapper);
+			void consumeDeviceEvent(DeviceChannelOpcode::DeviceChannelOpcode channel_opcode, DirectIODeviceChannelHeaderData& channel_header, void *channel_data);
         public:
 			DataConsumer();
             ~DataConsumer();

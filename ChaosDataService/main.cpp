@@ -20,13 +20,29 @@
 
 #include "ChaosDataService.h"
 
+#include <vector>
 #include <exception>
 
 using namespace chaos::data_service;
 
+#define OPT_CACHE_SERVER_LIST "cache_servers"
+
 int main(int argc, char * argv[]) {
     try {
+		std::vector<std::string> cache_servers;
+		
+		//data service parameter
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_CACHE_SERVER_LIST,
+																												"The list of the cache server",
+																												 &ChaosDataService::getInstance()->settings.startup_chache_servers);
+		
         ChaosDataService::getInstance()->init(argc, argv);
+		
+		if(!ChaosDataService::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CACHE_SERVER_LIST)) {
+			//no cache server provided
+			throw chaos::CException(-1, "No cache server provided", "Startup Sequence");
+		}
+		
         ChaosDataService::getInstance()->start();
     } catch(chaos::CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)

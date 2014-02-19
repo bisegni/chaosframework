@@ -45,12 +45,12 @@ void DirectIODeviceClientChannel::setDeviceID(std::string _device_id) {
 	device_id = _device_id;
 }
 
-int64_t DirectIODeviceClientChannel::sendWithPriority(uint8_t opcode, chaos_data::SerializationBuffer *serialization) {
+int64_t DirectIODeviceClientChannel::sendWithPriority(DeviceChannelOpcode::DeviceChannelOpcode opcode, chaos_data::SerializationBuffer *serialization) {
 	DirectIODataPack data_pack;
 	DirectIODeviceChannelHeaderData header_data;
 	
 	//set opcode
-	data_pack.header.dispatcher_header.fields.channel_opcode = opcode;
+	data_pack.header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode);
 	
 	//set header
 	header_data.device_hash = byte_swap<little_endian, host_endian, uint32_t>(device_hash);
@@ -60,12 +60,12 @@ int64_t DirectIODeviceClientChannel::sendWithPriority(uint8_t opcode, chaos_data
 	return client_instance->sendPriorityData(&data_pack);
 }
 
-int64_t DirectIODeviceClientChannel::sendWithService(uint8_t opcode, chaos_data::SerializationBuffer *serialization) {
+int64_t DirectIODeviceClientChannel::sendWithService(DeviceChannelOpcode::DeviceChannelOpcode opcode, chaos_data::SerializationBuffer *serialization) {
 	DirectIODataPack data_pack;
 	DirectIODeviceChannelHeaderData header_data;
 	
 	//set opcode
-	data_pack.header.dispatcher_header.fields.channel_opcode = opcode;
+	data_pack.header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode);
 	//set header
 	header_data.device_hash = byte_swap<little_endian, host_endian, uint32_t>(device_hash);
 	

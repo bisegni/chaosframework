@@ -85,6 +85,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
         CDSLAPP_ << "Allocate the Data Consumer";
         data_consumer = ALLOCATE_SS_CONTAINER_WI(DataConsumer, new DataConsumer(), true);
 		if(!data_consumer) throw chaos::CException(-1, "Error instantiating network broker", __PRETTY_FUNCTION__);
+		data_consumer->getPointer()->settings = &settings;
 		
 		CDSLAPP_ << "Get the endpoint and associate it to the Data Consumer";
 		data_consumer->getPointer()->server_endpoint = network_broker->getPointer()->getDirectIOServerEndpoint();

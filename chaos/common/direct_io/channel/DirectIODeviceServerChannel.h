@@ -35,7 +35,21 @@ namespace chaos {
 				
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DirectIODeviceServerChannel, DirectIOVirtualServerChannel), public chaos::common::direct_io::DirectIOEndpointHandler {
                     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIODeviceServerChannel)
+				public:
+					//! Device handler definition
+					typedef class DirectIODeviceServerChannelHandler {
+                    public:
+						//! Receive the CDataWrapper forwarded by the channel
+						/*!
+						 Receive the CdataWrapper forwarded by the channel, the deallocation is demanded to the handler
+						 */
+						virtual void consumeDeviceEvent(DeviceChannelOpcode::DeviceChannelOpcode channel_opcode, DirectIODeviceChannelHeaderData& channel_header, void *channel_data) = 0;
+					} DirectIODeviceServerChannelHandler;
+
+                    void setHandler(DirectIODeviceServerChannelHandler *_handler);
 				protected:
+					//! Handler for the event
+					DirectIODeviceServerChannelHandler *handler;
 					
 					DirectIODeviceServerChannel(std::string alias);
 					

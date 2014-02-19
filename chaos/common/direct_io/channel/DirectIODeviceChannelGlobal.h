@@ -16,12 +16,21 @@ namespace chaos {
 		namespace direct_io {
 			namespace channel {
 				
-#define DIRECT_IO_DEVICE_CHANNEL_OPCODE_PUT_OUTPUT_CHANNEL				1
-#define DIRECT_IO_DEVICE_CHANNEL_OPCODE_PUT_OUTPUT_CHANNEL_WITH_LIVE	2
-#define DIRECT_IO_DEVICE_CHANNEL_OPCODE_PUT_INPUT_CHANNEL				3
-#define DIRECT_IO_DEVICE_CHANNEL_OPCODE_PUT_INPUT_CHANNEL_WITH_LIVE		4
-#define DIRECT_IO_DEVICE_CHANNEL_OPCODE_PUT_NEW_RECEIVED_COMMAND		5
-				
+				namespace DeviceChannelOpcode {
+
+					/*!
+						\enum DeviceChannelOpcode
+						Opcode used by the DirectIO device channel
+					 */
+					typedef enum DeviceChannelOpcode {
+						DeviceChannelOpcodePutOutput = 1,			/**< send the output dataset */
+						DeviceChannelOpcodePutOutputWithCache,		/**< send the output dataset with cache specification */
+						DeviceChannelOpcodeGetOutputFromCache,		/**< request the output dataset from the cache */
+						DeviceChannelOpcodePutInput,				/**< send the input dataset */
+						DeviceChannelOpcodePutInputWithCache,		/**< send the input dataset with cache specification */
+						DeviceChannelOpcodePutNewReceivedCommand	/**< send over the channel the received command */
+					} DeviceChannelOpcode;
+				}
 				typedef struct DirectIODeviceChannelHeaderData {
 					uint32_t device_hash;
 				} DirectIODeviceChannelHeaderData, *DirectIODeviceChannelHeaderDataPtr;
