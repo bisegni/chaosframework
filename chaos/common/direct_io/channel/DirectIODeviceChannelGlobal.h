@@ -23,12 +23,12 @@ namespace chaos {
 						Opcode used by the DirectIO device channel
 					 */
 					typedef enum DeviceChannelOpcode {
-						DeviceChannelOpcodePutOutput = 1,			/**< send the output dataset */
-						DeviceChannelOpcodePutOutputWithCache,		/**< send the output dataset with cache specification */
-						DeviceChannelOpcodeGetOutputFromCache,		/**< request the output dataset from the cache */
-						DeviceChannelOpcodePutInput,				/**< send the input dataset */
-						DeviceChannelOpcodePutInputWithCache,		/**< send the input dataset with cache specification */
-						DeviceChannelOpcodePutNewReceivedCommand	/**< send over the channel the received command */
+						DeviceChannelOpcodePutOutput				= 1,	/**< send the output dataset */
+						DeviceChannelOpcodePutOutputWithCache		= 2,	/**< send the output dataset with cache specification */
+						DeviceChannelOpcodeGetOutputFromCache		= 4,	/**< request the output dataset from the cache */
+						DeviceChannelOpcodePutInput					= 8,	/**< send the input dataset */
+						DeviceChannelOpcodePutInputWithCache		= 16,	/**< send the input dataset with cache specification */
+						DeviceChannelOpcodePutNewReceivedCommand	= 32	/**< send over the channel the received command */
 					} DeviceChannelOpcode;
 				}
 				typedef struct DirectIODeviceChannelHeaderData {

@@ -13,6 +13,8 @@
 
 #include <string>
 #include <libmemcached/memcached.hpp>
+#include <chaos/common/utility/ObjectFactoryRegister.h>
+
 namespace chaos {
     namespace data_service {
         namespace cache_system {
@@ -23,12 +25,16 @@ namespace chaos {
              work to do on cache. Cache system is to be intended as global
              to all CacheDriver instance.
              */
-            class MemcachedCacheDriver : public CacheDriver {
+			REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(MemcachedCacheDriver, CacheDriver) {
+				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(MemcachedCacheDriver)
+
 				memcached_st *memcache_client;
 				
-				bool validateString(std::string& server_description, std::vector<std::string> tokens);
+				MemcachedCacheDriver(std::string alias);
+
+				
+				bool validateString(std::string& server_description, std::vector<std::string>& tokens);
             public:
-				MemcachedCacheDriver();
 				~MemcachedCacheDriver();
 				
                 int putData(uint32_t element_hash, void *value, uint32_t value_len);

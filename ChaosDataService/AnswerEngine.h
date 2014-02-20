@@ -22,6 +22,8 @@
 #include <chaos/common/direct_io/channel/DirectIODeviceClientChannel.h>
 #include <chaos/common/network/NetworkBroker.h>
 
+#include <boost/shared_ptr.hpp>
+
 using namespace chaos::utility;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
@@ -33,15 +35,19 @@ namespace chaos{
 		
 		class AnswerEngine : public InizializableService {
 			friend class ChaosDataService;
+						
+			typedef std::map<uint32_t, boost::shared_ptr<DirectIOClient> >::iterator MapClientIterator;
+			std::map<uint32_t, boost::shared_ptr<DirectIOClient> > map_client;
 			
+			typedef std::map<uint32_t, DirectIODeviceClientChannel* >::iterator MapChannelIterator;
+			std::map<uint32_t, DirectIODeviceClientChannel* > map_channel;
 			
-			std::map<uint32_t, utility::InizializableServiceContainer<DirectIOClient> *> map_client;
-			std::map<uint32_t, DirectIODeviceClientChannel *> map_channel;
-			utility::StartableServiceContainer<chaos::NetworkBroker> *network_broker;
+			//network broker instance
+			chaos::NetworkBroker *network_broker;
 
+		public:
 			AnswerEngine();
 			~AnswerEngine();
-		public:
 			int registerNewClient(uint32_t client_hash, std::string client_address);
 			void sendCacheAnswher(uint32_t client_hash, void *answer);
 			

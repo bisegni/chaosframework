@@ -22,10 +22,10 @@
 #define __CHAOSFramework__DataConsumer__
 
 #include "dataservice_global.h"
-
+#include "AnswerEngine.h"
+#include "cache_system/cache_system.h"
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/direct_io/DirectIOServerEndpoint.h>
-#include <chaos/common/direct_io/channel/DirectIOCDataWrapperServerChannel.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>
 #include <chaos/common/utility/TimingUtil.h>
 
@@ -38,25 +38,16 @@ namespace chaos{
         
         class ChaosDataService;
         
-        class DataConsumer : public DirectIOCDataWrapperServerChannel::DirectIOCDataWrapperServerChannelHandler, public DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler, public utility::StartableService {
+        class DataConsumer : public DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler, public utility::StartableService {
             friend class ChaosDataService;
+			std::string cache_impl_name;
 			
-			ChaosDataServiceSetting *settings;
-            DirectIOServerEndpoint *server_endpoint;
+			AnswerEngine				*answer_engine;
+			ChaosDataServiceSetting		*settings;
+            DirectIOServerEndpoint		*server_endpoint;
 			DirectIODeviceServerChannel *device_channel;
-            DirectIOCDataWrapperServerChannel *server_channel;
+			cache_system::CacheDriver	*cache_driver_instance;
 			
-			boost::thread_group client_threads_group;
-			uint32_t	received;
-			uint32_t	last_received;
-			uint64_t	last_received_ts;
-			uint32_t	sent;
-			uint32_t	last_sent;
-			uint64_t	last_sent_ts;
-            uint32_t    last_seq;
-			chaos::TimingUtil timing_util;
-			
-			void simulateClient(DirectIOClient *client_instance);
             void consumeCDataWrapper(uint8_t channel_opcode, chaos::common::data::CDataWrapper *data_wrapper);
 			void consumeDeviceEvent(DeviceChannelOpcode::DeviceChannelOpcode channel_opcode, DirectIODeviceChannelHeaderData& channel_header, void *channel_data);
         public:
@@ -66,8 +57,7 @@ namespace chaos{
             void start() throw (chaos::CException);
             void stop() throw (chaos::CException);
             void deinit() throw (chaos::CException);
-			
-			void addClient(DirectIOClient *client);
+
         };
     }
 }

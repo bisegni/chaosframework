@@ -21,8 +21,8 @@
 #include "DataConsumer.h"
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
-#include <chaos/common/direct_io/DirectIOClient.h>
-#include <chaos/common/direct_io/channel/DirectIOCDataWrapperClientChannel.h>
+//#include <chaos/common/direct_io/DirectIOClient.h>
+//#include <chaos/common/direct_io/channel/DirectIOCDataWrapperClientChannel.h>
 #include <boost/thread.hpp>
 
 using namespace chaos::data_service;
@@ -35,9 +35,7 @@ using namespace chaos::common::direct_io::channel;
 #define DSLDBG_ LDBG_ << DataConsumer_LOG_HEAD
 #define DSLERR_ LERR_ << DataConsumer_LOG_HEAD
 
-bool work = false;
-
-DataConsumer::DataConsumer():sent(0), received(0), last_sent(0), last_received(0) {
+DataConsumer::DataConsumer() {
     
 }
 
@@ -46,100 +44,61 @@ DataConsumer::~DataConsumer() {
 }
 
 void DataConsumer::init(void *init_data) throw (chaos::CException) {
-	if(!server_endpoint) throw chaos::CException(-1, "Invalid server endpoint", __FUNCTION__);
-	DSLAPP_ << "DataCOnsumer initialized with endpoint "<< server_endpoint->getRouteIndex();
+	if(!settings)  throw chaos::CException(-1, "No setting provided", __FUNCTION__);
+	if(!settings->cache_driver_impl.size())  throw chaos::CException(-2, "No cache implemetation provided", __FUNCTION__);
+	if(!settings->startup_chache_servers.size())  throw chaos::CException(-3, "No cache servers provided", __FUNCTION__);
 	
-	DSLAPP_ << "Allocating DirectIOCDataWrapperServerChannel";
-	server_channel = (DirectIOCDataWrapperServerChannel*)server_endpoint->getNewChannelInstance("DirectIOCDataWrapperServerChannel");
-	if(!server_channel) throw chaos::CException(-2, "Error allocating rpc server channel", __FUNCTION__);
-
+	if(!server_endpoint) throw chaos::CException(-4, "Invalid server endpoint", __FUNCTION__);
+	DSLAPP_ << "DataConsumer initialized with endpoint "<< server_endpoint->getRouteIndex();
 	
+	DSLAPP_ << "Allocating DirectIODeviceServerChannel";
+	device_channel = (DirectIODeviceServerChannel*)server_endpoint->getNewChannelInstance("DirectIODeviceServerChannel");
+	if(!device_channel) throw chaos::CException(-5, "Error allocating device server channel", __FUNCTION__);
+	device_channel->setHandler(this);
 	
-	server_channel->setHandler(this);
+	cache_impl_name = settings->cache_driver_impl;
+	cache_impl_name.append("CacheDriver");
+	DSLAPP_ << "The cache implementation to allocate is " << cache_impl_name;
+	//cache_driver_instance
+	cache_driver_instance = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name.c_str());
+	if(!cache_driver_instance) throw chaos::CException(-6, "Error allocating cache driver", __FUNCTION__);
 	
-	last_received_ts = last_sent_ts = timing_util.getTimeStamp();
+	DSLAPP_ << "Configure server on cache driver";
+	for(CacheServerListIterator iter = settings->startup_chache_servers.begin();
+		iter != settings->startup_chache_servers.end();
+		iter++) {
+		if(cache_driver_instance->addServer(*iter)) {
+			DSLERR_ << "Error registering server " << *iter;
+		} else {
+			DSLERR_ << "Registered server " << *iter;
+		}
+	}
 }
 
 void DataConsumer::start() throw (chaos::CException) {
-    DSLAPP_ << "Start Data Consumer";
-    work = true;
 }
 
 void DataConsumer::stop() throw (chaos::CException) {
-    DSLAPP_ << "Stop Data Consumer";
-    work = false;
-    client_threads_group.join_all();
 }
 
 void DataConsumer::deinit() throw (chaos::CException) {
 	DSLAPP_ << "Release DirectIOCDataWrapperServerChannel into the endpoint";
-	server_endpoint->releaseChannelInstance(server_channel);
-}
-
-
-void DataConsumer::consumeCDataWrapper(uint8_t channel_tag, chaos::common::data::CDataWrapper *data_wrapper) {
-	received++;
-    uint32_t seq = data_wrapper->getUInt32Value("int_val");
-    if(received>0) {
-        if(seq > last_seq + 1) {
-            DSLAPP_ << "broke sequence of ->" << seq- last_seq;
-        }
-    }
-    
-	if((received % 4000) == 0) {
-		uint64_t time_spent = timing_util.getTimeStamp()-last_received_ts;
-		DSLAPP_ << "total received " << received << " - received "<< (received - last_received) << " in " << time_spent << " msec";
-		last_received = received;
-		last_received_ts = timing_util.getTimeStamp();
-	}
+	server_endpoint->releaseChannelInstance(device_channel);
 	
-	if(data_wrapper) delete(data_wrapper);
-    
-    last_seq = seq;
+	DSLAPP_ << "Release cache Driver";
+	if(cache_driver_instance) delete(cache_driver_instance);
 }
 
 
 void DataConsumer::consumeDeviceEvent(DeviceChannelOpcode::DeviceChannelOpcode channel_opcode, DirectIODeviceChannelHeaderData& channel_header, void *channel_data) {
-	chaos_data::CDataWrapper *serialized_data = NULL;
-	
+	chaos_data::CDataWrapper *data = NULL;
+	chaos_data::SerializationBuffer *serialization = NULL;
 	switch (channel_opcode) {
-		case DeviceChannelOpcode::DeviceChannelOpcodePutOutput:
-			break;
 		case DeviceChannelOpcode::DeviceChannelOpcodePutOutputWithCache:
-			break;
+			data = static_cast<chaos_data::CDataWrapper*>(channel_data);
+			serialization = data->getBSONData();
+			cache_driver_instance->putData(channel_header.device_hash, (void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen());
 		default:
 			break;
 	}
-}
-
-void DataConsumer::simulateClient(DirectIOClient *client_instance) {
-    DSLAPP_ << "Entering client thread";
-	
-	DSLAPP_ << "get DirectIOCDataWrapperClientChannel channel";
-	DirectIOCDataWrapperClientChannel *channel = (DirectIOCDataWrapperClientChannel*)client_instance->getNewChannelInstance("DirectIOCDataWrapperClientChannel");
-
-	while(work) {
-		chaos::common::data::CDataWrapper data;
-		data.addInt32Value("int_val", sent++);
-		data.addStringValue("string_val", "str data");
-		
-		chaos::common::data::SerializationBuffer *s = data.getBSONData();
-		channel->pushCDataWrapperSerializationBuffer(0, (uint8_t)1, s);
-		delete(s);
-		
-		if((sent % 4000) == 0) {
-			uint64_t time_spent = timing_util.getTimeStamp()-last_sent_ts;
-			DSLAPP_ << "total sent "<< sent << " - sent"<< (sent - last_sent) << " in " << time_spent << " msec";
-			last_sent = sent;
-			last_sent_ts = timing_util.getTimeStamp();
-		}
-	}
-	
-    DSLAPP_ << "deregistering channel";
-	client_instance->releaseChannelInstance(channel);
-	DSLAPP_ << "client channel deregistered";
-}
-
-void DataConsumer::addClient(DirectIOClient *client) {
-	client_threads_group.add_thread(new thread(boost::bind(&DataConsumer::simulateClient, this, client)));
 }

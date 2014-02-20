@@ -728,6 +728,7 @@
 		32B159DF18B4F0DE0096B58B /* dataservice_global.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dataservice_global.h; sourceTree = "<group>"; };
 		32B159E018B4F66C0096B58B /* AnswerEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnswerEngine.cpp; sourceTree = "<group>"; };
 		32B159E118B4F66C0096B58B /* AnswerEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnswerEngine.h; sourceTree = "<group>"; };
+		32B159E318B635580096B58B /* cache_system.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cache_system.h; sourceTree = "<group>"; };
 		32B5714B168DF4750002A198 /* atomic_int.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atomic_int.h; sourceTree = "<group>"; };
 		32B5714C168DF4750002A198 /* bson_extract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bson_extract.cpp; sourceTree = "<group>"; };
 		32B5714D168DF4750002A198 /* bson_extract.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bson_extract.h; sourceTree = "<group>"; };
@@ -1614,6 +1615,7 @@
 				32B159DD18B4D4210096B58B /* MemcachedCacheDriver.h */,
 				3272152218B006BC005AC8FD /* CacheDriver.cpp */,
 				3272152318B006BC005AC8FD /* CacheDriver.h */,
+				32B159E318B635580096B58B /* cache_system.h */,
 			);
 			path = cache_system;
 			sourceTree = "<group>";

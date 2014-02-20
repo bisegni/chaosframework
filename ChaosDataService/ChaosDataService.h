@@ -26,6 +26,7 @@
 
 #include "dataservice_global.h"
 #include "DataConsumer.h"
+#include "AnswerEngine.h"
 #include "worker/DataWorker.h"
 #include "cache_system/CacheDriver.h"
 
@@ -59,9 +60,9 @@ namespace chaos{
             ~ChaosDataService();
             static void signalHanlder(int);
 			
-			utility::StartableServiceContainer<chaos::NetworkBroker> *network_broker;
-            utility::StartableServiceContainer<DataConsumer> *data_consumer;
-			utility::InizializableServiceContainer<DirectIOClient> *client;
+			utility::StartableServiceContainer<chaos::NetworkBroker> network_broker;
+            utility::StartableServiceContainer<DataConsumer> data_consumer;
+			utility::InizializableServiceContainer<AnswerEngine> answer_engine;
         public:
 			//----------setting----------
 			ChaosDataServiceSetting settings;

@@ -110,6 +110,7 @@ namespace chaos {
             const char * service_name;
 			T *startable_service_instance;
 		public:
+			InizializableServiceContainer():delete_on_dispose(true), startable_service_instance(NULL), service_name("") {}
 			InizializableServiceContainer(bool _delete_on_dispose, const char * instance_name):delete_on_dispose(_delete_on_dispose), startable_service_instance(new T()), service_name(instance_name) {}
 			InizializableServiceContainer(T *instance, bool _delete_on_dispose, const char * instance_name):startable_service_instance(instance), delete_on_dispose(_delete_on_dispose), service_name(instance_name) {}
 			~InizializableServiceContainer() {
@@ -123,13 +124,25 @@ namespace chaos {
 			bool deinit(const char * const domainString) {
 				return InizializableService::deinitImplementation(startable_service_instance, service_name, domainString);
 			}
+			T* get() {
+				return startable_service_instance;
+			}
+			void reset(T *new_instance, const char * instance_name) {
+				if(startable_service_instance) {
+					delete startable_service_instance;
+				}
+				startable_service_instance = new_instance;
+				service_name = instance_name;
+			}
 			
-			inline T* getPointer() {
+			T& operator*() {
+				return *startable_service_instance;
+			}
+			
+			T* operator->() {
 				return startable_service_instance;
 			}
 		};
-#define ALLOCATE_IS_CONTAINER(T, b) new chaos::utility::InizializableServiceContainer<T>(b, #T)
-#define ALLOCATE_IS_CONTAINER_WI(T, i, b) new chaos::utility::InizializableServiceContainer<T>(i, b, #T)
     }
 }
 

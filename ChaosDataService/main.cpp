@@ -25,13 +25,19 @@
 
 using namespace chaos::data_service;
 
-#define OPT_CACHE_SERVER_LIST "cache_servers"
+#define OPT_CACHE_SERVER_LIST	"cache_servers"
+#define OPT_CACHE_DRIVER		"cache_driver"
 
 int main(int argc, char * argv[]) {
     try {
 		std::vector<std::string> cache_servers;
 		
 		//data service parameter
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_CACHE_DRIVER,
+																									"Cache driver implementation",
+																									"Memcached",
+																									&ChaosDataService::getInstance()->settings.cache_driver_impl);
+		
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_CACHE_SERVER_LIST,
 																												"The list of the cache server",
 																												 &ChaosDataService::getInstance()->settings.startup_chache_servers);

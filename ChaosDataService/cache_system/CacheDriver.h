@@ -13,6 +13,7 @@
 
 #include <string>
 
+#include <chaos/common/utility/NamedService.h>
 namespace chaos {
     namespace data_service {
         namespace cache_system {
@@ -23,12 +24,16 @@ namespace chaos {
              work to do on cache. Cache system is to be intended as global
              to all CacheDriver instance.
              */
-            class CacheDriver {
+            class CacheDriver : public chaos::NamedService {
+			protected:
+				CacheDriver(std::string alias);
             public:
-                virtual int putData(uint32_t element_hash, void *value, void *value_len) = 0;
+				virtual ~CacheDriver();
+				
+                virtual int putData(uint32_t element_hash, void *value, uint32_t value_len) = 0;
                 
-                virtual int getData(uint32_t element_hash, void *value, void *value_len) = 0;
-                
+                virtual int getData(uint32_t element_hash, void **value, uint32_t& value_len) = 0;
+
                 virtual int addServer(std::string server_desc) = 0;
                 
                 virtual int removeServer(std::string server_desc) = 0;

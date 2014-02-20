@@ -21,7 +21,7 @@ static const boost::regex MemcachedIPAndPortRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]
 
 
 using namespace chaos::data_service::cache_system;
-MemcachedCacheDriver::MemcachedCacheDriver():memcache_client(NULL) {
+MemcachedCacheDriver::MemcachedCacheDriver(std::string alias): CacheDriver(alias), memcache_client(NULL) {
 	
 	//memcached_return_t configResult = MEMCACHED_SUCCESS;
 	
@@ -50,7 +50,7 @@ int MemcachedCacheDriver::getData(uint32_t element_hash, void **value, uint32_t&
 	return *value != NULL;
 }
 
-bool MemcachedCacheDriver::validateString(std::string& server_description, std::vector<std::string> tokens) {
+bool MemcachedCacheDriver::validateString(std::string& server_description, std::vector<std::string> &tokens) {
 	boost::algorithm::trim(server_description);
 	std::string normalized_server_desc = boost::algorithm::to_lower_copy(server_description);
 	
@@ -65,7 +65,7 @@ int MemcachedCacheDriver::addServer(std::string server_desc) {
 	//check if the description is well formed
 	std::vector<std::string> tokens;
 	memcached_return_t err = MEMCACHED_SUCCESS;
-	if(!validateString(server_desc, tokens)) return false;
+	if(!validateString(server_desc, tokens)) return -1;
 
 	err = memcached_server_add(memcache_client, tokens[0].c_str(), boost::lexical_cast<int>(tokens[1]));
 	return err != MEMCACHED_SUCCESS;
