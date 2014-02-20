@@ -9,7 +9,9 @@
 #ifndef CHAOSFramework_DirectIODeviceChannelGlobal_h
 #define CHAOSFramework_DirectIODeviceChannelGlobal_h
 
+#include <string>
 #include <stdint.h>
+#include <arpa/inet.h>
 
 namespace chaos {
 	namespace common {
@@ -31,10 +33,22 @@ namespace chaos {
 						DeviceChannelOpcodePutNewReceivedCommand	= 32	/**< send over the channel the received command */
 					} DeviceChannelOpcode;
 				}
+				
 				typedef struct DirectIODeviceChannelHeaderData {
 					uint32_t device_hash;
 				} DirectIODeviceChannelHeaderData, *DirectIODeviceChannelHeaderDataPtr;
 				
+				typedef	union DirectIODeviceChannelHeaderGetOpcode {
+					char raw_data[12];
+					struct header {
+					uint32_t	device_hash;
+					uint32_t	address;
+					uint16_t	port;
+					uint16_t	endpoint;
+					} field;
+				} DirectIODeviceChannelHeaderGetOpcode, *DirectIODeviceChannelHeaderGetOpcodePtr;
+				
+#define			IP_TO_UI32(x,i) int inet_pton(AF_INET, x, &i);
 			}
 		}
 	}
