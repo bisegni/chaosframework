@@ -45,7 +45,7 @@ void DirectIODeviceClientChannel::setDeviceID(std::string _device_id) {
 	device_id = _device_id;
 }
 
-int64_t DirectIODeviceClientChannel::putDataOutputChannel(bool cache_it, chaos_data::SerializationBuffer *serialization) {
+int64_t DirectIODeviceClientChannel::putDataOutputChannel(bool cache_it, void *buffer, uint32_t buffer_len) {
 	DirectIODataPack data_pack;
 	DirectIODeviceChannelHeaderPutOpcode header_data;
 	
@@ -56,6 +56,6 @@ int64_t DirectIODeviceClientChannel::putDataOutputChannel(bool cache_it, chaos_d
 	header_data.device_hash = byte_swap<little_endian, host_endian, uint32_t>(device_hash);
 	
 	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, &header_data, sizeof(DirectIODeviceChannelHeaderData))
-	DIRECT_IO_SET_CHANNEL_DATA(data_pack, (void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen())
+	DIRECT_IO_SET_CHANNEL_DATA(data_pack, buffer, buffer_len)
 	return client_instance->sendPriorityData(&data_pack);
 }

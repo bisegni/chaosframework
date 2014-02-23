@@ -26,6 +26,7 @@
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>
+
 #include <queue>
 #include <boost/lexical_cast.hpp>
 #include <boost/thread.hpp>
@@ -55,6 +56,7 @@ namespace chaos {
 		boost::thread_group t_group;
     protected:
         queue<T*> bufferQueue;
+        //boost::lockfree::queue<T*> bufferQueue;
         bool inDeinit;
         int outputThreadNumber;
         mutable boost::mutex qMutex;

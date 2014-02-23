@@ -52,7 +52,7 @@ namespace chaos {
 					void setDeviceID(std::string _device_id);
 					
 					//! Send device serialization with priority
-					int64_t putDataOutputChannel(bool cache_it, chaos_data::SerializationBuffer *serialization);
+                    int64_t putDataOutputChannel(bool cache_it, void *buffer, uint32_t buffer_len);
 					
 				};
 

@@ -95,12 +95,23 @@ void DataConsumer::consumeDeviceEvent(opcode::DeviceChannelOpcode channel_opcode
 	chaos_data::CDataWrapper *data = NULL;
 	chaos_data::SerializationBuffer *serialization = NULL;
 	switch (channel_opcode) {
-		case opcode::DeviceChannelOpcodePutOutputWithCache:
+		case opcode::DeviceChannelOpcodePutOutputWithCache: {
             opcode_headers::DirectIODeviceChannelHeaderPutOpcode header;
             header.device_hash = byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)channel_header_ptr));
 			data = static_cast<chaos_data::CDataWrapper*>(channel_data);
 			serialization = data->getBSONData();
 			cache_driver_instance->putData(header.device_hash, (void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen());
+            break;
+        }
+        case opcode::DeviceChannelOpcodeGetOutputFromCache: {
+            opcode_headers::DirectIODeviceChannelHeaderGetOpcode header;
+            //decode the endianes off the data
+            header.field.device_hash = TO_LITTE_ENDNS(uint32_t, channel_header_ptr, 0);
+            header.field.address = TO_LITTE_ENDNS(uint32_t, channel_header_ptr, 4);
+            header.field.port = TO_LITTE_ENDNS(uint32_t, channel_header_ptr, 8);
+            header.field.endpoint = TO_LITTE_ENDNS(uint32_t, channel_header_ptr, 10);
+            break;
+        }
 		default:
 			break;
 	}

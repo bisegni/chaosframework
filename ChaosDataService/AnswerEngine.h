@@ -23,6 +23,7 @@
 #include <chaos/common/network/NetworkBroker.h>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/lockfree/queue.hpp>
 
 using namespace chaos::utility;
 using namespace chaos::common::direct_io;
@@ -45,11 +46,12 @@ namespace chaos{
 			//network broker instance
 			chaos::NetworkBroker *network_broker;
 
+           // boost::lockfree::queue<T*> bufferQueue;
 		public:
 			AnswerEngine();
 			~AnswerEngine();
 			int registerNewClient(uint32_t client_hash, std::string client_address);
-			void sendCacheAnswher(uint32_t client_hash, void *answer);
+			void sendCacheAnswher(uint32_t client_hash, void *buffer, uint32_t buffer_len);
 			
 			//! Initialize instance
             void init(void *init_data) throw(chaos::CException);
