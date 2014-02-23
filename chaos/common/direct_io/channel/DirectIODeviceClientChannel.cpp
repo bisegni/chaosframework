@@ -27,7 +27,7 @@ namespace chaos_data = chaos::common::data;
 namespace chaos_cache = chaos::common::data::cache;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
-
+using namespace chaos::common::direct_io::channel::opcode_headers;
 
 DirectIODeviceClientChannel::DirectIODeviceClientChannel(std::string alias):DirectIOVirtualClientChannel(alias, DIODataset_Channel_Index, true) {
 
@@ -45,12 +45,12 @@ void DirectIODeviceClientChannel::setDeviceID(std::string _device_id) {
 	device_id = _device_id;
 }
 
-int64_t DirectIODeviceClientChannel::sendWithPriority(DeviceChannelOpcode::DeviceChannelOpcode opcode, chaos_data::SerializationBuffer *serialization) {
+int64_t DirectIODeviceClientChannel::putDataOutputChannel(bool cache_it, chaos_data::SerializationBuffer *serialization) {
 	DirectIODataPack data_pack;
-	DirectIODeviceChannelHeaderData header_data;
+	DirectIODeviceChannelHeaderPutOpcode header_data;
 	
 	//set opcode
-	data_pack.header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode);
+	data_pack.header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(cache_it?opcode::DeviceChannelOpcodePutOutputWithCache:opcode::DeviceChannelOpcodePutOutputWithCache);
 	
 	//set header
 	header_data.device_hash = byte_swap<little_endian, host_endian, uint32_t>(device_hash);
@@ -58,19 +58,4 @@ int64_t DirectIODeviceClientChannel::sendWithPriority(DeviceChannelOpcode::Devic
 	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, &header_data, sizeof(DirectIODeviceChannelHeaderData))
 	DIRECT_IO_SET_CHANNEL_DATA(data_pack, (void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen())
 	return client_instance->sendPriorityData(&data_pack);
-}
-
-int64_t DirectIODeviceClientChannel::sendWithService(DeviceChannelOpcode::DeviceChannelOpcode opcode, chaos_data::SerializationBuffer *serialization) {
-	DirectIODataPack data_pack;
-	DirectIODeviceChannelHeaderData header_data;
-	
-	//set opcode
-	data_pack.header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode);
-	//set header
-	header_data.device_hash = byte_swap<little_endian, host_endian, uint32_t>(device_hash);
-	
-	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, &header_data, sizeof(DirectIODeviceChannelHeaderData))
-	DIRECT_IO_SET_CHANNEL_DATA(data_pack, (void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen())
-	return client_instance->sendServiceData(&data_pack);
-
 }

@@ -25,6 +25,7 @@
 namespace chaos_data = chaos::common::data;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
+using namespace chaos::common::direct_io::channel::opcode_headers;
 
 
 DirectIODeviceServerChannel::DirectIODeviceServerChannel(std::string alias):DirectIOVirtualServerChannel(alias, DIODataset_Channel_Index) {
@@ -39,15 +40,11 @@ void DirectIODeviceServerChannel::setHandler(DirectIODeviceServerChannel::Direct
 void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
 	CHAOS_ASSERT(handler)
 	
-	DirectIODeviceChannelHeaderData channel_header;
-	
-	DeviceChannelOpcode::DeviceChannelOpcode  opcode = static_cast<DeviceChannelOpcode::DeviceChannelOpcode>(dataPack->header.dispatcher_header.fields.channel_opcode);
-
-	//convert hash
-	channel_header.device_hash = byte_swap<host_endian, little_endian, uint32_t>(static_cast<DirectIODeviceChannelHeaderData*>(dataPack->channel_header_data)->device_hash);
+    // the opcode
+	opcode::DeviceChannelOpcode  opcode = static_cast<opcode::DeviceChannelOpcode>(dataPack->header.dispatcher_header.fields.channel_opcode);
 
 	//forward event
-	handler->consumeDeviceEvent(opcode, channel_header, dataPack->channel_data);
+	handler->consumeDeviceEvent(opcode, dataPack->channel_header_data, dataPack->channel_data);
 	
 	//delete datapack
 	delete dataPack;

@@ -42,8 +42,11 @@ namespace chaos {
 						//! Receive the CDataWrapper forwarded by the channel
 						/*!
 						 Receive the CdataWrapper forwarded by the channel, the deallocation is demanded to the handler
+                         \param channel_opcode the opcode of the comand received by the channel
+                         \param channel_header_ptr the abstract pointr for the channel header. Implementations need to cast it according to opcode value
+                         \param channel_data the data (if speified by channel)
 						 */
-						virtual void consumeDeviceEvent(DeviceChannelOpcode::DeviceChannelOpcode channel_opcode, DirectIODeviceChannelHeaderData& channel_header, void *channel_data) = 0;
+						virtual void consumeDeviceEvent(opcode::DeviceChannelOpcode channel_opcode, void* channel_header_ptr, void *channel_data) = 0;
 					} DirectIODeviceServerChannelHandler;
 
                     void setHandler(DirectIODeviceServerChannelHandler *_handler);

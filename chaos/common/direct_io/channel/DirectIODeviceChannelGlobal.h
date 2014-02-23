@@ -18,11 +18,11 @@ namespace chaos {
 		namespace direct_io {
 			namespace channel {
 				
-				namespace DeviceChannelOpcode {
-
+				namespace opcode {
+                    
 					/*!
-						\enum DeviceChannelOpcode
-						Opcode used by the DirectIO device channel
+                     \enum DeviceChannelOpcode
+                     Opcode used by the DirectIO device channel
 					 */
 					typedef enum DeviceChannelOpcode {
 						DeviceChannelOpcodePutOutput				= 1,	/**< send the output dataset */
@@ -34,21 +34,34 @@ namespace chaos {
 					} DeviceChannelOpcode;
 				}
 				
-				typedef struct DirectIODeviceChannelHeaderData {
-					uint32_t device_hash;
-				} DirectIODeviceChannelHeaderData, *DirectIODeviceChannelHeaderDataPtr;
-				
-				typedef	union DirectIODeviceChannelHeaderGetOpcode {
-					char raw_data[12];
-					struct header {
-					uint32_t	device_hash;
-					uint32_t	address;
-					uint16_t	port;
-					uint16_t	endpoint;
-					} field;
-				} DirectIODeviceChannelHeaderGetOpcode, *DirectIODeviceChannelHeaderGetOpcodePtr;
-				
+                
+                //! Name space for grupping the varius headers for every DeviceChannelOpcode
+                namespace opcode_headers {
+                    
+                    //! Heder for the DeviceChannelOpcodePutOutput[WithCache] opcodes
+                    typedef struct DirectIODeviceChannelHeaderPutOpcode {
+                        //! The 32bit hash value for the device that we need to insert
+                        uint32_t device_hash;
+                    } DirectIODeviceChannelHeaderData, *DirectIODeviceChannelHeaderDataPtr;
+                    
+                    //! Heder for the DeviceChannelOpcodeGetOutputFromCache opcode
+                    typedef	union DirectIODeviceChannelHeaderGetOpcode {
+                        //raw data representation of the header
+                        char raw_data[12];
+                        struct header {
+                            //! The 32bit hash value for the device that we need to get
+                            uint32_t	device_hash;
+                            //! The 32bit representation for the ip where send the answer
+                            uint32_t	address;
+                            //! The port value for the device that we need to get
+                            uint16_t	port;
+                            //! The endpoint where the channel is published
+                            uint16_t	endpoint;
+                        } field;
+                    } DirectIODeviceChannelHeaderGetOpcode, *DirectIODeviceChannelHeaderGetOpcodePtr;
+                    
 #define			IP_TO_UI32(x,i) int inet_pton(AF_INET, x, &i);
+                }
 			}
 		}
 	}

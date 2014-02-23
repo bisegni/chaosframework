@@ -51,7 +51,7 @@ int AnswerEngine::registerNewClient(uint32_t client_hash, std::string client_add
 
 void AnswerEngine::sendCacheAnswher(uint32_t client_hash, void *answer) {
 	//send answer to client
-	map_channel[client_hash]->sendWithPriority(DeviceChannelOpcode::DeviceChannelOpcodePutInputWithCache, static_cast<chaos::common::data::SerializationBuffer*>(answer));
+	map_channel[client_hash]->putDataOutputChannel(true, static_cast<chaos::common::data::SerializationBuffer*>(answer));
 }
 
 //! Initialize instance

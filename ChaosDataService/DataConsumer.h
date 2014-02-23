@@ -32,7 +32,7 @@
 using namespace chaos::utility;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
-
+using namespace chaos::common::direct_io::channel::opcode_headers;
 namespace chaos{
     namespace data_service {
         
@@ -49,7 +49,7 @@ namespace chaos{
 			cache_system::CacheDriver	*cache_driver_instance;
 			
             void consumeCDataWrapper(uint8_t channel_opcode, chaos::common::data::CDataWrapper *data_wrapper);
-			void consumeDeviceEvent(DeviceChannelOpcode::DeviceChannelOpcode channel_opcode, DirectIODeviceChannelHeaderData& channel_header, void *channel_data);
+			void consumeDeviceEvent(opcode::DeviceChannelOpcode channel_opcode, void *channel_header_ptr, void *channel_data);
         public:
 			DataConsumer();
             ~DataConsumer();

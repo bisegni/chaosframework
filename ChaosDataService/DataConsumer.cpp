@@ -21,6 +21,7 @@
 #include "DataConsumer.h"
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
+#include <chaos/common/utility/endianess.h>
 //#include <chaos/common/direct_io/DirectIOClient.h>
 //#include <chaos/common/direct_io/channel/DirectIOCDataWrapperClientChannel.h>
 #include <boost/thread.hpp>
@@ -90,14 +91,16 @@ void DataConsumer::deinit() throw (chaos::CException) {
 }
 
 
-void DataConsumer::consumeDeviceEvent(DeviceChannelOpcode::DeviceChannelOpcode channel_opcode, DirectIODeviceChannelHeaderData& channel_header, void *channel_data) {
+void DataConsumer::consumeDeviceEvent(opcode::DeviceChannelOpcode channel_opcode, void* channel_header_ptr, void *channel_data) {
 	chaos_data::CDataWrapper *data = NULL;
 	chaos_data::SerializationBuffer *serialization = NULL;
 	switch (channel_opcode) {
-		case DeviceChannelOpcode::DeviceChannelOpcodePutOutputWithCache:
+		case opcode::DeviceChannelOpcodePutOutputWithCache:
+            opcode_headers::DirectIODeviceChannelHeaderPutOpcode header;
+            header.device_hash = byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)channel_header_ptr));
 			data = static_cast<chaos_data::CDataWrapper*>(channel_data);
 			serialization = data->getBSONData();
-			cache_driver_instance->putData(channel_header.device_hash, (void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen());
+			cache_driver_instance->putData(header.device_hash, (void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen());
 		default:
 			break;
 	}
