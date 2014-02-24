@@ -59,3 +59,8 @@ int64_t DirectIODeviceClientChannel::putDataOutputChannel(bool cache_it, void *b
 	DIRECT_IO_SET_CHANNEL_DATA(data_pack, buffer, buffer_len)
 	return client_instance->sendPriorityData(&data_pack);
 }
+
+//! Send device serialization with priority
+int64_t DirectIODeviceClientChannel::getLastDataOutputChannel(void **buffer, uint32_t& buffer_len) {
+	return 0;
+}

@@ -36,6 +36,12 @@ namespace b_algo = boost::algorithm;
 #define DIOLDBG_ LDBG_ << DIO_LOG_HEAD
 #define DIOLERR_ LERR_ << DIO_LOG_HEAD
 
+// current client ip in string form
+std::string DirectIOClient::my_str_ip;
+
+// current client ip in 64 bit form
+uint64_t DirectIOClient::my_i32_ip = 0;
+
 DirectIOClient::DirectIOClient(string alias):NamedService(alias), connection_mode(DirectIOConnectionSpreadType::DirectIONoSetting) {
 	
 }

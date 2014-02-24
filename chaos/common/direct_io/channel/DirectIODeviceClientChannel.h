@@ -54,6 +54,8 @@ namespace chaos {
 					//! Send device serialization with priority
                     int64_t putDataOutputChannel(bool cache_it, void *buffer, uint32_t buffer_len);
 					
+					//! Send device serialization with priority
+                    int64_t getLastDataOutputChannel(void **buffer, uint32_t& buffer_len);
 				};
 
 				

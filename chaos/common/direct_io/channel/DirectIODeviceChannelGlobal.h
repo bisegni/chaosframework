@@ -49,18 +49,16 @@ namespace chaos {
                         //raw data representation of the header
                         char raw_data[12];
                         struct header {
-                            //! The 32bit hash value for the device that we need to get
+                                //! The 32bit hash value for the device that we need to get
                             uint32_t	device_hash;
-                            //! The 32bit representation for the ip where send the answer
-                            uint32_t	address;
-                            //! The port value for the device that we need to get
-                            uint16_t	port;
-                            //! The endpoint where the channel is published
+                                //! The endpoint where the channel is published
                             uint16_t	endpoint;
+                                //! The port value for the device that we need to get
+                            uint16_t	port;
+                                //! The 32bit representation for the ip where send the answer
+                            uint64_t	address;
                         } field;
                     } DirectIODeviceChannelHeaderGetOpcode, *DirectIODeviceChannelHeaderGetOpcodePtr;
-                    
-#define			IP_TO_UI32(x,i) int inet_pton(AF_INET, x, &i);
                 }
 			}
 		}

@@ -41,10 +41,31 @@ void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
 	CHAOS_ASSERT(handler)
 	
     // the opcode
-	opcode::DeviceChannelOpcode  opcode = static_cast<opcode::DeviceChannelOpcode>(dataPack->header.dispatcher_header.fields.channel_opcode);
+	opcode::DeviceChannelOpcode  channel_opcode = static_cast<opcode::DeviceChannelOpcode>(dataPack->header.dispatcher_header.fields.channel_opcode);
 
+	switch (channel_opcode) {
+		case opcode::DeviceChannelOpcodePutOutputWithCache: {
+            opcode_headers::DirectIODeviceChannelHeaderPutOpcode header;
+            header.device_hash = byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)dataPack->channel_header_data));
+			handler->consumePutEvent(header, dataPack->channel_data, dataPack->header.channel_data_size);
+            break;
+        }
+        case opcode::DeviceChannelOpcodeGetOutputFromCache: {
+            opcode_headers::DirectIODeviceChannelHeaderGetOpcode header;
+            //decode the endianes off the data
+            header.field.device_hash = TO_LITTE_ENDNS(uint32_t, dataPack->channel_header_data, 0);
+            header.field.address = TO_LITTE_ENDNS(uint32_t, dataPack->channel_header_data, 4);
+            header.field.port = TO_LITTE_ENDNS(uint32_t, dataPack->channel_header_data, 8);
+            header.field.endpoint = TO_LITTE_ENDNS(uint32_t, dataPack->channel_header_data, 10);
+			handler->consumeGetEvent(header, dataPack->channel_data, dataPack->header.channel_data_size);
+            break;
+        }
+		default:
+			break;
+	}
+	
 	//forward event
-	handler->consumeDeviceEvent(opcode, dataPack->channel_header_data, dataPack->channel_data);
+	
 	
 	//delete datapack
 	delete dataPack;

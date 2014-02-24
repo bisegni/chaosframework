@@ -90,29 +90,15 @@ void DataConsumer::deinit() throw (chaos::CException) {
 	if(cache_driver_instance) delete(cache_driver_instance);
 }
 
+void DataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode header, void *channel_data, uint32_t channel_data_len) {
+    cache_driver_instance->putData(header.device_hash, channel_data, channel_data_len);
+}
 
-void DataConsumer::consumeDeviceEvent(opcode::DeviceChannelOpcode channel_opcode, void* channel_header_ptr, void *channel_data) {
-	chaos_data::CDataWrapper *data = NULL;
-	chaos_data::SerializationBuffer *serialization = NULL;
-	switch (channel_opcode) {
-		case opcode::DeviceChannelOpcodePutOutputWithCache: {
-            opcode_headers::DirectIODeviceChannelHeaderPutOpcode header;
-            header.device_hash = byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)channel_header_ptr));
-			data = static_cast<chaos_data::CDataWrapper*>(channel_data);
-			serialization = data->getBSONData();
-			cache_driver_instance->putData(header.device_hash, (void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen());
-            break;
-        }
-        case opcode::DeviceChannelOpcodeGetOutputFromCache: {
-            opcode_headers::DirectIODeviceChannelHeaderGetOpcode header;
-            //decode the endianes off the data
-            header.field.device_hash = TO_LITTE_ENDNS(uint32_t, channel_header_ptr, 0);
-            header.field.address = TO_LITTE_ENDNS(uint32_t, channel_header_ptr, 4);
-            header.field.port = TO_LITTE_ENDNS(uint32_t, channel_header_ptr, 8);
-            header.field.endpoint = TO_LITTE_ENDNS(uint32_t, channel_header_ptr, 10);
-            break;
-        }
-		default:
-			break;
-	}
+void DataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode header, void *channel_data, uint32_t channel_data_len) {
+    void *cached_data;
+    uint32_t cached_data_len;
+    if(cache_driver_instance->getData(header.field.device_hash, &cached_data, cached_data_len)) {
+            //error
+    }
+    answer_engine->sendCacheAnswher(header.field.device_hash, cached_data, cached_data_len);
 }

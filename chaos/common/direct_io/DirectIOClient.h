@@ -40,6 +40,9 @@
 
 
 namespace chaos {
+	
+	class NetworkBroker;
+	
 	namespace common {
 		namespace direct_io {
 			
@@ -55,7 +58,9 @@ namespace chaos {
 				dio_client---> data message -->dio_server
 			 */
 			class DirectIOClient : public DirectIOForwarder, public NamedService, public chaos::utility::InizializableService, public ServerFeeder {
-                std::string impl_alias;
+				friend class chaos::NetworkBroker;
+				
+				std::string impl_alias;
                 
                 boost::atomic_uint channel_counter;
                 
@@ -68,6 +73,14 @@ namespace chaos {
                 void clearChannelInstancerAndInstance();
 				
             protected:
+				
+				//! current client ip in string form
+				static std::string my_str_ip;
+				
+				//! current client ip in 32 bit form
+				static uint64_t my_i32_ip;
+				
+				//!connection type
 				DirectIOConnectionSpreadType::DirectIOConnectionSpreadType connection_mode;
 				
 			public:

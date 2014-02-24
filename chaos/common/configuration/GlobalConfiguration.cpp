@@ -183,8 +183,6 @@ void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& o
     if (metadataServerAddress.size()>0) {
         addMetadataServerAddress(metadataServerAddress);
     }
-    
-    
 }
 
 

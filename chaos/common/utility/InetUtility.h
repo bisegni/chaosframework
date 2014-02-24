@@ -31,6 +31,7 @@
 #include <arpa/inet.h>
 #include <chaos/common/global.h>
 #include <boost/regex.hpp>
+#include <boost/asio.hpp>
 
 namespace chaos {
     
@@ -118,6 +119,10 @@ namespace chaos {
         static bool checkWellFormedHostPort(std::string host_port) {
             return regex_match(host_port, ServerIPRegExp);
         }
+		
+		
+#define		STRIP_TO_UI32(x)  boost::asio::ip::address_v4::from_string(x)
+#define		UI32_TO_STRIP(i, x) inet_ntop(AF_INET, x, &i); //const char * inet_ntop(int af, const void *src, char *dst, size_t size)
     };
 }
 #endif

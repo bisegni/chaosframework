@@ -30,6 +30,7 @@
 #include <chaos/common/dispatcher/AbstractEventDispatcher.h>
 #include <chaos/common/event/channel/AlertEventChannel.h>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
+#include <chaos/common/utility/InetUtility.h>
 
 #define MB_LAPP LAPP_ << "[NetworkBroker]- "
 
@@ -99,6 +100,10 @@ void NetworkBroker::init(void *initData) throw(CException) {
 		
 		//initialize direct io server
         utility::StartableService::initImplementation(directIOServer, static_cast<void*>(globalConfiguration), directIOServer->getName(), __FUNCTION__);
+		
+		//init the my_ip variable for all client
+		common::direct_io::DirectIOClient::my_str_ip = GlobalConfiguration::getInstance()->getLocalServerAddress();
+		common::direct_io::DirectIOClient::my_i32_ip = STRIP_TO_UI32(common::direct_io::DirectIOClient::my_str_ip).to_ulong();
     }
 	//---------------------------- D I R E C T I/O ----------------------------
 	
@@ -556,7 +561,7 @@ void NetworkBroker::releaseDirectIOServerEndpoint(chaos_directio::DirectIOServer
 }
 //Return a new direct io client instance
 chaos_directio::DirectIOClient *NetworkBroker::getDirectIOClientInstance() {
-    MB_LAPP  << "Allcoate a new DirectIOClient of type " << directIOClientImpl;
+    MB_LAPP  << "Allocate a new DirectIOClient of type " << directIOClientImpl;
     return ObjectFactoryRegister<common::direct_io::DirectIOClient>::getInstance()->getNewInstanceByName(directIOClientImpl.c_str());
 }
 

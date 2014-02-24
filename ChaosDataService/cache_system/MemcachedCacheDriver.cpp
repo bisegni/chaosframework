@@ -47,7 +47,7 @@ int MemcachedCacheDriver::getData(uint32_t element_hash, void **value, uint32_t&
 	
 	*value =  memcached_get(memcache_client, (const char*)&element_hash, (size_t)4, &len, &flags,  &mcSetResult);
 	value_len = (uint32_t)len;
-	return *value != NULL;
+	return *value == NULL;
 }
 
 bool MemcachedCacheDriver::validateString(std::string& server_description, std::vector<std::string> &tokens) {
