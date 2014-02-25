@@ -7,10 +7,11 @@
 //
 
 #include "AnswerEngine.h"
+#include <chaos/common/utility/InetUtility.h>
 
 using namespace chaos::data_service;
 using namespace chaos::common::direct_io;
-
+using namespace chaos::common::direct_io::channel;
 #define AnswerEngine_LOG_HEAD "[AnswerEngine] - "
 
 #define AELAPP_ LAPP_ << AnswerEngine_LOG_HEAD
@@ -25,27 +26,34 @@ AnswerEngine::~AnswerEngine() {
 	
 }
 
-int AnswerEngine::registerNewClient(uint32_t client_hash, std::string client_address) {
-	if(InizializableService::getServiceState() == chaos::utility::service_state_machine::InizializableServiceType::IS_DEINTIATED)
-		return -1;
+int AnswerEngine::registerNewClient(opcode_headers::DirectIODeviceChannelHeaderGetOpcode& client_header) {
+	CHAOS_ASSERT(InizializableService::getServiceState() == chaos::utility::service_state_machine::InizializableServiceType::IS_INITIATED)
 	
+    if(map_client.count(client_header.field.device_hash)) {
+        //client already registered
+        return 0;
+    }
+    
 	boost::shared_ptr< DirectIOClient > new_client( network_broker->getDirectIOClientInstance() );
 	if(!new_client) return -2;
 
+        //initialize the client implementation
 	chaos::utility::InizializableService::initImplementation(new_client.get(), NULL, "DirectIOClient", __PRETTY_FUNCTION__);
-
+        //set conenction type for the client
 	new_client->setConnectionMode(DirectIOConnectionSpreadType::DirectIORoundRobin);
-	new_client->addServer(client_address);
+        //add the request client address
+	new_client->addServer(UI64_TO_STRIP(client_header.field.address));
 	
-	
+        //allcoate the client
 	DirectIODeviceClientChannel *device_channel = (DirectIODeviceClientChannel*)new_client->getNewChannelInstance("DirectIODeviceClientChannel");
 	if(!device_channel) {
+        chaos::utility::InizializableService::deinitImplementation(new_client.get(),  "DirectIOClient", __PRETTY_FUNCTION__);
 		return -3;
 	}
-	
-	//now we can add client and channel to the maps
-	map_channel.insert(make_pair(client_hash, device_channel));
-	map_client.insert(make_pair(client_hash, new_client));
+        //all is gone well
+        //now we can add client and channel to the maps
+	map_channel.insert(make_pair(client_header.field.device_hash, device_channel));
+	map_client.insert(make_pair(client_header.field.device_hash, new_client));
 	return 0;
 }
 

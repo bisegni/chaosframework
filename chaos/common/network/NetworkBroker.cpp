@@ -103,7 +103,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
 		
 		//init the my_ip variable for all client
 		common::direct_io::DirectIOClient::my_str_ip = GlobalConfiguration::getInstance()->getLocalServerAddress();
-		common::direct_io::DirectIOClient::my_i32_ip = STRIP_TO_UI32(common::direct_io::DirectIOClient::my_str_ip).to_ulong();
+		common::direct_io::DirectIOClient::my_i64_ip = STRIP_TO_UI64(common::direct_io::DirectIOClient::my_str_ip).to_ulong();
     }
 	//---------------------------- D I R E C T I/O ----------------------------
 	

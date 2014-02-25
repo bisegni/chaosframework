@@ -31,14 +31,13 @@
 namespace chaos {
 	namespace common {
 		namespace direct_io {
-			
-
+            class DirectIOServer;
 			//boost::function2<void, void*, uint32_t> delegate = priority_service?
            // boost::bind(&DirectIOHandler::serviceDataReceived, handler_impl, _1, _2):
            // boost::bind(&DirectIOHandler::priorityDataReceived, handler_impl, _1, _2);
 			//! Default dispatcher for the direct io system
 			class DirectIODispatcher : public common::direct_io::DirectIOHandler, public chaos::utility::StartableService {
-				
+				friend class DirectIOServer;
 				//! struct for fast delegation
 				struct EndpointFastDelegation {
 					bool enable;
@@ -51,6 +50,8 @@ namespace chaos {
 				
 				//!available index queue
 				boost::lockfree::queue<unsigned int> available_endpoint_slot;
+                
+                DirectIOServerPublicInterface *server_public_interface;
 			public:
 				DirectIODispatcher();
 				~DirectIODispatcher();
@@ -77,7 +78,6 @@ namespace chaos {
                 
                 // Event for a new data received
 				void serviceDataReceived(DirectIODataPack *data_pack);
-
 			};
 		}
 	}

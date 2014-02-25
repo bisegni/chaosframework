@@ -21,7 +21,7 @@
 
 using namespace chaos::common::direct_io;
 
-DirectIOServer::DirectIOServer(std::string alias):NamedService(alias) {
+DirectIOServer::DirectIOServer(std::string alias):NamedService(alias),priority_port(0), service_port(0) {
 	handler_impl = NULL;
 }
 
@@ -55,6 +55,7 @@ void DirectIOServer::setHandler(DirectIODispatcher *_handler_impl) {
 	if(StartableService::getServiceState() != ::chaos::utility::service_state_machine::InizializableServiceType::IS_DEINTIATED)
 		return;
 	handler_impl = _handler_impl;
+    handler_impl->server_public_interface = this;
 }
 
 //! Remove the handler pointer
@@ -62,4 +63,11 @@ void DirectIOServer::clearHandler() {
 	if(StartableService::getServiceState() != ::chaos::utility::service_state_machine::InizializableServiceType::IS_DEINTIATED)
 		return;
 	if(handler_impl) delete(handler_impl);
+}
+uint32_t DirectIOServer::getPriorityPort() {
+    return priority_port;
+}
+
+uint32_t DirectIOServer::getServicePort() {
+    return service_port;
 }

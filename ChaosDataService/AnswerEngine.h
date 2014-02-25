@@ -50,7 +50,7 @@ namespace chaos{
 		public:
 			AnswerEngine();
 			~AnswerEngine();
-			int registerNewClient(uint32_t client_hash, std::string client_address);
+			int registerNewClient(opcode_headers::DirectIODeviceChannelHeaderGetOpcode& client_header);
 			void sendCacheAnswher(uint32_t client_hash, void *buffer, uint32_t buffer_len);
 			
 			//! Initialize instance

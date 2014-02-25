@@ -29,7 +29,7 @@
 
 #include <chaos/common/direct_io/DirectIOTypes.h>
 #include <chaos/common/direct_io/DirectIODispatcher.h>
-
+#include <chaos/common/direct_io/DirectIOServerPublicInterface.h>
 namespace chaos {
 	namespace common {
 		namespace direct_io {
@@ -41,15 +41,17 @@ namespace chaos {
 				by different client
 				dio_client---> data message -->dio_server
 			 */
-			class DirectIOServer : public chaos::utility::StartableService, public NamedService  {
+			class DirectIOServer : public chaos::utility::StartableService, public NamedService, public DirectIOServerPublicInterface  {
 				//! handler implementation for the server instance
             protected:
+                int32_t priority_port;
+                int32_t service_port;
 				DirectIODispatcher *handler_impl;
 			public:
 				DirectIOServer(std::string alias);
 				
 				virtual ~DirectIOServer();
-				
+                
 				// Initialize instance
 				void init(void *init_data) throw(chaos::CException);
 				
@@ -67,6 +69,11 @@ namespace chaos {
 				
 				//! Remove the handler pointer
 				void clearHandler();
+                
+                uint32_t getPriorityPort();
+
+                uint32_t getServicePort();
+
 			};
 			
 		}

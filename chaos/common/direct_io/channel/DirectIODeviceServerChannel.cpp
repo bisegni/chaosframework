@@ -44,13 +44,14 @@ void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
 	opcode::DeviceChannelOpcode  channel_opcode = static_cast<opcode::DeviceChannelOpcode>(dataPack->header.dispatcher_header.fields.channel_opcode);
 
 	switch (channel_opcode) {
-		case opcode::DeviceChannelOpcodePutOutputWithCache: {
+		case opcode::DeviceChannelOpcodePutOutput: {
             opcode_headers::DirectIODeviceChannelHeaderPutOpcode header;
             header.device_hash = byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)dataPack->channel_header_data));
+            header.cache_tag = byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)dataPack->channel_header_data+4));
 			handler->consumePutEvent(header, dataPack->channel_data, dataPack->header.channel_data_size);
             break;
         }
-        case opcode::DeviceChannelOpcodeGetOutputFromCache: {
+        case opcode::DeviceChannelOpcodeGetLastOutput: {
             opcode_headers::DirectIODeviceChannelHeaderGetOpcode header;
             //decode the endianes off the data
             header.field.device_hash = TO_LITTE_ENDNS(uint32_t, dataPack->channel_header_data, 0);

@@ -53,10 +53,10 @@ void ZMQDirectIOServer::init(void *init_data) throw(chaos::CException) {
     if(!init_cw) throw chaos::CException(0, "No configration has been provided", __FUNCTION__);
 	
 	//get the port from configuration
-	int32_t priority_port = init_cw->getInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_PRIORITY_PORT);
+	priority_port = init_cw->getInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_PRIORITY_PORT);
 	if(priority_port <= 0) throw chaos::CException(0, "Bad priority port configured", __FUNCTION__);
 	
-	int32_t service_port = init_cw->getInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_SERVICE_PORT);
+	service_port = init_cw->getInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_SERVICE_PORT);
 	if(service_port <= 0) throw chaos::CException(0, "Bad service port configured", __FUNCTION__);
 	
 	//create the endpoint strings

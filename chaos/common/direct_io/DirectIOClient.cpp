@@ -40,7 +40,7 @@ namespace b_algo = boost::algorithm;
 std::string DirectIOClient::my_str_ip;
 
 // current client ip in 64 bit form
-uint64_t DirectIOClient::my_i32_ip = 0;
+uint64_t DirectIOClient::my_i64_ip = 0;
 
 DirectIOClient::DirectIOClient(string alias):NamedService(alias), connection_mode(DirectIOConnectionSpreadType::DirectIONoSetting) {
 	
@@ -48,6 +48,13 @@ DirectIOClient::DirectIOClient(string alias):NamedService(alias), connection_mod
 
 DirectIOClient::~DirectIOClient() {
     clearChannelInstancerAndInstance();
+}
+
+std::string DirectIOClient::getStrIp() {
+    return my_str_ip;
+}
+uint64_t DirectIOClient::getI64Ip() {
+    return my_i64_ip;
 }
 
 void DirectIOClient::clearChannelInstancerAndInstance() {

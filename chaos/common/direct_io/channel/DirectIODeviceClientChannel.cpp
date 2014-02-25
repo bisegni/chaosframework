@@ -21,7 +21,7 @@
 #include <chaos/common/utility/endianess.h>
 #include <chaos/common/data/cache/FastHash.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceClientChannel.h>
-
+#include <chaos/common/direct_io/DirectIOClient.h>
 
 namespace chaos_data = chaos::common::data;
 namespace chaos_cache = chaos::common::data::cache;
@@ -50,17 +50,29 @@ int64_t DirectIODeviceClientChannel::putDataOutputChannel(bool cache_it, void *b
 	DirectIODeviceChannelHeaderPutOpcode header_data;
 	
 	//set opcode
-	data_pack.header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(cache_it?opcode::DeviceChannelOpcodePutOutputWithCache:opcode::DeviceChannelOpcodePutOutputWithCache);
+	data_pack.header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodePutOutput);
 	
 	//set header
 	header_data.device_hash = byte_swap<little_endian, host_endian, uint32_t>(device_hash);
-	
+	header_data.cache_tag = byte_swap<little_endian, host_endian, uint32_t>(cache_it);
+
 	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, &header_data, sizeof(DirectIODeviceChannelHeaderData))
 	DIRECT_IO_SET_CHANNEL_DATA(data_pack, buffer, buffer_len)
 	return client_instance->sendPriorityData(&data_pack);
 }
 
 //! Send device serialization with priority
-int64_t DirectIODeviceClientChannel::getLastDataOutputChannel(void **buffer, uint32_t& buffer_len) {
-	return 0;
+int64_t DirectIODeviceClientChannel::requestLastOutputData(uint16_t server_port, uint16_t endpoint_idx) {
+	DirectIODataPack data_pack;
+	DirectIODeviceChannelHeaderGetOpcode header_data;
+	
+        //set opcode
+	data_pack.header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeGetLastOutput);
+    header_data.field.device_hash = byte_swap<little_endian, host_endian, uint32_t>(device_hash);
+    header_data.field.address = byte_swap<little_endian, host_endian, uint64_t>(((DirectIOClient*)client_instance)->getI64Ip());
+    header_data.field.port = byte_swap<little_endian, host_endian, uint16_t>(server_port);
+    header_data.field.endpoint = byte_swap<little_endian, host_endian, uint16_t>(endpoint_idx);
+        //set header
+    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, &header_data, sizeof(DirectIODeviceChannelHeaderGetOpcode))
+	return client_instance->sendPriorityData(&data_pack);
 }

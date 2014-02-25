@@ -28,7 +28,7 @@ using namespace chaos::common::direct_io;
 #define DIOSE_LDBG_ LDBG_ << DirectIOServerEndpoint_LOG_HEAD
 #define DIOSE_LERR_ LERR_ << DirectIOServerEndpoint_LOG_HEAD
 
-DirectIOServerEndpoint::DirectIOServerEndpoint() {
+DirectIOServerEndpoint::DirectIOServerEndpoint(): endpoint_route_index(0), server_public_interface(NULL) {
 	channel_slot = (channel::DirectIOVirtualServerChannel**)malloc(sizeof(channel::DirectIOVirtualServerChannel**)*MAX_ENDPOINT_CHANNEL);
 }
 
@@ -38,6 +38,10 @@ DirectIOServerEndpoint::~DirectIOServerEndpoint() {
 
 uint16_t DirectIOServerEndpoint::getRouteIndex() {
 	return endpoint_route_index;
+}
+
+DirectIOServerPublicInterface * DirectIOServerEndpoint::getPublicServerInterface() const {
+    return server_public_interface;
 }
 
 //! Add a new channel instantiator

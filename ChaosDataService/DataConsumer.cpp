@@ -22,6 +22,7 @@
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/endianess.h>
+#include <chaos/common/utility/InetUtility.h>
 //#include <chaos/common/direct_io/DirectIOClient.h>
 //#include <chaos/common/direct_io/channel/DirectIOCDataWrapperClientChannel.h>
 #include <boost/thread.hpp>
@@ -98,7 +99,8 @@ void DataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode header, 
     void *cached_data;
     uint32_t cached_data_len;
     if(cache_driver_instance->getData(header.field.device_hash, &cached_data, cached_data_len)) {
-            //error
+            //error getting data
     }
+    if(answer_engine->registerNewClient(header))
     answer_engine->sendCacheAnswher(header.field.device_hash, cached_data, cached_data_len);
 }

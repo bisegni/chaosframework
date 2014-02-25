@@ -111,6 +111,7 @@ DirectIOServerEndpoint *DirectIODispatcher::getNewEndpoint() {
 	}
 	//associate to the endpoint his slot index
 	endpoint_slot_array[next_available_slot]->endpoint->endpoint_route_index = next_available_slot;
+    endpoint_slot_array[next_available_slot]->endpoint->server_public_interface = server_public_interface;
 	endpoint_slot_array[next_available_slot]->enable = true;
 	return endpoint_slot_array[next_available_slot]->endpoint;
 }

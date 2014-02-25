@@ -121,8 +121,8 @@ namespace chaos {
         }
 		
 		
-#define		STRIP_TO_UI32(x)  boost::asio::ip::address_v4::from_string(x)
-#define		UI32_TO_STRIP(i, x) inet_ntop(AF_INET, x, &i); //const char * inet_ntop(int af, const void *src, char *dst, size_t size)
+#define		STRIP_TO_UI64(x)  boost::asio::ip::address_v4::from_string(x)
+#define		UI64_TO_STRIP(i)  boost::asio::ip::address_v4(i).to_string()
     };
 }
 #endif

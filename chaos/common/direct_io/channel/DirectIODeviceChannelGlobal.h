@@ -26,11 +26,9 @@ namespace chaos {
 					 */
 					typedef enum DeviceChannelOpcode {
 						DeviceChannelOpcodePutOutput				= 1,	/**< send the output dataset */
-						DeviceChannelOpcodePutOutputWithCache		= 2,	/**< send the output dataset with cache specification */
-						DeviceChannelOpcodeGetOutputFromCache		= 4,	/**< request the output dataset from the cache */
-						DeviceChannelOpcodePutInput					= 8,	/**< send the input dataset */
-						DeviceChannelOpcodePutInputWithCache		= 16,	/**< send the input dataset with cache specification */
-						DeviceChannelOpcodePutNewReceivedCommand	= 32	/**< send over the channel the received command */
+						DeviceChannelOpcodeGetLastOutput            = 2,	/**< request the output dataset*/
+						DeviceChannelOpcodePutInput					= 4,	/**< send the input dataset */
+						DeviceChannelOpcodePutNewReceivedCommand	= 8	/**< send over the channel the received command */
 					} DeviceChannelOpcode;
 				}
 				
@@ -42,6 +40,8 @@ namespace chaos {
                     typedef struct DirectIODeviceChannelHeaderPutOpcode {
                         //! The 32bit hash value for the device that we need to insert
                         uint32_t device_hash;
+                            //! The 32bit cache_tag
+                        uint32_t cache_tag;
                     } DirectIODeviceChannelHeaderData, *DirectIODeviceChannelHeaderDataPtr;
                     
                     //! Heder for the DeviceChannelOpcodeGetOutputFromCache opcode

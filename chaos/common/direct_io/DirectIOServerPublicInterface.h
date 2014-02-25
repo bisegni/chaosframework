@@ -1,5 +1,5 @@
 /*
- *	DirectIOEndpointHandler.h
+ *	DirectIOServerPublicInterface.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,19 +17,25 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef CHAOSFramework_DirectIOEndpointHandler_h
-#define CHAOSFramework_DirectIOEndpointHandler_h
+#ifndef CHAOSFramework_AbstractDirectIOServer_h
+#define CHAOSFramework_AbstractDirectIOServer_h
 
-#include <chaos/common/direct_io/DirectIODataPack.h>
+#include <stdint.h>
 namespace chaos {
 	namespace common {
 		namespace direct_io {
-			class DirectIOEndpointHandler {
-			public:
-				virtual void consumeDataPack(DirectIODataPack *dataPack) = 0;
-			};
-		}
-	}
+            
+            /*!
+             Direct io server public interface
+             */
+            class DirectIOServerPublicInterface {
+            public:
+                virtual uint32_t getPriorityPort() = 0;
+                virtual uint32_t getServicePort() = 0;
+            };
+            
+        }
+    }
 }
 
 #endif

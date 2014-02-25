@@ -24,6 +24,7 @@
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/direct_io/DirectIOHandler.h>
+#include <chaos/common/direct_io/DirectIOServerPublicInterface.h>
 #include <chaos/common/direct_io/channel/DirectIOVirtualServerChannel.h>
 
 #include <boost/thread.hpp>
@@ -41,7 +42,7 @@ namespace chaos {
 			
 			class DirectIOServerEndpoint : public DirectIOHandler {
 				friend class DirectIODispatcher;
-				
+                
 				boost::shared_mutex mutex_channel_slot;
 				
 				channel::DirectIOVirtualServerChannel **channel_slot;
@@ -52,7 +53,9 @@ namespace chaos {
 				 endpoint.
 				 */
 				uint16_t endpoint_route_index;
-				
+                
+                DirectIOServerPublicInterface *server_public_interface;
+                
 				DirectIOServerEndpoint();
 				~DirectIOServerEndpoint();
 				
@@ -70,7 +73,7 @@ namespace chaos {
                 void deregisterChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance);
 				
 				uint16_t getRouteIndex();
-				
+				DirectIOServerPublicInterface * getPublicServerInterface() const;
 				//! New channel allocation by name
 				/*!
 				 Allocate a new channel and initialize it
