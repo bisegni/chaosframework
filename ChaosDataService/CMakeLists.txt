@@ -1,5 +1,7 @@
 SET(cnd_src main.cpp)
-SET(cnd_src  ${cnd_src} ChaosDataService.cpp DataConsumer.cpp)
+SET(cnd_src  ${cnd_src} ChaosDataService.cpp DataConsumer.cpp AnswerEngine.cpp)
+SET(cnd_src  ${cnd_src} worker/DataWorker.cpp)
+SET(cnd_src  ${cnd_src} cache_system/CacheDriver.cpp cache_system/MemcachedCacheDriver.cpp)
 
 ADD_EXECUTABLE(ChaosDataService ${cnd_src})
 

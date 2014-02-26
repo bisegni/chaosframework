@@ -408,6 +408,8 @@
 		32EA501618A15BF000782435 /* DirectIODispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EA501418A15BF000782435 /* DirectIODispatcher.cpp */; };
 		32EA501718A15BF000782435 /* DirectIODispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EA501518A15BF000782435 /* DirectIODispatcher.h */; };
 		32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */; };
+		32EFCD6618BDE3A400B5EB77 /* IODirectIODriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32EFCD6418BDE3A400B5EB77 /* IODirectIODriver.cpp */; };
+		32EFCD6718BDE3A400B5EB77 /* IODirectIODriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 32EFCD6518BDE3A400B5EB77 /* IODirectIODriver.h */; };
 		32F2241B179AE3BC00853F62 /* RTAbstractControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F22419179AE3BC00853F62 /* RTAbstractControlUnit.cpp */; };
 		32F2241C179AE3BC00853F62 /* RTAbstractControlUnit.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F2241A179AE3BC00853F62 /* RTAbstractControlUnit.h */; };
 		32F2241F179AEED500853F62 /* SCAbstractControlUnit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32F2241D179AEED500853F62 /* SCAbstractControlUnit.cpp */; };
@@ -873,6 +875,8 @@
 		32EA501418A15BF000782435 /* DirectIODispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIODispatcher.cpp; sourceTree = "<group>"; };
 		32EA501518A15BF000782435 /* DirectIODispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIODispatcher.h; sourceTree = "<group>"; };
 		32ED648D14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleBufferCircularBuffer.h; sourceTree = "<group>"; };
+		32EFCD6418BDE3A400B5EB77 /* IODirectIODriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IODirectIODriver.cpp; sourceTree = "<group>"; };
+		32EFCD6518BDE3A400B5EB77 /* IODirectIODriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IODirectIODriver.h; sourceTree = "<group>"; };
 		32F22419179AE3BC00853F62 /* RTAbstractControlUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RTAbstractControlUnit.cpp; sourceTree = "<group>"; };
 		32F2241A179AE3BC00853F62 /* RTAbstractControlUnit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTAbstractControlUnit.h; sourceTree = "<group>"; };
 		32F2241D179AEED500853F62 /* SCAbstractControlUnit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SCAbstractControlUnit.cpp; sourceTree = "<group>"; };
@@ -1401,6 +1405,8 @@
 				326DB40314B38BC00018A8D0 /* IODataDriver.h */,
 				326DB40414B38BC00018A8D0 /* IOMemcachedDriver.cpp */,
 				326DB40514B38BC00018A8D0 /* IOMemcachedDriver.h */,
+				32EFCD6418BDE3A400B5EB77 /* IODirectIODriver.cpp */,
+				32EFCD6518BDE3A400B5EB77 /* IODirectIODriver.h */,
 			);
 			path = io;
 			sourceTree = "<group>";
@@ -2025,6 +2031,7 @@
 				32AAD78A14CD772F005A097C /* MessageChannel.h in Headers */,
 				32C353F31788015B009ED581 /* PluginDiscover.h in Headers */,
 				32AAD78E14CD95FD005A097C /* Atomic.h in Headers */,
+				32EFCD6718BDE3A400B5EB77 /* IODirectIODriver.h in Headers */,
 				32BFF90F176C842E00D27A04 /* InizializableService.h in Headers */,
 				3296032B1876B45000CDCADA /* BatchCommandTypes.h in Headers */,
 				326EA57814D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h in Headers */,
@@ -2505,6 +2512,7 @@
 				32B571B2168DFBAD0002A198 /* error_codes.cpp in Sources */,
 				32B571B6168DFBF10002A198 /* assert_util.cpp in Sources */,
 				32BFF912176C862A00D27A04 /* StartableService.cpp in Sources */,
+				32EFCD6618BDE3A400B5EB77 /* IODirectIODriver.cpp in Sources */,
 				32B571BA168DFC400002A198 /* status.cpp in Sources */,
 				3220F98118A4DBEB00B0A1D4 /* DirectIOVirtualChannel.cpp in Sources */,
 				32B571BE168DFCD50002A198 /* string_data.cpp in Sources */,

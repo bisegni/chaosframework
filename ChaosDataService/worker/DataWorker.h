@@ -9,7 +9,7 @@
 #ifndef __CHAOSFramework__DataWorker__
 #define __CHAOSFramework__DataWorker__
 
-#include "dataservice_global.h"
+#include "../dataservice_global.h"
 
 #include <chaos/common/utility/StartableService.h>
 

@@ -9,7 +9,7 @@
 #ifndef __CHAOSFramework__CacheDriver__
 #define __CHAOSFramework__CacheDriver__
 
-#include "dataservice_global.h"
+#include "../dataservice_global.h"
 
 #include <string>
 
