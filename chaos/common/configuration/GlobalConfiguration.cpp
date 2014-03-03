@@ -37,6 +37,8 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
     try{
         addOption(InitOption::OPT_HELP, "Produce help message");
         
+		addOption(InitOption::OPT_DATA_IO_IMPL, po::value< string >()->default_value("IOMemcached"), "Specify the data io implementation");
+		
 		addOption(InitOption::OPT_DIRECT_IO_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the direct io implementation");
 		addOption(InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, po::value<int>()->default_value(_DIRECT_IO_PRIORITY_PORT), "DirectIO priority server port");
 		addOption(InitOption::OPT_DIRECT_IO_SERVICE_SERVER_PORT, po::value<int>()->default_value(_DIRECT_IO_SERVICE_PORT), "DirectIO service server port");

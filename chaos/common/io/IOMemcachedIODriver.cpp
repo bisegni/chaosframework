@@ -1,5 +1,5 @@
 /*	
- *	IOMemcachedDriver.cpp
+ *	IOMemcachedIODriver.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *	
@@ -21,7 +21,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include "IOMemcachedDriver.h"
+#include "IOMemcachedIODriver.h"
 #include <chaos/common/chaos_constants.h>
 #include "../global.h"
 
@@ -40,14 +40,14 @@ namespace chaos{
     /*
      * Driver constructor
      */
-    IOMemcachedDriver::IOMemcachedDriver() {
+    IOMemcachedIODriver::IOMemcachedIODriver(std::string alias):NamedService(alias) {
         memClient = NULL;
     }
     
     /*
      * Driver distructor
      */
-    IOMemcachedDriver::~IOMemcachedDriver() {
+    IOMemcachedIODriver::~IOMemcachedIODriver() {
         //delete memcache client instance
         if(memClient) {
             memcached_free(memClient);
@@ -58,20 +58,20 @@ namespace chaos{
      * Init method, the has map has all received value for configuration
      * every implemented driver need to get all needed configuration param
      */
-    void IOMemcachedDriver::init() throw(CException) {
+    void IOMemcachedIODriver::init() throw(CException) {
         IODataDriver::init();
         LMEMDRIVER_ << "Initializing Driver with libmemcache: " << LIBMEMCACHED_VERSION_STRING;
         
         //memcached_return_t configResult = MEMCACHED_SUCCESS;
         
         memClient = memcached(NULL, 0);
-        if(!memClient) throw CException(0, "LibMemcached structure has not been allocated", "IOMemcachedDriver::init");
+        if(!memClient) throw CException(0, "LibMemcached structure has not been allocated", "IOMemcachedIODriver::init");
     }
     
     /*
      * Deinitialization of memcached driver
      */
-    void IOMemcachedDriver::deinit() throw(CException) {
+    void IOMemcachedIODriver::deinit() throw(CException) {
         IODataDriver::deinit();
         if(memClient){
             memcached_free(memClient);
@@ -83,7 +83,7 @@ namespace chaos{
      * This method retrive the cached object by CSDawrapperUsed as query key and
      * return a pointer to the class ArrayPointer of CDataWrapper type
      */
-    void IOMemcachedDriver::storeRawData(size_t dataDim, const char * buffer)  throw(CException) {
+    void IOMemcachedIODriver::storeRawData(size_t dataDim, const char * buffer)  throw(CException) {
         boost::mutex::scoped_lock lock(useMCMutex);
         memcached_return_t mcSetResult = MEMCACHED_SUCCESS;
         mcSetResult = memcached_set(memClient, dataKey.c_str(), dataKey.length(), buffer, dataDim, 0, 0);
@@ -100,7 +100,7 @@ namespace chaos{
      * This method retrive the cached object by CSDawrapperUsed as query key and
      * return a pointer to the class ArrayPointer of CDataWrapper type
      */
-    char* IOMemcachedDriver::retriveRawData(size_t *dim)  throw(CException) {
+    char* IOMemcachedIODriver::retriveRawData(size_t *dim)  throw(CException) {
         uint32_t flags= 0;
         size_t value_length= 0;
         memcached_return_t mcSetResult = MEMCACHED_SUCCESS;
@@ -113,12 +113,12 @@ namespace chaos{
     /*
      Update the driver configuration
      */
-    chaos_data::CDataWrapper* IOMemcachedDriver::updateConfiguration(chaos_data::CDataWrapper* newConfigration) {
+    chaos_data::CDataWrapper* IOMemcachedIODriver::updateConfiguration(chaos_data::CDataWrapper* newConfigration) {
         memcached_return_t configResult = MEMCACHED_SUCCESS;
         boost::mutex::scoped_lock lock(useMCMutex);
         LMEMDRIVER_ << "Update Configuration";
         
-        if(!memClient) throw CException(0, "Write memcached structure not allocated", "IOMemcachedDriver::updateConfiguration");
+        if(!memClient) throw CException(0, "Write memcached structure not allocated", "IOMemcachedIODriver::updateConfiguration");
         
             //checkif someone has passed us the device indetification
         if(newConfigration->hasKey(DatasetDefinitionkey::DEVICE_ID)){

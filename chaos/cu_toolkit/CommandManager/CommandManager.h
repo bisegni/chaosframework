@@ -51,13 +51,14 @@ namespace chaos{
     }
     
     namespace cu {
-
+		class DataManager;
         /*
          * CommandManager
          * - Command Manager is the central class for the registration and execution of the custom command
          *
          */
         class CommandManager : public DeclareAction,  public Configurable, public Singleton<CommandManager>, public chaos::utility::StartableService {
+			friend class DataManager;
             friend class RpcAdapterRegister;
             friend class CommandDispatcherRegister;
             friend class ServerDelegator;

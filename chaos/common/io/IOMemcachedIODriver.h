@@ -1,5 +1,5 @@
 /*	
- *	IOMemcachedDriver.h
+ *	IOMemcachedIODriver.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *	
@@ -18,13 +18,17 @@
  *    	limitations under the License.
  */
 
-#ifndef IOMemcachedDriver_H
-#define IOMemcachedDriver_H
+#ifndef IOMemcachedIODriver_H
+#define IOMemcachedIODriver_H
 
 #include <string>
 #include <libmemcached/memcached.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
+
+#include <chaos/common/utility/ObjectFactoryRegister.h>
+#include <chaos/common/utility/NamedService.h>
+
 #include "IODataDriver.h"
 
 namespace chaos{ 
@@ -32,15 +36,15 @@ namespace chaos{
     using namespace boost;
     
 	namespace chaos_data = chaos::common::data;
-	
-    class IOMemcachedDriver : public IODataDriver {
+	REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(IOMemcachedIODriver, IODataDriver), public NamedService {
+		REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(IOMemcachedIODriver)
         boost::mutex useMCMutex;
         memcached_st *memClient;
         string dataKey;
     public:
         
-        IOMemcachedDriver();
-        virtual ~IOMemcachedDriver();
+        IOMemcachedIODriver(std::string alias);
+        virtual ~IOMemcachedIODriver();
         
         /*
          * Init method, the has map has all received value for configuration

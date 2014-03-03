@@ -62,6 +62,8 @@ namespace chaos {
         static const char * const   OPT_LOG_LEVEL                       = "log-level";
         //!  Specify the ip where publish the framework
         static const char * const   OPT_PUBLISHING_IP                   = "publishing-ip";
+        //!  Specify the ip where publish the framework
+        static const char * const   OPT_DATA_IO_IMPL					= "data-io-impl";
     }
     /** @} */ // end of ParamOption
     

@@ -20,9 +20,16 @@
 
 #include <iostream>
 #include <chaos/common/global.h>
+#include <chaos/common/configuration/GlobalConfiguration.h>
+
+#include <chaos/common/io/IOMemcachedIODriver.h>
+#include <chaos/common/io/IODirectIODriver.h>
+
 #include <chaos/cu_toolkit/DataManager/DataManager.h>
-#include <chaos/common/io/IOMemcachedDriver.h>
 #include <chaos/cu_toolkit/DataManager/DataBuffer/OutputDataBuffer.h>
+#include <chaos/cu_toolkit/CommandManager/CommandManager.h>
+
+#include <boost/format.hpp>
 
 using namespace std;
 using namespace boost;
@@ -95,9 +102,19 @@ CDataWrapper* DataManager::updateConfiguration(CDataWrapper *newConfiguration) {
  * Return an instance for the configured data live driver
  */
 IODataDriver *DataManager::getDataLiveDriverNewInstance() throw(CException) {
-    IODataDriver *outputDriver = new IOMemcachedDriver();
-    outputDriver->init();
-    return outputDriver;
+	IODataDriver *result = NULL;
+	std::string impl_name =  boost::str( boost::format("%1%IODriver") % GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL));
+	if(result) {
+		if(impl_name.compare("IODirect")) {
+			//set the information
+			IODirectIODriverInitParam init_param;
+			//get client and endpoint
+			init_param.client_instance = CommandManager::getInstance()->broker->getDirectIOClientInstance();
+			init_param.endpoint_instance = CommandManager::getInstance()->broker->getDirectIOServerEndpoint();
+			((IODirectIODriver*)result)->setDirectIOParam(init_param);
+		}
+	}
+    return result;
 }
 
 
@@ -113,7 +130,7 @@ KeyDataStorage *DataManager::getKeyDataStorageNewInstanceForKey(string& key) thr
     OutputDataBuffer *outputLiveBuffer = new OutputDataBuffer();
     
         //make the live driver
-    IODataDriver *outputDriver = new IOMemcachedDriver();
+    IODataDriver *outputDriver = getDataLiveDriverNewInstance();
     
         //set the driver
     outputLiveBuffer->setIODriver(outputDriver);
