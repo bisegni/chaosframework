@@ -20,7 +20,7 @@
 
 #include "DeviceController.h"
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
-#include <chaos/common/io/IOMemcachedDriver.h>
+#include <chaos/common/io/IOMemcachedIODriver.h>
 
 #include <boost/lexical_cast.hpp>
 
@@ -100,7 +100,7 @@ void DeviceController::updateChannel() throw(CException) {
     if(err!=ErrorCode::EC_NO_ERROR || !devAddress) throw CException(-3, "No Address found for device", "DeviceController::init");
     
     //update live data driver
-    ioLiveDataDriver = new IOMemcachedDriver();
+    ioLiveDataDriver = new IOMemcachedIODriver("Alias");
     if(ioLiveDataDriver) {
         ioLiveDataDriver->init();
         ioLiveDataDriver->updateConfiguration(lastDeviceDefinition.get());

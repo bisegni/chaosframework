@@ -121,7 +121,6 @@ int main (int argc, char* argv[] )
         CUStateKey::ControlUnitState deviceState;
        
         //! [UIToolkit Attribute Init]
-		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_DEVICE_ID, "The identification string of the device");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_DEVICE_ID, "The identification string of the device");
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_TIMEOUT, "Timeout rpc in milliseconds", 2000, &timeout);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<int>(OPT_STATE, "The state to set on the device{1=init, 2=start, 3=stop, 4=deinit, 5=set schedule time, 6=submite slow command(slcu), 7=kill current command(slcu), 8=get command state by id, 9=set input channel(rtcu)}, 10=flush history state(slcu)", 0);

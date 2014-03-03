@@ -20,13 +20,13 @@
 #include "LLDataApi.h"
 
 #include "../../common/global.h"
-#include "../../common/io/IOMemcachedDriver.h"
+#include "../../common/io/IOMemcachedIODriver.h"
 
 using namespace chaos;
 using namespace chaos::ui;
 
 LLDataApi::LLDataApi() {
-    liveDriver = new IOMemcachedDriver();
+    liveDriver = new IOMemcachedIODriver("Alias");
     liveDriver->init();
 }
 
