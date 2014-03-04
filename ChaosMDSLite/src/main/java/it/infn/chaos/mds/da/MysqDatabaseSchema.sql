@@ -54,7 +54,6 @@ DROP TABLE IF EXISTS `data_server`;
 CREATE TABLE `data_server` (
   `id_server` int(11) NOT NULL AUTO_INCREMENT,
   `hostname` varchar(45) NOT NULL DEFAULT 'localhost',
-  `port` int(11) NOT NULL DEFAULT '8888',
   `is_live` varchar(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id_server`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;

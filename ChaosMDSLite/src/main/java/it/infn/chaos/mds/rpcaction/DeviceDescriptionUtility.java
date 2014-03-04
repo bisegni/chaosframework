@@ -40,7 +40,7 @@ public class DeviceDescriptionUtility {
 		List<DataServer> list = dsDA.getAllDataServer(true);
 		for (Iterator<DataServer> iterator = list.iterator(); iterator.hasNext();) {
 			DataServer dataServer = (DataServer) iterator.next();
-			liveServers.add(String.format("%s:%d", dataServer.getHostname(), dataServer.getPort()));
+			liveServers.add(String.format(dataServer.getHostname()));
 		}
 		if (liveServers.size() > 0)
 			result.append(RPCConstants.LIVE_DATASERVER_HOST_PORT, liveServers);

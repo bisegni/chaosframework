@@ -28,8 +28,7 @@ public class ManageServerProcess extends RefProcess {
 		try {
 			DataServerDA dsDA = (DataServerDA) getDataAccessInstance(DataServerDA.class);
 			DataServer newDataServer = new DataServer();
-			newDataServer.setHostname("localhost");
-			newDataServer.setPort(8888);
+			newDataServer.setHostname("server decription");
 			newDataServer.setIsLiveServer(false);
 			dsDA.saveServer(newDataServer);
 			commit();

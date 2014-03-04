@@ -15,7 +15,6 @@ import org.ref.common.business.DBTable;
 @DBTable(name = "data_server")
 public class DataServer extends BusinessObject {
 	public static final long	serialVersionUID	= -7648734249066851869L;
-	public static final String	KEY_PORT			= "port";
 	public static final String	KEY_HOSTAME			= "hostname";
 	public static final String	KEY_ID_SERVER		= "id_server";
 	public static final String	KEY_IS_LIVE			= "is_live";
@@ -25,8 +24,6 @@ public class DataServer extends BusinessObject {
 	@DBPrimaryKey
 	@DBColumn(name = KEY_HOSTAME)
 	private String				hostname			= null;
-	@DBColumn(name = KEY_PORT)
-	private Integer				port				= null;
 	@DBColumn(name = KEY_IS_LIVE)
 	private Boolean				isLiveServer		= null;
 
@@ -59,7 +56,7 @@ public class DataServer extends BusinessObject {
 	 */
 	@Override
 	public String toString() {
-		return String.format("%s:%s", getHostname(), getPort());
+		return String.format("%s", getHostname());
 	}
 
 	/**
@@ -90,21 +87,6 @@ public class DataServer extends BusinessObject {
 	 */
 	public void setHostname(String hostname) {
 		this.hostname = hostname;
-	}
-
-	/**
-	 * @return the port
-	 */
-	public Integer getPort() {
-		return port;
-	}
-
-	/**
-	 * @param port
-	 *            the port to set
-	 */
-	public void setPort(Integer port) {
-		this.port = port;
 	}
 
 	/**
