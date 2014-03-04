@@ -108,7 +108,7 @@ IODataDriver *DataManager::getDataLiveDriverNewInstance() throw(CException) {
 	result = ObjectFactoryRegister<IODataDriver>::getInstance()->getNewInstanceByName(impl_name.c_str());
 	
 	if(result) {
-		if(impl_name.compare("IODirect") == 0) {
+		if(impl_name.compare("IODirectIODriver") == 0) {
 			//set the information
 			IODirectIODriverInitParam init_param;
 			//get client and endpoint

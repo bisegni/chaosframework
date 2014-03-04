@@ -49,14 +49,19 @@ int64_t DirectIODeviceClientChannel::putDataOutputChannel(bool cache_it, void *b
 	DirectIODataPack data_pack;
 	DirectIODeviceChannelHeaderPutOpcode header_data;
 	
+	data_pack.header.dispatcher_header.raw_data = 0;
 	//set opcode
 	data_pack.header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodePutOutput);
+	//set the endpoint that need the receive the pack on the other side
+	data_pack.header.dispatcher_header.fields.route_addr = endpoint;
+	//set the channel route index within the endpoint
+	data_pack.header.dispatcher_header.fields.channel_idx = channel_route_index;
 	
 	//set header
 	header_data.device_hash = byte_swap<little_endian, host_endian, uint32_t>(device_hash);
 	header_data.cache_tag = byte_swap<little_endian, host_endian, uint32_t>(cache_it);
 
-	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, &header_data, sizeof(DirectIODeviceChannelHeaderData))
+	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, &header_data, sizeof(DirectIODeviceChannelHeaderPutOpcode))
 	DIRECT_IO_SET_CHANNEL_DATA(data_pack, buffer, buffer_len)
 	return client_instance->sendPriorityData(&data_pack);
 }
@@ -65,9 +70,15 @@ int64_t DirectIODeviceClientChannel::putDataOutputChannel(bool cache_it, void *b
 int64_t DirectIODeviceClientChannel::requestLastOutputData(uint16_t server_port, uint16_t endpoint_idx) {
 	DirectIODataPack data_pack;
 	DirectIODeviceChannelHeaderGetOpcode header_data;
-	
+		
+	data_pack.header.dispatcher_header.raw_data = 0;
         //set opcode
 	data_pack.header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeGetLastOutput);
+	//set the endpoint that need the receive the pack on the other side
+	data_pack.header.dispatcher_header.fields.route_addr = endpoint;
+	//set the channel route index within the endpoint
+	data_pack.header.dispatcher_header.fields.channel_idx = channel_route_index;
+	
     header_data.field.device_hash = byte_swap<little_endian, host_endian, uint32_t>(device_hash);
     header_data.field.address = byte_swap<little_endian, host_endian, uint64_t>(((DirectIOClient*)client_instance)->getI64Ip());
     header_data.field.port = byte_swap<little_endian, host_endian, uint16_t>(server_port);

@@ -41,7 +41,7 @@ void OutputDataBuffer::init(int threadNumber) throw(CException) {
     
     if(ioDriver) {
         LAPP_ << "Initializing OutputDataBuffer IO Driver";
-        (*ioDriver).init();
+        (*ioDriver).init(NULL);
     } else throw CException(0, "No IO Driver provided", "OutputDataBuffer::init");
 }
 

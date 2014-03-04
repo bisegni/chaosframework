@@ -43,7 +43,7 @@ namespace chaos{
          * Init method, the has map has all received value for configuration
          * every implemented driver need to get all needed configuration param
          */
-        virtual void init() throw(CException);
+        virtual void init(void *init_parameter) throw(CException);
         /*!
          * DeInit method
          */

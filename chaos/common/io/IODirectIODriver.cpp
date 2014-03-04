@@ -20,10 +20,17 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/regex.hpp>
 
 #include <chaos/common/io/IODirectIODriver.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common//global.h>
+#include <chaos/common/utility/InizializableService.h>
+
+//! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
+static const boost::regex DataProxyServerDescriptionIPRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}:[0-9]{4,5}\\|[0-9]{1,3}");
+//! Regular expression for check server endpoint with the sintax ip:[priority_port:service_port]
+static const boost::regex DataProxyServerDescriptionHostRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}:[0-9]{4,5}\\|[0-9]{1,3}");
 
 #define LMEMDRIVER_ LAPP_ << "[Memcached IO Driver] - "
 
@@ -72,10 +79,13 @@ namespace chaos{
      * every implemented driver need to get all needed configuration param
      */
     void IODirectIODriver::init(void *_init_parameter) throw(CException) {
-        IODataDriver::init();
+        IODataDriver::init(_init_parameter);
 
 		if(!init_parameter.client_instance) throw CException(-1, "No client configured", __PRETTY_FUNCTION__);
 		if(!init_parameter.endpoint_instance) throw CException(-1, "No endpoint configured", __PRETTY_FUNCTION__);
+		
+		//initialize client
+		utility::InizializableService::initImplementation(init_parameter.client_instance, _init_parameter, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
 		
 		//get the client and server channel
 		device_client_channel = (chaos_dio_channel::DirectIODeviceClientChannel *)init_parameter.client_instance->getNewChannelInstance("DirectIODeviceClientChannel");
@@ -90,11 +100,16 @@ namespace chaos{
      * Deinitialization of memcached driver
      */
     void IODirectIODriver::deinit() throw(CException) {
-        IODataDriver::deinit();
 		if(data_cache.data_ptr) {
 			free(data_cache.data_ptr);
 		}
-    }
+		
+		//initialize client
+		utility::InizializableService::deinitImplementation(init_parameter.client_instance, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
+
+		
+		IODataDriver::deinit();
+   }
     
     /*
      * This method retrive the cached object by CSDawrapperUsed as query key and
@@ -138,10 +153,23 @@ namespace chaos{
             auto_ptr<chaos_data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS));
 			size_t numerbOfserverAddressConfigured = liveMemAddrConfig->size();
             for ( int idx = 0; idx < numerbOfserverAddressConfigured; idx++ ){
-                string serverDesc = liveMemAddrConfig->getStringElementAtIndex(idx);
-				
-				init_parameter.client_instance->addServer(serverDesc);
-				
+				string serverDesc = liveMemAddrConfig->getStringElementAtIndex(idx);
+				if(!boost::regex_match(serverDesc, DataProxyServerDescriptionIPRegExp) &&
+				   !boost::regex_match(serverDesc, DataProxyServerDescriptionHostRegExp)) {
+					IODirectIODriver_DLDBG_ << "Data proxy server description " << serverDesc << " non well formed";
+					continue;
+				}
+				IODirectIODriver_DLDBG_ << "Try to install data proxy description "<< serverDesc;
+				std::vector<string> tokens;
+				boost::algorithm::split(tokens, serverDesc, boost::algorithm::is_any_of("|"), boost::algorithm::token_compress_on);
+				if(tokens.size()==2) {
+					IODirectIODriver_DLDBG_ << "Data proxy server description " << tokens[0];
+					IODirectIODriver_DLDBG_ << "Data proxy server Endpoint " << tokens[1];
+					init_parameter.client_instance->addServer(tokens[0]);
+					if(device_client_channel) device_client_channel->setEndpoint(boost::lexical_cast<uint16_t>(tokens[1]));
+				} else {
+					IODirectIODriver_DLDBG_ << "Bad server configuration";
+				}
             }
 		}
         return NULL;

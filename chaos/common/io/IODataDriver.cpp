@@ -15,7 +15,7 @@ using namespace chaos::common::data;
  * Init method, the has map has all received value for configuration
  * every implemented driver need to get all needed configuration param
  */
- void IODataDriver::init() throw(CException){
+ void IODataDriver::init(void *init_parameter) throw(CException){
     
 }
 /*
