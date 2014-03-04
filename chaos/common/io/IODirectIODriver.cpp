@@ -115,8 +115,11 @@ namespace chaos{
      * This method retrive the cached object by CSDawrapperUsed as query key and
      * return a pointer to the class ArrayPointer of CDataWrapper type
      */
-    void IODirectIODriver::storeRawData(size_t dataDim, const char * buffer)  throw(CException) {
-		device_client_channel->putDataOutputChannel(true, (void*)buffer, (uint32_t)dataDim);
+    void IODirectIODriver::storeRawData(chaos_data::SerializationBuffer *serialization)  throw(CException) {
+		CHAOS_ASSERT(serialization)
+		serialization->disposeOnDelete = false;
+		device_client_channel->putDataOutputChannel(true, (void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen());
+		delete(serialization);
     }
     
     /*
@@ -147,9 +150,14 @@ namespace chaos{
      Update the driver configuration
      */
     chaos_data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos_data::CDataWrapper* newConfigration) {
-
+		//checkif someone has passed us the device indetification
+        if(newConfigration->hasKey(DatasetDefinitionkey::DEVICE_ID)){
+            dataKey = newConfigration->getStringValue(DatasetDefinitionkey::DEVICE_ID);
+			device_client_channel->setDeviceID(dataKey);
+            IODirectIODriver_LAPP_ << "The key for memory cache is: " << dataKey;
+        }
         if(newConfigration->hasKey(DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS)){
-            LMEMDRIVER_ << "Get the DataManager LiveData address value";
+            IODirectIODriver_LAPP_ << "Get the DataManager LiveData address value";
             auto_ptr<chaos_data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS));
 			size_t numerbOfserverAddressConfigured = liveMemAddrConfig->size();
             for ( int idx = 0; idx < numerbOfserverAddressConfigured; idx++ ){

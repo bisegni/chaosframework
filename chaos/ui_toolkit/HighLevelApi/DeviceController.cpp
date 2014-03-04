@@ -102,7 +102,7 @@ void DeviceController::updateChannel() throw(CException) {
     //update live data driver
     ioLiveDataDriver = new IOMemcachedIODriver("Alias");
     if(ioLiveDataDriver) {
-        ioLiveDataDriver->init();
+        ioLiveDataDriver->init(NULL);
         ioLiveDataDriver->updateConfiguration(lastDeviceDefinition.get());
     }
     

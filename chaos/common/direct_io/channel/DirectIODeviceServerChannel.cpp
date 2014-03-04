@@ -46,18 +46,18 @@ void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
 	switch (channel_opcode) {
 		case opcode::DeviceChannelOpcodePutOutput: {
             opcode_headers::DirectIODeviceChannelHeaderPutOpcode header;
-            header.device_hash = byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)dataPack->channel_header_data));
-            header.cache_tag = byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)dataPack->channel_header_data+4));
+			header.device_hash = byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)(GO_TO_OFFSET(dataPack->channel_header_data,0))));
+			header.cache_tag = byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)(GO_TO_OFFSET(dataPack->channel_header_data,4))));
 			handler->consumePutEvent(header, dataPack->channel_data, dataPack->header.channel_data_size);
             break;
         }
         case opcode::DeviceChannelOpcodeGetLastOutput: {
             opcode_headers::DirectIODeviceChannelHeaderGetOpcode header;
             //decode the endianes off the data
-            header.field.device_hash = TO_LITTE_ENDNS(uint32_t, dataPack->channel_header_data, 0);
-            header.field.address = TO_LITTE_ENDNS(uint32_t, dataPack->channel_header_data, 4);
-            header.field.port = TO_LITTE_ENDNS(uint32_t, dataPack->channel_header_data, 8);
-            header.field.endpoint = TO_LITTE_ENDNS(uint32_t, dataPack->channel_header_data, 10);
+            header.field.device_hash = FROM_LITTLE_ENDNS(uint32_t, dataPack->channel_header_data, 0);
+            header.field.address = FROM_LITTLE_ENDNS(uint32_t, dataPack->channel_header_data, 4);
+            header.field.port = FROM_LITTLE_ENDNS(uint32_t, dataPack->channel_header_data, 8);
+            header.field.endpoint = FROM_LITTLE_ENDNS(uint32_t, dataPack->channel_header_data, 10);
 			handler->consumeGetEvent(header, dataPack->channel_data, dataPack->header.channel_data_size);
             break;
         }

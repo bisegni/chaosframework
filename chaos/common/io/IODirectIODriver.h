@@ -93,7 +93,7 @@ namespace chaos{
         /*
          * storeRawData
          */
-        virtual void storeRawData(size_t dataDim, const char * buffer)  throw(CException);
+        virtual void storeRawData(chaos_data::SerializationBuffer *serialization)  throw(CException);
         
         /*
          * retriveRawData

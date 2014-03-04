@@ -38,14 +38,14 @@ namespace chaos {
     namespace common {
         namespace direct_io {
 			
-#define DIRECT_IO_HEADER_SIZE					8
-#define DIRECT_IO_DISPATCHER_HEADER_SIZE		4
+#define DIRECT_IO_HEADER_SIZE					16
+#define DIRECT_IO_DISPATCHER_HEADER_SIZE		8
 
 #define DIRECT_IO_GET_DISPATCHER_DATA(d)		byte_swap<little_endian, host_endian, uint64_t>(*((uint64_t*)d));
 #define DIRECT_IO_GET_CHANNEL_HEADER_SIZE(d)    byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)((char*)d+8)));
 #define DIRECT_IO_GET_CHANNEL_DATA_SIZE(d)		byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)((char*)d+12)));
 			
-#define DIRECT_IO_SET_DISPATCHER_DATA(d)		byte_swap<host_endian, little_endian, uint32_t>(d);
+#define DIRECT_IO_SET_DISPATCHER_DATA(d)		byte_swap<host_endian, little_endian, uint64_t>(d);
 #define DIRECT_IO_SET_CHANNEL_HEADER_SIZE(d)    byte_swap<host_endian, little_endian, uint32_t>(d);
 #define DIRECT_IO_SET_CHANNEL_DATA_SIZE(d)		byte_swap<host_endian, little_endian, uint32_t>(d);
 			
@@ -56,14 +56,14 @@ namespace chaos {
 			
 
 #define DIRECT_IO_SET_CHANNEL_HEADER(pack, h_ptr, h_size)\
-pack.header.dispatcher_header.fields.channel_part = pack.header.dispatcher_header.fields.channel_part+DIRECT_IO_CHANNEL_PART_HEADER_ONLY;\
-pack.header.channel_header_size = DIRECT_IO_SET_CHANNEL_HEADER_SIZE(h_size);\
-pack.channel_header_data = h_ptr;
+pack->header.dispatcher_header.fields.channel_part = pack->header.dispatcher_header.fields.channel_part+DIRECT_IO_CHANNEL_PART_HEADER_ONLY;\
+pack->header.channel_header_size = DIRECT_IO_SET_CHANNEL_HEADER_SIZE(h_size);\
+pack->channel_header_data = h_ptr;
 
 #define DIRECT_IO_SET_CHANNEL_DATA(pack, d_ptr, d_size)\
-pack.header.dispatcher_header.fields.channel_part = pack.header.dispatcher_header.fields.channel_part+DIRECT_IO_CHANNEL_PART_DATA_ONLY;\
-pack.header.channel_data_size = DIRECT_IO_SET_CHANNEL_DATA_SIZE(d_size);\
-pack.channel_data = d_ptr;
+pack->header.dispatcher_header.fields.channel_part = pack->header.dispatcher_header.fields.channel_part+DIRECT_IO_CHANNEL_PART_DATA_ONLY;\
+pack->header.channel_data_size = DIRECT_IO_SET_CHANNEL_DATA_SIZE(d_size);\
+pack->channel_data = d_ptr;
 			
             //! DirectIO data pack structure. It is write in little endian
             typedef struct DirectIODataPack {
@@ -75,6 +75,8 @@ pack.channel_data = d_ptr;
 						struct dispatcher_header {
 							//! destination routing address
 							uint16_t	route_addr;
+							//! unused padding data
+							uint16_t	unused;
 							//! channel index
 							uint16_t	channel_idx: 8;
 							//! channel tag
@@ -83,8 +85,6 @@ pack.channel_data = d_ptr;
 							uint16_t    channel_opcode: 8;
 							//! channel tag
 							uint16_t    channel_specified_tag: 8;
-							//! unused padding data
-							uint16_t	unused;
 						} fields;
 					} dispatcher_header;
 					

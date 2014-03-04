@@ -23,6 +23,7 @@
 
 #include "IOMemcachedIODriver.h"
 #include <chaos/common/chaos_constants.h>
+#include <chaos/common/data/CDataWrapper.h>
 #include "../global.h"
 
 #define LMEMDRIVER_ LAPP_ << "[Memcached IO Driver] - "
@@ -83,17 +84,17 @@ namespace chaos{
      * This method retrive the cached object by CSDawrapperUsed as query key and
      * return a pointer to the class ArrayPointer of CDataWrapper type
      */
-    void IOMemcachedIODriver::storeRawData(size_t dataDim, const char * buffer)  throw(CException) {
+    void IOMemcachedIODriver::storeRawData(chaos_data::SerializationBuffer *serialization)  throw(CException) {
         boost::mutex::scoped_lock lock(useMCMutex);
         memcached_return_t mcSetResult = MEMCACHED_SUCCESS;
-        mcSetResult = memcached_set(memClient, dataKey.c_str(), dataKey.length(), buffer, dataDim, 0, 0);
+        mcSetResult = memcached_set(memClient, dataKey.c_str(), dataKey.length(), serialization->getBufferPtr(), serialization->getBufferLen(), 0, 0);
             //for debug
         if(mcSetResult!=MEMCACHED_SUCCESS) {
 #if DEBUG
             LMEMDRIVER_ << "cache data submition error";
 #endif
         }
-
+		delete serialization;
     }
     
     /*

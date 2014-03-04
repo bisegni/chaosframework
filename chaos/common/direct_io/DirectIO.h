@@ -25,6 +25,6 @@
 #include <chaos/common/direct_io/impl/ZMQDirectIOServer.h>
 
 //-------------------channels implementations---------------------
-#include <chaos/common/direct_io/channel/DirectIOCDataWrapperClientChannel.h>
-#include <chaos/common/direct_io/channel/DirectIOCDataWrapperServerChannel.h>
+#include <chaos/common/direct_io/channel/DirectIODeviceClientChannel.h>
+#include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>
 #endif

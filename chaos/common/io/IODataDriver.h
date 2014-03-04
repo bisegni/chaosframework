@@ -69,7 +69,7 @@ namespace chaos{
         /*!
          * This method store a buffer into live cached
          */
-        virtual void storeRawData(size_t dataDim, const char * buffer)  throw(CException) = 0;
+        virtual void storeRawData(chaos_data::SerializationBuffer *serialization)  throw(CException) = 0;
         
         /*!
          * This method retrive the cached object by CSDawrapperUsed as query key and

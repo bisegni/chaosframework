@@ -58,7 +58,7 @@ namespace chaos{
          * This method retrive the cached object by CSDawrapperUsed as query key and
          * return a pointer to the class ArrayPointer of CDataWrapper type
          */
-        virtual void storeRawData(size_t dataDim, const char * buffer)  throw(CException);
+        virtual void storeRawData(chaos_data::SerializationBuffer *serialization)  throw(CException);
         
         /*
          * This method retrive the cached object by CSDawrapperUsed as query key and

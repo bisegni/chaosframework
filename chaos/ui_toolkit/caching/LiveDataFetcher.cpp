@@ -38,7 +38,7 @@ CDataWrapper* LiveDataFetcher::updateConfiguration(CDataWrapper *configuration) 
 // Initialize instance
 void LiveDataFetcher::init(void *configuration) throw(chaos::CException) {
     if(dataDriver) {
-        dataDriver->init();
+        dataDriver->init(NULL);
     }
     updateConfiguration(static_cast<CDataWrapper*>(configuration));
 }

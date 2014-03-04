@@ -131,9 +131,9 @@ inline T byte_swap(T value)
     
     return util::do_byte_swap<from, to, T>()(value);
 }
-
-#define  TO_LITTE_ENDNS(type, ptr, offset) byte_swap<little_endian, host_endian, type>(*((type*)((char*)ptr)+offset));
-#define  FROM_LITTLE_ENDNS(type, ptr, offset) byte_swap<host_endian, little_endian, type>(*((type*)((char*)ptr)+offset));
-
+#define  TO_LITTE_ENDNS_NUM(type, n) byte_swap<little_endian, host_endian, type>(n)
+#define  TO_LITTE_ENDNS(type, ptr, offset) byte_swap<little_endian, host_endian, type>(*((type*)((char*)ptr)+offset))
+#define  FROM_LITTLE_ENDNS(type, ptr, offset) byte_swap<host_endian, little_endian, type>(*((type*)((char*)ptr)+offset))
+#define		GO_TO_OFFSET(ptr, off) static_cast<char*>(ptr)+off
 
 #endif

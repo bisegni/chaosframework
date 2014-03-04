@@ -13,8 +13,6 @@
 		320DF98D14E17E2700251621 /* DeviceController.h in Headers */ = {isa = PBXBuildFile; fileRef = 320DF98C14E17E2700251621 /* DeviceController.h */; };
 		320DF99114E190BB00251621 /* DeviceController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320DF98F14E17E3D00251621 /* DeviceController.cpp */; };
 		320FB0EC18A39E650014CDB3 /* DirectIO.h in Headers */ = {isa = PBXBuildFile; fileRef = 320FB0EB18A39E650014CDB3 /* DirectIO.h */; };
-		320FB0EF18A3BF6D0014CDB3 /* DirectIOCDataWrapperServerChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320FB0ED18A3BF6D0014CDB3 /* DirectIOCDataWrapperServerChannel.cpp */; };
-		320FB0F018A3BF6D0014CDB3 /* DirectIOCDataWrapperServerChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 320FB0EE18A3BF6D0014CDB3 /* DirectIOCDataWrapperServerChannel.h */; };
 		3211FD1D1698699D00424A3C /* LiveDataFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3211FD1B1698699D00424A3C /* LiveDataFetcher.cpp */; };
 		3211FD1E1698699D00424A3C /* LiveDataFetcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 3211FD1C1698699D00424A3C /* LiveDataFetcher.h */; };
 		3215860D178756B40090E7E6 /* AbstractDriverPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3215860C178756B40090E7E6 /* AbstractDriverPlugin.cpp */; };
@@ -29,6 +27,10 @@
 		32279F8516F8DEAF009EC7B9 /* DataBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32279F8316F8DEAF009EC7B9 /* DataBroker.h */; };
 		32279F8B16FA36B6009EC7B9 /* PublisherDataService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32279F8916FA36B6009EC7B9 /* PublisherDataService.cpp */; };
 		32279F8C16FA36B6009EC7B9 /* PublisherDataService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32279F8A16FA36B6009EC7B9 /* PublisherDataService.h */; };
+		3229253C18C6560600BC80BD /* DirectIOCDataWrapperClientChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3229253818C6560600BC80BD /* DirectIOCDataWrapperClientChannel.cpp */; };
+		3229253D18C6560600BC80BD /* DirectIOCDataWrapperClientChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3229253918C6560600BC80BD /* DirectIOCDataWrapperClientChannel.h */; };
+		3229253E18C6560600BC80BD /* DirectIOCDataWrapperServerChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3229253A18C6560600BC80BD /* DirectIOCDataWrapperServerChannel.cpp */; };
+		3229253F18C6560600BC80BD /* DirectIOCDataWrapperServerChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3229253B18C6560600BC80BD /* DirectIOCDataWrapperServerChannel.h */; };
 		3229700A18BCC6FE0004F70D /* DirectIOServerPublicInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3229700918BCC6FE0004F70D /* DirectIOServerPublicInterface.h */; };
 		322D990118A95F9200C0864C /* DataConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322D98FE18A95F9200C0864C /* DataConsumer.cpp */; };
 		322D990218A95F9200C0864C /* DataConsumer.h in Headers */ = {isa = PBXBuildFile; fileRef = 322D98FF18A95F9200C0864C /* DataConsumer.h */; };
@@ -198,8 +200,6 @@
 		327CFF091708C4EB0069497B /* FastHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327CFF071708C4EA0069497B /* FastHash.cpp */; };
 		327CFF0A1708C4EB0069497B /* FastHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF081708C4EB0069497B /* FastHash.h */; };
 		327CFF121708D7760069497B /* CacheGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF111708D7740069497B /* CacheGlobal.h */; };
-		3281D35818A67EB4005A0828 /* DirectIOCDataWrapperClientChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3281D35618A67EB4005A0828 /* DirectIOCDataWrapperClientChannel.cpp */; };
-		3281D35918A67EB4005A0828 /* DirectIOCDataWrapperClientChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3281D35718A67EB4005A0828 /* DirectIOCDataWrapperClientChannel.h */; };
 		328556A017F2E33A00A64ED2 /* DirectIOClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3285569E17F2E33A00A64ED2 /* DirectIOClient.cpp */; };
 		328556A117F2E33A00A64ED2 /* DirectIOClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3285569F17F2E33A00A64ED2 /* DirectIOClient.h */; };
 		328556A417F2E36000A64ED2 /* DirectIOServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328556A217F2E36000A64ED2 /* DirectIOServer.cpp */; };
@@ -442,8 +442,6 @@
 		320DF98C14E17E2700251621 /* DeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceController.h; sourceTree = "<group>"; };
 		320DF98F14E17E3D00251621 /* DeviceController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceController.cpp; sourceTree = "<group>"; };
 		320FB0EB18A39E650014CDB3 /* DirectIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIO.h; sourceTree = "<group>"; };
-		320FB0ED18A3BF6D0014CDB3 /* DirectIOCDataWrapperServerChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOCDataWrapperServerChannel.cpp; sourceTree = "<group>"; };
-		320FB0EE18A3BF6D0014CDB3 /* DirectIOCDataWrapperServerChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOCDataWrapperServerChannel.h; sourceTree = "<group>"; };
 		3211FD1B1698699D00424A3C /* LiveDataFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LiveDataFetcher.cpp; sourceTree = "<group>"; };
 		3211FD1C1698699D00424A3C /* LiveDataFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiveDataFetcher.h; sourceTree = "<group>"; };
 		3215860C178756B40090E7E6 /* AbstractDriverPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractDriverPlugin.cpp; sourceTree = "<group>"; };
@@ -460,6 +458,10 @@
 		32279F8316F8DEAF009EC7B9 /* DataBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBroker.h; sourceTree = "<group>"; };
 		32279F8916FA36B6009EC7B9 /* PublisherDataService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PublisherDataService.cpp; sourceTree = "<group>"; };
 		32279F8A16FA36B6009EC7B9 /* PublisherDataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PublisherDataService.h; sourceTree = "<group>"; };
+		3229253818C6560600BC80BD /* DirectIOCDataWrapperClientChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOCDataWrapperClientChannel.cpp; sourceTree = "<group>"; };
+		3229253918C6560600BC80BD /* DirectIOCDataWrapperClientChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOCDataWrapperClientChannel.h; sourceTree = "<group>"; };
+		3229253A18C6560600BC80BD /* DirectIOCDataWrapperServerChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOCDataWrapperServerChannel.cpp; sourceTree = "<group>"; };
+		3229253B18C6560600BC80BD /* DirectIOCDataWrapperServerChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOCDataWrapperServerChannel.h; sourceTree = "<group>"; };
 		3229700918BCC6FE0004F70D /* DirectIOServerPublicInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOServerPublicInterface.h; sourceTree = "<group>"; };
 		322D98FE18A95F9200C0864C /* DataConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataConsumer.cpp; sourceTree = "<group>"; };
 		322D98FF18A95F9200C0864C /* DataConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataConsumer.h; sourceTree = "<group>"; };
@@ -644,8 +646,6 @@
 		327CFF071708C4EA0069497B /* FastHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastHash.cpp; sourceTree = "<group>"; };
 		327CFF081708C4EB0069497B /* FastHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastHash.h; sourceTree = "<group>"; };
 		327CFF111708D7740069497B /* CacheGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheGlobal.h; sourceTree = "<group>"; };
-		3281D35618A67EB4005A0828 /* DirectIOCDataWrapperClientChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOCDataWrapperClientChannel.cpp; sourceTree = "<group>"; };
-		3281D35718A67EB4005A0828 /* DirectIOCDataWrapperClientChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOCDataWrapperClientChannel.h; sourceTree = "<group>"; };
 		3281D35A18A68532005A0828 /* DirectIOChannelGlobal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectIOChannelGlobal.h; sourceTree = "<group>"; };
 		3285569E17F2E33A00A64ED2 /* DirectIOClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOClient.cpp; sourceTree = "<group>"; };
 		3285569F17F2E33A00A64ED2 /* DirectIOClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOClient.h; sourceTree = "<group>"; };
@@ -1068,10 +1068,10 @@
 				3253F301189AEF8000959CA7 /* DirectIOVirtualServerChannel.h */,
 				3220F97F18A4DBEB00B0A1D4 /* DirectIOVirtualChannel.cpp */,
 				3220F98018A4DBEB00B0A1D4 /* DirectIOVirtualChannel.h */,
-				3281D35618A67EB4005A0828 /* DirectIOCDataWrapperClientChannel.cpp */,
-				3281D35718A67EB4005A0828 /* DirectIOCDataWrapperClientChannel.h */,
-				320FB0ED18A3BF6D0014CDB3 /* DirectIOCDataWrapperServerChannel.cpp */,
-				320FB0EE18A3BF6D0014CDB3 /* DirectIOCDataWrapperServerChannel.h */,
+				3229253818C6560600BC80BD /* DirectIOCDataWrapperClientChannel.cpp */,
+				3229253918C6560600BC80BD /* DirectIOCDataWrapperClientChannel.h */,
+				3229253A18C6560600BC80BD /* DirectIOCDataWrapperServerChannel.cpp */,
+				3229253B18C6560600BC80BD /* DirectIOCDataWrapperServerChannel.h */,
 				32B159CF18B38C980096B58B /* DirectIODeviceClientChannel.cpp */,
 				32B159D018B38C980096B58B /* DirectIODeviceClientChannel.h */,
 				32B159D318B38CA50096B58B /* DirectIODeviceServerChannel.cpp */,
@@ -2030,6 +2030,7 @@
 				32AAD78814CD660B005A097C /* RpcClient.h in Headers */,
 				32AAD78A14CD772F005A097C /* MessageChannel.h in Headers */,
 				32C353F31788015B009ED581 /* PluginDiscover.h in Headers */,
+				3229253F18C6560600BC80BD /* DirectIOCDataWrapperServerChannel.h in Headers */,
 				32AAD78E14CD95FD005A097C /* Atomic.h in Headers */,
 				32EFCD6718BDE3A400B5EB77 /* IODirectIODriver.h in Headers */,
 				32BFF90F176C842E00D27A04 /* InizializableService.h in Headers */,
@@ -2042,6 +2043,7 @@
 				3297F22914D96F43004FFE4F /* DeviceMessageChannel.h in Headers */,
 				3297F22B14D96F8D004FFE4F /* NodeMessageChannel.h in Headers */,
 				325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */,
+				3229253D18C6560600BC80BD /* DirectIOCDataWrapperClientChannel.h in Headers */,
 				32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */,
 				32BFF913176C862A00D27A04 /* StartableService.h in Headers */,
 				32B8C1A018292E51001CF714 /* DriverErogatorInterface.h in Headers */,
@@ -2060,7 +2062,6 @@
 				32DF603C15E14D5F00312C94 /* AlertEventDescriptor.h in Headers */,
 				32DF604015E14F5A00312C94 /* InstrumentEventDescriptor.h in Headers */,
 				32DF604415E1502700312C94 /* CommandEventDescriptor.h in Headers */,
-				3281D35918A67EB4005A0828 /* DirectIOCDataWrapperClientChannel.h in Headers */,
 				32B1378F189BEC4100B17CA4 /* ZMQDirectIOServer.h in Headers */,
 				32DF604815E1505F00312C94 /* CustomEventDescriptor.h in Headers */,
 				32DD884F15E2663B000AF740 /* DefaultEventDispatcher.h in Headers */,
@@ -2076,7 +2077,6 @@
 				3255E72815EA87D2005C96CA /* AbstractEventDispatcher.h in Headers */,
 				325DE9F215EC031E00D6F34E /* EventChannel.h in Headers */,
 				325DE9F615EC03F800D6F34E /* EventAction.h in Headers */,
-				320FB0F018A3BF6D0014CDB3 /* DirectIOCDataWrapperServerChannel.h in Headers */,
 				3244D11E15ECC25800FE2F86 /* AlertEventChannel.h in Headers */,
 				325CA6BC15EE10B3007FCC12 /* EventAction.h in Headers */,
 				3253E09515F27A180079B40E /* EventTypeScheduler.h in Headers */,
@@ -2443,7 +2443,6 @@
 				326DB43014B38BC00018A8D0 /* ActionDescriptor.cpp in Sources */,
 				326DB43314B38BC00018A8D0 /* DeclareAction.cpp in Sources */,
 				326DB43514B38BC00018A8D0 /* DomainActions.cpp in Sources */,
-				3281D35818A67EB4005A0828 /* DirectIOCDataWrapperClientChannel.cpp in Sources */,
 				326DB45A14B38BC00018A8D0 /* GlobalConfiguration.cpp in Sources */,
 				326DB45C14B38BC00018A8D0 /* CDataWrapper.cpp in Sources */,
 				326DB45E14B38BC00018A8D0 /* CUSchemaDB.cpp in Sources */,
@@ -2451,7 +2450,6 @@
 				32B159D518B38CA50096B58B /* DirectIODeviceServerChannel.cpp in Sources */,
 				3296031E1876B45000CDCADA /* AttributeSetting.cpp in Sources */,
 				326DB46B14B38BC00018A8D0 /* DefaultCommandDispatcher.cpp in Sources */,
-				320FB0EF18A3BF6D0014CDB3 /* DirectIOCDataWrapperServerChannel.cpp in Sources */,
 				326DB46D14B38BC00018A8D0 /* DomainActionsScheduler.cpp in Sources */,
 				326DB47414B38BC00018A8D0 /* IOMemcachedIODriver.cpp in Sources */,
 				326DB48914B38BC00018A8D0 /* CThread.cpp in Sources */,
@@ -2468,6 +2466,7 @@
 				32EA501618A15BF000782435 /* DirectIODispatcher.cpp in Sources */,
 				327967B815DFAAF40003C6DA /* RpcServer.cpp in Sources */,
 				327967D515E029C70003C6DA /* AsioImplEventServer.cpp in Sources */,
+				3229253E18C6560600BC80BD /* DirectIOCDataWrapperServerChannel.cpp in Sources */,
 				327967D915E030C40003C6DA /* AsioEventHandler.cpp in Sources */,
 				32DF603715E14C7700312C94 /* NamedService.cpp in Sources */,
 				32DF603B15E14D5F00312C94 /* AlertEventDescriptor.cpp in Sources */,
@@ -2545,6 +2544,7 @@
 				328E405D17287B82004E5938 /* LFDataCache.cpp in Sources */,
 				32A8F7D1172BE3FD0090DB78 /* KeyGroupCache.cpp in Sources */,
 				3298487D1736814700C158DF /* ChannelValueAccessor.cpp in Sources */,
+				3229253C18C6560600BC80BD /* DirectIOCDataWrapperClientChannel.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

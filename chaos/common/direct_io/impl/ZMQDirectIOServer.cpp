@@ -120,7 +120,6 @@ void ZMQDirectIOServer::worker(bool priority_service) {
     int					err					= 0;
     DirectIODataPack	*data_pack			= NULL;
 	void				*received_data		= NULL;
-	uint32_t			received_data_size	= 0;
 	
 	ZMQDIO_SRV_LAPP_ << "Startup thread for " << PS_STR(priority_service);
 	
@@ -170,7 +169,7 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 
             err = zmq_msg_recv(&m_header, socket, 0);
             if(err == -1 ||
-			   zmq_msg_size(&m_header) != DIRECT_IO_HEADER_SIZE) {
+			   err != DIRECT_IO_HEADER_SIZE) {
                 zmq_msg_close(&m_header);
 				zmq_msg_close(&m_header_data);
 				zmq_msg_close(&m_channel_data);

@@ -198,6 +198,8 @@ int64_t ZMQDirectIOClient::sendServiceData(DirectIODataPack *data_pack) {
 int64_t ZMQDirectIOClient::writeToSocket(void *socket, DirectIODataPack *data_pack) {
     assert(socket && data_pack);
 	int err = 0;
+	zmq_msg_t msg_header_data;
+	zmq_msg_t msg_data;
 	ZMQDirectIOClientReadLock lock(mutex_socket_manipolation);
 	//send global header
 	data_pack->header.dispatcher_header.raw_data = DIRECT_IO_SET_DISPATCHER_DATA(data_pack->header.dispatcher_header.raw_data);
@@ -214,27 +216,38 @@ int64_t ZMQDirectIOClient::writeToSocket(void *socket, DirectIODataPack *data_pa
 			if(err == -1) {
 				return err;
 			}
-			err = zmq_send(socket, data_pack->channel_data, data_pack->header.channel_data_size, ZMQ_DONTWAIT);
+			err = zmq_msg_init_data (&msg_header_data, data_pack->channel_header_data, data_pack->header.channel_header_size, ZMQDirectIOClientFree, NULL);
+			err = zmq_sendmsg(socket, &msg_header_data, ZMQ_DONTWAIT);
+			err = zmq_msg_close(&msg_header_data);
 			break;
 		case DIRECT_IO_CHANNEL_PART_DATA_ONLY:
 			err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, ZMQ_SNDMORE);
 			if(err == -1) {
 				return err;
 			}
-			err = zmq_send(socket, data_pack->channel_data, data_pack->header.channel_data_size, ZMQ_DONTWAIT);
+			err = zmq_msg_init_data (&msg_data, data_pack->channel_data, data_pack->header.channel_data_size, ZMQDirectIOClientFree, NULL);
+			err = zmq_sendmsg(socket, &msg_data, ZMQ_DONTWAIT);
+			err = zmq_msg_close(&msg_data);
 			break;
 		case DIRECT_IO_CHANNEL_PART_HEADER_DATA:
 			err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, ZMQ_SNDMORE);
 			if(err == -1) {
 				return err;
 			}
-			err = zmq_send(socket, &data_pack->channel_header_data, data_pack->header.channel_header_size, ZMQ_SNDMORE);
+			err = zmq_msg_init_data (&msg_header_data, data_pack->channel_header_data, data_pack->header.channel_header_size, ZMQDirectIOClientFree, NULL);
+			err = zmq_sendmsg(socket, &msg_header_data, ZMQ_SNDMORE);
 			if(err == -1) {
+				zmq_msg_close(&msg_header_data);
 				return err;
 			}
-			err = zmq_send(socket, data_pack->channel_data, data_pack->header.channel_data_size, ZMQ_DONTWAIT);
+			err = zmq_msg_init_data (&msg_data, data_pack->channel_data, data_pack->header.channel_data_size, ZMQDirectIOClientFree, NULL);
+			err = zmq_sendmsg(socket, &msg_data, ZMQ_DONTWAIT);
+			
+			err = zmq_msg_close(&msg_header_data);
+			err = zmq_msg_close(&msg_data);
 			break;
 	}
+	delete (data_pack);
 	//send data
     return err;
 

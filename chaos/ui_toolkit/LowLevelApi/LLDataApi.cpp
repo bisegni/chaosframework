@@ -27,7 +27,7 @@ using namespace chaos::ui;
 
 LLDataApi::LLDataApi() {
     liveDriver = new IOMemcachedIODriver("Alias");
-    liveDriver->init();
+    liveDriver->init(NULL);
 }
 
 LLDataApi::~LLDataApi() {
