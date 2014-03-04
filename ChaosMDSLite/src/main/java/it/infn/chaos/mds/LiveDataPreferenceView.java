@@ -52,8 +52,8 @@ public class LiveDataPreferenceView extends RefVaadinBasePanel implements com.va
 		setComponentKey(KEY_PREFERENCE_TABLE, liveDataView.getPreferenceTable());
 		serverListBeanContainer.setBeanIdProperty("idServer");
 		liveDataView.getPreferenceTable().setContainerDataSource(serverListBeanContainer);
-		liveDataView.getPreferenceTable().setVisibleColumns(new Object[] { "hostname", "port", "isLiveServer" });
-		liveDataView.getPreferenceTable().setColumnHeaders(new String[] { "Hostname", "Server Port", "Live" });
+		liveDataView.getPreferenceTable().setVisibleColumns(new Object[] { "hostname", "isLiveServer" });
+		liveDataView.getPreferenceTable().setColumnHeaders(new String[] { "Hostname", "Live" });
 		liveDataView.getPreferenceTable().addActionHandler(new Action.Handler() {
 			public Action[] getActions(Object target, Object sender) {
 				return isEditingServer() ? ACTIONS_IN_EDIT : ACTIONS_TO_EDIT;
