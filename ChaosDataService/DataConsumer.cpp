@@ -91,16 +91,15 @@ void DataConsumer::deinit() throw (chaos::CException) {
 	if(cache_driver_instance) delete(cache_driver_instance);
 }
 
-void DataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode header, void *channel_data, uint32_t channel_data_len) {
-    cache_driver_instance->putData(header.device_hash, channel_data, channel_data_len);
+void DataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header, void *channel_data, uint32_t channel_data_len) {
+    cache_driver_instance->putData(header->device_hash, channel_data, channel_data_len);
 }
 
-void DataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode header, void *channel_data, uint32_t channel_data_len) {
+void DataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header, void *channel_data, uint32_t channel_data_len) {
     void *cached_data;
     uint32_t cached_data_len;
-    if(cache_driver_instance->getData(header.field.device_hash, &cached_data, cached_data_len)) {
+    if(cache_driver_instance->getData(header->field.device_hash, &cached_data, cached_data_len)) {
             //error getting data
     }
-    if(answer_engine->registerNewClient(header))
-    answer_engine->sendCacheAnswher(header.field.device_hash, cached_data, cached_data_len);
+    if(answer_engine->registerNewClient(*header)) answer_engine->sendCacheAnswher(header->field.device_hash, cached_data, cached_data_len);
 }

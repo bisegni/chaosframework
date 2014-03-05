@@ -45,19 +45,19 @@ void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
 
 	switch (channel_opcode) {
 		case opcode::DeviceChannelOpcodePutOutput: {
-            opcode_headers::DirectIODeviceChannelHeaderPutOpcode header;
-			header.device_hash = byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)(GO_TO_OFFSET(dataPack->channel_header_data,0))));
-			header.cache_tag = byte_swap<little_endian, host_endian, uint32_t>(*((uint32_t*)(GO_TO_OFFSET(dataPack->channel_header_data,4))));
+            opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderPutOpcode* >(dataPack->channel_header_data);
+			header->device_hash = byte_swap<little_endian, host_endian, uint32_t>(header->device_hash);
+			header->cache_tag = byte_swap<little_endian, host_endian, uint32_t>(header->cache_tag);
 			handler->consumePutEvent(header, dataPack->channel_data, dataPack->header.channel_data_size);
             break;
         }
         case opcode::DeviceChannelOpcodeGetLastOutput: {
-            opcode_headers::DirectIODeviceChannelHeaderGetOpcode header;
+            opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderGetOpcode* >(dataPack->channel_header_data);
             //decode the endianes off the data
-            header.field.device_hash = FROM_LITTLE_ENDNS(uint32_t, dataPack->channel_header_data, 0);
-            header.field.address = FROM_LITTLE_ENDNS(uint32_t, dataPack->channel_header_data, 4);
-            header.field.port = FROM_LITTLE_ENDNS(uint32_t, dataPack->channel_header_data, 8);
-            header.field.endpoint = FROM_LITTLE_ENDNS(uint32_t, dataPack->channel_header_data, 10);
+            header->field.endpoint = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.endpoint);
+            header->field.port = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.port);
+            header->field.device_hash = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.device_hash);
+            header->field.address = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.address);
 			handler->consumeGetEvent(header, dataPack->channel_data, dataPack->header.channel_data_size);
             break;
         }
@@ -66,8 +66,18 @@ void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
 	}
 	
 	//forward event
-	
-	
-	//delete datapack
-	delete dataPack;
+	/*switch (dataPack->header.dispatcher_header.fields.channel_part) {
+		case DIRECT_IO_CHANNEL_PART_EMPTY:
+			break;
+		case DIRECT_IO_CHANNEL_PART_HEADER_ONLY:
+			free(dataPack->channel_header_data);
+			break;
+		case DIRECT_IO_CHANNEL_PART_DATA_ONLY:
+			free(dataPack->channel_data);
+			break;
+		case DIRECT_IO_CHANNEL_PART_HEADER_DATA:
+			free(dataPack->channel_data);
+			free(dataPack->channel_header_data);
+			break;
+	}*/
 }

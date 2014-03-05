@@ -77,7 +77,7 @@ void ZMQDirectIOServer::start() throw(chaos::CException) {
     if(zmq_context == NULL) throw chaos::CException(0, "Error creating zmq context", __FUNCTION__);
     
     //et the thread number
-    zmq_ctx_set(zmq_context, ZMQ_IO_THREADS, 2);
+    zmq_ctx_set(zmq_context, ZMQ_IO_THREADS, 1);
     ZMQDIO_SRV_LAPP_ << "ZMQ context created";
 	
     //queue thread
@@ -113,6 +113,10 @@ void ZMQDirectIOServer::deinit() throw(chaos::CException) {
 #define PS_STR(x) (x?"service":"priority")
 void ZMQDirectIOServer::worker(bool priority_service) {
 	int linger = 0;
+	int water_mark = 3;
+	int read_water_mark = 0;
+	size_t read_size;
+	zmq_msg_t			m_identity;
     zmq_msg_t			m_header;
 	zmq_msg_t			m_header_data;
 	zmq_msg_t			m_channel_data;
@@ -128,22 +132,28 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 	
 	if(priority_service) {
 		ZMQDIO_SRV_LAPP_ << "Allocating and binding service socket to " << service_socket_bind_str;
-		socket = zmq_socket (zmq_context, ZMQ_ROUTER);
+		socket = zmq_socket (zmq_context, ZMQ_DEALER);
 		err = zmq_setsockopt (socket, ZMQ_LINGER, &linger, sizeof(int));
 		if(err) {
-			std::string msg = boost::str( boost::format("Error Setting linget to priority socket"));
+			std::string msg = boost::str( boost::format("Error Setting linget to service socket"));
+			ZMQDIO_SRV_LAPP_ << msg;
+			return;
+		}
+		err = zmq_setsockopt (socket, ZMQ_RCVHWM, &water_mark, sizeof(int));
+		if(err) {
+			std::string msg = boost::str( boost::format("Error Setting watermark to service socket"));
 			ZMQDIO_SRV_LAPP_ << msg;
 			return;
 		}
 		err = zmq_bind(socket, service_socket_bind_str.c_str());
 		if(err) {
-			std::string msg = boost::str( boost::format("Error binding priority socket to  %1% ") % service_socket_bind_str);
+			std::string msg = boost::str( boost::format("Error binding service socket to  %1% ") % service_socket_bind_str);
 			ZMQDIO_SRV_LAPP_ << msg;
 			return;
 		}
 	} else {
 		ZMQDIO_SRV_LAPP_ << "Allocating and binding priority socket to "<< priority_socket_bind_str;
-		socket = zmq_socket (zmq_context, ZMQ_ROUTER);
+		socket = zmq_socket (zmq_context, ZMQ_DEALER);
 		int linger = 1;
 		err = zmq_setsockopt (socket, ZMQ_LINGER, &linger, sizeof(int));
 		if(err) {
@@ -151,7 +161,12 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 			ZMQDIO_SRV_LAPP_ << msg;
 			return;
 		}
-		
+		err = zmq_setsockopt (socket, ZMQ_RCVHWM, &water_mark, sizeof(int));
+		if(err) {
+			std::string msg = boost::str( boost::format("Error Setting watermark to priority socket"));
+			ZMQDIO_SRV_LAPP_ << msg;
+			return;
+		}
 		err = zmq_bind(socket, priority_socket_bind_str.c_str());
 		if(err) {
 			std::string msg = boost::str( boost::format("Error binding priority socket to  %1% ") % priority_socket_bind_str);
@@ -163,16 +178,23 @@ void ZMQDirectIOServer::worker(bool priority_service) {
     while (run_server) {
         try {
 			//read header
-            err = zmq_msg_init(&m_header);
+			err = zmq_msg_init(&m_identity);
+			err = zmq_msg_recv(&m_identity, socket, 0);
+			zmq_msg_close(&m_identity);
+            if(err == -1) {
+                continue;
+            }
+			
+			err = zmq_msg_init(&m_header);
 			err = zmq_msg_init(&m_header_data);
 			err = zmq_msg_init(&m_channel_data);
-
+			
             err = zmq_msg_recv(&m_header, socket, 0);
             if(err == -1 ||
 			   err != DIRECT_IO_HEADER_SIZE) {
                 zmq_msg_close(&m_header);
-				zmq_msg_close(&m_header_data);
-				zmq_msg_close(&m_channel_data);
+				//zmq_msg_close(&m_header_data);
+				//zmq_msg_close(&m_channel_data);
                 continue;
             }
 			
@@ -238,7 +260,8 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 			
 			DirectIOHandlerPtrCaller(handler_impl, delegate)(data_pack);
 			//close the requests
-            zmq_msg_close(&m_header);
+			zmq_msg_close(&m_header);
+			//header data and channel data aree free by other class
 			zmq_msg_close(&m_header_data);
 			zmq_msg_close(&m_channel_data);
 			

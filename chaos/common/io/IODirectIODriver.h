@@ -68,8 +68,8 @@ namespace chaos{
 		
 		WaitSemaphore wait_get_answer;
 		
-		void consumePutEvent(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderPutOpcode header, void *channel_data, uint32_t channel_data_len);
-		void consumeGetEvent(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderGetOpcode header, void *channel_data, uint32_t channel_data_len);
+		void consumePutEvent(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header, void *channel_data, uint32_t channel_data_len);
+		void consumeGetEvent(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header, void *channel_data, uint32_t channel_data_len);
 		
 		IODData data_cache;
 		boost::atomic<uint8_t> read_write_index;

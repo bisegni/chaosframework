@@ -49,12 +49,12 @@ namespace chaos {
                         //raw data representation of the header
                         char raw_data[12];
                         struct header {
+							//! The endpoint where the channel is published
+                            uint16_t	endpoint;
+							//! The port value for the device that we need to get
+                            uint16_t	port;
                                 //! The 32bit hash value for the device that we need to get
                             uint32_t	device_hash;
-                                //! The endpoint where the channel is published
-                            uint16_t	endpoint;
-                                //! The port value for the device that we need to get
-                            uint16_t	port;
                                 //! The 32bit representation for the ip where send the answer
                             uint64_t	address;
                         } field;

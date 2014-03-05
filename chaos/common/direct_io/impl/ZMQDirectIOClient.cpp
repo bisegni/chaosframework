@@ -241,7 +241,7 @@ int64_t ZMQDirectIOClient::writeToSocket(void *socket, DirectIODataPack *data_pa
 				return err;
 			}
 			err = zmq_msg_init_data (&msg_data, data_pack->channel_data, data_pack->header.channel_data_size, ZMQDirectIOClientFree, NULL);
-			err = zmq_sendmsg(socket, &msg_data, ZMQ_DONTWAIT);
+			err = zmq_sendmsg(socket, &msg_data, 0);
 			
 			err = zmq_msg_close(&msg_header_data);
 			err = zmq_msg_close(&msg_data);

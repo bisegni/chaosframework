@@ -137,13 +137,16 @@ namespace chaos{
     }
     
 	//we have request data and this arrive with the put opcode
-	void IODirectIODriver::consumePutEvent(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderPutOpcode header, void *channel_data, uint32_t channel_data_len) {
+	void IODirectIODriver::consumePutEvent(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header, void *channel_data, uint32_t channel_data_len) {
+		delete(header);
 		data_cache.data_len = channel_data_len;
 		data_cache.data_ptr = channel_data;
 		wait_get_answer.unlock();
 	}
 	
-	void IODirectIODriver::consumeGetEvent(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderGetOpcode header, void *channel_data, uint32_t channel_data_len) {
+	void IODirectIODriver::consumeGetEvent(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header, void *channel_data, uint32_t channel_data_len) {
+		delete(header);
+		free(channel_data);
 	}
 	
     /*

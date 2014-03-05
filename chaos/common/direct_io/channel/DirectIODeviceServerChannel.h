@@ -46,8 +46,8 @@ namespace chaos {
                          \param channel_header_ptr the abstract pointr for the channel header. Implementations need to cast it according to opcode value
                          \param channel_data the data (if speified by channel)
 						 */
-						virtual void consumePutEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode header, void *channel_data, uint32_t channel_data_len) = 0;
-						virtual void consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderGetOpcode header, void *channel_data, uint32_t channel_data_len) = 0;
+						virtual void consumePutEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header, void *channel_data, uint32_t channel_data_len) = 0;
+						virtual void consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header, void *channel_data, uint32_t channel_data_len) = 0;
 					} DirectIODeviceServerChannelHandler;
 
                     void setHandler(DirectIODeviceServerChannelHandler *_handler);
