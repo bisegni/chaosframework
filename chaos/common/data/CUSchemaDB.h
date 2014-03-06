@@ -77,6 +77,8 @@ namespace chaos {
 				//! fill a CDatawrapper with the device description
 				void fillCDataWrapperDSAtribute(CDataWrapper *dsAttribute,  entity::Entity *deviceIDEntity, entity::Entity *attrEntity, ptr_vector<edb::KeyIdAndValue>& attrProperty);
 				
+				void clearAllAttributeForProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd);
+				
 				//! add an attribute in unique mode
 				/*!
 				 Before add and attribute, is checked if it is present.

@@ -17,7 +17,7 @@ using namespace chaos::data_service::worker;
 #define DCLDBG_ LDBG_ << DataWorker_LOG_HEAD
 #define DCLERR_ LERR_ << DataWorker_LOG_HEAD
 
-DataWorker::DataWorker():work(false) {
+DataWorker::DataWorker():work(false), job_queue(1000) {
 	std::memset(&settings, 0, sizeof(DataWorkerSetting));
 }
 
@@ -25,8 +25,8 @@ DataWorker::~DataWorker() {
 	
 }
 
-WorkerJobInfoPtr DataWorker::getNextOrWait() {
-	WorkerJobInfoPtr new_job = NULL;
+WorkerJobPtr DataWorker::getNextOrWait() {
+	WorkerJobPtr new_job = NULL;
 	while(!job_queue.pop(new_job) && work) {
 		boost::unique_lock<boost::mutex> lock(job_mutex);
 		job_condition.wait(lock);
@@ -35,7 +35,7 @@ WorkerJobInfoPtr DataWorker::getNextOrWait() {
 }
 
 void DataWorker::consumeJob() {
-	WorkerJobInfoPtr thread_job = NULL;
+	WorkerJobPtr thread_job = NULL;
 	DCLAPP_<< "Entering in working cicle";
 	while(work) {
 		thread_job = getNextOrWait();
@@ -74,14 +74,19 @@ void DataWorker::stop() throw (chaos::CException) {
 }
 
 void DataWorker::deinit() throw (chaos::CException) {
-	WorkerJobInfoPtr thread_job = NULL;
+	WorkerJobPtr thread_job = NULL;
 	//empty the job queue deleting the non executed job
 	while(job_queue.pop(thread_job)) {
 		delete(thread_job);
 	}
 }
 
-bool DataWorker::submitJobInfo(WorkerJobInfoPtr job_info) {
-	if(!work || !job_info) return false;
-	return job_queue.push(job_info);
+bool DataWorker::submitJobInfo(WorkerJobPtr job_info) {
+	if(!work) return false;
+	if( job_queue.push(job_info) ) {
+		job_condition.notify_one();
+		return true;
+	}
+	return false;
+	
 }

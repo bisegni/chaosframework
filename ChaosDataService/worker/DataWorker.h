@@ -16,7 +16,7 @@
 #include <boost//thread.hpp>
 #include <boost/lockfree/queue.hpp>
 
-#define DEFAULT_JOB_THREAD 2
+#define DEFAULT_JOB_THREAD 1
 
 namespace chaos{
     namespace data_service {
@@ -24,7 +24,7 @@ namespace chaos{
 			
 			class DataWorker: public chaos::utility::StartableService  {
 				//job queue list
-				boost::lockfree::queue<WorkerJobInfoPtr> job_queue;
+				boost::lockfree::queue<WorkerJobPtr> job_queue;
 				
 				//group thread
 				boost::thread_group job_thread_group;
@@ -40,9 +40,9 @@ namespace chaos{
 				DataWorkerSetting settings;
 				
 				void consumeJob();
-				WorkerJobInfoPtr getNextOrWait();
+				WorkerJobPtr getNextOrWait();
 				
-				virtual void executeJob(WorkerJobInfoPtr job_info) = 0;
+				virtual void executeJob(WorkerJobPtr job_info) = 0;
 			public:
 				DataWorker();
 				virtual ~DataWorker();
@@ -50,7 +50,7 @@ namespace chaos{
 				void start() throw (chaos::CException);
 				void stop() throw (chaos::CException);
 				void deinit() throw (chaos::CException);
-				bool submitJobInfo(WorkerJobInfoPtr job_info);
+				bool submitJobInfo(WorkerJobPtr job_info);
 			};
 			
 		}

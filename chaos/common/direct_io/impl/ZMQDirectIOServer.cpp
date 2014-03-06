@@ -77,7 +77,7 @@ void ZMQDirectIOServer::start() throw(chaos::CException) {
     if(zmq_context == NULL) throw chaos::CException(0, "Error creating zmq context", __FUNCTION__);
     
     //et the thread number
-    zmq_ctx_set(zmq_context, ZMQ_IO_THREADS, 1);
+    zmq_ctx_set(zmq_context, ZMQ_IO_THREADS, 2);
     ZMQDIO_SRV_LAPP_ << "ZMQ context created";
 	
     //queue thread
@@ -112,18 +112,13 @@ void ZMQDirectIOServer::deinit() throw(chaos::CException) {
 
 #define PS_STR(x) (x?"service":"priority")
 void ZMQDirectIOServer::worker(bool priority_service) {
-	int linger = 0;
-	int water_mark = 3;
-	int read_water_mark = 0;
-	size_t read_size;
+	int					linger = 0;
+	int					water_mark = 3;
 	zmq_msg_t			m_identity;
-    zmq_msg_t			m_header;
-	zmq_msg_t			m_header_data;
-	zmq_msg_t			m_channel_data;
+	char				header_buffer[DIRECT_IO_HEADER_SIZE];
 	void				*socket				= NULL;
     int					err					= 0;
     DirectIODataPack	*data_pack			= NULL;
-	void				*received_data		= NULL;
 	
 	ZMQDIO_SRV_LAPP_ << "Startup thread for " << PS_STR(priority_service);
 	
@@ -180,90 +175,94 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 			//read header
 			err = zmq_msg_init(&m_identity);
 			err = zmq_msg_recv(&m_identity, socket, 0);
-			zmq_msg_close(&m_identity);
             if(err == -1) {
+				zmq_msg_close(&m_identity);
                 continue;
             }
 			
-			err = zmq_msg_init(&m_header);
-			err = zmq_msg_init(&m_header_data);
-			err = zmq_msg_init(&m_channel_data);
-			
-            err = zmq_msg_recv(&m_header, socket, 0);
+            err = zmq_recv(socket, header_buffer, DIRECT_IO_HEADER_SIZE, 0);
             if(err == -1 ||
 			   err != DIRECT_IO_HEADER_SIZE) {
-                zmq_msg_close(&m_header);
-				//zmq_msg_close(&m_header_data);
-				//zmq_msg_close(&m_channel_data);
+				zmq_msg_close(&m_identity);
                 continue;
             }
 			
-			received_data = zmq_msg_data(&m_header);
+			//create new datapack
 			data_pack = new DirectIODataPack();
-			data_pack->header.dispatcher_header.raw_data = DIRECT_IO_GET_DISPATCHER_DATA(received_data);
+			
+			//clear all memory
+			std::memset(data_pack, 0, sizeof(DirectIODataPack));
+			
+			//set dispatch header data
+			data_pack->header.dispatcher_header.raw_data = DIRECT_IO_GET_DISPATCHER_DATA(header_buffer);
 
-			//check what send
+			
+			//check what i need to reice
 			switch(data_pack->header.dispatcher_header.fields.channel_part) {
 				case DIRECT_IO_CHANNEL_PART_EMPTY:
 					break;
 				case DIRECT_IO_CHANNEL_PART_HEADER_ONLY:
-					data_pack->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(received_data);
-					err = zmq_msg_recv(&m_header_data, socket, 0);
+					
+					//init header data buffer
+					data_pack->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(header_buffer);
+					data_pack->channel_header_data = malloc(data_pack->header.channel_header_size);
+					
+					//init message with buffer
+					err = zmq_recv(socket, data_pack->channel_header_data, data_pack->header.channel_header_size, 0);
+					//err = zmq_msg_recv(&m_header_data, socket, 0);
 					if(err == -1) {
-						zmq_msg_close(&m_header);
-						zmq_msg_close(&m_header_data);
-						zmq_msg_close(&m_channel_data);
+						free(data_pack->channel_header_data);
+						delete data_pack;
 						continue;
 					}
-					//get channel header data
-					data_pack->channel_header_data = zmq_msg_data(&m_header_data);
 					break;
 				case DIRECT_IO_CHANNEL_PART_DATA_ONLY:
-					data_pack->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(received_data);
-					err = zmq_msg_recv(&m_channel_data, socket, 0);
+					
+					//init data buffer
+					data_pack->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(header_buffer);
+					data_pack->channel_data = malloc(data_pack->header.channel_data_size);
+					
+					//init message with buffer
+					err = zmq_recv(socket, data_pack->channel_data, data_pack->header.channel_data_size, 0);
 					if(err == -1) {
-						zmq_msg_close(&m_header);
-						zmq_msg_close(&m_header_data);
-						zmq_msg_close(&m_channel_data);
+						free(data_pack->channel_data);
+						delete data_pack;
 						continue;
 					}
-					//get channel data
-					data_pack->channel_data = zmq_msg_data(&m_channel_data);
 					break;
 				case DIRECT_IO_CHANNEL_PART_HEADER_DATA:
-					data_pack->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(received_data);
-					data_pack->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(received_data);
-
-					err = zmq_msg_recv(&m_header_data, socket, 0);
-					if(err == -1) {
-						zmq_msg_close(&m_header);
-						zmq_msg_close(&m_header_data);
-						zmq_msg_close(&m_channel_data);
-						continue;
-					}
-					err = zmq_msg_recv(&m_channel_data, socket, 0);
-					if(err == -1) {
-						zmq_msg_close(&m_header);
-						zmq_msg_close(&m_header_data);
-						zmq_msg_close(&m_channel_data);
-						continue;
-					}
+					//init header data and channel data buffers
+					data_pack->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(header_buffer);
+					data_pack->channel_header_data = malloc(data_pack->header.channel_header_size);
 					
-					//get channel header data
-					data_pack->channel_data = zmq_msg_data(&m_channel_data);
-					//get channel data
-					data_pack->channel_header_data = zmq_msg_data(&m_header_data);
+					data_pack->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(header_buffer);
+					data_pack->channel_data = malloc(data_pack->header.channel_data_size);
+
+					//reiceve all data
+					err = zmq_recv(socket, data_pack->channel_header_data, data_pack->header.channel_header_size, 0);
+					//err = zmq_msg_recv(&m_header_data, socket, 0);
+					if(err == -1) {
+						free(data_pack->channel_header_data);
+						free(data_pack->channel_data);
+						delete data_pack;
+						continue;
+					}
+					err = zmq_recv(socket, data_pack->channel_data, data_pack->header.channel_data_size, 0);
+					//err = zmq_msg_recv(&m_channel_data, socket, 0);
+					if(err == -1) {
+						free(data_pack->channel_header_data);
+						free(data_pack->channel_data);
+						delete data_pack;
+						continue;
+					}
 					break;
 			}
 			
 			
 			
 			DirectIOHandlerPtrCaller(handler_impl, delegate)(data_pack);
-			//close the requests
-			zmq_msg_close(&m_header);
-			//header data and channel data aree free by other class
-			zmq_msg_close(&m_header_data);
-			zmq_msg_close(&m_channel_data);
+			//close the socket of the header and identity
+			zmq_msg_close(&m_identity);
 			
         } catch (CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex)

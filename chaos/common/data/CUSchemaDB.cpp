@@ -243,6 +243,14 @@ void CUSchemaDB::addAttributeToDataSet(const char*const attributeDeviceID,
     }
 }
 
+void CUSchemaDB::clearAllAttributeForProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd) {
+	ptr_vector<edb::KeyIdAndValue> properties_for_entity;
+	attributeEntity->getPropertyByKeyID(keyIDToAdd, properties_for_entity);
+	
+	for (int idx = 0; idx < properties_for_entity.size(); idx++) {
+		attributeEntity->deleteProrperty((&properties_for_entity[idx])->elementID);
+	}
+}
 
 void CUSchemaDB::addUniqueAttributeProperty(entity::Entity *attributeEntity, uint32_t keyIDToAdd, const char * attributeValue, bool checkValueForUnicity) {
     ptr_vector<edb::KeyIdAndValue> keysAndValues;
@@ -419,10 +427,14 @@ void CUSchemaDB::addAttributeToDataSetFromDataWrapper(CDataWrapper& attributeDat
     
     //add now the server address for this device if sent
     if(attributeDataWrapper.hasKey(DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS)) {
+		//remove all stored server
+		clearAllAttributeForProperty(deviceEntity, mapDatasetKeyForID[DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS]);
+		
         //in the package has been sent the address where fir the data for this device
         auto_ptr<CMultiTypeDataArrayWrapper> serverVec(attributeDataWrapper.getVectorValue(DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS));
         for (int idx = 0; idx < serverVec->size(); idx++) {
-            addUniqueAttributeProperty(deviceEntity, mapDatasetKeyForID[DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS], serverVec->getStringElementAtIndex(idx).c_str());
+			//add new server
+			deviceEntity->addProperty(mapDatasetKeyForID[DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS],  serverVec->getStringElementAtIndex(idx).c_str());
         }
     }
 }

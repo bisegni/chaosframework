@@ -17,9 +17,10 @@ namespace chaos{
 
 		namespace worker {
 			
-			typedef struct WorkerJobInfo {
-				
-			} WorkerJobInfo, *WorkerJobInfoPtr;
+			typedef struct WorkerJob {
+				WorkerJob(){};
+				virtual ~WorkerJob(){};
+			} WorkerJob, *WorkerJobPtr;
 			
 			typedef struct DataWorkerSetting {
 				unsigned int job_thread_number;

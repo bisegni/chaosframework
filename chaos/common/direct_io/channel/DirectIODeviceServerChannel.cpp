@@ -46,8 +46,8 @@ void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
 	switch (channel_opcode) {
 		case opcode::DeviceChannelOpcodePutOutput: {
             opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderPutOpcode* >(dataPack->channel_header_data);
-			header->device_hash = byte_swap<little_endian, host_endian, uint32_t>(header->device_hash);
-			header->cache_tag = byte_swap<little_endian, host_endian, uint32_t>(header->cache_tag);
+			header->device_hash = FROM_LITTLE_ENDNS_NUM(uint32_t, header->device_hash);
+			header->cache_tag = FROM_LITTLE_ENDNS_NUM(uint32_t, header->cache_tag);
 			handler->consumePutEvent(header, dataPack->channel_data, dataPack->header.channel_data_size);
             break;
         }
@@ -64,20 +64,7 @@ void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
 		default:
 			break;
 	}
-	
-	//forward event
-	/*switch (dataPack->header.dispatcher_header.fields.channel_part) {
-		case DIRECT_IO_CHANNEL_PART_EMPTY:
-			break;
-		case DIRECT_IO_CHANNEL_PART_HEADER_ONLY:
-			free(dataPack->channel_header_data);
-			break;
-		case DIRECT_IO_CHANNEL_PART_DATA_ONLY:
-			free(dataPack->channel_data);
-			break;
-		case DIRECT_IO_CHANNEL_PART_HEADER_DATA:
-			free(dataPack->channel_data);
-			free(dataPack->channel_header_data);
-			break;
-	}*/
+
+	//only data pack is deleted, header data and channel data are managed by hendler
+	delete dataPack;
 }

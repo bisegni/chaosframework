@@ -135,7 +135,6 @@ void DirectIODispatcher::priorityDataReceived(DirectIODataPack *data_pack) {
 	if(endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->enable) {
 		endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->endpoint->priorityDataReceived(data_pack);
 	}
-	delete(data_pack);
 }
 
 // Event for a new data received
@@ -144,5 +143,4 @@ void DirectIODispatcher::serviceDataReceived(DirectIODataPack *data_pack) {
 	if(endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->enable) {
 		endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->endpoint->serviceDataReceived(data_pack);
 	}
-	delete(data_pack);
 }

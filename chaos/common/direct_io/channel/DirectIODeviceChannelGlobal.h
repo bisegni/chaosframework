@@ -38,7 +38,7 @@ namespace chaos {
                     
                     //! Heder for the DeviceChannelOpcodePutOutput[WithCache] opcodes
                     typedef struct DirectIODeviceChannelHeaderPutOpcode {
-                        //! The 32bit hash value for the device that we need to insert
+							//! The 32bit hash value for the device that we need to insert
                         uint32_t device_hash;
                             //! The 32bit cache_tag
                         uint32_t cache_tag;

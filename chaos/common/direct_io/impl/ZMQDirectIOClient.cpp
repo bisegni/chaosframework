@@ -72,8 +72,8 @@ void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
     socket_priority = zmq_socket (zmq_context, ZMQ_DEALER);
     if(socket_priority == NULL) throw chaos::CException(1, "Error creating priority socket", __FUNCTION__);
     //set socket identity
-    err = zmq_setsockopt (socket_priority, ZMQ_IDENTITY, priority_identity.c_str(), priority_identity.size());
-	if(err) throw chaos::CException(err, "Error setting priority socket option", __FUNCTION__);
+    //err = zmq_setsockopt (socket_priority, ZMQ_IDENTITY, priority_identity.c_str(), priority_identity.size());
+	//if(err) throw chaos::CException(err, "Error setting priority socket option", __FUNCTION__);
     
     err = zmq_setsockopt (socket_priority, ZMQ_LINGER, &linger_period, sizeof(int));
 	if(err) throw chaos::CException(err, "Error setting linger on priority socket option", __FUNCTION__);
@@ -85,8 +85,8 @@ void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
     socket_service = zmq_socket (zmq_context, ZMQ_DEALER);
     if(socket_service == NULL) throw chaos::CException(2, "Error creating service socket", __FUNCTION__);
     //set socket identity
-    err = zmq_setsockopt(socket_service, ZMQ_IDENTITY, service_identity.c_str(), service_identity.size());
-	if(err) throw chaos::CException(err, "Error setting service socket option", __FUNCTION__);
+    //err = zmq_setsockopt(socket_service, ZMQ_IDENTITY, service_identity.c_str(), service_identity.size());
+	//if(err) throw chaos::CException(err, "Error setting service socket option", __FUNCTION__);
     
     err = zmq_setsockopt (socket_service, ZMQ_LINGER, &linger_period, sizeof(int));
 	if(err) throw chaos::CException(err, "Error setting linger on service socket option", __FUNCTION__);

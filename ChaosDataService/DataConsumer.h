@@ -24,15 +24,21 @@
 #include "dataservice_global.h"
 #include "AnswerEngine.h"
 #include "cache_system/cache_system.h"
+#include "worker/DataWorker.h"
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/direct_io/DirectIOServerEndpoint.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>
 #include <chaos/common/utility/TimingUtil.h>
 
+#include <boost/atomic.hpp>
+
 using namespace chaos::utility;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 using namespace chaos::common::direct_io::channel::opcode_headers;
+
+#define DEVICE_WORKER_NUMBER 10
+
 namespace chaos{
     namespace data_service {
         
@@ -42,11 +48,14 @@ namespace chaos{
             friend class ChaosDataService;
 			std::string cache_impl_name;
 			
-			AnswerEngine				*answer_engine;
-			ChaosDataServiceSetting		*settings;
-            DirectIOServerEndpoint		*server_endpoint;
-			DirectIODeviceServerChannel *device_channel;
-			cache_system::CacheDriver	*cache_driver_instance;
+			AnswerEngine							*answer_engine;
+			ChaosDataServiceSetting					*settings;
+            DirectIOServerEndpoint					*server_endpoint;
+			DirectIODeviceServerChannel				*device_channel;
+			
+			boost::atomic<uint16_t> device_data_worker_index;
+			chaos::data_service::worker::DataWorker	**device_data_worker;
+			
 			
             void consumeCDataWrapper(uint8_t channel_opcode, chaos::common::data::CDataWrapper *data_wrapper);
             void consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header, void *channel_data, uint32_t channel_data_len);
