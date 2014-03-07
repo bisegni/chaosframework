@@ -18,8 +18,9 @@
  *    	limitations under the License.
  */
 #include "LLRpcApi.h"
-#include <chaos/common/data/CDataWrapper.h>
+#include <boost/format.hpp>
 #include <chaos/common/global.h>
+#include <chaos/common/data/CDataWrapper.h>
 
 using namespace boost;
 
@@ -39,10 +40,10 @@ void LLRpcApi::init()  throw (CException) {
     SetupStateManager::levelUpFrom(INIT_STEP, "LLRpcApi already initialized");
     
     LLRA_LAPP_ << "Init NetworkBroker";
-    rpcMessageBroker->init();
+    network_broker->init();
     LLRA_LAPP_ << "NetworkBroker Initialized";
     LLRA_LAPP_ << "Starting NetworkBroker";
-    rpcMessageBroker->start();
+    network_broker->start();
     LLRA_LAPP_ << "NetworkBroker Started";
 }
 
@@ -53,52 +54,74 @@ void LLRpcApi::deinit()  throw (CException) {
     LLRA_LAPP_ << "Deinit LLRpcApi";
     SetupStateManager::levelDownFrom(DEINIT_STEP, "LLRpcApi already deinitialized");
     LLRA_LAPP_ << "Stop NetworkBroker";
-    rpcMessageBroker->stop();
+    network_broker->stop();
     LLRA_LAPP_ << "Deinit NetworkBroker";
-    rpcMessageBroker->deinit();
+    network_broker->deinit();
     LLRA_LAPP_ << "NetworkBroker deinitialized";
 }
 
 /*
  */
 LLRpcApi::LLRpcApi() {
-    rpcMessageBroker = new NetworkBroker();
+    network_broker = new NetworkBroker();
 }
 
 /*
  */
 LLRpcApi::~LLRpcApi() {
-    if(rpcMessageBroker)
-        delete (rpcMessageBroker);
+    if(network_broker)
+        delete (network_broker);
+}
+
+/*
+ * Return an instance for the configured data live driver
+ */
+IODataDriver *LLRpcApi::getDataProxyChannelNewInstance() throw(CException) {
+	IODataDriver *result = NULL;
+	std::string impl_name =  boost::str( boost::format("%1%IODriver") % GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL));
+	
+	result = ObjectFactoryRegister<IODataDriver>::getInstance()->getNewInstanceByName(impl_name.c_str());
+	
+	if(result) {
+		if(impl_name.compare("IODirectIODriver") == 0) {
+			//set the information
+			IODirectIODriverInitParam init_param;
+			//get client and endpoint
+			init_param.client_instance = network_broker->getDirectIOClientInstance();
+			init_param.endpoint_instance = network_broker->getDirectIOServerEndpoint();
+			((IODirectIODriver*)result)->setDirectIOParam(init_param);
+		}
+	}
+    return result;
 }
 
 /*
  */
 MDSMessageChannel *LLRpcApi::getNewMetadataServerChannel() {
     string serverHost = GlobalConfiguration::getInstance()->getMetadataServerAddress();
-    return rpcMessageBroker->getMetadataserverMessageChannel(serverHost);
+    return network_broker->getMetadataserverMessageChannel(serverHost);
 }
 
 /*!
  Return a new device channel
  */
 DeviceMessageChannel *LLRpcApi::getNewDeviceMessageChannel(CDeviceNetworkAddress *deviceNetworkAddress) {
-    return rpcMessageBroker->getDeviceMessageChannelFromAddress(deviceNetworkAddress);
+    return network_broker->getDeviceMessageChannelFromAddress(deviceNetworkAddress);
 }
 
 void LLRpcApi::deleteMessageChannel(NodeMessageChannel *channelToDispose) {
-    rpcMessageBroker->disposeMessageChannel(channelToDispose);
+    network_broker->disposeMessageChannel(channelToDispose);
 }
 
 
 event::channel::AlertEventChannel *LLRpcApi::getNewAlertEventChannel() throw (CException) {
-    return rpcMessageBroker->getNewAlertEventChannel();
+    return network_broker->getNewAlertEventChannel();
 }
 
 event::channel::InstrumentEventChannel *LLRpcApi::getNewInstrumentEventChannel() throw (CException) {
-    return rpcMessageBroker->getNewInstrumentEventChannel();
+    return network_broker->getNewInstrumentEventChannel();
 }
 
 void LLRpcApi::disposeEventChannel(event::channel::EventChannel *eventChannel) throw (CException) {
-    rpcMessageBroker->disposeEventChannel(eventChannel);
+    network_broker->disposeEventChannel(eventChannel);
 }

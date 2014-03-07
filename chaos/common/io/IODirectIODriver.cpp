@@ -60,7 +60,8 @@ namespace chaos{
 		std::memset(&init_parameter, 0, sizeof(IODirectIODriverInitParam));
 		
 		read_write_index = 0;
-		std::memset(&data_cache, 0, sizeof(IODData));
+		data_cache.data_ptr = NULL;
+		data_cache.data_len = 0;
     }
     
     /*
@@ -106,8 +107,6 @@ namespace chaos{
 		
 		//initialize client
 		utility::InizializableService::deinitImplementation(init_parameter.client_instance, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
-
-		
 		IODataDriver::deinit();
    }
     
@@ -127,12 +126,14 @@ namespace chaos{
      * return a pointer to the class ArrayPointer of CDataWrapper type
      */
     char* IODirectIODriver::retriveRawData(size_t *dim)  throw(CException) {
-		char* result;
+		char* result = NULL;
 		device_client_channel->requestLastOutputData(current_endpoint_port, current_endpoint_index);
 		wait_get_answer.wait(1000);
-		*dim = (size_t)data_cache.data_len;
-		result = (char*)data_cache.data_ptr;
-		std::memset(&data_cache, 0, sizeof(IODData));
+		if(data_cache.data_ptr && data_cache.data_ptr) {
+			*dim = (size_t)data_cache.data_len;
+			result = (char*)data_cache.data_ptr;
+			std::memset(&data_cache, 0, sizeof(IODData));
+		}
         return result;
     }
     

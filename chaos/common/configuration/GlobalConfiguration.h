@@ -146,9 +146,10 @@ x = hasOption(y);
 		template<typename T>
         void addOption(const char* name,
 						const char* description,
-						T default_value)  throw (CException) {
+						T default_value,
+					   bool multivalue = false)  throw (CException) {
 			try{//po::value<T>(&timeout)->default_value(2000)
-				const po::value_semantic* s = po::value<T>()->default_value(default_value);
+				const po::value_semantic* s = multivalue?po::value<T>()->default_value(default_value)->multitoken():po::value<T>()->default_value(default_value);
 				desc.add_options()(name, s, description);
 			}catch (po::error &e) {
 				throw CException(0, e.what(), "GlobalConfiguration::addOption");
@@ -161,9 +162,10 @@ x = hasOption(y);
         void addOption(const char* name,
 						const char* description,
 						T default_value,
-						T *default_variable)  throw (CException) {
-			try{//po::value<T>(&timeout)->default_value(2000)
-				const po::value_semantic* s = po::value<T>(default_variable)->default_value(default_value);
+						T *default_variable,
+					   bool multivalue = false)  throw (CException) {
+			try{
+				const po::value_semantic* s = multivalue?po::value<T>(default_variable)->default_value(default_value)->multitoken():po::value<T>(default_variable)->default_value(default_value);
 				desc.add_options()(name, s, description);
 			}catch (po::error &e) {
 				throw CException(0, e.what(), "GlobalConfiguration::addOption");
@@ -175,9 +177,10 @@ x = hasOption(y);
 		template<typename T>
         void addOption(const char* name,
 					   const char* description,
-					   T *default_variable)  throw (CException) {
-			try{//po::value<T>(&timeout)->default_value(2000)
-				const po::value_semantic* s = po::value<T>(default_variable);
+					   T *default_variable,
+					   bool multivalue = false)  throw (CException) {
+			try{
+				const po::value_semantic* s = multivalue?po::value<T>(default_variable)->multitoken():po::value<T>(default_variable);
 				desc.add_options()(name, s, description);
 			}catch (po::error &e) {
 				throw CException(0, e.what(), "GlobalConfiguration::addOption");

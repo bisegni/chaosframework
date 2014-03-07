@@ -32,6 +32,8 @@
 #include <chaos/common/utility/SetupStateManager.h>
 #include <chaos/common/event/channel/AlertEventChannel.h>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
+#include <chaos/common/io/IODirectIODriver.h>
+#include <chaos/common/io/IOMemcachedIODriver.h>
 namespace chaos {
     namespace ui{
         using namespace boost;  
@@ -43,7 +45,7 @@ namespace chaos {
             friend class ChaosUIToolkit;
             friend class Singleton<LLRpcApi>;
             
-            chaos::NetworkBroker *rpcMessageBroker;
+            chaos::NetworkBroker *network_broker;
             /*
              LL Rpc Api static initialization it should be called once for application
              */
@@ -62,7 +64,8 @@ namespace chaos {
             ~LLRpcApi();
             
         public:
-            
+            IODataDriver *getDataProxyChannelNewInstance() throw(CException);
+			
             /*!
              Return a new channel for talk with metadata server
              */

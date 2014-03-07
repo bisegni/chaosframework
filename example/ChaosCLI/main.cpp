@@ -46,6 +46,7 @@ namespace chaos_batch = chaos::common::batch_command;
 #define OPT_SCHEDULE_TIME   "stime"
 #define OPT_PRINT_STATE     "print-state"
 #define OPT_PRINT_TYPE		"print-type"
+#define OPT_GET_DS_VALUE	"get_ds_value"
 //--------------slow contorol option----------------------------------------------------
 #define OPT_SL_ALIAS									"sc-alias"
 #define OPT_SL_EXEC_CHANNEL								"sc-exec-channel"
@@ -113,6 +114,8 @@ int main (int argc, char* argv[] )
         uint32_t scSubmissionSubmissionRetryDelay;
         uint32_t scExecutionChannel;
 		string rtAttributeValue;
+		vector<string> key_to_show;
+		
 		
 		bool scFeaturesLock;
 		uint32_t scFeaturesSchedWait;
@@ -123,13 +126,14 @@ int main (int argc, char* argv[] )
         //! [UIToolkit Attribute Init]
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_DEVICE_ID, "The identification string of the device");
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_TIMEOUT, "Timeout rpc in milliseconds", 2000, &timeout);
-        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<int>(OPT_STATE, "The state to set on the device{1=init, 2=start, 3=stop, 4=deinit, 5=set schedule time, 6=submite slow command(slcu), 7=kill current command(slcu), 8=get command state by id, 9=set input channel(rtcu)}, 10=flush history state(slcu)", 0);
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<int>(OPT_STATE, "The state to set on the device{1=init, 2=start, 3=stop, 4=deinit, 5=set schedule time, 6=submite slow command(slcu), 7=kill current command(slcu), 8=get command state by id, 9=set input channel(rtcu)}, 10=flush history state(slcu), 11=get dataset value for keys", 0);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<long>(OPT_SCHEDULE_TIME, "the time in microseconds for devide schedule time");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<bool>(OPT_PRINT_STATE, "Print the state of the device", false, &printState);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<bool>(OPT_PRINT_TYPE, "Print the type of the control unit of the device", false, &printType);
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption< vector<string> >(OPT_GET_DS_VALUE, "Print last value of the dataset keys[to use with opcode 11]", &key_to_show, true);
+		
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_SL_ALIAS, "The alias associted to the command for the slow control cu", "", &scAlias);
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_SL_EXEC_CHANNEL, "TThe alias used to execute the command [it's 1 based, 0 let choice the channel to the engine]", 0, &scExecutionChannel);
-        
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_SL_SUBMISSION_RULE, "The rule used for submit the command for the slow control cu [normal, stack, kill]","stack", &scSubmissionRule);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_SL_PRIORITY, "The priority used for submit the command for the slow control cu", 50,&scSubmissionPriority);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_SL_COMMAND_DATA, "The bson pack (in text format) sent to the set handler of the command for the slow", &scUserData);
@@ -170,7 +174,7 @@ int main (int argc, char* argv[] )
         
         //get the actual state of device
         err = controller->getState(deviceState);
-        if(err == ErrorCode::EC_TIMEOUT) throw CException(5, "Time out on connection", "Get state for device");
+        if(err == ErrorCode::EC_TIMEOUT && op!=11) throw CException(5, "Time out on connection", "Get state for device");
         
         if(printState) {
             std::cout << "Current state:";
@@ -343,6 +347,18 @@ int main (int argc, char* argv[] )
 			case 10:{
 				err = controller->flushCommandStateHistory();
 				if(err == ErrorCode::EC_TIMEOUT) throw CException(3, "Time out on connection", "OPCODE 10");
+				break;
+			}
+				
+			case 11:{
+				controller->fetchCurrentDeviceValue();
+				std::string str_value;
+				for (int idx = 0; idx < key_to_show.size(); idx++) {
+					if(!controller->getAttributeStrValue(key_to_show[idx], str_value)) {
+						std::cout << key_to_show[idx] << " = " << str_value << std::endl;
+					}
+				}
+				
 				break;
 			}
                 

@@ -179,6 +179,8 @@ namespace chaos {
              */
             int getDeviceAttributeType(string& attributesName, DataType::DataType& type);
             
+			int getAttributeStrValue(string attributesName, string& attribute_value);
+			
 			//! Get the type of the control unit
 			/*!
 			  Get the type of the contro unit
