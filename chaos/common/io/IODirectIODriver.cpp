@@ -91,7 +91,8 @@ namespace chaos{
 		//get the client and server channel
 		device_client_channel = (chaos_dio_channel::DirectIODeviceClientChannel *)init_parameter.client_instance->getNewChannelInstance("DirectIODeviceClientChannel");
 		device_server_channel = (chaos_dio_channel::DirectIODeviceServerChannel *)init_parameter.endpoint_instance->getNewChannelInstance("DirectIODeviceServerChannel");
-		
+		device_server_channel->setHandler(this);
+        
 		//store endpoint idnex for fast access
 		current_endpoint_port = init_parameter.endpoint_instance->getPublicServerInterface()->getPriorityPort();
 		current_endpoint_index = init_parameter.endpoint_instance->getRouteIndex();

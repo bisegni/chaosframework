@@ -114,7 +114,6 @@ void ZMQDirectIOServer::deinit() throw(chaos::CException) {
 void ZMQDirectIOServer::worker(bool priority_service) {
 	int					linger = 0;
 	int					water_mark = 3;
-	zmq_msg_t			m_identity;
 	char				header_buffer[DIRECT_IO_HEADER_SIZE];
 	void				*socket				= NULL;
     int					err					= 0;
@@ -172,18 +171,10 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 	ZMQDIO_SRV_LAPP_ << "Entering in the thread loop for " << PS_STR(priority_service) << " socket";
     while (run_server) {
         try {
-			//read header
-			err = zmq_msg_init(&m_identity);
-			err = zmq_msg_recv(&m_identity, socket, 0);
-            if(err == -1) {
-				zmq_msg_close(&m_identity);
-                continue;
-            }
-			
+            //read header
             err = zmq_recv(socket, header_buffer, DIRECT_IO_HEADER_SIZE, 0);
             if(err == -1 ||
 			   err != DIRECT_IO_HEADER_SIZE) {
-				zmq_msg_close(&m_identity);
                 continue;
             }
 			
@@ -262,7 +253,6 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 			
 			DirectIOHandlerPtrCaller(handler_impl, delegate)(data_pack);
 			//close the socket of the header and identity
-			zmq_msg_close(&m_identity);
 			
         } catch (CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex)
