@@ -58,6 +58,12 @@ uint64_t DirectIOClient::getI64Ip() {
 }
 
 void DirectIOClient::clearChannelInstancerAndInstance() {
+    for(ChannelMapIterator iter = channel_map.begin();
+        iter != channel_map.end();
+        iter++) {
+        delete(iter->second);
+    }
+    channel_map.clear();
 }
 
 // allocate a new channel by the instancer
@@ -80,32 +86,6 @@ void DirectIOClient::deregisterChannelInstance(channel::DirectIOVirtualClientCha
 }
 
 //! Initialize instance
-/*
-void DirectIOClient::updateConfiguration(void *init_data) throw(chaos::CException) {
-    chaos_data::CDataWrapper *init_cdw =static_cast<chaos_data::CDataWrapper*>(init_data);
-    if(init_cdw) return;
-    
-    DIOLAPP_ << "Receive new update for configuration";
-    if(init_cdw->hasKey(DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS)){
-        DIOLAPP_ << "New servers configration has been provided";
-        ServerFeeder::clear();
-        DIOLAPP_ << "Old configuration has been removed";
-
-        auto_ptr<chaos_data::CMultiTypeDataArrayWrapper> data_proxy_server_address(init_cdw->getVectorValue(DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS));
-        //update the live data address
-        DIOLAPP_ << "Scan "<< data_proxy_server_address->size() << " server descriptions";
-        for ( int idx = 0; idx < data_proxy_server_address->size(); idx++ ){
-            string server_desc = data_proxy_server_address->getStringElementAtIndex(idx);
-            if(!ServerFeeder::addServer(server_desc)) {
-                DIOLAPP_ << "Wrong Server Description '" << server_desc << "'";
-            }
-        }
-    }
-	if(init_cdw->hasKey(DataProxyConfigurationKey::DATAPROXY_CLIENT_CONNECTION_MODE)) {
-		
-	}
-}*/
-
 void DirectIOClient::setConnectionMode(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType _connection_mode) {
     connection_mode = _connection_mode;
 }

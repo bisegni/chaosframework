@@ -226,6 +226,27 @@ if [ ! -d "$PREFIX/include/event2" ]; then
 	echo "LIBEVENT Setupped"
 fi
 
+echo "Setup LIBUV"
+#if [ ! -d "$PREFIX/include/event2" ]; then
+if [ ! -f "$BASE_EXTERNAL/libuv" ]; then
+echo "Installing LibEvent"
+#    git clone git://levent.git.sourceforge.net/gitroot/levent/libevent $BASE_EXTERNAL/libevent
+git clone https://github.com/joyent/libuv.git $BASE_EXTERNAL/libuv
+cd $BASE_EXTERNAL/libuv
+else
+cd $BASE_EXTERNAL/libuv
+git pull
+fi
+./autogen.sh
+./configure --prefix=$PREFIX
+make clean
+make
+make install
+echo "LIBUV Setupped"
+fi
+
+
+
 echo "Setup LIBMEMCACHED"
 if [ ! -d "$PREFIX/include/libmemcached" ]; then
     echo "Install libmemcached into  $BASE_EXTERNAL/libmemcached"

@@ -50,6 +50,9 @@ namespace chaos {
                 class DirectIOVirtualClientChannel;
             }
             
+            typedef std::map<unsigned int, channel::DirectIOVirtualClientChannel* > ChannelMap;
+            typedef std::map<unsigned int, channel::DirectIOVirtualClientChannel* >::iterator ChannelMapIterator;
+            
 			//! Direct IO client base class
 			/*!
 				This class represent the base interface for the operation on direct io output channel,
@@ -67,7 +70,7 @@ namespace chaos {
                 boost::ptr_vector<DirectIOConnection> connections_info;
                 
                 boost::shared_mutex mutex_channel_map;
-                std::map<unsigned int, channel::DirectIOVirtualClientChannel* > channel_map;
+                ChannelMap channel_map;
                 
                 //! release all channel and instancer
                 void clearChannelInstancerAndInstance();

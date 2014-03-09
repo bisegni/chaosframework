@@ -29,13 +29,16 @@ namespace chaos {
 		namespace direct_io {
 			class DirectIOClient;
 			class DirectIOForwarder;
+            class DirectIOClientConnection;
+            
 			struct DirectIODataPack;
 			
             namespace channel {
                 
                 class DirectIOVirtualClientChannel : protected DirectIOVirtualChannel {
                     friend class chaos::common::direct_io::DirectIOClient;
-					
+					friend class chaos::common::direct_io::DirectIOClientConnection;
+                    
 					DirectIOForwarderHandler  forward_handler;
 
 				protected:
