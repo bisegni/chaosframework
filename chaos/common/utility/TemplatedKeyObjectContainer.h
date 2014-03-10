@@ -32,11 +32,13 @@ namespace chaos {
                 for(ContainerOrganizerIterator iter = organizer_map.begin();
                     iter != organizer_map.end();
                     iter++) {
-                    delete(iter->second);
+                    freeObject(iter->first, iter->second);
                 }
                 organizer_map.clear();
             }
-            
+		protected:
+			virtual void freeObject(K key, O *element_ptr) {}
+			
         public:
             TemplatedKeyObjectContainer(){};
             ~TemplatedKeyObjectContainer(){clearElement();};

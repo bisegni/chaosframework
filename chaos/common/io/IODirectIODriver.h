@@ -21,6 +21,7 @@
 #ifndef __CHAOSFramework__IODirectIODriver__
 #define __CHAOSFramework__IODirectIODriver__
 
+#include <set>
 #include <string>
 
 #include <chaos/common/io/IODataDriver.h>
@@ -31,12 +32,18 @@
 #include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/NamedService.h>
+#include <chaos/common/utility/ObjectSlot.h>
+
 #include <boost/atomic.hpp>
 
 namespace chaos{
+	
+	class NetworkBorker;
+	
     using namespace std;
     using namespace boost;
 	
+	namespace chaos_utility = chaos::common::utility;
     namespace chaos_direct_io = chaos::common::direct_io;
     namespace chaos_dio_channel = chaos::common::direct_io::channel;
     
@@ -44,7 +51,8 @@ namespace chaos{
 	 Struct for initialization of the io driver
      */
     typedef struct IODirectIODriverInitParam {
-        chaos_direct_io::DirectIOClient *client_instance;
+		chaos::NetworkBroker					*network_broker;
+        chaos_direct_io::DirectIOClient			*client_instance;
         chaos_direct_io::DirectIOServerEndpoint *endpoint_instance;
     } IODirectIODriverInitParam, *IODirectIODriverInitParamPtr;
     
@@ -54,6 +62,11 @@ namespace chaos{
 		uint32_t data_len;
 	} IODData;
 	
+	typedef struct IODirectIODriverClientChannels {
+		chaos_direct_io::DirectIOClientConnection		*connection;
+		chaos_dio_channel::DirectIODeviceClientChannel	*device_client_channel;
+	} IODirectIODriverClientChannels;
+	
     /*!
      */
     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(IODirectIODriver, IODataDriver), public NamedService, private chaos_dio_channel::DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler {
@@ -61,10 +74,14 @@ namespace chaos{
 		string dataKey;
         IODirectIODriverInitParam init_parameter;
 		
-		uint16_t	current_endpoint_port;
+		std::set<std::string> registered_server;
+		
+		uint16_t	current_endpoint_p_port;
+		uint16_t	current_endpoint_s_port;
 		uint16_t	current_endpoint_index;
-		chaos_dio_channel::DirectIODeviceClientChannel *device_client_channel;
-		chaos_dio_channel::DirectIODeviceServerChannel *device_server_channel;
+		
+		chaos_dio_channel::DirectIODeviceServerChannel	*device_server_channel;
+		chaos_utility::ObjectSlot<IODirectIODriverClientChannels*> channels_slot;
 		
 		WaitSemaphore wait_get_answer;
 		
@@ -73,6 +90,9 @@ namespace chaos{
 		
 		IODData data_cache;
 		boost::atomic<uint8_t> read_write_index;
+		
+	private:
+		void addNewServerConnection(std::string server_description);
     public:
         
         IODirectIODriver(std::string alias);

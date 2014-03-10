@@ -108,18 +108,17 @@ void DataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header,
 	job->device_hash = header->device_hash;
 	job->data_pack = channel_data;
 	job->data_pack_len = channel_data_len;
+	free(header);
 	
     while(!device_data_worker[index_to_use]->submitJobInfo(job));
+	
 }
 
 void DataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header, void *channel_data, uint32_t channel_data_len) {
     //void *cached_data;
 	//uint32_t cached_data_len;
-    //if(cache_driver_instance->getData(header->field.device_hash, &cached_data, cached_data_len)) {
-            //error getting data
-    //}
-    //if(answer_engine->registerNewClient(*header)) answer_engine->sendCacheAnswher(header->field.device_hash, cached_data, cached_data_len);
-	
+	//uint32_t index_to_use = device_data_worker_index++ % DEVICE_WORKER_NUMBER;
+    //kif(answer_engine->registerNewClient(*header)) answer_engine->sendCacheAnswher(header->field.device_hash, cached_data, cached_data_len);
 	free(header);
 	free(channel_data);
 }

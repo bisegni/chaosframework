@@ -55,7 +55,7 @@ namespace chaos {
                     int64_t putDataOutputChannel(bool cache_it, void *buffer, uint32_t buffer_len);
 					
 					//! Send a request for the last output data
-                    int64_t requestLastOutputData(uint16_t server_port, uint16_t endpoint_idx);
+                    int64_t requestLastOutputData(uint16_t p_server_port, uint16_t s_server_port, uint16_t endpoint_idx);
 				};
 
 				

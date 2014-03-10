@@ -8,6 +8,7 @@
 
 #include "AnswerEngine.h"
 #include <chaos/common/utility/InetUtility.h>
+#include <boost/format.hpp>
 
 using namespace chaos::data_service;
 using namespace chaos::common::direct_io;
@@ -17,6 +18,9 @@ using namespace chaos::common::direct_io::channel;
 #define AELAPP_ LAPP_ << AnswerEngine_LOG_HEAD
 #define AELDBG_ LDBG_ << AnswerEngine_LOG_HEAD
 #define AELERR_ LERR_ << AnswerEngine_LOG_HEAD
+
+typedef boost::unique_lock<boost::shared_mutex>	AnswerEngineWriteLock;
+typedef boost::shared_lock<boost::shared_mutex> AnswerEngineReadLock;
 
 AnswerEngine::AnswerEngine():network_broker(NULL) {
 	
@@ -28,69 +32,58 @@ AnswerEngine::~AnswerEngine() {
 
 int AnswerEngine::registerNewClient(opcode_headers::DirectIODeviceChannelHeaderGetOpcode& client_header) {
 	CHAOS_ASSERT(InizializableService::getServiceState() == chaos::utility::service_state_machine::InizializableServiceType::IS_INITIATED)
+	AnswerEngineWriteLock(mutex_map);
 	
-    if(map_client.count(client_header.field.device_hash)) {
+    if(map_connections.count(client_header.field.device_hash)) {
         //client already registered
         return 0;
     }
-    
-	boost::shared_ptr< DirectIOClient > new_client( network_broker->getDirectIOClientInstance() );
-	if(!new_client) return -2;
-
-        //initialize the client implementation
-	chaos::utility::InizializableService::initImplementation(new_client.get(), NULL, "DirectIOClient", __PRETTY_FUNCTION__);
-        //set conenction type for the client
-	new_client->setConnectionMode(DirectIOConnectionSpreadType::DirectIORoundRobin);
-        //add the request client address
-	new_client->addServer(UI64_TO_STRIP(client_header.field.address));
 	
-        //allcoate the client
-	DirectIODeviceClientChannel *device_channel = (DirectIODeviceClientChannel*)new_client->getNewChannelInstance("DirectIODeviceClientChannel");
-	if(!device_channel) {
-        chaos::utility::InizializableService::deinitImplementation(new_client.get(),  "DirectIOClient", __PRETTY_FUNCTION__);
-		return -3;
-	}
+	AnswerEngineClientInfo *client_info = new AnswerEngineClientInfo();
+	std::string client_server_description = boost::str( boost::format("%1%:%2%:%3%") % UI64_TO_STRIP(client_header.field.address) % client_header.field.p_port % client_header.field.s_port);
+	AELAPP_ << "Get new connection for server description " << client_server_description;
+	
+	client_info->connection = direct_io_client->getNewConnection(client_server_description);
+	client_info->device_channel = reinterpret_cast<DirectIODeviceClientChannel*>(client_info->connection->getNewChannelInstance("DirectIODeviceClientChannel"));
         //all is gone well
         //now we can add client and channel to the maps
-	map_channel.insert(make_pair(client_header.field.device_hash, device_channel));
-	map_client.insert(make_pair(client_header.field.device_hash, new_client));
+
+	map_connections.insert(make_pair(client_header.field.device_hash, client_info));
 	return 0;
 }
 
 void AnswerEngine::sendCacheAnswher(uint32_t client_hash, void *buffer, uint32_t buffer_len) {
+	AnswerEngineReadLock(mutex_map);
 	//send answer to client
-	map_channel[client_hash]->putDataOutputChannel(true, buffer, buffer_len);
+	map_connections[client_hash]->device_channel->putDataOutputChannel(true, buffer, buffer_len);
 }
 
 //! Initialize instance
 void AnswerEngine::init(void *init_data) throw(chaos::CException) {
-	AELAPP_ << "check for network broker instance";
+	AELAPP_ << "Check for network broker instance";
 	if(!network_broker) throw CException(-1, "No network brocker associated", "AnswerEngine::init");
+	
+	direct_io_client = network_broker->getDirectIOClientInstance();
+	if(!direct_io_client) throw CException(-1, "Error allcoating direct io client", __PRETTY_FUNCTION__);
+	
+	chaos::utility::InizializableService::initImplementation(direct_io_client,  init_data, "DirectIOClient", __PRETTY_FUNCTION__);
 }
 
 //! Deinit the implementation
 void AnswerEngine::deinit() throw(chaos::CException) {
 	AELAPP_ << "delete all client instance";
-	for (MapClientIterator iter = map_client.begin(); iter != map_client.end(); iter++) {
-		
-		
-		if(map_channel.count(iter->first)) {
-			AELAPP_ << "release channel for client hash " << iter->first;
-			iter->second->releaseChannelInstance(map_channel[iter->first]);
-			
-			AELAPP_ << "Erase channel map entry for hash" << iter->first;
-			map_channel.erase(iter->first);
-		}
-	
-		AELAPP_ << "Deinitializing client map entry for hash" << iter->first;
-		try {
-			chaos::utility::InizializableService::deinitImplementation(iter->second.get(), "DirectIOClient", __PRETTY_FUNCTION__);
-		} catch(chaos::CException& exc) {
-			
-		} catch(...) {
-			
-		}
+	AnswerEngineWriteLock(mutex_map);
+	for(MapConnectionIterator iter = map_connections.begin();
+		iter != map_connections.end();
+		iter++) {
+		AnswerEngineClientInfo *client_info = iter->second;
+		client_info->connection->releaseChannelInstance(client_info->device_channel);
+		direct_io_client->releaseConnection(client_info->connection);
+		delete client_info;
 	}
 	AELAPP_ << "Delete all client map entry";
-	map_client.clear();
+	map_connections.clear();
+	
+	chaos::utility::InizializableService::deinitImplementation(direct_io_client, "DirectIOClient", __PRETTY_FUNCTION__);
+	delete(direct_io_client);
 }

@@ -69,7 +69,7 @@ int64_t DirectIODeviceClientChannel::putDataOutputChannel(bool cache_it, void *b
 }
 
 //! Send device serialization with priority
-int64_t DirectIODeviceClientChannel::requestLastOutputData(uint16_t server_port, uint16_t endpoint_idx) {
+int64_t DirectIODeviceClientChannel::requestLastOutputData(uint16_t p_server_port, uint16_t s_server_port, uint16_t endpoint_idx) {
 	DirectIODataPack *data_pack = new DirectIODataPack();
 	std::memset(data_pack, 0, sizeof(DirectIODataPack));
 	
@@ -84,8 +84,9 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(uint16_t server_port,
 	data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
 	
     header_data->field.device_hash = TO_LITTE_ENDNS_NUM(uint32_t, device_hash);
-    header_data->field.address = TO_LITTE_ENDNS_NUM(uint64_t, ((DirectIOClient*)client_instance)->getI64Ip());
-    header_data->field.port = TO_LITTE_ENDNS_NUM(uint16_t, server_port);
+    header_data->field.address = TO_LITTE_ENDNS_NUM(uint64_t, ((DirectIOClientConnection*)client_instance)->getI64Ip());
+    header_data->field.p_port = TO_LITTE_ENDNS_NUM(uint16_t, p_server_port);
+	header_data->field.s_port = TO_LITTE_ENDNS_NUM(uint16_t, s_server_port);
     header_data->field.endpoint = TO_LITTE_ENDNS_NUM(uint16_t, endpoint_idx);
         //set header
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header_data, sizeof(DirectIODeviceChannelHeaderGetOpcode))

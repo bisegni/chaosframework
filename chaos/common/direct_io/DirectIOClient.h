@@ -27,10 +27,11 @@
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/InizializableService.h>
+#include <chaos/common/utility/TemplatedKeyObjectContainer.h>
 
 #include <chaos/common/direct_io/ServerFeeder.h>
 #include <chaos/common/direct_io/DirectIOTypes.h>
-#include <chaos/common/direct_io/DirectIOForwarder.h>
+#include <chaos/common/direct_io/DirectIOClientConnection.h>
 
 #include <boost/thread.hpp>
 #include <boost/atomic/atomic.hpp>
@@ -60,68 +61,29 @@ namespace chaos {
 				may server and the same data will be forwarded to all server
 				dio_client---> data message -->dio_server
 			 */
-			class DirectIOClient : public DirectIOForwarder, public NamedService, public chaos::utility::InizializableService, public ServerFeeder {
+			class DirectIOClient :	public NamedService,
+									public chaos::utility::InizializableService,
+									public ServerFeeder,
+									protected chaos::utility::TemplatedKeyObjectContainer<uint32_t, DirectIOClientConnection> {
 				friend class chaos::NetworkBroker;
 				
 				std::string impl_alias;
                 
                 boost::atomic_uint channel_counter;
-                
-                boost::ptr_vector<DirectIOConnection> connections_info;
-                
-                boost::shared_mutex mutex_channel_map;
-                ChannelMap channel_map;
-                
-                //! release all channel and instancer
-                void clearChannelInstancerAndInstance();
-				
-            protected:
-				
-				//! current client ip in string form
-				static std::string my_str_ip;
-				
-				//! current client ip in 32 bit form
-				static uint64_t my_i64_ip;
-				
-				//!connection type
-				DirectIOConnectionSpreadType::DirectIOConnectionSpreadType connection_mode;
+
 				
 			public:
                 DirectIOClient(string alias);
 				
 				virtual ~DirectIOClient();
 				
-                    //get client ip information
-                static std::string getStrIp();
-                static uint64_t getI64Ip();
-                
-                //! Initialize instance
-				//void updateConfiguration(void *init_data) throw(chaos::CException);
-                
-                //! Add a new channel instantiator
-                channel::DirectIOVirtualClientChannel *registerChannelInstance(channel::DirectIOVirtualClientChannel *channel_instance);
-                
-                //! Dispose the channel
-                void deregisterChannelInstance(channel::DirectIOVirtualClientChannel *channel_instance);
-				
-				//! set the connection mode
-                /*!
-                 Set the connection mode of the client, the implementation will perform the switch in realtime or
-                 after the deinit-init procedure
-                 */
-                void setConnectionMode(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType _connection_mode);
-				
-				//! New channel allocation by name
+				//! create a new connection for a server
 				/*!
-				 Allocate a new channel and initialize it
+				 Allocate a new connection
 				 */
-				channel::DirectIOVirtualClientChannel *getNewChannelInstance(std::string channel_name) throw (CException);
+				virtual DirectIOClientConnection *getNewConnection(std::string server_description) = 0;
 				
-				//! New channel allocation by name
-				/*!
-				 Allocate a new channel and initialize it
-				 */
-				void releaseChannelInstance(channel::DirectIOVirtualClientChannel *channel_instance) throw (CException);
+				virtual void releaseConnection(DirectIOClientConnection *connection_to_release) = 0;
 			};
 			
 		}

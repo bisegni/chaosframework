@@ -184,7 +184,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
 	} catch(CException& ex) {
 		if(last_service_state != chaos::utility::service_state_machine::InizializableServiceType::IS_INITIATED) {
 			//force the deinitialization on innit failure
-			_deinit(initConfiguration, detachParam);
+		//_deinit(initConfiguration, detachParam);
 		}
 		
 		//trhow received exception
@@ -208,7 +208,7 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
 	} catch(CException& ex) {
 		if(last_service_state != chaos::utility::service_state_machine::StartableServiceType::SS_STARTED) {
 			//force the deinitialization on innit failure
-			_stop(startParam, detachParam);
+		//_stop(startParam, detachParam);
 		}
 		
 		//trhow received exception

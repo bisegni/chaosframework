@@ -29,7 +29,6 @@
 #include <boost/shared_ptr.hpp>
 
 
-
 namespace chaos {
 	namespace common {
 		namespace direct_io {
@@ -46,23 +45,12 @@ namespace chaos {
 					
 					int32_t service_port;
 
-                    boost::shared_mutex mutex_socket_manipolation;
 					
 					void *zmq_context;
-					
-                    void *socket_priority;
-                    
-                    void *socket_service;
-					
 					void *socket_monitor;
 					
-                    inline int64_t writeToSocket(void *socket, DirectIODataPack *data_pack);
-
-                    //set the spread functionality on zmq socket
-                    //void switchModeTo(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType connection_mode);
-                    
 					bool thread_run;
-                    boost::shared_ptr<boost::thread> monitor_thread;
+					boost::shared_ptr<boost::thread> monitor_thread;
 					
 					//! check the connection with the endpoint for the two socket
 					void *monitorWorker();
@@ -70,13 +58,10 @@ namespace chaos {
                     ZMQDirectIOClient(string alias);
                     
                     ~ZMQDirectIOClient();
-				protected:
 					
-                    // send the data to the server layer on priority channel
-                    int64_t sendPriorityData(DirectIODataPack *data_pack);
-                    
-                    // send the data to the server layer on the service channel
-                    int64_t sendServiceData(DirectIODataPack *data_pack);
+				protected:
+					//overriding ofr free object fuunction for the tempalted key object container superclass
+					void freeObject(uint32_t hash, DirectIOClientConnection *connection);
                 public:
                     
                     //! Initialize instance
@@ -85,11 +70,12 @@ namespace chaos {
                     
                     //! Deinit the implementation
                     void deinit() throw(chaos::CException);
-					
-					int addServer(std::string server_desc);
-					
-					int removeServer(std::string server_desc);
 
+					//! get new connection
+					DirectIOClientConnection *getNewConnection(std::string server_description);
+					
+					//! release an instantiated connection
+					void releaseConnection(DirectIOClientConnection *connection_to_release);
                 };
             }
         }

@@ -29,9 +29,13 @@
 #include <chaos/common/utility/TemplatedKeyObjectContainer.h>
 
 #include <chaos/common/direct_io/DirectIOTypes.h>
+
+#include <chaos/common/direct_io/DirectIOForwarder.h>
 #include <chaos/common/direct_io/channel/DirectIOVirtualClientChannel.h>
 
 namespace chaos {
+	class NetworkBroker;
+	
 	namespace common {
 		namespace direct_io {
             //forward delcarations
@@ -58,14 +62,34 @@ namespace chaos {
                 In definitive it can be viwed as a socket connected to a server::port that
                 need to send the data towards an endpoint
              */
-            class DirectIOClientConnection  : protected utility::TemplatedKeyObjectContainer< unsigned int, channel::DirectIOVirtualClientChannel> {
+            class DirectIOClientConnection  : public DirectIOForwarder, protected chaos::utility::TemplatedKeyObjectContainer< unsigned int, channel::DirectIOVirtualClientChannel> {
                 friend class DirectIOClient;
-                DirectIOClientConnection(std::string server_description, bool priority);
-                
-            protected:
+				friend class chaos::NetworkBroker;
+								
+			protected:
+				std::string server_description;
+				
+
+				//! current client ip in string form
+				static std::string my_str_ip;
+				
+				//! current client ip in 32 bit form
+				static uint64_t my_i64_ip;
+
                 DirectIOClientConnectionEventHandler *event_handler;
+				
+				//overriding ofr free object fuunction for the tempalted key object container superclass
+				void freeObject(uint32_t hash, DirectIOClientConnection *connection);
             public:
+				
+				DirectIOClientConnection(std::string _server_description);
                 virtual ~DirectIOClientConnection();
+				
+				//get client ip information
+                static std::string getStrIp();
+                static uint64_t getI64Ip();
+
+				const char * getServerDescription();
 				
 				//! New channel allocation by name
 				/*!

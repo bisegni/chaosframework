@@ -84,7 +84,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
         
         CDSLAPP_ << "Allocate the Data Consumer";
         data_consumer.reset(new DataConsumer(), "DataConsumer");
-		if(!data_consumer.get()) throw chaos::CException(-1, "Error instantiating network broker", __PRETTY_FUNCTION__);
+		if(!data_consumer.get()) throw chaos::CException(-1, "Error instantiating data consumer", __PRETTY_FUNCTION__);
 		data_consumer->settings = &settings;
 		
 		CDSLAPP_ << "Allocate the Answer Engine";

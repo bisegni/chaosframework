@@ -22,10 +22,13 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/regex.hpp>
 
+#include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/io/IODirectIODriver.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common//global.h>
 #include <chaos/common/utility/InizializableService.h>
+
+#include <chaos/common/direct_io/impl/ZMQDirectIOClientConnection.h>
 
 //! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
 static const boost::regex DataProxyServerDescriptionIPRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}:[0-9]{4,5}\\|[0-9]{1,3}");
@@ -55,9 +58,11 @@ namespace chaos{
     /*
      * Driver constructor
      */
-    IODirectIODriver::IODirectIODriver(std::string alias):NamedService(alias), current_endpoint_port(0), current_endpoint_index(0) {
+    IODirectIODriver::IODirectIODriver(std::string alias):NamedService(alias), current_endpoint_p_port(0), current_endpoint_s_port(0), current_endpoint_index(0) {
 		//clear
 		std::memset(&init_parameter, 0, sizeof(IODirectIODriverInitParam));
+		
+		device_server_channel = NULL;
 		
 		read_write_index = 0;
 		data_cache.data_ptr = NULL;
@@ -81,21 +86,31 @@ namespace chaos{
      */
     void IODirectIODriver::init(void *_init_parameter) throw(CException) {
         IODataDriver::init(_init_parameter);
-
+		
+		IODirectIODriver_LAPP_ << "Check init parameter";
+		
+		if(!init_parameter.network_broker) throw CException(-1, "No network broker configured", __PRETTY_FUNCTION__);
+		
+		init_parameter.client_instance = init_parameter.network_broker->getDirectIOClientInstance();
 		if(!init_parameter.client_instance) throw CException(-1, "No client configured", __PRETTY_FUNCTION__);
+		
+		init_parameter.endpoint_instance = init_parameter.network_broker->getDirectIOServerEndpoint();
 		if(!init_parameter.endpoint_instance) throw CException(-1, "No endpoint configured", __PRETTY_FUNCTION__);
 		
 		//initialize client
 		utility::InizializableService::initImplementation(init_parameter.client_instance, _init_parameter, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
 		
 		//get the client and server channel
-		device_client_channel = (chaos_dio_channel::DirectIODeviceClientChannel *)init_parameter.client_instance->getNewChannelInstance("DirectIODeviceClientChannel");
-		device_server_channel = (chaos_dio_channel::DirectIODeviceServerChannel *)init_parameter.endpoint_instance->getNewChannelInstance("DirectIODeviceServerChannel");
+		IODirectIODriver_LAPP_ << "Allcoate the default device server channel";
+        device_server_channel = (chaos_dio_channel::DirectIODeviceServerChannel *)init_parameter.endpoint_instance->getNewChannelInstance("DirectIODeviceServerChannel");
 		device_server_channel->setHandler(this);
-        
+		
 		//store endpoint idnex for fast access
-		current_endpoint_port = init_parameter.endpoint_instance->getPublicServerInterface()->getPriorityPort();
+		current_endpoint_p_port = init_parameter.endpoint_instance->getPublicServerInterface()->getPriorityPort();
+		current_endpoint_s_port = init_parameter.endpoint_instance->getPublicServerInterface()->getServicePort();
 		current_endpoint_index = init_parameter.endpoint_instance->getRouteIndex();
+		IODirectIODriver_LAPP_ << "Our receiving priority port is " << current_endpoint_p_port << " and enpoint is " <<current_endpoint_index;
+		
     }
     
     /*
@@ -103,13 +118,32 @@ namespace chaos{
      */
     void IODirectIODriver::deinit() throw(CException) {
 		if(data_cache.data_ptr) {
+			IODirectIODriver_LAPP_ << "delete last data received";
 			free(data_cache.data_ptr);
 		}
 		
+		//scan all slot and deinitialize all clients
+		IODirectIODriver_LAPP_ << "Scan all slot and deinitialize all clients";
+		for(int idx = 0; idx < channels_slot.getNumberOfSlot(); idx++) {
+			IODirectIODriverClientChannels	*next_client = channels_slot.accessSlotByIndex(idx);
+			next_client->connection->releaseChannelInstance(next_client->device_client_channel);
+			init_parameter.client_instance->releaseConnection(next_client->connection);
+		}
+		channels_slot.clearSlots();
+		
+		//deinitialize server channel
+		if(device_server_channel) {
+			init_parameter.endpoint_instance->releaseChannelInstance(device_server_channel);
+		}
 		//initialize client
 		utility::InizializableService::deinitImplementation(init_parameter.client_instance, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
+		delete(init_parameter.client_instance);
+		
+		if(init_parameter.endpoint_instance) {
+			init_parameter.network_broker->releaseDirectIOServerEndpoint(init_parameter.endpoint_instance);
+		}
 		IODataDriver::deinit();
-   }
+	}
     
     /*
      * This method retrive the cached object by CSDawrapperUsed as query key and
@@ -117,8 +151,11 @@ namespace chaos{
      */
     void IODirectIODriver::storeRawData(chaos_data::SerializationBuffer *serialization)  throw(CException) {
 		CHAOS_ASSERT(serialization)
+		IODirectIODriverClientChannels	*next_client = channels_slot.accessSlot();
+		if(!next_client) return;
+		
 		serialization->disposeOnDelete = false;
-		device_client_channel->putDataOutputChannel(true, (void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen());
+		next_client->device_client_channel->putDataOutputChannel(true, (void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen());
 		delete(serialization);
     }
     
@@ -128,8 +165,11 @@ namespace chaos{
      */
     char* IODirectIODriver::retriveRawData(size_t *dim)  throw(CException) {
 		char* result = NULL;
-		device_client_channel->requestLastOutputData(current_endpoint_port, current_endpoint_index);
-		wait_get_answer.wait(1000);
+		IODirectIODriverClientChannels	*next_client = channels_slot.accessSlot();
+		if(!next_client) return NULL;
+		
+		next_client->device_client_channel->requestLastOutputData(current_endpoint_p_port, current_endpoint_s_port, current_endpoint_index);
+		wait_get_answer.wait();
 		if(data_cache.data_ptr && data_cache.data_ptr) {
 			*dim = (size_t)data_cache.data_len;
 			result = (char*)data_cache.data_ptr;
@@ -158,7 +198,6 @@ namespace chaos{
 		//checkif someone has passed us the device indetification
         if(newConfigration->hasKey(DatasetDefinitionkey::DEVICE_ID)){
             dataKey = newConfigration->getStringValue(DatasetDefinitionkey::DEVICE_ID);
-			device_client_channel->setDeviceID(dataKey);
             IODirectIODriver_LAPP_ << "The key for memory cache is: " << dataKey;
         }
         if(newConfigration->hasKey(DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS)){
@@ -175,16 +214,32 @@ namespace chaos{
 				IODirectIODriver_DLDBG_ << "Try to install data proxy description "<< serverDesc;
 				std::vector<string> tokens;
 				boost::algorithm::split(tokens, serverDesc, boost::algorithm::is_any_of("|"), boost::algorithm::token_compress_on);
-				if(tokens.size()==2) {
-					IODirectIODriver_DLDBG_ << "Data proxy server description " << tokens[0];
-					IODirectIODriver_DLDBG_ << "Data proxy server Endpoint " << tokens[1];
-					init_parameter.client_instance->addServer(tokens[0]);
-					if(device_client_channel) device_client_channel->setEndpoint(boost::lexical_cast<uint16_t>(tokens[1]));
+				if(registered_server.find(tokens[0]) ==  registered_server.end()) {
+					if(tokens.size()==2) {
+						IODirectIODriver_DLDBG_ << "Data proxy server description " << tokens[0];
+						IODirectIODriver_DLDBG_ << "Data proxy server Endpoint " << tokens[1];
+						addNewServerConnection(tokens[0]);
+						registered_server.insert(tokens[0]);
+					} else {
+						IODirectIODriver_DLDBG_ << "Bad server configuration";
+					}
 				} else {
-					IODirectIODriver_DLDBG_ << "Bad server configuration";
+					IODirectIODriver_DLDBG_ << "Server already configured";
 				}
             }
 		}
         return NULL;
     }
+	
+	void IODirectIODriver::addNewServerConnection(std::string server_description) {
+		IODirectIODriver_DLDBG_ << "Add connection for " << server_description;
+		chaos_direct_io::DirectIOClientConnection *tmp_connection = init_parameter.client_instance->getNewConnection(server_description);
+		if(tmp_connection) {
+			IODirectIODriverClientChannels * clients_channel = new IODirectIODriverClientChannels();
+			clients_channel->connection = tmp_connection;
+			clients_channel->device_client_channel = (chaos_dio_channel::DirectIODeviceClientChannel *)tmp_connection->getNewChannelInstance("DirectIODeviceClientChannel");
+			clients_channel->device_client_channel->setDeviceID(dataKey);
+			channels_slot.addSlot(clients_channel);
+		}
+	}
 }

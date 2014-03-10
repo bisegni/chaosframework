@@ -36,69 +36,9 @@ namespace b_algo = boost::algorithm;
 #define DIOLDBG_ LDBG_ << DIO_LOG_HEAD
 #define DIOLERR_ LERR_ << DIO_LOG_HEAD
 
-// current client ip in string form
-std::string DirectIOClient::my_str_ip;
-
-// current client ip in 64 bit form
-uint64_t DirectIOClient::my_i64_ip = 0;
-
-DirectIOClient::DirectIOClient(string alias):NamedService(alias), connection_mode(DirectIOConnectionSpreadType::DirectIONoSetting) {
+DirectIOClient::DirectIOClient(string alias):NamedService(alias) {
 	
 }
 
 DirectIOClient::~DirectIOClient() {
-    clearChannelInstancerAndInstance();
-}
-
-std::string DirectIOClient::getStrIp() {
-    return my_str_ip;
-}
-uint64_t DirectIOClient::getI64Ip() {
-    return my_i64_ip;
-}
-
-void DirectIOClient::clearChannelInstancerAndInstance() {
-    for(ChannelMapIterator iter = channel_map.begin();
-        iter != channel_map.end();
-        iter++) {
-        delete(iter->second);
-    }
-    channel_map.clear();
-}
-
-// allocate a new channel by the instancer
-channel::DirectIOVirtualClientChannel *DirectIOClient::registerChannelInstance(channel::DirectIOVirtualClientChannel *channel_instance) {
-    boost::unique_lock<boost::shared_mutex>	Lock(mutex_channel_map);
-    if(channel_instance == NULL) return NULL;
-    
-    //associate the instance
-    channel_instance->client_instance = this;
-    channel_map.insert(make_pair(channel_instance->channel_route_index, channel_instance));
-    return channel_instance;
-}
-
-// dispose the channel instance
-void DirectIOClient::deregisterChannelInstance(channel::DirectIOVirtualClientChannel *channel_instance) {
-    if(channel_instance == NULL) return;
-    boost::unique_lock<boost::shared_mutex>	Lock(mutex_channel_map);
-    channel_map.erase(channel_instance->channel_route_index);
-    delete channel_instance;
-}
-
-//! Initialize instance
-void DirectIOClient::setConnectionMode(DirectIOConnectionSpreadType::DirectIOConnectionSpreadType _connection_mode) {
-    connection_mode = _connection_mode;
-}
-
-// New channel allocation by name
-channel::DirectIOVirtualClientChannel *DirectIOClient::getNewChannelInstance(std::string channel_name) throw (CException) {
-	channel::DirectIOVirtualClientChannel *channel = chaos::ObjectFactoryRegister<channel::DirectIOVirtualClientChannel>::getInstance()->getNewInstanceByName(channel_name.c_str());
-	registerChannelInstance(channel);
-	return channel;
-}
-
-// New channel allocation by name
-void DirectIOClient::releaseChannelInstance(channel::DirectIOVirtualClientChannel *channel_instance) throw (CException) {
-	deregisterChannelInstance(channel_instance);
-	//if(channel_instance) delete(channel_instance);
 }

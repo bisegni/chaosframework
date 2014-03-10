@@ -24,6 +24,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/lockfree/queue.hpp>
+#include <boost/thread.hpp>
 
 using namespace chaos::utility;
 using namespace chaos::common::direct_io;
@@ -34,14 +35,19 @@ namespace chaos{
     namespace data_service {
 		class ChaosDataService;
 		
+		typedef struct AnswerEngineClientInfo {
+			DirectIOClientConnection *connection;
+			DirectIODeviceClientChannel *device_channel;
+		} AnswerEngineClientInfo;
+		
 		class AnswerEngine : public InizializableService {
 			friend class ChaosDataService;
 						
-			typedef std::map<uint32_t, boost::shared_ptr<DirectIOClient> >::iterator MapClientIterator;
-			std::map<uint32_t, boost::shared_ptr<DirectIOClient> > map_client;
+			DirectIOClient *direct_io_client;
 			
-			typedef std::map<uint32_t, DirectIODeviceClientChannel* >::iterator MapChannelIterator;
-			std::map<uint32_t, DirectIODeviceClientChannel* > map_channel;
+			boost::shared_mutex mutex_map;
+			typedef std::map<uint32_t, AnswerEngineClientInfo* >::iterator MapConnectionIterator;
+			std::map<uint32_t, AnswerEngineClientInfo* > map_connections;
 			
 			//network broker instance
 			chaos::NetworkBroker *network_broker;

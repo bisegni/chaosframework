@@ -55,7 +55,8 @@ void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
             opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderGetOpcode* >(dataPack->channel_header_data);
             //decode the endianes off the data
             header->field.endpoint = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.endpoint);
-            header->field.port = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.port);
+            header->field.p_port = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.p_port);
+			header->field.s_port = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.s_port);
             header->field.device_hash = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.device_hash);
             header->field.address = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.address);
 			handler->consumeGetEvent(header, dataPack->channel_data, dataPack->header.channel_data_size);

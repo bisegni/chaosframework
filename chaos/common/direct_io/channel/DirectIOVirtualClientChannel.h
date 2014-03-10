@@ -36,7 +36,6 @@ namespace chaos {
             namespace channel {
                 
                 class DirectIOVirtualClientChannel : protected DirectIOVirtualChannel {
-                    friend class chaos::common::direct_io::DirectIOClient;
 					friend class chaos::common::direct_io::DirectIOClientConnection;
                     
 					DirectIOForwarderHandler  forward_handler;

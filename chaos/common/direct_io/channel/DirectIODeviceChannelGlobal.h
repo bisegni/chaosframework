@@ -47,12 +47,14 @@ namespace chaos {
                     //! Heder for the DeviceChannelOpcodeGetOutputFromCache opcode
                     typedef	union DirectIODeviceChannelHeaderGetOpcode {
                         //raw data representation of the header
-                        char raw_data[12];
+                        char raw_data[18];
                         struct header {
 							//! The endpoint where the channel is published
                             uint16_t	endpoint;
-							//! The port value for the device that we need to get
-                            uint16_t	port;
+							//! The priority port value for the device that we need to get
+                            uint16_t	p_port;
+							//! The priority port value for the device that we need to get
+                            uint16_t	s_port;
                                 //! The 32bit hash value for the device that we need to get
                             uint32_t	device_hash;
                                 //! The 32bit representation for the ip where send the answer

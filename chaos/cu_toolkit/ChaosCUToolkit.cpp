@@ -122,6 +122,7 @@ void ChaosCUToolkit::start() throw(CException){
         exit(1);
     }
     //execute the stop and the deinitialization of the toolkit
+	stop();
     deinit();
 }
 
