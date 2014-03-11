@@ -92,6 +92,7 @@ namespace chaos{
 		boost::atomic<uint8_t> read_write_index;
 		
 	private:
+		IODirectIODriverClientChannels *getNextClientChannel();
 		void addNewServerConnection(std::string server_description);
     public:
         

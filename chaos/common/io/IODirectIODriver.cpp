@@ -145,12 +145,7 @@ namespace chaos{
 		IODataDriver::deinit();
 	}
     
-    /*
-     * This method retrive the cached object by CSDawrapperUsed as query key and
-     * return a pointer to the class ArrayPointer of CDataWrapper type
-     */
-    void IODirectIODriver::storeRawData(chaos_data::SerializationBuffer *serialization)  throw(CException) {
-		CHAOS_ASSERT(serialization)
+	IODirectIODriverClientChannels *IODirectIODriver::getNextClientChannel() {
 		uint32_t start_index;
 		uint32_t cur_index;
 		IODirectIODriverClientChannels	*found = NULL;
@@ -163,10 +158,20 @@ namespace chaos{
 			next_client = channels_slot.accessSlot(cur_index);
 			if(start_index == cur_index) break;
 		}
-		serialization->disposeOnDelete = !found;
-		if(found) {
+		return found;
+	}
+	
+    /*
+     * This method retrive the cached object by CSDawrapperUsed as query key and
+     * return a pointer to the class ArrayPointer of CDataWrapper type
+     */
+    void IODirectIODriver::storeRawData(chaos_data::SerializationBuffer *serialization)  throw(CException) {
+		CHAOS_ASSERT(serialization)
+		IODirectIODriverClientChannels	*next_client = getNextClientChannel();
+		serialization->disposeOnDelete = !next_client;
+		if(next_client) {
 			//free the packet
-			found->device_client_channel->putDataOutputChannel(true, (void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen());
+			next_client->device_client_channel->putDataOutputChannel(true, (void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen());
 			return;
 		}
 		delete(serialization);
@@ -178,7 +183,7 @@ namespace chaos{
      */
     char* IODirectIODriver::retriveRawData(size_t *dim)  throw(CException) {
 		char* result = NULL;
-		IODirectIODriverClientChannels	*next_client = channels_slot.accessSlot();
+		IODirectIODriverClientChannels	*next_client = getNextClientChannel();
 		if(!next_client) return NULL;
 		
 		next_client->device_client_channel->requestLastOutputData(current_endpoint_p_port, current_endpoint_s_port, current_endpoint_index);
