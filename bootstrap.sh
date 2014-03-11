@@ -23,7 +23,7 @@ fi
 
 BOOST_NUMBER_VERSION=$(echo $BOOST_VERSION_IN_PATH |sed "s/[^0-9]//g" )
 LMEM_VERSION=1.0.16
-ZMQ_VERSION=zeromq3-x
+ZMQ_VERSION=zeromq4-x
 
 if [ -n "$1" ]; then
     PREFIX=$1/usr/local
@@ -226,17 +226,16 @@ if [ ! -d "$PREFIX/include/event2" ]; then
 	echo "LIBEVENT Setupped"
 fi
 
-echo "Setup LIBUV"
-#if [ ! -d "$PREFIX/include/event2" ]; then
-if [ ! -f "$BASE_EXTERNAL/libuv" ]; then
-echo "Installing LibEvent"
-#    git clone git://levent.git.sourceforge.net/gitroot/levent/libevent $BASE_EXTERNAL/libevent
-git clone https://github.com/joyent/libuv.git $BASE_EXTERNAL/libuv
-cd $BASE_EXTERNAL/libuv
-else
-cd $BASE_EXTERNAL/libuv
-git pull
-fi
+if [ ! -f "$PREFIX/include/zmq.h" ]; then
+	echo "Setup LIBUV"
+	if [ ! -f "$BASE_EXTERNAL/libuv" ]; then
+		echo "Installing LibEvent"
+		git clone https://github.com/joyent/libuv.git $BASE_EXTERNAL/libuv
+		cd $BASE_EXTERNAL/libuv
+	else
+		cd $BASE_EXTERNAL/libuv
+		git pull
+	fi
 ./autogen.sh
 ./configure --prefix=$PREFIX
 make clean

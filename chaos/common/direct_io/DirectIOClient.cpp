@@ -42,3 +42,7 @@ DirectIOClient::DirectIOClient(string alias):NamedService(alias) {
 
 DirectIOClient::~DirectIOClient() {
 }
+
+void DirectIOClient::forwardEventToClientConnection(DirectIOClientConnection *client, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event_type) {
+	client->lowLevelManageEvent(event_type);
+}

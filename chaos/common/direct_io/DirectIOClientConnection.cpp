@@ -24,11 +24,11 @@
 
 using namespace chaos::common::direct_io;
 
-#define DIO_LOG_HEAD "[DirectIOVirtualClientChannel] - "
+#define DIOVCC_LOG_HEAD "[DirectIOVirtualClientChannel: "<< server_description <<"] - "
 
-#define DIOLAPP_ LAPP_ << DIO_LOG_HEAD
-#define DIOLDBG_ LDBG_ << DIO_LOG_HEAD
-#define DIOLERR_ LERR_ << DIO_LOG_HEAD
+#define DIOVCCLAPP_ LAPP_ << DIOVCC_LOG_HEAD
+#define DIOVCCLDBG_ LDBG_ << DIOVCC_LOG_HEAD
+#define DIOVCCLERR_ LERR_ << DIOVCC_LOG_HEAD
 
 // current client ip in string form
 std::string DirectIOClientConnection::my_str_ip;
@@ -54,6 +54,23 @@ std::string DirectIOClientConnection::getStrIp() {
 }
 uint64_t DirectIOClientConnection::getI64Ip() {
     return my_i64_ip;
+}
+
+DirectIOClientConnectionStateType::DirectIOClientConnectionStateType DirectIOClientConnection::getState() {
+	return current_state;
+}
+
+void DirectIOClientConnection::lowLevelManageEvent(DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event_state) {
+	current_state = event_state;
+	DEBUG_CODE( switch(current_state)  {
+		case DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected:
+			DIOVCCLDBG_ << "Set to state ->  DirectIOClientConnectionEventConnected";
+			break;
+		case DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected:
+			DIOVCCLDBG_ << "Set to state ->  DirectIOClientConnectionEventDisconnected";
+			break;
+	});
+
 }
 
 // New channel allocation by name

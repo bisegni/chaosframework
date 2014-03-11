@@ -51,30 +51,28 @@ namespace chaos {
                 class DirectIOVirtualClientChannel;
             }
             
-            typedef std::map<unsigned int, channel::DirectIOVirtualClientChannel* > ChannelMap;
-            typedef std::map<unsigned int, channel::DirectIOVirtualClientChannel* >::iterator ChannelMapIterator;
+            typedef std::map< unsigned int, channel::DirectIOVirtualClientChannel* > ChannelMap;
+            typedef std::map< unsigned int, channel::DirectIOVirtualClientChannel* >::iterator ChannelMapIterator;
             
 			//! Direct IO client base class
 			/*!
-				This class represent the base interface for the operation on direct io output channel,
-				The client layer will connect to the server one to send data. Client can connect to 
-				may server and the same data will be forwarded to all server
-				dio_client---> data message -->dio_server
+			 This class represent the base interface for the operation on direct io output channel,
+			 The client layer will connect to the server one to send data. Client can connect to
+			 may server and the same data will be forwarded to all server
+			 dio_client---> data message -->dio_server
 			 */
 			class DirectIOClient :	public NamedService,
-									public chaos::utility::InizializableService,
-									public ServerFeeder,
-									protected chaos::utility::TemplatedKeyObjectContainer<uint32_t, DirectIOClientConnection> {
+			public chaos::utility::InizializableService,
+			public ServerFeeder,
+			protected chaos::utility::TemplatedKeyObjectContainer<uint32_t, DirectIOClientConnection> {
 				friend class chaos::NetworkBroker;
 				
-				std::string impl_alias;
-                
-                boost::atomic_uint channel_counter;
-
-				
+				std::string			impl_alias;
+                boost::atomic_uint	channel_counter;
+			protected:
+				void forwardEventToClientConnection(DirectIOClientConnection *client, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event_type);
 			public:
                 DirectIOClient(string alias);
-				
 				virtual ~DirectIOClient();
 				
 				//! create a new connection for a server
@@ -83,6 +81,7 @@ namespace chaos {
 				 */
 				virtual DirectIOClientConnection *getNewConnection(std::string server_description) = 0;
 				
+				//! Release the connection
 				virtual void releaseConnection(DirectIOClientConnection *connection_to_release) = 0;
 			};
 			

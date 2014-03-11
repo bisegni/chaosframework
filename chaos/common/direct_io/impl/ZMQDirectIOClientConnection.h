@@ -44,7 +44,8 @@ namespace chaos {
 				 */
 				class ZMQDirectIOClientConnection : public chaos::common::direct_io::DirectIOClientConnection, protected ServerFeeder {
 					friend class ZMQDirectIOClient;
-
+					uint32_t zmq_addr_hash;
+					
 					void *socket_priority;
 					void *socket_service;
 					

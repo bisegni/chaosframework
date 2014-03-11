@@ -43,17 +43,18 @@ namespace chaos {
             class DirectIOClientConnection;
             
             //! Connection event enumeration
-            typedef enum DirectIOClientConnectionEventType {
+			namespace DirectIOClientConnectionStateType {
+            typedef enum DirectIOClientConnectionStateType {
                 DirectIOClientConnectionEventConnected,
                 DirectIOClientConnectionEventDisconnected
-            } DirectIOClientConnectionEventType;
-            
+            } DirectIOClientConnectionStateType;
+            }
             
             //! Direct io client connection event handler
             class DirectIOClientConnectionEventHandler {
             protected:
                 //! han
-                virtual void handleEvent(DirectIOClientConnectionEventType event, void *event_data, uint32_t even_data_len) = 0;
+                virtual void handleEvent(DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event, void *event_data, uint32_t even_data_len) = 0;
             };
             
             //! Represent the start point of a messaget towards an endpoint
@@ -68,7 +69,7 @@ namespace chaos {
 								
 			protected:
 				std::string server_description;
-				
+				DirectIOClientConnectionStateType::DirectIOClientConnectionStateType current_state;
 
 				//! current client ip in string form
 				static std::string my_str_ip;
@@ -80,6 +81,9 @@ namespace chaos {
 				
 				//overriding ofr free object fuunction for the tempalted key object container superclass
 				void freeObject(uint32_t hash, DirectIOClientConnection *connection);
+				
+				//! callend by client or by implementation when some event occour from socket conenction
+				void lowLevelManageEvent(DirectIOClientConnectionStateType::DirectIOClientConnectionStateType state_type);
             public:
 				
 				DirectIOClientConnection(std::string _server_description);
@@ -90,6 +94,9 @@ namespace chaos {
                 static uint64_t getI64Ip();
 
 				const char * getServerDescription();
+				
+				//! return the state of the connection
+				DirectIOClientConnectionStateType::DirectIOClientConnectionStateType getState();
 				
 				//! New channel allocation by name
 				/*!

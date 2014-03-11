@@ -1,4 +1,4 @@
-/*
+ /*
  *	IODirectIODriver.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
@@ -151,11 +151,24 @@ namespace chaos{
      */
     void IODirectIODriver::storeRawData(chaos_data::SerializationBuffer *serialization)  throw(CException) {
 		CHAOS_ASSERT(serialization)
-		IODirectIODriverClientChannels	*next_client = channels_slot.accessSlot();
-		if(!next_client) return;
-		
-		serialization->disposeOnDelete = false;
-		next_client->device_client_channel->putDataOutputChannel(true, (void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen());
+		uint32_t start_index;
+		uint32_t cur_index;
+		IODirectIODriverClientChannels	*found = NULL;
+		IODirectIODriverClientChannels	*next_client = channels_slot.accessSlot(start_index);
+		while(true) {
+			if(next_client->connection->getState() == chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected) {
+				found=next_client;
+				break;
+			}
+			next_client = channels_slot.accessSlot(cur_index);
+			if(start_index == cur_index) break;
+		}
+		serialization->disposeOnDelete = !found;
+		if(found) {
+			//free the packet
+			found->device_client_channel->putDataOutputChannel(true, (void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen());
+			return;
+		}
 		delete(serialization);
     }
     

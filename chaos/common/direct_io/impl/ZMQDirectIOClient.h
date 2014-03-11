@@ -21,6 +21,8 @@
 #ifndef __CHAOSFramework__ZMQDirectIOClient__
 #define __CHAOSFramework__ZMQDirectIOClient__
 
+#include <map>
+
 #include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/direct_io/impl/ZMQBaseClass.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
@@ -28,6 +30,7 @@
 #include <boost/thread.hpp>
 #include <boost/shared_ptr.hpp>
 
+#include <zmq.h>
 
 namespace chaos {
 	namespace common {
@@ -45,21 +48,18 @@ namespace chaos {
 					
 					int32_t service_port;
 
-					
 					void *zmq_context;
-					void *socket_monitor;
 					
 					bool thread_run;
-					boost::shared_ptr<boost::thread> monitor_thread;
-					
-					//! check the connection with the endpoint for the two socket
-					void *monitorWorker();
+					boost::thread_group monitor_thread_group;
                     
                     ZMQDirectIOClient(string alias);
                     
                     ~ZMQDirectIOClient();
 					
 				protected:
+					int readMesg(void* s, zmq_event_t* event, char* ep);
+					void *socketMonitor(void *s, const char * address);
 					//overriding ofr free object fuunction for the tempalted key object container superclass
 					void freeObject(uint32_t hash, DirectIOClientConnection *connection);
                 public:

@@ -21,6 +21,8 @@
 #ifndef CHAOSFramework_InetUtility_h
 #define CHAOSFramework_InetUtility_h
 
+#include <string>
+#include <vector>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -120,6 +122,18 @@ namespace chaos {
             return regex_match(host_port, ServerIPRegExp);
         }
 		
+		static void queryDns(std::string hostname, std::vector<std::string>& resolved_endpoints) {
+			boost::asio::io_service io;
+			boost::asio::ip::tcp::resolver resolver(io);
+			boost::asio::ip::tcp::resolver::query q(hostname.c_str(), "");
+			boost::system::error_code error;
+			boost::asio::ip::tcp::resolver::iterator iter = resolver.resolve(q, error);
+			boost::asio::ip::tcp::resolver::iterator end;
+			while (iter != end) {
+				resolved_endpoints.push_back(iter->endpoint().address().to_string());
+				iter++;
+			}
+		}
 		
 #define		STRIP_TO_UI64(x)  boost::asio::ip::address_v4::from_string(x)
 #define		UI64_TO_STRIP(i)  boost::asio::ip::address_v4(i).to_string()
