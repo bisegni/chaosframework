@@ -1,4 +1,3 @@
-
 /*
  *	ChaosDataService.h
  *	!CHOAS
@@ -26,7 +25,6 @@
 
 #include "dataservice_global.h"
 #include "DataConsumer.h"
-#include "AnswerEngine.h"
 #include "worker/DataWorker.h"
 #include "cache_system/CacheDriver.h"
 
@@ -62,7 +60,6 @@ namespace chaos{
 			
 			utility::StartableServiceContainer<chaos::NetworkBroker> network_broker;
             utility::StartableServiceContainer<DataConsumer> data_consumer;
-			utility::InizializableServiceContainer<AnswerEngine> answer_engine;
         public:
 			//----------setting----------
 			ChaosDataServiceSetting settings;

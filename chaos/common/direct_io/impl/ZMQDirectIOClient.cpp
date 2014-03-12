@@ -83,7 +83,7 @@ void *ZMQDirectIOClient::socketMonitor (void *ctx, const char * address) {
     assert (s);
 	
     rc = zmq_connect (s, address);
-    assert (rc == 0);
+    if(rc) return NULL;
     while (!readMesg(s, &event, addr)) {
 		//server_desc_tokens.clear();
 		//boost::algorithm::split(server_desc_tokens, addr, boost::algorithm::is_any_of("-"), boost::algorithm::token_compress_on);
@@ -167,7 +167,7 @@ DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server
 	const int output_buffer_dim = 1;
 	const int linger_period = 0;
 	const int min_reconnection_ivl = 500;
-	const int max_reconnection_ivl = 60000;
+	const int max_reconnection_ivl = 5000;
 	
 	void *socket_priority = NULL;
 	void *socket_service = NULL;

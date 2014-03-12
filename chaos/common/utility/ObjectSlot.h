@@ -60,12 +60,12 @@ namespace chaos {
 				
 				inline T accessSlot() {
 					uint32_t slot_to_use;
-					accessSlot(slot_to_use);
+					return accessSlot(slot_to_use);
 				}
 				
 				inline T accessSlot(uint32_t& return_index) {
 					return_index = using_slot++ % current_available_slot;
-					return slot_array[return_index ];
+					return slot_array[return_index];
 				}
 				
 				bool addSlot(T element) {

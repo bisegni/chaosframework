@@ -188,8 +188,9 @@ namespace chaos{
 		
 		next_client->device_client_channel->requestLastOutputData(current_endpoint_p_port, current_endpoint_s_port, current_endpoint_index);
 		wait_get_answer.wait();
-		if(data_cache.data_ptr && data_cache.data_ptr) {
-			*dim = (size_t)data_cache.data_len;
+		if(data_cache.data_ptr &&
+		   data_cache.data_len) {
+			if(dim) *dim = (size_t)data_cache.data_len;
 			result = (char*)data_cache.data_ptr;
 			std::memset(&data_cache, 0, sizeof(IODData));
 		}
@@ -201,6 +202,7 @@ namespace chaos{
 		delete(header);
 		data_cache.data_len = channel_data_len;
 		data_cache.data_ptr = channel_data;
+		IODirectIODriver_DLDBG_ << "received get answer by dimension " << channel_data_len;
 		wait_get_answer.unlock();
 	}
 	

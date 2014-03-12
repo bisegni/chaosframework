@@ -95,6 +95,7 @@
 		32640A3D169DCC5800450962 /* IteratorReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A24169DCC5800450962 /* IteratorReader.h */; };
 		32640A3E169DCC5800450962 /* MemoryAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A25169DCC5800450962 /* MemoryAllocator.h */; };
 		32640A3F169DCC5800450962 /* SmartPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A26169DCC5800450962 /* SmartPointer.h */; };
+		326459CC18D073BA0091B2E3 /* AnswerDataWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326459CA18D073BA0091B2E3 /* AnswerDataWorker.cpp */; };
 		3264B05C1673623F002E87FA /* TDSObjectHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3264B05B1673623E002E87FA /* TDSObjectHandler.h */; };
 		3264BBD51784887900E2F5A0 /* AbstractPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264BBD41784887900E2F5A0 /* AbstractPlugin.cpp */; };
 		3264BBD71784BFE400E2F5A0 /* PluginInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264BBD61784BFE400E2F5A0 /* PluginInspector.cpp */; };
@@ -276,7 +277,6 @@
 		32B159D618B38CA50096B58B /* DirectIODeviceServerChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B159D418B38CA50096B58B /* DirectIODeviceServerChannel.h */; };
 		32B159DA18B4B9F90096B58B /* DataWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B159D818B4B9F90096B58B /* DataWorker.cpp */; };
 		32B159DE18B4D4210096B58B /* MemcachedCacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B159DC18B4D4200096B58B /* MemcachedCacheDriver.cpp */; };
-		32B159E218B4F66C0096B58B /* AnswerEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B159E018B4F66C0096B58B /* AnswerEngine.cpp */; };
 		32B57172168DF4750002A198 /* atomic_int.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B5714B168DF4750002A198 /* atomic_int.h */; };
 		32B57173168DF4750002A198 /* bson_extract.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B5714C168DF4750002A198 /* bson_extract.cpp */; };
 		32B57174168DF4750002A198 /* bson_extract.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B5714D168DF4750002A198 /* bson_extract.h */; };
@@ -540,6 +540,8 @@
 		32640A24169DCC5800450962 /* IteratorReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorReader.h; sourceTree = "<group>"; };
 		32640A25169DCC5800450962 /* MemoryAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryAllocator.h; sourceTree = "<group>"; };
 		32640A26169DCC5800450962 /* SmartPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartPointer.h; sourceTree = "<group>"; };
+		326459CA18D073BA0091B2E3 /* AnswerDataWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnswerDataWorker.cpp; sourceTree = "<group>"; };
+		326459CB18D073BA0091B2E3 /* AnswerDataWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnswerDataWorker.h; sourceTree = "<group>"; };
 		3264B05B1673623E002E87FA /* TDSObjectHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSObjectHandler.h; sourceTree = "<group>"; };
 		3264BBD41784887900E2F5A0 /* AbstractPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractPlugin.cpp; sourceTree = "<group>"; };
 		3264BBD61784BFE400E2F5A0 /* PluginInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInspector.cpp; sourceTree = "<group>"; };
@@ -741,8 +743,6 @@
 		32B159DC18B4D4200096B58B /* MemcachedCacheDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemcachedCacheDriver.cpp; sourceTree = "<group>"; };
 		32B159DD18B4D4210096B58B /* MemcachedCacheDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemcachedCacheDriver.h; sourceTree = "<group>"; };
 		32B159DF18B4F0DE0096B58B /* dataservice_global.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = dataservice_global.h; sourceTree = "<group>"; };
-		32B159E018B4F66C0096B58B /* AnswerEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AnswerEngine.cpp; sourceTree = "<group>"; };
-		32B159E118B4F66C0096B58B /* AnswerEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnswerEngine.h; sourceTree = "<group>"; };
 		32B159E318B635580096B58B /* cache_system.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cache_system.h; sourceTree = "<group>"; };
 		32B5714B168DF4750002A198 /* atomic_int.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = atomic_int.h; sourceTree = "<group>"; };
 		32B5714C168DF4750002A198 /* bson_extract.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bson_extract.cpp; sourceTree = "<group>"; };
@@ -1055,8 +1055,6 @@
 				3299363518A7C4F60093E7F2 /* ChaosDataService.h */,
 				322D98FE18A95F9200C0864C /* DataConsumer.cpp */,
 				322D98FF18A95F9200C0864C /* DataConsumer.h */,
-				32B159E018B4F66C0096B58B /* AnswerEngine.cpp */,
-				32B159E118B4F66C0096B58B /* AnswerEngine.h */,
 				32B159DB18B4C46E0096B58B /* worker */,
 				3272152118B00650005AC8FD /* cache_system */,
 			);
@@ -1802,6 +1800,8 @@
 				32B159D918B4B9F90096B58B /* DataWorker.h */,
 				32A10C0118C87806006EA04C /* DeviceSharedDataWorker.cpp */,
 				32A10C0218C87806006EA04C /* DeviceSharedDataWorker.h */,
+				326459CA18D073BA0091B2E3 /* AnswerDataWorker.cpp */,
+				326459CB18D073BA0091B2E3 /* AnswerDataWorker.h */,
 			);
 			path = worker;
 			sourceTree = "<group>";
@@ -2453,11 +2453,11 @@
 			files = (
 				3272152418B006BC005AC8FD /* CacheDriver.cpp in Sources */,
 				32A10C0318C87806006EA04C /* DeviceSharedDataWorker.cpp in Sources */,
-				32B159E218B4F66C0096B58B /* AnswerEngine.cpp in Sources */,
 				323236DA164573F50052CE06 /* main.cpp in Sources */,
 				32B159DA18B4B9F90096B58B /* DataWorker.cpp in Sources */,
 				3299363618A7C4F60093E7F2 /* ChaosDataService.cpp in Sources */,
 				32B159DE18B4D4210096B58B /* MemcachedCacheDriver.cpp in Sources */,
+				326459CC18D073BA0091B2E3 /* AnswerDataWorker.cpp in Sources */,
 				322D990118A95F9200C0864C /* DataConsumer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

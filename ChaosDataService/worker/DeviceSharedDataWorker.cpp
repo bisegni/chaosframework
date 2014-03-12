@@ -17,7 +17,7 @@ DeviceSharedDataWorker::DeviceSharedDataWorker(std::string cache_impl_name):cach
 }
 
 DeviceSharedDataWorker::~DeviceSharedDataWorker() {
-	
+	if(cache_driver_instance) delete(cache_driver_instance);
 }
 
 void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info) {

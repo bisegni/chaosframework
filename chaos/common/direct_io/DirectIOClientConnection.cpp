@@ -18,7 +18,7 @@
  *    	limitations under the License.
  */
 
-
+#include <chaos/common/data/cache/FastHash.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/direct_io/DirectIOClientConnection.h>
 
@@ -37,8 +37,9 @@ std::string DirectIOClientConnection::my_str_ip;
 uint64_t DirectIOClientConnection::my_i64_ip = 0;
 
 
-DirectIOClientConnection::DirectIOClientConnection(std::string _server_description):server_description(_server_description) {
-	
+DirectIOClientConnection::DirectIOClientConnection(std::string _server_description):server_description(_server_description), event_handler(NULL) {
+	//set the default connection hash
+	connection_hash = chaos::common::data::cache::FastHash::hash(server_description.c_str(), server_description.size(), 0);
 }
 
 DirectIOClientConnection::~DirectIOClientConnection() {
@@ -56,6 +57,18 @@ uint64_t DirectIOClientConnection::getI64Ip() {
     return my_i64_ip;
 }
 
+void DirectIOClientConnection::setConnectionHash(uint32_t _connection_hash) {
+	connection_hash = _connection_hash;
+}
+
+uint32_t DirectIOClientConnection::getConenctionHash() {
+	return connection_hash;
+}
+
+void DirectIOClientConnection::setEventHandler(DirectIOClientConnectionEventHandler *_event_handler) {
+	event_handler = _event_handler;
+}
+
 DirectIOClientConnectionStateType::DirectIOClientConnectionStateType DirectIOClientConnection::getState() {
 	return current_state;
 }
@@ -70,7 +83,8 @@ void DirectIOClientConnection::lowLevelManageEvent(DirectIOClientConnectionState
 			DIOVCCLDBG_ << "Set to state ->  DirectIOClientConnectionEventDisconnected";
 			break;
 	});
-
+	//forward event to the handler
+	if(event_handler) event_handler->handleEvent(connection_hash, current_state);
 }
 
 // New channel allocation by name

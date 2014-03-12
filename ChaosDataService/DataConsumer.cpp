@@ -20,6 +20,7 @@
 
 #include "DataConsumer.h"
 #include "worker/DeviceSharedDataWorker.h"
+#include "worker/AnswerDataWorker.h"
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/endianess.h>
 #include <chaos/common/utility/InetUtility.h>
@@ -50,6 +51,7 @@ void DataConsumer::init(void *init_data) throw (chaos::CException) {
 	if(!settings->cache_driver_impl.size())  throw chaos::CException(-2, "No cache implemetation provided", __FUNCTION__);
 	if(!settings->startup_chache_servers.size())  throw chaos::CException(-3, "No cache servers provided", __FUNCTION__);
 	
+	server_endpoint = network_broker->getDirectIOServerEndpoint();
 	if(!server_endpoint) throw chaos::CException(-4, "Invalid server endpoint", __FUNCTION__);
 	DSLAPP_ << "DataConsumer initialized with endpoint "<< server_endpoint->getRouteIndex();
 	
@@ -78,7 +80,22 @@ void DataConsumer::init(void *init_data) throw (chaos::CException) {
 		}
 	}
 	
-	
+	//add answer worker
+	chaos::data_service::worker::AnswerDataWorker *tmp_data_worker = NULL;
+	for(int idx = 0; idx < ANSWER_WORKER_NUMBER; idx++) {
+		//allocate a new worker with his personal client instance
+		//get the cache driver instance
+		cache_system::CacheDriver *cache_driver_instance = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name.c_str());
+		for(CacheServerListIterator iter = settings->startup_chache_servers.begin();
+			iter != settings->startup_chache_servers.end();
+			iter++) {
+			cache_driver_instance->addServer(*iter);
+		}
+		tmp_data_worker = new chaos::data_service::worker::AnswerDataWorker(network_broker->getDirectIOClientInstance(), cache_driver_instance);
+		tmp_data_worker->init(NULL);
+		tmp_data_worker->start();
+		answer_worker_list.addSlot(tmp_data_worker);
+	}
 }
 
 void DataConsumer::start() throw (chaos::CException) {
@@ -90,6 +107,14 @@ void DataConsumer::stop() throw (chaos::CException) {
 void DataConsumer::deinit() throw (chaos::CException) {
 	DSLAPP_ << "Release DirectIOCDataWrapperServerChannel into the endpoint";
 	server_endpoint->releaseChannelInstance(device_channel);
+	
+	for(int idx = 0; idx < answer_worker_list.getNumberOfSlot(); idx++) {
+		chaos::data_service::worker::DataWorker *worker = answer_worker_list.accessSlotByIndex(idx);
+		worker->stop();
+		worker->deinit();
+		delete(worker);
+	}
+	answer_worker_list.clearSlots();
 	
 	for(int idx = 0; idx < DEVICE_WORKER_NUMBER; idx++) {
 		DSLAPP_ << "Release device worker "<< idx;
@@ -115,10 +140,11 @@ void DataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header,
 }
 
 void DataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header, void *channel_data, uint32_t channel_data_len) {
-    //void *cached_data;
-	//uint32_t cached_data_len;
-	//uint32_t index_to_use = device_data_worker_index++ % DEVICE_WORKER_NUMBER;
-    //kif(answer_engine->registerNewClient(*header)) answer_engine->sendCacheAnswher(header->field.device_hash, cached_data, cached_data_len);
-	free(header);
+	chaos::data_service::worker::DataWorker *worker = answer_worker_list.accessSlot();
+	
+    chaos::data_service::worker::AnswerDataWorkerJob *job = new chaos::data_service::worker::AnswerDataWorkerJob();
+	job->request_header = header;
+	worker->submitJobInfo(job);
+	
 	free(channel_data);
 }

@@ -81,14 +81,15 @@ IODataDriver *LLRpcApi::getDataProxyChannelNewInstance() throw(CException) {
 	std::string impl_name =  boost::str( boost::format("%1%IODriver") % GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL));
 	
 	result = ObjectFactoryRegister<IODataDriver>::getInstance()->getNewInstanceByName(impl_name.c_str());
-	
 	if(result) {
 		if(impl_name.compare("IODirectIODriver") == 0) {
 			//set the information
 			IODirectIODriverInitParam init_param;
+			std::memset(&init_param, 0, sizeof(IODirectIODriverInitParam));
 			//get client and endpoint
-			init_param.client_instance = network_broker->getDirectIOClientInstance();
-			init_param.endpoint_instance = network_broker->getDirectIOServerEndpoint();
+			init_param.network_broker = network_broker;
+			init_param.client_instance = NULL;
+			init_param.endpoint_instance = NULL;
 			((IODirectIODriver*)result)->setDirectIOParam(init_param);
 		}
 	}

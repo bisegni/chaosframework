@@ -1,4 +1,4 @@
-/*
+ /*
  *	DeviceLiveDataFetcher.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
@@ -753,8 +753,8 @@ void DeviceController::stopTracking() {
 //---------------------------------------------------------------------------------------------------
 void DeviceController::fetchCurrentDeviceValue() {
 	boost::recursive_mutex::scoped_lock lock(trackMutext);
-	
-	char *value = ioLiveDataDriver->retriveRawData();
+	size_t value_len = 0;
+	char *value = ioLiveDataDriver->retriveRawData(&value_len);
 	//check if some value has bee fetcher
 	if(!value) return;
 	

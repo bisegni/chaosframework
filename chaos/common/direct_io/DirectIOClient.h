@@ -64,7 +64,7 @@ namespace chaos {
 			class DirectIOClient :	public NamedService,
 			public chaos::utility::InizializableService,
 			public ServerFeeder,
-			protected chaos::utility::TemplatedKeyObjectContainer<uint32_t, DirectIOClientConnection> {
+			protected chaos::utility::TemplatedKeyObjectContainer<uint32_t, DirectIOClientConnection*> {
 				friend class chaos::NetworkBroker;
 				
 				std::string			impl_alias;

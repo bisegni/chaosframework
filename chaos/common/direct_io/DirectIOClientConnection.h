@@ -52,9 +52,10 @@ namespace chaos {
             
             //! Direct io client connection event handler
             class DirectIOClientConnectionEventHandler {
+				friend class DirectIOClientConnection;
             protected:
                 //! han
-                virtual void handleEvent(DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event, void *event_data, uint32_t even_data_len) = 0;
+                virtual void handleEvent(uint32_t connection_identifier, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) = 0;
             };
             
             //! Represent the start point of a messaget towards an endpoint
@@ -63,12 +64,15 @@ namespace chaos {
                 In definitive it can be viwed as a socket connected to a server::port that
                 need to send the data towards an endpoint
              */
-            class DirectIOClientConnection  : public DirectIOForwarder, protected chaos::utility::TemplatedKeyObjectContainer< unsigned int, channel::DirectIOVirtualClientChannel> {
+            class DirectIOClientConnection  :
+			public DirectIOForwarder,
+			protected chaos::utility::TemplatedKeyObjectContainer< unsigned int, channel::DirectIOVirtualClientChannel*> {
                 friend class DirectIOClient;
 				friend class chaos::NetworkBroker;
 								
 			protected:
 				std::string server_description;
+				uint32_t	connection_hash;
 				DirectIOClientConnectionStateType::DirectIOClientConnectionStateType current_state;
 
 				//! current client ip in string form
@@ -93,6 +97,11 @@ namespace chaos {
                 static std::string getStrIp();
                 static uint64_t getI64Ip();
 
+				void		setConnectionHash(uint32_t _connection_hash);
+				uint32_t	getConenctionHash();
+				
+				void setEventHandler(DirectIOClientConnectionEventHandler *_event_handler);
+				
 				const char * getServerDescription();
 				
 				//! return the state of the connection

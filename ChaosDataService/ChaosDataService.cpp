@@ -87,18 +87,10 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		if(!data_consumer.get()) throw chaos::CException(-1, "Error instantiating data consumer", __PRETTY_FUNCTION__);
 		data_consumer->settings = &settings;
 		
-		CDSLAPP_ << "Allocate the Answer Engine";
-        answer_engine.reset(new AnswerEngine(), "AnswerEngine");
-		if(!data_consumer.get()) throw chaos::CException(-1, "Error instantiating answer engine", __PRETTY_FUNCTION__);
-		
 		CDSLAPP_ << "Link class";
-		data_consumer->server_endpoint = network_broker->getDirectIOServerEndpoint();
-		data_consumer->answer_engine = answer_engine.get();
-		answer_engine->network_broker = network_broker.get();
+		data_consumer->network_broker = network_broker.get();
 
-		
         data_consumer.init(NULL, __PRETTY_FUNCTION__);
-        answer_engine.init(NULL, __PRETTY_FUNCTION__);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         exit(1);
@@ -145,7 +137,6 @@ void ChaosDataService::stop() throw(CException) {
  Deiniti all the manager
  */
 void ChaosDataService::deinit() throw(CException) {
-	answer_engine.deinit(__PRETTY_FUNCTION__);
 	
 	if(data_consumer.get()) {
 		CDSLAPP_ << "Stop the Data Consumer";

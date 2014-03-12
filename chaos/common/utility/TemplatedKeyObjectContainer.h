@@ -22,13 +22,19 @@ namespace chaos {
             boost::shared_mutex mutex_organizer_map;
 
         public:
-            typedef std::map< K, O*>                        ContainerOrganizer;
-            typedef typename std::map< K, O*>::iterator     ContainerOrganizerIterator;
+            typedef typename std::map< K, O >::iterator     ContainerOrganizerIterator;
             
         protected:
-            ContainerOrganizer organizer_map;
+            std::map< K, O > organizer_map;
             
-            void clearElement() {
+           		protected:
+			virtual void freeObject(K key, O element) {}
+			
+        public:
+            TemplatedKeyObjectContainer(){};
+            ~TemplatedKeyObjectContainer(){clearElement();};
+
+			void clearElement() {
                 for(ContainerOrganizerIterator iter = organizer_map.begin();
                     iter != organizer_map.end();
                     iter++) {
@@ -36,15 +42,9 @@ namespace chaos {
                 }
                 organizer_map.clear();
             }
-		protected:
-			virtual void freeObject(K key, O *element_ptr) {}
-			
-        public:
-            TemplatedKeyObjectContainer(){};
-            ~TemplatedKeyObjectContainer(){clearElement();};
-            
+
             // allocate a new channel by the instancer
-           void registerElement(K key, O* item) {
+           void registerElement(K key, O item) {
                 boost::unique_lock<boost::shared_mutex>	Lock(mutex_organizer_map);
                 
                 //associate the instance
@@ -57,8 +57,14 @@ namespace chaos {
                 organizer_map.erase(key);
             }
 
-            inline O* accessItem(K key) {
-                return organizer_map[key];
+			inline bool hasKey(K key) {
+				return organizer_map.count(key) > 0;
+			}
+			
+            inline O accessItem(K key) {
+				boost::shared_lock<boost::shared_mutex> lock(mutex_organizer_map);
+				if(organizer_map.count(key))
+				return organizer_map[key];
             }
             
         };
