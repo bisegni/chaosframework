@@ -38,6 +38,12 @@ namespace chaos {
 				//forward declaration
 				class ZMQDirectIOClient;
 				
+				typedef struct ConnectionMonitorInfo {
+					bool run;
+					boost::thread *monitor_thread;
+					void *monitor_socket;
+				} ConnectionMonitorInfo;
+				
 				/*!
 				 Class that represetn th eimplementation of one connection of the direct io
 				 connection implemented with zmq
@@ -48,6 +54,8 @@ namespace chaos {
 					
 					void *socket_priority;
 					void *socket_service;
+					
+					ConnectionMonitorInfo *monitor_info;
 					
                     boost::shared_mutex mutex_socket_manipolation;
 					

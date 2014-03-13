@@ -57,6 +57,8 @@ namespace chaos {
                             uint16_t	s_port;
                                 //! The 32bit hash value for the device that we need to get
                             uint32_t	device_hash;
+							//! The 32bit hash value for the unique identification of the answer ip string ip::s_port:p_port for fast retryve on other side
+                            uint32_t	answer_server_hash;
                                 //! The 32bit representation for the ip where send the answer
                             uint64_t	address;
                         } field;

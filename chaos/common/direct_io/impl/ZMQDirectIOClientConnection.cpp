@@ -31,7 +31,7 @@ void ZMQDirectIOClientConnectionFree (void *data, void *hint) {
 }
 
 ZMQDirectIOClientConnection::ZMQDirectIOClientConnection(std::string server_description, void *_socket_priority, void *_socket_service):
-DirectIOClientConnection(server_description), socket_priority(_socket_priority), socket_service(_socket_service) {
+DirectIOClientConnection(server_description), socket_priority(_socket_priority), socket_service(_socket_service), monitor_info(NULL) {
 }
 
 

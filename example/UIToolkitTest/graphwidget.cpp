@@ -144,7 +144,6 @@ void GraphWidget::update() {
     PlotBufferAndCurve *tmpPlotInfoPtr = NULL;
     PlotPtrBufferAndCurve *tmpPointeInfoPtr = NULL;
     std::vector<double> ys;
-    std::cout << "update graph" << std::endl;
     for(std::map<std::string, boost::shared_ptr<PlotBufferAndCurve> >::iterator iter = plotMap.begin();
         iter != plotMap.end();
         iter++){

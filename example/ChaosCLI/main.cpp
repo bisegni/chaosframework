@@ -352,6 +352,10 @@ int main (int argc, char* argv[] )
 				
 			case 11:{
 				controller->fetchCurrentDeviceValue();
+				CDataWrapper * dataWrapper = controller->getLiveCDataWrapperPtr();
+				if(dataWrapper) {
+					std::cout << dataWrapper->getJSONString() << std::endl;
+				}
 				std::string str_value;
 				for (int idx = 0; idx < key_to_show.size(); idx++) {
 					if(!controller->getAttributeStrValue(key_to_show[idx], str_value)) {
@@ -398,6 +402,9 @@ int main (int argc, char* argv[] )
             std::cout << std::endl;
         }
         
+		if(controller)
+			HLDataApi::getInstance()->disposeDeviceControllerPtr(controller);
+
     } catch (CException& e) {
         std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
     }

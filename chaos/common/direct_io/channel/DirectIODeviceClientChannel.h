@@ -33,6 +33,13 @@ namespace chaos {
 		namespace direct_io {
 			namespace channel {
 				
+				typedef struct AnswerServerInfo {
+					uint16_t p_server_port;
+					uint16_t s_server_port;
+					uint64_t ip;
+					uint32_t hash;
+				}AnswerServerInfo;
+				
 				//! Class for the managment of pushing data for the device dataset
 				/*!
 				 This class manage the forwarding of data that represent the device dataset channels (i/O)
@@ -41,8 +48,9 @@ namespace chaos {
 					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIODeviceClientChannel)
 					
 					uint32_t device_hash;
-					std::string device_id;
 
+					std::string device_id;
+					AnswerServerInfo answer_server_info;
 				protected:
 					DirectIODeviceClientChannel(std::string alias);
 				public:
@@ -50,6 +58,9 @@ namespace chaos {
 					
 					//! Set the device id for this channel
 					void setDeviceID(std::string _device_id);
+					
+					//! set the information on witch port forward the answer(the ip is the ip of the machine)
+					void setAnswerServerInfo(uint16_t p_server_port, uint16_t s_server_port);
 					
 					//! Send device serialization with priority
                     int64_t putDataOutputChannel(bool cache_it, void *buffer, uint32_t buffer_len);

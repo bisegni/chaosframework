@@ -39,7 +39,7 @@ using namespace chaos::common::direct_io::channel;
 using namespace chaos::common::direct_io::channel::opcode_headers;
 
 #define DEVICE_WORKER_NUMBER 10
-#define ANSWER_WORKER_NUMBER 10
+#define ANSWER_WORKER_NUMBER 2
 namespace chaos{
     namespace data_service {
         

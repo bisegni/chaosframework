@@ -58,6 +58,7 @@ void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
             header->field.p_port = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.p_port);
 			header->field.s_port = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.s_port);
             header->field.device_hash = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.device_hash);
+			header->field.answer_server_hash = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.answer_server_hash);
             header->field.address = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.address);
 			handler->consumeGetEvent(header, dataPack->channel_data, dataPack->header.channel_data_size);
             break;

@@ -26,6 +26,7 @@
 #include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/direct_io/impl/ZMQBaseClass.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
+#include <chaos/common/direct_io/impl/ZMQDirectIOClientConnection.h>
 
 #include <boost/thread.hpp>
 #include <boost/shared_ptr.hpp>
@@ -39,6 +40,11 @@ namespace chaos {
 				class DirectIOVirtualClientChannel;
 			}
             namespace impl {
+				
+				
+				// ZMQ Direct IO Implementation
+				/*!
+				 */
                 REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(ZMQDirectIOClient, DirectIOClient), private ZMQBaseClass {
                     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ZMQDirectIOClient)
 
@@ -53,13 +59,15 @@ namespace chaos {
 					bool thread_run;
 					boost::thread_group monitor_thread_group;
                     
+					std::map<uint32_t, ConnectionMonitorInfo*> map_connection_socket_monitor;
+					
                     ZMQDirectIOClient(string alias);
                     
                     ~ZMQDirectIOClient();
 					
 				protected:
 					int readMesg(void* s, zmq_event_t* event, char* ep);
-					void *socketMonitor(void *s, const char * address);
+					void *socketMonitor(void *s, const char * address, ConnectionMonitorInfo *monitor_info);
 					//overriding ofr free object fuunction for the tempalted key object container superclass
 					void freeObject(uint32_t hash, DirectIOClientConnection *connection);
                 public:

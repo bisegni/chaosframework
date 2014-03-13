@@ -412,11 +412,15 @@ void MainWindow::stopTracking() {
 void MainWindow::executeOnThread(){
     if(!deviceController) return;
     while(runThread){
+        std::cout << "pre fetch" << std::endl;
         deviceController->fetchCurrentDeviceValue();
+         std::cout << "post fetch" << std::endl;
         if(checkSequentialIDKey.size()>0){
             chaos::CDataWrapper *wrapper = deviceController->getCurrentData();
-            if(wrapper == NULL) return;
-
+            if(wrapper == NULL) {
+                std::cout << "No data" << std::endl;
+                continue;
+            }
             if(wrapper->hasKey(checkSequentialIDKey.c_str())){
                 int32_t curLastID = wrapper->getInt32Value(checkSequentialIDKey.c_str());
                 if(lastID+1<curLastID){
@@ -424,7 +428,6 @@ void MainWindow::executeOnThread(){
                 }else if(lastID==curLastID){
                     oversampling++;
                 }
-                std::cout << "last id:" << lastID << " - fetchedLastID:"<<curLastID << std::endl;
                 lastID = curLastID;
 
             }

@@ -144,7 +144,6 @@ void DataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header,
 	
     chaos::data_service::worker::AnswerDataWorkerJob *job = new chaos::data_service::worker::AnswerDataWorkerJob();
 	job->request_header = header;
-	worker->submitJobInfo(job);
-	
-	free(channel_data);
+	//while(!worker->submitJobInfo(job));
+	((worker::AnswerDataWorker*)worker)->executeJob(job);
 }

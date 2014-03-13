@@ -28,8 +28,10 @@
 #include <string>
 #include <stdint.h>
 
+#include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/utility/TemplatedKeyObjectContainer.h>
 #include <chaos/common/utility/InizializableService.h>
+
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/direct_io/DirectIOClientConnection.h>
@@ -38,7 +40,6 @@
 #include <chaos/common/network/NetworkBroker.h>
 
 #include <boost/shared_ptr.hpp>
-#include <boost/lockfree/queue.hpp>
 #include <boost/thread.hpp>
 
 using namespace chaos::utility;
@@ -68,13 +69,22 @@ namespace chaos{
 			public DataWorker,
 			protected chaos::utility::TemplatedKeyObjectContainer<uint32_t, ClientConnectionInfo*>,
 			protected chaos_direct_io::DirectIOClientConnectionEventHandler {
+				bool work_on_purge;
 				std::string cache_impl_name;
+
 				chaos_direct_io::DirectIOClient *direct_io_client;
+				
 				boost::shared_mutex mutex_add_new_client;
+				
+				chaos::WaitSemaphore purge_thread_wait_variable;
+				boost::shared_ptr<boost::thread> purge_thread;
+				
+				boost::mutex mutex_map_to_purge;
+				std::map<uint32_t, ClientConnectionInfo* > map_to_purge;
 				
 				cache_system::CacheDriver *cache_driver_instance;
 			protected:
-				void executeJob(WorkerJobPtr job_info);
+				
 				
 				//! handler method for receive the direct io client connection event
 				void handleEvent(uint32_t connection_identifier, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event);
@@ -82,11 +92,20 @@ namespace chaos{
 				void freeObject(uint32_t key, ClientConnectionInfo *elementPtr);
 				void disposeClientInfo(ClientConnectionInfo *client_info);
 				DirectIODeviceClientChannel *getClientChannel(opcode_headers::DirectIODeviceChannelHeaderGetOpcode *client_header);
+				void purge_thread_worker();
 			public:
+				void executeJob(WorkerJobPtr job_info);
 				AnswerDataWorker(chaos_direct_io::DirectIOClient *_client_instance, cache_system::CacheDriver *_cache_driver_instance);
 				~AnswerDataWorker();
 				void init(void *init_data) throw (chaos::CException);
 				void deinit() throw (chaos::CException);
+				//! purge unused connection
+				/*!
+				 thismethod is to be called some times in time for purge
+				 unused connection. The method is thread safe
+				 \param max_purge_element is, for default, set to max element and it define the max element that need to be purged, 0 means all
+				 */
+				void purge(uint32_t max_purge_element = std::numeric_limits<uint32_t>::max());
 			};
 			
 		}

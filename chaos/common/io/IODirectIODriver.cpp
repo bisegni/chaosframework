@@ -131,13 +131,14 @@ namespace chaos{
 		}
 		channels_slot.clearSlots();
 		
+		//initialize client
+		utility::InizializableService::deinitImplementation(init_parameter.client_instance, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
+		delete(init_parameter.client_instance);
+		
 		//deinitialize server channel
 		if(device_server_channel) {
 			init_parameter.endpoint_instance->releaseChannelInstance(device_server_channel);
 		}
-		//initialize client
-		utility::InizializableService::deinitImplementation(init_parameter.client_instance, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
-		delete(init_parameter.client_instance);
 		
 		if(init_parameter.endpoint_instance) {
 			init_parameter.network_broker->releaseDirectIOServerEndpoint(init_parameter.endpoint_instance);
@@ -187,7 +188,7 @@ namespace chaos{
 		if(!next_client) return NULL;
 		
 		next_client->device_client_channel->requestLastOutputData(current_endpoint_p_port, current_endpoint_s_port, current_endpoint_index);
-		wait_get_answer.wait();
+		wait_get_answer.wait(2000);
 		if(data_cache.data_ptr &&
 		   data_cache.data_len) {
 			if(dim) *dim = (size_t)data_cache.data_len;
@@ -202,7 +203,6 @@ namespace chaos{
 		delete(header);
 		data_cache.data_len = channel_data_len;
 		data_cache.data_ptr = channel_data;
-		IODirectIODriver_DLDBG_ << "received get answer by dimension " << channel_data_len;
 		wait_get_answer.unlock();
 	}
 	
@@ -258,8 +258,15 @@ namespace chaos{
 			IODirectIODriverClientChannels * clients_channel = new IODirectIODriverClientChannels();
 			clients_channel->connection = tmp_connection;
 			clients_channel->device_client_channel = (chaos_dio_channel::DirectIODeviceClientChannel *)tmp_connection->getNewChannelInstance("DirectIODeviceClientChannel");
+			if(!clients_channel->device_client_channel) {
+				IODirectIODriver_DLDBG_ << "Error creating client device channel for " << server_description;
+				delete(clients_channel);
+			}
 			clients_channel->device_client_channel->setDeviceID(dataKey);
+			clients_channel->device_client_channel->setAnswerServerInfo(current_endpoint_p_port, current_endpoint_s_port);
 			channels_slot.addSlot(clients_channel);
+		} else {
+			IODirectIODriver_DLDBG_ << "Error creating client connection for " << server_description;
 		}
 	}
 }

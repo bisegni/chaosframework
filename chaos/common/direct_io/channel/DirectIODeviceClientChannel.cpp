@@ -18,10 +18,14 @@
  *    	limitations under the License.
  */
 
+#include <chaos/common/utility/InetUtility.h>
 #include <chaos/common/utility/endianess.h>
+#include <chaos/common/data/cache/FastHash.h>
 #include <chaos/common/data/cache/FastHash.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceClientChannel.h>
 #include <chaos/common/direct_io/DirectIOClient.h>
+
+#include <boost/format.hpp>
 
 namespace chaos_data = chaos::common::data;
 namespace chaos_cache = chaos::common::data::cache;
@@ -43,6 +47,15 @@ void DirectIODeviceClientChannel::setDeviceID(std::string _device_id) {
 	
 	//keep track of the device id
 	device_id = _device_id;
+}
+
+void DirectIODeviceClientChannel::setAnswerServerInfo(uint16_t p_server_port, uint16_t s_server_port) {
+	answer_server_info.p_server_port = p_server_port;
+	answer_server_info.s_server_port = s_server_port;
+	answer_server_info.ip = ((DirectIOClientConnection*)client_instance)->getI64Ip();
+	
+	std::string client_server_description = boost::str( boost::format("%1%:%2%:%3%") % UI64_TO_STRIP(answer_server_info.ip) % answer_server_info.p_server_port % answer_server_info.s_server_port);
+	answer_server_info.hash = chaos::common::data::cache::FastHash::hash(client_server_description.c_str(), client_server_description.size(), 0);
 }
 
 int64_t DirectIODeviceClientChannel::putDataOutputChannel(bool cache_it, void *buffer, uint32_t buffer_len) {
@@ -84,9 +97,10 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(uint16_t p_server_por
 	data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
 	
     header_data->field.device_hash = TO_LITTE_ENDNS_NUM(uint32_t, device_hash);
-    header_data->field.address = TO_LITTE_ENDNS_NUM(uint64_t, ((DirectIOClientConnection*)client_instance)->getI64Ip());
-    header_data->field.p_port = TO_LITTE_ENDNS_NUM(uint16_t, p_server_port);
-	header_data->field.s_port = TO_LITTE_ENDNS_NUM(uint16_t, s_server_port);
+	header_data->field.answer_server_hash =  TO_LITTE_ENDNS_NUM(uint32_t, answer_server_info.hash);
+    header_data->field.address = TO_LITTE_ENDNS_NUM(uint64_t, answer_server_info.ip);
+    header_data->field.p_port = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.p_server_port);
+	header_data->field.s_port = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.s_server_port);
     header_data->field.endpoint = TO_LITTE_ENDNS_NUM(uint16_t, endpoint_idx);
         //set header
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header_data, sizeof(DirectIODeviceChannelHeaderGetOpcode))
