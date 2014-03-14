@@ -36,6 +36,7 @@ namespace chaos {
 				typedef struct AnswerServerInfo {
 					uint16_t p_server_port;
 					uint16_t s_server_port;
+                    uint16_t endpoint;
 					uint64_t ip;
 					uint32_t hash;
 				}AnswerServerInfo;
@@ -60,13 +61,13 @@ namespace chaos {
 					void setDeviceID(std::string _device_id);
 					
 					//! set the information on witch port forward the answer(the ip is the ip of the machine)
-					void setAnswerServerInfo(uint16_t p_server_port, uint16_t s_server_port);
+					void setAnswerServerInfo(uint16_t p_server_port, uint16_t s_server_port, uint16_t answer_enpoint);
 					
 					//! Send device serialization with priority
                     int64_t putDataOutputChannel(bool cache_it, void *buffer, uint32_t buffer_len);
 					
 					//! Send a request for the last output data
-                    int64_t requestLastOutputData(uint16_t p_server_port, uint16_t s_server_port, uint16_t endpoint_idx);
+                    int64_t requestLastOutputData();
 				};
 
 				

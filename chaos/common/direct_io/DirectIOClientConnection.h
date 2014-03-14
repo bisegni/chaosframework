@@ -55,7 +55,7 @@ namespace chaos {
 				friend class DirectIOClientConnection;
             protected:
                 //! han
-                virtual void handleEvent(uint32_t connection_identifier, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) = 0;
+                virtual void handleEvent(DirectIOClientConnection *client_connection, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) = 0;
             };
             
             //! Represent the start point of a messaget towards an endpoint
@@ -71,8 +71,10 @@ namespace chaos {
 				friend class chaos::NetworkBroker;
 								
 			protected:
-				std::string server_description;
-				uint32_t	connection_hash;
+				std::string     server_description;
+                uint16_t        endpoint;
+				uint32_t        connection_hash;
+                uint32_t        unique_hash;
 				DirectIOClientConnectionStateType::DirectIOClientConnectionStateType current_state;
 
 				//! current client ip in string form
@@ -88,17 +90,24 @@ namespace chaos {
 				
 				//! callend by client or by implementation when some event occour from socket conenction
 				void lowLevelManageEvent(DirectIOClientConnectionStateType::DirectIOClientConnectionStateType state_type);
+                
+                // prepare header for defaut connection data
+                inline DirectIODataPack *completeDataPack(DirectIODataPack *data_pack) {
+                    data_pack->header.dispatcher_header.fields.route_addr = endpoint;
+                    return data_pack;
+                }
+                
             public:
 				
-				DirectIOClientConnection(std::string _server_description);
+				DirectIOClientConnection(std::string _server_description, uint16_t _endpoint);
                 virtual ~DirectIOClientConnection();
 				
 				//get client ip information
                 static std::string getStrIp();
                 static uint64_t getI64Ip();
 
-				void		setConnectionHash(uint32_t _connection_hash);
-				uint32_t	getConenctionHash();
+                uint32_t	getUniqueHash();
+				uint32_t	getConnectionHash();
 				
 				void setEventHandler(DirectIOClientConnectionEventHandler *_event_handler);
 				

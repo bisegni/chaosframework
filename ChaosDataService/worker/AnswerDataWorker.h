@@ -41,6 +41,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
+#include <boost/interprocess/detail/atomic.hpp>
 
 using namespace chaos::utility;
 using namespace chaos::common::direct_io;
@@ -60,6 +61,7 @@ namespace chaos{
 			};
 			
 			struct ClientConnectionInfo {
+                boost::uint32_t access_number;
 				chaos_direct_io::DirectIOClientConnection		*connection;
 				chaos_direct_io_ch::DirectIODeviceClientChannel *channel;
 			};
@@ -81,17 +83,17 @@ namespace chaos{
 				
 				boost::mutex mutex_map_to_purge;
 				std::map<uint32_t, ClientConnectionInfo* > map_to_purge;
-				
 				cache_system::CacheDriver *cache_driver_instance;
 			protected:
-				
+				inline bool increaseAccessNumber(ClientConnectionInfo *conn_info);
+                inline void decreaseAccessNumber(ClientConnectionInfo *conn_info);
 				
 				//! handler method for receive the direct io client connection event
-				void handleEvent(uint32_t connection_identifier, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event);
+				void handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event);
 				
 				void freeObject(uint32_t key, ClientConnectionInfo *elementPtr);
 				void disposeClientInfo(ClientConnectionInfo *client_info);
-				DirectIODeviceClientChannel *getClientChannel(opcode_headers::DirectIODeviceChannelHeaderGetOpcode *client_header);
+				ClientConnectionInfo *getClientChannel(opcode_headers::DirectIODeviceChannelHeaderGetOpcode *client_header);
 				void purge_thread_worker();
 			public:
 				void executeJob(WorkerJobPtr job_info);

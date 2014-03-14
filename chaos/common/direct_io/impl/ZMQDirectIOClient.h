@@ -80,7 +80,7 @@ namespace chaos {
                     void deinit() throw(chaos::CException);
 
 					//! get new connection
-					DirectIOClientConnection *getNewConnection(std::string server_description);
+					DirectIOClientConnection *getNewConnection(std::string server_description, uint16_t endpoint);
 					
 					//! release an instantiated connection
 					void releaseConnection(DirectIOClientConnection *connection_to_release);

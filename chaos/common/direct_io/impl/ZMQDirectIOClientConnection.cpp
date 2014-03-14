@@ -30,8 +30,11 @@ void ZMQDirectIOClientConnectionFree (void *data, void *hint) {
     free(data);
 }
 
-ZMQDirectIOClientConnection::ZMQDirectIOClientConnection(std::string server_description, void *_socket_priority, void *_socket_service):
-DirectIOClientConnection(server_description), socket_priority(_socket_priority), socket_service(_socket_service), monitor_info(NULL) {
+ZMQDirectIOClientConnection::ZMQDirectIOClientConnection(std::string server_description, void *_socket_priority, void *_socket_service, uint16_t endpoint):
+DirectIOClientConnection(server_description, endpoint),
+socket_priority(_socket_priority),
+socket_service(_socket_service),
+monitor_info(NULL) {
 }
 
 
@@ -41,12 +44,12 @@ ZMQDirectIOClientConnection::~ZMQDirectIOClientConnection() {
 
 // send the data to the server layer on priority channel
 int64_t ZMQDirectIOClientConnection::sendPriorityData(DirectIODataPack *data_pack) {
-    return writeToSocket(socket_priority, data_pack);
+    return writeToSocket(socket_priority, completeDataPack(data_pack));
 }
 
 // send the data to the server layer on the service channel
 int64_t ZMQDirectIOClientConnection::sendServiceData(DirectIODataPack *data_pack) {
-    return writeToSocket(socket_service, data_pack);
+    return writeToSocket(socket_service, completeDataPack(data_pack));
 }
 
 int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket, DirectIODataPack *data_pack) {

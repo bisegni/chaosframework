@@ -71,15 +71,19 @@ namespace chaos {
                 boost::atomic_uint	channel_counter;
 			protected:
 				void forwardEventToClientConnection(DirectIOClientConnection *client, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event_type);
+                
+                bool decodeServerDescirptionWithEndpoint(std::string server_description_endpoint, std::string& server_description, uint16_t& endpoint);
 			public:
                 DirectIOClient(string alias);
 				virtual ~DirectIOClient();
 				
 				//! create a new connection for a server
 				/*!
-				 Allocate a new connection
+				 Allocate a new connection from server description with endpoitn ex: ip:p-port:s_port|endpoint
 				 */
-				virtual DirectIOClientConnection *getNewConnection(std::string server_description) = 0;
+				virtual DirectIOClientConnection *getNewConnection(std::string server_description_with_endpoint);
+                
+                virtual DirectIOClientConnection *getNewConnection(std::string server_description, uint16_t endpoint) = 0;
 				
 				//! Release the connection
 				virtual void releaseConnection(DirectIOClientConnection *connection_to_release) = 0;

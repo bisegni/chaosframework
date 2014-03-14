@@ -49,12 +49,14 @@ void DirectIODeviceClientChannel::setDeviceID(std::string _device_id) {
 	device_id = _device_id;
 }
 
-void DirectIODeviceClientChannel::setAnswerServerInfo(uint16_t p_server_port, uint16_t s_server_port) {
+void DirectIODeviceClientChannel::setAnswerServerInfo(uint16_t p_server_port, uint16_t s_server_port, uint16_t answer_endpoint) {
 	answer_server_info.p_server_port = p_server_port;
 	answer_server_info.s_server_port = s_server_port;
+    answer_server_info.endpoint = answer_endpoint;
+    //setEndpoint(endpoint);
 	answer_server_info.ip = ((DirectIOClientConnection*)client_instance)->getI64Ip();
 	
-	std::string client_server_description = boost::str( boost::format("%1%:%2%:%3%") % UI64_TO_STRIP(answer_server_info.ip) % answer_server_info.p_server_port % answer_server_info.s_server_port);
+	std::string client_server_description = boost::str( boost::format("%1%:%2%:%3%|%4%") % UI64_TO_STRIP(answer_server_info.ip) % answer_server_info.p_server_port % answer_server_info.s_server_port %  answer_server_info.endpoint);
 	answer_server_info.hash = chaos::common::data::cache::FastHash::hash(client_server_description.c_str(), client_server_description.size(), 0);
 }
 
@@ -68,7 +70,7 @@ int64_t DirectIODeviceClientChannel::putDataOutputChannel(bool cache_it, void *b
 	//set opcode
 	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodePutOutput);
 	//set the endpoint that need the receive the pack on the other side
-	data_pack->header.dispatcher_header.fields.route_addr = endpoint;
+	//data_pack->header.dispatcher_header.fields.route_addr = endpoint;
 	//set the channel route index within the endpoint
 	data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
 	
@@ -77,12 +79,12 @@ int64_t DirectIODeviceClientChannel::putDataOutputChannel(bool cache_it, void *b
 	header_data->cache_tag = TO_LITTE_ENDNS_NUM(uint32_t, cache_it);
 
 	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header_data, sizeof(DirectIODeviceChannelHeaderPutOpcode))
-	DIRECT_IO_SET_CHANNEL_DATA(data_pack, buffer, buffer_len)
+	if(buffer_len)DIRECT_IO_SET_CHANNEL_DATA(data_pack, buffer, buffer_len)
 	return client_instance->sendPriorityData(data_pack);
 }
 
 //! Send device serialization with priority
-int64_t DirectIODeviceClientChannel::requestLastOutputData(uint16_t p_server_port, uint16_t s_server_port, uint16_t endpoint_idx) {
+int64_t DirectIODeviceClientChannel::requestLastOutputData() {
 	DirectIODataPack *data_pack = new DirectIODataPack();
 	std::memset(data_pack, 0, sizeof(DirectIODataPack));
 	
@@ -92,16 +94,16 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(uint16_t p_server_por
         //set opcode
 	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeGetLastOutput);
 	//set the endpoint that need the receive the pack on the other side
-	data_pack->header.dispatcher_header.fields.route_addr = endpoint;
+	//data_pack->header.dispatcher_header.fields.route_addr = endpoint;
 	//set the channel route index within the endpoint
 	data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
-	
+	//-------->this part remain the same across al call so we can optimize here<----------
     header_data->field.device_hash = TO_LITTE_ENDNS_NUM(uint32_t, device_hash);
 	header_data->field.answer_server_hash =  TO_LITTE_ENDNS_NUM(uint32_t, answer_server_info.hash);
     header_data->field.address = TO_LITTE_ENDNS_NUM(uint64_t, answer_server_info.ip);
     header_data->field.p_port = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.p_server_port);
 	header_data->field.s_port = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.s_server_port);
-    header_data->field.endpoint = TO_LITTE_ENDNS_NUM(uint16_t, endpoint_idx);
+    header_data->field.endpoint = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.endpoint);
         //set header
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header_data, sizeof(DirectIODeviceChannelHeaderGetOpcode))
 	return client_instance->sendPriorityData(data_pack);

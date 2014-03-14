@@ -40,6 +40,7 @@ namespace chaos {
 				
 				typedef struct ConnectionMonitorInfo {
 					bool run;
+                    uint32_t hash_identification;
 					boost::thread *monitor_thread;
 					void *monitor_socket;
 				} ConnectionMonitorInfo;
@@ -50,7 +51,6 @@ namespace chaos {
 				 */
 				class ZMQDirectIOClientConnection : public chaos::common::direct_io::DirectIOClientConnection, protected ServerFeeder {
 					friend class ZMQDirectIOClient;
-					uint32_t zmq_addr_hash;
 					
 					void *socket_priority;
 					void *socket_service;
@@ -59,7 +59,7 @@ namespace chaos {
 					
                     boost::shared_mutex mutex_socket_manipolation;
 					
-					ZMQDirectIOClientConnection(std::string server_description, void *_socket_priority, void *_socket_service);
+					ZMQDirectIOClientConnection(std::string server_description, void *_socket_priority, void *_socket_service, uint16_t endpoint);
 					~ZMQDirectIOClientConnection();
 					
 					inline int64_t writeToSocket(void *socket, DirectIODataPack *data_pack);

@@ -187,7 +187,7 @@ namespace chaos{
 		IODirectIODriverClientChannels	*next_client = getNextClientChannel();
 		if(!next_client) return NULL;
 		
-		next_client->device_client_channel->requestLastOutputData(current_endpoint_p_port, current_endpoint_s_port, current_endpoint_index);
+		next_client->device_client_channel->requestLastOutputData();
 		wait_get_answer.wait(2000);
 		if(data_cache.data_ptr &&
 		   data_cache.data_len) {
@@ -238,8 +238,8 @@ namespace chaos{
 					if(tokens.size()==2) {
 						IODirectIODriver_DLDBG_ << "Data proxy server description " << tokens[0];
 						IODirectIODriver_DLDBG_ << "Data proxy server Endpoint " << tokens[1];
-						addNewServerConnection(tokens[0]);
-						registered_server.insert(tokens[0]);
+						addNewServerConnection(serverDesc);
+						registered_server.insert(serverDesc);
 					} else {
 						IODirectIODriver_DLDBG_ << "Bad server configuration";
 					}
@@ -262,8 +262,11 @@ namespace chaos{
 				IODirectIODriver_DLDBG_ << "Error creating client device channel for " << server_description;
 				delete(clients_channel);
 			}
+            //set device id
 			clients_channel->device_client_channel->setDeviceID(dataKey);
-			clients_channel->device_client_channel->setAnswerServerInfo(current_endpoint_p_port, current_endpoint_s_port);
+            
+            //set the answer information
+			clients_channel->device_client_channel->setAnswerServerInfo(current_endpoint_p_port, current_endpoint_s_port, current_endpoint_index);
 			channels_slot.addSlot(clients_channel);
 		} else {
 			IODirectIODriver_DLDBG_ << "Error creating client connection for " << server_description;

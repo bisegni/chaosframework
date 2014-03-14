@@ -74,9 +74,8 @@ void *ZMQDirectIOClient::socketMonitor (void *ctx, const char * address, Connect
     zmq_event_t event;
     static char addr[1025];
     int rc;
-	uint32_t server_addr_hash;
 	DirectIOClientConnection *connection = NULL;
-	std::vector<std::string> server_desc_tokens;
+	//std::vector<std::string> server_desc_tokens;
     DEBUG_CODE(ZMQDIOLDBG_ << "Start monitor for " << monitor_inproc_address;)
 	
     monitor_info->monitor_socket = zmq_socket (ctx, ZMQ_PAIR);
@@ -90,31 +89,31 @@ void *ZMQDirectIOClient::socketMonitor (void *ctx, const char * address, Connect
 		//server_desc_tokens.clear();
 		//boost::algorithm::split(server_desc_tokens, addr, boost::algorithm::is_any_of("-"), boost::algorithm::token_compress_on);
 		//if(server_desc_tokens.size() != 2) continue;
-		server_addr_hash = chaos::common::data::cache::FastHash::hash(addr, std::strlen(addr), 0);
-		if((connection = TemplatedKeyObjectContainer::accessItem(server_addr_hash))) {
+		//server_addr_hash = chaos::common::data::cache::FastHash::hash(addr, std::strlen(addr), 0);
+		if((connection = TemplatedKeyObjectContainer::accessItem(monitor_info->hash_identification))) {
 			switch (event.event) {
 				case ZMQ_EVENT_CONNECTED:
-					DEBUG_CODE(ZMQDIOLDBG_ << "ZMQ_EVENT_CONNECTED " << event.value << "-" << monitor_inproc_address;)
+					DEBUG_CODE(ZMQDIOLDBG_ << "ZMQ_EVENT_CONNECTED to " << connection->getServerDescription();)
 					forwardEventToClientConnection(connection , DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected);
 					break;
 				case ZMQ_EVENT_CONNECT_DELAYED:
 					forwardEventToClientConnection(connection , DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected);
-					DEBUG_CODE(ZMQDIOLDBG_ << "ZMQ_EVENT_CONNECT_DELAYED " << event.value << "-" << monitor_inproc_address;)
+					DEBUG_CODE(ZMQDIOLDBG_ << "ZMQ_EVENT_CONNECT_DELAYED " << connection->getServerDescription();)
 					break;
 				case ZMQ_EVENT_CONNECT_RETRIED:
 					forwardEventToClientConnection(connection , DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected);
-					DEBUG_CODE(ZMQDIOLDBG_ << "ZMQ_EVENT_CONNECT_RETRIED " << event.value << "-" << monitor_inproc_address;)
+					DEBUG_CODE(ZMQDIOLDBG_ << "ZMQ_EVENT_CONNECT_RETRIED " << connection->getServerDescription();)
 					break;
 				case ZMQ_EVENT_CLOSE_FAILED:
-					DEBUG_CODE(ZMQDIOLDBG_ << "ZMQ_EVENT_CLOSE_FAILED " << event.value << "-" << monitor_inproc_address;)
+					DEBUG_CODE(ZMQDIOLDBG_ << "ZMQ_EVENT_CLOSE_FAILED " << connection->getServerDescription();)
 					break;
 				case ZMQ_EVENT_CLOSED:
 					forwardEventToClientConnection(connection , DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected);
-					DEBUG_CODE(ZMQDIOLDBG_ << "ZMQ_EVENT_CLOSED " << event.value << "-" << monitor_inproc_address;)
+					DEBUG_CODE(ZMQDIOLDBG_ << "ZMQ_EVENT_CLOSED " << connection->getServerDescription();)
 					break;
 				case ZMQ_EVENT_DISCONNECTED:
 					forwardEventToClientConnection(connection , DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected);
-					DEBUG_CODE(ZMQDIOLDBG_ << "ZMQ_EVENT_DISCONNECTED " << event.value << "-" << monitor_inproc_address;)
+					DEBUG_CODE(ZMQDIOLDBG_ << "ZMQ_EVENT_DISCONNECTED " << connection->getServerDescription();)
 					break;
 			}
 			
@@ -167,7 +166,7 @@ void ZMQDirectIOClient::deinit() throw(chaos::CException) {
     DirectIOClient::deinit();
 }
 
-DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server_description) {
+DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server_description, uint16_t endpoint) {
 	int err = 0;
 	const int output_buffer_dim = 1;
 	const int linger_period = 0;
@@ -176,7 +175,7 @@ DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server
 	
 	void *socket_priority = NULL;
 	void *socket_service = NULL;
-	
+
 	std::string url;
 	std::string error_str;
 	std::string priority_endpoint;
@@ -189,6 +188,7 @@ DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server
 	ZMQDirectIOClientConnection *result = NULL;
 	
 	try {
+        
 		DEBUG_CODE(ZMQDIOLDBG_ << "Allocating priority socket";)
 		socket_priority = zmq_socket (zmq_context, ZMQ_DEALER);
 		if(socket_priority == NULL) throw chaos::CException(1, "Error creating priority socket", __FUNCTION__);
@@ -225,38 +225,32 @@ DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server
 
 		//---------------------------------------------------------------------------------------------------------------
 		//allocate client
-		result = new ZMQDirectIOClientConnection(server_description, socket_priority, socket_service);
+		result = new ZMQDirectIOClientConnection(server_description, socket_priority, socket_service, endpoint);
 		
 		//set the server information on socket
 		ServerFeeder::decoupleServerDescription(server_description, priority_endpoint, service_endpoint);
-		
-		std::string monitor_url = boost::str( boost::format("inproc://%1%") % priority_endpoint);
-		err = zmq_socket_monitor(socket_priority, monitor_url.c_str(), ZMQ_EVENT_ALL);
-		if(err) throw chaos::CException(err, "Error activating monitor on service socket", __FUNCTION__);
-		
-		DEBUG_CODE(ZMQDIOLDBG_ << "Allocating monitor socket thread for monitor url " << monitor_url;)
+				
+        
+		//DEBUG_CODE(ZMQDIOLDBG_ << "Allocating monitor socket thread for monitor url " << monitor_url;)
 		result->monitor_info = new ConnectionMonitorInfo();
 		result->monitor_info->run = true;
 		result->monitor_info->monitor_thread = NULL;
 		result->monitor_info->monitor_socket = NULL;
+        result->monitor_info->hash_identification = result->getUniqueHash();
+        //result->getConnectionHash();
+
+        //register socket for monitoring
+		std::string monitor_url = boost::str( boost::format("inproc://%1%") % result->getUniqueHash());
+		err = zmq_socket_monitor(socket_priority, monitor_url.c_str(), ZMQ_EVENT_ALL);
+		if(err) throw chaos::CException(err, "Error activating monitor on service socket", __FUNCTION__);
+
 		result->monitor_info->monitor_thread = new boost::thread(boost::bind(&ZMQDirectIOClient::socketMonitor, this, zmq_context, monitor_url.c_str(), result->monitor_info));
 		
-		url = boost::str( boost::format("tcp://%1%") % priority_endpoint);
-		//infer the zmq endpoint address
-		std::string temp_priority_endpoint = url;
-		size_t end_pos = temp_priority_endpoint.rfind(":") - 6;
-		std::string hostname = temp_priority_endpoint.substr(6, end_pos);
-		std::string port = temp_priority_endpoint.substr(temp_priority_endpoint.rfind(":")+1);
-		chaos::InetUtility::queryDns(hostname, resolved_ip);
-		if(resolved_ip.size()) {
-			temp_priority_endpoint = boost::str( boost::format("tcp://%1%:%2%") % resolved_ip[0] % port);
-		}
-		result->zmq_addr_hash = chaos::common::data::cache::FastHash::hash(temp_priority_endpoint.c_str(), temp_priority_endpoint.size(), 0);
-		
 		//register client with the hash of the xzmq decoded endpoint address (tcp://ip:port)
-		DEBUG_CODE(ZMQDIOLDBG_ << "Register client for " << server_description << " with zmq decoded hash " << result->zmq_addr_hash;)
-		TemplatedKeyObjectContainer::registerElement(result->zmq_addr_hash, result);
+		DEBUG_CODE(ZMQDIOLDBG_ << "Register client for " << server_description << " with zmq decoded hash " << result->getUniqueHash();)
+		TemplatedKeyObjectContainer::registerElement(result->getUniqueHash(), result);
 		
+        url = boost::str( boost::format("tcp://%1%") % priority_endpoint);
 		DEBUG_CODE(ZMQDIOLDBG_ << "connect to priority endpoint " << url;)
 		err = zmq_connect(socket_priority, url.c_str());
 		if(err) {
@@ -285,7 +279,7 @@ DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server
 			if(err) ZMQDIOLERR_ << "Error closing service socket";
 		}
 		if(result) {
-			TemplatedKeyObjectContainer::deregisterElementKey(result->zmq_addr_hash);
+			TemplatedKeyObjectContainer::deregisterElementKey(result->getUniqueHash());
 			delete(result);
 		}
 	}
@@ -320,7 +314,7 @@ void ZMQDirectIOClient::releaseConnection(DirectIOClientConnection *connection_t
 		}
 	}
 	
-	TemplatedKeyObjectContainer::deregisterElementKey(conn->zmq_addr_hash);
+	TemplatedKeyObjectContainer::deregisterElementKey(conn->getUniqueHash());
 	delete(connection_to_release);
 
 }

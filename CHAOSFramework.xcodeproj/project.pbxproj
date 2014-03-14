@@ -36,6 +36,7 @@
 		3229700A18BCC6FE0004F70D /* DirectIOServerPublicInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3229700918BCC6FE0004F70D /* DirectIOServerPublicInterface.h */; };
 		322D990118A95F9200C0864C /* DataConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322D98FE18A95F9200C0864C /* DataConsumer.cpp */; };
 		322D990218A95F9200C0864C /* DataConsumer.h in Headers */ = {isa = PBXBuildFile; fileRef = 322D98FF18A95F9200C0864C /* DataConsumer.h */; };
+		322DE35518D467E5006F1551 /* ConcuredUsedItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 322DE35418D467E5006F1551 /* ConcuredUsedItem.h */; };
 		322E157A161B629700C3003C /* NetworkBroker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 322E1578161B629700C3003C /* NetworkBroker.cpp */; };
 		322E157D161B62A900C3003C /* NetworkBroker.h in Headers */ = {isa = PBXBuildFile; fileRef = 322E157C161B62A900C3003C /* NetworkBroker.h */; };
 		3230BEC2181A6ADB00EA5793 /* DatasetDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3230BEC0181A6ADB00EA5793 /* DatasetDB.cpp */; };
@@ -473,6 +474,7 @@
 		3229700918BCC6FE0004F70D /* DirectIOServerPublicInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOServerPublicInterface.h; sourceTree = "<group>"; };
 		322D98FE18A95F9200C0864C /* DataConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataConsumer.cpp; sourceTree = "<group>"; };
 		322D98FF18A95F9200C0864C /* DataConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataConsumer.h; sourceTree = "<group>"; };
+		322DE35418D467E5006F1551 /* ConcuredUsedItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConcuredUsedItem.h; sourceTree = "<group>"; };
 		322E1578161B629700C3003C /* NetworkBroker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = NetworkBroker.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		322E157C161B62A900C3003C /* NetworkBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = NetworkBroker.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		3230BEBB1817A9E100EA5793 /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_common.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1516,6 +1518,7 @@
 				32983F7417896FE1004599A3 /* ObjectInstancer.h */,
 				326573F218CCD365009E9B6B /* TemplatedKeyObjectContainer.h */,
 				329CFCF218CDEE2F002C37CF /* ObjectSlot.h */,
+				322DE35418D467E5006F1551 /* ConcuredUsedItem.h */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -2041,6 +2044,7 @@
 				326DB48A14B38BC00018A8D0 /* CThread.h in Headers */,
 				326DB48B14B38BC00018A8D0 /* CThreadExecutionTask.h in Headers */,
 				326DB48D14B38BC00018A8D0 /* CThreadGroup.h in Headers */,
+				322DE35518D467E5006F1551 /* ConcuredUsedItem.h in Headers */,
 				326DB48E14B38BC00018A8D0 /* ArrayPointer.h in Headers */,
 				329603231876B45000CDCADA /* BatchCommand.h in Headers */,
 				326DB49214B38BC00018A8D0 /* ObjectFactoryRegister.h in Headers */,

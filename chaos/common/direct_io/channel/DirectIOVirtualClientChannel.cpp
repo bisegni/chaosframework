@@ -24,7 +24,7 @@
 using namespace chaos::common::direct_io::channel;
 
 
-DirectIOVirtualClientChannel::DirectIOVirtualClientChannel(string channel_name, uint8_t channel_route_index, bool priority):DirectIOVirtualChannel(channel_name, channel_route_index), endpoint(0) {
+DirectIOVirtualClientChannel::DirectIOVirtualClientChannel(string channel_name, uint8_t channel_route_index, bool priority):DirectIOVirtualChannel(channel_name, channel_route_index)/*, endpoint(0)*/ {
     if(priority) {
 		forward_handler = &DirectIOForwarder::sendPriorityData;
 	} else {
@@ -38,7 +38,7 @@ DirectIOVirtualClientChannel::~DirectIOVirtualClientChannel() {
 
 int64_t DirectIOVirtualClientChannel::sendData(chaos::common::direct_io::DirectIODataPack *data_pack) {
 	//set the endpoint that need the receive the pack on the other side
-	data_pack->header.dispatcher_header.fields.route_addr = endpoint;
+	//data_pack->header.dispatcher_header.fields.route_addr = endpoint;
 	//set the channel route index within the endpoint
 	data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
 	
@@ -46,6 +46,6 @@ int64_t DirectIOVirtualClientChannel::sendData(chaos::common::direct_io::DirectI
 	return DirectIOForwarderHandlerCaller(client_instance,forward_handler)(data_pack);
 }
 
-void DirectIOVirtualClientChannel::setEndpoint(uint16_t _endpoint) {
+/*void DirectIOVirtualClientChannel::setEndpoint(uint16_t _endpoint) {
 	endpoint = _endpoint;
-}
+}*/
