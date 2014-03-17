@@ -29,7 +29,10 @@ using namespace chaos::common::direct_io;
 #define DIOSE_LERR_ LERR_ << DirectIOServerEndpoint_LOG_HEAD
 
 DirectIOServerEndpoint::DirectIOServerEndpoint(): endpoint_route_index(0), server_public_interface(NULL) {
+	//allocate slot memory
 	channel_slot = (channel::DirectIOVirtualServerChannel**)malloc(sizeof(channel::DirectIOVirtualServerChannel**)*MAX_ENDPOINT_CHANNEL);
+	//clean all memory
+	std::memset(channel_slot, 0, sizeof(channel::DirectIOVirtualServerChannel**)*MAX_ENDPOINT_CHANNEL);
 }
 
 DirectIOServerEndpoint::~DirectIOServerEndpoint() {
@@ -86,11 +89,13 @@ void DirectIOServerEndpoint::releaseChannelInstance(channel::DirectIOVirtualServ
 // Event for a new data received
 void DirectIOServerEndpoint::priorityDataReceived(DirectIODataPack *data_pack) {
 	boost::shared_lock<boost::shared_mutex> Lock(mutex_channel_slot);
-	channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack);
+	if(channel_slot[data_pack->header.dispatcher_header.fields.channel_idx])
+		channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack);
 }
 
 // Event for a new data received
 void DirectIOServerEndpoint::serviceDataReceived(DirectIODataPack *data_pack) {
 	boost::shared_lock<boost::shared_mutex> Lock(mutex_channel_slot);
-	channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack);
+	if(channel_slot[data_pack->header.dispatcher_header.fields.channel_idx])
+		channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack);
 }

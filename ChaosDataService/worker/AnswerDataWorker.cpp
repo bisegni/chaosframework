@@ -161,11 +161,9 @@ void AnswerDataWorker::executeJob(WorkerJobPtr job_info) {
 		//send data to requester node
 		void *data = NULL;
 		uint32_t data_len = 0;
-		DEBUG_CODE(ADWLDBG_ << "Get data for hash " << dw_job_ptr->request_header->field.device_hash;);
 		cache_driver_instance->getData(dw_job_ptr->request_header->field.device_hash, &data, data_len);
 		
-		DEBUG_CODE(ADWLDBG_ << "Post data for hash " << dw_job_ptr->request_header->field.device_hash << " of size " << data_len;);
-		connection_info->channel->putDataOutputChannel(true, data, data_len);
+		connection_info->channel->storeAndCacheDataOutputChannel(data, data_len);
         
         //decrease the use of the channel
         decreaseAccessNumber(connection_info);

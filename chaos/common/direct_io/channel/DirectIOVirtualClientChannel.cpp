@@ -43,7 +43,7 @@ int64_t DirectIOVirtualClientChannel::sendData(chaos::common::direct_io::DirectI
 	data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
 	
 	//send pack
-	return DirectIOForwarderHandlerCaller(client_instance,forward_handler)(this, data_pack);
+	return DirectIOForwarderHandlerCaller(client_instance,forward_handler)(this, completeDataPack(data_pack));
 }
 
 void DirectIOVirtualClientChannel::freeSentData(void *data, uint8_t tag) {}

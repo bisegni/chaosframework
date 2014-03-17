@@ -172,7 +172,7 @@ namespace chaos{
 		serialization->disposeOnDelete = !next_client;
 		if(next_client) {
 			//free the packet
-			next_client->device_client_channel->putDataOutputChannel(true, (void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen());
+			next_client->device_client_channel->storeAndCacheDataOutputChannel((void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen());
 			return;
 		}
 		delete(serialization);

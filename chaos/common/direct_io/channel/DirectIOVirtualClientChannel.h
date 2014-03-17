@@ -47,6 +47,12 @@ namespace chaos {
 					int64_t sendData(chaos::common::direct_io::DirectIODataPack *data_pack);
 					virtual void freeSentData(void *data, uint8_t tag);
 					
+					// prepare header for defaut connection data
+					inline DirectIODataPack *completeDataPack(DirectIODataPack *data_pack) {
+						data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
+						return data_pack;
+					}
+					
                     DirectIOVirtualClientChannel(std::string channel_name, uint8_t channel_route_index, bool priority);
                     ~DirectIOVirtualClientChannel();
 				public:

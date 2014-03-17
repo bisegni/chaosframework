@@ -48,10 +48,17 @@ namespace chaos {
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DirectIODeviceClientChannel, DirectIOVirtualClientChannel) {
 					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIODeviceClientChannel)
 					
+					//fixed header
+					opcode_headers::DirectIODeviceChannelHeaderPutOpcode put_opcode_header;
+					opcode_headers::DirectIODeviceChannelHeaderGetOpcode get_opcode_header;
+					
 					uint32_t device_hash;
 
 					std::string device_id;
 					AnswerServerInfo answer_server_info;
+					
+					void prepare_put_opcode();
+					void prepare_get_opcode();
 				protected:
 					DirectIODeviceClientChannel(std::string alias);
 					void freeSentData(void *data, uint8_t tag);
@@ -65,7 +72,7 @@ namespace chaos {
 					void setAnswerServerInfo(uint16_t p_server_port, uint16_t s_server_port, uint16_t answer_enpoint);
 					
 					//! Send device serialization with priority
-                    int64_t putDataOutputChannel(bool cache_it, void *buffer, uint32_t buffer_len);
+                    int64_t storeAndCacheDataOutputChannel(void *buffer, uint32_t buffer_len);
 					
 					//! Send a request for the last output data
                     int64_t requestLastOutputData();
