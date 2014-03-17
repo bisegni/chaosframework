@@ -46,4 +46,4 @@ int64_t DirectIOVirtualClientChannel::sendData(chaos::common::direct_io::DirectI
 	return DirectIOForwarderHandlerCaller(client_instance,forward_handler)(this, completeDataPack(data_pack));
 }
 
-void DirectIOVirtualClientChannel::freeSentData(void *data, uint8_t tag) {}
+void DirectIOVirtualClientChannel::freeSentData(void *data, DisposeSentMemoryInfo& dispose_memory_info) {}

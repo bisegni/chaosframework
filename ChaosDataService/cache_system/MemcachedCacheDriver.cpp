@@ -34,18 +34,18 @@ MemcachedCacheDriver::~MemcachedCacheDriver() {
 	}
 }
 
-int MemcachedCacheDriver::putData(uint32_t element_hash, void *value, uint32_t value_len) {
+int MemcachedCacheDriver::putData(void *element_key, uint8_t element_key_len,  void *value, uint32_t value_len) {
 	memcached_return_t err = MEMCACHED_SUCCESS;
-	err = memcached_set(memcache_client, (const char*)&element_hash, (size_t)4, (const char*)value, (size_t)value_len, 0, 0);
+	err = memcached_set(memcache_client, (const char *)element_key, element_key_len, (const char*)value, (size_t)value_len, 0, 0);
 	return err != MEMCACHED_SUCCESS;
 }
 
-int MemcachedCacheDriver::getData(uint32_t element_hash, void **value, uint32_t& value_len) {
+int MemcachedCacheDriver::getData(void *element_key, uint8_t element_key_len,  void **value, uint32_t& value_len) {
 	uint32_t flags = 0;
 	size_t len;
 	memcached_return_t mcSetResult = MEMCACHED_SUCCESS;
 	
-	*value =  memcached_get(memcache_client, (const char*)&element_hash, (size_t)4, &len, &flags,  &mcSetResult);
+	*value =  memcached_get(memcache_client, (const char *)element_key, element_key_len, &len, &flags,  &mcSetResult);
 	value_len = (uint32_t)len;
 	return *value == NULL;
 }

@@ -52,6 +52,7 @@ int64_t ZMQDirectIOClientConnection::sendServiceData(channel::DirectIOVirtualCli
 int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClientChannel *channel, void *socket, DirectIODataPack *data_pack) {
     assert(socket && data_pack);
 	int err = 0;
+	uint16_t sending_opcode = data_pack->header.dispatcher_header.fields.channel_opcode;
 	zmq_msg_t msg_header_data;
 	zmq_msg_t msg_data;
 	ZMQDirectIOClientConnectionReadLock lock(mutex_socket_manipolation);
@@ -74,7 +75,7 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 									 data_pack->channel_header_data,
 									 data_pack->header.channel_header_size,
 									 DirectIOClientConnection::freeSentData,
-									 new DisposeSentMemoryInfo(channel, 1));
+									 new channel::DisposeSentMemoryInfo(channel, 1, sending_opcode));
 			err = zmq_sendmsg(socket, &msg_header_data, ZMQ_DONTWAIT);
 			err = zmq_msg_close(&msg_header_data);
 			break;
@@ -87,7 +88,7 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 									 data_pack->channel_data,
 									 data_pack->header.channel_data_size,
 									 DirectIOClientConnection::freeSentData,
-									 new DisposeSentMemoryInfo(channel, 2));
+									 new channel::DisposeSentMemoryInfo(channel, 2, sending_opcode));
 			err = zmq_sendmsg(socket, &msg_data, ZMQ_DONTWAIT);
 			err = zmq_msg_close(&msg_data);
 			break;
@@ -100,7 +101,7 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 									 data_pack->channel_header_data,
 									 data_pack->header.channel_header_size,
 									 DirectIOClientConnection::freeSentData,
-									 new DisposeSentMemoryInfo(channel, 1));
+									 new channel::DisposeSentMemoryInfo(channel, 1, sending_opcode));
 			err = zmq_sendmsg(socket, &msg_header_data, ZMQ_SNDMORE);
 			if(err == -1) {
 				zmq_msg_close(&msg_header_data);
@@ -110,7 +111,7 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 									 data_pack->channel_data,
 									 data_pack->header.channel_data_size,
 									 DirectIOClientConnection::freeSentData,
-									 new DisposeSentMemoryInfo(channel, 2));
+									 new channel::DisposeSentMemoryInfo(channel, 2, sending_opcode));
 			err = zmq_sendmsg(socket, &msg_data, 0);
 			
 			err = zmq_msg_close(&msg_header_data);

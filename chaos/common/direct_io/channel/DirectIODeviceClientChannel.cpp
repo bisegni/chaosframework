@@ -27,18 +27,26 @@
 
 #include <boost/format.hpp>
 
+#include <string.h>
+
 namespace chaos_data = chaos::common::data;
 namespace chaos_cache = chaos::common::data::cache;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 using namespace chaos::common::direct_io::channel::opcode_headers;
 
-DirectIODeviceClientChannel::DirectIODeviceClientChannel(std::string alias):DirectIOVirtualClientChannel(alias, DIODataset_Channel_Index, true), device_hash(0), device_id("") {
+//#define PUT_HEADER_LEN  sizeof(DirectIODeviceChannelHeaderPutOpcode)-sizeof(void*)+device_id.size()
+#define PUT_HEADER_LEN  GET_PUT_OPCODE_FIXED_PART_LEN+device_id.size()
+
+
+DirectIODeviceClientChannel::DirectIODeviceClientChannel(std::string alias):DirectIOVirtualClientChannel(alias, DIODataset_Channel_Index, true), device_hash(0), device_id(""), put_opcode_header(NULL) {
 
 }
 
 DirectIODeviceClientChannel::~DirectIODeviceClientChannel() {
-	
+	if(put_opcode_header) {
+		free(put_opcode_header);
+	}
 }
 
 void DirectIODeviceClientChannel::setDeviceID(std::string _device_id) {
@@ -48,6 +56,14 @@ void DirectIODeviceClientChannel::setDeviceID(std::string _device_id) {
 	//keep track of the device id
 	device_id = _device_id;
 	
+	if(put_opcode_header) {
+		free(put_opcode_header);
+	}
+	put_opcode_header = (opcode_headers::DirectIODeviceChannelHeaderPutOpcode *)malloc(PUT_HEADER_LEN);
+	std::memset(put_opcode_header, 0, PUT_HEADER_LEN);
+	//allign the key pointr to his position
+	//put_opcode_header->key_data = (void*)((char*)put_opcode_header+sizeof(DirectIODeviceChannelHeaderPutOpcode));
+	
 	//-------->initialize the headers <----------
 	prepare_put_opcode();
 	prepare_get_opcode();
@@ -55,9 +71,12 @@ void DirectIODeviceClientChannel::setDeviceID(std::string _device_id) {
 
 void DirectIODeviceClientChannel::prepare_put_opcode() {
 	bool cache = true;
-	std::memset(&put_opcode_header, 0, sizeof(DirectIODeviceChannelHeaderPutOpcode));
-	put_opcode_header.device_hash = TO_LITTE_ENDNS_NUM(uint32_t, device_hash);
-	put_opcode_header.cache_tag = TO_LITTE_ENDNS_NUM(uint32_t, cache);
+	if(!put_opcode_header) return;
+	put_opcode_header->device_hash = TO_LITTE_ENDNS_NUM(uint32_t, device_hash);
+	put_opcode_header->tag = TO_LITTE_ENDNS_NUM(uint32_t, cache);
+	put_opcode_header->key_len = device_id.size();
+	//put_opcode_header->key_data
+	std::memcpy(GET_PUT_OPCODE_KEY_PTR(put_opcode_header), device_id.c_str(), put_opcode_header->key_len);
 }
 
 void DirectIODeviceClientChannel::prepare_get_opcode() {
@@ -93,7 +112,7 @@ int64_t DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(void *buffer
 	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodePutOutput);
 	
 	//set the header
-	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, &put_opcode_header, sizeof(DirectIODeviceChannelHeaderPutOpcode))
+	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, put_opcode_header, (uint32_t)PUT_HEADER_LEN)
 	//set data if the have some
 	if(buffer_len)DIRECT_IO_SET_CHANNEL_DATA(data_pack, buffer, buffer_len)
 	return client_instance->sendPriorityData(this, completeDataPack(data_pack));
@@ -109,18 +128,22 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData() {
 	
         //set header
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, &get_opcode_header, sizeof(DirectIODeviceChannelHeaderGetOpcode))
+	DIRECT_IO_SET_CHANNEL_DATA(data_pack, (void*)device_id.c_str(), device_id.size())
 	return client_instance->sendPriorityData(this, completeDataPack(data_pack));
 }
 
-void DirectIODeviceClientChannel::freeSentData(void *data, uint8_t tag) {
-	switch (tag) {
+void DirectIODeviceClientChannel::freeSentData(void *data, DisposeSentMemoryInfo& dispose_memory_info) {
+	switch (dispose_memory_info.sent_part) {
 		case 1:
 			//header
 			//free(data); the ehader must not be deleted
 			break;
 			
 		case 2: // data
-			free(data);
+			if(static_cast<opcode::DeviceChannelOpcode>(dispose_memory_info.sent_opcode) == opcode::DeviceChannelOpcodePutOutput) {
+				//the data sent with the opcode DeviceChannelOpcodePutOutput is the output dataset and need to be deleted
+				free(data);
+			}
 			break;
 		default:break;
 	}

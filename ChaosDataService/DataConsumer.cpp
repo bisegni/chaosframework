@@ -130,10 +130,9 @@ void DataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header,
 	uint32_t index_to_use = device_data_worker_index++ % DEVICE_WORKER_NUMBER;
 
 	chaos::data_service::worker::DeviceSharedWorkerJob *job = new chaos::data_service::worker::DeviceSharedWorkerJob();
-	job->device_hash = header->device_hash;
+	job->request_header = header;
 	job->data_pack = channel_data;
 	job->data_pack_len = channel_data_len;
-	free(header);
 	
     while(!device_data_worker[index_to_use]->submitJobInfo(job));
 	
@@ -143,6 +142,8 @@ void DataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header,
 	chaos::data_service::worker::DataWorker *worker = answer_worker_list.accessSlot();
 	
     chaos::data_service::worker::AnswerDataWorkerJob *job = new chaos::data_service::worker::AnswerDataWorkerJob();
+	job->key_data = channel_data;
+	job->key_len = channel_data_len;
 	job->request_header = header;
 	//while(!worker->submitJobInfo(job));
 	((worker::AnswerDataWorker*)worker)->executeJob(job);

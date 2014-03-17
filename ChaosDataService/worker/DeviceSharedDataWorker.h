@@ -26,7 +26,7 @@
 
 #include <string>
 #include <chaos/common/direct_io/DirectIODataPack.h>
-
+#include <chaos/common/direct_io/channel/DirectIODeviceChannelGlobal.h>
 namespace chaos_direct_io = chaos::common::direct_io;
 
 namespace chaos{
@@ -35,7 +35,7 @@ namespace chaos{
 			
 			//!worker information for the device live storage
 			struct DeviceSharedWorkerJob : public WorkerJob {
-				uint32_t device_hash;
+				common::direct_io::channel::opcode_headers::DirectIODeviceChannelHeaderPutOpcode *request_header;
 				uint32_t data_pack_len;
 				void * data_pack;
 			};

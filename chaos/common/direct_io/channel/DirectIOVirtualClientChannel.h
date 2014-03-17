@@ -35,6 +35,16 @@ namespace chaos {
 			
             namespace channel {
                 
+				//!strucutre to maintaine the information about sent buffer and free it
+				struct DisposeSentMemoryInfo {
+					uint8_t		sent_part;
+					uint16_t	sent_opcode;
+					channel::DirectIOVirtualClientChannel *channel;
+					DisposeSentMemoryInfo(channel::DirectIOVirtualClientChannel *_channel,
+										  uint8_t _sent_part,
+										  uint16_t _sent_opcode):sent_part(_sent_part), channel(_channel), sent_opcode(_sent_opcode){};
+				};
+				
                 class DirectIOVirtualClientChannel : protected DirectIOVirtualChannel {
 					friend class chaos::common::direct_io::DirectIOClientConnection;
                     
@@ -45,7 +55,7 @@ namespace chaos {
 					DirectIOForwarder *client_instance;
 					
 					int64_t sendData(chaos::common::direct_io::DirectIODataPack *data_pack);
-					virtual void freeSentData(void *data, uint8_t tag);
+					virtual void freeSentData(void *data, DisposeSentMemoryInfo& dispose_memory_info);
 					
 					// prepare header for defaut connection data
 					inline DirectIODataPack *completeDataPack(DirectIODataPack *data_pack) {

@@ -40,11 +40,22 @@ namespace chaos {
                     typedef struct DirectIODeviceChannelHeaderPutOpcode {
 							//! The 32bit hash value for the device that we need to insert
                         uint32_t device_hash;
-                            //! The 32bit cache_tag
-                        uint32_t cache_tag;
+							//! The 8 bit tag field
+						uint8_t tag;;
+                            //! The 8 bit key length field
+                        uint8_t key_len;
+							//the pointer to key data
+						void*   key_data;
                     } DirectIODeviceChannelHeaderData, *DirectIODeviceChannelHeaderDataPtr;
-                    
-                    //! Heder for the DeviceChannelOpcodeGetOutputFromCache opcode
+#define	GET_PUT_OPCODE_FIXED_PART_LEN	6
+#define GET_PUT_OPCODE_KEY_PTR(h) (void*)((char*)h+6) 
+					
+                    //! Header for the DeviceChannelOpcodeGetOutputFromCache opcode
+					/*!
+					 this is the header for request the last output channel dataset
+					 found on shared dataproxy cache. The key of the item to search
+					 must be sent in the data part of the message
+					 */
                     typedef	union DirectIODeviceChannelHeaderGetOpcode {
                         //raw data representation of the header
                         char raw_data[18];

@@ -98,25 +98,31 @@ void AnswerDataWorker::decreaseAccessNumber(ClientConnectionInfo *conn_info) {
     boost::interprocess::ipcdetail::atomic_add32(mem_var, -1);
 }
 
-ClientConnectionInfo *AnswerDataWorker::getClientChannel(opcode_headers::DirectIODeviceChannelHeaderGetOpcode *client_header) {
+ClientConnectionInfo *AnswerDataWorker::getClientChannel(AnswerDataWorkerJob *answer_job_info) {
 	ClientConnectionInfo *conn_info = NULL;
 	// lock for all
 	boost::unique_lock<boost::shared_mutex> lock(mutex_add_new_client);
 	
-	if(TemplatedKeyObjectContainer::hasKey(client_header->field.answer_server_hash)) {
-        conn_info = TemplatedKeyObjectContainer::accessItem(client_header->field.answer_server_hash);
+	if(TemplatedKeyObjectContainer::hasKey(answer_job_info->request_header->field.answer_server_hash)) {
+        conn_info = TemplatedKeyObjectContainer::accessItem(answer_job_info->request_header->field.answer_server_hash);
         if(increaseAccessNumber(conn_info)) {
             return conn_info;
         }
 	}
-
-	std::string answer_server_description = boost::str( boost::format("%1%:%2%:%3%|%4%") % UI64_TO_STRIP(client_header->field.address) % client_header->field.p_port % client_header->field.s_port % client_header->field.endpoint);
+	
+	std::string key_requested((const char *)answer_job_info->key_data, answer_job_info->key_len);
+	std::string answer_server_description = boost::str( boost::format("%1%:%2%:%3%|%4%") %
+													   UI64_TO_STRIP(answer_job_info->request_header->field.address) %
+													   answer_job_info->request_header->field.p_port %
+													   answer_job_info->request_header->field.s_port %
+													   answer_job_info->request_header->field.endpoint);
+	
 	uint32_t answer_server_hash = chaos::common::data::cache::FastHash::hash(answer_server_description.c_str(), answer_server_description.size(), 0);
 
 	DEBUG_CODE(ADWLDBG_ << "verify the rigth hash for " << answer_server_description;);
-	DEBUG_CODE(ADWLDBG_ << "Forwarded by client -> " << client_header->field.answer_server_hash;)
+	DEBUG_CODE(ADWLDBG_ << "Forwarded by client -> " << answer_job_info->request_header->field.answer_server_hash;)
 	DEBUG_CODE(ADWLDBG_ << "calculated-> " << answer_server_hash;)
-	if(answer_server_hash != client_header->field.answer_server_hash) {
+	if(answer_server_hash != answer_job_info->request_header->field.answer_server_hash) {
 		DEBUG_CODE(ADWLERR_ << "Error on lcient get opcode header for answer server information";)
 	}
 	//allocate the client info struct
@@ -128,14 +134,14 @@ ClientConnectionInfo *AnswerDataWorker::getClientChannel(opcode_headers::DirectI
     conn_info->channel = NULL;
 	//get connection
 	conn_info->connection = direct_io_client->getNewConnection(answer_server_description);
-    if(conn_info->connection->getConnectionHash() != client_header->field.answer_server_hash) {
+    if(conn_info->connection->getConnectionHash() != answer_job_info->request_header->field.answer_server_hash) {
 		DEBUG_CODE(ADWLERR_ << "Error ongenerated and connection hash";)
 	}
 	if(!conn_info->connection) {
 		disposeClientInfo(conn_info);
 		return NULL;
 	}
-	//conn_info->connection->setConnectionHash(client_header->field.answer_server_hash);
+	//conn_info->connection->setConnectionHash(answer_job_info->request_header->field.answer_server_hash);
 	conn_info->connection->setEventHandler(this);
 	//get channel
 	conn_info->channel = dynamic_cast<DirectIODeviceClientChannel*>(conn_info->connection->getNewChannelInstance("DirectIODeviceClientChannel"));
@@ -143,11 +149,11 @@ ClientConnectionInfo *AnswerDataWorker::getClientChannel(opcode_headers::DirectI
 		disposeClientInfo(conn_info);
 		return NULL;
 	}
-    //conn_info->channel->setEndpoint(client_header->field.endpoint);
+    conn_info->channel->setDeviceID(key_requested);
 	//all is gone well
 	//now we can add client and channel to the maps
 	TemplatedKeyObjectContainer::registerElement(conn_info->connection->getConnectionHash(), conn_info);
-	DEBUG_CODE(ADWLDBG_ << "Allocate new connection for server description " << answer_server_description << " and hash " << client_header->field.answer_server_hash;)
+	DEBUG_CODE(ADWLDBG_ << "Allocate new connection for server description " << answer_server_description << " and hash " << answer_job_info->request_header->field.answer_server_hash;)
 	
 
 	//map_client_connection.insert(make_pair);
@@ -156,18 +162,19 @@ ClientConnectionInfo *AnswerDataWorker::getClientChannel(opcode_headers::DirectI
 
 void AnswerDataWorker::executeJob(WorkerJobPtr job_info) {
 	AnswerDataWorkerJob *dw_job_ptr = reinterpret_cast<AnswerDataWorkerJob*>(job_info);
-	ClientConnectionInfo *connection_info = getClientChannel(dw_job_ptr->request_header);
+	ClientConnectionInfo *connection_info = getClientChannel(dw_job_ptr);
 	if(connection_info) {
 		//send data to requester node
 		void *data = NULL;
 		uint32_t data_len = 0;
-		cache_driver_instance->getData(dw_job_ptr->request_header->field.device_hash, &data, data_len);
+		cache_driver_instance->getData(dw_job_ptr->key_data, dw_job_ptr->key_len, &data, data_len);
 		
 		connection_info->channel->storeAndCacheDataOutputChannel(data, data_len);
         
         //decrease the use of the channel
         decreaseAccessNumber(connection_info);
 	}
+	free(dw_job_ptr->key_data);
 	free(dw_job_ptr->request_header);
 	free(dw_job_ptr);
 }

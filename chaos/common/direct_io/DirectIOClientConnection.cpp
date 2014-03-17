@@ -39,8 +39,9 @@ std::string DirectIOClientConnection::my_str_ip;
 uint64_t DirectIOClientConnection::my_i64_ip = 0;
 
 void DirectIOClientConnection::freeSentData(void *data, void *hint) {
-	DisposeSentMemoryInfo *free_info = static_cast<DisposeSentMemoryInfo*>(hint);
-	free_info->channel->freeSentData(data, free_info->tag);
+	channel::DisposeSentMemoryInfo *free_info = static_cast<channel::DisposeSentMemoryInfo*>(hint);
+	free_info->channel->freeSentData(data, *free_info);
+	free(hint);
 }
 
 DirectIOClientConnection::DirectIOClientConnection(std::string _server_description, uint16_t _endpoint):server_description(_server_description), endpoint(_endpoint), event_handler(NULL) {

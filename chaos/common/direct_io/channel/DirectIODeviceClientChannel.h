@@ -40,7 +40,7 @@ namespace chaos {
 					uint64_t ip;
 					uint32_t hash;
 				}AnswerServerInfo;
-				
+								
 				//! Class for the managment of pushing data for the device dataset
 				/*!
 				 This class manage the forwarding of data that represent the device dataset channels (i/O)
@@ -49,7 +49,11 @@ namespace chaos {
 					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIODeviceClientChannel)
 					
 					//fixed header
-					opcode_headers::DirectIODeviceChannelHeaderPutOpcode put_opcode_header;
+					//the real size of the put header computed according to the dimension of the key
+					uint32_t put_header_computed_size;
+					opcode_headers::DirectIODeviceChannelHeaderPutOpcode *put_opcode_header;
+					
+					//the precomputed header for get last shared output channel
 					opcode_headers::DirectIODeviceChannelHeaderGetOpcode get_opcode_header;
 					
 					uint32_t device_hash;
@@ -61,7 +65,7 @@ namespace chaos {
 					void prepare_get_opcode();
 				protected:
 					DirectIODeviceClientChannel(std::string alias);
-					void freeSentData(void *data, uint8_t tag);
+					void freeSentData(void *data,  DisposeSentMemoryInfo& dispose_memory_info);
 				public:
 					~DirectIODeviceClientChannel();
 					

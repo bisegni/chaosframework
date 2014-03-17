@@ -37,9 +37,9 @@ namespace chaos {
             public:
 				~MemcachedCacheDriver();
 				
-                int putData(uint32_t element_hash, void *value, uint32_t value_len);
+                int putData(void *element_key, uint8_t element_key_len, void *value, uint32_t value_len);
                 
-                int getData(uint32_t element_hash, void **value, uint32_t& value_len);
+                int getData(void *element_key, uint8_t element_key_len, void **value, uint32_t& value_len);
                 
                 int addServer(std::string server_desc);
                 

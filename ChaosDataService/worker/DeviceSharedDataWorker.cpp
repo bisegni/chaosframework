@@ -22,7 +22,11 @@ DeviceSharedDataWorker::~DeviceSharedDataWorker() {
 
 void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info) {
 	DeviceSharedWorkerJob *job_ptr = reinterpret_cast<DeviceSharedWorkerJob*>(job_info);
-	cache_driver_instance->putData(job_ptr->device_hash, job_ptr->data_pack, job_ptr->data_pack_len);
+	cache_driver_instance->putData(GET_PUT_OPCODE_KEY_PTR(job_ptr->request_header),
+								   job_ptr->request_header->key_len,
+								   job_ptr->data_pack,
+								   job_ptr->data_pack_len);
+	free(job_ptr->request_header);
 	free(job_ptr->data_pack);
 	free(job_info);
 }

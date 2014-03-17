@@ -59,14 +59,6 @@ namespace chaos {
                 //! han
                 virtual void handleEvent(DirectIOClientConnection *client_connection, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) = 0;
             };
-            
-			
-			struct DisposeSentMemoryInfo {
-				uint8_t tag;
-				channel::DirectIOVirtualClientChannel *channel;
-				
-				DisposeSentMemoryInfo( channel::DirectIOVirtualClientChannel *_channel, uint8_t _tag):tag(_tag), channel(_channel){};
-			};
 			
             //! Represent the start point of a messaget towards an endpoint
             /*!

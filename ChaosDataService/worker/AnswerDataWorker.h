@@ -57,6 +57,8 @@ namespace chaos{
 			
 			//!worker information for the device live storage
 			struct AnswerDataWorkerJob : public WorkerJob {
+				void *key_data;
+				uint32_t key_len;
 				opcode_headers::DirectIODeviceChannelHeaderGetOpcode *request_header;
 			};
 			
@@ -93,7 +95,7 @@ namespace chaos{
 				
 				void freeObject(uint32_t key, ClientConnectionInfo *elementPtr);
 				void disposeClientInfo(ClientConnectionInfo *client_info);
-				ClientConnectionInfo *getClientChannel(opcode_headers::DirectIODeviceChannelHeaderGetOpcode *client_header);
+				ClientConnectionInfo *getClientChannel(AnswerDataWorkerJob *answer_job_info);
 				void purge_thread_worker();
 			public:
 				void executeJob(WorkerJobPtr job_info);

@@ -208,7 +208,7 @@ namespace chaos{
 	
 	void IODirectIODriver::consumeGetEvent(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header, void *channel_data, uint32_t channel_data_len) {
 		delete(header);
-		free(channel_data);
+		if(channel_data)free(channel_data);
 	}
 	
     /*

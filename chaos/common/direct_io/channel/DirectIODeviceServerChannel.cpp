@@ -46,8 +46,11 @@ void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
 	switch (channel_opcode) {
 		case opcode::DeviceChannelOpcodePutOutput: {
             opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderPutOpcode* >(dataPack->channel_header_data);
+			//reallign the pointer to the start of the key
+			//header->key_data = (void*)((char*)header+sizeof(DirectIODeviceChannelHeaderPutOpcode));
+
 			header->device_hash = FROM_LITTLE_ENDNS_NUM(uint32_t, header->device_hash);
-			header->cache_tag = FROM_LITTLE_ENDNS_NUM(uint32_t, header->cache_tag);
+			header->tag = FROM_LITTLE_ENDNS_NUM(uint32_t, header->tag);
 			handler->consumePutEvent(header, dataPack->channel_data, dataPack->header.channel_data_size);
             break;
         }

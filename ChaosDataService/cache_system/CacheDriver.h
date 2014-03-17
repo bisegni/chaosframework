@@ -11,6 +11,7 @@
 
 #include "../dataservice_global.h"
 
+#include <stdint.h>
 #include <string>
 
 #include <chaos/common/utility/NamedService.h>
@@ -30,9 +31,9 @@ namespace chaos {
             public:
 				virtual ~CacheDriver();
 				
-                virtual int putData(uint32_t element_hash, void *value, uint32_t value_len) = 0;
+                virtual int putData(void *element_key, uint8_t element_key_len, void *value, uint32_t value_len) = 0;
                 
-                virtual int getData(uint32_t element_hash, void **value, uint32_t& value_len) = 0;
+                virtual int getData(void *element_key, uint8_t element_key_len, void **value, uint32_t& value_len) = 0;
 
                 virtual int addServer(std::string server_desc) = 0;
                 
