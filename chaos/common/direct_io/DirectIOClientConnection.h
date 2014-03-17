@@ -41,7 +41,9 @@ namespace chaos {
             //forward delcarations
             class DirectIOClient;
             class DirectIOClientConnection;
-            
+			namespace channel{
+				class DirectIOVirtualClientChannel;
+			}
             //! Connection event enumeration
 			namespace DirectIOClientConnectionStateType {
             typedef enum DirectIOClientConnectionStateType {
@@ -58,6 +60,14 @@ namespace chaos {
                 virtual void handleEvent(DirectIOClientConnection *client_connection, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) = 0;
             };
             
+			
+			struct DisposeSentMemoryInfo {
+				uint8_t tag;
+				channel::DirectIOVirtualClientChannel *channel;
+				
+				DisposeSentMemoryInfo( channel::DirectIOVirtualClientChannel *_channel, uint8_t _tag):tag(_tag), channel(_channel){};
+			};
+			
             //! Represent the start point of a messaget towards an endpoint
             /*!
                 This class is the start point for a comunication winth a server endpoint,
@@ -84,6 +94,9 @@ namespace chaos {
 				static uint64_t my_i64_ip;
 
                 DirectIOClientConnectionEventHandler *event_handler;
+				
+				//! callback function used to free sent data in an async environment
+				static void freeSentData(void *data, void *hint);
 				
 				//overriding ofr free object fuunction for the tempalted key object container superclass
 				void freeObject(uint32_t hash, DirectIOClientConnection *connection);

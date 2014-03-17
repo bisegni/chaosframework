@@ -80,7 +80,7 @@ int64_t DirectIODeviceClientChannel::putDataOutputChannel(bool cache_it, void *b
 
 	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header_data, sizeof(DirectIODeviceChannelHeaderPutOpcode))
 	if(buffer_len)DIRECT_IO_SET_CHANNEL_DATA(data_pack, buffer, buffer_len)
-	return client_instance->sendPriorityData(data_pack);
+	return client_instance->sendPriorityData(this, data_pack);
 }
 
 //! Send device serialization with priority
@@ -106,5 +106,20 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData() {
     header_data->field.endpoint = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.endpoint);
         //set header
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header_data, sizeof(DirectIODeviceChannelHeaderGetOpcode))
-	return client_instance->sendPriorityData(data_pack);
+	return client_instance->sendPriorityData(this, data_pack);
+}
+
+void DirectIODeviceClientChannel::freeSentData(void *data, uint8_t tag) {
+	switch (tag) {
+		case 1:
+			//header
+			free(data);
+			break;
+			
+		case 2: // data
+			free(data);
+			break;
+		default:break;
+	}
+
 }

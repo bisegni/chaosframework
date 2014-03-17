@@ -7,6 +7,7 @@
 //
 
 #include <chaos/common/direct_io/impl/ZMQDirectIOClientConnection.h>
+#include <chaos/common/direct_io/channel/DirectIOVirtualClientChannel.h>
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/direct_io/impl/ZMQDirectIOClient.h>
 
@@ -26,10 +27,6 @@ using namespace chaos::common::direct_io::impl;
 #define ZMQDIO_CONNECTION_LDBG_ LDBG_ << ZMQDIO_CONNECTION_LOG_HEAD << __FUNCTION__ << " - "
 #define ZMQDIO_CONNECTION_LERR_ LERR_ << ZMQDIO_CONNECTION_LOG_HEAD
 
-void ZMQDirectIOClientConnectionFree (void *data, void *hint) {
-    free(data);
-}
-
 ZMQDirectIOClientConnection::ZMQDirectIOClientConnection(std::string server_description, void *_socket_priority, void *_socket_service, uint16_t endpoint):
 DirectIOClientConnection(server_description, endpoint),
 socket_priority(_socket_priority),
@@ -43,16 +40,16 @@ ZMQDirectIOClientConnection::~ZMQDirectIOClientConnection() {
 }
 
 // send the data to the server layer on priority channel
-int64_t ZMQDirectIOClientConnection::sendPriorityData(DirectIODataPack *data_pack) {
-    return writeToSocket(socket_priority, completeDataPack(data_pack));
+int64_t ZMQDirectIOClientConnection::sendPriorityData(channel::DirectIOVirtualClientChannel *channel, DirectIODataPack *data_pack) {
+    return writeToSocket(channel, socket_priority, completeDataPack(data_pack));
 }
 
 // send the data to the server layer on the service channel
-int64_t ZMQDirectIOClientConnection::sendServiceData(DirectIODataPack *data_pack) {
-    return writeToSocket(socket_service, completeDataPack(data_pack));
+int64_t ZMQDirectIOClientConnection::sendServiceData(channel::DirectIOVirtualClientChannel *channel, DirectIODataPack *data_pack) {
+    return writeToSocket(channel, socket_service, completeDataPack(data_pack));
 }
 
-int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket, DirectIODataPack *data_pack) {
+int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClientChannel *channel, void *socket, DirectIODataPack *data_pack) {
     assert(socket && data_pack);
 	int err = 0;
 	zmq_msg_t msg_header_data;
@@ -73,7 +70,11 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket, DirectIODataPac
 			if(err == -1) {
 				return err;
 			}
-			err = zmq_msg_init_data (&msg_header_data, data_pack->channel_header_data, data_pack->header.channel_header_size, ZMQDirectIOClientConnectionFree, NULL);
+			err = zmq_msg_init_data (&msg_header_data,
+									 data_pack->channel_header_data,
+									 data_pack->header.channel_header_size,
+									 DirectIOClientConnection::freeSentData,
+									 new DisposeSentMemoryInfo(channel, 1));
 			err = zmq_sendmsg(socket, &msg_header_data, ZMQ_DONTWAIT);
 			err = zmq_msg_close(&msg_header_data);
 			break;
@@ -82,7 +83,11 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket, DirectIODataPac
 			if(err == -1) {
 				return err;
 			}
-			err = zmq_msg_init_data (&msg_data, data_pack->channel_data, data_pack->header.channel_data_size, ZMQDirectIOClientConnectionFree, NULL);
+			err = zmq_msg_init_data (&msg_data,
+									 data_pack->channel_data,
+									 data_pack->header.channel_data_size,
+									 DirectIOClientConnection::freeSentData,
+									 new DisposeSentMemoryInfo(channel, 2));
 			err = zmq_sendmsg(socket, &msg_data, ZMQ_DONTWAIT);
 			err = zmq_msg_close(&msg_data);
 			break;
@@ -91,13 +96,21 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket, DirectIODataPac
 			if(err == -1) {
 				return err;
 			}
-			err = zmq_msg_init_data (&msg_header_data, data_pack->channel_header_data, data_pack->header.channel_header_size, ZMQDirectIOClientConnectionFree, NULL);
+			err = zmq_msg_init_data (&msg_header_data,
+									 data_pack->channel_header_data,
+									 data_pack->header.channel_header_size,
+									 DirectIOClientConnection::freeSentData,
+									 new DisposeSentMemoryInfo(channel, 1));
 			err = zmq_sendmsg(socket, &msg_header_data, ZMQ_SNDMORE);
 			if(err == -1) {
 				zmq_msg_close(&msg_header_data);
 				return err;
 			}
-			err = zmq_msg_init_data (&msg_data, data_pack->channel_data, data_pack->header.channel_data_size, ZMQDirectIOClientConnectionFree, NULL);
+			err = zmq_msg_init_data (&msg_data,
+									 data_pack->channel_data,
+									 data_pack->header.channel_data_size,
+									 DirectIOClientConnection::freeSentData,
+									 new DisposeSentMemoryInfo(channel, 2));
 			err = zmq_sendmsg(socket, &msg_data, 0);
 			
 			err = zmq_msg_close(&msg_header_data);

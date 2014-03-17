@@ -54,6 +54,7 @@ namespace chaos {
 					AnswerServerInfo answer_server_info;
 				protected:
 					DirectIODeviceClientChannel(std::string alias);
+					void freeSentData(void *data, uint8_t tag);
 				public:
 					~DirectIODeviceClientChannel();
 					
