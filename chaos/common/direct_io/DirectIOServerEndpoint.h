@@ -21,12 +21,14 @@
 #define __CHAOSFramework__DirectIOServerEndpoint__
 
 #include <string>
+#include <chaos/common/thread/SpinLock.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 #include <chaos/common/direct_io/DirectIOHandler.h>
 #include <chaos/common/direct_io/DirectIOServerPublicInterface.h>
 #include <chaos/common/direct_io/channel/DirectIOVirtualServerChannel.h>
 
+#include <boost/atomic.hpp>
 #include <boost/thread.hpp>
 
 namespace chaos {
@@ -42,9 +44,8 @@ namespace chaos {
 			
 			class DirectIOServerEndpoint : public DirectIOHandler {
 				friend class DirectIODispatcher;
-                
-				boost::shared_mutex mutex_channel_slot;
-				
+				//boost::shared_mutex mutex_channel_slot;
+				chaos::common::thread::Spinlock spinlock;
 				channel::DirectIOVirtualServerChannel **channel_slot;
 				
 				//! endpoint route index

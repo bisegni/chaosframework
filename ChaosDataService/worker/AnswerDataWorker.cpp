@@ -30,10 +30,10 @@ using namespace chaos::data_service;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 
-#define AnswerDataWorker_LOG_HEAD "[AnswerEngine] - "
+#define AnswerDataWorker_LOG_HEAD "[AnswerDataWorker] - "
 
 #define ADWLAPP_ LAPP_ << AnswerDataWorker_LOG_HEAD
-#define ADWLDBG_ LDBG_ << AnswerDataWorker_LOG_HEAD << __FUNCTION__
+#define ADWLDBG_ LDBG_ << AnswerDataWorker_LOG_HEAD << __FUNCTION__ << " - "
 #define ADWLERR_ LERR_ << AnswerDataWorker_LOG_HEAD
 
 typedef boost::unique_lock<boost::shared_mutex>	AnswerEngineWriteLock;
@@ -71,12 +71,13 @@ void AnswerDataWorker::init(void *init_data) throw (chaos::CException) {
 
 void AnswerDataWorker::deinit() throw (chaos::CException) {
 	//shutdown purger thread
+	ADWLAPP_ << "stop the purge thread";
 	work_on_purge = false;
 	purge_thread_wait_variable. unlock();
 	purge_thread->join();
+	ADWLAPP_ << "purge thread stoppped";
 	//deinit client
-	chaos::utility::InizializableService::deinitImplementation(direct_io_client, direct_io_client->getName(), __PRETTY_FUNCTION__);
-	
+	chaos::utility::InizializableService::deinitImplementation(direct_io_client, direct_io_client->getName(), __PRETTY_FUNCTION__);	
 	
 	//call superclass init method
 	DataWorker::deinit();
@@ -211,7 +212,7 @@ void AnswerDataWorker::disposeClientInfo(ClientConnectionInfo *client_info) {
 	uint32_t conn_hash = client_info->connection->getConnectionHash();
 	std::string server_desc = client_info->connection->getServerDescription();
 	
-	DEBUG_CODE(ADWLDBG_ << "Start purge oepration for " << server_desc;)
+	DEBUG_CODE(ADWLDBG_ << "starting purge oepration for " << server_desc;)
 	if(client_info->channel) {
 		client_info->connection->releaseChannelInstance(client_info->channel);
 	}
@@ -222,7 +223,7 @@ void AnswerDataWorker::disposeClientInfo(ClientConnectionInfo *client_info) {
         TemplatedKeyObjectContainer::deregisterElementKey(conn_hash);
     }
 	delete (client_info);
-	DEBUG_CODE(ADWLDBG_ << "Endign purge oepration for " << server_desc;)
+	DEBUG_CODE(ADWLDBG_ << "ending purge operation for " << server_desc;)
 }
 
 void AnswerDataWorker::purge_thread_worker() {

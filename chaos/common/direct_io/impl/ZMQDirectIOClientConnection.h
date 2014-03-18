@@ -30,6 +30,8 @@
 #include <boost/thread.hpp>
 #include <boost/shared_ptr.hpp>
 
+#include <zmq.h>
+
 namespace chaos {
 	namespace common {
 		namespace direct_io {
@@ -48,6 +50,8 @@ namespace chaos {
 					void *monitor_socket;
 				} ConnectionMonitorInfo;
 				
+				const int _send_more_no_wait_flag = ZMQ_SNDMORE|ZMQ_DONTWAIT;
+				const int _send_no_wait_flag = ZMQ_DONTWAIT;
 				/*!
 				 Class that represetn th eimplementation of one connection of the direct io
 				 connection implemented with zmq

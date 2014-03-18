@@ -112,6 +112,7 @@
 		3268CE37161608D100FCDB10 /* ZMQServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3268CE33161608D100FCDB10 /* ZMQServer.cpp */; };
 		3268CE38161608D100FCDB10 /* ZMQServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3268CE34161608D100FCDB10 /* ZMQServer.h */; };
 		32698D4A179E8CD100D6638C /* SetAttributeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 32698D48179E8CD100D6638C /* SetAttributeCommand.h */; };
+		326CDBB718D860430054EF19 /* SpinLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 326CDBB518D860430054EF19 /* SpinLock.h */; };
 		326DB43014B38BC00018A8D0 /* ActionDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB3B614B38BC00018A8D0 /* ActionDescriptor.cpp */; };
 		326DB43114B38BC00018A8D0 /* ActionDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3B714B38BC00018A8D0 /* ActionDescriptor.h */; };
 		326DB43214B38BC00018A8D0 /* ChaosAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3B814B38BC00018A8D0 /* ChaosAction.h */; };
@@ -562,6 +563,7 @@
 		3268CE34161608D100FCDB10 /* ZMQServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQServer.h; sourceTree = "<group>"; };
 		32698D47179E8CD100D6638C /* SetAttributeCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetAttributeCommand.cpp; sourceTree = "<group>"; };
 		32698D48179E8CD100D6638C /* SetAttributeCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetAttributeCommand.h; sourceTree = "<group>"; };
+		326CDBB518D860430054EF19 /* SpinLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpinLock.h; sourceTree = "<group>"; };
 		326D3A5F17B0CD01004601A8 /* DriverManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DriverManager.cpp; sourceTree = "<group>"; };
 		326D3A6017B0CD01004601A8 /* DriverManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DriverManager.h; sourceTree = "<group>"; };
 		326DB3B614B38BC00018A8D0 /* ActionDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ActionDescriptor.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -1489,6 +1491,7 @@
 				3216601014D49D0F008DADD2 /* ObjectWaitSemaphore.h */,
 				32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */,
 				3235110817B3EAE500E39E14 /* TemplatedConcurrentQueue.h */,
+				326CDBB518D860430054EF19 /* SpinLock.h */,
 			);
 			path = thread;
 			sourceTree = "<group>";
@@ -2114,6 +2117,7 @@
 				3268CE2E1616086800FCDB10 /* MsgPackClient.h in Headers */,
 				3268CE301616086800FCDB10 /* MsgPackServer.h in Headers */,
 				3268CE36161608D100FCDB10 /* ZMQClient.h in Headers */,
+				326CDBB718D860430054EF19 /* SpinLock.h in Headers */,
 				3268CE38161608D100FCDB10 /* ZMQServer.h in Headers */,
 				329603291876B45000CDCADA /* BatchCommandSandbox.h in Headers */,
 				322D990218A95F9200C0864C /* DataConsumer.h in Headers */,

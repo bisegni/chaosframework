@@ -76,13 +76,15 @@ void DataWorker::stop() throw (chaos::CException) {
 void DataWorker::deinit() throw (chaos::CException) {
 	WorkerJobPtr thread_job = NULL;
 	//empty the job queue deleting the non executed job
+	DCLAPP_ << "delete all remaining job";
 	while(job_queue.pop(thread_job)) {
+		DCLAPP_ << "delete worker job";
 		delete(thread_job);
 	}
+	DCLAPP_ << "job queue is empty";
 }
 
 bool DataWorker::submitJobInfo(WorkerJobPtr job_info) {
-	if(!work) return false;
 	if( job_queue.push(job_info) ) {
 		job_condition.notify_one();
 		return true;

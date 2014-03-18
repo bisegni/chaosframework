@@ -28,6 +28,11 @@ using namespace chaos::common::direct_io;
 #define DIOSE_LDBG_ LDBG_ << DirectIOServerEndpoint_LOG_HEAD
 #define DIOSE_LERR_ LERR_ << DirectIOServerEndpoint_LOG_HEAD
 
+#define INCREASE_COUNTER_OFF_USAGE	while(!pack_receiving){};pack_receiving++;
+#define DECREASE_COUNTER_OFF_USAGE	while(!pack_receiving){};pack_receiving--;
+#define LOCK_COUNTER_OFF_USAGE		pack_receiving = 0
+#define UNLOCK_COUNTER_OFF_USAGE	pack_receiving = 1
+
 DirectIOServerEndpoint::DirectIOServerEndpoint(): endpoint_route_index(0), server_public_interface(NULL) {
 	//allocate slot memory
 	channel_slot = (channel::DirectIOVirtualServerChannel**)malloc(sizeof(channel::DirectIOVirtualServerChannel**)*MAX_ENDPOINT_CHANNEL);
@@ -51,12 +56,13 @@ DirectIOServerPublicInterface * DirectIOServerEndpoint::getPublicServerInterface
 channel::DirectIOVirtualServerChannel *DirectIOServerEndpoint::registerChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance) {
 	if(!channel_instance) return NULL;
 	// gest exsclusive access
-	boost::upgrade_lock<boost::shared_mutex> lock(mutex_channel_slot);
-	boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
-	
+	//boost::upgrade_lock<boost::shared_mutex> lock(mutex_channel_slot);
+	//boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
+	spinlock.lock();
 	DIOSE_LDBG_ << "Register channel " << channel_instance->getName() << " with route index " << (int)channel_instance->getChannelRouterIndex();
 	if(channel_instance->getChannelRouterIndex() > (MAX_ENDPOINT_CHANNEL-1)) return NULL;
 	channel_slot[channel_instance->getChannelRouterIndex()] = channel_instance;
+	spinlock.unlock();
 	return channel_instance;
 }
 
@@ -64,8 +70,8 @@ channel::DirectIOVirtualServerChannel *DirectIOServerEndpoint::registerChannelIn
 void DirectIOServerEndpoint::deregisterChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance) {
 	if(!channel_instance) return;
 	// get exsclusive access
-	boost::upgrade_lock<boost::shared_mutex> lock(mutex_channel_slot);
-	boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
+	//boost::upgrade_lock<boost::shared_mutex> lock(mutex_channel_slot);
+	//boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
 	
 	// now we have exclusive access
 	if(channel_instance->getChannelRouterIndex() > (MAX_ENDPOINT_CHANNEL-1)) return;
@@ -88,14 +94,18 @@ void DirectIOServerEndpoint::releaseChannelInstance(channel::DirectIOVirtualServ
 
 // Event for a new data received
 void DirectIOServerEndpoint::priorityDataReceived(DirectIODataPack *data_pack) {
-	boost::shared_lock<boost::shared_mutex> Lock(mutex_channel_slot);
+	spinlock.lock();
+	//boost::shared_lock<boost::shared_mutex> Lock(mutex_channel_slot);
 	if(channel_slot[data_pack->header.dispatcher_header.fields.channel_idx])
 		channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack);
+	spinlock.unlock();
 }
 
 // Event for a new data received
 void DirectIOServerEndpoint::serviceDataReceived(DirectIODataPack *data_pack) {
-	boost::shared_lock<boost::shared_mutex> Lock(mutex_channel_slot);
+	spinlock.lock();
+	//boost::shared_lock<boost::shared_mutex> Lock(mutex_channel_slot);
 	if(channel_slot[data_pack->header.dispatcher_header.fields.channel_idx])
 		channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack);
+	spinlock.unlock();
 }

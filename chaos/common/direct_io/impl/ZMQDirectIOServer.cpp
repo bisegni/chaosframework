@@ -83,8 +83,8 @@ void ZMQDirectIOServer::start() throw(chaos::CException) {
     //queue thread
     ZMQDIO_SRV_LAPP_ << "Allocating and binding priority socket to "<< priority_socket_bind_str;
     ZMQDIO_SRV_LAPP_ << "Allocating threads for manage the requests";
-    server_threads_group.add_thread(new thread(boost::bind(&ZMQDirectIOServer::worker, this, false)));
-    server_threads_group.add_thread(new thread(boost::bind(&ZMQDirectIOServer::worker, this, true)));
+    server_threads_group.add_thread(new boost::thread(boost::bind(&ZMQDirectIOServer::worker, this, false)));
+    server_threads_group.add_thread(new boost::thread(boost::bind(&ZMQDirectIOServer::worker, this, true)));
     ZMQDIO_SRV_LAPP_ << "Threads allocated and started";
 }
 

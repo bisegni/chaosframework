@@ -412,9 +412,7 @@ void MainWindow::stopTracking() {
 void MainWindow::executeOnThread(){
     if(!deviceController) return;
     while(runThread){
-        std::cout << "pre fetch" << std::endl;
         deviceController->fetchCurrentDeviceValue();
-         std::cout << "post fetch" << std::endl;
         if(checkSequentialIDKey.size()>0){
             chaos::CDataWrapper *wrapper = deviceController->getCurrentData();
             if(wrapper == NULL) {

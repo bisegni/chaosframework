@@ -35,7 +35,7 @@ using namespace chaos::common::direct_io::channel;
 #define DataConsumer_LOG_HEAD "[DataConsumer] - "
 
 #define DSLAPP_ LAPP_ << DataConsumer_LOG_HEAD
-#define DSLDBG_ LDBG_ << DataConsumer_LOG_HEAD
+#define DSLDBG_ LDBG_ << DataConsumer_LOG_HEAD << __FUNCTION__ << " - "
 #define DSLERR_ LERR_ << DataConsumer_LOG_HEAD
 
 DataConsumer::DataConsumer() {
@@ -108,14 +108,16 @@ void DataConsumer::deinit() throw (chaos::CException) {
 	DSLAPP_ << "Release DirectIOCDataWrapperServerChannel into the endpoint";
 	server_endpoint->releaseChannelInstance(device_channel);
 	
+	DSLAPP_ << "Deallocating answer worker list";
 	for(int idx = 0; idx < answer_worker_list.getNumberOfSlot(); idx++) {
+		DSLAPP_ << "Deallocating answer worker of idx " << idx;
 		chaos::data_service::worker::DataWorker *worker = answer_worker_list.accessSlotByIndex(idx);
 		worker->stop();
 		worker->deinit();
 		delete(worker);
 	}
 	answer_worker_list.clearSlots();
-	
+	DSLAPP_ << "Deallocating device push data worker list";
 	for(int idx = 0; idx < DEVICE_WORKER_NUMBER; idx++) {
 		DSLAPP_ << "Release device worker "<< idx;
 		device_data_worker[idx]->stop();
@@ -134,7 +136,10 @@ void DataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header,
 	job->data_pack = channel_data;
 	job->data_pack_len = channel_data_len;
 	
-    while(!device_data_worker[index_to_use]->submitJobInfo(job));
+    if(!device_data_worker[index_to_use]->submitJobInfo(job)) {
+		DEBUG_CODE(DSLDBG_ << "error pushing data into worker queue");
+		delete job;
+	}
 	
 }
 
@@ -145,6 +150,10 @@ void DataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header,
 	job->key_data = channel_data;
 	job->key_len = channel_data_len;
 	job->request_header = header;
-	//while(!worker->submitJobInfo(job));
-	((worker::AnswerDataWorker*)worker)->executeJob(job);
+	//while();
+	//((worker::AnswerDataWorker*)worker)->executeJob(job)
+	if(!worker->submitJobInfo(job)) {
+		DEBUG_CODE(DSLDBG_ << "error pushing data into worker queue");
+		delete job;
+	}
 }

@@ -13,7 +13,6 @@
 
 #include <boost/format.hpp>
 
-#include <zmq.h>
 #include <string.h>
 
 typedef boost::unique_lock<boost::shared_mutex>	ZMQDirectIOClientConnectionWriteLock;
@@ -64,10 +63,10 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 	//check what send
 	switch(data_pack->header.dispatcher_header.fields.channel_part) {
 		case DIRECT_IO_CHANNEL_PART_EMPTY:
-			err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, ZMQ_DONTWAIT);
+			err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, _send_no_wait_flag);
 			break;
 		case DIRECT_IO_CHANNEL_PART_HEADER_ONLY:
-			err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, ZMQ_SNDMORE);
+			err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, _send_more_no_wait_flag);
 			if(err == -1) {
 				return err;
 			}
@@ -76,11 +75,11 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 									 data_pack->header.channel_header_size,
 									 DirectIOClientConnection::freeSentData,
 									 new channel::DisposeSentMemoryInfo(channel, 1, sending_opcode));
-			err = zmq_sendmsg(socket, &msg_header_data, ZMQ_DONTWAIT);
+			err = zmq_sendmsg(socket, &msg_header_data, _send_no_wait_flag);
 			err = zmq_msg_close(&msg_header_data);
 			break;
 		case DIRECT_IO_CHANNEL_PART_DATA_ONLY:
-			err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, ZMQ_SNDMORE);
+			err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, _send_more_no_wait_flag);
 			if(err == -1) {
 				return err;
 			}
@@ -89,11 +88,11 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 									 data_pack->header.channel_data_size,
 									 DirectIOClientConnection::freeSentData,
 									 new channel::DisposeSentMemoryInfo(channel, 2, sending_opcode));
-			err = zmq_sendmsg(socket, &msg_data, ZMQ_DONTWAIT);
+			err = zmq_sendmsg(socket, &msg_data, _send_no_wait_flag);
 			err = zmq_msg_close(&msg_data);
 			break;
 		case DIRECT_IO_CHANNEL_PART_HEADER_DATA:
-			err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, ZMQ_SNDMORE);
+			err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, _send_more_no_wait_flag);
 			if(err == -1) {
 				return err;
 			}
@@ -102,7 +101,7 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 									 data_pack->header.channel_header_size,
 									 DirectIOClientConnection::freeSentData,
 									 new channel::DisposeSentMemoryInfo(channel, 1, sending_opcode));
-			err = zmq_sendmsg(socket, &msg_header_data, ZMQ_SNDMORE);
+			err = zmq_sendmsg(socket, &msg_header_data, _send_more_no_wait_flag);
 			if(err == -1) {
 				zmq_msg_close(&msg_header_data);
 				return err;
@@ -112,7 +111,7 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 									 data_pack->header.channel_data_size,
 									 DirectIOClientConnection::freeSentData,
 									 new channel::DisposeSentMemoryInfo(channel, 2, sending_opcode));
-			err = zmq_sendmsg(socket, &msg_data, 0);
+			err = zmq_sendmsg(socket, &msg_data, _send_no_wait_flag);
 			
 			err = zmq_msg_close(&msg_header_data);
 			err = zmq_msg_close(&msg_data);
