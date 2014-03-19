@@ -383,9 +383,26 @@ namespace chaos {
         static const char * const ACTION_DEVICE_GET_STATE   = "getState";
 		//! return the control unit information
         static const char * const ACTION_CU_GET_INFO		= "getInfo";
+
     }
     /** @} */ // end of ChaosSystemDomainAndActionLabel
     
+	/** @defgroup PerformanceSystemRpcKey Chaos performance system
+     * this is the collection of the rpc key for interacting with
+	 * internal performance system
+     *  @{
+     */
+	namespace PerformanceSystemRpcKey {
+		//-------------------------performance-----------------------
+		//! The chaos action domain for system message
+        static const char * const SYSTEM_PERFORMANCE_DOMAIN = "system:perf";
+		
+		static const char * const ACTION_PERFORMANCE_INIT_SESSION= "sp:init_session";
+		
+		static const char * const KEY_REQUEST_SERVER_DESCRITPION = "sp::req_serv_desc";
+	}
+	/** @} */ // end of PerformanceSystemRpcKey
+	
     /** @defgroup DataProxyConfigurationKey Chaos data proxy configuration
      *  This is the collection of the key used to configure the DataProxy server
 	 *  address and port and how the client's(cu and ui) need to access to it (round robin or fail over)

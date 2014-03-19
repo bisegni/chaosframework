@@ -30,6 +30,14 @@ namespace chaos {
 						DeviceChannelOpcodePutInput					= 4,	/**< send the input dataset */
 						DeviceChannelOpcodePutNewReceivedCommand	= 8	/**< send over the channel the received command */
 					} DeviceChannelOpcode;
+					
+					/*!
+                     \enum DeviceChannelOpcode
+                     Opcode used by the DirectIO device channel
+					 */
+					typedef enum PerformanceChannelOpcode {
+						PerformanceChannelOpcodeRoundTrip			= 1,	/**< manage the roundtrip test */
+					} PerformanceChannelOpcode;
 				}
 				
                 
@@ -49,6 +57,7 @@ namespace chaos {
                     } DirectIODeviceChannelHeaderData, *DirectIODeviceChannelHeaderDataPtr;
 #define	GET_PUT_OPCODE_FIXED_PART_LEN	6
 #define GET_PUT_OPCODE_KEY_PTR(h) (void*)((char*)h+6) 
+					
 					
                     //! Header for the DeviceChannelOpcodeGetOutputFromCache opcode
 					/*!
@@ -74,6 +83,24 @@ namespace chaos {
                             uint64_t	address;
                         } field;
                     } DirectIODeviceChannelHeaderGetOpcode, *DirectIODeviceChannelHeaderGetOpcodePtr;
+					
+					
+					//! Header for the DeviceChannelOpcodeGetOutputFromCache opcode
+					/*!
+					 this is the header for request the last output channel dataset
+					 found on shared dataproxy cache. The key of the item to search
+					 must be sent in the data part of the message
+					 */
+                    typedef	union DirectIOPerformanceChannelHeaderOpcodeRoundTrip {
+						//raw data representation of the header
+                        char raw_data[16];
+                        struct header {
+							//! The 64bit value for the timestamp get from the client part at the start of the roundtrip test
+                            uint64_t	start_rt_ts;
+							//! The 64bit value for the timestamp get from the server layer part at the start of the roundtrip test
+                            uint64_t	receiver_rt_ts;
+                        } field;
+					} DirectIOPerformanceChannelHeaderOpcodeRoundTrip, *DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr;
                 }
 			}
 		}

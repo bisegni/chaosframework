@@ -23,8 +23,9 @@ namespace chaos {
 	namespace common {
 		namespace direct_io {
 			namespace channel {
-#define DIOCDC_Channel_Index 1
-#define DIODataset_Channel_Index 2
+				#define DIOCDC_Channel_Index 1
+				#define DIODataset_Channel_Index 2
+				#define DIOPerformance_Channel_Index 3
             }
         }
     }
