@@ -50,8 +50,8 @@ namespace chaos {
 					void *monitor_socket;
 				} ConnectionMonitorInfo;
 				
-				const int _send_more_no_wait_flag = ZMQ_SNDMORE|ZMQ_DONTWAIT;
-				const int _send_no_wait_flag = ZMQ_DONTWAIT;
+				const int _send_more_no_wait_flag = ZMQ_SNDMORE;
+				const int _send_no_wait_flag = 0;
 				/*!
 				 Class that represetn th eimplementation of one connection of the direct io
 				 connection implemented with zmq

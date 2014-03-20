@@ -73,6 +73,7 @@ namespace chaos {
 				friend class chaos::NetworkBroker;
 								
 			protected:
+				std::string		url;
 				std::string     server_description;
                 uint16_t        endpoint;
 				uint32_t        connection_hash;
@@ -117,6 +118,8 @@ namespace chaos {
 				void setEventHandler(DirectIOClientConnectionEventHandler *_event_handler);
 				
 				const char * getServerDescription();
+				
+				std::string getURL();
 				
 				//! return the state of the connection
 				DirectIOClientConnectionStateType::DirectIOClientConnectionStateType getState();

@@ -68,6 +68,7 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 		case DIRECT_IO_CHANNEL_PART_HEADER_ONLY:
 			err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, _send_more_no_wait_flag);
 			if(err == -1) {
+				delete (data_pack);
 				return err;
 			}
 			err = zmq_msg_init_data (&msg_header_data,
@@ -76,11 +77,12 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 									 DirectIOClientConnection::freeSentData,
 									 new channel::DisposeSentMemoryInfo(channel, 1, sending_opcode));
 			err = zmq_sendmsg(socket, &msg_header_data, _send_no_wait_flag);
-			err = zmq_msg_close(&msg_header_data);
+			zmq_msg_close(&msg_header_data);
 			break;
 		case DIRECT_IO_CHANNEL_PART_DATA_ONLY:
 			err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, _send_more_no_wait_flag);
 			if(err == -1) {
+				delete (data_pack);
 				return err;
 			}
 			err = zmq_msg_init_data (&msg_data,
@@ -89,11 +91,12 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 									 DirectIOClientConnection::freeSentData,
 									 new channel::DisposeSentMemoryInfo(channel, 2, sending_opcode));
 			err = zmq_sendmsg(socket, &msg_data, _send_no_wait_flag);
-			err = zmq_msg_close(&msg_data);
+			zmq_msg_close(&msg_data);
 			break;
 		case DIRECT_IO_CHANNEL_PART_HEADER_DATA:
 			err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, _send_more_no_wait_flag);
 			if(err == -1) {
+				delete (data_pack);
 				return err;
 			}
 			err = zmq_msg_init_data (&msg_header_data,
@@ -103,6 +106,7 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 									 new channel::DisposeSentMemoryInfo(channel, 1, sending_opcode));
 			err = zmq_sendmsg(socket, &msg_header_data, _send_more_no_wait_flag);
 			if(err == -1) {
+				delete (data_pack);
 				zmq_msg_close(&msg_header_data);
 				return err;
 			}
@@ -113,8 +117,8 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 									 new channel::DisposeSentMemoryInfo(channel, 2, sending_opcode));
 			err = zmq_sendmsg(socket, &msg_data, _send_no_wait_flag);
 			
-			err = zmq_msg_close(&msg_header_data);
-			err = zmq_msg_close(&msg_data);
+			zmq_msg_close(&msg_header_data);
+			zmq_msg_close(&msg_data);
 			break;
 	}
 	delete (data_pack);

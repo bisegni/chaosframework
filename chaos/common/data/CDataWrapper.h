@@ -106,7 +106,7 @@ namespace chaos {
 				void addStringValue(const char *, const char *);
 				
 				//add a string value
-				void addStringValue(const char *, string&);
+				void addStringValue(const char *, string);
 				
 				//add a string to array
 				void appendStringToArray(const char *);

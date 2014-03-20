@@ -175,6 +175,8 @@ namespace chaos{
 			//free the packet
 			next_client->device_client_channel->storeAndCacheDataOutputChannel((void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen());
 			return;
+		} else {
+			DEBUG_CODE(IODirectIODriver_DLDBG_ << "No available socket->loose packet");
 		}
 		delete(serialization);
     }

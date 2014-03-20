@@ -50,14 +50,19 @@ void DirectIOPerformanceServerChannel::consumeDataPack(DirectIODataPack *dataPac
 	opcode::PerformanceChannelOpcode  channel_opcode = static_cast<opcode::PerformanceChannelOpcode>(dataPack->header.dispatcher_header.fields.channel_opcode);
 	
 	switch (channel_opcode) {
-		case opcode::PerformanceChannelOpcodeRoundTrip: {
+		case opcode::PerformanceChannelOpcodeReqRoundTrip: {
             opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr header = reinterpret_cast< opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr >(dataPack->channel_header_data);
 			//reallign the pointer to the start of the key
 			header->field.start_rt_ts = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.start_rt_ts);
-			handler->handleRoundTripRequest(header);
+			handler->handleReqRoundTripRequest(header);
             break;
         }
-		default:
+			
+		case opcode::PerformanceChannelOpcodeRespRoundTrip:
+			opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr header = reinterpret_cast< opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr >(dataPack->channel_header_data);
+			//reallign the pointer to the start of the key
+			header->field.start_rt_ts = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.start_rt_ts);
+			handler->handleRespRoundTripRequest(header);
 			break;
 	}
 	

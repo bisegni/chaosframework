@@ -48,6 +48,9 @@ ADD_SUBDIRECTORY(ChaosDataService bin/bin_chst)
 message(STATUS "Configure Chaos CLI")
 ADD_SUBDIRECTORY(example/ChaosCLI bin/chaos_cli)
 
+message(STATUS "Configure Chaos Performance Tester")
+ADD_SUBDIRECTORY(example/ChaosPerformanceTester bin/ChaosPerformanceTester)
+
 #message(STATUS "Configure Control Unit Test examples")
 #ADD_SUBDIRECTORY(example/ControlUnitTest bin/bin_example_cutest)
 

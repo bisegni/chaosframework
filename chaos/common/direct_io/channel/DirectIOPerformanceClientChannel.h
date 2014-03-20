@@ -42,6 +42,8 @@ namespace chaos {
 					void freeSentData(void *data,  DisposeSentMemoryInfo& dispose_memory_info);
 				public:
 					int64_t sendRoundTripMessage();
+					int64_t answerRoundTripMessage(uint64_t received_ts);
+					int64_t answerRoundTripMessage(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr received_header);
 				};
 			}
 		}

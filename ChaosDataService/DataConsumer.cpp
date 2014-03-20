@@ -64,17 +64,17 @@ void DataConsumer::init(void *init_data) throw (chaos::CException) {
 	cache_impl_name.append("CacheDriver");
 	DSLAPP_ << "The cache implementation to allocate is " << cache_impl_name;
 	//cache_driver_instance
-	device_data_worker = (chaos::data_service::worker::DataWorker**) malloc(sizeof(chaos::data_service::worker::DataWorker**) * DEVICE_WORKER_NUMBER);
+	device_data_worker = (chaos::data_service::worker::DataWorker**) malloc(sizeof(chaos::data_service::worker::DataWorker**) * settings->caching_worker_num);
 	if(!device_data_worker) throw chaos::CException(-5, "Error allocating device workers", __FUNCTION__);
 	
 	chaos::data_service::worker::DeviceSharedDataWorker *tmp = NULL;
-	for(int idx = 0; idx < DEVICE_WORKER_NUMBER; idx++) {
+	for(int idx = 0; idx < settings->caching_worker_num; idx++) {
 		device_data_worker[idx] = (tmp = new chaos::data_service::worker::DeviceSharedDataWorker(cache_impl_name));
 		DSLAPP_ << "Configure server on device worker " << idx;
 		for(CacheServerListIterator iter = settings->startup_chache_servers.begin();
 			iter != settings->startup_chache_servers.end();
 			iter++) {
-			tmp->init(NULL);
+			tmp->init(&settings->caching_worker_setting);
 			tmp->start();
 			tmp->addServer(*iter);
 		}
@@ -82,7 +82,7 @@ void DataConsumer::init(void *init_data) throw (chaos::CException) {
 	
 	//add answer worker
 	chaos::data_service::worker::AnswerDataWorker *tmp_data_worker = NULL;
-	for(int idx = 0; idx < ANSWER_WORKER_NUMBER; idx++) {
+	for(int idx = 0; idx < settings->answer_worker_num; idx++) {
 		//allocate a new worker with his personal client instance
 		//get the cache driver instance
 		cache_system::CacheDriver *cache_driver_instance = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name.c_str());
@@ -92,7 +92,7 @@ void DataConsumer::init(void *init_data) throw (chaos::CException) {
 			cache_driver_instance->addServer(*iter);
 		}
 		tmp_data_worker = new chaos::data_service::worker::AnswerDataWorker(network_broker->getDirectIOClientInstance(), cache_driver_instance);
-		tmp_data_worker->init(NULL);
+		tmp_data_worker->init(&settings->answer_worker_setting);
 		tmp_data_worker->start();
 		answer_worker_list.addSlot(tmp_data_worker);
 	}
@@ -105,7 +105,7 @@ void DataConsumer::stop() throw (chaos::CException) {
 }
 
 void DataConsumer::deinit() throw (chaos::CException) {
-	DSLAPP_ << "Release DirectIOCDataWrapperServerChannel into the endpoint";
+	DSLAPP_ << "Release direct io device channel into the endpoint";
 	server_endpoint->releaseChannelInstance(device_channel);
 	
 	DSLAPP_ << "Deallocating answer worker list";
@@ -118,7 +118,7 @@ void DataConsumer::deinit() throw (chaos::CException) {
 	}
 	answer_worker_list.clearSlots();
 	DSLAPP_ << "Deallocating device push data worker list";
-	for(int idx = 0; idx < DEVICE_WORKER_NUMBER; idx++) {
+	for(int idx = 0; idx < settings->caching_worker_num; idx++) {
 		DSLAPP_ << "Release device worker "<< idx;
 		device_data_worker[idx]->stop();
 		device_data_worker[idx]->deinit();
@@ -129,7 +129,7 @@ void DataConsumer::deinit() throw (chaos::CException) {
 }
 
 void DataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header, void *channel_data, uint32_t channel_data_len) {
-	uint32_t index_to_use = device_data_worker_index++ % DEVICE_WORKER_NUMBER;
+	uint32_t index_to_use = device_data_worker_index++ % settings->caching_worker_num;
 
 	chaos::data_service::worker::DeviceSharedWorkerJob *job = new chaos::data_service::worker::DeviceSharedWorkerJob();
 	job->request_header = header;
@@ -150,10 +150,8 @@ void DataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header,
 	job->key_data = channel_data;
 	job->key_len = channel_data_len;
 	job->request_header = header;
-	//while();
-	//((worker::AnswerDataWorker*)worker)->executeJob(job)
 	if(!worker->submitJobInfo(job)) {
-		DEBUG_CODE(DSLDBG_ << "error pushing data into worker queue");
+		DEBUG_CODE(DSLDBG_ << "error pushing data into answer queue");
 		delete job;
 	}
 }

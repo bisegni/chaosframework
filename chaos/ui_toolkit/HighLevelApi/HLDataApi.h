@@ -22,8 +22,9 @@
 #include <map>
 #include <string>
 #include <chaos/ui_toolkit/HighLevelApi/DeviceController.h>
+#include <chaos/common/message/PerformanceNodeChannel.h>
 #include <chaos/common/utility/Singleton.h>
-
+namespace chaos_message = chaos::common::message;
 namespace chaos {
     namespace ui {
         using namespace std;

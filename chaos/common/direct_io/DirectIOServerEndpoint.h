@@ -86,6 +86,8 @@ namespace chaos {
 				 Allocate a new channel and initialize it
 				 */
 				void releaseChannelInstance(channel::DirectIOVirtualServerChannel *channel_instance) throw (CException);
+				
+				std::string getUrl();
 			};
 			
 		}

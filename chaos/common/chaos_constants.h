@@ -399,6 +399,8 @@ namespace chaos {
 		
 		static const char * const ACTION_PERFORMANCE_INIT_SESSION= "sp:init_session";
 		
+		static const char * const ACTION_PERFORMANCE_CLOSE_SESSION= "sp:close_session";
+		
 		static const char * const KEY_REQUEST_SERVER_DESCRITPION = "sp::req_serv_desc";
 	}
 	/** @} */ // end of PerformanceSystemRpcKey

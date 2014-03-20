@@ -49,8 +49,8 @@ DirectIOClientConnection::DirectIOClientConnection(std::string _server_descripti
     //generate random hash from uuid lite
     std::string unique_uuid = UUIDUtil::generateUUIDLite();
     
-    std::string answer_server_description = boost::str( boost::format("%1%|%2%") % server_description % endpoint);
-	connection_hash = chaos::common::data::cache::FastHash::hash(answer_server_description.c_str(), answer_server_description.size(), 0);
+	url = boost::str( boost::format("%1%|%2%") % server_description % endpoint);
+	connection_hash = chaos::common::data::cache::FastHash::hash(url.c_str(), url.size(), 0);
     unique_hash = chaos::common::data::cache::FastHash::hash(unique_uuid.c_str(), unique_uuid.size(), 0);
 }
 
@@ -60,6 +60,10 @@ DirectIOClientConnection::~DirectIOClientConnection() {
 
 const char * DirectIOClientConnection::getServerDescription() {
 	return server_description.c_str();
+}
+
+std::string DirectIOClientConnection::getURL() {
+	return url;
 }
 
 std::string DirectIOClientConnection::getStrIp() {

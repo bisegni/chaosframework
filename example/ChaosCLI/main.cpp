@@ -122,7 +122,7 @@ int main (int argc, char* argv[] )
 		
         CDeviceNetworkAddress deviceNetworkAddress;
         CUStateKey::ControlUnitState deviceState;
-       
+		
         //! [UIToolkit Attribute Init]
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_DEVICE_ID, "The identification string of the device");
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_TIMEOUT, "Timeout rpc in milliseconds", 2000, &timeout);
@@ -247,38 +247,38 @@ int main (int argc, char* argv[] )
                 }
                 break;
             case 6: {
-                    //check sc
-					uint64_t command_id = 0;
-                    auto_ptr<CDataWrapper> userData;
-                    bool canBeExecuted = scAlias.size() > 0;
-                    canBeExecuted = canBeExecuted && (checkSubmissionRule(scSubmissionRule) != -1);
-                    if(canBeExecuted) {
-                        if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_SUBMISSION_RETRY_DELAY)) {
-                            std::cout << "Custom checker delay submitted -> " << scSubmissionSubmissionRetryDelay << std::endl;
-                        }
-                        
-                        if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_DATA)) {
-                            userData.reset(new CDataWrapper());
-                            if(userData.get())userData->setSerializedJsonData(scUserData.c_str());
-                            std::cout << "User data submitted" << std::endl;
-                            std::cout << "-----------------------------------------" << std::endl;
-                            std::cout << userData->getJSONString() << std::endl;
-                            std::cout << "-----------------------------------------" << std::endl;
-                        }
-                        err = controller->submitSlowControlCommand(scAlias,
-																   static_cast<chaos_batch::SubmissionRuleType::SubmissionRule>(checkSubmissionRule(scSubmissionRule)),
-																   scSubmissionPriority,
-																   command_id,
-                                                                   scExecutionChannel,
-																   scSubmissionSchedulerDelay,
-																   scSubmissionSubmissionRetryDelay,
-																   userData.get());
-                        if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to deinit state");
-						std::cout << "Command submitted successfully his command idedentification number(cidn) is= " << command_id << std::endl;
-                    } else {
-                        throw CException(29, "Device can't be in deinit state", "Send slow command");
-                    }
-                }
+				//check sc
+				uint64_t command_id = 0;
+				auto_ptr<CDataWrapper> userData;
+				bool canBeExecuted = scAlias.size() > 0;
+				canBeExecuted = canBeExecuted && (checkSubmissionRule(scSubmissionRule) != -1);
+				if(canBeExecuted) {
+					if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_SUBMISSION_RETRY_DELAY)) {
+						std::cout << "Custom checker delay submitted -> " << scSubmissionSubmissionRetryDelay << std::endl;
+					}
+					
+					if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SL_COMMAND_DATA)) {
+						userData.reset(new CDataWrapper());
+						if(userData.get())userData->setSerializedJsonData(scUserData.c_str());
+						std::cout << "User data submitted" << std::endl;
+						std::cout << "-----------------------------------------" << std::endl;
+						std::cout << userData->getJSONString() << std::endl;
+						std::cout << "-----------------------------------------" << std::endl;
+					}
+					err = controller->submitSlowControlCommand(scAlias,
+															   static_cast<chaos_batch::SubmissionRuleType::SubmissionRule>(checkSubmissionRule(scSubmissionRule)),
+															   scSubmissionPriority,
+															   command_id,
+															   scExecutionChannel,
+															   scSubmissionSchedulerDelay,
+															   scSubmissionSubmissionRetryDelay,
+															   userData.get());
+					if(err == ErrorCode::EC_TIMEOUT) throw CException(2, "Time out on connection", "Set device to deinit state");
+					std::cout << "Command submitted successfully his command idedentification number(cidn) is= " << command_id << std::endl;
+				} else {
+					throw CException(29, "Device can't be in deinit state", "Send slow command");
+				}
+			}
                 break;
 			case 7:{
 				err = controller->killCurrentCommand();
@@ -330,7 +330,7 @@ int main (int argc, char* argv[] )
 				}
 				if(rtAttributeValue.find(":")== string::npos) {
 					throw CException(2, "Attribute param not well formet, lak of ':' character (param_name:param_value)", "OPCODE 9");
-
+					
 				}
 				std::string param_name = rtAttributeValue.substr(0, rtAttributeValue.find(":"));
 				std::string param_value = rtAttributeValue.substr(rtAttributeValue.find(":")+1);
@@ -404,7 +404,7 @@ int main (int argc, char* argv[] )
         
 		if(controller)
 			HLDataApi::getInstance()->disposeDeviceControllerPtr(controller);
-
+		
     } catch (CException& e) {
         std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
     }

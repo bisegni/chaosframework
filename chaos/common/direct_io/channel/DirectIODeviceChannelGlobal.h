@@ -36,7 +36,8 @@ namespace chaos {
                      Opcode used by the DirectIO device channel
 					 */
 					typedef enum PerformanceChannelOpcode {
-						PerformanceChannelOpcodeRoundTrip			= 1,	/**< manage the roundtrip test */
+						PerformanceChannelOpcodeReqRoundTrip			= 1,	/**< forwarda a start of a roundtrip test */
+						PerformanceChannelOpcodeRespRoundTrip			= 2,	/**< perform an answer to the roundtrip test */
 					} PerformanceChannelOpcode;
 				}
 				

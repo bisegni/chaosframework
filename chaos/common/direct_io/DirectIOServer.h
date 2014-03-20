@@ -73,6 +73,8 @@ namespace chaos {
                 uint32_t getPriorityPort();
 
                 uint32_t getServicePort();
+				
+				std::string getUrl();
 
 			};
 			

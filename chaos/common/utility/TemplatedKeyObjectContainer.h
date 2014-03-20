@@ -76,7 +76,9 @@ namespace chaos {
             inline O accessItem(K key) {
 				boost::shared_lock<boost::shared_mutex> lock(mutex_organizer_map);
 				if(organizer_map.count(key))
-				return organizer_map[key];
+					return organizer_map[key];
+				else
+					return NULL;
             }
             
         };

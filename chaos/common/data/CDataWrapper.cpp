@@ -81,7 +81,7 @@ void CDataWrapper::addStringValue(const char * key, const char * strValue) {
 }
 
 //add a string value
-void CDataWrapper::addStringValue(const char *key, string& strValue) {
+void CDataWrapper::addStringValue(const char *key, string strValue) {
     bsonBuilder->append(key, strValue);
 }
 

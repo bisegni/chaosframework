@@ -30,10 +30,19 @@ namespace chaos{
 		typedef std::vector<std::string>			CacheServerList;
 		typedef std::vector<std::string>::iterator	CacheServerListIterator;
 		
+		//! Setting for dataservice configuration
 		typedef struct ChaosDataServiceSetting {
-			worker::DataWorkerSetting	worker_setting;
-			std::string		cache_driver_impl;
-			CacheServerList	startup_chache_servers;
+
+			//!cache configuration
+			std::string					cache_driver_impl;
+			CacheServerList				startup_chache_servers;
+			unsigned int				caching_worker_num;
+			worker::DataWorkerSetting	caching_worker_setting;
+			
+			//----------answer worker------------------
+			unsigned int				answer_worker_num;
+			worker::DataWorkerSetting	answer_worker_setting;
+
 		} ChaosDataServiceSetting;
 	}
 }

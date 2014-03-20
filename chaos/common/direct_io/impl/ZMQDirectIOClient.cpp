@@ -97,7 +97,7 @@ void *ZMQDirectIOClient::socketMonitor (void *ctx, const char * address, Connect
 					forwardEventToClientConnection(connection , DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected);
 					break;
 				case ZMQ_EVENT_CONNECT_DELAYED:
-					forwardEventToClientConnection(connection , DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected);
+					//forwardEventToClientConnection(connection , DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected);
 					DEBUG_CODE(ZMQDIOLDBG_ << "ZMQ_EVENT_CONNECT_DELAYED " << connection->getServerDescription();)
 					break;
 				case ZMQ_EVENT_CONNECT_RETRIED:
@@ -170,8 +170,8 @@ DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server
 	int err = 0;
 	const int output_buffer_dim = 1;
 	const int linger_period = 0;
-	const int min_reconnection_ivl = 500;
-	const int max_reconnection_ivl = 5000;
+	const int min_reconnection_ivl = 100;
+	const int max_reconnection_ivl = 500;
 	
 	void *socket_priority = NULL;
 	void *socket_service = NULL;

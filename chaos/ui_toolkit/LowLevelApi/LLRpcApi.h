@@ -76,11 +76,18 @@ namespace chaos {
              */
             DeviceMessageChannel *getNewDeviceMessageChannel(CDeviceNetworkAddress *deviceNetworkAddress);
             
+			chaos::common::message::PerformanceNodeChannel *getNewPerformanceChannel(CNetworkAddress *note_network_address);
+			
             /*!
              Delete a previously instantiatedchannel
              */
-            void deleteMessageChannel(NodeMessageChannel*);
+            void deleteMessageChannel(MessageChannel*);
             
+			/*!
+             Delete a previously instantiatedchannel
+             */
+            void deleteMessageChannel(NodeMessageChannel*);
+			
             event::channel::AlertEventChannel *getNewAlertEventChannel() throw (CException);
             event::channel::InstrumentEventChannel *getNewInstrumentEventChannel() throw (CException);
             void disposeEventChannel(event::channel::EventChannel *) throw (CException);

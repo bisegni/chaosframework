@@ -18,7 +18,6 @@
  *    	limitations under the License.
  */
 #include "HLDataApi.h"
-
 using namespace std;
 using namespace chaos;
 using namespace chaos::ui;

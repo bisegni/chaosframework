@@ -44,7 +44,11 @@ namespace chaos {
 					//! Device handler definition
 					class DirectIOPerformanceServerChannelHandler {
                     public:
-						virtual void handleRoundTripRequest(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr rtt_request) = 0;
+						//! handle a request to perform a roundtrip test
+						virtual void handleReqRoundTripRequest(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr rtt_request) = 0;
+						
+						//! andle the response to an round trip test request
+						virtual void handleRespRoundTripRequest(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr rtt_request) = 0;
 					};
 					
 					

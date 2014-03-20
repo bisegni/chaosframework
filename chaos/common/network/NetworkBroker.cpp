@@ -24,6 +24,7 @@
 #include <chaos/common/message/DeviceMessageChannel.h>
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/message/MessageChannel.h>
+#include <chaos/common/message/PerformanceNodeChannel.h>
 #include <chaos/common/event/EventServer.h>
 #include <chaos/common/event/EventClient.h>
 #include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
@@ -43,7 +44,7 @@ using namespace chaos::common::data;
 /*!
  
  */
-NetworkBroker::NetworkBroker(){
+NetworkBroker::NetworkBroker():performance_session_managment(this){
     eventClient = NULL;
     eventServer = NULL;
     rpcServer = NULL;
@@ -69,12 +70,7 @@ NetworkBroker::~NetworkBroker() {
  * for the rpc client and server and for the dispatcher. All these are here initialized
  */
 void NetworkBroker::init(void *initData) throw(CException) {
-	//check if initialized
-    SetupStateManager::levelUpFrom(INIT_STEP, "NetworkBroker already initialized");
-    
-    
-    
-    MB_LAPP << "Init pahse";
+    MB_LAPP << "Init phase";
 	//get global configuration reference
     CDataWrapper *globalConfiguration = GlobalConfiguration::getInstance()->getConfiguration();
     
@@ -172,18 +168,14 @@ void NetworkBroker::init(void *initData) throw(CException) {
         throw CException(4, "No RPC Adapter type found in configuration", "NetworkBroker::init");
     }
 	//---------------------------- R P C ----------------------------
-    MB_LAPP  << "Message Broker Initialized";
+	MB_LAPP  << "Initialize performance session manager";
+	utility::StartableService::initImplementation(performance_session_managment, static_cast<void*>(globalConfiguration), "PerformanceManagment",  __PRETTY_FUNCTION__);
 }
 
 /*!
  * All rpc adapter and command siaptcer are deinitilized
  */
 void NetworkBroker::deinit() throw(CException) {
-    
-	//lock esclusive access to init phase
-    SetupStateManager::levelDownFrom(DEINIT_STEP, "NetworkBroker already deinitialized");
-    
-    MB_LAPP  << "Deinitilizing Network Broker";
 
 	//---------------------------- D I R E C T I/O ----------------------------
 	MB_LAPP  << "Deinit DirectIO server: " << directIOServer->getName();
@@ -247,6 +239,9 @@ void NetworkBroker::deinit() throw(CException) {
     utility::StartableService::deinitImplementation(commandDispatcher, "DefaultCommandDispatcher", "NetworkBroker::deinit");
 	//---------------------------- R P C ----------------------------
 	
+	MB_LAPP  << "Deinitialize performance session manager";
+	utility::StartableService::deinitImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);
+
 }
 
 /*!
@@ -277,12 +272,17 @@ void NetworkBroker::start() throw(CException){
     MB_LAPP << "get the published host and port from rpc server";
     getPublishedHostAndPort(publishedHostAndPort);
     MB_LAPP << "Rpc server has been published in: " << publishedHostAndPort;
+	
+	MB_LAPP  << "Start performance session manager";
+	utility::StartableService::startImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);
+
 }
 
 /*!
  * all part are started
  */
 void NetworkBroker::stop() throw(CException) {
+
     MB_LAPP  << "Stop rpc server: " << rpcClient->getName();
     utility::StartableService::stopImplementation(rpcClient, rpcClient->getName(), "NetworkBroker::stop");
 	
@@ -303,6 +303,10 @@ void NetworkBroker::stop() throw(CException) {
 	
 	MB_LAPP  << "Stop DirectIO server: " << directIOServer->getName();
     utility::StartableService::stopImplementation(directIOServer, directIOServer->getName(), "NetworkBroker::Stop");
+	
+	MB_LAPP  << "Stop performance session manager";
+	utility::StartableService::stopImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);
+
 }
 
 /*!
@@ -476,7 +480,7 @@ bool NetworkBroker::submiteRequest(string& serverAndPort,  CDataWrapper *request
 
 /*
  */
-MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNodeNetworkAddress *nodeNetworkAddress, EntityType type) {
+MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress *nodeNetworkAddress, EntityType type) {
     CHAOS_ASSERT(nodeNetworkAddress)
     MessageChannel *channel = NULL;
     switch (type) {
@@ -486,11 +490,14 @@ MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNodeNetworkAdd
             break;
             
         case MDS:
-            channel = new MDSMessageChannel(this, nodeNetworkAddress);
+            channel = new MDSMessageChannel(this, static_cast<CNodeNetworkAddress*>(nodeNetworkAddress));
             break;
             
         case DEVICE:
             channel = new DeviceMessageChannel(this, static_cast<CDeviceNetworkAddress*>(nodeNetworkAddress));
+            break;
+		case PERFORMANCE:
+			channel = new common::message::PerformanceNodeChannel(this, nodeNetworkAddress, performance_session_managment.getLocalDirectIOClientInstance());
             break;
     }
 	//check if the channel has been created
@@ -520,6 +527,11 @@ MDSMessageChannel *NetworkBroker::getMetadataserverMessageChannel(string& remote
  */
 DeviceMessageChannel *NetworkBroker::getDeviceMessageChannelFromAddress(CDeviceNetworkAddress *deviceNetworkAddress) {
     return static_cast<DeviceMessageChannel*>(getNewMessageChannelForRemoteHost(deviceNetworkAddress, DEVICE));
+}
+
+//!performance channel creation
+chaos::common::message::PerformanceNodeChannel *NetworkBroker::getPerformanceChannelFromAddress(CNetworkAddress  *node_network_address) {
+	return static_cast<chaos::common::message::PerformanceNodeChannel*>(getNewMessageChannelForRemoteHost(node_network_address, PERFORMANCE));
 }
 
 //!Channel deallocation
@@ -564,4 +576,3 @@ chaos_directio::DirectIOClient *NetworkBroker::getDirectIOClientInstance() {
     MB_LAPP  << "Allocate a new DirectIOClient of type " << directIOClientImpl;
     return ObjectFactoryRegister<common::direct_io::DirectIOClient>::getInstance()->getNewInstanceByName(directIOClientImpl.c_str());
 }
-

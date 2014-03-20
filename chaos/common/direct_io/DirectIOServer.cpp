@@ -18,6 +18,9 @@
  *    	limitations under the License.
  */
 #include <chaos/common/direct_io/DirectIOServer.h>
+#include <chaos/common/configuration/GlobalConfiguration.h>
+
+#include <boost/format.hpp>
 
 using namespace chaos::common::direct_io;
 
@@ -70,4 +73,8 @@ uint32_t DirectIOServer::getPriorityPort() {
 
 uint32_t DirectIOServer::getServicePort() {
     return service_port;
+}
+
+std::string DirectIOServer::getUrl() {
+	return  boost::str( boost::format("%1%:%2%:%3%") % chaos::GlobalConfiguration::getInstance()->getLocalServerAddress() % priority_port % service_port);
 }

@@ -19,6 +19,7 @@
  */
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/direct_io/DirectIOServerEndpoint.h>
+#include <boost/format.hpp>
 
 using namespace chaos::common::direct_io;
 
@@ -50,6 +51,12 @@ uint16_t DirectIOServerEndpoint::getRouteIndex() {
 
 DirectIOServerPublicInterface * DirectIOServerEndpoint::getPublicServerInterface() const {
     return server_public_interface;
+}
+
+std::string DirectIOServerEndpoint::getUrl() {
+	if(!server_public_interface) return std::string("");
+	//return the url concatenating he server url with the endpoint divided by pipe chacracter
+	return boost::str( boost::format("%1%|%2%") % server_public_interface->getUrl() % endpoint_route_index);
 }
 
 //! Add a new channel instantiator

@@ -1,5 +1,5 @@
 /*
- *	DirectIOServerPublicInterface.h
+ *	VFSDriver.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,26 +17,5 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef CHAOSFramework_AbstractDirectIOServer_h
-#define CHAOSFramework_AbstractDirectIOServer_h
 
-#include <stdint.h>
-namespace chaos {
-	namespace common {
-		namespace direct_io {
-            
-            /*!
-             Direct io server public interface
-             */
-            class DirectIOServerPublicInterface {
-            public:
-                virtual uint32_t getPriorityPort() = 0;
-                virtual uint32_t getServicePort() = 0;
-				virtual std::string getUrl() = 0;
-            };
-            
-        }
-    }
-}
-
-#endif
+#include "VFSDriver.h"

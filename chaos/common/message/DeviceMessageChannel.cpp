@@ -23,19 +23,7 @@
 using namespace chaos;
 using namespace chaos::common::data;
 
-/*! \name Check Request Result Macro
- These macros are used to check the result of a syncronous request operation. 
- */
-/*! \{ */
 
-/*! Check for delay error or application error */
-#define CHECK_TIMEOUT_AND_RESULT_CODE(x,e) \
-if(!x.get()) {\
-e = ErrorCode::EC_TIMEOUT;\
-} else if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {\
-e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);\
-}
-/*! \} */
 
 //------------------------------------
 DeviceMessageChannel::DeviceMessageChannel(NetworkBroker *msgBroker, CDeviceNetworkAddress *_deviceNetworkAddress) : NodeMessageChannel(msgBroker, _deviceNetworkAddress){

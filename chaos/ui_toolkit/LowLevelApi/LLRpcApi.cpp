@@ -110,10 +110,22 @@ DeviceMessageChannel *LLRpcApi::getNewDeviceMessageChannel(CDeviceNetworkAddress
     return network_broker->getDeviceMessageChannelFromAddress(deviceNetworkAddress);
 }
 
-void LLRpcApi::deleteMessageChannel(NodeMessageChannel *channelToDispose) {
-    network_broker->disposeMessageChannel(channelToDispose);
+/*!
+ Return a new device channel
+ */
+chaos::common::message::PerformanceNodeChannel *LLRpcApi::getNewPerformanceChannel(CNetworkAddress *note_network_address) {
+    return network_broker->getPerformanceChannelFromAddress(note_network_address);
 }
 
+void LLRpcApi::deleteMessageChannel(MessageChannel *channelToDispose) {
+    network_broker->disposeMessageChannel(channelToDispose);
+}
+/*!
+ Delete a previously instantiatedchannel
+ */
+void LLRpcApi::deleteMessageChannel(NodeMessageChannel *channelToDispose) {
+	network_broker->disposeMessageChannel(channelToDispose);
+}
 
 event::channel::AlertEventChannel *LLRpcApi::getNewAlertEventChannel() throw (CException) {
     return network_broker->getNewAlertEventChannel();

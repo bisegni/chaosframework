@@ -19,15 +19,16 @@ SET(common_lib_src  ${common_lib_src}	event/EventClient.cpp event/AsioImplEventC
 										event/evt_desc/CustomEventDescriptor.cpp event/channel/EventChannel.cpp 
 										event/channel/AlertEventChannel.cpp event/channel/InstrumentEventChannel.cpp)
 SET(common_lib_src  ${common_lib_src}	direct_io/DirectIOClient.cpp direct_io/DirectIOClientConnection.cpp direct_io/DirectIOServer.cpp
-										direct_io/ServerFeeder.cpp direct_io/DirectIOServerEndpoint.cpp direct_io/DirectIODispatcher.cpp
+										direct_io/ServerFeeder.cpp direct_io/DirectIOServerEndpoint.cpp direct_io/DirectIODispatcher.cpp direct_io/DirectIOPerformanceSession.cpp
 										direct_io/impl/ZMQDirectIOClient.cpp direct_io/impl/ZMQDirectIOServer.cpp 
 										direct_io/impl/ZMQBaseClass.cpp direct_io/impl/ZMQDirectIOClientConnection.cpp
 										direct_io/channel/DirectIOVirtualChannel.cpp direct_io/channel/DirectIOVirtualClientChannel.cpp direct_io/channel/DirectIOVirtualServerChannel.cpp
 										direct_io/channel/DirectIOCDataWrapperClientChannel.cpp direct_io/channel/DirectIOCDataWrapperServerChannel.cpp 
-										direct_io/channel/DirectIODeviceClientChannel.cpp direct_io/channel/DirectIODeviceServerChannel.cpp)
+										direct_io/channel/DirectIODeviceClientChannel.cpp direct_io/channel/DirectIODeviceServerChannel.cpp
+										direct_io/channel/DirectIOPerformanceServerChannel.cpp direct_io/channel/DirectIOPerformanceClientChannel.cpp)
 SET(common_lib_src  ${common_lib_src}	io/IODataDriver.cpp io/IOMemcachedIODriver.cpp io/IODirectIODriver.cpp)
-SET(common_lib_src  ${common_lib_src}	message/DeviceMessageChannel.cpp message/MDSMessageChannel.cpp message/MessageChannel.cpp)
-SET(common_lib_src  ${common_lib_src}	network/NetworkBroker.cpp)
+SET(common_lib_src  ${common_lib_src}	message/DeviceMessageChannel.cpp message/MDSMessageChannel.cpp message/MessageChannel.cpp message/PerformanceNodeChannel.cpp)
+SET(common_lib_src  ${common_lib_src}	network/NetworkBroker.cpp network/PerformanceManagment.cpp)
 SET(common_lib_src  ${common_lib_src}	rpc/RpcClient.cpp rpc/RpcServer.cpp rpc/msgpack/MsgPackClient.cpp rpc/msgpack/MsgPackServer.cpp)
 SET(common_lib_src  ${common_lib_src}	thread/CThread.cpp thread/CThreadGroup.cpp)
 SET(common_lib_src  ${common_lib_src}	utility/NamedService.cpp utility/StartableService.cpp utility/InizializableService.cpp)

@@ -1,5 +1,5 @@
 /*
- *	DirectIOPerformanceLoop.h
+ *	DirectIOPerformanceSession.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,16 +18,22 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__DirectIOPerformanceLoop__
-#define __CHAOSFramework__DirectIOPerformanceLoop__
+#ifndef __CHAOSFramework__DirectIOPerformanceSession__
+#define __CHAOSFramework__DirectIOPerformanceSession__
 
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/direct_io/DirectIOClientConnection.h>
 #include <chaos/common/direct_io/channel/DirectIOPerformanceClientChannel.h>
 #include <chaos/common/direct_io/channel/DirectIOPerformanceServerChannel.h>
+
+#include <boost/lockfree/queue.hpp>
+
 namespace chaos {
 	namespace common{
+		namespace message {
+			class PerformanceNodeChannel;
+		}
 		namespace network{
 			//forward declaration
 			class PerformanceManagment;
@@ -38,15 +44,31 @@ namespace chaos {
 			class DirectIOClient;
 			class DirectIOServerEndpoint;
 			
+			typedef boost::lockfree::queue< channel::opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr, boost::lockfree::fixed_sized<false> > RttResultQueue;
+			
+			template<typename T>
+			class ResultFetcher {
+				boost::lockfree::queue< T, boost::lockfree::fixed_sized<false> > *result_queue_ptr;
+			public:
+				ResultFetcher(boost::lockfree::queue< T, boost::lockfree::fixed_sized<false> > *_result_queue_ptr):result_queue_ptr(_result_queue_ptr) {}
+				
+				bool getNext(T& result) {
+					return result_queue_ptr->pop(result);
+				}
+			};
+			
+			typedef ResultFetcher<channel::opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr> RttResultFetcher;
+			
 			//! Direct IO performance loop connection
 			/*!
 			 this class permit to realize a direct io loop to make some bench test between two node
 			 using direct io system.
 			 */
-			class DirectIOPerformanceLoop :
-			public chaos::utility::InizializableService,
+			class DirectIOPerformanceSession :
+			protected chaos::utility::InizializableService,
 			protected  channel::DirectIOPerformanceServerChannel::DirectIOPerformanceServerChannelHandler {
 				friend class chaos::common::network::PerformanceManagment;
+				friend class chaos::common::message::PerformanceNodeChannel;
 				
 				std::string server_description;
 				
@@ -56,14 +78,16 @@ namespace chaos {
 				channel::DirectIOPerformanceClientChannel *client_channel;
 				channel::DirectIOPerformanceServerChannel *server_channel;
 
-				chaos::WaitSemaphore rtt_request_wait_sema;
-				channel::opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr rtt_answer;
+				//chaos::WaitSemaphore rtt_request_wait_sema;
+				RttResultQueue rtt_queue;
+				//channel::opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr rtt_answer;
 			protected:
-				void handleRoundTripRequest(channel::opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr rtt_request);
+				void handleReqRoundTripRequest(channel::opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr rtt_request);
+				void handleRespRoundTripRequest(channel::opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr rtt_request);
 				
 			public:
-				DirectIOPerformanceLoop(DirectIOClientConnection *_client_connection, DirectIOServerEndpoint *_server_endpoint);
-				~DirectIOPerformanceLoop();
+				DirectIOPerformanceSession(DirectIOClientConnection *_client_connection, DirectIOServerEndpoint *_server_endpoint);
+				~DirectIOPerformanceSession();
 				void setConnectionHandler(DirectIOClientConnectionEventHandler *event_handler);
 				// Initialize instance
 				void init(void *init_data) throw(chaos::CException);
@@ -71,10 +95,12 @@ namespace chaos {
 				// Deinit the implementation
 				void deinit() throw(chaos::CException);
 				
-				channel::opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr rttTest(uint32_t ms_timeout = 1000);
+				int64_t sendRttTest(uint32_t ms_timeout = 1000);
+				
+				RttResultFetcher *getRttResultQueue();
 			};
 		}
 	}
 }
 
-#endif /* defined(__CHAOSFramework__DirectIOPerformanceLoop__) */
+#endif /* defined(__CHAOSFramework__DirectIOPerformanceSession__) */

@@ -1,8 +1,8 @@
-/*	
+/*
  *	MessageChannel.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,24 +27,35 @@
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/thread/MultiKeyObjectWaitSemaphore.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
-
+#include <chaos/common/network/NetworkBroker.h>
 #include <boost/function.hpp>
 //#include <boost/thread/condition.hpp>
 #include <boost/thread.hpp>
 #include <map>
 
 namespace chaos {
-
 	
-    class NetworkBroker;
+	/*! \name Check Request Result Macro
+	 These macros are used to check the result of a syncronous request operation.
+	 */
+	/*! \{ */
+	
+	/*! Check for delay error or application error */
+#define CHECK_TIMEOUT_AND_RESULT_CODE(x,e) \
+if(!x.get()) {\
+e = ErrorCode::EC_TIMEOUT;\
+} else if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {\
+e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);\
+}
+	/*! \} */
     
     typedef void (*MessageHandler)(atomic_int_type, common::data::CDataWrapper*);
     
-
+	
     //typedef boost::function<void(atomic_int_type, common::data::CDataWrapper*)> MessageHandler;
     
-        //! MessageChannel
-    /*! 
+	//! MessageChannel
+    /*!
      This is the basic channel for comunicate with other chaos rpc server. It can be instantiated only by
      NetworkBroker. It can send a message or a request. Message is the async forward data to domain/action hosted on remote rpc server and no answer is waited.
      Request is two pahse message, first a message(the reqeust) is sent to  domain/action on remote rpc server, then an aswer is waited this step can
@@ -54,28 +65,26 @@ namespace chaos {
      */
     class MessageChannel : public DeclareAction {
         friend class NetworkBroker;
-            //! Message broker associated with the channel instance
-        NetworkBroker *broker;
-        
-            //! atomic int for request id
+		
+		//! atomic int for request id
         atomic_int_type channelRequestIDCounter;
         
-            //! remote host where send the message and request
+		//! remote host where send the message and request
         string remoteNodeAddress;
         
-            //! channel id (action domain)
+		//! channel id (action domain)
         string channelID;
         
-            //!multi key semaphore for manage the return of the action and result association to the reqeust id
+		//!multi key semaphore for manage the return of the action and result association to the reqeust id
         MultiKeyObjectWaitSemaphore<atomic_int_type,common::data::CDataWrapper*> sem;
         
-            //! Mutex for managing the maps manipulation
+		//! Mutex for managing the maps manipulation
         boost::shared_mutex mutext_answer_managment;
         
-            //!map to async request and handler
+		//!map to async request and handler
         MessageHandler response_handler;
         
-            //!map to sync request and result
+		//!map to sync request and result
         map<atomic_int_type, common::data::CDataWrapper* > responseIdSyncMap;
         
         /*!
@@ -88,7 +97,7 @@ namespace chaos {
          */
         virtual void deinit() throw(CException);
         
-        /*! 
+        /*!
          \brief called when a response to a request is received, it will manage thesearch of
          hanlder specified for request id request
          */
@@ -100,8 +109,11 @@ namespace chaos {
          \return the unique request id
          */
         atomic_int_type prepareRequestPackAndSend(bool, const char * const, const char * const, common::data::CDataWrapper*);
-
+		
     protected:
+		//! Message broker associated with the channel instance
+        NetworkBroker *broker;
+		
         /*!
          Private constructor called by NetworkBroker
          */
@@ -116,7 +128,7 @@ namespace chaos {
          Private destructor called by NetworkBroker
          */
         virtual ~MessageChannel();
-
+		
         /*!
          Update the address of the channel
          */
@@ -132,14 +144,14 @@ namespace chaos {
         }
         
     public:
-
-        /*! 
+		
+        /*!
          \brief send a message
          \param messagePack the data to send, the pointer is not deallocated and i scopied into the pack
          */
         void sendMessage(const char * const, const char * const, common::data::CDataWrapper* const);
         
-        /*! 
+        /*!
          \brief Set the handler for manage the rpc answer
          \param async_handler the handler to be used
          */
@@ -162,11 +174,11 @@ namespace chaos {
          \param actionName name of the actio to call
          \param requestPack the data to send, the pointer is not deallocated and i scopied into the pack
          \param millisecToWait waith the response for onli these number of millisec then return
-         \return the answer of the request, a null value mean that the wait time is expired 
+         \return the answer of the request, a null value mean that the wait time is expired
          */
         common::data::CDataWrapper* sendRequest(const char * const, const char * const, common::data::CDataWrapper* const, uint32_t millisecToWait=0, bool async = false);
         
-
+		
     };
     
 }

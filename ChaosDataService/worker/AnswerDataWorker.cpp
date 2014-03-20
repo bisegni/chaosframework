@@ -47,11 +47,11 @@ direct_io_client(_client_instance) {
 }
 
 AnswerDataWorker::~AnswerDataWorker() {
+	if(getServiceState() == service_state_machine::InizializableServiceType::IS_INITIATED) {
+		deinit();
+	}
 	//delete the cache instance
 	if(cache_driver_instance) delete(cache_driver_instance);
-	
-	//delete all registered object
-	TemplatedKeyObjectContainer::clearElement();
 }
 
 void AnswerDataWorker::init(void *init_data) throw (chaos::CException) {
@@ -73,10 +73,20 @@ void AnswerDataWorker::deinit() throw (chaos::CException) {
 	//shutdown purger thread
 	ADWLAPP_ << "stop the purge thread";
 	work_on_purge = false;
-	purge_thread_wait_variable. unlock();
+	purge_thread_wait_variable.unlock();
 	purge_thread->join();
 	ADWLAPP_ << "purge thread stoppped";
+
+	//delete all registered object
+	ADWLAPP_ << "Clear all active connections";
+	TemplatedKeyObjectContainer::clearElement();
+	
+	//try to remove all other remainde disconnected connections
+	ADWLAPP_ << "Clear all orfaned answer connection";
+	purge();
+	
 	//deinit client
+	ADWLAPP_ << "Deinitilize the directio client";
 	chaos::utility::InizializableService::deinitImplementation(direct_io_client, direct_io_client->getName(), __PRETTY_FUNCTION__);	
 	
 	//call superclass init method
@@ -202,9 +212,22 @@ void AnswerDataWorker::handleEvent(chaos_direct_io::DirectIOClientConnection *cl
 }
 
 void AnswerDataWorker::freeObject(uint32_t key, ClientConnectionInfo *elementPtr) {
+	//lock the creation of new connection
+    boost::unique_lock<boost::shared_mutex> uniqueLock(mutex_add_new_client);
+
+	if(TemplatedKeyObjectContainer::hasKey(elementPtr->connection->getConnectionHash())) {
+        ClientConnectionInfo *connection_info = TemplatedKeyObjectContainer::accessItem(elementPtr->connection->getConnectionHash());
+		
+        //NEED TO BE FOUND A LOGIC TO INVALIDATE AND DELETE AFTER THIS METHOD IS TERMINATED
+        map_to_purge.insert(make_pair(elementPtr->connection->getConnectionHash(), connection_info));
+        DEBUG_CODE(ADWLDBG_ << "Added to purge queue for connection of the server " << elementPtr->connection->getServerDescription() << " and hash " << elementPtr->connection->getConnectionHash();)
+		
+        TemplatedKeyObjectContainer::deregisterElementKey(elementPtr->connection->getConnectionHash());
+    }
+	
 	//dispose element non managed, thi smethod is called only when
 	//TemplatedKeyObjectContainer::clearElement(); is called (only in destructor
-	disposeClientInfo(elementPtr);
+	//disposeClientInfo(elementPtr);
 }
 
 void AnswerDataWorker::disposeClientInfo(ClientConnectionInfo *client_info) {
@@ -232,8 +255,6 @@ void AnswerDataWorker::purge_thread_worker() {
 		purge();
 		purge_thread_wait_variable.wait(5000);
 	}
-	//befor thread ends, try to remove all other remainde connections
-	purge();
 }
 
 void AnswerDataWorker::purge(uint32_t max_purge_element) {

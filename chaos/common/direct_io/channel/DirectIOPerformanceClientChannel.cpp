@@ -40,21 +40,62 @@ int64_t DirectIOPerformanceClientChannel::sendRoundTripMessage() {
 	std::memset(data_pack, 0, sizeof(DirectIODataPack));
 	
 	//set opcode
-	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::PerformanceChannelOpcodeRoundTrip);
+	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::PerformanceChannelOpcodeReqRoundTrip);
 	opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr header = new opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTrip();
 	
 	boost::posix_time::ptime time = boost::posix_time::microsec_clock::local_time();
 	boost::posix_time::time_duration duration( time.time_of_day() );
 	
-	header->field.start_rt_ts = duration.total_microseconds();
+	header->field.start_rt_ts = TO_LITTE_ENDNS_NUM(uint64_t, duration.total_microseconds());
 	//rt_opcode_header->fields.
 	//set the header
-	//DIRECT_IO_SET_CHANNEL_HEADER(data_pack, put_opcode_header, (uint32_t)PUT_HEADER_LEN)
+	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header, (uint32_t)sizeof(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTrip))
 	
 	//send pack
-	return client_instance->sendPriorityData(this, completeDataPack(data_pack));
+	return client_instance->sendServiceData(this, completeDataPack(data_pack));
 }
 
+int64_t DirectIOPerformanceClientChannel::answerRoundTripMessage(uint64_t received_ts) {
+	DirectIODataPack *data_pack = new DirectIODataPack();
+	std::memset(data_pack, 0, sizeof(DirectIODataPack));
+	
+	//set opcode
+	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::PerformanceChannelOpcodeRespRoundTrip);
+	opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr header = new opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTrip();
+	
+	boost::posix_time::ptime time = boost::posix_time::microsec_clock::local_time();
+	boost::posix_time::time_duration duration( time.time_of_day() );
+	
+	header->field.start_rt_ts = received_ts;
+	header->field.receiver_rt_ts = TO_LITTE_ENDNS_NUM(uint64_t, duration.total_microseconds());
+	//rt_opcode_header->fields.
+	//set the header
+	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header, (uint32_t)sizeof(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTrip))
+	
+	//send pack
+	return client_instance->sendServiceData(this, completeDataPack(data_pack));
+
+}
+
+int64_t DirectIOPerformanceClientChannel::answerRoundTripMessage(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr received_header) {
+	DirectIODataPack *data_pack = new DirectIODataPack();
+	std::memset(data_pack, 0, sizeof(DirectIODataPack));
+	
+	//set opcode
+	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::PerformanceChannelOpcodeRespRoundTrip);
+	
+	boost::posix_time::ptime time = boost::posix_time::microsec_clock::local_time();
+	boost::posix_time::time_duration duration( time.time_of_day() );
+	
+	received_header->field.receiver_rt_ts =TO_LITTE_ENDNS_NUM(uint64_t, duration.total_microseconds());
+	//rt_opcode_header->fields.
+	//set the header
+	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, received_header, (uint32_t)sizeof(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTrip))
+	
+	//send pack
+	return client_instance->sendServiceData(this, completeDataPack(data_pack));
+	
+}
 void DirectIOPerformanceClientChannel::freeSentData(void *data,  DisposeSentMemoryInfo& dispose_memory_info) {
 	//free all received data
 	free(data);

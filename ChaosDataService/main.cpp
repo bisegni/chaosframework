@@ -25,8 +25,16 @@
 
 using namespace chaos::data_service;
 
-#define OPT_CACHE_SERVER_LIST	"cache_servers"
-#define OPT_CACHE_DRIVER		"cache_driver"
+#define OPT_CACHE_SERVER_LIST		"cache_servers"
+#define OPT_CACHE_DRIVER			"cache_driver"
+#define OPT_CACHE_WORKER_NUM		"cache_worker_num"
+#define OPT_CACHE_WORKER_THREAD		"cache_worker_thread"
+
+#define OPT_ANSWER_WORKER_NUM		"answer_worker_num"
+#define OPT_ANSWER_WORKER_THREAD	"answer_worker_thread"
+
+#define DEVICE_WORKER_NUMBER 10
+#define ANSWER_WORKER_NUMBER 2
 
 int main(int argc, char * argv[]) {
     try {
@@ -41,7 +49,25 @@ int main(int argc, char * argv[]) {
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_CACHE_SERVER_LIST,
 																												"The list of the cache server",
 																												 &ChaosDataService::getInstance()->settings.startup_chache_servers);
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_CACHE_WORKER_NUM,
+																									 "The number of the cache worker",
+																									 DEVICE_WORKER_NUMBER,
+																									 &ChaosDataService::getInstance()->settings.caching_worker_num);
 		
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_CACHE_WORKER_THREAD,
+																									"The thread number of each cache worker",
+																									1,
+																									 &ChaosDataService::getInstance()->settings.caching_worker_setting.job_thread_number);
+		
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_ANSWER_WORKER_NUM,
+																									 "The number of the answer worker",
+																									 ANSWER_WORKER_NUMBER,
+																									 &ChaosDataService::getInstance()->settings.answer_worker_num);
+		
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_ANSWER_WORKER_THREAD,
+																									 "The thread number of each answer worker",
+																									 1,
+																									 &ChaosDataService::getInstance()->settings.answer_worker_setting.job_thread_number);
         ChaosDataService::getInstance()->init(argc, argv);
 		
 		if(!ChaosDataService::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CACHE_SERVER_LIST)) {

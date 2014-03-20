@@ -30,10 +30,10 @@
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/action/EventAction.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
-#include <chaos/common/utility/SetupStateManager.h>
 #include <chaos/common/event/channel/EventChannel.h>
 #include <chaos/common/event/evt_desc/EventDescriptor.h>
 #include <chaos/common/network/NetworkForwardInfo.h>
+#include <chaos/common/network/PerformanceManagment.h>
 #include <chaos/common/utility/StartableService.h>
 
 #include <chaos/common/direct_io/DirectIO.h>
@@ -51,9 +51,10 @@ namespace chaos {
      Constants that identify the type of the channel to create
      */
     typedef enum {
-        RAW = 0, /*!< Identify a raw channel used to send data pack to remote server */
-        MDS,  /*!< Identify a mds specific channel used to send data pack to the metadataserver */
-        DEVICE  /*!< Identify a device specific channel used to send data pack to the target control unit */
+        RAW = 0,		/*!< Identify a raw channel used to send data pack to remote server */
+        MDS,			/*!< Identify a mds specific channel used to send data pack to the metadataserver */
+        DEVICE,			/*!< Identify a device specific channel used to send data pack to the target control unit */
+		PERFORMANCE		/*!< Identify a performance specific channel used to send and receive various performance information and test between two chaos node using directio system */
     } EntityType;
 
     class MessageChannel;
@@ -63,6 +64,12 @@ namespace chaos {
     class AbstractCommandDispatcher;
     class AbstractEventDispatcher;
     
+	namespace common {
+		namespace message {
+			class PerformanceNodeChannel;
+		}
+	}
+	
     namespace event {
         namespace channel {
             class AlertEventChannel;
@@ -79,10 +86,13 @@ namespace chaos {
      chaos rpc client and server abstract class and to the message dispatcher abstract class. 
      It abstract the !CHAOS rule for sending message and wait for answer and other facility.
      */
-    class NetworkBroker: private SetupStateManager, public utility::StartableService {
+    class NetworkBroker: public utility::StartableService {
 		//!Event Client for event forwarding
 		std::string directIOClientImpl;
         
+		//! performance session managment
+		chaos::common::network::PerformanceManagment performance_session_managment;
+		
 		//!Direct IO server interface
 		common::direct_io::DirectIOServer *directIOServer;
 		//! Direct IO dispatcher
@@ -128,7 +138,7 @@ namespace chaos {
          \param nodeNetworkAddress node address info
          \param type channel type to create
          */
-        MessageChannel *getNewMessageChannelForRemoteHost(CNodeNetworkAddress *nodeNetworkAddress, EntityType type);
+        MessageChannel *getNewMessageChannelForRemoteHost(CNetworkAddress *nodeNetworkAddress, EntityType type);
         
     public:
         
@@ -236,7 +246,12 @@ namespace chaos {
          \param message the message coded into key/value semantics
          \param onThisThread if true the message is forwarded in the same thread of the caller
          */
-        bool submitMessage(string& serverAndPort, chaos_data::CDataWrapper *message, NetworkErrorHandler handler = NULL, const char * senderIdentifier = NULL, int64_t senderTag = (int64_t)0, bool onThisThread=false);
+        bool submitMessage(string& serverAndPort,
+						   chaos_data::CDataWrapper *message,
+						   NetworkErrorHandler handler = NULL,
+						   const char * senderIdentifier = NULL,
+						   int64_t senderTag = (int64_t)0,
+						   bool onThisThread=false);
         
             //!message request
         /*!
@@ -245,7 +260,12 @@ namespace chaos {
          \param request the request coded into key/value semantics
          \param onThisThread if true the message is forwarded in the same thread of the caller
          */
-        bool submiteRequest(string& serverAndPort,  chaos_data::CDataWrapper *request, NetworkErrorHandler handler = NULL, const char * senderIdentifier = NULL, int64_t senderTag = (int64_t)0, bool onThisThread=false);
+        bool submiteRequest(string& serverAndPort,
+							chaos_data::CDataWrapper *request,
+							NetworkErrorHandler handler = NULL,
+							const char * senderIdentifier = NULL,
+							int64_t senderTag = (int64_t)0,
+							bool onThisThread=false);
         
             //!message submition
         /*!
@@ -266,6 +286,13 @@ namespace chaos {
          */
         DeviceMessageChannel *getDeviceMessageChannelFromAddress(CDeviceNetworkAddress  *deviceNetworkAddress);
     
+		//!performance channel creation
+        /*!
+         Performe the creation of performance channel thowards a network node
+         \param note_network_address the address of the chaos node(network broker)
+         */
+		chaos::common::message::PerformanceNodeChannel *getPerformanceChannelFromAddress(CNetworkAddress  *node_network_address);
+		
         //!Rpc Channel deallocation
         /*!
          Perform the message channel deallocation
@@ -299,7 +326,6 @@ namespace chaos {
 		 \return A new instance of the direct io client
          */
         chaos_directio::DirectIOClient *getDirectIOClientInstance();
-
-    };
+	};
 }
 #endif
