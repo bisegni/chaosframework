@@ -70,14 +70,16 @@ void DataConsumer::init(void *init_data) throw (chaos::CException) {
 	chaos::data_service::worker::DeviceSharedDataWorker *tmp = NULL;
 	for(int idx = 0; idx < settings->caching_worker_num; idx++) {
 		device_data_worker[idx] = (tmp = new chaos::data_service::worker::DeviceSharedDataWorker(cache_impl_name));
+		tmp->init(&settings->caching_worker_setting);
 		DSLAPP_ << "Configure server on device worker " << idx;
 		for(CacheServerListIterator iter = settings->startup_chache_servers.begin();
 			iter != settings->startup_chache_servers.end();
 			iter++) {
-			tmp->init(&settings->caching_worker_setting);
-			tmp->start();
 			tmp->addServer(*iter);
 		}
+		tmp->updateServerConfiguration();
+		tmp->start();
+
 	}
 	
 	//add answer worker
@@ -85,14 +87,16 @@ void DataConsumer::init(void *init_data) throw (chaos::CException) {
 	for(int idx = 0; idx < settings->answer_worker_num; idx++) {
 		//allocate a new worker with his personal client instance
 		//get the cache driver instance
-		cache_system::CacheDriver *cache_driver_instance = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name.c_str());
+		//cache_system::CacheDriver *cache_driver_instance = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name.c_str());
+		
+		tmp_data_worker = new chaos::data_service::worker::AnswerDataWorker(network_broker->getDirectIOClientInstance(), cache_impl_name);
+		tmp_data_worker->init(&settings->answer_worker_setting);
 		for(CacheServerListIterator iter = settings->startup_chache_servers.begin();
 			iter != settings->startup_chache_servers.end();
 			iter++) {
-			cache_driver_instance->addServer(*iter);
+			tmp_data_worker->addServer(*iter);
 		}
-		tmp_data_worker = new chaos::data_service::worker::AnswerDataWorker(network_broker->getDirectIOClientInstance(), cache_driver_instance);
-		tmp_data_worker->init(&settings->answer_worker_setting);
+		tmp_data_worker->updateServerConfiguration();
 		tmp_data_worker->start();
 		answer_worker_list.addSlot(tmp_data_worker);
 	}

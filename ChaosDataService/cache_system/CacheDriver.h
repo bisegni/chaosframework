@@ -50,6 +50,8 @@ namespace chaos {
                 virtual int addServer(std::string server_desc) = 0;
                 
                 virtual int removeServer(std::string server_desc) = 0;
+				
+				virtual int updateConfig() = 0;
             };
         }
     }

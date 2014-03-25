@@ -43,15 +43,16 @@ namespace chaos{
 			
 			//! worker for live device sharing
 			class DeviceSharedDataWorker : public DataWorker {
-				cache_system::CacheDriver *cache_driver_instance;
+				std::string cache_impl_name;
 			protected:
-				void executeJob(WorkerJobPtr job_info);
-				
+				void executeJob(WorkerJobPtr job_info, void* cookie);
 			public:
-				DeviceSharedDataWorker(std::string cache_impl_name);
+				DeviceSharedDataWorker(std::string _cache_impl_name);
 				~DeviceSharedDataWorker();
-				
+				void init(void *init_data) throw (chaos::CException);
+				void deinit() throw (chaos::CException);
 				void addServer(std::string server_description);
+				void updateServerConfiguration();
 			};
 			
 		}

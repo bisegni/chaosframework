@@ -20,4 +20,5 @@
 #ifndef CHAOSFramework_cache_sytem_h
 #define CHAOSFramework_cache_sytem_h
 #include "MemcachedCacheDriver.h"
+#include "CouchbaseCacheDriver.h"
 #endif

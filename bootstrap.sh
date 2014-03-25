@@ -24,6 +24,7 @@ fi
 BOOST_NUMBER_VERSION=$(echo $BOOST_VERSION_IN_PATH |sed "s/[^0-9]//g" )
 LMEM_VERSION=1.0.16
 ZMQ_VERSION=zeromq4-x
+COUCHBASE_VERSION=2.2.0
 
 if [ -n "$1" ]; then
     PREFIX=$1/usr/local
@@ -226,7 +227,7 @@ if [ ! -d "$PREFIX/include/event2" ]; then
 	echo "LIBEVENT Setupped"
 fi
 
-if [ ! -f "$PREFIX/include/zmq.h" ]; then
+if [ ! -f "$PREFIX/include/libuv" ]; then
 	echo "Setup LIBUV"
 	if [ ! -f "$BASE_EXTERNAL/libuv" ]; then
 		echo "Installing LibEvent"
@@ -244,6 +245,19 @@ make install
 echo "LIBUV Setupped"
 fi
 
+echo "Setup Couchbase sdk"
+if [ ! -f "$PREFIX/include/libcouchbase/couchbase.h" ]; then
+if [ ! -f "$BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION" ]; then
+	echo "Download couchabse source"
+	wget --no-check-certificate -O $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION.tar.gz http://packages.couchbase.com/clients/c/libcouchbase-$COUCHBASE_VERSION.tar.gz
+	tar zxvf $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION.tar.gz -C $BASE_EXTERNAL
+fi
+cd $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION
+./configure --prefix=$PREFIX --disable-couchbasemock --disable-plugins
+make
+make install
+echo "ZMQ Setupped"
+fi
 
 
 echo "Setup LIBMEMCACHED"

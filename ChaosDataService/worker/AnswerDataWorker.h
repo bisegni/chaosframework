@@ -85,7 +85,6 @@ namespace chaos{
 				
 				boost::mutex mutex_map_to_purge;
 				std::map<uint32_t, ClientConnectionInfo* > map_to_purge;
-				cache_system::CacheDriver *cache_driver_instance;
 			protected:
 				inline bool increaseAccessNumber(ClientConnectionInfo *conn_info);
                 inline void decreaseAccessNumber(ClientConnectionInfo *conn_info);
@@ -98,11 +97,13 @@ namespace chaos{
 				ClientConnectionInfo *getClientChannel(AnswerDataWorkerJob *answer_job_info);
 				void purge_thread_worker();
 			public:
-				void executeJob(WorkerJobPtr job_info);
-				AnswerDataWorker(chaos_direct_io::DirectIOClient *_client_instance, cache_system::CacheDriver *_cache_driver_instance);
+				void executeJob(WorkerJobPtr job_info, void* cookie);
+				AnswerDataWorker(chaos_direct_io::DirectIOClient *_client_instance, std::string _cache_impl_name);
 				~AnswerDataWorker();
 				void init(void *init_data) throw (chaos::CException);
 				void deinit() throw (chaos::CException);
+				void addServer(std::string server_description);
+				void updateServerConfiguration();
 				//! purge unused connection
 				/*!
 				 thismethod is to be called some times in time for purge

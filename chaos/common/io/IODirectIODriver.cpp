@@ -171,7 +171,6 @@ namespace chaos{
 		IODirectIODriverClientChannels	*next_client = getNextClientChannel();
 		serialization->disposeOnDelete = !next_client;
 		if(next_client) {
-			DEBUG_CODE(IODirectIODriver_DLDBG_ << "send to " << next_client->connection->getServerDescription());
 			//free the packet
 			next_client->device_client_channel->storeAndCacheDataOutputChannel((void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen());
 			return;
@@ -189,7 +188,6 @@ namespace chaos{
 		char* result = NULL;
 		IODirectIODriverClientChannels	*next_client = getNextClientChannel();
 		if(!next_client) return NULL;
-		DEBUG_CODE(IODirectIODriver_DLDBG_ << "read from " << next_client->connection->getServerDescription());
 		next_client->device_client_channel->requestLastOutputData();
 		wait_get_answer.wait(1000);
 		if(data_cache.data_ptr &&

@@ -405,6 +405,7 @@
 		32D6C89A1815294700E9689B /* DirectIOForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C8991815294700E9689B /* DirectIOForwarder.h */; };
 		32DB1188166267FB0036D1B9 /* DSDoubleHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DB1187166267FB0036D1B9 /* DSDoubleHandler.h */; };
 		32DBF9CE18E06B240095B289 /* VFSDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DBF9CC18E06B240095B289 /* VFSDriver.cpp */; };
+		32DBF9D118E1845E0095B289 /* CouchbaseCacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */; };
 		32DD884F15E2663B000AF740 /* DefaultEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DD884D15E2663B000AF740 /* DefaultEventDispatcher.h */; };
 		32DD885315E2681F000AF740 /* EventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DD885115E2681F000AF740 /* EventHandler.cpp */; };
 		32DD885415E2681F000AF740 /* EventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DD885215E2681F000AF740 /* EventHandler.h */; };
@@ -891,6 +892,8 @@
 		32DB1187166267FB0036D1B9 /* DSDoubleHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSDoubleHandler.h; sourceTree = "<group>"; };
 		32DBF9CC18E06B240095B289 /* VFSDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSDriver.cpp; sourceTree = "<group>"; };
 		32DBF9CD18E06B240095B289 /* VFSDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSDriver.h; sourceTree = "<group>"; };
+		32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CouchbaseCacheDriver.cpp; sourceTree = "<group>"; };
+		32DBF9D018E1845E0095B289 /* CouchbaseCacheDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CouchbaseCacheDriver.h; sourceTree = "<group>"; };
 		32DD884D15E2663B000AF740 /* DefaultEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultEventDispatcher.h; sourceTree = "<group>"; };
 		32DD885115E2681F000AF740 /* EventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventHandler.cpp; sourceTree = "<group>"; };
 		32DD885215E2681F000AF740 /* EventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventHandler.h; sourceTree = "<group>"; };
@@ -1668,6 +1671,8 @@
 		3272152118B00650005AC8FD /* cache_system */ = {
 			isa = PBXGroup;
 			children = (
+				32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */,
+				32DBF9D018E1845E0095B289 /* CouchbaseCacheDriver.h */,
 				32B159DC18B4D4200096B58B /* MemcachedCacheDriver.cpp */,
 				32B159DD18B4D4210096B58B /* MemcachedCacheDriver.h */,
 				3272152218B006BC005AC8FD /* CacheDriver.cpp */,
@@ -2509,6 +2514,7 @@
 			files = (
 				3272152418B006BC005AC8FD /* CacheDriver.cpp in Sources */,
 				32A10C0318C87806006EA04C /* DeviceSharedDataWorker.cpp in Sources */,
+				32DBF9D118E1845E0095B289 /* CouchbaseCacheDriver.cpp in Sources */,
 				323236DA164573F50052CE06 /* main.cpp in Sources */,
 				32B159DA18B4B9F90096B58B /* DataWorker.cpp in Sources */,
 				32DBF9CE18E06B240095B289 /* VFSDriver.cpp in Sources */,
@@ -2850,6 +2856,7 @@
 					"-lboost_log",
 					"-lchaos_common",
 					"-lboost_log_setup",
+					"-lcouchbase",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -2900,6 +2907,7 @@
 					"-lboost_log",
 					"-lchaos_common",
 					"-lboost_log_setup",
+					"-lcouchbase",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

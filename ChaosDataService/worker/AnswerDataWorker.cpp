@@ -40,9 +40,9 @@ typedef boost::unique_lock<boost::shared_mutex>	AnswerEngineWriteLock;
 typedef boost::shared_lock<boost::shared_mutex> AnswerEngineReadLock;
 
 
-AnswerDataWorker::AnswerDataWorker(chaos_direct_io::DirectIOClient *_client_instance,  cache_system::CacheDriver *_cache_driver_instance):
+AnswerDataWorker::AnswerDataWorker(chaos_direct_io::DirectIOClient *_client_instance, std::string _cache_impl_name):
 work_on_purge(false),
-cache_driver_instance(_cache_driver_instance),
+cache_impl_name(_cache_impl_name),
 direct_io_client(_client_instance) {
 }
 
@@ -50,13 +50,16 @@ AnswerDataWorker::~AnswerDataWorker() {
 	if(getServiceState() == service_state_machine::InizializableServiceType::IS_INITIATED) {
 		deinit();
 	}
-	//delete the cache instance
-	if(cache_driver_instance) delete(cache_driver_instance);
 }
 
 void AnswerDataWorker::init(void *init_data) throw (chaos::CException) {
 	//call superclass init method
 	DataWorker::init(init_data);
+	
+	//allocate cached driver for every thread
+	for(int idx = 0; idx < settings.job_thread_number; idx++) {
+		thread_cookie[idx] = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name.c_str());
+	}
 
 	//check client
 	if(!direct_io_client) throw chaos::CException(-1, "DirectIO client not specified", __PRETTY_FUNCTION__);
@@ -71,6 +74,11 @@ void AnswerDataWorker::init(void *init_data) throw (chaos::CException) {
 
 void AnswerDataWorker::deinit() throw (chaos::CException) {
 	//shutdown purger thread
+	for(int idx = 0; idx < settings.job_thread_number; idx++) {
+		cache_system::CacheDriver *tmp_ptr = reinterpret_cast<cache_system::CacheDriver*>(thread_cookie[idx]);
+		delete(tmp_ptr);
+	}
+
 	ADWLAPP_ << "stop the purge thread";
 	work_on_purge = false;
 	purge_thread_wait_variable.unlock();
@@ -171,8 +179,10 @@ ClientConnectionInfo *AnswerDataWorker::getClientChannel(AnswerDataWorkerJob *an
 	return conn_info;
 }
 
-void AnswerDataWorker::executeJob(WorkerJobPtr job_info) {
+void AnswerDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 	AnswerDataWorkerJob *dw_job_ptr = reinterpret_cast<AnswerDataWorkerJob*>(job_info);
+	cache_system::CacheDriver *cache_driver_instance = reinterpret_cast<cache_system::CacheDriver*>(cookie);
+
 	ClientConnectionInfo *connection_info = getClientChannel(dw_job_ptr);
 	if(connection_info) {
 		//send data to requester node
@@ -277,5 +287,20 @@ void AnswerDataWorker::purge(uint32_t max_purge_element) {
 		if(iter->second) disposeClientInfo(iter->second);
 		//erase after increment the iterator
 		map_to_purge.erase(iter++);
+	}
+}
+
+void AnswerDataWorker::addServer(std::string server_description) {
+	for(int idx = 0; idx < settings.job_thread_number; idx++) {
+		cache_system::CacheDriver *tmp_ptr = reinterpret_cast<cache_system::CacheDriver*>(thread_cookie[idx]);
+		if(tmp_ptr) tmp_ptr->addServer(server_description);
+	}
+	
+}
+
+void AnswerDataWorker::updateServerConfiguration() {
+	for(int idx = 0; idx < settings.job_thread_number; idx++) {
+		cache_system::CacheDriver *tmp_ptr = reinterpret_cast<cache_system::CacheDriver*>(thread_cookie[idx]);
+		if(tmp_ptr) tmp_ptr->updateConfig();
 	}
 }

@@ -8,7 +8,7 @@
 
 #include <cstring>
 #include "DataWorker.h"
-
+#include <boost/thread/lock_options.hpp>
 using namespace chaos::data_service::worker;
 
 #define DataWorker_LOG_HEAD "[DataWorker] - "
@@ -25,21 +25,21 @@ DataWorker::~DataWorker() {
 	
 }
 
-WorkerJobPtr DataWorker::getNextOrWait() {
+WorkerJobPtr DataWorker::getNextOrWait(boost::unique_lock<boost::mutex>& lock) {
 	WorkerJobPtr new_job = NULL;
 	while(!job_queue.pop(new_job) && work) {
-		boost::unique_lock<boost::mutex> lock(job_mutex);
 		job_condition.wait(lock);
 	}
 	return new_job;
 }
 
-void DataWorker::consumeJob() {
+void DataWorker::consumeJob(void *cookie) {
 	WorkerJobPtr thread_job = NULL;
+	boost::unique_lock<boost::mutex> lock(mutex_job);
 	DCLAPP_<< "Entering in working cicle";
 	while(work) {
-		thread_job = getNextOrWait();
-		if(thread_job) executeJob(thread_job);
+		thread_job = getNextOrWait(lock);
+		if(thread_job) executeJob(thread_job, cookie);
 	}
 	DCLAPP_<< "Working cicle temrinated";
 }
@@ -52,6 +52,7 @@ void DataWorker::init(void *init_data) throw (chaos::CException) {
 		settings.job_thread_number = DEFAULT_JOB_THREAD;
 	}
 	
+	thread_cookie = (void**)malloc(sizeof(void*)*settings.job_thread_number);
 	DCLAPP_ << " Using " << settings.job_thread_number << " thread for consuming job";
 }
 
@@ -59,7 +60,7 @@ void DataWorker::start() throw (chaos::CException) {
 	DCLAPP_ << " Starting " << settings.job_thread_number << " thread for consuming job";
 	work = true;
 	for(int idx = 0; idx <settings.job_thread_number; idx++) {
-		job_thread_group.create_thread(boost::bind(&DataWorker::consumeJob, this));
+		job_thread_group.create_thread(boost::bind(&DataWorker::consumeJob, this, thread_cookie[idx]));
 	}
 }
 
@@ -81,6 +82,8 @@ void DataWorker::deinit() throw (chaos::CException) {
 		DCLAPP_ << "delete worker job";
 		delete(thread_job);
 	}
+	
+	if(thread_cookie) free(thread_cookie);
 	DCLAPP_ << "job queue is empty";
 }
 

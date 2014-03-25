@@ -33,7 +33,7 @@ using namespace chaos::data_service;
 #define OPT_ANSWER_WORKER_NUM		"answer_worker_num"
 #define OPT_ANSWER_WORKER_THREAD	"answer_worker_thread"
 
-#define DEVICE_WORKER_NUMBER 10
+#define DEVICE_WORKER_NUMBER 2
 #define ANSWER_WORKER_NUMBER 2
 
 int main(int argc, char * argv[]) {

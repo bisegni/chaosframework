@@ -42,19 +42,21 @@ namespace chaos{
 				boost::thread_group job_thread_group;
 				
 				//muthex for condition variable
-				boost::mutex job_mutex;
+				boost::mutex mutex_job;
 				
 				//condition for the threads
 				boost::condition_variable job_condition;
 				
 				bool work;
 			protected:
+				void * * thread_cookie;
+				
 				DataWorkerSetting settings;
 				
-				void consumeJob();
-				WorkerJobPtr getNextOrWait();
+				void consumeJob(void *cookie);
+				WorkerJobPtr getNextOrWait(boost::unique_lock<boost::mutex>& lock);
 				
-				virtual void executeJob(WorkerJobPtr job_info) = 0;
+				virtual void executeJob(WorkerJobPtr job_info, void* cookie) = 0;
 			public:
 				DataWorker();
 				virtual ~DataWorker();

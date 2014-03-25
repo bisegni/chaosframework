@@ -11,17 +11,34 @@
 
 using namespace chaos::data_service::worker;
 
-DeviceSharedDataWorker::DeviceSharedDataWorker(std::string cache_impl_name):cache_driver_instance(NULL) {
-	cache_driver_instance = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name.c_str());
+DeviceSharedDataWorker::DeviceSharedDataWorker(std::string _cache_impl_name):cache_impl_name(_cache_impl_name) {
 	
 }
 
 DeviceSharedDataWorker::~DeviceSharedDataWorker() {
-	if(cache_driver_instance) delete(cache_driver_instance);
 }
 
-void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info) {
+void DeviceSharedDataWorker::init(void *init_data) throw (chaos::CException) {
+	DataWorker::init(init_data);
+	for(int idx = 0; idx < settings.job_thread_number; idx++) {
+		thread_cookie[idx] = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name.c_str());
+	}
+}
+
+void DeviceSharedDataWorker::deinit() throw (chaos::CException) {
+	for(int idx = 0; idx < settings.job_thread_number; idx++) {
+		cache_system::CacheDriver *tmp_ptr = reinterpret_cast<cache_system::CacheDriver*>(thread_cookie[idx]);
+		delete(tmp_ptr);
+	}
+	std::memset(thread_cookie, 0, sizeof(void*)*settings.job_thread_number);
+	DataWorker::deinit();
+}
+
+void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 	DeviceSharedWorkerJob *job_ptr = reinterpret_cast<DeviceSharedWorkerJob*>(job_info);
+	
+	cache_system::CacheDriver *cache_driver_instance = reinterpret_cast<cache_system::CacheDriver*>(cookie);
+	
 	cache_driver_instance->putData(GET_PUT_OPCODE_KEY_PTR(job_ptr->request_header),
 								   job_ptr->request_header->key_len,
 								   job_ptr->data_pack,
@@ -32,5 +49,16 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info) {
 }
 
 void DeviceSharedDataWorker::addServer(std::string server_description) {
-	cache_driver_instance->addServer(server_description);
+	for(int idx = 0; idx < settings.job_thread_number; idx++) {
+		cache_system::CacheDriver *tmp_ptr = reinterpret_cast<cache_system::CacheDriver*>(thread_cookie[idx]);
+		if(tmp_ptr) tmp_ptr->addServer(server_description);
+	}
+
+}
+
+void DeviceSharedDataWorker::updateServerConfiguration() {
+	for(int idx = 0; idx < settings.job_thread_number; idx++) {
+		cache_system::CacheDriver *tmp_ptr = reinterpret_cast<cache_system::CacheDriver*>(thread_cookie[idx]);
+		if(tmp_ptr) tmp_ptr->updateConfig();
+	}
 }

@@ -1,5 +1,5 @@
 /*
- *	MemcachedCacheDriver.h
+ *	CouchbaseCacheDriver.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,36 +17,73 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef __CHAOSFramework__MemcachedCacheDriver__
-#define __CHAOSFramework__MemcachedCacheDriver__
+#ifndef __CHAOSFramework__CouchbaseCacheDriver__
+#define __CHAOSFramework__CouchbaseCacheDriver__
 
 #include "CacheDriver.h"
 
+#include <vector>
 #include <string>
-#include <libmemcached/memcached.hpp>
+
+#include <libcouchbase/couchbase.h>
+
 #include <chaos/common/utility/ObjectFactoryRegister.h>
+
+#include <boost/lockfree/queue.hpp>
+#include <boost/thread.hpp>
 
 namespace chaos {
     namespace data_service {
         namespace cache_system {
             
+			
+			struct ResultValue {
+				void		*value;
+				uint32_t	value_len;
+				lcb_error_t err;
+			};
+			
 			//! Abstraction of the chache driver
             /*!
              This class represent the abstraction of the
              work to do on cache. Cache system is to be intended as global
              to all CacheDriver instance.
              */
-			REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(MemcachedCacheDriver, CacheDriver) {
-				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(MemcachedCacheDriver)
-
-				memcached_st *memcache_client;
+			REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(CouchbaseCacheDriver, CacheDriver) {
+				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(CouchbaseCacheDriver)
+				lcb_t					instance;
+				struct lcb_create_st	create_options;
+				lcb_error_t				last_err;
+				std::string				last_err_str;
 				
-				MemcachedCacheDriver(std::string alias);
+				std::string all_server_str;
+				boost::shared_mutex	mutex_server;
+				std::vector<std::string> all_server_to_use;
+				typedef std::vector<std::string>::iterator ServerIterator;
 
 				
-				bool validateString(std::string& server_description, std::vector<std::string>& tokens);
+				CouchbaseCacheDriver(std::string alias);
+
+				
+				bool validateString(std::string& server_description);
+				
+				static void errorCallback(lcb_t instance,
+										   lcb_error_t err,
+										   const char *errinfo);
+				static void getCallback(lcb_t instance,
+										 const void *cookie,
+										 lcb_error_t error,
+										 const lcb_get_resp_t *resp);
+				static void setCallback(lcb_t instance,
+									   const void *cookie,
+									   lcb_storage_t operation,
+									   lcb_error_t error,
+									   const lcb_store_resp_t *resp);
+				
+				boost::lockfree::queue<ResultValue*, boost::lockfree::fixed_sized<false> > result_queue;
+				void addAnswer(ResultValue *got_value);
             public:
-				~MemcachedCacheDriver();
+				~CouchbaseCacheDriver();
 				
                 int putData(void *element_key, uint8_t element_key_len, void *value, uint32_t value_len);
                 
@@ -63,4 +100,4 @@ namespace chaos {
 }
 
 
-#endif /* defined(__CHAOSFramework__MemcachedCacheDriver__) */
+#endif /* defined(__CHAOSFramework__CouchbaseCacheDriver__) */
