@@ -227,7 +227,7 @@ if [ ! -d "$PREFIX/include/event2" ]; then
 	echo "LIBEVENT Setupped"
 fi
 
-if [ ! -f "$PREFIX/include/libuv" ]; then
+if [ ! -f "$PREFIX/include/uv.h" ]; then
 	echo "Setup LIBUV"
 	if [ ! -f "$BASE_EXTERNAL/libuv" ]; then
 		echo "Installing LibEvent"
@@ -247,7 +247,7 @@ fi
 
 echo "Setup Couchbase sdk"
 if [ ! -f "$PREFIX/include/libcouchbase/couchbase.h" ]; then
-if [ ! -f "$BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION" ]; then
+if [ ! -f "$BASE_EXTERNAL/mongo-cxx-driver" ]; then
 	echo "Download couchabse source"
 	wget --no-check-certificate -O $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION.tar.gz http://packages.couchbase.com/clients/c/libcouchbase-$COUCHBASE_VERSION.tar.gz
 	tar zxvf $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION.tar.gz -C $BASE_EXTERNAL
@@ -259,6 +259,22 @@ make install
 echo "ZMQ Setupped"
 fi
 
+echo "Setup MongoDB client"
+if [ ! -f "$PREFIX/include/mongo/client/dbclient.h" ]; then
+	if [ ! -f "$BASE_EXTERNAL/mongo" ]; then
+		echo "Download mongodb client"
+		git clone https://github.com/mongodb/mongo-cxx-driver.git $BASE_EXTERNAL/mongo
+		cd $BASE_EXTERNAL/mongo
+	else
+		cd $BASE_EXTERNAL/mongo
+		git pull
+	fi
+
+scons --prefix=$PREFIX --sharedclient \--extrapath=$PREFIX install-mongoclient
+echo "Mongodb setupped"
+fi
+
+https://github.com/mongodb/mongo-cxx-driver.git
 
 echo "Setup LIBMEMCACHED"
 if [ ! -d "$PREFIX/include/libmemcached" ]; then

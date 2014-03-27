@@ -1,5 +1,5 @@
 /*
- *	VFSDriver.cpp
+ *	IDXDriver.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,21 +18,4 @@
  *    	limitations under the License.
  */
 
-#include "VFSDriver.h"
-
-using namespace chaos::data_service::storage_system;
-
-VFSDriver::VFSDriver(std::string alias):NamedService(alias) {
-	
-}
-
-
-VFSDriver::~VFSDriver() {
-	
-}
-
-int VFSDriver::_setFlag(DataBlock *data_block, unsigned int flags) {
-	if(!data_block) return -1;
-	data_block->flags = flags;
-	return 0;
-}
+#include "IDXDriver.h"
