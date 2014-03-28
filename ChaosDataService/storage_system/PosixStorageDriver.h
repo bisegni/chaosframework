@@ -13,9 +13,24 @@
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
+
 namespace chaos {
 	namespace data_service {
 		namespace storage_system {
+			
+			//forward declaration
+			class PosixStorageDriver;
+			
+			//! posix specialization for the datablock
+			struct PosixDataBlock : public chaos_vfs::DataBlock {
+				friend class PosixStorageDriver;
+				~PosixDataBlock();
+			private:
+				PosixDataBlock(boost::filesystem::fstream *_fstream);
+				boost::filesystem::fstream *fstream;
+			};
 			
 			//! storage driver setting
 			struct PosixStorageDriverSetting :public StorageDriverSetting {
@@ -46,19 +61,19 @@ namespace chaos {
 				void deinit() throw (chaos::CException);
 				
 				// open a block of a determinated type with
-				int openBlock(chaos_vfs::BlockType type, std::string path, unsigned int flag, chaos_vfs::DataBlock **data_block);
+				int openBlock(chaos_vfs::block_type::BlockType type, std::string path, unsigned int flags, chaos_vfs::DataBlock **data_block);
 				
 				//! close the block of data
-				int closeBlock(chaos_vfs::BlockType *data_block);
+				int closeBlock(chaos_vfs::block_type::BlockType *data_block);
 
 				//! return all block of data found on the path, acocrding to the type
-				int listBlock(chaos_vfs::BlockType type, std::string path, boost::ptr_vector<chaos_vfs::DataBlock>& bloks_found);
+				int listBlock(chaos_vfs::block_type::BlockType type, std::string path, boost::ptr_vector<chaos_vfs::DataBlock>& bloks_found);
 				
 				//! write an amount of data into a DataBlock
-                int write(chaos_vfs::BlockType *data_block, void * data, uint32_t data_len);
+                int write(chaos_vfs::block_type::BlockType *data_block, void * data, uint32_t data_len);
 				
 				//! read an amount of data from a DataBlock
-                int read(chaos_vfs::BlockType *data_block, uint64_t offset, void * * data, uint32_t *data_len);
+                int read(chaos_vfs::block_type::BlockType *data_block, uint64_t offset, void * * data, uint32_t *data_len);
 			};
 			
 		}

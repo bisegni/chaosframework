@@ -36,25 +36,29 @@ namespace chaos {
 			 define the different type of block of data
 			 withing !CHAOS VFS
 			 */
+			namespace block_type {
 			typedef enum BlockType {
 				BlockTypeStage,
 				BlockTypeData
 			} BlockType;
+			}
 			
 			/*!
 			 define the different type of block of data
 			 withing !CHAOS VFS
 			 */
+			namespace block_flag {
 			typedef enum BlockFlag {
 				BlockFlagNone		= 0,
 				BlockFlagWriteble	= 1,
 				BlockFlagReadeable	= 2,
 			} BlockFlag;
+			}
 			
 			//! define a block of data into !CHAOS VFS
 			struct DataBlock {
 				//! the type of the block
-				BlockType	type;
+				block_type::BlockType	type;
 				
 				//! the flag for this bloc
 				unsigned int flags;

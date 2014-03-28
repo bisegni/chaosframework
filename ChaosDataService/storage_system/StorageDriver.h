@@ -42,8 +42,6 @@ namespace chaos {
 #define SD_STAGE_AREA_ALIAS "stage"
 #define SD_DATA_AREA_ALIAS "data"
 			
-#define SD_SET_FLAG(d,f) d->flags = f;
-			
 			//! Abstraction of the vfs driver
 			/*!
 			 This class represent the abstraction of the
@@ -85,22 +83,22 @@ namespace chaos {
 				 can we can write or read within.
 				 \param type the type of the block we want to open
 				 \param path the path relative to the type of the block
-				 \flag the flag for determinate the mode if the open operation
+				 \flag the flag for determinate the mode if the open operation it can be a concatenation of chaos::data_service::chaos_vfs::block_flag::DataBlockFlag
 				 \
 				 */
-				virtual int openBlock(chaos_vfs::BlockType type, std::string path, unsigned int flag, chaos_vfs::DataBlock **data_block) = 0;
+				virtual int openBlock(chaos_vfs::block_type::BlockType type, std::string path, unsigned int flags, chaos_vfs::DataBlock **data_block) = 0;
 				
 				//! close the block of data
-				virtual int closeBlock(chaos_vfs::BlockType *data_block) = 0;
+				virtual int closeBlock(chaos_vfs::block_type::BlockType *data_block) = 0;
 				
 				//! return all block of data found on the path, acocrding to the type
-				virtual int listBlock(chaos_vfs::BlockType type, std::string path, boost::ptr_vector<chaos_vfs::DataBlock>& bloks_found) = 0;
+				virtual int listBlock(chaos_vfs::block_type::BlockType type, std::string path, boost::ptr_vector<chaos_vfs::DataBlock>& bloks_found) = 0;
 
 				//! write an amount of data into a DataBlock
-                virtual int write(chaos_vfs::BlockType *data_block, void * data, uint32_t data_len) = 0;
+                virtual int write(chaos_vfs::block_type::BlockType *data_block, void * data, uint32_t data_len) = 0;
 				
 				//! read an amount of data from a DataBlock
-                virtual int read(chaos_vfs::BlockType *data_block, uint64_t offset, void * * data, uint32_t *data_len) = 0;
+                virtual int read(chaos_vfs::block_type::BlockType *data_block, uint64_t offset, void * * data, uint32_t *data_len) = 0;
 			};
 			
 		}
