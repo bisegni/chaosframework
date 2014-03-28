@@ -76,8 +76,16 @@ namespace chaos {
 				
 				//! deinit
 				void deinit() throw (chaos::CException);
-				
-				//! open a block of a determinated type with
+
+				//! Open a block
+				/*!
+				 Open a block filled eith all information to be opened
+				 \param type the type of the block we want to open
+				 \return error code
+				 */
+				virtual int openBlock(chaos_vfs::DataBlock *data_block) = 0;
+
+				//! open a block of a determinated type
 				/*!
 				 The returned block is a struct that desbribe a data block
 				 can we can write or read within.

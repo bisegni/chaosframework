@@ -25,11 +25,12 @@ namespace chaos {
 			
 			//! posix specialization for the datablock
 			struct PosixDataBlock : public chaos_vfs::DataBlock {
-				friend class PosixStorageDriver;
 				~PosixDataBlock();
 			private:
+				PosixDataBlock();
 				PosixDataBlock(boost::filesystem::fstream *_fstream);
 				boost::filesystem::fstream *fstream;
+				friend class PosixStorageDriver;
 			};
 			
 			//! storage driver setting
@@ -59,6 +60,9 @@ namespace chaos {
 				
 				//!deinit
 				void deinit() throw (chaos::CException);
+				
+				//! Open a block
+				int openBlock(chaos_vfs::DataBlock *data_block);
 				
 				// open a block of a determinated type with
 				int openBlock(chaos_vfs::block_type::BlockType type, std::string path, unsigned int flags, chaos_vfs::DataBlock **data_block);

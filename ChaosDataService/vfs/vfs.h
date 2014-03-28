@@ -70,6 +70,9 @@ namespace chaos {
 				//! the precalculated max reacheable size for the block
 				uint64_t	max_reacheable_size;
 				
+				//!current datablock size
+				uint32_t	current_size;
+				
 				//! block path
 				std::string path;
 				
