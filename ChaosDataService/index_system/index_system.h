@@ -1,5 +1,5 @@
 /*
- *	IDXDriver.cpp
+ *	index_system.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,4 +18,9 @@
  *    	limitations under the License.
  */
 
-#include "IDXDriver.h"
+#ifndef CHAOSFramework_index_system_h
+#define CHAOSFramework_index_system_h
+
+#incldue "MongoDBIDXDriver.h"
+
+#endif

@@ -60,6 +60,8 @@ namespace chaos {
                 virtual void handleEvent(DirectIOClientConnection *client_connection, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) = 0;
             };
 			
+			typedef  chaos::utility::TemplatedKeyObjectContainer< unsigned int, channel::DirectIOVirtualClientChannel*> DICKeyObjectContainer;
+			
             //! Represent the start point of a messaget towards an endpoint
             /*!
                 This class is the start point for a comunication winth a server endpoint,
@@ -68,7 +70,7 @@ namespace chaos {
              */
             class DirectIOClientConnection  :
 			public DirectIOForwarder,
-			protected chaos::utility::TemplatedKeyObjectContainer< unsigned int, channel::DirectIOVirtualClientChannel*> {
+			protected DICKeyObjectContainer {
                 friend class DirectIOClient;
 				friend class chaos::NetworkBroker;
 								

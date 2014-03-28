@@ -117,7 +117,7 @@ void  PerformanceManagment::handleEvent(chaos_direct_io::DirectIOClientConnectio
 		PMLDBG_ << "Performance session for remote address "<<client_connection->getServerDescription() << " Already in purge map";
 		return;
 	}
-	map_purgeable_performance_node.insert(make_pair(client_connection->getServerDescription(), TemplatedKeyObjectContainer::accessItem(client_connection->getServerDescription())));
+	map_purgeable_performance_node.insert(make_pair(client_connection->getServerDescription(), PMKeyObjectContainer::accessItem(client_connection->getServerDescription())));
 	PMLDBG_ << "Performance session for remote address "<<client_connection->getServerDescription() << " added in purge map";
 	
 }
@@ -145,7 +145,7 @@ void  PerformanceManagment::disposePerformanceNode(chaos_direct_io::DirectIOPerf
 		network_broker->releaseDirectIOServerEndpoint(performance_node->server_endpoint);
 	}
 	
-	TemplatedKeyObjectContainer::deregisterElementKey(server_description);
+	PMKeyObjectContainer::deregisterElementKey(server_description);
 }
 
 void  PerformanceManagment::freeObject(std::string server_description, chaos_direct_io::DirectIOPerformanceSession *performance_node) {
@@ -162,7 +162,7 @@ chaos_data::CDataWrapper* PerformanceManagment::startPerformanceSession(chaos_da
 	//we can initiate performance session allcoation
 	std::string req_server_description = param->getStringValue(PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION);
 	
-	if(TemplatedKeyObjectContainer::hasKey(req_server_description))
+	if(PMKeyObjectContainer::hasKey(req_server_description))
 		throw chaos::CException(-2, "performance sesison for requester already allocated", __PRETTY_FUNCTION__);
 	
 	PMLAPP_<< "Create new performance session for " << req_server_description;
@@ -197,7 +197,7 @@ chaos_data::CDataWrapper* PerformanceManagment::startPerformanceSession(chaos_da
 		throw chaos::CException(-3, "Generic exception on initialization of performance loop", __PRETTY_FUNCTION__);
 	}
 	//register performance node
-	TemplatedKeyObjectContainer::registerElement(req_server_description, performace_node);
+	PMKeyObjectContainer::registerElement(req_server_description, performace_node);
 	
 	//get the node server description for send it to the requester
 	return result;
@@ -210,11 +210,11 @@ chaos_data::CDataWrapper* PerformanceManagment::stopPerformanceSession(chaos_dat
 	//we can initiate performance session allcoation
 	std::string req_server_description = param->getStringValue(PerformanceSystemRpcKey::KEY_REQUEST_SERVER_DESCRITPION);
 	
-	if(!TemplatedKeyObjectContainer::hasKey(req_server_description))
+	if(!PMKeyObjectContainer::hasKey(req_server_description))
 		throw chaos::CException(-2, "performance sesison for requester already allocated", __PRETTY_FUNCTION__);
 	
 	//we can proceed to the closing of the performance session
-	chaos_direct_io::DirectIOPerformanceSession *performace_node = TemplatedKeyObjectContainer::accessItem(req_server_description);
+	chaos_direct_io::DirectIOPerformanceSession *performace_node = PMKeyObjectContainer::accessItem(req_server_description);
 	
 	// dispose the sesison node
 	disposePerformanceNode(performace_node);

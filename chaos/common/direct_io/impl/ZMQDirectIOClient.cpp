@@ -90,7 +90,7 @@ void *ZMQDirectIOClient::socketMonitor (void *ctx, const char * address, Connect
 		//boost::algorithm::split(server_desc_tokens, addr, boost::algorithm::is_any_of("-"), boost::algorithm::token_compress_on);
 		//if(server_desc_tokens.size() != 2) continue;
 		//server_addr_hash = chaos::common::data::cache::FastHash::hash(addr, std::strlen(addr), 0);
-		if((connection = TemplatedKeyObjectContainer::accessItem(monitor_info->hash_identification))) {
+		if((connection = DCKeyObjectContainer::accessItem(monitor_info->hash_identification))) {
 			switch (event.event) {
 				case ZMQ_EVENT_CONNECTED:
 					DEBUG_CODE(ZMQDIOLDBG_ << "ZMQ_EVENT_CONNECTED to " << connection->getServerDescription();)
@@ -153,7 +153,7 @@ void ZMQDirectIOClient::init(void *init_data) throw(chaos::CException) {
 void ZMQDirectIOClient::deinit() throw(chaos::CException) {
     int err = 0;
 	//remove all active connection (never need to be exists at this step)
-	TemplatedKeyObjectContainer::clearElement();
+	DCKeyObjectContainer::clearElement();
     //destroy the zmq context
     ZMQDIOLAPP_ << "Destroing zmq context";
 	thread_run = false;
@@ -248,7 +248,7 @@ DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server
 		
 		//register client with the hash of the xzmq decoded endpoint address (tcp://ip:port)
 		DEBUG_CODE(ZMQDIOLDBG_ << "Register client for " << server_description << " with zmq decoded hash " << result->getUniqueHash();)
-		TemplatedKeyObjectContainer::registerElement(result->getUniqueHash(), result);
+		DCKeyObjectContainer::registerElement(result->getUniqueHash(), result);
 		
         url = boost::str( boost::format("tcp://%1%") % priority_endpoint);
 		DEBUG_CODE(ZMQDIOLDBG_ << "connect to priority endpoint " << url;)
@@ -279,7 +279,7 @@ DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server
 			if(err) ZMQDIOLERR_ << "Error closing service socket";
 		}
 		if(result) {
-			TemplatedKeyObjectContainer::deregisterElementKey(result->getUniqueHash());
+			DCKeyObjectContainer::deregisterElementKey(result->getUniqueHash());
 			delete(result);
 		}
 	}
@@ -314,7 +314,7 @@ void ZMQDirectIOClient::releaseConnection(DirectIOClientConnection *connection_t
 		}
 	}
 	
-	TemplatedKeyObjectContainer::deregisterElementKey(conn->getUniqueHash());
+	DCKeyObjectContainer::deregisterElementKey(conn->getUniqueHash());
 	delete(connection_to_release);
 
 }

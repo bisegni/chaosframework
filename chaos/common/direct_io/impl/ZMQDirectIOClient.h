@@ -41,7 +41,6 @@ namespace chaos {
 			}
             namespace impl {
 				
-				
 				// ZMQ Direct IO Implementation
 				/*!
 				 */

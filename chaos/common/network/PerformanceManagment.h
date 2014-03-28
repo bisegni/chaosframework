@@ -38,12 +38,14 @@ namespace chaos {
 		
 		namespace network {
 			
+			typedef ::chaos::utility::TemplatedKeyObjectContainer<std::string, chaos_direct_io::DirectIOPerformanceSession*> PMKeyObjectContainer;
+			
 			//! root point for all instance of managment node
 			class PerformanceManagment :
 			public chaos::utility::StartableService,
 			public chaos::DeclareAction,
 			public direct_io::DirectIOClientConnectionEventHandler,
-			protected ::chaos::utility::TemplatedKeyObjectContainer<std::string, chaos_direct_io::DirectIOPerformanceSession*> {
+			protected PMKeyObjectContainer {
 				friend class chaos::NetworkBroker;
 				chaos::NetworkBroker				*network_broker;
 				

@@ -1,10 +1,22 @@
-//
-//  PosixStorageDriver.h
-//  CHAOSFramework
-//
-//  Created by Claudio Bisegni on 27/03/14.
-//  Copyright (c) 2014 INFN. All rights reserved.
-//
+/*
+ *	PosixStorageDriver.h
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
 
 #ifndef __CHAOSFramework__PosixStorageDriver__
 #define __CHAOSFramework__PosixStorageDriver__
@@ -44,7 +56,7 @@ namespace chaos {
 				
 				PosixStorageDriverSetting *setting;
 				
-				PosixStorageDriver(std::string);
+				PosixStorageDriver(std::string alias);
 			protected:
 				int _openFile(std::string path);
 				
@@ -77,7 +89,7 @@ namespace chaos {
                 int write(chaos_vfs::block_type::BlockType *data_block, void * data, uint32_t data_len);
 				
 				//! read an amount of data from a DataBlock
-                int read(chaos_vfs::block_type::BlockType *data_block, uint64_t offset, void * * data, uint32_t *data_len);
+                int read(chaos_vfs::block_type::BlockType *data_block, uint64_t offset, void * * data, uint32_t& data_len);
 			};
 			
 		}

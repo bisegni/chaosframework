@@ -1,5 +1,5 @@
 /*
- *	IDXDriver.h
+ *	IndexDriver.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__IDXDriver__
-#define __CHAOSFramework__IDXDriver__
+#ifndef __CHAOSFramework__IndexDriver__
+#define __CHAOSFramework__IndexDriver__
 
 #include "../vfs/vfs.h"
 
@@ -36,6 +36,15 @@ namespace chaos {
 		
 		namespace index_system {
 			
+			typedef std::vector<std::string>			IndexDriverServerList
+			typedef std::vector<std::string>::iterator	IndexDriverServerListIterator;
+			
+			//! index driver setting
+			typedef struct IndexDriverSetting {
+				//! vector for all index endpoint url (usualy database url, more is the driver permit the scalability of the service)
+				IndexDriverServerList servers;
+			} IndexDriverSetting;
+			
 			//! define a type of work that can occour on stage datablock
 			typedef enum StageDataBlockState {
 				WriteData = 0,
@@ -50,15 +59,25 @@ namespace chaos {
 			 of the !CHAOS virtual filesystem. At the end it will help to achive the execution 
 			 of query on memoryzed data
 			 */
-			class IDXDriver : public NamedService , public chaos::utility::InizializableService {
+			class IndexDriver : public NamedService , public chaos::utility::InizializableService {
 			protected:
 				//protected constructor
-				IDXDriver(std::string alias);
-				
+				IndexDriver(std::string alias);
+			protected:
+				IndexDriverSetting *setting;
             public:
 				
 				//! public destructor
-				virtual ~IDXDriver();
+				virtual ~IndexDriver();
+				
+				//! init
+				/*!
+				 Need a point to a structure IndexDriverSetting for the setting
+				*/
+				void init(void *init_data) throw (chaos::CException);
+				
+				//!deinit
+				void deinit() throw (chaos::CException);
 				
 				//! Register a new data block wrote on stage area
 				/*!
@@ -66,32 +85,32 @@ namespace chaos {
 					after the block has been created.
 					\param data_block Newly created data block
 				 */
-				virtual int addNewStageDataBlock(chaos_vfs::DataBlock *data_block);
+				virtual int addNewStageDataBlock(chaos_vfs::DataBlock *data_block) = 0;
 				
 				//! Set the state for a stage datablock
 				/*!
 				 Set the current state for a datablock in the stage area
 				 \param data_block Data block for wich need to be changed the state
 				 */
-				virtual int setStateOnStageDataBlock(chaos_vfs::DataBlock *data_block, StageDataBlockState state);
+				virtual int setStateOnStageDataBlock(chaos_vfs::DataBlock *data_block, StageDataBlockState state) = 0;
 				
 				//! Heartbeat update stage block
 				/*!
 				 Registration of a new datablock in stage area is achieved directly to the DataService process
 				 after the block has been created.
 				 */
-				virtual int workHeartBeatOnStageDataBlock(chaos_vfs::DataBlock *data_block);
+				virtual int workHeartBeatOnStageDataBlock(chaos_vfs::DataBlock *data_block) = 0;
 				
 				
 				//! Retrive the path for all datablock in a determinate state
 				/*!
 				 Retrieve from the all DataBlock in stage area that match the state.
 				 */
-				virtual int getStageDataBlockPathByState(std::vector<std::string>& path_data_block, StageDataBlockState state);
+				virtual int getStageDataBlockPathByState(std::vector<std::string>& path_data_block, StageDataBlockState state) = 0;
 
 			};
 		}
 	}
 }
 
-#endif /* defined(__CHAOSFramework__IDXDriver__) */
+#endif /* defined(__CHAOSFramework__IndexDriver__) */

@@ -68,10 +68,12 @@ namespace chaos{
 				chaos_direct_io_ch::DirectIODeviceClientChannel *channel;
 			};
 			
+			typedef chaos::utility::TemplatedKeyObjectContainer<uint32_t, ClientConnectionInfo*> ADWKeyObjectContainer;
+			
 			//! worker for live device sharing
 			class AnswerDataWorker :
 			public DataWorker,
-			protected chaos::utility::TemplatedKeyObjectContainer<uint32_t, ClientConnectionInfo*>,
+			protected ADWKeyObjectContainer,
 			protected chaos_direct_io::DirectIOClientConnectionEventHandler {
 				bool work_on_purge;
 				std::string cache_impl_name;

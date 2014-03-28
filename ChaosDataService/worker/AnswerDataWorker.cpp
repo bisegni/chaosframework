@@ -87,7 +87,7 @@ void AnswerDataWorker::deinit() throw (chaos::CException) {
 
 	//delete all registered object
 	ADWLAPP_ << "Clear all active connections";
-	TemplatedKeyObjectContainer::clearElement();
+	ADWKeyObjectContainer::clearElement();
 	
 	//try to remove all other remainde disconnected connections
 	ADWLAPP_ << "Clear all orfaned answer connection";
@@ -122,8 +122,8 @@ ClientConnectionInfo *AnswerDataWorker::getClientChannel(AnswerDataWorkerJob *an
 	// lock for all
 	boost::unique_lock<boost::shared_mutex> lock(mutex_add_new_client);
 	
-	if(TemplatedKeyObjectContainer::hasKey(answer_job_info->request_header->field.answer_server_hash)) {
-        conn_info = TemplatedKeyObjectContainer::accessItem(answer_job_info->request_header->field.answer_server_hash);
+	if(ADWKeyObjectContainer::hasKey(answer_job_info->request_header->field.answer_server_hash)) {
+        conn_info = ADWKeyObjectContainer::accessItem(answer_job_info->request_header->field.answer_server_hash);
         if(increaseAccessNumber(conn_info)) {
             return conn_info;
         }
@@ -171,7 +171,7 @@ ClientConnectionInfo *AnswerDataWorker::getClientChannel(AnswerDataWorkerJob *an
     conn_info->channel->setDeviceID(key_requested);
 	//all is gone well
 	//now we can add client and channel to the maps
-	TemplatedKeyObjectContainer::registerElement(conn_info->connection->getConnectionHash(), conn_info);
+	ADWKeyObjectContainer::registerElement(conn_info->connection->getConnectionHash(), conn_info);
 	DEBUG_CODE(ADWLDBG_ << "Allocate new connection for server description " << answer_server_description << " and hash " << answer_job_info->request_header->field.answer_server_hash;)
 	
 
@@ -209,14 +209,14 @@ void AnswerDataWorker::handleEvent(chaos_direct_io::DirectIOClientConnection *cl
     
 	DEBUG_CODE(ADWLDBG_ << "Handle disconnection event for hash -> " << client_connection->getConnectionHash();)
     
-    if(TemplatedKeyObjectContainer::hasKey(client_connection->getConnectionHash())) {
-        ClientConnectionInfo *connection_info = TemplatedKeyObjectContainer::accessItem(client_connection->getConnectionHash());
+    if(ADWKeyObjectContainer::hasKey(client_connection->getConnectionHash())) {
+        ClientConnectionInfo *connection_info = ADWKeyObjectContainer::accessItem(client_connection->getConnectionHash());
 
         //NEED TO BE FOUND A LOGIC TO INVALIDATE AND DELETE AFTER THIS METHOD IS TERMINATED
         map_to_purge.insert(make_pair(client_connection->getConnectionHash(), connection_info));
         DEBUG_CODE(ADWLDBG_ << "Added to purge queue for connection of the server " << client_connection->getServerDescription() << " and hash " << client_connection->getConnectionHash();)
 
-        TemplatedKeyObjectContainer::deregisterElementKey(client_connection->getConnectionHash());
+        ADWKeyObjectContainer::deregisterElementKey(client_connection->getConnectionHash());
     }
     
 }
@@ -225,18 +225,18 @@ void AnswerDataWorker::freeObject(uint32_t key, ClientConnectionInfo *elementPtr
 	//lock the creation of new connection
     boost::unique_lock<boost::shared_mutex> uniqueLock(mutex_add_new_client);
 
-	if(TemplatedKeyObjectContainer::hasKey(elementPtr->connection->getConnectionHash())) {
-        ClientConnectionInfo *connection_info = TemplatedKeyObjectContainer::accessItem(elementPtr->connection->getConnectionHash());
+	if(ADWKeyObjectContainer::hasKey(elementPtr->connection->getConnectionHash())) {
+        ClientConnectionInfo *connection_info = ADWKeyObjectContainer::accessItem(elementPtr->connection->getConnectionHash());
 		
         //NEED TO BE FOUND A LOGIC TO INVALIDATE AND DELETE AFTER THIS METHOD IS TERMINATED
         map_to_purge.insert(make_pair(elementPtr->connection->getConnectionHash(), connection_info));
         DEBUG_CODE(ADWLDBG_ << "Added to purge queue for connection of the server " << elementPtr->connection->getServerDescription() << " and hash " << elementPtr->connection->getConnectionHash();)
 		
-        TemplatedKeyObjectContainer::deregisterElementKey(elementPtr->connection->getConnectionHash());
+        ADWKeyObjectContainer::deregisterElementKey(elementPtr->connection->getConnectionHash());
     }
 	
 	//dispose element non managed, thi smethod is called only when
-	//TemplatedKeyObjectContainer::clearElement(); is called (only in destructor
+	//ADWKeyObjectContainer::clearElement(); is called (only in destructor
 	//disposeClientInfo(elementPtr);
 }
 
@@ -252,8 +252,8 @@ void AnswerDataWorker::disposeClientInfo(ClientConnectionInfo *client_info) {
 	if(client_info->connection) {
 		direct_io_client->releaseConnection(client_info->connection);
 	}
-    if(TemplatedKeyObjectContainer::hasKey(conn_hash)) {
-        TemplatedKeyObjectContainer::deregisterElementKey(conn_hash);
+    if(ADWKeyObjectContainer::hasKey(conn_hash)) {
+        ADWKeyObjectContainer::deregisterElementKey(conn_hash);
     }
 	delete (client_info);
 	DEBUG_CODE(ADWLDBG_ << "ending purge operation for " << server_desc;)

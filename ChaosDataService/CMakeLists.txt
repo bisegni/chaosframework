@@ -2,6 +2,8 @@ SET(src main.cpp)
 SET(src  ${src} ChaosDataService.cpp DataConsumer.cpp)
 SET(src  ${src} worker/DataWorker.cpp worker/DeviceSharedDataWorker.cpp worker/AnswerDataWorker.cpp)
 SET(src  ${src} cache_system/CacheDriver.cpp cache_system/MemcachedCacheDriver.cpp cache_system/CouchbaseCacheDriver.cpp)
+SET(src  ${src} storage_system/StorageDriver.cpp storage_system/PosixStorageDriver.cpp)
+SET(src  ${src} index_system/IndexDriver.cpp index_system/MongoDBIndexDriver.cpp)
 
 ADD_EXECUTABLE(ChaosDataService ${src})
 

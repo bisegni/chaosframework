@@ -109,7 +109,7 @@ channel::DirectIOVirtualClientChannel *DirectIOClientConnection::getNewChannelIn
     //sub class method for register the instance
     if(channel) {
 		channel->client_instance = this;
-		TemplatedKeyObjectContainer::registerElement(channel->channel_route_index, channel);
+		DICKeyObjectContainer::registerElement(channel->channel_route_index, channel);
     }
 	return channel;
 }
@@ -117,7 +117,7 @@ channel::DirectIOVirtualClientChannel *DirectIOClientConnection::getNewChannelIn
 // New channel allocation by name
 void DirectIOClientConnection::releaseChannelInstance(channel::DirectIOVirtualClientChannel *channel_instance) {
 	if(channel_instance) {
-        TemplatedKeyObjectContainer::deregisterElementKey(channel_instance->channel_route_index);
+        DICKeyObjectContainer::deregisterElementKey(channel_instance->channel_route_index);
 		channel_instance->client_instance = NULL;
         delete(channel_instance);
     }

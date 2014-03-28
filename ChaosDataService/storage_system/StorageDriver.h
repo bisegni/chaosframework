@@ -106,7 +106,7 @@ namespace chaos {
                 virtual int write(chaos_vfs::block_type::BlockType *data_block, void * data, uint32_t data_len) = 0;
 				
 				//! read an amount of data from a DataBlock
-                virtual int read(chaos_vfs::block_type::BlockType *data_block, uint64_t offset, void * * data, uint32_t *data_len) = 0;
+                virtual int read(chaos_vfs::block_type::BlockType *data_block, uint64_t offset, void * * data, uint32_t& data_len) = 0;
 			};
 			
 		}
