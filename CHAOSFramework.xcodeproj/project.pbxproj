@@ -2903,6 +2903,7 @@
 					"-lchaos_common",
 					"-lboost_log_setup",
 					"-lcouchbase",
+					"-lmongoclient",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -2954,6 +2955,7 @@
 					"-lchaos_common",
 					"-lboost_log_setup",
 					"-lcouchbase",
+					"-lmongoclient",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

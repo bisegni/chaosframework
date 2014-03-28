@@ -34,12 +34,6 @@ namespace bson {
 }
 
 namespace bson {
-    typedef bson::BSONElement be;
-    typedef bson::BSONObj bo;
-    typedef bson::BSONObjBuilder bob;
-}
-
-namespace bson {
 
     /* l and r MUST have same type when called: check that first. */
     int compareElementValues(const BSONElement& l, const BSONElement& r);

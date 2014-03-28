@@ -36,7 +36,7 @@ namespace chaos {
 		
 		namespace index_system {
 			
-			typedef std::vector<std::string>			IndexDriverServerList
+			typedef std::vector<std::string>			IndexDriverServerList;
 			typedef std::vector<std::string>::iterator	IndexDriverServerListIterator;
 			
 			//! index driver setting
