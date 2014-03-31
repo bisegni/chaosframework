@@ -21,6 +21,7 @@
 #include "PosixStorageDriver.h"
 
 #include <iostream>
+#include <sys/stat.h>
 
 #include <boost/format.hpp>
 
@@ -34,18 +35,6 @@
 
 
 using namespace chaos::data_service::storage_system;
-
-PosixDataBlock::PosixDataBlock():fstream(NULL) {
-	
-}
-
-PosixDataBlock::PosixDataBlock(boost::filesystem::fstream *_fstream):fstream(_fstream) {
-	
-}
-
-PosixDataBlock::~PosixDataBlock() {
-	if(fstream) delete(fstream);
-}
 
 //---------------------------------------------------------------------------
 
@@ -76,35 +65,36 @@ void PosixStorageDriver::deinit() throw (chaos::CException) {
 	
 }
 
+std::string PosixStorageDriver::getAbsolutePath(std::string vfs_path) {
+	return boost::str(boost::format("%1%/%2%") % setting->fs_root_path % vfs_path);
+}
+
 //! Open a block
-int PosixStorageDriver::openBlock(chaos_vfs::DataBlock *data_block) {
+int PosixStorageDriver::openBlock(chaos_vfs::DataBlock *data_block, unsigned int flags) {
 	CHAOS_ASSERT(data_block)
+	boost::filesystem::fstream *fstream_ptr = NULL;
 	try {
-		std::ios_base::openmode mode = std::ios_base::binary;
-		if(data_block->flags & chaos_vfs::block_flag::BlockFlagWriteble) {
-			mode &= std::ios_base::out;
-		}
-		
-		if(data_block->flags & chaos_vfs::block_flag::BlockFlagReadeable) {
-			mode &= std::ios_base::in;
-		}
-		
-		boost::filesystem::path _path = data_block->path;
+		boost::filesystem::path _path = data_block->fs_path;
 		boost::filesystem::file_status _status = boost::filesystem::status(_path);
 		if(boost::filesystem::is_directory(_status)) {
 			return -1;
 		}
 		
-		boost::filesystem::space_info _space = boost::filesystem::space(_path);
-		//no we can create the block
+		std::ios_base::openmode mode = std::ios_base::binary;
+		if(flags & chaos_vfs::block_flag::BlockFlagWriteble) {
+			mode &= std::ios_base::out;
+		}
 		
-		((PosixDataBlock*)data_block)->fstream = new boost::filesystem::fstream(_path, mode);
+		if(flags & chaos_vfs::block_flag::BlockFlagReadeable) {
+			mode &= std::ios_base::in;
+		}
+
+		//check on the max size
 		
-		((PosixDataBlock*)data_block)->fstream->seekg (0, ((PosixDataBlock*)data_block)->fstream->end);
-		uint32_t length = ((PosixDataBlock*)data_block)->fstream->tellg();
-		((PosixDataBlock*)data_block)->fstream->seekg (0, ((PosixDataBlock*)data_block)->fstream->beg);
+		data_block->driver_private_data = fstream_ptr = new boost::filesystem::fstream(_path, mode);
 	} catch (boost::filesystem::filesystem_error &e) {
-		//delete the allcoated stream
+		if(fstream_ptr) delete(fstream_ptr);
+		//delete the allocated stream
 		PSDLERR_ << e.what() << std::endl;
 		return -1;
 	}
@@ -112,24 +102,15 @@ int PosixStorageDriver::openBlock(chaos_vfs::DataBlock *data_block) {
 }
 
 // open a block of a determinated type with
-int PosixStorageDriver::openBlock(chaos_vfs::block_type::BlockType type, std::string path, unsigned int flags, chaos_vfs::DataBlock **data_block) {
+int PosixStorageDriver::openBlock(std::string vfs_path, unsigned int flags, chaos_vfs::DataBlock **data_block) {
 	CHAOS_ASSERT(data_block)
-	boost::filesystem::path _path;
+	boost::filesystem::path _path = getAbsolutePath(vfs_path);
 	boost::filesystem::fstream *ofs = NULL;
 	
 	//reset memory (if the user use an allocated handle here there is memory leak)
 	*data_block = NULL;
 	
 	try {
-		switch (type) {
-			case vfs::block_type::BlockTypeData:
-				_path = boost::str(boost::format("%1%/%2%") % path_data_area % path);
-				break;
-				
-			case vfs::block_type::BlockTypeStage:
-				_path = boost::str(boost::format("%1%/%2%") % path_stage_area % path);
-				break;
-		}
 		boost::filesystem::file_status _status = boost::filesystem::status(_path);
 		
 		if(boost::filesystem::is_directory(_status)) {
@@ -157,16 +138,15 @@ int PosixStorageDriver::openBlock(chaos_vfs::block_type::BlockType type, std::st
 		ofs = new boost::filesystem::fstream(_path, mode);
 		
 		//no we can create the block
-		*data_block = new PosixDataBlock(ofs);
-		(*data_block)->type = type;
+		*data_block = getNewDataBlock(_path.string().c_str());
+		(*data_block)->driver_private_data = ofs;
 		(*data_block)->flags = flags;
-		(*data_block)->path = _path.string();
 		(*data_block)->invalidation_timestamp = 0;
 		(*data_block)->max_reacheable_size = 0;
 	}catch (boost::filesystem::filesystem_error &e) {
 		//delete the allcoated stream
 		if(*data_block) {
-			delete(*data_block);
+			disposeDataBlock(*data_block);
 			*data_block = NULL;
 		} else if(ofs) {
 			delete(ofs);
@@ -177,32 +157,42 @@ int PosixStorageDriver::openBlock(chaos_vfs::block_type::BlockType type, std::st
 	return 0;
 }
 
-//! close the block of data
-int PosixStorageDriver::closeBlock(chaos_vfs::block_type::BlockType *data_block) {
+//! return the block current size
+int PosixStorageDriver::getBlockSize(chaos_vfs::DataBlock *data_block) {
 	CHAOS_ASSERT(data_block)
-	CHAOS_ASSERT(((PosixDataBlock*)data_block)->fstream)
+	CHAOS_ASSERT(data_block->driver_private_data)
+	boost::filesystem::fstream *fstream_ptr = static_cast<boost::filesystem::fstream *>(data_block->driver_private_data);
 	try {
-		((PosixDataBlock*)data_block)->fstream->close();
-	} catch (boost::filesystem::filesystem_error &e) {
+		//write data
+		fstream_ptr->seekg(0, fstream_ptr->end);
+		data_block->current_size = (uint32_t)fstream_ptr->tellg();
+		fstream_ptr->seekg(0, fstream_ptr->beg);
+	}catch (boost::filesystem::filesystem_error &e) {
 		PSDLERR_ << e.what() << std::endl;
 		return -1;
 	}
 	return 0;
 }
 
-//! return all block of data found on the path, acocrding to the type
-int PosixStorageDriver::listBlock(chaos_vfs::block_type::BlockType type, std::string path, boost::ptr_vector<chaos_vfs::DataBlock>& bloks_found) {
-	boost::filesystem::path _path;
+//! close the block of data
+int PosixStorageDriver::closeBlock(chaos_vfs::DataBlock *data_block) {
+	CHAOS_ASSERT(data_block)
+	CHAOS_ASSERT(data_block->driver_private_data)
+	
 	try {
-		switch (type) {
-			case vfs::block_type::BlockTypeData:
-				_path = boost::str(boost::format("%1%/%2%") % path_data_area % path);
-				break;
-				
-			case vfs::block_type::BlockTypeStage:
-				_path = boost::str(boost::format("%1%/%2%") % path_stage_area % path);
-				break;
-		}
+		static_cast<boost::filesystem::fstream *>(data_block->driver_private_data)->close();
+	} catch (boost::filesystem::filesystem_error &e) {
+		PSDLERR_ << e.what() << std::endl;
+		//return -1;
+	}
+	disposeDataBlock(data_block);
+	return 0;
+}
+
+//! return all block of data found on the path, acocrding to the type
+int PosixStorageDriver::listBlock(std::string vfs_path, std::vector<chaos_vfs::DataBlock*>& bloks_found) {
+	boost::filesystem::path _path = getAbsolutePath(vfs_path);
+	try {
 		boost::filesystem::file_status _status = boost::filesystem::status(_path);
 		
 		if(!boost::filesystem::is_directory(_status)) {
@@ -214,10 +204,8 @@ int PosixStorageDriver::listBlock(chaos_vfs::block_type::BlockType type, std::st
 		for ( boost::filesystem::directory_iterator itr( _path );
 			 itr != end_itr;
 			 ++itr ) {
-			chaos_vfs::DataBlock *data_block = new PosixDataBlock();
-			data_block->type = type;
+			chaos_vfs::DataBlock *data_block = getNewDataBlock(itr->path().string());
 			data_block->flags = chaos_vfs::block_flag::BlockFlagNone;
-			data_block->path = itr->path().string();
 			data_block->invalidation_timestamp = 0;
 			data_block->max_reacheable_size = 0;
 			bloks_found.push_back(data_block);
@@ -231,15 +219,15 @@ int PosixStorageDriver::listBlock(chaos_vfs::block_type::BlockType type, std::st
 }
 
 //! write an amount of data into a DataBlock
-int PosixStorageDriver::write(chaos_vfs::block_type::BlockType *data_block, void * data, uint32_t data_len) {
+int PosixStorageDriver::write(chaos_vfs::DataBlock *data_block, void * data, uint32_t data_len) {
 	CHAOS_ASSERT(data_block)
-	CHAOS_ASSERT(((PosixDataBlock*)data_block)->fstream)
+	CHAOS_ASSERT(data_block->driver_private_data)
 	try {
 		//write data
-		((PosixDataBlock*)data_block)->fstream->write((const char*)data, data_len);
+		static_cast<boost::filesystem::fstream *>(data_block->driver_private_data)->write((const char*)data, data_len);
 		
 		//update current size field
-		((PosixDataBlock*)data_block)->current_size += data_len;
+		data_block->current_size += data_len;
 	} catch (boost::filesystem::filesystem_error &e) {
 		PSDLERR_ << e.what() << std::endl;
 		return -1;
@@ -248,12 +236,13 @@ int PosixStorageDriver::write(chaos_vfs::block_type::BlockType *data_block, void
 }
 
 //! read an amount of data from a DataBlock
-int PosixStorageDriver::read(chaos_vfs::block_type::BlockType *data_block, uint64_t offset, void * * data, uint32_t& data_len) {
+int PosixStorageDriver::read(chaos_vfs::DataBlock *data_block, uint64_t offset, void * * data, uint32_t& data_len) {
 	CHAOS_ASSERT(data_block)
-	CHAOS_ASSERT(((PosixDataBlock*)data_block)->fstream)
+	CHAOS_ASSERT(data_block->driver_private_data)
 	try {
-		((PosixDataBlock*)data_block)->fstream->read((char*)*data, data_len);
-		if(!((PosixDataBlock*)data_block)->fstream) {
+		boost::filesystem::fstream *fstream_ptr = static_cast<boost::filesystem::fstream *>(data_block->driver_private_data);
+		fstream_ptr->read((char*)*data, data_len);
+		if(!*fstream_ptr) {
 			return -1;
 		}
 	} catch (boost::filesystem::filesystem_error &e) {

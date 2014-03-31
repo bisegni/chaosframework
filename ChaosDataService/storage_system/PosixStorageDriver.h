@@ -21,7 +21,10 @@
 #ifndef __CHAOSFramework__PosixStorageDriver__
 #define __CHAOSFramework__PosixStorageDriver__
 
+
 #include "StorageDriver.h"
+
+#include <string>
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
@@ -34,16 +37,6 @@ namespace chaos {
 			
 			//forward declaration
 			class PosixStorageDriver;
-			
-			//! posix specialization for the datablock
-			struct PosixDataBlock : public chaos_vfs::DataBlock {
-				~PosixDataBlock();
-			private:
-				PosixDataBlock();
-				PosixDataBlock(boost::filesystem::fstream *_fstream);
-				boost::filesystem::fstream *fstream;
-				friend class PosixStorageDriver;
-			};
 			
 			//! storage driver setting
 			struct PosixStorageDriverSetting :public StorageDriverSetting {
@@ -58,6 +51,7 @@ namespace chaos {
 				
 				PosixStorageDriver(std::string alias);
 			protected:
+				std::string getAbsolutePath(std::string vfs_path);
 				int _openFile(std::string path);
 				
 			public:
@@ -74,22 +68,25 @@ namespace chaos {
 				void deinit() throw (chaos::CException);
 				
 				//! Open a block
-				int openBlock(chaos_vfs::DataBlock *data_block);
+				int openBlock(chaos_vfs::DataBlock *data_block, unsigned int flags);
 				
 				// open a block of a determinated type with
-				int openBlock(chaos_vfs::block_type::BlockType type, std::string path, unsigned int flags, chaos_vfs::DataBlock **data_block);
+				int openBlock(std::string vfs_path, unsigned int flags, chaos_vfs::DataBlock **data_block);
 				
 				//! close the block of data
-				int closeBlock(chaos_vfs::block_type::BlockType *data_block);
+				int closeBlock(chaos_vfs::DataBlock *data_block);
 
+				//! return the block current size
+				int getBlockSize(chaos_vfs::DataBlock *data_block);
+				
 				//! return all block of data found on the path, acocrding to the type
-				int listBlock(chaos_vfs::block_type::BlockType type, std::string path, boost::ptr_vector<chaos_vfs::DataBlock>& bloks_found);
+				int listBlock(std::string vfs_path, std::vector<chaos_vfs::DataBlock*>& bloks_found);
 				
 				//! write an amount of data into a DataBlock
-                int write(chaos_vfs::block_type::BlockType *data_block, void * data, uint32_t data_len);
+                int write(chaos_vfs::DataBlock *data_block, void * data, uint32_t data_len);
 				
 				//! read an amount of data from a DataBlock
-                int read(chaos_vfs::block_type::BlockType *data_block, uint64_t offset, void * * data, uint32_t& data_len);
+                int read(chaos_vfs::DataBlock *data_block, uint64_t offset, void * * data, uint32_t& data_len);
 			};
 			
 		}

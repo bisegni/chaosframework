@@ -21,8 +21,8 @@
 #ifndef ChaosFramework_DispatcherRegister_h
 #define ChaosFramework_DispatcherRegister_h
 
-#include <chaos/common/utility/Singleton.h>
 #include <string>
+#include <chaos/common/utility/Singleton.h>
 
 namespace chaos {
     
@@ -76,6 +76,9 @@ namespace chaos {
             }
             
         }
+		T *getNewInstanceByName(std::string alias) {
+			return getNewInstanceByName(alias.c_str());
+		}
         /*
          Create a new instance for the command identified by input alias
          */

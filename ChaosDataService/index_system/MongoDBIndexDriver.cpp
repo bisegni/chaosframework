@@ -8,7 +8,10 @@
 
 #include "MongoDBIndexDriver.h"
 
+#include <boost/format.hpp>
+
 #include <mongo/client/dbclient.h>
+
 using namespace chaos::data_service::index_system;
 
 MongoDBIndexDriver::MongoDBIndexDriver(std::string alias):IndexDriver(alias) {
@@ -24,18 +27,22 @@ MongoDBIndexDriver::~MongoDBIndexDriver() {
 void MongoDBIndexDriver::init(void *init_data) throw (chaos::CException) {
 	IndexDriver::init(init_data);
 	std::string errmsg;
+	std::string servers;
 	for (IndexDriverServerListIterator iter = setting->servers.begin();
 		 iter != setting->servers.end();
 		 iter++){
 		
-		mongo::ConnectionString cs = mongo::ConnectionString::parse(*iter, errmsg);
-		if(!cs.isValid()) {
-			throw chaos::CException(-1, errmsg, __PRETTY_FUNCTION__);
-		}
-		
-		
+		servers.append(*iter);
+		servers.append(",");
+	}
+	if(servers.size()) {
+		servers.resize(servers.size()-1);
 	}
 	
+	connection_string = mongo::ConnectionString::parse(servers, errmsg);
+	//if(!connection_string) throw CException(-1, errmsg, __PRETTY_FUNCTION__);
+
+	//all is gone ok
 }
 
 //!deinit
@@ -45,6 +52,13 @@ void MongoDBIndexDriver::deinit() throw (chaos::CException) {
 
 //! Register a new data block wrote on stage area
 int MongoDBIndexDriver::addNewStageDataBlock(chaos_vfs::DataBlock *data_block) {
+	mongo::ScopedDbConnection sc(connection_string);
+	mongo::BSONObjBuilder b;
+	b.append("name", "Joe");
+	b.append("age", 33);
+	
+	sc.conn().insert("chaos_index.stage_block",  b.obj());
+	sc.done();
 	return 0;
 }
 

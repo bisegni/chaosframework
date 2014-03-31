@@ -33,7 +33,7 @@ namespace chaos {
 			//! Mongodb implementation for the index driver
 			REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(MongoDBIndexDriver, IndexDriver) {
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(MongoDBIndexDriver)
-				
+				mongo::ConnectionString connection_string;
 				MongoDBIndexDriver(std::string alias);
 			protected:
 				mongo::DBClientConnection mongo_client;

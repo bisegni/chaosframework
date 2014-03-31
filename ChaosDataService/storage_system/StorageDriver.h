@@ -21,12 +21,11 @@
 #define __CHAOSFramework__StorageDriver__
 
 #include <string>
-
-#include "../vfs/vfs.h"
+#include <vector>
+#include "../vfs/DataBlock.h"
 
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/InizializableService.h>
-#include <boost/ptr_container/ptr_vector.hpp>
 
 namespace chaos_vfs = chaos::data_service::vfs;
 
@@ -35,9 +34,10 @@ namespace chaos {
 		namespace storage_system {
 			
 			//! storage driver setting
-			struct StorageDriverSetting {
+			typedef struct StorageDriverSetting {
+				std::string fs_root_path;
 				std::string fs_domain_name;
-			};
+			} StorageDriverSetting;
 
 #define SD_STAGE_AREA_ALIAS "stage"
 #define SD_DATA_AREA_ALIAS "data"
@@ -62,6 +62,10 @@ namespace chaos {
 				//! Protected constructor
 				StorageDriver(std::string alias);
 				
+			protected:
+				chaos_vfs::DataBlock *getNewDataBlock(std::string path);
+				
+				void disposeDataBlock(chaos_vfs::DataBlock *);
             public:
 				
 				//! public destructor
@@ -83,7 +87,7 @@ namespace chaos {
 				 \param type the type of the block we want to open
 				 \return error code
 				 */
-				virtual int openBlock(chaos_vfs::DataBlock *data_block) = 0;
+				virtual int openBlock(chaos_vfs::DataBlock *data_block, unsigned int flags) = 0;
 
 				//! open a block of a determinated type
 				/*!
@@ -94,19 +98,22 @@ namespace chaos {
 				 \flag the flag for determinate the mode if the open operation it can be a concatenation of chaos::data_service::chaos_vfs::block_flag::DataBlockFlag
 				 \
 				 */
-				virtual int openBlock(chaos_vfs::block_type::BlockType type, std::string path, unsigned int flags, chaos_vfs::DataBlock **data_block) = 0;
+				virtual int openBlock(std::string vfs_path, unsigned int flags, chaos_vfs::DataBlock **data_block) = 0;
 				
 				//! close the block of data
-				virtual int closeBlock(chaos_vfs::block_type::BlockType *data_block) = 0;
+				virtual int closeBlock(chaos_vfs::DataBlock *data_block) = 0;
+				
+				//! return the block current size
+				virtual int getBlockSize(chaos_vfs::DataBlock *data_block) = 0;
 				
 				//! return all block of data found on the path, acocrding to the type
-				virtual int listBlock(chaos_vfs::block_type::BlockType type, std::string path, boost::ptr_vector<chaos_vfs::DataBlock>& bloks_found) = 0;
+				virtual int listBlock(std::string vfs_path, std::vector<chaos_vfs::DataBlock*>& bloks_found) = 0;
 
 				//! write an amount of data into a DataBlock
-                virtual int write(chaos_vfs::block_type::BlockType *data_block, void * data, uint32_t data_len) = 0;
+                virtual int write(chaos_vfs::DataBlock *data_block, void * data, uint32_t data_len) = 0;
 				
 				//! read an amount of data from a DataBlock
-                virtual int read(chaos_vfs::block_type::BlockType *data_block, uint64_t offset, void * * data, uint32_t& data_len) = 0;
+                virtual int read(chaos_vfs::DataBlock *data_block, uint64_t offset, void * * data, uint32_t& data_len) = 0;
 			};
 			
 		}

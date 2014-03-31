@@ -1,5 +1,5 @@
 /*
- *	IndexDriver.cpp
+ *	DataBlock.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,29 +18,18 @@
  *    	limitations under the License.
  */
 
-#include "IndexDriver.h"
+#include "DataBlock.h"
 
-using namespace chaos::data_service::index_system;
 
-IndexDriver::IndexDriver(std::string alias):NamedService(alias), setting(NULL) {
-	
-}
+using namespace chaos::data_service::vfs;
 
-IndexDriver::~IndexDriver() {
-	
-}
-
-//! init
-void IndexDriver::init(void *init_data) throw (chaos::CException) {
-	setting = static_cast<IndexDriverSetting*>(init_data);
-	if(!setting) throw CException(-1, "No setting has been set", __PRETTY_FUNCTION__);
-
-}
-
-//!deinit
-void IndexDriver::deinit() throw (chaos::CException) {
-	if(setting) {
-		delete (setting);
-		setting = NULL;
+DataBlock::DataBlock(std::string path):fs_path(NULL) {
+	if(path.size() > 0) {
+		fs_path = (char*)malloc(sizeof(char) * path.size());
+		std::memcpy(fs_path, path.c_str(), path.size());
 	}
+}
+
+DataBlock::~DataBlock() {
+	if(fs_path) free(fs_path);
 }

@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__IndexDriver__
 #define __CHAOSFramework__IndexDriver__
 
-#include "../vfs/vfs.h"
+#include "../vfs/DataBlock.h"
 
 #include <string>
 #include <vector>

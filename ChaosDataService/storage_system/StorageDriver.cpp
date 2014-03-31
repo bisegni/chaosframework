@@ -30,7 +30,7 @@ StorageDriver::StorageDriver(std::string alias):NamedService(alias), setting(NUL
 
 
 StorageDriver::~StorageDriver() {
-	if(setting) delete(setting);
+	
 }
 
 //! init
@@ -41,5 +41,16 @@ void StorageDriver::init(void *init_data) throw (chaos::CException) {
 
 //! deinit
 void StorageDriver::deinit() throw (chaos::CException) {
-	
+	if(setting) {
+		delete(setting);
+		setting = NULL;
+	}
+}
+
+chaos_vfs::DataBlock *StorageDriver::getNewDataBlock(std::string path) {
+	return new chaos_vfs::DataBlock(path);
+}
+
+void StorageDriver::disposeDataBlock(chaos_vfs::DataBlock *data_block) {
+	if(data_block) delete(data_block);
 }
