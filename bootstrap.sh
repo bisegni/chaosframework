@@ -274,8 +274,6 @@ scons --prefix=$PREFIX --sharedclient \--extrapath=$PREFIX install-mongoclient
 echo "Mongodb setupped"
 fi
 
-https://github.com/mongodb/mongo-cxx-driver.git
-
 echo "Setup LIBMEMCACHED"
 if [ ! -d "$PREFIX/include/libmemcached" ]; then
     echo "Install libmemcached into  $BASE_EXTERNAL/libmemcached"
