@@ -160,7 +160,7 @@ if [ ! -d "$PREFIX/include/msgpack" ]; then
 make clean
 make
 make install
-echo "MSGPACK Setupped"
+echo "MSGPACK done"
 fi
 
 if [ ! -d "$PREFIX/include/mp" ]; then
@@ -184,7 +184,7 @@ if [ ! -d "$PREFIX/include/mp" ]; then
 	make clean
 	make
 	make install
-	echo "MPIO Setupped"
+	echo "MPIO done"
 fi
 
 if [ ! -d "$PREFIX/include/msgpack/rpc" ]; then
@@ -205,7 +205,7 @@ if [ ! -d "$PREFIX/include/msgpack/rpc" ]; then
 	make clean
 	make
 	make install
-	echo "MSGPACK-RPC Setupped"
+	echo "MSGPACK-RPC done"
 fi
 
 echo "Setup LIBEVENT"
@@ -224,7 +224,7 @@ if [ ! -d "$PREFIX/include/event2" ]; then
 	make clean
 	make
 	make install
-	echo "LIBEVENT Setupped"
+	echo "LIBEVENT done"
 fi
 
 if [ ! -f "$PREFIX/include/uv.h" ]; then
@@ -242,12 +242,12 @@ if [ ! -f "$PREFIX/include/uv.h" ]; then
 make clean
 make
 make install
-echo "LIBUV Setupped"
+echo "LIBUV done"
 fi
 
 echo "Setup Couchbase sdk"
 if [ ! -f "$PREFIX/include/libcouchbase/couchbase.h" ]; then
-if [ ! -f "$BASE_EXTERNAL/mongo-cxx-driver" ]; then
+if [ ! -f "$BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION" ]; then
 	echo "Download couchabse source"
 	wget --no-check-certificate -O $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION.tar.gz http://packages.couchbase.com/clients/c/libcouchbase-$COUCHBASE_VERSION.tar.gz
 	tar zxvf $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION.tar.gz -C $BASE_EXTERNAL
@@ -256,7 +256,7 @@ cd $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION
 ./configure --prefix=$PREFIX --disable-couchbasemock --disable-plugins
 make
 make install
-echo "ZMQ Setupped"
+echo "Couchbase done"
 fi
 
 echo "Setup MongoDB client"
@@ -270,8 +270,8 @@ if [ ! -f "$PREFIX/include/mongo/client/dbclient.h" ]; then
 		git pull
 	fi
 
-scons --prefix=$PREFIX --sharedclient \--extrapath=$PREFIX install-mongoclient
-echo "Mongodb setupped"
+scons --prefix=$PREFIX --sharedclient --extrapath=$PREFIX install-mongoclient
+echo "Mongodb done"
 fi
 
 echo "Setup LIBMEMCACHED"
@@ -285,7 +285,7 @@ if [ ! -d "$PREFIX/include/libmemcached" ]; then
     make
     make install
 fi
-echo "LIBMEMCACHED Setupped"
+echo "Libmemcached done"
 
 echo "Setup ZMQ"
 if [ ! -f "$PREFIX/include/zmq.h" ]; then
@@ -326,7 +326,7 @@ if [ ! -f "$PREFIX/include/zmq.h" ]; then
 #	./configure --prefix=$PREFIX
 #make
 #	make install
-	echo "ZMQ Setupped"
+	echo "ZMQ done"
 fi
 
 echo "Compile !CHAOS"
