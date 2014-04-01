@@ -270,7 +270,7 @@ if [ ! -f "$PREFIX/include/mongo/client/dbclient.h" ]; then
 		git pull
 	fi
 
-scons --prefix=$PREFIX --sharedclient --extrapath=$PREFIX install-mongoclient
+scons --prefix=$PREFIX --libpath=$PREFIX/lib --cpppath=$PREFIX/include --extrapath=$PREFIX install-mongoclient
 echo "Mongodb done"
 fi
 

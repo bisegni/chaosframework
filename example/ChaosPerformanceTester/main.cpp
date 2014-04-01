@@ -52,15 +52,16 @@ typedef std::vector<int>			OpcodeSequence;
 typedef std::vector<int>::iterator	OpcodeSequenceIterator;
 
 typedef struct RttStat {
-	int64_t trx_min = 0;
-	int64_t trx_max = 0;
-	int64_t rec_min = 0;
-	int64_t rec_max = 0;
-	int64_t rtt_min = 0;
-	int64_t rtt_max = 0;
-	int64_t calc_trx = 0;
-	int64_t calc_rec = 0;
-	int64_t calc_rtt = 0;
+	int64_t trx_min ;
+	int64_t trx_max ;
+	int64_t rec_min ;
+	int64_t rec_max ;
+	int64_t rtt_min ;
+	int64_t rtt_max ;
+	int64_t calc_trx ;
+	int64_t calc_rec ;
+	int64_t calc_rtt ;
+        RttStat(){trx_min = 0;trx_max = 0;rec_min = 0;rec_max = 0;rtt_min = 0;rtt_max = 0;calc_trx = 0;calc_rec = 0; calc_rtt = 0;}
 }RttStat;
 
 void performRTTTest(chaos::common::direct_io::DirectIOPerformanceSession *session, uint32_t iteration, uint32_t timeout);
