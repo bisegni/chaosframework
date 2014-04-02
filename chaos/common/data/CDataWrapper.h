@@ -92,7 +92,7 @@ namespace chaos {
 			public:
 				
 				CDataWrapper();
-				CDataWrapper(const char* serializationBuffer/*, bool bson=true*/);
+				CDataWrapper(const char* serializationBuffer);
 				~CDataWrapper();
 				
 				CDataWrapper *clone();

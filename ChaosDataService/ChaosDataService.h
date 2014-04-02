@@ -27,7 +27,9 @@
 #include "DataConsumer.h"
 #include "worker/DataWorker.h"
 #include "cache_system/CacheDriver.h"
+#include "vfs/vfs.h"
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -60,6 +62,9 @@ namespace chaos{
 			
 			utility::StartableServiceContainer<chaos::NetworkBroker> network_broker;
             utility::StartableServiceContainer<DataConsumer> data_consumer;
+			utility::InizializableServiceContainer<vfs::VFSFileManager> vfs_file_manager;
+			
+			void fillKVParameter(std::map<std::string, std::string>& kvmap, const char * param_key);
         public:
 			//----------setting----------
 			ChaosDataServiceSetting settings;

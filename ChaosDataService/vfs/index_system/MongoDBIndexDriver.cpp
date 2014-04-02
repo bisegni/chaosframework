@@ -14,6 +14,12 @@
 
 using namespace chaos::data_service::index_system;
 
+#define MongoDBIndexDriver_LOG_HEAD "[MongoDBIndexDriver] - "
+#define MDBID_LAPP_ LAPP_ << MongoDBIndexDriver_LOG_HEAD
+#define MDBID_LDBG_ LDBG_ << MongoDBIndexDriver_LOG_HEAD << __FUNCTION__ << " - "
+#define MDBID_LERR_ LERR_ << MongoDBIndexDriver_LOG_HEAD << __FUNCTION__ << " - "
+
+
 MongoDBIndexDriver::MongoDBIndexDriver(std::string alias):IndexDriver(alias) {
 	
 }
@@ -38,9 +44,12 @@ void MongoDBIndexDriver::init(void *init_data) throw (chaos::CException) {
 	if(servers.size()) {
 		servers.resize(servers.size()-1);
 	}
-	
+	MDBID_LAPP_ << "Try to setup connection with " << servers;
 	connection_string = mongo::ConnectionString::parse(servers, errmsg);
-	//if(!connection_string) throw CException(-1, errmsg, __PRETTY_FUNCTION__);
+	if(!connection_string.isValid()) {
+		MDBID_LDBG_ << errmsg;
+		throw CException(-1, errmsg, __PRETTY_FUNCTION__);
+	}
 
 	//all is gone ok
 }

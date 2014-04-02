@@ -55,7 +55,7 @@ CDataWrapper::CDataWrapper():bsonArrayBuilder(new BSONArrayBuilder()),bsonBuilde
 }
 
 CDataWrapper::CDataWrapper(const char* serializationBuffer):bsonArrayBuilder(new BSONArrayBuilder()),bsonBuilder(new BSONObjBuilder()){
-    bsonBuilder->appendElements(BSONObj(serializationBuffer));
+	bsonBuilder->appendElements(BSONObj(serializationBuffer));
 }
 
 CDataWrapper::~CDataWrapper() {

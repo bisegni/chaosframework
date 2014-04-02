@@ -22,7 +22,7 @@
 
 using namespace chaos::data_service::index_system;
 
-IndexDriver::IndexDriver(std::string alias):NamedService(alias), setting(NULL) {
+IndexDriver::IndexDriver(std::string alias):NamedService(alias) {
 	
 }
 
@@ -33,14 +33,11 @@ IndexDriver::~IndexDriver() {
 //! init
 void IndexDriver::init(void *init_data) throw (chaos::CException) {
 	setting = static_cast<IndexDriverSetting*>(init_data);
-	if(!setting) throw CException(-1, "No setting has been set", __PRETTY_FUNCTION__);
+	if(!setting) throw CException(-1, "No setting set", __PRETTY_FUNCTION__);
+	if(!setting->servers.size()) throw CException(-1, "No server set", __PRETTY_FUNCTION__);
 
 }
 
 //!deinit
 void IndexDriver::deinit() throw (chaos::CException) {
-	if(setting) {
-		delete (setting);
-		setting = NULL;
-	}
 }

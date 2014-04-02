@@ -12,9 +12,34 @@
 #include <string>
 #include <vector>
 
+#include "vfs/vfs.h"
+#include <boost/regex.hpp>
+#include <boost/algorithm/string.hpp>
+
 namespace chaos{
     namespace data_service {
 
+		//cache configuration
+#define OPT_CACHE_SERVER_LIST		"cache_servers"
+#define OPT_CACHE_DRIVER			"cache_driver"
+#define OPT_CACHE_WORKER_NUM		"cache_worker_num"
+#define OPT_CACHE_WORKER_THREAD		"cache_worker_thread"
+#define CACHE_WORKER_NUMBER			2
+		
+		//answer configuration
+#define OPT_ANSWER_WORKER_NUM		"answer_worker_num"
+#define OPT_ANSWER_WORKER_THREAD	"answer_worker_thread"
+#define ANSWER_WORKER_NUMBER		2
+		
+		//vfs driver configuration
+#define OPT_VFS_STORAGE_DRIVER_IMPL		"vfs_storage_drvr_impl"
+#define OPT_VFS_STORAGE_DOMAIN			"vfs_storage_domain"
+#define OPT_VFS_STORAGE_DRIVER_KVP		"vfs_storage_driver_kvp"
+		
+#define OPT_VFS_INDEX_DRIVER_IMPL		"vfs_index_drvr_impl"
+#define OPT_VFS_INDEX_DRIVER_SERVERS	"vfs_index_servers"
+#define OPT_VFS_INDEX_DRIVER_KVP		"vfs_storage_index_kvp"
+		
 		namespace worker {
 			
 			typedef struct WorkerJob {
@@ -43,6 +68,8 @@ namespace chaos{
 			unsigned int				answer_worker_num;
 			worker::DataWorkerSetting	answer_worker_setting;
 
+			//----------vfs configuration----------------
+			vfs::VFSFileManagerSetting  file_manager_setting;
 		} ChaosDataServiceSetting;
 	}
 }

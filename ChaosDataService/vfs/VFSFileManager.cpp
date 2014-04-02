@@ -52,13 +52,17 @@ void VFSFileManager::init(void * init_data) throw (chaos::CException) {
 	setting = static_cast<VFSFileManagerSetting*>(init_data);
 	
 	//allocate index driver
-	VFSFM_LAPP_ << "Allocate index driver";
-	index_driver_ptr = chaos::ObjectFactoryRegister<chaos_data_index::IndexDriver>::getInstance()->getNewInstanceByName(setting->index_driver_impl);
-	chaos::utility::InizializableService::initImplementation(index_driver_ptr, setting->index_driver_setting, index_driver_ptr->getName(), __PRETTY_FUNCTION__);
+	std::string index_driver_class_name = boost::str(boost::format("%1%IndexDriver") % setting->index_driver_impl);
+	VFSFM_LAPP_ << "Allocate index driver of type "<<index_driver_class_name;
+	index_driver_ptr = chaos::ObjectFactoryRegister<chaos_data_index::IndexDriver>::getInstance()->getNewInstanceByName(index_driver_class_name);
+	if(!index_driver_ptr) throw chaos::CException(-1, "No index driver found", __PRETTY_FUNCTION__);
+	chaos::utility::InizializableService::initImplementation(index_driver_ptr, &setting->index_driver_setting, index_driver_ptr->getName(), __PRETTY_FUNCTION__);
 	
-	VFSFM_LAPP_ << "Allocate storage driver";
-	storage_driver_ptr = chaos::ObjectFactoryRegister<chaos_data_storage::StorageDriver>::getInstance()->getNewInstanceByName(setting->storage_driver_impl);
-	chaos::utility::InizializableService::initImplementation(storage_driver_ptr, setting->storage_driver_setting, storage_driver_ptr->getName(), __PRETTY_FUNCTION__);
+	std::string storage_driver_class_name = boost::str(boost::format("%1%StorageDriver") % setting->storage_driver_impl);
+	VFSFM_LAPP_ << "Allocate storage driver of type " << storage_driver_class_name;
+	storage_driver_ptr = chaos::ObjectFactoryRegister<chaos_data_storage::StorageDriver>::getInstance()->getNewInstanceByName(storage_driver_class_name);
+	if(!storage_driver_ptr) throw chaos::CException(-1, "No storage driver found", __PRETTY_FUNCTION__);
+	chaos::utility::InizializableService::initImplementation(storage_driver_ptr, &setting->storage_driver_setting, storage_driver_ptr->getName(), __PRETTY_FUNCTION__);
 	
 }
 
@@ -82,13 +86,6 @@ void VFSFileManager::deinit() throw (chaos::CException) {
 			VFSFM_LDBG_ << e.what();
 			delete (storage_driver_ptr);
 		}
-	}
-	
-	//deallocate the configuration
-	if(setting) {
-		VFSFM_LAPP_ << "Release setting";
-		delete(setting);
-		setting = NULL;
 	}
 }
 

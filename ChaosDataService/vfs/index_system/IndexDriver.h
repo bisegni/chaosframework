@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__IndexDriver__
 #define __CHAOSFramework__IndexDriver__
 
-#include "../vfs/DataBlock.h"
+#include "../DataBlock.h"
 
 #include <string>
 #include <vector>
@@ -43,6 +43,9 @@ namespace chaos {
 			typedef struct IndexDriverSetting {
 				//! vector for all index endpoint url (usualy database url, more is the driver permit the scalability of the service)
 				IndexDriverServerList servers;
+				
+				//! kv param for the implementations of the driver
+				std::map<string,string> key_value_custom_param;
 			} IndexDriverSetting;
 			
 			//! define a type of work that can occour on stage datablock

@@ -36,15 +36,15 @@ StorageDriver::~StorageDriver() {
 //! init
 void StorageDriver::init(void *init_data) throw (chaos::CException) {
 	setting = static_cast<StorageDriverSetting*>(init_data);
-	if(!setting) throw CException(-1, "No setting has been set", __PRETTY_FUNCTION__);
+	if(!setting) throw CException(-1, "No setting set", __PRETTY_FUNCTION__);
+	if(!setting->fs_domain_name.size()) throw CException(-1, "No domain name set", __PRETTY_FUNCTION__);
+	
+	//initialize driver domain
+	initDomain();
 }
 
 //! deinit
 void StorageDriver::deinit() throw (chaos::CException) {
-	if(setting) {
-		delete(setting);
-		setting = NULL;
-	}
 }
 
 chaos_vfs::DataBlock *StorageDriver::getNewDataBlock(std::string path) {
@@ -53,4 +53,9 @@ chaos_vfs::DataBlock *StorageDriver::getNewDataBlock(std::string path) {
 
 void StorageDriver::disposeDataBlock(chaos_vfs::DataBlock *data_block) {
 	if(data_block) delete(data_block);
+}
+
+//! return the storage domain for this driver
+const char * StorageDriver::getStorageDomain() const {
+	return setting->fs_domain_name.c_str();
 }

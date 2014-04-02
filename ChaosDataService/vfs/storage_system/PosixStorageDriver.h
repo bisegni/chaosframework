@@ -38,22 +38,27 @@ namespace chaos {
 			//forward declaration
 			class PosixStorageDriver;
 			
-			//! storage driver setting
-			struct PosixStorageDriverSetting :public StorageDriverSetting {
-				std::string fsd_domain_path;
-			};
-			
 			//! Posix implementation of the Storage Driver
+			/*!
+			 KV Custom param:
+				"posix_root_path":root directory that became domain root
+			 */
 			REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(PosixStorageDriver, StorageDriver) {
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(PosixStorageDriver)
 				
-				PosixStorageDriverSetting *setting;
+				std::string fs_driver_domain_path;
 				
 				PosixStorageDriver(std::string alias);
+				
+				void createDomain(boost::filesystem::fstream& domain_file_Stream) throw (chaos::CException);
+				void readDomain(boost::filesystem::fstream& domain_file_Stream, uint32_t domain_file_size) throw (chaos::CException);
+				
 			protected:
 				std::string getAbsolutePath(std::string vfs_path);
 				int _openFile(std::string path);
 				
+				// domain initialization
+				void initDomain() throw (chaos::CException);
 			public:
 				~PosixStorageDriver();
 				

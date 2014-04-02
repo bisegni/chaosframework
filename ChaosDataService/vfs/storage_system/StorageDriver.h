@@ -22,7 +22,7 @@
 
 #include <string>
 #include <vector>
-#include "../vfs/DataBlock.h"
+#include "../DataBlock.h"
 
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/InizializableService.h>
@@ -35,12 +35,14 @@ namespace chaos {
 			
 			//! storage driver setting
 			typedef struct StorageDriverSetting {
-				std::string fs_root_path;
+				//!driver domain name
 				std::string fs_domain_name;
+				
+				//! kv param for the implementations of the driver
+				std::map<string,string> key_value_custom_param;
 			} StorageDriverSetting;
 
-#define SD_STAGE_AREA_ALIAS "stage"
-#define SD_DATA_AREA_ALIAS "data"
+
 			
 			//! Abstraction of the vfs driver
 			/*!
@@ -49,12 +51,7 @@ namespace chaos {
 			 */
 			class StorageDriver : public chaos::NamedService, public chaos::utility::InizializableService {
 
-			protected:
-				//! absolute path to the stage area
-				std::string path_stage_area;
-				
-				//! absolute path to the data area
-				std::string path_data_area;
+			protected:				
 				
 				//! Driver sepcific configration
 				StorageDriverSetting *setting;
@@ -66,6 +63,14 @@ namespace chaos {
 				chaos_vfs::DataBlock *getNewDataBlock(std::string path);
 				
 				void disposeDataBlock(chaos_vfs::DataBlock *);
+				
+				//! domain initialization
+				/*!
+				 Subclass need to implement his domain creation strategy
+				 to permit that the same drivers on same storage share the same
+				 domain
+				 */
+				virtual void initDomain() throw (chaos::CException) = 0;
             public:
 				
 				//! public destructor
@@ -81,6 +86,9 @@ namespace chaos {
 				//! deinit
 				void deinit() throw (chaos::CException);
 
+				//! return the storage domain for this driver
+				const char * getStorageDomain() const;
+				
 				//! Open a block
 				/*!
 				 Open a block filled eith all information to be opened

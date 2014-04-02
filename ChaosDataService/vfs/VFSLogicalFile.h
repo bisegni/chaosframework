@@ -20,8 +20,8 @@
 #ifndef __CHAOSFramework__VFSLogicalFile__
 #define __CHAOSFramework__VFSLogicalFile__
 
-#include "../index_system/IndexDriver.h"
-#include "../storage_system/StorageDriver.h"
+#include "index_system/IndexDriver.h"
+#include "storage_system/StorageDriver.h"
 
 
 namespace chaos_data_index = chaos::data_service::index_system;

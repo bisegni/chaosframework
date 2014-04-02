@@ -22,8 +22,8 @@
 
 #include "VFSLogicalFile.h"
 
-#include "../index_system/IndexDriver.h"
-#include "../storage_system/StorageDriver.h"
+#include "index_system/IndexDriver.h"
+#include "storage_system/StorageDriver.h"
 
 #include <chaos/common/utility/TemplatedKeyObjectContainer.h>
 #include <chaos/common/utility/InizializableService.h>
@@ -33,10 +33,14 @@
 namespace chaos_data_index = chaos::data_service::index_system;
 namespace chaos_data_storage = chaos::data_service::storage_system;
 
+
 namespace chaos {
 	namespace data_service {
 		
 		namespace vfs {
+			
+#define SD_STAGE_AREA_ALIAS "chaos_stage"
+#define SD_DATA_AREA_ALIAS "chaos_data"
 			
 			//! VFS file manager setting
 			typedef struct VFSFileManagerSetting {
@@ -50,13 +54,13 @@ namespace chaos {
 				std::string index_driver_impl;
 				
 				//! the instance of the index driver for this manager
-				chaos_data_index::IndexDriverSetting *index_driver_setting;
+				chaos_data_index::IndexDriverSetting index_driver_setting;
 				
 				//! current storage driver implementaiton to use
 				std::string storage_driver_impl;
 				
 				//! the instance of the storage driver for this manager
-				chaos_data_storage::StorageDriverSetting *storage_driver_setting;
+				chaos_data_storage::StorageDriverSetting storage_driver_setting;
 			}VFSFileManagerSetting;
 			
 			typedef std::map<std::string,VFSLogicalFile *> FileInstanceMap;

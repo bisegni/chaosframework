@@ -25,22 +25,12 @@
 
 using namespace chaos::data_service;
 
-#define OPT_CACHE_SERVER_LIST		"cache_servers"
-#define OPT_CACHE_DRIVER			"cache_driver"
-#define OPT_CACHE_WORKER_NUM		"cache_worker_num"
-#define OPT_CACHE_WORKER_THREAD		"cache_worker_thread"
-
-#define OPT_ANSWER_WORKER_NUM		"answer_worker_num"
-#define OPT_ANSWER_WORKER_THREAD	"answer_worker_thread"
-
-#define DEVICE_WORKER_NUMBER 2
-#define ANSWER_WORKER_NUMBER 2
 
 int main(int argc, char * argv[]) {
     try {
 		std::vector<std::string> cache_servers;
 		
-		//data service parameter
+		//cache parameter
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_CACHE_DRIVER,
 																									"Cache driver implementation",
 																									"Memcached",
@@ -51,7 +41,7 @@ int main(int argc, char * argv[]) {
 																												 &ChaosDataService::getInstance()->settings.startup_chache_servers);
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_CACHE_WORKER_NUM,
 																									 "The number of the cache worker",
-																									 DEVICE_WORKER_NUMBER,
+																									 CACHE_WORKER_NUMBER,
 																									 &ChaosDataService::getInstance()->settings.caching_worker_num);
 		
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_CACHE_WORKER_THREAD,
@@ -59,6 +49,7 @@ int main(int argc, char * argv[]) {
 																									1,
 																									 &ChaosDataService::getInstance()->settings.caching_worker_setting.job_thread_number);
 		
+		//answer conf
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_ANSWER_WORKER_NUM,
 																									 "The number of the answer worker",
 																									 ANSWER_WORKER_NUMBER,
@@ -68,13 +59,32 @@ int main(int argc, char * argv[]) {
 																									 "The thread number of each answer worker",
 																									 1,
 																									 &ChaosDataService::getInstance()->settings.answer_worker_setting.job_thread_number);
-        ChaosDataService::getInstance()->init(argc, argv);
+
+		//vfs conf
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_STORAGE_DRIVER_IMPL,
+																									"The name of the vfs storage implementation [Posix]",
+																									"Posix",
+																									&ChaosDataService::getInstance()->settings.file_manager_setting.storage_driver_impl);
 		
-		if(!ChaosDataService::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CACHE_SERVER_LIST)) {
-			//no cache server provided
-			throw chaos::CException(-1, "No cache server provided", "Startup Sequence");
-		}
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_STORAGE_DOMAIN,
+																									"The name of the domain exposed by the driver",
+																									"CHAOS_DOMAIN",
+																									&ChaosDataService::getInstance()->settings.file_manager_setting.storage_driver_setting.fs_domain_name);
 		
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_STORAGE_DRIVER_KVP,
+																									"The key value parameter for implementation driver (ex k:v-k1:v1)");
+		
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_INDEX_DRIVER_IMPL,
+																									"The name of the vfs storage implementation [MongoDB]",
+																									"MongoDB",
+																									&ChaosDataService::getInstance()->settings.file_manager_setting.index_driver_impl);
+		
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_VFS_INDEX_DRIVER_SERVERS,
+																												 "The list of the index servers",
+																												 &ChaosDataService::getInstance()->settings.file_manager_setting.index_driver_setting.servers);
+		
+		ChaosDataService::getInstance()->init(argc, argv);
+
         ChaosDataService::getInstance()->start();
     } catch(chaos::CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
