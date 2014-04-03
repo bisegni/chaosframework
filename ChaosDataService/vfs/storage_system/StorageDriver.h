@@ -113,15 +113,18 @@ namespace chaos {
 				
 				//! return the block current size
 				virtual int getBlockSize(chaos_vfs::DataBlock *data_block) = 0;
-				
-				//! return all block of data found on the path, acocrding to the type
-				virtual int listBlock(std::string vfs_path, std::vector<chaos_vfs::DataBlock*>& bloks_found) = 0;
 
 				//! write an amount of data into a DataBlock
-                virtual int write(chaos_vfs::DataBlock *data_block, void * data, uint32_t data_len) = 0;
+                virtual int write(chaos_vfs::DataBlock *data_block, void * data, uint64_t data_len) = 0;
 				
 				//! read an amount of data from a DataBlock
-                virtual int read(chaos_vfs::DataBlock *data_block, uint64_t offset, void * * data, uint32_t& data_len) = 0;
+                virtual int read(chaos_vfs::DataBlock *data_block, uint64_t offset, void * * data, uint64_t& data_len) = 0;
+				
+				//! change the block pointer for read or write
+                virtual int seek(chaos_vfs::DataBlock *data_block, uint64_t offset, chaos_vfs::block_seek_base::BlockSeekBase base_direction) = 0;
+				
+				//! get the current block data pointer position
+                virtual int tell(chaos_vfs::DataBlock *data_block, uint64_t *offset) = 0;
 			};
 			
 		}

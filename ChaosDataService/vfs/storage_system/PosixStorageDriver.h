@@ -54,7 +54,7 @@ namespace chaos {
 				void readDomain(boost::filesystem::fstream& domain_file_Stream, uint32_t domain_file_size) throw (chaos::CException);
 				
 			protected:
-				std::string getAbsolutePath(std::string vfs_path);
+				inline std::string getAbsolutePath(std::string vfs_path);
 				int _openFile(std::string path);
 				
 				// domain initialization
@@ -84,14 +84,17 @@ namespace chaos {
 				//! return the block current size
 				int getBlockSize(chaos_vfs::DataBlock *data_block);
 				
-				//! return all block of data found on the path, acocrding to the type
-				int listBlock(std::string vfs_path, std::vector<chaos_vfs::DataBlock*>& bloks_found);
-				
 				//! write an amount of data into a DataBlock
-                int write(chaos_vfs::DataBlock *data_block, void * data, uint32_t data_len);
+                int write(chaos_vfs::DataBlock *data_block, void * data, uint64_t data_len);
 				
 				//! read an amount of data from a DataBlock
-                int read(chaos_vfs::DataBlock *data_block, uint64_t offset, void * * data, uint32_t& data_len);
+                int read(chaos_vfs::DataBlock *data_block, uint64_t offset, void * * data, uint64_t& data_len);
+				
+				//! change the block pointer for read or write
+				int seek(chaos_vfs::DataBlock *data_block, uint64_t offset, chaos_vfs::block_seek_base::BlockSeekBase base_direction);
+				
+				//! get the current block data pointer position
+                int tell(chaos_vfs::DataBlock *data_block, uint64_t *offset);
 			};
 			
 		}

@@ -35,6 +35,14 @@ namespace chaos {
 			//forward declaration
 			class VFSDriver;
 			
+			namespace block_seek_base {
+				typedef enum BlockSeekBase {
+					BlockSeekBaseBegin		= 0,
+					BlockSeekBaseCurrent	= 1,
+					BlockSeekBaseEnd		= 2
+				} BlockSeekBase;
+			}
+			
 			/*!
 			 define the different type of block of data
 			 withing !CHAOS VFS
@@ -55,26 +63,26 @@ namespace chaos {
 				
 				//! is a precalculated timestamp after which the
 				//! block became read only
-				uint32_t	invalidation_timestamp;
+				uint64_t	invalidation_timestamp;
 				
 				//! the precalculated max reacheable size for the block
-				uint32_t	max_reacheable_size;
+				uint64_t	max_reacheable_size;
 				
 				//!current datablock size
-				uint32_t	current_size;
+				uint64_t	current_size;
 				
-				//! block path relative to the domain
-				char *fs_path;
+				//! block path relative to the domain,
+				//! it not consider the root path of driver configuration
+				char *vfs_path;
 				
-				//! the domain of the real fs
-				char fs_domain[255];
-				
+				//! driver private data
 				void *driver_private_data;
 				
 			private:
 				friend class chaos::data_service::storage_system::StorageDriver;
-				
+				//! privade constructor
 				DataBlock(std::string path);
+				//! private destructor
 				virtual ~DataBlock();
 
 			};
