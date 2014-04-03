@@ -19,14 +19,15 @@
  */
 
 #include "DataBlock.h"
-
+#include <stdlib.h>
+#include <string.h>
 
 using namespace chaos::data_service::vfs;
 
 DataBlock::DataBlock(std::string path):fs_path(NULL) {
 	if(path.size() > 0) {
 		fs_path = (char*)malloc(sizeof(char) * path.size());
-		std::memcpy(fs_path, path.c_str(), path.size());
+		::memcpy(fs_path, path.c_str(), path.size());
 	}
 }
 
