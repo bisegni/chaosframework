@@ -86,7 +86,7 @@ namespace chaos{
 				boost::shared_ptr<boost::thread> purge_thread;
 				
 				boost::mutex mutex_map_to_purge;
-				std::map<uint32_t, ClientConnectionInfo* > map_to_purge;
+				std::map< uint32_t, ClientConnectionInfo* > map_to_purge;
 			protected:
 				inline bool increaseAccessNumber(ClientConnectionInfo *conn_info);
                 inline void decreaseAccessNumber(ClientConnectionInfo *conn_info);

@@ -62,7 +62,7 @@
 		325013D815E980C800DCB13E /* AsioImplEventClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 325013D615E980C800DCB13E /* AsioImplEventClient.h */; };
 		325013DC15E9843D00DCB13E /* AsioEventForwarder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325013DA15E9843D00DCB13E /* AsioEventForwarder.cpp */; };
 		325013DD15E9843D00DCB13E /* AsioEventForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 325013DB15E9843D00DCB13E /* AsioEventForwarder.h */; };
-		3250884D18E49975001C9733 /* VFSLogicalFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3250884B18E49975001C9733 /* VFSLogicalFile.cpp */; };
+		3250884D18E49975001C9733 /* VFSFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3250884B18E49975001C9733 /* VFSFile.cpp */; };
 		3253E09515F27A180079B40E /* EventTypeScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3253E09315F27A180079B40E /* EventTypeScheduler.h */; };
 		3253E09815F28A270079B40E /* EventTypeScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3253E09715F28A270079B40E /* EventTypeScheduler.cpp */; };
 		3253F2FE189AEEFD00959CA7 /* DirectIOVirtualClientChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3253F2FC189AEEFD00959CA7 /* DirectIOVirtualClientChannel.cpp */; };
@@ -118,7 +118,7 @@
 		3268CE38161608D100FCDB10 /* ZMQServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3268CE34161608D100FCDB10 /* ZMQServer.h */; };
 		32698D4A179E8CD100D6638C /* SetAttributeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 32698D48179E8CD100D6638C /* SetAttributeCommand.h */; };
 		326CADC718EAB64600E74CEA /* DataBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326CADC518EAB64600E74CEA /* DataBlock.cpp */; };
-		326CADCA18EAFD1200E74CEA /* VFSFileManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326CADC818EAFD1200E74CEA /* VFSFileManager.cpp */; };
+		326CADCA18EAFD1200E74CEA /* VFSManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326CADC818EAFD1200E74CEA /* VFSManager.cpp */; };
 		326CDBB718D860430054EF19 /* SpinLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 326CDBB518D860430054EF19 /* SpinLock.h */; };
 		326DB43014B38BC00018A8D0 /* ActionDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB3B614B38BC00018A8D0 /* ActionDescriptor.cpp */; };
 		326DB43114B38BC00018A8D0 /* ActionDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB3B714B38BC00018A8D0 /* ActionDescriptor.h */; };
@@ -533,8 +533,8 @@
 		325013DA15E9843D00DCB13E /* AsioEventForwarder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsioEventForwarder.cpp; sourceTree = "<group>"; };
 		325013DB15E9843D00DCB13E /* AsioEventForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsioEventForwarder.h; sourceTree = "<group>"; };
 		3250884418E46C4B001C9733 /* vfs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = vfs.h; sourceTree = "<group>"; };
-		3250884B18E49975001C9733 /* VFSLogicalFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSLogicalFile.cpp; sourceTree = "<group>"; };
-		3250884C18E49975001C9733 /* VFSLogicalFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSLogicalFile.h; sourceTree = "<group>"; };
+		3250884B18E49975001C9733 /* VFSFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSFile.cpp; sourceTree = "<group>"; };
+		3250884C18E49975001C9733 /* VFSFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSFile.h; sourceTree = "<group>"; };
 		3253E09315F27A180079B40E /* EventTypeScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventTypeScheduler.h; sourceTree = "<group>"; };
 		3253E09715F28A270079B40E /* EventTypeScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventTypeScheduler.cpp; sourceTree = "<group>"; };
 		3253F2FC189AEEFD00959CA7 /* DirectIOVirtualClientChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOVirtualClientChannel.cpp; sourceTree = "<group>"; };
@@ -596,8 +596,8 @@
 		32698D48179E8CD100D6638C /* SetAttributeCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetAttributeCommand.h; sourceTree = "<group>"; };
 		326CADC518EAB64600E74CEA /* DataBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataBlock.cpp; sourceTree = "<group>"; };
 		326CADC618EAB64600E74CEA /* DataBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBlock.h; sourceTree = "<group>"; };
-		326CADC818EAFD1200E74CEA /* VFSFileManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSFileManager.cpp; sourceTree = "<group>"; };
-		326CADC918EAFD1200E74CEA /* VFSFileManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSFileManager.h; sourceTree = "<group>"; };
+		326CADC818EAFD1200E74CEA /* VFSManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSManager.cpp; sourceTree = "<group>"; };
+		326CADC918EAFD1200E74CEA /* VFSManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSManager.h; sourceTree = "<group>"; };
 		326CDBB518D860430054EF19 /* SpinLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpinLock.h; sourceTree = "<group>"; };
 		326D3A5F17B0CD01004601A8 /* DriverManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DriverManager.cpp; sourceTree = "<group>"; };
 		326D3A6017B0CD01004601A8 /* DriverManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DriverManager.h; sourceTree = "<group>"; };
@@ -1153,10 +1153,10 @@
 				3223252F18EC157000ADBA4D /* index_system */,
 				3223253518EC157000ADBA4D /* storage_system */,
 				3250884418E46C4B001C9733 /* vfs.h */,
-				326CADC818EAFD1200E74CEA /* VFSFileManager.cpp */,
-				326CADC918EAFD1200E74CEA /* VFSFileManager.h */,
-				3250884B18E49975001C9733 /* VFSLogicalFile.cpp */,
-				3250884C18E49975001C9733 /* VFSLogicalFile.h */,
+				326CADC818EAFD1200E74CEA /* VFSManager.cpp */,
+				326CADC918EAFD1200E74CEA /* VFSManager.h */,
+				3250884B18E49975001C9733 /* VFSFile.cpp */,
+				3250884C18E49975001C9733 /* VFSFile.h */,
 				326CADC518EAB64600E74CEA /* DataBlock.cpp */,
 				326CADC618EAB64600E74CEA /* DataBlock.h */,
 			);
@@ -2573,9 +2573,9 @@
 				32B159DA18B4B9F90096B58B /* DataWorker.cpp in Sources */,
 				3299363618A7C4F60093E7F2 /* ChaosDataService.cpp in Sources */,
 				32B159DE18B4D4210096B58B /* MemcachedCacheDriver.cpp in Sources */,
-				3250884D18E49975001C9733 /* VFSLogicalFile.cpp in Sources */,
+				3250884D18E49975001C9733 /* VFSFile.cpp in Sources */,
 				3223253D18EC157000ADBA4D /* PosixStorageDriver.cpp in Sources */,
-				326CADCA18EAFD1200E74CEA /* VFSFileManager.cpp in Sources */,
+				326CADCA18EAFD1200E74CEA /* VFSManager.cpp in Sources */,
 				326459CC18D073BA0091B2E3 /* AnswerDataWorker.cpp in Sources */,
 				3223253C18EC157000ADBA4D /* MongoDBIndexDriver.cpp in Sources */,
 				3223253B18EC157000ADBA4D /* IndexDriver.cpp in Sources */,

@@ -69,7 +69,7 @@ namespace chaos{
 			worker::DataWorkerSetting	answer_worker_setting;
 
 			//----------vfs configuration----------------
-			vfs::VFSFileManagerSetting  file_manager_setting;
+			vfs::VFSManagerSetting		file_manager_setting;
 		} ChaosDataServiceSetting;
 	}
 }

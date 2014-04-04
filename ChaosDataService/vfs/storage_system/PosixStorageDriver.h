@@ -95,6 +95,15 @@ namespace chaos {
 				
 				//! get the current block data pointer position
                 int tell(chaos_vfs::DataBlock *data_block, uint64_t *offset);
+				
+				//! create a directory
+				int createDirectory(std::string vfs_path);
+				
+				//! create a directory
+				int createPath(std::string vfs_path);
+				
+				//! delete a directory
+				int deletePath(std::string vfs_path, bool all = false);
 			};
 			
 		}

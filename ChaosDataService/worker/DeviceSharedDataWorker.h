@@ -27,19 +27,19 @@
 #include <string>
 #include <chaos/common/direct_io/DirectIODataPack.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceChannelGlobal.h>
+
 namespace chaos_direct_io = chaos::common::direct_io;
 
 namespace chaos{
     namespace data_service {
 		namespace worker {
 			
-			//!worker information for the device live storage
+			//! worker information for the device live storage
 			struct DeviceSharedWorkerJob : public WorkerJob {
 				common::direct_io::channel::opcode_headers::DirectIODeviceChannelHeaderPutOpcode *request_header;
 				uint32_t data_pack_len;
 				void * data_pack;
 			};
-			
 			
 			//! worker for live device sharing
 			class DeviceSharedDataWorker : public DataWorker {
@@ -54,7 +54,6 @@ namespace chaos{
 				void addServer(std::string server_description);
 				void updateServerConfiguration();
 			};
-			
 		}
 	}
 }

@@ -141,7 +141,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
         data_consumer.init(NULL, __PRETTY_FUNCTION__);
 		
 		//initialize vfs file manager
-		vfs_file_manager.reset(new vfs::VFSFileManager(), "VFSFileManager");
+		vfs_file_manager.reset(new vfs::VFSManager(), "VFSFileManager");
 		vfs_file_manager.init(&settings.file_manager_setting , __PRETTY_FUNCTION__);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)

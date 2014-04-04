@@ -22,7 +22,6 @@
 #define CHAOSFramework_VFS_h
 
 #include "DataBlock.h"
-#include "VFSLogicalFile.h"
-#include "VFSFileManager.h"
-
+#include "VFSFile.h"
+#include "VFSManager.h"
 #endif

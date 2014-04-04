@@ -1,5 +1,5 @@
 /*
- *	VFSLogicalFile.cpp
+ *	VFSFile.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -20,18 +20,28 @@
 
 
 #include <string>
-#include "VFSLogicalFile.h"
+#include "VFSFile.h"
 
 using namespace chaos::data_service::vfs;
 
-VFSLogicalFile::VFSLogicalFile(std::string vfs_fpath) {
+VFSFile::VFSFile(std::string vfs_fpath) {
 	vfs_file_info.vfs_fpath = vfs_fpath;
 }
 
-VFSLogicalFile::~VFSLogicalFile() {
+VFSFile::~VFSFile() {
 	
 }
 
-bool VFSLogicalFile::exist() {
+const VFSFileInfo *VFSFile::getVFSFileInfo() const {
+	return &vfs_file_info;
+}
+
+bool VFSFile::exist() {
+	//index_driver_ptr->
 	return true;
 }
+
+int VFSFile::write(void *data, uint32_t data_len) {
+	return 0;
+};
+

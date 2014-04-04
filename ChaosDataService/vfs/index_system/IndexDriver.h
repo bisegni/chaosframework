@@ -21,19 +21,23 @@
 #ifndef __CHAOSFramework__IndexDriver__
 #define __CHAOSFramework__IndexDriver__
 
-#include "../DataBlock.h"
-
 #include <string>
 #include <vector>
 
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/InizializableService.h>
 
-namespace chaos_vfs = chaos::data_service::vfs;
 
 namespace chaos {
 	namespace data_service {
 		
+		namespace vfs {
+			class VFSFile;
+			struct DataBlock;
+		}
+		
+		namespace chaos_vfs = chaos::data_service::vfs;
+
 		namespace index_system {
 			
 			typedef std::vector<std::string>			IndexDriverServerList;
@@ -88,29 +92,33 @@ namespace chaos {
 					after the block has been created.
 					\param data_block Newly created data block
 				 */
-				virtual int addNewStageDataBlock(chaos_vfs::DataBlock *data_block) = 0;
+				virtual int vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,chaos_vfs::DataBlock *data_block) = 0;
 				
 				//! Set the state for a stage datablock
 				/*!
 				 Set the current state for a datablock in the stage area
 				 \param data_block Data block for wich need to be changed the state
 				 */
-				virtual int setStateOnStageDataBlock(chaos_vfs::DataBlock *data_block, StageDataBlockState state) = 0;
+				virtual int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,chaos_vfs::DataBlock *data_block, StageDataBlockState state) = 0;
 				
 				//! Heartbeat update stage block
 				/*!
 				 Registration of a new datablock in stage area is achieved directly to the DataService process
 				 after the block has been created.
 				 */
-				virtual int workHeartBeatOnStageDataBlock(chaos_vfs::DataBlock *data_block) = 0;
-				
-				
-				//! Retrive the path for all datablock in a determinate state
-				/*!
-				 Retrieve from the all DataBlock in stage area that match the state.
-				 */
-				virtual int getStageDataBlockPathByState(std::vector<std::string>& path_data_block, StageDataBlockState state) = 0;
+				virtual int vfsWorkHeartBeatOnDataBlock(chaos_vfs::VFSFile *vfs_file,chaos_vfs::DataBlock *data_block) = 0;
 
+				//! Check if the vfs file exists
+				/*!
+				 Check on vfs index db if the file exists
+				 */
+				virtual int vfsFileExist(chaos_vfs::VFSFile *vfs_file, bool& exists_flag) = 0;
+				
+				//! Create a file entry into the vfat
+				/*!
+				 allocate an entry on the database for vfile
+				 */
+				virtual int vfsCreateFileEntry(chaos_vfs::VFSFile *vfs_file) = 0;
 			};
 		}
 	}

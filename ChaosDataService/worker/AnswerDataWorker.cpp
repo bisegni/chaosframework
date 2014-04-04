@@ -105,9 +105,9 @@ bool AnswerDataWorker::increaseAccessNumber(ClientConnectionInfo *conn_info) {
     boost::uint32_t old_var = 0;
     volatile boost::uint32_t *mem_var = &conn_info->access_number;
     if((old_var = conn_info->access_number) != 0) {
-        do{
+        do {
             if((old_var = conn_info->access_number) == 0) return false;
-        }while(boost::interprocess::ipcdetail::atomic_add32(mem_var, 1) != old_var);
+        } while(boost::interprocess::ipcdetail::atomic_add32(mem_var, 1) != old_var);
         return true;
     } else return false;
 }
@@ -130,7 +130,7 @@ ClientConnectionInfo *AnswerDataWorker::getClientChannel(AnswerDataWorkerJob *an
 	}
 	
 	std::string key_requested((const char *)answer_job_info->key_data, answer_job_info->key_len);
-	std::string answer_server_description = boost::str( boost::format("%1%:%2%:%3%|%4%") %
+	std::string answer_server_description = boost::str(boost::format("%1%:%2%:%3%|%4%") %
 													   UI64_TO_STRIP(answer_job_info->request_header->field.address) %
 													   answer_job_info->request_header->field.p_port %
 													   answer_job_info->request_header->field.s_port %

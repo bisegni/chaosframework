@@ -1,5 +1,5 @@
 /*
- *	VFSFileManager.h
+ *	VFSManager.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,10 +17,10 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef __CHAOSFramework__VFSFileManager__
-#define __CHAOSFramework__VFSFileManager__
+#ifndef __CHAOSFramework__VFSManager__
+#define __CHAOSFramework__VFSManager__
 
-#include "VFSLogicalFile.h"
+#include "VFSFile.h"
 
 #include "index_system/IndexDriver.h"
 #include "storage_system/StorageDriver.h"
@@ -43,7 +43,7 @@ namespace chaos {
 #define SD_DATA_AREA_ALIAS "chaos_data"
 			
 			//! VFS file manager setting
-			typedef struct VFSFileManagerSetting {
+			typedef struct VFSManagerSetting {
 				//! identify the max size for a logical file block
 				uint32_t		max_block_size;
 				
@@ -61,10 +61,10 @@ namespace chaos {
 				
 				//! the instance of the storage driver for this manager
 				chaos_data_storage::StorageDriverSetting storage_driver_setting;
-			}VFSFileManagerSetting;
+			}VFSManagerSetting;
 			
-			typedef std::map<std::string,VFSLogicalFile *> FileInstanceMap;
-			typedef std::map<std::string,VFSLogicalFile *>::iterator FileInstanceMapIterator;
+			typedef std::map<std::string,VFSFile *> FileInstanceMap;
+			typedef std::map<std::string,VFSFile *>::iterator FileInstanceMapIterator;
 			
 			typedef struct VFSFilesForPath {
 				boost::mutex	_mutex;
@@ -72,15 +72,15 @@ namespace chaos {
 				FileInstanceMap	map_logical_files;
 			} VFSFilesForPath;
 			
-			typedef chaos::utility::TemplatedKeyObjectContainer<std::string, VFSFilesForPath*> VFSFileManagerKeyObjectContainer;
+			typedef chaos::utility::TemplatedKeyObjectContainer<std::string, VFSFilesForPath*> VFSManagerKeyObjectContainer;
 			
-			class VFSFileManager :
+			class VFSManager :
 			public chaos::utility::InizializableService,
-			protected VFSFileManagerKeyObjectContainer {
+			protected VFSManagerKeyObjectContainer {
 				
 				//! point to user allcoated configuration structure, the instance
 				//! will be deallocated at thedestruction of this class
-				VFSFileManagerSetting *setting;
+				VFSManagerSetting *setting;
 				
 				//!index driver pointer
 				chaos_data_index::IndexDriver *index_driver_ptr;
@@ -92,21 +92,25 @@ namespace chaos {
 				void freeObject(std::string key, VFSFilesForPath *element);
 				
 			public:
-				VFSFileManager();
-				~VFSFileManager();
+				VFSManager();
+				~VFSManager();
 				
-				//! Need to be forwarded a point to a structure VFSFileManagerSetting
+				//! Need to be forwarded a point to a structure VFSManagerSetting
 				void init(void * init_data) throw (CException);
 				
 				void deinit() throw (CException);
 				
-				int getLogicalFile(std::string vfs_path, VFSLogicalFile **l_file);
+				int getFile(std::string vfs_path, VFSFile **l_file);
 				
-				int relaseLogicalFile(VFSLogicalFile *l_file);
+				int relaseFile(VFSFile *l_file);
+				
+				int createDirectory(std::string vfs_path, bool all_path = false);
+				
+				int deleteDirectory(std::string vfs_path, bool all_path = false);
 			};
 
 		}
 	}
 }
 
-#endif /* defined(__CHAOSFramework__VFSFileManager__) */
+#endif /* defined(__CHAOSFramework__VFSManager__) */

@@ -71,6 +71,9 @@ namespace chaos {
 				//!current datablock size
 				uint64_t	current_size;
 				
+				//!current datablock size
+				uint64_t	creation_time;
+				
 				//! block path relative to the domain,
 				//! it not consider the root path of driver configuration
 				char *vfs_path;

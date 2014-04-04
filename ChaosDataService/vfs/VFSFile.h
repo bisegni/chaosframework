@@ -1,5 +1,5 @@
 /*
- *	VFSLogicalFile.h
+ *	VFSFile.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,8 +17,8 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef __CHAOSFramework__VFSLogicalFile__
-#define __CHAOSFramework__VFSLogicalFile__
+#ifndef __CHAOSFramework__VFSFile__
+#define __CHAOSFramework__VFSFile__
 
 #include "index_system/IndexDriver.h"
 #include "storage_system/StorageDriver.h"
@@ -31,19 +31,19 @@ namespace chaos {
 	namespace data_service {
 		namespace vfs {
 			
-			class VFSFileManager;
+			class VFSManager;
 			
-			typedef struct VFSLogicalFileInfo {
+			typedef struct VFSFileInfo {
 				uint32_t		max_block_size;
 				uint32_t		max_block_lifetime;
 				std::string		identify_key;
 				std::string		vfs_fpath;
-			} VFSLogicalFileInfo;
+				std::string		vfs_domain;
+			} VFSFileInfo;
 			
 			//! VFS Logical file
-			class VFSLogicalFile {
-				friend class VFSFileManager;
-				
+			class VFSFile {
+				friend class VFSManager;
 				//!index driver pointer
 				chaos_data_index::IndexDriver *index_driver_ptr;
 				
@@ -51,16 +51,19 @@ namespace chaos {
 				chaos_data_storage::StorageDriver *storage_driver_ptr;
 
 				std::string last_error;
-				VFSLogicalFileInfo vfs_file_info;
+				VFSFileInfo vfs_file_info;
 				
-				VFSLogicalFile(std::string vfs_fpath);
-				~VFSLogicalFile();
+				VFSFile(std::string vfs_fpath);
+				~VFSFile();
 			public:
 				
+				const VFSFileInfo *getVFSFileInfo() const;
 				bool exist();
+				
+				int write(void *data, uint32_t data_len);
 			};
 		}
 	}
 }
 
-#endif /* defined(__CHAOSFramework__VFSLogicalFile__) */
+#endif /* defined(__CHAOSFramework__VFSFile__) */

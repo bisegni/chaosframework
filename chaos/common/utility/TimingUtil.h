@@ -33,7 +33,7 @@ namespace chaos {
         /*
          Return the current timestamp
          */
-        inline int64_t getTimeStamp() {
+        static inline int64_t getTimeStamp() {
             return (boost::posix_time::microsec_clock::universal_time()-EPOCH).total_milliseconds();
         }
     };

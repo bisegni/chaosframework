@@ -48,17 +48,19 @@ namespace chaos {
 				void deinit() throw (chaos::CException);
 				
 				//! Register a new data block wrote on stage area
-				int addNewStageDataBlock(chaos_vfs::DataBlock *data_block);
+				int vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block);
 				
 				//! Set the state for a stage datablock
-				int setStateOnStageDataBlock(chaos_vfs::DataBlock *data_block, StageDataBlockState state);
+				int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block, StageDataBlockState state);
 				
 				//! Heartbeat update stage block
-				int workHeartBeatOnStageDataBlock(chaos_vfs::DataBlock *data_block);
+				int vfsWorkHeartBeatOnDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block);
 				
+				//! Check if the vfs file exists
+				int vfsFileExist(chaos_vfs::VFSFile *vfs_file, bool& exists_flag);
 				
-				//! Retrive the path for all datablock in a determinate state
-				int getStageDataBlockPathByState(std::vector<std::string>& path_data_block, StageDataBlockState state);
+				//! Create a file entry into the vfat
+				int vfsCreateFileEntry(chaos_vfs::VFSFile *vfs_file);
 			};
 		}
 	}

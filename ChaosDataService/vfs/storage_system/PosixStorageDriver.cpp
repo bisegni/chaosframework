@@ -25,6 +25,7 @@
 #include <memory>
 
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/utility/TimingUtil.h>
 
 #include <boost/format.hpp>
 #include <boost/interprocess/sync/file_lock.hpp>
@@ -191,9 +192,8 @@ int PosixStorageDriver::openBlock(chaos_vfs::DataBlock *data_block, unsigned int
 		if(flags & chaos_vfs::block_flag::BlockFlagReadeable) {
 			mode &= std::ios_base::in;
 		}
-
-		//check on the max size
 		
+		//set the default value
 		data_block->driver_private_data = fstream_ptr = new boost_fs::fstream(_path, mode);
 	} catch (boost_fs::filesystem_error &e) {
 		if(fstream_ptr) delete(fstream_ptr);
@@ -239,14 +239,22 @@ int PosixStorageDriver::openBlock(std::string vfs_path, unsigned int flags, chao
 		}
 		
 		ofs = new boost_fs::fstream(_path, mode);
+		if(!ofs) return -3;
 		
 		//no we can create the block
 		*data_block = getNewDataBlock(vfs_path.c_str());
+		if(!data_block) {
+			if(ofs) {
+				delete(ofs);
+			}
+			return -4;
+		}
 		(*data_block)->driver_private_data = ofs;
 		(*data_block)->flags = flags;
 		(*data_block)->invalidation_timestamp = 0;
 		(*data_block)->max_reacheable_size = 0;
-	}catch (boost_fs::filesystem_error &e) {
+		(*data_block)->creation_time = TimingUtil::getTimeStamp();
+	} catch(boost_fs::filesystem_error &e) {
 		//delete the allcoated stream
 		if(*data_block) {
 			disposeDataBlock(*data_block);
@@ -255,7 +263,7 @@ int PosixStorageDriver::openBlock(std::string vfs_path, unsigned int flags, chao
 			delete(ofs);
 		}
 		PSDLERR_ << e.what() << std::endl;
-		return -3;
+		return -5;
 	}
 	return 0;
 }
@@ -358,4 +366,71 @@ int PosixStorageDriver::tell(chaos_vfs::DataBlock *data_block, uint64_t *offset)
 		return -2;
 	}
 	return 0;
+}
+
+//! create a directory
+int PosixStorageDriver::createDirectory(std::string vfs_path) {
+	//get absolute path
+	int err = 0;
+	boost::filesystem::path fs_path = getAbsolutePath(vfs_path);
+	try {
+		if(boost::filesystem::exists(fs_path)) {
+			if(!boost::filesystem::is_directory(fs_path)) {
+				err = -1;
+			}
+		} else {
+			//create a directory
+			if(!boost::filesystem::create_directory(fs_path)) {
+				err = -2;
+			}
+		}
+		
+	} catch (boost_fs::filesystem_error &e) {
+		PSDLERR_ << e.what() << std::endl;
+		return -3;
+	}
+	return err;
+}
+
+//! create a directory
+int PosixStorageDriver::createPath(std::string vfs_path) {
+	int err = 0;
+	system::error_code error_code;
+	boost::filesystem::path fs_path = getAbsolutePath(vfs_path);
+	try {
+		if(!boost::filesystem::create_directories(fs_path, error_code)) {
+			err = -1;
+			PSDLERR_ << "Error deleting path " << error_code << std::endl;
+		}
+		
+	} catch (boost_fs::filesystem_error &e) {
+		PSDLERR_ << e.what() << std::endl;
+		return -2;
+	}
+	return err;
+}
+
+//! delete a directory
+int PosixStorageDriver::deletePath(std::string vfs_path, bool all) {
+	int err = 0;
+	system::error_code error_code;
+	boost::filesystem::path fs_path = getAbsolutePath(vfs_path);
+	try {
+		if(all) {
+			if(!boost::filesystem::remove_all(fs_path, error_code)) {
+				PSDLERR_ << "Error deleting all from " << vfs_path << std::endl;
+				err = -1;
+			}
+		} else {
+			if(!boost::filesystem::remove(fs_path, error_code)) {
+				PSDLERR_ << "Error deleting " << vfs_path << std::endl;
+				err = -22;
+			}
+		}
+		
+	} catch (boost_fs::filesystem_error &e) {
+		PSDLERR_ << e.what() << std::endl;
+		err = -3;
+	}
+	return err;
 }
