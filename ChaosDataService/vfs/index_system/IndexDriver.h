@@ -53,11 +53,25 @@ namespace chaos {
 			} IndexDriverSetting;
 			
 			//! define a type of work that can occour on stage datablock
-			typedef enum StageDataBlockState {
-				WriteData = 0,
-				ReadyForProcessing,
-				Processed
-			} StageWorkType;
+			typedef enum DataBlockState {
+				//! block is not used for processing or acquisition
+				DataBlockStateNone			= 0,
+				
+				//! block is acquiring new data
+				DataBlockStateAquiringData	= 1,
+				
+				//! block is reading for processing
+				DataBlockStateProcessing	= 2,
+				
+				//! block as been processed
+				DataBlockStateProcessed		= 4,
+				
+				//! block as been locked for processing
+				DataBlockStateLocked		= 8,
+				
+				//! block has been unlocked
+				DataBlockStateUnlocked		= 12
+			} DataBlockState;
 			
 			/*!
 			 Base class for all driver that will manage the work on index database.
@@ -90,16 +104,17 @@ namespace chaos {
 				/*!
 					Registration of a new datablock in stage area is achieved directly to the DataService process
 					after the block has been created.
+					\param vfs_file the vfs file for wich we need to create the new data block
 					\param data_block Newly created data block
 				 */
-				virtual int vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,chaos_vfs::DataBlock *data_block) = 0;
+				virtual int vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block, DataBlockState new_block_state = DataBlockStateNone) = 0;
 				
 				//! Set the state for a stage datablock
 				/*!
 				 Set the current state for a datablock in the stage area
 				 \param data_block Data block for wich need to be changed the state
 				 */
-				virtual int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,chaos_vfs::DataBlock *data_block, StageDataBlockState state) = 0;
+				virtual int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,chaos_vfs::DataBlock *data_block, DataBlockState state) = 0;
 				
 				//! Heartbeat update stage block
 				/*!

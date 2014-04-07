@@ -20,6 +20,7 @@
 #ifndef __CHAOSFramework__VFSFile__
 #define __CHAOSFramework__VFSFile__
 
+
 #include "index_system/IndexDriver.h"
 #include "storage_system/StorageDriver.h"
 
@@ -32,6 +33,7 @@ namespace chaos {
 		namespace vfs {
 			
 			class VFSManager;
+			struct DataBlock;
 			
 			typedef struct VFSFileInfo {
 				uint32_t		max_block_size;
@@ -51,10 +53,27 @@ namespace chaos {
 				chaos_data_storage::StorageDriver *storage_driver_ptr;
 
 				std::string last_error;
+				
+				//! operational setting for the virtual file
 				VFSFileInfo vfs_file_info;
 				
+				//! Current available data block where read or write
+				DataBlock *current_data_block;
+				
+				uint32_t check_validity_counter;
+				
+				//default consturctor or destructor
 				VFSFile(std::string vfs_fpath);
 				~VFSFile();
+				
+				//! return new datablock where write into
+				inline int getNewDataBlock(DataBlock **new_data_block_handler);
+				
+				//! release a datablock
+				inline int releaseDataBlock(DataBlock *data_block_ptr);
+				
+				//! check if datablock is valid according to internal logic
+				inline bool isDataBlockValid(DataBlock *new_data_blok_handler);
 			public:
 				
 				const VFSFileInfo *getVFSFileInfo() const;

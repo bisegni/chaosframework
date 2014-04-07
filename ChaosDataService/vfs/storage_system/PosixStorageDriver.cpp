@@ -184,13 +184,13 @@ int PosixStorageDriver::openBlock(chaos_vfs::DataBlock *data_block, unsigned int
 			return -1;
 		}
 		
-		std::ios_base::openmode mode = std::ios_base::binary;
+		std::ios_base::openmode mode = std::ios_base::binary | fstream::app;
 		if(flags & chaos_vfs::block_flag::BlockFlagWriteble) {
-			mode &= std::ios_base::out;
+			mode |= std::ios_base::out;
 		}
 		
 		if(flags & chaos_vfs::block_flag::BlockFlagReadeable) {
-			mode &= std::ios_base::in;
+			mode |= std::ios_base::in;
 		}
 		
 		//set the default value
@@ -229,13 +229,13 @@ int PosixStorageDriver::openBlock(std::string vfs_path, unsigned int flags, chao
 		//we can create a file that match a new data block
 		
 		
-		std::ios_base::openmode mode = std::ios_base::binary;
+		std::ios_base::openmode mode = std::ios_base::binary | fstream::app;
 		if(flags & chaos_vfs::block_flag::BlockFlagWriteble) {
-			mode &= std::ios_base::out;
+			mode |= std::ios_base::out;
 		}
 		
 		if(flags & chaos_vfs::block_flag::BlockFlagReadeable) {
-			mode &= std::ios_base::in;
+			mode |= std::ios_base::in;
 		}
 		
 		ofs = new boost_fs::fstream(_path, mode);
@@ -290,12 +290,15 @@ int PosixStorageDriver::closeBlock(chaos_vfs::DataBlock *data_block) {
 	CHAOS_ASSERT(data_block)
 	CHAOS_ASSERT(data_block->driver_private_data)
 	int result = 0;
+	boost_fs::fstream *fstream_ptr = static_cast<boost_fs::fstream *>(data_block->driver_private_data);
 	try {
-		static_cast<boost_fs::fstream *>(data_block->driver_private_data)->close();
+		fstream_ptr->flush();
+		fstream_ptr->close();
 	} catch (boost_fs::filesystem_error &e) {
 		PSDLERR_ << e.what() << std::endl;
 		result = -1;
 	}
+	delete(fstream_ptr);
 	disposeDataBlock(data_block);
 	return result;
 }

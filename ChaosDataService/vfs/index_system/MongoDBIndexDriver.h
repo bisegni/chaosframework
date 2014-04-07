@@ -30,6 +30,31 @@ namespace chaos {
 	namespace data_service {
 		namespace index_system {
 			
+/*!
+ Collection for the storage for the vfs infroamtion of the virtual files across the domain
+ 
+ //some index need to be setup on the mongo installation
+ usedb chaos_vfs
+ 
+ //unique index for the vfs colletion
+ db.vfat.ensureIndex( { "vfs_path": 1, "vfs_domain":1 } , { unique: true } )
+ */
+#define MONGO_DB_VFS_VFAT_COLLECTION		"chaos_vfs.vfat"
+#define MONGO_DB_VFS_VBLOCK_COLLECTION		"chaos_vfs.datablock"
+			
+			//file filed------------------------------------------------------
+#define MONGO_DB_FIELD_FILE_PRIMARY_KEY				"fpk"
+#define MONGO_DB_FIELD_FILE_VFS_PATH				"vfs_path"
+#define MONGO_DB_FIELD_FILE_VFS_DOMAIN				"vfs_domain"
+			
+			//data block file-------------------------------------------------
+#define MONGO_DB_FIELD_DATA_BLOCK_STATE				"state"
+#define MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS		"ct"
+#define MONGO_DB_FIELD_DATA_BLOCK_VALID_UNTIL_TS	"vu"
+#define MONGO_DB_FIELD_DATA_BLOCK_MAX_BLOCK_SIZE	"mbs"
+#define MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH			"vfs_path"
+#define MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN		"vfs_domain"
+			
 			//! Mongodb implementation for the index driver
 			REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(MongoDBIndexDriver, IndexDriver) {
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(MongoDBIndexDriver)
@@ -48,10 +73,10 @@ namespace chaos {
 				void deinit() throw (chaos::CException);
 				
 				//! Register a new data block wrote on stage area
-				int vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block);
+				int vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block, DataBlockState new_block_state = DataBlockStateNone);
 				
 				//! Set the state for a stage datablock
-				int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block, StageDataBlockState state);
+				int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block, DataBlockState state);
 				
 				//! Heartbeat update stage block
 				int vfsWorkHeartBeatOnDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block);

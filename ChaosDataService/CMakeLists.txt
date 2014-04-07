@@ -3,7 +3,7 @@ SET(src  ${src} ChaosDataService.cpp DataConsumer.cpp)
 SET(src  ${src} worker/DataWorker.cpp worker/DeviceSharedDataWorker.cpp worker/AnswerDataWorker.cpp)
 SET(src  ${src} cache_system/CacheDriver.cpp cache_system/MemcachedCacheDriver.cpp cache_system/CouchbaseCacheDriver.cpp)
 # 
-SET(src  ${src} vfs/VFSFileManager.cpp vfs/DataBlock.cpp vfs/VFSLogicalFile.cpp  vfs/storage_system/StorageDriver.cpp vfs/storage_system/PosixStorageDriver.cpp)
+SET(src  ${src} vfs/VFSManager.cpp vfs/DataBlock.cpp vfs/VFSFile.cpp  vfs/storage_system/StorageDriver.cpp vfs/storage_system/PosixStorageDriver.cpp)
 SET(src  ${src} vfs/index_system/IndexDriver.cpp vfs/index_system/MongoDBIndexDriver.cpp)
 
 ADD_EXECUTABLE(ChaosDataService ${src})

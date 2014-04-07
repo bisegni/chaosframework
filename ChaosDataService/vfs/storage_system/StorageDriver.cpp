@@ -47,12 +47,25 @@ void StorageDriver::init(void *init_data) throw (chaos::CException) {
 void StorageDriver::deinit() throw (chaos::CException) {
 }
 
-chaos_vfs::DataBlock *StorageDriver::getNewDataBlock(std::string path) {
-	return new chaos_vfs::DataBlock(path);
+chaos_vfs::DataBlock *StorageDriver::getNewDataBlock(std::string vfs_path) {
+	chaos_vfs::DataBlock *new_block = new chaos_vfs::DataBlock();
+	if(new_block) {
+		new_block->vfs_path = (char*)malloc(sizeof(char) * vfs_path.size()+1);
+		if(new_block->vfs_path) {
+			::strcpy(new_block->vfs_path , vfs_path.c_str());
+		} else {
+			delete new_block;
+			new_block= NULL;
+		}
+	}
+	return new_block;
 }
 
 void StorageDriver::disposeDataBlock(chaos_vfs::DataBlock *data_block) {
-	if(data_block) delete(data_block);
+	if(data_block) {
+		if(data_block->vfs_path) free( data_block->vfs_path );
+		if(data_block) delete(data_block);
+	}
 }
 
 //! return the storage domain for this driver

@@ -37,6 +37,22 @@ static const boost::regex KVParamRegex("[a-zA-Z0-9/_]+:[a-zA-Z0-9/_]+(-[a-zA-Z0-
 #define CDSLDBG_ LDBG_ << ChaosDataService_LOG_HEAD
 #define CDSLERR_ LERR_ << ChaosDataService_LOG_HEAD
 #define __METHOD_NAME__(x) x(__PRETTY_FUNCTION__)
+
+void writeTestData(chaos::data_service::vfs::VFSManager *manager) {
+	chaos::data_service::vfs::VFSFile * file= NULL;
+	if(manager->getFile("/data/device_1", &file) || !file) {
+		return;
+	}
+	const char * testBuff = "[START]asjgdoasdgfpaugfpaugsvuigsdfnocuagscougfabousdgfoanvuisgfaocusfadisugfoaisudgfainovsudgfcoiusfgnaoudisfgacnosufgaondsug[END]";
+	for (int idx = 0; idx < 100000; idx++) {
+		if(file->write((void*)testBuff, (uint32_t)std::strlen(testBuff))) {
+			break;
+		}
+		boost::this_thread::sleep(boost::posix_time::microseconds(100));
+	}
+	manager->releaseFile(file);
+}
+
 //boost::mutex ChaosCUToolkit::monitor;
 //boost::condition ChaosCUToolkit::endWaithCondition;
 WaitSemaphore ChaosDataService::waitCloseSemaphore;
@@ -143,6 +159,16 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		//initialize vfs file manager
 		vfs_file_manager.reset(new vfs::VFSManager(), "VFSFileManager");
 		vfs_file_manager.init(&settings.file_manager_setting , __PRETTY_FUNCTION__);
+		
+		//alocate default fs structure
+		vfs_file_manager->createDirectory("data");
+		vfs_file_manager->createDirectory("stage");
+		
+		boost::thread_group g;
+		for (int idx = 0; idx < 10; idx++) {
+			g.add_thread(new boost::thread(writeTestData, vfs_file_manager.get()));
+		}
+		g.join_all();
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         exit(1);

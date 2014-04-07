@@ -102,7 +102,7 @@ namespace chaos {
 				
 				int getFile(std::string vfs_path, VFSFile **l_file);
 				
-				int relaseFile(VFSFile *l_file);
+				int releaseFile(VFSFile *l_file);
 				
 				int createDirectory(std::string vfs_path, bool all_path = false);
 				

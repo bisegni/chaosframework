@@ -24,13 +24,11 @@
 
 using namespace chaos::data_service::vfs;
 
-DataBlock::DataBlock(std::string path):vfs_path(NULL) {
-	if(path.size() > 0) {
-		vfs_path = (char*)malloc(sizeof(char) * path.size());
-		::memcpy(vfs_path, path.c_str(), path.size());
-	}
+DataBlock::DataBlock():
+flags(0),invalidation_timestamp(0), max_reacheable_size(0),
+current_size(0), creation_time(0), vfs_path(NULL), driver_private_data(NULL) {
+
 }
 
 DataBlock::~DataBlock() {
-	if(vfs_path) free(vfs_path);
 }

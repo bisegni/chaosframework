@@ -33,6 +33,8 @@ namespace chaos_data_storage = chaos::data_service::storage_system;
 #define VFSFM_LDBG_ LDBG_ << VFSManager_LOG_HEAD << __FUNCTION__ << " - "
 #define VFSFM_LERR_ LERR_ << VFSManager_LOG_HEAD << __FUNCTION__ << " - "
 
+#define VFSManager_MAX_BLOCK_SIZE		1024*1024*5			// 5 megabyte
+#define VFSManager_MAX_BLOCK_LIFETIME	1000 * 60 * 5		// 5 minutes
 
 VFSManager::VFSManager():setting(NULL) {
 	
@@ -64,6 +66,18 @@ void VFSManager::init(void * init_data) throw (chaos::CException) {
 	if(!storage_driver_ptr) throw chaos::CException(-1, "No storage driver found", __PRETTY_FUNCTION__);
 	chaos::utility::InizializableService::initImplementation(storage_driver_ptr, &setting->storage_driver_setting, storage_driver_ptr->getName(), __PRETTY_FUNCTION__);
 	
+	if(!setting->max_block_size) {
+		VFSFM_LAPP_ << "Use default value for max_block_size";
+		setting->max_block_size = VFSManager_MAX_BLOCK_SIZE;
+	}
+	
+	if(!setting->max_block_lifetime) {
+		VFSFM_LAPP_ << "Use default value for max_block_lifetime";
+		setting->max_block_lifetime = VFSManager_MAX_BLOCK_LIFETIME;
+	}
+	
+	VFSFM_LDBG_ << "max_block_size configured with " << setting->max_block_size << " megabyte";
+	VFSFM_LDBG_ << "max_block_lifetime configured with " << setting->max_block_lifetime << " milliseconds (" << (setting->max_block_lifetime/(1000*60)) << " minutes)";
 }
 
 void VFSManager::deinit() throw (chaos::CException) {
@@ -106,25 +120,31 @@ void VFSManager::freeObject(std::string key, VFSFilesForPath *element) {
 }
 
 int VFSManager::getFile(std::string vfs_fpath,  VFSFile **l_file) {
-	DEBUG_CODE(VFSFM_LDBG_ << "Start getting new logical file with path" << vfs_fpath;)
+	DEBUG_CODE(VFSFM_LDBG_ << "Start getting new logical file with path->" << vfs_fpath;)
 	
 	VFSFilesForPath *files_for_path = NULL;
+	
+	VFSFile *logical_file = new VFSFile(vfs_fpath);
+	if(!logical_file) return -1;
+	
+	//the vfs file is identified by a folder containing all data block
+	if(storage_driver_ptr->createDirectory(vfs_fpath)) {
+		return -2;
+		delete logical_file;
+	}
 	
 	//get or create the infro for logical file isntance
 	if(VFSManagerKeyObjectContainer::hasKey(vfs_fpath)) {
 		files_for_path = VFSManagerKeyObjectContainer::accessItem(vfs_fpath);
 	} else {
 		files_for_path =  new VFSFilesForPath();
-		if(!files_for_path) return -1;
+		if(!files_for_path) return -3;
 		VFSManagerKeyObjectContainer::registerElement(vfs_fpath, files_for_path);
 	}
 
-	VFSFile *logical_file = new VFSFile(vfs_fpath);
-	if(!logical_file) return -2;
-
 	//lock the files info for path
 	boost::unique_lock<boost::mutex> lock(files_for_path->_mutex);
-	
+
 	//generate isntance unique key
 	logical_file->vfs_file_info.identify_key = boost::str(boost::format("%1%_%2%") % vfs_fpath % files_for_path->instance_counter++);
 	logical_file->vfs_file_info.vfs_domain = storage_driver_ptr->getStorageDomain();
@@ -134,11 +154,12 @@ int VFSManager::getFile(std::string vfs_fpath,  VFSFile **l_file) {
 	logical_file->index_driver_ptr	= index_driver_ptr;
 
 	files_for_path->map_logical_files.insert(make_pair(logical_file->vfs_file_info.identify_key, logical_file));
+	
 	*l_file = logical_file;
 	return 0;
 }
 
-int VFSManager::relaseFile(VFSFile *l_file) {
+int VFSManager::releaseFile(VFSFile *l_file) {
 	CHAOS_ASSERT(l_file)
 	DEBUG_CODE(VFSFM_LDBG_ << "Delete vfs fiel with path->" << l_file->vfs_file_info.vfs_fpath;)
 	

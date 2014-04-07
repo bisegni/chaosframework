@@ -84,7 +84,7 @@ namespace chaos {
 			private:
 				friend class chaos::data_service::storage_system::StorageDriver;
 				//! privade constructor
-				DataBlock(std::string path);
+				DataBlock();
 				//! private destructor
 				virtual ~DataBlock();
 
