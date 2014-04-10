@@ -17,8 +17,8 @@ if [ -n "$CHAOS_BOOST_VERSION" ]; then
 	BOOST_VERSION="1_"$CHAOS_BOOST_VERSION"_0"
 	BOOST_VERSION_IN_PATH="1.$CHAOS_BOOST_VERSION.0"
 else
-	BOOST_VERSION=1_53_0
-	BOOST_VERSION_IN_PATH=1.53.0
+	BOOST_VERSION=1_55_0
+	BOOST_VERSION_IN_PATH=1.55.0
 fi
 
 BOOST_NUMBER_VERSION=$(echo $BOOST_VERSION_IN_PATH |sed "s/[^0-9]//g" )
@@ -76,7 +76,7 @@ if [ ! -d "$PREFIX/include/boost" ]; then
     if [ ! -e "$BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz" ]; then
         echo "Download boost source"
         wget --no-check-certificate -O $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz "http://downloads.sourceforge.net/project/boost/boost/$BOOST_VERSION_IN_PATH/boost_$BOOST_VERSION.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F$BOOST_VERSION_IN_PATH%2F&ts=1350734344&use_mirror=freefr"
-        
+
     fi
 
     if [ ! -e $BASE_EXTERNAL/boost ]; then
