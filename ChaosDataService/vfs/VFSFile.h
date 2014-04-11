@@ -75,10 +75,13 @@ namespace chaos {
 				//! check if datablock is valid according to internal logic
 				inline bool isDataBlockValid(DataBlock *new_data_blok_handler);
 			public:
-				
+				//! Get the VFS information for file
 				const VFSFileInfo *getVFSFileInfo() const;
+				
+				//! Check if the file exists
 				bool exist();
 				
+				//! write data on the current data block
 				int write(void *data, uint32_t data_len);
 			};
 		}

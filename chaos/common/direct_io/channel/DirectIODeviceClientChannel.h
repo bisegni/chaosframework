@@ -40,7 +40,13 @@ namespace chaos {
 					uint64_t ip;
 					uint32_t hash;
 				}AnswerServerInfo;
-								
+							
+				typedef enum DirectIODeviceClientChannelPutMode {
+					DirectIODeviceClientChannelPutModeStoricizeOnly		= 0,
+					DirectIODeviceClientChannelPutModeLiveOnly			= 1,
+					DirectIODeviceClientChannelPutModeStoricizeAnLive	= 2
+				}DirectIODeviceClientChannelPutMode;
+				
 				//! Class for the managment of pushing data for the device dataset
 				/*!
 				 This class manage the forwarding of data that represent the device dataset channels (i/O)
@@ -59,6 +65,7 @@ namespace chaos {
 					uint32_t device_hash;
 
 					std::string device_id;
+					DirectIODeviceClientChannelPutMode put_mode;
 					AnswerServerInfo answer_server_info;
 					
 					void prepare_put_opcode();
@@ -70,7 +77,7 @@ namespace chaos {
 					~DirectIODeviceClientChannel();
 					
 					//! Set the device id for this channel
-					void setDeviceID(std::string _device_id);
+					void setDeviceID(std::string _device_id, DirectIODeviceClientChannelPutMode _put_mode = DirectIODeviceClientChannelPutModeLiveOnly);
 					
 					//! set the information on witch port forward the answer(the ip is the ip of the machine)
 					void setAnswerServerInfo(uint16_t p_server_port, uint16_t s_server_port, uint16_t answer_enpoint);
