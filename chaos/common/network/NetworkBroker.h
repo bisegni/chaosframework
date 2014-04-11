@@ -185,6 +185,18 @@ namespace chaos {
          */
         void getPublishedHostAndPort(string&);
         
+			//!Return the rpc url
+		/*!
+			return the rpc url
+		 */
+		std::string getRPCUrl();
+		
+			//!Return the direct io url
+		/*!
+			Return the direction server base url (without endpoint)
+		 */
+		std::string getDirectIOUrl();
+		
             //! event Action registration for the current instance of NetworkBroker
         /*!
          Register an event actions defined for a detgerminated event type

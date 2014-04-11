@@ -329,6 +329,16 @@ void NetworkBroker::getPublishedHostAndPort(string& hostAndPort) {
     hostAndPort.append(lexical_cast<string>(rpcServer->getPublishedPort()));
 }
 
+std::string NetworkBroker::getRPCUrl() {
+	std::string rpc_endpoint;
+	getPublishedHostAndPort(rpc_endpoint);
+	return rpc_endpoint;
+}
+
+std::string NetworkBroker::getDirectIOUrl() {
+	return directIOServer->getUrl();
+}
+
 #pragma mark Event Registration and forwarding
 //! event Action registration for the current instance of NetworkBroker
 /*!
