@@ -36,17 +36,28 @@ void DeviceSharedDataWorker::deinit() throw (chaos::CException) {
 
 void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 	DeviceSharedWorkerJob *job_ptr = reinterpret_cast<DeviceSharedWorkerJob*>(job_info);
-	
-	cache_system::CacheDriver *cache_driver_instance = reinterpret_cast<cache_system::CacheDriver*>(cookie);
-	
-	cache_driver_instance->putData(GET_PUT_OPCODE_KEY_PTR(job_ptr->request_header),
-								   job_ptr->request_header->key_len,
-								   job_ptr->data_pack,
-								   job_ptr->data_pack_len);
-	free(job_ptr->request_header);
-	free(job_ptr->data_pack);
-	free(job_info);
+	//check what kind of push we have
+	switch(job_ptr->request_header->tag) {
+		case 0:// storicize only
+			break;
+			
+
+		case 2:// storicize and live
+			//punt into history stream
+			
+		case 1:// live only only
+			cache_system::CacheDriver *cache_driver_instance = reinterpret_cast<cache_system::CacheDriver*>(cookie);
+			cache_driver_instance->putData(GET_PUT_OPCODE_KEY_PTR(job_ptr->request_header),
+										   job_ptr->request_header->key_len,
+										   job_ptr->data_pack,
+										   job_ptr->data_pack_len);
+			free(job_ptr->request_header);
+			free(job_ptr->data_pack);
+			free(job_info);
+			break;
+	}
 }
+
 
 void DeviceSharedDataWorker::addServer(std::string server_description) {
 	for(int idx = 0; idx < settings.job_thread_number; idx++) {

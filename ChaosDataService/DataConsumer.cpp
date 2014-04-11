@@ -85,10 +85,6 @@ void DataConsumer::init(void *init_data) throw (chaos::CException) {
 	//add answer worker
 	chaos::data_service::worker::AnswerDataWorker *tmp_data_worker = NULL;
 	for(int idx = 0; idx < settings->answer_worker_num; idx++) {
-		//allocate a new worker with his personal client instance
-		//get the cache driver instance
-		//cache_system::CacheDriver *cache_driver_instance = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name.c_str());
-		
 		tmp_data_worker = new chaos::data_service::worker::AnswerDataWorker(network_broker->getDirectIOClientInstance(), cache_impl_name);
 		tmp_data_worker->init(&settings->answer_worker_setting);
 		for(CacheServerListIterator iter = settings->startup_chache_servers.begin();
@@ -139,7 +135,6 @@ void DataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header,
 	job->request_header = header;
 	job->data_pack = channel_data;
 	job->data_pack_len = channel_data_len;
-	
     if(!device_data_worker[index_to_use]->submitJobInfo(job)) {
 		DEBUG_CODE(DSLDBG_ << "error pushing data into worker queue");
 		delete job;

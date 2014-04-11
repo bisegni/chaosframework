@@ -163,13 +163,13 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		//alocate default fs structure
 		vfs_file_manager->createDirectory("data");
 		vfs_file_manager->createDirectory("stage");
-		
+		/*
 		boost::thread_group g;
 		for (int idx = 0; idx < 10; idx++) {
 			g.add_thread(new boost::thread(writeTestData, vfs_file_manager.get()));
 		}
 		g.join_all();
-		
+		*/
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         exit(1);

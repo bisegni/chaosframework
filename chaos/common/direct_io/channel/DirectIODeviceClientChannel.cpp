@@ -39,7 +39,12 @@ using namespace chaos::common::direct_io::channel::opcode_headers;
 #define PUT_HEADER_LEN  GET_PUT_OPCODE_FIXED_PART_LEN+device_id.size()
 
 
-DirectIODeviceClientChannel::DirectIODeviceClientChannel(std::string alias):DirectIOVirtualClientChannel(alias, DIODataset_Channel_Index, true), device_hash(0), device_id(""), put_opcode_header(NULL) {
+DirectIODeviceClientChannel::DirectIODeviceClientChannel(std::string alias):
+DirectIOVirtualClientChannel(alias, DIODataset_Channel_Index, true),
+device_hash(0),
+device_id(""),
+put_mode(DirectIODeviceClientChannelPutModeLiveOnly),
+put_opcode_header(NULL) {
 
 }
 
@@ -49,13 +54,13 @@ DirectIODeviceClientChannel::~DirectIODeviceClientChannel() {
 	}
 }
 
-void DirectIODeviceClientChannel::setDeviceID(std::string _device_id) {
+void DirectIODeviceClientChannel::setDeviceID(std::string _device_id, DirectIODeviceClientChannelPutMode _put_mode) {
 	//create the has for the device id
 	device_hash = chaos_cache::FastHash::hash(_device_id.c_str(), _device_id.size(), 0);
 	
 	//keep track of the device id
 	device_id = _device_id;
-	
+	put_mode = _put_mode;
 	if(put_opcode_header) {
 		free(put_opcode_header);
 	}
@@ -70,10 +75,9 @@ void DirectIODeviceClientChannel::setDeviceID(std::string _device_id) {
 }
 
 void DirectIODeviceClientChannel::prepare_put_opcode() {
-	bool cache = true;
 	if(!put_opcode_header) return;
 	put_opcode_header->device_hash = TO_LITTE_ENDNS_NUM(uint32_t, device_hash);
-	put_opcode_header->tag = TO_LITTE_ENDNS_NUM(uint32_t, cache);
+	put_opcode_header->tag = /*TO_LITTE_ENDNS_NUM(uint32_t,*/(uint8_t) put_mode; /*);*/
 	put_opcode_header->key_len = device_id.size();
 	//put_opcode_header->key_data
 	std::memcpy(GET_PUT_OPCODE_KEY_PTR(put_opcode_header), device_id.c_str(), put_opcode_header->key_len);

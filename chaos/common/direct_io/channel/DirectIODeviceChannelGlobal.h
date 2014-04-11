@@ -50,7 +50,7 @@ namespace chaos {
 							//! The 32bit hash value for the device that we need to insert
                         uint32_t device_hash;
 							//! The 8 bit tag field
-						uint8_t tag;;
+						uint8_t tag;
                             //! The 8 bit key length field
                         uint8_t key_len;
 							//the pointer to key data
