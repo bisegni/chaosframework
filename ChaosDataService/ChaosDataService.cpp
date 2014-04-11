@@ -169,6 +169,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 			g.add_thread(new boost::thread(writeTestData, vfs_file_manager.get()));
 		}
 		g.join_all();
+		
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         exit(1);
@@ -183,6 +184,11 @@ void ChaosDataService::start() throw(CException) {
     try {
 		network_broker.start(__PRETTY_FUNCTION__);
         data_consumer.start(__PRETTY_FUNCTION__);
+		
+		//print information header on CDS address
+		std::cout << "--------------------------------------------------------------------------------------" << std::endl;
+		std::cout << "Chaos Data Service publisched with url: " << network_broker->getDirectIOUrl() << "|0"<< std::endl;
+		std::cout << "--------------------------------------------------------------------------------------" << std::endl;
 		
         waitCloseSemaphore.wait();
     } catch (CException& ex) {
