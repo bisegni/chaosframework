@@ -142,13 +142,22 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 			fillKVParameter(ChaosDataService::getInstance()->settings.file_manager_setting.index_driver_setting.key_value_custom_param, OPT_VFS_INDEX_DRIVER_KVP);
 		}
 		
+		//initialize vfs file manager
+		CDSLAPP_ << "Allocate VFS Manager";
+		vfs_file_manager.reset(new vfs::VFSManager(), "VFSFileManager");
+		vfs_file_manager.init(&settings.file_manager_setting , __PRETTY_FUNCTION__);
+		
+		//alocate default fs structure
+		vfs_file_manager->createDirectory("data");
+		vfs_file_manager->createDirectory("stage");
+
 		CDSLAPP_ << "Allocate Network Brocker";
         network_broker.reset(new NetworkBroker(), "NetworkBroker");
 		if(!network_broker.get()) throw chaos::CException(-1, "Error instantiating network broker", __PRETTY_FUNCTION__);
 		network_broker.init(NULL, __PRETTY_FUNCTION__);
         
         CDSLAPP_ << "Allocate the Data Consumer";
-        data_consumer.reset(new DataConsumer(), "DataConsumer");
+        data_consumer.reset(new DataConsumer(vfs_file_manager.get()), "DataConsumer");
 		if(!data_consumer.get()) throw chaos::CException(-1, "Error instantiating data consumer", __PRETTY_FUNCTION__);
 		data_consumer->settings = &settings;
 		
@@ -156,13 +165,6 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		data_consumer->network_broker = network_broker.get();
         data_consumer.init(NULL, __PRETTY_FUNCTION__);
 		
-		//initialize vfs file manager
-		vfs_file_manager.reset(new vfs::VFSManager(), "VFSFileManager");
-		vfs_file_manager.init(&settings.file_manager_setting , __PRETTY_FUNCTION__);
-		
-		//alocate default fs structure
-		vfs_file_manager->createDirectory("data");
-		vfs_file_manager->createDirectory("stage");
 		/*
 		boost::thread_group g;
 		for (int idx = 0; idx < 10; idx++) {

@@ -44,7 +44,10 @@ namespace chaos {
                 
                 //! Name space for grupping the varius headers for every DeviceChannelOpcode
                 namespace opcode_headers {
-                    
+#define	GET_PUT_OPCODE_FIXED_PART_LEN	6
+					//!macro used to get pointer to the start of the key data
+#define GET_PUT_OPCODE_KEY_PTR(h) (void*)((char*)h+6)
+					
                     //! Heder for the DeviceChannelOpcodePutOutput[WithCache] opcodes
                     typedef struct DirectIODeviceChannelHeaderPutOpcode {
 							//! The 32bit hash value for the device that we need to insert
@@ -56,8 +59,6 @@ namespace chaos {
 							//the pointer to key data
 						void*   key_data;
                     } DirectIODeviceChannelHeaderData, *DirectIODeviceChannelHeaderDataPtr;
-#define	GET_PUT_OPCODE_FIXED_PART_LEN	6
-#define GET_PUT_OPCODE_KEY_PTR(h) (void*)((char*)h+6) 
 					
 					
                     //! Header for the DeviceChannelOpcodeGetOutputFromCache opcode

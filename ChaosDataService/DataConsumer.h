@@ -22,8 +22,9 @@
 #define __CHAOSFramework__DataConsumer__
 
 #include "dataservice_global.h"
-#include "cache_system/cache_system.h"
+#include "vfs/VFSManager.h"
 #include "worker/DataWorker.h"
+#include "cache_system/cache_system.h"
 #include <chaos/common/utility/ObjectSlot.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/direct_io/DirectIOServerEndpoint.h>
@@ -54,6 +55,7 @@ namespace chaos{
             DirectIOServerEndpoint					*server_endpoint;
 			DirectIODeviceServerChannel				*device_channel;
 			
+			vfs::VFSManager *vfs_manager_instance;
 			boost::atomic<uint16_t> device_data_worker_index;
 			chaos::data_service::worker::DataWorker	**device_data_worker;
 			chaos::common::utility::ObjectSlot<chaos::data_service::worker::DataWorker*> answer_worker_list;
@@ -63,7 +65,7 @@ namespace chaos{
             void consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header, void *channel_data, uint32_t channel_data_len);
 
         public:
-			DataConsumer();
+			DataConsumer(vfs::VFSManager *_vfs_manager_instance);
             ~DataConsumer();
             void init(void *init_data) throw (chaos::CException);
             void start() throw (chaos::CException);
