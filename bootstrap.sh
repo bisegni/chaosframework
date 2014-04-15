@@ -17,12 +17,13 @@ if [ -n "$CHAOS_BOOST_VERSION" ]; then
 	BOOST_VERSION="1_"$CHAOS_BOOST_VERSION"_0"
 	BOOST_VERSION_IN_PATH="1.$CHAOS_BOOST_VERSION.0"
 else
-	BOOST_VERSION=1_53_0
-	BOOST_VERSION_IN_PATH=1.53.0
+	BOOST_VERSION=1_55_0
+	BOOST_VERSION_IN_PATH=1.55.0
 fi
 
 BOOST_NUMBER_VERSION=$(echo $BOOST_VERSION_IN_PATH |sed "s/[^0-9]//g" )
-LMEM_VERSION=1.0.16
+ZLIB_VERSION=1.2.8
+LMEM_VERSION=1.0.18
 ZMQ_VERSION=zeromq4-x
 COUCHBASE_VERSION=2.2.0
 
@@ -31,10 +32,25 @@ if [ -n "$1" ]; then
 else
     PREFIX=$CHAOS_DIR/usr/local
 fi
+CROSS_HOST_CONFIGURE=""
+if [ -n "$CROSS_HOST" ]; then
+CROSS_HOST_CONFIGURE="-host=$CROSS_HOST"
+fi
 
+do_make() {
+   if !(make -j$NPROC); then
+       echo "## error compiling $1"
+       exit 1
+   fi
+   if !(make install); then
+       echo "## error installing $1"
+       exit 1
+   fi
+
+}
 if [ -n "$CHAOS32" ]; then
-    export CFLAGS="-m32 -arch i386"
-    export CXXFLAGS="-m32 -arch i386"
+    export CFLAGS="-m32"
+    export CXXFLAGS="-m32"
     echo "Force 32 bit binaries"
 fi
 
@@ -71,47 +87,91 @@ if [ ! -d "$BASE_EXTERNAL" ]; then
     mkdir -p $BASE_EXTERNAL
 fi
 
+if [ ! -e "$PREFIX/include/zlib.h" ] || [ ! -e "$PREFIX/lib/libz.a" ]; then
+
+	if !( wget --no-check-certificate -O "$BASE_EXTERNAL/zlib-$ZLIB_VERSION.tar.gz" "http://zlib.net/zlib-$ZLIB_VERSION.tar.gz" ); then
+	    echo "## cannot download http://zlib.net/zlib-$ZLIB_VERSION.tar.gz, aborting "
+	    exit 1;
+	fi
+	if [ -e "$BASE_EXTERNAL/zlib-$ZLIB_VERSION.tar.gz" ]; then
+	    filetar="$BASE_EXTERNAL/zlib-$ZLIB_VERSION.tar.gz";
+	    if !( tar xvfz $filetar -C "$BASE_EXTERNAL" > /dev/null ) then
+		echo "## cannot extract $filetar, aborting "
+		exit 1
+	    fi
+	else
+	    echo "## cannot compile $BASE_EXTERNAL/zlib-$ZLIB_VERSION.tar.gz, aborting"
+	    exit 1
+	fi
+
+if [ -d "$BASE_EXTERNAL/zlib-$ZLIB_VERSION" ]; then
+	    cd $BASE_EXTERNAL/zlib-$ZLIB_VERSION
+	    echo "entering in $BASE_EXTERNAL/zlib-$ZLIB_VERSION"
+	    echo "using $CC and $CXX"
+	    ./configure --prefix=$PREFIX 
+	    do_make "ZLIB"
+else
+    echo "$BASE_EXTERNAL/zlib-$ZLIB_VERSION not found"
+    exit 1
+fi
+fi
+
 
 if [ ! -d "$PREFIX/include/boost" ]; then
     if [ ! -e "$BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz" ]; then
         echo "Download boost source"
-        wget --no-check-certificate -O $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz "http://downloads.sourceforge.net/project/boost/boost/$BOOST_VERSION_IN_PATH/boost_$BOOST_VERSION.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F$BOOST_VERSION_IN_PATH%2F&ts=1350734344&use_mirror=freefr"
-
+        if !( wget --no-check-certificate -O $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz "http://downloads.sourceforge.net/project/boost/boost/$BOOST_VERSION_IN_PATH/boost_$BOOST_VERSION.tar.gz?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fboost%2Ffiles%2Fboost%2F$BOOST_VERSION_IN_PATH%2F&ts=1350734344&use_mirror=freefr" ); then
+	    echo "## cannot download boost_$BOOST_VERSION.tar.gz"
+	    exit 1
+	 fi
+        
     fi
 
     if [ ! -e $BASE_EXTERNAL/boost ]; then
         tar zxvf $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz -C $BASE_EXTERNAL
         mv $BASE_EXTERNAL/boost_$BOOST_VERSION $BASE_EXTERNAL/boost
     fi
-
+    
 #install old version of boost log
-	if [ $BOOST_NUMBER_VERSION -le 1530 ] && [ ! -d "$BASE_EXTERNAL/boost_log" ]; then
-		git clone https://cvs.lnf.infn.it/boost_log $BASE_EXTERNAL/boost_log
-
-		if [ ! -d "$BASE_EXTERNAL/boost/boost/log" ]; then
-			echo "link $BASE_EXTERNAL/boost/boost/log -> $BASE_EXTERNAL/boost_log/boost/log"
-			ln -s $BASE_EXTERNAL/boost_log/boost/log $BASE_EXTERNAL/boost/boost/log
-		fi
-
-		if [ ! -d "$BASE_EXTERNAL/boost/libs/log" ]; then
-			echo "link $BASE_EXTERNAL/boost/libs/log -> $BASE_EXTERNAL/boost_log/libs/log"
-			ln -s $BASE_EXTERNAL/boost_log/libs/log $BASE_EXTERNAL/boost/libs/log
-		fi
+    if [ $BOOST_NUMBER_VERSION -le 1530 ] && [ ! -d "$BASE_EXTERNAL/boost_log" ]; then
+	
+	if !(git clone https://cvs.lnf.infn.it/boost_log $BASE_EXTERNAL/boost_log); then
+	    echo "## cannot git clone  https://cvs.lnf.infn.it/boost_log"
+	    exit 1
 	fi
-
-
-    if [ ! -f "$BASE_EXTERNAL/boost/b2" ]; then
-        echo "Boostrapping boost"
-        cd $BASE_EXTERNAL/boost
-        ./bootstrap.sh
+	
+	if [ ! -d "$BASE_EXTERNAL/boost/boost/log" ]; then
+	    echo "link $BASE_EXTERNAL/boost/boost/log -> $BASE_EXTERNAL/boost_log/boost/log"
+	    ln -s $BASE_EXTERNAL/boost_log/boost/log $BASE_EXTERNAL/boost/boost/log
+	fi
+	
+	if [ ! -d "$BASE_EXTERNAL/boost/libs/log" ]; then
+	    echo "link $BASE_EXTERNAL/boost/libs/log -> $BASE_EXTERNAL/boost_log/libs/log"
+	    ln -s $BASE_EXTERNAL/boost_log/libs/log $BASE_EXTERNAL/boost/libs/log
+	fi
     fi
+
+
+    echo "Boostrapping boost"
+    cd $BASE_EXTERNAL/boost
+    if !( ./bootstrap.sh ); then
+	echo "## cannot bootstrap boost"
+	exit 1;
+    fi
+
+    echo "-> $CROSS_HOST" 
+    if [ -n "$CROSS_HOST" ]; then
+	echo "* Patching project-config.jam to cross compile for $CROSS_HOST"
+	sed --in-place=.bak -e "s/using gcc/using gcc : arm : $CROSS_HOST-g++/" project-config.jam 
+    fi
+    
 
     cd $BASE_EXTERNAL/boost
     echo "Compile and install boost libraries into $PREFIX/"
 
-if [ -n "$CHAOS32" ]; then
-    	echo "INSTALLING BOOST X86 32"
-    	./b2 link=shared cflags=-m32 cxxflags=-m32 architecture=x86 address-model=32 --prefix=$PREFIX --with-iostreams --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread --with-atomic --with-timer install
+    if [ -n "$CHAOS32" ]; then
+    	echo "INSTALLING BOOST 32"
+    	./b2 link=shared cflags=-m32 cxxflags=-m32 address-model=32 --prefix=$PREFIX --with-iostreams --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread --with-atomic --with-timer install
     else
         if [ `echo $OS | tr [:upper:] [:lower:]` = `echo "Darwin" | tr [:upper:] [:lower:]` ] && [ $KERNEL_SHORT_VER -ge 1300 ]; then
             ./b2  toolset=clang cxxflags=-stdlib=libstdc++ linkflags=-stdlib=libstdc++ link=shared --prefix=$PREFIX --with-program_options --with-chrono --with-filesystem --with-iostreams --with-log --with-regex --with-system --with-thread --with-atomic --with-timer install
@@ -135,12 +195,14 @@ if [ ! -d "$PREFIX/include/modbus" ] || [ ! -d "$BASE_EXTERNAL/libmodbus" ]; the
                 cd $BASE_EXTERNAL/libmodbus/
                 git pull
         fi
-./autogen.sh
 
-./configure --prefix=$PREFIX
+./autogen.sh
+./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+
+
 make clean
-make
-make install
+do_make "MODBUS"
+
 echo "libmodbus done"
 fi
 
@@ -148,18 +210,22 @@ if [ ! -d "$PREFIX/include/msgpack" ]; then
 	echo "Setup MSGPACK"
 	if [ ! -d "$BASE_EXTERNAL/msgpack-c" ]; then
 		echo "Install msgpack-c"
-		git clone https://github.com/msgpack/msgpack-c.git $BASE_EXTERNAL/msgpack-c
-		cd $BASE_EXTERNAL/msgpack-c/
+		if !(git clone https://github.com/msgpack/msgpack-c.git $BASE_EXTERNAL/msgpack-c); then
+		    echo "## cannot clone https://github.com/msgpack/msgpack-c.git"
+		    exit 1
+		fi
+	
 	else
 		echo "Update msgpack-c"
 		cd $BASE_EXTERNAL/msgpack-c/
 		git pull
 	fi
+cd $BASE_EXTERNAL/msgpack-c/
 ./bootstrap
-./configure --prefix=$PREFIX
+./configure $CROSS_HOST_CONFIGURE --prefix=$PREFIX 
+
 make clean
-make
-make install
+do_make "MSG PACK"
 echo "MSGPACK done"
 fi
 
@@ -168,7 +234,10 @@ if [ ! -d "$PREFIX/include/mp" ]; then
 	if [ ! -d "$BASE_EXTERNAL/mpio" ]; then
 		echo "Install mpio"
 	#    git clone https://github.com/frsyuki/mpio.git $BASE_EXTERNAL/mpio
-		git clone https://github.com/bisegni/mpio.git $BASE_EXTERNAL/mpio
+		if !(git clone https://github.com/bisegni/mpio.git $BASE_EXTERNAL/mpio); then
+		    echo "## cannot git clone https://github.com/bisegni/mpio.git "
+		    exit 1
+		fi
 		cd $BASE_EXTERNAL/mpio
 	else
 		echo "Update mpio"
@@ -176,14 +245,13 @@ if [ ! -d "$PREFIX/include/mp" ]; then
 		git pull
 	fi
 	./bootstrap
-	if [ `echo $OS | tr [:upper:] [:lower:]` = `echo "linux" | tr [:upper:] [:lower:]` ] && [ $KERNEL_SHORT_VER -le 2625 ]; then
-         ./configure --prefix=$PREFIX
+	if [ `echo $OS | tr "[:upper:]" "[:lower:]"` = `echo "linux" | tr "[:upper:]" "[:lower:]"` ] && [ $KERNEL_SHORT_VER -le 2625 ]; then
+         ./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE
 	else
-         ./configure --disable-timerfd --disable-signalfd --prefix=$PREFIX
+         ./configure --disable-timerfd --disable-signalfd --prefix=$PREFIX $CROSS_HOST_CONFIGURE
 	fi
 	make clean
-	make
-	make install
+	do_make "MPIO"
 	echo "MPIO done"
 fi
 
@@ -192,7 +260,10 @@ if [ ! -d "$PREFIX/include/msgpack/rpc" ]; then
 	if [ ! -d "$BASE_EXTERNAL/msgpack-rpc" ]; then
 		echo "Install msgpack-rpc"
 #git clone https://github.com/msgpack-rpc/msgpack-rpc-cpp.git $BASE_EXTERNAL/msgpack-rpc
-		git clone https://github.com/bisegni/msgpack-rpc-cpp.git $BASE_EXTERNAL/msgpack-rpc
+		if !(git clone https://github.com/bisegni/msgpack-rpc-cpp.git $BASE_EXTERNAL/msgpack-rpc); then
+		    echo "## cannot git clone  https://github.com/bisegni/msgpack-rpc-cpp.git"
+		    exit 1
+   		fi
 		cd $BASE_EXTERNAL/msgpack-rpc
 	else
 		echo "Update msgpack-rpc"
@@ -201,10 +272,10 @@ if [ ! -d "$PREFIX/include/msgpack/rpc" ]; then
 		cd $BASE_EXTERNAL/msgpack-rpc/
 	fi
 	./bootstrap
-	./configure --prefix=$PREFIX --with-mpio=$PREFIX --with-msgpack=$PREFIX
+	./configure --prefix=$PREFIX --with-mpio=$PREFIX --with-msgpack=$PREFIX $CROSS_HOST_CONFIGURE
 	make clean
-	make
-	make install
+	do_make "MSGPACK-RPC"
+
 	echo "MSGPACK-RPC done"
 fi
 
@@ -213,17 +284,19 @@ if [ ! -d "$PREFIX/include/event2" ]; then
 	if [ ! -f "$BASE_EXTERNAL/libevent" ]; then
 		echo "Installing LibEvent"
 	#    git clone git://levent.git.sourceforge.net/gitroot/levent/libevent $BASE_EXTERNAL/libevent
-		git clone http://git.code.sf.net/p/levent/libevent $BASE_EXTERNAL/libevent
+		if !(git clone http://git.code.sf.net/p/levent/libevent $BASE_EXTERNAL/libevent); then
+		    echo "## cannot clone http://git.code.sf.net/p/levent/libevent"
+		    exit 1
+		fi
 		cd $BASE_EXTERNAL/libevent
 	else
 		cd $BASE_EXTERNAL/libevent
 		git pull
 	fi
 	./autogen.sh
-	./configure --prefix=$PREFIX
+	./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE
 	make clean
-	make
-	make install
+	do_make "LIBEVENT"
 	echo "LIBEVENT done"
 fi
 
@@ -231,17 +304,19 @@ if [ ! -f "$PREFIX/include/uv.h" ]; then
 	echo "Setup LIBUV"
 	if [ ! -f "$BASE_EXTERNAL/libuv" ]; then
 		echo "Installing LibEvent"
-		git clone https://github.com/joyent/libuv.git $BASE_EXTERNAL/libuv
+		if !(git clone https://github.com/joyent/libuv.git $BASE_EXTERNAL/libuv); then
+		    echo "## cannot git clone https://github.com/joyent/libuv.git"
+		    exit 1
+		fi
 		cd $BASE_EXTERNAL/libuv
 	else
 		cd $BASE_EXTERNAL/libuv
 		git pull
 	fi
 ./autogen.sh
-./configure --prefix=$PREFIX
+./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE
 make clean
-make
-make install
+do_make "LIBUV"
 echo "LIBUV done"
 fi
 
@@ -249,13 +324,15 @@ echo "Setup Couchbase sdk"
 if [ ! -f "$PREFIX/include/libcouchbase/couchbase.h" ]; then
 if [ ! -f "$BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION" ]; then
 	echo "Download couchabse source"
-	wget --no-check-certificate -O $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION.tar.gz http://packages.couchbase.com/clients/c/libcouchbase-$COUCHBASE_VERSION.tar.gz
+	if !(wget --no-check-certificate -O $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION.tar.gz http://packages.couchbase.com/clients/c/libcouchbase-$COUCHBASE_VERSION.tar.gz); then
+	    echo "## cannot wget http://packages.couchbase.com/clients/c/libcouchbase-$COUCHBASE_VERSION.tar.gz"
+	    exit 1
+	fi
 	tar zxvf $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION.tar.gz -C $BASE_EXTERNAL
 fi
 cd $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION
-./configure --prefix=$PREFIX --disable-couchbasemock --disable-plugins
-make
-make install
+./configure --prefix=$PREFIX --disable-couchbasemock --disable-plugins $CROSS_HOST_CONFIGURE
+do_make "COUCHBASE"
 echo "Couchbase done"
 fi
 
@@ -263,27 +340,37 @@ echo "Setup MongoDB client"
 if [ ! -f "$PREFIX/include/mongo/client/dbclient.h" ]; then
 	if [ ! -f "$BASE_EXTERNAL/mongo" ]; then
 		echo "Download mongodb client"
-		git clone https://github.com/mongodb/mongo-cxx-driver.git $BASE_EXTERNAL/mongo
+		if !(git clone https://github.com/mongodb/mongo-cxx-driver.git $BASE_EXTERNAL/mongo); then
+		    echo "## cannnot git clone https://github.com/mongodb/mongo-cxx-driver.git"
+		    exit 1
+		fi
 		cd $BASE_EXTERNAL/mongo
 	else
 		cd $BASE_EXTERNAL/mongo
 		git pull
 	fi
 
-scons --prefix=$PREFIX --libpath=$PREFIX/lib --cpppath=$PREFIX/include --extrapath=$PREFIX install-mongoclient
+if !(scons --prefix=$PREFIX --libpath=$PREFIX/lib --cxx=$CXX --cc=$CC --cpppath=$PREFIX/include --extrapath=$PREFIX install-mongoclient); then
+    echo "## error scons configuration of mongo failed, maybe you miss scons package"
+    exit 1
+fi
 echo "Mongodb done"
 fi
 
 echo "Setup LIBMEMCACHED"
 if [ ! -d "$PREFIX/include/libmemcached" ]; then
     echo "Install libmemcached into  $BASE_EXTERNAL/libmemcached"
-    wget --no-check-certificate -O $BASE_EXTERNAL/libmemcached.tar.gz https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz
+    if !(wget --no-check-certificate -O $BASE_EXTERNAL/libmemcached.tar.gz https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz); then
+      echo "## cannot wget  https://launchpad.net/libmemcached/1.0/$LMEM_VERSION/+download/libmemcached-$LMEM_VERSION.tar.gz"
+      exit 1
+    fi
+
     tar zxvf $BASE_EXTERNAL/libmemcached.tar.gz -C $BASE_EXTERNAL
     cd $BASE_EXTERNAL/libmemcached-$LMEM_VERSION
-    ./configure --disable-sasl --without-memcached --prefix=$PREFIX
+    ./configure --disable-sasl --host $CROSS_HOST --prefix=$PREFIX  $CROSS_HOST_CONFIGURE
+
     make clean
-    make
-    make install
+    do_make "LIBMEMCACHED"
 fi
 echo "Libmemcached done"
 
@@ -291,7 +378,11 @@ echo "Setup ZMQ"
 if [ ! -f "$PREFIX/include/zmq.h" ]; then
 	if [ ! -d "$BASE_EXTERNAL/$ZMQ_VERSION" ]; then
 	echo "Download zmq source"
-	git clone https://github.com/zeromq/$ZMQ_VERSION.git $BASE_EXTERNAL/$ZMQ_VERSION
+
+	if !(git clone https://github.com/zeromq/$ZMQ_VERSION.git $BASE_EXTERNAL/$ZMQ_VERSION); then
+	    echo "## cannot git clone  https://github.com/zeromq/$ZMQ_VERSION.git"
+	    exit 1
+	fi
 	else
 	echo "Update zmq source"
 	cd $BASE_EXTERNAL/$ZMQ_VERSION
@@ -319,9 +410,9 @@ if [ ! -f "$PREFIX/include/zmq.h" ]; then
 #        make -j4
 #    fi
     ./autogen.sh
-	./configure --prefix=$PREFIX
-	make
-    make install
+	./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+	do_make "ZMQ"
+
 #	./autogen.sh
 #	./configure --prefix=$PREFIX
 #make
@@ -331,6 +422,7 @@ fi
 
 echo "Compile !CHAOS"
 cd $SCRIPTPATH
+
 if [ -n "$CHAOS32" ]; then
     cmake $COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_FORCE_32=true -DBUILD_PREFIX=$PREFIX $SCRIPTPATH/.
 else
@@ -338,7 +430,7 @@ else
         echo "Use standard CLIB with clang"
         cmake -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_FLAGS="-stdlib=libstdc++" $COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_PREFIX=$PREFIX $SCRIPTPATH/.
     else
-        cmake $COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DBUILD_PREFIX=$PREFIX $SCRIPTPATH/.
+        cmake $COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DCMAKE_CXX_COMPILER=$CXX  -DCMAKE_C_COMPILER=$CC -DBUILD_PREFIX=$PREFIX $SCRIPTPATH/.
     fi
 
 fi
@@ -351,9 +443,15 @@ if [ "$ARCH" = "armv7l" ]; then
 fi
 
 if [ -n "$CHAOS_DEVELOPMENT" ]; then
-    make -j$NPROC  VERBOSE=1
+    if !(make -j$NPROC  VERBOSE=1); then
+	echo "## error compiling !CHAOS DEVELOPMENT"
+	exit 1
+    fi
 else
-    make -j$NPROC
+    if !(make -j$NPROC); then
+	echo "## error compiling !CHAOS"
+	exit 1
+    fi
 fi
 make install
 

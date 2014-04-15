@@ -14,13 +14,13 @@ EXECUTE_PROCESS(COMMAND chaos/common/version.sh)
 
 INCLUDE_DIRECTORIES(. ${PROJECT_SOURCE_DIR}/usr/local/include /usr/local/include /usr/include) 
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/usr/local/lib /usr/local/lib /usr/lib)
-ADD_DEFINITIONS(-O3 -Wall)
+ADD_DEFINITIONS(-O3 )
     
 IF( BUILD_FORCE_32 ) 
     MESSAGE( STATUS "Forcing 32 bit compilation" )
-    set (CMAKE_C_FLAGS "-m32 -march=i686")
-    set (CMAKE_CXX_FLAGS "-m32 -march=i686")
-    set (CMAKE_LINK_FLAGS "-m32 -march=i686")
+    set (CMAKE_C_FLAGS "-m32 ")
+    set (CMAKE_CXX_FLAGS "-m32")
+    set (CMAKE_LINK_FLAGS "-m32")
 ENDIF()
 
 IF(NOT BUILD_PREFIX)
