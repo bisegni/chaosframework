@@ -23,6 +23,7 @@ fi
 
 BOOST_NUMBER_VERSION=$(echo $BOOST_VERSION_IN_PATH |sed "s/[^0-9]//g" )
 ZLIB_VERSION=1.2.8
+
 LMEM_VERSION=1.0.18
 ZMQ_VERSION=zeromq4-x
 COUCHBASE_VERSION=2.2.0
@@ -65,8 +66,13 @@ fi
 
 if [ `echo $OS | tr '[:upper:]' '[:lower:]'` = `echo "Darwin" | tr '[:upper:]' '[:lower:]'` ] && [ $KERNEL_SHORT_VER -ge 1300 ]; then
     export CC=clang
-    export CXX="clang++ -stdlib=libstdc++"
+    export CXXFLAGS="-stdlib=libstdc++"
+    ## for msgpack
+    export CXX="clang++ $CXXFLAGS"
+
     export LD=clang
+    
+#    LMEM_VERSION=1.0.16
 fi
 
 CHAOS_DIR=$SCRIPTPATH
@@ -162,7 +168,7 @@ if [ ! -d "$PREFIX/include/boost" ]; then
     echo "-> $CROSS_HOST" 
     if [ -n "$CROSS_HOST" ]; then
 	echo "* Patching project-config.jam to cross compile for $CROSS_HOST"
-	sed --in-place=.bak -e "s/using gcc/using gcc : arm : $CROSS_HOST-g++/" project-config.jam 
+	sed -i .bak -e "s/using gcc/using gcc : arm : $CROSS_HOST-g++/" project-config.jam 
     fi
     
 
@@ -350,7 +356,7 @@ if [ ! -f "$PREFIX/include/mongo/client/dbclient.h" ]; then
 		git pull
 	fi
 
-if !(scons --prefix=$PREFIX --libpath=$PREFIX/lib --cxx=$CXX --cc=$CC --cpppath=$PREFIX/include --extrapath=$PREFIX install-mongoclient); then
+if !(scons --prefix=$PREFIX --libpath=$PREFIX/lib --cxx="$CXX" --cc="$CC" --cpppath=$PREFIX/include --extrapath=$PREFIX install-mongoclient); then
     echo "## error scons configuration of mongo failed, maybe you miss scons package"
     exit 1
 fi
@@ -367,7 +373,10 @@ if [ ! -d "$PREFIX/include/libmemcached" ]; then
 
     tar zxvf $BASE_EXTERNAL/libmemcached.tar.gz -C $BASE_EXTERNAL
     cd $BASE_EXTERNAL/libmemcached-$LMEM_VERSION
-    ./configure --disable-sasl --host $CROSS_HOST --prefix=$PREFIX  $CROSS_HOST_CONFIGURE
+    ./configure --without-memcached --disable-sasl --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+    ## use standard types instead cinttypes that generates troubles in ARM annd clang
+    echo "patchin memcached.h to use the correct cinttypes"
+    sed -i .bak -e "s/include <cinttypes>/include <tr1\/cinttypes>/" libmemcached-1.0/memcached.h
 
     make clean
     do_make "LIBMEMCACHED"
