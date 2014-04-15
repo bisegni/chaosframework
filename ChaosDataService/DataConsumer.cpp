@@ -38,7 +38,7 @@ using namespace chaos::common::direct_io::channel;
 #define DSLDBG_ LDBG_ << DataConsumer_LOG_HEAD << __FUNCTION__ << " - "
 #define DSLERR_ LERR_ << DataConsumer_LOG_HEAD
 
-DataConsumer::DataConsumer() {
+DataConsumer::DataConsumer(vfs::VFSManager *_vfs_manager_instance):vfs_manager_instance(_vfs_manager_instance) {
     
 }
 
@@ -69,7 +69,7 @@ void DataConsumer::init(void *init_data) throw (chaos::CException) {
 	
 	chaos::data_service::worker::DeviceSharedDataWorker *tmp = NULL;
 	for(int idx = 0; idx < settings->caching_worker_num; idx++) {
-		device_data_worker[idx] = (tmp = new chaos::data_service::worker::DeviceSharedDataWorker(cache_impl_name));
+		device_data_worker[idx] = (tmp = new chaos::data_service::worker::DeviceSharedDataWorker(cache_impl_name, vfs_manager_instance));
 		tmp->init(&settings->caching_worker_setting);
 		DSLAPP_ << "Configure server on device worker " << idx;
 		for(CacheServerListIterator iter = settings->startup_chache_servers.begin();

@@ -264,7 +264,7 @@ namespace chaos{
 				delete(clients_channel);
 			}
             //set device id
-			clients_channel->device_client_channel->setDeviceID(dataKey);
+			clients_channel->device_client_channel->setDeviceID(dataKey, common::direct_io::channel::DirectIODeviceClientChannelPutModeStoricizeAnLive);
             
             //set the answer information
 			clients_channel->device_client_channel->setAnswerServerInfo(current_endpoint_p_port, current_endpoint_s_port, current_endpoint_index);
