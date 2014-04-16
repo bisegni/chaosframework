@@ -129,8 +129,8 @@ namespace chaos {
 				}
 
 			protected:
-				//! template element deallcoation user method (to override)
-				void clearHashTableElement(const void *key, uint32_t key_len, T element){};
+				//! template element deallocation user method (to override)
+				virtual void clearHashTableElement(const void *key, uint32_t key_len, T element){};
 				
 			public:
 				//! default contructor
@@ -261,15 +261,22 @@ namespace chaos {
 					//get the write lock
 					boost::unique_lock<shared_mutex> writeLock(_list_head->mutex_list);
 					
+					HashedStruct *element_to_delete = NULL;
 					HashedStruct *_cur_hash_element = _list_head->head;
 					while (_cur_hash_element) {
 						if ((key_len == _cur_hash_element->key_len) && (memcmp(key, _cur_hash_element->key, key_len) == 0)) {
+							element_to_delete = _cur_hash_element;
 							if(_cur_hash_element->prev) {
 								_cur_hash_element->next->prev = _cur_hash_element->prev;
 							} else {
 								//is the first of the list so set the next as first
 								_list_head->head = _cur_hash_element->next;
 							}
+							//call user overloaded (possible) clear element
+							clearHashTableElement(element_to_delete->key, element_to_delete->key_len, element_to_delete->element);
+							//free key memory and slot
+							free(element_to_delete->key);
+							delete(element_to_delete);
 							break;
 						} else {
 							//go ahead
@@ -303,11 +310,15 @@ namespace chaos {
 							//call user overloaded (possible) clear element
 							clearHashTableElement(to_delete_slot->key, to_delete_slot->key_len, to_delete_slot->element);
 							
-							//delete slot
+							//free key memory and slot
+							free(to_delete_slot->key);
 							delete(to_delete_slot);
 							
 							//go ahead
 						}
+						
+						//all element has been deleted
+						hash_vector[idx]->head = NULL;
 					}
 				}
 			};
