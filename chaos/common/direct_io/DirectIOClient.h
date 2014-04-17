@@ -50,7 +50,8 @@ namespace chaos {
             namespace channel {
                 class DirectIOVirtualClientChannel;
             }
-            
+
+			
             typedef std::map< unsigned int, channel::DirectIOVirtualClientChannel* > ChannelMap;
             typedef std::map< unsigned int, channel::DirectIOVirtualClientChannel* >::iterator ChannelMapIterator;
             typedef chaos::utility::TemplatedKeyObjectContainer<uint32_t, DirectIOClientConnection*> DCKeyObjectContainer;

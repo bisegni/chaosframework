@@ -77,8 +77,8 @@ namespace chaos {
 			protected:
 				std::string		url;
 				std::string     server_description;
+				std::string     custom_string_identification;
                 uint16_t        endpoint;
-				uint32_t        connection_hash;
                 uint32_t        unique_hash;
 				DirectIOClientConnectionStateType::DirectIOClientConnectionStateType current_state;
 
@@ -115,7 +115,9 @@ namespace chaos {
                 static uint64_t getI64Ip();
 
                 uint32_t	getUniqueHash();
-				uint32_t	getConnectionHash();
+				
+				std::string	getCustomStringIdentification();
+				void		setCustomStringIdentification(std::string _custom_string_identificaiton);
 				
 				void setEventHandler(DirectIOClientConnectionEventHandler *_event_handler);
 				

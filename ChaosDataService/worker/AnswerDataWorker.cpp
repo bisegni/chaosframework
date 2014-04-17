@@ -122,8 +122,10 @@ ClientConnectionInfo *AnswerDataWorker::getClientChannel(AnswerDataWorkerJob *an
 	// lock for all
 	boost::unique_lock<boost::shared_mutex> lock(mutex_add_new_client);
 	
-	if(ADWKeyObjectContainer::hasKey(answer_job_info->request_header->field.answer_server_hash)) {
-        conn_info = ADWKeyObjectContainer::accessItem(answer_job_info->request_header->field.answer_server_hash);
+	//allcoate server key
+	std::string server_key(answer_job_info->request_header->raw_data, GET_OPCODE_HEADER_LEN);
+	if(ADWKeyObjectContainer::hasKey(server_key)) {
+        conn_info = ADWKeyObjectContainer::accessItem(server_key);
         if(increaseAccessNumber(conn_info)) {
             return conn_info;
         }
@@ -135,15 +137,6 @@ ClientConnectionInfo *AnswerDataWorker::getClientChannel(AnswerDataWorkerJob *an
 													   answer_job_info->request_header->field.p_port %
 													   answer_job_info->request_header->field.s_port %
 													   answer_job_info->request_header->field.endpoint);
-	
-	uint32_t answer_server_hash = chaos::common::data::cache::FastHash::hash(answer_server_description.c_str(), answer_server_description.size(), 0);
-
-	DEBUG_CODE(ADWLDBG_ << "verify the rigth hash for " << answer_server_description;);
-	DEBUG_CODE(ADWLDBG_ << "Forwarded by client -> " << answer_job_info->request_header->field.answer_server_hash;)
-	DEBUG_CODE(ADWLDBG_ << "calculated-> " << answer_server_hash;)
-	if(answer_server_hash != answer_job_info->request_header->field.answer_server_hash) {
-		DEBUG_CODE(ADWLERR_ << "Error on lcient get opcode header for answer server information";)
-	}
 	//allocate the client info struct
 	conn_info = new ClientConnectionInfo();
 	
@@ -153,15 +146,15 @@ ClientConnectionInfo *AnswerDataWorker::getClientChannel(AnswerDataWorkerJob *an
     conn_info->channel = NULL;
 	//get connection
 	conn_info->connection = direct_io_client->getNewConnection(answer_server_description);
-    if(conn_info->connection->getConnectionHash() != answer_job_info->request_header->field.answer_server_hash) {
-		DEBUG_CODE(ADWLERR_ << "Error ongenerated and connection hash";)
-	}
+
 	if(!conn_info->connection) {
 		disposeClientInfo(conn_info);
 		return NULL;
 	}
 	//conn_info->connection->setConnectionHash(answer_job_info->request_header->field.answer_server_hash);
 	conn_info->connection->setEventHandler(this);
+	//add header server key(string composed by all header raw data)
+	conn_info->connection->setCustomStringIdentification(server_key);
 	//get channel
 	conn_info->channel = dynamic_cast<DirectIODeviceClientChannel*>(conn_info->connection->getNewChannelInstance("DirectIODeviceClientChannel"));
 	if(!conn_info->channel) {
@@ -169,10 +162,11 @@ ClientConnectionInfo *AnswerDataWorker::getClientChannel(AnswerDataWorkerJob *an
 		return NULL;
 	}
     conn_info->channel->setDeviceID(key_requested);
+
 	//all is gone well
 	//now we can add client and channel to the maps
-	ADWKeyObjectContainer::registerElement(conn_info->connection->getConnectionHash(), conn_info);
-	DEBUG_CODE(ADWLDBG_ << "Allocate new connection for server description " << answer_server_description << " and hash " << answer_job_info->request_header->field.answer_server_hash;)
+	ADWKeyObjectContainer::registerElement(server_key, conn_info);
+	DEBUG_CODE(ADWLDBG_ << "Allocate new connection for server description " << answer_server_description;)
 	
 
 	//map_client_connection.insert(make_pair);
@@ -207,32 +201,30 @@ void AnswerDataWorker::handleEvent(chaos_direct_io::DirectIOClientConnection *cl
     //lock the creation of new connection
     boost::unique_lock<boost::shared_mutex> uniqueLock(mutex_add_new_client);
     
-	DEBUG_CODE(ADWLDBG_ << "Handle disconnection event for hash -> " << client_connection->getConnectionHash();)
-    
-    if(ADWKeyObjectContainer::hasKey(client_connection->getConnectionHash())) {
-        ClientConnectionInfo *connection_info = ADWKeyObjectContainer::accessItem(client_connection->getConnectionHash());
+    if(ADWKeyObjectContainer::hasKey(client_connection->getCustomStringIdentification())) {
+        ClientConnectionInfo *connection_info = ADWKeyObjectContainer::accessItem(client_connection->getCustomStringIdentification());
 
         //NEED TO BE FOUND A LOGIC TO INVALIDATE AND DELETE AFTER THIS METHOD IS TERMINATED
-        map_to_purge.insert(make_pair(client_connection->getConnectionHash(), connection_info));
-        DEBUG_CODE(ADWLDBG_ << "Added to purge queue for connection of the server " << client_connection->getServerDescription() << " and hash " << client_connection->getConnectionHash();)
+        map_to_purge.insert(make_pair(client_connection->getCustomStringIdentification(), connection_info));
+        DEBUG_CODE(ADWLDBG_ << "Added to purge queue for connection of the server " << client_connection->getServerDescription();)
 
-        ADWKeyObjectContainer::deregisterElementKey(client_connection->getConnectionHash());
+        ADWKeyObjectContainer::deregisterElementKey(client_connection->getCustomStringIdentification());
     }
     
 }
 
-void AnswerDataWorker::freeObject(uint32_t key, ClientConnectionInfo *elementPtr) {
+void AnswerDataWorker::freeObject(std::string key, ClientConnectionInfo *elementPtr) {
 	//lock the creation of new connection
     boost::unique_lock<boost::shared_mutex> uniqueLock(mutex_add_new_client);
 
-	if(ADWKeyObjectContainer::hasKey(elementPtr->connection->getConnectionHash())) {
-        ClientConnectionInfo *connection_info = ADWKeyObjectContainer::accessItem(elementPtr->connection->getConnectionHash());
+	if(ADWKeyObjectContainer::hasKey(elementPtr->connection->getCustomStringIdentification())) {
+        ClientConnectionInfo *connection_info = ADWKeyObjectContainer::accessItem(elementPtr->connection->getCustomStringIdentification());
 		
         //NEED TO BE FOUND A LOGIC TO INVALIDATE AND DELETE AFTER THIS METHOD IS TERMINATED
-        map_to_purge.insert(make_pair(elementPtr->connection->getConnectionHash(), connection_info));
-        DEBUG_CODE(ADWLDBG_ << "Added to purge queue for connection of the server " << elementPtr->connection->getServerDescription() << " and hash " << elementPtr->connection->getConnectionHash();)
+        map_to_purge.insert(make_pair(elementPtr->connection->getCustomStringIdentification(), connection_info));
+        DEBUG_CODE(ADWLDBG_ << "Added to purge queue for connection of the server " << elementPtr->connection->getServerDescription();)
 		
-        ADWKeyObjectContainer::deregisterElementKey(elementPtr->connection->getConnectionHash());
+        ADWKeyObjectContainer::deregisterElementKey(elementPtr->connection->getCustomStringIdentification());
     }
 	
 	//dispose element non managed, thi smethod is called only when
@@ -242,7 +234,7 @@ void AnswerDataWorker::freeObject(uint32_t key, ClientConnectionInfo *elementPtr
 
 void AnswerDataWorker::disposeClientInfo(ClientConnectionInfo *client_info) {
 	CHAOS_ASSERT(client_info)
-	uint32_t conn_hash = client_info->connection->getConnectionHash();
+	std::string connection_custom_id = client_info->connection->getCustomStringIdentification();
 	std::string server_desc = client_info->connection->getServerDescription();
 	
 	DEBUG_CODE(ADWLDBG_ << "starting purge oepration for " << server_desc;)
@@ -252,8 +244,8 @@ void AnswerDataWorker::disposeClientInfo(ClientConnectionInfo *client_info) {
 	if(client_info->connection) {
 		direct_io_client->releaseConnection(client_info->connection);
 	}
-    if(ADWKeyObjectContainer::hasKey(conn_hash)) {
-        ADWKeyObjectContainer::deregisterElementKey(conn_hash);
+    if(ADWKeyObjectContainer::hasKey(connection_custom_id)) {
+        ADWKeyObjectContainer::deregisterElementKey(connection_custom_id);
     }
 	delete (client_info);
 	DEBUG_CODE(ADWLDBG_ << "ending purge operation for " << server_desc;)
@@ -273,7 +265,7 @@ void AnswerDataWorker::purge(uint32_t max_purge_element) {
     volatile boost::uint32_t *mem = NULL;
 	boost::unique_lock<boost::mutex> lock(mutex_map_to_purge);
 	
-	for(std::map<uint32_t, ClientConnectionInfo* >::iterator iter = map_to_purge.begin();
+	for(std::map<std::string, ClientConnectionInfo* >::iterator iter = map_to_purge.begin();
 		iter != map_to_purge.end() && --max_purge_element;) {
         
         mem = &iter->second->access_number;

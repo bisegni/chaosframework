@@ -44,14 +44,12 @@ namespace chaos {
                 
                 //! Name space for grupping the varius headers for every DeviceChannelOpcode
                 namespace opcode_headers {
-#define	GET_PUT_OPCODE_FIXED_PART_LEN	6
+#define	GET_PUT_OPCODE_FIXED_PART_LEN	2
 					//!macro used to get pointer to the start of the key data
-#define GET_PUT_OPCODE_KEY_PTR(h) (void*)((char*)h+6)
+#define GET_PUT_OPCODE_KEY_PTR(h) (void*)((char*)h+2)
 					
                     //! Heder for the DeviceChannelOpcodePutOutput[WithCache] opcodes
                     typedef struct DirectIODeviceChannelHeaderPutOpcode {
-							//! The 32bit hash value for the device that we need to insert
-                        uint32_t device_hash;
 							//! The 8 bit tag field
 						uint8_t tag;
                             //! The 8 bit key length field
@@ -60,7 +58,7 @@ namespace chaos {
 						void*   key_data;
                     } DirectIODeviceChannelHeaderData, *DirectIODeviceChannelHeaderDataPtr;
 					
-					
+#define GET_OPCODE_HEADER_LEN 14
                     //! Header for the DeviceChannelOpcodeGetOutputFromCache opcode
 					/*!
 					 this is the header for request the last output channel dataset
@@ -69,7 +67,7 @@ namespace chaos {
 					 */
                     typedef	union DirectIODeviceChannelHeaderGetOpcode {
                         //raw data representation of the header
-                        char raw_data[18];
+                        char raw_data[GET_OPCODE_HEADER_LEN];
                         struct header {
 							//! The endpoint where the channel is published
                             uint16_t	endpoint;
@@ -77,10 +75,6 @@ namespace chaos {
                             uint16_t	p_port;
 							//! The priority port value for the device that we need to get
                             uint16_t	s_port;
-                                //! The 32bit hash value for the device that we need to get
-                            uint32_t	device_hash;
-							//! The 32bit hash value for the unique identification of the answer ip string ip::s_port:p_port for fast retryve on other side
-                            uint32_t	answer_server_hash;
                                 //! The 32bit representation for the ip where send the answer
                             uint64_t	address;
                         } field;

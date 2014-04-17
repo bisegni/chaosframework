@@ -68,7 +68,7 @@ namespace chaos{
 				chaos_direct_io_ch::DirectIODeviceClientChannel *channel;
 			};
 			
-			typedef chaos::utility::TemplatedKeyObjectContainer<uint32_t, ClientConnectionInfo*> ADWKeyObjectContainer;
+			typedef chaos::utility::TemplatedKeyObjectContainer<std::string, ClientConnectionInfo*> ADWKeyObjectContainer;
 			
 			//! worker for live device sharing
 			class AnswerDataWorker :
@@ -86,7 +86,7 @@ namespace chaos{
 				boost::shared_ptr<boost::thread> purge_thread;
 				
 				boost::mutex mutex_map_to_purge;
-				std::map< uint32_t, ClientConnectionInfo* > map_to_purge;
+				std::map< std::string, ClientConnectionInfo* > map_to_purge;
 			protected:
 				inline bool increaseAccessNumber(ClientConnectionInfo *conn_info);
                 inline void decreaseAccessNumber(ClientConnectionInfo *conn_info);
@@ -94,7 +94,7 @@ namespace chaos{
 				//! handler method for receive the direct io client connection event
 				void handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event);
 				
-				void freeObject(uint32_t key, ClientConnectionInfo *elementPtr);
+				void freeObject(std::string key, ClientConnectionInfo *elementPtr);
 				void disposeClientInfo(ClientConnectionInfo *client_info);
 				ClientConnectionInfo *getClientChannel(AnswerDataWorkerJob *answer_job_info);
 				void purge_thread_worker();
