@@ -31,7 +31,7 @@
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/utility/TemplatedKeyObjectContainer.h>
 #include <chaos/common/utility/InizializableService.h>
-
+#include <chaos/common/utility/TemplatedKeyValueHash.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/direct_io/DirectIOClientConnection.h>
@@ -68,12 +68,14 @@ namespace chaos{
 				chaos_direct_io_ch::DirectIODeviceClientChannel *channel;
 			};
 			
-			typedef chaos::utility::TemplatedKeyObjectContainer<std::string, ClientConnectionInfo*> ADWKeyObjectContainer;
+			//typedef chaos::utility::TemplatedKeyObjectContainer<std::string, ClientConnectionInfo*> ADWKeyObjectContainer;
+			typedef chaos::common::utility::TemplatedKeyValueHash<ClientConnectionInfo*> ClientConnectionInfoHashTable;
 			
+
 			//! worker for live device sharing
 			class AnswerDataWorker :
 			public DataWorker,
-			protected ADWKeyObjectContainer,
+			protected ClientConnectionInfoHashTable,
 			protected chaos_direct_io::DirectIOClientConnectionEventHandler {
 				bool work_on_purge;
 				std::string cache_impl_name;
@@ -94,7 +96,7 @@ namespace chaos{
 				//! handler method for receive the direct io client connection event
 				void handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event);
 				
-				void freeObject(std::string key, ClientConnectionInfo *elementPtr);
+				void clearHashTableElement(const void *key, uint32_t key_len, ClientConnectionInfo *element);
 				void disposeClientInfo(ClientConnectionInfo *client_info);
 				ClientConnectionInfo *getClientChannel(AnswerDataWorkerJob *answer_job_info);
 				void purge_thread_worker();

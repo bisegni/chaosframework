@@ -28,13 +28,12 @@
 
 #include <string>
 #include <chaos/common/direct_io/DirectIODataPack.h>
-#include <chaos/common/utility/TemplatedKeyValueHash.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceChannelGlobal.h>
 
 #include <boost/thread.hpp>
 
 namespace chaos_vfs			= chaos::data_service::vfs;
-namespace chaos_utility		= chaos::common::utility;
+namespace chaos_utility		= chaos::utility;
 namespace chaos_direct_io	= chaos::common::direct_io;
 
 namespace chaos{
@@ -56,8 +55,6 @@ namespace chaos{
 				//! mutext to lock on possible threads collision
 				boost::shared_mutex	mutex_slot;
 			};
-			
-			typedef chaos_utility::TemplatedKeyValueHash<VFSFileSlot*> VFSFileSlotHashTable;
 			
 			//! Thread cookier for collect need staff to process the request
 			struct ThreadCookie {
