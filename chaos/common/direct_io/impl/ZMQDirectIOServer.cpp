@@ -93,7 +93,7 @@ void ZMQDirectIOServer::stop() throw(chaos::CException) {
     run_server = false;
 	
 	ZMQDIO_SRV_LAPP_ << "Deallocating zmq context";
-    zmq_ctx_destroy (zmq_context);
+    zmq_ctx_shutdown(zmq_context);
     ZMQDIO_SRV_LAPP_ << "ZMQ Context deallocated";
 	
     //wiath all thread

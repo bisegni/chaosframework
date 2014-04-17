@@ -68,7 +68,6 @@ int ZMQDirectIOClient::readMesg(void* s, zmq_event_t* event, char* ep) {
 }
 
 void *ZMQDirectIOClient::socketMonitor (void *ctx, const char * address, ConnectionMonitorInfo *monitor_info) {
-	const int output_buffer_dim = 1;
 	const int linger_period = 0;
 	std::string monitor_inproc_address = address;
     zmq_event_t event;
@@ -81,16 +80,11 @@ void *ZMQDirectIOClient::socketMonitor (void *ctx, const char * address, Connect
     monitor_info->monitor_socket = zmq_socket (ctx, ZMQ_PAIR);
     if(monitor_info->monitor_socket == NULL) return NULL;
 	rc = zmq_setsockopt (monitor_info->monitor_socket, ZMQ_LINGER, &linger_period, sizeof(int));
-	rc = zmq_setsockopt (monitor_info->monitor_socket, ZMQ_SNDHWM, &output_buffer_dim, sizeof(int));
 	
     rc = zmq_connect (monitor_info->monitor_socket, address);
     if(rc) return NULL;
     while (monitor_info->run && !readMesg(monitor_info->monitor_socket, &event, addr)) {
-		//server_desc_tokens.clear();
-		//boost::algorithm::split(server_desc_tokens, addr, boost::algorithm::is_any_of("-"), boost::algorithm::token_compress_on);
-		//if(server_desc_tokens.size() != 2) continue;
-		//server_addr_hash = chaos::common::data::cache::FastHash::hash(addr, std::strlen(addr), 0);
-		if((connection = DCKeyObjectContainer::accessItem(monitor_info->hash_identification))) {
+		if((connection = DCKeyObjectContainer::accessItem(monitor_info->unique_identification))) {
 			switch (event.event) {
 				case ZMQ_EVENT_CONNECTED:
 					DEBUG_CODE(ZMQDIOLDBG_ << "ZMQ_EVENT_CONNECTED to " << connection->getServerDescription();)
@@ -101,10 +95,11 @@ void *ZMQDirectIOClient::socketMonitor (void *ctx, const char * address, Connect
 					DEBUG_CODE(ZMQDIOLDBG_ << "ZMQ_EVENT_CONNECT_DELAYED " << connection->getServerDescription();)
 					break;
 				case ZMQ_EVENT_CONNECT_RETRIED:
-					forwardEventToClientConnection(connection , DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected);
+					//forwardEventToClientConnection(connection , DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected);
 					DEBUG_CODE(ZMQDIOLDBG_ << "ZMQ_EVENT_CONNECT_RETRIED " << connection->getServerDescription();)
 					break;
 				case ZMQ_EVENT_CLOSE_FAILED:
+					forwardEventToClientConnection(connection , DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected);
 					DEBUG_CODE(ZMQDIOLDBG_ << "ZMQ_EVENT_CLOSE_FAILED " << connection->getServerDescription();)
 					break;
 				case ZMQ_EVENT_CLOSED:
@@ -115,8 +110,11 @@ void *ZMQDirectIOClient::socketMonitor (void *ctx, const char * address, Connect
 					forwardEventToClientConnection(connection , DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected);
 					DEBUG_CODE(ZMQDIOLDBG_ << "ZMQ_EVENT_DISCONNECTED " << connection->getServerDescription();)
 					break;
+				case ZMQ_EVENT_MONITOR_STOPPED:
+					monitor_info->run = false;
+					DEBUG_CODE(ZMQDIOLDBG_ << "ZMQ_EVENT_MONITOR_STOPPED " << connection->getServerDescription();)
+					break;
 			}
-			
 		}
     }
     zmq_close(monitor_info->monitor_socket);
@@ -236,19 +234,19 @@ DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server
 		result->monitor_info->run = true;
 		result->monitor_info->monitor_thread = NULL;
 		result->monitor_info->monitor_socket = NULL;
-        result->monitor_info->hash_identification = result->getUniqueHash();
+        result->monitor_info->unique_identification = result->getUniqueUUID();
         //result->getConnectionHash();
 
         //register socket for monitoring
-		std::string monitor_url = boost::str( boost::format("inproc://%1%") % result->getUniqueHash());
-		err = zmq_socket_monitor(socket_priority, monitor_url.c_str(), ZMQ_EVENT_ALL);
+		result->monitor_info->monitor_url = boost::str( boost::format("inproc://%1%") % result->getUniqueUUID());
+		err = zmq_socket_monitor(socket_priority, result->monitor_info->monitor_url.c_str(), ZMQ_EVENT_ALL);
 		if(err) throw chaos::CException(err, "Error activating monitor on service socket", __FUNCTION__);
 
-		result->monitor_info->monitor_thread = new boost::thread(boost::bind(&ZMQDirectIOClient::socketMonitor, this, zmq_context, monitor_url.c_str(), result->monitor_info));
+		result->monitor_info->monitor_thread = new boost::thread(boost::bind(&ZMQDirectIOClient::socketMonitor, this, zmq_context, result->monitor_info->monitor_url.c_str(), result->monitor_info));
 		
 		//register client with the hash of the xzmq decoded endpoint address (tcp://ip:port)
-		DEBUG_CODE(ZMQDIOLDBG_ << "Register client for " << server_description << " with zmq decoded hash " << result->getUniqueHash();)
-		DCKeyObjectContainer::registerElement(result->getUniqueHash(), result);
+		DEBUG_CODE(ZMQDIOLDBG_ << "Register client for " << server_description << " with zmq decoded hash " << result->getUniqueUUID();)
+		DCKeyObjectContainer::registerElement(result->getUniqueUUID(), result);
 		
         url = boost::str( boost::format("tcp://%1%") % priority_endpoint);
 		DEBUG_CODE(ZMQDIOLDBG_ << "connect to priority endpoint " << url;)
@@ -279,7 +277,7 @@ DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server
 			if(err) ZMQDIOLERR_ << "Error closing service socket";
 		}
 		if(result) {
-			DCKeyObjectContainer::deregisterElementKey(result->getUniqueHash());
+			DCKeyObjectContainer::deregisterElementKey(result->getUniqueUUID());
 			delete(result);
 		}
 	}
@@ -291,11 +289,12 @@ void ZMQDirectIOClient::releaseConnection(DirectIOClientConnection *connection_t
 	int err = 0;
 	ZMQDirectIOClientConnection *conn=reinterpret_cast<ZMQDirectIOClientConnection*>(connection_to_release);
 	if(!conn) return;
-	//set the flag for minitor cicle termination
-	conn->monitor_info->run = false;
+	//stop the monitor
 	
 	ZMQDIOLAPP_ << "Close priority socket for " << conn->getServerDescription();
     err = zmq_close(conn->socket_priority);
+	//seem that disconnection from somewhere can let the monitor will repsond to the disable action 
+	err = zmq_disconnect(conn->socket_priority, "tcp://0.0.0.0.:1111");
     if(err) ZMQDIOLERR_ << "Error closing priority socket for " << conn->getServerDescription();
     //zmq_close(socket_priority);
     
@@ -305,16 +304,17 @@ void ZMQDirectIOClient::releaseConnection(DirectIOClientConnection *connection_t
 
 	//stop the monitor
 	if(conn->monitor_info && conn->monitor_info->monitor_socket) {
-		ZMQDIOLAPP_ << "Close monitor socket for " << conn->getServerDescription();
-		//err = zmq_close(conn->monitor_info->monitor_socket);
-		if(err) ZMQDIOLERR_ << "Error closing monitor socket for connection " << conn->getServerDescription();
 		if(conn->monitor_info->monitor_thread) {
-			conn->monitor_info->monitor_thread->join();
+			err = zmq_socket_monitor(conn->socket_priority, NULL, 0);
+			ZMQDIOLAPP_ << "disable monitor socket for " << conn->getServerDescription();
+			
+			if(conn->monitor_info->monitor_thread->joinable())
+				conn->monitor_info->monitor_thread->join();
 			delete(conn->monitor_info->monitor_thread);
 		}
 	}
 	
-	DCKeyObjectContainer::deregisterElementKey(conn->getUniqueHash());
+	DCKeyObjectContainer::deregisterElementKey(conn->getUniqueUUID());
 	delete(connection_to_release);
 
 }

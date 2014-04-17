@@ -45,9 +45,10 @@ namespace chaos {
 				
 				typedef struct ConnectionMonitorInfo {
 					bool run;
-                    uint32_t hash_identification;
+					std::string unique_identification;
 					boost::thread *monitor_thread;
 					void *monitor_socket;
+					std::string monitor_url;
 				} ConnectionMonitorInfo;
 				
 				const int _send_more_no_wait_flag = ZMQ_SNDMORE;
