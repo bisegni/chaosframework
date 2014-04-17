@@ -148,8 +148,8 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		vfs_file_manager.init(&settings.file_manager_setting , __PRETTY_FUNCTION__);
 		
 		//alocate default fs structure
-		vfs_file_manager->createDirectory("data");
-		vfs_file_manager->createDirectory("stage");
+		vfs_file_manager->createDirectory(VFS_STAGE_AREA);
+		vfs_file_manager->createDirectory(VFS_DATA_AREA);
 
 		CDSLAPP_ << "Allocate Network Brocker";
         network_broker.reset(new NetworkBroker(), "NetworkBroker");

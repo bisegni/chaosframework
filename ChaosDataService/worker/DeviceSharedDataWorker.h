@@ -32,8 +32,10 @@
 #include <chaos/common/direct_io/channel/DirectIODeviceChannelGlobal.h>
 
 #include <boost/thread.hpp>
-namespace chaos_utility = chaos::common::utility;
-namespace chaos_direct_io = chaos::common::direct_io;
+
+namespace chaos_vfs			= chaos::data_service::vfs;
+namespace chaos_utility		= chaos::common::utility;
+namespace chaos_direct_io	= chaos::common::direct_io;
 
 namespace chaos{
     namespace data_service {
@@ -57,16 +59,17 @@ namespace chaos{
 			
 			typedef chaos_utility::TemplatedKeyValueHash<VFSFileSlot*> VFSFileSlotHashTable;
 			
+			//! Thread cookier for collect need staff to process the request
+			struct ThreadCookie {
+				chaos_vfs::VFSFile			*vfs_stage_file;
+				cache_system::CacheDriver	*cache_driver_ptr;
+			};
+			
 			//! worker for live device sharing
-			class DeviceSharedDataWorker : public DataWorker, protected VFSFileSlotHashTable {
+			class DeviceSharedDataWorker : public DataWorker {
 				std::string cache_impl_name;
 				vfs::VFSManager *vfs_manager_instance;
 			protected:
-				//!hash table super class overoladed method
-				void clearHashTableElement(void *key, uint32_t key_len, VFSFileSlot *element);
-				
-				inline VFSFileSlot *getFileForKey(const void *key, const uint32_t nkey);
-				inline void writeHistoryData(DeviceSharedWorkerJob *job_ptr);
 				void executeJob(WorkerJobPtr job_info, void* cookie);
 			public:
 				DeviceSharedDataWorker(std::string _cache_impl_name, vfs::VFSManager *_vfs_manager_instance);
