@@ -39,8 +39,8 @@ namespace chaos {
 		
 		namespace vfs {
 			
-#define SD_STAGE_AREA_ALIAS "chaos_stage"
-#define SD_DATA_AREA_ALIAS "chaos_data"
+#define VFS_STAGE_AREA	"stage/"
+#define VFS_DATA_AREA	"data/"
 			
 			//! VFS file manager setting
 			typedef struct VFSManagerSetting {

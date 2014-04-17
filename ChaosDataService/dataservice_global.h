@@ -39,7 +39,7 @@ namespace chaos{
 #define OPT_VFS_INDEX_DRIVER_IMPL		"vfs_index_drvr_impl"
 #define OPT_VFS_INDEX_DRIVER_SERVERS	"vfs_index_servers"
 #define OPT_VFS_INDEX_DRIVER_KVP		"vfs_storage_index_kvp"
-		
+				
 		namespace worker {
 			
 			typedef struct WorkerJob {
