@@ -79,7 +79,7 @@ namespace chaos {
 				std::string     server_description;
 				std::string     custom_string_identification;
                 uint16_t        endpoint;
-                uint32_t        unique_hash;
+				std::string     unique_uuid;
 				DirectIOClientConnectionStateType::DirectIOClientConnectionStateType current_state;
 
 				//! current client ip in string form
@@ -114,7 +114,7 @@ namespace chaos {
                 static std::string getStrIp();
                 static uint64_t getI64Ip();
 
-                uint32_t	getUniqueHash();
+				std::string	getUniqueUUID();
 				
 				std::string	getCustomStringIdentification();
 				void		setCustomStringIdentification(std::string _custom_string_identificaiton);

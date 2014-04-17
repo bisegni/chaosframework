@@ -47,10 +47,10 @@ void DirectIOClientConnection::freeSentData(void *data, void *hint) {
 DirectIOClientConnection::DirectIOClientConnection(std::string _server_description, uint16_t _endpoint):server_description(_server_description), endpoint(_endpoint), event_handler(NULL) {
 	//set the default connection hash
     //generate random hash from uuid lite
-    std::string unique_uuid = UUIDUtil::generateUUIDLite();
+    unique_uuid = UUIDUtil::generateUUIDLite();
     
 	url = boost::str( boost::format("%1%|%2%") % server_description % endpoint);
-    unique_hash = chaos::common::data::cache::FastHash::hash(unique_uuid.c_str(), unique_uuid.size(), 0);
+
 }
 
 DirectIOClientConnection::~DirectIOClientConnection() {
@@ -72,8 +72,8 @@ uint64_t DirectIOClientConnection::getI64Ip() {
     return my_i64_ip;
 }
 
-uint32_t DirectIOClientConnection::getUniqueHash() {
-    return unique_hash;
+std::string DirectIOClientConnection::getUniqueUUID() {
+    return unique_uuid;
 }
 
 std::string	DirectIOClientConnection::getCustomStringIdentification() {
