@@ -61,8 +61,6 @@ namespace chaos {
 					
 					//the precomputed header for get last shared output channel
 					opcode_headers::DirectIODeviceChannelHeaderGetOpcode get_opcode_header;
-					
-					uint32_t device_hash;
 
 					std::string device_id;
 					DirectIODeviceClientChannelPutMode put_mode;

@@ -49,7 +49,7 @@ void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
 			//reallign the pointer to the start of the key
 			//header->key_data = (void*)((char*)header+sizeof(DirectIODeviceChannelHeaderPutOpcode));
 
-			header->device_hash = FROM_LITTLE_ENDNS_NUM(uint32_t, header->device_hash);
+			//header->device_hash = FROM_LITTLE_ENDNS_NUM(uint32_t, header->device_hash);
 			header->tag = FROM_LITTLE_ENDNS_NUM(uint32_t, header->tag);
 			handler->consumePutEvent(header, dataPack->channel_data, dataPack->header.channel_data_size);
             break;
@@ -60,8 +60,8 @@ void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
             header->field.endpoint = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.endpoint);
             header->field.p_port = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.p_port);
 			header->field.s_port = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.s_port);
-            header->field.device_hash = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.device_hash);
-			header->field.answer_server_hash = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.answer_server_hash);
+            //header->field.device_hash = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.device_hash);
+			//header->field.answer_server_hash = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.answer_server_hash);
             header->field.address = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.address);
 			handler->consumeGetEvent(header, dataPack->channel_data, dataPack->header.channel_data_size);
             break;
