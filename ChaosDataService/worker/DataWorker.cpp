@@ -17,7 +17,7 @@ using namespace chaos::data_service::worker;
 #define DCLDBG_ LDBG_ << DataWorker_LOG_HEAD
 #define DCLERR_ LERR_ << DataWorker_LOG_HEAD
 
-DataWorker::DataWorker():work(false), job_queue(1000) {
+DataWorker::DataWorker():work(false), job_queue(1000),job_in_queue(0) {
 	std::memset(&settings, 0, sizeof(DataWorkerSetting));
 }
 
@@ -40,6 +40,7 @@ void DataWorker::consumeJob(void *cookie) {
 	while(work) {
 		thread_job = getNextOrWait(lock);
 		if(thread_job) executeJob(thread_job, cookie);
+		job_in_queue--;
 	}
 	DCLAPP_<< "Working cicle temrinated";
 }
@@ -88,10 +89,12 @@ void DataWorker::deinit() throw (chaos::CException) {
 }
 
 bool DataWorker::submitJobInfo(WorkerJobPtr job_info) {
+	if(job_in_queue++ % 1000) {
+		DCLDBG_ << "Job in queue " << job_in_queue;
+	}
 	if( job_queue.push(job_info) ) {
 		job_condition.notify_one();
 		return true;
 	}
 	return false;
-	
 }

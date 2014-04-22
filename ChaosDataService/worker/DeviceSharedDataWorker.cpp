@@ -53,30 +53,26 @@ void DeviceSharedDataWorker::init(void *init_data) throw (chaos::CException) {
 		std::string stage_file_name("/thread_");
 		stage_file_name.append(boost::lexical_cast<std::string>(idx));
 		
-		
-		
 		ThreadCookie *_tc_ptr = new ThreadCookie();
 		if(vfs_manager_instance->getFile(path+stage_file_name, &_tc_ptr->vfs_stage_file)) {
 			//we have got an error
 			DSDW_LERR_ << "Error getting vfs file for " << path+stage_file_name;
 			throw chaos::CException(-2, "Error creating vfs stage file", __PRETTY_FUNCTION__);
 		}
-		
-		_tc_ptr->cache_driver_ptr = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name.c_str());
-		
 		//associate the thread cooky for the idx value
 		thread_cookie[idx] = _tc_ptr;
 	}
+	
+	cache_driver_ptr = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name.c_str());
 }
 
 void DeviceSharedDataWorker::deinit() throw (chaos::CException) {
 	for(int idx = 0; idx < settings.job_thread_number; idx++) {
 		ThreadCookie *tmp_cookie = reinterpret_cast<ThreadCookie *>(thread_cookie[idx]);
-		delete(tmp_cookie->cache_driver_ptr);
 		vfs_manager_instance->releaseFile(tmp_cookie->vfs_stage_file);
 	}
 	std::memset(thread_cookie, 0, sizeof(void*)*settings.job_thread_number);
-	
+	if(cache_driver_ptr) delete(cache_driver_ptr);
 	DataWorker::deinit();
 }
 
@@ -95,10 +91,6 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 			break;
 			
 		case 2:// storicize and live
-			this_thread_cookie->cache_driver_ptr->putData(GET_PUT_OPCODE_KEY_PTR(job_ptr->request_header),
-														  job_ptr->request_header->key_len,
-														  job_ptr->data_pack,
-														  job_ptr->data_pack_len);
 			this_thread_cookie->vfs_stage_file->write(job_ptr->data_pack, job_ptr->data_pack_len);
 			free(job_ptr->request_header);
 			free(job_ptr->data_pack);
@@ -106,7 +98,46 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 			break;
 			
 		case 1:{// live only only
-			this_thread_cookie->cache_driver_ptr->putData(GET_PUT_OPCODE_KEY_PTR(job_ptr->request_header),
+			break;
+		}
+	}
+}
+
+
+void DeviceSharedDataWorker::addServer(std::string server_description) {
+	//for(int idx = 0; idx < settings.job_thread_number; idx++) {
+	//	ThreadCookie *this_thread_cookie = reinterpret_cast<ThreadCookie *>(thread_cookie[idx]);
+	//	if(this_thread_cookie) this_thread_cookie->cache_driver_ptr->addServer(server_description);
+	//}
+	cache_driver_ptr->addServer(server_description);
+}
+
+void DeviceSharedDataWorker::updateServerConfiguration() {
+	//for(int idx = 0; idx < settings.job_thread_number; idx++) {
+	//	ThreadCookie *this_thread_cookie = reinterpret_cast<ThreadCookie *>(thread_cookie[idx]);
+	//	if(this_thread_cookie) this_thread_cookie->cache_driver_ptr->updateConfig();
+	//}
+	cache_driver_ptr->updateConfig();
+}
+
+bool DeviceSharedDataWorker::submitJobInfo(WorkerJobPtr job_info) {
+	bool result = true;
+	DeviceSharedWorkerJob *job_ptr = reinterpret_cast<DeviceSharedWorkerJob*>(job_info);
+	switch(job_ptr->request_header->tag) {
+		case 0:// storicize only
+			result = DataWorker::submitJobInfo(job_info);
+			break;
+			
+		case 2:// storicize and live
+			cache_driver_ptr->putData(GET_PUT_OPCODE_KEY_PTR(job_ptr->request_header),
+														  job_ptr->request_header->key_len,
+														  job_ptr->data_pack,
+														  job_ptr->data_pack_len);
+			result = DataWorker::submitJobInfo(job_info);
+			break;
+			
+		case 1:{// live only only
+			cache_driver_ptr->putData(GET_PUT_OPCODE_KEY_PTR(job_ptr->request_header),
 														  job_ptr->request_header->key_len,
 														  job_ptr->data_pack,
 														  job_ptr->data_pack_len);
@@ -116,20 +147,5 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 			break;
 		}
 	}
-}
-
-
-void DeviceSharedDataWorker::addServer(std::string server_description) {
-	for(int idx = 0; idx < settings.job_thread_number; idx++) {
-		ThreadCookie *this_thread_cookie = reinterpret_cast<ThreadCookie *>(thread_cookie[idx]);
-		if(this_thread_cookie) this_thread_cookie->cache_driver_ptr->addServer(server_description);
-	}
-	
-}
-
-void DeviceSharedDataWorker::updateServerConfiguration() {
-	for(int idx = 0; idx < settings.job_thread_number; idx++) {
-		ThreadCookie *this_thread_cookie = reinterpret_cast<ThreadCookie *>(thread_cookie[idx]);
-		if(this_thread_cookie) this_thread_cookie->cache_driver_ptr->updateConfig();
-	}
+	return result;
 }
