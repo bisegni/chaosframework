@@ -59,13 +59,13 @@ namespace chaos{
 			//! Thread cookier for collect need staff to process the request
 			struct ThreadCookie {
 				chaos_vfs::VFSFile			*vfs_stage_file;
-				cache_system::CacheDriver	*cache_driver_ptr;
 			};
 			
 			//! worker for live device sharing
 			class DeviceSharedDataWorker : public DataWorker {
 				std::string cache_impl_name;
 				vfs::VFSManager *vfs_manager_instance;
+				cache_system::CacheDriver	*cache_driver_ptr;
 			protected:
 				void executeJob(WorkerJobPtr job_info, void* cookie);
 			public:
@@ -75,6 +75,7 @@ namespace chaos{
 				void deinit() throw (chaos::CException);
 				void addServer(std::string server_description);
 				void updateServerConfiguration();
+				bool submitJobInfo(WorkerJobPtr job_info);
 			};
 		}
 	}

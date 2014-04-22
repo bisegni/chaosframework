@@ -25,8 +25,9 @@
 
 #include <chaos/common/utility/StartableService.h>
 
-#include <boost//thread.hpp>
+#include <boost/thread.hpp>
 #include <boost/lockfree/queue.hpp>
+#include <boost/atomic.hpp>
 
 #define DEFAULT_JOB_THREAD 1
 
@@ -48,6 +49,8 @@ namespace chaos{
 				boost::condition_variable job_condition;
 				
 				bool work;
+				
+				boost::atomic<uint64_t> job_in_queue;
 			protected:
 				void * * thread_cookie;
 				
@@ -64,7 +67,7 @@ namespace chaos{
 				void start() throw (chaos::CException);
 				void stop() throw (chaos::CException);
 				void deinit() throw (chaos::CException);
-				bool submitJobInfo(WorkerJobPtr job_info);
+				virtual bool submitJobInfo(WorkerJobPtr job_info);
 			};
 			
 		}

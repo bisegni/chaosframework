@@ -33,8 +33,8 @@ namespace chaos_data_storage = chaos::data_service::storage_system;
 #define VFSFM_LDBG_ LDBG_ << VFSManager_LOG_HEAD << __FUNCTION__ << " - "
 #define VFSFM_LERR_ LERR_ << VFSManager_LOG_HEAD << __FUNCTION__ << " - "
 
-#define VFSManager_MAX_BLOCK_SIZE		1024*100//1024*5			// 5 megabyte
-#define VFSManager_MAX_BLOCK_LIFETIME	1000 //* 60 * 5		// 5 minutes
+#define VFSManager_MAX_BLOCK_SIZE		1024*1024*5		// 5 megabyte
+#define VFSManager_MAX_BLOCK_LIFETIME	1000*60*5		// 5 minutes
 
 VFSManager::VFSManager():setting(NULL) {
 	
