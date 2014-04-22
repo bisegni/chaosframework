@@ -22,10 +22,7 @@ using namespace chaos::data_service::index_system;
 #define MDBID_LDBG_ LDBG_ << MongoDBIndexDriver_LOG_HEAD << __FUNCTION__ << " - "
 #define MDBID_LERR_ LERR_ << MongoDBIndexDriver_LOG_HEAD << __FUNCTION__ << " - "
 
-#define MONGO_DB_CHECK_ERROR_CODE(b) b["code"].numberInt()
-#define MONGO_DB_GET_ERROR(e) \
-mongo::BSONObj _error = sc->getLastErrorDetailed(); \
-e = MONGO_DB_CHECK_ERROR_CODE(_error);
+
 
 MongoDBIndexDriver::MongoDBIndexDriver(std::string alias):IndexDriver(alias) {
 	
@@ -41,35 +38,14 @@ void MongoDBIndexDriver::init(void *init_data) throw (chaos::CException) {
 	IndexDriver::init(init_data);
 	std::string errmsg;
 	std::string servers;
-	int err = 0;
-	for (IndexDriverServerListIterator iter = setting->servers.begin();
-		 iter != setting->servers.end();
-		 iter++){
-		
-		servers.append(*iter);
-		servers.append(",");
-	}
-	if(servers.size()) {
-		servers.resize(servers.size()-1);
-	}
-	MDBID_LAPP_ << "Try to setup connection with " << servers;
-	connection_string = mongo::ConnectionString::parse(servers, errmsg);
-	if(!connection_string.isValid()) {
-		MDBID_LDBG_ << errmsg;
-		throw CException(-1, errmsg, __PRETTY_FUNCTION__);
-	}
-	
-	//all is gone ok create the needde index
-	//mongo::ScopedDbConnection sc(connection_string);
-	//sc->ensureIndex(MONGO_DB_VFS_VFAT_COLLECTION, BSON("vfs_path"<< 1 << "vfs_domain" << 1), /*unique*/true);
-	
-	//MONGO_DB_GET_ERROR(err);
-	//if(err) throw CException(-1, boost::str(boost::format("Error creating index with return code  %1%") % err),  __PRETTY_FUNCTION__);
+	//allcoate ha pool class
+	ha_connection_pool = new MongoDBHAConnectionManager(setting->servers);
 }
 
 //!deinit
 void MongoDBIndexDriver::deinit() throw (chaos::CException) {
 	IndexDriver::deinit();
+	if(ha_connection_pool) delete(ha_connection_pool);
 }
 
 //! Register a new data block wrote on stage area
@@ -92,16 +68,15 @@ int MongoDBIndexDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_v
 	//allocate data block on vfat
 	mongo::BSONObjBuilder bson_search;
 	mongo::BSONObjBuilder bson_block;
-	mongo::ScopedDbConnection sc(connection_string);
-	
+	mongo::BSONObj search_result;
 	try {
 		bson_search.append(MONGO_DB_FIELD_FILE_VFS_PATH, vfs_file->getVFSFileInfo()->vfs_fpath);
 		bson_search.append(MONGO_DB_FIELD_FILE_VFS_DOMAIN, vfs_file->getVFSFileInfo()->vfs_domain);
-		mongo::BSONObj search_result = sc.conn().findOne(MONGO_DB_VFS_VFAT_COLLECTION, bson_search.obj());
+		ha_connection_pool->findOne(search_result, MONGO_DB_VFS_VFAT_COLLECTION, bson_search.obj());
 		if(search_result.isEmpty()) {
 			//cant be here..anyway give error
 			MDBID_LERR_ << "Error getting file information";
-			return -3;
+			return -4;
 		}
 		
 		//insert new
@@ -113,13 +88,11 @@ int MongoDBIndexDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_v
 		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH, data_block->vfs_path);
 		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN, vfs_file->getVFSFileInfo()->vfs_domain);
 		
-		sc.conn().insert(MONGO_DB_VFS_VBLOCK_COLLECTION,  bson_block.obj());
-		
-		sc.done();
+		ha_connection_pool->insert(MONGO_DB_VFS_VBLOCK_COLLECTION,  bson_block.obj());
 		
 	} catch (const mongo::DBException &e) {
 		MDBID_LERR_ << e.what();
-		err = -4;
+		err = -5;
 	}
 	return 0;
 }
@@ -131,23 +104,22 @@ int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file, cha
 	mongo::BSONObjBuilder bson_block_query;
 	mongo::BSONObjBuilder bson_block_update;
 	mongo::BSONObjBuilder bson_block_update_filed;
-	mongo::ScopedDbConnection sc(connection_string);
+	mongo::BSONObj search_result;
 	try{
 		bson_search.append(MONGO_DB_FIELD_FILE_VFS_PATH, vfs_file->getVFSFileInfo()->vfs_fpath);
 		bson_search.append(MONGO_DB_FIELD_FILE_VFS_DOMAIN, vfs_file->getVFSFileInfo()->vfs_domain);
-		mongo::BSONObj search_result = sc.conn().findOne(MONGO_DB_VFS_VFAT_COLLECTION, bson_search.obj());
-		{
-			MONGO_DB_GET_ERROR(err);
-			if(err) {
-				MDBID_LERR_ << "Error " << err << " searching vfs on vfat";
-				return err;
-			}
-			if(search_result.isEmpty()) {
-				//cant be here..anyway give error
-				MDBID_LERR_ << "[CAN'T BE HERE]Error getting file information";
-				
-			}
+		err = ha_connection_pool->findOne(search_result, MONGO_DB_VFS_VFAT_COLLECTION, bson_search.obj());
+		
+		if(err) {
+			MDBID_LERR_ << "Error " << err << " searching vfs on vfat";
+			return err;
 		}
+		if(search_result.isEmpty()) {
+			//cant be here..anyway give error
+			MDBID_LERR_ << "[CAN'T BE HERE]Error getting file information";
+			
+		}
+		
 		//compose query
 		bson_block_query.append(MONGO_DB_FIELD_FILE_PRIMARY_KEY, search_result["_id"].OID());
 		bson_block_query.append(MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS, (long long)data_block->creation_time);
@@ -158,16 +130,13 @@ int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file, cha
 		bson_block_update_filed.append(MONGO_DB_FIELD_DATA_BLOCK_STATE, state);
 		bson_block_update.append("$set", bson_block_update_filed.obj());
 		
-		sc.conn().update(MONGO_DB_VFS_VBLOCK_COLLECTION, bson_block_query.obj(), bson_block_update.obj());
-		{
-			MONGO_DB_GET_ERROR(err);
-			if(err) {
-				MDBID_LERR_ << "Error " << err << " updating state on datablock";
-			}
+		err = ha_connection_pool->update(MONGO_DB_VFS_VBLOCK_COLLECTION, bson_block_query.obj(), bson_block_update.obj());
+		if(err) {
+			MDBID_LERR_ << "Error " << err << " updating state on datablock";
 		}
 	}catch(const mongo::DBException &e) {
 		MDBID_LERR_ << e.what();
-		err = -1;
+		err = -2;
 	}
 	return err;
 }
@@ -181,14 +150,13 @@ int MongoDBIndexDriver::vfsWorkHeartBeatOnDataBlock(chaos_vfs::VFSFile *vfs_file
 int MongoDBIndexDriver::vfsFileExist(VFSFile *vfs_file, bool& exists_flag) {
 	int err = 0;
 	mongo::BSONObjBuilder b;
-	mongo::ScopedDbConnection sc(connection_string);
+	mongo::BSONObj result;
 	try{
 		//compose file search criteria
 		b.append(MONGO_DB_FIELD_FILE_VFS_PATH, vfs_file->getVFSFileInfo()->vfs_fpath);
 		b.append(MONGO_DB_FIELD_FILE_VFS_DOMAIN, vfs_file->getVFSFileInfo()->vfs_domain);
 		
-		mongo::BSONObj result = sc.conn().findOne(MONGO_DB_VFS_VFAT_COLLECTION, b.obj());
-		MONGO_DB_GET_ERROR(err);
+		err = ha_connection_pool->findOne(result, MONGO_DB_VFS_VFAT_COLLECTION, b.obj());
 		if(err) {
 			MDBID_LERR_ << "Error " << err << " creting vfs file entry";
 		} else {
@@ -198,7 +166,6 @@ int MongoDBIndexDriver::vfsFileExist(VFSFile *vfs_file, bool& exists_flag) {
 		MDBID_LERR_ << e.what();
 		err = -1;
 	}
-	sc.done();
 	return err;
 }
 
@@ -206,15 +173,12 @@ int MongoDBIndexDriver::vfsFileExist(VFSFile *vfs_file, bool& exists_flag) {
 int MongoDBIndexDriver::vfsCreateFileEntry(chaos_vfs::VFSFile *vfs_file) {
 	int err = 0;
 	mongo::BSONObjBuilder b;
-	mongo::ScopedDbConnection sc(connection_string);
 	try{
 		//compose file search criteria
 		b.append(MONGO_DB_FIELD_FILE_VFS_PATH, vfs_file->getVFSFileInfo()->vfs_fpath);
 		b.append(MONGO_DB_FIELD_FILE_VFS_DOMAIN, vfs_file->getVFSFileInfo()->vfs_domain);
 		
-		sc.conn().insert(MONGO_DB_VFS_VFAT_COLLECTION, b.obj());
-		
-		MONGO_DB_GET_ERROR(err);
+		err = ha_connection_pool->insert(MONGO_DB_VFS_VFAT_COLLECTION, b.obj());
 		if(err) {
 			if(err != 11000) {
 				MDBID_LERR_ << "Error " << err << " creting vfs file entry";
@@ -226,6 +190,5 @@ int MongoDBIndexDriver::vfsCreateFileEntry(chaos_vfs::VFSFile *vfs_file) {
 		MDBID_LERR_ << e.what();
 		err = -1;
 	}
-	sc.done();
 	return err;
 }

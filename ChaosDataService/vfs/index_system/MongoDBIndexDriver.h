@@ -21,6 +21,7 @@
 #define __CHAOSFramework__MongoDBIndexDriver__
 
 #include "IndexDriver.h"
+#include "MongoDBHAConnectionManager.h"
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
@@ -58,10 +59,9 @@ namespace chaos {
 			//! Mongodb implementation for the index driver
 			REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(MongoDBIndexDriver, IndexDriver) {
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(MongoDBIndexDriver)
-				mongo::ConnectionString connection_string;
 				MongoDBIndexDriver(std::string alias);
 			protected:
-				mongo::DBClientConnection mongo_client;
+				MongoDBHAConnectionManager *ha_connection_pool;
 				
 			public:
 				~MongoDBIndexDriver();
