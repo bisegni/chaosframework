@@ -38,7 +38,7 @@ namespace chaos{
 		
 #define OPT_VFS_INDEX_DRIVER_IMPL		"vfs_index_drvr_impl"
 #define OPT_VFS_INDEX_DRIVER_SERVERS	"vfs_index_servers"
-#define OPT_VFS_INDEX_DRIVER_KVP		"vfs_storage_index_kvp"
+#define OPT_VFS_INDEX_DRIVER_KVP		"vfs_index_driver_kvp"
 				
 		namespace worker {
 			

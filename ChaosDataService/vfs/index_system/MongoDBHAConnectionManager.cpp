@@ -25,7 +25,42 @@
 mongo::BSONObj _error = c->conn().getLastErrorDetailed(); \
 e = MONGO_DB_CHECK_ERROR_CODE(_error);
 
+namespace chaos_data = chaos::common::data;
 using namespace chaos::data_service::index_system;
+//-----------------------------------------------------------------------------------------------------------
+
+MongoAuthHook::MongoAuthHook(std::map<string,string>& key_value_custom_param):
+has_autentication(false) {
+	if(key_value_custom_param.count("user") &&
+	   key_value_custom_param.count("pwd") &&
+	   key_value_custom_param.count("db") ) {
+		//configura for autentication
+		user = key_value_custom_param["user"];
+		pwd = key_value_custom_param["pwd"];
+		db = key_value_custom_param["db"];
+		has_autentication = true;
+	}
+}
+
+void MongoAuthHook::onCreate( mongo::DBClientBase * conn ) {
+	std::string err;
+	if(has_autentication){
+		MDBHAC_LDBG_ << "Autenticate on - " << conn->getServerAddress();
+		if(!conn->auth(db, user, pwd, err)) {
+			MDBHAC_LERR_ << conn->getServerAddress() << " -> " << err;
+		}
+	} else {
+		MDBHAC_LDBG_ << "No Autenticate on - " << conn->getServerAddress();
+	}
+}
+
+void MongoAuthHook::onHandedOut( mongo::DBClientBase * conn ) {
+	MDBHAC_LAPP_ << "MongoDBHAConnectionManager::onHandedOut - " << conn->getServerAddress();
+}
+
+void MongoAuthHook::onDestroy( mongo::DBClientBase * conn ) {
+	MDBHAC_LAPP_ << "MongoDBHAConnectionManager::onDestroy - " << conn->getServerAddress();
+}
 
 DriverScopedConnection::DriverScopedConnection(mongo::ConnectionString _conn):
 ScopedDbConnection(_conn) {}
@@ -33,9 +68,11 @@ ScopedDbConnection(_conn) {}
 DriverScopedConnection::~DriverScopedConnection() {
 	ScopedDbConnection::done();
 }
+
+
 //-----------------------------------------------------------------------------------------------------------
 
-MongoDBHAConnectionManager::MongoDBHAConnectionManager(std::vector<std::string> monogs_routers_list):
+MongoDBHAConnectionManager::MongoDBHAConnectionManager(std::vector<std::string> monogs_routers_list, std::map<string,string>& key_value_custom_param):
 server_number((uint32_t)monogs_routers_list.size()),
 next_retrive_intervall(0){
 	
@@ -44,14 +81,17 @@ next_retrive_intervall(0){
 	for (std::vector<std::string>::iterator iter = monogs_routers_list.begin();
 		 iter != monogs_routers_list.end();
 		 iter++){
-		complete_url = boost::str(boost::format("%1%/?w=2&wtimeoutMS=2000") % *iter);
+		complete_url = boost::str(boost::format("%1%/?w=1&wtimeoutMS=2000") % *iter);
 		MDBHAC_LAPP_ << "Register mongo server address " << complete_url;
 		boost::shared_ptr<mongo::ConnectionString> cs_ptr(new mongo::ConnectionString(complete_url));
 		valid_connection_queue.push(cs_ptr);
 	}
+	
+	mongo::pool.addHook(new MongoAuthHook(key_value_custom_param));
 }
 
 MongoDBHAConnectionManager::~MongoDBHAConnectionManager() {
+	
 	std::queue< boost::shared_ptr<mongo::ConnectionString> > empty_queue;
 	std::swap(valid_connection_queue, empty_queue);
 	std::swap(offline_connection_queue, empty_queue);
@@ -83,10 +123,10 @@ bool MongoDBHAConnectionManager::getConnection(MongoDBHAConnection *connection_s
 		//remove invalid connection string to his queue
 		offline_connection_queue.pop();
 	}
-
+	
 	//get the number of valid server
 	uint32_t valid_server_num = (uint32_t)valid_connection_queue.size();
-
+	
 	//try fo find a good conncetion
 	while(!nextCS && cur_index < valid_server_num) {
 		cur_index++;
@@ -132,6 +172,7 @@ int MongoDBHAConnectionManager::insert( const std::string &ns , mongo::BSONObj o
 			conn->conn().insert(ns, obj, flags);
 			MONGO_DB_GET_ERROR(conn, err);
 		} catch (std::exception& ex) {
+			MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();
 			if(conn) delete(conn);
 			continue;
 		}
@@ -150,6 +191,7 @@ int MongoDBHAConnectionManager::findOne(mongo::BSONObj& result, const std::strin
 			result = conn->conn().findOne(ns, query, fieldsToReturn, queryOptions);
 			MONGO_DB_GET_ERROR(conn, err);
 		} catch (std::exception& ex) {
+			MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();
 			if(conn) delete(conn);
 			continue;
 		}
@@ -168,6 +210,7 @@ int MongoDBHAConnectionManager::update( const std::string &ns, mongo::Query quer
 			conn->conn().update(ns, query, obj, upsert, multi);
 			MONGO_DB_GET_ERROR(conn, err);
 		} catch (std::exception& ex) {
+			MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();
 			if(conn) delete(conn);
 			continue;
 		}
@@ -176,8 +219,4 @@ int MongoDBHAConnectionManager::update( const std::string &ns, mongo::Query quer
 	}
 	if(conn) delete(conn);
 	return err;
-}
-
-mongo::BSONObj getLastError() {
-	
 }
