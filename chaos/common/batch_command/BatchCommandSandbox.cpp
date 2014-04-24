@@ -321,6 +321,17 @@ void BatchCommandSandbox::checkNextCommand() {
                     DEBUG_CODE(SCSLAPP_ << "[checkNextCommand] we have only a set handler";)
                     installHandler(next_available_command);
                     command_submitted_queue.pop();
+                    if(event_handler) {
+                        if(next_available_command->element->cmdImpl->runningProperty == RunningPropertyType::RP_Fault){
+                            event_handler->handleEvent(next_available_command->element->cmdImpl->unique_id,
+                                                      BatchCommandEventType::EVT_FAULT,
+                                                      static_cast<FaultDescription*>(&next_available_command->element->cmdImpl->faultDescription));
+                        } else {
+                            event_handler->handleEvent(next_available_command->element->cmdImpl->unique_id, BatchCommandEventType::EVT_COMPLETED, NULL);
+                        }
+                    }
+                    
+					DELETE_OBJ_POINTER(next_available_command);
                     continue;
                 }
                 

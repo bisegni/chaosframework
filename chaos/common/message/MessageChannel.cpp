@@ -77,11 +77,13 @@ CDataWrapper *MessageChannel::response(CDataWrapper *responseData, bool& detachD
         
             //lock lk(waith_asnwer_mutex);
         atomic_int_type requestID = responseData->getInt32Value(RpcActionDefinitionKey::CS_CMDM_MESSAGE_ID);
-            //call the handler
+            //check if the requester is waith the answer
         if(!(detachData = sem.setWaithedObjectForKey(requestID, responseData))){
             //call the handler
             if((detachData = response_handler)) {
                 response_handler(requestID, responseData);
+            } else {
+                LDBG_ << "No one has consumed the response of id " << requestID;
             }
         }
     } catch (...) {
@@ -92,7 +94,7 @@ CDataWrapper *MessageChannel::response(CDataWrapper *responseData, bool& detachD
 
 /*
  */
-atomic_int_type MessageChannel::prepareRequestPackAndSend(bool async, const char * const nodeID, const char * const actionName, CDataWrapper *requestPack) {
+atomic_int_type MessageChannel::prepareRequestPackAndSend(bool async, const char * const nodeID, const char * const actionName, CDataWrapper *requestPack, bool onThisThread) {
     CHAOS_ASSERT(nodeID && actionName && requestPack)
         //get new reqeust id
     atomic_int_type currentRequestID = atomic_increment(&channelRequestIDCounter);
@@ -112,7 +114,7 @@ atomic_int_type MessageChannel::prepareRequestPackAndSend(bool async, const char
     
     //the message need to be put in a subobject with the current key: CS_CMDM_ACTION_MESSAGE
     
-    broker->submiteRequest(remoteNodeAddress, requestPack);
+    broker->submiteRequest(remoteNodeAddress, requestPack, NULL, NULL, 0, onThisThread);
     
     return currentRequestID;
 }
@@ -120,7 +122,7 @@ atomic_int_type MessageChannel::prepareRequestPackAndSend(bool async, const char
 /*! 
  called when a result of an 
  */
-void MessageChannel::sendMessage(const char * const nodeID,const char * const actionName, CDataWrapper * const messagePack) {
+void MessageChannel::sendMessage(const char * const nodeID,const char * const actionName, CDataWrapper * const messagePack,  bool onThisThread) {
     CHAOS_ASSERT(nodeID && actionName)
     CDataWrapper *dataPack = new CDataWrapper();
     //add the action and dommain name
@@ -128,18 +130,18 @@ void MessageChannel::sendMessage(const char * const nodeID,const char * const ac
     dataPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME, actionName);
     if(messagePack)dataPack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *messagePack);
     //send the request
-    broker->submitMessage(remoteNodeAddress, dataPack);
+    broker->submitMessage(remoteNodeAddress, dataPack, NULL, NULL, 0, onThisThread);
 }
 
 /*
  */
-CDataWrapper* MessageChannel::sendRequest(const char * const nodeID, const char * const actionName, CDataWrapper * const requestPack, uint32_t millisecToWait, bool async) {
+CDataWrapper* MessageChannel::sendRequest(const char * const nodeID, const char * const actionName, CDataWrapper * const requestPack, uint32_t millisecToWait, bool async,  bool onThisThread) {
     CHAOS_ASSERT(nodeID && actionName)
     CDataWrapper *result = NULL;
     CDataWrapper *dataPack = new CDataWrapper();
     //lock lk(waith_asnwer_mutex);
     if(requestPack)dataPack->addCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE, *requestPack);
-    atomic_int_type currentRequestID =  prepareRequestPackAndSend(async, nodeID, actionName, dataPack);
+    atomic_int_type currentRequestID =  prepareRequestPackAndSend(async, nodeID, actionName, dataPack, onThisThread);
     
     //waith the answer
     //waith_asnwer_condition.wait(lk);

@@ -135,14 +135,14 @@ int DeviceMessageChannel::setScheduleDelay(uint64_t scheduledDealy, uint32_t mil
 }
 
 //------------------------------------
-void DeviceMessageChannel::sendCustomMessage(const char * const actAlias, CDataWrapper* const requestData) {
-    MessageChannel::sendMessage(deviceNetworkAddress->nodeID.c_str(), actAlias, requestData);
+void DeviceMessageChannel::sendCustomMessage(const char * const actAlias, CDataWrapper* const requestData, bool queued) {
+    MessageChannel::sendMessage(deviceNetworkAddress->nodeID.c_str(), actAlias, requestData, !queued);
 }
 
 //------------------------------------
-int DeviceMessageChannel::sendCustomRequest(const char * const actAlias, CDataWrapper* const requestData, CDataWrapper**const resultData, uint32_t millisecToWait, bool async) {
+int DeviceMessageChannel::sendCustomRequest(const char * const actAlias, CDataWrapper* const requestData, CDataWrapper** resultData, uint32_t millisecToWait, bool async, bool queued) {
     int err = ErrorCode::EC_NO_ERROR;
-    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), actAlias, requestData, millisecToWait, async));
+    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), actAlias, requestData, millisecToWait, async, !queued));
     CHECK_TIMEOUT_AND_RESULT_CODE(initResult, err)
     if(err == ErrorCode::EC_NO_ERROR && resultData) {
         *resultData = initResult->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE);

@@ -71,7 +71,7 @@ void DefaultCommandDispatcher::deinit() throw(CException) {
         }
         LDEF_CMD_DISPTC_APP_ << "Deinitialized action scheduler for domain:";
     }
-    
+    dasMap.clear();
     deinitialized = false;
     AbstractCommandDispatcher::deinit();
     LDEF_CMD_DISPTC_APP_ << "Deinitilized Default Command Dispatcher";
@@ -149,15 +149,20 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
             //RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
         if(!dasMap.count(actionDomain)) throw CException(3, "Action Domain not registered", "DefaultCommandDispatcher::dispatchCommand");
         
-#ifdef DEBUG
-        LDEF_CMD_DISPTC_APP_ << "Received the message content:-----------------------START";
-        LDEF_CMD_DISPTC_APP_ << commandPack->getJSONString();
-        LDEF_CMD_DISPTC_APP_ << "Received the message content:-------------------------END";
-#endif
+            //#ifdef DEBUG
+            //        LDEF_CMD_DISPTC_APP_ << "Received the message content:-----------------------START";
+            //        LDEF_CMD_DISPTC_APP_ << commandPack->getJSONString();
+            //        LDEF_CMD_DISPTC_APP_ << "Received the message content:-------------------------END";
+            //#endif
         
             //submit the action(Thread Safe)
-        dasMap[actionDomain]->push(commandPack);
-        
+		//ElementManagingPolicy ep;
+		//ep.elementHasBeenDetached = false;
+		dasMap[actionDomain]->push(commandPack);
+        //if(ep.elementHasBeenDetached) {
+		//	delete(commandPack);
+		//}
+		
             //tag message has submitted
         resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
     }catch(CException& cse){

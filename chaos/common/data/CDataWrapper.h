@@ -26,6 +26,7 @@
 //#include <chaos/common/bson/util/json.h>
 #include <chaos/common/pool/CPoolMemoryObject.h>
 
+#include <boost/scoped_ptr.hpp>
 namespace chaos {
 	namespace common {
 		
@@ -84,10 +85,10 @@ namespace chaos {
 			 Class that wrap the serializaiton system for data storage
 			 */
 			class CDataWrapper/*: public CPoolMemoryObject<CDataWrapper> */{
-				auto_ptr<BSONArrayBuilder> bsonArrayBuilder;
+				boost::scoped_ptr<BSONArrayBuilder> bsonArrayBuilder;
 				
 			protected:
-				auto_ptr<BSONObjBuilder> bsonBuilder;
+				boost::scoped_ptr<BSONObjBuilder> bsonBuilder;
 				
 			public:
 				

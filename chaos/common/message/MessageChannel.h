@@ -108,7 +108,7 @@ e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_COD
          \param requestPack the request pack to send
          \return the unique request id
          */
-        atomic_int_type prepareRequestPackAndSend(bool, const char * const, const char * const, common::data::CDataWrapper*);
+        atomic_int_type prepareRequestPackAndSend(bool, const char * const, const char * const, common::data::CDataWrapper*, bool);
 		
     protected:
 		//! Message broker associated with the channel instance
@@ -149,7 +149,7 @@ e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_COD
          \brief send a message
          \param messagePack the data to send, the pointer is not deallocated and i scopied into the pack
          */
-        void sendMessage(const char * const, const char * const, common::data::CDataWrapper* const);
+        void sendMessage(const char * const, const char * const, common::data::CDataWrapper* const, bool onThisThread = false);
         
         /*!
          \brief Set the handler for manage the rpc answer
@@ -176,7 +176,7 @@ e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_COD
          \param millisecToWait waith the response for onli these number of millisec then return
          \return the answer of the request, a null value mean that the wait time is expired
          */
-        common::data::CDataWrapper* sendRequest(const char * const, const char * const, common::data::CDataWrapper* const, uint32_t millisecToWait=0, bool async = false);
+        common::data::CDataWrapper* sendRequest(const char * const, const char * const, common::data::CDataWrapper* const, uint32_t millisecToWait=0, bool async = false, bool onThisThread = false);
         
 		
     };

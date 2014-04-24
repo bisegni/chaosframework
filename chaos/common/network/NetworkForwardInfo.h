@@ -39,7 +39,7 @@ namespace chaos {
      Structure used to contain information for
      message forward
      */
-    typedef struct {
+    typedef struct NetworkForwardInfo {
             //!Define the information ip:port used to reach a remote chaos network broker
         std::string destinationAddr;
             //! the message data
@@ -50,8 +50,27 @@ namespace chaos {
         NetworkFinischedHandler endOpHandler;
             //! the information for the emitter returned in all hadnler call
         const char *emitterIdentifier;
-            //! tag returned in all hadnler call used by emitter
+            //! tag returned in all handler call used by emitter
         int64_t tag;
+		
+		NetworkForwardInfo():
+		destinationAddr(""),
+		message(NULL),
+		errorOpHandler(NULL),
+		endOpHandler(NULL),
+		emitterIdentifier(NULL),
+		tag(0) {
+		}
+
+		~NetworkForwardInfo(){
+			if(message) delete(message);
+		}
+		
+		chaos_data::CDataWrapper *detachMessage() {
+			chaos_data::CDataWrapper *result = message;
+			message = NULL;
+			return result;
+		}
     } NetworkForwardInfo;
 }
 
