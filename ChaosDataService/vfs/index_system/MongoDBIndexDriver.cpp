@@ -17,6 +17,8 @@
 using namespace chaos::data_service::vfs;
 using namespace chaos::data_service::index_system;
 
+namespace chaos_data = chaos::common::data;
+
 #define MongoDBIndexDriver_LOG_HEAD "[MongoDBIndexDriver] - "
 #define MDBID_LAPP_ LAPP_ << MongoDBIndexDriver_LOG_HEAD
 #define MDBID_LDBG_ LDBG_ << MongoDBIndexDriver_LOG_HEAD << __FUNCTION__ << " - "
@@ -38,8 +40,9 @@ void MongoDBIndexDriver::init(void *init_data) throw (chaos::CException) {
 	IndexDriver::init(init_data);
 	std::string errmsg;
 	std::string servers;
+	chaos_data::CDataWrapper driver_custom_init;
 	//allcoate ha pool class
-	ha_connection_pool = new MongoDBHAConnectionManager(setting->servers);
+	ha_connection_pool = new MongoDBHAConnectionManager(setting->servers, setting->key_value_custom_param);
 }
 
 //!deinit

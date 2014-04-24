@@ -26,8 +26,12 @@
 #include <vector>
 #include <string>
 #include <queue>
+#include <map>
 #include <boost/thread.hpp>
 #include <boost/shared_ptr.hpp>
+#include <chaos/common/data/CDataWrapper.h>
+
+namespace chaos_data = chaos::common::data;
 
 namespace chaos {
 	namespace data_service {
@@ -45,6 +49,18 @@ namespace chaos {
 			
 			typedef DriverScopedConnection *MongoDBHAConnection;
 			
+			class MongoAuthHook : public mongo::DBConnectionHook {
+				std::string user;
+				std::string pwd;
+				std::string db;
+				bool has_autentication;
+				void onCreate( mongo::DBClientBase * conn );
+				void onHandedOut( mongo::DBClientBase * conn );
+				void onDestroy( mongo::DBClientBase * conn );
+			public:
+				MongoAuthHook(std::map<string,string>& key_value_custom_param);
+			};
+			
 			/*!
 			 Implementation for the high availability with multiple
 			 mongos router instance
@@ -59,15 +75,16 @@ namespace chaos {
 				std::queue< boost::shared_ptr<mongo::ConnectionString> > offline_connection_queue;
 			
 				inline bool canRetry();
-			public:
-				MongoDBHAConnectionManager(std::vector<std::string> monogs_routers_list);
-				~MongoDBHAConnectionManager();
+				
 				bool getConnection(MongoDBHAConnection *connection_sptr);
+				
+			public:
+				MongoDBHAConnectionManager(std::vector<std::string> monogs_routers_list, std::map<string,string>& key_value_custom_param);
+				~MongoDBHAConnectionManager();
 				
 				int insert( const std::string &ns , mongo::BSONObj obj , int flags=0);
 				int findOne( mongo::BSONObj& result, const std::string &ns, const mongo::Query& query, const mongo::BSONObj *fieldsToReturn = 0, int queryOptions = 0);
 				int update( const std::string &ns, mongo::Query query, mongo::BSONObj obj, bool upsert = false, bool multi = false );
-				mongo::BSONObj getLastError();
 			};
 		}
 	}
