@@ -36,11 +36,12 @@ namespace chaos {
     class OutputDataBuffer : public CObjectProcessingQueue<chaos_data::CDataWrapper>, public Configurable {
         IODataDriver *ioDriver;
         
-    protected:
+    public:
         
         /*
          Process the oldest element in buffer
          */
+        
         virtual void processBufferElement(chaos_data::CDataWrapper*, ElementManagingPolicy&) throw(CException);
     
     public:

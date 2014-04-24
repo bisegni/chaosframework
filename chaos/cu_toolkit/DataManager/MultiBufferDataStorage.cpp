@@ -119,8 +119,18 @@ void MultiBufferDataStorage::setHstOBuffer(OutputDataBuffer *newHstOBuffer) {
  
  */
 void MultiBufferDataStorage::pushDataSet(CDataWrapper *rowData) {
-    CHAOS_ASSERT(liveOBuffer)
-    liveOBuffer->push(rowData);
+  CHAOS_ASSERT(liveOBuffer)
+    CHAOS_ASSERT(rowData)
+    
+
+    ElementManagingPolicy tt;
+    tt.elementHasBeenDetached=true;
+   //liveOBuffer->push(rowData);
+    liveOBuffer->processBufferElement(rowData,tt);
+    if((tt.elementHasBeenDetached==true)){
+      delete rowData;
+    }
+        
 }
 
 /*
