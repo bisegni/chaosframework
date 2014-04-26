@@ -55,7 +55,7 @@ void MsgPackClient::init(void *cfg) throw(CException) {
     LAPP_ << "Msgpack RpcSender ConnectionPool initialization";
     connectionPolling = new rpc::session_pool();//msgpack::rpc::udp_builder()
     if(!connectionPolling)
-        throw CException(0, "Msgpack initialization error", "MsgPackClient::init");
+        throw CException(0, "Msgpack initialization error on rpc::session_pool", "MsgPackClient::init");
     connectionPolling->start(threadNumber);
     LAPP_ << "Msgpack RpcSender ConnectionPool initialized";
 }
@@ -81,7 +81,10 @@ void MsgPackClient::deinit() throw(CException) {
     LAPP_ << "Msgpack Sender deinitialization";
     
     LAPP_ << "Msgpack Sender connectionPolling stopping";
-    if(connectionPolling)connectionPolling->end();
+    if(connectionPolling) {
+        connectionPolling->end();
+        delete(connectionPolling);
+    }
     LAPP_ << "Msgpack Sender connectionPolling stopped";
     
     LAPP_ << "Msgpack Sender ObjectProcessingQueue<CDataWrapper> stopping";
@@ -106,8 +109,9 @@ bool MsgPackClient::submitMessage(NetworkForwardInfo* forwardInfo, bool onThisTh
         if(onThisThread){
             ePolicy.elementHasBeenDetached = false;
             processBufferElement(forwardInfo, ePolicy);
-            delete(forwardInfo->message);
-            delete(forwardInfo);
+            if(!ePolicy.elementHasBeenDetached) {
+                delete(forwardInfo);
+            }
                 //in this case i need to delete te memo
         } else {
             CObjectProcessingQueue<NetworkForwardInfo>::push(forwardInfo);
@@ -151,14 +155,16 @@ void MsgPackClient::processBufferElement(NetworkForwardInfo *messageInfo, Elemen
         LAPP_ << "Error during message forwarding:";
         return;
     }
+	
+	//delete the dynamic content for messageInfo
             //localSession.notify(CommandManagerConstant::CS_CMDM_RPC_TAG, rawMsg);
     if(rawResult.size>0){
 #if DEBUG
-        auto_ptr<CDataWrapper> resultBson(new CDataWrapper(rawResult.ptr));
-        LDBG_ << "Submission message result------------------------------";
-        LDBG_ << resultBson->getJSONString();
-        LDBG_ << "Submission message result------------------------------";
-            //LDBG_ << 
+            //auto_ptr<CDataWrapper> resultBson(new CDataWrapper(rawResult.ptr));
+            //  LDBG_ << "Submission message result------------------------------";
+            //    LDBG_ << resultBson->getJSONString();
+            //    LDBG_ << "Submission message result------------------------------";
+            //LDBG_ <<
             //beed to be
             //receivedPacket.reset(new CDataWrapper(bsonResult.ptr));
 #endif

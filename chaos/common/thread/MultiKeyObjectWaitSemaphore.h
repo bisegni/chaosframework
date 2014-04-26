@@ -90,7 +90,6 @@ namespace chaos {
         bool setWaithedObjectForKey(T key, A obj){
             boost::unique_lock< boost::mutex >  mapLock(mapAccessMutex);
             if(!keySemaphoreMap.count(key)) return false;
-            
             ObjectWaitSemaphore<A> *ks = keySemaphoreMap[key];
             if(!ks) {
                 //before i need to dealloc pointed data because noone wait for it

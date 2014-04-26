@@ -176,12 +176,13 @@ void NetworkBroker::init(void *initData) throw(CException) {
  * All rpc adapter and command siaptcer are deinitilized
  */
 void NetworkBroker::deinit() throw(CException) {
+	MB_LAPP  << "Deinitialize performance session manager";
+	utility::StartableService::deinitImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);
 
 	//---------------------------- D I R E C T I/O ----------------------------
 	MB_LAPP  << "Deinit DirectIO server: " << directIOServer->getName();
-    utility::StartableService::deinitImplementation(directIOServer, directIOServer->getName(), "NetworkBroker::deinit");
-	if(directIODispatcher) delete (directIODispatcher);
-    directIODispatcher = NULL;
+    CHAOS_NOT_THROW(utility::StartableService::deinitImplementation(directIOServer, directIOServer->getName(), "NetworkBroker::deinit");)
+	DELETE_OBJ_POINTER(directIOServer);
 	//---------------------------- D I R E C T I/O ----------------------------
 	
 	//---------------------------- E V E N T ----------------------------
@@ -200,15 +201,18 @@ void NetworkBroker::deinit() throw(CException) {
     }
     MB_LAPP  << "Clear event channel map";
     activeEventChannel.clear();
-    
+
     MB_LAPP  << "Deinit event client: " << eventClient->getName();
-    utility::StartableService::deinitImplementation(eventClient, eventClient->getName(), "NetworkBroker::deinit");
+    CHAOS_NOT_THROW(utility::StartableService::deinitImplementation(eventClient, eventClient->getName(), "NetworkBroker::deinit");)
+    DELETE_OBJ_POINTER (eventClient);
     
     MB_LAPP  << "Deinit event server: " << eventServer->getName();
-    utility::StartableService::deinitImplementation(eventServer, eventServer->getName(), "NetworkBroker::deinit");
+    CHAOS_NOT_THROW(utility::StartableService::deinitImplementation(eventServer, eventServer->getName(), "NetworkBroker::deinit");)
+    DELETE_OBJ_POINTER(eventServer);
     
     MB_LAPP  << "Deinit Event dispatcher";
-    utility::StartableService::deinitImplementation(eventDispatcher, "DefaultEventDispatcher", "NetworkBroker::deinit");
+    CHAOS_NOT_THROW(utility::StartableService::deinitImplementation(eventDispatcher, "DefaultEventDispatcher", "NetworkBroker::deinit");)
+    DELETE_OBJ_POINTER(eventDispatcher);
 	//---------------------------- E V E N T ----------------------------
 	
     
@@ -230,18 +234,18 @@ void NetworkBroker::deinit() throw(CException) {
     activeRpcChannel.clear();
     
     MB_LAPP  << "Deinit rpc client: " << rpcClient->getName();
-    utility::StartableService::deinitImplementation(rpcClient, rpcClient->getName(), "NetworkBroker::deinit");
+    CHAOS_NOT_THROW(utility::StartableService::deinitImplementation(rpcClient, rpcClient->getName(), "NetworkBroker::deinit");)
+    DELETE_OBJ_POINTER(rpcClient);
     
     MB_LAPP  << "Deinit rpc server: " << rpcServer->getName();
-    utility::StartableService::deinitImplementation(rpcServer, rpcServer->getName(), "NetworkBroker::deinit");
-	
+    CHAOS_NOT_THROW(utility::StartableService::deinitImplementation(rpcServer, rpcServer->getName(), "NetworkBroker::deinit");)
+	DELETE_OBJ_POINTER(rpcServer);
+    
     MB_LAPP  << "Deinit Command Dispatcher";
-    utility::StartableService::deinitImplementation(commandDispatcher, "DefaultCommandDispatcher", "NetworkBroker::deinit");
+    CHAOS_NOT_THROW(utility::StartableService::deinitImplementation(commandDispatcher, "DefaultCommandDispatcher", "NetworkBroker::deinit");)
+    DELETE_OBJ_POINTER(commandDispatcher);
 	//---------------------------- R P C ----------------------------
 	
-	MB_LAPP  << "Deinitialize performance session manager";
-	utility::StartableService::deinitImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);
-
 }
 
 /*!

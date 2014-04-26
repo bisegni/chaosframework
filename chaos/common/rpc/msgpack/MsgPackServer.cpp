@@ -124,15 +124,16 @@ void MsgPackServer::dispatch(request req) {
              
                 //dispatch the command
             cdataWrapperPack = commandHandler->dispatchCommand(new CDataWrapper(msgReceived.ptr));
+            if(cdataWrapperPack) {
+                    //serialize the result
+                auto_ptr<SerializationBuffer> serialization(cdataWrapperPack->getBSONData());
             
-            //serialize the result
-            auto_ptr<SerializationBuffer> serialization(cdataWrapperPack->getBSONData());
+                    //inpack the bson result
+                msgpack::type::raw_ref  msgResult(serialization->getBufferPtr() , (int32_t)serialization->getBufferLen());
             
-            //inpack the bson result
-            msgpack::type::raw_ref  msgResult(serialization->getBufferPtr() , (int32_t)serialization->getBufferLen());
-            
-            //send back the serialization
-            req.result(msgResult);
+                    //send back the serialization
+                req.result(msgResult);
+            }
         } else {
             req.error(msgpack::rpc::NO_METHOD_ERROR);
         }
@@ -142,6 +143,6 @@ void MsgPackServer::dispatch(request req) {
          DECODE_CHAOS_EXCEPTION(ex)
     } 
     
-            //deallocate the data wrapper pack if it has been allocated
+    //deallocate the data wrapper pack if it has been allocated
     if(cdataWrapperPack) delete(cdataWrapperPack);
 }

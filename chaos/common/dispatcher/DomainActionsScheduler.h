@@ -50,7 +50,7 @@ namespace chaos {
         
             //!reference to global dispatcher used to resubmit sub command
         AbstractCommandDispatcher *dispatcher;
-    protected:
+    public:
         virtual void processBufferElement(chaos_data::CDataWrapper*, ElementManagingPolicy&) throw(CException);
         
     public:

@@ -139,7 +139,7 @@ namespace chaos {
          \param type channel type to create
          */
         MessageChannel *getNewMessageChannelForRemoteHost(CNetworkAddress *nodeNetworkAddress, EntityType type);
-        
+
     public:
         
             //! Basic Constructor

@@ -87,7 +87,8 @@ void DomainActionsScheduler::processBufferElement(chaos_data::CDataWrapper *acti
     auto_ptr<chaos_data::CDataWrapper>  actionMessage;
     auto_ptr<chaos_data::CDataWrapper>  remoteActionResult;
     auto_ptr<chaos_data::CDataWrapper>  actionResult;
-    
+        //keep track for the retain of the message of the aciton description
+    ElementManagingPolicy               action_elementPolicy = {false};
     bool    needAnswer = false;
     //bool    detachParam = false;
     int     answerID;
@@ -150,8 +151,8 @@ void DomainActionsScheduler::processBufferElement(chaos_data::CDataWrapper *acti
                 remoteActionResult.reset(new chaos_data::CDataWrapper());
             }
                 //syncronously call the action in the current thread 
-            actionResult.reset(actionDescriptionPtr->call(actionMessage.get(), elementPolicy.elementHasBeenDetached));
-            
+            actionResult.reset(actionDescriptionPtr->call(actionMessage.get(), action_elementPolicy.elementHasBeenDetached));
+
                 //check if we need to submit a sub command
             if( subCommand ) {
                     //we can submit sub command
@@ -210,8 +211,10 @@ void DomainActionsScheduler::processBufferElement(chaos_data::CDataWrapper *acti
             //these exception need to be logged
         DECODE_CHAOS_EXCEPTION(ex);
     }
+    
+    
         //check if we need to detach the action message
-    if(elementPolicy.elementHasBeenDetached){
+    if(action_elementPolicy.elementHasBeenDetached){
         actionMessage.release();
     }
     

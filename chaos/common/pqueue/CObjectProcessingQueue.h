@@ -203,7 +203,7 @@ namespace chaos {
 				
                 //remove the oldest data
 				bufferQueue.pop();
-				
+				DEBUG_CODE(COPQUEUE_LDBG_<< " Element still in queue " << bufferQueue.size();)
 				return oldestElement;
 			}
 			

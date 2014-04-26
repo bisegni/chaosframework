@@ -1,8 +1,8 @@
-/*	
+/*
  *	MultiBufferDataStorage.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,7 +35,7 @@ MultiBufferDataStorage::MultiBufferDataStorage() {
     liveMsecOffset   = 0;
     liveLastMsecSent = 0;
     
-        //timing util allocation
+	//timing util allocation
     timingUtil = new TimingUtil();
     
     liveOBuffer = NULL;
@@ -46,7 +46,7 @@ MultiBufferDataStorage::MultiBufferDataStorage() {
  Destructor
  */
 MultiBufferDataStorage::~MultiBufferDataStorage() {
-        //timing util deallocation
+	//timing util deallocation
     if(timingUtil) delete(timingUtil);
 }
 
@@ -72,23 +72,23 @@ void MultiBufferDataStorage::init(CDataWrapper *configuration) {
     LDBG_ << "Configure Output buffer with " << liveThreadNumber << " thread each one";
     if(liveOBuffer) liveOBuffer->init(liveThreadNumber);
     if(hstOBuffer) hstOBuffer->init(liveThreadNumber);
-
+	
 }
 
 /*
  Deinitialize the Multisequence buffer
  */
 void MultiBufferDataStorage::deinit() {
-        //deinit the live buffer
+	//deinit the live buffer
     if(liveOBuffer) {
-        (*liveOBuffer).deinit();    
+        (*liveOBuffer).deinit();
         (*liveOBuffer).joinBufferThread();
         delete(liveOBuffer);
         liveOBuffer = NULL;
     }
     
     if(hstOBuffer) {
-        (*hstOBuffer).deinit();    
+        (*hstOBuffer).deinit();
         (*hstOBuffer).joinBufferThread();
         delete(hstOBuffer);
         hstOBuffer = NULL;
@@ -99,19 +99,19 @@ void MultiBufferDataStorage::deinit() {
  Set the first buffer
  */
 void MultiBufferDataStorage::setLiveOBuffer(OutputDataBuffer *newLiveOBuffer) {
-        //check  that there is no other driver(only one can be set
+	//check  that there is no other driver(only one can be set
     CHAOS_ASSERT(!liveOBuffer)
     liveOBuffer = newLiveOBuffer;
     if(liveOBuffer) liveOBuffer->tag = TAG_BUFFER_LIVE;
 }
 
-    /*
-     Set the first buffer
-     */
+/*
+ Set the first buffer
+ */
 void MultiBufferDataStorage::setHstOBuffer(OutputDataBuffer *newHstOBuffer) {
-        //check  that there is no other driver(only one can be set
+	//check  that there is no other driver(only one can be set
     CHAOS_ASSERT(!hstOBuffer)
-    hstOBuffer = newHstOBuffer;    
+    hstOBuffer = newHstOBuffer;
     if(hstOBuffer) hstOBuffer->tag = TAG_BUFFER_HST;
 }
 
@@ -119,18 +119,17 @@ void MultiBufferDataStorage::setHstOBuffer(OutputDataBuffer *newHstOBuffer) {
  
  */
 void MultiBufferDataStorage::pushDataSet(CDataWrapper *rowData) {
-  CHAOS_ASSERT(liveOBuffer)
+	CHAOS_ASSERT(liveOBuffer)
     CHAOS_ASSERT(rowData)
-    
-
+	
     ElementManagingPolicy tt;
-    tt.elementHasBeenDetached=true;
-   //liveOBuffer->push(rowData);
+    tt.elementHasBeenDetached=false;
+	//liveOBuffer->push(rowData);
     liveOBuffer->processBufferElement(rowData,tt);
-    if((tt.elementHasBeenDetached==true)){
-      delete rowData;
+    if(!tt.elementHasBeenDetached){
+		delete rowData;
     }
-        
+	
 }
 
 /*
@@ -152,32 +151,32 @@ bool MultiBufferDataStorage::elementWillBeProcessed(int bufferTag, CDataWrapper 
  */
 CDataWrapper* MultiBufferDataStorage::updateConfiguration(CDataWrapper *newConfiguration) {
     LDBG_ << "Configuration for Multi Sequencial Buffer";
-        //chec if is present the DataManager configuration
+	//chec if is present the DataManager configuration
     
     if(newConfiguration->hasKey(DataProxyConfigurationKey::CS_DM_OUTPUT_BUFFER_LIVE_TIME))
         liveMsecOffset = newConfiguration->getInt32Value(DataProxyConfigurationKey::CS_DM_OUTPUT_BUFFER_LIVE_TIME);
-
+	
     if(newConfiguration->hasKey(DataProxyConfigurationKey::CS_DM_OUTPUT_BUFFER_HST_TIME))
         historyUSecOffset = newConfiguration->getInt32Value(DataProxyConfigurationKey::CS_DM_OUTPUT_BUFFER_HST_TIME);
     
-        //update the driver configration
+	//update the driver configration
     if(liveOBuffer != NULL) liveOBuffer->updateConfiguration(newConfiguration);
     if(hstOBuffer != NULL) hstOBuffer->updateConfiguration(newConfiguration);
     return NULL;
 }
 
 /*
- Return the IODataDriver for the input buffer tag 
+ Return the IODataDriver for the input buffer tag
  */
 IODataDriver* MultiBufferDataStorage::getBufferIODataDriver(int bufferTag) {
     switch (bufferTag) {
         case TAG_BUFFER_LIVE:
             return liveOBuffer->getIODataDriver();
-        break;
+			break;
             
         case TAG_BUFFER_HST:
             return hstOBuffer->getIODataDriver();
-        break;
+			break;
     }
     return NULL;
 }

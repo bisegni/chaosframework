@@ -94,10 +94,10 @@ int MDSMessageChannel::getAllDeviceID(vector<string>&  deviceIDVec, uint32_t mil
 int MDSMessageChannel::getNetworkAddressForDevice(string& identificationID, CDeviceNetworkAddress** deviceNetworkAddress, uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     if(!deviceNetworkAddress) return -1;
-    CDataWrapper *callData = new CDataWrapper();
+    auto_ptr<CDataWrapper> callData(new CDataWrapper());
     callData->addStringValue(DatasetDefinitionkey::DEVICE_ID, identificationID);
         //send request and wait the response
-    auto_ptr<CDataWrapper> resultAnswer( MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), "getNodeNetworkAddress", callData, millisecToWait));
+    auto_ptr<CDataWrapper> resultAnswer( MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), "getNodeNetworkAddress", callData.get(), millisecToWait));
     CHECK_TIMEOUT_AND_RESULT_CODE(resultAnswer, err)
     if(err == ErrorCode::EC_NO_ERROR && resultAnswer->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)){
         auto_ptr<CDataWrapper> nodeNetworkInfromation(resultAnswer->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
@@ -123,10 +123,10 @@ int MDSMessageChannel::getNetworkAddressForDevice(string& identificationID, CDev
 int MDSMessageChannel::getLastDatasetForDevice(string& identificationID, CDataWrapper** deviceDefinition, uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     if(!deviceDefinition) return -1;
-    CDataWrapper *callData = new CDataWrapper();
+    auto_ptr<CDataWrapper> callData(new CDataWrapper());
     callData->addStringValue(DatasetDefinitionkey::DEVICE_ID, identificationID);
         //send request and wait the response
-    auto_ptr<CDataWrapper> deviceInitInformation(MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), "getCurrentDataset", callData, millisecToWait));
+    auto_ptr<CDataWrapper> deviceInitInformation(MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), "getCurrentDataset", callData.get(), millisecToWait));
     CHECK_TIMEOUT_AND_RESULT_CODE(deviceInitInformation, err)
     if(err == ErrorCode::EC_NO_ERROR) {
         if(deviceInitInformation->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)){

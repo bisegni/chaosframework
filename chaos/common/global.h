@@ -109,6 +109,12 @@ LAPP_ << CSLIB_VERSION_HEADER;\
 LAPP_ << CSLIB_VERSION_NUMBER;\
 LAPP_ << "-----------------------------------------";
 
+#define CHAOS_NOT_THROW(x)\
+try { \
+x \
+} catch (...) { \
+   \
+}
 /*
  Abstraction for the server delegator
  */

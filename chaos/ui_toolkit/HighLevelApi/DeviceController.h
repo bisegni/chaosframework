@@ -366,7 +366,8 @@ namespace chaos {
              */
             void clearHandler();
             
-            int sendCustomRequest(const char * const action, common::data::CDataWrapper * const param, common::data::CDataWrapper**const result, bool async = false);
+            int sendCustomRequest(const char * const action, common::data::CDataWrapper * const param, common::data::CDataWrapper**const result, bool async = false,  bool queued = true);
+			void sendCustomMessage(const char * const action, common::data::CDataWrapper * const param, bool queued = true);
             
         };
     }
