@@ -53,7 +53,7 @@ void DataWorker::init(void *init_data) throw (chaos::CException) {
 		settings.job_thread_number = DEFAULT_JOB_THREAD;
 	}
 	
-	thread_cookie = (void**)malloc(sizeof(void*)*settings.job_thread_number);
+	thread_cookie = (void**)calloc(1, sizeof(void*)*settings.job_thread_number);
 	DCLAPP_ << " Using " << settings.job_thread_number << " thread for consuming job";
 }
 

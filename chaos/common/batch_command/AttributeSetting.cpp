@@ -31,11 +31,11 @@ using namespace std;
 using namespace chaos::common::batch_command;
 
 ValueSetting::ValueSetting(uint32_t _size, uint32_t _index, chaos::DataType::DataType _type):currentValue(NULL), nextValue(NULL), size(_size),index(_index), type(_type) {
-    currentValue = malloc(size);
-	if(currentValue) std::memset(currentValue,0 ,size);
+    currentValue = std::calloc(1, size);
+	//if(currentValue) std::memset(currentValue,0 ,size);
 	
-    nextValue = malloc(size);
-	if(nextValue) std::memset(nextValue,0 ,size);
+    nextValue = std::calloc(1, size);
+	//if(nextValue) std::memset(nextValue,0 ,size);
 }
 
 ValueSetting::~ValueSetting() {

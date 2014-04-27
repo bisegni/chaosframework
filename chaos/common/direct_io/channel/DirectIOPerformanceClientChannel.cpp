@@ -36,8 +36,8 @@ DirectIOPerformanceClientChannel::~DirectIOPerformanceClientChannel() {
 }
 
 int64_t DirectIOPerformanceClientChannel::sendRoundTripMessage() {
-	DirectIODataPack *data_pack = new DirectIODataPack();
-	std::memset(data_pack, 0, sizeof(DirectIODataPack));
+	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(1, sizeof(DirectIODataPack));
+	//std::memset(data_pack, 0, sizeof(DirectIODataPack));
 	
 	//set opcode
 	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::PerformanceChannelOpcodeReqRoundTrip);
@@ -56,8 +56,8 @@ int64_t DirectIOPerformanceClientChannel::sendRoundTripMessage() {
 }
 
 int64_t DirectIOPerformanceClientChannel::answerRoundTripMessage(uint64_t received_ts) {
-	DirectIODataPack *data_pack = new DirectIODataPack();
-	std::memset(data_pack, 0, sizeof(DirectIODataPack));
+	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(1, sizeof(DirectIODataPack));
+	//std::memset(data_pack, 0, sizeof(DirectIODataPack));
 	
 	//set opcode
 	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::PerformanceChannelOpcodeRespRoundTrip);
@@ -78,8 +78,8 @@ int64_t DirectIOPerformanceClientChannel::answerRoundTripMessage(uint64_t receiv
 }
 
 int64_t DirectIOPerformanceClientChannel::answerRoundTripMessage(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr received_header) {
-	DirectIODataPack *data_pack = new DirectIODataPack();
-	std::memset(data_pack, 0, sizeof(DirectIODataPack));
+	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(1, sizeof(DirectIODataPack));
+	//std::memset(data_pack, 0, sizeof(DirectIODataPack));
 	
 	//set opcode
 	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::PerformanceChannelOpcodeRespRoundTrip);
