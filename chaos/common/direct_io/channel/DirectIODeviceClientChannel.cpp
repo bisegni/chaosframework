@@ -61,8 +61,8 @@ void DirectIODeviceClientChannel::setDeviceID(std::string _device_id, DirectIODe
 	if(put_opcode_header) {
 		free(put_opcode_header);
 	}
-	put_opcode_header = (opcode_headers::DirectIODeviceChannelHeaderPutOpcode *)malloc(PUT_HEADER_LEN+device_id.size());
-	std::memset(put_opcode_header, 0, PUT_HEADER_LEN);
+	put_opcode_header = (opcode_headers::DirectIODeviceChannelHeaderPutOpcode *)calloc(1, (PUT_HEADER_LEN+device_id.size()));
+	//std::memset(put_opcode_header, 0, PUT_HEADER_LEN);
 	//allign the key pointr to his position
 	//put_opcode_header->key_data = (void*)((char*)put_opcode_header+sizeof(DirectIODeviceChannelHeaderPutOpcode));
 	

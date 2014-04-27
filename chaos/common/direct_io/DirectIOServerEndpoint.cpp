@@ -36,9 +36,9 @@ using namespace chaos::common::direct_io;
 
 DirectIOServerEndpoint::DirectIOServerEndpoint(): endpoint_route_index(0), server_public_interface(NULL) {
 	//allocate slot memory
-	channel_slot = (channel::DirectIOVirtualServerChannel**)malloc(sizeof(channel::DirectIOVirtualServerChannel**)*MAX_ENDPOINT_CHANNEL);
+	channel_slot = (channel::DirectIOVirtualServerChannel**)calloc(1, (sizeof(channel::DirectIOVirtualServerChannel**)*MAX_ENDPOINT_CHANNEL));
 	//clean all memory
-	std::memset(channel_slot, 0, sizeof(channel::DirectIOVirtualServerChannel**)*MAX_ENDPOINT_CHANNEL);
+	//std::memset(channel_slot, 0, sizeof(channel::DirectIOVirtualServerChannel**)*MAX_ENDPOINT_CHANNEL);
 }
 
 DirectIOServerEndpoint::~DirectIOServerEndpoint() {

@@ -121,7 +121,7 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 			zmq_msg_close(&msg_data);
 			break;
 	}
-	delete (data_pack);
+	free(data_pack);
 	//send data
     return err;
 }
