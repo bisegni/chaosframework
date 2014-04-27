@@ -113,11 +113,11 @@ void  PerformanceManagment::handleEvent(chaos_direct_io::DirectIOClientConnectio
 	
 	//add to purgeable map
 	boost::unique_lock<boost::shared_mutex> lock(mutex_map_purgeable);
-	if(map_purgeable_performance_node.count(client_connection->getServerDescription())) {
+	if(map_purgeable_performance_node.count(client_connection->getURL())) {
 		PMLDBG_ << "Performance session for remote address "<<client_connection->getServerDescription() << " Already in purge map";
 		return;
 	}
-	map_purgeable_performance_node.insert(make_pair(client_connection->getServerDescription(), PMKeyObjectContainer::accessItem(client_connection->getServerDescription())));
+	map_purgeable_performance_node.insert(make_pair(client_connection->getServerDescription(), PMKeyObjectContainer::accessItem(client_connection->getURL())));
 	PMLDBG_ << "Performance session for remote address "<<client_connection->getServerDescription() << " added in purge map";
 	
 }
