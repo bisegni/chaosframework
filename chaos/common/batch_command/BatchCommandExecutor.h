@@ -39,12 +39,13 @@
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
 #include <chaos/common/batch_command/BatchCommandSandbox.h>
 #include <chaos/common/batch_command/BatchCommandSandboxEventHandler.h>
+#include <chaos/common/thread/WaitSemaphore.h>
 
 //#include <boost/container/deque.hpp>
 //#include <boost/container/map.hpp>
 
 #define COMMAND_QUEUE_DEFAULT_LENGTH		1024
-#define COMMAND_STATE_QUEUE_DEFAULT_SIZE	100
+#define COMMAND_STATE_QUEUE_DEFAULT_SIZE	50
 #define COMMAND_BASE_SANDOXX_ID             1
 
 namespace chaos_data = chaos::common::data;
@@ -90,6 +91,11 @@ namespace chaos {
                 RWMutex								command_state_rwmutex;
                 //! command state queue dimension
                 uint16_t							command_state_queue_max_size;
+				
+				//keep track for the last purge ts
+				bool	capper_work;
+				boost::shared_ptr<boost::thread> capper_thread;
+				chaos::WaitSemaphore				capper_wait_sem;
                 //the queue of the insert state (this permit to have an order by insertion time)
                 std::deque< boost::shared_ptr<CommandState> >			command_state_queue;
                 //the map is used for fast access id/pointer
@@ -114,6 +120,7 @@ namespace chaos {
                 //command event handler
                 void handleEvent(uint64_t command_seq, BatchCommandEventType::BatchCommandEventType type, void* type_attribute_ptr);
                 
+				void capWorker();
             protected:
                 //! Global cache shared across the sandbox
                 IOCAttributeSharedCache  global_attribute_cache;

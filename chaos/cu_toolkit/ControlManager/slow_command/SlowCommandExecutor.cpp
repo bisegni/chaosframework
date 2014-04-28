@@ -56,7 +56,7 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
     
     //initialize superclass
 	BatchCommandExecutor::init(initData);
-    
+	
     SCELAPP_ << "Populating sandbox shared setting for device input attribute";
     deviceSchemaDbPtr->getDatasetAttributesName(DataType::Input, attribute_names);
     initAttributeOnSahredVariableDomain(IOCAttributeSharedCache::SVD_INPUT, attribute_names);
@@ -65,6 +65,7 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
 	attribute_names.clear();
     deviceSchemaDbPtr->getDatasetAttributesName(DataType::Output, attribute_names);
     initAttributeOnSahredVariableDomain(IOCAttributeSharedCache::SVD_OUTPUT, attribute_names);
+
 
 }
 

@@ -50,7 +50,7 @@ namespace chaos{
                 const uint32_t                      size;
                 const chaos::DataType::DataType     type;
                 boost::mutex                        mutextAccessSetting;
-                
+                void								*buffer;
                 SettingValuePtr currentValue;
                 SettingValuePtr nextValue;
                 boost::dynamic_bitset<BitBlockDimension> * sharedBitmapChangedAttribute;
