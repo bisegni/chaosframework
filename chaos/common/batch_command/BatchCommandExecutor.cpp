@@ -23,6 +23,7 @@
 #include <boost/lexical_cast.hpp>
 
 #include <chaos/common/global.h>
+#include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/batch_command/BatchCommandExecutor.h>
 #include <chaos/common/batch_command/BatchCommandConstants.h>
 
@@ -31,13 +32,19 @@ using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::batch_command;
 
+#define PURGE_TS_DELAY	500
+
 #define LOG_HEAD_SBE "[BatchCommandExecutor-" << executorID << "] "
 
 #define BCELAPP_ LAPP_ << LOG_HEAD_SBE
 #define BCELDBG_ LDBG_ << LOG_HEAD_SBE
 #define BCELERR_ LERR_ << LOG_HEAD_SBE
 
-BatchCommandExecutor::BatchCommandExecutor(std::string _executorID):executorID(_executorID), default_command_sandbox_instance(1), command_state_queue_max_size(COMMAND_STATE_QUEUE_DEFAULT_SIZE) {
+BatchCommandExecutor::BatchCommandExecutor(std::string _executorID):
+executorID(_executorID),
+default_command_sandbox_instance(1),
+command_state_queue_max_size(COMMAND_STATE_QUEUE_DEFAULT_SIZE),
+capper_work(false) {
     // this need to be removed from here need to be implemented the def undef services
     // register the public rpc api
     std::string rpcActionDomain = executorID; //+ BatchCommandExecutorRpcActionKey::COMMAND_EXECUTOR_POSTFIX_DOMAIN;
@@ -136,7 +143,8 @@ void BatchCommandExecutor::init(void *initData) throw(chaos::CException) {
     
     //reset the command sequence on initialization
 	command_sequence_id = 0;
-	
+		
+	//broadcast init sequence to base class
     chaos::utility::StartableService::init(initData);
     
     //initialize the shared channel setting
@@ -156,16 +164,15 @@ void BatchCommandExecutor::init(void *initData) throw(chaos::CException) {
         BCELAPP_ << "Initilize instance " << tmp_ptr->identification;
         chaos::utility::StartableService::initImplementation(tmp_ptr, initData, "BatchCommandSandbox", "BatchCommandExecutor::init");
     }
-    
-
-    BCELAPP_ << "Check if we need to use the dafult command or we have pause instance";
-    if(default_command_alias.size()) {
-        BCELAPP_ << "Set the default command ->"<<default_command_alias;
-        BatchCommand * def_cmd_impl = instanceCommandInfo(default_command_alias);
-        def_cmd_impl->unique_id = ++command_sequence_id;
-        sandbox_map[default_command_sandbox_instance]->enqueueCommand(NULL, def_cmd_impl, 50);
-        DEBUG_CODE(BCELDBG_ << "Command " << default_command_alias << " successfull installed";)
-    }
+	
+	BCELAPP_ << "Check if we need to use the dafult command or we have pause instance";
+	if(default_command_alias.size()) {
+		BCELAPP_ << "Set the default command ->"<<default_command_alias;
+		BatchCommand * def_cmd_impl = instanceCommandInfo(default_command_alias);
+		def_cmd_impl->unique_id = ++command_sequence_id;
+		sandbox_map[default_command_sandbox_instance]->enqueueCommand(NULL, def_cmd_impl, 50);
+		DEBUG_CODE(BCELDBG_ << "Command " << default_command_alias << " successfull installed";)
+	}
 }
 
 // Start the implementation
@@ -175,7 +182,7 @@ void BatchCommandExecutor::start() throw(chaos::CException) {
     try {
         // set thread run flag for work
         chaos::utility::StartableService::start();
-        
+		
         BCELAPP_ << "Starting all the instance of sandbox";
         for(std::map<unsigned int, BatchCommandSandbox*>::iterator it = sandbox_map.begin();
             it != sandbox_map.end();
@@ -185,7 +192,9 @@ void BatchCommandExecutor::start() throw(chaos::CException) {
             //starting the sand box
             chaos::utility::StartableService::startImplementation(tmp_ptr, "SlowCommandSandbox", "BatchCommandExecutor::start");
         }
-       
+
+		capper_work = true;
+		capper_thread.reset(new boost::thread(&BatchCommandExecutor::capWorker, this));
     } catch (...) {
         BCELAPP_ << "Error starting";
         throw CException(1000, "Generic Error", "BatchCommandExecutor::start");
@@ -196,6 +205,11 @@ void BatchCommandExecutor::start() throw(chaos::CException) {
 void BatchCommandExecutor::stop() throw(chaos::CException) {
     ReadLock       lock(sandbox_map_mutex);
 
+	capper_work = false;
+	capper_wait_sem.unlock();
+	capper_thread->join();
+	capper_thread.reset();
+	
     //lock for queue access
     BCELAPP_ << "Stopping all the instance of sandbox";
     for(std::map<unsigned int, BatchCommandSandbox*>::iterator it = sandbox_map.begin();
@@ -242,8 +256,6 @@ void BatchCommandExecutor::handleEvent(uint64_t command_id, BatchCommandEventTyp
 			boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
 			
 			addComamndState(command_id);
-			//cap the queue
-			capCommanaQueue();
 			break;
 		}
 
@@ -284,21 +296,55 @@ void BatchCommandExecutor::addComamndState(uint64_t command_id) {
 //! Thanke care to limit the size of the queue to the max size permitted
 void BatchCommandExecutor::capCommanaQueue() {
 	if(command_state_queue.size() <= command_state_queue_max_size) return;
+	std::vector< boost::shared_ptr<CommandState> > cmd_state_to_reinsert;
+	
+	// get upgradable access
+	boost::upgrade_lock<boost::shared_mutex> lock(command_state_rwmutex);
+	
+	// get exclusive access
+	boost::upgrade_to_unique_lock<boost::shared_mutex> uniqueLock(lock);
 	
 	//we need to cap the queue
-	for (size_t idx = command_state_queue.size(); idx < command_state_queue_max_size; idx--) {
+	size_t idx = command_state_queue.size()-1;
+	for (; idx >= command_state_queue_max_size; ) {
 		if(command_state_queue.empty()) break;
 		//get the state
-		boost::shared_ptr<CommandState> cmd_state = command_state_queue.back();
+		boost::shared_ptr<CommandState> cmd_state = command_state_queue.front();
+		//remove it from the from
+		command_state_queue.pop_front();
 		
 		//chec if the command can be removed it need to be terminate (complete, fault or killed)
-		if(cmd_state->last_event < BatchCommandEventType::EVT_COMPLETED) break;
+		if(cmd_state->last_event < BatchCommandEventType::EVT_COMPLETED) {
+			//the command state need to be reinsert at the end of
+			cmd_state_to_reinsert.push_back(cmd_state);
+			continue;
+		}
 		//remove from the map
 		command_state_fast_access_map.erase(cmd_state->command_id);
 		
-		//delete it
-		command_state_queue.pop_back();
+		//decremente the index
+		idx--;
 	}
+	
+	//reinsert the element to preserv
+	for(std::vector< boost::shared_ptr<CommandState> >::iterator iter = cmd_state_to_reinsert.begin();
+		iter != cmd_state_to_reinsert.end();
+		iter++) {
+		command_state_queue.push_front(*iter);
+	}
+	
+	cmd_state_to_reinsert.clear();
+	
+
+}
+
+void BatchCommandExecutor::capWorker() {
+	DEBUG_CODE(BCELDBG_ << "Starting capper thread";)
+	while(capper_work) {
+		capCommanaQueue();
+		capper_wait_sem.wait(PURGE_TS_DELAY);
+	}
+	DEBUG_CODE(BCELDBG_ << "Leaving capper thread with command_state_queue.size()" << command_state_queue.size();)
 }
 
 //! Add a new command state structure to the queue (checking the alredy presence)

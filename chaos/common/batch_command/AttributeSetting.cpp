@@ -30,17 +30,26 @@
 using namespace std;
 using namespace chaos::common::batch_command;
 
-ValueSetting::ValueSetting(uint32_t _size, uint32_t _index, chaos::DataType::DataType _type):currentValue(NULL), nextValue(NULL), size(_size),index(_index), type(_type) {
-    currentValue = std::calloc(1, size);
-	//if(currentValue) std::memset(currentValue,0 ,size);
-	
-    nextValue = std::calloc(1, size);
-	//if(nextValue) std::memset(nextValue,0 ,size);
+ValueSetting::ValueSetting(uint32_t _size, uint32_t _index, chaos::DataType::DataType _type):
+buffer(NULL),
+currentValue(NULL),
+nextValue(NULL),
+size(_size),
+index(_index),
+type(_type) {
+	buffer = std::calloc(1, size*2);
+	if(!buffer) {
+		LERR_ << "error allcoating currentValue memory";
+	} else {
+		currentValue = buffer;
+		
+		nextValue = ((char*)buffer + _size);
+	}
 }
 
 ValueSetting::~ValueSetting() {
-    if(currentValue) free(currentValue);
-    if(nextValue) free(nextValue);
+    if(buffer) free(buffer);
+    //if(nextValue) free(nextValue);
 }
 
 void ValueSetting::completed() {
@@ -78,7 +87,8 @@ bool ValueSetting::setDefaultValue(const void* valPtr, uint32_t _size) {
 
 //-----------------------------------------------------------------------------------------------------------------------------
 
-AttributeSetting::AttributeSetting() {
+AttributeSetting::AttributeSetting():
+index(0){
    // bitmapChangedAttribute = new boost::dynamic_bitset<BitBlockDimension>(mapAttributeIndexSettings.size());
 }
 
@@ -88,7 +98,7 @@ AttributeSetting::~AttributeSetting() {
 
 //! Initialize instance
 void AttributeSetting::init(void *initData) throw(chaos::CException) {
-    index = 0;
+    
     //bitmapChangedAttribute = new boost::dynamic_bitset<BitBlockDimension>(mapAttributeIndexSettings.size());
     /*if(!bitmapChangedAttribute) throw CException(1, "Error allocating memory for map bit", "AttributeSetting::init");
    
