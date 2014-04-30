@@ -46,9 +46,9 @@ void CouchbaseCacheDriver::errorCallback(lcb_t instance,
 										  lcb_error_t err,
 										  const char *errinfo) {
     (void)instance;
-	CCDLERR_<< "Error " << err << " with message " << errinfo;
 	((CouchbaseCacheDriver*)lcb_get_cookie(instance))->last_err = err;
 	if(errinfo) {
+		CCDLERR_<< "Error " << err << " with message " << errinfo;
 		((CouchbaseCacheDriver*)lcb_get_cookie(instance))->last_err_str = errinfo;
 	} else {
 		((CouchbaseCacheDriver*)lcb_get_cookie(instance))->last_err_str = "";
