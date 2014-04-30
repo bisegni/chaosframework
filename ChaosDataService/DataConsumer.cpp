@@ -99,9 +99,11 @@ void DataConsumer::init(void *init_data) throw (chaos::CException) {
 }
 
 void DataConsumer::start() throw (chaos::CException) {
+	
 }
 
 void DataConsumer::stop() throw (chaos::CException) {
+	
 }
 
 void DataConsumer::deinit() throw (chaos::CException) {

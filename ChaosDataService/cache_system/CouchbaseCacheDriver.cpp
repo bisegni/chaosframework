@@ -32,7 +32,8 @@
 #define CCDLDBG_ LDBG_ << CouchbaseCacheDriver_LOG_HEAD << __FUNCTION__ << " - "
 #define CCDLERR_ LERR_ << CouchbaseCacheDriver_LOG_HEAD
 
-
+//! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
+static const boost::regex CouchbaseHostNameOnlyRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+");
 //! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
 static const boost::regex CouchbaseHostNameRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}");
 //! Regular expression for check server endpoint with the sintax ip:[priority_port:service_port]
@@ -81,6 +82,9 @@ void CouchbaseCacheDriver::setCallback(lcb_t instance,
 CouchbaseCacheDriver::CouchbaseCacheDriver(std::string alias):
 CacheDriver(alias),
 instance(NULL),result_queue(1) {
+	lcb_uint32_t ver;
+	const char *msg = lcb_get_version(&ver);
+	CCDLAPP_ << "Couchbase sdk version: " << msg;
 }
 
 CouchbaseCacheDriver::~CouchbaseCacheDriver() {
@@ -106,6 +110,7 @@ int CouchbaseCacheDriver::putData(void *element_key, uint8_t element_key_len,  v
 	lcb_wait(instance);
 	if(last_err != LCB_SUCCESS) {
 		CCDLERR_<< "Fail to set value with last_err "<< last_err << " with message " << last_err_str;
+		last_err = LCB_SUCCESS;
 		return -1;
 	}
 	return 0;
@@ -136,6 +141,7 @@ int CouchbaseCacheDriver::getData(void *element_key, uint8_t element_key_len,  v
 	}
 	if(last_err != LCB_SUCCESS) {
 		CCDLERR_<< "Fail to set value with last_err "<< last_err << " with message " << last_err_str;
+		last_err = LCB_SUCCESS;
 		return -1;
 	}
 	return 0;
@@ -150,7 +156,9 @@ bool CouchbaseCacheDriver::validateString(std::string& server_description) {
 	std::string normalized_server_desc = boost::algorithm::to_lower_copy(server_description);
 	
 	//check if the description is well formed
-	if(!regex_match(normalized_server_desc, CouchbaseHostNameRegExp) && !regex_match(normalized_server_desc, CouchbaseIPAndPortRegExp)) return false;
+	if(!regex_match(normalized_server_desc, CouchbaseHostNameOnlyRegExp) &&
+	   !regex_match(normalized_server_desc, CouchbaseHostNameRegExp) &&
+	   !regex_match(normalized_server_desc, CouchbaseIPAndPortRegExp)) return false;
 	return true;
 }
 
@@ -190,9 +198,18 @@ int CouchbaseCacheDriver::updateConfig() {
 	}
 	//clear the configuration
 	memset(&create_options, 0, sizeof(create_options));
-	create_options.v.v0.user = "chaos";
-	create_options.v.v0.passwd = "chaos";
-	create_options.v.v0.bucket = "chaos";
+	
+	lcb_config_transport_t transports[] = {
+		LCB_CONFIG_TRANSPORT_CCCP,
+		LCB_CONFIG_TRANSPORT_LIST_END
+	};
+	
+	//create_options
+	create_options.version = 2;
+	create_options.v.v2.transports = transports;
+	create_options.v.v2.user = "chaos";
+	create_options.v.v2.passwd = "chaos";
+	create_options.v.v2.bucket = "chaos";
 	all_server_str.assign("");
 	for (ServerIterator iter = all_server_to_use.begin();
 		 iter!=all_server_to_use.end();
@@ -207,7 +224,7 @@ int CouchbaseCacheDriver::updateConfig() {
 	
 	CCDLAPP_ << "Create new session";
 	//assign the host string to the configuration
-	create_options.v.v0.host = all_server_str.c_str();
+	create_options.v.v2.host = all_server_str.c_str();
 	
 	//create the instance
 	last_err = lcb_create(&instance, &create_options);
@@ -238,6 +255,14 @@ int CouchbaseCacheDriver::updateConfig() {
 		lcb_set_get_callback(instance, CouchbaseCacheDriver::getCallback);
 		lcb_set_store_callback(instance, CouchbaseCacheDriver::setCallback);
 	}
-	
+	lcb_size_t num_events = 0;
+	lcb_cntl(instance, LCB_CNTL_GET, LCB_CNTL_CONFERRTHRESH, &num_events);
+	num_events = 1;
+	lcb_cntl(instance, LCB_CNTL_SET, LCB_CNTL_CONFERRTHRESH, &num_events);
+
+	lcb_cntl(instance, LCB_CNTL_GET, LCB_CNTL_CONFDELAY_THRESH, &num_events);
+	num_events = 500000;
+	lcb_cntl(instance, LCB_CNTL_SET, LCB_CNTL_CONFDELAY_THRESH, &num_events);
+
 	return !(last_err == LCB_SUCCESS);
 }
