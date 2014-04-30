@@ -22,11 +22,22 @@ else
 fi
 
 BOOST_NUMBER_VERSION=$(echo $BOOST_VERSION_IN_PATH |sed "s/[^0-9]//g" )
-ZLIB_VERSION=1.2.8
 
-LMEM_VERSION=1.0.16
-ZMQ_VERSION=zeromq4-x
-COUCHBASE_VERSION=2.3.0
+if [ ! -n "$ZLIB_VERSION" ]; then
+    ZLIB_VERSION=1.2.8
+fi;
+
+if [ ! -n "$LMEM_VERSION" ]; then
+    LMEM_VERSION=1.0.16
+fi;
+if [ ! -n "$ZMQ_VERSION" ]; then
+    ZMQ_VERSION=zeromq4-x
+fi;
+
+if [ ! -n "$COUCHBASE_VERSION" ]; then
+    COUCHBASE_VERSION=2.2.0
+fi;
+
 
 if [ -n "$1" ]; then
     PREFIX=$1/usr/local
