@@ -35,7 +35,7 @@ if [ ! -n "$ZMQ_VERSION" ]; then
 fi;
 
 if [ ! -n "$COUCHBASE_VERSION" ]; then
-    COUCHBASE_VERSION=2.2.0
+    COUCHBASE_VERSION=2.3.0
 fi;
 
 
