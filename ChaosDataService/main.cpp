@@ -22,6 +22,7 @@
 
 #include <vector>
 #include <exception>
+#include <fstream>      // std::ifstream
 
 using namespace chaos::data_service;
 
@@ -29,6 +30,10 @@ using namespace chaos::data_service;
 int main(int argc, char * argv[]) {
     try {
 		std::vector<std::string> cache_servers;
+		
+		//cache parameter
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_CONF_FILE,
+																									"File configuration path");
 		
 		//cache parameter
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_CACHE_DRIVER,
@@ -85,8 +90,27 @@ int main(int argc, char * argv[]) {
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_INDEX_DRIVER_KVP,
 																									"The key value parameter for index implementation driver (ex k:v-k1:v1)");
 
-		ChaosDataService::getInstance()->init(argc, argv);
-
+		//preparse for blow custom option
+		ChaosDataService::getInstance()->preparseCommandOption(argc, argv);
+	
+		//check if we have a config file
+		if(ChaosDataService::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CONF_FILE)) {
+			//reload configuraiton from file
+			std::string file_option = ChaosDataService::getInstance()->getGlobalConfigurationInstance()->getOption<std::string>(OPT_CONF_FILE);
+			std::ifstream option_file_stream;
+			option_file_stream.open(file_option.c_str(), std::ifstream::in);
+			if(!option_file_stream) {
+				throw chaos::CException(-1, "Error opening configuration file", "Startup sequence");
+			}
+			//reparse the config file
+			ChaosDataService::getInstance()->preparseConfigFile(option_file_stream);
+		}
+		//parse the dafult framework option
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->checkDefaultOption();
+		
+		//initilize the faramework
+		ChaosDataService::getInstance()->init(NULL);
+		
         ChaosDataService::getInstance()->start();
     } catch(chaos::CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)

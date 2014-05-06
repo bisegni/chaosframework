@@ -62,6 +62,22 @@ namespace chaos {
         virtual ~ChaosCommon() {};
         
     public:
+		/*!
+		 parse a config file before initializzation
+		 */
+		void preparseConfigFile(std::istream &config_file_stream) {
+			GlobalConfiguration::getInstance()->loadStreamParameter(config_file_stream);
+			GlobalConfiguration::getInstance()->scanOption();
+		}
+		
+		/*!
+		 parse a config file before initializzation
+		 */
+		void preparseCommandOption(int argc, char* argv[]) {
+			GlobalConfiguration::getInstance()->loadStartupParameter( argc, argv);
+			GlobalConfiguration::getInstance()->scanOption();
+		}
+		
             //! C and C++ attribute parser
         /*!
          Specialized option for startup c and cpp program main options parameter
@@ -76,8 +92,8 @@ namespace chaos {
         /*
          specialized option for string stream buffer with boost semantics
          */
-        void init(istringstream &initStringStream) throw (CException) {
-            GlobalConfiguration::getInstance()->parseStringStream(initStringStream);
+        void init(std::istream &initStream) throw (CException) {
+            GlobalConfiguration::getInstance()->parseStringStream(initStream);
             init(NULL);
         }
         
