@@ -40,15 +40,21 @@ namespace chaos {
  //unique index for the vfs colletion
  db.vfat.ensureIndex( { "vfs_path": 1, "vfs_domain":1 } , { unique: true } )
  */
+#define MONGO_DB_VFS_DOMAINS_COLLECTION		"chaos_vfs.domains"
 #define MONGO_DB_VFS_VFAT_COLLECTION		"chaos_vfs.vfat"
 #define MONGO_DB_VFS_VBLOCK_COLLECTION		"chaos_vfs.datablock"
 			
-			//file filed------------------------------------------------------
+			//domains field---------------------------------------------------
+#define MONGO_DB_FIELD_DOMAIN_NAME			"domain_name"
+#define MONGO_DB_FIELD_DOMAIN_URL			"domain_url"
+#define MONGO_DB_FIELD_DOMAIN_HB			"hb"
+			
+			//file field------------------------------------------------------
 #define MONGO_DB_FIELD_FILE_PRIMARY_KEY				"fpk"
 #define MONGO_DB_FIELD_FILE_VFS_PATH				"vfs_path"
 #define MONGO_DB_FIELD_FILE_VFS_DOMAIN				"vfs_domain"
 			
-			//data block file-------------------------------------------------
+			//data block field-------------------------------------------------
 #define MONGO_DB_FIELD_DATA_BLOCK_STATE				"state"
 #define MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS		"ct"
 #define MONGO_DB_FIELD_DATA_BLOCK_VALID_UNTIL_TS	"vu"
@@ -71,12 +77,17 @@ namespace chaos {
 				
 				//!deinit
 				void deinit() throw (chaos::CException);
+				//! Register a new domain
+				int vfsAddDomain(vfs::VFSDomain domain);
+				
+				//! Give an heart beat for a domain
+				int vfsDomainHeartBeat(vfs::VFSDomain domain);
 				
 				//! Register a new data block wrote on stage area
-				int vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block, DataBlockState new_block_state = DataBlockStateNone);
+				int vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block, vfs::data_block_state::DataBlockState new_block_state = vfs::data_block_state::DataBlockStateNone);
 				
 				//! Set the state for a stage datablock
-				int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block, DataBlockState state);
+				int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block, vfs::data_block_state::DataBlockState state);
 				
 				//! Heartbeat update stage block
 				int vfsWorkHeartBeatOnDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block);

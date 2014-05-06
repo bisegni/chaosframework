@@ -23,6 +23,8 @@
 #include <stdint.h>
 #include <string>
 
+#include "VFSTypes.h"
+
 namespace chaos {
 	namespace data_service {
 		
@@ -34,26 +36,6 @@ namespace chaos {
 		namespace vfs {
 			//forward declaration
 			class VFSDriver;
-			
-			namespace block_seek_base {
-				typedef enum BlockSeekBase {
-					BlockSeekBaseBegin		= 0,
-					BlockSeekBaseCurrent	= 1,
-					BlockSeekBaseEnd		= 2
-				} BlockSeekBase;
-			}
-			
-			/*!
-			 define the different type of block of data
-			 withing !CHAOS VFS
-			 */
-			namespace block_flag {
-				typedef enum BlockFlag {
-					BlockFlagNone		= 0,
-					BlockFlagWriteble	= 1,
-					BlockFlagReadeable	= 2,
-				} BlockFlag;
-			}
 			
 			//! define a block of data into !CHAOS VFS
 			struct DataBlock {
@@ -87,7 +69,7 @@ namespace chaos {
 				DataBlock();
 				//! private destructor
 				virtual ~DataBlock();
-
+				
 			};
 			
 		}

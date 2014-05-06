@@ -20,8 +20,8 @@
 #ifndef __CHAOSFramework__VFSManager__
 #define __CHAOSFramework__VFSManager__
 
+#include "VFSTypes.h"
 #include "VFSFile.h"
-
 #include "index_system/IndexDriver.h"
 #include "storage_system/StorageDriver.h"
 
@@ -29,7 +29,7 @@
 #include <chaos/common/utility/InizializableService.h>
 
 #include <boost/thread.hpp>
-
+#include <boost/asio.hpp>
 namespace chaos_data_index = chaos::data_service::index_system;
 namespace chaos_data_storage = chaos::data_service::storage_system;
 
@@ -77,7 +77,9 @@ namespace chaos {
 			class VFSManager :
 			public chaos::utility::InizializableService,
 			protected VFSManagerKeyObjectContainer {
-				
+				boost::asio::io_service io;
+				boost::asio::deadline_timer timer;
+				boost::scoped_ptr<boost::thread> thread_hb;
 				//! point to user allcoated configuration structure, the instance
 				//! will be deallocated at thedestruction of this class
 				VFSManagerSetting *setting;
@@ -88,6 +90,7 @@ namespace chaos {
 				//!storage driver pointer
 				chaos_data_storage::StorageDriver *storage_driver_ptr;
 				
+				void giveDomainHeartbeat(const boost::system::error_code& e);
 			protected:
 				void freeObject(std::string key, VFSFilesForPath *element);
 				

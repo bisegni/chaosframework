@@ -134,7 +134,7 @@ void PosixStorageDriver::createDomain(boost::filesystem::fstream& domain_file_St
 	chaos_data::CDataWrapper domain_data;
 	
 	//compose the pack with the given domain name
-	domain_data.addStringValue("domain.name", setting->fs_domain_name);
+	domain_data.addStringValue("domain.name", setting->domain.name);
 	
 	//get serialization
 	std::auto_ptr<chaos_data::SerializationBuffer> bson_serialization(domain_data.getBSONData());
@@ -163,7 +163,7 @@ void PosixStorageDriver::readDomain(boost::filesystem::fstream& domain_file_Stre
 	chaos_data::CDataWrapper domain_data(memblock);
 	if(domain_data.hasKey("domain.name")) {
 		//the key is present so we get the alread wrote domain name also if it is different from gived one
-		setting->fs_domain_name = domain_data.getStringValue("domain.name");
+		setting->domain.name = domain_data.getStringValue("domain.name");
 	} else {
 		//rollback the file
 		domain_file_Stream.seekg(0, ios::beg);
