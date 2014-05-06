@@ -60,7 +60,7 @@ int VFSFile::getNewDataBlock(DataBlock **new_data_block_handler) {
 	new_data_block_ptr->max_reacheable_size = vfs_file_info.max_block_size;
 	
 	//ask to db wat is the next datablock
-	if(index_driver_ptr->vfsAddNewDataBlock(this, new_data_block_ptr, index_system::DataBlockStateAquiringData)) {
+	if(index_driver_ptr->vfsAddNewDataBlock(this, new_data_block_ptr, data_block_state::DataBlockStateAquiringData)) {
 		storage_driver_ptr->closeBlock(new_data_block_ptr);
 		return -2;
 	}
@@ -76,7 +76,7 @@ int VFSFile::releaseDataBlock(DataBlock *data_block_ptr) {
 	int err = 0;
 	DEBUG_CODE(VFSF_LDBG_ << "Release datablock of path " << data_block_ptr->vfs_path);
 	//write on index for free of work block
-	if((err = index_driver_ptr->vfsSetStateOnDataBlock(this, data_block_ptr, index_system::DataBlockStateNone))) {
+	if((err = index_driver_ptr->vfsSetStateOnDataBlock(this, data_block_ptr, data_block_state::DataBlockStateNone))) {
 		VFSF_LERR_ << "Error setting state on datablock with error " << err;
 		return storage_driver_ptr->closeBlock(data_block_ptr);
 	}

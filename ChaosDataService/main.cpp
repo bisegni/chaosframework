@@ -74,7 +74,7 @@ int main(int argc, char * argv[]) {
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_STORAGE_DOMAIN,
 																									"The name of the domain exposed by the driver",
 																									"CHAOS_DOMAIN",
-																									&ChaosDataService::getInstance()->settings.file_manager_setting.storage_driver_setting.fs_domain_name);
+																									&ChaosDataService::getInstance()->settings.file_manager_setting.storage_driver_setting.domain.name);
 		
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_STORAGE_DRIVER_KVP,
 																									"The key value parameter for storage implementation driver (ex k:v-k1:v1)");

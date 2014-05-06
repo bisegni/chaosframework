@@ -14,6 +14,8 @@
 
 #include <mongo/client/dbclient.h>
 
+#include <chaos/common/utility/TimingUtil.h>
+
 using namespace chaos::data_service::vfs;
 using namespace chaos::data_service::index_system;
 
@@ -51,8 +53,57 @@ void MongoDBIndexDriver::deinit() throw (chaos::CException) {
 	if(ha_connection_pool) delete(ha_connection_pool);
 }
 
+//! Register a new domain
+int MongoDBIndexDriver::vfsAddDomain(vfs::VFSDomain domain) {
+	int err = 0;
+	mongo::BSONObjBuilder b;
+	try {
+		//compose file search criteria
+		b.append(MONGO_DB_FIELD_DOMAIN_NAME, domain.name);
+		b.append(MONGO_DB_FIELD_DOMAIN_URL, domain.local_url);
+		b.append(MONGO_DB_FIELD_DOMAIN_HB, chaos::TimingUtil::getTimeStamp());
+		err = ha_connection_pool->insert(MONGO_DB_VFS_DOMAINS_COLLECTION, b.obj());
+		if(err) {
+			if(err != 11000) {
+				MDBID_LERR_ << "Error " << err << " creting domain entry";
+			} else {
+				err = vfsDomainHeartBeat(domain);
+			}
+		}
+		
+	} catch (const mongo::DBException &e) {
+		MDBID_LERR_ << e.what();
+		err = -5;
+	}
+	return err;
+}
+
+//! Give an heart beat for a domain
+int MongoDBIndexDriver::vfsDomainHeartBeat(vfs::VFSDomain domain) {
+	int err = 0;
+	mongo::BSONObjBuilder b_query;
+	mongo::BSONObjBuilder b_update_filed;
+	mongo::BSONObjBuilder b_update;
+	try {
+		//compose file search criteria
+		b_query.append(MONGO_DB_FIELD_DOMAIN_NAME, domain.name);
+		b_query.append(MONGO_DB_FIELD_DOMAIN_URL, domain.local_url);
+		b_update_filed.append(MONGO_DB_FIELD_DOMAIN_HB, chaos::TimingUtil::getTimeStamp());
+		b_update.append("$set", b_update_filed.obj());
+		err = ha_connection_pool->update(MONGO_DB_VFS_DOMAINS_COLLECTION, b_query.obj(), b_update.obj());
+		if(err) {
+			MDBID_LERR_ << "Error " << err << " updating the heartbeat for domain";
+		}
+		
+	} catch (const mongo::DBException &e) {
+		MDBID_LERR_ << e.what();
+		err = -5;
+	}
+	return err;
+}
+
 //! Register a new data block wrote on stage area
-int MongoDBIndexDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block, DataBlockState new_block_state) {
+int MongoDBIndexDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block, vfs::data_block_state::DataBlockState new_block_state) {
 	int err = 0;
 	bool f_exists = false;
 	
@@ -97,11 +148,11 @@ int MongoDBIndexDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_v
 		MDBID_LERR_ << e.what();
 		err = -5;
 	}
-	return 0;
+	return err;
 }
 
 //! Set the state for a stage datablock
-int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block, DataBlockState state) {
+int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block, vfs::data_block_state::DataBlockState state) {
 	int err = 0;
 	mongo::BSONObjBuilder bson_search;
 	mongo::BSONObjBuilder bson_block_query;

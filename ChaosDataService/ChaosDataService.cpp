@@ -142,6 +142,16 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 			fillKVParameter(ChaosDataService::getInstance()->settings.file_manager_setting.index_driver_setting.key_value_custom_param, OPT_VFS_INDEX_DRIVER_KVP);
 		}
 		
+		
+		CDSLAPP_ << "Allocate Network Brocker";
+        network_broker.reset(new NetworkBroker(), "NetworkBroker");
+		if(!network_broker.get()) throw chaos::CException(-1, "Error instantiating network broker", __PRETTY_FUNCTION__);
+		network_broker.init(NULL, __PRETTY_FUNCTION__);
+		
+		//configure the domain url equal to the directio io server one plus the deafult endpoint "0"
+		settings.file_manager_setting.storage_driver_setting.domain.local_url = network_broker->getDirectIOUrl();
+		settings.file_manager_setting.storage_driver_setting.domain.local_url.append("|0");
+		
 		//initialize vfs file manager
 		CDSLAPP_ << "Allocate VFS Manager";
 		vfs_file_manager.reset(new vfs::VFSManager(), "VFSFileManager");
@@ -150,11 +160,6 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		//alocate default fs structure
 		vfs_file_manager->createDirectory(VFS_STAGE_AREA);
 		vfs_file_manager->createDirectory(VFS_DATA_AREA);
-
-		CDSLAPP_ << "Allocate Network Brocker";
-        network_broker.reset(new NetworkBroker(), "NetworkBroker");
-		if(!network_broker.get()) throw chaos::CException(-1, "Error instantiating network broker", __PRETTY_FUNCTION__);
-		network_broker.init(NULL, __PRETTY_FUNCTION__);
         
         CDSLAPP_ << "Allocate the Data Consumer";
         data_consumer.reset(new DataConsumer(vfs_file_manager.get()), "DataConsumer");

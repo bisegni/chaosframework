@@ -55,7 +55,7 @@ void MongoAuthHook::onCreate( mongo::DBClientBase * conn ) {
 }
 
 void MongoAuthHook::onHandedOut( mongo::DBClientBase * conn ) {
-	MDBHAC_LAPP_ << "MongoDBHAConnectionManager::onHandedOut - " << conn->getServerAddress();
+	//MDBHAC_LAPP_ << "MongoDBHAConnectionManager::onHandedOut - " << conn->getServerAddress();
 }
 
 void MongoAuthHook::onDestroy( mongo::DBClientBase * conn ) {

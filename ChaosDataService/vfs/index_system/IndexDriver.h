@@ -27,6 +27,7 @@
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/InizializableService.h>
 
+#include "../VFSTypes.h"
 
 namespace chaos {
 	namespace data_service {
@@ -51,27 +52,6 @@ namespace chaos {
 				//! kv param for the implementations of the driver
 				std::map<string,string> key_value_custom_param;
 			} IndexDriverSetting;
-			
-			//! define a type of work that can occour on stage datablock
-			typedef enum DataBlockState {
-				//! block is not used for processing or acquisition
-				DataBlockStateNone			= 0,
-				
-				//! block is acquiring new data
-				DataBlockStateAquiringData	= 1,
-				
-				//! block is reading for processing
-				DataBlockStateProcessing	= 2,
-				
-				//! block as been processed
-				DataBlockStateProcessed		= 4,
-				
-				//! block as been locked for processing
-				DataBlockStateLocked		= 8,
-				
-				//! block has been unlocked
-				DataBlockStateUnlocked		= 12
-			} DataBlockState;
 			
 			/*!
 			 Base class for all driver that will manage the work on index database.
@@ -100,6 +80,20 @@ namespace chaos {
 				//!deinit
 				void deinit() throw (chaos::CException);
 				
+				//! Register a new domain
+				/*!
+				 Register a new domain adding an url. Different data service that
+				 share the same domain wil register their own url
+				 */
+				virtual int vfsAddDomain(vfs::VFSDomain domain) = 0;
+				
+				//! Give an heart beat for a domain
+				/*!
+				 Give an heart beat for a domain
+				 \param domain_name the name of the domain that the hb
+				 */
+				virtual int vfsDomainHeartBeat(vfs::VFSDomain domain) = 0;
+				
 				//! Register a new data block wrote on stage area
 				/*!
 					Registration of a new datablock in stage area is achieved directly to the DataService process
@@ -107,14 +101,15 @@ namespace chaos {
 					\param vfs_file the vfs file for wich we need to create the new data block
 					\param data_block Newly created data block
 				 */
-				virtual int vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block, DataBlockState new_block_state = DataBlockStateNone) = 0;
+				virtual int vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block,
+											   vfs::data_block_state::DataBlockState new_block_state = vfs::data_block_state::DataBlockStateNone) = 0;
 				
 				//! Set the state for a stage datablock
 				/*!
 				 Set the current state for a datablock in the stage area
 				 \param data_block Data block for wich need to be changed the state
 				 */
-				virtual int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,chaos_vfs::DataBlock *data_block, DataBlockState state) = 0;
+				virtual int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,chaos_vfs::DataBlock *data_block, vfs::data_block_state::DataBlockState state) = 0;
 				
 				//! Heartbeat update stage block
 				/*!

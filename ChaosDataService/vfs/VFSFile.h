@@ -20,7 +20,7 @@
 #ifndef __CHAOSFramework__VFSFile__
 #define __CHAOSFramework__VFSFile__
 
-
+#include "VFSTypes.h"
 #include "index_system/IndexDriver.h"
 #include "storage_system/StorageDriver.h"
 
@@ -35,14 +35,7 @@ namespace chaos {
 			class VFSManager;
 			struct DataBlock;
 			
-			typedef struct VFSFileInfo {
-				uint32_t		max_block_size;
-				uint32_t		max_block_lifetime;
-				std::string		identify_key;
-				std::string		vfs_fpath;
-				std::string		vfs_domain;
-			} VFSFileInfo;
-			
+						
 			//! VFS Logical file
 			class VFSFile {
 				friend class VFSManager;
