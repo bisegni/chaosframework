@@ -36,9 +36,7 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
     
     try{
         addOption(InitOption::OPT_HELP, "Produce help message");
-        
 		addOption(InitOption::OPT_DATA_IO_IMPL, po::value< string >()->default_value("IOMemcached"), "Specify the data io implementation");
-		
 		addOption(InitOption::OPT_DIRECT_IO_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the direct io implementation");
 		addOption(InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, po::value<int>()->default_value(_DIRECT_IO_PRIORITY_PORT), "DirectIO priority server port");
 		addOption(InitOption::OPT_DIRECT_IO_SERVICE_SERVER_PORT, po::value<int>()->default_value(_DIRECT_IO_SERVICE_PORT), "DirectIO service server port");
@@ -68,7 +66,7 @@ void GlobalConfiguration::parseStartupParameters(int argc, char* argv[]) throw (
 /*
  specialized option for string stream buffer with boost semantics
  */
-void GlobalConfiguration::parseStringStream(istringstream &sStreamOptions) throw (CException) {
+void GlobalConfiguration::parseStringStream(std::istream &sStreamOptions) throw (CException) {
     parseParameter(po::parse_config_file(sStreamOptions, desc));
 }
 
@@ -95,6 +93,41 @@ int32_t GlobalConfiguration::filterLogLevel(string& levelStr) throw (CException)
     return static_cast< int32_t >(level);
 }
 
+void GlobalConfiguration::loadStartupParameter(int argc, char* argv[]) throw (CException) {
+	try{
+        //
+        po::store(po::parse_command_line(argc, argv, desc), vm);
+    }catch (po::error &e) {
+        //write error also on cerr
+        std::cerr << e.what();
+        throw CException(0, e.what(), __PRETTY_FUNCTION__);
+        
+    }
+}
+
+void GlobalConfiguration::loadStreamParameter(std::istream &config_file)  throw (CException) {
+	try{
+        //
+        po::store(po::parse_config_file(config_file, desc), vm);
+    }catch (po::error &e) {
+        //write error also on cerr
+        std::cerr << e.what();
+        throw CException(0, e.what(), __PRETTY_FUNCTION__);
+        
+    }
+}
+
+void GlobalConfiguration::scanOption()  throw (CException) {
+	try{
+        po::notify(vm);
+    }catch (po::error &e) {
+        //write error also on cerr
+        std::cerr << e.what();
+        throw CException(0, e.what(), __PRETTY_FUNCTION__);
+        
+    }
+}
+
 /*
  parse the tandard startup parameters
  */
@@ -106,7 +139,6 @@ void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& o
     try{
         //
         po::store(optionsParser, vm);
-        po::notify(vm);
     }catch (po::error &e) {
         //write error also on cerr
         std::cerr << e.what();
@@ -114,12 +146,20 @@ void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& o
         
     }
     
+	//scan option
+	scanOption();
+	
     if (hasOption(InitOption::OPT_HELP)) {
         std::cout << desc;
         exit(0);
         return;
+		
     }
-    
+	//check the default option
+	checkDefaultOption();
+}
+
+void GlobalConfiguration::checkDefaultOption() throw (CException) {
     //now we can fill the gloabl configuration
     //start with getting log configuration
     CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(logOnConsole, InitOption::OPT_LOG_ON_CONSOLE)

@@ -19,6 +19,7 @@
 namespace chaos{
     namespace data_service {
 
+#define OPT_CONF_FILE				"conf_file"
 		//cache configuration
 #define OPT_CACHE_SERVER_LIST		"cache_servers"
 #define OPT_CACHE_DRIVER			"cache_driver"

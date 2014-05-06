@@ -28,7 +28,7 @@
 #include <chaos/common/utility/InetUtility.h>
 
 #include <string>
-#include <sstream>
+#include <istream>
 #include <boost/shared_ptr.hpp>
 #include <boost/program_options/option.hpp>
 #include <boost/program_options/options_description.hpp>
@@ -100,6 +100,10 @@ x = hasOption(y);
          */
         int32_t filterLogLevel(string& levelStr) throw (CException);
     public:
+		void loadStartupParameter(int, char* argv[]) throw (CException);
+		void loadStreamParameter(std::istream &config_file) throw (CException);
+		void scanOption() throw (CException);
+		void checkDefaultOption() throw (CException);
             //! startup parameter pre setup
         /*
          Set up all stardard input attribute map
@@ -114,7 +118,7 @@ x = hasOption(y);
         /*
          specialized option for string stream buffer with boost semantics
          */
-        void parseStringStream(istringstream &) throw (CException);
+        void parseStringStream(std::istream &) throw (CException);
         
         /*
          Add a custom option
