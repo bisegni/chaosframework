@@ -126,6 +126,13 @@ void GlobalConfiguration::scanOption()  throw (CException) {
         throw CException(0, e.what(), __PRETTY_FUNCTION__);
         
     }
+	
+	if (hasOption(InitOption::OPT_HELP)) {
+        std::cout << desc;
+        exit(0);
+        return;
+		
+    }
 }
 
 /*
@@ -149,12 +156,6 @@ void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& o
 	//scan option
 	scanOption();
 	
-    if (hasOption(InitOption::OPT_HELP)) {
-        std::cout << desc;
-        exit(0);
-        return;
-		
-    }
 	//check the default option
 	checkDefaultOption();
 }
