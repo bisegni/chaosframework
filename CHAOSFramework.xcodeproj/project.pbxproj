@@ -2021,7 +2021,6 @@
 		32B5714A168DF4750002A198 /* util */ = {
 			isa = PBXGroup;
 			children = (
-				324A4B85191A510200975394 /* concurrency */,
 				32EE897B191A78DB00DE2F29 /* embedded_builder.h */,
 				324A4B9C191A569800975394 /* hex.cpp */,
 				324A4B9D191A569800975394 /* hex.h */,
@@ -2044,10 +2043,11 @@
 				324A4B89191A523F00975394 /* md5.h */,
 				324A4B8A191A523F00975394 /* md5.hpp */,
 				324A4B65191A428400975394 /* misc.h */,
-				324A4B66191A428400975394 /* mongoutils */,
 				324A4B6B191A428500975394 /* safe_num-inl.h */,
 				324A4B6C191A428500975394 /* safe_num.cpp */,
 				324A4B6D191A428500975394 /* safe_num.h */,
+				324A4B85191A510200975394 /* concurrency */,
+				324A4B66191A428400975394 /* mongoutils */,
 			);
 			path = util;
 			sourceTree = "<group>";
