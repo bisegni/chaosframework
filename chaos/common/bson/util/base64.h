@@ -16,6 +16,7 @@
  */
 
 #pragma once
+#include <cstring>
 #include <assert.h>
 #include <boost/scoped_array.hpp>
 #include <sstream>
