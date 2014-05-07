@@ -61,7 +61,7 @@ int MongoDBIndexDriver::vfsAddDomain(vfs::VFSDomain domain) {
 		//compose file search criteria
 		b.append(MONGO_DB_FIELD_DOMAIN_NAME, domain.name);
 		b.append(MONGO_DB_FIELD_DOMAIN_URL, domain.local_url);
-		b.append(MONGO_DB_FIELD_DOMAIN_HB, chaos::TimingUtil::getTimeStamp());
+		b.append(MONGO_DB_FIELD_DOMAIN_HB, mongo::Date_t(chaos::TimingUtil::getTimeStamp()));
 		err = ha_connection_pool->insert(MONGO_DB_VFS_DOMAINS_COLLECTION, b.obj());
 		if(err) {
 			if(err != 11000) {
@@ -88,7 +88,7 @@ int MongoDBIndexDriver::vfsDomainHeartBeat(vfs::VFSDomain domain) {
 		//compose file search criteria
 		b_query.append(MONGO_DB_FIELD_DOMAIN_NAME, domain.name);
 		b_query.append(MONGO_DB_FIELD_DOMAIN_URL, domain.local_url);
-		b_update_filed.append(MONGO_DB_FIELD_DOMAIN_HB, chaos::TimingUtil::getTimeStamp());
+		b_update_filed.append(MONGO_DB_FIELD_DOMAIN_HB, mongo::Date_t(chaos::TimingUtil::getTimeStamp()));
 		b_update.append("$set", b_update_filed.obj());
 		err = ha_connection_pool->update(MONGO_DB_VFS_DOMAINS_COLLECTION, b_query.obj(), b_update.obj());
 		if(err) {
@@ -136,8 +136,8 @@ int MongoDBIndexDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_v
 		//insert new
 		bson_block.append(MONGO_DB_FIELD_FILE_PRIMARY_KEY, search_result["_id"].OID());
 		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_STATE, new_block_state);
-		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS, (long long)data_block->creation_time);
-		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_VALID_UNTIL_TS, (long long)data_block->invalidation_timestamp);
+		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS, mongo::Date_t(data_block->creation_time));
+		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_VALID_UNTIL_TS, mongo::Date_t(data_block->invalidation_timestamp));
 		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_MAX_BLOCK_SIZE, (long long)data_block->max_reacheable_size);
 		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH, data_block->vfs_path);
 		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN, vfs_file->getVFSFileInfo()->vfs_domain);
@@ -176,7 +176,7 @@ int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file, cha
 		
 		//compose query
 		bson_block_query.append(MONGO_DB_FIELD_FILE_PRIMARY_KEY, search_result["_id"].OID());
-		bson_block_query.append(MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS, (long long)data_block->creation_time);
+		bson_block_query.append(MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS, mongo::Date_t(data_block->creation_time));
 		bson_block_query.append(MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH, data_block->vfs_path);
 		bson_block_query.append(MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN, vfs_file->getVFSFileInfo()->vfs_domain);
 		

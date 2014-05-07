@@ -10,6 +10,7 @@
 #define CHAOSFramework_VFSTypes_h
 
 #include <string>
+#include <stdint.h>
 
 namespace chaos {
 	namespace data_service {
