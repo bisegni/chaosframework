@@ -12,6 +12,18 @@
 *
 *    You should have received a copy of the GNU Affero General Public License
 *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*
+*    As a special exception, the copyright holders give permission to link the
+*    code of portions of this program with the OpenSSL library under certain
+*    conditions as described in each individual source file and distribute
+*    linked combinations including the program with the OpenSSL library. You
+*    must comply with the GNU Affero General Public License in all respects for
+*    all of the code used other than as permitted herein. If you modify file(s)
+*    with this exception, you may extend this exception to your version of the
+*    file(s), but you are not obligated to do so. If you do not wish to do so,
+*    delete this exception statement from your version. If you delete this
+*    exception statement from all source files in the program, then also delete
+*    it in the license file.
 */
 
 #pragma once
@@ -27,10 +39,10 @@ namespace bson {
      * Create a BSONObj from a JSON <http://www.json.org>,
      * <http://www.ietf.org/rfc/rfc4627.txt> string.  In addition to the JSON
      * extensions extensions described here
-     * <http://mongodb.onconfluence.com/display/DOCS/Mongo+Extended+JSON>, this
-     * function accepts unquoted field names and allows single quotes to
-     * optionally be used when specifying field names and string values instead
-     * of double quotes.  JSON unicode escape sequences (of the form \uXXXX) are
+     * <http://dochub.mongodb.org/core/mongodbextendedjson>, this function
+     * accepts unquoted field names and allows single quotes to optionally be
+     * used when specifying field names and string values instead of double
+     * quotes.  JSON unicode escape sequences (of the form \uXXXX) are
      * converted to utf8.
      *
      * @throws MsgAssertionException if parsing fails.  The message included with
@@ -59,6 +71,8 @@ namespace bson {
              * VALUE :
              *     STRING
              *   | NUMBER
+             *   | NUMBERINT
+             *   | NUMBERLONG
              *   | OBJECT
              *   | ARRAY
              *
@@ -103,6 +117,7 @@ namespace bson {
              *   | REGEXOBJECT
              *   | REFOBJECT
              *   | UNDEFINEDOBJECT
+             *   | NUMBERLONGOBJECT
              *
              */
         public:
@@ -166,6 +181,12 @@ namespace bson {
             Status undefinedObject(const StringData& fieldName, BSONObjBuilder&);
 
             /*
+             * NUMBERLONGOBJECT :
+             *     { FIELD("$numberLong") : "<number>" }
+             */
+            Status numberLongObject(const StringData& fieldName, BSONObjBuilder&);
+
+            /*
              * ARRAY :
              *     []
              *   | [ ELEMENTS ]
@@ -203,6 +224,18 @@ namespace bson {
              *     ObjectId( <24 character hex string> )
              */
             Status objectId(const StringData& fieldName, BSONObjBuilder&);
+
+            /*
+             * NUMBERLONG :
+             *     NumberLong( <number> )
+             */
+            Status numberLong(const StringData& fieldName, BSONObjBuilder&);
+
+            /*
+             * NUMBERINT :
+             *     NumberInt( <number> )
+             */
+            Status numberInt(const StringData& fieldName, BSONObjBuilder&);
 
             /*
              * DBREF :
@@ -326,15 +359,31 @@ namespace bson {
              * @return true if the given token matches the next non whitespace
              * sequence in our buffer, and false if the token doesn't match or
              * we reach the end of our buffer.  Do not update the pointer to our
+             * buffer (same as calling readTokenImpl with advance=false).
+             */
+            inline bool peekToken(const char* token);
+
+            /**
+             * @return true if the given token matches the next non whitespace
+             * sequence in our buffer, and false if the token doesn't match or
+             * we reach the end of our buffer.  Updates the pointer to our
+             * buffer (same as calling readTokenImpl with advance=true).
+             */
+            inline bool readToken(const char* token);
+
+            /**
+             * @return true if the given token matches the next non whitespace
+             * sequence in our buffer, and false if the token doesn't match or
+             * we reach the end of our buffer.  Do not update the pointer to our
              * buffer if advance is false.
              */
-            bool accept(const char* token, bool advance=true);
+            bool readTokenImpl(const char* token, bool advance=true);
 
             /**
              * @return true if the next field in our stream matches field.
              * Handles single quoted, double quoted, and unquoted field names
              */
-            bool acceptField(const StringData& field);
+            bool readField(const StringData& field);
 
             /**
              * @return true if matchChar is in matchSet

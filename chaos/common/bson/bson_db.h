@@ -25,8 +25,8 @@
 */
 
 #pragma once
-
-#include <chaos/common/bson/util/optime.h>
+#include <chaos/common/global.h>
+#include <chaos/common/bson/optime.h>
 #include <chaos/common/bson/util/time_support.h>
 
 namespace bson {
@@ -60,8 +60,10 @@ namespace bson {
             return std::string(valuestr(), valuestrsize()-1);
         case CodeWScope:
             return std::string(codeWScopeCode(), *(int*)(valuestr())-1);
+        default:
+				break;
         }
-        assert(  0 );
+        uassert( 10062 ,  "not code" , 0 );
         return "";
     }
 

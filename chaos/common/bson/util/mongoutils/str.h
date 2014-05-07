@@ -17,7 +17,7 @@
 
 #pragma once
 
-/* Things in the mongoutils namespace
+/* Things in the bsonutils namespace
    (1) are not database specific, rather, true utilities
    (2) are cross platform
    (3) may require boost headers, but not libs
@@ -30,10 +30,10 @@
 #include <string>
 #include <sstream>
 
-// this violates the README rules for mongoutils:
+// this violates the README rules for bsonutils:
 #include <chaos/common/bson/util/builder.h>
-#include <chaos/common/bson/util/assert_util.h>
-namespace mongoutils {
+
+namespace bsonutils {
 
     namespace str {
 
@@ -113,7 +113,7 @@ namespace mongoutils {
             return strstr(s.c_str(), x.c_str()) != 0;
         }
         inline bool contains(const std::string& s, char x) {
-            MONGO_verify(x != '\0'); // this expects c-strings so don't use when looking for NUL bytes
+            verify(x != '\0'); // this expects c-strings so don't use when looking for NUL bytes
             return strchr(s.c_str(), x) != 0;
         }
 

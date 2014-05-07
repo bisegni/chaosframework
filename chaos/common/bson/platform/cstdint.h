@@ -17,7 +17,7 @@
 #pragma once
 
 /**
- * Include "bson/platform/cstdint.h" to get the C++11 cstdint types in namespace bson.
+ * Include "mongo/platform/cstdint.h" to get the C++11 cstdint types in namespace bson.
  */
 
 #if defined(_MSC_VER)

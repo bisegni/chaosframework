@@ -69,45 +69,51 @@ namespace bson {
         BSON( "a" << GT << 23.4 << NE << 30 << "b" << 2 ) produces the object
         { a: { \$gt: 23.4, \$ne: 30 }, b: 2 }.
     */
-#define BSON(x) (( bson::BSONObjBuilder(64) << x ).obj())
+#define BSON(x) (( ::bson::BSONObjBuilder(64) << x ).obj())
 
     /** Use BSON_ARRAY macro like BSON macro, but without keys
 
         BSONArray arr = BSON_ARRAY( "hello" << 1 << BSON( "foo" << BSON_ARRAY( "bar" << "baz" << "qux" ) ) );
 
      */
-#define BSON_ARRAY(x) (( bson::BSONArrayBuilder() << x ).arr())
+#define BSON_ARRAY(x) (( ::bson::BSONArrayBuilder() << x ).arr())
 
     /* Utility class to auto assign object IDs.
        Example:
          std::cout << BSON( GENOID << "z" << 3 ); // { _id : ..., z : 3 }
     */
-    extern struct GENOIDLabeler { } GENOID;
+    struct GENOIDLabeler { };
+    extern GENOIDLabeler GENOID;
 
     /* Utility class to add a Date element with the current time
        Example:
          std::cout << BSON( "created" << DATENOW ); // { created : "2009-10-09 11:41:42" }
     */
-    extern struct DateNowLabeler { } DATENOW;
+    struct DateNowLabeler { };
+    extern DateNowLabeler DATENOW;
 
     /* Utility class to assign a NULL value to a given attribute
        Example:
          std::cout << BSON( "a" << BSONNULL ); // { a : null }
     */
-    extern struct NullLabeler { } BSONNULL;
+    struct NullLabeler { };
+    extern NullLabeler BSONNULL;
 
     /* Utility class to assign an Undefined value to a given attribute
        Example:
          std::cout << BSON( "a" << BSONUndefined ); // { a : undefined }
     */
-    extern struct UndefinedLabeler { } BSONUndefined;
+    struct UndefinedLabeler { };
+    extern UndefinedLabeler BSONUndefined;
 
     /* Utility class to add the minKey (minus infinity) to a given attribute
        Example:
          std::cout << BSON( "a" << MINKEY ); // { "a" : { "$minKey" : 1 } }
     */
-    extern struct MinKeyLabeler { } MINKEY;
-    extern struct MaxKeyLabeler { } MAXKEY;
+    struct MinKeyLabeler { };
+    extern MinKeyLabeler MINKEY;
+    struct MaxKeyLabeler { };
+    extern MaxKeyLabeler MAXKEY;
 
     // Utility class to implement GT, GTE, etc as described above.
     class Labeler {

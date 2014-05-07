@@ -1,5 +1,3 @@
-// optime.h - OpTime class
-
 /*    Copyright 2009 10gen Inc.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,9 +14,14 @@
  */
 
 #pragma once
-#include <sstream>
+
 #include <boost/thread/condition.hpp>
-#include <chaos/common/bson/util/mutex.h>
+#include <iostream>
+#include <sstream>
+
+#include <chaos/common/bson/util/assert_util.h>
+#include <chaos/common/bson/util/concurrency/mutex.h>
+#include <chaos/common/bson/util/time_support.h>
 
 namespace bson {
 
@@ -38,53 +41,39 @@ namespace bson {
     class OpTime {
         unsigned i; // ordinal comes first so we can do a single 64 bit compare on little endian
         unsigned secs;
-        static OpTime last;
-        static OpTime skewed();
     public:
-        static void setLast(const Date_t &date) {
-            mutex::scoped_lock lk(m);
-            notifier.notify_all(); // won't really do anything until write-lock released
-            last = OpTime(date);
-        }
         unsigned getSecs() const {
             return secs;
         }
         unsigned getInc() const {
             return i;
         }
+
         OpTime(Date_t date) {
             reinterpret_cast<unsigned long long&>(*this) = date.millis;
-            assert( (int)secs >= 0 );
+            dassert( (int)secs >= 0 );
         }
         OpTime(ReplTime x) {
             reinterpret_cast<unsigned long long&>(*this) = x;
-            assert( (int)secs >= 0 );
+            dassert( (int)secs >= 0 );
         }
         OpTime(unsigned a, unsigned b) {
             secs = a;
             i = b;
-            assert( (int)secs >= 0 );
+            dassert( (int)secs >= 0 );
         }
         OpTime( const OpTime& other ) { 
             secs = other.secs;
             i = other.i;
-            assert( (int)secs >= 0 );
+            dassert( (int)secs >= 0 );
         }
         OpTime() {
             secs = 0;
             i = 0;
         }
-        // it isn't generally safe to not be locked for this. so use now(). some tests use this.
-        static OpTime _now();
 
-        static bson::mutex m;
-
-        static OpTime now(const bson::mutex::scoped_lock&);
-
-        static OpTime getLast(const bson::mutex::scoped_lock&);
-
-        // Waits for global OpTime to be different from *this
-        void waitForDifferent(unsigned millis);
+        // Maximum OpTime value.
+        static OpTime max();
 
         /* We store OpTime's in the database as BSON Date datatype -- we needed some sort of
          64 bit "container" for these values.  While these are not really "Dates", that seems a
@@ -102,8 +91,6 @@ namespace bson {
         bool isNull() const { return secs == 0; }
 
         string toStringLong() const {
-            char buf[64];
-            time_t_to_String(secs, buf);
             std::stringstream ss;
             ss << time_t_to_String_short(secs) << ' ';
             ss << std::hex << secs << ':' << i;
@@ -142,9 +129,7 @@ namespace bson {
         bool operator>=(const OpTime& r) const {
             return !(*this < r);
         }
-    private:
-        static boost::condition notifier;
     };
 #pragma pack()
 
-} // namespace bson
+} // namespace mongo

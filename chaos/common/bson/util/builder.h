@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <string>
 #include <string.h>
+#include <assert.h>
 #include <chaos/common/bson/inline_decls.h>
 #include <chaos/common/bson/base/string_data.h>
 #include <chaos/common/bson/util/assert_util.h>
@@ -55,8 +56,6 @@ namespace bson {
     const int BSONObjMaxInternalSize = BSONObjMaxUserSize + ( 16 * 1024 );
 
     const int BufferMaxSize = 64 * 1024 * 1024;
-
-    void msgasserted(int msgid, const char *msg);
 
     template <typename Allocator>
     class StringBuilderImpl;
@@ -171,15 +170,8 @@ namespace bson {
         void appendNum(double j) {
             (reinterpret_cast< PackedDouble* >(grow(sizeof(double))))->d = j;
         }
-        void appendNum(long double j) {
-            (reinterpret_cast< PackedDouble* >(grow(sizeof(long double))))->d = j;
-        }
-        
         void appendNum(long long j) {
             *((long long*)grow(sizeof(long long))) = j;
-        }
-        void appendNum(long int j) {
-            *((long int*)grow(sizeof(long int))) = j;
         }
         void appendNum(unsigned long long j) {
             *((unsigned long long*)grow(sizeof(unsigned long long))) = j;
@@ -208,18 +200,19 @@ namespace bson {
         /* returns the pre-grow write position */
         inline char* grow(int by) {
             int oldlen = l;
-            l += by;
-            if ( l > size ) {
-                grow_reallocate();
+            int newLen = l + by;
+            if ( newLen > size ) {
+                grow_reallocate(newLen);
             }
+            l = newLen;
             return data + oldlen;
         }
 
     private:
         /* "slow" portion of 'grow()'  */
-        void NOINLINE_DECL grow_reallocate() {
+        void NOINLINE_DECL grow_reallocate(int newLen) {
             int a = 64;
-            while( a < l ) 
+            while( a < newLen ) 
                 a = a * 2;
             if ( a > BufferMaxSize ) {
                 std::stringstream ss;
@@ -306,8 +299,8 @@ namespace bson {
             const int maxSize = 32; 
             char * start = _buf.grow( maxSize );
             int z = snprintf( start , maxSize , "%.16g" , x );
-            //verify( z >= 0 );
-            //verify( z < maxSize );
+            assert( z >= 0 );
+            assert( z < maxSize );
             _buf.l = prev + z;
             if( strchr(start, '.') == 0 && strchr(start, 'E') == 0 && strchr(start, 'N') == 0 ) {
                 write( ".0" , 2 );
@@ -341,8 +334,8 @@ namespace bson {
         StringBuilderImpl& SBNUM(T val,int maxSize,const char *macro)  {
             int prev = _buf.l;
             int z = snprintf( _buf.grow(maxSize) , maxSize , macro , (val) );
-            //verify( z >= 0 );
-            //verify( z < maxSize );
+            assert( z >= 0 );
+            assert( z < maxSize );
             _buf.l = prev + z;
             return *this;
         }

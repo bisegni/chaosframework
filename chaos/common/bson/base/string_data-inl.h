@@ -61,8 +61,11 @@ namespace bson {
             dest[size()] = 0;
     }
 
-    inline size_t StringData::find( char c ) const {
-        const void* x = memchr( _data, c, size() );
+    inline size_t StringData::find( char c, size_t fromPos ) const {
+        if ( fromPos >= size() )
+            return string::npos;
+
+        const void* x = memchr( _data + fromPos, c, _size - fromPos );
         if ( x == 0 )
             return string::npos;
         return static_cast<size_t>( static_cast<const char*>(x) - _data );
@@ -87,14 +90,41 @@ namespace bson {
 
     }
 
+    inline size_t StringData::rfind( char c, size_t fromPos ) const {
+        const size_t sz = size();
+        if ( fromPos > sz )
+            fromPos = sz;
+
+        for ( const char* cur = _data + fromPos; cur > _data; --cur ) {
+            if ( *(cur - 1) == c )
+                return (cur - _data) - 1;
+        }
+        return string::npos;
+    }
+
     inline StringData StringData::substr( size_t pos, size_t n ) const {
         if ( pos > size() )
             throw std::out_of_range( "out of range" );
 
-        if ( pos + n > size() )
+        // truncate to end of string
+        if ( n > size() - pos )
             n = size() - pos;
 
         return StringData( _data + pos, n );
     }
 
-}
+    inline bool StringData::startsWith( const StringData& prefix ) const {
+        // TODO: Investigate an optimized implementation.
+        return substr(0, prefix.size()) == prefix;
+    }
+
+    inline bool StringData::endsWith( const StringData& suffix ) const {
+        // TODO: Investigate an optimized implementation.
+        const size_t thisSize = size();
+        const size_t suffixSize = suffix.size();
+        if (suffixSize > thisSize)
+            return false;
+        return substr(thisSize - suffixSize) == suffix;
+    }
+
+}  // namespace bson
