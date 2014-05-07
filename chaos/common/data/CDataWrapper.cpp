@@ -165,13 +165,13 @@ CDataWrapper *CDataWrapper::getCSDataValue(const char *key) {
 
 //get string value
 string  CDataWrapper::getStringValue(const char *key) {
-    const char * result = bsonBuilder->asTempObj().getField(key).CString();
+    const char * result = bsonBuilder->asTempObj().getField(key).String().c_str();
     return string(result);
 }
 
 //get string value
 const char *  CDataWrapper::getCStringValue(const char *key) {
-    return bsonBuilder->asTempObj().getField(key).CString();
+    return bsonBuilder->asTempObj().getField(key).String().c_str();
 }
 //add a integer value
 int32_t CDataWrapper::getInt32Value(const char *key) {

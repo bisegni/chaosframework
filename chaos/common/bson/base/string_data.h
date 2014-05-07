@@ -56,7 +56,7 @@ namespace bson {
 
         /**
          * Constructs a StringData explicitly, for the case where the length of the string is
-         * already known. 'c' must be a pointer to a null-terminated string, and strlenOfc must
+         * already known. 'c' must be a pointer to a null-terminated string, and len must
          * be the length that strlen(c) would return, a.k.a the index of the terminator in c.
          */
         StringData( const char* c, size_t len )
@@ -96,16 +96,28 @@ namespace bson {
         // finders
         //
 
-        size_t find( char c ) const;
+        size_t find( char c , size_t fromPos = 0 ) const;
         size_t find( const StringData& needle ) const;
+        size_t rfind( char c, size_t fromPos = string::npos ) const;
+
+        /**
+         * Returns true if 'prefix' is a substring of this instance, anchored at position 0.
+         */
+        bool startsWith( const StringData& prefix ) const;
+
+        /**
+         * Returns true if 'suffix' is a substring of this instance, anchored at the end.
+         */
+        bool endsWith( const StringData& suffix ) const;
 
         //
         // accessors
         //
 
         /**
-         * this is not guaranteed to be null-terminated,
-         * if you use this without all using size(), you are likely doing something wrong
+         * Get the pointer to the first byte of StringData.  This is not guaranteed to be
+         * null-terminated, so if using this without checking size(), you are likely doing
+         * something wrong.
          */
         const char* rawData() const { return _data; }
 
@@ -113,6 +125,24 @@ namespace bson {
         bool empty() const { return size() == 0; }
         string toString() const { return string(_data, size()); }
         char operator[] ( unsigned pos ) const { return _data[pos]; }
+
+        /**
+         * Functor compatible with std::hash for std::unordered_{map,set}
+         * Warning: The hash function is subject to change. Do not use in cases where hashes need
+         *          to be consistent across versions.
+         */
+        struct Hasher {
+            size_t operator() (const StringData& str) const;
+        };
+
+        //
+        // iterators
+        //
+
+        typedef const char* const_iterator;
+
+        const_iterator begin() const { return rawData(); }
+        const_iterator end() const { return rawData() + size(); }
 
     private:
         const char* _data;        // is not guaranted to be null terminated (see "notes" above)
@@ -153,4 +183,4 @@ namespace bson {
 
 } // namespace bson
 
-#include "string_data-inl.h"
+#include <chaos/common/bson/base/string_data-inl.h>

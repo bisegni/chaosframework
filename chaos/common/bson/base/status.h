@@ -19,7 +19,7 @@
 #include <string>
 
 #include <chaos/common/bson/base/error_codes.h>
-#include <chaos/common/utility/Atomic.h>
+#include <chaos/common/bson/platform/atomic_word.h>
 
 namespace bson {
 
@@ -49,7 +49,7 @@ namespace bson {
     class Status {
     public:
         // Short-hand for returning an OK status.
-        static Status OK() { return Status(getOKInfo()); }
+        static inline Status OK();
 
         /**
          * Builds an error status given the error code, a textual description of what
@@ -58,9 +58,16 @@ namespace bson {
          */
         Status(ErrorCodes::Error code, const std::string& reason, int location = 0);
         Status(ErrorCodes::Error code, const char* reason, int location = 0);
-        Status(const Status& other);
-        Status& operator=(const Status& other);
-        ~Status();
+
+        inline Status(const Status& other);
+        inline Status& operator=(const Status& other);
+
+#if __cplusplus >= 201103L
+        inline Status(Status&& other) noexcept;
+        inline Status& operator=(Status&& other) noexcept;
+#endif // __cplusplus >= 201103L
+
+        inline ~Status();
 
         /**
          * Returns true if 'other's error code and location are equal/different to this
@@ -82,11 +89,15 @@ namespace bson {
         // accessors
         //
 
-        bool isOK() const { return code() == ErrorCodes::OK; }
-        ErrorCodes::Error code() const { return _error->code; }
-        const char* codeString() const { return ErrorCodes::errorString(_error->code); }
-        const std::string& reason() const { return _error->reason; }
-        int location() const { return _error->location; }
+        inline bool isOK() const;
+
+        inline ErrorCodes::Error code() const;
+
+        inline std::string codeString() const;
+
+        inline std::string reason() const;
+
+        inline int location() const;
 
         std::string toString() const;
 
@@ -94,21 +105,22 @@ namespace bson {
         // Below interface used for testing code only.
         //
 
-        int refCount() const { return _error->ref; }
+        inline AtomicUInt32::WordType refCount() const;
 
     private:
+        inline Status();
+
         struct ErrorInfo {
-            chaos::atomic_int_type ref;       // reference counter
-            ErrorCodes::Error code;  // error code
-            std::string reason;      // description of error cause
-            int location;            // unique location of the triggering line in the code
+            AtomicUInt32 refs;             // reference counter
+            const ErrorCodes::Error code;  // error code
+            const std::string reason;      // description of error cause
+            const int location;            // unique location of the triggering line in the code
 
-            ErrorInfo(ErrorCodes::Error aCode, const std::string& aReason, int aLocation);
+            static ErrorInfo* create(ErrorCodes::Error code,
+                                     const StringData& reason, int location);
+
+            ErrorInfo(ErrorCodes::Error code, const StringData& reason, int location);
         };
-
-        static ErrorInfo *getOKInfo();
-
-        explicit Status(ErrorInfo *info);
 
         ErrorInfo* _error;
 
@@ -117,17 +129,13 @@ namespace bson {
          *
          * @param error  ErrorInfo to be incremented
          */
-        static void ref(ErrorInfo* error);
-        static void unref(ErrorInfo* error);
+        static inline void ref(ErrorInfo* error);
+        static inline void unref(ErrorInfo* error);
     };
 
-    static inline bool operator==(const ErrorCodes::Error lhs, const Status& rhs) {
-        return rhs == lhs;
-    }
+    inline bool operator==(const ErrorCodes::Error lhs, const Status& rhs);
 
-    static inline bool operator!=(const ErrorCodes::Error lhs, const Status& rhs) {
-        return rhs != lhs;
-    }
+    inline bool operator!=(const ErrorCodes::Error lhs, const Status& rhs);
 
     //
     // Convenience method for unittest code. Please use accessors otherwise.
@@ -137,3 +145,5 @@ namespace bson {
     std::ostream& operator<<(std::ostream& os, ErrorCodes::Error);
 
 }  // namespace bson
+
+#include <chaos/common/bson/base/status-inl.h>

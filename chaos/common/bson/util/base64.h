@@ -16,10 +16,9 @@
  */
 
 #pragma once
-#include <sstream>
-#include <string>
+#include <assert.h>
 #include <boost/scoped_array.hpp>
-#include <chaos/common/bson/util/assert_util.h>
+#include <sstream>
 namespace bson {
     namespace base64 {
 
@@ -40,9 +39,9 @@ namespace bson {
                 test();
             }
             void test() {
-                MONGO_verify( strlen( (char*)encode ) == 64 );
+                assert( std::strlen( (char*)encode ) == 64 );
                 for ( int i=0; i<26; i++ )
-                    MONGO_verify( encode[i] == toupper( encode[i+26] ) );
+                    assert( encode[i] == toupper( encode[i+26] ) );
             }
 
             char e( int x ) {
@@ -60,7 +59,7 @@ namespace bson {
 
         void encode( std::stringstream& ss , const char * data , int size );
         std::string encode( const char * data , int size );
-        std::string encode( const string& s );
+        std::string encode( const std::string& s );
 
         void decode( std::stringstream& ss , const std::string& s );
         std::string decode( const std::string& s );

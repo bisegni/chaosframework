@@ -15,10 +15,11 @@
  *    limitations under the License.
  */
 
-#include <ostream>
 #include <boost/functional/hash.hpp>
 #include <boost/scoped_ptr.hpp>
-#include <chaos/common/utility/Atomic.h>
+
+#include <chaos/common/bson/platform/atomic_word.h>
+#include <chaos/common/bson/platform/process_id.h>
 #include <chaos/common/bson/platform/random.h>
 #include <chaos/common/bson/bsonobjbuilder.h>
 #include <chaos/common/bson/oid.h>
@@ -45,17 +46,9 @@ namespace bson {
         return s;
     }
 
-    unsigned OID::ourPid() {
-#ifdef _WIN32
-        return static_cast<unsigned>( GetCurrentProcessId() );
-#else
-        return static_cast<unsigned>( getpid() );
-#endif
-    }
-
     void OID::foldInPid(OID::MachineAndPid& x) {
-        unsigned p = ourPid();
-        x._pid ^= (unsigned short) p;
+        unsigned p = ProcessId::getCurrent().asUInt32();
+        x._pid ^= static_cast<unsigned short>(p);
         // when the pid is greater than 16 bits, let the high bits modulate the machine id field.
         unsigned short& rest = (unsigned short &) x._machineNumber[1];
         rest ^= p >> 16;
@@ -65,7 +58,7 @@ namespace bson {
         BOOST_STATIC_ASSERT( sizeof(bson::OID::MachineAndPid) == 5 );
 
         // we only call this once per process
-        boost::scoped_ptr<SecureRandom> sr( SecureRandom::create() );
+		boost::scoped_ptr<SecureRandom> sr( SecureRandom::create() );
         int64_t n = sr->nextInt64();
         OID::MachineAndPid x = ourMachine = reinterpret_cast<OID::MachineAndPid&>(n);
         foldInPid(x);
@@ -103,8 +96,8 @@ namespace bson {
     }
 
     void OID::init() {
-        boost::scoped_ptr<SecureRandom> sr( SecureRandom::create() );
-        static AtomicUInt inc = static_cast<unsigned>( sr->nextInt64() );
+        static AtomicUInt inc = static_cast<unsigned>(
+		boost::scoped_ptr<SecureRandom>(SecureRandom::create())->nextInt64());
 
         {
             unsigned t = (unsigned) time(0);
@@ -126,7 +119,7 @@ namespace bson {
         }
     }
 
-    static chaos::atomic_int_type _initSequential_sequence;
+    static AtomicUInt64 _initSequential_sequence;
     void OID::initSequential() {
 
         {
@@ -139,7 +132,7 @@ namespace bson {
         }
         
         {
-            unsigned long long nextNumber = chaos::atomic_increment(&_initSequential_sequence);
+            unsigned long long nextNumber = _initSequential_sequence.fetchAndAdd(1);
             unsigned char* numberData = reinterpret_cast<unsigned char*>(&nextNumber);
             for ( int i=0; i<8; i++ ) {
                 data[4+i] = numberData[7-i];

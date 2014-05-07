@@ -25,7 +25,7 @@
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
-#include "mongo/client/dbclient.h"
+#include <mongo/client/dbclient.h>
 
 namespace chaos {
 	namespace data_service {

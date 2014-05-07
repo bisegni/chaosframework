@@ -142,7 +142,7 @@ dodouble:
             return 0;
         }
         default:
-            assert( false);
+            verify( false);
         }
         return -1;
     }
@@ -180,12 +180,12 @@ dodouble:
     }
 
     inline BSONObj BSONElement::embeddedObject() const {
-        //verify( isABSONObj() );
+        verify( isABSONObj() );
         return BSONObj(value());
     }
 
     inline BSONObj BSONElement::codeWScopeObject() const {
-        //verify( type() == CodeWScope );
+        verify( type() == CodeWScope );
         int strSizeWNull = *(int *)( value() + 4 );
         return BSONObj( value() + 4 + 4 + strSizeWNull );
     }
@@ -208,7 +208,7 @@ dodouble:
     inline NOINLINE_DECL void BSONObj::_assertInvalid() const {
         StringBuilder ss;
         int os = objsize();
-        ss << "BSONObj size: " << os << " (0x" << toHex( &os, 4 ) << ") is invalid. "
+        ss << "BSONObj size: " << os << " (0x" << integerToHex( os ) << ") is invalid. "
            << "Size must be between 0 and " << BSONObjMaxInternalSize
            << "(" << ( BSONObjMaxInternalSize/(1024*1024) ) << "MB)";
         try {
@@ -216,7 +216,7 @@ dodouble:
             ss << " First element: " << e.toString();
         }
         catch ( ... ) { }
-        assert( 0 );
+        massert( 10334 , ss.str() , 0 );
     }
 
     /* the idea with NOINLINE_DECL here is to keep this from inlining in the
@@ -272,29 +272,27 @@ dodouble:
         return BSONElement();
     }
 
-    inline int BSONObj::getIntField(const char *name) const {
+    inline int BSONObj::getIntField(const StringData& name) const {
         BSONElement e = getField(name);
         return e.isNumber() ? (int) e.number() : std::numeric_limits< int >::min();
     }
 
-    inline bool BSONObj::getBoolField(const char *name) const {
+    inline bool BSONObj::getBoolField(const StringData& name) const {
         BSONElement e = getField(name);
         return e.type() == Bool ? e.boolean() : false;
     }
 
-    inline const char * BSONObj::getStringField(const char *name) const {
+    inline const char * BSONObj::getStringField(const StringData& name) const {
         BSONElement e = getField(name);
         return e.type() == String ? e.valuestr() : "";
     }
 
     /* add all the fields from the object specified to this object */
     inline BSONObjBuilder& BSONObjBuilder::appendElements(BSONObj x) {
-        BSONObjIterator it(x);
-        while ( it.moreWithEOO() ) {
-            BSONElement e = it.next();
-            if ( e.eoo() ) break;
-            append(e);
-        }
+        if (!x.isEmpty())
+            _b.appendBuf(
+                x.objdata() + 4,   // skip over leading length
+                x.objsize() - 5);  // ignore leading length and trailing \0
         return *this;
     }
 
@@ -367,10 +365,10 @@ dodouble:
 
     inline void BSONObjBuilderValueStream::endField( const StringData& nextFieldName ) {
         if ( haveSubobj() ) {
-            assert( _fieldName.rawData() );
+            verify( _fieldName.rawData() );
             _builder->append( _fieldName, subobj()->done() );
+            _subobj.reset();
         }
-        _subobj.reset();
         _fieldName = nextFieldName;
     }
 
@@ -454,14 +452,14 @@ dodouble:
     }
 
     inline std::string BSONObj::toString( bool isArray, bool full ) const {
-        if ( isEmpty() ) return "{}";
+        if ( isEmpty() ) return (isArray ? "[]" : "{}");
         StringBuilder s;
         toString(s, isArray, full);
         return s.str();
     }
     inline void BSONObj::toString( StringBuilder& s,  bool isArray, bool full, int depth ) const {
         if ( isEmpty() ) {
-            s << "{}";
+            s << (isArray ? "[]" : "{}");
             return;
         }
 
@@ -469,16 +467,16 @@ dodouble:
         BSONObjIterator i(*this);
         bool first = true;
         while ( 1 ) {
-            assert( i.moreWithEOO() );
+            massert( 10327 ,  "Object does not end with EOO", i.moreWithEOO() );
             BSONElement e = i.next( true );
-            assert( e.size() > 0 );
-            assert( e.size() < ( 1 << 30 ) );
+            massert( 10328 ,  "Invalid element size", e.size() > 0 );
+            massert( 10329 ,  "Element too large", e.size() < ( 1 << 30 ) );
             int offset = (int) (e.rawdata() - this->objdata());
-            assert( e.size() + offset <= this->objsize() );
-            e.validate();
+            massert( 10330 ,  "Element extends past end of object",
+                     e.size() + offset <= this->objsize() );
             bool end = ( e.size() + offset == this->objsize() );
             if ( e.eoo() ) {
-                assert( end );
+                massert( 10331 ,  "EOO Before end of object", end );
                 break;
             }
             if ( first )
@@ -488,44 +486,6 @@ dodouble:
             e.toString( s, !isArray, full, depth );
         }
         s << ( isArray ? " ]" : " }" );
-    }
-
-    inline void BSONElement::validate() const {
-        const BSONType t = type();
-
-        switch( t ) {
-        case DBRef:
-        case Code:
-        case Symbol:
-        case bson::String: {
-            unsigned x = (unsigned) valuestrsize();
-            bool lenOk = x > 0 && x < (unsigned) BSONObjMaxInternalSize;
-            if( lenOk && valuestr()[x-1] == 0 )
-                return;
-            StringBuilder buf;
-            buf <<  "Invalid dbref/code/string/symbol size: " << x;
-            if( lenOk )
-                buf << " strnlen:" << bson::strnlen( valuestr() , x );
-            msgasserted( 10321 , buf.str() );
-            break;
-        }
-        case CodeWScope: {
-            int totalSize = *( int * )( value() );
-            assert( totalSize >= 8 );
-            int strSizeWNull = *( int * )( value() + 4 );
-            assert( totalSize >= strSizeWNull + 4 + 4 );
-            assert( strSizeWNull > 0 &&
-                     (strSizeWNull - 1) == bson::strnlen( codeWScopeCode(), strSizeWNull ) );
-            assert( totalSize >= strSizeWNull + 4 + 4 + 4 );
-            int objSize = *( int * )( value() + 4 + 4 + strSizeWNull );
-            assert( totalSize == 4 + 4 + strSizeWNull + objSize );
-            // Subobject validation handled elsewhere.
-        }
-        case Object:
-            // We expect Object size validation to be handled elsewhere.
-        default:
-            break;
-        }
     }
 
     inline int BSONElement::size( int maxLen ) const {
@@ -560,25 +520,25 @@ dodouble:
         case Symbol:
         case Code:
         case bson::String:
-            assert( maxLen == -1 || remain > 3 );
+            massert( 10313 ,  "Insufficient bytes to calculate element size", maxLen == -1 || remain > 3 );
             x = valuestrsize() + 4;
             break;
         case CodeWScope:
-            assert( maxLen == -1 || remain > 3 );
+            massert( 10314 ,  "Insufficient bytes to calculate element size", maxLen == -1 || remain > 3 );
             x = objsize();
             break;
 
         case DBRef:
-            assert( maxLen == -1 || remain > 3 );
+            massert( 10315 ,  "Insufficient bytes to calculate element size", maxLen == -1 || remain > 3 );
             x = valuestrsize() + 4 + 12;
             break;
         case Object:
         case bson::Array:
-            assert(maxLen == -1 || remain > 3 );
+            massert( 10316 ,  "Insufficient bytes to calculate element size", maxLen == -1 || remain > 3 );
             x = objsize();
             break;
         case BinData:
-            assert( maxLen == -1 || remain > 3 );
+            massert( 10317 ,  "Insufficient bytes to calculate element size", maxLen == -1 || remain > 3 );
             x = valuestrsize() + 4 + 1/*subtype*/;
             break;
         case RegEx: {
@@ -591,7 +551,7 @@ dodouble:
                 len2 = strlen( p );
             else {
                 size_t x = remain - len1 - 1;
-                assert( x <= 0x7fffffff );
+                verify( x <= 0x7fffffff );
                 len2 = bson::strnlen( p, (int) x );
             }
             //massert( 10319 ,  "Invalid regex options string", len2 != -1 ); // ERH - 4/28/10 - don't think this does anything
@@ -602,7 +562,7 @@ dodouble:
             StringBuilder ss;
             ss << "BSONElement: bad type " << (int) type();
             std::string msg = ss.str();
-            assert(false);
+            massert( 13655 , msg.c_str(),false);
         }
         }
         totalSize =  x + fieldNameSize() + 1; // BSONType
@@ -668,7 +628,7 @@ dodouble:
                 StringBuilder ss;
                 ss << "BSONElement: bad type " << (int) type();
                 std::string msg = ss.str();
-                assert(false);
+                massert(10320 , msg.c_str(),false);
             }
         }
         totalSize =  x + fieldNameSize() + 1; // BSONType
@@ -689,7 +649,7 @@ dodouble:
                 StringBuilder s;
                 s << "Reached maximum recursion depth of ";
                 s << BSONObj::maxToStringRecursionDepth;
-                assert(full != true);
+                uassert(16150, s.str(), full != true);
             }
             s << "...";
             return;
@@ -796,21 +756,22 @@ dodouble:
     /* return has eoo() true if no match
        supports "." notation to reach into embedded objects
     */
-    inline BSONElement BSONObj::getFieldDotted(const char *name) const {
-        BSONElement e = getField( name );
-        if ( e.eoo() ) {
-            const char *p = strchr(name, '.');
-            if ( p ) {
-                std::string left(name, p-name);
-                BSONObj sub = getObjectField(left.c_str());
-                return sub.isEmpty() ? BSONElement() : sub.getFieldDotted(p+1);
+    inline BSONElement BSONObj::getFieldDotted(const StringData& name) const {
+        BSONElement e = getField(name);
+        if (e.eoo()) {
+            size_t dot_offset = name.find('.');
+            if (dot_offset != string::npos) {
+                StringData left = name.substr(0, dot_offset);
+                StringData right = name.substr(dot_offset + 1);
+                BSONObj sub = getObjectField(left);
+                return sub.isEmpty() ? BSONElement() : sub.getFieldDotted(right);
             }
         }
 
         return e;
     }
 
-    inline BSONObj BSONObj::getObjectField(const char *name) const {
+    inline BSONObj BSONObj::getObjectField(const StringData& name) const {
         BSONElement e = getField(name);
         BSONType t = e.type();
         return t == Object || t == Array ? e.embeddedObject() : BSONObj();
@@ -994,8 +955,8 @@ dodouble:
             appendAs( j.next() , i.next().fieldName() );
         }
 
-        assert( ! i.more() );
-        assert( ! j.more() );
+        verify( ! i.more() );
+        verify( ! j.more() );
     }
 
     inline BSONObj BSONObj::removeField(const StringData& name) const {

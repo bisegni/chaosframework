@@ -17,6 +17,9 @@
 
 #pragma once
 
+#include <chaos/common/bson/bsonobj.h>
+#include <chaos/common/bson/bsonobjiterator.h>
+
 namespace bson {
 
     // todo: ideally move to db/ instead of bson/, but elim any dependencies first
@@ -61,7 +64,7 @@ namespace bson {
                 BSONElement e = k.next();
                 if( e.eoo() )
                     break;
-                assert( n <= 31 );
+                uassert( 13103, "too many compound keys", n <= 31 );
                 if( e.number() < 0 )
                     b |= (1 << n);
                 n++;

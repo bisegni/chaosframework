@@ -28,6 +28,7 @@
 #include <chaos/common/bson/base/string_data.h>
 #include <chaos/common/bson/util/atomic_int.h>
 #include <chaos/common/bson/util/builder.h>
+#include <chaos/common/bson/util/bufreader.h>
 
 namespace bson {
 
@@ -74,7 +75,7 @@ namespace bson {
      */
     class BSONObj {
     public:
-        
+
         /** Construct a BSONObj from data in the proper format.
          *  Use this constructor when something else owns msgdata's buffer
         */
@@ -94,9 +95,7 @@ namespace bson {
         /** Construct an empty BSONObj -- that is, {}. */
         BSONObj();
 
-        static BSONObj make( const Record* r );
-
-        ~BSONObj() { 
+        ~BSONObj() {
             _objdata = 0; // defensive
         }
 
@@ -130,7 +129,7 @@ namespace bson {
         */
         bool isOwned() const { return _holder.get() != 0; }
 
-        /** assure the data buffer is under the control of this BSONObj and not a remote buffer 
+        /** assure the data buffer is under the control of this BSONObj and not a remote buffer
             @see isOwned()
         */
         BSONObj getOwned() const;
@@ -171,14 +170,7 @@ namespace bson {
             @param name field to find. supports dot (".") notation to reach into embedded objects.
              for example "x.y" means "in the nested object in field x, retrieve field y"
         */
-        BSONElement getFieldDotted(const char *name) const;
-        /** @return the specified element.  element.eoo() will be true if not found.
-            @param name field to find. supports dot (".") notation to reach into embedded objects.
-             for example "x.y" means "in the nested object in field x, retrieve field y"
-        */
-        BSONElement getFieldDotted(const std::string& name) const {
-            return getFieldDotted( name.c_str() );
-        }
+        BSONElement getFieldDotted(const StringData &name) const;
 
         /** Like getFieldDotted(), but expands arrays and returns all matching objects.
          *  Turning off expandLastArray allows you to retrieve nested array objects instead of
@@ -197,7 +189,7 @@ namespace bson {
         */
         BSONElement getField(const StringData& name) const;
 
-        /** Get several fields at once. This is faster than separate getField() calls as the size of 
+        /** Get several fields at once. This is faster than separate getField() calls as the size of
             elements iterated can then be calculated only once each.
             @param n number of fieldNames, and number of elements in the fields array
             @param fields if a field is found its element is stored in its corresponding position in this array.
@@ -208,11 +200,7 @@ namespace bson {
         /** Get the field of the specified name. eoo() is true on the returned
             element if not found.
         */
-        BSONElement operator[] (const char *field) const {
-            return getField(field);
-        }
-
-        BSONElement operator[] (const std::string& field) const {
+        BSONElement operator[] (const StringData& field) const {
             return getField(field);
         }
 
@@ -229,18 +217,18 @@ namespace bson {
         bool hasElement(const StringData& name) const { return hasField(name); }
 
         /** @return "" if DNE or wrong type */
-        const char * getStringField(const char *name) const;
+        const char * getStringField(const StringData& name) const;
 
         /** @return subobject of the given name */
-        BSONObj getObjectField(const char *name) const;
+        BSONObj getObjectField(const StringData& name) const;
 
         /** @return INT_MIN if not present - does some type conversions */
-        int getIntField(const char *name) const;
+        int getIntField(const StringData& name) const;
 
-        /** @return false if not present 
+        /** @return false if not present
             @see BSONElement::trueValue()
          */
-        bool getBoolField(const char *name) const;
+        bool getBoolField(const StringData& name) const;
 
         /** @param pattern a BSON obj indicating a set of (un-dotted) field
          *  names.  Element values are ignored.
@@ -265,7 +253,8 @@ namespace bson {
 
         BSONObj filterFieldsUndotted(const BSONObj &filter, bool inFilter) const;
 
-        BSONElement getFieldUsingIndexNames(const char *fieldName, const BSONObj &indexKey) const;
+        BSONElement getFieldUsingIndexNames(const StringData& fieldName,
+                                            const BSONObj &indexKey) const;
 
         /** arrays are bson objects with numeric and increasing field names
             @return true if field names are numeric and increasing
@@ -282,10 +271,49 @@ namespace bson {
         /** performs a cursory check on the object's size only. */
         bool isValid() const;
 
-        /** @return if the user is a valid user doc
-            criter: isValid() no . or $ field names
+        /** @return ok if it can be stored as a valid embedded doc.
+         *  Not valid if any field name:
+         *      - contains a "."
+         *      - starts with "$"
+         *          -- unless it is a dbref ($ref/$id/[$db]/...)
          */
-        bool okForStorage() const;
+        inline bool okForStorage() const {
+            return _okForStorage(false, true).isOK();
+        }
+
+        /** Same as above with the following extra restrictions
+         *  Not valid if:
+         *      - "_id" field is a
+         *          -- Regex
+         *          -- Array
+         */
+        inline bool okForStorageAsRoot() const {
+            return _okForStorage(true, true).isOK();
+        }
+
+        /**
+         * Validates that this can be stored as an embedded document
+         * See details above in okForStorage
+         *
+         * If 'deep' is true then validation is done to children
+         *
+         * If not valid a user readable status message is returned.
+         */
+        inline Status storageValidEmbedded(const bool deep = true) const {
+            return _okForStorage(false, deep);
+        }
+
+        /**
+         * Validates that this can be stored as a document (in a collection)
+         * See details above in okForStorageAsRoot
+         *
+         * If 'deep' is true then validation is done to children
+         *
+         * If not valid a user readable status message is returned.
+         */
+        inline Status storageValid(const bool deep = true) const {
+            return _okForStorage(true, deep);
+        }
 
         /** @return true if object is empty -- i.e.,  {} */
         bool isEmpty() const { return objsize() <= 5; }
@@ -353,15 +381,15 @@ namespace bson {
         /** @return first field of the object */
         BSONElement firstElement() const { return BSONElement(objdata() + 4); }
 
-        /** faster than firstElement().fieldName() - for the first element we can easily find the fieldname without 
+        /** faster than firstElement().fieldName() - for the first element we can easily find the fieldname without
             computing the element size.
         */
-        const char * firstElementFieldName() const { 
+        const char * firstElementFieldName() const {
             const char *p = objdata() + 4;
             return *p == EOO ? "" : p+1;
         }
 
-        BSONType firstElementType() const { 
+        BSONType firstElementType() const {
             const char *p = objdata() + 4;
             return (BSONType) *p;
         }
@@ -462,7 +490,7 @@ namespace bson {
         BSONObjIterator begin() const;
 
         void appendSelfToBufBuilder(BufBuilder& b) const {
-            assert( objsize() );
+            verify( objsize() );
             b.appendBuf(reinterpret_cast<const void *>( objdata() ), objsize());
         }
 
@@ -508,6 +536,19 @@ namespace bson {
         return *this;
     }
 
+    /// members for Sorter
+    struct SorterDeserializeSettings {}; // unused
+    void serializeForSorter(BufBuilder& buf) const { buf.appendBuf(objdata(), objsize()); }
+    static BSONObj deserializeForSorter(BufReader& buf, const SorterDeserializeSettings&) {
+        const int size = buf.peek<int>();
+        const void* ptr = buf.skip(size);
+        return BSONObj(static_cast<const char*>(ptr));
+    }
+    int memUsageForSorter() const {
+        // TODO consider ownedness?
+        return sizeof(BSONObj) + objsize();
+    }
+
     private:
         const char *_objdata;
         boost::intrusive_ptr< Holder > _holder;
@@ -523,6 +564,14 @@ namespace bson {
             if ( !isValid() )
                 _assertInvalid();
         }
+
+        /**
+         * Validate if the element is okay to be stored in a collection, maybe as the root element
+         *
+         * If 'root' is true then checks against _id are made.
+         * If 'deep' is false then do not traverse through children
+         */
+        Status _okForStorage(bool root, bool deep) const;
     };
 
     std::ostream& operator<<( std::ostream &s, const BSONObj &o );

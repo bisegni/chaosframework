@@ -15,9 +15,8 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#include <sstream>
-#include <chaos/common/bson/util/base64.h>
 
+#include <chaos/common/bson/util/base64.h>
 namespace bson {
     namespace base64 {
 
@@ -75,7 +74,7 @@ namespace bson {
 
 
         void decode( std::stringstream& ss , const std::string& s ) {
-            MONGO_uassert( 10270 ,  "invalid base64" , s.size() % 4 == 0 );
+            assert(s.size() % 4 == 0 );
             const unsigned char * data = (const unsigned char*)s.c_str();
             int size = s.size();
 

@@ -16,6 +16,7 @@
 #include <chaos/common/bson/util/bson_extract.h>
 
 #include <chaos/common/bson/util/jsobj.h>
+#include <chaos/common/bson/util/mongoutils/str.h>
 
 namespace bson {
 
@@ -24,7 +25,9 @@ namespace bson {
                             BSONElement* outElement) {
         BSONElement element = object.getField(fieldName);
         if (element.eoo())
-            return Status(ErrorCodes::NoSuchKey, fieldName.toString());
+            return Status(ErrorCodes::NoSuchKey,
+                          bsonutils::str::stream() << "Missing expected field \"" <<
+                                  fieldName.toString() << "\"");
         *outElement = element;
         return Status::OK();
     }
@@ -38,8 +41,21 @@ namespace bson {
             return status;
         if (type != outElement->type()) {
             return Status(ErrorCodes::TypeMismatch,
-                          std::string("Expected "));
+                          bsonutils::str::stream() << "\"" << fieldName <<
+                          "\" had the wrong type. Expected " << typeName(type) <<
+                          ", found " << typeName(outElement->type()));
         }
+        return Status::OK();
+    }
+
+    Status bsonExtractBooleanField(const BSONObj& object,
+                                   const StringData& fieldName,
+                                   bool* out) {
+        BSONElement element;
+        Status status = bsonExtractTypedField(object, fieldName, Bool, &element);
+        if (!status.isOK())
+            return status;
+        *out = element.boolean();
         return Status::OK();
     }
 
@@ -51,17 +67,20 @@ namespace bson {
         Status status = bsonExtractField(object, fieldName, &value);
         if (status == ErrorCodes::NoSuchKey) {
             *out = defaultValue;
+            return Status::OK();
         }
         else if (!status.isOK()) {
             return status;
         }
         else if (!value.isNumber() && !value.isBoolean()) {
-            return Status(ErrorCodes::TypeMismatch, "Expected boolean or number type");
+            return Status(ErrorCodes::TypeMismatch, bsonutils::str::stream() <<
+                          "Expected boolean or number type for field \"" << fieldName <<
+                          "\", found " << typeName(value.type()));
         }
         else {
             *out = value.trueValue();
+            return Status::OK();
         }
-        return Status::OK();
     }
 
     Status bsonExtractStringField(const BSONObj& object,
@@ -87,6 +106,41 @@ namespace bson {
             return status;
         }
         return Status::OK();
+    }
+
+    Status bsonExtractIntegerField(const BSONObj& object,
+                                   const StringData& fieldName,
+                                   long long* out) {
+        BSONElement value;
+        Status status = bsonExtractField(object, fieldName, &value);
+        if (!status.isOK())
+            return status;
+        if (!value.isNumber()) {
+            return Status(ErrorCodes::TypeMismatch, bsonutils::str::stream() <<
+                          "Expected field \"" << fieldName <<
+                          "\" to have numeric type, but found " << typeName(value.type()));
+        }
+        long long result = value.safeNumberLong();
+        if (result != value.numberDouble()) {
+            return Status(ErrorCodes::BadValue, bsonutils::str::stream() <<
+                          "Expected field \"" << fieldName << "\" to have a value "
+                          "exactly representable as a 64-bit integer, but found " <<
+                          value);
+        }
+        *out = result;
+        return Status::OK();
+    }
+
+    Status bsonExtractIntegerFieldWithDefault(const BSONObj& object,
+                                              const StringData& fieldName,
+                                              long long defaultValue,
+                                              long long* out) {
+        Status status = bsonExtractIntegerField(object, fieldName, out);
+        if (status == ErrorCodes::NoSuchKey) {
+            *out = defaultValue;
+            status = Status::OK();
+        }
+        return status;
     }
 
 }  // namespace bson

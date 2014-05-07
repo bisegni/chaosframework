@@ -137,7 +137,6 @@ namespace bson {
             unsigned char data[kOIDSize];
         };
 
-        static unsigned ourPid();
         static void foldInPid(MachineAndPid& x);
         static MachineAndPid genMachineAndPid();
     };
@@ -147,7 +146,7 @@ namespace bson {
     inline StringBuilder& operator<< (StringBuilder& s, const OID& o) { return (s << o.str()); }
 
     /** Formatting mode for generating JSON from BSON.
-        See <http://mongodb.onconfluence.com/display/DOCS/Mongo+Extended+JSON>
+        See <http://dochub.mongodb.org/core/mongodbextendedjson>
         for details.
     */
     enum JsonStringFormat {

@@ -14,20 +14,20 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-
-
-#include <chaos/common/bson/util/stringutils.h>
+#include <vector>
+#include <string>
+#include <chaos/common/bson/base/string_data.h>
+#include <chaos/common/bson/base/stringutils.h>
 
 namespace bson {
-    using namespace std;
-    
-    void splitStringDelim( const string& str , vector<string>* res , char delim ) {
+
+    void splitStringDelim( const std::string& str , std::vector<std::string>* res , char delim ) {
         if ( str.empty() )
             return;
 
         size_t beg = 0;
         size_t pos = str.find( delim );
-        while ( pos != string::npos ) {
+        while ( pos != std::string::npos ) {
             res->push_back( str.substr( beg, pos - beg) );
             beg = ++pos;
             pos = str.find( delim, beg );
@@ -35,8 +35,8 @@ namespace bson {
         res->push_back( str.substr( beg ) );
     }
 
-    void joinStringDelim( const vector<string>& strs , string* res , char delim ) {
-        for ( vector<string>::const_iterator it = strs.begin(); it != strs.end(); ++it ) {
+    void joinStringDelim( const std::vector<std::string>& strs , std::string* res , char delim ) {
+        for ( std::vector<std::string>::const_iterator it = strs.begin(); it != strs.end(); ++it ) {
             if ( it !=strs.begin() ) res->push_back( delim );
             res->append( *it );
         }

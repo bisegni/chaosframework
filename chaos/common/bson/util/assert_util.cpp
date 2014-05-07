@@ -24,8 +24,10 @@ using namespace std;
 #include <cxxabi.h>
 #include <sys/file.h>
 #endif
-
+#include <chaos/common/global.h>
 #include <chaos/common/bson/bsonobjbuilder.h>
+//#include <chaos/common/bson/db/lasterror.h>
+//#include <chaos/common/bson/util/stacktrace.h>
 
 namespace bson {
 
@@ -52,8 +54,16 @@ namespace bson {
     bool DBException::traceExceptions = false;
 
     string DBException::toString() const {
-        stringstream ss; ss << getCode() << " " << what(); return ss.str();
+        stringstream ss;
+        ss << getCode() << " " << what();
         return ss.str();
+    }
+
+    void DBException::traceIfNeeded( const DBException& e ) {
+        if( traceExceptions){
+			LWRN_ << "DBException thrown" << causedBy( e );
+            //printStackTrace();
+        }
     }
 
     ErrorCodes::Error DBException::convertExceptionCode(int exCode) {
@@ -79,36 +89,62 @@ namespace bson {
         if( lastLine == line && time(0)-lastWhen < 5 ) { 
             if( !rateLimited ) { 
                 rateLimited = true;
+                LAPP_ << "rate limiting wassert";
             }
             return;
         }
         lastWhen = time(0);
         lastLine = line;
 
-       
+        LWRN_ << "warning assertion failure " << msg << ' ' << file << ' ' << dec << line;
         assertionCount.condrollover( ++assertionCount.warning );
 #if defined(_DEBUG) || defined(_DURABLEDEFAULTON) || defined(_DURABLEDEFAULTOFF)
         // this is so we notice in buildbot
-        log() << "\n\n***aborting after wassert() failure in a debug/test build\n\n" << endl;
+        LAPP_ << "\n\n***aborting after wassert() failure in a debug/test build\n\n";
         abort();
 #endif
     }
 
     NOINLINE_DECL void verifyFailed(const char *msg, const char *file, unsigned line) {
         assertionCount.condrollover( ++assertionCount.regular );
-        
-        stringstream temp;
+        LWRN_ << "Assertion failure " << msg << ' ' << file << ' ' << dec << line;
+		stringstream temp;
         temp << "assertion " << file << ":" << line;
         AssertionException e(temp.str(),0);
+        
 #if defined(_DEBUG) || defined(_DURABLEDEFAULTON) || defined(_DURABLEDEFAULTOFF)
         // this is so we notice in buildbot
-        log() << "\n\n***aborting after verify() failure as this is a debug/test build\n\n" << endl;
+        LAPP_ << "\n\n***aborting after verify() failure as this is a debug/test build\n\n";
         abort();
 #endif
         throw e;
     }
 
+    NOINLINE_DECL void invariantFailed(const char *msg, const char *file, unsigned line) {
+        LWRN_ << "Invariant failure " << msg << ' ' << file << ' ' << dec << line;
+        
+        
+        LAPP_ << "\n\n***aborting after invariant() failure\n\n";
+        abort();
+    }
+
     NOINLINE_DECL void fassertFailed( int msgid ) {
+        LWRN_ << "Fatal Assertion " << msgid;
+        
+        LAPP_ << "\n\n***aborting after fassert() failure\n\n";
+        abort();
+    }
+
+    NOINLINE_DECL void fassertFailedNoTrace( int msgid ) {
+        LWRN_ << "Fatal Assertion " << msgid;
+        
+        LAPP_ << "\n\n***aborting after fassert() failure\n\n";
+        exit(1); // bypass our handler for SIGABRT, which prints a stack trace.
+    }
+
+    MONGO_COMPILER_NORETURN void fassertFailedWithStatus(int msgid, const Status& status) {
+        LWRN_ << "Fatal assertion " <<  msgid << " " << status;
+        LAPP_ << "\n\n***aborting after fassert() failure\n\n";
         abort();
     }
 
@@ -119,24 +155,54 @@ namespace bson {
     void UserException::appendPrefix( stringstream& ss ) const { ss << "userassert:"; }
     void MsgAssertionException::appendPrefix( stringstream& ss ) const { ss << "massert:"; }
 
-    MONGO_COMPILER_NORETURN NOINLINE_DECL void uasserted(int msgid, const char *msg) {
+    NOINLINE_DECL void uasserted(int msgid, const char *msg) {
         assertionCount.condrollover( ++assertionCount.user );
-        
+        LAPP_ << "User Assertion: " << msgid << ":" << msg;
         throw UserException(msgid, msg);
     }
 
-    MONGO_COMPILER_NORETURN void msgasserted(int msgid, const string &msg) {
+    void msgasserted(int msgid, const string &msg) {
         msgasserted(msgid, msg.c_str());
     }
 
-    MONGO_COMPILER_NORETURN NOINLINE_DECL void msgasserted(int msgid, const char *msg) {
+    NOINLINE_DECL void msgasserted(int msgid, const char *msg) {
         assertionCount.condrollover( ++assertionCount.warning );
+        LAPP_ << "Assertion: " << msgid << ":" << msg;
         throw MsgAssertionException(msgid, msg);
     }
 
     NOINLINE_DECL void msgassertedNoTrace(int msgid, const char *msg) {
         assertionCount.condrollover( ++assertionCount.warning );
+		LAPP_ << "Assertion: " << msgid << ":" << msg;
         throw MsgAssertionException(msgid, msg);
+    }
+
+    void msgassertedNoTrace(int msgid, const std::string& msg) {
+        msgassertedNoTrace(msgid, msg.c_str());
+    }
+
+    std::string causedBy( const char* e ) {
+        return std::string(" :: caused by :: ") + e;
+    }
+
+    std::string causedBy( const DBException& e ){
+        return causedBy( e.toString() );
+    }
+
+    std::string causedBy( const std::exception& e ) {
+        return causedBy( e.what() );
+    }
+
+    std::string causedBy( const std::string& e ){
+        return causedBy( e.c_str() );
+    }
+
+    std::string causedBy( const std::string* e ) {
+        return (e && *e != "") ? causedBy(*e) : "";
+    }
+
+    std::string causedBy( const Status& e ){
+        return causedBy( e.reason() );
     }
 
     NOINLINE_DECL void streamNotGood( int code , const std::string& msg , std::ios& myios ) {
@@ -176,7 +242,7 @@ namespace bson {
 
     NOINLINE_DECL ErrorMsg::ErrorMsg(const char *msg, char ch) {
         int l = strlen(msg);
-        assert( l < 128);
+        verify( l < 128);
         memcpy(buf, msg, l);
         char *p = buf + l;
         p[0] = ch;
@@ -185,7 +251,7 @@ namespace bson {
 
     NOINLINE_DECL ErrorMsg::ErrorMsg(const char *msg, unsigned val) {
         int l = strlen(msg);
-        assert( l < 128);
+        verify( l < 128);
         memcpy(buf, msg, l);
         char *p = buf + l;
         sprintf(p, "%u", val);
