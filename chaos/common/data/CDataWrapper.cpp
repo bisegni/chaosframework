@@ -102,7 +102,7 @@ void CDataWrapper::appendInt32ToArray(int32_t int32ArrayElement) {
 
 //append a strin gto an open array
 void CDataWrapper::appendInt64ToArray(int64_t int64ArrayElement) {
-    bsonArrayBuilder->append((long long)sint64ArrayElement);
+    bsonArrayBuilder->append((long long)int64ArrayElement);
 }
 
 //append a strin gto an open array
