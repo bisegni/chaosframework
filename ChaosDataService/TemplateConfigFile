@@ -1,0 +1,15 @@
+log-on-console=yes
+log-level=debug
+cache_servers=couchbase01
+cache_servers=couchbase02
+cache_servers=couchbase03
+cache_driver=Couchbase
+data-io-impl=IODirect
+answer_worker_thread=2
+cache_worker_thread=2
+vfs_storage_domain=test_domain
+vfs_index_servers=mongodb01:27017
+vfs_index_servers=mongodb02:27017
+vfs_index_servers=mongodb03:27017
+vfs_storage_driver_kvp=posix_root_path:/Volumes/MegaAppo/chaos_domain_test
+vfs_index_driver_kvp=user:[user]-pwd:[password]-db:[vfs database name]

@@ -933,6 +933,7 @@
 		32C100F9191B847800478F40 /* TimerHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimerHandler.cpp; sourceTree = "<group>"; };
 		32C100FA191B847800478F40 /* TimerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimerHandler.h; sourceTree = "<group>"; };
 		32C100FD191B84FB00478F40 /* async_central.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = async_central.h; sourceTree = "<group>"; };
+		32C100FE191BC94100478F40 /* TemplateConfigFile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TemplateConfigFile; sourceTree = "<group>"; };
 		32C353F01788015B009ED581 /* PluginDiscover.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginDiscover.cpp; sourceTree = "<group>"; };
 		32C353F11788015B009ED581 /* PluginDiscover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginDiscover.h; sourceTree = "<group>"; };
 		32C3543517885A37009ED581 /* common.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = common.hpp; sourceTree = "<group>"; };
@@ -1183,6 +1184,7 @@
 		323236D8164573F50052CE06 /* ChaosDataService */ = {
 			isa = PBXGroup;
 			children = (
+				32C100FE191BC94100478F40 /* TemplateConfigFile */,
 				324A4B00191947BD00975394 /* MongodbIndex */,
 				327CB2D8167E44D700AED2C6 /* CMakeLists.txt */,
 				323236D9164573F50052CE06 /* main.cpp */,
