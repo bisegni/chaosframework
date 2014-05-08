@@ -51,8 +51,8 @@ namespace chaos{
             
             static WaitSemaphore waitCloseSemaphore;
             
-            ChaosCUToolkit(){};
-            ~ChaosCUToolkit(){};
+            ChaosCUToolkit();
+            ~ChaosCUToolkit();
             static void signalHanlder(int);
             
         public:
