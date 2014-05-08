@@ -401,6 +401,10 @@
 		32BFF913176C862A00D27A04 /* StartableService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32BFF911176C862A00D27A04 /* StartableService.h */; };
 		32C0CC98168CC16400BC2DA7 /* Entity.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C0CC96168CC16400BC2DA7 /* Entity.cpp */; };
 		32C0CC99168CC16400BC2DA7 /* Entity.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C0CC97168CC16400BC2DA7 /* Entity.h */; };
+		32C100F7191B6F2900478F40 /* AsyncCentralManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C100F5191B6F2900478F40 /* AsyncCentralManager.cpp */; };
+		32C100F8191B6F2900478F40 /* AsyncCentralManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C100F6191B6F2900478F40 /* AsyncCentralManager.h */; };
+		32C100FB191B847800478F40 /* TimerHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C100F9191B847800478F40 /* TimerHandler.cpp */; };
+		32C100FC191B847800478F40 /* TimerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C100FA191B847800478F40 /* TimerHandler.h */; };
 		32C353F21788015B009ED581 /* PluginDiscover.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C353F01788015B009ED581 /* PluginDiscover.cpp */; };
 		32C353F31788015B009ED581 /* PluginDiscover.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C353F11788015B009ED581 /* PluginDiscover.h */; };
 		32C3544E17885A37009ED581 /* common.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32C3543517885A37009ED581 /* common.hpp */; };
@@ -469,8 +473,6 @@
 		32F7FEA118A4FD9B00FC03AB /* DirectIOEndpointHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7FEA018A4FD9B00FC03AB /* DirectIOEndpointHandler.h */; };
 		32F7FEAB18A5066600FC03AB /* FastDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7FEA218A5066600FC03AB /* FastDelegate.h */; };
 		32F7FEAC18A5066600FC03AB /* FastDelegateBind.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7FEA318A5066600FC03AB /* FastDelegateBind.h */; };
-		32FA968317C894830000BE9E /* Semaphore.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FA968117C894830000BE9E /* Semaphore.cpp */; };
-		32FA968417C894830000BE9E /* Semaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 32FA968217C894830000BE9E /* Semaphore.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -926,6 +928,11 @@
 		32BFF911176C862A00D27A04 /* StartableService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StartableService.h; sourceTree = "<group>"; };
 		32C0CC96168CC16400BC2DA7 /* Entity.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Entity.cpp; sourceTree = "<group>"; };
 		32C0CC97168CC16400BC2DA7 /* Entity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Entity.h; sourceTree = "<group>"; };
+		32C100F5191B6F2900478F40 /* AsyncCentralManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AsyncCentralManager.cpp; sourceTree = "<group>"; };
+		32C100F6191B6F2900478F40 /* AsyncCentralManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsyncCentralManager.h; sourceTree = "<group>"; };
+		32C100F9191B847800478F40 /* TimerHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimerHandler.cpp; sourceTree = "<group>"; };
+		32C100FA191B847800478F40 /* TimerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimerHandler.h; sourceTree = "<group>"; };
+		32C100FD191B84FB00478F40 /* async_central.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = async_central.h; sourceTree = "<group>"; };
 		32C353F01788015B009ED581 /* PluginDiscover.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginDiscover.cpp; sourceTree = "<group>"; };
 		32C353F11788015B009ED581 /* PluginDiscover.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginDiscover.h; sourceTree = "<group>"; };
 		32C3543517885A37009ED581 /* common.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = common.hpp; sourceTree = "<group>"; };
@@ -1003,8 +1010,6 @@
 		32F7FEA018A4FD9B00FC03AB /* DirectIOEndpointHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOEndpointHandler.h; sourceTree = "<group>"; };
 		32F7FEA218A5066600FC03AB /* FastDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastDelegate.h; sourceTree = "<group>"; };
 		32F7FEA318A5066600FC03AB /* FastDelegateBind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastDelegateBind.h; sourceTree = "<group>"; };
-		32FA968117C894830000BE9E /* Semaphore.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Semaphore.cpp; sourceTree = "<group>"; };
-		32FA968217C894830000BE9E /* Semaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Semaphore.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1463,6 +1468,7 @@
 				32DA666F1700DBB6004FC02B /* endian.h */,
 				326DB42E14B38BC00018A8D0 /* version.h */,
 				326DB42F14B38BC00018A8D0 /* version.sh */,
+				32C100F4191B6EE100478F40 /* async_central */,
 				3296030E1876B45000CDCADA /* batch_command */,
 				32C3543317885A36009ED581 /* extension */,
 				32875F951776317F00E33D6F /* plugin */,
@@ -1678,8 +1684,6 @@
 		326DB41D14B38BC00018A8D0 /* thread */ = {
 			isa = PBXGroup;
 			children = (
-				32FA968117C894830000BE9E /* Semaphore.cpp */,
-				32FA968217C894830000BE9E /* Semaphore.h */,
 				326DB41E14B38BC00018A8D0 /* ChaosThread.h */,
 				326DB41F14B38BC00018A8D0 /* CThread.cpp */,
 				326DB42014B38BC00018A8D0 /* CThread.h */,
@@ -2121,6 +2125,18 @@
 			path = sqlite_impl;
 			sourceTree = "<group>";
 		};
+		32C100F4191B6EE100478F40 /* async_central */ = {
+			isa = PBXGroup;
+			children = (
+				32C100F5191B6F2900478F40 /* AsyncCentralManager.cpp */,
+				32C100F6191B6F2900478F40 /* AsyncCentralManager.h */,
+				32C100F9191B847800478F40 /* TimerHandler.cpp */,
+				32C100FA191B847800478F40 /* TimerHandler.h */,
+				32C100FD191B84FB00478F40 /* async_central.h */,
+			);
+			path = async_central;
+			sourceTree = "<group>";
+		};
 		32C3543317885A36009ED581 /* extension */ = {
 			isa = PBXGroup;
 			children = (
@@ -2268,7 +2284,6 @@
 				324A4B9F191A569800975394 /* hex.h in Headers */,
 				326DB48514B38BC00018A8D0 /* RpcServer.h in Headers */,
 				324A4B4D191A41EF00975394 /* compiler_gcc.h in Headers */,
-				32FA968417C894830000BE9E /* Semaphore.h in Headers */,
 				326DB48614B38BC00018A8D0 /* CNodeNetworkAddress.h in Headers */,
 				326DB48814B38BC00018A8D0 /* ChaosThread.h in Headers */,
 				32B159D618B38CA50096B58B /* DirectIODeviceServerChannel.h in Headers */,
@@ -2285,6 +2300,7 @@
 				324A4B4C191A41EF00975394 /* bits.h in Headers */,
 				326DB49514B38BC00018A8D0 /* TimingUtil.h in Headers */,
 				326DB49614B38BC00018A8D0 /* UUIDUtil.h in Headers */,
+				32C100F8191B6F2900478F40 /* AsyncCentralManager.h in Headers */,
 				326DB49714B38BC00018A8D0 /* version.h in Headers */,
 				32AAD78814CD660B005A097C /* RpcClient.h in Headers */,
 				324A4B1C191A402A00975394 /* MurmurHash3.h in Headers */,
@@ -2427,6 +2443,7 @@
 				324A4B47191A41EF00975394 /* atomic_intrinsics_gcc_intel.h in Headers */,
 				32640A29169DCC5800450962 /* DataAggregationInterface.h in Headers */,
 				324A4B99191A55E800975394 /* mutex.h in Headers */,
+				32C100FC191B847800478F40 /* TimerHandler.h in Headers */,
 				32640A2A169DCC5800450962 /* DataFetcherInterface.h in Headers */,
 				32640A2C169DCC5800450962 /* EmbeddedDataTransform.h in Headers */,
 				32640A2D169DCC5800450962 /* AbstractDeviceTracker.h in Headers */,
@@ -2749,6 +2766,7 @@
 				3266A5DF18A631A800637592 /* ZMQBaseClass.cpp in Sources */,
 				327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */,
 				32EA501618A15BF000782435 /* DirectIODispatcher.cpp in Sources */,
+				32C100FB191B847800478F40 /* TimerHandler.cpp in Sources */,
 				324A4B9E191A569800975394 /* hex.cpp in Sources */,
 				327967B815DFAAF40003C6DA /* RpcServer.cpp in Sources */,
 				327967D515E029C70003C6DA /* AsioImplEventServer.cpp in Sources */,
@@ -2776,6 +2794,7 @@
 				324A4B96191A557700975394 /* time_support.cpp in Sources */,
 				324A4B15191A3F6A00975394 /* string_data.cpp in Sources */,
 				325013D715E980C800DCB13E /* AsioImplEventClient.cpp in Sources */,
+				32C100F7191B6F2900478F40 /* AsyncCentralManager.cpp in Sources */,
 				324A4B10191A3F6A00975394 /* parse_number.cpp in Sources */,
 				3253F2FE189AEEFD00959CA7 /* DirectIOVirtualClientChannel.cpp in Sources */,
 				325013DC15E9843D00DCB13E /* AsioEventForwarder.cpp in Sources */,
@@ -2818,7 +2837,6 @@
 				32AF7D4018DAEAF300537DE6 /* PerformanceNodeChannel.cpp in Sources */,
 				324A4B71191A428500975394 /* bson_extract.cpp in Sources */,
 				32B1378A189BEC3300B17CA4 /* ZMQDirectIOClient.cpp in Sources */,
-				32FA968317C894830000BE9E /* Semaphore.cpp in Sources */,
 				329603221876B45000CDCADA /* BatchCommand.cpp in Sources */,
 				32BFF90E176C842E00D27A04 /* InizializableService.cpp in Sources */,
 				32C5A42718D9959800C0435C /* DirectIOPerformanceSession.cpp in Sources */,
@@ -3177,6 +3195,7 @@
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lzmq",
+					"-luv",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -3224,6 +3243,7 @@
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lzmq",
+					"-luv",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;

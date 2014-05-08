@@ -76,13 +76,24 @@ void ChaosUIToolkit::init(void *init_data) throw(CException) {
  
  */
 void ChaosUIToolkit::deinit() throw(CException) {
-    
-    UI_LAPP_ << "Deinit HLDataApi";
-    HLDataApi::getInstance()->deinit();
-    UI_LAPP_ << "HLDataApi deinitilized";
-    
-    UI_LAPP_ << "Deinit LLRpcApi";
-    LLRpcApi::getInstance()->deinit();
-    UI_LAPP_ << "LLRpcApi Deinitialized";
-    UI_LAPP_ << "Deinitialization terminated";
+    try{
+		UI_LAPP_ << "Deinit HLDataApi";
+		HLDataApi::getInstance()->deinit();
+		UI_LAPP_ << "HLDataApi deinitilized";
+	}catch(...) {}
+	
+    try{
+		UI_LAPP_ << "Deinit LLRpcApi";
+		LLRpcApi::getInstance()->deinit();
+		UI_LAPP_ << "LLRpcApi Deinitialized";
+		UI_LAPP_ << "Deinitialization terminated";
+	}catch(...) {}
+	
+    try{
+		//forward the deinitialization to the common sublayer
+		ChaosCommon<ChaosUIToolkit>::deinit();
+	}catch(...) {}
+
 }
+	
+

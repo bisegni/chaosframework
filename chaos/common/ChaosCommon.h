@@ -25,8 +25,10 @@
 #include <sstream>
 
 #include <chaos/common/global.h>
+#include <chaos/common/async_central/AsyncCentralManager.h>
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/utility/InetUtility.h>
+#include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/log/LogManager.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 //#include <chaos/common/data/cache/DataCache.h>
@@ -42,7 +44,7 @@ namespace chaos {
      resource used for the base chaos function
      */
     template<class T>
-    class ChaosCommon : public Singleton<T> {
+    class ChaosCommon : public Singleton<T>, public utility::InizializableService {
         log::LogManager logManager;
     protected:
             //! Constructor Method
@@ -102,7 +104,7 @@ namespace chaos {
          This virtual method can be extended by toolkit subclass for specialized initializaion
          in themain toolkit subclass of ChaosCommon
          */
-        virtual void init(void *init_data) throw (CException) {
+        void init(void *init_data) throw (CException) {
             int err = 0;
             struct utsname u_name;
             
@@ -135,8 +137,17 @@ namespace chaos {
             GlobalConfiguration::getInstance()->addLocalServerAddress(localIp.c_str());
                 
             LAPP_ << "The local address choosen is:  " << GlobalConfiguration::getInstance()->getLocalServerAddress();
+				
+			//Starting Async centrla
+			LAPP_ << "Initilizing async central";
+			utility::InizializableService::initImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(), init_data, "AsyncCentralManager", __PRETTY_FUNCTION__);
         }
-                
+				
+		void deinit() throw (CException) {
+			LAPP_ << "DeInitilizing async central";
+			utility::InizializableService::deinitImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(),  "AsyncCentralManager", __PRETTY_FUNCTION__);
+		}
+				
         //! Return the global configuration for the current singleton instance
         /*!
         \return the GlobalConfiguration pointer to global instance

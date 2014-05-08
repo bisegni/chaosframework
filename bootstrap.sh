@@ -319,8 +319,8 @@ fi
 
 if [ ! -f "$PREFIX/include/uv.h" ]; then
 	echo "Setup LIBUV"
-	if [ ! -f "$BASE_EXTERNAL/libuv" ]; then
-		echo "Installing LibEvent"
+	if [ ! -d "$BASE_EXTERNAL/libuv" ]; then
+		echo "Installing LIBUV"
 		if !(git clone https://github.com/joyent/libuv.git $BASE_EXTERNAL/libuv); then
 		    echo "## cannot git clone https://github.com/joyent/libuv.git"
 		    exit 1
