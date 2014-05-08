@@ -244,6 +244,8 @@ void ChaosDataService::deinit() throw(CException) {
 	//deinitialize vfs file manager
 	vfs_file_manager.deinit(__PRETTY_FUNCTION__);
 
+	ChaosCommon<ChaosDataService>::deinit();
+	
     CDSLAPP_ << "Deinitializated";
 }
 

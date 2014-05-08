@@ -162,6 +162,9 @@ void ChaosCUToolkit::deinit() throw(CException) {
     
 	chaos::utility::StartableService::deinitImplementation(cu_driver_manager::DriverManager::getInstance(), "DriverManager", "ChaosCUToolkit::deinit");
     LAPP_ << "CHAOS Control System Library Stopped";
+	
+	//forward the deinitialization to the common sublayer
+	ChaosCommon<ChaosCUToolkit>::deinit();
 }
 
 /*

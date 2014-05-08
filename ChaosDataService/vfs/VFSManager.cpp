@@ -37,10 +37,10 @@ namespace chaos_data_storage = chaos::data_service::storage_system;
 #define VFSManager_MAX_BLOCK_SIZE		1024*1024*5		// 5 megabyte
 #define VFSManager_MAX_BLOCK_LIFETIME	1000*60*5		// 5 minutes
 
-#define HB_REPEAT_TIME 2
+#define HB_REPEAT_TIME 2000
 
 
-VFSManager::VFSManager():timer(io), setting(NULL) {
+VFSManager::VFSManager():setting(NULL) {
 	
 }
 
@@ -88,22 +88,12 @@ void VFSManager::init(void * init_data) throw (chaos::CException) {
 		throw chaos::CException(-1, "Error initializing the domain", __PRETTY_FUNCTION__);
 	}
 	
-	timer.expires_from_now(boost::posix_time::seconds(HB_REPEAT_TIME));
-	timer.async_wait(boost::bind(&VFSManager::giveDomainHeartbeat, this, boost::asio::placeholders::error));
-	thread_hb.reset(new boost::thread(boost::bind(&boost::asio::io_service::run, &io)));
+	chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, HB_REPEAT_TIME);
 }
 
 void VFSManager::deinit() throw (chaos::CException) {
 	VFSFM_LAPP_ << "Deallocate hb timer";
-	try {
-		timer.cancel();
-		io.stop();
-	} catch (...) {
-		VFSFM_LAPP_ << "Error stoppping timer";
-	}
-	
-	VFSFM_LAPP_ << "Join on timer thread";
-	thread_hb->join();
+	chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
 	
 	if(index_driver_ptr) {
 		VFSFM_LAPP_ << "Deallocate index driver";
@@ -127,13 +117,10 @@ void VFSManager::deinit() throw (chaos::CException) {
 	}
 }
 
-void VFSManager::giveDomainHeartbeat(const boost::system::error_code& e) {
+void VFSManager::timeout() {
 	if(index_driver_ptr->vfsDomainHeartBeat(setting->storage_driver_setting.domain)) {
 		VFSFM_LERR_ << "Error giving the eartbeat";
 	}
-	
-	timer.expires_from_now(boost::posix_time::seconds(HB_REPEAT_TIME));
-	timer.async_wait(boost::bind(&VFSManager::giveDomainHeartbeat, this, boost::asio::placeholders::error));
 }
 
 void VFSManager::freeObject(std::string key, VFSFilesForPath *element) {
