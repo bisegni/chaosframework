@@ -20,6 +20,7 @@
 #include <boost/preprocessor/cat.hpp> // like the ## operator but works with __LINE__
 
 #include <chaos/common/bson/bsonobj.h>
+#include <chaos/common/bson/base/disallow_copying.h>
 
 namespace bson {
 
@@ -60,23 +61,23 @@ namespace bson {
 
         /** @return the next element in the object. For the final element, element.eoo() will be true. */
         BSONElement next( bool checkEnd ) {
-            assert( _pos <= _theend );
+            verify( _pos <= _theend );
             
             int maxLen = -1;
             if ( checkEnd ) {
                 maxLen = _theend + 1 - _pos;
-                assert( maxLen > 0 );
+                verify( maxLen > 0 );
             }
 
             BSONElement e( _pos, maxLen );
             int esize = e.size( maxLen );
-            assert(esize > 0 );
+            massert( 16446, "BSONElement has bad size", esize > 0 );
             _pos += esize;
 
             return e;
         }
         BSONElement next() {
-            assert( _pos <= _theend );
+            verify( _pos <= _theend );
             BSONElement e(_pos);
             _pos += e.size();
             return e;
@@ -85,7 +86,7 @@ namespace bson {
         void operator++(int) { next(); }
 
         BSONElement operator*() {
-            assert( _pos <= _theend );
+            verify( _pos <= _theend );
             return BSONElement(_pos);
         }
 
@@ -96,9 +97,10 @@ namespace bson {
 
     /** Base class implementing ordered iteration through BSONElements. */
     class BSONIteratorSorted {
+        MONGO_DISALLOW_COPYING(BSONIteratorSorted);
     public:
         ~BSONIteratorSorted() {
-            assert( _fields );
+            verify( _fields );
             delete[] _fields;
             _fields = 0;
         }
@@ -108,7 +110,7 @@ namespace bson {
         }
 
         BSONElement next() {
-            assert( _fields );
+            verify( _fields );
             if ( _cur < _nfields )
                 return BSONElement( _fields[_cur++] );
             return BSONElement();

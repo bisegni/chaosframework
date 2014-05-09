@@ -33,7 +33,6 @@
 #include <chaos/common/bson/bsonmisc.h>
 #include <chaos/common/bson/bson_builder_base.h>
 #include <chaos/common/bson/bson_field.h>
-//#include <chaos/common/bson/bson.h>
 
 namespace bson {
 
@@ -46,7 +45,7 @@ namespace bson {
         See also the BSON() and BSON_ARRAY() macros.
     */
     class BSONObjBuilder : public BSONBuilderBase, private boost::noncopyable {
-    protected:
+	protected:
         /** @param initsize this is just a hint as to the final size of the object */
         BSONObjBuilder(bool partialBSON, int initsize) : _b(_buf), _buf(initsize + sizeof(unsigned)), _offset( sizeof(unsigned) ), _s( this ) , _tracker(0) , _doneCalled(false) {
             if(!partialBSON) {
@@ -54,6 +53,7 @@ namespace bson {
                 _b.skip(4); /*leave room for size field and ref-count*/
             }
         }
+
     public:
         /** @param initsize this is just a hint as to the final size of the object */
         BSONObjBuilder(int initsize=512) : _b(_buf), _buf(initsize + sizeof(unsigned)), _offset( sizeof(unsigned) ), _s( this ) , _tracker(0) , _doneCalled(false) {
@@ -87,14 +87,14 @@ namespace bson {
 
         /** append element to the object we are building */
         BSONObjBuilder& append( const BSONElement& e) {
-            assert( !e.eoo() ); // do not append eoo, that would corrupt us. the builder auto appends when done() is called.
+            verify( !e.eoo() ); // do not append eoo, that would corrupt us. the builder auto appends when done() is called.
             _b.appendBuf((void*) e.rawdata(), e.size());
             return *this;
         }
 
         /** append an element but with a new name */
         BSONObjBuilder& appendAs(const BSONElement& e, const StringData& fieldName) {
-            assert( !e.eoo() ); // do not append eoo, that would corrupt us. the builder auto appends when done() is called.
+            verify( !e.eoo() ); // do not append eoo, that would corrupt us. the builder auto appends when done() is called.
             _b.appendNum((char) e.type());
             _b.appendStr(fieldName);
             _b.appendBuf((void *) e.value(), e.valuesize());
@@ -111,12 +111,12 @@ namespace bson {
 
         /** add a subobject as a member */
         BSONObjBuilder& appendObject(const StringData& fieldName, const char * objdata , int size = 0 ) {
-            assert( objdata );
+            verify( objdata );
             if ( size == 0 ) {
                 size = *((int*)objdata);
             }
 
-            assert( size > 4 && size < 100000000 );
+            verify( size > 4 && size < 100000000 );
 
             _b.appendNum((char) Object);
             _b.appendStr(fieldName);
@@ -199,23 +199,17 @@ namespace bson {
             return *this;
         }
 
-        /** Append a NumberLong */
-        BSONObjBuilder& append(const StringData& fieldName, long int n) {
-            _b.appendNum((char) NumberLong);
-            _b.appendStr(fieldName);
-            _b.appendNum(n);
-            return *this;
-        }
-        
         /** appends a number.  if n < max(int)/2 then uses int, otherwise long long */
         BSONObjBuilder& appendIntOrLL( const StringData& fieldName , long long n ) {
-            long long x = n;
-            if ( x < 0 )
-                x = x * -1;
-            if ( x < ( (std::numeric_limits<int>::max)() / 2 ) ) // extra () to avoid max macro on windows
-                append( fieldName , (int)n );
-            else
+            // extra () to avoid max macro on windows
+            static const long long maxInt = (std::numeric_limits<int>::max)() / 2;
+            static const long long minInt = -maxInt;
+            if ( minInt < n && n < maxInt ) {
+                append( fieldName , static_cast<int>( n ) );
+            }
+            else {
                 append( fieldName , n );
+            }
             return *this;
         }
 
@@ -243,15 +237,20 @@ namespace bson {
 
         BSONObjBuilder& appendNumber( const StringData& fieldName, long long llNumber ) {
             static const long long maxInt = ( 1LL << 30 );
+            static const long long minInt = -maxInt;
             static const long long maxDouble = ( 1LL << 40 );
+            static const long long minDouble = -maxDouble;
 
-            long long nonNegative = llNumber >= 0 ? llNumber : -llNumber;
-            if ( nonNegative < maxInt )
+            if ( minInt < llNumber && llNumber < maxInt ) {
                 append( fieldName, static_cast<int>( llNumber ) );
-            else if ( nonNegative < maxDouble )
+            }
+            else if ( minDouble < llNumber && llNumber < maxDouble ) {
                 append( fieldName, static_cast<double>( llNumber ) );
-            else
+            }
+            else {
                 append( fieldName, llNumber );
+            }
+
             return *this;
         }
 
@@ -263,14 +262,6 @@ namespace bson {
             return *this;
         }
 
-        BSONObjBuilder& append(const StringData& fieldName, long double n) {
-            //TODO: handle long double???
-            _b.appendNum((char) NumberDouble);
-            _b.appendStr(fieldName);
-            _b.appendNum(n);
-            return *this;
-        }
-        
         /** tries to append the data as a number
          * @return true if the data was able to be converted to a number
          */
@@ -376,7 +367,7 @@ namespace bson {
             return appendCode(fieldName, code.code);
         }
 
-        /** Append a string element. 
+        /** Append a string element.
             @param sz size includes terminating null character */
         BSONObjBuilder& append(const StringData& fieldName, const char *str, int sz) {
             _b.appendNum((char) String);
@@ -585,7 +576,7 @@ namespace bson {
         */
         BSONObj obj() {
             bool own = owned();
-            assert( own );
+            massert( 10335 , "builder does not own memory", own );
             doneFast();
             BSONObj::Holder* h = (BSONObj::Holder*)_b.buf();
             decouple(); // sets _b.buf() to NULL
@@ -617,10 +608,21 @@ namespace bson {
             return temp;
         }
 
+        /** Make it look as if "done" has been called, so that our destructor is a no-op. Do
+         *  this if you know that you don't care about the contents of the builder you are
+         *  destroying.
+         *
+         *  Note that it is invalid to call any method other than the destructor after invoking
+         *  this method.
+         */
+        void abandon() {
+            _doneCalled = true;
+        }
+
         void decouple() {
             _b.decouple();    // post done() call version.  be sure jsobj frees...
         }
-        
+
         void appendKeys( const BSONObj& keyPattern , const BSONObj& values );
 
         static std::string numStr( int i ) {
@@ -641,7 +643,7 @@ namespace bson {
         BSONObjBuilder& operator<<( GENOIDLabeler ) { return genOID(); }
 
         Labeler operator<<( const Labeler::Label &l ) {
-            assert( _s.subobjStarted() );
+            massert( 10336 ,  "No subobject started", _s.subobjStarted() );
             return _s << l;
         }
 
@@ -677,9 +679,6 @@ namespace bson {
 
         BufBuilder& bb() { return _b; }
 
-    protected:
-        BufBuilder &_b;
-            
     private:
         char* _done() {
             if ( _doneCalled )
@@ -696,7 +695,7 @@ namespace bson {
             return data;
         }
 
-        //BufBuilder &_b;
+        
         BufBuilder _buf;
         int _offset;
         BSONObjBuilderValueStream _s;
@@ -705,6 +704,8 @@ namespace bson {
 
         static const std::string numStrs[100]; // cache of 0 to 99 inclusive
         static bool numStrsReady; // for static init safety. see comments in db/jsobj.cpp
+	protected:
+		BufBuilder &_b;
     };
 
     class BSONArrayBuilder : public BSONBuilderBase, private boost::noncopyable {
@@ -765,13 +766,6 @@ namespace bson {
             return *this;
         }
 
-        BSONArrayBuilder& append(const StringData& name, long double n) {
-            // TODO: handle long double? 
-            fill( name );
-            append( (double)n );
-            return *this;
-        }
-
         BSONArrayBuilder& append(const StringData& name, double n) {
             fill( name );
             append( n );
@@ -805,7 +799,7 @@ namespace bson {
             return _b.subarrayStart( num() );
         }
 
-        // These should only be used where you really need interface compatability with BSONObjBuilder
+        // These should only be used where you really need interface compatibility with BSONObjBuilder
         // Currently they are only used by update.cpp and it should probably stay that way
         BufBuilder &subobjStart( const StringData& name ) {
             fill( name );
@@ -834,6 +828,11 @@ namespace bson {
             return *this;
         }
 
+        BSONArrayBuilder& appendTimestamp(unsigned long long ts) {
+            _b.appendTimestamp(num(), ts);
+            return *this;
+        }
+
         BSONArrayBuilder& append(const StringData& s) {
             _b.append(num(), s);
             return *this;
@@ -846,6 +845,8 @@ namespace bson {
         int len() const { return _b.len(); }
         int arrSize() const { return _i; }
 
+        BufBuilder& bb() { return _b.bb(); }
+
     private:
         // These two are undefined privates to prevent their accidental
         // use as we don't support unsigned ints in BSON
@@ -855,7 +856,9 @@ namespace bson {
         void fill( const StringData& name ) {
             long int n;
             Status status = parseNumberFromStringWithBase( name, 10, &n );
-            assert( status.isOK() );
+            uassert( 13048,
+                     (string)"can't append to array using string field name: " + name.toString(),
+                     status.isOK() );
             fill(n);
         }
 
@@ -863,7 +866,7 @@ namespace bson {
             // if this is changed make sure to update error message and jstests/set7.js
             const int maxElems = 1500000;
             BOOST_STATIC_ASSERT(maxElems < (BSONObjMaxUserSize/10));
-            assert(upTo <= maxElems);
+            uassert(15891, "can't backfill array to larger than 1,500,000 elements", upTo <= maxElems);
 
             while( _i < upTo )
                 appendNull();

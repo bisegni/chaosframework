@@ -23,7 +23,7 @@
 #include <vector>
 
 #include <boost/scoped_array.hpp>
-#include <chaos/common/bson/base/string_data.h>
+
 namespace bson {
 
     // see also mongoutils/str.h - perhaps move these there?
@@ -33,7 +33,7 @@ namespace bson {
 
     void joinStringDelim( const std::vector<std::string>& strs , std::string* res , char delim );
 
-    inline std::string tolowerString( const std::string& input ) {
+    inline std::string tolowerString( StringData input ) {
         std::string::size_type sz = input.size();
 
         boost::scoped_array<char> line(new char[sz+1]);

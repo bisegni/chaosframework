@@ -30,7 +30,6 @@ namespace bson {
     class BSONObjBuilderValueStream;
     class BSONObjIterator;
     class Ordering;
-    class Record;
     struct BSONArray; // empty subclass of BSONObj useful for overloading
     struct BSONElementCmpWithoutField;
 
@@ -152,7 +151,7 @@ namespace bson {
         case CodeWScope:
             return 65;
         default:
-            MONGO_verify(0);
+           // verify(0);
             return -1;
         }
     }

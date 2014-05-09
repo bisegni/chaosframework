@@ -21,7 +21,7 @@
 
 #include <chaos/common/bson/base/string_data.h>
 #include <chaos/common/bson/util/builder.h>
-#include <chaos/common/bson/util/assert_util.h>
+
 namespace bson {
     //can't use hex namespace because it conflicts with hex iostream function
     inline int fromHex( char c ) {
@@ -31,7 +31,7 @@ namespace bson {
             return c - 'a' + 10;
         if ( 'A' <= c && c <= 'F' )
             return c - 'A' + 10;
-        MONGO_verify( false );
+        //verify( false );
         return 0xff;
     }
     inline char fromHex( const char *c ) {
@@ -56,6 +56,8 @@ namespace bson {
 
         return out.str();
     }
+
+    template <typename T> std::string integerToHex(T val);
 
     inline std::string toHexLower(const void* inRaw, int len) {
         static const char hexchars[] = "0123456789abcdef";

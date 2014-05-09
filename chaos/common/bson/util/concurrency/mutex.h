@@ -18,7 +18,7 @@
 #pragma once
 
 #ifdef _WIN32
-#include <chaos/common/bson/platform/windows_basic.h>
+#include <chaos/common/bson/platform/windows_basic.h"
 #endif
 
 #include <boost/noncopyable.hpp>
@@ -26,9 +26,17 @@
 #include <boost/thread/xtime.hpp>
 
 #include <chaos/common/bson/util/assert_util.h>
+#include <chaos/common/bson/util/concurrency/threadlocal.h>
 #include <chaos/common/bson/util/time_support.h>
 
+// Macro to get line as a string constant
+#define MONGO_STRINGIFY(X) #X
+// Double-expansion trick to get preproc to actually substitute __LINE__
+#define _MONGO_LINE_STRING(LINE) MONGO_STRINGIFY( LINE )
+#define MONGO_LINE_STRING _MONGO_LINE_STRING( __LINE__ )
 
+// Mutex names should be as <file>::<line> string
+#define MONGO_FILE_LINE __FILE__ "::" MONGO_LINE_STRING
 
 namespace bson {
 
@@ -73,7 +81,7 @@ namespace bson {
 
         class try_lock : boost::noncopyable {
         public:
-            try_lock( bson::mutex &m , int millis = 0 )
+            try_lock(bson::mutex &m , int millis = 0 )
                 : _l( m.boost() , incxtimemillis( millis ) ) ,
                   ok( _l.owns_lock() )
             { }
@@ -89,9 +97,9 @@ namespace bson {
             struct PostStaticCheck {
                 PostStaticCheck();
             } _check;
-            bson::mutex * const _mut;
+           bson::mutex * const _mut;
 #endif
-            scoped_lock( bson::mutex &m ) :
+            scoped_lock(bson::mutex &m ) : 
 #if defined(_DEBUG)
             _mut(&m),
 #endif
@@ -124,7 +132,7 @@ namespace bson {
 #if defined(_WIN32)
     class SimpleMutex : boost::noncopyable {
     public:
-        SimpleMutex( const char * ) { InitializeCriticalSection( &_cs ); }
+        SimpleMutex( const StringData& ) { InitializeCriticalSection( &_cs ); }
         void dassertLocked() const { }
         void lock() { EnterCriticalSection( &_cs ); }
         void unlock() { LeaveCriticalSection( &_cs ); }
@@ -143,15 +151,15 @@ namespace bson {
     class SimpleMutex : boost::noncopyable {
     public:
         void dassertLocked() const { }
-        SimpleMutex(const char* name) { assert( pthread_mutex_init(&_lock,0) == 0 ); }
+        SimpleMutex(const StringData& name) { verify( pthread_mutex_init(&_lock,0) == 0 ); }
         ~SimpleMutex(){ 
             if ( ! StaticObserver::_destroyingStatics ) { 
-                assert( pthread_mutex_destroy(&_lock) == 0 );
+                verify( pthread_mutex_destroy(&_lock) == 0 ); 
             }
         }
 
-        void lock() { assert( pthread_mutex_lock(&_lock) == 0 ); }
-        void unlock() { assert( pthread_mutex_unlock(&_lock) == 0 ); }
+        void lock() { verify( pthread_mutex_lock(&_lock) == 0 ); }
+        void unlock() { verify( pthread_mutex_unlock(&_lock) == 0 ); }
     public:
         class scoped_lock : boost::noncopyable {
             SimpleMutex& _m;
@@ -165,5 +173,32 @@ namespace bson {
         pthread_mutex_t _lock;
     };
 #endif
+
+    /** This can be used instead of boost recursive mutex. The advantage is the _DEBUG checks
+     *  and ability to assertLocked(). This has not yet been tested for speed vs. the boost one.
+     */
+    class RecursiveMutex : boost::noncopyable {
+    public:
+        RecursiveMutex(const StringData& name) : m(name) { }
+        bool isLocked() const { return n.get() > 0; }
+        class scoped_lock : boost::noncopyable {
+            RecursiveMutex& rm;
+            int& nLocksByMe;
+        public:
+            scoped_lock( RecursiveMutex &m ) : rm(m), nLocksByMe(rm.n.getRef()) { 
+                if( nLocksByMe++ == 0 ) 
+                    rm.m.lock(); 
+            }
+            ~scoped_lock() { 
+                verify( nLocksByMe > 0 );
+                if( --nLocksByMe == 0 ) {
+                    rm.m.unlock(); 
+                }
+            }
+        };
+    private:
+        SimpleMutex m;
+        ThreadLocalValue<int> n;
+    };
 
 }

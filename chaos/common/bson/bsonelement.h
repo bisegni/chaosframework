@@ -23,8 +23,8 @@
 
 #include <chaos/common/bson/bsontypes.h>
 #include <chaos/common/bson/oid.h>
+#include <chaos/common/bson/platform/cstdint.h>
 #include <chaos/common/bson/platform/float_utils.h>
-#include <chaos/common/bson/util/assert_util.h>
 
 namespace bson {
     class OpTime;
@@ -54,13 +54,12 @@ namespace bson {
     */
     class BSONElement {
     public:
-        /** These functions, which start with a capital letter, throw a UserException if the
+        /** These functions, which start with a capital letter, throw a MsgAssertionException if the
             element is not of the required type. Example:
 
             std::string foo = obj["foo"].String(); // std::exception if not a std::string type or DNE
         */
-        std::string String()        const { return chk(bson::String).valuestr(); }
-        const char * CString()       const { return chk(bson::String).valuestr(); }
+        std::string String()        const { return chk(bson::String).str(); }
         Date_t Date()               const { return chk(bson::Date).date(); }
         double Number()             const { return chk(isNumber()).number(); }
         double Double()             const { return chk(NumberDouble)._numberDouble(); }
@@ -69,12 +68,12 @@ namespace bson {
         bool Bool()                 const { return chk(bson::Bool).boolean(); }
         std::vector<BSONElement> Array() const; // see implementation for detailed comments
         bson::OID OID()            const { return chk(jstOID).__oid(); }
-        void Null()                 const { chk(isNull()); } // throw UserException if not null
-        void OK()                   const { chk(ok()); }     // throw UserException if element DNE
+        void Null()                 const { chk(isNull()); } // throw MsgAssertionException if not null
+        void OK()                   const { chk(ok()); }     // throw MsgAssertionException if element DNE
 
         /** @return the embedded object associated with this field.
-            Note the returned object is a reference to within the parent bson object. If that 
-            object is out of scope, this pointer will no longer be valid. Call getOwned() on the 
+            Note the returned object is a reference to within the parent bson object. If that
+            object is out of scope, this pointer will no longer be valid. Call getOwned() on the
             returned BSONObj if you need your own copy.
             throws UserException if the element is not of type object.
         */
@@ -139,11 +138,17 @@ namespace bson {
             return data + 1;
         }
 
-
+        /**
+         * NOTE: size includes the NULL terminator.
+         */
         int fieldNameSize() const {
             if ( fieldNameSize_ == -1 )
                 fieldNameSize_ = (int)strlen( fieldName() ) + 1;
             return fieldNameSize_;
+        }
+
+        const StringData fieldNameStringData() const {
+            return StringData(fieldName(), fieldNameSize() - 1);
         }
 
         /** raw data of the element's value (so be careful). */
@@ -225,7 +230,7 @@ namespace bson {
         }
 
         /** Size (length) of a string element.
-            You must assure of type String first.  
+            You must assure of type String first.
             @return string size including terminating null
         */
         int valuestrsize() const {
@@ -233,8 +238,8 @@ namespace bson {
         }
 
         // for objects the size *includes* the size of the size field
-        int objsize() const {
-            return *reinterpret_cast< const int* >( value() );
+        size_t objsize() const {
+            return static_cast< const size_t >( *reinterpret_cast< const uint32_t* >( value() ) );
         }
 
         /** Get a string's value.  Also gives you start of the real data for an embedded object.
@@ -255,14 +260,14 @@ namespace bson {
 
         /** Get javascript code of a CodeWScope data element. */
         const char * codeWScopeCode() const {
-            MONGO_verify( type() == CodeWScope );
+            massert( 16177 , "not codeWScope" , type() == CodeWScope );
             return value() + 4 + 4; //two ints precede code (see BSON spec)
         }
 
         /** Get length of the code part of the CodeWScope object
          *  This INCLUDES the null char at the end */
         int codeWScopeCodeLen() const {
-            MONGO_verify(type() == CodeWScope );
+            massert( 16178 , "not codeWScope" , type() == CodeWScope );
             return *(int *)( value() + 4 );
         }
 
@@ -299,7 +304,8 @@ namespace bson {
         /** Get raw binary data.  Element must be of type BinData. Doesn't handle type 2 specially */
         const char *binData(int& len) const {
             // BinData: <int len> <byte subtype> <byte[len] data>
-     //       MONGO_verify( type() == BinData );
+
+            verify( type() == BinData );
             len = valuestrsize();
             return value() + 5;
         }
@@ -318,14 +324,14 @@ namespace bson {
 
         BinDataType binDataType() const {
             // BinData: <int len> <byte subtype> <byte[len] data>
-            MONGO_verify( type() == BinData );
+            verify( type() == BinData );
             unsigned char c = (value() + 4)[0];
             return (BinDataType)c;
         }
 
         /** Retrieve the regex string for a Regex element */
         const char *regex() const {
-            MONGO_verify(type() == RegEx);
+            verify(type() == RegEx);
             return value();
         }
 
@@ -364,9 +370,6 @@ namespace bson {
         /** Constructs an empty element */
         BSONElement();
 
-        /** Check that data is internally consistent. */
-        void validate() const;
-
         /** True if this element may contain subobjects. */
         bool mayEncapsulate() const {
             switch ( type() ) {
@@ -398,13 +401,17 @@ namespace bson {
             return ((unsigned int*)(value() ))[0];
         }
 
+        unsigned long long timestampValue() const {
+            return reinterpret_cast<const unsigned long long*>( value() )[0];
+        }
+
         const char * dbrefNS() const {
-            MONGO_verify(type() == DBRef );
+            uassert( 10063 ,  "not a dbref" , type() == DBRef );
             return value() + 4;
         }
 
         const bson::OID& dbrefOID() const {
-            MONGO_verify(type() == DBRef );
+            uassert( 10064 ,  "not a dbref" , type() == DBRef );
             const char * start = value();
             start += 4 + *reinterpret_cast< const int* >( start );
             return *reinterpret_cast< const bson::OID* >( start );
@@ -429,7 +436,7 @@ namespace bson {
                 fieldNameSize_ = -1;
                 if ( maxLen != -1 ) {
                     int size = (int) strnlen( fieldName(), maxLen - 1 );
-                    MONGO_verify(size != -1 );
+                    uassert( 10333 ,  "Invalid field name", size != -1 );
                     fieldNameSize_ = size + 1;
                 }
             }
@@ -442,6 +449,19 @@ namespace bson {
                 fieldNameSize_ = 0;
                 totalSize = 1;
             }
+        }
+
+        struct FieldNameSizeTag {}; // For disambiguation with ctor taking 'maxLen' above.
+
+        /** Construct a BSONElement where you already know the length of the name. The value
+         *  passed here includes the null terminator. The data pointed to by 'd' must not
+         *  represent an EOO. You may pass -1 to indicate that you don't actually know the
+         *  size.
+         */
+        BSONElement(const char* d, int fieldNameSize, FieldNameSizeTag)
+            : data(d)
+            , fieldNameSize_(fieldNameSize) // internal size includes null terminator
+            , totalSize(-1) {
         }
 
         std::string _asCode() const;
@@ -464,11 +484,12 @@ namespace bson {
                     ss << "field not found, expected type " << t;
                 else
                     ss << "wrong type for field (" << fieldName() << ") " << type() << " != " << t;
+                msgasserted(13111, ss.str() );
             }
             return *this;
         }
         const BSONElement& chk(bool expr) const {
-            MONGO_verify(expr);
+            massert(13118, "unexpected or missing type value in BSON object", expr);
             return *this;
         }
     };

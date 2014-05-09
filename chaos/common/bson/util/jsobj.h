@@ -29,7 +29,7 @@
 #pragma once
 
 #include <chaos/common/bson/util/builder.h>
-#include <chaos/common/bson/util/optime.h>
+#include <chaos/common/bson/optime.h>
 #include <chaos/common/bson/bsontypes.h>
 #include <chaos/common/bson/oid.h>
 #include <chaos/common/bson/bsonelement.h>

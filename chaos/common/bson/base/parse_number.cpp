@@ -13,9 +13,15 @@
  *    limitations under the License.
  */
 
+#include <chaos/common/bson/platform/basic.h>
+
 #include <chaos/common/bson/base/parse_number.h>
 
+#include <algorithm>
+#include <cerrno>
+#include <cstdlib>
 #include <limits>
+#include <string>
 
 #include <chaos/common/bson/platform/cstdint.h>
 
@@ -74,33 +80,32 @@ namespace bson {
      * "inputBase" is not 0, *outputBase is set to "inputBase".  Otherwise, if "stringValue" starts
      * with "0x" or "0X", sets outputBase to 16, or if it starts with 0, sets outputBase to 8.
      *
-     * Returns the substring of "stringValue" with the base-indicating prefix stripped off.
+     * Returns stringValue, unless it sets *outputBase to 16, in which case it will strip off the
+     * "0x" or "0X" prefix, if present.
      */
     static inline StringData _extractBase(
             const StringData& stringValue, int inputBase, int* outputBase) {
 
+        const StringData hexPrefixLower("0x", StringData::LiteralTag());
+        const StringData hexPrefixUpper("0X", StringData::LiteralTag());
         if (inputBase == 0) {
-            if (stringValue.size() == 0) {
-                *outputBase = inputBase;
-                return stringValue;
+            if (stringValue.size() > 2 && (stringValue.startsWith(hexPrefixLower) ||
+                                           stringValue.startsWith(hexPrefixUpper))) {
+                *outputBase = 16;
+                return stringValue.substr(2);
             }
-            if (stringValue[0] == '0') {
-                if (stringValue.size() > 1 && (stringValue[1] == 'x' || stringValue[1] == 'X')) {
-                    *outputBase = 16;
-                    return stringValue.substr(2);
-                }
+            if (stringValue.size() > 1 && stringValue[0] == '0') {
                 *outputBase = 8;
-                return stringValue.substr(1);
+                return stringValue;
             }
             *outputBase = 10;
             return stringValue;
         }
         else {
             *outputBase = inputBase;
-            if (inputBase == 16) {
-                StringData prefix = stringValue.substr(0, 2);
-                if (prefix == "0x" || prefix == "0X")
-                    return stringValue.substr(2);
+            if (inputBase == 16 && (stringValue.startsWith(hexPrefixLower) ||
+                                    stringValue.startsWith(hexPrefixUpper))) {
+                return stringValue.substr(2);
             }
             return stringValue;
         }
@@ -115,11 +120,11 @@ namespace bson {
         if (base == 1 || base < 0 || base > 36)
             return Status(ErrorCodes::BadValue, "Invalid base", 0);
 
-        if (stringValue.size() == 0)
-            return Status(ErrorCodes::FailedToParse, "Empty string");
-
         bool isNegative = false;
         StringData str = _extractBase(_extractSign(stringValue, &isNegative), base, &base);
+
+        if (str.empty())
+            return Status(ErrorCodes::FailedToParse, "No digits");
 
         NumberType n(0);
         if (isNegative) {
@@ -170,7 +175,7 @@ namespace bson {
     // Definition of the various supported implementations of parseNumberFromStringWithBase.
 
 #define DEFINE_PARSE_NUMBER_FROM_STRING_WITH_BASE(NUMBER_TYPE)          \
-    template Status parseNumberFromStringWithBase<NUMBER_TYPE>(const StringData&, int, NUMBER_TYPE*);
+    template MONGO_COMPILER_API_EXPORT Status parseNumberFromStringWithBase<NUMBER_TYPE>(const StringData&, int, NUMBER_TYPE*);
 
     DEFINE_PARSE_NUMBER_FROM_STRING_WITH_BASE(long)
     DEFINE_PARSE_NUMBER_FROM_STRING_WITH_BASE(long long)
@@ -182,5 +187,72 @@ namespace bson {
     DEFINE_PARSE_NUMBER_FROM_STRING_WITH_BASE(unsigned int)
     DEFINE_PARSE_NUMBER_FROM_STRING_WITH_BASE(int8_t);
     DEFINE_PARSE_NUMBER_FROM_STRING_WITH_BASE(uint8_t);
+#undef DEFINE_PARSE_NUMBER_FROM_STRING_WITH_BASE
+
+#ifdef _WIN32
+
+namespace {
+
+    /**
+     * Converts ascii c-locale uppercase characters to lower case, leaves other char values
+     * unchanged.
+     */
+    char toLowerAscii(char c) {
+        if (isascii(c) && isupper(c))
+            return _tolower(c);
+        return c;
+    }
+
+}  // namespace
+
+#endif  // defined(_WIN32)
+
+    template <>
+    Status parseNumberFromStringWithBase<double>(const StringData& stringValue,
+                                                 int base,
+                                                 double* result) {
+        if (base != 0) {
+            return Status(ErrorCodes::BadValue,
+                          "Must pass 0 as base to parseNumberFromStringWithBase<double>.");
+        }
+        if (stringValue.empty())
+            return Status(ErrorCodes::FailedToParse, "Empty string");
+
+        if (isspace(stringValue[0]))
+            return Status(ErrorCodes::FailedToParse, "Leading whitespace");
+
+        std::string str = stringValue.toString();
+        const char* cStr = str.c_str();
+        char* endp;
+        errno = 0;
+        double d = strtod(cStr, &endp);
+        int actualErrno = errno;
+        if (endp != stringValue.size() + cStr) {
+#ifdef _WIN32
+            // The Windows libc implementation of strtod cannot parse +/-infinity or nan,
+            // so handle that here.
+            std::transform(str.begin(), str.end(), str.begin(), toLowerAscii);
+            if (str == StringData("nan", StringData::LiteralTag())) {
+                *result = std::numeric_limits<double>::quiet_NaN();
+                return Status::OK();
+            }
+            else if (str == StringData("+infinity", StringData::LiteralTag()) ||
+                     str == StringData("infinity", StringData::LiteralTag())) {
+                *result = std::numeric_limits<double>::infinity();
+                return Status::OK();
+            }
+            else if (str == StringData("-infinity", StringData::LiteralTag())) {
+                *result = -std::numeric_limits<double>::infinity();
+                return Status::OK();
+            }
+#endif  // defined(_WIN32)
+
+            return Status(ErrorCodes::FailedToParse, "Did not consume whole number.");
+        }
+        if (actualErrno == ERANGE)
+            return Status(ErrorCodes::FailedToParse, "Out of range");
+        *result = d;
+        return Status::OK();
+    }
 
 }  // namespace bson

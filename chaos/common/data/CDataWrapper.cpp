@@ -102,7 +102,7 @@ void CDataWrapper::appendInt32ToArray(int32_t int32ArrayElement) {
 
 //append a strin gto an open array
 void CDataWrapper::appendInt64ToArray(int64_t int64ArrayElement) {
-    bsonArrayBuilder->append(int64ArrayElement);
+    bsonArrayBuilder->append((long long)int64ArrayElement);
 }
 
 //append a strin gto an open array
@@ -141,12 +141,12 @@ void CDataWrapper::addDoubleValue(const char *key, double dValue) {
 
 //add a integer value
 void CDataWrapper::addInt64Value(const char *key, int64_t i64Value) {
-    bsonBuilder->append(key, i64Value);
+    bsonBuilder->append(key, (long long)i64Value);
 }
 
 //add a integer value
 void CDataWrapper::addInt64Value(const char *key, uint64_t i64Value) {
-    bsonBuilder->append(key, static_cast<int64_t>(i64Value));
+    bsonBuilder->append(key, (long long)static_cast<int64_t>(i64Value));
 }
 
 //get a csdata value
@@ -165,13 +165,13 @@ CDataWrapper *CDataWrapper::getCSDataValue(const char *key) {
 
 //get string value
 string  CDataWrapper::getStringValue(const char *key) {
-    const char * result = bsonBuilder->asTempObj().getField(key).CString();
+    const char * result = bsonBuilder->asTempObj().getField(key).String().c_str();
     return string(result);
 }
 
 //get string value
 const char *  CDataWrapper::getCStringValue(const char *key) {
-    return bsonBuilder->asTempObj().getField(key).CString();
+    return bsonBuilder->asTempObj().getField(key).String().c_str();
 }
 //add a integer value
 int32_t CDataWrapper::getInt32Value(const char *key) {

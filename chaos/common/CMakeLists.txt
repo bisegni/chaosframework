@@ -1,9 +1,16 @@
 SET(common_lib_src						log/LogManager.cpp)
+SET(common_lib_src	${common_lib_src}	async_central/AsyncCentralManager.cpp async_central/TimerHandler.cpp)
 SET(common_lib_src  ${common_lib_src}	plugin/AbstractPlugin.cpp plugin/PluginDiscover.cpp plugin/PluginInspector.cpp plugin/PluginLoader.cpp)
 SET(common_lib_src  ${common_lib_src}	action/ActionExecutionSafetySystem.cpp action/EventAction.cpp action/ActionDescriptor.cpp action/DeclareAction.cpp action/DomainActions.cpp)
-SET(common_lib_src  ${common_lib_src}	bson/oid.cpp bson/bson_validate.cpp bson/base/parse_number.cpp bson/base/string_data.cpp bson/base/status.cpp bson/base/error_codes.cpp 
-										bson/platform/random.cpp bson/util/stringutils.cpp bson/util/md5.cpp bson/util/base64.cpp bson/util/timer.cpp bson/util/time_support.cpp 
-										bson/util/jsobj.cpp bson/util/json.cpp bson/util/assert_util.cpp bson/util/bson_extract.cpp)
+
+SET(common_lib_src  ${common_lib_src}	bson/oid.cpp bson/bson_validate.cpp 
+										bson/base/parse_number.cpp bson/base/string_data.cpp bson/base/stringutils.cpp bson/base/status.cpp bson/base/error_codes.cpp
+										bson/murmurhash3/MurmurHash3.cpp
+										bson/mutable/document.cpp bson/mutable/element.cpp
+										bson/platform/process_id.cpp bson/platform/random.cpp
+										bson/util/hex.cpp bson/util/base64.cpp bson/util/time_support.cpp bson/util/time_support.cpp 
+										bson/util/assert_util.cpp bson/util/bson_extract.cpp bson/util/jsobj.cpp bson/util/json.cpp bson/util/md5.cpp bson/util/safe_num.cpp)
+
 SET(common_lib_src  ${common_lib_src}	configuration/GlobalConfiguration.cpp)
 SET(common_lib_src  ${common_lib_src}	data/CDataWrapper.cpp data/CUSchemaDB.cpp data/DatasetDB.cpp data/entity_db/EntityDB.cpp data/entity_db/sqlite_impl/sqlite3.c
 										data/entity_db/sqlite_impl/SQLiteEntityDB.cpp data/entity/Entity.cpp data/broker/DataBroker.cpp data/broker/publisher/PublisherDataService.cpp 
@@ -36,7 +43,7 @@ SET(common_lib_src  ${common_lib_src}	batch_command/AttributeSetting.cpp batch_c
                                         batch_command/BatchCommand.cpp)
 
 
-SET(common_lib_library boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached msgpack msgpack-rpc mpio zmq dl)
+SET(common_lib_library boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached msgpack msgpack-rpc mpio zmq uv dl)
 
 
 ADD_LIBRARY(chaos_common SHARED ${common_lib_src})
@@ -48,6 +55,8 @@ TARGET_LINK_LIBRARIES(chaos_common ${common_lib_library})
         
 FILE(GLOB files "*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common)
+FILE(GLOB files "async_central/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/async_central)
 FILE(GLOB files "plugin/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/plugin)
 FILE(GLOB files "action/*.h")

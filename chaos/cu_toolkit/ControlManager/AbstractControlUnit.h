@@ -46,6 +46,7 @@
 #define INIT_STATE      0
 #define START_STATE     1
 
+#define CU_OPT_IN_MEMORY_DATABASE "cu_db_in_memory"
 
 namespace chaos{
     
@@ -70,7 +71,11 @@ namespace chaos{
             class that permit to publish rpc method for control the control unit life cycle. Most of the API
             that needs to be used to create device and his dataset are contained into the DeviceSchemaDB class.
          */
-        class AbstractControlUnit : public chaos::cu::driver_manager::DriverErogatorInterface, public DeclareAction, protected chaos_data::DatasetDB, public utility::StartableService {
+        class AbstractControlUnit :
+		public chaos::cu::driver_manager::DriverErogatorInterface,
+		public DeclareAction,
+		protected chaos_data::DatasetDB,
+		public utility::StartableService {
             
             //frinedly class declaration
             friend class ControlManager;

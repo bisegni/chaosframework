@@ -38,6 +38,15 @@ namespace common_utility = chaos::utility;
 //boost::condition ChaosCUToolkit::endWaithCondition;
 WaitSemaphore ChaosCUToolkit::waitCloseSemaphore;
 
+ChaosCUToolkit::ChaosCUToolkit() {
+	GlobalConfiguration::getInstance()->addOption<bool>(CU_OPT_IN_MEMORY_DATABASE,
+														"Specify when to use in memory or on disc contorl unit internal database",
+														true);
+}
+
+ChaosCUToolkit::~ChaosCUToolkit() {
+	
+}
 
     //! C and C++ attribute parser
 /*!
@@ -162,6 +171,9 @@ void ChaosCUToolkit::deinit() throw(CException) {
     
 	chaos::utility::StartableService::deinitImplementation(cu_driver_manager::DriverManager::getInstance(), "DriverManager", "ChaosCUToolkit::deinit");
     LAPP_ << "CHAOS Control System Library Stopped";
+	
+	//forward the deinitialization to the common sublayer
+	ChaosCommon<ChaosCUToolkit>::deinit();
 }
 
 /*

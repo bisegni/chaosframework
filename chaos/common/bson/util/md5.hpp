@@ -16,8 +16,12 @@
  */
 
 #pragma once
-#include <sstream>
+
 #include <chaos/common/bson/util/md5.h>
+
+#include <sstream>
+#include <string>
+#include <string.h>
 
 namespace bson {
 
@@ -55,4 +59,4 @@ namespace bson {
     }
 
 
-} // namespace mongo
+} // namespace bson
