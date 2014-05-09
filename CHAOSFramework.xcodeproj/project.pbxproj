@@ -3011,6 +3011,7 @@
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
 				COPY_PHASE_STRIP = NO;
+				DSTROOT = /;
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -3032,6 +3033,7 @@
 					/usr/local/include,
 					/usr/include,
 				);
+				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/usr/local/lib",
@@ -3066,6 +3068,7 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DSTROOT = /;
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -3080,6 +3083,7 @@
 					/usr/local/include,
 					/usr/include,
 				);
+				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/usr/local/lib",
@@ -3112,6 +3116,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
 				COPY_PHASE_STRIP = NO;
+				DSTROOT = /;
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -3133,6 +3138,7 @@
 					/usr/local/include,
 					/usr/include,
 				);
+				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
 					"$(SRCROOT)/usr/local/lib",
@@ -3167,6 +3173,7 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DSTROOT = /;
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -3181,6 +3188,7 @@
 					/usr/local/include,
 					/usr/include,
 				);
+				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/lib,
 					"$(SRCROOT)/usr/local/lib",
@@ -3213,6 +3221,7 @@
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
 				COPY_PHASE_STRIP = NO;
+				DSTROOT = /;
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -3234,6 +3243,7 @@
 					/usr/local/include,
 					/usr/include,
 				);
+				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/usr/local/lib",
 					/usr/local/lib,
@@ -3268,6 +3278,7 @@
 				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/usr/local/lib";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DSTROOT = /;
 				EXECUTABLE_PREFIX = lib;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
@@ -3282,6 +3293,7 @@
 					/usr/local/include,
 					/usr/include,
 				);
+				INSTALL_PATH = "$(SRCROOT)/usr/local/lib";
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/usr/local/lib",
 					/usr/local/lib,

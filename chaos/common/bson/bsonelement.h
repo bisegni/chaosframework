@@ -299,7 +299,7 @@ namespace bson {
         /** Get raw binary data.  Element must be of type BinData. Doesn't handle type 2 specially */
         const char *binData(int& len) const {
             // BinData: <int len> <byte subtype> <byte[len] data>
-            MONGO_verify( type() == BinData );
+     //       MONGO_verify( type() == BinData );
             len = valuestrsize();
             return value() + 5;
         }

@@ -188,12 +188,12 @@ if [ ! -d "$PREFIX/include/boost" ]; then
 
     if [ -n "$CHAOS32" ]; then
     	echo "INSTALLING BOOST 32"
-    	./b2 link=shared cflags=-m32 cxxflags=-m32 address-model=32 --prefix=$PREFIX --with-iostreams --with-program_options --with-chrono --with-filesystem --with-log --with-regex --with-system --with-thread --with-atomic --with-timer install
+    	./b2 link=shared cflags=-m32 cxxflags=-m32 address-model=32 --prefix=$PREFIX --with-iostreams --with-program_options --with-chrono --with-random --with-filesystem --with-log --with-regex --with-system --with-thread --with-atomic --with-timer install
     else
         if [ `echo $OS | tr [:upper:] [:lower:]` = `echo "Darwin" | tr [:upper:] [:lower:]` ] && [ $KERNEL_SHORT_VER -ge 1300 ]; then
-            ./b2  toolset=clang cxxflags=-stdlib=libstdc++ linkflags=-stdlib=libstdc++ link=shared --prefix=$PREFIX --with-program_options --with-chrono --with-filesystem --with-iostreams --with-log --with-regex --with-system --with-thread --with-atomic --with-timer install
+            ./b2  toolset=clang cxxflags=-stdlib=libstdc++ linkflags=-stdlib=libstdc++ link=shared --prefix=$PREFIX --with-program_options --with-random --with-chrono --with-filesystem --with-iostreams --with-log --with-regex --with-system --with-thread --with-atomic --with-timer install
         else
-            ./b2  link=shared --prefix=$PREFIX --with-program_options --with-chrono --with-filesystem --with-iostreams --with-log --with-regex --with-system --with-thread --with-atomic --with-timer install
+            ./b2  link=shared --prefix=$PREFIX --with-program_options --with-chrono --with-filesystem --with-iostreams --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer install
         fi
     fi
 else
