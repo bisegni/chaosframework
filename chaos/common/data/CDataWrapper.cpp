@@ -106,9 +106,9 @@ void CDataWrapper::appendInt64ToArray(int64_t int64ArrayElement) {
 }
 
 //append a strin gto an open array
-void CDataWrapper::appendDoubleToArray(double_t doubleArrayElement) {
+void CDataWrapper::appendDoubleToArray(double doubleArrayElement) {
   // TODO: all std int or NOT
-  bsonArrayBuilder->append((double)doubleArrayElement);
+  bsonArrayBuilder->append(doubleArrayElement);
 }
 
 //appen a CDataWrapper to an open array

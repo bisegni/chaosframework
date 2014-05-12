@@ -116,7 +116,7 @@ namespace chaos {
 				void appendStringToArray(string&);
 				void appendInt32ToArray(int32_t int32ArrayElement);
 				void appendInt64ToArray(int64_t int64ArrayElement);
-				void appendDoubleToArray(double_t doubleArrayElement);
+				void appendDoubleToArray(double doubleArrayElement);
 				void appendCDataWrapperToArray(CDataWrapper& srcDataWrapper, bool finalize=false);
 				//finalize the array into a key for the current dataobject
 				void finalizeArrayForKey(const char *);
