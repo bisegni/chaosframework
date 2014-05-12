@@ -33,7 +33,7 @@
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/utility/StartableService.h>
-
+#include <chaos/common/async_central/async_central.h>
 namespace chaos {
     
     namespace cu {
@@ -43,26 +43,19 @@ namespace chaos {
         /*
          Manager for the Control Unit execution
          */
-        class ControlManager : public CThreadExecutionTask, public DeclareAction, public chaos::utility::StartableService, public Singleton<ControlManager> {
+        class ControlManager :
+		public DeclareAction,
+		public chaos::utility::StartableService,
+		public chaos::common::async_central::TimerHanlder,
+		public Singleton<ControlManager> {
             friend class Singleton<ControlManager>;
             mutable boost::mutex qMutex;
             condition_variable lockCondition;
-            CThread *selfThreadPtr;
             queue< AbstractControlUnit* > submittedCUQueue;
             map<string, shared_ptr<AbstractControlUnit> > controlUnitInstanceMap;
             MDSMessageChannel *mdsChannel;
             
             int sendConfPackToMDS(CDataWrapper&);
-            
-            /*
-             Thread method that work on buffer item
-             */
-            void executeOnThread() throw(CException);
-            
-            /*
-             get the last insert data
-             */
-            AbstractControlUnit* waitAndPop();
             
             /*
              check for empty buffer
@@ -80,8 +73,8 @@ namespace chaos {
              */
             ~ControlManager();
 			
+			void timeout();
         public:
-
             
             /*
              Initialize the Control Manager
@@ -93,6 +86,7 @@ namespace chaos {
              */
             void start() throw(CException);
             
+			void stop() throw(CException);
             /*
              Deinitialize the Control Manager
              */
