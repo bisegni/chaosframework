@@ -66,7 +66,6 @@ ControlManager::~ControlManager() {
  */
 void ControlManager::init(void *initParameter) throw(CException) {
     LCMAPP_  << "Inititializing";
-	//CThreadExecutionTaskSPtr selfSharedPtr(this);
     
     
 	//control manager action initialization

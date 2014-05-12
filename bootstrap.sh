@@ -298,7 +298,7 @@ fi
 
 echo "Setup LIBEVENT"
 if [ ! -d "$PREFIX/include/event2" ]; then
-	if [ ! -f "$BASE_EXTERNAL/libevent" ]; then
+	if [ ! -d "$BASE_EXTERNAL/libevent" ]; then
 		echo "Installing LibEvent"
 	#    git clone git://levent.git.sourceforge.net/gitroot/levent/libevent $BASE_EXTERNAL/libevent
 		if !(git clone http://git.code.sf.net/p/levent/libevent $BASE_EXTERNAL/libevent); then
@@ -355,7 +355,7 @@ fi
 
 echo "Setup MongoDB client"
 if [ ! -f "$PREFIX/include/mongo/client/dbclient.h" ]; then
-	if [ ! -f "$BASE_EXTERNAL/mongo" ]; then
+	if [ ! -d "$BASE_EXTERNAL/mongo" ]; then
 		echo "Download mongodb client"
 		if !(git clone https://github.com/mongodb/mongo-cxx-driver.git $BASE_EXTERNAL/mongo); then
 		    echo "## cannnot git clone https://github.com/mongodb/mongo-cxx-driver.git"

@@ -30,8 +30,6 @@
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/message/DeviceMessageChannel.h>
 #include <chaos/common/exception/CException.h>
-#include <chaos/common/thread/CThread.h>
-#include <chaos/common/thread/CThreadExecutionTask.h>
 #include <chaos/common/utility/SingleBufferCircularBuffer.h>
 #include <chaos/common/data/DatasetDB.h>
 #include <chaos/common/chaos_types.h>

@@ -21,13 +21,12 @@
 #ifndef __CHAOSFramework__RTAbstractControlUnit__
 #define __CHAOSFramework__RTAbstractControlUnit__
 
-#include <chaos/common/thread/CThreadExecutionTask.h>
-#include <chaos/common/thread/CThread.h>
-
 #include <chaos/cu_toolkit/ControlManager/DSAttributeHandlerExecutionEngine.h>
 #include <chaos/cu_toolkit/ControlManager/handler/TDSObjectHandler.h>
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 
+#include <boost/thread.hpp>
+#include <boost/scoped_ptr.hpp>
 
 #define CREATE_HANDLER(class, type, abstractPointer)\
 TDSObjectHandler<T, double> *typedHandler = NULL;\
@@ -37,18 +36,22 @@ abstractPointer = typedHandler = new TDSObjectHandler<T, double>(objectPointer, 
 namespace chaos_data = chaos::common::data;
 
 namespace chaos {
+	using namespace boost;
+	using namespace boost::chrono;
+	using namespace std;
     namespace cu {
-        
+		
         class ControManager;
         
         using namespace cu::handler;
         
-        class RTAbstractControlUnit : public AbstractControlUnit, public CThreadExecutionTask  {
+        class RTAbstractControlUnit : public AbstractControlUnit  {
             friend class ControlManager;
             friend class DomainActionsScheduler;
-            CThread*   schedulerThread;
-            
-            uint32_t defaultScheduleDelay;
+			
+			uint64_t schedule_dalay;
+			bool scheduler_run;
+			boost::scoped_ptr<boost::thread>  scheduler_thread;
             
             cu::DSAttributeHandlerExecutionEngine *attributeHandlerEngine;
             
@@ -73,13 +76,13 @@ namespace chaos {
             
             void deinit() throw(CException);
         protected:
-
+			
             virtual void unitRun() throw(CException) = 0;
-
+			
             
             void pushDataSet(chaos_data::CDataWrapper *acquiredData);
             
-            void setDefaultScheduleDelay(uint32_t _defaultScheduleDelay);
+            void setDefaultScheduleDelay(uint64_t _defaultScheduleDelay);
             /*!
              return a new instance of CDataWrapper filled with a mandatory data
              according to key
@@ -100,7 +103,7 @@ namespace chaos {
             /*!
              Thread method for the scheduler
              */
-            void executeOnThread() throw(CException);
+            void executeOnThread();
             
             /*!
              Add the new attribute in the dataset for at the CU dataset with an associated handler

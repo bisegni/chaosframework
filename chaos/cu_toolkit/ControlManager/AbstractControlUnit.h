@@ -35,8 +35,8 @@
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/utility/ArrayPointer.h>
-#include <chaos/common/pqueue/CObjectHandlerProcessingQueue.h>
 #include <chaos/common/utility/StartableService.h>
+
 #include <chaos/common/data/DatasetDB.h>
 
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>

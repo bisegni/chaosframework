@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		320192BA14DEEAC000318F00 /* CObjectHandlerProcessingQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 320192B914DEEAC000318F00 /* CObjectHandlerProcessingQueue.h */; };
 		320C218A151B555A00BD0F41 /* EventServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 320C2189151B555A00BD0F41 /* EventServer.h */; };
 		320C218C151B556E00BD0F41 /* EventServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 320C218B151B556E00BD0F41 /* EventServer.cpp */; };
 		320DF98D14E17E2700251621 /* DeviceController.h in Headers */ = {isa = PBXBuildFile; fileRef = 320DF98C14E17E2700251621 /* DeviceController.h */; };
@@ -233,11 +232,6 @@
 		326DB48514B38BC00018A8D0 /* RpcServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB41814B38BC00018A8D0 /* RpcServer.h */; };
 		326DB48614B38BC00018A8D0 /* CNodeNetworkAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB41A14B38BC00018A8D0 /* CNodeNetworkAddress.h */; };
 		326DB48814B38BC00018A8D0 /* ChaosThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB41E14B38BC00018A8D0 /* ChaosThread.h */; };
-		326DB48914B38BC00018A8D0 /* CThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB41F14B38BC00018A8D0 /* CThread.cpp */; };
-		326DB48A14B38BC00018A8D0 /* CThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB42014B38BC00018A8D0 /* CThread.h */; };
-		326DB48B14B38BC00018A8D0 /* CThreadExecutionTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB42114B38BC00018A8D0 /* CThreadExecutionTask.h */; };
-		326DB48C14B38BC00018A8D0 /* CThreadGroup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB42214B38BC00018A8D0 /* CThreadGroup.cpp */; };
-		326DB48D14B38BC00018A8D0 /* CThreadGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB42314B38BC00018A8D0 /* CThreadGroup.h */; };
 		326DB48E14B38BC00018A8D0 /* ArrayPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB42514B38BC00018A8D0 /* ArrayPointer.h */; };
 		326DB49214B38BC00018A8D0 /* ObjectFactoryRegister.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB42914B38BC00018A8D0 /* ObjectFactoryRegister.h */; };
 		326DB49314B38BC00018A8D0 /* Singleton.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB42A14B38BC00018A8D0 /* Singleton.h */; };
@@ -489,7 +483,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		320192B914DEEAC000318F00 /* CObjectHandlerProcessingQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CObjectHandlerProcessingQueue.h; sourceTree = "<group>"; };
 		320C2189151B555A00BD0F41 /* EventServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventServer.h; sourceTree = "<group>"; };
 		320C218B151B556E00BD0F41 /* EventServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventServer.cpp; sourceTree = "<group>"; };
 		320DF98C14E17E2700251621 /* DeviceController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceController.h; sourceTree = "<group>"; };
@@ -743,11 +736,6 @@
 		326DB41814B38BC00018A8D0 /* RpcServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = RpcServer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB41A14B38BC00018A8D0 /* CNodeNetworkAddress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CNodeNetworkAddress.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB41E14B38BC00018A8D0 /* ChaosThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ChaosThread.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB41F14B38BC00018A8D0 /* CThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = CThread.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		326DB42014B38BC00018A8D0 /* CThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CThread.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB42114B38BC00018A8D0 /* CThreadExecutionTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = CThreadExecutionTask.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		326DB42214B38BC00018A8D0 /* CThreadGroup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = CThreadGroup.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
-		326DB42314B38BC00018A8D0 /* CThreadGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CThreadGroup.h; sourceTree = "<group>"; };
 		326DB42514B38BC00018A8D0 /* ArrayPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ArrayPointer.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB42914B38BC00018A8D0 /* ObjectFactoryRegister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ObjectFactoryRegister.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB42A14B38BC00018A8D0 /* Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = Singleton.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -1649,7 +1637,6 @@
 				326DB40E14B38BC00018A8D0 /* CObjectProcessingPriorityQueue.h */,
 				326DB40F14B38BC00018A8D0 /* CObjectProcessingQueue.h */,
 				326DB41014B38BC00018A8D0 /* CObjectProcessingQueueListener.h */,
-				320192B914DEEAC000318F00 /* CObjectHandlerProcessingQueue.h */,
 			);
 			path = pqueue;
 			sourceTree = "<group>";
@@ -1687,11 +1674,6 @@
 			isa = PBXGroup;
 			children = (
 				326DB41E14B38BC00018A8D0 /* ChaosThread.h */,
-				326DB41F14B38BC00018A8D0 /* CThread.cpp */,
-				326DB42014B38BC00018A8D0 /* CThread.h */,
-				326DB42114B38BC00018A8D0 /* CThreadExecutionTask.h */,
-				326DB42214B38BC00018A8D0 /* CThreadGroup.cpp */,
-				326DB42314B38BC00018A8D0 /* CThreadGroup.h */,
 				326EA57714D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h */,
 				3216601014D49D0F008DADD2 /* ObjectWaitSemaphore.h */,
 				32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */,
@@ -2289,9 +2271,6 @@
 				326DB48614B38BC00018A8D0 /* CNodeNetworkAddress.h in Headers */,
 				326DB48814B38BC00018A8D0 /* ChaosThread.h in Headers */,
 				32B159D618B38CA50096B58B /* DirectIODeviceServerChannel.h in Headers */,
-				326DB48A14B38BC00018A8D0 /* CThread.h in Headers */,
-				326DB48B14B38BC00018A8D0 /* CThreadExecutionTask.h in Headers */,
-				326DB48D14B38BC00018A8D0 /* CThreadGroup.h in Headers */,
 				324A4B76191A428500975394 /* jsobj.h in Headers */,
 				322DE35518D467E5006F1551 /* ConcuredUsedItem.h in Headers */,
 				326DB48E14B38BC00018A8D0 /* ArrayPointer.h in Headers */,
@@ -2336,7 +2315,6 @@
 				32B159D218B38C980096B58B /* DirectIODeviceClientChannel.h in Headers */,
 				32A886C7189C37EA00321D61 /* ServerFeeder.h in Headers */,
 				324A4B8C191A523F00975394 /* md5.h in Headers */,
-				320192BA14DEEAC000318F00 /* CObjectHandlerProcessingQueue.h in Headers */,
 				3230BEC3181A6ADB00EA5793 /* DatasetDB.h in Headers */,
 				32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */,
 				32E0EF3818CDB37D00CD1808 /* ZMQDirectIOClientConnection.h in Headers */,
@@ -2754,8 +2732,6 @@
 				326DB46B14B38BC00018A8D0 /* DefaultCommandDispatcher.cpp in Sources */,
 				326DB46D14B38BC00018A8D0 /* DomainActionsScheduler.cpp in Sources */,
 				326DB47414B38BC00018A8D0 /* IOMemcachedIODriver.cpp in Sources */,
-				326DB48914B38BC00018A8D0 /* CThread.cpp in Sources */,
-				326DB48C14B38BC00018A8D0 /* CThreadGroup.cpp in Sources */,
 				32AAD78C14CD773F005A097C /* MessageChannel.cpp in Sources */,
 				32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */,
 				32B73E9618D9A74600F0B187 /* DirectIOPerformanceClientChannel.cpp in Sources */,
