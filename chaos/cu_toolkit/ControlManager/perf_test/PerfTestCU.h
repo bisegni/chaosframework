@@ -35,11 +35,11 @@ namespace chaos {
                 int64_t lastSequenceComputed;
                 int64_t sequenceOverSample;
                 int64_t lastSequence;
-                map<int64_t, high_resolution_clock::time_point> sequenceTimestampedMap;
+                map<int64_t, boost::chrono::high_resolution_clock::time_point> sequenceTimestampedMap;
                 
                 TimingUtil tUtil;
-                high_resolution_clock::time_point timeReferenceWorkSimulation;
-                high_resolution_clock::time_point rtTimeTemp;
+                boost::chrono::high_resolution_clock::time_point timeReferenceWorkSimulation;
+                boost::chrono::high_resolution_clock::time_point rtTimeTemp;
                 PerfTestCU();
                 ~PerfTestCU();
                 

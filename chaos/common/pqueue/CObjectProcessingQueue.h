@@ -21,8 +21,6 @@
 #define CObjectProcessingQueue_H
 
 #include "CObjectProcessingQueueListener.h"
-#include <chaos/common/thread/CThreadExecutionTask.h>
-#include <chaos/common/thread/CThreadGroup.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/global.h>
 #include <chaos/common/utility/UUIDUtil.h>

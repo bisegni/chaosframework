@@ -93,7 +93,7 @@ void PerfTestCU::run() throw(CException) {
     lastSequence++;
     boost::chrono::microseconds msecDiff(0);
     
-    sequenceTimestampedMap.insert(make_pair<int64_t, high_resolution_clock::time_point>(lastSequence, timeReferenceWorkSimulation = boost::chrono::steady_clock::now()));
+    sequenceTimestampedMap.insert(make_pair<int64_t, boost::chrono::high_resolution_clock::time_point>(lastSequence, timeReferenceWorkSimulation = boost::chrono::steady_clock::now()));
     for (; msecDiff.count() >= WORK_SIMULATION_TIME;) {
         //simulate hard work
         msecDiff = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now() - timeReferenceWorkSimulation);

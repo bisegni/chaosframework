@@ -27,7 +27,6 @@
 
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 #include <chaos/common/utility/Singleton.h>
-#include <chaos/common/thread/ChaosThread.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/general/Configurable.h>
