@@ -73,8 +73,8 @@ CommandInfoAndImplementation::CommandInfoAndImplementation(chaos_data::CDataWrap
 }
 
 CommandInfoAndImplementation::~CommandInfoAndImplementation() {
-    if(cmdInfo) delete(cmdInfo);
-    if(cmdImpl) delete(cmdImpl);
+    deleteInfo();
+    deleteImpl();
 }
 
 void CommandInfoAndImplementation::deleteInfo() {
@@ -251,19 +251,20 @@ void BatchCommandSandbox::deinit() throw(chaos::CException) {
     DELETE_OBJ_POINTER(currentExecutingCommand)
     
     //free the remained commands into the stack
-    SCSLAPP_ << "Remove paused command into the stack";
+    SCSLAPP_ << "Remove paused command into the stack - size:" << commandStack.size();
     while (!commandStack.empty()) {
         nextAvailableCommand = commandStack.top();
+		commandStack.pop();
         if(event_handler && currentExecutingCommand) event_handler->handleEvent(nextAvailableCommand->element->cmdImpl->unique_id, BatchCommandEventType::EVT_KILLED, NULL);
         DELETE_OBJ_POINTER(nextAvailableCommand)
     }
     SCSLAPP_ << "Paused command into the stack removed";
     
-    SCSLAPP_ << "Remove waiting command into the queue";
+    SCSLAPP_ << "Remove waiting command into the queue - size:"<<command_submitted_queue.size();
     while (!command_submitted_queue.empty()) {
         nextAvailableCommand = command_submitted_queue.top();
+		command_submitted_queue.pop();
         if(event_handler && currentExecutingCommand) event_handler->handleEvent(nextAvailableCommand->element->cmdImpl->unique_id, BatchCommandEventType::EVT_KILLED, NULL);
-        command_submitted_queue.pop();
         DELETE_OBJ_POINTER(nextAvailableCommand)
     }
         
