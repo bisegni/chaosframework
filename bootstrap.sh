@@ -366,8 +366,8 @@ if [ ! -f "$PREFIX/include/mongo/client/dbclient.h" ]; then
 		cd $BASE_EXTERNAL/mongo
 		git pull
 	fi
-
-if !(scons --prefix=$PREFIX --libpath=$PREFIX/lib --cxx="$CXX" --cc="$CC" --cpppath=$PREFIX/include --extrapath=$PREFIX install-mongoclient); then
+## centos6 does not detect correctly boost_thread becasue script fails linking boost_system that is required, force to be included in test
+if !(scons --prefix=$PREFIX --libpath=$PREFIX/lib --cxx="$CXX" --cc="$CC" --cpppath=$PREFIX/include --extrapath=$PREFIX --extralib=boost_system install-mongoclient); then
     echo "## error scons configuration of mongo failed, maybe you miss scons package"
     exit 1
 fi
@@ -384,9 +384,13 @@ if [ ! -d "$PREFIX/include/libmemcached" ]; then
 
     tar zxvf $BASE_EXTERNAL/libmemcached.tar.gz -C $BASE_EXTERNAL
     cd $BASE_EXTERNAL/libmemcached-$LMEM_VERSION
-    ./configure --without-memcached --disable-sasl --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+
+    if !(./configure --without-memcached --disable-sasl --prefix=$PREFIX $CROSS_HOST_CONFIGURE); then
+	echo "Memcached configuration failed"
+	exit 1
+    fi
     ## use standard types instead cinttypes that generates troubles in ARM annd clang
-    echo "patchin memcached.h to use the correct cinttypes"
+    echo "patching memcached.h to use the correct cinttypes"
     sed -i .bak -e "s/include <cinttypes>/include <tr1\/cinttypes>/" libmemcached-1.0/memcached.h
 
     make clean
