@@ -28,7 +28,6 @@
 #ifndef Q_MOC_RUN
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/ui_toolkit/HighLevelApi/DeviceController.h>
-#include <chaos/common/thread/ChaosThread.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 #endif
@@ -45,7 +44,6 @@ class MainWindow : public QMainWindow
     GraphWidget *graphWdg;
     chaos::MDSMessageChannel *mdsChannel;
     chaos::ui::DeviceController *deviceController;
-    chaos::CThread *trackThread;
     int d_timerId;
     boost::shared_ptr<boost::thread> schedThread;
     bool runThread;

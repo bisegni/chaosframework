@@ -8,7 +8,6 @@
 
 #ifndef CHAOSFramework_ZMQClient_h
 #define CHAOSFramework_ZMQClient_h
-#ifdef DEV_WITH_ZMQ
 
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
@@ -27,7 +26,7 @@ namespace chaos {
      */
     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(ZMQClient, RpcClient), public CObjectProcessingQueue<NetworkForwardInfo> {
         REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ZMQClient)
-        ZMQClient(string *alias);
+        ZMQClient(string alias);
         virtual ~ZMQClient();
     protected:
         virtual void processBufferElement(NetworkForwardInfo*, ElementManagingPolicy&) throw(CException);
@@ -37,7 +36,7 @@ namespace chaos {
         /*
          init the rpc adapter
          */
-        void init(CDataWrapper*) throw(CException);
+        void init(void *init_data) throw(CException);
         
         /*
          start the rpc adapter
@@ -61,5 +60,4 @@ namespace chaos {
         bool submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread=false) throw(CException);
     };
 }
-#endif
 #endif

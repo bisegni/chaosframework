@@ -62,7 +62,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     //setup mds channel
     mdsChannel = chaos::ui::LLRpcApi::getInstance()->getNewMetadataServerChannel();
-    trackThread = NULL;
     d_timerId = -1;
     lostPack = 0;
     checkSequentialIDKey.assign(ui->lineEdit->text().toStdString());

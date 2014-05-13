@@ -18,25 +18,24 @@
  *    	limitations under the License.
  */
 
-#ifdef DEV_WITH_ZMQ
-
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/zmq/ZMQServer.h>
 #include <chaos/common/chaos_constants.h>
 #include <chaos/common/exception/CException.h>
 
 #define ZMQS_LAPP LAPP_ << "[ZMQServer] - "
+#define ZMQS_LERR LERR_ << "[ZMQServer] - "
 #define DEFAULT_MSGPACK_DISPATCHER_PORT             8888
 #define DEFAULT_MSGPACK_DISPATCHER_THREAD_NUMBER    4
 
 using namespace chaos;
-
+using namespace chaos::common::data;
 static void my_free (void *data, void *hint)
 {
     delete (char*)data;
 }
 
-ZMQServer::ZMQServer(string *alias) {
+ZMQServer::ZMQServer(string alias):RpcServer(alias) {
     
 }
 
@@ -45,9 +44,9 @@ ZMQServer::~ZMQServer() {
 }
 
     //init the server getting the configuration value
-void ZMQServer::init(CDataWrapper *adapterConfiguration) throw(CException) {
+void ZMQServer::init(void *init_data) throw(CException) {
         //get portnumber and thread number
-    SetupStateManager::levelUpFrom(0, "ZMQServer already initialized");
+	CDataWrapper *adapterConfiguration = reinterpret_cast<CDataWrapper*>(init_data);
     ZMQS_LAPP << "initialization";
     try {
         runServer = true;
@@ -78,46 +77,33 @@ void ZMQServer::init(CDataWrapper *adapterConfiguration) throw(CException) {
     } catch (...) {
         throw CException(-3, "generic error", "ZMQServer::init");
     }
+	runServer = true;
+	//queue thread
+	ZMQS_LAPP << "Allocating thread for manage the request";
+	for (int idx = 0; idx<1; idx++) {
+        threadGroup.add_thread(new thread(boost::bind(&ZMQServer::executeOnThread, this)));
+    }
+	ZMQS_LAPP << "Thread allocated";
 }
 
     //start the rpc adapter
 void ZMQServer::start() throw(CException) {
-    SetupStateManager::levelUpFrom(1, "ZMQServer already started");
-    ZMQS_LAPP << "Allocating thread for manage the request";
-    runServer = true;
-        //queue thread
-    for (int idx = 0; idx<1; idx++) {
-        threadGroup.add_thread(new thread(boost::bind(&ZMQServer::executeOnThread, this)));
-    }
-    
-    ZMQS_LAPP << "Thread allocated";
-    ZMQS_LAPP << "started";
-    
 }
 
     //start the rpc adapter
 void ZMQServer::stop() throw(CException) {
-    SetupStateManager::levelDownFrom(2, "ZMQServer already stopped");
-    runServer = false;
-    ZMQS_LAPP << "Stopping thread";
-    
-    boost::shared_lock<boost::shared_mutex> socketLock(socketMutex);
-    for (int idx = 0; idx < 1; idx++) {
-            //close the socket
-        zmq_close(socketsVector[idx]);
-    }
-        //wiath all thread
-    threadGroup.join_all();
-    ZMQS_LAPP << "Thread stopped";
+   
 }
 
     //deinit the rpc adapter
 void ZMQServer::deinit() throw(CException) {
-    SetupStateManager::levelDownFrom(1, "ZMQServer already deinitialized");
-        //serverThreadGroup.stopGroup(true);
-    ZMQS_LAPP << "Deinitialization";
-    zmq_ctx_destroy (zmqContext);
-    ZMQS_LAPP << "Deinitialized";
+	runServer = false;
+    ZMQS_LAPP << "Stopping thread";
+	zmq_ctx_shutdown(zmqContext);
+	zmq_ctx_destroy(zmqContext);
+	//wiath all thread
+    threadGroup.join_all();
+    ZMQS_LAPP << "Thread stopped";
 }
 
 /*
@@ -127,46 +113,61 @@ void ZMQServer::executeOnThread(){
     
         //data pack pointer
     int err = 0;
-    void *receiver = zmq_socket (zmqContext, ZMQ_REP);
+	int	linger = 0;
+	int	water_mark = 3;
+    zmq_msg_t response;
+	CDataWrapper *cdataWrapperPack = NULL;
+	
+	void *receiver = zmq_socket (zmqContext, ZMQ_REP);
     if(!receiver) return;
-    
-    boost::shared_lock<boost::shared_mutex> socketLock(socketMutex);
-    socketsVector.push_back(receiver);
-    socketLock.unlock();
     
     err = zmq_bind(receiver, bindStr.str().c_str());
     if(err == 0){
         ZMQS_LAPP << "Thread id:" << boost::lexical_cast<std::string>(boost::this_thread::get_id()) << "binded successfully";
     } else {
-        ZMQS_LAPP << "Thread id:" << boost::lexical_cast<std::string>(boost::this_thread::get_id()) << "binded with error";
+        ZMQS_LERR << "Thread id:" << boost::lexical_cast<std::string>(boost::this_thread::get_id()) << "binded with error";
         return;
     }
-    CDataWrapper *cdataWrapperPack = NULL;
+	err = zmq_setsockopt(receiver, ZMQ_LINGER, &linger, sizeof(int));
+	if(err) {
+		ZMQS_LERR << "Error setting ZMQ_LINGER value";
+		return;
+	}
+	err = zmq_setsockopt(receiver, ZMQ_RCVHWM, &water_mark, sizeof(int));
+	if(err) {
+		ZMQS_LERR << "Error setting ZMQ_RCVHWM value";
+		return;
+	}
+
     while (runServer) {
         try {
             zmq_msg_t request;
             err = zmq_msg_init(&request);
             err = zmq_recvmsg(receiver, &request, 0);
             if(err == -1 || zmq_msg_size(&request)==0) {
+				zmq_msg_close(&request);
                 continue;
             }
                 //  Send reply back to client
                 //dispatch the command
             cdataWrapperPack = commandHandler->dispatchCommand(new CDataWrapper((const char*)zmq_msg_data(&request)));
             
-            zmq_msg_t response;
+            
             auto_ptr<SerializationBuffer> result(cdataWrapperPack->getBSONData());
             result->disposeOnDelete = false;
             err = zmq_msg_init_data(&response, (void*)result->getBufferPtr(), result->getBufferLen(), my_free, NULL);
             
             err = zmq_sendmsg(receiver, &response, 0);
+			
+			err = zmq_msg_close(&request);
+			
                 //deallocate the data wrapper pack if it has been allocated
             if(cdataWrapperPack) delete(cdataWrapperPack);
+			cdataWrapperPack = NULL;
+
         } catch (CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex)
         }
     }
     zmq_close(receiver);
 }
-
-#endif

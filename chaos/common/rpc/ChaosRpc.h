@@ -19,9 +19,8 @@
  */
 #ifndef ChaosFramework_ChaosRpc_h
 #define ChaosFramework_ChaosRpc_h
-
-
-#include "MsgPackServer.h"
-#include "MsgPackClient.h"
-
+#include <chaos/common/rpc/msgpack/MsgPackServer.h>
+#include <chaos/common/rpc/msgpack/MsgPackClient.h>
+#include <chaos/common/rpc/zmq/ZMQClient.h>
+#include <chaos/common/rpc/zmq/ZMQServer.h>
 #endif

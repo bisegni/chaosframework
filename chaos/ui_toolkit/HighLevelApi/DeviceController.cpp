@@ -508,7 +508,7 @@ int DeviceController::flushCommandStateHistory() {
 
 //---------------------------------------------------------------------------------------------------
 int DeviceController::sendCustomRequest(const char * const action, common::data::CDataWrapper * const param, common::data::CDataWrapper**const result, bool async, bool queued) {
-	return deviceChannel->sendCustomRequest(action, param, result, millisecToWait, async, !queued);
+	return deviceChannel->sendCustomRequest(action, param, result, millisecToWait, async, queued);
 }
 
 //---------------------------------------------------------------------------------------------------

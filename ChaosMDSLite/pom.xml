@@ -9,6 +9,11 @@
 	<url>http://maven.apache.org</url>
 	<dependencies>
 		<dependency>
+			<groupId>org.zeromq</groupId>
+			<artifactId>jeromq</artifactId>
+			<version>0.3.2</version>
+		</dependency>
+		<dependency>
 			<groupId>netty</groupId>
 			<artifactId>netty</artifactId>
 			<version>0</version>

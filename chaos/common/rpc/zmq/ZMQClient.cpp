@@ -17,7 +17,6 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifdef DEV_WITH_ZMQ
 #include <chaos/common/global.h>
 #include <chaos/common/rpc/zmq/ZMQClient.h>
 #include <chaos/common/chaos_constants.h>
@@ -28,20 +27,22 @@
 #include <msgpack/rpc/transport/udp.h>
 
 using namespace chaos;
+using namespace chaos::common::data;
+
 using namespace std;
 using namespace boost;
 using namespace boost::algorithm;
 using namespace msgpack;
 
-#define ZMQC_LAPP LAPP_ << "[ZMQClient] " 
-
+#define ZMQC_LAPP LAPP_ << "[ZMQClient] - "
+#define ZMQC_LERR LERR_ << "[ZMQClient] - "
 static void my_free (void *data, void *hint)
 {
     delete (char*)data;
 }
 
 
-ZMQClient::ZMQClient(string *alias):RpcClient(alias){
+ZMQClient::ZMQClient(string alias):RpcClient(alias){
 };
 
 ZMQClient::~ZMQClient(){
@@ -50,7 +51,8 @@ ZMQClient::~ZMQClient(){
 /*
  Initialization method for output buffer
  */
-void ZMQClient::init(CDataWrapper *cfg) throw(CException) {
+void ZMQClient::init(void *init_data) throw(CException) {
+	CDataWrapper *cfg = reinterpret_cast<CDataWrapper*>(init_data);
     ZMQC_LAPP << "initialization";
     int32_t threadNumber = cfg->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER)? cfg->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER):1;
     ZMQC_LAPP << "ObjectProcessingQueue<CDataWrapper> initialization with "<< threadNumber <<" thread";
@@ -90,9 +92,10 @@ void ZMQClient::deinit() throw(CException) {
     CObjectProcessingQueue<NetworkForwardInfo>::clear();
     CObjectProcessingQueue<NetworkForwardInfo>::deinit();
     ZMQC_LAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopped";
-    
-        //destroy the zmq context
-    zmq_ctx_destroy(zmqContext);
+
+	//destroy the zmq context
+    zmq_ctx_shutdown(zmqContext);
+	zmq_ctx_destroy(zmqContext);
     ZMQC_LAPP << "ZMQ Destroyed";
 
 }
@@ -113,7 +116,7 @@ bool ZMQClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread
         if(onThisThread){
             ePolicy.elementHasBeenDetached = false;
             processBufferElement(forwardInfo, ePolicy);
-            delete(forwardInfo->message);
+            //delete(forwardInfo->message);
             delete(forwardInfo);
         } else {
             CObjectProcessingQueue<NetworkForwardInfo>::push(forwardInfo);
@@ -133,31 +136,47 @@ bool ZMQClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread
  */
 void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementManagingPolicy& elementPolicy) throw(CException) {
         //the domain is securely the same is is mandatory for submition so i need to get the name of the action
-    int err = 0;
-    void *endPointSocket = zmq_socket (zmqContext, ZMQ_REQ);
+    int			err = 0;
+	zmq_msg_t	reply;
+	zmq_msg_t	message;
+	int			linger = 0;
+	int			water_mark = 3;
+	zmq_msg_init (&reply);
+	
+    void *request_socket = zmq_socket (zmqContext, ZMQ_REQ);
         //this implementation is too slow, client for ip need to be cached
-    if(!endPointSocket) throw CException(-1, "error allocating socket", "ZMQClient::processBufferElement");
+    if(!request_socket) {
+		ZMQC_LERR << "Error creating socket";
+	}
     
+	err = zmq_setsockopt(request_socket, ZMQ_LINGER, &linger, sizeof(int));
+	if(err) {
+		return;
+	}
+	err = zmq_setsockopt(request_socket, ZMQ_RCVHWM, &water_mark, sizeof(int));
+	if(err) {
+		
+		return;
+	}
         //get remote ip
         //serialize the call packet
-    auto_ptr<chaos::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
+    auto_ptr<chaos::common::data::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
     
     try{
         string url = "tcp://";
         url.append(messageInfo->destinationAddr);
-        zmq_connect(endPointSocket, url.c_str());
+        if(zmq_connect(request_socket, url.c_str())) {
+			ZMQC_LERR << "Error connectiong socket";
+		}
         
-        zmq_msg_t message;
             //detach buffer from carrier object so we don't need to copy anymore the data
         callSerialization->disposeOnDelete = false;
         err = zmq_msg_init_data(&message, (void*)callSerialization->getBufferPtr(), callSerialization->getBufferLen(), my_free, NULL);
-        err = zmq_sendmsg(endPointSocket, &message, 0);
-            //zmq_send(endPointSocket, callSerialization->getBufferPtr(), callSerialization->getBufferLen(), 0);
-        
-        zmq_msg_t reply;
-        zmq_msg_init (&reply);
-        zmq_recvmsg(endPointSocket, &reply, 0);
-        
+        err = zmq_sendmsg(request_socket, &message, 0);
+     
+        if(zmq_recvmsg(request_socket, &reply, 0) == -1) {
+			ZMQC_LERR << "Error receiving data";
+		}
             //decode result of the posting message operation
         if(zmq_msg_size(&reply)>0){
 #if DEBUG
@@ -167,7 +186,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
             LDBG_ << "Submission message result------------------------------";
 #endif
         }
-        zmq_msg_close (&reply);
+		
     } catch (msgpack::type_error& e) {
         ZMQC_LAPP << "Error during message forwarding:"<< e.what();
         return;
@@ -175,6 +194,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
         ZMQC_LAPP << "Error during message forwarding:"<< e.what();
         return;
     }
-
+	zmq_msg_close (&message);
+	zmq_msg_close (&reply);
+	zmq_close(request_socket);
 }
-#endif
