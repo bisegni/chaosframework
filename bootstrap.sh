@@ -205,8 +205,9 @@ if [ ! -d "$PREFIX/include/modbus" ] || [ ! -d "$BASE_EXTERNAL/libmodbus" ]; the
         echo "Setup libmodbus library"
         if [ ! -d "$BASE_EXTERNAL/libmodbus" ]; then
                 echo "Install libmodbus"
-                git clone -b v3.0.5 https://github.com/stephane/libmodbus.git $BASE_EXTERNAL/libmodbus
+                git clone https://github.com/stephane/libmodbus.git $BASE_EXTERNAL/libmodbus
                 cd $BASE_EXTERNAL/libmodbus
+		git checkout v3.0.5
         else
                 echo "Update libmodbus"
                 cd $BASE_EXTERNAL/libmodbus/
