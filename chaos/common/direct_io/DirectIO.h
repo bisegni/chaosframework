@@ -17,13 +17,15 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef ChaosFramework_ChaosRpc_h
-#define ChaosFramework_ChaosRpc_h
+#ifndef ChaosFramework_DirectIO_h
+#define ChaosFramework_DirectIO_h
 
 //-------------------client/server implementations---------------------
 #include <chaos/common/direct_io/impl/ZMQDirectIOClient.h>
 #include <chaos/common/direct_io/impl/ZMQDirectIOServer.h>
-
+#include <chaos/common/direct_io/DirectIOClient.h>
+#include <chaos/common/direct_io/DirectIOServer.h>
+#include <chaos/common/direct_io/DirectIODispatcher.h>
 //-------------------channels implementations---------------------
 #include <chaos/common/direct_io/channel/DirectIODeviceClientChannel.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>

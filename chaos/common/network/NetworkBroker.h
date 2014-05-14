@@ -24,8 +24,8 @@
 #include <string>
 #include <boost/thread/mutex.hpp>
 
-#include <chaos/common/rpc/RpcClient.h>
-#include <chaos/common/rpc/RpcServer.h>
+#include <chaos/common/rpc/ChaosRpc.h>
+#include <chaos/common/direct_io/DirectIO.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/action/DeclareAction.h>
 #include <chaos/common/action/EventAction.h>

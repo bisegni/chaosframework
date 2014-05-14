@@ -20,7 +20,6 @@
 
 #ifndef CHAOSFramework_ZMQServer_h
 #define CHAOSFramework_ZMQServer_h
-#ifdef DEV_WITH_ZMQ
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <vector>
@@ -37,24 +36,22 @@ namespace chaos {
     /*
      Class that implement the Chaos RPC adapter for 0mq protocoll
      */
-    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(ZMQServer, RpcServer), private SetupStateManager   {
+    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(ZMQServer, RpcServer)  {
         REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ZMQServer)
         int threadNumber;
         void *zmqContext;
-        vector<void*> socketsVector;
         stringstream bindStr;
         thread_group threadGroup;
         bool runServer;
-        boost::shared_mutex socketMutex;
         
-        ZMQServer(string *alias):RpcServer(alias);
+        ZMQServer(string alias);
         virtual ~ZMQServer();
     public:
 
         /*
          init the rpc adapter
          */
-        void init(CDataWrapper*) throw(CException);
+        void init(void *init_data) throw(CException);
         /*
          start the rpc adapter
          */
@@ -76,5 +73,4 @@ namespace chaos {
     };
     
 }
-#endif
 #endif

@@ -17,7 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "MessageChannel.h"
+#include <chaos/common/message/MessageChannel.h>
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 

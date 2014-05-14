@@ -24,8 +24,7 @@ public class ActionHandlerExecutor implements Runnable {
 	 * @param threadNumber
 	 */
 	public ActionHandlerExecutor(int threadNumber) {
-		this.threadNumber = threadNumber;
-		executionService = Executors.newScheduledThreadPool(threadNumber);
+		executionService = Executors.newScheduledThreadPool(this.threadNumber = threadNumber);
 		for (int i = 0; i < threadNumber; i++) {
 			executionService.execute(this);
 		}
@@ -65,7 +64,7 @@ public class ActionHandlerExecutor implements Runnable {
 		}
 
 		hanlderQueue.isEmpty();
-		for (int i = 0; i < threadNumber; i++) {
+		for (int i = 0; i < getThreadNumber(); i++) {
 			hanlderQueue.add(new ActionHandlerExecutionUnit(null, null));
 		}
 		executionService.shutdown();
@@ -134,5 +133,9 @@ public class ActionHandlerExecutor implements Runnable {
 			}
 
 		}
+	}
+
+	public int getThreadNumber() {
+		return threadNumber;
 	}
 }
