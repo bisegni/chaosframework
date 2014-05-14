@@ -24,12 +24,12 @@
 
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/utility/InizializableService.h>
+#include <chaos/common/utility/Delegate.h>
 
 //#include <boost/thread.hpp>
 //#include <boost/scoped_ptr.hpp>
-
+#include <map>
 #include <uv.h>
-
 namespace chaos {
 	namespace common {
 		namespace async_central {
@@ -37,6 +37,8 @@ namespace chaos {
 			//! forward declaration
 			class TimerHanlder;
 
+			typedef uv_thread_t AcmThreadID;
+			
 			/*!
 			 Managment class fot the async central
 			 */
@@ -49,7 +51,7 @@ namespace chaos {
 				static bool looping;
 				
 				static void _internalEventLoop(void *args);
-			
+				
 				AsyncCentralManager();
 				~AsyncCentralManager();
 				// Initialize instance
@@ -61,6 +63,10 @@ namespace chaos {
 				int addTimer(TimerHanlder *timer_handler, uint64_t timeout, uint64_t repeat);
 				
 				void removeTimer(TimerHanlder *timer_handler);
+				
+				int addThread(utility::delegate::Delegate *thread_delegate, AcmThreadID *thread_id);
+				
+				void joinThread(AcmThreadID *thread_id);
 			};
 		}
 	}

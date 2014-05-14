@@ -1,5 +1,5 @@
 SET(src main.cpp)
-SET(src  ${src} ChaosDataService.cpp DataConsumer.cpp)
+SET(src  ${src} ChaosDataService.cpp QueryDataConsumer.cpp)
 SET(src  ${src} worker/DataWorker.cpp worker/DeviceSharedDataWorker.cpp worker/AnswerDataWorker.cpp)
 SET(src  ${src} cache_system/CacheDriver.cpp cache_system/MemcachedCacheDriver.cpp cache_system/CouchbaseCacheDriver.cpp)
 # 

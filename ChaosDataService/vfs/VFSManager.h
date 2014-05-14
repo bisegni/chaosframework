@@ -22,6 +22,7 @@
 
 #include "VFSTypes.h"
 #include "VFSFile.h"
+#include "VFSStageWriteableFile.h"
 #include "index_system/IndexDriver.h"
 #include "storage_system/StorageDriver.h"
 
@@ -38,8 +39,6 @@ namespace chaos {
 		
 		namespace vfs {
 			
-#define VFS_STAGE_AREA	"stage/"
-#define VFS_DATA_AREA	"data/"
 			
 			//! VFS file manager setting
 			typedef struct VFSManagerSetting {
@@ -101,6 +100,8 @@ namespace chaos {
 				void deinit() throw (CException);
 				
 				int getFile(std::string vfs_path, VFSFile **l_file);
+				
+				int getWriteableStageFile(std::string stage_vfs_relative_path, VFSStageWriteableFile **wsf_file);
 				
 				int releaseFile(VFSFile *l_file);
 				

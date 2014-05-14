@@ -25,6 +25,22 @@
 mongo::BSONObj _error = c->conn().getLastErrorDetailed(); \
 e = MONGO_DB_CHECK_ERROR_CODE(_error);
 
+
+#define CONTINUE_ON_NEXT_CONNECTION(x) \
+switch(x) { \
+case 13328: \
+case 10276: \
+case 13386: \
+case 16090: \
+case 13127: \
+case 13348: \
+case 13678: \
+	continue; \
+break; \
+default: \
+ 	break; \
+}
+
 namespace chaos_data = chaos::common::data;
 using namespace chaos::data_service::index_system;
 //-----------------------------------------------------------------------------------------------------------
@@ -173,8 +189,9 @@ int MongoDBHAConnectionManager::insert( const std::string &ns , mongo::BSONObj o
 			MONGO_DB_GET_ERROR(conn, err);
 		} catch (std::exception& ex) {
 			MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();
-			if(conn) delete(conn);
-			continue;
+			MONGO_DB_GET_ERROR(conn, err);
+			DELETE_OBJ_POINTER(conn)
+			CONTINUE_ON_NEXT_CONNECTION(err)
 		}
 		err = 0;
 		break;
@@ -192,8 +209,31 @@ int MongoDBHAConnectionManager::findOne(mongo::BSONObj& result, const std::strin
 			MONGO_DB_GET_ERROR(conn, err);
 		} catch (std::exception& ex) {
 			MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();
-			if(conn) delete(conn);
-			continue;
+			MONGO_DB_GET_ERROR(conn, err);
+			DELETE_OBJ_POINTER(conn)
+			CONTINUE_ON_NEXT_CONNECTION(err)
+		}
+		err = 0;
+		break;
+	}
+	if(conn) delete(conn);
+	return err;
+}
+
+int MongoDBHAConnectionManager::runCommand(mongo::BSONObj& result, const std::string &ns, const mongo::BSONObj& command, int queryOptions) {
+	int err = -1;
+	MongoDBHAConnection conn = NULL;
+	while (getConnection(&conn)) {
+		try {
+			if(!conn->conn().runCommand(ns, command, result, queryOptions)) {
+				MDBHAC_LERR_ << "Error executing MongoDBHAConnectionManager::runCommand" << " -> " << command.toString();
+			}
+			MONGO_DB_GET_ERROR(conn, err);
+		} catch (std::exception& ex) {
+			MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();
+			MONGO_DB_GET_ERROR(conn, err);
+			DELETE_OBJ_POINTER(conn)
+			CONTINUE_ON_NEXT_CONNECTION(err)
 		}
 		err = 0;
 		break;
@@ -211,8 +251,9 @@ int MongoDBHAConnectionManager::update( const std::string &ns, mongo::Query quer
 			MONGO_DB_GET_ERROR(conn, err);
 		} catch (std::exception& ex) {
 			MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();
-			if(conn) delete(conn);
-			continue;
+			MONGO_DB_GET_ERROR(conn, err);
+			DELETE_OBJ_POINTER(conn)
+			CONTINUE_ON_NEXT_CONNECTION(err)
 		}
 		err = 0;
 		break;

@@ -304,7 +304,7 @@ int PosixStorageDriver::closeBlock(chaos_vfs::DataBlock *data_block) {
 }
 
 //! write an amount of data into a DataBlock
-int PosixStorageDriver::write(chaos_vfs::DataBlock *data_block, void * data, uint64_t data_len) {
+int PosixStorageDriver::write(chaos_vfs::DataBlock *data_block, void * data, uint32_t data_len) {
 	CHAOS_ASSERT(data_block)
 	CHAOS_ASSERT(data_block->driver_private_data)
 	try {
@@ -321,15 +321,16 @@ int PosixStorageDriver::write(chaos_vfs::DataBlock *data_block, void * data, uin
 }
 
 //! read an amount of data from a DataBlock
-int PosixStorageDriver::read(chaos_vfs::DataBlock *data_block, uint64_t offset, void * * data, uint64_t& data_len) {
+int PosixStorageDriver::read(chaos_vfs::DataBlock *data_block, void * buffer, uint32_t buffer_len, uint32_t& readed_byte) {
 	CHAOS_ASSERT(data_block)
 	CHAOS_ASSERT(data_block->driver_private_data)
 	try {
 		boost_fs::fstream *fstream_ptr = static_cast<boost_fs::fstream *>(data_block->driver_private_data);
-		fstream_ptr->read((char*)*data, data_len);
+		fstream_ptr->read((char*)buffer, buffer_len);
 		if(!*fstream_ptr) {
 			return -1;
 		}
+		readed_byte = (uint32_t)fstream_ptr->gcount();
 	} catch (boost_fs::filesystem_error &e) {
 		PSDLERR_ << e.what() << std::endl;
 		return -2;

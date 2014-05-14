@@ -1,5 +1,5 @@
  /*
- *	DataConsumer.h
+ *	QueryDataConsumer.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,7 +18,7 @@
  *    	limitations under the License.
  */
 
-#include "DataConsumer.h"
+#include "QueryDataConsumer.h"
 #include "worker/DeviceSharedDataWorker.h"
 #include "worker/AnswerDataWorker.h"
 #include <chaos/common/utility/ObjectFactoryRegister.h>
@@ -32,28 +32,28 @@ using namespace chaos::data_service;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 
-#define DataConsumer_LOG_HEAD "[DataConsumer] - "
+#define QueryDataConsumer_LOG_HEAD "[QueryDataConsumer] - "
 
-#define DSLAPP_ LAPP_ << DataConsumer_LOG_HEAD
-#define DSLDBG_ LDBG_ << DataConsumer_LOG_HEAD << __FUNCTION__ << " - "
-#define DSLERR_ LERR_ << DataConsumer_LOG_HEAD
+#define DSLAPP_ LAPP_ << QueryDataConsumer_LOG_HEAD
+#define DSLDBG_ LDBG_ << QueryDataConsumer_LOG_HEAD << __FUNCTION__ << " - "
+#define DSLERR_ LERR_ << QueryDataConsumer_LOG_HEAD
 
-DataConsumer::DataConsumer(vfs::VFSManager *_vfs_manager_instance):vfs_manager_instance(_vfs_manager_instance) {
+QueryDataConsumer::QueryDataConsumer(vfs::VFSManager *_vfs_manager_instance):vfs_manager_instance(_vfs_manager_instance) {
     
 }
 
-DataConsumer::~DataConsumer() {
+QueryDataConsumer::~QueryDataConsumer() {
     
 }
 
-void DataConsumer::init(void *init_data) throw (chaos::CException) {
+void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
 	if(!settings)  throw chaos::CException(-1, "No setting provided", __FUNCTION__);
 	if(!settings->cache_driver_impl.size())  throw chaos::CException(-2, "No cache implemetation provided", __FUNCTION__);
 	if(!settings->startup_chache_servers.size())  throw chaos::CException(-3, "No cache servers provided", __FUNCTION__);
 	
 	server_endpoint = network_broker->getDirectIOServerEndpoint();
 	if(!server_endpoint) throw chaos::CException(-4, "Invalid server endpoint", __FUNCTION__);
-	DSLAPP_ << "DataConsumer initialized with endpoint "<< server_endpoint->getRouteIndex();
+	DSLAPP_ << "QueryDataConsumer initialized with endpoint "<< server_endpoint->getRouteIndex();
 	
 	DSLAPP_ << "Allocating DirectIODeviceServerChannel";
 	device_channel = (DirectIODeviceServerChannel*)server_endpoint->getNewChannelInstance("DirectIODeviceServerChannel");
@@ -98,15 +98,15 @@ void DataConsumer::init(void *init_data) throw (chaos::CException) {
 	}
 }
 
-void DataConsumer::start() throw (chaos::CException) {
+void QueryDataConsumer::start() throw (chaos::CException) {
 	
 }
 
-void DataConsumer::stop() throw (chaos::CException) {
+void QueryDataConsumer::stop() throw (chaos::CException) {
 	
 }
 
-void DataConsumer::deinit() throw (chaos::CException) {
+void QueryDataConsumer::deinit() throw (chaos::CException) {
 	DSLAPP_ << "Release direct io device channel into the endpoint";
 	server_endpoint->releaseChannelInstance(device_channel);
 	
@@ -130,7 +130,7 @@ void DataConsumer::deinit() throw (chaos::CException) {
 	free(device_data_worker);
 }
 
-void DataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header, void *channel_data, uint32_t channel_data_len) {
+void QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header, void *channel_data, uint32_t channel_data_len) {
 	uint32_t index_to_use = device_data_worker_index++ % settings->caching_worker_num;
 
 	chaos::data_service::worker::DeviceSharedWorkerJob *job = new chaos::data_service::worker::DeviceSharedWorkerJob();
@@ -144,7 +144,7 @@ void DataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header,
 	
 }
 
-void DataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header, void *channel_data, uint32_t channel_data_len) {
+void QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header, void *channel_data, uint32_t channel_data_len) {
 	chaos::data_service::worker::DataWorker *worker = answer_worker_list.accessSlot();
 	
     chaos::data_service::worker::AnswerDataWorkerJob *job = new chaos::data_service::worker::AnswerDataWorkerJob();

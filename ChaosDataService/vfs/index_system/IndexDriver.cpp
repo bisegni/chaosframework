@@ -19,6 +19,7 @@
  */
 
 #include "IndexDriver.h"
+#include "../DataBlock.h"
 
 using namespace chaos::data_service::index_system;
 
@@ -40,4 +41,12 @@ void IndexDriver::init(void *init_data) throw (chaos::CException) {
 
 //!deinit
 void IndexDriver::deinit() throw (chaos::CException) {
+}
+
+chaos::data_service::chaos_vfs::DataBlock *IndexDriver::getEmptyDataBlock() {
+	return new chaos::data_service::chaos_vfs::DataBlock();
+}
+
+void IndexDriver::deleteDataBlock(chaos::data_service::chaos_vfs::DataBlock *data_block) {
+	delete(data_block);
 }

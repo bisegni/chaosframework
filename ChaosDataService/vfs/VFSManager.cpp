@@ -88,6 +88,10 @@ void VFSManager::init(void * init_data) throw (chaos::CException) {
 		throw chaos::CException(-1, "Error initializing the domain", __PRETTY_FUNCTION__);
 	}
 	
+	//create the defaulg vfs directory
+	createDirectory(VFS_STAGE_AREA);
+	createDirectory(VFS_DATA_AREA);
+	
 	chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, HB_REPEAT_TIME);
 }
 
@@ -144,7 +148,7 @@ int VFSManager::getFile(std::string vfs_fpath,  VFSFile **l_file) {
 	
 	VFSFilesForPath *files_for_path = NULL;
 	
-	VFSFile *logical_file = new VFSFile(vfs_fpath);
+	VFSFile *logical_file = new VFSFile(storage_driver_ptr, index_driver_ptr, vfs_fpath);
 	if(!logical_file) return -1;
 	
 	//the vfs file is identified by a folder containing all data block
@@ -170,12 +174,50 @@ int VFSManager::getFile(std::string vfs_fpath,  VFSFile **l_file) {
 	logical_file->vfs_file_info.vfs_domain = storage_driver_ptr->getStorageDomain();
 	logical_file->vfs_file_info.max_block_size = setting-> max_block_size;
 	logical_file->vfs_file_info.max_block_lifetime = setting-> max_block_lifetime;
-	logical_file->storage_driver_ptr = storage_driver_ptr;
-	logical_file->index_driver_ptr	= index_driver_ptr;
 
 	files_for_path->map_logical_files.insert(make_pair(logical_file->vfs_file_info.identify_key, logical_file));
 	
 	*l_file = logical_file;
+	return 0;
+}
+
+int VFSManager::getWriteableStageFile(std::string stage_vfs_relative_path, VFSStageWriteableFile **wsf_file) {
+	DEBUG_CODE(VFSFM_LDBG_ << "Start getting new writeable stage file with name->" << stage_vfs_relative_path;)
+	
+	VFSFilesForPath *files_for_path = NULL;
+	
+	VFSStageWriteableFile *writeable_stage_file = new VFSStageWriteableFile(storage_driver_ptr, index_driver_ptr, stage_vfs_relative_path);
+	if(!writeable_stage_file) return -1;
+	
+	//the vfs file is identified by a folder containing all data block
+	if(!writeable_stage_file->isGood()) {
+		return -2;
+		delete storage_driver_ptr;
+	}
+	
+	//get or create the infro for logical file isntance
+	if(VFSManagerKeyObjectContainer::hasKey(writeable_stage_file->getVFSFileInfo()->vfs_fpath)) {
+		files_for_path = VFSManagerKeyObjectContainer::accessItem(writeable_stage_file->getVFSFileInfo()->vfs_fpath);
+	} else {
+		files_for_path =  new VFSFilesForPath();
+		if(!files_for_path) return -3;
+		VFSManagerKeyObjectContainer::registerElement(writeable_stage_file->getVFSFileInfo()->vfs_fpath, files_for_path);
+	}
+	
+	//lock the files info for path
+	boost::unique_lock<boost::mutex> lock(files_for_path->_mutex);
+	
+	//generate isntance unique key
+	writeable_stage_file->vfs_file_info.identify_key = boost::str(boost::format("%1%_%2%") % writeable_stage_file->getVFSFileInfo()->vfs_fpath % files_for_path->instance_counter++);
+	writeable_stage_file->vfs_file_info.vfs_domain = storage_driver_ptr->getStorageDomain();
+	writeable_stage_file->vfs_file_info.max_block_size = setting-> max_block_size;
+	writeable_stage_file->vfs_file_info.max_block_lifetime = setting-> max_block_lifetime;
+	
+	files_for_path->map_logical_files.insert(make_pair(writeable_stage_file->vfs_file_info.identify_key, writeable_stage_file));
+	
+	*wsf_file = writeable_stage_file;
+	DEBUG_CODE(VFSFM_LDBG_ << "Created writeable stage file with vfs path->" << writeable_stage_file->getVFSFileInfo()->vfs_fpath;)
+
 	return 0;
 }
 

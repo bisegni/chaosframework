@@ -35,18 +35,8 @@ DeviceSharedDataWorker::~DeviceSharedDataWorker() {
 
 void DeviceSharedDataWorker::init(void *init_data) throw (chaos::CException) {
 	DataWorker::init(init_data);
-	std::string path("stage/");
-	
-	//geenrate random path for this worker
-	path.append(UUIDUtil::generateUUIDLite());
-	
-	DSDW_LAPP_ << "Generated worker stage path " << path;
-	
-	//create path for this instance of worker
-	if(vfs_manager_instance->createDirectory(path, true)) {
-		DSDW_LERR_ << "Error creating thread folder  " << path;
-		throw chaos::CException(-2, "Error creating thread folder", __PRETTY_FUNCTION__);
-	}
+	//generate random path for this worker
+	std::string path(UUIDUtil::generateUUIDLite());
 	
 	DSDW_LAPP_ << "allocating cache driver for every thread";
 	for(int idx = 0; idx < settings.job_thread_number; idx++) {
@@ -54,7 +44,7 @@ void DeviceSharedDataWorker::init(void *init_data) throw (chaos::CException) {
 		stage_file_name.append(boost::lexical_cast<std::string>(idx));
 		
 		ThreadCookie *_tc_ptr = new ThreadCookie();
-		if(vfs_manager_instance->getFile(path+stage_file_name, &_tc_ptr->vfs_stage_file)) {
+		if(vfs_manager_instance->getWriteableStageFile(path+stage_file_name, &_tc_ptr->vfs_stage_file)) {
 			//we have got an error
 			DSDW_LERR_ << "Error getting vfs file for " << path+stage_file_name;
 			throw chaos::CException(-2, "Error creating vfs stage file", __PRETTY_FUNCTION__);

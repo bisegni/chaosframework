@@ -36,22 +36,6 @@ static const boost::regex KVParamRegex("[a-zA-Z0-9/_]+:[a-zA-Z0-9/_]+(-[a-zA-Z0-
 #define CDSLAPP_ LAPP_ << ChaosDataService_LOG_HEAD
 #define CDSLDBG_ LDBG_ << ChaosDataService_LOG_HEAD
 #define CDSLERR_ LERR_ << ChaosDataService_LOG_HEAD
-#define __METHOD_NAME__(x) x(__PRETTY_FUNCTION__)
-
-void writeTestData(chaos::data_service::vfs::VFSManager *manager) {
-	chaos::data_service::vfs::VFSFile * file= NULL;
-	if(manager->getFile("/data/device_1", &file) || !file) {
-		return;
-	}
-	const char * testBuff = "[START]asjgdoasdgfpaugfpaugsvuigsdfnocuagscougfabousdgfoanvuisgfaocusfadisugfoaisudgfainovsudgfcoiusfgnaoudisfgacnosufgaondsug[END]";
-	for (int idx = 0; idx < 100000; idx++) {
-		if(file->write((void*)testBuff, (uint32_t)std::strlen(testBuff))) {
-			break;
-		}
-		boost::this_thread::sleep(boost::posix_time::microseconds(100));
-	}
-	manager->releaseFile(file);
-}
 
 //boost::mutex ChaosCUToolkit::monitor;
 //boost::condition ChaosCUToolkit::endWaithCondition;
@@ -123,7 +107,22 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
         if (signal((int) SIGQUIT, ChaosDataService::signalHanlder) == SIG_ERR){
             CDSLERR_ << "SIGQUIT Signal handler registraiton error";
         }
-
+		
+		//check for mandatory configuration
+		if(!getGlobalConfigurationInstance()->hasOption(OPT_RUN_MODE)) {
+			//no cache server provided
+			throw chaos::CException(-1, "No run mode specified", __PRETTY_FUNCTION__);
+		}
+		
+		if(getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_RUN_MODE) > BOTH ||
+		   getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_RUN_MODE) < INDEXER) {
+			//no cache server provided
+			throw chaos::CException(-1, "Invalid run mode", __PRETTY_FUNCTION__);
+		}
+		
+		//get the run mode
+		run_mode = (RunMode)getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_RUN_MODE);
+		
 		//check for mandatory configuration
 		if(!getGlobalConfigurationInstance()->hasOption(OPT_CACHE_SERVER_LIST)) {
 			//no cache server provided
@@ -156,27 +155,23 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		CDSLAPP_ << "Allocate VFS Manager";
 		vfs_file_manager.reset(new vfs::VFSManager(), "VFSFileManager");
 		vfs_file_manager.init(&settings.file_manager_setting , __PRETTY_FUNCTION__);
-		
-		//alocate default fs structure
-		vfs_file_manager->createDirectory(VFS_STAGE_AREA);
-		vfs_file_manager->createDirectory(VFS_DATA_AREA);
         
-        CDSLAPP_ << "Allocate the Data Consumer";
-        data_consumer.reset(new DataConsumer(vfs_file_manager.get()), "DataConsumer");
-		if(!data_consumer.get()) throw chaos::CException(-1, "Error instantiating data consumer", __PRETTY_FUNCTION__);
-		data_consumer->settings = &settings;
-		
-		CDSLAPP_ << "Link class";
-		data_consumer->network_broker = network_broker.get();
-        data_consumer.init(NULL, __PRETTY_FUNCTION__);
-		
-		/*
-		boost::thread_group g;
-		for (int idx = 0; idx < 10; idx++) {
-			g.add_thread(new boost::thread(writeTestData, vfs_file_manager.get()));
+		if(run_mode == QUERY ||
+		   run_mode == BOTH) {
+			CDSLAPP_ << "Allocate the Query Data Consumer";
+			data_consumer.reset(new QueryDataConsumer(vfs_file_manager.get()), "QueryDataConsumer");
+			if(!data_consumer.get()) throw chaos::CException(-1, "Error instantiating data consumer", __PRETTY_FUNCTION__);
+			data_consumer->settings = &settings;
+			data_consumer->network_broker = network_broker.get();
+			data_consumer.init(NULL, __PRETTY_FUNCTION__);
 		}
-		g.join_all();
-		*/
+		if(run_mode == INDEXER ||
+		   run_mode == BOTH) {
+			CDSLAPP_ << "Allocate the Data Consumer";
+			stage_data_indexer.reset(new StageDataConsumer(vfs_file_manager.get(), &settings), "StageDataConsumer");
+			if(!stage_data_indexer.get()) throw chaos::CException(-1, "Error instantiating stage data consumer", __PRETTY_FUNCTION__);
+			stage_data_indexer.init(NULL, __PRETTY_FUNCTION__);
+		}
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         exit(1);
@@ -190,7 +185,15 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 void ChaosDataService::start() throw(CException) {
     try {
 		network_broker.start(__PRETTY_FUNCTION__);
-        data_consumer.start(__PRETTY_FUNCTION__);
+		
+        if(run_mode == QUERY ||
+		   run_mode == BOTH) {
+			data_consumer.start( __PRETTY_FUNCTION__);
+		}
+		if(run_mode == INDEXER ||
+		   run_mode == BOTH) {
+			stage_data_indexer.start(__PRETTY_FUNCTION__);
+		}
 		
 		//print information header on CDS address
 		std::cout << "--------------------------------------------------------------------------------------" << std::endl;
@@ -217,11 +220,17 @@ void ChaosDataService::start() throw(CException) {
  Stop the toolkit execution
  */
 void ChaosDataService::stop() throw(CException) {
-    CDSLAPP_ << "Stop the Data Consumer";
-    data_consumer.stop(__PRETTY_FUNCTION__);
 	
-	CDSLAPP_ << "Stopping CHAOS Data Service";
-    network_broker.stop(__PRETTY_FUNCTION__);
+	network_broker.stop(__PRETTY_FUNCTION__);
+	
+	if(run_mode == QUERY ||
+	   run_mode == BOTH) {
+		data_consumer.stop( __PRETTY_FUNCTION__);
+	}
+	if(run_mode == INDEXER ||
+	   run_mode == BOTH) {
+		stage_data_indexer.stop(__PRETTY_FUNCTION__);
+	}
 }
 
 /*
@@ -229,13 +238,18 @@ void ChaosDataService::stop() throw(CException) {
  */
 void ChaosDataService::deinit() throw(CException) {
 	
-	if(data_consumer.get()) {
-		CDSLAPP_ << "Stop the Data Consumer";
+	if((run_mode == QUERY ||
+		run_mode == BOTH ) &&
+		data_consumer.get()) {
 		data_consumer.deinit(__PRETTY_FUNCTION__);
 		CDSLAPP_ << "Release the endpoint associated to the Data Consumer";
 		network_broker->releaseDirectIOServerEndpoint(data_consumer->server_endpoint);
 	}
-	
+	if((run_mode == INDEXER ||
+		run_mode == BOTH ) &&
+		stage_data_indexer.get()) {
+		stage_data_indexer.deinit(__PRETTY_FUNCTION__);
+	}
 	if(network_broker.get()) {
 		CDSLAPP_ << "Deinitializing CHAOS Data Service";
 		network_broker.deinit(__PRETTY_FUNCTION__);
@@ -243,10 +257,10 @@ void ChaosDataService::deinit() throw(CException) {
 	
 	//deinitialize vfs file manager
 	vfs_file_manager.deinit(__PRETTY_FUNCTION__);
-
+	
 	ChaosCommon<ChaosDataService>::deinit();
 	
-    CDSLAPP_ << "Deinitializated";
+    CDSLAPP_ << "Chaos Data service will now exit";
 }
 
 

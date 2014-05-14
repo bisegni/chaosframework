@@ -102,7 +102,6 @@ int CouchbaseCacheDriver::putData(void *element_key, uint8_t element_key_len,  v
     cmd.v.v0.bytes = value;
     cmd.v.v0.nbytes = value_len;
     cmd.v.v0.operation = LCB_SET;
-	
     if ((last_err = lcb_store(instance, this, 1, commands)) != LCB_SUCCESS) {
 		CCDLERR_<< "Fail to set value -> "<< lcb_strerror(NULL, last_err);
 		return -1;

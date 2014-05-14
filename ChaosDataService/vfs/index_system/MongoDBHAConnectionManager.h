@@ -84,6 +84,7 @@ namespace chaos {
 				
 				int insert( const std::string &ns , mongo::BSONObj obj , int flags=0);
 				int findOne( mongo::BSONObj& result, const std::string &ns, const mongo::Query& query, const mongo::BSONObj *fieldsToReturn = 0, int queryOptions = 0);
+				int runCommand( mongo::BSONObj& result, const std::string &ns, const mongo::BSONObj& comand, int queryOptions = 0);
 				int update( const std::string &ns, mongo::Query query, mongo::BSONObj obj, bool upsert = false, bool multi = false );
 			};
 		}

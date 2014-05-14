@@ -33,8 +33,13 @@
 
 
 using namespace chaos::data_service::vfs;
+namespace chaos_data_index = chaos::data_service::index_system;
+namespace chaos_data_storage = chaos::data_service::storage_system;
 
-VFSFile::VFSFile(std::string vfs_fpath) : current_data_block(NULL) {
+VFSFile::VFSFile(chaos_data_storage::StorageDriver *_storage_driver_ptr, chaos_data_index::IndexDriver *_index_driver_ptr, std::string vfs_fpath) :
+storage_driver_ptr(_storage_driver_ptr),
+index_driver_ptr(_index_driver_ptr),
+current_data_block(NULL) {
 	vfs_file_info.vfs_fpath = vfs_fpath;
 }
 
@@ -70,6 +75,16 @@ int VFSFile::getNewDataBlock(DataBlock **new_data_block_handler) {
 	return 0;
 }
 
+//! return new datablock where write into
+int VFSFile::getNextInTimeDataBlock(DataBlock **new_data_block_handler, uint64_t timestamp, data_block_state::DataBlockState state) {
+	return 0;
+}
+
+//! change Datablock state
+int updateDataBlockState(DataBlock *new_data_block_handler, data_block_state::DataBlockState state) {
+	return 0;
+}
+
 //! release a datablock
 int VFSFile::releaseDataBlock(DataBlock *data_block_ptr) {
 	if(!data_block_ptr) return 0;
@@ -84,21 +99,12 @@ int VFSFile::releaseDataBlock(DataBlock *data_block_ptr) {
 	return storage_driver_ptr->closeBlock(data_block_ptr);
 }
 
-//! check if datablock is valid according to internal logic
-bool VFSFile::isDataBlockValid(DataBlock *new_data_blok_handler) {
-	check_validity_counter++;
-	if(!new_data_blok_handler) return NULL;
-	
-	if((check_validity_counter % 4)) return true;
-	
-	//check operational value
-	bool is_valid = new_data_blok_handler->invalidation_timestamp > TimingUtil::getTimeStamp();
-	is_valid = is_valid && new_data_blok_handler->current_size < new_data_blok_handler->max_reacheable_size;
-	return is_valid;
-}
-
 const VFSFileInfo *VFSFile::getVFSFileInfo() const {
 	return &vfs_file_info;
+}
+
+bool VFSFile::isGood() {
+	return good;
 }
 
 bool VFSFile::exist() {
@@ -112,18 +118,18 @@ bool VFSFile::exist() {
 }
 
 int VFSFile::write(void *data, uint32_t data_len) {
-	int err = 0;
-	if(!isDataBlockValid(current_data_block)) {
-		if((err = releaseDataBlock(current_data_block))) {
-			VFSF_LERR_ << "Error releaseing datablock " << err;
-		}
-		
-		if((err = getNewDataBlock(&current_data_block))) {
-			VFSF_LERR_ << "Error creating datablock " << err;
-		}
-	}
-	
 	//write data
 	return storage_driver_ptr->write(current_data_block, data, data_len);
 };
+
+int VFSFile::read(void *buffer, uint32_t buffer_len) {
+	if(!current_data_block) return NULL;
+	int err = 0;
+	uint32_t readed_byte = 0;
+	//read the requested byte size
+	if((err = storage_driver_ptr->read(current_data_block, buffer, buffer_len, readed_byte))){
+		return err;
+	}
+	return readed_byte;
+}
 

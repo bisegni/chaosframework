@@ -35,7 +35,10 @@ void acm_timer(uv_timer_t *handle) {
 	TimerHanlder *c_handler = reinterpret_cast<TimerHanlder*>(handle->data);
 	c_handler->timeout();
 }
-
+void acm_thread(void *handle) {
+	chaos::utility::delegate::Delegate *thread_delegate = reinterpret_cast<chaos::utility::delegate::Delegate*>(handle);
+	(*thread_delegate)();
+}
 //----------------------------------------------------------------------------------------------------
 //static initialization
 bool AsyncCentralManager::looping = false;
@@ -105,4 +108,18 @@ int AsyncCentralManager::addTimer(TimerHanlder *timer_handler, uint64_t timeout,
 
 void AsyncCentralManager::removeTimer(TimerHanlder *timer_handler) {
 	uv_timer_stop(&timer_handler->uv_t);
+}
+
+int AsyncCentralManager::addThread(chaos::utility::delegate::Delegate *thread_delegate, AcmThreadID *thread_id) {
+	int err = 0;
+	if((err = uv_thread_create(thread_id, &acm_thread, thread_delegate))) {
+		return err;
+	}
+	return 0;
+}
+
+void AsyncCentralManager::joinThread(AcmThreadID *thread_id) {
+	if(uv_thread_join(thread_id)) {
+		ACM_LERR_ << "Error joining loop thread";
+	}
 }

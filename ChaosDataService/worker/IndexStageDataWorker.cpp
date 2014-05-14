@@ -1,5 +1,5 @@
 /*
- *	vfs.h
+ *	IndexStageDataWorker.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,12 +18,27 @@
  *    	limitations under the License.
  */
 
-#ifndef CHAOSFramework_VFS_h
-#define CHAOSFramework_VFS_h
+#include "IndexStageDataWorker.h"
 
-#include "DataBlock.h"
-#include "VFSFile.h"
-#include "VFSStageFile.h"
-#include "VFSManager.h"
+using namespace chaos::data_service;
+using namespace chaos::data_service::worker;
 
-#endif
+IndexStageDataWorker::IndexStageDataWorker(vfs::VFSManager *_vfs_manager_instance) {
+	
+}
+
+IndexStageDataWorker::~IndexStageDataWorker() {
+	
+}
+
+void IndexStageDataWorker::init(void *init_data) throw (chaos::CException) {
+	
+}
+
+void IndexStageDataWorker::deinit() throw (chaos::CException) {
+	
+}
+
+void IndexStageDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
+	IndexStageDataJob *dw_job_ptr = reinterpret_cast<IndexStageDataJob*>(job_info);
+}

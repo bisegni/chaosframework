@@ -24,7 +24,8 @@
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include "dataservice_global.h"
-#include "DataConsumer.h"
+#include "QueryDataConsumer.h"
+#include "StageDataConsumer.h"
 #include "worker/DataWorker.h"
 #include "cache_system/CacheDriver.h"
 #include "vfs/vfs.h"
@@ -47,6 +48,11 @@ namespace common_utility = chaos::utility;
 namespace chaos{
     namespace data_service {
 
+		typedef enum RunMode {
+			QUERY = 1,
+			INDEXER,
+			BOTH
+		} RunMode;
 		
         //! Chaos Data Service singleton
         /*!
@@ -54,6 +60,7 @@ namespace chaos{
         class ChaosDataService : public ChaosCommon<ChaosDataService>, public common_utility::StartableService {
             friend class Singleton<ChaosDataService>;
             
+			RunMode run_mode;
             static WaitSemaphore waitCloseSemaphore;
             
             ChaosDataService();
@@ -61,9 +68,10 @@ namespace chaos{
             static void signalHanlder(int);
 			
 			utility::StartableServiceContainer<chaos::NetworkBroker> network_broker;
-            utility::StartableServiceContainer<DataConsumer> data_consumer;
 			utility::InizializableServiceContainer<vfs::VFSManager> vfs_file_manager;
-			
+
+			utility::StartableServiceContainer<QueryDataConsumer> data_consumer;
+			utility::StartableServiceContainer<StageDataConsumer> stage_data_indexer;
 			void fillKVParameter(std::map<std::string, std::string>& kvmap, const char * param_key);
         public:
 			//----------setting----------
