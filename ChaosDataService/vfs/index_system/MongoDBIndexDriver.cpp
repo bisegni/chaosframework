@@ -103,7 +103,9 @@ int MongoDBIndexDriver::vfsDomainHeartBeat(vfs::VFSDomain domain) {
 }
 
 //! Register a new data block wrote on stage area
-int MongoDBIndexDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block, vfs::data_block_state::DataBlockState new_block_state) {
+int MongoDBIndexDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,
+										   chaos_vfs::DataBlock *data_block,
+										   vfs::data_block_state::DataBlockState new_block_state) {
 	int err = 0;
 	bool f_exists = false;
 	
@@ -152,7 +154,9 @@ int MongoDBIndexDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_v
 }
 
 //! Set the state for a stage datablock
-int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block, vfs::data_block_state::DataBlockState state) {
+int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
+											   chaos_vfs::DataBlock *data_block,
+											   vfs::data_block_state::DataBlockState state) {
 	int err = 0;
 	mongo::BSONObjBuilder bson_search;
 	mongo::BSONObjBuilder bson_block_query;
@@ -195,8 +199,69 @@ int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file, cha
 	return err;
 }
 
+//! Return the next available datablock created since timestamp
+int MongoDBIndexDriver::vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
+												  uint64_t timestamp,
+												  bool direction,
+												  data_block_state::DataBlockState state,
+												  vfs::data_block_state::DataBlockState new_state,
+												  chaos_vfs::DataBlock **data_block) {
+	int err = 0;
+	mongo::BSONObjBuilder command;
+	mongo::BSONObjBuilder query_master;
+	mongo::BSONObjBuilder query_cond;
+	mongo::BSONObjBuilder update;
+	mongo::BSONObj result;
+	try{
+		query_master << MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN << vfs_file->getVFSFileInfo()->vfs_domain;
+		//query on state
+		query_master << MONGO_DB_FIELD_DATA_BLOCK_STATE << state;
+		//search query on date
+		query_master << "$gt" << BSON(MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS << mongo::Date_t(timestamp));
+		
+		//start the find and modify command
+		command << "findandmodify" << MONGO_DB_VFS_VBLOCK_COLLECTION;
+		//compose file search criteria
+		command << "query" << query_master.obj();
+		//set the atomic update on the tate
+		command << "update" << BSON("$set" << BSON( MONGO_DB_FIELD_DATA_BLOCK_STATE << new_state) );
+		
+		err = ha_connection_pool->runCommand(result, MONGO_DB_VFS_VFAT_COLLECTION, query_master.obj());
+		if(err) {
+			MDBID_LERR_ << "Error " << err << " creting vfs file entry";
+		} else if(result.isEmpty()){
+			MDBID_LERR_ << "No datablock found for the criteria";
+		} else {
+			// read the block element
+			
+			//get new empty datablock
+			*data_block = getEmptyDataBlock();
+			
+			//set the field
+			(*data_block)->creation_time = result.getField(MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS).numberLong();
+			(*data_block)->invalidation_timestamp = result.getField(MONGO_DB_FIELD_DATA_BLOCK_VALID_UNTIL_TS).numberLong();
+			(*data_block)->max_reacheable_size = result.getField(MONGO_DB_FIELD_DATA_BLOCK_MAX_BLOCK_SIZE).numberLong();
+			
+			std::string path = result.getField(MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH).String();
+			(*data_block)->vfs_path = (char*)malloc(sizeof(char) * path.size()+1);
+			if((*data_block)->vfs_path) {
+				::strcpy((*data_block)->vfs_path , path.c_str());
+			} else {
+				deleteDataBlock(*data_block);
+				*data_block = NULL;
+				err = -1;
+			}
+		}
+	} catch( const mongo::DBException &e ) {
+		MDBID_LERR_ << e.what();
+		err = -1;
+	}
+	return err;
+}
+
 //! Heartbeat update stage block
-int MongoDBIndexDriver::vfsWorkHeartBeatOnDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block) {
+int MongoDBIndexDriver::vfsWorkHeartBeatOnDataBlock(chaos_vfs::VFSFile *vfs_file,
+													chaos_vfs::DataBlock *data_block) {
 	return 0;
 }
 

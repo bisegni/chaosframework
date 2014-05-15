@@ -34,6 +34,9 @@ int main(int argc, char * argv[]) {
 		//cache parameter
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_CONF_FILE,
 																									"File configuration path");
+		//cache parameter
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_RUN_MODE,
+																									"Specify the run mode[1 - Query Consumer, 2 - Stage Indexer, 3 - Both]");
 		
 		//cache parameter
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_CACHE_DRIVER,
@@ -64,6 +67,12 @@ int main(int argc, char * argv[]) {
 																									 "The thread number of each answer worker",
 																									 1,
 																									 &ChaosDataService::getInstance()->settings.answer_worker_setting.job_thread_number);
+
+		//indexer
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_INDEXER_WORKER_NUM,
+																									 "The number of the indexer worker",
+																									 INDEXER_WORKER_NUMBER,
+																									 &ChaosDataService::getInstance()->settings.indexer_worker_num);
 
 		//vfs conf
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_STORAGE_DRIVER_IMPL,

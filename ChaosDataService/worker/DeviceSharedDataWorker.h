@@ -23,7 +23,7 @@
 
 #include "DataWorker.h"
 #include "../vfs/VFSManager.h"
-#include "../vfs/VFSFile.h"
+#include "../vfs/VFSStageWriteableFile.h"
 #include "../cache_system/cache_system.h"
 
 #include <string>
@@ -58,7 +58,7 @@ namespace chaos{
 			
 			//! Thread cookier for collect need staff to process the request
 			struct ThreadCookie {
-				chaos_vfs::VFSFile			*vfs_stage_file;
+				chaos_vfs::VFSStageWriteableFile *vfs_stage_file;
 			};
 			
 			//! worker for live device sharing

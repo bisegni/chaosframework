@@ -20,6 +20,8 @@ namespace chaos{
     namespace data_service {
 
 #define OPT_CONF_FILE				"conf_file"
+#define OPT_RUN_MODE				"run_mode"
+		
 		//cache configuration
 #define OPT_CACHE_SERVER_LIST		"cache_servers"
 #define OPT_CACHE_DRIVER			"cache_driver"
@@ -31,6 +33,10 @@ namespace chaos{
 #define OPT_ANSWER_WORKER_NUM		"answer_worker_num"
 #define OPT_ANSWER_WORKER_THREAD	"answer_worker_thread"
 #define ANSWER_WORKER_NUMBER		2
+		
+		//stage data indexer
+#define OPT_INDEXER_WORKER_NUM		"indexer_worker_num"
+#define INDEXER_WORKER_NUMBER		2
 		
 		//vfs driver configuration
 #define OPT_VFS_STORAGE_DRIVER_IMPL		"vfs_storage_drvr_impl"
@@ -69,6 +75,9 @@ namespace chaos{
 			unsigned int				answer_worker_num;
 			worker::DataWorkerSetting	answer_worker_setting;
 
+			//----------stage data indexer---------------
+			unsigned int				indexer_worker_num;
+			
 			//----------vfs configuration----------------
 			vfs::VFSManagerSetting		file_manager_setting;
 		} ChaosDataServiceSetting;

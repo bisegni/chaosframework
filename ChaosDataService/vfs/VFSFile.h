@@ -25,13 +25,14 @@
 #include "storage_system/StorageDriver.h"
 
 
-namespace chaos_data_index = chaos::data_service::index_system;
-namespace chaos_data_storage = chaos::data_service::storage_system;
 
 namespace chaos {
 	namespace data_service {
 		namespace vfs {
 			
+			namespace chaos_data_index = chaos::data_service::index_system;
+			namespace chaos_data_storage = chaos::data_service::storage_system;
+		
 			class VFSManager;
 			struct DataBlock;
 			
@@ -39,34 +40,38 @@ namespace chaos {
 			//! VFS Logical file
 			class VFSFile {
 				friend class VFSManager;
+				
+				//! operational setting for the virtual file
+				VFSFileInfo vfs_file_info;
+				
+			protected:
+				//!tag if the file is in good state
+				bool good;
+
+				//! Current available data block where read or write
+				DataBlock *current_data_block;
+				
 				//!index driver pointer
 				chaos_data_index::IndexDriver *index_driver_ptr;
 				
 				//!storage driver pointer
 				chaos_data_storage::StorageDriver *storage_driver_ptr;
-
-				std::string last_error;
-				
-				//! operational setting for the virtual file
-				VFSFileInfo vfs_file_info;
-				
-				//! Current available data block where read or write
-				DataBlock *current_data_block;
-				
-				uint32_t check_validity_counter;
-				
-				//default consturctor or destructor
-				VFSFile(std::string vfs_fpath);
-				~VFSFile();
+			
+				//! return new datablock where write into
+				int getNewDataBlock(DataBlock **new_data_block_handler);
 				
 				//! return new datablock where write into
-				inline int getNewDataBlock(DataBlock **new_data_block_handler);
+				int getNextInTimeDataBlock(DataBlock **new_data_block_handler, uint64_t timestamp, data_block_state::DataBlockState state);
+				
+				//! change Datablock state
+				int updateDataBlockState(DataBlock *new_data_block_handler, data_block_state::DataBlockState state);
 				
 				//! release a datablock
-				inline int releaseDataBlock(DataBlock *data_block_ptr);
+				int releaseDataBlock(DataBlock *data_block_ptr);
 				
-				//! check if datablock is valid according to internal logic
-				inline bool isDataBlockValid(DataBlock *new_data_blok_handler);
+				//default consturctor or destructor
+				VFSFile(chaos_data_storage::StorageDriver *_storage_driver_ptr, chaos_data_index::IndexDriver *_index_driver_ptr, std::string vfs_fpath);
+				~VFSFile();
 			public:
 				//! Get the VFS information for file
 				const VFSFileInfo *getVFSFileInfo() const;
@@ -74,8 +79,21 @@ namespace chaos {
 				//! Check if the file exists
 				bool exist();
 				
+				//! Return the goodness of the file
+				bool isGood();
+				
 				//! write data on the current data block
-				int write(void *data, uint32_t data_len);
+				virtual int write(void *data, uint32_t data_len);
+				
+				//! read data from the current data block
+				/*!
+				 Read the data for the current loaded databloc
+				 \param data pointer where put the readed byte
+				 \param byte to read
+				 \return negative number is something is not gone well,
+				 otherwise the number of byte readed
+				 */
+				virtual int read(void *buffer, uint32_t buffer_len);
 			};
 		}
 	}

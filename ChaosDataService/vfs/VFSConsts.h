@@ -1,5 +1,5 @@
 /*
- *	vfs.h
+ *	VFSConst.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,12 +18,11 @@
  *    	limitations under the License.
  */
 
-#ifndef CHAOSFramework_VFS_h
-#define CHAOSFramework_VFS_h
 
-#include "DataBlock.h"
-#include "VFSFile.h"
-#include "VFSStageFile.h"
-#include "VFSManager.h"
+#ifndef CHAOSFramework_VFSConsts_h
+#define CHAOSFramework_VFSConsts_h
+//cosntant for the definition of the two main directory of the chaos vfs
+#define VFS_STAGE_AREA	"stage"
+#define VFS_DATA_AREA	"data"
 
 #endif

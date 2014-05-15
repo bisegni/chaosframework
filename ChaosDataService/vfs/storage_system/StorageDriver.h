@@ -116,10 +116,10 @@ namespace chaos {
 				virtual int getBlockSize(chaos_vfs::DataBlock *data_block) = 0;
 
 				//! write an amount of data into a DataBlock
-                virtual int write(chaos_vfs::DataBlock *data_block, void * data, uint64_t data_len) = 0;
+                virtual int write(chaos_vfs::DataBlock *data_block, void * data, uint32_t data_len) = 0;
 				
 				//! read an amount of data from a DataBlock
-                virtual int read(chaos_vfs::DataBlock *data_block, uint64_t offset, void * * data, uint64_t& data_len) = 0;
+                virtual int read(chaos_vfs::DataBlock *data_block, void * buffer, uint32_t buffer_len, uint32_t& readed_byte) = 0;
 				
 				//! change the block pointer for read or write
                 virtual int seek(chaos_vfs::DataBlock *data_block, uint64_t offset, chaos_vfs::block_seek_base::BlockSeekBase base_direction) = 0;

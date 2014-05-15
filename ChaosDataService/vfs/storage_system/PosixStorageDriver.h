@@ -85,10 +85,10 @@ namespace chaos {
 				int getBlockSize(chaos_vfs::DataBlock *data_block);
 				
 				//! write an amount of data into a DataBlock
-                int write(chaos_vfs::DataBlock *data_block, void * data, uint64_t data_len);
+                int write(chaos_vfs::DataBlock *data_block, void * data, uint32_t data_len);
 				
 				//! read an amount of data from a DataBlock
-                int read(chaos_vfs::DataBlock *data_block, uint64_t offset, void * * data, uint64_t& data_len);
+                int read(chaos_vfs::DataBlock *data_block, void * buffer, uint32_t buffer_len, uint32_t& readed_byte);
 				
 				//! change the block pointer for read or write
 				int seek(chaos_vfs::DataBlock *data_block, uint64_t offset, chaos_vfs::block_seek_base::BlockSeekBase base_direction);

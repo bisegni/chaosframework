@@ -84,16 +84,30 @@ namespace chaos {
 				int vfsDomainHeartBeat(vfs::VFSDomain domain);
 				
 				//! Register a new data block wrote on stage area
-				int vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block, vfs::data_block_state::DataBlockState new_block_state = vfs::data_block_state::DataBlockStateNone);
-				
+				int vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,
+									   chaos_vfs::DataBlock *data_block,
+									   vfs::data_block_state::DataBlockState new_block_state = vfs::data_block_state::DataBlockStateNone);
+								
 				//! Set the state for a stage datablock
-				int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block, vfs::data_block_state::DataBlockState state);
+				int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
+										   chaos_vfs::DataBlock *data_block,
+										   vfs::data_block_state::DataBlockState state);
 				
+				//! Return the next available datablock created since timestamp
+				int vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
+											  uint64_t timestamp,
+											  bool direction,
+											  vfs::data_block_state::DataBlockState state,
+											  vfs::data_block_state::DataBlockState new_state,
+											  chaos_vfs::DataBlock **data_block);
+
 				//! Heartbeat update stage block
-				int vfsWorkHeartBeatOnDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block);
+				int vfsWorkHeartBeatOnDataBlock(chaos_vfs::VFSFile *vfs_file,
+												chaos_vfs::DataBlock *data_block);
 				
 				//! Check if the vfs file exists
-				int vfsFileExist(chaos_vfs::VFSFile *vfs_file, bool& exists_flag);
+				int vfsFileExist(chaos_vfs::VFSFile *vfs_file,
+								 bool& exists_flag);
 				
 				//! Create a file entry into the vfat
 				int vfsCreateFileEntry(chaos_vfs::VFSFile *vfs_file);

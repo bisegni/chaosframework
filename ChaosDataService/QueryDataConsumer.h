@@ -1,5 +1,5 @@
 /*
- *	DataConsumer.cpp
+ *	QueryDataConsumer.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__DataConsumer__
-#define __CHAOSFramework__DataConsumer__
+#ifndef __CHAOSFramework__QueryDataConsumer__
+#define __CHAOSFramework__QueryDataConsumer__
 
 #include "dataservice_global.h"
 #include "vfs/VFSManager.h"
@@ -44,13 +44,13 @@ namespace chaos{
         
         class ChaosDataService;
         
-        class DataConsumer : public DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler, public utility::StartableService {
+        class QueryDataConsumer : public DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler, public utility::StartableService {
             friend class ChaosDataService;
 			std::string cache_impl_name;
 			
-			chaos::NetworkBroker					*network_broker;
 			
 			ChaosDataServiceSetting					*settings;
+			chaos::NetworkBroker					*network_broker;
 			
             DirectIOServerEndpoint					*server_endpoint;
 			DirectIODeviceServerChannel				*device_channel;
@@ -65,8 +65,8 @@ namespace chaos{
             void consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header, void *channel_data, uint32_t channel_data_len);
 
         public:
-			DataConsumer(vfs::VFSManager *_vfs_manager_instance);
-            ~DataConsumer();
+			QueryDataConsumer(vfs::VFSManager *_vfs_manager_instance);
+            ~QueryDataConsumer();
             void init(void *init_data) throw (chaos::CException);
             void start() throw (chaos::CException);
             void stop() throw (chaos::CException);
@@ -76,4 +76,4 @@ namespace chaos{
     }
 }
 
-#endif /* defined(__CHAOSFramework__DataConsumer__) */
+#endif /* defined(__CHAOSFramework__QueryDataConsumer__) */

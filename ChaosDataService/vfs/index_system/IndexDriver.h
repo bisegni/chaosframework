@@ -64,6 +64,9 @@ namespace chaos {
 			protected:
 				//protected constructor
 				IndexDriver(std::string alias);
+				
+				chaos_vfs::DataBlock *getEmptyDataBlock();
+				void deleteDataBlock(chaos_vfs::DataBlock *data_block);
 			protected:
 				IndexDriverSetting *setting;
             public:
@@ -79,6 +82,7 @@ namespace chaos {
 				
 				//!deinit
 				void deinit() throw (chaos::CException);
+
 				
 				//! Register a new domain
 				/*!
@@ -101,7 +105,8 @@ namespace chaos {
 					\param vfs_file the vfs file for wich we need to create the new data block
 					\param data_block Newly created data block
 				 */
-				virtual int vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file, chaos_vfs::DataBlock *data_block,
+				virtual int vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,
+											   chaos_vfs::DataBlock *data_block,
 											   vfs::data_block_state::DataBlockState new_block_state = vfs::data_block_state::DataBlockStateNone) = 0;
 				
 				//! Set the state for a stage datablock
@@ -109,20 +114,43 @@ namespace chaos {
 				 Set the current state for a datablock in the stage area
 				 \param data_block Data block for wich need to be changed the state
 				 */
-				virtual int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,chaos_vfs::DataBlock *data_block, vfs::data_block_state::DataBlockState state) = 0;
+				virtual int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
+												   chaos_vfs::DataBlock *data_block,
+												   vfs::data_block_state::DataBlockState state) = 0;
+				
+				//! Return the next available datablock created since timestamp
+				/*!
+				 The rule on how select the Datablock is regulated by direction flag. It set the next or prev, starting from
+				 the timestamp, datablock to select that match the state. The api is atomic
+				 \param vfs_file virtual file at wich the datablock belowng
+				 \param timestamp the timestamp form wich search
+				 \param directio true -> enxt or false -> prev
+				 \param state the state for the selection of the datablock
+				 \param new_state is the state in wich the block is ported if found
+				 \param data_block the returned, if found, datablock
+				 \return the error code
+				 */
+				virtual int vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
+													  uint64_t timestamp,
+													  bool direction,
+													  vfs::data_block_state::DataBlockState state,
+													  vfs::data_block_state::DataBlockState new_state,
+													  chaos_vfs::DataBlock **data_block) = 0;
 				
 				//! Heartbeat update stage block
 				/*!
 				 Registration of a new datablock in stage area is achieved directly to the DataService process
 				 after the block has been created.
 				 */
-				virtual int vfsWorkHeartBeatOnDataBlock(chaos_vfs::VFSFile *vfs_file,chaos_vfs::DataBlock *data_block) = 0;
+				virtual int vfsWorkHeartBeatOnDataBlock(chaos_vfs::VFSFile *vfs_file,
+														chaos_vfs::DataBlock *data_block) = 0;
 
 				//! Check if the vfs file exists
 				/*!
 				 Check on vfs index db if the file exists
 				 */
-				virtual int vfsFileExist(chaos_vfs::VFSFile *vfs_file, bool& exists_flag) = 0;
+				virtual int vfsFileExist(chaos_vfs::VFSFile *vfs_file,
+										 bool& exists_flag) = 0;
 				
 				//! Create a file entry into the vfat
 				/*!

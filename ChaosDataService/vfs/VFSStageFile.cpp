@@ -1,5 +1,5 @@
 /*
- *	vfs.h
+ *	VFSStageFile.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,12 +18,14 @@
  *    	limitations under the License.
  */
 
-#ifndef CHAOSFramework_VFS_h
-#define CHAOSFramework_VFS_h
-
-#include "DataBlock.h"
-#include "VFSFile.h"
 #include "VFSStageFile.h"
-#include "VFSManager.h"
 
-#endif
+#include <boost/format.hpp>
+using namespace chaos::data_service::vfs;
+
+VFSStageFile::VFSStageFile(chaos_data_storage::StorageDriver *_storage_driver_ptr, chaos_data_index::IndexDriver *_index_driver_ptr, std::string stage_vfs_relative_path, VFSStageFileOpenMode _open_mode):
+VFSFile(_storage_driver_ptr, _index_driver_ptr, boost::str(boost::format("%1%/%2%") % VFS_STAGE_AREA % stage_vfs_relative_path)), //superclass constructor
+open_mode(_open_mode) {
+	//allocate all thepath for this file
+	good = (storage_driver_ptr->createPath(getVFSFileInfo()->vfs_fpath) == 0);
+}
