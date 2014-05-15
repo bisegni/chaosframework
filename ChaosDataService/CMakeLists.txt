@@ -1,9 +1,9 @@
 SET(src main.cpp)
-SET(src  ${src} ChaosDataService.cpp QueryDataConsumer.cpp)
+SET(src  ${src} ChaosDataService.cpp QueryDataConsumer.cpp StageDataConsumer.cpp)
 SET(src  ${src} worker/DataWorker.cpp worker/DeviceSharedDataWorker.cpp worker/AnswerDataWorker.cpp)
 SET(src  ${src} cache_system/CacheDriver.cpp cache_system/MemcachedCacheDriver.cpp cache_system/CouchbaseCacheDriver.cpp)
 # 
-SET(src  ${src} vfs/VFSManager.cpp vfs/DataBlock.cpp vfs/VFSFile.cpp  vfs/storage_system/StorageDriver.cpp vfs/storage_system/PosixStorageDriver.cpp)
+SET(src  ${src} vfs/VFSManager.cpp vfs/DataBlock.cpp vfs/VFSFile.cpp vfs/VFSStageFile.cpp vfs/VFSStageWriteableFile.cpp vfs/VFSStageRedeableFile.cpp vfs/storage_system/StorageDriver.cpp vfs/storage_system/PosixStorageDriver.cpp)
 SET(src  ${src} vfs/index_system/IndexDriver.cpp vfs/index_system/MongoDBIndexDriver.cpp vfs/index_system/MongoDBHAConnectionManager.cpp)
 
 ADD_EXECUTABLE(ChaosDataService ${src})
