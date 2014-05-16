@@ -1,6 +1,6 @@
 SET(src main.cpp)
 SET(src  ${src} ChaosDataService.cpp QueryDataConsumer.cpp StageDataConsumer.cpp)
-SET(src  ${src} worker/DataWorker.cpp worker/DeviceSharedDataWorker.cpp worker/AnswerDataWorker.cpp)
+SET(src  ${src} worker/DataWorker.cpp worker/DeviceSharedDataWorker.cpp worker/AnswerDataWorker.cpp worker/IndexStageDataWorker.cpp)
 SET(src  ${src} cache_system/CacheDriver.cpp cache_system/MemcachedCacheDriver.cpp cache_system/CouchbaseCacheDriver.cpp)
 # 
 SET(src  ${src} vfs/VFSManager.cpp vfs/DataBlock.cpp vfs/VFSFile.cpp vfs/VFSStageFile.cpp vfs/VFSStageWriteableFile.cpp vfs/VFSStageRedeableFile.cpp vfs/storage_system/StorageDriver.cpp vfs/storage_system/PosixStorageDriver.cpp)
