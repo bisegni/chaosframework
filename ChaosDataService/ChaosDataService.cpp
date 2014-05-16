@@ -115,7 +115,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		}
 		
 		if(getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_RUN_MODE) > BOTH ||
-		   getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_RUN_MODE) < INDEXER) {
+		   getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_RUN_MODE) < QUERY) {
 			//no cache server provided
 			throw chaos::CException(-1, "Invalid run mode", __PRETTY_FUNCTION__);
 		}

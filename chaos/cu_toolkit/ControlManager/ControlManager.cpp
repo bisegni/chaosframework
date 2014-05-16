@@ -219,18 +219,17 @@ void ControlManager::timeout() {
 	//initialize the Control Unit
     int registrationError = ErrorCode::EC_NO_ERROR;
     AbstractControlUnit *curCU = 0L;
-    CDataWrapper cuActionAndDataset;
     std::vector<const chaos::DeclareAction * > cuDeclareActionsInstance;
-    
+    CDataWrapper cuActionAndDataset;
 	//boost::mutex::scoped_lock lock(qMutex);
 	boost::unique_lock<boost::mutex> lock(qMutex);
 	while(!submittedCUQueue.empty()){
+		
 		//get the oldest data ad copy the ahsred_ptr
 		curCU = submittedCUQueue.front();
 		//remove the oldest data
 		submittedCUQueue.pop();
 		try {
-			
 			LCMAPP_  << "Got new Control Unit";
 			shared_ptr<AbstractControlUnit> cuPtr(curCU);
 			
@@ -283,6 +282,7 @@ void ControlManager::timeout() {
 			
 			//clear
 			cuDeclareActionsInstance.clear();
+			cuActionAndDataset.reset();
 		} catch (CException& ex) {
 			DECODE_CHAOS_EXCEPTION(ex)
 		}
