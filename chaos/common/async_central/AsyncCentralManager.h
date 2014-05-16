@@ -64,7 +64,7 @@ namespace chaos {
 				
 				void removeTimer(TimerHanlder *timer_handler);
 				
-				int addThread(utility::delegate::Delegate *thread_delegate, AcmThreadID *thread_id);
+				int addThread(chaos::common::utility::delegate::Delegate *thread_delegate, AcmThreadID *thread_id);
 				
 				void joinThread(AcmThreadID *thread_id);
 			};

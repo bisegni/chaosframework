@@ -44,7 +44,7 @@ StageDataConsumer::~StageDataConsumer() {
 void StageDataConsumer::init(void *init_data) throw (chaos::CException) {
 	if(!settings)  throw chaos::CException(-1, "No setting provided", __FUNCTION__);
 	
-	myself_delegate = utility::delegate::Delegate::from_method<StageDataConsumer, &StageDataConsumer::scanStage>(this);
+	myself_delegate = common::utility::delegate::Delegate::from_method<StageDataConsumer, &StageDataConsumer::scanStage>(this);
 	
 	//add answer worker
 	SDCLAPP_ << "Allocating stage data indexer";

@@ -44,7 +44,7 @@ namespace chaos{
 			chaos::common::utility::ObjectSlot<chaos::data_service::worker::DataWorker*> indexer_stage_worker_list;
 
 			bool work_on_stage;
-			utility::delegate::Delegate myself_delegate;
+			chaos::common::utility::delegate::Delegate myself_delegate;
 			std::vector<common::async_central::AcmThreadID> thread_ids;
 			
 			void scanStage();
