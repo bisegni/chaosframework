@@ -36,7 +36,7 @@ void acm_timer(uv_timer_t *handle) {
 	c_handler->timeout();
 }
 void acm_thread(void *handle) {
-	chaos::utility::delegate::Delegate *thread_delegate = reinterpret_cast<chaos::utility::delegate::Delegate*>(handle);
+	chaos::common::utility::delegate::Delegate *thread_delegate = reinterpret_cast<chaos::common::utility::delegate::Delegate*>(handle);
 	(*thread_delegate)();
 }
 //----------------------------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ void AsyncCentralManager::removeTimer(TimerHanlder *timer_handler) {
 	uv_timer_stop(&timer_handler->uv_t);
 }
 
-int AsyncCentralManager::addThread(chaos::utility::delegate::Delegate *thread_delegate, AcmThreadID *thread_id) {
+int AsyncCentralManager::addThread(chaos::common::utility::delegate::Delegate *thread_delegate, AcmThreadID *thread_id) {
 	int err = 0;
 	if((err = uv_thread_create(thread_id, &acm_thread, thread_delegate))) {
 		return err;
