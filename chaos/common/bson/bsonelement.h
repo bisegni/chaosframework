@@ -304,8 +304,9 @@ namespace bson {
         /** Get raw binary data.  Element must be of type BinData. Doesn't handle type 2 specially */
         const char *binData(int& len) const {
             // BinData: <int len> <byte subtype> <byte[len] data>
-
-            verify( type() == BinData );
+	  
+	  if(type() != BinData) return 0;
+	  //            verify( type() == BinData );
             len = valuestrsize();
             return value() + 5;
         }
