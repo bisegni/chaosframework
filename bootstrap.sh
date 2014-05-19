@@ -207,11 +207,11 @@ if [ ! -d "$PREFIX/include/modbus" ] || [ ! -d "$BASE_EXTERNAL/libmodbus" ]; the
                 echo "Install libmodbus"
                 git clone https://github.com/stephane/libmodbus.git $BASE_EXTERNAL/libmodbus
                 cd $BASE_EXTERNAL/libmodbus
-		git checkout -b v3.0.5
+		git checkout v3.0.5
         else
                 echo "Update libmodbus"
                 cd $BASE_EXTERNAL/libmodbus/
-                git pull
+                git pull v3.05
         fi
 
 ./autogen.sh
@@ -363,7 +363,7 @@ if [ ! -f "$PREFIX/include/mongo/client/dbclient.h" ]; then
 		    exit 1
 		fi
 		cd $BASE_EXTERNAL/mongo
-		git checkout -b $MONGO_VERSION
+		git checkout $MONGO_VERSION
 	else
 		cd $BASE_EXTERNAL/mongo
 		git pull $MONGO_VERSION
