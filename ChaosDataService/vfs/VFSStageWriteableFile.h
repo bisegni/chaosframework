@@ -42,7 +42,7 @@ namespace chaos {
 				//! check if datablock is valid according to internal logic
 				inline bool isDataBlockValid(DataBlock *new_data_blok_handler);
 
-				VFSStageWriteableFile(chaos_data_storage::StorageDriver *_storage_driver_ptr, chaos_data_index::IndexDriver *_index_driver_ptr, std::string stage_vfs_relative_path);
+				VFSStageWriteableFile(storage_system::StorageDriver *_storage_driver_ptr, index_system::IndexDriver *_index_driver_ptr, std::string stage_vfs_relative_path);
 
 			public:
 				// write data on the current data block

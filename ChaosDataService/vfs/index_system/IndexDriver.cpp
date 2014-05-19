@@ -21,7 +21,7 @@
 #include "IndexDriver.h"
 #include "../DataBlock.h"
 
-using namespace chaos::data_service::index_system;
+using namespace chaos::data_service::vfs::index_system;
 
 IndexDriver::IndexDriver(std::string alias):NamedService(alias) {
 	
@@ -43,10 +43,10 @@ void IndexDriver::init(void *init_data) throw (chaos::CException) {
 void IndexDriver::deinit() throw (chaos::CException) {
 }
 
-chaos::data_service::chaos_vfs::DataBlock *IndexDriver::getEmptyDataBlock() {
-	return new chaos::data_service::chaos_vfs::DataBlock();
+chaos::data_service::vfs::DataBlock *IndexDriver::getEmptyDataBlock() {
+	return new chaos::data_service::vfs::DataBlock();
 }
 
-void IndexDriver::deleteDataBlock(chaos::data_service::chaos_vfs::DataBlock *data_block) {
+void IndexDriver::deleteDataBlock(chaos::data_service::vfs::DataBlock *data_block) {
 	delete(data_block);
 }

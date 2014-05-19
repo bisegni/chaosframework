@@ -35,58 +35,61 @@ namespace chaos_data = chaos::common::data;
 
 namespace chaos {
 	namespace data_service {
-		namespace index_system {
-			
-			/*!
-			 Class that encapsulat ethe mongodb conenction for safe deallocation
-			 */
-			class DriverScopedConnection : public mongo::ScopedDbConnection {
+		namespace vfs {
+			namespace index_system {
 				
-			public:
-				DriverScopedConnection(mongo::ConnectionString _conn);
-				~DriverScopedConnection();
-			};
-			
-			typedef DriverScopedConnection *MongoDBHAConnection;
-			
-			class MongoAuthHook : public mongo::DBConnectionHook {
-				std::string user;
-				std::string pwd;
-				std::string db;
-				bool has_autentication;
-				void onCreate( mongo::DBClientBase * conn );
-				void onHandedOut( mongo::DBClientBase * conn );
-				void onDestroy( mongo::DBClientBase * conn );
-			public:
-				MongoAuthHook(std::map<string,string>& key_value_custom_param);
-			};
-			
-			/*!
-			 Implementation for the high availability with multiple
-			 mongos router instance
-			 */
-			class MongoDBHAConnectionManager {
-				uint32_t server_number;
+				/*!
+				 Class that encapsulat ethe mongodb conenction for safe deallocation
+				 */
+				class DriverScopedConnection : public mongo::ScopedDbConnection {
+					
+				public:
+					DriverScopedConnection(mongo::ConnectionString _conn);
+					~DriverScopedConnection();
+				};
 				
-				uint64_t next_retrive_intervall;
+				typedef DriverScopedConnection *MongoDBHAConnection;
 				
-				boost::shared_mutex mutext_queue;
-				std::queue< boost::shared_ptr<mongo::ConnectionString> > valid_connection_queue;
-				std::queue< boost::shared_ptr<mongo::ConnectionString> > offline_connection_queue;
-			
-				inline bool canRetry();
+				class MongoAuthHook : public mongo::DBConnectionHook {
+					std::string user;
+					std::string pwd;
+					std::string db;
+					bool has_autentication;
+					void onCreate( mongo::DBClientBase * conn );
+					void onHandedOut( mongo::DBClientBase * conn );
+					void onDestroy( mongo::DBClientBase * conn );
+				public:
+					MongoAuthHook(std::map<string,string>& key_value_custom_param);
+				};
 				
-				bool getConnection(MongoDBHAConnection *connection_sptr);
-				
-			public:
-				MongoDBHAConnectionManager(std::vector<std::string> monogs_routers_list, std::map<string,string>& key_value_custom_param);
-				~MongoDBHAConnectionManager();
-				
-				int insert( const std::string &ns , mongo::BSONObj obj , int flags=0);
-				int findOne( mongo::BSONObj& result, const std::string &ns, const mongo::Query& query, const mongo::BSONObj *fieldsToReturn = 0, int queryOptions = 0);
-				int runCommand( mongo::BSONObj& result, const std::string &ns, const mongo::BSONObj& comand, int queryOptions = 0);
-				int update( const std::string &ns, mongo::Query query, mongo::BSONObj obj, bool upsert = false, bool multi = false );
-			};
+				/*!
+				 Implementation for the high availability with multiple
+				 mongos router instance
+				 */
+				class MongoDBHAConnectionManager {
+					uint32_t server_number;
+					
+					uint64_t next_retrive_intervall;
+					
+					boost::shared_mutex mutext_queue;
+					std::queue< boost::shared_ptr<mongo::ConnectionString> > valid_connection_queue;
+					std::queue< boost::shared_ptr<mongo::ConnectionString> > offline_connection_queue;
+					
+					inline bool canRetry();
+					
+					bool getConnection(MongoDBHAConnection *connection_sptr);
+					
+				public:
+					MongoDBHAConnectionManager(std::vector<std::string> monogs_routers_list, std::map<string,string>& key_value_custom_param);
+					~MongoDBHAConnectionManager();
+					
+					int insert( const std::string &ns , mongo::BSONObj obj , int flags=0);
+					int findOne( mongo::BSONObj& result, const std::string &ns, const mongo::Query& query, const mongo::BSONObj *fieldsToReturn = 0, int queryOptions = 0);
+					void findN(std::vector<mongo::BSONObj>& out, const std::string& ns, mongo::Query query, int nToReturn, int nToSkip = 0, const mongo::BSONObj *fieldsToReturn = 0, int queryOptions = 0);
+					int runCommand( mongo::BSONObj& result, const std::string &ns, const mongo::BSONObj& comand, int queryOptions = 0);
+					int update( const std::string &ns, mongo::Query query, mongo::BSONObj obj, bool upsert = false, bool multi = false );
+				};
+			}
 		}
 	}
 }

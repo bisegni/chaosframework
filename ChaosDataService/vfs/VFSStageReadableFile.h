@@ -33,24 +33,38 @@ namespace chaos {
 			/*!
 			 Manage the read operation on the stage file
 			 */
-			class VFSStageRedeableFile : public VFSStageFile {
+			class VFSStageReadableFile : public VFSStageFile {
 				friend class VFSManager;
 				
+				//!keep track of the number of the bytes read from current block
+				uint64_t current_block_read_byte;
+				
 				//!keep track of the totale byte read for the local block
-				uint64_t global_readed_byte;
+				uint64_t current_block_size;
+
+				uint64_t current_block_creation_ts;
 				
 				//! Default constructor
-				VFSStageRedeableFile(chaos_data_storage::StorageDriver *_storage_driver_ptr, chaos_data_index::IndexDriver *_index_driver_ptr, std::string stage_vfs_relative_path);
+				VFSStageReadableFile(storage_system::StorageDriver *_storage_driver_ptr, index_system::IndexDriver *_index_driver_ptr, std::string stage_vfs_relative_path);
 				
 				//! Get next availbale block
 				/*!
 				 Next block is loaded from the set of block
 				 that are in state DataBlockState::DataBlockStateNone
 				 */
-				inline void getNextAvailbaleBlock();
+				inline int getNextAvailbaleBlock();
 			public:
 				// write data on the current data block
-				int read(void *data, uint32_t data_len);
+				/*!
+				 the read function try to fill all the buffer, if the block is full readed
+				 and other space if left in the buffer, new block is loaded according to
+				 overlaped_block_read parameter
+				 \param data buffer where put readed byte
+				 \param data_len the length of the buffer
+				 \param overlaped_block_read if tru the read operation will fullfill the buffer
+				 if there are other available data block
+				 */
+				int read(void *data, uint32_t data_len, bool overlaped_block_read = false);
 			};
 		}
 	}

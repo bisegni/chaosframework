@@ -434,7 +434,7 @@
 		32D6C89A1815294700E9689B /* DirectIOForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C8991815294700E9689B /* DirectIOForwarder.h */; };
 		32DB1188166267FB0036D1B9 /* DSDoubleHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DB1187166267FB0036D1B9 /* DSDoubleHandler.h */; };
 		32DBF9D118E1845E0095B289 /* CouchbaseCacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */; };
-		32DCC36F192517DA00E14256 /* VFSStageRedeableFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DCC36D192517DA00E14256 /* VFSStageRedeableFile.cpp */; };
+		32DCC36F192517DA00E14256 /* VFSStageReadableFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DCC36D192517DA00E14256 /* VFSStageReadableFile.cpp */; };
 		32DD884F15E2663B000AF740 /* DefaultEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DD884D15E2663B000AF740 /* DefaultEventDispatcher.h */; };
 		32DD885315E2681F000AF740 /* EventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DD885115E2681F000AF740 /* EventHandler.cpp */; };
 		32DD885415E2681F000AF740 /* EventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DD885215E2681F000AF740 /* EventHandler.h */; };
@@ -472,6 +472,8 @@
 		32F7FEA118A4FD9B00FC03AB /* DirectIOEndpointHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7FEA018A4FD9B00FC03AB /* DirectIOEndpointHandler.h */; };
 		32F7FEAB18A5066600FC03AB /* FastDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7FEA218A5066600FC03AB /* FastDelegate.h */; };
 		32F7FEAC18A5066600FC03AB /* FastDelegateBind.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7FEA318A5066600FC03AB /* FastDelegateBind.h */; };
+		32FB2170192A574700E9C87A /* StageDataVFileScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FB216E192A574700E9C87A /* StageDataVFileScanner.cpp */; };
+		32FB2174192A58E400E9C87A /* DataIndexDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FB2172192A58E400E9C87A /* DataIndexDriver.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -974,8 +976,8 @@
 		32DB1187166267FB0036D1B9 /* DSDoubleHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSDoubleHandler.h; sourceTree = "<group>"; };
 		32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CouchbaseCacheDriver.cpp; sourceTree = "<group>"; };
 		32DBF9D018E1845E0095B289 /* CouchbaseCacheDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CouchbaseCacheDriver.h; sourceTree = "<group>"; };
-		32DCC36D192517DA00E14256 /* VFSStageRedeableFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSStageRedeableFile.cpp; sourceTree = "<group>"; };
-		32DCC36E192517DA00E14256 /* VFSStageRedeableFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSStageRedeableFile.h; sourceTree = "<group>"; };
+		32DCC36D192517DA00E14256 /* VFSStageReadableFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSStageReadableFile.cpp; sourceTree = "<group>"; };
+		32DCC36E192517DA00E14256 /* VFSStageReadableFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSStageReadableFile.h; sourceTree = "<group>"; };
 		32DD884D15E2663B000AF740 /* DefaultEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultEventDispatcher.h; sourceTree = "<group>"; };
 		32DD885115E2681F000AF740 /* EventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventHandler.cpp; sourceTree = "<group>"; };
 		32DD885215E2681F000AF740 /* EventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventHandler.h; sourceTree = "<group>"; };
@@ -1016,6 +1018,10 @@
 		32F7FEA018A4FD9B00FC03AB /* DirectIOEndpointHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOEndpointHandler.h; sourceTree = "<group>"; };
 		32F7FEA218A5066600FC03AB /* FastDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastDelegate.h; sourceTree = "<group>"; };
 		32F7FEA318A5066600FC03AB /* FastDelegateBind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastDelegateBind.h; sourceTree = "<group>"; };
+		32FB216E192A574700E9C87A /* StageDataVFileScanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StageDataVFileScanner.cpp; sourceTree = "<group>"; };
+		32FB216F192A574700E9C87A /* StageDataVFileScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StageDataVFileScanner.h; sourceTree = "<group>"; };
+		32FB2172192A58E400E9C87A /* DataIndexDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataIndexDriver.cpp; sourceTree = "<group>"; };
+		32FB2173192A58E400E9C87A /* DataIndexDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataIndexDriver.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1201,6 +1207,7 @@
 				3235425A1923A5C70090B8F6 /* StageDataConsumer.cpp */,
 				3235425B1923A5C70090B8F6 /* StageDataConsumer.h */,
 				32B159DB18B4C46E0096B58B /* worker */,
+				32FB2171192A582100E9C87A /* data_index */,
 				3272152118B00650005AC8FD /* cache_system */,
 				3250884318E46C23001C9733 /* vfs */,
 			);
@@ -1271,8 +1278,8 @@
 				326CADC918EAFD1200E74CEA /* VFSManager.h */,
 				32502C811923C6F60073E4AB /* VFSStageWriteableFile.cpp */,
 				32502C821923C6F60073E4AB /* VFSStageWriteableFile.h */,
-				32DCC36D192517DA00E14256 /* VFSStageRedeableFile.cpp */,
-				32DCC36E192517DA00E14256 /* VFSStageRedeableFile.h */,
+				32DCC36D192517DA00E14256 /* VFSStageReadableFile.cpp */,
+				32DCC36E192517DA00E14256 /* VFSStageReadableFile.h */,
 				32502C7D1923BAF30073E4AB /* VFSStageFile.cpp */,
 				32502C7E1923BAF30073E4AB /* VFSStageFile.h */,
 				3250884B18E49975001C9733 /* VFSFile.cpp */,
@@ -2239,6 +2246,17 @@
 			path = evt_desc;
 			sourceTree = "<group>";
 		};
+		32FB2171192A582100E9C87A /* data_index */ = {
+			isa = PBXGroup;
+			children = (
+				32FB216E192A574700E9C87A /* StageDataVFileScanner.cpp */,
+				32FB216F192A574700E9C87A /* StageDataVFileScanner.h */,
+				32FB2172192A58E400E9C87A /* DataIndexDriver.cpp */,
+				32FB2173192A58E400E9C87A /* DataIndexDriver.h */,
+			);
+			path = data_index;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -2733,12 +2751,14 @@
 				32399F8A19066BCD00A5502F /* MongoDBHAConnectionManager.cpp in Sources */,
 				32B159DA18B4B9F90096B58B /* DataWorker.cpp in Sources */,
 				3299363618A7C4F60093E7F2 /* ChaosDataService.cpp in Sources */,
+				32FB2170192A574700E9C87A /* StageDataVFileScanner.cpp in Sources */,
 				32B159DE18B4D4210096B58B /* MemcachedCacheDriver.cpp in Sources */,
-				32DCC36F192517DA00E14256 /* VFSStageRedeableFile.cpp in Sources */,
+				32DCC36F192517DA00E14256 /* VFSStageReadableFile.cpp in Sources */,
 				3250884D18E49975001C9733 /* VFSFile.cpp in Sources */,
 				3235425F1923A9360090B8F6 /* IndexStageDataWorker.cpp in Sources */,
 				3223253D18EC157000ADBA4D /* PosixStorageDriver.cpp in Sources */,
 				326CADCA18EAFD1200E74CEA /* VFSManager.cpp in Sources */,
+				32FB2174192A58E400E9C87A /* DataIndexDriver.cpp in Sources */,
 				326459CC18D073BA0091B2E3 /* AnswerDataWorker.cpp in Sources */,
 				3223253C18EC157000ADBA4D /* MongoDBIndexDriver.cpp in Sources */,
 				3235425C1923A5C70090B8F6 /* StageDataConsumer.cpp in Sources */,

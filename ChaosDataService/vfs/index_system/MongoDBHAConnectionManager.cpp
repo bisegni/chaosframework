@@ -42,7 +42,7 @@ default: \
 }
 
 namespace chaos_data = chaos::common::data;
-using namespace chaos::data_service::index_system;
+using namespace chaos::data_service::vfs::index_system;
 //-----------------------------------------------------------------------------------------------------------
 
 MongoAuthHook::MongoAuthHook(std::map<string,string>& key_value_custom_param):
@@ -218,6 +218,25 @@ int MongoDBHAConnectionManager::findOne(mongo::BSONObj& result, const std::strin
 	}
 	if(conn) delete(conn);
 	return err;
+}
+
+void MongoDBHAConnectionManager::findN(std::vector<mongo::BSONObj>& out, const std::string& ns, mongo::Query query, int nToReturn, int nToSkip, const mongo::BSONObj *fieldsToReturn, int queryOptions) {
+	int err = -1;
+	MongoDBHAConnection conn = NULL;
+	while (getConnection(&conn)) {
+		try {
+			conn->conn().findN(out, ns, query, nToReturn, nToSkip, fieldsToReturn, queryOptions);
+			MONGO_DB_GET_ERROR(conn, err);
+		} catch (std::exception& ex) {
+			MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();
+			MONGO_DB_GET_ERROR(conn, err);
+			DELETE_OBJ_POINTER(conn)
+			CONTINUE_ON_NEXT_CONNECTION(err)
+		}
+		err = 0;
+		break;
+	}
+	if(conn) delete(conn);
 }
 
 int MongoDBHAConnectionManager::runCommand(mongo::BSONObj& result, const std::string &ns, const mongo::BSONObj& command, int queryOptions) {
