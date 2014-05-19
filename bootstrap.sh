@@ -207,7 +207,7 @@ if [ ! -d "$PREFIX/include/modbus" ] || [ ! -d "$BASE_EXTERNAL/libmodbus" ]; the
                 echo "Install libmodbus"
                 git clone https://github.com/stephane/libmodbus.git $BASE_EXTERNAL/libmodbus
                 cd $BASE_EXTERNAL/libmodbus
-		git checkout v3.0.5
+		git checkout -b v3.0.5
         else
                 echo "Update libmodbus"
                 cd $BASE_EXTERNAL/libmodbus/
@@ -363,12 +363,13 @@ if [ ! -f "$PREFIX/include/mongo/client/dbclient.h" ]; then
 		    exit 1
 		fi
 		cd $BASE_EXTERNAL/mongo
+		git checkout -b $MONGO_VERSION
 	else
 		cd $BASE_EXTERNAL/mongo
-		git pull
+		git pull $MONGO_VERSION
 	fi
 ## centos6 does not detect correctly boost_thread becasue script fails linking boost_system that is required, force to be included in test
-if !(scons --prefix=$PREFIX --libpath=$PREFIX/lib --cxx="$CXX" --cc="$CC" --cpppath=$PREFIX/include --extrapath=$PREFIX --extralib=boost_system install-mongoclient); then
+if !( scons --disable-warnings-as-errors --prefix=$PREFIX --libpath=$PREFIX/lib --cxx="$CXX" --cc="$CC" --cpppath=$PREFIX/include --extrapath=$PREFIX --extralib=boost_system install-mongoclient); then
     echo "## error scons configuration of mongo failed, maybe you miss scons package"
     exit 1
 fi
