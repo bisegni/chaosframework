@@ -46,7 +46,7 @@ else
 fi
 CROSS_HOST_CONFIGURE=""
 if [ -n "$CROSS_HOST" ]; then
-CROSS_HOST_CONFIGURE="-host=$CROSS_HOST"
+CROSS_HOST_CONFIGURE="--host=$CROSS_HOST"
 fi
 
 do_make() {
@@ -179,7 +179,7 @@ if [ ! -d "$PREFIX/include/boost" ]; then
     echo "-> $CROSS_HOST" 
     if [ -n "$CROSS_HOST" ]; then
 	echo "* Patching project-config.jam to cross compile for $CROSS_HOST"
-	sed -i .bak -e "s/using gcc/using gcc : arm : $CROSS_HOST-g++/" project-config.jam 
+	sed -i .bak -e "s/using gcc/using gcc : arm : $CXX/" project-config.jam 
     fi
     
 
@@ -436,7 +436,7 @@ if [ ! -f "$PREFIX/include/zmq.h" ]; then
 #        make -j4
 #    fi
     ./autogen.sh
-	./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+	./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE --with-gnu-ld 
 	do_make "ZMQ"
 
 #	./autogen.sh
