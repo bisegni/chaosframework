@@ -63,14 +63,14 @@ namespace chaos {
 				
 				//! driver private data
 				void *driver_private_data;
-				
+				//! private destructor
+				virtual ~DataBlock();
 			private:
 				friend class storage_system::StorageDriver;
 				friend class index_system::IndexDriver;
 				//! privade constructor
 				DataBlock();
-				//! private destructor
-				virtual ~DataBlock();
+
 				
 			};
 			

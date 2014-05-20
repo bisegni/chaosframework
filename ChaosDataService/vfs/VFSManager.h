@@ -97,7 +97,7 @@ namespace chaos {
 				
 				void deinit() throw (CException);
 				
-				int getFile(std::string vfs_path, VFSFile **l_file);
+				int getFile(std::string area, std::string vfs_path, VFSFile **l_file);
 				
 				int getWriteableStageFile(std::string stage_vfs_relative_path, VFSStageWriteableFile **wsf_file);
 				

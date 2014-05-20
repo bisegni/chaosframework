@@ -25,6 +25,8 @@
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
+#include <boost/format.hpp>
+
 #include <mongo/client/dbclient.h>
 
 namespace chaos {
@@ -41,9 +43,12 @@ namespace chaos {
 				 //unique index for the vfs colletion
 				 db.vfat.ensureIndex( { "vfs_path": 1, "vfs_domain":1 } , { unique: true } )
 				 */
-#define MONGO_DB_VFS_DOMAINS_COLLECTION		"chaos_vfs.domains"
-#define MONGO_DB_VFS_VFAT_COLLECTION		"chaos_vfs.vfat"
-#define MONGO_DB_VFS_VBLOCK_COLLECTION		"chaos_vfs.datablock"
+#define MONGO_DB_VFS_DB_NAME				"chaos_vfs"
+#define MONGO_DB_VFS_DOMAINS_COLLECTION		"domains"
+#define MONGO_DB_VFS_VFAT_COLLECTION		"vfat"
+#define MONGO_DB_VFS_VBLOCK_COLLECTION		"datablock"
+				
+#define MONGO_DB_COLLECTION_NAME(db,coll)	boost::str(boost::format("%1%.%2%") % db % coll)
 				
 				//domains field---------------------------------------------------
 #define MONGO_DB_FIELD_DOMAIN_NAME			"domain_name"
@@ -98,7 +103,8 @@ namespace chaos {
 					int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 											   chaos_vfs::DataBlock *data_block,
 											   vfs::data_block_state::DataBlockState cur_state,
-											   vfs::data_block_state::DataBlockState new_state);
+											   vfs::data_block_state::DataBlockState new_state,
+											   bool& success);
 					
 					//! Return the next available datablock created since timestamp
 					int vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,

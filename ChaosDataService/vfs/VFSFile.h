@@ -61,13 +61,13 @@ namespace chaos {
 				int getNextInTimeDataBlock(DataBlock **new_data_block_handler, uint64_t timestamp, data_block_state::DataBlockState state);
 				
 				//! change Datablock state
-				int updateDataBlockState(DataBlock *new_data_block_handler, data_block_state::DataBlockState state);
+				int updateDataBlockState(data_block_state::DataBlockState state);
 				
 				//! release a datablock
 				int releaseDataBlock(DataBlock *data_block_ptr);
 				
 				//default consturctor or destructor
-				VFSFile(storage_system::StorageDriver *_storage_driver_ptr, index_system::IndexDriver *_index_driver_ptr, std::string vfs_fpath);
+				VFSFile(storage_system::StorageDriver *_storage_driver_ptr, index_system::IndexDriver *_index_driver_ptr, std::string area, std::string vfs_fpath);
 				~VFSFile();
 			public:
 				//! Get the VFS information for file
@@ -78,6 +78,8 @@ namespace chaos {
 				
 				//! Return the goodness of the file
 				bool isGood();
+				
+				virtual int seekOnCurrentBlock(block_seek_base::BlockSeekBase base_direction, int64_t offset);
 				
 				//! write data on the current data block
 				virtual int write(void *data, uint32_t data_len);

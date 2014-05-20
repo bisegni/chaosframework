@@ -24,8 +24,12 @@
 using namespace chaos::data_service::vfs;
 
 VFSStageFile::VFSStageFile(storage_system::StorageDriver *_storage_driver_ptr, index_system::IndexDriver *_index_driver_ptr, std::string stage_vfs_relative_path, VFSStageFileOpenMode _open_mode):
-VFSFile(_storage_driver_ptr, _index_driver_ptr, boost::str(boost::format("%1%/%2%") % VFS_STAGE_AREA % stage_vfs_relative_path)), //superclass constructor
+VFSFile(_storage_driver_ptr, _index_driver_ptr, VFS_STAGE_AREA, stage_vfs_relative_path), //superclass constructor
 open_mode(_open_mode) {
+	
+	//check for path prefix, the prefix of stage can't be put twice
+	
+	
 	//allocate all thepath for this file
 	good = (storage_driver_ptr->createPath(getVFSFileInfo()->vfs_fpath) == 0);
 }

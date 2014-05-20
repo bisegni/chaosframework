@@ -141,12 +141,12 @@ void VFSManager::freeObject(std::string key, VFSFilesForPath *element) {
 	element->map_logical_files.clear();
 }
 
-int VFSManager::getFile(std::string vfs_fpath,  VFSFile **l_file) {
+int VFSManager::getFile(std::string area, std::string vfs_fpath,  VFSFile **l_file) {
 	DEBUG_CODE(VFSFM_LDBG_ << "Start getting new logical file with path->" << vfs_fpath;)
 	
 	VFSFilesForPath *files_for_path = NULL;
 	
-	VFSFile *logical_file = new VFSFile(storage_driver_ptr, index_driver_ptr, vfs_fpath);
+	VFSFile *logical_file = new VFSFile(storage_driver_ptr, index_driver_ptr, area, vfs_fpath);
 	if(!logical_file) return -1;
 	
 	//the vfs file is identified by a folder containing all data block
