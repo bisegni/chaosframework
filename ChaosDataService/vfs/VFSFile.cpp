@@ -33,10 +33,10 @@
 
 
 using namespace chaos::data_service::vfs;
-namespace chaos_data_index = chaos::data_service::index_system;
-namespace chaos_data_storage = chaos::data_service::storage_system;
 
-VFSFile::VFSFile(chaos_data_storage::StorageDriver *_storage_driver_ptr, chaos_data_index::IndexDriver *_index_driver_ptr, std::string vfs_fpath) :
+VFSFile::VFSFile(storage_system::StorageDriver *_storage_driver_ptr,
+				 index_system::IndexDriver *_index_driver_ptr,
+				 std::string vfs_fpath) :
 storage_driver_ptr(_storage_driver_ptr),
 index_driver_ptr(_index_driver_ptr),
 current_data_block(NULL) {

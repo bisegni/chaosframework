@@ -22,7 +22,7 @@
 
 namespace chaos_vfs = chaos::data_service::vfs;
 
-using namespace chaos::data_service::storage_system;
+using namespace chaos::data_service::vfs::storage_system;
 
 StorageDriver::StorageDriver(std::string alias):NamedService(alias), setting(NULL) {
 	
@@ -69,6 +69,6 @@ void StorageDriver::disposeDataBlock(chaos_vfs::DataBlock *data_block) {
 }
 
 //! return the storage domain for this driver
-const char * StorageDriver::getStorageDomain() const {
-	return setting->domain.name.c_str();
+const std::string StorageDriver::getStorageDomain() const {
+	return setting->domain.name;
 }

@@ -28,7 +28,7 @@ using namespace chaos::data_service::vfs;
 #define VFSWF_LERR_ LERR_ << VFSStageWriteableFile_LOG_HEAD << __FUNCTION__ << " - "
 
 
-VFSStageWriteableFile::VFSStageWriteableFile(chaos_data_storage::StorageDriver *_storage_driver_ptr, chaos_data_index::IndexDriver *_index_driver_ptr, std::string stage_vfs_relative_path):
+VFSStageWriteableFile::VFSStageWriteableFile(storage_system::StorageDriver *_storage_driver_ptr, index_system::IndexDriver *_index_driver_ptr, std::string stage_vfs_relative_path):
 VFSStageFile(_storage_driver_ptr, _index_driver_ptr, stage_vfs_relative_path, VFSStageFileOpenModeWrite) {
 	
 }

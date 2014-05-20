@@ -29,89 +29,99 @@
 
 namespace chaos {
 	namespace data_service {
-		namespace index_system {
-			
-/*!
- Collection for the storage for the vfs infroamtion of the virtual files across the domain
- 
- //some index need to be setup on the mongo installation
- usedb chaos_vfs
- 
- //unique index for the vfs colletion
- db.vfat.ensureIndex( { "vfs_path": 1, "vfs_domain":1 } , { unique: true } )
- */
+		namespace vfs {
+			namespace index_system {
+				
+				/*!
+				 Collection for the storage for the vfs infroamtion of the virtual files across the domain
+				 
+				 //some index need to be setup on the mongo installation
+				 usedb chaos_vfs
+				 
+				 //unique index for the vfs colletion
+				 db.vfat.ensureIndex( { "vfs_path": 1, "vfs_domain":1 } , { unique: true } )
+				 */
 #define MONGO_DB_VFS_DOMAINS_COLLECTION		"chaos_vfs.domains"
 #define MONGO_DB_VFS_VFAT_COLLECTION		"chaos_vfs.vfat"
 #define MONGO_DB_VFS_VBLOCK_COLLECTION		"chaos_vfs.datablock"
-			
-			//domains field---------------------------------------------------
+				
+				//domains field---------------------------------------------------
 #define MONGO_DB_FIELD_DOMAIN_NAME			"domain_name"
 #define MONGO_DB_FIELD_DOMAIN_URL			"domain_url"
 #define MONGO_DB_FIELD_DOMAIN_HB			"hb"
-			
-			//file field------------------------------------------------------
+				
+				//file field------------------------------------------------------
 #define MONGO_DB_FIELD_FILE_PRIMARY_KEY				"fpk"
 #define MONGO_DB_FIELD_FILE_VFS_PATH				"vfs_path"
 #define MONGO_DB_FIELD_FILE_VFS_DOMAIN				"vfs_domain"
-			
-			//data block field-------------------------------------------------
+				
+				//data block field-------------------------------------------------
 #define MONGO_DB_FIELD_DATA_BLOCK_STATE				"state"
 #define MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS		"ct"
 #define MONGO_DB_FIELD_DATA_BLOCK_VALID_UNTIL_TS	"vu"
 #define MONGO_DB_FIELD_DATA_BLOCK_MAX_BLOCK_SIZE	"mbs"
 #define MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH			"vfs_path"
 #define MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN		"vfs_domain"
-			
-			//! Mongodb implementation for the index driver
-			REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(MongoDBIndexDriver, IndexDriver) {
-				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(MongoDBIndexDriver)
-				MongoDBIndexDriver(std::string alias);
-			protected:
-				MongoDBHAConnectionManager *ha_connection_pool;
 				
-			public:
-				~MongoDBIndexDriver();
-				
-				//! init
-				void init(void *init_data) throw (chaos::CException);
-				
-				//!deinit
-				void deinit() throw (chaos::CException);
-				//! Register a new domain
-				int vfsAddDomain(vfs::VFSDomain domain);
-				
-				//! Give an heart beat for a domain
-				int vfsDomainHeartBeat(vfs::VFSDomain domain);
-				
-				//! Register a new data block wrote on stage area
-				int vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,
-									   chaos_vfs::DataBlock *data_block,
-									   vfs::data_block_state::DataBlockState new_block_state = vfs::data_block_state::DataBlockStateNone);
-								
-				//! Set the state for a stage datablock
-				int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
+				//! Mongodb implementation for the index driver
+				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(MongoDBIndexDriver, IndexDriver) {
+					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(MongoDBIndexDriver)
+					MongoDBIndexDriver(std::string alias);
+				protected:
+					MongoDBHAConnectionManager *ha_connection_pool;
+					
+				public:
+					~MongoDBIndexDriver();
+					
+					//! init
+					void init(void *init_data) throw (chaos::CException);
+					
+					//!deinit
+					void deinit() throw (chaos::CException);
+					//! Register a new domain
+					int vfsAddDomain(vfs::VFSDomain domain);
+					
+					//! Give an heart beat for a domain
+					int vfsDomainHeartBeat(vfs::VFSDomain domain);
+					
+					//! Register a new data block wrote on stage area
+					int vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,
 										   chaos_vfs::DataBlock *data_block,
-										   vfs::data_block_state::DataBlockState state);
-				
-				//! Return the next available datablock created since timestamp
-				int vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
-											  uint64_t timestamp,
-											  bool direction,
-											  vfs::data_block_state::DataBlockState state,
-											  vfs::data_block_state::DataBlockState new_state,
-											  chaos_vfs::DataBlock **data_block);
-
-				//! Heartbeat update stage block
-				int vfsWorkHeartBeatOnDataBlock(chaos_vfs::VFSFile *vfs_file,
-												chaos_vfs::DataBlock *data_block);
-				
-				//! Check if the vfs file exists
-				int vfsFileExist(chaos_vfs::VFSFile *vfs_file,
-								 bool& exists_flag);
-				
-				//! Create a file entry into the vfat
-				int vfsCreateFileEntry(chaos_vfs::VFSFile *vfs_file);
-			};
+										   vfs::data_block_state::DataBlockState new_block_state = vfs::data_block_state::DataBlockStateNone);
+					
+					//! Set the state for a stage datablock
+					int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
+											   chaos_vfs::DataBlock *data_block,
+											   vfs::data_block_state::DataBlockState state);
+					
+					//! Set the state for a stage datablock
+					int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
+											   chaos_vfs::DataBlock *data_block,
+											   vfs::data_block_state::DataBlockState cur_state,
+											   vfs::data_block_state::DataBlockState new_state);
+					
+					//! Return the next available datablock created since timestamp
+					int vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
+												  uint64_t timestamp,
+												  bool direction,
+												  vfs::data_block_state::DataBlockState state,
+												  chaos_vfs::DataBlock **data_block);
+					
+					//! Heartbeat update stage block
+					int vfsWorkHeartBeatOnDataBlock(chaos_vfs::VFSFile *vfs_file,
+													chaos_vfs::DataBlock *data_block);
+					
+					//! Check if the vfs file exists
+					int vfsFileExist(chaos_vfs::VFSFile *vfs_file,
+									 bool& exists_flag);
+					
+					//! Create a file entry into the vfat
+					int vfsCreateFileEntry(chaos_vfs::VFSFile *vfs_file);
+					
+					//! Return a list of vfs path of the file belong to a domain
+					int vfsGetFilePathForDomain(std::string vfs_domain, std::string prefix_filter, std::vector<std::string>& result_vfs_file_path, int limit_to_size);
+				};
+			}
 		}
 	}
 }

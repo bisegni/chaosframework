@@ -23,15 +23,13 @@
 #include "VFSTypes.h"
 #include "VFSFile.h"
 #include "VFSStageWriteableFile.h"
+#include "VFSStageReadableFile.h"
 #include "index_system/IndexDriver.h"
 #include "storage_system/StorageDriver.h"
 
 #include <chaos/common/async_central/async_central.h>
 #include <chaos/common/utility/TemplatedKeyObjectContainer.h>
 #include <chaos/common/utility/InizializableService.h>
-
-namespace chaos_data_index = chaos::data_service::index_system;
-namespace chaos_data_storage = chaos::data_service::storage_system;
 
 
 namespace chaos {
@@ -52,13 +50,13 @@ namespace chaos {
 				std::string index_driver_impl;
 				
 				//! the instance of the index driver for this manager
-				chaos_data_index::IndexDriverSetting index_driver_setting;
+				index_system::IndexDriverSetting index_driver_setting;
 				
 				//! current storage driver implementaiton to use
 				std::string storage_driver_impl;
 				
 				//! the instance of the storage driver for this manager
-				chaos_data_storage::StorageDriverSetting storage_driver_setting;
+				storage_system::StorageDriverSetting storage_driver_setting;
 			}VFSManagerSetting;
 			
 			typedef std::map<std::string,VFSFile *> FileInstanceMap;
@@ -81,10 +79,10 @@ namespace chaos {
 				VFSManagerSetting *setting;
 				
 				//!index driver pointer
-				chaos_data_index::IndexDriver *index_driver_ptr;
+				index_system::IndexDriver *index_driver_ptr;
 				
 				//!storage driver pointer
-				chaos_data_storage::StorageDriver *storage_driver_ptr;
+				storage_system::StorageDriver *storage_driver_ptr;
 				
 				void timeout();
 				//void giveDomainHeartbeat(const boost::system::error_code& e);
@@ -103,11 +101,15 @@ namespace chaos {
 				
 				int getWriteableStageFile(std::string stage_vfs_relative_path, VFSStageWriteableFile **wsf_file);
 				
+				int getReadableStageFile(std::string stage_vfs_relative_path, VFSStageReadableFile **rsf_file);
+				
 				int releaseFile(VFSFile *l_file);
 				
 				int createDirectory(std::string vfs_path, bool all_path = false);
 				
 				int deleteDirectory(std::string vfs_path, bool all_path = false);
+				
+				int getAllStageFileVFSPath(std::vector<std::string>& stage_file_vfs_paths, int limit_to_size = 100);
 			};
 
 		}

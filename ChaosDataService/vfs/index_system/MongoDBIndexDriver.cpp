@@ -17,7 +17,7 @@
 #include <chaos/common/utility/TimingUtil.h>
 
 using namespace chaos::data_service::vfs;
-using namespace chaos::data_service::index_system;
+using namespace chaos::data_service::vfs::index_system;
 
 namespace chaos_data = chaos::common::data;
 
@@ -199,13 +199,11 @@ int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 	return err;
 }
 
-//! Return the next available datablock created since timestamp
-int MongoDBIndexDriver::vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
-												  uint64_t timestamp,
-												  bool direction,
-												  data_block_state::DataBlockState state,
-												  vfs::data_block_state::DataBlockState new_state,
-												  chaos_vfs::DataBlock **data_block) {
+//! Set the state for a stage datablock
+int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
+											   chaos_vfs::DataBlock *data_block,
+											   vfs::data_block_state::DataBlockState cur_state,
+											   vfs::data_block_state::DataBlockState new_state) {
 	int err = 0;
 	mongo::BSONObjBuilder command;
 	mongo::BSONObjBuilder query_master;
@@ -213,11 +211,12 @@ int MongoDBIndexDriver::vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
 	mongo::BSONObjBuilder update;
 	mongo::BSONObj result;
 	try{
+		//domain search
 		query_master << MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN << vfs_file->getVFSFileInfo()->vfs_domain;
+		//path search
+		query_master << MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH << vfs_file->getVFSFileInfo()->vfs_fpath;
 		//query on state
-		query_master << MONGO_DB_FIELD_DATA_BLOCK_STATE << state;
-		//search query on date
-		query_master << "$gt" << BSON(MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS << mongo::Date_t(timestamp));
+		query_master << MONGO_DB_FIELD_DATA_BLOCK_STATE << cur_state;
 		
 		//start the find and modify command
 		command << "findandmodify" << MONGO_DB_VFS_VBLOCK_COLLECTION;
@@ -227,6 +226,42 @@ int MongoDBIndexDriver::vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
 		command << "update" << BSON("$set" << BSON( MONGO_DB_FIELD_DATA_BLOCK_STATE << new_state) );
 		
 		err = ha_connection_pool->runCommand(result, MONGO_DB_VFS_VFAT_COLLECTION, query_master.obj());
+		if(err) {
+			MDBID_LERR_ << "Error " << err << " creting vfs file entry";
+		} else if(result.isEmpty()){
+			MDBID_LERR_ << "No datablock found for the criteria";
+			err = -1;
+		} else {
+		}
+	} catch( const mongo::DBException &e ) {
+		MDBID_LERR_ << e.what();
+		err = -1;
+	}
+	return err;
+}
+
+//! Return the next available datablock created since timestamp
+int MongoDBIndexDriver::vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
+												  uint64_t timestamp,
+												  bool direction,
+												  data_block_state::DataBlockState state,
+												  chaos_vfs::DataBlock **data_block) {
+	int err = 0;
+	mongo::BSONObjBuilder query_master;
+	mongo::BSONObj result;
+	try{
+		//search for domain
+		query_master << MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN << vfs_file->getVFSFileInfo()->vfs_domain;
+		
+		//search on file path, the datablock is always the end token of the path
+		query_master << MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH << BSON("$regex" << "stage/eb6b929d/thread_0/.*");
+
+		//search for state
+		query_master << MONGO_DB_FIELD_DATA_BLOCK_STATE << state;
+		//search on the timestamp
+		query_master << "$gt" << BSON(MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS << mongo::Date_t(timestamp));
+		
+		err = ha_connection_pool->findOne(result, MONGO_DB_VFS_VFAT_COLLECTION, query_master.obj());
 		if(err) {
 			MDBID_LERR_ << "Error " << err << " creting vfs file entry";
 		} else if(result.isEmpty()){
@@ -304,6 +339,46 @@ int MongoDBIndexDriver::vfsCreateFileEntry(chaos_vfs::VFSFile *vfs_file) {
 			} else {
 				err = 0;
 			}
+		}
+	} catch( const mongo::DBException &e ) {
+		MDBID_LERR_ << e.what();
+		err = -1;
+	}
+	return err;
+}
+
+//! Return a list of vfs path of the file belong to a domain
+int MongoDBIndexDriver::vfsGetFilePathForDomain(std::string vfs_domain, std::string prefix_filter, std::vector<std::string>& result_vfs_file_path, int limit_to_size) {
+	int err = 0;
+	mongo::BSONObjBuilder query_master;
+	mongo::BSONObjBuilder return_field;
+	std::vector<mongo::BSONObj> results;
+	try{
+		//search for domain
+		query_master << MONGO_DB_FIELD_FILE_VFS_DOMAIN << vfs_domain;
+		
+		//after the prefix we need to add the regex
+		prefix_filter.append(".*");
+		
+		query_master << MONGO_DB_FIELD_FILE_VFS_PATH << BSON("$regex" << prefix_filter);
+		
+		return_field << MONGO_DB_FIELD_FILE_VFS_PATH << 1 << "_id" << 0;
+		
+		mongo::BSONObj q_obj = query_master.obj();
+		mongo::BSONObj f_obj = return_field.obj();
+		
+		DEBUG_CODE(MDBID_LDBG_ << "vfsGetFilePathForDomain query ---------------------------------------------";)
+		DEBUG_CODE(MDBID_LDBG_ << "Domain: " << vfs_domain;)
+		DEBUG_CODE(MDBID_LDBG_ << "Prefix: " << prefix_filter;)
+		DEBUG_CODE(MDBID_LDBG_ << "Query: "  << q_obj.jsonString();)
+		DEBUG_CODE(MDBID_LDBG_ << "Selected Fileds: "  << f_obj.jsonString();)
+		DEBUG_CODE(MDBID_LDBG_ << "vfsGetFilePathForDomain query ---------------------------------------------";)
+		
+		ha_connection_pool->findN(results, MONGO_DB_VFS_VFAT_COLLECTION, q_obj, limit_to_size, 0, &f_obj);
+		for(std::vector<mongo::BSONObj>::iterator it = results.begin();
+			it != results.end();
+			it++) {
+			result_vfs_file_path.push_back(it->getField(MONGO_DB_FIELD_FILE_VFS_PATH));
 		}
 	} catch( const mongo::DBException &e ) {
 		MDBID_LERR_ << e.what();

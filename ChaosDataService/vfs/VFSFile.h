@@ -29,9 +29,6 @@
 namespace chaos {
 	namespace data_service {
 		namespace vfs {
-			
-			namespace chaos_data_index = chaos::data_service::index_system;
-			namespace chaos_data_storage = chaos::data_service::storage_system;
 		
 			class VFSManager;
 			struct DataBlock;
@@ -52,10 +49,10 @@ namespace chaos {
 				DataBlock *current_data_block;
 				
 				//!index driver pointer
-				chaos_data_index::IndexDriver *index_driver_ptr;
+				index_system::IndexDriver *index_driver_ptr;
 				
 				//!storage driver pointer
-				chaos_data_storage::StorageDriver *storage_driver_ptr;
+				storage_system::StorageDriver *storage_driver_ptr;
 			
 				//! return new datablock where write into
 				int getNewDataBlock(DataBlock **new_data_block_handler);
@@ -70,7 +67,7 @@ namespace chaos {
 				int releaseDataBlock(DataBlock *data_block_ptr);
 				
 				//default consturctor or destructor
-				VFSFile(chaos_data_storage::StorageDriver *_storage_driver_ptr, chaos_data_index::IndexDriver *_index_driver_ptr, std::string vfs_fpath);
+				VFSFile(storage_system::StorageDriver *_storage_driver_ptr, index_system::IndexDriver *_index_driver_ptr, std::string vfs_fpath);
 				~VFSFile();
 			public:
 				//! Get the VFS information for file

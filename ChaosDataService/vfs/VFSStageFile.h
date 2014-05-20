@@ -44,7 +44,7 @@ namespace chaos {
 				VFSStageFileOpenMode open_mode;
 				
 			protected:
-				VFSStageFile(chaos_data_storage::StorageDriver *_storage_driver_ptr, chaos_data_index::IndexDriver *_index_driver_ptr, std::string stage_vfs_relative_path, VFSStageFileOpenMode _open_mode);
+				VFSStageFile(storage_system::StorageDriver *_storage_driver_ptr, index_system::IndexDriver *_index_driver_ptr, std::string stage_vfs_relative_path, VFSStageFileOpenMode _open_mode);
 			};
 			
 		}

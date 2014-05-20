@@ -41,7 +41,7 @@
 #define PSDLERR_ LERR_ << PosixStorageDriver_LOG_HEAD << __FUNCTION__ << " - "
 
 
-using namespace chaos::data_service::storage_system;
+using namespace chaos::data_service::vfs::storage_system;
 namespace boost_fs = boost::filesystem;
 namespace chaos_data = chaos::common::data;
 
@@ -403,13 +403,12 @@ int PosixStorageDriver::createPath(std::string vfs_path) {
 	boost::filesystem::path fs_path = getAbsolutePath(vfs_path);
 	try {
 		if(!boost::filesystem::create_directories(fs_path, error_code)) {
-			err = -1;
-			PSDLERR_ << "Error deleting path " << error_code << std::endl;
+			PSDLDBG_ << "Path "<< vfs_path << " already present" << std::endl;
 		}
 		
 	} catch (boost_fs::filesystem_error &e) {
 		PSDLERR_ << e.what() << std::endl;
-		return -2;
+		return -1;
 	}
 	return err;
 }
