@@ -35,12 +35,6 @@ namespace chaos {
 			 */
 			class VFSStageReadableFile : public VFSStageFile {
 				friend class VFSManager;
-				
-				//!keep track of the number of the bytes read from current block
-				uint64_t current_block_read_byte;
-				
-				//!keep track of the totale byte read for the local block
-				uint64_t current_block_size;
 
 				uint64_t current_block_creation_ts;
 				
@@ -53,6 +47,8 @@ namespace chaos {
 				 that are in state DataBlockState::DataBlockStateNone
 				 */
 				inline int getNextAvailbaleBlock();
+				
+				inline int checkForBlockChange(bool overlapping);
 			public:
 				// write data on the current data block
 				/*!

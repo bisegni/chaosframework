@@ -193,7 +193,6 @@ int MongoDBHAConnectionManager::insert( const std::string &ns , mongo::BSONObj o
 			DELETE_OBJ_POINTER(conn)
 			CONTINUE_ON_NEXT_CONNECTION(err)
 		}
-		err = 0;
 		break;
 	}
 	if(conn) delete(conn);
@@ -213,7 +212,6 @@ int MongoDBHAConnectionManager::findOne(mongo::BSONObj& result, const std::strin
 			DELETE_OBJ_POINTER(conn)
 			CONTINUE_ON_NEXT_CONNECTION(err)
 		}
-		err = 0;
 		break;
 	}
 	if(conn) delete(conn);
@@ -233,7 +231,6 @@ void MongoDBHAConnectionManager::findN(std::vector<mongo::BSONObj>& out, const s
 			DELETE_OBJ_POINTER(conn)
 			CONTINUE_ON_NEXT_CONNECTION(err)
 		}
-		err = 0;
 		break;
 	}
 	if(conn) delete(conn);
@@ -249,12 +246,11 @@ int MongoDBHAConnectionManager::runCommand(mongo::BSONObj& result, const std::st
 			}
 			MONGO_DB_GET_ERROR(conn, err);
 		} catch (std::exception& ex) {
-			MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();
+			MDBHAC_LERR_ << "MongoDBHAConnectionManager::runCommand" << " -> " << ex.what();
 			MONGO_DB_GET_ERROR(conn, err);
 			DELETE_OBJ_POINTER(conn)
 			CONTINUE_ON_NEXT_CONNECTION(err)
 		}
-		err = 0;
 		break;
 	}
 	if(conn) delete(conn);
@@ -274,7 +270,6 @@ int MongoDBHAConnectionManager::update( const std::string &ns, mongo::Query quer
 			DELETE_OBJ_POINTER(conn)
 			CONTINUE_ON_NEXT_CONNECTION(err)
 		}
-		err = 0;
 		break;
 	}
 	if(conn) delete(conn);

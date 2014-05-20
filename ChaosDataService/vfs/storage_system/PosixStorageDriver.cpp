@@ -184,9 +184,9 @@ int PosixStorageDriver::openBlock(chaos_vfs::DataBlock *data_block, unsigned int
 			return -1;
 		}
 		
-		std::ios_base::openmode mode = std::ios_base::binary | fstream::app;
+		std::ios_base::openmode mode = std::ios_base::binary;
 		if(flags & chaos_vfs::block_flag::BlockFlagWriteble) {
-			mode |= std::ios_base::out;
+			mode |= fstream::app | std::ios_base::out;
 		}
 		
 		if(flags & chaos_vfs::block_flag::BlockFlagReadeable) {
@@ -194,12 +194,20 @@ int PosixStorageDriver::openBlock(chaos_vfs::DataBlock *data_block, unsigned int
 		}
 		
 		//set the default value
+		data_block->max_reacheable_size = boost_fs::file_size(_path);
 		data_block->driver_private_data = fstream_ptr = new boost_fs::fstream(_path, mode);
+		
+		if(fstream_ptr->rdstate() & std::ifstream::failbit) {
+			delete(fstream_ptr);
+			data_block->driver_private_data = NULL;
+			return -2;
+		}
 	} catch (boost_fs::filesystem_error &e) {
 		if(fstream_ptr) delete(fstream_ptr);
+		data_block->driver_private_data = NULL;
 		//delete the allocated stream
 		PSDLERR_ << e.what() << std::endl;
-		return -1;
+		return -3;
 	}
 	return 0;
 }
@@ -249,10 +257,11 @@ int PosixStorageDriver::openBlock(std::string vfs_path, unsigned int flags, chao
 			}
 			return -4;
 		}
+		
 		(*data_block)->driver_private_data = ofs;
 		(*data_block)->flags = flags;
 		(*data_block)->invalidation_timestamp = 0;
-		(*data_block)->max_reacheable_size = 0;
+		(*data_block)->max_reacheable_size = boost_fs::file_size(_path);
 		(*data_block)->creation_time = TimingUtil::getTimeStamp();
 	} catch(boost_fs::filesystem_error &e) {
 		//delete the allcoated stream
@@ -327,7 +336,7 @@ int PosixStorageDriver::read(chaos_vfs::DataBlock *data_block, void * buffer, ui
 	try {
 		boost_fs::fstream *fstream_ptr = static_cast<boost_fs::fstream *>(data_block->driver_private_data);
 		fstream_ptr->read((char*)buffer, buffer_len);
-		if(!*fstream_ptr) {
+		if(!fstream_ptr->good()) {
 			return -1;
 		}
 		readed_byte = (uint32_t)fstream_ptr->gcount();
@@ -339,7 +348,7 @@ int PosixStorageDriver::read(chaos_vfs::DataBlock *data_block, void * buffer, ui
 }
 
 //! change the block pointer for read or write
-int PosixStorageDriver::seek(chaos_vfs::DataBlock *data_block, uint64_t offset, chaos_vfs::block_seek_base::BlockSeekBase base_direction) {
+int PosixStorageDriver::seek(chaos_vfs::DataBlock *data_block, int64_t offset, chaos_vfs::block_seek_base::BlockSeekBase base_direction) {
 	CHAOS_ASSERT(data_block)
 	CHAOS_ASSERT(data_block->driver_private_data)
 	try {
@@ -356,12 +365,12 @@ int PosixStorageDriver::seek(chaos_vfs::DataBlock *data_block, uint64_t offset, 
 }
 
 //! get the current block data pointer position
-int PosixStorageDriver::tell(chaos_vfs::DataBlock *data_block, uint64_t *offset) {
+int PosixStorageDriver::tell(chaos_vfs::DataBlock *data_block, uint64_t& offset) {
 	CHAOS_ASSERT(data_block)
 	CHAOS_ASSERT(data_block->driver_private_data)
 	try {
 		boost_fs::fstream *fstream_ptr = static_cast<boost_fs::fstream *>(data_block->driver_private_data);
-		*offset = fstream_ptr->tellp();
+		offset = fstream_ptr->tellp();
 		if(!*fstream_ptr) {
 			return -1;
 		}

@@ -123,10 +123,10 @@ namespace chaos {
 					virtual int read(chaos_vfs::DataBlock *data_block, void * buffer, uint32_t buffer_len, uint32_t& readed_byte) = 0;
 					
 					//! change the block pointer for read or write
-					virtual int seek(chaos_vfs::DataBlock *data_block, uint64_t offset, chaos_vfs::block_seek_base::BlockSeekBase base_direction) = 0;
+					virtual int seek(chaos_vfs::DataBlock *data_block, int64_t offset, chaos_vfs::block_seek_base::BlockSeekBase base_direction) = 0;
 					
 					//! get the current block data pointer position
-					virtual int tell(chaos_vfs::DataBlock *data_block, uint64_t *offset) = 0;
+					virtual int tell(chaos_vfs::DataBlock *data_block, uint64_t& offset) = 0;
 					
 					//! create a directory
 					virtual int createDirectory(std::string vfs_path) = 0;

@@ -133,7 +133,8 @@ namespace chaos {
 					virtual int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 													   chaos_vfs::DataBlock *data_block,
 													   vfs::data_block_state::DataBlockState cur_state,
-													   vfs::data_block_state::DataBlockState new_state) = 0;
+													   vfs::data_block_state::DataBlockState new_state,
+													   bool& success) = 0;
 					
 					//! Return the next available datablock created since timestamp
 					/*!

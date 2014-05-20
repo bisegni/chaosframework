@@ -22,6 +22,8 @@
 
 #include "../vfs/VFSStageReadableFile.h"
 
+#include <chaos/common/bson/bson.h>
+
 #include <string>
 
 namespace chaos{
@@ -35,7 +37,14 @@ namespace chaos{
 			class StageDataVFileScanner {
 				friend class StageDataConsumer;
 				
+				void *data_buffer;
+				uint32_t curret_data_buffer_len;
+				
 				vfs::VFSStageReadableFile *stage_file;
+				
+				void grow(uint32_t new_size);
+				
+				void processDataPack(bson::BSONObj data_pack);
 			public:
 				StageDataVFileScanner(vfs::VFSStageReadableFile *_stage_file);
 				~StageDataVFileScanner();

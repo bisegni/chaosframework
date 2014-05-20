@@ -36,11 +36,19 @@ using namespace chaos::data_service::vfs;
 
 VFSFile::VFSFile(storage_system::StorageDriver *_storage_driver_ptr,
 				 index_system::IndexDriver *_index_driver_ptr,
+				 std::string area,
 				 std::string vfs_fpath) :
 storage_driver_ptr(_storage_driver_ptr),
 index_driver_ptr(_index_driver_ptr),
 current_data_block(NULL) {
-	vfs_file_info.vfs_fpath = vfs_fpath;
+	//check the path if his prefix is not equal to area (omit duplcieted name in path for prefix)
+	if(vfs_fpath.substr(0, area.size()).find(area, 0) == std::string::npos) {
+		vfs_file_info.vfs_fpath = area + vfs_fpath;
+	} else {
+		//the path in the prefix has the area
+		vfs_file_info.vfs_fpath = vfs_fpath;
+	}
+	
 }
 
 VFSFile::~VFSFile() {
@@ -81,7 +89,11 @@ int VFSFile::getNextInTimeDataBlock(DataBlock **new_data_block_handler, uint64_t
 }
 
 //! change Datablock state
-int updateDataBlockState(DataBlock *new_data_block_handler, data_block_state::DataBlockState state) {
+int VFSFile::updateDataBlockState(data_block_state::DataBlockState state) {
+	int err = 0;
+	if((err = index_driver_ptr->vfsSetStateOnDataBlock(this, current_data_block, state))) {
+		VFSF_LDBG_ << "Error setting state on datablock with error " << err;
+	}
 	return 0;
 }
 
@@ -93,7 +105,6 @@ int VFSFile::releaseDataBlock(DataBlock *data_block_ptr) {
 	//write on index for free of work block
 	if((err = index_driver_ptr->vfsSetStateOnDataBlock(this, data_block_ptr, data_block_state::DataBlockStateNone))) {
 		VFSF_LERR_ << "Error setting state on datablock with error " << err;
-		return storage_driver_ptr->closeBlock(data_block_ptr);
 	}
 	//close the block
 	return storage_driver_ptr->closeBlock(data_block_ptr);
@@ -117,13 +128,19 @@ bool VFSFile::exist() {
 	return exist_flag;
 }
 
+int VFSFile::seekOnCurrentBlock(block_seek_base::BlockSeekBase base_direction, int64_t offset) {
+	if(!current_data_block) return -1;
+	
+	return storage_driver_ptr->seek(current_data_block, offset, base_direction);
+}
+
 int VFSFile::write(void *data, uint32_t data_len) {
 	//write data
 	return storage_driver_ptr->write(current_data_block, data, data_len);
 };
 
 int VFSFile::read(void *buffer, uint32_t buffer_len) {
-	if(!current_data_block) return NULL;
+	if(!current_data_block) return -1;
 	int err = 0;
 	uint32_t readed_byte = 0;
 	//read the requested byte size
