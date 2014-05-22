@@ -252,7 +252,7 @@ int PosixStorageDriver::openBlock(std::string vfs_path, unsigned int flags, chao
 		if(!ofs) return -3;
 		
 		//no we can create the block
-		*data_block = (chaos_vfs::DataBlock*)malloc(sizeof(chaos_vfs::DataBlock));
+		*data_block = new chaos_vfs::DataBlock();
 		if(!data_block) {
 			if(ofs) {
 				delete(ofs);
@@ -310,7 +310,7 @@ int PosixStorageDriver::closeBlock(chaos_vfs::DataBlock *data_block) {
 		result = -1;
 	}
 	delete(fstream_ptr);
-	free(data_block);
+	delete(data_block);
 	return result;
 }
 
