@@ -9,12 +9,17 @@ import it.infn.chaos.mds.rpc.server.RPCServer;
 
 import org.ref.common.exception.RefException;
 
+import com.mongodb.DB;
+import com.mongodb.MongoClient;
+
 /**
  * @author bisegni
  */
 public class SingletonServices {
 	private RPCServer					mdsRpcServer	= null;
 	private RPCClient					mdsRpcClient	= null;
+	private MongoClient					mongoClient		= null;
+	private DB							mongoDB			= null;
 	static private SingletonServices	instance		= null;
 
 	/**
@@ -66,13 +71,29 @@ public class SingletonServices {
 
 	/**
 	 * @param handlerClass
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
-	 * @throws RefException 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws RefException
 	 */
 	public void addHandler(Class<? extends RPCActionHadler> handlerClass) throws InstantiationException, IllegalAccessException, RefException {
 		RPCActionHadler hanlder = handlerClass.newInstance();
 		hanlder.intiHanlder();
 		hanlder.registerDomanAndNameForHandler(getMdsRpcServer());
+	}
+
+	public MongoClient getMongoClient() {
+		return mongoClient;
+	}
+
+	public void setMongoClient(MongoClient mongoClient) {
+		this.mongoClient = mongoClient;
+	}
+
+	public DB getMongoDB() {
+		return mongoDB;
+	}
+
+	public void setMongoDB(DB mongoDB) {
+		this.mongoDB = mongoDB;
 	}
 }
