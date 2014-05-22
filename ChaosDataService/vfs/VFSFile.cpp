@@ -43,7 +43,7 @@ index_driver_ptr(_index_driver_ptr),
 current_data_block(NULL) {
 	//check the path if his prefix is not equal to area (omit duplcieted name in path for prefix)
 	if(vfs_fpath.substr(0, area.size()).find(area, 0) == std::string::npos) {
-		vfs_file_info.vfs_fpath = area + vfs_fpath;
+		vfs_file_info.vfs_fpath = area + "/" +vfs_fpath;
 	} else {
 		//the path in the prefix has the area
 		vfs_file_info.vfs_fpath = vfs_fpath;

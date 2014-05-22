@@ -42,7 +42,7 @@ namespace chaos {
 				 //unique index for the vfs colletion
 				 db.vfat.ensureIndex( { "vfs_path": 1, "vfs_domain":1 } , { unique: true } )
 				 */
-#define MONGO_DB_VFS_DB_NAME				"chaos_vfs"
+#define MONGO_DB_VFS_DB_NAME				"chaos"
 #define MONGO_DB_VFS_DOMAINS_COLLECTION		"domains"
 #define MONGO_DB_VFS_DOMAINS_URL_COLLECTION	"domains_url"
 #define MONGO_DB_VFS_VFAT_COLLECTION		"vfat"
@@ -73,6 +73,7 @@ namespace chaos {
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(MongoDBIndexDriver, IndexDriver) {
 					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(MongoDBIndexDriver)
 					MongoDBIndexDriver(std::string alias);
+					std::string db_name;
 				protected:
 					MongoDBHAConnectionManager *ha_connection_pool;
 					

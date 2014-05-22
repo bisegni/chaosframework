@@ -46,7 +46,11 @@ void MongoDBIndexDriver::init(void *init_data) throw (chaos::CException) {
 	chaos_data::CDataWrapper driver_custom_init;
 	//allcoate ha pool class
 	ha_connection_pool = new MongoDBHAConnectionManager(setting->servers, setting->key_value_custom_param);
-	
+	if(setting->key_value_custom_param.count("db")) {
+		db_name = setting->key_value_custom_param["db"];
+	} else {
+		db_name = MONGO_DB_VFS_DB_NAME;
+	}
 	//setup index
 	//db.vdomain.ensureIndex( { "vfs_domain":1, "vfs_unique_domain_code":1 } , { unique: true,  dropDups: true  } )
 	//db.vfat.ensureIndex( { "vfs_path": 1, "vfs_domain":1 } , { unique: true,  dropDups: true  } )
@@ -54,12 +58,16 @@ void MongoDBIndexDriver::init(void *init_data) throw (chaos::CException) {
 	
 	//domain index
 	mongo::BSONObj index_on_domain = BSON(MONGO_DB_FIELD_DOMAIN_NAME<<1<<MONGO_DB_FIELD_DOMAIN_UNIQUE_CODE<<1);
-	err = ha_connection_pool->ensureIndex(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_DOMAINS_COLLECTION, index_on_domain, true, "", true);
+	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_VFS_DOMAINS_COLLECTION, index_on_domain, true, "", true);
 	if(err) throw chaos::CException(-1, "Error creating domain colelction index", __PRETTY_FUNCTION__);
 	
 	//domain url index
 	index_on_domain = BSON(MONGO_DB_FIELD_DOMAIN_NAME<<1<<MONGO_DB_FIELD_DOMAIN_URL<<1);
-	err = ha_connection_pool->ensureIndex(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_DOMAINS_URL_COLLECTION, index_on_domain, true, "", true);
+	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_VFS_DOMAINS_URL_COLLECTION, index_on_domain, true, "", true);
+	if(err) throw chaos::CException(-1, "Error creating domain colelction index", __PRETTY_FUNCTION__);
+	
+	index_on_domain = BSON(MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH<<1<<MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN<<1<<MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS<<1);
+	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_VFS_VBLOCK_COLLECTION, index_on_domain, true, "", true);
 	if(err) throw chaos::CException(-1, "Error creating domain colelction index", __PRETTY_FUNCTION__);
 
 }
@@ -80,13 +88,13 @@ int MongoDBIndexDriver::vfsAddDomain(vfs::VFSDomain domain) {
 		domain_registration.append(MONGO_DB_FIELD_DOMAIN_NAME, domain.name);
 		domain_registration.append(MONGO_DB_FIELD_DOMAIN_UNIQUE_CODE, domain.unique_code);
 		mongo::BSONObj domain_insertation_obj = domain_registration.obj();
-		err = ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_DOMAINS_COLLECTION), domain_insertation_obj);
+		err = ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_VFS_DOMAINS_COLLECTION), domain_insertation_obj);
 		if(err) {
 			MDBID_LERR_ << "Error " << err << " creting domain entry";
 			MDBID_LAPP_ << "Checking already stored domain info";
 			mongo::BSONObj result;
 			// no i can read the memoryzed unique code for my domain and see if it match
-			err = ha_connection_pool->findOne(result, MONGO_DB_COLLECTION_NAME(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_DOMAINS_COLLECTION), domain_insertation_obj);
+			err = ha_connection_pool->findOne(result, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_VFS_DOMAINS_COLLECTION), domain_insertation_obj);
 			if(err) {
 				MDBID_LERR_ << "Error " << err << " retriving domain info";
 			} else if(result.isEmpty()) {
@@ -108,7 +116,7 @@ int MongoDBIndexDriver::vfsAddDomain(vfs::VFSDomain domain) {
 		domain_url_registration.append(MONGO_DB_FIELD_DOMAIN_NAME, domain.name);
 		domain_url_registration.append(MONGO_DB_FIELD_DOMAIN_URL, domain.local_url);
 		domain_url_registration.append(MONGO_DB_FIELD_DOMAIN_HB, mongo::Date_t(chaos::TimingUtil::getTimeStamp()));
-		err = ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_DOMAINS_URL_COLLECTION), domain_url_registration.obj());
+		err = ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_VFS_DOMAINS_URL_COLLECTION), domain_url_registration.obj());
 		if(err) {
 			if(err != 11000) {
 				MDBID_LERR_ << "Error " << err << " creting domain entry";
@@ -136,7 +144,7 @@ int MongoDBIndexDriver::vfsDomainHeartBeat(vfs::VFSDomain domain) {
 		b_query.append(MONGO_DB_FIELD_DOMAIN_URL, domain.local_url);
 		b_update_filed.append(MONGO_DB_FIELD_DOMAIN_HB, mongo::Date_t(chaos::TimingUtil::getTimeStamp()));
 		b_update.append("$set", b_update_filed.obj());
-		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_DOMAINS_URL_COLLECTION), b_query.obj(), b_update.obj());
+		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_VFS_DOMAINS_URL_COLLECTION), b_query.obj(), b_update.obj());
 		if(err) {
 			MDBID_LERR_ << "Error " << err << " updating the heartbeat for domain";
 		}
@@ -174,7 +182,7 @@ int MongoDBIndexDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,
 	try {
 		bson_search.append(MONGO_DB_FIELD_FILE_VFS_PATH, vfs_file->getVFSFileInfo()->vfs_fpath);
 		bson_search.append(MONGO_DB_FIELD_FILE_VFS_DOMAIN, vfs_file->getVFSFileInfo()->vfs_domain);
-		ha_connection_pool->findOne(search_result, MONGO_DB_COLLECTION_NAME(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_VFAT_COLLECTION), bson_search.obj());
+		ha_connection_pool->findOne(search_result, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_VFS_VFAT_COLLECTION), bson_search.obj());
 		if(search_result.isEmpty()) {
 			//cant be here..anyway give error
 			MDBID_LERR_ << "Error getting file information";
@@ -190,7 +198,7 @@ int MongoDBIndexDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,
 		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH, data_block->vfs_path);
 		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN, vfs_file->getVFSFileInfo()->vfs_domain);
 		
-		ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_VBLOCK_COLLECTION),  bson_block.obj());
+		ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_VFS_VBLOCK_COLLECTION),  bson_block.obj());
 		
 	} catch (const mongo::DBException &e) {
 		MDBID_LERR_ << e.what();
@@ -212,7 +220,7 @@ int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 	try{
 		bson_search.append(MONGO_DB_FIELD_FILE_VFS_PATH, vfs_file->getVFSFileInfo()->vfs_fpath);
 		bson_search.append(MONGO_DB_FIELD_FILE_VFS_DOMAIN, vfs_file->getVFSFileInfo()->vfs_domain);
-		err = ha_connection_pool->findOne(search_result, MONGO_DB_COLLECTION_NAME(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_VFAT_COLLECTION), bson_search.obj());
+		err = ha_connection_pool->findOne(search_result, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_VFS_VFAT_COLLECTION), bson_search.obj());
 		
 		if(err) {
 			MDBID_LERR_ << "Error " << err << " searching vfs on vfat";
@@ -234,7 +242,7 @@ int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 		bson_block_update_filed.append(MONGO_DB_FIELD_DATA_BLOCK_STATE, state);
 		bson_block_update.append("$set", bson_block_update_filed.obj());
 		
-		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_VBLOCK_COLLECTION), bson_block_query.obj(), bson_block_update.obj());
+		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_VFS_VBLOCK_COLLECTION), bson_block_query.obj(), bson_block_update.obj());
 		if(err) {
 			MDBID_LERR_ << "Error " << err << " updating state on datablock";
 		}
@@ -277,7 +285,7 @@ int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 		DEBUG_CODE(MDBID_LDBG_ << "vfsSetStateOnDataBlock query ---------------------------------------------";)
 
 		
-		err = ha_connection_pool->runCommand(result, MONGO_DB_VFS_DB_NAME, q);
+		err = ha_connection_pool->runCommand(result, db_name, q);
 		if(err) {
 			MDBID_LERR_ << "Error " << err << " vfsSetStateOnDataBlock";
 		} else if(result.isEmpty()){
@@ -321,7 +329,7 @@ int MongoDBIndexDriver::vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
 		DEBUG_CODE(MDBID_LDBG_ << "vfsFindSinceTimeDataBlock query ---------------------------------------------";)
 
 		
-		err = ha_connection_pool->findOne(result, MONGO_DB_COLLECTION_NAME(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_VBLOCK_COLLECTION), q);
+		err = ha_connection_pool->findOne(result, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_VFS_VBLOCK_COLLECTION), q);
 		if(err) {
 			MDBID_LERR_ << "Error " << err << " creting vfs file entry";
 		} else if(result.isEmpty()){
@@ -330,7 +338,7 @@ int MongoDBIndexDriver::vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
 			// read the block element
 			
 			//get new empty datablock
-			*data_block = (chaos_vfs::DataBlock*)malloc(sizeof(chaos_vfs::DataBlock));
+			*data_block = new chaos_vfs::DataBlock();
 			
 			//set the field
 			(*data_block)->creation_time = result.getField(MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS).numberLong();
@@ -363,7 +371,7 @@ int MongoDBIndexDriver::vfsFileExist(VFSFile *vfs_file, bool& exists_flag) {
 		b.append(MONGO_DB_FIELD_FILE_VFS_PATH, vfs_file->getVFSFileInfo()->vfs_fpath);
 		b.append(MONGO_DB_FIELD_FILE_VFS_DOMAIN, vfs_file->getVFSFileInfo()->vfs_domain);
 		
-		err = ha_connection_pool->findOne(result, MONGO_DB_COLLECTION_NAME(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_VFAT_COLLECTION), b.obj());
+		err = ha_connection_pool->findOne(result, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_VFS_VFAT_COLLECTION), b.obj());
 		if(err) {
 			MDBID_LERR_ << "Error " << err << " creting vfs file entry";
 		} else {
@@ -385,7 +393,7 @@ int MongoDBIndexDriver::vfsCreateFileEntry(chaos_vfs::VFSFile *vfs_file) {
 		b.append(MONGO_DB_FIELD_FILE_VFS_PATH, vfs_file->getVFSFileInfo()->vfs_fpath);
 		b.append(MONGO_DB_FIELD_FILE_VFS_DOMAIN, vfs_file->getVFSFileInfo()->vfs_domain);
 		
-		err = ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_VFAT_COLLECTION), b.obj());
+		err = ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_VFS_VFAT_COLLECTION), b.obj());
 		if(err) {
 			if(err != 11000) {
 				MDBID_LERR_ << "Error " << err << " creting vfs file entry";
@@ -427,7 +435,7 @@ int MongoDBIndexDriver::vfsGetFilePathForDomain(std::string vfs_domain, std::str
 		DEBUG_CODE(MDBID_LDBG_ << "Selected Fileds: "  << f_obj.jsonString();)
 		DEBUG_CODE(MDBID_LDBG_ << "vfsGetFilePathForDomain query ---------------------------------------------";)
 		
-		ha_connection_pool->findN(results, MONGO_DB_COLLECTION_NAME(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_VFAT_COLLECTION), q_obj, limit_to_size, 0, &f_obj);
+		ha_connection_pool->findN(results, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_VFS_VFAT_COLLECTION), q_obj, limit_to_size, 0, &f_obj);
 		for(std::vector<mongo::BSONObj>::iterator it = results.begin();
 			it != results.end();
 			it++) {
