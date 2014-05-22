@@ -21,15 +21,16 @@
 #define __CHAOSFramework__VFSFile__
 
 #include "VFSTypes.h"
-#include "index_system/IndexDriver.h"
+#include "../index_system/IndexDriver.h"
 #include "storage_system/StorageDriver.h"
-
 
 
 namespace chaos {
 	namespace data_service {
 		namespace vfs {
 		
+			namespace chaos_index = chaos::data_service::index_system;
+			
 			class VFSManager;
 			struct DataBlock;
 			
@@ -49,7 +50,7 @@ namespace chaos {
 				DataBlock *current_data_block;
 				
 				//!index driver pointer
-				index_system::IndexDriver *index_driver_ptr;
+				chaos_index::IndexDriver *index_driver_ptr;
 				
 				//!storage driver pointer
 				storage_system::StorageDriver *storage_driver_ptr;

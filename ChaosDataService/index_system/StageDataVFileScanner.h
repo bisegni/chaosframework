@@ -32,7 +32,7 @@ namespace chaos{
 		//forward declaration
 		class StageDataConsumer;
 		
-		namespace data_index {
+		namespace index_system {
 			
 			class StageDataVFileScanner {
 				friend class StageDataConsumer;

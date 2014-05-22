@@ -35,7 +35,7 @@
 using namespace chaos::data_service::vfs;
 
 VFSFile::VFSFile(storage_system::StorageDriver *_storage_driver_ptr,
-				 index_system::IndexDriver *_index_driver_ptr,
+				 chaos_index::IndexDriver *_index_driver_ptr,
 				 std::string area,
 				 std::string vfs_fpath) :
 storage_driver_ptr(_storage_driver_ptr),

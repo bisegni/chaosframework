@@ -1,5 +1,5 @@
 /*
- *	index_system.h
+ *	storage_system.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,10 +17,9 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+#ifndef CHAOSFramework_storage_system_h
+#define CHAOSFramework_storage_system_h
 
-#ifndef CHAOSFramework_index_system_h
-#define CHAOSFramework_index_system_h
-
-#incldue "MongoDBIDXDriver.h"
+#include "PosixStorageDriver.h"
 
 #endif

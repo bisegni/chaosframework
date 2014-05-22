@@ -86,7 +86,7 @@ void VFSManager::init(void * init_data) throw (chaos::CException) {
 		throw chaos::CException(-1, "Error initializing the domain", __PRETTY_FUNCTION__);
 	}
 	
-	//create the defaulg vfs directory
+	//create the default vfs directory
 	createDirectory(VFS_STAGE_AREA);
 	createDirectory(VFS_DATA_AREA);
 	

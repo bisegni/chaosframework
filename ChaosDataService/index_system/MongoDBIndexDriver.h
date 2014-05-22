@@ -31,7 +31,6 @@
 
 namespace chaos {
 	namespace data_service {
-		namespace vfs {
 			namespace index_system {
 				
 				/*!
@@ -45,6 +44,7 @@ namespace chaos {
 				 */
 #define MONGO_DB_VFS_DB_NAME				"chaos_vfs"
 #define MONGO_DB_VFS_DOMAINS_COLLECTION		"domains"
+#define MONGO_DB_VFS_DOMAINS_URL_COLLECTION	"domains_url"
 #define MONGO_DB_VFS_VFAT_COLLECTION		"vfat"
 #define MONGO_DB_VFS_VBLOCK_COLLECTION		"datablock"
 				
@@ -52,6 +52,7 @@ namespace chaos {
 				
 				//domains field---------------------------------------------------
 #define MONGO_DB_FIELD_DOMAIN_NAME			"domain_name"
+#define MONGO_DB_FIELD_DOMAIN_UNIQUE_CODE	"domain_unique_code"
 #define MONGO_DB_FIELD_DOMAIN_URL			"domain_url"
 #define MONGO_DB_FIELD_DOMAIN_HB			"hb"
 				
@@ -128,7 +129,6 @@ namespace chaos {
 					int vfsGetFilePathForDomain(std::string vfs_domain, std::string prefix_filter, std::vector<std::string>& result_vfs_file_path, int limit_to_size);
 				};
 			}
-		}
 	}
 }
 
