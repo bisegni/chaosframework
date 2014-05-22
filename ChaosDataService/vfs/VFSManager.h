@@ -24,7 +24,7 @@
 #include "VFSFile.h"
 #include "VFSStageWriteableFile.h"
 #include "VFSStageReadableFile.h"
-#include "index_system/IndexDriver.h"
+#include "../index_system/IndexDriver.h"
 #include "storage_system/StorageDriver.h"
 
 #include <chaos/common/async_central/async_central.h>
@@ -36,7 +36,6 @@ namespace chaos {
 	namespace data_service {
 		
 		namespace vfs {
-			
 			
 			//! VFS file manager setting
 			typedef struct VFSManagerSetting {
@@ -50,7 +49,7 @@ namespace chaos {
 				std::string index_driver_impl;
 				
 				//! the instance of the index driver for this manager
-				index_system::IndexDriverSetting index_driver_setting;
+				::chaos::data_service::index_system::IndexDriverSetting index_driver_setting;
 				
 				//! current storage driver implementaiton to use
 				std::string storage_driver_impl;

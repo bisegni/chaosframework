@@ -23,7 +23,7 @@
 #include "dataservice_global.h"
 #include "vfs/VFSManager.h"
 #include "worker/DataWorker.h"
-#include "data_index/StageDataVFileScanner.h"
+#include "index_system/StageDataVFileScanner.h"
 
 #include <chaos/common/utility/ObjectSlot.h>
 #include <chaos/common/utility/StartableService.h>
@@ -57,7 +57,7 @@ namespace chaos{
 			boost::mutex						mutex_on_scan;
 			
 			//is the scanner for this slot
-			data_index::StageDataVFileScanner	*scanner;
+			index_system::StageDataVFileScanner	*scanner;
 		}StageScannerInfo;
 
 		/*!

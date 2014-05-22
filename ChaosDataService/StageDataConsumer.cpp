@@ -153,7 +153,7 @@ void StageDataConsumer::timeout() {
 			//scanner not present, so we need to add it
 			scanner_info = new StageScannerInfo();
 			scanner_info->index = ++global_scanner_num;
-			scanner_info->scanner = new data_index::StageDataVFileScanner(readable_stage_file);
+			scanner_info->scanner = new index_system::StageDataVFileScanner(readable_stage_file);
 			
 			//add new scanner infor to the processing queue to be scheduled and in vector to keep track of it
 			vector_working_path.push_back(*it);

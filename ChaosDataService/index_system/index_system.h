@@ -1,5 +1,5 @@
 /*
- *	VFSStageFile.cpp
+ *	index_system.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,24 +18,10 @@
  *    	limitations under the License.
  */
 
-#include "VFSStageFile.h"
+#ifndef CHAOSFramework_index_system_h
+#define CHAOSFramework_index_system_h
 
-#include <boost/format.hpp>
-using namespace chaos::data_service::vfs;
+#incldue "MongoDBIDXDriver.h"
+#include "StageDataVFIleScanner"
 
-VFSStageFile::VFSStageFile(storage_system::StorageDriver *_storage_driver_ptr,
-						   chaos_index::IndexDriver *_index_driver_ptr,
-						   std::string stage_vfs_relative_path,
-						   VFSStageFileOpenMode _open_mode):
-VFSFile(_storage_driver_ptr,
-		_index_driver_ptr,
-		VFS_STAGE_AREA,
-		stage_vfs_relative_path), //superclass constructor
-open_mode(_open_mode) {
-	
-	//check for path prefix, the prefix of stage can't be put twice
-	
-	
-	//allocate all thepath for this file
-	good = (storage_driver_ptr->createPath(getVFSFileInfo()->vfs_fpath) == 0);
-}
+#endif

@@ -1,5 +1,5 @@
 /*
- *	DataBlock.cpp
+ *	IndexDriver.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,17 +18,27 @@
  *    	limitations under the License.
  */
 
-#include "DataBlock.h"
-#include <stdlib.h>
-#include <string.h>
+#include "IndexDriver.h"
+#include "../vfs/DataBlock.h"
 
-using namespace chaos::data_service::vfs;
+using namespace chaos::data_service::index_system;
 
-DataBlock::DataBlock():
-flags(0),invalidation_timestamp(0), max_reacheable_size(0),
-current_size(0), creation_time(0), vfs_path(NULL), driver_private_data(NULL) {
+IndexDriver::IndexDriver(std::string alias):NamedService(alias) {
+	
+}
+
+IndexDriver::~IndexDriver() {
+	
+}
+
+//! init
+void IndexDriver::init(void *init_data) throw (chaos::CException) {
+	setting = static_cast<IndexDriverSetting*>(init_data);
+	if(!setting) throw CException(-1, "No setting set", __PRETTY_FUNCTION__);
+	if(!setting->servers.size()) throw CException(-1, "No server set", __PRETTY_FUNCTION__);
 
 }
 
-DataBlock::~DataBlock() {
+//!deinit
+void IndexDriver::deinit() throw (chaos::CException) {
 }

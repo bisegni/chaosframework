@@ -33,6 +33,7 @@ namespace chaos {
 			//! describe the local domain for the VFS
 			typedef struct VFSDomain {
 				std::string name;
+				std::string unique_code;
 				std::string local_url;
 			} VFSDomain;
 			

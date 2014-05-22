@@ -29,7 +29,7 @@
 #define StageDataVFileScannerLERR_ LERR_ << StageDataVFileScanner_LOG_HEAD
 
 
-using namespace chaos::data_service::data_index;
+using namespace chaos::data_service::index_system;
 
 StageDataVFileScanner::StageDataVFileScanner(vfs::VFSStageReadableFile *_stage_file):
 stage_file(_stage_file),

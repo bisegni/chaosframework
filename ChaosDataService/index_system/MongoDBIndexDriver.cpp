@@ -8,7 +8,7 @@
 
 #include "MongoDBIndexDriver.h"
 
-#include "../vfs.h"
+#include "../vfs/vfs.h"
 
 #include <boost/format.hpp>
 
@@ -17,7 +17,7 @@
 #include <chaos/common/utility/TimingUtil.h>
 
 using namespace chaos::data_service::vfs;
-using namespace chaos::data_service::vfs::index_system;
+using namespace chaos::data_service::index_system;
 
 namespace chaos_data = chaos::common::data;
 
@@ -40,11 +40,28 @@ MongoDBIndexDriver::~MongoDBIndexDriver() {
 //! init
 void MongoDBIndexDriver::init(void *init_data) throw (chaos::CException) {
 	IndexDriver::init(init_data);
+	int err = 0;
 	std::string errmsg;
 	std::string servers;
 	chaos_data::CDataWrapper driver_custom_init;
 	//allcoate ha pool class
 	ha_connection_pool = new MongoDBHAConnectionManager(setting->servers, setting->key_value_custom_param);
+	
+	//setup index
+	//db.vdomain.ensureIndex( { "vfs_domain":1, "vfs_unique_domain_code":1 } , { unique: true,  dropDups: true  } )
+	//db.vfat.ensureIndex( { "vfs_path": 1, "vfs_domain":1 } , { unique: true,  dropDups: true  } )
+	//db.runCommand( { shardCollection : "chaos_vfs.domains" , key : { domain_name: 1, domain_url:1 } , unique : true,  dropDups: true  } )
+	
+	//domain index
+	mongo::BSONObj index_on_domain = BSON(MONGO_DB_FIELD_DOMAIN_NAME<<1<<MONGO_DB_FIELD_DOMAIN_UNIQUE_CODE<<1);
+	err = ha_connection_pool->ensureIndex(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_DOMAINS_COLLECTION, index_on_domain, true, "", true);
+	if(err) throw chaos::CException(-1, "Error creating domain colelction index", __PRETTY_FUNCTION__);
+	
+	//domain url index
+	index_on_domain = BSON(MONGO_DB_FIELD_DOMAIN_NAME<<1<<MONGO_DB_FIELD_DOMAIN_URL<<1);
+	err = ha_connection_pool->ensureIndex(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_DOMAINS_URL_COLLECTION, index_on_domain, true, "", true);
+	if(err) throw chaos::CException(-1, "Error creating domain colelction index", __PRETTY_FUNCTION__);
+
 }
 
 //!deinit
@@ -56,13 +73,42 @@ void MongoDBIndexDriver::deinit() throw (chaos::CException) {
 //! Register a new domain
 int MongoDBIndexDriver::vfsAddDomain(vfs::VFSDomain domain) {
 	int err = 0;
-	mongo::BSONObjBuilder b;
+	mongo::BSONObjBuilder domain_registration;
+	mongo::BSONObjBuilder domain_url_registration;
 	try {
-		//compose file search criteria
-		b.append(MONGO_DB_FIELD_DOMAIN_NAME, domain.name);
-		b.append(MONGO_DB_FIELD_DOMAIN_URL, domain.local_url);
-		b.append(MONGO_DB_FIELD_DOMAIN_HB, mongo::Date_t(chaos::TimingUtil::getTimeStamp()));
-		err = ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_DOMAINS_COLLECTION), b.obj());
+		//try to add the domain
+		domain_registration.append(MONGO_DB_FIELD_DOMAIN_NAME, domain.name);
+		domain_registration.append(MONGO_DB_FIELD_DOMAIN_UNIQUE_CODE, domain.unique_code);
+		mongo::BSONObj domain_insertation_obj = domain_registration.obj();
+		err = ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_DOMAINS_COLLECTION), domain_insertation_obj);
+		if(err) {
+			MDBID_LERR_ << "Error " << err << " creting domain entry";
+			MDBID_LAPP_ << "Checking already stored domain info";
+			mongo::BSONObj result;
+			// no i can read the memoryzed unique code for my domain and see if it match
+			err = ha_connection_pool->findOne(result, MONGO_DB_COLLECTION_NAME(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_DOMAINS_COLLECTION), domain_insertation_obj);
+			if(err) {
+				MDBID_LERR_ << "Error " << err << " retriving domain info";
+			} else if(result.isEmpty()) {
+				MDBID_LERR_ << "No domain found on index db --> somenthing is going bad on db";
+				err = -1;
+				return err;
+			} else {
+				MDBID_LAPP_ << "Checking domain unique code";
+				MDBID_LAPP_ << "Local unique domain code->" << domain.unique_code;
+				MDBID_LAPP_ << "Index db unique domaincode->" << result.getStringField(MONGO_DB_FIELD_DOMAIN_UNIQUE_CODE);
+				if(domain.unique_code.compare(result.getStringField(MONGO_DB_FIELD_DOMAIN_UNIQUE_CODE))) {
+					MDBID_LERR_ << "Unique code checking NOT PASSED";
+					err = -2;
+					return err;
+				}
+			}
+		}
+		//compose the insert
+		domain_url_registration.append(MONGO_DB_FIELD_DOMAIN_NAME, domain.name);
+		domain_url_registration.append(MONGO_DB_FIELD_DOMAIN_URL, domain.local_url);
+		domain_url_registration.append(MONGO_DB_FIELD_DOMAIN_HB, mongo::Date_t(chaos::TimingUtil::getTimeStamp()));
+		err = ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_DOMAINS_URL_COLLECTION), domain_url_registration.obj());
 		if(err) {
 			if(err != 11000) {
 				MDBID_LERR_ << "Error " << err << " creting domain entry";
@@ -90,7 +136,7 @@ int MongoDBIndexDriver::vfsDomainHeartBeat(vfs::VFSDomain domain) {
 		b_query.append(MONGO_DB_FIELD_DOMAIN_URL, domain.local_url);
 		b_update_filed.append(MONGO_DB_FIELD_DOMAIN_HB, mongo::Date_t(chaos::TimingUtil::getTimeStamp()));
 		b_update.append("$set", b_update_filed.obj());
-		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_DOMAINS_COLLECTION), b_query.obj(), b_update.obj());
+		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(MONGO_DB_VFS_DB_NAME, MONGO_DB_VFS_DOMAINS_URL_COLLECTION), b_query.obj(), b_update.obj());
 		if(err) {
 			MDBID_LERR_ << "Error " << err << " updating the heartbeat for domain";
 		}
@@ -284,7 +330,7 @@ int MongoDBIndexDriver::vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
 			// read the block element
 			
 			//get new empty datablock
-			*data_block = getEmptyDataBlock();
+			*data_block = (chaos_vfs::DataBlock*)malloc(sizeof(chaos_vfs::DataBlock));
 			
 			//set the field
 			(*data_block)->creation_time = result.getField(MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS).numberLong();
@@ -292,14 +338,7 @@ int MongoDBIndexDriver::vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
 			(*data_block)->max_reacheable_size = result.getField(MONGO_DB_FIELD_DATA_BLOCK_MAX_BLOCK_SIZE).numberLong();
 			
 			std::string path = result.getField(MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH).String();
-			(*data_block)->vfs_path = (char*)malloc(sizeof(char) * path.size()+1);
-			if((*data_block)->vfs_path) {
-				::strcpy((*data_block)->vfs_path , path.c_str());
-			} else {
-				deleteDataBlock(*data_block);
-				*data_block = NULL;
-				err = -1;
-			}
+			(*data_block)->vfs_path = path;
 		}
 	} catch( const mongo::DBException &e ) {
 		MDBID_LERR_ << e.what();

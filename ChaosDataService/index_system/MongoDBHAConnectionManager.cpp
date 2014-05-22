@@ -42,7 +42,7 @@ default: \
 }
 
 namespace chaos_data = chaos::common::data;
-using namespace chaos::data_service::vfs::index_system;
+using namespace chaos::data_service::index_system;
 //-----------------------------------------------------------------------------------------------------------
 
 MongoAuthHook::MongoAuthHook(std::map<string,string>& key_value_custom_param):
@@ -263,6 +263,54 @@ int MongoDBHAConnectionManager::update( const std::string &ns, mongo::Query quer
 	while (getConnection(&conn)) {
 		try {
 			conn->conn().update(ns, query, obj, upsert, multi);
+			MONGO_DB_GET_ERROR(conn, err);
+		} catch (std::exception& ex) {
+			MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();
+			MONGO_DB_GET_ERROR(conn, err);
+			DELETE_OBJ_POINTER(conn)
+			CONTINUE_ON_NEXT_CONNECTION(err)
+		}
+		break;
+	}
+	if(conn) delete(conn);
+	return err;
+}
+
+int MongoDBHAConnectionManager::ensureIndex( const std::string &database, const std::string &collection, mongo::BSONObj keys, bool unique, const std::string &name, bool dropDup, bool background, int v, int ttl) {
+	int err = -1;
+	MongoDBHAConnection conn = NULL;
+	while (getConnection(&conn)) {
+		try {
+			mongo::BSONObjBuilder toSave;
+			toSave.append( "ns" , database+"."+collection );
+			toSave.append( "key" , keys );
+			
+			if ( name != "" ) {
+				toSave.append( "name" , name );
+			}
+			else {
+				string nn = conn->conn().genIndexName( keys );
+				toSave.append( "name" , nn );
+			}
+			
+			if( v >= 0 )
+				toSave.append("v", v);
+			
+			if ( unique )
+				toSave.appendBool( "unique", unique );
+			
+			if( background )
+				toSave.appendBool( "background", true );
+			
+			if( dropDup )
+				toSave.appendBool( "dropDups", dropDup );
+			
+			
+			if ( ttl > 0 )
+				toSave.append( "expireAfterSeconds", ttl );
+		
+			err = insert(database+".system.indexes", toSave.obj());
+			//err = conn->conn().ensureIndex(database+"."+collection, keys, unique, name, cache, background, v, ttl);
 			MONGO_DB_GET_ERROR(conn, err);
 		} catch (std::exception& ex) {
 			MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();

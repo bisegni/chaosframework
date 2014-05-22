@@ -22,8 +22,8 @@
 
 #include <string>
 #include <vector>
-#include "../VFSTypes.h"
-#include "../DataBlock.h"
+#include "../vfs/VFSTypes.h"
+#include "..vfs/DataBlock.h"
 
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/InizializableService.h>
@@ -62,6 +62,10 @@ namespace chaos {
 					StorageDriver(std::string alias);
 					
 				protected:
+					chaos_vfs::DataBlock *getNewDataBlock(std::string path);
+					
+					void disposeDataBlock(chaos_vfs::DataBlock *);
+					
 					//! domain initialization
 					/*!
 					 Subclass need to implement his domain creation strategy
@@ -69,7 +73,6 @@ namespace chaos {
 					 domain
 					 */
 					virtual void initDomain() throw (chaos::CException) = 0;
-					
 				public:
 					
 					//! public destructor
