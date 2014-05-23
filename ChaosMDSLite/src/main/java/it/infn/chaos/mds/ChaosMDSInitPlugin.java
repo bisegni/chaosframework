@@ -17,7 +17,10 @@ import org.ref.server.configuration.REFServerConfiguration;
 import org.ref.server.plugins.REFDeinitPlugin;
 import org.ref.server.plugins.REFInitPlugin;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
@@ -42,16 +45,20 @@ public class ChaosMDSInitPlugin implements REFInitPlugin, REFDeinitPlugin {
 			String user = REFServerConfiguration.getInstance().getStringParamByValue("mongodb.user");
 			String pwd = REFServerConfiguration.getInstance().getStringParamByValue("mongodb.pwd");
 			String db = REFServerConfiguration.getInstance().getStringParamByValue("mongodb.db");
-			if(mongodbURL != null) {
+			if (mongodbURL != null) {
 				StringTokenizer tokenizer = new StringTokenizer(mongodbURL, ",");
 				Vector<ServerAddress> servers = new Vector<ServerAddress>();
-				while(tokenizer.hasMoreTokens()) {
+				while (tokenizer.hasMoreTokens()) {
 					String databaseUrl = tokenizer.nextToken();
 					servers.add(new ServerAddress(databaseUrl));
 				}
-				if(servers.size()>0) {
-					SingletonServices.getInstance().setMongoClient(new MongoClient(servers, Arrays.asList(MongoCredential.createMongoCRCredential(user, db, pwd.toCharArray()))));
-					SingletonServices.getInstance().setMongoDB( SingletonServices.getInstance().getMongoClient().getDB(db));
+				if (servers.size() > 0) {
+					if (user != null && pwd != null && db != null) {
+						SingletonServices.getInstance().setMongoClient(new MongoClient(servers, Arrays.asList(MongoCredential.createMongoCRCredential(user, db, pwd.toCharArray()))));
+					} else {
+						SingletonServices.getInstance().setMongoClient(new MongoClient(servers));
+					}
+					SingletonServices.getInstance().setMongoDB(SingletonServices.getInstance().getMongoClient().getDB(db));
 					SingletonServices.getInstance().getMongoClient().setWriteConcern(WriteConcern.JOURNALED);
 				}
 			}

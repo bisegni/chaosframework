@@ -144,16 +144,22 @@ public class Device extends BSONBusinessObject {
 		this.netAddress = netAddress;
 	}
 
-	@Override
-	public Object toBson() {
+	public BasicBSONObject getDeviceOnlyBSON() {
 		BasicBSONObject deviceObj = new BasicBSONObject();
 		if (getDeviceIdentification() != null)
 			deviceObj.append(RPCConstants.DATASET_DEVICE_ID, getDeviceIdentification());
+		return deviceObj;
+	}
+	
+	@Override
+	public Object toBson() {
+		BasicBSONObject deviceObj = getDeviceOnlyBSON();
 		if (getDataset() != null)
 			deviceObj.append(RPCConstants.DATASET_DESCRIPTION, getDataset().toBson());
 		return deviceObj;
 	}
 
+	
 	/**
 	 * @throws Throwable
 	 */
