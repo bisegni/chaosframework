@@ -258,6 +258,7 @@ public class DeviceDA extends DataAccess {
 		DBCollection devicesCollection = chaosDB.getCollection("devices");
 		DBCollection datasetsCollection = chaosDB.getCollection("datasets");
 		BasicDBObject dbObject = new BasicDBObject();
+		dbObject.append(RPCConstants.DATASET_DEVICE_ID, d.getDeviceIdentification());
 		dbObject.append(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS, d.getNetAddress());
 		dbObject.append(RPCConstants.CONTROL_UNIT_INSTANCE, d.getCuInstance());
 		dbObject.putAll((BSONObject) d.getDeviceOnlyBSON());
