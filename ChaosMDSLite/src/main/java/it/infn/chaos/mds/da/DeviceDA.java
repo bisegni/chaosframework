@@ -294,8 +294,8 @@ public class DeviceDA extends DataAccess {
 		BasicDBObject updateObj = new BasicDBObject();
 		BasicDBObject queryObj = new BasicDBObject();
 		queryObj.append(RPCConstants.DATASET_DEVICE_ID, deviceIdentification);
-		updateObj.append(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS, netAddress);
-		updateObj.append(RPCConstants.CONTROL_UNIT_INSTANCE, cuInstance);
+		updateObj.append("$set", new BasicDBObject(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS, netAddress));
+		updateObj.append("$set", new BasicDBObject(RPCConstants.CONTROL_UNIT_INSTANCE, cuInstance));
 		devicesCollection.update(queryObj, updateObj);
 	}
 
