@@ -36,13 +36,13 @@ SET(common_lib_src  ${common_lib_src}	direct_io/DirectIOClient.cpp direct_io/Dir
 SET(common_lib_src  ${common_lib_src}	io/IODataDriver.cpp io/IOMemcachedIODriver.cpp io/IODirectIODriver.cpp)
 SET(common_lib_src  ${common_lib_src}	message/DeviceMessageChannel.cpp message/MDSMessageChannel.cpp message/MessageChannel.cpp message/PerformanceNodeChannel.cpp)
 SET(common_lib_src  ${common_lib_src}	network/NetworkBroker.cpp network/PerformanceManagment.cpp)
-SET(common_lib_src  ${common_lib_src}	rpc/RpcClient.cpp rpc/RpcServer.cpp rpc/msgpack/MsgPackClient.cpp rpc/msgpack/MsgPackServer.cpp rpc/zmq/ZMQClient.cpp rpc/zmq/ZMQServer.cpp)
+SET(common_lib_src  ${common_lib_src}	rpc/RpcClient.cpp rpc/RpcServer.cpp rpc/zmq/ZMQClient.cpp rpc/zmq/ZMQServer.cpp)
 SET(common_lib_src  ${common_lib_src}	utility/NamedService.cpp utility/StartableService.cpp utility/InizializableService.cpp)
 SET(common_lib_src  ${common_lib_src}	batch_command/AttributeSetting.cpp batch_command/BatchCommandExecutor.cpp batch_command/BatchCommandSandbox.cpp 
                                         batch_command/BatchCommand.cpp)
 
 
-SET(common_lib_library boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached msgpack msgpack-rpc mpio zmq uv dl)
+SET(common_lib_library boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached zmq uv dl)
 
 
 ADD_LIBRARY(chaos_common SHARED ${common_lib_src})

@@ -24,7 +24,6 @@
 #include <string>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
-#include <msgpack/rpc/transport/udp.h>
 
 using namespace chaos;
 using namespace chaos::common::data;
@@ -32,7 +31,6 @@ using namespace chaos::common::data;
 using namespace std;
 using namespace boost;
 using namespace boost::algorithm;
-using namespace msgpack;
 
 #define ZMQC_LAPP LAPP_ << "[ZMQClient] - "
 #define ZMQC_LERR LERR_ << "[ZMQClient] - "
@@ -187,11 +185,11 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
 #endif
         }
 		
-    } catch (msgpack::type_error& e) {
+    }catch (std::exception& e) {
         ZMQC_LAPP << "Error during message forwarding:"<< e.what();
         return;
-    } catch (std::exception& e) {
-        ZMQC_LAPP << "Error during message forwarding:"<< e.what();
+    } catch (...) {
+        ZMQC_LAPP << "General error during message forwarding:";
         return;
     }
 	zmq_msg_close (&message);

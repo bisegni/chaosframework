@@ -315,9 +315,6 @@
 					"-lboost_program_options",
 					"-lboost_regex",
 					"-lboost_filesystem",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
 				);
@@ -358,9 +355,6 @@
 					"-lboost_program_options",
 					"-lboost_regex",
 					"-lboost_filesystem",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
 				);

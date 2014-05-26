@@ -8,9 +8,9 @@ SET(src  ${src} vfs/VFSManager.cpp vfs/VFSFile.cpp vfs/VFSStageFile.cpp vfs/VFSS
 ADD_EXECUTABLE(ChaosDataService ${src})
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	TARGET_LINK_LIBRARIES(ChaosDataService pthread dl couchbase mongoclient chaos_common boost_program_options boost_system boost_filesystem boost_thread boost_chrono boost_regex boost_log boost_log_setup boost_atomic memcached msgpack msgpack-rpc mpio)
+	TARGET_LINK_LIBRARIES(ChaosDataService pthread dl couchbase mongoclient chaos_common boost_program_options boost_system boost_filesystem boost_thread boost_chrono boost_regex boost_log boost_log_setup boost_atomic memcached)
 ELSE(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	TARGET_LINK_LIBRARIES(ChaosDataService dl couchbase mongoclient chaos_common boost_program_options boost_system boost_filesystem boost_thread boost_chrono boost_regex boost_log boost_log_setup boost_atomic memcached msgpack msgpack-rpc mpio)
+	TARGET_LINK_LIBRARIES(ChaosDataService dl couchbase mongoclient chaos_common boost_program_options boost_system boost_filesystem boost_thread boost_chrono boost_regex boost_log boost_log_setup boost_atomic memcached)
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 INSTALL_TARGETS(/bin ChaosDataService)
