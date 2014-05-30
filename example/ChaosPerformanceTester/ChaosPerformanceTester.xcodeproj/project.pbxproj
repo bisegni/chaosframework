@@ -207,9 +207,6 @@
 					"-lboost_program_options",
 					"-lboost_regex",
 					"-lboost_filesystem",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lchaos_uitoolkit",
@@ -242,9 +239,6 @@
 					"-lboost_program_options",
 					"-lboost_regex",
 					"-lboost_filesystem",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lchaos_uitoolkit",
@@ -273,6 +267,7 @@
 				32AF7D5618DB501E00537DE6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

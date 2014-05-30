@@ -182,10 +182,6 @@
 		3265BF4615D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3265BF4515D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h */; };
 		3265BF4915D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3265BF4815D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc */; };
 		3266A5DF18A631A800637592 /* ZMQBaseClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3266A5DE18A631A800637592 /* ZMQBaseClass.cpp */; };
-		3268CE2D1616086800FCDB10 /* MsgPackClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3268CE291616086800FCDB10 /* MsgPackClient.cpp */; };
-		3268CE2E1616086800FCDB10 /* MsgPackClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3268CE2A1616086800FCDB10 /* MsgPackClient.h */; };
-		3268CE2F1616086800FCDB10 /* MsgPackServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3268CE2B1616086800FCDB10 /* MsgPackServer.cpp */; };
-		3268CE301616086800FCDB10 /* MsgPackServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3268CE2C1616086800FCDB10 /* MsgPackServer.h */; };
 		3268CE35161608D100FCDB10 /* ZMQClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3268CE31161608D100FCDB10 /* ZMQClient.cpp */; };
 		3268CE36161608D100FCDB10 /* ZMQClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3268CE32161608D100FCDB10 /* ZMQClient.h */; };
 		3268CE37161608D100FCDB10 /* ZMQServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3268CE33161608D100FCDB10 /* ZMQServer.cpp */; };
@@ -688,10 +684,6 @@
 		3265BF4815D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosUIToolkitCWrapper.cc; sourceTree = "<group>"; };
 		3266A5DD18A6315600637592 /* ZMQBaseClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMQBaseClass.h; sourceTree = "<group>"; };
 		3266A5DE18A631A800637592 /* ZMQBaseClass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQBaseClass.cpp; sourceTree = "<group>"; };
-		3268CE291616086800FCDB10 /* MsgPackClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MsgPackClient.cpp; sourceTree = "<group>"; };
-		3268CE2A1616086800FCDB10 /* MsgPackClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MsgPackClient.h; sourceTree = "<group>"; };
-		3268CE2B1616086800FCDB10 /* MsgPackServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MsgPackServer.cpp; sourceTree = "<group>"; };
-		3268CE2C1616086800FCDB10 /* MsgPackServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MsgPackServer.h; sourceTree = "<group>"; };
 		3268CE31161608D100FCDB10 /* ZMQClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQClient.cpp; sourceTree = "<group>"; };
 		3268CE32161608D100FCDB10 /* ZMQClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQClient.h; sourceTree = "<group>"; };
 		3268CE33161608D100FCDB10 /* ZMQServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQServer.cpp; sourceTree = "<group>"; };
@@ -1429,17 +1421,6 @@
 			path = zmq;
 			sourceTree = "<group>";
 		};
-		3268CE281616082A00FCDB10 /* msgpack */ = {
-			isa = PBXGroup;
-			children = (
-				3268CE291616086800FCDB10 /* MsgPackClient.cpp */,
-				3268CE2A1616086800FCDB10 /* MsgPackClient.h */,
-				3268CE2B1616086800FCDB10 /* MsgPackServer.cpp */,
-				3268CE2C1616086800FCDB10 /* MsgPackServer.h */,
-			);
-			path = msgpack;
-			sourceTree = "<group>";
-		};
 		32698D46179E8C3300D6638C /* command */ = {
 			isa = PBXGroup;
 			children = (
@@ -1656,7 +1637,6 @@
 		326DB41114B38BC00018A8D0 /* rpc */ = {
 			isa = PBXGroup;
 			children = (
-				3268CE281616082A00FCDB10 /* msgpack */,
 				3268CE261616081000FCDB10 /* zmq */,
 				326DB41214B38BC00018A8D0 /* ChaosRpc.h */,
 				327967B415DF99FB0003C6DA /* RpcClient.cpp */,
@@ -2389,8 +2369,6 @@
 				32B89CA215F3D1E100B17AAA /* InstrumentEventChannel.h in Headers */,
 				32D6C89A1815294700E9689B /* DirectIOForwarder.h in Headers */,
 				324A4B97191A557700975394 /* time_support.h in Headers */,
-				3268CE2E1616086800FCDB10 /* MsgPackClient.h in Headers */,
-				3268CE301616086800FCDB10 /* MsgPackServer.h in Headers */,
 				3268CE36161608D100FCDB10 /* ZMQClient.h in Headers */,
 				326CDBB718D860430054EF19 /* SpinLock.h in Headers */,
 				3268CE38161608D100FCDB10 /* ZMQServer.h in Headers */,
@@ -2825,8 +2803,6 @@
 				3253E09815F28A270079B40E /* EventTypeScheduler.cpp in Sources */,
 				32B89C9D15F39DB500B17AAA /* ActionExecutionSafetySystem.cpp in Sources */,
 				32B89CA115F3D1E100B17AAA /* InstrumentEventChannel.cpp in Sources */,
-				3268CE2D1616086800FCDB10 /* MsgPackClient.cpp in Sources */,
-				3268CE2F1616086800FCDB10 /* MsgPackServer.cpp in Sources */,
 				324A4B12191A3F6A00975394 /* status.cpp in Sources */,
 				3268CE35161608D100FCDB10 /* ZMQClient.cpp in Sources */,
 				3268CE37161608D100FCDB10 /* ZMQServer.cpp in Sources */,
@@ -2971,9 +2947,6 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lchaos_common",
 					"-lboost_log_setup",
@@ -3021,9 +2994,6 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lchaos_common",
 					"-lboost_log_setup",
@@ -3078,9 +3048,6 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lchaos_common",
 					"-lboost_log_setup",
@@ -3130,9 +3097,6 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lchaos_common",
 					"-lboost_log_setup",
@@ -3205,9 +3169,6 @@
 					"-lboost_program_options",
 					"-lboost_regex",
 					"-lboost_filesystem",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lzmq",
@@ -3255,9 +3216,6 @@
 					"-lboost_program_options",
 					"-lboost_regex",
 					"-lboost_filesystem",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lzmq",
@@ -3312,9 +3270,6 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-Levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lchaos_common",
@@ -3361,9 +3316,6 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-Levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lchaos_common",
@@ -3529,9 +3481,6 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lchaos_common",
 					"-lchaos_uitoolkit",
@@ -3589,9 +3538,6 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lchaos_common",
 					"-lchaos_uitoolkit",
