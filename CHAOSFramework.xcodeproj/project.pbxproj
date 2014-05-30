@@ -149,7 +149,7 @@
 		3258AEEA1935C34000A66D44 /* URL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3258AEE81935C34000A66D44 /* URL.cpp */; };
 		3258AEEB1935C34000A66D44 /* URL.h in Headers */ = {isa = PBXBuildFile; fileRef = 3258AEE91935C34000A66D44 /* URL.h */; };
 		3258AF031935EE4D00A66D44 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3258AF021935EE4D00A66D44 /* main.cpp */; };
-		3258AF0C1935F46D00A66D44 /* FeederService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3258AF0A1935F46D00A66D44 /* FeederService.cpp */; };
+		3258AF0C1935F46D00A66D44 /* FeederTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3258AF0A1935F46D00A66D44 /* FeederTest.cpp */; };
 		325CA6BB15EE10B3007FCC12 /* EventAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325CA6B915EE10B3007FCC12 /* EventAction.cpp */; };
 		325CA6BC15EE10B3007FCC12 /* EventAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 325CA6BA15EE10B3007FCC12 /* EventAction.h */; };
 		325DE9F115EC031E00D6F34E /* EventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325DE9EF15EC031E00D6F34E /* EventChannel.cpp */; };
@@ -663,8 +663,8 @@
 		3258AF001935EE4D00A66D44 /* EchitectureTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EchitectureTests; sourceTree = BUILT_PRODUCTS_DIR; };
 		3258AF021935EE4D00A66D44 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		3258AF091935EE9700A66D44 /* CMakeList.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeList.txt; sourceTree = "<group>"; };
-		3258AF0A1935F46D00A66D44 /* FeederService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FeederService.cpp; sourceTree = "<group>"; };
-		3258AF0B1935F46D00A66D44 /* FeederService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeederService.h; sourceTree = "<group>"; };
+		3258AF0A1935F46D00A66D44 /* FeederTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FeederTest.cpp; sourceTree = "<group>"; };
+		3258AF0B1935F46D00A66D44 /* FeederTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeederTest.h; sourceTree = "<group>"; };
 		325CA6B915EE10B3007FCC12 /* EventAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventAction.cpp; sourceTree = "<group>"; };
 		325CA6BA15EE10B3007FCC12 /* EventAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventAction.h; sourceTree = "<group>"; };
 		325DE9EF15EC031E00D6F34E /* EventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventChannel.cpp; sourceTree = "<group>"; };
@@ -1323,9 +1323,8 @@
 		3258AF011935EE4D00A66D44 /* EchitectureTests */ = {
 			isa = PBXGroup;
 			children = (
+				32EE00CE19387E0B00621776 /* network */,
 				3258AF021935EE4D00A66D44 /* main.cpp */,
-				3258AF0A1935F46D00A66D44 /* FeederService.cpp */,
-				3258AF0B1935F46D00A66D44 /* FeederService.h */,
 			);
 			path = EchitectureTests;
 			sourceTree = "<group>";
@@ -2249,6 +2248,15 @@
 			path = evt_desc;
 			sourceTree = "<group>";
 		};
+		32EE00CE19387E0B00621776 /* network */ = {
+			isa = PBXGroup;
+			children = (
+				3258AF0A1935F46D00A66D44 /* FeederTest.cpp */,
+				3258AF0B1935F46D00A66D44 /* FeederTest.h */,
+			);
+			path = network;
+			sourceTree = "<group>";
+		};
 		32FB2171192A582100E9C87A /* index_system */ = {
 			isa = PBXGroup;
 			children = (
@@ -2795,7 +2803,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3258AF0C1935F46D00A66D44 /* FeederService.cpp in Sources */,
+				3258AF0C1935F46D00A66D44 /* FeederTest.cpp in Sources */,
 				3258AF031935EE4D00A66D44 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3235,9 +3243,6 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lchaos_common",
 					"-lboost_log_setup",
@@ -3294,9 +3299,6 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lchaos_common",
 					"-lboost_log_setup",
@@ -3567,9 +3569,6 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-Levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lchaos_common",
@@ -3616,9 +3615,6 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-Levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lchaos_common",
@@ -3775,6 +3771,7 @@
 				3258AF081935EE4D00A66D44 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		3260261014B300FE00C906CE /* Build configuration list for PBXProject "CHAOSFramework" */ = {
 			isa = XCConfigurationList;

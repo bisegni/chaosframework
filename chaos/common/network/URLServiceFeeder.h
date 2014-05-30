@@ -68,11 +68,15 @@ namespace chaos {
                     bool operator < (const URLService& b) const {
                         return priority < b.priority;
                     }
-                    bool operator < (const URLService*& b) const {
-                        return priority < b->priority;
-                    }
                 };
                 
+				template<typename Type, typename Compare = std::less<Type> >
+				struct pless : public std::binary_function<Type *, Type *, bool> {
+					bool operator()(const Type *x, const Type *y) const
+					{ return Compare()(*x, *y); }
+				};
+
+				
                     //! Default contructor
                 /*!
                  Construct a new feeder with some option
@@ -120,7 +124,7 @@ namespace chaos {
                 URLService *current_service;
                 URLService **service_list;
                 
-                std::priority_queue< URLService*, std::vector< URLService* >, less<vector<URLService*>::value_type> > online_urls;
+                std::priority_queue< URLService*, std::vector< URLService* >, pless<URLService> > online_urls;
                 
                 std::set<uint32_t> offline_urls;
                 std::set<uint32_t> available_url;
