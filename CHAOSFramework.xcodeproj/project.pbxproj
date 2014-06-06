@@ -22,8 +22,6 @@
 		3219E6A018CC7AE600C2F795 /* DirectIOClientConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 3219E69E18CC7AE600C2F795 /* DirectIOClientConnection.h */; };
 		3220F98118A4DBEB00B0A1D4 /* DirectIOVirtualChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3220F97F18A4DBEB00B0A1D4 /* DirectIOVirtualChannel.cpp */; };
 		3220F98218A4DBEB00B0A1D4 /* DirectIOVirtualChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3220F98018A4DBEB00B0A1D4 /* DirectIOVirtualChannel.h */; };
-		3223253B18EC157000ADBA4D /* IndexDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3223253118EC157000ADBA4D /* IndexDriver.cpp */; };
-		3223253C18EC157000ADBA4D /* MongoDBIndexDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3223253318EC157000ADBA4D /* MongoDBIndexDriver.cpp */; };
 		3223253D18EC157000ADBA4D /* PosixStorageDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3223253618EC157000ADBA4D /* PosixStorageDriver.cpp */; };
 		3223253E18EC157000ADBA4D /* StorageDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3223253918EC157000ADBA4D /* StorageDriver.cpp */; };
 		32234D3F176E045100525E0C /* SlowCommandExecutor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32234D3D176E045100525E0C /* SlowCommandExecutor.cpp */; };
@@ -52,7 +50,6 @@
 		3235110A17B3EAE500E39E14 /* TemplatedConcurrentQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 3235110817B3EAE500E39E14 /* TemplatedConcurrentQueue.h */; };
 		3235425C1923A5C70090B8F6 /* StageDataConsumer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235425A1923A5C70090B8F6 /* StageDataConsumer.cpp */; };
 		3235425F1923A9360090B8F6 /* IndexStageDataWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3235425D1923A9360090B8F6 /* IndexStageDataWorker.cpp */; };
-		32399F8A19066BCD00A5502F /* MongoDBHAConnectionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32399F8819066BCD00A5502F /* MongoDBHAConnectionManager.cpp */; };
 		3244C0C6168CB96B007C802C /* Record.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244C0C5168CB96B007C802C /* Record.h */; };
 		3244D11D15ECC25800FE2F86 /* AlertEventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */; };
 		3244D11E15ECC25800FE2F86 /* AlertEventChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */; };
@@ -149,6 +146,10 @@
 		3255E72415EA86F2005C96CA /* DefaultEventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3255E72315EA86F1005C96CA /* DefaultEventDispatcher.cpp */; };
 		3255E72715EA87D2005C96CA /* AbstractEventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3255E72515EA87D1005C96CA /* AbstractEventDispatcher.cpp */; };
 		3255E72815EA87D2005C96CA /* AbstractEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 3255E72615EA87D1005C96CA /* AbstractEventDispatcher.h */; };
+		3258AEEA1935C34000A66D44 /* URL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3258AEE81935C34000A66D44 /* URL.cpp */; };
+		3258AEEB1935C34000A66D44 /* URL.h in Headers */ = {isa = PBXBuildFile; fileRef = 3258AEE91935C34000A66D44 /* URL.h */; };
+		3258AF031935EE4D00A66D44 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3258AF021935EE4D00A66D44 /* main.cpp */; };
+		3258AF0C1935F46D00A66D44 /* FeederTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3258AF0A1935F46D00A66D44 /* FeederTest.cpp */; };
 		325CA6BB15EE10B3007FCC12 /* EventAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325CA6B915EE10B3007FCC12 /* EventAction.cpp */; };
 		325CA6BC15EE10B3007FCC12 /* EventAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 325CA6BA15EE10B3007FCC12 /* EventAction.h */; };
 		325DE9F115EC031E00D6F34E /* EventChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325DE9EF15EC031E00D6F34E /* EventChannel.cpp */; };
@@ -185,16 +186,11 @@
 		3265BF4615D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3265BF4515D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h */; };
 		3265BF4915D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3265BF4815D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc */; };
 		3266A5DF18A631A800637592 /* ZMQBaseClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3266A5DE18A631A800637592 /* ZMQBaseClass.cpp */; };
-		3268CE2D1616086800FCDB10 /* MsgPackClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3268CE291616086800FCDB10 /* MsgPackClient.cpp */; };
-		3268CE2E1616086800FCDB10 /* MsgPackClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3268CE2A1616086800FCDB10 /* MsgPackClient.h */; };
-		3268CE2F1616086800FCDB10 /* MsgPackServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3268CE2B1616086800FCDB10 /* MsgPackServer.cpp */; };
-		3268CE301616086800FCDB10 /* MsgPackServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3268CE2C1616086800FCDB10 /* MsgPackServer.h */; };
 		3268CE35161608D100FCDB10 /* ZMQClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3268CE31161608D100FCDB10 /* ZMQClient.cpp */; };
 		3268CE36161608D100FCDB10 /* ZMQClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3268CE32161608D100FCDB10 /* ZMQClient.h */; };
 		3268CE37161608D100FCDB10 /* ZMQServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3268CE33161608D100FCDB10 /* ZMQServer.cpp */; };
 		3268CE38161608D100FCDB10 /* ZMQServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3268CE34161608D100FCDB10 /* ZMQServer.h */; };
 		32698D4A179E8CD100D6638C /* SetAttributeCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 32698D48179E8CD100D6638C /* SetAttributeCommand.h */; };
-		326CADC718EAB64600E74CEA /* DataBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326CADC518EAB64600E74CEA /* DataBlock.cpp */; };
 		326CADCA18EAFD1200E74CEA /* VFSManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326CADC818EAFD1200E74CEA /* VFSManager.cpp */; };
 		326CDBB718D860430054EF19 /* SpinLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 326CDBB518D860430054EF19 /* SpinLock.h */; };
 		326DB43014B38BC00018A8D0 /* ActionDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB3B614B38BC00018A8D0 /* ActionDescriptor.cpp */; };
@@ -284,6 +280,9 @@
 		327CFF091708C4EB0069497B /* FastHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327CFF071708C4EA0069497B /* FastHash.cpp */; };
 		327CFF0A1708C4EB0069497B /* FastHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF081708C4EB0069497B /* FastHash.h */; };
 		327CFF121708D7760069497B /* CacheGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF111708D7740069497B /* CacheGlobal.h */; };
+		327D5E49192DE3430043ED21 /* IndexDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327D5E43192DE3430043ED21 /* IndexDriver.cpp */; };
+		327D5E4A192DE3430043ED21 /* MongoDBHAConnectionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327D5E45192DE3430043ED21 /* MongoDBHAConnectionManager.cpp */; };
+		327D5E4B192DE3430043ED21 /* MongoDBIndexDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327D5E47192DE3430043ED21 /* MongoDBIndexDriver.cpp */; };
 		328556A017F2E33A00A64ED2 /* DirectIOClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3285569E17F2E33A00A64ED2 /* DirectIOClient.cpp */; };
 		328556A117F2E33A00A64ED2 /* DirectIOClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3285569F17F2E33A00A64ED2 /* DirectIOClient.h */; };
 		328556A417F2E36000A64ED2 /* DirectIOServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328556A217F2E36000A64ED2 /* DirectIOServer.cpp */; };
@@ -348,7 +347,6 @@
 		32AF7D4018DAEAF300537DE6 /* PerformanceNodeChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AF7D3E18DAEAF300537DE6 /* PerformanceNodeChannel.cpp */; };
 		32AF7D4118DAEAF300537DE6 /* PerformanceNodeChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AF7D3F18DAEAF300537DE6 /* PerformanceNodeChannel.h */; };
 		32B10910188C1D6200969D3D /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1090F188C1D6200969D3D /* main.cpp */; };
-		32B10912188C1D6200969D3D /* TestAsyncRpc.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 32B10911188C1D6200969D3D /* TestAsyncRpc.1 */; };
 		32B1378A189BEC3300B17CA4 /* ZMQDirectIOClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B13788189BEC3300B17CA4 /* ZMQDirectIOClient.cpp */; };
 		32B1378B189BEC3300B17CA4 /* ZMQDirectIOClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 32B13789189BEC3300B17CA4 /* ZMQDirectIOClient.h */; };
 		32B1378E189BEC4100B17CA4 /* ZMQDirectIOServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32B1378C189BEC4100B17CA4 /* ZMQDirectIOServer.cpp */; };
@@ -411,6 +409,8 @@
 		32C3546317885A37009ED581 /* shared_library.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32C3544B17885A37009ED581 /* shared_library.hpp */; };
 		32C35467178860E5009ED581 /* extension.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32C35465178860E5009ED581 /* extension.hpp */; };
 		32C3546A178860EB009ED581 /* decl.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 32C35469178860EB009ED581 /* decl.hpp */; };
+		32C4C86D193491F2002DA741 /* URLServiceFeeder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C4C86B193491F2002DA741 /* URLServiceFeeder.cpp */; };
+		32C4C86E193491F2002DA741 /* URLServiceFeeder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C4C86C193491F2002DA741 /* URLServiceFeeder.h */; };
 		32C5A42718D9959800C0435C /* DirectIOPerformanceSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C5A42518D9959800C0435C /* DirectIOPerformanceSession.cpp */; };
 		32C5A42818D9959800C0435C /* DirectIOPerformanceSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C5A42618D9959800C0435C /* DirectIOPerformanceSession.h */; };
 		32C7B8FD16DD362A005B3B21 /* ApiServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7B8FB16DD362A005B3B21 /* ApiServer.cpp */; };
@@ -434,7 +434,7 @@
 		32D6C89A1815294700E9689B /* DirectIOForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C8991815294700E9689B /* DirectIOForwarder.h */; };
 		32DB1188166267FB0036D1B9 /* DSDoubleHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DB1187166267FB0036D1B9 /* DSDoubleHandler.h */; };
 		32DBF9D118E1845E0095B289 /* CouchbaseCacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */; };
-		32DCC36F192517DA00E14256 /* VFSStageRedeableFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DCC36D192517DA00E14256 /* VFSStageRedeableFile.cpp */; };
+		32DCC36F192517DA00E14256 /* VFSStageReadableFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DCC36D192517DA00E14256 /* VFSStageReadableFile.cpp */; };
 		32DD884F15E2663B000AF740 /* DefaultEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DD884D15E2663B000AF740 /* DefaultEventDispatcher.h */; };
 		32DD885315E2681F000AF740 /* EventHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DD885115E2681F000AF740 /* EventHandler.cpp */; };
 		32DD885415E2681F000AF740 /* EventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DD885215E2681F000AF740 /* EventHandler.h */; };
@@ -472,16 +472,25 @@
 		32F7FEA118A4FD9B00FC03AB /* DirectIOEndpointHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7FEA018A4FD9B00FC03AB /* DirectIOEndpointHandler.h */; };
 		32F7FEAB18A5066600FC03AB /* FastDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7FEA218A5066600FC03AB /* FastDelegate.h */; };
 		32F7FEAC18A5066600FC03AB /* FastDelegateBind.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7FEA318A5066600FC03AB /* FastDelegateBind.h */; };
+		32FB2170192A574700E9C87A /* StageDataVFileScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FB216E192A574700E9C87A /* StageDataVFileScanner.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		3258AEFE1935EE4C00A66D44 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		32B1090B188C1D6200969D3D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
-				32B10912188C1D6200969D3D /* TestAsyncRpc.1 in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
@@ -505,11 +514,6 @@
 		3219E69E18CC7AE600C2F795 /* DirectIOClientConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOClientConnection.h; sourceTree = "<group>"; };
 		3220F97F18A4DBEB00B0A1D4 /* DirectIOVirtualChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOVirtualChannel.cpp; sourceTree = "<group>"; };
 		3220F98018A4DBEB00B0A1D4 /* DirectIOVirtualChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOVirtualChannel.h; sourceTree = "<group>"; };
-		3223253018EC157000ADBA4D /* index_system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = index_system.h; sourceTree = "<group>"; };
-		3223253118EC157000ADBA4D /* IndexDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexDriver.cpp; sourceTree = "<group>"; };
-		3223253218EC157000ADBA4D /* IndexDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexDriver.h; sourceTree = "<group>"; };
-		3223253318EC157000ADBA4D /* MongoDBIndexDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBIndexDriver.cpp; sourceTree = "<group>"; };
-		3223253418EC157000ADBA4D /* MongoDBIndexDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBIndexDriver.h; sourceTree = "<group>"; };
 		3223253618EC157000ADBA4D /* PosixStorageDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PosixStorageDriver.cpp; sourceTree = "<group>"; };
 		3223253718EC157000ADBA4D /* PosixStorageDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PosixStorageDriver.h; sourceTree = "<group>"; };
 		3223253818EC157000ADBA4D /* storage_system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = storage_system.h; sourceTree = "<group>"; };
@@ -550,8 +554,6 @@
 		3235425B1923A5C70090B8F6 /* StageDataConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StageDataConsumer.h; sourceTree = "<group>"; };
 		3235425D1923A9360090B8F6 /* IndexStageDataWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexStageDataWorker.cpp; sourceTree = "<group>"; };
 		3235425E1923A9360090B8F6 /* IndexStageDataWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexStageDataWorker.h; sourceTree = "<group>"; };
-		32399F8819066BCD00A5502F /* MongoDBHAConnectionManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBHAConnectionManager.cpp; sourceTree = "<group>"; };
-		32399F8919066BCD00A5502F /* MongoDBHAConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBHAConnectionManager.h; sourceTree = "<group>"; };
 		3244C0C5168CB96B007C802C /* Record.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Record.h; sourceTree = "<group>"; };
 		3244D11B15ECC25800FE2F86 /* AlertEventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlertEventChannel.cpp; sourceTree = "<group>"; };
 		3244D11C15ECC25800FE2F86 /* AlertEventChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertEventChannel.h; sourceTree = "<group>"; };
@@ -656,6 +658,13 @@
 		3255E72315EA86F1005C96CA /* DefaultEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DefaultEventDispatcher.cpp; sourceTree = "<group>"; };
 		3255E72515EA87D1005C96CA /* AbstractEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractEventDispatcher.cpp; sourceTree = "<group>"; };
 		3255E72615EA87D1005C96CA /* AbstractEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractEventDispatcher.h; sourceTree = "<group>"; };
+		3258AEE81935C34000A66D44 /* URL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URL.cpp; sourceTree = "<group>"; };
+		3258AEE91935C34000A66D44 /* URL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URL.h; sourceTree = "<group>"; };
+		3258AF001935EE4D00A66D44 /* EchitectureTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EchitectureTests; sourceTree = BUILT_PRODUCTS_DIR; };
+		3258AF021935EE4D00A66D44 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		3258AF091935EE9700A66D44 /* CMakeList.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeList.txt; sourceTree = "<group>"; };
+		3258AF0A1935F46D00A66D44 /* FeederTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FeederTest.cpp; sourceTree = "<group>"; };
+		3258AF0B1935F46D00A66D44 /* FeederTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeederTest.h; sourceTree = "<group>"; };
 		325CA6B915EE10B3007FCC12 /* EventAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventAction.cpp; sourceTree = "<group>"; };
 		325CA6BA15EE10B3007FCC12 /* EventAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventAction.h; sourceTree = "<group>"; };
 		325DE9EF15EC031E00D6F34E /* EventChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventChannel.cpp; sourceTree = "<group>"; };
@@ -695,17 +704,12 @@
 		3265BF4815D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosUIToolkitCWrapper.cc; sourceTree = "<group>"; };
 		3266A5DD18A6315600637592 /* ZMQBaseClass.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMQBaseClass.h; sourceTree = "<group>"; };
 		3266A5DE18A631A800637592 /* ZMQBaseClass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQBaseClass.cpp; sourceTree = "<group>"; };
-		3268CE291616086800FCDB10 /* MsgPackClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MsgPackClient.cpp; sourceTree = "<group>"; };
-		3268CE2A1616086800FCDB10 /* MsgPackClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MsgPackClient.h; sourceTree = "<group>"; };
-		3268CE2B1616086800FCDB10 /* MsgPackServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MsgPackServer.cpp; sourceTree = "<group>"; };
-		3268CE2C1616086800FCDB10 /* MsgPackServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MsgPackServer.h; sourceTree = "<group>"; };
 		3268CE31161608D100FCDB10 /* ZMQClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQClient.cpp; sourceTree = "<group>"; };
 		3268CE32161608D100FCDB10 /* ZMQClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQClient.h; sourceTree = "<group>"; };
 		3268CE33161608D100FCDB10 /* ZMQServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQServer.cpp; sourceTree = "<group>"; };
 		3268CE34161608D100FCDB10 /* ZMQServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQServer.h; sourceTree = "<group>"; };
 		32698D47179E8CD100D6638C /* SetAttributeCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetAttributeCommand.cpp; sourceTree = "<group>"; };
 		32698D48179E8CD100D6638C /* SetAttributeCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetAttributeCommand.h; sourceTree = "<group>"; };
-		326CADC518EAB64600E74CEA /* DataBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataBlock.cpp; sourceTree = "<group>"; };
 		326CADC618EAB64600E74CEA /* DataBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBlock.h; sourceTree = "<group>"; };
 		326CADC818EAFD1200E74CEA /* VFSManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSManager.cpp; sourceTree = "<group>"; };
 		326CADC918EAFD1200E74CEA /* VFSManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSManager.h; sourceTree = "<group>"; };
@@ -802,6 +806,13 @@
 		327CFF071708C4EA0069497B /* FastHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastHash.cpp; sourceTree = "<group>"; };
 		327CFF081708C4EB0069497B /* FastHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastHash.h; sourceTree = "<group>"; };
 		327CFF111708D7740069497B /* CacheGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheGlobal.h; sourceTree = "<group>"; };
+		327D5E42192DE3430043ED21 /* index_system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = index_system.h; path = ChaosDataService/index_system/index_system.h; sourceTree = SOURCE_ROOT; };
+		327D5E43192DE3430043ED21 /* IndexDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IndexDriver.cpp; path = ChaosDataService/index_system/IndexDriver.cpp; sourceTree = SOURCE_ROOT; };
+		327D5E44192DE3430043ED21 /* IndexDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IndexDriver.h; path = ChaosDataService/index_system/IndexDriver.h; sourceTree = SOURCE_ROOT; };
+		327D5E45192DE3430043ED21 /* MongoDBHAConnectionManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MongoDBHAConnectionManager.cpp; path = ChaosDataService/index_system/MongoDBHAConnectionManager.cpp; sourceTree = SOURCE_ROOT; };
+		327D5E46192DE3430043ED21 /* MongoDBHAConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MongoDBHAConnectionManager.h; path = ChaosDataService/index_system/MongoDBHAConnectionManager.h; sourceTree = SOURCE_ROOT; };
+		327D5E47192DE3430043ED21 /* MongoDBIndexDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MongoDBIndexDriver.cpp; path = ChaosDataService/index_system/MongoDBIndexDriver.cpp; sourceTree = SOURCE_ROOT; };
+		327D5E48192DE3430043ED21 /* MongoDBIndexDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MongoDBIndexDriver.h; path = ChaosDataService/index_system/MongoDBIndexDriver.h; sourceTree = SOURCE_ROOT; };
 		3281D35A18A68532005A0828 /* DirectIOChannelGlobal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectIOChannelGlobal.h; sourceTree = "<group>"; };
 		3285569E17F2E33A00A64ED2 /* DirectIOClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOClient.cpp; sourceTree = "<group>"; };
 		3285569F17F2E33A00A64ED2 /* DirectIOClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOClient.h; sourceTree = "<group>"; };
@@ -874,7 +885,6 @@
 		32AF7D3F18DAEAF300537DE6 /* PerformanceNodeChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceNodeChannel.h; sourceTree = "<group>"; };
 		32B1090D188C1D6200969D3D /* TestAsyncRpc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestAsyncRpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		32B1090F188C1D6200969D3D /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		32B10911188C1D6200969D3D /* TestAsyncRpc.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = TestAsyncRpc.1; sourceTree = "<group>"; };
 		32B13788189BEC3300B17CA4 /* ZMQDirectIOClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQDirectIOClient.cpp; sourceTree = "<group>"; };
 		32B13789189BEC3300B17CA4 /* ZMQDirectIOClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQDirectIOClient.h; sourceTree = "<group>"; };
 		32B1378C189BEC4100B17CA4 /* ZMQDirectIOServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQDirectIOServer.cpp; sourceTree = "<group>"; };
@@ -945,6 +955,8 @@
 		32C3544B17885A37009ED581 /* shared_library.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = shared_library.hpp; sourceTree = "<group>"; };
 		32C35465178860E5009ED581 /* extension.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = extension.hpp; sourceTree = "<group>"; };
 		32C35469178860EB009ED581 /* decl.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = decl.hpp; sourceTree = "<group>"; };
+		32C4C86B193491F2002DA741 /* URLServiceFeeder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLServiceFeeder.cpp; sourceTree = "<group>"; };
+		32C4C86C193491F2002DA741 /* URLServiceFeeder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLServiceFeeder.h; sourceTree = "<group>"; };
 		32C5A42518D9959800C0435C /* DirectIOPerformanceSession.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOPerformanceSession.cpp; sourceTree = "<group>"; };
 		32C5A42618D9959800C0435C /* DirectIOPerformanceSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOPerformanceSession.h; sourceTree = "<group>"; };
 		32C7B8FB16DD362A005B3B21 /* ApiServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApiServer.cpp; sourceTree = "<group>"; };
@@ -974,8 +986,8 @@
 		32DB1187166267FB0036D1B9 /* DSDoubleHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSDoubleHandler.h; sourceTree = "<group>"; };
 		32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CouchbaseCacheDriver.cpp; sourceTree = "<group>"; };
 		32DBF9D018E1845E0095B289 /* CouchbaseCacheDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CouchbaseCacheDriver.h; sourceTree = "<group>"; };
-		32DCC36D192517DA00E14256 /* VFSStageRedeableFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSStageRedeableFile.cpp; sourceTree = "<group>"; };
-		32DCC36E192517DA00E14256 /* VFSStageRedeableFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSStageRedeableFile.h; sourceTree = "<group>"; };
+		32DCC36D192517DA00E14256 /* VFSStageReadableFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSStageReadableFile.cpp; sourceTree = "<group>"; };
+		32DCC36E192517DA00E14256 /* VFSStageReadableFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSStageReadableFile.h; sourceTree = "<group>"; };
 		32DD884D15E2663B000AF740 /* DefaultEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultEventDispatcher.h; sourceTree = "<group>"; };
 		32DD885115E2681F000AF740 /* EventHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventHandler.cpp; sourceTree = "<group>"; };
 		32DD885215E2681F000AF740 /* EventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventHandler.h; sourceTree = "<group>"; };
@@ -1016,6 +1028,8 @@
 		32F7FEA018A4FD9B00FC03AB /* DirectIOEndpointHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOEndpointHandler.h; sourceTree = "<group>"; };
 		32F7FEA218A5066600FC03AB /* FastDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastDelegate.h; sourceTree = "<group>"; };
 		32F7FEA318A5066600FC03AB /* FastDelegateBind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastDelegateBind.h; sourceTree = "<group>"; };
+		32FB216E192A574700E9C87A /* StageDataVFileScanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StageDataVFileScanner.cpp; sourceTree = "<group>"; };
+		32FB216F192A574700E9C87A /* StageDataVFileScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StageDataVFileScanner.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1027,6 +1041,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		323236D3164573F50052CE06 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3258AEFD1935EE4C00A66D44 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1117,20 +1138,6 @@
 			path = chaos/cu_toolkit/ControlManager/slow_command/command;
 			sourceTree = SOURCE_ROOT;
 		};
-		3223252F18EC157000ADBA4D /* index_system */ = {
-			isa = PBXGroup;
-			children = (
-				3223253018EC157000ADBA4D /* index_system.h */,
-				3223253118EC157000ADBA4D /* IndexDriver.cpp */,
-				3223253218EC157000ADBA4D /* IndexDriver.h */,
-				3223253318EC157000ADBA4D /* MongoDBIndexDriver.cpp */,
-				3223253418EC157000ADBA4D /* MongoDBIndexDriver.h */,
-				32399F8819066BCD00A5502F /* MongoDBHAConnectionManager.cpp */,
-				32399F8919066BCD00A5502F /* MongoDBHAConnectionManager.h */,
-			);
-			path = index_system;
-			sourceTree = "<group>";
-		};
 		3223253518EC157000ADBA4D /* storage_system */ = {
 			isa = PBXGroup;
 			children = (
@@ -1201,6 +1208,7 @@
 				3235425A1923A5C70090B8F6 /* StageDataConsumer.cpp */,
 				3235425B1923A5C70090B8F6 /* StageDataConsumer.h */,
 				32B159DB18B4C46E0096B58B /* worker */,
+				32FB2171192A582100E9C87A /* index_system */,
 				3272152118B00650005AC8FD /* cache_system */,
 				3250884318E46C23001C9733 /* vfs */,
 			);
@@ -1271,17 +1279,15 @@
 				326CADC918EAFD1200E74CEA /* VFSManager.h */,
 				32502C811923C6F60073E4AB /* VFSStageWriteableFile.cpp */,
 				32502C821923C6F60073E4AB /* VFSStageWriteableFile.h */,
-				32DCC36D192517DA00E14256 /* VFSStageRedeableFile.cpp */,
-				32DCC36E192517DA00E14256 /* VFSStageRedeableFile.h */,
+				32DCC36D192517DA00E14256 /* VFSStageReadableFile.cpp */,
+				32DCC36E192517DA00E14256 /* VFSStageReadableFile.h */,
 				32502C7D1923BAF30073E4AB /* VFSStageFile.cpp */,
 				32502C7E1923BAF30073E4AB /* VFSStageFile.h */,
 				3250884B18E49975001C9733 /* VFSFile.cpp */,
 				3250884C18E49975001C9733 /* VFSFile.h */,
-				326CADC518EAB64600E74CEA /* DataBlock.cpp */,
 				326CADC618EAB64600E74CEA /* DataBlock.h */,
 				32B9C2291919258800A9A3E4 /* VFSTypes.h */,
 				32502C801923BC260073E4AB /* VFSConsts.h */,
-				3223252F18EC157000ADBA4D /* index_system */,
 				3223253518EC157000ADBA4D /* storage_system */,
 			);
 			path = vfs;
@@ -1312,6 +1318,15 @@
 				3281D35A18A68532005A0828 /* DirectIOChannelGlobal.h */,
 			);
 			path = channel;
+			sourceTree = "<group>";
+		};
+		3258AF011935EE4D00A66D44 /* EchitectureTests */ = {
+			isa = PBXGroup;
+			children = (
+				32EE00CE19387E0B00621776 /* network */,
+				3258AF021935EE4D00A66D44 /* main.cpp */,
+			);
+			path = EchitectureTests;
 			sourceTree = "<group>";
 		};
 		325DE9EE15EC001900D6F34E /* channel */ = {
@@ -1347,12 +1362,14 @@
 				323236C9164573C60052CE06 /* ChaosNodeDirectory */,
 				323236D8164573F50052CE06 /* ChaosDataService */,
 				32B1090E188C1D6200969D3D /* TestAsyncRpc */,
+				3258AF011935EE4D00A66D44 /* EchitectureTests */,
 				3230BEBB1817A9E100EA5793 /* libchaos_common.dylib */,
 				3230BEBC1817A9E100EA5793 /* libchaos_cutoolkit.dylib */,
 				3230BEBD1817A9E100EA5793 /* libchaos_uitoolkit.dylib */,
 				3230BEBE1817A9E100EA5793 /* ChaosNodeDirectory */,
 				3230BEBF1817A9E100EA5793 /* ChaosDataService */,
 				32B1090D188C1D6200969D3D /* TestAsyncRpc */,
+				3258AF001935EE4D00A66D44 /* EchitectureTests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1441,17 +1458,6 @@
 				3268CE34161608D100FCDB10 /* ZMQServer.h */,
 			);
 			path = zmq;
-			sourceTree = "<group>";
-		};
-		3268CE281616082A00FCDB10 /* msgpack */ = {
-			isa = PBXGroup;
-			children = (
-				3268CE291616086800FCDB10 /* MsgPackClient.cpp */,
-				3268CE2A1616086800FCDB10 /* MsgPackClient.h */,
-				3268CE2B1616086800FCDB10 /* MsgPackServer.cpp */,
-				3268CE2C1616086800FCDB10 /* MsgPackServer.h */,
-			);
-			path = msgpack;
 			sourceTree = "<group>";
 		};
 		32698D46179E8C3300D6638C /* command */ = {
@@ -1670,7 +1676,6 @@
 		326DB41114B38BC00018A8D0 /* rpc */ = {
 			isa = PBXGroup;
 			children = (
-				3268CE281616082A00FCDB10 /* msgpack */,
 				3268CE261616081000FCDB10 /* zmq */,
 				326DB41214B38BC00018A8D0 /* ChaosRpc.h */,
 				327967B415DF99FB0003C6DA /* RpcClient.cpp */,
@@ -1692,6 +1697,10 @@
 				3230DA091652C41D00113C93 /* NetworkForwardInfo.h */,
 				32B73E9C18D9D80F00F0B187 /* PerformanceManagment.cpp */,
 				32B73E9D18D9D80F00F0B187 /* PerformanceManagment.h */,
+				32C4C86B193491F2002DA741 /* URLServiceFeeder.cpp */,
+				32C4C86C193491F2002DA741 /* URLServiceFeeder.h */,
+				3258AEE81935C34000A66D44 /* URL.cpp */,
+				3258AEE91935C34000A66D44 /* URL.h */,
 			);
 			path = network;
 			sourceTree = "<group>";
@@ -1998,7 +2007,7 @@
 			isa = PBXGroup;
 			children = (
 				32B1090F188C1D6200969D3D /* main.cpp */,
-				32B10911188C1D6200969D3D /* TestAsyncRpc.1 */,
+				3258AF091935EE9700A66D44 /* CMakeList.txt */,
 			);
 			path = TestAsyncRpc;
 			sourceTree = "<group>";
@@ -2239,6 +2248,31 @@
 			path = evt_desc;
 			sourceTree = "<group>";
 		};
+		32EE00CE19387E0B00621776 /* network */ = {
+			isa = PBXGroup;
+			children = (
+				3258AF0A1935F46D00A66D44 /* FeederTest.cpp */,
+				3258AF0B1935F46D00A66D44 /* FeederTest.h */,
+			);
+			path = network;
+			sourceTree = "<group>";
+		};
+		32FB2171192A582100E9C87A /* index_system */ = {
+			isa = PBXGroup;
+			children = (
+				327D5E42192DE3430043ED21 /* index_system.h */,
+				327D5E43192DE3430043ED21 /* IndexDriver.cpp */,
+				327D5E44192DE3430043ED21 /* IndexDriver.h */,
+				327D5E45192DE3430043ED21 /* MongoDBHAConnectionManager.cpp */,
+				327D5E46192DE3430043ED21 /* MongoDBHAConnectionManager.h */,
+				327D5E47192DE3430043ED21 /* MongoDBIndexDriver.cpp */,
+				327D5E48192DE3430043ED21 /* MongoDBIndexDriver.h */,
+				32FB216E192A574700E9C87A /* StageDataVFileScanner.cpp */,
+				32FB216F192A574700E9C87A /* StageDataVFileScanner.h */,
+			);
+			path = index_system;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -2337,6 +2371,7 @@
 				324A4B2E191A405700975394 /* document.h in Headers */,
 				324A4B51191A41EF00975394 /* float_utils.h in Headers */,
 				32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */,
+				3258AEEB1935C34000A66D44 /* URL.h in Headers */,
 				32BFF913176C862A00D27A04 /* StartableService.h in Headers */,
 				32B8C1A018292E51001CF714 /* DriverErogatorInterface.h in Headers */,
 				324A4B8D191A523F00975394 /* md5.hpp in Headers */,
@@ -2387,8 +2422,6 @@
 				32B89CA215F3D1E100B17AAA /* InstrumentEventChannel.h in Headers */,
 				32D6C89A1815294700E9689B /* DirectIOForwarder.h in Headers */,
 				324A4B97191A557700975394 /* time_support.h in Headers */,
-				3268CE2E1616086800FCDB10 /* MsgPackClient.h in Headers */,
-				3268CE301616086800FCDB10 /* MsgPackServer.h in Headers */,
 				3268CE36161608D100FCDB10 /* ZMQClient.h in Headers */,
 				326CDBB718D860430054EF19 /* SpinLock.h in Headers */,
 				3268CE38161608D100FCDB10 /* ZMQServer.h in Headers */,
@@ -2429,6 +2462,7 @@
 				32B57200168E02CE0002A198 /* bsonobjbuilder.h in Headers */,
 				32B57201168E02CE0002A198 /* bsonobjiterator.h in Headers */,
 				328556A717F3039700A64ED2 /* DirectIOTypes.h in Headers */,
+				32C4C86E193491F2002DA741 /* URLServiceFeeder.h in Headers */,
 				32C3544E17885A37009ED581 /* common.hpp in Headers */,
 				32B57202168E02CE0002A198 /* bsontypes.h in Headers */,
 				32B57203168E02CE0002A198 /* inline_decls.h in Headers */,
@@ -2589,6 +2623,23 @@
 			productReference = 3230BEBF1817A9E100EA5793 /* ChaosDataService */;
 			productType = "com.apple.product-type.tool";
 		};
+		3258AEFF1935EE4C00A66D44 /* EchitectureTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3258AF061935EE4D00A66D44 /* Build configuration list for PBXNativeTarget "EchitectureTests" */;
+			buildPhases = (
+				3258AEFC1935EE4C00A66D44 /* Sources */,
+				3258AEFD1935EE4C00A66D44 /* Frameworks */,
+				3258AEFE1935EE4C00A66D44 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = EchitectureTests;
+			productName = EchitectureTests;
+			productReference = 3258AF001935EE4D00A66D44 /* EchitectureTests */;
+			productType = "com.apple.product-type.tool";
+		};
 		326026E814B301F600C906CE /* chaos_common */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 326026EB14B301F600C906CE /* Build configuration list for PBXNativeTarget "chaos_common" */;
@@ -2685,6 +2736,7 @@
 				323236C6164573C60052CE06 /* ChaosNodeDirectory */,
 				323236D5164573F50052CE06 /* ChaosDataService */,
 				32B1090C188C1D6200969D3D /* TestAsyncRpc */,
+				3258AEFF1935EE4C00A66D44 /* EchitectureTests */,
 			);
 		};
 /* End PBXProject section */
@@ -2723,27 +2775,36 @@
 			buildActionMask = 2147483647;
 			files = (
 				32502C7F1923BAF30073E4AB /* VFSStageFile.cpp in Sources */,
+				327D5E4B192DE3430043ED21 /* MongoDBIndexDriver.cpp in Sources */,
 				3272152418B006BC005AC8FD /* CacheDriver.cpp in Sources */,
+				327D5E49192DE3430043ED21 /* IndexDriver.cpp in Sources */,
 				32A10C0318C87806006EA04C /* DeviceSharedDataWorker.cpp in Sources */,
+				327D5E4A192DE3430043ED21 /* MongoDBHAConnectionManager.cpp in Sources */,
 				32DBF9D118E1845E0095B289 /* CouchbaseCacheDriver.cpp in Sources */,
 				3223253E18EC157000ADBA4D /* StorageDriver.cpp in Sources */,
 				32502C831923C6F60073E4AB /* VFSStageWriteableFile.cpp in Sources */,
 				323236DA164573F50052CE06 /* main.cpp in Sources */,
-				326CADC718EAB64600E74CEA /* DataBlock.cpp in Sources */,
-				32399F8A19066BCD00A5502F /* MongoDBHAConnectionManager.cpp in Sources */,
 				32B159DA18B4B9F90096B58B /* DataWorker.cpp in Sources */,
 				3299363618A7C4F60093E7F2 /* ChaosDataService.cpp in Sources */,
+				32FB2170192A574700E9C87A /* StageDataVFileScanner.cpp in Sources */,
 				32B159DE18B4D4210096B58B /* MemcachedCacheDriver.cpp in Sources */,
-				32DCC36F192517DA00E14256 /* VFSStageRedeableFile.cpp in Sources */,
+				32DCC36F192517DA00E14256 /* VFSStageReadableFile.cpp in Sources */,
 				3250884D18E49975001C9733 /* VFSFile.cpp in Sources */,
 				3235425F1923A9360090B8F6 /* IndexStageDataWorker.cpp in Sources */,
 				3223253D18EC157000ADBA4D /* PosixStorageDriver.cpp in Sources */,
 				326CADCA18EAFD1200E74CEA /* VFSManager.cpp in Sources */,
 				326459CC18D073BA0091B2E3 /* AnswerDataWorker.cpp in Sources */,
-				3223253C18EC157000ADBA4D /* MongoDBIndexDriver.cpp in Sources */,
 				3235425C1923A5C70090B8F6 /* StageDataConsumer.cpp in Sources */,
-				3223253B18EC157000ADBA4D /* IndexDriver.cpp in Sources */,
 				322D990118A95F9200C0864C /* QueryDataConsumer.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3258AEFC1935EE4C00A66D44 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3258AF0C1935F46D00A66D44 /* FeederTest.cpp in Sources */,
+				3258AF031935EE4D00A66D44 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2800,11 +2861,13 @@
 				329603281876B45000CDCADA /* BatchCommandSandbox.cpp in Sources */,
 				32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */,
 				32EE897F191A792000DE2F29 /* stringutils.cpp in Sources */,
+				32C4C86D193491F2002DA741 /* URLServiceFeeder.cpp in Sources */,
 				325013BC15E9258C00DCB13E /* EventClient.cpp in Sources */,
 				324A4B2D191A405700975394 /* document.cpp in Sources */,
 				32C353F21788015B009ED581 /* PluginDiscover.cpp in Sources */,
 				324A4B96191A557700975394 /* time_support.cpp in Sources */,
 				324A4B15191A3F6A00975394 /* string_data.cpp in Sources */,
+				3258AEEA1935C34000A66D44 /* URL.cpp in Sources */,
 				325013D715E980C800DCB13E /* AsioImplEventClient.cpp in Sources */,
 				32C100F7191B6F2900478F40 /* AsyncCentralManager.cpp in Sources */,
 				324A4B10191A3F6A00975394 /* parse_number.cpp in Sources */,
@@ -2823,8 +2886,6 @@
 				3253E09815F28A270079B40E /* EventTypeScheduler.cpp in Sources */,
 				32B89C9D15F39DB500B17AAA /* ActionExecutionSafetySystem.cpp in Sources */,
 				32B89CA115F3D1E100B17AAA /* InstrumentEventChannel.cpp in Sources */,
-				3268CE2D1616086800FCDB10 /* MsgPackClient.cpp in Sources */,
-				3268CE2F1616086800FCDB10 /* MsgPackServer.cpp in Sources */,
 				324A4B12191A3F6A00975394 /* status.cpp in Sources */,
 				3268CE35161608D100FCDB10 /* ZMQClient.cpp in Sources */,
 				3268CE37161608D100FCDB10 /* ZMQServer.cpp in Sources */,
@@ -2969,9 +3030,6 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lchaos_common",
 					"-lboost_log_setup",
@@ -3019,9 +3077,6 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lchaos_common",
 					"-lboost_log_setup",
@@ -3076,9 +3131,6 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lchaos_common",
 					"-lboost_log_setup",
@@ -3128,14 +3180,128 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lchaos_common",
 					"-lboost_log_setup",
 					"-lcouchbase",
 					"-lmongoclient",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		3258AF071935EE4D00A66D44 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+					/usr/local/include,
+					/usr/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					"$(SRCROOT)/usr/local/lib",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				OTHER_LDFLAGS = (
+					"-lboost_chrono",
+					"-lmemcached",
+					"-lboost_system",
+					"-lboost_thread",
+					"-lboost_program_options",
+					"-lboost_filesystem",
+					"-lboost_regex",
+					"-levent",
+					"-lboost_log",
+					"-lchaos_common",
+					"-lboost_log_setup",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3258AF081935EE4D00A66D44 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
+				CLANG_CXX_LIBRARY = "libstdc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					.,
+					usr/local/include,
+					/usr/local/include,
+					/usr/include,
+				);
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					"$(SRCROOT)/usr/local/lib",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				OTHER_LDFLAGS = (
+					"-lboost_chrono",
+					"-lmemcached",
+					"-lboost_system",
+					"-lboost_thread",
+					"-lboost_program_options",
+					"-lboost_filesystem",
+					"-lboost_regex",
+					"-levent",
+					"-lboost_log",
+					"-lchaos_common",
+					"-lboost_log_setup",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
@@ -3203,9 +3369,6 @@
 					"-lboost_program_options",
 					"-lboost_regex",
 					"-lboost_filesystem",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lzmq",
@@ -3253,9 +3416,6 @@
 					"-lboost_program_options",
 					"-lboost_regex",
 					"-lboost_filesystem",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lzmq",
@@ -3310,9 +3470,6 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-Levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lchaos_common",
@@ -3359,9 +3516,6 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-Levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lchaos_common",
@@ -3415,9 +3569,6 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-Levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lchaos_common",
@@ -3464,9 +3615,6 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-Levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lboost_log_setup",
 					"-lchaos_common",
@@ -3527,9 +3675,6 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lchaos_common",
 					"-lchaos_uitoolkit",
@@ -3587,9 +3732,6 @@
 					"-lboost_filesystem",
 					"-lboost_regex",
 					"-levent",
-					"-lmpio",
-					"-lmsgpack",
-					"-lmsgpack-rpc",
 					"-lboost_log",
 					"-lchaos_common",
 					"-lchaos_uitoolkit",
@@ -3618,6 +3760,15 @@
 			buildConfigurations = (
 				323236DE164573F50052CE06 /* Debug */,
 				323236DF164573F50052CE06 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3258AF061935EE4D00A66D44 /* Build configuration list for PBXNativeTarget "EchitectureTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3258AF071935EE4D00A66D44 /* Debug */,
+				3258AF081935EE4D00A66D44 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

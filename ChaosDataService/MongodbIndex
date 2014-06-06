@@ -1,3 +1,6 @@
- 
- db.vfat.ensureIndex( { "vfs_path": 1, "vfs_domain":1 } , { unique: true,  dropDups: true  } )
- db.runCommand( { shardCollection : "chaos_vfs.domains" , key : { domain_name: 1, domain_url:1 } , unique : true,  dropDups: true  } )
+db.vdomain.ensureIndex( { "vfs_domain":1, "vfs_unique_domain_code":1 } , { unique: true,  dropDups: true  } )
+db.vfat.ensureIndex( { "vfs_path": 1, "vfs_domain":1 } , { unique: true,  dropDups: true  } )
+db.datasets.ensureIndex({  "ds_timestamp": 1, "ds_attr_dom":1},{ unique: true,  dropDups: true  })
+db.devices.ensureIndex({  "ds_attr_dom": 1},{ unique: true,  dropDups: true  })
+
+db.runCommand( { shardCollection : "chaos_vfs.domains" , key : { domain_name: 1, domain_url:1 } , unique : true,  dropDups: true  } )

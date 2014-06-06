@@ -193,7 +193,6 @@ int MongoDBHAConnectionManager::insert( const std::string &ns , mongo::BSONObj o
 			DELETE_OBJ_POINTER(conn)
 			CONTINUE_ON_NEXT_CONNECTION(err)
 		}
-		err = 0;
 		break;
 	}
 	if(conn) delete(conn);
@@ -213,11 +212,28 @@ int MongoDBHAConnectionManager::findOne(mongo::BSONObj& result, const std::strin
 			DELETE_OBJ_POINTER(conn)
 			CONTINUE_ON_NEXT_CONNECTION(err)
 		}
-		err = 0;
 		break;
 	}
 	if(conn) delete(conn);
 	return err;
+}
+
+void MongoDBHAConnectionManager::findN(std::vector<mongo::BSONObj>& out, const std::string& ns, mongo::Query query, int nToReturn, int nToSkip, const mongo::BSONObj *fieldsToReturn, int queryOptions) {
+	int err = -1;
+	MongoDBHAConnection conn = NULL;
+	while (getConnection(&conn)) {
+		try {
+			conn->conn().findN(out, ns, query, nToReturn, nToSkip, fieldsToReturn, queryOptions);
+			MONGO_DB_GET_ERROR(conn, err);
+		} catch (std::exception& ex) {
+			MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();
+			MONGO_DB_GET_ERROR(conn, err);
+			DELETE_OBJ_POINTER(conn)
+			CONTINUE_ON_NEXT_CONNECTION(err)
+		}
+		break;
+	}
+	if(conn) delete(conn);
 }
 
 int MongoDBHAConnectionManager::runCommand(mongo::BSONObj& result, const std::string &ns, const mongo::BSONObj& command, int queryOptions) {
@@ -230,12 +246,11 @@ int MongoDBHAConnectionManager::runCommand(mongo::BSONObj& result, const std::st
 			}
 			MONGO_DB_GET_ERROR(conn, err);
 		} catch (std::exception& ex) {
-			MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();
+			MDBHAC_LERR_ << "MongoDBHAConnectionManager::runCommand" << " -> " << ex.what();
 			MONGO_DB_GET_ERROR(conn, err);
 			DELETE_OBJ_POINTER(conn)
 			CONTINUE_ON_NEXT_CONNECTION(err)
 		}
-		err = 0;
 		break;
 	}
 	if(conn) delete(conn);
@@ -255,7 +270,54 @@ int MongoDBHAConnectionManager::update( const std::string &ns, mongo::Query quer
 			DELETE_OBJ_POINTER(conn)
 			CONTINUE_ON_NEXT_CONNECTION(err)
 		}
-		err = 0;
+		break;
+	}
+	if(conn) delete(conn);
+	return err;
+}
+
+int MongoDBHAConnectionManager::ensureIndex( const std::string &database, const std::string &collection, mongo::BSONObj keys, bool unique, const std::string &name, bool dropDup, bool background, int v, int ttl) {
+	int err = -1;
+	MongoDBHAConnection conn = NULL;
+	while (getConnection(&conn)) {
+		try {
+			mongo::BSONObjBuilder toSave;
+			toSave.append( "ns" , database+"."+collection );
+			toSave.append( "key" , keys );
+			
+			if ( name != "" ) {
+				toSave.append( "name" , name );
+			}
+			else {
+				string nn = conn->conn().genIndexName( keys );
+				toSave.append( "name" , nn );
+			}
+			
+			if( v >= 0 )
+				toSave.append("v", v);
+			
+			if ( unique )
+				toSave.appendBool( "unique", unique );
+			
+			if( background )
+				toSave.appendBool( "background", true );
+			
+			if( dropDup )
+				toSave.appendBool( "dropDups", dropDup );
+			
+			
+			if ( ttl > 0 )
+				toSave.append( "expireAfterSeconds", ttl );
+		
+			err = insert(database+".system.indexes", toSave.obj());
+			//err = conn->conn().ensureIndex(database+"."+collection, keys, unique, name, cache, background, v, ttl);
+			MONGO_DB_GET_ERROR(conn, err);
+		} catch (std::exception& ex) {
+			MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();
+			MONGO_DB_GET_ERROR(conn, err);
+			DELETE_OBJ_POINTER(conn)
+			CONTINUE_ON_NEXT_CONNECTION(err)
+		}
 		break;
 	}
 	if(conn) delete(conn);

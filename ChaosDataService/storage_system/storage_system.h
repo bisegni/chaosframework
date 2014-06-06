@@ -1,5 +1,5 @@
 /*
- *	DataBlock.cpp
+ *	storage_system.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,18 +17,9 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+#ifndef CHAOSFramework_storage_system_h
+#define CHAOSFramework_storage_system_h
 
-#include "DataBlock.h"
-#include <stdlib.h>
-#include <string.h>
+#include "PosixStorageDriver.h"
 
-using namespace chaos::data_service::vfs;
-
-DataBlock::DataBlock():
-flags(0),invalidation_timestamp(0), max_reacheable_size(0),
-current_size(0), creation_time(0), vfs_path(NULL), driver_private_data(NULL) {
-
-}
-
-DataBlock::~DataBlock() {
-}
+#endif

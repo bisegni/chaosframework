@@ -21,18 +21,16 @@
 #define __CHAOSFramework__VFSFile__
 
 #include "VFSTypes.h"
-#include "index_system/IndexDriver.h"
+#include "../index_system/IndexDriver.h"
 #include "storage_system/StorageDriver.h"
-
 
 
 namespace chaos {
 	namespace data_service {
 		namespace vfs {
-			
-			namespace chaos_data_index = chaos::data_service::index_system;
-			namespace chaos_data_storage = chaos::data_service::storage_system;
 		
+			namespace chaos_index = chaos::data_service::index_system;
+			
 			class VFSManager;
 			struct DataBlock;
 			
@@ -52,10 +50,10 @@ namespace chaos {
 				DataBlock *current_data_block;
 				
 				//!index driver pointer
-				chaos_data_index::IndexDriver *index_driver_ptr;
+				chaos_index::IndexDriver *index_driver_ptr;
 				
 				//!storage driver pointer
-				chaos_data_storage::StorageDriver *storage_driver_ptr;
+				storage_system::StorageDriver *storage_driver_ptr;
 			
 				//! return new datablock where write into
 				int getNewDataBlock(DataBlock **new_data_block_handler);
@@ -64,13 +62,13 @@ namespace chaos {
 				int getNextInTimeDataBlock(DataBlock **new_data_block_handler, uint64_t timestamp, data_block_state::DataBlockState state);
 				
 				//! change Datablock state
-				int updateDataBlockState(DataBlock *new_data_block_handler, data_block_state::DataBlockState state);
+				int updateDataBlockState(data_block_state::DataBlockState state);
 				
 				//! release a datablock
 				int releaseDataBlock(DataBlock *data_block_ptr);
 				
 				//default consturctor or destructor
-				VFSFile(chaos_data_storage::StorageDriver *_storage_driver_ptr, chaos_data_index::IndexDriver *_index_driver_ptr, std::string vfs_fpath);
+				VFSFile(storage_system::StorageDriver *_storage_driver_ptr, index_system::IndexDriver *_index_driver_ptr, std::string area, std::string vfs_fpath);
 				~VFSFile();
 			public:
 				//! Get the VFS information for file
@@ -81,6 +79,8 @@ namespace chaos {
 				
 				//! Return the goodness of the file
 				bool isGood();
+				
+				virtual int seekOnCurrentBlock(block_seek_base::BlockSeekBase base_direction, int64_t offset);
 				
 				//! write data on the current data block
 				virtual int write(void *data, uint32_t data_len);

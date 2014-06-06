@@ -46,7 +46,7 @@ else
 fi
 CROSS_HOST_CONFIGURE=""
 if [ -n "$CROSS_HOST" ]; then
-CROSS_HOST_CONFIGURE="-host=$CROSS_HOST"
+CROSS_HOST_CONFIGURE="--host=$CROSS_HOST"
 fi
 
 do_make() {
@@ -179,7 +179,7 @@ if [ ! -d "$PREFIX/include/boost" ]; then
     echo "-> $CROSS_HOST" 
     if [ -n "$CROSS_HOST" ]; then
 	echo "* Patching project-config.jam to cross compile for $CROSS_HOST"
-	sed -i .bak -e "s/using gcc/using gcc : arm : $CROSS_HOST-g++/" project-config.jam 
+	sed -i .bak -e "s/using gcc/using gcc : arm : $CXX/" project-config.jam 
     fi
     
 
@@ -222,79 +222,6 @@ make clean
 do_make "MODBUS"
 
 echo "libmodbus done"
-fi
-
-if [ ! -d "$PREFIX/include/msgpack" ]; then
-	echo "Setup MSGPACK"
-	if [ ! -d "$BASE_EXTERNAL/msgpack-c" ]; then
-		echo "Install msgpack-c"
-		if !(git clone https://github.com/msgpack/msgpack-c.git $BASE_EXTERNAL/msgpack-c); then
-		    echo "## cannot clone https://github.com/msgpack/msgpack-c.git"
-		    exit 1
-		fi
-	
-	else
-		echo "Update msgpack-c"
-		cd $BASE_EXTERNAL/msgpack-c/
-		git pull
-	fi
-cd $BASE_EXTERNAL/msgpack-c/
-./bootstrap
-./configure $CROSS_HOST_CONFIGURE --prefix=$PREFIX 
-
-make clean
-do_make "MSG PACK"
-echo "MSGPACK done"
-fi
-
-if [ ! -d "$PREFIX/include/mp" ]; then
-	echo "Setup MPIO"
-	if [ ! -d "$BASE_EXTERNAL/mpio" ]; then
-		echo "Install mpio"
-	#    git clone https://github.com/frsyuki/mpio.git $BASE_EXTERNAL/mpio
-		if !(git clone https://github.com/bisegni/mpio.git $BASE_EXTERNAL/mpio); then
-		    echo "## cannot git clone https://github.com/bisegni/mpio.git "
-		    exit 1
-		fi
-		cd $BASE_EXTERNAL/mpio
-	else
-		echo "Update mpio"
-		cd $BASE_EXTERNAL/mpio
-		git pull
-	fi
-	./bootstrap
-	if [ `echo $OS | tr "[:upper:]" "[:lower:]"` = `echo "linux" | tr "[:upper:]" "[:lower:]"` ] && [ $KERNEL_SHORT_VER -le 2625 ]; then
-         ./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE
-	else
-         ./configure --disable-timerfd --disable-signalfd --prefix=$PREFIX $CROSS_HOST_CONFIGURE
-	fi
-	make clean
-	do_make "MPIO"
-	echo "MPIO done"
-fi
-
-if [ ! -d "$PREFIX/include/msgpack/rpc" ]; then
-	echo "Setup MSGPACK-RPC"
-	if [ ! -d "$BASE_EXTERNAL/msgpack-rpc" ]; then
-		echo "Install msgpack-rpc"
-#git clone https://github.com/msgpack-rpc/msgpack-rpc-cpp.git $BASE_EXTERNAL/msgpack-rpc
-		if !(git clone https://github.com/bisegni/msgpack-rpc-cpp.git $BASE_EXTERNAL/msgpack-rpc); then
-		    echo "## cannot git clone  https://github.com/bisegni/msgpack-rpc-cpp.git"
-		    exit 1
-   		fi
-		cd $BASE_EXTERNAL/msgpack-rpc
-	else
-		echo "Update msgpack-rpc"
-		cd $BASE_EXTERNAL/msgpack-rpc/
-		git pull
-		cd $BASE_EXTERNAL/msgpack-rpc/
-	fi
-	./bootstrap
-	./configure --prefix=$PREFIX --with-mpio=$PREFIX --with-msgpack=$PREFIX $CROSS_HOST_CONFIGURE
-	make clean
-	do_make "MSGPACK-RPC"
-
-	echo "MSGPACK-RPC done"
 fi
 
 echo "Setup LIBEVENT"
@@ -436,7 +363,7 @@ if [ ! -f "$PREFIX/include/zmq.h" ]; then
 #        make -j4
 #    fi
     ./autogen.sh
-	./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+	./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE --with-gnu-ld 
 	do_make "ZMQ"
 
 #	./autogen.sh

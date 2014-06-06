@@ -27,7 +27,7 @@
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/InizializableService.h>
 
-#include "../VFSTypes.h"
+#include "../vfs/VFSTypes.h"
 
 namespace chaos {
 	namespace data_service {
@@ -36,9 +36,8 @@ namespace chaos {
 			class VFSFile;
 			struct DataBlock;
 		}
-		
 		namespace chaos_vfs = chaos::data_service::vfs;
-
+		
 		namespace index_system {
 			
 			typedef std::vector<std::string>			IndexDriverServerList;
@@ -57,19 +56,16 @@ namespace chaos {
 			 Base class for all driver that will manage the work on index database.
 			 The base role of the index driver is to help the fast storage
 			 of into stage area, coordinate the worker that migrate data between stage and data area
-			 of the !CHAOS virtual filesystem. At the end it will help to achive the execution 
+			 of the !CHAOS virtual filesystem. At the end it will help to achive the execution
 			 of query on memoryzed data
 			 */
 			class IndexDriver : public NamedService , public chaos::utility::InizializableService {
 			protected:
 				//protected constructor
 				IndexDriver(std::string alias);
-				
-				chaos_vfs::DataBlock *getEmptyDataBlock();
-				void deleteDataBlock(chaos_vfs::DataBlock *data_block);
 			protected:
 				IndexDriverSetting *setting;
-            public:
+			public:
 				
 				//! public destructor
 				virtual ~IndexDriver();
@@ -77,12 +73,12 @@ namespace chaos {
 				//! init
 				/*!
 				 Need a point to a structure IndexDriverSetting for the setting
-				*/
+				 */
 				void init(void *init_data) throw (chaos::CException);
 				
 				//!deinit
 				void deinit() throw (chaos::CException);
-
+				
 				
 				//! Register a new domain
 				/*!
@@ -100,23 +96,42 @@ namespace chaos {
 				
 				//! Register a new data block wrote on stage area
 				/*!
-					Registration of a new datablock in stage area is achieved directly to the DataService process
-					after the block has been created.
-					\param vfs_file the vfs file for wich we need to create the new data block
-					\param data_block Newly created data block
+				 Registration of a new datablock in stage area is achieved directly to the DataService process
+				 after the block has been created.
+				 \param vfs_file the vfs file for wich we need to create the new data block
+				 \param data_block Newly created data block
 				 */
 				virtual int vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,
 											   chaos_vfs::DataBlock *data_block,
 											   vfs::data_block_state::DataBlockState new_block_state = vfs::data_block_state::DataBlockStateNone) = 0;
 				
-				//! Set the state for a stage datablock
+				//! Set the state for a datablock
 				/*!
 				 Set the current state for a datablock in the stage area
+				 \param vfs_file owner of the datablock
 				 \param data_block Data block for wich need to be changed the state
+				 \param state new state to set
 				 */
 				virtual int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 												   chaos_vfs::DataBlock *data_block,
 												   vfs::data_block_state::DataBlockState state) = 0;
+				
+				//! Set the state for a datablock
+				/*!
+				 Set the current state for a datablock if is current state
+				 is equal to function param'cur_state'. The operation is done
+				 only if the current state of the datablock is equal to the
+				 given parameter, and the update is done atomically
+				 \param vfs_file owner of the datablock
+				 \param data_block Data block for wich need to be changed the state
+				 \param cur_state current state of the block
+				 \param new_state new state of the block
+				 */
+				virtual int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
+												   chaos_vfs::DataBlock *data_block,
+												   vfs::data_block_state::DataBlockState cur_state,
+												   vfs::data_block_state::DataBlockState new_state,
+												   bool& success) = 0;
 				
 				//! Return the next available datablock created since timestamp
 				/*!
@@ -126,7 +141,6 @@ namespace chaos {
 				 \param timestamp the timestamp form wich search
 				 \param directio true -> enxt or false -> prev
 				 \param state the state for the selection of the datablock
-				 \param new_state is the state in wich the block is ported if found
 				 \param data_block the returned, if found, datablock
 				 \return the error code
 				 */
@@ -134,7 +148,6 @@ namespace chaos {
 													  uint64_t timestamp,
 													  bool direction,
 													  vfs::data_block_state::DataBlockState state,
-													  vfs::data_block_state::DataBlockState new_state,
 													  chaos_vfs::DataBlock **data_block) = 0;
 				
 				//! Heartbeat update stage block
@@ -144,7 +157,7 @@ namespace chaos {
 				 */
 				virtual int vfsWorkHeartBeatOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 														chaos_vfs::DataBlock *data_block) = 0;
-
+				
 				//! Check if the vfs file exists
 				/*!
 				 Check on vfs index db if the file exists
@@ -157,6 +170,16 @@ namespace chaos {
 				 allocate an entry on the database for vfile
 				 */
 				virtual int vfsCreateFileEntry(chaos_vfs::VFSFile *vfs_file) = 0;
+				
+				//! Return a list of vfs path of the file belong to a domain
+				/*!
+				 The returned vfs file paths are filtered using the prefix, so all
+				 path are of the form PREFIX_other_character
+				 \param vfs_domain the domain that we wan't to selct
+				 \param prefix_filter the prefix of the path used for filter the result
+				 \param result_vfs_file_path array contains the found vfs paths.
+				 */
+				virtual int vfsGetFilePathForDomain(std::string vfs_domain, std::string prefix_filter, std::vector<std::string>& result_vfs_file_path, int limit_to_size = 100) = 0;
 			};
 		}
 	}

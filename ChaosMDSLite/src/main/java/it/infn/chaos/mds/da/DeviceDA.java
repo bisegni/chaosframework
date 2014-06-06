@@ -3,6 +3,8 @@
  */
 package it.infn.chaos.mds.da;
 
+import it.infn.chaos.mds.RPCConstants;
+import it.infn.chaos.mds.SingletonServices;
 import it.infn.chaos.mds.business.Dataset;
 import it.infn.chaos.mds.business.DatasetAttribute;
 import it.infn.chaos.mds.business.Device;
@@ -14,11 +16,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 
+import org.bson.BSONObject;
+import org.bson.types.BSONTimestamp;
+import org.ref.common.exception.RefException;
 import org.ref.server.data.DataAccess;
 import org.ref.server.db.sqlbuilder.DeleteSqlBuilder;
 import org.ref.server.db.sqlbuilder.InsertUpdateBuilder;
 import org.ref.server.db.sqlbuilder.SqlBuilder;
 import org.ref.server.db.sqlbuilder.SqlTable;
+
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
 
 /**
  * @author bisegni
@@ -243,6 +252,25 @@ public class DeviceDA extends DataAccess {
 			d.getDataset().setDeviceID(d.getDeviceID());
 			insertNewDataset(d.getDataset());
 		}
+
+		// all is gone well so i need to push the device into mongodb
+		DB chaosDB = SingletonServices.getInstance().getMongoDB();
+		DBCollection devicesCollection = chaosDB.getCollection("devices");
+		DBCollection datasetsCollection = chaosDB.getCollection("datasets");
+		BasicDBObject dbObject = new BasicDBObject();
+		dbObject.append(RPCConstants.DATASET_DEVICE_ID, d.getDeviceIdentification());
+		dbObject.append(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS, d.getNetAddress());
+		dbObject.append(RPCConstants.CONTROL_UNIT_INSTANCE, d.getCuInstance());
+		dbObject.putAll((BSONObject) d.getDeviceOnlyBSON());
+		// insert new device into mongodb
+		devicesCollection.insert(dbObject);
+
+		//
+		dbObject.clear();
+		dbObject.append(RPCConstants.DATASET_DEVICE_ID, d.getDeviceIdentification());
+		dbObject.append(RPCConstants.DATASET_TIMESTAMP, d.getDataset().getTimestamp().getDate());
+		dbObject.append(RPCConstants.DATASET_DESCRIPTION, (BSONObject) d.getDataset().toBson());
+		datasetsCollection.insert(dbObject);
 		return d;
 	}
 
@@ -261,6 +289,14 @@ public class DeviceDA extends DataAccess {
 		int idx = iuBuilder.fillPreparedStatement(ps);
 		ps.setString(idx++, deviceIdentification);
 		executeInsertUpdateAndClose(ps);
+		DB chaosDB = SingletonServices.getInstance().getMongoDB();
+		DBCollection devicesCollection = chaosDB.getCollection("devices");
+		BasicDBObject updateObj = new BasicDBObject();
+		BasicDBObject queryObj = new BasicDBObject();
+		queryObj.append(RPCConstants.DATASET_DEVICE_ID, deviceIdentification);
+		updateObj.append("$set", new BasicDBObject(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS, netAddress));
+		updateObj.append("$set", new BasicDBObject(RPCConstants.CONTROL_UNIT_INSTANCE, cuInstance));
+		devicesCollection.update(queryObj, updateObj);
 	}
 
 	/**
@@ -370,6 +406,16 @@ public class DeviceDA extends DataAccess {
 				insertNewDatasetAttribute(attribute);
 			}
 		}
+
+		// all is gone weel so i need to push the device into mongodb
+		DB chaosDB = SingletonServices.getInstance().getMongoDB();
+		DBCollection datasetsCollection = chaosDB.getCollection("datasets");
+		//
+		BasicDBObject dbObject = new BasicDBObject();
+		dbObject.append(RPCConstants.DATASET_DEVICE_ID, ds.getDevice().getDeviceIdentification());
+		dbObject.append(RPCConstants.DATASET_TIMESTAMP, ds.getTimestamp().getDate());
+		dbObject.append(RPCConstants.DATASET_DESCRIPTION, (BSONObject) ds.toBson());
+		datasetsCollection.insert(dbObject);
 		return ds;
 	}
 

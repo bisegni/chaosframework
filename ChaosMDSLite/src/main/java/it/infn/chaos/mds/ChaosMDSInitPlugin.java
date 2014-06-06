@@ -5,15 +5,26 @@ package it.infn.chaos.mds;
 
 import it.infn.chaos.mds.rpc.server.JMQRPCClient;
 import it.infn.chaos.mds.rpc.server.JMQRPCServer;
-import it.infn.chaos.mds.rpc.server.MSGPackRPCClient;
-import it.infn.chaos.mds.rpc.server.MSGPackRPCServer;
 import it.infn.chaos.mds.rpcaction.CUQueryHandler;
 import it.infn.chaos.mds.rpcaction.DeviceQueyHandler;
 import it.infn.chaos.mds.rpcaction.PerformanceTest;
 
+import java.util.Arrays;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
 import org.ref.server.configuration.REFServerConfiguration;
 import org.ref.server.plugins.REFDeinitPlugin;
 import org.ref.server.plugins.REFInitPlugin;
+
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
+import com.mongodb.WriteConcern;
 
 /**
  * Inizializzaiozne del lato serve di GOVA
@@ -30,6 +41,27 @@ public class ChaosMDSInitPlugin implements REFInitPlugin, REFDeinitPlugin {
 	public void customInit() {
 		try {
 			String port = REFServerConfiguration.getInstance().getStringParamByValue("mds.port");
+			String mongodbURL = REFServerConfiguration.getInstance().getStringParamByValue("mongodb.url");
+			String user = REFServerConfiguration.getInstance().getStringParamByValue("mongodb.user");
+			String pwd = REFServerConfiguration.getInstance().getStringParamByValue("mongodb.pwd");
+			String db = REFServerConfiguration.getInstance().getStringParamByValue("mongodb.db");
+			if (mongodbURL != null) {
+				StringTokenizer tokenizer = new StringTokenizer(mongodbURL, ",");
+				Vector<ServerAddress> servers = new Vector<ServerAddress>();
+				while (tokenizer.hasMoreTokens()) {
+					String databaseUrl = tokenizer.nextToken();
+					servers.add(new ServerAddress(databaseUrl));
+				}
+				if (servers.size() > 0) {
+					if (user != null && pwd != null && db != null) {
+						SingletonServices.getInstance().setMongoClient(new MongoClient(servers, Arrays.asList(MongoCredential.createMongoCRCredential(user, db, pwd.toCharArray()))));
+					} else {
+						SingletonServices.getInstance().setMongoClient(new MongoClient(servers));
+					}
+					SingletonServices.getInstance().setMongoDB(SingletonServices.getInstance().getMongoClient().getDB(db));
+					SingletonServices.getInstance().getMongoClient().setWriteConcern(WriteConcern.JOURNALED);
+				}
+			}
 			int intPort = 5000;
 			try {
 				intPort = Integer.parseInt(port);
@@ -37,8 +69,6 @@ public class ChaosMDSInitPlugin implements REFInitPlugin, REFDeinitPlugin {
 			}
 			SingletonServices.getInstance().setMdsRpcServer(new JMQRPCServer(1));
 			SingletonServices.getInstance().setMdsRpcClient(new JMQRPCClient(1));
-			// SingletonServices.getInstance().setMdsRpcServer(new MSGPackRPCServer(8));
-			// SingletonServices.getInstance().setMdsRpcClient(new MSGPackRPCClient());
 			SingletonServices.getInstance().getMdsRpcClient().init(0);
 			SingletonServices.getInstance().getMdsRpcClient().start();
 			SingletonServices.getInstance().getMdsRpcServer().init(intPort);

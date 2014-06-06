@@ -26,7 +26,6 @@
 
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/utility/TimingUtil.h>
-#include <chaos/common/utility/UUIDUtil.h>
 
 #include <boost/format.hpp>
 #include <boost/interprocess/sync/file_lock.hpp>
@@ -134,9 +133,9 @@ void PosixStorageDriver::initDomain() throw (chaos::CException) {
 void PosixStorageDriver::createDomain(boost::filesystem::fstream& domain_file_Stream) throw (chaos::CException) {
 	chaos_data::CDataWrapper domain_data;
 	
-	//compose the pack with the given domain name and a generated unique key
+	//compose the pack with the given domain name
 	domain_data.addStringValue("domain.name", setting->domain.name);
-	domain_data.addStringValue("domain.unique_code", (setting->domain.unique_code = UUIDUtil::generateUUID()));
+	
 	//get serialization
 	std::auto_ptr<chaos_data::SerializationBuffer> bson_serialization(domain_data.getBSONData());
 	
@@ -162,10 +161,9 @@ void PosixStorageDriver::readDomain(boost::filesystem::fstream& domain_file_Stre
 	
 	//deserialize buffer
 	chaos_data::CDataWrapper domain_data(memblock);
-	if(domain_data.hasKey("domain.name") && domain_data.hasKey("domain.unique_code")) {
+	if(domain_data.hasKey("domain.name")) {
 		//the key is present so we get the alread wrote domain name also if it is different from gived one
 		setting->domain.name = domain_data.getStringValue("domain.name");
-		setting->domain.unique_code = domain_data.getStringValue("domain.unique_code");
 	} else {
 		//rollback the file
 		domain_file_Stream.seekg(0, ios::beg);
@@ -252,14 +250,14 @@ int PosixStorageDriver::openBlock(std::string vfs_path, unsigned int flags, chao
 		if(!ofs) return -3;
 		
 		//no we can create the block
-		*data_block = new chaos_vfs::DataBlock();
+		*data_block = getNewDataBlock(vfs_path.c_str());
 		if(!data_block) {
 			if(ofs) {
 				delete(ofs);
 			}
 			return -4;
 		}
-		(*data_block)->vfs_path = vfs_path;
+		
 		(*data_block)->driver_private_data = ofs;
 		(*data_block)->flags = flags;
 		(*data_block)->invalidation_timestamp = 0;
@@ -268,7 +266,7 @@ int PosixStorageDriver::openBlock(std::string vfs_path, unsigned int flags, chao
 	} catch(boost_fs::filesystem_error &e) {
 		//delete the allcoated stream
 		if(*data_block) {
-			free(*data_block);
+			disposeDataBlock(*data_block);
 			*data_block = NULL;
 		} else if(ofs) {
 			delete(ofs);
@@ -310,7 +308,7 @@ int PosixStorageDriver::closeBlock(chaos_vfs::DataBlock *data_block) {
 		result = -1;
 	}
 	delete(fstream_ptr);
-	delete(data_block);
+	disposeDataBlock(data_block);
 	return result;
 }
 

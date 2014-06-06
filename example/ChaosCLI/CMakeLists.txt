@@ -16,6 +16,6 @@ LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../usr/local/lib /usr/local/lib)
 
 ADD_EXECUTABLE(ChaosCLI ${chaos_cli_src})
 
-TARGET_LINK_LIBRARIES(ChaosCLI chaos_uitoolkit chaos_common boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup boost_atomic memcached msgpack msgpack-rpc mpio pthread dl) 
+TARGET_LINK_LIBRARIES(ChaosCLI chaos_uitoolkit chaos_common boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup boost_atomic memcached pthread dl) 
 
 INSTALL_TARGETS(/bin ChaosCLI)

@@ -28,18 +28,8 @@
 namespace chaos {
 	namespace data_service {
 		
-		namespace storage_system {
-			class StorageDriver;
-		}
-		
-		namespace index_system {
-			class IndexDriver;
-		}
-		
 		//!Namesapace for grupping all api and struct for the !CHAOS virtual filesystem
 		namespace vfs {
-			//forward declaration
-			class VFSDriver;
 
 			//! define a block of data into !CHAOS VFS
 			struct DataBlock {
@@ -62,19 +52,12 @@ namespace chaos {
 				
 				//! block path relative to the domain,
 				//! it not consider the root path of driver configuration
-				char *vfs_path;
+				std::string vfs_path;
 				
 				//! driver private data
 				void *driver_private_data;
 				
-			private:
-				friend class chaos::data_service::storage_system::StorageDriver;
-				friend class chaos::data_service::index_system::IndexDriver;
-				//! privade constructor
-				DataBlock();
-				//! private destructor
-				virtual ~DataBlock();
-				
+				DataBlock():flags(0), invalidation_timestamp(0), max_reacheable_size(0), current_size(0), creation_time(0), driver_private_data(NULL){}
 			};
 			
 		}
