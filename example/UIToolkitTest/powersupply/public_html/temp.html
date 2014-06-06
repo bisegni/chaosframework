@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+       
+        <script type="text/javascript" src="Drinks/Drinks.js"></script>
+    </head>
+    <body>
+    <knob id="an1" radius="80" onchange="gau.value=this.value" style="float:left;" ></knob> 
+    <display id="gau" radius="80" value="0" max_range="200" min_range="0" style="float:left;margin-top: 55px"></display>
+    <switch id="ON" label="ON" onchange="On.toggle();"></switch>
+    
+    <led id="On" value="0" label="ON"></led>
+    <led id="Stby" value="0" label="StandBy"></led>
+    <led id="Error" value="0" label="Error"></led>
+        
+       <!--  <slider id=”Pol” type=”digital” value=”open”>
+            <option value=”open”>open</option>
+            <option value=”Positive”>Pos</option>
+            <option value=”Negative”>Neg</option>
+        </slider> -->
+    </body>
+</html>

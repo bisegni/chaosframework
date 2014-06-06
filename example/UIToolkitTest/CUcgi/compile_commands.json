@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/hw/chaos_bundle_open/chaosframework/example/UIToolkitTest/CUcgi",
+  "command": "/usr/bin/g++   -DBOOST_ALL_DYN_LINK -DCHAOS -DDEBUG -g3 -gdwarf-2 -I/hw/chaos_bundle_open/chaosframework/example/UIToolkitTest/CUcgi/../.. -I/hw/chaos_bundle_open/chaosframework/example/UIToolkitTest/CUcgi/../../.. -I/hw/chaos_bundle_open/chaosframework/usr/local/include    -g -O2 -Wall -o CMakeFiles/cu.cgi.dir/main.cpp.o -c /hw/chaos_bundle_open/chaosframework/example/UIToolkitTest/CUcgi/main.cpp",
+  "file": "/hw/chaos_bundle_open/chaosframework/example/UIToolkitTest/CUcgi/main.cpp"
+}
+]
