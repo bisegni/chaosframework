@@ -77,6 +77,7 @@ bool InizializableService::initImplementation(InizializableService *impl, void *
         IS_LAPP  << implName << "Initialized";
     } catch (CException ex) {
         IS_LAPP  << "Error initializing " << implName;
+        impl->state_machine.process_event(service_state_machine::EventType::deinitialize());
         throw ex;
     }
     return result;
