@@ -76,6 +76,7 @@ bool StartableService::initImplementation(StartableService *impl, void *initData
         }
         SS_LDBG  << implName << "Initialized";
     } catch (CException ex) {
+        impl->StartableService::state_machine.process_event(service_state_machine::EventType::deinitialize());
         SS_LAPP  << "Error initializing " << implName;
         throw ex;
     }
@@ -120,6 +121,7 @@ bool StartableService::startImplementation(StartableService *impl, const char * 
         SS_LDBG  << implName << " Started";
     } catch (CException ex) {
         SS_LAPP  << "Error Starting " << implName;
+        impl->StartableService::state_machine.process_event(service_state_machine::EventType::initialize());
         throw ex;
     }
     return result;
@@ -142,6 +144,7 @@ bool StartableService::stopImplementation(StartableService *impl, const char * c
         SS_LDBG  << implName << " Stopped";
     } catch (CException ex) {
         SS_LAPP  << "Error Starting " << implName;
+        impl->StartableService::state_machine.process_event(service_state_machine::EventType::start());
         throw ex;
     }
     return result;

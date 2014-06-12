@@ -81,7 +81,7 @@ namespace chaos {
 				std::map<string, cu_driver::AbstractDriver*> mapDriverUUIDHashLiveInstance;
 				
 				//!Mutex for priority queue managment
-				boost::mutex    mutextMapAccess;
+				boost::shared_mutex    mutextMapAccess;
 			protected:
 				
 				/*

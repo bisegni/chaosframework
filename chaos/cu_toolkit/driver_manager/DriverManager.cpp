@@ -66,7 +66,7 @@ void cu_driver_manager::DriverManager::stop() throw(chaos::CException) {
 
 // Deinit the implementation
 void cu_driver_manager::DriverManager::deinit() throw(chaos::CException) {
-	boost::mutex::scoped_lock lock(mutextMapAccess);
+	boost::scoped_lock<shared_mutex> lock(mutextMapAccess);
 
 	//deinitialize all allcoated driver
 	mapParameterHashLiveInstance.clear();
@@ -114,7 +114,7 @@ void cu_driver_manager::DriverManager::registerDriver(boost::shared_ptr< common_
 
 // Get a new driver accessor for a driver instance
 cu_driver::DriverAccessor *cu_driver_manager::DriverManager::getNewAccessorForDriverInstance(cu_driver::DrvRequestInfo& request_info) throw(chaos::CException) {
-    boost::mutex::scoped_lock lock(mutextMapAccess);
+    boost::scoped_lock<shared_mutex> lock(mutextMapAccess);
 	
 	size_t instanceHash;
 	std::string composedDriverName;
@@ -174,7 +174,7 @@ cu_driver::DriverAccessor *cu_driver_manager::DriverManager::getNewAccessorForDr
 
 //! release the accessor instance
 void cu_driver_manager::DriverManager::releaseAccessor(cu_driver::DriverAccessor *accessor) {
-	boost::mutex::scoped_lock lock(mutextMapAccess);
+	boost::scoped_lock<shared_mutex> lock(mutextMapAccess);
 
 	if(!mapDriverUUIDHashLiveInstance.count(accessor->driver_uuid)) return;
 	
