@@ -35,6 +35,7 @@
           <ccTool>
             <incDir>
               <pElem>../..</pElem>
+              <pElem>..</pElem>
               <pElem>../../../usr/local/include</pElem>
             </incDir>
             <preprocessorList>
@@ -45,9 +46,7 @@
           </ccTool>
         </makeTool>
       </makefileType>
-      <item path="main.cpp" ex="false" tool="1" flavor2="4">
-        <ccTool>
-        </ccTool>
+      <item path="main.cpp" ex="false" tool="1" flavor2="0">
       </item>
     </conf>
   </confs>

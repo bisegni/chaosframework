@@ -35,7 +35,7 @@ LINK_DIRECTORIES(${CHAOS_FRAMEWORK}/usr/local/lib)
 ADD_EXECUTABLE(cu.cgi ${CGI})
 
 
-TARGET_LINK_LIBRARIES(cu.cgi cgicc pthread common_test chaos_uitoolkit driver_powersupply chaos_common common_debug boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup boost_atomic memcached msgpack msgpack-rpc mpio)
+TARGET_LINK_LIBRARIES(cu.cgi cgicc pthread common_test chaos_uitoolkit driver_powersupply chaos_common common_debug boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup boost_atomic memcached)
 
 INSTALL_TARGETS(/bin cu.cgi)
 
