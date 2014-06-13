@@ -6,14 +6,13 @@ and open the template in the editor.
 -->
 <html>
     <head>
-       
-        <script type="text/javascript" src="Drinks/Drinks.js"></script>
+  
+        <script type="text/javascript" src="Drinks/Drinks.js"></script>       
          <div style="width:600px; height:100px;  border-radius:15px; box-shadow:1px 1px 3px #333;">
              <div style="float:left">
-                <form action="cgi-bin/cu.cgi?connect">
-                 MDS : <input type="text" name="mds"><br>
-                 PowerSupply: <input type="text" name="powerID"><br>
-                    <input type="submit" value="Connect">
+                <form name="init" onsubmit="initCU();return false;">
+                 PowerSupplyID: <input type="text" name="InitID">
+                    <input type="submit" value="Init">
                 </form> 
                  
              </div>
@@ -24,15 +23,45 @@ and open the template in the editor.
              <p style="float:left"> timestamp: <b id="timestamp">0</b> </p>
              </div>
         <script>
-                 var request = new XMLHttpRequest();
-                 var timestamp=0;
+                var initialized="";  
+                var timestamp=0;
                  
-                function updateChaosIndicators(){
-               
-                   if(this.readyState == 4 ){
-                       var json_answer=this.responseText;
-                             console.log("answer:"+json_answer);
+                function initCU(){
+                    var cuname =document.forms["init"]["InitID"].value;
+                    if(cuname !=""){
+                        var request = new XMLHttpRequest();
+                         console.log("answer:"+cuname);
+                        request.open("GET","cgi-bin/cu.cgi?InitId="+cuname,true);
+                        request.send();
+                        initialized=cuname;        
+                    } else {
+                        alert ("You must specify a valid ID");
+                    }
+                    return false;
+                }
+                
+                function sendCommand(command,parm){
+                    var request= new XMLHttpRequest();
+                    console.log("device:"+initialized+" command:"+command+" param:"+parm);
+                    request.open("GET","cgi-bin/cu.cgi?dev="+initialized+"&cmd="+command+"&param="+parm,true);
+                    request.send();
+                }
+                function powerSupplyToggle(id){
+                    var element=Drinks.getElementById(id);
+                    sendCommand("mode","{\"mode_type\":"+element.value+"}");
+                }
+                function queryInterface(){
+                    
+                 var request = new XMLHttpRequest();
+                 request.open("GET","cgi-bin/cu.cgi?dev="+initialized,true);
+                                request.send();
 
+                request.onreadystatechange=function(){
+                   if(request.readyState == 4 ){
+                       var json_answer=request.responseText;
+                       console.log("answer:"+json_answer);
+                       if(json_answer=="")
+                           return;
                        var json = JSON.parse(json_answer);
                         Object.keys(json).forEach(function(key) {
                         
@@ -46,7 +75,7 @@ and open the template in the editor.
                               }
                             if(key == 'cs|csv|timestamp'){
                                 if(timestamp!=val){
-                                   document.getElementById('timestamp').innerHTML =(int)val/1000;
+                                   document.getElementById('timestamp').innerHTML =val;
                                    Drinks.getElementById('connected').toggle(); 
                                 } 
                               timestamp = val;
@@ -64,29 +93,19 @@ and open the template in the editor.
                        
                    }
              } 
-           
-            function queryInterface(){
-
-               request.open("GET","cgi-bin/cu.cgi",true);
-               request.onreadystatechange=updateChaosIndicators;
-               request.send();
-             }
+                }
+            
             
             function onload(){
-               
-               queryInterface();
+               if(initialized !=""){
+                queryInterface();
+                }   
             }
-     /*        var minput = Drinks.createManager();
-            minput.href ='cgi-bin/cu.cgi';
-            minput.input = new Array("ON","setcurrent");
-            minput.refresh=1;
-            minput.start();
-            var moutput = Drinks.createManager();
-            moutput.href ='cgi-bin/cu.cgi';
-           moutput.start(); */
+     
                    
          </script>
     </head>
+    
     <body onload="setInterval(onload,2000);">
         
       <div style="width:600px; height:300px; background-color:gray; border-radius:15px; box-shadow:1px 1px 3px #333;">
@@ -98,7 +117,7 @@ and open the template in the editor.
   </div>
       <div style="width:600px; height:200px;  border-radius:15px; box-shadow:1px 1px 3px #333;">
 
-    <switch id="ON" label="ON" onchange="On.toggle();"  style="float:left";></switch>
+    <switch id="ON" label="ON" onchange="powerSupplyToggle(this.id);"  style="float:left";></switch>
     <knob id="setcurrent" radius="60" type="analog" min_range="0"  max_range="200"  onchange="set.value=this.value" style="float:left;" ></knob> 
     <div>
     <led id="on" value="0" label="ON" style="float:left;margin-left:10px"></led>

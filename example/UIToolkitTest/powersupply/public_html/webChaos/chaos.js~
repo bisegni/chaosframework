@@ -1,0 +1,108 @@
+var initialized = "";
+var timestamp = 0;
+var points = new Array();
+
+function initCU() {
+    var cuname = document.forms["init"]["InitID"].value;
+    
+    if (cuname != "") {
+	var request = new XMLHttpRequest();
+        
+	console.log("answer:" + cuname);
+        request.open("GET", "../cgi-bin/cu.cgi?InitId=" + cuname, true);
+        request.send();
+        
+	initialized = cuname;
+    } else {
+        alert("You must specify a valid ID");
+    }
+    return false;
+}
+
+function sendCommand(command, parm) {
+    var request = new XMLHttpRequest();
+    
+    console.log("device:" + initialized + "command:" + command + "param:" + parm);
+    request.open("GET", "../cgi-bin/cu.cgi?dev=" + initialized + "&cmd=" + command + "&param=" + parm, true);
+    request.send();
+}
+
+function powerSupplyToggle(id) {
+    var element = Drinks.getElementById(id);
+    
+    sendCommand("mode", "{\"mode_type\":" + element.value + "}");
+}
+
+function queryInterface() {
+    var request = new XMLHttpRequest();
+    
+    request.open("GET", "../cgi-bin/cu.cgi?dev=" + initialized, true);
+    request.send();
+    
+    request.onreadystatechange = function() {
+	if (request.readyState == 4) {
+	    var json_answer = request.responseText;
+	    
+	    console.log("answer:" + json_answer);
+	    if (json_answer == "") {
+		return;
+	    }
+	    try {
+	    var json = JSON.parse(json_answer);
+	    } catch (err){
+		console.log("exception parsing " + json_answer);
+	    }
+	    Object.keys(json).forEach(function(key) {
+		try {
+		    var val = json[key];
+		    
+		    if (typeof(val) === 'object') {
+			if (val.hasOwnProperty('$numberLong')) {
+			    val = val['$numberLong'];
+			}
+		    }
+		    
+		    if (key == 'cs|csv|timestamp') {
+			if (timestamp != val) {
+			    document.getElementById('timestamp').innerHTML = val;
+			    Drinks.getElementById('connected').toggle();
+			}
+			
+			timestamp = val;
+		    } else {
+			if (key == "current") {
+			    points.push(json[key]);
+			    loadGraph();
+			}
+			
+			/*
+			var arrClass = Drinks.getElementsByClassName(key);
+			for (var i in arrClass ) {
+			    var elem = Drinks.displays[i];
+			    elem.value = val;
+			    found = 1;
+			}
+			*/
+			
+			Drinks.getElementById(key).value = val;
+		    }
+		} catch(err) {
+		    // console.error(key + " does not exist");
+		}
+	    });
+	}
+    } 
+}
+
+function loadGraph() {
+    currentGraph.off();
+    console.log("loading graph: " + points);
+    currentGraph.channel[0].setPoints(points);
+    currentGraph.on();
+}
+
+function onload() {
+    if (initialized != "") {
+	queryInterface();
+    }
+}

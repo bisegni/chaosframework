@@ -1,0 +1,19 @@
+<html>
+<head>
+    <title>graph test</title>
+    <script type="text/Javascript" src="Drinks/Drinks.js"></script>
+    <script type="text/Javascript">
+        function load() {
+            var arr = new Array();
+            arr.push(-1,0,1,2,3,4,5,6,7,6,5,4,3,2,1,0,-1,-2,-3,-2,-1,0);
+            
+            g1.channel[0].setPoints(arr);
+        }
+    </script>
+</head>
+<body>
+<display type="graph" id="g1" onload="load();" scale="range" autoscale="true" power_onload="true">
+<channel></channel>
+</display>
+</body>
+</html>

@@ -1,0 +1,52 @@
+div.container {
+    background-color: #aaaaaa;
+    border-radius: 15px;
+    box-shadow: 1px 1px 3px #333;
+    padding: 15px;
+    font-family: "Verdana", sans-serif;
+    font-size: small;
+    width: 600px;
+}
+
+#headerContainer {
+    height: 50px;
+}
+
+input.headerInput {
+    background: #cccccc;
+}
+
+input.controlInput {
+    background: #cccccc;
+    width: 50px;
+}
+
+div.spacer {
+    height: 15px;
+    width: 600px;
+}
+
+#readoutContainer {
+    height: 300px;
+}
+
+td.digitalIndicator {
+    text-align: center;
+}
+
+#controlContainer {
+    height: 140px;
+}
+
+td.controllerTd {
+    vertical-align: top;
+    text-align: center;
+}
+
+button.polarity {
+    width: 50px;
+}
+
+td.spacerTd {
+    width: 100px;
+}
