@@ -20,8 +20,12 @@ set_target_properties(PluginTest PROPERTIES PREFIX "" SUFFIX ".extension")
 
 ADD_EXECUTABLE(PluginLoader ${loadr_src})
 
-TARGET_LINK_LIBRARIES(PluginTest chaos_cutoolkit chaos_common boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup boost_atomic memcached)
-TARGET_LINK_LIBRARIES(PluginLoader chaos_cutoolkit chaos_common boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup boost_atomic memcached) 
+SET(PluginTestLib $ENV{CHAOS_LINK_LIBRARY})
+separate_arguments(PluginTestLib)
+
+
+TARGET_LINK_LIBRARIES(PluginTest chaos_cutoolkit chaos_common ${PluginTestLib})
+TARGET_LINK_LIBRARIES(PluginLoader chaos_cutoolkit chaos_common ${PluginTestLib})
 
 INSTALL_TARGETS(/bin PluginTest)
 INSTALL_TARGETS(/bin PluginLoader)

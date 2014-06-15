@@ -66,7 +66,7 @@ void cu_driver_manager::DriverManager::stop() throw(chaos::CException) {
 
 // Deinit the implementation
 void cu_driver_manager::DriverManager::deinit() throw(chaos::CException) {
-	boost::unique_lock<shared_mutex> lock(mutextMapAccess);
+    boost::unique_lock<boost::shared_mutex> lock(mutextMapAccess);
 
 	//deinitialize all allcoated driver
 	mapParameterHashLiveInstance.clear();
@@ -91,7 +91,8 @@ void cu_driver_manager::DriverManager::deinit() throw(chaos::CException) {
 // Register a new driver
 void cu_driver_manager::DriverManager::registerDriver(boost::shared_ptr< common_utility::ObjectInstancer<cu_driver::AbstractDriver> > instancer,
 													  boost::shared_ptr< common_plugin::PluginInspector > description) throw(chaos::CException) {
-	
+    boost::unique_lock<boost::shared_mutex> lock(mutextMapAccess);
+
 	if(!instancer)
 		throw chaos::CException(1, "The instancer of the driver is mandatory for his registration", "DriverManager::registerDriver");
 	
@@ -114,7 +115,7 @@ void cu_driver_manager::DriverManager::registerDriver(boost::shared_ptr< common_
 
 // Get a new driver accessor for a driver instance
 cu_driver::DriverAccessor *cu_driver_manager::DriverManager::getNewAccessorForDriverInstance(cu_driver::DrvRequestInfo& request_info) throw(chaos::CException) {
-    boost::unique_lock<shared_mutex> lock(mutextMapAccess);
+   boost::unique_lock<boost::shared_mutex> lock(mutextMapAccess);
 	
 	size_t instanceHash;
 	std::string composedDriverName;
@@ -174,7 +175,7 @@ cu_driver::DriverAccessor *cu_driver_manager::DriverManager::getNewAccessorForDr
 
 //! release the accessor instance
 void cu_driver_manager::DriverManager::releaseAccessor(cu_driver::DriverAccessor *accessor) {
-	boost::unique_lock<shared_mutex> lock(mutextMapAccess);
+	boost::unique_lock<boost::shared_mutex> lock(mutextMapAccess);
 
 	if(!mapDriverUUIDHashLiveInstance.count(accessor->driver_uuid)) return;
 	

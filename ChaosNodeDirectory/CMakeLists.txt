@@ -2,10 +2,14 @@ SET(cnd_src main.cpp ChaosNodeDirectory.cpp)
 
 ADD_EXECUTABLE(ChaosNodeDirectory ${cnd_src})
 
+SET(ChaosNodeDirectoryLib $ENV{CHAOS_LINK_LIBRARY})
+separate_arguments(ChaosNodeDirectoryLib)
+SET(ChaosNodeDirectoryLib chaos_common ${ChaosNodeDirectoryLib})
+
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	TARGET_LINK_LIBRARIES(ChaosNodeDirectory pthread dl chaos_common boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup boost_atomic memcached)
+	TARGET_LINK_LIBRARIES(ChaosNodeDirectory pthread dl ${ChaosNodeDirectoryLib})
 ELSE(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	TARGET_LINK_LIBRARIES(ChaosNodeDirectory dl chaos_common boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup boost_atomic memcached)
+	TARGET_LINK_LIBRARIES(ChaosNodeDirectory dl ${ChaosNodeDirectoryLib})
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 

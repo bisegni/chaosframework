@@ -662,7 +662,7 @@
 		3258AEE91935C34000A66D44 /* URL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URL.h; sourceTree = "<group>"; };
 		3258AF001935EE4D00A66D44 /* EchitectureTests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EchitectureTests; sourceTree = BUILT_PRODUCTS_DIR; };
 		3258AF021935EE4D00A66D44 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
-		3258AF091935EE9700A66D44 /* CMakeList.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeList.txt; sourceTree = "<group>"; };
+		3258AF091935EE9700A66D44 /* CMakeList.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = CMakeList.txt; path = ../TestAsyncRpc/CMakeList.txt; sourceTree = "<group>"; };
 		3258AF0A1935F46D00A66D44 /* FeederTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FeederTest.cpp; sourceTree = "<group>"; };
 		3258AF0B1935F46D00A66D44 /* FeederTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeederTest.h; sourceTree = "<group>"; };
 		325CA6B915EE10B3007FCC12 /* EventAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventAction.cpp; sourceTree = "<group>"; };
@@ -1323,8 +1323,9 @@
 		3258AF011935EE4D00A66D44 /* EchitectureTests */ = {
 			isa = PBXGroup;
 			children = (
-				32EE00CE19387E0B00621776 /* network */,
+				3258AF091935EE9700A66D44 /* CMakeList.txt */,
 				3258AF021935EE4D00A66D44 /* main.cpp */,
+				32EE00CE19387E0B00621776 /* network */,
 			);
 			path = EchitectureTests;
 			sourceTree = "<group>";
@@ -2007,7 +2008,6 @@
 			isa = PBXGroup;
 			children = (
 				32B1090F188C1D6200969D3D /* main.cpp */,
-				3258AF091935EE9700A66D44 /* CMakeList.txt */,
 			);
 			path = TestAsyncRpc;
 			sourceTree = "<group>";

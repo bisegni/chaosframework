@@ -38,6 +38,12 @@ if [ ! -n "$COUCHBASE_VERSION" ]; then
     COUCHBASE_VERSION=2.3.0
 fi;
 
+if [ ]-n "$CHAOS_LINK_LIBRARY" ]
+    echo "Set the dafult chaos framework linking library"
+    export CHAOS_LINK_LIBRARY="boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached zmq uv dl"
+    echo $CHAOS_LINK_LIBRARY
+if;
+
 
 if [ -n "$1" ]; then
     PREFIX=$1/usr/local
