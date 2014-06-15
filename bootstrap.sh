@@ -30,6 +30,7 @@ fi;
 if [ ! -n "$LMEM_VERSION" ]; then
     LMEM_VERSION=1.0.16
 fi;
+
 if [ ! -n "$ZMQ_VERSION" ]; then
     ZMQ_VERSION=zeromq4-x
 fi;
@@ -38,11 +39,11 @@ if [ ! -n "$COUCHBASE_VERSION" ]; then
     COUCHBASE_VERSION=2.3.0
 fi;
 
-if [ ]-n "$CHAOS_LINK_LIBRARY" ]
+if [ ! -n "$CHAOS_LINK_LIBRARY" ]; then
     echo "Set the dafult chaos framework linking library"
     export CHAOS_LINK_LIBRARY="boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached zmq uv dl"
     echo $CHAOS_LINK_LIBRARY
-if;
+fi;
 
 
 if [ -n "$1" ]; then
