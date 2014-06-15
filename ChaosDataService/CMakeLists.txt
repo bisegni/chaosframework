@@ -7,10 +7,14 @@ SET(src  ${src} vfs/VFSManager.cpp vfs/VFSFile.cpp vfs/VFSStageFile.cpp vfs/VFSS
 
 ADD_EXECUTABLE(ChaosDataService ${src})
 
+SET(ChaosDataServiceLib $ENV{CHAOS_LINK_LIBRARY})
+separate_arguments(ChaosDataServiceLib)
+SET(ChaosDataServiceLib dl mongoclient couchbase chaos_common boost_filesystem ${ChaosDataServiceLib})
+
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	TARGET_LINK_LIBRARIES(ChaosDataService pthread dl couchbase mongoclient chaos_common boost_program_options boost_system boost_filesystem boost_thread boost_chrono boost_regex boost_log boost_log_setup boost_atomic memcached)
+	TARGET_LINK_LIBRARIES(ChaosDataService pthread ${ChaosDataServiceLib})
 ELSE(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	TARGET_LINK_LIBRARIES(ChaosDataService dl couchbase mongoclient chaos_common boost_program_options boost_system boost_filesystem boost_thread boost_chrono boost_regex boost_log boost_log_setup boost_atomic memcached)
+	TARGET_LINK_LIBRARIES(ChaosDataService ${ChaosDataServiceLib})
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 INSTALL_TARGETS(/bin ChaosDataService)

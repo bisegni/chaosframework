@@ -42,8 +42,8 @@ SET(common_lib_src  ${common_lib_src}	batch_command/AttributeSetting.cpp batch_c
                                         batch_command/BatchCommand.cpp)
 
 
-SET(common_lib_library boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup memcached zmq uv dl)
-
+SET(common_lib_library $ENV{CHAOS_LINK_LIBRARY})
+separate_arguments(common_lib_library)
 
 ADD_LIBRARY(chaos_common SHARED ${common_lib_src})
 

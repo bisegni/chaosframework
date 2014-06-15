@@ -15,8 +15,12 @@ SET(lockfree_test LockfreeCacheEmbeddedTest/main.cpp)
 INCLUDE_DIRECTORIES(. ${PROJECT_SOURCE_DIR}/../../usr/local/include /usr/local/include /usr/include) 
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../usr/local/lib /usr/local/lib)
 
+SET(ChachePerfomanceLib $ENV{CHAOS_LINK_LIBRARY})
+separate_arguments(ChachePerfomanceLib)
+
+
 ADD_EXECUTABLE(MemcachedEmbeddedTest ${memcache_test})
-TARGET_LINK_LIBRARIES(MemcachedEmbeddedTest chaos_common boost_program_options boost_system boost_thread boost_atomic boost_timer pthread dl) 
+TARGET_LINK_LIBRARIES(MemcachedEmbeddedTest chaos_common boost_timer pthread dl ${ChachePerfomanceLib} )
 
 ADD_EXECUTABLE(ChaosLockfreeCacheTest ${lockfree_test})
-TARGET_LINK_LIBRARIES(ChaosLockfreeCacheTest chaos_common boost_program_options boost_system boost_thread boost_atomic boost_timer pthread dl) 
+TARGET_LINK_LIBRARIES(ChaosLockfreeCacheTest chaos_common boost_timer pthread dl ${ChachePerfomanceLib} ) 

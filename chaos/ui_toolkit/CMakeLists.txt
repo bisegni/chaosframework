@@ -3,7 +3,11 @@ SET(ui_lib_src ChaosUIToolkit.cpp ChaosUIToolkitCWrapper.cc HighLevelApi/DeviceC
 ADD_LIBRARY(chaos_uitoolkit SHARED ${ui_lib_src})
 set_target_properties(chaos_uitoolkit PROPERTIES VERSION 1.0.0 SOVERSION 1) 
 
-TARGET_LINK_LIBRARIES(chaos_uitoolkit chaos_common boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup boost_atomic memcached) 
+SET(chaos_uitoolkit_lib $ENV{CHAOS_LINK_LIBRARY})
+separate_arguments(chaos_uitoolkit_lib)
+TARGET_LINK_LIBRARIES(chaos_uitoolkit  chaos_common ${chaos_uitoolkit_lib})
+
+
 
 FILE(GLOB files "*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/ui_toolkit)

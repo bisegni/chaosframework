@@ -16,6 +16,9 @@ LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../usr/local/lib /usr/local/lib)
 
 ADD_EXECUTABLE(ChaosPerformanceTester ${chaos_perf_tester_src})
 
-TARGET_LINK_LIBRARIES(ChaosPerformanceTester chaos_uitoolkit chaos_common boost_program_options boost_system boost_thread boost_chrono boost_regex boost_log boost_log_setup boost_atomic memcached pthread dl)
+SET(ChaosPerformanceTesterLib $ENV{CHAOS_LINK_LIBRARY})
+separate_arguments(ChaosPerformanceTesterLib)
+
+TARGET_LINK_LIBRARIES(ChaosPerformanceTester chaos_uitoolkit chaos_common pthread dl ${ChaosPerformanceTesterLib} )
 
 INSTALL_TARGETS(/bin ChaosPerformanceTester)
