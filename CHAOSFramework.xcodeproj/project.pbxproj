@@ -1320,14 +1320,15 @@
 			path = channel;
 			sourceTree = "<group>";
 		};
-		3258AF011935EE4D00A66D44 /* EchitectureTests */ = {
+		3258AF011935EE4D00A66D44 /* ArchitectureTest */ = {
 			isa = PBXGroup;
 			children = (
 				3258AF091935EE9700A66D44 /* CMakeList.txt */,
 				3258AF021935EE4D00A66D44 /* main.cpp */,
 				32EE00CE19387E0B00621776 /* network */,
 			);
-			path = EchitectureTests;
+			name = ArchitectureTest;
+			path = ArchitectureTests;
 			sourceTree = "<group>";
 		};
 		325DE9EE15EC001900D6F34E /* channel */ = {
@@ -1363,7 +1364,7 @@
 				323236C9164573C60052CE06 /* ChaosNodeDirectory */,
 				323236D8164573F50052CE06 /* ChaosDataService */,
 				32B1090E188C1D6200969D3D /* TestAsyncRpc */,
-				3258AF011935EE4D00A66D44 /* EchitectureTests */,
+				3258AF011935EE4D00A66D44 /* ArchitectureTest */,
 				3230BEBB1817A9E100EA5793 /* libchaos_common.dylib */,
 				3230BEBC1817A9E100EA5793 /* libchaos_cutoolkit.dylib */,
 				3230BEBD1817A9E100EA5793 /* libchaos_uitoolkit.dylib */,
