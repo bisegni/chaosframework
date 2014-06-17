@@ -14,7 +14,7 @@
 int main(int argc, const char * argv[])
 {
     chaos::test::network::FeederTest fd;
-	fd.test(1000);
+	fd.test(100000);
     return 0;
 }
 

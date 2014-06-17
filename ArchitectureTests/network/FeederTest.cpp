@@ -22,6 +22,7 @@ else \
 std::cout << "no service" <<std::endl; \
 
 #define CHECK_SERVICE(b) \
+assert(service); \
 if(service) STR_ASSERT(service->url, b)
 
 #define NO_SERVICE \
@@ -31,17 +32,13 @@ using namespace chaos::test::network;
 FeederTest::FeederTest():
 feeder_engine("feeder_test", this),
 number_of_cycle(NUMBER_OF_CYCLE) {
-	int idx[3];
-    idx[0] = feeder_engine.addURL(chaos::common::network::URL("http://test:9091"),100);
-    idx[1] = feeder_engine.addURL(chaos::common::network::URL("http://test:9092"), 50);
-    idx[3] = feeder_engine.addURL(chaos::common::network::URL("http://test:9093"), 25);
 }
 
 void FeederTest::disposeService(void *service_ptr) {
     delete ((ServiceForURL*)service_ptr);
 }
 
-void* FeederTest::serviceForURL(common::network::URL url) {
+void* FeederTest::serviceForURL(const common::network::URL& url) {
     ServiceForURL *result = new ServiceForURL();
     result->url = url.getURL();
     return (void*)result;
@@ -49,6 +46,9 @@ void* FeederTest::serviceForURL(common::network::URL url) {
 
 void FeederTest::test_feeder_logic() {
 	std::cout << "----------------logic feeder test-----------" << std::endl;
+	feeder_engine.addURL(chaos::common::network::URL("http://test:9091"), 100);
+    feeder_engine.addURL(chaos::common::network::URL("http://test:9092"), 50);
+	feeder_engine.addURL(chaos::common::network::URL("http://test:9093"), 25);
 	chaos::test::network::ServiceForURL *service = NULL;
 	feeder_engine.setFeedMode(chaos::common::network::URLServiceFeeder::URLServiceFeedModeFailOver);
     PRINT_SERVICE

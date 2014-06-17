@@ -23,7 +23,10 @@
 #include <chaos/common/direct_io/DirectIOClientConnection.h>
 #include <chaos/common/utility/UUIDUtil.h>
 
+#include <boost/regex.hpp>
 #include <boost/format.hpp>
+#include <boost/algorithm/string.hpp>
+
 using namespace chaos::common::direct_io;
 
 #define DIOVCC_LOG_HEAD "[DirectIOVirtualClientChannel: "<< server_description <<"] - "
@@ -37,6 +40,11 @@ std::string DirectIOClientConnection::my_str_ip;
 
 // current client ip in 64 bit form
 uint64_t DirectIOClientConnection::my_i64_ip = 0;
+//! Regular expression for check server endpoint with the sintax hostname:[priority_port:service_port]
+static const boost::regex DirectIOHostNameRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[0-9]{4,5}:[0-9]{4,5}");
+//! Regular expression for check server endpoint with the sintax ip:[priority_port:service_port]
+static const boost::regex DirectIOIPAndPortRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}:[0-9]{4,5}");
+
 
 void DirectIOClientConnection::freeSentData(void *data, void *hint) {
 	channel::DisposeSentMemoryInfo *free_info = static_cast<channel::DisposeSentMemoryInfo*>(hint);

@@ -31,6 +31,7 @@
 #include <chaos/common/direct_io/DirectIOTypes.h>
 
 #include <chaos/common/direct_io/DirectIOForwarder.h>
+#include <chaos/common/direct_io/DirectIOURLManagment.h>
 #include <chaos/common/direct_io/channel/DirectIOVirtualClientChannel.h>
 
 namespace chaos {
@@ -70,6 +71,7 @@ namespace chaos {
              */
             class DirectIOClientConnection  :
 			public DirectIOForwarder,
+			public DirectIOURLManagment,
 			protected DICKeyObjectContainer {
                 friend class DirectIOClient;
 				friend class chaos::NetworkBroker;
@@ -104,7 +106,7 @@ namespace chaos {
                     data_pack->header.dispatcher_header.fields.route_addr = endpoint;
                     return data_pack;
                 }
-                
+				
             public:
 				
 				DirectIOClientConnection(std::string _server_description, uint16_t _endpoint);

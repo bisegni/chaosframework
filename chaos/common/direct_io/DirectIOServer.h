@@ -41,7 +41,7 @@ namespace chaos {
 				by different client
 				dio_client---> data message -->dio_server
 			 */
-			class DirectIOServer : public chaos::utility::StartableService, public NamedService, public DirectIOServerPublicInterface  {
+			class DirectIOServer : public chaos::utility::StartableService, public NamedService, public DirectIOServerPublicInterface {
 				//! handler implementation for the server instance
             protected:
                 int32_t priority_port;

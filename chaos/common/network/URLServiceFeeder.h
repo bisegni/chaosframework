@@ -28,6 +28,9 @@
 
 #include <chaos/common/network/URL.h>
 #include <chaos/common/utility/NamedService.h>
+
+#include <boost/heap/priority_queue.hpp>
+
 namespace chaos {
     namespace common {
         namespace network {
@@ -38,7 +41,7 @@ namespace chaos {
             protected:
                 friend class URLServiceFeeder;
                 virtual void  disposeService(void *service_ptr) = 0;
-                virtual void* serviceForURL(URL url) = 0;
+                virtual void* serviceForURL(const URL& url, uint32_t service_index) = 0;
             };
             
                 //! Service feeder helper class
@@ -77,6 +80,14 @@ namespace chaos {
 				};
 
 				
+				struct decreasingOrderMyType
+				{
+					bool operator() (const URLService * lhs, const URLService * rhs) const
+					{
+						return lhs->priority < rhs->priority;
+					}
+				};
+				
                     //! Default contructor
                 /*!
                  Construct a new feeder with some option
@@ -89,12 +100,12 @@ namespace chaos {
                 virtual ~URLServiceFeeder();
                 
                     //!Add a new URL Object and return the associated index
-                uint32_t addURL(URL new_url, uint32_t priority = 0);
+                uint32_t addURL(const URL& new_url, uint32_t priority = 0);
                 
                     //!get eh service with the relative index
                 void* getService(uint32_t idx);
                 
-                    //!Remove a service
+                    //!Remove an url with the index
                 /*!
                  The remove operation can be perfored with
                  the deallocation of the service
@@ -103,6 +114,11 @@ namespace chaos {
                  */
                 void removeURL(uint32_t idx, bool deallocate_service = false);
                 
+				/*!
+				 Remove all url and service
+				 */
+				void clear(bool dispose_service = true);
+				
                 /*!
                  Set the url as offline
                  */
@@ -124,8 +140,10 @@ namespace chaos {
                 URLService *current_service;
                 URLService **service_list;
                 
-                std::priority_queue< URLService*, std::vector< URLService* >, pless<URLService> > online_urls;
-                
+                //std::priority_queue< URLService*, std::vector< URLService* >, pless<URLService> > online_urls;
+				typedef  boost::heap::priority_queue<URLService*, boost::heap::compare<decreasingOrderMyType> > OnlineQueueType;
+				typedef OnlineQueueType::iterator OnlineQueueIterator;
+				OnlineQueueType online_urls;
                 std::set<uint32_t> offline_urls;
                 std::set<uint32_t> available_url;
 
@@ -134,6 +152,7 @@ namespace chaos {
                 
                 inline void grow();
                 inline URLService* getNext();
+				inline void removeFromOnlineQueue(uint32_t url_index);
             };
             
         }

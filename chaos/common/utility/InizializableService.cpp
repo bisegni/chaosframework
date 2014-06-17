@@ -69,13 +69,19 @@ bool InizializableService::initImplementation(InizializableService *impl, void *
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
         IS_LAPP  << "Initializing " << implName;
         if(impl->state_machine.process_event(service_state_machine::EventType::initialize()) == boost::msm::back::HANDLED_TRUE) {
-            impl->init(initData);
+			try {
+				impl->init(initData);
+			}catch(CException& ex) {
+				impl->InizializableService::state_machine.process_event(service_state_machine::EventType::deinitialize());
+				throw ex;
+			}
+            
             impl->serviceState = impl->state_machine.current_state()[0];//service_state_machine::InizializableServiceType::IS_INITIATED;
         } else {
            throw CException(0, "Service cant be initialized", domainString);
         }
         IS_LAPP  << implName << "Initialized";
-    } catch (CException ex) {
+    } catch (CException& ex) {
         IS_LAPP  << "Error initializing " << implName;
         impl->state_machine.process_event(service_state_machine::EventType::deinitialize());
         throw ex;
@@ -97,7 +103,7 @@ bool InizializableService::deinitImplementation(InizializableService *impl, cons
         }
         impl->serviceState = impl->state_machine.current_state()[0];//service_state_machine::InizializableServiceType::IS_DEINTIATED;
         IS_LAPP  << implName << "Deinitialized";
-    } catch (CException ex) {
+    } catch (CException& ex) {
         IS_LAPP  << "Error Deinitializing " << implName;
         throw ex;
     }

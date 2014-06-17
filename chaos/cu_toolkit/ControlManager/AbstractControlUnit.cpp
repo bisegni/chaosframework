@@ -169,28 +169,15 @@ void AbstractControlUnit::_getDeclareActionInstance(std::vector<const chaos::Dec
  Initialize the Custom Contro Unit and return the configuration
  */
 CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& detachParam) throw(CException) {
-	uint8_t last_service_state = chaos::utility::StartableService::serviceState;
-    try {
-		//call init method of the startable interface
-		utility::StartableService::initImplementation(this, static_cast<void*>(initConfiguration), "AbstractControlUnit", "AbstractControlUnit::_init");
-		
-		//initialization has gone well
-		
-		//the init of the implementation unit goes after the infrastructure one
-		LCU_ << "Start custom inititialization";
-		unitInit();
-		
-		//call update param function
-		updateConfiguration(initConfiguration, detachParam);
-	} catch(CException& ex) {
-		if(last_service_state != chaos::utility::service_state_machine::InizializableServiceType::IS_INITIATED) {
-			//force the deinitialization on innit failure
-		//_deinit(initConfiguration, detachParam);
-		}
-		
-		//trhow received exception
-		throw ex;
-	}
+	utility::StartableService::initImplementation(this, static_cast<void*>(initConfiguration), "AbstractControlUnit", "AbstractControlUnit::_init");
+	
+	//the init of the implementation unit goes after the infrastructure one
+	LCU_ << "Start custom inititialization";
+	unitInit();
+	
+	//call update param function
+	updateConfiguration(initConfiguration, detachParam);
+	
     return NULL;
 }
 
@@ -199,22 +186,9 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
  */
 CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detachParam) throw(CException) {
     //call start method of the startable interface
-	uint8_t last_service_state = chaos::utility::StartableService::serviceState;
-	try {
-		utility::StartableService::startImplementation(this, "AbstractControlUnit", "AbstractControlUnit::_start");
-		
-		//the start of the implementation unit goes after the infrastructure one
-		LCU_ << "Start sublass for deviceID:" << DatasetDB::getDeviceID();
-		unitStart();
-	} catch(CException& ex) {
-		if(last_service_state != chaos::utility::service_state_machine::StartableServiceType::SS_STARTED) {
-			//force the deinitialization on innit failure
-		//_stop(startParam, detachParam);
-		}
-		
-		//trhow received exception
-		throw ex;
-	}
+	utility::StartableService::startImplementation(this, "AbstractControlUnit", "AbstractControlUnit::_start");
+	LCU_ << "Start sublass for deviceID:" << DatasetDB::getDeviceID();
+	unitStart();
     return NULL;
 }
 
@@ -222,13 +196,11 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
  Stop the Custom Control Unit scheduling for device
  */
 CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachParam) throw(CException) {
+    //call start method of the startable interface
+    utility::StartableService::stopImplementation(this, "AbstractControlUnit", "AbstractControlUnit::_stop");
 	//first we need to stop the implementation unit
     LCU_ << "Stop sublass for deviceID:" << DatasetDB::getDeviceID();
     unitStop();
-	
-    //call start method of the startable interface
-    utility::StartableService::stopImplementation(this, "AbstractControlUnit", "AbstractControlUnit::_stop");
-	
     return NULL;
 }
 
@@ -236,13 +208,20 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachPa
  deinit all datastorage
  */
 CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& detachParam) throw(CException) {
-    LCU_ << "Deinitializating AbstractControlUnit";
-    //first we start the deinitializaiton of the implementation unit
+    //call deinit method of the startable interface
+    utility::StartableService::deinitImplementation(this, "AbstractControlUnit", "AbstractControlUnit::_deinit");
+	
+	//first we start the deinitializaiton of the implementation unit
     LCU_ << "Deinit custom deinitialization for device:" << DatasetDB::getDeviceID();
     unitDeinit();
 	
-    //call deinit method of the startable interface
-    utility::StartableService::deinitImplementation(this, "AbstractControlUnit", "AbstractControlUnit::_deinit");
+    //remove key data storage
+    if(keyDataStorage) {
+        LCU_ << "Delete data storage driver for device:" << DatasetDB::getDeviceID();
+        keyDataStorage->deinit();
+        delete(keyDataStorage);
+        keyDataStorage = NULL;
+    }
 	
 	//clear the accessor of the driver
 	for (int idx = 0;
@@ -252,6 +231,7 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
 	}
 	//clear the vector
 	accessorInstances.clear();
+
     return NULL;
 }
 
@@ -335,25 +315,14 @@ void AbstractControlUnit::init(void *initData) throw(CException) {
 
 // Startable Service method
 void AbstractControlUnit::start() throw(CException) {
-	LCU_ << "Start Phase for device:" << DatasetDB::getDeviceID();
 }
 
 // Startable Service method
 void AbstractControlUnit::stop() throw(CException) {
-    LCU_ << "Stop Phase for device:" << DatasetDB::getDeviceID();
 }
 
 // Startable Service method
 void AbstractControlUnit::deinit() throw(CException) {
-    LCU_ << "Deinitialization Phase for device:" << DatasetDB::getDeviceID();
-    
-    //remove key data storage
-    if(keyDataStorage) {
-        LCU_ << "Delete data storage driver for device:" << DatasetDB::getDeviceID();
-        keyDataStorage->deinit();
-        delete(keyDataStorage);
-        keyDataStorage = NULL;
-    }
 }
 
 /*

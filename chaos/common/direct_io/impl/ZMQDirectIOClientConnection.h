@@ -25,7 +25,6 @@
 
 #include <chaos/common/direct_io/DirectIODataPack.h>
 #include <chaos/common/direct_io/DirectIOClientConnection.h>
-#include <chaos/common/direct_io/ServerFeeder.h>
 
 #include <boost/thread.hpp>
 #include <boost/shared_ptr.hpp>
@@ -57,7 +56,7 @@ namespace chaos {
 				 Class that represetn th eimplementation of one connection of the direct io
 				 connection implemented with zmq
 				 */
-				class ZMQDirectIOClientConnection : public chaos::common::direct_io::DirectIOClientConnection, protected ServerFeeder {
+				class ZMQDirectIOClientConnection : public chaos::common::direct_io::DirectIOClientConnection {
 					friend class ZMQDirectIOClient;
 					
 					void *socket_priority;

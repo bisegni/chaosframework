@@ -26,12 +26,12 @@ URL::URL() {
     
 }
 
-URL::URL(std::vector<boost::regex> _url_reg, std::string _url):
+URL::URL(std::vector<boost::regex>& _url_reg, std::string _url):
 url(_url),
 url_reg(_url_reg) {
 }
 
-URL::URL(std::string _url):
+URL::URL(std::string& _url):
 url(_url){
 }
 

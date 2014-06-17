@@ -23,8 +23,7 @@ macx:LIBS +=  -F/usr/local/lib/ -framework qwt
 unix:!macx::INCLUDEPATH += /usr/local/qwt/include
 unix:!macx:LIBS += -L/usr/local/qwt/lib -lqwt
 
-LIBS +=  -lzmq -lchaos_common -lchaos_uitoolkit -lboost_chrono -lmemcached -lboost_log -lboost_log_setup -lboost_system -lboost_thread -lboost_program_options -lboost_regex -lboost_filesystem -levent 
-
+LIBS +=  -lzmq -lchaos_common -lchaos_uitoolkit -lboost_chrono -lmemcached -lboost_log -lboost_log_setup -lboost_system -lboost_thread -lboost_program_options -lboost_regex -lboost_filesystem -levent
 
 SOURCES += main.cpp\
         mainwindow.cpp \

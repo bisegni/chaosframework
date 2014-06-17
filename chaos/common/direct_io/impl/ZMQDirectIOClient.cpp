@@ -226,7 +226,7 @@ DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server
 		result = new ZMQDirectIOClientConnection(server_description, socket_priority, socket_service, endpoint);
 		
 		//set the server information on socket
-		ServerFeeder::decoupleServerDescription(server_description, priority_endpoint, service_endpoint);
+		decoupleServerDescription(server_description, priority_endpoint, service_endpoint);
 				
         
 		//DEBUG_CODE(ZMQDIOLDBG_ << "Allocating monitor socket thread for monitor url " << monitor_url;)

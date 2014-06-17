@@ -25,8 +25,8 @@ SET(common_lib_src  ${common_lib_src}	event/EventClient.cpp event/AsioImplEventC
 										event/evt_desc/InstrumentEventDescriptor.cpp event/evt_desc/CommandEventDescriptor.cpp 
 										event/evt_desc/CustomEventDescriptor.cpp event/channel/EventChannel.cpp 
 										event/channel/AlertEventChannel.cpp event/channel/InstrumentEventChannel.cpp)
-SET(common_lib_src  ${common_lib_src}	direct_io/DirectIOClient.cpp direct_io/DirectIOClientConnection.cpp direct_io/DirectIOServer.cpp
-										direct_io/ServerFeeder.cpp direct_io/DirectIOServerEndpoint.cpp direct_io/DirectIODispatcher.cpp direct_io/DirectIOPerformanceSession.cpp
+SET(common_lib_src  ${common_lib_src}	direct_io/DirectIOClient.cpp direct_io/DirectIOClientConnection.cpp direct_io/DirectIOServer.cpp direct_io/DirectIOURLManagment.cpp
+										direct_io/DirectIOServerEndpoint.cpp direct_io/DirectIODispatcher.cpp direct_io/DirectIOPerformanceSession.cpp
 										direct_io/impl/ZMQDirectIOClient.cpp direct_io/impl/ZMQDirectIOServer.cpp 
 										direct_io/impl/ZMQBaseClass.cpp direct_io/impl/ZMQDirectIOClientConnection.cpp
 										direct_io/channel/DirectIOVirtualChannel.cpp direct_io/channel/DirectIOVirtualClientChannel.cpp direct_io/channel/DirectIOVirtualServerChannel.cpp
@@ -35,7 +35,7 @@ SET(common_lib_src  ${common_lib_src}	direct_io/DirectIOClient.cpp direct_io/Dir
 										direct_io/channel/DirectIOPerformanceServerChannel.cpp direct_io/channel/DirectIOPerformanceClientChannel.cpp)
 SET(common_lib_src  ${common_lib_src}	io/IODataDriver.cpp io/IOMemcachedIODriver.cpp io/IODirectIODriver.cpp)
 SET(common_lib_src  ${common_lib_src}	message/DeviceMessageChannel.cpp message/MDSMessageChannel.cpp message/MessageChannel.cpp message/PerformanceNodeChannel.cpp)
-SET(common_lib_src  ${common_lib_src}	network/NetworkBroker.cpp network/PerformanceManagment.cpp)
+SET(common_lib_src  ${common_lib_src}	network/NetworkBroker.cpp network/PerformanceManagment.cpp network/URLServiceFeeder.cpp network/URL.cpp)
 SET(common_lib_src  ${common_lib_src}	rpc/RpcClient.cpp rpc/RpcServer.cpp rpc/zmq/ZMQClient.cpp rpc/zmq/ZMQServer.cpp)
 SET(common_lib_src  ${common_lib_src}	utility/NamedService.cpp utility/StartableService.cpp utility/InizializableService.cpp)
 SET(common_lib_src  ${common_lib_src}	batch_command/AttributeSetting.cpp batch_command/BatchCommandExecutor.cpp batch_command/BatchCommandSandbox.cpp 
