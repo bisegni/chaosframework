@@ -28,7 +28,7 @@
 #include <chaos/common/async_central/AsyncCentralManager.h>
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/utility/InetUtility.h>
-#include <chaos/common/utility/InizializableService.h>
+#include <chaos/common/utility/StartableService.h>
 #include <chaos/common/log/LogManager.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 //#include <chaos/common/data/cache/DataCache.h>
@@ -44,7 +44,7 @@ namespace chaos {
      resource used for the base chaos function
      */
     template<class T>
-    class ChaosCommon : public Singleton<T>, public utility::InizializableService {
+    class ChaosCommon : public Singleton<T>, public utility::StartableService {
         log::LogManager logManager;
     protected:
             //! Constructor Method
@@ -147,7 +147,13 @@ namespace chaos {
 			LAPP_ << "DeInitilizing async central";
 			utility::InizializableService::deinitImplementation(chaos::common::async_central::AsyncCentralManager::getInstance(),  "AsyncCentralManager", __PRETTY_FUNCTION__);
 		}
-				
+			
+        void start() throw (CException) {
+                    
+        }
+        void stop() throw (CException) {
+                   
+        }
         //! Return the global configuration for the current singleton instance
         /*!
         \return the GlobalConfiguration pointer to global instance

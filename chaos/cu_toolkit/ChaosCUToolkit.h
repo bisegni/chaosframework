@@ -31,7 +31,6 @@
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManager.h>
 #include <chaos/cu_toolkit/driver_manager/DriverManager.h>
-#include <chaos/common/utility/StartableService.h>
 namespace chaos{
     namespace cu {
         /*! \page page_cut The Control Unit Toolkit
@@ -44,7 +43,7 @@ namespace chaos{
          This class is a Singleton that need to be used to setup environment,
          add Custom Control unit, and start all Contro Unit environment
          */
-        class ChaosCUToolkit : public ChaosCommon<ChaosCUToolkit>, public ServerDelegator, public utility::StartableService {
+        class ChaosCUToolkit : public ChaosCommon<ChaosCUToolkit>, public ServerDelegator {
             friend class Singleton<ChaosCUToolkit>;
             //static boost::mutex monitor;
             //static boost::condition endWaithCondition;
