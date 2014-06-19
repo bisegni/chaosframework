@@ -283,6 +283,8 @@
 		327D5E49192DE3430043ED21 /* IndexDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327D5E43192DE3430043ED21 /* IndexDriver.cpp */; };
 		327D5E4A192DE3430043ED21 /* MongoDBHAConnectionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327D5E45192DE3430043ED21 /* MongoDBHAConnectionManager.cpp */; };
 		327D5E4B192DE3430043ED21 /* MongoDBIndexDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327D5E47192DE3430043ED21 /* MongoDBIndexDriver.cpp */; };
+		327F51DE1952E81D00BA3D01 /* DirectIOURLManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327F51DC1952E81D00BA3D01 /* DirectIOURLManagment.cpp */; };
+		327F51DF1952E81D00BA3D01 /* DirectIOURLManagment.h in Headers */ = {isa = PBXBuildFile; fileRef = 327F51DD1952E81D00BA3D01 /* DirectIOURLManagment.h */; };
 		328556A017F2E33A00A64ED2 /* DirectIOClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3285569E17F2E33A00A64ED2 /* DirectIOClient.cpp */; };
 		328556A117F2E33A00A64ED2 /* DirectIOClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3285569F17F2E33A00A64ED2 /* DirectIOClient.h */; };
 		328556A417F2E36000A64ED2 /* DirectIOServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328556A217F2E36000A64ED2 /* DirectIOServer.cpp */; };
@@ -336,8 +338,6 @@
 		32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */; };
 		32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */; };
 		32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */; };
-		32A886C6189C37EA00321D61 /* ServerFeeder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A886C4189C37EA00321D61 /* ServerFeeder.cpp */; };
-		32A886C7189C37EA00321D61 /* ServerFeeder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A886C5189C37EA00321D61 /* ServerFeeder.h */; };
 		32A8F7D1172BE3FD0090DB78 /* KeyGroupCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A8F7CF172BE3FD0090DB78 /* KeyGroupCache.cpp */; };
 		32A8F7D2172BE3FD0090DB78 /* KeyGroupCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A8F7D0172BE3FD0090DB78 /* KeyGroupCache.h */; };
 		32AAD78814CD660B005A097C /* RpcClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AAD78714CD660B005A097C /* RpcClient.h */; };
@@ -813,6 +813,8 @@
 		327D5E46192DE3430043ED21 /* MongoDBHAConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MongoDBHAConnectionManager.h; path = ChaosDataService/index_system/MongoDBHAConnectionManager.h; sourceTree = SOURCE_ROOT; };
 		327D5E47192DE3430043ED21 /* MongoDBIndexDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MongoDBIndexDriver.cpp; path = ChaosDataService/index_system/MongoDBIndexDriver.cpp; sourceTree = SOURCE_ROOT; };
 		327D5E48192DE3430043ED21 /* MongoDBIndexDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MongoDBIndexDriver.h; path = ChaosDataService/index_system/MongoDBIndexDriver.h; sourceTree = SOURCE_ROOT; };
+		327F51DC1952E81D00BA3D01 /* DirectIOURLManagment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOURLManagment.cpp; sourceTree = "<group>"; };
+		327F51DD1952E81D00BA3D01 /* DirectIOURLManagment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOURLManagment.h; sourceTree = "<group>"; };
 		3281D35A18A68532005A0828 /* DirectIOChannelGlobal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectIOChannelGlobal.h; sourceTree = "<group>"; };
 		3285569E17F2E33A00A64ED2 /* DirectIOClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOClient.cpp; sourceTree = "<group>"; };
 		3285569F17F2E33A00A64ED2 /* DirectIOClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOClient.h; sourceTree = "<group>"; };
@@ -873,8 +875,6 @@
 		32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaitSemaphore.h; sourceTree = "<group>"; };
 		32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = MDSMessageChannel.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSMessageChannel.cpp; sourceTree = "<group>"; };
-		32A886C4189C37EA00321D61 /* ServerFeeder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServerFeeder.cpp; sourceTree = "<group>"; };
-		32A886C5189C37EA00321D61 /* ServerFeeder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerFeeder.h; sourceTree = "<group>"; };
 		32A8F7CF172BE3FD0090DB78 /* KeyGroupCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyGroupCache.cpp; sourceTree = "<group>"; };
 		32A8F7D0172BE3FD0090DB78 /* KeyGroupCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyGroupCache.h; sourceTree = "<group>"; };
 		32AAD78714CD660B005A097C /* RpcClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcClient.h; sourceTree = "<group>"; };
@@ -1882,6 +1882,8 @@
 				3253F2FB189AEECA00959CA7 /* channel */,
 				3285569E17F2E33A00A64ED2 /* DirectIOClient.cpp */,
 				3285569F17F2E33A00A64ED2 /* DirectIOClient.h */,
+				328556A217F2E36000A64ED2 /* DirectIOServer.cpp */,
+				328556A317F2E36000A64ED2 /* DirectIOServer.h */,
 				3219E69D18CC7AE600C2F795 /* DirectIOClientConnection.cpp */,
 				3219E69E18CC7AE600C2F795 /* DirectIOClientConnection.h */,
 				32EA501018A152BE00782435 /* DirectIOServerEndpoint.cpp */,
@@ -1889,18 +1891,16 @@
 				32F7FEA018A4FD9B00FC03AB /* DirectIOEndpointHandler.h */,
 				32EA501418A15BF000782435 /* DirectIODispatcher.cpp */,
 				32EA501518A15BF000782435 /* DirectIODispatcher.h */,
-				328556A217F2E36000A64ED2 /* DirectIOServer.cpp */,
-				328556A317F2E36000A64ED2 /* DirectIOServer.h */,
 				3229700918BCC6FE0004F70D /* DirectIOServerPublicInterface.h */,
 				328556A617F3039700A64ED2 /* DirectIOTypes.h */,
 				32D6C8971815293200E9689B /* DirectIOHandler.h */,
 				32D6C8991815294700E9689B /* DirectIOForwarder.h */,
 				3253F304189AF0D500959CA7 /* DirectIODataPack.h */,
-				32A886C4189C37EA00321D61 /* ServerFeeder.cpp */,
-				32A886C5189C37EA00321D61 /* ServerFeeder.h */,
 				320FB0EB18A39E650014CDB3 /* DirectIO.h */,
 				32C5A42518D9959800C0435C /* DirectIOPerformanceSession.cpp */,
 				32C5A42618D9959800C0435C /* DirectIOPerformanceSession.h */,
+				327F51DC1952E81D00BA3D01 /* DirectIOURLManagment.cpp */,
+				327F51DD1952E81D00BA3D01 /* DirectIOURLManagment.h */,
 			);
 			path = direct_io;
 			sourceTree = "<group>";
@@ -2378,7 +2378,6 @@
 				324A4B8D191A523F00975394 /* md5.hpp in Headers */,
 				324A4B4E191A41EF00975394 /* compiler_msvc.h in Headers */,
 				32B159D218B38C980096B58B /* DirectIODeviceClientChannel.h in Headers */,
-				32A886C7189C37EA00321D61 /* ServerFeeder.h in Headers */,
 				324A4B8C191A523F00975394 /* md5.h in Headers */,
 				3230BEC3181A6ADB00EA5793 /* DatasetDB.h in Headers */,
 				32ED648E14E2DCFC00A73CF9 /* SingleBufferCircularBuffer.h in Headers */,
@@ -2517,6 +2516,7 @@
 				32875F97177634AF00E33D6F /* PluginInspector.h in Headers */,
 				324A4B7D191A428500975394 /* str.h in Headers */,
 				320FB0EC18A39E650014CDB3 /* DirectIO.h in Headers */,
+				327F51DF1952E81D00BA3D01 /* DirectIOURLManagment.h in Headers */,
 				329CFCF318CDEE2F002C37CF /* ObjectSlot.h in Headers */,
 				32279F8516F8DEAF009EC7B9 /* DataBroker.h in Headers */,
 				32279F8C16FA36B6009EC7B9 /* PublisherDataService.h in Headers */,
@@ -2877,11 +2877,11 @@
 				3255E72415EA86F2005C96CA /* DefaultEventDispatcher.cpp in Sources */,
 				32E0EF3718CDB37D00CD1808 /* ZMQDirectIOClientConnection.cpp in Sources */,
 				3255E72715EA87D2005C96CA /* AbstractEventDispatcher.cpp in Sources */,
+				327F51DE1952E81D00BA3D01 /* DirectIOURLManagment.cpp in Sources */,
 				328556A417F2E36000A64ED2 /* DirectIOServer.cpp in Sources */,
 				32B159D118B38C980096B58B /* DirectIODeviceClientChannel.cpp in Sources */,
 				325DE9F115EC031E00D6F34E /* EventChannel.cpp in Sources */,
 				328E36EB1786B89500C1564D /* PluginLoader.cpp in Sources */,
-				32A886C6189C37EA00321D61 /* ServerFeeder.cpp in Sources */,
 				3244D11D15ECC25800FE2F86 /* AlertEventChannel.cpp in Sources */,
 				325CA6BB15EE10B3007FCC12 /* EventAction.cpp in Sources */,
 				3253E09815F28A270079B40E /* EventTypeScheduler.cpp in Sources */,

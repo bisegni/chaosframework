@@ -132,7 +132,7 @@ int ZMQDirectIOClientConnection::addServer(std::string server_desc) {
 	std::string priority_endpoint;
 	std::string service_endpoint;
 	std::string url;
-	ServerFeeder::decoupleServerDescription(server_desc, priority_endpoint, service_endpoint);
+	decoupleServerDescription(server_desc, priority_endpoint, service_endpoint);
 	
 	url = boost::str( boost::format("tcp://%1%") % priority_endpoint);
 	ZMQDIO_CONNECTION_LAPP_ << "connect to priority endpoint " << url;
@@ -159,7 +159,7 @@ int ZMQDirectIOClientConnection::removeServer(std::string server_desc) {
 	std::string priority_endpoint;
 	std::string service_endpoint;
 	std::string url;
-	ServerFeeder::decoupleServerDescription(server_desc, priority_endpoint, service_endpoint);
+	decoupleServerDescription(server_desc, priority_endpoint, service_endpoint);
 	
 	url = boost::str( boost::format("tcp://%1%") % priority_endpoint);
 	ZMQDIO_CONNECTION_LAPP_ << "connect to priority endpoint " << url;

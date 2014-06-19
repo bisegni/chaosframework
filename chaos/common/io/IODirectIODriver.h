@@ -34,6 +34,9 @@
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/ObjectSlot.h>
 
+#include <chaos/common/network/URLServiceFeeder.h>
+
+#include <boost/thread.hpp>
 #include <boost/atomic.hpp>
 
 namespace chaos{
@@ -69,11 +72,14 @@ namespace chaos{
 	
     /*!
      */
-    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(IODirectIODriver, IODataDriver), public NamedService, private chaos_dio_channel::DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler {
+    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(IODirectIODriver, IODataDriver),
+	public NamedService,
+	public common::network::URLServiceFeederHandler,
+	private chaos_dio_channel::DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler,
+	protected chaos_direct_io::DirectIOClientConnectionEventHandler {
 		REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(IODirectIODriver)
 		string dataKey;
         IODirectIODriverInitParam init_parameter;
-		
 		std::set<std::string> registered_server;
 		
 		uint16_t	current_endpoint_p_port;
@@ -84,16 +90,20 @@ namespace chaos{
 		chaos_utility::ObjectSlot<IODirectIODriverClientChannels*> channels_slot;
 		
 		WaitSemaphore wait_get_answer;
+		boost::shared_mutex mutext_feeder;
 		
 		void consumePutEvent(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header, void *channel_data, uint32_t channel_data_len);
 		void consumeGetEvent(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header, void *channel_data, uint32_t channel_data_len);
 		
 		IODData data_cache;
 		boost::atomic<uint8_t> read_write_index;
-		
-	private:
-		IODirectIODriverClientChannels *getNextClientChannel();
-		void addNewServerConnection(std::string server_description);
+		chaos::common::network::URLServiceFeeder connectionFeeder;
+
+	protected:
+		void disposeService(void *service_ptr);
+		void* serviceForURL(const common::network::URL& url, uint32_t service_index);
+		void handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection,
+						 chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event);
     public:
         
         IODirectIODriver(std::string alias);

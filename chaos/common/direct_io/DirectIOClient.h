@@ -29,9 +29,10 @@
 #include <chaos/common/utility/InizializableService.h>
 #include <chaos/common/utility/TemplatedKeyObjectContainer.h>
 
-#include <chaos/common/direct_io/ServerFeeder.h>
+
 #include <chaos/common/direct_io/DirectIOTypes.h>
 #include <chaos/common/direct_io/DirectIOClientConnection.h>
+#include <chaos/common/direct_io/DirectIOURLManagment.h>
 
 #include <boost/thread.hpp>
 #include <boost/atomic/atomic.hpp>
@@ -64,7 +65,7 @@ namespace chaos {
 			 */
 			class DirectIOClient :	public NamedService,
 			public chaos::utility::InizializableService,
-			public ServerFeeder,
+			public DirectIOURLManagment,
 			protected DCKeyObjectContainer {
 				friend class chaos::NetworkBroker;
 				
@@ -72,8 +73,6 @@ namespace chaos {
                 boost::atomic_uint	channel_counter;
 			protected:
 				void forwardEventToClientConnection(DirectIOClientConnection *client, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event_type);
-                
-                bool decodeServerDescirptionWithEndpoint(std::string server_description_endpoint, std::string& server_description, uint16_t& endpoint);
 			public:
                 DirectIOClient(string alias);
 				virtual ~DirectIOClient();
