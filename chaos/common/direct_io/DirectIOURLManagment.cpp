@@ -43,7 +43,9 @@ bool DirectIOURLManagment::checkURL(const std::string& url) {
 }
 
 
-bool DirectIOURLManagment::decoupleServerDescription(std::string server_desc,  std::string& priority_desc, std::string& service_desc) {
+bool DirectIOURLManagment::decoupleServerDescription(const std::string& server_desc,
+													 std::string& priority_desc,
+													 std::string& service_desc) {
 	std::vector<std::string> server_desc_tokens;
 	
 	if(!boost::regex_match(server_desc, DirectIOHostNameRegExp) &&
@@ -58,7 +60,8 @@ bool DirectIOURLManagment::decoupleServerDescription(std::string server_desc,  s
 	return true;
 }
 
-bool DirectIOURLManagment::decoupleServerDescription(std::string server_desc, std::vector<std::string>& servers_desc) {
+bool DirectIOURLManagment::decoupleServerDescription(const std::string& server_desc,
+													 std::vector<std::string>& servers_desc) {
 	std::string p_desc;
 	std::string s_desc;
 	if(! decoupleServerDescription(server_desc, p_desc, s_desc)) {
@@ -70,7 +73,9 @@ bool DirectIOURLManagment::decoupleServerDescription(std::string server_desc, st
 }
 
 
-bool DirectIOURLManagment::decodeServerDescirptionWithEndpoint(std::string server_description_endpoint, std::string& server_description, uint16_t& endpoint) {
+bool DirectIOURLManagment::decodeServerDescriptionWithEndpoint(const std::string& server_description_endpoint,
+															   std::string& server_description,
+															   uint16_t& endpoint) {
     std::vector<std::string> tokens;
     
     if(!checkURL(server_description_endpoint)) {
