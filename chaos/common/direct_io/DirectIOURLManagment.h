@@ -23,25 +23,31 @@
 
 #include <string>
 #include <vector>
-
+#include <inttypes.h>
 namespace chaos {
 	namespace common {
 		namespace direct_io {
 			
+			/*!
+			 Class for DirectIO URL managment
+			 */
 			class DirectIOURLManagment {
 			public:
-				
+				//! given a standard DirectIO URL (host:p_port:s_port:endpoint), the base server description and endpoint are returned
 				bool decodeServerDescriptionWithEndpoint(const std::string& server_description_endpoint,
 														 std::string& server_description,
 														 uint16_t& endpoint);
 				
+				//! given a standard DirectIO URL (host:p_port:s_port:endpoint), two single url (host:port) are returned
 				bool decoupleServerDescription(const std::string& server_desc,
 											   std::string& priority_desc,
 											   std::string& service_desc);
 				
+				//! given a standard DirectIO URL (host:p_port:s_port:endpoint), two single url (host:port) are returned
 				bool decoupleServerDescription(const std::string& server_desc,
 											   std::vector<std::string>& servers_desc);
 				
+				//! static check method for the enteri DirectIO URL (host:p_port:s_port:endpoint)
 				static bool checkURL(const std::string& url);
 			};
 			
