@@ -54,7 +54,7 @@ DirectIOClientConnection *DirectIOClient::getNewConnection(std::string server_de
     uint16_t endpoint;
     std::string server_description;
     DEBUG_CODE(DIOLDBG_ << "Requested a new connection for a server description " << server_description_with_endpoint;)
-    if(decodeServerDescirptionWithEndpoint(server_description_with_endpoint, server_description, endpoint)) {
+    if(decodeServerDescriptionWithEndpoint(server_description_with_endpoint, server_description, endpoint)) {
         DEBUG_CODE(DIOLDBG_ << "scomposed into server description " << server_description << " and endpoint " << endpoint;)
         return getNewConnection(server_description, endpoint);
     } else return NULL;

@@ -30,9 +30,18 @@ namespace chaos {
 			
 			class DirectIOURLManagment {
 			public:
-				bool decodeServerDescirptionWithEndpoint(std::string server_description_endpoint, std::string& server_description, uint16_t& endpoint);
-				bool decoupleServerDescription(std::string server_desc,  std::string& priority_desc, std::string& service_desc);
-				bool decoupleServerDescription(std::string server_desc, std::vector<std::string>& servers_desc);
+				
+				bool decodeServerDescriptionWithEndpoint(const std::string& server_description_endpoint,
+														 std::string& server_description,
+														 uint16_t& endpoint);
+				
+				bool decoupleServerDescription(const std::string& server_desc,
+											   std::string& priority_desc,
+											   std::string& service_desc);
+				
+				bool decoupleServerDescription(const std::string& server_desc,
+											   std::vector<std::string>& servers_desc);
+				
 				static bool checkURL(const std::string& url);
 			};
 			
