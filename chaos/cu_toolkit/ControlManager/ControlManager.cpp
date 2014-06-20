@@ -29,26 +29,10 @@ using namespace chaos;
 using namespace chaos::cu;
 using namespace std;
 
-#define INIT_DEINIT_ACTION_CU_PARAM_NAME            "cu_uuid"
-#define INIT_DEINIT_ACTION_CU_PARAM_DESCRIPTION     "The name of the Control Unit subject of the operation"
-#define WAITH_TIME_FOR_CU_REGISTRATION 2000000
-
-#define CHECK_AND_RETURN_CU_UUID_PARAM_OR_TROW(x, y)\
-string y;\
-if(!x->hasKey(INIT_DEINIT_ACTION_CU_PARAM_NAME)) {\
-throw CException(0, "The Control Unit identifier param has not been set", "ControlManager::initSandbox");\
-}\
-y=x->getStringValue(INIT_DEINIT_ACTION_CU_PARAM_NAME);
-
-#define CHECK_CU_PRESENCE_IN_MAP_OR_TROW(x)\
-if(!controlUnitInstanceMap.count(x)) {\
-throw CException(0, "The Control Unit identifier is not registered", "ControlManager::initSandbox");\
-}
-
 #define LCMAPP_ LAPP_ << "[Control Manager] - "
-#define LCMDBG_ LDBG_ << "[Control Manager DBG] - "
-#define LCMERR_ LERR_ << "[Control Manager Error] - "
-
+#define LCMDBG_ LDBG_ << "[Control Manager] - "
+#define LCMERR_ LERR_ << "[Control Manager] - "
+#define WAITH_TIME_FOR_CU_REGISTRATION 2000000
 /*
  Constructor
  */
@@ -76,24 +60,28 @@ void ControlManager::init(void *initParameter) throw(CException) {
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
                                                                                    &ControlManager::loadControlUnit,
                                                                                    ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN,
-                                                                                   "loadControlUnit",
+                                                                                   ChaosSystemDomainAndActionLabel::ACTION_CU_LOAD,
                                                                                    "Control Unit load system action");
 	//add parameter for control unit name
-    actionDescription->addParam(INIT_DEINIT_ACTION_CU_PARAM_NAME,
+    actionDescription->addParam(ChaosSystemDomainAndActionLabel::PARAM_CU_LOAD_UNLOAD_ALIAS,
     							DataType::TYPE_STRING,
-    							INIT_DEINIT_ACTION_CU_PARAM_DESCRIPTION);
+    							"Alias of the control unit to load");
+	//add parameter for driver initialization string
+    actionDescription->addParam(ChaosSystemDomainAndActionLabel::PARAM_CU_LOAD_DRIVER_PARAMS,
+    							DataType::TYPE_STRING,
+    							"Driver params (pipe separated '|') to pass to the control unit instance");
     
 	//deinit CU action
     
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
                                                                                    &ControlManager::unloadControlUnit,
                                                                                    ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN,
-                                                                                   "unloadControlUnit",
+                                                                                   ChaosSystemDomainAndActionLabel::ACTION_CU_UNLOAD,
                                                                                    "Control Unit unload system action");
 	//add parameter for control unit name
-    actionDescription->addParam(INIT_DEINIT_ACTION_CU_PARAM_NAME,
+    actionDescription->addParam(ChaosSystemDomainAndActionLabel::PARAM_CU_LOAD_UNLOAD_ALIAS,
     							DataType::TYPE_STRING,
-    							INIT_DEINIT_ACTION_CU_PARAM_DESCRIPTION);
+    							"Alias of the control unit to unload");
     
     
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
@@ -116,7 +104,8 @@ void ControlManager::init(void *initParameter) throw(CException) {
  */
 void ControlManager::start() throw(CException) {
     LCMAPP_  << "Start cu scan timer";
-	chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, 2000);
+	thread_run = true;
+	thread_registration.reset(new boost::thread(boost::bind(&ControlManager::manageControlUnit, this)));
 }
 
 /*
@@ -124,7 +113,9 @@ void ControlManager::start() throw(CException) {
  */
 void ControlManager::stop() throw(CException) {
     LCMAPP_  << "Stop cu scan timer";
-	chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
+	thread_run = false;
+	thread_waith_semaphore.unlock();
+	if(thread_registration.get()) thread_registration->join();
 }
 
 /*
@@ -142,8 +133,8 @@ void ControlManager::deinit() throw(CException) {
     
     
     LCMAPP_  << "Deinit all the submitted Control Unit";
-    map<string, shared_ptr<AbstractControlUnit> >::iterator cuIter = controlUnitInstanceMap.begin();
-    for ( ; cuIter != controlUnitInstanceMap.end(); cuIter++ ){
+    map<string, shared_ptr<AbstractControlUnit> >::iterator cuIter = map_control_unit_instance.begin();
+    for ( ; cuIter != map_control_unit_instance.end(); cuIter++ ){
         shared_ptr<AbstractControlUnit> cu = (*cuIter).second;
         
         LCMAPP_  << "Deregister RPC action for cu whith instance:" << cu->getCUInstance();
@@ -199,7 +190,7 @@ void ControlManager::deinit() throw(CException) {
         cuDeclareActionsInstance.clear();
         LCMAPP_  << "Deinitilized Control Unit Sanbox:" << cu->getCUInstance();
     }
-    controlUnitInstanceMap.clear();
+    map_control_unit_instance.clear();
 }
 
 
@@ -208,85 +199,97 @@ void ControlManager::deinit() throw(CException) {
  Submit a new Control unit for operation
  */
 void ControlManager::submitControlUnit(AbstractControlUnit *data) throw(CException) {
-    mutex::scoped_lock lock(qMutex);
+    boost::unique_lock<boost::shared_mutex> lock(mutex_registration);
     submittedCUQueue.push(data);
-    lock.unlock();
-    lockCondition.notify_one();
+	
+	//unlock thread
+	thread_waith_semaphore.unlock();
 }
 
 
-void ControlManager::timeout() {
+void ControlManager::manageControlUnit() {
 	//initialize the Control Unit
     int registrationError = ErrorCode::EC_NO_ERROR;
     AbstractControlUnit *curCU = 0L;
     std::vector<const chaos::DeclareAction * > cuDeclareActionsInstance;
     CDataWrapper cuActionAndDataset;
-	//boost::mutex::scoped_lock lock(qMutex);
-	boost::unique_lock<boost::mutex> lock(qMutex);
-	while(!submittedCUQueue.empty()){
-		
-		//get the oldest data ad copy the ahsred_ptr
-		curCU = submittedCUQueue.front();
-		//remove the oldest data
-		submittedCUQueue.pop();
-		try {
-			LCMAPP_  << "Got new Control Unit";
-			shared_ptr<AbstractControlUnit> cuPtr(curCU);
+	
+	boost::unique_lock<boost::shared_mutex> lock(mutex_registration, boost::defer_lock);
+	while(thread_run) {
+		while(!submittedCUQueue.empty()){
+			//lock queue
+			lock.lock();
 			
-			//associate the event channel to the control unit
-			cuPtr->deviceEventChannel = CommandManager::getInstance()->getDeviceEventChannel();
+			//get the oldest data ad copy the ahsred_ptr
+			curCU = submittedCUQueue.front();
 			
-			LCMAPP_  << "Setup Control Unit Sanbox for cu with instance:" << cuPtr->getCUInstance();
-			cuPtr->_defineActionAndDataset(cuActionAndDataset);
+			//remove the oldest data
+			submittedCUQueue.pop();
 			
-			LCMAPP_  << "Register RPC action for cu whith instance:" << cuPtr->getCUInstance();
-			cuPtr->_getDeclareActionInstance(cuDeclareActionsInstance);
-			for(int idx = 0; idx < cuDeclareActionsInstance.size(); idx++) {
-				CommandManager::getInstance()->registerAction((chaos::DeclareAction *)cuDeclareActionsInstance[idx]);
-			}
-			
-			//sendConfPackToMDS(cuPtr->defaultInternalConf.get());
-			LCMAPP_  << "Talk with MDS for cu with instance:" << cuPtr->getCUInstance();
-			registrationError = sendConfPackToMDS(cuActionAndDataset);
-			if(registrationError == ErrorCode::EC_NO_ERROR){
-				LCMAPP_  << "Configuration pack has been sent to MDS for cu with instance:" << cuPtr->getCUInstance();
-				LCMAPP_  << "Control Unit Sanbox:" << cuPtr->getCUInstance() << " ready to work";
-			} else {
-				LCMAPP_  << "ERROR sending configuration pack has been sent to MDS for cu with instance:" << cuPtr->getCUInstance();
-			}
-			
-			//the sandbox name now is the real CUName_CUInstance before the initSandbox method call the CUInstance is
-			//randomlly defined but if a CU want to ovveride it it can dureing initSandbox call
-			if(controlUnitInstanceMap.count(cuPtr->getCUInstance())) {
-				LCMERR_  << "Duplicated control unit instance " << cuPtr->getCUInstance();
-				return;
-			}
-			
-			//add sandbox to all map of running cu
-			controlUnitInstanceMap.insert(make_pair(cuPtr->getCUInstance(), cuPtr));
-			
-			//check if we need to autostart and init the CU
-			if(cuActionAndDataset.hasKey(CUDefinitionKey::CS_CM_CU_AUTOSTART) &&
-			   cuActionAndDataset.getInt32Value(CUDefinitionKey::CS_CM_CU_AUTOSTART)){
-				//cuPtr->initSandbox(cuPtr->defaultInternalConf.get());
-				auto_ptr<SerializationBuffer> serBuffForGlobalConf(GlobalConfiguration::getInstance()->getConfiguration()->getBSONData());
-				auto_ptr<CDataWrapper> masterConfiguration(new CDataWrapper(serBuffForGlobalConf->getBufferPtr()));
-				masterConfiguration->appendAllElement(cuActionAndDataset);
+			//unlock queue
+			lock.unlock();
+			try {
+				LCMAPP_  << "Got new Control Unit";
+				shared_ptr<AbstractControlUnit> cuPtr(curCU);
 				
+				//associate the event channel to the control unit
+				cuPtr->deviceEventChannel = CommandManager::getInstance()->getDeviceEventChannel();
+				
+				LCMAPP_  << "Setup Control Unit Sanbox for cu with instance:" << cuPtr->getCUInstance();
+				cuPtr->_defineActionAndDataset(cuActionAndDataset);
+				
+				LCMAPP_  << "Register RPC action for cu whith instance:" << cuPtr->getCUInstance();
+				cuPtr->_getDeclareActionInstance(cuDeclareActionsInstance);
+				for(int idx = 0; idx < cuDeclareActionsInstance.size(); idx++) {
+					CommandManager::getInstance()->registerAction((chaos::DeclareAction *)cuDeclareActionsInstance[idx]);
+				}
+				
+				//sendConfPackToMDS(cuPtr->defaultInternalConf.get());
+				LCMAPP_  << "Talk with MDS for cu with instance:" << cuPtr->getCUInstance();
+				registrationError = sendConfPackToMDS(cuActionAndDataset);
+				if(registrationError == ErrorCode::EC_NO_ERROR){
+					LCMAPP_  << "Configuration pack has been sent to MDS for cu with instance:" << cuPtr->getCUInstance();
+					LCMAPP_  << "Control Unit Sanbox:" << cuPtr->getCUInstance() << " ready to work";
+				} else {
+					LCMAPP_  << "ERROR sending configuration pack has been sent to MDS for cu with instance:" << cuPtr->getCUInstance();
+				}
+				
+				//the sandbox name now is the real CUName_CUInstance before the initSandbox method call the CUInstance is
+				//randomlly defined but if a CU want to ovveride it it can dureing initSandbox call
+				if(map_control_unit_instance.count(cuPtr->getCUInstance())) {
+					LCMERR_  << "Duplicated control unit instance " << cuPtr->getCUInstance();
+					return;
+				}
+				
+				//add sandbox to all map of running cu
+				map_control_unit_instance.insert(make_pair(cuPtr->getCUInstance(), cuPtr));
+				
+				//check if we need to autostart and init the CU
+				if(cuActionAndDataset.hasKey(CUDefinitionKey::CS_CM_CU_AUTOSTART) &&
+				   cuActionAndDataset.getInt32Value(CUDefinitionKey::CS_CM_CU_AUTOSTART)){
+					//cuPtr->initSandbox(cuPtr->defaultInternalConf.get());
+					auto_ptr<SerializationBuffer> serBuffForGlobalConf(GlobalConfiguration::getInstance()->getConfiguration()->getBSONData());
+					auto_ptr<CDataWrapper> masterConfiguration(new CDataWrapper(serBuffForGlobalConf->getBufferPtr()));
+					masterConfiguration->appendAllElement(cuActionAndDataset);
+					
 #if DEBUG
-				LDBG_ << "Registration Error:" << registrationError;
-				LDBG_ << masterConfiguration->getJSONString();
+					LDBG_ << "Registration Error:" << registrationError;
+					LDBG_ << masterConfiguration->getJSONString();
 #endif
+				}
+				
+				
+				//clear
+				cuDeclareActionsInstance.clear();
+				cuActionAndDataset.reset();
+			} catch (CException& ex) {
+				DECODE_CHAOS_EXCEPTION(ex)
 			}
-			
-			
-			//clear
-			cuDeclareActionsInstance.clear();
-			cuActionAndDataset.reset();
-		} catch (CException& ex) {
-			DECODE_CHAOS_EXCEPTION(ex)
+			//no
 		}
-		//no
+		
+		//all cu as been registered, wiath for other task
+		thread_waith_semaphore.wait();
 	}
 }
 
@@ -309,30 +312,22 @@ int ControlManager::sendConfPackToMDS(CDataWrapper& dataToSend) {
 }
 
 /*
- check for empty buffer
+ Load the requested control unit
  */
-bool ControlManager::isEmpty() const {
-    boost::mutex::scoped_lock lock(qMutex);
-    return submittedCUQueue.empty();
-}
-
-/*
- Init the sandbox
- */
-CDataWrapper* ControlManager::loadControlUnit(CDataWrapper*, bool&) throw (CException) {
+CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *param_info, bool& detach) throw (CException) {
     return NULL;
 }
 
 /*
- Deinit the sandbox
+ Unload the requested control unit
  */
-CDataWrapper* ControlManager::unloadControlUnit(CDataWrapper*, bool&) throw (CException) {
+CDataWrapper* ControlManager::unloadControlUnit(CDataWrapper *param_info, bool& detach) throw (CException) {
     return NULL;
 }
 
 /*
  Configure the sandbox and all subtree of the CU
  */
-CDataWrapper* ControlManager::updateConfiguration(CDataWrapper*, bool&) {
+CDataWrapper* ControlManager::updateConfiguration(CDataWrapper *param_info, bool& detach) {
     return NULL;
 }

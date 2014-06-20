@@ -73,6 +73,12 @@ namespace chaos{
 					const char * alias;
 					const char * version;
 					const char * init_parameter;
+					DrvRequestInfo(const DrvRequestInfo& _orig):alias(_orig.alias), version(_orig.version), init_parameter(_orig.init_parameter) {
+						
+					}
+					DrvRequestInfo(const char * _alias, const char * _version, const char * _init_parameter):alias(_alias), version(_version), init_parameter(_init_parameter) {
+						
+					}
 				}DrvRequestInfo;
                 
                 //forward declaration

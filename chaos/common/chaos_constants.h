@@ -115,7 +115,7 @@ namespace chaos {
         //! start the CU without metadataserver permission
         static const char * const CS_CM_CU_AUTOSTART                            = "cs|cm|cu|autostart";
         //! start the CU without metadataserver presence
-        static const char * const CS_CM_CU_AUTOSTART_NO_MS                        = "cs|cm|cu|autostart_no_ms";
+        static const char * const CS_CM_CU_AUTOSTART_NO_MS                      = "cs|cm|cu|autostart_no_ms";
         //!key representing the type of parameter
         static const char * const CS_CM_CU_NAME                                 = "cs|cm|cu_name";
         //!key representing the type of parameter
@@ -364,26 +364,45 @@ namespace chaos {
      */
     namespace ChaosSystemDomainAndActionLabel {
         //! The chaos action domain for system message
-        static const char * const SYSTEM_DOMAIN             = "system";
+        static const char * const SYSTEM_DOMAIN					= "system";
+		
         //! This action provide to the shutdown porcess of the enteir daemon
         //! that runt the active contorl units. All it will be gracefull shutten down
         //! before daemon exit
-        static const char * const ACTION_SYSTEM_SHUTDOWN    = "shutdown";
+        static const char * const ACTION_SYSTEM_SHUTDOWN		= "shutdownControlUnitServer";
+		
+		//! Load the control unit
+        static const char * const ACTION_CU_LOAD				= "loadControlUnit";
+		
+		//! Unload the control unit
+        static const char * const ACTION_CU_UNLOAD				= "unloadControlUnit";
+		
+		//! Alias for the control unit to load/unload
+		static const char * const PARAM_CU_LOAD_UNLOAD_ALIAS	= "controlUnitAlias";
+		
+		//! driver params passed during load operation for a specified control unit
+		static const char * const PARAM_CU_LOAD_DRIVER_PARAMS	= "controlUnitDriverParams";
+
         //! Start the control unit intialization, the action need the default value
         //! of the input attribute for a determinate device
-        static const char * const ACTION_DEVICE_INIT        = "initDevice";
+        static const char * const ACTION_CU_INIT				= "initControlUnit";
+		
         //! Deinitialization of a control unit, if it is in run, the stop phase
         //! is started befor deinitialization one
-        static const char * const ACTION_DEVICE_DEINIT      = "deinitDevice";
+        static const char * const ACTION_CU_DEINIT				= "deinitControlUnit";
+		
         //! start the run method schedule for a determinated device
-        static const char * const ACTION_DEVICE_START       = "startDevice";
+        static const char * const ACTION_CU_START				= "startControlUnit";
+		
         //! pause the run method for a determinated device
-        static const char * const ACTION_DEVICE_STOP        = "stopDevice";
+        static const char * const ACTION_CU_STOP				= "stopControlUnit";
+		
         //! return the state of the device
-        static const char * const ACTION_DEVICE_GET_STATE   = "getState";
+        static const char * const ACTION_CU_GET_STATE			= "getControlUnitState";
+		
 		//! return the control unit information
-        static const char * const ACTION_CU_GET_INFO		= "getInfo";
-
+        static const char * const ACTION_CU_GET_INFO			= "getControlUnitInfo";
+		
     }
     /** @} */ // end of ChaosSystemDomainAndActionLabel
     
@@ -426,7 +445,7 @@ namespace chaos {
         //!live data address
         static const char * const CS_DM_LD_SERVER_ADDRESS						= "cs|dm|ld|server_address";
         //!key associated with the device identification in a k/v storage ien
-        static const char * const CS_DM_LD_DEVICE_ADDRESS_KEY                   = "ld.device_addr_key";
+        static const char * const CS_DM_LD_CU_ADDRESS_KEY                   = "ld.device_addr_key";
 		//!key associated with the device identification in a k/v storage ien
         static const char * const DATAPROXY_CLIENT_CONNECTION_MODE				= "chaos:dp:conn_mode";
     }
@@ -442,7 +461,7 @@ namespace chaos {
     namespace DataPackKey{
         //!define the device id key, this represent the
         //!primary key of the device
-        static const char * const CS_CSV_DEVICE_ID                            = "cs|csv|device_id";
+        static const char * const CS_CSV_CU_ID                            = "cs|csv|device_id";
         
         //!this define the timestamp of the data rapresented
         //!in the dataset row

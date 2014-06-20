@@ -221,7 +221,14 @@ namespace chaos {
             chaos_data::CDataWrapper* setDatasetAttribute(chaos_data::CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException);
         public:
             
-            RTAbstractControlUnit();
+			//! default constructor
+            RTAbstractControlUnit(const std::string& _control_unit_id);
+			/*!
+			 Parametrized constructor
+			 \param _control_unit_id unique id for the control unit
+			 \param _control_unit_drivers driver information
+			 */
+            RTAbstractControlUnit(const std::string& _control_unit_id, const ControlUnitDriverList& _control_unit_drivers);
             ~RTAbstractControlUnit();
         };
         

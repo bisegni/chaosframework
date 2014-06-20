@@ -42,13 +42,26 @@ using namespace chaos::common::data;
 using namespace chaos::cu;
 using namespace chaos::cu::driver_manager::driver;
 
-#define LCU_ LAPP_ << "[Control Unit:"<<getCUInstance()<<"] - "
+#define LCU_ LAPP_ << "[Control Unit:"<<getCUInstance()<<"-"<<control_unit_instance<<"] - "
 
 
-AbstractControlUnit::AbstractControlUnit(std::string _control_unit_type):
+AbstractControlUnit::AbstractControlUnit(const std::string& _control_unit_type, const std::string& _control_unit_id):
 DatasetDB(GlobalConfiguration::getInstance()->getOption<bool>(CU_OPT_IN_MEMORY_DATABASE)),
-cuInstance(UUIDUtil::generateUUIDLite()),
-control_unit_type(_control_unit_type) {
+control_unit_instance(UUIDUtil::generateUUIDLite()),
+control_unit_type(_control_unit_type),
+control_unit_id(_control_unit_id) {
+}
+
+//! Default Contructor
+AbstractControlUnit::AbstractControlUnit(const std::string& _control_unit_type, const std::string& _control_unit_id, const ControlUnitDriverList& _control_unit_drivers):
+DatasetDB(GlobalConfiguration::getInstance()->getOption<bool>(CU_OPT_IN_MEMORY_DATABASE)),
+control_unit_instance(UUIDUtil::generateUUIDLite()),
+control_unit_type(_control_unit_type),
+control_unit_id(_control_unit_id){
+	//copy array
+	for (int idx = 0; idx < _control_unit_drivers.size(); idx++){
+		control_unit_drivers.push_back(_control_unit_drivers[idx]);
+	}
 }
 
 /*!
@@ -61,7 +74,7 @@ AbstractControlUnit::~AbstractControlUnit() {
  return the CU name
  */
 const char * AbstractControlUnit::getCUInstance(){
-    return cuInstance.c_str();
+    return control_unit_instance.c_str();
 };
 
 /*
@@ -79,9 +92,13 @@ void AbstractControlUnit::setKeyDataStorage(KeyDataStorage* _keyDatStorage) {
 void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfiguration)  throw(CException) {
     vector<std::string> tempStringVector;
     
+	if(control_unit_id.size()) {
+		setDeviceID(control_unit_id);
+	}
+	
     //add the CU isntance, this can be redefinide by user in the unitDefineActionAndDataset method
     //for let the CU have the same instance at every run
-    setupConfiguration.addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE, cuInstance);
+    setupConfiguration.addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE, control_unit_instance);
     //check if as been setuped a file for configuration
     //LCU_ << "Check if as been setup a json file path to configura CU:" << CU_IDENTIFIER_C_STREAM;
     //loadCDataWrapperForJsonFile(setupConfiguration);
@@ -110,29 +127,29 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
     LCU_ << "Register initDevice action";
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::_init,
-                                                     ChaosSystemDomainAndActionLabel::ACTION_DEVICE_INIT,
+                                                     ChaosSystemDomainAndActionLabel::ACTION_CU_INIT,
                                                      "Perform the control unit initialization");
     
     LCU_ << "Register deinitDevice action";
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::_deinit,
-                                                     ChaosSystemDomainAndActionLabel::ACTION_DEVICE_DEINIT,
+                                                     ChaosSystemDomainAndActionLabel::ACTION_CU_DEINIT,
                                                      "Perform the control unit deinitialization");
     LCU_ << "Register startDevice action";
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::_start,
-                                                     ChaosSystemDomainAndActionLabel::ACTION_DEVICE_START,
-                                                     "Sart the control unit scheduling");
+                                                     ChaosSystemDomainAndActionLabel::ACTION_CU_START,
+                                                     "Start the control unit scheduling");
     
     LCU_ << "Register stopDevice action";
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::_stop,
-                                                     ChaosSystemDomainAndActionLabel::ACTION_DEVICE_STOP,
+                                                     ChaosSystemDomainAndActionLabel::ACTION_CU_STOP,
                                                      "Stop the control unit scheduling");
     LCU_ << "Register getState action";
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::_getState,
-                                                     ChaosSystemDomainAndActionLabel::ACTION_DEVICE_GET_STATE,
+                                                     ChaosSystemDomainAndActionLabel::ACTION_CU_GET_STATE,
                                                      "Get the state of the running control unit");
 	LCU_ << "Register getInfo action";
     addActionDescritionInstance<AbstractControlUnit>(this,
@@ -147,6 +164,16 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
 #if DEBUG
     LCU_ << setupConfiguration.getJSONString();
 #endif
+}
+
+void AbstractControlUnit::unitDefineDriver(std::vector<cu_driver::DrvRequestInfo>& neededDriver) {
+	
+	for(ControlUnitDriverListIterator iter = control_unit_drivers.begin();
+		iter != control_unit_drivers.end();
+		iter++) {
+		//copy driver info to the system array reference
+		neededDriver.push_back(*iter);
+	}
 }
 
 /*
@@ -231,7 +258,7 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
 	}
 	//clear the vector
 	accessorInstances.clear();
-
+	
     return NULL;
 }
 

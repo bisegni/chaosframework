@@ -82,8 +82,13 @@ namespace chaos{
             friend class DomainActionsScheduler;
             friend class SCAbstractControlUnit;
 			friend class RTAbstractControlUnit;
-            
+		public:
+			typedef std::vector<chaos::cu::driver_manager::driver::DrvRequestInfo>				ControlUnitDriverList;
+			typedef std::vector<chaos::cu::driver_manager::driver::DrvRequestInfo>::iterator	ControlUnitDriverListIterator;
+		private:
 			std::string control_unit_type;
+			std::string control_unit_id;
+			ControlUnitDriverList control_unit_drivers;
 			
 			//! list of the accessor of the driver requested by the unit implementation
 			std::vector< cu_driver::DriverAccessor *> accessorInstances;
@@ -134,8 +139,8 @@ namespace chaos{
         protected:
             //  It's is the dynamically assigned instance of the CU. it will be used
             // as domain for the rpc action.
-            string cuInstance;
-            
+            string control_unit_instance;
+
             //! Momentary driver for push data into the central memory
             KeyDataStorage*  keyDataStorage;
             
@@ -189,7 +194,7 @@ namespace chaos{
 			 \param neededDriver need to be filled with the structure DrvRequestInfo filled with the information
 			 about the needed driver [name, version and initialization param if preset statically]
              */
-            virtual void unitDefineDriver(std::vector<cu_driver::DrvRequestInfo>& neededDriver) = 0;
+            virtual void unitDefineDriver(std::vector<cu_driver::DrvRequestInfo>& neededDriver);
 			
                 //! Abstract method for the initialization of the control unit
             /*!
@@ -247,8 +252,16 @@ namespace chaos{
 			/*!
 			 \param _control_unit_type the superclass need to set the control unit type for his implementation
 			 */
-            AbstractControlUnit(std::string _control_unit_type);
+            AbstractControlUnit(const std::string& _control_unit_type, const std::string& _control_unit_id);
             
+            //! Default Contructor
+			/*!
+			 \param _control_unit_type the superclass need to set the control unit type for his implementation
+			 \param _control_unit_id unique id for the control unit
+			 \param _control_unit_drivers driver information
+			 */
+            AbstractControlUnit(const std::string& _control_unit_type, const std::string& _control_unit_id, const ControlUnitDriverList& _control_unit_drivers);
+			
             //! default destructor
             virtual ~AbstractControlUnit();
             
@@ -265,7 +278,7 @@ namespace chaos{
                                                              const char*const actionAliasName,
                                                              const char*const actionDescription) {
                 //call the DeclareAction action register method, the domain will be associated to the control unit isntance
-                return DeclareAction::addActionDescritionInstance(objectReference, actionHandler, cuInstance.c_str(), actionAliasName, actionDescription);
+                return DeclareAction::addActionDescritionInstance(objectReference, actionHandler, control_unit_instance.c_str(), actionAliasName, actionDescription);
             }
             
             //! Return the contro unit instance

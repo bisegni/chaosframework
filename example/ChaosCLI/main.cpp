@@ -42,7 +42,7 @@ namespace chaos_batch = chaos::common::batch_command;
 
 #define OPT_STATE           "op"
 #define OPT_TIMEOUT         "timeout"
-#define OPT_DEVICE_ID       "deviceid"
+#define OPT_CU_ID       "deviceid"
 #define OPT_SCHEDULE_TIME   "stime"
 #define OPT_PRINT_STATE     "print-state"
 #define OPT_PRINT_TYPE		"print-type"
@@ -124,7 +124,7 @@ int main (int argc, char* argv[] )
         CUStateKey::ControlUnitState deviceState;
 		
         //! [UIToolkit Attribute Init]
-        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_DEVICE_ID, "The identification string of the device");
+        ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_CU_ID, "The identification string of the device");
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_TIMEOUT, "Timeout rpc in milliseconds", 2000, &timeout);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<int>(OPT_STATE, "The state to set on the device{1=init, 2=start, 3=stop, 4=deinit, 5=set schedule time, 6=submite slow command(slcu), 7=kill current command(slcu), 8=get command state by id, 9=set input channel(rtcu)}, 10=flush history state(slcu), 11=get dataset value for keys", 0);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<long>(OPT_SCHEDULE_TIME, "the time in microseconds for devide schedule time");
@@ -154,8 +154,8 @@ int main (int argc, char* argv[] )
             op = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<int>(OPT_STATE);
         }
         
-        if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_DEVICE_ID)){
-            deviceID = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<string>(OPT_DEVICE_ID);
+        if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CU_ID)){
+            deviceID = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<string>(OPT_CU_ID);
         }
         
         if(deviceID.size()==0) throw CException(1, "invalid device identification string", "check param");

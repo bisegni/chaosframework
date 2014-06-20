@@ -86,7 +86,15 @@ namespace chaos {
 
         public:
             
-            SCAbstractControlUnit();
+			//! default constructor
+            SCAbstractControlUnit(const std::string& _control_unit_id);
+			/*!
+			 Parametrized constructor
+			 \param _control_unit_id unique id for the control unit
+			 \param _control_unit_drivers driver information
+			 */
+            SCAbstractControlUnit(const std::string& _control_unit_id, const ControlUnitDriverList& _control_unit_drivers);
+			
             ~SCAbstractControlUnit();
             
             void setDefaultCommand(std::string dafaultCommandName, unsigned int sandbox_instance = 0);

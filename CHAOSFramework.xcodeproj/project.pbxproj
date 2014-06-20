@@ -420,8 +420,6 @@
 		32CB737016FE3432008575F0 /* ReaderDataService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CB736E16FE3432008575F0 /* ReaderDataService.h */; };
 		32CB7CE017099C8D00767FC1 /* DataCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CB7CDE17099C8D00767FC1 /* DataCache.cpp */; };
 		32CB7CE117099C8D00767FC1 /* DataCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CB7CDF17099C8D00767FC1 /* DataCache.h */; };
-		32CF054816AB23C200E86CC7 /* PerfTestCU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CF054616AB23C200E86CC7 /* PerfTestCU.cpp */; };
-		32CF054916AB23C200E86CC7 /* PerfTestCU.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CF054716AB23C200E86CC7 /* PerfTestCU.h */; };
 		32CFF95B15E4D950005D607E /* EventDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95915E4D950005D607E /* EventDescriptor.cpp */; };
 		32CFF95C15E4D950005D607E /* EventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFF95A15E4D950005D607E /* EventDescriptor.h */; };
 		32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95D15E4DBD3005D607E /* EventFactory.cpp */; };
@@ -970,8 +968,6 @@
 		32CB736E16FE3432008575F0 /* ReaderDataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReaderDataService.h; sourceTree = "<group>"; };
 		32CB7CDE17099C8D00767FC1 /* DataCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataCache.cpp; sourceTree = "<group>"; };
 		32CB7CDF17099C8D00767FC1 /* DataCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataCache.h; sourceTree = "<group>"; };
-		32CF054616AB23C200E86CC7 /* PerfTestCU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerfTestCU.cpp; sourceTree = "<group>"; };
-		32CF054716AB23C200E86CC7 /* PerfTestCU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerfTestCU.h; sourceTree = "<group>"; };
 		32CFF95915E4D950005D607E /* EventDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventDescriptor.cpp; sourceTree = "<group>"; };
 		32CFF95A15E4D950005D607E /* EventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDescriptor.h; sourceTree = "<group>"; };
 		32CFF95D15E4DBD3005D607E /* EventFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventFactory.cpp; sourceTree = "<group>"; };
@@ -1781,7 +1777,6 @@
 			isa = PBXGroup;
 			children = (
 				325F8B4E1763AED200EFE616 /* slow_command */,
-				32CF054416AB235100E86CC7 /* perf_test */,
 				328D2FBF16612A15007F482E /* handler */,
 				328D2FB51660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp */,
 				328D2FB61660EACD007F482E /* DSAttributeHandlerExecutionEngine.h */,
@@ -2221,15 +2216,6 @@
 			path = cache;
 			sourceTree = "<group>";
 		};
-		32CF054416AB235100E86CC7 /* perf_test */ = {
-			isa = PBXGroup;
-			children = (
-				32CF054616AB23C200E86CC7 /* PerfTestCU.cpp */,
-				32CF054716AB23C200E86CC7 /* PerfTestCU.h */,
-			);
-			path = perf_test;
-			sourceTree = "<group>";
-		};
 		32DF602B15E14B1900312C94 /* evt_desc */ = {
 			isa = PBXGroup;
 			children = (
@@ -2565,7 +2551,6 @@
 				328D2FC316612AB3007F482E /* DSInt32Handler.h in Headers */,
 				32DB1188166267FB0036D1B9 /* DSDoubleHandler.h in Headers */,
 				3264B05C1673623F002E87FA /* TDSObjectHandler.h in Headers */,
-				32CF054916AB23C200E86CC7 /* PerfTestCU.h in Headers */,
 				325F8B521763AF2300EFE616 /* SlowCommand.h in Headers */,
 				328CC9D71763CCC7000B30B6 /* AbstractDriver.h in Headers */,
 				32919A0C1764E68F00724874 /* DriverAccessor.h in Headers */,
@@ -2950,7 +2935,6 @@
 				326DB4CD14B3A3E50018A8D0 /* MultiBufferDataStorage.cpp in Sources */,
 				328D2FB71660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp in Sources */,
 				328D2FB91660EAD6007F482E /* DSAttributeHandler.cpp in Sources */,
-				32CF054816AB23C200E86CC7 /* PerfTestCU.cpp in Sources */,
 				325F8B511763AF2300EFE616 /* SlowCommand.cpp in Sources */,
 				328CC9D61763CCC7000B30B6 /* AbstractDriver.cpp in Sources */,
 				32234D3F176E045100525E0C /* SlowCommandExecutor.cpp in Sources */,
