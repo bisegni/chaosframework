@@ -13,7 +13,8 @@ INCLUDE_DIRECTORIES(. ${PROJECT_SOURCE_DIR}/../usr/local/include /Library/Java/J
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../usr/local/lib /usr/local/lib /usr/lib)
 ADD_DEFINITIONS(-O3 )
 
-SET(jnichaos_src JNIChaos.c)
+
+SET(jnichaos_src JNIChaos.cc)
 
 ADD_LIBRARY(jnichaos SHARED ${jnichaos_src})
 set_target_properties(jnichaos PROPERTIES VERSION 1.0.0 SOVERSION 1)

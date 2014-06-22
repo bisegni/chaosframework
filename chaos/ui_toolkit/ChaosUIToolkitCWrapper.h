@@ -25,7 +25,7 @@
  *  Some applications used in scentific experiment (as for example LabView) can be
  *  can be customized with the use of shared library written in "C" language. At this
  *  scope, !CHOAS give a simple interface to a DeviceController managed by user interface
- *  toolkit \link UIToolkitCWrapper wrapped with few simple "C" function\endlink. 
+ *  toolkit \link UIToolkitCWrapper wrapped with few simple "C" function\endlink.
  */
 
 /** @defgroup UIToolkitCWrapper "C" language interface to user interface toolkit
@@ -51,17 +51,17 @@ typedef unsigned long long uint64_t;
 extern "C" {
 #endif
 
-    
+
         //! User interface toolkit initialization
     /*!
-     Perform the user interface toolkit initialization, the startup parameter are the same of the complied 
+     Perform the user interface toolkit initialization, the startup parameter are the same of the complied
      !CHAOS application. For example: --log-on-console is setupped with the string
      "log-on-console=true" and for example "--metadata-server=host:5000" is "metadata-server=host:5000"
      \param startupParameter the startup initialization string queal to the norma launch program
      \return the error of operation, if all goes well the result is 0
      */
     int initToolkit(const char* startupParameter);
-    
+
         //! Device Controller creation
     /*!
      Create an instance of the controller for a device. The function return the DeviceControl ID that
@@ -71,9 +71,9 @@ extern "C" {
      \return the error of operation, if all goes well the result is 0
      */
     int getNewControllerForDeviceID(const char * const deviceID, uint32_t *devIDPtr);
-    
+
     int setControllerTimeout(uint32_t devID, uint32_t timeout);
-    
+
         //! Get device attribute names
     /*!
      Retrive the device attributes name giving a device identification string and a a direction.
@@ -96,7 +96,7 @@ extern "C" {
      \return the error of operation, if all goes well the result is 0
      */
     int initDevice(uint32_t devID);
-    
+
         //! Startup the device
     /*!
      Perform the startup of the device
@@ -104,7 +104,7 @@ extern "C" {
      \return the error of operation, if all goes well the result is 0
      */
     int startDevice(uint32_t devID);
-    
+
         //! Setup of the run method delay
     /*!
      Setup of the delay of the run method schedule
@@ -113,7 +113,7 @@ extern "C" {
      \return the error of operation, if all goes well the result is 0
      */
     int setDeviceRunScheduleDelay(uint32_t devID, int32_t delayTimeInMilliseconds);
-    
+
         //! Stop the device
     /*!
      Perform the interruption of the run method scehduling without deinitlize the control unit
@@ -121,7 +121,7 @@ extern "C" {
      \return the error of operation, if all goes well the result is 0
      */
     int stopDevice(uint32_t devID);
-    
+
         //! Deinit the device
     /*!
      Perform the deinitialization of the control unit
@@ -129,7 +129,7 @@ extern "C" {
      \return the error of operation, if all goes well the result is 0
      */
     int deinitDevice(uint32_t devID);
-    
+
         //! Fetch the device live data
     /*!
      Perform the update of device control internal live data  cache
@@ -137,28 +137,28 @@ extern "C" {
      \return the error of operation, if all goes well the result is 0
      */
     int fetchLiveData(uint32_t devID);
-    
+
         //! Return a string represetnation of an attribute value
     /*!
      Return the stirng representation of an attribute value. The current attribute value is keept from the
-     device control interna cache, that is filled with \link fetchLiveData \endlink 
+     device control interna cache, that is filled with \link fetchLiveData \endlink
      \param devID is the identification number got from \link getNewControllerForDeviceID \endlink function
      \param dsAttrName the name of the attribute
      \param dsAttrValueHandle the handle to c string that will contain the attribute value
      \return the error of operation, if all goes well the result is 0
      */
     int getStrValueForAttribute(uint32_t devID, const char * const dsAttrName, char ** dsAttrValueHandle);
-    
+
  /*!
      Return the stirng representation of an attribute value. The current attribute value is keept from the
-     device control interna cache, that is filled with \link fetchLiveData \endlink 
+     device control interna cache, that is filled with \link fetchLiveData \endlink
      \param devID is the identification number got from \link getNewControllerForDeviceID \endlink function
      \param dsAttrName the name of the attribute
      \param dsAttrValue a pointer to preallocated c string that will contain the attribute value
      \return the error of operation, if all goes well the result is 0
      */
     int getStrValueForAttr(uint32_t devID, const char * const dsAttrName, char * dsAttrValue);
-   
+
         //! Set the value for an attribute
     /*!
      Set an attribute value using  a string reprpesentation for the new value to use.
@@ -184,7 +184,7 @@ extern "C" {
 	 \param slow_command_data is the abstraction of the command data that is passed to the set handler befor the scheduler loop of the new command
 	 take palce. The memory of that parameter is not free
 	 */
-#ifdef __cplusplus
+/*#ifdef __cplusplus
 	int submitSlowControlCommand(uint32_t dev_id,
 								 const char * const command_alias,
 								 uint16_t submissione_rule,
@@ -193,7 +193,7 @@ extern "C" {
 								 uint32_t scheduler_steps_delay = 0,
 								 uint32_t submission_checker_steps_delay = 0,
 								 const char * const slow_command_data = NULL);
-#else
+#else*/
 	int submitSlowControlCommand(uint32_t dev_id,
 								 const char * const command_alias,
 								 uint16_t submissione_rule,
@@ -203,7 +203,7 @@ extern "C" {
 								 uint32_t submission_checker_steps_delay ,
 								 const char * const slow_command_data );
 
-#endif
+//#endif
         //! Device Control deinitialization
     /*!
      Perform deinitialization of a device control associated to an id
@@ -211,7 +211,7 @@ extern "C" {
      \return the error of operation, if all goes well the result is 0
      */
     int deinitController(uint32_t devID);
-    
+
         //! UiToolkit deinitialization
     /*!
      Perform the deinitialization of UIToolkit
