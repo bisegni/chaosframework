@@ -1,9 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
+    
+    
+        <link href="powersupply.css" rel="stylesheet" type="text/css">
+
     <script type="text/Javascript" src="Drinks/Drinks.js"></script>
+    <script type="text/Javascript" src="jquery.js"></script>
+    <script type="text/Javascript" src="flot/jquery.flot.js"></script>
+
     <script type="text/Javascript" src="chaos.js"></script>
-    <link href="style.css" rel="stylesheet" type="text/css">
+   
 </head>
 <body onload="setInterval(onload, 1500)">
     <!-- Power supply connection section -->
@@ -32,19 +39,18 @@
         <table>
             <tr>
                 <td rowspan="3">
-                    <display type="graph" id="currentGraph" height="300" width="500" scale="range" autoscale="true">
-                        <!-- <channel sweep="1" frequency="1"></channel> -->
-			<channel></channel>
-                    </display>
+			<div id="powersupply-graph" class="powersupply-graph-class"></div>		
                 </td>
                 <td class="digitalIndicator">
-                    <display type="digital" id="current" class="current" cipher="5" significative="2" height="40" width="100"></display>
+                    <display type="digital" id="current" cipher="5" significative="2" width="100px" height="40px"></display>
+<!--                        <display type="digital" class="digitalIndicator" id="current" cipher="5" significative="2" ></display>-->
                     Current
                 </td>
             </tr>
             <tr>
                 <td class="digitalIndicator">
-                    <display type="digital" id="set" cipher="5" significative="2" height="40" width="100"></display>
+                    <!--<display type="digital" class="digitalIndicator" id="set"  cipher="5" significative="2"></display>-->
+                    <display type="digital" id="set"  cipher="5" significative="2" width="100px" height="40px"></display>
                     Set
                 </td>
             </tr>
@@ -62,6 +68,7 @@
                         <tr>
                             <td><led id="alarm" value="0"></led></td>
                             <td>Alarm</td>
+                            <td><b id="alarms">0</b></td>
                         </tr>
                     </table>
                 </td>
@@ -77,7 +84,7 @@
                 <td class="controllerTd"><br/><br/>Toggle ON/OFF</td>
                 <td id="switchOn" class="controllerTd">
                     ON
-                    <switch id="ON" onchange="powerSupplyToggle(this.value)" width="50"></switch>
+                    <switch id="ON" onchange="powerSupplyToggle(this.value)"  ></switch>
                     OFF
                 </td>
                 <td rowspan="2" class="spacerTd">&nbsp;</td>
@@ -97,24 +104,26 @@
                             <td>
                                 <button class="polarity" name="polarity" value="0" onclick="polOpen.toggle();powerSupplyPol(0);">Open</button>
                             </td>
+                            <td > <b>Current</b><br></td><td> <input type="text" id="currentSet" name="currentSet" class="controlInput" value="0" /> 
+                            </td>
+                            <td><input type="button" value="Set" onclick="set.value = currentSet.value;powerSupplySet(currentSet.value);" />
+                            </td>
                         </tr>
                         <tr>
                             <td><led id="polPos" value="0"></led></td>
                             <td>
                                 <button class="polarity" name="polarity" value="1" onclick="polPos.toggle();powerSupplyPol(1);">Pos</button>
                             </td>
+                            <td><input type="button" value="Reset Alarms" onclick="powerSupplyClrAlarms();" />
+                            </td>
                         </tr>
                     </table>
                 </td>
             </tr>
-            <tr>
-                <td class="controllerTd" colspan="2">
-                    Current<br>
-                    <input class="controlInput" type="text" id="currentSet" name="currentSet" value="0" />
-                    <input type="button" value="Set" onclick="set.value = currentSet.value;powerSupplySet(currentSet.value);" />
-                </td>
-            </tr>
+          
         </table>
     </div>
+    
+       
 </body>
 </html>

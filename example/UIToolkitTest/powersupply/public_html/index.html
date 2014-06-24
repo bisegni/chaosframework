@@ -6,131 +6,41 @@ and open the template in the editor.
 -->
 <html>
     <head>
-  
-        <script type="text/javascript" src="Drinks/Drinks.js"></script>       
-         <div style="width:600px; height:100px;  border-radius:15px; box-shadow:1px 1px 3px #333;">
-             <div style="float:left">
-                <form name="init" onsubmit="initCU();return false;">
-                 PowerSupplyID: <input type="text" name="InitID">
-                    <input type="submit" value="Init">
-                </form> 
-                 
-             </div>
-             <div style="float:left">
-
-             <led id="connected" value="0" label="Connected" style="float:left"></led>
-             </div>
-             <p style="float:left"> timestamp: <b id="timestamp">0</b> </p>
-             </div>
+        <link href="powersupply.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="Chaos.js"></script>        
         <script>
-                var initialized="";  
-                var timestamp=0;
-                 
-                function initCU(){
-                    var cuname =document.forms["init"]["InitID"].value;
-                    if(cuname !=""){
-                        var request = new XMLHttpRequest();
-                         console.log("answer:"+cuname);
-                        request.open("GET","cgi-bin/cu.cgi?InitId="+cuname,true);
-                        request.send();
-                        initialized=cuname;        
-                    } else {
-                        alert ("You must specify a valid ID");
-                    }
-                    return false;
-                }
-                
-                function sendCommand(command,parm){
-                    var request= new XMLHttpRequest();
-                    console.log("device:"+initialized+" command:"+command+" param:"+parm);
-                    request.open("GET","cgi-bin/cu.cgi?dev="+initialized+"&cmd="+command+"&param="+parm,true);
-                    request.send();
-                }
-                function powerSupplyToggle(id){
-                    var element=Drinks.getElementById(id);
-                    sendCommand("mode","{\"mode_type\":"+element.value+"}");
-                }
-                function queryInterface(){
-                    
-                 var request = new XMLHttpRequest();
-                 request.open("GET","cgi-bin/cu.cgi?dev="+initialized,true);
-                                request.send();
-
-                request.onreadystatechange=function(){
-                   if(request.readyState == 4 ){
-                       var json_answer=request.responseText;
-                       console.log("answer:"+json_answer);
-                       if(json_answer=="")
-                           return;
-                       var json = JSON.parse(json_answer);
-                        Object.keys(json).forEach(function(key) {
-                        
-                         try {
-                             var val=json[key];
-                           if(typeof(val)=== 'object'){
-                               if(val.hasOwnProperty('$numberLong')){
-                                   val = val['$numberLong'];
-                                   //console.log("key " + key + " has value:" +val);
-                               }
-                              }
-                            if(key == 'cs|csv|timestamp'){
-                                if(timestamp!=val){
-                                   document.getElementById('timestamp').innerHTML =val;
-                                   Drinks.getElementById('connected').toggle(); 
-                                } 
-                              timestamp = val;
-
-                            } else{
-                               console.log("key:" + key +" value:"+json[key]);
-
-                               Drinks.getElementById(key).value=val; 
-                            }
-                             
-                        } catch(err){
-                           // console.error(key + " does not exist");
-                        }
-                         });
-                       
-                   }
-             } 
-                }
+           initializePowerSupply(["simpower"]);
             
-            
-            function onload(){
-               if(initialized !=""){
-                queryInterface();
-                }   
-            }
-     
-                   
-         </script>
-    </head>
-    
-    <body onload="setInterval(onload,2000);">
-        
-      <div style="width:600px; height:300px; background-color:gray; border-radius:15px; box-shadow:1px 1px 3px #333;">
-    <display id="gau" type="analog" value="0" max_range="200" min_range="0"  height="300" width="500" style="float:left;"></display>
-    <div style="float:left">
-    <display type="digital" id="current" cipher="5" significative="2"  height="100" width="100" style="float:top;" label="Current"></display>
-    <display type="digital" id="set" cipher="5" significative="2"  height="100" width="100" style="float:top;" label="Set"></display>
-    </div>
-  </div>
-      <div style="width:600px; height:200px;  border-radius:15px; box-shadow:1px 1px 3px #333;">
+        </script>
+        <body onload="setInterval(powerSupplyUpdateArrayInterface, 1500);">
+        <table>
+            <tr>
+                <td colspan="5"><b>State</b></td>
+                <td colspan="2"><b>Current</b></td>
+                <td><b>Current SP</b></td>
+                <td><b>Current Readout</b></td>
+                <td><b>Seconds</b></td>
 
-    <switch id="ON" label="ON" onchange="powerSupplyToggle(this.id);"  style="float:left";></switch>
-    <knob id="setcurrent" radius="60" type="analog" min_range="0"  max_range="200"  onchange="set.value=this.value" style="float:left;" ></knob> 
-    <div>
-    <led id="on" value="0" label="ON" style="float:left;margin-left:10px"></led>
-    <led id="stby" value="0" label="StBy" style="float:left;margin-left:40px"></led>
-    <led id="alarm" value="0" label="Alarm" style="float:left; margin-left:40px"></led>
-    </div>
-    <slider id="polarity" type="digital" value="0" selectindex="1" style="float:left">
-      <option value=”-1”>Neg</option>
-      <option value=”0”>Open</option>
-      <option value=”1”>Pos</option>
-    </slider> 
-     </div>
+                <td colspan="2"><b>Alarms</b></td>
+             </tr>
+            <tr>
+                <td><b id="cuname_0" class="PowersupplyIndicator">noname</b></td>
+                <td><input type="button" name="on" id="onstby_0" value="On" onclick="cus[0].powerSupplyToggle(this.value);" /></td>
+   
+                <td><input type="button" name="pos" id="pos_0" value="Pos" onclick="cus[0].setPolarity(1);" /></td>
+                <td><input type="button" name="neg" id="neg_0" value="Neg" onclick="cus[0].setPolarity(-1);" /></td>
+                <td><input type="button" name="open" id="open_0" value="open" onclick="cus[0].setPolarity(0);" /></td>
+                <td><input type="text" id="inputcurrent_0" name="currentSet" class="controlInput" value="0" /></td> 
+                <td><input type="button" id="setcurrent_0" value="set" onclick="cus[0].setCurrent(inputcurrent_0.value);" />
+                <td><b id="spcurrent_0" class="PowersupplyIndicator">0</b></td>
+                <td><b id="readoutcurrent_0" class="PowersupplyIndicator">0</b></td>
+                <td><b id="timestamp_0" class="PowersupplyIndicator">0</b></td>
 
-    
+                <td><input type="button" name="rstalarms" id="rstalarms_0" value="rstalarms" onclick="cus[0].powerSupplyClrAlarms();" /></td>
+                <td><b id="readoutalarms_0" class="PowersupplyIndicator">0</b></td>
+
+
+            </tr>
+                </table>
     </body>
 </html>
