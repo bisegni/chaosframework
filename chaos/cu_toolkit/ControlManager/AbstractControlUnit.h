@@ -83,6 +83,7 @@ namespace chaos{
             friend class SCAbstractControlUnit;
 			friend class RTAbstractControlUnit;
 		public:
+			//! definition of the type for the driver list
 			typedef std::vector<chaos::cu::driver_manager::driver::DrvRequestInfo>				ControlUnitDriverList;
 			typedef std::vector<chaos::cu::driver_manager::driver::DrvRequestInfo>::iterator	ControlUnitDriverListIterator;
 		private:
@@ -252,7 +253,8 @@ namespace chaos{
 			/*!
 			 \param _control_unit_type the superclass need to set the control unit type for his implementation
 			 */
-            AbstractControlUnit(const std::string& _control_unit_type, const std::string& _control_unit_id);
+            AbstractControlUnit(const std::string& _control_unit_type,
+								const std::string& _control_unit_id);
             
             //! Default Contructor
 			/*!
@@ -260,7 +262,9 @@ namespace chaos{
 			 \param _control_unit_id unique id for the control unit
 			 \param _control_unit_drivers driver information
 			 */
-            AbstractControlUnit(const std::string& _control_unit_type, const std::string& _control_unit_id, const ControlUnitDriverList& _control_unit_drivers);
+            AbstractControlUnit(const std::string& _control_unit_type,
+								const std::string& _control_unit_id,
+								const ControlUnitDriverList& _control_unit_drivers);
 			
             //! default destructor
             virtual ~AbstractControlUnit();

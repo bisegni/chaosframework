@@ -44,16 +44,19 @@ using namespace chaos::cu::driver_manager::driver;
 
 #define LCU_ LAPP_ << "[Control Unit:"<<getCUInstance()<<"-"<<control_unit_instance<<"] - "
 
-
-AbstractControlUnit::AbstractControlUnit(const std::string& _control_unit_type, const std::string& _control_unit_id):
+//! Contructor with type and id
+AbstractControlUnit::AbstractControlUnit(const std::string& _control_unit_type,
+										 const std::string& _control_unit_id):
 DatasetDB(GlobalConfiguration::getInstance()->getOption<bool>(CU_OPT_IN_MEMORY_DATABASE)),
 control_unit_instance(UUIDUtil::generateUUIDLite()),
 control_unit_type(_control_unit_type),
 control_unit_id(_control_unit_id) {
 }
 
-//! Default Contructor
-AbstractControlUnit::AbstractControlUnit(const std::string& _control_unit_type, const std::string& _control_unit_id, const ControlUnitDriverList& _control_unit_drivers):
+//! Contructor with driver
+AbstractControlUnit::AbstractControlUnit(const std::string& _control_unit_type,
+										 const std::string& _control_unit_id,
+										 const ControlUnitDriverList& _control_unit_drivers):
 DatasetDB(GlobalConfiguration::getInstance()->getOption<bool>(CU_OPT_IN_MEMORY_DATABASE)),
 control_unit_instance(UUIDUtil::generateUUIDLite()),
 control_unit_type(_control_unit_type),

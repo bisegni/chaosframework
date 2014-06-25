@@ -67,9 +67,9 @@ void cu_driver_manager::DriverManager::stop() throw(chaos::CException) {
 // Deinit the implementation
 void cu_driver_manager::DriverManager::deinit() throw(chaos::CException) {
     boost::unique_lock<boost::shared_mutex> lock(mutextMapAccess);
-
+	
 	//deinitialize all allcoated driver
-	mapParameterHashLiveInstance.clear();
+	mapParameterLiveInstance.clear();
 	for(std::map<string, cu_driver::AbstractDriver*>::iterator it = mapDriverUUIDHashLiveInstance.begin();
 		it != mapDriverUUIDHashLiveInstance.end();
 		it++){
@@ -86,43 +86,42 @@ void cu_driver_manager::DriverManager::deinit() throw(chaos::CException) {
 		delete(it->second);
 	}
 	mapDriverUUIDHashLiveInstance.clear();
+	mapParameterLiveInstance.clear();
 }
 
 // Register a new driver
 void cu_driver_manager::DriverManager::registerDriver(boost::shared_ptr< common_utility::ObjectInstancer<cu_driver::AbstractDriver> > instancer,
 													  boost::shared_ptr< common_plugin::PluginInspector > description) throw(chaos::CException) {
     boost::unique_lock<boost::shared_mutex> lock(mutextMapAccess);
-
+	
 	if(!instancer)
 		throw chaos::CException(1, "The instancer of the driver is mandatory for his registration", "DriverManager::registerDriver");
 	
 	if(!description)
 		throw chaos::CException(2, "The description of the driver is mandatory for his registration", "DriverManager::registerDriver");
-
+	
 	std::string composedDriverName = description->getName();
 	composedDriverName.append(description->getVersion());
 	DMLAPP_ << "Register new driver with alias = " << composedDriverName;
-
+	
 	if(mapDriverAliasVersionInstancer.count(composedDriverName)) {
 		DMLAPP_ << "Driver is already registered";
 		return;
 	}
 	
-	mapDriverAliasDescription.insert(make_pair(composedDriverName, description));
-	
-	mapDriverAliasVersionInstancer.insert(make_pair(composedDriverName, instancer));
+	boost::shared_ptr< DriverPluginInfo > driver_plugin_info(new DriverPluginInfo());
+	driver_plugin_info->sp_inspector = description;
+	driver_plugin_info->sp_instancer = instancer;
+	mapDriverAliasVersionInstancer.insert(make_pair(composedDriverName, driver_plugin_info));
 }
 
 // Get a new driver accessor for a driver instance
 cu_driver::DriverAccessor *cu_driver_manager::DriverManager::getNewAccessorForDriverInstance(cu_driver::DrvRequestInfo& request_info) throw(chaos::CException) {
-   boost::unique_lock<boost::shared_mutex> lock(mutextMapAccess);
+	boost::unique_lock<boost::shared_mutex> lock(mutextMapAccess);
 	
-	size_t instanceHash;
 	std::string composedDriverName;
-	std::string inputParameterHashing;
+	std::string stringForMap;
 	cu_driver::DriverAccessor *accessor = NULL;
-
-	boost::hash<std::string> string_hash;
 	// the hashing of th einstance  is composed by name+version+input_parameter[if given], because
 	// different device drive can have same parameter names. If no input is passed the hashing is
 	// calculated using only the device name and the version.
@@ -132,39 +131,39 @@ cu_driver::DriverAccessor *cu_driver_manager::DriverManager::getNewAccessorForDr
 	composedDriverName = request_info.alias;
 	composedDriverName.append(request_info.version);
 	
-	inputParameterHashing = composedDriverName;
-	inputParameterHashing.append(request_info.init_parameter);
+	stringForMap = composedDriverName;
+	stringForMap.append(request_info.init_parameter);
 	
-	instanceHash = string_hash(inputParameterHashing);
-	DMLDBG_ << "The hash value for the driver is -> " << instanceHash;
-
-	if(mapParameterHashLiveInstance.count(instanceHash)) {
+	DMLDBG_ << "The identification string for the driver is -> " << stringForMap;
+	
+	if(mapParameterLiveInstance.count(stringForMap)) {
 		DMLDBG_ << "Driver is already been instantiated";
-
-		if(mapParameterHashLiveInstance[instanceHash]->getNewAccessor(&accessor)) {
+		
+		if(mapParameterLiveInstance[stringForMap]->getNewAccessor(&accessor)) {
 			//new accessor has been allocated
-			DMLAPP_ << "Got new driver accessor with index ="<< accessor->accessor_index << " from driver with uuid =" << mapParameterHashLiveInstance[instanceHash];
-
+			DMLAPP_ << "Got new driver accessor with index ="<< accessor->accessor_index << " from driver with uuid =" << mapParameterLiveInstance[stringForMap];
+			
 			return accessor;
 		} else {
 			throw chaos::CException(1, "Device driver get new accessor", "DriverManager::getNewAccessorForDriverInstance");
 		}
 	}
-	DMLDBG_ << "Driver need to be instantiated using alias =" << composedDriverName << " instancer presence = " << mapDriverAliasVersionInstancer.count(composedDriverName);
+	DMLDBG_ << "Driver need to be instantiated using alias =" << stringForMap << " instancer presence = " << mapDriverAliasVersionInstancer.count(composedDriverName);
 	//the instance of the driver need to be created
 	if(!mapDriverAliasVersionInstancer.count(composedDriverName))
-	   throw chaos::CException(1, "The isntance of the drive has not been found", "DriverManager::getNewAccessorForDriverInstance");
+		throw chaos::CException(1, "The isntance of the drive has not been found", "DriverManager::getNewAccessorForDriverInstance");
 	
 	// i can create the instance
-	cu_driver::AbstractDriver *driverInstance = mapDriverAliasVersionInstancer[composedDriverName]->getInstance();
-	driverInstance->identificationHash = instanceHash;
+	cu_driver::AbstractDriver *driverInstance = mapDriverAliasVersionInstancer[composedDriverName]->sp_instancer->getInstance();
+	//associate the driver identification string
+	driverInstance->identificationString = stringForMap;
 	//initialize the newly create instance
 	DMLAPP_ << "Initilizing device driver with uuid = " << driverInstance->driverUUID;
 	chaos::utility::InizializableService::initImplementation(driverInstance, (void*)(request_info.init_parameter), "AbstractDriver", "DriverManager::getNewAccessorForDriverInstance");
 	
 	//here the driver has been initializated and has been associated with the hash of the parameter
-	DMLAPP_ << "Add device driver with hash = " << instanceHash;
-	mapParameterHashLiveInstance.insert(make_pair(instanceHash, driverInstance));
+	DMLAPP_ << "Add device driver with hash = " << driverInstance->identificationString;
+	mapParameterLiveInstance.insert(make_pair(stringForMap, driverInstance));
 	mapDriverUUIDHashLiveInstance.insert(make_pair(driverInstance->driverUUID, driverInstance));
 	//now can get new accessor
 	if(driverInstance->getNewAccessor(&accessor)) {
@@ -176,7 +175,7 @@ cu_driver::DriverAccessor *cu_driver_manager::DriverManager::getNewAccessorForDr
 //! release the accessor instance
 void cu_driver_manager::DriverManager::releaseAccessor(cu_driver::DriverAccessor *accessor) {
 	boost::unique_lock<boost::shared_mutex> lock(mutextMapAccess);
-
+	
 	if(!mapDriverUUIDHashLiveInstance.count(accessor->driver_uuid)) return;
 	
 	cu_driver::AbstractDriver *dInstance = mapDriverUUIDHashLiveInstance[accessor->driver_uuid];
@@ -195,7 +194,7 @@ void cu_driver_manager::DriverManager::releaseAccessor(cu_driver::DriverAccessor
 			
 		}
 		DMLAPP_ << "Deleting device driver with uuid = " << dInstance->driverUUID;
-		mapParameterHashLiveInstance.erase(dInstance->identificationHash);
+		mapParameterLiveInstance.erase(dInstance->identificationString);
 		mapDriverUUIDHashLiveInstance.erase(dInstance->driverUUID);
 		delete(dInstance);
 		dInstance = NULL;
