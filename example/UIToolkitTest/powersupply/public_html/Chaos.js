@@ -13,6 +13,7 @@ function CU(name){
     this.npoints=0;
     this.current=0;
     this.polarity=0;
+    this.alarms=0;
     this.initCU=function initCU(){
         if(this.initialized==0){
         var request = new XMLHttpRequest();
@@ -114,6 +115,8 @@ function CU(name){
                             my.state = val;
                      } else if(key=="current_sp"){
                          my.current_sp = val;
+                     } else if(key=="alarm"){
+                         my.alarms = val;
                      }
                 } catch(err) {
 		    // console.error(key + " does not exist:" + err);
@@ -126,7 +129,11 @@ function CU(name){
 
  function initializePowerSupply(cunames){
      for(var i=0;i<cunames.length;i++){
-          cus.push(new CU(cunames[i]));
+          var cu = new CU(cunames[i])
+          cus.push(cu);
+          console.log("initializing "+cunames[i]);
+          cu.initCU();
+          
      }
  }
  function powerSupplyUpdateArrayInterface(){
@@ -137,6 +144,8 @@ function CU(name){
                     document.getElementById("spcurrent_"+i).innerHTML=cus[i].current_sp;
                     document.getElementById("cuname_"+i).innerHTML=cus[i].name;
                     document.getElementById("timestamp_"+i).innerHTML=Number((cus[i].timestamp -cus[i].firsttimestamp))*1.0/1000;
+                    document.getElementById("readoutalarms_"+i).innerHTML=cus[i].alarms;
+
                     if(cus[i].state&0x2){
                         document.getElementById("onstby_"+i).value="On";
                         document.getElementById("neg_"+i).disabled=true;
@@ -166,6 +175,12 @@ function CU(name){
                     } else {
                         document.getElementById("cuname_"+i).style.color="red";
                     }
+                    if(cus[i].alarms!=0){
+                        document.getElementById("readoutalarms_"+i).style.color="red";
+                    } else {
+                         document.getElementById("readoutalarms_"+i).style.color="green";
+                    }
+                    $.plot("#powersupply-graph_"+i,[cus[i].points]);
                 }
             }
     

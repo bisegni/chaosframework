@@ -126,7 +126,7 @@ if (!Function.prototype.bind) {
 
 CanvasRenderingContext2D.prototype.dashedLineTo = function (fromX, fromY, toX, toY) {
 	var lt = function (a, b) { return a <= b; };
-	var gt = function (a, b) { return a >= b; };
+i	var gt = function (a, b) { return a >= b; };
 	var capmin = function (a, b) { return Math.min(a, b); };
   	var capmax = function (a, b) { return Math.max(a, b); };
 	var checkX = { thereYet: gt, cap: capmin };
