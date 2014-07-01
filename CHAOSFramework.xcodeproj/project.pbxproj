@@ -335,6 +335,10 @@
 		329FFFD2170712CE00D69CDE /* ManagedMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 329FFFD0170712CE00D69CDE /* ManagedMemory.h */; };
 		32A10C0318C87806006EA04C /* DeviceSharedDataWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A10C0118C87806006EA04C /* DeviceSharedDataWorker.cpp */; };
 		32A391C418FE923E001C5A73 /* TemplatedKeyValueHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A391C218FE923E001C5A73 /* TemplatedKeyValueHash.h */; };
+		32A420A51962D16A00AFE689 /* TCPUVClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A420A31962D16A00AFE689 /* TCPUVClient.cpp */; };
+		32A420A61962D16A00AFE689 /* TCPUVClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A420A41962D16A00AFE689 /* TCPUVClient.h */; };
+		32A420A91962E17F00AFE689 /* TCPUVServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A420A71962E17F00AFE689 /* TCPUVServer.cpp */; };
+		32A420AA1962E17F00AFE689 /* TCPUVServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A420A81962E17F00AFE689 /* TCPUVServer.h */; };
 		32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */; };
 		32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */; };
 		32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */; };
@@ -870,6 +874,10 @@
 		32A10C0118C87806006EA04C /* DeviceSharedDataWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceSharedDataWorker.cpp; sourceTree = "<group>"; };
 		32A10C0218C87806006EA04C /* DeviceSharedDataWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSharedDataWorker.h; sourceTree = "<group>"; };
 		32A391C218FE923E001C5A73 /* TemplatedKeyValueHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedKeyValueHash.h; sourceTree = "<group>"; };
+		32A420A31962D16A00AFE689 /* TCPUVClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCPUVClient.cpp; sourceTree = "<group>"; };
+		32A420A41962D16A00AFE689 /* TCPUVClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCPUVClient.h; sourceTree = "<group>"; };
+		32A420A71962E17F00AFE689 /* TCPUVServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCPUVServer.cpp; sourceTree = "<group>"; };
+		32A420A81962E17F00AFE689 /* TCPUVServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCPUVServer.h; sourceTree = "<group>"; };
 		32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaitSemaphore.h; sourceTree = "<group>"; };
 		32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = MDSMessageChannel.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSMessageChannel.cpp; sourceTree = "<group>"; };
@@ -1674,6 +1682,7 @@
 		326DB41114B38BC00018A8D0 /* rpc */ = {
 			isa = PBXGroup;
 			children = (
+				32A420A21962D13200AFE689 /* tcpuv */,
 				3268CE261616081000FCDB10 /* zmq */,
 				326DB41214B38BC00018A8D0 /* ChaosRpc.h */,
 				327967B415DF99FB0003C6DA /* RpcClient.cpp */,
@@ -1982,6 +1991,17 @@
 				329FFFD0170712CE00D69CDE /* ManagedMemory.h */,
 			);
 			path = memory;
+			sourceTree = "<group>";
+		};
+		32A420A21962D13200AFE689 /* tcpuv */ = {
+			isa = PBXGroup;
+			children = (
+				32A420A31962D16A00AFE689 /* TCPUVClient.cpp */,
+				32A420A41962D16A00AFE689 /* TCPUVClient.h */,
+				32A420A71962E17F00AFE689 /* TCPUVServer.cpp */,
+				32A420A81962E17F00AFE689 /* TCPUVServer.h */,
+			);
+			path = tcpuv;
 			sourceTree = "<group>";
 		};
 		32AAD78114CD630D005A097C /* message */ = {
@@ -2357,6 +2377,7 @@
 				324A4B57191A41EF00975394 /* unordered_map.h in Headers */,
 				324A4B2E191A405700975394 /* document.h in Headers */,
 				324A4B51191A41EF00975394 /* float_utils.h in Headers */,
+				32A420AA1962E17F00AFE689 /* TCPUVServer.h in Headers */,
 				32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */,
 				3258AEEB1935C34000A66D44 /* URL.h in Headers */,
 				32BFF913176C862A00D27A04 /* StartableService.h in Headers */,
@@ -2455,6 +2476,7 @@
 				32B57208168E02D10002A198 /* oid.h in Headers */,
 				32B57209168E02D10002A198 /* ordering.h in Headers */,
 				324A4B2C191A405700975394 /* document-inl.h in Headers */,
+				32A420A61962D16A00AFE689 /* TCPUVClient.h in Headers */,
 				32C35467178860E5009ED581 /* extension.hpp in Headers */,
 				324A4B91191A527D00975394 /* base64.h in Headers */,
 				32AF7D4118DAEAF300537DE6 /* PerformanceNodeChannel.h in Headers */,
@@ -2809,6 +2831,7 @@
 				326DB46714B38BC00018A8D0 /* AbstractCommandDispatcher.cpp in Sources */,
 				32B159D518B38CA50096B58B /* DirectIODeviceServerChannel.cpp in Sources */,
 				324A4B52191A41EF00975394 /* process_id.cpp in Sources */,
+				32A420A91962E17F00AFE689 /* TCPUVServer.cpp in Sources */,
 				3296031E1876B45000CDCADA /* AttributeSetting.cpp in Sources */,
 				326DB46B14B38BC00018A8D0 /* DefaultCommandDispatcher.cpp in Sources */,
 				326DB46D14B38BC00018A8D0 /* DomainActionsScheduler.cpp in Sources */,
@@ -2854,6 +2877,7 @@
 				324A4B96191A557700975394 /* time_support.cpp in Sources */,
 				324A4B15191A3F6A00975394 /* string_data.cpp in Sources */,
 				3258AEEA1935C34000A66D44 /* URL.cpp in Sources */,
+				32A420A51962D16A00AFE689 /* TCPUVClient.cpp in Sources */,
 				325013D715E980C800DCB13E /* AsioImplEventClient.cpp in Sources */,
 				32C100F7191B6F2900478F40 /* AsyncCentralManager.cpp in Sources */,
 				324A4B10191A3F6A00975394 /* parse_number.cpp in Sources */,

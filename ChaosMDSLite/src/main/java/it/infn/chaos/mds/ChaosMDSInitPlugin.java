@@ -3,8 +3,8 @@
  */
 package it.infn.chaos.mds;
 
-import it.infn.chaos.mds.rpc.server.JMQRPCClient;
-import it.infn.chaos.mds.rpc.server.JMQRPCServer;
+import it.infn.chaos.mds.rpc.server.TCPRpcClient;
+import it.infn.chaos.mds.rpc.server.TCPRpcServer;
 import it.infn.chaos.mds.rpcaction.CUQueryHandler;
 import it.infn.chaos.mds.rpcaction.DeviceQueyHandler;
 import it.infn.chaos.mds.rpcaction.PerformanceTest;
@@ -17,10 +17,6 @@ import org.ref.server.configuration.REFServerConfiguration;
 import org.ref.server.plugins.REFDeinitPlugin;
 import org.ref.server.plugins.REFInitPlugin;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
@@ -67,8 +63,8 @@ public class ChaosMDSInitPlugin implements REFInitPlugin, REFDeinitPlugin {
 				intPort = Integer.parseInt(port);
 			} catch (Exception e) {
 			}
-			SingletonServices.getInstance().setMdsRpcServer(new JMQRPCServer(1));
-			SingletonServices.getInstance().setMdsRpcClient(new JMQRPCClient(1));
+			SingletonServices.getInstance().setMdsRpcServer(new TCPRpcServer());
+			SingletonServices.getInstance().setMdsRpcClient(new TCPRpcClient());
 			SingletonServices.getInstance().getMdsRpcClient().init(0);
 			SingletonServices.getInstance().getMdsRpcClient().start();
 			SingletonServices.getInstance().getMdsRpcServer().init(intPort);

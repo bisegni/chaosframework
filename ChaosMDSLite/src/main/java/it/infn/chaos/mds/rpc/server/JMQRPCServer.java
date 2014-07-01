@@ -83,7 +83,7 @@ public class JMQRPCServer extends RPCServer implements Runnable {
 	@Override
 	public void run() {
 		byte[] buffer = null;
-		Socket rep_socket = context.createSocket(ZMQ.ZMQ_REP);
+		Socket rep_socket = context.createSocket(ZMQ.ZMQ_DEALER);
 		if (rep_socket == null) {
 			System.out.println("Error creating socket");
 			return;
