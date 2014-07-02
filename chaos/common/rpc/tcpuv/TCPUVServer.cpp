@@ -34,38 +34,39 @@ using namespace chaos;
 using namespace chaos::common::data;
 
 void TCPUVServer::on_close(uv_handle_t* handle) {
-	free(handle);
+	TCPUVServerLDBG << "on_close ";
+	//free(handle);
 }
 
 void TCPUVServer::on_alloc(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf) {
+	TCPUVServerLDBG << "on_alloc ";
 	*buf = uv_buf_init((char*) malloc(suggested_size), (unsigned int)suggested_size);
 }
 
 void TCPUVServer::on_write_end(uv_write_t *req, int status) {
-	if (status == -1) {
+	TCPUVServerLDBG << "on_write_end " << status;
+	if (status) {
 		TCPUVServerLERR << "error on_write_end";
 	}
+	chaos::common::data::SerializationBuffer *ser = static_cast<chaos::common::data::SerializationBuffer*>(req->data);
+	if(ser) delete(ser);
+	uv_close((uv_handle_t*)req->handle, TCPUVServer::on_close);
 }
 
 void TCPUVServer::on_read(uv_stream_t* handle, ssize_t nread, const uv_buf_t* buf) {
-	chaos::common::data::CDataWrapper *action_result = NULL;
+	TCPUVServerLDBG << "on_read " << nread;
 	if (nread >= 0) {
-		uv_write_t *write_req =(uv_write_t*) malloc(sizeof(uv_write_t));
 		//received data
 		TCPUVServer *server_instance = static_cast<TCPUVServer*>(handle->data);
-		action_result = server_instance->handleReceivedData(buf->base, buf->len);
+		chaos::common::data::CDataWrapper *action_result = server_instance->handleReceivedData(buf->base, buf->len);
 		
-		auto_ptr<chaos::common::data::SerializationBuffer> callSerialization(action_result->getBSONData());
-		callSerialization->disposeOnDelete = false;
+		chaos::common::data::SerializationBuffer *callSerialization = action_result->getBSONData();
 		
-		char buffer[100];
-		uv_buf_t buf = uv_buf_init(buffer, sizeof(buffer));
-		buf.len = callSerialization->getBufferLen();
-		buf.base = (char*)(callSerialization->getBufferPtr());
-		
-		int buf_count = 1;
-		
-		uv_write(write_req, handle, &buf, buf_count, on_write_end);
+		uv_write_t *write_req = (uv_write_t*)malloc(sizeof(uv_write_t));
+		write_req->data = static_cast<void*>(callSerialization);
+		uv_buf_t buf = uv_buf_init((char *)callSerialization->getBufferPtr(), (unsigned int)callSerialization->getBufferLen());
+
+		uv_write(write_req, handle, &buf, 1, TCPUVServer::on_write_end);
 	} else {
 		TCPUVServerLERR << "Error reading data";
 		uv_close((uv_handle_t*)handle, TCPUVServer::on_close);
@@ -74,6 +75,7 @@ void TCPUVServer::on_read(uv_stream_t* handle, ssize_t nread, const uv_buf_t* bu
 }
 
 void TCPUVServer::on_connected(uv_stream_t* s, int status) {
+	TCPUVServerLDBG << "on_connected " << status;
 	int err = 0;
 	if (status == -1) {
 		TCPUVServerLERR << "error on_connected:" << status;

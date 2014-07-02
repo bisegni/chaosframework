@@ -5,6 +5,7 @@ import it.infn.chaos.mds.RPCConstants;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import org.bson.BasicBSONObject;
@@ -36,7 +37,9 @@ public class TCPRpcClient extends RPCClient {
 		byte[] buffer = new byte[1024];
 		String[] addressInfo = messageData.getString(RPCConstants.CS_CMDM_REMOTE_HOST_IP).split(":");
 
-		Socket clientSocket = new Socket(addressInfo[0], Integer.parseInt(addressInfo[1]));
+		Socket clientSocket = new Socket();
+		clientSocket.connect(new InetSocketAddress(addressInfo[0], Integer.parseInt(addressInfo[1])), 5000);
+		
 		DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
 		DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream());
 		try {

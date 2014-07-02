@@ -17,68 +17,89 @@
 
 using namespace chaos;
 
+struct RequestInfo {
+	uv_tcp_t *tcp_connection;
+	NetworkForwardInfo *messageInfo;
+	chaos::common::data::SerializationBuffer *serializationBuffer;
+	uv_timer_t *phase_timer;
+};
+
+#define DEALLOCATE_REQUEST_INFO(x) \
+if(x) { \
+if(x->messageInfo) delete(x->messageInfo);\
+if(x->serializationBuffer) delete(x->serializationBuffer);\
+if(x->phase_timer) free(x->phase_timer);\
+free(x);\
+}
+
+void TCPUVClient::timer_cb(uv_timer_t* handle) {
+	RequestInfo *ri = static_cast<RequestInfo*>(handle->data);
+	uv_close((uv_handle_t*)ri->tcp_connection, TCPUVClient::on_close);
+	uv_close((uv_handle_t*)handle, TCPUVClient::on_close);
+}
+
 void TCPUVClient::on_close(uv_handle_t* handle) {
-	free(handle);
+	LDBG_ << "TCPUVClient::on_close";
+//	free(handle);
 }
 
 void TCPUVClient::alloc_buffer(uv_handle_t *handle, size_t suggested_size, uv_buf_t* buf) {
+	TCPUVClientLDBG << "alloc_buffer ";
 	*buf = uv_buf_init((char*) malloc(suggested_size), (unsigned int)suggested_size);
 }
 
-void TCPUVClient::on_ack_read(uv_stream_t *server, ssize_t nread, const uv_buf_t* buf) {
+void TCPUVClient::on_ack_read(uv_stream_t *stream, ssize_t nread, const uv_buf_t* buf) {
 	//delete the forward info class
-	NetworkForwardInfo *forwardInfo = static_cast<NetworkForwardInfo*>(server->data);
+	TCPUVClientLDBG << "on_ack_read " << nread;
+	RequestInfo *ri = static_cast<RequestInfo*>(stream->data);
+	stream->data = NULL;
 	
-	if (nread == -1) {
-		TCPUVClientLERR << "error echo_read";
-		delete(forwardInfo);
+	if (nread>0) {
+		auto_ptr<chaos::common::data::CDataWrapper> ack_result(new chaos::common::data::CDataWrapper(buf->base));
+		LDBG_ << "TCPUVClient::on_ack_read message result------------------------------";
+		LDBG_ << ack_result->getJSONString();
+		LDBG_ << "TCPUVClient::on_ack_read message result------------------------------";
 		//uv_close((uv_handle_t*) server, TCPUVClient::on_close);
-		return;
 	}
-	
-	auto_ptr<chaos::common::data::CDataWrapper> ack_result(new chaos::common::data::CDataWrapper(buf->base));
-	LDBG_ << "TCPUVClient::on_ack_read message result------------------------------";
-	LDBG_ << ack_result->getJSONString();
-	LDBG_ << "TCPUVClient::on_ack_read message result------------------------------";
+	uv_close((uv_handle_t*)ri->tcp_connection, TCPUVClient::on_close);
 	free(buf->base);
-	delete(forwardInfo);
-	//uv_close((uv_handle_t*) server, TCPUVClient::on_close);
+	DEALLOCATE_REQUEST_INFO(ri)
 }
 
 void TCPUVClient::on_write_end(uv_write_t *req, int status) {
-	NetworkForwardInfo *forwardInfo = static_cast<NetworkForwardInfo*>(req->data);
+	TCPUVClientLDBG << "on_write_end " << status;
+	RequestInfo *ri = static_cast<RequestInfo*>(req->data);
 	if (status) {
 		TCPUVClientLERR << "error on_write_end ->" << status;
-		delete(forwardInfo);
+		uv_close((uv_handle_t*)ri->tcp_connection,TCPUVClient::on_close);
+		DEALLOCATE_REQUEST_INFO(ri)
 		return;
 	}
-	
 	uv_read_start(req->handle, TCPUVClient::alloc_buffer, TCPUVClient::on_ack_read);
+	//uv_timer_start(ri->phase_timer, TCPUVClient::timer_cb, 1000, 0);
 }
 
 void TCPUVClient::on_connect(uv_connect_t *connection, int status) {
-	NetworkForwardInfo *forwardInfo = static_cast<NetworkForwardInfo*>(connection->data);
+	TCPUVClientLDBG << "on_connect " << status;
+	RequestInfo *ri = static_cast<RequestInfo*>(connection->data);
 	if (status) {
 		TCPUVClientLERR << "error on_connect" << status;
-		delete(forwardInfo);
+		DEALLOCATE_REQUEST_INFO(ri)
 		return;
 	}
-	uv_stream_t* stream = connection->handle;
 
-	auto_ptr<chaos::common::data::SerializationBuffer> callSerialization(forwardInfo->message->getBSONData());
-	callSerialization->disposeOnDelete = false;
+	//get the data to send
+	ri->serializationBuffer = ri->messageInfo->message->getBSONData();
 	
-	char buffer[100];
-	uv_buf_t buf = uv_buf_init(buffer, sizeof(buffer));
-	buf.len = callSerialization->getBufferLen();
-	buf.base = (char*)(callSerialization->getBufferPtr());
+	//initialize uv buffer
+	uv_buf_t buf = uv_buf_init((char*)ri->serializationBuffer->getBufferPtr(), (unsigned int)ri->serializationBuffer->getBufferLen());
 	
-	// ハンドルを取得
-	stream->data = static_cast<void*>(forwardInfo);
+	//connect data to stream handler
+	connection->handle->data = connection->data;
 	
 	uv_write_t request;
-	//int buf_count = 1;
-	uv_write(&request, stream, &buf, 1, TCPUVClient::on_write_end);
+	uv_write(&request, connection->handle, &buf, 1, TCPUVClient::on_write_end);
+	//uv_timer_start(ri->phase_timer, TCPUVClient::timer_cb, 1000, 0);
 }
 
 TCPUVClient::TCPUVClient(string alias):RpcClient(alias), loop(NULL){
@@ -104,8 +125,6 @@ void TCPUVClient::init(void *init_data) throw(CException) {
 void TCPUVClient::start() throw(CException) {
 	run = true;
 	loop = uv_loop_new();
-	uv_tcp_init(loop, &client);
-	uv_tcp_keepalive(&client, 1, 60);
 	loop_thread.reset(new boost::thread(boost::bind(&TCPUVClient::runLoop, this)));
 }
 
@@ -160,10 +179,9 @@ bool TCPUVClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThre
 		//allocate new forward info
 		//submit action
         if(onThisThread){
-            ePolicy.elementHasBeenDetached = false;
+            ePolicy.elementHasBeenDetached = true;
             processBufferElement(forwardInfo, ePolicy);
             //delete(forwardInfo->message);
-            delete(forwardInfo);
         } else {
             CObjectProcessingQueue<NetworkForwardInfo>::push(forwardInfo);
         }
@@ -178,18 +196,30 @@ bool TCPUVClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThre
 }
 
 void TCPUVClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementManagingPolicy& elementPolicy) throw(CException) {
-
 	
+	struct sockaddr_in req_addr;
 	std::vector<std::string> server_desc_tokens;
 	boost::algorithm::split(server_desc_tokens, messageInfo->destinationAddr, boost::algorithm::is_any_of(":"), boost::algorithm::token_compress_on);
 	
-	uv_connect_t* connect_req = (uv_connect_t*)malloc(sizeof(uv_connect_t));
-	struct sockaddr_in req_addr;
 	uv_ip4_addr(server_desc_tokens[0].c_str(), boost::lexical_cast<int>(server_desc_tokens[1]), &req_addr);
+
+	RequestInfo * ri = (RequestInfo*)std::calloc(1, sizeof(RequestInfo));
+	ri->tcp_connection = (uv_tcp_t*)malloc(sizeof(uv_tcp_t));
+	uv_tcp_init(loop, ri->tcp_connection);
+	uv_tcp_keepalive(ri->tcp_connection, 1, 60);
+
+	elementPolicy.elementHasBeenDetached = true;
+	ri->messageInfo = messageInfo;
 	
 	//exec the connection
-	elementPolicy.elementHasBeenDetached = true;
-	connect_req->data = static_cast<void*>(messageInfo);
-	uv_tcp_connect(connect_req, &client, (const struct sockaddr*)&req_addr, TCPUVClient::on_connect);
+	ri->tcp_connection->data = static_cast<void*>(ri);
+	ri->phase_timer = (uv_timer_t*)malloc(sizeof(uv_timer_t));
+	ri->phase_timer->data = static_cast<void*>(ri);
+	//init timer for timeout on operation
+	uv_timer_init(loop, ri->phase_timer);
+	
+	uv_connect_t *conn = (uv_connect_t*)malloc(sizeof(uv_connect_t));
+	conn->data = ri->tcp_connection->data;
+	uv_tcp_connect(conn, ri->tcp_connection, (const struct sockaddr*)&req_addr, TCPUVClient::on_connect);
 
 }

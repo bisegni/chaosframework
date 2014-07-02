@@ -16,6 +16,8 @@ import org.bson.BasicBSONDecoder;
 import org.bson.BasicBSONEncoder;
 import org.bson.BasicBSONObject;
 import org.ref.common.exception.RefException;
+import org.ref.common.helper.ExceptionHelper;
+import org.ref.common.helper.StringHelper;
 
 /**
  * @author bisegni
@@ -71,24 +73,26 @@ public class TCPRpcServer extends RPCServer implements Runnable {
 		while (work) {
 			byte[] buffer = new byte[1024];
 			Socket connectionSocket = null;
+			DataInputStream inFromClient = null;
+			DataOutputStream outToClient = null;
 			try {
 				connectionSocket = incomingSocket.accept();
 
-				DataInputStream inFromClient = new DataInputStream(connectionSocket.getInputStream());
+				inFromClient = new DataInputStream(connectionSocket.getInputStream());
 
-				DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
+				outToClient = new DataOutputStream(connectionSocket.getOutputStream());
 
 				int readed = 0;
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				do {
 					// i have some data
-					if((readed = inFromClient.read(buffer)) != -1)
+					if ((readed = inFromClient.read(buffer)) != -1)
 						baos.write(buffer, 0, readed);
 				} while (readed >= 1024);
 				// i have all the byte
 
 				BasicBSONObject bsonData = (BasicBSONObject) bDecoder.readObject(baos.toByteArray());
-
+				System.out.println(bsonData);
 				String domain = bsonData.getString(RPCConstants.CS_CMDM_ACTION_DOMAIN);
 				String action = bsonData.getString(RPCConstants.CS_CMDM_ACTION_NAME);
 
@@ -104,12 +108,29 @@ public class TCPRpcServer extends RPCServer implements Runnable {
 				} catch (RefException e) {
 					outToClient.write(getResponseRawType(e.getExceptionDomain(), e.getMessage(), e.getExceptionCode()));
 				} catch (InterruptedException e) {
-					e.printStackTrace();
+					outToClient.write(getResponseRawType(null, e.getMessage(), 0));
 				}
 			} catch (IOException e1) {
-				e1.printStackTrace();
+				try {
+					outToClient.write(getResponseRawType(null, ExceptionHelper.getInstance().putExcetpionStackToString(e1), 0));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} catch (Throwable e) {
+				try {
+					outToClient.write(getResponseRawType(null, ExceptionHelper.getInstance().putExcetpionStackToString(e), 0));
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			} finally {
+				try {
+					connectionSocket.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
+		System.out.println("End of TCPRpcServer");
 	}
 
 	/**

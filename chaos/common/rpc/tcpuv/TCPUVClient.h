@@ -31,7 +31,6 @@ namespace chaos {
         virtual ~TCPUVClient();
 		
 		uv_loop_t *loop;
-		uv_tcp_t client;
 		boost::shared_ptr<boost::thread> loop_thread;
 		
 		bool run;
@@ -48,6 +47,8 @@ namespace chaos {
 		static void on_connect(uv_connect_t *connection, int status);
 		
 		static void on_close(uv_handle_t* handle);
+		
+		static void timer_cb(uv_timer_t* handle);
     public:
 		
         /*
