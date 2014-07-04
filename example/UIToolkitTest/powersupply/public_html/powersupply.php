@@ -8,7 +8,7 @@
         <script type="text/javascript" src="Chaos.js"></script>        
         <script>
 <?php
-$con=mysqli_connect("mdsserver","root","mafalda0","chaosms");
+$con=mysqli_connect("mdsserver","chaos","chaos","chaosms");
 // Check connection
 if (mysqli_connect_errno()) {
   echo "Failed to connect to MySQL: " . mysqli_connect_error();
