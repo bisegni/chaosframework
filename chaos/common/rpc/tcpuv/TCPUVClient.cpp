@@ -28,19 +28,18 @@ struct RequestInfo {
 if(x) { \
 if(x->messageInfo) delete(x->messageInfo);\
 if(x->serializationBuffer) delete(x->serializationBuffer);\
-if(x->phase_timer) free(x->phase_timer);\
 free(x);\
 }
 
 void TCPUVClient::timer_cb(uv_timer_t* handle) {
 	RequestInfo *ri = static_cast<RequestInfo*>(handle->data);
-	uv_close((uv_handle_t*)ri->tcp_connection, TCPUVClient::on_close);
-	uv_close((uv_handle_t*)handle, TCPUVClient::on_close);
+	//uv_close((uv_handle_t*)ri->tcp_connection, TCPUVClient::on_close);
+	//uv_close((uv_handle_t*)handle, TCPUVClient::on_close);
 }
 
 void TCPUVClient::on_close(uv_handle_t* handle) {
 	LDBG_ << "TCPUVClient::on_close";
-//	free(handle);
+	free(handle);
 }
 
 void TCPUVClient::alloc_buffer(uv_handle_t *handle, size_t suggested_size, uv_buf_t* buf) {
@@ -61,8 +60,8 @@ void TCPUVClient::on_ack_read(uv_stream_t *stream, ssize_t nread, const uv_buf_t
 		LDBG_ << "TCPUVClient::on_ack_read message result------------------------------";
 		//uv_close((uv_handle_t*) server, TCPUVClient::on_close);
 	}
-	uv_close((uv_handle_t*)ri->tcp_connection, TCPUVClient::on_close);
 	free(buf->base);
+	uv_close((uv_handle_t*)stream, TCPUVClient::on_close);
 	DEALLOCATE_REQUEST_INFO(ri)
 }
 
@@ -71,19 +70,31 @@ void TCPUVClient::on_write_end(uv_write_t *req, int status) {
 	RequestInfo *ri = static_cast<RequestInfo*>(req->data);
 	if (status) {
 		TCPUVClientLERR << "error on_write_end ->" << status;
-		uv_close((uv_handle_t*)ri->tcp_connection,TCPUVClient::on_close);
+		TCPUVClientLERR << "so we close the handle";
+		if (!uv_is_closing((uv_handle_t*) req->handle))
+			uv_close((uv_handle_t*)req->handle,TCPUVClient::on_close);
+		free(req);
 		DEALLOCATE_REQUEST_INFO(ri)
 		return;
 	}
 	uv_read_start(req->handle, TCPUVClient::alloc_buffer, TCPUVClient::on_ack_read);
-	//uv_timer_start(ri->phase_timer, TCPUVClient::timer_cb, 1000, 0);
+	free(req);
 }
 
 void TCPUVClient::on_connect(uv_connect_t *connection, int status) {
 	TCPUVClientLDBG << "on_connect " << status;
 	RequestInfo *ri = static_cast<RequestInfo*>(connection->data);
 	if (status) {
-		TCPUVClientLERR << "error on_connect" << status;
+		TCPUVClientLERR << "error on_connect" << uv_strerror(status);
+		switch (status) {
+			case ECONNREFUSED:
+				TCPUVClientLERR << "ECONNREFUSED";
+				break;
+				
+			default:
+				break;
+		}
+		free(connection);
 		DEALLOCATE_REQUEST_INFO(ri)
 		return;
 	}
@@ -94,12 +105,9 @@ void TCPUVClient::on_connect(uv_connect_t *connection, int status) {
 	//initialize uv buffer
 	uv_buf_t buf = uv_buf_init((char*)ri->serializationBuffer->getBufferPtr(), (unsigned int)ri->serializationBuffer->getBufferLen());
 	
-	//connect data to stream handler
-	connection->handle->data = connection->data;
-	
-	uv_write_t request;
-	uv_write(&request, connection->handle, &buf, 1, TCPUVClient::on_write_end);
-	//uv_timer_start(ri->phase_timer, TCPUVClient::timer_cb, 1000, 0);
+	uv_write_t *request = (uv_write_t*)malloc(sizeof(uv_write_t));
+	uv_write(request, connection->handle, &buf, 1, TCPUVClient::on_write_end);
+	free(connection);
 }
 
 TCPUVClient::TCPUVClient(string alias):RpcClient(alias), loop(NULL){
@@ -152,9 +160,11 @@ void TCPUVClient::deinit() throw(CException) {
 
 void TCPUVClient::runLoop() {
 	//run the run loop
+	int err = 0;
+	//run the run loop
 	while(run) {
-		uv_run(loop, UV_RUN_DEFAULT);
-		usleep(100);
+		err = uv_run(loop, UV_RUN_DEFAULT);
+		usleep(1000);
 	}
 }
 
@@ -213,10 +223,10 @@ void TCPUVClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementM
 	
 	//exec the connection
 	ri->tcp_connection->data = static_cast<void*>(ri);
-	ri->phase_timer = (uv_timer_t*)malloc(sizeof(uv_timer_t));
-	ri->phase_timer->data = static_cast<void*>(ri);
+	//ri->phase_timer = (uv_timer_t*)malloc(sizeof(uv_timer_t));
+	//ri->phase_timer->data = static_cast<void*>(ri);
 	//init timer for timeout on operation
-	uv_timer_init(loop, ri->phase_timer);
+	//uv_timer_init(loop, ri->phase_timer);
 	
 	uv_connect_t *conn = (uv_connect_t*)malloc(sizeof(uv_connect_t));
 	conn->data = ri->tcp_connection->data;

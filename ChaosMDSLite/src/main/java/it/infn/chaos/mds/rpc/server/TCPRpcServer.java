@@ -90,7 +90,7 @@ public class TCPRpcServer extends RPCServer implements Runnable {
 						baos.write(buffer, 0, readed);
 				} while (readed >= 1024);
 				// i have all the byte
-
+				
 				BasicBSONObject bsonData = (BasicBSONObject) bDecoder.readObject(baos.toByteArray());
 				System.out.println(bsonData);
 				String domain = bsonData.getString(RPCConstants.CS_CMDM_ACTION_DOMAIN);
@@ -124,6 +124,8 @@ public class TCPRpcServer extends RPCServer implements Runnable {
 				}
 			} finally {
 				try {
+					inFromClient.close();
+					outToClient.close();
 					connectionSocket.close();
 				} catch (IOException e) {
 					e.printStackTrace();

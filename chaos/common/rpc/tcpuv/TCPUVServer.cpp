@@ -35,7 +35,7 @@ using namespace chaos::common::data;
 
 void TCPUVServer::on_close(uv_handle_t* handle) {
 	TCPUVServerLDBG << "on_close ";
-	//free(handle);
+	free(handle);
 }
 
 void TCPUVServer::on_alloc(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf) {
@@ -44,59 +44,74 @@ void TCPUVServer::on_alloc(uv_handle_t* handle, size_t suggested_size, uv_buf_t*
 }
 
 void TCPUVServer::on_write_end(uv_write_t *req, int status) {
-	TCPUVServerLDBG << "on_write_end " << status;
-	if (status) {
-		TCPUVServerLERR << "error on_write_end";
-	}
+	TCPUVServerLDBG << "on_write_end ";
+	
+	//delete the sent data
 	chaos::common::data::SerializationBuffer *ser = static_cast<chaos::common::data::SerializationBuffer*>(req->data);
 	if(ser) delete(ser);
+	
+	if (status) {
+		TCPUVServerLERR << "error on_write_end:" << status;
+	}
 	uv_close((uv_handle_t*)req->handle, TCPUVServer::on_close);
+	free(req);
 }
 
 void TCPUVServer::on_read(uv_stream_t* handle, ssize_t nread, const uv_buf_t* buf) {
-	TCPUVServerLDBG << "on_read " << nread;
-	if (nread >= 0) {
+	TCPUVServerLDBG << "on_read ";
+	if (nread > 0) {
+		TCPUVServerLDBG << "Received data: " <<  nread;
 		//received data
 		TCPUVServer *server_instance = static_cast<TCPUVServer*>(handle->data);
 		chaos::common::data::CDataWrapper *action_result = server_instance->handleReceivedData(buf->base, buf->len);
 		
 		chaos::common::data::SerializationBuffer *callSerialization = action_result->getBSONData();
 		
+		//delete the data not more needed
+		free(action_result);
+		
 		uv_write_t *write_req = (uv_write_t*)malloc(sizeof(uv_write_t));
 		write_req->data = static_cast<void*>(callSerialization);
 		uv_buf_t buf = uv_buf_init((char *)callSerialization->getBufferPtr(), (unsigned int)callSerialization->getBufferLen());
-
+		
 		uv_write(write_req, handle, &buf, 1, TCPUVServer::on_write_end);
+	} else if (nread < 0) {
+		TCPUVServerLERR << "Error reading data:" << nread<< " "<< uv_strerror((int)nread);
+		if(!uv_is_closing((uv_handle_t*)handle)) {
+			uv_close((uv_handle_t*)handle, TCPUVServer::on_close);
+		}
 	} else {
-		TCPUVServerLERR << "Error reading data";
-		uv_close((uv_handle_t*)handle, TCPUVServer::on_close);
+		//all ok nothing read
+		
 	}
-	free(buf->base);
+	//free the received data
+	if(buf->base) free(buf->base);
 }
 
-void TCPUVServer::on_connected(uv_stream_t* s, int status) {
+void TCPUVServer::on_connected(uv_stream_t* server, int status) {
+	uv_tcp_t* client = NULL;
 	TCPUVServerLDBG << "on_connected " << status;
 	int err = 0;
 	if (status == -1) {
 		TCPUVServerLERR << "error on_connected:" << status;
 		return;
 	}
-
-	uv_tcp_t* client = (uv_tcp_t*)malloc(sizeof(uv_tcp_t));
 	
-	
-	if ((err = uv_tcp_init(s->loop, client))) {
+	client = (uv_tcp_t*)malloc(sizeof(uv_tcp_t));
+	if ((err = uv_tcp_init(server->loop, client))) {
 		TCPUVServerLERR << "Error initializing client on connection: " <<  uv_strerror(err);
 		return;
 	}
-		
-	if ((err = uv_accept(s, (uv_stream_t*)client))) {
+	
+	//associate server to the client stream
+	if ((err = uv_accept(server, (uv_stream_t*)client))) {
 		TCPUVServerLERR << "Error initializing client on connection: " <<  uv_strerror(err);
-		 uv_close((uv_handle_t*) client, NULL);
+		uv_close((uv_handle_t*) client, NULL);
 		return;
 	} else {
-		client->data = s->data;
-		uv_read_start((uv_stream_t*) client, TCPUVServer::on_alloc, TCPUVServer::on_read);
+		//associate the server class instance to the client
+		client->data = server->data;
+		uv_read_start((uv_stream_t*)client, TCPUVServer::on_alloc, TCPUVServer::on_read);
 	}
 }
 
@@ -143,6 +158,7 @@ void TCPUVServer::start() throw(CException) {
 //start the rpc adapter
 void TCPUVServer::stop() throw(CException) {
 	run = false;
+	uv_close((uv_handle_t*)&server, NULL);
 	uv_stop(loop);
 	uv_loop_delete(loop);
 	loop_thread->join();
@@ -153,10 +169,12 @@ void TCPUVServer::deinit() throw(CException) {
 }
 
 void TCPUVServer::runLoop() {
+	int err = 0;
 	//run the run loop
 	while(run) {
-		uv_run(loop, UV_RUN_DEFAULT);
-		usleep(100);
+		err = uv_run(loop, UV_RUN_DEFAULT);
+		//TCPUVServerLDBG << err;
+		usleep(1000);
 	}
 }
 
