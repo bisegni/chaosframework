@@ -68,7 +68,7 @@ void TCPUVServer::on_read(uv_stream_t* handle, ssize_t nread, const uv_buf_t* bu
 		chaos::common::data::SerializationBuffer *callSerialization = action_result->getBSONData();
 		
 		//delete the data not more needed
-		free(action_result);
+		delete(action_result);
 		
 		uv_write_t *write_req = (uv_write_t*)malloc(sizeof(uv_write_t));
 		write_req->data = static_cast<void*>(callSerialization);
@@ -77,9 +77,7 @@ void TCPUVServer::on_read(uv_stream_t* handle, ssize_t nread, const uv_buf_t* bu
 		uv_write(write_req, handle, &buf, 1, TCPUVServer::on_write_end);
 	} else if (nread < 0) {
 		TCPUVServerLERR << "Error reading data:" << nread<< " "<< uv_strerror((int)nread);
-		if(!uv_is_closing((uv_handle_t*)handle)) {
-			uv_close((uv_handle_t*)handle, TCPUVServer::on_close);
-		}
+		uv_close((uv_handle_t*)handle, TCPUVServer::on_close);
 	} else {
 		//all ok nothing read
 		

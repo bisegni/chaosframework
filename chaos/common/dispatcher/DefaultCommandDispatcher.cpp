@@ -135,6 +135,7 @@ void DefaultCommandDispatcher::deregisterAction(DeclareAction *declareActionClas
 CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPack) throw(CException)  {
         //allocate new Result Pack
     CDataWrapper *resultPack = new CDataWrapper();
+	bool sent = false;
     try{
         
         if(!commandPack) return resultPack;
@@ -158,7 +159,7 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
             //submit the action(Thread Safe)
 		//ElementManagingPolicy ep;
 		//ep.elementHasBeenDetached = false;
-		dasMap[actionDomain]->push(commandPack);
+		sent = dasMap[actionDomain]->push(commandPack);
         //if(ep.elementHasBeenDetached) {
 		//	delete(commandPack);
 		//}
@@ -166,6 +167,7 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
             //tag message has submitted
         resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
     }catch(CException& cse){
+		if(!sent && commandPack) delete(commandPack);
             //tag message has not submitted
             //resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, 1);
         
@@ -174,6 +176,7 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
         resultPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN, cse.errorDomain);
         resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, cse.errorCode);
     } catch(...){
+		if(!sent && commandPack) delete(commandPack);
             //tag message has not submitted
         resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 1);
             //set error to general exception error

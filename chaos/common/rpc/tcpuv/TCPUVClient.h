@@ -15,13 +15,23 @@
 #include <chaos/common/pqueue/ChaosProcessingQueue.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
-
 #include <uv.h>
 
 #include <boost/thread.hpp>
 
 namespace chaos {
     
+	class TCPUVClient;
+	
+	struct RequestInfo {
+		NetworkForwardInfo *messageInfo;
+		chaos::common::data::SerializationBuffer *serializationBuffer;
+		
+		//libuv strucutre
+		uv_tcp_t		tcp_connection;
+		uv_connect_t	tcp_connection_request;
+		uv_write_t		tcp_write_request;
+	};
     /*
      Class that manage the MessagePack message send.
      */
@@ -30,9 +40,10 @@ namespace chaos {
         TCPUVClient(string alias);
         virtual ~TCPUVClient();
 		
-		uv_loop_t *loop;
-		boost::shared_ptr<boost::thread> loop_thread;
-		
+		uv_loop_t loop;
+		boost::shared_mutex					loop_mutex;
+		boost::shared_ptr<boost::thread>	loop_thread;
+
 		bool run;
 		void runLoop();
     protected:
@@ -48,7 +59,7 @@ namespace chaos {
 		
 		static void on_close(uv_handle_t* handle);
 		
-		static void timer_cb(uv_timer_t* handle);
+		//static void timer_cb(uv_timer_t* handle);
     public:
 		
         /*
