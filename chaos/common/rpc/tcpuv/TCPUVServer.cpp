@@ -38,6 +38,14 @@ void TCPUVServer::on_close(uv_handle_t* handle) {
 	free(handle);
 }
 
+void TCPUVServer::shutdown_connection_cb(uv_shutdown_t *req, int status) {
+	TCPUVServerLDBG << "shutdown_connection_cb";
+	if(status) {
+		TCPUVServerLDBG << "shutdown_connection_cb error"<< status;
+	}
+	free(req);
+}
+
 void TCPUVServer::on_alloc(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf) {
 	TCPUVServerLDBG << "on_alloc ";
 	*buf = uv_buf_init((char*) malloc(suggested_size), (unsigned int)suggested_size);
@@ -53,7 +61,15 @@ void TCPUVServer::on_write_end(uv_write_t *req, int status) {
 	if (status) {
 		TCPUVServerLERR << "error on_write_end:" << status;
 	}
-	uv_close((uv_handle_t*)req->handle, TCPUVServer::on_close);
+	//uv_close((uv_handle_t*)req->handle, TCPUVServer::on_close);
+	uv_shutdown_t *shutdown_req = (uv_shutdown_t*)malloc(sizeof(uv_shutdown_t));
+	
+	//Stop reading
+	uv_shutdown(shutdown_req, req->handle, TCPUVServer::shutdown_connection_cb);
+	
+	//read next message
+	uv_read_start((uv_stream_t*)req->handle, TCPUVServer::on_alloc, TCPUVServer::on_read);
+	
 	free(req);
 }
 
@@ -80,7 +96,10 @@ void TCPUVServer::on_read(uv_stream_t* handle, ssize_t nread, const uv_buf_t* bu
 		uv_close((uv_handle_t*)handle, TCPUVServer::on_close);
 	} else {
 		//all ok nothing read
-		
+		//we can close the stream
+		TCPUVServerLDBG << "Close socket message";
+		uv_close((uv_handle_t*)handle, TCPUVServer::on_close);
+
 	}
 	//free the received data
 	if(buf->base) free(buf->base);

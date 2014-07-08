@@ -21,6 +21,19 @@
 
 namespace chaos {
     using namespace std;
+	
+	typedef enum ReceivementPhase {
+		ReceivementPhaseHeader,
+		ReceivementPhaseData
+	};
+	
+	struct AcceptedConnection {
+		uv_tcp_t tcp_connection;
+		//tag the receivement phase 0-header 1-data
+		ReceivementPhase	receiving_phase;
+		uint64_t			phjase_one_data_size;
+	};
+	
     /*
      Class that implement the Chaos RPC adapter for 0mq protocoll
      */
@@ -40,6 +53,8 @@ namespace chaos {
 		void runLoop();
 	protected:
 		static void on_write_end(uv_write_t *req, int status);
+		
+		static void shutdown_connection_cb(uv_shutdown_t *req, int status);
 		
 		static void on_close(uv_handle_t* handle);
 		
