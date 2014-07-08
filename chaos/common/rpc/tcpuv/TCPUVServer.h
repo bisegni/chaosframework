@@ -22,15 +22,20 @@
 namespace chaos {
     using namespace std;
 	
-	typedef enum ReceivementPhase {
-		ReceivementPhaseHeader,
-		ReceivementPhaseData
+	typedef enum ConnectionReadPhase {
+		ConnectionReadPhaseHeader = 0,
+		ConnectionReadPhaseData
 	};
 	
+    class TCPUVServer;
+    
 	struct AcceptedConnection {
-		uv_tcp_t tcp_connection;
+        TCPUVServer         *server_instance;
+		uv_tcp_t            tcp_connection;
 		//tag the receivement phase 0-header 1-data
-		ReceivementPhase	receiving_phase;
+		ConnectionReadPhase receiving_phase;
+        
+        //data len to expect
 		uint64_t			phjase_one_data_size;
 	};
 	
@@ -62,6 +67,10 @@ namespace chaos {
 		
 		static void on_read(uv_stream_t* handle, ssize_t nread, const uv_buf_t* buf);
 		
+        static void read_buffer(uv_stream_t* handle, ssize_t nread, const uv_buf_t* buf);
+        
+        static void read_data(uv_stream_t* handle, ssize_t nread, const uv_buf_t* buf);
+        
 		static void on_connected(uv_stream_t* s, int status);
 		
 		chaos::common::data::CDataWrapper *handleReceivedData(void *data, size_t len);
