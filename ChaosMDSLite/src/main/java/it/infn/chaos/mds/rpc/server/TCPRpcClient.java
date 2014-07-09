@@ -44,8 +44,10 @@ public class TCPRpcClient extends RPCClient {
 		DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream());
 		try {
 			byte[] rawData = encoder.encode(messageData);
-			outToServer.writeLong(ByteSwapper.swap(new Long(rawData.length).longValue()));
+			//outToServer.writeLong(ByteSwapper.swap(new Long(rawData.length).longValue()));
+			//outToServer.flush();
 			outToServer.write(rawData);
+			outToServer.flush();
 			int readed = 0;
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			do {
@@ -59,6 +61,10 @@ public class TCPRpcClient extends RPCClient {
 		} catch (Throwable e) {
 			throw e;
 		} finally {
+			if (outToServer != null)
+				outToServer.close();
+			if (inFromServer != null)
+				inFromServer.close();
 			if (clientSocket != null)
 				clientSocket.close();
 		}

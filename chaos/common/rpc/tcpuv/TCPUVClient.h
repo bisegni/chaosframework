@@ -15,6 +15,8 @@
 #include <chaos/common/pqueue/ChaosProcessingQueue.h>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
+#include <chaos/common/thread/WaitSemaphore.h>
+
 #include <uv.h>
 
 #include <boost/thread.hpp>
@@ -34,7 +36,6 @@ namespace chaos {
 		//
 		uv_tcp_t			tcp_connection;
 		uv_connect_t		tcp_connection_request;
-		uv_shutdown_t		tcp_write_shutdown_request;
 	};
 	
 	struct ConnectionInfo {
@@ -59,8 +60,8 @@ namespace chaos {
 		uv_loop_t loop;
 		boost::shared_mutex					loop_mutex;
 		boost::shared_ptr<boost::thread>	loop_thread;
-		
-		std::map<std::string, ConnectionInfo*> map_addr_connection_info;
+		typedef std::map<std::string, ConnectionInfo*>::iterator	map_addr_connection_iter;
+		std::map<std::string, ConnectionInfo*>						map_addr_connection_info;
 		
 		bool run;
 		void runLoop();
@@ -82,7 +83,7 @@ namespace chaos {
 		
 		static void on_close(uv_handle_t* handle);
 		
-		static void shutdown_connection_cb(uv_shutdown_t *req, int status);
+		static void shutdown_cb(uv_shutdown_t *req, int status);
 		
 		static void send_data(ConnectionInfo *ci, uv_stream_t *stream);
 		

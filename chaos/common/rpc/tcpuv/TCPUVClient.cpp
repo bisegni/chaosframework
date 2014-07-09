@@ -17,7 +17,7 @@
 
 #define TCPUVClientLAPP LAPP_ << "[TCPUVClient] - "
 #define TCPUVClientLDBG LDBG_ << "[TCPUVClient] - "
-#define TCPUVClientLERR LERR_ << "[TCPUVClient] - "
+#define TCPUVClientLERR LERR_ << "[TCPUVClient] - (" << __LINE__ << ") - "
 
 #define SLAB_SIZE 32000
 using namespace chaos;
@@ -31,40 +31,56 @@ delete(x);
 
 
 void TCPUVClient::on_close(uv_handle_t* handle) {
-	LDBG_ << "TCPUVClient::on_close";
+	TCPUVClientLDBG << "on_close";
 	UVConnInfo *ci = static_cast<UVConnInfo*>(handle->data);
 	DEALLOCATE_UV_CONNECTION_INFO(ci)
 }
 
-void TCPUVClient::shutdown_connection_cb(uv_shutdown_t *req, int status) {
-	on_close((uv_handle_t*)req->handle);
+void TCPUVClient::shutdown_cb(uv_shutdown_t *req, int status) {
+	//on_close((uv_handle_t*)req->handle);
+	free(req);
 }
 
 void TCPUVClient::alloc_buffer(uv_handle_t *handle, size_t suggested_size, uv_buf_t* buf) {
-	TCPUVClientLDBG << "Alloc_buffer ";
+	TCPUVClientLDBG << "Alloc_buffer";
 	*buf = uv_buf_init((char*) malloc(suggested_size), (unsigned int)suggested_size);
 }
 
 void TCPUVClient::on_ack_read(uv_stream_t *stream, ssize_t nread, const uv_buf_t* buf) {
 	ConnectionInfo *ci = static_cast<ConnectionInfo*>(stream->data);
-	TCPUVClientLDBG << "on_ack_read " << nread;
+	TCPUVClientLDBG << "STEP-2->on_ack_read " << nread;
 	if (nread>0) {
 		auto_ptr<chaos::common::data::CDataWrapper> ack_result(new chaos::common::data::CDataWrapper(buf->base));
 		LDBG_ << "TCPUVClient::on_ack_read message result------------------------------";
 		LDBG_ << ack_result->getJSONString();
 		LDBG_ << "TCPUVClient::on_ack_read message result------------------------------";
-		//uv_close((uv_handle_t*) server, TCPUVClient::on_close);
+	} else {
+		TCPUVClientLERR << "STEP-2->on_ack_read error " << uv_err_name((int)nread);
+		boost::unique_lock<boost::shared_mutex> lock(ci->connection_mutex);
+		
+		stream->data = ci->uv_conn_info;
+		ci->uv_conn_info = NULL;
+		uv_close((uv_handle_t*)stream,TCPUVClient::on_close);
 	}
 	free(buf->base);
 	
 	//we need check othe data to send
 	boost::unique_lock<boost::shared_mutex> lock(ci->connection_mutex);
 	if(ci->queued_message_info.empty()) {
+		TCPUVClientLDBG << "STEP-2->close connection for empty queue";
+		
+		stream->data = ci->uv_conn_info;
+		ci->uv_conn_info = NULL;
+		uv_close((uv_handle_t*)stream,TCPUVClient::on_close);
 		//send empty message for close socket
-		TCPUVClient::send_close(ci, stream);
+		//TCPUVClient::send_close(ci, stream);
 		//we can close
 		//uv_close((uv_handle_t*)stream, TCPUVClient::on_close);
 	} else {
+		TCPUVClientLDBG << "STEP-2->we have more data to send ->" << ci->queued_message_info.size();
+		//delete sent data
+		if(ci->uv_conn_info->current_message_info) delete(ci->uv_conn_info->current_message_info);
+		if(ci->uv_conn_info->current_serialization) delete(ci->uv_conn_info->current_serialization);
 		TCPUVClient::send_data(ci, stream);
 	}
 	
@@ -83,22 +99,30 @@ void TCPUVClient::on_write_for_close(uv_write_t *req, int status) {
 
 
 void TCPUVClient::on_write_end(uv_write_t *req, int status) {
-	TCPUVClientLDBG << "on_write_end " << status;
+	TCPUVClientLDBG << "on_write_end" << status;
+	int err = 0;
 	if (status) {
 		ConnectionInfo *ci = static_cast<ConnectionInfo*>(req->handle->data);
 		boost::unique_lock<boost::shared_mutex> lock(ci->connection_mutex);
-		TCPUVClientLERR << "error on_write_end ->" << status;
+		TCPUVClientLERR << "error on_write_end ->" << uv_err_name(status);
 		TCPUVClientLERR << "so we close the handle";
 		req->handle->data = ci->uv_conn_info;
 		ci->uv_conn_info = NULL;
 		uv_close((uv_handle_t*)req->handle,TCPUVClient::on_close);
 	} else {
-		uv_read_start(req->handle, TCPUVClient::alloc_buffer, TCPUVClient::on_ack_read);
+			//Stop writing
+		//uv_shutdown_t *shutdown_req = (uv_shutdown_t*)malloc(sizeof(uv_shutdown_t));
+		//uv_shutdown(shutdown_req, req->handle, TCPUVClient::shutdown_cb);
+			//new read
+		if((err = uv_read_start(req->handle, TCPUVClient::alloc_buffer, TCPUVClient::on_ack_read))){
+			TCPUVClientLERR << "error on_write_end:uv_read_start" << uv_err_name(err);
+		}
 	}
 	free(req);
 }
 
 void TCPUVClient::send_data(ConnectionInfo *ci, uv_stream_t *stream) {
+	int err = 0;
 	//get the next message to send
 	ci->uv_conn_info->current_message_info = ci->queued_message_info.front();
 	ci->queued_message_info.pop();
@@ -107,17 +131,23 @@ void TCPUVClient::send_data(ConnectionInfo *ci, uv_stream_t *stream) {
 	ci->uv_conn_info->current_serialization = ci->uv_conn_info->current_message_info->message->getBSONData();
 	
 	//send data
-	uv_buf_t buffers[2];
+	//uv_buf_t buffers[2];
 	uv_write_t *new_write_req = (uv_write_t*)malloc(sizeof(uv_write_t));
 	
 	ci->uv_conn_info->data_len = (uint64_t)ci->uv_conn_info->current_serialization->getBufferLen();
 	
-	buffers[0] = uv_buf_init((char*)&ci->uv_conn_info->data_len, sizeof(uint64_t));
-	buffers[1] = uv_buf_init((char*)ci->uv_conn_info->current_serialization->getBufferPtr(), (unsigned int)ci->uv_conn_info->current_serialization->getBufferLen());
-	uv_write(new_write_req, stream, buffers, 2, TCPUVClient::on_write_end);
+	TCPUVClientLDBG << "STEP-1->send_data of size " << ci->uv_conn_info->data_len;
+
+	//buffers[0] = uv_buf_init((char*)&ci->uv_conn_info->data_len, sizeof(uint64_t));
+	//buffers[1] = uv_buf_init((char*)ci->uv_conn_info->current_serialization->getBufferPtr(), (unsigned int)ci->uv_conn_info->current_serialization->getBufferLen());
+	uv_buf_t buffers = uv_buf_init((char*)ci->uv_conn_info->current_serialization->getBufferPtr(), (unsigned int)ci->uv_conn_info->current_serialization->getBufferLen());
+	if((err = uv_write(new_write_req, stream, &buffers, 1, TCPUVClient::on_write_end))) {
+		TCPUVClientLERR << "error send_data:uv_write" << uv_err_name(err);
+	}
 }
 
 void TCPUVClient::send_close(ConnectionInfo *ci, uv_stream_t *stream) {
+	TCPUVClientLDBG << "STEP-3->send_close";
 	uv_buf_t buf = uv_buf_init(NULL, 0);
 	
 	stream->data = ci->uv_conn_info;
@@ -184,8 +214,14 @@ void TCPUVClient::start() throw(CException) {
  */
 void TCPUVClient::stop() throw(CException) {
 	run = false;
-	uv_loop_delete(&loop);
 	loop_thread->join();
+	uv_loop_close(&loop);
+	
+	for(map_addr_connection_iter iter = map_addr_connection_info.begin();
+		iter != map_addr_connection_info.end();
+		iter++) {
+		delete(iter->second);
+	}
 }
 
 
@@ -208,7 +244,7 @@ void TCPUVClient::runLoop() {
 		lock_loop.lock();
 		err = uv_run(&loop, UV_RUN_ONCE);
 		lock_loop.unlock();
-		usleep(250);
+		boost::this_thread::sleep(boost::posix_time::microseconds(250));
 	}
 }
 
@@ -263,7 +299,6 @@ void TCPUVClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementM
 }
 
 bool TCPUVClient::startConnection(NetworkForwardInfo *message_info) {
-	struct sockaddr_in req_addr;
 	std::vector<std::string> server_desc_tokens;
 	boost::algorithm::split(server_desc_tokens, message_info->destinationAddr, boost::algorithm::is_any_of(":"), boost::algorithm::token_compress_on);
 	ConnectionInfo * ci = new ConnectionInfo();

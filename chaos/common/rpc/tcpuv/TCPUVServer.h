@@ -22,21 +22,21 @@
 namespace chaos {
     using namespace std;
 	
-	typedef enum ConnectionReadPhase {
-		ConnectionReadPhaseHeader = 0,
-		ConnectionReadPhaseData
-	};
+	typedef enum TCPUVServerConnectionReadPhase {
+		TCPUVServerConnectionReadPhaseHeader = 0,
+		TCPUVServerConnectionReadPhaseData
+	} ConnectionReadPhase;
 	
     class TCPUVServer;
     
-	struct AcceptedConnection {
-        TCPUVServer         *server_instance;
-		uv_tcp_t            tcp_connection;
+	struct TCPUVServerAcceptedConnection {
+        TCPUVServer						*server_instance;
+		uv_tcp_t						tcp_connection;
 		//tag the receivement phase 0-header 1-data
-		ConnectionReadPhase receiving_phase;
+		TCPUVServerConnectionReadPhase	receiving_phase;
         
         //data len to expect
-		uint64_t			phjase_one_data_size;
+		uint64_t						phjase_one_data_size;
 	};
 	
     /*
@@ -50,12 +50,19 @@ namespace chaos {
         bool run;
 		uv_loop_t *loop;
 		uv_tcp_t server;
+		uv_async_t async_shutdown_loop;
 		boost::scoped_ptr<boost::thread> loop_thread;
 		
         TCPUVServer(string alias);
         virtual ~TCPUVServer();
 		
 		void runLoop();
+		
+		//internal function doesn't deallocate the uv_buf_t base buffer
+		static void _internal_read_header(uv_stream_t* handle, ssize_t nread, const uv_buf_t* buf);
+        
+        static void _internal_read_data(uv_stream_t* handle, ssize_t nread, const uv_buf_t* buf);
+		
 	protected:
 		static void on_write_end(uv_write_t *req, int status);
 		
@@ -66,12 +73,10 @@ namespace chaos {
 		static void on_alloc(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf);
 		
 		static void on_read(uv_stream_t* handle, ssize_t nread, const uv_buf_t* buf);
-		
-        static void read_buffer(uv_stream_t* handle, ssize_t nread, const uv_buf_t* buf);
-        
-        static void read_data(uv_stream_t* handle, ssize_t nread, const uv_buf_t* buf);
         
 		static void on_connected(uv_stream_t* s, int status);
+		
+		static void async_shutdown_loop_cb(uv_async_t *handle);
 		
 		chaos::common::data::CDataWrapper *handleReceivedData(void *data, size_t len);
     public:

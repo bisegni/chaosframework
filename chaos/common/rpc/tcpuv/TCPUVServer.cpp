@@ -27,12 +27,12 @@
 
 #define TCPUVServerLAPP LAPP_ << "[TCPUVServer] - "
 #define TCPUVServerLDBG LDBG_ << "[TCPUVServer] - "
-#define TCPUVServerLERR LERR_ << "[TCPUVServer] - "
+#define TCPUVServerLERR LERR_ << "[TCPUVServer] - (" << __LINE__ << ") - "
 
 #define DEFAULT_DISPATCHER_PORT             8888
 #define DEFAULT_MSGPACK_DISPATCHER_THREAD_NUMBER    4
 
-#define AC(x) static_cast<AcceptedConnection*>(x)
+#define TCPUV_AC(x) static_cast<TCPUVServerAcceptedConnection*>(x)
 
 using namespace chaos;
 using namespace chaos::common::data;
@@ -52,54 +52,73 @@ void TCPUVServer::shutdown_connection_cb(uv_shutdown_t *req, int status) {
 }
 
 void TCPUVServer::on_alloc(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf) {
-	TCPUVServerLDBG << "on_alloc ";
-	*buf = uv_buf_init((char*) malloc(suggested_size), (unsigned int)suggested_size);
+	TCPUVServerLDBG << "on_alloc";
+	switch(TCPUV_AC(handle->data)->receiving_phase) {
+		case TCPUVServerConnectionReadPhaseHeader:
+			TCPUVServerLDBG << "Allocate buffer for header of size " << (unsigned int)sizeof(uint64_t);
+			*buf = uv_buf_init((char*) malloc(sizeof(uint64_t)), (unsigned int)sizeof(uint64_t));
+			break;
+			
+		case TCPUVServerConnectionReadPhaseData:
+			//TCPUVServerLDBG << "Allocate buffer for data of size " << (unsigned int)TCPUV_AC(handle->data)->phjase_one_data_size;
+			//*buf = uv_buf_init((char*) malloc(TCPUV_AC(handle->data)->phjase_one_data_size), (unsigned int)TCPUV_AC(handle->data)->phjase_one_data_size);
+			*buf = uv_buf_init((char*) malloc(suggested_size), (unsigned int)suggested_size);
+			break;
+	}
+	
 }
 
 void TCPUVServer::on_write_end(uv_write_t *req, int status) {
-	TCPUVServerLDBG << "on_write_end ";
-	
+	TCPUVServerLDBG << "on_write_end";
+	int err = 0;
 	//delete the sent data
 	chaos::common::data::SerializationBuffer *ser = static_cast<chaos::common::data::SerializationBuffer*>(req->data);
 	if(ser) delete(ser);
 	
 	if (status) {
-		TCPUVServerLERR << "error on_write_end:" << status;
+		TCPUVServerLERR << "error on_write_end: " << status;
 	}
 	//uv_close((uv_handle_t*)req->handle, TCPUVServer::on_close);
-	uv_shutdown_t *shutdown_req = (uv_shutdown_t*)malloc(sizeof(uv_shutdown_t));
+	//uv_shutdown_t *shutdown_req = (uv_shutdown_t*)malloc(sizeof(uv_shutdown_t));
 	
 	//Stop reading
-	uv_shutdown(shutdown_req, req->handle, TCPUVServer::shutdown_connection_cb);
+	//if((err = uv_shutdown(shutdown_req, req->handle, TCPUVServer::shutdown_connection_cb))) {
+	//	TCPUVServerLERR << "Error on_write_end:uv_shutdown" << uv_err_name(err);
+	//}
 	
 	//read next message
-	uv_read_start((uv_stream_t*)req->handle, TCPUVServer::on_alloc, TCPUVServer::on_read);
+	if((err = uv_read_start((uv_stream_t*)req->handle, TCPUVServer::on_alloc, TCPUVServer::on_read))) {
+		TCPUVServerLERR << "Error on_write_end:uv_read_start" << uv_err_name(err);
+	}
 	
 	free(req);
 }
 
-void TCPUVServer::read_buffer(uv_stream_t* handle, ssize_t nread, const uv_buf_t* buf) {
+void TCPUVServer::_internal_read_header(uv_stream_t* handle, ssize_t nread, const uv_buf_t* buf) {
     TCPUVServerLDBG << "Received header: " <<  nread;
+	int err = 0;
     //read the ehader
-    AC(handle->data)->phjase_one_data_size = FROM_LITTLE_ENDNS_NUM(uint64_t, *((uint64_t*)buf->base));
-    free(buf->base);
+    TCPUV_AC(handle->data)->phjase_one_data_size = FROM_LITTLE_ENDNS_NUM(uint64_t, *((uint64_t*)buf->base));
     
-    if(AC(handle->data)->phjase_one_data_size) {
-        AC(handle->data)->receiving_phase = ConnectionReadPhaseData;
-    
+    if(TCPUV_AC(handle->data)->phjase_one_data_size) {
+        TCPUV_AC(handle->data)->receiving_phase = TCPUVServerConnectionReadPhaseData;
+		TCPUVServerLDBG << "We need to receive data for bytes-> " <<  TCPUV_AC(handle->data)->phjase_one_data_size;
         //read the data
-        uv_read_start(handle, TCPUVServer::on_alloc, TCPUVServer::on_read);
+        if((err = uv_read_start(handle, TCPUVServer::on_alloc, TCPUVServer::on_read))) {
+			TCPUVServerLERR << "Error _internal_read_header:uv_read_start" << uv_err_name(err);
+		}
     } else {
+		TCPUVServerLDBG << "No data we need to aspect so we close the connection " <<  nread;
         // we have rceived zero length header that tell us to close connection
         uv_close((uv_handle_t*)handle, TCPUVServer::on_close);
     }
 }
 
-void TCPUVServer::read_data(uv_stream_t* handle, ssize_t nread, const uv_buf_t* buf) {
+void TCPUVServer::_internal_read_data(uv_stream_t* handle, ssize_t nread, const uv_buf_t* buf) {
     TCPUVServerLDBG << "Received data: " <<  nread;
     //read the message data
-
-    chaos::common::data::CDataWrapper *action_result = AC(handle->data)->server_instance->handleReceivedData(buf->base, buf->len);
+	int err = 0;
+    chaos::common::data::CDataWrapper *action_result = TCPUV_AC(handle->data)->server_instance->handleReceivedData(buf->base, buf->len);
     
     chaos::common::data::SerializationBuffer *callSerialization = action_result->getBSONData();
     
@@ -111,28 +130,26 @@ void TCPUVServer::read_data(uv_stream_t* handle, ssize_t nread, const uv_buf_t* 
     uv_buf_t b = uv_buf_init((char *)callSerialization->getBufferPtr(), (unsigned int)callSerialization->getBufferLen());
     
     //write answer
-    uv_write(write_req, handle, &b, 1, TCPUVServer::on_write_end);
+    if((err = uv_write(write_req, handle, &b, 1, TCPUVServer::on_write_end))) {
+		TCPUVServerLERR << "Error _internal_read_data:uv_write" << uv_err_name(err);
+	}
     
-    //delete the buffer
-    free(buf->base);
-    
-    AC(handle->data)->receiving_phase = ConnectionReadPhaseHeader;
+    TCPUV_AC(handle->data)->receiving_phase = TCPUVServerConnectionReadPhaseData;
 }
 
 void TCPUVServer::on_read(uv_stream_t* handle, ssize_t nread, const uv_buf_t* buf) {
-    
-	TCPUVServerLDBG << "on_read ";
+	TCPUVServerLDBG << "on_read";
 	if (nread > 0) {
-        switch(AC(handle->data)->receiving_phase) {
-            case ConnectionReadPhaseHeader: {
-                TCPUVServerLDBG << "Received ConnectionReadPhaseHeader" <<  nread;
-                TCPUVServer::read_buffer(handle, nread, buf);
+        switch(TCPUV_AC(handle->data)->receiving_phase) {
+            case TCPUVServerConnectionReadPhaseHeader: {
+                TCPUVServerLDBG << "Received TCPUVServerConnectionReadPhaseHeader " <<  nread;
+                TCPUVServer::_internal_read_header(handle, nread, buf);
                 break;
             }
                 
-            case ConnectionReadPhaseData: {
-                TCPUVServerLDBG << "Received ConnectionReadPhaseData" <<  nread;
-                TCPUVServer::read_buffer(handle, nread, buf);
+            case TCPUVServerConnectionReadPhaseData: {
+                TCPUVServerLDBG << "Received TCPUVServerConnectionReadPhaseData " <<  nread;
+                TCPUVServer::_internal_read_data(handle, nread, buf);
                 break;
             }
         }
@@ -151,16 +168,15 @@ void TCPUVServer::on_read(uv_stream_t* handle, ssize_t nread, const uv_buf_t* bu
 }
 
 void TCPUVServer::on_connected(uv_stream_t* server, int status) {
-	uv_tcp_t* client = NULL;
 	TCPUVServerLDBG << "on_connected " << status;
 	int err = 0;
 	if (status == -1) {
-		TCPUVServerLERR << "error on_connected:" << status;
+		TCPUVServerLERR << "error on_connected: " << status;
 		return;
 	}
 	
-	AcceptedConnection *ac = (AcceptedConnection*)malloc(sizeof(AcceptedConnection));
-    ac->receiving_phase = ConnectionReadPhaseHeader;
+	TCPUVServerAcceptedConnection *ac = (TCPUVServerAcceptedConnection*)malloc(sizeof(TCPUVServerAcceptedConnection));
+    ac->receiving_phase = TCPUVServerConnectionReadPhaseData;
 	if ((err = uv_tcp_init(server->loop, &ac->tcp_connection))) {
         free(ac);
 		TCPUVServerLERR << "Error initializing client on connection: " <<  uv_strerror(err);
@@ -168,15 +184,20 @@ void TCPUVServer::on_connected(uv_stream_t* server, int status) {
 	}
 	ac->tcp_connection.data = static_cast<void*>(ac);
 	//associate server to the client stream
-	if ((err = uv_accept(server, (uv_stream_t*)client))) {
+	if ((err = uv_accept(server, (uv_stream_t*)&ac->tcp_connection))) {
 		TCPUVServerLERR << "Error initializing client on connection: " <<  uv_strerror(err);
 		uv_close((uv_handle_t*) &ac->tcp_connection, NULL);
 		return;
 	} else {
 		//associate the server class instance to the client
         ac->server_instance = static_cast<TCPUVServer*>(server->data);
-		uv_read_start((uv_stream_t*)client, TCPUVServer::on_alloc, TCPUVServer::on_read);
+		uv_read_start((uv_stream_t*)&ac->tcp_connection, TCPUVServer::on_alloc, TCPUVServer::on_read);
 	}
+}
+
+void TCPUVServer::async_shutdown_loop_cb(uv_async_t *handle) {
+	if(!handle->data) return;
+	uv_stop(handle->loop);
 }
 
 TCPUVServer::TCPUVServer(string alias):RpcServer(alias), loop(NULL) {
@@ -198,6 +219,9 @@ void TCPUVServer::start() throw(CException) {
 	int err = 0;
 	run = true;
 	loop = uv_loop_new();
+	
+	uv_async_init(loop, &async_shutdown_loop, TCPUVServer::async_shutdown_loop_cb);
+	
 	uv_tcp_init(loop, &server);
 	sockaddr_in addr;
 	
@@ -222,9 +246,8 @@ void TCPUVServer::start() throw(CException) {
 //start the rpc adapter
 void TCPUVServer::stop() throw(CException) {
 	run = false;
-	uv_close((uv_handle_t*)&server, NULL);
-	uv_stop(loop);
-	uv_loop_delete(loop);
+	async_shutdown_loop.data = (void*) this;
+	uv_async_send(&async_shutdown_loop);
 	loop_thread->join();
 }
 
@@ -235,11 +258,13 @@ void TCPUVServer::deinit() throw(CException) {
 void TCPUVServer::runLoop() {
 	int err = 0;
 	//run the run loop
-	while(run) {
-		err = uv_run(loop, UV_RUN_DEFAULT);
+	//while(run) {
+	err = uv_run(loop, UV_RUN_DEFAULT);
 		//TCPUVServerLDBG << err;
-		usleep(1000);
-	}
+		//usleep(1000);
+	//}
+	uv_loop_close(loop);
+	TCPUVServerLDBG << "leaving loop thread " << err;
 }
 
 chaos::common::data::CDataWrapper * TCPUVServer::handleReceivedData(void *data, size_t len) {

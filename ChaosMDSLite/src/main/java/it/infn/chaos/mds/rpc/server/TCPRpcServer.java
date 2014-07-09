@@ -149,7 +149,7 @@ public class TCPRpcServer extends RPCServer implements Runnable {
 					int readed = 0;
 					ByteArrayOutputStream baos = new ByteArrayOutputStream();
 					
-					long to_readed = ByteSwapper.swap(inFromClient.readLong());
+					//long to_readed = ByteSwapper.swap(inFromClient.readLong());
 					
 					do {
 						// i have some data
