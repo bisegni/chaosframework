@@ -182,7 +182,25 @@ void TCPUVClient::on_connect(uv_connect_t *connection, int status) {
 	}
 }
 
-TCPUVClient::TCPUVClient(string alias):RpcClient(alias)/*, loop(NULL)*/ {
+void TCPUVClient::async_shutdown_loop_cb(uv_async_t *handle) {
+	uv_stop(handle->loop);
+}
+
+void TCPUVClient::async_submit_message_cb(uv_async_t *handle) {
+	NetworkForwardInfo *message_info = NULL;
+	ElementManagingPolicy element_policy;
+	
+	TCPUVClient *client_instance = static_cast<TCPUVClient*>(handle->data);
+	
+	client_instance->queue_async_submission.pop(message_info);
+	if(message_info) {
+		client_instance->processBufferElement(message_info, element_policy);
+	}
+}
+
+TCPUVClient::TCPUVClient(string alias):
+RpcClient(alias),
+queue_async_submission(1)/*, loop(NULL)*/ {
 };
 
 TCPUVClient::~TCPUVClient(){
@@ -195,7 +213,7 @@ void TCPUVClient::init(void *init_data) throw(CException) {
 	chaos::common::data::CDataWrapper *cfg = reinterpret_cast<chaos::common::data::CDataWrapper*>(init_data);
 	int32_t threadNumber = cfg->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER)? cfg->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER):1;
 	TCPUVClientLAPP << "ObjectProcessingQueue<CDataWrapper> initialization with "<< threadNumber <<" thread";
-    CObjectProcessingQueue<NetworkForwardInfo>::init(threadNumber);
+    //CObjectProcessingQueue<NetworkForwardInfo>::init(threadNumber);
     TCPUVClientLAPP << "ObjectProcessingQueue<NetworkForwardInfo> initialized";
 }
 
@@ -204,7 +222,18 @@ void TCPUVClient::init(void *init_data) throw(CException) {
  */
 void TCPUVClient::start() throw(CException) {
 	run = true;
+	
+	//initlize loop
 	uv_loop_init(&loop);
+	
+	//initialize async shutdown callback
+	uv_async_init(&loop, &async_shutdown_loop, TCPUVClient::async_shutdown_loop_cb);
+
+	//initlialize async submission calback
+	async_submit_message.data = static_cast<void*>(this);
+	uv_async_init(&loop, &async_submit_message, TCPUVClient::async_submit_message_cb);
+
+	//start loop
 	loop_thread.reset(new boost::thread(boost::bind(&TCPUVClient::runLoop, this)));
 }
 
@@ -214,8 +243,9 @@ void TCPUVClient::start() throw(CException) {
  */
 void TCPUVClient::stop() throw(CException) {
 	run = false;
+	
+	uv_async_send(&async_shutdown_loop);
 	loop_thread->join();
-	uv_loop_close(&loop);
 	
 	for(map_addr_connection_iter iter = map_addr_connection_info.begin();
 		iter != map_addr_connection_info.end();
@@ -230,8 +260,8 @@ void TCPUVClient::stop() throw(CException) {
  */
 void TCPUVClient::deinit() throw(CException) {
 	TCPUVClientLAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopping";
-    CObjectProcessingQueue<NetworkForwardInfo>::clear();
-    CObjectProcessingQueue<NetworkForwardInfo>::deinit();
+  //  CObjectProcessingQueue<NetworkForwardInfo>::clear();
+  //  CObjectProcessingQueue<NetworkForwardInfo>::deinit();
     TCPUVClientLAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopped";
 }
 
@@ -239,13 +269,17 @@ void TCPUVClient::runLoop() {
 	//run the run loop
 	int err = 0;
 	//run the run loop
-	boost::shared_lock<boost::shared_mutex> lock_loop(loop_mutex, boost::defer_lock);
+	TCPUVClientLAPP << "Enter loop";
+	//boost::shared_lock<boost::shared_mutex> lock_loop(loop_mutex, boost::defer_lock);
 	while(run) {
-		lock_loop.lock();
-		err = uv_run(&loop, UV_RUN_ONCE);
-		lock_loop.unlock();
-		boost::this_thread::sleep(boost::posix_time::microseconds(250));
+		//lock_loop.lock();
+		err = uv_run(&loop, UV_RUN_DEFAULT);
+		//lock_loop.unlock();
+		//boost::this_thread::sleep(boost::posix_time::microseconds(250));
 	}
+	
+	uv_loop_close(&loop);
+	TCPUVClientLAPP << "Exit loop";
 }
 
 /*
@@ -268,13 +302,10 @@ bool TCPUVClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThre
             throw CException(0, "No message in description", "ZMQClient::submitMessage");
 		//allocate new forward info
 		//submit action
-        if(onThisThread){
-            ePolicy.elementHasBeenDetached = true;
-            processBufferElement(forwardInfo, ePolicy);
-            //delete(forwardInfo->message);
-        } else {
-            CObjectProcessingQueue<NetworkForwardInfo>::push(forwardInfo);
-        }
+        queue_async_submission.push(forwardInfo);
+		
+		//infrom uv to send
+		uv_async_send(&async_submit_message);
     } catch(CException& ex){
 		//in this case i need to delete the memory
         if(forwardInfo->message) delete(forwardInfo->message);
@@ -318,7 +349,7 @@ bool TCPUVClient::sendToConnectionInfo(ConnectionInfo *conenction_info, NetworkF
 		conenction_info->uv_conn_info  = new UVConnInfo();
 		
 		//i need to restart the connection
-		boost::unique_lock<boost::shared_mutex> lock_loop(loop_mutex);
+		//boost::unique_lock<boost::shared_mutex> lock_loop(loop_mutex);
 		struct sockaddr_in req_addr;
 		std::vector<std::string> server_desc_tokens;
 		boost::algorithm::split(server_desc_tokens, message_info->destinationAddr, boost::algorithm::is_any_of(":"), boost::algorithm::token_compress_on);

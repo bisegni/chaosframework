@@ -20,6 +20,7 @@
 #include <uv.h>
 
 #include <boost/thread.hpp>
+#include <boost/lockfree/queue.hpp>
 
 #include <queue>
 #include <map>
@@ -52,13 +53,16 @@ namespace chaos {
     /*
      Class that manage the MessagePack message send.
      */
-    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(TCPUVClient, RpcClient), public CObjectProcessingQueue<NetworkForwardInfo> {
+    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(TCPUVClient, RpcClient)/*, public CObjectProcessingQueue<NetworkForwardInfo>*/ {
         REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(TCPUVClient)
         TCPUVClient(string alias);
         virtual ~TCPUVClient();
 		
 		uv_loop_t loop;
-		boost::shared_mutex					loop_mutex;
+		uv_async_t async_shutdown_loop;
+		uv_async_t async_submit_message;
+		boost::lockfree::queue<NetworkForwardInfo *, boost::lockfree::fixed_sized<false> > queue_async_submission;
+		//boost::shared_mutex					loop_mutex;
 		boost::shared_ptr<boost::thread>	loop_thread;
 		typedef std::map<std::string, ConnectionInfo*>::iterator	map_addr_connection_iter;
 		std::map<std::string, ConnectionInfo*>						map_addr_connection_info;
@@ -88,6 +92,10 @@ namespace chaos {
 		static void send_data(ConnectionInfo *ci, uv_stream_t *stream);
 		
 		static void send_close(ConnectionInfo *ci, uv_stream_t *stream);
+		
+		static void async_shutdown_loop_cb(uv_async_t *handle);
+		
+		static void async_submit_message_cb(uv_async_t *handle);
 		//static void timer_cb(uv_timer_t* handle);
     public:
 		
