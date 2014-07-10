@@ -84,7 +84,7 @@ void TCPUVClient::on_ack_read(uv_stream_t *stream, ssize_t nread, const uv_buf_t
 		TCPUVClient::send_data(ci, stream);
 	}
 	
-
+	
 }
 
 void TCPUVClient::on_write_for_close(uv_write_t *req, int status) {
@@ -110,10 +110,10 @@ void TCPUVClient::on_write_end(uv_write_t *req, int status) {
 		ci->uv_conn_info = NULL;
 		uv_close((uv_handle_t*)req->handle,TCPUVClient::on_close);
 	} else {
-			//Stop writing
+		//Stop writing
 		//uv_shutdown_t *shutdown_req = (uv_shutdown_t*)malloc(sizeof(uv_shutdown_t));
 		//uv_shutdown(shutdown_req, req->handle, TCPUVClient::shutdown_cb);
-			//new read
+		//new read
 		if((err = uv_read_start(req->handle, TCPUVClient::alloc_buffer, TCPUVClient::on_ack_read))){
 			TCPUVClientLERR << "error on_write_end:uv_read_start" << uv_err_name(err);
 		}
@@ -137,7 +137,7 @@ void TCPUVClient::send_data(ConnectionInfo *ci, uv_stream_t *stream) {
 	ci->uv_conn_info->data_len = (uint64_t)ci->uv_conn_info->current_serialization->getBufferLen();
 	
 	TCPUVClientLDBG << "STEP-1->send_data of size " << ci->uv_conn_info->data_len;
-
+	
 	//buffers[0] = uv_buf_init((char*)&ci->uv_conn_info->data_len, sizeof(uint64_t));
 	//buffers[1] = uv_buf_init((char*)ci->uv_conn_info->current_serialization->getBufferPtr(), (unsigned int)ci->uv_conn_info->current_serialization->getBufferLen());
 	uv_buf_t buffers = uv_buf_init((char*)ci->uv_conn_info->current_serialization->getBufferPtr(), (unsigned int)ci->uv_conn_info->current_serialization->getBufferLen());
@@ -191,11 +191,11 @@ void TCPUVClient::async_submit_message_cb(uv_async_t *handle) {
 	ElementManagingPolicy element_policy;
 	
 	TCPUVClient *client_instance = static_cast<TCPUVClient*>(handle->data);
-	
-	client_instance->queue_async_submission.pop(message_info);
-	if(message_info) {
-		client_instance->processBufferElement(message_info, element_policy);
-	}
+	while(client_instance->queue_async_submission.pop(message_info)) {
+		if(message_info) {
+			client_instance->processBufferElement(message_info, element_policy);
+		}
+	};
 }
 
 TCPUVClient::TCPUVClient(string alias):
@@ -228,11 +228,11 @@ void TCPUVClient::start() throw(CException) {
 	
 	//initialize async shutdown callback
 	uv_async_init(&loop, &async_shutdown_loop, TCPUVClient::async_shutdown_loop_cb);
-
+	
 	//initlialize async submission calback
 	async_submit_message.data = static_cast<void*>(this);
 	uv_async_init(&loop, &async_submit_message, TCPUVClient::async_submit_message_cb);
-
+	
 	//start loop
 	loop_thread.reset(new boost::thread(boost::bind(&TCPUVClient::runLoop, this)));
 }
@@ -260,8 +260,8 @@ void TCPUVClient::stop() throw(CException) {
  */
 void TCPUVClient::deinit() throw(CException) {
 	TCPUVClientLAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopping";
-  //  CObjectProcessingQueue<NetworkForwardInfo>::clear();
-  //  CObjectProcessingQueue<NetworkForwardInfo>::deinit();
+	//  CObjectProcessingQueue<NetworkForwardInfo>::clear();
+	//  CObjectProcessingQueue<NetworkForwardInfo>::deinit();
     TCPUVClientLAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopped";
 }
 
@@ -288,7 +288,6 @@ void TCPUVClient::runLoop() {
  */
 bool TCPUVClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread) throw(CException) {
 	CHAOS_ASSERT(forwardInfo);
-    ElementManagingPolicy ePolicy;
 	std::vector<std::string> server_desc_tokens;
     try{
         if(!forwardInfo->destinationAddr.size())
@@ -318,7 +317,7 @@ bool TCPUVClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThre
 
 void TCPUVClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementManagingPolicy& elementPolicy) throw(CException) {
 	elementPolicy.elementHasBeenDetached = true;
-
+	
 	if(map_addr_connection_info.count(messageInfo->destinationAddr)) {
 		//we have already a client but we need to se if it is allcoated
 		sendToConnectionInfo(map_addr_connection_info[messageInfo->destinationAddr], messageInfo);
@@ -336,7 +335,7 @@ bool TCPUVClient::startConnection(NetworkForwardInfo *message_info) {
 	
 	//add new connection infointo map
 	map_addr_connection_info.insert(make_pair(message_info->destinationAddr, ci));
-
+	
 	return sendToConnectionInfo(ci, message_info);
 }
 
@@ -345,7 +344,7 @@ bool TCPUVClient::sendToConnectionInfo(ConnectionInfo *conenction_info, NetworkF
 	//
 	conenction_info->queued_message_info.push(message_info);
 	if(!conenction_info->uv_conn_info) {
-		
+		TCPUVClientLAPP << "Allocate new UVConnInfo";
 		conenction_info->uv_conn_info  = new UVConnInfo();
 		
 		//i need to restart the connection
@@ -354,7 +353,7 @@ bool TCPUVClient::sendToConnectionInfo(ConnectionInfo *conenction_info, NetworkF
 		std::vector<std::string> server_desc_tokens;
 		boost::algorithm::split(server_desc_tokens, message_info->destinationAddr, boost::algorithm::is_any_of(":"), boost::algorithm::token_compress_on);
 		uv_ip4_addr(server_desc_tokens[0].c_str(), boost::lexical_cast<int>(server_desc_tokens[1]), &req_addr);
-
+		
 		
 		uv_tcp_init(&loop, &conenction_info->uv_conn_info->tcp_connection);
 		uv_tcp_keepalive(&conenction_info->uv_conn_info->tcp_connection, 1, 60);
