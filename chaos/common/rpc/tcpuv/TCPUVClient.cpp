@@ -51,11 +51,11 @@ void TCPUVClient::on_ack_read(uv_stream_t *stream, ssize_t nread, const uv_buf_t
 	TCPUVClientLDBG << "STEP-2->on_ack_read " << nread;
 	if (nread>0) {
 		auto_ptr<chaos::common::data::CDataWrapper> ack_result(new chaos::common::data::CDataWrapper(buf->base));
-		LDBG_ << "TCPUVClient::on_ack_read message result------------------------------";
-		LDBG_ << ack_result->getJSONString();
-		LDBG_ << "TCPUVClient::on_ack_read message result------------------------------";
+		DEBUG_CODE(LDBG_ << "TCPUVClient::on_ack_read message result------------------------------";)
+		DEBUG_CODE(LDBG_ << ack_result->getJSONString();)
+		DEBUG_CODE(LDBG_ << "TCPUVClient::on_ack_read message result------------------------------";)
 	} else {
-		TCPUVClientLERR << "STEP-2->on_ack_read error " << uv_err_name((int)nread);
+		TCPUVClientLERR << "on_ack_read error " << uv_err_name((int)nread);
 		boost::unique_lock<boost::shared_mutex> lock(ci->connection_mutex);
 		
 		stream->data = ci->uv_conn_info;
@@ -67,17 +67,12 @@ void TCPUVClient::on_ack_read(uv_stream_t *stream, ssize_t nread, const uv_buf_t
 	//we need check othe data to send
 	boost::unique_lock<boost::shared_mutex> lock(ci->connection_mutex);
 	if(ci->queued_message_info.empty()) {
-		TCPUVClientLDBG << "STEP-2->close connection for empty queue";
-		
+		DEBUG_CODE(TCPUVClientLDBG << "STEP-close connection for empty queue";)
 		stream->data = ci->uv_conn_info;
 		ci->uv_conn_info = NULL;
 		uv_close((uv_handle_t*)stream,TCPUVClient::on_close);
-		//send empty message for close socket
-		//TCPUVClient::send_close(ci, stream);
-		//we can close
-		//uv_close((uv_handle_t*)stream, TCPUVClient::on_close);
 	} else {
-		TCPUVClientLDBG << "STEP-2->we have more data to send ->" << ci->queued_message_info.size();
+		DEBUG_CODE(TCPUVClientLDBG << "we have more data to send ->" << ci->queued_message_info.size();)
 		//delete sent data
 		if(ci->uv_conn_info->current_message_info) delete(ci->uv_conn_info->current_message_info);
 		if(ci->uv_conn_info->current_serialization) delete(ci->uv_conn_info->current_serialization);
@@ -86,17 +81,6 @@ void TCPUVClient::on_ack_read(uv_stream_t *stream, ssize_t nread, const uv_buf_t
 	
 	
 }
-
-void TCPUVClient::on_write_for_close(uv_write_t *req, int status) {
-	TCPUVClientLDBG << "on_write_end " << status;
-	if (status) {
-		TCPUVClientLERR << "error on_write_end ->" << status;
-		TCPUVClientLERR << "so we close the handle";
-	}
-	uv_close((uv_handle_t*)req->handle, TCPUVClient::on_close);
-	free(req);
-}
-
 
 void TCPUVClient::on_write_end(uv_write_t *req, int status) {
 	TCPUVClientLDBG << "on_write_end" << status;
@@ -144,16 +128,6 @@ void TCPUVClient::send_data(ConnectionInfo *ci, uv_stream_t *stream) {
 	if((err = uv_write(new_write_req, stream, &buffers, 1, TCPUVClient::on_write_end))) {
 		TCPUVClientLERR << "error send_data:uv_write" << uv_err_name(err);
 	}
-}
-
-void TCPUVClient::send_close(ConnectionInfo *ci, uv_stream_t *stream) {
-	TCPUVClientLDBG << "STEP-3->send_close";
-	uv_buf_t buf = uv_buf_init(NULL, 0);
-	
-	stream->data = ci->uv_conn_info;
-	ci->uv_conn_info = NULL;
-	uv_write_t *new_write_req = (uv_write_t*)malloc(sizeof(uv_write_t));
-	uv_write(new_write_req, stream, &buf, 1, TCPUVClient::on_write_for_close);
 }
 
 void TCPUVClient::on_connect(uv_connect_t *connection, int status) {
@@ -357,7 +331,7 @@ bool TCPUVClient::sendToConnectionInfo(ConnectionInfo *conenction_info, NetworkF
 		
 		uv_tcp_init(&loop, &conenction_info->uv_conn_info->tcp_connection);
 		uv_tcp_keepalive(&conenction_info->uv_conn_info->tcp_connection, 1, 60);
-		
+        uv_tcp_nodelay(&conenction_info->uv_conn_info->tcp_connection, 1);
 		//exec the connection
 		conenction_info->uv_conn_info->tcp_connection.data = static_cast<void*>(conenction_info);
 		uv_tcp_connect(&conenction_info->uv_conn_info->tcp_connection_request, &conenction_info->uv_conn_info->tcp_connection, (const struct sockaddr*)&req_addr, TCPUVClient::on_connect);

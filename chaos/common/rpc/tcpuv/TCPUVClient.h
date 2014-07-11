@@ -79,8 +79,6 @@ namespace chaos {
 		
 		static void on_ack_read(uv_stream_t *server, ssize_t nread, const uv_buf_t* buf);
 		
-		static void on_write_for_close(uv_write_t *req, int status);
-		
 		static void on_write_end(uv_write_t *req, int status);
 		
 		static void on_connect(uv_connect_t *connection, int status);
@@ -90,8 +88,6 @@ namespace chaos {
 		static void shutdown_cb(uv_shutdown_t *req, int status);
 		
 		static void send_data(ConnectionInfo *ci, uv_stream_t *stream);
-		
-		static void send_close(ConnectionInfo *ci, uv_stream_t *stream);
 		
 		static void async_shutdown_loop_cb(uv_async_t *handle);
 		

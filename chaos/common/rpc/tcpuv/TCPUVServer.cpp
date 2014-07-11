@@ -43,14 +43,6 @@ void TCPUVServer::on_close(uv_handle_t* handle) {
     free(handle->data);
 }
 
-void TCPUVServer::shutdown_connection_cb(uv_shutdown_t *req, int status) {
-	TCPUVServerLDBG << "shutdown_connection_cb";
-	if(status) {
-		TCPUVServerLDBG << "shutdown_connection_cb error"<< status;
-	}
-	free(req);
-}
-
 void TCPUVServer::on_alloc(uv_handle_t* handle, size_t suggested_size, uv_buf_t* buf) {
 	TCPUVServerLDBG << "on_alloc";
 	switch(TCPUV_AC(handle->data)->receiving_phase) {
@@ -78,13 +70,6 @@ void TCPUVServer::on_write_end(uv_write_t *req, int status) {
 	if (status) {
 		TCPUVServerLERR << "error on_write_end: " << status;
 	}
-	//uv_close((uv_handle_t*)req->handle, TCPUVServer::on_close);
-	//uv_shutdown_t *shutdown_req = (uv_shutdown_t*)malloc(sizeof(uv_shutdown_t));
-	
-	//Stop reading
-	//if((err = uv_shutdown(shutdown_req, req->handle, TCPUVServer::shutdown_connection_cb))) {
-	//	TCPUVServerLERR << "Error on_write_end:uv_shutdown" << uv_err_name(err);
-	//}
 	
 	//read next message
 	if((err = uv_read_start((uv_stream_t*)req->handle, TCPUVServer::on_alloc, TCPUVServer::on_read))) {
@@ -95,27 +80,27 @@ void TCPUVServer::on_write_end(uv_write_t *req, int status) {
 }
 
 void TCPUVServer::_internal_read_header(uv_stream_t* handle, ssize_t nread, const uv_buf_t* buf) {
-    TCPUVServerLDBG << "Received header: " <<  nread;
+    DEBUG_CODE(TCPUVServerLDBG << "Received header: " <<  nread;)
 	int err = 0;
     //read the ehader
     TCPUV_AC(handle->data)->phjase_one_data_size = FROM_LITTLE_ENDNS_NUM(uint64_t, *((uint64_t*)buf->base));
     
     if(TCPUV_AC(handle->data)->phjase_one_data_size) {
         TCPUV_AC(handle->data)->receiving_phase = TCPUVServerConnectionReadPhaseData;
-		TCPUVServerLDBG << "We need to receive data for bytes-> " <<  TCPUV_AC(handle->data)->phjase_one_data_size;
+		DEBUG_CODE(TCPUVServerLDBG << "We need to receive data for bytes-> " <<  TCPUV_AC(handle->data)->phjase_one_data_size;)
         //read the data
         if((err = uv_read_start(handle, TCPUVServer::on_alloc, TCPUVServer::on_read))) {
 			TCPUVServerLERR << "Error _internal_read_header:uv_read_start" << uv_err_name(err);
 		}
     } else {
-		TCPUVServerLDBG << "No data we need to aspect so we close the connection " <<  nread;
+		DEBUG_CODE(TCPUVServerLDBG << "No data we need to aspect so we close the connection " <<  nread;)
         // we have rceived zero length header that tell us to close connection
         uv_close((uv_handle_t*)handle, TCPUVServer::on_close);
     }
 }
 
 void TCPUVServer::_internal_read_data(uv_stream_t* handle, ssize_t nread, const uv_buf_t* buf) {
-    TCPUVServerLDBG << "Received data: " <<  nread;
+    DEBUG_CODE(TCPUVServerLDBG << "Received data: " <<  nread;)
     //read the message data
 	int err = 0;
     chaos::common::data::CDataWrapper *action_result = TCPUV_AC(handle->data)->server_instance->handleReceivedData(buf->base, buf->len);
@@ -142,13 +127,13 @@ void TCPUVServer::on_read(uv_stream_t* handle, ssize_t nread, const uv_buf_t* bu
 	if (nread > 0) {
         switch(TCPUV_AC(handle->data)->receiving_phase) {
             case TCPUVServerConnectionReadPhaseHeader: {
-                TCPUVServerLDBG << "Received TCPUVServerConnectionReadPhaseHeader " <<  nread;
+                DEBUG_CODE(TCPUVServerLDBG << "Received TCPUVServerConnectionReadPhaseHeader " <<  nread;)
                 TCPUVServer::_internal_read_header(handle, nread, buf);
                 break;
             }
                 
             case TCPUVServerConnectionReadPhaseData: {
-                TCPUVServerLDBG << "Received TCPUVServerConnectionReadPhaseData " <<  nread;
+                DEBUG_CODE(TCPUVServerLDBG << "Received TCPUVServerConnectionReadPhaseData " <<  nread;)
                 TCPUVServer::_internal_read_data(handle, nread, buf);
                 break;
             }
@@ -159,7 +144,7 @@ void TCPUVServer::on_read(uv_stream_t* handle, ssize_t nread, const uv_buf_t* bu
 	} else {
 		//all ok nothing read
 		//we can close the stream
-		TCPUVServerLDBG << "Close socket message";
+		DEBUG_CODE(TCPUVServerLDBG << "Close socket message";)
 		uv_close((uv_handle_t*)handle, TCPUVServer::on_close);
 
 	}
@@ -200,7 +185,7 @@ void TCPUVServer::async_shutdown_loop_cb(uv_async_t *handle) {
 	uv_stop(handle->loop);
 }
 
-TCPUVServer::TCPUVServer(string alias):RpcServer(alias), loop(NULL) {
+TCPUVServer::TCPUVServer(string alias):RpcServer(alias) {
     
 }
 
@@ -217,37 +202,43 @@ void TCPUVServer::init(void *init_data) throw(CException) {
 //start the rpc adapter
 void TCPUVServer::start() throw(CException) {
 	int err = 0;
-	run = true;
-	loop = uv_loop_new();
-	
-	uv_async_init(loop, &async_shutdown_loop, TCPUVServer::async_shutdown_loop_cb);
-	
-	uv_tcp_init(loop, &server);
-	sockaddr_in addr;
-	
+    sockaddr_in addr;
+    //init the uv loop
+    uv_loop_init(&loop);
+    
+    //init the tcp socket
+    uv_tcp_init(&loop, &server);
+    
+	//init shutdown async callback
+	uv_async_init(&loop, &async_shutdown_loop, TCPUVServer::async_shutdown_loop_cb);
+
+    //set the class instance into accept socket data field
 	server.data = static_cast<void*>(this);
 	
+    //! puslish server on all ip
 	uv_ip4_addr("0.0.0.0", portNumber, &addr);
-	
 	if ((err = uv_tcp_bind(&server, (const struct sockaddr*)&addr, 0))) {
 		TCPUVServerLERR << "bind error " << uv_strerror(err);
 		throw CException(-1, uv_strerror(err), __PRETTY_FUNCTION__);
 	}
 	
-	
+	//start listening...
 	if ((err = uv_listen((uv_stream_t*)&server, 128, TCPUVServer::on_connected))) {
 		TCPUVServerLERR << "listen error " << uv_strerror(err);
 		throw CException(-2, uv_strerror(err), __PRETTY_FUNCTION__);
 	}
 	
+    //start loop
 	loop_thread.reset(new boost::thread(boost::bind(&TCPUVServer::runLoop, this)));
 }
 
 //start the rpc adapter
 void TCPUVServer::stop() throw(CException) {
-	run = false;
 	async_shutdown_loop.data = (void*) this;
+    //send shutdown async message
 	uv_async_send(&async_shutdown_loop);
+    
+    //join on thread
 	loop_thread->join();
 }
 
@@ -257,14 +248,10 @@ void TCPUVServer::deinit() throw(CException) {
 
 void TCPUVServer::runLoop() {
 	int err = 0;
-	//run the run loop
-	//while(run) {
-	err = uv_run(loop, UV_RUN_DEFAULT);
-		//TCPUVServerLDBG << err;
-		//usleep(1000);
-	//}
-	uv_loop_close(loop);
-	TCPUVServerLDBG << "leaving loop thread " << err;
+    TCPUVServerLAPP << "Starting loop thread " << err;
+	err = uv_run(&loop, UV_RUN_DEFAULT);
+	uv_loop_close(&loop);
+	TCPUVServerLAPP << "Leaving loop thread " << err;
 }
 
 chaos::common::data::CDataWrapper * TCPUVServer::handleReceivedData(void *data, size_t len) {
