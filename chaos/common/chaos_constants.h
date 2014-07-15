@@ -404,8 +404,35 @@ namespace chaos {
         static const char * const ACTION_CU_GET_INFO			= "getControlUnitInfo";
 		
     }
-    /** @} */ // end of ChaosSystemDomainAndActionLabel
-    
+    /** @} */ // end of ChaosMetadataActionLabel
+	/** @defgroup ChaosMetadataActionLabel Chaos Metadata Message query
+     *  This is the collection of the label that identify the action exposed by metadata service to 
+	 *  perform query about !CHAOS metadata infromation
+     *  @{
+     */
+    namespace ChaosMetadataRPCConstants {
+        //! The chaos metadata query domain
+        static const char * const MDS_DOMAIN					= "system";
+		
+        //! this action perform the registration for the unit server service
+        static const char * const MDS_REGISTER_UNIT_SERVER		= "registerUnitServer";
+		
+		//! this action perform the registration for the control unit dataset
+        static const char * const MDS_REGISTER_CONTROL_UNIT		= "registerControlUnit";
+		
+		//! Action to retrive all device id
+		static const char * const MDS_GET_ALL_DEVICE			= "getAllActiveDevice";
+		
+		//! Perform the heart beat of the cu
+		static const char * const MDS_CU_HEARTBEAT				= "heartbeatControlUnit";
+		
+		//! Perform request of the network address for a node identified by a device id
+		static const char * const MDS_GET_NODE_ADDRESS			= "getNodeNetworkAddress";
+    }
+    /** @} */ // end of ChaosMetadataActionLabel
+	
+	
+	
 	/** @defgroup PerformanceSystemRpcKey Chaos performance system
      * this is the collection of the rpc key for interacting with
 	 * internal performance system
@@ -431,7 +458,7 @@ namespace chaos {
      */
     //! This is the collection of the key to configura history and live channel
     namespace DataProxyConfigurationKey {
-        static const char * const CS_LIB_METADATASET_ADDRESS					="mds_network_addr";
+        static const char * const CS_LIB_METADATASET_ADDRESS					= "mds_network_addr";
         //!root key for DataManager Configuration
         static const char * const CS_DM_CONFIGURATION							= "cs|dm|configuration";
         //!the numebr of the thread ofr the output buffer
@@ -445,7 +472,7 @@ namespace chaos {
         //!live data address
         static const char * const CS_DM_LD_SERVER_ADDRESS						= "cs|dm|ld|server_address";
         //!key associated with the device identification in a k/v storage ien
-        static const char * const CS_DM_LD_CU_ADDRESS_KEY                   = "ld.device_addr_key";
+        static const char * const CS_DM_LD_CU_ADDRESS_KEY						= "ld.device_addr_key";
 		//!key associated with the device identification in a k/v storage ien
         static const char * const DATAPROXY_CLIENT_CONNECTION_MODE				= "chaos:dp:conn_mode";
     }

@@ -42,7 +42,6 @@
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/driver_manager/DriverErogatorInterface.h>
 
-#define CU_IDENTIFIER_C_STREAM "_" << getCUInstance()
 #define INIT_STATE      0
 #define START_STATE     1
 
@@ -87,8 +86,16 @@ namespace chaos{
 			typedef std::vector<chaos::cu::driver_manager::driver::DrvRequestInfo>				ControlUnitDriverList;
 			typedef std::vector<chaos::cu::driver_manager::driver::DrvRequestInfo>::iterator	ControlUnitDriverListIterator;
 		private:
+			//! contains the description of the type of the control unit
 			std::string control_unit_type;
+			
+			//! is the unique identification code associated to the control unit instance(rand benerated by contructor)
 			std::string control_unit_id;
+			
+			//! control unit load param
+			std::string control_unit_param;
+			
+			//! control unit driver information list
 			ControlUnitDriverList control_unit_drivers;
 			
 			//! list of the accessor of the driver requested by the unit implementation
@@ -252,18 +259,23 @@ namespace chaos{
             //! Default Contructor
 			/*!
 			 \param _control_unit_type the superclass need to set the control unit type for his implementation
+			 \param _control_unit_id unique id for the control unit
+			 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
 			 */
             AbstractControlUnit(const std::string& _control_unit_type,
-								const std::string& _control_unit_id);
+								const std::string& _control_unit_id,
+								const std::string& _control_unit_param);
             
             //! Default Contructor
 			/*!
 			 \param _control_unit_type the superclass need to set the control unit type for his implementation
 			 \param _control_unit_id unique id for the control unit
+			 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
 			 \param _control_unit_drivers driver information
 			 */
             AbstractControlUnit(const std::string& _control_unit_type,
 								const std::string& _control_unit_id,
+								const std::string& _control_unit_param,
 								const ControlUnitDriverList& _control_unit_drivers);
 			
             //! default destructor
@@ -287,6 +299,9 @@ namespace chaos{
             
             //! Return the contro unit instance
             const char * getCUInstance();
+			
+			//! Return the contro unit instance
+            const char * getCUID();
         };
     }
 }

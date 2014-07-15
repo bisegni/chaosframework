@@ -139,7 +139,17 @@ void TCPUVServer::on_read(uv_stream_t* handle, ssize_t nread, const uv_buf_t* bu
             }
         }
 	} else if (nread < 0) {
-		TCPUVServerLERR << "Error reading data:" << nread<< " "<< uv_strerror((int)nread);
+		if(nread == -4095) {
+			int namelen;
+			char check_ip[17];
+			struct sockaddr_in peername;
+			uv_tcp_getpeername((const uv_tcp_t*)handle, (struct sockaddr*)&peername, &namelen);
+			
+			uv_ip4_name(&peername, (char*) check_ip, sizeof check_ip);
+			TCPUVServerLERR << "Client " <<  check_ip << "-" << ntohs(peername.sin_port) << " has disconnected";
+		} else {
+			TCPUVServerLERR << "Error reading data:" << nread<< " "<< uv_strerror((int)nread);
+		}
 		uv_close((uv_handle_t*)handle, TCPUVServer::on_close);
 	} else {
 		//all ok nothing read

@@ -33,6 +33,9 @@ using namespace std;
 #define LCMDBG_ LDBG_ << "[Control Manager] - "
 #define LCMERR_ LERR_ << "[Control Manager] - "
 #define WAITH_TIME_FOR_CU_REGISTRATION 2000000
+#define WU_IDENTIFICATION(x) std::string(x->getCUInstance()) + std::string("-") + std::string(x->getCUID())
+
+
 /*
  Constructor
  */
@@ -133,19 +136,18 @@ void ControlManager::deinit() throw(CException) {
     
     
     LCMAPP_  << "Deinit all the submitted Control Unit";
-    map<string, shared_ptr<AbstractControlUnit> >::iterator cuIter = map_control_unit_instance.begin();
+    map<string, shared_ptr<WorkUnitInfo> >::iterator cuIter = map_control_unit_instance.begin();
     for ( ; cuIter != map_control_unit_instance.end(); cuIter++ ){
-        shared_ptr<AbstractControlUnit> cu = (*cuIter).second;
+        shared_ptr<WorkUnitInfo> cu = (*cuIter).second;
         
-        LCMAPP_  << "Deregister RPC action for cu whith instance:" << cu->getCUInstance();
-        cu->_getDeclareActionInstance(cuDeclareActionsInstance);
+        LCMAPP_  << "Deregister RPC action for cu whith instance:" << WU_IDENTIFICATION(cu->work_unit_instance);
+        cu->work_unit_instance->_getDeclareActionInstance(cuDeclareActionsInstance);
         for(int idx = 0; idx < cuDeclareActionsInstance.size(); idx++) {
             CommandManager::getInstance()->deregisterAction((chaos::DeclareAction *)cuDeclareActionsInstance[idx]);
         }
         
-        LCMAPP_  << "Deinit Control Unit. " << cu->getCUInstance();
 		//load all device id for this cu
-        allCUDeviceIDToStop.push_back(cu->getDeviceID());
+        allCUDeviceIDToStop.push_back(cu->work_unit_instance->getDeviceID());
         
         for (vector<string>::iterator iter =  allCUDeviceIDToStop.begin();
              iter != allCUDeviceIDToStop.end();
@@ -156,8 +158,8 @@ void ControlManager::deinit() throw(CException) {
             CDataWrapper fakeDWForDeinit;
             fakeDWForDeinit.addStringValue(DatasetDefinitionkey::DEVICE_ID, *iter);
             try{
-                LCMAPP_  << "Stopping deviceid:" << *iter;
-                cu->_stop(&fakeDWForDeinit, detachFake);
+                LCMAPP_  << "Stopping Control Unit: " << WU_IDENTIFICATION(cu->work_unit_instance);
+                cu->work_unit_instance->_stop(&fakeDWForDeinit, detachFake);
             }catch (CException& ex) {
                 if(ex.errorCode != 1){
 					//these exception need to be logged
@@ -166,8 +168,8 @@ void ControlManager::deinit() throw(CException) {
             }
             
             try{
-                LCMAPP_  << "Deinit deviceid:" << *iter;
-                cu->_deinit(&fakeDWForDeinit, detachFake);
+                LCMAPP_  << "Deiniting Control Unit: " << WU_IDENTIFICATION(cu->work_unit_instance);
+                cu->work_unit_instance->_deinit(&fakeDWForDeinit, detachFake);
             }catch (CException& ex) {
                 if(ex.errorCode != 1){
 					//these exception need to be logged
@@ -175,8 +177,8 @@ void ControlManager::deinit() throw(CException) {
                 }
             }
             try{
-                LCMAPP_  << "Undefine Action And Dataset for deviceid:" << *iter;
-                cu->_undefineActionAndDataset();
+				LCMAPP_  << "Undefine Action And Dataset for  Control Unit: " << WU_IDENTIFICATION(cu->work_unit_instance);
+                cu->work_unit_instance->_undefineActionAndDataset();
             }  catch (CException& ex) {
                 if(ex.errorCode != 1){
 					//these exception need to be logged
@@ -184,11 +186,11 @@ void ControlManager::deinit() throw(CException) {
                 }
             }
         }
-        LCMAPP_  << "Dispose event channel for Control Unit Sanbox:" << cu->getCUInstance();
-        CommandManager::getInstance()->deleteEventChannel(cu->deviceEventChannel);
-        cu->deviceEventChannel = NULL;
+        LCMAPP_  << "Dispose event channel for Control Unit Sanbox:" << WU_IDENTIFICATION(cu->work_unit_instance);
+        CommandManager::getInstance()->deleteEventChannel(cu->work_unit_instance->deviceEventChannel);
+        cu->work_unit_instance->deviceEventChannel = NULL;
         cuDeclareActionsInstance.clear();
-        LCMAPP_  << "Deinitilized Control Unit Sanbox:" << cu->getCUInstance();
+        LCMAPP_  << "Unload" << cu->work_unit_instance->getCUInstance();
     }
     map_control_unit_instance.clear();
 }
@@ -206,7 +208,6 @@ void ControlManager::submitControlUnit(AbstractControlUnit *data) throw(CExcepti
 	thread_waith_semaphore.unlock();
 }
 
-
 void ControlManager::manageControlUnit() {
 	//initialize the Control Unit
     int registrationError = ErrorCode::EC_NO_ERROR;
@@ -220,7 +221,7 @@ void ControlManager::manageControlUnit() {
 			//lock queue
 			lock.lock();
 			
-			//get the oldest data ad copy the ahsred_ptr
+			//get the oldest data ad copy the shared_ptr
 			curCU = submittedCUQueue.front();
 			
 			//remove the oldest data
@@ -230,39 +231,41 @@ void ControlManager::manageControlUnit() {
 			lock.unlock();
 			try {
 				LCMAPP_  << "Got new Control Unit";
-				shared_ptr<AbstractControlUnit> cuPtr(curCU);
-				
+				shared_ptr<WorkUnitInfo> wui(new WorkUnitInfo(curCU));
+
 				//associate the event channel to the control unit
-				cuPtr->deviceEventChannel = CommandManager::getInstance()->getDeviceEventChannel();
+				LCMAPP_  << "Adding event channel to the control unit:" << WU_IDENTIFICATION(wui->work_unit_instance);
+				wui->work_unit_instance->deviceEventChannel = CommandManager::getInstance()->getDeviceEventChannel();
 				
-				LCMAPP_  << "Setup Control Unit Sanbox for cu with instance:" << cuPtr->getCUInstance();
-				cuPtr->_defineActionAndDataset(cuActionAndDataset);
+				LCMAPP_  << "Setup Control Unit Sanbox for cu with instance:" << WU_IDENTIFICATION(wui->work_unit_instance);
+				wui->work_unit_instance->_defineActionAndDataset(cuActionAndDataset);
 				
-				LCMAPP_  << "Register RPC action for cu whith instance:" << cuPtr->getCUInstance();
-				cuPtr->_getDeclareActionInstance(cuDeclareActionsInstance);
+				LCMAPP_  << "Register RPC action for cu whith instance:" << WU_IDENTIFICATION(wui->work_unit_instance);
+				wui->work_unit_instance->_getDeclareActionInstance(cuDeclareActionsInstance);
 				for(int idx = 0; idx < cuDeclareActionsInstance.size(); idx++) {
 					CommandManager::getInstance()->registerAction((chaos::DeclareAction *)cuDeclareActionsInstance[idx]);
 				}
 				
 				//sendConfPackToMDS(cuPtr->defaultInternalConf.get());
-				LCMAPP_  << "Talk with MDS for cu with instance:" << cuPtr->getCUInstance();
+				LCMAPP_  << "Talk with MDS for cu with instance:" << WU_IDENTIFICATION(wui->work_unit_instance);
 				registrationError = sendConfPackToMDS(cuActionAndDataset);
 				if(registrationError == ErrorCode::EC_NO_ERROR){
-					LCMAPP_  << "Configuration pack has been sent to MDS for cu with instance:" << cuPtr->getCUInstance();
-					LCMAPP_  << "Control Unit Sanbox:" << cuPtr->getCUInstance() << " ready to work";
+					LCMAPP_  << "Configuration pack has been sent to MDS for cu with instance:" << WU_IDENTIFICATION(wui->work_unit_instance);
+					LCMAPP_  << "Control Unit Sanbox:" << WU_IDENTIFICATION(wui->work_unit_instance) << " ready to work";
 				} else {
-					LCMAPP_  << "ERROR sending configuration pack has been sent to MDS for cu with instance:" << cuPtr->getCUInstance();
+					LCMAPP_  << "ERROR sending configuration pack has been sent to MDS for cu with instance:" << WU_IDENTIFICATION(wui->work_unit_instance);
 				}
 				
 				//the sandbox name now is the real CUName_CUInstance before the initSandbox method call the CUInstance is
 				//randomlly defined but if a CU want to ovveride it it can dureing initSandbox call
-				if(map_control_unit_instance.count(cuPtr->getCUInstance())) {
-					LCMERR_  << "Duplicated control unit instance " << cuPtr->getCUInstance();
+				if(map_control_unit_instance.count(wui->work_unit_instance->getCUInstance())) {
+					LCMERR_  << "Duplicated control unit instance " << WU_IDENTIFICATION(wui->work_unit_instance);
 					return;
 				}
 				
 				//add sandbox to all map of running cu
-				map_control_unit_instance.insert(make_pair(cuPtr->getCUInstance(), cuPtr));
+				
+				map_control_unit_instance.insert(make_pair(wui->work_unit_instance->getCUInstance(), wui));
 				
 				//check if we need to autostart and init the CU
 				if(cuActionAndDataset.hasKey(CUDefinitionKey::CS_CM_CU_AUTOSTART) &&

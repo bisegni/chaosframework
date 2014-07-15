@@ -73,7 +73,7 @@ namespace chaos{
              reference to the master pirv lib controller, for shutdown operation
              by rpc
              */
-            ServerDelegator *privLibControllerPtr;
+            ServerDelegator *server_handler;
             
             /*
              * Initzialize the command manager

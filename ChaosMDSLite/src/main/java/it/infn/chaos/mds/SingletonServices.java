@@ -6,6 +6,7 @@ package it.infn.chaos.mds;
 import it.infn.chaos.mds.rpc.server.RPCActionHadler;
 import it.infn.chaos.mds.rpc.server.RPCClient;
 import it.infn.chaos.mds.rpc.server.RPCServer;
+import it.infn.chaos.mds.slowexecution.SlowExecution;
 
 import org.ref.common.exception.RefException;
 
@@ -20,6 +21,7 @@ public class SingletonServices {
 	private RPCClient					mdsRpcClient	= null;
 	private MongoClient					mongoClient		= null;
 	private DB							mongoDB			= null;
+	private SlowExecution				slowExecution	= null;
 	static private SingletonServices	instance		= null;
 
 	/**
@@ -95,5 +97,13 @@ public class SingletonServices {
 
 	public void setMongoDB(DB mongoDB) {
 		this.mongoDB = mongoDB;
+	}
+
+	public SlowExecution getSlowExecution() {
+		return slowExecution;
+	}
+
+	public void setSlowExecution(SlowExecution slowExecution) {
+		this.slowExecution = slowExecution;
 	}
 }

@@ -74,6 +74,26 @@ abstract public class RPCActionHadler {
 
 	}
 
+	
+	/**
+	 * @param mdsRpcServer
+	 * @throws RefException
+	 */
+	public void deregisterDomanAndNameForHandler(RPCServer mdsRpcServer) throws RefException {
+		if (mdsRpcServer == null)
+			return;
+
+		Enumeration<DomainActions> actions = domainHash.elements();
+		while (actions.hasMoreElements()) {
+			RPCActionHadler.DomainActions domainActions = (RPCActionHadler.DomainActions) actions.nextElement();
+			Vector<String> acts = domainActions.getNames();
+			for (String actionAlias : acts) {
+				mdsRpcServer.removeDomainActionHanlder(domainActions.getDomain(), actionAlias, this);
+			}
+		}
+
+	}
+	
 	/**
 	 * @param dName
 	 * @return

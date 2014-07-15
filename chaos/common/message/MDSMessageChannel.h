@@ -45,22 +45,32 @@ namespace chaos {
         
     public:
         
-        //! Send heartbeat
+			//! Send heartbeat
         /*! 
          Send the heartbeat for an identification ID. This can be an id for a device or an uitoolkit instance.
          The method return has fast as possible, no aswer is wait
          \param identificationID identification id of a device or a client
          */
-        void sendHeartBeatForDeviceID(string& identificationID);
-        
+		void sendHeartBeatForDeviceID(string& identificationID);
+		
+			//! Send Unit server registration to MDS
+		/*!
+		 Perform the registration of the unit server
+		 \param unitServerDescription the description of the unit server to publish
+		 \param requestCheck flasg the message has request if it is true
+		 \param millisecToWait delay after wich the wait is interrupt
+		 */
+		int sendUnitServerRegistration(CDataWrapper *unitServerDescription, bool requestCheck = false, uint32_t millisecToWait = 0);
+
             //! Send dataset to MDS
         /*! 
-         Return a list of all device id that are active
+         Perform the registration of the control unit dataaset
          \param deviceDataset the CDatawrapper representi the device dataset infromation, th epointer is not disposed
+		 \param requestCheck flasg the message has request if it is true
          \param millisecToWait delay after wich the wait is interrupt
          */
         int sendUnitDescription(CDataWrapper *deviceDataset, bool requestCheck=false, uint32_t millisecToWait=0);
-        
+		
         //! Get all active device id
         /*! 
          Return a list of all device id that are active

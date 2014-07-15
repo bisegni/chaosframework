@@ -32,23 +32,23 @@ namespace cs = chaos::cu::control_manager::slow_command;
 
 namespace chaos {
     namespace cu {
-
+		
         
         class ControManager;
         
         //! Abstract class for Slow Control Unit
         /*!
-            This class is the base for the slow control unit. It manage the all
-            customization of the base class AbstractControlUnit necessary to implement
-            slow control. With this term is intended a command that when it is executed,
-            it can run in a unterminated period of time.
+		 This class is the base for the slow control unit. It manage the all
+		 customization of the base class AbstractControlUnit necessary to implement
+		 slow control. With this term is intended a command that when it is executed,
+		 it can run in a unterminated period of time.
          
-            Subclass need to install commands and, optionally, set the default one.
+		 Subclass need to install commands and, optionally, set the default one.
          */
         class SCAbstractControlUnit : public AbstractControlUnit {
             friend class ControlManager;
             friend class DomainActionsScheduler;
-
+			
             //! Slow command executor pointer
             cu::control_manager::slow_command::SlowCommandExecutor *slow_command_executor;
             
@@ -83,17 +83,24 @@ namespace chaos {
 			chaos_batch::ValueSetting *getVariableValue(chaos_batch::IOCAttributeSharedCache::SharedVeriableDomain domain, const char *variable_name);
             // Get all managem declare action instance
             void _getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance);
-
+			
         public:
             
-			//! default constructor
-            SCAbstractControlUnit(const std::string& _control_unit_id);
+			/*! default constructor
+			 \param _control_unit_id unique id for the control unit
+			 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
+			 */
+            SCAbstractControlUnit(const std::string& _control_unit_id,
+								  const std::string& _control_unit_param);
 			/*!
 			 Parametrized constructor
 			 \param _control_unit_id unique id for the control unit
+			 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
 			 \param _control_unit_drivers driver information
 			 */
-            SCAbstractControlUnit(const std::string& _control_unit_id, const ControlUnitDriverList& _control_unit_drivers);
+            SCAbstractControlUnit(const std::string& _control_unit_id,
+								  const std::string& _control_unit_param,
+								  const ControlUnitDriverList& _control_unit_drivers);
 			
             ~SCAbstractControlUnit();
             

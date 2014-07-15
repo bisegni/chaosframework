@@ -18,29 +18,29 @@ import org.ref.common.exception.RefException;
 
 /**
  * RPC actions for manage the Control Unit registration and device dataset retriving
- *
+ * 
  * @author bisegni
  */
 public class CUQueryHandler extends RPCActionHadler {
 	private static final String	SYSTEM					= "system";
+	private static final String	REGISTER_UNIT_SERVER	= "registerUnitServer";
 	private static final String	REGISTER_CONTROL_UNIT	= "registerControlUnit";
 	private static final String	HEARTBEAT_CONTROL_UNIT	= "heartbeatControlUnit";
-	
+
 	/*
 	 * (non-Javadoc)
-	 *
+	 * 
 	 * @see it.infn.chaos.mds.rpc.server.RPCActionHadler#intiHanlder()
 	 */
 	@Override
 	public void intiHanlder() throws RefException {
 		addDomainAction(SYSTEM, REGISTER_CONTROL_UNIT);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 *
-	 * @see it.infn.chaos.mds.rpc.server.RPCActionHadler#handleAction(java.lang.String ,
-	 * java.lang.String, org.bson.BasicBSONObject)
+	 * 
+	 * @see it.infn.chaos.mds.rpc.server.RPCActionHadler#handleAction(java.lang.String , java.lang.String, org.bson.BasicBSONObject)
 	 */
 	@Override
 	public BasicBSONObject handleAction(String domain, String action, BasicBSONObject actionData) throws RefException {
@@ -50,20 +50,33 @@ public class CUQueryHandler extends RPCActionHadler {
 				result = registerControUnit(actionData);
 			} else if (action.equals(HEARTBEAT_CONTROL_UNIT)) {
 				result = heartbeat(actionData);
+			}else if (action.equals(REGISTER_UNIT_SERVER)) {
+				result = registerUnitServer(actionData);
 			}
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Execute l'heartbeat of the control unit
-	 *
+	 * Register an unit server
 	 * @param actionData
 	 * @return
 	 */
-	private BasicBSONObject heartbeat(BasicBSONObject actionData)  throws RefException {
+	private BasicBSONObject registerUnitServer(BasicBSONObject actionData) {
+		
+		return null;
+	}
+
+	/**
+	 * Execute l'heartbeat of the control unit
+	 * 
+	 * @param actionData
+	 * @return
+	 */
+	private BasicBSONObject heartbeat(BasicBSONObject actionData) throws RefException {
 		BasicBSONObject result = null;
-		if(!actionData.containsField(RPCConstants.DATASET_DEVICE_ID)) throw new RefException("Message desn't contain deviceid");
+		if (!actionData.containsField(RPCConstants.DATASET_DEVICE_ID))
+			throw new RefException("Message desn't contain deviceid");
 		DeviceDA dDA = null;
 		try {
 			dDA = getDataAccessInstance(DeviceDA.class);
@@ -72,17 +85,17 @@ public class CUQueryHandler extends RPCActionHadler {
 			throw new RefException("heartbeat error", 1, "CUQueryHandler::heartbeat");
 		} catch (Throwable e) {
 			throw new RefException("heartbeat error", 1, "CUQueryHandler::heartbeat");
-		}finally {
+		} finally {
 			try {
 				closeDataAccess(dDA, false);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 	/**
 	 * @return
 	 * @throws Throwable
@@ -102,17 +115,17 @@ public class CUQueryHandler extends RPCActionHadler {
 			String controlUnitInstance = actionData.containsField(RPCConstants.CONTROL_UNIT_INSTANCE) ? actionData.getString(RPCConstants.CONTROL_UNIT_INSTANCE) : null;
 			if (controlUnitInstance == null)
 				throw new RefException("No control unit instance found", 1, "DeviceDA::controlUnitValidationAndRegistration");
-			
+
 			d = new Device();
 			d.setCuInstance(controlUnitInstance);
 			d.setNetAddress(controlUnitNetAddress);
 			d.fillFromBson(actionData);
-			
+
 			// check for deviceID presence
 			if (dDA.isDeviceIDPresent(d.getDeviceIdentification())) {
 				// the device is already present i need to check for dataset
 				// change
-				
+
 				if (dDA.isDSChanged(d.getDeviceIdentification(), d.getDataset().getAttributes())) {
 					Integer deviceID = dDA.getDeviceIdFormInstance(d.getDeviceIdentification());
 					d.getDataset().setDeviceID(deviceID);
@@ -124,21 +137,21 @@ public class CUQueryHandler extends RPCActionHadler {
 			} else {
 				dDA.insertDevice(d);
 			}
-			
+
 			if (d != null) {
 				dDA.performDeviceHB(d.getDeviceIdentification());
-				
+
 				// at this point i need to check if thedevice need to be initialized
 				if (dDA.isDeviceToBeInitialized(d.getDeviceIdentification())) {
 					// send rpc command to initialize the device
-					result = DeviceDescriptionUtility.composeStartupCommandForDeviceIdentification(d.getDeviceIdentification(),dDA , getDataAccessInstance(DataServerDA.class), true);
+					result = DeviceDescriptionUtility.composeStartupCommandForDeviceIdentification(d.getDeviceIdentification(), dDA, getDataAccessInstance(DataServerDA.class), true);
 					result.append(RPCConstants.CS_CMDM_REMOTE_HOST_IP, d.getNetAddress());
 					result.append(RPCConstants.CS_CMDM_ACTION_DOMAIN, "system");
 					result.append(RPCConstants.CS_CMDM_ACTION_NAME, "initControlUnit");
 				}
 			}
-			//}
-			
+			// }
+
 			closeDataAccess(dDA, true);
 		} catch (RefException e) {
 			try {

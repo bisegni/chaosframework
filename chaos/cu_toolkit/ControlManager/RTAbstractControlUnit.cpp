@@ -31,8 +31,11 @@ using namespace boost::chrono;
 
 #define RTCULAPP_ LAPP_ << "[Real Time Control Unit:"<<getCUInstance()<<"] - "
 
-RTAbstractControlUnit::RTAbstractControlUnit(const std::string& _control_unit_id):
-AbstractControlUnit(CUType::RTCU, _control_unit_id) {
+RTAbstractControlUnit::RTAbstractControlUnit(const std::string& _control_unit_id,
+											 const std::string& _control_unit_param):
+AbstractControlUnit(CUType::RTCU,
+					_control_unit_id,
+					_control_unit_param) {
     //allocate the handler engine
     attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
 }
@@ -42,8 +45,13 @@ AbstractControlUnit(CUType::RTCU, _control_unit_id) {
  \param _control_unit_id unique id for the control unit
  \param _control_unit_drivers driver information
  */
-RTAbstractControlUnit::RTAbstractControlUnit(const std::string& _control_unit_id, const ControlUnitDriverList& _control_unit_drivers):
-AbstractControlUnit(CUType::RTCU, _control_unit_id) {
+RTAbstractControlUnit::RTAbstractControlUnit(const std::string& _control_unit_id,
+											 const std::string& _control_unit_param,
+											 const ControlUnitDriverList& _control_unit_drivers):
+AbstractControlUnit(CUType::RTCU,
+					_control_unit_id,
+					_control_unit_param,
+					_control_unit_drivers) {
     //allocate the handler engine
     attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);	
 }

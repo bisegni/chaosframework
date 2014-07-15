@@ -35,7 +35,11 @@ namespace chaos_batch = chaos::common::batch_command;
 
 #define LCCU_ LAPP_ << "[Slow Command Control Unit:" << getCUInstance() <<"] - "
 
-SCAbstractControlUnit::SCAbstractControlUnit(const std::string& _control_unit_id):AbstractControlUnit(CUType::SCCU, _control_unit_id) {
+SCAbstractControlUnit::SCAbstractControlUnit(const std::string& _control_unit_id,
+											 const std::string& _control_unit_param):
+AbstractControlUnit(CUType::SCCU,
+					_control_unit_id,
+					_control_unit_param) {
     slow_command_executor = new SlowCommandExecutor(control_unit_instance, this);
 	slow_command_executor->driverAccessorsErogator = this;
 }
@@ -45,8 +49,13 @@ SCAbstractControlUnit::SCAbstractControlUnit(const std::string& _control_unit_id
  \param _control_unit_id unique id for the control unit
  \param _control_unit_drivers driver information
  */
-SCAbstractControlUnit::SCAbstractControlUnit(const std::string& _control_unit_id, const ControlUnitDriverList& _control_unit_drivers):
-AbstractControlUnit(CUType::SCCU, _control_unit_id, _control_unit_drivers) {
+SCAbstractControlUnit::SCAbstractControlUnit(const std::string& _control_unit_id,
+											 const std::string& _control_unit_param,
+											 const ControlUnitDriverList& _control_unit_drivers):
+AbstractControlUnit(CUType::SCCU,
+					_control_unit_id,
+					_control_unit_param,
+					_control_unit_drivers) {
 	slow_command_executor = new SlowCommandExecutor(control_unit_instance, this);
 	slow_command_executor->driverAccessorsErogator = this;
 }

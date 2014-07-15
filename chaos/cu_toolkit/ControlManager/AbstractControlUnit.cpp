@@ -42,25 +42,31 @@ using namespace chaos::common::data;
 using namespace chaos::cu;
 using namespace chaos::cu::driver_manager::driver;
 
-#define LCU_ LAPP_ << "[Control Unit:"<<getCUInstance()<<"-"<<control_unit_instance<<"] - "
+#define ACULAPP_ LAPP_ << "[Control Unit:"<<control_unit_instance<<"-"<<control_unit_id<<"] - "
+#define ACULDBG_ LDBG_ << "[Control Unit:"<<control_unit_instance<<"-"<<control_unit_id<<"] - "
+#define ACULERR_ LERR_ << "[Control Unit:"<<control_unit_instance<<"-"<<control_unit_id<<"]("<<__LINE__<<") - "
 
 //! Contructor with type and id
 AbstractControlUnit::AbstractControlUnit(const std::string& _control_unit_type,
-										 const std::string& _control_unit_id):
+										 const std::string& _control_unit_id,
+										 const std::string& _control_unit_param):
 DatasetDB(GlobalConfiguration::getInstance()->getOption<bool>(CU_OPT_IN_MEMORY_DATABASE)),
 control_unit_instance(UUIDUtil::generateUUIDLite()),
 control_unit_type(_control_unit_type),
-control_unit_id(_control_unit_id) {
+control_unit_id(_control_unit_id),
+control_unit_param(_control_unit_param) {
 }
 
 //! Contructor with driver
 AbstractControlUnit::AbstractControlUnit(const std::string& _control_unit_type,
 										 const std::string& _control_unit_id,
+										 const std::string& _control_unit_param,
 										 const ControlUnitDriverList& _control_unit_drivers):
 DatasetDB(GlobalConfiguration::getInstance()->getOption<bool>(CU_OPT_IN_MEMORY_DATABASE)),
 control_unit_instance(UUIDUtil::generateUUIDLite()),
 control_unit_type(_control_unit_type),
-control_unit_id(_control_unit_id){
+control_unit_id(_control_unit_id),
+control_unit_param(_control_unit_param) {
 	//copy array
 	for (int idx = 0; idx < _control_unit_drivers.size(); idx++){
 		control_unit_drivers.push_back(_control_unit_drivers[idx]);
@@ -79,6 +85,10 @@ AbstractControlUnit::~AbstractControlUnit() {
 const char * AbstractControlUnit::getCUInstance(){
     return control_unit_instance.c_str();
 };
+
+const char * AbstractControlUnit::getCUID() {
+	return control_unit_id.c_str();
+}
 
 /*
  Add a new KeyDataStorage for a specific key
@@ -108,12 +118,12 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
     
     //first call the setup abstract method used by the implementing CU to define action, dataset and other
     //usefull value
-    LCU_ << "Define Actions and Dataset for:" << CU_IDENTIFIER_C_STREAM;
+    ACULAPP_ << "Define Actions and Dataset";
     unitDefineActionAndDataset();
     
     //for now we need only to add custom action for expose to rpc
     //input element of the dataset
-    LCU_ << "Define the base action for map the input attribute of the dataset of the CU:" << CU_IDENTIFIER_C_STREAM;
+    ACULAPP_ << "Define the base action for map the input attribute of the dataset";
     AbstActionDescShrPtr
     actionDescription = addActionDescritionInstance<AbstractControlUnit>(this,
                                                                          &AbstractControlUnit::_setDatasetAttribute,
@@ -121,51 +131,51 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
                                                                          "method for set the input element for the dataset");
     
     //expose updateConfiguration Methdo to rpc
-    LCU_ << "Register updateConfiguration action";
+    ACULAPP_ << "Register updateConfiguration action";
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::updateConfiguration,
                                                      "updateConfiguration",
                                                      "Update control unit configuration");
     
-    LCU_ << "Register initDevice action";
+    ACULAPP_ << "Register initDevice action";
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::_init,
                                                      ChaosSystemDomainAndActionLabel::ACTION_CU_INIT,
                                                      "Perform the control unit initialization");
     
-    LCU_ << "Register deinitDevice action";
+    ACULAPP_ << "Register deinitDevice action";
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::_deinit,
                                                      ChaosSystemDomainAndActionLabel::ACTION_CU_DEINIT,
                                                      "Perform the control unit deinitialization");
-    LCU_ << "Register startDevice action";
+    ACULAPP_ << "Register startDevice action";
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::_start,
                                                      ChaosSystemDomainAndActionLabel::ACTION_CU_START,
                                                      "Start the control unit scheduling");
     
-    LCU_ << "Register stopDevice action";
+    ACULAPP_ << "Register stopDevice action";
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::_stop,
                                                      ChaosSystemDomainAndActionLabel::ACTION_CU_STOP,
                                                      "Stop the control unit scheduling");
-    LCU_ << "Register getState action";
+    ACULAPP_ << "Register getState action";
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::_getState,
                                                      ChaosSystemDomainAndActionLabel::ACTION_CU_GET_STATE,
                                                      "Get the state of the running control unit");
-	LCU_ << "Register getInfo action";
+	ACULAPP_ << "Register getInfo action";
     addActionDescritionInstance<AbstractControlUnit>(this,
                                                      &AbstractControlUnit::_getInfo,
                                                      ChaosSystemDomainAndActionLabel::ACTION_CU_GET_INFO,
                                                      "Get the information about running control unit");
 	
-    LCU_ << "Get Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
+    ACULAPP_ << "Get Description";
     //grab dataset description
     DatasetDB::fillDataWrapperWithDataSetDescription(setupConfiguration);
     
 #if DEBUG
-    LCU_ << setupConfiguration.getJSONString();
+    ACULAPP_ << setupConfiguration.getJSONString();
 #endif
 }
 
@@ -184,7 +194,7 @@ void AbstractControlUnit::unitDefineDriver(std::vector<cu_driver::DrvRequestInfo
  a CDataWrapper
  */
 void AbstractControlUnit::_undefineActionAndDataset() throw(CException) {
-    LCU_ << "Remove Action Description for Control Unit:" << CU_IDENTIFIER_C_STREAM;
+    ACULAPP_ << "Remove Action Description";
     //register command manager action
     //CommandManager::getInstance()->deregisterAction(this);
     
@@ -202,7 +212,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
 	utility::StartableService::initImplementation(this, static_cast<void*>(initConfiguration), "AbstractControlUnit", "AbstractControlUnit::_init");
 	
 	//the init of the implementation unit goes after the infrastructure one
-	LCU_ << "Start custom inititialization";
+	ACULAPP_ << "Start custom inititialization";
 	unitInit();
 	
 	//call update param function
@@ -217,7 +227,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
 CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detachParam) throw(CException) {
     //call start method of the startable interface
 	utility::StartableService::startImplementation(this, "AbstractControlUnit", "AbstractControlUnit::_start");
-	LCU_ << "Start sublass for deviceID:" << DatasetDB::getDeviceID();
+	ACULAPP_ << "Start sublass for deviceID:" << DatasetDB::getDeviceID();
 	unitStart();
     return NULL;
 }
@@ -229,7 +239,7 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachPa
     //call start method of the startable interface
     utility::StartableService::stopImplementation(this, "AbstractControlUnit", "AbstractControlUnit::_stop");
 	//first we need to stop the implementation unit
-    LCU_ << "Stop sublass for deviceID:" << DatasetDB::getDeviceID();
+    ACULAPP_ << "Stop sublass for deviceID:" << DatasetDB::getDeviceID();
     unitStop();
     return NULL;
 }
@@ -242,12 +252,12 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
     utility::StartableService::deinitImplementation(this, "AbstractControlUnit", "AbstractControlUnit::_deinit");
 	
 	//first we start the deinitializaiton of the implementation unit
-    LCU_ << "Deinit custom deinitialization for device:" << DatasetDB::getDeviceID();
+    ACULAPP_ << "Deinit custom deinitialization for device:" << DatasetDB::getDeviceID();
     unitDeinit();
 	
     //remove key data storage
     if(keyDataStorage) {
-        LCU_ << "Delete data storage driver for device:" << DatasetDB::getDeviceID();
+        ACULAPP_ << "Delete data storage driver for device:" << DatasetDB::getDeviceID();
         keyDataStorage->deinit();
         delete(keyDataStorage);
         keyDataStorage = NULL;
@@ -276,7 +286,7 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
         }
         
 #if DEBUG
-        LCU_ << datasetAttributeValues->getJSONString();
+        ACULAPP_ << datasetAttributeValues->getJSONString();
 #endif
         
         if(!datasetAttributeValues->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
@@ -310,10 +320,10 @@ void AbstractControlUnit::init(void *initData) throw(CException) {
 	
 	std::string deviceID = initConfiguration->getStringValue(DatasetDefinitionkey::DEVICE_ID);
 	if(deviceID.compare(DatasetDB::getDeviceID())) {
-		LCU_ << "device:" << deviceID << "not known by this ContorlUnit";
+		ACULAPP_ << "device:" << deviceID << "not known by this ContorlUnit";
 		throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_init");
 	}
-	LCU_ << "Initializating Phase for device:" << deviceID;
+	ACULAPP_ << "Initializating Phase for device:" << deviceID;
 	//at this point and before the unit implementation init i need to get
 	//the infromation about the needed drivers
 	std::vector<cu_driver::DrvRequestInfo> unitNeededDrivers;
@@ -332,14 +342,14 @@ void AbstractControlUnit::init(void *initData) throw(CException) {
 	
     //cast to the CDatawrapper instance
     
-    LCU_ << "Initialize CU Database for device:" << deviceID;
+    ACULAPP_ << "Initialize CU Database for device:" << deviceID;
     DatasetDB::addAttributeToDataSetFromDataWrapper(*initConfiguration);
     
     //initialize key data storage for device id
-    LCU_ << "Create KeyDataStorage device:" << deviceID;
+    ACULAPP_ << "Create KeyDataStorage device:" << deviceID;
     keyDataStorage = DataManager::getInstance()->getKeyDataStorageNewInstanceForKey(deviceID);
     
-    LCU_ << "Call KeyDataStorage init implementation for deviceID:" << deviceID;
+    ACULAPP_ << "Call KeyDataStorage init implementation for deviceID:" << deviceID;
     keyDataStorage->init(initConfiguration);
 }
 
@@ -391,13 +401,13 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
     string deviceID = updatePack->getStringValue(DatasetDefinitionkey::DEVICE_ID);
     
     if(deviceID.compare(DatasetDB::getDeviceID())) {
-        LCU_ << "device:" << DatasetDB::getDeviceID() << "not known by this ContorlUnit";
+        ACULAPP_ << "device:" << DatasetDB::getDeviceID() << "not known by this ContorlUnit";
         throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_stop");
     }
     
     //check to see if the device can ben initialized
     if(utility::StartableService::getServiceState() == INIT_STATE) {
-        LCU_ << "device:" << DatasetDB::getDeviceID() << " not initialized";
+        ACULAPP_ << "device:" << DatasetDB::getDeviceID() << " not initialized";
         throw CException(-3, "Device Not Initilized", "AbstractControlUnit::updateConfiguration");
     }
     

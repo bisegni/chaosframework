@@ -10,6 +10,7 @@ import it.infn.chaos.mds.rpc.server.TCPRpcServer;
 import it.infn.chaos.mds.rpcaction.CUQueryHandler;
 import it.infn.chaos.mds.rpcaction.DeviceQueyHandler;
 import it.infn.chaos.mds.rpcaction.PerformanceTest;
+import it.infn.chaos.mds.slowexecution.SlowExecution;
 
 import java.util.Arrays;
 import java.util.StringTokenizer;
@@ -83,6 +84,9 @@ public class ChaosMDSInitPlugin implements REFInitPlugin, REFDeinitPlugin {
 			SingletonServices.getInstance().addHandler(CUQueryHandler.class);
 			SingletonServices.getInstance().addHandler(DeviceQueyHandler.class);
 			SingletonServices.getInstance().addHandler(PerformanceTest.class);
+			
+			//allocate new slow execution queue
+			SingletonServices.getInstance().setSlowExecution(new SlowExecution(20));
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
