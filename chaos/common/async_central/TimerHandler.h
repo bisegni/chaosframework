@@ -32,12 +32,12 @@ namespace chaos {
 			/*!
 			 UV timer c++ abstraction
 			 */
-			class TimerHanlder {
+			class TimerHandler {
 				friend class AsyncCentralManager;
 				uv_timer_t uv_t;
 			public:
-				TimerHanlder();
-				~TimerHanlder();
+				TimerHandler();
+				~TimerHandler();
 				virtual void timeout() = 0;
 			};
 		}

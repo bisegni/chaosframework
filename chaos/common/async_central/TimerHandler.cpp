@@ -22,10 +22,10 @@
 #include <uv.h>
 using namespace chaos::common::async_central;
 
-TimerHanlder::TimerHanlder() {
+TimerHandler::TimerHandler() {
 	uv_t.data = reinterpret_cast<void*>(this);
 }
 
-TimerHanlder::~TimerHanlder() {
+TimerHandler::~TimerHandler() {
 	
 }

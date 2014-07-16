@@ -34,18 +34,25 @@
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/thread/WaitSemaphore.h>
+#include <chaos/common/async_central/async_central.h>
 
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 
-// back-end
+#include <boost/thread.hpp>
 #include <boost/msm/back/state_machine.hpp>
-//front-end
 #include <boost/msm/front/state_machine_def.hpp>
 #include <boost/msm/front/functor_row.hpp>
 #include <boost/msm/front/euml/common.hpp>
-// for And_ operator
 #include <boost/msm/front/euml/operator.hpp>
 
+//startup parameter for unit server
+#define CONTROL_MANAGER_UNIT_SERVER_ENABLE							"unit_server_enable"
+#define CONTROL_MANAGER_UNIT_SERVER_ENABLE_desc						"Enable the unit server on this instance of process"
+
+#define CONTROL_MANAGER_UNIT_SERVER_ALIAS							"unit_server_alias"
+#define CONTROL_MANAGER_UNIT_SERVER_ALIAS_desc						"Alias used to publish the unit server"
+#define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC			"unit_server_retry_ms"
+#define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_desc	"Delay in milliseconds for the registration retry"
 namespace chaos {
     namespace cu {
         using namespace std;
@@ -107,8 +114,8 @@ namespace chaos {
                 struct UnitEventTypePublishing {};
 				// unti server is registered
                 struct UnitEventTypePublished {};
-				// unti server is registered
-                struct UnitEventTypeUnpublishing {};
+				// unti server is failed to register
+                struct UnitEventTypeFailure {};
             }
 			
             // Unit Server state
@@ -118,8 +125,8 @@ namespace chaos {
 			
             struct Published : public boost::msm::front::state<> {};
             
-			struct Unpublishing  : public boost::msm::front::state<> {};
-            
+			struct PublishingFailure  : public boost::msm::front::state<> {};
+			
             // front-end: define the FSM structure
             struct wu_state_machine : public boost::msm::front::state_machine_def<wu_state_machine> {
 				
@@ -128,15 +135,15 @@ namespace chaos {
                 
                 typedef boost::msm::front::Row <  Unpublished   ,  UnitEventType::UnitEventTypePublishing  , Publishing, boost::msm::front::none , boost::msm::front::none > unpub_pubing_row;
                 typedef boost::msm::front::Row <  Publishing   ,  UnitEventType::UnitEventTypePublished  , Published, boost::msm::front::none , boost::msm::front::none > pubing_pub_row;
-                typedef boost::msm::front::Row <  Published   ,  UnitEventType::UnitEventTypeUnpublishing  , Unpublishing, boost::msm::front::none , boost::msm::front::none > pub_unpubing_row;
-                typedef boost::msm::front::Row <  Unpublishing   ,  UnitEventType::UnitEventTypeUnpublishing  , Unpublished, boost::msm::front::none , boost::msm::front::none > unpubing_unpub_row;
+                typedef boost::msm::front::Row <  Publishing   ,  UnitEventType::UnitEventTypeFailure  , PublishingFailure, boost::msm::front::none , boost::msm::front::none > pubbing_pubfail_row;
+				typedef boost::msm::front::Row <  Published   ,  UnitEventType::UnitEventTypeUnpublished  , Unpublished, boost::msm::front::none , boost::msm::front::none > pub_unpub_row;
 				
                 // Transition table for initialization services
                 struct transition_table : boost::mpl::vector<
                 unpub_pubing_row,
                 pubing_pub_row,
-				pub_unpubing_row,
-				unpubing_unpub_row> {};
+				pubbing_pubfail_row,
+				pub_unpub_row> {};
                 
                 template <class FSM,class Event>
                 void no_transition(Event const& ,FSM&, int ){}
@@ -164,12 +171,16 @@ namespace chaos {
 	class ControlManager :
 	public DeclareAction,
 	public chaos::utility::StartableService,
+	protected chaos::common::async_central::TimerHandler,
 	public Singleton<ControlManager> {
 		friend class Singleton<ControlManager>;
 		mutable boost::shared_mutex mutex_registration;
 		
 		//unit server state machine
-		WorkUnitServerStateMachine unit_server_sm;
+		bool						use_unit_server;
+		std::string					unit_server_alias;
+		boost::shared_mutex			unit_server_sm_mutex;
+		WorkUnitServerStateMachine	unit_server_sm;
 		
 		bool thread_run;
 		chaos::WaitSemaphore thread_waith_semaphore;
@@ -203,10 +214,14 @@ namespace chaos {
 		
 		void _loadWorkUnit();
 		void _unloadControlUnit();
-		
+		//!prepare and send registration pack to the metadata server
+		void sendUnitServerRegistration();
 	protected:
 		//! timer fire method
 		void manageControlUnit();
+		
+		//TimerHandler callback
+		void timeout();
 	public:
 		
 		/*
@@ -245,19 +260,25 @@ namespace chaos {
 			map_cu_alias_instancer.insert(make_pair(control_unit_alias, ALLOCATE_INSTANCER(ControlUnitClass, AbstractControlUnit)));
 		}
 		
-		/*
-		 Load the requested control unit
-		 */
-		CDataWrapper* loadControlUnit(CDataWrapper*, bool&) throw (CException);
 		
-		/*
-		 Unload the requested control unit
-		 The unload operation, check that the target control unit is in deinit state
+		/*!
+		 Action that show the unit server registration result(success or failure)
 		 */
-		CDataWrapper* unloadControlUnit(CDataWrapper*, bool&) throw (CException);
+		CDataWrapper* unitServerRegistrationACK(CDataWrapper *messageData, bool &detach) throw (CException);
 		
-		/*
-		 Configure the sandbox and all subtree of the CU
+		/*!
+			Action for loading a control unit
+		 */
+		CDataWrapper* loadControlUnit(CDataWrapper *messageData, bool &detach) throw (CException);
+		
+		/*!
+			Action for the unloading of a control unit
+			The unload operation, check that the target control unit is in deinit state
+		 */
+		CDataWrapper* unloadControlUnit(CDataWrapper *messageData, bool &detach) throw (CException);
+		
+		/*!
+			Configure the sandbox and all subtree of the CU
 		 */
 		CDataWrapper* updateConfiguration(CDataWrapper*, bool&);
 	};

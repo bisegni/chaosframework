@@ -42,6 +42,20 @@ ChaosCUToolkit::ChaosCUToolkit() {
 	GlobalConfiguration::getInstance()->addOption<bool>(CU_OPT_IN_MEMORY_DATABASE,
 														"Specify when to use in memory or on disc contorl unit internal database",
 														true);
+	//
+	
+	
+	GlobalConfiguration::getInstance()->addOption<bool>(CONTROL_MANAGER_UNIT_SERVER_ENABLE,
+														CONTROL_MANAGER_UNIT_SERVER_ENABLE_desc,
+														false);
+	
+	GlobalConfiguration::getInstance()->addOption<std::string>(CONTROL_MANAGER_UNIT_SERVER_ALIAS,
+															   CONTROL_MANAGER_UNIT_SERVER_ALIAS_desc);
+	
+	GlobalConfiguration::getInstance()->addOption<uint64_t>(CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC,
+															CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_desc,
+															true);
+
 }
 
 ChaosCUToolkit::~ChaosCUToolkit() {

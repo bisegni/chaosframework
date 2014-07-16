@@ -278,9 +278,13 @@ namespace chaos {
             //!Integer 32 bit length
             EC_NO_ERROR = 0,
             EC_TIMEOUT = 1,
-            EC_ATTRIBUTE_NOT_FOUND,
-            EC_ATTRIBUTE_BAD_DIR,
-            EC_ATTRIBUTE_TYPE_NOT_SUPPORTED
+            EC_ATTRIBUTE_NOT_FOUND = 2,
+            EC_ATTRIBUTE_BAD_DIR = 3,
+            EC_ATTRIBUTE_TYPE_NOT_SUPPORTED = 4,
+			EC_MDS_UNIT_SERV_REGISTRATION_OK = 5,
+			EC_MDS_UNIT_SERV_REGISTRATION_FAILURE_INVALID_ALIAS = 6,
+			EC_MDS_UNIT_SERV_REGISTRATION_FAILURE_DUPLICATE_ALIAS = 7,
+			EC_MDS_UNIT_SERV_BAD_US_SM_STATE = 8,
         } ErrorCode;
     }
     /** @} */ // end of ChaosDataType
@@ -412,22 +416,28 @@ namespace chaos {
      */
     namespace ChaosMetadataRPCConstants {
         //! The chaos metadata query domain
-        static const char * const MDS_DOMAIN					= "system";
+        static const char * const MDS_DOMAIN						= "system";
 		
         //! this action perform the registration for the unit server service
-        static const char * const MDS_REGISTER_UNIT_SERVER		= "registerUnitServer";
+        static const char * const MDS_REGISTER_UNIT_SERVER			= "registerUnitServer";
 		
+		//! key for the server alias used by the instance
+        static const char * const MDS_REGISTER_UNIT_SERVER_ALIAS	= "unit_server_alias";
+		
+        //! key that idetify the result of unit server registration[int32]
+        static const char * const MDS_REGISTER_UNIT_SERVER_RESULT	= "reg_unit_serv_result";
+
 		//! this action perform the registration for the control unit dataset
-        static const char * const MDS_REGISTER_CONTROL_UNIT		= "registerControlUnit";
+        static const char * const MDS_REGISTER_CONTROL_UNIT			= "registerControlUnit";
 		
 		//! Action to retrive all device id
-		static const char * const MDS_GET_ALL_DEVICE			= "getAllActiveDevice";
+		static const char * const MDS_GET_ALL_DEVICE				= "getAllActiveDevice";
 		
 		//! Perform the heart beat of the cu
-		static const char * const MDS_CU_HEARTBEAT				= "heartbeatControlUnit";
+		static const char * const MDS_CU_HEARTBEAT					= "heartbeatControlUnit";
 		
 		//! Perform request of the network address for a node identified by a device id
-		static const char * const MDS_GET_NODE_ADDRESS			= "getNodeNetworkAddress";
+		static const char * const MDS_GET_NODE_ADDRESS				= "getNodeNetworkAddress";
     }
     /** @} */ // end of ChaosMetadataActionLabel
 	

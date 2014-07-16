@@ -35,7 +35,7 @@ namespace chaos {
 		namespace async_central {
 			
 			//! forward declaration
-			class TimerHanlder;
+			class TimerHandler;
 
 			typedef uv_thread_t AcmThreadID;
 			
@@ -60,9 +60,9 @@ namespace chaos {
 				// Deinit the implementation
 				void deinit() throw(chaos::CException);
 			public:
-				int addTimer(TimerHanlder *timer_handler, uint64_t timeout, uint64_t repeat);
+				int addTimer(TimerHandler *timer_handler, uint64_t timeout, uint64_t repeat);
 				
-				void removeTimer(TimerHanlder *timer_handler);
+				void removeTimer(TimerHandler *timer_handler);
 				
 				int addThread(chaos::common::utility::delegate::Delegate *thread_delegate, AcmThreadID *thread_id);
 				
