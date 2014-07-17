@@ -416,28 +416,31 @@ namespace chaos {
      */
     namespace ChaosMetadataRPCConstants {
         //! The chaos metadata query domain
-        static const char * const MDS_DOMAIN						= "system";
+        static const char * const MDS_DOMAIN									= "system";
 		
         //! this action perform the registration for the unit server service
-        static const char * const MDS_REGISTER_UNIT_SERVER			= "registerUnitServer";
+        static const char * const MDS_REGISTER_UNIT_SERVER						= "registerUnitServer";
 		
-		//! key for the server alias used by the instance
-        static const char * const MDS_REGISTER_UNIT_SERVER_ALIAS	= "unit_server_alias";
+		//! key for the server alias used by the instance [string]
+        static const char * const MDS_REGISTER_UNIT_SERVER_ALIAS				= "unit_server_alias";
+
+		//! key for the control unit aliases published by the unit server [array fo string]
+        static const char * const MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS	= "unit_server_cu_alias";
 		
         //! key that idetify the result of unit server registration[int32]
-        static const char * const MDS_REGISTER_UNIT_SERVER_RESULT	= "reg_unit_serv_result";
+        static const char * const MDS_REGISTER_UNIT_SERVER_RESULT				= "reg_unit_serv_result";
 
 		//! this action perform the registration for the control unit dataset
-        static const char * const MDS_REGISTER_CONTROL_UNIT			= "registerControlUnit";
+        static const char * const MDS_REGISTER_CONTROL_UNIT						= "registerControlUnit";
 		
 		//! Action to retrive all device id
-		static const char * const MDS_GET_ALL_DEVICE				= "getAllActiveDevice";
+		static const char * const MDS_GET_ALL_DEVICE							= "getAllActiveDevice";
 		
 		//! Perform the heart beat of the cu
-		static const char * const MDS_CU_HEARTBEAT					= "heartbeatControlUnit";
+		static const char * const MDS_CU_HEARTBEAT								= "heartbeatControlUnit";
 		
 		//! Perform request of the network address for a node identified by a device id
-		static const char * const MDS_GET_NODE_ADDRESS				= "getNodeNetworkAddress";
+		static const char * const MDS_GET_NODE_ADDRESS							= "getNodeNetworkAddress";
     }
     /** @} */ // end of ChaosMetadataActionLabel
 	

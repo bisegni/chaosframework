@@ -47,6 +47,18 @@
 
 #define CU_OPT_IN_MEMORY_DATABASE "cu_db_in_memory"
 
+#define CONTROL_UNIT_PUBLISH_NAME(impl)\
+impl::PublishName
+
+#define PUBLISHABLE_CONTROL_UNIT_IMPLEMENTATION(impl)\
+const char * const  impl::PublishName = #impl;\
+
+#define PUBLISHABLE_CONTROL_UNIT_INTERFACE(impl)\
+public:\
+static const char * const PublishName;\
+private:\
+//class impl : public subclass
+
 namespace chaos{
     
     //forward event channel declaration

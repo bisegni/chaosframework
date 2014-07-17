@@ -107,13 +107,13 @@ namespace chaos {
 				void addStringValue(const char *, const char *);
 				
 				//add a string value
-				void addStringValue(const char *, string);
+				void addStringValue(const char *, const string&);
 				
 				//add a string to array
 				void appendStringToArray(const char *);
 				
 				//add a strin gto array
-				void appendStringToArray(string&);
+				void appendStringToArray(const string&);
 				void appendInt32ToArray(int32_t int32ArrayElement);
 				void appendInt64ToArray(int64_t int64ArrayElement);
 				void appendDoubleToArray(double doubleArrayElement);

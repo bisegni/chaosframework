@@ -20,7 +20,7 @@
 #include <chaos/cu_toolkit/ChaosCUToolkit.h>
 #include <chaos/cu_toolkit/DataManager/DataManager.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManager.h>
-#include <chaos/cu_toolkit/ControlManager/ControlManager.h>
+
 
 #include <csignal>
 
@@ -54,7 +54,7 @@ ChaosCUToolkit::ChaosCUToolkit() {
 	
 	GlobalConfiguration::getInstance()->addOption<uint64_t>(CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC,
 															CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_desc,
-															true);
+															CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_DEFAULT);
 
 }
 

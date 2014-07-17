@@ -53,6 +53,13 @@
 #define CONTROL_MANAGER_UNIT_SERVER_ALIAS_desc						"Alias used to publish the unit server"
 #define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC			"unit_server_retry_ms"
 #define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_desc	"Delay in milliseconds for the registration retry"
+#define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_DEFAULT	30000
+//define the type for the Control Unit isntancer
+typedef chaos::common::utility::ObjectInstancerP3<chaos::cu::AbstractControlUnit,
+		const std::string&,
+		const std::string&,
+		const chaos::cu::AbstractControlUnit::ControlUnitDriverList&> CUObjectInstancer;
+
 namespace chaos {
     namespace cu {
         using namespace std;
@@ -196,7 +203,8 @@ namespace chaos {
 		map<string, shared_ptr<WorkUnitInfo> > map_control_unit_instance;
 		
 		//! association by alias and control unit instancer
-		std::map<string, chaos::common::utility::ObjectInstancer<AbstractControlUnit>* > map_cu_alias_instancer;
+		typedef std::map<string, boost::shared_ptr<CUObjectInstancer> >::iterator MapCUAliasInstancerIterator;
+		std::map<string, boost::shared_ptr<CUObjectInstancer> > map_cu_alias_instancer;
 		
 		//----------private method-----------
 		//! send register control unit to the mds.
@@ -250,14 +258,20 @@ namespace chaos {
 		 */
 		void submitControlUnit(AbstractControlUnit *control_unit_instance) throw(CException);
 		
+#define TO_STRING(x) #x
 		//! control unit registration
 		/*!
 		 Register a control unit instancer associating it to an alias
 		 \param control_unit_alias the alias associated to the tempalte class identification
 		 */
 		template<typename ControlUnitClass>
-		void registerControlUnit(const std::string& control_unit_alias) {
-			map_cu_alias_instancer.insert(make_pair(control_unit_alias, ALLOCATE_INSTANCER(ControlUnitClass, AbstractControlUnit)));
+		void registerControlUnit() {
+			map_cu_alias_instancer.insert(make_pair(CONTROL_UNIT_PUBLISH_NAME(ControlUnitClass),
+													boost::shared_ptr<CUObjectInstancer>(ALLOCATE_INSTANCER_P3(ControlUnitClass,													//Control unit implementation
+																											   AbstractControlUnit,													//Control unit base class
+																											   const std::string&,													//Control Unit unique id param
+																											   const std::string&,													//control unit load param
+																											   const chaos::cu::AbstractControlUnit::ControlUnitDriverList&))));	//Control unit driver list
 		}
 		
 		

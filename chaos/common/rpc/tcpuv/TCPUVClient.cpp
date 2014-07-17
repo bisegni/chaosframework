@@ -76,6 +76,10 @@ void TCPUVClient::on_ack_read(uv_stream_t *stream, ssize_t nread, const uv_buf_t
 		//delete sent data
 		if(ci->uv_conn_info->current_message_info) delete(ci->uv_conn_info->current_message_info);
 		if(ci->uv_conn_info->current_serialization) delete(ci->uv_conn_info->current_serialization);
+		//get the next message to send
+		ci->uv_conn_info->current_message_info = ci->queued_message_info.front();
+		ci->uv_conn_info->current_serialization = NULL;
+		ci->queued_message_info.pop();
 		TCPUVClient::send_data(ci, stream);
 	}
 	
@@ -107,9 +111,6 @@ void TCPUVClient::on_write_end(uv_write_t *req, int status) {
 
 void TCPUVClient::send_data(ConnectionInfo *ci, uv_stream_t *stream) {
 	int err = 0;
-	//get the next message to send
-	ci->uv_conn_info->current_message_info = ci->queued_message_info.front();
-	ci->queued_message_info.pop();
 	
 	//get next serialization to send
 	ci->uv_conn_info->current_serialization = ci->uv_conn_info->current_message_info->message->getBSONData();
@@ -134,6 +135,17 @@ void TCPUVClient::on_connect(uv_connect_t *connection, int status) {
 	TCPUVClientLDBG << "on_connect " << status;
 	ConnectionInfo *ci = static_cast<ConnectionInfo*>(connection->handle->data);
 	boost::unique_lock<boost::shared_mutex> lock(ci->connection_mutex);
+	
+	//get the next message to send
+	if(!ci->queued_message_info.empty()) {
+		ci->uv_conn_info->current_message_info = ci->queued_message_info.front();
+		ci->queued_message_info.pop();
+	}else {
+		ci->uv_conn_info->current_message_info = NULL;
+	}
+	ci->uv_conn_info->current_serialization = NULL;
+	
+	
 	if (status) {
 		TCPUVClientLERR << "error on_connect" << uv_strerror(status);
 		switch (status) {
@@ -147,7 +159,7 @@ void TCPUVClient::on_connect(uv_connect_t *connection, int status) {
 		connection->handle->data = ci->uv_conn_info;
 		ci->uv_conn_info = NULL;
 		uv_close((uv_handle_t*)connection->handle,TCPUVClient::on_close);
-	} else if(!ci->queued_message_info.empty()) {
+	} else if(ci->uv_conn_info->current_message_info) {
 		//lock access to connection info
 		TCPUVClient::send_data(ci, connection->handle);
 	} else {

@@ -52,7 +52,7 @@ int MDSMessageChannel::sendUnitServerRegistration(CDataWrapper *deviceDataset, b
         auto_ptr<CDataWrapper> deviceRegistrationCheck( MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), ChaosMetadataRPCConstants::MDS_REGISTER_UNIT_SERVER, deviceDataset, millisecToWait));
         CHECK_TIMEOUT_AND_RESULT_CODE(deviceRegistrationCheck, err)
     } else {
-        MessageChannel::sendMessage(nodeAddress->nodeID.c_str(), "registerControlUnit", deviceDataset);
+        MessageChannel::sendMessage(nodeAddress->nodeID.c_str(), ChaosMetadataRPCConstants::MDS_REGISTER_UNIT_SERVER, deviceDataset);
     }
     
     return err;

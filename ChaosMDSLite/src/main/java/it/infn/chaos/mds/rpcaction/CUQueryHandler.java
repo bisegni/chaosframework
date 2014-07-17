@@ -4,6 +4,7 @@
 package it.infn.chaos.mds.rpcaction;
 
 import it.infn.chaos.mds.RPCConstants;
+import it.infn.chaos.mds.business.DatasetAttribute;
 import it.infn.chaos.mds.business.Device;
 import it.infn.chaos.mds.da.DataServerDA;
 import it.infn.chaos.mds.da.DeviceDA;
@@ -23,7 +24,6 @@ import org.ref.common.exception.RefException;
  */
 public class CUQueryHandler extends RPCActionHadler {
 	private static final String	SYSTEM					= "system";
-	private static final String	REGISTER_UNIT_SERVER	= "registerUnitServer";
 	private static final String	REGISTER_CONTROL_UNIT	= "registerControlUnit";
 	private static final String	HEARTBEAT_CONTROL_UNIT	= "heartbeatControlUnit";
 
@@ -34,7 +34,7 @@ public class CUQueryHandler extends RPCActionHadler {
 	 */
 	@Override
 	public void intiHanlder() throws RefException {
-		addDomainAction(SYSTEM, REGISTER_CONTROL_UNIT);
+		addDomainAction(SYSTEM, RPCConstants.MDS_REGISTER_UNIT_SERVER);
 	}
 
 	/*
@@ -50,7 +50,7 @@ public class CUQueryHandler extends RPCActionHadler {
 				result = registerControUnit(actionData);
 			} else if (action.equals(HEARTBEAT_CONTROL_UNIT)) {
 				result = heartbeat(actionData);
-			}else if (action.equals(REGISTER_UNIT_SERVER)) {
+			}else if (action.equals(RPCConstants.MDS_REGISTER_UNIT_SERVER)) {
 				result = registerUnitServer(actionData);
 			}
 		}
@@ -63,7 +63,14 @@ public class CUQueryHandler extends RPCActionHadler {
 	 * @return
 	 */
 	private BasicBSONObject registerUnitServer(BasicBSONObject actionData) {
+		if(actionData == null) new RefException("No info forwarded for unit server registration", 1, "CUQueryHandler::registerUnitServer");
+		String unitName = actionData.getString(RPCConstants.MDS_REGISTER_UNIT_SERVER_ALIAS);
 		
+		BasicBSONList bsonAttributesArray = (BasicBSONList) actionData.get(RPCConstants.MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS);
+		ListIterator<Object> dsDescIter = bsonAttributesArray.listIterator();
+		while (dsDescIter.hasNext()) {
+			System.out.println(dsDescIter.next().toString());
+		}
 		return null;
 	}
 

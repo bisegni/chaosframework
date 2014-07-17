@@ -95,9 +95,6 @@ void ControlManager::init(void *initParameter) throw(CException) {
 		actionDescription->addParam(ChaosSystemDomainAndActionLabel::PARAM_CU_LOAD_UNLOAD_ALIAS,
 									DataType::TYPE_STRING,
 									"Alias of the control unit to unload");
-		
-		//add unit server registration managment timer
-		chaos_async::AsyncCentralManager::getInstance()->addTimer(this, 0, GlobalConfiguration::getInstance()->getOption<uint64_t>(CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC));
 	}
     
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
@@ -122,6 +119,11 @@ void ControlManager::start() throw(CException) {
     LCMAPP_  << "Start cu scan timer";
 	thread_run = true;
 	thread_registration.reset(new boost::thread(boost::bind(&ControlManager::manageControlUnit, this)));
+	
+	if(use_unit_server){
+		//add unit server registration managment timer
+		chaos_async::AsyncCentralManager::getInstance()->addTimer(this, 0, GlobalConfiguration::getInstance()->getOption<uint64_t>(CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC));
+	}
 }
 
 /*
@@ -390,10 +392,18 @@ void ControlManager::timeout() {
 
 //!prepare and send registration pack to the metadata server
 void ControlManager::sendUnitServerRegistration() {
-	chaos_data::CDataWrapper unitServerRegistrationPack;
+	chaos_data::CDataWrapper *unit_server_registration_pack = new chaos_data::CDataWrapper();
 	//set server alias
-	unitServerRegistrationPack.addStringValue(ChaosMetadataRPCConstants::MDS_REGISTER_UNIT_SERVER_ALIAS, unit_server_alias);
-	mdsChannel->sendUnitServerRegistration(&unitServerRegistrationPack);
+	unit_server_registration_pack->addStringValue(ChaosMetadataRPCConstants::MDS_REGISTER_UNIT_SERVER_ALIAS, unit_server_alias);
+	
+	//add control unit alias
+	for(MapCUAliasInstancerIterator iter = map_cu_alias_instancer.begin();
+		iter != map_cu_alias_instancer.end();
+		iter++) {
+		unit_server_registration_pack->appendStringToArray(iter->first);
+	}
+	unit_server_registration_pack->finalizeArrayForKey(ChaosMetadataRPCConstants::MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS);
+	mdsChannel->sendUnitServerRegistration(unit_server_registration_pack);
 }
 
 // Server registration ack message
