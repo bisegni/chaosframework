@@ -4,11 +4,15 @@
 package it.infn.chaos.mds.rpcaction;
 
 import it.infn.chaos.mds.RPCConstants;
+import it.infn.chaos.mds.SingletonServices;
 import it.infn.chaos.mds.business.DatasetAttribute;
 import it.infn.chaos.mds.business.Device;
+import it.infn.chaos.mds.business.UnitServer;
 import it.infn.chaos.mds.da.DataServerDA;
 import it.infn.chaos.mds.da.DeviceDA;
+import it.infn.chaos.mds.da.UnitServerDA;
 import it.infn.chaos.mds.rpc.server.RPCActionHadler;
+import it.infn.chaos.mds.slowexecution.UnitServerACK;
 
 import java.sql.SQLException;
 import java.util.ListIterator;
@@ -16,6 +20,10 @@ import java.util.ListIterator;
 import org.bson.BasicBSONObject;
 import org.bson.types.BasicBSONList;
 import org.ref.common.exception.RefException;
+import org.ref.common.helper.ExceptionHelper;
+import org.ref.common.helper.StringHelper;
+
+import com.sun.rmi.rmid.ExecPermission;
 
 /**
  * RPC actions for manage the Control Unit registration and device dataset retriving
@@ -35,6 +43,7 @@ public class CUQueryHandler extends RPCActionHadler {
 	@Override
 	public void intiHanlder() throws RefException {
 		addDomainAction(SYSTEM, RPCConstants.MDS_REGISTER_UNIT_SERVER);
+		addDomainAction(SYSTEM, CUQueryHandler.REGISTER_CONTROL_UNIT);
 	}
 
 	/*
@@ -50,7 +59,7 @@ public class CUQueryHandler extends RPCActionHadler {
 				result = registerControUnit(actionData);
 			} else if (action.equals(HEARTBEAT_CONTROL_UNIT)) {
 				result = heartbeat(actionData);
-			}else if (action.equals(RPCConstants.MDS_REGISTER_UNIT_SERVER)) {
+			} else if (action.equals(RPCConstants.MDS_REGISTER_UNIT_SERVER)) {
 				result = registerUnitServer(actionData);
 			}
 		}
@@ -59,18 +68,59 @@ public class CUQueryHandler extends RPCActionHadler {
 
 	/**
 	 * Register an unit server
+	 * 
 	 * @param actionData
 	 * @return
+	 * @throws SQLException 
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
 	 */
-	private BasicBSONObject registerUnitServer(BasicBSONObject actionData) {
-		if(actionData == null) new RefException("No info forwarded for unit server registration", 1, "CUQueryHandler::registerUnitServer");
-		String unitName = actionData.getString(RPCConstants.MDS_REGISTER_UNIT_SERVER_ALIAS);
-		
-		BasicBSONList bsonAttributesArray = (BasicBSONList) actionData.get(RPCConstants.MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS);
-		ListIterator<Object> dsDescIter = bsonAttributesArray.listIterator();
-		while (dsDescIter.hasNext()) {
-			System.out.println(dsDescIter.next().toString());
+	private BasicBSONObject registerUnitServer(BasicBSONObject actionData) throws RefException {
+		UnitServerDA usDA = null;
+		try {
+			usDA = getDataAccessInstance(UnitServerDA.class);
+			if (actionData == null)
+				new RefException("No info forwarded for unit server registration", 1, "CUQueryHandler::registerUnitServer");
+			UnitServer us = new UnitServer();
+			us.setAlias(actionData.getString(RPCConstants.MDS_REGISTER_UNIT_SERVER_ALIAS));
+			us.setIp_port(actionData.getString(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS));
+			BasicBSONList bsonAttributesArray = (BasicBSONList) actionData.get(RPCConstants.MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS);
+			ListIterator<Object> dsDescIter = bsonAttributesArray.listIterator();
+			while (dsDescIter.hasNext()) {
+				us.addPublischedCU(dsDescIter.next().toString());
+			}
+			
+			if(usDA.unitServerAlreadyRegistered(us)){
+				usDA.updateUnitServer(us);
+			} else {
+				usDA.insertNewUnitServer(us);
+			}
+			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int)5);
+			closeDataAccess(usDA, true);
+		} catch (InstantiationException e) {
+			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int)6);
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "CUQueryHandler::registerUnitServer");
+		} catch (IllegalAccessException e) {
+			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int)6);
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 1, "CUQueryHandler::registerUnitServer");
+		} catch (SQLException e) {
+			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int)6);
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 2, "CUQueryHandler::registerUnitServer");
+		}finally{
+			try {
+				closeDataAccess(usDA, false);
+			} catch (SQLException e) {
+				//e.printStackTrace();
+			}
+			try {
+				SingletonServices.getInstance().getSlowExecution().submitJob(UnitServerACK.class.getName(), actionData);
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
 		}
+	
 		return null;
 	}
 

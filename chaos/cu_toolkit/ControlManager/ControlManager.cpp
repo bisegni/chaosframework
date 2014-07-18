@@ -85,7 +85,6 @@ void ControlManager::init(void *initParameter) throw(CException) {
 									"Driver params (pipe separated '|') to pass to the control unit instance");
 		
 		//deinit CU action
-		
 		actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
 																					   &ControlManager::unloadControlUnit,
 																					   ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN,
@@ -95,6 +94,12 @@ void ControlManager::init(void *initParameter) throw(CException) {
 		actionDescription->addParam(ChaosSystemDomainAndActionLabel::PARAM_CU_LOAD_UNLOAD_ALIAS,
 									DataType::TYPE_STRING,
 									"Alias of the control unit to unload");
+		
+		actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
+																					   &ControlManager::unitServerRegistrationACK,
+																					   ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN,
+																					   ChaosSystemDomainAndActionLabel::ACTION_UNIT_SERVER_REG_ACK,
+																					   "Unit server registration ack message");
 	}
     
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
@@ -381,11 +386,6 @@ void ControlManager::timeout() {
 			LCMDBG_ << "[Published failed] Perform Unpublishing state";
 			chaos_async::AsyncCentralManager::getInstance()->removeTimer(this);
 			use_unit_server = false;
-			if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypeUnpublished()) == boost::msm::back::HANDLED_TRUE){
-				LCMDBG_ << "[Published failed] got to [Unpublished with use_unit_server = "<<use_unit_server<<"]";
-			} else {
-				LCMERR_ << "[Published failed] i can't be here";
-			}
 			break;
 	}
 }
@@ -410,7 +410,7 @@ void ControlManager::sendUnitServerRegistration() {
 CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *messageData, bool &detach) throw (CException) {
 	//lock the sm access
 	boost::unique_lock<boost::shared_mutex> lock_sm(unit_server_sm_mutex);
-	
+	detach = false;
 	if(!messageData->hasKey(ChaosMetadataRPCConstants::MDS_REGISTER_UNIT_SERVER_ALIAS))
 		throw CException(-1, "No alias forwarder", __PRETTY_FUNCTION__);
 	
@@ -419,9 +419,10 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *messageDat
 		throw CException(-2, "Server alias not found", __PRETTY_FUNCTION__);
 	}
 	if(messageData->hasKey(ChaosMetadataRPCConstants::MDS_REGISTER_UNIT_SERVER_RESULT)) {
+		//registration has been ended
 		switch(messageData->getInt32Value(ChaosMetadataRPCConstants::MDS_REGISTER_UNIT_SERVER_RESULT)){
 			case ErrorCode::EC_MDS_UNIT_SERV_REGISTRATION_OK:
-				if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypeUnpublished()) == boost::msm::back::HANDLED_TRUE){
+				if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypePublished()) == boost::msm::back::HANDLED_TRUE){
 					//we are published and it is ok!
 				} else {
 					throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for published event", __PRETTY_FUNCTION__);
@@ -431,8 +432,9 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *messageDat
 			case ErrorCode::EC_MDS_UNIT_SERV_REGISTRATION_FAILURE_DUPLICATE_ALIAS:
 				LCMERR_ << "The " << unit_server_alias << " is already used";
 				//turn of unit server
-				if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypeUnpublishing()) == boost::msm::back::HANDLED_TRUE){
-					//we are published and it is ok!
+				if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypeFailure()) == boost::msm::back::HANDLED_TRUE){
+					//we have problem
+					chaos_async::AsyncCentralManager::getInstance()->restartTimer(this);
 				} else {
 					throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for unpublishing event", __PRETTY_FUNCTION__);
 				}
@@ -442,15 +444,16 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *messageDat
 				LCMERR_ << "The " << unit_server_alias << " is invalid";
 				//turn of unit server
 				LCMDBG_ << "Turning of unit server";
-				use_unit_server = false;
-				if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypeUnpublishing()) == boost::msm::back::HANDLED_TRUE){
-					//we are published and it is ok!
+				if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypeFailure()) == boost::msm::back::HANDLED_TRUE){
+					//we have problem
+					
 				} else {
 					throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for unpublished event", __PRETTY_FUNCTION__);
 				}
 				break;
 		}
-		
+		//repeat fast as possible the timer
+		chaos_async::AsyncCentralManager::getInstance()->restartTimer(this);
 	} else {
 		throw CException(-3, "No result received", __PRETTY_FUNCTION__);
 	}

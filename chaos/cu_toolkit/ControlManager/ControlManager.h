@@ -76,7 +76,7 @@ namespace chaos {
 				// unti server is registered
                 struct UnitServerEventTypePublished {};
 				// unit server is registering and he's waiting for approval
-                struct UnitServerEventTypeUnpublishing {};
+                struct UnitServerEventTypeFailure {};
             }
 			
             // Unit Server state
@@ -86,7 +86,7 @@ namespace chaos {
 			
             struct Published : public boost::msm::front::state<> {};
             
-			struct Unpublishing  : public boost::msm::front::state<> {};
+			struct PublishingFailure  : public boost::msm::front::state<> {};
 			
             // front-end: define the FSM structure
             struct us_state_machine : public boost::msm::front::state_machine_def<us_state_machine> {
@@ -94,17 +94,17 @@ namespace chaos {
                 // the initial state of the player SM. Must be defined
                 typedef Unpublished initial_state;
                 
-                typedef boost::msm::front::Row <  Unpublished   ,  UnitServerEventType::UnitServerEventTypePublishing  , Publishing, boost::msm::front::none , boost::msm::front::none > unpub_pubing_row;
+				typedef boost::msm::front::Row <  Unpublished   ,  UnitServerEventType::UnitServerEventTypePublishing  , Publishing, boost::msm::front::none , boost::msm::front::none > unpub_pubing_row;
                 typedef boost::msm::front::Row <  Publishing   ,  UnitServerEventType::UnitServerEventTypePublished  , Published, boost::msm::front::none , boost::msm::front::none > pubing_pub_row;
-                typedef boost::msm::front::Row <  Published   ,  UnitServerEventType::UnitServerEventTypeUnpublishing  , Unpublishing, boost::msm::front::none , boost::msm::front::none > pub_unpubing_row;
-                typedef boost::msm::front::Row <  Unpublishing   ,  UnitServerEventType::UnitServerEventTypeUnpublishing  , Unpublished, boost::msm::front::none , boost::msm::front::none > unpubing_unpub_row;
+                typedef boost::msm::front::Row <  Publishing   ,  UnitServerEventType::UnitServerEventTypeFailure  , PublishingFailure, boost::msm::front::none , boost::msm::front::none > pubbing_pubfail_row;
+				typedef boost::msm::front::Row <  Published   ,  UnitServerEventType::UnitServerEventTypeUnpublished  , Unpublished, boost::msm::front::none , boost::msm::front::none > pub_unpub_row;
 				
                 // Transition table for initialization services
                 struct transition_table : boost::mpl::vector<
                 unpub_pubing_row,
                 pubing_pub_row,
-				pub_unpubing_row,
-				unpubing_unpub_row> {};
+				pubbing_pubfail_row,
+				pub_unpub_row> {};
                 
                 template <class FSM,class Event>
                 void no_transition(Event const& ,FSM&, int ){}

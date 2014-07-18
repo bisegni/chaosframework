@@ -11,6 +11,7 @@ import it.infn.chaos.mds.rpcaction.CUQueryHandler;
 import it.infn.chaos.mds.rpcaction.DeviceQueyHandler;
 import it.infn.chaos.mds.rpcaction.PerformanceTest;
 import it.infn.chaos.mds.slowexecution.SlowExecution;
+import it.infn.chaos.mds.slowexecution.UnitServerACK;
 
 import java.util.Arrays;
 import java.util.StringTokenizer;
@@ -87,6 +88,7 @@ public class ChaosMDSInitPlugin implements REFInitPlugin, REFDeinitPlugin {
 			
 			//allocate new slow execution queue
 			SingletonServices.getInstance().setSlowExecution(new SlowExecution(20));
+			SingletonServices.getInstance().getSlowExecution().registerSlowControlJob(UnitServerACK.class);
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}

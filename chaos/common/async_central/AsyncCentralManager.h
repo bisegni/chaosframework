@@ -62,6 +62,8 @@ namespace chaos {
 			public:
 				int addTimer(TimerHandler *timer_handler, uint64_t timeout, uint64_t repeat);
 				
+				int restartTimer(TimerHandler *timer_handler);
+				
 				void removeTimer(TimerHandler *timer_handler);
 				
 				int addThread(chaos::common::utility::delegate::Delegate *thread_delegate, AcmThreadID *thread_id);

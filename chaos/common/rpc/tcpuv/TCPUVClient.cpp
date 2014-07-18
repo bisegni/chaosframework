@@ -68,19 +68,28 @@ void TCPUVClient::on_ack_read(uv_stream_t *stream, ssize_t nread, const uv_buf_t
 	boost::unique_lock<boost::shared_mutex> lock(ci->connection_mutex);
 	if(ci->queued_message_info.empty()) {
 		DEBUG_CODE(TCPUVClientLDBG << "STEP-close connection for empty queue";)
+		//attach tcp channel to the conenction and...
 		stream->data = ci->uv_conn_info;
+		//....detach the general connection info
 		ci->uv_conn_info = NULL;
 		uv_close((uv_handle_t*)stream,TCPUVClient::on_close);
 	} else {
 		DEBUG_CODE(TCPUVClientLDBG << "we have more data to send ->" << ci->queued_message_info.size();)
 		//delete sent data
-		if(ci->uv_conn_info->current_message_info) delete(ci->uv_conn_info->current_message_info);
-		if(ci->uv_conn_info->current_serialization) delete(ci->uv_conn_info->current_serialization);
-		//get the next message to send
-		ci->uv_conn_info->current_message_info = ci->queued_message_info.front();
-		ci->uv_conn_info->current_serialization = NULL;
-		ci->queued_message_info.pop();
-		TCPUVClient::send_data(ci, stream);
+		if(ci->uv_conn_info) {
+			if(ci->uv_conn_info->current_message_info) delete(ci->uv_conn_info->current_message_info);
+			if(ci->uv_conn_info->current_serialization) delete(ci->uv_conn_info->current_serialization);
+			//get the next message to send
+			ci->uv_conn_info->current_message_info = ci->queued_message_info.front();
+			ci->uv_conn_info->current_serialization = NULL;
+			ci->queued_message_info.pop();
+			TCPUVClient::send_data(ci, stream);
+		} else {
+			//we have more data ma no connection because has closed for some reason,
+			//so we need to reconnect
+			TCPUVClient::create_new_connection_for_next_message(stream->loop, ci);
+		}
+		
 	}
 	
 	
@@ -159,6 +168,10 @@ void TCPUVClient::on_connect(uv_connect_t *connection, int status) {
 		connection->handle->data = ci->uv_conn_info;
 		ci->uv_conn_info = NULL;
 		uv_close((uv_handle_t*)connection->handle,TCPUVClient::on_close);
+		
+		if(ci->queued_message_info.size()) {
+			TCPUVClient::create_new_connection_for_next_message(connection->handle->loop, ci);
+		}
 	} else if(ci->uv_conn_info->current_message_info) {
 		//lock access to connection info
 		TCPUVClient::send_data(ci, connection->handle);
@@ -182,6 +195,26 @@ void TCPUVClient::async_submit_message_cb(uv_async_t *handle) {
 			client_instance->processBufferElement(message_info, element_policy);
 		}
 	};
+}
+
+void TCPUVClient::create_new_connection_for_next_message(uv_loop_t *loop, ConnectionInfo *ci) {
+	TCPUVClientLAPP << "create_new_connection";
+	ci->uv_conn_info  = new UVConnInfo();
+	
+	//i need to restart the connection
+	//boost::unique_lock<boost::shared_mutex> lock_loop(loop_mutex);
+	struct sockaddr_in req_addr;
+	std::vector<std::string> server_desc_tokens;
+	boost::algorithm::split(server_desc_tokens, ci->queued_message_info.front()->destinationAddr, boost::algorithm::is_any_of(":"), boost::algorithm::token_compress_on);
+	uv_ip4_addr(server_desc_tokens[0].c_str(), boost::lexical_cast<int>(server_desc_tokens[1]), &req_addr);
+	
+	
+	uv_tcp_init(loop, &ci->uv_conn_info->tcp_connection);
+	uv_tcp_keepalive(&ci->uv_conn_info->tcp_connection, 1, 60);
+	uv_tcp_nodelay(&ci->uv_conn_info->tcp_connection, 1);
+	//exec the connection
+	ci->uv_conn_info->tcp_connection.data = static_cast<void*>(ci);
+	uv_tcp_connect(&ci->uv_conn_info->tcp_connection_request, &ci->uv_conn_info->tcp_connection, (const struct sockaddr*)&req_addr, TCPUVClient::on_connect);
 }
 
 TCPUVClient::TCPUVClient(string alias):
@@ -331,22 +364,8 @@ bool TCPUVClient::sendToConnectionInfo(ConnectionInfo *conenction_info, NetworkF
 	conenction_info->queued_message_info.push(message_info);
 	if(!conenction_info->uv_conn_info) {
 		TCPUVClientLAPP << "Allocate new UVConnInfo";
-		conenction_info->uv_conn_info  = new UVConnInfo();
-		
-		//i need to restart the connection
-		//boost::unique_lock<boost::shared_mutex> lock_loop(loop_mutex);
-		struct sockaddr_in req_addr;
-		std::vector<std::string> server_desc_tokens;
-		boost::algorithm::split(server_desc_tokens, message_info->destinationAddr, boost::algorithm::is_any_of(":"), boost::algorithm::token_compress_on);
-		uv_ip4_addr(server_desc_tokens[0].c_str(), boost::lexical_cast<int>(server_desc_tokens[1]), &req_addr);
-		
-		
-		uv_tcp_init(&loop, &conenction_info->uv_conn_info->tcp_connection);
-		uv_tcp_keepalive(&conenction_info->uv_conn_info->tcp_connection, 1, 60);
-        uv_tcp_nodelay(&conenction_info->uv_conn_info->tcp_connection, 1);
-		//exec the connection
-		conenction_info->uv_conn_info->tcp_connection.data = static_cast<void*>(conenction_info);
-		uv_tcp_connect(&conenction_info->uv_conn_info->tcp_connection_request, &conenction_info->uv_conn_info->tcp_connection, (const struct sockaddr*)&req_addr, TCPUVClient::on_connect);
+		//conenction_info->uv_conn_info  = new UVConnInfo();
+		TCPUVClient::create_new_connection_for_next_message(&loop, conenction_info);
 	}
 	return true;
 }

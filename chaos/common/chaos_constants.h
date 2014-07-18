@@ -373,7 +373,10 @@ namespace chaos {
         //! This action provide to the shutdown porcess of the enteir daemon
         //! that runt the active contorl units. All it will be gracefull shutten down
         //! before daemon exit
-        static const char * const ACTION_SYSTEM_SHUTDOWN		= "shutdownControlUnitServer";
+        static const char * const ACTION_SYSTEM_SHUTDOWN		= "shutdownUnitServer";
+		
+		//! Action called by mds for ack message in the unit server registration process
+        static const char * const ACTION_UNIT_SERVER_REG_ACK	= "unitServerRegistrationACK";
 		
 		//! Load the control unit
         static const char * const ACTION_CU_LOAD				= "loadControlUnit";
@@ -386,7 +389,7 @@ namespace chaos {
 		
 		//! driver params passed during load operation for a specified control unit
 		static const char * const PARAM_CU_LOAD_DRIVER_PARAMS	= "controlUnitDriverParams";
-
+		
         //! Start the control unit intialization, the action need the default value
         //! of the input attribute for a determinate device
         static const char * const ACTION_CU_INIT				= "initControlUnit";
@@ -410,7 +413,7 @@ namespace chaos {
     }
     /** @} */ // end of ChaosMetadataActionLabel
 	/** @defgroup ChaosMetadataActionLabel Chaos Metadata Message query
-     *  This is the collection of the label that identify the action exposed by metadata service to 
+     *  This is the collection of the label that identify the action exposed by metadata service to
 	 *  perform query about !CHAOS metadata infromation
      *  @{
      */
@@ -423,13 +426,13 @@ namespace chaos {
 		
 		//! key for the server alias used by the instance [string]
         static const char * const MDS_REGISTER_UNIT_SERVER_ALIAS				= "unit_server_alias";
-
+		
 		//! key for the control unit aliases published by the unit server [array fo string]
         static const char * const MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS	= "unit_server_cu_alias";
 		
         //! key that idetify the result of unit server registration[int32]
         static const char * const MDS_REGISTER_UNIT_SERVER_RESULT				= "reg_unit_serv_result";
-
+		
 		//! this action perform the registration for the control unit dataset
         static const char * const MDS_REGISTER_CONTROL_UNIT						= "registerControlUnit";
 		

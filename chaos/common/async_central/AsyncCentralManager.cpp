@@ -109,6 +109,11 @@ int AsyncCentralManager::addTimer(TimerHandler *timer_handler, uint64_t timeout,
 	return err;
 }
 
+int AsyncCentralManager::restartTimer(TimerHandler *timer_handler) {
+	int err = uv_timer_again(&timer_handler->uv_t);
+	return err;
+}
+
 void AsyncCentralManager::removeTimer(TimerHandler *timer_handler) {
 	uv_timer_stop(&timer_handler->uv_t);
 }

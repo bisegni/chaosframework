@@ -3,18 +3,17 @@
  */
 package it.infn.chaos.mds.rpc.server;
 
-import it.infn.chaos.mds.RPCConstants;
-import it.infn.chaos.mds.SingletonServices;
-
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.bson.BasicBSONObject;
-import org.ref.common.exception.RefException;
 
 /**
  * @author bisegni
  */
-public class ActionHandlerExecutor implements Runnable {
+public class ActionHandlerExecutor/* implements Runnable*/ {
 	private int												threadNumber		= 0;
 	private Boolean											done				= false;
 	private ScheduledExecutorService						executionService	= null;
@@ -25,9 +24,9 @@ public class ActionHandlerExecutor implements Runnable {
 	 */
 	public ActionHandlerExecutor(int threadNumber) {
 		executionService = Executors.newScheduledThreadPool(this.threadNumber = threadNumber);
-		for (int i = 0; i < threadNumber; i++) {
-			executionService.execute(this);
-		}
+		//for (int i = 0; i < threadNumber; i++) {
+			//executionService.execute(this);
+		//}
 	}
 
 	/**
@@ -36,27 +35,21 @@ public class ActionHandlerExecutor implements Runnable {
 	 * @throws InterruptedException
 	 */
 	public void submitAction(RPCActionHadler h, BasicBSONObject d) throws InterruptedException {
-		synchronized (done) {
-			hanlderQueue.put(new ActionHandlerExecutionUnit(h, d));
-		}
+		executionService.execute(new ActionHandlerExecutionUnit(h, d));
 	}
 
 	/**
 	 * @author bisegni
-	 */
+	
 	class ActionHandlerExecutionUnit {
 		public RPCActionHadler	handler	= null;
 		public BasicBSONObject	data	= null;
 
-		/**
-		 * @param h
-		 * @param d
-		 */
 		public ActionHandlerExecutionUnit(RPCActionHadler h, BasicBSONObject d) {
 			handler = h;
 			data = d;
 		}
-	}
+	} */
 
 	public void stop() throws InterruptedException {
 		synchronized (done) {
@@ -64,24 +57,26 @@ public class ActionHandlerExecutor implements Runnable {
 		}
 
 		hanlderQueue.isEmpty();
-		for (int i = 0; i < getThreadNumber(); i++) {
-			hanlderQueue.add(new ActionHandlerExecutionUnit(null, null));
-		}
+		//for (int i = 0; i < getThreadNumber(); i++) {
+			//hanlderQueue.add(new ActionHandlerExecutionUnit(null, null));
+		//}
 		executionService.shutdown();
-		executionService.awaitTermination(10, TimeUnit.SECONDS);
+		executionService.awaitTermination(600, TimeUnit.SECONDS);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see java.lang.Runnable#run()
-	 */
+	
 	public void run() {
 		while (!done) {
 			BasicBSONObject resultMessage = new BasicBSONObject();
 			BasicBSONObject resultPack = new BasicBSONObject();
 			ActionHandlerExecutionUnit actionHandler = null;
 			try {
+				System.out.println("pre hanlderQueue.take() " + Thread.currentThread());
 				actionHandler = hanlderQueue.take();
+				System.out.println("post hanlderQueue.take() " + Thread.currentThread());
 			} catch (InterruptedException e1) {
 				e1.printStackTrace();
 			}
@@ -131,10 +126,10 @@ public class ActionHandlerExecutor implements Runnable {
 				SingletonServices.getInstance().getMdsRpcClient().sendMessage(resultMessage);
 			} catch (Throwable e) {
 			}
-
 		}
+		System.out.println("Done executing ActionHandlerExecutionUnit");
 	}
-
+ */
 	public int getThreadNumber() {
 		return threadNumber;
 	}

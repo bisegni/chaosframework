@@ -92,7 +92,8 @@ namespace chaos {
 		static void async_shutdown_loop_cb(uv_async_t *handle);
 		
 		static void async_submit_message_cb(uv_async_t *handle);
-		//static void timer_cb(uv_timer_t* handle);
+		
+		static void create_new_connection_for_next_message(uv_loop_t *loop, ConnectionInfo *ci);
     public:
 		
         /*
