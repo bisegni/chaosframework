@@ -19,6 +19,9 @@
  */
 #ifndef __CHAOSFramework__WorkUnitManagement__
 #define __CHAOSFramework__WorkUnitManagement__
+
+#include <chaos/common/data/CDataWrapper.h>
+
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 
 #include <boost/thread.hpp>
@@ -27,6 +30,9 @@
 #include <boost/msm/front/functor_row.hpp>
 #include <boost/msm/front/euml/common.hpp>
 #include <boost/msm/front/euml/operator.hpp>
+#include <chaos/common/message/MDSMessageChannel.h>
+
+using namespace chaos::common::data;
 
 namespace chaos {
 	namespace cu {
@@ -84,13 +90,13 @@ namespace chaos {
 			
 			
 			//! Unit event state enum definition used on WorkUnitManagment class method
-			typedef enum UnitEventState {
-				UnitEventUnpublished,
-				UnitEventPublishing,
-				UnitEventPublished,
-				UnitEventUnpublishing,
-				UnitEventPublishingFailure
-			}UnitEventState;
+			typedef enum UnitState {
+				UnitStateUnpublished,
+				UnitStatePublishing,
+				UnitStatePublished,
+				UnitStatePublishingFailure,
+				UnitStateUnpublishing
+			} UnitState;
 			
 			//! type definition for state machine
 			typedef boost::msm::back::state_machine< work_unit_state_machine::wu_state_machine >	WorkUnitStateMachine;
@@ -103,7 +109,10 @@ namespace chaos {
 			class WorkUnitManagement {
 				//! state machine for the control unit instance
 				WorkUnitStateMachine					wu_instance_sm;
+				
+				int sendConfPackToMDS(CDataWrapper& dataToSend);
 			public:
+				MDSMessageChannel						*mds_channel;
 				//! abstract contro unit isntalce
 				boost::shared_ptr<AbstractControlUnit>	work_unit_instance;
 
@@ -112,9 +121,12 @@ namespace chaos {
 				~WorkUnitManagement(){}
 				
 				//! return the state of the unit state machine
-				UnitEventState getCurrentState();
+				UnitState getCurrentState();
 				
-				void scheduleSM();
+				//! manage the internal state machine
+				void scheduleSM() throw (CException);
+
+				void manageACKPack(CDataWrapper ackPack);
 			};
 		}
 	}
