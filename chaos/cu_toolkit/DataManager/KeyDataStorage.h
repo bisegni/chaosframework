@@ -25,46 +25,47 @@
 #include <chaos/cu_toolkit/DataManager/MultiBufferDataStorage.h>
 #include <chaos/common/utility/ArrayPointer.h>
 
+using namespace std;
+
 namespace chaos_data = chaos::common::data;
 
 namespace chaos{
-    
     namespace cu {
-        
-        using namespace std;
-        
-        class KeyDataStorage : public MultiBufferDataStorage {
-            string dataSetKey;
-            IODataDriver *liveIODriver;
-            auto_ptr<chaos_data::CDataWrapper> keyData;
-        public:
-            KeyDataStorage(const char*);
-            KeyDataStorage(string&);
-            virtual ~KeyDataStorage();
-            
-            void init(chaos_data::CDataWrapper*);
-            
-            /*
-             Return a new instace for the CSDatawrapped
-             */
-            chaos_data::CDataWrapper* getNewDataWrapper();
-            
-            /*
-             Retrive the data from Live Storage
-             */
-            ArrayPointer<chaos_data::CDataWrapper>* getLastDataSet();
-            
-            /*
-             Retrive the data from History Storage
-             */
-            ArrayPointer<chaos_data::CDataWrapper>*  getHistoricalDataSet(chaos_data::CDataWrapper*);
-            
-            /*
-             Permit to be live configurable
-             */
-            chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper *);
-            
-        };
+		namespace data_manager {
+			
+			class KeyDataStorage : public MultiBufferDataStorage {
+				string dataSetKey;
+				IODataDriver *liveIODriver;
+				auto_ptr<chaos_data::CDataWrapper> keyData;
+			public:
+				KeyDataStorage(const char*);
+				KeyDataStorage(string&);
+				virtual ~KeyDataStorage();
+				
+				void init(chaos_data::CDataWrapper*);
+				
+				/*
+				 Return a new instace for the CSDatawrapped
+				 */
+				chaos_data::CDataWrapper* getNewDataWrapper();
+				
+				/*
+				 Retrive the data from Live Storage
+				 */
+				ArrayPointer<chaos_data::CDataWrapper>* getLastDataSet();
+				
+				/*
+				 Retrive the data from History Storage
+				 */
+				ArrayPointer<chaos_data::CDataWrapper>*  getHistoricalDataSet(chaos_data::CDataWrapper*);
+				
+				/*
+				 Permit to be live configurable
+				 */
+				chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper *);
+				
+			};
+		}
     }
 }
 #endif

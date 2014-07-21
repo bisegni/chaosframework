@@ -37,87 +37,90 @@ namespace chaos{
     namespace cu {
         using namespace boost;
         using namespace std;
-        /*
-         * This class manage and organize the creation of output pipeline,
-         * there is only one instance of this class
-         */
-        class DataManager : public chaos::utility::StartableService, public Singleton<DataManager> {
-			friend class Singleton<DataManager>;
-			//mutex for lock operation on service request
-			boost::mutex managing_data_mutex;
-			shared_ptr<IODataDriver> liveDriver;
-			shared_ptr<MultiBufferDataStorage> outputBuffer;
-			map<string, KeyDataStorage*>  deviceIDKeyDataStorageMap;
-			
+		
+		namespace data_manager {
 			/*
-			 * Constructor
+			 * This class manage and organize the creation of output pipeline,
+			 * there is only one instance of this class
 			 */
-			DataManager();
-			
-			/*
-			 * Distructor
-			 */
-			virtual ~DataManager();
-			
-		public:
-			/*
-			 * Initzialize the datamanager
-			 */
-			void init(void *initParamter) throw(CException);
-			/*
-			 * Deinitzialize the datamanager
-			 */
-			void deinit() throw(CException);
-			
-			/*
-			 * Start all sub process
-			 */
-			void start() throw(CException);
-			
-			/*
-			 Configure the sandbox and all subtree of the CU
-			 */
-			chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*);
-			/*
-			 *
-			 */
-			KeyDataStorage *getKeyDataStorageNewInstanceForKey(string&) throw(CException);
-			//-------per test------
-			/*
-			 * Return an instance for the configured data live driver
-			 */
-			IODataDriver *getDataLiveDriverNewInstance() throw(CException);
-			
-			/*
-			 Initialize a device id KeyDataStorageBuffer
-			 */
-			void initDeviceIDKeyDataStorage(string&, chaos_data::CDataWrapper*) throw(CException);
-			
-			/*
-			 Initialize a device id KeyDataStorageBuffer
-			 */
-			void deinitDeviceIDKeyDataStorage(string&) throw(CException);
-			
-			/*
-			 Submit a CDataWrapper on device id KeyDataStorage
-			 */
-			void pushDeviceDataByIdKey(string&, chaos_data::CDataWrapper*) throw(CException);
-			
-			/*
-			 Get the last CDataWrapper from the live data for the device id key
-			 */
-			ArrayPointer<chaos_data::CDataWrapper> *getLastCDataWrapperForDeviceIdKey(string&)  throw(CException);
-			/*
-			 return a new instance of CDataWrapper filled with a mandatory data
-			 according to key
-			 */
-			chaos_data::CDataWrapper *getNewDataWrapperForDeviceIdKey(string&);
-			
-			/*
-			 Configure the datamanager
-			 */
-			void updateConfigurationForDeviceIdKey(string&, chaos_data::CDataWrapper*);
-		};
+			class DataManager : public chaos::utility::StartableService, public Singleton<DataManager> {
+				friend class Singleton<DataManager>;
+				//mutex for lock operation on service request
+				boost::mutex managing_data_mutex;
+				shared_ptr<IODataDriver> liveDriver;
+				shared_ptr<MultiBufferDataStorage> outputBuffer;
+				map<string, KeyDataStorage*>  deviceIDKeyDataStorageMap;
+				
+				/*
+				 * Constructor
+				 */
+				DataManager();
+				
+				/*
+				 * Distructor
+				 */
+				virtual ~DataManager();
+				
+			public:
+				/*
+				 * Initzialize the datamanager
+				 */
+				void init(void *initParamter) throw(CException);
+				/*
+				 * Deinitzialize the datamanager
+				 */
+				void deinit() throw(CException);
+				
+				/*
+				 * Start all sub process
+				 */
+				void start() throw(CException);
+				
+				/*
+				 Configure the sandbox and all subtree of the CU
+				 */
+				chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*);
+				/*
+				 *
+				 */
+				KeyDataStorage *getKeyDataStorageNewInstanceForKey(string&) throw(CException);
+				//-------per test------
+				/*
+				 * Return an instance for the configured data live driver
+				 */
+				IODataDriver *getDataLiveDriverNewInstance() throw(CException);
+				
+				/*
+				 Initialize a device id KeyDataStorageBuffer
+				 */
+				void initDeviceIDKeyDataStorage(string&, chaos_data::CDataWrapper*) throw(CException);
+				
+				/*
+				 Initialize a device id KeyDataStorageBuffer
+				 */
+				void deinitDeviceIDKeyDataStorage(string&) throw(CException);
+				
+				/*
+				 Submit a CDataWrapper on device id KeyDataStorage
+				 */
+				void pushDeviceDataByIdKey(string&, chaos_data::CDataWrapper*) throw(CException);
+				
+				/*
+				 Get the last CDataWrapper from the live data for the device id key
+				 */
+				ArrayPointer<chaos_data::CDataWrapper> *getLastCDataWrapperForDeviceIdKey(string&)  throw(CException);
+				/*
+				 return a new instance of CDataWrapper filled with a mandatory data
+				 according to key
+				 */
+				chaos_data::CDataWrapper *getNewDataWrapperForDeviceIdKey(string&);
+				
+				/*
+				 Configure the datamanager
+				 */
+				void updateConfigurationForDeviceIdKey(string&, chaos_data::CDataWrapper*);
+			};
+		}
 	}
 }
 #endif

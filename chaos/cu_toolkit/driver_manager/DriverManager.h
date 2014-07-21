@@ -38,10 +38,10 @@
 
 namespace chaos {
 	namespace cu {
-		
-		//forward declaration
-		class AbstractControlUnit;
-		
+		namespace control_manager {
+			//forward declaration
+			class AbstractControlUnit;
+		}
 		namespace driver_manager {
 			
 			namespace common_utility = chaos::common::utility;
@@ -66,7 +66,7 @@ namespace chaos {
 			//! !CHAOS Driver infrastructure managment
 			class DriverManager : public chaos::utility::StartableService, public chaos::Singleton<DriverManager> {
 				friend class chaos::Singleton<DriverManager>;
-				friend class chaos::cu::AbstractControlUnit;
+				friend class chaos::cu::control_manager::AbstractControlUnit;
 				
 				//! this map correlate the alias to the object instancer
 				std::map<std::string, boost::shared_ptr< DriverPluginInfo > > mapDriverAliasVersionInstancer;

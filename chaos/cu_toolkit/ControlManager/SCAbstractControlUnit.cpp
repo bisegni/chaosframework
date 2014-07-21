@@ -27,6 +27,7 @@
 using namespace chaos;
 
 using namespace chaos::cu;
+using namespace chaos::cu::control_manager;
 using namespace chaos::cu::control_manager::slow_command;
 
 namespace chaos_data = chaos::common::data;

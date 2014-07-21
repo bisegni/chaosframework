@@ -29,7 +29,6 @@
 #include <boost/scoped_ptr.hpp>
 namespace chaos {
 	namespace common {
-		
 		namespace data {
 			using namespace std;
 			using namespace bson;

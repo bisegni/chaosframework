@@ -25,19 +25,21 @@
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
 
-using namespace chaos;
-using namespace chaos::cu;
-using namespace std;
-
-namespace chaos_data = chaos::common::data;
-namespace chaos_async = chaos::common::async_central;
-
 #define LCMAPP_ LAPP_ << "[Control Manager] - "
 #define LCMDBG_ LDBG_ << "[Control Manager] - "
 #define LCMERR_ LERR_ << "[Control Manager]"<<__LINE__<<" - "
 #define WAITH_TIME_FOR_CU_REGISTRATION 2000000
 #define WU_IDENTIFICATION(x) std::string(x->getCUInstance()) + std::string("-") + std::string(x->getCUID())
 
+
+
+namespace chaos_data = chaos::common::data;
+namespace chaos_async = chaos::common::async_central;
+
+using namespace chaos;
+using namespace chaos::cu::command_manager;
+using namespace chaos::cu::control_manager;
+using namespace std;
 
 /*
  Constructor
@@ -122,13 +124,25 @@ void ControlManager::init(void *initParameter) throw(CException) {
  */
 void ControlManager::start() throw(CException) {
     LCMAPP_  << "Start cu scan timer";
-	thread_run = true;
-	thread_registration.reset(new boost::thread(boost::bind(&ControlManager::manageControlUnit, this)));
-	
 	if(use_unit_server){
 		//add unit server registration managment timer
 		chaos_async::AsyncCentralManager::getInstance()->addTimer(this, 0, GlobalConfiguration::getInstance()->getOption<uint64_t>(CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC));
+	} else {
+		startControlUnitSMThread();
 	}
+}
+
+// start control units state machine thread
+void ControlManager::startControlUnitSMThread() {
+	thread_run = true;
+	thread_registration.reset(new boost::thread(boost::bind(&ControlManager::manageControlUnit, this)));
+}
+
+// stop control unit state machien thread
+void ControlManager::stopControlUnitSMThread(bool whait) {
+	thread_run = false;
+	thread_waith_semaphore.unlock();
+	if(thread_registration.get() && whait) thread_registration->join();
 }
 
 /*
@@ -136,9 +150,7 @@ void ControlManager::start() throw(CException) {
  */
 void ControlManager::stop() throw(CException) {
     LCMAPP_  << "Stop cu scan timer";
-	thread_run = false;
-	thread_waith_semaphore.unlock();
-	if(thread_registration.get()) thread_registration->join();
+	stopControlUnitSMThread();
 }
 
 /*
@@ -156,9 +168,9 @@ void ControlManager::deinit() throw(CException) {
     
     
     LCMAPP_  << "Deinit all the submitted Control Unit";
-    map<string, shared_ptr<WorkUnitInfo> >::iterator cuIter = map_control_unit_instance.begin();
+    map<string, shared_ptr<WorkUnitManagement> >::iterator cuIter = map_control_unit_instance.begin();
     for ( ; cuIter != map_control_unit_instance.end(); cuIter++ ){
-        shared_ptr<WorkUnitInfo> cu = (*cuIter).second;
+        shared_ptr<WorkUnitManagement> cu = (*cuIter).second;
         
         LCMAPP_  << "Deregister RPC action for cu whith instance:" << WU_IDENTIFICATION(cu->work_unit_instance);
         cu->work_unit_instance->_getDeclareActionInstance(cuDeclareActionsInstance);
@@ -251,7 +263,7 @@ void ControlManager::manageControlUnit() {
 			lock.unlock();
 			try {
 				LCMAPP_  << "Got new Control Unit";
-				shared_ptr<WorkUnitInfo> wui(new WorkUnitInfo(curCU));
+				shared_ptr<WorkUnitManagement> wui(new WorkUnitManagement(curCU));
 				
 				//associate the event channel to the control unit
 				LCMAPP_  << "Adding event channel to the control unit:" << WU_IDENTIFICATION(wui->work_unit_instance);
@@ -380,6 +392,9 @@ void ControlManager::timeout() {
 		case 2:
 			LCMDBG_ << "[Published] Unit server registration completed, turn off the timer";
 			chaos_async::AsyncCentralManager::getInstance()->removeTimer(this);
+			
+			LCMDBG_ << "[Published] Start control units registration state machine";
+			startControlUnitSMThread();
 			break;
 			//Published failed
 		case 3:
@@ -410,6 +425,7 @@ void ControlManager::sendUnitServerRegistration() {
 CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *messageData, bool &detach) throw (CException) {
 	//lock the sm access
 	boost::unique_lock<boost::shared_mutex> lock_sm(unit_server_sm_mutex);
+	LCMAPP_ << "Unit server registration ack message received";
 	detach = false;
 	if(!messageData->hasKey(ChaosMetadataRPCConstants::MDS_REGISTER_UNIT_SERVER_ALIAS))
 		throw CException(-1, "No alias forwarder", __PRETTY_FUNCTION__);
@@ -422,6 +438,7 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *messageDat
 		//registration has been ended
 		switch(messageData->getInt32Value(ChaosMetadataRPCConstants::MDS_REGISTER_UNIT_SERVER_RESULT)){
 			case ErrorCode::EC_MDS_UNIT_SERV_REGISTRATION_OK:
+				LCMAPP_ << "Registration is gone well";
 				if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypePublished()) == boost::msm::back::HANDLED_TRUE){
 					//we are published and it is ok!
 				} else {
@@ -434,7 +451,6 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *messageDat
 				//turn of unit server
 				if(unit_server_sm.process_event(unit_server_state_machine::UnitServerEventType::UnitServerEventTypeFailure()) == boost::msm::back::HANDLED_TRUE){
 					//we have problem
-					chaos_async::AsyncCentralManager::getInstance()->restartTimer(this);
 				} else {
 					throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for unpublishing event", __PRETTY_FUNCTION__);
 				}
@@ -453,7 +469,8 @@ CDataWrapper* ControlManager::unitServerRegistrationACK(CDataWrapper *messageDat
 				break;
 		}
 		//repeat fast as possible the timer
-		chaos_async::AsyncCentralManager::getInstance()->restartTimer(this);
+		chaos_async::AsyncCentralManager::getInstance()->removeTimer(this);
+		chaos_async::AsyncCentralManager::getInstance()->addTimer(this, 0, GlobalConfiguration::getInstance()->getOption<uint64_t>(CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC));
 	} else {
 		throw CException(-3, "No result received", __PRETTY_FUNCTION__);
 	}

@@ -28,53 +28,54 @@
 
 namespace chaos {
     namespace cu {
-        namespace  handler {
-            
+		namespace control_manager {
+			namespace  handler {
+				
                 //! Implement and handler of int32_t type
-            /*! \class DSInt32Handler
-             \brief
-             Thsi class implement and int32_t handler using an object ethod as handler pointer
-             */
-            template <typename T>
-            class DSInt32Handler : public TDSAttributeHandler<int32_t> {
-            protected:
-                
+				/*! \class DSInt32Handler
+				 \brief
+				 Thsi class implement and int32_t handler using an object ethod as handler pointer
+				 */
+				template <typename T>
+				class DSInt32Handler : public TDSAttributeHandler<int32_t> {
+				protected:
+					
                     //! call the method that as been choosen to manage the value
-                /*!
-                 *  \param attributeValue the int32_t value that need to be managed
-                 */
-                inline void attributeHandler(int32_t& attributeValue)  throw (CException) {
-                    CHAOS_ASSERT(objectPointer)
-                    ((*objectPointer).*handler)(&attributeName, attributeValue);
-                }
-                
-            public:
-                
+					/*!
+					 *  \param attributeValue the int32_t value that need to be managed
+					 */
+					inline void attributeHandler(int32_t& attributeValue)  throw (CException) {
+						CHAOS_ASSERT(objectPointer)
+						((*objectPointer).*handler)(&attributeName, attributeValue);
+					}
+					
+				public:
+					
                     //! The function point to the handle
-                typedef void (T::*I32Handler)(const std::string * const, int32_t);
-                
-                /*!
-                 Default constructor
-                 */
-                DSInt32Handler(T *_objectPointer,
-                               I32Handler _handler):objectPointer(_objectPointer),handler(_handler) {};
-                
-                /*!
-                 Default constructor
-                 */
-                DSInt32Handler(std::string attrName,
-                               T *_objectPointer,
-                               I32Handler _handler):TDSAttributeHandler<int32_t>(attrName),objectPointer(_objectPointer),handler(_handler) {};
-
-        
-            private:
+					typedef void (T::*I32Handler)(const std::string * const, int32_t);
+					
+					/*!
+					 Default constructor
+					 */
+					DSInt32Handler(T *_objectPointer,
+								   I32Handler _handler):objectPointer(_objectPointer),handler(_handler) {};
+					
+					/*!
+					 Default constructor
+					 */
+					DSInt32Handler(std::string attrName,
+								   T *_objectPointer,
+								   I32Handler _handler):TDSAttributeHandler<int32_t>(attrName),objectPointer(_objectPointer),handler(_handler) {};
+					
+					
+				private:
                     //! Object pointer tha own the method
-                T *objectPointer;
-                
+					T *objectPointer;
+					
                     //! the handler pointer
-                I32Handler handler;
-            };
-    
+					I32Handler handler;
+				};
+			}
         }
     }
 }

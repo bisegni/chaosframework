@@ -34,7 +34,7 @@ using namespace chaos;
 
 using namespace chaos::common::data;
 
-using namespace chaos::cu;
+using namespace chaos::cu::command_manager;
 
 
 #pragma mark Public Method

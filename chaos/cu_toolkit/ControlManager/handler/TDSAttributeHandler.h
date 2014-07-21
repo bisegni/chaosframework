@@ -25,55 +25,57 @@
 
 namespace chaos {
     namespace cu {
-        namespace  handler {
-            
+		namespace control_manager {
+			namespace  handler {
+				
                 //---------------help macro------------
-
-            
+				
+				
                 //! Templated Attribute Handler base class
-            /*! \class TDSAttributeHandler
-             \brief
-             This class is the base attributed class that permit to define a typed handler
-             to process parameter value
-             */
-            template<typename T>
-            class TDSAttributeHandler : public DSAttributeHandler {
-                
+				/*! \class TDSAttributeHandler
+				 \brief
+				 This class is the base attributed class that permit to define a typed handler
+				 to process parameter value
+				 */
+				template<typename T>
+				class TDSAttributeHandler : public DSAttributeHandler {
+					
                     //!Handle the abstarct managment of the value
-                /*!
-                 *  \param value the abstract value
-                 *  \exception in case of error a the exception is thrown
-                 */
-                void handle(void *value) throw (CException) {
-                    attributeHandler(*((T*)value));
-                }
-                
-            protected:
-                
+					/*!
+					 *  \param value the abstract value
+					 *  \exception in case of error a the exception is thrown
+					 */
+					void handle(void *value) throw (CException) {
+						attributeHandler(*((T*)value));
+					}
+					
+				protected:
+					
                     //!attributeHandler implement the handler for a specified attribute
-                /*!
-                 *  \param attributeValue the value for the attribute to handle
-                 *  \exception when something goes wrong the implementation need to send an exception to notify it
-                 */
-                virtual void attributeHandler(T& attributeValue)  throw (CException) = 0;
-                
-            public:
-                /*!
-                 *  Default constructor with attribute name as parameter
-                 */
-                TDSAttributeHandler(){};
-                
-                /*!
-                 *  Default constructor with attribute name as parameter
-                 */
-                TDSAttributeHandler(std::string attrName):DSAttributeHandler(attrName){};
-                
-                /*!
-                 * Default destructor
-                 */
-                virtual ~TDSAttributeHandler(){};
-            };
-        }
+					/*!
+					 *  \param attributeValue the value for the attribute to handle
+					 *  \exception when something goes wrong the implementation need to send an exception to notify it
+					 */
+					virtual void attributeHandler(T& attributeValue)  throw (CException) = 0;
+					
+				public:
+					/*!
+					 *  Default constructor with attribute name as parameter
+					 */
+					TDSAttributeHandler(){};
+					
+					/*!
+					 *  Default constructor with attribute name as parameter
+					 */
+					TDSAttributeHandler(std::string attrName):DSAttributeHandler(attrName){};
+					
+					/*!
+					 * Default destructor
+					 */
+					virtual ~TDSAttributeHandler(){};
+				};
+			}
+		}
     }
 }
 #endif /* defined(__CHAOSFramework__TDSAttributeHandler__) */

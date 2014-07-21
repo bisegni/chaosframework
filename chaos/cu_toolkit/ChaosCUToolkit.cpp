@@ -28,7 +28,9 @@
 using namespace std;
 using namespace chaos;
 using namespace chaos::cu;
-
+using namespace chaos::cu::data_manager;
+using namespace chaos::cu::command_manager;
+using namespace chaos::cu::control_manager;
 using boost::shared_ptr;
 
 namespace cu_driver_manager = chaos::cu::driver_manager;

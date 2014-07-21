@@ -72,10 +72,10 @@ namespace chaos{
             void stop()throw(CException);
             void deinit()throw(CException);
 			
-            void addControlUnit(AbstractControlUnit*);
+            void addControlUnit(control_manager::AbstractControlUnit*);
 			template<typename ControlUnitClass>
 			void registerControlUnit() {
-				 ControlManager::getInstance()->registerControlUnit<ControlUnitClass>();
+				control_manager::ControlManager::getInstance()->registerControlUnit<ControlUnitClass>();
 			}
         };
     }

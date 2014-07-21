@@ -14,10 +14,10 @@
 
 namespace chaos {
 	namespace cu {
-		
-		//forward declaration
-		class AbstractControlUnit;
-		
+		/*namespace control_manager {
+			//forward declaration
+			class AbstractControlUnit;
+		}*/
 		namespace driver_manager {
 			
 			class DriverErogatorInterface {

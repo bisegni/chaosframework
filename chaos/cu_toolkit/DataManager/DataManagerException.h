@@ -24,18 +24,19 @@
 #include <chaos/common/exception/CException.h>
 
 namespace chaos{
-    
     namespace cu {
-        /*
-         Exception class for DataManager package
-         */
-        class DataManagerException : public CException{
-            
-            
-        public:
-            DataManagerException(int eCode, const char * eMessage):CException(eCode, eMessage, "DataManager") {
-            }
-        };
+		namespace data_manager {
+			/*
+			 Exception class for DataManager package
+			 */
+			class DataManagerException : public CException{
+				
+				
+			public:
+				DataManagerException(int eCode, const char * eMessage):CException(eCode, eMessage, "DataManager") {
+				}
+			};
+		}
     }
 }
 #endif

@@ -51,84 +51,89 @@ namespace chaos{
     }
     
     namespace cu {
-		class DataManager;
-        /*
-         * CommandManager
-         * - Command Manager is the central class for the registration and execution of the custom command
-         *
-         */
-        class CommandManager : public DeclareAction,  public Configurable, public Singleton<CommandManager>, public chaos::utility::StartableService {
-			friend class DataManager;
-            friend class RpcAdapterRegister;
-            friend class CommandDispatcherRegister;
-            friend class ServerDelegator;
-            friend class Singleton<CommandManager>;
-            
-            string metadataServerAddress;
-            bool canUseMetadataServer;
-            NetworkBroker *broker;
-            
-        public:
-            /*
-             reference to the master pirv lib controller, for shutdown operation
-             by rpc
-             */
-            ServerDelegator *server_handler;
-            
-            /*
-             * Initzialize the command manager
-             */
-            void init(void *initParam) throw(CException);
-            /*
-             * Deinitzialize the command manager
-             */
-            void deinit() throw(CException);
-            
-            /*
-             * Start all sub process
-             */
-            void start() throw(CException);
-            
-            //-----------------------
-            void stop() throw(CException);
-            
-            /*
-             Configure the sandbox and all subtree of the CU
-             */
-			chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*);
-            
-            /*
-             Get MEtadataserver channel
-             */
-            MDSMessageChannel *getMetadataserverChannel();
-            
-            /*
-             Get Device event channel
-             */
-            event::channel::InstrumentEventChannel *getDeviceEventChannel();
-            
-            /*!
-             Delete an event channel allocated with command manager
-             */
-            void deleteEventChannel(event::channel::EventChannel *eventChannel);
-            
-            /*
-             Register actions defined by AbstractActionDescriptor instance contained in the array
-             */
-            void registerAction(DeclareAction*);
-            /*
-             Deregister actions for a determianted domain
-             */
-            void deregisterAction(DeclareAction*);
-            
-            /*
-             Shutdown the chaos control library
-             */
-            chaos_data::CDataWrapper* shutdown(chaos_data::CDataWrapper*, bool&) throw (CException);
-        private:
-            CommandManager();
-            ~CommandManager();
-        };
+		
+		namespace data_manager {
+			class DataManager;
+		}
+		namespace command_manager {
+			/*
+			 * CommandManager
+			 * - Command Manager is the central class for the registration and execution of the custom command
+			 *
+			 */
+			class CommandManager : public DeclareAction,  public Configurable, public Singleton<CommandManager>, public chaos::utility::StartableService {
+				friend class data_manager::DataManager;
+				friend class RpcAdapterRegister;
+				friend class CommandDispatcherRegister;
+				friend class ServerDelegator;
+				friend class Singleton<CommandManager>;
+				
+				string metadataServerAddress;
+				bool canUseMetadataServer;
+				NetworkBroker *broker;
+				
+			public:
+				/*
+				 reference to the master pirv lib controller, for shutdown operation
+				 by rpc
+				 */
+				ServerDelegator *server_handler;
+				
+				/*
+				 * Initzialize the command manager
+				 */
+				void init(void *initParam) throw(CException);
+				/*
+				 * Deinitzialize the command manager
+				 */
+				void deinit() throw(CException);
+				
+				/*
+				 * Start all sub process
+				 */
+				void start() throw(CException);
+				
+				//-----------------------
+				void stop() throw(CException);
+				
+				/*
+				 Configure the sandbox and all subtree of the CU
+				 */
+				chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*);
+				
+				/*
+				 Get MEtadataserver channel
+				 */
+				MDSMessageChannel *getMetadataserverChannel();
+				
+				/*
+				 Get Device event channel
+				 */
+				event::channel::InstrumentEventChannel *getDeviceEventChannel();
+				
+				/*!
+				 Delete an event channel allocated with command manager
+				 */
+				void deleteEventChannel(event::channel::EventChannel *eventChannel);
+				
+				/*
+				 Register actions defined by AbstractActionDescriptor instance contained in the array
+				 */
+				void registerAction(DeclareAction*);
+				/*
+				 Deregister actions for a determianted domain
+				 */
+				void deregisterAction(DeclareAction*);
+				
+				/*
+				 Shutdown the chaos control library
+				 */
+				chaos_data::CDataWrapper* shutdown(chaos_data::CDataWrapper*, bool&) throw (CException);
+			private:
+				CommandManager();
+				~CommandManager();
+			};
+		}
     }
 }
 #endif

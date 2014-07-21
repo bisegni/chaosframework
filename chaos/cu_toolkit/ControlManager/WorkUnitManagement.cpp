@@ -1,5 +1,5 @@
 /*
- *	DSAttributeHandler.cpp
+ *	WorkUnitManagement.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,22 +18,4 @@
  *    	limitations under the License.
  */
 
-#include "DSAttributeHandler.h"
-
-using namespace chaos::cu::control_manager::handler;
-
-DSAttributeHandler::DSAttributeHandler(std::string attrName):attributeName(attrName) {
-    
-}
-
-DSAttributeHandler::DSAttributeHandler() {
-    
-}
-
-DSAttributeHandler::~DSAttributeHandler(){
-    
-}
-
-std::string& DSAttributeHandler::getAttributeName() {
-    return attributeName;
-}
+#include <chaos/cu_toolkit/ControlManager/WorkUnitManagement.h>

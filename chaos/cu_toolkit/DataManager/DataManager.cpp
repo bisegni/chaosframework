@@ -34,7 +34,7 @@
 using namespace std;
 using namespace boost;
 using namespace chaos;
-using namespace chaos::cu;
+using namespace chaos::cu::data_manager;
 using namespace chaos::common::data;
 
 /*
@@ -113,7 +113,7 @@ IODataDriver *DataManager::getDataLiveDriverNewInstance() throw(CException) {
 			IODirectIODriverInitParam init_param;
 			std::memset(&init_param, 0, sizeof(IODirectIODriverInitParam));
 			//get client and endpoint
-			init_param.network_broker = CommandManager::getInstance()->broker;
+			init_param.network_broker = command_manager::CommandManager::getInstance()->broker;
 			init_param.client_instance = NULL;
 			init_param.endpoint_instance = NULL;
 			((IODirectIODriver*)result)->setDirectIOParam(init_param);

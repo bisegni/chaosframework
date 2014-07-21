@@ -37,6 +37,7 @@
 #include <chaos/common/async_central/async_central.h>
 
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
+#include <chaos/cu_toolkit/ControlManager/WorkUnitManagement.h>
 
 #include <boost/thread.hpp>
 #include <boost/msm/back/state_machine.hpp>
@@ -55,247 +56,201 @@
 #define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_desc	"Delay in milliseconds for the registration retry"
 #define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_DEFAULT	30000
 //define the type for the Control Unit isntancer
-typedef chaos::common::utility::ObjectInstancerP3<chaos::cu::AbstractControlUnit,
-		const std::string&,
-		const std::string&,
-		const chaos::cu::AbstractControlUnit::ControlUnitDriverList&> CUObjectInstancer;
 
 namespace chaos {
     namespace cu {
-        using namespace std;
-        using namespace boost;
-		
-		namespace unit_server_state_machine {
-            
-            //Unit server state machine
-            namespace UnitServerEventType {
-				// unit server need to register hiself to the mds
-				struct UnitServerEventTypeUnpublished {};
-				// unit server is registering and he's waiting for approval
-                struct UnitServerEventTypePublishing {};
-				// unti server is registered
-                struct UnitServerEventTypePublished {};
-				// unit server is registering and he's waiting for approval
-                struct UnitServerEventTypeFailure {};
-            }
+		namespace control_manager {
+			using namespace std;
+			using namespace boost;
 			
-            // Unit Server state
-            struct Unpublished : public boost::msm::front::state<>{};
-            
-			struct Publishing : public boost::msm::front::state<> {};
+			typedef chaos::common::utility::ObjectInstancerP3<AbstractControlUnit,
+			const std::string&,
+			const std::string&,
+			const AbstractControlUnit::ControlUnitDriverList&> CUObjectInstancer;
 			
-            struct Published : public boost::msm::front::state<> {};
-            
-			struct PublishingFailure  : public boost::msm::front::state<> {};
 			
-            // front-end: define the FSM structure
-            struct us_state_machine : public boost::msm::front::state_machine_def<us_state_machine> {
+			namespace unit_server_state_machine {
 				
-                // the initial state of the player SM. Must be defined
-                typedef Unpublished initial_state;
-                
-				typedef boost::msm::front::Row <  Unpublished   ,  UnitServerEventType::UnitServerEventTypePublishing  , Publishing, boost::msm::front::none , boost::msm::front::none > unpub_pubing_row;
-                typedef boost::msm::front::Row <  Publishing   ,  UnitServerEventType::UnitServerEventTypePublished  , Published, boost::msm::front::none , boost::msm::front::none > pubing_pub_row;
-                typedef boost::msm::front::Row <  Publishing   ,  UnitServerEventType::UnitServerEventTypeFailure  , PublishingFailure, boost::msm::front::none , boost::msm::front::none > pubbing_pubfail_row;
-				typedef boost::msm::front::Row <  Published   ,  UnitServerEventType::UnitServerEventTypeUnpublished  , Unpublished, boost::msm::front::none , boost::msm::front::none > pub_unpub_row;
+				//Unit server state machine
+				namespace UnitServerEventType {
+					// unit server need to register hiself to the mds
+					struct UnitServerEventTypeUnpublished {};
+					// unit server is registering and he's waiting for approval
+					struct UnitServerEventTypePublishing {};
+					// unti server is registered
+					struct UnitServerEventTypePublished {};
+					// unit server is registering and he's waiting for approval
+					struct UnitServerEventTypeFailure {};
+				}
 				
-                // Transition table for initialization services
-                struct transition_table : boost::mpl::vector<
-                unpub_pubing_row,
-                pubing_pub_row,
-				pubbing_pubfail_row,
-				pub_unpub_row> {};
-                
-                template <class FSM,class Event>
-                void no_transition(Event const& ,FSM&, int ){}
-            };
-        }
-		
-		namespace work_unit_state_machine {
-            
-            //Work unit event type
-            namespace UnitEventType {
-				// unit server need to register hiself to the mds
-				struct UnitEventTypeUnpublished {};
-				// unit server is registering and he's waiting for approval
-                struct UnitEventTypePublishing {};
-				// unti server is registered
-                struct UnitEventTypePublished {};
-				// unti server is failed to register
-                struct UnitEventTypeFailure {};
-            }
-			
-            // Unit Server state
-            struct Unpublished : public boost::msm::front::state<>{};
-            
-			struct Publishing : public boost::msm::front::state<> {};
-			
-            struct Published : public boost::msm::front::state<> {};
-            
-			struct PublishingFailure  : public boost::msm::front::state<> {};
-			
-            // front-end: define the FSM structure
-            struct wu_state_machine : public boost::msm::front::state_machine_def<wu_state_machine> {
+				// Unit Server state
+				struct Unpublished : public boost::msm::front::state<>{};
 				
-                // the initial state of the player SM. Must be defined
-                typedef Unpublished initial_state;
-                
-                typedef boost::msm::front::Row <  Unpublished   ,  UnitEventType::UnitEventTypePublishing  , Publishing, boost::msm::front::none , boost::msm::front::none > unpub_pubing_row;
-                typedef boost::msm::front::Row <  Publishing   ,  UnitEventType::UnitEventTypePublished  , Published, boost::msm::front::none , boost::msm::front::none > pubing_pub_row;
-                typedef boost::msm::front::Row <  Publishing   ,  UnitEventType::UnitEventTypeFailure  , PublishingFailure, boost::msm::front::none , boost::msm::front::none > pubbing_pubfail_row;
-				typedef boost::msm::front::Row <  Published   ,  UnitEventType::UnitEventTypeUnpublished  , Unpublished, boost::msm::front::none , boost::msm::front::none > pub_unpub_row;
+				struct Publishing : public boost::msm::front::state<> {};
 				
-                // Transition table for initialization services
-                struct transition_table : boost::mpl::vector<
-                unpub_pubing_row,
-                pubing_pub_row,
-				pubbing_pubfail_row,
-				pub_unpub_row> {};
-                
-                template <class FSM,class Event>
-                void no_transition(Event const& ,FSM&, int ){}
-            };
-        }
-	
-	//type definition of the state machine
-	typedef boost::msm::back::state_machine< unit_server_state_machine::us_state_machine >	WorkUnitServerStateMachine;
-	typedef boost::msm::back::state_machine< work_unit_state_machine::wu_state_machine >	WorkUnitStateMachine;
-	
-		//! struct for main the reference to the state machine of the contro  unit instance
-	struct WorkUnitInfo {
-		AbstractControlUnit		*work_unit_instance;
-		WorkUnitStateMachine	wu_instance_sm;
-		
-		WorkUnitInfo(AbstractControlUnit *_work_unit_instance):work_unit_instance(_work_unit_instance){}
-		~WorkUnitInfo(){if(work_unit_instance) delete(work_unit_instance);}
-	};
-	
-	//!Manager for the Control Unit managment
-	/*!
-	 This class is the central point qhere control unit are managed. Two api are exposed
-	 via RPC to load and unload the control unit giving some parameter.
-	 */
-	class ControlManager :
-	public DeclareAction,
-	public chaos::utility::StartableService,
-	protected chaos::common::async_central::TimerHandler,
-	public Singleton<ControlManager> {
-		friend class Singleton<ControlManager>;
-		mutable boost::shared_mutex mutex_registration;
-		
-		//unit server state machine
-		bool						use_unit_server;
-		std::string					unit_server_alias;
-		boost::shared_mutex			unit_server_sm_mutex;
-		WorkUnitServerStateMachine	unit_server_sm;
-		
-		bool thread_run;
-		chaos::WaitSemaphore thread_waith_semaphore;
-		boost::scoped_ptr<boost::thread> thread_registration;
-		
-		//! metadata server channel for control unit registration
-		MDSMessageChannel *mdsChannel;
-		
-		//!queue for control unit waiting to be published
-		queue< AbstractControlUnit* > submittedCUQueue;
-		
-		//! control unit instance mapped with their unique identifier
-		map<string, shared_ptr<WorkUnitInfo> > map_control_unit_instance;
-		
-		//! association by alias and control unit instancer
-		typedef std::map<string, boost::shared_ptr<CUObjectInstancer> >::iterator MapCUAliasInstancerIterator;
-		std::map<string, boost::shared_ptr<CUObjectInstancer> > map_cu_alias_instancer;
-		
-		//----------private method-----------
-		//! send register control unit to the mds.
-		int sendConfPackToMDS(CDataWrapper&);
-		
-		/*
-		 Constructor
-		 */
-		ControlManager();
-		
-		/*
-		 Desctructor
-		 */
-		~ControlManager();
-		
-		void _loadWorkUnit();
-		void _unloadControlUnit();
-		//!prepare and send registration pack to the metadata server
-		void sendUnitServerRegistration();
-	protected:
-		//! timer fire method
-		void manageControlUnit();
-		
-		//TimerHandler callback
-		void timeout();
-	public:
-		
-		/*
-		 Initialize the Control Manager
-		 */
-		void init(void *initParameter) throw(CException);
-		
-		/*
-		 Start the Control Manager
-		 */
-		void start() throw(CException);
-		
-		
-		/*!
-		 Stop the control manager
-		 */
-		void stop() throw(CException);
-		
-		/*
-		 Deinitialize the Control Manager
-		 */
-		void deinit() throw(CException);
-		
-		/*
-		 Submit a new Control unit instance
-		 */
-		void submitControlUnit(AbstractControlUnit *control_unit_instance) throw(CException);
-		
+				struct Published : public boost::msm::front::state<> {};
+				
+				struct PublishingFailure  : public boost::msm::front::state<> {};
+				
+				// front-end: define the FSM structure
+				struct us_state_machine : public boost::msm::front::state_machine_def<us_state_machine> {
+					
+					// the initial state of the player SM. Must be defined
+					typedef Unpublished initial_state;
+					
+					typedef boost::msm::front::Row <  Unpublished   ,  UnitServerEventType::UnitServerEventTypePublishing  , Publishing, boost::msm::front::none , boost::msm::front::none > unpub_pubing_row;
+					typedef boost::msm::front::Row <  Publishing   ,  UnitServerEventType::UnitServerEventTypePublished  , Published, boost::msm::front::none , boost::msm::front::none > pubing_pub_row;
+					typedef boost::msm::front::Row <  Publishing   ,  UnitServerEventType::UnitServerEventTypeFailure  , PublishingFailure, boost::msm::front::none , boost::msm::front::none > pubbing_pubfail_row;
+					typedef boost::msm::front::Row <  Published   ,  UnitServerEventType::UnitServerEventTypeUnpublished  , Unpublished, boost::msm::front::none , boost::msm::front::none > pub_unpub_row;
+					
+					// Transition table for initialization services
+					struct transition_table : boost::mpl::vector<
+					unpub_pubing_row,
+					pubing_pub_row,
+					pubbing_pubfail_row,
+					pub_unpub_row> {};
+					
+					template <class FSM,class Event>
+					void no_transition(Event const& ,FSM&, int ){}
+				};
+			}
+			//type definition of the state machine
+			typedef boost::msm::back::state_machine< unit_server_state_machine::us_state_machine >	WorkUnitServerStateMachine;
+			
+			
+			//!Manager for the Control Unit managment
+			/*!
+			 This class is the central point qhere control unit are managed. Two api are exposed
+			 via RPC to load and unload the control unit giving some parameter.
+			 */
+			class ControlManager :
+			public DeclareAction,
+			public chaos::utility::StartableService,
+			protected chaos::common::async_central::TimerHandler,
+			public Singleton<ControlManager> {
+				friend class Singleton<ControlManager>;
+				mutable boost::shared_mutex mutex_registration;
+				
+				//unit server state machine
+				bool						use_unit_server;
+				std::string					unit_server_alias;
+				boost::shared_mutex			unit_server_sm_mutex;
+				WorkUnitServerStateMachine	unit_server_sm;
+				
+				bool thread_run;
+				chaos::WaitSemaphore thread_waith_semaphore;
+				boost::scoped_ptr<boost::thread> thread_registration;
+				
+				//! metadata server channel for control unit registration
+				MDSMessageChannel *mdsChannel;
+				
+				//!queue for control unit waiting to be published
+				queue< AbstractControlUnit* > submittedCUQueue;
+				
+				//! control unit instance mapped with their unique identifier
+				map<string, shared_ptr<WorkUnitManagement> > map_control_unit_instance;
+				
+				//! association by alias and control unit instancer
+				typedef std::map<string, boost::shared_ptr<CUObjectInstancer> >::iterator MapCUAliasInstancerIterator;
+				std::map<string, boost::shared_ptr<CUObjectInstancer> > map_cu_alias_instancer;
+				
+				//----------private method-----------
+				//! send register control unit to the mds.
+				int sendConfPackToMDS(CDataWrapper&);
+				
+				/*
+				 Constructor
+				 */
+				ControlManager();
+				
+				/*
+				 Desctructor
+				 */
+				~ControlManager();
+				
+				void _loadWorkUnit();
+				void _unloadControlUnit();
+				//!prepare and send registration pack to the metadata server
+				void sendUnitServerRegistration();
+			protected:
+				//! timer fire method
+				void manageControlUnit();
+				
+				//TimerHandler callback
+				void timeout();
+				
+				//! start control units state machine thread
+				void startControlUnitSMThread();
+				
+				//! stop control unit state machien thread
+				void stopControlUnitSMThread(bool whait = true);
+			public:
+				
+				/*
+				 Initialize the Control Manager
+				 */
+				void init(void *initParameter) throw(CException);
+				
+				/*
+				 Start the Control Manager
+				 */
+				void start() throw(CException);
+				
+				
+				/*!
+				 Stop the control manager
+				 */
+				void stop() throw(CException);
+				
+				/*
+				 Deinitialize the Control Manager
+				 */
+				void deinit() throw(CException);
+				
+				/*
+				 Submit a new Control unit instance
+				 */
+				void submitControlUnit(AbstractControlUnit *control_unit_instance) throw(CException);
+				
 #define TO_STRING(x) #x
-		//! control unit registration
-		/*!
-		 Register a control unit instancer associating it to an alias
-		 \param control_unit_alias the alias associated to the tempalte class identification
-		 */
-		template<typename ControlUnitClass>
-		void registerControlUnit() {
-			map_cu_alias_instancer.insert(make_pair(CONTROL_UNIT_PUBLISH_NAME(ControlUnitClass),
-													boost::shared_ptr<CUObjectInstancer>(ALLOCATE_INSTANCER_P3(ControlUnitClass,													//Control unit implementation
-																											   AbstractControlUnit,													//Control unit base class
-																											   const std::string&,													//Control Unit unique id param
-																											   const std::string&,													//control unit load param
-																											   const chaos::cu::AbstractControlUnit::ControlUnitDriverList&))));	//Control unit driver list
+				//! control unit registration
+				/*!
+				 Register a control unit instancer associating it to an alias
+				 \param control_unit_alias the alias associated to the tempalte class identification
+				 */
+				template<typename ControlUnitClass>
+				void registerControlUnit() {
+					map_cu_alias_instancer.insert(make_pair(CONTROL_UNIT_PUBLISH_NAME(ControlUnitClass),
+															boost::shared_ptr<CUObjectInstancer>(ALLOCATE_INSTANCER_P3(ControlUnitClass,										//Control unit implementation
+																													   AbstractControlUnit,										//Control unit base class
+																													   const std::string&,										//Control Unit unique id param
+																													   const std::string&,										//control unit load param
+																													   const AbstractControlUnit::ControlUnitDriverList&))));	//Control unit driver list
+				}
+				
+				
+				/*!
+				 Action that show the unit server registration result(success or failure)
+				 */
+				CDataWrapper* unitServerRegistrationACK(CDataWrapper *messageData, bool &detach) throw (CException);
+				
+				/*!
+				 Action for loading a control unit
+				 */
+				CDataWrapper* loadControlUnit(CDataWrapper *messageData, bool &detach) throw (CException);
+				
+				/*!
+				 Action for the unloading of a control unit
+				 The unload operation, check that the target control unit is in deinit state
+				 */
+				CDataWrapper* unloadControlUnit(CDataWrapper *messageData, bool &detach) throw (CException);
+				
+				/*!
+				 Configure the sandbox and all subtree of the CU
+				 */
+				CDataWrapper* updateConfiguration(CDataWrapper*, bool&);
+			};
 		}
-		
-		
-		/*!
-		 Action that show the unit server registration result(success or failure)
-		 */
-		CDataWrapper* unitServerRegistrationACK(CDataWrapper *messageData, bool &detach) throw (CException);
-		
-		/*!
-			Action for loading a control unit
-		 */
-		CDataWrapper* loadControlUnit(CDataWrapper *messageData, bool &detach) throw (CException);
-		
-		/*!
-			Action for the unloading of a control unit
-			The unload operation, check that the target control unit is in deinit state
-		 */
-		CDataWrapper* unloadControlUnit(CDataWrapper *messageData, bool &detach) throw (CException);
-		
-		/*!
-			Configure the sandbox and all subtree of the CU
-		 */
-		CDataWrapper* updateConfiguration(CDataWrapper*, bool&);
-	};
-}
+	}
 }
 #endif

@@ -25,7 +25,7 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::cu;
-
+using namespace chaos::cu::control_manager;
 using namespace boost;
 using namespace boost::chrono;
 
@@ -131,7 +131,7 @@ void RTAbstractControlUnit::deinit() throw(CException) {
 /*
  Add a new handler
  */
-void RTAbstractControlUnit::addHandlerForDSAttribute(cu::handler::DSAttributeHandler * classHandler)  throw (CException) {
+void RTAbstractControlUnit::addHandlerForDSAttribute(handler::DSAttributeHandler * classHandler)  throw (CException) {
     if(!classHandler) return;
     //add the handler
     attributeHandlerEngine->addHandlerForDSAttribute(classHandler);

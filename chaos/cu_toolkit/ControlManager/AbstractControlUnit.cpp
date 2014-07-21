@@ -39,7 +39,8 @@ using namespace boost::uuids;
 
 using namespace chaos::common::data;
 
-using namespace chaos::cu;
+using namespace chaos::cu::data_manager;
+using namespace chaos::cu::control_manager;
 using namespace chaos::cu::driver_manager::driver;
 
 #define ACULAPP_ LAPP_ << "[Control Unit:"<<control_unit_instance<<"-"<<control_unit_id<<"] - "
