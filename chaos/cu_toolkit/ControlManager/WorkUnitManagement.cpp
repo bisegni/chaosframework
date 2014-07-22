@@ -27,11 +27,13 @@
 #define WUMERR_ LERR_ << WUMHADER<<"("<<__LINE__<<") "
 
 using namespace chaos::common::data;
+using namespace chaos::cu::command_manager;
 using namespace chaos::cu::control_manager;
 
 WorkUnitManagement::WorkUnitManagement(AbstractControlUnit *_work_unit_instance):
 mds_channel(NULL),
-work_unit_instance(_work_unit_instance) {
+work_unit_instance(_work_unit_instance),
+active(false) {
 }
 
 WorkUnitManagement::~WorkUnitManagement(){
@@ -41,55 +43,89 @@ WorkUnitManagement::~WorkUnitManagement(){
 UnitState WorkUnitManagement::getCurrentState() {
 	return (UnitState) wu_instance_sm.current_state()[0];
 }
-	
+
+//! turn on the control unit
+void WorkUnitManagement::turnOn() throw (CException) {
+	active = true;
+	if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypePublish()) == boost::msm::back::HANDLED_TRUE){
+		//we are switched state
+	} else {
+		throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for UnitEventTypePublish event", __PRETTY_FUNCTION__);
+	}
+}
+
+//! turn off the control unit
+void WorkUnitManagement::turnOFF() throw (CException) {
+	active = false;
+	if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublish()) == boost::msm::back::HANDLED_TRUE){
+		//we are switched state
+	} else {
+		throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for UnitEventTypeUnpublish event", __PRETTY_FUNCTION__);
+	}
+
+}
+
 void WorkUnitManagement::scheduleSM() throw (CException) {
-	WUMDBG_ << "Shedule state machine step"
+	WUMDBG_ << "Shedule state machine step";
 	switch ((UnitState) wu_instance_sm.current_state()[0]) {
-		case UnitState::UnitStateUnpublished: {
-			CDataWrapper cuActionAndDataset;
+		case UnitStateUnpublished:
+//			WUMAPP_ << "[UnitStateUnpublished] Control unit is unpublished"
+
+			break;
+			
+		case UnitStateStartPublishing: {
 			std::vector<const chaos::DeclareAction * > cuDeclareActionsInstance;
-			WUMDBG_ << "Control unit is unpublished, need to be setup"
+			WUMAPP_ << "[UnitStateStartPublishing] Control unit is unpublished, need to be setup";
 			//associate the event channel to the control unit
-			WUMDBG_  << "Adding event channel";
+			WUMAPP_ << "[UnitStateStartPublishing] Adding event channel";
 			work_unit_instance->deviceEventChannel = CommandManager::getInstance()->getDeviceEventChannel();
 			
-			LCMAPP_  << "Setup Control Unit Sanbox for cu with instance"
-			work_unit_instance->_defineActionAndDataset(cuActionAndDataset);
+			WUMAPP_ << "[UnitStateStartPublishing] Setup Control Unit Sanbox for cu with instance";
+			work_unit_instance->_defineActionAndDataset(mds_registration_message);
 			
-			LCMAPP_  << "Register RPC action for cu whith instance";
+			WUMAPP_ << "[UnitStateStartPublishing] Register RPC action for cu whith instance";
 			work_unit_instance->_getDeclareActionInstance(cuDeclareActionsInstance);
 			for(int idx = 0; idx < cuDeclareActionsInstance.size(); idx++) {
 				CommandManager::getInstance()->registerAction((chaos::DeclareAction *)cuDeclareActionsInstance[idx]);
 			}
 			
 			//sendConfPackToMDS(cuPtr->defaultInternalConf.get());
-			LCMAPP_  << "Talk with MDS for cu with instance:" << WU_IDENTIFICATION(wui->work_unit_instance);
-			registrationError = sendConfPackToMDS(cuActionAndDataset);
-			if(registrationError == ErrorCode::EC_NO_ERROR){
-				LCMAPP_  << "Configuration pack has been sent to MDS for cu with instance:" << WU_IDENTIFICATION(wui->work_unit_instance);
-				LCMAPP_  << "Control Unit Sanbox:" << WU_IDENTIFICATION(wui->work_unit_instance) << " ready to work";
+			if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypePublishing()) == boost::msm::back::HANDLED_TRUE){
+				//we are switched state
 			} else {
-				LCMAPP_  << "ERROR sending configuration pack has been sent to MDS for cu with instance:" << WU_IDENTIFICATION(wui->work_unit_instance);
+				throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for unpublishing event", __PRETTY_FUNCTION__);
 			}
 			break;
 		}
 			
-		case UnitState::UnitStatePublishing:
-			
+		case UnitStatePublishing: {
+			WUMAPP_  << "[UnitStatePublishing] send registration to mds";
+			if(sendConfPackToMDS(mds_registration_message)) {
+				WUMERR_ << "Error forwarding registration message to mds";
+			}
 			break;
-		case UnitState::UnitStatePublished:
+		}
 			
+		case UnitStatePublished:
+			WUMAPP_  << "[Published] work unit has been successfully published";
 			break;
-		case UnitState::UnitStatePublishingFailure:
 			
+		case UnitStateStartUnpublishing:
+			WUMAPP_  << "[Published] work unit has been successfully published";
 			break;
-		case UnitState::UnitStateUnpublishing:
+
+			
+		case UnitStatePublishingFailure:
+			WUMAPP_  << "[UnitStatePublishingFailure] there was been error during control unit registration we end here";
+			break;
+		case UnitStateUnpublishing:
+			WUMAPP_  << "[UnitStateUnpublishing] work unit is going to be unpublished";
 			
 			break;
 	}
 }
 
-int ControlManager::sendConfPackToMDS(CDataWrapper& dataToSend) {
+int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& dataToSend) {
 	// dataToSend can't be sent because it is porperty of the CU
 	//so we need to copy it
     
@@ -101,7 +137,7 @@ int ControlManager::sendConfPackToMDS(CDataWrapper& dataToSend) {
     mdsPack->addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS, GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort().c_str());
     
 	//register CU from mds
-    return mdsChannel->sendUnitDescription(mdsPack, true, WAITH_TIME_FOR_CU_REGISTRATION);
+    return mds_channel->sendUnitDescription(mdsPack);
 }
 
 void WorkUnitManagement::manageACKPack(CDataWrapper ackPack) {

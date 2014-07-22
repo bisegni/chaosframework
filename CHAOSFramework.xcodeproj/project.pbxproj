@@ -185,6 +185,7 @@
 		3264BBD71784BFE400E2F5A0 /* PluginInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264BBD61784BFE400E2F5A0 /* PluginInspector.cpp */; };
 		3265BF4615D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3265BF4515D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h */; };
 		3265BF4915D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3265BF4815D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc */; };
+		3265F332197E626900F22FBC /* WorkUnitManagement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D72CA8197D196D00512B89 /* WorkUnitManagement.cpp */; };
 		3266A5DF18A631A800637592 /* ZMQBaseClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3266A5DE18A631A800637592 /* ZMQBaseClass.cpp */; };
 		3268CE35161608D100FCDB10 /* ZMQClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3268CE31161608D100FCDB10 /* ZMQClient.cpp */; };
 		3268CE36161608D100FCDB10 /* ZMQClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3268CE32161608D100FCDB10 /* ZMQClient.h */; };
@@ -434,7 +435,6 @@
 		32D68AD014D5D5A7009F290A /* SetupStateManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D68ACF14D5D5A7009F290A /* SetupStateManager.h */; };
 		32D6C8981815293200E9689B /* DirectIOHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C8971815293200E9689B /* DirectIOHandler.h */; };
 		32D6C89A1815294700E9689B /* DirectIOForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C8991815294700E9689B /* DirectIOForwarder.h */; };
-		32D72CAA197D196D00512B89 /* WorkUnitManagement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D72CA8197D196D00512B89 /* WorkUnitManagement.cpp */; };
 		32D72CAB197D196D00512B89 /* WorkUnitManagement.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D72CA9197D196D00512B89 /* WorkUnitManagement.h */; };
 		32DB1188166267FB0036D1B9 /* DSDoubleHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DB1187166267FB0036D1B9 /* DSDoubleHandler.h */; };
 		32DBF9D118E1845E0095B289 /* CouchbaseCacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */; };
@@ -2880,7 +2880,6 @@
 				3255E72415EA86F2005C96CA /* DefaultEventDispatcher.cpp in Sources */,
 				32E0EF3718CDB37D00CD1808 /* ZMQDirectIOClientConnection.cpp in Sources */,
 				3255E72715EA87D2005C96CA /* AbstractEventDispatcher.cpp in Sources */,
-				32D72CAA197D196D00512B89 /* WorkUnitManagement.cpp in Sources */,
 				327F51DE1952E81D00BA3D01 /* DirectIOURLManagment.cpp in Sources */,
 				328556A417F2E36000A64ED2 /* DirectIOServer.cpp in Sources */,
 				32B159D118B38C980096B58B /* DirectIODeviceClientChannel.cpp in Sources */,
@@ -2943,6 +2942,7 @@
 				326DB4B814B3A3E50018A8D0 /* ChaosCUToolkit.cpp in Sources */,
 				3287F7E617B2756C009DD6ED /* DriverManager.cpp in Sources */,
 				326DB4BA14B3A3E50018A8D0 /* CommandManager.cpp in Sources */,
+				3265F332197E626900F22FBC /* WorkUnitManagement.cpp in Sources */,
 				326DB4BF14B3A3E50018A8D0 /* AbstractControlUnit.cpp in Sources */,
 				3215860D178756B40090E7E6 /* AbstractDriverPlugin.cpp in Sources */,
 				32158DE5187D80D9004C25AA /* SetAttributeCommand.cpp in Sources */,

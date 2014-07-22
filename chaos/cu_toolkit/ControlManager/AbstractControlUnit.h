@@ -70,12 +70,12 @@ namespace chaos{
     
     namespace cu {
         namespace control_manager {
-			namespace ec = event::channel;
+			namespace chaos_event = event::channel;
 			namespace cu_driver = chaos::cu::driver_manager::driver;
 			namespace chaos_data = chaos::common::data;
 			
-			class ControManager;
-			
+			class ControlManager;
+			class WorkUnitManagement;
             //!  Base class for control unit !CHAOS node
 			/*!
 			 This is the abstraction of the contorl unit node of CHAOS. This class extends DeclareAction
@@ -87,9 +87,9 @@ namespace chaos{
 			public DeclareAction,
 			protected chaos_data::DatasetDB,
 			public utility::StartableService {
-				
-				//frinedly class declaration
+				//friendly class declaration
 				friend class ControlManager;
+				friend class WorkUnitManagement;
 				friend class DomainActionsScheduler;
 				friend class SCAbstractControlUnit;
 				friend class RTAbstractControlUnit;
@@ -165,7 +165,7 @@ namespace chaos{
 				data_manager::KeyDataStorage*  keyDataStorage;
 				
 				//! Event channel to permit the fire of the device event
-				ec::InstrumentEventChannel *deviceEventChannel;
+				chaos_event::InstrumentEventChannel *deviceEventChannel;
 				
 				//! Define the dataset information of the device implementeted into the CU
 				/*!

@@ -40,24 +40,32 @@ namespace chaos {
 			namespace work_unit_state_machine {
 				//Work unit event type
 				namespace UnitEventType {
-					// unit server need to register hiself to the mds
+					// wotkunit is instatiated e all information are got
 					struct UnitEventTypeUnpublished {};
-					// unit server is registering and he's waiting for approval
+					// start the publishing porcess for the workunit
+					struct UnitEventTypePublish {};
+					// work unit is retrying to register hisself to the mds
 					struct UnitEventTypePublishing {};
-					// unti server is registered
+					// unit server is sucessfully registered
 					struct UnitEventTypePublished {};
-					// unit server unpublishing event
+					// unit server is starting the unpublishjing process
+					struct UnitEventTypeUnpublish {};
+					// unit server is waiting the unpublishing completion process
 					struct UnitEventTypeUnpublishing {};
-					// unti server is failed to register
+					// unti server is failed to register to the mds
 					struct UnitEventTypeFailure {};
 				}
 				
 				//! work unit is not published
 				struct Unpublished : public boost::msm::front::state<>{};
 				//! work unit is publishing to the mds service
+				struct StartPublishing : public boost::msm::front::state<> {};
+				//! work unit is publishing to the mds service
 				struct Publishing : public boost::msm::front::state<> {};
 				//! work unit has been published, and his heartbeat start to pulse
 				struct Published : public boost::msm::front::state<> {};
+				//! workunit is beginning to unpublish to the mds
+				struct StartUnpublishing : public boost::msm::front::state<> {};
 				//! unpublishing event is given and now work unit start te unpublishing process
 				struct Unpublishing : public boost::msm::front::state<> {};
 				//! there was been some failure during publishing operation
@@ -68,19 +76,22 @@ namespace chaos {
 					
 					// the initial state of the player SM. Must be defined
 					typedef Unpublished initial_state;
-					
-					typedef boost::msm::front::Row <  Unpublished   ,  UnitEventType::UnitEventTypePublishing  , Publishing, boost::msm::front::none , boost::msm::front::none > unpub_pubing_row;
+					typedef boost::msm::front::Row <  Unpublished   ,  UnitEventType::UnitEventTypePublish  , StartPublishing, boost::msm::front::none , boost::msm::front::none > unpub_spubing_row;
+					typedef boost::msm::front::Row <  StartPublishing   ,  UnitEventType::UnitEventTypePublishing  , Publishing, boost::msm::front::none , boost::msm::front::none > spubing_pubing_row;
 					typedef boost::msm::front::Row <  Publishing   ,  UnitEventType::UnitEventTypePublished  , Published, boost::msm::front::none , boost::msm::front::none > pubing_pub_row;
 					typedef boost::msm::front::Row <  Publishing   ,  UnitEventType::UnitEventTypeFailure  , PublishingFailure, boost::msm::front::none , boost::msm::front::none > pubbing_pubfail_row;
-					typedef boost::msm::front::Row <  Published   ,  UnitEventType::UnitEventTypeUnpublishing  , Unpublishing, boost::msm::front::none , boost::msm::front::none > pub_unpubing_row;
+					typedef boost::msm::front::Row <  Published   ,  UnitEventType::UnitEventTypeUnpublish  , StartUnpublishing, boost::msm::front::none , boost::msm::front::none > pub_sunpubing_row;
+					typedef boost::msm::front::Row <  StartUnpublishing   ,  UnitEventType::UnitEventTypeUnpublishing  , Unpublishing, boost::msm::front::none , boost::msm::front::none > sunpubing_unpubing_row;
 					typedef boost::msm::front::Row <  Unpublishing   ,  UnitEventType::UnitEventTypeUnpublished  , Unpublished, boost::msm::front::none , boost::msm::front::none > unpubing_unpub_row;
 					
 					// Transition table for initialization services
 					struct transition_table : boost::mpl::vector<
-					unpub_pubing_row,
+					unpub_spubing_row,
+					spubing_pubing_row,
 					pubing_pub_row,
 					pubbing_pubfail_row,
-					pub_unpubing_row,
+					pub_sunpubing_row,
+					sunpubing_unpubing_row,
 					unpubing_unpub_row> {};
 					
 					template <class FSM,class Event>
@@ -92,9 +103,11 @@ namespace chaos {
 			//! Unit event state enum definition used on WorkUnitManagment class method
 			typedef enum UnitState {
 				UnitStateUnpublished,
+				UnitStateStartPublishing,
 				UnitStatePublishing,
 				UnitStatePublished,
 				UnitStatePublishingFailure,
+				UnitStateStartUnpublishing,
 				UnitStateUnpublishing
 			} UnitState;
 			
@@ -107,9 +120,12 @@ namespace chaos {
 			 process of publishing and online maintenance
 			 */
 			class WorkUnitManagement {
+				//! registration pack used to send work unit descirption to mds
+				CDataWrapper			mds_registration_message;
 				//! state machine for the control unit instance
-				WorkUnitStateMachine					wu_instance_sm;
+				WorkUnitStateMachine	wu_instance_sm;
 				
+				bool active;
 				int sendConfPackToMDS(CDataWrapper& dataToSend);
 			public:
 				MDSMessageChannel						*mds_channel;
@@ -117,16 +133,33 @@ namespace chaos {
 				boost::shared_ptr<AbstractControlUnit>	work_unit_instance;
 
 				//! default constructor adn destructor
-				WorkUnitManagement(AbstractControlUnit *_work_unit_instance):work_unit_instance(_work_unit_instance){}
-				~WorkUnitManagement(){}
+				WorkUnitManagement(AbstractControlUnit *_work_unit_instance);
+				~WorkUnitManagement();
 				
 				//! return the state of the unit state machine
 				UnitState getCurrentState();
 				
+				//! turn on the control unit
+				/*!
+				 This message will activate the registration process of the control unit
+				 and all the step are done to achive the registration.
+				 */
+				void turnOn()throw (CException);
+				
+				//! turn off the control unit
+				/*!
+				 This message will start the unload process of the work unit.
+				 if it is running, before that the process for the unpublish can 
+				 start it will be stopped and deinitialized.
+				 */
+				void turnOFF()throw (CException);
+				
 				//! manage the internal state machine
 				void scheduleSM() throw (CException);
 
+				//! manage the ack pack
 				void manageACKPack(CDataWrapper ackPack);
+
 			};
 		}
 	}
