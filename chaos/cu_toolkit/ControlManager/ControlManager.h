@@ -117,6 +117,11 @@ namespace chaos {
 			//type definition of the state machine
 			typedef boost::msm::back::state_machine< unit_server_state_machine::us_state_machine >	WorkUnitServerStateMachine;
 			
+			typedef boost::upgrade_lock<boost::shared_mutex>			UpgradeableLock;
+			typedef boost::upgrade_to_unique_lock<boost::shared_mutex>	UpgradeReadToWriteLock;
+			typedef boost::shared_lock<boost::shared_mutex>				ReadLock;
+			typedef boost::unique_lock<boost::shared_mutex>				WriteLock;
+
 			
 			//!Manager for the Control Unit managment
 			/*!
@@ -129,7 +134,7 @@ namespace chaos {
 			protected chaos::common::async_central::TimerHandler,
 			public Singleton<ControlManager> {
 				friend class Singleton<ControlManager>;
-				mutable boost::shared_mutex mutex_registration;
+				//mutable boost::shared_mutex mutex_registration;
 				
 				//unit server state machine
 				bool						use_unit_server;
@@ -142,16 +147,23 @@ namespace chaos {
 				boost::scoped_ptr<boost::thread> thread_registration;
 				
 				//! metadata server channel for control unit registration
-				MDSMessageChannel *mdsChannel;
+				MDSMessageChannel *mds_channel;
 				
 				//!queue for control unit waiting to be published
-				queue< AbstractControlUnit* > submittedCUQueue;
+				mutable boost::shared_mutex		mutex_queue_submitted_cu;
+				queue< AbstractControlUnit* >	queue_submitted_cu;
 				
 				//! control unit instance mapped with their unique identifier
-				map<string, shared_ptr<WorkUnitManagement> > map_control_unit_instance;
+				mutable boost::shared_mutex mutex_map_cuid_registering_instance;
+				map<string, shared_ptr<WorkUnitManagement> > map_cuid_registering_instance;
+				
+				//map
+				mutable boost::shared_mutex mutex_map_cuid_registered_instance;
+				map<string, shared_ptr<WorkUnitManagement> > map_cuid_registered_instance;
 				
 				//! association by alias and control unit instancer
 				typedef std::map<string, boost::shared_ptr<CUObjectInstancer> >::iterator MapCUAliasInstancerIterator;
+				mutable boost::shared_mutex mutex_map_cu_instancer;
 				std::map<string, boost::shared_ptr<CUObjectInstancer> > map_cu_alias_instancer;
 				
 				//----------private method-----------
@@ -172,6 +184,15 @@ namespace chaos {
 				void _unloadControlUnit();
 				//!prepare and send registration pack to the metadata server
 				void sendUnitServerRegistration();
+				
+				//! manage transistion betwheen map_cuid_registering_instance and map_cuid_registered_instance
+				/*!
+				 checn in the registering map al the instance that has state machine in a stable state
+				 */
+				inline void migrateStableAndUnstableSMCUInstance();
+				
+				//! Make one steps in SM for all registring state machine
+				inline void makeSMSteps();
 			protected:
 				//! timer fire method
 				void manageControlUnit();
@@ -184,6 +205,34 @@ namespace chaos {
 				
 				//! stop control unit state machien thread
 				void stopControlUnitSMThread(bool whait = true);
+				
+				
+				/*!
+				 Action that show the unit server registration result(success or failure)
+				 */
+				CDataWrapper* unitServerRegistrationACK(CDataWrapper *message_data, bool &detach) throw (CException);
+				
+				/*!
+				 Action that get the work unit registration(success or failure)
+				 */
+				CDataWrapper* workUnitRegistrationACK(CDataWrapper *message_data, bool &detach) throw (CException);
+				
+				/*!
+				 Action for loading a control unit
+				 */
+				CDataWrapper* loadControlUnit(CDataWrapper *message_data, bool &detach) throw (CException);
+				
+				/*!
+				 Action for the unloading of a control unit
+				 The unload operation, check that the target control unit is in deinit state
+				 */
+				CDataWrapper* unloadControlUnit(CDataWrapper *message_data, bool &detach) throw (CException);
+				
+				/*!
+				 Configure the sandbox and all subtree of the CU
+				 */
+				CDataWrapper* updateConfiguration(CDataWrapper  *message_data, bool& detach);
+				
 			public:
 				
 				/*
@@ -212,7 +261,6 @@ namespace chaos {
 				 */
 				void submitControlUnit(AbstractControlUnit *control_unit_instance) throw(CException);
 				
-#define TO_STRING(x) #x
 				//! control unit registration
 				/*!
 				 Register a control unit instancer associating it to an alias
@@ -220,6 +268,9 @@ namespace chaos {
 				 */
 				template<typename ControlUnitClass>
 				void registerControlUnit() {
+					//lock the map with the instancer
+					WriteLock write_instancer_lock(mutex_map_cu_instancer);
+					
 					map_cu_alias_instancer.insert(make_pair(CONTROL_UNIT_PUBLISH_NAME(ControlUnitClass),
 															boost::shared_ptr<CUObjectInstancer>(ALLOCATE_INSTANCER_P3(ControlUnitClass,										//Control unit implementation
 																													   AbstractControlUnit,										//Control unit base class
@@ -227,28 +278,6 @@ namespace chaos {
 																													   const std::string&,										//control unit load param
 																													   const AbstractControlUnit::ControlUnitDriverList&))));	//Control unit driver list
 				}
-				
-				
-				/*!
-				 Action that show the unit server registration result(success or failure)
-				 */
-				CDataWrapper* unitServerRegistrationACK(CDataWrapper *messageData, bool &detach) throw (CException);
-				
-				/*!
-				 Action for loading a control unit
-				 */
-				CDataWrapper* loadControlUnit(CDataWrapper *messageData, bool &detach) throw (CException);
-				
-				/*!
-				 Action for the unloading of a control unit
-				 The unload operation, check that the target control unit is in deinit state
-				 */
-				CDataWrapper* unloadControlUnit(CDataWrapper *messageData, bool &detach) throw (CException);
-				
-				/*!
-				 Configure the sandbox and all subtree of the CU
-				 */
-				CDataWrapper* updateConfiguration(CDataWrapper*, bool&);
 			};
 		}
 	}

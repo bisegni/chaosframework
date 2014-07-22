@@ -138,6 +138,8 @@ namespace chaos {
 
 #pragma mark Template for Action Definition
     
+#define IN_ACTION_PARAM_CHECK(x, e, m) if(x) throw CException(e, m, __PRETTY_FUNCTION__);
+	
     /*!
      Template class for register a class method as an action. The T*
      msut not be deleted from this class when it will be deallocate

@@ -66,7 +66,7 @@ void WorkUnitManagement::turnOFF() throw (CException) {
 }
 
 void WorkUnitManagement::scheduleSM() throw (CException) {
-	WUMDBG_ << "Shedule state machine step";
+	WUMDBG_ << "Schedule state machine step";
 	switch ((UnitState) wu_instance_sm.current_state()[0]) {
 		case UnitStateUnpublished:
 //			WUMAPP_ << "[UnitStateUnpublished] Control unit is unpublished"
@@ -113,16 +113,23 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
 		case UnitStateStartUnpublishing:
 			WUMAPP_  << "[Published] work unit has been successfully published";
 			break;
-
 			
 		case UnitStatePublishingFailure:
 			WUMAPP_  << "[UnitStatePublishingFailure] there was been error during control unit registration we end here";
 			break;
+			
 		case UnitStateUnpublishing:
 			WUMAPP_  << "[UnitStateUnpublishing] work unit is going to be unpublished";
-			
 			break;
 	}
+}
+
+bool WorkUnitManagement::smNeedToSchedule() {
+	UnitState s = getCurrentState();
+	return	s != UnitStatePublished &&
+			s != UnitStateUnpublished &&
+			s != UnitStatePublishingFailure;
+			
 }
 
 int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& dataToSend) {
@@ -140,6 +147,6 @@ int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& dataToSend) {
     return mds_channel->sendUnitDescription(mdsPack);
 }
 
-void WorkUnitManagement::manageACKPack(CDataWrapper ackPack) {
+void WorkUnitManagement::manageACKPack(CDataWrapper& ackPack) {
 	
 }

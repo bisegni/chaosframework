@@ -368,7 +368,31 @@ namespace chaos {
      */
     namespace ChaosSystemDomainAndActionLabel {
         //! The chaos action domain for system message
-        static const char * const SYSTEM_DOMAIN					= "system";
+        static const char * const SYSTEM_DOMAIN									= "system";
+		
+        //! this action perform the registration for the unit server service
+        static const char * const MDS_REGISTER_UNIT_SERVER						= "registerUnitServer";
+		
+		//! key for the server alias used by the instance [string]
+        static const char * const MDS_REGISTER_UNIT_SERVER_ALIAS				= "unit_server_alias";
+		
+		//! key for the control unit aliases published by the unit server [array fo string]
+        static const char * const MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS	= "unit_server_cu_alias";
+		
+        //! key that idetify the result of unit server registration[int32]
+        static const char * const MDS_REGISTER_UNIT_SERVER_RESULT				= "reg_unit_serv_result";
+		
+		//! this action perform the registration for the control unit dataset
+        static const char * const MDS_REGISTER_CONTROL_UNIT						= "registerControlUnit";
+		
+		//! Action to retrive all device id
+		static const char * const MDS_GET_ALL_DEVICE							= "getAllActiveDevice";
+		
+		//! Perform the heart beat of the cu
+		static const char * const MDS_CU_HEARTBEAT								= "heartbeatControlUnit";
+		
+		//! Perform request of the network address for a node identified by a device id
+		static const char * const MDS_GET_NODE_ADDRESS							= "getNodeNetworkAddress";
 		
         //! This action provide to the shutdown porcess of the enteir daemon
         //! that runt the active contorl units. All it will be gracefull shutten down
@@ -377,12 +401,39 @@ namespace chaos {
 		
 		//! Action called by mds for ack message in the unit server registration process
         static const char * const ACTION_UNIT_SERVER_REG_ACK	= "unitServerRegistrationACK";
+
+		//! Action called by mds for ack message in the unit server registration process
+        static const char * const ACTION_WORK_UNIT_REG_ACK		= "workUnitRegistrationACK";
+		
+		//! is the device id received by the work unit registration ack message from the mds
+		static const char * const PARAM_WORK_UNIT_REG_ACK_DEVICE_ID	= DatasetDefinitionkey::DEVICE_ID;
 		
 		//! Load the control unit
-        static const char * const ACTION_CU_LOAD				= "loadControlUnit";
+        static const char * const ACTION_LOAD_CONTROL_UNIT		= "loadControlUnit";
+
+		//! Alias to the intancer of the control unit to allocate [string]
+        static const char * const PARAM_LOAD_CONTROL_UNIT_ALIAS	= "loadControlUnitAlias";
+
+		//! unique id to associate to the work unit instance [string]
+        static const char * const PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID	= PARAM_WORK_UNIT_REG_ACK_DEVICE_ID;
 		
+		//! param to pass to the control unit during load operation[ string]
+        static const char * const PARAM_LOAD_CONTROL_UNIT_PARAM	= "loadControlUnitParam";
+		
+		//! Description for the control unit dirvers [vector[string, string, string]*]
+        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC				= "loadControlUnitDriverDesc";
+
+		//! The name of the driver to use[strig]
+        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME			= "loadControlUnitDriverDescName";
+
+		//! The version of the driver to use[strig]
+        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION		= "loadControlUnitDriverDescVersion";
+
+		//! The version of the driver to use[strig]
+        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM	= "loadControlUnitDriverDescInitParam";
+
 		//! Unload the control unit
-        static const char * const ACTION_CU_UNLOAD				= "unloadControlUnit";
+        static const char * const ACTION_UNLOAD_CONTROL_UNIT	= "unloadControlUnit";
 		
 		//! Alias for the control unit to load/unload
 		static const char * const PARAM_CU_LOAD_UNLOAD_ALIAS	= "controlUnitAlias";
@@ -411,42 +462,6 @@ namespace chaos {
         static const char * const ACTION_CU_GET_INFO			= "getControlUnitInfo";
 		
     }
-    /** @} */ // end of ChaosMetadataActionLabel
-	/** @defgroup ChaosMetadataActionLabel Chaos Metadata Message query
-     *  This is the collection of the label that identify the action exposed by metadata service to
-	 *  perform query about !CHAOS metadata infromation
-     *  @{
-     */
-    namespace ChaosMetadataRPCConstants {
-        //! The chaos metadata query domain
-        static const char * const MDS_DOMAIN									= "system";
-		
-        //! this action perform the registration for the unit server service
-        static const char * const MDS_REGISTER_UNIT_SERVER						= "registerUnitServer";
-		
-		//! key for the server alias used by the instance [string]
-        static const char * const MDS_REGISTER_UNIT_SERVER_ALIAS				= "unit_server_alias";
-		
-		//! key for the control unit aliases published by the unit server [array fo string]
-        static const char * const MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS	= "unit_server_cu_alias";
-		
-        //! key that idetify the result of unit server registration[int32]
-        static const char * const MDS_REGISTER_UNIT_SERVER_RESULT				= "reg_unit_serv_result";
-		
-		//! this action perform the registration for the control unit dataset
-        static const char * const MDS_REGISTER_CONTROL_UNIT						= "registerControlUnit";
-		
-		//! Action to retrive all device id
-		static const char * const MDS_GET_ALL_DEVICE							= "getAllActiveDevice";
-		
-		//! Perform the heart beat of the cu
-		static const char * const MDS_CU_HEARTBEAT								= "heartbeatControlUnit";
-		
-		//! Perform request of the network address for a node identified by a device id
-		static const char * const MDS_GET_NODE_ADDRESS							= "getNodeNetworkAddress";
-    }
-    /** @} */ // end of ChaosMetadataActionLabel
-	
 	
 	
 	/** @defgroup PerformanceSystemRpcKey Chaos performance system
