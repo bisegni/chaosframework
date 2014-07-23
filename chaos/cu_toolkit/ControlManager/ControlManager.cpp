@@ -295,7 +295,7 @@ void ControlManager::manageControlUnit() {
 		//lock queue
 		lock.lock();
 		
-		//try to consume all the submitted control unit instance (fter the lock no other thread can submit new on)
+		//try to consume all the submitted control unit instance (after the lock no other thread can submit new on)
 		while(!queue_submitted_cu.empty()) {
 			//we have new instance to manage
 			shared_ptr<WorkUnitManagement> wui(new WorkUnitManagement(queue_submitted_cu.front()));
@@ -308,13 +308,12 @@ void ControlManager::manageControlUnit() {
 			wui->turnOn();
 			
 			LCMAPP_  << "Create manager for new control unit:" << WU_IDENTIFICATION(wui->work_unit_instance);
-			
 			//! lock the hastable
 			ReadLock read_registering_lock(mutex_map_cuid_registering_instance);
 			LCMDBG_  << "Added to registering map" << WU_IDENTIFICATION(wui->work_unit_instance);
 			
 			// we can't have two different work unit with the same unique identifier within the same process
-			if(map_cuid_registering_instance.count(wui->work_unit_instance->getCUInstance())) {
+			if(map_cuid_registering_instance.count(wui->work_unit_instance->getCUID())) {
 				LCMERR_  << "Duplicated control unit instance " << WU_IDENTIFICATION(wui->work_unit_instance);
 				return;
 			}
@@ -323,7 +322,7 @@ void ControlManager::manageControlUnit() {
 			wui->mds_channel = mds_channel;
 			
 			//add sandbox to all map of running cu
-			map_cuid_registering_instance.insert(make_pair(wui->work_unit_instance->getCUInstance(), wui));
+			map_cuid_registering_instance.insert(make_pair(wui->work_unit_instance->getCUID(), wui));
 		}
 		lock.unlock();
 		
@@ -337,7 +336,7 @@ void ControlManager::manageControlUnit() {
 			//whe have control unit isntance with unstable state machine
 			makeSMSteps();
 			//waith some time to retry the state machine
-			thread_waith_semaphore.wait(5000);
+			thread_waith_semaphore.wait(1000);
 		} else {
 			//we don'need to do anything else
 			thread_waith_semaphore.wait();

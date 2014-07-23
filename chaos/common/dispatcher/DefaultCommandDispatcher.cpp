@@ -29,7 +29,7 @@ using namespace std;
 using namespace boost;
 
 #define LDEF_CMD_DISPTC_APP_ LAPP_ << "[DefaultCommandDispatcher] - " 
-
+#define LDEF_CMD_DISPTC_DBG_ LDBG_ << "[DefaultCommandDispatcher] - "
 DefaultCommandDispatcher::DefaultCommandDispatcher(string alias) : AbstractCommandDispatcher(alias) {
 }
 
@@ -97,13 +97,13 @@ void DefaultCommandDispatcher::registerAction(DeclareAction *declareActionClass)
         if(!dasMap.count(domainName)){
             boost::shared_ptr<DomainActionsScheduler> das(new DomainActionsScheduler(getDomainActionsFromName(domainName)));
 #if DEBUG
-            LDEF_CMD_DISPTC_APP_ << "Allocated new  actions scheduler for domain:" << domainName;
-            LDEF_CMD_DISPTC_APP_ << "Init actions scheduler for domain:" << domainName;
-            LDEF_CMD_DISPTC_APP_ << "WE MUST THING ABOUT GET GLOBAL CONF FOR INIT DomainActionsScheduler object";
+            LDEF_CMD_DISPTC_DBG_ << "Allocated new  actions scheduler for domain:" << domainName;
+            LDEF_CMD_DISPTC_DBG_ << "Init actions scheduler for domain:" << domainName;
+            LDEF_CMD_DISPTC_DBG_ << "WE MUST THING ABOUT GET GLOBAL CONF FOR INIT DomainActionsScheduler object";
 #endif
             das->init(1);
 #if DEBUG
-            LDEF_CMD_DISPTC_APP_ << "Initialized actions scheduler for domain:" << domainName;
+            LDEF_CMD_DISPTC_DBG_ << "Initialized actions scheduler for domain:" << domainName;
 #endif
                 //add the domain scheduler to map
             dasMap.insert(make_pair(domainName, das));

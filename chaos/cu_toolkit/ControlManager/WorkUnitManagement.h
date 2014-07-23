@@ -158,7 +158,7 @@ namespace chaos {
 				void scheduleSM() throw (CException);
 
 				//! manage the ack pack
-				void manageACKPack(CDataWrapper& ackPack);
+				void manageACKPack(CDataWrapper& ack_pack);
 				
 				bool smNeedToSchedule();
 

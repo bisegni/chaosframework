@@ -126,16 +126,14 @@ namespace chaos {
          */
         virtual void init(int threadNumber) throw(CException) {
             inDeinit = false;
-            COPQUEUE_LAPP_ << " init";
+            COPQUEUE_LDBG_ << " init";
 			//add the n thread on the threadgroup
-            COPQUEUE_LAPP_ << " creating and starting" << threadNumber << " thread";
+            COPQUEUE_LDBG_ << " creating and starting" << threadNumber << " thread";
             for (int idx = 0; idx<threadNumber; idx++) {
                 t_group.create_thread(boost::bind(&CObjectProcessingQueue<T>::executeOnThread, this));
             }
             
-            //COPQUEUE_LAPP_ << "Starting all thread";
-            //threadGroup.startGroup();
-            COPQUEUE_LAPP_ << " Initialized";
+            COPQUEUE_LDBG_ << " Initialized";
 			}
 			
 			/*
@@ -144,26 +142,26 @@ namespace chaos {
 			virtual void deinit(bool waithForEmptyQueue=true) throw(CException) {
 				boost::mutex::scoped_lock lock(qMutex);
 				inDeinit = true;
-				COPQUEUE_LAPP_ << " Deinitialization";
+				COPQUEUE_LDBG_ << " Deinitialization";
                 //stopping the group
-				COPQUEUE_LAPP_ << " Deinitializing Threads";
+				COPQUEUE_LDBG_ << " Deinitializing Threads";
 				
 				if(waithForEmptyQueue){
-					COPQUEUE_LAPP_ << " wait until queue is empty";
+					COPQUEUE_LDBG_ << " wait until queue is empty";
 					while( !bufferQueue.empty()){
 						emptyQueueConditionLock.wait(lock);
 					}
-					COPQUEUE_LAPP_ << " queue is empty";
+					COPQUEUE_LDBG_ << " queue is empty";
 				}
 				
-				COPQUEUE_LAPP_ << " Stopping thread";
+				COPQUEUE_LDBG_ << " Stopping thread";
 				//threadGroup.stopGroup(false);
 				lock.unlock();
 				
 				liveThreadConditionLock.notify_all();
-				COPQUEUE_LAPP_ << " join internal thread group";
+				COPQUEUE_LDBG_ << " join internal thread group";
 				t_group.join_all();
-				COPQUEUE_LAPP_ << " deinitlized";
+				COPQUEUE_LDBG_ << " deinitlized";
 			}
 			
 			/*
@@ -258,7 +256,7 @@ namespace chaos {
 			void joinBufferThread() {
 				t_group.join_all();
 			}
-	};
-}
+			};
+			}
 #endif
 			

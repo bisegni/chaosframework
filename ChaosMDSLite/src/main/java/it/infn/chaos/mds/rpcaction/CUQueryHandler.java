@@ -5,14 +5,13 @@ package it.infn.chaos.mds.rpcaction;
 
 import it.infn.chaos.mds.RPCConstants;
 import it.infn.chaos.mds.SingletonServices;
-import it.infn.chaos.mds.business.DatasetAttribute;
 import it.infn.chaos.mds.business.Device;
 import it.infn.chaos.mds.business.UnitServer;
-import it.infn.chaos.mds.da.DataServerDA;
 import it.infn.chaos.mds.da.DeviceDA;
 import it.infn.chaos.mds.da.UnitServerDA;
 import it.infn.chaos.mds.rpc.server.RPCActionHadler;
 import it.infn.chaos.mds.slowexecution.UnitServerACK;
+import it.infn.chaos.mds.slowexecution.WorkUnitACK;
 
 import java.sql.SQLException;
 import java.util.ListIterator;
@@ -21,9 +20,6 @@ import org.bson.BasicBSONObject;
 import org.bson.types.BasicBSONList;
 import org.ref.common.exception.RefException;
 import org.ref.common.helper.ExceptionHelper;
-import org.ref.common.helper.StringHelper;
-
-import com.sun.rmi.rmid.ExecPermission;
 
 /**
  * RPC actions for manage the Control Unit registration and device dataset retriving
@@ -71,9 +67,9 @@ public class CUQueryHandler extends RPCActionHadler {
 	 * 
 	 * @param actionData
 	 * @return
-	 * @throws SQLException 
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
+	 * @throws SQLException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
 	 */
 	private BasicBSONObject registerUnitServer(BasicBSONObject actionData) throws RefException {
 		UnitServerDA usDA = null;
@@ -89,28 +85,28 @@ public class CUQueryHandler extends RPCActionHadler {
 			while (dsDescIter.hasNext()) {
 				us.addPublischedCU(dsDescIter.next().toString());
 			}
-			
-			if(usDA.unitServerAlreadyRegistered(us)){
+
+			if (usDA.unitServerAlreadyRegistered(us)) {
 				usDA.updateUnitServer(us);
 			} else {
 				usDA.insertNewUnitServer(us);
 			}
-			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int)5);
+			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 5);
 			closeDataAccess(usDA, true);
 		} catch (InstantiationException e) {
-			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int)6);
+			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "CUQueryHandler::registerUnitServer");
 		} catch (IllegalAccessException e) {
-			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int)6);
+			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 1, "CUQueryHandler::registerUnitServer");
 		} catch (SQLException e) {
-			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int)6);
+			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 2, "CUQueryHandler::registerUnitServer");
-		}finally{
+		} finally {
 			try {
 				closeDataAccess(usDA, false);
 			} catch (SQLException e) {
-				//e.printStackTrace();
+				// e.printStackTrace();
 			}
 			try {
 				SingletonServices.getInstance().getSlowExecution().submitJob(UnitServerACK.class.getName(), actionData);
@@ -120,7 +116,7 @@ public class CUQueryHandler extends RPCActionHadler {
 				e.printStackTrace();
 			}
 		}
-	
+
 		return null;
 	}
 
@@ -161,6 +157,7 @@ public class CUQueryHandler extends RPCActionHadler {
 		Device d = null;
 		BasicBSONObject result = null;
 		DeviceDA dDA = null;
+		BasicBSONObject ackPack = new BasicBSONObject();
 		try {
 			dDA = getDataAccessInstance(DeviceDA.class);
 			if (actionData == null)
@@ -177,7 +174,9 @@ public class CUQueryHandler extends RPCActionHadler {
 			d.setCuInstance(controlUnitInstance);
 			d.setNetAddress(controlUnitNetAddress);
 			d.fillFromBson(actionData);
-
+			//add device id into ack pack
+			ackPack.append(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS, actionData.getString(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS));
+			ackPack.append(RPCConstants.DATASET_DEVICE_ID, actionData.getString(RPCConstants.DATASET_DEVICE_ID));
 			// check for deviceID presence
 			if (dDA.isDeviceIDPresent(d.getDeviceIdentification())) {
 				// the device is already present i need to check for dataset
@@ -197,31 +196,31 @@ public class CUQueryHandler extends RPCActionHadler {
 
 			if (d != null) {
 				dDA.performDeviceHB(d.getDeviceIdentification());
-
-				// at this point i need to check if thedevice need to be initialized
-				if (dDA.isDeviceToBeInitialized(d.getDeviceIdentification())) {
-					// send rpc command to initialize the device
-					result = DeviceDescriptionUtility.composeStartupCommandForDeviceIdentification(d.getDeviceIdentification(), dDA, getDataAccessInstance(DataServerDA.class), true);
-					result.append(RPCConstants.CS_CMDM_REMOTE_HOST_IP, d.getNetAddress());
-					result.append(RPCConstants.CS_CMDM_ACTION_DOMAIN, "system");
-					result.append(RPCConstants.CS_CMDM_ACTION_NAME, "initControlUnit");
-				}
 			}
-			// }
-
 			closeDataAccess(dDA, true);
+			ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 5);
 		} catch (RefException e) {
+			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
 			try {
 				closeDataAccess(dDA, false);
 			} catch (SQLException e1) {
 			}
 			throw new RefException(e.getMessage(), 3, "CUQueryHandler::registerControUnit");
 		} catch (Throwable e) {
+			ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 5);
 			try {
 				closeDataAccess(dDA, false);
 			} catch (SQLException e1) {
 			}
 			throw new RefException(e.getMessage(), 4, "CUQueryHandler::registerControUnit");
+		} finally {
+			try {
+				SingletonServices.getInstance().getSlowExecution().submitJob(WorkUnitACK.class.getName(), ackPack);
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
 		}
 		return result;
 	}
