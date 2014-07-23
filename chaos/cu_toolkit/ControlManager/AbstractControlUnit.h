@@ -314,6 +314,9 @@ namespace chaos{
 				
 				//! Return the contro unit instance
 				const char * getCUID();
+				
+				//! getControlUnitParam
+				const string& getCUParam();
 			};
 		}
     }

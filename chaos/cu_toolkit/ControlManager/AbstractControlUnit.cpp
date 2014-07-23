@@ -91,6 +91,10 @@ const char * AbstractControlUnit::getCUID() {
 	return control_unit_id.c_str();
 }
 
+const string& AbstractControlUnit::getCUParam() {
+	return control_unit_param;
+}
+
 /*
  Add a new KeyDataStorage for a specific key
  */
