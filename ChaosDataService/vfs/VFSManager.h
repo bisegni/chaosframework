@@ -71,7 +71,7 @@ namespace chaos {
 			
 			class VFSManager :
 			public chaos::utility::InizializableService,
-			public chaos::common::async_central::TimerHanlder,
+			public chaos::common::async_central::TimerHandler,
 			protected VFSManagerKeyObjectContainer {
 				//! point to user allcoated configuration structure, the instance
 				//! will be deallocated at thedestruction of this class

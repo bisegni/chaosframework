@@ -34,7 +34,7 @@ using namespace chaos;
 
 using namespace chaos::common::data;
 
-using namespace chaos::cu;
+using namespace chaos::cu::command_manager;
 
 
 #pragma mark Public Method
@@ -150,7 +150,7 @@ void CommandManager::deregisterAction(DeclareAction* declareActionClass) {
  Init the sandbox
  */
 CDataWrapper* CommandManager::shutdown(CDataWrapper *actionParam, bool& detachParam) throw (CException) {
-    CHAOS_ASSERT(privLibControllerPtr)
-    if(privLibControllerPtr) privLibControllerPtr->stop();
+    CHAOS_ASSERT(server_handler)
+    if(server_handler) server_handler->stop();
     return NULL;
 }

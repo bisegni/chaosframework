@@ -28,27 +28,42 @@ abstract public class RPCServer {
 	abstract public void deinit() throws Throwable;
 
 	/**
-	 * @throws RefException 
+	 * @throws RefException
 	 * 
 	 */
 	public void addDomainActionHanlder(String domain, String action, RPCActionHadler handler) throws RefException {
-		if (domain == null || action == null || handler == null)
-			throw new RefException("Ivalid parameter");
-		String key = String.format(actionHanlderFormat, domain, action);
-		actionHanlder.put(key, handler);
+		synchronized (actionHanlder) {
+			if (domain == null || action == null || handler == null)
+				throw new RefException("Ivalid parameter");
+			String key = String.format(actionHanlderFormat, domain, action);
+			actionHanlder.put(key, handler);
+		}
 	}
-	
+
+	public void removeDomainActionHanlder(String domain, String action, RPCActionHadler handler) throws RefException {
+		// TODO Auto-generated method stub
+		synchronized (actionHanlder) {
+			if (domain == null || action == null || handler == null)
+				throw new RefException("Ivalid parameter");
+			String key = String.format(actionHanlderFormat, domain, action);
+			actionHanlder.remove(key);
+		}
+	}
+
 	/**
 	 * 
 	 * @param domain
 	 * @param action
 	 * @return
-	 * @throws RefException 
+	 * @throws RefException
 	 */
 	public RPCActionHadler getHandlerForDomainAndAction(String domain, String action) throws RefException {
-		if (domain == null || action == null)
-			throw new RefException("Ivalid parameter");
-		String key = String.format(actionHanlderFormat, domain, action);
-		return actionHanlder.get(key);
+		synchronized (actionHanlder) {
+			if (domain == null || action == null)
+				throw new RefException("Ivalid parameter");
+			String key = String.format(actionHanlderFormat, domain, action);
+			return actionHanlder.get(key);
+		}
 	}
+
 }

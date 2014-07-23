@@ -25,15 +25,35 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::cu;
-
+using namespace chaos::cu::control_manager;
 using namespace boost;
 using namespace boost::chrono;
 
 #define RTCULAPP_ LAPP_ << "[Real Time Control Unit:"<<getCUInstance()<<"] - "
 
-RTAbstractControlUnit::RTAbstractControlUnit():AbstractControlUnit(CUType::RTCU) {
+RTAbstractControlUnit::RTAbstractControlUnit(const std::string& _control_unit_id,
+											 const std::string& _control_unit_param):
+AbstractControlUnit(CUType::RTCU,
+					_control_unit_id,
+					_control_unit_param) {
     //allocate the handler engine
     attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
+}
+
+/*!
+ Parametrized constructor
+ \param _control_unit_id unique id for the control unit
+ \param _control_unit_drivers driver information
+ */
+RTAbstractControlUnit::RTAbstractControlUnit(const std::string& _control_unit_id,
+											 const std::string& _control_unit_param,
+											 const ControlUnitDriverList& _control_unit_drivers):
+AbstractControlUnit(CUType::RTCU,
+					_control_unit_id,
+					_control_unit_param,
+					_control_unit_drivers) {
+    //allocate the handler engine
+    attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);	
 }
 
 RTAbstractControlUnit::~RTAbstractControlUnit() {
@@ -111,7 +131,7 @@ void RTAbstractControlUnit::deinit() throw(CException) {
 /*
  Add a new handler
  */
-void RTAbstractControlUnit::addHandlerForDSAttribute(cu::handler::DSAttributeHandler * classHandler)  throw (CException) {
+void RTAbstractControlUnit::addHandlerForDSAttribute(handler::DSAttributeHandler * classHandler)  throw (CException) {
     if(!classHandler) return;
     //add the handler
     attributeHandlerEngine->addHandlerForDSAttribute(classHandler);

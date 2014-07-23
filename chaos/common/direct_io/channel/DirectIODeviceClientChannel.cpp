@@ -54,9 +54,9 @@ DirectIODeviceClientChannel::~DirectIODeviceClientChannel() {
 	}
 }
 
-void DirectIODeviceClientChannel::setDeviceID(std::string _device_id, DirectIODeviceClientChannelPutMode _put_mode) {
+void DirectIODeviceClientChannel::setDeviceID(std::string _CU_id, DirectIODeviceClientChannelPutMode _put_mode) {
 	//keep track of the device id
-	device_id = _device_id;
+	device_id = _CU_id;
 	put_mode = _put_mode;
 	if(put_opcode_header) {
 		free(put_opcode_header);

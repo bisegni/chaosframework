@@ -29,7 +29,7 @@ using namespace std;
 using namespace boost;
 
 #define LDEF_CMD_DISPTC_APP_ LAPP_ << "[DefaultCommandDispatcher] - " 
-
+#define LDEF_CMD_DISPTC_DBG_ LDBG_ << "[DefaultCommandDispatcher] - "
 DefaultCommandDispatcher::DefaultCommandDispatcher(string alias) : AbstractCommandDispatcher(alias) {
 }
 
@@ -97,13 +97,13 @@ void DefaultCommandDispatcher::registerAction(DeclareAction *declareActionClass)
         if(!dasMap.count(domainName)){
             boost::shared_ptr<DomainActionsScheduler> das(new DomainActionsScheduler(getDomainActionsFromName(domainName)));
 #if DEBUG
-            LDEF_CMD_DISPTC_APP_ << "Allocated new  actions scheduler for domain:" << domainName;
-            LDEF_CMD_DISPTC_APP_ << "Init actions scheduler for domain:" << domainName;
-            LDEF_CMD_DISPTC_APP_ << "WE MUST THING ABOUT GET GLOBAL CONF FOR INIT DomainActionsScheduler object";
+            LDEF_CMD_DISPTC_DBG_ << "Allocated new  actions scheduler for domain:" << domainName;
+            LDEF_CMD_DISPTC_DBG_ << "Init actions scheduler for domain:" << domainName;
+            LDEF_CMD_DISPTC_DBG_ << "WE MUST THING ABOUT GET GLOBAL CONF FOR INIT DomainActionsScheduler object";
 #endif
             das->init(1);
 #if DEBUG
-            LDEF_CMD_DISPTC_APP_ << "Initialized actions scheduler for domain:" << domainName;
+            LDEF_CMD_DISPTC_DBG_ << "Initialized actions scheduler for domain:" << domainName;
 #endif
                 //add the domain scheduler to map
             dasMap.insert(make_pair(domainName, das));
@@ -135,6 +135,7 @@ void DefaultCommandDispatcher::deregisterAction(DeclareAction *declareActionClas
 CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPack) throw(CException)  {
         //allocate new Result Pack
     CDataWrapper *resultPack = new CDataWrapper();
+	bool sent = false;
     try{
         
         if(!commandPack) return resultPack;
@@ -158,7 +159,7 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
             //submit the action(Thread Safe)
 		//ElementManagingPolicy ep;
 		//ep.elementHasBeenDetached = false;
-		dasMap[actionDomain]->push(commandPack);
+		sent = dasMap[actionDomain]->push(commandPack);
         //if(ep.elementHasBeenDetached) {
 		//	delete(commandPack);
 		//}
@@ -166,6 +167,7 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
             //tag message has submitted
         resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
     }catch(CException& cse){
+		if(!sent && commandPack) delete(commandPack);
             //tag message has not submitted
             //resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, 1);
         
@@ -174,6 +176,7 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
         resultPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN, cse.errorDomain);
         resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, cse.errorCode);
     } catch(...){
+		if(!sent && commandPack) delete(commandPack);
             //tag message has not submitted
         resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 1);
             //set error to general exception error

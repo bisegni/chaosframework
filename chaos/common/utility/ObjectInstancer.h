@@ -30,7 +30,7 @@ namespace chaos {
         namespace utility {
             
             /*!
-             Templated interface that regolate the instantiation of a class.
+             Templated interface that give rule for the the instantiation of a class.
              */
             template <typename R >
             class ObjectInstancer {
@@ -39,6 +39,36 @@ namespace chaos {
                 virtual R* getInstance() = 0;
             };
             
+			/*!
+             Templated interface that give rule for the the instantiation of a class with one param constructor.
+             */
+			template <typename R, typename p1 >
+            class ObjectInstancerP1 {
+            public:
+                virtual ~ObjectInstancerP1(){};
+                virtual R* getInstance(p1 _p1) = 0;
+            };
+			
+			/*!
+             Templated interface that give rule for the the instantiation of a class with two param constructor.
+             */
+			template <typename R, typename p1, typename p2 >
+            class ObjectInstancerP2 {
+            public:
+                virtual ~ObjectInstancerP2(){};
+                virtual R* getInstance(p1 _p1, p2 _p2) = 0;
+            };
+			
+			/*!
+             Templated interface that give rule for the the instantiation of a class with three param constructor.
+             */
+			template <typename R, typename p1, typename p2, typename p3 >
+            class ObjectInstancerP3 {
+            public:
+                virtual ~ObjectInstancerP3(){};
+                virtual R* getInstance(p1 _p1, p2 _p2, p3 _p3) = 0;
+            };
+			
             /*!
              Templated interface that regolate the instantiation of a class.
              */
@@ -69,7 +99,47 @@ namespace chaos {
                 }
             };
 			
+			/*!
+             Templated class that permit to instantiate the superclas of
+             a base class. This class permit to check this rule at compiletime
+             */
+            template <typename T, typename R, typename p1>
+            class TypedObjectInstancerP1 : public ObjectInstancerP1<R, p1> {
+            public:
+                R* getInstance(p1 _p1) {
+                    return new T(_p1);
+                }
+            };
+			
+			/*!
+             Templated class that permit to instantiate the superclas of
+             a base class. This class permit to check this rule at compiletime
+             */
+            template <typename T, typename R, typename p1, typename p2 >
+            class TypedObjectInstancerP2 : public ObjectInstancerP2<R, p1, p2> {
+            public:
+                R* getInstance(p1 _p1, p2 _p2) {
+                    return new T(_p1, _p2);
+                }
+            };
+			
+			/*!
+             Templated class that permit to instantiate the superclas of
+             a base class. This class permit to check this rule at compiletime
+             */
+            template <typename T, typename R, typename p1, typename p2, typename p3 >
+            class TypedObjectInstancerP3 : public ObjectInstancerP3<R, p1, p2, p3> {
+            public:
+                R* getInstance(p1 _p1, p2 _p2, p3 _p3) {
+                    return new T(_p1, _p2, _p3);
+                }
+            };
+			
 			#define ALLOCATE_INSTANCER(ImplClass, BaseClass) new chaos::common::utility::TypedObjectInstancer<ImplClass, BaseClass>()
+			#define ALLOCATE_INSTANCER_P1(ImplClass, BaseClass, p1) new chaos::common::utility::TypedObjectInstancerP1<ImplClass, BaseClass, p1>()
+			#define ALLOCATE_INSTANCER_P2(ImplClass, BaseClass, p1, p2) new chaos::common::utility::TypedObjectInstancerP2<ImplClass, BaseClass, p1, p2>()
+			#define ALLOCATE_INSTANCER_P3(ImplClass, BaseClass, p1, p2, p3) new chaos::common::utility::TypedObjectInstancerP3<ImplClass, BaseClass, p1, p2, p3>()
+			
 			typedef boost::shared_mutex						InstancerReadWriteMutexClass;
 			typedef boost::unique_lock<boost::shared_mutex>	InstancerContainerWriteLockClass;
 			typedef boost::shared_lock<boost::shared_mutex> InstancerContainerReadLockClass;

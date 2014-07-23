@@ -1,8 +1,8 @@
-/*	
+/*
  *	AbstractCommandDispatcher.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,9 @@ using namespace chaos;
 using namespace boost;
 using namespace std;
 
+#define ACDLAPP_ LAPP_ << "[AbstractCommandDispatcher] - "
+#define ACDLDBG_ LDBG_ << "[AbstractCommandDispatcher] - "
+#define ACDLERR_ LERR_ << "[AbstractCommandDispatcher] - "
 
 AbstractCommandDispatcher::AbstractCommandDispatcher(string alias):NamedService(alias){
 }
@@ -39,7 +42,7 @@ AbstractCommandDispatcher::~AbstractCommandDispatcher() {
 void AbstractCommandDispatcher::init(void *initConfiguration) throw(CException) {
 }
 
-    //-----------------------
+//-----------------------
 void AbstractCommandDispatcher::start() throw(CException) {
     
 }
@@ -56,17 +59,17 @@ void AbstractCommandDispatcher::deinit() throw(CException) {
  but if the name is not present initialized it and add it to map
  */
 boost::shared_ptr<DomainActions> AbstractCommandDispatcher::getDomainActionsFromName(string& domainName) {
-        //check if is not preset, so we can allocate it
+	//check if is not preset, so we can allocate it
     if(!actionDomainExecutorMap.count(domainName)){
         boost::shared_ptr<DomainActions>  result(new DomainActions(domainName));
         if(result){;
             actionDomainExecutorMap.insert(make_pair(domainName, result));
 #if DEBUG
-            LDBG_ << "Allocated new  DomainActions:" << domainName;
+            ACDLDBG_ << "Allocated new  DomainActions:" << domainName;
 #endif
         }
     }
-        //return the domain executor for name
+	//return the domain executor for name
     return actionDomainExecutorMap[domainName];
 }
 
@@ -88,17 +91,15 @@ void AbstractCommandDispatcher::registerAction(DeclareAction* declareActionClass
     
     vector<AbstActionDescShrPtr>::iterator actDescIter = declareActionClass->getActionDescriptors().begin();
     for (; actDescIter != declareActionClass->getActionDescriptors().end(); actDescIter++) {
+        ACDLDBG_   << "Registering action " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionName) << " for domain " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain);
         
-        LAPP_   << "Registering action " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionName) 
-        << " for domain " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain);
-        
-            //get the domain executor for this action descriptor
+		//get the domain executor for this action descriptor
         boost::shared_ptr<DomainActions> domainExecutor = getDomainActionsFromName((*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain));
         
-            //if the domain executor has been returned, add this action to it
+		//if the domain executor has been returned, add this action to it
         if(domainExecutor) {
             domainExecutor->addActionDescriptor(*actDescIter);
-            LAPP_ << "Registered action " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionName) 
+            ACDLDBG_ << "Registered action " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionName)
             << " for domain " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain);
         }
     }
@@ -112,16 +113,15 @@ void AbstractCommandDispatcher::deregisterAction(DeclareAction* declareActionCla
     
     vector<AbstActionDescShrPtr>::iterator actDescIter = declareActionClass->getActionDescriptors().begin();
     for (; actDescIter != declareActionClass->getActionDescriptors().end(); actDescIter++) {
-        LAPP_   << "Deregistering action " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionName) 
-        << " for domain " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain);
+        ACDLDBG_   << "Deregistering action " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionName) << " for domain " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain);
         
-            //get the domain executor for this action descriptor
+		//get the domain executor for this action descriptor
         boost::shared_ptr<DomainActions> domainExecutor = getDomainActionsFromName((*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain));
         
-            //if the domain executor has been returned, add this action to it
+		//if the domain executor has been returned, add this action to it
         if(domainExecutor) {
             domainExecutor->removeActionDescriptor(*actDescIter);
-            LAPP_   << "Deregistered action " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionName) 
+            ACDLDBG_   << "Deregistered action " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionName)
             << " for domain " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain);
             
         }

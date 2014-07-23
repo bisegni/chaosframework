@@ -30,7 +30,6 @@ namespace chaos {
                 
                 namespace command {
                     
-                    
                     //! Set Property Command
                     /*!
                       This command permit to update an attribute into the shared setting instance

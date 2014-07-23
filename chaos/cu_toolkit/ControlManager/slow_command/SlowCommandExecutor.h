@@ -49,9 +49,6 @@ namespace chaos {
     namespace cu {
         
         //forward declaration
-        class SCAbstractControlUnit;
-        
-        //forward declaration
         namespace dm {
             namespace driver {
                 class DriverAccessor;
@@ -59,6 +56,9 @@ namespace chaos {
         }
         
         namespace control_manager {
+			//forward declaration
+			class SCAbstractControlUnit;
+
             namespace slow_command {
                 //forward declaration
                 class SlowCommand;
@@ -72,10 +72,10 @@ namespace chaos {
                  */
                 class SlowCommandExecutor : private chaos_batch::BatchCommandExecutor {
 
-                    friend class chaos::cu::SCAbstractControlUnit;
+                    friend class chaos::cu::control_manager::SCAbstractControlUnit;
 
                     //!Live push driver
-                    KeyDataStorage  *keyDataStoragePtr;
+                    data_manager::KeyDataStorage  *keyDataStoragePtr;
                     
                     //! the reference to the master device database
                     chaos_data::DatasetDB *deviceSchemaDbPtr;

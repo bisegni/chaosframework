@@ -530,7 +530,7 @@ MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress
 MDSMessageChannel *NetworkBroker::getMetadataserverMessageChannel(string& remoteHost) {
     CNodeNetworkAddress *mdsNodeAddr = new CNodeNetworkAddress();
     mdsNodeAddr->ipPort = remoteHost.c_str();
-    mdsNodeAddr->nodeID = "system";
+    mdsNodeAddr->nodeID = ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN;
     return static_cast<MDSMessageChannel*>(getNewMessageChannelForRemoteHost(mdsNodeAddr, MDS));
 }
 

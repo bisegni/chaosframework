@@ -37,6 +37,10 @@
 		<param-name>db.appserver.datasource</param-name>
 		<param-value>jdbc/chaosms</param-value>
 	</context-param>
+	<context-param>
+		<param-name>chaos.rpc.impl</param-name>
+		<param-value>TCPRpc</param-value>
+	</context-param>
 	<!-- Configurazione per il plugin dell'initi di govdia -->
 	<!-- Configurazione dei processi -->
 	<context-param>

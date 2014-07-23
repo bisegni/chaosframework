@@ -34,7 +34,7 @@ int main(int argc, char* argv[] ) {
     chaos::MessageHandler mh = &handler;
     controller->setHandler(mh);
     //simulate bad init call
-    controller->sendCustomRequest(chaos::ChaosSystemDomainAndActionLabel::ACTION_DEVICE_INIT, NULL, NULL, true);
+    controller->sendCustomRequest(chaos::ChaosSystemDomainAndActionLabel::ACTION_CU_INIT, NULL, NULL, true);
     sleep(5);
     chaos::ui::ChaosUIToolkit::getInstance()->deinit();
     return 0;

@@ -40,7 +40,7 @@ void DeviceMessageChannel::setNewAddress(CDeviceNetworkAddress *_deviceAddress) 
 int DeviceMessageChannel::initDevice(CDataWrapper *initData, uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     CHAOS_ASSERT(initData)
-    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::ACTION_DEVICE_INIT, initData, millisecToWait));
+    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::ACTION_CU_INIT, initData, millisecToWait));
     CHECK_TIMEOUT_AND_RESULT_CODE(initResult, err)
     return err;
 }
@@ -50,7 +50,7 @@ int DeviceMessageChannel::deinitDevice(uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper deinitDeviceData;
     deinitDeviceData.addStringValue(DatasetDefinitionkey::DEVICE_ID, deviceNetworkAddress->deviceID);
-    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::ACTION_DEVICE_DEINIT, &deinitDeviceData, millisecToWait));
+    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::ACTION_CU_DEINIT, &deinitDeviceData, millisecToWait));
     CHECK_TIMEOUT_AND_RESULT_CODE(initResult, err)
     return err;
 }
@@ -60,7 +60,7 @@ int DeviceMessageChannel::startDevice(uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper startDeviceParam;
     startDeviceParam.addStringValue(DatasetDefinitionkey::DEVICE_ID, deviceNetworkAddress->deviceID);
-    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::ACTION_DEVICE_START, &startDeviceParam, millisecToWait));
+    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::ACTION_CU_START, &startDeviceParam, millisecToWait));
     CHECK_TIMEOUT_AND_RESULT_CODE(initResult, err)
     return err;
 }
@@ -70,7 +70,7 @@ int DeviceMessageChannel::stopDevice(uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper stopDeviceData;
     stopDeviceData.addStringValue(DatasetDefinitionkey::DEVICE_ID, deviceNetworkAddress->deviceID);
-    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::ACTION_DEVICE_STOP, &stopDeviceData, millisecToWait));
+    auto_ptr<CDataWrapper> initResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::ACTION_CU_STOP, &stopDeviceData, millisecToWait));
     CHECK_TIMEOUT_AND_RESULT_CODE(initResult, err)
     return err;
 }
@@ -94,7 +94,7 @@ int DeviceMessageChannel::getState(CUStateKey::ControlUnitState& deviceState, ui
     int err = ErrorCode::EC_NO_ERROR;
     CDataWrapper deviceStateData;
     deviceStateData.addStringValue(DatasetDefinitionkey::DEVICE_ID, deviceNetworkAddress->deviceID);
-    auto_ptr<CDataWrapper> stateResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::ACTION_DEVICE_GET_STATE, &deviceStateData, millisecToWait));
+    auto_ptr<CDataWrapper> stateResult(MessageChannel::sendRequest(deviceNetworkAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::ACTION_CU_GET_STATE, &deviceStateData, millisecToWait));
     CHECK_TIMEOUT_AND_RESULT_CODE(stateResult, err)
     if(err == ErrorCode::EC_NO_ERROR) {
         auto_ptr<CDataWrapper> statePack(stateResult->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));

@@ -72,7 +72,7 @@ namespace chaos{
                     std::string driverUUID;
 					
 					//! used by driver manager to identity the instance by the hashing
-                    size_t identificationHash;
+					std::string identificationString;
 					
                     boost::atomic_uint accessorCount;
                     

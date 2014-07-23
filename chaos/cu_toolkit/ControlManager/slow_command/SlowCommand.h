@@ -67,7 +67,7 @@ namespace chaos{
                     friend class SlowCommandExecutor;
                     
                     //! key data storage to forwsard data to central memory (momentary until directi/O will be created)
-                    KeyDataStorage *keyDataStoragePtr;
+                    data_manager::KeyDataStorage *keyDataStoragePtr;
                     
                     //! point to the in memory device database
 					chaos::common::data::DatasetDB  *deviceDatabasePtr;

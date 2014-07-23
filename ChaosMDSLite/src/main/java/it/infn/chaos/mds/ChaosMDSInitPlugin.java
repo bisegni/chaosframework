@@ -5,9 +5,14 @@ package it.infn.chaos.mds;
 
 import it.infn.chaos.mds.rpc.server.JMQRPCClient;
 import it.infn.chaos.mds.rpc.server.JMQRPCServer;
+import it.infn.chaos.mds.rpc.server.TCPRpcClient;
+import it.infn.chaos.mds.rpc.server.TCPRpcServer;
 import it.infn.chaos.mds.rpcaction.CUQueryHandler;
 import it.infn.chaos.mds.rpcaction.DeviceQueyHandler;
 import it.infn.chaos.mds.rpcaction.PerformanceTest;
+import it.infn.chaos.mds.slowexecution.SlowExecution;
+import it.infn.chaos.mds.slowexecution.UnitServerACK;
+import it.infn.chaos.mds.slowexecution.WorkUnitACK;
 
 import java.util.Arrays;
 import java.util.StringTokenizer;
@@ -17,10 +22,6 @@ import org.ref.server.configuration.REFServerConfiguration;
 import org.ref.server.plugins.REFDeinitPlugin;
 import org.ref.server.plugins.REFInitPlugin;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
@@ -45,6 +46,8 @@ public class ChaosMDSInitPlugin implements REFInitPlugin, REFDeinitPlugin {
 			String user = REFServerConfiguration.getInstance().getStringParamByValue("mongodb.user");
 			String pwd = REFServerConfiguration.getInstance().getStringParamByValue("mongodb.pwd");
 			String db = REFServerConfiguration.getInstance().getStringParamByValue("mongodb.db");
+			String rpcImpl = REFServerConfiguration.getInstance().getStringParamByValue("chaos.rpc.impl");
+
 			if (mongodbURL != null) {
 				StringTokenizer tokenizer = new StringTokenizer(mongodbURL, ",");
 				Vector<ServerAddress> servers = new Vector<ServerAddress>();
@@ -67,16 +70,27 @@ public class ChaosMDSInitPlugin implements REFInitPlugin, REFDeinitPlugin {
 				intPort = Integer.parseInt(port);
 			} catch (Exception e) {
 			}
-			SingletonServices.getInstance().setMdsRpcServer(new JMQRPCServer(1));
-			SingletonServices.getInstance().setMdsRpcClient(new JMQRPCClient(1));
-			SingletonServices.getInstance().getMdsRpcClient().init(0);
-			SingletonServices.getInstance().getMdsRpcClient().start();
-			SingletonServices.getInstance().getMdsRpcServer().init(intPort);
-			SingletonServices.getInstance().getMdsRpcServer().start();
-
+			if (rpcImpl.equals("TCPRpc")) {
+				SingletonServices.getInstance().setMdsRpcServer(new TCPRpcServer());
+				SingletonServices.getInstance().setMdsRpcClient(new TCPRpcClient());
+			} else if (rpcImpl.equals("JMQRPC")) {
+				SingletonServices.getInstance().setMdsRpcServer(new JMQRPCServer(1));
+				SingletonServices.getInstance().setMdsRpcClient(new JMQRPCClient(1));
+			}
+			if (SingletonServices.getInstance().getMdsRpcClient() != null && SingletonServices.getInstance().getMdsRpcServer() != null) {
+				SingletonServices.getInstance().getMdsRpcClient().init(0);
+				SingletonServices.getInstance().getMdsRpcClient().start();
+				SingletonServices.getInstance().getMdsRpcServer().init(intPort);
+				SingletonServices.getInstance().getMdsRpcServer().start();
+			}
 			SingletonServices.getInstance().addHandler(CUQueryHandler.class);
 			SingletonServices.getInstance().addHandler(DeviceQueyHandler.class);
 			SingletonServices.getInstance().addHandler(PerformanceTest.class);
+			
+			//allocate new slow execution queue
+			SingletonServices.getInstance().setSlowExecution(new SlowExecution(20));
+			SingletonServices.getInstance().getSlowExecution().registerSlowControlJob(UnitServerACK.class);
+			SingletonServices.getInstance().getSlowExecution().registerSlowControlJob(WorkUnitACK.class);
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}

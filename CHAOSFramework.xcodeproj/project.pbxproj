@@ -185,6 +185,7 @@
 		3264BBD71784BFE400E2F5A0 /* PluginInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264BBD61784BFE400E2F5A0 /* PluginInspector.cpp */; };
 		3265BF4615D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3265BF4515D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h */; };
 		3265BF4915D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc in Sources */ = {isa = PBXBuildFile; fileRef = 3265BF4815D1AA9F00C3CAC6 /* ChaosUIToolkitCWrapper.cc */; };
+		3265F332197E626900F22FBC /* WorkUnitManagement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32D72CA8197D196D00512B89 /* WorkUnitManagement.cpp */; };
 		3266A5DF18A631A800637592 /* ZMQBaseClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3266A5DE18A631A800637592 /* ZMQBaseClass.cpp */; };
 		3268CE35161608D100FCDB10 /* ZMQClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3268CE31161608D100FCDB10 /* ZMQClient.cpp */; };
 		3268CE36161608D100FCDB10 /* ZMQClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3268CE32161608D100FCDB10 /* ZMQClient.h */; };
@@ -335,6 +336,10 @@
 		329FFFD2170712CE00D69CDE /* ManagedMemory.h in Headers */ = {isa = PBXBuildFile; fileRef = 329FFFD0170712CE00D69CDE /* ManagedMemory.h */; };
 		32A10C0318C87806006EA04C /* DeviceSharedDataWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A10C0118C87806006EA04C /* DeviceSharedDataWorker.cpp */; };
 		32A391C418FE923E001C5A73 /* TemplatedKeyValueHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A391C218FE923E001C5A73 /* TemplatedKeyValueHash.h */; };
+		32A420A51962D16A00AFE689 /* TCPUVClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A420A31962D16A00AFE689 /* TCPUVClient.cpp */; };
+		32A420A61962D16A00AFE689 /* TCPUVClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A420A41962D16A00AFE689 /* TCPUVClient.h */; };
+		32A420A91962E17F00AFE689 /* TCPUVServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A420A71962E17F00AFE689 /* TCPUVServer.cpp */; };
+		32A420AA1962E17F00AFE689 /* TCPUVServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A420A81962E17F00AFE689 /* TCPUVServer.h */; };
 		32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */; };
 		32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */; };
 		32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */; };
@@ -420,8 +425,6 @@
 		32CB737016FE3432008575F0 /* ReaderDataService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CB736E16FE3432008575F0 /* ReaderDataService.h */; };
 		32CB7CE017099C8D00767FC1 /* DataCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CB7CDE17099C8D00767FC1 /* DataCache.cpp */; };
 		32CB7CE117099C8D00767FC1 /* DataCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CB7CDF17099C8D00767FC1 /* DataCache.h */; };
-		32CF054816AB23C200E86CC7 /* PerfTestCU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CF054616AB23C200E86CC7 /* PerfTestCU.cpp */; };
-		32CF054916AB23C200E86CC7 /* PerfTestCU.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CF054716AB23C200E86CC7 /* PerfTestCU.h */; };
 		32CFF95B15E4D950005D607E /* EventDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95915E4D950005D607E /* EventDescriptor.cpp */; };
 		32CFF95C15E4D950005D607E /* EventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFF95A15E4D950005D607E /* EventDescriptor.h */; };
 		32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95D15E4DBD3005D607E /* EventFactory.cpp */; };
@@ -432,6 +435,7 @@
 		32D68AD014D5D5A7009F290A /* SetupStateManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D68ACF14D5D5A7009F290A /* SetupStateManager.h */; };
 		32D6C8981815293200E9689B /* DirectIOHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C8971815293200E9689B /* DirectIOHandler.h */; };
 		32D6C89A1815294700E9689B /* DirectIOForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C8991815294700E9689B /* DirectIOForwarder.h */; };
+		32D72CAB197D196D00512B89 /* WorkUnitManagement.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D72CA9197D196D00512B89 /* WorkUnitManagement.h */; };
 		32DB1188166267FB0036D1B9 /* DSDoubleHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DB1187166267FB0036D1B9 /* DSDoubleHandler.h */; };
 		32DBF9D118E1845E0095B289 /* CouchbaseCacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */; };
 		32DCC36F192517DA00E14256 /* VFSStageReadableFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DCC36D192517DA00E14256 /* VFSStageReadableFile.cpp */; };
@@ -508,7 +512,6 @@
 		3215860E17875FDB0090E7E6 /* DriverPluginLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DriverPluginLoader.cpp; sourceTree = "<group>"; };
 		3215860F17875FDB0090E7E6 /* DriverPluginLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DriverPluginLoader.h; sourceTree = "<group>"; };
 		32158DE3187D80D9004C25AA /* SetAttributeCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetAttributeCommand.cpp; sourceTree = "<group>"; };
-		32158DE4187D80D9004C25AA /* SetAttributeCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetAttributeCommand.h; sourceTree = "<group>"; };
 		3216601014D49D0F008DADD2 /* ObjectWaitSemaphore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectWaitSemaphore.h; sourceTree = "<group>"; };
 		3219E69D18CC7AE600C2F795 /* DirectIOClientConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOClientConnection.cpp; sourceTree = "<group>"; };
 		3219E69E18CC7AE600C2F795 /* DirectIOClientConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOClientConnection.h; sourceTree = "<group>"; };
@@ -520,7 +523,7 @@
 		3223253918EC157000ADBA4D /* StorageDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageDriver.cpp; sourceTree = "<group>"; };
 		3223253A18EC157000ADBA4D /* StorageDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageDriver.h; sourceTree = "<group>"; };
 		32234D3D176E045100525E0C /* SlowCommandExecutor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SlowCommandExecutor.cpp; sourceTree = "<group>"; };
-		32234D3E176E045100525E0C /* SlowCommandExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlowCommandExecutor.h; sourceTree = "<group>"; };
+		32234D3E176E045100525E0C /* SlowCommandExecutor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = SlowCommandExecutor.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		32279F8216F8DEAF009EC7B9 /* DataBroker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataBroker.cpp; sourceTree = "<group>"; };
 		32279F8316F8DEAF009EC7B9 /* DataBroker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBroker.h; sourceTree = "<group>"; };
 		32279F8916FA36B6009EC7B9 /* PublisherDataService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PublisherDataService.cpp; sourceTree = "<group>"; };
@@ -672,7 +675,7 @@
 		325DE9F415EC03F800D6F34E /* EventAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventAction.h; sourceTree = "<group>"; };
 		325F86EB14D9E59D00CDF35F /* InetUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InetUtility.h; sourceTree = "<group>"; };
 		325F8B4F1763AF2300EFE616 /* SlowCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SlowCommand.cpp; sourceTree = "<group>"; };
-		325F8B501763AF2300EFE616 /* SlowCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlowCommand.h; sourceTree = "<group>"; };
+		325F8B501763AF2300EFE616 /* SlowCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = SlowCommand.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		32640A09169DCC5800450962 /* BufferTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BufferTracker.h; sourceTree = "<group>"; };
 		32640A0A169DCC5800450962 /* GarbageThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GarbageThread.h; sourceTree = "<group>"; };
 		32640A0C169DCC5800450962 /* DataAggregationInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataAggregationInterface.h; sourceTree = "<group>"; };
@@ -708,14 +711,13 @@
 		3268CE32161608D100FCDB10 /* ZMQClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQClient.h; sourceTree = "<group>"; };
 		3268CE33161608D100FCDB10 /* ZMQServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZMQServer.cpp; sourceTree = "<group>"; };
 		3268CE34161608D100FCDB10 /* ZMQServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMQServer.h; sourceTree = "<group>"; };
-		32698D47179E8CD100D6638C /* SetAttributeCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetAttributeCommand.cpp; sourceTree = "<group>"; };
 		32698D48179E8CD100D6638C /* SetAttributeCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetAttributeCommand.h; sourceTree = "<group>"; };
 		326CADC618EAB64600E74CEA /* DataBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBlock.h; sourceTree = "<group>"; };
 		326CADC818EAFD1200E74CEA /* VFSManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSManager.cpp; sourceTree = "<group>"; };
 		326CADC918EAFD1200E74CEA /* VFSManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSManager.h; sourceTree = "<group>"; };
 		326CDBB518D860430054EF19 /* SpinLock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpinLock.h; sourceTree = "<group>"; };
-		326D3A5F17B0CD01004601A8 /* DriverManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DriverManager.cpp; sourceTree = "<group>"; };
-		326D3A6017B0CD01004601A8 /* DriverManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DriverManager.h; sourceTree = "<group>"; };
+		326D3A5F17B0CD01004601A8 /* DriverManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = DriverManager.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		326D3A6017B0CD01004601A8 /* DriverManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DriverManager.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB3B614B38BC00018A8D0 /* ActionDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = ActionDescriptor.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB3B714B38BC00018A8D0 /* ActionDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ActionDescriptor.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326DB3B814B38BC00018A8D0 /* ChaosAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ChaosAction.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -839,8 +841,8 @@
 		328E405B17287B82004E5938 /* LFDataCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LFDataCache.cpp; sourceTree = "<group>"; };
 		328E405C17287B82004E5938 /* LFDataCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LFDataCache.h; sourceTree = "<group>"; };
 		328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcServerHandler.h; sourceTree = "<group>"; };
-		32919A091764E68F00724874 /* DriverAccessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DriverAccessor.cpp; sourceTree = "<group>"; };
-		32919A0A1764E68F00724874 /* DriverAccessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DriverAccessor.h; sourceTree = "<group>"; };
+		32919A091764E68F00724874 /* DriverAccessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = DriverAccessor.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		32919A0A1764E68F00724874 /* DriverAccessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DriverAccessor.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		32919A0D17650F4500724874 /* DriverTypes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DriverTypes.h; sourceTree = "<group>"; };
 		3294905A159AF4BF00E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		3294905B159AF4D700E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -872,6 +874,10 @@
 		32A10C0118C87806006EA04C /* DeviceSharedDataWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceSharedDataWorker.cpp; sourceTree = "<group>"; };
 		32A10C0218C87806006EA04C /* DeviceSharedDataWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceSharedDataWorker.h; sourceTree = "<group>"; };
 		32A391C218FE923E001C5A73 /* TemplatedKeyValueHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplatedKeyValueHash.h; sourceTree = "<group>"; };
+		32A420A31962D16A00AFE689 /* TCPUVClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCPUVClient.cpp; sourceTree = "<group>"; };
+		32A420A41962D16A00AFE689 /* TCPUVClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCPUVClient.h; sourceTree = "<group>"; };
+		32A420A71962E17F00AFE689 /* TCPUVServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TCPUVServer.cpp; sourceTree = "<group>"; };
+		32A420A81962E17F00AFE689 /* TCPUVServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCPUVServer.h; sourceTree = "<group>"; };
 		32A5ED5F14DBD68B001DC80E /* WaitSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WaitSemaphore.h; sourceTree = "<group>"; };
 		32A809D514D82E19000F2DF7 /* MDSMessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = MDSMessageChannel.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSMessageChannel.cpp; sourceTree = "<group>"; };
@@ -970,8 +976,6 @@
 		32CB736E16FE3432008575F0 /* ReaderDataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReaderDataService.h; sourceTree = "<group>"; };
 		32CB7CDE17099C8D00767FC1 /* DataCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataCache.cpp; sourceTree = "<group>"; };
 		32CB7CDF17099C8D00767FC1 /* DataCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataCache.h; sourceTree = "<group>"; };
-		32CF054616AB23C200E86CC7 /* PerfTestCU.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerfTestCU.cpp; sourceTree = "<group>"; };
-		32CF054716AB23C200E86CC7 /* PerfTestCU.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerfTestCU.h; sourceTree = "<group>"; };
 		32CFF95915E4D950005D607E /* EventDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventDescriptor.cpp; sourceTree = "<group>"; };
 		32CFF95A15E4D950005D607E /* EventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDescriptor.h; sourceTree = "<group>"; };
 		32CFF95D15E4DBD3005D607E /* EventFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventFactory.cpp; sourceTree = "<group>"; };
@@ -982,6 +986,8 @@
 		32D68ACF14D5D5A7009F290A /* SetupStateManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetupStateManager.h; sourceTree = "<group>"; };
 		32D6C8971815293200E9689B /* DirectIOHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOHandler.h; sourceTree = "<group>"; };
 		32D6C8991815294700E9689B /* DirectIOForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOForwarder.h; sourceTree = "<group>"; };
+		32D72CA8197D196D00512B89 /* WorkUnitManagement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkUnitManagement.cpp; sourceTree = "<group>"; };
+		32D72CA9197D196D00512B89 /* WorkUnitManagement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkUnitManagement.h; sourceTree = "<group>"; };
 		32DA666F1700DBB6004FC02B /* endian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
 		32DB1187166267FB0036D1B9 /* DSDoubleHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSDoubleHandler.h; sourceTree = "<group>"; };
 		32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CouchbaseCacheDriver.cpp; sourceTree = "<group>"; };
@@ -1127,16 +1133,6 @@
 			);
 			path = caching;
 			sourceTree = "<group>";
-		};
-		32158DE2187D80D9004C25AA /* command */ = {
-			isa = PBXGroup;
-			children = (
-				32158DE3187D80D9004C25AA /* SetAttributeCommand.cpp */,
-				32158DE4187D80D9004C25AA /* SetAttributeCommand.h */,
-			);
-			name = command;
-			path = chaos/cu_toolkit/ControlManager/slow_command/command;
-			sourceTree = SOURCE_ROOT;
 		};
 		3223253518EC157000ADBA4D /* storage_system */ = {
 			isa = PBXGroup;
@@ -1465,7 +1461,7 @@
 		32698D46179E8C3300D6638C /* command */ = {
 			isa = PBXGroup;
 			children = (
-				32698D47179E8CD100D6638C /* SetAttributeCommand.cpp */,
+				32158DE3187D80D9004C25AA /* SetAttributeCommand.cpp */,
 				32698D48179E8CD100D6638C /* SetAttributeCommand.h */,
 			);
 			path = command;
@@ -1678,6 +1674,7 @@
 		326DB41114B38BC00018A8D0 /* rpc */ = {
 			isa = PBXGroup;
 			children = (
+				32A420A21962D13200AFE689 /* tcpuv */,
 				3268CE261616081000FCDB10 /* zmq */,
 				326DB41214B38BC00018A8D0 /* ChaosRpc.h */,
 				327967B415DF99FB0003C6DA /* RpcClient.cpp */,
@@ -1769,7 +1766,6 @@
 		326DB49D14B3A3E50018A8D0 /* CommandManager */ = {
 			isa = PBXGroup;
 			children = (
-				32158DE2187D80D9004C25AA /* command */,
 				326DB49E14B3A3E50018A8D0 /* CommandManager.cpp */,
 				326DB49F14B3A3E50018A8D0 /* CommandManager.h */,
 				326DB4A014B3A3E50018A8D0 /* CommandManagerDefaultAdapters.h */,
@@ -1781,7 +1777,6 @@
 			isa = PBXGroup;
 			children = (
 				325F8B4E1763AED200EFE616 /* slow_command */,
-				32CF054416AB235100E86CC7 /* perf_test */,
 				328D2FBF16612A15007F482E /* handler */,
 				328D2FB51660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp */,
 				328D2FB61660EACD007F482E /* DSAttributeHandlerExecutionEngine.h */,
@@ -1793,6 +1788,8 @@
 				32F2241A179AE3BC00853F62 /* RTAbstractControlUnit.h */,
 				326DB4A714B3A3E50018A8D0 /* ControlManager.cpp */,
 				326DB4A814B3A3E50018A8D0 /* ControlManager.h */,
+				32D72CA8197D196D00512B89 /* WorkUnitManagement.cpp */,
+				32D72CA9197D196D00512B89 /* WorkUnitManagement.h */,
 			);
 			path = ControlManager;
 			sourceTree = "<group>";
@@ -1987,6 +1984,17 @@
 				329FFFD0170712CE00D69CDE /* ManagedMemory.h */,
 			);
 			path = memory;
+			sourceTree = "<group>";
+		};
+		32A420A21962D13200AFE689 /* tcpuv */ = {
+			isa = PBXGroup;
+			children = (
+				32A420A31962D16A00AFE689 /* TCPUVClient.cpp */,
+				32A420A41962D16A00AFE689 /* TCPUVClient.h */,
+				32A420A71962E17F00AFE689 /* TCPUVServer.cpp */,
+				32A420A81962E17F00AFE689 /* TCPUVServer.h */,
+			);
+			path = tcpuv;
 			sourceTree = "<group>";
 		};
 		32AAD78114CD630D005A097C /* message */ = {
@@ -2221,15 +2229,6 @@
 			path = cache;
 			sourceTree = "<group>";
 		};
-		32CF054416AB235100E86CC7 /* perf_test */ = {
-			isa = PBXGroup;
-			children = (
-				32CF054616AB23C200E86CC7 /* PerfTestCU.cpp */,
-				32CF054716AB23C200E86CC7 /* PerfTestCU.h */,
-			);
-			path = perf_test;
-			sourceTree = "<group>";
-		};
 		32DF602B15E14B1900312C94 /* evt_desc */ = {
 			isa = PBXGroup;
 			children = (
@@ -2345,6 +2344,7 @@
 				324A4B4C191A41EF00975394 /* bits.h in Headers */,
 				326DB49514B38BC00018A8D0 /* TimingUtil.h in Headers */,
 				326DB49614B38BC00018A8D0 /* UUIDUtil.h in Headers */,
+				32D72CAB197D196D00512B89 /* WorkUnitManagement.h in Headers */,
 				32C100F8191B6F2900478F40 /* AsyncCentralManager.h in Headers */,
 				326DB49714B38BC00018A8D0 /* version.h in Headers */,
 				32AAD78814CD660B005A097C /* RpcClient.h in Headers */,
@@ -2371,6 +2371,7 @@
 				324A4B57191A41EF00975394 /* unordered_map.h in Headers */,
 				324A4B2E191A405700975394 /* document.h in Headers */,
 				324A4B51191A41EF00975394 /* float_utils.h in Headers */,
+				32A420AA1962E17F00AFE689 /* TCPUVServer.h in Headers */,
 				32A5ED6014DBD68B001DC80E /* WaitSemaphore.h in Headers */,
 				3258AEEB1935C34000A66D44 /* URL.h in Headers */,
 				32BFF913176C862A00D27A04 /* StartableService.h in Headers */,
@@ -2469,6 +2470,7 @@
 				32B57208168E02D10002A198 /* oid.h in Headers */,
 				32B57209168E02D10002A198 /* ordering.h in Headers */,
 				324A4B2C191A405700975394 /* document-inl.h in Headers */,
+				32A420A61962D16A00AFE689 /* TCPUVClient.h in Headers */,
 				32C35467178860E5009ED581 /* extension.hpp in Headers */,
 				324A4B91191A527D00975394 /* base64.h in Headers */,
 				32AF7D4118DAEAF300537DE6 /* PerformanceNodeChannel.h in Headers */,
@@ -2565,7 +2567,6 @@
 				328D2FC316612AB3007F482E /* DSInt32Handler.h in Headers */,
 				32DB1188166267FB0036D1B9 /* DSDoubleHandler.h in Headers */,
 				3264B05C1673623F002E87FA /* TDSObjectHandler.h in Headers */,
-				32CF054916AB23C200E86CC7 /* PerfTestCU.h in Headers */,
 				325F8B521763AF2300EFE616 /* SlowCommand.h in Headers */,
 				328CC9D71763CCC7000B30B6 /* AbstractDriver.h in Headers */,
 				32919A0C1764E68F00724874 /* DriverAccessor.h in Headers */,
@@ -2824,6 +2825,7 @@
 				326DB46714B38BC00018A8D0 /* AbstractCommandDispatcher.cpp in Sources */,
 				32B159D518B38CA50096B58B /* DirectIODeviceServerChannel.cpp in Sources */,
 				324A4B52191A41EF00975394 /* process_id.cpp in Sources */,
+				32A420A91962E17F00AFE689 /* TCPUVServer.cpp in Sources */,
 				3296031E1876B45000CDCADA /* AttributeSetting.cpp in Sources */,
 				326DB46B14B38BC00018A8D0 /* DefaultCommandDispatcher.cpp in Sources */,
 				326DB46D14B38BC00018A8D0 /* DomainActionsScheduler.cpp in Sources */,
@@ -2869,6 +2871,7 @@
 				324A4B96191A557700975394 /* time_support.cpp in Sources */,
 				324A4B15191A3F6A00975394 /* string_data.cpp in Sources */,
 				3258AEEA1935C34000A66D44 /* URL.cpp in Sources */,
+				32A420A51962D16A00AFE689 /* TCPUVClient.cpp in Sources */,
 				325013D715E980C800DCB13E /* AsioImplEventClient.cpp in Sources */,
 				32C100F7191B6F2900478F40 /* AsyncCentralManager.cpp in Sources */,
 				324A4B10191A3F6A00975394 /* parse_number.cpp in Sources */,
@@ -2939,6 +2942,7 @@
 				326DB4B814B3A3E50018A8D0 /* ChaosCUToolkit.cpp in Sources */,
 				3287F7E617B2756C009DD6ED /* DriverManager.cpp in Sources */,
 				326DB4BA14B3A3E50018A8D0 /* CommandManager.cpp in Sources */,
+				3265F332197E626900F22FBC /* WorkUnitManagement.cpp in Sources */,
 				326DB4BF14B3A3E50018A8D0 /* AbstractControlUnit.cpp in Sources */,
 				3215860D178756B40090E7E6 /* AbstractDriverPlugin.cpp in Sources */,
 				32158DE5187D80D9004C25AA /* SetAttributeCommand.cpp in Sources */,
@@ -2950,7 +2954,6 @@
 				326DB4CD14B3A3E50018A8D0 /* MultiBufferDataStorage.cpp in Sources */,
 				328D2FB71660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp in Sources */,
 				328D2FB91660EAD6007F482E /* DSAttributeHandler.cpp in Sources */,
-				32CF054816AB23C200E86CC7 /* PerfTestCU.cpp in Sources */,
 				325F8B511763AF2300EFE616 /* SlowCommand.cpp in Sources */,
 				328CC9D61763CCC7000B30B6 /* AbstractDriver.cpp in Sources */,
 				32234D3F176E045100525E0C /* SlowCommandExecutor.cpp in Sources */,

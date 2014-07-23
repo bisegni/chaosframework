@@ -115,7 +115,7 @@ namespace chaos {
         //! start the CU without metadataserver permission
         static const char * const CS_CM_CU_AUTOSTART                            = "cs|cm|cu|autostart";
         //! start the CU without metadataserver presence
-        static const char * const CS_CM_CU_AUTOSTART_NO_MS                        = "cs|cm|cu|autostart_no_ms";
+        static const char * const CS_CM_CU_AUTOSTART_NO_MS                      = "cs|cm|cu|autostart_no_ms";
         //!key representing the type of parameter
         static const char * const CS_CM_CU_NAME                                 = "cs|cm|cu_name";
         //!key representing the type of parameter
@@ -278,9 +278,13 @@ namespace chaos {
             //!Integer 32 bit length
             EC_NO_ERROR = 0,
             EC_TIMEOUT = 1,
-            EC_ATTRIBUTE_NOT_FOUND,
-            EC_ATTRIBUTE_BAD_DIR,
-            EC_ATTRIBUTE_TYPE_NOT_SUPPORTED
+            EC_ATTRIBUTE_NOT_FOUND = 2,
+            EC_ATTRIBUTE_BAD_DIR = 3,
+            EC_ATTRIBUTE_TYPE_NOT_SUPPORTED = 4,
+			EC_MDS_UNIT_SERV_REGISTRATION_OK = 5,
+			EC_MDS_UNIT_SERV_REGISTRATION_FAILURE_INVALID_ALIAS = 6,
+			EC_MDS_UNIT_SERV_REGISTRATION_FAILURE_DUPLICATE_ALIAS = 7,
+			EC_MDS_UNIT_SERV_BAD_US_SM_STATE = 8,
         } ErrorCode;
     }
     /** @} */ // end of ChaosDataType
@@ -364,29 +368,102 @@ namespace chaos {
      */
     namespace ChaosSystemDomainAndActionLabel {
         //! The chaos action domain for system message
-        static const char * const SYSTEM_DOMAIN             = "system";
+        static const char * const SYSTEM_DOMAIN									= "system";
+		
+        //! this action perform the registration for the unit server service
+        static const char * const MDS_REGISTER_UNIT_SERVER						= "registerUnitServer";
+		
+		//! key for the server alias used by the instance [string]
+        static const char * const MDS_REGISTER_UNIT_SERVER_ALIAS				= "unit_server_alias";
+		
+		//! key for the control unit aliases published by the unit server [array fo string]
+        static const char * const MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS	= "unit_server_cu_alias";
+		
+        //! key that idetify the result of unit server registration[int32]
+        static const char * const MDS_REGISTER_UNIT_SERVER_RESULT				= "reg_unit_serv_result";
+		
+		//! this action perform the registration for the control unit dataset
+        static const char * const MDS_REGISTER_CONTROL_UNIT						= "registerControlUnit";
+		
+		//! Action to retrive all device id
+		static const char * const MDS_GET_ALL_DEVICE							= "getAllActiveDevice";
+		
+		//! Perform the heart beat of the cu
+		static const char * const MDS_CU_HEARTBEAT								= "heartbeatControlUnit";
+		
+		//! Perform request of the network address for a node identified by a device id
+		static const char * const MDS_GET_NODE_ADDRESS							= "getNodeNetworkAddress";
+		
         //! This action provide to the shutdown porcess of the enteir daemon
         //! that runt the active contorl units. All it will be gracefull shutten down
         //! before daemon exit
-        static const char * const ACTION_SYSTEM_SHUTDOWN    = "shutdown";
+        static const char * const ACTION_SYSTEM_SHUTDOWN		= "shutdownUnitServer";
+		
+		//! Action called by mds for ack message in the unit server registration process
+        static const char * const ACTION_UNIT_SERVER_REG_ACK	= "unitServerRegistrationACK";
+
+		//! Action called by mds for ack message in the unit server registration process
+        static const char * const ACTION_WORK_UNIT_REG_ACK		= "workUnitRegistrationACK";
+		
+		//! is the device id received by the work unit registration ack message from the mds
+		static const char * const PARAM_WORK_UNIT_REG_ACK_DEVICE_ID	= DatasetDefinitionkey::DEVICE_ID;
+		
+		//! Load the control unit
+        static const char * const ACTION_LOAD_CONTROL_UNIT		= "loadControlUnit";
+
+		//! Alias to the intancer of the control unit to allocate [string]
+        static const char * const PARAM_LOAD_CONTROL_UNIT_ALIAS	= "loadControlUnitAlias";
+
+		//! unique id to associate to the work unit instance [string]
+        static const char * const PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID	= PARAM_WORK_UNIT_REG_ACK_DEVICE_ID;
+		
+		//! param to pass to the control unit during load operation[ string]
+        static const char * const PARAM_LOAD_CONTROL_UNIT_PARAM	= "loadControlUnitParam";
+		
+		//! Description for the control unit dirvers [vector[string, string, string]*]
+        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC				= "loadControlUnitDriverDesc";
+
+		//! The name of the driver to use[strig]
+        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME			= "loadControlUnitDriverDescName";
+
+		//! The version of the driver to use[strig]
+        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION		= "loadControlUnitDriverDescVersion";
+
+		//! The version of the driver to use[strig]
+        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM	= "loadControlUnitDriverDescInitParam";
+
+		//! Unload the control unit
+        static const char * const ACTION_UNLOAD_CONTROL_UNIT	= "unloadControlUnit";
+		
+		//! Alias for the control unit to load/unload
+		static const char * const PARAM_CU_LOAD_UNLOAD_ALIAS	= "controlUnitAlias";
+		
+		//! driver params passed during load operation for a specified control unit
+		static const char * const PARAM_CU_LOAD_DRIVER_PARAMS	= "controlUnitDriverParams";
+		
         //! Start the control unit intialization, the action need the default value
         //! of the input attribute for a determinate device
-        static const char * const ACTION_DEVICE_INIT        = "initDevice";
+        static const char * const ACTION_CU_INIT				= "initControlUnit";
+		
         //! Deinitialization of a control unit, if it is in run, the stop phase
         //! is started befor deinitialization one
-        static const char * const ACTION_DEVICE_DEINIT      = "deinitDevice";
+        static const char * const ACTION_CU_DEINIT				= "deinitControlUnit";
+		
         //! start the run method schedule for a determinated device
-        static const char * const ACTION_DEVICE_START       = "startDevice";
+        static const char * const ACTION_CU_START				= "startControlUnit";
+		
         //! pause the run method for a determinated device
-        static const char * const ACTION_DEVICE_STOP        = "stopDevice";
+        static const char * const ACTION_CU_STOP				= "stopControlUnit";
+		
         //! return the state of the device
-        static const char * const ACTION_DEVICE_GET_STATE   = "getState";
+        static const char * const ACTION_CU_GET_STATE			= "getControlUnitState";
+		
 		//! return the control unit information
-        static const char * const ACTION_CU_GET_INFO		= "getInfo";
-
+        static const char * const ACTION_CU_GET_INFO			= "getControlUnitInfo";
+		
     }
-    /** @} */ // end of ChaosSystemDomainAndActionLabel
-    
+	
+	
 	/** @defgroup PerformanceSystemRpcKey Chaos performance system
      * this is the collection of the rpc key for interacting with
 	 * internal performance system
@@ -412,7 +489,7 @@ namespace chaos {
      */
     //! This is the collection of the key to configura history and live channel
     namespace DataProxyConfigurationKey {
-        static const char * const CS_LIB_METADATASET_ADDRESS					="mds_network_addr";
+        static const char * const CS_LIB_METADATASET_ADDRESS					= "mds_network_addr";
         //!root key for DataManager Configuration
         static const char * const CS_DM_CONFIGURATION							= "cs|dm|configuration";
         //!the numebr of the thread ofr the output buffer
@@ -426,7 +503,7 @@ namespace chaos {
         //!live data address
         static const char * const CS_DM_LD_SERVER_ADDRESS						= "cs|dm|ld|server_address";
         //!key associated with the device identification in a k/v storage ien
-        static const char * const CS_DM_LD_DEVICE_ADDRESS_KEY                   = "ld.device_addr_key";
+        static const char * const CS_DM_LD_CU_ADDRESS_KEY						= "ld.device_addr_key";
 		//!key associated with the device identification in a k/v storage ien
         static const char * const DATAPROXY_CLIENT_CONNECTION_MODE				= "chaos:dp:conn_mode";
     }
@@ -442,7 +519,7 @@ namespace chaos {
     namespace DataPackKey{
         //!define the device id key, this represent the
         //!primary key of the device
-        static const char * const CS_CSV_DEVICE_ID                            = "cs|csv|device_id";
+        static const char * const CS_CSV_CU_ID                            = "cs|csv|device_id";
         
         //!this define the timestamp of the data rapresented
         //!in the dataset row

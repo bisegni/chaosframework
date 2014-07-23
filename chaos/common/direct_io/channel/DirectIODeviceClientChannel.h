@@ -75,7 +75,7 @@ namespace chaos {
 					~DirectIODeviceClientChannel();
 					
 					//! Set the device id for this channel
-					void setDeviceID(std::string _device_id, DirectIODeviceClientChannelPutMode _put_mode = DirectIODeviceClientChannelPutModeLiveOnly);
+					void setDeviceID(std::string _CU_id, DirectIODeviceClientChannelPutMode _put_mode = DirectIODeviceClientChannelPutModeLiveOnly);
 					
 					//! set the information on witch port forward the answer(the ip is the ip of the machine)
 					void setAnswerServerInfo(uint16_t p_server_port, uint16_t s_server_port, uint16_t answer_enpoint);

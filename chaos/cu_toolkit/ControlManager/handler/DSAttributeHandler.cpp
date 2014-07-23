@@ -20,7 +20,7 @@
 
 #include "DSAttributeHandler.h"
 
-using namespace chaos::cu::handler;
+using namespace chaos::cu::control_manager::handler;
 
 DSAttributeHandler::DSAttributeHandler(std::string attrName):attributeName(attrName) {
     

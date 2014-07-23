@@ -37,15 +37,28 @@ e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_COD
 void MDSMessageChannel::sendHeartBeatForDeviceID(string& identificationID) {
     CDataWrapper hbMessage;
     hbMessage.addStringValue(DatasetDefinitionkey::DEVICE_ID, identificationID);
-    MessageChannel::sendMessage(nodeAddress->nodeID.c_str(), "heartbeat", &hbMessage);
+    MessageChannel::sendMessage(nodeAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::MDS_CU_HEARTBEAT, &hbMessage);
+}
+
+
+//! Send unit server description to MDS
+int MDSMessageChannel::sendUnitServerRegistration(CDataWrapper *deviceDataset, bool requestCheck, uint32_t millisecToWait) {
+    CHAOS_ASSERT(deviceDataset)
+    int err = ErrorCode::EC_NO_ERROR;
+    string currentBrokerIpPort;
+    getBroker()->getPublishedHostAndPort(currentBrokerIpPort);
+    deviceDataset->addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS, currentBrokerIpPort.c_str());
+    if(requestCheck){
+        auto_ptr<CDataWrapper> deviceRegistrationCheck( MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER, deviceDataset, millisecToWait));
+        CHECK_TIMEOUT_AND_RESULT_CODE(deviceRegistrationCheck, err)
+    } else {
+        MessageChannel::sendMessage(nodeAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER, deviceDataset);
+    }
+    
+    return err;
 }
 
     //! Send dataset to MDS
-/*!
- Return a list of all device id that are active
- \param deviceDataset the CDatawrapper representi the device dataset infromation, the pointer is not disposed
- \param millisecToWait delay after wich the wait is interrupt
- */
 int MDSMessageChannel::sendUnitDescription(CDataWrapper *deviceDataset, bool requestCheck, uint32_t millisecToWait) {
     CHAOS_ASSERT(deviceDataset)
     int err = ErrorCode::EC_NO_ERROR;
@@ -53,7 +66,7 @@ int MDSMessageChannel::sendUnitDescription(CDataWrapper *deviceDataset, bool req
     getBroker()->getPublishedHostAndPort(currentBrokerIpPort);
     deviceDataset->addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS, currentBrokerIpPort.c_str());
     if(requestCheck){
-        auto_ptr<CDataWrapper> deviceRegistrationCheck( MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), "registerControlUnit", deviceDataset, millisecToWait));
+        auto_ptr<CDataWrapper> deviceRegistrationCheck( MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::MDS_REGISTER_CONTROL_UNIT, deviceDataset, millisecToWait));
         CHECK_TIMEOUT_AND_RESULT_CODE(deviceRegistrationCheck, err)
     } else {
         MessageChannel::sendMessage(nodeAddress->nodeID.c_str(), "registerControlUnit", deviceDataset);
@@ -63,14 +76,10 @@ int MDSMessageChannel::sendUnitDescription(CDataWrapper *deviceDataset, bool req
 }
 
     //! Get all active device id
-/*!
- Return a list of all device id that are active
- \deviceID
- */
 int MDSMessageChannel::getAllDeviceID(vector<string>&  deviceIDVec, uint32_t millisecToWait) {
         //send request and wait the response
     int err = ErrorCode::EC_NO_ERROR;
-    auto_ptr<CDataWrapper> resultAnswer( MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), "getAllActiveDevice", NULL, millisecToWait));
+    auto_ptr<CDataWrapper> resultAnswer( MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::MDS_GET_ALL_DEVICE, NULL, millisecToWait));
     CHECK_TIMEOUT_AND_RESULT_CODE(resultAnswer, err)
     if(err == ErrorCode::EC_NO_ERROR && resultAnswer->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)){
         auto_ptr<CDataWrapper> allDeviceInfo(resultAnswer->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
@@ -97,7 +106,7 @@ int MDSMessageChannel::getNetworkAddressForDevice(string& identificationID, CDev
     auto_ptr<CDataWrapper> callData(new CDataWrapper());
     callData->addStringValue(DatasetDefinitionkey::DEVICE_ID, identificationID);
         //send request and wait the response
-    auto_ptr<CDataWrapper> resultAnswer( MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), "getNodeNetworkAddress", callData.get(), millisecToWait));
+    auto_ptr<CDataWrapper> resultAnswer( MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::MDS_GET_NODE_ADDRESS, callData.get(), millisecToWait));
     CHECK_TIMEOUT_AND_RESULT_CODE(resultAnswer, err)
     if(err == ErrorCode::EC_NO_ERROR && resultAnswer->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)){
         auto_ptr<CDataWrapper> nodeNetworkInfromation(resultAnswer->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));

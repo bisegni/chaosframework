@@ -33,99 +33,100 @@
 #define TAG_BUFFER_LIVE                 1
 #define TAG_BUFFER_HST                  2
 
+using namespace std;
+
 namespace chaos_data = chaos::common::data;
 
 namespace chaos {
-    
     namespace cu {
-        using namespace std;
-        
-        /*
-         THis class implement the use of two OutputDataBuffer, to permit the CU
-         to send data to the live and the history database
-         */
-        class MultiBufferDataStorage : public CObjectProcessingQueueListener<chaos_data::CDataWrapper>, public Configurable {
-            int32_t liveThreadNumber;
-            //live data offset in msec to waith
-            //according to pack timestamp
-            //for send data pack to the buffer
-            int32_t liveMsecOffset;
-            
-            //last timestamp sent to the buffer
-            int32_t liveLastMsecSent;
-            
-            //live data offset in msec to waith
-            //according to pack timestamp
-            //for send data pack to the buffer
-            int32_t historyUSecOffset;
-            
-            //last timestamp sent to the buffer
-            int64_t historyLastMsecSent;
-        protected:
-            //live data output buffer
-            OutputDataBuffer *liveOBuffer;
-            
-            //history data output buffer
-            OutputDataBuffer *hstOBuffer;
-            
-            //timining utility class
-            TimingUtil *timingUtil;
-        public:
-            
-            /*
-             Constructor
-             */
-            MultiBufferDataStorage();
-            
-            /*
-             Destructor
-             */
-            virtual ~MultiBufferDataStorage();
-            
-            /*
-             Initialize the Multisequence buffer
-             */
-            virtual void init(chaos_data::CDataWrapper*);
-            
-            /*
-             Deinitialize the Multisequence buffer
-             */
-            virtual void deinit();
-            /*
-             OBuffer listener
-             */
-            virtual bool elementWillBeProcessed(int bufferTag, chaos_data::CDataWrapper*);
-            /*
-             OBuffer listener
-             */
-            virtual bool elementWillBeDiscarded(int, chaos_data::CDataWrapper*);
-            /*
-             Push raw data in to buffer
-             */
-            virtual void pushDataSet(chaos_data::CDataWrapper*);
-            
-            /*
-             Set the first buffer
-             */
-            void setLiveOBuffer(OutputDataBuffer*);
-            
-            /*
-             Set the first buffer
-             */
-            void setHstOBuffer(OutputDataBuffer*);
-            
-            /*
-             Permit to be live configurable
-             */
-            virtual chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*);
-            
-            /*
-             Return the IODataDriver pointer for the input buffer tag
-             The pointer MUST NOT BE DEALOCATED it 's managed
-             internale to the buffer
-             */
-            IODataDriver* getBufferIODataDriver(int);
-        };
+		namespace data_manager {
+			/*
+			 THis class implement the use of two OutputDataBuffer, to permit the CU
+			 to send data to the live and the history database
+			 */
+			class MultiBufferDataStorage : public CObjectProcessingQueueListener<chaos_data::CDataWrapper>, public Configurable {
+				int32_t liveThreadNumber;
+				//live data offset in msec to waith
+				//according to pack timestamp
+				//for send data pack to the buffer
+				int32_t liveMsecOffset;
+				
+				//last timestamp sent to the buffer
+				int32_t liveLastMsecSent;
+				
+				//live data offset in msec to waith
+				//according to pack timestamp
+				//for send data pack to the buffer
+				int32_t historyUSecOffset;
+				
+				//last timestamp sent to the buffer
+				int64_t historyLastMsecSent;
+			protected:
+				//live data output buffer
+				OutputDataBuffer *liveOBuffer;
+				
+				//history data output buffer
+				OutputDataBuffer *hstOBuffer;
+				
+				//timining utility class
+				TimingUtil *timingUtil;
+			public:
+				
+				/*
+				 Constructor
+				 */
+				MultiBufferDataStorage();
+				
+				/*
+				 Destructor
+				 */
+				virtual ~MultiBufferDataStorage();
+				
+				/*
+				 Initialize the Multisequence buffer
+				 */
+				virtual void init(chaos_data::CDataWrapper*);
+				
+				/*
+				 Deinitialize the Multisequence buffer
+				 */
+				virtual void deinit();
+				/*
+				 OBuffer listener
+				 */
+				virtual bool elementWillBeProcessed(int bufferTag, chaos_data::CDataWrapper*);
+				/*
+				 OBuffer listener
+				 */
+				virtual bool elementWillBeDiscarded(int, chaos_data::CDataWrapper*);
+				/*
+				 Push raw data in to buffer
+				 */
+				virtual void pushDataSet(chaos_data::CDataWrapper*);
+				
+				/*
+				 Set the first buffer
+				 */
+				void setLiveOBuffer(OutputDataBuffer*);
+				
+				/*
+				 Set the first buffer
+				 */
+				void setHstOBuffer(OutputDataBuffer*);
+				
+				/*
+				 Permit to be live configurable
+				 */
+				virtual chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*);
+				
+				/*
+				 Return the IODataDriver pointer for the input buffer tag
+				 The pointer MUST NOT BE DEALOCATED it 's managed
+				 internale to the buffer
+				 */
+				IODataDriver* getBufferIODataDriver(int);
+			};
+		}
     }
 }
 #endif

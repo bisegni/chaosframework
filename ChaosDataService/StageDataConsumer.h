@@ -65,7 +65,7 @@ namespace chaos{
 		 */
         class StageDataConsumer :
 		public utility::StartableService,
-		protected chaos::common::async_central::TimerHanlder {
+		protected chaos::common::async_central::TimerHandler {
             friend class ChaosDataService;
 			ChaosDataServiceSetting	*settings;
 			vfs::VFSManager *vfs_manager_instance;

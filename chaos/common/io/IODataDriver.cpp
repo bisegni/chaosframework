@@ -33,7 +33,7 @@ void IODataDriver::storeData(CDataWrapper *dataToStore) throw(CException){
     if(!dataToStore) return;
     
         //get the key to store data on the memcached
-        //string key = dataToStore->getStringValue(DataPackKey::CS_CSV_DEVICE_ID);
+        //string key = dataToStore->getStringValue(DataPackKey::CS_CSV_CU_ID);
 	SerializationBuffer* serialization = dataToStore->getBSONData();
     //if(!serialization) {
    //     return;

@@ -25,12 +25,12 @@
 
 using namespace std;
 using namespace chaos;
-using namespace chaos::cu;
 using namespace chaos::common::data;
+using namespace chaos::cu::data_manager;
 
 KeyDataStorage::KeyDataStorage(const char * key):dataSetKey(key),keyData(new CDataWrapper()) {
         //associate the key to datawrapper used for retrive last personal data
-    keyData->addStringValue(DataPackKey::CS_CSV_DEVICE_ID, dataSetKey);
+    keyData->addStringValue(DataPackKey::CS_CSV_CU_ID, dataSetKey);
 }
 
 KeyDataStorage::KeyDataStorage(std::string& key):dataSetKey(key) {
@@ -59,7 +59,7 @@ void KeyDataStorage::init(CDataWrapper *startConfig) {
 CDataWrapper* KeyDataStorage::getNewDataWrapper() {
     CDataWrapper *result = new CDataWrapper();
         //add key to datawrapper
-    result->addStringValue(DataPackKey::CS_CSV_DEVICE_ID, dataSetKey);
+    result->addStringValue(DataPackKey::CS_CSV_CU_ID, dataSetKey);
         //add timestamp to datawrapper
     result->addInt64Value(DataPackKey::CS_CSV_TIME_STAMP, timingUtil->getTimeStamp());
     return result;
@@ -87,7 +87,7 @@ ArrayPointer<CDataWrapper>* KeyDataStorage::getHistoricalDataSet(CDataWrapper *s
  */
 CDataWrapper* KeyDataStorage::updateConfiguration(CDataWrapper *newConfiguration) {
         //add in the configuration the key for the device
-    newConfiguration->addStringValue(DataProxyConfigurationKey::CS_DM_LD_DEVICE_ADDRESS_KEY, dataSetKey);
+    newConfiguration->addStringValue(DataProxyConfigurationKey::CS_DM_LD_CU_ADDRESS_KEY, dataSetKey);
     MultiBufferDataStorage::updateConfiguration(newConfiguration);
     return NULL;
 }

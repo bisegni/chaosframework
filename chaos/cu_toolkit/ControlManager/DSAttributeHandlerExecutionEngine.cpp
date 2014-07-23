@@ -24,6 +24,7 @@
 #define LDSAHEE_ LAPP_ << "[DSAttributeHandlerExecutionEngine] - "
 using namespace chaos;
 using namespace chaos::cu;
+using namespace chaos::cu::control_manager;
 using namespace chaos::common::data;
 
 /*!

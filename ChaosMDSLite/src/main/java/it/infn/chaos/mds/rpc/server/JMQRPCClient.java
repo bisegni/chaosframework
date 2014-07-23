@@ -34,7 +34,7 @@ public class JMQRPCClient extends RPCClient {
 
 	@Override
 	public void sendMessage(BasicBSONObject messageData) throws Throwable {
-		Socket reqSocket = context.createSocket(ZMQ.ZMQ_REQ);
+		Socket reqSocket = context.createSocket(ZMQ.ZMQ_DEALER);
 		String serverAddress = "tcp://" + (messageData.containsField(RPCConstants.CS_CMDM_REMOTE_HOST_IP) ? messageData.getString(RPCConstants.CS_CMDM_REMOTE_HOST_IP) : null);
 		reqSocket.connect(serverAddress);
 		try {

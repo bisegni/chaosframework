@@ -26,54 +26,55 @@
 #include <chaos/common/exception/CException.h>
 
 namespace chaos {
-    
     namespace cu {
+		namespace control_manager {
             //Forward declaration
-        class RTAbstractControlUnit;
-        
+			class RTAbstractControlUnit;
+			
             //Forward declaration
-        class DSAttributeHandlerExecutionEngine;
-        
-        namespace  handler {
-            
-            
-            
+			class DSAttributeHandlerExecutionEngine;
+			
+			namespace  handler {
+				
+				
+				
                 //! Base class for attribute set hanlder operation
-            /*! \class DSAttributeHandler
-             \brief
-             Define an handler that can be attaccehd to aa Dataset Attribute when a
-             set request is received by rpc engine
-             */
-            class DSAttributeHandler {
-                friend class chaos::cu::DSAttributeHandlerExecutionEngine;
-                friend class chaos::cu::RTAbstractControlUnit;
-                
+				/*! \class DSAttributeHandler
+				 \brief
+				 Define an handler that can be attaccehd to aa Dataset Attribute when a
+				 set request is received by rpc engine
+				 */
+				class DSAttributeHandler {
+					friend class chaos::cu::control_manager::DSAttributeHandlerExecutionEngine;
+					friend class chaos::cu::control_manager::RTAbstractControlUnit;
+					
                     //!handle the abstract call to the specialize handler
-                /*!
-                 *  The sub class need to implement this function and cast or convert the value to teh specialized type
-                 *  \param valueReference is the reference to the value of the type T
-                 *  \exception CException is to be managed when something occur during the set operation
-                 *  \return CDataWrapper* if the handler need to be send something
-                 */
-                virtual void handle(void *valueReference) throw (CException) = 0;
-             
-            protected:
+					/*!
+					 *  The sub class need to implement this function and cast or convert the value to teh specialized type
+					 *  \param valueReference is the reference to the value of the type T
+					 *  \exception CException is to be managed when something occur during the set operation
+					 *  \return CDataWrapper* if the handler need to be send something
+					 */
+					virtual void handle(void *valueReference) throw (CException) = 0;
+					
+				protected:
                     //!The name of the attribute
-                std::string attributeName;
-            public:
-                
+					std::string attributeName;
+				public:
+					
                     //! Default constructor
-                DSAttributeHandler(std::string attrName);
-                
+					DSAttributeHandler(std::string attrName);
+					
                     //! Default constructor
-                DSAttributeHandler();
-                
+					DSAttributeHandler();
+					
                     //! Default Sestructor
-                virtual ~DSAttributeHandler();
-                
+					virtual ~DSAttributeHandler();
+					
                     //! Return the name of the attribute
-                std::string& getAttributeName();
-            };
+					std::string& getAttributeName();
+				};
+			}
         }
     }
 }

@@ -38,10 +38,10 @@
 
 namespace chaos {
 	namespace cu {
-		
-		//forward declaration
-		class AbstractControlUnit;
-		
+		namespace control_manager {
+			//forward declaration
+			class AbstractControlUnit;
+		}
 		namespace driver_manager {
 			
 			namespace common_utility = chaos::common::utility;
@@ -58,15 +58,18 @@ namespace chaos {
 			
 			#define CU_DRIVER_INSTANCER(DriverClass) new chaos::common::utility::TypedObjectInstancer<DriverClass, chaos::cu::driver_manager::driver::AbstractDriver>()
 
+			typedef struct DriverPluginInfo {
+				boost::shared_ptr< common_plugin::PluginInspector > sp_inspector;
+				boost::shared_ptr< common_utility::ObjectInstancer<cu_driver::AbstractDriver> > sp_instancer;
+			} DriverPluginInfo;
+			
 			//! !CHAOS Driver infrastructure managment
 			class DriverManager : public chaos::utility::StartableService, public chaos::Singleton<DriverManager> {
 				friend class chaos::Singleton<DriverManager>;
-				friend class chaos::cu::AbstractControlUnit;
-				
-				std::map<std::string, boost::shared_ptr< common_plugin::PluginInspector > > mapDriverAliasDescription;
+				friend class chaos::cu::control_manager::AbstractControlUnit;
 				
 				//! this map correlate the alias to the object instancer
-				std::map<std::string, boost::shared_ptr< common_utility::ObjectInstancer<cu_driver::AbstractDriver> > > mapDriverAliasVersionInstancer;
+				std::map<std::string, boost::shared_ptr< DriverPluginInfo > > mapDriverAliasVersionInstancer;
 				
 				//! this map correlate the param md5 to a live driver instance
 				/*!
@@ -75,7 +78,7 @@ namespace chaos {
 					is created, the hashing of the input parameter is checked if it is contained in the map. In case
 					of successfull test a live instance is returned.
 				 */
-				std::map<size_t, cu_driver::AbstractDriver*> mapParameterHashLiveInstance;
+				std::map<string, cu_driver::AbstractDriver*> mapParameterLiveInstance;
 				
 				
 				std::map<string, cu_driver::AbstractDriver*> mapDriverUUIDHashLiveInstance;

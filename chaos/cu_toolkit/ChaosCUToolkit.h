@@ -31,6 +31,7 @@
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManager.h>
 #include <chaos/cu_toolkit/driver_manager/DriverManager.h>
+#include <chaos/cu_toolkit/ControlManager/ControlManager.h>
 namespace chaos{
     namespace cu {
         /*! \page page_cut The Control Unit Toolkit
@@ -71,7 +72,11 @@ namespace chaos{
             void stop()throw(CException);
             void deinit()throw(CException);
 			
-            void addControlUnit(AbstractControlUnit*);
+            void addControlUnit(control_manager::AbstractControlUnit*);
+			template<typename ControlUnitClass>
+			void registerControlUnit() {
+				control_manager::ControlManager::getInstance()->registerControlUnit<ControlUnitClass>();
+			}
         };
     }
 }

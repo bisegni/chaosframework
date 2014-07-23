@@ -32,7 +32,7 @@
 using namespace chaos::common::async_central;
 
 void acm_timer(uv_timer_t *handle) {
-	TimerHanlder *c_handler = reinterpret_cast<TimerHanlder*>(handle->data);
+	TimerHandler *c_handler = reinterpret_cast<TimerHandler*>(handle->data);
 	c_handler->timeout();
 }
 void acm_thread(void *handle) {
@@ -67,8 +67,9 @@ void AsyncCentralManager::_internalEventLoop(void *args) {
 // Initialize instance
 void AsyncCentralManager::init(void *inti_data) throw(chaos::CException) {
 	ACM_LAPP_ << "Allocating uv loop";
-	uv_l = uv_loop_new();
+	uv_l = (uv_loop_t*)malloc(sizeof(uv_loop_t));
 	if(!uv_l) throw chaos::CException(-1, "Error allocating uv loop", __PRETTY_FUNCTION__);
+	uv_loop_init(uv_l);
 	
 	//start the interna central loop ticker
 	ACM_LAPP_ << "Allocate loop thread";
@@ -90,10 +91,12 @@ void AsyncCentralManager::deinit() throw(chaos::CException) {
 	if(uv_thread_join(&thread_loop_id)) {
 		ACM_LERR_ << "Error joining loop thread";
 	}
+	
+	if(uv_l)free(uv_l);
 }
 
 
-int AsyncCentralManager::addTimer(TimerHanlder *timer_handler, uint64_t timeout,uint64_t repeat) {
+int AsyncCentralManager::addTimer(TimerHandler *timer_handler, uint64_t timeout,uint64_t repeat) {
 	int err = 0;
 	//init timer
 	err = uv_timer_init(uv_l, &timer_handler->uv_t);
@@ -106,7 +109,12 @@ int AsyncCentralManager::addTimer(TimerHanlder *timer_handler, uint64_t timeout,
 	return err;
 }
 
-void AsyncCentralManager::removeTimer(TimerHanlder *timer_handler) {
+int AsyncCentralManager::restartTimer(TimerHandler *timer_handler) {
+	int err = uv_timer_again(&timer_handler->uv_t);
+	return err;
+}
+
+void AsyncCentralManager::removeTimer(TimerHandler *timer_handler) {
 	uv_timer_stop(&timer_handler->uv_t);
 }
 

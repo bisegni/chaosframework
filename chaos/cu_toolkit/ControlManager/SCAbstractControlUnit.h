@@ -32,72 +32,88 @@ namespace cs = chaos::cu::control_manager::slow_command;
 
 namespace chaos {
     namespace cu {
-
-        
-        class ControManager;
-        
-        //! Abstract class for Slow Control Unit
-        /*!
-            This class is the base for the slow control unit. It manage the all
-            customization of the base class AbstractControlUnit necessary to implement
-            slow control. With this term is intended a command that when it is executed,
-            it can run in a unterminated period of time.
-         
-            Subclass need to install commands and, optionally, set the default one.
-         */
-        class SCAbstractControlUnit : public AbstractControlUnit {
-            friend class ControlManager;
-            friend class DomainActionsScheduler;
-
-            //! Slow command executor pointer
-            cu::control_manager::slow_command::SlowCommandExecutor *slow_command_executor;
-            
-			// Startable Service method
-            void init(void *initData) throw(CException);
-            
-            // Startable Service method
-            void start() throw(CException);
-            
-            // Startable Service method
-            void stop() throw(CException);
-            
-            // Startable Service method
-            void deinit() throw(CException);
+		namespace control_manager {
 			
-            /*
-             Receive the event for set the dataset input element, this virtual method
-             is empty because can be used by controlunit implementation
-             */
-			chaos_data::CDataWrapper* setDatasetAttribute(chaos_data::CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException);
-            
-			/*
-             Event for update some CU configuration
-             */
-            chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*, bool&) throw (CException);
-        protected:
-            
-            virtual void defineSharedVariable();
-            
-            void addCustomSharedVariable(std::string name, uint32_t max_size, chaos::DataType::DataType type);
-            void setVariableValue(chaos_batch::IOCAttributeSharedCache::SharedVeriableDomain domain, std::string name, void *value, uint32_t value_size);
-			chaos_batch::ValueSetting *getVariableValue(chaos_batch::IOCAttributeSharedCache::SharedVeriableDomain domain, const char *variable_name);
-            // Get all managem declare action instance
-            void _getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance);
-
-        public:
-            
-            SCAbstractControlUnit();
-            ~SCAbstractControlUnit();
-            
-            void setDefaultCommand(std::string dafaultCommandName, unsigned int sandbox_instance = 0);
-            void addExecutionChannels(unsigned int execution_channels=1);
-            
-            template<typename T>
-            void installCommand(const char * commandName) {
-                CHAOS_ASSERT(slow_command_executor)
-                slow_command_executor->installCommand(std::string(commandName), SLOWCOMMAND_INSTANCER(T));
-            }
-        };
+			class ControManager;
+			
+			//! Abstract class for Slow Control Unit
+			/*!
+			 This class is the base for the slow control unit. It manage the all
+			 customization of the base class AbstractControlUnit necessary to implement
+			 slow control. With this term is intended a command that when it is executed,
+			 it can run in a unterminated period of time.
+			 
+			 Subclass need to install commands and, optionally, set the default one.
+			 */
+			class SCAbstractControlUnit : public AbstractControlUnit {
+				friend class ControlManager;
+				friend class DomainActionsScheduler;
+				
+				//! Slow command executor pointer
+				cu::control_manager::slow_command::SlowCommandExecutor *slow_command_executor;
+				
+				// Startable Service method
+				void init(void *initData) throw(CException);
+				
+				// Startable Service method
+				void start() throw(CException);
+				
+				// Startable Service method
+				void stop() throw(CException);
+				
+				// Startable Service method
+				void deinit() throw(CException);
+				
+				/*
+				 Receive the event for set the dataset input element, this virtual method
+				 is empty because can be used by controlunit implementation
+				 */
+				chaos_data::CDataWrapper* setDatasetAttribute(chaos_data::CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException);
+				
+				/*
+				 Event for update some CU configuration
+				 */
+				chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*, bool&) throw (CException);
+			protected:
+				
+				virtual void defineSharedVariable();
+				
+				void addCustomSharedVariable(std::string name, uint32_t max_size, chaos::DataType::DataType type);
+				void setVariableValue(chaos_batch::IOCAttributeSharedCache::SharedVeriableDomain domain, std::string name, void *value, uint32_t value_size);
+				chaos_batch::ValueSetting *getVariableValue(chaos_batch::IOCAttributeSharedCache::SharedVeriableDomain domain, const char *variable_name);
+				// Get all managem declare action instance
+				void _getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance);
+				
+			public:
+				
+				/*! default constructor
+				 \param _control_unit_id unique id for the control unit
+				 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
+				 */
+				SCAbstractControlUnit(const std::string& _control_unit_id,
+									  const std::string& _control_unit_param);
+				/*!
+				 Parametrized constructor
+				 \param _control_unit_id unique id for the control unit
+				 \param _control_unit_param is a string that contains parameter to pass during the contorl unit creation
+				 \param _control_unit_drivers driver information
+				 */
+				SCAbstractControlUnit(const std::string& _control_unit_id,
+									  const std::string& _control_unit_param,
+									  const ControlUnitDriverList& _control_unit_drivers);
+				
+				~SCAbstractControlUnit();
+				
+				void setDefaultCommand(std::string dafaultCommandName, unsigned int sandbox_instance = 0);
+				void addExecutionChannels(unsigned int execution_channels=1);
+				
+				template<typename T>
+				void installCommand(const char * commandName) {
+					CHAOS_ASSERT(slow_command_executor)
+					slow_command_executor->installCommand(std::string(commandName), SLOWCOMMAND_INSTANCER(T));
+				}
+			};
+		}
     }
 }
 

@@ -33,6 +33,7 @@ using namespace boost;
 using namespace boost::algorithm;
 
 #define ZMQC_LAPP LAPP_ << "[ZMQClient] - "
+#define ZMQC_LDBG LDBG_ << "[ZMQClient] - "
 #define ZMQC_LERR LERR_ << "[ZMQClient] - "
 static void my_free (void *data, void *hint)
 {
@@ -138,24 +139,29 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
 	zmq_msg_t	reply;
 	zmq_msg_t	message;
 	int			linger = 0;
-	int			water_mark = 3;
+	int			water_mark = 1;
 	zmq_msg_init (&reply);
 	
-    void *request_socket = zmq_socket (zmqContext, ZMQ_REQ);
+    void *request_socket = zmq_socket (zmqContext, ZMQ_DEALER);
         //this implementation is too slow, client for ip need to be cached
     if(!request_socket) {
 		ZMQC_LERR << "Error creating socket";
 	}
     
-	err = zmq_setsockopt(request_socket, ZMQ_LINGER, &linger, sizeof(int));
+	//err = zmq_setsockopt(request_socket, ZMQ_LINGER, &linger, sizeof(int));
+	//if(err) {
+	//	return;
+	//}
+	/*err = zmq_setsockopt(request_socket, ZMQ_RCVHWM, &water_mark, sizeof(int));
 	if(err) {
+		ZMQC_LERR << "Error setting ZMQ_SNDHWM value";
 		return;
 	}
-	err = zmq_setsockopt(request_socket, ZMQ_RCVHWM, &water_mark, sizeof(int));
+	err = zmq_setsockopt(request_socket, ZMQ_SNDHWM, &water_mark, sizeof(int));
 	if(err) {
-		
+		ZMQC_LERR << "Error setting ZMQ_SNDHWM value";
 		return;
-	}
+	}*/
         //get remote ip
         //serialize the call packet
     auto_ptr<chaos::common::data::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
@@ -170,11 +176,13 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
             //detach buffer from carrier object so we don't need to copy anymore the data
         callSerialization->disposeOnDelete = false;
         err = zmq_msg_init_data(&message, (void*)callSerialization->getBufferPtr(), callSerialization->getBufferLen(), my_free, NULL);
-        err = zmq_sendmsg(request_socket, &message, 0);
-     
+		ZMQC_LDBG << "Sending message";
+        err = zmq_sendmsg(request_socket, &message, ZMQ_NOBLOCK);
+		ZMQC_LDBG << "Message sent";
         if(zmq_recvmsg(request_socket, &reply, 0) == -1) {
 			ZMQC_LERR << "Error receiving data";
 		}
+		ZMQC_LDBG << "ACK Received";
             //decode result of the posting message operation
         if(zmq_msg_size(&reply)>0){
 #if DEBUG
