@@ -8,6 +8,7 @@ import it.infn.chaos.mds.business.UnitServer;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Vector;
 
 import org.ref.common.exception.RefException;
 import org.ref.common.helper.ExceptionHelper;
@@ -21,6 +22,93 @@ import org.ref.server.db.sqlbuilder.SqlBuilder;
  * 
  */
 public class UnitServerDA extends DataAccess {
+
+	/**
+	 * 
+	 * @return
+	 * @throws Throwable
+	 */
+	public Vector<UnitServer> getAlUnitServer() throws Throwable {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		Vector<UnitServer> result = new Vector<UnitServer>();
+		SqlBuilder s = new SqlBuilder();
+		s.addTable(UnitServer.class);
+		s.addPseudoColumntoSelect("*");
+		try {
+			ps = getPreparedStatementForSQLCommand(s.toString());
+			Vector<?> result_partial = executeQueryPreparedStatementAndClose(ps, UnitServer.class, null, null, false);
+			for (Object object : result_partial) {
+				UnitServer us = (UnitServer) object;
+				fillUnitServerWithCUTypes(us);
+				result.addElement(us);
+			}
+		} catch (IllegalArgumentException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 1, "UnitServerDA::getAlUnitServer");
+		} catch (IllegalAccessException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 2, "UnitServerDA::getAlUnitServer");
+		} catch (SQLException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 3, "UnitServerDA::getAlUnitServer");
+		} finally {
+		}
+		return result;
+	}
+
+	/**
+	 * 
+	 * @param unitServerAlias
+	 * @return
+	 * @throws RefException
+	 */
+	public UnitServer getUnitServerByAlias(String unitServerAlias) throws RefException {
+		PreparedStatement ps = null;
+		UnitServer result = null;
+		SqlBuilder s = new SqlBuilder();
+		s.addTable(UnitServer.class);
+		s.addPseudoColumntoSelect("*");
+		s.addCondition(true, String.format("unit_server_alias='%s'", unitServerAlias));
+		try {
+			ps = getPreparedStatementForSQLCommand(s.toString());
+			result = (UnitServer) executeQuerySingleResultPreparedStatementAndClose(ps, UnitServer.class, null, null, false);
+			if(result !=null) {
+				fillUnitServerWithCUTypes(result);
+			}
+		} catch (IllegalArgumentException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 1, "UnitServerDA::getAlUnitServer");
+		} catch (IllegalAccessException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 2, "UnitServerDA::getAlUnitServer");
+		} catch (SQLException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 3, "UnitServerDA::getAlUnitServer");
+		} catch (Throwable e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 3, "UnitServerDA::getAlUnitServer");
+		} finally {
+		}
+		return result;
+	}
+
+	public void fillUnitServerWithCUTypes(UnitServer us) throws RefException {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		SqlBuilder cuTypesSql = new SqlBuilder();
+		cuTypesSql.addTable("unit_server_published_cu");
+		cuTypesSql.addPseudoColumntoSelect("control_unit_alias");
+		cuTypesSql.addCondition(true, String.format("unit_server_alias='%s'", us.getAlias()));
+
+		try {
+			ps = getPreparedStatementForSQLCommand(cuTypesSql.toString());
+			rs = ps.executeQuery();
+			us.getPublischedCU().clear();
+			while (rs.next()) {
+				us.getPublischedCU().addElement(rs.getString(1));
+			}
+		} catch (Exception e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::getAlUnitServer");
+		} finally {
+			closeResultSet(rs);
+			closePreparedStatement(ps);
+		}
+	}
+	
 	/**
 	 * Insert new unit server
 	 * 
@@ -145,4 +233,5 @@ public class UnitServerDA extends DataAccess {
 			closePreparedStatement(ps);
 		}
 	}
+
 }

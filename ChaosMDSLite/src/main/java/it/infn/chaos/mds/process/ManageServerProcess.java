@@ -6,7 +6,6 @@ package it.infn.chaos.mds.process;
 import it.infn.chaos.mds.business.DataServer;
 import it.infn.chaos.mds.da.DataServerDA;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.ref.server.interapplicationenvironment.ProcessDescription;
