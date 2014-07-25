@@ -5,6 +5,7 @@ import it.infn.chaos.mds.business.Dataset;
 import it.infn.chaos.mds.business.DatasetAttribute;
 import it.infn.chaos.mds.business.Device;
 import it.infn.chaos.mds.business.UnitServer;
+import it.infn.chaos.mds.business.UnitServerCuInstance;
 import it.infn.chaos.mds.process.ManageDeviceProcess;
 import it.infn.chaos.mds.process.ManageServerProcess;
 import it.infn.chaos.mds.process.ManageUnitServerProcess;
@@ -140,7 +141,13 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 					} catch (IllegalAccessException e) {
 						e.printStackTrace();
 					}
-				}
+				}else if (viewEvent.getEventKind().equals(NewUSCUAssociationView.EVENT_SAVE_USCU_ASSOC_VIEW)) {
+					deleteViewByKey("NEW_US_CU_ASSOCIATION");
+					UnitServerCuInstance usci = (UnitServerCuInstance)viewEvent.getEventData();
+					musp.addUSCUAssociation(usci);
+				}else if (viewEvent.getEventKind().equals(NewUSCUAssociationView.EVENT_CANCEL_USCU_ASSOC_VIEW)) {
+					deleteViewByKey("NEW_US_CU_ASSOCIATION");
+				} 
 			}
 		} catch (Throwable e) {
 			MDSAppView view = getViewByKey("VISTA");

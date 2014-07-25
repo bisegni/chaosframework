@@ -4,18 +4,22 @@
 package it.infn.chaos.mds.da;
 
 import it.infn.chaos.mds.business.UnitServer;
+import it.infn.chaos.mds.business.UnitServerCuInstance;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 
+import org.bson.BasicBSONObject;
 import org.ref.common.exception.RefException;
 import org.ref.common.helper.ExceptionHelper;
 import org.ref.server.data.DataAccess;
 import org.ref.server.db.sqlbuilder.DeleteSqlBuilder;
 import org.ref.server.db.sqlbuilder.InsertUpdateBuilder;
 import org.ref.server.db.sqlbuilder.SqlBuilder;
+
+import com.mongodb.util.JSON;
 
 /**
  * @author bisegni
@@ -70,7 +74,7 @@ public class UnitServerDA extends DataAccess {
 		try {
 			ps = getPreparedStatementForSQLCommand(s.toString());
 			result = (UnitServer) executeQuerySingleResultPreparedStatementAndClose(ps, UnitServer.class, null, null, false);
-			if(result !=null) {
+			if (result != null) {
 				fillUnitServerWithCUTypes(result);
 			}
 		} catch (IllegalArgumentException e) {
@@ -108,7 +112,7 @@ public class UnitServerDA extends DataAccess {
 			closePreparedStatement(ps);
 		}
 	}
-	
+
 	/**
 	 * Insert new unit server
 	 * 
@@ -137,7 +141,31 @@ public class UnitServerDA extends DataAccess {
 		} finally {
 			closePreparedStatement(ps);
 		}
+	}
 
+	/**
+	 * 
+	 * @param usci
+	 * @throws RefException
+	 */
+	public void insertNewUSCUAssociation(UnitServerCuInstance usci) throws RefException {
+		PreparedStatement ps = null;
+		InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_INSERT);
+		iuBuilder.addTable(UnitServerCuInstance.class);
+		try {
+			iuBuilder.fillWithBusinessClass(usci);
+			ps = getPreparedStatementForSQLCommand(iuBuilder.toString());
+			iuBuilder.fillPreparedStatement(ps);
+			executeInsertUpdateAndClose(ps);
+		} catch (IllegalArgumentException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::insertNewUnitServer");
+		} catch (IllegalAccessException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 1, "UnitServerDA::insertNewUnitServer");
+		} catch (SQLException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 2, "UnitServerDA::insertNewUnitServer");
+		} finally {
+			closePreparedStatement(ps);
+		}
 	}
 
 	/**
@@ -232,6 +260,29 @@ public class UnitServerDA extends DataAccess {
 		} finally {
 			closePreparedStatement(ps);
 		}
+	}
+
+	public Vector<UnitServerCuInstance> returnAllUnitServerCUAssociationbyUSAlias(String unitServerAlias) throws RefException {
+		SqlBuilder s = new SqlBuilder();
+		Vector<UnitServerCuInstance> result = new Vector<UnitServerCuInstance>();
+		s.addTable(UnitServerCuInstance.class);
+		s.addPseudoColumntoSelect("*");
+		s.addCondition(true, String.format("%s=?", UnitServerCuInstance.UNIT_SERVER_ALIAS));
+		PreparedStatement ps = null;
+		try {
+			ps = getPreparedStatementForSQLCommand(s.toString());
+
+			ps.setString(1, unitServerAlias);
+			result = (Vector<UnitServerCuInstance>) executeQueryPreparedStatementAndClose(ps, UnitServerCuInstance.class, null, null, false);
+			for (UnitServerCuInstance unitServerCuInstance : result) {
+				BasicBSONObject bdriverDescription = (BasicBSONObject) JSON.parse(unitServerCuInstance.getDrvSpec());
+				System.out.println(bdriverDescription);
+			}
+		} catch (Throwable e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::returnAllUnitServerCUAssociationbyUSAlias");
+		}
+
+		return result;
 	}
 
 }
