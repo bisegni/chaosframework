@@ -58,6 +58,16 @@ public class MainView extends CustomComponent {
 	private Label				label_2;
 	private Button				buttonUnitServerUpdate;
 	private Button				buttonUSCUAssociate;
+	public Button getButtonUSCULoadAll() {
+		return buttonUSCULoadAll;
+	}
+
+	public Button getButtonUSCUUnloadAll() {
+		return buttonUSCUUnloadAll;
+	}
+
+	private Button				buttonUSCULoadAll;
+	private Button				buttonUSCUUnloadAll;
 
 	/*- VaadinEditorProperties={"grid":"RegularGrid,20","showGrid":true,"snapToGrid":true,"snapToObject":true,"movingGuides":false,"snappingDistance":10} */
 
@@ -391,13 +401,26 @@ public class MainView extends CustomComponent {
 		getButtonUnitServerUpdate().setHeight("-1px");
 		usbuttonHL.addComponent(getButtonUnitServerUpdate());
 
-		
 		buttonUSCUAssociate = new Button();
 		getButtonUSCUAssociate().setCaption("Associate new CUID");
 		getButtonUSCUAssociate().setImmediate(true);
 		getButtonUSCUAssociate().setWidth("-1px");
 		getButtonUSCUAssociate().setHeight("-1px");
 		usbuttonHL.addComponent(getButtonUSCUAssociate());
+
+		buttonUSCULoadAll = new Button();
+		buttonUSCULoadAll.setCaption("Load all association");
+		buttonUSCULoadAll.setImmediate(true);
+		buttonUSCULoadAll.setWidth("-1px");
+		buttonUSCULoadAll.setHeight("-1px");
+		usbuttonHL.addComponent(buttonUSCULoadAll);
+
+		buttonUSCUUnloadAll = new Button();
+		buttonUSCUUnloadAll.setCaption("Unload all association");
+		buttonUSCUUnloadAll.setImmediate(true);
+		buttonUSCUUnloadAll.setWidth("-1px");
+		buttonUSCUUnloadAll.setHeight("-1px");
+		usbuttonHL.addComponent(buttonUSCUUnloadAll);
 		return usbuttonHL;
 	}
 

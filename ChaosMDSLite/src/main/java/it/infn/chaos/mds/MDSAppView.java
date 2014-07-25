@@ -35,6 +35,8 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	public static final String	EVENT_UNIT_SERVER_SELECTED					= "EVENT_UNIT_SERVER_SELECTED";
 	public static final String	EVENT_UNIT_SERVER_CU_TYPE_SELECTED			= "EVENT_UNIT_SERVER_CU_TYPE_SELECTED";
 	public static final String	EVENT_UNIT_SERVER_CREATE_US_CU_ASSOCIATION	= "EVENT_UNIT_SERVER_CREATE_US_CU_ASSOCIATION";
+	public static final String	EVENT_UNIT_SERVER_LOAD_ALL_ASSOCIATION		= "EVENT_UNIT_SERVER_LOAD_ALL_ASSOCIATION";
+	public static final String	EVENT_UNIT_SERVER_UNLOAD_ALL_ASSOCIATION	= "EVENT_UNIT_SERVER_UNLOAD_ALL_ASSOCIATION";
 	public static final String	TAB1_CU_PARENT								= "CU Parent";
 	public static final String	TAB1_DEVICE_INSTANCE						= "Device Instance";
 	public static final String	TAB1_NET_ADDRESS							= "Net Address";
@@ -72,13 +74,12 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 
 		setComponentKey(KEY_DEVICE_TAB, mv.getTableDevice());
 		setComponentKey(KEY_DEVICE_START_AT_INIT_BUTTON, mv.getButtonInitializedAtStartup());
-
 		mv.getTableUnitServer().addListener(this);
 		mv.getTableUnitServer().setEditable(false);
 		mv.getTableUnitServer().setSelectable(true);
 		mv.getTableUnitServer().setImmediate(true);
 		mv.getTableUnitServer().setReadThrough(true);
-		mv.getTableUnitServer().setNullSelectionAllowed(false);
+		//mv.getTableUnitServer().setNullSelectionAllowed(false);
 		mv.getTableUnitServer().addContainerProperty(TAB_UNIT_SERVER_NAME, String.class, null);
 		mv.getTableUnitServer().addContainerProperty(TAB_UNIT_SERVER_ADDRESS, String.class, null);
 		mv.getTableUnitServer().addContainerProperty(TAB_UNIT_SERVER_HB_TS, Date.class, null);
@@ -108,6 +109,20 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 			}
 		});
 
+		mv.getButtonUSCULoadAll().setEnabled(true);
+		mv.getButtonUSCULoadAll().addListener(new ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				notifyEventoToControllerWithData(EVENT_UNIT_SERVER_LOAD_ALL_ASSOCIATION, event.getSource(), null);
+			}
+		});
+		
+		mv.getButtonUSCUUnloadAll().setEnabled(true);
+		mv.getButtonUSCUUnloadAll().addListener(new ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				notifyEventoToControllerWithData(EVENT_UNIT_SERVER_UNLOAD_ALL_ASSOCIATION, event.getSource(), null);
+			}
+		});
+		
 		mv.getButtonUSCUAssociate().addListener(new ClickListener() {
 			public void buttonClick(ClickEvent event) {
 				notifyEventoToControllerWithData(EVENT_UNIT_SERVER_CREATE_US_CU_ASSOCIATION, event.getSource(), null);
@@ -215,6 +230,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	 * @see com.vaadin.event.ItemClickEvent.ItemClickListener#itemClick(com.vaadin.event.ItemClickEvent)
 	 */
 	public void itemClick(ItemClickEvent event) {
+		boolean modifier = event.isCtrlKey() || event.isShiftKey() || event.isMetaKey() || event.isAltKey();
 		if (event.isDoubleClick() && event.getSource() instanceof Table) {
 			((Table) event.getSource()).select(event.getItemId());
 		}
