@@ -1,4 +1,4 @@
-package it.infn.chaos.mds.slowexecution;
+package it.infn.chaos.mds.batchexecution;
 
 import java.util.Hashtable;
 import java.util.concurrent.Executors;
@@ -18,7 +18,7 @@ public class SlowExecution {
 		mapAliasJob.put(job.getName(), job);
 	}
 
-	public boolean submitJob(String alias, BasicBSONObject jobData) throws InstantiationException, IllegalAccessException {
+	public boolean submitJob(String alias, Object jobData) throws InstantiationException, IllegalAccessException {
 		if (!mapAliasJob.containsKey(alias))
 			return false;
 		SlowExecutionJob job = mapAliasJob.get(alias).newInstance();

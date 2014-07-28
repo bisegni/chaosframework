@@ -5,13 +5,13 @@ package it.infn.chaos.mds.rpcaction;
 
 import it.infn.chaos.mds.RPCConstants;
 import it.infn.chaos.mds.SingletonServices;
+import it.infn.chaos.mds.batchexecution.UnitServerACK;
+import it.infn.chaos.mds.batchexecution.WorkUnitACK;
 import it.infn.chaos.mds.business.Device;
 import it.infn.chaos.mds.business.UnitServer;
 import it.infn.chaos.mds.da.DeviceDA;
 import it.infn.chaos.mds.da.UnitServerDA;
 import it.infn.chaos.mds.rpc.server.RPCActionHadler;
-import it.infn.chaos.mds.slowexecution.UnitServerACK;
-import it.infn.chaos.mds.slowexecution.WorkUnitACK;
 
 import java.sql.SQLException;
 import java.util.ListIterator;
@@ -157,9 +157,12 @@ public class CUQueryHandler extends RPCActionHadler {
 		Device d = null;
 		BasicBSONObject result = null;
 		DeviceDA dDA = null;
+		UnitServerDA usDA = null;
 		BasicBSONObject ackPack = new BasicBSONObject();
 		try {
 			dDA = getDataAccessInstance(DeviceDA.class);
+			usDA = getDataAccessInstance(UnitServerDA.class);
+			
 			if (actionData == null)
 				return null;
 			// check for CU presence
@@ -170,6 +173,8 @@ public class CUQueryHandler extends RPCActionHadler {
 			if (controlUnitInstance == null)
 				throw new RefException("No control unit instance found", 1, "DeviceDA::controlUnitValidationAndRegistration");
 
+			
+			
 			d = new Device();
 			d.setCuInstance(controlUnitInstance);
 			d.setNetAddress(controlUnitNetAddress);
@@ -177,6 +182,10 @@ public class CUQueryHandler extends RPCActionHadler {
 			//add device id into ack pack
 			ackPack.append(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS, actionData.getString(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS));
 			ackPack.append(RPCConstants.DATASET_DEVICE_ID, actionData.getString(RPCConstants.DATASET_DEVICE_ID));
+			if(!usDA.cuIDSelfManageable(actionData.getString(RPCConstants.DATASET_DEVICE_ID))) {
+				ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 9);
+				return null;
+			}
 			// check for deviceID presence
 			if (dDA.isDeviceIDPresent(d.getDeviceIdentification())) {
 				// the device is already present i need to check for dataset

@@ -556,5 +556,4 @@ public class DeviceDA extends DataAccess {
 		}
 		return result;
 	}
-
 }

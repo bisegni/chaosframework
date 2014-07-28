@@ -1,5 +1,7 @@
 package it.infn.chaos.mds;
 
+import it.infn.chaos.mds.batchexecution.LoadUnloadWorkUnit;
+import it.infn.chaos.mds.batchexecution.LoadUnloadWorkUnit.LoadUnloadWorkUnitSetting;
 import it.infn.chaos.mds.business.DataServer;
 import it.infn.chaos.mds.business.Dataset;
 import it.infn.chaos.mds.business.DatasetAttribute;
@@ -155,12 +157,28 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 					notifyEventoToViewWithData(USCUAssociationListView.EVENT_UPDATE_LIST, this, musp.loadAllAssociationForUnitServerAlias(unitServerSelected));
 				} else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_REMOVE_ASSOCIATION)) {
 					removeAssociation((Set<UnitServerCuInstance>) viewEvent.getEventData());
+				} else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_LOAD_INSTANCE)) {
+					loadUnloadInstance((Set<UnitServerCuInstance>) viewEvent.getEventData(), true);
 				}
 			}
 		} catch (Throwable e) {
 			MDSAppView view = getViewByKey("VISTA");
 			RefVaadinErrorDialog.shorError(view.getWindow(), "Event Error", e.getMessage());
 		}
+	}
+
+	/**
+	 * 
+	 * @param eventData
+	 * @param b
+	 * @throws Throwable 
+	 */
+	private void loadUnloadInstance(Set<UnitServerCuInstance> eventData, boolean loadUnload) throws Throwable {
+		LoadUnloadWorkUnitSetting setting = new LoadUnloadWorkUnitSetting();
+		setting.unit_server_container = musp.getUnitServerByIdentification(unitServerSelected);
+		setting.associations = eventData;
+		setting.loadUnload = loadUnload;
+		SingletonServices.getInstance().getSlowExecution().submitJob(LoadUnloadWorkUnit.class.getName(), setting);
 	}
 
 	/**

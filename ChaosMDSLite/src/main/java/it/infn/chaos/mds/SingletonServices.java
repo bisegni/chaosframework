@@ -3,10 +3,10 @@
  */
 package it.infn.chaos.mds;
 
+import it.infn.chaos.mds.batchexecution.SlowExecution;
 import it.infn.chaos.mds.rpc.server.RPCActionHadler;
 import it.infn.chaos.mds.rpc.server.RPCClient;
 import it.infn.chaos.mds.rpc.server.RPCServer;
-import it.infn.chaos.mds.slowexecution.SlowExecution;
 
 import org.ref.common.exception.RefException;
 

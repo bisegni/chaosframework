@@ -308,4 +308,27 @@ public class UnitServerDA extends DataAccess {
 	
 	}
 
+	/**
+	 * 
+	 * @param controlUnitInstance
+	 * @return
+	 * @throws RefException 
+	 */
+	public boolean cuIDSelfManageable(String controlUnitInstance) throws RefException {
+		SqlBuilder s = new SqlBuilder();
+		s.addTable(UnitServerCuInstance.class);
+		s.addPseudoColumntoSelect("count(*)");
+		s.addCondition(true, String.format("%s = ?", UnitServerCuInstance.CU_ID));
+		PreparedStatement ps;
+		try {
+			ps = getPreparedStatementForSQLCommand(s.toString());
+			ps.setString(1, controlUnitInstance);
+			return executeCountFromPreparedStatementAndClose(ps, 1) == 0;
+		} catch (SQLException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::cuIDSelfManageable");
+		} catch (Exception e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::cuIDSelfManageable");
+		}
+	}
+
 }

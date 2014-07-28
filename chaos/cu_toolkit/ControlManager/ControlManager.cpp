@@ -266,7 +266,11 @@ void ControlManager::migrateStableAndUnstableSMCUInstance() {
 			UpgradeReadToWriteLock registered_wlock(registered_lock);
 			
 			//now i can write on the two map
-			map_cuid_registered_instance.insert(make_pair(i->first, i->second));
+			if(i->second->getCurrentState() != UnitStatePublishingFailure) {
+				map_cuid_registered_instance.insert(make_pair(i->first, i->second));
+			}else {
+				LCMAPP_<< i->second->work_unit_instance->getCUID() << " instance is erased becase is in publishing failure state";
+			}
 			
 			//remove the iterator
 			map_cuid_registering_instance.erase(i);
@@ -383,7 +387,7 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
 	
 	
 	LCMDBG_ << "instantiate work unit ->" << "device_id:" <<device_id<< " load_options:"<< load_options;
-
+	
 	//scan all the driver description forwarded
 	std::vector<cu_driver_manager::driver::DrvRequestInfo> driver_params;
 	if(message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC)) {
@@ -399,8 +403,8 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
 			IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM), -3, "No driver init param name found")
 			LCMDBG_ << "scan " << idx << " driver";
 			cu_driver_manager::driver::DrvRequestInfo drv = {message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME).c_str(),
-																message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION).c_str(),
-																message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM).c_str()};
+				message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION).c_str(),
+				message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM).c_str()};
 			LCMDBG_ << "adding driver  " << drv.alias << "["<<drv.version << "-" << drv.init_parameter<<"]";
 			driver_params.push_back(drv);
 		}
@@ -430,7 +434,7 @@ CDataWrapper* ControlManager::workUnitRegistrationACK(CDataWrapper *message_data
 	std::string device_id = message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID);
 	
 	IN_ACTION_PARAM_CHECK(!map_cuid_registering_instance.count(device_id), -3, "No registering work unit found with the device id")
-
+	
 	//we can process the ack into the right manager
 	map_cuid_registering_instance[device_id]->manageACKPack(*message_data);
 	return NULL;
