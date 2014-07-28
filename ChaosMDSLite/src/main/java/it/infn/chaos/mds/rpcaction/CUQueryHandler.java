@@ -173,8 +173,11 @@ public class CUQueryHandler extends RPCActionHadler {
 			if (controlUnitInstance == null)
 				throw new RefException("No control unit instance found", 1, "DeviceDA::controlUnitValidationAndRegistration");
 
-			
-			
+			if(!actionData.containsField("self_managed_work_unit")) {
+				throw new RefException("No self_managed_work_unit key found", 1, "DeviceDA::controlUnitValidationAndRegistration");
+			}
+			String control_key = actionData.getString("control_key");
+
 			d = new Device();
 			d.setCuInstance(controlUnitInstance);
 			d.setNetAddress(controlUnitNetAddress);
@@ -182,7 +185,8 @@ public class CUQueryHandler extends RPCActionHadler {
 			//add device id into ack pack
 			ackPack.append(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS, actionData.getString(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS));
 			ackPack.append(RPCConstants.DATASET_DEVICE_ID, actionData.getString(RPCConstants.DATASET_DEVICE_ID));
-			if(!usDA.cuIDSelfManageable(actionData.getString(RPCConstants.DATASET_DEVICE_ID))) {
+			
+			if(usDA.cuIDIsMDSManaged(actionData.getString(RPCConstants.DATASET_DEVICE_ID)) && !control_key.equals("mds")) {
 				ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 9);
 				return null;
 			}

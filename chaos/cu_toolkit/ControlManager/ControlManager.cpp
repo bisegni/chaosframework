@@ -373,20 +373,20 @@ int ControlManager::sendConfPackToMDS(CDataWrapper& dataToSend) {
 CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& detach) throw (CException) {
 	//check param
 	IN_ACTION_PARAM_CHECK(!message_data, -1, "No param found")
-	IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_ALIAS), -2, "No instancer alias")
-	IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID), -2, "No id for the work unit instance found")
+	IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_TYPE_ALIAS), -2, "No instancer alias")
+	IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID), -3, "No id for the work unit instance found")
 	
-	std::string alias = message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_ALIAS);
-	LCMDBG_ << "Get new request for instance the work unit with alias:" << alias;
+	std::string work_unit_type = message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_TYPE_ALIAS);
+	LCMAPP_ << "Get new request for instance the work unit with alias:" << work_unit_type;
 	
 	WriteLock write_instancer_lock(mutex_map_cu_instancer);
-	IN_ACTION_PARAM_CHECK(!map_cu_alias_instancer.count(alias), -2, "No work unit instancer's found for the alias")
+	IN_ACTION_PARAM_CHECK(!map_cu_alias_instancer.count(work_unit_type), -2, "No work unit instancer's found for the alias")
 	
-	string device_id = message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID);
-	string load_options = CDW_STR_KEY(ChaosSystemDomainAndActionLabel::PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID);
+	string work_unit_id = message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID);
+	string load_options = CDW_STR_KEY(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_PARAM);
 	
 	
-	LCMDBG_ << "instantiate work unit ->" << "device_id:" <<device_id<< " load_options:"<< load_options;
+	LCMDBG_ << "instantiate work unit ->" << "device_id:" <<work_unit_id<< " load_options:"<< load_options;
 	
 	//scan all the driver description forwarded
 	std::vector<cu_driver_manager::driver::DrvRequestInfo> driver_params;
@@ -398,9 +398,9 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
 		for( int idx = 0; idx < driver_descriptions->size(); idx++) {
 			LCMDBG_ << "scan " << idx << " driver";
 			boost::scoped_ptr<CDataWrapper> driver_desc(driver_descriptions->getCDataWrapperElementAtIndex(idx));
-			IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME), -3, "No driver name found")
-			IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION), -3, "No driver version found")
-			IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM), -3, "No driver init param name found")
+			IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME), -4, "No driver name found")
+			IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION), -5, "No driver version found")
+			IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM), -6, "No driver init param name found")
 			LCMDBG_ << "scan " << idx << " driver";
 			cu_driver_manager::driver::DrvRequestInfo drv = {message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME).c_str(),
 				message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION).c_str(),
@@ -411,7 +411,10 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
 	}
 	
 	//submit new instance of the requested control unit
-	submitControlUnit(map_cu_alias_instancer[device_id]->getInstance(device_id, load_options, driver_params));
+	AbstractControlUnit *instance = map_cu_alias_instancer[work_unit_type]->getInstance(work_unit_id, load_options, driver_params);
+	IN_ACTION_PARAM_CHECK(instance==NULL, -7, "Error creating work unit instance")
+	instance->control_key = "mds";
+	submitControlUnit(instance);
 	return NULL;
 }
 

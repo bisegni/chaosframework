@@ -3,6 +3,7 @@
  */
 package it.infn.chaos.mds.batchexecution;
 
+import it.infn.chaos.mds.RPCConstants;
 import it.infn.chaos.mds.business.UnitServer;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
 
@@ -36,11 +37,19 @@ public class LoadUnloadWorkUnit extends SlowExecutionJob {
 	protected void executeJob() throws Throwable {
 		LoadUnloadWorkUnitSetting data = (LoadUnloadWorkUnitSetting) getInputData();
 
+		for (UnitServerCuInstance association : data.associations) {
+			sendLoadUnloadControlUnitMessage(data.unit_server_container, association, data.loadUnload);
+		}
 	}
 
-	private void sendLoadUnloadControlUnitMessage(UnitServerCuInstance instance) {
+	private void sendLoadUnloadControlUnitMessage(UnitServer unitServer, UnitServerCuInstance instance, boolean load) throws Throwable {
 		// send
-		BasicBSONObject msgData = new BasicBSONObject();
+		BasicBSONObject msgData = instance.getDriverDescriptionAsBson();
 		// msgData.pu
+		msgData.append("controlUnitTypeAlias", instance.getCuType());
+		msgData.append(RPCConstants.DATASET_DEVICE_ID, instance.getCuId());
+		msgData.append("loadControlUnitParam", instance.getCuParam());
+		//send message
+		sendMessage(unitServer.getIp_port(), "system", load?"loadControlUnit":"unloadControlUnit", msgData);
 	}
 }

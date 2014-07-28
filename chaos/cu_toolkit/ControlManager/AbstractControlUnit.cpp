@@ -52,6 +52,7 @@ AbstractControlUnit::AbstractControlUnit(const std::string& _control_unit_type,
 										 const std::string& _control_unit_id,
 										 const std::string& _control_unit_param):
 DatasetDB(GlobalConfiguration::getInstance()->getOption<bool>(CU_OPT_IN_MEMORY_DATABASE)),
+control_key("none"),
 control_unit_instance(UUIDUtil::generateUUIDLite()),
 control_unit_type(_control_unit_type),
 control_unit_id(_control_unit_id),
@@ -64,6 +65,7 @@ AbstractControlUnit::AbstractControlUnit(const std::string& _control_unit_type,
 										 const std::string& _control_unit_param,
 										 const ControlUnitDriverList& _control_unit_drivers):
 DatasetDB(GlobalConfiguration::getInstance()->getOption<bool>(CU_OPT_IN_MEMORY_DATABASE)),
+control_key("none"),
 control_unit_instance(UUIDUtil::generateUUIDLite()),
 control_unit_type(_control_unit_type),
 control_unit_id(_control_unit_id),
@@ -117,6 +119,10 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
     //add the CU isntance, this can be redefinide by user in the unitDefineActionAndDataset method
     //for let the CU have the same instance at every run
     setupConfiguration.addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE, control_unit_instance);
+	
+	//undocumented field
+	setupConfiguration.addStringValue("control_key", control_key);
+	
     //check if as been setuped a file for configuration
     //LCU_ << "Check if as been setup a json file path to configura CU:" << CU_IDENTIFIER_C_STREAM;
     //loadCDataWrapperForJsonFile(setupConfiguration);

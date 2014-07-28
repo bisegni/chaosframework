@@ -3,6 +3,7 @@
  */
 package it.infn.chaos.mds;
 
+import it.infn.chaos.mds.batchexecution.LoadUnloadWorkUnit;
 import it.infn.chaos.mds.batchexecution.SlowExecution;
 import it.infn.chaos.mds.batchexecution.UnitServerACK;
 import it.infn.chaos.mds.batchexecution.WorkUnitACK;
@@ -91,6 +92,7 @@ public class ChaosMDSInitPlugin implements REFInitPlugin, REFDeinitPlugin {
 			SingletonServices.getInstance().setSlowExecution(new SlowExecution(20));
 			SingletonServices.getInstance().getSlowExecution().registerSlowControlJob(UnitServerACK.class);
 			SingletonServices.getInstance().getSlowExecution().registerSlowControlJob(WorkUnitACK.class);
+			SingletonServices.getInstance().getSlowExecution().registerSlowControlJob(LoadUnloadWorkUnit.class);
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}

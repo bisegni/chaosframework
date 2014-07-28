@@ -413,7 +413,7 @@ namespace chaos {
         static const char * const ACTION_LOAD_CONTROL_UNIT		= "loadControlUnit";
 
 		//! Alias to the intancer of the control unit to allocate [string]
-        static const char * const PARAM_LOAD_CONTROL_UNIT_ALIAS	= "loadControlUnitAlias";
+        static const char * const PARAM_LOAD_CONTROL_UNIT_TYPE_ALIAS	= "controlUnitTypeAlias";
 
 		//! unique id to associate to the work unit instance [string]
         static const char * const PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID	= PARAM_WORK_UNIT_REG_ACK_DEVICE_ID;
@@ -422,16 +422,16 @@ namespace chaos {
         static const char * const PARAM_LOAD_CONTROL_UNIT_PARAM	= "loadControlUnitParam";
 		
 		//! Description for the control unit dirvers [vector[string, string, string]*]
-        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC				= "loadControlUnitDriverDesc";
+        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC				= "DriverDescription";
 
 		//! The name of the driver to use[strig]
-        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME			= "loadControlUnitDriverDescName";
+        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME			= "DriverDescriptionName";
 
 		//! The version of the driver to use[strig]
-        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION		= "loadControlUnitDriverDescVersion";
+        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION		= "DriverDescriptionVersion";
 
 		//! The version of the driver to use[strig]
-        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM	= "loadControlUnitDriverDescInitParam";
+        static const char * const PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM	= "DriverDescriptionInitParam";
 
 		//! Unload the control unit
         static const char * const ACTION_UNLOAD_CONTROL_UNIT	= "unloadControlUnit";

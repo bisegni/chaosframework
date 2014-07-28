@@ -76,7 +76,7 @@ public class USCUAssociationListView extends RefVaadinBasePanel implements com.v
 		});
 		impl.getButtonLoadInstance().addListener(new ClickListener() {
 			public void buttonClick(ClickEvent event) {
-				notifyEventoToControllerWithData(USCUAssociationListView.EVENT_LOAD_INSTANCE, event.getSource(), null);
+				notifyEventoToControllerWithData(USCUAssociationListView.EVENT_LOAD_INSTANCE, event.getSource(), impl.getTableAssociation().getValue());
 			}
 		});
 		impl.getButtonRemoveAssociation().addListener(new ClickListener() {
@@ -90,7 +90,7 @@ public class USCUAssociationListView extends RefVaadinBasePanel implements com.v
 		});
 		impl.getButtonUnloadInstance().addListener(new ClickListener() {
 			public void buttonClick(ClickEvent event) {
-				notifyEventoToControllerWithData(USCUAssociationListView.EVENT_UNLOAD_INSTANCE, event.getSource(), null);
+				notifyEventoToControllerWithData(USCUAssociationListView.EVENT_UNLOAD_INSTANCE, event.getSource(), impl.getTableAssociation().getValue());
 			}
 		});
 	}

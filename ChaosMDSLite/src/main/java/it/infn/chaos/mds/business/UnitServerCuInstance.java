@@ -3,6 +3,8 @@
  */
 package it.infn.chaos.mds.business;
 
+import it.infn.chaos.mds.RPCConstants;
+
 import java.util.Vector;
 
 import org.bson.BasicBSONObject;
@@ -131,37 +133,18 @@ public class UnitServerCuInstance extends BusinessObject {
 		this.driverSpec = driverSpec;
 	}
 
-	public String getDriverSpecInString() {
-		StringBuffer sb = new StringBuffer();
-		for (DriverSpec ds : getDriverSpec()) {
-			sb.append(ds.getDriverName());
-			sb.append("||");
-			sb.append(ds.getDriverVersion());
-			sb.append("||");
-			sb.append(ds.getDriverInit());
-			sb.append("||");
-		}
-		if (sb.length() > 0) {
-			sb.setLength(sb.length() - 2);
-		}
-		return sb.toString();
-	}
-
-	public BasicBSONObject getDriverSpecAsBson() {
+	public BasicBSONObject getDriverDescriptionAsBson() {
 		BasicBSONObject bobj = new BasicBSONObject();
-		bobj.append("US_ALIAS", getUnitServerAlias());
-		bobj.append("CU_TYPE", getCuType());
-		bobj.append("CU_ID", getCuId());
 		if (getDriverSpec().size() > 0) {
 			BasicBSONList blist = new BasicBSONList();
 			for (DriverSpec ds : getDriverSpec()) {
 				BasicBSONObject dspec = new BasicBSONObject();
-				dspec.append("DRV_NAME", ds.getDriverName());
-				dspec.append("DRV_VERSION", ds.getDriverVersion());
-				dspec.append("DRV_INIT", ds.getDriverInit());
+				dspec.append("DriverDescriptionName", ds.getDriverName());
+				dspec.append("DriverDescriptionVersion", ds.getDriverVersion());
+				dspec.append("DriverDescriptionInitParam", ds.getDriverInit());
 				blist.add(dspec);
 			}
-			bobj.append("CU_DRV_SPEC", blist);
+			bobj.append("DriverDescription", blist);
 		}
 		return bobj;
 	}

@@ -314,7 +314,7 @@ public class UnitServerDA extends DataAccess {
 	 * @return
 	 * @throws RefException 
 	 */
-	public boolean cuIDSelfManageable(String controlUnitInstance) throws RefException {
+	public boolean cuIDIsMDSManaged(String controlUnitInstance) throws RefException {
 		SqlBuilder s = new SqlBuilder();
 		s.addTable(UnitServerCuInstance.class);
 		s.addPseudoColumntoSelect("count(*)");

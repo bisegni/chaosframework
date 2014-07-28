@@ -98,6 +98,7 @@ namespace chaos{
 				typedef std::vector<chaos::cu::driver_manager::driver::DrvRequestInfo>				ControlUnitDriverList;
 				typedef std::vector<chaos::cu::driver_manager::driver::DrvRequestInfo>::iterator	ControlUnitDriverListIterator;
 			private:
+				std::string  control_key;
 				//! contains the description of the type of the control unit
 				std::string control_unit_type;
 				

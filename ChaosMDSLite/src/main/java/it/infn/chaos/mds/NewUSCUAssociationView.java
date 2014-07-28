@@ -119,7 +119,7 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 						driverSpec.setDriverInit(impl.getTableDriverSpecifications().getItem(idx).getItemProperty(NewUSCUAssociationView.TABLE_COLUMN_DRIVER_INIT).toString());
 						usci.addDrvierSpec(driverSpec);
 					}
-					usci.setDrvSpec(usci.getDriverSpecAsBson().toString());
+					usci.setDrvSpec(usci.getDriverDescriptionAsBson().toString());
 					usci.checkIntegrityValues();
 					notifyEventoToControllerWithData(NewUSCUAssociationView.EVENT_SAVE_USCU_ASSOC_VIEW, event.getSource(), usci);
 				} catch (Throwable e) {
