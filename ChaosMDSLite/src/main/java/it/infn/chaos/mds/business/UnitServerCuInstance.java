@@ -10,9 +10,7 @@ import org.bson.types.BasicBSONList;
 import org.ref.common.business.BusinessObject;
 import org.ref.common.business.DBColumn;
 import org.ref.common.business.DBTable;
-
-import com.mongodb.util.JSON;
-import com.mongodb.util.JSONSerializers;
+import org.ref.common.exception.RefException;
 
 /**
  * @author bisegni
@@ -27,7 +25,7 @@ public class UnitServerCuInstance extends BusinessObject {
 	public static final String	CU_PARAM			= "cu_param";
 	public static final String	DRIVER_SPEC			= "driver_spec";
 	public static final String	AUTO_LOAD			= "auto_load";
-
+	public static final String	STATE				= "state";
 	@DBColumn(name = UNIT_SERVER_ALIAS, maxDimension = 64)
 	private String				unitServerAlias		= null;
 	@DBColumn(name = CU_ID, maxDimension = 64)
@@ -38,6 +36,14 @@ public class UnitServerCuInstance extends BusinessObject {
 	private String				drvSpec				= null;
 	private Vector<DriverSpec>	driverSpec			= new Vector<DriverSpec>();
 
+
+	@DBColumn(name = CU_PARAM, maxDimension = 64)
+	private String	cuParam		= null;
+	@DBColumn(name = AUTO_LOAD)
+	private Boolean	autoLoad	= false;
+	@DBColumn(name = STATE, maxDimension = 64)
+	private String	state = "one";
+
 	public String getCuType() {
 		return cuType;
 	}
@@ -45,11 +51,11 @@ public class UnitServerCuInstance extends BusinessObject {
 	public void setCuType(String cuType) {
 		this.cuType = cuType;
 	}
-
-	@DBColumn(name = CU_PARAM, maxDimension = 64)
-	private String	cuParam		= null;
-	@DBColumn(name = AUTO_LOAD)
-	private Boolean	autoLoad	= false;
+	
+	@Override
+	public void checkIntegrityValues() throws RefException {
+		checkValue(getCuId(), "The work unit id is mandatory");
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -58,8 +64,10 @@ public class UnitServerCuInstance extends BusinessObject {
 	 */
 	@Override
 	public boolean equals(Object arg0) {
-		// TODO Auto-generated method stub
-		return false;
+		UnitServerCuInstance c = (UnitServerCuInstance) arg0;
+		if (c == null)
+			return false;
+		return c.getUnitServerAlias().equals(getUnitServerAlias()) && c.getCuId().equals(getCuId());
 	}
 
 	/*
@@ -80,8 +88,7 @@ public class UnitServerCuInstance extends BusinessObject {
 	 */
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return null;
+		return String.format("%s_%s", getUnitServerAlias(), getCuId());
 	}
 
 	public String getUnitServerAlias() {
@@ -173,5 +180,13 @@ public class UnitServerCuInstance extends BusinessObject {
 
 	public void setDrvSpec(String drvSpec) {
 		this.drvSpec = drvSpec;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
 	}
 }

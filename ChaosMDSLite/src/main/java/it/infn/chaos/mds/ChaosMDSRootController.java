@@ -10,11 +10,13 @@ import it.infn.chaos.mds.process.ManageDeviceProcess;
 import it.infn.chaos.mds.process.ManageServerProcess;
 import it.infn.chaos.mds.process.ManageUnitServerProcess;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
+import java.util.Set;
 
 import org.ref.common.exception.RefException;
 import org.ref.common.mvc.ViewNotifyEvent;
@@ -141,18 +143,60 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 					} catch (IllegalAccessException e) {
 						e.printStackTrace();
 					}
-				}else if (viewEvent.getEventKind().equals(NewUSCUAssociationView.EVENT_SAVE_USCU_ASSOC_VIEW)) {
+				} else if (viewEvent.getEventKind().equals(NewUSCUAssociationView.EVENT_SAVE_USCU_ASSOC_VIEW)) {
 					deleteViewByKey("NEW_US_CU_ASSOCIATION");
-					UnitServerCuInstance usci = (UnitServerCuInstance)viewEvent.getEventData();
+					UnitServerCuInstance usci = (UnitServerCuInstance) viewEvent.getEventData();
 					musp.addUSCUAssociation(usci);
-				}else if (viewEvent.getEventKind().equals(NewUSCUAssociationView.EVENT_CANCEL_USCU_ASSOC_VIEW)) {
+				} else if (viewEvent.getEventKind().equals(NewUSCUAssociationView.EVENT_CANCEL_USCU_ASSOC_VIEW)) {
 					deleteViewByKey("NEW_US_CU_ASSOCIATION");
-				} 
+				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UNIT_SERVER_SHOW_ALL_ASSOCIATION)) {
+					showAllAssociationForUnitServer();
+				} else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_UPDATE_LIST)) {
+					notifyEventoToViewWithData(USCUAssociationListView.EVENT_UPDATE_LIST, this, musp.loadAllAssociationForUnitServerAlias(unitServerSelected));
+				} else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_REMOVE_ASSOCIATION)) {
+					removeAssociation((Set<UnitServerCuInstance>) viewEvent.getEventData());
+				}
 			}
 		} catch (Throwable e) {
 			MDSAppView view = getViewByKey("VISTA");
 			RefVaadinErrorDialog.shorError(view.getWindow(), "Event Error", e.getMessage());
 		}
+	}
+
+	/**
+	 * 
+	 * @param associationToRemove
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws RefException
+	 */
+	private void removeAssociation(Set<UnitServerCuInstance> associationToRemove) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException, RefException {
+		if (associationToRemove == null || associationToRemove.size() == 0)
+			return;
+		musp.removeUSCUAssociation(associationToRemove);
+		notifyEventoToViewWithData(USCUAssociationListView.EVENT_UPDATE_LIST, this, musp.loadAllAssociationForUnitServerAlias(unitServerSelected));
+	}
+
+	/**
+	 * 
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws RefException
+	 */
+	private void showAllAssociationForUnitServer() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException, RefException {
+		if (unitServerSelected != null) {
+			openViewByKeyAndClass("US_CU_ASSOCIATION_LIST", USCUAssociationListView.class, OpenViewIn.DIALOG, "Work Unit List");
+			notifyEventoToViewWithData(USCUAssociationListView.SET_US_ALIAS, this, unitServerSelected);
+			notifyEventoToViewWithData(USCUAssociationListView.EVENT_UPDATE_LIST, this, musp.loadAllAssociationForUnitServerAlias(unitServerSelected));
+		} else {
+			MDSAppView view = getViewByKey("VISTA");
+			RefVaadinErrorDialog.shorError(view.getWindow(), "Show all error", "Uniserver not selected");
+		}
+
 	}
 
 	/**

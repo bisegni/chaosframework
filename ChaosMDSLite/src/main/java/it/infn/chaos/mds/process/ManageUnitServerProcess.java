@@ -5,6 +5,7 @@ import it.infn.chaos.mds.business.UnitServerCuInstance;
 import it.infn.chaos.mds.da.UnitServerDA;
 
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Vector;
 
@@ -75,5 +76,36 @@ public class ManageUnitServerProcess extends RefProcess {
 	public Vector<UnitServerCuInstance> loadAllAssociationForUnitServerAlias(String unitServerAlias) throws InstantiationException, IllegalAccessException, ClassNotFoundException, RefException, SQLException {
 		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
 		return usDA.returnAllUnitServerCUAssociationbyUSAlias(unitServerAlias);
+	}
+
+	/**
+	 * 
+	 * @param associationToRemove
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws ClassNotFoundException
+	 * @throws RefException
+	 * @throws SQLException
+	 */
+	public void removeUSCUAssociation(UnitServerCuInstance associationToRemove) throws InstantiationException, IllegalAccessException, ClassNotFoundException, RefException, SQLException {
+		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
+		usDA.removeAssociation(associationToRemove);
+		commit();
+	}
+
+	/**
+	 * 
+	 * @param associationToRemove
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws RefException
+	 */
+	public void removeUSCUAssociation(Collection<UnitServerCuInstance> associationToRemove) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException, RefException {
+		for (UnitServerCuInstance unitServerCuInstance : associationToRemove) {
+			removeUSCUAssociation(unitServerCuInstance);
+		}
+
 	}
 }

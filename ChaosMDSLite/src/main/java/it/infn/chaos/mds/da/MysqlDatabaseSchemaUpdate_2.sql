@@ -4,6 +4,7 @@ CREATE TABLE `chaosms`.`unit_server_cu_instance` (
   `cu_type` VARCHAR(64) NOT NULL,
   `cu_param` VARCHAR(256) NULL,
   `driver_init` VARCHAR(65535) NULL,
+  `state` VARCHAR(64) NOT NULL,
   `auto_load` VARCHAR(1) NULL DEFAULT 0,
   PRIMARY KEY (`unit_server_alias`, `cu_id`),
   CONSTRAINT `fk_unit_server_cu_instance_1`

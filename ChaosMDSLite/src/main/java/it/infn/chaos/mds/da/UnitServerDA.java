@@ -285,4 +285,27 @@ public class UnitServerDA extends DataAccess {
 		return result;
 	}
 
+	/**
+	 * 
+	 * @param associationToRemove
+	 * @throws RefException 
+	 * @throws SQLException 
+	 */
+	public void removeAssociation(UnitServerCuInstance associationToRemove) throws RefException {
+		DeleteSqlBuilder dsb = new DeleteSqlBuilder();
+		dsb.addTable(UnitServerCuInstance.class);
+		dsb.addCondition(true, String.format("%s = ?", UnitServerCuInstance.UNIT_SERVER_ALIAS));
+		dsb.addCondition(true, String.format("%s = ?", UnitServerCuInstance.CU_ID));
+		PreparedStatement ps;
+		try {
+			ps = getPreparedStatementForSQLCommand(dsb.toString());
+			ps.setString(1, associationToRemove.getUnitServerAlias());
+			ps.setString(2, associationToRemove.getCuId());
+			executeInsertUpdateAndClose(ps);
+		} catch (SQLException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::removeAssociation");
+		}
+	
+	}
+
 }

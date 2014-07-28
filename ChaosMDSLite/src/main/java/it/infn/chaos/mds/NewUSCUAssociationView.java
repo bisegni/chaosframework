@@ -3,7 +3,6 @@
  */
 package it.infn.chaos.mds;
 
-import it.infn.chaos.mds.business.DatasetAttribute;
 import it.infn.chaos.mds.business.DriverSpec;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
 
@@ -12,18 +11,15 @@ import java.util.Observable;
 
 import org.ref.common.mvc.ViewNotifyEvent;
 import org.ref.server.webapp.RefVaadinBasePanel;
+import org.ref.server.webapp.dialog.RefVaadinErrorDialog;
 
-import com.sun.activation.viewers.TextEditor;
 import com.vaadin.data.Item;
 import com.vaadin.event.Action;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
 
 /**
  * @author bisegni
@@ -96,7 +92,7 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 
 		impl.getButtonRemoveDriverSpec().addListener(new ClickListener() {
 			public void buttonClick(ClickEvent event) {
-				 impl.getTableDriverSpecifications().removeItem(driverSpecSelected);
+				impl.getTableDriverSpecifications().removeItem(driverSpecSelected);
 			}
 		});
 
@@ -109,21 +105,27 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 		impl.getButtonSave().addListener(new ClickListener() {
 			public void buttonClick(ClickEvent event) {
 				UnitServerCuInstance usci = new UnitServerCuInstance();
-				usci.setUnitServerAlias(impl.getUsSelected().getValue().toString());
-				usci.setCuId(impl.getCuIDTextField().getValue().toString());
-				usci.setCuType(impl.getCuTypeSelected().getValue().toString());
-				usci.setCuParam(impl.getCuParamTextArea().getValue().toString());
-				usci.setAutoLoad((Boolean) impl.getCheckBoxAutoLoad().getValue());
-				Collection<Integer> indexList = (Collection<Integer>) impl.getTableDriverSpecifications().getItemIds();
-				for (Integer idx : indexList) {
-					DriverSpec driverSpec = new DriverSpec();
-					driverSpec.setDriverName(impl.getTableDriverSpecifications().getItem(idx).getItemProperty(NewUSCUAssociationView.TABLE_COLUMN_DRIVER_ALIAS).toString());
-					driverSpec.setDriverVersion(impl.getTableDriverSpecifications().getItem(idx).getItemProperty(NewUSCUAssociationView.TABLE_COLUMN_DRIVER_VERSION).toString());
-					driverSpec.setDriverInit(impl.getTableDriverSpecifications().getItem(idx).getItemProperty(NewUSCUAssociationView.TABLE_COLUMN_DRIVER_INIT).toString());
-					usci.addDrvierSpec(driverSpec);
+				try {
+					usci.setUnitServerAlias(impl.getUsSelected().getValue().toString());
+					usci.setCuId(impl.getCuIDTextField().getValue().toString());
+					usci.setCuType(impl.getCuTypeSelected().getValue().toString());
+					usci.setCuParam(impl.getCuParamTextArea().getValue().toString());
+					usci.setAutoLoad((Boolean) impl.getCheckBoxAutoLoad().getValue());
+					Collection<Integer> indexList = (Collection<Integer>) impl.getTableDriverSpecifications().getItemIds();
+					for (Integer idx : indexList) {
+						DriverSpec driverSpec = new DriverSpec();
+						driverSpec.setDriverName(impl.getTableDriverSpecifications().getItem(idx).getItemProperty(NewUSCUAssociationView.TABLE_COLUMN_DRIVER_ALIAS).toString());
+						driverSpec.setDriverVersion(impl.getTableDriverSpecifications().getItem(idx).getItemProperty(NewUSCUAssociationView.TABLE_COLUMN_DRIVER_VERSION).toString());
+						driverSpec.setDriverInit(impl.getTableDriverSpecifications().getItem(idx).getItemProperty(NewUSCUAssociationView.TABLE_COLUMN_DRIVER_INIT).toString());
+						usci.addDrvierSpec(driverSpec);
+					}
+					usci.setDrvSpec(usci.getDriverSpecAsBson().toString());
+					usci.checkIntegrityValues();
+					notifyEventoToControllerWithData(NewUSCUAssociationView.EVENT_SAVE_USCU_ASSOC_VIEW, event.getSource(), usci);
+				} catch (Throwable e) {
+					RefVaadinErrorDialog.shorError(getWindow(), "Save Assocaition", "Some value are not good");
+
 				}
-				usci.setDrvSpec(usci.getDriverSpecAsBson().toString());
-				notifyEventoToControllerWithData(NewUSCUAssociationView.EVENT_SAVE_USCU_ASSOC_VIEW, event.getSource(), usci);
 			}
 		});
 

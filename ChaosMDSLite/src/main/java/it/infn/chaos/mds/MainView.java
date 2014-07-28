@@ -68,7 +68,7 @@ public class MainView extends CustomComponent {
 
 	private Button				buttonUSCULoadAll;
 	private Button				buttonUSCUUnloadAll;
-
+	private Button				buttonUSCUShowAll;
 	/*- VaadinEditorProperties={"grid":"RegularGrid,20","showGrid":true,"snapToGrid":true,"snapToObject":true,"movingGuides":false,"snappingDistance":10} */
 
 	/*- VaadinEditorProperties={"grid":"RegularGrid,20","showGrid":true,"snapToGrid":true,"snapToObject":true,"movingGuides":false,"snappingDistance":10} */
@@ -186,6 +186,10 @@ public class MainView extends CustomComponent {
 	/*- VaadinEditorProperties={"grid":"RegularGrid,20","showGrid":true,"snapToGrid":true,"snapToObject":true,"movingGuides":false,"snappingDistance":10} */
 
 	/*- VaadinEditorProperties={"grid":"RegularGrid,20","showGrid":true,"snapToGrid":true,"snapToObject":true,"movingGuides":false,"snappingDistance":10} */
+
+	public Button getButtonUSCUShowAll() {
+		return buttonUSCUShowAll;
+	}
 
 	private static final long	serialVersionUID	= 1722906903909249860L;
 
@@ -421,6 +425,13 @@ public class MainView extends CustomComponent {
 		buttonUSCUUnloadAll.setWidth("-1px");
 		buttonUSCUUnloadAll.setHeight("-1px");
 		usbuttonHL.addComponent(buttonUSCUUnloadAll);
+		
+		buttonUSCUShowAll = new Button();
+		buttonUSCUShowAll.setCaption("Show all association");
+		buttonUSCUShowAll.setImmediate(true);
+		buttonUSCUShowAll.setWidth("-1px");
+		buttonUSCUShowAll.setHeight("-1px");
+		usbuttonHL.addComponent(buttonUSCUShowAll);
 		return usbuttonHL;
 	}
 
