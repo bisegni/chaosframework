@@ -121,7 +121,7 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
     setupConfiguration.addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE, control_unit_instance);
 	
 	//undocumented field
-	setupConfiguration.addStringValue("control_key", control_key);
+	setupConfiguration.addStringValue("mds_control_key", control_key);
 	
     //check if as been setuped a file for configuration
     //LCU_ << "Check if as been setup a json file path to configura CU:" << CU_IDENTIFIER_C_STREAM;

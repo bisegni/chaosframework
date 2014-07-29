@@ -323,7 +323,7 @@ public class UnitServerDA extends DataAccess {
 		try {
 			ps = getPreparedStatementForSQLCommand(s.toString());
 			ps.setString(1, controlUnitInstance);
-			return executeCountFromPreparedStatementAndClose(ps, 1) == 0;
+			return executeCountFromPreparedStatementAndClose(ps, 1) == 1;
 		} catch (SQLException e) {
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::cuIDSelfManageable");
 		} catch (Exception e) {

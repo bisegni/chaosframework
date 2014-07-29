@@ -14,6 +14,8 @@ import org.ref.common.business.DBColumn;
 import org.ref.common.business.DBTable;
 import org.ref.common.exception.RefException;
 
+import com.mongodb.util.JSON;
+
 /**
  * @author bisegni
  * 
@@ -38,13 +40,12 @@ public class UnitServerCuInstance extends BusinessObject {
 	private String				drvSpec				= null;
 	private Vector<DriverSpec>	driverSpec			= new Vector<DriverSpec>();
 
-
 	@DBColumn(name = CU_PARAM, maxDimension = 64)
-	private String	cuParam		= null;
+	private String				cuParam				= null;
 	@DBColumn(name = AUTO_LOAD)
-	private Boolean	autoLoad	= false;
+	private Boolean				autoLoad			= false;
 	@DBColumn(name = STATE, maxDimension = 64)
-	private String	state = "one";
+	private String				state				= "one";
 
 	public String getCuType() {
 		return cuType;
@@ -53,7 +54,7 @@ public class UnitServerCuInstance extends BusinessObject {
 	public void setCuType(String cuType) {
 		this.cuType = cuType;
 	}
-	
+
 	@Override
 	public void checkIntegrityValues() throws RefException {
 		checkValue(getCuId(), "The work unit id is mandatory");
@@ -145,6 +146,10 @@ public class UnitServerCuInstance extends BusinessObject {
 				blist.add(dspec);
 			}
 			bobj.append("DriverDescription", blist);
+		} else {
+			if (getDrvSpec() != null) {
+				bobj = (BasicBSONObject) JSON.parse(getDrvSpec());
+			}
 		}
 		return bobj;
 	}

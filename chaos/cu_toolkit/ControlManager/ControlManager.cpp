@@ -310,8 +310,8 @@ void ControlManager::manageControlUnit() {
 			
 			//activate the sm for register the control unit instance
 			wui->turnOn();
-			
 			LCMAPP_  << "Create manager for new control unit:" << WU_IDENTIFICATION(wui->work_unit_instance);
+			
 			//! lock the hastable
 			ReadLock read_registering_lock(mutex_map_cuid_registering_instance);
 			LCMDBG_  << "Added to registering map" << WU_IDENTIFICATION(wui->work_unit_instance);
@@ -319,7 +319,7 @@ void ControlManager::manageControlUnit() {
 			// we can't have two different work unit with the same unique identifier within the same process
 			if(map_cuid_registering_instance.count(wui->work_unit_instance->getCUID())) {
 				LCMERR_  << "Duplicated control unit instance " << WU_IDENTIFICATION(wui->work_unit_instance);
-				return;
+				continue;
 			}
 			
 			//now we can proceed, add the network broker instance to the managment class of the work unit
@@ -340,7 +340,7 @@ void ControlManager::manageControlUnit() {
 			//whe have control unit isntance with unstable state machine
 			makeSMSteps();
 			//waith some time to retry the state machine
-			thread_waith_semaphore.wait(1000);
+			thread_waith_semaphore.wait(2500);
 		} else {
 			//we don'need to do anything else
 			thread_waith_semaphore.wait();
@@ -398,13 +398,13 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
 		for( int idx = 0; idx < driver_descriptions->size(); idx++) {
 			LCMDBG_ << "scan " << idx << " driver";
 			boost::scoped_ptr<CDataWrapper> driver_desc(driver_descriptions->getCDataWrapperElementAtIndex(idx));
-			IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME), -4, "No driver name found")
-			IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION), -5, "No driver version found")
-			IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM), -6, "No driver init param name found")
+			IN_ACTION_PARAM_CHECK(!driver_desc->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME), -4, "No driver name found")
+			IN_ACTION_PARAM_CHECK(!driver_desc->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION), -5, "No driver version found")
+			IN_ACTION_PARAM_CHECK(!driver_desc->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM), -6, "No driver init param name found")
 			LCMDBG_ << "scan " << idx << " driver";
-			cu_driver_manager::driver::DrvRequestInfo drv = {message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME).c_str(),
-				message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION).c_str(),
-				message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM).c_str()};
+			cu_driver_manager::driver::DrvRequestInfo drv = {driver_desc->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME).c_str(),
+															driver_desc->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION).c_str(),
+															driver_desc->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM).c_str()};
 			LCMDBG_ << "adding driver  " << drv.alias << "["<<drv.version << "-" << drv.init_parameter<<"]";
 			driver_params.push_back(drv);
 		}
