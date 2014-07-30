@@ -3,6 +3,10 @@
  */
 package it.infn.chaos.mds;
 
+import it.infn.chaos.mds.batchexecution.LoadUnloadWorkUnit;
+import it.infn.chaos.mds.batchexecution.SlowExecution;
+import it.infn.chaos.mds.batchexecution.UnitServerACK;
+import it.infn.chaos.mds.batchexecution.WorkUnitACK;
 import it.infn.chaos.mds.rpc.server.JMQRPCClient;
 import it.infn.chaos.mds.rpc.server.JMQRPCServer;
 import it.infn.chaos.mds.rpc.server.TCPRpcClient;
@@ -10,9 +14,6 @@ import it.infn.chaos.mds.rpc.server.TCPRpcServer;
 import it.infn.chaos.mds.rpcaction.CUQueryHandler;
 import it.infn.chaos.mds.rpcaction.DeviceQueyHandler;
 import it.infn.chaos.mds.rpcaction.PerformanceTest;
-import it.infn.chaos.mds.slowexecution.SlowExecution;
-import it.infn.chaos.mds.slowexecution.UnitServerACK;
-import it.infn.chaos.mds.slowexecution.WorkUnitACK;
 
 import java.util.Arrays;
 import java.util.StringTokenizer;
@@ -91,6 +92,7 @@ public class ChaosMDSInitPlugin implements REFInitPlugin, REFDeinitPlugin {
 			SingletonServices.getInstance().setSlowExecution(new SlowExecution(20));
 			SingletonServices.getInstance().getSlowExecution().registerSlowControlJob(UnitServerACK.class);
 			SingletonServices.getInstance().getSlowExecution().registerSlowControlJob(WorkUnitACK.class);
+			SingletonServices.getInstance().getSlowExecution().registerSlowControlJob(LoadUnloadWorkUnit.class);
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}

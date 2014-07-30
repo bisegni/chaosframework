@@ -76,23 +76,23 @@ namespace chaos {
 					
 					// the initial state of the player SM. Must be defined
 					typedef Unpublished initial_state;
-					typedef boost::msm::front::Row <  Unpublished   ,  UnitEventType::UnitEventTypePublish  , StartPublishing, boost::msm::front::none , boost::msm::front::none > unpub_spubing_row;
-					typedef boost::msm::front::Row <  StartPublishing   ,  UnitEventType::UnitEventTypePublishing  , Publishing, boost::msm::front::none , boost::msm::front::none > spubing_pubing_row;
-					typedef boost::msm::front::Row <  Publishing   ,  UnitEventType::UnitEventTypePublished  , Published, boost::msm::front::none , boost::msm::front::none > pubing_pub_row;
-					typedef boost::msm::front::Row <  Publishing   ,  UnitEventType::UnitEventTypeFailure  , PublishingFailure, boost::msm::front::none , boost::msm::front::none > pubbing_pubfail_row;
-					typedef boost::msm::front::Row <  Published   ,  UnitEventType::UnitEventTypeUnpublish  , StartUnpublishing, boost::msm::front::none , boost::msm::front::none > pub_sunpubing_row;
-					typedef boost::msm::front::Row <  StartUnpublishing   ,  UnitEventType::UnitEventTypeUnpublishing  , Unpublishing, boost::msm::front::none , boost::msm::front::none > sunpubing_unpubing_row;
-					typedef boost::msm::front::Row <  Unpublishing   ,  UnitEventType::UnitEventTypeUnpublished  , Unpublished, boost::msm::front::none , boost::msm::front::none > unpubing_unpub_row;
+					typedef boost::msm::front::Row <  Unpublished		,  UnitEventType::UnitEventTypePublish		, StartPublishing	, boost::msm::front::none , boost::msm::front::none > unpub_spubing_row;
+					typedef boost::msm::front::Row <  StartPublishing   ,  UnitEventType::UnitEventTypePublishing	, Publishing		, boost::msm::front::none , boost::msm::front::none > spubing_pubing_row;
+					typedef boost::msm::front::Row <  Publishing		,  UnitEventType::UnitEventTypePublished	, Published			, boost::msm::front::none , boost::msm::front::none > pubing_pub_row;
+					typedef boost::msm::front::Row <  Published			,  UnitEventType::UnitEventTypeUnpublish	, StartUnpublishing	, boost::msm::front::none , boost::msm::front::none > pub_sunpubing_row;
+					typedef boost::msm::front::Row <  StartUnpublishing ,  UnitEventType::UnitEventTypeUnpublishing , Unpublishing		, boost::msm::front::none , boost::msm::front::none > sunpubing_unpubing_row;
+					typedef boost::msm::front::Row <  Unpublishing		,  UnitEventType::UnitEventTypeUnpublished  , Unpublished		, boost::msm::front::none , boost::msm::front::none > unpubing_unpub_row;
+					typedef boost::msm::front::Row <  Publishing		,  UnitEventType::UnitEventTypeFailure		, PublishingFailure	, boost::msm::front::none , boost::msm::front::none > pubbing_pubfail_row;
 					
 					// Transition table for initialization services
 					struct transition_table : boost::mpl::vector<
 					unpub_spubing_row,
 					spubing_pubing_row,
 					pubing_pub_row,
-					pubbing_pubfail_row,
 					pub_sunpubing_row,
 					sunpubing_unpubing_row,
-					unpubing_unpub_row> {};
+					unpubing_unpub_row,
+					pubbing_pubfail_row> {};
 					
 					template <class FSM,class Event>
 					void no_transition(Event const& ,FSM&, int ){}
@@ -106,9 +106,9 @@ namespace chaos {
 				UnitStateStartPublishing,
 				UnitStatePublishing,
 				UnitStatePublished,
-				UnitStatePublishingFailure,
 				UnitStateStartUnpublishing,
-				UnitStateUnpublishing
+				UnitStateUnpublishing,
+				UnitStatePublishingFailure
 			} UnitState;
 			
 			//! type definition for state machine
@@ -127,6 +127,7 @@ namespace chaos {
 				
 				bool active;
 				int sendConfPackToMDS(CDataWrapper& dataToSend);
+				inline string getCurrentStateString();
 			public:
 				MDSMessageChannel						*mds_channel;
 				//! abstract contro unit isntalce
@@ -158,7 +159,7 @@ namespace chaos {
 				void scheduleSM() throw (CException);
 
 				//! manage the ack pack
-				void manageACKPack(CDataWrapper& ack_pack);
+				bool manageACKPack(CDataWrapper& ack_pack);
 				
 				bool smNeedToSchedule();
 

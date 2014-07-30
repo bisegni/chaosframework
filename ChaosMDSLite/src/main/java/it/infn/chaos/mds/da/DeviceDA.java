@@ -255,22 +255,24 @@ public class DeviceDA extends DataAccess {
 
 		// all is gone well so i need to push the device into mongodb
 		DB chaosDB = SingletonServices.getInstance().getMongoDB();
-		DBCollection devicesCollection = chaosDB.getCollection("devices");
-		DBCollection datasetsCollection = chaosDB.getCollection("datasets");
-		BasicDBObject dbObject = new BasicDBObject();
-		dbObject.append(RPCConstants.DATASET_DEVICE_ID, d.getDeviceIdentification());
-		dbObject.append(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS, d.getNetAddress());
-		dbObject.append(RPCConstants.CONTROL_UNIT_INSTANCE, d.getCuInstance());
-		dbObject.putAll((BSONObject) d.getDeviceOnlyBSON());
-		// insert new device into mongodb
-		devicesCollection.insert(dbObject);
+		if (chaosDB != null) {
+			DBCollection devicesCollection = chaosDB.getCollection("devices");
+			DBCollection datasetsCollection = chaosDB.getCollection("datasets");
+			BasicDBObject dbObject = new BasicDBObject();
+			dbObject.append(RPCConstants.DATASET_DEVICE_ID, d.getDeviceIdentification());
+			dbObject.append(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS, d.getNetAddress());
+			dbObject.append(RPCConstants.CONTROL_UNIT_INSTANCE, d.getCuInstance());
+			dbObject.putAll((BSONObject) d.getDeviceOnlyBSON());
+			// insert new device into mongodb
+			devicesCollection.insert(dbObject);
 
-		//
-		dbObject.clear();
-		dbObject.append(RPCConstants.DATASET_DEVICE_ID, d.getDeviceIdentification());
-		dbObject.append(RPCConstants.DATASET_TIMESTAMP, d.getDataset().getTimestamp().getDate());
-		dbObject.append(RPCConstants.DATASET_DESCRIPTION, (BSONObject) d.getDataset().toBson());
-		datasetsCollection.insert(dbObject);
+			//
+			dbObject.clear();
+			dbObject.append(RPCConstants.DATASET_DEVICE_ID, d.getDeviceIdentification());
+			dbObject.append(RPCConstants.DATASET_TIMESTAMP, d.getDataset().getTimestamp().getDate());
+			dbObject.append(RPCConstants.DATASET_DESCRIPTION, (BSONObject) d.getDataset().toBson());
+			datasetsCollection.insert(dbObject);
+		}
 		return d;
 	}
 
@@ -290,13 +292,15 @@ public class DeviceDA extends DataAccess {
 		ps.setString(idx++, deviceIdentification);
 		executeInsertUpdateAndClose(ps);
 		DB chaosDB = SingletonServices.getInstance().getMongoDB();
-		DBCollection devicesCollection = chaosDB.getCollection("devices");
-		BasicDBObject updateObj = new BasicDBObject();
-		BasicDBObject queryObj = new BasicDBObject();
-		queryObj.append(RPCConstants.DATASET_DEVICE_ID, deviceIdentification);
-		updateObj.append("$set", new BasicDBObject(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS, netAddress));
-		updateObj.append("$set", new BasicDBObject(RPCConstants.CONTROL_UNIT_INSTANCE, cuInstance));
-		devicesCollection.update(queryObj, updateObj);
+		if (chaosDB != null) {
+			DBCollection devicesCollection = chaosDB.getCollection("devices");
+			BasicDBObject updateObj = new BasicDBObject();
+			BasicDBObject queryObj = new BasicDBObject();
+			queryObj.append(RPCConstants.DATASET_DEVICE_ID, deviceIdentification);
+			updateObj.append("$set", new BasicDBObject(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS, netAddress));
+			updateObj.append("$set", new BasicDBObject(RPCConstants.CONTROL_UNIT_INSTANCE, cuInstance));
+			devicesCollection.update(queryObj, updateObj);
+		}
 	}
 
 	/**
@@ -409,13 +413,15 @@ public class DeviceDA extends DataAccess {
 
 		// all is gone weel so i need to push the device into mongodb
 		DB chaosDB = SingletonServices.getInstance().getMongoDB();
-		DBCollection datasetsCollection = chaosDB.getCollection("datasets");
-		//
-		BasicDBObject dbObject = new BasicDBObject();
-		dbObject.append(RPCConstants.DATASET_DEVICE_ID, ds.getDevice().getDeviceIdentification());
-		dbObject.append(RPCConstants.DATASET_TIMESTAMP, ds.getTimestamp().getDate());
-		dbObject.append(RPCConstants.DATASET_DESCRIPTION, (BSONObject) ds.toBson());
-		datasetsCollection.insert(dbObject);
+		if (chaosDB != null) {
+			DBCollection datasetsCollection = chaosDB.getCollection("datasets");
+			//
+			BasicDBObject dbObject = new BasicDBObject();
+			dbObject.append(RPCConstants.DATASET_DEVICE_ID, ds.getDevice().getDeviceIdentification());
+			dbObject.append(RPCConstants.DATASET_TIMESTAMP, ds.getTimestamp().getDate());
+			dbObject.append(RPCConstants.DATASET_DESCRIPTION, (BSONObject) ds.toBson());
+			datasetsCollection.insert(dbObject);
+		}
 		return ds;
 	}
 
@@ -556,5 +562,4 @@ public class DeviceDA extends DataAccess {
 		}
 		return result;
 	}
-
 }

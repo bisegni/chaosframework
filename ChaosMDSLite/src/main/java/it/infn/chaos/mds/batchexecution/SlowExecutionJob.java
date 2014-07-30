@@ -1,4 +1,4 @@
-package it.infn.chaos.mds.slowexecution;
+package it.infn.chaos.mds.batchexecution;
 
 import it.infn.chaos.mds.RPCConstants;
 import it.infn.chaos.mds.SingletonServices;
@@ -15,7 +15,7 @@ import org.ref.common.exception.RefException;
 
 abstract public class SlowExecutionJob extends RPCActionHadler implements Runnable {
 	private AtomicInteger						counterRequestID	= new AtomicInteger();
-	private BasicBSONObject						inputData			= null;
+	private Object								inputData			= null;
 	private RPCClient							clientInstance		= null;
 	private String								jobDomain			= UUID.randomUUID().toString().substring(0, 10);
 	private final Semaphore						available			= new Semaphore(1);
@@ -93,7 +93,6 @@ abstract public class SlowExecutionJob extends RPCActionHadler implements Runnab
 		getClientInstance().sendMessage(request);
 	}
 
-	
 	protected BasicBSONObject getResultForID(int resultID) {
 		synchronized (resultHashTable) {
 			return resultHashTable.get(new Integer(resultID));
@@ -128,11 +127,11 @@ abstract public class SlowExecutionJob extends RPCActionHadler implements Runnab
 		return "";
 	}
 
-	public BasicBSONObject getInputData() {
+	public Object getInputData() {
 		return inputData;
 	}
 
-	public void setInputData(BasicBSONObject inputData) {
+	public void setInputData(Object inputData) {
 		this.inputData = inputData;
 	}
 

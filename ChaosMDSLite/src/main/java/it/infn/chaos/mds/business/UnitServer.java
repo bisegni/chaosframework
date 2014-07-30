@@ -93,4 +93,12 @@ public class UnitServer extends BusinessObject {
 	public void addPublischedCU(String publischedCU) {
 		getPublischedCU().addElement(publischedCU);
 	}
+
+	public Timestamp getUnitServerHB() {
+		return unitServerHB;
+	}
+
+	public void setUnitServerHB(Timestamp unitServerHB) {
+		this.unitServerHB = unitServerHB;
+	}
 }

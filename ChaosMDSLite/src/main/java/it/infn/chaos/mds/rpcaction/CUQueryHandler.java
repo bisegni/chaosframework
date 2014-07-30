@@ -5,13 +5,13 @@ package it.infn.chaos.mds.rpcaction;
 
 import it.infn.chaos.mds.RPCConstants;
 import it.infn.chaos.mds.SingletonServices;
+import it.infn.chaos.mds.batchexecution.UnitServerACK;
+import it.infn.chaos.mds.batchexecution.WorkUnitACK;
 import it.infn.chaos.mds.business.Device;
 import it.infn.chaos.mds.business.UnitServer;
 import it.infn.chaos.mds.da.DeviceDA;
 import it.infn.chaos.mds.da.UnitServerDA;
 import it.infn.chaos.mds.rpc.server.RPCActionHadler;
-import it.infn.chaos.mds.slowexecution.UnitServerACK;
-import it.infn.chaos.mds.slowexecution.WorkUnitACK;
 
 import java.sql.SQLException;
 import java.util.ListIterator;
@@ -157,9 +157,13 @@ public class CUQueryHandler extends RPCActionHadler {
 		Device d = null;
 		BasicBSONObject result = null;
 		DeviceDA dDA = null;
+		UnitServerDA usDA = null;
 		BasicBSONObject ackPack = new BasicBSONObject();
+		boolean sendACK = false;
 		try {
 			dDA = getDataAccessInstance(DeviceDA.class);
+			usDA = getDataAccessInstance(UnitServerDA.class);
+
 			if (actionData == null)
 				return null;
 			// check for CU presence
@@ -169,14 +173,24 @@ public class CUQueryHandler extends RPCActionHadler {
 			String controlUnitInstance = actionData.containsField(RPCConstants.CONTROL_UNIT_INSTANCE) ? actionData.getString(RPCConstants.CONTROL_UNIT_INSTANCE) : null;
 			if (controlUnitInstance == null)
 				throw new RefException("No control unit instance found", 1, "DeviceDA::controlUnitValidationAndRegistration");
+			if (!actionData.containsField("mds_control_key")) {
+				throw new RefException("No self_managed_work_unit key found", 1, "DeviceDA::controlUnitValidationAndRegistration");
+			}
+
+			String control_key = actionData.getString("mds_control_key");
 
 			d = new Device();
 			d.setCuInstance(controlUnitInstance);
 			d.setNetAddress(controlUnitNetAddress);
 			d.fillFromBson(actionData);
-			//add device id into ack pack
+			// add device id into ack pack
 			ackPack.append(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS, actionData.getString(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS));
 			ackPack.append(RPCConstants.DATASET_DEVICE_ID, actionData.getString(RPCConstants.DATASET_DEVICE_ID));
+			sendACK = true;
+			if (usDA.cuIDIsMDSManaged(actionData.getString(RPCConstants.DATASET_DEVICE_ID)) && !control_key.equals("mds")) {
+				ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 9);
+				return null;
+			}
 			// check for deviceID presence
 			if (dDA.isDeviceIDPresent(d.getDeviceIdentification())) {
 				// the device is already present i need to check for dataset
@@ -196,13 +210,20 @@ public class CUQueryHandler extends RPCActionHadler {
 
 			if (d != null) {
 				dDA.performDeviceHB(d.getDeviceIdentification());
+				usDA.setState(d.getDeviceIdentification(), "Registered");
 			}
+			
 			closeDataAccess(dDA, true);
+			closeDataAccess(usDA, true);
 			ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 5);
 		} catch (RefException e) {
 			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
 			try {
 				closeDataAccess(dDA, false);
+			} catch (SQLException e1) {
+			}
+			try {
+				closeDataAccess(usDA, false);
 			} catch (SQLException e1) {
 			}
 			throw new RefException(e.getMessage(), 3, "CUQueryHandler::registerControUnit");
@@ -212,10 +233,15 @@ public class CUQueryHandler extends RPCActionHadler {
 				closeDataAccess(dDA, false);
 			} catch (SQLException e1) {
 			}
+			try {
+				closeDataAccess(usDA, false);
+			} catch (SQLException e1) {
+			}
 			throw new RefException(e.getMessage(), 4, "CUQueryHandler::registerControUnit");
 		} finally {
 			try {
-				SingletonServices.getInstance().getSlowExecution().submitJob(WorkUnitACK.class.getName(), ackPack);
+				if (sendACK == true)
+					SingletonServices.getInstance().getSlowExecution().submitJob(WorkUnitACK.class.getName(), ackPack);
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {

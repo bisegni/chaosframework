@@ -115,7 +115,7 @@ namespace chaos {
 				};
 			}
 			//type definition of the state machine
-			typedef boost::msm::back::state_machine< unit_server_state_machine::us_state_machine >	WorkUnitServerStateMachine;
+			typedef boost::msm::back::state_machine< unit_server_state_machine::us_state_machine >	UnitServerStateMachine;
 			
 			typedef boost::upgrade_lock<boost::shared_mutex>			UpgradeableLock;
 			typedef boost::upgrade_to_unique_lock<boost::shared_mutex>	UpgradeReadToWriteLock;
@@ -137,10 +137,10 @@ namespace chaos {
 				//mutable boost::shared_mutex mutex_registration;
 				
 				//unit server state machine
-				bool						use_unit_server;
-				std::string					unit_server_alias;
-				boost::shared_mutex			unit_server_sm_mutex;
-				WorkUnitServerStateMachine	unit_server_sm;
+				bool					use_unit_server;
+				std::string				unit_server_alias;
+				boost::shared_mutex		unit_server_sm_mutex;
+				UnitServerStateMachine	unit_server_sm;
 				
 				bool thread_run;
 				chaos::WaitSemaphore thread_waith_semaphore;
@@ -154,8 +154,8 @@ namespace chaos {
 				queue< AbstractControlUnit* >	queue_submitted_cu;
 				
 				//! control unit instance mapped with their unique identifier
-				mutable boost::shared_mutex mutex_map_cuid_registering_instance;
-				map<string, shared_ptr<WorkUnitManagement> > map_cuid_registering_instance;
+				mutable boost::shared_mutex mutex_map_cuid_reg_unreg_instance;
+				map<string, shared_ptr<WorkUnitManagement> > map_cuid_reg_unreg_instance;
 				
 				//map
 				mutable boost::shared_mutex mutex_map_cuid_registered_instance;

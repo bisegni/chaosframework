@@ -21,7 +21,7 @@
 #include <chaos/cu_toolkit/ControlManager/WorkUnitManagement.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManager.h>
 
-#define WUMHADER "[WorkUnitManagement " << std::string(work_unit_instance->getCUInstance()) + std::string("-") + std::string(work_unit_instance->getCUID()) << "] - "
+#define WUMHADER "[WorkUnitManagement " << std::string(work_unit_instance->getCUInstance()) + std::string("-") + std::string(work_unit_instance->getCUID()) << "-"<<getCurrentStateString()<<"] - "
 #define WUMAPP_ LAPP_ << WUMHADER
 #define WUMDBG_ LDBG_ << WUMHADER
 #define WUMERR_ LERR_ << WUMHADER<<"("<<__LINE__<<") "
@@ -53,9 +53,41 @@ UnitState WorkUnitManagement::getCurrentState() {
 }
 
 /*---------------------------------------------------------------------------------
+ return the state of the unit state machine
+ ---------------------------------------------------------------------------------*/
+string WorkUnitManagement::getCurrentStateString() {
+	std::string result;
+	switch (getCurrentState()) {
+		case UnitStatePublished:
+			result = "Published";
+			break;
+		case UnitStatePublishingFailure:
+			result = "PublishingFailure";
+			break;
+		case UnitStatePublishing:
+			result = "Publishing";
+			break;
+		case UnitStateStartPublishing:
+			result = "StartPublishing";
+			break;
+		case UnitStateStartUnpublishing:
+			result = "StartUnpublishing";
+			break;
+		case UnitStateUnpublished:
+			result = "Unpublished";
+			break;
+		case UnitStateUnpublishing:
+			result = "Unpublishing";
+			break;
+	}
+	return result;
+}
+
+/*---------------------------------------------------------------------------------
  turn on the control unit
  ---------------------------------------------------------------------------------*/
 void WorkUnitManagement::turnOn() throw (CException) {
+	LAPP_ << "Turn ON";
 	if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypePublish()) == boost::msm::back::HANDLED_TRUE){
 		//we are switched state
 	} else {
@@ -67,6 +99,7 @@ void WorkUnitManagement::turnOn() throw (CException) {
  turn off the control unit
  ---------------------------------------------------------------------------------*/
 void WorkUnitManagement::turnOFF() throw (CException) {
+	LAPP_ << "Turn OFF";
 	if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublish()) == boost::msm::back::HANDLED_TRUE){
 		//we are switched state
 	} else {
@@ -79,22 +112,22 @@ void WorkUnitManagement::turnOFF() throw (CException) {
  
  ---------------------------------------------------------------------------------*/
 void WorkUnitManagement::scheduleSM() throw (CException) {
-	WUMDBG_ << "Schedule state machine step";
+	WUMDBG_ << "Start state machine step";
 	switch ((UnitState) wu_instance_sm.current_state()[0]) {
 		case UnitStateUnpublished:
-			WUMAPP_ << "[Unpublished] work unit in unpublished";
+			WUMAPP_ << "[work unit in unpublished";
 			active = false;
 
 			break;
 			
 		case UnitStateStartPublishing: {
 			active = true;
-			WUMAPP_ << "[UnitStateStartPublishing] Control unit is unpublished, need to be setup";
+			WUMAPP_ << "Control unit is unpublished, need to be setup";
 			//associate the event channel to the control unit
-			WUMAPP_ << "[UnitStateStartPublishing] Adding event channel";
+			WUMAPP_ << "Adding event channel";
 			work_unit_instance->deviceEventChannel = CommandManager::getInstance()->getDeviceEventChannel();
 			
-			WUMAPP_ << "[UnitStateStartPublishing] Setup Control Unit Sanbox for cu with instance";
+			WUMAPP_ << "Setup Control Unit Sanbox for cu with instance";
 			work_unit_instance->_defineActionAndDataset(mds_registration_message);
 			
 			//sendConfPackToMDS(cuPtr->defaultInternalConf.get());
@@ -107,7 +140,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
 		}
 			
 		case UnitStatePublishing: {
-			WUMAPP_  << "[UnitStatePublishing] send registration to mds";
+			WUMAPP_  << "send registration to mds";
 			if(sendConfPackToMDS(mds_registration_message)) {
 				WUMERR_ << "Error forwarding registration message to mds";
 			}
@@ -116,8 +149,8 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
 			
 		case UnitStatePublished: {
 			active = false;
-			WUMAPP_ << "[Published] work unit has been successfully published";
-			WUMAPP_ << "[Published] Register RPC action for cu whith instance";
+			WUMAPP_ << "work unit has been successfully published";
+			WUMAPP_ << "Register RPC action for cu whith instance";
 			std::vector<const chaos::DeclareAction * > cuDeclareActionsInstance;
 			work_unit_instance->_getDeclareActionInstance(cuDeclareActionsInstance);
 			for(int idx = 0; idx < cuDeclareActionsInstance.size(); idx++) {
@@ -127,8 +160,8 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
 		}
 		case UnitStateStartUnpublishing: {
 			active = true;
-			WUMAPP_ << "[Start Unpublishing] work unit is starting the unpublishing porcess";
-			WUMAPP_ << "[Start Unpublishing] Register RPC action for cu whith instance";
+			WUMAPP_ << "work unit is starting the unpublishing porcess";
+			WUMAPP_ << "Register RPC action for cu whith instance";
 			std::vector<const chaos::DeclareAction * > cuDeclareActionsInstance;
 			work_unit_instance->_getDeclareActionInstance(cuDeclareActionsInstance);
 			for(int idx = 0; idx < cuDeclareActionsInstance.size(); idx++) {
@@ -142,14 +175,55 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
 			break;
 		}
 			
-		case UnitStatePublishingFailure:
-			WUMAPP_  << "[UnitStatePublishingFailure] there was been error during control unit registration we end here";
-			break;
+		case UnitStatePublishingFailure: {
+			active = false;
+						break;
+		}
+		case UnitStateUnpublishing: {
+			WUMAPP_  << "there was been error during control unit registration we end here";
+			CDataWrapper fakeDWForDeinit;
+			bool detachFake;
+            fakeDWForDeinit.addStringValue(DatasetDefinitionkey::DEVICE_ID, work_unit_instance->getCUID());
+            try{
+                WUMAPP_  << "Stopping Wor Unit";
+                work_unit_instance->_stop(&fakeDWForDeinit, detachFake);
+            }catch (CException& ex) {
+                if(ex.errorCode != 1){
+					//these exception need to be logged
+                    DECODE_CHAOS_EXCEPTION(ex);
+                }
+            }
+            
+            try{
+                WUMAPP_  << "Deiniting Work Unit";
+                work_unit_instance->_deinit(&fakeDWForDeinit, detachFake);
+            }catch (CException& ex) {
+                if(ex.errorCode != 1){
+					//these exception need to be logged
+                    DECODE_CHAOS_EXCEPTION(ex);
+                }
+            }
+            try{
+				WUMAPP_  << "Undefine Action And Dataset for  Work Unit";
+                work_unit_instance->_undefineActionAndDataset();
+            }  catch (CException& ex) {
+                if(ex.errorCode != 1){
+					//these exception need to be logged
+                    DECODE_CHAOS_EXCEPTION(ex);
+                }
+            }
 			
-		case UnitStateUnpublishing:
-			WUMAPP_  << "[UnitStateUnpublishing] work unit is going to be unpublished";
+
+			WUMAPP_  << "work unit is going to be unpublished";
+			if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublished()) == boost::msm::back::HANDLED_TRUE){
+				//we are switched state
+			} else {
+				throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for unpublishing event", __PRETTY_FUNCTION__);
+			}
 			break;
+		}
 	}
+	WUMDBG_ << "End state machine step";
 }
 bool WorkUnitManagement::smNeedToSchedule() {
 	UnitState s = getCurrentState();
@@ -174,7 +248,8 @@ int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& dataToSend) {
     return mds_channel->sendUnitDescription(mdsPack);
 }
 
-void WorkUnitManagement::manageACKPack(CDataWrapper& ack_pack) {
+bool WorkUnitManagement::manageACKPack(CDataWrapper& ack_pack) {
+	bool result = false;
 	WUMAPP_ << "Work unit registration ack message received";
 
 	if(!ack_pack.hasKey(ChaosSystemDomainAndActionLabel::PARAM_WORK_UNIT_REG_ACK_DEVICE_ID))
@@ -194,14 +269,16 @@ void WorkUnitManagement::manageACKPack(CDataWrapper& ack_pack) {
 				} else {
 					throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for UnitEventTypePublished event", __PRETTY_FUNCTION__);
 				}
+				result = true;
 				break;
-				
+			
+			case ErrorCode::EC_MDS_WOR_UNIT_ID_NOT_SELF_MANAGEABLE:
+				WUMAPP_ << "id is not slef manageable";
 			default:
 				WUMERR_ << "work unit failed to register";
 				//turn of unit server
 				if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypeFailure()) == boost::msm::back::HANDLED_TRUE){
 					//we have problem
-					
 				} else {
 					throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for UnitEventTypeFailure event", __PRETTY_FUNCTION__);
 				}
@@ -211,4 +288,5 @@ void WorkUnitManagement::manageACKPack(CDataWrapper& ack_pack) {
 		WUMERR_ << "No result received";
 		throw CException(-3, "No result received", __PRETTY_FUNCTION__);
 	}
+	return result;
 }

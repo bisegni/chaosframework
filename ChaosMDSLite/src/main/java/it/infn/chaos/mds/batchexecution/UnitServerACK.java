@@ -1,7 +1,9 @@
 /**
  * 
  */
-package it.infn.chaos.mds.slowexecution;
+package it.infn.chaos.mds.batchexecution;
+
+import org.bson.BasicBSONObject;
 
 import it.infn.chaos.mds.RPCConstants;
 
@@ -17,7 +19,8 @@ public class UnitServerACK extends SlowExecutionJob {
 	 * @see it.infn.chaos.mds.slowexecution.SlowExecution.SlowExecutioJob#executeJob()
 	 */
 	protected void executeJob() throws Throwable {
-		sendMessage(getInputData().getString(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS), "system", "unitServerRegistrationACK", getInputData());
+		BasicBSONObject data = (BasicBSONObject) getInputData();
+		sendMessage(data.getString(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS), "system", "unitServerRegistrationACK", data);
 	}
 
 }
