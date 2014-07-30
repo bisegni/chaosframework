@@ -234,7 +234,7 @@ void ControlManager::deinit() throw(CException) {
         LCMAPP_  << "Unload" << cu->work_unit_instance->getCUInstance();
     }
     map_cuid_registered_instance.clear();
-	map_cuid_registering_instance.clear();
+	map_cuid_reg_unreg_instance.clear();
 }
 
 
@@ -254,11 +254,11 @@ void ControlManager::submitControlUnit(AbstractControlUnit *data) throw(CExcepti
 void ControlManager::migrateStableAndUnstableSMCUInstance() {
 	//shared access for the read of map
 	//get the upgradeable lock
-	UpgradeableLock registering_lock(mutex_map_cuid_registering_instance);
+	UpgradeableLock registering_lock(mutex_map_cuid_reg_unreg_instance);
 	UpgradeableLock registered_lock(mutex_map_cuid_registered_instance);
 	
-    for (map<string, shared_ptr<WorkUnitManagement> >::iterator i = map_cuid_registering_instance.begin();
-		 i != map_cuid_registering_instance.end();
+    for (map<string, shared_ptr<WorkUnitManagement> >::iterator i = map_cuid_reg_unreg_instance.begin();
+		 i != map_cuid_reg_unreg_instance.end();
 		 i++ ){
 		
 		if(!i->second->smNeedToSchedule()) {
@@ -266,14 +266,23 @@ void ControlManager::migrateStableAndUnstableSMCUInstance() {
 			UpgradeReadToWriteLock registered_wlock(registered_lock);
 			
 			//now i can write on the two map
-			if(i->second->getCurrentState() != UnitStatePublishingFailure) {
-				map_cuid_registered_instance.insert(make_pair(i->first, i->second));
-			}else {
-				LCMAPP_<< i->second->work_unit_instance->getCUID() << " instance is erased becase is in publishing failure state";
+			switch (i->second->getCurrentState()) {
+				case UnitStatePublishingFailure:
+					LCMAPP_<< i->second->work_unit_instance->getCUID() << " instance is erased becase is in publishing failure state";
+					break;
+				case UnitStateUnpublished:
+					LCMAPP_<< i->second->work_unit_instance->getCUID() << " instance is erased becase has been successfully unpublished";
+					break;
+				case UnitStatePublished:
+					LCMAPP_<< i->second->work_unit_instance->getCUID() << " instance has been sucessfully registered";
+					map_cuid_registered_instance.insert(make_pair(i->first, i->second));
+					break;
+				default:
+					break;
 			}
-			
+
 			//remove the iterator
-			map_cuid_registering_instance.erase(i);
+			map_cuid_reg_unreg_instance.erase(i);
 		}
 	}
 }
@@ -281,10 +290,10 @@ void ControlManager::migrateStableAndUnstableSMCUInstance() {
 //! Make one steps in SM for all registring state machine
 void ControlManager::makeSMSteps() {
 	//lock for read the registering map
-	ReadLock read_registering_lock(mutex_map_cuid_registering_instance);
+	ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
 	
-	for (map<string, shared_ptr<WorkUnitManagement> >::iterator i = map_cuid_registering_instance.begin();
-		 i != map_cuid_registering_instance.end();
+	for (map<string, shared_ptr<WorkUnitManagement> >::iterator i = map_cuid_reg_unreg_instance.begin();
+		 i != map_cuid_reg_unreg_instance.end();
 		 i++ ){
 		//make step
 		if(i->second->smNeedToSchedule()) i->second->scheduleSM();
@@ -313,11 +322,11 @@ void ControlManager::manageControlUnit() {
 			LCMAPP_  << "Create manager for new control unit:" << WU_IDENTIFICATION(wui->work_unit_instance);
 			
 			//! lock the hastable
-			ReadLock read_registering_lock(mutex_map_cuid_registering_instance);
+			ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
 			LCMDBG_  << "Added to registering map" << WU_IDENTIFICATION(wui->work_unit_instance);
 			
 			// we can't have two different work unit with the same unique identifier within the same process
-			if(map_cuid_registering_instance.count(wui->work_unit_instance->getCUID())) {
+			if(map_cuid_reg_unreg_instance.count(wui->work_unit_instance->getCUID())) {
 				LCMERR_  << "Duplicated control unit instance " << WU_IDENTIFICATION(wui->work_unit_instance);
 				continue;
 			}
@@ -326,7 +335,7 @@ void ControlManager::manageControlUnit() {
 			wui->mds_channel = mds_channel;
 			
 			//add sandbox to all map of running cu
-			map_cuid_registering_instance.insert(make_pair(wui->work_unit_instance->getCUID(), wui));
+			map_cuid_reg_unreg_instance.insert(make_pair(wui->work_unit_instance->getCUID(), wui));
 		}
 		lock.unlock();
 		
@@ -334,9 +343,9 @@ void ControlManager::manageControlUnit() {
 		migrateStableAndUnstableSMCUInstance();
 		
 		//! lock the registering (unstable sm) hastable
-		ReadLock read_registering_lock(mutex_map_cuid_registering_instance);
+		ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
 		//schedule unstable state machine steps
-		if(map_cuid_registering_instance.size()) {
+		if(map_cuid_reg_unreg_instance.size()) {
 			//whe have control unit isntance with unstable state machine
 			makeSMSteps();
 			//waith some time to retry the state machine
@@ -382,8 +391,8 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
 	WriteLock write_instancer_lock(mutex_map_cu_instancer);
 	IN_ACTION_PARAM_CHECK(!map_cu_alias_instancer.count(work_unit_type), -2, "No work unit instancer's found for the alias")
 	
-	string work_unit_id = message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID);
-	string load_options = CDW_STR_KEY(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_PARAM);
+	std::string work_unit_id = message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID);
+	std::string load_options = CDW_STR_KEY(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_PARAM);
 	
 	
 	LCMDBG_ << "instantiate work unit ->" << "device_id:" <<work_unit_id<< " load_options:"<< load_options;
@@ -421,8 +430,28 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
 //! message for unload operation
 CDataWrapper* ControlManager::unloadControlUnit(CDataWrapper *message_data, bool& detach) throw (CException) {
 	IN_ACTION_PARAM_CHECK(!message_data, -1, "No param found")
-	IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID), -2, "No device id found")
-	IN_ACTION_PARAM_CHECK(false, -3, "Not yet implemented")
+	IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_TYPE_ALIAS), -2, "No instancer alias")
+	IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID), -3, "No id for the work unit instance found")
+	
+	std::string work_unit_type = message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_TYPE_ALIAS);
+	std::string work_unit_id = message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID);
+	
+	LCMAPP_ << "Unload operation for: " << work_unit_id << " of type "<<work_unit_type;
+	WriteLock write_instancer_lock(mutex_map_cuid_registered_instance);
+	IN_ACTION_PARAM_CHECK(!map_cuid_registered_instance.count(work_unit_id), -2, "Work unitnot found on registered's map")
+
+	//get the iterator for the work unit managment class
+	map<string, shared_ptr<WorkUnitManagement> >::iterator iter = map_cuid_registered_instance.find(work_unit_id);
+
+	//migrate the workunit into the map for registering and unregistering instance
+	map_cuid_reg_unreg_instance.insert(make_pair(work_unit_id, map_cuid_registered_instance[work_unit_id]));
+	
+	//turn of the instance
+	iter->second->turnOFF();
+	map_cuid_registered_instance.erase(iter);
+
+	//unlock the thread
+	thread_waith_semaphore.unlock();
 	return NULL;
 }
 
@@ -433,13 +462,13 @@ CDataWrapper* ControlManager::workUnitRegistrationACK(CDataWrapper *message_data
 	IN_ACTION_PARAM_CHECK(!message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID), -2, "No device id found")
 	
 	//lock the registering control unit map
-	ReadLock read_registering_lock(mutex_map_cuid_registering_instance);
+	ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
 	std::string device_id = message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID);
 	
-	IN_ACTION_PARAM_CHECK(!map_cuid_registering_instance.count(device_id), -3, "No registering work unit found with the device id")
+	IN_ACTION_PARAM_CHECK(!map_cuid_reg_unreg_instance.count(device_id), -3, "No registering work unit found with the device id")
 	
 	//we can process the ack into the right manager
-	map_cuid_registering_instance[device_id]->manageACKPack(*message_data);
+	map_cuid_reg_unreg_instance[device_id]->manageACKPack(*message_data);
 	return NULL;
 }
 

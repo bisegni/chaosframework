@@ -87,6 +87,7 @@ string WorkUnitManagement::getCurrentStateString() {
  turn on the control unit
  ---------------------------------------------------------------------------------*/
 void WorkUnitManagement::turnOn() throw (CException) {
+	LAPP_ << "Turn ON";
 	if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypePublish()) == boost::msm::back::HANDLED_TRUE){
 		//we are switched state
 	} else {
@@ -98,6 +99,7 @@ void WorkUnitManagement::turnOn() throw (CException) {
  turn off the control unit
  ---------------------------------------------------------------------------------*/
 void WorkUnitManagement::turnOFF() throw (CException) {
+	LAPP_ << "Turn OFF";
 	if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublish()) == boost::msm::back::HANDLED_TRUE){
 		//we are switched state
 	} else {
@@ -173,12 +175,45 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
 			break;
 		}
 			
-		case UnitStatePublishingFailure:
+		case UnitStatePublishingFailure: {
 			active = false;
+						break;
+		}
+		case UnitStateUnpublishing: {
 			WUMAPP_  << "there was been error during control unit registration we end here";
-			break;
+			CDataWrapper fakeDWForDeinit;
+			bool detachFake;
+            fakeDWForDeinit.addStringValue(DatasetDefinitionkey::DEVICE_ID, work_unit_instance->getCUID());
+            try{
+                WUMAPP_  << "Stopping Wor Unit";
+                work_unit_instance->_stop(&fakeDWForDeinit, detachFake);
+            }catch (CException& ex) {
+                if(ex.errorCode != 1){
+					//these exception need to be logged
+                    DECODE_CHAOS_EXCEPTION(ex);
+                }
+            }
+            
+            try{
+                WUMAPP_  << "Deiniting Work Unit";
+                work_unit_instance->_deinit(&fakeDWForDeinit, detachFake);
+            }catch (CException& ex) {
+                if(ex.errorCode != 1){
+					//these exception need to be logged
+                    DECODE_CHAOS_EXCEPTION(ex);
+                }
+            }
+            try{
+				WUMAPP_  << "Undefine Action And Dataset for  Work Unit";
+                work_unit_instance->_undefineActionAndDataset();
+            }  catch (CException& ex) {
+                if(ex.errorCode != 1){
+					//these exception need to be logged
+                    DECODE_CHAOS_EXCEPTION(ex);
+                }
+            }
 			
-		case UnitStateUnpublishing:
+
 			WUMAPP_  << "work unit is going to be unpublished";
 			if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublished()) == boost::msm::back::HANDLED_TRUE){
 				//we are switched state
@@ -186,6 +221,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
 				throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for unpublishing event", __PRETTY_FUNCTION__);
 			}
 			break;
+		}
 	}
 	WUMDBG_ << "End state machine step";
 }

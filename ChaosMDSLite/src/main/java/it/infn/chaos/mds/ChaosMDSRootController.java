@@ -159,6 +159,8 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 					removeAssociation((Set<UnitServerCuInstance>) viewEvent.getEventData());
 				} else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_LOAD_INSTANCE)) {
 					loadUnloadInstance((Set<UnitServerCuInstance>) viewEvent.getEventData(), true);
+				}else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_UNLOAD_INSTANCE)) {
+					loadUnloadInstance((Set<UnitServerCuInstance>) viewEvent.getEventData(), false);
 				}
 			}
 		} catch (Throwable e) {

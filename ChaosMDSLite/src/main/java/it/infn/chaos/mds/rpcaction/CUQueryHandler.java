@@ -210,8 +210,11 @@ public class CUQueryHandler extends RPCActionHadler {
 
 			if (d != null) {
 				dDA.performDeviceHB(d.getDeviceIdentification());
+				usDA.setState(d.getDeviceIdentification(), "Registered");
 			}
+			
 			closeDataAccess(dDA, true);
+			closeDataAccess(usDA, true);
 			ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 5);
 		} catch (RefException e) {
 			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
@@ -219,11 +222,19 @@ public class CUQueryHandler extends RPCActionHadler {
 				closeDataAccess(dDA, false);
 			} catch (SQLException e1) {
 			}
+			try {
+				closeDataAccess(usDA, false);
+			} catch (SQLException e1) {
+			}
 			throw new RefException(e.getMessage(), 3, "CUQueryHandler::registerControUnit");
 		} catch (Throwable e) {
 			ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 5);
 			try {
 				closeDataAccess(dDA, false);
+			} catch (SQLException e1) {
+			}
+			try {
+				closeDataAccess(usDA, false);
 			} catch (SQLException e1) {
 			}
 			throw new RefException(e.getMessage(), 4, "CUQueryHandler::registerControUnit");

@@ -331,4 +331,24 @@ public class UnitServerDA extends DataAccess {
 		}
 	}
 
+	public void setState(String deviceIdentification, String state) throws RefException {
+		PreparedStatement ps = null;
+		InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_UPDATE);
+		iuBuilder.addTable(UnitServerCuInstance.class);
+		iuBuilder.addColumnAndValue(UnitServerCuInstance.STATE, state);
+		iuBuilder.addCondition(true, String.format("%s=?", UnitServerCuInstance.CU_ID));
+		try {
+			ps = getPreparedStatementForSQLCommand(iuBuilder.toString());
+			int idx = iuBuilder.fillPreparedStatement(ps);
+			ps.setString(idx++, deviceIdentification);
+			executeInsertUpdateAndClose(ps);
+		} catch (IllegalArgumentException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::setState");
+		} catch (SQLException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 2, "UnitServerDA::setState");
+		} finally {
+			closePreparedStatement(ps);
+		}
+	}
+
 }

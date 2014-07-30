@@ -154,8 +154,8 @@ namespace chaos {
 				queue< AbstractControlUnit* >	queue_submitted_cu;
 				
 				//! control unit instance mapped with their unique identifier
-				mutable boost::shared_mutex mutex_map_cuid_registering_instance;
-				map<string, shared_ptr<WorkUnitManagement> > map_cuid_registering_instance;
+				mutable boost::shared_mutex mutex_map_cuid_reg_unreg_instance;
+				map<string, shared_ptr<WorkUnitManagement> > map_cuid_reg_unreg_instance;
 				
 				//map
 				mutable boost::shared_mutex mutex_map_cuid_registered_instance;
