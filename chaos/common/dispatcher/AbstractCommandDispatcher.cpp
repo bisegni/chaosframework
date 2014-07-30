@@ -110,19 +110,24 @@ void AbstractCommandDispatcher::registerAction(DeclareAction* declareActionClass
  */
 void AbstractCommandDispatcher::deregisterAction(DeclareAction* declareActionClass)  throw(CException) {
     if(!declareActionClass) return;
-    
     vector<AbstActionDescShrPtr>::iterator actDescIter = declareActionClass->getActionDescriptors().begin();
     for (; actDescIter != declareActionClass->getActionDescriptors().end(); actDescIter++) {
         ACDLDBG_   << "Deregistering action " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionName) << " for domain " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain);
         
 		//get the domain executor for this action descriptor
         boost::shared_ptr<DomainActions> domainExecutor = getDomainActionsFromName((*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain));
-        
+
 		//if the domain executor has been returned, add this action to it
         if(domainExecutor) {
             domainExecutor->removeActionDescriptor(*actDescIter);
-            ACDLDBG_   << "Deregistered action " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionName)
-            << " for domain " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain);
+            ACDLDBG_	<< "Deregistered action " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionName)
+						<< " for domain " << (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain);
+			
+			if(!domainExecutor->registeredActions()) {
+				std::string domain_name = domainExecutor->getDomainName();
+				ACDLDBG_ << "No more action in domain " << domain_name << " so it will be destroyed";
+				actionDomainExecutorMap.erase(domain_name);
+			}
             
         }
     }

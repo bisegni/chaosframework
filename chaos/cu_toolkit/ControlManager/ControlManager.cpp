@@ -228,13 +228,18 @@ void ControlManager::deinit() throw(CException) {
             }
         }
         LCMAPP_  << "Dispose event channel for Control Unit Sanbox:" << WU_IDENTIFICATION(cu->work_unit_instance);
-        CommandManager::getInstance()->deleteEventChannel(cu->work_unit_instance->deviceEventChannel);
+        CommandManager::getInstance()->deleteInstrumentEventChannel(cu->work_unit_instance->deviceEventChannel);
         cu->work_unit_instance->deviceEventChannel = NULL;
         cuDeclareActionsInstance.clear();
         LCMAPP_  << "Unload" << cu->work_unit_instance->getCUInstance();
     }
     map_cuid_registered_instance.clear();
 	map_cuid_reg_unreg_instance.clear();
+	
+	if(mds_channel) {
+		CommandManager::getInstance()->deleteMDSChannel(mds_channel);
+		mds_channel = NULL;
+	}
 }
 
 
@@ -316,6 +321,9 @@ void ControlManager::manageControlUnit() {
 			
 			//remove the oldest data
 			queue_submitted_cu.pop();
+			
+			//give a beat to the state machine
+			wui->scheduleSM();
 			
 			//activate the sm for register the control unit instance
 			wui->turnOn();
