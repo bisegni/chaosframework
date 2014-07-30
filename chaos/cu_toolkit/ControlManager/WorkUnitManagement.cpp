@@ -36,7 +36,7 @@ using namespace chaos::cu::control_manager;
 WorkUnitManagement::WorkUnitManagement(AbstractControlUnit *_work_unit_instance):
 mds_channel(NULL),
 work_unit_instance(_work_unit_instance),
-active(false) {
+active(true) {
 }
 
 /*---------------------------------------------------------------------------------
@@ -117,7 +117,6 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
 		case UnitStateUnpublished:
 			WUMAPP_ << "[work unit in unpublished";
 			active = false;
-
 			break;
 			
 		case UnitStateStartPublishing: {
@@ -125,7 +124,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
 			WUMAPP_ << "Control unit is unpublished, need to be setup";
 			//associate the event channel to the control unit
 			WUMAPP_ << "Adding event channel";
-			work_unit_instance->deviceEventChannel = CommandManager::getInstance()->getDeviceEventChannel();
+			work_unit_instance->deviceEventChannel = CommandManager::getInstance()->getInstrumentEventChannel();
 			
 			WUMAPP_ << "Setup Control Unit Sanbox for cu with instance";
 			work_unit_instance->_defineActionAndDataset(mds_registration_message);
@@ -214,8 +213,13 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             }
 			
 
+			if(work_unit_instance->deviceEventChannel) {
+				CommandManager::getInstance()->deleteInstrumentEventChannel(work_unit_instance->deviceEventChannel);
+				work_unit_instance->deviceEventChannel = NULL;
+			}
+			
 			WUMAPP_  << "work unit is going to be unpublished";
-			if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublished()) == boost::msm::back::HANDLED_TRUE){
+			if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypeUnpublished()) == boost::msm::back::HANDLED_TRUE) {
 				//we are switched state
 			} else {
 				throw CException(ErrorCode::EC_MDS_UNIT_SERV_BAD_US_SM_STATE, "Bad state of the sm for unpublishing event", __PRETTY_FUNCTION__);

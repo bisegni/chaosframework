@@ -65,6 +65,9 @@ namespace chaos {
          */
         bool hasActionName(string&);
         
+		//! return the number of the registered action in the domain
+		uint32_t registeredActions();
+		
         /*
          return the reference to action desciptor ssociated with action name
          for managed domain

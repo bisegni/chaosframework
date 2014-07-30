@@ -119,14 +119,21 @@ MDSMessageChannel *CommandManager::getMetadataserverChannel() {
 }
 
 /*
+ Send message over rpc channel
+ */
+void CommandManager::deleteMDSChannel(MDSMessageChannel *mds_channel) {
+    return broker->disposeMessageChannel(mds_channel);
+}
+
+/*
  Get Device event channel
  */
-event::channel::InstrumentEventChannel *CommandManager::getDeviceEventChannel() {
+event::channel::InstrumentEventChannel *CommandManager::getInstrumentEventChannel() {
     return static_cast<event::channel::InstrumentEventChannel*>(broker->getNewEventChannelFromType(event::EventTypeInstrument));
 }
 
     //
-void CommandManager::deleteEventChannel(event::channel::EventChannel *eventChannel) {
+void CommandManager::deleteInstrumentEventChannel(event::channel::InstrumentEventChannel *eventChannel) {
     broker->disposeEventChannel(eventChannel);
 }
 

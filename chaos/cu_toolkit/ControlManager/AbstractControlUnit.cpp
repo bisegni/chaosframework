@@ -331,7 +331,7 @@ void AbstractControlUnit::init(void *initData) throw(CException) {
 	
 	std::string deviceID = initConfiguration->getStringValue(DatasetDefinitionkey::DEVICE_ID);
 	if(deviceID.compare(DatasetDB::getDeviceID())) {
-		ACULERR_ << "device:" << deviceID << "not known by this ContorlUnit";
+		ACULERR_ << "device:" << deviceID << "not known by this Work Unit";
 		throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_init");
 	}
 	ACULAPP_ << "Initializating Phase for device:" << deviceID;

@@ -79,6 +79,10 @@ string& DomainActions::getDomainName() {
     return domainName;
 }
 
+uint32_t DomainActions::registeredActions() {
+	return actionDescriptionsMap.size();
+}
+
 /*
  check for action name presence
  */

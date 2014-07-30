@@ -40,7 +40,7 @@ DSAttributeHandlerExecutionEngine::DSAttributeHandlerExecutionEngine(chaos::comm
  Default destructor
  */
 DSAttributeHandlerExecutionEngine::~DSAttributeHandlerExecutionEngine() {
-    
+    deinit();
 }
 
 void DSAttributeHandlerExecutionEngine::setDeviceSchemaDB(chaos::common::data::DatasetDB *_referenceDeviceSchemeDB) {
