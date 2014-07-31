@@ -177,12 +177,26 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 					loadUnloadInstance((Set<UnitServerCuInstance>) viewEvent.getEventData(), true);
 				} else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_UNLOAD_INSTANCE)) {
 					loadUnloadInstance((Set<UnitServerCuInstance>) viewEvent.getEventData(), false);
+				} else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_SAVE_ATTRIBUTE_CONFIG)) {
+					saveAssociationAttributeConfig((UnitServerCuInstance) viewEvent.getEventData());
+				}else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_LOAD_INSTANCE_ATTRIBUTE)) {
+					loadAssociationAttributeConfig((UnitServerCuInstance) viewEvent.getEventData());
 				}
 			}
 		} catch (Throwable e) {
 			MDSAppView view = getViewByKey("VISTA");
 			RefVaadinErrorDialog.shorError(view.getWindow(), "Event Error", e.getMessage());
 		}
+	}
+
+	private void loadAssociationAttributeConfig(UnitServerCuInstance eventData) throws InstantiationException, IllegalAccessException, ClassNotFoundException, RefException {
+		// TODO Auto-generated method stub
+		notifyEventoToViewWithData(USCUAssociationListView.EVENT_LOAD_INSTANCE_ATTRIBUTE, this, musp.loadAllAssociationAttributeConfigForUnitServerAlias(eventData));
+	}
+
+	private void saveAssociationAttributeConfig(UnitServerCuInstance eventData) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException, RefException {
+		// TODO Auto-generated method stub
+		musp.saveAllAttributeConfigForAssociation(eventData);
 	}
 
 	private void loadUnloadAllUnitServerAssociation(boolean loadUnload) throws Throwable {

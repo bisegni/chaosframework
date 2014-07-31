@@ -3,6 +3,7 @@
  */
 package it.infn.chaos.mds.da;
 
+import it.infn.chaos.mds.business.DatasetAttribute;
 import it.infn.chaos.mds.business.UnitServer;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
 
@@ -288,8 +289,8 @@ public class UnitServerDA extends DataAccess {
 	/**
 	 * 
 	 * @param associationToRemove
-	 * @throws RefException 
-	 * @throws SQLException 
+	 * @throws RefException
+	 * @throws SQLException
 	 */
 	public void removeAssociation(UnitServerCuInstance associationToRemove) throws RefException {
 		DeleteSqlBuilder dsb = new DeleteSqlBuilder();
@@ -305,14 +306,14 @@ public class UnitServerDA extends DataAccess {
 		} catch (SQLException e) {
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::removeAssociation");
 		}
-	
+
 	}
 
 	/**
 	 * 
 	 * @param controlUnitInstance
 	 * @return
-	 * @throws RefException 
+	 * @throws RefException
 	 */
 	public boolean cuIDIsMDSManaged(String controlUnitInstance) throws RefException {
 		SqlBuilder s = new SqlBuilder();
@@ -342,6 +343,73 @@ public class UnitServerDA extends DataAccess {
 			int idx = iuBuilder.fillPreparedStatement(ps);
 			ps.setString(idx++, deviceIdentification);
 			executeInsertUpdateAndClose(ps);
+		} catch (IllegalArgumentException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::setState");
+		} catch (SQLException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 2, "UnitServerDA::setState");
+		} finally {
+			closePreparedStatement(ps);
+		}
+	}
+
+	public Vector<DatasetAttribute> loadAllAttributeConfigForAssociation(UnitServerCuInstance associationInstance) throws RefException {
+		Vector<DatasetAttribute> result = new Vector<DatasetAttribute>();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		SqlBuilder s = new SqlBuilder();
+		s.addPseudoColumntoSelect("*");
+		s.addTable("attribute_config");
+		s.addCondition(true, String.format("%s=?", "unique_id"));
+		try {
+			ps = getPreparedStatementForSQLCommand(s.toString());
+			ps.setString(1, associationInstance.getCuId());
+			rs = ps.executeQuery();
+			while(rs.next()) {
+				DatasetAttribute da = new DatasetAttribute();
+				da.setName(rs.getString("attribute_name"));
+				da.setDefaultValueNoCheck(rs.getString("default_value"));
+				da.setRangeMaxNoCheck(rs.getString("max_value"));
+				da.setRangeMinNoCheck(rs.getString("min_value"));
+				result.add(da);
+			}
+		} catch (IllegalArgumentException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::loadAllAttributeConfigForAssociation");
+		} catch (SQLException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 2, "UnitServerDA::loadAllAttributeConfigForAssociation");
+		} finally {
+			closePreparedStatement(ps);
+		}
+		
+		return result;
+	}
+
+	public void saveAllAttributeConfigForAssociation(UnitServerCuInstance associationInstance) throws RefException {
+		PreparedStatement ps = null;
+		try {
+			// first delete all config for device id
+			DeleteSqlBuilder d = new DeleteSqlBuilder();
+			d.addTable("attribute_config");
+			d.addCondition(true, String.format("%s=?", "unique_id"));
+			ps = getPreparedStatementForSQLCommand(d.toString());
+			ps.setString(1, associationInstance.getCuId());
+			executeInsertUpdateAndClose(ps);
+
+			// write all configuration
+			InsertUpdateBuilder i = new InsertUpdateBuilder();
+			i.addTable("attribute_config");
+			i.addColumnAndValue("unique_id", associationInstance.getCuId());
+
+			Vector<DatasetAttribute> conf = associationInstance.getAttributeConfigutaion();
+			for (DatasetAttribute datasetAttribute : conf) {
+				i.addColumnAndValue("attribute_name", datasetAttribute.getName());
+				i.addColumnAndValue("default_value", datasetAttribute.getDefaultValue());
+				i.addColumnAndValue("max_value", datasetAttribute.getRangeMax());
+				i.addColumnAndValue("min_value", datasetAttribute.getRangeMin());
+
+				ps = getPreparedStatementForInputUpdateBuilder(i);
+
+				executeInsertUpdateAndClose(ps);
+			}
 		} catch (IllegalArgumentException e) {
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::setState");
 		} catch (SQLException e) {
