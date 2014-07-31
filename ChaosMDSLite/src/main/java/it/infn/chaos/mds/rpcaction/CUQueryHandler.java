@@ -199,12 +199,19 @@ public class CUQueryHandler extends RPCActionHadler {
 				if (dDA.isDSChanged(d.getDeviceIdentification(), d.getDataset().getAttributes())) {
 					Integer deviceID = dDA.getDeviceIdFormInstance(d.getDeviceIdentification());
 					d.getDataset().setDeviceID(deviceID);
+					
+					//configura dataset wth configured value
+					usDA.configuraDataseAttributestForCUID(d.getDeviceIdentification(), d.getDataset().getAttributes());
+					
 					// add new dataset
 					dDA.insertNewDataset(d.getDataset());
 				}
 				// update the CU id for this device, it can be changed
 				dDA.updateCUInstanceAndAddressForDeviceID(d.getDeviceIdentification(), d.getCuInstance(), d.getNetAddress());
 			} else {
+				//configure the dataset
+				usDA.configuraDataseAttributestForCUID(d.getDeviceIdentification(), d.getDataset().getAttributes());
+
 				dDA.insertDevice(d);
 			}
 
@@ -228,7 +235,7 @@ public class CUQueryHandler extends RPCActionHadler {
 			}
 			throw new RefException(e.getMessage(), 3, "CUQueryHandler::registerControUnit");
 		} catch (Throwable e) {
-			ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 5);
+			ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
 			try {
 				closeDataAccess(dDA, false);
 			} catch (SQLException e1) {
