@@ -4,7 +4,6 @@
 package it.infn.chaos.mds;
 
 import it.infn.chaos.mds.business.DatasetAttribute;
-import it.infn.chaos.mds.business.DriverSpec;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
 
 import java.util.Collection;
@@ -16,23 +15,23 @@ import org.ref.common.mvc.ViewNotifyEvent;
 import org.ref.server.webapp.RefVaadinBasePanel;
 import org.ref.server.webapp.dialog.RefVaadinErrorDialog;
 
-import com.sun.activation.viewers.TextEditor;
 import com.vaadin.data.Item;
 import com.vaadin.event.Action;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.TextArea;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.Window;
 
 /**
  * @author bisegni
  * 
  */
 public class USCUAssociationListView extends RefVaadinBasePanel implements com.vaadin.data.Container.PropertySetChangeListener, ItemClickListener {
+	private static final String				ATTRIBUTE_DEFAULT_VALUE			= "Default Value";
+	private static final String				ATTRIBUTE_MIN_VALUE				= "Min Value";
+	private static final String				ATTRIBUTE_MAX_VALUE				= "Max Value";
+	private static final String				ATTRIBUTE_NAME					= "Attribute name";
 	private static final long				serialVersionUID				= -841710385419733478L;
 	static final Action						ACTION_EDIT						= new Action("Edit");
 	static final Action						ACTION_SAVE						= new Action("Save");
@@ -43,12 +42,15 @@ public class USCUAssociationListView extends RefVaadinBasePanel implements com.v
 	public static final String				EVENT_LOAD_INSTANCE				= "EVENT_LOAD_INSTANCE";
 	public static final String				EVENT_UNLOAD_INSTANCE			= "EVENT_UNLOAD_INSTANCE";
 	public static final String				EVENT_UPDATE_LIST				= "EVENT_UPDATE_LIST";
+	public static final String				EVENT_SAVE_ATTRIBUTE_CONFIG		= "EVENT_SAVE_ATTRIBUTE_CONFIG";
+	public static final String				EVENT_LOAD_INSTANCE_ATTRIBUTE	= "EVENT_LOAD_INSTANCE_ATTRIBUTE";
 	private static final Object				TABLE_COLUMN_WU_ID				= "Unique ID";
 	private static final Object				TABLE_COLUMN_WU_TYPE			= "type";
 	private static final Object				TABLE_COLUMN_WU_STATE			= "State";
 	private USCUAssociationListVaadin		impl							= new USCUAssociationListVaadin();
 	private boolean							editingServer					= false;
 	private Vector<UnitServerCuInstance>	currentInstancesForUnitServer	= null;
+	protected int							idx;
 
 	/*
 	 * (non-Javadoc)
@@ -61,8 +63,8 @@ public class USCUAssociationListView extends RefVaadinBasePanel implements com.v
 		addComponent(impl);
 		impl.getTableAssociation().addListener((ItemClickListener) this);
 		impl.getTableAssociation().setSelectable(true);
-		impl.getTableAssociation().setImmediate(true);
-		impl.getTableAssociation().setReadThrough(true);
+		// impl.getTableAssociation().setImmediate(true);
+		// impl.getTableAssociation().setReadThrough(true);
 		impl.getTableAssociation().setMultiSelect(true);
 		impl.getTableAssociation().setNullSelectionAllowed(true);
 		impl.getTableAssociation().addContainerProperty(USCUAssociationListView.TABLE_COLUMN_WU_ID, String.class, null);
@@ -93,6 +95,86 @@ public class USCUAssociationListView extends RefVaadinBasePanel implements com.v
 				notifyEventoToControllerWithData(USCUAssociationListView.EVENT_UNLOAD_INSTANCE, event.getSource(), impl.getTableAssociation().getValue());
 			}
 		});
+
+		// ----------attribute config
+		impl.getTableAttributeConfig().addListener((ItemClickListener) this);
+		impl.getTableAttributeConfig().setSelectable(true);
+		impl.getTableAttributeConfig().setImmediate(true);
+		impl.getTableAttributeConfig().setReadThrough(true);
+		impl.getTableAttributeConfig().setMultiSelect(true);
+		impl.getTableAttributeConfig().setNullSelectionAllowed(true);
+		impl.getTableAttributeConfig().addContainerProperty(ATTRIBUTE_NAME, String.class, null);
+		impl.getTableAttributeConfig().addContainerProperty(ATTRIBUTE_MAX_VALUE, String.class, null);
+		impl.getTableAttributeConfig().addContainerProperty(ATTRIBUTE_MIN_VALUE, String.class, null);
+		impl.getTableAttributeConfig().addContainerProperty(ATTRIBUTE_DEFAULT_VALUE, String.class, null);
+		impl.getTableAttributeConfig().addActionHandler(new Action.Handler() {
+			public Action[] getActions(Object target, Object sender) {
+				return impl.getTableAttributeConfig().isEditable() ? ACTIONS_IN_EDIT : ACTIONS_TO_EDIT;
+			}
+
+			public void handleAction(Action action, Object sender, Object target) {
+				impl.getTableAttributeConfig().setEditable(!impl.getTableAttributeConfig().isEditable());
+				if (ACTION_EDIT == action) {
+					impl.getTableAttributeConfig().refreshRowCache();
+				} else if (ACTION_SAVE == action) {
+					impl.getTableAttributeConfig().refreshRowCache();
+				}
+			}
+
+		});
+		impl.getButtonAddAttributeConfig().addListener(new ClickListener() {
+			@SuppressWarnings("unchecked")
+			public void buttonClick(ClickEvent event) {
+				if (((Set<UnitServerCuInstance>) impl.getTableAssociation().getValue()).size() != 1) {
+					getWindow().showNotification("Attribute value Error", "<b>An association need to be selected</b>", Window.Notification.TYPE_ERROR_MESSAGE);
+				} else {
+					Item item = impl.getTableAttributeConfig().addItem(new Integer(idx++));
+					item.getItemProperty(ATTRIBUTE_NAME).setValue(ATTRIBUTE_NAME);
+					item.getItemProperty(ATTRIBUTE_MAX_VALUE).setValue(ATTRIBUTE_MAX_VALUE);
+					item.getItemProperty(ATTRIBUTE_MIN_VALUE).setValue(ATTRIBUTE_MIN_VALUE);
+					item.getItemProperty(ATTRIBUTE_DEFAULT_VALUE).setValue(ATTRIBUTE_DEFAULT_VALUE);
+				}
+			}
+		});
+
+		impl.getButtonRemoveAttributeConfig().addListener(new ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				Set<Integer> c = (Set<Integer>) impl.getTableAttributeConfig().getValue();
+				for (Integer idx : c) {
+					impl.getTableAttributeConfig().removeItem(idx);
+				}
+			}
+		});
+		
+		impl.getButtonSaveAttributeConfig().addListener(new ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				// filel the object
+				UnitServerCuInstance selectedInstance = null;
+				Set<UnitServerCuInstance> selected = (Set<UnitServerCuInstance>) impl.getTableAssociation().getValue();
+				if (selected.size() != 1) {
+					getWindow().showNotification("Save Attribute Configuration Error", "<b>Only one association need to be selected</b>", Window.Notification.TYPE_ERROR_MESSAGE);
+					return;
+				}
+				for (UnitServerCuInstance unitServerCuInstance : selected) {
+					selectedInstance = unitServerCuInstance;
+					break;
+				}
+
+				Vector<DatasetAttribute> toSave = new Vector<DatasetAttribute>();
+				Collection<Integer> indexList = (Collection<Integer>) impl.getTableAttributeConfig().getItemIds();
+				for (Integer idx : indexList) {
+					DatasetAttribute da = new DatasetAttribute();
+					da.setName(impl.getTableAttributeConfig().getItem(idx).getItemProperty(ATTRIBUTE_NAME).toString());
+					da.setDefaultValueNoCheck(impl.getTableAttributeConfig().getItem(idx).getItemProperty(ATTRIBUTE_DEFAULT_VALUE).toString());
+					da.setRangeMaxNoCheck(impl.getTableAttributeConfig().getItem(idx).getItemProperty(ATTRIBUTE_MAX_VALUE).toString());
+					da.setRangeMinNoCheck(impl.getTableAttributeConfig().getItem(idx).getItemProperty(ATTRIBUTE_MIN_VALUE).toString());
+					toSave.addElement(da);
+				}
+				selectedInstance.setAttributeConfigutaion(toSave);
+				notifyEventoToControllerWithData(USCUAssociationListView.EVENT_SAVE_ATTRIBUTE_CONFIG, event.getSource(), selectedInstance);
+				getWindow().showNotification("Attribute Configuration", "<b>The configuraiton has been saved</b>", Window.Notification.TYPE_HUMANIZED_MESSAGE);
+			}
+		});
 	}
 
 	/*
@@ -118,6 +200,20 @@ public class USCUAssociationListView extends RefVaadinBasePanel implements com.v
 					woItem.getItemProperty(USCUAssociationListView.TABLE_COLUMN_WU_ID).setValue(unitServerCuInstance.getCuId());
 					woItem.getItemProperty(USCUAssociationListView.TABLE_COLUMN_WU_TYPE).setValue(unitServerCuInstance.getCuType());
 					woItem.getItemProperty(USCUAssociationListView.TABLE_COLUMN_WU_STATE).setValue(unitServerCuInstance.getState());
+				}
+
+			} else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_LOAD_INSTANCE_ATTRIBUTE)) {
+				impl.getTableAttributeConfig().removeAllItems();
+				Vector<DatasetAttribute> datattr = (Vector<DatasetAttribute>) viewEvent.getEventData();
+				if (datattr == null)
+					return;
+
+				for (DatasetAttribute da : datattr) {
+					Item woItem = impl.getTableAttributeConfig().addItem(new Integer(idx++));
+					woItem.getItemProperty(USCUAssociationListView.ATTRIBUTE_NAME).setValue(da.getName());
+					woItem.getItemProperty(USCUAssociationListView.ATTRIBUTE_DEFAULT_VALUE).setValue(da.getDefaultValue());
+					woItem.getItemProperty(USCUAssociationListView.ATTRIBUTE_MAX_VALUE).setValue(da.getRangeMax());
+					woItem.getItemProperty(USCUAssociationListView.ATTRIBUTE_MIN_VALUE).setValue(da.getRangeMin());
 				}
 
 			}
@@ -155,8 +251,20 @@ public class USCUAssociationListView extends RefVaadinBasePanel implements com.v
 	 * @see com.vaadin.event.ItemClickEvent.ItemClickListener#itemClick(com.vaadin.event.ItemClickEvent)
 	 */
 	public void itemClick(ItemClickEvent event) {
-		if (event.isDoubleClick() && event.getSource() instanceof Table) {
-			((Table) event.getSource()).select(event.getItemId());
+		if (event.getSource().equals(impl.getTableAssociation())) {
+			associationSeleteionHasChanged(event.getItemId());
 		}
+	}
+
+	/**
+	 * 
+	 * @param itemID
+	 */
+	private void associationSeleteionHasChanged(Object itemID) {
+		impl.getTableAttributeConfig().removeAllItems();
+		UnitServerCuInstance association = (UnitServerCuInstance) itemID;
+		if (association == null)
+			return;
+		notifyEventoToControllerWithData(EVENT_LOAD_INSTANCE_ATTRIBUTE, impl.getTableAssociation(), association);
 	}
 }

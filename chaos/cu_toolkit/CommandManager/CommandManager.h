@@ -106,15 +106,18 @@ namespace chaos{
 				 */
 				MDSMessageChannel *getMetadataserverChannel();
 				
+				//! delete an mds message channel
+				void deleteMDSChannel(MDSMessageChannel *mds_channel);
+				
 				/*
 				 Get Device event channel
 				 */
-				event::channel::InstrumentEventChannel *getDeviceEventChannel();
+				event::channel::InstrumentEventChannel *getInstrumentEventChannel();
 				
 				/*!
 				 Delete an event channel allocated with command manager
 				 */
-				void deleteEventChannel(event::channel::EventChannel *eventChannel);
+				void deleteInstrumentEventChannel(event::channel::InstrumentEventChannel *eventChannel);
 				
 				/*
 				 Register actions defined by AbstractActionDescriptor instance contained in the array

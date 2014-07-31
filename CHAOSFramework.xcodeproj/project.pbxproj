@@ -425,6 +425,8 @@
 		32CB737016FE3432008575F0 /* ReaderDataService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CB736E16FE3432008575F0 /* ReaderDataService.h */; };
 		32CB7CE017099C8D00767FC1 /* DataCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CB7CDE17099C8D00767FC1 /* DataCache.cpp */; };
 		32CB7CE117099C8D00767FC1 /* DataCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CB7CDF17099C8D00767FC1 /* DataCache.h */; };
+		32CDA9A4198932C500663D8B /* LoadableService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CDA9A2198932C500663D8B /* LoadableService.cpp */; };
+		32CDA9A5198932C500663D8B /* LoadableService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CDA9A3198932C500663D8B /* LoadableService.h */; };
 		32CFF95B15E4D950005D607E /* EventDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95915E4D950005D607E /* EventDescriptor.cpp */; };
 		32CFF95C15E4D950005D607E /* EventDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CFF95A15E4D950005D607E /* EventDescriptor.h */; };
 		32CFF95F15E4DBD3005D607E /* EventFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CFF95D15E4DBD3005D607E /* EventFactory.cpp */; };
@@ -976,6 +978,8 @@
 		32CB736E16FE3432008575F0 /* ReaderDataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReaderDataService.h; sourceTree = "<group>"; };
 		32CB7CDE17099C8D00767FC1 /* DataCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataCache.cpp; sourceTree = "<group>"; };
 		32CB7CDF17099C8D00767FC1 /* DataCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataCache.h; sourceTree = "<group>"; };
+		32CDA9A2198932C500663D8B /* LoadableService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadableService.cpp; sourceTree = "<group>"; };
+		32CDA9A3198932C500663D8B /* LoadableService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadableService.h; sourceTree = "<group>"; };
 		32CFF95915E4D950005D607E /* EventDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventDescriptor.cpp; sourceTree = "<group>"; };
 		32CFF95A15E4D950005D607E /* EventDescriptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDescriptor.h; sourceTree = "<group>"; };
 		32CFF95D15E4DBD3005D607E /* EventFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventFactory.cpp; sourceTree = "<group>"; };
@@ -1720,6 +1724,12 @@
 		326DB42414B38BC00018A8D0 /* utility */ = {
 			isa = PBXGroup;
 			children = (
+				32BFF90C176C842E00D27A04 /* InizializableService.cpp */,
+				32BFF90D176C842E00D27A04 /* InizializableService.h */,
+				32BFF910176C862A00D27A04 /* StartableService.cpp */,
+				32BFF911176C862A00D27A04 /* StartableService.h */,
+				32CDA9A2198932C500663D8B /* LoadableService.cpp */,
+				32CDA9A3198932C500663D8B /* LoadableService.h */,
 				32F7FEA218A5066600FC03AB /* FastDelegate.h */,
 				32F7FEA318A5066600FC03AB /* FastDelegateBind.h */,
 				326DB42514B38BC00018A8D0 /* ArrayPointer.h */,
@@ -1735,10 +1745,6 @@
 				32DF603515E14C7700312C94 /* NamedService.cpp */,
 				32DF603615E14C7700312C94 /* NamedService.h */,
 				32DD886515E2C313000AF740 /* endianess.h */,
-				32BFF90C176C842E00D27A04 /* InizializableService.cpp */,
-				32BFF90D176C842E00D27A04 /* InizializableService.h */,
-				32BFF910176C862A00D27A04 /* StartableService.cpp */,
-				32BFF911176C862A00D27A04 /* StartableService.h */,
 				32983F7417896FE1004599A3 /* ObjectInstancer.h */,
 				326573F218CCD365009E9B6B /* TemplatedKeyObjectContainer.h */,
 				329CFCF218CDEE2F002C37CF /* ObjectSlot.h */,
@@ -2520,6 +2526,7 @@
 				320FB0EC18A39E650014CDB3 /* DirectIO.h in Headers */,
 				327F51DF1952E81D00BA3D01 /* DirectIOURLManagment.h in Headers */,
 				329CFCF318CDEE2F002C37CF /* ObjectSlot.h in Headers */,
+				32CDA9A5198932C500663D8B /* LoadableService.h in Headers */,
 				32279F8516F8DEAF009EC7B9 /* DataBroker.h in Headers */,
 				32279F8C16FA36B6009EC7B9 /* PublisherDataService.h in Headers */,
 				324A4B7C191A428500975394 /* html.h in Headers */,
@@ -2843,6 +2850,7 @@
 				327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */,
 				32EA501618A15BF000782435 /* DirectIODispatcher.cpp in Sources */,
 				32C100FB191B847800478F40 /* TimerHandler.cpp in Sources */,
+				32CDA9A4198932C500663D8B /* LoadableService.cpp in Sources */,
 				324A4B9E191A569800975394 /* hex.cpp in Sources */,
 				327967B815DFAAF40003C6DA /* RpcServer.cpp in Sources */,
 				327967D515E029C70003C6DA /* AsioImplEventServer.cpp in Sources */,

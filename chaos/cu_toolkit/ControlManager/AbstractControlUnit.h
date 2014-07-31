@@ -70,7 +70,6 @@ namespace chaos{
     
     namespace cu {
         namespace control_manager {
-			namespace chaos_event = event::channel;
 			namespace cu_driver = chaos::cu::driver_manager::driver;
 			namespace chaos_data = chaos::common::data;
 			
@@ -166,7 +165,7 @@ namespace chaos{
 				data_manager::KeyDataStorage*  keyDataStorage;
 				
 				//! Event channel to permit the fire of the device event
-				chaos_event::InstrumentEventChannel *deviceEventChannel;
+				event::channel::InstrumentEventChannel *deviceEventChannel;
 				
 				//! Define the dataset information of the device implementeted into the CU
 				/*!

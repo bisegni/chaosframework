@@ -3,12 +3,14 @@
  */
 package it.infn.chaos.mds.da;
 
+import it.infn.chaos.mds.business.DatasetAttribute;
 import it.infn.chaos.mds.business.UnitServer;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Vector;
 
 import org.bson.BasicBSONObject;
@@ -288,8 +290,8 @@ public class UnitServerDA extends DataAccess {
 	/**
 	 * 
 	 * @param associationToRemove
-	 * @throws RefException 
-	 * @throws SQLException 
+	 * @throws RefException
+	 * @throws SQLException
 	 */
 	public void removeAssociation(UnitServerCuInstance associationToRemove) throws RefException {
 		DeleteSqlBuilder dsb = new DeleteSqlBuilder();
@@ -305,14 +307,14 @@ public class UnitServerDA extends DataAccess {
 		} catch (SQLException e) {
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::removeAssociation");
 		}
-	
+
 	}
 
 	/**
 	 * 
 	 * @param controlUnitInstance
 	 * @return
-	 * @throws RefException 
+	 * @throws RefException
 	 */
 	public boolean cuIDIsMDSManaged(String controlUnitInstance) throws RefException {
 		SqlBuilder s = new SqlBuilder();
@@ -349,6 +351,136 @@ public class UnitServerDA extends DataAccess {
 		} finally {
 			closePreparedStatement(ps);
 		}
+	}
+
+	/**
+	 * 
+	 * @param associationInstance
+	 * @return
+	 * @throws RefException
+	 */
+	public Vector<DatasetAttribute> loadAllAttributeConfigForAssociation(UnitServerCuInstance associationInstance) throws RefException {
+		return loadAllAttributeConfigForAssociation(associationInstance.getCuId());
+	}
+
+	/**
+	 * 
+	 * @param cuID
+	 * @return
+	 * @throws RefException
+	 */
+	public Vector<DatasetAttribute> loadAllAttributeConfigForAssociation(String cuID) throws RefException {
+		Vector<DatasetAttribute> result = new Vector<DatasetAttribute>();
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		SqlBuilder s = new SqlBuilder();
+		s.addPseudoColumntoSelect("*");
+		s.addTable("attribute_config");
+		s.addCondition(true, String.format("%s=?", "unique_id"));
+		try {
+			ps = getPreparedStatementForSQLCommand(s.toString());
+			ps.setString(1, cuID);
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				DatasetAttribute da = new DatasetAttribute();
+				da.setName(rs.getString("attribute_name"));
+				da.setDefaultValueNoCheck(rs.getString("default_value"));
+				da.setRangeMaxNoCheck(rs.getString("max_value"));
+				da.setRangeMinNoCheck(rs.getString("min_value"));
+				result.add(da);
+			}
+		} catch (IllegalArgumentException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::loadAllAttributeConfigForAssociation");
+		} catch (SQLException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 2, "UnitServerDA::loadAllAttributeConfigForAssociation");
+		} finally {
+			closePreparedStatement(ps);
+		}
+
+		return result;
+	}
+
+	/**
+	 * 
+	 * @param associationInstance
+	 * @throws RefException
+	 */
+	public void saveAllAttributeConfigForAssociation(UnitServerCuInstance associationInstance) throws RefException {
+		PreparedStatement ps = null;
+		try {
+			// first delete all config for device id
+			DeleteSqlBuilder d = new DeleteSqlBuilder();
+			d.addTable("attribute_config");
+			d.addCondition(true, String.format("%s=?", "unique_id"));
+			ps = getPreparedStatementForSQLCommand(d.toString());
+			ps.setString(1, associationInstance.getCuId());
+			executeInsertUpdateAndClose(ps);
+
+			// write all configuration
+			InsertUpdateBuilder i = new InsertUpdateBuilder();
+			i.addTable("attribute_config");
+			i.addColumnAndValue("unique_id", associationInstance.getCuId());
+
+			Vector<DatasetAttribute> conf = associationInstance.getAttributeConfigutaion();
+			for (DatasetAttribute datasetAttribute : conf) {
+				i.addColumnAndValue("attribute_name", datasetAttribute.getName());
+				if(datasetAttribute.getDefaultValue() != null && datasetAttribute.getDefaultValue().length()>0)
+					i.addColumnAndValue("default_value", datasetAttribute.getDefaultValue());
+				else
+					i.addNullColumnAndType("default_value", Types.VARCHAR);
+				
+				if(datasetAttribute.getRangeMax() != null && datasetAttribute.getRangeMax().length()>0)
+					i.addColumnAndValue("max_value", datasetAttribute.getRangeMax());
+				else
+					i.addNullColumnAndType("max_value", Types.VARCHAR);
+				
+				if(datasetAttribute.getRangeMin() != null && datasetAttribute.getRangeMin().length()>0)
+					i.addColumnAndValue("min_value", datasetAttribute.getRangeMin());
+				else
+					i.addNullColumnAndType("min_value", Types.VARCHAR);
+				
+				ps = getPreparedStatementForInputUpdateBuilder(i);
+
+				executeInsertUpdateAndClose(ps);
+			}
+		} catch (IllegalArgumentException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::setState");
+		} catch (SQLException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 2, "UnitServerDA::setState");
+		} finally {
+			closePreparedStatement(ps);
+		}
+	}
+
+	/**
+	 * 
+	 * @param cuID
+	 * @param attributes
+	 * @throws RefException
+	 */
+	public void configuraDataseAttributestForCUID(String cuID, Vector<DatasetAttribute> attributes) throws RefException {
+		Vector<DatasetAttribute> configuredAttribute = loadAllAttributeConfigForAssociation(cuID);
+
+		for (DatasetAttribute configuredAttirbute : configuredAttribute) {
+			// iterate the input attributes to find the corespond one
+			for (DatasetAttribute inputAttribute : attributes) {
+				if (configuredAttirbute.getName().toUpperCase().equals(inputAttribute.getName().toUpperCase())) {
+					try {
+						// is the same attribute so try so the the configured value
+						if (configuredAttirbute.getDefaultValue() != null)
+							inputAttribute.setDefaultValue(configuredAttirbute.getDefaultValue());
+						if (configuredAttirbute.getRangeMax() != null)
+							inputAttribute.setRangeMax(configuredAttirbute.getRangeMax());
+						if (configuredAttirbute.getRangeMin() != null)
+							inputAttribute.setRangeMin(configuredAttirbute.getRangeMin());
+					} catch (RefException e) {
+						System.out.println(ExceptionHelper.getInstance().putExcetpionStackToString(e));
+					}
+
+				}
+			}
+		}
+
 	}
 
 }

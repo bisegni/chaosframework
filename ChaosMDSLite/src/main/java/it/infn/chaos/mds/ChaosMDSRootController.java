@@ -14,11 +14,13 @@ import it.infn.chaos.mds.process.ManageUnitServerProcess;
 
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Set;
+import java.util.Vector;
 
 import org.ref.common.exception.RefException;
 import org.ref.common.mvc.ViewNotifyEvent;
@@ -153,14 +155,32 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 					deleteViewByKey("NEW_US_CU_ASSOCIATION");
 				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UNIT_SERVER_SHOW_ALL_ASSOCIATION)) {
 					showAllAssociationForUnitServer();
+				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UNIT_SERVER_LOAD_ALL_ASSOCIATION)) {
+					if (unitServerSelected != null) {
+						loadUnloadAllUnitServerAssociation(true);
+					} else {
+						MDSAppView view = getViewByKey("VISTA");
+						RefVaadinErrorDialog.shorError(view.getWindow(), "Load all association", "A unit server need to be selected");
+					}
+				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UNIT_SERVER_UNLOAD_ALL_ASSOCIATION)) {
+					if (unitServerSelected != null) {
+						loadUnloadAllUnitServerAssociation(false);
+					} else {
+						MDSAppView view = getViewByKey("VISTA");
+						RefVaadinErrorDialog.shorError(view.getWindow(), "Unload all association", "A unit server need to be selected");
+					}
 				} else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_UPDATE_LIST)) {
 					notifyEventoToViewWithData(USCUAssociationListView.EVENT_UPDATE_LIST, this, musp.loadAllAssociationForUnitServerAlias(unitServerSelected));
 				} else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_REMOVE_ASSOCIATION)) {
 					removeAssociation((Set<UnitServerCuInstance>) viewEvent.getEventData());
 				} else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_LOAD_INSTANCE)) {
 					loadUnloadInstance((Set<UnitServerCuInstance>) viewEvent.getEventData(), true);
-				}else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_UNLOAD_INSTANCE)) {
+				} else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_UNLOAD_INSTANCE)) {
 					loadUnloadInstance((Set<UnitServerCuInstance>) viewEvent.getEventData(), false);
+				} else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_SAVE_ATTRIBUTE_CONFIG)) {
+					saveAssociationAttributeConfig((UnitServerCuInstance) viewEvent.getEventData());
+				}else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_LOAD_INSTANCE_ATTRIBUTE)) {
+					loadAssociationAttributeConfig((UnitServerCuInstance) viewEvent.getEventData());
 				}
 			}
 		} catch (Throwable e) {
@@ -169,11 +189,28 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 		}
 	}
 
+	private void loadAssociationAttributeConfig(UnitServerCuInstance eventData) throws InstantiationException, IllegalAccessException, ClassNotFoundException, RefException {
+		// TODO Auto-generated method stub
+		notifyEventoToViewWithData(USCUAssociationListView.EVENT_LOAD_INSTANCE_ATTRIBUTE, this, musp.loadAllAssociationAttributeConfigForUnitServerAlias(eventData));
+	}
+
+	private void saveAssociationAttributeConfig(UnitServerCuInstance eventData) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException, RefException {
+		// TODO Auto-generated method stub
+		musp.saveAllAttributeConfigForAssociation(eventData);
+	}
+
+	private void loadUnloadAllUnitServerAssociation(boolean loadUnload) throws Throwable {
+		Vector<UnitServerCuInstance> instanceForUnitServer = musp.loadAllAssociationForUnitServerAlias(unitServerSelected);
+		Set<UnitServerCuInstance> instanceSet = new HashSet<UnitServerCuInstance>();
+		instanceSet.addAll(instanceForUnitServer);
+		loadUnloadInstance(instanceSet, loadUnload);
+	}
+
 	/**
 	 * 
 	 * @param eventData
 	 * @param b
-	 * @throws Throwable 
+	 * @throws Throwable
 	 */
 	private void loadUnloadInstance(Set<UnitServerCuInstance> eventData, boolean loadUnload) throws Throwable {
 		LoadUnloadWorkUnitSetting setting = new LoadUnloadWorkUnitSetting();
