@@ -8,6 +8,7 @@ import it.infn.chaos.mds.SingletonServices;
 import it.infn.chaos.mds.business.Dataset;
 import it.infn.chaos.mds.business.DatasetAttribute;
 import it.infn.chaos.mds.business.Device;
+import it.infn.chaos.mds.business.UnitServerCuInstance;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -238,8 +239,9 @@ public class DeviceDA extends DataAccess {
 	 * 
 	 * @param d
 	 * @throws Exception
+	 * @throws RefException 
 	 */
-	public Device insertDevice(Device d) throws Exception {
+	public Device insertDevice(Device d) throws Exception, RefException {
 		InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder();
 		iuBuilder.addColumnAndValue("last_hb", "$CURRENT_TIMESTAMP");
 		iuBuilder.fillWithBusinessClass(d);
@@ -250,6 +252,7 @@ public class DeviceDA extends DataAccess {
 
 		if (d.getDataset() != null) {
 			d.getDataset().setDeviceID(d.getDeviceID());
+			// configura dataset wth configured value
 			insertNewDataset(d.getDataset());
 		}
 

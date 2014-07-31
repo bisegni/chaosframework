@@ -95,34 +95,7 @@ public class USCUAssociationListView extends RefVaadinBasePanel implements com.v
 				notifyEventoToControllerWithData(USCUAssociationListView.EVENT_UNLOAD_INSTANCE, event.getSource(), impl.getTableAssociation().getValue());
 			}
 		});
-		impl.getButtonSaveAttributeConfig().addListener(new ClickListener() {
-			public void buttonClick(ClickEvent event) {
-				// filel the object
-				UnitServerCuInstance selectedInstance = null;
-				Set<UnitServerCuInstance> selected = (Set<UnitServerCuInstance>) impl.getTableAssociation().getValue();
-				if (selected.size() != 1) {
-					getWindow().showNotification("Save Attribute Configuration Error", "<b>Only one association need to be selected</b>", Window.Notification.TYPE_ERROR_MESSAGE);
-					return;
-				}
-				for (UnitServerCuInstance unitServerCuInstance : selected) {
-					selectedInstance = unitServerCuInstance;
-					break;
-				}
 
-				Vector<DatasetAttribute> toSave = new Vector<DatasetAttribute>();
-				Collection<Integer> indexList = (Collection<Integer>) impl.getTableAttributeConfig().getItemIds();
-				for (Integer idx : indexList) {
-					DatasetAttribute da = new DatasetAttribute();
-					da.setName(impl.getTableAttributeConfig().getItem(idx).getItemProperty(ATTRIBUTE_NAME).toString());
-					da.setDefaultValueNoCheck(impl.getTableAttributeConfig().getItem(idx).getItemProperty(ATTRIBUTE_DEFAULT_VALUE).toString());
-					da.setRangeMaxNoCheck(impl.getTableAttributeConfig().getItem(idx).getItemProperty(ATTRIBUTE_MAX_VALUE).toString());
-					da.setRangeMinNoCheck(impl.getTableAttributeConfig().getItem(idx).getItemProperty(ATTRIBUTE_MIN_VALUE).toString());
-					toSave.addElement(da);
-				}
-				selectedInstance.setAttributeConfigutaion(toSave);
-				notifyEventoToControllerWithData(USCUAssociationListView.EVENT_SAVE_ATTRIBUTE_CONFIG, event.getSource(), selectedInstance);
-			}
-		});
 		// ----------attribute config
 		impl.getTableAttributeConfig().addListener((ItemClickListener) this);
 		impl.getTableAttributeConfig().setSelectable(true);
@@ -168,8 +141,38 @@ public class USCUAssociationListView extends RefVaadinBasePanel implements com.v
 			public void buttonClick(ClickEvent event) {
 				Set<Integer> c = (Set<Integer>) impl.getTableAttributeConfig().getValue();
 				for (Integer idx : c) {
-					impl.getTableAssociation().removeItem(idx);
+					impl.getTableAttributeConfig().removeItem(idx);
 				}
+			}
+		});
+		
+		impl.getButtonSaveAttributeConfig().addListener(new ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				// filel the object
+				UnitServerCuInstance selectedInstance = null;
+				Set<UnitServerCuInstance> selected = (Set<UnitServerCuInstance>) impl.getTableAssociation().getValue();
+				if (selected.size() != 1) {
+					getWindow().showNotification("Save Attribute Configuration Error", "<b>Only one association need to be selected</b>", Window.Notification.TYPE_ERROR_MESSAGE);
+					return;
+				}
+				for (UnitServerCuInstance unitServerCuInstance : selected) {
+					selectedInstance = unitServerCuInstance;
+					break;
+				}
+
+				Vector<DatasetAttribute> toSave = new Vector<DatasetAttribute>();
+				Collection<Integer> indexList = (Collection<Integer>) impl.getTableAttributeConfig().getItemIds();
+				for (Integer idx : indexList) {
+					DatasetAttribute da = new DatasetAttribute();
+					da.setName(impl.getTableAttributeConfig().getItem(idx).getItemProperty(ATTRIBUTE_NAME).toString());
+					da.setDefaultValueNoCheck(impl.getTableAttributeConfig().getItem(idx).getItemProperty(ATTRIBUTE_DEFAULT_VALUE).toString());
+					da.setRangeMaxNoCheck(impl.getTableAttributeConfig().getItem(idx).getItemProperty(ATTRIBUTE_MAX_VALUE).toString());
+					da.setRangeMinNoCheck(impl.getTableAttributeConfig().getItem(idx).getItemProperty(ATTRIBUTE_MIN_VALUE).toString());
+					toSave.addElement(da);
+				}
+				selectedInstance.setAttributeConfigutaion(toSave);
+				notifyEventoToControllerWithData(USCUAssociationListView.EVENT_SAVE_ATTRIBUTE_CONFIG, event.getSource(), selectedInstance);
+				getWindow().showNotification("Attribute Configuration", "<b>The configuraiton has been saved</b>", Window.Notification.TYPE_HUMANIZED_MESSAGE);
 			}
 		});
 	}
