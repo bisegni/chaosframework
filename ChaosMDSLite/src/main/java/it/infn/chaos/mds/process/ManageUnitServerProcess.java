@@ -1,5 +1,6 @@
 package it.infn.chaos.mds.process;
 
+import it.infn.chaos.mds.business.DatasetAttribute;
 import it.infn.chaos.mds.business.UnitServer;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
 import it.infn.chaos.mds.da.UnitServerDA;
@@ -107,5 +108,16 @@ public class ManageUnitServerProcess extends RefProcess {
 			removeUSCUAssociation(unitServerCuInstance);
 		}
 
+	}
+
+	public Vector<DatasetAttribute> loadAllAssociationAttributeConfigForUnitServerAlias(UnitServerCuInstance associationInstance) throws InstantiationException, IllegalAccessException, ClassNotFoundException, RefException {
+		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
+		return usDA.loadAllAttributeConfigForAssociation(associationInstance);
+	}
+
+	public void saveAllAttributeConfigForAssociation(UnitServerCuInstance associationInstance) throws InstantiationException, IllegalAccessException, ClassNotFoundException, RefException, SQLException {
+		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
+		usDA.saveAllAttributeConfigForAssociation(associationInstance);
+		commit();
 	}
 }

@@ -174,7 +174,14 @@ public class DatasetAttribute extends BSONBusinessObject {
 		checkDefaultValueForType(rangeMax);
 		this.rangeMax = rangeMax;
 	}
-
+	/**
+	 * @param rangeMax
+	 *            the rangeMax to set
+	 * @throws RefException
+	 */
+	public void setRangeMaxNoCheck(String rangeMax) {
+		this.rangeMax = rangeMax;
+	}
 	/**
 	 * @return the rangeMin
 	 */
@@ -189,6 +196,14 @@ public class DatasetAttribute extends BSONBusinessObject {
 	 */
 	public void setRangeMin(String rangeMin) throws RefException {
 		checkDefaultValueForType(rangeMin);
+		this.rangeMin = rangeMin;
+	}
+	/**
+	 * @param rangeMin
+	 *            the rangeMin to set
+	 * @throws RefException
+	 */
+	public void setRangeMinNoCheck(String rangeMin) {
 		this.rangeMin = rangeMin;
 	}
 
@@ -481,10 +496,20 @@ public class DatasetAttribute extends BSONBusinessObject {
 				throw new RefException(String.format("The default value %s is greater than the maximum value %s", defaultValue, getRangeMax()));
 			}
 		}
-		this.defaultValue = defaultValue;
+		setDefaultValueNoCheck(defaultValue);
 
 	}
 
+	/**
+	 * @param defaultValue
+	 *            the defaultValue to set
+	 * @throws RefException
+	 */
+	public void setDefaultValueNoCheck(String defaultValue) {
+		this.defaultValue = defaultValue;
+
+	}
+	
 	/**
 	 * @return the tagsPath
 	 */

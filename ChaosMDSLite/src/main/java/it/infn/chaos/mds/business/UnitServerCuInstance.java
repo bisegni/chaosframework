@@ -22,30 +22,40 @@ import com.mongodb.util.JSON;
  */
 @DBTable(name = "unit_server_cu_instance")
 public class UnitServerCuInstance extends BusinessObject {
-	private static final long	serialVersionUID	= -3540643481390952382L;
-	public static final String	UNIT_SERVER_ALIAS	= "unit_server_alias";
-	public static final String	CU_ID				= "cu_id";
-	public static final String	CU_TYPE				= "cu_type";
-	public static final String	CU_PARAM			= "cu_param";
-	public static final String	DRIVER_SPEC			= "driver_spec";
-	public static final String	AUTO_LOAD			= "auto_load";
-	public static final String	STATE				= "state";
+	private static final long			serialVersionUID		= -3540643481390952382L;
+	public static final String			UNIT_SERVER_ALIAS		= "unit_server_alias";
+	public static final String			CU_ID					= "cu_id";
+	public static final String			CU_TYPE					= "cu_type";
+	public static final String			CU_PARAM				= "cu_param";
+	public static final String			DRIVER_SPEC				= "driver_spec";
+	public static final String			AUTO_LOAD				= "auto_load";
+	public static final String			STATE					= "state";
 	@DBColumn(name = UNIT_SERVER_ALIAS, maxDimension = 64)
-	private String				unitServerAlias		= null;
+	private String						unitServerAlias			= null;
 	@DBColumn(name = CU_ID, maxDimension = 64)
-	private String				cuId				= null;
+	private String						cuId					= null;
 	@DBColumn(name = CU_TYPE, maxDimension = 64)
-	private String				cuType				= null;
+	private String						cuType					= null;
 	@DBColumn(name = DRIVER_SPEC)
-	private String				drvSpec				= null;
-	private Vector<DriverSpec>	driverSpec			= new Vector<DriverSpec>();
+	private String						drvSpec					= null;
+	private Vector<DriverSpec>			driverSpec				= new Vector<DriverSpec>();
 
 	@DBColumn(name = CU_PARAM, maxDimension = 64)
-	private String				cuParam				= null;
+	private String						cuParam					= null;
 	@DBColumn(name = AUTO_LOAD)
-	private Boolean				autoLoad			= false;
+	private Boolean						autoLoad				= false;
 	@DBColumn(name = STATE, maxDimension = 64)
-	private String				state				= "one";
+	private String						state					= "one";
+
+	private Vector<DatasetAttribute>	attributeConfigutaion	= new Vector<DatasetAttribute>();
+
+	public Vector<DatasetAttribute> getAttributeConfigutaion() {
+		return attributeConfigutaion;
+	}
+
+	public void setAttributeConfigutaion(Vector<DatasetAttribute> attributeConfigutaion) {
+		this.attributeConfigutaion = attributeConfigutaion;
+	}
 
 	public String getCuType() {
 		return cuType;
