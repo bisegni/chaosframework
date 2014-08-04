@@ -8,6 +8,7 @@ import it.infn.chaos.mds.da.UnitServerDA;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import java.util.Vector;
 
 import org.ref.common.exception.RefException;
@@ -22,6 +23,53 @@ public class ManageUnitServerProcess extends RefProcess {
 	 * 
 	 */
 	private static final long	serialVersionUID	= -8527016113254216852L;
+
+	/**
+	 * Create new unit server with unique alias
+	 * 
+	 * @throws ClassNotFoundException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws RefException
+	 * @throws SQLException
+	 */
+	public void createNewUnitServer() throws InstantiationException, IllegalAccessException, ClassNotFoundException, RefException, SQLException {
+		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
+		UnitServer us = new UnitServer();
+		us.setAlias(UUID.randomUUID().toString().substring(0, 8));
+		usDA.insertNewUnitServer(us);
+		commit();
+	}
+
+	/**
+	 * 
+	 * @param eventData
+	 * @throws ClassNotFoundException 
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 * @throws RefException 
+	 * @throws SQLException 
+	 */
+	public void updaUnitServerProperty(UnitServer eventData) throws InstantiationException, IllegalAccessException, ClassNotFoundException, RefException, SQLException {
+		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
+		usDA.updateUnitServerProperty(eventData);
+		commit();
+	}
+
+	/**
+	 * 
+	 * @param unitServerSelected
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws ClassNotFoundException
+	 * @throws SQLException
+	 * @throws RefException
+	 */
+	public void deleteUnitServer(String unitServerSelected) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException, RefException {
+		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
+		usDA.deleteUnitServer(unitServerSelected);
+		commit();
+	}
 
 	/**
 	 * return all unit server
@@ -120,4 +168,5 @@ public class ManageUnitServerProcess extends RefProcess {
 		usDA.saveAllAttributeConfigForAssociation(associationInstance);
 		commit();
 	}
+
 }

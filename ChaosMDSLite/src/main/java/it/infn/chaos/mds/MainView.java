@@ -69,6 +69,8 @@ public class MainView extends CustomComponent {
 	private Button				buttonUSCULoadAll;
 	private Button				buttonUSCUUnloadAll;
 	private Button				buttonUSCUShowAll;
+	private Button				buttonNewUS;
+	private Button				buttonDelUS;
 	/*- VaadinEditorProperties={"grid":"RegularGrid,20","showGrid":true,"snapToGrid":true,"snapToObject":true,"movingGuides":false,"snappingDistance":10} */
 
 	/*- VaadinEditorProperties={"grid":"RegularGrid,20","showGrid":true,"snapToGrid":true,"snapToObject":true,"movingGuides":false,"snappingDistance":10} */
@@ -186,6 +188,14 @@ public class MainView extends CustomComponent {
 	/*- VaadinEditorProperties={"grid":"RegularGrid,20","showGrid":true,"snapToGrid":true,"snapToObject":true,"movingGuides":false,"snappingDistance":10} */
 
 	/*- VaadinEditorProperties={"grid":"RegularGrid,20","showGrid":true,"snapToGrid":true,"snapToObject":true,"movingGuides":false,"snappingDistance":10} */
+
+	public Button getButtonDelUS() {
+		return buttonDelUS;
+	}
+
+	public Button getButtonNewUS() {
+		return buttonNewUS;
+	}
 
 	public Button getButtonUSCUShowAll() {
 		return buttonUSCUShowAll;
@@ -397,6 +407,20 @@ public class MainView extends CustomComponent {
 		usbuttonHL.setMargin(true);
 		usbuttonHL.setSpacing(true);
 
+		buttonNewUS = new Button();
+		buttonNewUS.setCaption("New US");
+		buttonNewUS.setImmediate(true);
+		buttonNewUS.setWidth("-1px");
+		buttonNewUS.setHeight("-1px");
+		usbuttonHL.addComponent(buttonNewUS);
+		
+		buttonDelUS = new Button();
+		buttonDelUS.setCaption("Delete US");
+		buttonDelUS.setImmediate(true);
+		buttonDelUS.setWidth("-1px");
+		buttonDelUS.setHeight("-1px");
+		usbuttonHL.addComponent(buttonDelUS);
+		
 		// buttonSetUnsetInit
 		buttonUnitServerUpdate = new Button();
 		getButtonUnitServerUpdate().setCaption("Update list");
@@ -404,30 +428,30 @@ public class MainView extends CustomComponent {
 		getButtonUnitServerUpdate().setWidth("-1px");
 		getButtonUnitServerUpdate().setHeight("-1px");
 		usbuttonHL.addComponent(getButtonUnitServerUpdate());
-
+		
 		buttonUSCUAssociate = new Button();
-		getButtonUSCUAssociate().setCaption("Associate new CUID");
+		getButtonUSCUAssociate().setCaption("US-CU Assoc.");
 		getButtonUSCUAssociate().setImmediate(true);
 		getButtonUSCUAssociate().setWidth("-1px");
 		getButtonUSCUAssociate().setHeight("-1px");
 		usbuttonHL.addComponent(getButtonUSCUAssociate());
 
 		buttonUSCULoadAll = new Button();
-		buttonUSCULoadAll.setCaption("Load all association");
+		buttonUSCULoadAll.setCaption("Load All CU");
 		buttonUSCULoadAll.setImmediate(true);
 		buttonUSCULoadAll.setWidth("-1px");
 		buttonUSCULoadAll.setHeight("-1px");
 		usbuttonHL.addComponent(buttonUSCULoadAll);
 
 		buttonUSCUUnloadAll = new Button();
-		buttonUSCUUnloadAll.setCaption("Unload all association");
+		buttonUSCUUnloadAll.setCaption("Unload All CU");
 		buttonUSCUUnloadAll.setImmediate(true);
 		buttonUSCUUnloadAll.setWidth("-1px");
 		buttonUSCUUnloadAll.setHeight("-1px");
 		usbuttonHL.addComponent(buttonUSCUUnloadAll);
 		
 		buttonUSCUShowAll = new Button();
-		buttonUSCUShowAll.setCaption("Show all association");
+		buttonUSCUShowAll.setCaption("Show all CU");
 		buttonUSCUShowAll.setImmediate(true);
 		buttonUSCUShowAll.setWidth("-1px");
 		buttonUSCUShowAll.setHeight("-1px");

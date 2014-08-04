@@ -197,7 +197,38 @@ public class UnitServerDA extends DataAccess {
 		} finally {
 			closePreparedStatement(ps);
 		}
+	}
 
+
+	public void updateUnitServerProperty(UnitServer unitServer) throws RefException {
+		InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_UPDATE);
+		iuBuilder.addTable(UnitServer.class);
+		iuBuilder.addColumnAndValue(UnitServer.UNIT_SERVER_ALIAS, unitServer.getAlias());
+		iuBuilder.addCondition(true, "unit_server_alias=?");
+		PreparedStatement ps = null;
+		try {
+			ps = getPreparedStatementForSQLCommand(iuBuilder.toString());
+			int idx = iuBuilder.fillPreparedStatement(ps);
+			ps.setString(idx++, unitServer.isAliasChanged()?unitServer.getOldAliasOnChange():unitServer.getAlias());
+			executeInsertUpdateAndClose(ps);
+		} catch (SQLException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::updateNewUnitServer");
+		} finally {
+			closePreparedStatement(ps);
+		}
+	}
+	
+	public void deleteUnitServer(String unitServerToDelete) throws RefException, SQLException {
+		// delete all association
+		deletePublishedCU(unitServerToDelete);
+
+		// delete the unit server
+		DeleteSqlBuilder d = new DeleteSqlBuilder();
+		d.addTable(UnitServer.class);
+		d.addCondition(true, String.format("%s=?", UnitServer.UNIT_SERVER_ALIAS));
+		PreparedStatement ps = getPreparedStatementForSQLCommand(d.toString());
+		ps.setString(1, unitServerToDelete);
+		executeInsertUpdateAndClose(ps);
 	}
 
 	public boolean unitServerAlreadyRegistered(UnitServer unitServer) throws RefException {
@@ -249,13 +280,17 @@ public class UnitServerDA extends DataAccess {
 	}
 
 	public void deletePublishedCU(UnitServer unitServer) throws RefException {
+		deletePublishedCU(unitServer.getAlias());
+	}
+
+	public void deletePublishedCU(String unitServerIdentifier) throws RefException {
 		PreparedStatement ps = null;
 		DeleteSqlBuilder d = new DeleteSqlBuilder();
 		d.addTable("unit_server_published_cu");
 		d.addCondition(true, "unit_server_alias = ?");
 		try {
 			ps = getPreparedStatementForSQLCommand(d.toString());
-			ps.setString(1, unitServer.getAlias());
+			ps.setString(1, unitServerIdentifier);
 			executeInsertUpdateAndClose(ps);
 		} catch (SQLException e) {
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::deletePublishedCU");
@@ -424,21 +459,21 @@ public class UnitServerDA extends DataAccess {
 			Vector<DatasetAttribute> conf = associationInstance.getAttributeConfigutaion();
 			for (DatasetAttribute datasetAttribute : conf) {
 				i.addColumnAndValue("attribute_name", datasetAttribute.getName());
-				if(datasetAttribute.getDefaultValue() != null && datasetAttribute.getDefaultValue().length()>0)
+				if (datasetAttribute.getDefaultValue() != null && datasetAttribute.getDefaultValue().length() > 0)
 					i.addColumnAndValue("default_value", datasetAttribute.getDefaultValue());
 				else
 					i.addNullColumnAndType("default_value", Types.VARCHAR);
-				
-				if(datasetAttribute.getRangeMax() != null && datasetAttribute.getRangeMax().length()>0)
+
+				if (datasetAttribute.getRangeMax() != null && datasetAttribute.getRangeMax().length() > 0)
 					i.addColumnAndValue("max_value", datasetAttribute.getRangeMax());
 				else
 					i.addNullColumnAndType("max_value", Types.VARCHAR);
-				
-				if(datasetAttribute.getRangeMin() != null && datasetAttribute.getRangeMin().length()>0)
+
+				if (datasetAttribute.getRangeMin() != null && datasetAttribute.getRangeMin().length() > 0)
 					i.addColumnAndValue("min_value", datasetAttribute.getRangeMin());
 				else
 					i.addNullColumnAndType("min_value", Types.VARCHAR);
-				
+
 				ps = getPreparedStatementForInputUpdateBuilder(i);
 
 				executeInsertUpdateAndClose(ps);
@@ -482,5 +517,6 @@ public class UnitServerDA extends DataAccess {
 		}
 
 	}
+
 
 }

@@ -99,7 +99,7 @@ next_retrive_intervall(0){
 		 iter++){
 		complete_url = boost::str(boost::format("%1%/?w=1&wtimeoutMS=2000") % *iter);
 		MDBHAC_LAPP_ << "Register mongo server address " << complete_url;
-		boost::shared_ptr<mongo::ConnectionString> cs_ptr(new mongo::ConnectionString(complete_url));
+		boost::shared_ptr<mongo::ConnectionString> cs_ptr(new mongo::ConnectionString(complete_url, mongo::ConnectionString::MASTER));
 		valid_connection_queue.push(cs_ptr);
 	}
 	

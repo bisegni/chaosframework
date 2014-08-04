@@ -11,9 +11,12 @@
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
 
 #include <vector>
+
+#include <uv.h>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
-#include <uv.h>
+
 
 #include <chaos/common/rpc/RpcServer.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>

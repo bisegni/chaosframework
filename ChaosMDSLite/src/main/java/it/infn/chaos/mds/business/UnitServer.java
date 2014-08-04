@@ -16,11 +16,22 @@ import org.ref.common.type.Timestamp;
  */
 @DBTable(name = "unit_server")
 public class UnitServer extends BusinessObject {
+	public boolean isAliasChanged() {
+		return isAliasChanged;
+	}
+
 	public static final String	UNIT_SERVER_ALIAS	= "unit_server_alias";
 	public static final String	UNIT_SERVER_IP_PORT	= "unit_server_ip_port";
 	public static final String	UNIT_SERVER_HB_TIME	= "unit_server_hb_time";
 	public static final String	CONTROL_UNIT_ALIAS	= "control_unit_alias";
 	private static final long	serialVersionUID	= 947001022484682227L;
+
+	private String				oldAliasOnChange	= null;
+
+	public String getOldAliasOnChange() {
+		return oldAliasOnChange;
+	}
+
 	@DBColumn(name = UNIT_SERVER_ALIAS, maxDimension = 64)
 	private String				alias				= null;
 	@DBColumn(name = UNIT_SERVER_IP_PORT, maxDimension = 256)
@@ -28,6 +39,7 @@ public class UnitServer extends BusinessObject {
 	@DBColumn(name = UNIT_SERVER_HB_TIME, maxDimension = 256)
 	private Timestamp			unitServerHB		= null;
 	private Vector<String>		publischedCU		= new Vector<String>();
+	private boolean				isAliasChanged		= false;
 
 	/*
 	 * (non-Javadoc)
@@ -67,6 +79,8 @@ public class UnitServer extends BusinessObject {
 	}
 
 	public void setAlias(String alias) {
+		isAliasChanged = true;
+		this.oldAliasOnChange = this.alias;
 		this.alias = alias;
 	}
 
