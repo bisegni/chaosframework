@@ -18,7 +18,7 @@ abstract public class SlowExecutionJob extends RPCActionHadler implements Runnab
 	private Object								inputData			= null;
 	private RPCClient							clientInstance		= null;
 	private String								jobDomain			= UUID.randomUUID().toString().substring(0, 10);
-	private final Semaphore						available			= new Semaphore(1);
+	private final Semaphore						available			= new Semaphore(0);
 	private Hashtable<Integer, BasicBSONObject>	resultHashTable		= new Hashtable<Integer, BasicBSONObject>();
 
 	public SlowExecutionJob() {
@@ -59,15 +59,16 @@ abstract public class SlowExecutionJob extends RPCActionHadler implements Runnab
 
 	protected BasicBSONObject sendRequest(String ip_port, String domain, String action, BasicBSONObject requestData, Integer requestID, boolean wait) throws Throwable {
 		BasicBSONObject request = new BasicBSONObject();
-		request.append(RPCConstants.CS_CMDM_REMOTE_HOST_ANSWER_IP, ip_port);
+		request.append(RPCConstants.CS_CMDM_REMOTE_HOST_IP, ip_port);
 		request.append(RPCConstants.CS_CMDM_ACTION_DOMAIN, domain);
 		request.append(RPCConstants.CS_CMDM_ACTION_NAME, action);
 		if (requestData != null) {
-			// request.append(RPCConstants.CS_CMDM_ACTION_MESSAGE, requestData);
+			request.append(RPCConstants.CS_CMDM_ACTION_MESSAGE, requestData);
 		}
 
 		// add current server as
 		int resultID = counterRequestID.incrementAndGet();
+		request.append(RPCConstants.CS_CMDM_REMOTE_HOST_ANSWER_IP, "localhost:5500");
 		request.append(RPCConstants.CS_CMDM_REMOTE_HOST_ANSWER_MESSAGE_ID, resultID);
 		request.append(RPCConstants.CS_CMDM_ANSWER_DOMAIN, jobDomain);
 		request.append(RPCConstants.CS_CMDM_ANSWER_ACTION, "response");

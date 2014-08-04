@@ -190,20 +190,44 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 					saveAssociationAttributeConfig((UnitServerCuInstance) viewEvent.getEventData());
 				} else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_LOAD_INSTANCE_ATTRIBUTE)) {
 					loadAssociationAttributeConfig((UnitServerCuInstance) viewEvent.getEventData());
-				}else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UNIT_SERVER_EDIT_ALIAS)) {
+				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UNIT_SERVER_EDIT_ALIAS)) {
 					openViewByKeyAndClass("EDIT_US_ALIAS", USEditInfoView.class, OpenViewIn.DIALOG, "Edit Unit Server Property");
-					notifyEventoToViewWithData(USEditInfoView.EVENT_SET_UNIT_SERVER, this,  musp.getUnitServerByIdentification(viewEvent.getEventData().toString()));
-				}else if (viewEvent.getEventKind().equals(USEditInfoView.EVENT_CANCELL)) {
+					notifyEventoToViewWithData(USEditInfoView.EVENT_SET_UNIT_SERVER, this, musp.getUnitServerByIdentification(viewEvent.getEventData().toString()));
+				} else if (viewEvent.getEventKind().equals(USEditInfoView.EVENT_CANCELL)) {
 					deleteViewByKey("EDIT_US_ALIAS");
-				}else if (viewEvent.getEventKind().equals(USEditInfoView.EVENT_SAVE)) {
-					musp.updaUnitServerProperty((UnitServer)viewEvent.getEventData());
+				} else if (viewEvent.getEventKind().equals(USEditInfoView.EVENT_SAVE)) {
+					musp.updaUnitServerProperty((UnitServer) viewEvent.getEventData());
 					updateUnitServerList();
 					deleteViewByKey("EDIT_US_ALIAS");
-				}else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UPDATE_UNIT_SERVER_LIST)) {
+				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UPDATE_UNIT_SERVER_LIST)) {
 					updateUnitServerList();
+				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UNIT_SERVER_CU_TYPE_ADD)) {
+					openViewByKeyAndClass("US_CU_TYPE_ADD", USAddCuTypeView.class, OpenViewIn.DIALOG, "Add unit type");
+					notifyEventoToViewWithData(USAddCuTypeView.EVENT_SET_UNIT_SERVER, this, viewEvent.getEventData().toString());
+				} else if (viewEvent.getEventKind().equals(USAddCuTypeView.EVENT_CANCELL)) {
+					deleteViewByKey("US_CU_TYPE_ADD");
+				} else if (viewEvent.getEventKind().equals(USAddCuTypeView.EVENT_SAVE)) {
+					String[] data = (String[]) viewEvent.getEventData();
+					musp.addCuTypeToUnitServerAlias(data[0], data[1]);
+					unitServerHasBeenSelected(data[0]);
+					deleteViewByKey("US_CU_TYPE_ADD");
+				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UNIT_SERVER_CU_TYPE_REMOVE)) {
+					if (unitServerSelected != null) {
+						musp.removeCuTypeToUnitServer(unitServerSelected, viewEvent.getEventData().toString());
+						unitServerHasBeenSelected(unitServerSelected);
+					} else {
+						MDSAppView view = getViewByKey("VISTA");
+						RefVaadinErrorDialog.shorError(view.getWindow(), "Remove Unit Server Type", "A unit server need to be selected");
+					}
+				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UNIT_SERVER_CU_TYPE_UPDATE_LIST)) {
+					if (unitServerSelected != null) {
+						unitServerHasBeenSelected(viewEvent.getEventData().toString());
+					} else {
+						MDSAppView view = getViewByKey("VISTA");
+						RefVaadinErrorDialog.shorError(view.getWindow(), "Remove Unit Server Type", "A unit server need to be selected");
+					}
 				}
-				
-				
+
 			}
 		} catch (Throwable e) {
 			MDSAppView view = getViewByKey("VISTA");

@@ -50,6 +50,7 @@ public class LoadUnloadWorkUnit extends SlowExecutionJob {
 		msgData.append(RPCConstants.DATASET_DEVICE_ID, instance.getCuId());
 		msgData.append("loadControlUnitParam", instance.getCuParam());
 		//send message
+		Integer reqID = 0;
 		sendMessage(unitServer.getIp_port(), "system", load?"loadControlUnit":"unloadControlUnit", msgData);
 	}
 }

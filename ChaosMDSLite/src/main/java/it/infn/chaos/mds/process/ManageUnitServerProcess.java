@@ -44,11 +44,11 @@ public class ManageUnitServerProcess extends RefProcess {
 	/**
 	 * 
 	 * @param eventData
-	 * @throws ClassNotFoundException 
-	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
-	 * @throws RefException 
-	 * @throws SQLException 
+	 * @throws ClassNotFoundException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws RefException
+	 * @throws SQLException
 	 */
 	public void updaUnitServerProperty(UnitServer eventData) throws InstantiationException, IllegalAccessException, ClassNotFoundException, RefException, SQLException {
 		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
@@ -155,17 +155,66 @@ public class ManageUnitServerProcess extends RefProcess {
 		for (UnitServerCuInstance unitServerCuInstance : associationToRemove) {
 			removeUSCUAssociation(unitServerCuInstance);
 		}
-
 	}
 
+	/**
+	 * 
+	 * @param associationInstance
+	 * @return
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws ClassNotFoundException
+	 * @throws RefException
+	 */
 	public Vector<DatasetAttribute> loadAllAssociationAttributeConfigForUnitServerAlias(UnitServerCuInstance associationInstance) throws InstantiationException, IllegalAccessException, ClassNotFoundException, RefException {
 		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
 		return usDA.loadAllAttributeConfigForAssociation(associationInstance);
 	}
 
+	/**
+	 * 
+	 * @param associationInstance
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws ClassNotFoundException
+	 * @throws RefException
+	 * @throws SQLException
+	 */
 	public void saveAllAttributeConfigForAssociation(UnitServerCuInstance associationInstance) throws InstantiationException, IllegalAccessException, ClassNotFoundException, RefException, SQLException {
 		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
 		usDA.saveAllAttributeConfigForAssociation(associationInstance);
+		commit();
+	}
+
+	/**
+	 * 
+	 * @param string
+	 * @param string2
+	 * @throws ClassNotFoundException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws SQLException
+	 * @throws RefException
+	 */
+	public void addCuTypeToUnitServerAlias(String unitServerAlias, String cuTypeName) throws RefException, InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException {
+		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
+		usDA.addCuTypeToUnitServer(unitServerAlias, cuTypeName);
+		commit();
+	}
+
+	/**
+	 * 
+	 * @param unitServerSelected
+	 * @param cuTypeName
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws ClassNotFoundException
+	 * @throws RefException
+	 * @throws SQLException
+	 */
+	public void removeCuTypeToUnitServer(String unitServerSelected, String cuTypeName) throws InstantiationException, IllegalAccessException, ClassNotFoundException, RefException, SQLException {
+		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
+		usDA.removeCuTypeToUnitServer(unitServerSelected, cuTypeName);
 		commit();
 	}
 

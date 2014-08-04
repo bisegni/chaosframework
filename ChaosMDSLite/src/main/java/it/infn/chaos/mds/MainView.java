@@ -58,6 +58,12 @@ public class MainView extends CustomComponent {
 	private Label				label_2;
 	private Button				buttonUnitServerUpdate;
 	private Button				buttonUSCUAssociate;
+	private Button				buttonUpdateListCUType;
+
+	public Button getButtonUpdateListCUType() {
+		return buttonUpdateListCUType;
+	}
+
 	public Button getButtonUSCULoadAll() {
 		return buttonUSCULoadAll;
 	}
@@ -66,12 +72,23 @@ public class MainView extends CustomComponent {
 		return buttonUSCUUnloadAll;
 	}
 
-	private Button				buttonUSCULoadAll;
-	private Button				buttonUSCUUnloadAll;
-	private Button				buttonUSCUShowAll;
-	private Button				buttonNewUS;
-	private Button				buttonDelUS;
+	private Button	buttonUSCULoadAll;
+	private Button	buttonUSCUUnloadAll;
+	private Button	buttonUSCUShowAll;
+	private Button	buttonNewUS;
+	private Button	buttonDelUS;
 	/*- VaadinEditorProperties={"grid":"RegularGrid,20","showGrid":true,"snapToGrid":true,"snapToObject":true,"movingGuides":false,"snappingDistance":10} */
+	private Button	buttonAddCUType	= null;
+
+	public Button getButtonAddCUType() {
+		return buttonAddCUType;
+	}
+
+	public Button getButtonRemoveCUType() {
+		return buttonRemoveCUType;
+	}
+
+	private Button	buttonRemoveCUType	= null;
 
 	/*- VaadinEditorProperties={"grid":"RegularGrid,20","showGrid":true,"snapToGrid":true,"snapToObject":true,"movingGuides":false,"snappingDistance":10} */
 
@@ -413,14 +430,14 @@ public class MainView extends CustomComponent {
 		buttonNewUS.setWidth("-1px");
 		buttonNewUS.setHeight("-1px");
 		usbuttonHL.addComponent(buttonNewUS);
-		
+
 		buttonDelUS = new Button();
 		buttonDelUS.setCaption("Delete US");
 		buttonDelUS.setImmediate(true);
 		buttonDelUS.setWidth("-1px");
 		buttonDelUS.setHeight("-1px");
 		usbuttonHL.addComponent(buttonDelUS);
-		
+
 		// buttonSetUnsetInit
 		buttonUnitServerUpdate = new Button();
 		getButtonUnitServerUpdate().setCaption("Update list");
@@ -428,7 +445,7 @@ public class MainView extends CustomComponent {
 		getButtonUnitServerUpdate().setWidth("-1px");
 		getButtonUnitServerUpdate().setHeight("-1px");
 		usbuttonHL.addComponent(getButtonUnitServerUpdate());
-		
+
 		buttonUSCUAssociate = new Button();
 		getButtonUSCUAssociate().setCaption("US-CU Assoc.");
 		getButtonUSCUAssociate().setImmediate(true);
@@ -449,7 +466,7 @@ public class MainView extends CustomComponent {
 		buttonUSCUUnloadAll.setWidth("-1px");
 		buttonUSCUUnloadAll.setHeight("-1px");
 		usbuttonHL.addComponent(buttonUSCUUnloadAll);
-		
+
 		buttonUSCUShowAll = new Button();
 		buttonUSCUShowAll.setCaption("Show all CU");
 		buttonUSCUShowAll.setImmediate(true);
@@ -485,6 +502,31 @@ public class MainView extends CustomComponent {
 		unitServerWorkUnitTypeVerticalLayout.addComponent(tableUnitServerWorkUnitType);
 		unitServerWorkUnitTypeVerticalLayout.setExpandRatio(tableUnitServerWorkUnitType, 1.0f);
 
+		HorizontalLayout hlCUTypeButton = new HorizontalLayout();
+		hlCUTypeButton.setMargin(true);
+		hlCUTypeButton.setSpacing(true);
+		buttonAddCUType = new Button();
+		buttonAddCUType.setCaption("Add");
+		buttonAddCUType.setImmediate(true);
+		buttonAddCUType.setWidth("-1px");
+		buttonAddCUType.setHeight("-1px");
+		hlCUTypeButton.addComponent(buttonAddCUType);
+
+		buttonRemoveCUType = new Button();
+		buttonRemoveCUType.setCaption("Remove");
+		buttonRemoveCUType.setImmediate(true);
+		buttonRemoveCUType.setWidth("-1px");
+		buttonRemoveCUType.setHeight("-1px");
+		hlCUTypeButton.addComponent(buttonRemoveCUType);
+
+		buttonUpdateListCUType = new Button();
+		buttonUpdateListCUType.setCaption("Update List");
+		buttonUpdateListCUType.setImmediate(true);
+		buttonUpdateListCUType.setWidth("-1px");
+		buttonUpdateListCUType.setHeight("-1px");
+		hlCUTypeButton.addComponent(buttonUpdateListCUType);
+
+		unitServerWorkUnitTypeVerticalLayout.addComponent(hlCUTypeButton);
 		return unitServerWorkUnitTypeVerticalLayout;
 	}
 

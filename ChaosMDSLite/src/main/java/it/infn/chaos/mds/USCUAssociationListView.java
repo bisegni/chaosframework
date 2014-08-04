@@ -22,6 +22,7 @@ import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.Window.Notification;
 
 /**
  * @author bisegni
@@ -46,6 +47,7 @@ public class USCUAssociationListView extends RefVaadinBasePanel implements com.v
 	public static final String				EVENT_LOAD_INSTANCE_ATTRIBUTE	= "EVENT_LOAD_INSTANCE_ATTRIBUTE";
 	private static final Object				TABLE_COLUMN_WU_ID				= "Unique ID";
 	private static final Object				TABLE_COLUMN_WU_TYPE			= "type";
+	private static final Object				TABLE_COLUMN_WU_AUTOLOAD		= "autoload";
 	private static final Object				TABLE_COLUMN_WU_STATE			= "State";
 	private USCUAssociationListVaadin		impl							= new USCUAssociationListVaadin();
 	private boolean							editingServer					= false;
@@ -69,6 +71,7 @@ public class USCUAssociationListView extends RefVaadinBasePanel implements com.v
 		impl.getTableAssociation().setNullSelectionAllowed(true);
 		impl.getTableAssociation().addContainerProperty(USCUAssociationListView.TABLE_COLUMN_WU_ID, String.class, null);
 		impl.getTableAssociation().addContainerProperty(USCUAssociationListView.TABLE_COLUMN_WU_TYPE, String.class, null);
+		impl.getTableAssociation().addContainerProperty(USCUAssociationListView.TABLE_COLUMN_WU_AUTOLOAD, String.class, null);
 		impl.getTableAssociation().addContainerProperty(USCUAssociationListView.TABLE_COLUMN_WU_STATE, String.class, null);
 
 		impl.getButtonUpdateList().addListener(new ClickListener() {
@@ -84,7 +87,7 @@ public class USCUAssociationListView extends RefVaadinBasePanel implements com.v
 		impl.getButtonRemoveAssociation().addListener(new ClickListener() {
 			public void buttonClick(ClickEvent event) {
 				if (impl.getTableAssociation().getValue() == null || ((Set<UnitServerCuInstance>) impl.getTableAssociation().getValue()).size() == 0) {
-					RefVaadinErrorDialog.shorError(getWindow(), "Remove Association Error", "No association selected");
+					getWindow().showNotification("Remove Association Error", "No association selected", Notification.TYPE_ERROR_MESSAGE);
 					return;
 				}
 				notifyEventoToControllerWithData(USCUAssociationListView.EVENT_REMOVE_ASSOCIATION, event.getSource(), impl.getTableAssociation().getValue());
@@ -145,7 +148,7 @@ public class USCUAssociationListView extends RefVaadinBasePanel implements com.v
 				}
 			}
 		});
-		
+
 		impl.getButtonSaveAttributeConfig().addListener(new ClickListener() {
 			public void buttonClick(ClickEvent event) {
 				// filel the object
@@ -191,6 +194,7 @@ public class USCUAssociationListView extends RefVaadinBasePanel implements com.v
 				impl.getUsSelected().setValue(viewEvent.getEventData().toString());
 			} else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_UPDATE_LIST)) {
 				impl.getTableAssociation().removeAllItems();
+				impl.getTableAttributeConfig().removeAllItems();
 				currentInstancesForUnitServer = (Vector<UnitServerCuInstance>) viewEvent.getEventData();
 				if (currentInstancesForUnitServer == null)
 					return;
@@ -199,6 +203,7 @@ public class USCUAssociationListView extends RefVaadinBasePanel implements com.v
 					Item woItem = impl.getTableAssociation().addItem(unitServerCuInstance);
 					woItem.getItemProperty(USCUAssociationListView.TABLE_COLUMN_WU_ID).setValue(unitServerCuInstance.getCuId());
 					woItem.getItemProperty(USCUAssociationListView.TABLE_COLUMN_WU_TYPE).setValue(unitServerCuInstance.getCuType());
+					woItem.getItemProperty(USCUAssociationListView.TABLE_COLUMN_WU_AUTOLOAD).setValue(unitServerCuInstance.getAutoLoad());
 					woItem.getItemProperty(USCUAssociationListView.TABLE_COLUMN_WU_STATE).setValue(unitServerCuInstance.getState());
 				}
 

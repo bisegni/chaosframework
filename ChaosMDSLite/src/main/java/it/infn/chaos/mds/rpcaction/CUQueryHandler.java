@@ -5,16 +5,22 @@ package it.infn.chaos.mds.rpcaction;
 
 import it.infn.chaos.mds.RPCConstants;
 import it.infn.chaos.mds.SingletonServices;
+import it.infn.chaos.mds.batchexecution.LoadUnloadWorkUnit;
 import it.infn.chaos.mds.batchexecution.UnitServerACK;
 import it.infn.chaos.mds.batchexecution.WorkUnitACK;
+import it.infn.chaos.mds.batchexecution.LoadUnloadWorkUnit.LoadUnloadWorkUnitSetting;
 import it.infn.chaos.mds.business.Device;
 import it.infn.chaos.mds.business.UnitServer;
+import it.infn.chaos.mds.business.UnitServerCuInstance;
 import it.infn.chaos.mds.da.DeviceDA;
 import it.infn.chaos.mds.da.UnitServerDA;
 import it.infn.chaos.mds.rpc.server.RPCActionHadler;
 
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.ListIterator;
+import java.util.Set;
+import java.util.Vector;
 
 import org.bson.BasicBSONObject;
 import org.bson.types.BasicBSONList;
@@ -73,6 +79,8 @@ public class CUQueryHandler extends RPCActionHadler {
 	 */
 	private BasicBSONObject registerUnitServer(BasicBSONObject actionData) throws RefException {
 		UnitServerDA usDA = null;
+		Vector<UnitServerCuInstance> instanceForUnitServer = null;
+		LoadUnloadWorkUnitSetting setting = new LoadUnloadWorkUnitSetting();
 		try {
 			usDA = getDataAccessInstance(UnitServerDA.class);
 			if (actionData == null)
@@ -91,6 +99,15 @@ public class CUQueryHandler extends RPCActionHadler {
 			} else {
 				usDA.insertNewUnitServer(us);
 			}
+			// now start all association in auto-load for that server, if are present
+			instanceForUnitServer = usDA.loadAllAssociationForUnitServerAliasInAutoload(us.getAlias());
+			Set<UnitServerCuInstance> instanceSet = new HashSet<UnitServerCuInstance>();
+			instanceSet.addAll(instanceForUnitServer);
+			setting.unit_server_container = usDA.getUnitServerByAlias(us.getAlias());
+			setting.loadUnload = true;
+			setting.associations = instanceSet;
+			instanceForUnitServer = usDA.loadAllAssociationForUnitServerAliasInAutoload(us.getAlias());
+			
 			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 5);
 			closeDataAccess(usDA, true);
 		} catch (InstantiationException e) {
@@ -110,6 +127,10 @@ public class CUQueryHandler extends RPCActionHadler {
 			}
 			try {
 				SingletonServices.getInstance().getSlowExecution().submitJob(UnitServerACK.class.getName(), actionData);
+				// check if we have association in auto-load
+				if (setting.unit_server_container != null && setting.associations != null && setting.associations.size() > 0) {
+					SingletonServices.getInstance().getSlowExecution().submitJob(LoadUnloadWorkUnit.class.getName(), setting, 2);
+				}
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
@@ -199,17 +220,17 @@ public class CUQueryHandler extends RPCActionHadler {
 				if (dDA.isDSChanged(d.getDeviceIdentification(), d.getDataset().getAttributes())) {
 					Integer deviceID = dDA.getDeviceIdFormInstance(d.getDeviceIdentification());
 					d.getDataset().setDeviceID(deviceID);
-					
-					//configura dataset wth configured value
+
+					// configura dataset wth configured value
 					usDA.configuraDataseAttributestForCUID(d.getDeviceIdentification(), d.getDataset().getAttributes());
-					
+
 					// add new dataset
 					dDA.insertNewDataset(d.getDataset());
 				}
 				// update the CU id for this device, it can be changed
 				dDA.updateCUInstanceAndAddressForDeviceID(d.getDeviceIdentification(), d.getCuInstance(), d.getNetAddress());
 			} else {
-				//configure the dataset
+				// configure the dataset
 				usDA.configuraDataseAttributestForCUID(d.getDeviceIdentification(), d.getDataset().getAttributes());
 
 				dDA.insertDevice(d);
@@ -219,7 +240,7 @@ public class CUQueryHandler extends RPCActionHadler {
 				dDA.performDeviceHB(d.getDeviceIdentification());
 				usDA.setState(d.getDeviceIdentification(), "Registered");
 			}
-			
+
 			closeDataAccess(dDA, true);
 			closeDataAccess(usDA, true);
 			ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 5);

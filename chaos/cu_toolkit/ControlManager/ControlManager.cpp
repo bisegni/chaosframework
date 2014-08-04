@@ -331,13 +331,15 @@ void ControlManager::manageControlUnit() {
 			
 			//! lock the hastable
 			ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
-			LCMDBG_  << "Added to registering map" << WU_IDENTIFICATION(wui->work_unit_instance);
+			ReadLock read_registered_lock(mutex_map_cuid_registered_instance);
 			
 			// we can't have two different work unit with the same unique identifier within the same process
-			if(map_cuid_reg_unreg_instance.count(wui->work_unit_instance->getCUID())) {
+			if(map_cuid_reg_unreg_instance.count(wui->work_unit_instance->getCUID()) ||
+			   map_cuid_registered_instance.count(wui->work_unit_instance->getCUID())) {
 				LCMERR_  << "Duplicated control unit instance " << WU_IDENTIFICATION(wui->work_unit_instance);
 				continue;
 			}
+			LCMDBG_  << "Added to registering map" << WU_IDENTIFICATION(wui->work_unit_instance);
 			
 			//now we can proceed, add the network broker instance to the managment class of the work unit
 			wui->mds_channel = mds_channel;
@@ -402,6 +404,13 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
 	std::string work_unit_id = message_data->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_UNLOAD_CONTROL_UNIT_DEVICE_ID);
 	std::string load_options = CDW_STR_KEY(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_PARAM);
 	
+	//check if cuid is already present
+	ReadLock read_registering_lock(mutex_map_cuid_reg_unreg_instance);
+	ReadLock read_registered_lock(mutex_map_cuid_registered_instance);
+	
+	// we can't have two different work unit with the same unique identifier within the same process
+	IN_ACTION_PARAM_CHECK(map_cuid_reg_unreg_instance.count(work_unit_id), -3, "Another work unit use the same id")
+	IN_ACTION_PARAM_CHECK(map_cuid_registered_instance.count(work_unit_id), -4, "Another work unit use the same id")
 	
 	LCMDBG_ << "instantiate work unit ->" << "device_id:" <<work_unit_id<< " load_options:"<< load_options;
 	

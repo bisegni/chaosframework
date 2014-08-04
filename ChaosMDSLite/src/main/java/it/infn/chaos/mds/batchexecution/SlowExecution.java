@@ -3,8 +3,7 @@ package it.infn.chaos.mds.batchexecution;
 import java.util.Hashtable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-
-import org.bson.BasicBSONObject;
+import java.util.concurrent.TimeUnit;
 
 public class SlowExecution {
 	private ScheduledExecutorService								executionService	= null;
@@ -25,5 +24,11 @@ public class SlowExecution {
 		job.setInputData(jobData);
 		executionService.execute(job);
 		return true;
+	}
+
+	public void submitJob(String alias, Object jobData, int delayInSeconds) throws InstantiationException, IllegalAccessException {
+		SlowExecutionJob job = mapAliasJob.get(alias).newInstance();
+		job.setInputData(jobData);
+		executionService.schedule(job, 10, TimeUnit.SECONDS);
 	}
 }

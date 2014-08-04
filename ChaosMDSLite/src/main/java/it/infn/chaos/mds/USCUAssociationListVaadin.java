@@ -310,7 +310,7 @@ public class USCUAssociationListVaadin extends CustomComponent {
 		// buttonAddAttributeConfig
 		buttonAddAttributeConfig = new Button();
 		buttonAddAttributeConfig.setCaption("Add Attribute Config");
-		buttonAddAttributeConfig.setImmediate(true);
+		//buttonAddAttributeConfig.setImmediate(true);
 		buttonAddAttributeConfig.setWidth("-1px");
 		buttonAddAttributeConfig.setHeight("-1px");
 		horizontalLayout_2.addComponent(buttonAddAttributeConfig);

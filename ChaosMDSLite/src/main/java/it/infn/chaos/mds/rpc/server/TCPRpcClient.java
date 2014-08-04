@@ -31,7 +31,7 @@ public class TCPRpcClient extends RPCClient {
 	}
 
 	@Override
-	public void sendMessage(BasicBSONObject messageData) throws Throwable {
+	synchronized public void sendMessage(BasicBSONObject messageData) throws Throwable {
 		if (!messageData.containsField(RPCConstants.CS_CMDM_REMOTE_HOST_IP))
 			return;
 		byte[] buffer = new byte[1024];
@@ -43,6 +43,7 @@ public class TCPRpcClient extends RPCClient {
 		DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
 		DataInputStream inFromServer = new DataInputStream(clientSocket.getInputStream());
 		try {
+			System.out.println(String.format("Mesage sent\n%s", messageData));
 			byte[] rawData = encoder.encode(messageData);
 			//outToServer.writeLong(ByteSwapper.swap(new Long(rawData.length).longValue()));
 			//outToServer.flush();

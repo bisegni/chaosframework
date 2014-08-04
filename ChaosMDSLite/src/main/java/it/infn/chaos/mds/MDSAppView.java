@@ -15,6 +15,7 @@ import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.Window;
 
 @SuppressWarnings("serial")
 public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener {
@@ -24,26 +25,29 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	static final Action[]		ACTIONS_TO_EDIT								= new Action[] { ACTION_EDIT };
 	static final Action[]		ACTIONS_IN_EDIT								= new Action[] { ACTION_SAVE };
 	static final Action[]		EDIT_US_ALIAS								= new Action[] { ACTION_US_EDIT_ALIAS };
-	public static final String	EVENT_DEVICE_SELECTED						= "EVENT_DEVICE_SELECTED";
-	public static final String	EVENT_DATASET_SELECTED						= "EVENT_DATASET_SELECTED";
-	public static final String	EVENT_ATTRIBUTE_EDITING						= "EVENT_ATTRIBUTE_EDITING";
-	public static final String	EVENT_ATTRIBUTE_SAVE						= "EVENT_ATTRIBUTE_SAVE";
-	public static final String	EVENT_DELETE_SELECTED_DEVICE				= "EVENT_DELETE_SELECTED_DEVICE";
-	public static final String	EVENT_UPDATE_DEVICE_LIST					= "EVENT_UPDATE_DEVICE_LIST";
-	public static final String	EVENT_UPDATE_DS_ATTRIBUTE_LIST				= "EVENT_UPDATE_DS_ATTRIBUTE_LIST";
-	public static final String	EVENT_SHOW_PREFERENCE						= "EVENT_SHOW_PREFERENCE";
-	public static final String	EVENT_INITIALIZE_DEVICE_AT_STARTUP			= "EVENT_INITIALIZE_DEVICE_AT_STARTUP";
-	public static final String	EVENT_UPDATE_UNIT_SERVER_LIST				= "EVENT_UPDATE_UNIT_SERVER_LIST";
+	public static final String	EVENT_DEVICE_SELECTED						= "MDSAppView_EVENT_DEVICE_SELECTED";
+	public static final String	EVENT_DATASET_SELECTED						= "MDSAppView_EVENT_DATASET_SELECTED";
+	public static final String	EVENT_ATTRIBUTE_EDITING						= "MDSAppView_EVENT_ATTRIBUTE_EDITING";
+	public static final String	EVENT_ATTRIBUTE_SAVE						= "MDSAppView_EVENT_ATTRIBUTE_SAVE";
+	public static final String	EVENT_DELETE_SELECTED_DEVICE				= "MDSAppView_EVENT_DELETE_SELECTED_DEVICE";
+	public static final String	EVENT_UPDATE_DEVICE_LIST					= "MDSAppView_EVENT_UPDATE_DEVICE_LIST";
+	public static final String	EVENT_UPDATE_DS_ATTRIBUTE_LIST				= "MDSAppView_EVENT_UPDATE_DS_ATTRIBUTE_LIST";
+	public static final String	EVENT_SHOW_PREFERENCE						= "MDSAppView_EVENT_SHOW_PREFERENCE";
+	public static final String	EVENT_INITIALIZE_DEVICE_AT_STARTUP			= "MDSAppView_EVENT_INITIALIZE_DEVICE_AT_STARTUP";
+	public static final String	EVENT_UPDATE_UNIT_SERVER_LIST				= "MDSAppView_EVENT_UPDATE_UNIT_SERVER_LIST";
 
-	public static final String	EVENT_UNIT_SERVER_SELECTED					= "EVENT_UNIT_SERVER_SELECTED";
-	public static final String	EVENT_UNIT_SERVER_CU_TYPE_SELECTED			= "EVENT_UNIT_SERVER_CU_TYPE_SELECTED";
-	public static final String	EVENT_UNIT_SERVER_CREATE_US_CU_ASSOCIATION	= "EVENT_UNIT_SERVER_CREATE_US_CU_ASSOCIATION";
-	public static final String	EVENT_UNIT_SERVER_LOAD_ALL_ASSOCIATION		= "EVENT_UNIT_SERVER_LOAD_ALL_ASSOCIATION";
-	public static final String	EVENT_UNIT_SERVER_UNLOAD_ALL_ASSOCIATION	= "EVENT_UNIT_SERVER_UNLOAD_ALL_ASSOCIATION";
-	public static final String	EVENT_UNIT_SERVER_SHOW_ALL_ASSOCIATION		= "EVENT_UNIT_SERVER_SHOW_ALL_ASSOCIATION";
-	public static final String	EVENT_UNIT_SERVER_NEW						= "EVENT_UNIT_SERVER_NEW";
-	public static final String	EVENT_UNIT_SERVER_DELETE					= "EVENT_UNIT_SERVER_DELETE";
-	public static final String	EVENT_UNIT_SERVER_EDIT_ALIAS				= "EVENT_UNIT_SERVER_EDIT_ALIAS";
+	public static final String	EVENT_UNIT_SERVER_SELECTED					= "MDSAppView_EVENT_UNIT_SERVER_SELECTED";
+	public static final String	EVENT_UNIT_SERVER_CU_TYPE_SELECTED			= "MDSAppView_EVENT_UNIT_SERVER_CU_TYPE_SELECTED";
+	public static final String	EVENT_UNIT_SERVER_CREATE_US_CU_ASSOCIATION	= "MDSAppView_EVENT_UNIT_SERVER_CREATE_US_CU_ASSOCIATION";
+	public static final String	EVENT_UNIT_SERVER_LOAD_ALL_ASSOCIATION		= "MDSAppView_EVENT_UNIT_SERVER_LOAD_ALL_ASSOCIATION";
+	public static final String	EVENT_UNIT_SERVER_UNLOAD_ALL_ASSOCIATION	= "MDSAppView_EVENT_UNIT_SERVER_UNLOAD_ALL_ASSOCIATION";
+	public static final String	EVENT_UNIT_SERVER_SHOW_ALL_ASSOCIATION		= "MDSAppView_EVENT_UNIT_SERVER_SHOW_ALL_ASSOCIATION";
+	public static final String	EVENT_UNIT_SERVER_NEW						= "MDSAppView_EVENT_UNIT_SERVER_NEW";
+	public static final String	EVENT_UNIT_SERVER_DELETE					= "MDSAppView_EVENT_UNIT_SERVER_DELETE";
+	public static final String	EVENT_UNIT_SERVER_EDIT_ALIAS				= "MDSAppView_EVENT_UNIT_SERVER_EDIT_ALIAS";
+	public static final String	EVENT_UNIT_SERVER_CU_TYPE_ADD				= "MDSAppView_EVENT_UNIT_SERVER_CU_TYPE_ADD";
+	public static final String	EVENT_UNIT_SERVER_CU_TYPE_REMOVE			= "MDSAppView_EVENT_UNIT_SERVER_CU_TYPE_REMOVE";
+	public static final String	EVENT_UNIT_SERVER_CU_TYPE_UPDATE_LIST		= "MDSAppView_EVENT_UNIT_SERVER_CU_TYPE_UPDATE_LIST";
 
 	public static final String	TAB1_CU_PARENT								= "CU Parent";
 	public static final String	TAB1_DEVICE_INSTANCE						= "Device Instance";
@@ -68,6 +72,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	public static final String	KEY_DATASET_TAB								= "KEY_DATASET_TAB";
 	public static final String	KEY_DEVICE_START_AT_INIT_BUTTON				= "KEY_DEVICE_START_AT_INIT_BUTTON";
 	public static final String	KEY_DATASET_ATTRIBUTE_TAB					= "KEY_DATASET_ATTRIBUTE_TAB";
+
 	private MainView			mv											= new MainView();
 	private boolean				editingAttribute							= false;
 
@@ -189,6 +194,34 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 			}
 		});
 
+		mv.getButtonAddCUType().addListener(new ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				if (mv.getTableUnitServer().getValue() == null) {
+					getWindow().showNotification("New CU Type", "<b>A unit server needs to be selected</b>", Window.Notification.TYPE_ERROR_MESSAGE);
+				} else {
+					notifyEventoToControllerWithData(EVENT_UNIT_SERVER_CU_TYPE_ADD, event.getSource(), mv.getTableUnitServer().getValue());
+				}
+			}
+		});
+		mv.getButtonRemoveCUType().addListener(new ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				if (mv.getTableUnitServerCUType().getValue() == null) {
+					getWindow().showNotification("Delete CU Type", "<b>A cu type needs to be selected</b>", Window.Notification.TYPE_ERROR_MESSAGE);
+				} else {
+					notifyEventoToControllerWithData(EVENT_UNIT_SERVER_CU_TYPE_REMOVE, event.getSource(), mv.getTableUnitServerCUType().getValue());
+				}
+			}
+		});
+		mv.getButtonUpdateListCUType().addListener(new ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				if (mv.getTableUnitServer().getValue() == null) {
+					getWindow().showNotification("Update CU Type List", "<b>A unit server needs to be seletec</b>", Window.Notification.TYPE_ERROR_MESSAGE);
+				} else {
+					notifyEventoToControllerWithData(EVENT_UNIT_SERVER_CU_TYPE_UPDATE_LIST, event.getSource(), mv.getTableUnitServer().getValue());
+				}
+			}
+		});
+		
 		mv.getTableDataset().addListener(this);
 		setComponentKey(KEY_DATASET_TAB, mv.getTableDataset());
 
