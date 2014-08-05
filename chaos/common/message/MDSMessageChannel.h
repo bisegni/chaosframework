@@ -60,7 +60,7 @@ namespace chaos {
 		 \param requestCheck flasg the message has request if it is true
 		 \param millisecToWait delay after wich the wait is interrupt
 		 */
-		int sendUnitServerRegistration(CDataWrapper *unitServerDescription, bool requestCheck = false, uint32_t millisecToWait = 0);
+		int sendUnitServerRegistration(CDataWrapper& unitServerDescription, bool requestCheck = false, uint32_t millisecToWait = 0);
 
             //! Send dataset to MDS
         /*! 
@@ -69,7 +69,7 @@ namespace chaos {
 		 \param requestCheck flasg the message has request if it is true
          \param millisecToWait delay after wich the wait is interrupt
          */
-        int sendUnitDescription(CDataWrapper *deviceDataset, bool requestCheck=false, uint32_t millisecToWait=0);
+        int sendUnitDescription(CDataWrapper& deviceDataset, bool requestCheck=false, uint32_t millisecToWait=0);
 		
         //! Get all active device id
         /*! 

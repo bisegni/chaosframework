@@ -103,7 +103,7 @@ void DefaultEventDispatcher::deregisterEventAction(EventAction *eventAction)  th
         //try to remove from all scheduler, becaus eone action can be mapped to all event type
     if(alertEventScheduler) alertEventScheduler->removeEventAction(eventAction);
     
-    if(instrumentEventScheduler) instrumentEventScheduler->installEventAction(eventAction);
+    if(instrumentEventScheduler) instrumentEventScheduler->removeEventAction(eventAction);
 }
 
 /*!

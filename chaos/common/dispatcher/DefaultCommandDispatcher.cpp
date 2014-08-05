@@ -1,8 +1,8 @@
-/*	
+/*
  *	DefaultCommandDispatcher.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,7 @@ using namespace chaos::common::data;
 using namespace std;
 using namespace boost;
 
-#define LDEF_CMD_DISPTC_APP_ LAPP_ << "[DefaultCommandDispatcher] - " 
+#define LDEF_CMD_DISPTC_APP_ LAPP_ << "[DefaultCommandDispatcher] - "
 #define LDEF_CMD_DISPTC_DBG_ LDBG_ << "[DefaultCommandDispatcher] - "
 DefaultCommandDispatcher::DefaultCommandDispatcher(string alias) : AbstractCommandDispatcher(alias) {
 }
@@ -54,14 +54,15 @@ void DefaultCommandDispatcher::init(CDataWrapper *initConfiguration) throw(CExce
  */
 void DefaultCommandDispatcher::deinit() throw(CException) {
     LDEF_CMD_DISPTC_APP_ << "Deinitilizing Default Command Dispatcher";
-        //we need to stop all das
-    map<string, boost::shared_ptr<DomainActionsScheduler> >::iterator dasIter = dasMap.begin();
-    for (; dasIter != dasMap.end(); dasIter++) {
+	//we need to stop all das
+	chaos::common::thread::ReadLock r_lock(das_map_mutex);
+    map<string, boost::shared_ptr<DomainActionsScheduler> >::iterator dasIter = das_map.begin();
+    for (; dasIter != das_map.end(); dasIter++) {
         LDEF_CMD_DISPTC_APP_ << "Deinitilizing action scheduler for domain:"<< (*dasIter).second->getManagedDomainName();
-            //th einitialization is enclosed into try/catch because we need to 
-            //all well cleaned
+		//th einitialization is enclosed into try/catch because we need to
+		//all well cleaned
         try{
-            (*dasIter).second->deinit();  
+            (*dasIter).second->deinit();
         }catch(CException& cse){
             DECODE_CHAOS_EXCEPTION(cse)
         }catch(...){
@@ -71,7 +72,7 @@ void DefaultCommandDispatcher::deinit() throw(CException) {
         }
         LDEF_CMD_DISPTC_APP_ << "Deinitialized action scheduler for domain:";
     }
-    dasMap.clear();
+    das_map.clear();
     deinitialized = false;
     AbstractCommandDispatcher::deinit();
     LDEF_CMD_DISPTC_APP_ << "Deinitilized Default Command Dispatcher";
@@ -84,17 +85,17 @@ void DefaultCommandDispatcher::deinit() throw(CException) {
 void DefaultCommandDispatcher::registerAction(DeclareAction *declareActionClass)  throw(CException)  {
     if(!declareActionClass) return;
     
-        //register the action
+	//register the action
     AbstractCommandDispatcher::registerAction(declareActionClass);
     
-        //we need to allocate the scheduler for every registered domain that doesn't exist
-    
+	//we need to allocate the scheduler for every registered domain that doesn't exist
+    chaos::common::thread::UpgradeableLock ur_lock(das_map_mutex);
     vector<AbstActionDescShrPtr>::iterator actDescIter = declareActionClass->getActionDescriptors().begin();
     for (; actDescIter != declareActionClass->getActionDescriptors().end(); actDescIter++) {
-            //get the domain executor for this action descriptor
+		//get the domain executor for this action descriptor
         string domainName = (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain);
         
-        if(!dasMap.count(domainName)){
+        if(!das_map.count(domainName)){
             boost::shared_ptr<DomainActionsScheduler> das(new DomainActionsScheduler(getDomainActionsFromName(domainName)));
 #if DEBUG
             LDEF_CMD_DISPTC_DBG_ << "Allocated new  actions scheduler for domain:" << domainName;
@@ -105,26 +106,46 @@ void DefaultCommandDispatcher::registerAction(DeclareAction *declareActionClass)
 #if DEBUG
             LDEF_CMD_DISPTC_DBG_ << "Initialized actions scheduler for domain:" << domainName;
 #endif
-                //add the domain scheduler to map
-            dasMap.insert(make_pair(domainName, das));
+			chaos::common::thread::UpgradeReadToWriteLock uw_lock(ur_lock);
+			//add the domain scheduler to map
+            das_map.insert(make_pair(domainName, das));
             
-                //register this dispatcher into Action Scheduler
-                //to permit it to manage the subcommand push
+			//register this dispatcher into Action Scheduler
+			//to permit it to manage the subcommand push
             das->setDispatcher(this);
         }
     }
     
-        //initialing the scheduler
-        //das->init(1);
+	//initialing the scheduler
+	//das->init(1);
 }
 
 /*
  Deregister actions for a determianted domain
  */
 void DefaultCommandDispatcher::deregisterAction(DeclareAction *declareActionClass)  throw(CException) {
-        //call superclass method
+	if(!declareActionClass) return;
+	
+	//call superclass method
     AbstractCommandDispatcher::deregisterAction(declareActionClass);
-        //BUG
+	//BUG
+	
+	chaos::common::thread::WriteLock w_lock(das_map_mutex);
+	
+	//scan all cation to check if we need to remove the scheduler for an empty domain
+	vector<AbstActionDescShrPtr>::iterator actDescIter = declareActionClass->getActionDescriptors().begin();
+    for (; actDescIter != declareActionClass->getActionDescriptors().end(); actDescIter++) {
+        
+		//get the domain executor for this action descriptor
+		string domain_name = (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain);
+		
+		//try to check if we need to remove the domain scheduler
+		if(das_map.count(domain_name) && !actionDomainExecutorMap.count(domain_name)) {
+			LDEF_CMD_DISPTC_DBG_ << "The domain scheduler no more needed for "<< domain_name << " so it it's going to be removed";
+			das_map.erase(domain_name);
+		}
+	}
+	
 }
 
 /*
@@ -133,7 +154,7 @@ void DefaultCommandDispatcher::deregisterAction(DeclareAction *declareActionClas
  will ever return an allocated object. The deallocaiton is demanded to caller
  */
 CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPack) throw(CException)  {
-        //allocate new Result Pack
+	//allocate new Result Pack
     CDataWrapper *resultPack = new CDataWrapper();
 	bool sent = false;
     try{
@@ -147,39 +168,39 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
         
         string actionDomain = commandPack->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
         
-            //RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
-        if(!dasMap.count(actionDomain)) throw CException(3, "Action Domain not registered", "DefaultCommandDispatcher::dispatchCommand");
+		//RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
+        if(!das_map.count(actionDomain)) throw CException(3, "Action Domain not registered", "DefaultCommandDispatcher::dispatchCommand");
         
-            //#ifdef DEBUG
-            //        LDEF_CMD_DISPTC_APP_ << "Received the message content:-----------------------START";
-            //        LDEF_CMD_DISPTC_APP_ << commandPack->getJSONString();
-            //        LDEF_CMD_DISPTC_APP_ << "Received the message content:-------------------------END";
-            //#endif
+		//#ifdef DEBUG
+		//        LDEF_CMD_DISPTC_APP_ << "Received the message content:-----------------------START";
+		//        LDEF_CMD_DISPTC_APP_ << commandPack->getJSONString();
+		//        LDEF_CMD_DISPTC_APP_ << "Received the message content:-------------------------END";
+		//#endif
         
-            //submit the action(Thread Safe)
+		//submit the action(Thread Safe)
 		//ElementManagingPolicy ep;
 		//ep.elementHasBeenDetached = false;
-		sent = dasMap[actionDomain]->push(commandPack);
+		sent = das_map[actionDomain]->push(commandPack);
         //if(ep.elementHasBeenDetached) {
 		//	delete(commandPack);
 		//}
 		
-            //tag message has submitted
+		//tag message has submitted
         resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
     }catch(CException& cse){
 		if(!sent && commandPack) delete(commandPack);
-            //tag message has not submitted
-            //resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, 1);
+		//tag message has not submitted
+		//resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, 1);
         
-            //set error to general exception error
+		//set error to general exception error
         resultPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, cse.errorMessage);
         resultPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN, cse.errorDomain);
         resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, cse.errorCode);
     } catch(...){
 		if(!sent && commandPack) delete(commandPack);
-            //tag message has not submitted
+		//tag message has not submitted
         resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 1);
-            //set error to general exception error
+		//set error to general exception error
         resultPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, "Unmanaged error");
     }
     return resultPack;

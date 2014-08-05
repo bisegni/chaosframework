@@ -24,6 +24,8 @@
 
 #include <string>
 #include <boost/shared_ptr.hpp>
+
+#include <chaos/common/thread/ChaosThread.h>
 #include <chaos/common/dispatcher/AbstractCommandDispatcher.h>
 #include <chaos/common/dispatcher/DomainActionsScheduler.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
@@ -40,7 +42,8 @@ namespace chaos{
     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DefaultCommandDispatcher, AbstractCommandDispatcher) {
         bool deinitialized;
         
-        map<string, boost::shared_ptr<DomainActionsScheduler> > dasMap;
+		chaos::common::thread::SharedMutex das_map_mutex;
+        map<string, boost::shared_ptr<DomainActionsScheduler> > das_map;
     
         /*!
          return the scheduler for domain and if no present create a new instance

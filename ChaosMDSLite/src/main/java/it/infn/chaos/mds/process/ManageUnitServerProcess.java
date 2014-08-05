@@ -8,6 +8,7 @@ import it.infn.chaos.mds.da.UnitServerDA;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.Vector;
 
@@ -215,6 +216,36 @@ public class ManageUnitServerProcess extends RefProcess {
 	public void removeCuTypeToUnitServer(String unitServerSelected, String cuTypeName) throws InstantiationException, IllegalAccessException, ClassNotFoundException, RefException, SQLException {
 		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
 		usDA.removeCuTypeToUnitServer(unitServerSelected, cuTypeName);
+		commit();
+	}
+
+	/**
+	 * 
+	 * @param eventData
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws ClassNotFoundException
+	 * @throws RefException
+	 * @throws SQLException
+	 */
+	public void switcAutoloadOptionOnAssociation(Set<UnitServerCuInstance> eventData) throws InstantiationException, IllegalAccessException, ClassNotFoundException, RefException, SQLException {
+		for (UnitServerCuInstance unitServerCuInstance : eventData) {
+			switcAutoloadOptionOnAssociation(unitServerCuInstance);
+		}
+	}
+
+	/**
+	 * 
+	 * @param unitServerCuInstance
+	 * @throws InstantiationException
+	 * @throws IllegalAccessException
+	 * @throws ClassNotFoundException
+	 * @throws RefException
+	 * @throws SQLException
+	 */
+	public void switcAutoloadOptionOnAssociation(UnitServerCuInstance unitServerCuInstance) throws InstantiationException, IllegalAccessException, ClassNotFoundException, RefException, SQLException {
+		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
+		usDA.updateAutoloadForAssociation(unitServerCuInstance, !unitServerCuInstance.getAutoLoad());
 		commit();
 	}
 

@@ -45,6 +45,7 @@ public class USCUAssociationListView extends RefVaadinBasePanel implements com.v
 	public static final String				EVENT_UPDATE_LIST				= "EVENT_UPDATE_LIST";
 	public static final String				EVENT_SAVE_ATTRIBUTE_CONFIG		= "EVENT_SAVE_ATTRIBUTE_CONFIG";
 	public static final String				EVENT_LOAD_INSTANCE_ATTRIBUTE	= "EVENT_LOAD_INSTANCE_ATTRIBUTE";
+	public static final String				EVENT_SWITCH_AUTOLOAD			= "EVENT_SWITCH_AUTOLOAD";
 	private static final Object				TABLE_COLUMN_WU_ID				= "Unique ID";
 	private static final Object				TABLE_COLUMN_WU_TYPE			= "type";
 	private static final Object				TABLE_COLUMN_WU_AUTOLOAD		= "autoload";
@@ -98,7 +99,11 @@ public class USCUAssociationListView extends RefVaadinBasePanel implements com.v
 				notifyEventoToControllerWithData(USCUAssociationListView.EVENT_UNLOAD_INSTANCE, event.getSource(), impl.getTableAssociation().getValue());
 			}
 		});
-
+		impl.getButtonSwapAutoLoad().addListener(new ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				notifyEventoToControllerWithData(USCUAssociationListView.EVENT_SWITCH_AUTOLOAD, event.getSource(), impl.getTableAssociation().getValue());
+			}
+		});
 		// ----------attribute config
 		impl.getTableAttributeConfig().addListener((ItemClickListener) this);
 		impl.getTableAttributeConfig().setSelectable(true);

@@ -74,8 +74,8 @@ void AsioImplEventClient::start() throw(CException) {
     
     for (int idx = 0; idx < threadNumber; idx++) {
             //create the handler
-        boost::shared_ptr<thread> thread(new boost::thread(bind(&asio::io_service::run, &io_service)));
-        serviceThread.push_back(thread);
+       // boost::shared_ptr<thread> thread();
+        service_thread_group.add_thread(new boost::thread(bind(&asio::io_service::run, &io_service)));
     }
 }
 
@@ -122,9 +122,9 @@ void AsioImplEventClient::deinit() throw(CException) {
     }
     
     io_service.stop();
+	
         // Wait for all threads in the pool to exit.
-    for (std::size_t i = 0; i < serviceThread.size(); ++i)
-        serviceThread[i]->join();
+    service_thread_group.join_all();
 }
     //! abstract queue action method implementation
 bool AsioImplEventClient::submitEvent(EventDescriptor *event)  throw(CException) {

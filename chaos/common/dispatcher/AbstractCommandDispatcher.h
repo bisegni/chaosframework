@@ -62,12 +62,11 @@ namespace chaos{
         /*!Pointer to the associated rpc client, used to send the result of an action*/
         RpcMessageForwarder *rpcForwarderPtr;
         
-            //! Domain name <-> Action name association map
+    protected:
+		//! Domain name <-> Action name association map
         /*!Contains the association between the domain name and all action for this domain*/
         map<string, boost::shared_ptr<DomainActions> >  actionDomainExecutorMap;
-        
-    protected:
-        
+		
             //! Dispatch initialization with default value
         virtual void init(void*) throw(CException);
         

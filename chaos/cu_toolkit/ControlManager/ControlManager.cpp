@@ -375,11 +375,11 @@ int ControlManager::sendConfPackToMDS(CDataWrapper& dataToSend) {
 	//so we need to copy it
 	
 	auto_ptr<SerializationBuffer> serBuf(dataToSend.getBSONData());
-	CDataWrapper *mdsPack = new CDataWrapper(serBuf->getBufferPtr());
+	CDataWrapper mdsPack(serBuf->getBufferPtr());
 	//add action for metadata server
 	//add local ip and port
 	
-	mdsPack->addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS, GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort().c_str());
+	mdsPack.addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS, GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort().c_str());
 	
 	//register CU from mds
 	return mds_channel->sendUnitDescription(mdsPack, true, WAITH_TIME_FOR_CU_REGISTRATION);
@@ -539,17 +539,17 @@ void ControlManager::timeout() {
 
 //!prepare and send registration pack to the metadata server
 void ControlManager::sendUnitServerRegistration() {
-	chaos_data::CDataWrapper *unit_server_registration_pack = new chaos_data::CDataWrapper();
+	chaos_data::CDataWrapper unit_server_registration_pack;
 	//set server alias
-	unit_server_registration_pack->addStringValue(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_ALIAS, unit_server_alias);
+	unit_server_registration_pack.addStringValue(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_ALIAS, unit_server_alias);
 	
 	//add control unit alias
 	for(MapCUAliasInstancerIterator iter = map_cu_alias_instancer.begin();
 		iter != map_cu_alias_instancer.end();
 		iter++) {
-		unit_server_registration_pack->appendStringToArray(iter->first);
+		unit_server_registration_pack.appendStringToArray(iter->first);
 	}
-	unit_server_registration_pack->finalizeArrayForKey(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS);
+	unit_server_registration_pack.finalizeArrayForKey(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS);
 	mds_channel->sendUnitServerRegistration(unit_server_registration_pack);
 }
 

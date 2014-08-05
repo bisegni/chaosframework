@@ -19,7 +19,16 @@
  */
 #ifndef ChaosFramework_ChaosThread_h
 #define ChaosFramework_ChaosThread_h
-#include "CThread.h"
-#include "CThreadExecutionTask.h"
-#include "CThreadGroup.h"
+#include <boost/thread.hpp>
+namespace chaos {
+	namespace common {
+		namespace thread {
+			typedef boost::upgrade_lock<boost::shared_mutex>			UpgradeableLock;
+			typedef boost::upgrade_to_unique_lock<boost::shared_mutex>	UpgradeReadToWriteLock;
+			typedef boost::shared_lock<boost::shared_mutex>				ReadLock;
+			typedef boost::unique_lock<boost::shared_mutex>				WriteLock;
+			typedef boost::shared_mutex									SharedMutex;			
+		}
+	}
+}
 #endif

@@ -191,16 +191,16 @@ public class UnitServerDA extends DataAccess {
 			int idx = iuBuilder.fillPreparedStatement(ps);
 			ps.setString(idx++, unitServer.getAlias());
 			executeInsertUpdateAndClose(ps);
-			
-			//compare stored cu type with new one and insert only new one
+
+			// compare stored cu type with new one and insert only new one
 			Vector<String> newCuType = unitServer.getPublischedCU();
 			unitServer.getPublischedCU().clear();
 			fillUnitServerWithCUTypes(unitServer);
-			
-			//remove from the passe cu type, all the types already present
+
+			// remove from the passe cu type, all the types already present
 			newCuType.removeAll(unitServer.getPublischedCU());
-			
-			//insert the new one
+
+			// insert the new one
 			for (String newType : newCuType) {
 				addCuTypeToUnitServer(unitServer.getAlias(), newType);
 			}
@@ -313,7 +313,6 @@ public class UnitServerDA extends DataAccess {
 		}
 	}
 
-
 	public void removeCuTypeToUnitServer(String unitServerIdentifier, String cuTypeName) throws RefException {
 		PreparedStatement ps = null;
 		DeleteSqlBuilder d = new DeleteSqlBuilder();
@@ -331,7 +330,7 @@ public class UnitServerDA extends DataAccess {
 			closePreparedStatement(ps);
 		}
 	}
-	
+
 	public Vector<UnitServerCuInstance> returnAllUnitServerCUAssociationbyUSAlias(String unitServerAlias) throws RefException {
 		SqlBuilder s = new SqlBuilder();
 		Vector<UnitServerCuInstance> result = new Vector<UnitServerCuInstance>();
@@ -353,7 +352,6 @@ public class UnitServerDA extends DataAccess {
 		}
 		return result;
 	}
-
 
 	public Vector<UnitServerCuInstance> loadAllAssociationForUnitServerAliasInAutoload(String unitServerAlias) throws RefException {
 		SqlBuilder s = new SqlBuilder();
@@ -377,7 +375,7 @@ public class UnitServerDA extends DataAccess {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 
 	 * @param associationToRemove
@@ -389,18 +387,18 @@ public class UnitServerDA extends DataAccess {
 		dsb.addTable(UnitServerCuInstance.class);
 		dsb.addCondition(true, String.format("%s = ?", UnitServerCuInstance.UNIT_SERVER_ALIAS));
 		dsb.addCondition(true, String.format("%s = ?", UnitServerCuInstance.CU_ID));
-		
+
 		DeleteSqlBuilder deleteConfiguration = new DeleteSqlBuilder();
 		deleteConfiguration.addTable("attribute_config");
 		deleteConfiguration.addCondition(true, "unique_id = ?");
-		
+
 		PreparedStatement ps;
 		try {
 			ps = getPreparedStatementForSQLCommand(dsb.toString());
 			ps.setString(1, associationToRemove.getUnitServerAlias());
 			ps.setString(2, associationToRemove.getCuId());
 			executeInsertUpdateAndClose(ps);
-			
+
 			ps = getPreparedStatementForSQLCommand(deleteConfiguration.toString());
 			ps.setString(1, associationToRemove.getCuId());
 			executeInsertUpdateAndClose(ps);
@@ -583,5 +581,26 @@ public class UnitServerDA extends DataAccess {
 
 	}
 
+	public void updateAutoloadForAssociation(UnitServerCuInstance unitServerCuInstance, boolean autoLoadFlag) throws RefException {
+		PreparedStatement ps = null;
+		try {
+			InsertUpdateBuilder u = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_UPDATE);
+			u.addTable(UnitServerCuInstance.class);
+			u.addColumnAndValue(UnitServerCuInstance.AUTO_LOAD, autoLoadFlag);
+			u.addCondition(true, String.format("%s=?", UnitServerCuInstance.UNIT_SERVER_ALIAS));
+			u.addCondition(true, String.format("%s=?", UnitServerCuInstance.CU_ID));
+			ps = getPreparedStatementForSQLCommand(u.toString());
+			int idx = u.fillPreparedStatement(ps);
+			ps.setString(idx++, unitServerCuInstance.getUnitServerAlias());
+			ps.setString(idx++, unitServerCuInstance.getCuId());
+			executeInsertUpdateAndClose(ps);
+		} catch (IllegalArgumentException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::updateAutoloadForAssociation");
+		} catch (SQLException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 2, "UnitServerDA::updateAutoloadForAssociation");
+		} finally {
+			closePreparedStatement(ps);
+		}
+	}
 
 }

@@ -115,7 +115,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
 	WUMDBG_ << "Start state machine step";
 	switch ((UnitState) wu_instance_sm.current_state()[0]) {
 		case UnitStateUnpublished:
-			WUMAPP_ << "[work unit in unpublished";
+			WUMAPP_ << "Work unit in unpublished";
 			active = false;
 			break;
 			
@@ -242,11 +242,11 @@ int WorkUnitManagement::sendConfPackToMDS(CDataWrapper& dataToSend) {
 	//so we need to copy it
     
     auto_ptr<SerializationBuffer> serBuf(dataToSend.getBSONData());
-    CDataWrapper *mdsPack = new CDataWrapper(serBuf->getBufferPtr());
+    CDataWrapper mdsPack(serBuf->getBufferPtr());
 	//add action for metadata server
 	//add local ip and port
     
-    mdsPack->addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS, GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort().c_str());
+    mdsPack.addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS, GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort().c_str());
     
 	//register CU from mds
     return mds_channel->sendUnitDescription(mdsPack);

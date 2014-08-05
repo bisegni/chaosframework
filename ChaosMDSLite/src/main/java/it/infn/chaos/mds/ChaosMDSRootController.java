@@ -226,6 +226,9 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 						MDSAppView view = getViewByKey("VISTA");
 						RefVaadinErrorDialog.shorError(view.getWindow(), "Remove Unit Server Type", "A unit server need to be selected");
 					}
+				}else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_SWITCH_AUTOLOAD)) {
+					musp.switcAutoloadOptionOnAssociation((Set<UnitServerCuInstance>) viewEvent.getEventData());
+					notifyEventoToViewWithData(USCUAssociationListView.EVENT_UPDATE_LIST, this, musp.loadAllAssociationForUnitServerAlias(unitServerSelected));
 				}
 
 			}

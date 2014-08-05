@@ -42,34 +42,31 @@ void MDSMessageChannel::sendHeartBeatForDeviceID(string& identificationID) {
 
 
 //! Send unit server description to MDS
-int MDSMessageChannel::sendUnitServerRegistration(CDataWrapper *deviceDataset, bool requestCheck, uint32_t millisecToWait) {
-    CHAOS_ASSERT(deviceDataset)
+int MDSMessageChannel::sendUnitServerRegistration(CDataWrapper& deviceDataset, bool requestCheck, uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     string currentBrokerIpPort;
     getBroker()->getPublishedHostAndPort(currentBrokerIpPort);
-    deviceDataset->addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS, currentBrokerIpPort.c_str());
+    deviceDataset.addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS, currentBrokerIpPort.c_str());
     if(requestCheck){
-        auto_ptr<CDataWrapper> deviceRegistrationCheck( MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER, deviceDataset, millisecToWait));
+        auto_ptr<CDataWrapper> deviceRegistrationCheck( MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER, &deviceDataset, millisecToWait));
         CHECK_TIMEOUT_AND_RESULT_CODE(deviceRegistrationCheck, err)
     } else {
-        MessageChannel::sendMessage(nodeAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER, deviceDataset);
+        MessageChannel::sendMessage(nodeAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER, &deviceDataset);
     }
-    
     return err;
 }
 
     //! Send dataset to MDS
-int MDSMessageChannel::sendUnitDescription(CDataWrapper *deviceDataset, bool requestCheck, uint32_t millisecToWait) {
-    CHAOS_ASSERT(deviceDataset)
+int MDSMessageChannel::sendUnitDescription(CDataWrapper& deviceDataset, bool requestCheck, uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;
     string currentBrokerIpPort;
     getBroker()->getPublishedHostAndPort(currentBrokerIpPort);
-    deviceDataset->addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS, currentBrokerIpPort.c_str());
+    deviceDataset.addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS, currentBrokerIpPort.c_str());
     if(requestCheck){
-        auto_ptr<CDataWrapper> deviceRegistrationCheck( MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::MDS_REGISTER_CONTROL_UNIT, deviceDataset, millisecToWait));
+        auto_ptr<CDataWrapper> deviceRegistrationCheck( MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::MDS_REGISTER_CONTROL_UNIT, &deviceDataset, millisecToWait));
         CHECK_TIMEOUT_AND_RESULT_CODE(deviceRegistrationCheck, err)
     } else {
-        MessageChannel::sendMessage(nodeAddress->nodeID.c_str(), "registerControlUnit", deviceDataset);
+        MessageChannel::sendMessage(nodeAddress->nodeID.c_str(), "registerControlUnit", &deviceDataset);
     }
     
     return err;
