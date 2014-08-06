@@ -261,9 +261,10 @@ if [ ! -f "$PREFIX/include/uv.h" ]; then
 		    exit 1
 		fi
 		cd $BASE_EXTERNAL/libuv
+		git checkout -b good_for_chaos beb54fe
 	else
 		cd $BASE_EXTERNAL/libuv
-		git pull
+#git pull
 	fi
 ./autogen.sh
 ./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE
