@@ -15,7 +15,10 @@ import it.infn.chaos.mds.business.UnitServerCuInstance;
 import it.infn.chaos.mds.da.DeviceDA;
 import it.infn.chaos.mds.da.UnitServerDA;
 import it.infn.chaos.mds.rpc.server.RPCActionHadler;
+import it.infn.chaos.mds.secutiry.RSAKeys;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.ListIterator;
@@ -62,7 +65,13 @@ public class CUQueryHandler extends RPCActionHadler {
 			} else if (action.equals(HEARTBEAT_CONTROL_UNIT)) {
 				result = heartbeat(actionData);
 			} else if (action.equals(RPCConstants.MDS_REGISTER_UNIT_SERVER)) {
-				result = registerUnitServer(actionData);
+				try {
+					result = registerUnitServer(actionData);
+				} catch (NoSuchAlgorithmException e) {
+					throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "CUQueryHandler::handleAction");
+				} catch (NoSuchProviderException e) {
+					throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "CUQueryHandler::handleAction");
+				}
 			}
 		}
 		return result;
@@ -73,12 +82,15 @@ public class CUQueryHandler extends RPCActionHadler {
 	 * 
 	 * @param actionData
 	 * @return
+	 * @throws NoSuchProviderException 
+	 * @throws NoSuchAlgorithmException 
 	 * @throws SQLException
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
-	private BasicBSONObject registerUnitServer(BasicBSONObject actionData) throws RefException {
+	private BasicBSONObject registerUnitServer(BasicBSONObject actionData) throws RefException, NoSuchAlgorithmException, NoSuchProviderException {
 		UnitServerDA usDA = null;
+		String registrationPublicKey = null;
 		Vector<UnitServerCuInstance> instanceForUnitServer = null;
 		LoadUnloadWorkUnitSetting setting = new LoadUnloadWorkUnitSetting();
 		try {
@@ -94,8 +106,18 @@ public class CUQueryHandler extends RPCActionHadler {
 				us.addPublischedCU(dsDescIter.next().toString());
 			}
 
+			if(actionData.containsField(RPCConstants.MDS_REGISTER_UNIT_SERVER_KEY)) {
+				registrationPublicKey =  actionData.getString(RPCConstants.MDS_REGISTER_UNIT_SERVER_KEY);
+			}
+			//the registration pack contain an rsa key check if it match with the private
+			if(!usDA.checkPublicKey(us.getAlias(), registrationPublicKey)) {
+				actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
+				return null;
+			}
+			
+			
 			if (usDA.unitServerAlreadyRegistered(us)) {
-				usDA.updateUnitServer(us);
+				usDA.updateUnitServerTSAndIP(us);
 			} else {
 				usDA.insertNewUnitServer(us);
 			}

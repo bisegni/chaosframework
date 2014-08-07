@@ -24,6 +24,8 @@ public class UnitServer extends BusinessObject {
 	public static final String	UNIT_SERVER_IP_PORT	= "unit_server_ip_port";
 	public static final String	UNIT_SERVER_HB_TIME	= "unit_server_hb_time";
 	public static final String	CONTROL_UNIT_ALIAS	= "control_unit_alias";
+	public static final String	PRIVATE_KEY			= "private_key";
+	public static final String	PUBLIC_KEY			= "public_key";
 	private static final long	serialVersionUID	= 947001022484682227L;
 
 	private String				oldAliasOnChange	= null;
@@ -33,13 +35,18 @@ public class UnitServer extends BusinessObject {
 	}
 
 	@DBColumn(name = UNIT_SERVER_ALIAS, maxDimension = 64)
-	private String				alias				= null;
+	private String			alias			= null;
 	@DBColumn(name = UNIT_SERVER_IP_PORT, maxDimension = 256)
-	private String				ip_port				= null;
+	private String			ip_port			= null;
 	@DBColumn(name = UNIT_SERVER_HB_TIME, maxDimension = 256)
-	private Timestamp			unitServerHB		= null;
-	private Vector<String>		publischedCU		= new Vector<String>();
-	private boolean				isAliasChanged		= false;
+	private Timestamp		unitServerHB	= null;
+	@DBColumn(name = PUBLIC_KEY, maxDimension = 1024)
+	private String			public_key		= null;
+	@DBColumn(name = PRIVATE_KEY, maxDimension = 1024)
+	private String			private_key		= null;
+
+	private Vector<String>	publischedCU	= new Vector<String>();
+	private boolean			isAliasChanged	= false;
 
 	/*
 	 * (non-Javadoc)
@@ -114,5 +121,21 @@ public class UnitServer extends BusinessObject {
 
 	public void setUnitServerHB(Timestamp unitServerHB) {
 		this.unitServerHB = unitServerHB;
+	}
+
+	public String getPublic_key() {
+		return public_key;
+	}
+
+	public void setPublic_key(String public_key) {
+		this.public_key = public_key;
+	}
+
+	public String getPrivate_key() {
+		return private_key;
+	}
+
+	public void setPrivate_key(String private_key) {
+		this.private_key = private_key;
 	}
 }

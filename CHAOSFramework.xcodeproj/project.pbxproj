@@ -1792,10 +1792,10 @@
 				32F2241E179AEED500853F62 /* SCAbstractControlUnit.h */,
 				32F22419179AE3BC00853F62 /* RTAbstractControlUnit.cpp */,
 				32F2241A179AE3BC00853F62 /* RTAbstractControlUnit.h */,
-				326DB4A714B3A3E50018A8D0 /* ControlManager.cpp */,
-				326DB4A814B3A3E50018A8D0 /* ControlManager.h */,
 				32D72CA8197D196D00512B89 /* WorkUnitManagement.cpp */,
 				32D72CA9197D196D00512B89 /* WorkUnitManagement.h */,
+				326DB4A714B3A3E50018A8D0 /* ControlManager.cpp */,
+				326DB4A814B3A3E50018A8D0 /* ControlManager.h */,
 			);
 			path = ControlManager;
 			sourceTree = "<group>";

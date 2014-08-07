@@ -376,6 +376,9 @@ namespace chaos {
 		
 		//! key for the server alias used by the instance [string]
         static const char * const MDS_REGISTER_UNIT_SERVER_ALIAS				= "unit_server_alias";
+	
+		//! key for the server rsa public key [string]
+        static const char * const MDS_REGISTER_UNIT_SERVER_KEY					= "unit_server_key";
 		
 		//! key for the control unit aliases published by the unit server [array fo string]
         static const char * const MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS	= "unit_server_cu_alias";

@@ -57,6 +57,13 @@ public class ManageUnitServerProcess extends RefProcess {
 		commit();
 	}
 
+
+	public void deleteSecurityKeys(UnitServer eventData) throws InstantiationException, IllegalAccessException, ClassNotFoundException, RefException, SQLException {
+		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
+		usDA.deleteSecurityKeys(eventData);
+		commit();
+	}
+	
 	/**
 	 * 
 	 * @param unitServerSelected
@@ -248,5 +255,6 @@ public class ManageUnitServerProcess extends RefProcess {
 		usDA.updateAutoloadForAssociation(unitServerCuInstance, !unitServerCuInstance.getAutoLoad());
 		commit();
 	}
+
 
 }

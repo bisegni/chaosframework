@@ -26,6 +26,11 @@
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
 
 #include <boost/scoped_ptr.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
+
+#include <fstream>
+#include <streambuf>
 
 #define LCMAPP_ LAPP_ << "[Control Manager] - "
 #define LCMDBG_ LDBG_ << "[Control Manager] - "
@@ -34,7 +39,7 @@
 #define WU_IDENTIFICATION(x) std::string(x->getCUInstance()) + std::string("-") + std::string(x->getCUID())
 
 
-
+namespace fs = boost::filesystem;
 namespace chaos_data = chaos::common::data;
 namespace chaos_async = chaos::common::async_central;
 namespace cu_driver_manager = chaos::cu::driver_manager;
@@ -70,6 +75,26 @@ void ControlManager::init(void *initParameter) throw(CException) {
 		
 		if(!GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_UNIT_SERVER_ALIAS)) {
 			throw CException(-1, "No server alias param found", __PRETTY_FUNCTION__);
+		}
+		
+		if(GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_UNIT_SERVER_KEY)) {
+			//a key file need to be used to publish the server
+			fs::path key_file_path(GlobalConfiguration::getInstance()->getOption<string>(CONTROL_MANAGER_UNIT_SERVER_KEY));
+			if(fs::exists(key_file_path)) {
+				if(!fs::is_directory(key_file_path)) {
+					std::ifstream key_file_stream(key_file_path.c_str());
+					unit_server_key.assign((std::istreambuf_iterator<char>(key_file_stream)), std::istreambuf_iterator<char>());
+					LCMAPP_ << "UUnit server ublic key----------------------------------------------";
+					LCMAPP_ << unit_server_key;
+					LCMAPP_ << "UUnit server ublic key----------------------------------------------";
+				} else {
+					LCMERR_ << "Key file is a diretory";
+				}
+			} else {
+				LCMERR_ << "Key file not found";
+			}
+			
+			
 		}
 		
 		unit_server_alias = GlobalConfiguration::getInstance()->getOption<std::string>(CONTROL_MANAGER_UNIT_SERVER_ALIAS);
@@ -367,24 +392,6 @@ void ControlManager::manageControlUnit() {
 	}
 }
 
-/*
- 
- */
-int ControlManager::sendConfPackToMDS(CDataWrapper& dataToSend) {
-	// dataToSend can't be sent because it is porperty of the CU
-	//so we need to copy it
-	
-	auto_ptr<SerializationBuffer> serBuf(dataToSend.getBSONData());
-	CDataWrapper mdsPack(serBuf->getBufferPtr());
-	//add action for metadata server
-	//add local ip and port
-	
-	mdsPack.addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS, GlobalConfiguration::getInstance()->getLocalServerAddressAnBasePort().c_str());
-	
-	//register CU from mds
-	return mds_channel->sendUnitDescription(mdsPack, true, WAITH_TIME_FOR_CU_REGISTRATION);
-}
-
 #define CDW_HAS_KEY(x) message_data->hasKey(x)
 #define CDW_STR_KEY(x) CDW_HAS_KEY(x)?message_data->getStringValue(x):""
 
@@ -542,6 +549,11 @@ void ControlManager::sendUnitServerRegistration() {
 	chaos_data::CDataWrapper unit_server_registration_pack;
 	//set server alias
 	unit_server_registration_pack.addStringValue(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_ALIAS, unit_server_alias);
+	
+	if(unit_server_key.size()) {
+		//the key need to be forwarded
+		unit_server_registration_pack.addStringValue(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_KEY, unit_server_key);
+	}
 	
 	//add control unit alias
 	for(MapCUAliasInstancerIterator iter = map_cu_alias_instancer.begin();

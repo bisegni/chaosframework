@@ -52,9 +52,13 @@
 
 #define CONTROL_MANAGER_UNIT_SERVER_ALIAS							"unit_server_alias"
 #define CONTROL_MANAGER_UNIT_SERVER_ALIAS_desc						"Alias used to publish the unit server"
+#define CONTROL_MANAGER_UNIT_SERVER_KEY								"unit_server_file_key"
+#define CONTROL_MANAGER_UNIT_SERVER_KEY_desc						"the path to the file that contains the rsa public key for the unit server alias"
 #define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC			"unit_server_retry_ms"
 #define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_desc	"Delay in milliseconds for the registration retry"
 #define CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_DEFAULT	5000
+
+
 //define the type for the Control Unit isntancer
 
 namespace chaos {
@@ -139,6 +143,7 @@ namespace chaos {
 				//unit server state machine
 				bool					use_unit_server;
 				std::string				unit_server_alias;
+				std::string				unit_server_key;
 				boost::shared_mutex		unit_server_sm_mutex;
 				UnitServerStateMachine	unit_server_sm;
 				
@@ -165,10 +170,6 @@ namespace chaos {
 				typedef std::map<string, boost::shared_ptr<CUObjectInstancer> >::iterator MapCUAliasInstancerIterator;
 				mutable boost::shared_mutex mutex_map_cu_instancer;
 				std::map<string, boost::shared_ptr<CUObjectInstancer> > map_cu_alias_instancer;
-				
-				//----------private method-----------
-				//! send register control unit to the mds.
-				int sendConfPackToMDS(CDataWrapper&);
 				
 				/*
 				 Constructor

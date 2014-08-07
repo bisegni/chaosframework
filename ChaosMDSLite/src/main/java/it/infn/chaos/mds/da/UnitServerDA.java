@@ -6,13 +6,17 @@ package it.infn.chaos.mds.da;
 import it.infn.chaos.mds.business.DatasetAttribute;
 import it.infn.chaos.mds.business.UnitServer;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
+import it.infn.chaos.mds.secutiry.RSAKey;
 
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.Arrays;
 import java.util.Vector;
 
+import org.bouncycastle.crypto.InvalidCipherTextException;
 import org.bson.BasicBSONObject;
 import org.ref.common.exception.RefException;
 import org.ref.common.helper.ExceptionHelper;
@@ -20,6 +24,7 @@ import org.ref.server.data.DataAccess;
 import org.ref.server.db.sqlbuilder.DeleteSqlBuilder;
 import org.ref.server.db.sqlbuilder.InsertUpdateBuilder;
 import org.ref.server.db.sqlbuilder.SqlBuilder;
+import org.ref.server.db.sqlbuilder.SqlTable;
 
 import com.mongodb.util.JSON;
 
@@ -126,10 +131,16 @@ public class UnitServerDA extends DataAccess {
 	 */
 	public void insertNewUnitServer(UnitServer unitServer) throws RefException {
 		PreparedStatement ps = null;
-		InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_INSERT);
-		iuBuilder.addTable(UnitServer.class);
-		iuBuilder.addColumnAndValue(UnitServer.UNIT_SERVER_HB_TIME, "$CURRENT_TIMESTAMP");
+		// generate the key
 		try {
+			// RSAKeys keys = new RSAKeys();
+			// keys.generate();
+			// unitServer.setPublic_key(keys.getPublicKeyAsB64String());
+			// unitServer.setPrivate_key(keys.getPrivateKeyAsB64String());
+			InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_INSERT);
+			iuBuilder.addTable(UnitServer.class);
+			iuBuilder.addColumnAndValue(UnitServer.UNIT_SERVER_HB_TIME, "$CURRENT_TIMESTAMP");
+
 			iuBuilder.fillWithBusinessClass(unitServer);
 			ps = getPreparedStatementForSQLCommand(iuBuilder.toString());
 			iuBuilder.fillPreparedStatement(ps);
@@ -140,6 +151,10 @@ public class UnitServerDA extends DataAccess {
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 1, "UnitServerDA::insertNewUnitServer");
 		} catch (SQLException e) {
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 2, "UnitServerDA::insertNewUnitServer");
+			// } catch (NoSuchAlgorithmException e) {
+			// throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 3, "UnitServerDA::insertNewUnitServer");
+			// } catch (NoSuchProviderException e) {
+			// throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 4, "UnitServerDA::insertNewUnitServer");
 		} finally {
 			closePreparedStatement(ps);
 		}
@@ -179,7 +194,7 @@ public class UnitServerDA extends DataAccess {
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
 	 */
-	public void updateUnitServer(UnitServer unitServer) throws RefException {
+	public void updateUnitServerTSAndIP(UnitServer unitServer) throws RefException {
 		InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_UPDATE);
 		iuBuilder.addTable(UnitServer.class);
 		iuBuilder.addColumnAndValue(UnitServer.UNIT_SERVER_HB_TIME, "$CURRENT_TIMESTAMP");
@@ -215,6 +230,8 @@ public class UnitServerDA extends DataAccess {
 		InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_UPDATE);
 		iuBuilder.addTable(UnitServer.class);
 		iuBuilder.addColumnAndValue(UnitServer.UNIT_SERVER_ALIAS, unitServer.getAlias());
+		iuBuilder.addColumnAndValue(UnitServer.PRIVATE_KEY, unitServer.getPrivate_key());
+		iuBuilder.addColumnAndValue(UnitServer.PUBLIC_KEY, unitServer.getPublic_key());
 		iuBuilder.addCondition(true, "unit_server_alias=?");
 		PreparedStatement ps = null;
 		try {
@@ -224,6 +241,30 @@ public class UnitServerDA extends DataAccess {
 			executeInsertUpdateAndClose(ps);
 		} catch (SQLException e) {
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::updateNewUnitServer");
+		} finally {
+			closePreparedStatement(ps);
+		}
+	}
+
+	/**
+	 * 
+	 * @param unitServer
+	 * @throws RefException
+	 */
+	public void deleteSecurityKeys(UnitServer unitServer) throws RefException {
+		InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_UPDATE);
+		iuBuilder.addTable(UnitServer.class);
+		iuBuilder.addColumnAndValue(UnitServer.PRIVATE_KEY, "");
+		iuBuilder.addColumnAndValue(UnitServer.PUBLIC_KEY, "");
+		iuBuilder.addCondition(true, String.format("%s=?", UnitServer.UNIT_SERVER_ALIAS));
+		PreparedStatement ps = null;
+		try {
+			ps = getPreparedStatementForSQLCommand(iuBuilder.toString());
+			int idx = iuBuilder.fillPreparedStatement(ps);
+			ps.setString(idx++, unitServer.isAliasChanged() ? unitServer.getOldAliasOnChange() : unitServer.getAlias());
+			executeInsertUpdateAndClose(ps);
+		} catch (SQLException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::deleteSecurityKeys");
 		} finally {
 			closePreparedStatement(ps);
 		}
@@ -601,6 +642,54 @@ public class UnitServerDA extends DataAccess {
 		} finally {
 			closePreparedStatement(ps);
 		}
+	}
+
+	public boolean checkPublicKey(String unitServerAlias, String publicKeyBase64) throws RefException {
+		boolean result = false;
+		ResultSet rs = null;
+		PreparedStatement ps = null;
+		try {
+			SqlBuilder sForKey = new SqlBuilder();
+			SqlTable t = sForKey.addTable(UnitServer.class);
+			sForKey.addTableColumnToSelect(t.getTableName(), UnitServer.PRIVATE_KEY);
+			sForKey.addCondition(true, String.format("%s=?", UnitServer.UNIT_SERVER_ALIAS));
+			ps = getPreparedStatementForSQLCommand(sForKey.toString());
+			ps.setString(1, unitServerAlias);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				String privateKeyBase64 = rs.getString(1);
+				if (privateKeyBase64 != null && privateKeyBase64.length() > 0) {
+					if (publicKeyBase64 != null && publicKeyBase64.length() > 0) {
+						RSAKey privateKey = new RSAKey(privateKeyBase64, false);
+						RSAKey publicKey = new RSAKey(publicKeyBase64, true);
+						// try to encode with private key
+						byte[] privEncoding = privateKey.encriptByte(unitServerAlias.getBytes());
+
+						// now decode with the public
+						byte[] publicDecoding = publicKey.decriptByte(privEncoding);
+
+						result = Arrays.equals(unitServerAlias.getBytes(), publicDecoding);
+					}
+				}else {
+					result = true;
+				}
+			} else {
+				result = true;
+			}
+		} catch (IllegalArgumentException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::updateAutoloadForAssociation");
+		} catch (SQLException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 2, "UnitServerDA::updateAutoloadForAssociation");
+		} catch (IOException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 2, "UnitServerDA::updateAutoloadForAssociation");
+		} catch (InvalidCipherTextException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 2, "UnitServerDA::updateAutoloadForAssociation");
+		} finally {
+			closeResultSet(rs);
+			closePreparedStatement(ps);
+		}
+
+		return result;
 	}
 
 }

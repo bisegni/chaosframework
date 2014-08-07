@@ -53,6 +53,10 @@ ChaosCUToolkit::ChaosCUToolkit() {
 	
 	GlobalConfiguration::getInstance()->addOption<std::string>(CONTROL_MANAGER_UNIT_SERVER_ALIAS,
 															   CONTROL_MANAGER_UNIT_SERVER_ALIAS_desc);
+
+	GlobalConfiguration::getInstance()->addOption<std::string>(CONTROL_MANAGER_UNIT_SERVER_KEY,
+															   CONTROL_MANAGER_UNIT_SERVER_KEY_desc);
+
 	
 	GlobalConfiguration::getInstance()->addOption<uint64_t>(CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC,
 															CONTROL_MANAGER_UNIT_SERVER_REGISTRATION_RETRY_MSEC_desc,

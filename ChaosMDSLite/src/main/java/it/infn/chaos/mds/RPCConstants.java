@@ -69,6 +69,8 @@ public class RPCConstants {
 	public static final String	MDS_REGISTER_UNIT_SERVER					= "registerUnitServer";
 	// ! key for the server alias used by the instance [string]
 	public static final String	MDS_REGISTER_UNIT_SERVER_ALIAS				= "unit_server_alias";
+	// ! key for the server rsa key [string]
+	public static final String	MDS_REGISTER_UNIT_SERVER_KEY				= "unit_server_key";
 	// ! key for the control unit aliases published by the unit server [array fo string]
 	public static final String	MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS	= "unit_server_cu_alias";
 	// ! key that idetify the result of unit server registration[int32]

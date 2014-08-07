@@ -229,6 +229,9 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 				}else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_SWITCH_AUTOLOAD)) {
 					musp.switcAutoloadOptionOnAssociation((Set<UnitServerCuInstance>) viewEvent.getEventData());
 					notifyEventoToViewWithData(USCUAssociationListView.EVENT_UPDATE_LIST, this, musp.loadAllAssociationForUnitServerAlias(unitServerSelected));
+				}else if (viewEvent.getEventKind().equals(USEditInfoView.EVENT_DELETE_SECURITY_KEY)) {
+					musp.deleteSecurityKeys((UnitServer) viewEvent.getEventData());
+					notifyEventoToViewWithData(USEditInfoView.EVENT_SET_UNIT_SERVER, this, musp.getUnitServerByIdentification(((UnitServer) viewEvent.getEventData()).getAlias()));
 				}
 
 			}
