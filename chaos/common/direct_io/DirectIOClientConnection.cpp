@@ -116,7 +116,7 @@ void DirectIOClientConnection::lowLevelManageEvent(DirectIOClientConnectionState
 
 // New channel allocation by name
 channel::DirectIOVirtualClientChannel *DirectIOClientConnection::getNewChannelInstance(std::string channel_name) {
-	channel::DirectIOVirtualClientChannel *channel = chaos::ObjectFactoryRegister<channel::DirectIOVirtualClientChannel>::getInstance()->getNewInstanceByName(channel_name.c_str());
+	channel::DirectIOVirtualClientChannel *channel = chaos::ObjectFactoryRegister<channel::DirectIOVirtualClientChannel>::getInstance()->getNewInstanceByName(channel_name);
     //sub class method for register the instance
     if(channel) {
 		channel->client_instance = this;

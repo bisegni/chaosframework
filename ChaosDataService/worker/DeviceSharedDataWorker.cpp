@@ -53,7 +53,7 @@ void DeviceSharedDataWorker::init(void *init_data) throw (chaos::CException) {
 		thread_cookie[idx] = _tc_ptr;
 	}
 	
-	cache_driver_ptr = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name.c_str());
+	cache_driver_ptr = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
 }
 
 void DeviceSharedDataWorker::deinit() throw (chaos::CException) {

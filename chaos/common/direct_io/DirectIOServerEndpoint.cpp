@@ -88,7 +88,7 @@ void DirectIOServerEndpoint::deregisterChannelInstance(channel::DirectIOVirtualS
 
 // New channel allocation by name
 channel::DirectIOVirtualServerChannel *DirectIOServerEndpoint::getNewChannelInstance(std::string channel_name) throw (CException) {
-	channel::DirectIOVirtualServerChannel *channel = chaos::ObjectFactoryRegister<channel::DirectIOVirtualServerChannel>::getInstance()->getNewInstanceByName(channel_name.c_str());
+	channel::DirectIOVirtualServerChannel *channel = chaos::ObjectFactoryRegister<channel::DirectIOVirtualServerChannel>::getInstance()->getNewInstanceByName(channel_name);
 	registerChannelInstance(channel);
 	return channel;
 }

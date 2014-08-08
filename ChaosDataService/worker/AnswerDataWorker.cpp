@@ -58,7 +58,7 @@ void AnswerDataWorker::init(void *init_data) throw (chaos::CException) {
 	
 	//allocate cached driver for every thread
 	for(int idx = 0; idx < settings.job_thread_number; idx++) {
-		thread_cookie[idx] = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name.c_str());
+		thread_cookie[idx] = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
 	}
 
 	//check client

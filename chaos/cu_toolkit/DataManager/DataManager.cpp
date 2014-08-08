@@ -105,7 +105,7 @@ IODataDriver *DataManager::getDataLiveDriverNewInstance() throw(CException) {
 	IODataDriver *result = NULL;
 	std::string impl_name =  boost::str( boost::format("%1%IODriver") % GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_DATA_IO_IMPL));
 	
-	result = ObjectFactoryRegister<IODataDriver>::getInstance()->getNewInstanceByName(impl_name.c_str());
+	result = ObjectFactoryRegister<IODataDriver>::getInstance()->getNewInstanceByName(impl_name);
 	
 	if(result) {
 		if(impl_name.compare("IODirectIODriver") == 0) {
