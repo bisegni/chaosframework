@@ -107,7 +107,7 @@ namespace chaos {
 		template<typename T>
 		class InizializableServiceContainer {
 			bool delete_on_dispose;
-            const string service_name;
+            string service_name;
 			T *startable_service_instance;
 		public:
 			InizializableServiceContainer():
