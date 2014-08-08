@@ -32,7 +32,7 @@ namespace chaos {
     class NamedService {
         string type_name;
     protected:
-        NamedService(const string & alias);
+       explicit NamedService(const string & alias);
     public:
         /*
          Return the alias of the current instance
