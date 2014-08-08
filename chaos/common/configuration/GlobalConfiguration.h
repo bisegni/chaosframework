@@ -217,7 +217,7 @@ x = hasOption(y);
         /**
          *Add the metadataserver address
          */
-        void addMetadataServerAddress(string& mdsAddress) throw (CException) {
+        void addMetadataServerAddress(const string& mdsAddress) throw (CException) {
             bool isHostnameAndPort = regex_match(mdsAddress, ServerHostNameRegExp);
             bool isIpAndPort  = regex_match(mdsAddress, ServerIPAndPortRegExp);
             if(!isHostnameAndPort && !isIpAndPort)
@@ -230,7 +230,7 @@ x = hasOption(y);
         /**
          *Add the metadataserver address
          */
-        void addLocalServerAddress(const char * mdsAddress) throw (CException) {
+        void addLocalServerAddress(const std::string& mdsAddress) throw (CException) {
             bool isIp = regex_match(mdsAddress, ServerIPRegExp);
             if(!isIp)
                 throw CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");

@@ -128,13 +128,13 @@ namespace chaos {
                 
                 
                 //find our ip
-            string localIp;
+            string local_ip;
             if(GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_PUBLISHING_IP)){
-                localIp = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_PUBLISHING_IP);
+                local_ip = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_PUBLISHING_IP);
             } else {
-                InetUtility::scanForLocalNetworkAddress(localIp);
+                local_ip = InetUtility::scanForLocalNetworkAddress();
             }
-            GlobalConfiguration::getInstance()->addLocalServerAddress(localIp.c_str());
+            GlobalConfiguration::getInstance()->addLocalServerAddress(local_ip);
                 
             LAPP_ << "The local address choosen is:  " << GlobalConfiguration::getInstance()->getLocalServerAddress();
 				

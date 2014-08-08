@@ -74,45 +74,56 @@ namespace chaos {
             virtual ~StartableService();
 
             
-            static bool startImplementation(StartableService& impl, const char * const implName,  const char * const domainString);
-            static bool stopImplementation(StartableService& impl, const char * const implName,  const char * const domainString);
+            static bool startImplementation(StartableService& impl, const string & implName,  const string & domainString);
+            static bool stopImplementation(StartableService& impl, const string & implName,  const string & domainString);
             
-            static bool startImplementation(StartableService *impl, const char * const implName,  const char * const domainString);
-            static bool stopImplementation(StartableService *impl, const char * const implName,  const char * const domainString);
+            static bool startImplementation(StartableService *impl, const string & implName,  const string & domainString);
+            static bool stopImplementation(StartableService *impl, const string & implName,  const string & domainString);
             
-            static bool initImplementation(StartableService& impl, void *initData, const char * const implName,  const char * const domainString);
-            static bool deinitImplementation(StartableService& impl, const char * const implName,  const char * const domainString);
+            static bool initImplementation(StartableService& impl, void *initData, const string & implName,  const string & domainString);
+            static bool deinitImplementation(StartableService& impl, const string & implName,  const string & domainString);
             
-            static bool initImplementation(StartableService *impl, void *initData, const char * const implName,  const char * const domainString);
-            static bool deinitImplementation(StartableService *impl, const char * const implName,  const char * const domainString);
+            static bool initImplementation(StartableService *impl, void *initData, const string & implName,  const string & domainString);
+            static bool deinitImplementation(StartableService *impl, const string & implName,  const string & domainString);
         };
 		
 		template<typename T>
 		class StartableServiceContainer {
 			bool delete_on_dispose;
-            const char * service_name;
+            const string & service_name;
 			T *startable_service_instance;
 		public:
-			StartableServiceContainer():delete_on_dispose(true), startable_service_instance(NULL), service_name("") {}
-			StartableServiceContainer(bool _delete_on_dispose, const char * instance_name):delete_on_dispose(_delete_on_dispose), startable_service_instance(new T()), service_name(instance_name) {}
-			StartableServiceContainer(T *instance, bool _delete_on_dispose, const char * instance_name):startable_service_instance(instance), delete_on_dispose(_delete_on_dispose), service_name(instance_name) {}
+			StartableServiceContainer():
+			delete_on_dispose(true),
+			startable_service_instance(NULL) {}
+			StartableServiceContainer(bool _delete_on_dispose,
+									  const string & instance_name):
+			delete_on_dispose(_delete_on_dispose),
+			startable_service_instance(new T()),
+			service_name(instance_name) {}
+			StartableServiceContainer(T *instance,
+									  bool _delete_on_dispose,
+									  const string & instance_name):
+			startable_service_instance(instance),
+			delete_on_dispose(_delete_on_dispose),
+			service_name(instance_name) {}
 			~StartableServiceContainer() {
 				if(delete_on_dispose) delete(startable_service_instance);
 			}
 			
-			bool init(void *init_data, const char * const domainString) {
+			bool init(void *init_data, const string & domainString) {
 				return StartableService::initImplementation(startable_service_instance, init_data, service_name, domainString);
 			}
 			
-			bool start(const char * const domainString) {
+			bool start(const string & domainString) {
 				return StartableService::startImplementation(startable_service_instance, service_name, domainString);
 			}
 			
-			bool stop(const char * const domainString) {
+			bool stop(const string & domainString) {
 				return StartableService::stopImplementation(startable_service_instance, service_name, domainString);
 			}
 			
-			bool deinit(const char * const domainString) {
+			bool deinit(const string & domainString) {
 				return StartableService::deinitImplementation(startable_service_instance, service_name, domainString);
 			}
 			
@@ -120,7 +131,7 @@ namespace chaos {
 				return startable_service_instance;
 			}
 			
-			void reset(T *new_instance, const char * instance_name) {
+			void reset(T *new_instance, const string & instance_name) {
 				if(startable_service_instance) {
 					delete startable_service_instance;
 				}

@@ -53,7 +53,8 @@ namespace chaos {
         /*! 
          This methdo will take care for network address scan process
          */
-        static void scanForLocalNetworkAddress(string& ipPort) {
+        static string scanForLocalNetworkAddress() {
+			string ip_port;
             struct ifaddrs * ifAddrStruct=NULL;
             struct ifaddrs * ifa=NULL;
 #if __APPLE__
@@ -75,7 +76,7 @@ namespace chaos {
                     char addressBuffer[INET_ADDRSTRLEN];
                     inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
                     LAPP_ << "Interface " << ifa->ifa_name << " address " << addressBuffer << "<- this will be choosen";
-                    ipPort.assign(addressBuffer);
+                    ip_port = addressBuffer;
                     break;
                 } else if (ifa->ifa_addr->sa_family==AF_INET6) { // check it is IP6
                                                                  // is a valid IP6 Address
@@ -87,10 +88,12 @@ namespace chaos {
             }
             if (ifAddrStruct!=NULL) freeifaddrs(ifAddrStruct);
             
-            if(ipPort.size() == 0) {
+            if(ip_port.size() == 0) {
                 // no ip was found go to localhost
-                ipPort.assign("127.0.0.1");
+                ip_port.assign("127.0.0.1");
             }
+			
+			return ip_port;
         }
         
             //! Network port scan

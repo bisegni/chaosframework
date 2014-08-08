@@ -53,17 +53,17 @@ const uint8_t InizializableService::getServiceState() const {
     return serviceState;
 }
 
-bool InizializableService::initImplementation(InizializableService& impl, void *initData, const char * const implName,  const char * const domainString) {
+bool InizializableService::initImplementation(InizializableService& impl, void *initData, const string & implName,  const string & domainString) {
     return initImplementation(&impl, initData, implName,  domainString);
 }
 
-bool InizializableService::deinitImplementation(InizializableService& impl, const char * const implName,  const char * const domainString) {
+bool InizializableService::deinitImplementation(InizializableService& impl, const string & implName,  const string & domainString) {
     return deinitImplementation(&impl, implName,  domainString);
 }
 
 /*!
  */
-bool InizializableService::initImplementation(InizializableService *impl, void *initData, const char * const implName,  const char * const domainString)  {
+bool InizializableService::initImplementation(InizializableService *impl, void *initData, const string & implName,  const string & domainString)  {
     bool result = true;
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
@@ -91,7 +91,7 @@ bool InizializableService::initImplementation(InizializableService *impl, void *
 
 /*!
  */
-bool InizializableService::deinitImplementation(InizializableService *impl, const char * const implName,  const char * const domainString) {
+bool InizializableService::deinitImplementation(InizializableService *impl, const string & implName,  const string & domainString) {
     bool result = true;
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);

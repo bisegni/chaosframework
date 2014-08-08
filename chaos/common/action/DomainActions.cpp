@@ -80,7 +80,7 @@ string& DomainActions::getDomainName() {
 }
 
 uint32_t DomainActions::registeredActions() {
-	return actionDescriptionsMap.size();
+	return (uint32_t)actionDescriptionsMap.size();
 }
 
 /*

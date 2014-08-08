@@ -97,37 +97,51 @@ namespace chaos {
             const uint8_t getServiceState() const;
 
             
-            static bool initImplementation(InizializableService& impl, void *initData, const char * const implName,  const char * const domainString);
-            static bool deinitImplementation(InizializableService& impl, const char * const implName,  const char * const domainString);
+            static bool initImplementation(InizializableService& impl, void *initData, const string & implName,  const string & domainString);
+            static bool deinitImplementation(InizializableService& impl, const string & implName,  const string & domainString);
             
-            static bool initImplementation(InizializableService *impl, void *initData, const char * const implName,  const char * const domainString);
-            static bool deinitImplementation(InizializableService *impl, const char * const implName,  const char * const domainString);
+            static bool initImplementation(InizializableService *impl, void *initData, const string & implName,  const string & domainString);
+            static bool deinitImplementation(InizializableService *impl, const string & implName,  const string & domainString);
         };
 		
 		template<typename T>
 		class InizializableServiceContainer {
 			bool delete_on_dispose;
-            const char * service_name;
+            const string service_name;
 			T *startable_service_instance;
 		public:
-			InizializableServiceContainer():delete_on_dispose(true), startable_service_instance(NULL), service_name("") {}
-			InizializableServiceContainer(bool _delete_on_dispose, const char * instance_name):delete_on_dispose(_delete_on_dispose), startable_service_instance(new T()), service_name(instance_name) {}
-			InizializableServiceContainer(T *instance, bool _delete_on_dispose, const char * instance_name):startable_service_instance(instance), delete_on_dispose(_delete_on_dispose), service_name(instance_name) {}
+			InizializableServiceContainer():
+			delete_on_dispose(true),
+			startable_service_instance(NULL){}
+			
+			InizializableServiceContainer(bool _delete_on_dispose,
+										  const string & instance_name):
+			delete_on_dispose(_delete_on_dispose),
+			startable_service_instance(new T()),
+			service_name(instance_name) {}
+			
+			InizializableServiceContainer(T *instance,
+										  bool _delete_on_dispose,
+										  const string & instance_name):
+			startable_service_instance(instance),
+			delete_on_dispose(_delete_on_dispose),
+			service_name(instance_name) {}
+			
 			~InizializableServiceContainer() {
 				if(delete_on_dispose) delete(startable_service_instance);
 			}
 			
-			bool init(void *init_data, const char * const domainString) {
+			bool init(void *init_data, const string & domainString) {
 				return InizializableService::initImplementation(startable_service_instance, init_data, service_name, domainString);
 			}
 			
-			bool deinit(const char * const domainString) {
+			bool deinit(const string & domainString) {
 				return InizializableService::deinitImplementation(startable_service_instance, service_name, domainString);
 			}
 			T* get() {
 				return startable_service_instance;
 			}
-			void reset(T *new_instance, const char * instance_name) {
+			void reset(T *new_instance, const string & instance_name) {
 				if(startable_service_instance) {
 					delete startable_service_instance;
 				}

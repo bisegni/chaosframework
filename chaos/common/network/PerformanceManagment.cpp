@@ -75,7 +75,6 @@ chaos_direct_io::DirectIOClient *PerformanceManagment::getLocalDirectIOClientIns
 	if(!global_performance_connection) {
 		global_performance_connection = network_broker->getDirectIOClientInstance();
 		if(!global_performance_connection) throw chaos::CException(-1, "Performance direct io client creation error", __PRETTY_FUNCTION__);
-		
 		chaos::utility::InizializableService::initImplementation(global_performance_connection, NULL, global_performance_connection->getName(), __PRETTY_FUNCTION__);
 	}
 	return global_performance_connection;

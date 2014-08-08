@@ -369,7 +369,6 @@ item *DataCache::do_item_alloc(const char *key, const size_t nkey, const int fla
     if (id == 0)
         return 0;
     int tries = 50;
-    item *search;
     
     if (it == NULL && (it = (item *)allocate(ntotal, id)) == NULL) {
         /*
