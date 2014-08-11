@@ -287,9 +287,10 @@ void ControlManager::migrateStableAndUnstableSMCUInstance() {
 	UpgradeableLock registering_lock(mutex_map_cuid_reg_unreg_instance);
 	UpgradeableLock registered_lock(mutex_map_cuid_registered_instance);
 	
-    for (map<string, shared_ptr<WorkUnitManagement> >::iterator i = map_cuid_reg_unreg_instance.begin();
-		 i != map_cuid_reg_unreg_instance.end();
-		 i++ ){
+        //used the Mark Ransom Technique for avoid the temporary iterator
+        //http://stackoverflow.com/questions/180516/how-to-filter-items-from-a-stdmap/180616#180616
+    for (map<string, shared_ptr<WorkUnitManagement> >::iterator i = map_cuid_reg_unreg_instance.begin(),
+         it != map_cuid_reg_unreg_instance.end();) {
 		
 		if(!i->second->smNeedToSchedule()) {
 			UpgradeReadToWriteLock registering_wlock(registering_lock);
@@ -312,8 +313,11 @@ void ControlManager::migrateStableAndUnstableSMCUInstance() {
 			}
 
 			//remove the iterator
-			map_cuid_reg_unreg_instance.erase(i);
-		}
+            map_cuid_reg_unreg_instance.erase(i++); // first is executed the uncrement that return
+                                                    // a copy of the original iterator
+        } else {
+            ++i; //more efficient because doesn't make a copy
+        }
 	}
 }
 
