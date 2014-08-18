@@ -51,6 +51,7 @@ namespace chaos{
     }
     
     namespace cu {
+		class ChaosCUToolkit;
 		
 		namespace data_manager {
 			class DataManager;
@@ -66,6 +67,7 @@ namespace chaos{
 				friend class RpcAdapterRegister;
 				friend class CommandDispatcherRegister;
 				friend class ServerDelegator;
+				friend class chaos::cu::ChaosCUToolkit;
 				friend class Singleton<CommandManager>;
 				
 				string metadataServerAddress;

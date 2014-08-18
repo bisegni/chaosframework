@@ -198,7 +198,7 @@ void TCPUVClient::async_submit_message_cb(uv_async_t *handle) {
 }
 
 void TCPUVClient::create_new_connection_for_next_message(uv_loop_t *loop, ConnectionInfo *ci) {
-	TCPUVClientLAPP << "create_new_connection";
+	TCPUVClientLDBG << "create_new_connection";
 	int err = 0;
 	
 	//i need to restart the connection
@@ -303,7 +303,7 @@ void TCPUVClient::runLoop() {
 	//run the run loop
 	int err = 0;
 	//run the run loop
-	TCPUVClientLAPP << "Enter loop";
+	TCPUVClientLDBG << "Enter loop";
 	//boost::shared_lock<boost::shared_mutex> lock_loop(loop_mutex, boost::defer_lock);
 	while(run) {
 		//lock_loop.lock();
@@ -313,7 +313,7 @@ void TCPUVClient::runLoop() {
 	}
 	
 	uv_loop_close(&loop);
-	TCPUVClientLAPP << "Exit loop";
+	TCPUVClientLDBG << "Exit loop";
 }
 
 /*
@@ -378,7 +378,7 @@ bool TCPUVClient::sendToConnectionInfo(ConnectionInfo *connection_info, NetworkF
 	//
 	connection_info->queued_message_info.push(message_info);
 	if(!connection_info->uv_conn_info) {
-		TCPUVClientLAPP << "Allocate new UVConnInfo";
+		TCPUVClientLDBG << "Allocate new UVConnInfo";
 		//conenction_info->uv_conn_info  = new UVConnInfo();
 		TCPUVClient::create_new_connection_for_next_message(&loop, connection_info);
 	}

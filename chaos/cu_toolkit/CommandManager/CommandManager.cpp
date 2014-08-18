@@ -59,11 +59,7 @@ CommandManager::~CommandManager(){
  * Initzialize the datamanager
  */
 void CommandManager::init(void *initParam) throw(CException) {
-    LAPP_ << "Init Command Manager";
     broker->init();
-    
-    LAPP_ << "Command Manager system action registration";
-    
     AbstActionDescShrPtr 
     actionDescription = DeclareAction::addActionDescritionInstance<CommandManager>(this, 
                                                                                    &CommandManager::shutdown, 
@@ -78,12 +74,8 @@ void CommandManager::init(void *initParam) throw(CException) {
  * Deinitzialize the command manager
  */
 void CommandManager::deinit() throw(CException) {
-    LAPP_ << "Deinit Command Manager";
-    LAPP_ << "Command Manager system action deregistration";
         //deregistering the action
     broker->deregisterAction(this);
-    LAPP_ << "Command Manager system action deregistered";
-    
     broker->deinit();
 }
 
@@ -91,16 +83,12 @@ void CommandManager::deinit() throw(CException) {
  * Start all sub process
  */
 void CommandManager::start() throw(CException) {
-    LAPP_ << "Start Message Broker";
     broker->start();
-    LAPP_ << "Message Broker started";
 }
 
 //-----------------------
 void CommandManager::stop() throw(CException) {
-    LAPP_ << "Stop Message Broker";
     broker->stop();
-    LAPP_ << "Stop Message Broker";
 }
 
 /*

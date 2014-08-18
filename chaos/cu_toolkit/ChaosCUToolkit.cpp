@@ -140,6 +140,8 @@ void ChaosCUToolkit::start() throw(CException){
 
         LAPP_ << "-----------------------------------------";
         LAPP_ << "!CHAOS Control Unit System Started";
+		LAPP_ << "RPC Server address: " << CommandManager::getInstance()->broker->getRPCUrl();
+		LAPP_ << "DirectIO Server address: " << CommandManager::getInstance()->broker->getDirectIOUrl();
         LAPP_ << "-----------------------------------------";
         //at this point i must with for end signal
         waitCloseSemaphore.wait();
