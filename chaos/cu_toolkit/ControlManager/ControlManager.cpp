@@ -346,7 +346,7 @@ void ControlManager::manageControlUnit() {
 		while(!queue_submitted_cu.empty()) {
 			//we have new instance to manage
 			shared_ptr<WorkUnitManagement> wui(new WorkUnitManagement(queue_submitted_cu.front()));
-			LCMAPP_  << "We have a new control unit isntance:" << WU_IDENTIFICATION(wui->work_unit_instance);
+			LCMAPP_  << "We have a new control unit instance:" << WU_IDENTIFICATION(wui->work_unit_instance);
 			
 			//remove the oldest data
 			queue_submitted_cu.pop();

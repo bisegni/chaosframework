@@ -248,6 +248,9 @@ public class CUQueryHandler extends RPCActionHadler {
 
 					// add new dataset
 					dDA.insertNewDataset(d.getDataset());
+				}else {
+					usDA.configuraDataseAttributestForCUID(d.getDeviceIdentification(), d.getDataset().getAttributes());
+					dDA.updateDatasetAttributeValue(d.getDataset());
 				}
 				// update the CU id for this device, it can be changed
 				dDA.updateCUInstanceAndAddressForDeviceID(d.getDeviceIdentification(), d.getCuInstance(), d.getNetAddress());

@@ -277,7 +277,7 @@ bool WorkUnitManagement::manageACKPack(CDataWrapper& ack_pack) {
 				break;
 			
 			case ErrorCode::EC_MDS_WOR_UNIT_ID_NOT_SELF_MANAGEABLE:
-				WUMAPP_ << "id is not slef manageable";
+				WUMAPP_ << "id is not self manageable";
 			default:
 				WUMERR_ << "work unit failed to register";
 				//turn of unit server

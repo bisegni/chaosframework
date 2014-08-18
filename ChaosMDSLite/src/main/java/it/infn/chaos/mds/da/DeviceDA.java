@@ -428,6 +428,27 @@ public class DeviceDA extends DataAccess {
 		return ds;
 	}
 
+
+	public void updateDatasetAttributeValue(Dataset dataset) throws Throwable {
+		Dataset storedDatase = getLastDatasetForDeviceIdentification(dataset.getDevice().getDeviceIdentification());
+		for (DatasetAttribute attribute : storedDatase.getAttributes()) {
+			
+			for (DatasetAttribute updatedAttribute : dataset.getAttributes()) {
+				if(updatedAttribute.getName().toUpperCase().equals(attribute.getName().toUpperCase())) {
+					//update the configuration
+					attribute.setDefaultValue(updatedAttribute.getDefaultValue());
+					attribute.setRangeMax(updatedAttribute.getRangeMax());
+					attribute.setRangeMin(updatedAttribute.getRangeMin());
+					
+					updateDatasetAttribute(attribute);
+					
+					break;
+				}
+			}
+		} 
+		
+	}
+	
 	/**
 	 * Check if some attribute must to be updated
 	 * 
@@ -565,4 +586,5 @@ public class DeviceDA extends DataAccess {
 		}
 		return result;
 	}
+
 }
