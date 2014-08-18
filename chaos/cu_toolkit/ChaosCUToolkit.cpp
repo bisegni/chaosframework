@@ -167,8 +167,6 @@ void ChaosCUToolkit::stop() throw(CException) {
     
 	//stop driver manager
 	chaos::utility::StartableService::stopImplementation(cu_driver_manager::DriverManager::getInstance(), "DriverManager", "ChaosCUToolkit::stop");
-
-    waitCloseSemaphore.unlock();
 }
 
 /*
@@ -190,6 +188,10 @@ void ChaosCUToolkit::deinit() throw(CException) {
 	
 	//forward the deinitialization to the common sublayer
 	ChaosCommon<ChaosCUToolkit>::deinit();
+	
+	LAPP_ << "-----------------------------------------";
+	LAPP_ << "!CHAOS Control Unit System deinitlizied  ";
+	LAPP_ << "-----------------------------------------";
 }
 
 /*
@@ -209,5 +211,5 @@ void ChaosCUToolkit::signalHanlder(int signalNumber) {
     //lock lk(monitor);
         //unlock the condition for end start method
     //endWaithCondition.notify_one();
-     waitCloseSemaphore.unlock();
+	waitCloseSemaphore.unlock();
 }
