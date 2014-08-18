@@ -30,6 +30,7 @@ using namespace boost;
 
 #define LDEF_CMD_DISPTC_APP_ LAPP_ << "[DefaultCommandDispatcher] - "
 #define LDEF_CMD_DISPTC_DBG_ LDBG_ << "[DefaultCommandDispatcher] - "
+#define LDEF_CMD_DISPTC_ERR_ LERR_ << "[DefaultCommandDispatcher] ("<< __LINE__ <<") -"
 DefaultCommandDispatcher::DefaultCommandDispatcher(string alias) : AbstractCommandDispatcher(alias) {
 }
 
@@ -144,6 +145,13 @@ void DefaultCommandDispatcher::deregisterAction(DeclareAction *declareActionClas
 			boost::shared_ptr<DomainActionsScheduler> domain_pointer = das_map[domain_name];
 			LDEF_CMD_DISPTC_DBG_ << "The domain scheduler no more needed for "<< domain_name << " so it it's going to be removed";
 			das_map.erase(domain_name);
+			try{
+				domain_pointer->deinit();
+			} catch(CException& ex) {
+				LDEF_CMD_DISPTC_ERR_<< "Error on " << domain_name << " DomainActionsScheduler deinit operation" << ex.what();
+			}catch(...){
+				LDEF_CMD_DISPTC_ERR_ << "Unmanaged error on " << domain_name << " DomainActionsScheduler deinit operation";
+			}
 		}
 	}
 	

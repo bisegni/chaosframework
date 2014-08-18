@@ -42,7 +42,7 @@ namespace chaos {
 					channel::DirectIOVirtualClientChannel *channel;
 					DisposeSentMemoryInfo(channel::DirectIOVirtualClientChannel *_channel,
 										  uint8_t _sent_part,
-										  uint16_t _sent_opcode):sent_part(_sent_part), channel(_channel), sent_opcode(_sent_opcode){};
+										  uint16_t _sent_opcode):channel(_channel), sent_part(_sent_part), sent_opcode(_sent_opcode){};
 				};
 				
                 class DirectIOVirtualClientChannel : protected DirectIOVirtualChannel {
