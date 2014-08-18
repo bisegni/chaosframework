@@ -41,8 +41,7 @@ namespace chaos {
         //mutex actionAccessMutext;
         map<string, AbstActionDescShrPtr> actionDescriptionsMap;
     public:
-        DomainActions(const char*const);
-        DomainActions(string&);
+        DomainActions(const string & domain_name);
         ~DomainActions();
         
         /*

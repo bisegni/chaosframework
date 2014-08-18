@@ -84,7 +84,7 @@ namespace chaos{
          \return the instance of DomainActions pointer in relation to name
          but if the name is not present initialized it and add it to map
          */
-        boost::shared_ptr<DomainActions> getDomainActionsFromName(string&);
+        boost::shared_ptr<DomainActions> getDomainActionsFromName(const string & domain_name);
         
             //! Remove the infromation about a domain
         /*!

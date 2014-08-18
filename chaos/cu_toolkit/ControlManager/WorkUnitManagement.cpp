@@ -175,11 +175,11 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
 		}
 			
 		case UnitStatePublishingFailure: {
+			WUMAPP_  << "there was been error during control unit registration we end here";
 			active = false;
-						break;
+			break;
 		}
 		case UnitStateUnpublishing: {
-			WUMAPP_  << "there was been error during control unit registration we end here";
 			CDataWrapper fakeDWForDeinit;
 			bool detachFake;
             fakeDWForDeinit.addStringValue(DatasetDefinitionkey::DEVICE_ID, work_unit_instance->getCUID());

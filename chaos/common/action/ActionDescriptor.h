@@ -103,12 +103,7 @@ namespace chaos {
         /*!
             set the string value for the determinated type
          */
-        void setTypeValue(ActionStringType, string&);
-        
-        /*!
-         set the string value for the determinated type
-         */
-        void setTypeValue(ActionStringType, const char*const);
+        void setTypeValue(ActionStringType, const string &);
         
         bool isFired();
         bool setFiredWriteLocked(bool _fired);
@@ -119,7 +114,7 @@ namespace chaos {
             get the string value for the determinated type, a reference
             has been return so keep in mind that string live within object life
          */        
-        string& getTypeValue(ActionStringType);
+        const string & getTypeValue(ActionStringType);
         
 #pragma mark Param Method
         /*!
@@ -154,7 +149,7 @@ namespace chaos {
          that implement the action. be aware that the object reference is never deallocated by
          this class
          */
-        ActionDescriptor(T* _objectReference, ActionPointerDef _actionPointer, const char*const _domainName, const char*const _actionName) {
+        ActionDescriptor(T* _objectReference, ActionPointerDef _actionPointer, const string & _domainName, const string & _actionName) {
                 //set the object reference
             objectReference = _objectReference;
                 //set the action offset 

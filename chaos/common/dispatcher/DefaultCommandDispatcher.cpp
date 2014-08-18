@@ -138,16 +138,13 @@ void DefaultCommandDispatcher::deregisterAction(DeclareAction *declareActionClas
         
 		//get the domain executor for this action descriptor
 		string domain_name = (*actDescIter)->getTypeValue(AbstractActionDescriptor::ActionDomain);
-		
-		map<string, boost::shared_ptr<DomainActionsScheduler> >::iterator it = das_map.find(domain_name);
-		if(it != das_map.end() && !actionDomainExecutorMap.count(domain_name)) {
-			LDEF_CMD_DISPTC_DBG_ << "The domain scheduler no more needed for "<< domain_name << " so it it's going to be removed";
-			das_map.erase(it);
-
-		}
 		//try to check if we need to remove the domain scheduler
-		//if(das_map.count(domain_name) && !actionDomainExecutorMap.count(domain_name)) {
-		//}
+		if(das_map.count(domain_name) &&
+		   !actionDomainExecutorMap.count(domain_name)) {
+			boost::shared_ptr<DomainActionsScheduler> domain_pointer = das_map[domain_name];
+			LDEF_CMD_DISPTC_DBG_ << "The domain scheduler no more needed for "<< domain_name << " so it it's going to be removed";
+			das_map.erase(domain_name);
+		}
 	}
 	
 }

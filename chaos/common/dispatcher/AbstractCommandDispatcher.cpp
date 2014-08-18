@@ -58,19 +58,19 @@ void AbstractCommandDispatcher::deinit() throw(CException) {
  return an isntance of DomainActions pointer in relation to name
  but if the name is not present initialized it and add it to map
  */
-boost::shared_ptr<DomainActions> AbstractCommandDispatcher::getDomainActionsFromName(string& domainName) {
+boost::shared_ptr<DomainActions> AbstractCommandDispatcher::getDomainActionsFromName(const string& domain_name) {
 	//check if is not preset, so we can allocate it
-    if(!actionDomainExecutorMap.count(domainName)){
-        boost::shared_ptr<DomainActions>  result(new DomainActions(domainName));
+    if(!actionDomainExecutorMap.count(domain_name)){
+        boost::shared_ptr<DomainActions>  result(new DomainActions(domain_name));
         if(result){;
-            actionDomainExecutorMap.insert(make_pair(domainName, result));
+            actionDomainExecutorMap.insert(make_pair(domain_name, result));
 #if DEBUG
-            ACDLDBG_ << "Allocated new  DomainActions:" << domainName;
+            ACDLDBG_ << "Allocated new  DomainActions:" << domain_name;
 #endif
         }
     }
 	//return the domain executor for name
-    return actionDomainExecutorMap[domainName];
+    return actionDomainExecutorMap[domain_name];
 }
 
 /*

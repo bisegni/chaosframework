@@ -25,12 +25,7 @@
 using namespace chaos;
 using namespace boost;
 
-DomainActions::DomainActions(const char*const _domainName) {
-    domainName.assign(_domainName);
-}
-
-DomainActions::DomainActions(string& _domainName) {
-    domainName.assign(_domainName.c_str());
+DomainActions::DomainActions(const string & _domain_name):domainName(_domain_name) {
 }
 
 DomainActions::~DomainActions() {    

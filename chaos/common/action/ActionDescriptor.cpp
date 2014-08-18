@@ -42,24 +42,17 @@ AbstractActionDescriptor::~AbstractActionDescriptor() {
 /*
  set the string value for the determinated type
  */
-void AbstractActionDescriptor::setTypeValue(ActionStringType sType, string& sValue) {
-    setTypeValue(sType, sValue.c_str());
-}
-
-/*
- set the string value for the determinated type
- */
-void AbstractActionDescriptor::setTypeValue(ActionStringType sType, const char*const sValue) {
+void AbstractActionDescriptor::setTypeValue(ActionStringType sType, const string & sValue) {
     switch (sType) {
         case ActionDomain:
-            actionDomain.assign(sValue);
+            actionDomain = sValue;
             break;
         case ActionName:
-            actionName.assign(sValue);
+            actionName = sValue;
             break;
             
         case ActionDescription:
-            actionDescription.assign(sValue);
+            actionDescription = sValue;
             break;
     }
 }
@@ -97,7 +90,7 @@ bool AbstractActionDescriptor::setEnabled(bool _enabled){
  get the string value for the determinated type, a reference
  has been return so keep in mind that string live within object life
  */        
-string& AbstractActionDescriptor::getTypeValue(ActionStringType sType)  {
+const string & AbstractActionDescriptor::getTypeValue(ActionStringType sType)  {
     if (sType == ActionDomain) {
         return actionDomain;
     } else if (sType == ActionName) {
