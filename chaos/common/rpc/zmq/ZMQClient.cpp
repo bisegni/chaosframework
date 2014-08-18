@@ -138,8 +138,6 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
     int			err = 0;
 	zmq_msg_t	reply;
 	zmq_msg_t	message;
-	int			linger = 0;
-	int			water_mark = 1;
 	zmq_msg_init (&reply);
 	
     void *request_socket = zmq_socket (zmqContext, ZMQ_DEALER);

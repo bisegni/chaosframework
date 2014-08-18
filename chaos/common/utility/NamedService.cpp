@@ -19,17 +19,21 @@
  */
 
 #include "NamedService.h"
+#include <chaos/common/global.h>
 
 using namespace chaos;
 using namespace std;
 
-NamedService::NamedService(string alias) {
-    typeName = alias;
+#define NamedService_LDBG_ LDBG_ << "[NamedService]- "
+
+NamedService::NamedService(const string & alias) {
+    type_name = alias;
+	NamedService_LDBG_ << "Allocated Named Service for " << type_name;
 }
 
 /*
  Return the adapter alias
  */
-const char * NamedService::getName() const {
-    return typeName.c_str();
+const string  & NamedService::getName() const{
+    return type_name;
 }

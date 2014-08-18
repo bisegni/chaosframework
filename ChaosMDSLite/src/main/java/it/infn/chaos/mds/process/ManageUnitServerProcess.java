@@ -75,6 +75,10 @@ public class ManageUnitServerProcess extends RefProcess {
 	 */
 	public void deleteUnitServer(String unitServerSelected) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException, RefException {
 		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
+		Vector<UnitServerCuInstance> assoc = usDA.returnAllUnitServerCUAssociationbyUSAlias(unitServerSelected);
+		for (UnitServerCuInstance unitServerCuInstance : assoc) {
+			usDA.removeAllAttributeConfigurationForAssociation(unitServerCuInstance);
+		}
 		usDA.deleteUnitServer(unitServerSelected);
 		commit();
 	}

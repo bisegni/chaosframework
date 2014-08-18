@@ -29,10 +29,14 @@ namespace chaos {
     using namespace std;
     
     class ObjectFactory {
-        public :
-        ObjectFactory(const char *alias):sAlias(alias){};
-        std::string sAlias;
+	protected:
+		std::string object_alias;
+	public :
+        ObjectFactory(const std::string & _object_alias):object_alias(_object_alias){};
         virtual void* createInstance() = 0;
+		const string & getAlias() {
+			return object_alias;
+		}
     };
     
     /*
@@ -41,8 +45,8 @@ namespace chaos {
     template <class T>
     class ObjectFactoryAliasInstantiation : public ObjectFactory {
     public:
-        ObjectFactoryAliasInstantiation(const char *alias):ObjectFactory(alias){};
-        virtual void* createInstance() { return (void*)new T(sAlias); };
+        ObjectFactoryAliasInstantiation(const std::string & _object_alias):ObjectFactory(_object_alias){};
+        virtual void* createInstance() { return (void*)new T(object_alias); };
     };
 
     /*
@@ -68,25 +72,21 @@ namespace chaos {
         /*
          Register the Abstract command factory for a Command associated with an alias
          */
-        void registerObjectFactory(const char *alias, ObjectFactory *factoryPtr) {
+        void registerObjectFactory(const string & alias, ObjectFactory *factoryPtr) {
                 //register command into map
-            string aliasString(alias);
-            if(objectFacotoryList.count(aliasString) == 0){
-                objectFacotoryList.insert(make_pair(aliasString, factoryPtr));
+            if(objectFacotoryList.count(alias) == 0){
+                objectFacotoryList.insert(make_pair(alias, factoryPtr));
             }
             
         }
-		T *getNewInstanceByName(std::string alias) {
-			return getNewInstanceByName(alias.c_str());
-		}
+
         /*
          Create a new instance for the command identified by input alias
          */
-        T *getNewInstanceByName(const char *alias) {
+        T *getNewInstanceByName(const string & alias) {
             T *result=NULL;
-            string aliasString(alias);
                 //get the reference for the className
-            ObjectFactory *acf = objectFacotoryList[aliasString];
+            ObjectFactory *acf = objectFacotoryList[alias];
                 //return null ora create instance
             if(acf){
                 result=(T*)acf->createInstance();
@@ -103,7 +103,7 @@ namespace chaos {
     public:
         ObjectInstancer(ObjectFactory *commandFactory) {
             if(commandFactory){
-                ObjectFactoryRegister<T>::getInstance()->registerObjectFactory((*commandFactory).sAlias.c_str(), commandFactory);
+                ObjectFactoryRegister<T>::getInstance()->registerObjectFactory(commandFactory->getAlias(), commandFactory);
             }
         }
     };

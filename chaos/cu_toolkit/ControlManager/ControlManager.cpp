@@ -287,9 +287,10 @@ void ControlManager::migrateStableAndUnstableSMCUInstance() {
 	UpgradeableLock registering_lock(mutex_map_cuid_reg_unreg_instance);
 	UpgradeableLock registered_lock(mutex_map_cuid_registered_instance);
 	
+        //used the Mark Ransom Technique for avoid the temporary iterator
+        //http://stackoverflow.com/questions/180516/how-to-filter-items-from-a-stdmap/180616#180616
     for (map<string, shared_ptr<WorkUnitManagement> >::iterator i = map_cuid_reg_unreg_instance.begin();
-		 i != map_cuid_reg_unreg_instance.end();
-		 i++ ){
+         i != map_cuid_reg_unreg_instance.end();) {
 		
 		if(!i->second->smNeedToSchedule()) {
 			UpgradeReadToWriteLock registering_wlock(registering_lock);
@@ -312,8 +313,11 @@ void ControlManager::migrateStableAndUnstableSMCUInstance() {
 			}
 
 			//remove the iterator
-			map_cuid_reg_unreg_instance.erase(i);
-		}
+            map_cuid_reg_unreg_instance.erase(i++); // first is executed the uncrement that return
+                                                    // a copy of the original iterator
+        } else {
+            ++i; //more efficient because doesn't make a copy
+        }
 	}
 }
 
@@ -342,7 +346,7 @@ void ControlManager::manageControlUnit() {
 		while(!queue_submitted_cu.empty()) {
 			//we have new instance to manage
 			shared_ptr<WorkUnitManagement> wui(new WorkUnitManagement(queue_submitted_cu.front()));
-			LCMAPP_  << "We have a new control unit isntance:" << WU_IDENTIFICATION(wui->work_unit_instance);
+			LCMAPP_  << "We have a new control unit instance:" << WU_IDENTIFICATION(wui->work_unit_instance);
 			
 			//remove the oldest data
 			queue_submitted_cu.pop();

@@ -87,7 +87,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         directIOClientImpl = direct_io_impl+"DirectIOClient";
         MB_LAPP  << "DirectIO Client implementation is configured has : " << directIOClientImpl;
         MB_LAPP  << "Trying to initilize DirectIO Server: " << directIOServerImpl;
-        directIOServer = ObjectFactoryRegister<common::direct_io::DirectIOServer>::getInstance()->getNewInstanceByName(directIOServerImpl.c_str());
+        directIOServer = ObjectFactoryRegister<common::direct_io::DirectIOServer>::getInstance()->getNewInstanceByName(directIOServerImpl);
 		if(!directIOServer) throw CException(1, "Error creating direct io server implementation", __FUNCTION__);
 		
 		//allocate the dispatcher
@@ -119,7 +119,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         string eventClientName = eventAdapterType+"EventClient";
         
         MB_LAPP  << "Trying to initilize Event Server: " << eventServerName;
-        eventServer = ObjectFactoryRegister<EventServer>::getInstance()->getNewInstanceByName(eventServerName.c_str());
+        eventServer = ObjectFactoryRegister<EventServer>::getInstance()->getNewInstanceByName(eventServerName);
         if(utility::StartableService::initImplementation(eventServer, static_cast<void*>(globalConfiguration), eventServer->getName(), "NetworkBroker::init")){
 			//register the root handler on event server
             eventServer->setEventHanlder(eventDispatcher);
@@ -127,7 +127,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         
         MB_LAPP  << "Trying to initilize Event Client: " << eventClientName;
-        eventClient = ObjectFactoryRegister<EventClient>::getInstance()->getNewInstanceByName(eventClientName.c_str());
+        eventClient = ObjectFactoryRegister<EventClient>::getInstance()->getNewInstanceByName(eventClientName);
         utility::StartableService::initImplementation(eventClient, static_cast<void*>(globalConfiguration), eventClientName.c_str(), "NetworkBroker::init");
     }
 	//---------------------------- E V E N T ----------------------------
@@ -151,7 +151,9 @@ void NetworkBroker::init(void *initData) throw(CException) {
         string rpcClientName = rpcRapterType+"Client";
         
         MB_LAPP  << "Trying to initilize RPC Server: " << rpcServerName;
-        rpcServer = ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(rpcServerName.c_str());
+        rpcServer = ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(rpcServerName);
+		if(!rpcServer) throw CException(4, "Error allocating rpc server implementation", "NetworkBroker::init");
+		
         if(utility::StartableService::initImplementation(rpcServer, static_cast<void*>(globalConfiguration), rpcServer->getName(), "NetworkBroker::init")) {
 			//set the handler on the rpc server
             rpcServer->setCommandDispatcher(commandDispatcher);
@@ -159,7 +161,9 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         
         MB_LAPP  << "Trying to initilize RPC Client: " << rpcClientName;
-        rpcClient = ObjectFactoryRegister<RpcClient>::getInstance()->getNewInstanceByName(rpcClientName.c_str());
+        rpcClient = ObjectFactoryRegister<RpcClient>::getInstance()->getNewInstanceByName(rpcClientName);
+		if(!rpcClient) throw CException(4, "Error allocating rpc client implementation", "NetworkBroker::init");
+
         if(utility::StartableService::initImplementation(rpcClient, static_cast<void*>(globalConfiguration), rpcClient->getName(), "NetworkBroker::init")) {
 			//set the forwarder into dispatcher for answere
             if(commandDispatcher) commandDispatcher->setRpcForwarder(rpcClient);
@@ -588,5 +592,5 @@ void NetworkBroker::releaseDirectIOServerEndpoint(chaos_directio::DirectIOServer
 //Return a new direct io client instance
 chaos_directio::DirectIOClient *NetworkBroker::getDirectIOClientInstance() {
     MB_LAPP  << "Allocate a new DirectIOClient of type " << directIOClientImpl;
-    return ObjectFactoryRegister<common::direct_io::DirectIOClient>::getInstance()->getNewInstanceByName(directIOClientImpl.c_str());
+    return ObjectFactoryRegister<common::direct_io::DirectIOClient>::getInstance()->getNewInstanceByName(directIOClientImpl);
 }

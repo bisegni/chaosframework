@@ -103,7 +103,7 @@ namespace chaos {
 				CDataWrapper *getCSDataValue(const char *);
 				
 				//add a string value
-				void addStringValue(const char *, const char *);
+				//void addStringValue(const char *, const char *);
 				
 				//add a string value
 				void addStringValue(const char *, const string&);

@@ -145,6 +145,10 @@ public class UnitServerDA extends DataAccess {
 			ps = getPreparedStatementForSQLCommand(iuBuilder.toString());
 			iuBuilder.fillPreparedStatement(ps);
 			executeInsertUpdateAndClose(ps);
+			
+			for (String newType : unitServer.getPublischedCU()) {
+				addCuTypeToUnitServer(unitServer.getAlias(), newType);
+			}
 		} catch (IllegalArgumentException e) {
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::insertNewUnitServer");
 		} catch (IllegalAccessException e) {
@@ -208,7 +212,7 @@ public class UnitServerDA extends DataAccess {
 			executeInsertUpdateAndClose(ps);
 
 			// compare stored cu type with new one and insert only new one
-			Vector<String> newCuType = unitServer.getPublischedCU();
+			Vector<String> newCuType = (Vector<String>) unitServer.getPublischedCU().clone();
 			unitServer.getPublischedCU().clear();
 			fillUnitServerWithCUTypes(unitServer);
 
@@ -539,6 +543,25 @@ public class UnitServerDA extends DataAccess {
 		return result;
 	}
 
+	public void removeAllAttributeConfigurationForAssociation(UnitServerCuInstance associationInstance) throws RefException {
+		// first delete all config for device id
+		PreparedStatement ps = null;
+		try {
+			DeleteSqlBuilder d = new DeleteSqlBuilder();
+			d.addTable("attribute_config");
+			d.addCondition(true, String.format("%s=?", "unique_id"));
+			ps = getPreparedStatementForSQLCommand(d.toString());
+			ps.setString(1, associationInstance.getCuId());
+			executeInsertUpdateAndClose(ps);
+		} catch (IllegalArgumentException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::setState");
+		} catch (SQLException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 2, "UnitServerDA::setState");
+		} finally {
+			closePreparedStatement(ps);
+		}
+	}
+
 	/**
 	 * 
 	 * @param associationInstance
@@ -670,7 +693,7 @@ public class UnitServerDA extends DataAccess {
 
 						result = Arrays.equals(unitServerAlias.getBytes(), publicDecoding);
 					}
-				}else {
+				} else {
 					result = true;
 				}
 			} else {

@@ -76,9 +76,9 @@ void CDataWrapper::addCSDataValue(const char *key, CDataWrapper& csData) {
 }
 
 //add a string value
-void CDataWrapper::addStringValue(const char * key, const char * strValue) {
+/*void CDataWrapper::addStringValue(const char * key, const char * strValue) {
     bsonBuilder->append(key, strValue);
-}
+}*/
 
 //add a string value
 void CDataWrapper::addStringValue(const char *key, const string& strValue) {
@@ -166,8 +166,7 @@ CDataWrapper *CDataWrapper::getCSDataValue(const char *key) {
 
 //get string value
 string  CDataWrapper::getStringValue(const char *key) {
-    const char * result = bsonBuilder->asTempObj().getField(key).String().c_str();
-    return string(result);
+    return bsonBuilder->asTempObj().getField(key).String();
 }
 
 //get string value

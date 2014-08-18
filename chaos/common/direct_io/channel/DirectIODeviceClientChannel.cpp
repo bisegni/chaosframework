@@ -36,7 +36,7 @@ using namespace chaos::common::direct_io::channel;
 using namespace chaos::common::direct_io::channel::opcode_headers;
 
 //#define PUT_HEADER_LEN  sizeof(DirectIODeviceChannelHeaderPutOpcode)-sizeof(void*)+device_id.size()
-#define PUT_HEADER_LEN  GET_PUT_OPCODE_FIXED_PART_LEN+device_id.size()
+#define PUT_HEADER_LEN  (GET_PUT_OPCODE_FIXED_PART_LEN+((uint32_t)device_id.size()))
 
 
 DirectIODeviceClientChannel::DirectIODeviceClientChannel(std::string alias):
@@ -125,7 +125,7 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData() {
 	
         //set header
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, &get_opcode_header, sizeof(DirectIODeviceChannelHeaderGetOpcode))
-	DIRECT_IO_SET_CHANNEL_DATA(data_pack, (void*)device_id.c_str(), device_id.size())
+	DIRECT_IO_SET_CHANNEL_DATA(data_pack, (void*)device_id.c_str(), (uint32_t)device_id.size())
 	return client_instance->sendPriorityData(this, completeDataPack(data_pack));
 }
 

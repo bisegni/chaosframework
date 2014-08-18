@@ -44,25 +44,25 @@ void StartableService::stop() throw(chaos::CException) {
     
 }
 
-bool StartableService::startImplementation(StartableService& impl, const char * const implName,  const char * const domainString) {
+bool StartableService::startImplementation(StartableService& impl, const string & implName,  const string & domainString) {
     return startImplementation(&impl, implName,  domainString);
 }
 
-bool StartableService::stopImplementation(StartableService& impl, const char * const implName,  const char * const domainString) {
+bool StartableService::stopImplementation(StartableService& impl, const string & implName,  const string & domainString) {
     return stopImplementation(&impl, implName,  domainString);
 }
 
-bool StartableService::initImplementation(StartableService& impl, void *initData, const char * const implName,  const char * const domainString) {
+bool StartableService::initImplementation(StartableService& impl, void *initData, const string & implName,  const string & domainString) {
     return initImplementation(&impl, initData, implName,  domainString);
 }
 
-bool StartableService::deinitImplementation(StartableService& impl, const char * const implName,  const char * const domainString) {
+bool StartableService::deinitImplementation(StartableService& impl, const string & implName,  const string & domainString) {
     return deinitImplementation(&impl, implName,  domainString);
 }
 
 /*!
  */
-bool StartableService::initImplementation(StartableService *impl, void *initData, const char * const implName,  const char * const domainString)  {
+bool StartableService::initImplementation(StartableService *impl, void *initData, const string & implName,  const string & domainString)  {
     bool result = true;
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
@@ -90,7 +90,7 @@ bool StartableService::initImplementation(StartableService *impl, void *initData
 
 /*!
  */
-bool StartableService::deinitImplementation(StartableService *impl, const char * const implName,  const char * const domainString) {
+bool StartableService::deinitImplementation(StartableService *impl, const string & implName,  const string & domainString) {
     bool result = true;
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
@@ -111,7 +111,7 @@ bool StartableService::deinitImplementation(StartableService *impl, const char *
 }
 /*!
  */
-bool StartableService::startImplementation(StartableService *impl, const char * const implName,  const char * const domainString) {
+bool StartableService::startImplementation(StartableService *impl, const string & implName,  const string & domainString) {
     bool result = true;
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
@@ -138,7 +138,7 @@ bool StartableService::startImplementation(StartableService *impl, const char * 
 
 /*!
  */
-bool StartableService::stopImplementation(StartableService *impl, const char * const implName,  const char * const domainString) {
+bool StartableService::stopImplementation(StartableService *impl, const string & implName,  const string & domainString) {
     bool result = true;
     try {
         if(impl == NULL) throw CException(0, "Implementation is null", domainString);
