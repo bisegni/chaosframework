@@ -74,7 +74,7 @@ void TCPUVClient::on_ack_read(uv_stream_t *stream, ssize_t nread, const uv_buf_t
 		ci->uv_conn_info = NULL;
 		uv_close((uv_handle_t*)stream,TCPUVClient::on_close);
 	} else {
-		DEBUG_CODE(TCPUVClientLDBG << "we have more data to send ->" << ci->queued_message_info.size();)
+		DEBUG_CODE(TCPUVClientLDBG << "we have more data to send -> " << ci->queued_message_info.size();)
 		//delete sent data
 		if(ci->uv_conn_info) {
 			if(ci->uv_conn_info->current_message_info) delete(ci->uv_conn_info->current_message_info);
@@ -112,7 +112,7 @@ void TCPUVClient::on_write_end(uv_write_t *req, int status) {
 		//uv_shutdown(shutdown_req, req->handle, TCPUVClient::shutdown_cb);
 		//new read
 		if((err = uv_read_start(req->handle, TCPUVClient::alloc_buffer, TCPUVClient::on_ack_read))){
-			TCPUVClientLERR << "error on_write_end:uv_read_start" << uv_err_name(err);
+			TCPUVClientLERR << "error on_write_end:uv_read_start " << uv_err_name(err);
 		}
 	}
 	free(req);
@@ -136,7 +136,7 @@ void TCPUVClient::send_data(ConnectionInfo *ci, uv_stream_t *stream) {
 	//buffers[1] = uv_buf_init((char*)ci->uv_conn_info->current_serialization->getBufferPtr(), (unsigned int)ci->uv_conn_info->current_serialization->getBufferLen());
 	uv_buf_t buffers = uv_buf_init((char*)ci->uv_conn_info->current_serialization->getBufferPtr(), (unsigned int)ci->uv_conn_info->current_serialization->getBufferLen());
 	if((err = uv_write(new_write_req, stream, &buffers, 1, TCPUVClient::on_write_end))) {
-		TCPUVClientLERR << "error send_data:uv_write" << uv_err_name(err);
+		TCPUVClientLERR << "error send_data:uv_write " << uv_err_name(err);
 	}
 }
 
@@ -156,7 +156,7 @@ void TCPUVClient::on_connect(uv_connect_t *connection, int status) {
 	
 	
 	if (status) {
-		TCPUVClientLERR << "error on_connect" << uv_strerror(status);
+		TCPUVClientLERR << "error on_connect " << uv_strerror(status);
 		switch (status) {
 			case ECONNREFUSED:
 				TCPUVClientLERR << "ECONNREFUSED";
@@ -199,7 +199,7 @@ void TCPUVClient::async_submit_message_cb(uv_async_t *handle) {
 
 void TCPUVClient::create_new_connection_for_next_message(uv_loop_t *loop, ConnectionInfo *ci) {
 	TCPUVClientLAPP << "create_new_connection";
-	ci->uv_conn_info  = new UVConnInfo();
+	int err = 0;
 	
 	//i need to restart the connection
 	//boost::unique_lock<boost::shared_mutex> lock_loop(loop_mutex);
@@ -207,14 +207,29 @@ void TCPUVClient::create_new_connection_for_next_message(uv_loop_t *loop, Connec
 	std::vector<std::string> server_desc_tokens;
 	boost::algorithm::split(server_desc_tokens, ci->queued_message_info.front()->destinationAddr, boost::algorithm::is_any_of(":"), boost::algorithm::token_compress_on);
 	uv_ip4_addr(server_desc_tokens[0].c_str(), boost::lexical_cast<int>(server_desc_tokens[1]), &req_addr);
+
 	
+	ci->uv_conn_info  = new UVConnInfo();
+	if(!ci->uv_conn_info) {
+		TCPUVClientLERR << "Error allocating UVConnInfo strucutre ";
+		DEALLOCATE_UV_CONNECTION_INFO(ci->uv_conn_info)
+		return;
+	}
+	if((err = uv_tcp_init(loop, &ci->uv_conn_info->tcp_connection))){
+		TCPUVClientLERR << "error on uv_tcp_init " << err;
+	}else if((err = uv_tcp_keepalive(&ci->uv_conn_info->tcp_connection, 1, 60))){
+		TCPUVClientLERR << "error on uv_tcp_keepalive " << err;
+	}else if((err = uv_tcp_nodelay(&ci->uv_conn_info->tcp_connection, 1))){
+		TCPUVClientLERR << "error on uv_tcp_nodelay " << err;
+	}
 	
-	uv_tcp_init(loop, &ci->uv_conn_info->tcp_connection);
-	uv_tcp_keepalive(&ci->uv_conn_info->tcp_connection, 1, 60);
-	uv_tcp_nodelay(&ci->uv_conn_info->tcp_connection, 1);
-	//exec the connection
-	ci->uv_conn_info->tcp_connection.data = static_cast<void*>(ci);
-	uv_tcp_connect(&ci->uv_conn_info->tcp_connection_request, &ci->uv_conn_info->tcp_connection, (const struct sockaddr*)&req_addr, TCPUVClient::on_connect);
+	if(err) {
+		DEALLOCATE_UV_CONNECTION_INFO(ci->uv_conn_info)
+	} else {
+		//exec the connection
+		ci->uv_conn_info->tcp_connection.data = static_cast<void*>(ci);
+		uv_tcp_connect(&ci->uv_conn_info->tcp_connection_request, &ci->uv_conn_info->tcp_connection, (const struct sockaddr*)&req_addr, TCPUVClient::on_connect);
+	}
 }
 
 TCPUVClient::TCPUVClient(string alias):
@@ -358,14 +373,14 @@ bool TCPUVClient::startConnection(NetworkForwardInfo *message_info) {
 	return sendToConnectionInfo(ci, message_info);
 }
 
-bool TCPUVClient::sendToConnectionInfo(ConnectionInfo *conenction_info, NetworkForwardInfo *message_info) {
-	boost::unique_lock<boost::shared_mutex> lock_connection(conenction_info->connection_mutex);
+bool TCPUVClient::sendToConnectionInfo(ConnectionInfo *connection_info, NetworkForwardInfo *message_info) {
+	boost::unique_lock<boost::shared_mutex> lock_connection(connection_info->connection_mutex);
 	//
-	conenction_info->queued_message_info.push(message_info);
-	if(!conenction_info->uv_conn_info) {
+	connection_info->queued_message_info.push(message_info);
+	if(!connection_info->uv_conn_info) {
 		TCPUVClientLAPP << "Allocate new UVConnInfo";
 		//conenction_info->uv_conn_info  = new UVConnInfo();
-		TCPUVClient::create_new_connection_for_next_message(&loop, conenction_info);
+		TCPUVClient::create_new_connection_for_next_message(&loop, connection_info);
 	}
 	return true;
 }
