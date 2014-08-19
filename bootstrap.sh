@@ -261,7 +261,7 @@ if [ ! -f "$PREFIX/include/uv.h" ]; then
 		    exit 1
 		fi
 		cd $BASE_EXTERNAL/libuv
-		git checkout -b good_for_chaos beb54fe
+		git checkout -b good_for_chaos 1552184
 	else
 		cd $BASE_EXTERNAL/libuv
 #git pull

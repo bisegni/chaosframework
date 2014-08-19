@@ -204,6 +204,7 @@ public class UnitServerDA extends DataAccess {
 		iuBuilder.addColumnAndValue(UnitServer.UNIT_SERVER_HB_TIME, "$CURRENT_TIMESTAMP");
 		iuBuilder.addColumnAndValue(UnitServer.UNIT_SERVER_IP_PORT, unitServer.getIp_port());
 		iuBuilder.addCondition(true, "unit_server_alias=?");
+		
 		PreparedStatement ps = null;
 		try {
 			ps = getPreparedStatementForSQLCommand(iuBuilder.toString());
@@ -231,6 +232,17 @@ public class UnitServerDA extends DataAccess {
 	}
 
 	public void updateUnitServerProperty(UnitServer unitServer) throws RefException {
+		
+		InsertUpdateBuilder iuPublishedCUBuilder = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_UPDATE);
+		iuPublishedCUBuilder.addTable("unit_server_published_cu");
+		iuPublishedCUBuilder.addColumnAndValue(UnitServer.UNIT_SERVER_ALIAS, unitServer.getAlias());
+		iuPublishedCUBuilder.addCondition(true, "unit_server_alias=?");
+		
+		InsertUpdateBuilder iuCUAssociationBuilder = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_UPDATE);
+		iuCUAssociationBuilder.addTable(UnitServerCuInstance.class);
+		iuCUAssociationBuilder.addColumnAndValue(UnitServerCuInstance.UNIT_SERVER_ALIAS, unitServer.getAlias());
+		iuCUAssociationBuilder.addCondition(true, "unit_server_alias=?");
+		
 		InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_UPDATE);
 		iuBuilder.addTable(UnitServer.class);
 		iuBuilder.addColumnAndValue(UnitServer.UNIT_SERVER_ALIAS, unitServer.getAlias());
@@ -239,13 +251,34 @@ public class UnitServerDA extends DataAccess {
 		iuBuilder.addCondition(true, "unit_server_alias=?");
 		PreparedStatement ps = null;
 		try {
+			ps=getPreparedStatementForSQLCommand("SET foreign_key_checks = 0");
+			executeInsertUpdateAndClose(ps);
+			
+			ps = getPreparedStatementForSQLCommand(iuPublishedCUBuilder.toString());
+			int idx = iuPublishedCUBuilder.fillPreparedStatement(ps);
+			ps.setString(idx++, unitServer.isAliasChanged() ? unitServer.getOldAliasOnChange() : unitServer.getAlias());
+			executeInsertUpdateAndClose(ps);
+			
+			ps = getPreparedStatementForSQLCommand(iuCUAssociationBuilder.toString());
+			idx = iuCUAssociationBuilder.fillPreparedStatement(ps);
+			ps.setString(idx++, unitServer.isAliasChanged() ? unitServer.getOldAliasOnChange() : unitServer.getAlias());
+			executeInsertUpdateAndClose(ps);
+			
 			ps = getPreparedStatementForSQLCommand(iuBuilder.toString());
-			int idx = iuBuilder.fillPreparedStatement(ps);
+			idx = iuBuilder.fillPreparedStatement(ps);
 			ps.setString(idx++, unitServer.isAliasChanged() ? unitServer.getOldAliasOnChange() : unitServer.getAlias());
 			executeInsertUpdateAndClose(ps);
 		} catch (SQLException e) {
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::updateNewUnitServer");
 		} finally {
+			try {
+				ps=getPreparedStatementForSQLCommand("SET foreign_key_checks = 1");
+				executeInsertUpdateAndClose(ps);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
 			closePreparedStatement(ps);
 		}
 	}
