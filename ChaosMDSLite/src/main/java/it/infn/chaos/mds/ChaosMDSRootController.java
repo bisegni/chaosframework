@@ -133,7 +133,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UNIT_SERVER_DELETE)) {
 					if (unitServerSelected == null) {
 						MDSAppView view = getViewByKey("VISTA");
-						RefVaadinErrorDialog.shorError(view.getWindow(), "Delete unit server", "Select one unit server");
+						RefVaadinErrorDialog.showError(view.getWindow(), "Delete unit server", "Select one unit server");
 					} else {
 						deleteSelectedUnitServer();
 					}
@@ -149,7 +149,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 							notifyEventoToViewWithData(NewUSCUAssociationView.SET_SC_CUTYPE_VALUE, this, sccu);
 						} else {
 							MDSAppView view = getViewByKey("VISTA");
-							RefVaadinErrorDialog.shorError(view.getWindow(), "SC-CU Association error", "SC or CU type invalid association");
+							RefVaadinErrorDialog.showError(view.getWindow(), "SC-CU Association error", "SC or CU type invalid association");
 						}
 					} catch (InstantiationException e) {
 						e.printStackTrace();
@@ -169,14 +169,14 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 						loadUnloadAllUnitServerAssociation(true);
 					} else {
 						MDSAppView view = getViewByKey("VISTA");
-						RefVaadinErrorDialog.shorError(view.getWindow(), "Load all association", "A unit server need to be selected");
+						RefVaadinErrorDialog.showError(view.getWindow(), "Load all association", "A unit server need to be selected");
 					}
 				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UNIT_SERVER_UNLOAD_ALL_ASSOCIATION)) {
 					if (unitServerSelected != null) {
 						loadUnloadAllUnitServerAssociation(false);
 					} else {
 						MDSAppView view = getViewByKey("VISTA");
-						RefVaadinErrorDialog.shorError(view.getWindow(), "Unload all association", "A unit server need to be selected");
+						RefVaadinErrorDialog.showError(view.getWindow(), "Unload all association", "A unit server need to be selected");
 					}
 				} else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_UPDATE_LIST)) {
 					notifyEventoToViewWithData(USCUAssociationListView.EVENT_UPDATE_LIST, this, musp.loadAllAssociationForUnitServerAlias(unitServerSelected));
@@ -217,14 +217,14 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 						unitServerHasBeenSelected(unitServerSelected);
 					} else {
 						MDSAppView view = getViewByKey("VISTA");
-						RefVaadinErrorDialog.shorError(view.getWindow(), "Remove Unit Server Type", "A unit server need to be selected");
+						RefVaadinErrorDialog.showError(view.getWindow(), "Remove Unit Server Type", "A unit server need to be selected");
 					}
 				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UNIT_SERVER_CU_TYPE_UPDATE_LIST)) {
 					if (unitServerSelected != null) {
 						unitServerHasBeenSelected(viewEvent.getEventData().toString());
 					} else {
 						MDSAppView view = getViewByKey("VISTA");
-						RefVaadinErrorDialog.shorError(view.getWindow(), "Remove Unit Server Type", "A unit server need to be selected");
+						RefVaadinErrorDialog.showError(view.getWindow(), "Remove Unit Server Type", "A unit server need to be selected");
 					}
 				}else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_SWITCH_AUTOLOAD)) {
 					musp.switcAutoloadOptionOnAssociation((Set<UnitServerCuInstance>) viewEvent.getEventData());
@@ -237,7 +237,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 			}
 		} catch (Throwable e) {
 			MDSAppView view = getViewByKey("VISTA");
-			RefVaadinErrorDialog.shorError(view.getWindow(), "Event Error", e.getMessage());
+			RefVaadinErrorDialog.showError(view.getWindow(), "Event Error", e.getMessage());
 		}
 	}
 
@@ -323,7 +323,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 			notifyEventoToViewWithData(USCUAssociationListView.EVENT_UPDATE_LIST, this, musp.loadAllAssociationForUnitServerAlias(unitServerSelected));
 		} else {
 			MDSAppView view = getViewByKey("VISTA");
-			RefVaadinErrorDialog.shorError(view.getWindow(), "Show all error", "Uniserver not selected");
+			RefVaadinErrorDialog.showError(view.getWindow(), "Show all error", "Uniserver not selected");
 		}
 
 	}
@@ -473,7 +473,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 			}
 			mdp.updateDeviceAttributes(datasetAttributes);
 		} catch (Throwable e) {
-			RefVaadinErrorDialog.shorError(view.getWindow(), "Update Attribute Error", e.getMessage());
+			RefVaadinErrorDialog.showError(view.getWindow(), "Update Attribute Error", e.getMessage());
 			notifyEventoToViewWithData(MDSAppView.EVENT_ATTRIBUTE_EDITING, null, null);
 		}
 	}

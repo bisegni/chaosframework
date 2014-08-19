@@ -11,6 +11,7 @@ import it.infn.chaos.mds.da.DeviceDA;
 import java.util.Collection;
 import java.util.List;
 
+import org.ref.common.exception.RefException;
 import org.ref.server.interapplicationenvironment.ProcessActionDescription;
 import org.ref.server.interapplicationenvironment.ProcessDescription;
 import org.ref.server.process.RefProcess;
@@ -57,13 +58,17 @@ public class ManageDeviceProcess extends RefProcess {
 	 * @param deviceIdentification
 	 * @param initialized
 	 * @throws Exception 
+	 * @throws RefException 
 	 */
-	public void setDeviceStartupInitizializationOption(String deviceIdentification, boolean init) throws Exception {
+	public void setDeviceStartupInitizializationOption(String deviceIdentification, boolean init) throws Exception, RefException {
 		try {
 			DeviceDA dDA = (DeviceDA) getDataAccessInstance(DeviceDA.class);
 			dDA.setStartupInitializationOption(deviceIdentification, init);
 			commit();
 		} catch (Exception e) {
+			rollback();
+			throw e;
+		} catch (RefException e) {
 			rollback();
 			throw e;
 		}
@@ -115,15 +120,20 @@ public class ManageDeviceProcess extends RefProcess {
 	 * 
 	 * @param datasetAttributes
 	 * @throws Exception
+	 * @throws RefException 
 	 */
-	public void updateDeviceAttributes(Collection<DatasetAttribute> datasetAttributes) throws Exception {
-		DeviceDA dDA = (DeviceDA) getDataAccessInstance(DeviceDA.class);
+	public void updateDeviceAttributes(Collection<DatasetAttribute> datasetAttributes) throws Exception, RefException {
+		DeviceDA dDA = null;
 		try {
+			dDA = (DeviceDA) getDataAccessInstance(DeviceDA.class);
 			for (DatasetAttribute datasetAttribute : datasetAttributes) {
 				dDA.updateDatasetAttribute(datasetAttribute);
 			}
 			commit();
 		} catch (Exception e) {
+			rollback();
+			throw e;
+		} catch (RefException e) {
 			rollback();
 			throw e;
 		}

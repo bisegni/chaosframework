@@ -123,7 +123,7 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 					usci.checkIntegrityValues();
 					notifyEventoToControllerWithData(NewUSCUAssociationView.EVENT_SAVE_USCU_ASSOC_VIEW, event.getSource(), usci);
 				} catch (Throwable e) {
-					RefVaadinErrorDialog.shorError(getWindow(), "Save Assocaition", "Some value are not good");
+					RefVaadinErrorDialog.showError(getWindow(), "Save Assocaition", "Some value are not good");
 
 				}
 			}

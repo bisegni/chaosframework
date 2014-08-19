@@ -57,3 +57,5 @@ Documentation/uml/CHAOS.mdzip.bak
 external
 usr
 example/build-UIToolkitTest-Desktop-Debug/*
+ChaosMDSLite/RefCommon.jardesc
+ChaosMDSLite/RefServer.jardesc

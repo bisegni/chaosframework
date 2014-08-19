@@ -8,6 +8,7 @@ import it.infn.chaos.mds.da.DataServerDA;
 
 import java.util.List;
 
+import org.ref.common.exception.RefException;
 import org.ref.server.interapplicationenvironment.ProcessDescription;
 import org.ref.server.process.RefProcess;
 
@@ -69,13 +70,17 @@ public class ManageServerProcess extends RefProcess {
 	 * remove a dataserver
 	 * @param dsToUpdate
 	 * @throws Exception 
+	 * @throws RefException 
 	 */
-	public void deleteServer(DataServer dsToUpdate) throws Exception {
+	public void deleteServer(DataServer dsToUpdate) throws Exception, RefException {
 		try {
 			DataServerDA dsDA = (DataServerDA) getDataAccessInstance(DataServerDA.class);
 			dsDA.deleteDataserver(dsToUpdate.getIdServer());
 			commit();
 		} catch (Exception e) {
+			rollback();
+			throw e;
+		} catch (RefException e) {
 			rollback();
 			throw e;
 		}
