@@ -167,7 +167,7 @@ cu_driver::DriverAccessor *cu_driver_manager::DriverManager::getNewAccessorForDr
 	driverInstance->identificationString = stringForMap;
 	//initialize the newly create instance
 	DMLAPP_ << "Initializing device driver " << driverInfo <<", initialization parameters:\""<<request_info.init_parameter<<"\" with uuid = " << driverInstance->driverUUID;
-	chaos::utility::InizializableService::initImplementation(driverInstance, (void*)(request_info.init_parameter), "AbstractDriver", "DriverManager::getNewAccessorForDriverInstance");
+	chaos::utility::InizializableService::initImplementation(driverInstance, (void*)(request_info.init_parameter.c_str()), "AbstractDriver", "DriverManager::getNewAccessorForDriverInstance");
 	
 	//here the driver has been initializated and has been associated with the hash of the parameter
 	DMLAPP_ << "Add device driver with hash = " << driverInstance->identificationString;

@@ -428,7 +428,7 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
 	//scan all the driver description forwarded
 	std::vector<cu_driver_manager::driver::DrvRequestInfo> driver_params;
 	if(message_data->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC)) {
-		LCMDBG_ << "Driver param has been supplyed";
+		LCMDBG_ << "Driver param has been supplied";
 		boost::scoped_ptr<CMultiTypeDataArrayWrapper> driver_descriptions(message_data->getVectorValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC));
 		//scan all the driver description
 		LCMDBG_ << "scan " << driver_descriptions->size() << " driver descriptions";
@@ -439,9 +439,9 @@ CDataWrapper* ControlManager::loadControlUnit(CDataWrapper *message_data, bool& 
 			IN_ACTION_PARAM_CHECK(!driver_desc->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION), -5, "No driver version found")
 			IN_ACTION_PARAM_CHECK(!driver_desc->hasKey(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM), -6, "No driver init param name found")
 			LCMDBG_ << "scan " << idx << " driver";
-			cu_driver_manager::driver::DrvRequestInfo drv = {driver_desc->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME).c_str(),
-															driver_desc->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION).c_str(),
-															driver_desc->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM).c_str()};
+			cu_driver_manager::driver::DrvRequestInfo drv = {driver_desc->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_NAME),
+															driver_desc->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_VERSION),
+															driver_desc->getStringValue(ChaosSystemDomainAndActionLabel::PARAM_LOAD_CONTROL_UNIT_DRIVER_DESC_INIT_PARAM)};
 			LCMDBG_ << "adding driver  " << drv.alias << "["<<drv.version << "-" << drv.init_parameter<<"]";
 			driver_params.push_back(drv);
 		}
