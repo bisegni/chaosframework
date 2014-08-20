@@ -119,7 +119,7 @@ void ZMQServer::executeOnThread(){
     zmq_msg_t response;
 	CDataWrapper *cdataWrapperPack = NULL;
 	
-	void *receiver = zmq_socket (zmqContext, ZMQ_DEALER);
+	void *receiver = zmq_socket (zmqContext, ZMQ_REP);
     if(!receiver) return;
     
     err = zmq_bind(receiver, bindStr.str().c_str());

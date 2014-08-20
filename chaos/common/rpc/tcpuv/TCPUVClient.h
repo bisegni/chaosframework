@@ -93,6 +93,8 @@ namespace chaos {
 		
 		static void async_submit_message_cb(uv_async_t *handle);
 		
+		static void on_resolve(uv_getaddrinfo_t *resolver, int status, struct addrinfo *res);
+		
 		static void create_new_connection_for_next_message(uv_loop_t *loop, ConnectionInfo *ci);
     public:
 		

@@ -25,9 +25,10 @@ using namespace chaos;
 #define CLOESE_CONNECTION
 
 #define DEALLOCATE_UV_CONNECTION_INFO(x) \
-if(x->current_message_info) delete(x->current_message_info);\
-if(x->current_serialization) delete(x->current_serialization);\
-delete(x);
+if(x->current_message_info) {delete(x->current_message_info);x->current_message_info = NULL;}\
+if(x->current_serialization) {delete(x->current_serialization);x->current_serialization=NULL;}\
+delete(x);\
+x = NULL;
 
 
 void TCPUVClient::on_close(uv_handle_t* handle) {
@@ -48,6 +49,9 @@ void TCPUVClient::alloc_buffer(uv_handle_t *handle, size_t suggested_size, uv_bu
 
 void TCPUVClient::on_ack_read(uv_stream_t *stream, ssize_t nread, const uv_buf_t* buf) {
 	ConnectionInfo *ci = static_cast<ConnectionInfo*>(stream->data);
+	//we need check othe data to send
+	boost::unique_lock<boost::shared_mutex> lock(ci->connection_mutex);
+	
 	TCPUVClientLDBG << "STEP-2->on_ack_read " << nread;
 	if (nread>0) {
 		auto_ptr<chaos::common::data::CDataWrapper> ack_result(new chaos::common::data::CDataWrapper(buf->base));
@@ -56,7 +60,6 @@ void TCPUVClient::on_ack_read(uv_stream_t *stream, ssize_t nread, const uv_buf_t
 		DEBUG_CODE(LDBG_ << "TCPUVClient::on_ack_read message result------------------------------";)
 	} else {
 		TCPUVClientLERR << "on_ack_read error " << uv_err_name((int)nread);
-		boost::unique_lock<boost::shared_mutex> lock(ci->connection_mutex);
 		
 		stream->data = ci->uv_conn_info;
 		ci->uv_conn_info = NULL;
@@ -64,13 +67,11 @@ void TCPUVClient::on_ack_read(uv_stream_t *stream, ssize_t nread, const uv_buf_t
 	}
 	free(buf->base);
 	
-	//we need check othe data to send
-	boost::unique_lock<boost::shared_mutex> lock(ci->connection_mutex);
 	if(ci->queued_message_info.empty()) {
 		DEBUG_CODE(TCPUVClientLDBG << "STEP-close connection for empty queue";)
 		//attach tcp channel to the conenction and...
-		stream->data = ci->uv_conn_info;
 		//....detach the general connection info
+		stream->data = ci->uv_conn_info;
 		ci->uv_conn_info = NULL;
 		uv_close((uv_handle_t*)stream,TCPUVClient::on_close);
 	} else {
@@ -89,10 +90,7 @@ void TCPUVClient::on_ack_read(uv_stream_t *stream, ssize_t nread, const uv_buf_t
 			//so we need to reconnect
 			TCPUVClient::create_new_connection_for_next_message(stream->loop, ci);
 		}
-		
 	}
-	
-	
 }
 
 void TCPUVClient::on_write_end(uv_write_t *req, int status) {
@@ -108,8 +106,6 @@ void TCPUVClient::on_write_end(uv_write_t *req, int status) {
 		uv_close((uv_handle_t*)req->handle,TCPUVClient::on_close);
 	} else {
 		//Stop writing
-		//uv_shutdown_t *shutdown_req = (uv_shutdown_t*)malloc(sizeof(uv_shutdown_t));
-		//uv_shutdown(shutdown_req, req->handle, TCPUVClient::shutdown_cb);
 		//new read
 		if((err = uv_read_start(req->handle, TCPUVClient::alloc_buffer, TCPUVClient::on_ack_read))){
 			TCPUVClientLERR << "error on_write_end:uv_read_start " << uv_err_name(err);
@@ -120,7 +116,6 @@ void TCPUVClient::on_write_end(uv_write_t *req, int status) {
 
 void TCPUVClient::send_data(ConnectionInfo *ci, uv_stream_t *stream) {
 	int err = 0;
-	
 	//get next serialization to send
 	ci->uv_conn_info->current_serialization = ci->uv_conn_info->current_message_info->message->getBSONData();
 	
@@ -161,7 +156,6 @@ void TCPUVClient::on_connect(uv_connect_t *connection, int status) {
 			case ECONNREFUSED:
 				TCPUVClientLERR << "ECONNREFUSED";
 				break;
-				
 			default:
 				break;
 		}
@@ -177,6 +171,8 @@ void TCPUVClient::on_connect(uv_connect_t *connection, int status) {
 		TCPUVClient::send_data(ci, connection->handle);
 	} else {
 		//we can close the conenction
+		connection->handle->data = ci->uv_conn_info;
+		ci->uv_conn_info = NULL;
 		uv_close((uv_handle_t*)connection->handle,TCPUVClient::on_close);
 	}
 }
@@ -197,38 +193,64 @@ void TCPUVClient::async_submit_message_cb(uv_async_t *handle) {
 	};
 }
 
+void TCPUVClient::on_resolve(uv_getaddrinfo_t* req,
+							 int status,
+							 struct addrinfo* res) {
+	if(status) {
+		TCPUVClientLERR << "error on on_resolve: " << uv_strerror(status);
+	}else{
+		int err = 0;
+		
+		char addr[17] = {'\0'};
+		uv_ip4_name((struct sockaddr_in*) res->ai_addr, addr, 16);
+		TCPUVClientLDBG << "Conenction to " << addr;
+		
+		ConnectionInfo *ci = static_cast<ConnectionInfo*>(req->data);
+		if((err = uv_tcp_init(req->loop, &ci->uv_conn_info->tcp_connection))){
+			TCPUVClientLERR << "error on uv_tcp_init " << err;
+		} else if((err = uv_tcp_keepalive(&ci->uv_conn_info->tcp_connection, 1, 60))){
+			TCPUVClientLERR << "error on uv_tcp_keepalive " << err;
+		} else if((err = uv_tcp_nodelay(&ci->uv_conn_info->tcp_connection, 1))){
+			TCPUVClientLERR << "error on uv_tcp_nodelay " << err;
+		}
+		
+		if(err) {
+			TCPUVClientLERR << "error on tcp configuration so delete the connection info";
+			DEALLOCATE_UV_CONNECTION_INFO(ci->uv_conn_info)
+		} else {
+			//exec the connection
+			ci->uv_conn_info->tcp_connection.data = static_cast<void*>(ci);
+			uv_tcp_connect(&ci->uv_conn_info->tcp_connection_request, &ci->uv_conn_info->tcp_connection, (const struct sockaddr*)res->ai_addr, TCPUVClient::on_connect);
+		}
+	}
+	free(res);
+	free(req);
+}
+
 void TCPUVClient::create_new_connection_for_next_message(uv_loop_t *loop, ConnectionInfo *ci) {
 	TCPUVClientLDBG << "create_new_connection";
 	int err = 0;
 	
-	//i need to restart the connection
-	//boost::unique_lock<boost::shared_mutex> lock_loop(loop_mutex);
-	struct sockaddr_in req_addr;
 	std::vector<std::string> server_desc_tokens;
 	boost::algorithm::split(server_desc_tokens, ci->queued_message_info.front()->destinationAddr, boost::algorithm::is_any_of(":"), boost::algorithm::token_compress_on);
-	uv_ip4_addr(server_desc_tokens[0].c_str(), boost::lexical_cast<int>(server_desc_tokens[1]), &req_addr);
-
+	
+	//resolve name
+	struct addrinfo *res = (addrinfo*)malloc(sizeof(struct addrinfo));
+	res->ai_family = PF_INET;
+	res->ai_socktype = SOCK_STREAM;
+	res->ai_protocol = IPPROTO_TCP;
+	res->ai_flags = 0;
+	
+	uv_getaddrinfo_t *req = (uv_getaddrinfo_t*)malloc(sizeof(uv_getaddrinfo_t));
 	
 	ci->uv_conn_info  = new UVConnInfo();
-	if(!ci->uv_conn_info) {
-		TCPUVClientLERR << "Error allocating UVConnInfo strucutre ";
-		DEALLOCATE_UV_CONNECTION_INFO(ci->uv_conn_info)
-		return;
-	}
-	if((err = uv_tcp_init(loop, &ci->uv_conn_info->tcp_connection))){
-		TCPUVClientLERR << "error on uv_tcp_init " << err;
-	}else if((err = uv_tcp_keepalive(&ci->uv_conn_info->tcp_connection, 1, 60))){
-		TCPUVClientLERR << "error on uv_tcp_keepalive " << err;
-	}else if((err = uv_tcp_nodelay(&ci->uv_conn_info->tcp_connection, 1))){
-		TCPUVClientLERR << "error on uv_tcp_nodelay " << err;
-	}
-	
-	if(err) {
-		DEALLOCATE_UV_CONNECTION_INFO(ci->uv_conn_info)
-	} else {
-		//exec the connection
-		ci->uv_conn_info->tcp_connection.data = static_cast<void*>(ci);
-		uv_tcp_connect(&ci->uv_conn_info->tcp_connection_request, &ci->uv_conn_info->tcp_connection, (const struct sockaddr*)&req_addr, TCPUVClient::on_connect);
+	req->data = static_cast<void*>(ci);
+	if((err = uv_getaddrinfo(loop, req, TCPUVClient::on_resolve, server_desc_tokens[0].c_str(), server_desc_tokens[1].c_str(), res))) {
+		free(res);
+		free(req);
+		DEALLOCATE_UV_CONNECTION_INFO(ci->uv_conn_info);
+		ci->uv_conn_info = NULL;
+		TCPUVClientLERR << "error on uv_getaddrinfo api call " << uv_strerror(err);
 	}
 }
 
@@ -247,8 +269,8 @@ void TCPUVClient::init(void *init_data) throw(CException) {
 	chaos::common::data::CDataWrapper *cfg = reinterpret_cast<chaos::common::data::CDataWrapper*>(init_data);
 	int32_t threadNumber = cfg->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER)? cfg->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER):1;
 	TCPUVClientLAPP << "ObjectProcessingQueue<CDataWrapper> initialization with "<< threadNumber <<" thread";
-    //CObjectProcessingQueue<NetworkForwardInfo>::init(threadNumber);
-    TCPUVClientLAPP << "ObjectProcessingQueue<NetworkForwardInfo> initialized";
+	//CObjectProcessingQueue<NetworkForwardInfo>::init(threadNumber);
+	TCPUVClientLAPP << "ObjectProcessingQueue<NetworkForwardInfo> initialized";
 }
 
 /*
@@ -296,7 +318,7 @@ void TCPUVClient::deinit() throw(CException) {
 	TCPUVClientLAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopping";
 	//  CObjectProcessingQueue<NetworkForwardInfo>::clear();
 	//  CObjectProcessingQueue<NetworkForwardInfo>::deinit();
-    TCPUVClientLAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopped";
+	TCPUVClientLAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopped";
 }
 
 void TCPUVClient::runLoop() {
@@ -323,30 +345,30 @@ void TCPUVClient::runLoop() {
 bool TCPUVClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread) throw(CException) {
 	CHAOS_ASSERT(forwardInfo);
 	std::vector<std::string> server_desc_tokens;
-    try{
-        if(!forwardInfo->destinationAddr.size())
-            throw CException(0, "No destination ip in message description", __PRETTY_FUNCTION__);
+	try{
+		if(!forwardInfo->destinationAddr.size())
+			throw CException(0, "No destination ip in message description", __PRETTY_FUNCTION__);
 		
 		boost::algorithm::split(server_desc_tokens, forwardInfo->destinationAddr, boost::algorithm::is_any_of(":"), boost::algorithm::token_compress_on);
 		if(server_desc_tokens.size() != 2)
 			throw CException(0, "Invalid url format", __PRETTY_FUNCTION__);
 		
-        if(!forwardInfo->message)
-            throw CException(0, "No message in description", "ZMQClient::submitMessage");
+		if(!forwardInfo->message)
+			throw CException(0, "No message in description", "ZMQClient::submitMessage");
 		//allocate new forward info
 		//submit action
-        queue_async_submission.push(forwardInfo);
+		queue_async_submission.push(forwardInfo);
 		
 		//infrom uv to send
 		uv_async_send(&async_submit_message);
-    } catch(CException& ex){
+	} catch(CException& ex){
 		//in this case i need to delete the memory
-        if(forwardInfo->message) delete(forwardInfo->message);
-        if(forwardInfo) delete(forwardInfo);
+		if(forwardInfo->message) delete(forwardInfo->message);
+		if(forwardInfo) delete(forwardInfo);
 		//in this case i need to delete te memory allocated by message
-        DECODE_CHAOS_EXCEPTION(ex)
-    }
-    return true;
+		DECODE_CHAOS_EXCEPTION(ex)
+	}
+	return true;
 }
 
 void TCPUVClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementManagingPolicy& elementPolicy) throw(CException) {
@@ -375,11 +397,9 @@ bool TCPUVClient::startConnection(NetworkForwardInfo *message_info) {
 
 bool TCPUVClient::sendToConnectionInfo(ConnectionInfo *connection_info, NetworkForwardInfo *message_info) {
 	boost::unique_lock<boost::shared_mutex> lock_connection(connection_info->connection_mutex);
-	//
+	//concetion info is already created so push data
 	connection_info->queued_message_info.push(message_info);
 	if(!connection_info->uv_conn_info) {
-		TCPUVClientLDBG << "Allocate new UVConnInfo";
-		//conenction_info->uv_conn_info  = new UVConnInfo();
 		TCPUVClient::create_new_connection_for_next_message(&loop, connection_info);
 	}
 	return true;

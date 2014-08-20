@@ -21,10 +21,16 @@ import com.vaadin.ui.Window;
 public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener {
 	static final Action			ACTION_EDIT									= new Action("Edit");
 	static final Action			ACTION_SAVE									= new Action("Save");
+
 	static final Action			ACTION_US_EDIT_ALIAS						= new Action("Edit Unit Server Alias");
+	static final Action			ACTION_US_LOAD_ALL							= new Action("Load all work unit");
+	static final Action			ACTION_US_UNLOAD_ALL						= new Action("Unload all work unit");
+	static final Action			ACTION_US_SHOW_ALL							= new Action("Show work unit");
+
 	static final Action[]		ACTIONS_TO_EDIT								= new Action[] { ACTION_EDIT };
 	static final Action[]		ACTIONS_IN_EDIT								= new Action[] { ACTION_SAVE };
-	static final Action[]		EDIT_US_ALIAS								= new Action[] { ACTION_US_EDIT_ALIAS };
+	static final Action[]		EDIT_US										= new Action[] { ACTION_US_EDIT_ALIAS, ACTION_US_LOAD_ALL, ACTION_US_UNLOAD_ALL, ACTION_US_SHOW_ALL };
+	
 	public static final String	EVENT_DEVICE_SELECTED						= "MDSAppView_EVENT_DEVICE_SELECTED";
 	public static final String	EVENT_DATASET_SELECTED						= "MDSAppView_EVENT_DATASET_SELECTED";
 	public static final String	EVENT_ATTRIBUTE_EDITING						= "MDSAppView_EVENT_ATTRIBUTE_EDITING";
@@ -97,13 +103,19 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 		mv.getTableUnitServer().addContainerProperty(TAB_UNIT_SERVER_HB_TS, Date.class, null);
 		mv.getTableUnitServer().addActionHandler(new Action.Handler() {
 			public Action[] getActions(Object target, Object sender) {
-				return EDIT_US_ALIAS;
+				return EDIT_US;
 			}
 
 			public void handleAction(Action action, Object sender, Object target) {
 				setEditingAttribute(!isEditingAttribute());
 				if (ACTION_US_EDIT_ALIAS == action) {
 					notifyEventoToControllerWithData(EVENT_UNIT_SERVER_EDIT_ALIAS, mv.getTableUnitServer().getValue(), sender);
+				}else if (ACTION_US_LOAD_ALL == action) {
+					notifyEventoToControllerWithData(EVENT_UNIT_SERVER_LOAD_ALL_ASSOCIATION, null, null);
+				}else if (ACTION_US_UNLOAD_ALL == action) {
+					notifyEventoToControllerWithData(EVENT_UNIT_SERVER_UNLOAD_ALL_ASSOCIATION, null, sender);
+				}else if (ACTION_US_SHOW_ALL == action) {
+					notifyEventoToControllerWithData(EVENT_UNIT_SERVER_SHOW_ALL_ASSOCIATION, null, sender);
 				}
 			}
 
@@ -146,30 +158,12 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 			}
 		});
 
-		mv.getButtonUSCULoadAll().setEnabled(true);
-		mv.getButtonUSCULoadAll().addListener(new ClickListener() {
-			public void buttonClick(ClickEvent event) {
-				notifyEventoToControllerWithData(EVENT_UNIT_SERVER_LOAD_ALL_ASSOCIATION, event.getSource(), null);
-			}
-		});
-
-		mv.getButtonUSCUUnloadAll().setEnabled(true);
-		mv.getButtonUSCUUnloadAll().addListener(new ClickListener() {
-			public void buttonClick(ClickEvent event) {
-				notifyEventoToControllerWithData(EVENT_UNIT_SERVER_UNLOAD_ALL_ASSOCIATION, event.getSource(), null);
-			}
-		});
-
 		mv.getButtonUSCUAssociate().addListener(new ClickListener() {
 			public void buttonClick(ClickEvent event) {
 				notifyEventoToControllerWithData(EVENT_UNIT_SERVER_CREATE_US_CU_ASSOCIATION, event.getSource(), null);
 			}
 		});
-		mv.getButtonUSCUShowAll().addListener(new ClickListener() {
-			public void buttonClick(ClickEvent event) {
-				notifyEventoToControllerWithData(EVENT_UNIT_SERVER_SHOW_ALL_ASSOCIATION, event.getSource(), null);
-			}
-		});
+
 		mv.getButtonRefresh().addListener(new ClickListener() {
 			public void buttonClick(ClickEvent event) {
 				notifyEventoToControllerWithData(EVENT_UPDATE_DEVICE_LIST, event.getSource(), null);
@@ -221,7 +215,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 				}
 			}
 		});
-		
+
 		mv.getTableDataset().addListener(this);
 		setComponentKey(KEY_DATASET_TAB, mv.getTableDataset());
 

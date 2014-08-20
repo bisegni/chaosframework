@@ -39,7 +39,8 @@
 	</context-param>
 	<context-param>
 		<param-name>chaos.rpc.impl</param-name>
-		<param-value>TCPRpc</param-value>
+		<!--<param-value>TCPRpc</param-value>-->
+		<param-value>JMQRPC</param-value>
 	</context-param>
 	<!-- Configurazione per il plugin dell'initi di govdia -->
 	<!-- Configurazione dei processi -->
