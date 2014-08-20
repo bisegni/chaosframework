@@ -102,10 +102,10 @@ void cu_driver_manager::DriverManager::registerDriver(boost::shared_ptr< common_
 	
 	std::string composedDriverName = description->getName();
 	composedDriverName.append(description->getVersion());
-	DMLAPP_ << "Register new driver with alias = " << composedDriverName;
+	DMLAPP_ << "Register new driver with alias = \"" << composedDriverName<<"\"";
 	
 	if(mapDriverAliasVersionInstancer.count(composedDriverName)) {
-		DMLAPP_ << "Driver is already registered";
+		DMLAPP_ << "Driver \""<<composedDriverName<<"\" is already registered";
 		return;
 	}
 	
@@ -122,6 +122,7 @@ cu_driver::DriverAccessor *cu_driver_manager::DriverManager::getNewAccessorForDr
 	std::string composedDriverName;
 	std::string stringForMap;
 	cu_driver::DriverAccessor *accessor = NULL;
+    std::string driverInfo;
 	// the hashing of th einstance  is composed by name+version+input_parameter[if given], because
 	// different device drive can have same parameter names. If no input is passed the hashing is
 	// calculated using only the device name and the version.
@@ -133,32 +134,39 @@ cu_driver::DriverAccessor *cu_driver_manager::DriverManager::getNewAccessorForDr
 	
 	stringForMap = composedDriverName;
 	stringForMap.append(request_info.init_parameter);
-	
-	DMLDBG_ << "The identification string for the driver is -> " << stringForMap;
+	driverInfo = std::string("\"") + std::string(request_info.alias) + std::string("\" ver=")+std::string(request_info.version);
+    
+	DMLDBG_ << "The identification string for the driver is \"" << stringForMap<<"\"";
 	
 	if(mapParameterLiveInstance.count(stringForMap)) {
-		DMLDBG_ << "Driver is already been instantiated";
+		DMLDBG_ << "Driver \""<<stringForMap<<"\" is already been instantiated";
 		
 		if(mapParameterLiveInstance[stringForMap]->getNewAccessor(&accessor)) {
 			//new accessor has been allocated
-			DMLAPP_ << "Got new driver accessor with index ="<< accessor->accessor_index << " from driver with uuid =" << mapParameterLiveInstance[stringForMap];
+			DMLAPP_ << "Retrive driver accessor with index ="<< accessor->accessor_index << " for driver "<<driverInfo<<" with uuid =" << mapParameterLiveInstance[stringForMap];
 			
 			return accessor;
 		} else {
-			throw chaos::CException(1, "Device driver get new accessor", "DriverManager::getNewAccessorForDriverInstance");
+			throw chaos::CException(1, "Device driver retriving accessor", "DriverManager::getNewAccessorForDriverInstance");
 		}
 	}
-	DMLDBG_ << "Driver need to be instantiated using alias =" << stringForMap << " instancer presence = " << mapDriverAliasVersionInstancer.count(composedDriverName);
+	DMLDBG_ << "Driver need to be instantiated using alias =\"" << stringForMap << "\" instancer presence = " << mapDriverAliasVersionInstancer.count(composedDriverName);
 	//the instance of the driver need to be created
-	if(!mapDriverAliasVersionInstancer.count(composedDriverName))
-		throw chaos::CException(1, "The isntance of the drive has not been found", "DriverManager::getNewAccessorForDriverInstance");
-	
+	if(mapDriverAliasVersionInstancer.count(composedDriverName)==0){
+        std::map<std::string, boost::shared_ptr< DriverPluginInfo > >::iterator i;
+        DMLDBG_ << "Driver "<<driverInfo<<" not found, here a list of possible driver names and versions:";
+        for(i=mapDriverAliasVersionInstancer.begin();i!=mapDriverAliasVersionInstancer.end();i++){
+            DMLDBG_ << "\""<<(*i).first<<"\"";
+        }
+        std::string msg ="Driver " + driverInfo +" not found";
+		throw chaos::CException(1,msg , "DriverManager::getNewAccessorForDriverInstance");
+	}
 	// i can create the instance
 	cu_driver::AbstractDriver *driverInstance = mapDriverAliasVersionInstancer[composedDriverName]->sp_instancer->getInstance();
 	//associate the driver identification string
 	driverInstance->identificationString = stringForMap;
 	//initialize the newly create instance
-	DMLAPP_ << "Initilizing device driver with uuid = " << driverInstance->driverUUID;
+	DMLAPP_ << "Initializing device driver " << driverInfo <<", initialization parameters:\""<<request_info.init_parameter<<"\" with uuid = " << driverInstance->driverUUID;
 	chaos::utility::InizializableService::initImplementation(driverInstance, (void*)(request_info.init_parameter), "AbstractDriver", "DriverManager::getNewAccessorForDriverInstance");
 	
 	//here the driver has been initializated and has been associated with the hash of the parameter
@@ -167,7 +175,7 @@ cu_driver::DriverAccessor *cu_driver_manager::DriverManager::getNewAccessorForDr
 	mapDriverUUIDHashLiveInstance.insert(make_pair(driverInstance->driverUUID, driverInstance));
 	//now can get new accessor
 	if(driverInstance->getNewAccessor(&accessor)) {
-		DMLAPP_ << "Got new driver accessor with index ="<< accessor->accessor_index << " from driver with uuid =" << driverInstance->driverUUID;
+		DMLAPP_ << "Got new driver accessor with index =\""<< accessor->accessor_index << "\" for driver:"<<driverInfo<<" driver with uuid =" << driverInstance->driverUUID;
 	}
 	return accessor;
 }
@@ -187,16 +195,15 @@ void cu_driver_manager::DriverManager::releaseAccessor(cu_driver::DriverAccessor
 		DMLAPP_ << "The driver with uuid =" << dInstance->driverUUID << " has no more accessor allocated so we can deinitialize it";
 		//deinitialize driver
 		try {
-			DMLAPP_ << "Deinitializing device driver with uuid = " << dInstance->driverUUID;
+			DMLAPP_ << "Deinitializing device driver with uuid = " << dInstance->driverUUID <<" (\""<<dInstance->identificationString + "\")";
 			chaos::utility::InizializableService::deinitImplementation(dInstance, "AbstractDriver", "DriverManager::deinit");
 		} catch (...) {
-			DMLAPP_ << "Error deinitializing device driver with uuid = " << dInstance->driverUUID;
+			DMLAPP_ << "Error deinitializing device driver with uuid = " << dInstance->driverUUID<<" (\""<<dInstance->identificationString + "\")";
 			
 		}
 		DMLAPP_ << "Deleting device driver with uuid = " << dInstance->driverUUID;
 		mapParameterLiveInstance.erase(dInstance->identificationString);
 		mapDriverUUIDHashLiveInstance.erase(dInstance->driverUUID);
 		delete(dInstance);
-		dInstance = NULL;
 	}
 }
