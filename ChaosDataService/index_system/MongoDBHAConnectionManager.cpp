@@ -88,22 +88,27 @@ DriverScopedConnection::~DriverScopedConnection() {
 
 //-----------------------------------------------------------------------------------------------------------
 
-MongoDBHAConnectionManager::MongoDBHAConnectionManager(std::vector<std::string> monogs_routers_list, std::map<string,string>& key_value_custom_param):
+MongoDBHAConnectionManager::MongoDBHAConnectionManager(std::vector<std::string> monogs_routers_list,
+													   std::map<string,string>& key_value_custom_param):
 server_number((uint32_t)monogs_routers_list.size()),
 next_retrive_intervall(0){
-	
 	std::string errmsg;
 	std::string complete_url;
 	for (std::vector<std::string>::iterator iter = monogs_routers_list.begin();
 		 iter != monogs_routers_list.end();
 		 iter++){
-		complete_url = boost::str(boost::format("%1%/?w=1&wtimeoutMS=2000") % *iter);
+		complete_url = boost::str(boost::format("%1%") % *iter);
 		MDBHAC_LAPP_ << "Register mongo server address " << complete_url;
-		boost::shared_ptr<mongo::ConnectionString> cs_ptr(new mongo::ConnectionString(complete_url, mongo::ConnectionString::MASTER));
+		boost::shared_ptr<mongo::ConnectionString> cs_ptr(new mongo::ConnectionString(mongo::HostAndPort(complete_url)));
 		valid_connection_queue.push(cs_ptr);
 	}
 	
 	mongo::pool.addHook(new MongoAuthHook(key_value_custom_param));
+	
+	mongo::Status status = mongo::client::initialize();
+	if (!status.isOK()) {
+        std::cout << "failed to initialize the client driver: " << status.toString() << endl;
+    }
 }
 
 MongoDBHAConnectionManager::~MongoDBHAConnectionManager() {
@@ -153,6 +158,7 @@ bool MongoDBHAConnectionManager::getConnection(MongoDBHAConnection *connection_s
 			try {
 				DriverScopedConnection c(*nextCS);
 				connection_is_good = c.ok();
+				c.get()->setWriteConcern(mongo::WriteConcern::journaled);
 			} catch (std::exception &ex) {
 				// in any case of error put the current conneciton string into offline queue
 				offline_connection_queue.push(nextCS);

@@ -19,7 +19,6 @@
 namespace chaos{
     namespace data_service {
 
-#define OPT_CONF_FILE				"conf_file"
 #define OPT_RUN_MODE				"run_mode"
 		
 		//cache configuration

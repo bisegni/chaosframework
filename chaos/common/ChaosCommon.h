@@ -23,8 +23,10 @@
 #include <errno.h>
 #include <sys/utsname.h>
 #include <sstream>
+#include <fstream>      // std::ifstream
 
 #include <chaos/common/global.h>
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/async_central/AsyncCentralManager.h>
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/utility/InetUtility.h>
@@ -78,6 +80,21 @@ namespace chaos {
 		void preparseCommandOption(int argc, char* argv[]) {
 			GlobalConfiguration::getInstance()->loadStartupParameter( argc, argv);
 			GlobalConfiguration::getInstance()->scanOption();
+			
+			//check if we have a config file
+			if(GlobalConfiguration::getInstance()->hasOption(InitOption::OPT_CONF_FILE)) {
+				//reload configuraiton from file
+				std::string file_option = GlobalConfiguration::getInstance()->getOption<std::string>(InitOption::OPT_CONF_FILE);
+				std::ifstream option_file_stream;
+				option_file_stream.open(file_option.c_str(), std::ifstream::in);
+				if(!option_file_stream) {
+					throw chaos::CException(-1, "Error opening configuration file", "Startup sequence");
+				}
+				//reparse the config file
+				preparseConfigFile(option_file_stream);
+			}
+			//parse the dafult framework option
+			GlobalConfiguration::getInstance()->checkDefaultOption();
 		}
 		
             //! C and C++ attribute parser

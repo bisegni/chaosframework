@@ -22,7 +22,6 @@
 
 #include <vector>
 #include <exception>
-#include <fstream>      // std::ifstream
 
 using namespace chaos::data_service;
 
@@ -31,9 +30,6 @@ int main(int argc, char * argv[]) {
     try {
 		std::vector<std::string> cache_servers;
 		
-		//cache parameter
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_CONF_FILE,
-																									"File configuration path");
 		//cache parameter
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_RUN_MODE,
 																									"Specify the run mode[1 - Query Consumer, 2 - Stage Indexer, 3 - Both]");
@@ -102,6 +98,7 @@ int main(int argc, char * argv[]) {
 		//preparse for blow custom option
 		ChaosDataService::getInstance()->preparseCommandOption(argc, argv);
 	
+		/*
 		//check if we have a config file
 		if(ChaosDataService::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CONF_FILE)) {
 			//reload configuraiton from file
@@ -116,7 +113,7 @@ int main(int argc, char * argv[]) {
 		}
 		//parse the dafult framework option
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->checkDefaultOption();
-		
+		*/
 		//initilize the faramework
 		ChaosDataService::getInstance()->init(NULL);
 		
