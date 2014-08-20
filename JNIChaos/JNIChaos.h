@@ -25,6 +25,110 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getNewControllerForDeviceID
 
 /*
  * Class:     it_infn_chaos_JNIChaos
+ * Method:    setControllerTimeout
+ * Signature: (II)I
+ */
+JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_setControllerTimeout
+  (JNIEnv *, jobject, jint, jint);
+
+/*
+ * Class:     it_infn_chaos_JNIChaos
+ * Method:    getDeviceDatasetAttributeNameForDirection
+ * Signature: (IILjava/lang/String;Lit/infn/chaos/type/IntReference;)I
+ */
+JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getDeviceDatasetAttributeNameForDirection
+  (JNIEnv *, jobject, jint, jint, jstring, jobject);
+
+/*
+ * Class:     it_infn_chaos_JNIChaos
+ * Method:    initDevice
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_initDevice
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     it_infn_chaos_JNIChaos
+ * Method:    startDevice
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_startDevice
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     it_infn_chaos_JNIChaos
+ * Method:    setDeviceRunScheduleDelay
+ * Signature: (II)I
+ */
+JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_setDeviceRunScheduleDelay
+  (JNIEnv *, jobject, jint, jint);
+
+/*
+ * Class:     it_infn_chaos_JNIChaos
+ * Method:    stopDevice
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_stopDevice
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     it_infn_chaos_JNIChaos
+ * Method:    deinitDevice
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_deinitDevice
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     it_infn_chaos_JNIChaos
+ * Method:    fetchLiveData
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_fetchLiveData
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     it_infn_chaos_JNIChaos
+ * Method:    getStrValueForAttribute
+ * Signature: (ILjava/lang/String;Ljava/lang/String;)I
+ */
+JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getStrValueForAttribute
+  (JNIEnv *, jobject, jint, jstring, jstring);
+
+/*
+ * Class:     it_infn_chaos_JNIChaos
+ * Method:    getStrValueForAttr
+ * Signature: (ILjava/lang/String;Ljava/lang/String;)I
+ */
+JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getStrValueForAttr
+  (JNIEnv *, jobject, jint, jstring, jstring);
+
+/*
+ * Class:     it_infn_chaos_JNIChaos
+ * Method:    setStrValueForAttribute
+ * Signature: (ILjava/lang/String;Ljava/lang/String;)I
+ */
+JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_setStrValueForAttribute
+  (JNIEnv *, jobject, jint, jstring, jstring);
+
+/*
+ * Class:     it_infn_chaos_JNIChaos
+ * Method:    getTimeStamp
+ * Signature: (ILit/infn/chaos/type/IntReference;)I
+ */
+JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getTimeStamp
+  (JNIEnv *, jobject, jint, jobject);
+
+/*
+ * Class:     it_infn_chaos_JNIChaos
+ * Method:    submitSlowControlCommand
+ * Signature: (ILjava/lang/String;IILit/infn/chaos/type/IntReference;IILjava/lang/String;)I
+ */
+JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_submitSlowControlCommand
+  (JNIEnv *, jobject, jint, jstring, jint, jint, jobject, jint, jint, jstring);
+
+/*
+ * Class:     it_infn_chaos_JNIChaos
  * Method:    deinitController
  * Signature: (I)I
  */

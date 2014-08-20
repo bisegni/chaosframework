@@ -3,21 +3,19 @@
 #####################################################
 
 
-1) Buildind del progetto da Netbeans
+1) Buildind del progetto Netbeans
 2) Creare il file header da terminale dalla directory JNIChaos
 
 	javah -jni -o JNIChaos.h -classpath build/classes it.infn.chaos.JNIChaos
 
-4) Settare la variabile d'ambiente e verificare
+4) Settare la variabile d'ambiente
 
 	export JAVA_HOME=/usr/lib/jvm/java-8-oracle
-	echo $JAVA_HOME
 
 5) Modificare il file CMakeLists.txt nella directory JNIChaos, aggiungendo: (SOLO LA PRIMA VOLTA)
 
 	$ENV{JAVA_HOME}/include/linux		alla riga SET (set_local_include_path ...
 	${PROJECT_SOURCE_DIR}/..		Come primo elemento alla riga INCLUDE_DIRECTORIES(. 
-
 
 6) Compilare la parte in C
 
@@ -29,7 +27,7 @@
 N.b:
 	I primi 2 comandi possono essere evitati ma così evito di sporcare la directory.
 
-7) Copiare i tre file .so nella directory superiore JNIChaos
+7) Spostare i tre file .so nella directory superiore JNIChaos
 
 8) Avviare progetto Test.java per il testing
 
@@ -40,7 +38,7 @@ N.b:
 
     const char * parametroDaFornire = env->GetStringUTFChars(parametroRicevuto,0);
 
-puntatore ad un intero uint32_t:
+# puntatore ad un intero uint32_t:
 
     jclass clazz = env->GetObjectClass(commandIDPtr);
     jmethodID mid = env->GetMethodID(clazz, "getValue", "()I");
@@ -59,7 +57,7 @@ poi creo la variabile richiesta ed il puntatore ad essa da passare.
 
 Ottenuto un riferimento locale ad un oggetto Java, per ivocarne un metodo occorre:
 
-1) Definire un oggetto JClass chge rappresenti la classe cui appartiene il metodo
+1) Definire un oggetto JClass che rappresenti la classe cui appartiene il metodo
 2) Ricavare la signature del metodo
 3) Ricavare l'ID del metodo
 4) Invocare il metodo
