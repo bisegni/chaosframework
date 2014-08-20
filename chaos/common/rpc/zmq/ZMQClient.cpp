@@ -87,7 +87,18 @@ void ZMQClient::stop() throw(CException) {
 void ZMQClient::deinit() throw(CException) {
     ZMQC_LAPP << "deinitialization";
     
-    ZMQC_LAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopping";
+	boost::shared_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
+	
+	for(std::map<string, boost::shared_ptr<SocketInfo> >::iterator it = map_socket.begin();
+		it != map_socket.end();
+		it++) {
+		boost::unique_lock<boost::shared_mutex> lock_socket(it->second->socket_mutex);
+
+		if(it->second->socket) zmq_close(it->second->socket);
+	}
+	map_socket.clear();
+	
+	ZMQC_LAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopping";
     CObjectProcessingQueue<NetworkForwardInfo>::clear();
     CObjectProcessingQueue<NetworkForwardInfo>::deinit();
     ZMQC_LAPP << "ObjectProcessingQueue<NetworkForwardInfo> stopped";
@@ -130,54 +141,78 @@ bool ZMQClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread
     return true;
 }
 
+boost::shared_ptr<SocketInfo> ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi) {
+	int	err,linger,water_mark = 0;
+	boost::shared_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
+	if(!map_socket.count(nfi->destinationAddr)) {
+		ZMQC_LDBG << "Create new socket for " << nfi->destinationAddr;
+		boost::shared_ptr<SocketInfo>  socket_info_ptr(new SocketInfo());
+		
+		socket_info_ptr->socket = zmq_socket (zmqContext, ZMQ_REQ);
+        //this implementation is too slow, client for ip need to be cached
+		if(!socket_info_ptr->socket) {
+			ZMQC_LERR << "Error creating socket";
+			err = -1;
+		} /*else if ((err = zmq_setsockopt(socket_info_ptr->socket, ZMQ_LINGER, &linger, sizeof(int)))) {
+			ZMQC_LERR << "Error setting ZMQ_SNDHWM value";
+		} else if ((err = zmq_setsockopt(socket_info_ptr->socket, ZMQ_RCVHWM, &water_mark, sizeof(int)))) {
+			ZMQC_LERR << "Error setting ZMQ_SNDHWM value";
+		} else if ((err = zmq_setsockopt(socket_info_ptr->socket, ZMQ_SNDHWM, &water_mark, sizeof(int)))) {
+			ZMQC_LERR << "Error setting ZMQ_SNDHWM value";
+		} */else {
+			string url = "tcp://";
+			url.append(nfi->destinationAddr);
+			if((err = zmq_connect(socket_info_ptr->socket, url.c_str()))) {
+				ZMQC_LERR << "Error connectiong socket";
+			}
+		}
+		
+		if(err) {
+			zmq_close(socket_info_ptr->socket);
+			socket_info_ptr->socket = NULL;
+			socket_info_ptr.reset();
+		} else {
+			map_socket.insert(make_pair(nfi->destinationAddr, socket_info_ptr));
+		}
+		return socket_info_ptr;
+	} else {
+		ZMQC_LDBG << "return already allocated socket for " << nfi->destinationAddr;
+		return map_socket[nfi->destinationAddr];
+	}
+}
+
 /*
  process the element action to be executed
  */
 void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementManagingPolicy& elementPolicy) throw(CException) {
         //the domain is securely the same is is mandatory for submition so i need to get the name of the action
-    int			err = 0;
+	int err = 0;
 	zmq_msg_t	reply;
 	zmq_msg_t	message;
 	zmq_msg_init (&reply);
 	
-    void *request_socket = zmq_socket (zmqContext, ZMQ_DEALER);
-        //this implementation is too slow, client for ip need to be cached
-    if(!request_socket) {
-		ZMQC_LERR << "Error creating socket";
-	}
-    
-	//err = zmq_setsockopt(request_socket, ZMQ_LINGER, &linger, sizeof(int));
-	//if(err) {
-	//	return;
-	//}
-	/*err = zmq_setsockopt(request_socket, ZMQ_RCVHWM, &water_mark, sizeof(int));
-	if(err) {
-		ZMQC_LERR << "Error setting ZMQ_SNDHWM value";
-		return;
-	}
-	err = zmq_setsockopt(request_socket, ZMQ_SNDHWM, &water_mark, sizeof(int));
-	if(err) {
-		ZMQC_LERR << "Error setting ZMQ_SNDHWM value";
-		return;
-	}*/
         //get remote ip
         //serialize the call packet
     auto_ptr<chaos::common::data::SerializationBuffer> callSerialization(messageInfo->message->getBSONData());
     
     try{
-        string url = "tcp://";
-        url.append(messageInfo->destinationAddr);
-        if(zmq_connect(request_socket, url.c_str())) {
-			ZMQC_LERR << "Error connectiong socket";
-		}
         
+		boost::shared_ptr<SocketInfo> socket_info = getSocketForNFI(messageInfo);
+		//now we can use the socket
+        if(!(socket_info.get() && socket_info->socket)) {
+			ZMQC_LDBG << "Socket creation error";
+			return;
+		}
+		boost::unique_lock<boost::shared_mutex> lock_socket(socket_info->socket_mutex);
+		ZMQC_LDBG << "Lock acquired on socket mutex";
+		
             //detach buffer from carrier object so we don't need to copy anymore the data
         callSerialization->disposeOnDelete = false;
         err = zmq_msg_init_data(&message, (void*)callSerialization->getBufferPtr(), callSerialization->getBufferLen(), my_free, NULL);
 		ZMQC_LDBG << "Sending message";
-        err = zmq_sendmsg(request_socket, &message, ZMQ_NOBLOCK);
+        err = zmq_sendmsg(socket_info->socket, &message, ZMQ_NOBLOCK);
 		ZMQC_LDBG << "Message sent";
-        if(zmq_recvmsg(request_socket, &reply, 0) == -1) {
+        if(zmq_recvmsg(socket_info->socket, &reply, 0) == -1) {
 			ZMQC_LERR << "Error receiving data";
 		}
 		ZMQC_LDBG << "ACK Received";
@@ -191,6 +226,7 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
 #endif
         }
 		
+		lock_socket.unlock();
     }catch (std::exception& e) {
         ZMQC_LAPP << "Error during message forwarding:"<< e.what();
         return;
@@ -200,5 +236,4 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
     }
 	zmq_msg_close (&message);
 	zmq_msg_close (&reply);
-	zmq_close(request_socket);
 }

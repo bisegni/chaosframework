@@ -17,10 +17,23 @@
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
+#include <boost/thread.hpp>
+#include <boost/shared_ptr.hpp>
+
 #include <zmq.h>
+
+#include <map>
 
 namespace chaos {
     
+	class SocketInfo {
+	public:
+		void *socket;
+		boost::shared_mutex socket_mutex;
+		
+		SocketInfo():socket(NULL){};
+	};
+	
     /*
      Class that manage the MessagePack message send.
      */
@@ -28,9 +41,14 @@ namespace chaos {
         REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ZMQClient)
         ZMQClient(string alias);
         virtual ~ZMQClient();
+		
+		boost::shared_mutex map_socket_mutex;
+		std::map<string, boost::shared_ptr<SocketInfo> > map_socket;
+		
     protected:
         virtual void processBufferElement(NetworkForwardInfo*, ElementManagingPolicy&) throw(CException);
         void *zmqContext;
+		boost::shared_ptr<SocketInfo> getSocketForNFI(NetworkForwardInfo *nfi);
     public:
 
         /*

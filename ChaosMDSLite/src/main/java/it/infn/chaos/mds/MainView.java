@@ -452,7 +452,7 @@ public class MainView extends CustomComponent {
 		getButtonUSCUAssociate().setWidth("-1px");
 		getButtonUSCUAssociate().setHeight("-1px");
 		usbuttonHL.addComponent(getButtonUSCUAssociate());
-
+/*
 		buttonUSCULoadAll = new Button();
 		buttonUSCULoadAll.setCaption("Load All CU");
 		buttonUSCULoadAll.setImmediate(true);
@@ -473,6 +473,7 @@ public class MainView extends CustomComponent {
 		buttonUSCUShowAll.setWidth("-1px");
 		buttonUSCUShowAll.setHeight("-1px");
 		usbuttonHL.addComponent(buttonUSCUShowAll);
+		*/
 		return usbuttonHL;
 	}
 
