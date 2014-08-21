@@ -461,42 +461,46 @@ public class DatasetAttribute extends BSONBusinessObject {
 	 *            the defaultValue to set
 	 * @throws RefException
 	 */
-	public void setDefaultValue(String defaultValue) throws RefException {
-		checkDefaultValueForType(defaultValue);
-		boolean defMinMinValue = false;
-		boolean defMaxMaxValue = false;
-		if (defaultValue != null) {
-			switch (getType()) {
+    public void setDefaultValue(String defaultValue) throws RefException {
+	checkDefaultValueForType(defaultValue);
+	boolean defMinMinValue = false;
+	boolean defMaxMaxValue = false;
+	if (defaultValue != null) {
+	    switch (getType()) {
 				case 0:{
-					int defv = Integer.parseInt(defaultValue);
+				    int defv = Integer.parseInt(defaultValue);
 					int maxv = getRangeMax()!=null?Integer.parseInt(getRangeMax()):Integer.MAX_VALUE;
 					int minv = getRangeMin()!=null?Integer.parseInt(getRangeMin()):Integer.MIN_VALUE;
-					defMinMinValue = defv<minv;
-					defMaxMaxValue = defv>maxv;
-				}break;
+					defMinMinValue = (defv<=minv);
+					defMaxMaxValue = (defv>=maxv);
+				}
+				    break;
 				case 1:{
 					long defv = Long.parseLong(defaultValue);
 					long maxv = getRangeMax()!=null?Long.parseLong(getRangeMax()):Long.MAX_VALUE;
 					long minv = getRangeMin()!=null?Long.parseLong(getRangeMin()):Long.MIN_VALUE;
-					defMinMinValue = defv<minv;
-					defMaxMaxValue = defv>maxv;
-				}break;
+					defMinMinValue = (defv<=minv);
+					defMaxMaxValue = (defv>=maxv);
+				}
+				    break;
 				case 2:{
 					double defv = Double.parseDouble(defaultValue);
 					double maxv = getRangeMax()!=null? Double.parseDouble(getRangeMax()):Double.MAX_VALUE;
 					double minv = getRangeMin()!=null? Double.parseDouble(getRangeMin()):Double.MIN_VALUE;
-					defMinMinValue = defv<minv;
-					defMaxMaxValue = defv>maxv;
-				}break;
+					defMinMinValue = (defv<=minv);
+					defMaxMaxValue = (defv>=maxv);
+				}
+				    break;
 			}
 			if (defMinMinValue) {
-				throw new RefException(String.format("The default value %s is lower than the minimum value %s", defaultValue, getRangeMin()));
+			    throw new RefException(String.format("The default value %s (type %d) is lower than the minimum value %s", getType(),defaultValue, getRangeMin()));
 			}
 			if (defMaxMaxValue) {
-				throw new RefException(String.format("The default value %s is greater than the maximum value %s", defaultValue, getRangeMax()));
+			    throw new RefException(String.format("The default value %s (type %d) is greater than the maximum value %s", getType(),defaultValue, getRangeMax()));
 			}
+		  setDefaultValueNoCheck(defaultValue);
 		}
-		setDefaultValueNoCheck(defaultValue);
+		
 
 	}
 
