@@ -168,9 +168,9 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		if(run_mode == INDEXER ||
 		   run_mode == BOTH) {
 			CDSLAPP_ << "Allocate the Data Consumer";
-			stage_data_indexer.reset(new StageDataConsumer(vfs_file_manager.get(), &settings), "StageDataConsumer");
-			if(!stage_data_indexer.get()) throw chaos::CException(-1, "Error instantiating stage data consumer", __PRETTY_FUNCTION__);
-			stage_data_indexer.init(NULL, __PRETTY_FUNCTION__);
+			stage_data_consumer.reset(new StageDataConsumer(vfs_file_manager.get(), &settings), "StageDataConsumer");
+			if(!stage_data_consumer.get()) throw chaos::CException(-1, "Error instantiating stage data consumer", __PRETTY_FUNCTION__);
+			stage_data_consumer.init(NULL, __PRETTY_FUNCTION__);
 		}
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
@@ -192,7 +192,7 @@ void ChaosDataService::start() throw(CException) {
 		}
 		if(run_mode == INDEXER ||
 		   run_mode == BOTH) {
-			stage_data_indexer.start(__PRETTY_FUNCTION__);
+			stage_data_consumer.start(__PRETTY_FUNCTION__);
 		}
 		
 		//print information header on CDS address
@@ -229,7 +229,7 @@ void ChaosDataService::stop() throw(CException) {
 	}
 	if(run_mode == INDEXER ||
 	   run_mode == BOTH) {
-		stage_data_indexer.stop(__PRETTY_FUNCTION__);
+		stage_data_consumer.stop(__PRETTY_FUNCTION__);
 	}
 }
 
@@ -247,8 +247,8 @@ void ChaosDataService::deinit() throw(CException) {
 	}
 	if((run_mode == INDEXER ||
 		run_mode == BOTH ) &&
-		stage_data_indexer.get()) {
-		stage_data_indexer.deinit(__PRETTY_FUNCTION__);
+		stage_data_consumer.get()) {
+		stage_data_consumer.deinit(__PRETTY_FUNCTION__);
 	}
 	if(network_broker.get()) {
 		CDSLAPP_ << "Deinitializing CHAOS Data Service";

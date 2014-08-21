@@ -43,7 +43,7 @@ namespace chaos{
 		/*!
 		 This struct permit to help the usage of different scanner
 		 with the usage of some thread. Only one thread a time
-		 can use a scanner. Every call to the scan methdo of the
+		 can use a scanner. Every call to the scan method of the
 		 StageDataVFileScanner class permit to scan an intere data block
 		 */
 		typedef struct StageScannerInfo {

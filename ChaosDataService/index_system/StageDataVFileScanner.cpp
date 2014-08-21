@@ -56,6 +56,7 @@ void StageDataVFileScanner::grow(uint32_t new_size) {
 
 void StageDataVFileScanner::processDataPack(bson::BSONObj data_pack) {
 	StageDataVFileScannerLDBG_ << data_pack.toString();
+	
 }
 
 #define BREAK_ON_NO_DATA_READED \
@@ -75,6 +76,7 @@ int StageDataVFileScanner::scan() {
 		err = stage_file->read(data_buffer, BSON_HEADER_SIZE);
 		BREAK_ON_NO_DATA_READED
 		
+		//get the bson size to read
 		uint32_t bson_size = FROM_LITTLE_ENDNS(int32_t, data_buffer, 0);
 		
 		//check if we need to expand the buffer

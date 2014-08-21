@@ -1,5 +1,5 @@
 /*
- *	VFSStageFile.h
+ *	VFSDataFile.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__VFSStageFile__
-#define __CHAOSFramework__VFSStageFile__
+#ifndef __CHAOSFramework__VFSDataFile__
+#define __CHAOSFramework__VFSDataFile__
 
 #include "VFSFile.h"
 
@@ -29,25 +29,30 @@ namespace chaos {
 			//forward declaration
 			class VFSManager;
 			
-			typedef enum VFSStageFileOpenMode {
-				VFSStageFileOpenModeRead = VFSFileOpenModeRead,
-				VFSStageFileOpenModeWrite = VFSFileOpenModeWrite
-			} VFSStageFileOpenMode;
+			typedef enum VFSDataFileOpenMode {
+				VFSDataFileOpenModeRead = VFSFileOpenModeRead,
+				VFSDataFileOpenModeWrite = VFSFileOpenModeWrite
+			} VFSDataFileOpenMode;
 			
-			//! Abstract the managment of the stage file
+			//! Abstract the managment of the data file
 			/*!
-			 Stage file represnt a file in the vfs that contain chaos heterogeneous
-			 data pack colelcted by different data producer (for example Control Unit, etc...).
+			 The data file is the virtual file, identified by different phisical blocks[files], where
+			 data pack are stored. A virtual datafile is asosciated to a unique instrument identification
+			 code.
 			 */
-			class VFSStageFile : public VFSFile {
+			class VFSDataFile : public VFSFile {
 				friend class VFSManager;
-				VFSStageFileOpenMode open_mode;
+				VFSDataFileOpenMode open_mode;
 				
 			protected:
-				VFSStageFile(storage_system::StorageDriver *_storage_driver_ptr,
-							 chaos_index::IndexDriver *_index_driver_ptr,
-							 std::string stage_vfs_relative_path,
-							 VFSStageFileOpenMode _open_mode);
+				//! default ocnstructor for vfs file
+				/*!
+				 Allcoata a new file class for the absraction of the data bloc managment
+				 */
+				VFSDataFile(storage_system::StorageDriver *_storage_driver_ptr,
+							chaos_index::IndexDriver *_index_driver_ptr,
+							std::string data_vfs_relative_path,
+							VFSDataFileOpenMode _open_mode);
 			};
 			
 		}

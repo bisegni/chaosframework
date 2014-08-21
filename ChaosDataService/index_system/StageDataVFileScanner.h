@@ -21,6 +21,7 @@
 #define __CHAOSFramework__StageDataVFileScanner__
 
 #include "../vfs/VFSStageReadableFile.h"
+#include "../vfs/VFSDataWriteableFile.h"
 
 #include <chaos/common/bson/bson.h>
 
@@ -41,6 +42,7 @@ namespace chaos{
 				uint32_t curret_data_buffer_len;
 				
 				vfs::VFSStageReadableFile *stage_file;
+				//vfs::VFSDataWriteableFile *data_file;
 				
 				void grow(uint32_t new_size);
 				

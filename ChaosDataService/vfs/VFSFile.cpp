@@ -110,6 +110,17 @@ int VFSFile::releaseDataBlock(DataBlock *data_block_ptr) {
 	return storage_driver_ptr->closeBlock(data_block_ptr);
 }
 
+//! check if datablock is valid according to internal logic
+bool VFSFile::isDataBlockValid(DataBlock *data_block_ptr) {
+	if(!data_block_ptr) return false;
+	
+	//check operational value
+	bool is_valid = data_block_ptr->invalidation_timestamp > chaos::TimingUtil::getTimeStamp();
+	is_valid = is_valid && data_block_ptr->current_size < data_block_ptr->max_reacheable_size;
+	return is_valid;
+}
+
+
 const VFSFileInfo *VFSFile::getVFSFileInfo() const {
 	return &vfs_file_info;
 }

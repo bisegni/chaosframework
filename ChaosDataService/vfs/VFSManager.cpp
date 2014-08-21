@@ -37,17 +37,23 @@ using namespace chaos::data_service::vfs;
 
 #define HB_REPEAT_TIME 2000
 
-
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 VFSManager::VFSManager():setting(NULL) {
 	
 }
-
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 VFSManager::~VFSManager() {
 	//deallocate the configuration
 	deinit();
 	
 }
-
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void VFSManager::init(void * init_data) throw (chaos::CException) {
 	if(!init_data) throw chaos::CException(-1, "Invalid init data", __PRETTY_FUNCTION__);
 	
@@ -92,7 +98,9 @@ void VFSManager::init(void * init_data) throw (chaos::CException) {
 	
 	chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, HB_REPEAT_TIME);
 }
-
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void VFSManager::deinit() throw (chaos::CException) {
 	VFSFM_LAPP_ << "Deallocate hb timer";
 	chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
@@ -118,14 +126,20 @@ void VFSManager::deinit() throw (chaos::CException) {
 		}
 	}
 }
-
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void VFSManager::timeout() {
 	if(index_driver_ptr->vfsDomainHeartBeat(setting->storage_driver_setting.domain)) {
 		VFSFM_LERR_ << "Error giving the eartbeat";
 	}
 }
 
-void VFSManager::freeObject(std::string key, VFSFilesForPath *element) {
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+void VFSManager::freeObject(std::string key,
+							VFSFilesForPath *element) {
 	//lock the files info for path
 	boost::unique_lock<boost::mutex> lock(element->_mutex);
 	
@@ -141,7 +155,12 @@ void VFSManager::freeObject(std::string key, VFSFilesForPath *element) {
 	element->map_logical_files.clear();
 }
 
-int VFSManager::getFile(std::string area, std::string vfs_fpath,  VFSFile **l_file) {
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+int VFSManager::getFile(std::string area,
+						std::string vfs_fpath,
+						VFSFile **l_file) {
 	DEBUG_CODE(VFSFM_LDBG_ << "Start getting new logical file with path->" << vfs_fpath;)
 	
 	VFSFilesForPath *files_for_path = NULL;
@@ -179,7 +198,12 @@ int VFSManager::getFile(std::string area, std::string vfs_fpath,  VFSFile **l_fi
 	return 0;
 }
 
-int VFSManager::getWriteableStageFile(std::string stage_vfs_relative_path, VFSStageWriteableFile **wsf_file) {
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+int VFSManager::getWriteableStageFile(std::string
+									  stage_vfs_relative_path,
+									  VFSStageWriteableFile **wsf_file) {
 	DEBUG_CODE(VFSFM_LDBG_ << "Start getting new writeable stage file with name->" << stage_vfs_relative_path;)
 	
 	VFSFilesForPath *files_for_path = NULL;
@@ -219,7 +243,11 @@ int VFSManager::getWriteableStageFile(std::string stage_vfs_relative_path, VFSSt
 	return 0;
 }
 
-int VFSManager::getReadableStageFile(std::string stage_vfs_relative_path, VFSStageReadableFile **rsf_file) {
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+int VFSManager::getReadableStageFile(std::string stage_vfs_relative_path,
+									 VFSStageReadableFile **rsf_file) {
 	DEBUG_CODE(VFSFM_LDBG_ << "Start getting new readable stage file with name->" << stage_vfs_relative_path;)
 	
 	VFSFilesForPath *files_for_path = NULL;
@@ -259,6 +287,53 @@ int VFSManager::getReadableStageFile(std::string stage_vfs_relative_path, VFSSta
 	return 0;
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+int VFSManager::getWriteableDataFile(std::string data_vfs_relative_path,
+									 VFSDataWriteableFile **wdf_file) {
+	DEBUG_CODE(VFSFM_LDBG_ << "Start getting new writeable data file with name->" << data_vfs_relative_path;)
+	
+	VFSFilesForPath *files_for_path = NULL;
+	
+	VFSDataWriteableFile *writeable_data_file = new VFSDataWriteableFile(storage_driver_ptr, index_driver_ptr, data_vfs_relative_path);
+	if(!writeable_data_file) return -1;
+	
+	//the vfs file is identified by a folder containing all data block
+	if(!writeable_data_file->isGood()) {
+		return -2;
+		delete storage_driver_ptr;
+	}
+	
+	//get or create the infro for logical file isntance
+	if(VFSManagerKeyObjectContainer::hasKey(writeable_data_file->getVFSFileInfo()->vfs_fpath)) {
+		files_for_path = VFSManagerKeyObjectContainer::accessItem(writeable_data_file->getVFSFileInfo()->vfs_fpath);
+	} else {
+		files_for_path =  new VFSFilesForPath();
+		if(!files_for_path) return -3;
+		VFSManagerKeyObjectContainer::registerElement(writeable_data_file->getVFSFileInfo()->vfs_fpath, files_for_path);
+	}
+	
+	//lock the files info for path
+	boost::unique_lock<boost::mutex> lock(files_for_path->_mutex);
+	
+	//generate isntance unique key
+	writeable_data_file->vfs_file_info.identify_key = boost::str(boost::format("%1%_%2%") % writeable_data_file->getVFSFileInfo()->vfs_fpath % files_for_path->instance_counter++);
+	writeable_data_file->vfs_file_info.vfs_domain = storage_driver_ptr->getStorageDomain();
+	writeable_data_file->vfs_file_info.max_block_size = setting-> max_block_size;
+	writeable_data_file->vfs_file_info.max_block_lifetime = setting-> max_block_lifetime;
+	
+	files_for_path->map_logical_files.insert(make_pair(writeable_data_file->vfs_file_info.identify_key, writeable_data_file));
+	
+	*wdf_file = writeable_data_file;
+	DEBUG_CODE(VFSFM_LDBG_ << "Created writeable stage file with vfs path->" << writeable_data_file->getVFSFileInfo()->vfs_fpath;)
+	
+	return 0;
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 int VFSManager::releaseFile(VFSFile *l_file) {
 	CHAOS_ASSERT(l_file)
 	DEBUG_CODE(VFSFM_LDBG_ << "Delete vfs fiel with path->" << l_file->vfs_file_info.vfs_fpath;)
@@ -280,7 +355,11 @@ int VFSManager::releaseFile(VFSFile *l_file) {
 	return 0;
 }
 
-int VFSManager::createDirectory(std::string vfs_path, bool all_path) {
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+int VFSManager::createDirectory(std::string vfs_path,
+								bool all_path) {
 	DEBUG_CODE(VFSFM_LDBG_ << "Create directory path->" << vfs_path;)
 	int err = 0;
 	if(all_path)
@@ -290,10 +369,18 @@ int VFSManager::createDirectory(std::string vfs_path, bool all_path) {
 	return err;
 }
 
-int VFSManager::deleteDirectory(std::string vfs_path, bool all_path) {
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+int VFSManager::deleteDirectory(std::string vfs_path,
+								bool all_path) {
 	return storage_driver_ptr->deletePath(vfs_path, all_path);
 }
 
-int VFSManager::getAllStageFileVFSPath(std::vector<std::string>& stage_file_vfs_paths, int limit_to_size) {
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+int VFSManager::getAllStageFileVFSPath(std::vector<std::string>& stage_file_vfs_paths,
+									   int limit_to_size) {
 	return index_driver_ptr->vfsGetFilePathForDomain(storage_driver_ptr->getStorageDomain(), std::string(VFS_STAGE_AREA),stage_file_vfs_paths, limit_to_size);
 }

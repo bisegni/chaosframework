@@ -1,5 +1,5 @@
 /*
- *	VFSStageWriteableFile.h
+ *	VFSDataWriteableFile.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,10 +18,10 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__VFSStageWriteableFile__
-#define __CHAOSFramework__VFSStageWriteableFile__
+#ifndef __CHAOSFramework__VFSDataWriteableFile__
+#define __CHAOSFramework__VFSDataWriteableFile__
 
-#include "VFSStageFile.h"
+#include "VFSDataFile.h"
 
 namespace chaos {
 	namespace data_service {
@@ -33,20 +33,20 @@ namespace chaos {
 			/*!
 			 Manage the write operation on the stage file
 			 */
-			class VFSStageWriteableFile: public VFSStageFile {
+			class VFSDataWriteableFile: public VFSDataFile {
 				friend class VFSManager;
-				
-				//counter for release the stress on the timining check
-				uint32_t check_validity_counter;
-				
+
 				//! check if datablock is valid according to internal logic
 				inline bool isDataBlockValid(DataBlock *new_data_block_ptr);
-
-				VFSStageWriteableFile(storage_system::StorageDriver *_storage_driver_ptr,
-									  index_system::IndexDriver *_index_driver_ptr,
-									  std::string stage_vfs_relative_path);
-
+				
+				VFSDataWriteableFile(storage_system::StorageDriver *_storage_driver_ptr,
+									 index_system::IndexDriver *_index_driver_ptr,
+									 std::string data_vfs_relative_path);
+				
 			public:
+				//! force new data block creation
+				int switchDataBlock();
+				
 				// write data on the current data block
 				int write(void *data, uint32_t data_len);
 			};
@@ -55,4 +55,4 @@ namespace chaos {
 	}
 }
 
-#endif /* defined(__CHAOSFramework__VFSStageWriteableFile__) */
+#endif /* defined(__CHAOSFramework__VFSDataWriteableFile__) */

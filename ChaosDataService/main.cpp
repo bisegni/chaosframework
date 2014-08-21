@@ -98,22 +98,6 @@ int main(int argc, char * argv[]) {
 		//preparse for blow custom option
 		ChaosDataService::getInstance()->preparseCommandOption(argc, argv);
 	
-		/*
-		//check if we have a config file
-		if(ChaosDataService::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CONF_FILE)) {
-			//reload configuraiton from file
-			std::string file_option = ChaosDataService::getInstance()->getGlobalConfigurationInstance()->getOption<std::string>(OPT_CONF_FILE);
-			std::ifstream option_file_stream;
-			option_file_stream.open(file_option.c_str(), std::ifstream::in);
-			if(!option_file_stream) {
-				throw chaos::CException(-1, "Error opening configuration file", "Startup sequence");
-			}
-			//reparse the config file
-			ChaosDataService::getInstance()->preparseConfigFile(option_file_stream);
-		}
-		//parse the dafult framework option
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->checkDefaultOption();
-		*/
 		//initilize the faramework
 		ChaosDataService::getInstance()->init(NULL);
 		

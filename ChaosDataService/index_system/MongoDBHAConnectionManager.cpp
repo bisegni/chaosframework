@@ -186,7 +186,9 @@ bool MongoDBHAConnectionManager::getConnection(MongoDBHAConnection *connection_s
 	return result;
 }
 
-int MongoDBHAConnectionManager::insert( const std::string &ns , mongo::BSONObj obj , int flags) {
+int MongoDBHAConnectionManager::insert( const std::string &ns,
+									   mongo::BSONObj obj,
+									   int flags) {
 	int err = -1;
 	MongoDBHAConnection conn = NULL;
 	while (getConnection(&conn)) {
@@ -205,7 +207,11 @@ int MongoDBHAConnectionManager::insert( const std::string &ns , mongo::BSONObj o
 	return err;
 }
 
-int MongoDBHAConnectionManager::findOne(mongo::BSONObj& result, const std::string &ns, const mongo::Query& query, const mongo::BSONObj *fieldsToReturn, int queryOptions) {
+int MongoDBHAConnectionManager::findOne(mongo::BSONObj& result,
+										const std::string &ns,
+										const mongo::Query& query,
+										const mongo::BSONObj *fieldsToReturn,
+										int queryOptions) {
 	int err = -1;
 	MongoDBHAConnection conn = NULL;
 	while (getConnection(&conn)) {
@@ -224,7 +230,13 @@ int MongoDBHAConnectionManager::findOne(mongo::BSONObj& result, const std::strin
 	return err;
 }
 
-void MongoDBHAConnectionManager::findN(std::vector<mongo::BSONObj>& out, const std::string& ns, mongo::Query query, int nToReturn, int nToSkip, const mongo::BSONObj *fieldsToReturn, int queryOptions) {
+void MongoDBHAConnectionManager::findN(std::vector<mongo::BSONObj>& out,
+									   const std::string& ns,
+									   mongo::Query query,
+									   int nToReturn,
+									   int nToSkip,
+									   const mongo::BSONObj *fieldsToReturn,
+									   int queryOptions) {
 	int err = -1;
 	MongoDBHAConnection conn = NULL;
 	while (getConnection(&conn)) {
@@ -242,7 +254,10 @@ void MongoDBHAConnectionManager::findN(std::vector<mongo::BSONObj>& out, const s
 	if(conn) delete(conn);
 }
 
-int MongoDBHAConnectionManager::runCommand(mongo::BSONObj& result, const std::string &ns, const mongo::BSONObj& command, int queryOptions) {
+int MongoDBHAConnectionManager::runCommand(mongo::BSONObj& result,
+										   const std::string &ns,
+										   const mongo::BSONObj& command,
+										   int queryOptions) {
 	int err = -1;
 	MongoDBHAConnection conn = NULL;
 	while (getConnection(&conn)) {
@@ -263,7 +278,11 @@ int MongoDBHAConnectionManager::runCommand(mongo::BSONObj& result, const std::st
 	return err;
 }
 
-int MongoDBHAConnectionManager::update( const std::string &ns, mongo::Query query, mongo::BSONObj obj, bool upsert, bool multi) {
+int MongoDBHAConnectionManager::update( const std::string &ns,
+									   mongo::Query query,
+									   mongo::BSONObj obj,
+									   bool upsert,
+									   bool multi) {
 	int err = -1;
 	MongoDBHAConnection conn = NULL;
 	while (getConnection(&conn)) {
@@ -282,7 +301,15 @@ int MongoDBHAConnectionManager::update( const std::string &ns, mongo::Query quer
 	return err;
 }
 
-int MongoDBHAConnectionManager::ensureIndex( const std::string &database, const std::string &collection, mongo::BSONObj keys, bool unique, const std::string &name, bool dropDup, bool background, int v, int ttl) {
+int MongoDBHAConnectionManager::ensureIndex( const std::string &database,
+											const std::string &collection,
+											mongo::BSONObj keys,
+											bool unique,
+											const std::string &name,
+											bool dropDup,
+											bool background,
+											int v,
+											int ttl) {
 	int err = -1;
 	MongoDBHAConnection conn = NULL;
 	while (getConnection(&conn)) {

@@ -34,6 +34,10 @@ namespace chaos {
 			class VFSManager;
 			struct DataBlock;
 			
+			typedef enum VFSFileOpenMode {
+				VFSFileOpenModeRead = 0,
+				VFSFileOpenModeWrite = 1
+			} VFSFileOpenMode;
 						
 			//! VFS Logical file
 			class VFSFile {
@@ -66,6 +70,9 @@ namespace chaos {
 				
 				//! release a datablock
 				int releaseDataBlock(DataBlock *data_block_ptr);
+				
+				//! check the validity of the datablock(usefull only on write version of the write)
+				bool isDataBlockValid(DataBlock *data_block_ptr);
 				
 				//default consturctor or destructor
 				VFSFile(storage_system::StorageDriver *_storage_driver_ptr, index_system::IndexDriver *_index_driver_ptr, std::string area, std::string vfs_fpath);

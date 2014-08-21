@@ -23,6 +23,7 @@
 #include "VFSTypes.h"
 #include "VFSFile.h"
 #include "VFSStageWriteableFile.h"
+#include "VFSDataWriteableFile.h"
 #include "VFSStageReadableFile.h"
 #include "../index_system/IndexDriver.h"
 #include "storage_system/StorageDriver.h"
@@ -101,6 +102,8 @@ namespace chaos {
 				int getWriteableStageFile(std::string stage_vfs_relative_path, VFSStageWriteableFile **wsf_file);
 				
 				int getReadableStageFile(std::string stage_vfs_relative_path, VFSStageReadableFile **rsf_file);
+				
+				int getWriteableDataFile(std::string data_vfs_relative_path, VFSDataWriteableFile **wdf_file);
 				
 				int releaseFile(VFSFile *l_file);
 				

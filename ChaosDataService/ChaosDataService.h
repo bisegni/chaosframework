@@ -71,7 +71,7 @@ namespace chaos{
 			utility::InizializableServiceContainer<vfs::VFSManager> vfs_file_manager;
 
 			utility::StartableServiceContainer<QueryDataConsumer> data_consumer;
-			utility::StartableServiceContainer<StageDataConsumer> stage_data_indexer;
+			utility::StartableServiceContainer<StageDataConsumer> stage_data_consumer;
 			void fillKVParameter(std::map<std::string, std::string>& kvmap, const char * param_key);
         public:
 			//----------setting----------
