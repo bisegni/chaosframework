@@ -118,9 +118,15 @@ public class ManageUnitServerProcess extends RefProcess {
 	 * @throws RefException
 	 * @throws SQLException
 	 */
-	public void addUSCUAssociation(UnitServerCuInstance usci) throws InstantiationException, IllegalAccessException, ClassNotFoundException, RefException, SQLException {
+	public void saveUSCUAssociation(UnitServerCuInstance usci) throws InstantiationException, IllegalAccessException, ClassNotFoundException, RefException, SQLException {
 		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
-		usDA.insertNewUSCUAssociation(usci);
+		if(usci.isCuIdModified()) {
+			//need to be updated
+			usDA.updateUSCUAssociation(usci);
+		} else {
+			//new creation
+			usDA.insertNewUSCUAssociation(usci);
+		}
 		commit();
 	}
 

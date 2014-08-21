@@ -142,7 +142,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UNIT_SERVER_CREATE_US_CU_ASSOCIATION)) {
 					try {
 						if (unitServerSelected != null && unitServerCUTypeSelected != null) {
-							openViewByKeyAndClass("NEW_US_CU_ASSOCIATION", NewUSCUAssociationView.class, OpenViewIn.DIALOG, "New Unit server - Work Unit Association");
+							openViewByKeyAndClass("NEW_US_CU_ASSOCIATION", NewUSCUAssociationView.class, OpenViewIn.MAIN_VIEW, "New Unit server - Work Unit Association");
 							String[] sccu = new String[2];
 							sccu[0] = unitServerSelected;
 							sccu[1] = unitServerCUTypeSelected;
@@ -158,10 +158,12 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 					}
 				} else if (viewEvent.getEventKind().equals(NewUSCUAssociationView.EVENT_SAVE_USCU_ASSOC_VIEW)) {
 					deleteViewByKey("NEW_US_CU_ASSOCIATION");
+					openViewByKeyAndClass("VISTA", MDSAppView.class);
 					UnitServerCuInstance usci = (UnitServerCuInstance) viewEvent.getEventData();
-					musp.addUSCUAssociation(usci);
+					musp.saveUSCUAssociation(usci);
 				} else if (viewEvent.getEventKind().equals(NewUSCUAssociationView.EVENT_CANCEL_USCU_ASSOC_VIEW)) {
 					deleteViewByKey("NEW_US_CU_ASSOCIATION");
+					openViewByKeyAndClass("VISTA", MDSAppView.class);
 				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UNIT_SERVER_SHOW_ALL_ASSOCIATION)) {
 					showAllAssociationForUnitServer();
 				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UNIT_SERVER_LOAD_ALL_ASSOCIATION)) {
@@ -190,15 +192,30 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 					saveAssociationAttributeConfig((UnitServerCuInstance) viewEvent.getEventData());
 				} else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_LOAD_INSTANCE_ATTRIBUTE)) {
 					loadAssociationAttributeConfig((UnitServerCuInstance) viewEvent.getEventData());
+				} else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_CLOSE_VIEW)) {
+					deleteViewByKey("US_CU_ASSOCIATION_LIST");
+					openViewByKeyAndClass("VISTA", MDSAppView.class);
+				} else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_EDIT_ASSOCIATION)) {
+					Set<UnitServerCuInstance> associationToEdit = (Set<UnitServerCuInstance>) viewEvent.getEventData();
+					if (associationToEdit.size() == 1) {
+						UnitServerCuInstance association = (UnitServerCuInstance) associationToEdit.toArray()[0];
+						openViewByKeyAndClass("NEW_US_CU_ASSOCIATION", NewUSCUAssociationView.class, OpenViewIn.MAIN_VIEW, "New Unit server - Work Unit Association");
+						notifyEventoToViewWithData(NewUSCUAssociationView.SET_ASSOCIATION_TO_EDIT, this, association);
+					} else {
+						MDSAppView view = getViewByKey("VISTA");
+						RefVaadinErrorDialog.showError(view.getWindow(), "Edit Association Error", "Only one association need to be selected");
+					}
 				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UNIT_SERVER_EDIT_ALIAS)) {
-					openViewByKeyAndClass("EDIT_US_ALIAS", USEditInfoView.class, OpenViewIn.DIALOG, "Edit Unit Server Property");
+					openViewByKeyAndClass("EDIT_US_ALIAS", USEditInfoView.class, OpenViewIn.MAIN_VIEW, "Edit Unit Server Property");
 					notifyEventoToViewWithData(USEditInfoView.EVENT_SET_UNIT_SERVER, this, musp.getUnitServerByIdentification(viewEvent.getEventData().toString()));
 				} else if (viewEvent.getEventKind().equals(USEditInfoView.EVENT_CANCELL)) {
 					deleteViewByKey("EDIT_US_ALIAS");
+					openViewByKeyAndClass("VISTA", MDSAppView.class);
 				} else if (viewEvent.getEventKind().equals(USEditInfoView.EVENT_SAVE)) {
 					musp.updaUnitServerProperty((UnitServer) viewEvent.getEventData());
 					updateUnitServerList();
 					deleteViewByKey("EDIT_US_ALIAS");
+					openViewByKeyAndClass("VISTA", MDSAppView.class);
 				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UPDATE_UNIT_SERVER_LIST)) {
 					updateUnitServerList();
 				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UNIT_SERVER_CU_TYPE_ADD)) {
@@ -226,10 +243,10 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 						MDSAppView view = getViewByKey("VISTA");
 						RefVaadinErrorDialog.showError(view.getWindow(), "Remove Unit Server Type", "A unit server need to be selected");
 					}
-				}else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_SWITCH_AUTOLOAD)) {
+				} else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_SWITCH_AUTOLOAD)) {
 					musp.switcAutoloadOptionOnAssociation((Set<UnitServerCuInstance>) viewEvent.getEventData());
 					notifyEventoToViewWithData(USCUAssociationListView.EVENT_UPDATE_LIST, this, musp.loadAllAssociationForUnitServerAlias(unitServerSelected));
-				}else if (viewEvent.getEventKind().equals(USEditInfoView.EVENT_DELETE_SECURITY_KEY)) {
+				} else if (viewEvent.getEventKind().equals(USEditInfoView.EVENT_DELETE_SECURITY_KEY)) {
 					musp.deleteSecurityKeys((UnitServer) viewEvent.getEventData());
 					notifyEventoToViewWithData(USEditInfoView.EVENT_SET_UNIT_SERVER, this, musp.getUnitServerByIdentification(((UnitServer) viewEvent.getEventData()).getAlias()));
 				}
@@ -318,7 +335,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 	 */
 	private void showAllAssociationForUnitServer() throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException, RefException {
 		if (unitServerSelected != null) {
-			openViewByKeyAndClass("US_CU_ASSOCIATION_LIST", USCUAssociationListView.class, OpenViewIn.DIALOG, "Work Unit List");
+			openViewByKeyAndClass("US_CU_ASSOCIATION_LIST", USCUAssociationListView.class, OpenViewIn.MAIN_VIEW, "Work Unit List");
 			notifyEventoToViewWithData(USCUAssociationListView.SET_US_ALIAS, this, unitServerSelected);
 			notifyEventoToViewWithData(USCUAssociationListView.EVENT_UPDATE_LIST, this, musp.loadAllAssociationForUnitServerAlias(unitServerSelected));
 		} else {

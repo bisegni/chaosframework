@@ -32,6 +32,7 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 	static final Action[]				ACTIONS_TO_EDIT					= new Action[] { ACTION_EDIT };
 	static final Action[]				ACTIONS_IN_EDIT					= new Action[] { ACTION_SAVE };
 	public static final String			SET_SC_CUTYPE_VALUE				= "SET_SC_CUTYPE_VALUE";
+	public static final Object			SET_ASSOCIATION_TO_EDIT			= "SET_ASSOCIATION_TO_EDIT";
 	public static final String			EVENT_CANCEL_USCU_ASSOC_VIEW	= "EVENT_CANCEL_USCU_ASSOC_VIEW";
 	public static final String			EVENT_SAVE_USCU_ASSOC_VIEW		= "EVENT_SAVE_USCU_ASSOC_VIEW";
 	public static final String			EVENT_ADD_DRIVER_SPEC			= "EVENT_ADD_DRIVER_SPEC";
@@ -43,6 +44,7 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 	private boolean						editingServer					= false;
 	private Object						driverSpecSelected				= null;
 	private int							index							= 0;
+	private UnitServerCuInstance		associationToEdit				= null;
 
 	/*
 	 * (non-Javadoc)
@@ -104,13 +106,15 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 
 		impl.getButtonSave().addListener(new ClickListener() {
 			public void buttonClick(ClickEvent event) {
-				UnitServerCuInstance usci = new UnitServerCuInstance();
+				UnitServerCuInstance usci = associationToEdit == null ? new UnitServerCuInstance():associationToEdit;
 				try {
 					usci.setUnitServerAlias(impl.getUsSelected().getValue().toString());
 					usci.setCuId(impl.getCuIDTextField().getValue().toString());
 					usci.setCuType(impl.getCuTypeSelected().getValue().toString());
 					usci.setCuParam(impl.getCuParamTextArea().getValue().toString());
 					usci.setAutoLoad((Boolean) impl.getCheckBoxAutoLoad().getValue());
+					
+					usci.getDriverSpec().clear();
 					Collection<Integer> indexList = (Collection<Integer>) impl.getTableDriverSpecifications().getItemIds();
 					for (Integer idx : indexList) {
 						DriverSpec driverSpec = new DriverSpec();
@@ -119,6 +123,7 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 						driverSpec.setDriverInit(impl.getTableDriverSpecifications().getItem(idx).getItemProperty(NewUSCUAssociationView.TABLE_COLUMN_DRIVER_INIT).toString());
 						usci.addDrvierSpec(driverSpec);
 					}
+					
 					usci.setDrvSpec(usci.getDriverDescriptionAsBson().toString());
 					usci.checkIntegrityValues();
 					notifyEventoToControllerWithData(NewUSCUAssociationView.EVENT_SAVE_USCU_ASSOC_VIEW, event.getSource(), usci);
@@ -144,6 +149,20 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 			if (viewEvent.getEventKind().equals(NewUSCUAssociationView.SET_SC_CUTYPE_VALUE)) {
 				impl.getUsSelected().setValue(((String[]) viewEvent.getEventData())[0]);
 				impl.getCuTypeSelected().setValue(((String[]) viewEvent.getEventData())[1]);
+			} else if (viewEvent.getEventKind().equals(NewUSCUAssociationView.SET_ASSOCIATION_TO_EDIT)) {
+				associationToEdit =  (UnitServerCuInstance) viewEvent.getEventData();
+				impl.getUsSelected().setValue(associationToEdit.getUnitServerAlias());
+				impl.getCuTypeSelected().setValue(associationToEdit.getCuType());
+				impl.getCuIDTextField().setValue(associationToEdit.getCuId());
+				impl.getCuParamTextArea().setValue(associationToEdit.getCuParam());
+				impl.getCheckBoxAutoLoad().setValue(associationToEdit.getAutoLoad());
+				
+				for (DriverSpec driverSpec : associationToEdit.fillDriverVectorFromBSONDescription()) {
+					Item woItem = impl.getTableDriverSpecifications().addItem(new Integer(index++));
+					woItem.getItemProperty(NewUSCUAssociationView.TABLE_COLUMN_DRIVER_ALIAS).setValue(driverSpec.getDriverName());
+					woItem.getItemProperty(NewUSCUAssociationView.TABLE_COLUMN_DRIVER_VERSION).setValue(driverSpec.getDriverVersion());
+					woItem.getItemProperty(NewUSCUAssociationView.TABLE_COLUMN_DRIVER_INIT).setValue(driverSpec.getDriverInit());	
+				}
 			}
 		}
 	}

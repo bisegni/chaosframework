@@ -34,6 +34,8 @@ public class UnitServerCuInstance extends BusinessObject {
 	private String						unitServerAlias			= null;
 	@DBColumn(name = CU_ID, maxDimension = 64)
 	private String						cuId					= null;
+	private String						oldCUId					= null;
+
 	@DBColumn(name = CU_TYPE, maxDimension = 64)
 	private String						cuType					= null;
 	@DBColumn(name = DRIVER_SPEC)
@@ -117,7 +119,19 @@ public class UnitServerCuInstance extends BusinessObject {
 	}
 
 	public void setCuId(String cuId) {
+		if (this.oldCUId == null) {
+			// in this way if updat ethe id more times the first is backuped
+			this.oldCUId = this.cuId;
+		}
 		this.cuId = cuId;
+	}
+
+	public boolean isCuIdModified() {
+		return this.oldCUId != null;
+	}
+
+	public String getOldCUId() {
+		return oldCUId;
 	}
 
 	public String getCuParam() {
@@ -162,6 +176,26 @@ public class UnitServerCuInstance extends BusinessObject {
 			}
 		}
 		return bobj;
+	}
+
+	public Vector<DriverSpec> fillDriverVectorFromBSONDescription() {
+		getDriverSpec().clear();
+		if (getDrvSpec() == null)
+			return getDriverSpec();
+
+		BasicBSONObject bobj = (BasicBSONObject) JSON.parse(getDrvSpec());
+		if (bobj.containsField("DriverDescription")) {
+			BasicBSONList blist = (BasicBSONList) bobj.get("DriverDescription");
+			for (Object object : blist) {
+				BasicBSONObject bo = (BasicBSONObject) object;
+				DriverSpec newDriverSpec = new DriverSpec();
+				newDriverSpec.setDriverName(bo.getString("DriverDescriptionName"));
+				newDriverSpec.setDriverVersion(bo.getString("DriverDescriptionVersion"));
+				newDriverSpec.setDriverInit(bo.getString("DriverDescriptionInitParam"));
+				addDrvierSpec(newDriverSpec);
+			}
+		}
+		return getDriverSpec();
 	}
 
 	public void addDrvierSpec(DriverSpec driverSpec) {

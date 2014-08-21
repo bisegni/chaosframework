@@ -189,6 +189,34 @@ public class UnitServerDA extends DataAccess {
 		}
 	}
 
+
+
+	public void updateUSCUAssociation(UnitServerCuInstance unitServerCuInstance) throws RefException {
+		PreparedStatement ps = null;
+		try {
+			InsertUpdateBuilder u = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_UPDATE);
+			u.addTable(UnitServerCuInstance.class);
+			u.fillWithBusinessClass(unitServerCuInstance);
+			u.addCondition(true, String.format("%s=?", UnitServerCuInstance.UNIT_SERVER_ALIAS));
+			u.addCondition(true, String.format("%s=?", UnitServerCuInstance.CU_ID));
+			ps = getPreparedStatementForSQLCommand(u.toString());
+			int idx = u.fillPreparedStatement(ps);
+			ps.setString(idx++, unitServerCuInstance.getUnitServerAlias());
+			ps.setString(idx++, unitServerCuInstance.getOldCUId());
+			executeInsertUpdateAndClose(ps);
+		} catch (IllegalArgumentException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::updateAutoloadForAssociation");
+		} catch (SQLException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 1, "UnitServerDA::updateAutoloadForAssociation");
+		} catch (IllegalAccessException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 2, "UnitServerDA::updateAutoloadForAssociation");
+		} finally {
+			closePreparedStatement(ps);
+		}
+		
+	}
+	
+	
 	/**
 	 * Insert new unit server
 	 * 
@@ -747,5 +775,6 @@ public class UnitServerDA extends DataAccess {
 
 		return result;
 	}
+
 
 }

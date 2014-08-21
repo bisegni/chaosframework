@@ -39,13 +39,15 @@ public class USCUAssociationListView extends RefVaadinBasePanel implements com.v
 	static final Action[]					ACTIONS_TO_EDIT					= new Action[] { ACTION_EDIT };
 	static final Action[]					ACTIONS_IN_EDIT					= new Action[] { ACTION_SAVE };
 	public static final String				SET_US_ALIAS					= "SET_US_ALIAS";
-	public static final String				EVENT_REMOVE_ASSOCIATION		= "EVENT_REMOVE_ASSOCIATION";
-	public static final String				EVENT_LOAD_INSTANCE				= "EVENT_LOAD_INSTANCE";
-	public static final String				EVENT_UNLOAD_INSTANCE			= "EVENT_UNLOAD_INSTANCE";
-	public static final String				EVENT_UPDATE_LIST				= "EVENT_UPDATE_LIST";
-	public static final String				EVENT_SAVE_ATTRIBUTE_CONFIG		= "EVENT_SAVE_ATTRIBUTE_CONFIG";
-	public static final String				EVENT_LOAD_INSTANCE_ATTRIBUTE	= "EVENT_LOAD_INSTANCE_ATTRIBUTE";
-	public static final String				EVENT_SWITCH_AUTOLOAD			= "EVENT_SWITCH_AUTOLOAD";
+	public static final String				EVENT_REMOVE_ASSOCIATION		= "USCUAssociationListView_EVENT_REMOVE_ASSOCIATION";
+	public static final String				EVENT_LOAD_INSTANCE				= "USCUAssociationListView_EVENT_LOAD_INSTANCE";
+	public static final String				EVENT_UNLOAD_INSTANCE			= "USCUAssociationListView_EVENT_UNLOAD_INSTANCE";
+	public static final String				EVENT_UPDATE_LIST				= "USCUAssociationListView_EVENT_UPDATE_LIST";
+	public static final String				EVENT_SAVE_ATTRIBUTE_CONFIG		= "USCUAssociationListView_EVENT_SAVE_ATTRIBUTE_CONFIG";
+	public static final String				EVENT_LOAD_INSTANCE_ATTRIBUTE	= "USCUAssociationListView_EVENT_LOAD_INSTANCE_ATTRIBUTE";
+	public static final String				EVENT_SWITCH_AUTOLOAD			= "USCUAssociationListView_EVENT_SWITCH_AUTOLOAD";
+	public static final String				EVENT_CLOSE_VIEW				= "USCUAssociationListView_EVENT_CLOSE_VIEW";
+	public static final String				EVENT_EDIT_ASSOCIATION			= "USCUAssociationListView_EVENT_EDIT_ASSOCIATION";
 	private static final Object				TABLE_COLUMN_WU_ID				= "Unique ID";
 	private static final Object				TABLE_COLUMN_WU_TYPE			= "type";
 	private static final Object				TABLE_COLUMN_WU_AUTOLOAD		= "autoload";
@@ -74,7 +76,23 @@ public class USCUAssociationListView extends RefVaadinBasePanel implements com.v
 		impl.getTableAssociation().addContainerProperty(USCUAssociationListView.TABLE_COLUMN_WU_TYPE, String.class, null);
 		impl.getTableAssociation().addContainerProperty(USCUAssociationListView.TABLE_COLUMN_WU_AUTOLOAD, String.class, null);
 		impl.getTableAssociation().addContainerProperty(USCUAssociationListView.TABLE_COLUMN_WU_STATE, String.class, null);
+		impl.getTableAssociation().addActionHandler(new Action.Handler() {
+			public Action[] getActions(Object target, Object sender) {
+				return new Action[] { ACTION_EDIT };
+			}
 
+			public void handleAction(Action action, Object sender, Object target) {
+				if (ACTION_EDIT == action) {
+					if (impl.getTableAssociation().getValue() == null || ((Set<UnitServerCuInstance>) impl.getTableAssociation().getValue()).size() != 1) {
+						getWindow().showNotification("Edit association error", "Only one association need to be selected", Notification.TYPE_ERROR_MESSAGE);
+						return;
+					} else {
+						notifyEventoToControllerWithData(USCUAssociationListView.EVENT_EDIT_ASSOCIATION, sender, impl.getTableAssociation().getValue());
+					}
+				}
+			}
+
+		});
 		impl.getButtonUpdateList().addListener(new ClickListener() {
 			public void buttonClick(ClickEvent event) {
 				notifyEventoToControllerWithData(USCUAssociationListView.EVENT_UPDATE_LIST, event.getSource(), null);
@@ -102,6 +120,11 @@ public class USCUAssociationListView extends RefVaadinBasePanel implements com.v
 		impl.getButtonSwapAutoLoad().addListener(new ClickListener() {
 			public void buttonClick(ClickEvent event) {
 				notifyEventoToControllerWithData(USCUAssociationListView.EVENT_SWITCH_AUTOLOAD, event.getSource(), impl.getTableAssociation().getValue());
+			}
+		});
+		impl.getButtonCloseView().addListener(new ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				notifyEventoToControllerWithData(USCUAssociationListView.EVENT_CLOSE_VIEW, event.getSource(), impl.getTableAssociation().getValue());
 			}
 		});
 		// ----------attribute config
