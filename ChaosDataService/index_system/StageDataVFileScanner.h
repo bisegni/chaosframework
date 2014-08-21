@@ -25,6 +25,9 @@
 
 #include <chaos/common/bson/bson.h>
 
+#include <boost/thread.hpp>
+
+#include <map>
 #include <string>
 
 namespace chaos{
@@ -35,6 +38,24 @@ namespace chaos{
 		
 		namespace index_system {
 			
+			//! data pack scanner class
+			/*!
+			 this class scan a stage file consuming interanlly storede
+			 data pack (BSON) one at one. The default index has the following structure
+			 (exposed in json format):
+			 {	did:string,
+				dts:uint64,
+				cpt:{
+					chunk_key:chunk id(string)
+					chunk_offset:uint64_t
+				}
+			 }
+			 For every datapack it makes:
+			 1 - retrive the field necessary to crete a default index
+			 2 - save pack into the corresponding data file for the device id
+			 3 - store the dafault index into the database using the driver
+			 4 - step torward
+			 */
 			class StageDataVFileScanner {
 				friend class StageDataConsumer;
 				
@@ -42,11 +63,16 @@ namespace chaos{
 				uint32_t curret_data_buffer_len;
 				
 				vfs::VFSStageReadableFile *stage_file;
-				//vfs::VFSDataWriteableFile *data_file;
+				
+				//!association between did and his data file
+				boost::shared_mutex mutext_did_data_file;
+				std::map<std::string, vfs::VFSDataWriteableFile* > map_did_data_file;
 				
 				void grow(uint32_t new_size);
 				
 				void processDataPack(bson::BSONObj data_pack);
+				
+				vfs::VFSDataWriteableFile *getWriteableFileForDID(std::string did);
 			public:
 				StageDataVFileScanner(vfs::VFSStageReadableFile *_stage_file);
 				~StageDataVFileScanner();

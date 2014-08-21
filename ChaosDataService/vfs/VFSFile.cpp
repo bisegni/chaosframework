@@ -34,6 +34,9 @@
 
 using namespace chaos::data_service::vfs;
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 VFSFile::VFSFile(storage_system::StorageDriver *_storage_driver_ptr,
 				 chaos_index::IndexDriver *_index_driver_ptr,
 				 std::string area,
@@ -51,6 +54,9 @@ current_data_block(NULL) {
 	
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 VFSFile::~VFSFile() {
 	if(current_data_block) {
 		releaseDataBlock(current_data_block);
@@ -58,7 +64,9 @@ VFSFile::~VFSFile() {
 	}
 }
 
-//! return new datablock where write into
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 int VFSFile::getNewDataBlock(DataBlock **new_data_block_handler) {
 	DataBlock *new_data_block_ptr = NULL;
 	std::string block_unique_path = boost::str(boost::format("%1%/%2%") % vfs_file_info.vfs_fpath % chaos::UUIDUtil::generateUUID());
@@ -83,12 +91,16 @@ int VFSFile::getNewDataBlock(DataBlock **new_data_block_handler) {
 	return 0;
 }
 
-//! return new datablock where write into
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 int VFSFile::getNextInTimeDataBlock(DataBlock **new_data_block_handler, uint64_t timestamp, data_block_state::DataBlockState state) {
 	return 0;
 }
 
-//! change Datablock state
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 int VFSFile::updateDataBlockState(data_block_state::DataBlockState state) {
 	int err = 0;
 	if((err = index_driver_ptr->vfsSetStateOnDataBlock(this, current_data_block, state))) {
@@ -97,7 +109,9 @@ int VFSFile::updateDataBlockState(data_block_state::DataBlockState state) {
 	return 0;
 }
 
-//! release a datablock
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 int VFSFile::releaseDataBlock(DataBlock *data_block_ptr) {
 	if(!data_block_ptr) return 0;
 	int err = 0;
@@ -110,7 +124,9 @@ int VFSFile::releaseDataBlock(DataBlock *data_block_ptr) {
 	return storage_driver_ptr->closeBlock(data_block_ptr);
 }
 
-//! check if datablock is valid according to internal logic
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 bool VFSFile::isDataBlockValid(DataBlock *data_block_ptr) {
 	if(!data_block_ptr) return false;
 	
@@ -121,14 +137,23 @@ bool VFSFile::isDataBlockValid(DataBlock *data_block_ptr) {
 }
 
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 const VFSFileInfo *VFSFile::getVFSFileInfo() const {
 	return &vfs_file_info;
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 bool VFSFile::isGood() {
 	return good;
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 bool VFSFile::exist() {
 	int err = 0;
 	bool exist_flag = false;
@@ -139,17 +164,26 @@ bool VFSFile::exist() {
 	return exist_flag;
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 int VFSFile::seekOnCurrentBlock(block_seek_base::BlockSeekBase base_direction, int64_t offset) {
 	if(!current_data_block) return -1;
 	
 	return storage_driver_ptr->seek(current_data_block, offset, base_direction);
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 int VFSFile::write(void *data, uint32_t data_len) {
 	//write data
 	return storage_driver_ptr->write(current_data_block, data, data_len);
 };
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 int VFSFile::read(void *buffer, uint32_t buffer_len) {
 	if(!current_data_block) return -1;
 	int err = 0;

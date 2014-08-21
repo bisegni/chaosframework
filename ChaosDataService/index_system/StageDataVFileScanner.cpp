@@ -19,7 +19,8 @@
  */
 
 #include "StageDataVFileScanner.h"
-
+#include "../vfs/VFSManager.h"
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/utility/endianess.h>
 
 #define StageDataVFileScanner_LOG_HEAD "[StageDataVFileScanner] - "
@@ -30,6 +31,7 @@
 
 
 using namespace chaos::data_service::index_system;
+namespace vfs=chaos::data_service::vfs;
 
 StageDataVFileScanner::StageDataVFileScanner(vfs::VFSStageReadableFile *_stage_file):
 stage_file(_stage_file),
@@ -54,9 +56,17 @@ void StageDataVFileScanner::grow(uint32_t new_size) {
 	}
 }
 
+vfs::VFSDataWriteableFile *getWriteableFileForDID(std::string did) {
+	return NULL;
+}
+
 void StageDataVFileScanner::processDataPack(bson::BSONObj data_pack) {
-	StageDataVFileScannerLDBG_ << data_pack.toString();
-	
+	if(!data_pack.hasField(chaos::DataPackKey::CS_CSV_CU_ID) ||
+	   data_pack.hasField(chaos::DataPackKey::CS_CSV_CU_ID)) {
+		StageDataVFileScannerLDBG_ << "Current scanned data pack doesn't have required field: " << data_pack.toString();
+	}
+	std::string did = data_pack.getField(chaos::DataPackKey::CS_CSV_CU_ID).String();
+	uint64_t	dts = data_pack.getField(chaos::DataPackKey::CS_CSV_TIME_STAMP).numberLong();
 }
 
 #define BREAK_ON_NO_DATA_READED \
