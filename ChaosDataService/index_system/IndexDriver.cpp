@@ -22,6 +22,7 @@
 #include "../vfs/DataBlock.h"
 
 using namespace chaos::data_service::index_system;
+using namespace chaos::data_service::vfs;
 
 IndexDriver::IndexDriver(std::string alias):NamedService(alias) {
 	
@@ -41,4 +42,12 @@ void IndexDriver::init(void *init_data) throw (chaos::CException) {
 
 //!deinit
 void IndexDriver::deinit() throw (chaos::CException) {
+}
+
+DataBlock *IndexDriver::getDataBlockFromFileLocation(const FileLocationPointer& file_location) {
+	return file_location.data_block;
+}
+
+uint64_t IndexDriver::getDataBlockOffsetFromFileLocation(const FileLocationPointer & file_location) {
+	return file_location.offset;
 }

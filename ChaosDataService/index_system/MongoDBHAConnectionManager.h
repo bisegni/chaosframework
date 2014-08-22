@@ -87,6 +87,7 @@ namespace chaos {
 				void findN(std::vector<mongo::BSONObj>& out, const std::string& ns, mongo::Query query, int nToReturn, int nToSkip = 0, const mongo::BSONObj *fieldsToReturn = 0, int queryOptions = 0);
 				int runCommand( mongo::BSONObj& result, const std::string &ns, const mongo::BSONObj& comand, int queryOptions = 0);
 				int update( const std::string &ns, mongo::Query query, mongo::BSONObj obj, bool upsert = false, bool multi = false );
+				int remove( const std::string &ns , mongo::Query q , bool justOne = 0, const mongo::WriteConcern* wc=NULL );
 				int ensureIndex(  const std::string &database, const std::string &collection, mongo::BSONObj keys, bool unique = false, const std::string &name = "", bool dropDup = false, bool background = false, int v = -1, int ttl = 0 );
 			};
 		}

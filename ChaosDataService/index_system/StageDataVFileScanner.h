@@ -27,6 +27,7 @@
 #include <chaos/common/bson/bson.h>
 
 #include <boost/thread.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include <map>
 #include <string>
@@ -38,6 +39,14 @@ namespace chaos{
 		class StageDataConsumer;
 		
 		namespace index_system {
+			
+			typedef struct DataFileInfo {
+				//!  pointer to writeable data file
+				vfs::VFSDataWriteableFile *data_file_ptr;
+				
+				//! mantains track of the latest timestamp stored into datafile
+				uint64_t last_wrote_ts;
+			} DataFileInfo;
 			
 			//! data pack scanner class
 			/*!
@@ -72,16 +81,16 @@ namespace chaos{
 				
 				//!association between did and his data file
 				boost::shared_mutex mutext_did_data_file;
-				std::map<std::string, vfs::VFSDataWriteableFile* > map_did_data_file;
+				std::map<std::string, shared_ptr<DataFileInfo> > map_did_data_file;
 				
 				void grow(uint32_t new_size);
 				
 				bool processDataPack(const bson::BSONObj& data_pack);
 				
-				vfs::VFSDataWriteableFile *getWriteableFileForDID(const std::string& did);
+				boost::shared_ptr<DataFileInfo> getWriteableFileForDID(const std::string& did);
 			public:
-				StageDataVFileScanner(index_system::IndexDriver *index_driver,
-									  vfs::VFSManager *_vfs_manager,
+				StageDataVFileScanner(vfs::VFSManager *_vfs_manager,
+									  index_system::IndexDriver *_index_driver,
 									  vfs::VFSStageReadableFile *_working_stage_file);
 				
 				~StageDataVFileScanner();

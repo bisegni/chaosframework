@@ -47,8 +47,11 @@ namespace chaos {
 				//! force new data block creation
 				int switchDataBlock();
 				
-				//! return the offset for the current data block
-				int64_t getCurrentOffSet();
+				//! ensure that a datablock is not null
+				/*!
+					usefullt to get the current lcoation before write the first data pack.
+				 */
+				int ensureDatablockAllocated();
 				
 				// write data on the current data block
 				int write(void *data, uint32_t data_len);

@@ -46,13 +46,6 @@ namespace chaos {
 				//! identify the mac lifetime for a logical file block
 				uint32_t		max_block_lifetime;
 				
-				
-				//! current index driver implementaiton to use
-				std::string index_driver_impl;
-				
-				//! the instance of the index driver for this manager
-				::chaos::data_service::index_system::IndexDriverSetting index_driver_setting;
-				
 				//! current storage driver implementaiton to use
 				std::string storage_driver_impl;
 				
@@ -90,7 +83,7 @@ namespace chaos {
 			protected:
 				void freeObject(std::string key, VFSFilesForPath *element);
 			public:
-				VFSManager();
+				VFSManager(index_system::IndexDriver *_index_driver_ptr);
 				~VFSManager();
 				
 				//! Need to be forwarded a point to a structure VFSManagerSetting

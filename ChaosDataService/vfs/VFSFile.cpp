@@ -147,6 +147,14 @@ const VFSFileInfo *VFSFile::getVFSFileInfo() const {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
+FileLocationPointer VFSFile::getCurrentFileLocation() {
+	return FileLocationPointer(current_data_block, current_data_block == NULL ?-1:current_data_block->current_size);
+}
+
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 bool VFSFile::isGood() {
 	return good;
 }

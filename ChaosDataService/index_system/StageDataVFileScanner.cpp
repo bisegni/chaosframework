@@ -34,7 +34,9 @@ using namespace chaos::data_service::index_system;
 namespace vfs=chaos::data_service::vfs;
 
 StageDataVFileScanner::StageDataVFileScanner(vfs::VFSManager *_vfs_manager,
+											 index_system::IndexDriver *_index_driver,
 											 vfs::VFSStageReadableFile *_working_stage_file):
+index_driver(_index_driver),
 vfs_manager(_vfs_manager),
 working_stage_file(_working_stage_file),
 data_buffer(NULL),
@@ -58,52 +60,68 @@ void StageDataVFileScanner::grow(uint32_t new_size) {
 	}
 }
 
-vfs::VFSDataWriteableFile *StageDataVFileScanner::getWriteableFileForDID(const std::string& did) {
-	vfs::VFSDataWriteableFile *vfile = NULL;
+boost::shared_ptr<DataFileInfo> StageDataVFileScanner::getWriteableFileForDID(const std::string& did) {
+	boost::shared_ptr<DataFileInfo> result;
 	if(map_did_data_file.count(did)) {
-		vfile = map_did_data_file[did];
+		result = map_did_data_file[did];
 	} else {
+		result.reset(new DataFileInfo());
+		
 		//we need to create a new data file for new readed unique identifier
-		if(!vfs_manager->getWriteableDataFile(did, &vfile) && vfile){
-			map_did_data_file.insert(make_pair(did, vfile));
+		if(!vfs_manager->getWriteableDataFile(did, &result->data_file_ptr) && result->data_file_ptr){
+			//we need to ensure that datablock is not null for determinate correct first block location
+			result->data_file_ptr->ensureDatablockAllocated();
+			
+			//insert file into the hasmap
+			map_did_data_file.insert(make_pair(did, result));
 		}else {
 			StageDataVFileScannerLERR_ << "Error creating data file for " << did;
 		}
 	}
-	return vfile;
+	return result;
 }
 
 bool StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack) {
 	if(!data_pack.hasField(chaos::DataPackKey::CS_CSV_CU_ID) ||
-	   data_pack.hasField(chaos::DataPackKey::CS_CSV_CU_ID)) {
+	   !data_pack.hasField(chaos::DataPackKey::CS_CSV_CU_ID)) {
 		StageDataVFileScannerLDBG_ << "Current scanned data pack doesn't have required field: " << data_pack.toString();
 		return false;
 	}
+	
+	//index structure
+	DataPackIndex new_data_pack_index;
+	
 	//get values for key that are mandatory for default index
-	std::string did = data_pack.getField(chaos::DataPackKey::CS_CSV_CU_ID).String();
-	uint64_t	dts = data_pack.getField(chaos::DataPackKey::CS_CSV_TIME_STAMP).numberLong();
+	new_data_pack_index.did = data_pack.getField(chaos::DataPackKey::CS_CSV_CU_ID).String();
+	new_data_pack_index.acquisition_ts = data_pack.getField(chaos::DataPackKey::CS_CSV_TIME_STAMP).numberLong();
 	
 	//get file for unique id
-	vfs::VFSDataWriteableFile *did_vfile = getWriteableFileForDID(did);
-	if(!did_vfile) {
-		//strange error because datablock is null
-		StageDataVFileScannerLERR_ << "No vfs got for unique id " << did;
+	boost::shared_ptr<DataFileInfo> data_file_info = getWriteableFileForDID(new_data_pack_index.did);
+	if(!data_file_info->data_file_ptr) {
+		StageDataVFileScannerLERR_ << "No vfs got for unique id " << new_data_pack_index.did;
 		return false;
 	}
 	//write packet to his virtaul data file
-	int64_t current_offset = did_vfile->getCurrentOffSet();
-	if(current_offset == -1) {
+	new_data_pack_index.dst_location = data_file_info->data_file_ptr->getCurrentFileLocation();
+	if(!new_data_pack_index.dst_location.isValid()) {
 		//strange error because datablock is null
 		StageDataVFileScannerLERR_ << "Error on retrieve datafile offset";
 		return false;
 	}
 	
-	//write pack on file
-	if(did_vfile->write((void*)data_pack.objdata(), data_pack.objsize())) {
-		StageDataVFileScannerLERR_ << "Error writing datafile";
+	if(index_driver->idxAddDataPackIndex(new_data_pack_index)) {
+		StageDataVFileScannerLERR_ << "Error writing index to database";
 		return false;
 	}
 	
+	//write pack on file
+	if(data_file_info->data_file_ptr->write((void*)data_pack.objdata(), data_pack.objsize())) {
+		StageDataVFileScannerLERR_ << "Error writing datafile";
+		//delete index
+		index_driver->idxDeleteDataPackIndex(new_data_pack_index);
+		return false;
+	}
+
 	return true;
 }
 
@@ -134,7 +152,9 @@ int StageDataVFileScanner::scan() {
 		err = working_stage_file->read((static_cast<char*>(data_buffer)+4), bson_size-4);
 		BREAK_ON_NO_DATA_READED
 		
-		processDataPack(bson::BSONObj(static_cast<const char*>(data_buffer)));
+		if(!(work = processDataPack(bson::BSONObj(static_cast<const char*>(data_buffer))))){
+			//some error has occured so we need to close all chunk end go forward
+		};
 	}
 	return 0;
 }

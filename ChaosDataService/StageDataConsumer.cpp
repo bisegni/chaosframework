@@ -41,10 +41,13 @@ s=NULL;
 #define LOCK_SCANNER_INFO(s) \
 boost::unique_lock<boost::mutex> l(s->mutex_on_scan);
 
-StageDataConsumer::StageDataConsumer(vfs::VFSManager *_vfs_manager_instance, ChaosDataServiceSetting *_settings):
+StageDataConsumer::StageDataConsumer(vfs::VFSManager *_vfs_manager_ptr,
+									 index_system::IndexDriver *_index_driver_ptr,
+									 ChaosDataServiceSetting *_settings):
 settings(_settings),
 work_on_stage(false),
-vfs_manager_instance(_vfs_manager_instance),
+vfs_manager_ptr(_vfs_manager_ptr),
+index_driver_ptr(_index_driver_ptr),
 global_scanner_num(0),
 queue_scanners(1) {
 	
@@ -59,12 +62,6 @@ void StageDataConsumer::init(void *init_data) throw (chaos::CException) {
 	
 	//add answer worker
 	StageDataConsumerLAPP_ << "Allocating index driver";
-	//allocate index driver
-	std::string index_driver_class_name = boost::str(boost::format("%1%IndexDriver") % setting->index_driver_impl);
-	VFSFM_LAPP_ << "Allocate index driver of type "<<index_driver_class_name;
-	index_driver_ptr = chaos::ObjectFactoryRegister<index_system::IndexDriver>::getInstance()->getNewInstanceByName(index_driver_class_name);
-	if(!index_driver_ptr) throw chaos::CException(-1, "No index driver found", __PRETTY_FUNCTION__);
-	chaos::utility::InizializableService::initImplementation(index_driver_ptr, &setting->index_driver_setting, index_driver_ptr->getName(), __PRETTY_FUNCTION__);
 }
 
 void StageDataConsumer::start() throw (chaos::CException) {
@@ -109,7 +106,7 @@ void StageDataConsumer::timeout() {
 	StageScannerInfo *scanner_info = NULL;
 	vfs::VFSStageReadableFile *readable_stage_file = NULL;
 	
-	if(vfs_manager_instance->getAllStageFileVFSPath(current_stage_file)) return;
+	if(vfs_manager_ptr->getAllStageFileVFSPath(current_stage_file)) return;
 	
 	//cicle all found vfs file path to search wich are new
 	for (std::vector<std::string>::iterator it = current_stage_file.begin();
@@ -118,7 +115,7 @@ void StageDataConsumer::timeout() {
 		//check if we alread have this path
 		if(std::find(vector_working_path.begin(), vector_working_path.end(), *it) == vector_working_path.end()) {
 			//get new vfs stage readable file
-			if((err = vfs_manager_instance->getReadableStageFile(*it, &readable_stage_file))) {
+			if((err = vfs_manager_ptr->getReadableStageFile(*it, &readable_stage_file))) {
 				//error gettin file
 				StageDataConsumerLDBG_ << "Error getting vfs stage readable file for vfs path: " << *it;
 				continue;
@@ -127,7 +124,7 @@ void StageDataConsumer::timeout() {
 			//scanner not present, so we need to add it
 			scanner_info = new StageScannerInfo();
 			scanner_info->index = ++global_scanner_num;
-			scanner_info->scanner = new index_system::StageDataVFileScanner(vfs_manager_instance, readable_stage_file);
+			scanner_info->scanner = new index_system::StageDataVFileScanner(vfs_manager_ptr, index_driver_ptr, readable_stage_file);
 			
 			//add new scanner infor to the processing queue to be scheduled and in vector to keep track of it
 			vector_working_path.push_back(*it);
