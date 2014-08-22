@@ -47,6 +47,9 @@ namespace chaos {
 				//! force new data block creation
 				int switchDataBlock();
 				
+				//! return the offset for the current data block
+				int64_t getCurrentOffSet();
+				
 				// write data on the current data block
 				int write(void *data, uint32_t data_len);
 			};

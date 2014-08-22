@@ -22,6 +22,7 @@
 
 #include "../vfs/VFSStageReadableFile.h"
 #include "../vfs/VFSDataWriteableFile.h"
+#include "../index_system/IndexDriver.h"
 
 #include <chaos/common/bson/bson.h>
 
@@ -62,7 +63,12 @@ namespace chaos{
 				void *data_buffer;
 				uint32_t curret_data_buffer_len;
 				
-				vfs::VFSStageReadableFile *stage_file;
+				//file managment class
+				vfs::VFSManager *vfs_manager;
+				vfs::VFSStageReadableFile *working_stage_file;
+				
+				//index driver
+				index_system::IndexDriver *index_driver;
 				
 				//!association between did and his data file
 				boost::shared_mutex mutext_did_data_file;
@@ -70,11 +76,14 @@ namespace chaos{
 				
 				void grow(uint32_t new_size);
 				
-				void processDataPack(bson::BSONObj data_pack);
+				bool processDataPack(const bson::BSONObj& data_pack);
 				
-				vfs::VFSDataWriteableFile *getWriteableFileForDID(std::string did);
+				vfs::VFSDataWriteableFile *getWriteableFileForDID(const std::string& did);
 			public:
-				StageDataVFileScanner(vfs::VFSStageReadableFile *_stage_file);
+				StageDataVFileScanner(index_system::IndexDriver *index_driver,
+									  vfs::VFSManager *_vfs_manager,
+									  vfs::VFSStageReadableFile *_working_stage_file);
+				
 				~StageDataVFileScanner();
 				
 				std::string getScannedVFSPath();

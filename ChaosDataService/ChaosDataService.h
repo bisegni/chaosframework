@@ -67,6 +67,8 @@ namespace chaos{
             ~ChaosDataService();
             static void signalHanlder(int);
 			
+			index_driver_ptr
+			
 			utility::StartableServiceContainer<chaos::NetworkBroker> network_broker;
 			utility::InizializableServiceContainer<vfs::VFSManager> vfs_file_manager;
 
@@ -88,9 +90,9 @@ namespace chaos{
              */
             void init(istringstream &initStringStream) throw (CException);
             void init(void *init_data)  throw(CException);
-            void start() throw(CException);;
-            void stop() throw(CException);;
-            void deinit() throw(CException);;
+            void start() throw(CException);
+            void stop() throw(CException);
+            void deinit() throw(CException);
         };
     }
 }

@@ -22,7 +22,10 @@
 #include <csignal>
 
 #include "ChaosDataService.h"
+
+#include <boost/format.hpp>
 #include <chaos/common//direct_io/DirectIOServerEndpoint.h>
+
 using namespace std;
 using namespace chaos;
 using namespace chaos::data_service;
@@ -141,6 +144,13 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 			fillKVParameter(ChaosDataService::getInstance()->settings.file_manager_setting.index_driver_setting.key_value_custom_param, OPT_VFS_INDEX_DRIVER_KVP);
 		}
 		
+		//allocate index driver
+		std::string index_driver_class_name = boost::str(boost::format("%1%IndexDriver") % setting->index_driver_impl);
+		VFSFM_LAPP_ << "Allocate index driver of type "<<index_driver_class_name;
+		index_driver_ptr = chaos::ObjectFactoryRegister<index_system::IndexDriver>::getInstance()->getNewInstanceByName(index_driver_class_name);
+		if(!index_driver_ptr) throw chaos::CException(-1, "No index driver found", __PRETTY_FUNCTION__);
+		chaos::utility::InizializableService::initImplementation(index_driver_ptr, &setting->index_driver_setting, index_driver_ptr->getName(), __PRETTY_FUNCTION__);
+
 		
 		CDSLAPP_ << "Allocate Network Brocker";
         network_broker.reset(new NetworkBroker(), "NetworkBroker");

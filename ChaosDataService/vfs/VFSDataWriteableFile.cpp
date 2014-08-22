@@ -28,9 +28,15 @@ using namespace chaos::data_service::vfs;
 #define VFSWF_LERR_ LERR_ << VFSDataWriteableFile_LOG_HEAD <<__LINE__<< " - "
 
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 VFSDataWriteableFile::VFSDataWriteableFile(storage_system::StorageDriver *_storage_driver_ptr,
 										   index_system::IndexDriver *_index_driver_ptr,
 										   std::string data_vfs_relative_path):
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 VFSDataFile(_storage_driver_ptr,
 			_index_driver_ptr,
 			data_vfs_relative_path,
@@ -38,14 +44,18 @@ VFSDataFile(_storage_driver_ptr,
 	
 }
 
-//! check if datablock is valid according to internal logic
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 bool VFSDataWriteableFile::isDataBlockValid(DataBlock *new_data_block_ptr) {
 	//check operational value
 	return VFSFile::isDataBlockValid(new_data_block_ptr);
 
 }
 
-//! force new data block creation
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 int VFSDataWriteableFile::switchDataBlock() {
 	int err = 0;
 	if((err = VFSFile::releaseDataBlock(current_data_block))) {
@@ -55,8 +65,16 @@ int VFSDataWriteableFile::switchDataBlock() {
 	}
 	return err;
 }
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+int64_t VFSDataWriteableFile::getCurrentOffSet() {
+	return current_data_block == NULL ?-1:current_data_block->current_size;
+}
 
-// write data on the current data block
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 int VFSDataWriteableFile::write(void *data, uint32_t data_len) {
 	int err = 0;
 	if(!isDataBlockValid(current_data_block)) {

@@ -33,8 +33,10 @@
 using namespace chaos::data_service::index_system;
 namespace vfs=chaos::data_service::vfs;
 
-StageDataVFileScanner::StageDataVFileScanner(vfs::VFSStageReadableFile *_stage_file):
-stage_file(_stage_file),
+StageDataVFileScanner::StageDataVFileScanner(vfs::VFSManager *_vfs_manager,
+											 vfs::VFSStageReadableFile *_working_stage_file):
+vfs_manager(_vfs_manager),
+working_stage_file(_working_stage_file),
 data_buffer(NULL),
 curret_data_buffer_len(0) {
 	
@@ -47,7 +49,7 @@ StageDataVFileScanner::~StageDataVFileScanner() {
 }
 
 std::string StageDataVFileScanner::getScannedVFSPath() {
-	return stage_file->getVFSFileInfo()->vfs_fpath;
+	return working_stage_file->getVFSFileInfo()->vfs_fpath;
 }
 
 void StageDataVFileScanner::grow(uint32_t new_size) {
@@ -56,17 +58,53 @@ void StageDataVFileScanner::grow(uint32_t new_size) {
 	}
 }
 
-vfs::VFSDataWriteableFile *getWriteableFileForDID(std::string did) {
-	return NULL;
+vfs::VFSDataWriteableFile *StageDataVFileScanner::getWriteableFileForDID(const std::string& did) {
+	vfs::VFSDataWriteableFile *vfile = NULL;
+	if(map_did_data_file.count(did)) {
+		vfile = map_did_data_file[did];
+	} else {
+		//we need to create a new data file for new readed unique identifier
+		if(!vfs_manager->getWriteableDataFile(did, &vfile) && vfile){
+			map_did_data_file.insert(make_pair(did, vfile));
+		}else {
+			StageDataVFileScannerLERR_ << "Error creating data file for " << did;
+		}
+	}
+	return vfile;
 }
 
-void StageDataVFileScanner::processDataPack(bson::BSONObj data_pack) {
+bool StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack) {
 	if(!data_pack.hasField(chaos::DataPackKey::CS_CSV_CU_ID) ||
 	   data_pack.hasField(chaos::DataPackKey::CS_CSV_CU_ID)) {
 		StageDataVFileScannerLDBG_ << "Current scanned data pack doesn't have required field: " << data_pack.toString();
+		return false;
 	}
+	//get values for key that are mandatory for default index
 	std::string did = data_pack.getField(chaos::DataPackKey::CS_CSV_CU_ID).String();
 	uint64_t	dts = data_pack.getField(chaos::DataPackKey::CS_CSV_TIME_STAMP).numberLong();
+	
+	//get file for unique id
+	vfs::VFSDataWriteableFile *did_vfile = getWriteableFileForDID(did);
+	if(!did_vfile) {
+		//strange error because datablock is null
+		StageDataVFileScannerLERR_ << "No vfs got for unique id " << did;
+		return false;
+	}
+	//write packet to his virtaul data file
+	int64_t current_offset = did_vfile->getCurrentOffSet();
+	if(current_offset == -1) {
+		//strange error because datablock is null
+		StageDataVFileScannerLERR_ << "Error on retrieve datafile offset";
+		return false;
+	}
+	
+	//write pack on file
+	if(did_vfile->write((void*)data_pack.objdata(), data_pack.objsize())) {
+		StageDataVFileScannerLERR_ << "Error writing datafile";
+		return false;
+	}
+	
+	return true;
 }
 
 #define BREAK_ON_NO_DATA_READED \
@@ -83,7 +121,7 @@ int StageDataVFileScanner::scan() {
 	bool work = true;
 	while(work) {
 		//read the header
-		err = stage_file->read(data_buffer, BSON_HEADER_SIZE);
+		err = working_stage_file->read(data_buffer, BSON_HEADER_SIZE);
 		BREAK_ON_NO_DATA_READED
 		
 		//get the bson size to read
@@ -93,7 +131,7 @@ int StageDataVFileScanner::scan() {
 		grow(bson_size);
 		
 		//read all bson
-		err = stage_file->read((static_cast<char*>(data_buffer)+4), bson_size-4);
+		err = working_stage_file->read((static_cast<char*>(data_buffer)+4), bson_size-4);
 		BREAK_ON_NO_DATA_READED
 		
 		processDataPack(bson::BSONObj(static_cast<const char*>(data_buffer)));

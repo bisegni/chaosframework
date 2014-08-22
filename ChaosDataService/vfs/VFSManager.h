@@ -46,6 +46,7 @@ namespace chaos {
 				//! identify the mac lifetime for a logical file block
 				uint32_t		max_block_lifetime;
 				
+				
 				//! current index driver implementaiton to use
 				std::string index_driver_impl;
 				

@@ -79,6 +79,9 @@ namespace chaos{
 			
 			//----------vfs configuration----------------
 			vfs::VFSManagerSetting		file_manager_setting;
+			
+			//-------------index system------------------
+
 		} ChaosDataServiceSetting;
 	}
 }

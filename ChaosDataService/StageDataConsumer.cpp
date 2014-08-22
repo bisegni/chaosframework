@@ -58,32 +58,17 @@ void StageDataConsumer::init(void *init_data) throw (chaos::CException) {
 	if(!settings)  throw chaos::CException(-1, "No setting provided", __FUNCTION__);
 	
 	//add answer worker
-	StageDataConsumerLAPP_ << "Allocating stage data indexer";
-	chaos::data_service::worker::IndexStageDataWorker *tmp_indexer_data_worker = NULL;
-	
-	//allocate the worker
-	/*for(int idx = 0; idx < settings->indexer_worker_num; idx++) {
-		tmp_indexer_data_worker = new chaos::data_service::worker::IndexStageDataWorker(vfs_manager_instance);
-		tmp_indexer_data_worker->init(NULL);
-		for(CacheServerListIterator iter = settings->startup_chache_servers.begin();
-			iter != settings->startup_chache_servers.end();
-			iter++) {
-			tmp_indexer_data_worker->init(init_data);
-		}
-		indexer_stage_worker_list.addSlot(tmp_indexer_data_worker);
-	}*/
-	
+	StageDataConsumerLAPP_ << "Allocating index driver";
+	//allocate index driver
+	std::string index_driver_class_name = boost::str(boost::format("%1%IndexDriver") % setting->index_driver_impl);
+	VFSFM_LAPP_ << "Allocate index driver of type "<<index_driver_class_name;
+	index_driver_ptr = chaos::ObjectFactoryRegister<index_system::IndexDriver>::getInstance()->getNewInstanceByName(index_driver_class_name);
+	if(!index_driver_ptr) throw chaos::CException(-1, "No index driver found", __PRETTY_FUNCTION__);
+	chaos::utility::InizializableService::initImplementation(index_driver_ptr, &setting->index_driver_setting, index_driver_ptr->getName(), __PRETTY_FUNCTION__);
 }
 
 void StageDataConsumer::start() throw (chaos::CException) {
-	
-	//start the worker
-	/*for(int idx = 0; idx < indexer_stage_worker_list.getNumberOfSlot(); idx++) {
-		StageDataConsumerLAPP_ << "Stop stage data indexer of idx " << idx;
-		chaos::data_service::worker::DataWorker *worker = indexer_stage_worker_list.accessSlotByIndex(idx);
-		worker->start();
-	}*/
-	
+
 	StageDataConsumerLAPP_ << "Start find path timer";
 	//scan path every 60 seconds
 	chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, 60000);
@@ -110,22 +95,11 @@ void StageDataConsumer::stop() throw (chaos::CException) {
 		//delete the element
 		DISPOSE_SCANNER_INFO(scanner_info)
 	}
-	// now clear the superclass hashtable that will erase the element
-	
-	/*for(int idx = 0; idx < indexer_stage_worker_list.getNumberOfSlot(); idx++) {
-		StageDataConsumerLAPP_ << "Stop stage data indexer of idx " << idx;
-		chaos::data_service::worker::DataWorker *worker = indexer_stage_worker_list.accessSlotByIndex(idx);
-		worker->stop();
-	}*/
+
 }
 
 void StageDataConsumer::deinit() throw (chaos::CException) {
-	/*for(int idx = 0; idx < indexer_stage_worker_list.getNumberOfSlot(); idx++) {
-		StageDataConsumerLAPP_ << "Deallocating stage data indexer of idx " << idx;
-		chaos::data_service::worker::DataWorker *worker = indexer_stage_worker_list.accessSlotByIndex(idx);
-		worker->deinit();
-		delete(worker);
-	}*/
+
 }
 
 void StageDataConsumer::timeout() {
@@ -153,7 +127,7 @@ void StageDataConsumer::timeout() {
 			//scanner not present, so we need to add it
 			scanner_info = new StageScannerInfo();
 			scanner_info->index = ++global_scanner_num;
-			scanner_info->scanner = new index_system::StageDataVFileScanner(readable_stage_file);
+			scanner_info->scanner = new index_system::StageDataVFileScanner(vfs_manager_instance, readable_stage_file);
 			
 			//add new scanner infor to the processing queue to be scheduled and in vector to keep track of it
 			vector_working_path.push_back(*it);
