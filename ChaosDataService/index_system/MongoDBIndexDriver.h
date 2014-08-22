@@ -71,7 +71,7 @@ namespace chaos {
 #define MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH			"vfs_path"
 #define MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN		"vfs_domain"
 #define MONGO_DB_FIELD_DATA_BLOCK_HB				"hb"
-				
+
 				//db_idx field-------------------------------------------------
 #define MONGO_DB_IDX_DATA_PACK_DID						"did"
 #define MONGO_DB_IDX_DATA_PACK_ACQ_TS					"acq_ts"

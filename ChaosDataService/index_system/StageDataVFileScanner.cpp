@@ -152,6 +152,7 @@ int StageDataVFileScanner::scan() {
 		err = working_stage_file->read((static_cast<char*>(data_buffer)+4), bson_size-4);
 		BREAK_ON_NO_DATA_READED
 		
+
 		if(!(work = processDataPack(bson::BSONObj(static_cast<const char*>(data_buffer))))){
 			//some error has occured so we need to close all chunk end go forward
 		};

@@ -591,6 +591,7 @@ int MongoDBIndexDriver::idxAddDataPackIndex(const DataPackIndex& index) {
 		err = -1;
 	}
 	return err;
+
 }
 
 //! add the default index for a unique instrument identification and a timestamp
