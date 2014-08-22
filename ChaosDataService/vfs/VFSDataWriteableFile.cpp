@@ -58,18 +58,24 @@ bool VFSDataWriteableFile::isDataBlockValid(DataBlock *new_data_block_ptr) {
  ---------------------------------------------------------------------------------*/
 int VFSDataWriteableFile::switchDataBlock() {
 	int err = 0;
-	if((err = VFSFile::releaseDataBlock(current_data_block))) {
+	if(current_data_block &&
+	   (err = VFSFile::releaseDataBlock(current_data_block))) {
 		VFSWF_LERR_ << "Error releaseing datablock " << err;
 	} else if((err = VFSFile::getNewDataBlock(&current_data_block))) {
 		VFSWF_LERR_ << "Error creating datablock " << err;
 	}
 	return err;
 }
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
-int64_t VFSDataWriteableFile::getCurrentOffSet() {
-	return current_data_block == NULL ?-1:current_data_block->current_size;
+
+//! ensure that a datablock is not null
+/*!
+ usefullt to get the current lcoation before write the first data pack.
+ */
+int VFSDataWriteableFile::ensureDatablockAllocated() {
+	if(!current_data_block) {
+		return switchDataBlock();
+	}
+	return 0;
 }
 
 /*---------------------------------------------------------------------------------

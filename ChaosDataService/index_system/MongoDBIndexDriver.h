@@ -47,6 +47,7 @@ namespace chaos {
 #define MONGO_DB_VFS_DOMAINS_URL_COLLECTION	"domains_url"
 #define MONGO_DB_VFS_VFAT_COLLECTION		"vfat"
 #define MONGO_DB_VFS_VBLOCK_COLLECTION		"datablock"
+#define MONGO_DB_IDX_DATA_PACK_COLLECTION	"dp_idx"
 				
 #define MONGO_DB_COLLECTION_NAME(db,coll)	boost::str(boost::format("%1%.%2%") % db % coll)
 				
@@ -68,6 +69,12 @@ namespace chaos {
 #define MONGO_DB_FIELD_DATA_BLOCK_MAX_BLOCK_SIZE	"mbs"
 #define MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH			"vfs_path"
 #define MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN		"vfs_domain"
+	
+				//db_idx field-------------------------------------------------
+#define MONGO_DB_IDX_DATA_PACK_DID						"did"
+#define MONGO_DB_IDX_DATA_PACK_ACQ_TS					"acq_ts"
+#define MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_ID		"db_id"
+#define MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET	"db_offset"
 				
 				//! Mongodb implementation for the index driver
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(MongoDBIndexDriver, IndexDriver) {
@@ -128,6 +135,9 @@ namespace chaos {
 					
 					//! Return a list of vfs path of the file belong to a domain
 					int vfsGetFilePathForDomain(std::string vfs_domain, std::string prefix_filter, std::vector<std::string>& result_vfs_file_path, int limit_to_size);
+					
+					//! add the default index for a unique instrument identification and a timestamp
+					int idxAddDataPackIndex(const DataPackIndex& index);
 				};
 			}
 	}

@@ -84,15 +84,15 @@ int main(int argc, char * argv[]) {
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_STORAGE_DRIVER_KVP,
 																									"The key value parameter for storage implementation driver (ex k:v-k1:v1)");
 		
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_INDEX_DRIVER_IMPL,
-																									"The name of the vfs storage implementation [MongoDB]",
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_INDEX_DRIVER_IMPL,
+																									"The name of the index driver implementation [MongoDB]",
 																									"MongoDB",
-																									&ChaosDataService::getInstance()->settings.file_manager_setting.index_driver_impl);
+																									&ChaosDataService::getInstance()->settings.index_driver_impl);
 		
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_VFS_INDEX_DRIVER_SERVERS,
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_INDEX_DRIVER_SERVERS,
 																												 "The list of the index servers",
-																												 &ChaosDataService::getInstance()->settings.file_manager_setting.index_driver_setting.servers);
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_INDEX_DRIVER_KVP,
+																												 &ChaosDataService::getInstance()->settings.index_driver_setting.servers);
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_INDEX_DRIVER_KVP,
 																									"The key value parameter for index implementation driver (ex k:v-k1:v1)");
 
 		//preparse for blow custom option

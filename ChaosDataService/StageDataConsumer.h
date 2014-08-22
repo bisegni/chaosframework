@@ -68,7 +68,10 @@ namespace chaos{
 		protected chaos::common::async_central::TimerHandler {
             friend class ChaosDataService;
 			ChaosDataServiceSetting	*settings;
-			vfs::VFSManager *vfs_manager_instance;
+			
+			vfs::VFSManager *vfs_manager_ptr;
+			index_system::IndexDriver *index_driver_ptr;
+			
 			chaos::common::utility::ObjectSlot<chaos::data_service::worker::DataWorker*> indexer_stage_worker_list;
 
 			//thread managment
@@ -96,7 +99,9 @@ namespace chaos{
 			
 			void rescheduleScannerInfo(StageScannerInfo *scanner_info);
 		public:
-			StageDataConsumer(vfs::VFSManager *_vfs_manager_instance, ChaosDataServiceSetting *_settings);
+			StageDataConsumer(vfs::VFSManager *_vfs_manager_ptr,
+							  index_system::IndexDriver *_index_driver_ptr,
+							  ChaosDataServiceSetting *_settings);
             ~StageDataConsumer();
             void init(void *init_data) throw (chaos::CException);
             void start() throw (chaos::CException);

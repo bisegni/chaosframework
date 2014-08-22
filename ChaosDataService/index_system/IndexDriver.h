@@ -21,13 +21,15 @@
 #ifndef __CHAOSFramework__IndexDriver__
 #define __CHAOSFramework__IndexDriver__
 
+#include <map>
 #include <string>
 #include <vector>
 
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/InizializableService.h>
 
-#include "../vfs/VFSTypes.h"
+//#include "../vfs/VFSTypes.h"
+#include "index_system_types.h"
 
 namespace chaos {
 	namespace data_service {
@@ -65,6 +67,9 @@ namespace chaos {
 				IndexDriver(std::string alias);
 			protected:
 				IndexDriverSetting *setting;
+				
+				chaos_vfs::DataBlock *getDataBlockFromFileLocation(const vfs::FileLocationPointer& data_block);
+				uint64_t getDataBlockOffsetFromFileLocation(const vfs::FileLocationPointer& data_block);
 			public:
 				
 				//! public destructor
@@ -180,6 +185,15 @@ namespace chaos {
 				 \param result_vfs_file_path array contains the found vfs paths.
 				 */
 				virtual int vfsGetFilePathForDomain(std::string vfs_domain, std::string prefix_filter, std::vector<std::string>& result_vfs_file_path, int limit_to_size = 100) = 0;
+				
+				//! add the default index for a unique instrument identification and a timestamp
+				/*!
+				 whitin !CHAOS every data pack has, by default, an unique identification and a timestamp that represet
+				 the time when the data into packet have been colelcted. This api write the default index on database
+				 that permit to find the data pack whhitin the destination virtula file.
+				 \param index the index to be stored for a new datapack
+				 */
+				virtual int idxAddDataPackIndex(const DataPackIndex& index) = 0;
 			};
 		}
 	}

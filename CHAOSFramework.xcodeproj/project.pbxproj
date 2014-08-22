@@ -803,6 +803,7 @@
 		3271063419A6157800946A8B /* VFSDataFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSDataFile.h; sourceTree = "<group>"; };
 		3271063619A6188000946A8B /* VFSDataWriteableFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSDataWriteableFile.cpp; sourceTree = "<group>"; };
 		3271063719A6188000946A8B /* VFSDataWriteableFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSDataWriteableFile.h; sourceTree = "<group>"; };
+		3271063C19A7417000946A8B /* index_system_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = index_system_types.h; sourceTree = "<group>"; };
 		3272152218B006BC005AC8FD /* CacheDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheDriver.cpp; sourceTree = "<group>"; };
 		3272152318B006BC005AC8FD /* CacheDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheDriver.h; sourceTree = "<group>"; };
 		3272FE1615E1053100B096FB /* EventForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventForwarder.h; sourceTree = "<group>"; };
@@ -2277,6 +2278,7 @@
 			isa = PBXGroup;
 			children = (
 				327D5E42192DE3430043ED21 /* index_system.h */,
+				3271063C19A7417000946A8B /* index_system_types.h */,
 				327D5E43192DE3430043ED21 /* IndexDriver.cpp */,
 				327D5E44192DE3430043ED21 /* IndexDriver.h */,
 				327D5E45192DE3430043ED21 /* MongoDBHAConnectionManager.cpp */,

@@ -40,7 +40,9 @@ using namespace chaos::data_service::vfs;
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-VFSManager::VFSManager():setting(NULL) {
+VFSManager::VFSManager(index_system::IndexDriver *_index_driver_ptr):
+setting(NULL),
+index_driver_ptr(_index_driver_ptr){
 	
 }
 /*---------------------------------------------------------------------------------
@@ -60,7 +62,8 @@ void VFSManager::init(void * init_data) throw (chaos::CException) {
 	//associate the setting
 	VFSFM_LAPP_ << "Get setting";
 	setting = static_cast<VFSManagerSetting*>(init_data);
-		
+	
+	//torage driver is interally managed by vfs manage
 	std::string storage_driver_class_name = boost::str(boost::format("%1%StorageDriver") % setting->storage_driver_impl);
 	VFSFM_LAPP_ << "Allocate storage driver of type " << storage_driver_class_name;
 	storage_driver_ptr = chaos::ObjectFactoryRegister<storage_system::StorageDriver>::getInstance()->getNewInstanceByName(storage_driver_class_name);
@@ -98,17 +101,6 @@ void VFSManager::deinit() throw (chaos::CException) {
 	VFSFM_LAPP_ << "Deallocate hb timer";
 	chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
 	
-	if(index_driver_ptr) {
-		VFSFM_LAPP_ << "Deallocate index driver";
-		
-		try {
-			chaos::utility::InizializableService::deinitImplementation(index_driver_ptr, index_driver_ptr->getName(), __PRETTY_FUNCTION__);
-		} catch (chaos::CException e) {
-			VFSFM_LDBG_ << e.what();
-		}
-		
-		delete (index_driver_ptr);
-	}
 	if(storage_driver_ptr) {
 		VFSFM_LAPP_ << "Deallocate storage driver";
 		try {

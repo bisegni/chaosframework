@@ -21,12 +21,16 @@
 #define __CHAOSFramework__VFSFile__
 
 #include "VFSTypes.h"
+#include "DataBlock.h"
 #include "../index_system/IndexDriver.h"
 #include "storage_system/StorageDriver.h"
 
 
 namespace chaos {
 	namespace data_service {
+		namespace index_system {
+			class IndexDriver;
+		}
 		namespace vfs {
 		
 			namespace chaos_index = chaos::data_service::index_system;
@@ -42,7 +46,7 @@ namespace chaos {
 			//! VFS Logical file
 			class VFSFile {
 				friend class VFSManager;
-				
+				friend class IndexDriver;
 				//! operational setting for the virtual file
 				VFSFileInfo vfs_file_info;
 				
@@ -80,6 +84,9 @@ namespace chaos {
 			public:
 				//! Get the VFS information for file
 				const VFSFileInfo *getVFSFileInfo() const;
+				
+				//! return the curent location pointed by writeable file
+				FileLocationPointer getCurrentFileLocation();
 				
 				//! Check if the file exists
 				bool exist();
