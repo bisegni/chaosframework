@@ -186,7 +186,6 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
         DECODE_CHAOS_EXCEPTION(ex)
         exit(1);
     }
-    //start data manager
 }
 
 /*

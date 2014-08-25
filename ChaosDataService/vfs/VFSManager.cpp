@@ -145,12 +145,13 @@ void VFSManager::freeObject(std::string key,
  ---------------------------------------------------------------------------------*/
 int VFSManager::getFile(std::string area,
 						std::string vfs_fpath,
-						VFSFile **l_file) {
+						VFSFile **l_file,
+						VFSFileOpenMode open_mode) {
 	DEBUG_CODE(VFSFM_LDBG_ << "Start getting new logical file with path->" << vfs_fpath;)
 	
 	VFSFilesForPath *files_for_path = NULL;
 	
-	VFSFile *logical_file = new VFSFile(storage_driver_ptr, index_driver_ptr, area, vfs_fpath);
+	VFSFile *logical_file = new VFSFile(storage_driver_ptr, index_driver_ptr, area, vfs_fpath, open_mode);
 	if(!logical_file) return -1;
 	
 	//the vfs file is identified by a folder containing all data block
@@ -189,7 +190,7 @@ int VFSManager::getFile(std::string area,
 int VFSManager::getWriteableStageFile(std::string
 									  stage_vfs_relative_path,
 									  VFSStageWriteableFile **wsf_file) {
-	DEBUG_CODE(VFSFM_LDBG_ << "Start getting new writeable stage file with name->" << stage_vfs_relative_path;)
+	DEBUG_CODE(VFSFM_LDBG_ << "Start getting new writeable data file with name->" << stage_vfs_relative_path;)
 	
 	VFSFilesForPath *files_for_path = NULL;
 	
@@ -223,7 +224,7 @@ int VFSManager::getWriteableStageFile(std::string
 	files_for_path->map_logical_files.insert(make_pair(writeable_stage_file->vfs_file_info.identify_key, writeable_stage_file));
 	
 	*wsf_file = writeable_stage_file;
-	DEBUG_CODE(VFSFM_LDBG_ << "Created writeable stage file with vfs path->" << writeable_stage_file->getVFSFileInfo()->vfs_fpath;)
+	DEBUG_CODE(VFSFM_LDBG_ << "Created writeable data file with vfs path->" << writeable_stage_file->getVFSFileInfo()->vfs_fpath;)
 
 	return 0;
 }

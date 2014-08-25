@@ -28,8 +28,13 @@ using namespace chaos::data_service::vfs;
 #define VFSWF_LERR_ LERR_ << VFSStageWriteableFile_LOG_HEAD << __FUNCTION__ << " - "
 
 
-VFSStageWriteableFile::VFSStageWriteableFile(storage_system::StorageDriver *_storage_driver_ptr, index_system::IndexDriver *_index_driver_ptr, std::string stage_vfs_relative_path):
-VFSStageFile(_storage_driver_ptr, _index_driver_ptr, stage_vfs_relative_path, VFSStageFileOpenModeWrite) {
+VFSStageWriteableFile::VFSStageWriteableFile(storage_system::StorageDriver *_storage_driver_ptr,
+											 index_system::IndexDriver *_index_driver_ptr,
+											 std::string stage_vfs_relative_path):
+VFSStageFile(_storage_driver_ptr,
+			 _index_driver_ptr,
+			 stage_vfs_relative_path,
+			 VFSStageFileOpenModeWrite) {
 	
 }
 
@@ -51,11 +56,13 @@ int VFSStageWriteableFile::write(void *data, uint32_t data_len) {
 	if(!isDataBlockValid(current_data_block)) {
 		if((err = VFSFile::releaseDataBlock(current_data_block))) {
 			VFSWF_LERR_ << "Error releaseing datablock " << err;
-		}
-		
-		if((err = VFSFile::getNewDataBlock(&current_data_block))) {
+		} else if((err = VFSFile::getNewDataBlock(&current_data_block))) {
 			VFSWF_LERR_ << "Error creating datablock " << err;
 		}
 	}
-	return VFSFile::write(data, data_len);
+	
+	if( err || (err = VFSStageFile::write(data, data_len))) {
+		VFSWF_LERR_ << "Error writing to datablock " << err;
+	}
+	return err ;
 }

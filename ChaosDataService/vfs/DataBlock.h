@@ -50,8 +50,8 @@ namespace chaos {
 				//! the precalculated max reacheable size for the block
 				uint64_t	max_reacheable_size;
 				
-				//!current datablock size
-				uint64_t	current_size;
+				//!current datablock position in file elaboration(write or read according to the state)
+				uint64_t	current_work_position;
 				
 				//!current datablock size
 				uint64_t	creation_time;
@@ -66,7 +66,7 @@ namespace chaos {
 				//! data usefull for index driver where can put information to fastes find the datablock
 				std::string index_driver_uinique_id;
 				
-				DataBlock():flags(0), invalidation_timestamp(0), max_reacheable_size(0), current_size(0), creation_time(0), driver_private_data(NULL){}
+				DataBlock():flags(0), invalidation_timestamp(0), max_reacheable_size(0), current_work_position(0), creation_time(0), driver_private_data(NULL){}
 			};
 			
 			//! define a pointer to a location whitin a virtual file

@@ -63,14 +63,14 @@ namespace chaos {
 #define MONGO_DB_FIELD_FILE_VFS_DOMAIN				"vfs_domain"
 				
 				//data block field-------------------------------------------------
-#define MONGO_DB_FIELD_DATA_BLOCK_STATE				"state"
-#define MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS		"ct"
-#define MONGO_DB_FIELD_DATA_BLOCK_VALID_UNTIL_TS	"vu"
-#define MONGO_DB_FIELD_DATA_BLOCK_MAX_BLOCK_SIZE	"mbs"
-#define MONGO_DB_FIELD_DATA_BLOCK_CUR_POSITION		"cur_pos"
-#define MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH			"vfs_path"
-#define MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN		"vfs_domain"
-#define MONGO_DB_FIELD_DATA_BLOCK_HB				"hb"
+#define MONGO_DB_FIELD_DATA_BLOCK_STATE						"state"
+#define MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS				"ct"
+#define MONGO_DB_FIELD_DATA_BLOCK_VALID_UNTIL_TS			"vu"
+#define MONGO_DB_FIELD_DATA_BLOCK_MAX_BLOCK_SIZE			"mbs"
+#define MONGO_DB_FIELD_DATA_BLOCK_CURRENT_WORK_POSITION		"cur_work_pos"
+#define MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH					"vfs_path"
+#define MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN				"vfs_domain"
+#define MONGO_DB_FIELD_DATA_BLOCK_HB						"hb"
 
 				//db_idx field-------------------------------------------------
 #define MONGO_DB_IDX_DATA_PACK_DID						"did"
@@ -108,34 +108,30 @@ namespace chaos {
 					//! Set the state for a stage datablock
 					int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 											   chaos_vfs::DataBlock *data_block,
-											   vfs::data_block_state::DataBlockState state);
+											   int state);
 					
 					//! Set the state for a stage datablock
 					int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 											   chaos_vfs::DataBlock *data_block,
-											   vfs::data_block_state::DataBlockState cur_state,
-											   vfs::data_block_state::DataBlockState new_state,
+											   int cur_state,
+											   int new_state,
 											   bool& success);
 					
 					//! Set the datablock current position
-					virtual int vfsSetCurrentPositionOnDatablock(chaos_vfs::VFSFile *vfs_file,
-																 chaos_vfs::DataBlock *data_block,
-																 uint64_t offset);
+					int vfsSetHeartbeatOnDatablock(chaos_vfs::VFSFile *vfs_file,
+												   chaos_vfs::DataBlock *data_block,
+												   uint64_t timestamp = 0);
 					
-					//! Set the datablock current position
-					virtual int vfsSetHeartbeatOnDatablock(chaos_vfs::VFSFile *vfs_file,
-														   chaos_vfs::DataBlock *data_block);
+					//! update the current datablock size
+					int vfsUpdateDatablockCurrentWorkPosition(chaos_vfs::VFSFile *vfs_file,
+															  chaos_vfs::DataBlock *data_block);
 					
 					//! Return the next available datablock created since timestamp
 					int vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
 												  uint64_t timestamp,
 												  bool direction,
-												  vfs::data_block_state::DataBlockState state,
+												  int state,
 												  chaos_vfs::DataBlock **data_block);
-					
-					//! Heartbeat update stage block
-					int vfsWorkHeartBeatOnDataBlock(chaos_vfs::VFSFile *vfs_file,
-													chaos_vfs::DataBlock *data_block);
 					
 					//! Check if the vfs file exists
 					int vfsFileExist(chaos_vfs::VFSFile *vfs_file,

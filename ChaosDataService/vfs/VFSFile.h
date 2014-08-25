@@ -35,6 +35,7 @@ namespace chaos {
 		
 			namespace chaos_index = chaos::data_service::index_system;
 			
+			
 			class VFSManager;
 			struct DataBlock;
 			
@@ -50,12 +51,21 @@ namespace chaos {
 				//! operational setting for the virtual file
 				VFSFileInfo vfs_file_info;
 				
+				//record last read or write operation timestamp
+				uint64_t last_wr_ts;
+				
 			protected:
+				//! track the opening mode
+				int open_mode;
+				
 				//!tag if the file is in good state
 				bool good;
 
 				//! Current available data block where read or write
 				DataBlock *current_data_block;
+				
+				//!current journal datablock
+				DataBlock *current_journal_data_block;
 				
 				//!index driver pointer
 				chaos_index::IndexDriver *index_driver_ptr;
@@ -66,21 +76,38 @@ namespace chaos {
 				//! return new datablock where write into
 				int getNewDataBlock(DataBlock **new_data_block_handler);
 				
-				//! return new datablock where write into
-				int getNextInTimeDataBlock(DataBlock **new_data_block_handler, uint64_t timestamp, data_block_state::DataBlockState state);
-				
 				//! change Datablock state
 				int updateDataBlockState(data_block_state::DataBlockState state);
 				
-				//! release a datablock
-				int releaseDataBlock(DataBlock *data_block_ptr);
+				//! release a datablock adn set the current work position
+				virtual int releaseDataBlock(DataBlock *data_block_ptr);
 				
 				//! check the validity of the datablock(usefull only on write version of the write)
 				bool isDataBlockValid(DataBlock *data_block_ptr);
 				
 				//default consturctor or destructor
-				VFSFile(storage_system::StorageDriver *_storage_driver_ptr, index_system::IndexDriver *_index_driver_ptr, std::string area, std::string vfs_fpath);
+				VFSFile(storage_system::StorageDriver *_storage_driver_ptr,
+						index_system::IndexDriver *_index_driver_ptr,
+						std::string area,
+						std::string vfs_fpath,
+						int _open_mode);
+				
+				//!destructore
 				~VFSFile();
+				
+				//   journal file managment api
+				//! open a journa file for the datablock
+				int openJournalForDatablock(DataBlock *datablock, DataBlock **current_journal_data_block);
+				
+				//! close the journal file for the datablock
+				int closeJournalDatablock(DataBlock *current_journal_data_block);
+				
+				//! sync location of master datablock on journal
+				int syncLocationFromDatablockAndJournal(DataBlock *datablock, DataBlock *current_journal_data_block);
+				
+				//! check if the journl is present
+				int journalIsPresent(DataBlock *datablock,  bool &presence);
+				
 			public:
 				//! Get the VFS information for file
 				const VFSFileInfo *getVFSFileInfo() const;
@@ -94,7 +121,11 @@ namespace chaos {
 				//! Return the goodness of the file
 				bool isGood();
 				
-				virtual int seekOnCurrentBlock(block_seek_base::BlockSeekBase base_direction, int64_t offset);
+				//! seek on block
+				/*!
+				 \param gp false = seekg true = seekp
+				 */
+				virtual int seekOnCurrentBlock(block_seek_base::BlockSeekBase base_direction, int64_t offset, bool gp);
 				
 				//! write data on the current data block
 				virtual int write(void *data, uint32_t data_len);
@@ -108,6 +139,12 @@ namespace chaos {
 				 otherwise the number of byte readed
 				 */
 				virtual int read(void *buffer, uint32_t buffer_len);
+				
+				//! give heartbeat on current datablock
+				int giveHeartbeat(uint64_t hb_time = 0);
+				
+				//Synck the journal with current block state
+				virtual int syncJournal();
 			};
 		}
 	}

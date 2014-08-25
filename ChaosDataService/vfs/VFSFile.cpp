@@ -40,10 +40,14 @@ using namespace chaos::data_service::vfs;
 VFSFile::VFSFile(storage_system::StorageDriver *_storage_driver_ptr,
 				 chaos_index::IndexDriver *_index_driver_ptr,
 				 std::string area,
-				 std::string vfs_fpath) :
+				 std::string vfs_fpath,
+				 int _open_mode):
+open_mode(_open_mode),
+last_wr_ts(0),
 storage_driver_ptr(_storage_driver_ptr),
 index_driver_ptr(_index_driver_ptr),
-current_data_block(NULL) {
+current_data_block(NULL),
+current_journal_data_block(NULL) {
 	//check the path if his prefix is not equal to area (omit duplcieted name in path for prefix)
 	if(vfs_fpath.substr(0, area.size()).find(area, 0) == std::string::npos) {
 		vfs_file_info.vfs_fpath = area + "/" +vfs_fpath;
@@ -51,7 +55,6 @@ current_data_block(NULL) {
 		//the path in the prefix has the area
 		vfs_file_info.vfs_fpath = vfs_fpath;
 	}
-	
 }
 
 /*---------------------------------------------------------------------------------
@@ -75,7 +78,7 @@ int VFSFile::getNewDataBlock(DataBlock **new_data_block_handler) {
 	if(storage_driver_ptr->openBlock(block_unique_path, block_flag::BlockFlagWriteble, &new_data_block_ptr) || !new_data_block_ptr) {
 		return -1;
 	}
-
+	
 	//compute data block limits for this vfs configuraiton
 	new_data_block_ptr->invalidation_timestamp = TimingUtil::getTimeStamp() + vfs_file_info.max_block_lifetime;
 	new_data_block_ptr->max_reacheable_size = vfs_file_info.max_block_size;
@@ -87,14 +90,6 @@ int VFSFile::getNewDataBlock(DataBlock **new_data_block_handler) {
 	}
 	*new_data_block_handler = new_data_block_ptr;
 	DEBUG_CODE(VFSF_LDBG_ << "Opened datablock of path " << new_data_block_ptr->vfs_path);
-
-	return 0;
-}
-
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
-int VFSFile::getNextInTimeDataBlock(DataBlock **new_data_block_handler, uint64_t timestamp, data_block_state::DataBlockState state) {
 	return 0;
 }
 
@@ -119,9 +114,25 @@ int VFSFile::releaseDataBlock(DataBlock *data_block_ptr) {
 	//write on index for free of work block
 	if((err = index_driver_ptr->vfsSetStateOnDataBlock(this, data_block_ptr, data_block_state::DataBlockStateNone))) {
 		VFSF_LERR_ << "Error setting state on datablock with error " << err;
+	} else if ((err = index_driver_ptr->vfsUpdateDatablockCurrentWorkPosition(this, data_block_ptr))) {
+		VFSF_LERR_ << "Error setting work location on datablock with error " << err;
+	} else if ((err = index_driver_ptr->vfsSetHeartbeatOnDatablock(this, data_block_ptr, chaos::TimingUtil::getTimeStamp()))) {
+		VFSF_LERR_ << "Error setting heartbeat on datablock with error " << err;
 	}
 	//close the block
 	return storage_driver_ptr->closeBlock(data_block_ptr);
+}
+
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+int VFSFile::giveHeartbeat(uint64_t hb_time) {
+	int err = 0;
+	if(current_data_block && (err = index_driver_ptr->vfsSetHeartbeatOnDatablock(this, current_data_block, hb_time))) {
+		VFSF_LERR_ << "Error setting heartbeaat wit error " << err << " on datablock " << current_data_block->vfs_path;
+	}
+	return err;
 }
 
 /*---------------------------------------------------------------------------------
@@ -132,7 +143,7 @@ bool VFSFile::isDataBlockValid(DataBlock *data_block_ptr) {
 	
 	//check operational value
 	bool is_valid = data_block_ptr->invalidation_timestamp > chaos::TimingUtil::getTimeStamp();
-	is_valid = is_valid && data_block_ptr->current_size < data_block_ptr->max_reacheable_size;
+	is_valid = is_valid && data_block_ptr->current_work_position < data_block_ptr->max_reacheable_size;
 	return is_valid;
 }
 
@@ -148,7 +159,7 @@ const VFSFileInfo *VFSFile::getVFSFileInfo() const {
  
  ---------------------------------------------------------------------------------*/
 FileLocationPointer VFSFile::getCurrentFileLocation() {
-	return FileLocationPointer(current_data_block, current_data_block == NULL ?-1:current_data_block->current_size);
+	return FileLocationPointer(current_data_block, current_data_block == NULL ?-1:current_data_block->current_work_position);
 }
 
 
@@ -175,18 +186,25 @@ bool VFSFile::exist() {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-int VFSFile::seekOnCurrentBlock(block_seek_base::BlockSeekBase base_direction, int64_t offset) {
+int VFSFile::seekOnCurrentBlock(block_seek_base::BlockSeekBase base_direction, int64_t offset, bool gp) {
 	if(!current_data_block) return -1;
-	
-	return storage_driver_ptr->seek(current_data_block, offset, base_direction);
+	if(gp) {
+		return storage_driver_ptr->seekp(current_data_block, offset, base_direction);
+	} else {
+		return storage_driver_ptr->seekg(current_data_block, offset, base_direction);
+	}
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
 int VFSFile::write(void *data, uint32_t data_len) {
-	//write data
-	return storage_driver_ptr->write(current_data_block, data, data_len);
+	int err = 0;
+	if(open_mode != VFSFileOpenModeWrite  ||
+	   (err = storage_driver_ptr->write(current_data_block, data, data_len))) {
+		VFSF_LERR_ << "Error writing with error " << err << " on datablock " << current_data_block->vfs_path;
+	}
+	return err;
 };
 
 /*---------------------------------------------------------------------------------
@@ -197,9 +215,74 @@ int VFSFile::read(void *buffer, uint32_t buffer_len) {
 	int err = 0;
 	uint32_t readed_byte = 0;
 	//read the requested byte size
-	if((err = storage_driver_ptr->read(current_data_block, buffer, buffer_len, readed_byte))){
-		return err;
+	if(open_mode != VFSFileOpenModeRead  ||
+	   (err = storage_driver_ptr->read(current_data_block, buffer, buffer_len, readed_byte))){
+		VFSF_LERR_ << "Error reading with error " << err << " on datablock " << current_data_block->vfs_path;
 	}
 	return readed_byte;
 }
 
+//--------------------------------------journal api --------------------------------
+//! open a journa file for the datablock
+int VFSFile::openJournalForDatablock(DataBlock *datablock, DataBlock **current_journal_data_block) {
+	int err = 0;
+	CHAOS_ASSERT(datablock)
+	
+	std::string jblock_apth = boost::str(boost::format("%1%.journal") % datablock->vfs_path);
+	
+	//open new block has writeable
+	if((err = storage_driver_ptr->openBlock(jblock_apth, block_flag::BlockFlagWriteble, current_journal_data_block))|| !*current_journal_data_block) {
+		VFSF_LERR_ << "Error Opening journal file " << err;
+	}
+	return err;
+}
+
+//! close the journal file for the datablock
+int VFSFile::closeJournalDatablock(DataBlock *current_journal_data_block) {
+	int err = 0;
+	CHAOS_ASSERT(current_journal_data_block)
+	std::string jblock_apth = current_journal_data_block->vfs_path;
+	//open new block has writeable
+	if((err = storage_driver_ptr->closeBlock(current_journal_data_block))) {
+		VFSF_LERR_ << "Error closing journal file " << err;
+	} else  if((err = storage_driver_ptr->deletePath(jblock_apth))) {
+		VFSF_LERR_ << "Error deleting journal file at " << jblock_apth << " with error " << err;
+	}
+	return err;
+}
+
+//! sync location of master datablock on journal
+int VFSFile::syncLocationFromDatablockAndJournal(DataBlock *datablock, DataBlock *current_journal_data_block) {
+	int err = 0;
+	CHAOS_ASSERT(datablock)
+	CHAOS_ASSERT(current_journal_data_block)
+	if((err = storage_driver_ptr->write(current_journal_data_block, (void*)&datablock->current_work_position, sizeof(uint64_t)))){
+		VFSF_LERR_ << "Error writing information on journal " << err;
+	} else if((err = storage_driver_ptr->flush(current_journal_data_block))) {
+		VFSF_LERR_ << "Error flushing journal " << err;
+	}
+	return 0;
+}
+
+//! check if the journl is present
+int VFSFile::journalIsPresent(DataBlock *current_journal_data_block, bool &presence) {
+	int err = 0;
+	CHAOS_ASSERT(current_journal_data_block)
+	if((err = storage_driver_ptr->blockIsPresent(current_journal_data_block, presence))) {
+		VFSF_LERR_ << "Error checking file existance with code " << err;
+		
+	}
+	return err;
+}
+
+//Synck the journal with current block state
+int VFSFile::syncJournal() {
+	int err = 0;
+	if(current_data_block && current_journal_data_block) {
+		if((err = syncLocationFromDatablockAndJournal(current_data_block, current_journal_data_block))) {
+			//error creating journal
+			VFSF_LERR_ << "Error syncronizing journal file " << err;
+		}
+	}
+	return err;
+}

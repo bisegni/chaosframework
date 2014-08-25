@@ -30,11 +30,9 @@ VFSDataFile::VFSDataFile(storage_system::StorageDriver *_storage_driver_ptr,
 VFSFile(_storage_driver_ptr,
 		_index_driver_ptr,
 		VFS_DATA_AREA,
-		data_vfs_relative_path), //superclass constructor
-open_mode(_open_mode) {
-	
-	//check for path prefix, the prefix of stage can't be put twice
-	
-	//allocate all thepath for this file
+		data_vfs_relative_path,
+		(int) _open_mode) //superclass constructor
+{	
+	//allocate all the path for this file
 	good = (storage_driver_ptr->createPath(getVFSFileInfo()->vfs_fpath) == 0);
 }

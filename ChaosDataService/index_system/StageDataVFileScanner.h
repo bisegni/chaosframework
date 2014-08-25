@@ -20,6 +20,7 @@
 #ifndef __CHAOSFramework__StageDataVFileScanner__
 #define __CHAOSFramework__StageDataVFileScanner__
 
+#include "DataPackScanner.h"
 #include "../vfs/VFSStageReadableFile.h"
 #include "../vfs/VFSDataWriteableFile.h"
 #include "../index_system/IndexDriver.h"
@@ -48,7 +49,7 @@ namespace chaos{
 				uint64_t last_wrote_ts;
 			} DataFileInfo;
 			
-			//! data pack scanner class
+			//! Stage data scanner
 			/*!
 			 this class scan a stage file consuming interanlly storede
 			 data pack (BSON) one at one. The default index has the following structure
@@ -66,26 +67,17 @@ namespace chaos{
 			 3 - store the dafault index into the database using the driver
 			 4 - step torward
 			 */
-			class StageDataVFileScanner {
+			class StageDataVFileScanner : public DataPackScanner {
 				friend class StageDataConsumer;
-				
-				void *data_buffer;
-				uint32_t curret_data_buffer_len;
-				
-				//file managment class
-				vfs::VFSManager *vfs_manager;
-				vfs::VFSStageReadableFile *working_stage_file;
-				
-				//index driver
-				index_system::IndexDriver *index_driver;
+
+				uint64_t last_hb_on_vfile;
 				
 				//!association between did and his data file
 				boost::shared_mutex mutext_did_data_file;
 				std::map<std::string, shared_ptr<DataFileInfo> > map_did_data_file;
+
 				
-				void grow(uint32_t new_size);
-				
-				bool processDataPack(const bson::BSONObj& data_pack);
+				int processDataPack(const bson::BSONObj& data_pack);
 				
 				boost::shared_ptr<DataFileInfo> getWriteableFileForDID(const std::string& did);
 			public:
@@ -94,10 +86,6 @@ namespace chaos{
 									  vfs::VFSStageReadableFile *_working_stage_file);
 				
 				~StageDataVFileScanner();
-				
-				std::string getScannedVFSPath();
-				//! scan an entire block of the stage file
-				int scan();
 			};
 		}
 	}

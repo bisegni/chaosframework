@@ -33,7 +33,8 @@ VFSStageReadableFile::VFSStageReadableFile(storage_system::StorageDriver *_stora
 VFSStageFile(_storage_driver_ptr,
 			 _index_driver_ptr,
 			 stage_vfs_relative_path,
-			 VFSStageFileOpenModeWrite),
+			 VFSStageFileOpenModeRead),
+overlaped_block_read(0),
 current_block_creation_ts(0) {
 }
 
@@ -65,37 +66,43 @@ int VFSStageReadableFile::getNextAvailbaleBlock() {
 			current_data_block = NULL;
 		} else {
 			current_block_creation_ts = current_data_block->creation_time;
+			//open journal for file
+			if((err = openJournalForDatablock(current_data_block, &current_journal_data_block))) {
+				//error creating journal
+				VFSRF_LERR_ << "Error creating journal file " << err;
+			}
 		}
 	}
-	
-	//change the state
 	return err;
 }
 
 int VFSStageReadableFile::checkForBlockChange(bool overlapping) {
 	int err = 0;
-	uint64_t  cur_position = 0;
-	
 	if(!current_data_block) {
-		if((err = getNextAvailbaleBlock()))  return err;
-	} else {
-		if(storage_driver_ptr->tell(current_data_block, cur_position)){
-			return err;
+		if((err = getNextAvailbaleBlock())){
+			VFSRF_LERR_ << "Error getting new available block " << err;
+		}
+	} else if(current_data_block->current_work_position == current_data_block->max_reacheable_size) {
+		//set current datablock to processed state
+		if((err = updateDataBlockState(data_block_state::DataBlockStateProcessed))) {
+			VFSRF_LERR_ << "Error udapting the sate of the datablock " << err;
+		} else if((err = syncLocationFromDatablockAndJournal(current_data_block, current_journal_data_block))) {
+			//error creating journal
+			VFSRF_LERR_ << "Error syncronizing journal file " << err;
+		} else if((err = closeJournalDatablock(current_journal_data_block))) {
+			//error creating journal
+			VFSRF_LERR_ << "Error syncronizing journal file " << err;
+		} else if((err = openJournalForDatablock(current_data_block, &current_journal_data_block))) {
+			//error creating journal
+			VFSRF_LERR_ << "Error creating journal file " << err;
 		} else {
-			if(cur_position == current_data_block->max_reacheable_size) {
-				//set current datablock to processed state
-				if((err = updateDataBlockState(data_block_state::DataBlockStateProcessed))) {
-					return err;
-				}
-				
-				//close the data block
-				err = storage_driver_ptr->closeBlock(current_data_block);
+			if((err = closeJournalDatablock(current_journal_data_block))) {
+				//error creating journal
+				VFSRF_LERR_ << "Error closing journal file " << err;
+			} else if((err = storage_driver_ptr->closeBlock(current_data_block))) {
+				VFSRF_LERR_ << "Error closing datablock";
+			} else {
 				current_data_block = NULL;
-				if(err) {
-					VFSRF_LERR_ << "Error closing datablock";
-					return err;
-				}
-				
 				if(overlapping) {
 					//we need to load another block, in this we have read all
 					if((err = getNextAvailbaleBlock()))  return err;
@@ -103,20 +110,19 @@ int VFSStageReadableFile::checkForBlockChange(bool overlapping) {
 			}
 		}
 	}
-	return 0;
+	return err;
 }
 
 // write data on the current data block
-int VFSStageReadableFile::read(void *data, uint32_t data_len, bool overlaped_block_read) {
+int VFSStageReadableFile::read(void *data, uint32_t data_len) {
 	int       err = 0;
 	int       read_data = 0;
-	
 	
 	//check if we need to change block
 	if((err = checkForBlockChange(overlaped_block_read)) || !current_data_block) return err;
 	
 	//read data from block
-	read_data = VFSFile::read(data, data_len);
+	read_data = VFSStageFile::read(data, data_len);
 	
 	if(overlaped_block_read &&
 	   read_data < data_len) {

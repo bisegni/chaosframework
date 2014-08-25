@@ -28,16 +28,16 @@ namespace chaos{
 #define OPT_CACHE_DRIVER			"cache_driver"
 #define OPT_CACHE_WORKER_NUM		"cache_worker_num"
 #define OPT_CACHE_WORKER_THREAD		"cache_worker_thread"
-#define CACHE_WORKER_NUMBER			2
+#define CACHE_WORKER_NUMBER			1
 		
 		//answer configuration
 #define OPT_ANSWER_WORKER_NUM		"answer_worker_num"
 #define OPT_ANSWER_WORKER_THREAD	"answer_worker_thread"
-#define ANSWER_WORKER_NUMBER		2
+#define ANSWER_WORKER_NUMBER		1
 		
 		//stage data indexer
 #define OPT_INDEXER_WORKER_NUM		"indexer_worker_num"
-#define INDEXER_WORKER_NUMBER		2
+#define INDEXER_WORKER_NUMBER		1
 		
 		//vfs driver configuration
 #define OPT_VFS_STORAGE_DRIVER_IMPL		"vfs_storage_drvr_impl"

@@ -73,6 +73,9 @@ namespace chaos {
 					//!deinit
 					void deinit() throw (chaos::CException);
 					
+					//! Check if the datablock is present
+					int blockIsPresent(chaos_vfs::DataBlock *data_block, bool &presence);
+					
 					//! Open a block
 					int openBlock(chaos_vfs::DataBlock *data_block, unsigned int flags);
 					
@@ -92,10 +95,22 @@ namespace chaos {
 					int read(chaos_vfs::DataBlock *data_block, void * buffer, uint32_t buffer_len, uint32_t& readed_byte);
 					
 					//! change the block pointer for read or write
-					int seek(chaos_vfs::DataBlock *data_block, int64_t offset, chaos_vfs::block_seek_base::BlockSeekBase base_direction);
+					int seekp(chaos_vfs::DataBlock *data_block, uint64_t offset, chaos_vfs::block_seek_base::BlockSeekBase base_direction);
+					
+					//! change the block pointer for read or write
+					int seekg(chaos_vfs::DataBlock *data_block, uint64_t offset, chaos_vfs::block_seek_base::BlockSeekBase base_direction);
 					
 					//! get the current block data pointer position
-					int tell(chaos_vfs::DataBlock *data_block, uint64_t& offset);
+					int tellp(chaos_vfs::DataBlock *data_block, uint64_t& offset);
+					
+					//! get the current block data pointer position
+					int tellg(chaos_vfs::DataBlock *data_block, uint64_t& offset);
+					
+					//! truncate the file to the new size
+					int resize(chaos_vfs::DataBlock *data_block, uint64_t new_size);
+
+					//! flush data on file
+					int flush(chaos_vfs::DataBlock *data_block);
 					
 					//! create a directory
 					int createDirectory(std::string vfs_path);

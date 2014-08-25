@@ -115,11 +115,11 @@ namespace chaos {
 				 Set the current state for a datablock in the stage area
 				 \param vfs_file owner of the datablock
 				 \param data_block Data block for wich need to be changed the state
-				 \param state new state to set
+				 \param state new state to set (chaos::data_service::vfs::data_block_state::DataBlockState)
 				 */
 				virtual int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 												   chaos_vfs::DataBlock *data_block,
-												   vfs::data_block_state::DataBlockState state) = 0;
+												   int state) = 0;
 				
 				//! Set the state for a datablock
 				/*!
@@ -129,23 +129,24 @@ namespace chaos {
 				 given parameter, and the update is done atomically
 				 \param vfs_file owner of the datablock
 				 \param data_block Data block for wich need to be changed the state
-				 \param cur_state current state of the block
-				 \param new_state new state of the block
+				 \param cur_state current state of the block (chaos::data_service::vfs::data_block_state::DataBlockState)
+				 \param new_state new state of the block (chaos::data_service::vfs::data_block_state::DataBlockState)
 				 */
 				virtual int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 												   chaos_vfs::DataBlock *data_block,
-												   vfs::data_block_state::DataBlockState cur_state,
-												   vfs::data_block_state::DataBlockState new_state,
+												   int cur_state,
+												   int new_state,
 												   bool& success) = 0;
 				
 				//! Set the datablock current position
-				virtual int vfsSetCurrentPositionOnDatablock(chaos_vfs::VFSFile *vfs_file,
-															 chaos_vfs::DataBlock *data_block,
-															 uint64_t position) = 0;
-				
-				//! Set the datablock current position
 				virtual int vfsSetHeartbeatOnDatablock(chaos_vfs::VFSFile *vfs_file,
-													   chaos_vfs::DataBlock *data_block) = 0;
+													   chaos_vfs::DataBlock *data_block,
+													   uint64_t timestamp = 0) = 0;
+				
+				
+				//! update the current datablock size
+				virtual int vfsUpdateDatablockCurrentWorkPosition(chaos_vfs::VFSFile *vfs_file,
+																  chaos_vfs::DataBlock *data_block) = 0;
 				
 				//! Return the next available datablock created since timestamp
 				/*!
@@ -153,24 +154,16 @@ namespace chaos {
 				 the timestamp, datablock to select that match the state. The api is atomic
 				 \param vfs_file virtual file at wich the datablock belowng
 				 \param timestamp the timestamp form wich search
-				 \param directio true -> enxt or false -> prev
-				 \param state the state for the selection of the datablock
+				 \param direction true -> enxt or false -> prev
+				 \param state the state for the selection of the datablock (chaos::data_service::vfs::data_block_state::DataBlockState)
 				 \param data_block the returned, if found, datablock
 				 \return the error code
 				 */
 				virtual int vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
 													  uint64_t timestamp,
 													  bool direction,
-													  vfs::data_block_state::DataBlockState state,
+													  int state,
 													  chaos_vfs::DataBlock **data_block) = 0;
-				
-				//! Heartbeat update stage block
-				/*!
-				 Registration of a new datablock in stage area is achieved directly to the DataService process
-				 after the block has been created.
-				 */
-				virtual int vfsWorkHeartBeatOnDataBlock(chaos_vfs::VFSFile *vfs_file,
-														chaos_vfs::DataBlock *data_block) = 0;
 				
 				//! Check if the vfs file exists
 				/*!

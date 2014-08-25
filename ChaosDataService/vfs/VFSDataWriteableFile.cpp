@@ -34,9 +34,6 @@ using namespace chaos::data_service::vfs;
 VFSDataWriteableFile::VFSDataWriteableFile(storage_system::StorageDriver *_storage_driver_ptr,
 										   index_system::IndexDriver *_index_driver_ptr,
 										   std::string data_vfs_relative_path):
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
 VFSDataFile(_storage_driver_ptr,
 			_index_driver_ptr,
 			data_vfs_relative_path,

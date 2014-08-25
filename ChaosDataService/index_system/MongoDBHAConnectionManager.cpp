@@ -282,12 +282,13 @@ int MongoDBHAConnectionManager::update( const std::string &ns,
 									   mongo::Query query,
 									   mongo::BSONObj obj,
 									   bool upsert,
-									   bool multi) {
+									   bool multi,
+									   const mongo::WriteConcern* wc) {
 	int err = -1;
 	MongoDBHAConnection conn = NULL;
 	while (getConnection(&conn)) {
 		try {
-			conn->conn().update(ns, query, obj, upsert, multi);
+			conn->conn().update(ns, query, obj, upsert, multi, wc);
 			MONGO_DB_GET_ERROR(conn, err);
 		} catch (std::exception& ex) {
 			MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();

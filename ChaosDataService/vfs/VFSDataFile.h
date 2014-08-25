@@ -42,7 +42,6 @@ namespace chaos {
 			 */
 			class VFSDataFile : public VFSFile {
 				friend class VFSManager;
-				VFSDataFileOpenMode open_mode;
 				
 			protected:
 				//! default ocnstructor for vfs file
