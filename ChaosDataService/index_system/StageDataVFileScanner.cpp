@@ -70,6 +70,10 @@ boost::shared_ptr<DataFileInfo> StageDataVFileScanner::getWriteableFileForDID(co
 	return result;
 }
 
+int StageDataVFileScanner::startScanHandler() {
+	return 0;
+}
+
 int StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack) {
 	int err = 0;
 	uint64_t cur_ts = chaos::TimingUtil::getTimeStamp();
@@ -99,4 +103,12 @@ int StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack) {
 		last_hb_on_vfile = cur_ts;
 	}
 	return err;
+}
+
+int StageDataVFileScanner::endScanHandler(int end_scan_error) {
+	if(end_scan_error) {
+		//scan as endded with error so we need to clean
+	}
+	
+	//perform some clean on virtual file
 }

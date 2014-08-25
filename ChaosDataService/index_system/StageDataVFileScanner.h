@@ -77,7 +77,11 @@ namespace chaos{
 				std::map<std::string, shared_ptr<DataFileInfo> > map_did_data_file;
 
 				
+				int startScanHandler();
+				
 				int processDataPack(const bson::BSONObj& data_pack);
+				
+				int endScanHandler(int end_scan_error);
 				
 				boost::shared_ptr<DataFileInfo> getWriteableFileForDID(const std::string& did);
 			public:

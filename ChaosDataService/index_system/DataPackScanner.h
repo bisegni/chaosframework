@@ -62,9 +62,14 @@ namespace chaos{
 				//!working file (stage or data)
 				vfs::VFSFile *working_data_file;
 				
-				//! abstract working method
+				//! abstract method for prcoessing one datapack at time
 				virtual int processDataPack(const bson::BSONObj& data_pack) = 0;
 
+				//! handler called befor the scan task
+				virtual int startScanHandler() = 0;
+				
+				//! handler called after the termination of the scan task
+				virtual int endScanHandler(int end_scan_error) = 0;
 			public:
 				DataPackScanner(vfs::VFSManager *_vfs_manager,
 								index_system::IndexDriver *_index_driver,

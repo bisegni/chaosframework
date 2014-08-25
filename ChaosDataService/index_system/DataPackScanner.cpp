@@ -70,6 +70,10 @@ break; \
 int DataPackScanner::scan() {
 	int err = 0;
 	if(!data_buffer) return -1;
+	
+	//call start handler
+	if((err = startScanHandler())) return err;
+	
 	while(!err) {
 		//read the header
 		err = working_data_file->read(data_buffer, BSON_HEADER_SIZE);
@@ -91,5 +95,7 @@ int DataPackScanner::scan() {
 			DataPackScannerLERR_ << "error sinking journal on working file";			
 		}
 	}
-	return 0;
+	
+	//call end scanner handler
+	return endScanHandler(err);
 }
