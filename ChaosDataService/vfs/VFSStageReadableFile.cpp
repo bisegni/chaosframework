@@ -86,15 +86,6 @@ int VFSStageReadableFile::checkForBlockChange(bool overlapping) {
 		//set current datablock to processed state
 		if((err = updateDataBlockState(data_block_state::DataBlockStateProcessed))) {
 			VFSRF_LERR_ << "Error udapting the sate of the datablock " << err;
-		} else if((err = syncLocationFromDatablockAndJournal(current_data_block, current_journal_data_block))) {
-			//error creating journal
-			VFSRF_LERR_ << "Error syncronizing journal file " << err;
-		} else if((err = closeJournalDatablock(current_journal_data_block))) {
-			//error creating journal
-			VFSRF_LERR_ << "Error syncronizing journal file " << err;
-		} else if((err = openJournalForDatablock(current_data_block, &current_journal_data_block))) {
-			//error creating journal
-			VFSRF_LERR_ << "Error creating journal file " << err;
 		} else {
 			if((err = closeJournalDatablock(current_journal_data_block))) {
 				//error creating journal
@@ -132,4 +123,12 @@ int VFSStageReadableFile::read(void *data, uint32_t data_len) {
 		read_data = VFSFile::read((void*)((char*)data+read_data), data_len - read_data);
 	}
 	return read_data;
+}
+
+//! prefetch data
+int VFSStageReadableFile::prefetchData() {
+	if(!current_data_block) {
+		return checkForBlockChange(overlaped_block_read);
+	}
+	return 0;
 }

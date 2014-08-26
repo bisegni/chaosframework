@@ -62,6 +62,8 @@ void DataPackScanner::grow(uint32_t new_size) {
 
 #define BREAK_ON_NO_DATA_READED \
 if(err <= 0) { \
+working_data_file->appendValueToJournal("END");\
+working_data_file->closeKeyToJournal("process");\
 break; \
 } \
 
@@ -74,26 +76,46 @@ int DataPackScanner::scan() {
 	//call start handler
 	if((err = startScanHandler())) return err;
 	
+	if((err = working_data_file->prefetchData())) {
+		DataPackScannerLERR_ << "error sinking work location to journal";
+	}
+	
 	while(!err) {
+		if((err = working_data_file->syncCurrentOffsetToJournal())) {
+			DataPackScannerLERR_ << "error sinking work location to journal";
+			break;
+		}
+		
+		//! open journal tag for the reading
+		working_data_file->openKeyToJournal("process");
+				
 		//read the header
 		err = working_data_file->read(data_buffer, BSON_HEADER_SIZE);
 		BREAK_ON_NO_DATA_READED
+		
+		//! write first read phase
+		working_data_file->appendValueToJournal("rh");
 		
 		//get the bson size to read
 		uint32_t bson_size = FROM_LITTLE_ENDNS(int32_t, data_buffer, 0);
 		
 		//check if we need to expand the buffer
 		grow(bson_size);
-		
+
 		//read all bson
 		err = working_data_file->read((static_cast<char*>(data_buffer)+4), bson_size-4);
 		BREAK_ON_NO_DATA_READED
 		
+		//! write read second phase
+		working_data_file->appendValueToJournal("rd");
+		
+		//! write read phase
+		working_data_file->appendValueToJournal("p");
 		if((err = processDataPack(bson::BSONObj(static_cast<const char*>(data_buffer))))){
 			DataPackScannerLERR_ << "error processing data";
-		} else if((err = working_data_file->syncJournal())) {
-			DataPackScannerLERR_ << "error sinking journal on working file";			
 		}
+		//! open journal tag for the reading
+		working_data_file->closeKeyToJournal("process");
 	}
 	
 	//call end scanner handler

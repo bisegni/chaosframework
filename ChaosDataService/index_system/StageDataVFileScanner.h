@@ -84,6 +84,8 @@ namespace chaos{
 				int endScanHandler(int end_scan_error);
 				
 				boost::shared_ptr<DataFileInfo> getWriteableFileForDID(const std::string& did);
+				
+				int closeAllDatafile();
 			public:
 				StageDataVFileScanner(vfs::VFSManager *_vfs_manager,
 									  index_system::IndexDriver *_index_driver,

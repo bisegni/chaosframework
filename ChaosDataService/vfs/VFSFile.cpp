@@ -25,6 +25,7 @@
 #include <chaos/common/utility/TimingUtil.h>
 
 #include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
 
 #define VFSFile_LOG_HEAD "[VFSFile] - " << vfs_file_info.vfs_fpath << " - "
 #define VFSF_LAPP_ LAPP_ << VFSFile_LOG_HEAD
@@ -107,12 +108,12 @@ int VFSFile::updateDataBlockState(data_block_state::DataBlockState state) {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-int VFSFile::releaseDataBlock(DataBlock *data_block_ptr) {
+int VFSFile::releaseDataBlock(DataBlock *data_block_ptr, int closed_state) {
 	if(!data_block_ptr) return 0;
 	int err = 0;
 	DEBUG_CODE(VFSF_LDBG_ << "Release datablock of path " << data_block_ptr->vfs_path);
 	//write on index for free of work block
-	if((err = index_driver_ptr->vfsSetStateOnDataBlock(this, data_block_ptr, data_block_state::DataBlockStateNone))) {
+	if((err = index_driver_ptr->vfsSetStateOnDataBlock(this, data_block_ptr, closed_state))) {
 		VFSF_LERR_ << "Error setting state on datablock with error " << err;
 	} else if ((err = index_driver_ptr->vfsUpdateDatablockCurrentWorkPosition(this, data_block_ptr))) {
 		VFSF_LERR_ << "Error setting work location on datablock with error " << err;
@@ -222,8 +223,111 @@ int VFSFile::read(void *buffer, uint32_t buffer_len) {
 	return readed_byte;
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+int VFSFile::closeCurrentDataBlock(int closed_state) {
+	if(!current_data_block) return 0;
+	int err = 0;
+	
+	//we need also to delete the journal
+	if(current_journal_data_block) {
+		if((err = closeJournalDatablock(current_journal_data_block))) {
+			VFSF_LERR_ << "Error closing journal file " << current_data_block->vfs_path << " with error" << err;
+		}else{
+			current_journal_data_block = NULL;
+		}
+	}
+	
+	if((err = releaseDataBlock(current_data_block, closed_state))) {
+		VFSF_LERR_ << "Error closing datablock " << current_data_block->vfs_path << " with error" << err;
+	} else {
+		current_data_block = NULL;
+	}
+	return err;
+}
+
+
+int VFSFile::writeKeyValueToJournal(std::string journal_key, std::string journal_value) {
+	int err = 0;
+	if((err = openKeyToJournal(journal_key))) {
+	} else if((err = appendValueToJournal(journal_value))) {
+	} else if((err = closeKeyToJournal(journal_key))) {
+	}
+	return  err;
+}
+
+//! write text key value to the journal file
+int VFSFile::openKeyToJournal(std::string journal_key) {
+	int err = 0;
+	if(!current_journal_data_block) return err;
+	std::string journal_row = boost::str(boost::format(":%1%:") % journal_key);
+	if((err = storage_driver_ptr->write(current_journal_data_block, (void*)journal_row.c_str(), (uint32_t)journal_row.size()))) {
+		VFSF_LERR_ << "Error writing on journal file " << err;
+	}
+	return err;
+
+}
+
+//! write text key value to the journal file
+int VFSFile::appendValueToJournal(std::string journal_value) {
+	int err = 0;
+	if(!current_journal_data_block) return err;
+	std::string journal_row = boost::str(boost::format("%1%:") % journal_value);
+	if((err = storage_driver_ptr->write(current_journal_data_block, (void*)journal_row.c_str(), (uint32_t)journal_row.size()))) {
+		VFSF_LERR_ << "Error writing on journal file " << err;
+	}
+	return err;
+
+}
+
+//! write the clouse information for the key
+int VFSFile::closeKeyToJournal(std::string journal_key) {
+	int err = 0;
+	if(!current_journal_data_block) return err;
+	std::string journal_row = boost::str(boost::format("%1%:\n") % journal_key);
+	if((err = storage_driver_ptr->write(current_journal_data_block, (void*)journal_row.c_str(), (uint32_t)journal_row.size()))) {
+		VFSF_LERR_ << "Error writing on journal file " << err;
+	} else if((err = storage_driver_ptr->flush(current_journal_data_block))) {
+		VFSF_LERR_ << "Error flushing journal " << err;
+	}
+	return err;
+
+}
+
+int VFSFile::prefetchData() {
+	return 0;
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+int VFSFile::syncCurrentOffsetToJournal() {
+	int err = 0;
+	if(current_data_block && current_journal_data_block) {
+		if((err = syncWorkPositionFromDatablockAndJournal(current_data_block, current_journal_data_block))) {
+			//error creating journal
+			VFSF_LERR_ << "Error syncronizing journal file " << err;
+		}
+	}
+	return err;
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+int VFSFile::mantain(int closing_state) {
+	int err = 0;
+	if(!isDataBlockValid(current_journal_data_block)) {
+		if((err = closeCurrentDataBlock())) {
+		VFSF_LERR_ << "Error closing datablock " << err;
+		}
+	}
+	return err;
+}
+
 //--------------------------------------journal api --------------------------------
-//! open a journa file for the datablock
+//! open a journal file for the datablock
 int VFSFile::openJournalForDatablock(DataBlock *datablock, DataBlock **current_journal_data_block) {
 	int err = 0;
 	CHAOS_ASSERT(datablock)
@@ -240,7 +344,7 @@ int VFSFile::openJournalForDatablock(DataBlock *datablock, DataBlock **current_j
 //! close the journal file for the datablock
 int VFSFile::closeJournalDatablock(DataBlock *current_journal_data_block) {
 	int err = 0;
-	CHAOS_ASSERT(current_journal_data_block)
+	if(!current_journal_data_block) return err;
 	std::string jblock_apth = current_journal_data_block->vfs_path;
 	//open new block has writeable
 	if((err = storage_driver_ptr->closeBlock(current_journal_data_block))) {
@@ -252,11 +356,11 @@ int VFSFile::closeJournalDatablock(DataBlock *current_journal_data_block) {
 }
 
 //! sync location of master datablock on journal
-int VFSFile::syncLocationFromDatablockAndJournal(DataBlock *datablock, DataBlock *current_journal_data_block) {
+int VFSFile::syncWorkPositionFromDatablockAndJournal(DataBlock *datablock, DataBlock *current_journal_data_block) {
 	int err = 0;
 	CHAOS_ASSERT(datablock)
-	CHAOS_ASSERT(current_journal_data_block)
-	if((err = storage_driver_ptr->write(current_journal_data_block, (void*)&datablock->current_work_position, sizeof(uint64_t)))){
+	if(!current_journal_data_block) return err;
+	if((err = writeKeyValueToJournal("offset", boost::lexical_cast<std::string>(datablock->current_work_position)))){
 		VFSF_LERR_ << "Error writing information on journal " << err;
 	} else if((err = storage_driver_ptr->flush(current_journal_data_block))) {
 		VFSF_LERR_ << "Error flushing journal " << err;
@@ -267,22 +371,10 @@ int VFSFile::syncLocationFromDatablockAndJournal(DataBlock *datablock, DataBlock
 //! check if the journl is present
 int VFSFile::journalIsPresent(DataBlock *current_journal_data_block, bool &presence) {
 	int err = 0;
-	CHAOS_ASSERT(current_journal_data_block)
+	if(!current_journal_data_block) return err;
 	if((err = storage_driver_ptr->blockIsPresent(current_journal_data_block, presence))) {
 		VFSF_LERR_ << "Error checking file existance with code " << err;
 		
-	}
-	return err;
-}
-
-//Synck the journal with current block state
-int VFSFile::syncJournal() {
-	int err = 0;
-	if(current_data_block && current_journal_data_block) {
-		if((err = syncLocationFromDatablockAndJournal(current_data_block, current_journal_data_block))) {
-			//error creating journal
-			VFSF_LERR_ << "Error syncronizing journal file " << err;
-		}
 	}
 	return err;
 }

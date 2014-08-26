@@ -80,7 +80,13 @@ namespace chaos {
 				int updateDataBlockState(data_block_state::DataBlockState state);
 				
 				//! release a datablock adn set the current work position
-				virtual int releaseDataBlock(DataBlock *data_block_ptr);
+				/*!
+				 perform some operation befor phisically close the data block setting
+				 also the state. 
+				 \param data_block_ptr data block to release
+				 \param closed_state is the state ater the block is processed
+				 */
+				virtual int releaseDataBlock(DataBlock *data_block_ptr, int closed_state = data_block_state::DataBlockStateNone);
 				
 				//! check the validity of the datablock(usefull only on write version of the write)
 				bool isDataBlockValid(DataBlock *data_block_ptr);
@@ -103,7 +109,7 @@ namespace chaos {
 				int closeJournalDatablock(DataBlock *current_journal_data_block);
 				
 				//! sync location of master datablock on journal
-				int syncLocationFromDatablockAndJournal(DataBlock *datablock, DataBlock *current_journal_data_block);
+				int syncWorkPositionFromDatablockAndJournal(DataBlock *datablock, DataBlock *current_journal_data_block);
 				
 				//! check if the journl is present
 				int journalIsPresent(DataBlock *datablock,  bool &presence);
@@ -143,8 +149,39 @@ namespace chaos {
 				//! give heartbeat on current datablock
 				int giveHeartbeat(uint64_t hb_time = 0);
 				
-				//Synck the journal with current block state
-				virtual int syncJournal();
+				//!Synck the journal with current block state
+				virtual int syncCurrentOffsetToJournal();
+				
+				//! write text key value to the journal file
+				int writeKeyValueToJournal(std::string journal_key, std::string journal_value);
+
+				//! write text key value to the journal file
+				int openKeyToJournal(std::string journal_key);
+				
+				//! write text key value to the journal file
+				int appendValueToJournal(std::string journal_value);
+				
+				//! write the clouse information for the key
+				int closeKeyToJournal(std::string journal_key);
+				
+				//!close the current data block setting the state
+				int closeCurrentDataBlock(int closed_state = data_block_state::DataBlockStateNone);
+				
+				//! perform the matainance of the virtual file
+				/*!
+				 vrtiual fiel has many block that can be open one at time
+				 or many at time(depending on sublcass) anyway any datta block
+				 as some logic for keep datablock open. With this method a check is
+				 done closing the datablock that needs to be closed according to their
+				 rules.
+				 */
+				int mantain(int closed_state = data_block_state::DataBlockStateNone);
+				
+				//! prefetch needed datablock
+				/*!
+				  subclass implement this to permit the prefetch of needed datablock
+				 */
+				virtual int prefetchData();
 			};
 		}
 	}

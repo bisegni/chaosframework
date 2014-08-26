@@ -31,7 +31,8 @@ namespace chaos {
 			
 			//! Stage writeable file
 			/*!
-			 Manage the write operation on the stage file
+			 Manage the write operation on the stage file during the indexing operation
+			 that happen migrating file form state to data or merging two data file.
 			 */
 			class VFSDataWriteableFile: public VFSDataFile {
 				friend class VFSManager;
@@ -45,13 +46,13 @@ namespace chaos {
 				
 			public:
 				//! force new data block creation
-				int switchDataBlock();
+				int switchDataBlock(bool close_only = false);
 				
 				//! ensure that a datablock is not null
 				/*!
 					usefullt to get the current lcoation before write the first data pack.
 				 */
-				int ensureDatablockAllocated();
+				int prefetchData();
 				
 				// write data on the current data block
 				int write(void *data, uint32_t data_len);

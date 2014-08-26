@@ -62,7 +62,8 @@ namespace chaos {
 				 */
 				int read(void *data, uint32_t data_len);
 				
-				int syncJurnal();
+				//! prefetch data
+				int prefetchData();
 			};
 		}
 	}

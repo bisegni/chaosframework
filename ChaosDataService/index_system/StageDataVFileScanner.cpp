@@ -46,6 +46,7 @@ last_hb_on_vfile(0) {
 }
 
 StageDataVFileScanner::~StageDataVFileScanner() {
+	closeAllDatafile();
 }
 
 
@@ -59,7 +60,7 @@ boost::shared_ptr<DataFileInfo> StageDataVFileScanner::getWriteableFileForDID(co
 		//we need to create a new data file for new readed unique identifier
 		if(!vfs_manager->getWriteableDataFile(did, &result->data_file_ptr) && result->data_file_ptr){
 			//we need to ensure that datablock is not null for determinate correct first block location
-			result->data_file_ptr->ensureDatablockAllocated();
+			result->data_file_ptr->prefetchData();
 			
 			//insert file into the hasmap
 			map_did_data_file.insert(make_pair(did, result));
@@ -68,6 +69,21 @@ boost::shared_ptr<DataFileInfo> StageDataVFileScanner::getWriteableFileForDID(co
 		}
 	}
 	return result;
+}
+
+int StageDataVFileScanner::closeAllDatafile() {
+	int err = 0;
+	//scan as endded with error so we need to clean
+	for(std::map<std::string, shared_ptr<DataFileInfo> >::iterator it =  map_did_data_file.begin();
+		it != map_did_data_file.end();
+		it++){
+		StageDataVFileScannerLAPP_ << "closing datafile: " << it->second->data_file_ptr->getVFSFileInfo()->vfs_fpath;
+		if((err = vfs_manager->releaseFile(it->second->data_file_ptr))){
+			StageDataVFileScannerLERR_ << "error closing data file";
+		}
+	}
+	map_did_data_file.clear();
+	return err;
 }
 
 int StageDataVFileScanner::startScanHandler() {
@@ -83,16 +99,58 @@ int StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack) {
 		StageDataVFileScannerLDBG_ << "Current scanned data pack doesn't have required field so we skip it";
 		return 0;
 	}
+	DataPackIndex new_data_pack_index;
+
+	//colelct idnex information
 	
 	//get values for key that are mandatory for default index
-	string did = data_pack.getField(chaos::DataPackKey::CS_CSV_CU_ID).String();
+	new_data_pack_index.did = data_pack.getField(chaos::DataPackKey::CS_CSV_CU_ID).String();
+	new_data_pack_index.acquisition_ts = data_pack.getField(chaos::DataPackKey::CS_CSV_TIME_STAMP).numberLong();
 	
 	//get file for unique id
-	boost::shared_ptr<DataFileInfo> data_file_info = getWriteableFileForDID(did);
+	boost::shared_ptr<DataFileInfo> data_file_info = getWriteableFileForDID(new_data_pack_index.did);
 	if(!data_file_info->data_file_ptr) {
-		StageDataVFileScannerLERR_ << "No vfs got for unique id " << did;
-	} else if((err = data_file_info->data_file_ptr->write((void*)data_pack.objdata(), data_pack.objsize()))) {
+		StageDataVFileScannerLERR_ << "No vfs got for unique id " << new_data_pack_index.did;
+		return -1;
+	}
+	//! write get data file phase
+	if((err = working_data_file->appendValueToJournal("gdf"))){
+		StageDataVFileScannerLERR_ << "Error writing gdf tag";
+		return err;
+	}
+
+	//write packet to his virtaul data file
+	new_data_pack_index.dst_location = data_file_info->data_file_ptr->getCurrentFileLocation();
+	if(!new_data_pack_index.dst_location.isValid()) {
+		//strange error because datablock is null
+		StageDataVFileScannerLERR_ << "Error on retrieve datafile offset";
+		return -2;
+	}
+	//! write journal
+	if((err = working_data_file->appendValueToJournal("gloc"))){
+		StageDataVFileScannerLERR_ << "Error writing gloc tag";
+		return err;
+	}
+
+	//write index for the datapack on database
+	if((err = index_driver->idxAddDataPackIndex(new_data_pack_index))) {
+		StageDataVFileScannerLERR_ << "Error writing index to database";
+		return err;
+	}
+	//! write journal
+	if((err = working_data_file->appendValueToJournal("widx"))){
+		StageDataVFileScannerLERR_ << "Error writing widx tag";
+		return err;
+	}
+	
+	//write data pack on data file
+	if((err = data_file_info->data_file_ptr->write((void*)data_pack.objdata(), data_pack.objsize()))) {
 		StageDataVFileScannerLERR_ << "Error writing datafile "<< err;
+	}
+	//! write journal
+	if((err = working_data_file->appendValueToJournal("wpack"))){
+		StageDataVFileScannerLERR_ << "Error writing wpac tag";
+		return err;
 	}
 	
 	//give heartbeat on datafile
@@ -106,9 +164,22 @@ int StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack) {
 }
 
 int StageDataVFileScanner::endScanHandler(int end_scan_error) {
+	int err = 0;
 	if(end_scan_error) {
+		StageDataVFileScannerLAPP_ << "An error has occurred during scanner, close all datafile";
+		closeAllDatafile();
+	} else {
+		//all is gone weel but we need to do some mantainance
 		//scan as endded with error so we need to clean
+		for(std::map<std::string, shared_ptr<DataFileInfo> >::iterator it =  map_did_data_file.begin();
+			it != map_did_data_file.end();
+			it++){
+			StageDataVFileScannerLAPP_ << "Mantainance for datafile: " << it->second->data_file_ptr->getVFSFileInfo()->vfs_fpath;
+			if((err = it->second->data_file_ptr->mantain(vfs::data_block_state::DataBlockStateQuerable))) {
+				StageDataVFileScannerLERR_ << "error mantaining datafile";
+			}
+		}
+
 	}
-	
-	//perform some clean on virtual file
+	return err;
 }

@@ -52,15 +52,19 @@ bool VFSDataWriteableFile::isDataBlockValid(DataBlock *new_data_block_ptr) {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-int VFSDataWriteableFile::switchDataBlock() {
+int VFSDataWriteableFile::switchDataBlock(bool close_only) {
 	int err = 0;
 	if(current_data_block) {
-		if((err = VFSFile::releaseDataBlock(current_data_block))){
+		//close data block setting his state to querable because
+		if((err = VFSFile::releaseDataBlock(current_data_block, data_block_state::DataBlockStateQuerable))){
 			VFSWF_LERR_ << "Error releaseing datablock " << err;
 		}
 	}
-	if((err = VFSFile::getNewDataBlock(&current_data_block))) {
-		VFSWF_LERR_ << "Error creating datablock " << err;
+	if(!close_only) {
+		//! we need also to allocate new one datablock
+		if((err = VFSFile::getNewDataBlock(&current_data_block))) {
+			VFSWF_LERR_ << "Error creating datablock " << err;
+		}
 	}
 	return err;
 }
@@ -68,7 +72,7 @@ int VFSDataWriteableFile::switchDataBlock() {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-int VFSDataWriteableFile::ensureDatablockAllocated() {
+int VFSDataWriteableFile::prefetchData() {
 	if(!current_data_block) {
 		return switchDataBlock();
 	}
