@@ -173,7 +173,7 @@ void StageDataConsumer::scanStage() {
 			rescheduleScannerInfo(scanner_info);
 		}
 		//waith some time
-		boost::this_thread::sleep(boost::posix_time::milliseconds(250));
+		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 	}
 	StageDataConsumerLAPP_ << "Leaving stage scanner thread";
 }

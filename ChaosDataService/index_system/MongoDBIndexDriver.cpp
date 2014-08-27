@@ -558,20 +558,21 @@ int MongoDBIndexDriver::idxAddDataPackIndex(const DataPackIndex& index) {
 		//add default index information
 		index_builder << MONGO_DB_IDX_DATA_PACK_DID << index.did;
 		index_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS << mongo::Date_t(index.acquisition_ts);
+		index_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC << (int64_t)index.acquisition_ts;
 		index_builder << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_ID << mongo::OID(getDataBlockFromFileLocation(index.dst_location)->index_driver_uinique_id);
 		index_builder << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET << (int64_t)getDataBlockOffsetFromFileLocation(index.dst_location);
 		
 		DEBUG_CODE(MDBID_LDBG_ << "idxAddDataPackIndex insert ---------------------------------------------";)
 		DEBUG_CODE(MDBID_LDBG_ << "did: " << index.did;)
-		DEBUG_CODE(MDBID_LDBG_ << "acq_ts: " << index.acquisition_ts;)
+		DEBUG_CODE(MDBID_LDBG_ << "acq_ts_numeric: " << index.acquisition_ts;)
 		DEBUG_CODE(MDBID_LDBG_ << "data_pack: " << getDataBlockFromFileLocation(index.dst_location)->index_driver_uinique_id;)
 		DEBUG_CODE(MDBID_LDBG_ << "data_pack_offset: " << getDataBlockOffsetFromFileLocation(index.dst_location);)
 		DEBUG_CODE(MDBID_LDBG_ << "idxAddDataPackIndex insert ---------------------------------------------";)
 		
-		ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), index_builder.obj());
+		err = ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), index_builder.obj());
 	} catch( const mongo::DBException &e ) {
 		MDBID_LERR_ << e.what();
-		err = -1;
+		err = e.getCode();
 	}
 	return err;
 
@@ -590,7 +591,7 @@ int MongoDBIndexDriver::idxDeleteDataPackIndex(const DataPackIndex& index) {
 		DEBUG_CODE(MDBID_LDBG_ << "query: " << q.jsonString());
 		DEBUG_CODE(MDBID_LDBG_ << "idxDeleteDataPackIndex insert ---------------------------------------------";)
 		
-		ha_connection_pool->remove(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), q);
+		err = ha_connection_pool->remove(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), q);
 	} catch( const mongo::DBException &e ) {
 		MDBID_LERR_ << e.what();
 		err = -1;

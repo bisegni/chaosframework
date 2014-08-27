@@ -59,15 +59,15 @@ boost::shared_ptr<DataFileInfo> StageDataVFileScanner::getWriteableFileForDID(co
 		
 		//we need to create a new data file for new readed unique identifier
 		if(!vfs_manager->getWriteableDataFile(did, &result->data_file_ptr) && result->data_file_ptr){
-			//we need to ensure that datablock is not null for determinate correct first block location
-			result->data_file_ptr->prefetchData();
-			
 			//insert file into the hasmap
 			map_did_data_file.insert(make_pair(did, result));
 		}else {
 			StageDataVFileScannerLERR_ << "Error creating data file for " << did;
 		}
 	}
+	//we need to ensure that datablock is not null for determinate correct first block location
+	if(result.get())result->data_file_ptr->prefetchData();
+	
 	return result;
 }
 
@@ -134,8 +134,12 @@ int StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack) {
 
 	//write index for the datapack on database
 	if((err = index_driver->idxAddDataPackIndex(new_data_pack_index))) {
-		StageDataVFileScannerLERR_ << "Error writing index to database";
-		return err;
+		if(err == 11000) {
+			StageDataVFileScannerLERR_ << "Index already present";
+		} else {
+			StageDataVFileScannerLERR_ << "Error writing index to database";
+			return err;
+		}
 	}
 	//! write journal
 	if((err = working_data_file->appendValueToJournal("widx"))){
@@ -174,9 +178,12 @@ int StageDataVFileScanner::endScanHandler(int end_scan_error) {
 		for(std::map<std::string, shared_ptr<DataFileInfo> >::iterator it =  map_did_data_file.begin();
 			it != map_did_data_file.end();
 			it++){
+			
+			// we need to maintin datablock on to long idle datafile so datablock no more valid(time/size) are closed
+			// and prefetchData call ensure that one valida databloc is allocated if mantainance close an old one.
 			StageDataVFileScannerLAPP_ << "Mantainance for datafile: " << it->second->data_file_ptr->getVFSFileInfo()->vfs_fpath;
 			if((err = it->second->data_file_ptr->mantain(vfs::data_block_state::DataBlockStateQuerable))) {
-				StageDataVFileScannerLERR_ << "error mantaining datafile";
+				StageDataVFileScannerLERR_ << "error mantaining datafile " << it->second->data_file_ptr->getVFSFileInfo()->vfs_fpath;
 			}
 		}
 

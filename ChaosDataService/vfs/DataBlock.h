@@ -86,6 +86,10 @@ namespace chaos {
 				~FileLocationPointer(){};
 				
 				bool isValid() {return (offset != 0)?(data_block != NULL):true;}
+				
+				uint64_t getOffset(){return offset;}
+				
+				std::string getBlockVFSPath() {return data_block?data_block->vfs_path:std::string("no block");}
 			};
 			
 		}

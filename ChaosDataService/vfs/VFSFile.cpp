@@ -299,6 +299,12 @@ int VFSFile::prefetchData() {
 	return 0;
 }
 
+//! return the presen of a datablock
+int VFSFile::hasData(bool& has_data) {
+	has_data = current_data_block != NULL;
+	return 0;
+}
+
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/

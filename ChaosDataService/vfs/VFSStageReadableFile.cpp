@@ -65,9 +65,12 @@ int VFSStageReadableFile::getNextAvailbaleBlock() {
 			delete(current_data_block);
 			current_data_block = NULL;
 		} else {
+			bool journal_presence = false;
 			current_block_creation_ts = current_data_block->creation_time;
 			//open journal for file
-			if((err = openJournalForDatablock(current_data_block, &current_journal_data_block))) {
+			if((err = journalIsPresent(current_data_block, journal_presence))) {
+				VFSRF_LERR_ << "Error checking journal " << err;
+			}else if((err = openJournalForDatablock(current_data_block, &current_journal_data_block))) {
 				//error creating journal
 				VFSRF_LERR_ << "Error creating journal file " << err;
 			}

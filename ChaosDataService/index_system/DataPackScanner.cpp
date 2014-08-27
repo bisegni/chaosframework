@@ -62,8 +62,6 @@ void DataPackScanner::grow(uint32_t new_size) {
 
 #define BREAK_ON_NO_DATA_READED \
 if(err <= 0) { \
-working_data_file->appendValueToJournal("END");\
-working_data_file->closeKeyToJournal("process");\
 break; \
 } \
 
@@ -71,13 +69,21 @@ break; \
 // scan an entire block of the stage file
 int DataPackScanner::scan() {
 	int err = 0;
+	bool has_data = false;
 	if(!data_buffer) return -1;
 	
 	//call start handler
 	if((err = startScanHandler())) return err;
 	
 	if((err = working_data_file->prefetchData())) {
-		DataPackScannerLERR_ << "error sinking work location to journal";
+		DataPackScannerLERR_ << "error " << err << "prefetching data on working file " << working_data_file->getVFSFileInfo()->vfs_fpath;
+	} else if((err = working_data_file->hasData(has_data))) {
+		DataPackScannerLERR_ << "errr checking if data is available on" << working_data_file->getVFSFileInfo()->vfs_fpath;
+	}
+	
+	if (!has_data) {
+		DataPackScannerLAPP_ << "no data to read on " << working_data_file->getVFSFileInfo()->vfs_fpath;
+		return 0;
 	}
 	
 	while(!err) {

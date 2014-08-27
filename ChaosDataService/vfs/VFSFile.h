@@ -182,6 +182,9 @@ namespace chaos {
 				  subclass implement this to permit the prefetch of needed datablock
 				 */
 				virtual int prefetchData();
+				
+				//! return the presen of a datablock
+				virtual int hasData(bool& has_data);
 			};
 		}
 	}
