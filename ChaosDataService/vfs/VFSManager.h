@@ -23,6 +23,7 @@
 #include "VFSTypes.h"
 #include "VFSFile.h"
 #include "VFSStageWriteableFile.h"
+#include "VFSDataWriteableFile.h"
 #include "VFSStageReadableFile.h"
 #include "../index_system/IndexDriver.h"
 #include "storage_system/StorageDriver.h"
@@ -44,12 +45,6 @@ namespace chaos {
 				
 				//! identify the mac lifetime for a logical file block
 				uint32_t		max_block_lifetime;
-				
-				//! current index driver implementaiton to use
-				std::string index_driver_impl;
-				
-				//! the instance of the index driver for this manager
-				::chaos::data_service::index_system::IndexDriverSetting index_driver_setting;
 				
 				//! current storage driver implementaiton to use
 				std::string storage_driver_impl;
@@ -88,7 +83,7 @@ namespace chaos {
 			protected:
 				void freeObject(std::string key, VFSFilesForPath *element);
 			public:
-				VFSManager();
+				VFSManager(index_system::IndexDriver *_index_driver_ptr);
 				~VFSManager();
 				
 				//! Need to be forwarded a point to a structure VFSManagerSetting
@@ -96,11 +91,13 @@ namespace chaos {
 				
 				void deinit() throw (CException);
 				
-				int getFile(std::string area, std::string vfs_path, VFSFile **l_file);
+				int getFile(std::string area, std::string vfs_path, VFSFile **l_file, VFSFileOpenMode open_mode);
 				
 				int getWriteableStageFile(std::string stage_vfs_relative_path, VFSStageWriteableFile **wsf_file);
 				
 				int getReadableStageFile(std::string stage_vfs_relative_path, VFSStageReadableFile **rsf_file);
+				
+				int getWriteableDataFile(std::string data_vfs_relative_path, VFSDataWriteableFile **wdf_file);
 				
 				int releaseFile(VFSFile *l_file);
 				

@@ -35,7 +35,9 @@ namespace chaos {
 			 */
 			class VFSStageReadableFile : public VFSStageFile {
 				friend class VFSManager;
-
+				//param overlaped_block_read if tru the read operation will fullfill the buffer
+				//if there are other available data block
+				bool overlaped_block_read;
 				uint64_t current_block_creation_ts;
 				
 				//! Default constructor
@@ -57,10 +59,11 @@ namespace chaos {
 				 overlaped_block_read parameter
 				 \param data buffer where put readed byte
 				 \param data_len the length of the buffer
-				 \param overlaped_block_read if tru the read operation will fullfill the buffer
-				 if there are other available data block
 				 */
-				int read(void *data, uint32_t data_len, bool overlaped_block_read = false);
+				int read(void *data, uint32_t data_len);
+				
+				//! prefetch data
+				int prefetchData();
 			};
 		}
 	}

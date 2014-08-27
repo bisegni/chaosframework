@@ -59,16 +59,20 @@ void MongoDBIndexDriver::init(void *init_data) throw (chaos::CException) {
 	//domain index
 	mongo::BSONObj index_on_domain = BSON(MONGO_DB_FIELD_DOMAIN_NAME<<1<<MONGO_DB_FIELD_DOMAIN_UNIQUE_CODE<<1);
 	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_VFS_DOMAINS_COLLECTION, index_on_domain, true, "", true);
-	if(err) throw chaos::CException(-1, "Error creating domain colelction index", __PRETTY_FUNCTION__);
+	if(err) throw chaos::CException(-1, "Error creating domain collection index", __PRETTY_FUNCTION__);
 	
 	//domain url index
 	index_on_domain = BSON(MONGO_DB_FIELD_DOMAIN_NAME<<1<<MONGO_DB_FIELD_DOMAIN_URL<<1);
 	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_VFS_DOMAINS_URL_COLLECTION, index_on_domain, true, "", true);
-	if(err) throw chaos::CException(-1, "Error creating domain colelction index", __PRETTY_FUNCTION__);
+	if(err) throw chaos::CException(-1, "Error creating domain urls collection index", __PRETTY_FUNCTION__);
 	
 	index_on_domain = BSON(MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH<<1<<MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN<<1<<MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS<<1);
 	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_VFS_VBLOCK_COLLECTION, index_on_domain, true, "", true);
-	if(err) throw chaos::CException(-1, "Error creating domain colelction index", __PRETTY_FUNCTION__);
+	if(err) throw chaos::CException(-1, "Error creating data block index", __PRETTY_FUNCTION__);
+	
+	index_on_domain = BSON(MONGO_DB_IDX_DATA_PACK_DID<<1<<MONGO_DB_IDX_DATA_PACK_ACQ_TS<<1);
+	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION, index_on_domain, true, "", true);
+	if(err) throw chaos::CException(-1, "Error creating data pack index collection index", __PRETTY_FUNCTION__);
 
 }
 
@@ -178,6 +182,10 @@ int MongoDBIndexDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,
 	//allocate data block on vfat
 	mongo::BSONObjBuilder bson_search;
 	mongo::BSONObjBuilder bson_block;
+	
+	mongo::BSONObjBuilder search_id;
+	mongo::BSONObjBuilder search_id_return_field;
+	
 	mongo::BSONObj search_result;
 	try {
 		bson_search.append(MONGO_DB_FIELD_FILE_VFS_PATH, vfs_file->getVFSFileInfo()->vfs_fpath);
@@ -197,9 +205,32 @@ int MongoDBIndexDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,
 		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_MAX_BLOCK_SIZE, (long long)data_block->max_reacheable_size);
 		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH, data_block->vfs_path);
 		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN, vfs_file->getVFSFileInfo()->vfs_domain);
+		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_CURRENT_WORK_POSITION, (long long)0);
+		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_HB, mongo::Date_t(chaos::TimingUtil::getTimeStamp()));
 		
 		ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_VFS_VBLOCK_COLLECTION),  bson_block.obj());
 		
+		//collecte the unique id of the datablock
+		search_id << MONGO_DB_FIELD_FILE_VFS_PATH << data_block->vfs_path;
+		search_id << MONGO_DB_FIELD_FILE_VFS_DOMAIN << vfs_file->getVFSFileInfo()->vfs_domain;
+		
+		//set the result needed field
+		search_id_return_field << "_id" << 1;
+		mongo::BSONObj o = search_id_return_field.obj();
+		
+		ha_connection_pool->findOne(search_result,
+									MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_VFS_VBLOCK_COLLECTION),
+									search_id.obj(),
+									&o);
+		
+		if(search_result.isEmpty()) {
+			//cant be here..anyway give error
+			MDBID_LERR_ << "Error getting file information";
+			return -5;
+		}
+		
+		//retrive the id
+		data_block->index_driver_uinique_id = search_result["_id"].OID().toString();
 	} catch (const mongo::DBException &e) {
 		MDBID_LERR_ << e.what();
 		err = -5;
@@ -210,7 +241,7 @@ int MongoDBIndexDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,
 //! Set the state for a stage datablock
 int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 											   chaos_vfs::DataBlock *data_block,
-											   vfs::data_block_state::DataBlockState state) {
+											   int state) {
 	int err = 0;
 	mongo::BSONObjBuilder bson_search;
 	mongo::BSONObjBuilder bson_block_query;
@@ -256,8 +287,8 @@ int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 //! Set the state for a stage datablock
 int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 											   chaos_vfs::DataBlock *data_block,
-											   vfs::data_block_state::DataBlockState cur_state,
-											   vfs::data_block_state::DataBlockState new_state,
+											   int cur_state,
+											   int new_state,
 											   bool& success) {
 	int err = 0;
 	mongo::BSONObjBuilder command;
@@ -301,11 +332,86 @@ int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 	return err;
 }
 
+//! Set the datablock current position
+int MongoDBIndexDriver::vfsSetHeartbeatOnDatablock(chaos_vfs::VFSFile *vfs_file,
+												   chaos_vfs::DataBlock *data_block,
+												   uint64_t timestamp) {
+	int err = 0;
+	mongo::BSONObjBuilder bson_block_query;
+	mongo::BSONObjBuilder bson_block_update;
+	try{
+		bson_block_query << MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH << data_block->vfs_path;
+		bson_block_query << MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN << vfs_file->getVFSFileInfo()->vfs_domain;
+		
+		//compose udpate
+		bson_block_update << "$set"<< BSON(MONGO_DB_FIELD_DATA_BLOCK_HB << mongo::Date_t(((timestamp == 0)?chaos::TimingUtil::getTimeStamp():timestamp)));
+		
+		//for heart beat we use unsecure write
+		mongo::BSONObj q = bson_block_query.obj();
+		mongo::WriteConcern wc = mongo::WriteConcern::unacknowledged;
+		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_VFS_VBLOCK_COLLECTION), q, bson_block_update.obj(), &wc);
+		DEBUG_CODE(MDBID_LDBG_ << "vfsSetHeartbeatOnDatablock query ---------------------------------------------";)
+		DEBUG_CODE(MDBID_LDBG_ << "Query: "  << q.jsonString();)
+		DEBUG_CODE(MDBID_LDBG_ << "vfsSetHeartbeatOnDatablock query ---------------------------------------------";)
+
+		if(err) {
+			MDBID_LERR_ << "Error " << err << " updating state on datablock";
+		}
+	}catch(const mongo::DBException &e) {
+		MDBID_LERR_ << e.what();
+		err = -2;
+	}
+	return err;
+}
+
+//! Set the datablock current position
+int MongoDBIndexDriver::vfsUpdateDatablockCurrentWorkPosition(chaos_vfs::VFSFile *vfs_file,
+															  chaos_vfs::DataBlock *data_block) {
+	int err = 0;
+	mongo::BSONObjBuilder bson_search;
+	mongo::BSONObjBuilder bson_block_query;
+	mongo::BSONObjBuilder bson_block_update;
+	mongo::BSONObj search_result;
+	try{
+		bson_search.append(MONGO_DB_FIELD_FILE_VFS_PATH, vfs_file->getVFSFileInfo()->vfs_fpath);
+		bson_search.append(MONGO_DB_FIELD_FILE_VFS_DOMAIN, vfs_file->getVFSFileInfo()->vfs_domain);
+		err = ha_connection_pool->findOne(search_result, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_VFS_VFAT_COLLECTION), bson_search.obj());
+		
+		if(err) {
+			MDBID_LERR_ << "Error " << err << " searching vfs on vfat";
+			return err;
+		}
+		if(search_result.isEmpty()) {
+			//cant be here..anyway give error
+			MDBID_LERR_ << "[CAN'T BE HERE]Error getting file information";
+			
+		}
+		
+		//compose query
+		bson_block_query << MONGO_DB_FIELD_FILE_PRIMARY_KEY << search_result["_id"].OID();
+		bson_block_query << MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH << data_block->vfs_path;
+		bson_block_query << MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN << vfs_file->getVFSFileInfo()->vfs_domain;
+		
+		//compose udpate
+		bson_block_update << "$set"<< BSON(MONGO_DB_FIELD_DATA_BLOCK_CURRENT_WORK_POSITION << (long long)data_block->current_work_position);
+		
+		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_VFS_VBLOCK_COLLECTION), bson_block_query.obj(), bson_block_update.obj());
+		if(err) {
+			MDBID_LERR_ << "Error " << err << " updating state on datablock";
+		}
+	}catch(const mongo::DBException &e) {
+		MDBID_LERR_ << e.what();
+		err = -2;
+	}
+	return err;
+
+}
+
 //! Return the next available datablock created since timestamp
 int MongoDBIndexDriver::vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
 												  uint64_t timestamp,
 												  bool direction,
-												  data_block_state::DataBlockState state,
+												  int state,
 												  chaos_vfs::DataBlock **data_block) {
 	int err = 0;
 	mongo::BSONObjBuilder query_master;
@@ -341,6 +447,7 @@ int MongoDBIndexDriver::vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
 			*data_block = new chaos_vfs::DataBlock();
 			
 			//set the field
+			(*data_block)->index_driver_uinique_id = result["_id"].OID().toString();
 			(*data_block)->creation_time = result.getField(MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS).numberLong();
 			(*data_block)->invalidation_timestamp = result.getField(MONGO_DB_FIELD_DATA_BLOCK_VALID_UNTIL_TS).numberLong();
 			(*data_block)->max_reacheable_size = result.getField(MONGO_DB_FIELD_DATA_BLOCK_MAX_BLOCK_SIZE).numberLong();
@@ -353,12 +460,6 @@ int MongoDBIndexDriver::vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
 		err = -1;
 	}
 	return err;
-}
-
-//! Heartbeat update stage block
-int MongoDBIndexDriver::vfsWorkHeartBeatOnDataBlock(chaos_vfs::VFSFile *vfs_file,
-													chaos_vfs::DataBlock *data_block) {
-	return 0;
 }
 
 //! Check if the vfs file exists
@@ -441,6 +542,56 @@ int MongoDBIndexDriver::vfsGetFilePathForDomain(std::string vfs_domain, std::str
 			it++) {
 			result_vfs_file_path.push_back(it->getField(MONGO_DB_FIELD_FILE_VFS_PATH).String());
 		}
+	} catch( const mongo::DBException &e ) {
+		MDBID_LERR_ << e.what();
+		err = -1;
+	}
+	return err;
+}
+
+//! add the default index for a unique instrument identification and a timestamp
+int MongoDBIndexDriver::idxAddDataPackIndex(const DataPackIndex& index) {
+	int err = 0;
+	mongo::BSONObjBuilder index_builder;
+	mongo::BSONObjBuilder index_data_block_info_builder;
+	try{
+		//add default index information
+		index_builder << MONGO_DB_IDX_DATA_PACK_DID << index.did;
+		index_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS << mongo::Date_t(index.acquisition_ts);
+		index_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC << (int64_t)index.acquisition_ts;
+		index_builder << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_ID << mongo::OID(getDataBlockFromFileLocation(index.dst_location)->index_driver_uinique_id);
+		index_builder << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET << (int64_t)getDataBlockOffsetFromFileLocation(index.dst_location);
+		
+		DEBUG_CODE(MDBID_LDBG_ << "idxAddDataPackIndex insert ---------------------------------------------";)
+		DEBUG_CODE(MDBID_LDBG_ << "did: " << index.did;)
+		DEBUG_CODE(MDBID_LDBG_ << "acq_ts_numeric: " << index.acquisition_ts;)
+		DEBUG_CODE(MDBID_LDBG_ << "data_pack: " << getDataBlockFromFileLocation(index.dst_location)->index_driver_uinique_id;)
+		DEBUG_CODE(MDBID_LDBG_ << "data_pack_offset: " << getDataBlockOffsetFromFileLocation(index.dst_location);)
+		DEBUG_CODE(MDBID_LDBG_ << "idxAddDataPackIndex insert ---------------------------------------------";)
+		
+		err = ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), index_builder.obj());
+	} catch( const mongo::DBException &e ) {
+		MDBID_LERR_ << e.what();
+		err = e.getCode();
+	}
+	return err;
+
+}
+
+//! add the default index for a unique instrument identification and a timestamp
+int MongoDBIndexDriver::idxDeleteDataPackIndex(const DataPackIndex& index) {
+	int err = 0;
+	mongo::BSONObjBuilder index_search_builder;
+	try{
+		//add default index information
+		index_search_builder << MONGO_DB_IDX_DATA_PACK_DID << index.did;
+		index_search_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS << mongo::Date_t(index.acquisition_ts);
+		mongo::BSONObj q = index_search_builder.obj();
+		DEBUG_CODE(MDBID_LDBG_ << "idxDeleteDataPackIndex insert ---------------------------------------------";)
+		DEBUG_CODE(MDBID_LDBG_ << "query: " << q.jsonString());
+		DEBUG_CODE(MDBID_LDBG_ << "idxDeleteDataPackIndex insert ---------------------------------------------";)
+		
+		err = ha_connection_pool->remove(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), q);
 	} catch( const mongo::DBException &e ) {
 		MDBID_LERR_ << e.what();
 		err = -1;

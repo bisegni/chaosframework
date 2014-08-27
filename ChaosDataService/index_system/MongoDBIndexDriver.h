@@ -47,6 +47,7 @@ namespace chaos {
 #define MONGO_DB_VFS_DOMAINS_URL_COLLECTION	"domains_url"
 #define MONGO_DB_VFS_VFAT_COLLECTION		"vfat"
 #define MONGO_DB_VFS_VBLOCK_COLLECTION		"datablock"
+#define MONGO_DB_IDX_DATA_PACK_COLLECTION	"dp_idx"
 				
 #define MONGO_DB_COLLECTION_NAME(db,coll)	boost::str(boost::format("%1%.%2%") % db % coll)
 				
@@ -62,12 +63,21 @@ namespace chaos {
 #define MONGO_DB_FIELD_FILE_VFS_DOMAIN				"vfs_domain"
 				
 				//data block field-------------------------------------------------
-#define MONGO_DB_FIELD_DATA_BLOCK_STATE				"state"
-#define MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS		"ct"
-#define MONGO_DB_FIELD_DATA_BLOCK_VALID_UNTIL_TS	"vu"
-#define MONGO_DB_FIELD_DATA_BLOCK_MAX_BLOCK_SIZE	"mbs"
-#define MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH			"vfs_path"
-#define MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN		"vfs_domain"
+#define MONGO_DB_FIELD_DATA_BLOCK_STATE						"state"
+#define MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS				"ct"
+#define MONGO_DB_FIELD_DATA_BLOCK_VALID_UNTIL_TS			"vu"
+#define MONGO_DB_FIELD_DATA_BLOCK_MAX_BLOCK_SIZE			"mbs"
+#define MONGO_DB_FIELD_DATA_BLOCK_CURRENT_WORK_POSITION		"cur_work_pos"
+#define MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH					"vfs_path"
+#define MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN				"vfs_domain"
+#define MONGO_DB_FIELD_DATA_BLOCK_HB						"hb"
+
+				//db_idx field-------------------------------------------------
+#define MONGO_DB_IDX_DATA_PACK_DID						"did"
+#define MONGO_DB_IDX_DATA_PACK_ACQ_TS					"acq_ts"
+#define MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC			"acq_ts_numeric"
+#define MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_ID		"db_id"
+#define MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET	"db_offset"
 				
 				//! Mongodb implementation for the index driver
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(MongoDBIndexDriver, IndexDriver) {
@@ -99,25 +109,30 @@ namespace chaos {
 					//! Set the state for a stage datablock
 					int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 											   chaos_vfs::DataBlock *data_block,
-											   vfs::data_block_state::DataBlockState state);
+											   int state);
 					
 					//! Set the state for a stage datablock
 					int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 											   chaos_vfs::DataBlock *data_block,
-											   vfs::data_block_state::DataBlockState cur_state,
-											   vfs::data_block_state::DataBlockState new_state,
+											   int cur_state,
+											   int new_state,
 											   bool& success);
+					
+					//! Set the datablock current position
+					int vfsSetHeartbeatOnDatablock(chaos_vfs::VFSFile *vfs_file,
+												   chaos_vfs::DataBlock *data_block,
+												   uint64_t timestamp = 0);
+					
+					//! update the current datablock size
+					int vfsUpdateDatablockCurrentWorkPosition(chaos_vfs::VFSFile *vfs_file,
+															  chaos_vfs::DataBlock *data_block);
 					
 					//! Return the next available datablock created since timestamp
 					int vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
 												  uint64_t timestamp,
 												  bool direction,
-												  vfs::data_block_state::DataBlockState state,
+												  int state,
 												  chaos_vfs::DataBlock **data_block);
-					
-					//! Heartbeat update stage block
-					int vfsWorkHeartBeatOnDataBlock(chaos_vfs::VFSFile *vfs_file,
-													chaos_vfs::DataBlock *data_block);
 					
 					//! Check if the vfs file exists
 					int vfsFileExist(chaos_vfs::VFSFile *vfs_file,
@@ -128,6 +143,12 @@ namespace chaos {
 					
 					//! Return a list of vfs path of the file belong to a domain
 					int vfsGetFilePathForDomain(std::string vfs_domain, std::string prefix_filter, std::vector<std::string>& result_vfs_file_path, int limit_to_size);
+					
+					//! add the default index for a unique instrument identification and a timestamp
+					int idxAddDataPackIndex(const DataPackIndex& index);
+					
+					//! remove the index for a unique instrument identification and a timestamp
+					virtual int idxDeleteDataPackIndex(const DataPackIndex& index);
 				};
 			}
 	}

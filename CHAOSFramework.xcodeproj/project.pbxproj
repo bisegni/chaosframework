@@ -270,6 +270,9 @@
 		326DB4F514B3B0070018A8D0 /* LLRpcApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326DB4E314B3B0070018A8D0 /* LLRpcApi.cpp */; };
 		326DB4F614B3B0070018A8D0 /* LLRpcApi.h in Headers */ = {isa = PBXBuildFile; fileRef = 326DB4E414B3B0070018A8D0 /* LLRpcApi.h */; };
 		326EA57814D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 326EA57714D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h */; };
+		3271063519A6157800946A8B /* VFSDataFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3271063319A6157800946A8B /* VFSDataFile.cpp */; };
+		3271063819A6188000946A8B /* VFSDataWriteableFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3271063619A6188000946A8B /* VFSDataWriteableFile.cpp */; };
+		3271063F19AB576300946A8B /* DataPackScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3271063D19AB576300946A8B /* DataPackScanner.cpp */; };
 		3272152418B006BC005AC8FD /* CacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3272152218B006BC005AC8FD /* CacheDriver.cpp */; };
 		3272FE1715E1053100B096FB /* EventForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3272FE1615E1053100B096FB /* EventForwarder.h */; };
 		327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B415DF99FB0003C6DA /* RpcClient.cpp */; };
@@ -797,6 +800,13 @@
 		326DB4E314B3B0070018A8D0 /* LLRpcApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = LLRpcApi.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		326DB4E414B3B0070018A8D0 /* LLRpcApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = LLRpcApi.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		326EA57714D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiKeyObjectWaitSemaphore.h; sourceTree = "<group>"; };
+		3271063319A6157800946A8B /* VFSDataFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSDataFile.cpp; sourceTree = "<group>"; };
+		3271063419A6157800946A8B /* VFSDataFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSDataFile.h; sourceTree = "<group>"; };
+		3271063619A6188000946A8B /* VFSDataWriteableFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSDataWriteableFile.cpp; sourceTree = "<group>"; };
+		3271063719A6188000946A8B /* VFSDataWriteableFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSDataWriteableFile.h; sourceTree = "<group>"; };
+		3271063C19A7417000946A8B /* index_system_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = index_system_types.h; sourceTree = "<group>"; };
+		3271063D19AB576300946A8B /* DataPackScanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataPackScanner.cpp; sourceTree = "<group>"; };
+		3271063E19AB576300946A8B /* DataPackScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataPackScanner.h; sourceTree = "<group>"; };
 		3272152218B006BC005AC8FD /* CacheDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheDriver.cpp; sourceTree = "<group>"; };
 		3272152318B006BC005AC8FD /* CacheDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheDriver.h; sourceTree = "<group>"; };
 		3272FE1615E1053100B096FB /* EventForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventForwarder.h; sourceTree = "<group>"; };
@@ -1279,10 +1289,14 @@
 				326CADC918EAFD1200E74CEA /* VFSManager.h */,
 				32502C811923C6F60073E4AB /* VFSStageWriteableFile.cpp */,
 				32502C821923C6F60073E4AB /* VFSStageWriteableFile.h */,
+				3271063619A6188000946A8B /* VFSDataWriteableFile.cpp */,
+				3271063719A6188000946A8B /* VFSDataWriteableFile.h */,
 				32DCC36D192517DA00E14256 /* VFSStageReadableFile.cpp */,
 				32DCC36E192517DA00E14256 /* VFSStageReadableFile.h */,
 				32502C7D1923BAF30073E4AB /* VFSStageFile.cpp */,
 				32502C7E1923BAF30073E4AB /* VFSStageFile.h */,
+				3271063319A6157800946A8B /* VFSDataFile.cpp */,
+				3271063419A6157800946A8B /* VFSDataFile.h */,
 				3250884B18E49975001C9733 /* VFSFile.cpp */,
 				3250884C18E49975001C9733 /* VFSFile.h */,
 				326CADC618EAB64600E74CEA /* DataBlock.h */,
@@ -2267,6 +2281,7 @@
 			isa = PBXGroup;
 			children = (
 				327D5E42192DE3430043ED21 /* index_system.h */,
+				3271063C19A7417000946A8B /* index_system_types.h */,
 				327D5E43192DE3430043ED21 /* IndexDriver.cpp */,
 				327D5E44192DE3430043ED21 /* IndexDriver.h */,
 				327D5E45192DE3430043ED21 /* MongoDBHAConnectionManager.cpp */,
@@ -2275,6 +2290,8 @@
 				327D5E48192DE3430043ED21 /* MongoDBIndexDriver.h */,
 				32FB216E192A574700E9C87A /* StageDataVFileScanner.cpp */,
 				32FB216F192A574700E9C87A /* StageDataVFileScanner.h */,
+				3271063D19AB576300946A8B /* DataPackScanner.cpp */,
+				3271063E19AB576300946A8B /* DataPackScanner.h */,
 			);
 			path = index_system;
 			sourceTree = "<group>";
@@ -2791,12 +2808,15 @@
 				327D5E4A192DE3430043ED21 /* MongoDBHAConnectionManager.cpp in Sources */,
 				32DBF9D118E1845E0095B289 /* CouchbaseCacheDriver.cpp in Sources */,
 				3223253E18EC157000ADBA4D /* StorageDriver.cpp in Sources */,
+				3271063519A6157800946A8B /* VFSDataFile.cpp in Sources */,
+				3271063819A6188000946A8B /* VFSDataWriteableFile.cpp in Sources */,
 				32502C831923C6F60073E4AB /* VFSStageWriteableFile.cpp in Sources */,
 				323236DA164573F50052CE06 /* main.cpp in Sources */,
 				32B159DA18B4B9F90096B58B /* DataWorker.cpp in Sources */,
 				3299363618A7C4F60093E7F2 /* ChaosDataService.cpp in Sources */,
 				32FB2170192A574700E9C87A /* StageDataVFileScanner.cpp in Sources */,
 				32B159DE18B4D4210096B58B /* MemcachedCacheDriver.cpp in Sources */,
+				3271063F19AB576300946A8B /* DataPackScanner.cpp in Sources */,
 				32DCC36F192517DA00E14256 /* VFSStageReadableFile.cpp in Sources */,
 				3250884D18E49975001C9733 /* VFSFile.cpp in Sources */,
 				3235425F1923A9360090B8F6 /* IndexStageDataWorker.cpp in Sources */,

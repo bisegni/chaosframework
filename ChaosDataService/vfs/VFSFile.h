@@ -21,33 +21,51 @@
 #define __CHAOSFramework__VFSFile__
 
 #include "VFSTypes.h"
+#include "DataBlock.h"
 #include "../index_system/IndexDriver.h"
 #include "storage_system/StorageDriver.h"
 
 
 namespace chaos {
 	namespace data_service {
+		namespace index_system {
+			class IndexDriver;
+		}
 		namespace vfs {
 		
 			namespace chaos_index = chaos::data_service::index_system;
 			
+			
 			class VFSManager;
 			struct DataBlock;
 			
+			typedef enum VFSFileOpenMode {
+				VFSFileOpenModeRead = 0,
+				VFSFileOpenModeWrite = 1
+			} VFSFileOpenMode;
 						
 			//! VFS Logical file
 			class VFSFile {
 				friend class VFSManager;
-				
+				friend class IndexDriver;
 				//! operational setting for the virtual file
 				VFSFileInfo vfs_file_info;
 				
+				//record last read or write operation timestamp
+				uint64_t last_wr_ts;
+				
 			protected:
+				//! track the opening mode
+				int open_mode;
+				
 				//!tag if the file is in good state
 				bool good;
 
 				//! Current available data block where read or write
 				DataBlock *current_data_block;
+				
+				//!current journal datablock
+				DataBlock *current_journal_data_block;
 				
 				//!index driver pointer
 				chaos_index::IndexDriver *index_driver_ptr;
@@ -58,21 +76,50 @@ namespace chaos {
 				//! return new datablock where write into
 				int getNewDataBlock(DataBlock **new_data_block_handler);
 				
-				//! return new datablock where write into
-				int getNextInTimeDataBlock(DataBlock **new_data_block_handler, uint64_t timestamp, data_block_state::DataBlockState state);
-				
 				//! change Datablock state
 				int updateDataBlockState(data_block_state::DataBlockState state);
 				
-				//! release a datablock
-				int releaseDataBlock(DataBlock *data_block_ptr);
+				//! release a datablock adn set the current work position
+				/*!
+				 perform some operation befor phisically close the data block setting
+				 also the state. 
+				 \param data_block_ptr data block to release
+				 \param closed_state is the state ater the block is processed
+				 */
+				virtual int releaseDataBlock(DataBlock *data_block_ptr, int closed_state = data_block_state::DataBlockStateNone);
+				
+				//! check the validity of the datablock(usefull only on write version of the write)
+				bool isDataBlockValid(DataBlock *data_block_ptr);
 				
 				//default consturctor or destructor
-				VFSFile(storage_system::StorageDriver *_storage_driver_ptr, index_system::IndexDriver *_index_driver_ptr, std::string area, std::string vfs_fpath);
+				VFSFile(storage_system::StorageDriver *_storage_driver_ptr,
+						index_system::IndexDriver *_index_driver_ptr,
+						std::string area,
+						std::string vfs_fpath,
+						int _open_mode);
+				
+				//!destructore
 				~VFSFile();
+				
+				//   journal file managment api
+				//! open a journa file for the datablock
+				int openJournalForDatablock(DataBlock *datablock, DataBlock **current_journal_data_block);
+				
+				//! close the journal file for the datablock
+				int closeJournalDatablock(DataBlock *current_journal_data_block);
+				
+				//! sync location of master datablock on journal
+				int syncWorkPositionFromDatablockAndJournal(DataBlock *datablock, DataBlock *current_journal_data_block);
+				
+				//! check if the journl is present
+				int journalIsPresent(DataBlock *datablock,  bool &presence);
+				
 			public:
 				//! Get the VFS information for file
 				const VFSFileInfo *getVFSFileInfo() const;
+				
+				//! return the curent location pointed by writeable file
+				FileLocationPointer getCurrentFileLocation();
 				
 				//! Check if the file exists
 				bool exist();
@@ -80,7 +127,11 @@ namespace chaos {
 				//! Return the goodness of the file
 				bool isGood();
 				
-				virtual int seekOnCurrentBlock(block_seek_base::BlockSeekBase base_direction, int64_t offset);
+				//! seek on block
+				/*!
+				 \param gp false = seekg true = seekp
+				 */
+				virtual int seekOnCurrentBlock(block_seek_base::BlockSeekBase base_direction, int64_t offset, bool gp);
 				
 				//! write data on the current data block
 				virtual int write(void *data, uint32_t data_len);
@@ -94,6 +145,46 @@ namespace chaos {
 				 otherwise the number of byte readed
 				 */
 				virtual int read(void *buffer, uint32_t buffer_len);
+				
+				//! give heartbeat on current datablock
+				int giveHeartbeat(uint64_t hb_time = 0);
+				
+				//!Synck the journal with current block state
+				virtual int syncCurrentOffsetToJournal();
+				
+				//! write text key value to the journal file
+				int writeKeyValueToJournal(std::string journal_key, std::string journal_value);
+
+				//! write text key value to the journal file
+				int openKeyToJournal(std::string journal_key);
+				
+				//! write text key value to the journal file
+				int appendValueToJournal(std::string journal_value);
+				
+				//! write the clouse information for the key
+				int closeKeyToJournal(std::string journal_key);
+				
+				//!close the current data block setting the state
+				int closeCurrentDataBlock(int closed_state = data_block_state::DataBlockStateNone);
+				
+				//! perform the matainance of the virtual file
+				/*!
+				 vrtiual fiel has many block that can be open one at time
+				 or many at time(depending on sublcass) anyway any datta block
+				 as some logic for keep datablock open. With this method a check is
+				 done closing the datablock that needs to be closed according to their
+				 rules.
+				 */
+				int mantain(int closed_state = data_block_state::DataBlockStateNone);
+				
+				//! prefetch needed datablock
+				/*!
+				  subclass implement this to permit the prefetch of needed datablock
+				 */
+				virtual int prefetchData();
+				
+				//! return the presen of a datablock
+				virtual int hasData(bool& has_data);
 			};
 		}
 	}

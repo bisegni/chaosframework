@@ -1,5 +1,5 @@
 /*
- *	index_system.h
+ *	VFSDataFile.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,10 +18,21 @@
  *    	limitations under the License.
  */
 
-#ifndef CHAOSFramework_index_system_h
-#define CHAOSFramework_index_system_h
+#include "VFSDataFile.h"
 
-#include "MongoDBIndexDriver.h"
-#include "StageDataVFileScanner.h"
+#include <boost/format.hpp>
+using namespace chaos::data_service::vfs;
 
-#endif
+VFSDataFile::VFSDataFile(storage_system::StorageDriver *_storage_driver_ptr,
+						 chaos_index::IndexDriver *_index_driver_ptr,
+						 std::string data_vfs_relative_path,
+						 VFSDataFileOpenMode _open_mode):
+VFSFile(_storage_driver_ptr,
+		_index_driver_ptr,
+		VFS_DATA_AREA,
+		data_vfs_relative_path,
+		(int) _open_mode) //superclass constructor
+{	
+	//allocate all the path for this file
+	good = (storage_driver_ptr->createPath(getVFSFileInfo()->vfs_fpath) == 0);
+}

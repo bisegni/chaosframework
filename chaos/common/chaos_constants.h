@@ -33,7 +33,9 @@ namespace chaos {
     //! Name space for grupping option used for commandline or in config file
     namespace InitOption{
         //!  for print the help
-        static const char * const   OPT_HELP                            = "help";
+        static const char * const	OPT_HELP                            = "help";
+		//! config file parameter
+		static const char * const   OPT_CONF_FILE						= "conf_file";
         //!   Specify the implementation to use for rp messaging
         static const char * const   OPT_RPC_IMPLEMENTATION              = "rpc-server-impl";
         //!   Specify the network port where rpc system will publish al the service

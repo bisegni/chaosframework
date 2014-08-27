@@ -19,7 +19,10 @@
  */
 
 #include "StageDataVFileScanner.h"
+#include "../vfs/VFSManager.h"
 
+#include <chaos/common/utility/TimingUtil.h>
+#include <chaos/common/chaos_constants.h>
 #include <chaos/common/utility/endianess.h>
 
 #define StageDataVFileScanner_LOG_HEAD "[StageDataVFileScanner] - "
@@ -30,61 +33,160 @@
 
 
 using namespace chaos::data_service::index_system;
+namespace vfs=chaos::data_service::vfs;
 
-StageDataVFileScanner::StageDataVFileScanner(vfs::VFSStageReadableFile *_stage_file):
-stage_file(_stage_file),
-data_buffer(NULL),
-curret_data_buffer_len(0) {
+StageDataVFileScanner::StageDataVFileScanner(vfs::VFSManager *_vfs_manager,
+											 index_system::IndexDriver *_index_driver,
+											 vfs::VFSStageReadableFile *_working_stage_file):
+DataPackScanner(_vfs_manager,
+				_index_driver,
+				_working_stage_file),
+last_hb_on_vfile(0) {
 	
-	//for first time make place for only BSON header
-	data_buffer = malloc(curret_data_buffer_len = 4);
 }
 
 StageDataVFileScanner::~StageDataVFileScanner() {
-	if(data_buffer) free(data_buffer);
+	closeAllDatafile();
 }
 
-std::string StageDataVFileScanner::getScannedVFSPath() {
-	return stage_file->getVFSFileInfo()->vfs_fpath;
-}
 
-void StageDataVFileScanner::grow(uint32_t new_size) {
-	if(curret_data_buffer_len < new_size) {
-		data_buffer = realloc(data_buffer, (curret_data_buffer_len = new_size));
+boost::shared_ptr<DataFileInfo> StageDataVFileScanner::getWriteableFileForDID(const std::string& did) {
+	boost::shared_ptr<DataFileInfo> result;
+	if(map_did_data_file.count(did)) {
+		result = map_did_data_file[did];
+	} else {
+		result.reset(new DataFileInfo());
+		
+		//we need to create a new data file for new readed unique identifier
+		if(!vfs_manager->getWriteableDataFile(did, &result->data_file_ptr) && result->data_file_ptr){
+			//insert file into the hasmap
+			map_did_data_file.insert(make_pair(did, result));
+		}else {
+			StageDataVFileScannerLERR_ << "Error creating data file for " << did;
+		}
 	}
+	//we need to ensure that datablock is not null for determinate correct first block location
+	if(result.get())result->data_file_ptr->prefetchData();
+	
+	return result;
 }
 
-void StageDataVFileScanner::processDataPack(bson::BSONObj data_pack) {
-	StageDataVFileScannerLDBG_ << data_pack.toString();
-}
-
-#define BREAK_ON_NO_DATA_READED \
-if(err <= 0) { \
-work = false; \
-break; \
-} \
-
-#define BSON_HEADER_SIZE 4
-// scan an entire block of the stage file
-int StageDataVFileScanner::scan() {
+int StageDataVFileScanner::closeAllDatafile() {
 	int err = 0;
-	if(!data_buffer) return -1;
-	bool work = true;
-	while(work) {
-		//read the header
-		err = stage_file->read(data_buffer, BSON_HEADER_SIZE);
-		BREAK_ON_NO_DATA_READED
-		
-		uint32_t bson_size = FROM_LITTLE_ENDNS(int32_t, data_buffer, 0);
-		
-		//check if we need to expand the buffer
-		grow(bson_size);
-		
-		//read all bson
-		err = stage_file->read((static_cast<char*>(data_buffer)+4), bson_size-4);
-		BREAK_ON_NO_DATA_READED
-		
-		processDataPack(bson::BSONObj(static_cast<const char*>(data_buffer)));
+	//scan as endded with error so we need to clean
+	for(std::map<std::string, shared_ptr<DataFileInfo> >::iterator it =  map_did_data_file.begin();
+		it != map_did_data_file.end();
+		it++){
+		StageDataVFileScannerLAPP_ << "closing datafile: " << it->second->data_file_ptr->getVFSFileInfo()->vfs_fpath;
+		if((err = vfs_manager->releaseFile(it->second->data_file_ptr))){
+			StageDataVFileScannerLERR_ << "error closing data file";
+		}
 	}
+	map_did_data_file.clear();
+	return err;
+}
+
+int StageDataVFileScanner::startScanHandler() {
 	return 0;
+}
+
+int StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack) {
+	int err = 0;
+	uint64_t cur_ts = chaos::TimingUtil::getTimeStamp();
+	
+	if(!data_pack.hasField(chaos::DataPackKey::CS_CSV_CU_ID) ||
+	   !data_pack.hasField(chaos::DataPackKey::CS_CSV_CU_ID)) {
+		StageDataVFileScannerLDBG_ << "Current scanned data pack doesn't have required field so we skip it";
+		return 0;
+	}
+	DataPackIndex new_data_pack_index;
+
+	//colelct idnex information
+	
+	//get values for key that are mandatory for default index
+	new_data_pack_index.did = data_pack.getField(chaos::DataPackKey::CS_CSV_CU_ID).String();
+	new_data_pack_index.acquisition_ts = data_pack.getField(chaos::DataPackKey::CS_CSV_TIME_STAMP).numberLong();
+	
+	//get file for unique id
+	boost::shared_ptr<DataFileInfo> data_file_info = getWriteableFileForDID(new_data_pack_index.did);
+	if(!data_file_info->data_file_ptr) {
+		StageDataVFileScannerLERR_ << "No vfs got for unique id " << new_data_pack_index.did;
+		return -1;
+	}
+	//! write get data file phase
+	if((err = working_data_file->appendValueToJournal("gdf"))){
+		StageDataVFileScannerLERR_ << "Error writing gdf tag";
+		return err;
+	}
+
+	//write packet to his virtaul data file
+	new_data_pack_index.dst_location = data_file_info->data_file_ptr->getCurrentFileLocation();
+	if(!new_data_pack_index.dst_location.isValid()) {
+		//strange error because datablock is null
+		StageDataVFileScannerLERR_ << "Error on retrieve datafile offset";
+		return -2;
+	}
+	//! write journal
+	if((err = working_data_file->appendValueToJournal("gloc"))){
+		StageDataVFileScannerLERR_ << "Error writing gloc tag";
+		return err;
+	}
+
+	//write index for the datapack on database
+	if((err = index_driver->idxAddDataPackIndex(new_data_pack_index))) {
+		if(err == 11000) {
+			StageDataVFileScannerLERR_ << "Index already present";
+		} else {
+			StageDataVFileScannerLERR_ << "Error writing index to database";
+			return err;
+		}
+	}
+	//! write journal
+	if((err = working_data_file->appendValueToJournal("widx"))){
+		StageDataVFileScannerLERR_ << "Error writing widx tag";
+		return err;
+	}
+	
+	//write data pack on data file
+	if((err = data_file_info->data_file_ptr->write((void*)data_pack.objdata(), data_pack.objsize()))) {
+		StageDataVFileScannerLERR_ << "Error writing datafile "<< err;
+	}
+	//! write journal
+	if((err = working_data_file->appendValueToJournal("wpack"))){
+		StageDataVFileScannerLERR_ << "Error writing wpac tag";
+		return err;
+	}
+	
+	//give heartbeat on datafile
+	if(cur_ts > last_hb_on_vfile + 2000) {
+		if((err = data_file_info->data_file_ptr->giveHeartbeat(cur_ts))) {
+			StageDataVFileScannerLERR_ << "Error writing datafile "<< err;
+		}
+		last_hb_on_vfile = cur_ts;
+	}
+	return err;
+}
+
+int StageDataVFileScanner::endScanHandler(int end_scan_error) {
+	int err = 0;
+	if(end_scan_error) {
+		StageDataVFileScannerLAPP_ << "An error has occurred during scanner, close all datafile";
+		closeAllDatafile();
+	} else {
+		//all is gone weel but we need to do some mantainance
+		//scan as endded with error so we need to clean
+		for(std::map<std::string, shared_ptr<DataFileInfo> >::iterator it =  map_did_data_file.begin();
+			it != map_did_data_file.end();
+			it++){
+			
+			// we need to maintin datablock on to long idle datafile so datablock no more valid(time/size) are closed
+			// and prefetchData call ensure that one valida databloc is allocated if mantainance close an old one.
+			StageDataVFileScannerLAPP_ << "Mantainance for datafile: " << it->second->data_file_ptr->getVFSFileInfo()->vfs_fpath;
+			if((err = it->second->data_file_ptr->mantain(vfs::data_block_state::DataBlockStateQuerable))) {
+				StageDataVFileScannerLERR_ << "error mantaining datafile " << it->second->data_file_ptr->getVFSFileInfo()->vfs_fpath;
+			}
+		}
+
+	}
+	return err;
 }

@@ -21,13 +21,15 @@
 #ifndef __CHAOSFramework__IndexDriver__
 #define __CHAOSFramework__IndexDriver__
 
+#include <map>
 #include <string>
 #include <vector>
 
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/InizializableService.h>
 
-#include "../vfs/VFSTypes.h"
+//#include "../vfs/VFSTypes.h"
+#include "index_system_types.h"
 
 namespace chaos {
 	namespace data_service {
@@ -65,6 +67,9 @@ namespace chaos {
 				IndexDriver(std::string alias);
 			protected:
 				IndexDriverSetting *setting;
+				
+				chaos_vfs::DataBlock *getDataBlockFromFileLocation(const vfs::FileLocationPointer& data_block);
+				uint64_t getDataBlockOffsetFromFileLocation(const vfs::FileLocationPointer& data_block);
 			public:
 				
 				//! public destructor
@@ -110,11 +115,11 @@ namespace chaos {
 				 Set the current state for a datablock in the stage area
 				 \param vfs_file owner of the datablock
 				 \param data_block Data block for wich need to be changed the state
-				 \param state new state to set
+				 \param state new state to set (chaos::data_service::vfs::data_block_state::DataBlockState)
 				 */
 				virtual int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 												   chaos_vfs::DataBlock *data_block,
-												   vfs::data_block_state::DataBlockState state) = 0;
+												   int state) = 0;
 				
 				//! Set the state for a datablock
 				/*!
@@ -124,14 +129,24 @@ namespace chaos {
 				 given parameter, and the update is done atomically
 				 \param vfs_file owner of the datablock
 				 \param data_block Data block for wich need to be changed the state
-				 \param cur_state current state of the block
-				 \param new_state new state of the block
+				 \param cur_state current state of the block (chaos::data_service::vfs::data_block_state::DataBlockState)
+				 \param new_state new state of the block (chaos::data_service::vfs::data_block_state::DataBlockState)
 				 */
 				virtual int vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 												   chaos_vfs::DataBlock *data_block,
-												   vfs::data_block_state::DataBlockState cur_state,
-												   vfs::data_block_state::DataBlockState new_state,
+												   int cur_state,
+												   int new_state,
 												   bool& success) = 0;
+				
+				//! Set the datablock current position
+				virtual int vfsSetHeartbeatOnDatablock(chaos_vfs::VFSFile *vfs_file,
+													   chaos_vfs::DataBlock *data_block,
+													   uint64_t timestamp = 0) = 0;
+				
+				
+				//! update the current datablock size
+				virtual int vfsUpdateDatablockCurrentWorkPosition(chaos_vfs::VFSFile *vfs_file,
+																  chaos_vfs::DataBlock *data_block) = 0;
 				
 				//! Return the next available datablock created since timestamp
 				/*!
@@ -139,24 +154,16 @@ namespace chaos {
 				 the timestamp, datablock to select that match the state. The api is atomic
 				 \param vfs_file virtual file at wich the datablock belowng
 				 \param timestamp the timestamp form wich search
-				 \param directio true -> enxt or false -> prev
-				 \param state the state for the selection of the datablock
+				 \param direction true -> enxt or false -> prev
+				 \param state the state for the selection of the datablock (chaos::data_service::vfs::data_block_state::DataBlockState)
 				 \param data_block the returned, if found, datablock
 				 \return the error code
 				 */
 				virtual int vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
 													  uint64_t timestamp,
 													  bool direction,
-													  vfs::data_block_state::DataBlockState state,
+													  int state,
 													  chaos_vfs::DataBlock **data_block) = 0;
-				
-				//! Heartbeat update stage block
-				/*!
-				 Registration of a new datablock in stage area is achieved directly to the DataService process
-				 after the block has been created.
-				 */
-				virtual int vfsWorkHeartBeatOnDataBlock(chaos_vfs::VFSFile *vfs_file,
-														chaos_vfs::DataBlock *data_block) = 0;
 				
 				//! Check if the vfs file exists
 				/*!
@@ -180,6 +187,18 @@ namespace chaos {
 				 \param result_vfs_file_path array contains the found vfs paths.
 				 */
 				virtual int vfsGetFilePathForDomain(std::string vfs_domain, std::string prefix_filter, std::vector<std::string>& result_vfs_file_path, int limit_to_size = 100) = 0;
+				
+				//! add the default index for a unique instrument identification and a timestamp
+				/*!
+				 whitin !CHAOS every data pack has, by default, an unique identification and a timestamp that represet
+				 the time when the data into packet have been colelcted. This api write the default index on database
+				 that permit to find the data pack whhitin the destination virtula file.
+				 \param index the index to be stored for a new datapack
+				 */
+				virtual int idxAddDataPackIndex(const DataPackIndex& index) = 0;
+				
+				//! remove the index for a unique instrument identification and a timestamp
+				virtual int idxDeleteDataPackIndex(const DataPackIndex& index) = 0;
 			};
 		}
 	}
