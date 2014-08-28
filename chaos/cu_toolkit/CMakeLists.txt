@@ -8,7 +8,7 @@ SET(cu_lib_src  ${cu_lib_src} ControlManager/slow_command/SlowCommandExecutor.cp
 
 ADD_LIBRARY(chaos_cutoolkit SHARED ${cu_lib_src})
 
-set_target_properties(chaos_cutoolkit PROPERTIES VERSION 1.0.0 SOVERSION 1) 
+#set_target_properties(chaos_cutoolkit PROPERTIES VERSION 1.0.0 SOVERSION 1) 
 
 SET(chaos_cutoolkit_lib $ENV{CHAOS_LINK_LIBRARY})
 separate_arguments(chaos_cutoolkit_lib)

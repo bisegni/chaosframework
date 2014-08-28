@@ -122,10 +122,10 @@ extern "C" {
                     *attributeNumberPtr = attributeFound = static_cast<uint32_t>(attributesName.size());
                     
                         //allcoate the memory for the array
-                    *attributeNameArrayHandle = arrayPtr = (char**)malloc(attributeFound * sizeof(char));
+                    *attributeNameArrayHandle = arrayPtr = (char**)malloc(attributeFound * sizeof(char*));
                     
                         //scann all name and allocate the string
-                    for (int idx = 0 ; attributeFound; idx++) {
+                    for (int idx = 0 ; idx < attributeFound; idx++) {
                         string curName = attributesName[idx];
                         
                             //create and copy the attribute name into appropiate index

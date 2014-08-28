@@ -34,10 +34,10 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_setControllerTimeout
 /*
  * Class:     it_infn_chaos_JNIChaos
  * Method:    getDeviceDatasetAttributeNameForDirection
- * Signature: (IILjava/lang/String;Lit/infn/chaos/type/IntReference;)I
+ * Signature: (IILjava/util/Vector;)I
  */
 JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getDeviceDatasetAttributeNameForDirection
-  (JNIEnv *, jobject, jint, jint, jstring, jobject);
+  (JNIEnv *, jobject, jint, jint, jobject);
 
 /*
  * Class:     it_infn_chaos_JNIChaos

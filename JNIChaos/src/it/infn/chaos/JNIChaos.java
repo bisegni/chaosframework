@@ -5,6 +5,8 @@
  */
 package it.infn.chaos;
 
+import java.util.Vector;
+
 import it.infn.chaos.type.IntReference;
 
 /**
@@ -14,6 +16,23 @@ import it.infn.chaos.type.IntReference;
 public class JNIChaos {
 
     static {
+        System.loadLibrary("uv");
+    	System.loadLibrary("zmq");
+    	System.loadLibrary("memcached");
+    	
+       	System.loadLibrary("boost_system");
+    	//System.loadLibrary("boost_thread");
+    	
+    	System.loadLibrary("boost_regex");
+
+    	//System.loadLibrary("boost_log");
+       //	System.loadLibrary("boost_log_setup");
+     	//System.loadLibrary("boost_chrono");
+    	//System.loadLibrary("boost_filesystem");
+    	System.loadLibrary("boost_program_options");
+    	
+    	System.loadLibrary("chaos_common");
+    	System.loadLibrary("chaos_uitoolkit");
         System.loadLibrary("jnichaos");
     }
 
@@ -52,8 +71,7 @@ public class JNIChaos {
      with the number for attribute names found
      \return the error of operation, if all goes well the result is 0
      */
-    native int getDeviceDatasetAttributeNameForDirection(int devID, int attributeDirection,
-            String attributeNameArrayHandle, IntReference attributeNumberPtr);
+    native int getDeviceDatasetAttributeNameForDirection(int devID, int attributeDirection, Vector<String> attributeNames);
     
         //! Device initialization
     /*!

@@ -28,17 +28,15 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_initToolkit
  */
 JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getNewControllerForDeviceID
   (JNIEnv *env, jobject obj, jstring deviceIdString, jobject devIdPtr) {
-
+    uint32_t device_id = 0;
     const char * const deviceId = env->GetStringUTFChars(deviceIdString,0);
 
     jclass clazz = env->GetObjectClass(devIdPtr);
-    jmethodID mid = env->GetMethodID(clazz, "getValue", "()I");
-    jint devIdPtrIntValue = env->CallIntMethod(devIdPtr, mid);    
-    uint32_t devIdPtrUint32Value, *devIdPtrUint32;
-    devIdPtrUint32Value=uint32_t(devIdPtrIntValue);
-    devIdPtrUint32=&devIdPtrUint32Value;
+    jmethodID mid = env->GetMethodID(clazz, "setValue", "(I)V");
 
-    int result = getNewControllerForDeviceID(deviceId, devIdPtrUint32);
+    int result = getNewControllerForDeviceID(deviceId, &device_id);
+
+    env->CallIntMethod(devIdPtr, mid, device_id);
     env->ReleaseStringUTFChars(deviceIdString, deviceId);
     return result;
 //    return devIdPtrIntValue;  // Debug
@@ -59,29 +57,41 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_setControllerTimeout
 /*
  * Class:     it_infn_chaos_JNIChaos
  * Method:    getDeviceDatasetAttributeNameForDirection
- * Signature: (IILjava/lang/String;Lit/infn/chaos/type/IntReference;)I
+ * Signature: (IILjava/util/Vector;)I
  */
 JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getDeviceDatasetAttributeNameForDirection
-  (JNIEnv *env, jobject obj, jint devID, jint attributeDirection, jstring attributeNameHarrayHandleString, jobject   	attributeNumberPtr) {
+  (JNIEnv *env, jobject obj, jint devID, jint attributeDirection, jobject attributeNamesVector) {
 
-    char * attributeNameHarrayHandle = (char*)env->GetStringUTFChars(attributeNameHarrayHandleString,0);
-    char ** attributeNameHarrayHandlePtr2=&attributeNameHarrayHandle;
-    char *** attributeNameHarrayHandlePtr3=&attributeNameHarrayHandlePtr2;
+    jclass vectorClass = env->FindClass("java/util/Vector");
+    jmethodID vectorAddElement = env->GetMethodID(vectorClass, "addElement", "(Ljava/lang/Object;)V");
 
-    jclass clazz = env->GetObjectClass(attributeNumberPtr);
-    jmethodID mid = env->GetMethodID(clazz, "getValue", "()I");
-    jint attributeNumberPtrIntValue = env->CallIntMethod(attributeNumberPtr, mid);
-    uint32_t attributeNumberPtrUint32Value, *attributeNumberPtrUint32;
-    attributeNumberPtrUint32Value=uint32_t(attributeNumberPtrIntValue);
-    attributeNumberPtrUint32=&attributeNumberPtrUint32Value;
+    char * * attribute_name_array = NULL;
+    uint32_t attribute_name_array_size;
 
     int result=getDeviceDatasetAttributeNameForDirection(uint32_t(devID),
 							 int16_t(attributeDirection),
-							 attributeNameHarrayHandlePtr3,
-							 attributeNumberPtrUint32);
-    env->ReleaseStringUTFChars(attributeNameHarrayHandleString, attributeNameHarrayHandle);
+							 &attribute_name_array,
+							 &attribute_name_array_size);
+
+    if(attribute_name_array) {
+      for(int idx = 0;
+        idx < attribute_name_array_size;
+        idx++) {
+          //create java string
+          jstring attribute_name = env->NewStringUTF((const char *) attribute_name_array[idx]);
+
+          //add java string to the vector
+          env->CallIntMethod(attributeNamesVector, vectorAddElement, attribute_name);
+
+          //delete memory for attribute name
+          free(attribute_name_array[idx]);
+      }
+
+      // delete array
+      free(attribute_name_array);
+    }
+
     return result;
-//    return 3; // Debug
 }
 
 /*
@@ -251,7 +261,7 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_submitSlowControlCommand
     uint64_t commandIDPtrUint64Value, *commandIDPtrUint64;
     commandIDPtrUint64Value=uint64_t(commandIDPtrIntValue);
     commandIDPtrUint64=&commandIDPtrUint64Value;
-  
+
     int result = submitSlowControlCommand(uint32_t(devID),
 					    commandAlias,
 					    uint16_t(submissioneRule),
@@ -290,4 +300,3 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_deinitToolkit
     return deinitToolkit();
 //    return 16; // Debug
   }
-

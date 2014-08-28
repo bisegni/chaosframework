@@ -5,6 +5,9 @@
  */
 
 package it.infn.chaos;
+import java.util.Stack;
+import java.util.Vector;
+
 import it.infn.chaos.type.IntReference;
 
 /**
@@ -14,33 +17,48 @@ import it.infn.chaos.type.IntReference;
 public class Test {
     public static void main (String [] args) {
     
-        System.out.println("Main, classe Test.java");
+        System.out.println((System.getProperty("java.library.path")));
         JNIChaos jni=new JNIChaos();
-        IntReference ir=new IntReference();
-        String deviceIDString="deviceID";
-        int devID=123456;
-        
-//Per richiamare le funzioni native:    jni.nomeMetodo(---);
+        IntReference ir = new IntReference();
+        Vector<String> attributeNames = new Stack<String>();
+        String deviceIDString="rt-sin-a";
 
+        int err = jni.initToolkit("metadata-server=pcbisegni:5000\nlog-on-console=true\ndata-io-impl=IODirect");
+        if(err != 0) return;
         
-        
-//        System.out.println(jni.initToolkit(""));
-//        System.out.println(jni.getNewControllerForDeviceID(deviceIDString, ir)+" : valore assegnato alla variabile intValue di IntReference");
-//        System.out.println(jni.setControllerTimeout(devID, 0));
-//        System.out.println(jni.getDeviceDatasetAttributeNameForDirection(devID, devID, deviceIDString, ir));
-//        System.out.println(jni.initDevice(devID));
-//        System.out.println(jni.startDevice(devID));
-//        System.out.println(jni.setDeviceRunScheduleDelay(devID, devID));
-//        System.out.println(jni.stopDevice(devID));
-//        System.out.println(jni.deinitDevice(devID));
-//        System.out.println(jni.fetchLiveData(devID));
-//        System.out.println(jni.getTimeStamp(devID, ir));
-//        System.out.println(jni.getStrValueForAttribute(devID, deviceIDString, deviceIDString));
-//        System.out.println(jni.getStrValueForAttr(devID, deviceIDString, deviceIDString));
-//        System.out.println(jni.setStrValueForAttribute(devID, deviceIDString, deviceIDString));
-//        System.out.println(jni.submitSlowControlCommand(devID, deviceIDString, devID, devID, ir, devID, devID, deviceIDString));
-//        System.out.println(jni.deinitController(devID));
-//        System.out.println(jni.deinitToolkit());
+        err = jni.getNewControllerForDeviceID(deviceIDString, ir);
+        if(err != 0) {
+        	jni.deinitToolkit();
+        	return;
+        }
+ 
+        err = jni.initDevice(ir.getValue());
+        if(err != 0) {
+        	jni.deinitToolkit();
+        	return;
+        }
 
+        err = jni.getDeviceDatasetAttributeNameForDirection(ir.getValue(), 1, attributeNames);
+        if(err != 0) {
+        	jni.deinitToolkit();
+        	return;
+        }
+        System.out.println("Output channels:");
+        for (String attributeName : attributeNames) {
+			System.out.println("\t\t" + attributeName);
+		}
+        
+        attributeNames.clear();
+        err = jni.getDeviceDatasetAttributeNameForDirection(ir.getValue(), 0, attributeNames);
+        if(err != 0) {
+        	jni.deinitToolkit();
+        	return;
+        }
+        System.out.println("Input channels:");
+        for (String attributeName : attributeNames) {
+			System.out.println("\t\t" + attributeName);
+		}
+        
+        err = jni.startDevice(ir.getValue());
     }
 }

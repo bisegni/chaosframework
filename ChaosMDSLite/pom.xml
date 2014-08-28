@@ -9,6 +9,11 @@
 	<url>http://maven.apache.org</url>
 	<dependencies>
 		<dependency>
+			<groupId>org.vaadin.addons</groupId>
+			<artifactId>refresher</artifactId>
+			<version>1.2.1.7</version>
+		</dependency>
+		<dependency>
 			<groupId>org.zeromq</groupId>
 			<artifactId>jeromq</artifactId>
 			<version>0.3.4</version>
@@ -166,4 +171,10 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	<repositories>
+		<repository>
+			<id>vaadin-addons</id>
+			<url>http://maven.vaadin.com/vaadin-addons</url>
+		</repository>
+	</repositories>
 </project>

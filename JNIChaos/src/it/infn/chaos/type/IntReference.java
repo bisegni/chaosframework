@@ -11,11 +11,13 @@ package it.infn.chaos.type;
  * @author bisegni
  */
 public class IntReference {
-    // Simula il puntatore
-    int intValue=159;
+    int intValue=0;
     
     public int getValue(){
         return intValue;
     }
     
+    public void setValue(int i) {
+    	intValue = i;
+    }
 }
