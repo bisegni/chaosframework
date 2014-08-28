@@ -23,16 +23,10 @@ public class Test {
         Vector<String> attributeNames = new Stack<String>();
         String deviceIDString="rt-sin-a";
 
-        int err = jni.initToolkit("metadata-server=pcbisegni:5000\nlog-on-console=true\ndata-io-impl=IODirect");
+        int err = jni.initToolkit("metadata-server=pcbisegni:5000\nlog-on-console=true");
         if(err != 0) return;
         
         err = jni.getNewControllerForDeviceID(deviceIDString, ir);
-        if(err != 0) {
-        	jni.deinitToolkit();
-        	return;
-        }
- 
-        err = jni.initDevice(ir.getValue());
         if(err != 0) {
         	jni.deinitToolkit();
         	return;
@@ -59,6 +53,38 @@ public class Test {
 			System.out.println("\t\t" + attributeName);
 		}
         
+        err = jni.initDevice(ir.getValue());
+        if(err != 0) {
+        	jni.deinitToolkit();
+        	return;
+        }
+        
         err = jni.startDevice(ir.getValue());
+        if(err != 0) {
+        	jni.deinitToolkit();
+        	return;
+        }
+        
+        err = jni.setDeviceRunScheduleDelay(ir.getValue(), 200);
+        if(err != 0) {
+        	jni.deinitToolkit();
+        	return;
+        }
+        
+        err = jni.stopDevice(ir.getValue());
+        if(err != 0) {
+        	jni.deinitToolkit();
+        	return;
+        }
+        
+        err = jni.deinitDevice(ir.getValue());
+        if(err != 0) {
+        	jni.deinitToolkit();
+        	return;
+        }
+        
+        jni.deinitController(ir.getValue());
+        
+        jni.deinitToolkit();
     }
 }
