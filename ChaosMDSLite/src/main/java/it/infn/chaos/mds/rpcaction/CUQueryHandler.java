@@ -14,6 +14,8 @@ import it.infn.chaos.mds.business.UnitServer;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
 import it.infn.chaos.mds.da.DeviceDA;
 import it.infn.chaos.mds.da.UnitServerDA;
+import it.infn.chaos.mds.event.ChaosEventsToVaadinController;
+import it.infn.chaos.mds.event.EventsToVaadin;
 import it.infn.chaos.mds.rpc.server.RPCActionHadler;
 import it.infn.chaos.mds.secutiry.RSAKeys;
 
@@ -132,6 +134,7 @@ public class CUQueryHandler extends RPCActionHadler {
 			
 			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 5);
 			closeDataAccess(usDA, true);
+			
 		} catch (InstantiationException e) {
 			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "CUQueryHandler::registerUnitServer");
@@ -269,6 +272,9 @@ public class CUQueryHandler extends RPCActionHadler {
 			closeDataAccess(dDA, true);
 			closeDataAccess(usDA, true);
 			ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 5);
+			EventsToVaadin ev= EventsToVaadin.getInstance();
+			//ChaosEventsToVaadinController ev= new ChaosEventsToVaadinController();
+			ev.deviceRegistrationEvent();
 		} catch (RefException e) {
 			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
 			try {

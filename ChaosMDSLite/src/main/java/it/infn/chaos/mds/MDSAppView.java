@@ -1,5 +1,7 @@
 package it.infn.chaos.mds;
 
+import it.infn.chaos.mds.event.EventsToVaadin;
+
 import java.util.Date;
 import java.util.Observable;
 
@@ -16,7 +18,7 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Window;
-
+import com.github.wolfie.refresher.Refresher;;
 @SuppressWarnings("serial")
 public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener {
 	static final Action			ACTION_EDIT									= new Action("Edit");
@@ -54,6 +56,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	public static final String	EVENT_UNIT_SERVER_CU_TYPE_ADD				= "MDSAppView_EVENT_UNIT_SERVER_CU_TYPE_ADD";
 	public static final String	EVENT_UNIT_SERVER_CU_TYPE_REMOVE			= "MDSAppView_EVENT_UNIT_SERVER_CU_TYPE_REMOVE";
 	public static final String	EVENT_UNIT_SERVER_CU_TYPE_UPDATE_LIST		= "MDSAppView_EVENT_UNIT_SERVER_CU_TYPE_UPDATE_LIST";
+	public static final String  EVENT_CU_REGISTERED 						= "MDSAppView_EVENT_CU_REGISTERED";
 
 	public static final String	TAB1_CU_PARENT								= "CU Parent";
 	public static final String	TAB1_DEVICE_INSTANCE						= "Device Instance";
@@ -80,14 +83,28 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	public static final String	KEY_DATASET_ATTRIBUTE_TAB					= "KEY_DATASET_ATTRIBUTE_TAB";
 
 	private MainView			mv											= new MainView();
+	 
 	private boolean				editingAttribute							= false;
 
 	@Override
 	public void initGui() {
+		final Refresher			refresher									= new Refresher();
+		refresher.setRefreshInterval(1000); 
+		addComponent(refresher);
 		addComponent(mv);
+		
+		refresher.addListener(new Refresher.RefreshListener() {
+			private static final long serialVersionUID = -8765221895426102605L;
+			public void refresh(Refresher source) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+			
+	
+		
 		mv.setWidth("100.0%");
 		mv.setHeight("100.0%");
-
 		setComponentKey(KEY_USERVER_TAB, mv.getTableUnitServer());
 		setComponentKey(KEY_USERVER_CUTYPE_TAB, mv.getTableUnitServerCUType());
 

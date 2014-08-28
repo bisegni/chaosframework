@@ -8,6 +8,7 @@ import it.infn.chaos.mds.business.DatasetAttribute;
 import it.infn.chaos.mds.business.Device;
 import it.infn.chaos.mds.business.UnitServer;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
+import it.infn.chaos.mds.event.EventsToVaadin;
 import it.infn.chaos.mds.process.ManageDeviceProcess;
 import it.infn.chaos.mds.process.ManageServerProcess;
 import it.infn.chaos.mds.process.ManageUnitServerProcess;
@@ -33,6 +34,7 @@ import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.UriFragmentUtility.FragmentChangedEvent;
 
 @SuppressWarnings("serial")
@@ -54,6 +56,8 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 		msp = (ManageServerProcess) openProcess(ManageServerProcess.class.getSimpleName(), mdp.getProcessName());
 		musp = (ManageUnitServerProcess) openProcess(ManageUnitServerProcess.class.getSimpleName(), mdp.getProcessName());
 		openViewByKeyAndClass("VISTA", MDSAppView.class);
+		EventsToVaadin.getInstance().addListener(this);
+		
 	}
 
 	/*
@@ -249,6 +253,10 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 				} else if (viewEvent.getEventKind().equals(USEditInfoView.EVENT_DELETE_SECURITY_KEY)) {
 					musp.deleteSecurityKeys((UnitServer) viewEvent.getEventData());
 					notifyEventoToViewWithData(USEditInfoView.EVENT_SET_UNIT_SERVER, this, musp.getUnitServerByIdentification(((UnitServer) viewEvent.getEventData()).getAlias()));
+				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_CU_REGISTERED)) {
+					
+					updateDeviceList();
+				
 				}
 
 			}
@@ -295,6 +303,13 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 		loadUnloadInstance(instanceSet, loadUnload);
 	}
 
+	private void removeDeviceAssociated(Set<UnitServerCuInstance> ass) throws Throwable{
+		for (UnitServerCuInstance association : ass) {
+			mdp.deleteDeviceByInstance(association.getCuId());
+		}
+		updateDeviceList();
+	}
+	
 	/**
 	 * 
 	 * @param eventData
@@ -307,22 +322,25 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 		setting.associations = eventData;
 		setting.loadUnload = loadUnload;
 		SingletonServices.getInstance().getSlowExecution().submitJob(LoadUnloadWorkUnit.class.getName(), setting);
+		if(loadUnload==false){
+			UnitServer us=musp.getUnitServerByIdentification(unitServerSelected);
+			removeDeviceAssociated(eventData);
+			
+		}
 	}
 
 	/**
 	 * 
 	 * @param associationToRemove
-	 * @throws InstantiationException
-	 * @throws IllegalAccessException
-	 * @throws ClassNotFoundException
-	 * @throws SQLException
-	 * @throws RefException
+	 * @throws Throwable 
 	 */
-	private void removeAssociation(Set<UnitServerCuInstance> associationToRemove) throws InstantiationException, IllegalAccessException, ClassNotFoundException, SQLException, RefException {
+	private void removeAssociation(Set<UnitServerCuInstance> associationToRemove) throws Throwable {
 		if (associationToRemove == null || associationToRemove.size() == 0)
 			return;
 		musp.removeUSCUAssociation(associationToRemove);
 		notifyEventoToViewWithData(USCUAssociationListView.EVENT_UPDATE_LIST, this, musp.loadAllAssociationForUnitServerAlias(unitServerSelected));
+		removeDeviceAssociated(associationToRemove);
+
 	}
 
 	/**
@@ -340,7 +358,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 			notifyEventoToViewWithData(USCUAssociationListView.EVENT_UPDATE_LIST, this, musp.loadAllAssociationForUnitServerAlias(unitServerSelected));
 		} else {
 			MDSAppView view = getViewByKey("VISTA");
-			RefVaadinErrorDialog.showError(view.getWindow(), "Show all error", "Uniserver not selected");
+			RefVaadinErrorDialog.showError(view.getWindow(), "Show all error", "Unit server not selected");
 		}
 
 	}
@@ -470,6 +488,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 			@SuppressWarnings("unchecked")
 			Collection<DatasetAttribute> datasetAttributes = (Collection<DatasetAttribute>) t.getItemIds();
 			for (DatasetAttribute datasetAttributeItemID : datasetAttributes) {
+				Double def=null,max=null,min=null;
 				Object tmpValue = null;
 				tmpValue = t.getItem(datasetAttributeItemID).getItemProperty(MDSAppView.TAB3_TAGS_PATH);
 				if (tmpValue != null) {
@@ -477,14 +496,47 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 				}
 				tmpValue = t.getItem(datasetAttributeItemID).getItemProperty(MDSAppView.TAB3_RANG_MIN);
 				if (tmpValue != null) {
+					try {
+						min = Double.parseDouble(tmpValue.toString());
+					} catch(Throwable e) {
+						RefVaadinErrorDialog.showError(view.getWindow(), "Bad MIN:\""+ tmpValue.toString()+"\" format ", e.getMessage());
+						notifyEventoToViewWithData(MDSAppView.EVENT_ATTRIBUTE_EDITING, null, null);
+						return;
+					}
 					datasetAttributeItemID.setRangeMin(tmpValue.toString());
 				}
 				tmpValue = t.getItem(datasetAttributeItemID).getItemProperty(MDSAppView.TAB3_RANG_MAX);
 				if (tmpValue != null) {
+					try {
+						max = Double.parseDouble(tmpValue.toString());
+					} catch(Throwable e) {
+						RefVaadinErrorDialog.showError(view.getWindow(), "Bad MAX:\""+ tmpValue.toString()+"\" format ", e.getMessage());
+						notifyEventoToViewWithData(MDSAppView.EVENT_ATTRIBUTE_EDITING, null, null);
+						return;
+					}
 					datasetAttributeItemID.setRangeMax(tmpValue.toString());
 				}
 				tmpValue = t.getItem(datasetAttributeItemID).getItemProperty(MDSAppView.TAB3_DEF_VALUE);
 				if (tmpValue != null) {
+					
+					try {
+						def = Double.parseDouble(tmpValue.toString());
+					} catch(Throwable e) {
+						RefVaadinErrorDialog.showError(view.getWindow(), "Bad Default format ", e.getMessage());
+						notifyEventoToViewWithData(MDSAppView.EVENT_ATTRIBUTE_EDITING, null, null);
+						return;
+					}
+					
+					if(max!=null && def>max){
+						RefVaadinErrorDialog.showError(view.getWindow(), "DEFAULT: "+def+" is greater than MAX: "+max,"");
+						notifyEventoToViewWithData(MDSAppView.EVENT_ATTRIBUTE_EDITING, null, null);
+						return;	
+					}
+					if(min!=null && def<min){
+						RefVaadinErrorDialog.showError(view.getWindow(), "DEFAULT: "+def+"  is lower than MIN:"+min, "");
+						notifyEventoToViewWithData(MDSAppView.EVENT_ATTRIBUTE_EDITING, null, null);
+						return;	
+					}
 					datasetAttributeItemID.setDefaultValue(tmpValue.toString());
 				}
 			}

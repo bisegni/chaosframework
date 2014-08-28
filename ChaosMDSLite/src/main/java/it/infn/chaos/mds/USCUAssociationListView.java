@@ -194,11 +194,61 @@ public class USCUAssociationListView extends RefVaadinBasePanel implements com.v
 				Vector<DatasetAttribute> toSave = new Vector<DatasetAttribute>();
 				Collection<Integer> indexList = (Collection<Integer>) impl.getTableAttributeConfig().getItemIds();
 				for (Integer idx : indexList) {
+					Double def=null,max=null,min=null;
+					String sname = impl.getTableAttributeConfig().getItem(idx).getItemProperty(ATTRIBUTE_NAME).toString();
+					String smax = impl.getTableAttributeConfig().getItem(idx).getItemProperty(ATTRIBUTE_MAX_VALUE).toString();
+					String smin = impl.getTableAttributeConfig().getItem(idx).getItemProperty(ATTRIBUTE_MIN_VALUE).toString();
+					String sdef =impl.getTableAttributeConfig().getItem(idx).getItemProperty(ATTRIBUTE_DEFAULT_VALUE).toString();
+					
 					DatasetAttribute da = new DatasetAttribute();
-					da.setName(impl.getTableAttributeConfig().getItem(idx).getItemProperty(ATTRIBUTE_NAME).toString());
-					da.setDefaultValueNoCheck(impl.getTableAttributeConfig().getItem(idx).getItemProperty(ATTRIBUTE_DEFAULT_VALUE).toString());
-					da.setRangeMaxNoCheck(impl.getTableAttributeConfig().getItem(idx).getItemProperty(ATTRIBUTE_MAX_VALUE).toString());
-					da.setRangeMinNoCheck(impl.getTableAttributeConfig().getItem(idx).getItemProperty(ATTRIBUTE_MIN_VALUE).toString());
+					
+					if(sname.isEmpty()){
+						getWindow().showNotification("Save Attribute Configuration Error", "<b>Attribute Name cannot be empty</b>", Window.Notification.TYPE_ERROR_MESSAGE);
+						return;
+					}
+					
+					da.setName(sname);
+					if(!smax.isEmpty()){
+						try {
+							max = Double.parseDouble(smax);
+						} catch(Throwable e) {
+							getWindow().showNotification("Save Attribute Configuration Error", "<b>Attribute \""+sname+"\" MAX \""+smax+"\" bad format</b>", Window.Notification.TYPE_ERROR_MESSAGE);
+							return;
+						}
+					}
+					if(!smin.isEmpty()){
+						try {
+							min = Double.parseDouble(smin);
+						} catch(Throwable e) {
+							getWindow().showNotification("Save Attribute Configuration Error", "<b>Attribute \""+sname+"\" MIN \"" +smin+"\" bad format</b>", Window.Notification.TYPE_ERROR_MESSAGE);
+							return;
+						}
+					}
+					
+					if(!sdef.isEmpty()){
+						try {
+							def = Double.parseDouble(sdef);
+						} catch(Throwable e) {
+							getWindow().showNotification("Save Attribute Configuration Error", "<b>Attribute \""+sname+"\" DEFAULT \""+sdef+"\" bad format</b>", Window.Notification.TYPE_ERROR_MESSAGE);
+							return;
+						}
+						
+						if(min!=null && def<min){
+							getWindow().showNotification("Save Attribute Configuration Error", "<b>Attribute \""+sname+"\" DEFAULT "+sdef+" cannot be lower than MIN "+smin+"</b>", Window.Notification.TYPE_ERROR_MESSAGE);
+							return;
+							
+						}
+						if(max!=null && def>max){
+							getWindow().showNotification("Save Attribute Configuration Error", "<b>Attribute \""+sname+"\" DEFAULT "+sdef+" cannot be greater than MAX "+smax+"</b>", Window.Notification.TYPE_ERROR_MESSAGE);
+							return;
+							
+						}
+					}
+					
+					da.setDefaultValueNoCheck(sdef);
+					
+					da.setRangeMaxNoCheck(smax);
+					da.setRangeMinNoCheck(smin);
 					toSave.addElement(da);
 				}
 				selectedInstance.setAttributeConfigutaion(toSave);

@@ -1,0 +1,2 @@
+# Module com.github.wolfie.refresher.RefresherApplicationWidgetset
+# RPC service class, partial path of RPC policy file

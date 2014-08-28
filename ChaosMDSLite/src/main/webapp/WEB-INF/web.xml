@@ -16,22 +16,23 @@
 		<param-name>mds.port</param-name>
 		<param-value>5000</param-value>
 	</context-param>
-	<!-- <context-param>
+	<!-- -->
+	<context-param>
 		<param-name>mongodb.url</param-name>
 		<param-value>mongodb01:27017,mongodb02:27017,mongodb03:27017</param-value>
 	</context-param>
 	<context-param>
 		<param-name>mongodb.user</param-name>
-		<param-value>chaos_admin</param-value>
+		<param-value>mds</param-value>
 	</context-param>
 	<context-param>
 		<param-name>mongodb.pwd</param-name>
-		<param-value>chaos_admin</param-value>
+		<param-value>mds</param-value>
 	</context-param>
 	<context-param>
 		<param-name>mongodb.db</param-name>
-		<param-value>chaos</param-value>
-	</context-param>-->
+		<param-value>chaos_mds</param-value>
+	</context-param>
 	<!-- context param -->
 	<context-param>
 		<param-name>db.appserver.datasource</param-name>
@@ -39,7 +40,7 @@
 	</context-param>
 	<context-param>
 		<param-name>chaos.rpc.impl</param-name>
-		<!--<param-value>TCPRpc</param-value>-->
+		<!--<param-value>TCPRpc</param-value> -->
 		<param-value>JMQRPC</param-value>
 	</context-param>
 	<!-- Configurazione per il plugin dell'initi di govdia -->
@@ -74,6 +75,11 @@
 			<param-name>ref.vaadin.application.controller</param-name>
 			<param-value>it.infn.chaos.mds.ChaosMDSRootController</param-value>
 		</init-param>
+		<init-param>
+  		<description>Application widgetset</description>
+  		<param-name>widgetset</param-name>
+  		<param-value>com.github.wolfie.refresher.RefresherApplicationWidgetset</param-value>
+  	</init-param>
 	</servlet>
 
 	<servlet-mapping>
