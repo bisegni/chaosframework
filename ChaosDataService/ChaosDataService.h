@@ -29,7 +29,7 @@
 #include "worker/DataWorker.h"
 #include "cache_system/CacheDriver.h"
 #include "vfs/vfs.h"
-
+#include "index_system/index_system.h"
 #include <map>
 #include <string>
 #include <vector>
@@ -67,11 +67,14 @@ namespace chaos{
             ~ChaosDataService();
             static void signalHanlder(int);
 			
+			//root pointer of the index driver
+			index_system::IndexDriver *index_driver_ptr;
+			
 			utility::StartableServiceContainer<chaos::NetworkBroker> network_broker;
 			utility::InizializableServiceContainer<vfs::VFSManager> vfs_file_manager;
 
 			utility::StartableServiceContainer<QueryDataConsumer> data_consumer;
-			utility::StartableServiceContainer<StageDataConsumer> stage_data_indexer;
+			utility::StartableServiceContainer<StageDataConsumer> stage_data_consumer;
 			void fillKVParameter(std::map<std::string, std::string>& kvmap, const char * param_key);
         public:
 			//----------setting----------
@@ -88,9 +91,9 @@ namespace chaos{
              */
             void init(istringstream &initStringStream) throw (CException);
             void init(void *init_data)  throw(CException);
-            void start() throw(CException);;
-            void stop() throw(CException);;
-            void deinit() throw(CException);;
+            void start() throw(CException);
+            void stop() throw(CException);
+            void deinit() throw(CException);
         };
     }
 }

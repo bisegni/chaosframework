@@ -1,4 +1,5 @@
-db.vdomain.ensureIndex( { "vfs_domain":1, "vfs_unique_domain_code":1 } , { unique: true,  dropDups: true  } )
+db.domains.ensureIndex( { "vfs_domain":1, "vfs_unique_domain_code":1 } , { unique: true,  dropDups: true  } )
+db.domains_url.ensureIndex( { "vfs_domain":1, "vfs_unique_domain_code":1 } , { unique: true,  dropDups: true  } )
 db.vfat.ensureIndex( { "vfs_path": 1, "vfs_domain":1 } , { unique: true,  dropDups: true  } )
 db.datasets.ensureIndex({  "ds_timestamp": 1, "ds_attr_dom":1},{ unique: true,  dropDups: true  })
 db.devices.ensureIndex({  "ds_attr_dom": 1},{ unique: true,  dropDups: true  })

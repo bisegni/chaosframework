@@ -76,7 +76,10 @@ namespace chaos {
 					DataBlockStateLocked		= 8,
 					
 					//! block has been unlocked
-					DataBlockStateUnlocked		= 12
+					DataBlockStateUnlocked		= 16,
+					
+					//! can be querable
+					DataBlockStateQuerable		= 32
 				} DataBlockState;
 			}
 			

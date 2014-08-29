@@ -87,7 +87,7 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 			free(job_info);
 			break;
 			
-		case 1:{// live only only
+		case 1:{// live only
 			break;
 		}
 	}

@@ -13,13 +13,14 @@
 #include <vector>
 
 #include "vfs/vfs.h"
+#include "index_system/index_system.h"
+
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
 
 namespace chaos{
     namespace data_service {
 
-#define OPT_CONF_FILE				"conf_file"
 #define OPT_RUN_MODE				"run_mode"
 		
 		//cache configuration
@@ -27,25 +28,25 @@ namespace chaos{
 #define OPT_CACHE_DRIVER			"cache_driver"
 #define OPT_CACHE_WORKER_NUM		"cache_worker_num"
 #define OPT_CACHE_WORKER_THREAD		"cache_worker_thread"
-#define CACHE_WORKER_NUMBER			2
+#define CACHE_WORKER_NUMBER			1
 		
 		//answer configuration
 #define OPT_ANSWER_WORKER_NUM		"answer_worker_num"
 #define OPT_ANSWER_WORKER_THREAD	"answer_worker_thread"
-#define ANSWER_WORKER_NUMBER		2
+#define ANSWER_WORKER_NUMBER		1
 		
 		//stage data indexer
 #define OPT_INDEXER_WORKER_NUM		"indexer_worker_num"
-#define INDEXER_WORKER_NUMBER		2
+#define INDEXER_WORKER_NUMBER		1
 		
 		//vfs driver configuration
 #define OPT_VFS_STORAGE_DRIVER_IMPL		"vfs_storage_drvr_impl"
 #define OPT_VFS_STORAGE_DOMAIN			"vfs_storage_domain"
 #define OPT_VFS_STORAGE_DRIVER_KVP		"vfs_storage_driver_kvp"
 		
-#define OPT_VFS_INDEX_DRIVER_IMPL		"vfs_index_drvr_impl"
-#define OPT_VFS_INDEX_DRIVER_SERVERS	"vfs_index_servers"
-#define OPT_VFS_INDEX_DRIVER_KVP		"vfs_index_driver_kvp"
+#define OPT_INDEX_DRIVER_IMPL		"index_drvr_impl"
+#define OPT_INDEX_DRIVER_SERVERS	"index_servers"
+#define OPT_INDEX_DRIVER_KVP		"index_driver_kvp"
 				
 		namespace worker {
 			
@@ -80,6 +81,13 @@ namespace chaos{
 			
 			//----------vfs configuration----------------
 			vfs::VFSManagerSetting		file_manager_setting;
+			
+			//-------------index system------------------
+			//! current index driver implementaiton to use
+			std::string index_driver_impl;
+			
+			//! the instance of the index driver for this manager
+			::chaos::data_service::index_system::IndexDriverSetting index_driver_setting;
 		} ChaosDataServiceSetting;
 	}
 }

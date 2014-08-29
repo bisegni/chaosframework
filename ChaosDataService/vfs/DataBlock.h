@@ -28,13 +28,19 @@
 namespace chaos {
 	namespace data_service {
 		
+		namespace index_system {
+			class IndexDriver;
+		}
+		
 		//!Namesapace for grupping all api and struct for the !CHAOS virtual filesystem
 		namespace vfs {
 
+			class VFSFile;
+			
 			//! define a block of data into !CHAOS VFS
 			struct DataBlock {
 				
-				//! the flag for this bloc
+				//! the flag for this block
 				unsigned int flags;
 				
 				//! is a precalculated timestamp after which the
@@ -44,8 +50,8 @@ namespace chaos {
 				//! the precalculated max reacheable size for the block
 				uint64_t	max_reacheable_size;
 				
-				//!current datablock size
-				uint64_t	current_size;
+				//!current datablock position in file elaboration(write or read according to the state)
+				uint64_t	current_work_position;
 				
 				//!current datablock size
 				uint64_t	creation_time;
@@ -57,7 +63,33 @@ namespace chaos {
 				//! driver private data
 				void *driver_private_data;
 				
-				DataBlock():flags(0), invalidation_timestamp(0), max_reacheable_size(0), current_size(0), creation_time(0), driver_private_data(NULL){}
+				//! data usefull for index driver where can put information to fastes find the datablock
+				std::string index_driver_uinique_id;
+				
+				DataBlock():flags(0), invalidation_timestamp(0), max_reacheable_size(0), current_work_position(0), creation_time(0), driver_private_data(NULL){}
+			};
+			
+			//! define a pointer to a location whitin a virtual file
+			class FileLocationPointer {
+				friend class chaos::data_service::index_system::IndexDriver;
+				friend class VFSFile;
+				
+				//! is the datablock of the destination datafile where the data pack is definitely stored
+				DataBlock *data_block;
+				
+				//! is th offset, whitin the datablock, where the datapack begin
+				uint64_t offset;
+				
+			public:
+				FileLocationPointer():data_block(NULL), offset(0){}
+				FileLocationPointer(DataBlock *_data_block, uint64_t _offset):data_block(_data_block), offset(_offset){}
+				~FileLocationPointer(){};
+				
+				bool isValid() {return (offset != 0)?(data_block != NULL):true;}
+				
+				uint64_t getOffset(){return offset;}
+				
+				std::string getBlockVFSPath() {return data_block?data_block->vfs_path:std::string("no block");}
 			};
 			
 		}

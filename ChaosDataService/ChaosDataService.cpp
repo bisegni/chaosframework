@@ -22,7 +22,10 @@
 #include <csignal>
 
 #include "ChaosDataService.h"
+
+#include <boost/format.hpp>
 #include <chaos/common//direct_io/DirectIOServerEndpoint.h>
+
 using namespace std;
 using namespace chaos;
 using namespace chaos::data_service;
@@ -128,7 +131,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 			//no cache server provided
 			throw chaos::CException(-1, "No cache server provided", __PRETTY_FUNCTION__);
 		}
-		if(!getGlobalConfigurationInstance()->hasOption(OPT_VFS_INDEX_DRIVER_SERVERS)) {
+		if(!getGlobalConfigurationInstance()->hasOption(OPT_INDEX_DRIVER_SERVERS)) {
 			//no cache server provided
 			throw chaos::CException(-2, "No index server provided", __PRETTY_FUNCTION__);
 		}
@@ -137,10 +140,17 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 			fillKVParameter(ChaosDataService::getInstance()->settings.file_manager_setting.storage_driver_setting.key_value_custom_param, OPT_VFS_STORAGE_DRIVER_KVP);
 		}
 		
-		if(getGlobalConfigurationInstance()->hasOption(OPT_VFS_INDEX_DRIVER_KVP)) {
-			fillKVParameter(ChaosDataService::getInstance()->settings.file_manager_setting.index_driver_setting.key_value_custom_param, OPT_VFS_INDEX_DRIVER_KVP);
+		if(getGlobalConfigurationInstance()->hasOption(OPT_INDEX_DRIVER_KVP)) {
+			fillKVParameter(ChaosDataService::getInstance()->settings.index_driver_setting.key_value_custom_param, OPT_INDEX_DRIVER_KVP);
 		}
 		
+		//allocate index driver
+		std::string index_driver_class_name = boost::str(boost::format("%1%IndexDriver") % settings.index_driver_impl);
+		CDSLAPP_ << "Allocate index driver of type "<<index_driver_class_name;
+		index_driver_ptr = chaos::ObjectFactoryRegister<index_system::IndexDriver>::getInstance()->getNewInstanceByName(index_driver_class_name);
+		if(!index_driver_ptr) throw chaos::CException(-1, "No index driver found", __PRETTY_FUNCTION__);
+		chaos::utility::InizializableService::initImplementation(index_driver_ptr, &settings.index_driver_setting, index_driver_ptr->getName(), __PRETTY_FUNCTION__);
+
 		
 		CDSLAPP_ << "Allocate Network Brocker";
         network_broker.reset(new NetworkBroker(), "NetworkBroker");
@@ -153,8 +163,8 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		
 		//initialize vfs file manager
 		CDSLAPP_ << "Allocate VFS Manager";
-		vfs_file_manager.reset(new vfs::VFSManager(), "VFSFileManager");
-		vfs_file_manager.init(&settings.file_manager_setting , __PRETTY_FUNCTION__);
+		vfs_file_manager.reset(new vfs::VFSManager(index_driver_ptr), "VFSFileManager");
+		vfs_file_manager.init(&settings.file_manager_setting, __PRETTY_FUNCTION__);
         
 		if(run_mode == QUERY ||
 		   run_mode == BOTH) {
@@ -168,15 +178,14 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		if(run_mode == INDEXER ||
 		   run_mode == BOTH) {
 			CDSLAPP_ << "Allocate the Data Consumer";
-			stage_data_indexer.reset(new StageDataConsumer(vfs_file_manager.get(), &settings), "StageDataConsumer");
-			if(!stage_data_indexer.get()) throw chaos::CException(-1, "Error instantiating stage data consumer", __PRETTY_FUNCTION__);
-			stage_data_indexer.init(NULL, __PRETTY_FUNCTION__);
+			stage_data_consumer.reset(new StageDataConsumer(vfs_file_manager.get(), index_driver_ptr, &settings), "StageDataConsumer");
+			if(!stage_data_consumer.get()) throw chaos::CException(-1, "Error instantiating stage data consumer", __PRETTY_FUNCTION__);
+			stage_data_consumer.init(NULL, __PRETTY_FUNCTION__);
 		}
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         exit(1);
     }
-    //start data manager
 }
 
 /*
@@ -192,7 +201,7 @@ void ChaosDataService::start() throw(CException) {
 		}
 		if(run_mode == INDEXER ||
 		   run_mode == BOTH) {
-			stage_data_indexer.start(__PRETTY_FUNCTION__);
+			stage_data_consumer.start(__PRETTY_FUNCTION__);
 		}
 		
 		//print information header on CDS address
@@ -229,7 +238,7 @@ void ChaosDataService::stop() throw(CException) {
 	}
 	if(run_mode == INDEXER ||
 	   run_mode == BOTH) {
-		stage_data_indexer.stop(__PRETTY_FUNCTION__);
+		stage_data_consumer.stop(__PRETTY_FUNCTION__);
 	}
 }
 
@@ -247,8 +256,8 @@ void ChaosDataService::deinit() throw(CException) {
 	}
 	if((run_mode == INDEXER ||
 		run_mode == BOTH ) &&
-		stage_data_indexer.get()) {
-		stage_data_indexer.deinit(__PRETTY_FUNCTION__);
+		stage_data_consumer.get()) {
+		stage_data_consumer.deinit(__PRETTY_FUNCTION__);
 	}
 	if(network_broker.get()) {
 		CDSLAPP_ << "Deinitializing CHAOS Data Service";
@@ -257,6 +266,16 @@ void ChaosDataService::deinit() throw(CException) {
 	
 	//deinitialize vfs file manager
 	vfs_file_manager.deinit(__PRETTY_FUNCTION__);
+	
+	if(index_driver_ptr) {
+		CDSLAPP_ << "Deallocate index driver";
+		try {
+			chaos::utility::InizializableService::deinitImplementation(index_driver_ptr, index_driver_ptr->getName(), __PRETTY_FUNCTION__);
+		} catch (chaos::CException e) {
+			CDSLAPP_ << e.what();
+		}
+		delete (index_driver_ptr);
+	}
 	
 	ChaosCommon<ChaosDataService>::deinit();
 	

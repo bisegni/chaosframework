@@ -22,7 +22,6 @@
 
 #include <vector>
 #include <exception>
-#include <fstream>      // std::ifstream
 
 using namespace chaos::data_service;
 
@@ -31,9 +30,6 @@ int main(int argc, char * argv[]) {
     try {
 		std::vector<std::string> cache_servers;
 		
-		//cache parameter
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_CONF_FILE,
-																									"File configuration path");
 		//cache parameter
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_RUN_MODE,
 																									"Specify the run mode[1 - Query Consumer, 2 - Stage Indexer, 3 - Both]");
@@ -88,35 +84,20 @@ int main(int argc, char * argv[]) {
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_STORAGE_DRIVER_KVP,
 																									"The key value parameter for storage implementation driver (ex k:v-k1:v1)");
 		
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_INDEX_DRIVER_IMPL,
-																									"The name of the vfs storage implementation [MongoDB]",
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_INDEX_DRIVER_IMPL,
+																									"The name of the index driver implementation [MongoDB]",
 																									"MongoDB",
-																									&ChaosDataService::getInstance()->settings.file_manager_setting.index_driver_impl);
+																									&ChaosDataService::getInstance()->settings.index_driver_impl);
 		
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_VFS_INDEX_DRIVER_SERVERS,
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_INDEX_DRIVER_SERVERS,
 																												 "The list of the index servers",
-																												 &ChaosDataService::getInstance()->settings.file_manager_setting.index_driver_setting.servers);
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_INDEX_DRIVER_KVP,
+																												 &ChaosDataService::getInstance()->settings.index_driver_setting.servers);
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_INDEX_DRIVER_KVP,
 																									"The key value parameter for index implementation driver (ex k:v-k1:v1)");
 
 		//preparse for blow custom option
 		ChaosDataService::getInstance()->preparseCommandOption(argc, argv);
 	
-		//check if we have a config file
-		if(ChaosDataService::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CONF_FILE)) {
-			//reload configuraiton from file
-			std::string file_option = ChaosDataService::getInstance()->getGlobalConfigurationInstance()->getOption<std::string>(OPT_CONF_FILE);
-			std::ifstream option_file_stream;
-			option_file_stream.open(file_option.c_str(), std::ifstream::in);
-			if(!option_file_stream) {
-				throw chaos::CException(-1, "Error opening configuration file", "Startup sequence");
-			}
-			//reparse the config file
-			ChaosDataService::getInstance()->preparseConfigFile(option_file_stream);
-		}
-		//parse the dafult framework option
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->checkDefaultOption();
-		
 		//initilize the faramework
 		ChaosDataService::getInstance()->init(NULL);
 		

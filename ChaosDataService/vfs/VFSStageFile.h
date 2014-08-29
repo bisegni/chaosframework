@@ -28,10 +28,10 @@ namespace chaos {
 		namespace vfs {
 			//forward declaration
 			class VFSManager;
-
+			
 			typedef enum VFSStageFileOpenMode {
-				VFSStageFileOpenModeRead,
-				VFSStageFileOpenModeWrite
+				VFSStageFileOpenModeRead = VFSFileOpenModeRead,
+				VFSStageFileOpenModeWrite = VFSFileOpenModeWrite
 			} VFSStageFileOpenMode;
 			
 			//! Abstract the managment of the stage file
@@ -41,8 +41,6 @@ namespace chaos {
 			 */
 			class VFSStageFile : public VFSFile {
 				friend class VFSManager;
-				VFSStageFileOpenMode open_mode;
-				
 			protected:
 				VFSStageFile(storage_system::StorageDriver *_storage_driver_ptr,
 							 chaos_index::IndexDriver *_index_driver_ptr,

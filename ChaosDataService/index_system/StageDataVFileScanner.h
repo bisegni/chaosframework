@@ -20,10 +20,17 @@
 #ifndef __CHAOSFramework__StageDataVFileScanner__
 #define __CHAOSFramework__StageDataVFileScanner__
 
+#include "DataPackScanner.h"
 #include "../vfs/VFSStageReadableFile.h"
+#include "../vfs/VFSDataWriteableFile.h"
+#include "../index_system/IndexDriver.h"
 
 #include <chaos/common/bson/bson.h>
 
+#include <boost/thread.hpp>
+#include <boost/shared_ptr.hpp>
+
+#include <map>
 #include <string>
 
 namespace chaos{
@@ -34,24 +41,57 @@ namespace chaos{
 		
 		namespace index_system {
 			
-			class StageDataVFileScanner {
+			typedef struct DataFileInfo {
+				//!  pointer to writeable data file
+				vfs::VFSDataWriteableFile *data_file_ptr;
+				
+				//! mantains track of the latest timestamp stored into datafile
+				uint64_t last_wrote_ts;
+			} DataFileInfo;
+			
+			//! Stage data scanner
+			/*!
+			 this class scan a stage file consuming interanlly storede
+			 data pack (BSON) one at one. The default index has the following structure
+			 (exposed in json format):
+			 {	did:string,
+				dts:uint64,
+				cpt:{
+					chunk_key:chunk id(string)
+					chunk_offset:uint64_t
+				}
+			 }
+			 For every datapack it makes:
+			 1 - retrive the field necessary to crete a default index
+			 2 - save pack into the corresponding data file for the device id
+			 3 - store the dafault index into the database using the driver
+			 4 - step torward
+			 */
+			class StageDataVFileScanner : public DataPackScanner {
 				friend class StageDataConsumer;
+
+				uint64_t last_hb_on_vfile;
 				
-				void *data_buffer;
-				uint32_t curret_data_buffer_len;
+				//!association between did and his data file
+				boost::shared_mutex mutext_did_data_file;
+				std::map<std::string, shared_ptr<DataFileInfo> > map_did_data_file;
+
 				
-				vfs::VFSStageReadableFile *stage_file;
+				int startScanHandler();
 				
-				void grow(uint32_t new_size);
+				int processDataPack(const bson::BSONObj& data_pack);
 				
-				void processDataPack(bson::BSONObj data_pack);
+				int endScanHandler(int end_scan_error);
+				
+				boost::shared_ptr<DataFileInfo> getWriteableFileForDID(const std::string& did);
+				
+				int closeAllDatafile();
 			public:
-				StageDataVFileScanner(vfs::VFSStageReadableFile *_stage_file);
-				~StageDataVFileScanner();
+				StageDataVFileScanner(vfs::VFSManager *_vfs_manager,
+									  index_system::IndexDriver *_index_driver,
+									  vfs::VFSStageReadableFile *_working_stage_file);
 				
-				std::string getScannedVFSPath();
-				//! scan an entire block of the stage file
-				int scan();
+				~StageDataVFileScanner();
 			};
 		}
 	}
