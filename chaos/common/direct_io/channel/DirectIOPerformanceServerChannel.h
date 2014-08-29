@@ -58,7 +58,7 @@ namespace chaos {
 					DirectIOPerformanceServerChannelHandler *handler;
 					
 					
-					void consumeDataPack(DirectIODataPack *dataPack);
+					int consumeDataPack(DirectIODataPack *dataPack, DirectIOSynchronousAnswerPtr synchronous_answer);
 				};
 			}
 		}

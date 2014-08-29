@@ -42,7 +42,7 @@ namespace chaos_batch = chaos::common::batch_command;
 
 #define OPT_STATE           "op"
 #define OPT_TIMEOUT         "timeout"
-#define OPT_CU_ID       "deviceid"
+#define OPT_CU_ID			"deviceid"
 #define OPT_SCHEDULE_TIME   "stime"
 #define OPT_PRINT_STATE     "print-state"
 #define OPT_PRINT_TYPE		"print-type"

@@ -100,19 +100,23 @@ void DirectIOServerEndpoint::releaseChannelInstance(channel::DirectIOVirtualServ
 }
 
 // Event for a new data received
-void DirectIOServerEndpoint::priorityDataReceived(DirectIODataPack *data_pack) {
+int DirectIOServerEndpoint::priorityDataReceived(DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer) {
+	int err = 0;
 	spinlock.lock();
 	//boost::shared_lock<boost::shared_mutex> Lock(mutex_channel_slot);
 	if(channel_slot[data_pack->header.dispatcher_header.fields.channel_idx])
-		channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack);
+		err =  channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack, synchronous_answer);
 	spinlock.unlock();
+	return err;
 }
 
 // Event for a new data received
-void DirectIOServerEndpoint::serviceDataReceived(DirectIODataPack *data_pack) {
+int DirectIOServerEndpoint::serviceDataReceived(DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer) {
+	int err = 0;
 	spinlock.lock();
 	//boost::shared_lock<boost::shared_mutex> Lock(mutex_channel_slot);
 	if(channel_slot[data_pack->header.dispatcher_header.fields.channel_idx])
-		channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack);
+		err = channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack, synchronous_answer);
 	spinlock.unlock();
+	return err;
 }

@@ -18,6 +18,7 @@
  *    	limitations under the License.
  */
 
+#include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/direct_io/DirectIODataPack.h>
 #include <chaos/common/direct_io/impl/ZMQDirectIOServer.h>
@@ -31,10 +32,20 @@
 #define ZMQDIO_SRV_LERR_ LERR_ << ZMQDIO_SRV_LOG_HEAD
 
 
+#define DIRECTIO_FREE_ANSWER_DATA(x)\
+if(x && x->answer_data) free(x->answer_data);\
+if(x) free(x);\
+x = NULL;
+
+
 namespace chaos_data = chaos::common::data;
 
 using namespace chaos::common::direct_io::impl;
 
+void free_answer(void *data, void *hint) {
+	chaos::common::direct_io::DirectIOSynchronousAnswerPtr answer_data = static_cast<chaos::common::direct_io::DirectIOSynchronousAnswerPtr>(hint);
+	DIRECTIO_FREE_ANSWER_DATA(answer_data)
+}
 
 ZMQDirectIOServer::ZMQDirectIOServer(std::string alias):DirectIOServer(alias) {
 	zmq_context = NULL;
@@ -113,12 +124,13 @@ void ZMQDirectIOServer::deinit() throw(chaos::CException) {
 
 #define PS_STR(x) (x?"service":"priority")
 void ZMQDirectIOServer::worker(bool priority_service) {
-	int					linger = 0;
-	int					water_mark = 3;
-	char				header_buffer[DIRECT_IO_HEADER_SIZE];
-	void				*socket				= NULL;
-    int					err					= 0;
-    DirectIODataPack	*data_pack			= NULL;
+	char						header_buffer[DIRECT_IO_HEADER_SIZE];
+	int							linger				= 0;
+	int							water_mark			= 3;
+	void						*socket				= NULL;
+    int							err					= 0;
+    DirectIODataPack			*data_pack			= NULL;
+	DirectIOSynchronousAnswerPtr synchronous_answer = NULL;
 	
 	ZMQDIO_SRV_LAPP_ << "Startup thread for " << PS_STR(priority_service);
 	
@@ -187,7 +199,7 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 			
 			//set dispatch header data
 			data_pack->header.dispatcher_header.raw_data = DIRECT_IO_GET_DISPATCHER_DATA(header_buffer);
-
+			
 			
 			//check what i need to reice
 			switch(data_pack->header.dispatcher_header.fields.channel_part) {
@@ -231,7 +243,7 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 					
 					data_pack->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(header_buffer);
 					data_pack->channel_data = malloc(data_pack->header.channel_data_size);
-
+					
 					//reiceve all data
 					err = zmq_recv(socket, data_pack->channel_header_data, data_pack->header.channel_header_size, 0);
 					//err = zmq_msg_recv(&m_header_data, socket, 0);
@@ -252,10 +264,37 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 					break;
 			}
 			
+			//check if we need to send async answer
+			if(data_pack->header.dispatcher_header.fields.synchronous_answer) {
+				//the client waith an answer
+				synchronous_answer = (DirectIOSynchronousAnswerPtr) calloc(sizeof(synchronous_answer), 1);
+			}
 			
+			//dispatch to endpoint
+			err = DirectIOHandlerPtrCaller(handler_impl, delegate)(data_pack, synchronous_answer);
+			//check if we need to send async answer
+			if((err = data_pack->header.dispatcher_header.fields.synchronous_answer)) {
+				zmq_msg_t answer_data;
+				//construct answer zmq message
+				err = zmq_msg_init_data (&answer_data,
+										synchronous_answer->answer_data,
+										synchronous_answer->answer_size,
+										free_answer,
+										synchronous_answer);
+				if(err == -1) {
+					ZMQDIO_SRV_LAPP_ << "Error creating message for asnwer";
+					DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
+				} else {
+					err = zmq_sendmsg(socket, &answer_data, 0);
+					if(err == -1) {
+						ZMQDIO_SRV_LAPP_ << "Error sending answer";
+						DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
+					}
+				}
+				//close the message
+				zmq_msg_close(&answer_data);
+			}
 			
-			DirectIOHandlerPtrCaller(handler_impl, delegate)(data_pack);
-			//close the socket of the header and identity
 			
         } catch (CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex)

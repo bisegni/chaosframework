@@ -56,6 +56,7 @@ void AnswerDataWorker::init(void *init_data) throw (chaos::CException) {
 	//call superclass init method
 	DataWorker::init(init_data);
 	
+	cache_general_driver = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);;
 	//allocate cached driver for every thread
 	for(int idx = 0; idx < settings.job_thread_number; idx++) {
 		thread_cookie[idx] = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
@@ -172,25 +173,23 @@ ClientConnectionInfo *AnswerDataWorker::getClientChannel(AnswerDataWorkerJob *an
 	return conn_info;
 }
 
-void AnswerDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
-	AnswerDataWorkerJob *dw_job_ptr = reinterpret_cast<AnswerDataWorkerJob*>(job_info);
-	cache_system::CacheDriver *cache_driver_instance = reinterpret_cast<cache_system::CacheDriver*>(cookie);
+void AnswerDataWorker::executeJob(AnswerDataWorkerJob *job_info, /*void* cookie, */DirectIOSynchronousAnswerPtr synchronous_answer) {
+	//AnswerDataWorkerJob *dw_job_ptr = reinterpret_cast<AnswerDataWorkerJob*>(job_info);
+	//cache_system::CacheDriver *cache_driver_instance = reinterpret_cast<cache_system::CacheDriver*>(cookie);
 
-	ClientConnectionInfo *connection_info = getClientChannel(dw_job_ptr);
-	if(connection_info) {
+	//ClientConnectionInfo *connection_info = getClientChannel(dw_job_ptr);
+	//if(connection_info) {
 		//send data to requester node
-		void *data = NULL;
-		uint32_t data_len = 0;
-		cache_driver_instance->getData(dw_job_ptr->key_data, dw_job_ptr->key_len, &data, data_len);
+		cache_general_driver->getData(job_info->key_data, job_info->key_len, &synchronous_answer->answer_data, synchronous_answer->answer_size);
 		
-		connection_info->channel->storeAndCacheDataOutputChannel(data, data_len);
+		//connection_info->channel->storeAndCacheDataOutputChannel(data, data_len);
         
         //decrease the use of the channel
-        decreaseAccessNumber(connection_info);
-	}
-	free(dw_job_ptr->key_data);
-	free(dw_job_ptr->request_header);
-	free(dw_job_ptr);
+       // decreaseAccessNumber(connection_info);
+	//}
+	//free(dw_job_ptr->key_data);
+	//free(dw_job_ptr->request_header);
+	//free(dw_job_ptr);
 }
 
 void AnswerDataWorker::handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) {
@@ -278,7 +277,7 @@ void AnswerDataWorker::addServer(std::string server_description) {
 		cache_system::CacheDriver *tmp_ptr = reinterpret_cast<cache_system::CacheDriver*>(thread_cookie[idx]);
 		if(tmp_ptr) tmp_ptr->addServer(server_description);
 	}
-	
+	cache_general_driver->addServer(server_description);
 }
 
 void AnswerDataWorker::updateServerConfiguration() {
@@ -286,4 +285,6 @@ void AnswerDataWorker::updateServerConfiguration() {
 		cache_system::CacheDriver *tmp_ptr = reinterpret_cast<cache_system::CacheDriver*>(thread_cookie[idx]);
 		if(tmp_ptr) tmp_ptr->updateConfig();
 	}
+	cache_general_driver->updateConfig();
+
 }

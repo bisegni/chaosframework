@@ -54,11 +54,13 @@ namespace chaos {
 					//uint16_t endpoint;
 					DirectIOForwarder *client_instance;
 					
-					int64_t sendData(chaos::common::direct_io::DirectIODataPack *data_pack);
+					int64_t sendData(chaos::common::direct_io::DirectIODataPack *data_pack,  bool synchronous_answer = false, DirectIOSynchronousAnswer **asynchronous_answer = NULL);
 					virtual void freeSentData(void *data, DisposeSentMemoryInfo& dispose_memory_info);
 					
 					// prepare header for defaut connection data
-					inline DirectIODataPack *completeDataPack(DirectIODataPack *data_pack) {
+					inline DirectIODataPack *completeDataPack(DirectIODataPack *data_pack, bool synchronous_answer = false) {
+						//complete the datapack
+						data_pack->header.dispatcher_header.fields.synchronous_answer = synchronous_answer;
 						data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
 						return data_pack;
 					}

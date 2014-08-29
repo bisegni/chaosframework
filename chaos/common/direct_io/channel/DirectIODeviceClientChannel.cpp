@@ -116,7 +116,9 @@ int64_t DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(void *buffer
 }
 
 //! Send device serialization with priority
-int64_t DirectIODeviceClientChannel::requestLastOutputData() {
+int64_t DirectIODeviceClientChannel::requestLastOutputData(void **result, uint32_t &size) {
+	uint64_t err = 0;
+	DirectIOSynchronousAnswer *answer = NULL;
 	DirectIODataPack *data_pack = new DirectIODataPack();
 	std::memset(data_pack, 0, sizeof(DirectIODataPack));
 
@@ -126,7 +128,17 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData() {
         //set header
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, &get_opcode_header, sizeof(DirectIODeviceChannelHeaderGetOpcode))
 	DIRECT_IO_SET_CHANNEL_DATA(data_pack, (void*)device_id.c_str(), (uint32_t)device_id.size())
-	return client_instance->sendPriorityData(this, completeDataPack(data_pack));
+	//send data with synchronous answer flag
+	if((err = client_instance->sendPriorityData(this, completeDataPack(data_pack, true), &answer))) {
+		//error getting last value
+		if(answer && answer->answer_data) free(answer->answer_data);
+	} else {
+		//we got answer
+		*result  = answer->answer_data;
+		size = answer->answer_size;
+	}
+	if(answer) free(answer);
+	return err;
 }
 
 void DirectIODeviceClientChannel::freeSentData(void *data, DisposeSentMemoryInfo& dispose_memory_info) {

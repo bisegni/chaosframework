@@ -43,7 +43,7 @@ void DirectIOPerformanceServerChannel::setHandler(DirectIOPerformanceServerChann
 	handler = _handler;
 }
 
-void DirectIOPerformanceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
+int DirectIOPerformanceServerChannel::consumeDataPack(DirectIODataPack *dataPack, DirectIOSynchronousAnswerPtr synchronous_answer) {
 	CHAOS_ASSERT(handler)
 	
     // the opcode
@@ -68,4 +68,6 @@ void DirectIOPerformanceServerChannel::consumeDataPack(DirectIODataPack *dataPac
 	
 	//only data pack is deleted, header data and channel data are managed by hendler
 	delete dataPack;
+	
+	return 0;
 }

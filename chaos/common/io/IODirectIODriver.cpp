@@ -166,28 +166,42 @@ char* IODirectIODriver::retriveRawData(size_t *dim)  throw(CException) {
 	boost::shared_lock<boost::shared_mutex>(mutext_feeder);
 	IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
 	if(!next_client) return NULL;
-	next_client->device_client_channel->requestLastOutputData();
-	wait_get_answer.wait(1000);
+	
+	uint32_t size =0;
+	next_client->device_client_channel->requestLastOutputData((void**)&result, size);
+	*dim = (size_t)size;
+	/*wait_get_answer.wait(1000);
 	if(data_cache.data_ptr &&
 	   data_cache.data_len) {
 		if(dim) *dim = (size_t)data_cache.data_len;
 		result = (char*)data_cache.data_ptr;
 		std::memset(&data_cache, 0, sizeof(IODData));
-	}
+	}*/
 	return result;
 }
 
 //we have request data and this arrive with the put opcode
-void IODirectIODriver::consumePutEvent(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header, void *channel_data, uint32_t channel_data_len) {
+int IODirectIODriver::consumePutEvent(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header,
+									   void *channel_data,
+									   uint32_t channel_data_len,
+									   common::direct_io::DirectIOSynchronousAnswerPtr synchronous_answer) {
 	delete(header);
-	data_cache.data_len = channel_data_len;
-	data_cache.data_ptr = channel_data;
-	wait_get_answer.unlock();
+	//data_cache.data_len = channel_data_len;
+	//data_cache.data_ptr = channel_data;
+	//wait_get_answer.unlock();
+	if(channel_data)free(channel_data);
+	
+	return 0;
 }
 
-void IODirectIODriver::consumeGetEvent(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header, void *channel_data, uint32_t channel_data_len) {
+int IODirectIODriver::consumeGetEvent(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header,
+									   void *channel_data,
+									   uint32_t channel_data_len,
+									   common::direct_io::DirectIOSynchronousAnswerPtr synchronous_answer) {
 	delete(header);
 	if(channel_data)free(channel_data);
+	
+	return 0;
 }
 
 /*

@@ -84,7 +84,7 @@ namespace chaos {
                     int64_t storeAndCacheDataOutputChannel(void *buffer, uint32_t buffer_len);
 					
 					//! Send a request for the last output data
-                    int64_t requestLastOutputData();
+                    int64_t requestLastOutputData(void **result, uint32_t &size);
 				};
 
 				

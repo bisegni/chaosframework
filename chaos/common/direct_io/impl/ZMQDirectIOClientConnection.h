@@ -69,16 +69,16 @@ namespace chaos {
 					ZMQDirectIOClientConnection(std::string server_description, void *_socket_priority, void *_socket_service, uint16_t endpoint);
 					~ZMQDirectIOClientConnection();
 					
-					inline int64_t writeToSocket(channel::DirectIOVirtualClientChannel *channel, void *socket, DirectIODataPack *data_pack);
+					inline int64_t writeToSocket(channel::DirectIOVirtualClientChannel *channel, void *socket, DirectIODataPack *data_pack, DirectIOSynchronousAnswer **asynchronous_answer);
 					void monitorWorker();
 					
 				protected:
 					
                     // send the data to the server layer on priority channel
-                    int64_t sendPriorityData(channel::DirectIOVirtualClientChannel *channel, DirectIODataPack *data_pack);
+                    int64_t sendPriorityData(channel::DirectIOVirtualClientChannel *channel, DirectIODataPack *data_pack, DirectIOSynchronousAnswer **asynchronous_answer);
                     
                     // send the data to the server layer on the service channel
-                    int64_t sendServiceData(channel::DirectIOVirtualClientChannel *channel, DirectIODataPack *data_pack);
+                    int64_t sendServiceData(channel::DirectIOVirtualClientChannel *channel, DirectIODataPack *data_pack, DirectIOSynchronousAnswer **asynchronous_answer);
 					
 				public:
 					int addServer(std::string server_description);

@@ -37,9 +37,9 @@ void DirectIODeviceServerChannel::setHandler(DirectIODeviceServerChannel::Direct
 	handler = _handler;
 }
 
-void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
+int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack, DirectIOSynchronousAnswerPtr synchronous_answer) {
 	CHAOS_ASSERT(handler)
-	
+	int err = 0;
     // the opcode
 	opcode::DeviceChannelOpcode  channel_opcode = static_cast<opcode::DeviceChannelOpcode>(dataPack->header.dispatcher_header.fields.channel_opcode);
 
@@ -51,7 +51,7 @@ void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
 
 			//header->device_hash = FROM_LITTLE_ENDNS_NUM(uint32_t, header->device_hash);
 			header->tag = FROM_LITTLE_ENDNS_NUM(uint32_t, header->tag);
-			handler->consumePutEvent(header, dataPack->channel_data, dataPack->header.channel_data_size);
+			err = handler->consumePutEvent(header, dataPack->channel_data, dataPack->header.channel_data_size, synchronous_answer);
             break;
         }
         case opcode::DeviceChannelOpcodeGetLastOutput: {
@@ -63,7 +63,7 @@ void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
             //header->field.device_hash = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.device_hash);
 			//header->field.answer_server_hash = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.answer_server_hash);
             header->field.address = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.address);
-			handler->consumeGetEvent(header, dataPack->channel_data, dataPack->header.channel_data_size);
+			err = handler->consumeGetEvent(header, dataPack->channel_data, dataPack->header.channel_data_size, synchronous_answer);
             break;
         }
 		default:
@@ -72,4 +72,7 @@ void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
 
 	//only data pack is deleted, header data and channel data are managed by hendler
 	delete dataPack;
+	
+	//return no result
+	return err;
 }

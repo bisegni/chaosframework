@@ -49,7 +49,7 @@ namespace chaos {
                     
 					DirectIOCDataWrapperServerChannel(std::string alias);
 					
-					void consumeDataPack(DirectIODataPack *dataPack);
+					int consumeDataPack(DirectIODataPack *dataPack, DirectIOSynchronousAnswerPtr synchronous_answer);
 				public:
                     void setHandler(DirectIOCDataWrapperServerChannelHandler *handler);
 				};

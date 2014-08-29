@@ -31,7 +31,7 @@ DirectIOCDataWrapperServerChannel::DirectIOCDataWrapperServerChannel(std::string
 	DirectIOVirtualServerChannel::setDelegate(this);
 }
 
-void DirectIOCDataWrapperServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
+int DirectIOCDataWrapperServerChannel::consumeDataPack(DirectIODataPack *dataPack, DirectIOSynchronousAnswerPtr synchronous_answer) {
 	CHAOS_ASSERT(cdatawrapper_handler)
 	//get CData Wrapper
 	chaos_data::CDataWrapper *cdata = new chaos_data::CDataWrapper(static_cast<const char *>(dataPack->channel_data));
@@ -41,6 +41,8 @@ void DirectIOCDataWrapperServerChannel::consumeDataPack(DirectIODataPack *dataPa
 																   
 	//delete pack
 	delete dataPack;
+	
+	return 0;
 }
 
 void DirectIOCDataWrapperServerChannel::setHandler(DirectIOCDataWrapperServerChannelHandler *handler) {

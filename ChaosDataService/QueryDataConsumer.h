@@ -61,8 +61,8 @@ namespace chaos{
 			chaos::common::utility::ObjectSlot<chaos::data_service::worker::DataWorker*> answer_worker_list;
 			
             void consumeCDataWrapper(uint8_t channel_opcode, chaos::common::data::CDataWrapper *data_wrapper);
-            void consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header, void *channel_data, uint32_t channel_data_len);
-            void consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header, void *channel_data, uint32_t channel_data_len);
+            int consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header, void *channel_data, uint32_t channel_data_len, DirectIOSynchronousAnswerPtr synchronous_answer);
+            int consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header, void *channel_data, uint32_t channel_data_len, DirectIOSynchronousAnswerPtr synchronous_answer);
 
         public:
 			QueryDataConsumer(vfs::VFSManager *_vfs_manager_instance);

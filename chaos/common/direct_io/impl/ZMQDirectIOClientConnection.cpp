@@ -24,7 +24,7 @@ using namespace chaos::common::direct_io::impl;
 
 #define ZMQDIO_CONNECTION_LAPP_ LAPP_ << ZMQDIO_CONNECTION_LOG_HEAD
 #define ZMQDIO_CONNECTION_LDBG_ LDBG_ << ZMQDIO_CONNECTION_LOG_HEAD << __FUNCTION__ << " - "
-#define ZMQDIO_CONNECTION_LERR_ LERR_ << ZMQDIO_CONNECTION_LOG_HEAD
+#define ZMQDIO_CONNECTION_LERR_ LERR_ << ZMQDIO_CONNECTION_LOG_HEAD << __FUNCTION__ << " - " << __LINE__ << " - "
 
 ZMQDirectIOClientConnection::ZMQDirectIOClientConnection(std::string server_description, void *_socket_priority, void *_socket_service, uint16_t endpoint):
 DirectIOClientConnection(server_description, endpoint),
@@ -39,16 +39,17 @@ ZMQDirectIOClientConnection::~ZMQDirectIOClientConnection() {
 }
 
 // send the data to the server layer on priority channel
-int64_t ZMQDirectIOClientConnection::sendPriorityData(channel::DirectIOVirtualClientChannel *channel, DirectIODataPack *data_pack) {
-    return writeToSocket(channel, socket_priority, completeDataPack(data_pack));
+int64_t ZMQDirectIOClientConnection::sendPriorityData(channel::DirectIOVirtualClientChannel *channel, DirectIODataPack *data_pack, DirectIOSynchronousAnswer **asynchronous_answer) {
+    return writeToSocket(channel, socket_priority, completeDataPack(data_pack), asynchronous_answer);
 }
 
 // send the data to the server layer on the service channel
-int64_t ZMQDirectIOClientConnection::sendServiceData(channel::DirectIOVirtualClientChannel *channel, DirectIODataPack *data_pack) {
-    return writeToSocket(channel, socket_service, completeDataPack(data_pack));
+int64_t ZMQDirectIOClientConnection::sendServiceData(channel::DirectIOVirtualClientChannel *channel, DirectIODataPack *data_pack, DirectIOSynchronousAnswer **asynchronous_answer) {
+    return writeToSocket(channel, socket_service, completeDataPack(data_pack), asynchronous_answer);
 }
 
-int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClientChannel *channel, void *socket, DirectIODataPack *data_pack) {
+//send data with zmq tech
+int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClientChannel *channel, void *socket, DirectIODataPack *data_pack, DirectIOSynchronousAnswer **asynchronous_answer) {
     assert(socket && data_pack);
 	int err = 0;
 	uint16_t sending_opcode = data_pack->header.dispatcher_header.fields.channel_opcode;
@@ -117,13 +118,40 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 									 new channel::DisposeSentMemoryInfo(channel, 2, sending_opcode));
 			err = zmq_sendmsg(socket, &msg_data, _send_no_wait_flag);
 			
+			//check if we need to espect async answer
 			zmq_msg_close(&msg_header_data);
 			zmq_msg_close(&msg_data);
 			break;
 	}
+	
+	if(data_pack->header.dispatcher_header.fields.synchronous_answer) {
+		//DirectIOSynchronousAnswer
+		zmq_msg_t msg;
+		err = zmq_msg_init(&msg);
+		if(err == -1) {
+			ZMQDIO_CONNECTION_LERR_ << "Error initializing message for asynchronous answer";
+		} else {
+			err = zmq_recvmsg(socket, &msg, 0);
+			if(err == -1) {
+				ZMQDIO_CONNECTION_LERR_ << "Error getting message for asynchronous answer";
+			} else {
+				//we have message
+				*asynchronous_answer = (DirectIOSynchronousAnswer*)calloc(sizeof(DirectIOSynchronousAnswer), 1);
+				
+				//copy data
+				(*asynchronous_answer)->answer_size = (uint32_t)zmq_msg_size(&msg);
+				(*asynchronous_answer)->answer_data = malloc((*asynchronous_answer)->answer_size);
+				std::memcpy((*asynchronous_answer)->answer_data , zmq_msg_data(&msg), (*asynchronous_answer)->answer_size);
+			}
+		}
+		//close received message
+		err = zmq_msg_close(&msg);
+	}
+	
 	free(data_pack);
+
 	//send data
-    return err;
+	return err;
 }
 
 int ZMQDirectIOClientConnection::addServer(std::string server_desc) {

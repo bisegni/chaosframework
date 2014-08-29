@@ -130,17 +130,17 @@ void DirectIODispatcher::releaseEndpoint(DirectIOServerEndpoint *endpoint_to_rel
 }
 
 // Event for a new data received
-void DirectIODispatcher::priorityDataReceived(DirectIODataPack *data_pack) {
+int DirectIODispatcher::priorityDataReceived(DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer) {
 	//get route index and call delegator
 	if(endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->enable) {
-		endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->endpoint->priorityDataReceived(data_pack);
+		return endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->endpoint->priorityDataReceived(data_pack, synchronous_answer);
 	}
 }
 
 // Event for a new data received
-void DirectIODispatcher::serviceDataReceived(DirectIODataPack *data_pack) {
+int DirectIODispatcher::serviceDataReceived(DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer) {
 	//get route index and call delegator
 	if(endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->enable) {
-		endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->endpoint->serviceDataReceived(data_pack);
+		return endpoint_slot_array[data_pack->header.dispatcher_header.fields.route_addr]->endpoint->serviceDataReceived(data_pack, synchronous_answer);
 	}
 }

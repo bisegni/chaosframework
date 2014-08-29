@@ -130,7 +130,10 @@ void QueryDataConsumer::deinit() throw (chaos::CException) {
 	free(device_data_worker);
 }
 
-void QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header, void *channel_data, uint32_t channel_data_len) {
+int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header,
+										void *channel_data,
+										uint32_t channel_data_len,
+										DirectIOSynchronousAnswerPtr synchronous_answer) {
 	uint32_t index_to_use = device_data_worker_index++ % settings->caching_worker_num;
 
 	chaos::data_service::worker::DeviceSharedWorkerJob *job = new chaos::data_service::worker::DeviceSharedWorkerJob();
@@ -141,18 +144,23 @@ void QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *he
 		DEBUG_CODE(DSLDBG_ << "error pushing data into worker queue");
 		delete job;
 	}
-	
+	return 0;
 }
 
-void QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header, void *channel_data, uint32_t channel_data_len) {
-	chaos::data_service::worker::DataWorker *worker = answer_worker_list.accessSlot();
+int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header,
+										void *channel_data,
+										uint32_t channel_data_len,
+										DirectIOSynchronousAnswerPtr synchronous_answer) {
 	
+	chaos::data_service::worker::DataWorker *worker = answer_worker_list.accessSlot();
     chaos::data_service::worker::AnswerDataWorkerJob *job = new chaos::data_service::worker::AnswerDataWorkerJob();
 	job->key_data = channel_data;
 	job->key_len = channel_data_len;
 	job->request_header = header;
-	if(!worker->submitJobInfo(job)) {
-		DEBUG_CODE(DSLDBG_ << "error pushing data into answer queue");
+	((worker::AnswerDataWorker*)worker)->executeJob(job, synchronous_answer);
+	//if(!worker->submitJobInfo(job)) {
+	//	DEBUG_CODE(DSLDBG_ << "error pushing data into answer queue");
 		delete job;
-	}
+	//}
+	return 0;
 }
