@@ -47,7 +47,7 @@ public class UnitServerCuInstance extends BusinessObject {
 	@DBColumn(name = AUTO_LOAD)
 	private Boolean						autoLoad				= false;
 	@DBColumn(name = STATE, maxDimension = 64)
-	private String						state					= "one";
+	private String						state					= "----";
 
 	private Vector<DatasetAttribute>	attributeConfigutaion	= new Vector<DatasetAttribute>();
 
@@ -220,5 +220,11 @@ public class UnitServerCuInstance extends BusinessObject {
 
 	public void setState(String state) {
 		this.state = state;
+	}
+
+	public void removeAllDriverSpec() {
+		this.driverSpec.removeAllElements();
+		this.drvSpec = null;
+		
 	}
 }

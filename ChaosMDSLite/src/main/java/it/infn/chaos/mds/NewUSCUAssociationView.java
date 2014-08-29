@@ -114,7 +114,7 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 					usci.setCuParam(impl.getCuParamTextArea().getValue().toString());
 					usci.setAutoLoad((Boolean) impl.getCheckBoxAutoLoad().getValue());
 					
-					usci.getDriverSpec().clear();
+					usci.removeAllDriverSpec();
 					Collection<Integer> indexList = (Collection<Integer>) impl.getTableDriverSpecifications().getItemIds();
 					for (Integer idx : indexList) {
 						DriverSpec driverSpec = new DriverSpec();
