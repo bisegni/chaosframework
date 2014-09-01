@@ -134,8 +134,13 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(void **result, uint32
 		if(answer && answer->answer_data) free(answer->answer_data);
 	} else {
 		//we got answer
-		*result  = answer->answer_data;
-		size = answer->answer_size;
+		if(answer) {
+			*result  = answer->answer_data;
+			size = answer->answer_size;
+		} else {
+			*result = NULL;
+			size = 0;
+		}
 	}
 	if(answer) free(answer);
 	return err;

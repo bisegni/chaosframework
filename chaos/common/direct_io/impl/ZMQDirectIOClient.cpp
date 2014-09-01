@@ -178,8 +178,6 @@ DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server
 	std::string error_str;
 	std::string priority_endpoint;
 	std::string service_endpoint;
-	std::string priority_identity = UUIDUtil::generateUUIDLite();
-    std::string service_identity = UUIDUtil::generateUUIDLite();
 	
 	std::vector<std::string> resolved_ip;
 	
@@ -203,7 +201,7 @@ DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server
 		
 		err = zmq_setsockopt (socket_priority, ZMQ_RECONNECT_IVL_MAX, &max_reconnection_ivl, sizeof(int));
 		if(err) throw chaos::CException(err, "Error setting ZMQ_RECONNECT_IVL on priority socket option", __FUNCTION__);
-
+		
 		//---------------------------------------------------------------------------------------------------------------
 		DEBUG_CODE(ZMQDIOLDBG_ << "Allocating service socket";)
 		socket_service = zmq_socket (zmq_context, ZMQ_DEALER);
@@ -220,11 +218,15 @@ DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server
 		
 		err = zmq_setsockopt (socket_service, ZMQ_RECONNECT_IVL_MAX, &max_reconnection_ivl, sizeof(int));
 		if(err) throw chaos::CException(err, "Error setting ZMQ_RECONNECT_IVL on priority socket option", __FUNCTION__);
-
 		//---------------------------------------------------------------------------------------------------------------
 		//allocate client
 		result = new ZMQDirectIOClientConnection(server_description, socket_priority, socket_service, endpoint);
+		err = setAndReturnID(socket_priority, result->priority_identity);
+		if(err) throw chaos::CException(err, "Error setting identity on priority socket", __FUNCTION__);
 		
+		err = setAndReturnID(socket_service, result->service_identity);
+		if(err) throw chaos::CException(err, "Error setting identity on service socket", __FUNCTION__);
+
 		//set the server information on socket
 		decoupleServerDescription(server_description, priority_endpoint, service_endpoint);
 				

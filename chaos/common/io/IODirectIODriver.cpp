@@ -170,13 +170,6 @@ char* IODirectIODriver::retriveRawData(size_t *dim)  throw(CException) {
 	uint32_t size =0;
 	next_client->device_client_channel->requestLastOutputData((void**)&result, size);
 	*dim = (size_t)size;
-	/*wait_get_answer.wait(1000);
-	if(data_cache.data_ptr &&
-	   data_cache.data_len) {
-		if(dim) *dim = (size_t)data_cache.data_len;
-		result = (char*)data_cache.data_ptr;
-		std::memset(&data_cache, 0, sizeof(IODData));
-	}*/
 	return result;
 }
 
@@ -186,11 +179,7 @@ int IODirectIODriver::consumePutEvent(chaos_dio_channel::opcode_headers::DirectI
 									   uint32_t channel_data_len,
 									   common::direct_io::DirectIOSynchronousAnswerPtr synchronous_answer) {
 	delete(header);
-	//data_cache.data_len = channel_data_len;
-	//data_cache.data_ptr = channel_data;
-	//wait_get_answer.unlock();
 	if(channel_data)free(channel_data);
-	
 	return 0;
 }
 

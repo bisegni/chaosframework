@@ -68,7 +68,6 @@ namespace chaos{
 				chaos_direct_io_ch::DirectIODeviceClientChannel *channel;
 			};
 			
-			//typedef chaos::utility::TemplatedKeyObjectContainer<std::string, ClientConnectionInfo*> ADWKeyObjectContainer;
 			typedef chaos::common::utility::TemplatedKeyValueHash<ClientConnectionInfo*> ClientConnectionInfoHashTable;
 			
 
@@ -79,8 +78,7 @@ namespace chaos{
 			protected chaos_direct_io::DirectIOClientConnectionEventHandler {
 				bool work_on_purge;
 				std::string cache_impl_name;
-
-				cache_system::CacheDriver *cache_general_driver;
+				
 				chaos_direct_io::DirectIOClient *direct_io_client;
 				
 				boost::shared_mutex mutex_add_new_client;
@@ -102,8 +100,7 @@ namespace chaos{
 				ClientConnectionInfo *getClientChannel(AnswerDataWorkerJob *answer_job_info);
 				void purge_thread_worker();
 			public:
-				void executeJob(WorkerJobPtr job_info, void* cookie){}
-				void executeJob(AnswerDataWorkerJob *job_info, DirectIOSynchronousAnswerPtr synchronous_answer);
+				void executeJob(WorkerJobPtr job_info, void* cookie);
 				AnswerDataWorker(chaos_direct_io::DirectIOClient *_client_instance, std::string _cache_impl_name);
 				~AnswerDataWorker();
 				void init(void *init_data) throw (chaos::CException);

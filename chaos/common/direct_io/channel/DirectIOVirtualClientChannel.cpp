@@ -36,14 +36,14 @@ DirectIOVirtualClientChannel::~DirectIOVirtualClientChannel() {
     
 }
 
-int64_t DirectIOVirtualClientChannel::sendData(chaos::common::direct_io::DirectIODataPack *data_pack, bool synchronous_answer, DirectIOSynchronousAnswer **asynchronous_answer) {
+int64_t DirectIOVirtualClientChannel::sendData(chaos::common::direct_io::DirectIODataPack *data_pack, DirectIOSynchronousAnswer **synchronous_answer) {
 	//set the endpoint that need the receive the pack on the other side
 	//data_pack->header.dispatcher_header.fields.route_addr = endpoint;
 	//set the channel route index within the endpoint
 	data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
 	
 	//send pack
-	return DirectIOForwarderHandlerCaller(client_instance,forward_handler)(this, completeDataPack(data_pack, synchronous_answer), asynchronous_answer);
+	return DirectIOForwarderHandlerCaller(client_instance,forward_handler)(this, completeDataPack(data_pack, synchronous_answer != NULL ), synchronous_answer);
 }
 
 void DirectIOVirtualClientChannel::freeSentData(void *data, DisposeSentMemoryInfo& dispose_memory_info) {}

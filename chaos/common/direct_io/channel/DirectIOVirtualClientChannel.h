@@ -54,7 +54,7 @@ namespace chaos {
 					//uint16_t endpoint;
 					DirectIOForwarder *client_instance;
 					
-					int64_t sendData(chaos::common::direct_io::DirectIODataPack *data_pack,  bool synchronous_answer = false, DirectIOSynchronousAnswer **asynchronous_answer = NULL);
+					int64_t sendData(chaos::common::direct_io::DirectIODataPack *data_pack, DirectIOSynchronousAnswer **synchronous_answer = NULL);
 					virtual void freeSentData(void *data, DisposeSentMemoryInfo& dispose_memory_info);
 					
 					// prepare header for defaut connection data

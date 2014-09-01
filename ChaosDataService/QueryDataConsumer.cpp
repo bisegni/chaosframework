@@ -67,6 +67,10 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
 	device_data_worker = (chaos::data_service::worker::DataWorker**) malloc(sizeof(chaos::data_service::worker::DataWorker**) * settings->caching_worker_num);
 	if(!device_data_worker) throw chaos::CException(-5, "Error allocating device workers", __FUNCTION__);
 	
+	//get the cached driver
+	cache_driver = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
+	
+	//Sahred data worker
 	chaos::data_service::worker::DeviceSharedDataWorker *tmp = NULL;
 	for(int idx = 0; idx < settings->caching_worker_num; idx++) {
 		device_data_worker[idx] = (tmp = new chaos::data_service::worker::DeviceSharedDataWorker(cache_impl_name, vfs_manager_instance));
@@ -96,6 +100,13 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
 		tmp_data_worker->start();
 		answer_worker_list.addSlot(tmp_data_worker);
 	}
+	
+	for(CacheServerListIterator iter = settings->startup_chache_servers.begin();
+		iter != settings->startup_chache_servers.end();
+		iter++) {
+		cache_driver->addServer(*iter);
+	}
+	cache_driver->updateConfig();
 }
 
 void QueryDataConsumer::start() throw (chaos::CException) {
@@ -151,16 +162,5 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
 										void *channel_data,
 										uint32_t channel_data_len,
 										DirectIOSynchronousAnswerPtr synchronous_answer) {
-	
-	chaos::data_service::worker::DataWorker *worker = answer_worker_list.accessSlot();
-    chaos::data_service::worker::AnswerDataWorkerJob *job = new chaos::data_service::worker::AnswerDataWorkerJob();
-	job->key_data = channel_data;
-	job->key_len = channel_data_len;
-	job->request_header = header;
-	((worker::AnswerDataWorker*)worker)->executeJob(job, synchronous_answer);
-	//if(!worker->submitJobInfo(job)) {
-	//	DEBUG_CODE(DSLDBG_ << "error pushing data into answer queue");
-		delete job;
-	//}
-	return 0;
+	return cache_driver->getData(channel_data, channel_data_len, &synchronous_answer->answer_data, synchronous_answer->answer_size);
 }

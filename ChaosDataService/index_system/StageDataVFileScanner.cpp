@@ -99,9 +99,9 @@ int StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack) {
 		StageDataVFileScannerLDBG_ << "Current scanned data pack doesn't have required field so we skip it";
 		return 0;
 	}
+	//collect idnex information
 	DataPackIndex new_data_pack_index;
-
-	//colelct idnex information
+	
 	
 	//get values for key that are mandatory for default index
 	new_data_pack_index.did = data_pack.getField(chaos::DataPackKey::CS_CSV_CU_ID).String();

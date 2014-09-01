@@ -25,6 +25,7 @@
 #include "vfs/VFSManager.h"
 #include "worker/DataWorker.h"
 #include "cache_system/cache_system.h"
+
 #include <chaos/common/utility/ObjectSlot.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/direct_io/DirectIOServerEndpoint.h>
@@ -54,6 +55,8 @@ namespace chaos{
 			
             DirectIOServerEndpoint					*server_endpoint;
 			DirectIODeviceServerChannel				*device_channel;
+			
+			cache_system::CacheDriver				*cache_driver;
 			
 			vfs::VFSManager *vfs_manager_instance;
 			boost::atomic<uint16_t> device_data_worker_index;
