@@ -25,9 +25,16 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	static final Action			ACTION_SAVE									= new Action("Save");
 
 	static final Action			ACTION_US_EDIT_ALIAS						= new Action("Edit Unit Server Alias");
-	static final Action			ACTION_US_LOAD_ALL							= new Action("Load all work unit");
-	static final Action			ACTION_US_UNLOAD_ALL						= new Action("Unload all work unit");
-	static final Action			ACTION_US_SHOW_ALL							= new Action("Show work unit");
+	static final Action			ACTION_US_LOAD_ALL							= new Action("Load all work units");
+	static final Action			ACTION_US_UNLOAD_ALL						= new Action("Unload all work units");
+	static final Action			ACTION_US_SHOW_ALL							= new Action("Edit work unit");
+	
+	static final Action			ACTION_NODE_START						    = new Action("Node Start");
+	static final Action			ACTION_NODE_STOP							= new Action("Node Stop");
+	static final Action			ACTION_NODE_INIT							= new Action("Node Init");
+	static final Action			ACTION_NODE_DEINIT							= new Action("Node DeInit");
+	static final Action			ACTION_NODE_SHUTDOWN						= new Action("Node ShutDown");
+
 
 	static final Action[]		ACTIONS_TO_EDIT								= new Action[] { ACTION_EDIT };
 	static final Action[]		ACTIONS_IN_EDIT								= new Action[] { ACTION_SAVE };
@@ -44,6 +51,15 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	public static final String	EVENT_INITIALIZE_DEVICE_AT_STARTUP			= "MDSAppView_EVENT_INITIALIZE_DEVICE_AT_STARTUP";
 	public static final String	EVENT_UPDATE_UNIT_SERVER_LIST				= "MDSAppView_EVENT_UPDATE_UNIT_SERVER_LIST";
 
+	// device action events
+	public static final String	EVENT_NODE_INIT								= "MDSAppView_EVENT_NODE_INIT";
+	public static final String	EVENT_NODE_DEINIT							= "MDSAppView_EVENT_NODE_DEINIT";
+	public static final String	EVENT_NODE_START							= "MDSAppView_EVENT_NODE_START";
+	public static final String	EVENT_NODE_STOP								= "MDSAppView_EVENT_NODE_STOP";
+	public static final String	EVENT_NODE_SHUTDOWN							= "MDSAppView_EVENT_NODE_SHUTDOWN";
+
+
+	//
 	public static final String	EVENT_UNIT_SERVER_SELECTED					= "MDSAppView_EVENT_UNIT_SERVER_SELECTED";
 	public static final String	EVENT_UNIT_SERVER_CU_TYPE_SELECTED			= "MDSAppView_EVENT_UNIT_SERVER_CU_TYPE_SELECTED";
 	public static final String	EVENT_UNIT_SERVER_CREATE_US_CU_ASSOCIATION	= "MDSAppView_EVENT_UNIT_SERVER_CREATE_US_CU_ASSOCIATION";
@@ -85,10 +101,10 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	private MainView			mv											= new MainView();
 	 
 	private boolean				editingAttribute							= false;
-
+	public static Refresher	 	refresher									= new Refresher();
 	@Override
 	public void initGui() {
-		final Refresher			refresher									= new Refresher();
+		
 		refresher.setRefreshInterval(1000); 
 		addComponent(refresher);
 		addComponent(mv);
@@ -157,6 +173,31 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 		mv.getTableDevice().addContainerProperty(TAB1_LAST_HB, Date.class, null);
 		mv.getTableDevice().addContainerProperty("INIT", String.class, null);
 
+		mv.getTableDevice().addActionHandler(new Action.Handler() {
+	
+			
+			@Override
+			public void handleAction(Action action, Object sender, Object target) {
+				if (ACTION_NODE_START == action) {
+					notifyEventoToControllerWithData(EVENT_NODE_START, mv.getTableDevice().getValue(), sender);
+				}else if (ACTION_NODE_STOP == action) {
+					notifyEventoToControllerWithData(EVENT_NODE_STOP,  mv.getTableDevice().getValue(), sender);
+				}else if (ACTION_NODE_INIT == action) {
+					notifyEventoToControllerWithData(EVENT_NODE_INIT, mv.getTableDevice().getValue(), sender);
+				}else if (ACTION_NODE_DEINIT == action) {
+					notifyEventoToControllerWithData(EVENT_NODE_DEINIT, mv.getTableDevice().getValue(), sender);
+				}else if (ACTION_NODE_SHUTDOWN == action) {
+					notifyEventoToControllerWithData(EVENT_NODE_SHUTDOWN, mv.getTableDevice().getValue(), sender);
+				
+				}
+			}
+			
+			@Override
+			public Action[] getActions(Object target, Object sender) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		});
 		mv.getButtonNewUS().addListener(new ClickListener() {
 			public void buttonClick(ClickEvent event) {
 				notifyEventoToControllerWithData(EVENT_UNIT_SERVER_NEW, event.getSource(), null);
