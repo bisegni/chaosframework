@@ -24,7 +24,7 @@ namespace chaos {
                     int closeSocketNoWhait (void *socket);
 					
 					//!
-					char *  stringReceive(void *socket);
+					int stringReceive(void *socket, std::string& received_string);
 					
 					//!
 					int stringSend(void *socket, const char *string);

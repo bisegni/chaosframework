@@ -31,15 +31,16 @@ int ZMQBaseClass::closeSocketNoWhait (void *socket) {
 //  Receive 0MQ string from socket and convert into C string
 //  Caller must free returned string. Returns NULL if the context
 //  is being terminated.
-char * ZMQBaseClass::stringReceive(void *socket) {
+int ZMQBaseClass::stringReceive(void *socket, std::string& received_string) {
     char buffer [256];
     int size = zmq_recv (socket, buffer, 255, 0);
     if (size == -1)
-        return NULL;
+        return size;
     if (size > 255)
         size = 255;
-    buffer [size] = 0;
-    return strdup (buffer);
+    buffer[size] = 0;
+	received_string = buffer;
+    return size;
 }
 
 //  Convert C string to 0MQ string and send to socket

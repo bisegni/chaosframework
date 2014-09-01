@@ -98,3 +98,7 @@ bool DataWorker::submitJobInfo(WorkerJobPtr job_info) {
 	}
 	return false;
 }
+
+void DataWorker::mantain() throw (chaos::CException) {
+	
+}

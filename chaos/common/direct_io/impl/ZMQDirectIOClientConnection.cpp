@@ -133,39 +133,38 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 	}
 	
 	if(data_pack->header.dispatcher_header.fields.synchronous_answer) {
-		//receive te identity
-		//free(stringReceive(socket));
-		
+		std::string empty_delimiter;
 		//receive the zmq evenlod delimiter
-		free(stringReceive(socket));
-		
-		//DirectIOSynchronousAnswer
-		zmq_msg_t msg;
-		err = zmq_msg_init(&msg);
-		if(err == -1) {
-			ZMQDIO_CONNECTION_LERR_ << "Error initializing message for asynchronous answer";
-		} else {
-			err = zmq_recvmsg(socket, &msg, 0);
+		err = stringReceive(socket, empty_delimiter);
+		if(err != -1) {
+			//DirectIOSynchronousAnswer
+			zmq_msg_t msg;
+			err = zmq_msg_init(&msg);
 			if(err == -1) {
-				ZMQDIO_CONNECTION_LERR_ << "Error getting message for asynchronous answer";
+				ZMQDIO_CONNECTION_LERR_ << "Error initializing message for asynchronous answer";
 			} else {
-				//we have message
-				*synchronous_answer = (DirectIOSynchronousAnswer*)calloc(sizeof(DirectIOSynchronousAnswer), 1);
-				//copy data
-				(*synchronous_answer)->answer_size = (uint32_t)zmq_msg_size(&msg);
-				if(err > 0) {
-					//if we have some data copy it  otjerwhise we have an empty pack
-					(*synchronous_answer)->answer_data = malloc((*synchronous_answer)->answer_size);
-					std::memcpy((*synchronous_answer)->answer_data , zmq_msg_data(&msg), (*synchronous_answer)->answer_size);
+				err = zmq_recvmsg(socket, &msg, 0);
+				if(err == -1) {
+					ZMQDIO_CONNECTION_LERR_ << "Error getting message for asynchronous answer";
+				} else {
+					//we have message
+					*synchronous_answer = (DirectIOSynchronousAnswer*)calloc(sizeof(DirectIOSynchronousAnswer), 1);
+					//copy data
+					(*synchronous_answer)->answer_size = (uint32_t)zmq_msg_size(&msg);
+					if(err > 0) {
+						//if we have some data copy it  otjerwhise we have an empty pack
+						(*synchronous_answer)->answer_data = malloc((*synchronous_answer)->answer_size);
+						std::memcpy((*synchronous_answer)->answer_data , zmq_msg_data(&msg), (*synchronous_answer)->answer_size);
+					}
 				}
 			}
+			//close received message
+			err = zmq_msg_close(&msg);
 		}
-		//close received message
-		err = zmq_msg_close(&msg);
 	}
 	
 	free(data_pack);
-
+	
 	//send data
 	return err;
 }

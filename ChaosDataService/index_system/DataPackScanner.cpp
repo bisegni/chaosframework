@@ -48,6 +48,7 @@ curret_data_buffer_len(0) {
 
 DataPackScanner::~DataPackScanner() {
 	if(data_buffer) free(data_buffer);
+	
 }
 
 std::string DataPackScanner::getScannedVFSPath() {

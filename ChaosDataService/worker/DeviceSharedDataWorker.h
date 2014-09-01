@@ -58,6 +58,7 @@ namespace chaos{
 			
 			//! Thread cookier for collect need staff to process the request
 			struct ThreadCookie {
+				boost::shared_mutex mantainance_mutex;
 				chaos_vfs::VFSStageWriteableFile *vfs_stage_file;
 			};
 			
@@ -76,6 +77,7 @@ namespace chaos{
 				void addServer(std::string server_description);
 				void updateServerConfiguration();
 				bool submitJobInfo(WorkerJobPtr job_info);
+				void mantain() throw (chaos::CException);
 			};
 		}
 	}

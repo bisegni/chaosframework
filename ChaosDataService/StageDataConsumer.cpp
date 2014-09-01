@@ -33,8 +33,9 @@ using namespace chaos::data_service;
 #define StageDataConsumerLERR_ LERR_ << StageDataConsumer_LOG_HEAD
 
 #define DISPOSE_SCANNER_INFO(s) \
-delete (s->scanner); \
-delete s; \
+vfs_manager_ptr->releaseFile(s->scanner->working_data_file);\
+delete (s->scanner);\
+delete s;\
 s=NULL;
 
 
@@ -66,9 +67,9 @@ void StageDataConsumer::init(void *init_data) throw (chaos::CException) {
 
 void StageDataConsumer::start() throw (chaos::CException) {
 
-	StageDataConsumerLAPP_ << "Start find path timer";
+	StageDataConsumerLAPP_ << "Start find path timer with delay of"<<(settings->indexer_scan_delay*1000)<<" seconds";
 	//scan path every 60 seconds
-	chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, 60000);
+	chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, settings->indexer_scan_delay*1000);
 	
 	StageDataConsumerLAPP_ << "Start stage scanner thread";
 	work_on_stage = true;

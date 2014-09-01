@@ -9,6 +9,7 @@
 #ifndef CHAOSFramework_global_h
 #define CHAOSFramework_global_h
 
+#include <stdint.h>
 #include <string>
 #include <vector>
 
@@ -29,6 +30,10 @@ namespace chaos{
 #define OPT_CACHE_WORKER_NUM		"cache_worker_num"
 #define OPT_CACHE_WORKER_THREAD		"cache_worker_thread"
 #define CACHE_WORKER_NUMBER			1
+	
+		//query data consumer
+#define OPT_QUERY_CONSUMER_VFILE_MANTAINANCE_DELAY		"qdc_vfile_mantain_delay"
+#define QUERY_CONSUMER_VFILE_MANTAINANCE_DEFAULT_DELAY	60
 		
 		//answer configuration
 #define OPT_ANSWER_WORKER_NUM		"answer_worker_num"
@@ -36,8 +41,10 @@ namespace chaos{
 #define ANSWER_WORKER_NUMBER		1
 		
 		//stage data indexer
-#define OPT_INDEXER_WORKER_NUM		"indexer_worker_num"
-#define INDEXER_WORKER_NUMBER		1
+#define OPT_INDEXER_WORKER_NUM			"indexer_worker_num"
+#define OPT_INDEXER_SCAN_DELAY			"indexer_scan_delay"
+#define INDEXER_DEFAULT_WORKER_NUMBER	1
+#define INDEXER_DEFAULT_SCAN_DELAY		60
 		
 		//vfs driver configuration
 #define OPT_VFS_STORAGE_DRIVER_IMPL		"vfs_storage_drvr_impl"
@@ -72,12 +79,16 @@ namespace chaos{
 			unsigned int				caching_worker_num;
 			worker::DataWorkerSetting	caching_worker_setting;
 			
+			//----------query consumer---------------
+			unsigned int				vfile_mantainer_delay;
+			
 			//----------answer worker------------------
 			unsigned int				answer_worker_num;
 			worker::DataWorkerSetting	answer_worker_setting;
 
 			//----------stage data indexer---------------
 			unsigned int				indexer_worker_num;
+			unsigned int				indexer_scan_delay;
 			
 			//----------vfs configuration----------------
 			vfs::VFSManagerSetting		file_manager_setting;

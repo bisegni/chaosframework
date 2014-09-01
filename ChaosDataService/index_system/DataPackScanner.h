@@ -45,7 +45,7 @@ namespace chaos{
 
 			 */
 			class DataPackScanner {
-				friend class StageDataConsumer;
+				friend class chaos::data_service::StageDataConsumer;
 				
 				void *data_buffer;
 				uint32_t curret_data_buffer_len;

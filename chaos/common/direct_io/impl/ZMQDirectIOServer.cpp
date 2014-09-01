@@ -187,21 +187,25 @@ void ZMQDirectIOServer::worker(bool priority_service) {
         try {
 			//received the zmq identity
 			std::string identity;
-			char *_identity = stringReceive(socket);
-			identity = _identity;
-			free(_identity);
-			ZMQDIO_SRV_LDBG_ << "received data from identity: " << identity;
-			
+			std::string empty_delimiter;
+			err = stringReceive(socket, identity);
+			if(err == -1) {
+                continue;
+            }
+
 			//receive the zmq evenlod delimiter
-			free(stringReceive(socket));
-			ZMQDIO_SRV_LDBG_ << "Readed empty delimiter for " << identity;
+			err = stringReceive(socket, empty_delimiter);
+			if(err == -1 ) {
+                continue;
+            }
+			
+			
             //read header
             err = zmq_recv(socket, header_buffer, DIRECT_IO_HEADER_SIZE, 0);
             if(err == -1 ||
 			   err != DIRECT_IO_HEADER_SIZE) {
                 continue;
             }
-			ZMQDIO_SRV_LDBG_ << "Readed data for " << identity;
 
 			//create new datapack
 			data_pack = new DirectIODataPack();
@@ -288,15 +292,11 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 			err = DirectIOHandlerPtrCaller(handler_impl, delegate)(data_pack, synchronous_answer);
 			//check if we need to send async answer
 			if(send_synchronous_answer) {
-				ZMQDIO_SRV_LDBG_ << "sending answer for " << identity;
-
 				//sending identity
 				stringSendMore(socket, identity.c_str());
-				ZMQDIO_SRV_LDBG_ << "Sent identity for " << identity;
 
 				//sending envelop delimiter
 				stringSendMore(socket, EmptyMessage);
-				ZMQDIO_SRV_LDBG_ << "Sent empty delimiter for " << identity;
 			
 				//send the data
 				zmq_msg_t answer_data;
@@ -315,8 +315,6 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 					if(err == -1) {
 						ZMQDIO_SRV_LAPP_ << "Error sending answer";
 						DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
-					}else {
-						ZMQDIO_SRV_LDBG_ << "Sent data for " << identity;
 					}
 				}
 				//close the message

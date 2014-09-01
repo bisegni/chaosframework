@@ -68,7 +68,7 @@ namespace chaos{
 			 4 - step torward
 			 */
 			class StageDataVFileScanner : public DataPackScanner {
-				friend class StageDataConsumer;
+				friend class chaos::data_service::StageDataConsumer;
 
 				uint64_t last_hb_on_vfile;
 				

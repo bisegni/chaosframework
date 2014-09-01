@@ -204,6 +204,9 @@ int VFSFile::write(void *data, uint32_t data_len) {
 	if(open_mode != VFSFileOpenModeWrite  ||
 	   (err = storage_driver_ptr->write(current_data_block, data, data_len))) {
 		VFSF_LERR_ << "Error writing with error " << err << " on datablock " << current_data_block->vfs_path;
+	}else {
+		//update the current work position
+		current_data_block->current_work_position += data_len;
 	}
 	return err;
 };
@@ -219,6 +222,9 @@ int VFSFile::read(void *buffer, uint32_t buffer_len) {
 	if(open_mode != VFSFileOpenModeRead  ||
 	   (err = storage_driver_ptr->read(current_data_block, buffer, buffer_len, readed_byte))){
 		VFSF_LERR_ << "Error reading with error " << err << " on datablock " << current_data_block->vfs_path;
+	} else {
+		//update current size field
+		current_data_block->current_work_position += readed_byte;
 	}
 	return readed_byte;
 }
@@ -325,7 +331,7 @@ int VFSFile::syncCurrentOffsetToJournal() {
 int VFSFile::mantain(int closing_state) {
 	int err = 0;
 	if(!isDataBlockValid(current_journal_data_block)) {
-		if((err = closeCurrentDataBlock())) {
+		if((err = closeCurrentDataBlock(closing_state))) {
 		VFSF_LERR_ << "Error closing datablock " << err;
 		}
 	}

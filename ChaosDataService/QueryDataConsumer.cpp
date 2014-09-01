@@ -107,17 +107,22 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
 		cache_driver->addServer(*iter);
 	}
 	cache_driver->updateConfig();
+	
+	//start virtual file mantainers timer
+	DSLAPP_ << "Start virtual file mantainers timer with a timeout of " << settings->vfile_mantainer_delay*1000 << "seconds";
+	chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, settings->vfile_mantainer_delay*1000);
 }
 
 void QueryDataConsumer::start() throw (chaos::CException) {
-	
 }
 
 void QueryDataConsumer::stop() throw (chaos::CException) {
-	
 }
 
 void QueryDataConsumer::deinit() throw (chaos::CException) {
+	DSLAPP_ << "Remove virtual file mantainers timer";
+	chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
+
 	DSLAPP_ << "Release direct io device channel into the endpoint";
 	server_endpoint->releaseChannelInstance(device_channel);
 	
@@ -163,4 +168,10 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
 										uint32_t channel_data_len,
 										DirectIOSynchronousAnswerPtr synchronous_answer) {
 	return cache_driver->getData(channel_data, channel_data_len, &synchronous_answer->answer_data, synchronous_answer->answer_size);
+}
+//async central timer hook
+void QueryDataConsumer::timeout() {
+	for (int idx = 0; idx < settings->caching_worker_num; idx++) {
+		device_data_worker[idx]->mantain();
+	}
 }

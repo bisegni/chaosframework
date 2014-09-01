@@ -279,7 +279,7 @@ void ChaosDataService::deinit() throw(CException) {
 	
 	ChaosCommon<ChaosDataService>::deinit();
 	
-    CDSLAPP_ << "Chaos Data service will now exit";
+    CDSLAPP_ << "Chaos Data service will exit now";
 }
 
 

@@ -29,6 +29,7 @@
 #include <chaos/common/utility/ObjectSlot.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/direct_io/DirectIOServerEndpoint.h>
+#include <chaos/common/async_central/AsyncCentralManager.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/network/NetworkBroker.h>
@@ -45,7 +46,10 @@ namespace chaos{
         
         class ChaosDataService;
         
-        class QueryDataConsumer : public DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler, public utility::StartableService {
+        class QueryDataConsumer :
+		protected chaos::common::async_central::TimerHandler,
+		public DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler,
+		public utility::StartableService {
             friend class ChaosDataService;
 			std::string cache_impl_name;
 			
@@ -66,7 +70,8 @@ namespace chaos{
             void consumeCDataWrapper(uint8_t channel_opcode, chaos::common::data::CDataWrapper *data_wrapper);
             int consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header, void *channel_data, uint32_t channel_data_len, DirectIOSynchronousAnswerPtr synchronous_answer);
             int consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header, void *channel_data, uint32_t channel_data_len, DirectIOSynchronousAnswerPtr synchronous_answer);
-
+			//async central timer hook
+			void timeout();
         public:
 			QueryDataConsumer(vfs::VFSManager *_vfs_manager_instance);
             ~QueryDataConsumer();

@@ -32,7 +32,7 @@ int main(int argc, char * argv[]) {
 		
 		//cache parameter
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_RUN_MODE,
-																									"Specify the run mode[1 - Query Consumer, 2 - Stage Indexer, 3 - Both]");
+																									 "Specify the run mode[1 - Query Consumer, 2 - Stage Indexer, 3 - Both]");
 		
 		//cache parameter
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_CACHE_DRIVER,
@@ -41,35 +41,46 @@ int main(int argc, char * argv[]) {
 																									&ChaosDataService::getInstance()->settings.cache_driver_impl);
 		
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_CACHE_SERVER_LIST,
-																												"The list of the cache server",
+																												 "The list of the cache server",
 																												 &ChaosDataService::getInstance()->settings.startup_chache_servers);
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_CACHE_WORKER_NUM,
-																									 "The number of the cache worker",
-																									 CACHE_WORKER_NUMBER,
-																									 &ChaosDataService::getInstance()->settings.caching_worker_num);
+																								 "The number of the cache worker",
+																								 CACHE_WORKER_NUMBER,
+																								 &ChaosDataService::getInstance()->settings.caching_worker_num);
 		
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_CACHE_WORKER_THREAD,
-																									"The thread number of each cache worker",
-																									1,
-																									 &ChaosDataService::getInstance()->settings.caching_worker_setting.job_thread_number);
+																								 "The thread number of each cache worker",
+																								 1,
+																								 &ChaosDataService::getInstance()->settings.caching_worker_setting.job_thread_number);
+		
+		//query consumer
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_QUERY_CONSUMER_VFILE_MANTAINANCE_DELAY,
+																								 "Repeat time for virtual file mantainer in query consumer in seconds",
+																								 QUERY_CONSUMER_VFILE_MANTAINANCE_DEFAULT_DELAY,
+																								 &ChaosDataService::getInstance()->settings.vfile_mantainer_delay);
 		
 		//answer conf
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_ANSWER_WORKER_NUM,
-																									 "The number of the answer worker",
-																									 ANSWER_WORKER_NUMBER,
-																									 &ChaosDataService::getInstance()->settings.answer_worker_num);
+																								 "The number of the answer worker",
+																								 ANSWER_WORKER_NUMBER,
+																								 &ChaosDataService::getInstance()->settings.answer_worker_num);
 		
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_ANSWER_WORKER_THREAD,
-																									 "The thread number of each answer worker",
-																									 1,
-																									 &ChaosDataService::getInstance()->settings.answer_worker_setting.job_thread_number);
-
+																								 "The thread number of each answer worker",
+																								 1,
+																								 &ChaosDataService::getInstance()->settings.answer_worker_setting.job_thread_number);
+		
 		//indexer
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_INDEXER_WORKER_NUM,
-																									 "The number of the indexer worker",
-																									 INDEXER_WORKER_NUMBER,
-																									 &ChaosDataService::getInstance()->settings.indexer_worker_num);
-
+																								 "The number of the indexer worker",
+																								 INDEXER_DEFAULT_WORKER_NUMBER,
+																								 &ChaosDataService::getInstance()->settings.indexer_worker_num);
+		
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_INDEXER_SCAN_DELAY,
+																								 "The repeat delay for virtual system scan in seconds",
+																								 INDEXER_DEFAULT_SCAN_DELAY,
+																								 &ChaosDataService::getInstance()->settings.indexer_scan_delay);
+		
 		//vfs conf
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_STORAGE_DRIVER_IMPL,
 																									"The name of the vfs storage implementation [Posix]",
@@ -94,10 +105,10 @@ int main(int argc, char * argv[]) {
 																												 &ChaosDataService::getInstance()->settings.index_driver_setting.servers);
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_INDEX_DRIVER_KVP,
 																									"The key value parameter for index implementation driver (ex k:v-k1:v1)");
-
+		
 		//preparse for blow custom option
 		ChaosDataService::getInstance()->preparseCommandOption(argc, argv);
-	
+		
 		//initilize the faramework
 		ChaosDataService::getInstance()->init(NULL);
 		

@@ -334,9 +334,6 @@ int PosixStorageDriver::write(chaos_vfs::DataBlock *data_block, void * data, uin
 	try {
 		//write data
 		static_cast<boost_fs::fstream *>(data_block->driver_private_data)->write((const char*)data, data_len);
-		
-		//update current size field
-		data_block->current_work_position += data_len;
 	} catch (boost_fs::filesystem_error &e) {
 		PSDLERR_ << e.what() << std::endl;
 		return -2;
@@ -355,7 +352,7 @@ int PosixStorageDriver::read(chaos_vfs::DataBlock *data_block, void * buffer, ui
 			return -1;
 		}
 		//update the current work position
-		data_block->current_work_position += (readed_byte = (uint32_t)fstream_ptr->gcount());
+		readed_byte = (uint32_t)fstream_ptr->gcount();
 	} catch (boost_fs::filesystem_error &e) {
 		PSDLERR_ << e.what() << std::endl;
 		return -2;

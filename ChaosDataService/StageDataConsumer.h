@@ -68,7 +68,6 @@ namespace chaos{
 		protected chaos::common::async_central::TimerHandler {
             friend class ChaosDataService;
 			ChaosDataServiceSetting	*settings;
-			
 			vfs::VFSManager *vfs_manager_ptr;
 			index_system::IndexDriver *index_driver_ptr;
 			
