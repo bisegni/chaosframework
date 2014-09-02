@@ -265,7 +265,8 @@ bool WorkUnitManagement::manageACKPack(CDataWrapper& ack_pack) {
 	}
 	if(ack_pack.hasKey(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_RESULT)) {
 		//registration has been ended
-		switch(ack_pack.getInt32Value(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_RESULT)){
+        int ack_val=ack_pack.getInt32Value(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_RESULT);
+		switch(ack_val){
 			case ErrorCode::EC_MDS_UNIT_SERV_REGISTRATION_OK:
 				WUMAPP_ << "work unit has been registered";
 				if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypePublished()) == boost::msm::back::HANDLED_TRUE){
@@ -279,7 +280,7 @@ bool WorkUnitManagement::manageACKPack(CDataWrapper& ack_pack) {
 			case ErrorCode::EC_MDS_WOR_UNIT_ID_NOT_SELF_MANAGEABLE:
 				WUMAPP_ << "id is not self manageable";
 			default:
-				WUMERR_ << "work unit failed to register";
+				WUMERR_ << "work unit "<< device_id<<" failed to register, error ack:"<<ack_val;
 				//turn of unit server
 				if(wu_instance_sm.process_event(work_unit_state_machine::UnitEventType::UnitEventTypeFailure()) == boost::msm::back::HANDLED_TRUE){
 					//we have problem

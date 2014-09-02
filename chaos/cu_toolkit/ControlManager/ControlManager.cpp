@@ -299,13 +299,13 @@ void ControlManager::migrateStableAndUnstableSMCUInstance() {
 			//now i can write on the two map
 			switch (i->second->getCurrentState()) {
 				case UnitStatePublishingFailure:
-					LCMAPP_<< i->second->work_unit_instance->getCUID() << " instance is erased becase is in publishing failure state";
+					LCMAPP_<< i->second->work_unit_instance->getCUID() << " instance is erased because is in publishing failure state";
 					break;
 				case UnitStateUnpublished:
 					LCMAPP_<< i->second->work_unit_instance->getCUID() << " instance is erased becase has been successfully unpublished";
 					break;
 				case UnitStatePublished:
-					LCMAPP_<< i->second->work_unit_instance->getCUID() << " instance has been sucessfully registered";
+					LCMAPP_<< i->second->work_unit_instance->getCUID() << " instance has been sucessfully registered ("<<i->first<<", "<< i->second<<")";
 					map_cuid_registered_instance.insert(make_pair(i->first, i->second));
 					break;
 				default:
@@ -466,7 +466,7 @@ CDataWrapper* ControlManager::unloadControlUnit(CDataWrapper *message_data, bool
 	
 	LCMAPP_ << "Unload operation for: " << work_unit_id << " of type "<<work_unit_type;
 	WriteLock write_instancer_lock(mutex_map_cuid_registered_instance);
-	IN_ACTION_PARAM_CHECK(!map_cuid_registered_instance.count(work_unit_id), -2, "Work unitnot found on registered's map")
+	IN_ACTION_PARAM_CHECK(!map_cuid_registered_instance.count(work_unit_id), -2, "Work unit not found on registered's map")
 
 	//get the iterator for the work unit managment class
 	map<string, shared_ptr<WorkUnitManagement> >::iterator iter = map_cuid_registered_instance.find(work_unit_id);

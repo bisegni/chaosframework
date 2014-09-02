@@ -39,7 +39,7 @@ public class UnitServerDA extends DataAccess {
 	 * @return
 	 * @throws Throwable
 	 */
-	public Vector<UnitServer> getAlUnitServer() throws Throwable {
+	public Vector<UnitServer> getAllUnitServer() throws Throwable {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		Vector<UnitServer> result = new Vector<UnitServer>();

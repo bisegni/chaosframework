@@ -93,7 +93,7 @@ public class ManageUnitServerProcess extends RefProcess {
 	public List<UnitServer> getAllUnitServer() throws Throwable {
 		Vector<UnitServer> usList = new Vector<UnitServer>();
 		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
-		usList = usDA.getAlUnitServer();
+		usList = usDA.getAllUnitServer();
 		return (List<UnitServer>) usList;
 	}
 
