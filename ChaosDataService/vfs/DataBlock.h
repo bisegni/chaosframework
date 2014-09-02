@@ -28,8 +28,8 @@
 namespace chaos {
 	namespace data_service {
 		
-		namespace index_system {
-			class IndexDriver;
+		namespace db_system {
+			class DBDriver;
 		}
 		
 		//!Namesapace for grupping all api and struct for the !CHAOS virtual filesystem
@@ -71,7 +71,7 @@ namespace chaos {
 			
 			//! define a pointer to a location whitin a virtual file
 			class FileLocationPointer {
-				friend class chaos::data_service::index_system::IndexDriver;
+				friend class chaos::data_service::db_system::DBDriver;
 				friend class VFSFile;
 				
 				//! is the datablock of the destination datafile where the data pack is definitely stored

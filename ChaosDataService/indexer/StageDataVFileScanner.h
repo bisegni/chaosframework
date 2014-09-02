@@ -23,7 +23,7 @@
 #include "DataPackScanner.h"
 #include "../vfs/VFSStageReadableFile.h"
 #include "../vfs/VFSDataWriteableFile.h"
-#include "../index_system/IndexDriver.h"
+#include "../db_system/DBDriver.h"
 
 #include <chaos/common/bson/bson.h>
 
@@ -39,7 +39,7 @@ namespace chaos{
 		//forward declaration
 		class StageDataConsumer;
 		
-		namespace index_system {
+		namespace indexer {
 			
 			typedef struct DataFileInfo {
 				//!  pointer to writeable data file
@@ -88,7 +88,7 @@ namespace chaos{
 				int closeAllDatafile();
 			public:
 				StageDataVFileScanner(vfs::VFSManager *_vfs_manager,
-									  index_system::IndexDriver *_index_driver,
+									  db_system::DBDriver *_db_driver,
 									  vfs::VFSStageReadableFile *_working_stage_file);
 				
 				~StageDataVFileScanner();

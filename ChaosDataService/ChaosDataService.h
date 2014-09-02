@@ -29,7 +29,7 @@
 #include "worker/DataWorker.h"
 #include "cache_system/CacheDriver.h"
 #include "vfs/vfs.h"
-#include "index_system/index_system.h"
+#include "db_system/db_system.h"
 #include <map>
 #include <string>
 #include <vector>
@@ -68,7 +68,7 @@ namespace chaos{
             static void signalHanlder(int);
 			
 			//root pointer of the index driver
-			index_system::IndexDriver *index_driver_ptr;
+			db_system::DBDriver *db_driver_ptr;
 			
 			utility::StartableServiceContainer<chaos::NetworkBroker> network_broker;
 			utility::InizializableServiceContainer<vfs::VFSManager> vfs_file_manager;

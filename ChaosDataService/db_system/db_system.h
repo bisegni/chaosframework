@@ -21,7 +21,7 @@
 #ifndef CHAOSFramework_index_system_h
 #define CHAOSFramework_index_system_h
 
-#include "MongoDBIndexDriver.h"
-#include "StageDataVFileScanner.h"
+#include "DBDriver.h"
+#include "MongoDBDriver.h"
 
 #endif

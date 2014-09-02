@@ -27,7 +27,7 @@
 
 namespace chaos {
 	namespace data_service {
-		namespace index_system {
+		namespace db_system {
 			
 			//! definition of the datapack index
 			/*!
@@ -44,6 +44,18 @@ namespace chaos {
 				chaos::data_service::vfs::FileLocationPointer dst_location;
 			};
 			
+			
+			typedef std::vector<std::string>			DBDriverServerList;
+			typedef std::vector<std::string>::iterator	DBDriverServerListIterator;
+			
+			//! index driver setting
+			typedef struct DBDriverSetting {
+				//! vector for all index endpoint url (usualy database url, more is the driver permit the scalability of the service)
+				DBDriverServerList servers;
+				
+				//! kv param for the implementations of the driver
+				std::map<string,string> key_value_custom_param;
+			} DBDriverSetting;
 		}
 	}
 }

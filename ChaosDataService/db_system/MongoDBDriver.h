@@ -1,5 +1,5 @@
 /*
- *	MongoDBIndexDriver.h
+ *	MongoDBDriver.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -17,10 +17,10 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#ifndef __CHAOSFramework__MongoDBIndexDriver__
-#define __CHAOSFramework__MongoDBIndexDriver__
+#ifndef __CHAOSFramework__MongoDBDriver__
+#define __CHAOSFramework__MongoDBDriver__
 
-#include "IndexDriver.h"
+#include "DBDriver.h"
 #include "MongoDBHAConnectionManager.h"
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
@@ -31,7 +31,7 @@
 
 namespace chaos {
 	namespace data_service {
-			namespace index_system {
+			namespace db_system {
 				
 				/*!
 				 Collection for the storage for the vfs infroamtion of the virtual files across the domain
@@ -80,15 +80,15 @@ namespace chaos {
 #define MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET	"db_offset"
 				
 				//! Mongodb implementation for the index driver
-				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(MongoDBIndexDriver, IndexDriver) {
-					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(MongoDBIndexDriver)
-					MongoDBIndexDriver(std::string alias);
+				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(MongoDBDriver, DBDriver) {
+					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(MongoDBDriver)
+					MongoDBDriver(std::string alias);
 					std::string db_name;
 				protected:
 					MongoDBHAConnectionManager *ha_connection_pool;
 					
 				public:
-					~MongoDBIndexDriver();
+					~MongoDBDriver();
 					
 					//! init
 					void init(void *init_data) throw (chaos::CException);
@@ -158,4 +158,4 @@ namespace chaos {
 	}
 }
 
-#endif /* defined(__CHAOSFramework__MongoDBIndexDriver__) */
+#endif /* defined(__CHAOSFramework__MongoDBDriver__) */

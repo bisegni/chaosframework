@@ -49,7 +49,7 @@ namespace chaos {
 				 Allcoata a new file class for the absraction of the data bloc managment
 				 */
 				VFSDataFile(storage_system::StorageDriver *_storage_driver_ptr,
-							chaos_index::IndexDriver *_index_driver_ptr,
+							chaos_index::DBDriver *_db_driver_ptr,
 							std::string data_vfs_relative_path,
 							VFSDataFileOpenMode _open_mode);
 			};

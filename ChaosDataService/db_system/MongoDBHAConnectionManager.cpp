@@ -42,7 +42,7 @@ default: \
 }
 
 namespace chaos_data = chaos::common::data;
-using namespace chaos::data_service::index_system;
+using namespace chaos::data_service::db_system;
 //-----------------------------------------------------------------------------------------------------------
 
 MongoAuthHook::MongoAuthHook(std::map<string,string>& key_value_custom_param):

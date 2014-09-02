@@ -39,14 +39,14 @@ using namespace chaos::data_service::vfs;
  
  ---------------------------------------------------------------------------------*/
 VFSFile::VFSFile(storage_system::StorageDriver *_storage_driver_ptr,
-				 chaos_index::IndexDriver *_index_driver_ptr,
+				 chaos_index::DBDriver *_db_driver_ptr,
 				 std::string area,
 				 std::string vfs_fpath,
 				 int _open_mode):
 open_mode(_open_mode),
 last_wr_ts(0),
 storage_driver_ptr(_storage_driver_ptr),
-index_driver_ptr(_index_driver_ptr),
+db_driver_ptr(_db_driver_ptr),
 current_data_block(NULL),
 current_journal_data_block(NULL) {
 	//check the path if his prefix is not equal to area (omit duplcieted name in path for prefix)
@@ -85,7 +85,7 @@ int VFSFile::getNewDataBlock(DataBlock **new_data_block_handler) {
 	new_data_block_ptr->max_reacheable_size = vfs_file_info.max_block_size;
 	
 	//ask to db wat is the next datablock
-	if(index_driver_ptr->vfsAddNewDataBlock(this, new_data_block_ptr, data_block_state::DataBlockStateAquiringData)) {
+	if(db_driver_ptr->vfsAddNewDataBlock(this, new_data_block_ptr, data_block_state::DataBlockStateAquiringData)) {
 		storage_driver_ptr->closeBlock(new_data_block_ptr);
 		return -2;
 	}
@@ -99,7 +99,7 @@ int VFSFile::getNewDataBlock(DataBlock **new_data_block_handler) {
  ---------------------------------------------------------------------------------*/
 int VFSFile::updateDataBlockState(data_block_state::DataBlockState state) {
 	int err = 0;
-	if((err = index_driver_ptr->vfsSetStateOnDataBlock(this, current_data_block, state))) {
+	if((err = db_driver_ptr->vfsSetStateOnDataBlock(this, current_data_block, state))) {
 		VFSF_LDBG_ << "Error setting state on datablock with error " << err;
 	}
 	return 0;
@@ -113,11 +113,11 @@ int VFSFile::releaseDataBlock(DataBlock *data_block_ptr, int closed_state) {
 	int err = 0;
 	DEBUG_CODE(VFSF_LDBG_ << "Release datablock of path " << data_block_ptr->vfs_path);
 	//write on index for free of work block
-	if((err = index_driver_ptr->vfsSetStateOnDataBlock(this, data_block_ptr, closed_state))) {
+	if((err = db_driver_ptr->vfsSetStateOnDataBlock(this, data_block_ptr, closed_state))) {
 		VFSF_LERR_ << "Error setting state on datablock with error " << err;
-	} else if ((err = index_driver_ptr->vfsUpdateDatablockCurrentWorkPosition(this, data_block_ptr))) {
+	} else if ((err = db_driver_ptr->vfsUpdateDatablockCurrentWorkPosition(this, data_block_ptr))) {
 		VFSF_LERR_ << "Error setting work location on datablock with error " << err;
-	} else if ((err = index_driver_ptr->vfsSetHeartbeatOnDatablock(this, data_block_ptr, chaos::TimingUtil::getTimeStamp()))) {
+	} else if ((err = db_driver_ptr->vfsSetHeartbeatOnDatablock(this, data_block_ptr, chaos::TimingUtil::getTimeStamp()))) {
 		VFSF_LERR_ << "Error setting heartbeat on datablock with error " << err;
 	}
 	//close the block
@@ -130,7 +130,7 @@ int VFSFile::releaseDataBlock(DataBlock *data_block_ptr, int closed_state) {
  ---------------------------------------------------------------------------------*/
 int VFSFile::giveHeartbeat(uint64_t hb_time) {
 	int err = 0;
-	if(current_data_block && (err = index_driver_ptr->vfsSetHeartbeatOnDatablock(this, current_data_block, hb_time))) {
+	if(current_data_block && (err = db_driver_ptr->vfsSetHeartbeatOnDatablock(this, current_data_block, hb_time))) {
 		VFSF_LERR_ << "Error setting heartbeaat wit error " << err << " on datablock " << current_data_block->vfs_path;
 	}
 	return err;
@@ -177,7 +177,7 @@ bool VFSFile::isGood() {
 bool VFSFile::exist() {
 	int err = 0;
 	bool exist_flag = false;
-	if((err = index_driver_ptr->vfsFileExist(this, exist_flag))) {
+	if((err = db_driver_ptr->vfsFileExist(this, exist_flag))) {
 		VFSF_LERR_ << "Error checking file existance with code " << err;
 		return false;
 	}

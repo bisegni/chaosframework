@@ -41,7 +41,7 @@ namespace chaos {
 				inline bool isDataBlockValid(DataBlock *new_data_block_ptr);
 				
 				VFSDataWriteableFile(storage_system::StorageDriver *_storage_driver_ptr,
-									 index_system::IndexDriver *_index_driver_ptr,
+									 db_system::DBDriver *_db_driver_ptr,
 									 std::string data_vfs_relative_path);
 				
 			public:

@@ -23,7 +23,7 @@
 #include "dataservice_global.h"
 #include "vfs/VFSManager.h"
 #include "worker/DataWorker.h"
-#include "index_system/StageDataVFileScanner.h"
+#include "indexer/StageDataVFileScanner.h"
 
 #include <chaos/common/utility/ObjectSlot.h>
 #include <chaos/common/utility/StartableService.h>
@@ -37,7 +37,11 @@
 #include <boost/lockfree/queue.hpp>
 namespace chaos{
     namespace data_service {
-        
+		
+		namespace db_system {
+			class DBDriver;
+		}
+		
         class ChaosDataService;
 		
 		/*!
@@ -57,7 +61,7 @@ namespace chaos{
 			boost::mutex						mutex_on_scan;
 			
 			//is the scanner for this slot
-			index_system::StageDataVFileScanner	*scanner;
+			indexer::StageDataVFileScanner	*scanner;
 		}StageScannerInfo;
 
 		/*!
@@ -69,7 +73,7 @@ namespace chaos{
             friend class ChaosDataService;
 			ChaosDataServiceSetting	*settings;
 			vfs::VFSManager *vfs_manager_ptr;
-			index_system::IndexDriver *index_driver_ptr;
+			db_system::DBDriver *db_driver_ptr;
 			
 			chaos::common::utility::ObjectSlot<chaos::data_service::worker::DataWorker*> indexer_stage_worker_list;
 
@@ -99,7 +103,7 @@ namespace chaos{
 			void rescheduleScannerInfo(StageScannerInfo *scanner_info);
 		public:
 			StageDataConsumer(vfs::VFSManager *_vfs_manager_ptr,
-							  index_system::IndexDriver *_index_driver_ptr,
+							  db_system::DBDriver *_db_driver_ptr,
 							  ChaosDataServiceSetting *_settings);
             ~StageDataConsumer();
             void init(void *init_data) throw (chaos::CException);

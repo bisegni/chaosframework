@@ -41,7 +41,7 @@ namespace chaos {
 				uint64_t current_block_creation_ts;
 				
 				//! Default constructor
-				VFSStageReadableFile(storage_system::StorageDriver *_storage_driver_ptr, index_system::IndexDriver *_index_driver_ptr, std::string stage_vfs_relative_path);
+				VFSStageReadableFile(storage_system::StorageDriver *_storage_driver_ptr, db_system::DBDriver *_db_driver_ptr, std::string stage_vfs_relative_path);
 				
 				//! Get next availbale block
 				/*!

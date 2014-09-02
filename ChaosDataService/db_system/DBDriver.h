@@ -1,5 +1,5 @@
 /*
- *	IndexDriver.h
+ *	DBDriver.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__IndexDriver__
-#define __CHAOSFramework__IndexDriver__
+#ifndef __CHAOSFramework__DBDriver__
+#define __CHAOSFramework__DBDriver__
 
 #include <map>
 #include <string>
@@ -29,7 +29,7 @@
 #include <chaos/common/utility/InizializableService.h>
 
 //#include "../vfs/VFSTypes.h"
-#include "index_system_types.h"
+#include "db_system_types.h"
 
 namespace chaos {
 	namespace data_service {
@@ -40,20 +40,7 @@ namespace chaos {
 		}
 		namespace chaos_vfs = chaos::data_service::vfs;
 		
-		namespace index_system {
-			
-			typedef std::vector<std::string>			IndexDriverServerList;
-			typedef std::vector<std::string>::iterator	IndexDriverServerListIterator;
-			
-			//! index driver setting
-			typedef struct IndexDriverSetting {
-				//! vector for all index endpoint url (usualy database url, more is the driver permit the scalability of the service)
-				IndexDriverServerList servers;
-				
-				//! kv param for the implementations of the driver
-				std::map<string,string> key_value_custom_param;
-			} IndexDriverSetting;
-			
+		namespace db_system {
 			/*!
 			 Base class for all driver that will manage the work on index database.
 			 The base role of the index driver is to help the fast storage
@@ -61,23 +48,23 @@ namespace chaos {
 			 of the !CHAOS virtual filesystem. At the end it will help to achive the execution
 			 of query on memoryzed data
 			 */
-			class IndexDriver : public NamedService , public chaos::utility::InizializableService {
+			class DBDriver : public NamedService , public chaos::utility::InizializableService {
 			protected:
 				//protected constructor
-				IndexDriver(std::string alias);
+				DBDriver(std::string alias);
 			protected:
-				IndexDriverSetting *setting;
+				DBDriverSetting *setting;
 				
 				chaos_vfs::DataBlock *getDataBlockFromFileLocation(const vfs::FileLocationPointer& data_block);
 				uint64_t getDataBlockOffsetFromFileLocation(const vfs::FileLocationPointer& data_block);
 			public:
 				
 				//! public destructor
-				virtual ~IndexDriver();
+				virtual ~DBDriver();
 				
 				//! init
 				/*!
-				 Need a point to a structure IndexDriverSetting for the setting
+				 Need a point to a structure DBDriverSetting for the setting
 				 */
 				void init(void *init_data) throw (chaos::CException);
 				
@@ -211,4 +198,4 @@ namespace chaos {
 	}
 }
 
-#endif /* defined(__CHAOSFramework__IndexDriver__) */
+#endif /* defined(__CHAOSFramework__DBDriver__) */

@@ -28,10 +28,10 @@ using namespace chaos::data_service::vfs;
 
 
 VFSStageReadableFile::VFSStageReadableFile(storage_system::StorageDriver *_storage_driver_ptr,
-										   index_system::IndexDriver *_index_driver_ptr,
+										   db_system::DBDriver *_db_driver_ptr,
 										   std::string stage_vfs_relative_path):
 VFSStageFile(_storage_driver_ptr,
-			 _index_driver_ptr,
+			 _db_driver_ptr,
 			 stage_vfs_relative_path,
 			 VFSStageFileOpenModeRead),
 overlaped_block_read(0),
@@ -44,7 +44,7 @@ int VFSStageReadableFile::getNextAvailbaleBlock() {
 	
 	//get next available datablock
 	while (!current_data_block && !err) {
-		err = index_driver_ptr->vfsFindSinceTimeDataBlock(this,
+		err = db_driver_ptr->vfsFindSinceTimeDataBlock(this,
 														  current_block_creation_ts,
 														  true,
 														  vfs::data_block_state::DataBlockStateNone,
@@ -52,7 +52,7 @@ int VFSStageReadableFile::getNextAvailbaleBlock() {
 		if(err || !current_data_block)	break; //break on error
 		
 		//try to update the current state to processing
-		err = index_driver_ptr->vfsSetStateOnDataBlock(this,
+		err = db_driver_ptr->vfsSetStateOnDataBlock(this,
 													   current_data_block,
 													   vfs::data_block_state::DataBlockStateNone,
 													   vfs::data_block_state::DataBlockStateProcessing,
@@ -97,7 +97,7 @@ int VFSStageReadableFile::checkForBlockChange(bool overlapping) {
 			if((err = closeJournalDatablock(current_journal_data_block))) {
 				//error creating journal
 				VFSRF_LERR_ << "Error closing journal file " << err;
-			} else if(index_driver_ptr->vfsDeleteDataBlock(this, current_data_block)) {
+			} else if(db_driver_ptr->vfsDeleteDataBlock(this, current_data_block)) {
 				VFSRF_LERR_ << "Error removing datablock from data base " << err;
 			} else if((err = storage_driver_ptr->closeBlock(current_data_block))) {
 				VFSRF_LERR_ << "Error closing datablock";

@@ -32,14 +32,15 @@
 #define StageDataVFileScannerLERR_ LERR_ << StageDataVFileScanner_LOG_HEAD
 
 
-using namespace chaos::data_service::index_system;
+using namespace chaos::data_service;
+using namespace chaos::data_service::indexer;
 namespace vfs=chaos::data_service::vfs;
 
 StageDataVFileScanner::StageDataVFileScanner(vfs::VFSManager *_vfs_manager,
-											 index_system::IndexDriver *_index_driver,
+											 db_system::DBDriver *_db_driver,
 											 vfs::VFSStageReadableFile *_working_stage_file):
 DataPackScanner(_vfs_manager,
-				_index_driver,
+				_db_driver,
 				_working_stage_file),
 last_hb_on_vfile(0) {
 	
@@ -100,7 +101,7 @@ int StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack) {
 		return 0;
 	}
 	//collect idnex information
-	DataPackIndex new_data_pack_index;
+	db_system::DataPackIndex new_data_pack_index;
 	
 	
 	//get values for key that are mandatory for default index
@@ -133,7 +134,7 @@ int StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack) {
 	}
 
 	//write index for the datapack on database
-	if((err = index_driver->idxAddDataPackIndex(new_data_pack_index))) {
+	if((err = db_driver->idxAddDataPackIndex(new_data_pack_index))) {
 		if(err == 11000) {
 			StageDataVFileScannerLERR_ << "Index already present";
 		} else {

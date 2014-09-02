@@ -131,7 +131,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 			//no cache server provided
 			throw chaos::CException(-1, "No cache server provided", __PRETTY_FUNCTION__);
 		}
-		if(!getGlobalConfigurationInstance()->hasOption(OPT_INDEX_DRIVER_SERVERS)) {
+		if(!getGlobalConfigurationInstance()->hasOption(OPT_DB_DRIVER_SERVERS)) {
 			//no cache server provided
 			throw chaos::CException(-2, "No index server provided", __PRETTY_FUNCTION__);
 		}
@@ -140,16 +140,16 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 			fillKVParameter(ChaosDataService::getInstance()->settings.file_manager_setting.storage_driver_setting.key_value_custom_param, OPT_VFS_STORAGE_DRIVER_KVP);
 		}
 		
-		if(getGlobalConfigurationInstance()->hasOption(OPT_INDEX_DRIVER_KVP)) {
-			fillKVParameter(ChaosDataService::getInstance()->settings.index_driver_setting.key_value_custom_param, OPT_INDEX_DRIVER_KVP);
+		if(getGlobalConfigurationInstance()->hasOption(OPT_DB_DRIVER_KVP)) {
+			fillKVParameter(ChaosDataService::getInstance()->settings.db_driver_setting.key_value_custom_param, OPT_DB_DRIVER_KVP);
 		}
 		
 		//allocate index driver
-		std::string index_driver_class_name = boost::str(boost::format("%1%IndexDriver") % settings.index_driver_impl);
-		CDSLAPP_ << "Allocate index driver of type "<<index_driver_class_name;
-		index_driver_ptr = chaos::ObjectFactoryRegister<index_system::IndexDriver>::getInstance()->getNewInstanceByName(index_driver_class_name);
-		if(!index_driver_ptr) throw chaos::CException(-1, "No index driver found", __PRETTY_FUNCTION__);
-		chaos::utility::InizializableService::initImplementation(index_driver_ptr, &settings.index_driver_setting, index_driver_ptr->getName(), __PRETTY_FUNCTION__);
+		std::string db_driver_class_name = boost::str(boost::format("%1%DBDriver") % settings.index_driver_impl);
+		CDSLAPP_ << "Allocate index driver of type "<<db_driver_class_name;
+		db_driver_ptr = chaos::ObjectFactoryRegister<db_system::DBDriver>::getInstance()->getNewInstanceByName(db_driver_class_name);
+		if(!db_driver_ptr) throw chaos::CException(-1, "No index driver found", __PRETTY_FUNCTION__);
+		chaos::utility::InizializableService::initImplementation(db_driver_ptr, &settings.db_driver_setting, db_driver_ptr->getName(), __PRETTY_FUNCTION__);
 
 		
 		CDSLAPP_ << "Allocate Network Brocker";
@@ -163,7 +163,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		
 		//initialize vfs file manager
 		CDSLAPP_ << "Allocate VFS Manager";
-		vfs_file_manager.reset(new vfs::VFSManager(index_driver_ptr), "VFSFileManager");
+		vfs_file_manager.reset(new vfs::VFSManager(db_driver_ptr), "VFSFileManager");
 		vfs_file_manager.init(&settings.file_manager_setting, __PRETTY_FUNCTION__);
         
 		if(run_mode == QUERY ||
@@ -178,7 +178,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		if(run_mode == INDEXER ||
 		   run_mode == BOTH) {
 			CDSLAPP_ << "Allocate the Data Consumer";
-			stage_data_consumer.reset(new StageDataConsumer(vfs_file_manager.get(), index_driver_ptr, &settings), "StageDataConsumer");
+			stage_data_consumer.reset(new StageDataConsumer(vfs_file_manager.get(), db_driver_ptr, &settings), "StageDataConsumer");
 			if(!stage_data_consumer.get()) throw chaos::CException(-1, "Error instantiating stage data consumer", __PRETTY_FUNCTION__);
 			stage_data_consumer.init(NULL, __PRETTY_FUNCTION__);
 		}
@@ -267,14 +267,14 @@ void ChaosDataService::deinit() throw(CException) {
 	//deinitialize vfs file manager
 	vfs_file_manager.deinit(__PRETTY_FUNCTION__);
 	
-	if(index_driver_ptr) {
+	if(db_driver_ptr) {
 		CDSLAPP_ << "Deallocate index driver";
 		try {
-			chaos::utility::InizializableService::deinitImplementation(index_driver_ptr, index_driver_ptr->getName(), __PRETTY_FUNCTION__);
+			chaos::utility::InizializableService::deinitImplementation(db_driver_ptr, db_driver_ptr->getName(), __PRETTY_FUNCTION__);
 		} catch (chaos::CException e) {
 			CDSLAPP_ << e.what();
 		}
-		delete (index_driver_ptr);
+		delete (db_driver_ptr);
 	}
 	
 	ChaosCommon<ChaosDataService>::deinit();

@@ -1,12 +1,12 @@
 //
-//  MongoDBIndexDriver.cpp
+//  MongoDBDriver.cpp
 //  CHAOSFramework
 //
 //  Created by Claudio Bisegni on 28/03/14.
 //  Copyright (c) 2014 INFN. All rights reserved.
 //
 
-#include "MongoDBIndexDriver.h"
+#include "MongoDBDriver.h"
 
 #include "../vfs/vfs.h"
 
@@ -17,29 +17,29 @@
 #include <chaos/common/utility/TimingUtil.h>
 
 using namespace chaos::data_service::vfs;
-using namespace chaos::data_service::index_system;
+using namespace chaos::data_service::db_system;
 
 namespace chaos_data = chaos::common::data;
 
-#define MongoDBIndexDriver_LOG_HEAD "[MongoDBIndexDriver] - "
-#define MDBID_LAPP_ LAPP_ << MongoDBIndexDriver_LOG_HEAD
-#define MDBID_LDBG_ LDBG_ << MongoDBIndexDriver_LOG_HEAD << __FUNCTION__ << " - "
-#define MDBID_LERR_ LERR_ << MongoDBIndexDriver_LOG_HEAD << __FUNCTION__ << " - "
+#define MongoDBDriver_LOG_HEAD "[MongoDBDriver] - "
+#define MDBID_LAPP_ LAPP_ << MongoDBDriver_LOG_HEAD
+#define MDBID_LDBG_ LDBG_ << MongoDBDriver_LOG_HEAD << __FUNCTION__ << " - "
+#define MDBID_LERR_ LERR_ << MongoDBDriver_LOG_HEAD << __FUNCTION__ << " - "
 
 
 
-MongoDBIndexDriver::MongoDBIndexDriver(std::string alias):IndexDriver(alias) {
+MongoDBDriver::MongoDBDriver(std::string alias):DBDriver(alias) {
 	
 }
 
 
-MongoDBIndexDriver::~MongoDBIndexDriver() {
+MongoDBDriver::~MongoDBDriver() {
 	
 }
 
 //! init
-void MongoDBIndexDriver::init(void *init_data) throw (chaos::CException) {
-	IndexDriver::init(init_data);
+void MongoDBDriver::init(void *init_data) throw (chaos::CException) {
+	DBDriver::init(init_data);
 	int err = 0;
 	std::string errmsg;
 	std::string servers;
@@ -77,13 +77,13 @@ void MongoDBIndexDriver::init(void *init_data) throw (chaos::CException) {
 }
 
 //!deinit
-void MongoDBIndexDriver::deinit() throw (chaos::CException) {
-	IndexDriver::deinit();
+void MongoDBDriver::deinit() throw (chaos::CException) {
+	DBDriver::deinit();
 	if(ha_connection_pool) delete(ha_connection_pool);
 }
 
 //! Register a new domain
-int MongoDBIndexDriver::vfsAddDomain(vfs::VFSDomain domain) {
+int MongoDBDriver::vfsAddDomain(vfs::VFSDomain domain) {
 	int err = 0;
 	mongo::BSONObjBuilder domain_registration;
 	mongo::BSONObjBuilder domain_url_registration;
@@ -137,7 +137,7 @@ int MongoDBIndexDriver::vfsAddDomain(vfs::VFSDomain domain) {
 }
 
 //! Give an heart beat for a domain
-int MongoDBIndexDriver::vfsDomainHeartBeat(vfs::VFSDomain domain) {
+int MongoDBDriver::vfsDomainHeartBeat(vfs::VFSDomain domain) {
 	int err = 0;
 	mongo::BSONObjBuilder b_query;
 	mongo::BSONObjBuilder b_update_filed;
@@ -161,7 +161,7 @@ int MongoDBIndexDriver::vfsDomainHeartBeat(vfs::VFSDomain domain) {
 }
 
 //! Register a new data block wrote on stage area
-int MongoDBIndexDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,
+int MongoDBDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,
 										   chaos_vfs::DataBlock *data_block,
 										   vfs::data_block_state::DataBlockState new_block_state) {
 	int err = 0;
@@ -239,7 +239,7 @@ int MongoDBIndexDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,
 }
 
 //! Delete a virtual file datablock
-int MongoDBIndexDriver::vfsDeleteDataBlock(chaos_vfs::VFSFile *vfs_file,
+int MongoDBDriver::vfsDeleteDataBlock(chaos_vfs::VFSFile *vfs_file,
 										   chaos_vfs::DataBlock *data_block) {
 	int err = 0;
 	mongo::BSONObjBuilder file_search;
@@ -276,7 +276,7 @@ int MongoDBIndexDriver::vfsDeleteDataBlock(chaos_vfs::VFSFile *vfs_file,
 }
 
 //! Set the state for a stage datablock
-int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
+int MongoDBDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 											   chaos_vfs::DataBlock *data_block,
 											   int state) {
 	int err = 0;
@@ -322,7 +322,7 @@ int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 }
 
 //! Set the state for a stage datablock
-int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
+int MongoDBDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 											   chaos_vfs::DataBlock *data_block,
 											   int cur_state,
 											   int new_state,
@@ -370,7 +370,7 @@ int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 }
 
 //! Set the datablock current position
-int MongoDBIndexDriver::vfsSetHeartbeatOnDatablock(chaos_vfs::VFSFile *vfs_file,
+int MongoDBDriver::vfsSetHeartbeatOnDatablock(chaos_vfs::VFSFile *vfs_file,
 												   chaos_vfs::DataBlock *data_block,
 												   uint64_t timestamp) {
 	int err = 0;
@@ -402,7 +402,7 @@ int MongoDBIndexDriver::vfsSetHeartbeatOnDatablock(chaos_vfs::VFSFile *vfs_file,
 }
 
 //! Set the datablock current position
-int MongoDBIndexDriver::vfsUpdateDatablockCurrentWorkPosition(chaos_vfs::VFSFile *vfs_file,
+int MongoDBDriver::vfsUpdateDatablockCurrentWorkPosition(chaos_vfs::VFSFile *vfs_file,
 															  chaos_vfs::DataBlock *data_block) {
 	int err = 0;
 	mongo::BSONObjBuilder bson_search;
@@ -445,7 +445,7 @@ int MongoDBIndexDriver::vfsUpdateDatablockCurrentWorkPosition(chaos_vfs::VFSFile
 }
 
 //! Return the next available datablock created since timestamp
-int MongoDBIndexDriver::vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
+int MongoDBDriver::vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
 												  uint64_t timestamp,
 												  bool direction,
 												  int state,
@@ -500,7 +500,7 @@ int MongoDBIndexDriver::vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
 }
 
 //! Check if the vfs file exists
-int MongoDBIndexDriver::vfsFileExist(VFSFile *vfs_file, bool& exists_flag) {
+int MongoDBDriver::vfsFileExist(VFSFile *vfs_file, bool& exists_flag) {
 	int err = 0;
 	mongo::BSONObjBuilder b;
 	mongo::BSONObj result;
@@ -523,7 +523,7 @@ int MongoDBIndexDriver::vfsFileExist(VFSFile *vfs_file, bool& exists_flag) {
 }
 
 //! Create a file entry into the vfat
-int MongoDBIndexDriver::vfsCreateFileEntry(chaos_vfs::VFSFile *vfs_file) {
+int MongoDBDriver::vfsCreateFileEntry(chaos_vfs::VFSFile *vfs_file) {
 	int err = 0;
 	mongo::BSONObjBuilder b;
 	try{
@@ -547,7 +547,7 @@ int MongoDBIndexDriver::vfsCreateFileEntry(chaos_vfs::VFSFile *vfs_file) {
 }
 
 //! Return a list of vfs path of the file belong to a domain
-int MongoDBIndexDriver::vfsGetFilePathForDomain(std::string vfs_domain, std::string prefix_filter, std::vector<std::string>& result_vfs_file_path, int limit_to_size) {
+int MongoDBDriver::vfsGetFilePathForDomain(std::string vfs_domain, std::string prefix_filter, std::vector<std::string>& result_vfs_file_path, int limit_to_size) {
 	int err = 0;
 	mongo::BSONObjBuilder query_master;
 	mongo::BSONObjBuilder return_field;
@@ -591,7 +591,7 @@ int MongoDBIndexDriver::vfsGetFilePathForDomain(std::string vfs_domain, std::str
 }
 
 //! add the default index for a unique instrument identification and a timestamp
-int MongoDBIndexDriver::idxAddDataPackIndex(const DataPackIndex& index) {
+int MongoDBDriver::idxAddDataPackIndex(const DataPackIndex& index) {
 	int err = 0;
 	mongo::BSONObjBuilder index_builder;
 	mongo::BSONObjBuilder index_data_block_info_builder;
@@ -620,7 +620,7 @@ int MongoDBIndexDriver::idxAddDataPackIndex(const DataPackIndex& index) {
 }
 
 //! add the default index for a unique instrument identification and a timestamp
-int MongoDBIndexDriver::idxDeleteDataPackIndex(const DataPackIndex& index) {
+int MongoDBDriver::idxDeleteDataPackIndex(const DataPackIndex& index) {
 	int err = 0;
 	mongo::BSONObjBuilder index_search_builder;
 	try{

@@ -21,7 +21,7 @@
 #define __CHAOSFramework__DataPackScanner__
 
 #include "../vfs/VFSFile.h"
-#include "../index_system/IndexDriver.h"
+#include "DBDriver.h"
 
 #include <chaos/common/bson/bson.h>
 
@@ -37,7 +37,7 @@ namespace chaos{
 		//forward declaration
 		class StageDataConsumer;
 		
-		namespace index_system {
+		namespace indexer {
 			
 			
 			//! data pack scanner class
@@ -57,7 +57,7 @@ namespace chaos{
 				//file managment class
 				vfs::VFSManager *vfs_manager;
 				//index driver
-				index_system::IndexDriver *index_driver;
+				db_system::DBDriver *db_driver;
 				
 				//!working file (stage or data)
 				vfs::VFSFile *working_data_file;
@@ -72,7 +72,7 @@ namespace chaos{
 				virtual int endScanHandler(int end_scan_error) = 0;
 			public:
 				DataPackScanner(vfs::VFSManager *_vfs_manager,
-								index_system::IndexDriver *_index_driver,
+								db_system::DBDriver *_db_driver,
 								vfs::VFSFile *_working_data_file);
 				
 				~DataPackScanner();

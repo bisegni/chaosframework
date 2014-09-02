@@ -35,7 +35,7 @@ namespace chaos_data = chaos::common::data;
 
 namespace chaos {
 	namespace data_service {
-		namespace index_system {
+		namespace db_system {
 			
 			/*!
 			 Class that encapsulat ethe mongodb conenction for safe deallocation

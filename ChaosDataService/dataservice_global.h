@@ -14,7 +14,7 @@
 #include <vector>
 
 #include "vfs/vfs.h"
-#include "index_system/index_system.h"
+#include "db_system/db_system.h"
 
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
@@ -51,9 +51,9 @@ namespace chaos{
 #define OPT_VFS_STORAGE_DOMAIN			"vfs_storage_domain"
 #define OPT_VFS_STORAGE_DRIVER_KVP		"vfs_storage_driver_kvp"
 		
-#define OPT_INDEX_DRIVER_IMPL		"index_drvr_impl"
-#define OPT_INDEX_DRIVER_SERVERS	"index_servers"
-#define OPT_INDEX_DRIVER_KVP		"index_driver_kvp"
+#define OPT_DB_DRIVER_IMPL		"db_drvr_impl"
+#define OPT_DB_DRIVER_SERVERS	"db_servers"
+#define OPT_DB_DRIVER_KVP		"db_driver_kvp"
 				
 		namespace worker {
 			
@@ -98,7 +98,7 @@ namespace chaos{
 			std::string index_driver_impl;
 			
 			//! the instance of the index driver for this manager
-			::chaos::data_service::index_system::IndexDriverSetting index_driver_setting;
+			::chaos::data_service::db_system::DBDriverSetting db_driver_setting;
 		} ChaosDataServiceSetting;
 	}
 }

@@ -143,6 +143,9 @@
 		3253F2FF189AEEFD00959CA7 /* DirectIOVirtualClientChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3253F2FD189AEEFD00959CA7 /* DirectIOVirtualClientChannel.h */; };
 		3253F302189AEF8000959CA7 /* DirectIOVirtualServerChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3253F300189AEF8000959CA7 /* DirectIOVirtualServerChannel.cpp */; };
 		3253F303189AEF8000959CA7 /* DirectIOVirtualServerChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3253F301189AEF8000959CA7 /* DirectIOVirtualServerChannel.h */; };
+		32556B0919B5F2FA0004ABC5 /* DBDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 32556B0819B5F2FA0004ABC5 /* DBDriver.h */; };
+		32556B0F19B5F4090004ABC5 /* DataPackScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32556B0B19B5F4090004ABC5 /* DataPackScanner.cpp */; };
+		32556B1019B5F4090004ABC5 /* StageDataVFileScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32556B0D19B5F4090004ABC5 /* StageDataVFileScanner.cpp */; };
 		3255E72415EA86F2005C96CA /* DefaultEventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3255E72315EA86F1005C96CA /* DefaultEventDispatcher.cpp */; };
 		3255E72715EA87D2005C96CA /* AbstractEventDispatcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3255E72515EA87D1005C96CA /* AbstractEventDispatcher.cpp */; };
 		3255E72815EA87D2005C96CA /* AbstractEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 3255E72615EA87D1005C96CA /* AbstractEventDispatcher.h */; };
@@ -272,7 +275,6 @@
 		326EA57814D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h in Headers */ = {isa = PBXBuildFile; fileRef = 326EA57714D2D8EE00D4962A /* MultiKeyObjectWaitSemaphore.h */; };
 		3271063519A6157800946A8B /* VFSDataFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3271063319A6157800946A8B /* VFSDataFile.cpp */; };
 		3271063819A6188000946A8B /* VFSDataWriteableFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3271063619A6188000946A8B /* VFSDataWriteableFile.cpp */; };
-		3271063F19AB576300946A8B /* DataPackScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3271063D19AB576300946A8B /* DataPackScanner.cpp */; };
 		3272152418B006BC005AC8FD /* CacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3272152218B006BC005AC8FD /* CacheDriver.cpp */; };
 		3272FE1715E1053100B096FB /* EventForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 3272FE1615E1053100B096FB /* EventForwarder.h */; };
 		327967B515DF99FB0003C6DA /* RpcClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327967B415DF99FB0003C6DA /* RpcClient.cpp */; };
@@ -284,9 +286,9 @@
 		327CFF091708C4EB0069497B /* FastHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327CFF071708C4EA0069497B /* FastHash.cpp */; };
 		327CFF0A1708C4EB0069497B /* FastHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF081708C4EB0069497B /* FastHash.h */; };
 		327CFF121708D7760069497B /* CacheGlobal.h in Headers */ = {isa = PBXBuildFile; fileRef = 327CFF111708D7740069497B /* CacheGlobal.h */; };
-		327D5E49192DE3430043ED21 /* IndexDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327D5E43192DE3430043ED21 /* IndexDriver.cpp */; };
+		327D5E49192DE3430043ED21 /* DBDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327D5E43192DE3430043ED21 /* DBDriver.cpp */; };
 		327D5E4A192DE3430043ED21 /* MongoDBHAConnectionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327D5E45192DE3430043ED21 /* MongoDBHAConnectionManager.cpp */; };
-		327D5E4B192DE3430043ED21 /* MongoDBIndexDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327D5E47192DE3430043ED21 /* MongoDBIndexDriver.cpp */; };
+		327D5E4B192DE3430043ED21 /* MongoDBDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327D5E47192DE3430043ED21 /* MongoDBDriver.cpp */; };
 		327F51DE1952E81D00BA3D01 /* DirectIOURLManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327F51DC1952E81D00BA3D01 /* DirectIOURLManagment.cpp */; };
 		327F51DF1952E81D00BA3D01 /* DirectIOURLManagment.h in Headers */ = {isa = PBXBuildFile; fileRef = 327F51DD1952E81D00BA3D01 /* DirectIOURLManagment.h */; };
 		328556A017F2E33A00A64ED2 /* DirectIOClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3285569E17F2E33A00A64ED2 /* DirectIOClient.cpp */; };
@@ -481,7 +483,6 @@
 		32F7FEA118A4FD9B00FC03AB /* DirectIOEndpointHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7FEA018A4FD9B00FC03AB /* DirectIOEndpointHandler.h */; };
 		32F7FEAB18A5066600FC03AB /* FastDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7FEA218A5066600FC03AB /* FastDelegate.h */; };
 		32F7FEAC18A5066600FC03AB /* FastDelegateBind.h in Headers */ = {isa = PBXBuildFile; fileRef = 32F7FEA318A5066600FC03AB /* FastDelegateBind.h */; };
-		32FB2170192A574700E9C87A /* StageDataVFileScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32FB216E192A574700E9C87A /* StageDataVFileScanner.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -663,6 +664,11 @@
 		3253F300189AEF8000959CA7 /* DirectIOVirtualServerChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOVirtualServerChannel.cpp; sourceTree = "<group>"; };
 		3253F301189AEF8000959CA7 /* DirectIOVirtualServerChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOVirtualServerChannel.h; sourceTree = "<group>"; };
 		3253F304189AF0D500959CA7 /* DirectIODataPack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectIODataPack.h; sourceTree = "<group>"; };
+		32556B0819B5F2FA0004ABC5 /* DBDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBDriver.h; sourceTree = "<group>"; };
+		32556B0B19B5F4090004ABC5 /* DataPackScanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataPackScanner.cpp; sourceTree = "<group>"; };
+		32556B0C19B5F4090004ABC5 /* DataPackScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataPackScanner.h; sourceTree = "<group>"; };
+		32556B0D19B5F4090004ABC5 /* StageDataVFileScanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StageDataVFileScanner.cpp; sourceTree = "<group>"; };
+		32556B0E19B5F4090004ABC5 /* StageDataVFileScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StageDataVFileScanner.h; sourceTree = "<group>"; };
 		3255E72315EA86F1005C96CA /* DefaultEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DefaultEventDispatcher.cpp; sourceTree = "<group>"; };
 		3255E72515EA87D1005C96CA /* AbstractEventDispatcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractEventDispatcher.cpp; sourceTree = "<group>"; };
 		3255E72615EA87D1005C96CA /* AbstractEventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractEventDispatcher.h; sourceTree = "<group>"; };
@@ -804,9 +810,7 @@
 		3271063419A6157800946A8B /* VFSDataFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSDataFile.h; sourceTree = "<group>"; };
 		3271063619A6188000946A8B /* VFSDataWriteableFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSDataWriteableFile.cpp; sourceTree = "<group>"; };
 		3271063719A6188000946A8B /* VFSDataWriteableFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSDataWriteableFile.h; sourceTree = "<group>"; };
-		3271063C19A7417000946A8B /* index_system_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = index_system_types.h; sourceTree = "<group>"; };
-		3271063D19AB576300946A8B /* DataPackScanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataPackScanner.cpp; sourceTree = "<group>"; };
-		3271063E19AB576300946A8B /* DataPackScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataPackScanner.h; sourceTree = "<group>"; };
+		3271063C19A7417000946A8B /* db_system_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = db_system_types.h; sourceTree = "<group>"; };
 		3272152218B006BC005AC8FD /* CacheDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CacheDriver.cpp; sourceTree = "<group>"; };
 		3272152318B006BC005AC8FD /* CacheDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheDriver.h; sourceTree = "<group>"; };
 		3272FE1615E1053100B096FB /* EventForwarder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventForwarder.h; sourceTree = "<group>"; };
@@ -820,13 +824,12 @@
 		327CFF071708C4EA0069497B /* FastHash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FastHash.cpp; sourceTree = "<group>"; };
 		327CFF081708C4EB0069497B /* FastHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastHash.h; sourceTree = "<group>"; };
 		327CFF111708D7740069497B /* CacheGlobal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheGlobal.h; sourceTree = "<group>"; };
-		327D5E42192DE3430043ED21 /* index_system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = index_system.h; path = ChaosDataService/index_system/index_system.h; sourceTree = SOURCE_ROOT; };
-		327D5E43192DE3430043ED21 /* IndexDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = IndexDriver.cpp; path = ChaosDataService/index_system/IndexDriver.cpp; sourceTree = SOURCE_ROOT; };
-		327D5E44192DE3430043ED21 /* IndexDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IndexDriver.h; path = ChaosDataService/index_system/IndexDriver.h; sourceTree = SOURCE_ROOT; };
-		327D5E45192DE3430043ED21 /* MongoDBHAConnectionManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MongoDBHAConnectionManager.cpp; path = ChaosDataService/index_system/MongoDBHAConnectionManager.cpp; sourceTree = SOURCE_ROOT; };
-		327D5E46192DE3430043ED21 /* MongoDBHAConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MongoDBHAConnectionManager.h; path = ChaosDataService/index_system/MongoDBHAConnectionManager.h; sourceTree = SOURCE_ROOT; };
-		327D5E47192DE3430043ED21 /* MongoDBIndexDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MongoDBIndexDriver.cpp; path = ChaosDataService/index_system/MongoDBIndexDriver.cpp; sourceTree = SOURCE_ROOT; };
-		327D5E48192DE3430043ED21 /* MongoDBIndexDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MongoDBIndexDriver.h; path = ChaosDataService/index_system/MongoDBIndexDriver.h; sourceTree = SOURCE_ROOT; };
+		327D5E42192DE3430043ED21 /* db_system.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = db_system.h; path = ChaosDataService/db_system/db_system.h; sourceTree = SOURCE_ROOT; };
+		327D5E43192DE3430043ED21 /* DBDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DBDriver.cpp; path = ChaosDataService/db_system/DBDriver.cpp; sourceTree = SOURCE_ROOT; };
+		327D5E45192DE3430043ED21 /* MongoDBHAConnectionManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MongoDBHAConnectionManager.cpp; path = ChaosDataService/db_system/MongoDBHAConnectionManager.cpp; sourceTree = SOURCE_ROOT; };
+		327D5E46192DE3430043ED21 /* MongoDBHAConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MongoDBHAConnectionManager.h; path = ChaosDataService/db_system/MongoDBHAConnectionManager.h; sourceTree = SOURCE_ROOT; };
+		327D5E47192DE3430043ED21 /* MongoDBDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MongoDBDriver.cpp; path = ChaosDataService/db_system/MongoDBDriver.cpp; sourceTree = SOURCE_ROOT; };
+		327D5E48192DE3430043ED21 /* MongoDBDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MongoDBDriver.h; path = ChaosDataService/db_system/MongoDBDriver.h; sourceTree = SOURCE_ROOT; };
 		327F51DC1952E81D00BA3D01 /* DirectIOURLManagment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOURLManagment.cpp; sourceTree = "<group>"; };
 		327F51DD1952E81D00BA3D01 /* DirectIOURLManagment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOURLManagment.h; sourceTree = "<group>"; };
 		3281D35A18A68532005A0828 /* DirectIOChannelGlobal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectIOChannelGlobal.h; sourceTree = "<group>"; };
@@ -1048,8 +1051,6 @@
 		32F7FEA018A4FD9B00FC03AB /* DirectIOEndpointHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOEndpointHandler.h; sourceTree = "<group>"; };
 		32F7FEA218A5066600FC03AB /* FastDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastDelegate.h; sourceTree = "<group>"; };
 		32F7FEA318A5066600FC03AB /* FastDelegateBind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastDelegateBind.h; sourceTree = "<group>"; };
-		32FB216E192A574700E9C87A /* StageDataVFileScanner.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StageDataVFileScanner.cpp; sourceTree = "<group>"; };
-		32FB216F192A574700E9C87A /* StageDataVFileScanner.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StageDataVFileScanner.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1217,8 +1218,9 @@
 				322D98FF18A95F9200C0864C /* QueryDataConsumer.h */,
 				3235425A1923A5C70090B8F6 /* StageDataConsumer.cpp */,
 				3235425B1923A5C70090B8F6 /* StageDataConsumer.h */,
+				32556B0A19B5F3DC0004ABC5 /* indexer */,
 				32B159DB18B4C46E0096B58B /* worker */,
-				32FB2171192A582100E9C87A /* index_system */,
+				32FB2171192A582100E9C87A /* db_system */,
 				3272152118B00650005AC8FD /* cache_system */,
 				3250884318E46C23001C9733 /* vfs */,
 			);
@@ -1332,6 +1334,17 @@
 				3281D35A18A68532005A0828 /* DirectIOChannelGlobal.h */,
 			);
 			path = channel;
+			sourceTree = "<group>";
+		};
+		32556B0A19B5F3DC0004ABC5 /* indexer */ = {
+			isa = PBXGroup;
+			children = (
+				32556B0B19B5F4090004ABC5 /* DataPackScanner.cpp */,
+				32556B0C19B5F4090004ABC5 /* DataPackScanner.h */,
+				32556B0D19B5F4090004ABC5 /* StageDataVFileScanner.cpp */,
+				32556B0E19B5F4090004ABC5 /* StageDataVFileScanner.h */,
+			);
+			path = indexer;
 			sourceTree = "<group>";
 		};
 		3258AF011935EE4D00A66D44 /* ArchitectureTest */ = {
@@ -2277,23 +2290,19 @@
 			path = network;
 			sourceTree = "<group>";
 		};
-		32FB2171192A582100E9C87A /* index_system */ = {
+		32FB2171192A582100E9C87A /* db_system */ = {
 			isa = PBXGroup;
 			children = (
-				327D5E42192DE3430043ED21 /* index_system.h */,
-				3271063C19A7417000946A8B /* index_system_types.h */,
-				327D5E43192DE3430043ED21 /* IndexDriver.cpp */,
-				327D5E44192DE3430043ED21 /* IndexDriver.h */,
+				327D5E42192DE3430043ED21 /* db_system.h */,
+				3271063C19A7417000946A8B /* db_system_types.h */,
+				327D5E43192DE3430043ED21 /* DBDriver.cpp */,
+				32556B0819B5F2FA0004ABC5 /* DBDriver.h */,
 				327D5E45192DE3430043ED21 /* MongoDBHAConnectionManager.cpp */,
 				327D5E46192DE3430043ED21 /* MongoDBHAConnectionManager.h */,
-				327D5E47192DE3430043ED21 /* MongoDBIndexDriver.cpp */,
-				327D5E48192DE3430043ED21 /* MongoDBIndexDriver.h */,
-				32FB216E192A574700E9C87A /* StageDataVFileScanner.cpp */,
-				32FB216F192A574700E9C87A /* StageDataVFileScanner.h */,
-				3271063D19AB576300946A8B /* DataPackScanner.cpp */,
-				3271063E19AB576300946A8B /* DataPackScanner.h */,
+				327D5E47192DE3430043ED21 /* MongoDBDriver.cpp */,
+				327D5E48192DE3430043ED21 /* MongoDBDriver.h */,
 			);
-			path = index_system;
+			path = db_system;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -2385,6 +2394,7 @@
 				3253F303189AEF8000959CA7 /* DirectIOVirtualServerChannel.h in Headers */,
 				329603271876B45000CDCADA /* BatchCommandExecutor.h in Headers */,
 				32D68AD014D5D5A7009F290A /* SetupStateManager.h in Headers */,
+				32556B0919B5F2FA0004ABC5 /* DBDriver.h in Headers */,
 				32A809D614D82E19000F2DF7 /* MDSMessageChannel.h in Headers */,
 				3297F22914D96F43004FFE4F /* DeviceMessageChannel.h in Headers */,
 				3297F22B14D96F8D004FFE4F /* NodeMessageChannel.h in Headers */,
@@ -2801,9 +2811,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				32502C7F1923BAF30073E4AB /* VFSStageFile.cpp in Sources */,
-				327D5E4B192DE3430043ED21 /* MongoDBIndexDriver.cpp in Sources */,
+				327D5E4B192DE3430043ED21 /* MongoDBDriver.cpp in Sources */,
 				3272152418B006BC005AC8FD /* CacheDriver.cpp in Sources */,
-				327D5E49192DE3430043ED21 /* IndexDriver.cpp in Sources */,
+				327D5E49192DE3430043ED21 /* DBDriver.cpp in Sources */,
 				32A10C0318C87806006EA04C /* DeviceSharedDataWorker.cpp in Sources */,
 				327D5E4A192DE3430043ED21 /* MongoDBHAConnectionManager.cpp in Sources */,
 				32DBF9D118E1845E0095B289 /* CouchbaseCacheDriver.cpp in Sources */,
@@ -2814,17 +2824,17 @@
 				323236DA164573F50052CE06 /* main.cpp in Sources */,
 				32B159DA18B4B9F90096B58B /* DataWorker.cpp in Sources */,
 				3299363618A7C4F60093E7F2 /* ChaosDataService.cpp in Sources */,
-				32FB2170192A574700E9C87A /* StageDataVFileScanner.cpp in Sources */,
 				32B159DE18B4D4210096B58B /* MemcachedCacheDriver.cpp in Sources */,
-				3271063F19AB576300946A8B /* DataPackScanner.cpp in Sources */,
 				32DCC36F192517DA00E14256 /* VFSStageReadableFile.cpp in Sources */,
 				3250884D18E49975001C9733 /* VFSFile.cpp in Sources */,
 				3235425F1923A9360090B8F6 /* IndexStageDataWorker.cpp in Sources */,
 				3223253D18EC157000ADBA4D /* PosixStorageDriver.cpp in Sources */,
 				326CADCA18EAFD1200E74CEA /* VFSManager.cpp in Sources */,
 				326459CC18D073BA0091B2E3 /* AnswerDataWorker.cpp in Sources */,
+				32556B1019B5F4090004ABC5 /* StageDataVFileScanner.cpp in Sources */,
 				3235425C1923A5C70090B8F6 /* StageDataConsumer.cpp in Sources */,
 				322D990118A95F9200C0864C /* QueryDataConsumer.cpp in Sources */,
+				32556B0F19B5F4090004ABC5 /* DataPackScanner.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

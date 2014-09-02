@@ -1,5 +1,5 @@
 /*
- *	IndexDriver.cpp
+ *	DBDriver.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -18,36 +18,36 @@
  *    	limitations under the License.
  */
 
-#include "IndexDriver.h"
+#include "DBDriver.h"
 #include "../vfs/DataBlock.h"
 
-using namespace chaos::data_service::index_system;
+using namespace chaos::data_service::db_system;
 using namespace chaos::data_service::vfs;
 
-IndexDriver::IndexDriver(std::string alias):NamedService(alias) {
+DBDriver::DBDriver(std::string alias):NamedService(alias) {
 	
 }
 
-IndexDriver::~IndexDriver() {
+DBDriver::~DBDriver() {
 	
 }
 
 //! init
-void IndexDriver::init(void *init_data) throw (chaos::CException) {
-	setting = static_cast<IndexDriverSetting*>(init_data);
+void DBDriver::init(void *init_data) throw (chaos::CException) {
+	setting = static_cast<DBDriverSetting*>(init_data);
 	if(!setting) throw CException(-1, "No setting set", __PRETTY_FUNCTION__);
 	if(!setting->servers.size()) throw CException(-1, "No server set", __PRETTY_FUNCTION__);
 
 }
 
 //!deinit
-void IndexDriver::deinit() throw (chaos::CException) {
+void DBDriver::deinit() throw (chaos::CException) {
 }
 
-DataBlock *IndexDriver::getDataBlockFromFileLocation(const FileLocationPointer& file_location) {
+DataBlock *DBDriver::getDataBlockFromFileLocation(const FileLocationPointer& file_location) {
 	return file_location.data_block;
 }
 
-uint64_t IndexDriver::getDataBlockOffsetFromFileLocation(const FileLocationPointer & file_location) {
+uint64_t DBDriver::getDataBlockOffsetFromFileLocation(const FileLocationPointer & file_location) {
 	return file_location.offset;
 }

@@ -40,9 +40,9 @@ using namespace chaos::data_service::vfs;
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-VFSManager::VFSManager(index_system::IndexDriver *_index_driver_ptr):
+VFSManager::VFSManager(db_system::DBDriver *_db_driver_ptr):
 setting(NULL),
-index_driver_ptr(_index_driver_ptr){
+db_driver_ptr(_db_driver_ptr){
 	
 }
 /*---------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ void VFSManager::init(void * init_data) throw (chaos::CException) {
 	VFSFM_LDBG_ << "max_block_lifetime configured with " << setting->max_block_lifetime << " milliseconds (" << (setting->max_block_lifetime/(1000*60)) << " minutes)";
 	
 	//initialize the domina do index database
-	if(index_driver_ptr->vfsAddDomain(setting->storage_driver_setting.domain)) {
+	if(db_driver_ptr->vfsAddDomain(setting->storage_driver_setting.domain)) {
 		throw chaos::CException(-1, "Error initializing the domain", __PRETTY_FUNCTION__);
 	}
 	
@@ -115,7 +115,7 @@ void VFSManager::deinit() throw (chaos::CException) {
  
  ---------------------------------------------------------------------------------*/
 void VFSManager::timeout() {
-	if(index_driver_ptr->vfsDomainHeartBeat(setting->storage_driver_setting.domain)) {
+	if(db_driver_ptr->vfsDomainHeartBeat(setting->storage_driver_setting.domain)) {
 		VFSFM_LERR_ << "Error giving the eartbeat";
 	}
 }
@@ -151,7 +151,7 @@ int VFSManager::getFile(std::string area,
 	
 	VFSFilesForPath *files_for_path = NULL;
 	
-	VFSFile *logical_file = new VFSFile(storage_driver_ptr, index_driver_ptr, area, vfs_fpath, open_mode);
+	VFSFile *logical_file = new VFSFile(storage_driver_ptr, db_driver_ptr, area, vfs_fpath, open_mode);
 	if(!logical_file) return -1;
 	
 	//the vfs file is identified by a folder containing all data block
@@ -194,7 +194,7 @@ int VFSManager::getWriteableStageFile(std::string
 	
 	VFSFilesForPath *files_for_path = NULL;
 	
-	VFSStageWriteableFile *writeable_stage_file = new VFSStageWriteableFile(storage_driver_ptr, index_driver_ptr, stage_vfs_relative_path);
+	VFSStageWriteableFile *writeable_stage_file = new VFSStageWriteableFile(storage_driver_ptr, db_driver_ptr, stage_vfs_relative_path);
 	if(!writeable_stage_file) return -1;
 	
 	//the vfs file is identified by a folder containing all data block
@@ -238,7 +238,7 @@ int VFSManager::getReadableStageFile(std::string stage_vfs_relative_path,
 	
 	VFSFilesForPath *files_for_path = NULL;
 	
-	VFSStageReadableFile *readable_stage_file = new VFSStageReadableFile(storage_driver_ptr, index_driver_ptr, stage_vfs_relative_path);
+	VFSStageReadableFile *readable_stage_file = new VFSStageReadableFile(storage_driver_ptr, db_driver_ptr, stage_vfs_relative_path);
 	if(!readable_stage_file) return -1;
 	
 	//the vfs file is identified by a folder containing all data block
@@ -282,7 +282,7 @@ int VFSManager::getWriteableDataFile(std::string data_vfs_relative_path,
 	
 	VFSFilesForPath *files_for_path = NULL;
 	
-	VFSDataWriteableFile *writeable_data_file = new VFSDataWriteableFile(storage_driver_ptr, index_driver_ptr, data_vfs_relative_path);
+	VFSDataWriteableFile *writeable_data_file = new VFSDataWriteableFile(storage_driver_ptr, db_driver_ptr, data_vfs_relative_path);
 	if(!writeable_data_file) return -1;
 	
 	//the vfs file is identified by a folder containing all data block
@@ -368,5 +368,5 @@ int VFSManager::deleteDirectory(std::string vfs_path,
  ---------------------------------------------------------------------------------*/
 int VFSManager::getAllStageFileVFSPath(std::vector<std::string>& stage_file_vfs_paths,
 									   int limit_to_size) {
-	return index_driver_ptr->vfsGetFilePathForDomain(storage_driver_ptr->getStorageDomain(), std::string(VFS_STAGE_AREA),stage_file_vfs_paths, limit_to_size);
+	return db_driver_ptr->vfsGetFilePathForDomain(storage_driver_ptr->getStorageDomain(), std::string(VFS_STAGE_AREA),stage_file_vfs_paths, limit_to_size);
 }

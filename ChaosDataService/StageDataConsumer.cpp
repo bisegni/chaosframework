@@ -43,12 +43,12 @@ s=NULL;
 boost::unique_lock<boost::mutex> l(s->mutex_on_scan);
 
 StageDataConsumer::StageDataConsumer(vfs::VFSManager *_vfs_manager_ptr,
-									 index_system::IndexDriver *_index_driver_ptr,
+									 db_system::DBDriver *_db_driver_ptr,
 									 ChaosDataServiceSetting *_settings):
 settings(_settings),
 work_on_stage(false),
 vfs_manager_ptr(_vfs_manager_ptr),
-index_driver_ptr(_index_driver_ptr),
+db_driver_ptr(_db_driver_ptr),
 global_scanner_num(0),
 queue_scanners(1) {
 	
@@ -125,7 +125,7 @@ void StageDataConsumer::timeout() {
 			//scanner not present, so we need to add it
 			scanner_info = new StageScannerInfo();
 			scanner_info->index = ++global_scanner_num;
-			scanner_info->scanner = new index_system::StageDataVFileScanner(vfs_manager_ptr, index_driver_ptr, readable_stage_file);
+			scanner_info->scanner = new indexer::StageDataVFileScanner(vfs_manager_ptr, db_driver_ptr, readable_stage_file);
 			
 			//add new scanner infor to the processing queue to be scheduled and in vector to keep track of it
 			vector_working_path.push_back(*it);

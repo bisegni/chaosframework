@@ -43,7 +43,7 @@ namespace chaos {
 				friend class VFSManager;
 			protected:
 				VFSStageFile(storage_system::StorageDriver *_storage_driver_ptr,
-							 chaos_index::IndexDriver *_index_driver_ptr,
+							 chaos_index::DBDriver *_db_driver_ptr,
 							 std::string stage_vfs_relative_path,
 							 VFSStageFileOpenMode _open_mode);
 			};

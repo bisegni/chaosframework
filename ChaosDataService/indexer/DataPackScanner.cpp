@@ -30,14 +30,14 @@
 #define DataPackScannerLERR_ LERR_ << DataPackScanner_LOG_HEAD
 
 
-using namespace chaos::data_service::index_system;
+using namespace chaos::data_service::indexer;
 namespace vfs=chaos::data_service::vfs;
 
 DataPackScanner::DataPackScanner(vfs::VFSManager *_vfs_manager,
-								 index_system::IndexDriver *_index_driver,
+								 db_system::DBDriver *_db_driver,
 								 vfs::VFSFile *_working_data_file):
 vfs_manager(_vfs_manager),
-index_driver(_index_driver),
+db_driver(_db_driver),
 working_data_file(_working_data_file),
 data_buffer(NULL),
 curret_data_buffer_len(0) {
