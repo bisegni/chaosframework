@@ -21,7 +21,7 @@
 #define __CHAOSFramework__DataPackScanner__
 
 #include "../vfs/VFSFile.h"
-#include "DBDriver.h"
+#include "../db_system/DBDriver.h"
 
 #include <chaos/common/bson/bson.h>
 
