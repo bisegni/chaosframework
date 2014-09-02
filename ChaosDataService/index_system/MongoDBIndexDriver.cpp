@@ -238,6 +238,43 @@ int MongoDBIndexDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,
 	return err;
 }
 
+//! Delete a virtual file datablock
+int MongoDBIndexDriver::vfsDeleteDataBlock(chaos_vfs::VFSFile *vfs_file,
+										   chaos_vfs::DataBlock *data_block) {
+	int err = 0;
+	mongo::BSONObjBuilder file_search;
+	mongo::BSONObj file_search_result;
+	mongo::BSONObjBuilder data_block_search;
+	try{
+		//add default index information
+		file_search << MONGO_DB_FIELD_FILE_VFS_PATH << vfs_file->getVFSFileInfo()->vfs_fpath;
+		file_search << MONGO_DB_FIELD_FILE_VFS_DOMAIN << vfs_file->getVFSFileInfo()->vfs_domain;
+		
+		ha_connection_pool->findOne(file_search_result, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_VFS_VFAT_COLLECTION), file_search.obj());
+		if(file_search_result.isEmpty()) {
+			//cant be here..anyway give error
+			MDBID_LERR_ << "Error getting file information";
+			return -4;
+		}
+		
+		//insert new
+		data_block_search << MONGO_DB_FIELD_FILE_PRIMARY_KEY << file_search_result["_id"].OID();
+		data_block_search << MONGO_DB_FIELD_FILE_VFS_PATH << data_block->vfs_path;
+		data_block_search << MONGO_DB_FIELD_FILE_VFS_DOMAIN << vfs_file->getVFSFileInfo()->vfs_domain;
+		
+		mongo::BSONObj q = data_block_search.obj();
+		DEBUG_CODE(MDBID_LDBG_ << "vfsDeleteDataBlock delete ---------------------------------------------";)
+		DEBUG_CODE(MDBID_LDBG_ << "query: " << q.jsonString());
+		DEBUG_CODE(MDBID_LDBG_ << "vfsDeleteDataBlock delete ---------------------------------------------";)
+		
+		err = ha_connection_pool->remove(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_VFS_VBLOCK_COLLECTION), q);
+	} catch( const mongo::DBException &e ) {
+		MDBID_LERR_ << e.what();
+		err = -1;
+	}
+	return err;
+}
+
 //! Set the state for a stage datablock
 int MongoDBIndexDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 											   chaos_vfs::DataBlock *data_block,
@@ -516,13 +553,17 @@ int MongoDBIndexDriver::vfsGetFilePathForDomain(std::string vfs_domain, std::str
 	mongo::BSONObjBuilder return_field;
 	std::vector<mongo::BSONObj> results;
 	try{
-		//search for domain
-		query_master << MONGO_DB_FIELD_FILE_VFS_DOMAIN << vfs_domain;
 		
 		//after the prefix we need to add the regex
 		prefix_filter.append(".*");
 		
-		query_master << MONGO_DB_FIELD_FILE_VFS_PATH << BSON("$regex" << prefix_filter);
+		query_master << "$query" << BSON(MONGO_DB_FIELD_FILE_VFS_DOMAIN << vfs_domain << MONGO_DB_FIELD_FILE_VFS_PATH << BSON("$regex" << prefix_filter))
+					<< "$orderby" << BSON(MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS << 1);
+		//search for domain
+		//query_master << MONGO_DB_FIELD_FILE_VFS_DOMAIN << vfs_domain;
+
+		
+		//query_master << MONGO_DB_FIELD_FILE_VFS_PATH << BSON("$regex" << prefix_filter);
 		
 		return_field << MONGO_DB_FIELD_FILE_VFS_PATH << 1 << "_id" << 0;
 		

@@ -90,12 +90,23 @@ int VFSStageReadableFile::checkForBlockChange(bool overlapping) {
 		if((err = updateDataBlockState(data_block_state::DataBlockStateProcessed))) {
 			VFSRF_LERR_ << "Error udapting the sate of the datablock " << err;
 		} else {
+			//memorize the current block path into vfs for delete it after closed
+			std::string current_block_path = current_data_block->vfs_path;
+			
+			//close correctly the datablock
 			if((err = closeJournalDatablock(current_journal_data_block))) {
 				//error creating journal
 				VFSRF_LERR_ << "Error closing journal file " << err;
+			} else if(index_driver_ptr->vfsDeleteDataBlock(this, current_data_block)) {
+				VFSRF_LERR_ << "Error removing datablock from data base " << err;
 			} else if((err = storage_driver_ptr->closeBlock(current_data_block))) {
 				VFSRF_LERR_ << "Error closing datablock";
 			} else {
+				//delete the path
+				err = storage_driver_ptr->deletePath(current_block_path, false);
+				if(err) {
+					VFSRF_LERR_ << "Error deleting the file";
+				}
 				current_data_block = NULL;
 				if(overlapping) {
 					//we need to load another block, in this we have read all

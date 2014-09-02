@@ -110,6 +110,13 @@ namespace chaos {
 											   chaos_vfs::DataBlock *data_block,
 											   vfs::data_block_state::DataBlockState new_block_state = vfs::data_block_state::DataBlockStateNone) = 0;
 				
+				//! Delete a virtual file datablock
+				/*!
+				 Delete a datablock associated to a virtual file
+				 */
+				virtual int vfsDeleteDataBlock(chaos_vfs::VFSFile *vfs_file,
+											   chaos_vfs::DataBlock *data_block) = 0;
+				
 				//! Set the state for a datablock
 				/*!
 				 Set the current state for a datablock in the stage area
