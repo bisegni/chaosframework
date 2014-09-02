@@ -57,7 +57,7 @@ namespace chaos{
         //! Chaos Data Service singleton
         /*!
          */
-        class ChaosDataService : public ChaosCommon<ChaosDataService>, public common_utility::StartableService {
+        class ChaosDataService : public ChaosCommon<ChaosDataService> {
             friend class Singleton<ChaosDataService>;
             
 			RunMode run_mode;
