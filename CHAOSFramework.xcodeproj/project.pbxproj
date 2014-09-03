@@ -289,6 +289,9 @@
 		327D5E49192DE3430043ED21 /* DBDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327D5E43192DE3430043ED21 /* DBDriver.cpp */; };
 		327D5E4A192DE3430043ED21 /* MongoDBHAConnectionManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327D5E45192DE3430043ED21 /* MongoDBHAConnectionManager.cpp */; };
 		327D5E4B192DE3430043ED21 /* MongoDBDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327D5E47192DE3430043ED21 /* MongoDBDriver.cpp */; };
+		327EA46119B7036600FF24F1 /* VFSQuerableDataFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327EA45F19B7036600FF24F1 /* VFSQuerableDataFile.cpp */; };
+		327EA46419B711C500FF24F1 /* DBIndexCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327EA46219B711C500FF24F1 /* DBIndexCursor.cpp */; };
+		327EA46719B71E4200FF24F1 /* MongoDBIndexCursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327EA46519B71E4200FF24F1 /* MongoDBIndexCursor.cpp */; };
 		327F51DE1952E81D00BA3D01 /* DirectIOURLManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 327F51DC1952E81D00BA3D01 /* DirectIOURLManagment.cpp */; };
 		327F51DF1952E81D00BA3D01 /* DirectIOURLManagment.h in Headers */ = {isa = PBXBuildFile; fileRef = 327F51DD1952E81D00BA3D01 /* DirectIOURLManagment.h */; };
 		328556A017F2E33A00A64ED2 /* DirectIOClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3285569E17F2E33A00A64ED2 /* DirectIOClient.cpp */; };
@@ -830,8 +833,15 @@
 		327D5E46192DE3430043ED21 /* MongoDBHAConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MongoDBHAConnectionManager.h; path = ChaosDataService/db_system/MongoDBHAConnectionManager.h; sourceTree = SOURCE_ROOT; };
 		327D5E47192DE3430043ED21 /* MongoDBDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MongoDBDriver.cpp; path = ChaosDataService/db_system/MongoDBDriver.cpp; sourceTree = SOURCE_ROOT; };
 		327D5E48192DE3430043ED21 /* MongoDBDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MongoDBDriver.h; path = ChaosDataService/db_system/MongoDBDriver.h; sourceTree = SOURCE_ROOT; };
+		327EA45F19B7036600FF24F1 /* VFSQuerableDataFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSQuerableDataFile.cpp; sourceTree = "<group>"; };
+		327EA46019B7036600FF24F1 /* VFSQuerableDataFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VFSQuerableDataFile.h; sourceTree = "<group>"; };
+		327EA46219B711C500FF24F1 /* DBIndexCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DBIndexCursor.cpp; sourceTree = "<group>"; };
+		327EA46319B711C500FF24F1 /* DBIndexCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBIndexCursor.h; sourceTree = "<group>"; };
+		327EA46519B71E4200FF24F1 /* MongoDBIndexCursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MongoDBIndexCursor.cpp; sourceTree = "<group>"; };
+		327EA46619B71E4200FF24F1 /* MongoDBIndexCursor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MongoDBIndexCursor.h; sourceTree = "<group>"; };
 		327F51DC1952E81D00BA3D01 /* DirectIOURLManagment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOURLManagment.cpp; sourceTree = "<group>"; };
 		327F51DD1952E81D00BA3D01 /* DirectIOURLManagment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOURLManagment.h; sourceTree = "<group>"; };
+		3281514619B7628000C26694 /* mongo_db_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mongo_db_types.h; sourceTree = "<group>"; };
 		3281D35A18A68532005A0828 /* DirectIOChannelGlobal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirectIOChannelGlobal.h; sourceTree = "<group>"; };
 		3285569E17F2E33A00A64ED2 /* DirectIOClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOClient.cpp; sourceTree = "<group>"; };
 		3285569F17F2E33A00A64ED2 /* DirectIOClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOClient.h; sourceTree = "<group>"; };
@@ -1289,6 +1299,8 @@
 				3250884418E46C4B001C9733 /* vfs.h */,
 				326CADC818EAFD1200E74CEA /* VFSManager.cpp */,
 				326CADC918EAFD1200E74CEA /* VFSManager.h */,
+				327EA45F19B7036600FF24F1 /* VFSQuerableDataFile.cpp */,
+				327EA46019B7036600FF24F1 /* VFSQuerableDataFile.h */,
 				32502C811923C6F60073E4AB /* VFSStageWriteableFile.cpp */,
 				32502C821923C6F60073E4AB /* VFSStageWriteableFile.h */,
 				3271063619A6188000946A8B /* VFSDataWriteableFile.cpp */,
@@ -2297,10 +2309,15 @@
 				3271063C19A7417000946A8B /* db_system_types.h */,
 				327D5E43192DE3430043ED21 /* DBDriver.cpp */,
 				32556B0819B5F2FA0004ABC5 /* DBDriver.h */,
+				327EA46219B711C500FF24F1 /* DBIndexCursor.cpp */,
+				327EA46319B711C500FF24F1 /* DBIndexCursor.h */,
 				327D5E45192DE3430043ED21 /* MongoDBHAConnectionManager.cpp */,
 				327D5E46192DE3430043ED21 /* MongoDBHAConnectionManager.h */,
 				327D5E47192DE3430043ED21 /* MongoDBDriver.cpp */,
 				327D5E48192DE3430043ED21 /* MongoDBDriver.h */,
+				327EA46519B71E4200FF24F1 /* MongoDBIndexCursor.cpp */,
+				327EA46619B71E4200FF24F1 /* MongoDBIndexCursor.h */,
+				3281514619B7628000C26694 /* mongo_db_types.h */,
 			);
 			path = db_system;
 			sourceTree = "<group>";
@@ -2824,13 +2841,16 @@
 				323236DA164573F50052CE06 /* main.cpp in Sources */,
 				32B159DA18B4B9F90096B58B /* DataWorker.cpp in Sources */,
 				3299363618A7C4F60093E7F2 /* ChaosDataService.cpp in Sources */,
+				327EA46119B7036600FF24F1 /* VFSQuerableDataFile.cpp in Sources */,
 				32B159DE18B4D4210096B58B /* MemcachedCacheDriver.cpp in Sources */,
 				32DCC36F192517DA00E14256 /* VFSStageReadableFile.cpp in Sources */,
 				3250884D18E49975001C9733 /* VFSFile.cpp in Sources */,
 				3235425F1923A9360090B8F6 /* IndexStageDataWorker.cpp in Sources */,
 				3223253D18EC157000ADBA4D /* PosixStorageDriver.cpp in Sources */,
 				326CADCA18EAFD1200E74CEA /* VFSManager.cpp in Sources */,
+				327EA46419B711C500FF24F1 /* DBIndexCursor.cpp in Sources */,
 				326459CC18D073BA0091B2E3 /* AnswerDataWorker.cpp in Sources */,
+				327EA46719B71E4200FF24F1 /* MongoDBIndexCursor.cpp in Sources */,
 				32556B1019B5F4090004ABC5 /* StageDataVFileScanner.cpp in Sources */,
 				3235425C1923A5C70090B8F6 /* StageDataConsumer.cpp in Sources */,
 				322D990118A95F9200C0864C /* QueryDataConsumer.cpp in Sources */,

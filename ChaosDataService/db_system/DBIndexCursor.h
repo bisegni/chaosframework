@@ -1,0 +1,60 @@
+/*
+ *	DBIndexCursor.h
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
+
+#ifndef __CHAOSFramework__DBCursor__
+#define __CHAOSFramework__DBCursor__
+
+#include "db_system_types.h"
+
+namespace chaos {
+	namespace data_service {
+		namespace db_system {
+			
+			class DBDriver;
+			
+			//! database cursor abstraction
+			/*!
+			 This class represent the abstraction for the result
+			 of query on chaos file offset indexes
+			 */
+			class DBIndexCursor {
+				friend class DBDriver;
+				DBDriver *driver_ptr;
+			public:
+				//! private constructor
+				DBIndexCursor(DBDriver *_driver_ptr);
+				
+				//! return true if there are othere index to fetch
+				/*!
+				 \return true is there are other result to fetch
+				 */
+				virtual bool hasNext() = 0;
+				
+				//! return next index
+				/*!
+				 \return the location on virtual filesystem of the found data pack
+				 */
+				virtual chaos::data_service::vfs::PathFileLocation *getIndex() = 0;
+			};
+			
+		}
+	}
+}
+#endif /* defined(__CHAOSFramework__DBCursor__) */

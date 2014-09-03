@@ -7,6 +7,7 @@
 //
 
 #include "MongoDBDriver.h"
+#include "MongoDBIndexCursor.h"
 
 #include "../vfs/vfs.h"
 
@@ -600,13 +601,13 @@ int MongoDBDriver::idxAddDataPackIndex(const DataPackIndex& index) {
 		index_builder << MONGO_DB_IDX_DATA_PACK_DID << index.did;
 		index_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS << mongo::Date_t(index.acquisition_ts);
 		index_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC << (int64_t)index.acquisition_ts;
-		index_builder << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_ID << mongo::OID(getDataBlockFromFileLocation(index.dst_location)->index_driver_uinique_id);
+		index_builder << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_PATH << mongo::OID(getDataBlockFromFileLocation(index.dst_location)->vfs_path);
 		index_builder << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET << (int64_t)getDataBlockOffsetFromFileLocation(index.dst_location);
 		
 		DEBUG_CODE(MDBID_LDBG_ << "idxAddDataPackIndex insert ---------------------------------------------";)
 		DEBUG_CODE(MDBID_LDBG_ << "did: " << index.did;)
 		DEBUG_CODE(MDBID_LDBG_ << "acq_ts_numeric: " << index.acquisition_ts;)
-		DEBUG_CODE(MDBID_LDBG_ << "data_pack: " << getDataBlockFromFileLocation(index.dst_location)->index_driver_uinique_id;)
+		DEBUG_CODE(MDBID_LDBG_ << "data_pack: " << getDataBlockFromFileLocation(index.dst_location)->vfs_path;)
 		DEBUG_CODE(MDBID_LDBG_ << "data_pack_offset: " << getDataBlockOffsetFromFileLocation(index.dst_location);)
 		DEBUG_CODE(MDBID_LDBG_ << "idxAddDataPackIndex insert ---------------------------------------------";)
 		
@@ -633,6 +634,33 @@ int MongoDBDriver::idxDeleteDataPackIndex(const DataPackIndex& index) {
 		DEBUG_CODE(MDBID_LDBG_ << "idxDeleteDataPackIndex insert ---------------------------------------------";)
 		
 		err = ha_connection_pool->remove(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), q);
+	} catch( const mongo::DBException &e ) {
+		MDBID_LERR_ << e.what();
+		err = -1;
+	}
+	return err;
+}
+
+//! perform a search on data pack indexes
+int MongoDBDriver::idxSearchDataPack(DataPackIndexQuery *data_pack_index_query, DBIndexCursor **index_cursor) {
+	int err = 0;
+	mongo::BSONObjBuilder	index_search_builder;
+	mongo::BSONObjBuilder	return_field;
+	try{
+		//add default index information
+		index_search_builder << MONGO_DB_IDX_DATA_PACK_DID << data_pack_index_query->did;
+		index_search_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS << BSON("$gte" << mongo::Date_t(data_pack_index_query->start_ts) <<
+																	  "$lte" << mongo::Date_t(data_pack_index_query->end_ts));
+		
+		return_field << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_PATH << 1 << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET << 1;
+		
+		mongo::BSONObj q = index_search_builder.obj();
+		DEBUG_CODE(MDBID_LDBG_ << "idxDeleteDataPackIndex insert ---------------------------------------------";)
+		DEBUG_CODE(MDBID_LDBG_ << "query: " << q.jsonString());
+		DEBUG_CODE(MDBID_LDBG_ << "idxDeleteDataPackIndex insert ---------------------------------------------";)
+		
+		mongo::BSONObj r = return_field.obj();
+		*index_cursor = new MongoDBIndexCursor(this, ha_connection_pool->query(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), q, 0, 0, &r));
 	} catch( const mongo::DBException &e ) {
 		MDBID_LERR_ << e.what();
 		err = -1;

@@ -254,6 +254,33 @@ void MongoDBHAConnectionManager::findN(std::vector<mongo::BSONObj>& out,
 	if(conn) delete(conn);
 }
 
+std::auto_ptr<mongo::DBClientCursor> MongoDBHAConnectionManager::query(const std::string &ns,
+																	   mongo::Query query,
+																	   int nToReturn,
+																	   int nToSkip,
+																	   const mongo::BSONObj *fieldsToReturn,
+																	   int queryOptions,
+																	   int batchSize) {
+	int err = -1;
+	MongoDBHAConnection conn = NULL;
+	std::auto_ptr<mongo::DBClientCursor> result;
+	while (getConnection(&conn)) {
+		try {
+			result = conn->conn().query(ns, query, nToReturn, nToSkip, fieldsToReturn, queryOptions, batchSize);
+			MONGO_DB_GET_ERROR(conn, err);
+		} catch (std::exception& ex) {
+			MDBHAC_LERR_ << "MongoDBHAConnectionManager::insert" << " -> " << ex.what();
+			MONGO_DB_GET_ERROR(conn, err);
+			DELETE_OBJ_POINTER(conn)
+			CONTINUE_ON_NEXT_CONNECTION(err)
+		}
+		break;
+	}
+	if(conn) delete(conn);
+	return result;
+}
+
+
 int MongoDBHAConnectionManager::runCommand(mongo::BSONObj& result,
 										   const std::string &ns,
 										   const mongo::BSONObj& command,

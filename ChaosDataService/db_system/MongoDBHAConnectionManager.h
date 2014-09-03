@@ -89,6 +89,7 @@ namespace chaos {
 				int update( const std::string &ns, mongo::Query query, mongo::BSONObj obj, bool upsert = false, bool multi = false, const mongo::WriteConcern* wc=NULL );
 				int remove( const std::string &ns , mongo::Query q , bool justOne = 0, const mongo::WriteConcern* wc=NULL );
 				int ensureIndex(  const std::string &database, const std::string &collection, mongo::BSONObj keys, bool unique = false, const std::string &name = "", bool dropDup = false, bool background = false, int v = -1, int ttl = 0 );
+				std::auto_ptr<mongo::DBClientCursor> query(const std::string &ns, mongo::Query query, int nToReturn = 0, int nToSkip = 0, const mongo::BSONObj *fieldsToReturn = 0, int queryOptions = 0 , int batchSize = 0 );
 			};
 		}
 	}

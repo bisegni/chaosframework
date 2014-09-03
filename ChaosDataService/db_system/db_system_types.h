@@ -20,7 +20,9 @@
 #ifndef CHAOSFramework_index_system_types_h
 #define CHAOSFramework_index_system_types_h
 
+#include <map>
 #include <string>
+#include <vector>
 #include <stdint.h>
 
 #include "../vfs/DataBlock.h"
@@ -44,7 +46,14 @@ namespace chaos {
 				chaos::data_service::vfs::FileLocationPointer dst_location;
 			};
 			
+			//! define the query that can be applied to the DataPackINdex
+			struct DataPackIndexQuery {
+				uint64_t	start_ts;
+				uint64_t	end_ts;
+				std::string did;
+			};
 			
+			//! db server list type
 			typedef std::vector<std::string>			DBDriverServerList;
 			typedef std::vector<std::string>::iterator	DBDriverServerListIterator;
 			
@@ -54,7 +63,7 @@ namespace chaos {
 				DBDriverServerList servers;
 				
 				//! kv param for the implementations of the driver
-				std::map<string,string> key_value_custom_param;
+				std::map<std::string, std::string> key_value_custom_param;
 			} DBDriverSetting;
 		}
 	}
