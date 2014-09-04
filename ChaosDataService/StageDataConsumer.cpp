@@ -124,6 +124,7 @@ void StageDataConsumer::timeout() {
 			
 			//scanner not present, so we need to add it
 			scanner_info = new StageScannerInfo();
+			LOCK_SCANNER_INFO(scanner_info)
 			scanner_info->index = ++global_scanner_num;
 			scanner_info->scanner = new indexer::StageDataVFileScanner(vfs_manager_ptr, db_driver_ptr, readable_stage_file);
 			
@@ -138,9 +139,9 @@ StageScannerInfo *StageDataConsumer::getNextAvailableScanner() {
 	StageScannerInfo *result = NULL;
 	StageScannerInfo *scanner_info = NULL;
 	uint32_t n_element = global_scanner_num;
-	while (n_element-->0) {
-		queue_scanners.pop(scanner_info);
-		
+	while ((n_element--)>0) {
+		if(!queue_scanners.pop(scanner_info)) continue;
+		//we have a scanner available
 		LOCK_SCANNER_INFO(scanner_info)
 		
 		if(scanner_info->in_use) continue;

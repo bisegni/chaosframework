@@ -107,6 +107,7 @@ int StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack) {
 	//get values for key that are mandatory for default index
 	new_data_pack_index.did = data_pack.getField(chaos::DataPackKey::CS_CSV_CU_ID).String();
 	new_data_pack_index.acquisition_ts = data_pack.getField(chaos::DataPackKey::CS_CSV_TIME_STAMP).numberLong();
+	new_data_pack_index.datapack_size = data_pack.objsize();
 	
 	//get file for unique id
 	boost::shared_ptr<DataFileInfo> data_file_info = getWriteableFileForDID(new_data_pack_index.did);
@@ -149,7 +150,7 @@ int StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack) {
 	}
 	
 	//write data pack on data file
-	if((err = data_file_info->data_file_ptr->write((void*)data_pack.objdata(), data_pack.objsize()))) {
+	if((err = data_file_info->data_file_ptr->write((void*)data_pack.objdata(), new_data_pack_index.datapack_size))) {
 		StageDataVFileScannerLERR_ << "Error writing datafile "<< err;
 	}
 	//! write journal

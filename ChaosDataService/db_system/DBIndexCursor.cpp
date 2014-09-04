@@ -20,8 +20,21 @@
 
 #include "DBIndexCursor.h"
 
+using namespace chaos::data_service::db_system;
+
+#define RESULT_PAGE_DIMENSION 30
+
 //! private constructor
-chaos::data_service::db_system::DBIndexCursor::DBIndexCursor(DBDriver *_driver_ptr):
+DBIndexCursor::DBIndexCursor(DBDriver *_driver_ptr):
+result_page_dimension(RESULT_PAGE_DIMENSION),
 driver_ptr(_driver_ptr){
 	
+}
+
+uint32_t DBIndexCursor::getResultPageDimension() {
+	return result_page_dimension;
+}
+
+void DBIndexCursor::setResultPageDimension(uint32_t _result_page_dimension) {
+	result_page_dimension = _result_page_dimension;
 }

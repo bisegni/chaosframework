@@ -36,10 +36,21 @@ namespace chaos {
 			 */
 			class DBIndexCursor {
 				friend class DBDriver;
+			protected:
+				//!
+				uint32_t result_page_dimension;
+				
+				//!
 				DBDriver *driver_ptr;
 			public:
 				//! private constructor
 				DBIndexCursor(DBDriver *_driver_ptr);
+				
+				//!
+				uint32_t getResultPageDimension();
+				
+				//!
+				void setResultPageDimension(uint32_t);
 				
 				//! return true if there are othere index to fetch
 				/*!
@@ -51,7 +62,7 @@ namespace chaos {
 				/*!
 				 \return the location on virtual filesystem of the found data pack
 				 */
-				virtual chaos::data_service::vfs::PathFileLocation *getIndex() = 0;
+				virtual DataPackIndexQueryResult *getIndex() = 0;
 			};
 			
 		}

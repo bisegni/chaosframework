@@ -60,9 +60,11 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
 	if(!device_channel) throw chaos::CException(-5, "Error allocating device server channel", __FUNCTION__);
 	device_channel->setHandler(this);
 	
+	//
 	cache_impl_name = settings->cache_driver_impl;
 	cache_impl_name.append("CacheDriver");
 	DSLAPP_ << "The cache implementation to allocate is " << cache_impl_name;
+	
 	//cache_driver_instance
 	device_data_worker = (chaos::data_service::worker::DataWorker**) malloc(sizeof(chaos::data_service::worker::DataWorker**) * settings->caching_worker_num);
 	if(!device_data_worker) throw chaos::CException(-5, "Error allocating device workers", __FUNCTION__);
@@ -151,7 +153,6 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
 										uint32_t channel_data_len,
 										DirectIOSynchronousAnswerPtr synchronous_answer) {
 	uint32_t index_to_use = device_data_worker_index++ % settings->caching_worker_num;
-
 	chaos::data_service::worker::DeviceSharedWorkerJob *job = new chaos::data_service::worker::DeviceSharedWorkerJob();
 	job->request_header = header;
 	job->data_pack = channel_data;

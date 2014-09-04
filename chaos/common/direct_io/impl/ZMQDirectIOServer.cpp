@@ -126,7 +126,8 @@ void ZMQDirectIOServer::deinit() throw(chaos::CException) {
 void ZMQDirectIOServer::worker(bool priority_service) {
 	char						header_buffer[DIRECT_IO_HEADER_SIZE];
 	int							linger				= 0;
-	int							water_mark			= 3;
+	int							water_mark			= 0;
+	int							timeout				= 200;
 	void						*socket				= NULL;
     int							err					= 0;
 	bool						send_synchronous_answer = false;
@@ -149,10 +150,25 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 		}
 		err = zmq_setsockopt (socket, ZMQ_RCVHWM, &water_mark, sizeof(int));
 		if(err) {
-			std::string msg = boost::str( boost::format("Error Setting watermark to service socket"));
+			std::string msg = boost::str( boost::format("Error Setting ZMQ_RCVHWM to service socket"));
 			ZMQDIO_SRV_LAPP_ << msg;
 			return;
 		}
+		
+		err = zmq_setsockopt (socket, ZMQ_SNDHWM, &water_mark, sizeof(int));
+		if(err) {
+			std::string msg = boost::str( boost::format("Error Setting ZMQ_SNDHWM to service socket"));
+			ZMQDIO_SRV_LAPP_ << msg;
+			return;
+		}
+		
+		err = zmq_setsockopt (socket, ZMQ_SNDTIMEO, &timeout, sizeof(int));
+		if(err) {
+			std::string msg = boost::str( boost::format("Error Setting ZMQ_SNDTIMEO to service socket"));
+			ZMQDIO_SRV_LAPP_ << msg;
+			return;
+		}
+		
 		err = zmq_bind(socket, service_socket_bind_str.c_str());
 		if(err) {
 			std::string msg = boost::str( boost::format("Error binding service socket to  %1% ") % service_socket_bind_str);
@@ -175,6 +191,20 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 			ZMQDIO_SRV_LAPP_ << msg;
 			return;
 		}
+		err = zmq_setsockopt (socket, ZMQ_SNDHWM, &water_mark, sizeof(int));
+		if(err) {
+			std::string msg = boost::str( boost::format("Error Setting watermark to priority socket"));
+			ZMQDIO_SRV_LAPP_ << msg;
+			return;
+		}
+		
+		err = zmq_setsockopt (socket, ZMQ_SNDTIMEO, &timeout, sizeof(int));
+		if(err) {
+			std::string msg = boost::str( boost::format("Error Setting ZMQ_SNDTIMEO to priority socket"));
+			ZMQDIO_SRV_LAPP_ << msg;
+			return;
+		}
+		
 		err = zmq_bind(socket, priority_socket_bind_str.c_str());
 		if(err) {
 			std::string msg = boost::str( boost::format("Error binding priority socket to  %1% ") % priority_socket_bind_str);

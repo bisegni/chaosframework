@@ -83,7 +83,7 @@ namespace chaos {
 				
 			public:
 				PathFileLocation():block_vfs_path(""), offset(0){}
-				PathFileLocation(std::string _block_vfs_path,
+				PathFileLocation(const std::string& _block_vfs_path,
 								 uint64_t _offset):
 				block_vfs_path(_block_vfs_path),
 				offset(_offset){};

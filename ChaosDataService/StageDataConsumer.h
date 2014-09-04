@@ -50,7 +50,7 @@ namespace chaos{
 		 can use a scanner. Every call to the scan method of the
 		 StageDataVFileScanner class permit to scan an intere data block
 		 */
-		typedef struct StageScannerInfo {
+		struct StageScannerInfo {
 			//the sequencial index of the scanner
 			uint32_t							index;
 			
@@ -61,8 +61,8 @@ namespace chaos{
 			boost::mutex						mutex_on_scan;
 			
 			//is the scanner for this slot
-			indexer::StageDataVFileScanner	*scanner;
-		}StageScannerInfo;
+			indexer::StageDataVFileScanner		*scanner;
+		};
 
 		/*!
 		  Worker for stage data elaboration

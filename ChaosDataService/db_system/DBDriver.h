@@ -195,13 +195,7 @@ namespace chaos {
 				virtual int idxDeleteDataPackIndex(const DataPackIndex& index) = 0;
 				
 				//! perform a search on data pack indexes
-				/*!
-				 Start a search on datapack indexes and return the cursor that will fetch the result.
-				 \param data_pack_index_query query param for perform the sarch
-				 \param index_cursor and handle to the BSIndexCursor class to fetch the result of the query
-				 \return  the cursor for the request search
-				 */
-				virtual int idxSearchDataPack(DataPackIndexQuery *data_pack_index_query, DBIndexCursor **index_cursor) = 0;
+				virtual int idxStartSearchDataPack(DataPackIndexQuery *data_pack_index_query, DBIndexCursor **index_cursor) = 0;
 			};
 		}
 	}

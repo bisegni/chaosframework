@@ -44,12 +44,32 @@ namespace chaos {
 				
 				//! location whithin the destination file
 				chaos::data_service::vfs::FileLocationPointer dst_location;
+				
+				//! size of the pack
+				uint32_t	datapack_size;
+			};
+			
+			//! data pack locato returned by the cursor
+			struct DataPackIndexQueryResult {
+				//location of the found data pack
+				chaos::data_service::vfs::PathFileLocation *dst_location;
+				
+				//! size of the pack
+				uint32_t	datapack_size;
+				
+				DataPackIndexQueryResult():dst_location(NULL), datapack_size(0){};
+				~DataPackIndexQueryResult(){if(dst_location) delete dst_location;}
 			};
 			
 			//! define the query that can be applied to the DataPackINdex
 			struct DataPackIndexQuery {
+				//! start timestamp
 				uint64_t	start_ts;
+				
+				//! end timestamp
 				uint64_t	end_ts;
+				
+				//! device identification
 				std::string did;
 			};
 			

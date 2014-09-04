@@ -18,27 +18,89 @@
  *    	limitations under the License.
  */
 
+#include "MongoDBDriver.h"
 #include "MongoDBIndexCursor.h"
 
 using namespace chaos::data_service::db_system;
 
 //! private constructor
 MongoDBIndexCursor::MongoDBIndexCursor(DBDriver *_driver_ptr,
-									   std::auto_ptr<mongo::DBClientCursor> _cursor):
+									   DataPackIndexQuery *_query):
 DBIndexCursor(_driver_ptr),
-cursor(_cursor) {
+element_for_query(0),
+time_offset_per_page(0),
+query(_query) {
+}
 
+MongoDBIndexCursor::~MongoDBIndexCursor() {
+	if(query) delete(query);
+}
+
+int MongoDBIndexCursor::computeTimeLapsForPage() {
+	int err = 0;
+	MongoDBDriver *mdrv = static_cast<MongoDBDriver*>(driver_ptr);
+	
+	//check if max and min timestamp has been gived
+	if(!query->start_ts || !query->end_ts) {
+		uint64_t max_ts;
+		uint64_t min_ts;
+		err = mdrv->idxMaxAndMInimumTimeStampForDataPack(*query, min_ts, max_ts);
+		if(err) return err;
+		
+		if(!query->start_ts) query->start_ts = min_ts;
+		if(!query->end_ts) query->end_ts = max_ts;
+	}
+	
+	//calculate the pagin information
+	err = mdrv->idxSearchResultCountDataPack(*query, element_for_query);
+	if(!err) {
+		//!calculate total element for the time laps request
+		element_for_query = element_for_query / getResultPageDimension();
+		
+		//!calculate the laps of the single page
+		time_offset_per_page = (query->end_ts - query->start_ts)/element_for_query;
+	}
+	return err;
+}
+
+int MongoDBIndexCursor::performNextPagedQuery() {
+	MongoDBDriver *mdrv = static_cast<MongoDBDriver*>(driver_ptr);
+	
+	//check if we have terminated the query page
+	if(last_max_ts_searched >= query->end_ts) return 0;
+	
+	DataPackIndexQuery paged_query;
+	paged_query.did = query->did;
+	//set the start timestamp
+	paged_query.start_ts = (last_max_ts_searched?last_max_ts_searched+1:query->start_ts);
+	
+	//set the end timestamp
+	last_max_ts_searched = paged_query.end_ts = (paged_query.start_ts + time_offset_per_page);
+	
+	//perform query
+	return mdrv->idxSearchDataPack(paged_query, cursor);
 }
 
 //! return true if there are othere index to fetch
 bool MongoDBIndexCursor::hasNext() {
-	return cursor->more();
+	int err = 0;
+	bool has_more = cursor->more();
+	if(!has_more) {
+		if(!(err = performNextPagedQuery())){
+			has_more = cursor->more();
+		}
+	}
+	return has_more;
 }
 
 //! return next index
-chaos::data_service::vfs::PathFileLocation *MongoDBIndexCursor::getIndex() {
+DataPackIndexQueryResult *MongoDBIndexCursor::getIndex() {
 	mongo::BSONObj next_element = cursor->next();
+	DataPackIndexQueryResult *result = new DataPackIndexQueryResult();
 	std::string block_path = next_element.getField(MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_PATH).String();
 	uint64_t block_offset = (uint64_t)next_element.getField(MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET).Long();
-	return new chaos::data_service::vfs::PathFileLocation(block_path, block_offset);
+	
+	result->dst_location = new chaos::data_service::vfs::PathFileLocation(block_path, block_offset);
+	result->datapack_size = (uint32_t)next_element.getField(MONGO_DB_IDX_DATA_PACK_SIZE).numberInt();
+	return result;
 }

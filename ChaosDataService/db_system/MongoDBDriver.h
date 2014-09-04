@@ -33,14 +33,26 @@
 namespace chaos {
 	namespace data_service {
 			namespace db_system {
+				class MongoDBIndexCursor;
+				
 				//! Mongodb implementation for the index driver
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(MongoDBDriver, DBDriver) {
 					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(MongoDBDriver)
 					MongoDBDriver(std::string alias);
+					friend class MongoDBIndexCursor;
 					std::string db_name;
 				protected:
+					//! ha mongodb driver
 					MongoDBHAConnectionManager *ha_connection_pool;
 					
+					//! protected methdo that perform the real paged query on index called by the cursor
+					int idxSearchDataPack(const DataPackIndexQuery & data_pack_index_query, std::auto_ptr<mongo::DBClientCursor>& cursor);
+					
+					//! protected methdo that perform the real paged query on index called by the cursor
+					int idxSearchResultCountDataPack(const DataPackIndexQuery & data_pack_index_query, uint64_t num_of_result);
+					
+					//! protected methdo that perform the real paged query on index called by the cursor
+					int idxMaxAndMInimumTimeStampForDataPack(const DataPackIndexQuery & data_pack_index_query, uint64_t& min_ts, uint64_t& max_ts);
 				public:
 					~MongoDBDriver();
 					
@@ -109,7 +121,7 @@ namespace chaos {
 					int idxDeleteDataPackIndex(const DataPackIndex& index);
 					
 					//! perform a search on data pack indexes
-					int idxSearchDataPack(DataPackIndexQuery *data_pack_index_query, DBIndexCursor **index_cursor);
+					int idxStartSearchDataPack(DataPackIndexQuery *data_pack_index_query, DBIndexCursor **index_cursor);
 				};
 			}
 	}

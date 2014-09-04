@@ -37,12 +37,30 @@ namespace chaos {
 			class MongoDBIndexCursor : public DBIndexCursor {
 				friend class MongoDBDriver;
 				
+				//! is the number of elemento of the query
+				uint64_t element_for_query;
+				
+				//! is the time lasp for the paged search
+				uint64_t time_offset_per_page;
+				
+				//! point to the last max timestamp paged search
+				uint64_t last_max_ts_searched;
+				
+				DataPackIndexQuery *query;
+
+				
 				std::auto_ptr<mongo::DBClientCursor> cursor;
 				
 				//! private constructor
 				MongoDBIndexCursor(DBDriver *_driver_ptr,
-								   std::auto_ptr<mongo::DBClientCursor> _cursor);
+								   DataPackIndexQuery *_query);
+				
+				int performNextPagedQuery();
+				
+				int computeTimeLapsForPage();
 			public:
+				
+				~MongoDBIndexCursor();
 				
 				//! return true if there are othere index to fetch
 				/*!
@@ -54,7 +72,7 @@ namespace chaos {
 				/*!
 				 \return the location on virtual filesystem of the found data pack
 				 */
-				chaos::data_service::vfs::PathFileLocation *getIndex();
+				DataPackIndexQueryResult *getIndex();
 			};
 		}
 	}
