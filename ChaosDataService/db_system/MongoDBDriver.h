@@ -53,6 +53,9 @@ namespace chaos {
 					
 					//! protected methdo that perform the real paged query on index called by the cursor
 					int idxMaxAndMInimumTimeStampForDataPack(const DataPackIndexQuery & data_pack_index_query, uint64_t& min_ts, uint64_t& max_ts);
+					
+					//! fill a complete datablock
+					chaos_vfs::DataBlock* fillDatablock(const mongo::BSONObj& full_datablock_query_result, chaos_vfs::DataBlock *data_block);
 				public:
 					~MongoDBDriver();
 					
@@ -104,6 +107,11 @@ namespace chaos {
 												  int state,
 												  chaos_vfs::DataBlock **data_block);
 					
+					//! Return the datablock identified by path
+					int vfsFindFromPathDataBlock(const std::string& data_block_domain,
+												 const std::string& data_block_path,
+												 chaos_vfs::DataBlock **data_block);
+					
 					//! Check if the vfs file exists
 					int vfsFileExist(chaos_vfs::VFSFile *vfs_file,
 									 bool& exists_flag);
@@ -121,7 +129,7 @@ namespace chaos {
 					int idxDeleteDataPackIndex(const DataPackIndex& index);
 					
 					//! perform a search on data pack indexes
-					int idxStartSearchDataPack(DataPackIndexQuery *data_pack_index_query, DBIndexCursor **index_cursor);
+					int idxStartSearchDataPack(const DataPackIndexQuery& _query, DBIndexCursor **index_cursor);
 				};
 			}
 	}

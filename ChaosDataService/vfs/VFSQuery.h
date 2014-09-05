@@ -1,5 +1,5 @@
 /*
- *	VFSQuerableDataFile.h
+ *	VFSQuery.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -23,7 +23,11 @@
 
 #include "VFSDataFile.h"
 
+#include "../db_system/DBDriver.h"
+#include "storage_system/StorageDriver.h"
+
 #include <vector>
+#include <memory>
 
 namespace chaos {
 	namespace data_service {
@@ -33,12 +37,23 @@ namespace chaos {
 			
 			//! Data querable file
 			/*!
-			 This class permit to query a virtual data file and
+			 This class permit to perform a query on the a virtual data file and
 			 reading the result in single or array element.
 			 */
-			class VFSQuerableDataFile: protected VFSDataFile {
+			class VFSQuery {
 				friend class VFSManager;
 				
+				//!index driver pointer
+				chaos_index::DBDriver *db_driver_ptr;
+				
+				//!storage driver pointer
+				storage_system::StorageDriver *storage_driver_ptr;
+				
+				//! query on virtual file system to perform
+				chaos::data_service::db_system::DataPackIndexQuery query;
+				
+				
+				auto_ptr<chaos::data_service::db_system::DBIndexCursor> query_cursor_ptr;
 				//!contructor for a timed query
 				/*!
 				 Construct a data reading file with a timed query adn ordering
@@ -47,26 +62,29 @@ namespace chaos {
 				 \param end_ts the end timestamp of the last neede datapack
 				 \param asc is the order of the resulting packet
 				 */
-				VFSQuerableDataFile(storage_system::StorageDriver *_storage_driver_ptr,
-									db_system::DBDriver *_db_driver_ptr,
-									std::string data_vfs_relative_path,
-									uint64_t start_ts,
-									uint64_t end_ts,
-									bool asc = true);
+				VFSQuery(storage_system::StorageDriver *_storage_driver_ptr,
+						 db_system::DBDriver *_db_driver_ptr,
+						 const chaos::data_service::db_system::DataPackIndexQuery& _query);
 				
+				
+				//! load data block containing index
+				int getDatablockForIndex(const db_system::DataPackIndexQueryResult& index, vfs::DataBlock **datablock_ptr);
+				
+				//! return a datapack for the index
+				int getDataPackForIndex(const db_system::DataPackIndexQueryResult& index);
 			public:
 				
 				//! ensure that a datablock is not null
 				/*!
 				 usefullt to get the current lcoation before write the first data pack.
 				 */
-				int prefetchData();
+				int executeQuery();
 				
 				// read a single query result
-				int read(void *data);
+				int nextDataPack(void **data);
 				
 				// read a bunch of result data
-				int readn(std::vector<void*> &readed_pack, int to_read);
+				int nextNDataPack(std::vector<void*> &readed_pack, int to_read);
 			};
 			
 		}

@@ -42,9 +42,15 @@ namespace chaos {
 				
 				//!
 				DBDriver *driver_ptr;
+				
+				//! the query to pperform
+				DataPackIndexQuery query;
 			public:
 				//! private constructor
-				DBIndexCursor(DBDriver *_driver_ptr);
+				DBIndexCursor(DBDriver *_driver_ptr,
+							  const DataPackIndexQuery& _query);
+				
+				virtual ~DBIndexCursor();
 				
 				//!
 				uint32_t getResultPageDimension();

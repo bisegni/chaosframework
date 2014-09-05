@@ -25,7 +25,6 @@ using namespace chaos::data_service::db_system;
 using namespace chaos::data_service::vfs;
 
 DBDriver::DBDriver(std::string alias):NamedService(alias) {
-	
 }
 
 DBDriver::~DBDriver() {

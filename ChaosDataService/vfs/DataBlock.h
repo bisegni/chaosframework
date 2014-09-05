@@ -60,6 +60,9 @@ namespace chaos {
 				//! it not consider the root path of driver configuration
 				std::string vfs_path;
 				
+				//! domain that contains the data block
+				std::string vfs_domain;
+				
 				//! driver private data
 				void *driver_private_data;
 				
@@ -71,20 +74,26 @@ namespace chaos {
 							max_reacheable_size(0),
 							current_work_position(0),
 							creation_time(0),
-							driver_private_data(NULL){}
+							driver_private_data(NULL),
+							vfs_path(""),
+							vfs_domain(""){}
 			};
 			
 			class PathFileLocation {
 			protected:
+				//! domain of the datapack
+				std::string block_vfs_domain;
 				//! location into the virtual file of the datablock
 				std::string block_vfs_path;
 				//! is th offset, whitin the datablock, where the datapack begin
 				uint64_t offset;
 				
 			public:
-				PathFileLocation():block_vfs_path(""), offset(0){}
-				PathFileLocation(const std::string& _block_vfs_path,
+				PathFileLocation():block_vfs_domain(""), block_vfs_path(""), offset(0){}
+				PathFileLocation(const std::string& _block_vfs_domain,
+								 const std::string& _block_vfs_path,
 								 uint64_t _offset):
+				block_vfs_domain(_block_vfs_domain),
 				block_vfs_path(_block_vfs_path),
 				offset(_offset){};
 				
@@ -95,6 +104,8 @@ namespace chaos {
 				virtual uint64_t getOffset(){return offset;}
 				
 				virtual std::string getBlockVFSPath() {return block_vfs_path;}
+				
+				virtual std::string getBlockVFSDomain() {return block_vfs_domain;}
 			};
 			
 			//! define a pointer to a location whitin a virtual file
@@ -108,8 +119,14 @@ namespace chaos {
 			
 			public:
 				FileLocationPointer():PathFileLocation(), data_block(NULL){}
-				FileLocationPointer(DataBlock *_data_block, uint64_t _offset):PathFileLocation(), data_block(_data_block){
-					if(data_block) block_vfs_path = _data_block->vfs_path;
+				FileLocationPointer(DataBlock *_data_block,
+									uint64_t _offset):
+					PathFileLocation(),
+					data_block(_data_block){
+					if(data_block) {
+						block_vfs_domain = _data_block->vfs_domain;
+						block_vfs_path = _data_block->vfs_path;
+					}
 					offset = _offset;
 				}
 				~FileLocationPointer(){};

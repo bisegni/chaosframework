@@ -200,7 +200,7 @@ int MongoDBDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,
 		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_VALID_UNTIL_TS, mongo::Date_t(data_block->invalidation_timestamp));
 		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_MAX_BLOCK_SIZE, (long long)data_block->max_reacheable_size);
 		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH, data_block->vfs_path);
-		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN, vfs_file->getVFSFileInfo()->vfs_domain);
+		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN, (data_block->vfs_domain = vfs_file->getVFSFileInfo()->vfs_domain));
 		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_CURRENT_WORK_POSITION, (long long)0);
 		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_HB, mongo::Date_t(chaos::TimingUtil::getTimeStamp()));
 		
@@ -367,8 +367,8 @@ int MongoDBDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 
 //! Set the datablock current position
 int MongoDBDriver::vfsSetHeartbeatOnDatablock(chaos_vfs::VFSFile *vfs_file,
-												   chaos_vfs::DataBlock *data_block,
-												   uint64_t timestamp) {
+											  chaos_vfs::DataBlock *data_block,
+											  uint64_t timestamp) {
 	int err = 0;
 	mongo::BSONObjBuilder bson_block_query;
 	mongo::BSONObjBuilder bson_block_update;
@@ -399,7 +399,7 @@ int MongoDBDriver::vfsSetHeartbeatOnDatablock(chaos_vfs::VFSFile *vfs_file,
 
 //! Set the datablock current position
 int MongoDBDriver::vfsUpdateDatablockCurrentWorkPosition(chaos_vfs::VFSFile *vfs_file,
-															  chaos_vfs::DataBlock *data_block) {
+														 chaos_vfs::DataBlock *data_block) {
 	int err = 0;
 	mongo::BSONObjBuilder bson_search;
 	mongo::BSONObjBuilder bson_block_query;
@@ -439,12 +439,26 @@ int MongoDBDriver::vfsUpdateDatablockCurrentWorkPosition(chaos_vfs::VFSFile *vfs
 	return err;
 }
 
+//! fill a complete datablock
+chaos_vfs::DataBlock *MongoDBDriver::fillDatablock(const mongo::BSONObj& full_datablock_query_result, chaos_vfs::DataBlock *data_block) {
+	if(!data_block) return data_block;
+	
+	//set the field
+	(*data_block).index_driver_uinique_id = full_datablock_query_result["_id"].OID().toString();
+	(*data_block).creation_time = full_datablock_query_result.getField(MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS).numberLong();
+	(*data_block).invalidation_timestamp = full_datablock_query_result.getField(MONGO_DB_FIELD_DATA_BLOCK_VALID_UNTIL_TS).numberLong();
+	(*data_block).max_reacheable_size = full_datablock_query_result.getField(MONGO_DB_FIELD_DATA_BLOCK_MAX_BLOCK_SIZE).numberLong();
+	(*data_block).vfs_domain = full_datablock_query_result.getField(MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN).String();
+	(*data_block).vfs_path = full_datablock_query_result.getField(MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH).String();
+	return data_block;
+}
+
 //! Return the next available datablock created since timestamp
 int MongoDBDriver::vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
-												  uint64_t timestamp,
-												  bool direction,
-												  int state,
-												  chaos_vfs::DataBlock **data_block) {
+											 uint64_t timestamp,
+											 bool direction,
+											 int state,
+											 chaos_vfs::DataBlock **data_block) {
 	int err = 0;
 	mongo::BSONObjBuilder query_master;
 	mongo::BSONObj result;
@@ -476,16 +490,47 @@ int MongoDBDriver::vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
 			// read the block element
 			
 			//get new empty datablock
-			*data_block = new chaos_vfs::DataBlock();
+			*data_block = fillDatablock(result, new chaos_vfs::DataBlock());
+		}
+	} catch( const mongo::DBException &e ) {
+		MDBID_LERR_ << e.what();
+		err = -1;
+	}
+	return err;
+}
+
+//! Return the datablock identified by path
+int MongoDBDriver::vfsFindFromPathDataBlock(const std::string& data_block_domain,
+											const std::string& data_block_path,
+											chaos_vfs::DataBlock **data_block) {
+	int err = 0;
+	mongo::BSONObj result;
+	mongo::BSONObjBuilder query_data_blocks;
+	try{
+		//search for domain
+		query_data_blocks << MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN << data_block_domain;
+		
+		//search on file path, the datablock is always the end token of the path
+		
+		query_data_blocks << MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH << data_block_path;
+		
+		//search for state
+		query_data_blocks << MONGO_DB_FIELD_DATA_BLOCK_STATE << chaos_vfs::data_block_state::DataBlockStateQuerable;
+		
+		mongo::BSONObj q = query_data_blocks.obj();
+		DEBUG_CODE(MDBID_LDBG_ << "vfsFindFromPathDataBlock query ---------------------------------------------";)
+		DEBUG_CODE(MDBID_LDBG_ << "Query: "  << q.jsonString();)
+		DEBUG_CODE(MDBID_LDBG_ << "vfsFindFromPathDataBlock query ---------------------------------------------";)
+		
+		if((err = ha_connection_pool->findOne(result, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_VFS_VBLOCK_COLLECTION), q))) {
+			MDBID_LERR_ << "Error " << err << " creting vfs file entry";
+		} else if(result.isEmpty()){
+			MDBID_LERR_ << "No datablock found for the criteria";
+		} else {
+			// read the block element
 			
-			//set the field
-			(*data_block)->index_driver_uinique_id = result["_id"].OID().toString();
-			(*data_block)->creation_time = result.getField(MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS).numberLong();
-			(*data_block)->invalidation_timestamp = result.getField(MONGO_DB_FIELD_DATA_BLOCK_VALID_UNTIL_TS).numberLong();
-			(*data_block)->max_reacheable_size = result.getField(MONGO_DB_FIELD_DATA_BLOCK_MAX_BLOCK_SIZE).numberLong();
-			
-			std::string path = result.getField(MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH).String();
-			(*data_block)->vfs_path = path;
+			//get new empty datablock
+			*data_block = fillDatablock(result, new chaos_vfs::DataBlock());
 		}
 	} catch( const mongo::DBException &e ) {
 		MDBID_LERR_ << e.what();
@@ -595,6 +640,7 @@ int MongoDBDriver::idxAddDataPackIndex(const DataPackIndex& index) {
 		index_builder << MONGO_DB_IDX_DATA_PACK_DID << index.did;
 		index_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS << mongo::Date_t(index.acquisition_ts);
 		index_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC << (int64_t)index.acquisition_ts;
+		index_builder << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_DOMAIN << getDataBlockFromFileLocation(index.dst_location)->vfs_domain;
 		index_builder << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_PATH << getDataBlockFromFileLocation(index.dst_location)->vfs_path;
 		index_builder << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET << (int64_t)getDataBlockOffsetFromFileLocation(index.dst_location);
 		index_builder << MONGO_DB_IDX_DATA_PACK_SIZE << (int32_t)index.datapack_size;
@@ -636,14 +682,14 @@ int MongoDBDriver::idxDeleteDataPackIndex(const DataPackIndex& index) {
 }
 
 //! perform a search on data pack indexes
-int MongoDBDriver::idxStartSearchDataPack(DataPackIndexQuery *data_pack_index_query, DBIndexCursor **index_cursor) {
+int MongoDBDriver::idxStartSearchDataPack(const DataPackIndexQuery& data_pack_index_query, DBIndexCursor **index_cursor) {
 	*index_cursor = new MongoDBIndexCursor(this, data_pack_index_query);
 	return 0;
 }
 
 //-------------------------- protected method------------------------------
 //! protected methdo that perform the real paged query on index called by the cursor
-int MongoDBDriver::idxSearchResultCountDataPack(const DataPackIndexQuery & data_pack_index_query, uint64_t num_of_result) {
+int MongoDBDriver::idxSearchResultCountDataPack(const DataPackIndexQuery& data_pack_index_query, uint64_t num_of_result) {
 	int err = 0;
 	mongo::BSONObjBuilder	index_search_builder;
 	mongo::BSONObjBuilder	return_field;
@@ -668,7 +714,7 @@ int MongoDBDriver::idxSearchResultCountDataPack(const DataPackIndexQuery & data_
 }
 
 //! perform a search on data pack indexes
-int MongoDBDriver::idxSearchDataPack(const DataPackIndexQuery & data_pack_index_query, std::auto_ptr<mongo::DBClientCursor>& cursor) {
+int MongoDBDriver::idxSearchDataPack(const DataPackIndexQuery& data_pack_index_query, std::auto_ptr<mongo::DBClientCursor>& cursor) {
 	int err = 0;
 	mongo::BSONObjBuilder	index_search_builder;
 	mongo::BSONObjBuilder	return_field;

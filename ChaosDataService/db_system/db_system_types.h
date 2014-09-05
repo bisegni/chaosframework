@@ -63,14 +63,27 @@ namespace chaos {
 			
 			//! define the query that can be applied to the DataPackINdex
 			struct DataPackIndexQuery {
+				
+				//! device identification
+				std::string did;
+				
 				//! start timestamp
 				uint64_t	start_ts;
 				
 				//! end timestamp
 				uint64_t	end_ts;
-				
-				//! device identification
-				std::string did;
+
+				//! default constructor
+				DataPackIndexQuery():
+				did(""), start_ts(0), end_ts(0)
+				{};
+
+				//! copy constructor
+				DataPackIndexQuery(const std::string & _did,
+								   uint64_t _start_ts,
+								   uint64_t _end_ts):
+				did(_did), start_ts(_start_ts), end_ts(_end_ts)
+				{};
 			};
 			
 			//! db server list type

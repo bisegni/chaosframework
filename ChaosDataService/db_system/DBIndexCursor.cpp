@@ -25,9 +25,15 @@ using namespace chaos::data_service::db_system;
 #define RESULT_PAGE_DIMENSION 30
 
 //! private constructor
-DBIndexCursor::DBIndexCursor(DBDriver *_driver_ptr):
+DBIndexCursor::DBIndexCursor(DBDriver *_driver_ptr,
+							 const DataPackIndexQuery& _query):
 result_page_dimension(RESULT_PAGE_DIMENSION),
-driver_ptr(_driver_ptr){
+driver_ptr(_driver_ptr),
+query(_query){
+	
+}
+
+DBIndexCursor::~DBIndexCursor() {
 	
 }
 

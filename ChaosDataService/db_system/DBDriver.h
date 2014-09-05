@@ -195,7 +195,7 @@ namespace chaos {
 				virtual int idxDeleteDataPackIndex(const DataPackIndex& index) = 0;
 				
 				//! perform a search on data pack indexes
-				virtual int idxStartSearchDataPack(DataPackIndexQuery *data_pack_index_query, DBIndexCursor **index_cursor) = 0;
+				virtual int idxStartSearchDataPack(const chaos::data_service::db_system::DataPackIndexQuery& _query, DBIndexCursor **index_cursor) = 0;
 			};
 		}
 	}

@@ -46,14 +46,11 @@ namespace chaos {
 				//! point to the last max timestamp paged search
 				uint64_t last_max_ts_searched;
 				
-				DataPackIndexQuery *query;
-
-				
 				std::auto_ptr<mongo::DBClientCursor> cursor;
 				
 				//! private constructor
 				MongoDBIndexCursor(DBDriver *_driver_ptr,
-								   DataPackIndexQuery *_query);
+								   const DataPackIndexQuery &_query);
 				
 				int performNextPagedQuery();
 				
