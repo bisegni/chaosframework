@@ -19,7 +19,6 @@
  */
 
 #include "StageDataConsumer.h"
-#include "worker/IndexStageDataWorker.h"
 
 #include <unistd.h>
 #include <chaos/common/utility/UUIDUtil.h>

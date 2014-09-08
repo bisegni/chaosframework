@@ -46,6 +46,7 @@ using namespace std;
 using namespace boost;
 using namespace boost::algorithm;
 
+namespace chaos_data = chaos::common::data;
 namespace chaos_direct_io = chaos::common::direct_io;
 namespace chaos_dio_channel = chaos::common::direct_io::channel;
 
@@ -171,26 +172,6 @@ char* IODirectIODriver::retriveRawData(size_t *dim)  throw(CException) {
 	next_client->device_client_channel->requestLastOutputData((void**)&result, size);
 	*dim = (size_t)size;
 	return result;
-}
-
-//we have request data and this arrive with the put opcode
-int IODirectIODriver::consumePutEvent(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header,
-									   void *channel_data,
-									   uint32_t channel_data_len,
-									   common::direct_io::DirectIOSynchronousAnswerPtr synchronous_answer) {
-	delete(header);
-	if(channel_data)free(channel_data);
-	return 0;
-}
-
-int IODirectIODriver::consumeGetEvent(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header,
-									   void *channel_data,
-									   uint32_t channel_data_len,
-									   common::direct_io::DirectIOSynchronousAnswerPtr synchronous_answer) {
-	delete(header);
-	if(channel_data)free(channel_data);
-	
-	return 0;
 }
 
 /*

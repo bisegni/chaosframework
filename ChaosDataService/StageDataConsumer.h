@@ -25,7 +25,6 @@
 #include "worker/DataWorker.h"
 #include "indexer/StageDataVFileScanner.h"
 
-#include <chaos/common/utility/ObjectSlot.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/utility/TemplatedKeyValueHash.h>
 #include <chaos/common/async_central/AsyncCentralManager.h>
@@ -74,8 +73,6 @@ namespace chaos{
 			ChaosDataServiceSetting	*settings;
 			vfs::VFSManager *vfs_manager_ptr;
 			db_system::DBDriver *db_driver_ptr;
-			
-			chaos::common::utility::ObjectSlot<chaos::data_service::worker::DataWorker*> indexer_stage_worker_list;
 
 			//thread managment
 			bool work_on_stage;

@@ -21,6 +21,7 @@
 #ifndef CHAOSFramework_index_system_h
 #define CHAOSFramework_index_system_h
 
+#include "db_system_types.h"
 #include "DBDriver.h"
 #include "MongoDBDriver.h"
 

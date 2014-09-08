@@ -34,6 +34,8 @@ namespace chaos{
 		//query data consumer
 #define OPT_QUERY_CONSUMER_VFILE_MANTAINANCE_DELAY		"qdc_vfile_mantain_delay"
 #define QUERY_CONSUMER_VFILE_MANTAINANCE_DEFAULT_DELAY	60
+#define OPT_QUERY_CONSUMER_QM_THREAD_POOL_SIZE			"query_thread_pool_size"
+#define QUERY_CONSUMER_QM_THREAD_POOL_SIZE				2
 		
 		//answer configuration
 #define OPT_ANSWER_WORKER_NUM		"answer_worker_num"
@@ -81,6 +83,7 @@ namespace chaos{
 			
 			//----------query consumer---------------
 			unsigned int				vfile_mantainer_delay;
+			unsigned int				query_manager_thread_poll_size;
 			
 			//----------answer worker------------------
 			unsigned int				answer_worker_num;

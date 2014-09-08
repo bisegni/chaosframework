@@ -59,6 +59,11 @@ int main(int argc, char * argv[]) {
 																								 QUERY_CONSUMER_VFILE_MANTAINANCE_DEFAULT_DELAY,
 																								 &ChaosDataService::getInstance()->settings.vfile_mantainer_delay);
 		
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_QUERY_CONSUMER_QM_THREAD_POOL_SIZE,
+																									 "Number ofthread in the pool of query consumer",
+																									 QUERY_CONSUMER_QM_THREAD_POOL_SIZE,
+																									 &ChaosDataService::getInstance()->settings.query_manager_thread_poll_size);
+		
 		//answer conf
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_ANSWER_WORKER_NUM,
 																								 "The number of the answer worker",

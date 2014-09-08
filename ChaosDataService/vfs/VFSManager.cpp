@@ -320,6 +320,18 @@ int VFSManager::getWriteableDataFile(std::string data_vfs_relative_path,
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
+int VFSManager::getVFSQuery(const chaos::data_service::db_system::DataPackIndexQuery& _query, VFSQuery **vfs_query) {
+	int err = 0;
+	*vfs_query = new VFSQuery(storage_driver_ptr, db_driver_ptr, _query);
+	if(!*vfs_query) {
+		err = -1;
+	}
+	return err;
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 int VFSManager::releaseFile(VFSFile *l_file) {
 	CHAOS_ASSERT(l_file)
 	DEBUG_CODE(VFSFM_LDBG_ << "Delete vfs fiel with path->" << l_file->vfs_file_info.vfs_fpath;)

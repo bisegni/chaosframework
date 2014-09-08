@@ -25,6 +25,7 @@
 #include "VFSStageWriteableFile.h"
 #include "VFSDataWriteableFile.h"
 #include "VFSStageReadableFile.h"
+#include "VFSQuery.h"
 #include "../db_system/DBDriver.h"
 #include "storage_system/StorageDriver.h"
 
@@ -98,6 +99,8 @@ namespace chaos {
 				int getReadableStageFile(std::string stage_vfs_relative_path, VFSStageReadableFile **rsf_file);
 				
 				int getWriteableDataFile(std::string data_vfs_relative_path, VFSDataWriteableFile **wdf_file);
+				
+				int getVFSQuery(const chaos::data_service::db_system::DataPackIndexQuery& _query, VFSQuery **vfs_query);
 				
 				int releaseFile(VFSFile *l_file);
 				

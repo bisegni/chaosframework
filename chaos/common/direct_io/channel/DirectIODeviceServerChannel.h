@@ -33,6 +33,13 @@ namespace chaos {
 		namespace direct_io {
 			namespace channel {
 				
+#define DELETE_HEADER_DATA(h,d)\
+if(h) free(h);\
+if(d) free(d);
+
+#define DELETE_HEADER(h)\
+if(h) free(h);
+				
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DirectIODeviceServerChannel, DirectIOVirtualServerChannel), public chaos::common::direct_io::DirectIOEndpointHandler {
                     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIODeviceServerChannel)
 				public:
@@ -45,15 +52,43 @@ namespace chaos {
                          \param channel_opcode the opcode of the comand received by the channel
                          \param channel_header_ptr the abstract pointr for the channel header. Implementations need to cast it according to opcode value
                          \param channel_data the data (if speified by channel)
+						 \synchronous_answer possible async answer (not used for now)
 						 */
 						virtual int consumePutEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header,
 													 void *channel_data,
 													 uint32_t channel_data_len,
-													 DirectIOSynchronousAnswerPtr synchronous_answer) = 0;
+													 DirectIOSynchronousAnswerPtr synchronous_answer){DELETE_HEADER_DATA(header, channel_data) return 0;};
+						
+						//! Receive the key of the live data channel to read
+						/*!
+							Receive the key to fetch from the live cache and fill the synchronous_answer to return
+							in synchronous way the ansert to the client
+						 \param header header containing the information where send the answer
+						 \param key_data the data of the key
+						 \param key_len the size of the key data
+						 \param synchronous_answer the answer structure to return the found value associated to the key
+								on the live system
+						 */
 						virtual int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header,
-													 void *channel_data,
-													 uint32_t channel_data_len,
-													 DirectIOSynchronousAnswerPtr synchronous_answer) = 0;
+													 void *key_data,
+													 uint32_t key_len,
+													 DirectIOSynchronousAnswerPtr synchronous_answer){DELETE_HEADER_DATA(header, key_data) return 0;};
+						
+						//! Receive the query information for search on data cloud
+						/*!
+							The CData wrapper received contains all the infromation needed to perform query 
+							on chaos data cloud. The answer need to be sent in asynchornous way.
+						 \param header of the request containing the naswer information
+						 \param search_key the key that we need to query
+						 \param search_start_ts the start of the time that delimit the lower time stamp of result
+						 \param search_end_ts the end of the time stamp that delimit the upper time stamp of result
+						 \param synchronous_answer the synchronous answer (not used at the moment)
+						 */
+						virtual int consumeDataCloudQuery(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud *header,
+														  const std::string& search_key,
+														  uint64_t search_start_ts,
+														  uint64_t search_end_ts,
+														  DirectIOSynchronousAnswerPtr synchronous_answer){DELETE_HEADER(header) return 0;};
 					} DirectIODeviceServerChannelHandler;
 
                     void setHandler(DirectIODeviceServerChannelHandler *_handler);

@@ -46,6 +46,7 @@ namespace chaos{
     using namespace std;
     using namespace boost;
 	
+	namespace chaos_data = chaos::common::data;
 	namespace chaos_utility = chaos::common::utility;
     namespace chaos_direct_io = chaos::common::direct_io;
     namespace chaos_dio_channel = chaos::common::direct_io::channel;
@@ -91,15 +92,6 @@ namespace chaos{
 		
 		WaitSemaphore wait_get_answer;
 		boost::shared_mutex mutext_feeder;
-		
-		int consumePutEvent(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header,
-							 void *channel_data,
-							 uint32_t channel_data_len,
-							 common::direct_io::DirectIOSynchronousAnswerPtr synchronous_answer);
-		int consumeGetEvent(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header,
-							 void *channel_data,
-							 uint32_t channel_data_len,
-							 common::direct_io::DirectIOSynchronousAnswerPtr synchronous_answer);
 		
 		IODData data_cache;
 		boost::atomic<uint8_t> read_write_index;

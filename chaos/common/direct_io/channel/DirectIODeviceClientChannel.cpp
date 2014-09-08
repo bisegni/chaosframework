@@ -45,7 +45,7 @@ DirectIOVirtualClientChannel(alias, DIODataset_Channel_Index, true),
 device_id(""),
 put_mode(DirectIODeviceClientChannelPutModeLiveOnly),
 put_opcode_header(NULL) {
-
+	
 }
 
 DirectIODeviceClientChannel::~DirectIODeviceClientChannel() {
@@ -102,9 +102,9 @@ void DirectIODeviceClientChannel::setAnswerServerInfo(uint16_t p_server_port, ui
 }
 
 int64_t DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(void *buffer, uint32_t buffer_len) {
-	DirectIODataPack *data_pack = new DirectIODataPack();
+	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
 	std::memset(data_pack, 0, sizeof(DirectIODataPack));
-
+	
 	//set opcode
 	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodePutOutput);
 	
@@ -112,20 +112,20 @@ int64_t DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(void *buffer
 	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, put_opcode_header, (uint32_t)PUT_HEADER_LEN)
 	//set data if the have some
 	if(buffer_len)DIRECT_IO_SET_CHANNEL_DATA(data_pack, buffer, buffer_len)
-	return client_instance->sendPriorityData(this, completeDataPack(data_pack));
+		return client_instance->sendPriorityData(this, completeDataPack(data_pack));
 }
 
 //! Send device serialization with priority
 int64_t DirectIODeviceClientChannel::requestLastOutputData(void **result, uint32_t &size) {
 	uint64_t err = 0;
 	DirectIOSynchronousAnswer *answer = NULL;
-	DirectIODataPack *data_pack = new DirectIODataPack();
+	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
 	std::memset(data_pack, 0, sizeof(DirectIODataPack));
-
-        //set opcode
+	
+	//set opcode
 	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeGetLastOutput);
 	
-        //set header
+	//set header
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, &get_opcode_header, sizeof(DirectIODeviceChannelHeaderGetOpcode))
 	DIRECT_IO_SET_CHANNEL_DATA(data_pack, (void*)device_id.c_str(), (uint32_t)device_id.size())
 	//send data with synchronous answer flag
@@ -146,20 +146,56 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(void **result, uint32
 	return err;
 }
 
+int64_t DirectIODeviceClientChannel::queryDataCloud(std::string keys, uint64_t start_ts, uint64_t end_ts) {
+	chaos_data::CDataWrapper query_description;
+	//allcoate the data to send direct io pack
+	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
+	DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr query_data_lcoud_header = (DirectIODeviceChannelHeaderOpcodeQueryDataCloud*)calloc(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloud), 1);
+				
+	//fill the query CDataWrapper
+	query_description.addStringValue(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, keys);
+	query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64, (int64_t)start_ts);
+	query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64, (int64_t)end_ts);
+	
+	//fill the hader
+    query_data_lcoud_header->field.address = TO_LITTE_ENDNS_NUM(uint64_t, answer_server_info.ip);
+    query_data_lcoud_header->field.p_port = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.p_server_port);
+	query_data_lcoud_header->field.s_port = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.s_server_port);
+    query_data_lcoud_header->field.endpoint = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.endpoint);
+	
+	//set opcode
+	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeQueryDataCloud);
+	
+	//get the buffer to send
+	auto_ptr<chaos_data::SerializationBuffer> buffer(query_description.getBSONData());
+	
+	//the frre of memeory is managed in this class in async way
+	buffer->disposeOnDelete = false;
+	
+	//set data for the query
+	DIRECT_IO_SET_CHANNEL_DATA(data_pack, (void*)buffer->getBufferPtr(), (uint32_t)buffer->getBufferLen());
+	
+	//send query request
+	return client_instance->sendPriorityData(this, completeDataPack(data_pack));
+}
+
+//dispose the resuource forwarded in async way
 void DirectIODeviceClientChannel::freeSentData(void *data, DisposeSentMemoryInfo& dispose_memory_info) {
 	switch (dispose_memory_info.sent_part) {
-		case 1:
 			//header
+		case 1:
 			//free(data); the ehader must not be deleted
 			break;
-			
-		case 2: // data
-			if(static_cast<opcode::DeviceChannelOpcode>(dispose_memory_info.sent_opcode) == opcode::DeviceChannelOpcodePutOutput) {
-				//the data sent with the opcode DeviceChannelOpcodePutOutput is the output dataset and need to be deleted
-				free(data);
+			// data
+		case 2: {
+			switch(static_cast<opcode::DeviceChannelOpcode>(dispose_memory_info.sent_opcode)) {
+				case opcode::DeviceChannelOpcodePutOutput:
+				case opcode::DeviceChannelOpcodeQueryDataCloud:
+					free(data);
+					break;
 			}
+		}
 			break;
 		default:break;
 	}
-
 }

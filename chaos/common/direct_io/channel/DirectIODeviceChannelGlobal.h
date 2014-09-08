@@ -26,9 +26,9 @@ namespace chaos {
 					 */
 					typedef enum DeviceChannelOpcode {
 						DeviceChannelOpcodePutOutput				= 1,	/**< send the output dataset */
-						DeviceChannelOpcodeGetLastOutput            = 2,	/**< request the output dataset*/
-						DeviceChannelOpcodePutInput					= 4,	/**< send the input dataset */
-						DeviceChannelOpcodePutNewReceivedCommand	= 8	/**< send over the channel the received command */
+						DeviceChannelOpcodeGetLastOutput            = 2,	/**< request the last output dataset from live cache*/
+						DeviceChannelOpcodeQueryDataCloud			= 4		/**< query the chaos data cloud */
+						//DeviceChannelOpcodePutNewReceivedCommand	= 8		/**< send over the channel the received command */
 					} DeviceChannelOpcode;
 					
 					/*!
@@ -41,6 +41,14 @@ namespace chaos {
 					} PerformanceChannelOpcode;
 				}
 				
+				/*!
+				 Parameter for the query used in CDataWrapper structure
+				 */
+				namespace DeviceChannelOpcodeQueryDataCloudParam {
+					static const char * const QUERY_PARAM_STAR_TS_I64			= "qp_data_cloud_start_ts";
+					static const char * const QUERY_PARAM_END_TS_I64			= "qp_data_cloud_end_ts";
+					static const char * const QUERY_PARAM_SEARCH_KEY_STRING		= "qp_data_cloud_key";
+				}
                 
                 //! Name space for grupping the varius headers for every DeviceChannelOpcode
                 namespace opcode_headers {
@@ -50,11 +58,11 @@ namespace chaos {
 					
                     //! Heder for the DeviceChannelOpcodePutOutput[WithCache] opcodes
                     typedef struct DirectIODeviceChannelHeaderPutOpcode {
-							//! The 8 bit tag field
+						//! The 8 bit tag field
 						uint8_t tag;
-                            //! The 8 bit key length field
+						//! The 8 bit key length field
                         uint8_t key_len;
-							//the pointer to key data
+						//the pointer to key data
 						void*   key_data;
                     } DirectIODeviceChannelHeaderData, *DirectIODeviceChannelHeaderDataPtr;
 					
@@ -75,13 +83,34 @@ namespace chaos {
                             uint16_t	p_port;
 							//! The priority port value for the device that we need to get
                             uint16_t	s_port;
-                                //! The 32bit representation for the ip where send the answer
+							//! The 32bit representation for the ip where send the answer
                             uint64_t	address;
                         } field;
                     } DirectIODeviceChannelHeaderGetOpcode, *DirectIODeviceChannelHeaderGetOpcodePtr;
 					
+#define QUERY_DATA_CLOUD_OPCODE_HEADER_LEN 14
+					//! Header for the DirectIODeviceChannelHeaderOpcodeQueryDataCloud opcode
+					/*!
+					 this is the header for query on data cloud. The header contains information
+					 for answer to a determinated ip:sport:pport:end:endpoint respecting the
+					 directIO formalism.
+					 */
+					typedef	union DirectIODeviceChannelHeaderOpcodeQueryDataCloud {
+						//raw data representation of the header
+						char raw_data[QUERY_DATA_CLOUD_OPCODE_HEADER_LEN];
+						struct header {
+							//! The endpoint where the channel is published
+							uint16_t	endpoint;
+							//! The priority port value for the device that we need to get
+							uint16_t	p_port;
+							//! The priority port value for the device that we need to get
+							uint16_t	s_port;
+							//! The 32bit representation for the ip where send the answer
+							uint64_t	address;
+						} field;
+					} DirectIODeviceChannelHeaderOpcodeQueryDataCloud, *DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr;
 					
-					//! Header for the DeviceChannelOpcodeGetOutputFromCache opcode
+					//! Header for the DirectIOPerformanceChannelHeaderOpcodeRoundTrip opcode
 					/*!
 					 this is the header for request the last output channel dataset
 					 found on shared dataproxy cache. The key of the item to search

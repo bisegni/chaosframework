@@ -85,6 +85,15 @@ namespace chaos {
 					
 					//! Send a request for the last output data
                     int64_t requestLastOutputData(void **result, uint32_t &size);
+					
+					//! Perform a temporal query on a key
+					/*!
+					 Perform a query on a data cloud key(aka device id)
+					 \param key to search
+					 \param start_ts start of timestamp to search
+					 \param end_ts end of the timestamp where limit the search
+					 */
+                    int64_t queryDataCloud(std::string keys, uint64_t start_ts, uint64_t end_ts);
 				};
 
 				
