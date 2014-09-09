@@ -228,7 +228,7 @@ int PosixStorageDriver::openBlock(chaos_vfs::DataBlock *data_block, unsigned int
 }
 
 // open a block of a determinated type with
-int PosixStorageDriver::openBlock(std::string vfs_path, unsigned int flags, chaos_vfs::DataBlock **data_block) {
+int PosixStorageDriver::openBlock(const std::string& vfs_path, unsigned int flags, chaos_vfs::DataBlock **data_block) {
 	CHAOS_ASSERT(data_block)
 	boost_fs::path _path = getAbsolutePath(vfs_path);
 	boost_fs::fstream *ofs = NULL;
@@ -464,7 +464,7 @@ int PosixStorageDriver::flush(chaos_vfs::DataBlock *data_block) {
 }
 
 //! create a directory
-int PosixStorageDriver::createDirectory(std::string vfs_path) {
+int PosixStorageDriver::createDirectory(const std::string& vfs_path) {
 	//get absolute path
 	int err = 0;
 	boost::filesystem::path fs_path = getAbsolutePath(vfs_path);
@@ -488,7 +488,7 @@ int PosixStorageDriver::createDirectory(std::string vfs_path) {
 }
 
 //! create a directory
-int PosixStorageDriver::createPath(std::string vfs_path) {
+int PosixStorageDriver::createPath(const std::string& vfs_path) {
 	int err = 0;
 	system::error_code error_code;
 	boost::filesystem::path fs_path = getAbsolutePath(vfs_path);
@@ -505,7 +505,7 @@ int PosixStorageDriver::createPath(std::string vfs_path) {
 }
 
 //! delete a directory
-int PosixStorageDriver::deletePath(std::string vfs_path, bool all) {
+int PosixStorageDriver::deletePath(const std::string& vfs_path, bool all) {
 	int err = 0;
 	system::error_code error_code;
 	boost::filesystem::path fs_path = getAbsolutePath(vfs_path);

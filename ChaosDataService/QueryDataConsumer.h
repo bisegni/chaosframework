@@ -69,7 +69,7 @@ namespace chaos{
 			boost::atomic<uint16_t> device_data_worker_index;
 			chaos::data_service::worker::DataWorker	**device_data_worker;
 			
-			QueryEngine *query_engine;
+			query_engine::QueryEngine *query_engine;
 			
             int consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header,
 								void *channel_data,

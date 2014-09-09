@@ -20,7 +20,7 @@
 #ifndef __CHAOSFramework__QueryAnswerEngine__
 #define __CHAOSFramework__QueryAnswerEngine__
 
-#include "vfs/vfs.h"
+#include "../vfs/vfs.h"
 
 #include <chaos/common/utility/StartableService.h>
 
@@ -29,43 +29,52 @@
 #include <boost/lockfree/queue.hpp>
 
 namespace chaos {
-	    namespace data_service {
+	namespace data_service {
+		namespace query_engine {
 			class QueryEngine;
 			
-		
-			//! Class that manage the answer of the query
+			
+			//! Class that manage the query at higer level
 			/*!
-			 This is the root class that perform and answer to a query request. The query and the forwarding are done in scheduling way. 
-			 A thread pool is created that perform a "step" of a query. A step is or a real query execution of a forward of a "page" of a result, 
+			 This is the root class that perform and answer to a query request. The query and the forwarding are done in scheduling way.
+			 A thread pool is created that perform a "step" of a query. A step is or a real query execution of a forward of a "page" of a result,
 			 then another query is "Stepped". Wuen a query has not more page it is deleted and the connection to the client is closed
 			 */
 			class DataCloudQuery {
 				friend class QueryEngine;
 				
+				//! the phase of query
 				typedef enum DataCloudQueryPhase {
-					DataCloudQueryPhaseEmpty = 0,
-					DataCloudQueryPhaseSearch,
-					DataCloudQueryPhaseAnswer,
-					DataCloudQueryPhaseError,
-					DataCloudQueryPhaseEnd
+					DataCloudQueryPhaseEmpty = 0,		/**< The query is empty and not configured */
+					DataCloudQueryPhaseNeedSearch,		/**< the query need to phisically execute the qeury on index database */
+					DataCloudQueryPhaseHaveAnswer,		/**< the query have done the query and can begin to fetch data */
+					DataCloudQueryPhaseError,			/**< the query is in error */
+					DataCloudQueryPhaseEnd				/**< the query has ended */
 				} DataCloudQueryPhase;
 				
+				//! the phase of query
 				DataCloudQueryPhase query_phase;
-				//query submission and answer information
+				
+				//! query information
 				db_system::DataPackIndexQuery query;
+				
+				//! DirectIO endpoint where push the found data
 				std::string answer_endpoint;
 				
+				//! vfs query object that abstract the real query on inde and data fetch
 				vfs::VFSQuery *vfs_query;
 			public:
 				DataCloudQuery(const db_system::DataPackIndexQuery& query,
-							   const std::string& answer_endpoint):
-				query_phase(DataCloudQueryPhaseSearch),
-				vfs_query(NULL){};
-				~DataCloudQuery(){};
+							   const std::string& answer_endpoint);
+				~DataCloudQuery();
+				
+				int startQuery();
+				
+				int fecthData(std::vector<vfs::FoundDataPack>& found_data_pack, unsigned int element_to_fecth);
 			};
 			
 			/*!
-			 This class is the central singlet that perform asynchronous answering to the 
+			 This class is the central that perform asynchronous answering to the
 			 data cloud query
 			 */
 			class QueryEngine:
@@ -93,8 +102,8 @@ namespace chaos {
 				//execute a query and manage the result
 				void executeQuery(DataCloudQuery *query);
 			};
-			
 		}
+	}
 }
 
 #endif /* defined(__CHAOSFramework__QueryAnswerEngine__) */

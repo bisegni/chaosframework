@@ -160,6 +160,7 @@
 		325F86EC14D9E59D00CDF35F /* InetUtility.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F86EB14D9E59D00CDF35F /* InetUtility.h */; };
 		325F8B511763AF2300EFE616 /* SlowCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 325F8B4F1763AF2300EFE616 /* SlowCommand.cpp */; };
 		325F8B521763AF2300EFE616 /* SlowCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 325F8B501763AF2300EFE616 /* SlowCommand.h */; };
+		326096C519BF22080032F55E /* DataBlockFetcher.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 326096C319BF22080032F55E /* DataBlockFetcher.cpp */; };
 		32640A27169DCC5800450962 /* BufferTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A09169DCC5800450962 /* BufferTracker.h */; };
 		32640A28169DCC5800450962 /* GarbageThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A0A169DCC5800450962 /* GarbageThread.h */; };
 		32640A29169DCC5800450962 /* DataAggregationInterface.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A0C169DCC5800450962 /* DataAggregationInterface.h */; };
@@ -688,6 +689,8 @@
 		325F86EB14D9E59D00CDF35F /* InetUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InetUtility.h; sourceTree = "<group>"; };
 		325F8B4F1763AF2300EFE616 /* SlowCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SlowCommand.cpp; sourceTree = "<group>"; };
 		325F8B501763AF2300EFE616 /* SlowCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = SlowCommand.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		326096C319BF22080032F55E /* DataBlockFetcher.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataBlockFetcher.cpp; sourceTree = "<group>"; };
+		326096C419BF22080032F55E /* DataBlockFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataBlockFetcher.h; sourceTree = "<group>"; };
 		32640A09169DCC5800450962 /* BufferTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BufferTracker.h; sourceTree = "<group>"; };
 		32640A0A169DCC5800450962 /* GarbageThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GarbageThread.h; sourceTree = "<group>"; };
 		32640A0C169DCC5800450962 /* DataAggregationInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataAggregationInterface.h; sourceTree = "<group>"; };
@@ -1226,10 +1229,9 @@
 				3299363518A7C4F60093E7F2 /* ChaosDataService.h */,
 				322D98FE18A95F9200C0864C /* QueryDataConsumer.cpp */,
 				322D98FF18A95F9200C0864C /* QueryDataConsumer.h */,
-				32AFEB3719BDDACF00AF49F4 /* QueryEngine.cpp */,
-				32AFEB3819BDDACF00AF49F4 /* QueryEngine.h */,
 				3235425A1923A5C70090B8F6 /* StageDataConsumer.cpp */,
 				3235425B1923A5C70090B8F6 /* StageDataConsumer.h */,
+				326096BB19BF04340032F55E /* query_engine */,
 				32556B0A19B5F3DC0004ABC5 /* indexer */,
 				32B159DB18B4C46E0096B58B /* worker */,
 				32FB2171192A582100E9C87A /* db_system */,
@@ -1318,6 +1320,7 @@
 				326CADC618EAB64600E74CEA /* DataBlock.h */,
 				32B9C2291919258800A9A3E4 /* VFSTypes.h */,
 				32502C801923BC260073E4AB /* VFSConsts.h */,
+				326096BF19BF0B060032F55E /* query */,
 				3223253518EC157000ADBA4D /* storage_system */,
 			);
 			path = vfs;
@@ -1414,6 +1417,24 @@
 				32B1090D188C1D6200969D3D /* TestAsyncRpc */,
 				3258AF001935EE4D00A66D44 /* EchitectureTests */,
 			);
+			sourceTree = "<group>";
+		};
+		326096BB19BF04340032F55E /* query_engine */ = {
+			isa = PBXGroup;
+			children = (
+				32AFEB3719BDDACF00AF49F4 /* QueryEngine.cpp */,
+				32AFEB3819BDDACF00AF49F4 /* QueryEngine.h */,
+			);
+			path = query_engine;
+			sourceTree = "<group>";
+		};
+		326096BF19BF0B060032F55E /* query */ = {
+			isa = PBXGroup;
+			children = (
+				326096C319BF22080032F55E /* DataBlockFetcher.cpp */,
+				326096C419BF22080032F55E /* DataBlockFetcher.h */,
+			);
+			path = query;
 			sourceTree = "<group>";
 		};
 		32640A07169DCC1B00450962 /* caching_system */ = {
@@ -2841,6 +2862,7 @@
 				323236DA164573F50052CE06 /* main.cpp in Sources */,
 				32B159DA18B4B9F90096B58B /* DataWorker.cpp in Sources */,
 				3299363618A7C4F60093E7F2 /* ChaosDataService.cpp in Sources */,
+				326096C519BF22080032F55E /* DataBlockFetcher.cpp in Sources */,
 				32AFEB3919BDDACF00AF49F4 /* QueryEngine.cpp in Sources */,
 				327EA46119B7036600FF24F1 /* VFSQuery.cpp in Sources */,
 				32B159DE18B4D4210096B58B /* MemcachedCacheDriver.cpp in Sources */,

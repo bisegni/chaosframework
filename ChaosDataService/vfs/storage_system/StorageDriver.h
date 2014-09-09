@@ -112,7 +112,7 @@ namespace chaos {
 					 \flag the flag for determinate the mode if the open operation it can be a concatenation of chaos::data_service::chaos_vfs::block_flag::DataBlockFlag
 					 \
 					 */
-					virtual int openBlock(std::string vfs_path, unsigned int flags, chaos_vfs::DataBlock **data_block) = 0;
+					virtual int openBlock(const std::string& vfs_path, unsigned int flags, chaos_vfs::DataBlock **data_block) = 0;
 					
 					//! close the block of data
 					virtual int closeBlock(chaos_vfs::DataBlock *data_block) = 0;
@@ -145,13 +145,13 @@ namespace chaos {
 					virtual int flush(chaos_vfs::DataBlock *data_block) = 0;
 					
 					//! create a directory
-					virtual int createDirectory(std::string vfs_path) = 0;
+					virtual int createDirectory(const std::string& vfs_path) = 0;
 					
 					//! create a directory
-					virtual int createPath(std::string vfs_path) = 0;
+					virtual int createPath(const std::string& vfs_path) = 0;
 					
 					//! delete a directory
-					virtual int deletePath(std::string vfs_path, bool all = false) = 0;
+					virtual int deletePath(const std::string& vfs_path, bool all = false) = 0;
 				};
 				
 			}

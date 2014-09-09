@@ -74,7 +74,7 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
 	cache_driver = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
 	
 	//allocate query manager
-	query_engine = new QueryEngine(settings->query_manager_thread_poll_size, vfs_manager_instance);
+	query_engine = new query_engine::QueryEngine(settings->query_manager_thread_poll_size, vfs_manager_instance);
 	if(!query_engine) throw chaos::CException(-5, "Error allocating Query Engine", __FUNCTION__);
 	chaos::utility::StartableService::initImplementation(query_engine, init_data, "QueryEngine", __PRETTY_FUNCTION__);
 	
@@ -165,7 +165,7 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
 													   header->field.endpoint);
 	
 	//execute the query
-	query_engine->executeQuery(new DataCloudQuery(db_system::DataPackIndexQuery(search_key, search_start_ts, search_end_ts), answer_server_description));
+	query_engine->executeQuery(new query_engine::DataCloudQuery(db_system::DataPackIndexQuery(search_key, search_start_ts, search_end_ts), answer_server_description));
 
 	//delete header and
 	if(header) free(header);

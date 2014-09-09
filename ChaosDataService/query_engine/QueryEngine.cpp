@@ -20,7 +20,7 @@
 
 #include "QueryEngine.h"
 
-using namespace chaos::data_service;
+using namespace chaos::data_service::query_engine;
 
 #define QueryEngine_LOG_HEAD "[QueryDataConsumer] - "
 
@@ -30,6 +30,29 @@ using namespace chaos::data_service;
 
 #define QUERY_INFO "query on key:" << query->query.did << "(since: " << query->query.start_ts << " to: " << query->query.end_ts << ") has been submitted"
 
+
+DataCloudQuery::DataCloudQuery(const db_system::DataPackIndexQuery& query,
+							   const std::string& answer_endpoint):
+query_phase(DataCloudQueryPhaseNeedSearch),
+vfs_query(NULL){
+};
+
+DataCloudQuery::~DataCloudQuery(){
+};
+
+int DataCloudQuery::startQuery() {
+	if(!vfs_query) return -1;
+	return vfs_query->executeQuery();
+}
+
+int DataCloudQuery::fecthData(std::vector<vfs::FoundDataPack>& found_data_pack, unsigned int element_to_fecth) {
+	if(!vfs_query) return -1;
+	return vfs_query->nextNDataPack(found_data_pack, element_to_fecth);
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 QueryEngine::QueryEngine(unsigned int _thread_pool_size,
 						 vfs::VFSManager *_vfs_manager_ptr):
 work_on_query(false),
@@ -81,6 +104,9 @@ void QueryEngine::executeQuery(DataCloudQuery *query) {
 		delete(query);
 	}
 	QEDBG_ << "Successfull submission for " << QUERY_INFO;
+	
+	//set the next phase of the query
+	query->query_phase = DataCloudQuery::DataCloudQueryPhaseNeedSearch;
 }
 
 void QueryEngine::process_query() {
@@ -88,11 +114,11 @@ void QueryEngine::process_query() {
 	while(work_on_query) {
 		if(query_queue.pop(query) && query) {
 			switch(query->query_phase) {
-				case DataCloudQuery::DataCloudQueryPhaseSearch:
+				case DataCloudQuery::DataCloudQueryPhaseNeedSearch:
 					LDBG_ << "Start "<< QUERY_INFO;
 					break;
 
-				case DataCloudQuery::DataCloudQueryPhaseAnswer:
+				case DataCloudQuery::DataCloudQueryPhaseHaveAnswer:
 					LDBG_ << "Answer "<< QUERY_INFO;
 					break;
 					
@@ -113,7 +139,7 @@ void QueryEngine::process_query() {
 					QEDBG_ << "Succcesfull rescheduled "<< QUERY_INFO;
 				}
 			}
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 		}
-		
 	}
 }
