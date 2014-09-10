@@ -38,9 +38,9 @@ namespace chaos{
 #define QUERY_CONSUMER_QM_THREAD_POOL_SIZE				2
 		
 		//answer configuration
-#define OPT_ANSWER_WORKER_NUM		"answer_worker_num"
-#define OPT_ANSWER_WORKER_THREAD	"answer_worker_thread"
-#define ANSWER_WORKER_NUMBER		1
+//#define OPT_ANSWER_WORKER_NUM		"answer_worker_num"
+//#define OPT_ANSWER_WORKER_THREAD	"answer_worker_thread"
+//#define ANSWER_WORKER_NUMBER		1
 		
 		//stage data indexer
 #define OPT_INDEXER_WORKER_NUM			"indexer_worker_num"
@@ -86,8 +86,8 @@ namespace chaos{
 			unsigned int				query_manager_thread_poll_size;
 			
 			//----------answer worker------------------
-			unsigned int				answer_worker_num;
-			worker::DataWorkerSetting	answer_worker_setting;
+			//unsigned int				answer_worker_num;
+			//worker::DataWorkerSetting	answer_worker_setting;
 
 			//----------stage data indexer---------------
 			unsigned int				indexer_worker_num;

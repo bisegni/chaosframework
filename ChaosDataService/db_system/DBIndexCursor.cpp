@@ -41,6 +41,10 @@ uint32_t DBIndexCursor::getResultPageDimension() {
 	return result_page_dimension;
 }
 
+uint32_t DBIndexCursor::getNumberOfElementFound() {
+	return element_found;
+}
+
 void DBIndexCursor::setResultPageDimension(uint32_t _result_page_dimension) {
 	result_page_dimension = _result_page_dimension;
 }

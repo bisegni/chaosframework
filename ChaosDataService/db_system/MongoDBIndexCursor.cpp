@@ -27,7 +27,6 @@ using namespace chaos::data_service::db_system;
 MongoDBIndexCursor::MongoDBIndexCursor(DBDriver *_driver_ptr,
 									   const DataPackIndexQuery& _query):
 DBIndexCursor(_driver_ptr, _query),
-element_for_query(0),
 time_offset_per_page(0) {
 }
 
@@ -50,13 +49,13 @@ int MongoDBIndexCursor::computeTimeLapsForPage() {
 	}
 	
 	//calculate the pagin information
-	err = mdrv->idxSearchResultCountDataPack(query, element_for_query);
+	err = mdrv->idxSearchResultCountDataPack(query, element_found);
 	if(!err) {
 		//!calculate total element for the time laps request
-		element_for_query = element_for_query / getResultPageDimension();
+		uint32_t number_of_page = element_found / getResultPageDimension();
 		
 		//!calculate the laps of the single page
-		time_offset_per_page = (query.end_ts - query.start_ts)/element_for_query;
+		time_offset_per_page = (query.end_ts - query.start_ts)/number_of_page;
 	}
 	return err;
 }

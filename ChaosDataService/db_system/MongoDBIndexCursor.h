@@ -37,9 +37,6 @@ namespace chaos {
 			class MongoDBIndexCursor : public DBIndexCursor {
 				friend class MongoDBDriver;
 				
-				//! is the number of elemento of the query
-				uint64_t element_for_query;
-				
 				//! is the time lasp for the paged search
 				uint64_t time_offset_per_page;
 				

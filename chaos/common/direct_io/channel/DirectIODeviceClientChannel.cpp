@@ -20,11 +20,9 @@
 
 #include <chaos/common/utility/InetUtility.h>
 #include <chaos/common/utility/endianess.h>
-#include <chaos/common/data/cache/FastHash.h>
-#include <chaos/common/data/cache/FastHash.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceClientChannel.h>
 #include <chaos/common/direct_io/DirectIOClient.h>
-
+#include <chaos/common/utility/UUIDUtil.h>
 #include <boost/format.hpp>
 
 #include <string.h>
@@ -146,22 +144,27 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(void **result, uint32
 	return err;
 }
 
-int64_t DirectIODeviceClientChannel::queryDataCloud(std::string keys, uint64_t start_ts, uint64_t end_ts) {
+int64_t DirectIODeviceClientChannel::queryDataCloud(uint64_t start_ts, uint64_t end_ts, string& query_id) {
 	chaos_data::CDataWrapper query_description;
 	//allcoate the data to send direct io pack
 	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
-	DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr query_data_lcoud_header = (DirectIODeviceChannelHeaderOpcodeQueryDataCloud*)calloc(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloud), 1);
-				
+	DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr query_data_cloud_header = (DirectIODeviceChannelHeaderOpcodeQueryDataCloud*)calloc(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloud), 1);
+	
 	//fill the query CDataWrapper
-	query_description.addStringValue(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, keys);
+	query_description.addStringValue(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, device_id);
 	query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64, (int64_t)start_ts);
 	query_description.addInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64, (int64_t)end_ts);
 	
 	//fill the hader
-    query_data_lcoud_header->field.address = TO_LITTE_ENDNS_NUM(uint64_t, answer_server_info.ip);
-    query_data_lcoud_header->field.p_port = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.p_server_port);
-	query_data_lcoud_header->field.s_port = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.s_server_port);
-    query_data_lcoud_header->field.endpoint = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.endpoint);
+    query_data_cloud_header->field.address = TO_LITTE_ENDNS_NUM(uint64_t, answer_server_info.ip);
+    query_data_cloud_header->field.p_port = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.p_server_port);
+	query_data_cloud_header->field.s_port = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.s_server_port);
+    query_data_cloud_header->field.endpoint = TO_LITTE_ENDNS_NUM(uint16_t, answer_server_info.endpoint);
+	
+	query_id = chaos::UUIDUtil::generateUUIDLite();
+	query_id.resize(8);
+	//copy the query id on header
+	std::strncpy(query_data_cloud_header->field.query_id, query_id.c_str(), 8);
 	
 	//set opcode
 	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeQueryDataCloud);
@@ -172,26 +175,61 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(std::string keys, uint64_t s
 	//the frre of memeory is managed in this class in async way
 	buffer->disposeOnDelete = false;
 	
-	//set data for the query
+	//set header and data for the query
+    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, query_data_cloud_header, QUERY_DATA_CLOUD_OPCODE_HEADER_LEN)
 	DIRECT_IO_SET_CHANNEL_DATA(data_pack, (void*)buffer->getBufferPtr(), (uint32_t)buffer->getBufferLen());
 	
 	//send query request
 	return client_instance->sendPriorityData(this, completeDataPack(data_pack));
 }
 
+//! Send the single result of the temporal query to requester
+int64_t DirectIODeviceClientChannel::sendResultToQueryDataCloud(const std::string& query_id, uint32_t total_element_found, uint32_t element_number, void *data, uint32_t data_len) {
+	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
+	DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswerPtr cloud_query_answer_header = (DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswerPtr)calloc(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswer), 1);
+	
+	//copy the query id on header
+	std::strncpy(cloud_query_answer_header->field.query_id, query_id.c_str(), 8);
+	
+	cloud_query_answer_header->field.total_element_found = TO_LITTE_ENDNS_NUM(uint32_t, total_element_found);
+	cloud_query_answer_header->field.element_number = TO_LITTE_ENDNS_NUM(uint32_t, element_number);
+	//set opcode
+	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeQueryDataCloudAnswer);
+	
+	//set header and data for the query
+    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, cloud_query_answer_header, QUERY_DATA_CLOUD_ANSWER_OPCODE_HEADER_LEN)
+	DIRECT_IO_SET_CHANNEL_DATA(data_pack, data, data_len);
+	
+	//send query request
+	return client_instance->sendPriorityData(this, completeDataPack(data_pack));
+	
+}
+
 //dispose the resuource forwarded in async way
 void DirectIODeviceClientChannel::freeSentData(void *data, DisposeSentMemoryInfo& dispose_memory_info) {
 	switch (dispose_memory_info.sent_part) {
-			//header
-		case 1:
-			//free(data); the ehader must not be deleted
+		case 1: {
+			switch(static_cast<opcode::DeviceChannelOpcode>(dispose_memory_info.sent_opcode)) {
+				case opcode::DeviceChannelOpcodeQueryDataCloud:
+				case opcode::DeviceChannelOpcodeQueryDataCloudAnswer:
+					free(data);
+					break;
+				case opcode::DeviceChannelOpcodePutOutput:
+				case opcode::DeviceChannelOpcodeGetLastOutput:
+					break;
+			}
+		}
 			break;
-			// data
 		case 2: {
+			// data
 			switch(static_cast<opcode::DeviceChannelOpcode>(dispose_memory_info.sent_opcode)) {
 				case opcode::DeviceChannelOpcodePutOutput:
 				case opcode::DeviceChannelOpcodeQueryDataCloud:
+				case opcode::DeviceChannelOpcodeQueryDataCloudAnswer:
 					free(data);
+					break;
+					
+				case opcode::DeviceChannelOpcodeGetLastOutput:
 					break;
 			}
 		}

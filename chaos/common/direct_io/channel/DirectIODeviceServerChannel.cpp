@@ -94,11 +94,28 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack, Dir
 			if(query) delete(query);
 			break;
 		}
+			
+		case opcode::DeviceChannelOpcodeQueryDataCloudAnswer: {
+			opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswerPtr header =
+			reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswerPtr>(dataPack->channel_header_data);
+
+					//decode the endianes off the data
+					header->field.total_element_found = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.total_element_found);
+					header->field.element_number = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.element_number);
+
+					//call server api
+					err = handler->consumeDataCloudQueryAnswer(header,
+															   dataPack->channel_data,
+															   dataPack->header.channel_data_size,
+															   synchronous_answer);
+			break;
+		}
+
 		default:
 			break;
 	}
 	
-	//only data pack is deleted, header data and channel data are managed by handler
+	//only data pack is deleted, header and data of the channel are managed by handler
 	free(dataPack);
 	
 	//return no result

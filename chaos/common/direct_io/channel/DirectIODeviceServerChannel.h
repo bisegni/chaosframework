@@ -89,6 +89,19 @@ if(h) free(h);
 														  uint64_t search_start_ts,
 														  uint64_t search_end_ts,
 														  DirectIOSynchronousAnswerPtr synchronous_answer){DELETE_HEADER(header) return 0;};
+						
+						//! Receive the answer to a submitted query
+						/*!
+						 the query id is contained into header and the data point to the single data pack
+						 \param header the hader fo the answer
+						 \param data_found the single datapack found
+						 \param data_lenght the lenght of the data pack
+						 \param synchronous_answer the synchronous answer (not used at the moment)
+						 */
+						virtual int consumeDataCloudQueryAnswer(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswer *header,
+																void *data_found,
+																uint32_t data_lenght,
+																DirectIOSynchronousAnswerPtr synchronous_answer){DELETE_HEADER_DATA(header, data_found) return 0;};
 					} DirectIODeviceServerChannelHandler;
 
                     void setHandler(DirectIODeviceServerChannelHandler *_handler);

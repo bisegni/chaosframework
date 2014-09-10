@@ -13,6 +13,7 @@
 #include "../DataBlock.h"
 #include "../storage_system/StorageDriver.h"
 
+#include <boost/thread.hpp>
 namespace chaos {
 	namespace data_service {
 		namespace vfs {
@@ -21,6 +22,10 @@ namespace chaos {
 			namespace query {
 				
 				//! class that manage the fecth of data pack on o a single datablock
+				/*!
+				 this class manage and optimize the multithreaded access to the single 
+				 datablock.
+				 */
 				class DataBlockFetcher {
 					friend class chaos::data_service::vfs::VFSQuery;
 					
@@ -33,12 +38,21 @@ namespace chaos {
 					//! datablock structure
 					vfs::DataBlock *data_block;
 					
+					//! data block mutex for mutltitrhead access
+					boost::mutex mutex_read_access;
+					
 					DataBlockFetcher(storage_system::StorageDriver *_driver,
 									 const std::string & _data_block_path);
 					
 					~DataBlockFetcher();
-				public:
 					
+					//! open the datablock
+					int open();
+					
+					//! open the datablock
+					int close();
+				public:
+					//! read the data
 					int readData(uint64_t offset, uint32_t data_len, void**data_handler);
 				};
 			}

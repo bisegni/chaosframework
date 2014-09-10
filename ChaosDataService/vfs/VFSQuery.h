@@ -38,10 +38,19 @@ namespace chaos {
 			//forward declaration
 			class VFSManager;
 			
-			typedef struct FoundDataPack {
+			struct FoundDataPack {
 				void		*data_pack_buffer;
 				uint32_t	data_pack_size;
-			}FoundDataPack;
+				
+				FoundDataPack(void *_data_pack_buffer,
+							  uint32_t	_data_pack_size):
+				data_pack_buffer(_data_pack_buffer),
+				data_pack_size(_data_pack_size)	{};
+				
+				~FoundDataPack(){
+					if(data_pack_buffer) free(data_pack_buffer);
+				}
+			};
 			
 			//! Data querable file
 			/*!
@@ -84,7 +93,7 @@ namespace chaos {
 				
 				
 				//! load data block containing index
-				inline int getDatablockForIndex(const db_system::DataPackIndexQueryResult& index, query::DataBlockFetcher **datablock_ptr);
+				inline int getDatablockFetcherForIndex(const db_system::DataPackIndexQueryResult& index, query::DataBlockFetcher **datablock_ptr);
 				
 				//! return a datapack for the index
 				inline int getDataPackForIndex(const db_system::DataPackIndexQueryResult& index, void** data, uint32_t& data_len);
@@ -101,6 +110,9 @@ namespace chaos {
 				
 				// read a bunch of result data
 				int nextNDataPack(std::vector<FoundDataPack> &readed_pack, unsigned int to_read);
+				
+				//
+				uint32_t getNumberOfElementFound();
 			};
 			
 		}

@@ -92,8 +92,21 @@ namespace chaos {
 					 \param key to search
 					 \param start_ts start of timestamp to search
 					 \param end_ts end of the timestamp where limit the search
+					 \param query_id the newly associated query id is returned.
+					 \return error
 					 */
-                    int64_t queryDataCloud(std::string keys, uint64_t start_ts, uint64_t end_ts);
+                    int64_t queryDataCloud(uint64_t start_ts, uint64_t end_ts, std::string& query_id);
+					
+					//! Send the single result of the temporal query to requester
+					/*!
+					 Return to requester the answer to temporal query
+					 \param the query id of the associated query
+					 \param total_element_found
+					 \param element_idx
+					 \param data
+					 \param data_len
+					 */
+                    int64_t sendResultToQueryDataCloud(const std::string& query_id, uint32_t total_element_found, uint32_t element_idx, void *data, uint32_t data_len);
 				};
 
 				

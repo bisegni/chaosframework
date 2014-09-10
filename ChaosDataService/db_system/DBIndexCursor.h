@@ -37,6 +37,9 @@ namespace chaos {
 			class DBIndexCursor {
 				friend class DBDriver;
 			protected:
+				//! the total number of ellement that are found by qury
+				uint32_t element_found;
+				
 				//!
 				uint32_t result_page_dimension;
 				
@@ -54,6 +57,9 @@ namespace chaos {
 				
 				//!
 				uint32_t getResultPageDimension();
+			
+				//!
+				uint32_t getNumberOfElementFound();
 				
 				//!
 				void setResultPageDimension(uint32_t);

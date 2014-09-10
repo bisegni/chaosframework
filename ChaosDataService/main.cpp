@@ -65,15 +65,15 @@ int main(int argc, char * argv[]) {
 																									 &ChaosDataService::getInstance()->settings.query_manager_thread_poll_size);
 		
 		//answer conf
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_ANSWER_WORKER_NUM,
-																								 "The number of the answer worker",
-																								 ANSWER_WORKER_NUMBER,
-																								 &ChaosDataService::getInstance()->settings.answer_worker_num);
+		//ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_ANSWER_WORKER_NUM,
+		//																						 "The number of the answer worker",
+		//																						 ANSWER_WORKER_NUMBER,
+		//																						 &ChaosDataService::getInstance()->settings.answer_worker_num);
 		
-		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_ANSWER_WORKER_THREAD,
-																								 "The thread number of each answer worker",
-																								 1,
-																								 &ChaosDataService::getInstance()->settings.answer_worker_setting.job_thread_number);
+		//ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_ANSWER_WORKER_THREAD,
+		//																						 "The thread number of each answer worker",
+		//																						 1,
+		//																						 &ChaosDataService::getInstance()->settings.answer_worker_setting.job_thread_number);
 		
 		//indexer
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_INDEXER_WORKER_NUM,

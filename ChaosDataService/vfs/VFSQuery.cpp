@@ -47,8 +47,8 @@ query(_query){
 }
 
 //! load data block containing index
-int VFSQuery::getDatablockForIndex(const db_system::DataPackIndexQueryResult& index,
-								   query::DataBlockFetcher **datablock_ptr) {
+int VFSQuery::getDatablockFetcherForIndex(const db_system::DataPackIndexQueryResult& index,
+										  query::DataBlockFetcher **datablock_ptr) {
 	int err = 0;
 	boost::upgrade_lock<boost::shared_mutex> rmap_lock(map_path_datablock_mutex);
 	std::string data_block_path = index.dst_location->getBlockVFSPath();
@@ -71,13 +71,15 @@ int VFSQuery::getDatablockForIndex(const db_system::DataPackIndexQueryResult& in
 int VFSQuery::getDataPackForIndex(const db_system::DataPackIndexQueryResult& index, void** data, uint32_t& data_len) {
 	int err = 0;
 	query::DataBlockFetcher *db_fetcher = NULL;
-	if((err = getDatablockForIndex(index, &db_fetcher))){
+	if((err = getDatablockFetcherForIndex(index, &db_fetcher))){
 		VFSQ_LERR_ << "Error retriving the datablock fetcher for path:" << DataPackIndexQueryResult_PRINT_INFO(index);
 	} else if(!db_fetcher) {
 		VFSQ_LERR_ << "no error and no datablock fetcher for " << DataPackIndexQueryResult_PRINT_INFO(index);
 	} else {
 		//we have the fetcher
-		db_fetcher->readData(index.dst_location->getOffset(), (data_len = index.datapack_size), data);
+		if((err = db_fetcher->readData(index.dst_location->getOffset(), (data_len = index.datapack_size), data))) {
+			VFSQ_LERR_ << "Error fetching data for " << DataPackIndexQueryResult_PRINT_INFO(index);
+		}
 	}
 	return err;
 }
@@ -115,8 +117,21 @@ int VFSQuery::nextDataPack(void **data, uint32_t& data_len) {
 
 // read a bunch of result data
 int VFSQuery::nextNDataPack(std::vector<FoundDataPack> &readed_pack, unsigned int to_read) {
-	for (int idx = 0; (idx < to_read); idx++) {
-		//FoundDataPack fdp();
+	int err = 0;
+	void *data = NULL;
+	uint32_t data_len = 0;
+	for (int idx = 0;
+		 (idx < to_read) && !err;
+		 idx++) {
+		
+		if(!(err = nextDataPack(&data, data_len))){
+			readed_pack.push_back(FoundDataPack(data, data_len));
+		}
+		
 	}
 	return 0;
+}
+
+uint32_t VFSQuery::getNumberOfElementFound() {
+	return query_cursor_ptr->getNumberOfElementFound();
 }
