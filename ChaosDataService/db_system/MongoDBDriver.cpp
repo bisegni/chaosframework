@@ -298,7 +298,6 @@ int MongoDBDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 		
 		//compose query
 		bson_block_query.append(MONGO_DB_FIELD_FILE_PRIMARY_KEY, search_result["_id"].OID());
-		//bson_block_query.append(MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS, mongo::Date_t(data_block->creation_time));
 		bson_block_query.append(MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH, data_block->vfs_path);
 		bson_block_query.append(MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN, vfs_file->getVFSFileInfo()->vfs_domain);
 		
@@ -639,10 +638,10 @@ int MongoDBDriver::idxAddDataPackIndex(const DataPackIndex& index) {
 		//add default index information
 		index_builder << MONGO_DB_IDX_DATA_PACK_DID << index.did;
 		index_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS << mongo::Date_t(index.acquisition_ts);
-		index_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC << (int64_t)index.acquisition_ts;
+		index_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC << (long long)index.acquisition_ts;
 		index_builder << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_DOMAIN << getDataBlockFromFileLocation(index.dst_location)->vfs_domain;
 		index_builder << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_PATH << getDataBlockFromFileLocation(index.dst_location)->vfs_path;
-		index_builder << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET << (int64_t)getDataBlockOffsetFromFileLocation(index.dst_location);
+		index_builder << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET << (long long)getDataBlockOffsetFromFileLocation(index.dst_location);
 		index_builder << MONGO_DB_IDX_DATA_PACK_SIZE << (int32_t)index.datapack_size;
 		
 		DEBUG_CODE(MDBID_LDBG_ << "idxAddDataPackIndex insert ---------------------------------------------";)
@@ -683,21 +682,26 @@ int MongoDBDriver::idxDeleteDataPackIndex(const DataPackIndex& index) {
 
 //! perform a search on data pack indexes
 int MongoDBDriver::idxStartSearchDataPack(const DataPackIndexQuery& data_pack_index_query, DBIndexCursor **index_cursor) {
+	int err=-1;
 	*index_cursor = new MongoDBIndexCursor(this, data_pack_index_query);
-	return 0;
+	if(*index_cursor) {
+		err = 0;
+		((MongoDBIndexCursor*)*index_cursor)->computeTimeLapsForPage();
+	}
+	return err;
 }
 
 //-------------------------- protected method------------------------------
 //! protected methdo that perform the real paged query on index called by the cursor
-int MongoDBDriver::idxSearchResultCountDataPack(const DataPackIndexQuery& data_pack_index_query, uint64_t num_of_result) {
+int MongoDBDriver::idxSearchResultCountDataPack(const DataPackIndexQuery& data_pack_index_query,  uint64_t& num_of_result) {
 	int err = 0;
 	mongo::BSONObjBuilder	index_search_builder;
 	mongo::BSONObjBuilder	return_field;
 	try{
 		//add default index information
 		index_search_builder << MONGO_DB_IDX_DATA_PACK_DID << data_pack_index_query.did;
-		index_search_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS << BSON("$gte" << mongo::Date_t(data_pack_index_query.start_ts) <<
-																	  "$lte" << mongo::Date_t(data_pack_index_query.end_ts));
+		index_search_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC << BSON("$gte" << (long long)data_pack_index_query.start_ts <<
+																	  "$lte" << (long long)data_pack_index_query.end_ts);
 		
 		mongo::BSONObj q = index_search_builder.obj();
 		DEBUG_CODE(MDBID_LDBG_ << "idxSearchResultCountDataPack insert ---------------------------------------------";)
@@ -721,10 +725,11 @@ int MongoDBDriver::idxSearchDataPack(const DataPackIndexQuery& data_pack_index_q
 	try{
 		//add default index information
 		index_search_builder << MONGO_DB_IDX_DATA_PACK_DID << data_pack_index_query.did;
-		index_search_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS << BSON("$gte" << mongo::Date_t(data_pack_index_query.start_ts) <<
-																	  "$lte" << mongo::Date_t(data_pack_index_query.end_ts));
+		index_search_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC << BSON("$gte" << (long long)data_pack_index_query.start_ts <<
+																			  "$lte" << (long long)data_pack_index_query.end_ts);
 		
-		return_field << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_PATH << 1
+		return_field << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_DOMAIN << 1
+					 << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_PATH << 1
 					 << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET << 1
 					 << MONGO_DB_IDX_DATA_PACK_SIZE << 1;
 		

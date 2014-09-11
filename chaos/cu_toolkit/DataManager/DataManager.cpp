@@ -34,6 +34,7 @@
 using namespace std;
 using namespace boost;
 using namespace chaos;
+using namespace chaos::common::io;
 using namespace chaos::cu::data_manager;
 using namespace chaos::common::data;
 

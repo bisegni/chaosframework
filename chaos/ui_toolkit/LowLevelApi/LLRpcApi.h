@@ -34,9 +34,12 @@
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
 #include <chaos/common/io/IODirectIODriver.h>
 #include <chaos/common/io/IOMemcachedIODriver.h>
+
+namespace chaos_io = chaos::common::io;
+
 namespace chaos {
     namespace ui{
-        using namespace boost;  
+   
         
         /*
          LLRpcApi Class api for rpc system
@@ -64,7 +67,7 @@ namespace chaos {
             ~LLRpcApi();
             
         public:
-            IODataDriver *getDataProxyChannelNewInstance() throw(CException);
+			chaos_io::IODataDriver *getDataProxyChannelNewInstance() throw(CException);
 			
             /*!
              Return a new channel for talk with metadata server

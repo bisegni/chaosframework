@@ -89,7 +89,7 @@ namespace chaos {
                         } field;
                     } DirectIODeviceChannelHeaderGetOpcode, *DirectIODeviceChannelHeaderGetOpcodePtr;
 					
-#define QUERY_DATA_CLOUD_OPCODE_HEADER_LEN 22
+#define QUERY_DATA_CLOUD_OPCODE_HEADER_LEN 24
 					//! Header for the DirectIODeviceChannelHeaderOpcodeQueryDataCloud opcode
 					/*!
 					 this is the header for query on data cloud. The header contains information
@@ -106,6 +106,8 @@ namespace chaos {
 							uint16_t	p_port;
 							//! The priority port value for the device that we need to get
 							uint16_t	s_port;
+							//! padding
+							uint16_t	unused;
 							//! The 32bit representation for the ip where send the answer
 							uint64_t	address;
 							//! is the query id associated to the request
@@ -113,7 +115,8 @@ namespace chaos {
 						} field;
 					} DirectIODeviceChannelHeaderOpcodeQueryDataCloud, *DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr;
 
-#define QUERY_DATA_CLOUD_ANSWER_OPCODE_HEADER_LEN 16
+					//computed lenght of header
+#define QUERY_DATA_CLOUD_ANSWER_OPCODE_HEADER_LEN 24
 					//! Header for the DirectIODeviceChannelHeaderOpcodeQueryDataCloud opcode
 					/*!
 					 this is the header for query on data cloud. The header contains information
@@ -128,10 +131,10 @@ namespace chaos {
 							char		query_id[8];
 							
 							//!the number of total element found for query id
-							uint32_t	total_element_found;
+							uint64_t	total_element_found;
 							
 							//! the number, relative to the total, of the current element
-							uint32_t	element_number;
+							uint64_t	element_number;
 						} field;
 					} DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswer, *DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswerPtr;
 					

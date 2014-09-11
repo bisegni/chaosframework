@@ -1,8 +1,8 @@
-/*	
+/*
  *	IOMemcachedIODriver.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,44 +31,47 @@
 
 #include "IODataDriver.h"
 
-namespace chaos{ 
-    using namespace std;
-    using namespace boost;
-    
-	namespace chaos_data = chaos::common::data;
-	REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(IOMemcachedIODriver, IODataDriver), public NamedService {
-		REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(IOMemcachedIODriver)
-        boost::mutex useMCMutex;
-        memcached_st *memClient;
-        string dataKey;
-    public:
-        
-        IOMemcachedIODriver(std::string alias);
-        virtual ~IOMemcachedIODriver();
-        
-        /*
-         * Init method, the has map has all received value for configuration
-         * every implemented driver need to get all needed configuration param
-         */
-        void init(void *init_parameter) throw(CException);
-        
-        void deinit() throw(CException);
-        
-        /*
-         * This method retrive the cached object by CSDawrapperUsed as query key and
-         * return a pointer to the class ArrayPointer of CDataWrapper type
-         */
-        virtual void storeRawData(chaos_data::SerializationBuffer *serialization)  throw(CException);
-        
-        /*
-         * This method retrive the cached object by CSDawrapperUsed as query key and
-         * return a pointer to the class ArrayPointer of CDataWrapper type
-         */
-        virtual char * retriveRawData(size_t *dim=NULL)  throw(CException);
-        /*
-         Update the driver configuration
-         */
-        chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*);
-    };
+namespace chaos{
+	namespace common {
+		namespace io {
+			using namespace std;
+			using namespace boost;
+			
+			namespace chaos_data = chaos::common::data;
+			REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(IOMemcachedIODriver, IODataDriver), public NamedService {
+				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(IOMemcachedIODriver)
+				boost::mutex useMCMutex;
+				memcached_st *memClient;
+			public:
+				
+				IOMemcachedIODriver(std::string alias);
+				virtual ~IOMemcachedIODriver();
+				
+				/*
+				 * Init method, the has map has all received value for configuration
+				 * every implemented driver need to get all needed configuration param
+				 */
+				void init(void *init_parameter) throw(CException);
+				
+				void deinit() throw(CException);
+				
+				/*
+				 * This method retrive the cached object by CSDawrapperUsed as query key and
+				 * return a pointer to the class ArrayPointer of CDataWrapper type
+				 */
+				virtual void storeRawData(chaos_data::SerializationBuffer *serialization)  throw(CException);
+				
+				/*
+				 * This method retrive the cached object by CSDawrapperUsed as query key and
+				 * return a pointer to the class ArrayPointer of CDataWrapper type
+				 */
+				virtual char * retriveRawData(size_t *dim=NULL)  throw(CException);
+				/*
+				 Update the driver configuration
+				 */
+				chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*);
+			};
+		}
+	}
 }
 #endif

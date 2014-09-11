@@ -26,7 +26,9 @@
 #include <chaos/common/data/CDataWrapper.h> 
 #include <chaos/common/pqueue/ChaosProcessingQueue.h>
 
+namespace chaos_io = chaos::common::io;
 namespace chaos_data = chaos::common::data;
+
 
 namespace chaos {
     
@@ -34,7 +36,7 @@ namespace chaos {
      Output buffer for live data
      */
     class OutputDataBuffer : public CObjectProcessingQueue<chaos_data::CDataWrapper>, public Configurable {
-        IODataDriver *ioDriver;
+		chaos_io::IODataDriver *ioDriver;
         
     public:
         
@@ -46,7 +48,7 @@ namespace chaos {
     
     public:
         OutputDataBuffer();
-        OutputDataBuffer(IODataDriver*);
+        OutputDataBuffer(chaos_io::IODataDriver*);
         virtual ~OutputDataBuffer();
         
         /*
@@ -62,13 +64,13 @@ namespace chaos {
         /*
          Set the live io driver
          */
-        void setIODriver(IODataDriver*);
+        void setIODriver(chaos_io::IODataDriver*);
         
         /*
          Return the internat instance of datadriver
          with shared_ptr
          */
-        IODataDriver *getIODataDriver();
+		chaos_io::IODataDriver *getIODataDriver();
         
         /*
          Update the configuration

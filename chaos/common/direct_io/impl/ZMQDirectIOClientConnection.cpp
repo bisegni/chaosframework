@@ -127,8 +127,8 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 									 new channel::DisposeSentMemoryInfo(channel, 2, sending_opcode));
 			err = zmq_sendmsg(socket, &msg_data, _send_no_wait_flag);
 			//check if we need to espect async answer
-			zmq_msg_close(&msg_header_data);
-			zmq_msg_close(&msg_data);
+			err = zmq_msg_close(&msg_header_data);
+			err = zmq_msg_close(&msg_data);
 			break;
 	}
 	
@@ -160,6 +160,7 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 			}
 			//close received message
 			err = zmq_msg_close(&msg);
+			//err need to be euqal to 0 for riget things
 		}
 	}
 	

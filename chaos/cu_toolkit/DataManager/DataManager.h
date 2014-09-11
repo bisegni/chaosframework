@@ -31,6 +31,7 @@
 
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 
+namespace chaos_io = chaos::common::io;
 namespace chaos_data = chaos::common::data;
 
 namespace chaos{
@@ -47,7 +48,7 @@ namespace chaos{
 				friend class Singleton<DataManager>;
 				//mutex for lock operation on service request
 				boost::mutex managing_data_mutex;
-				shared_ptr<IODataDriver> liveDriver;
+				shared_ptr<chaos_io::IODataDriver> liveDriver;
 				shared_ptr<MultiBufferDataStorage> outputBuffer;
 				map<string, KeyDataStorage*>  deviceIDKeyDataStorageMap;
 				
@@ -88,7 +89,7 @@ namespace chaos{
 				/*
 				 * Return an instance for the configured data live driver
 				 */
-				IODataDriver *getDataLiveDriverNewInstance() throw(CException);
+				chaos_io::IODataDriver *getDataLiveDriverNewInstance() throw(CException);
 				
 				/*
 				 Initialize a device id KeyDataStorageBuffer

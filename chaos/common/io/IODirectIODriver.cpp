@@ -42,12 +42,15 @@
 #define IODirectIODriver_LERR_ LERR_ << IODirectIODriver_LOG_HEAD
 
 using namespace chaos;
+using namespace chaos::common::io;
+using namespace chaos::utility;
+
 using namespace std;
 using namespace boost;
 using namespace boost::algorithm;
 
 namespace chaos_data = chaos::common::data;
-namespace chaos_direct_io = chaos::common::direct_io;
+namespace chaos_dio = chaos::common::direct_io;
 namespace chaos_dio_channel = chaos::common::direct_io::channel;
 
 //using namespace memcache;
@@ -95,7 +98,7 @@ void IODirectIODriver::init(void *_init_parameter) throw(CException) {
 	if(!init_parameter.endpoint_instance) throw CException(-1, "No endpoint configured", __PRETTY_FUNCTION__);
 	
 	//initialize client
-	utility::InizializableService::initImplementation(init_parameter.client_instance, _init_parameter, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
+	InizializableService::initImplementation(init_parameter.client_instance, _init_parameter, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
 	
 	//get the client and server channel
 	IODirectIODriver_LAPP_ << "Allcoate the default device server channel";
@@ -114,6 +117,18 @@ void IODirectIODriver::init(void *_init_parameter) throw(CException) {
  * Deinitialization of memcached driver
  */
 void IODirectIODriver::deinit() throw(CException) {
+	IODirectIODriver_LAPP_ << "Remove active query";
+	//acquire write lock on map
+	boost::unique_lock<boost::shared_mutex> wmap_loc(map_query_future_mutex);
+
+	//scan all remained query
+	for(std::map<string, QueryFuture*>::iterator it = map_query_future.begin();
+		it != map_query_future.end();
+		it++) {
+		releaseQuery(it->second);
+	}
+	map_query_future.clear();
+	
 	if(data_cache.data_ptr) {
 		IODirectIODriver_LAPP_ << "delete last data received";
 		free(data_cache.data_ptr);
@@ -124,7 +139,7 @@ void IODirectIODriver::deinit() throw(CException) {
 	connectionFeeder.clear();
 	
 	//initialize client
-	utility::InizializableService::deinitImplementation(init_parameter.client_instance, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
+	InizializableService::deinitImplementation(init_parameter.client_instance, init_parameter.client_instance->getName(), __PRETTY_FUNCTION__);
 	delete(init_parameter.client_instance);
 	
 	//deinitialize server channel
@@ -253,4 +268,66 @@ void IODirectIODriver::handleEvent(chaos_direct_io::DirectIOClientConnection *cl
 			connectionFeeder.setURLOffline(service_index);
 			break;
 	}
+}
+
+QueryFuture *IODirectIODriver::performQuery(uint64_t start_ts, uint64_t end_ts) {
+	IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
+	if(!next_client) return NULL;
+	
+	QueryFuture *q = NULL;
+	std::string query_id;
+	if(!next_client->device_client_channel->queryDataCloud(start_ts, end_ts, query_id)) {
+		//acquire write lock
+		boost::unique_lock<boost::shared_mutex> wmap_loc(map_query_future_mutex);
+		q = _getNewQueryFutureForQueryID(query_id);
+		if(q) {
+			//add query to map
+			map_query_future.insert(make_pair<string, QueryFuture*>(query_id, q));
+		} else {
+			releaseQuery(q);
+		}
+	}
+	return q;
+}
+
+//! release a query
+void IODirectIODriver::releaseQuery(QueryFuture *query_future) {
+	//acquire write lock
+	boost::unique_lock<boost::shared_mutex> wmap_loc(map_query_future_mutex);
+	if(map_query_future.count(query_future->getQueryID())) {
+		map_query_future.erase(query_future->getQueryID());
+	}
+	//delete query
+	IODataDriver::releaseQuery(query_future);
+}
+
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+int IODirectIODriver::consumeDataCloudQueryAnswer(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswer *header,
+												  void *data_found,
+												  uint32_t data_lenght,
+												  chaos_dio::DirectIOSynchronousAnswerPtr synchronous_answer){
+	//acquire read lock
+	boost::shared_lock<boost::shared_mutex> rmap_loc(map_query_future_mutex);
+	
+	std::string query_id(header->field.query_id, 8);
+	
+	//get qeury iterator on map
+	std::map<string, QueryFuture*>::iterator it = map_query_future.find(query_id);
+	if(it != map_query_future.end()) {
+		try{
+			chaos_data::CDataWrapper *data_pack = new chaos_data::CDataWrapper((char *)data_found);
+			//we have map so we will add the new packet
+			_pushDataToQuryFuture(*it->second, data_pack);
+		}catch(...) {
+			IODirectIODriver_LERR_ << "error parsing reuslt data pack"
+		}
+	}
+	
+	//deelte received data
+	free(data_found);
+	free(header);
+	return 0;
 }

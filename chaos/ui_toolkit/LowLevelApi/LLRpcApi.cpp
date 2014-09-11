@@ -25,6 +25,7 @@
 using namespace boost;
 
 using namespace chaos;
+using namespace chaos::common::io;
 using namespace chaos::ui;
 
 #define LLRA_LAPP_ LAPP_ << "[LLRpcApi] - "

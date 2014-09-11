@@ -52,6 +52,7 @@ int DataBlockFetcher::close() {
 int DataBlockFetcher::readData(uint64_t offset, uint32_t data_len, void **data_handler) {
 	int err = 0;
 	boost::unique_lock<boost::mutex> rlock(mutex_read_access);
+	
 	//got to offset
 	if((err = storage_driver->seekg(data_block, offset, block_seek_base::BlockSeekBaseBegin))) {
 		DBF_LERR_ << "Error going to offset " << err;
@@ -65,5 +66,5 @@ int DataBlockFetcher::readData(uint64_t offset, uint32_t data_len, void **data_h
 			//we got data
 		}
 	}
-	return 0;
+	return err;
 }

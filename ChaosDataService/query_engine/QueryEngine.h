@@ -89,7 +89,7 @@ namespace chaos {
 				
 				int startQuery();
 				
-				int fecthData(std::vector<vfs::FoundDataPack>& found_data_pack, unsigned int element_to_fecth);
+				int fecthData(std::vector< boost::shared_ptr<vfs::FoundDataPack> >& found_data_pack, unsigned int element_to_fecth);
 			};
 			
 			
@@ -126,7 +126,7 @@ namespace chaos {
 										ClientConnectionInfo **connection_info_handle);
 				//send data to client
 				int  sendDataToClient(DataCloudQuery& query,
-									  const std::vector<vfs::FoundDataPack>& data);
+									  const std::vector< boost::shared_ptr<vfs::FoundDataPack> >& data);
 				
 				//!process the signle query step
 				void process_query();

@@ -822,3 +822,13 @@ void DeviceController::clearHandler() {
 	if(!deviceChannel) return;
 	deviceChannel->clearHandler();
 }
+
+//! get datapack between time itervall
+void DeviceController::executeTimeIntervallQuery(uint64_t start_ts, uint64_t end_ts, chaos_io::QueryFuture **query_future) {
+	*query_future = ioLiveDataDriver->performQuery(start_ts, end_ts);
+}
+
+//! release a query
+void DeviceController::releaseQuery(chaos_io::QueryFuture *query_future) {
+	ioLiveDataDriver->releaseQuery(query_future);
+}

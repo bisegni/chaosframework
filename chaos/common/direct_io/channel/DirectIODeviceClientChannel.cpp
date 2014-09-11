@@ -146,9 +146,10 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(void **result, uint32
 
 int64_t DirectIODeviceClientChannel::queryDataCloud(uint64_t start_ts, uint64_t end_ts, string& query_id) {
 	chaos_data::CDataWrapper query_description;
+	size_t size_ptr = 0;
 	//allcoate the data to send direct io pack
 	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
-	DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr query_data_cloud_header = (DirectIODeviceChannelHeaderOpcodeQueryDataCloud*)calloc(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloud), 1);
+	DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr query_data_cloud_header = (DirectIODeviceChannelHeaderOpcodeQueryDataCloud*)calloc((size_ptr = sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloud)), 1);
 	
 	//fill the query CDataWrapper
 	query_description.addStringValue(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, device_id);
@@ -184,15 +185,20 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(uint64_t start_ts, uint64_t 
 }
 
 //! Send the single result of the temporal query to requester
-int64_t DirectIODeviceClientChannel::sendResultToQueryDataCloud(const std::string& query_id, uint32_t total_element_found, uint32_t element_number, void *data, uint32_t data_len) {
+int64_t DirectIODeviceClientChannel::sendResultToQueryDataCloud(const std::string& query_id,
+																uint64_t total_element_found,
+																uint64_t element_number,
+																void *data,
+																uint32_t data_len) {
 	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
-	DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswerPtr cloud_query_answer_header = (DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswerPtr)calloc(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswer), 1);
+	DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswerPtr cloud_query_answer_header =
+	(DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswerPtr)calloc(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswer), 1);
 	
 	//copy the query id on header
 	std::strncpy(cloud_query_answer_header->field.query_id, query_id.c_str(), 8);
 	
-	cloud_query_answer_header->field.total_element_found = TO_LITTE_ENDNS_NUM(uint32_t, total_element_found);
-	cloud_query_answer_header->field.element_number = TO_LITTE_ENDNS_NUM(uint32_t, element_number);
+	cloud_query_answer_header->field.total_element_found = TO_LITTE_ENDNS_NUM(uint64_t, total_element_found);
+	cloud_query_answer_header->field.element_number = TO_LITTE_ENDNS_NUM(uint64_t, element_number);
 	//set opcode
 	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeQueryDataCloudAnswer);
 	

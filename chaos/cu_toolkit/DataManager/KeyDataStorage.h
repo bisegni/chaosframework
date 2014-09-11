@@ -28,6 +28,7 @@
 using namespace std;
 
 namespace chaos_data = chaos::common::data;
+namespace chaos_io = chaos::common::io;
 
 namespace chaos{
     namespace cu {
@@ -35,7 +36,7 @@ namespace chaos{
 			
 			class KeyDataStorage : public MultiBufferDataStorage {
 				string dataSetKey;
-				IODataDriver *liveIODriver;
+				chaos_io::IODataDriver *liveIODriver;
 				auto_ptr<chaos_data::CDataWrapper> keyData;
 			public:
 				KeyDataStorage(const char*);

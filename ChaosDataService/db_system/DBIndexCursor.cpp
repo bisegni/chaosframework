@@ -41,7 +41,7 @@ uint32_t DBIndexCursor::getResultPageDimension() {
 	return result_page_dimension;
 }
 
-uint32_t DBIndexCursor::getNumberOfElementFound() {
+uint64_t DBIndexCursor::getNumberOfElementFound() {
 	return element_found;
 }
 

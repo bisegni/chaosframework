@@ -30,13 +30,6 @@ using namespace chaos::data_service::vfs;
 "domain:" << index.dst_location->getBlockVFSDomain() <<\
 " path:"<< index.dst_location->getBlockVFSPath()
 //!contructor for a timed query
-/*!
- Construct a data reading file with a timed query adn ordering
- \param data_vfs_relative_path virtual file path
- \param start_ts the start time stamp of the first needed data pack
- \param end_ts the end timestamp of the last neede datapack
- \param asc is the order of the resulting packet
- */
 VFSQuery::VFSQuery(storage_system::StorageDriver *_storage_driver_ptr,
 				   db_system::DBDriver *_db_driver_ptr,
 				   const chaos::data_service::db_system::DataPackIndexQuery& _query):
@@ -61,8 +54,14 @@ int VFSQuery::getDatablockFetcherForIndex(const db_system::DataPackIndexQueryRes
 		boost::upgrade_to_unique_lock<boost::shared_mutex> wmap_lock(rmap_lock);
 		
 		//install datablock fetcher in map
-		map_path_datablock.insert(make_pair(data_block_path, (*datablock_ptr = new query::DataBlockFetcher(storage_driver_ptr, data_block_path))));
-		
+		*datablock_ptr = new query::DataBlockFetcher(storage_driver_ptr, data_block_path);
+		if(!(*datablock_ptr) ||
+		   (err = (*datablock_ptr)->open())) {
+			//error
+		} else {
+			//all is gone well and we can put the fetcher in hashmap
+			map_path_datablock.insert(make_pair(data_block_path, *datablock_ptr));
+		}
 	}
 	return err;
 }
@@ -105,33 +104,34 @@ int VFSQuery::executeQuery() {
 int VFSQuery::nextDataPack(void **data, uint32_t& data_len) {
 	int err  = 0;
 	if(query_cursor_ptr->hasNext()) {
-		db_system::DataPackIndexQueryResult *current_index = query_cursor_ptr->getIndex();
-		if((err = getDataPackForIndex(*current_index, data, data_len))){
+		auto_ptr<db_system::DataPackIndexQueryResult> current_index(query_cursor_ptr->getIndex());
+		if((err = getDataPackForIndex(*current_index.get(), data, data_len))){
 			VFSQ_LERR_ << "Error retriving the data pack on virtual filesystem";
-			//*data = current_index->
 		}
-		delete(current_index);
 	}
-	return 0;
+	return err;
 }
 
 // read a bunch of result data
-int VFSQuery::nextNDataPack(std::vector<FoundDataPack> &readed_pack, unsigned int to_read) {
+int VFSQuery::nextNDataPack(std::vector< boost::shared_ptr<vfs::FoundDataPack> > &readed_pack, unsigned int to_read) {
 	int err = 0;
 	void *data = NULL;
 	uint32_t data_len = 0;
 	for (int idx = 0;
 		 (idx < to_read) && !err;
 		 idx++) {
-		
-		if(!(err = nextDataPack(&data, data_len))){
-			readed_pack.push_back(FoundDataPack(data, data_len));
+		data = NULL;
+		if(!(err = nextDataPack(&data, data_len)) &&
+		   data){
+			boost::shared_ptr<vfs::FoundDataPack> dp(new FoundDataPack(data, data_len));
+			readed_pack.push_back(dp);
+		} else {
+			break;
 		}
-		
 	}
-	return 0;
+	return err;
 }
 
-uint32_t VFSQuery::getNumberOfElementFound() {
+uint64_t VFSQuery::getNumberOfElementFound() {
 	return query_cursor_ptr->getNumberOfElementFound();
 }

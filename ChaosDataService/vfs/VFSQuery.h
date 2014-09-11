@@ -31,6 +31,7 @@
 #include <memory>
 #include <map>
 #include <boost/thread.hpp>
+#include <boost/shared_ptr.hpp>
 
 namespace chaos {
 	namespace data_service {
@@ -109,10 +110,10 @@ namespace chaos {
 				int nextDataPack(void **data, uint32_t& data_len);
 				
 				// read a bunch of result data
-				int nextNDataPack(std::vector<FoundDataPack> &readed_pack, unsigned int to_read);
+				int nextNDataPack(std::vector< boost::shared_ptr<FoundDataPack> > &readed_pack, unsigned int to_read);
 				
 				//
-				uint32_t getNumberOfElementFound();
+				uint64_t getNumberOfElementFound();
 			};
 			
 		}

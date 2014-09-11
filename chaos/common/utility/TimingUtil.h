@@ -24,7 +24,7 @@
 
 namespace chaos {
     using namespace boost::posix_time;
-    
+	
     /*
      Class for give some method util for timing purpose
      */
@@ -40,6 +40,12 @@ namespace chaos {
 		static inline int64_t getUTCTimeStamp() {
             return (boost::posix_time::microsec_clock::universal_time()-EPOCH).total_milliseconds();
         }
+		
+		//!convert string timestamp to uint64 ["2012-02-20T00:26:39Z"]
+		static inline uint64_t getTimestampFromString(const std::string& timestamp) {
+			boost::posix_time::ptime t = boost::posix_time::time_from_string(timestamp);
+			return (t-EPOCH).total_milliseconds();
+		}
     };
 }
 #endif

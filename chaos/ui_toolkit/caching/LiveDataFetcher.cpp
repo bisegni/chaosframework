@@ -11,12 +11,11 @@
 #include <chaos/ui_toolkit/caching/LiveDataFetcher.h>
 
 using namespace chaos;
-
+using namespace chaos::common::io;
 using namespace chaos::common::data;
-
 using namespace chaos::ui::chaching;
 
-LiveDataFetcher::LiveDataFetcher(chaos::IODataDriver *_dataDriver):dataDriver(_dataDriver) {
+LiveDataFetcher::LiveDataFetcher(IODataDriver *_dataDriver):dataDriver(_dataDriver) {
     
 }
 

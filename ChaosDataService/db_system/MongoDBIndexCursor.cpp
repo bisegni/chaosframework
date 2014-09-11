@@ -21,13 +21,16 @@
 #include "MongoDBDriver.h"
 #include "MongoDBIndexCursor.h"
 
+#include <math.h>
+
 using namespace chaos::data_service::db_system;
 
 //! private constructor
 MongoDBIndexCursor::MongoDBIndexCursor(DBDriver *_driver_ptr,
 									   const DataPackIndexQuery& _query):
 DBIndexCursor(_driver_ptr, _query),
-time_offset_per_page(0) {
+time_offset_per_page_in_ms(0),
+last_max_ts_searched(0) {
 }
 
 MongoDBIndexCursor::~MongoDBIndexCursor() {
@@ -52,10 +55,13 @@ int MongoDBIndexCursor::computeTimeLapsForPage() {
 	err = mdrv->idxSearchResultCountDataPack(query, element_found);
 	if(!err) {
 		//!calculate total element for the time laps request
-		uint32_t number_of_page = element_found / getResultPageDimension();
+		uint32_t number_of_page = (uint32_t)ceil((double)element_found / (double)getResultPageDimension());
 		
 		//!calculate the laps of the single page
-		time_offset_per_page = (query.end_ts - query.start_ts)/number_of_page;
+		time_offset_per_page_in_ms = (uint64_t)ceil((double)((query.end_ts - query.start_ts)/number_of_page));
+		
+		//! start to perform query
+		err = performNextPagedQuery();
 	}
 	return err;
 }
@@ -72,7 +78,7 @@ int MongoDBIndexCursor::performNextPagedQuery() {
 	paged_query.start_ts = (last_max_ts_searched?last_max_ts_searched+1:query.start_ts);
 	
 	//set the end timestamp
-	last_max_ts_searched = paged_query.end_ts = (paged_query.start_ts + time_offset_per_page);
+	last_max_ts_searched = paged_query.end_ts = (paged_query.start_ts + time_offset_per_page_in_ms);
 	
 	//perform query
 	return mdrv->idxSearchDataPack(paged_query, cursor);

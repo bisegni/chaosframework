@@ -21,6 +21,7 @@
 #include "../../../common/global.h"
 
 using namespace chaos;
+using namespace chaos::common::io;
 using namespace chaos::common::data;
 
 OutputDataBuffer::OutputDataBuffer() {

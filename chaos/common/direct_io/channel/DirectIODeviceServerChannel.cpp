@@ -100,8 +100,8 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack, Dir
 			reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswerPtr>(dataPack->channel_header_data);
 
 					//decode the endianes off the data
-					header->field.total_element_found = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.total_element_found);
-					header->field.element_number = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.element_number);
+					header->field.total_element_found = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.total_element_found);
+					header->field.element_number = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.element_number);
 
 					//call server api
 					err = handler->consumeDataCloudQueryAnswer(header,

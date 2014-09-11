@@ -37,8 +37,8 @@ namespace chaos {
 			class MongoDBIndexCursor : public DBIndexCursor {
 				friend class MongoDBDriver;
 				
-				//! is the time lasp for the paged search
-				uint64_t time_offset_per_page;
+				//! is the time lasp for the paged search expressed in milliseconds
+				uint64_t time_offset_per_page_in_ms;
 				
 				//! point to the last max timestamp paged search
 				uint64_t last_max_ts_searched;

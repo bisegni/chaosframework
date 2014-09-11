@@ -36,6 +36,7 @@
 using namespace std;
 
 namespace chaos_data = chaos::common::data;
+namespace chaos_io = chaos::common::io;
 
 namespace chaos {
     namespace cu {
@@ -124,7 +125,7 @@ namespace chaos {
 				 The pointer MUST NOT BE DEALOCATED it 's managed
 				 internale to the buffer
 				 */
-				IODataDriver* getBufferIODataDriver(int);
+				chaos_io::IODataDriver* getBufferIODataDriver(int);
 			};
 		}
     }

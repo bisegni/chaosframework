@@ -22,6 +22,7 @@
 #define __CHAOSFramework__IODirectIODriver__
 
 #include <set>
+#include <map>
 #include <string>
 
 #include <chaos/common/io/IODataDriver.h>
@@ -40,99 +41,118 @@
 #include <boost/atomic.hpp>
 
 namespace chaos{
-	
-	class NetworkBorker;
-	
-    using namespace std;
-    using namespace boost;
-	
-	namespace chaos_data = chaos::common::data;
-	namespace chaos_utility = chaos::common::utility;
-    namespace chaos_direct_io = chaos::common::direct_io;
-    namespace chaos_dio_channel = chaos::common::direct_io::channel;
-    
-    /*!
-	 Struct for initialization of the io driver
-     */
-    typedef struct IODirectIODriverInitParam {
-		chaos::NetworkBroker					*network_broker;
-        chaos_direct_io::DirectIOClient			*client_instance;
-        chaos_direct_io::DirectIOServerEndpoint *endpoint_instance;
-    } IODirectIODriverInitParam, *IODirectIODriverInitParamPtr;
-    
-	
-	typedef struct IODData {
-		void *data_ptr;
-		uint32_t data_len;
-	} IODData;
-	
-	typedef struct IODirectIODriverClientChannels {
-		chaos_direct_io::DirectIOClientConnection		*connection;
-		chaos_dio_channel::DirectIODeviceClientChannel	*device_client_channel;
-	} IODirectIODriverClientChannels;
-	
-    /*!
-     */
-    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(IODirectIODriver, IODataDriver),
-	public NamedService,
-	public common::network::URLServiceFeederHandler,
-	private chaos_dio_channel::DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler,
-	protected chaos_direct_io::DirectIOClientConnectionEventHandler {
-		REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(IODirectIODriver)
-		string dataKey;
-        IODirectIODriverInitParam init_parameter;
-		std::set<std::string> registered_server;
-		
-		uint16_t	current_endpoint_p_port;
-		uint16_t	current_endpoint_s_port;
-		uint16_t	current_endpoint_index;
-		
-		chaos_dio_channel::DirectIODeviceServerChannel	*device_server_channel;
-		chaos_utility::ObjectSlot<IODirectIODriverClientChannels*> channels_slot;
-		
-		WaitSemaphore wait_get_answer;
-		boost::shared_mutex mutext_feeder;
-		
-		IODData data_cache;
-		boost::atomic<uint8_t> read_write_index;
-		chaos::common::network::URLServiceFeeder connectionFeeder;
-
-	protected:
-		void disposeService(void *service_ptr);
-		void* serviceForURL(const common::network::URL& url, uint32_t service_index);
-		void handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection,
-						 chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event);
-    public:
-        
-        IODirectIODriver(std::string alias);
-        virtual ~IODirectIODriver();
-        
-		void setDirectIOParam(IODirectIODriverInitParam& _init_parameter);
-		
-        /*
-         * Init method
-         */
-        void init(void *init_parameter) throw(CException);
-        
-        /*
-         * Deinit method
-         */
-        void deinit() throw(CException);
-        
-        /*
-         * storeRawData
-         */
-        virtual void storeRawData(chaos_data::SerializationBuffer *serialization)  throw(CException);
-        
-        /*
-         * retriveRawData
-         */
-        virtual char * retriveRawData(size_t *dim=NULL)  throw(CException);
-        /*
-         * updateConfiguration
-         */
-        chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*);
-    };
+	namespace common {
+		namespace io {
+			class NetworkBorker;
+			
+			using namespace std;
+			using namespace boost;
+			
+			namespace chaos_data = chaos::common::data;
+			namespace chaos_utility = chaos::common::utility;
+			namespace chaos_direct_io = chaos::common::direct_io;
+			namespace chaos_dio_channel = chaos::common::direct_io::channel;
+			
+			/*!
+			 Struct for initialization of the io driver
+			 */
+			typedef struct IODirectIODriverInitParam {
+				chaos::NetworkBroker					*network_broker;
+				chaos_direct_io::DirectIOClient			*client_instance;
+				chaos_direct_io::DirectIOServerEndpoint *endpoint_instance;
+			} IODirectIODriverInitParam, *IODirectIODriverInitParamPtr;
+			
+			
+			typedef struct IODData {
+				void *data_ptr;
+				uint32_t data_len;
+			} IODData;
+			
+			typedef struct IODirectIODriverClientChannels {
+				chaos_direct_io::DirectIOClientConnection		*connection;
+				chaos_dio_channel::DirectIODeviceClientChannel	*device_client_channel;
+			} IODirectIODriverClientChannels;
+			
+			/*!
+			 */
+			REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(IODirectIODriver, IODataDriver),
+			public NamedService,
+			public common::network::URLServiceFeederHandler,
+			private chaos_dio_channel::DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler,
+			protected chaos_direct_io::DirectIOClientConnectionEventHandler {
+				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(IODirectIODriver)
+				IODirectIODriverInitParam init_parameter;
+				std::set<std::string> registered_server;
+				
+				uint16_t	current_endpoint_p_port;
+				uint16_t	current_endpoint_s_port;
+				uint16_t	current_endpoint_index;
+				
+				chaos_dio_channel::DirectIODeviceServerChannel	*device_server_channel;
+				chaos_utility::ObjectSlot<IODirectIODriverClientChannels*> channels_slot;
+				
+				WaitSemaphore wait_get_answer;
+				boost::shared_mutex mutext_feeder;
+				
+				IODData data_cache;
+				boost::atomic<uint8_t> read_write_index;
+				chaos::common::network::URLServiceFeeder connectionFeeder;
+				
+				//query future management
+				boost::shared_mutex				map_query_future_mutex;
+				std::map<string, QueryFuture*>	map_query_future;
+				
+			protected:
+				void disposeService(void *service_ptr);
+				void* serviceForURL(const common::network::URL& url, uint32_t service_index);
+				void handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection,
+								 chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event);
+			public:
+				
+				IODirectIODriver(std::string alias);
+				virtual ~IODirectIODriver();
+				
+				void setDirectIOParam(IODirectIODriverInitParam& _init_parameter);
+				
+				/*
+				 * Init method
+				 */
+				void init(void *init_parameter) throw(CException);
+				
+				/*
+				 * Deinit method
+				 */
+				void deinit() throw(CException);
+				
+				/*
+				 * storeRawData
+				 */
+				virtual void storeRawData(chaos_data::SerializationBuffer *serialization)  throw(CException);
+				
+				/*
+				 * retriveRawData
+				 */
+				virtual char * retriveRawData(size_t *dim=NULL)  throw(CException);
+				
+				/*
+				 * updateConfiguration
+				 */
+				chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*);
+				
+				//! perform a query since and
+				QueryFuture *performQuery(uint64_t start_ts, uint64_t end_ts);
+				
+				//! release a query
+				void releaseQuery(QueryFuture *query_future);
+				
+				//! overrid of the query result method for class DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler[run in another thread]
+				int consumeDataCloudQueryAnswer(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswer *header,
+												void *data_found,
+												uint32_t data_lenght,
+												chaos_direct_io::DirectIOSynchronousAnswerPtr synchronous_answer);
+			};
+		}
+	}
 }
 
 

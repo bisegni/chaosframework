@@ -106,7 +106,7 @@ namespace chaos {
 					 \param data
 					 \param data_len
 					 */
-                    int64_t sendResultToQueryDataCloud(const std::string& query_id, uint32_t total_element_found, uint32_t element_idx, void *data, uint32_t data_len);
+                    int64_t sendResultToQueryDataCloud(const std::string& query_id, uint64_t total_element_found, uint64_t element_idx, void *data, uint32_t data_len);
 				};
 
 				

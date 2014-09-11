@@ -7,8 +7,10 @@
 //
 
 #include <chaos/common/io/IODataDriver.h>
+#include <chaos/common/io/QueryFuture.h>
 
 using namespace chaos;
+using namespace chaos::common::io;
 using namespace chaos::common::data;
 
 /*
@@ -78,4 +80,25 @@ ArrayPointer<CDataWrapper>* IODataDriver::retriveData()  throw(CException) {
  */
 CDataWrapper* IODataDriver::updateConfiguration(CDataWrapper*){
     return NULL;
+}
+
+QueryFuture *IODataDriver::_getNewQueryFutureForQueryID(const std::string& query_id) {
+	return new QueryFuture(query_id);
+}
+
+void IODataDriver::_releaseQueryFuture(QueryFuture *query_future_ptr) {
+	if(query_future_ptr)delete(query_future_ptr);
+}
+
+void IODataDriver::_pushDataToQuryFuture(QueryFuture& query_future, chaos_data::CDataWrapper *data_pack) {
+	query_future.pushDataPack(data_pack);
+}
+
+QueryFuture *IODataDriver::performQuery(uint64_t start_ts, uint64_t end_ts) {
+	return NULL;
+}
+
+//! close a query
+void IODataDriver::releaseQuery(QueryFuture *query_future) {
+	_releaseQueryFuture(query_future);
 }

@@ -61,7 +61,7 @@ int DataCloudQuery::startQuery() {
 	return err;
 }
 
-int DataCloudQuery::fecthData(std::vector<vfs::FoundDataPack>& found_data_pack, unsigned int element_to_fecth) {
+int DataCloudQuery::fecthData(std::vector< boost::shared_ptr<vfs::FoundDataPack> >& found_data_pack, unsigned int element_to_fecth) {
 	if(!vfs_query) return -1;
 	int err = 0;
 	if((err = vfs_query->nextNDataPack(found_data_pack, element_to_fecth))) {
@@ -95,7 +95,7 @@ QueryEngine::QueryEngine(chaos_direct_io::DirectIOClient *_directio_client_insta
 						 vfs::VFSManager *_vfs_manager_ptr):
 directio_client_instance(_directio_client_instance),
 work_on_query(false),
-thread_pool_size(_thread_pool_size), 
+thread_pool_size(_thread_pool_size),
 vfs_manager_ptr(_vfs_manager_ptr),
 query_queue(1) {
 	
@@ -107,8 +107,10 @@ QueryEngine::~QueryEngine() {
 
 void QueryEngine::init(void *init_data)  throw(chaos::CException) {
 	if(!directio_client_instance) throw chaos::CException(-1, "No direct io setupped", __FUNCTION__);
+	utility::InizializableService::initImplementation(directio_client_instance, init_data, "directio_client_instance", __PRETTY_FUNCTION__);
+	
 	if(!vfs_manager_ptr) throw chaos::CException(-2, "No vfs manager setupped", __FUNCTION__);
-
+	
 }
 
 void QueryEngine::start() throw(chaos::CException) {
@@ -126,7 +128,7 @@ void QueryEngine::stop() throw(chaos::CException) {
 }
 
 void QueryEngine::deinit() throw(CException) {
-	
+	utility::InizializableService::deinitImplementation(directio_client_instance, "directio_client_instance", __PRETTY_FUNCTION__);
 }
 
 //execute a query and manage the result
@@ -137,15 +139,14 @@ void QueryEngine::executeQuery(DataCloudQuery *query) {
 	if(vfs_manager_ptr->getVFSQuery(query->query, &query->vfs_query)) {
 		QEERR_ << "error quetting VFSQuery for " << QUERY_INFO((*query));
 	}
+	//set the next phase of the query
+	query->query_phase = DataCloudQuery::DataCloudQueryPhaseNeedSearch;
 	
 	if(!query_queue.push(query)) {
 		QEERR_ << "error submitting for "<< QUERY_INFO((*query));
 		delete(query);
 	}
 	QEDBG_ << "Successfull submission for " << QUERY_INFO((*query));
-	
-	//set the next phase of the query
-	query->query_phase = DataCloudQuery::DataCloudQueryPhaseNeedSearch;
 }
 
 void QueryEngine::clearHashTableElement(const void *key, uint32_t key_len, ClientConnectionInfo *element) {
@@ -178,8 +179,8 @@ void QueryEngine::handleEvent(chaos_direct_io::DirectIOClientConnection *client_
 	//get the unique key for query
 	std::string unique_query_key = client_connection->getCustomStringIdentification();
 	if(DirectIOChannelHashTable::getElement(unique_query_key.c_str(),
-										   (uint32_t)unique_query_key.size(),
-										   &connection_info_ptr)) {
+											(uint32_t)unique_query_key.size(),
+											&connection_info_ptr)) {
 		//we can't be here
 		return;
 	}
@@ -190,7 +191,6 @@ void QueryEngine::handleEvent(chaos_direct_io::DirectIOClientConnection *client_
 
 int  QueryEngine::getChannelForQuery(const DataCloudQuery& query,
 									 ClientConnectionInfo **connection_info_handle) {
-	
 	//allocate server key
 	if(!DirectIOChannelHashTable::getElement(query.query_computed_unique_id.c_str(),
 											 (uint32_t)query.query_computed_unique_id.size(),
@@ -213,7 +213,7 @@ int  QueryEngine::getChannelForQuery(const DataCloudQuery& query,
 	}
 	//set query engine as handler of event on client conenction
 	(*connection_info_handle)->connection->setEventHandler(this);
-
+	
 	//! set connection custo identification key
 	(*connection_info_handle)->connection->setCustomStringIdentification(query.query_computed_unique_id);
 	
@@ -229,34 +229,34 @@ int  QueryEngine::getChannelForQuery(const DataCloudQuery& query,
 	//all is gone well
 	//now we can add client and channel to the maps
 	DirectIOChannelHashTable::addElement(query.query_computed_unique_id.c_str(),
-										(uint32_t)query.query_computed_unique_id.size(),
-										*connection_info_handle);
-
+										 (uint32_t)query.query_computed_unique_id.size(),
+										 *connection_info_handle);
+	
 	return 0;
 }
 
 int  QueryEngine::sendDataToClient(DataCloudQuery& query,
-								   const std::vector<vfs::FoundDataPack>& data) {
-	ClientConnectionInfo *connection_info_ptr = NULL;
-	
+								   const std::vector<boost::shared_ptr<vfs::FoundDataPack> >& data) {
 	//fecth connection channel
+	ClientConnectionInfo *connection_info_ptr = NULL;
 	int err = getChannelForQuery(query, &connection_info_ptr);
-	
-	for (std::vector<vfs::FoundDataPack>::const_iterator it = data.begin();
-		 err == 0 && it != data.end();
-		 it++) {
-		
-		//send data packet
-		err = (int)connection_info_ptr->channel->sendResultToQueryDataCloud(query.query_id,
-																			query.vfs_query->getNumberOfElementFound(),
-																			++query.total_data_pack_sent,
-																			it->data_pack_buffer,
-																			it->data_pack_size);
-		//check for error
-		if(query.answer_connection_state == chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected ||
-		   err) {
-			LDBG_ << "Client has been disconnected for " << QUERY_INFO(query);
-			err = -1;
+	if(!err && connection_info_ptr) {
+		for (std::vector<boost::shared_ptr<vfs::FoundDataPack> >::const_iterator it = data.begin();
+			 err == 0 && it != data.end();
+			 it++) {
+			
+			//send data packet
+			err = (int)connection_info_ptr->channel->sendResultToQueryDataCloud(query.query_id,
+																				query.vfs_query->getNumberOfElementFound(),
+																				++query.total_data_pack_sent,
+																				(*it)->data_pack_buffer,
+																				(*it)->data_pack_size);
+			//check for error
+			if(query.answer_connection_state == chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected ||
+			   err) {
+				LDBG_ << "Client has been disconnected for " << QUERY_INFO(query);
+				err = -1;
+			}
 		}
 	}
 	return err;
@@ -265,7 +265,7 @@ int  QueryEngine::sendDataToClient(DataCloudQuery& query,
 void QueryEngine::process_query() {
 	int err = 0;
 	DataCloudQuery *query = NULL;
-	std::vector<vfs::FoundDataPack> found_datapac_vec;
+	std::vector<boost::shared_ptr<vfs::FoundDataPack> > found_datapac_vec;
 	
 	while(work_on_query) {
 		if(query_queue.pop(query) && query) {
@@ -278,8 +278,7 @@ void QueryEngine::process_query() {
 					//start the query
 					LDBG_ << "Start "<< QUERY_INFO((*query));
 					err = query->startQuery();
-					break;
-
+					
 				case DataCloudQuery::DataCloudQueryPhaseHaveData:
 					LDBG_ << "Answer "<< QUERY_INFO((*query));
 					if(!(err = query->fecthData(found_datapac_vec, 50))) {
@@ -300,8 +299,8 @@ void QueryEngine::process_query() {
 				ClientConnectionInfo *connection_info_ptr = NULL;
 				std::string query_unique_id = query->query_computed_unique_id;
 				if(!DirectIOChannelHashTable::getElement(query->query_computed_unique_id.c_str(),
-														(uint32_t)query_unique_id.size(),
-														&connection_info_ptr) && connection_info_ptr) {
+														 (uint32_t)query_unique_id.size(),
+														 &connection_info_ptr) && connection_info_ptr) {
 					//dispose conenction info
 					disposeClientConnectionInfo(connection_info_ptr);
 					
@@ -321,6 +320,7 @@ void QueryEngine::process_query() {
 					QEDBG_ << "Succcesfull rescheduled "<< QUERY_INFO((*query));
 				}
 			}
+		} else {
 			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 		}
 	}

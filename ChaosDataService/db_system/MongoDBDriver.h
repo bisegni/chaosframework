@@ -49,7 +49,7 @@ namespace chaos {
 					int idxSearchDataPack(const DataPackIndexQuery & data_pack_index_query, std::auto_ptr<mongo::DBClientCursor>& cursor);
 					
 					//! protected methdo that perform the real paged query on index called by the cursor
-					int idxSearchResultCountDataPack(const DataPackIndexQuery & data_pack_index_query, uint64_t num_of_result);
+					int idxSearchResultCountDataPack(const DataPackIndexQuery & data_pack_index_query, uint64_t& num_of_result);
 					
 					//! protected methdo that perform the real paged query on index called by the cursor
 					int idxMaxAndMInimumTimeStampForDataPack(const DataPackIndexQuery & data_pack_index_query, uint64_t& min_ts, uint64_t& max_ts);

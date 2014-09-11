@@ -165,9 +165,9 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
 													   header->field.p_port %
 													   header->field.s_port %
 													   header->field.endpoint);
-	
+	std::string query_id(header->field.query_id, 8);
 	//execute the query
-	query_engine->executeQuery(new query_engine::DataCloudQuery(header->field.query_id,
+	query_engine->executeQuery(new query_engine::DataCloudQuery(query_id,
 																db_system::DataPackIndexQuery(search_key, search_start_ts, search_end_ts),
 																answer_server_description));
 	//delete header and

@@ -222,6 +222,7 @@
 					"-lboost_log_setup",
 					"-lchaos_uitoolkit",
 					"-lchaos_common",
+					"-lboost_date_time",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -255,6 +256,7 @@
 					"-lboost_log_setup",
 					"-lchaos_uitoolkit",
 					"-lchaos_common",
+					"-lboost_date_time",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

@@ -24,11 +24,10 @@
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/io/IODataDriver.h>
+using namespace chaos::common::io;
+using namespace std;
 namespace chaos {
     namespace ui {
-
-        using namespace std;
-        
         /*
          Low level api for data access api
          */

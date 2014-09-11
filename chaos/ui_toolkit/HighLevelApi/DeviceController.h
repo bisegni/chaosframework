@@ -34,7 +34,7 @@
 #include <chaos/common/data/DatasetDB.h>
 #include <chaos/common/chaos_types.h>
 
-
+namespace chaos_io = chaos::common::io;
 namespace chaos_batch = chaos::common::batch_command;
 
 namespace chaos {
@@ -56,7 +56,7 @@ namespace chaos {
                 //! Device MEssage channel to control via chaos rpc the device
             DeviceMessageChannel *deviceChannel;
                 //! The io driver for accessing live data of the device
-            IODataDriver *ioLiveDataDriver;
+			chaos_io::IODataDriver *ioLiveDataDriver;
                 //!Dataset database
             DatasetDB datasetDB;
                 //!point to the freashest live value for this device dataset
@@ -364,9 +364,17 @@ namespace chaos {
              */
             void clearHandler();
             
+			//! send custom request to device
             int sendCustomRequest(const char * const action, common::data::CDataWrapper * const param, common::data::CDataWrapper**const result, bool async = false,  bool queued = true);
+			
+			//! send custom message to device
 			void sendCustomMessage(const char * const action, common::data::CDataWrapper * const param, bool queued = true);
             
+			//! get datapack between time itervall
+			void executeTimeIntervallQuery(uint64_t start_ts, uint64_t end_ts, chaos_io::QueryFuture **query_future);
+			
+			//! release a query
+			void releaseQuery(chaos_io::QueryFuture *query_future);
         };
     }
 }
