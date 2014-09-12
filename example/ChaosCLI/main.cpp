@@ -179,10 +179,14 @@ int main (int argc, char* argv[] )
 		chaos::common::io::QueryFuture *query_future = NULL;
 		controller->executeTimeIntervallQuery(start_ts, end_ts, &query_future);
 		if(query_future) {
-			auto_ptr<CDataWrapper> q_result(query_future->getDataPack(true));
-			if(q_result.get()) {
-				std::cout << q_result->getJSONString() << std::endl;
-			}
+			do {
+				auto_ptr<CDataWrapper> q_result(query_future->getDataPack(true));
+				if(q_result.get()) {
+					std::cout << q_result->getUInt64Value(chaos::DataPackKey::CS_CSV_TIME_STAMP) << std::endl;
+				}
+			} while(query_future->getCurrentElementIndex() < query_future->getTotalElementFound());
+			
+			controller->releaseQuery(query_future);
 		}
 		
         //get the actual state of device

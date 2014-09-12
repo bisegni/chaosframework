@@ -48,19 +48,21 @@ namespace chaos {
 				//! private constructor
 				MongoDBIndexCursor(DBDriver *_driver_ptr,
 								   const DataPackIndexQuery &_query);
-				
-				int performNextPagedQuery();
+
 				
 				int computeTimeLapsForPage();
 			public:
 				
 				~MongoDBIndexCursor();
 				
-				//! return true if there are othere index to fetch
+				//! return true if there are othere index to fetch on current page
 				/*!
 				 \return true is there are other result to fetch
 				 */
 				bool hasNext();
+				
+				//! perform the next page query
+				int performNextPagedQuery();
 				
 				//! return next index
 				/*!

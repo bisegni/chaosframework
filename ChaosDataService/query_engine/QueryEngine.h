@@ -32,6 +32,8 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/lockfree/queue.hpp>
 
+#include <map>
+
 namespace chaos_direct_io = chaos::common::direct_io;
 namespace chaos_direct_io_ch = chaos::common::direct_io::channel;
 
@@ -89,21 +91,19 @@ namespace chaos {
 				
 				int startQuery();
 				
-				int fecthData(std::vector< boost::shared_ptr<vfs::FoundDataPack> >& found_data_pack, unsigned int element_to_fecth);
+				int fecthData(std::vector<vfs::FoundDataPack*>& found_data_pack);
 			};
 			
-			
+			//collect connection information
 			struct ClientConnectionInfo {
 				chaos_direct_io::DirectIOClientConnection		*connection;
 				chaos_direct_io_ch::DirectIODeviceClientChannel *channel;
 				DataCloudQuery									*query;
-				ClientConnectionInfo();
-				~ClientConnectionInfo();
 			};
 			
 			//!hash table superclass type definition
 			typedef chaos::common::utility::TemplatedKeyValueHash< ClientConnectionInfo* > DirectIOChannelHashTable;
-
+			typedef std::map<string, ClientConnectionInfo*>::iterator MapConnectionIterator;
 			
 			/*!
 			 This class is the central that perform asynchronous answering to the
@@ -111,7 +111,6 @@ namespace chaos {
 			 */
 			class QueryEngine:
 			public utility::StartableService,
-			protected DirectIOChannelHashTable,
 			protected chaos_direct_io::DirectIOClientConnectionEventHandler {
 				chaos_direct_io::DirectIOClient *directio_client_instance;
 				vfs::VFSManager *vfs_manager_ptr;
@@ -121,18 +120,21 @@ namespace chaos {
 				boost::thread_group answer_thread_pool;
 				boost::lockfree::queue<DataCloudQuery*, boost::lockfree::fixed_sized<false> > query_queue;
 				
+				boost::shared_mutex						mutex_map_query_id_connection;
+				std::map<string, ClientConnectionInfo*> map_query_id_connection;
+				
 				//! send data to the requester
-				int  getChannelForQuery(const DataCloudQuery& query,
+				int  getChannelForQuery(DataCloudQuery *query,
 										ClientConnectionInfo **connection_info_handle);
 				//send data to client
-				int  sendDataToClient(DataCloudQuery& query,
-									  const std::vector< boost::shared_ptr<vfs::FoundDataPack> >& data);
+				int  sendDataToClient(DataCloudQuery *query,
+									  const std::vector<vfs::FoundDataPack*>& data);
 				
 				//!process the signle query step
 				void process_query();
 				
 				//!virtual method of hastable DirectIOChannelHashTable
-				void clearHashTableElement(const void *key, uint32_t key_len, ClientConnectionInfo *element);
+				//void clearHashTableElement(const void *key, uint32_t key_len, ClientConnectionInfo *element);
 				
 				//!virtual function of DirectIOClientConnectionEventHandler
 				void handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection,

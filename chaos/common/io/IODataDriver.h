@@ -48,7 +48,7 @@ namespace chaos{
 				
 				void _releaseQueryFuture(QueryFuture *query_future_ptr);
 				
-				void _pushDataToQuryFuture(QueryFuture& query_future, chaos_data::CDataWrapper *data_pack);
+				void _pushDataToQuryFuture(QueryFuture& query_future, chaos_data::CDataWrapper *data_pack, uint64_t total_element_found);
 			public:
 				virtual ~IODataDriver(){};
 				/*!

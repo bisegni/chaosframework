@@ -30,7 +30,16 @@ namespace chaos {
 			class QueryFuture {
 				friend class IODataDriver;
 				
+				//!query id for this future
 				std::string query_id;
+				
+				//!total number of element of the query
+				uint64_t total_found_element;
+				
+				//!index of the current fetched element
+				uint64_t fetched_element_index;
+				
+				//!semaphore
 				WaitSemaphore waith_for_get_data_Semaphore;
 				WaitSemaphore waith_for_push_data_Semaphore;
 				
@@ -41,11 +50,15 @@ namespace chaos {
 				
 				virtual ~QueryFuture();
 				
-				void pushDataPack(cc_data::CDataWrapper *received_datapack);
+				void pushDataPack(cc_data::CDataWrapper *received_datapack, uint64_t _total_found_element);
 			public:
 				cc_data::CDataWrapper *getDataPack(bool wait = true);
 				
 				const std::string& getQueryID();
+				
+				uint64_t getTotalElementFound();
+				
+				uint64_t getCurrentElementIndex();
 			};
 			
 		}

@@ -64,11 +64,14 @@ namespace chaos {
 				//!
 				void setResultPageDimension(uint32_t);
 				
-				//! return true if there are othere index to fetch
+				//! return true if there are othere index to fetch on current page
 				/*!
 				 \return true is there are other result to fetch
 				 */
 				virtual bool hasNext() = 0;
+				
+				//! perform the next page query
+				virtual int performNextPagedQuery() = 0;
 				
 				//! return next index
 				/*!

@@ -90,8 +90,8 @@ void IODataDriver::_releaseQueryFuture(QueryFuture *query_future_ptr) {
 	if(query_future_ptr)delete(query_future_ptr);
 }
 
-void IODataDriver::_pushDataToQuryFuture(QueryFuture& query_future, chaos_data::CDataWrapper *data_pack) {
-	query_future.pushDataPack(data_pack);
+void IODataDriver::_pushDataToQuryFuture(QueryFuture& query_future, chaos_data::CDataWrapper *data_pack, uint64_t total_element_found) {
+	query_future.pushDataPack(data_pack, total_element_found);
 }
 
 QueryFuture *IODataDriver::performQuery(uint64_t start_ts, uint64_t end_ts) {

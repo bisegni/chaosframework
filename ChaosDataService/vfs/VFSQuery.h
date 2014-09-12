@@ -42,14 +42,15 @@ namespace chaos {
 			struct FoundDataPack {
 				void		*data_pack_buffer;
 				uint32_t	data_pack_size;
-				
+				bool		delete_on_dispose;
 				FoundDataPack(void *_data_pack_buffer,
 							  uint32_t	_data_pack_size):
 				data_pack_buffer(_data_pack_buffer),
-				data_pack_size(_data_pack_size)	{};
+				data_pack_size(_data_pack_size),
+				delete_on_dispose(true){};
 				
 				~FoundDataPack(){
-					if(data_pack_buffer) free(data_pack_buffer);
+					if(data_pack_buffer && delete_on_dispose) free(data_pack_buffer);
 				}
 			};
 			
@@ -106,11 +107,8 @@ namespace chaos {
 				 */
 				int executeQuery();
 				
-				// read a single query result
-				int nextDataPack(void **data, uint32_t& data_len);
-				
 				// read a bunch of result data
-				int nextNDataPack(std::vector< boost::shared_ptr<FoundDataPack> > &readed_pack, unsigned int to_read);
+				int readDataPackPage(std::vector<FoundDataPack*> &readed_pack);
 				
 				//
 				uint64_t getNumberOfElementFound();

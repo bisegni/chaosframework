@@ -59,9 +59,6 @@ int MongoDBIndexCursor::computeTimeLapsForPage() {
 		
 		//!calculate the laps of the single page
 		time_offset_per_page_in_ms = (uint64_t)ceil((double)((query.end_ts - query.start_ts)/number_of_page));
-		
-		//! start to perform query
-		err = performNextPagedQuery();
 	}
 	return err;
 }
@@ -86,14 +83,7 @@ int MongoDBIndexCursor::performNextPagedQuery() {
 
 //! return true if there are othere index to fetch
 bool MongoDBIndexCursor::hasNext() {
-	int err = 0;
-	bool has_more = cursor->more();
-	if(!has_more) {
-		if(!(err = performNextPagedQuery())){
-			has_more = cursor->more();
-		}
-	}
-	return has_more;
+	return (cursor.get() == NULL)? false:cursor->more();
 }
 
 //! return next index

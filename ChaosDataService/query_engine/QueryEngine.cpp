@@ -33,7 +33,7 @@ namespace chaos_direct_io_ch = chaos::common::direct_io::channel;
 #define QEDBG_ LDBG_ << QueryEngine_LOG_HEAD << __FUNCTION__ << " - "
 #define QEERR_ LERR_ << QueryEngine_LOG_HEAD << __FUNCTION__ << "(" << __LINE__ << ") - "
 
-#define QUERY_INFO(x) "query on key:" << x.query.did << "(since: " << x.query.start_ts << " to: " << x.query.end_ts << ") has been submitted"
+#define QUERY_INFO(x) "query on key:" << x.query.did << "(since: " << x.query.start_ts << " to: " << x.query.end_ts << ")"
 
 
 DataCloudQuery::DataCloudQuery(const std::string& _query_id,
@@ -61,10 +61,10 @@ int DataCloudQuery::startQuery() {
 	return err;
 }
 
-int DataCloudQuery::fecthData(std::vector< boost::shared_ptr<vfs::FoundDataPack> >& found_data_pack, unsigned int element_to_fecth) {
+int DataCloudQuery::fecthData(std::vector<vfs::FoundDataPack*>& found_data_pack) {
 	if(!vfs_query) return -1;
 	int err = 0;
-	if((err = vfs_query->nextNDataPack(found_data_pack, element_to_fecth))) {
+	if((err = vfs_query->readDataPackPage(found_data_pack))) {
 		query_phase = DataCloudQueryPhaseError;
 		QEERR_ << "Error fetching query data";
 	} else {
@@ -75,18 +75,6 @@ int DataCloudQuery::fecthData(std::vector< boost::shared_ptr<vfs::FoundDataPack>
 	return err;
 }
 
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
-ClientConnectionInfo::ClientConnectionInfo():
-connection(NULL),
-channel(NULL){}
-
-ClientConnectionInfo::~ClientConnectionInfo(){
-	if(connection) delete(connection);
-	if(channel) delete(channel);
-	
-}
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
@@ -125,6 +113,13 @@ void QueryEngine::start() throw(chaos::CException) {
 void QueryEngine::stop() throw(chaos::CException) {
 	work_on_query = false;
 	answer_thread_pool.join_all();
+	
+	//delete all connection
+	for(MapConnectionIterator it = map_query_id_connection.begin();
+		it != map_query_id_connection.end();
+		it++) {
+		disposeClientConnectionInfo(it->second);
+	}
 }
 
 void QueryEngine::deinit() throw(CException) {
@@ -149,9 +144,9 @@ void QueryEngine::executeQuery(DataCloudQuery *query) {
 	QEDBG_ << "Successfull submission for " << QUERY_INFO((*query));
 }
 
-void QueryEngine::clearHashTableElement(const void *key, uint32_t key_len, ClientConnectionInfo *element) {
-	disposeClientConnectionInfo(element);
-}
+//void QueryEngine::clearHashTableElement(const void *key, uint32_t key_len, ClientConnectionInfo *element) {
+//	disposeClientConnectionInfo(element);
+//}
 
 void QueryEngine::disposeClientConnectionInfo(ClientConnectionInfo *client_info) {
 	CHAOS_ASSERT(client_info)
@@ -167,44 +162,49 @@ void QueryEngine::disposeClientConnectionInfo(ClientConnectionInfo *client_info)
 		directio_client_instance->releaseConnection(client_info->connection);
 	}
 	
-	delete (client_info);
+	free(client_info);
 	DEBUG_CODE(QEDBG_ << "ending purge operation for " << server_desc;)
 }
 
 
 void QueryEngine::handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection,
 							  chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) {
-	ClientConnectionInfo *connection_info_ptr = NULL;
 	
 	//get the unique key for query
+	boost::shared_lock<boost::shared_mutex> rlock(mutex_map_query_id_connection);
+	
 	std::string unique_query_key = client_connection->getCustomStringIdentification();
-	if(DirectIOChannelHashTable::getElement(unique_query_key.c_str(),
-											(uint32_t)unique_query_key.size(),
-											&connection_info_ptr)) {
-		//we can't be here
+	MapConnectionIterator it =  map_query_id_connection.find(unique_query_key);
+	if(it == map_query_id_connection.end()) {
 		return;
 	}
-	
 	//set the connection state in query
-	connection_info_ptr->query->answer_connection_state = event;
+	if(event == chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected) {
+		//if client disconnects set query in error
+		it->second->query->query_phase = DataCloudQuery::DataCloudQueryPhaseError;
+	}
 }
 
-int  QueryEngine::getChannelForQuery(const DataCloudQuery& query,
+int  QueryEngine::getChannelForQuery(DataCloudQuery *query,
 									 ClientConnectionInfo **connection_info_handle) {
+	
+	boost::upgrade_lock<boost::shared_mutex> readLock(mutex_map_query_id_connection);
 	//allocate server key
-	if(!DirectIOChannelHashTable::getElement(query.query_computed_unique_id.c_str(),
-											 (uint32_t)query.query_computed_unique_id.size(),
-											 connection_info_handle)) {
+	MapConnectionIterator it = map_query_id_connection.find(query->query_computed_unique_id);
+	if(it != map_query_id_connection.end()) {
+		*connection_info_handle = it->second;
 		return 0;
 	}
 	
+	//lock for write
+	boost::upgrade_to_unique_lock<boost::shared_mutex> writeLock(readLock);
 	//allocate the client info struct
-	*connection_info_handle = new ClientConnectionInfo();
+	*connection_info_handle = (ClientConnectionInfo*)calloc(sizeof(ClientConnectionInfo), 1);
 	
 	if(!*connection_info_handle) return -1;
 	
 	//get connection
-	(*connection_info_handle)->connection = directio_client_instance->getNewConnection(query.answer_endpoint);
+	(*connection_info_handle)->connection = directio_client_instance->getNewConnection(query->answer_endpoint);
 	
 	if(!(*connection_info_handle)->connection) {
 		disposeClientConnectionInfo(*connection_info_handle);
@@ -215,7 +215,7 @@ int  QueryEngine::getChannelForQuery(const DataCloudQuery& query,
 	(*connection_info_handle)->connection->setEventHandler(this);
 	
 	//! set connection custo identification key
-	(*connection_info_handle)->connection->setCustomStringIdentification(query.query_computed_unique_id);
+	(*connection_info_handle)->connection->setCustomStringIdentification(query->query_computed_unique_id);
 	
 	//get the channel
 	(*connection_info_handle)->channel = dynamic_cast<chaos_direct_io_ch::DirectIODeviceClientChannel*>((*connection_info_handle)->connection->getNewChannelInstance("DirectIODeviceClientChannel"));
@@ -224,39 +224,43 @@ int  QueryEngine::getChannelForQuery(const DataCloudQuery& query,
 		*connection_info_handle = NULL;
 		return -1;
 	}
-	(*connection_info_handle)->channel->setDeviceID(query.query.did);
+	(*connection_info_handle)->channel->setDeviceID(query->query.did);
+	
+	//set the query pointer to the connection info
+	(*connection_info_handle)->query = query;
 	
 	//all is gone well
 	//now we can add client and channel to the maps
-	DirectIOChannelHashTable::addElement(query.query_computed_unique_id.c_str(),
-										 (uint32_t)query.query_computed_unique_id.size(),
-										 *connection_info_handle);
-	
+	map_query_id_connection.insert(make_pair(query->query_computed_unique_id, *connection_info_handle));
 	return 0;
 }
 
-int  QueryEngine::sendDataToClient(DataCloudQuery& query,
-								   const std::vector<boost::shared_ptr<vfs::FoundDataPack> >& data) {
+int  QueryEngine::sendDataToClient(DataCloudQuery *query,
+								   const std::vector<vfs::FoundDataPack*>& data) {
 	//fecth connection channel
 	ClientConnectionInfo *connection_info_ptr = NULL;
 	int err = getChannelForQuery(query, &connection_info_ptr);
 	if(!err && connection_info_ptr) {
-		for (std::vector<boost::shared_ptr<vfs::FoundDataPack> >::const_iterator it = data.begin();
+		for (std::vector<vfs::FoundDataPack*>::const_iterator it = data.begin();
 			 err == 0 && it != data.end();
 			 it++) {
 			
 			//send data packet
-			err = (int)connection_info_ptr->channel->sendResultToQueryDataCloud(query.query_id,
-																				query.vfs_query->getNumberOfElementFound(),
-																				++query.total_data_pack_sent,
+			err = (int)connection_info_ptr->channel->sendResultToQueryDataCloud(query->query_id,
+																				query->vfs_query->getNumberOfElementFound(),
+																				++query->total_data_pack_sent,
 																				(*it)->data_pack_buffer,
 																				(*it)->data_pack_size);
 			//check for error
-			if(query.answer_connection_state == chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected ||
+			if(query->answer_connection_state == chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected ||
 			   err) {
-				LDBG_ << "Client has been disconnected for " << QUERY_INFO(query);
+				QEDBG_ << "Client has been disconnected for " << QUERY_INFO((*query));
 				err = -1;
+			} else {
+				//at tis point memory is managed by async direct io system
+				(*it)->delete_on_dispose = false;
 			}
+			delete(*it);
 		}
 	}
 	return err;
@@ -265,7 +269,7 @@ int  QueryEngine::sendDataToClient(DataCloudQuery& query,
 void QueryEngine::process_query() {
 	int err = 0;
 	DataCloudQuery *query = NULL;
-	std::vector<boost::shared_ptr<vfs::FoundDataPack> > found_datapac_vec;
+	std::vector<vfs::FoundDataPack*> found_datapac_vec;
 	
 	while(work_on_query) {
 		if(query_queue.pop(query) && query) {
@@ -276,13 +280,14 @@ void QueryEngine::process_query() {
 			switch(query->query_phase) {
 				case DataCloudQuery::DataCloudQueryPhaseNeedSearch:
 					//start the query
-					LDBG_ << "Start "<< QUERY_INFO((*query));
+					QEDBG_ << "Start "<< QUERY_INFO((*query));
 					err = query->startQuery();
 					
 				case DataCloudQuery::DataCloudQueryPhaseHaveData:
-					LDBG_ << "Answer "<< QUERY_INFO((*query));
-					if(!(err = query->fecthData(found_datapac_vec, 50))) {
-						if((err = sendDataToClient(*query, found_datapac_vec))) {
+					QEDBG_ << "Answer "<< QUERY_INFO((*query));
+					if(!(err = query->fecthData(found_datapac_vec)) &&
+					   query->query_phase ==DataCloudQuery::DataCloudQueryPhaseHaveData) {
+						if((err = sendDataToClient(query, found_datapac_vec))) {
 							//if there is an error sending data back to client remove the query
 							query->query_phase = DataCloudQuery::DataCloudQueryPhaseError;
 						}
@@ -296,30 +301,33 @@ void QueryEngine::process_query() {
 			
 			if(query->query_phase == DataCloudQuery::DataCloudQueryPhaseError ||
 			   query->query_phase == DataCloudQuery::DataCloudQueryPhaseEnd) {
-				ClientConnectionInfo *connection_info_ptr = NULL;
-				std::string query_unique_id = query->query_computed_unique_id;
-				if(!DirectIOChannelHashTable::getElement(query->query_computed_unique_id.c_str(),
-														 (uint32_t)query_unique_id.size(),
-														 &connection_info_ptr) && connection_info_ptr) {
-					//dispose conenction info
-					disposeClientConnectionInfo(connection_info_ptr);
+				//read from map
+				boost::upgrade_lock<boost::shared_mutex> readLock(mutex_map_query_id_connection);
+				
+				MapConnectionIterator it =  map_query_id_connection.find(query->query_computed_unique_id);
+				
+				if(it != map_query_id_connection.end()) {
+					//lock for write
+					boost::upgrade_to_unique_lock<boost::shared_mutex> writeLock(readLock);
 					
-					//remove connection info
-					DirectIOChannelHashTable::removeElement(query->query_computed_unique_id.c_str(),
-															(uint32_t)query_unique_id.size());
+					//dispose conenction info
+					disposeClientConnectionInfo(it->second);
+					
+					//delete entry on map
+					map_query_id_connection.erase(it);
 				}
-				
+				QEDBG_ << "Deleted "<< QUERY_INFO((*query));
 				delete(query);
-				LDBG_ << "Deleted "<< QUERY_INFO((*query));
-				
 			} else {
 				//reschedule query for next step
 				if(!query_queue.push(query)) {
 					QEERR_ << "Error rescheduling "<< QUERY_INFO((*query));
+					delete(query);
 				} else {
 					QEDBG_ << "Succcesfull rescheduled "<< QUERY_INFO((*query));
 				}
 			}
+			query = NULL;
 		} else {
 			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 		}

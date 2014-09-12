@@ -320,9 +320,9 @@ int IODirectIODriver::consumeDataCloudQueryAnswer(chaos_dio_channel::opcode_head
 		try{
 			chaos_data::CDataWrapper *data_pack = new chaos_data::CDataWrapper((char *)data_found);
 			//we have map so we will add the new packet
-			_pushDataToQuryFuture(*it->second, data_pack);
+			_pushDataToQuryFuture(*it->second, data_pack, header->field.total_element_found);
 		}catch(...) {
-			IODirectIODriver_LERR_ << "error parsing reuslt data pack"
+			IODirectIODriver_LERR_ << "error parsing reuslt data pack";
 		}
 	}
 	

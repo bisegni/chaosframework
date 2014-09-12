@@ -100,33 +100,22 @@ int VFSQuery::executeQuery() {
 	return err;
 }
 
-// read a single query result
-int VFSQuery::nextDataPack(void **data, uint32_t& data_len) {
-	int err  = 0;
-	if(query_cursor_ptr->hasNext()) {
-		auto_ptr<db_system::DataPackIndexQueryResult> current_index(query_cursor_ptr->getIndex());
-		if((err = getDataPackForIndex(*current_index.get(), data, data_len))){
-			VFSQ_LERR_ << "Error retriving the data pack on virtual filesystem";
-		}
-	}
-	return err;
-}
-
 // read a bunch of result data
-int VFSQuery::nextNDataPack(std::vector< boost::shared_ptr<vfs::FoundDataPack> > &readed_pack, unsigned int to_read) {
+int VFSQuery::readDataPackPage(std::vector<FoundDataPack*> &readed_pack) {
 	int err = 0;
 	void *data = NULL;
+	if((err = query_cursor_ptr->performNextPagedQuery())) {
+		return err;
+	}
 	uint32_t data_len = 0;
-	for (int idx = 0;
-		 (idx < to_read) && !err;
-		 idx++) {
-		data = NULL;
-		if(!(err = nextDataPack(&data, data_len)) &&
-		   data){
-			boost::shared_ptr<vfs::FoundDataPack> dp(new FoundDataPack(data, data_len));
-			readed_pack.push_back(dp);
-		} else {
-			break;
+	while (query_cursor_ptr->hasNext()) {
+		auto_ptr<db_system::DataPackIndexQueryResult> current_index(query_cursor_ptr->getIndex());
+		if((err = getDataPackForIndex(*current_index.get(), &data, data_len))){
+			VFSQ_LERR_ << "Error retriving the data pack on virtual filesystem";
+		}else {
+			readed_pack.push_back(new FoundDataPack(data, data_len));
+			data = NULL;
+			data_len = 0;
 		}
 	}
 	return err;
