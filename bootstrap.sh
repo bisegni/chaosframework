@@ -231,7 +231,7 @@ do_make "MODBUS"
 echo "libmodbus done"
 fi
 
-echo "Setup LIBEVENT"
+echo "Setup LIBEVENT :$LIB_EVENT_VERSION"
 if [ ! -d "$PREFIX/include/event2" ]; then
 	if [ ! -d "$BASE_EXTERNAL/libevent" ]; then
 		echo "Installing LibEvent"
@@ -241,7 +241,7 @@ if [ ! -d "$PREFIX/include/event2" ]; then
 		fi
 	fi
 	cd $BASE_EXTERNAL/libevent
-	git checkout release-2.0.21-stable
+	git checkout $LIB_EVENT_VERSION
 	git pull
 	./autogen.sh
 	./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE
