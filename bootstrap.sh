@@ -235,16 +235,14 @@ echo "Setup LIBEVENT"
 if [ ! -d "$PREFIX/include/event2" ]; then
 	if [ ! -d "$BASE_EXTERNAL/libevent" ]; then
 		echo "Installing LibEvent"
-	#    git clone git://levent.git.sourceforge.net/gitroot/levent/libevent $BASE_EXTERNAL/libevent
-		if !(git clone http://git.code.sf.net/p/levent/libevent $BASE_EXTERNAL/libevent); then
+		if !(git clone https://github.com/libevent/libevent.git $BASE_EXTERNAL/libevent); then
 		    echo "## cannot clone http://git.code.sf.net/p/levent/libevent"
 		    exit 1
 		fi
-		cd $BASE_EXTERNAL/libevent
-	else
-		cd $BASE_EXTERNAL/libevent
-		git pull
 	fi
+	cd $BASE_EXTERNAL/libevent
+	git checkout release-2.0.21-stable
+	git pull
 	./autogen.sh
 	./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE
 	make clean
@@ -304,7 +302,7 @@ if [ ! -f "$PREFIX/include/mongo/client/dbclient.h" ]; then
 		git pull $MONGO_VERSION
 	fi
 ## centos6 does not detect correctly boost_thread becasue script fails linking boost_system that is required, force to be included in test
-if !( scons --prefix=$PREFIX --libpath=$PREFIX/lib --cxx="$CXX" --cc="$CC" --cpppath=$PREFIX/include --extrapath=$PREFIX --extralib=boost_system install-mongoclient); then
+if !( scons --prefix=$PREFIX --libpath=$PREFIX/lib --cxx="$CXX" --cc="$CC" --cpppath=$PREFIX/include --use-system-boost --extrapath=$PREFIX --extralib=boost_system --full install-mongoclient); then
     echo "## error scons configuration of mongo failed, maybe you miss scons package"
     exit 1
 fi
