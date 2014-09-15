@@ -302,7 +302,8 @@ if [ ! -f "$PREFIX/include/mongo/client/dbclient.h" ]; then
 		git pull $MONGO_VERSION
 	fi
 ## centos6 does not detect correctly boost_thread becasue script fails linking boost_system that is required, force to be included in test
-if !( scons --prefix=$PREFIX --libpath=$PREFIX/lib --cxx="$CXX" --cc="$CC" --cpppath=$PREFIX/include --use-system-boost --extrapath=$PREFIX --extralib=boost_system --full install-mongoclient); then
+#--use-system-boost --full removed on used mongodb version
+if !( scons --prefix=$PREFIX --libpath=$PREFIX/lib --cxx="$CXX" --cc="$CC" --cpppath=$PREFIX/include --extrapath=$PREFIX --extralib=boost_system  install-mongoclient); then
     echo "## error scons configuration of mongo failed, maybe you miss scons package"
     exit 1
 fi

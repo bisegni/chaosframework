@@ -26,7 +26,7 @@
 #include "vfs/VFSManager.h"
 #include "worker/DataWorker.h"
 #include "cache_system/cache_system.h"
-#include "QueryEngine.h"
+#include "query_engine/QueryEngine.h"
 
 #include <chaos/common/utility/ObjectSlot.h>
 #include <chaos/common/utility/StartableService.h>
