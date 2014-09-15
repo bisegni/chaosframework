@@ -709,7 +709,11 @@ int MongoDBDriver::idxSearchResultCountDataPack(const DataPackIndexQuery& data_p
 		DEBUG_CODE(MDBID_LDBG_ << "idxSearchResultCountDataPack insert ---------------------------------------------";)
 		
 		mongo::BSONObj r = return_field.obj();
+#if __GNUC__
+		err = ha_connection_pool->count((unsigned long long &)num_of_result, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), q);
+#else
 		err = ha_connection_pool->count(num_of_result, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), q);
+#endif // __GNUC__
 	} catch( const mongo::DBException &e ) {
 		MDBID_LERR_ << e.what();
 		err = -1;
