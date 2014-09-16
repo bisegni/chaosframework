@@ -10,12 +10,16 @@
 #define __CHAOSFramework__SingletonOnArguments__
 #include <map>
 #include <iostream>
+#include <boost/utility.hpp>
+#include <boost/thread/mutex.hpp>
+
 namespace chaos{
     template <class T>
                 class SingletonOnArguments {
                      std::string init_params;
-                    static std::map<std::string,SingletonOnArguments*> instances;
-                    
+                     static std::map<std::string,SingletonOnArguments*> instances;
+                     static boost::mutex mutex;
+
                 protected:
 
                     virtual int callInit(std::string st)=0;
@@ -29,6 +33,8 @@ namespace chaos{
                     void setParams(std::string p){init_params=p;}
                     
                     static T* getInstance(std::string initParams){
+                        boost::mutex::scoped_lock l(mutex);
+                        
                         typename std::map<std::string, SingletonOnArguments*>::iterator i = instances.find(initParams);
                         if(i!=instances.end()){
                             return dynamic_cast<T*>(i->second);
@@ -41,6 +47,8 @@ namespace chaos{
                     }
 
                     static void removeInstance(SingletonOnArguments*t ){
+                        boost::mutex::scoped_lock l(mutex);
+
                         typename std::map<std::string,SingletonOnArguments*>::iterator i = instances.begin();
                         while(i!=instances.end()){
                             if(i->second==t){
@@ -61,5 +69,6 @@ namespace chaos{
 
                 };
     template <class T> std::map<std::string,SingletonOnArguments<T>*> SingletonOnArguments<T>::instances;
+    template <class T> boost::mutex SingletonOnArguments<T>::mutex;
 }
 #endif /* defined(__CHAOSFramework__SingletonOnArguments__) */
