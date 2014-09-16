@@ -166,8 +166,8 @@ void ZMQDirectIOClient::deinit() throw(chaos::CException) {
 
 DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server_description, uint16_t endpoint) {
 	int err = 0;
-	const int output_buffer_dim = 0;
-	const int linger_period = 0;
+	const int output_buffer_dim = 1;
+	const int linger_period = 500;
 	const int timeout = 200;
 	const int min_reconnection_ivl = 100;
 	const int max_reconnection_ivl = 500;
@@ -308,12 +308,12 @@ DirectIOClientConnection *ZMQDirectIOClient::getNewConnection(std::string server
 }
 
 void ZMQDirectIOClient::releaseConnection(DirectIOClientConnection *connection_to_release) {
-	ZMQDIOLAPP_ << "Dispose the connection";
 	int err = 0;
 	ZMQDirectIOClientConnection *conn=reinterpret_cast<ZMQDirectIOClientConnection*>(connection_to_release);
 	if(!conn) return;
 	//stop the monitor
-	
+	ZMQDIOLAPP_ << "Release the connection for " << connection_to_release->getServerDescription();
+
 	ZMQDIOLAPP_ << "Close priority socket for " << conn->getServerDescription();
     err = zmq_close(conn->socket_priority);
 	//seem that disconnection from somewhere can let the monitor will repsond to the disable action 
@@ -345,6 +345,6 @@ void ZMQDirectIOClient::releaseConnection(DirectIOClientConnection *connection_t
 
 void ZMQDirectIOClient::freeObject(uint32_t hash, DirectIOClientConnection *connection) {
 	if(!connection) return;
-	ZMQDIOLAPP_ << "Release connection for " << connection->getServerDescription();
+	ZMQDIOLAPP_ << "Autorelease connection for " << connection->getServerDescription();
 	releaseConnection(connection);
 }

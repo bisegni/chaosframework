@@ -55,16 +55,19 @@ int MongoDBIndexCursor::computeTimeLapsForPage() {
 	err = mdrv->idxSearchResultCountDataPack(query, element_found);
 	if(!err) {
 		//!calculate total element for the time laps request
-		uint32_t number_of_page = (uint32_t)ceil((double)element_found / (double)getResultPageDimension());
+		total_page_number = (uint32_t)ceil((double)element_found / (double)getResultPageDimension());
 		
 		//!calculate the laps of the single page
-		time_offset_per_page_in_ms = (uint64_t)ceil((double)((query.end_ts - query.start_ts)/number_of_page));
+		time_offset_per_page_in_ms = (uint64_t)ceil((double)((query.end_ts - query.start_ts)/total_page_number));
 	}
 	return err;
 }
 
 int MongoDBIndexCursor::performNextPagedQuery() {
 	MongoDBDriver *mdrv = static_cast<MongoDBDriver*>(driver_ptr);
+	
+	//advance page indicator
+	current_page++;
 	
 	//check if we have terminated the query page
 	if(last_max_ts_searched >= query.end_ts) return 0;

@@ -75,20 +75,27 @@ namespace chaos {
 					ZMQDirectIOClientConnection(std::string server_description, void *_socket_priority, void *_socket_service, uint16_t endpoint);
 					~ZMQDirectIOClientConnection();
 					
-					inline int64_t writeToSocket(channel::DirectIOVirtualClientChannel *channel, void *socket, std::string& identity, DirectIODataPack *data_pack, DirectIOSynchronousAnswer **synchronous_answer = NULL);
+					inline int64_t writeToSocket(void *socket,
+												 std::string& identity,
+												 DirectIODataPack *data_pack,
+												 DirectIOClientDeallocationHandler *header_deallocation_handler,
+												 DirectIOClientDeallocationHandler *data_deallocation_handler,
+												 DirectIOSynchronousAnswer **synchronous_answer = NULL);
 					void monitorWorker();
 					
 				protected:
 					
                     // send the data to the server layer on priority channel
-                    int64_t sendPriorityData(channel::DirectIOVirtualClientChannel *channel, DirectIODataPack *data_pack, DirectIOSynchronousAnswer **synchronous_answer = NULL);
+                    int64_t sendPriorityData(DirectIODataPack *data_pack,
+											 DirectIOClientDeallocationHandler *header_deallocation_handler,
+											 DirectIOClientDeallocationHandler *data_deallocation_handler,
+											 DirectIOSynchronousAnswer **synchronous_answer = NULL);
                     
                     // send the data to the server layer on the service channel
-                    int64_t sendServiceData(channel::DirectIOVirtualClientChannel *channel, DirectIODataPack *data_pack, DirectIOSynchronousAnswer **synchronous_answer = NULL);
-					
-				public:
-					int addServer(std::string server_description);
-					int removeServer(std::string server_description);
+                    int64_t sendServiceData(DirectIODataPack *data_pack,
+											DirectIOClientDeallocationHandler *header_deallocation_handler,
+											DirectIOClientDeallocationHandler *data_deallocation_handler,
+											DirectIOSynchronousAnswer **synchronous_answer = NULL);
 				};
 				
 			}

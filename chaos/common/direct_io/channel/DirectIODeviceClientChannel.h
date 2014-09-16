@@ -54,6 +54,14 @@ namespace chaos {
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DirectIODeviceClientChannel, DirectIOVirtualClientChannel) {
 					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIODeviceClientChannel)
 					
+					class DirectIODeviceClientChannelDeallocator:
+					public DirectIOClientDeallocationHandler {
+					protected:
+						void freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr);
+					};
+					//static deallocator forthis channel
+					static DirectIODeviceClientChannelDeallocator STATIC_DirectIODeviceClientChannelDeallocator;
+					
 					//fixed header
 					//the real size of the put header computed according to the dimension of the key
 					uint32_t put_header_computed_size;
@@ -70,7 +78,7 @@ namespace chaos {
 					void prepare_get_opcode();
 				protected:
 					DirectIODeviceClientChannel(std::string alias);
-					void freeSentData(void *data,  DisposeSentMemoryInfo& dispose_memory_info);
+
 				public:
 					~DirectIODeviceClientChannel();
 					
@@ -106,7 +114,12 @@ namespace chaos {
 					 \param data
 					 \param data_len
 					 */
-                    int64_t sendResultToQueryDataCloud(const std::string& query_id, uint64_t total_element_found, uint64_t element_idx, void *data, uint32_t data_len);
+                    int64_t sendResultToQueryDataCloud(const std::string& query_id,
+													   uint64_t total_element_found,
+													   uint64_t element_idx,
+													   void *data,
+													   uint32_t data_len,
+													   DirectIOClientDeallocationHandler *data_deallocator = NULL);
 				};
 
 				

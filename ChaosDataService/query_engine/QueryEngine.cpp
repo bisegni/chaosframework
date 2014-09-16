@@ -144,9 +144,22 @@ void QueryEngine::executeQuery(DataCloudQuery *query) {
 	QEDBG_ << "Successfull submission for " << QUERY_INFO((*query));
 }
 
-//void QueryEngine::clearHashTableElement(const void *key, uint32_t key_len, ClientConnectionInfo *element) {
-//	disposeClientConnectionInfo(element);
-//}
+void QueryEngine::disposeQuery(DataCloudQuery *query) {
+	if(!query) return;
+	QEDBG_ << "Deallocating " << QUERY_INFO((*query));
+	//get a new vfs query
+	if(query->vfs_query) {
+		QEDBG_ << "Deleteing VFSQuery for " << QUERY_INFO((*query));
+		
+		delete(query->vfs_query);
+		
+		query->vfs_query = NULL;
+	}
+	
+	//delete query
+	QEDBG_ << "Deleting " << QUERY_INFO((*query));
+	delete(query);
+}
 
 void QueryEngine::disposeClientConnectionInfo(ClientConnectionInfo *client_info) {
 	CHAOS_ASSERT(client_info)
@@ -212,7 +225,7 @@ int  QueryEngine::getChannelForQuery(DataCloudQuery *query,
 		return -1;
 	}
 	//set query engine as handler of event on client conenction
-	(*connection_info_handle)->connection->setEventHandler(this);
+	//(*connection_info_handle)->connection->setEventHandler(this);
 	
 	//! set connection custo identification key
 	(*connection_info_handle)->connection->setCustomStringIdentification(query->query_computed_unique_id);
@@ -241,36 +254,53 @@ int  QueryEngine::sendDataToClient(DataCloudQuery *query,
 	ClientConnectionInfo *connection_info_ptr = NULL;
 	int err = getChannelForQuery(query, &connection_info_ptr);
 	if(!err && connection_info_ptr) {
+		
+		//all found datapack are processed, if there is an error on a cicle,
+		//in the next will not be send data over channel, but only discarded
+		//in this way at the end all the found datapack will be erased
 		for (std::vector<vfs::FoundDataPack*>::const_iterator it = data.begin();
-			 err == 0 && it != data.end();
+			 it != data.end();
 			 it++) {
 			
 			//send data packet
-			err = (int)connection_info_ptr->channel->sendResultToQueryDataCloud(query->query_id,
-																				query->vfs_query->getNumberOfElementFound(),
-																				++query->total_data_pack_sent,
-																				(*it)->data_pack_buffer,
-																				(*it)->data_pack_size);
-			//check for error
-			if(query->answer_connection_state == chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected ||
-			   err) {
-				QEDBG_ << "Client has been disconnected for " << QUERY_INFO((*query));
-				err = -1;
-			} else {
-				//at tis point memory is managed by async direct io system
-				(*it)->delete_on_dispose = false;
+			if(!err) {
+				//previoous iteration has not failed
+				err = (int)connection_info_ptr->channel->sendResultToQueryDataCloud(query->query_id,
+																					query->vfs_query->getNumberOfElementFound(),
+																					++query->total_data_pack_sent,
+																					(*it)->data_pack_buffer,
+																					(*it)->data_pack_size,
+																					this);
+				//check for error
+				if(connection_info_ptr->connection->getState() == chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected ||
+				   err) {
+					QEDBG_ << "Client has been disconnected for " << QUERY_INFO((*query));
+					err = -1;
+				} else {
+					//at tis point memory is managed by async direct io system
+					(*it)->delete_on_dispose = false;
+				}
 			}
+			//delete the datapack
 			delete(*it);
 		}
 	}
 	return err;
 }
 
+void QueryEngine::freeSentData(void* sent_data_ptr, common::direct_io::DisposeSentMemoryInfo *free_info_ptr) {
+	if(free_info_ptr->sent_part != common::direct_io::DisposeSentMemoryInfo::SentPartData) return;
+	//deelte sent result;
+	free(sent_data_ptr);
+	
+	QEDBG_ << "Deleted data for part "<<  free_info_ptr->sent_part<< " and opcode " << free_info_ptr->sent_opcode;
+}
+
 void QueryEngine::process_query() {
 	int err = 0;
 	DataCloudQuery *query = NULL;
 	std::vector<vfs::FoundDataPack*> found_datapac_vec;
-	
+	QEDBG_ << "Enter process query thread";
 	while(work_on_query) {
 		if(query_queue.pop(query) && query) {
 			//clear the vector of precedente result
@@ -301,6 +331,11 @@ void QueryEngine::process_query() {
 			
 			if(query->query_phase == DataCloudQuery::DataCloudQueryPhaseError ||
 			   query->query_phase == DataCloudQuery::DataCloudQueryPhaseEnd) {
+				if(query->query_phase == DataCloudQuery::DataCloudQueryPhaseError) {
+					QEDBG_ << "Error on "<< QUERY_INFO((*query));
+				}else{
+					QEDBG_ << "End on "<< QUERY_INFO((*query));
+				}
 				//read from map
 				boost::upgrade_lock<boost::shared_mutex> readLock(mutex_map_query_id_connection);
 				
@@ -316,8 +351,7 @@ void QueryEngine::process_query() {
 					//delete entry on map
 					map_query_id_connection.erase(it);
 				}
-				QEDBG_ << "Deleted "<< QUERY_INFO((*query));
-				delete(query);
+				disposeQuery(query);
 			} else {
 				//reschedule query for next step
 				if(!query_queue.push(query)) {
@@ -332,4 +366,6 @@ void QueryEngine::process_query() {
 			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 		}
 	}
+	QEDBG_ << "Leave process query thread";
+	
 }

@@ -41,17 +41,38 @@ ZMQDirectIOClientConnection::~ZMQDirectIOClientConnection() {
 }
 
 // send the data to the server layer on priority channel
-int64_t ZMQDirectIOClientConnection::sendPriorityData(channel::DirectIOVirtualClientChannel *channel, DirectIODataPack *data_pack, DirectIOSynchronousAnswer **synchronous_answer) {
-    return writeToSocket(channel, socket_priority, priority_identity, completeDataPack(data_pack), synchronous_answer);
+int64_t ZMQDirectIOClientConnection::sendPriorityData(DirectIODataPack *data_pack,
+													  DirectIOClientDeallocationHandler *header_deallocation_handler,
+													  DirectIOClientDeallocationHandler *data_deallocation_handler,
+													  DirectIOSynchronousAnswer **synchronous_answer) {
+    return writeToSocket(socket_priority,
+						 priority_identity,
+						 completeDataPack(data_pack),
+						 header_deallocation_handler,
+						 data_deallocation_handler,
+						 synchronous_answer);
 }
 
 // send the data to the server layer on the service channel
-int64_t ZMQDirectIOClientConnection::sendServiceData(channel::DirectIOVirtualClientChannel *channel, DirectIODataPack *data_pack, DirectIOSynchronousAnswer **synchronous_answer) {
-    return writeToSocket(channel, socket_service, service_identity, completeDataPack(data_pack), synchronous_answer);
+int64_t ZMQDirectIOClientConnection::sendServiceData(DirectIODataPack *data_pack,
+													 DirectIOClientDeallocationHandler *header_deallocation_handler,
+													 DirectIOClientDeallocationHandler *data_deallocation_handler,
+													 DirectIOSynchronousAnswer **synchronous_answer) {
+    return writeToSocket(socket_service,
+						 service_identity,
+						 completeDataPack(data_pack),
+						 header_deallocation_handler,
+						 data_deallocation_handler,
+						 synchronous_answer);
 }
 
 //send data with zmq tech
-int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClientChannel *channel, void *socket, std::string& identity, DirectIODataPack *data_pack, DirectIOSynchronousAnswer **synchronous_answer) {
+int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket,
+												   std::string& identity,
+												   DirectIODataPack *data_pack,
+												   DirectIOClientDeallocationHandler *header_deallocation_handler,
+												   DirectIOClientDeallocationHandler *data_deallocation_handler,
+												   DirectIOSynchronousAnswer **synchronous_answer) {
     assert(socket && data_pack);
 	int err = 0;
 	uint16_t sending_opcode = data_pack->header.dispatcher_header.fields.channel_opcode;
@@ -83,8 +104,8 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 			err = zmq_msg_init_data (&msg_header_data,
 									 data_pack->channel_header_data,
 									 data_pack->header.channel_header_size,
-									 DirectIOClientConnection::freeSentData,
-									 new channel::DisposeSentMemoryInfo(channel, 1, sending_opcode));
+									 DirectIOForwarder::freeSentData,
+									 new DisposeSentMemoryInfo(header_deallocation_handler, DisposeSentMemoryInfo::SentPartHeader, sending_opcode));
 			err = zmq_sendmsg(socket, &msg_header_data, _send_no_wait_flag);
 			zmq_msg_close(&msg_header_data);
 			break;
@@ -97,10 +118,13 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 			err = zmq_msg_init_data (&msg_data,
 									 data_pack->channel_data,
 									 data_pack->header.channel_data_size,
-									 DirectIOClientConnection::freeSentData,
-									 new channel::DisposeSentMemoryInfo(channel, 2, sending_opcode));
+									 DirectIOForwarder::freeSentData,
+									 new DisposeSentMemoryInfo(data_deallocation_handler, DisposeSentMemoryInfo::SentPartData, sending_opcode));
 			err = zmq_sendmsg(socket, &msg_data, _send_no_wait_flag);
-			zmq_msg_close(&msg_data);
+			if(err == -1) {
+				ZMQDIO_CONNECTION_LERR_ << "Error sending data only";
+			}
+			err = zmq_msg_close(&msg_data);
 			break;
 			
 		case DIRECT_IO_CHANNEL_PART_HEADER_DATA:
@@ -112,19 +136,23 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 			err = zmq_msg_init_data (&msg_header_data,
 									 data_pack->channel_header_data,
 									 data_pack->header.channel_header_size,
-									 DirectIOClientConnection::freeSentData,
-									 new channel::DisposeSentMemoryInfo(channel, 1, sending_opcode));
+									 DirectIOForwarder::freeSentData,
+									 new DisposeSentMemoryInfo(header_deallocation_handler, DisposeSentMemoryInfo::SentPartHeader, sending_opcode));
 			err = zmq_sendmsg(socket, &msg_header_data, _send_more_no_wait_flag);
 			if(err == -1) {
+				ZMQDIO_CONNECTION_LERR_ << "Error sending header part befor data part";
+				//delete the data part simulating the zmq behaviour
+				DirectIOForwarder::freeSentData(data_pack->channel_data, new DisposeSentMemoryInfo(data_deallocation_handler, DisposeSentMemoryInfo::SentPartData, sending_opcode));
 				delete (data_pack);
 				zmq_msg_close(&msg_header_data);
+				ZMQDIO_CONNECTION_LERR_ << "Data resurce are been deallocated";
 				return err;
 			}
 			err = zmq_msg_init_data (&msg_data,
 									 data_pack->channel_data,
 									 data_pack->header.channel_data_size,
-									 DirectIOClientConnection::freeSentData,
-									 new channel::DisposeSentMemoryInfo(channel, 2, sending_opcode));
+									 DirectIOForwarder::freeSentData,
+									 new DisposeSentMemoryInfo(data_deallocation_handler, DisposeSentMemoryInfo::SentPartData, sending_opcode));
 			err = zmq_sendmsg(socket, &msg_data, _send_no_wait_flag);
 			//check if we need to espect async answer
 			err = zmq_msg_close(&msg_header_data);
@@ -168,58 +196,4 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(channel::DirectIOVirtualClien
 	
 	//send data
 	return err;
-}
-
-int ZMQDirectIOClientConnection::addServer(std::string server_desc) {
-	ZMQDirectIOClientConnectionWriteLock lock(mutex_socket_manipolation);
-	int err = 0;
-	std::string priority_endpoint;
-	std::string service_endpoint;
-	std::string url;
-	decoupleServerDescription(server_desc, priority_endpoint, service_endpoint);
-	
-	url = boost::str( boost::format("tcp://%1%") % priority_endpoint);
-	ZMQDIO_CONNECTION_LAPP_ << "connect to priority endpoint " << url;
-	err = zmq_connect(socket_priority, url.c_str());
-	if(err) {
-		ZMQDIO_CONNECTION_LERR_ << "Error connecting priority socket to " << priority_endpoint;
-		return err;
-	}
-	
-	//add monitor on priority socket
-	url = boost::str( boost::format("tcp://%1%") % service_endpoint);
-	ZMQDIO_CONNECTION_LAPP_ << "connect to service endpoint " << url;
-	err = zmq_connect(socket_service, url.c_str());
-	if(err) {
-		ZMQDIO_CONNECTION_LERR_ << "Error connecting service socket to " << service_endpoint;
-		return err;
-	}
-	return 0;
-}
-
-int ZMQDirectIOClientConnection::removeServer(std::string server_desc) {
-	ZMQDirectIOClientConnectionWriteLock lock(mutex_socket_manipolation);
-	int err = 0;
-	std::string priority_endpoint;
-	std::string service_endpoint;
-	std::string url;
-	decoupleServerDescription(server_desc, priority_endpoint, service_endpoint);
-	
-	url = boost::str( boost::format("tcp://%1%") % priority_endpoint);
-	ZMQDIO_CONNECTION_LAPP_ << "connect to priority endpoint " << url;
-	err = zmq_disconnect(socket_priority, url.c_str());
-	if(err) {
-		ZMQDIO_CONNECTION_LERR_ << "Error connecting priority socket to " << priority_endpoint;
-		return err;
-	}
-	
-	//add monitor on priority socket
-	url = boost::str( boost::format("tcp://%1%") % service_endpoint);
-	ZMQDIO_CONNECTION_LAPP_ << "connect to service endpoint " << url;
-	err = zmq_disconnect(socket_service, url.c_str());
-	if(err) {
-		ZMQDIO_CONNECTION_LERR_ << "Error connecting service socket to " << service_endpoint;
-		return err;
-	}
-	return 0;
 }

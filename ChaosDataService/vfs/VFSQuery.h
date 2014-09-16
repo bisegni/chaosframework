@@ -101,6 +101,8 @@ namespace chaos {
 				inline int getDataPackForIndex(const db_system::DataPackIndexQueryResult& index, void** data, uint32_t& data_len);
 			public:
 				
+				~VFSQuery();
+				
 				//! ensure that a datablock is not null
 				/*!
 				 usefullt to get the current lcoation before write the first data pack.

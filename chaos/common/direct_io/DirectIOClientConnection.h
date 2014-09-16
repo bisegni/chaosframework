@@ -45,14 +45,16 @@ namespace chaos {
 			namespace channel{
 				class DirectIOVirtualClientChannel;
 			}
-            //! Connection event enumeration
+ 
+			//--------------connection event handler-----------------------
+			//! Connection event enumeration
 			namespace DirectIOClientConnectionStateType {
-            typedef enum DirectIOClientConnectionStateType {
-                DirectIOClientConnectionEventConnected,
-                DirectIOClientConnectionEventDisconnected
-            } DirectIOClientConnectionStateType;
+				typedef enum DirectIOClientConnectionStateType {
+					DirectIOClientConnectionEventConnected,
+					DirectIOClientConnectionEventDisconnected
+				} DirectIOClientConnectionStateType;
             }
-            
+
             //! Direct io client connection event handler
             class DirectIOClientConnectionEventHandler {
 				friend class DirectIOClientConnection;
@@ -62,6 +64,7 @@ namespace chaos {
             };
 			
 			typedef  chaos::utility::TemplatedKeyObjectContainer< unsigned int, channel::DirectIOVirtualClientChannel*> DICKeyObjectContainer;
+			
 			
             //! Represent the start point of a messaget towards an endpoint
             /*!
@@ -91,9 +94,6 @@ namespace chaos {
 				static uint64_t my_i64_ip;
 
                 DirectIOClientConnectionEventHandler *event_handler;
-				
-				//! callback function used to free sent data in an async environment
-				static void freeSentData(void *data, void *hint);
 				
 				//overriding ofr free object fuunction for the tempalted key object container superclass
 				void freeObject(uint32_t hash, DirectIOClientConnection *connection);

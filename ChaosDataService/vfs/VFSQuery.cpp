@@ -36,7 +36,17 @@ VFSQuery::VFSQuery(storage_system::StorageDriver *_storage_driver_ptr,
 storage_driver_ptr(_storage_driver_ptr),
 db_driver_ptr(_db_driver_ptr),
 query(_query){
+	
+}
 
+VFSQuery::~VFSQuery() {
+	for(MapPathDatablockIterator it = map_path_datablock.begin();
+		it != map_path_datablock.end();
+		it++) {
+		VFSQ_LDBG_ << "Erasing data block fetcher for " << it->first;
+		it->second->close();
+		delete(it->second);
+	}
 }
 
 //! load data block containing index
@@ -104,9 +114,17 @@ int VFSQuery::executeQuery() {
 int VFSQuery::readDataPackPage(std::vector<FoundDataPack*> &readed_pack) {
 	int err = 0;
 	void *data = NULL;
-	if((err = query_cursor_ptr->performNextPagedQuery())) {
-		return err;
-	}
+	bool has_data = false;
+	bool has_more_page = false;
+	do{
+		if((err = query_cursor_ptr->performNextPagedQuery())) {
+			return err;
+		}
+		//cicle untile we don't find a page with some data
+		has_data = query_cursor_ptr->hasNext();
+		has_more_page = query_cursor_ptr->getCurrentPage()<=query_cursor_ptr->getTotalPage();
+	} while(!has_data && has_more_page);
+	
 	uint32_t data_len = 0;
 	while (query_cursor_ptr->hasNext()) {
 		auto_ptr<db_system::DataPackIndexQueryResult> current_index(query_cursor_ptr->getIndex());

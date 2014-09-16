@@ -27,7 +27,7 @@
 using namespace chaos::common::direct_io::channel;
 
 DirectIOPerformanceClientChannel::DirectIOPerformanceClientChannel(std::string alias):
-DirectIOVirtualClientChannel(alias, DIOPerformance_Channel_Index, true)  {
+DirectIOVirtualClientChannel(alias, DIOPerformance_Channel_Index)  {
 	
 }
 
@@ -52,7 +52,7 @@ int64_t DirectIOPerformanceClientChannel::sendRoundTripMessage() {
 	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header, (uint32_t)sizeof(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTrip))
 	
 	//send pack
-	return client_instance->sendServiceData(this, completeDataPack(data_pack));
+	return sendServiceData(data_pack);
 }
 
 int64_t DirectIOPerformanceClientChannel::answerRoundTripMessage(uint64_t received_ts) {
@@ -73,7 +73,7 @@ int64_t DirectIOPerformanceClientChannel::answerRoundTripMessage(uint64_t receiv
 	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header, (uint32_t)sizeof(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTrip))
 	
 	//send pack
-	return client_instance->sendServiceData(this, completeDataPack(data_pack));
+	return sendServiceData(data_pack);
 
 }
 
@@ -93,10 +93,6 @@ int64_t DirectIOPerformanceClientChannel::answerRoundTripMessage(opcode_headers:
 	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, received_header, (uint32_t)sizeof(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTrip))
 	
 	//send pack
-	return client_instance->sendServiceData(this, completeDataPack(data_pack));
+	return sendServiceData(data_pack);
 	
-}
-void DirectIOPerformanceClientChannel::freeSentData(void *data,  DisposeSentMemoryInfo& dispose_memory_info) {
-	//free all received data
-	free(data);
 }

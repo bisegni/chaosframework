@@ -111,7 +111,8 @@ namespace chaos {
 			 */
 			class QueryEngine:
 			public utility::StartableService,
-			protected chaos_direct_io::DirectIOClientConnectionEventHandler {
+			protected chaos_direct_io::DirectIOClientConnectionEventHandler,
+			protected chaos_direct_io::DirectIOClientDeallocationHandler {
 				chaos_direct_io::DirectIOClient *directio_client_instance;
 				vfs::VFSManager *vfs_manager_ptr;
 				
@@ -141,6 +142,11 @@ namespace chaos {
 								 chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event);
 				
 				void disposeClientConnectionInfo(ClientConnectionInfo *client_info);
+				
+				//! ovveriding function for DirectIOClientDeallocationHandler
+				void freeSentData(void* sent_data_ptr, common::direct_io::DisposeSentMemoryInfo *free_info_ptr);
+				
+				void disposeQuery(DataCloudQuery *query);
 			public:
 				
 				QueryEngine(chaos_direct_io::DirectIOClient *_directio_client_instance,

@@ -36,14 +36,18 @@ using namespace chaos::common::direct_io::channel::opcode_headers;
 //#define PUT_HEADER_LEN  sizeof(DirectIODeviceChannelHeaderPutOpcode)-sizeof(void*)+device_id.size()
 #define PUT_HEADER_LEN  (GET_PUT_OPCODE_FIXED_PART_LEN+((uint32_t)device_id.size()))
 
+//define the static allcoator class
+DirectIODeviceClientChannel::DirectIODeviceClientChannelDeallocator DirectIODeviceClientChannel::STATIC_DirectIODeviceClientChannelDeallocator;
+
 
 DirectIODeviceClientChannel::DirectIODeviceClientChannel(std::string alias):
-DirectIOVirtualClientChannel(alias, DIODataset_Channel_Index, true),
+DirectIOVirtualClientChannel(alias, DIODataset_Channel_Index),
 //device_hash(0),
 device_id(""),
 put_mode(DirectIODeviceClientChannelPutModeLiveOnly),
 put_opcode_header(NULL) {
-	
+	//associate the static allocator
+	header_deallocator = &STATIC_DirectIODeviceClientChannelDeallocator;
 }
 
 DirectIODeviceClientChannel::~DirectIODeviceClientChannel() {
@@ -110,7 +114,7 @@ int64_t DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(void *buffer
 	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, put_opcode_header, (uint32_t)PUT_HEADER_LEN)
 	//set data if the have some
 	if(buffer_len)DIRECT_IO_SET_CHANNEL_DATA(data_pack, buffer, buffer_len)
-		return client_instance->sendPriorityData(this, completeDataPack(data_pack));
+	return sendPriorityData(data_pack);
 }
 
 //! Send device serialization with priority
@@ -127,7 +131,7 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(void **result, uint32
     DIRECT_IO_SET_CHANNEL_HEADER(data_pack, &get_opcode_header, sizeof(DirectIODeviceChannelHeaderGetOpcode))
 	DIRECT_IO_SET_CHANNEL_DATA(data_pack, (void*)device_id.c_str(), (uint32_t)device_id.size())
 	//send data with synchronous answer flag
-	if((err = client_instance->sendPriorityData(this, completeDataPack(data_pack, true), &answer))) {
+	if((err = sendPriorityData(data_pack, &answer))) {
 		//error getting last value
 		if(answer && answer->answer_data) free(answer->answer_data);
 	} else {
@@ -181,7 +185,7 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(uint64_t start_ts, uint64_t 
 	DIRECT_IO_SET_CHANNEL_DATA(data_pack, (void*)buffer->getBufferPtr(), (uint32_t)buffer->getBufferLen());
 	
 	//send query request
-	return client_instance->sendPriorityData(this, completeDataPack(data_pack));
+	return sendServiceData(data_pack);
 }
 
 //! Send the single result of the temporal query to requester
@@ -189,7 +193,8 @@ int64_t DirectIODeviceClientChannel::sendResultToQueryDataCloud(const std::strin
 																uint64_t total_element_found,
 																uint64_t element_number,
 																void *data,
-																uint32_t data_len) {
+																uint32_t data_len,
+																DirectIOClientDeallocationHandler *data_deallocator) {
 	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
 	DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswerPtr cloud_query_answer_header =
 	(DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswerPtr)calloc(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswer), 1);
@@ -207,39 +212,38 @@ int64_t DirectIODeviceClientChannel::sendResultToQueryDataCloud(const std::strin
 	DIRECT_IO_SET_CHANNEL_DATA(data_pack, data, data_len);
 	
 	//send query request
-	return client_instance->sendPriorityData(this, completeDataPack(data_pack));
-	
+	return sendServiceData(data_pack, (data_deallocator?data_deallocator:this));
 }
 
-//dispose the resuource forwarded in async way
-void DirectIODeviceClientChannel::freeSentData(void *data, DisposeSentMemoryInfo& dispose_memory_info) {
-	switch (dispose_memory_info.sent_part) {
-		case 1: {
-			switch(static_cast<opcode::DeviceChannelOpcode>(dispose_memory_info.sent_opcode)) {
+//! default data deallocator implementation
+void DirectIODeviceClientChannel::DirectIODeviceClientChannelDeallocator::freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr) {
+	switch(free_info_ptr->sent_part) {
+		case DisposeSentMemoryInfo::SentPartHeader:{
+			switch(static_cast<opcode::DeviceChannelOpcode>(free_info_ptr->sent_opcode)) {
 				case opcode::DeviceChannelOpcodeQueryDataCloud:
 				case opcode::DeviceChannelOpcodeQueryDataCloudAnswer:
-					free(data);
+					free(sent_data_ptr);
 					break;
 				case opcode::DeviceChannelOpcodePutOutput:
 				case opcode::DeviceChannelOpcodeGetLastOutput:
+					//these two opcode are header allocated in the stack
 					break;
 			}
-		}
 			break;
-		case 2: {
-			// data
-			switch(static_cast<opcode::DeviceChannelOpcode>(dispose_memory_info.sent_opcode)) {
+		}
+			
+		case DisposeSentMemoryInfo::SentPartData: {
+			switch(static_cast<opcode::DeviceChannelOpcode>(free_info_ptr->sent_opcode)) {
 				case opcode::DeviceChannelOpcodePutOutput:
 				case opcode::DeviceChannelOpcodeQueryDataCloud:
 				case opcode::DeviceChannelOpcodeQueryDataCloudAnswer:
-					free(data);
+					free(sent_data_ptr);
 					break;
 					
 				case opcode::DeviceChannelOpcodeGetLastOutput:
 					break;
 			}
-		}
 			break;
-		default:break;
+		}
 	}
 }
