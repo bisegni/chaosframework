@@ -174,8 +174,8 @@ int main (int argc, char* argv[] )
         if(!controller) throw CException(4, "Error allcoating decive controller", "device controller creation");
         
 		//test query
-		uint64_t start_ts = 0;//chaos::TimingUtil::getTimestampFromString("2014-09-05 15:44:03.000");
-		uint64_t end_ts = 0;//chaos::TimingUtil::getTimestampFromString("2014-09-05 15:44:04.000");
+		uint64_t start_ts = chaos::TimingUtil::getTimestampFromString("2014-09-05 15:44:03.000");
+		uint64_t end_ts = chaos::TimingUtil::getTimestampFromString("2014-09-05 15:44:04.000");
 		chaos::common::io::QueryFuture *query_future = NULL;
 		controller->executeTimeIntervallQuery(start_ts, end_ts, &query_future);
 		if(query_future) {
