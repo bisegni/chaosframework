@@ -107,11 +107,15 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket,
 									 DirectIOForwarder::freeSentData,
 									 new DisposeSentMemoryInfo(header_deallocation_handler, DisposeSentMemoryInfo::SentPartHeader, sending_opcode));
 			err = zmq_sendmsg(socket, &msg_header_data, _send_no_wait_flag);
+			if(err > 0) {
+				err = 0; //keep error to default behaviour
+			}
 			zmq_msg_close(&msg_header_data);
 			break;
 		case DIRECT_IO_CHANNEL_PART_DATA_ONLY:
 			err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, _send_more_no_wait_flag);
 			if(err == -1) {
+				DirectIOForwarder::freeSentData(data_pack->channel_data, new DisposeSentMemoryInfo(data_deallocation_handler, DisposeSentMemoryInfo::SentPartData, sending_opcode));
 				delete (data_pack);
 				return err;
 			}
@@ -121,15 +125,16 @@ int64_t ZMQDirectIOClientConnection::writeToSocket(void *socket,
 									 DirectIOForwarder::freeSentData,
 									 new DisposeSentMemoryInfo(data_deallocation_handler, DisposeSentMemoryInfo::SentPartData, sending_opcode));
 			err = zmq_sendmsg(socket, &msg_data, _send_no_wait_flag);
-			if(err == -1) {
-				ZMQDIO_CONNECTION_LERR_ << "Error sending data only";
+			if(err > 0) {
+				err = 0; //keep error to default behaviour
 			}
-			err = zmq_msg_close(&msg_data);
+			zmq_msg_close(&msg_data);
 			break;
 			
 		case DIRECT_IO_CHANNEL_PART_HEADER_DATA:
 			err = zmq_send(socket, &data_pack->header, DIRECT_IO_HEADER_SIZE, _send_more_no_wait_flag);
 			if(err == -1) {
+				DirectIOForwarder::freeSentData(data_pack->channel_data, new DisposeSentMemoryInfo(data_deallocation_handler, DisposeSentMemoryInfo::SentPartData, sending_opcode));
 				delete (data_pack);
 				return err;
 			}

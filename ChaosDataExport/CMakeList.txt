@@ -9,17 +9,17 @@ IF( ($ENV{CHAOS32}) OR (BUILD_FORCE_32) )
 ENDIF()
 ADD_DEFINITIONS(-g -O2 -Wall)
 
-SET(chaos_cli_src main.cpp)
+SET(chaos_cde_src cde.cpp)
 
 INCLUDE_DIRECTORIES(. ${PROJECT_SOURCE_DIR}/../../usr/local/include /usr/local/include /usr/include ${PROJECT_SOURCE_DIR}/example/ChaosCLI/) 
 LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/../../usr/local/lib /usr/local/lib)
 
-ADD_EXECUTABLE(ChaosCLI ${chaos_cli_src})
+ADD_EXECUTABLE(ChaosDataExport ${chaos_cde_src})
 
-SET(ChaosCLILib $ENV{CHAOS_LINK_LIBRARY})
-separate_arguments(ChaosCLILib)
+SET(ChaosDataExportLib $ENV{CHAOS_LINK_LIBRARY})
+separate_arguments(ChaosDataExportLib)
 
 
-TARGET_LINK_LIBRARIES(ChaosCLI chaos_uitoolkit chaos_common pthread dl ${ChaosCLILib})
+TARGET_LINK_LIBRARIES(ChaosDataExport chaos_uitoolkit chaos_common pthread dl ${ChaosCLILib})
 
-INSTALL_TARGETS(/bin ChaosCLI)
+INSTALL_TARGETS(/bin ChaosDataExport)

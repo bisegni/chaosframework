@@ -265,6 +265,8 @@ int  QueryEngine::sendDataToClient(DataCloudQuery *query,
 			//send data packet
 			if(!err) {
 				//previoous iteration has not failed
+				(*it)->delete_on_dispose = false;
+				
 				err = (int)connection_info_ptr->channel->sendResultToQueryDataCloud(query->query_id,
 																					query->vfs_query->getNumberOfElementFound(),
 																					++query->total_data_pack_sent,
@@ -278,7 +280,7 @@ int  QueryEngine::sendDataToClient(DataCloudQuery *query,
 					err = -1;
 				} else {
 					//at tis point memory is managed by async direct io system
-					(*it)->delete_on_dispose = false;
+					
 				}
 			}
 			//delete the datapack

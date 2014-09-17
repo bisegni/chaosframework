@@ -36,11 +36,27 @@ void QueryFuture::pushDataPack(cc_data::CDataWrapper *received_datapack, uint64_
 	waith_for_get_data_Semaphore.unlock();
 }
 
-cc_data::CDataWrapper *QueryFuture::getDataPack(bool wait) {
+cc_data::CDataWrapper *QueryFuture::getDataPack(bool wait, uint32_t timeout) {
 	cc_data::CDataWrapper *result = NULL;
-	while(!data_pack_queue.pop(result) && wait) {
-		waith_for_get_data_Semaphore.unlock();
+	
+	if(timeout) {
+		//wait only once an the return
+		if(!data_pack_queue.pop(result) && wait) {
+			//we have no data wait the timeout to receck
+			waith_for_get_data_Semaphore.wait(timeout);
+			
+			//try to get next
+			data_pack_queue.pop(result);
+		}
+	}else{
+		//cicle and waith untile we have a data
+		while(!data_pack_queue.pop(result) && wait) {
+			waith_for_get_data_Semaphore.wait();
+		}
 	}
+	
+	
+	waith_for_get_data_Semaphore.unlock();
 	return result;
 }
 

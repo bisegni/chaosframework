@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		328B4E8E19C9AEF9008D1331 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328B4E8D19C9AEF9008D1331 /* main.cpp */; };
+		328B4E8E19C9AEF9008D1331 /* cde.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328B4E8D19C9AEF9008D1331 /* cde.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,7 +25,7 @@
 /* Begin PBXFileReference section */
 		328B4E7F19C9AE35008D1331 /* ChaosDataExport */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosDataExport; sourceTree = BUILT_PRODUCTS_DIR; };
 		328B4E8C19C9AEF9008D1331 /* CMakeList.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeList.txt; sourceTree = SOURCE_ROOT; };
-		328B4E8D19C9AEF9008D1331 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = SOURCE_ROOT; };
+		328B4E8D19C9AEF9008D1331 /* cde.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cde.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,7 +59,7 @@
 			isa = PBXGroup;
 			children = (
 				328B4E8C19C9AEF9008D1331 /* CMakeList.txt */,
-				328B4E8D19C9AEF9008D1331 /* main.cpp */,
+				328B4E8D19C9AEF9008D1331 /* cde.cpp */,
 			);
 			path = ChaosDataExport;
 			sourceTree = "<group>";
@@ -115,7 +115,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				328B4E8E19C9AEF9008D1331 /* main.cpp in Sources */,
+				328B4E8E19C9AEF9008D1331 /* cde.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -197,6 +197,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "libstdc++";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../usr/local/bin";
 				HEADER_SEARCH_PATHS = (
 					../../,
 					/usr/local/include,
@@ -229,6 +230,7 @@
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "compiler-default";
 				CLANG_CXX_LIBRARY = "libstdc++";
+				CONFIGURATION_BUILD_DIR = "$(SRCROOT)/../../usr/local/bin";
 				HEADER_SEARCH_PATHS = (
 					../../,
 					/usr/local/include,

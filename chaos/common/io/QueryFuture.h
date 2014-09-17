@@ -52,7 +52,7 @@ namespace chaos {
 				
 				void pushDataPack(cc_data::CDataWrapper *received_datapack, uint64_t _total_found_element);
 			public:
-				cc_data::CDataWrapper *getDataPack(bool wait = true);
+				cc_data::CDataWrapper *getDataPack(bool wait = true, uint32_t timeout = 0);
 				
 				const std::string& getQueryID();
 				
