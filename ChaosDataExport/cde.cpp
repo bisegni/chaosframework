@@ -41,6 +41,7 @@ using namespace boost;
 
 #define OPT_CU_ID           "device_id"
 #define OPT_TIMEOUT         "timeout"
+#define OPT_DST_TARGET      "dest_target"
 #define OPT_DST_FILE        "dest_file"
 #define OPT_DST_TYPE        "dest_type"
 
@@ -68,6 +69,7 @@ int main(int argc, char* argv[])
 	uint32_t timeout;
 	string device_id;
 	string dst_file;
+	bool dest_target;
 	bool dest_type;
 	string start_time;
 	string end_time;
@@ -77,17 +79,18 @@ int main(int argc, char* argv[])
 	
 	uint64_t start_ts = 0;
 	uint64_t end_ts = 0;
-
+	
 	int retry = 0;
 	uint32_t cicle_number = 0;
 	CDeviceNetworkAddress deviceNetworkAddress;
 	try{
-
+		
 		//! [UIToolkit Attribute Init]
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_CU_ID, "The identification string of the device", &device_id);
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_TIMEOUT, "Timeout for wait the answer in milliseconds", 2000, &timeout);
-		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_DST_FILE, "Destination file for save found datapack", &dst_file);
+		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<bool>(OPT_DST_TARGET, "Destination target file(true) or stdandard output(false)", true, &dest_target);
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<bool>(OPT_DST_TYPE, "Destination date type binary(true) or string(false)", true, &dest_type);
+		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_DST_FILE, "Destination file for save found datapack", &dst_file);
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_START_TIME, "Time for first datapack to find [format from %Y-%m-%dT%H:%M:%S.%f to %Y]", &start_time);
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_END_TIME, "Time for last datapack to find [format from %Y-%m-%dT%H:%M:%S.%f to %Y]", &end_time);
 		
@@ -112,39 +115,48 @@ int main(int argc, char* argv[])
 		
 		if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_START_TIME)){
 			if(!chaos::TimingUtil::dateWellFormat(end_time)) {
-				throw CException(-2, "Invalid end date format", "check date");
+				throw CException(-3, "Invalid end date format", "check date");
 			}
-
+			
 			end_ts = chaos::TimingUtil::getTimestampFromString(end_time);
 		}
 		
+		//print the desttination target
+		std::cout << "Set output target to"<<(dest_target?" file":" standard output") << std::endl;
+		
 		//get the timestamp for query boundary
-		if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_DST_FILE)){
-			getcwd(buf, 255);
-			dst_file.assign(buf, strlen(buf));
-			dst_file += "/"+device_id+".exp";
+		if(dest_target) {
+			if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_DST_FILE)){
+				std::cout << "Auto destination file generation:";
+				getcwd(buf, 255);
+				dst_file.assign(buf, strlen(buf));
+				dst_file += "/"+device_id+".exp";
+				std::cout << dst_file << std::endl;
+			}
+			std::cout << "Open destination file";
+			std::basic_ios<char>::openmode dst_file_mode = ios_base::out;
+			if(dest_type) {
+				dst_file_mode |= ios_base::binary;
+			}
+			destination_file.open(dst_file.c_str(), dst_file_mode);
+			if(!destination_file.good()) {
+				err_str = "Error opening destination file ";
+				err_str.append(buf, strlen(buf));
+				throw CException(-4, err_str, string("check param"));
+			}
+			
+			destination_stream = &destination_file;
+		} else {
+			destination_stream = &std::cout;
+			(*destination_stream) << "BEGIN EXPORT---------------------------------";
 		}
-		
-		std::basic_ios<char>::openmode dst_file_mode = ios_base::out;
-		if(dest_type) {
-			dst_file_mode |= ios_base::binary;
-		}
-		destination_file.open(dst_file.c_str(), dst_file_mode);
-		if(!destination_file.good()) {
-			err_str = "Error opening destination file ";
-			err_str.append(buf, strlen(buf));
-			throw CException(1, err_str, string("check param"));
-		}
-		
-		destination_stream = &destination_file;
-		
 		//we can allocate the channel
 		std::cout << "Acquiring controller" << std::endl;
 		DeviceController *controller = HLDataApi::getInstance()->getControllerForDeviceID(device_id, timeout);
 		if(!controller) throw CException(4, "Error allcoating decive controller", "device controller creation");
 		
 		chaos::common::io::QueryFuture *query_future = NULL;
-		std::cout << "Start Query" << std::endl;
+		std::cout << "Starting export" << std::endl;
 		controller->executeTimeIntervallQuery(start_ts, end_ts, &query_future);
 		if(query_future) {
 			do {
@@ -167,7 +179,7 @@ int main(int argc, char* argv[])
 				if(!(cicle_number % 100)) {
 					printPercendDone(computePercent(query_future->getCurrentElementIndex(), query_future->getTotalElementFound()));
 				}
-
+				
 			} while((query_future->getCurrentElementIndex() < query_future->getTotalElementFound()) && retry < 3);
 			//print last percent
 			printPercendDone(computePercent(query_future->getCurrentElementIndex(), query_future->getTotalElementFound()));
@@ -187,7 +199,9 @@ int main(int argc, char* argv[])
     } catch (CException& e) {
         std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
     }
-	
+	if(!dest_target) {
+		(*destination_stream) << "END EXPORT---------------------------------";
+	}
 	std::cout << std::endl << "Export done"<< std::endl;
 	return 0;
 }

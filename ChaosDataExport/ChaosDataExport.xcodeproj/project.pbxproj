@@ -24,7 +24,7 @@
 
 /* Begin PBXFileReference section */
 		328B4E7F19C9AE35008D1331 /* ChaosDataExport */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosDataExport; sourceTree = BUILT_PRODUCTS_DIR; };
-		328B4E8C19C9AEF9008D1331 /* CMakeList.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeList.txt; sourceTree = SOURCE_ROOT; };
+		328B4E8C19C9AEF9008D1331 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
 		328B4E8D19C9AEF9008D1331 /* cde.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cde.cpp; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -58,7 +58,7 @@
 		328B4E8119C9AE35008D1331 /* ChaosDataExport */ = {
 			isa = PBXGroup;
 			children = (
-				328B4E8C19C9AEF9008D1331 /* CMakeList.txt */,
+				328B4E8C19C9AEF9008D1331 /* CMakeLists.txt */,
 				328B4E8D19C9AEF9008D1331 /* cde.cpp */,
 			);
 			path = ChaosDataExport;
@@ -277,6 +277,7 @@
 				328B4E8A19C9AE35008D1331 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
