@@ -313,7 +313,7 @@ void QueryEngine::process_query() {
 				case DataCloudQuery::DataCloudQueryPhaseNeedSearch:
 					//start the query
 					QEDBG_ << "Start "<< QUERY_INFO((*query));
-					err = query->startQuery();
+					if((err = query->startQuery())) break;
 					
 				case DataCloudQuery::DataCloudQueryPhaseHaveData:
 					QEDBG_ << "Answer "<< QUERY_INFO((*query));

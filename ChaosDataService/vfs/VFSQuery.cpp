@@ -19,6 +19,8 @@
  */
 
 #include "VFSQuery.h"
+#include "query/DataBlockCache.h"
+
 using namespace chaos::data_service::vfs;
 
 #define VFSQuery_LOG_HEAD "[VFSQuery] - "
@@ -40,38 +42,20 @@ query(_query){
 }
 
 VFSQuery::~VFSQuery() {
-	for(MapPathDatablockIterator it = map_path_datablock.begin();
-		it != map_path_datablock.end();
-		it++) {
-		VFSQ_LDBG_ << "Erasing data block fetcher for " << it->first;
-		it->second->close();
-		delete(it->second);
-	}
 }
 
 //! load data block containing index
 int VFSQuery::getDatablockFetcherForIndex(const db_system::DataPackIndexQueryResult& index,
 										  query::DataBlockFetcher **datablock_ptr) {
 	int err = 0;
-	boost::upgrade_lock<boost::shared_mutex> rmap_lock(map_path_datablock_mutex);
-	std::string data_block_path = index.dst_location->getBlockVFSPath();
-	MapPathDatablockIterator db_iter = map_path_datablock.find(data_block_path);
+	std::string datablock_path = index.dst_location->getBlockVFSPath();
+	MapPathDatablockIterator db_iter = map_path_datablock.find(datablock_path);
 	if(db_iter != map_path_datablock.end()) {
 		//return mapped datablock
 		*datablock_ptr = db_iter->second;
-	} else {
-		//open new datablock fetcher
-		boost::upgrade_to_unique_lock<boost::shared_mutex> wmap_lock(rmap_lock);
-		
-		//install datablock fetcher in map
-		*datablock_ptr = new query::DataBlockFetcher(storage_driver_ptr, data_block_path);
-		if(!(*datablock_ptr) ||
-		   (err = (*datablock_ptr)->open())) {
-			//error
-		} else {
+	} else if(!(err = query::DataBlockCache::getInstance()->getFetcherForBlockWithPath(datablock_path, datablock_ptr))) {
 			//all is gone well and we can put the fetcher in hashmap
-			map_path_datablock.insert(make_pair(data_block_path, *datablock_ptr));
-		}
+		map_path_datablock.insert(make_pair(datablock_path, *datablock_ptr));
 	}
 	return err;
 }
@@ -95,7 +79,7 @@ int VFSQuery::getDataPackForIndex(const db_system::DataPackIndexQueryResult& ind
 
 //! ensure that a datablock is not null
 /*!
- usefullt to get the current lcoation before write the first data pack.
+ usefullt to get the current allocation before write the first data pack.
  */
 int VFSQuery::executeQuery() {
 	int err = 0;

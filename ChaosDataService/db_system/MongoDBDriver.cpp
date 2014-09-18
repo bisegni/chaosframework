@@ -685,8 +685,7 @@ int MongoDBDriver::idxStartSearchDataPack(const DataPackIndexQuery& data_pack_in
 	int err=-1;
 	*index_cursor = new MongoDBIndexCursor(this, data_pack_index_query);
 	if(*index_cursor) {
-		err = 0;
-		((MongoDBIndexCursor*)*index_cursor)->computeTimeLapsForPage();
+		err = ((MongoDBIndexCursor*)*index_cursor)->computeTimeLapsForPage();
 	}
 	return err;
 }
