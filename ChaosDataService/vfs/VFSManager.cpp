@@ -19,6 +19,7 @@
  */
 
 #include "VFSManager.h"
+#include "query/DataBlockCache.h"
 
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
@@ -92,6 +93,10 @@ void VFSManager::init(void * init_data) throw (chaos::CException) {
 	createDirectory(VFS_STAGE_AREA);
 	createDirectory(VFS_DATA_AREA);
 	
+	//assign the storage driver to the  data block fetcher cache
+	query::DataBlockCache::getInstance()->storage_driver = storage_driver_ptr;
+	chaos::utility::InizializableService::initImplementation(query::DataBlockCache::getInstance(), NULL, "DataBlockCache", __PRETTY_FUNCTION__);
+
 	chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, HB_REPEAT_TIME);
 }
 /*---------------------------------------------------------------------------------
@@ -100,6 +105,9 @@ void VFSManager::init(void * init_data) throw (chaos::CException) {
 void VFSManager::deinit() throw (chaos::CException) {
 	VFSFM_LAPP_ << "Deallocate hb timer";
 	chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
+	
+	//deinit data block fetcher cache
+	chaos::utility::InizializableService::deinitImplementation(query::DataBlockCache::getInstance(), "DataBlockCache", __PRETTY_FUNCTION__);
 	
 	if(storage_driver_ptr) {
 		VFSFM_LAPP_ << "Deallocate storage driver";

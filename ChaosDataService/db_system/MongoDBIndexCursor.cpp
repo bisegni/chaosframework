@@ -25,6 +25,12 @@
 
 using namespace chaos::data_service::db_system;
 
+#define MongoDBIndexCursor_LOG_HEAD "[MongoDBIndexCursor] - "
+#define MDBIDCURSOR_LAPP_ LAPP_ << MongoDBIndexCursor_LOG_HEAD
+#define MDBIDCURSOR_LDBG_ LDBG_ << MongoDBIndexCursor_LOG_HEAD << __FUNCTION__ << " - "
+#define MDBIDCURSOR_LERR_ LERR_ << MongoDBIndexCursor_LOG_HEAD << __FUNCTION__ << "(" << __LINE__ << ")" << " - "
+
+
 //! private constructor
 MongoDBIndexCursor::MongoDBIndexCursor(DBDriver *_driver_ptr,
 									   const DataPackIndexQuery& _query):
@@ -57,8 +63,14 @@ int MongoDBIndexCursor::computeTimeLapsForPage() {
 		//!calculate total element for the time laps request
 		total_page_number = (uint32_t)ceil((double)element_found / (double)getResultPageDimension());
 		
-		//!calculate the laps of the single page
-		time_offset_per_page_in_ms = (uint64_t)ceil((double)((query.end_ts - query.start_ts)/total_page_number));
+		if(total_page_number) {
+			//!calculate the laps of the single page
+			time_offset_per_page_in_ms = (uint64_t)ceil((double)((query.end_ts - query.start_ts)/total_page_number));
+		} else {
+			MDBIDCURSOR_LERR_ << "zero element found for did:" << query.did << " Start TS:" << query.start_ts << " End TS:"<< query.end_ts;
+			time_offset_per_page_in_ms = 0;
+			err = -1;
+		}
 	}
 	return err;
 }
