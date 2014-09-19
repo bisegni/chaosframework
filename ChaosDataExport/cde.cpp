@@ -124,18 +124,16 @@ int main(int argc, char* argv[])
 		}
 		
 		//print the desttination target
-		std::cout << "Set output target to"<<(dest_target?" file":" standard output") << std::endl;
+		std::cout << "Set output target to -> "<<(dest_target?" file":" standard output") << std::endl;
 		
 		//get the timestamp for query boundary
 		if(dest_target) {
 			if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_DST_FILE)){
-				std::cout << "Auto destination file generation:";
+				std::cout << "Auto destination file generation" << std::endl;
 				getcwd(buf, 255);
 				dst_file.assign(buf, strlen(buf));
 				dst_file += "/"+device_id+".exp";
-				std::cout << dst_file << std::endl;
 			}
-			std::cout << "Open destination file";
 			std::basic_ios<char>::openmode dst_file_mode = ios_base::out;
 			if(dest_type) {
 				dst_file_mode |= ios_base::binary;
@@ -146,12 +144,14 @@ int main(int argc, char* argv[])
 				err_str.append(buf, strlen(buf));
 				throw CException(-4, err_str, string("check param"));
 			}
-			
+			std::cout << "Destination file -> " << dst_file << std::endl;
+
 			destination_stream = &destination_file;
 		} else {
 			destination_stream = &std::cout;
-			(*destination_stream) << "BEGIN EXPORT---------------------------------";
 		}
+		std::cout << "BEGIN EXPORT---------------------------------" << std::endl;
+
 		//we can allocate the channel
 		std::cout << "Acquiring controller" << std::endl;
 		DeviceController *controller = HLDataApi::getInstance()->getControllerForDeviceID(device_id, timeout);
