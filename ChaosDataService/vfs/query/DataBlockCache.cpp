@@ -45,8 +45,6 @@ void DataBlockCache::deinit() throw(chaos::CException) {
 void DataBlockCache::timeout() {
 	//clan only unused
 	clean(false);
-	
-	map_path_datablock.clear();
 }
 
 //clean all or aged (timed out) data block fetcher
@@ -76,6 +74,8 @@ int DataBlockCache::getFetcherForBlockWithPath(const std::string& datablock_path
 	if(db_iter != map_path_datablock.end()) {
 		//return mapped datablock
 		*fetcher = db_iter->second;
+		
+		(*fetcher)->use_count++;
 	} else {
 		//open new datablock fetcher
 		boost::upgrade_to_unique_lock<boost::shared_mutex> wmap_lock(rmap_lock);
@@ -88,6 +88,8 @@ int DataBlockCache::getFetcherForBlockWithPath(const std::string& datablock_path
 		} else {
 			//all is gone well and we can put the fetcher in hashmap
 			map_path_datablock.insert(make_pair(datablock_path, *fetcher));
+			
+			(*fetcher)->use_count++;
 		}
 	}
 	return err;

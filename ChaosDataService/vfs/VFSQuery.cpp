@@ -42,6 +42,13 @@ query(_query){
 }
 
 VFSQuery::~VFSQuery() {
+	for(MapPathDatablockIterator it =  map_path_datablock.begin();
+		it != map_path_datablock.end();
+		it++) {
+		// release all fetcher
+		VFSQ_LAPP_ << "Release datablock fetcher for " << it->first;
+		query::DataBlockCache::getInstance()->releaseFetcher(it->second);
+	}
 }
 
 //! load data block containing index

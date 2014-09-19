@@ -106,19 +106,21 @@ int main(int argc, char* argv[])
 		}
 		
 		//get the timestamp for query boundary
-		if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_DST_FILE)){
+		if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_START_TIME)){
 			if(!chaos::TimingUtil::dateWellFormat(start_time)) {
 				throw CException(-2, "Invalid star date format", "check date");
 			}
 			start_ts = chaos::TimingUtil::getTimestampFromString(start_time);
+			std::cout << "Set start data to"<< start_time << std::endl;
 		}
 		
-		if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_START_TIME)){
+		if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_END_TIME)){
 			if(!chaos::TimingUtil::dateWellFormat(end_time)) {
 				throw CException(-3, "Invalid end date format", "check date");
 			}
 			
 			end_ts = chaos::TimingUtil::getTimestampFromString(end_time);
+			std::cout << "Set end data to"<< end_time << std::endl;
 		}
 		
 		//print the desttination target

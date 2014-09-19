@@ -62,10 +62,7 @@ namespace chaos {
 					
 					//clean all or unused data block fetcher
 					void clean(bool all_unused);
-					
-					//! Release a previously allocated fetcher for datablock
-					int releaseFetcher(DataBlockFetcher *datablock_fetcher);
-					
+										
 				protected:
 					//! Initialize instance
 					void init(void *init_data) throw(chaos::CException);
@@ -77,7 +74,9 @@ namespace chaos {
 					//! Get a new fetcher for datablock
 					int getFetcherForBlockWithPath(const std::string& datablock_path,
 												   DataBlockFetcher **fetcher);
-
+					
+					//! Release a previously allocated fetcher for datablock
+					int releaseFetcher(DataBlockFetcher *datablock_fetcher);
 				};
 			}
 		}
