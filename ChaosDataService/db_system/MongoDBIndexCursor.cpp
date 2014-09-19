@@ -90,7 +90,7 @@ int MongoDBIndexCursor::performNextPagedQuery() {
 	paged_query.start_ts = (last_max_ts_searched?last_max_ts_searched+1:query.start_ts);
 	
 	//set the end timestamp
-	last_max_ts_searched = paged_query.end_ts = (paged_query.start_ts + time_offset_per_page_in_ms);
+	last_max_ts_searched = (paged_query.end_ts = (paged_query.start_ts + time_offset_per_page_in_ms));
 	
 	//perform query
 	return mdrv->idxSearchDataPack(paged_query, cursor);

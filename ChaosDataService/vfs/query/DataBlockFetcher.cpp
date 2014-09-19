@@ -26,7 +26,7 @@ using namespace chaos::data_service::vfs::query;
 #define DBF_LOG_HEAD "[DataBlockFetcher] - " << datablock_path << " - "
 #define DBF_LAPP_ LAPP_ << DBF_LOG_HEAD
 #define DBF_LDBG_ LDBG_ << DBF_LOG_HEAD << __FUNCTION__ << " - "
-#define DBF_LERR_ LERR_ << DBF_LOG_HEAD << __FUNCTION__ << " - " << __LINE__
+#define DBF_LERR_ LERR_ << DBF_LOG_HEAD << __FUNCTION__ << " - " << __LINE__ << " "
 
 
 DataBlockFetcher::DataBlockFetcher(storage_system::StorageDriver *_storage_driver,
@@ -67,14 +67,17 @@ int DataBlockFetcher::readData(uint64_t offset, uint32_t data_len, void **data_h
 	int err = 0;
 	boost::unique_lock<boost::mutex> rlock(mutex_read_access);
 	
-	//got to offset
-	if((err = storage_driver->seekg(datablock, offset, block_seek_base::BlockSeekBaseBegin))) {
+	if(offset >= datablock->max_reacheable_size) {
+		err = -1000; //off
+		DBF_LERR_ << "Offset outside file " << err;
+	} else if((err = storage_driver->seekg(datablock, offset, block_seek_base::BlockSeekBaseBegin))) {
 		DBF_LERR_ << "Error going to offset " << err;
 	} else {
 		//we can read so we need to allcoate memory for reading
 		uint32_t readed_byte;
 		*data_handler = calloc(data_len, 1);
 		if((err = storage_driver->read(datablock, *data_handler, data_len, readed_byte))) {
+			if(*data_handler) free(*data_handler);
 			DBF_LERR_ << "Error reading data " << err;
 		} else {
 			//we got data

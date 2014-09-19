@@ -22,7 +22,7 @@
 
 #include "../vfs/vfs.h"
 
-#include <chaos/common/thread/WaitSemaphore.h>
+#include <chaos/common/thread/ThreadSemaphore.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/utility/TemplatedKeyValueHash.h>
 
@@ -136,7 +136,7 @@ namespace chaos {
 				bool work_on_query;
 				unsigned int thread_pool_size;
 				boost::thread_group answer_thread_pool;
-				WaitSemaphore	thread_wait_sem;
+				chaos::common::thread::ThreadSemaphore *thread_semaphore;
 				boost::lockfree::queue<DataCloudQuery*, boost::lockfree::fixed_sized<false> > query_queue;
 				
 				boost::shared_mutex						mutex_map_query_id_connection;

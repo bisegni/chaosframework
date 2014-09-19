@@ -46,7 +46,6 @@ query(_query),
 query_phase(DataCloudQueryPhaseNeedSearch),
 total_data_pack_sent(0),
 vfs_query(NULL){
-	
 	//set teh dafault value on element to forward for server-> client paging
 	fetchedAndForwadInfo.number_of_element_to_forward = 0;
 };
@@ -91,6 +90,7 @@ QueryEngine::QueryEngine(chaos_direct_io::DirectIOClient *_directio_client_insta
 directio_client_instance(_directio_client_instance),
 work_on_query(false),
 thread_pool_size(_thread_pool_size),
+thread_semaphore(NULL),
 vfs_manager_ptr(_vfs_manager_ptr),
 query_queue(1) {
 	
@@ -110,6 +110,10 @@ void QueryEngine::init(void *init_data)  throw(chaos::CException) {
 
 void QueryEngine::start() throw(chaos::CException) {
 	QEAPP_ << "Starting thread pool of size " << thread_pool_size;
+	
+	//allocate the semahore for thread size
+	thread_semaphore = new chaos::common::thread::ThreadSemaphore(thread_pool_size);
+	
 	//add al thread to the pool
 	work_on_query = true;
 	for(int idx = 0; idx < thread_pool_size; idx++) {
@@ -120,6 +124,8 @@ void QueryEngine::start() throw(chaos::CException) {
 void QueryEngine::stop() throw(chaos::CException) {
 	work_on_query = false;
 	answer_thread_pool.join_all();
+	//unlock all thread
+	thread_semaphore->signal(thread_pool_size);
 	
 	//delete all connection
 	for(MapConnectionIterator it = map_query_id_connection.begin();
@@ -127,6 +133,8 @@ void QueryEngine::stop() throw(chaos::CException) {
 		it++) {
 		disposeClientConnectionInfo(it->second);
 	}
+	
+	if(thread_semaphore) delete(thread_semaphore);
 }
 
 void QueryEngine::deinit() throw(CException) {
@@ -148,7 +156,7 @@ void QueryEngine::executeQuery(DataCloudQuery *query) {
 		QEERR_ << "error submitting for "<< QUERY_INFO((*query));
 		delete(query);
 	} else {
-		thread_wait_sem.unlock();
+		thread_semaphore->signal();
 		QEDBG_ << "Successfull submission for " << QUERY_INFO((*query));
 	}
 }
@@ -163,6 +171,15 @@ void QueryEngine::disposeQuery(DataCloudQuery *query) {
 		delete(query->vfs_query);
 		
 		query->vfs_query = NULL;
+	}
+	
+	if(query->fetchedAndForwadInfo.fetched_data_vector.size()) {
+		QEDBG_ << "Deleting unset data " << QUERY_INFO((*query));
+		for(int idx = 0;
+			idx < query->fetchedAndForwadInfo.fetched_data_vector.size();
+			idx++) {
+			delete(query->fetchedAndForwadInfo.fetched_data_vector[idx]);
+		}
 	}
 	
 	//delete query
@@ -391,7 +408,7 @@ void QueryEngine::process_query() {
 			}
 			query = NULL;
 		} else {
-			thread_wait_sem.wait(2000);
+			thread_semaphore->wait();
 			//boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 		}
 	}

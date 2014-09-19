@@ -106,15 +106,15 @@ int VFSQuery::executeQuery() {
 int VFSQuery::readDataPackPage(std::vector<FoundDataPack*> &readed_pack) {
 	int err = 0;
 	void *data = NULL;
-	
-	if(query_cursor_ptr->getCurrentPage()==query_cursor_ptr->getTotalPage()) return 0;
+	//chec is we have got all elelement
+	if(query_cursor_ptr->getNumberOfElementFound()==fetched_element) return 0;
 	
 	if((err = query_cursor_ptr->performNextPagedQuery())) {
 		return err;
 	}
 	
 	uint32_t data_len = 0;
-	while (query_cursor_ptr->hasNext()) {
+	while (query_cursor_ptr->hasNext() && !err) {
 		auto_ptr<db_system::DataPackIndexQueryResult> current_index(query_cursor_ptr->getIndex());
 		if((err = getDataPackForIndex(*current_index.get(), &data, data_len))){
 			VFSQ_LERR_ << "Error retriving the data pack on virtual filesystem";
