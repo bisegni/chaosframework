@@ -63,6 +63,9 @@ namespace chaos {
 			class VFSQuery {
 				friend class VFSManager;
 				
+				//!
+				uint64_t	fetched_element;
+				
 				//!index driver pointer
 				chaos_index::DBDriver *db_driver_ptr;
 				
@@ -112,6 +115,9 @@ namespace chaos {
 				
 				//
 				uint64_t getNumberOfElementFound();
+				
+				//
+				uint64_t getNumberOfFetchedElement();
 			};
 			
 		}

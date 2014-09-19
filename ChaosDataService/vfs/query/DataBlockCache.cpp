@@ -26,6 +26,12 @@
 
 using namespace chaos::data_service::vfs::query;
 
+#define DBC_LOG_HEAD "[DataBlockCache] - "
+#define DBC_LAPP_ LAPP_ << DBC_LOG_HEAD
+#define DBC_LDBG_ LDBG_ << DBC_LOG_HEAD << __FUNCTION__ << " - "
+#define DBC_LERR_ LERR_ << DBC_LOG_HEAD << __FUNCTION__ << " - " << __LINE__
+
+
 //! Initialize instance
 void DataBlockCache::init(void *init_data) throw(chaos::CException) {
 	if(!storage_driver) throw chaos::CException(-1, "No storage driver found", __PRETTY_FUNCTION__);
@@ -54,6 +60,7 @@ void DataBlockCache::clean(bool all_unused) {
 	for (MapPathDatablockIterator it = map_path_datablock.begin();
 		 it != map_path_datablock.end();) {
 		if(!it->second->use_count || all_unused) {
+			DBC_LDBG_ << "Deleting datablock fetcher for " << it->first;
 			//no one is using the fetcher or all fetcher need to be claned
 			delete(it->second);
 			//the right auto increment return the previus element
@@ -72,11 +79,15 @@ int DataBlockCache::getFetcherForBlockWithPath(const std::string& datablock_path
 	boost::upgrade_lock<boost::shared_mutex> rmap_lock(map_path_datablock_mutex);
 	MapPathDatablockIterator db_iter = map_path_datablock.find(datablock_path);
 	if(db_iter != map_path_datablock.end()) {
+		DBC_LDBG_ << "return already allocated datablock fetcher for " << datablock_path;
+		
 		//return mapped datablock
 		*fetcher = db_iter->second;
 		
 		(*fetcher)->use_count++;
 	} else {
+		DBC_LDBG_ << "Allocating new datablock fetcher for " << datablock_path;
+		
 		//open new datablock fetcher
 		boost::upgrade_to_unique_lock<boost::shared_mutex> wmap_lock(rmap_lock);
 		

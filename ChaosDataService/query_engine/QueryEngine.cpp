@@ -26,7 +26,7 @@ using namespace chaos::data_service::query_engine;
 namespace chaos_direct_io = chaos::common::direct_io;
 namespace chaos_direct_io_ch = chaos::common::direct_io::channel;
 
-
+#define QueryEngine_FORWARDING_PAGE_DIMENSION 50
 #define QueryEngine_LOG_HEAD "[QueryDataConsumer] - "
 
 #define QEAPP_ LAPP_ << QueryEngine_LOG_HEAD
@@ -45,9 +45,15 @@ query_computed_unique_id(boost::str(boost::format("%1%_%2%") % query_id % answer
 query(_query),
 query_phase(DataCloudQueryPhaseNeedSearch),
 total_data_pack_sent(0),
-vfs_query(NULL){};
+vfs_query(NULL){
+	
+	//set teh dafault value on element to forward for server-> client paging
+	fetchedAndForwadInfo.number_of_element_to_forward = 0;
+};
 
-DataCloudQuery::~DataCloudQuery(){};
+DataCloudQuery::~DataCloudQuery(){
+	fetchedAndForwadInfo.fetched_data_vector.clear();
+};
 
 int DataCloudQuery::startQuery() {
 	int err = 0;
@@ -56,7 +62,7 @@ int DataCloudQuery::startQuery() {
 		QEERR_ << "Error executing query";
 		query_phase = DataCloudQueryPhaseError;
 	} else {
-		query_phase = DataCloudQueryPhaseHaveData;
+		query_phase = DataCloudQueryPhaseFetchData;
 	}
 	return err;
 }
@@ -68,7 +74,8 @@ int DataCloudQuery::fecthData(std::vector<vfs::FoundDataPack*>& found_data_pack)
 		query_phase = DataCloudQueryPhaseError;
 		QEERR_ << "Error fetching query data";
 	} else {
-		if(found_data_pack.size() == 0) {
+		if(found_data_pack.size() == 0 &&
+		   vfs_query->getNumberOfFetchedElement() == vfs_query->getNumberOfElementFound()) {
 			query_phase = DataCloudQueryPhaseEnd;
 		}
 	}
@@ -140,8 +147,10 @@ void QueryEngine::executeQuery(DataCloudQuery *query) {
 	if(!query_queue.push(query)) {
 		QEERR_ << "error submitting for "<< QUERY_INFO((*query));
 		delete(query);
+	} else {
+		thread_wait_sem.unlock();
+		QEDBG_ << "Successfull submission for " << QUERY_INFO((*query));
 	}
-	QEDBG_ << "Successfull submission for " << QUERY_INFO((*query));
 }
 
 void QueryEngine::disposeQuery(DataCloudQuery *query) {
@@ -248,30 +257,34 @@ int  QueryEngine::getChannelForQuery(DataCloudQuery *query,
 	return 0;
 }
 
-int  QueryEngine::sendDataToClient(DataCloudQuery *query,
-								   const std::vector<vfs::FoundDataPack*>& data) {
+int  QueryEngine::sendDataToClient(DataCloudQuery *query) {
 	//fecth connection channel
-	ClientConnectionInfo *connection_info_ptr = NULL;
+	vfs::FoundDataPack		*datapack_to_forward = NULL;
+	ClientConnectionInfo	*connection_info_ptr = NULL;
 	int err = getChannelForQuery(query, &connection_info_ptr);
 	if(!err && connection_info_ptr) {
-		
+		//QueryEngine_FORWARDING_PAGE_DIMENSION
 		//all found datapack are processed, if there is an error on a cicle,
 		//in the next will not be send data over channel, but only discarded
 		//in this way at the end all the found datapack will be erased
-		for (std::vector<vfs::FoundDataPack*>::const_iterator it = data.begin();
-			 it != data.end();
-			 it++) {
+		for (int sent_count = 0;											//keep track of the page dimension of element to send
+			 (sent_count<QueryEngine_FORWARDING_PAGE_DIMENSION &&			//step until the page is not sent or
+			  query->fetchedAndForwadInfo.number_of_element_to_forward);	//until we have cicle all vector
+			 sent_count++) {												//increment the page element
 			
+			//get next element to send
+			datapack_to_forward = query->fetchedAndForwadInfo.fetched_data_vector[--query->fetchedAndForwadInfo.number_of_element_to_forward];
 			//send data packet
 			if(!err) {
 				//previoous iteration has not failed
-				(*it)->delete_on_dispose = false;
+				datapack_to_forward->delete_on_dispose = false;
 				
+				//send data to client
 				err = (int)connection_info_ptr->channel->sendResultToQueryDataCloud(query->query_id,
 																					query->vfs_query->getNumberOfElementFound(),
 																					++query->total_data_pack_sent,
-																					(*it)->data_pack_buffer,
-																					(*it)->data_pack_size,
+																					datapack_to_forward->data_pack_buffer,
+																					datapack_to_forward->data_pack_size,
 																					this);
 				//check for error
 				if(connection_info_ptr->connection->getState() == chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected ||
@@ -284,7 +297,7 @@ int  QueryEngine::sendDataToClient(DataCloudQuery *query,
 				}
 			}
 			//delete the datapack
-			delete(*it);
+			delete(datapack_to_forward);
 		}
 	}
 	return err;
@@ -301,12 +314,9 @@ void QueryEngine::freeSentData(void* sent_data_ptr, common::direct_io::DisposeSe
 void QueryEngine::process_query() {
 	int err = 0;
 	DataCloudQuery *query = NULL;
-	std::vector<vfs::FoundDataPack*> found_datapac_vec;
 	QEDBG_ << "Enter process query thread";
 	while(work_on_query) {
 		if(query_queue.pop(query) && query) {
-			//clear the vector of precedente result
-			found_datapac_vec.clear();
 			
 			//step on current query
 			switch(query->query_phase) {
@@ -315,14 +325,30 @@ void QueryEngine::process_query() {
 					QEDBG_ << "Start "<< QUERY_INFO((*query));
 					if((err = query->startQuery())) break;
 					
-				case DataCloudQuery::DataCloudQueryPhaseHaveData:
+				case DataCloudQuery::DataCloudQueryPhaseFetchData:
 					QEDBG_ << "Answer "<< QUERY_INFO((*query));
-					if(!(err = query->fecthData(found_datapac_vec)) &&
-					   query->query_phase ==DataCloudQuery::DataCloudQueryPhaseHaveData) {
-						if((err = sendDataToClient(query, found_datapac_vec))) {
-							//if there is an error sending data back to client remove the query
-							query->query_phase = DataCloudQuery::DataCloudQueryPhaseError;
-						}
+					//get the nex page data
+					if(!(err = query->fecthData(query->fetchedAndForwadInfo.fetched_data_vector)) &&
+					   query->fetchedAndForwadInfo.fetched_data_vector.size() &&
+					   query->query_phase == DataCloudQuery::DataCloudQueryPhaseFetchData) {
+						//got to forwarding state
+						query->query_phase = DataCloudQuery::DataCloudQueryPhaseForwardData;
+						//keep track of how many element we need to return to the client
+						query->fetchedAndForwadInfo.number_of_element_to_forward = query->fetchedAndForwadInfo.fetched_data_vector.size();
+					}
+					break;
+					
+				case DataCloudQuery::DataCloudQueryPhaseForwardData:
+					if((err = sendDataToClient(query))) {
+						//if there is an error sending data back to client remove the query
+						query->query_phase = DataCloudQuery::DataCloudQueryPhaseError;
+					} else if(!query->fetchedAndForwadInfo.number_of_element_to_forward) {
+						//we have forward all element so whe ned to fetch another page of data
+						query->query_phase = DataCloudQuery::DataCloudQueryPhaseFetchData;
+						
+						//reset fetched info of the query
+						query->fetchedAndForwadInfo.number_of_element_to_forward = 0;
+						query->fetchedAndForwadInfo.fetched_data_vector.clear();
 					}
 					break;
 					
@@ -365,7 +391,8 @@ void QueryEngine::process_query() {
 			}
 			query = NULL;
 		} else {
-			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+			thread_wait_sem.wait(2000);
+			//boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 		}
 	}
 	QEDBG_ << "Leave process query thread";

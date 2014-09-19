@@ -50,7 +50,7 @@ using namespace boost;
 
 
 void printPercendDone(int percend_done) {
-	std::cout << " " << setfill('0') << setw(4) << percend_done << "& " <<std::flush;
+	std::cout << " " << setfill('0') << setw(4) << percend_done << "% " <<std::flush;
 }
 
 void printStep() {

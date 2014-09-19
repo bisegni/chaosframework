@@ -37,7 +37,8 @@ VFSQuery::VFSQuery(storage_system::StorageDriver *_storage_driver_ptr,
 				   const chaos::data_service::db_system::DataPackIndexQuery& _query):
 storage_driver_ptr(_storage_driver_ptr),
 db_driver_ptr(_db_driver_ptr),
-query(_query){
+query(_query),
+fetched_element(0) {
 	
 }
 
@@ -105,16 +106,12 @@ int VFSQuery::executeQuery() {
 int VFSQuery::readDataPackPage(std::vector<FoundDataPack*> &readed_pack) {
 	int err = 0;
 	void *data = NULL;
-	bool has_data = false;
-	bool has_more_page = false;
-	do{
-		if((err = query_cursor_ptr->performNextPagedQuery())) {
-			return err;
-		}
-		//cicle untile we don't find a page with some data
-		has_data = query_cursor_ptr->hasNext();
-		has_more_page = query_cursor_ptr->getCurrentPage()<=query_cursor_ptr->getTotalPage();
-	} while(!has_data && has_more_page);
+	
+	if(query_cursor_ptr->getCurrentPage()==query_cursor_ptr->getTotalPage()) return 0;
+	
+	if((err = query_cursor_ptr->performNextPagedQuery())) {
+		return err;
+	}
 	
 	uint32_t data_len = 0;
 	while (query_cursor_ptr->hasNext()) {
@@ -127,9 +124,15 @@ int VFSQuery::readDataPackPage(std::vector<FoundDataPack*> &readed_pack) {
 			data_len = 0;
 		}
 	}
+	//update the fetche element number
+	fetched_element += readed_pack.size();
 	return err;
 }
 
 uint64_t VFSQuery::getNumberOfElementFound() {
 	return query_cursor_ptr->getNumberOfElementFound();
+}
+
+uint64_t VFSQuery::getNumberOfFetchedElement() {
+	return fetched_element;
 }
