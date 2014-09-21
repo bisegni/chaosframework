@@ -14,12 +14,11 @@ SET(src  ${src} query_engine/QueryEngine.cpp)
 SET(src  ${src} indexer/DataPackScanner.cpp indexer/StageDataVFileScanner.cpp)
 
 SET(src  ${src} vfs/VFSManager.cpp vfs/VFSFile.cpp vfs/VFSStageFile.cpp vfs/VFSDataFile.cpp 
-				vfs/VFSDataWriteableFile.cpp
-				vfs/VFSStageWriteableFile.cpp vfs/VFSStageReadableFile.cpp 
+				vfs/VFSDataWriteableFile.cpp vfs/VFSStageWriteableFile.cpp vfs/VFSStageReadableFile.cpp
 				vfs/storage_system/StorageDriver.cpp vfs/storage_system/PosixStorageDriver.cpp
 				vfs/VFSQuery.cpp)
 
-SET(src  ${src} vfs/query/DataBlockFetcher.cpp)
+SET(src  ${src} vfs/query/DataBlockCache.cpp vfs/query/DataBlockFetcher.cpp)
 
 ADD_EXECUTABLE(ChaosDataService ${src})
 

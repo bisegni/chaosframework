@@ -1,10 +1,22 @@
-//
-//  DataBlockFetcher.h
-//  CHAOSFramework
-//
-//  Created by Claudio Bisegni on 09/09/14.
-//  Copyright (c) 2014 INFN. All rights reserved.
-//
+/*
+ *	DataBlockFetcher.h
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *
+ *    	Copyright 2014 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
 
 #ifndef __CHAOSFramework__DataBlockFetcher__
 #define __CHAOSFramework__DataBlockFetcher__
@@ -17,26 +29,26 @@
 namespace chaos {
 	namespace data_service {
 		namespace vfs {
-			class VFSQuery;
-			
 			namespace query {
-				
+				class DataBlockCache;
 				//! class that manage the fecth of data pack on o a single datablock
 				/*!
 				 this class manage and optimize the multithreaded access to the single 
 				 datablock.
 				 */
 				class DataBlockFetcher {
-					friend class chaos::data_service::vfs::VFSQuery;
+					friend class chaos::data_service::vfs::query::DataBlockCache;
+					
+					uint32_t use_count;
 					
 					//! storage driver for operation on datablock
 					storage_system::StorageDriver *storage_driver;
 					
 					//! path pointing to the datablock
-					std::string data_block_path;
+					std::string datablock_path;
 					
 					//! datablock structure
-					vfs::DataBlock *data_block;
+					vfs::DataBlock *datablock;
 					
 					//! data block mutex for mutltitrhead access
 					boost::mutex mutex_read_access;

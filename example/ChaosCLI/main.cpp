@@ -188,7 +188,7 @@ int main (int argc, char* argv[] )
 			
 			controller->releaseQuery(query_future);
 		}
-		
+		return 0;
         //get the actual state of device
         err = controller->getState(deviceState);
         if(err == ErrorCode::EC_TIMEOUT && op!=11) throw CException(5, "Time out on connection", "Get state for device");

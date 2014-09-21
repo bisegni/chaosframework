@@ -22,9 +22,11 @@
 
 #include "../vfs/vfs.h"
 
+#include <chaos/common/thread/ThreadSemaphore.h>
 #include <chaos/common/utility/StartableService.h>
-#include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/utility/TemplatedKeyValueHash.h>
+
+#include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/direct_io/DirectIOClientConnection.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceClientChannel.h>
 
@@ -42,6 +44,17 @@ namespace chaos {
 		namespace query_engine {
 			class QueryEngine;
 			
+			typedef struct FetchedDataWithForwardInfo {
+				//! contain the number of elemento to forward
+				//! this field is decremented by method that answer to client
+				//! and it is used to page the result to client in different
+				//! way that are paged from datablock
+				uint64_t number_of_element_to_forward;
+				
+				//! fetched data from current query page
+				std::vector<vfs::FoundDataPack*> fetched_data_vector;
+			}FetchedDataWithForwardInfo;
+			
 			//! Class that manage the query at higer level
 			/*!
 			 This is the root class that perform and answer to a query request. The query and the forwarding are done in scheduling way.
@@ -55,7 +68,8 @@ namespace chaos {
 				typedef enum DataCloudQueryPhase {
 					DataCloudQueryPhaseEmpty = 0,		/**< The query is empty and not configured */
 					DataCloudQueryPhaseNeedSearch,		/**< the query need to phisically execute the qeury on index database */
-					DataCloudQueryPhaseHaveData,		/**< the query have done the query and can begin to fetch data */
+					DataCloudQueryPhaseFetchData,		/**< the query have done the query and can begin to fetch data */
+					DataCloudQueryPhaseForwardData,		/**< the query fetched data has not been forwarded at all */
 					DataCloudQueryPhaseError,			/**< the query is in error */
 					DataCloudQueryPhaseEnd				/**< the query has ended */
 				} DataCloudQueryPhase;
@@ -83,6 +97,9 @@ namespace chaos {
 				
 				//! vfs query object that abstract the real query on inde and data fetch
 				vfs::VFSQuery *vfs_query;
+				
+				//! fetched data from page with forwaded info for differited forwarding page info;
+				FetchedDataWithForwardInfo fetchedAndForwadInfo;
 			public:
 				DataCloudQuery(const std::string& _query_id,
 							   const db_system::DataPackIndexQuery& _query,
@@ -111,13 +128,15 @@ namespace chaos {
 			 */
 			class QueryEngine:
 			public utility::StartableService,
-			protected chaos_direct_io::DirectIOClientConnectionEventHandler {
+			protected chaos_direct_io::DirectIOClientConnectionEventHandler,
+			protected chaos_direct_io::DirectIOClientDeallocationHandler {
 				chaos_direct_io::DirectIOClient *directio_client_instance;
 				vfs::VFSManager *vfs_manager_ptr;
 				
 				bool work_on_query;
 				unsigned int thread_pool_size;
 				boost::thread_group answer_thread_pool;
+				chaos::common::thread::ThreadSemaphore *thread_semaphore;
 				boost::lockfree::queue<DataCloudQuery*, boost::lockfree::fixed_sized<false> > query_queue;
 				
 				boost::shared_mutex						mutex_map_query_id_connection;
@@ -127,8 +146,7 @@ namespace chaos {
 				int  getChannelForQuery(DataCloudQuery *query,
 										ClientConnectionInfo **connection_info_handle);
 				//send data to client
-				int  sendDataToClient(DataCloudQuery *query,
-									  const std::vector<vfs::FoundDataPack*>& data);
+				int  sendDataToClient(DataCloudQuery *query);
 				
 				//!process the signle query step
 				void process_query();
@@ -141,6 +159,11 @@ namespace chaos {
 								 chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event);
 				
 				void disposeClientConnectionInfo(ClientConnectionInfo *client_info);
+				
+				//! ovveriding function for DirectIOClientDeallocationHandler
+				void freeSentData(void* sent_data_ptr, common::direct_io::DisposeSentMemoryInfo *free_info_ptr);
+				
+				void disposeQuery(DataCloudQuery *query);
 			public:
 				
 				QueryEngine(chaos_direct_io::DirectIOClient *_directio_client_instance,

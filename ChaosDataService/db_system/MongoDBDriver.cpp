@@ -685,8 +685,7 @@ int MongoDBDriver::idxStartSearchDataPack(const DataPackIndexQuery& data_pack_in
 	int err=-1;
 	*index_cursor = new MongoDBIndexCursor(this, data_pack_index_query);
 	if(*index_cursor) {
-		err = 0;
-		((MongoDBIndexCursor*)*index_cursor)->computeTimeLapsForPage();
+		err = ((MongoDBIndexCursor*)*index_cursor)->computeTimeLapsForPage();
 	}
 	return err;
 }
@@ -763,9 +762,9 @@ int MongoDBDriver::idxMaxAndMInimumTimeStampForDataPack(const DataPackIndexQuery
 		return_field << MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC << 1;
 		
 		mongo::BSONObj p = return_field.obj();
-		if((err = ha_connection_pool->findOne(r_max, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), BSON("$orderby"<<BSON(MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC<<-1)), &p))){
+		if((err = ha_connection_pool->findOne(r_max, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), mongo::Query().sort(MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC,-1), &p))){
 			MDBID_LDBG_ << "Error getting maximum timestamp on index of " << data_pack_index_query.did;
-		} else if((err = ha_connection_pool->findOne(r_min, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), BSON("$orderby"<<BSON(MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC<<1)), &p))) {
+		} else if((err = ha_connection_pool->findOne(r_min, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), mongo::Query().sort(MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC,1), &p))) {
 			MDBID_LDBG_ << "Error getting minimum timestamp on index of " << data_pack_index_query.did;
 		} else {
 			min_ts = (uint64_t)r_min.getField(MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC).Long();

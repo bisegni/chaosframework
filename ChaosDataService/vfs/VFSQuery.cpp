@@ -19,6 +19,8 @@
  */
 
 #include "VFSQuery.h"
+#include "query/DataBlockCache.h"
+
 using namespace chaos::data_service::vfs;
 
 #define VFSQuery_LOG_HEAD "[VFSQuery] - "
@@ -35,33 +37,33 @@ VFSQuery::VFSQuery(storage_system::StorageDriver *_storage_driver_ptr,
 				   const chaos::data_service::db_system::DataPackIndexQuery& _query):
 storage_driver_ptr(_storage_driver_ptr),
 db_driver_ptr(_db_driver_ptr),
-query(_query){
+query(_query),
+fetched_element(0) {
+	
+}
 
+VFSQuery::~VFSQuery() {
+	for(MapPathDatablockIterator it =  map_path_datablock.begin();
+		it != map_path_datablock.end();
+		it++) {
+		// release all fetcher
+		VFSQ_LAPP_ << "Release datablock fetcher for " << it->first;
+		query::DataBlockCache::getInstance()->releaseFetcher(it->second);
+	}
 }
 
 //! load data block containing index
 int VFSQuery::getDatablockFetcherForIndex(const db_system::DataPackIndexQueryResult& index,
 										  query::DataBlockFetcher **datablock_ptr) {
 	int err = 0;
-	boost::upgrade_lock<boost::shared_mutex> rmap_lock(map_path_datablock_mutex);
-	std::string data_block_path = index.dst_location->getBlockVFSPath();
-	MapPathDatablockIterator db_iter = map_path_datablock.find(data_block_path);
+	std::string datablock_path = index.dst_location->getBlockVFSPath();
+	MapPathDatablockIterator db_iter = map_path_datablock.find(datablock_path);
 	if(db_iter != map_path_datablock.end()) {
 		//return mapped datablock
 		*datablock_ptr = db_iter->second;
-	} else {
-		//open new datablock fetcher
-		boost::upgrade_to_unique_lock<boost::shared_mutex> wmap_lock(rmap_lock);
-		
-		//install datablock fetcher in map
-		*datablock_ptr = new query::DataBlockFetcher(storage_driver_ptr, data_block_path);
-		if(!(*datablock_ptr) ||
-		   (err = (*datablock_ptr)->open())) {
-			//error
-		} else {
+	} else if(!(err = query::DataBlockCache::getInstance()->getFetcherForBlockWithPath(datablock_path, datablock_ptr))) {
 			//all is gone well and we can put the fetcher in hashmap
-			map_path_datablock.insert(make_pair(data_block_path, *datablock_ptr));
-		}
+		map_path_datablock.insert(make_pair(datablock_path, *datablock_ptr));
 	}
 	return err;
 }
@@ -85,7 +87,7 @@ int VFSQuery::getDataPackForIndex(const db_system::DataPackIndexQueryResult& ind
 
 //! ensure that a datablock is not null
 /*!
- usefullt to get the current lcoation before write the first data pack.
+ usefullt to get the current allocation before write the first data pack.
  */
 int VFSQuery::executeQuery() {
 	int err = 0;
@@ -104,11 +106,15 @@ int VFSQuery::executeQuery() {
 int VFSQuery::readDataPackPage(std::vector<FoundDataPack*> &readed_pack) {
 	int err = 0;
 	void *data = NULL;
+	//chec is we have got all elelement
+	if(query_cursor_ptr->getNumberOfElementFound()==fetched_element) return 0;
+	
 	if((err = query_cursor_ptr->performNextPagedQuery())) {
 		return err;
 	}
+	
 	uint32_t data_len = 0;
-	while (query_cursor_ptr->hasNext()) {
+	while (query_cursor_ptr->hasNext() && !err) {
 		auto_ptr<db_system::DataPackIndexQueryResult> current_index(query_cursor_ptr->getIndex());
 		if((err = getDataPackForIndex(*current_index.get(), &data, data_len))){
 			VFSQ_LERR_ << "Error retriving the data pack on virtual filesystem";
@@ -118,9 +124,15 @@ int VFSQuery::readDataPackPage(std::vector<FoundDataPack*> &readed_pack) {
 			data_len = 0;
 		}
 	}
+	//update the fetche element number
+	fetched_element += readed_pack.size();
 	return err;
 }
 
 uint64_t VFSQuery::getNumberOfElementFound() {
 	return query_cursor_ptr->getNumberOfElementFound();
+}
+
+uint64_t VFSQuery::getNumberOfFetchedElement() {
+	return fetched_element;
 }

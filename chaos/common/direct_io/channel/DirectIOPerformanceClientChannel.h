@@ -38,8 +38,6 @@ namespace chaos {
 					
 					DirectIOPerformanceClientChannel(std::string alias);
 					~DirectIOPerformanceClientChannel();
-				protected:
-					void freeSentData(void *data,  DisposeSentMemoryInfo& dispose_memory_info);
 				public:
 					int64_t sendRoundTripMessage();
 					int64_t answerRoundTripMessage(uint64_t received_ts);

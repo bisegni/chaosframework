@@ -1,8 +1,8 @@
-/*	
+/*
  *	TimingUtil.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,6 +25,20 @@
 namespace chaos {
     using namespace boost::posix_time;
 	
+	const std::locale formats[] = {
+		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%dT%H:%M:%S.%f")),
+		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d %H:%M:%S.%f")),
+		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d %H:%M:%S")),
+		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%dT%H:%M:%S")),
+		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d %H:%M")),
+		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%dT%H:%M")),
+		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d %H")),
+		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%dT%H")),
+		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m-%d")),
+		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y-%m")),
+		std::locale(std::locale::classic(),new boost::posix_time::time_input_facet("%Y"))};
+	const size_t formats_n = sizeof(formats)/sizeof(formats[0]);
+	
     /*
      Class for give some method util for timing purpose
      */
@@ -41,11 +55,34 @@ namespace chaos {
             return (boost::posix_time::microsec_clock::universal_time()-EPOCH).total_milliseconds();
         }
 		
+		static bool dateWellFormat(const std::string& timestamp) {
+			boost::posix_time::ptime time;
+			size_t i=0;
+			for(; i<formats_n; ++i) {
+				std::istringstream is(timestamp);
+				is.imbue(formats[i]);
+				is >> time;
+				if(time != boost::posix_time::ptime()) break;
+			}
+			return i != formats_n;
+		}
+		
 		//!convert string timestamp to uint64 ["2012-02-20T00:26:39Z"]
 		static inline uint64_t getTimestampFromString(const std::string& timestamp) {
-			boost::posix_time::ptime t = boost::posix_time::time_from_string(timestamp);
-			return (t-EPOCH).total_milliseconds();
+			boost::posix_time::ptime time;
+			size_t i=0;
+			for(; i<formats_n; ++i) {
+				std::istringstream is(timestamp);
+				is.imbue(formats[i]);
+				is >> time;
+				if(time != boost::posix_time::ptime()) break;
+			}
+			if(i != formats_n) {
+				return (time-EPOCH).total_milliseconds();
+			} else {
+				return 0;
+			}
 		}
-    };
+	};
 }
 #endif

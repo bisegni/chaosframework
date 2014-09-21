@@ -28,6 +28,8 @@ using namespace chaos::data_service::db_system;
 DBIndexCursor::DBIndexCursor(DBDriver *_driver_ptr,
 							 const DataPackIndexQuery& _query):
 result_page_dimension(RESULT_PAGE_DIMENSION),
+total_page_number(0),
+current_page(0),
 driver_ptr(_driver_ptr),
 query(_query){
 	
@@ -47,4 +49,14 @@ uint64_t DBIndexCursor::getNumberOfElementFound() {
 
 void DBIndexCursor::setResultPageDimension(uint32_t _result_page_dimension) {
 	result_page_dimension = _result_page_dimension;
+}
+
+//!
+uint32_t DBIndexCursor::getTotalPage() {
+	return total_page_number;
+}
+
+//!
+uint32_t DBIndexCursor::getCurrentPage() {
+	return current_page;
 }

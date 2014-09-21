@@ -27,6 +27,9 @@
       location = "group:example/ChaosCLI/ChaosCLI.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:ChaosDataExport/ChaosDataExport.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:example/ChaosPerformanceTester/ChaosPerformanceTester.xcodeproj">
    </FileRef>
    <FileRef

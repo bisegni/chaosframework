@@ -44,6 +44,13 @@ namespace chaos {
 				uint32_t result_page_dimension;
 				
 				//!
+				uint32_t total_page_number;
+				
+				//!
+				uint32_t current_page;
+
+				
+				//!
 				DBDriver *driver_ptr;
 				
 				//! the query to pperform
@@ -60,6 +67,12 @@ namespace chaos {
 			
 				//!
 				uint64_t getNumberOfElementFound();
+				
+				//!
+				uint32_t getTotalPage();
+
+				//!
+				uint32_t getCurrentPage();
 				
 				//!
 				void setResultPageDimension(uint32_t);

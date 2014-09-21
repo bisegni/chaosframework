@@ -30,7 +30,6 @@ SET(common_lib_src  ${common_lib_src}	direct_io/DirectIOClient.cpp direct_io/Dir
 										direct_io/impl/ZMQDirectIOClient.cpp direct_io/impl/ZMQDirectIOServer.cpp 
 										direct_io/impl/ZMQBaseClass.cpp direct_io/impl/ZMQDirectIOClientConnection.cpp
 										direct_io/channel/DirectIOVirtualChannel.cpp direct_io/channel/DirectIOVirtualClientChannel.cpp direct_io/channel/DirectIOVirtualServerChannel.cpp
-										direct_io/channel/DirectIOCDataWrapperClientChannel.cpp direct_io/channel/DirectIOCDataWrapperServerChannel.cpp 
 										direct_io/channel/DirectIODeviceClientChannel.cpp direct_io/channel/DirectIODeviceServerChannel.cpp
 										direct_io/channel/DirectIOPerformanceServerChannel.cpp direct_io/channel/DirectIOPerformanceClientChannel.cpp)
 SET(common_lib_src  ${common_lib_src}	io/IODataDriver.cpp io/IOMemcachedIODriver.cpp io/IODirectIODriver.cpp io/QueryFuture.cpp)

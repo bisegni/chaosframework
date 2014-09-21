@@ -57,10 +57,14 @@ namespace chaos {
 			//! Data querable file
 			/*!
 			 This class permit to perform a query on the a virtual data file and
-			 reading the result in single or array element.
+			 reading the result in single or array element. this class is not
+			 multithreading aware, only one thread at time can step forward the query
 			 */
 			class VFSQuery {
 				friend class VFSManager;
+				
+				//!
+				uint64_t	fetched_element;
 				
 				//!index driver pointer
 				chaos_index::DBDriver *db_driver_ptr;
@@ -73,9 +77,6 @@ namespace chaos {
 				
 				//!the current query cursor
 				auto_ptr<chaos::data_service::db_system::DBIndexCursor> query_cursor_ptr;
-				
-				//! mutext on datablock map
-				boost::shared_mutex map_path_datablock_mutex;
 				
 				//! the map that collect the datablock for path
 				typedef std::map<std::string, query::DataBlockFetcher* >::iterator MapPathDatablockIterator;
@@ -101,6 +102,8 @@ namespace chaos {
 				inline int getDataPackForIndex(const db_system::DataPackIndexQueryResult& index, void** data, uint32_t& data_len);
 			public:
 				
+				~VFSQuery();
+				
 				//! ensure that a datablock is not null
 				/*!
 				 usefullt to get the current lcoation before write the first data pack.
@@ -112,6 +115,9 @@ namespace chaos {
 				
 				//
 				uint64_t getNumberOfElementFound();
+				
+				//
+				uint64_t getNumberOfFetchedElement();
 			};
 			
 		}

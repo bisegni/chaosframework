@@ -46,12 +46,6 @@ static const boost::regex DirectIOHostNameRegExp("[a-zA-Z0-9]+(.[a-zA-Z0-9]+)+:[
 static const boost::regex DirectIOIPAndPortRegExp("\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b:[0-9]{4,5}:[0-9]{4,5}");
 
 
-void DirectIOClientConnection::freeSentData(void *data, void *hint) {
-	channel::DisposeSentMemoryInfo *free_info = static_cast<channel::DisposeSentMemoryInfo*>(hint);
-	free_info->channel->freeSentData(data, *free_info);
-	free(hint);
-}
-
 DirectIOClientConnection::DirectIOClientConnection(std::string _server_description, uint16_t _endpoint):server_description(_server_description), endpoint(_endpoint), event_handler(NULL) {
 	//set the default connection hash
     //generate random hash from uuid lite
