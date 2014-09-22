@@ -36,7 +36,8 @@ MongoDBIndexCursor::MongoDBIndexCursor(DBDriver *_driver_ptr,
 									   const DataPackIndexQuery& _query):
 DBIndexCursor(_driver_ptr, _query),
 time_offset_per_page_in_ms(0),
-last_max_ts_searched(0) {
+last_max_ts_searched(0),
+number_of_returned_element_in_page(0) {
 }
 
 MongoDBIndexCursor::~MongoDBIndexCursor() {
@@ -76,7 +77,12 @@ int MongoDBIndexCursor::computeTimeLapsForPage() {
 }
 
 int MongoDBIndexCursor::performNextPagedQuery() {
+	int err = 0;
 	MongoDBDriver *mdrv = static_cast<MongoDBDriver*>(driver_ptr);
+	
+	//remove old fetched element
+	number_of_returned_element_in_page = 0;
+	fetched_element_page.clear();
 	
 	//advance page indicator
 	current_page++;
@@ -90,20 +96,32 @@ int MongoDBIndexCursor::performNextPagedQuery() {
 	paged_query.start_ts = (last_max_ts_searched?last_max_ts_searched+1:query.start_ts);
 	
 	//set the end timestamp
-	last_max_ts_searched = (paged_query.end_ts = (paged_query.start_ts + time_offset_per_page_in_ms));
 	
 	//perform query
-	return mdrv->idxSearchDataPack(paged_query, cursor);
+	uint32_t left_to_fetch = (uint32_t)(element_found-number_of_element_fetched);
+	uint32_t to_fetch = (uint32_t)(getResultPageDimension()>left_to_fetch?left_to_fetch:getResultPageDimension());
+	MDBIDCURSOR_LDBG_ << "Left_to_fetch: " << left_to_fetch << " To Fetch: " << to_fetch;
+	if((err = mdrv->idxSearchDataPack(paged_query, fetched_element_page, to_fetch))) {
+		MDBIDCURSOR_LERR_ << "Error fetching page element with error " << err;
+	} else {
+		number_of_element_fetched += (uint32_t)fetched_element_page.size();
+		//get last elelement timestamp and adjust the query
+		last_max_ts_searched = paged_query.end_ts = fetched_element_page[fetched_element_page.size()-1].getField(MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC).Long();
+
+	}
+	return err;
 }
 
 //! return true if there are othere index to fetch
 bool MongoDBIndexCursor::hasNext() {
-	return (cursor.get() == NULL)? false:cursor->more();
+	return (number_of_returned_element_in_page == fetched_element_page.size())?false:true;
 }
 
 //! return next index
 DataPackIndexQueryResult *MongoDBIndexCursor::getIndex() {
-	mongo::BSONObj next_element = cursor->next();
+	if(!hasNext()) return NULL;
+	//get next element
+	mongo::BSONObj next_element = fetched_element_page[number_of_returned_element_in_page++];
 	DataPackIndexQueryResult *result = new DataPackIndexQueryResult();
 	std::string block_domain = next_element.getField(MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_DOMAIN).String();
 	std::string block_path = next_element.getField(MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_PATH).String();

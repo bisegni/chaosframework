@@ -66,12 +66,13 @@ namespace chaos {
 				
 				//! the phase of query
 				typedef enum DataCloudQueryPhase {
-					DataCloudQueryPhaseEmpty = 0,		/**< The query is empty and not configured */
-					DataCloudQueryPhaseNeedSearch,		/**< the query need to phisically execute the qeury on index database */
-					DataCloudQueryPhaseFetchData,		/**< the query have done the query and can begin to fetch data */
-					DataCloudQueryPhaseForwardData,		/**< the query fetched data has not been forwarded at all */
-					DataCloudQueryPhaseError,			/**< the query is in error */
-					DataCloudQueryPhaseEnd				/**< the query has ended */
+					DataCloudQueryPhaseEmpty = 0,			/**< The query is empty and not configured */
+					DataCloudQueryPhaseNeedSearch,			/**< the query need to phisically execute the qeury on index database */
+					DataCloudQueryPhaseFetchData,			/**< the query have done the query and can begin to fetch data */
+					DataCloudQueryPhaseForwardData,			/**< the query fetched data has not been forwarded at all */
+					DataCloudQueryPhaseError,				/**< the query is in error */
+					DataCloudQueryPhaseClientDisconnected,	/**< the query as not more client connection */
+					DataCloudQueryPhaseEnd					/**< the query has ended */
 				} DataCloudQueryPhase;
 				
 				//!reflect the associated connection state
@@ -105,10 +106,6 @@ namespace chaos {
 							   const db_system::DataPackIndexQuery& _query,
 							   const std::string& _answer_endpoint);
 				~DataCloudQuery();
-				
-				int startQuery();
-				
-				int fecthData(std::vector<vfs::FoundDataPack*>& found_data_pack);
 			};
 			
 			//collect connection information

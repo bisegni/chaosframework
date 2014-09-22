@@ -42,8 +42,9 @@ namespace chaos {
 				
 				//! point to the last max timestamp paged search
 				uint64_t last_max_ts_searched;
-				
-				std::auto_ptr<mongo::DBClientCursor> cursor;
+				//number of the total element fetched
+				uint32_t number_of_returned_element_in_page;
+				std::vector<mongo::BSONObj> fetched_element_page;
 				
 				//! private constructor
 				MongoDBIndexCursor(DBDriver *_driver_ptr,

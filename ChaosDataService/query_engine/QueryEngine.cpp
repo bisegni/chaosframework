@@ -54,33 +54,6 @@ DataCloudQuery::~DataCloudQuery(){
 	fetchedAndForwadInfo.fetched_data_vector.clear();
 };
 
-int DataCloudQuery::startQuery() {
-	int err = 0;
-	if(!vfs_query) return -1;
-	if((err = vfs_query->executeQuery()) ) {
-		QEERR_ << "Error executing query";
-		query_phase = DataCloudQueryPhaseError;
-	} else {
-		query_phase = DataCloudQueryPhaseFetchData;
-	}
-	return err;
-}
-
-int DataCloudQuery::fecthData(std::vector<vfs::FoundDataPack*>& found_data_pack) {
-	if(!vfs_query) return -1;
-	int err = 0;
-	if((err = vfs_query->readDataPackPage(found_data_pack))) {
-		query_phase = DataCloudQueryPhaseError;
-		QEERR_ << "Error fetching query data";
-	} else {
-		if(found_data_pack.size() == 0 &&
-		   vfs_query->getNumberOfFetchedElement() == vfs_query->getNumberOfElementFound()) {
-			query_phase = DataCloudQueryPhaseEnd;
-		}
-	}
-	return err;
-}
-
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
@@ -173,15 +146,6 @@ void QueryEngine::disposeQuery(DataCloudQuery *query) {
 		query->vfs_query = NULL;
 	}
 	
-	if(query->fetchedAndForwadInfo.fetched_data_vector.size()) {
-		QEDBG_ << "Deleting unset data " << QUERY_INFO((*query));
-		for(int idx = 0;
-			idx < query->fetchedAndForwadInfo.fetched_data_vector.size();
-			idx++) {
-			delete(query->fetchedAndForwadInfo.fetched_data_vector[idx]);
-		}
-	}
-	
 	//delete query
 	QEDBG_ << "Deleting " << QUERY_INFO((*query));
 	delete(query);
@@ -220,7 +184,7 @@ void QueryEngine::handleEvent(chaos_direct_io::DirectIOClientConnection *client_
 	//set the connection state in query
 	if(event == chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected) {
 		//if client disconnects set query in error
-		it->second->query->query_phase = DataCloudQuery::DataCloudQueryPhaseError;
+		it->second->query->query_phase = DataCloudQuery::DataCloudQueryPhaseClientDisconnected;
 	}
 }
 
@@ -250,8 +214,6 @@ int  QueryEngine::getChannelForQuery(DataCloudQuery *query,
 		*connection_info_handle = NULL;
 		return -1;
 	}
-	//set query engine as handler of event on client conenction
-	//(*connection_info_handle)->connection->setEventHandler(this);
 	
 	//! set connection custo identification key
 	(*connection_info_handle)->connection->setCustomStringIdentification(query->query_computed_unique_id);
@@ -284,10 +246,11 @@ int  QueryEngine::sendDataToClient(DataCloudQuery *query) {
 		//all found datapack are processed, if there is an error on a cicle,
 		//in the next will not be send data over channel, but only discarded
 		//in this way at the end all the found datapack will be erased
-		for (int sent_count = 0;											//keep track of the page dimension of element to send
+		for (int sent_count = 0;												//keep track of the page dimension of element to send
 			 (sent_count<QueryEngine_FORWARDING_PAGE_DIMENSION &&			//step until the page is not sent or
-			  query->fetchedAndForwadInfo.number_of_element_to_forward);	//until we have cicle all vector
-			 sent_count++) {												//increment the page element
+			  query->fetchedAndForwadInfo.number_of_element_to_forward && //until we have cicle all vector
+			  !err);															//and we have no err
+			 sent_count++) {													//increment the page element
 			
 			//get next element to send
 			datapack_to_forward = query->fetchedAndForwadInfo.fetched_data_vector[--query->fetchedAndForwadInfo.number_of_element_to_forward];
@@ -304,13 +267,8 @@ int  QueryEngine::sendDataToClient(DataCloudQuery *query) {
 																					datapack_to_forward->data_pack_size,
 																					this);
 				//check for error
-				if(connection_info_ptr->connection->getState() == chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventDisconnected ||
-				   err) {
-					QEDBG_ << "Client has been disconnected for " << QUERY_INFO((*query));
-					err = -1;
-				} else {
-					//at tis point memory is managed by async direct io system
-					
+				if(query->query_phase != DataCloudQuery::DataCloudQueryPhaseForwardData || err) {
+					if(!err) err = -1;
 				}
 			}
 			//delete the datapack
@@ -340,19 +298,31 @@ void QueryEngine::process_query() {
 				case DataCloudQuery::DataCloudQueryPhaseNeedSearch:
 					//start the query
 					QEDBG_ << "Start "<< QUERY_INFO((*query));
-					if((err = query->startQuery())) break;
+					if((err = query->vfs_query->executeQuery()) ) {
+						QEERR_ << "Error executing query";
+						query->query_phase = DataCloudQuery::DataCloudQueryPhaseError;
+					} else {
+						query->query_phase = DataCloudQuery::DataCloudQueryPhaseFetchData;
+					}
+					break;
 					
 				case DataCloudQuery::DataCloudQueryPhaseFetchData:
 					QEDBG_ << "Answer "<< QUERY_INFO((*query));
-					//get the nex page data
-					if(!(err = query->fecthData(query->fetchedAndForwadInfo.fetched_data_vector)) &&
-					   query->fetchedAndForwadInfo.fetched_data_vector.size() &&
-					   query->query_phase == DataCloudQuery::DataCloudQueryPhaseFetchData) {
-						//got to forwarding state
-						query->query_phase = DataCloudQuery::DataCloudQueryPhaseForwardData;
-						//keep track of how many element we need to return to the client
-						query->fetchedAndForwadInfo.number_of_element_to_forward = query->fetchedAndForwadInfo.fetched_data_vector.size();
+					if((err = query->vfs_query->readDataPackPage(query->fetchedAndForwadInfo.fetched_data_vector, 100))) {
+						query->query_phase = DataCloudQuery::DataCloudQueryPhaseError;
+					} else {
+						if(query->fetchedAndForwadInfo.fetched_data_vector.size() == 0 &&
+						   query->vfs_query->getNumberOfFetchedElement() == query->vfs_query->getNumberOfElementFound()) {
+							query->query_phase = DataCloudQuery::DataCloudQueryPhaseEnd;
+						}else if(query->fetchedAndForwadInfo.fetched_data_vector.size() &&
+								 query->query_phase == DataCloudQuery::DataCloudQueryPhaseFetchData) {
+							//got to forwarding state
+							query->query_phase = DataCloudQuery::DataCloudQueryPhaseForwardData;
+						}
 					}
+					
+					//keep track of how many element we need to return to the client or manage in case of error
+					query->fetchedAndForwadInfo.number_of_element_to_forward = query->fetchedAndForwadInfo.fetched_data_vector.size();
 					break;
 					
 				case DataCloudQuery::DataCloudQueryPhaseForwardData:
@@ -366,6 +336,8 @@ void QueryEngine::process_query() {
 						//reset fetched info of the query
 						query->fetchedAndForwadInfo.number_of_element_to_forward = 0;
 						query->fetchedAndForwadInfo.fetched_data_vector.clear();
+					} else {
+						//continue to send subffer of data
 					}
 					break;
 					
@@ -375,11 +347,32 @@ void QueryEngine::process_query() {
 			}
 			
 			if(query->query_phase == DataCloudQuery::DataCloudQueryPhaseError ||
-			   query->query_phase == DataCloudQuery::DataCloudQueryPhaseEnd) {
-				if(query->query_phase == DataCloudQuery::DataCloudQueryPhaseError) {
-					QEDBG_ << "Error on "<< QUERY_INFO((*query));
-				}else{
-					QEDBG_ << "End on "<< QUERY_INFO((*query));
+			   query->query_phase == DataCloudQuery::DataCloudQueryPhaseEnd ||
+			   query->query_phase == DataCloudQuery::DataCloudQueryPhaseClientDisconnected) {
+				
+				
+				if(query->fetchedAndForwadInfo.number_of_element_to_forward) {
+					QEDBG_ << "Deleting " << query->fetchedAndForwadInfo.number_of_element_to_forward << " unsend data for " << QUERY_INFO((*query));
+					while(query->fetchedAndForwadInfo.number_of_element_to_forward) {
+						delete(query->fetchedAndForwadInfo.fetched_data_vector[--query->fetchedAndForwadInfo.number_of_element_to_forward]);
+					}
+				}
+				
+				switch(query->query_phase) {
+					case DataCloudQuery::DataCloudQueryPhaseError:
+						QEDBG_ << "Error on "<< QUERY_INFO((*query));
+						break;
+						
+					case DataCloudQuery::DataCloudQueryPhaseEnd:
+						QEDBG_ << "End on "<< QUERY_INFO((*query));
+						break;
+						
+					case DataCloudQuery::DataCloudQueryPhaseClientDisconnected:
+						QEDBG_ << "Client disconnection for "<< QUERY_INFO((*query));
+						break;
+						
+					default:
+						break;
 				}
 				//read from map
 				boost::upgrade_lock<boost::shared_mutex> readLock(mutex_map_query_id_connection);

@@ -46,7 +46,7 @@ namespace chaos {
 					MongoDBHAConnectionManager *ha_connection_pool;
 					
 					//! protected methdo that perform the real paged query on index called by the cursor
-					int idxSearchDataPack(const DataPackIndexQuery & data_pack_index_query, std::auto_ptr<mongo::DBClientCursor>& cursor);
+					int idxSearchDataPack(const DataPackIndexQuery & data_pack_index_query, std::vector<mongo::BSONObj>& found_element, uint32_t limit_to = 100);
 					
 					//! protected methdo that perform the real paged query on index called by the cursor
 					int idxSearchResultCountDataPack(const DataPackIndexQuery & data_pack_index_query, uint64_t& num_of_result);

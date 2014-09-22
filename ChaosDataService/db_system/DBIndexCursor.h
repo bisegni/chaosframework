@@ -40,6 +40,9 @@ namespace chaos {
 				//! the total number of ellement that are found by qury
 				uint64_t element_found;
 				
+				//! the number of element fetched from the database
+				uint64_t number_of_element_fetched;
+				
 				//!
 				uint32_t result_page_dimension;
 				
@@ -67,6 +70,9 @@ namespace chaos {
 			
 				//!
 				uint64_t getNumberOfElementFound();
+				
+				//!
+				uint64_t getNumberOfElementFetched();
 				
 				//!
 				uint32_t getTotalPage();

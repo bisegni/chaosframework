@@ -90,8 +90,10 @@ void LogManager::init() throw(CException) {
     
     //get the log configuration
     level::LogSeverityLevel     logLevel        = static_cast<level::LogSeverityLevel>(GlobalConfiguration::getInstance()->getConfiguration()->getInt32Value(InitOption::OPT_LOG_LEVEL));
-    bool                        logOnConsole    = GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_CONSOLE);
-    bool                        logOnFile       = GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_FILE);
+    bool                        logOnConsole    =	GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_ON_CONSOLE)?
+												GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_CONSOLE):false;
+    bool                        logOnFile       =	GlobalConfiguration::getInstance()->getConfiguration()->hasKey(InitOption::OPT_LOG_ON_CONSOLE)?
+												GlobalConfiguration::getInstance()->getConfiguration()->getBoolValue(InitOption::OPT_LOG_ON_FILE):false;
     string                      logFileName     = GlobalConfiguration::getInstance()->getConfiguration()->getStringValue(InitOption::OPT_LOG_FILE);
     
     logging::add_common_attributes();

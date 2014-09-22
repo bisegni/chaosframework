@@ -37,10 +37,7 @@ VFSQuery::VFSQuery(storage_system::StorageDriver *_storage_driver_ptr,
 				   const chaos::data_service::db_system::DataPackIndexQuery& _query):
 storage_driver_ptr(_storage_driver_ptr),
 db_driver_ptr(_db_driver_ptr),
-query(_query),
-fetched_element(0) {
-	
-}
+query(_query) {}
 
 VFSQuery::~VFSQuery() {
 	for(MapPathDatablockIterator it =  map_path_datablock.begin();
@@ -62,7 +59,7 @@ int VFSQuery::getDatablockFetcherForIndex(const db_system::DataPackIndexQueryRes
 		//return mapped datablock
 		*datablock_ptr = db_iter->second;
 	} else if(!(err = query::DataBlockCache::getInstance()->getFetcherForBlockWithPath(datablock_path, datablock_ptr))) {
-			//all is gone well and we can put the fetcher in hashmap
+		//all is gone well and we can put the fetcher in hashmap
 		map_path_datablock.insert(make_pair(datablock_path, *datablock_ptr));
 	}
 	return err;
@@ -103,18 +100,21 @@ int VFSQuery::executeQuery() {
 }
 
 // read a bunch of result data
-int VFSQuery::readDataPackPage(std::vector<FoundDataPack*> &readed_pack) {
+int VFSQuery::readDataPackPage(std::vector<FoundDataPack*> &readed_pack, uint32_t limit_to) {
 	int err = 0;
 	void *data = NULL;
 	//chec is we have got all elelement
-	if(query_cursor_ptr->getNumberOfElementFound()==fetched_element) return 0;
+	if(query_cursor_ptr->getNumberOfElementFound()==query_cursor_ptr->getNumberOfElementFetched()) return 0;
 	
-	if((err = query_cursor_ptr->performNextPagedQuery())) {
-		return err;
+	if(!query_cursor_ptr->hasNext()) {
+		if((err = query_cursor_ptr->performNextPagedQuery())) {
+			return err;
+		}
 	}
 	
 	uint32_t data_len = 0;
-	while (query_cursor_ptr->hasNext() && !err) {
+	while (query_cursor_ptr->hasNext() &&	//has data
+		   !err) {							//has no error
 		auto_ptr<db_system::DataPackIndexQueryResult> current_index(query_cursor_ptr->getIndex());
 		if((err = getDataPackForIndex(*current_index.get(), &data, data_len))){
 			VFSQ_LERR_ << "Error retriving the data pack on virtual filesystem";
@@ -123,9 +123,10 @@ int VFSQuery::readDataPackPage(std::vector<FoundDataPack*> &readed_pack) {
 			data = NULL;
 			data_len = 0;
 		}
+		if(!(--limit_to)) break;
 	}
 	//update the fetche element number
-	fetched_element += readed_pack.size();
+	//fetched_element += readed_pack.size();
 	return err;
 }
 
@@ -134,5 +135,5 @@ uint64_t VFSQuery::getNumberOfElementFound() {
 }
 
 uint64_t VFSQuery::getNumberOfFetchedElement() {
-	return fetched_element;
+	return query_cursor_ptr->getNumberOfElementFetched();
 }

@@ -721,20 +721,22 @@ int MongoDBDriver::idxSearchResultCountDataPack(const DataPackIndexQuery& data_p
 }
 
 //! perform a search on data pack indexes
-int MongoDBDriver::idxSearchDataPack(const DataPackIndexQuery& data_pack_index_query, std::auto_ptr<mongo::DBClientCursor>& cursor) {
+int MongoDBDriver::idxSearchDataPack(const DataPackIndexQuery& data_pack_index_query, std::vector<mongo::BSONObj>& found_element, uint32_t limit_to) {
 	int err = 0;
 	mongo::BSONObjBuilder	index_search_builder;
 	mongo::BSONObjBuilder	return_field;
 	try{
 		//add default index information
 		index_search_builder << MONGO_DB_IDX_DATA_PACK_DID << data_pack_index_query.did;
-		index_search_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC << BSON("$gte" << (long long)data_pack_index_query.start_ts <<
-																			  "$lte" << (long long)data_pack_index_query.end_ts);
+		index_search_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC << BSON("$gte" << (long long)data_pack_index_query.start_ts);
+		//index_search_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC << BSON("$gte" << (long long)data_pack_index_query.start_ts <<
+		//																	  "$lte" << (long long)data_pack_index_query.end_ts);
 		
 		return_field << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_DOMAIN << 1
 					 << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_PATH << 1
 					 << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET << 1
-					 << MONGO_DB_IDX_DATA_PACK_SIZE << 1;
+					 << MONGO_DB_IDX_DATA_PACK_SIZE << 1
+					 << MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC << 1;
 		
 		mongo::BSONObj q = index_search_builder.obj();
 		DEBUG_CODE(MDBID_LDBG_ << "idxDeleteDataPackIndex insert ---------------------------------------------";)
@@ -742,7 +744,8 @@ int MongoDBDriver::idxSearchDataPack(const DataPackIndexQuery& data_pack_index_q
 		DEBUG_CODE(MDBID_LDBG_ << "idxDeleteDataPackIndex insert ---------------------------------------------";)
 		
 		mongo::BSONObj r = return_field.obj();
-		cursor = ha_connection_pool->query(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), q, 0, 0, &r);
+		//cursor = ha_connection_pool->query(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), q, 0, 0, &r);
+		ha_connection_pool->findN(found_element, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), q, limit_to, 0, &r);
 	} catch( const mongo::DBException &e ) {
 		MDBID_LERR_ << e.what();
 		err = -1;

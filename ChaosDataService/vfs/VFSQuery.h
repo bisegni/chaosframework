@@ -64,7 +64,7 @@ namespace chaos {
 				friend class VFSManager;
 				
 				//!
-				uint64_t	fetched_element;
+				//uint64_t	fetched_element;
 				
 				//!index driver pointer
 				chaos_index::DBDriver *db_driver_ptr;
@@ -111,7 +111,7 @@ namespace chaos {
 				int executeQuery();
 				
 				// read a bunch of result data
-				int readDataPackPage(std::vector<FoundDataPack*> &readed_pack);
+				int readDataPackPage(std::vector<FoundDataPack*> &readed_pack,  uint32_t limit_to = 0);
 				
 				//
 				uint64_t getNumberOfElementFound();
