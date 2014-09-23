@@ -349,15 +349,7 @@ void QueryEngine::process_query() {
 			if(query->query_phase == DataCloudQuery::DataCloudQueryPhaseError ||
 			   query->query_phase == DataCloudQuery::DataCloudQueryPhaseEnd ||
 			   query->query_phase == DataCloudQuery::DataCloudQueryPhaseClientDisconnected) {
-				
-				
-				if(query->fetchedAndForwadInfo.number_of_element_to_forward) {
-					QEDBG_ << "Deleting " << query->fetchedAndForwadInfo.number_of_element_to_forward << " unsend data for " << QUERY_INFO((*query));
-					while(query->fetchedAndForwadInfo.number_of_element_to_forward) {
-						delete(query->fetchedAndForwadInfo.fetched_data_vector[--query->fetchedAndForwadInfo.number_of_element_to_forward]);
-					}
-				}
-				
+				//print thre reason for the query deallocation
 				switch(query->query_phase) {
 					case DataCloudQuery::DataCloudQueryPhaseError:
 						QEDBG_ << "Error on "<< QUERY_INFO((*query));
@@ -374,6 +366,15 @@ void QueryEngine::process_query() {
 					default:
 						break;
 				}
+				
+				//remove unsent data
+				if(query->fetchedAndForwadInfo.number_of_element_to_forward) {
+					QEDBG_ << "Deleting " << query->fetchedAndForwadInfo.number_of_element_to_forward << " unsend data for " << QUERY_INFO((*query));
+					while(query->fetchedAndForwadInfo.number_of_element_to_forward) {
+						delete(query->fetchedAndForwadInfo.fetched_data_vector[--query->fetchedAndForwadInfo.number_of_element_to_forward]);
+					}
+				}
+				
 				//read from map
 				boost::upgrade_lock<boost::shared_mutex> readLock(mutex_map_query_id_connection);
 				
