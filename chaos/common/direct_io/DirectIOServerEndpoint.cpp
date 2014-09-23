@@ -23,7 +23,7 @@
 
 using namespace chaos::common::direct_io;
 
-#define DirectIOServerEndpoint_LOG_HEAD "[DirectIOServerEndpoint_LOG_HEAD - "<<endpoint_route_index<<"] - "
+#define DirectIOServerEndpoint_LOG_HEAD "[DirectIOServerEndpoint-"<<endpoint_route_index<<"] - "
 
 #define DIOSE_LAPP_ LAPP_ << DirectIOServerEndpoint_LOG_HEAD
 #define DIOSE_LDBG_ LDBG_ << DirectIOServerEndpoint_LOG_HEAD

@@ -46,7 +46,7 @@ DirectIOVirtualClientChannel(alias, DIODataset_Channel_Index),
 device_id(""),
 put_mode(DirectIODeviceClientChannelPutModeLiveOnly),
 put_opcode_header(NULL) {
-	//associate the static allocator
+	//associate the default static allocator
 	header_deallocator = &STATIC_DirectIODeviceClientChannelDeallocator;
 }
 
@@ -153,7 +153,8 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(uint64_t start_ts, uint64_t 
 	size_t size_ptr = 0;
 	//allcoate the data to send direct io pack
 	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
-	DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr query_data_cloud_header = (DirectIODeviceChannelHeaderOpcodeQueryDataCloud*)calloc((size_ptr = sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloud)), 1);
+	DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr query_data_cloud_header =
+	(DirectIODeviceChannelHeaderOpcodeQueryDataCloud*)calloc((size_ptr = sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloud)), 1);
 	
 	//fill the query CDataWrapper
 	query_description.addStringValue(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, device_id);
@@ -213,6 +214,19 @@ int64_t DirectIODeviceClientChannel::sendResultToQueryDataCloud(const std::strin
 	
 	//send query request
 	return sendServiceData(data_pack, (data_deallocator?data_deallocator:this));
+}
+
+// start the answering sequence to a query
+int64_t DirectIODeviceClientChannel::startQueryDataCloudResult(const std::string& query_id,
+															   const opcode_headers::QueryResultMetadata& result_metadata) {
+	return 0;
+}
+
+
+//! Set the end of the answer to a query
+int64_t DirectIODeviceClientChannel::endQueryDataCloudResult(const std::string& query_id,
+															 uint32_t error) {
+	return 0;
 }
 
 //! default data deallocator implementation

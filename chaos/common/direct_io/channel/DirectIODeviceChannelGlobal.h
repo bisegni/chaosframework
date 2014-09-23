@@ -115,6 +115,12 @@ namespace chaos {
 						} field;
 					} DirectIODeviceChannelHeaderOpcodeQueryDataCloud, *DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr;
 
+					//! bring the metadata infromation of the query result
+					typedef struct QueryResultMetadata {
+						//! is the number of total element found by query
+						uint64_t number_of_element_found;
+					} QueryResultMetadata;
+					
 					//computed lenght of header
 #define QUERY_DATA_CLOUD_ANSWER_OPCODE_HEADER_LEN 24
 					//! Header for the DirectIODeviceChannelHeaderOpcodeQueryDataCloud opcode

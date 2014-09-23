@@ -105,6 +105,15 @@ namespace chaos {
 					 */
                     int64_t queryDataCloud(uint64_t start_ts, uint64_t end_ts, std::string& query_id);
 					
+					//! start the answering sequence to a query
+					/*!
+					 Start the answering sequence of query sending information about query metadata(number of result and ohter information in the future)
+					 \param query_id the unique id of the query whitch the result refer to
+					 \param result_metadata the metadata of the query result
+					 */
+					int64_t startQueryDataCloudResult(const std::string& query_id,
+													  const opcode_headers::QueryResultMetadata& result_metadata);
+					
 					//! Send the single result of the temporal query to requester
 					/*!
 					 Return to requester the answer to temporal query
@@ -120,6 +129,15 @@ namespace chaos {
 													   void *data,
 													   uint32_t data_len,
 													   DirectIOClientDeallocationHandler *data_deallocator = NULL);
+					
+					//! Set the end of the answer to a query
+					/*!
+					 Notify the remote endpoint tha the result has finisched
+					 \param query_id is the unique id of the query
+					 \param is the error if there is one
+					 */
+					int64_t endQueryDataCloudResult(const std::string& query_id,
+													uint32_t error);
 				};
 
 				

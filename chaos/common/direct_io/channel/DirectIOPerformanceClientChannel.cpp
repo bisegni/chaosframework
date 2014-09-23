@@ -32,7 +32,8 @@ DirectIOPerformanceClientChannel::DirectIOPerformanceClientChannelDeallocator Di
 
 DirectIOPerformanceClientChannel::DirectIOPerformanceClientChannel(std::string alias):
 DirectIOVirtualClientChannel(alias, DIOPerformance_Channel_Index)  {
-	
+	//associate the default static allocator
+	header_deallocator = &STATIC_DirectIOPerformanceClientChannelDeallocator;
 }
 
 DirectIOPerformanceClientChannel::~DirectIOPerformanceClientChannel() {
