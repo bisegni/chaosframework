@@ -36,6 +36,14 @@ namespace chaos {
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIOPerformanceClientChannel)
 					friend class DirectIOClientConnection;
 					
+					class DirectIOPerformanceClientChannelDeallocator:
+					public DirectIOClientDeallocationHandler {
+					protected:
+						void freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr);
+					};
+					//static deallocator forthis channel
+					static DirectIOPerformanceClientChannelDeallocator STATIC_DirectIOPerformanceClientChannelDeallocator;
+					
 					DirectIOPerformanceClientChannel(std::string alias);
 					~DirectIOPerformanceClientChannel();
 				public:
