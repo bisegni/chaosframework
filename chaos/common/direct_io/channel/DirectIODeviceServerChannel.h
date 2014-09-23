@@ -57,7 +57,8 @@ if(h) free(h);
 						virtual int consumePutEvent(opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header,
 													 void *channel_data,
 													 uint32_t channel_data_len,
-													 DirectIOSynchronousAnswerPtr synchronous_answer){DELETE_HEADER_DATA(header, channel_data) return 0;};
+													 DirectIOSynchronousAnswerPtr synchronous_answer)
+						{DELETE_HEADER_DATA(header, channel_data) return 0;};
 						
 						//! Receive the key of the live data channel to read
 						/*!
@@ -72,7 +73,8 @@ if(h) free(h);
 						virtual int consumeGetEvent(opcode_headers::DirectIODeviceChannelHeaderGetOpcode *header,
 													 void *key_data,
 													 uint32_t key_len,
-													 DirectIOSynchronousAnswerPtr synchronous_answer){DELETE_HEADER_DATA(header, key_data) return 0;};
+													 DirectIOSynchronousAnswerPtr synchronous_answer)
+						{DELETE_HEADER_DATA(header, key_data) return 0;};
 						
 						//! Receive the query information for search on data cloud
 						/*!
@@ -88,7 +90,17 @@ if(h) free(h);
 														  const std::string& search_key,
 														  uint64_t search_start_ts,
 														  uint64_t search_end_ts,
-														  DirectIOSynchronousAnswerPtr synchronous_answer){DELETE_HEADER(header) return 0;};
+														  DirectIOSynchronousAnswerPtr synchronous_answer)
+						{DELETE_HEADER(header) return 0;};
+						
+						//! Receive the start result answering sequence for a query from the quered node
+						/*!
+						 This message start the answering sequence composed by many consumeDataCloudQueryAnswer method call. It bring infromation
+						 about overall query metadata like the total number of element found. In future this will be used to inform clinet
+						 to the query splitting across server.
+						 */
+						virtual int consumeDataCloudQueryStartAnswer(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResult *header)
+						{DELETE_HEADER(header) return 0;}
 						
 						//! Receive the answer to a submitted query
 						/*!
@@ -101,7 +113,17 @@ if(h) free(h);
 						virtual int consumeDataCloudQueryAnswer(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswer *header,
 																void *data_found,
 																uint32_t data_lenght,
-																DirectIOSynchronousAnswerPtr synchronous_answer){DELETE_HEADER_DATA(header, data_found) return 0;};
+																DirectIOSynchronousAnswerPtr synchronous_answer)
+						{DELETE_HEADER_DATA(header, data_found) return 0;};
+						
+						//! Receive the end message for the results answering sequence from the answering node
+						/*!
+						 This is need to manage the error occurend on the server ansering node, to permit the request node
+						 to not way any further result.
+						 */
+						virtual int consumeDataCloudQueryEndAnswer(opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResult *header)
+						{DELETE_HEADER(header) return 0;}
+
 					} DirectIODeviceServerChannelHandler;
 
                     void setHandler(DirectIODeviceServerChannelHandler *_handler);
