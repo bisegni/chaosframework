@@ -55,9 +55,9 @@ namespace chaos_dio_channel = chaos::common::direct_io::channel;
 
 //using namespace memcache;
 
-/*
- * Driver constructor
- */
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 IODirectIODriver::IODirectIODriver(std::string alias):NamedService(alias), current_endpoint_p_port(0), current_endpoint_s_port(0), current_endpoint_index(0), connectionFeeder(alias, this) {
 	//clear
 	std::memset(&init_parameter, 0, sizeof(IODirectIODriverInitParam));
@@ -69,21 +69,23 @@ IODirectIODriver::IODirectIODriver(std::string alias):NamedService(alias), curre
 	data_cache.data_len = 0;
 }
 
-/*
- * Driver distructor
- */
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 IODirectIODriver::~IODirectIODriver() {
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void IODirectIODriver::setDirectIOParam(IODirectIODriverInitParam& _init_parameter) {
 	//store the configuration
 	init_parameter = _init_parameter;
 }
 
-/*
- * Init method, the has map has all received value for configuration
- * every implemented driver need to get all needed configuration param
- */
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void IODirectIODriver::init(void *_init_parameter) throw(CException) {
 	IODataDriver::init(_init_parameter);
 	
@@ -113,9 +115,9 @@ void IODirectIODriver::init(void *_init_parameter) throw(CException) {
 	
 }
 
-/*
- * Deinitialization of memcached driver
- */
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void IODirectIODriver::deinit() throw(CException) {
 	IODirectIODriver_LAPP_ << "Remove active query";
 	//acquire write lock on map
@@ -153,10 +155,9 @@ void IODirectIODriver::deinit() throw(CException) {
 	IODataDriver::deinit();
 }
 
-/*
- * This method retrive the cached object by CSDawrapperUsed as query key and
- * return a pointer to the class ArrayPointer of CDataWrapper type
- */
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void IODirectIODriver::storeRawData(chaos::common::data::SerializationBuffer *serialization)  throw(CException) {
 	CHAOS_ASSERT(serialization)
 	boost::shared_lock<boost::shared_mutex>(mutext_feeder);
@@ -173,10 +174,9 @@ void IODirectIODriver::storeRawData(chaos::common::data::SerializationBuffer *se
 	delete(serialization);
 }
 
-/*
- * This method retrive the cached object by CSDawrapperUsed as query key and
- * return a pointer to the class ArrayPointer of CDataWrapper type
- */
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 char* IODirectIODriver::retriveRawData(size_t *dim)  throw(CException) {
 	char* result = NULL;
 	boost::shared_lock<boost::shared_mutex>(mutext_feeder);
@@ -189,9 +189,9 @@ char* IODirectIODriver::retriveRawData(size_t *dim)  throw(CException) {
 	return result;
 }
 
-/*
- Update the driver configuration
- */
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::common::data::CDataWrapper* newConfigration) {
 	//lock the feeder access
 	boost::unique_lock<boost::shared_mutex>(mutext_feeder);
@@ -217,6 +217,9 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
 	return NULL;
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void IODirectIODriver::disposeService(void *service_ptr) {
 	if(!service_ptr) return;
 	IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(service_ptr);
@@ -224,6 +227,10 @@ void IODirectIODriver::disposeService(void *service_ptr) {
 	init_parameter.client_instance->releaseConnection(next_client->connection);
 	delete(next_client);
 }
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void* IODirectIODriver::serviceForURL(const common::network::URL& url, uint32_t service_index) {
 	IODirectIODriver_DLDBG_ << "Add connection for " << url.getURL();
 	IODirectIODriverClientChannels * clients_channel = NULL;
@@ -253,6 +260,9 @@ void* IODirectIODriver::serviceForURL(const common::network::URL& url, uint32_t 
 	return clients_channel;
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void IODirectIODriver::handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection,
 										   chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) {
 	//if the channel has bee disconnected turn the relative index offline, if onli reput it online
@@ -270,6 +280,9 @@ void IODirectIODriver::handleEvent(chaos_direct_io::DirectIOClientConnection *cl
 	}
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 QueryFuture *IODirectIODriver::performQuery(uint64_t start_ts, uint64_t end_ts) {
 	IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
 	if(!next_client) return NULL;
@@ -290,7 +303,9 @@ QueryFuture *IODirectIODriver::performQuery(uint64_t start_ts, uint64_t end_ts) 
 	return q;
 }
 
-//! release a query
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void IODirectIODriver::releaseQuery(QueryFuture *query_future) {
 	//acquire write lock
 	boost::unique_lock<boost::shared_mutex> wmap_loc(map_query_future_mutex);
@@ -305,14 +320,34 @@ void IODirectIODriver::releaseQuery(QueryFuture *query_future) {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-int IODirectIODriver::consumeDataCloudQueryAnswer(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswer *header,
+int IODirectIODriver::consumeDataCloudQueryStartResult(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResult *header) {
+	
+	//get the query id
+	std::string query_id(header->field.query_id, 8);
+
+	//acquire read lock
+	boost::shared_lock<boost::shared_mutex> rmap_loc(map_query_future_mutex);
+
+	//get qeury iterator on map
+	std::map<string, QueryFuture*>::iterator it = map_query_future.find(query_id);
+	if(it != map_query_future.end()) {
+		//initialize the query for for the result receivement
+		_startQueryFutureResult(*it->second, header->field.total_element_found);
+	}
+	return 0;
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+int IODirectIODriver::consumeDataCloudQueryResult(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult *header,
 												  void *data_found,
 												  uint32_t data_lenght,
 												  chaos_dio::DirectIOSynchronousAnswerPtr synchronous_answer){
+	std::string query_id(header->field.query_id, 8);
+
 	//acquire read lock
 	boost::shared_lock<boost::shared_mutex> rmap_loc(map_query_future_mutex);
-	
-	std::string query_id(header->field.query_id, 8);
 	
 	//get qeury iterator on map
 	std::map<string, QueryFuture*>::iterator it = map_query_future.find(query_id);
@@ -320,7 +355,7 @@ int IODirectIODriver::consumeDataCloudQueryAnswer(chaos_dio_channel::opcode_head
 		try{
 			chaos_data::CDataWrapper *data_pack = new chaos_data::CDataWrapper((char *)data_found);
 			//we have map so we will add the new packet
-			_pushDataToQuryFuture(*it->second, data_pack, header->field.total_element_found);
+			_pushResultToQueryFuture(*it->second, data_pack, header->field.element_index);
 		}catch(...) {
 			IODirectIODriver_LERR_ << "error parsing reuslt data pack";
 		}
@@ -330,4 +365,32 @@ int IODirectIODriver::consumeDataCloudQueryAnswer(chaos_dio_channel::opcode_head
 	free(data_found);
 	free(header);
 	return 0;
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+int IODirectIODriver::consumeDataCloudQueryEndResult(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResult *header,
+													 void *error_message_string_data,
+													 uint32_t error_message_string_data_length) {
+	//get the query id
+	std::string query_id(header->field.query_id, 8);
+	
+	//acquire read lock
+	boost::shared_lock<boost::shared_mutex> rmap_loc(map_query_future_mutex);
+	
+	//get qeury iterator on map
+	std::map<string, QueryFuture*>::iterator it = map_query_future.find(query_id);
+	if(it != map_query_future.end()) {
+		if(error_message_string_data_length) {
+			std::string error_message((char*)error_message_string_data, error_message_string_data_length);
+			//initialize the query for for the result receivement
+			_endQueryFutureResult(*it->second, header->field.error, error_message);
+		} else {
+			//initialize the query for for the result receivement
+			_endQueryFutureResult(*it->second, header->field.error);
+		}
+		
+	}
+
 }

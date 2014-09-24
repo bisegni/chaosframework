@@ -145,11 +145,20 @@ namespace chaos{
 				//! release a query
 				void releaseQuery(QueryFuture *query_future);
 				
-				//! overrid of the query result method for class DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler[run in another thread]
-				int consumeDataCloudQueryAnswer(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswer *header,
+				// overrid the method method for class DirectIODeviceServerChannel::consumeDataCloudQueryStartResult[run in another thread]
+				int consumeDataCloudQueryStartResult(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResult *header);
+				
+				// overrid of the query result method for class DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler[run in another thread]
+				int consumeDataCloudQueryResult(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult *header,
 												void *data_found,
 												uint32_t data_lenght,
 												chaos_direct_io::DirectIOSynchronousAnswerPtr synchronous_answer);
+				
+				// overrid the method method for class DirectIODeviceServerChannel::consumeDataCloudQueryEndResult[run in another thread]
+				int consumeDataCloudQueryEndResult(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResult *header,
+												   void *error_message_string_data,
+												   uint32_t error_message_string_data_length);
+
 			};
 		}
 	}

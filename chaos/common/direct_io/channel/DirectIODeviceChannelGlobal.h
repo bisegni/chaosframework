@@ -28,9 +28,9 @@ namespace chaos {
 						DeviceChannelOpcodePutOutput				= 1,	/**< send the output dataset [synchronous]*/
 						DeviceChannelOpcodeGetLastOutput            = 2,	/**< request the last output dataset from live cache [synchronous]*/
 						DeviceChannelOpcodeQueryDataCloud			= 4,	/**< query the chaos data cloud [async]*/
-						DeviceChannelOpcodeQueryDataCloudStartAnswer= 8,	/**< Start the answering sequence to the endpoint [async]*/
-						DeviceChannelOpcodeQueryDataCloudAnswer		= 16,	/**< contain the answer of the query [async]*/
-						DeviceChannelOpcodeQueryDataCloudEndAnswer	= 24	/**< End the answering sequence [async]*/
+						DeviceChannelOpcodeQueryDataCloudStartResult= 8,	/**< Start the answering sequence to the endpoint [async]*/
+						DeviceChannelOpcodeQueryDataCloudResult		= 16,	/**< contain the answer of the query [async]*/
+						DeviceChannelOpcodeQueryDataCloudEndResult	= 24	/**< End the answering sequence [async]*/
 						//DeviceChannelOpcodePutNewReceivedCommand	= 8		/**< send over the channel the received command */
 					} DeviceChannelOpcode;
 					
@@ -123,7 +123,7 @@ namespace chaos {
 						uint64_t number_of_element_found;
 					} QueryResultMetadata;
 					
-#define QUERY_DATA_CLOUD_START_ANSWER_OPCODE_HEADER_LEN 16
+#define QUERY_DATA_CLOUD_START_RESULT_OPCODE_HEADER_LEN 16
 					//! Header for the DeviceChannelOpcodeQueryDataCloudStartAnswer opcode
 					/*!
 					 This header bring information about the initialization of the answer to
@@ -131,7 +131,7 @@ namespace chaos {
 					 */
 					typedef	union DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResult {
 						//raw data representation of the header
-						char raw_data[QUERY_DATA_CLOUD_START_ANSWER_OPCODE_HEADER_LEN];
+						char raw_data[QUERY_DATA_CLOUD_START_RESULT_OPCODE_HEADER_LEN];
 						struct header {
 							//! is the query id relative to the request
 							char		query_id[8];
@@ -141,29 +141,26 @@ namespace chaos {
 						} field;
 					} DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResult, *DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResultPtr;
 
-#define QUERY_DATA_CLOUD_ANSWER_OPCODE_HEADER_LEN 24
+#define QUERY_DATA_CLOUD_RESULT_OPCODE_HEADER_LEN 24
 					//! Header for the DirectIODeviceChannelHeaderOpcodeQueryDataCloud opcode
 					/*!
 					 this is the header for query on data cloud. The header contains information
 					 for answer to a determinated ip:sport:pport:end:endpoint respecting the
 					 directIO formalism.
 					 */
-					typedef	union DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswer {
+					typedef	union DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult {
 						//raw data representation of the header
-						char raw_data[QUERY_DATA_CLOUD_ANSWER_OPCODE_HEADER_LEN];
+						char raw_data[QUERY_DATA_CLOUD_RESULT_OPCODE_HEADER_LEN];
 						struct header {
 							//! is the query id relative to the request
 							char		query_id[8];
-							
-							//!the number of total element found for query id
-							uint64_t	total_element_found;
-							
+
 							//! the number, relative to the total, of the current element
-							uint64_t	element_number;
+							uint64_t	element_index;
 						} field;
-					} DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswer, *DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswerPtr;
+					} DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult, *DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr;
 					
-#define QUERY_DATA_CLOUD_END_ANSWER_OPCODE_HEADER_LEN 8
+#define QUERY_DATA_CLOUD_END_RESULT_OPCODE_HEADER_LEN 24
 					//! Header for the DeviceChannelOpcodeQueryDataCloudEndAnswer opcode
 					/*!
 					 This header bring information about the initialization of the answer to
@@ -171,7 +168,7 @@ namespace chaos {
 					 */
 					typedef	union DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResult {
 						//raw data representation of the header
-						char raw_data[QUERY_DATA_CLOUD_END_ANSWER_OPCODE_HEADER_LEN];
+						char raw_data[QUERY_DATA_CLOUD_END_RESULT_OPCODE_HEADER_LEN];
 						struct header {
 							//! is the query id relative to the request
 							char	query_id[8];

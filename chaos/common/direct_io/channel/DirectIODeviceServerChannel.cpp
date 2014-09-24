@@ -95,22 +95,41 @@ int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack, Dir
 			break;
 		}
 			
-		case opcode::DeviceChannelOpcodeQueryDataCloudAnswer: {
-			opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswerPtr header =
-			reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswerPtr>(dataPack->channel_header_data);
+		case opcode::DeviceChannelOpcodeQueryDataCloudStartResult:{
+			opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResultPtr header =
+			reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResultPtr>(dataPack->channel_header_data);
+			header->field.total_element_found = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.total_element_found);
+			err = handler->consumeDataCloudQueryStartResult(header);
+			break;
+		}
+			
+		case opcode::DeviceChannelOpcodeQueryDataCloudResult: {
+			opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr header =
+			reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr>(dataPack->channel_header_data);
 
 					//decode the endianes off the data
-					header->field.total_element_found = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.total_element_found);
-					header->field.element_number = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.element_number);
+
+					header->field.element_index = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.element_index);
 
 					//call server api
-					err = handler->consumeDataCloudQueryAnswer(header,
+					err = handler->consumeDataCloudQueryResult(header,
 															   dataPack->channel_data,
 															   dataPack->header.channel_data_size,
 															   synchronous_answer);
 			break;
 		}
-
+			
+		case opcode::DeviceChannelOpcodeQueryDataCloudEndResult:{
+			opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResultPtr header =
+			reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResultPtr>(dataPack->channel_header_data);
+			header->field.error = FROM_LITTLE_ENDNS_NUM(int32_t, header->field.error);
+			header->field.error_message_length = FROM_LITTLE_ENDNS_NUM(int32_t, header->field.error_message_length);
+			err = handler->consumeDataCloudQueryEndResult(header,
+														  dataPack->channel_data,
+														  dataPack->header.channel_data_size);
+			break;
+		}
+			
 		default:
 			break;
 	}

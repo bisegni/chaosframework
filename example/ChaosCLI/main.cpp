@@ -173,23 +173,7 @@ int main (int argc, char* argv[] )
         DeviceController *controller = HLDataApi::getInstance()->getControllerForDeviceID(deviceID, timeout);
         if(!controller) throw CException(4, "Error allcoating decive controller", "device controller creation");
         
-		//test query
-		uint64_t start_ts = chaos::TimingUtil::getTimestampFromString("2014-09-05 15:44:03.000");
-		uint64_t end_ts = chaos::TimingUtil::getTimestampFromString("2014-09-05 15:44:04.000");
-		chaos::common::io::QueryFuture *query_future = NULL;
-		controller->executeTimeIntervallQuery(start_ts, end_ts, &query_future);
-		if(query_future) {
-			do {
-				auto_ptr<CDataWrapper> q_result(query_future->getDataPack(true));
-				if(q_result.get()) {
-					std::cout << q_result->getUInt64Value(chaos::DataPackKey::CS_CSV_TIME_STAMP) << std::endl;
-				}
-			} while(query_future->getCurrentElementIndex() < query_future->getTotalElementFound());
-			
-			controller->releaseQuery(query_future);
-		}
-		return 0;
-        //get the actual state of device
+		//get the actual state of device
         err = controller->getState(deviceState);
         if(err == ErrorCode::EC_TIMEOUT && op!=11) throw CException(5, "Time out on connection", "Get state for device");
         

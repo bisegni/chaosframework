@@ -48,7 +48,11 @@ namespace chaos{
 				
 				void _releaseQueryFuture(QueryFuture *query_future_ptr);
 				
-				void _pushDataToQuryFuture(QueryFuture& query_future, chaos_data::CDataWrapper *data_pack, uint64_t total_element_found);
+				void _startQueryFutureResult(QueryFuture& query_future, uint64_t _total_element_found);
+				
+				void _pushResultToQueryFuture(QueryFuture& query_future, chaos_data::CDataWrapper *data_pack, uint64_t element_index);
+				
+				void _endQueryFutureResult(QueryFuture& query_future, int32_t _error, const std::string& _error_message = std::string(""));
 			public:
 				virtual ~IODataDriver(){};
 				/*!

@@ -23,6 +23,15 @@ namespace chaos {
 			
 			class IODataDriver;
 			
+			//! denote the state of the query future
+			typedef enum QueryFutureState {
+				QueryFutureStateCreated,			/**< Query has been only created */
+				QueryFutureStateExecuted,			/**< Query has been submitted to remote endpoint */
+				QueryFutureStateStartResult,		/**< Query has received the message for begin the resutl trasmission */
+				QueryFutureStateReceivingResult,	/**< Query has receiving the result data */
+				QueryFutureStateEndResult			/**< Query has ended*/
+			} QueryFutureState;
+			
 			//! is the result for a query
 			/*!
 			 waith and return the result of a query in a synchronous and asynchronous way
@@ -39,10 +48,17 @@ namespace chaos {
 				//!index of the current fetched element
 				uint64_t fetched_element_index;
 				
+				int32_t error;
+				
+				std::string error_message;
+				
+				//! query state
+				QueryFutureState state;
+				
 				//!semaphore
 				WaitSemaphore waith_for_get_data_Semaphore;
+				WaitSemaphore waith_for_begin_result;
 				WaitSemaphore waith_for_push_data_Semaphore;
-				
 				//datapack result of query
 				boost::lockfree::queue<cc_data::CDataWrapper*, boost::lockfree::fixed_sized<false> > data_pack_queue;
 				
@@ -50,8 +66,13 @@ namespace chaos {
 				
 				virtual ~QueryFuture();
 				
-				void pushDataPack(cc_data::CDataWrapper *received_datapack, uint64_t _total_found_element);
+				void pushDataPack(cc_data::CDataWrapper *received_datapack, uint64_t _datapack_index);
+				void notifyStartResultPhase(uint64_t _total_element_found);
+				void notifyEndResultPhase(int32_t _error, const std::string & _error_message);
 			public:
+				
+				void waitForBeginResult(int32_t timeout = -1);
+				
 				cc_data::CDataWrapper *getDataPack(bool wait = true, uint32_t timeout = 0);
 				
 				const std::string& getQueryID();
@@ -59,6 +80,12 @@ namespace chaos {
 				uint64_t getTotalElementFound();
 				
 				uint64_t getCurrentElementIndex();
+				
+				int32_t getError();
+				
+				const std::string& getErrorMessage();
+				
+				QueryFutureState getState();
 			};
 			
 		}
