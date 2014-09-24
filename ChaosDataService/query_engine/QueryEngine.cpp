@@ -36,6 +36,9 @@ namespace chaos_direct_io_ch = chaos::common::direct_io::channel;
 #define QUERY_INFO(x) "query on key:" << x.query.did << "(since: " << x.query.start_ts << " to: " << x.query.end_ts << ")"
 
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 DataCloudQuery::DataCloudQuery(const std::string& _query_id,
 							   const db_system::DataPackIndexQuery& _query,
 							   const std::string& _answer_endpoint):
@@ -50,6 +53,9 @@ vfs_query(NULL){
 	fetchedAndForwadInfo.number_of_element_to_forward = 0;
 };
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 DataCloudQuery::~DataCloudQuery(){
 	fetchedAndForwadInfo.fetched_data_vector.clear();
 };
@@ -69,10 +75,16 @@ query_queue(1) {
 	
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 QueryEngine::~QueryEngine() {
 	
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void QueryEngine::init(void *init_data)  throw(chaos::CException) {
 	if(!directio_client_instance) throw chaos::CException(-1, "No direct io setupped", __FUNCTION__);
 	utility::InizializableService::initImplementation(directio_client_instance, init_data, "directio_client_instance", __PRETTY_FUNCTION__);
@@ -81,6 +93,9 @@ void QueryEngine::init(void *init_data)  throw(chaos::CException) {
 	
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void QueryEngine::start() throw(chaos::CException) {
 	QEAPP_ << "Starting thread pool of size " << thread_pool_size;
 	
@@ -94,6 +109,9 @@ void QueryEngine::start() throw(chaos::CException) {
 	}
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void QueryEngine::stop() throw(chaos::CException) {
 	work_on_query = false;
 	answer_thread_pool.join_all();
@@ -110,11 +128,16 @@ void QueryEngine::stop() throw(chaos::CException) {
 	if(thread_semaphore) delete(thread_semaphore);
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void QueryEngine::deinit() throw(CException) {
 	utility::InizializableService::deinitImplementation(directio_client_instance, "directio_client_instance", __PRETTY_FUNCTION__);
 }
 
-//execute a query and manage the result
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void QueryEngine::executeQuery(DataCloudQuery *query) {
 	if(!query) return;
 	
@@ -134,6 +157,9 @@ void QueryEngine::executeQuery(DataCloudQuery *query) {
 	}
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void QueryEngine::disposeQuery(DataCloudQuery *query) {
 	if(!query) return;
 	QEDBG_ << "Deallocating " << QUERY_INFO((*query));
@@ -151,6 +177,9 @@ void QueryEngine::disposeQuery(DataCloudQuery *query) {
 	delete(query);
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void QueryEngine::disposeClientConnectionInfo(ClientConnectionInfo *client_info) {
 	CHAOS_ASSERT(client_info)
 	std::string connection_custom_id = client_info->connection->getCustomStringIdentification();
@@ -170,6 +199,9 @@ void QueryEngine::disposeClientConnectionInfo(ClientConnectionInfo *client_info)
 }
 
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void QueryEngine::handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection,
 							  chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) {
 	
@@ -188,6 +220,9 @@ void QueryEngine::handleEvent(chaos_direct_io::DirectIOClientConnection *client_
 	}
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 int  QueryEngine::getChannelForQuery(DataCloudQuery *query,
 									 ClientConnectionInfo **connection_info_handle) {
 	
@@ -236,6 +271,22 @@ int  QueryEngine::getChannelForQuery(DataCloudQuery *query,
 	return 0;
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+int  QueryEngine::sendStartResultFaseToClient(DataCloudQuery *query) {
+	ClientConnectionInfo	*connection_info_ptr = NULL;
+	int err = getChannelForQuery(query, &connection_info_ptr);
+	if(err || !connection_info_ptr) return err;
+	
+	//send to cient the start result phase message
+	err = (int)connection_info_ptr->channel->startQueryDataCloudResult(query->query_id, query->vfs_query->getNumberOfElementFound());
+	return err;
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 int  QueryEngine::sendDataToClient(DataCloudQuery *query) {
 	//fecth connection channel
 	vfs::FoundDataPack		*datapack_to_forward = NULL;
@@ -261,7 +312,6 @@ int  QueryEngine::sendDataToClient(DataCloudQuery *query) {
 				
 				//send data to client
 				err = (int)connection_info_ptr->channel->sendResultToQueryDataCloud(query->query_id,
-																					query->vfs_query->getNumberOfElementFound(),
 																					++query->total_data_pack_sent,
 																					datapack_to_forward->data_pack_buffer,
 																					datapack_to_forward->data_pack_size,
@@ -278,6 +328,24 @@ int  QueryEngine::sendDataToClient(DataCloudQuery *query) {
 	return err;
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+int  QueryEngine::sendEndResultFaseToClient(DataCloudQuery *query, int32_t error) {
+	ClientConnectionInfo	*connection_info_ptr = NULL;
+	int err = getChannelForQuery(query, &connection_info_ptr);
+	if(err || !connection_info_ptr) return err;
+	
+	//send to cient the start result phase message
+	err = (int)connection_info_ptr->channel->endQueryDataCloudResult(query->query_id, error);
+	return err;
+
+}
+
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void QueryEngine::freeSentData(void* sent_data_ptr, common::direct_io::DisposeSentMemoryInfo *free_info_ptr) {
 	if(free_info_ptr->sent_part != common::direct_io::DisposeSentMemoryInfo::SentPartData) return;
 	//deelte sent result;
@@ -286,6 +354,9 @@ void QueryEngine::freeSentData(void* sent_data_ptr, common::direct_io::DisposeSe
 	QEDBG_ << "Deleted data for part "<<  free_info_ptr->sent_part<< " and opcode " << free_info_ptr->sent_opcode;
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void QueryEngine::process_query() {
 	int err = 0;
 	DataCloudQuery *query = NULL;
@@ -301,8 +372,12 @@ void QueryEngine::process_query() {
 					if((err = query->vfs_query->executeQuery()) ) {
 						QEERR_ << "Error executing query";
 						query->query_phase = DataCloudQuery::DataCloudQueryPhaseError;
+						
+						//send end of result phase
+						sendEndResultFaseToClient(query, -1);
 					} else {
 						query->query_phase = DataCloudQuery::DataCloudQueryPhaseFetchData;
+						sendStartResultFaseToClient(query);
 					}
 					break;
 					
@@ -353,14 +428,17 @@ void QueryEngine::process_query() {
 				switch(query->query_phase) {
 					case DataCloudQuery::DataCloudQueryPhaseError:
 						QEDBG_ << "Error on "<< QUERY_INFO((*query));
+						sendEndResultFaseToClient(query, -2);
 						break;
 						
 					case DataCloudQuery::DataCloudQueryPhaseEnd:
 						QEDBG_ << "End on "<< QUERY_INFO((*query));
+						sendEndResultFaseToClient(query, 0);
 						break;
 						
 					case DataCloudQuery::DataCloudQueryPhaseClientDisconnected:
 						QEDBG_ << "Client disconnection for "<< QUERY_INFO((*query));
+						sendEndResultFaseToClient(query, -3);
 						break;
 						
 					default:

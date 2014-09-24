@@ -109,23 +109,20 @@ namespace chaos {
 					/*!
 					 Start the answering sequence of query sending information about query metadata(number of result and ohter information in the future)
 					 \param query_id the unique id of the query whitch the result refer to
-					 \param result_metadata the metadata of the query result
+					 \param total_element_found the total element found b ythe query
 					 */
-					int64_t startQueryDataCloudResult(const std::string& query_id,
-													  const opcode_headers::QueryResultMetadata& result_metadata);
+					int64_t startQueryDataCloudResult(const std::string& query_id, uint64_t total_element_found);
 					
 					//! Send the single result of the temporal query to requester
 					/*!
 					 Return to requester the answer to temporal query
 					 \param the query id of the associated query
-					 \param total_element_found
-					 \param element_idx
-					 \param data
-					 \param data_len
+					 \param element_idx the idnex of the current element
+					 \param data the datapack of the found element
+					 \param data_len the lenght of the element
 					 */
                     int64_t sendResultToQueryDataCloud(const std::string& query_id,
-													   uint64_t total_element_found,
-													   uint64_t element_idx,
+													   uint64_t element_index,
 													   void *data,
 													   uint32_t data_len,
 													   DirectIOClientDeallocationHandler *data_deallocator = NULL);
@@ -135,9 +132,9 @@ namespace chaos {
 					 Notify the remote endpoint tha the result has finisched
 					 \param query_id is the unique id of the query
 					 \param is the error if there is one
+					 \param error_message is the message of the error, if one
 					 */
-					int64_t endQueryDataCloudResult(const std::string& query_id,
-													uint32_t error);
+					int64_t endQueryDataCloudResult(const std::string& query_id, uint32_t error, const std::string& error_message=std::string(""));
 				};
 
 				

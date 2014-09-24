@@ -36,6 +36,12 @@ using namespace chaos::common::direct_io::channel::opcode_headers;
 //#define PUT_HEADER_LEN  sizeof(DirectIODeviceChannelHeaderPutOpcode)-sizeof(void*)+device_id.size()
 #define PUT_HEADER_LEN  (GET_PUT_OPCODE_FIXED_PART_LEN+((uint32_t)device_id.size()))
 
+#define DECLARE_AND_CALLOC_DATA_PACK(n)\
+DirectIODataPack *n = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
+
+#define DECLARE_AND_CALLOC_HEADER(x,n)\
+x *n = (x*)calloc(sizeof(x),1);
+
 //define the static deallocator class
 DirectIODeviceClientChannel::DirectIODeviceClientChannelDeallocator DirectIODeviceClientChannel::STATIC_DirectIODeviceClientChannelDeallocator;
 
@@ -189,43 +195,81 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(uint64_t start_ts, uint64_t 
 	return sendServiceData(data_pack);
 }
 
+
+// start the answering sequence to a query
+int64_t DirectIODeviceClientChannel::startQueryDataCloudResult(const std::string& query_id,
+															   uint64_t total_element_found) {
+	DECLARE_AND_CALLOC_DATA_PACK(data_pack)
+	DECLARE_AND_CALLOC_HEADER(DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResult, cq_start_result_header)
+	
+	//set opcode
+	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeQueryDataCloudStartResult);
+
+	//copy the query id on header
+	std::strncpy(cq_start_result_header->field.query_id, query_id.c_str(), 8);
+	
+	//configure the header
+	cq_start_result_header->field.total_element_found = TO_LITTE_ENDNS_NUM(uint64_t, total_element_found);
+
+	//set the header for forward
+	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, cq_start_result_header, QUERY_DATA_CLOUD_START_RESULT_OPCODE_HEADER_LEN)
+
+	//send message
+	return sendServiceData(data_pack);
+}
+
+
 //! Send the single result of the temporal query to requester
 int64_t DirectIODeviceClientChannel::sendResultToQueryDataCloud(const std::string& query_id,
-																uint64_t total_element_found,
-																uint64_t element_number,
+																uint64_t element_index,
 																void *data,
 																uint32_t data_len,
 																DirectIOClientDeallocationHandler *data_deallocator) {
-	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
-	DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswerPtr cloud_query_answer_header =
-	(DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswerPtr)calloc(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudAnswer), 1);
+	DECLARE_AND_CALLOC_DATA_PACK(data_pack)
+	DECLARE_AND_CALLOC_HEADER(DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult, cq_result_header)
+	
+	//set opcode
+	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeQueryDataCloudResult);
 	
 	//copy the query id on header
-	std::strncpy(cloud_query_answer_header->field.query_id, query_id.c_str(), 8);
-	
-	cloud_query_answer_header->field.total_element_found = TO_LITTE_ENDNS_NUM(uint64_t, total_element_found);
-	cloud_query_answer_header->field.element_number = TO_LITTE_ENDNS_NUM(uint64_t, element_number);
-	//set opcode
-	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeQueryDataCloudAnswer);
+	std::strncpy(cq_result_header->field.query_id, query_id.c_str(), 8);
+
+	cq_result_header->field.element_index = TO_LITTE_ENDNS_NUM(uint64_t, element_index);
 	
 	//set header and data for the query
-    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, cloud_query_answer_header, QUERY_DATA_CLOUD_ANSWER_OPCODE_HEADER_LEN)
+    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, cq_result_header, QUERY_DATA_CLOUD_RESULT_OPCODE_HEADER_LEN)
 	DIRECT_IO_SET_CHANNEL_DATA(data_pack, data, data_len);
 	
 	//send query request
 	return sendServiceData(data_pack, (data_deallocator?data_deallocator:this));
 }
 
-// start the answering sequence to a query
-int64_t DirectIODeviceClientChannel::startQueryDataCloudResult(const std::string& query_id,
-															   const opcode_headers::QueryResultMetadata& result_metadata) {
-	return 0;
-}
-
 
 //! Set the end of the answer to a query
 int64_t DirectIODeviceClientChannel::endQueryDataCloudResult(const std::string& query_id,
-															 uint32_t error) {
+															 uint32_t error,
+															 const std::string& error_message) {
+	DECLARE_AND_CALLOC_DATA_PACK(data_pack)
+	DECLARE_AND_CALLOC_HEADER(DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResult, cq_end_result_header)
+	
+	//set opcode
+	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::DeviceChannelOpcodeQueryDataCloudEndResult);
+	
+	//copy the query id on header
+	std::strncpy(cq_end_result_header->field.query_id, query_id.c_str(), 8);
+	
+	//configure the header
+	cq_end_result_header->field.error = TO_LITTE_ENDNS_NUM(int32_t, error);
+	cq_end_result_header->field.error_message_length = TO_LITTE_ENDNS_NUM(uint32_t, (uint32_t)error_message.size());
+	
+	//set the header for forward
+	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, cq_end_result_header, QUERY_DATA_CLOUD_START_RESULT_OPCODE_HEADER_LEN)
+	if(cq_end_result_header->field.error_message_length) {
+		//send error message has data
+		
+	}
+	//send message
+	return sendServiceData(data_pack);
 	return 0;
 }
 
@@ -235,7 +279,9 @@ void DirectIODeviceClientChannel::DirectIODeviceClientChannelDeallocator::freeSe
 		case DisposeSentMemoryInfo::SentPartHeader:{
 			switch(static_cast<opcode::DeviceChannelOpcode>(free_info_ptr->sent_opcode)) {
 				case opcode::DeviceChannelOpcodeQueryDataCloud:
-				case opcode::DeviceChannelOpcodeQueryDataCloudAnswer:
+				case opcode::DeviceChannelOpcodeQueryDataCloudStartResult:
+				case opcode::DeviceChannelOpcodeQueryDataCloudResult:
+				case opcode::DeviceChannelOpcodeQueryDataCloudEndResult:
 					free(sent_data_ptr);
 					break;
 				case opcode::DeviceChannelOpcodePutOutput:
@@ -248,12 +294,20 @@ void DirectIODeviceClientChannel::DirectIODeviceClientChannelDeallocator::freeSe
 			
 		case DisposeSentMemoryInfo::SentPartData: {
 			switch(static_cast<opcode::DeviceChannelOpcode>(free_info_ptr->sent_opcode)) {
+					//opcode with data
 				case opcode::DeviceChannelOpcodePutOutput:
 				case opcode::DeviceChannelOpcodeQueryDataCloud:
-				case opcode::DeviceChannelOpcodeQueryDataCloudAnswer:
+				case opcode::DeviceChannelOpcodeQueryDataCloudResult:
 					free(sent_data_ptr);
 					break;
 					
+					//opcode with optionally data
+				case opcode::DeviceChannelOpcodeQueryDataCloudEndResult:
+					if(sent_data_ptr) free(sent_data_ptr);
+					break;
+					
+					//opcode with no data
+				case opcode::DeviceChannelOpcodeQueryDataCloudStartResult:
 				case opcode::DeviceChannelOpcodeGetLastOutput:
 					break;
 			}

@@ -49,8 +49,28 @@ using namespace boost;
 #define OPT_END_TIME		"end_time"
 
 
+void sendBackOnRow() {
+	std::cout << "\r" <<std::flush;
+}
+
+void sendBackForNPos(int position = 1) {
+	for(int i = 0; i < position; i++) {
+		std::cout << "\b";
+	}
+	std::cout << std::flush;
+}
+
 void printPercendDone(int percend_done) {
-	std::cout << " " << setfill('0') << setw(4) << percend_done << "% " <<std::flush;
+	std::cout << " " << setfill('0') << setw(3) << percend_done << "% " <<std::flush;
+}
+
+void printStat(chaos::common::io::QueryFuture *query_future) {
+	std::cout << "--------------------------------------------------------------------------" << std::endl;
+	std::cout << "Total found: " << query_future->getTotalElementFound() <<std::endl;
+	std::cout << "Last element fetched: " << query_future->getCurrentElementIndex() <<std::endl;
+	std::cout << "Error code: " << query_future->getError() <<std::endl;
+	std::cout << "Error message: " << query_future->getErrorMessage() <<std::endl;
+	std::cout << "--------------------------------------------------------------------------" << std::endl;
 }
 
 void printStep() {
@@ -69,7 +89,6 @@ int main(int argc, char* argv[])
 	uint32_t timeout;
 	string device_id;
 	string dst_file;
-	bool dest_target;
 	bool dest_type;
 	string start_time;
 	string end_time;
@@ -84,11 +103,10 @@ int main(int argc, char* argv[])
 	uint32_t cicle_number = 0;
 	CDeviceNetworkAddress deviceNetworkAddress;
 	try{
-		
+		std::cout << "\e[?25l";
 		//! [UIToolkit Attribute Init]
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_CU_ID, "The identification string of the device", &device_id);
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_TIMEOUT, "Timeout for wait the answer in milliseconds", 2000, &timeout);
-		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<bool>(OPT_DST_TARGET, "Destination target file(true) or stdandard output(false)", true, &dest_target);
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<bool>(OPT_DST_TYPE, "Destination date type binary(true) or string(false)", true, &dest_type);
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_DST_FILE, "Destination file for save found datapack", &dst_file);
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_START_TIME, "Time for first datapack to find [format from %Y-%m-%dT%H:%M:%S.%f to %Y]", &start_time);
@@ -123,45 +141,37 @@ int main(int argc, char* argv[])
 			std::cout << "Set end data to"<< end_time << std::endl;
 		}
 		
-		//print the desttination target
-		std::cout << "Set output target to -> "<<(dest_target?" file":" standard output") << std::endl;
-		
 		//get the timestamp for query boundary
-		if(dest_target) {
-			if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_DST_FILE)){
-				std::cout << "Auto destination file generation" << std::endl;
-				getcwd(buf, 255);
-				dst_file.assign(buf, strlen(buf));
-				dst_file += "/"+device_id+".exp";
-			}
-			std::basic_ios<char>::openmode dst_file_mode = ios_base::out;
-			if(dest_type) {
-				dst_file_mode |= ios_base::binary;
-			}
-			destination_file.open(dst_file.c_str(), dst_file_mode);
-			if(!destination_file.good()) {
-				err_str = "Error opening destination file ";
-				err_str.append(buf, strlen(buf));
-				throw CException(-4, err_str, string("check param"));
-			}
-			std::cout << "Destination file -> " << dst_file << std::endl;
-
-			destination_stream = &destination_file;
-		} else {
-			destination_stream = &std::cout;
+		if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_DST_FILE)){
+			std::cout << "Auto destination file generation" << std::endl;
+			getcwd(buf, 255);
+			dst_file.assign(buf, strlen(buf));
+			dst_file += "/"+device_id+".exp";
 		}
-		std::cout << "BEGIN EXPORT---------------------------------" << std::endl;
-
+		std::basic_ios<char>::openmode dst_file_mode = ios_base::out;
+		if(dest_type) {
+			dst_file_mode |= ios_base::binary;
+		}
+		destination_file.open(dst_file.c_str(), dst_file_mode);
+		if(!destination_file.good()) {
+			err_str = "Error opening destination file ";
+			err_str.append(buf, strlen(buf));
+			throw CException(-4, err_str, string("check param"));
+		}
+		std::cout << "Destination file -> " << dst_file << std::endl;
+		destination_stream = &destination_file;
+		
 		//we can allocate the channel
 		std::cout << "Acquiring controller" << std::endl;
 		DeviceController *controller = HLDataApi::getInstance()->getControllerForDeviceID(device_id, timeout);
 		if(!controller) throw CException(4, "Error allcoating decive controller", "device controller creation");
 		
 		chaos::common::io::QueryFuture *query_future = NULL;
-		std::cout << "Starting export" << std::endl;
 		controller->executeTimeIntervallQuery(start_ts, end_ts, &query_future);
 		if(query_future) {
-			do {
+			query_future->waitForBeginResult();
+			while(query_future->getState() ==chaos::common::io::QueryFutureStateStartResult ||
+				  query_future->getState() ==chaos::common::io::QueryFutureStateReceivingResult){
 				auto_ptr<CDataWrapper> q_result(query_future->getDataPack(true, timeout));
 				if(q_result.get()) {
 					retry = 0;
@@ -175,34 +185,38 @@ int main(int argc, char* argv[])
 				}
 				
 				cicle_number++;
+				
 				if(!(cicle_number % 10)) {
-					printStep();
-				}
-				if(!(cicle_number % 100)) {
+					std::cout << "Exporting ";
 					printPercendDone(computePercent(query_future->getCurrentElementIndex(), query_future->getTotalElementFound()));
+					sendBackOnRow();
 				}
 				
-			} while((query_future->getCurrentElementIndex() < query_future->getTotalElementFound()) && retry < 3);
+			};
 			//print last percent
+			std::cout << "Exporting ";
 			printPercendDone(computePercent(query_future->getCurrentElementIndex(), query_future->getTotalElementFound()));
+			std::cout << std::endl;
+			//print the statistic
+			printStat(query_future);
+			std::cout << "Releasing query";
 			//release the query
 			controller->releaseQuery(query_future);
+			std::cout << "Releasing controller";
+			HLDataApi::getInstance()->disposeDeviceControllerPtr(controller);
 		}
 	} catch (CException& e) {
 		std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
-    } catch (...) {
+	} catch (...) {
 		std::cerr << "General error " << std::endl;
 	}
-	
-    try {
-        //! [UIToolkit Deinit]
-        ChaosUIToolkit::getInstance()->deinit();
-        //! [UIToolkit Deinit]
-    } catch (CException& e) {
-        std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
-    }
-	if(!dest_target) {
-		(*destination_stream) << "END EXPORT---------------------------------";
+	std::cout << "\e[?25h";
+	try {
+		//! [UIToolkit Deinit]
+		ChaosUIToolkit::getInstance()->deinit();
+		//! [UIToolkit Deinit]
+	} catch (CException& e) {
+		std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
 	}
 	std::cout << std::endl << "Export done"<< std::endl;
 	return 0;

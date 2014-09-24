@@ -142,9 +142,16 @@ namespace chaos {
 				//! send data to the requester
 				int  getChannelForQuery(DataCloudQuery *query,
 										ClientConnectionInfo **connection_info_handle);
+				
+				//send start result phase
+				int  sendStartResultFaseToClient(DataCloudQuery *query);
+				
 				//send data to client
 				int  sendDataToClient(DataCloudQuery *query);
 				
+				//send start result phase
+				int  sendEndResultFaseToClient(DataCloudQuery *query, int32_t error);
+
 				//!process the signle query step
 				void process_query();
 				
