@@ -22,7 +22,7 @@
 
 using namespace chaos::data_service::db_system;
 
-#define RESULT_PAGE_DIMENSION 50
+#define RESULT_PAGE_DIMENSION 100
 
 //! private constructor
 DBIndexCursor::DBIndexCursor(DBDriver *_driver_ptr,
