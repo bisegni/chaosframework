@@ -44,6 +44,23 @@ VFSDataFile(_storage_driver_ptr,
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
+int VFSDataWriteableFile::releaseDataBlock(DataBlock *data_block_ptr,
+										   int closed_state) {
+	int err = 0;
+	std::string db_vfs_domain = data_block_ptr->vfs_domain;
+	std::string db_vfs_path = data_block_ptr->vfs_path;
+	if((err = VFSDataFile::releaseDataBlock(data_block_ptr))){
+	}else if((err = db_driver_ptr->idxSetDataPackIndexStateByDataBlock(db_vfs_domain,
+																 db_vfs_path,
+																 db_system::DataPackIndexQueryStateQuerable))) {
+		VFSWF_LERR_ << "Error setting querable state on all datablock possible index " << err;
+	}
+	return err;
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 bool VFSDataWriteableFile::isDataBlockValid(DataBlock *new_data_block_ptr) {
 	//check operational value
 	return VFSFile::isDataBlockValid(new_data_block_ptr);

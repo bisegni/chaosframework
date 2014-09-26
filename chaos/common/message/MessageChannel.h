@@ -20,6 +20,10 @@
 #ifndef ChaosFramework_MessageChannel_h
 #define ChaosFramework_MessageChannel_h
 
+#include <map>
+#include <string>
+#include <vector>
+
 #include <chaos/common/utility/Atomic.h>
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/data/CDataWrapper.h>
@@ -29,9 +33,7 @@
 #include <chaos/common/network/CNodeNetworkAddress.h>
 #include <chaos/common/network/NetworkBroker.h>
 #include <boost/function.hpp>
-//#include <boost/thread/condition.hpp>
 #include <boost/thread.hpp>
-#include <map>
 
 namespace chaos {
 	
@@ -51,9 +53,7 @@ e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_COD
     
     typedef void (*MessageHandler)(atomic_int_type, common::data::CDataWrapper*);
     
-	
-    //typedef boost::function<void(atomic_int_type, common::data::CDataWrapper*)> MessageHandler;
-    
+	    
 	//! MessageChannel
     /*!
      This is the basic channel for comunicate with other chaos rpc server. It can be instantiated only by
@@ -70,6 +70,7 @@ e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_COD
         atomic_int_type channelRequestIDCounter;
         
 		//! remote host where send the message and request
+
         string remoteNodeAddress;
         
 		//! channel id (action domain)
@@ -85,7 +86,7 @@ e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_COD
         MessageHandler response_handler;
         
 		//!map to sync request and result
-        map<atomic_int_type, common::data::CDataWrapper* > responseIdSyncMap;
+        map<atomic_int_type, common::data::CDataWrapper* > response_id_sync_map;
         
         /*!
          Initialization phase of the channel
@@ -116,13 +117,16 @@ e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_COD
 		
         /*!
          Private constructor called by NetworkBroker
+		 \param _borker the broker instance that has created the channel
+		 \param _remote_host the remote host where send the message
          */
-        MessageChannel(NetworkBroker*, const char*const);
-        
+		MessageChannel(NetworkBroker *_broker,
+					   const std::string& _remote_host);
+		
         /*!
          Private constructor called by NetworkBroker
          */
-        MessageChannel(NetworkBroker*);
+        MessageChannel(NetworkBroker *_broker);
         
         /*!
          Private destructor called by NetworkBroker
@@ -132,17 +136,13 @@ e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_COD
         /*!
          Update the address of the channel
          */
-        void setRemoteNodeAddress(string& remoteAddr){
-            remoteNodeAddress = remoteAddr;
-        }
+		void setRemoteNodeAddress(const std::string& remote_addr);
         
         /*!
          Return the broker for that channel
          */
-        NetworkBroker * getBroker(){
-            return broker;
-        }
-        
+		NetworkBroker * getBroker();
+		
     public:
 		
         /*!

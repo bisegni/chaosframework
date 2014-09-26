@@ -180,7 +180,10 @@ namespace chaos {
 				 \param prefix_filter the prefix of the path used for filter the result
 				 \param result_vfs_file_path array contains the found vfs paths.
 				 */
-				virtual int vfsGetFilePathForDomain(std::string vfs_domain, std::string prefix_filter, std::vector<std::string>& result_vfs_file_path, int limit_to_size = 100) = 0;
+				virtual int vfsGetFilePathForDomain(const std::string& vfs_domain,
+													const std::string& prefix_filter,
+													std::vector<std::string>& result_vfs_file_path,
+													int limit_to_size = 100) = 0;
 				
 				//! add the default index for a unique instrument identification and a timestamp
 				/*!
@@ -193,6 +196,11 @@ namespace chaos {
 				
 				//! remove the index for a unique instrument identification and a timestamp
 				virtual int idxDeleteDataPackIndex(const DataPackIndex& index) = 0;
+				
+				//! set the state on all datapack index for an datablock
+				virtual int idxSetDataPackIndexStateByDataBlock(const std::string& vfs_datablock_domain,
+																const std::string& vfs_datablock_path,
+																DataPackIndexQueryState dp_index_state) = 0;
 				
 				//! perform a search on data pack indexes
 				virtual int idxStartSearchDataPack(const chaos::data_service::db_system::DataPackIndexQuery& _query, DBIndexCursor **index_cursor) = 0;

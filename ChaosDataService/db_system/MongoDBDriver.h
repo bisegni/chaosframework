@@ -120,13 +120,21 @@ namespace chaos {
 					int vfsCreateFileEntry(chaos_vfs::VFSFile *vfs_file);
 					
 					//! Return a list of vfs path of the file belong to a domain
-					int vfsGetFilePathForDomain(std::string vfs_domain, std::string prefix_filter, std::vector<std::string>& result_vfs_file_path, int limit_to_size);
+					int vfsGetFilePathForDomain(const std::string& vfs_domain,
+												const std::string& prefix_filter,
+												std::vector<std::string>& result_vfs_file_path,
+												int limit_to_size);
 					
 					//! add the default index for a unique instrument identification and a timestamp
 					int idxAddDataPackIndex(const DataPackIndex& index);
 					
 					//! remove the index for a unique instrument identification and a timestamp
 					int idxDeleteDataPackIndex(const DataPackIndex& index);
+					
+					//! set the state on all datapack index for an datablock
+					int idxSetDataPackIndexStateByDataBlock(const std::string& vfs_datablock_domain,
+															const std::string& vfs_datablock_path,
+															DataPackIndexQueryState dp_index_state);
 					
 					//! perform a search on data pack indexes
 					int idxStartSearchDataPack(const DataPackIndexQuery& _query, DBIndexCursor **index_cursor);

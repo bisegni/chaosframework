@@ -43,6 +43,7 @@ public class JMQRPCClient extends RPCClient {
 				SocketSlot socketSlot = new SocketSlot();
 				socketSlot.socket = context.createSocket(ZMQ.ZMQ_REQ);
 				socketSlot.socket.setSendTimeOut(1000);
+				socketSlot.socket.setReceiveTimeOut(1000);
 				socketSlot.socket.connect(serverAddress);
 				serverSlotHashtable.put(serverAddress, socketSlot);
 				return socketSlot;

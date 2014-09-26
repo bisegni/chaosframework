@@ -61,7 +61,7 @@ namespace chaos {
 #define MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_PATH		"db_path"
 #define MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET	"db_offset"
 #define MONGO_DB_IDX_DATA_PACK_SIZE						"dp_size"
-			
+#define MONGO_DB_IDX_DATA_PACK_STATE					"dp_state"
 		}
 	}
 }

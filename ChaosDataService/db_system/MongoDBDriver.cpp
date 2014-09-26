@@ -346,7 +346,6 @@ int MongoDBDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 		DEBUG_CODE(MDBID_LDBG_ << "vfsSetStateOnDataBlock query ---------------------------------------------";)
 		DEBUG_CODE(MDBID_LDBG_ << "Query: "  << q.jsonString();)
 		DEBUG_CODE(MDBID_LDBG_ << "vfsSetStateOnDataBlock query ---------------------------------------------";)
-
 		
 		err = ha_connection_pool->runCommand(result, db_name, q);
 		if(err) {
@@ -526,8 +525,6 @@ int MongoDBDriver::vfsFindFromPathDataBlock(const std::string& data_block_domain
 		} else if(result.isEmpty()){
 			MDBID_LERR_ << "No datablock found for the criteria";
 		} else {
-			// read the block element
-			
 			//get new empty datablock
 			*data_block = fillDatablock(result, new chaos_vfs::DataBlock());
 		}
@@ -586,23 +583,26 @@ int MongoDBDriver::vfsCreateFileEntry(chaos_vfs::VFSFile *vfs_file) {
 }
 
 //! Return a list of vfs path of the file belong to a domain
-int MongoDBDriver::vfsGetFilePathForDomain(std::string vfs_domain, std::string prefix_filter, std::vector<std::string>& result_vfs_file_path, int limit_to_size) {
+int MongoDBDriver::vfsGetFilePathForDomain(const std::string& vfs_domain,
+										   const std::string& prefix_filter,
+										   std::vector<std::string>& result_vfs_file_path,
+										   int limit_to_size) {
 	int err = 0;
 	mongo::BSONObjBuilder query_master;
 	mongo::BSONObjBuilder return_field;
 	std::vector<mongo::BSONObj> results;
 	try{
-		
+		std::string _prefix_filter = prefix_filter;
 		//after the prefix we need to add the regex
-		prefix_filter.append(".*");
+		_prefix_filter.append(".*");
 		
-		query_master << "$query" << BSON(MONGO_DB_FIELD_FILE_VFS_DOMAIN << vfs_domain << MONGO_DB_FIELD_FILE_VFS_PATH << BSON("$regex" << prefix_filter))
+		query_master << "$query" << BSON(MONGO_DB_FIELD_FILE_VFS_DOMAIN << vfs_domain << MONGO_DB_FIELD_FILE_VFS_PATH << BSON("$regex" << _prefix_filter))
 					<< "$orderby" << BSON(MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS << 1);
 		//search for domain
 		//query_master << MONGO_DB_FIELD_FILE_VFS_DOMAIN << vfs_domain;
 
 		
-		//query_master << MONGO_DB_FIELD_FILE_VFS_PATH << BSON("$regex" << prefix_filter);
+		//query_master << MONGO_DB_FIELD_FILE_VFS_PATH << BSON("$regex" << _prefix_filter);
 		
 		return_field << MONGO_DB_FIELD_FILE_VFS_PATH << 1 << "_id" << 0;
 		
@@ -611,7 +611,7 @@ int MongoDBDriver::vfsGetFilePathForDomain(std::string vfs_domain, std::string p
 		
 		DEBUG_CODE(MDBID_LDBG_ << "vfsGetFilePathForDomain query ---------------------------------------------";)
 		DEBUG_CODE(MDBID_LDBG_ << "Domain: " << vfs_domain;)
-		DEBUG_CODE(MDBID_LDBG_ << "Prefix: " << prefix_filter;)
+		DEBUG_CODE(MDBID_LDBG_ << "Prefix: " << _prefix_filter;)
 		DEBUG_CODE(MDBID_LDBG_ << "Query: "  << q_obj.jsonString();)
 		DEBUG_CODE(MDBID_LDBG_ << "Selected Fileds: "  << f_obj.jsonString();)
 		DEBUG_CODE(MDBID_LDBG_ << "vfsGetFilePathForDomain query ---------------------------------------------";)
@@ -643,6 +643,7 @@ int MongoDBDriver::idxAddDataPackIndex(const DataPackIndex& index) {
 		index_builder << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_PATH << getDataBlockFromFileLocation(index.dst_location)->vfs_path;
 		index_builder << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET << (long long)getDataBlockOffsetFromFileLocation(index.dst_location);
 		index_builder << MONGO_DB_IDX_DATA_PACK_SIZE << (int32_t)index.datapack_size;
+		index_builder << MONGO_DB_IDX_DATA_PACK_STATE << (int32_t)DataPackIndexQueryStateCreated;
 		
 		DEBUG_CODE(MDBID_LDBG_ << "idxAddDataPackIndex insert ---------------------------------------------";)
 		DEBUG_CODE(MDBID_LDBG_ << "did: " << index.did;)
@@ -680,6 +681,36 @@ int MongoDBDriver::idxDeleteDataPackIndex(const DataPackIndex& index) {
 	return err;
 }
 
+//! set the state on all datapack index for an datablock
+int MongoDBDriver::idxSetDataPackIndexStateByDataBlock(const std::string& vfs_datablock_domain,
+													   const std::string& vfs_datablock_path,
+													   DataPackIndexQueryState dp_index_state) {
+	int err = 0;
+	mongo::BSONObjBuilder index_search_builder;
+	mongo::BSONObjBuilder bson_block_update;
+	try{
+		//add default index information
+		index_search_builder << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_DOMAIN << vfs_datablock_domain;
+		index_search_builder << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_PATH << vfs_datablock_path;
+		mongo::BSONObj q = index_search_builder.obj();
+		DEBUG_CODE(MDBID_LDBG_ << "idxSetDataPackIndexStateByDataBlock insert ---------------------------------------------";)
+		DEBUG_CODE(MDBID_LDBG_ << "query: " << q.jsonString());
+		DEBUG_CODE(MDBID_LDBG_ << "idxSetDataPackIndexStateByDataBlock insert ---------------------------------------------";)
+		
+		bson_block_update << "$set"<< BSON(MONGO_DB_IDX_DATA_PACK_STATE << (int32_t)dp_index_state);
+		
+		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), q, bson_block_update.obj(), false, true);
+		if(err) {
+			MDBID_LERR_ << "Error " << err << " updating state on all datablock index";
+		}
+
+	} catch( const mongo::DBException &e ) {
+		MDBID_LERR_ << e.what();
+		err = -1;
+	}
+	return err;
+}
+
 //! perform a search on data pack indexes
 int MongoDBDriver::idxStartSearchDataPack(const DataPackIndexQuery& data_pack_index_query, DBIndexCursor **index_cursor) {
 	int err=-1;
@@ -690,6 +721,7 @@ int MongoDBDriver::idxStartSearchDataPack(const DataPackIndexQuery& data_pack_in
 	return err;
 }
 
+#pragma mark Protected Query Function
 //-------------------------- protected method------------------------------
 //! protected methdo that perform the real paged query on index called by the cursor
 int MongoDBDriver::idxSearchResultCountDataPack(const DataPackIndexQuery& data_pack_index_query,  uint64_t& num_of_result) {
@@ -699,6 +731,7 @@ int MongoDBDriver::idxSearchResultCountDataPack(const DataPackIndexQuery& data_p
 	try{
 		//add default index information
 		index_search_builder << MONGO_DB_IDX_DATA_PACK_DID << data_pack_index_query.did;
+		index_search_builder << MONGO_DB_IDX_DATA_PACK_STATE << (int32_t)DataPackIndexQueryStateQuerable; //select only querable indexes
 		index_search_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC << BSON("$gte" << (long long)data_pack_index_query.start_ts <<
 																	  "$lte" << (long long)data_pack_index_query.end_ts);
 		
@@ -728,10 +761,10 @@ int MongoDBDriver::idxSearchDataPack(const DataPackIndexQuery& data_pack_index_q
 	try{
 		//add default index information
 		index_search_builder << MONGO_DB_IDX_DATA_PACK_DID << data_pack_index_query.did;
+		index_search_builder << MONGO_DB_IDX_DATA_PACK_STATE << (int32_t)DataPackIndexQueryStateQuerable; //select only querable indexes
 		index_search_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC << BSON("$gte" << (long long)data_pack_index_query.start_ts);
-		//index_search_builder << MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC << BSON("$gte" << (long long)data_pack_index_query.start_ts <<
-		//																	  "$lte" << (long long)data_pack_index_query.end_ts);
 		
+		//set the field to return
 		return_field << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_DOMAIN << 1
 					 << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_PATH << 1
 					 << MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET << 1
@@ -739,12 +772,11 @@ int MongoDBDriver::idxSearchDataPack(const DataPackIndexQuery& data_pack_index_q
 					 << MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC << 1;
 		
 		mongo::BSONObj q = index_search_builder.obj();
+		mongo::BSONObj r = return_field.obj();
 		DEBUG_CODE(MDBID_LDBG_ << "idxDeleteDataPackIndex insert ---------------------------------------------";)
 		DEBUG_CODE(MDBID_LDBG_ << "query: " << q.jsonString());
 		DEBUG_CODE(MDBID_LDBG_ << "idxDeleteDataPackIndex insert ---------------------------------------------";)
-		
-		mongo::BSONObj r = return_field.obj();
-		//cursor = ha_connection_pool->query(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), q, 0, 0, &r);
+
 		ha_connection_pool->findN(found_element, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), q, limit_to, 0, &r);
 	} catch( const mongo::DBException &e ) {
 		MDBID_LERR_ << e.what();
@@ -760,15 +792,26 @@ int MongoDBDriver::idxMaxAndMInimumTimeStampForDataPack(const DataPackIndexQuery
 	mongo::BSONObj r_max;
 	mongo::BSONObj r_min;
 	mongo::BSONObjBuilder	return_field;
+	mongo::BSONObjBuilder	index_search_builder;
 	try{
-
 		return_field << MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC << 1;
 		
+		index_search_builder << MONGO_DB_IDX_DATA_PACK_DID << data_pack_index_query.did;
+		index_search_builder << MONGO_DB_IDX_DATA_PACK_STATE << (int32_t)DataPackIndexQueryStateQuerable; //select only querable indexes
+
 		mongo::BSONObj p = return_field.obj();
-		if((err = ha_connection_pool->findOne(r_max, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), mongo::Query().sort(MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC,-1), &p))){
-			MDBID_LDBG_ << "Error getting maximum timestamp on index of " << data_pack_index_query.did;
-		} else if((err = ha_connection_pool->findOne(r_min, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), mongo::Query().sort(MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC,1), &p))) {
-			MDBID_LDBG_ << "Error getting minimum timestamp on index of " << data_pack_index_query.did;
+		mongo::BSONObj q = index_search_builder.obj();
+		DEBUG_CODE(MDBID_LDBG_ << "idxMaxAndMInimumTimeStampForDataPack insert ---------------------------------------------";)
+		DEBUG_CODE(MDBID_LDBG_ << "query: " << q.jsonString());
+		DEBUG_CODE(MDBID_LDBG_ << "idxMaxAndMInimumTimeStampForDataPack insert ---------------------------------------------";)
+
+		if((err = ha_connection_pool->findOne(r_max, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), mongo::Query(q).sort(MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC,-1), &p))){
+			MDBID_LERR_ << "Error getting maximum timestamp on index of " << data_pack_index_query.did;
+		} else if((err = ha_connection_pool->findOne(r_min, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_IDX_DATA_PACK_COLLECTION), mongo::Query(q).sort(MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC,1), &p))) {
+			MDBID_LERR_ << "Error getting minimum timestamp on index of " << data_pack_index_query.did;
+		} else if(r_min.isEmpty() || r_max.isEmpty()) {
+			MDBID_LERR_ << "No max or min found for " << data_pack_index_query.did;
+			err = -1000;
 		} else {
 			min_ts = (uint64_t)r_min.getField(MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC).Long();
 			max_ts = (uint64_t)r_max.getField(MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC).Long();

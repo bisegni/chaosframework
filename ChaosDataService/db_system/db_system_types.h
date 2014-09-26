@@ -61,6 +61,11 @@ namespace chaos {
 				~DataPackIndexQueryResult(){if(dst_location) delete dst_location;}
 			};
 			
+			typedef enum DataPackIndexQueryState {
+				DataPackIndexQueryStateCreated = 0,
+				DataPackIndexQueryStateQuerable
+			}DataPackIndexQueryState;
+			
 			//! define the query that can be applied to the DataPackINdex
 			struct DataPackIndexQuery {
 				

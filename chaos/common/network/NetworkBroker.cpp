@@ -503,7 +503,7 @@ MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress
     MessageChannel *channel = NULL;
     switch (type) {
         case RAW:
-            channel = new MessageChannel(this, nodeNetworkAddress->ipPort.c_str());
+            channel = new MessageChannel(this, nodeNetworkAddress->ipPort);
             delete(nodeNetworkAddress);
             break;
             
