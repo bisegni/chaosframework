@@ -179,12 +179,10 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
         
 		//RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
         if(!das_map.count(actionDomain)) throw CException(3, "Action Domain not registered", "DefaultCommandDispatcher::dispatchCommand");
-        
-		//#ifdef DEBUG
-		//        LDEF_CMD_DISPTC_APP_ << "Received the message content:-----------------------START";
-		//        LDEF_CMD_DISPTC_APP_ << commandPack->getJSONString();
-		//        LDEF_CMD_DISPTC_APP_ << "Received the message content:-------------------------END";
-		//#endif
+		
+		LDEF_CMD_DISPTC_DBG_ << "Received the message content:-----------------------START";
+		LDEF_CMD_DISPTC_DBG_ << commandPack->getJSONString();
+		LDEF_CMD_DISPTC_DBG_ << "Received the message content:-------------------------END";
         
 		//submit the action(Thread Safe)
 		//ElementManagingPolicy ep;

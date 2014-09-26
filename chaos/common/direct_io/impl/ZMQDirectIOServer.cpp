@@ -125,8 +125,8 @@ void ZMQDirectIOServer::deinit() throw(chaos::CException) {
 #define PS_STR(x) (x?"service":"priority")
 void ZMQDirectIOServer::worker(bool priority_service) {
 	char						header_buffer[DIRECT_IO_HEADER_SIZE];
-	int							linger				= 0;
-	int							water_mark			= 0;
+	int							linger				= 500;
+	int							water_mark			= 500;
 	int							timeout				= 200;
 	void						*socket				= NULL;
     int							err					= 0;

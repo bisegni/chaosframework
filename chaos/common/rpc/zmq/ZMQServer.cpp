@@ -114,8 +114,9 @@ void ZMQServer::executeOnThread(){
     
         //data pack pointer
     int err = 0;
-//	int	linger = 0;
-//	int	water_mark = 1;
+	int	linger = 500;
+	int	water_mark = 100;
+	int	send_timeout = 100;
     zmq_msg_t response;
 	CDataWrapper *cdataWrapperPack = NULL;
 	
@@ -129,12 +130,12 @@ void ZMQServer::executeOnThread(){
         ZMQS_LERR << "Thread id:" << boost::lexical_cast<std::string>(boost::this_thread::get_id()) << "binded with error";
         return;
     }
-	//err = zmq_setsockopt(receiver, ZMQ_LINGER, &linger, sizeof(int));
-	//if(err) {
-	//	ZMQS_LERR << "Error setting ZMQ_LINGER value";
-	//	return;
-	//}
-	/*err = zmq_setsockopt(receiver, ZMQ_RCVHWM, &water_mark, sizeof(int));
+	err = zmq_setsockopt(receiver, ZMQ_LINGER, &linger, sizeof(int));
+	if(err) {
+		ZMQS_LERR << "Error setting ZMQ_LINGER value";
+		return;
+	}
+	err = zmq_setsockopt(receiver, ZMQ_RCVHWM, &water_mark, sizeof(int));
 	if(err) {
 		ZMQS_LERR << "Error setting ZMQ_RCVHWM value";
 		return;
@@ -143,7 +144,12 @@ void ZMQServer::executeOnThread(){
 	if(err) {
 		ZMQS_LERR << "Error setting ZMQ_SNDHWM value";
 		return;
-	}*/
+	}
+	err = zmq_setsockopt(receiver, ZMQ_SNDTIMEO, &send_timeout, sizeof(int));
+	if(err) {
+		ZMQS_LERR << "Error setting ZMQ_SNDHWM value";
+		return;
+	}
     while (runServer) {
         try {
             zmq_msg_t request;
