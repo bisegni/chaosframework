@@ -29,6 +29,7 @@ namespace chaos {
 	class SocketInfo {
 	public:
 		void *socket;
+		std::string endpoint;
 		boost::shared_mutex socket_mutex;
 		
 		SocketInfo():socket(NULL){};

@@ -150,7 +150,7 @@ boost::shared_ptr<SocketInfo> ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi
 	if(!map_socket.count(nfi->destinationAddr)) {
 		ZMQC_LDBG << "Create new socket for " << nfi->destinationAddr;
 		boost::shared_ptr<SocketInfo>  socket_info_ptr(new SocketInfo());
-		
+		socket_info_ptr->endpoint = nfi->destinationAddr;
 		socket_info_ptr->socket = zmq_socket (zmqContext, ZMQ_REQ);
 		//this implementation is too slow, client for ip need to be cached
 		if(!socket_info_ptr->socket) {
@@ -175,9 +175,11 @@ boost::shared_ptr<SocketInfo> ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi
 		}
 		
 		if(err) {
-			disposeSocket(socket_info_ptr);
+			zmq_close(socket_info_ptr->socket);
+			socket_info_ptr->socket = NULL;
+			socket_info_ptr.reset();
 		} else {
-			map_socket.insert(make_pair(nfi->destinationAddr, socket_info_ptr));
+			map_socket.insert(make_pair(socket_info_ptr->endpoint, socket_info_ptr));
 		}
 		return socket_info_ptr;
 	} else {
@@ -187,6 +189,8 @@ boost::shared_ptr<SocketInfo> ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi
 }
 
 void ZMQClient::disposeSocket(boost::shared_ptr<SocketInfo> socket_info_to_dispose) {
+	boost::unique_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
+	map_socket.erase(socket_info_to_dispose->endpoint);
 	zmq_close(socket_info_to_dispose->socket);
 	socket_info_to_dispose->socket = NULL;
 	socket_info_to_dispose.reset();
@@ -251,9 +255,11 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
 			}
 		}
 	}catch (std::exception& e) {
+		disposeSocket(socket_info);
 		ZMQC_LAPP << "Error during message forwarding:"<< e.what();
 		return;
 	} catch (...) {
+		disposeSocket(socket_info);
 		ZMQC_LAPP << "General error during message forwarding:";
 		return;
 	}
