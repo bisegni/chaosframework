@@ -43,7 +43,7 @@ public class JMQRPCClient extends RPCClient {
 				SocketSlot socketSlot = new SocketSlot();
 				socketSlot.socket = context.createSocket(ZMQ.ZMQ_REQ);
 				socketSlot.socket.setSendTimeOut(5000);
-				socketSlot.socket.setReceiveTimeOut(10000);
+				socketSlot.socket.setReceiveTimeOut(5000);
 				socketSlot.socket.setSndHWM(30);
 				socketSlot.socket.setLinger(1000);
 				socketSlot.socket.connect(serverAddress);
@@ -63,17 +63,22 @@ public class JMQRPCClient extends RPCClient {
 				byte[] rawData = encoder.encode(messageData);
 
 				if (!socketSlot.socket.send(rawData)) {
-					System.err.println("JMQRPCClient - Error sending data");
-					return;
+					throw new Throwable("Error on sending");
 				}
 
 				if ((rawData = socketSlot.socket.recv()) == null) {
-					System.err.println("JMQRPCClient - Error receiving the answer data");
-					return;
+					throw new Throwable("Error on sending");
 				}
 				BasicBSONObject bsonResult = (BasicBSONObject) decoder.readObject(rawData);
 				System.out.println("Submission result->" + bsonResult);
 			} catch (Throwable e) {
+				synchronized (serverSlotHashtable) {
+					try {
+						socketSlot.socket.close();
+					} catch (Exception e2) {
+					}
+					serverSlotHashtable.remove(serverAddress);
+				}
 				throw e;
 			} finally {
 			}
