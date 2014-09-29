@@ -144,7 +144,7 @@ bool ZMQClient::submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread
 boost::shared_ptr<SocketInfo> ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi) {
 	int	err = 0;
 	int linger = 500;
-	int water_mark = 30;
+	int water_mark = 100;
 	int timeout = 1000;
 	boost::shared_lock<boost::shared_mutex> lock_socket_map(map_socket_mutex);
 	if(!map_socket.count(nfi->destinationAddr)) {
@@ -163,9 +163,9 @@ boost::shared_ptr<SocketInfo> ZMQClient::getSocketForNFI(NetworkForwardInfo *nfi
 		} else if ((err = zmq_setsockopt(socket_info_ptr->socket, ZMQ_SNDHWM, &water_mark, sizeof(int)))) {
 			ZMQC_LERR << "Error setting ZMQ_SNDHWM value";
 		} else if ((err = zmq_setsockopt(socket_info_ptr->socket, ZMQ_SNDTIMEO, &timeout, sizeof(int)))) {
-			ZMQC_LERR << "Error setting ZMQ_SNDHWM value";
+			ZMQC_LERR << "Error setting ZMQ_SNDTIMEO value";
 		} else if ((err = zmq_setsockopt(socket_info_ptr->socket, ZMQ_RCVTIMEO, &timeout, sizeof(int)))) {
-			ZMQC_LERR << "Error setting ZMQ_SNDHWM value";
+			ZMQC_LERR << "Error setting ZMQ_RCVTIMEO value";
 		} else {
 			string url = "tcp://";
 			url.append(nfi->destinationAddr);
