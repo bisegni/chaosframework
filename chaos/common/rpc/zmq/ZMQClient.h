@@ -49,6 +49,7 @@ namespace chaos {
         virtual void processBufferElement(NetworkForwardInfo*, ElementManagingPolicy&) throw(CException);
         void *zmqContext;
 		boost::shared_ptr<SocketInfo> getSocketForNFI(NetworkForwardInfo *nfi);
+		void disposeSocket(boost::shared_ptr<SocketInfo> socket_info_to_dispose);
     public:
 
         /*

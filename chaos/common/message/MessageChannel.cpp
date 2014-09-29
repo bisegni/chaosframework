@@ -150,6 +150,18 @@ NetworkBroker* MessageChannel::getBroker(){
 	return broker;
 }
 
+int32_t MessageChannel::getLastErrorCode() {
+	return last_error_code;
+}
+
+const std::string& MessageChannel::getLastErrorMessage() {
+	return last_error_message;
+}
+
+const std::string& MessageChannel::getLastErrorDomain() {
+	return last_error_domain;
+}
+
 /*!
  called when a result of an
  */

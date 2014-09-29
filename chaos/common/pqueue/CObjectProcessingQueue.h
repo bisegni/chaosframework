@@ -33,7 +33,7 @@
 #define COPQUEUE_LAPP_ LAPP_ << LOG_HEAD
 #define COPQUEUE_LDBG_ LDBG_ << LOG_HEAD
 
-
+#define CObjectProcessingQueue_MAX_ELEMENT_IN_QUEUE 1000
 namespace chaos {
     using namespace std;
     using namespace boost;
@@ -55,8 +55,8 @@ namespace chaos {
     protected:
         queue<T*> bufferQueue;
         //boost::lockfree::queue<T*> bufferQueue;
-        bool inDeinit;
-        int outputThreadNumber;
+        bool in_deinit;
+        int output_thread_number;
         mutable boost::mutex qMutex;
         boost::condition_variable liveThreadConditionLock;
         boost::condition_variable emptyQueueConditionLock;
@@ -68,7 +68,7 @@ namespace chaos {
          */
         void executeOnThread() {
 			//get the oldest element
-			while(!inDeinit) {
+			while(!in_deinit) {
 				T* dataRow = NULL;
 				ElementManagingPolicy elementPolicy;
                 //retrive the oldest element
@@ -108,10 +108,10 @@ namespace chaos {
     public:
         int tag;
         
-        CObjectProcessingQueue(){
-            inDeinit = false;
-            eventListener=0L;
-			uid = chaos::UUIDUtil::generateUUIDLite();
+		CObjectProcessingQueue():
+		in_deinit(false),
+		eventListener(NULL),
+		uid(chaos::UUIDUtil::generateUUIDLite()){
         }
 		
         /*
@@ -125,7 +125,7 @@ namespace chaos {
 		 Initialization method for output buffer
          */
         virtual void init(int threadNumber) throw(CException) {
-            inDeinit = false;
+            in_deinit = false;
             COPQUEUE_LDBG_ << " init";
 			//add the n thread on the threadgroup
             COPQUEUE_LDBG_ << " creating and starting" << threadNumber << " thread";
@@ -141,7 +141,7 @@ namespace chaos {
 			 */
 			virtual void deinit(bool waithForEmptyQueue=true) throw(CException) {
 				boost::mutex::scoped_lock lock(qMutex);
-				inDeinit = true;
+				in_deinit = true;
 				COPQUEUE_LDBG_ << " Deinitialization";
                 //stopping the group
 				COPQUEUE_LDBG_ << " Deinitializing Threads";
@@ -169,7 +169,7 @@ namespace chaos {
 			 */
 			virtual bool push(T* data) throw(CException) {
 				boost::mutex::scoped_lock lock(qMutex);
-				if(inDeinit) return false;
+				if(in_deinit || bufferQueue.size() > CObjectProcessingQueue_MAX_ELEMENT_IN_QUEUE) return false;
 				bufferQueue.push(data);
 				lock.unlock();
 				liveThreadConditionLock.notify_all();
@@ -184,7 +184,7 @@ namespace chaos {
                 //output result poitner
 				T *oldestElement = NULL;
 				//DEBUG_CODE(COPQUEUE_LDBG_<< " waitAndPop() begin to wait";)
-				while(bufferQueue.empty() && !inDeinit) {
+				while(bufferQueue.empty() && !in_deinit) {
 					emptyQueueConditionLock.notify_one();
 					liveThreadConditionLock.wait(lock);
 				}

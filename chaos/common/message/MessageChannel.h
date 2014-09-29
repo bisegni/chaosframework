@@ -49,6 +49,19 @@ e = ErrorCode::EC_TIMEOUT;\
 } else if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) {\
 e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);\
 }
+	
+#define MC_PARSE_RESULT(x) \
+if(!x.get()) {\
+last_error_code = ErrorCode::EC_TIMEOUT;\
+} else {\
+if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE)) last_error_code = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE);\
+if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE)) last_error_message = x->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE);\
+if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN)) last_error_domain = x->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN);\
+}
+	
+#define MC_GET_RESULT_DATA(x)\
+if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE);
+	
 	/*! \} */
     
     typedef void (*MessageHandler)(atomic_int_type, common::data::CDataWrapper*);
@@ -75,7 +88,7 @@ e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_COD
         
 		//! channel id (action domain)
         string channelID;
-        
+		
 		//!multi key semaphore for manage the return of the action and result association to the reqeust id
         MultiKeyObjectWaitSemaphore<atomic_int_type,common::data::CDataWrapper*> sem;
         
@@ -114,6 +127,15 @@ e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_COD
     protected:
 		//! Message broker associated with the channel instance
         NetworkBroker *broker;
+
+		//!last error domain
+		std::string last_error_domain;
+		
+		//!last error message
+		std::string last_error_message;
+		
+		//!error code
+		int32_t last_error_code;
 		
         /*!
          Private constructor called by NetworkBroker
@@ -144,6 +166,11 @@ e = x->getInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_COD
 		NetworkBroker * getBroker();
 		
     public:
+		int32_t getLastErrorCode();
+		
+		const std::string& getLastErrorMessage();
+		
+		const std::string& getLastErrorDomain();
 		
         /*!
          \brief send a message
