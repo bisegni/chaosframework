@@ -22,12 +22,15 @@
 #include <iostream>
 #include <fstream>
 #include <unistd.h>
+#include <sstream>
 
+#include <chaos/common/bson/util/base64.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/network/CNodeNetworkAddress.h>
 #include <chaos/ui_toolkit/ChaosUIToolkit.h>
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
+
 
 #include <chaos/common/bson/bson.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -39,14 +42,14 @@ using namespace chaos::ui;
 using namespace bson;
 using namespace boost;
 
-#define OPT_CU_ID           "device_id"
+#define OPT_CU_ID           "device-id"
 #define OPT_TIMEOUT         "timeout"
-#define OPT_DST_TARGET      "dest_target"
-#define OPT_DST_FILE        "dest_file"
-#define OPT_DST_TYPE        "dest_type"
+#define OPT_DST_TARGET      "dest-target"
+#define OPT_DST_FILE        "dest-file"
+#define OPT_DST_TYPE        "dest-type"
 
-#define OPT_START_TIME      "start_time"
-#define OPT_END_TIME		"end_time"
+#define OPT_START_TIME      "start-time"
+#define OPT_END_TIME		"end-time"
 
 
 void sendBackOnRow() {
@@ -82,6 +85,78 @@ int computePercent(uint64_t done, uint64_t all) {
 	return result;
 }
 
+chaos::common::data::SerializationBuffer *getCSVDecoding( DeviceController& controller, const std::vector<std::string>& output_element_name, CDataWrapper& data_pack) {
+	chaos::common::data::SerializationBuffer *result = NULL;
+	std::stringstream csv_lin;
+	chaos::RangeValueInfo attribute_info;
+	
+	int idx = 0;
+	for(std::vector<std::string>::const_iterator it = output_element_name.begin();
+		it < output_element_name.end();
+		it++){
+		//fetch the type
+		controller.getDeviceAttributeRangeValueInfo(*it, attribute_info);
+		
+		//write the data in csv way
+		switch(attribute_info.valueType){
+			case DataType::TYPE_BOOLEAN:{
+				if(data_pack.hasKey((*it).c_str())){
+					csv_lin << data_pack.getBoolValue((*it).c_str());
+				}
+				break;
+			}
+				
+			case DataType::TYPE_BYTEARRAY:{
+				int len;
+				std::stringstream binary_field;
+				const char * base_addr = data_pack.getBinaryValue((*it).c_str(), len);
+				bson::base64::encode( binary_field , base_addr , len );
+				csv_lin << binary_field.str();
+				break;
+			}
+				
+			case DataType::TYPE_DOUBLE:
+				if(data_pack.hasKey((*it).c_str())){
+					csv_lin << data_pack.getDoubleValue((*it).c_str());
+				}
+				break;
+			case DataType::TYPE_INT32:{
+				if(data_pack.hasKey((*it).c_str())){
+					csv_lin << data_pack.getInt32Value((*it).c_str());
+				}
+				break;
+			}
+				
+			case DataType::TYPE_INT64:{
+				if(data_pack.hasKey((*it).c_str())){
+					csv_lin << data_pack.getInt64Value((*it).c_str());
+				}
+				break;
+			}
+				
+			case DataType::TYPE_STRING:{
+				if(data_pack.hasKey((*it).c_str())){
+					csv_lin << data_pack.getStringValue((*it).c_str());
+				}
+				break;
+			}
+				
+			default:
+				break;
+		}
+		if(++idx < output_element_name.size()) {
+			csv_lin << ",";
+		}else{
+			csv_lin << std::endl;
+		}
+	}
+	std::string line = csv_lin.str();
+	if(line.size()>0) {
+		result = new chaos::common::data::SerializationBuffer(line.c_str(), line.size());
+	}
+	return result;
+}
+
 int main(int argc, char* argv[])
 {
 	char buf[255];
@@ -89,7 +164,7 @@ int main(int argc, char* argv[])
 	uint32_t timeout;
 	string device_id;
 	string dst_file;
-	bool dest_type;
+	unsigned int dest_type;
 	string start_time;
 	string end_time;
 	std::string err_str;
@@ -107,7 +182,7 @@ int main(int argc, char* argv[])
 		//! [UIToolkit Attribute Init]
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_CU_ID, "The identification string of the device", &device_id);
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_TIMEOUT, "Timeout for wait the answer in milliseconds", 2000, &timeout);
-		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<bool>(OPT_DST_TYPE, "Destination date type binary(true) or string(false)", true, &dest_type);
+		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<unsigned int>(OPT_DST_TYPE, "Destination date type [binary(0), JSON(1), CSV(2)]", 0, &dest_type);
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_DST_FILE, "Destination file for save found datapack", &dst_file);
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_START_TIME, "Time for first datapack to find [format from %Y-%m-%dT%H:%M:%S.%f to %Y]", &start_time);
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_END_TIME, "Time for last datapack to find [format from %Y-%m-%dT%H:%M:%S.%f to %Y]", &end_time);
@@ -146,7 +221,18 @@ int main(int argc, char* argv[])
 			std::cout << "Auto destination file generation" << std::endl;
 			getcwd(buf, 255);
 			dst_file.assign(buf, strlen(buf));
-			dst_file += "/"+device_id+".exp";
+			dst_file += "/"+device_id;
+			switch(dest_type) {
+				case 0:
+					dst_file.append(".bin");
+					break;
+				case 1:
+					dst_file.append(".json");
+					break;
+				case 2:
+					dst_file.append(".cvs");
+					break;
+			}
 		}
 		std::basic_ios<char>::openmode dst_file_mode = ios_base::out;
 		if(dest_type) {
@@ -166,8 +252,29 @@ int main(int argc, char* argv[])
 		DeviceController *controller = HLDataApi::getInstance()->getControllerForDeviceID(device_id, timeout);
 		if(!controller) throw CException(4, "Error allcoating decive controller", "device controller creation");
 		
+		
 		chaos::common::io::QueryFuture *query_future = NULL;
 		controller->executeTimeIntervallQuery(start_ts, end_ts, &query_future);
+		
+		std::vector<std::string> output_element_name;
+		//fetche the output element of the device
+		controller->getDeviceDatasetAttributesName(output_element_name, DataType::Output);
+
+		//create header
+		if(dest_type == 2) {
+			
+			//write header
+			int idx = 0;
+			for(std::vector<std::string>::const_iterator it = output_element_name.begin();
+				it < output_element_name.end();
+				it++){
+				(*destination_stream) << *it;
+				if(++idx < output_element_name.size()) {
+					(*destination_stream) << ",";
+				}
+			}
+		}
+		
 		if(query_future) {
 			query_future->waitForBeginResult();
 			while(query_future->getState() ==chaos::common::io::QueryFutureStateStartResult ||
@@ -175,11 +282,28 @@ int main(int argc, char* argv[])
 				auto_ptr<CDataWrapper> q_result(query_future->getDataPack(true, timeout));
 				if(q_result.get()) {
 					retry = 0;
+					auto_ptr<chaos::common::data::SerializationBuffer> ser;
 					//get serialization buffer by type
-					auto_ptr<chaos::common::data::SerializationBuffer> ser(dest_type?q_result->getBSONData():q_result->getJSONData());
+					switch (dest_type) {
+							//BSON
+						case 0:{
+							ser.reset(q_result->getBSONData());
+							break;
+						}
+							//JSON
+						case 1:{
+							ser.reset(q_result->getJSONData());
+							break;
+						}
+							//CSV
+						case 2:{
+							ser.reset(getCSVDecoding(*controller, output_element_name, *q_result.get()));
+							break;
+						}
+					}
+					//write the data
+					if(ser.get())destination_stream->write(ser->getBufferPtr(), ser->getBufferLen());
 					
-					//write data
-					destination_stream->write(ser->getBufferPtr(), ser->getBufferLen());
 				} else {
 					break;
 				}

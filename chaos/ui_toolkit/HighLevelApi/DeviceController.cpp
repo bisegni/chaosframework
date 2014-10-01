@@ -129,7 +129,7 @@ void DeviceController::getDeviceDatasetAttributesName(vector<string>& attributes
 }
 
 //---------------------------------------------------------------------------------------------------
-void DeviceController::getAttributeDescription(string& attributesName, string& attributeDescription) {
+void DeviceController::getAttributeDescription(const string& attributesName, string& attributeDescription) {
     datasetDB.getAttributeDescription(attributesName, attributeDescription);
 }
 
@@ -139,11 +139,11 @@ void DeviceController::getDeviceDatasetAttributesName(vector<string>& attributes
 }
 
 //---------------------------------------------------------------------------------------------------
-void DeviceController::getDeviceAttributeRangeValueInfo(string& attributesName, chaos::RangeValueInfo& rangeInfo) {
+void DeviceController::getDeviceAttributeRangeValueInfo(const string& attributesName, chaos::RangeValueInfo& rangeInfo) {
     datasetDB.getAttributeRangeValueInfo(attributesName, rangeInfo);
 }
 //---------------------------------------------------------------------------------------------------
-int DeviceController::getDeviceAttributeDirection(string& attributesName, DataType::DataSetAttributeIOAttribute& directionType) {
+int DeviceController::getDeviceAttributeDirection(const string& attributesName, DataType::DataSetAttributeIOAttribute& directionType) {
     return datasetDB.getAttributeDirection(attributesName, directionType);
 }
 
@@ -194,7 +194,7 @@ int DeviceController::getAttributeStrValue(string attribute_name, string& attrib
 	return err;
 }
 //---------------------------------------------------------------------------------------------------
-int DeviceController::getDeviceAttributeType(string& attributesName, DataType::DataType& type) {
+int DeviceController::getDeviceAttributeType(const string& attributesName, DataType::DataType& type) {
 	int err = 0;
 	if(attributeTypeMap.count(attributesName)){
 		type = attributeTypeMap[attributesName];

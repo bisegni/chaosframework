@@ -159,7 +159,7 @@ namespace chaos {
             /*!
              Get description for attribute name
              */
-            void getAttributeDescription(string& attributesName, string& attributeDescription);
+            void getAttributeDescription(const string& attributesName, string& attributeDescription);
             /*!
              Get all attribute name
              */
@@ -167,17 +167,17 @@ namespace chaos {
             /*!
              Get range valu einfo for attrbiute name
              */
-            void getDeviceAttributeRangeValueInfo(string& attributesName, chaos::RangeValueInfo& rangeInfo);
+            void getDeviceAttributeRangeValueInfo(const string& attributesName, chaos::RangeValueInfo& rangeInfo);
             /*!
              Get the direction of the attribute
              */
-            int getDeviceAttributeDirection(string& attributesName, DataType::DataSetAttributeIOAttribute& directionType);
+            int getDeviceAttributeDirection(const string& attributesName, DataType::DataSetAttributeIOAttribute& directionType);
             /*!
              Get the direction of the attribute
              */
-            int getDeviceAttributeType(string& attributesName, DataType::DataType& type);
+            int getDeviceAttributeType(const string& attributesName, DataType::DataType& type);
             
-			int getAttributeStrValue(string attributesName, string& attribute_value);
+			int getAttributeStrValue(const string attributesName, string& attribute_value);
 			
 			//! Get the type of the control unit
 			/*!
