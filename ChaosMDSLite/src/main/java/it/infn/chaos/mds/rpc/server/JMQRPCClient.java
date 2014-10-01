@@ -5,6 +5,7 @@ import java.util.Hashtable;
 import it.infn.chaos.mds.RPCConstants;
 
 import org.bson.BasicBSONObject;
+import org.ref.common.helper.ExceptionHelper;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ.Socket;
 
@@ -59,24 +60,31 @@ public class JMQRPCClient extends RPCClient {
 		String serverAddress = "tcp://" + (messageData.containsField(RPCConstants.CS_CMDM_REMOTE_HOST_IP) ? messageData.getString(RPCConstants.CS_CMDM_REMOTE_HOST_IP) : null);
 		SocketSlot socketSlot = getSocketForADDR(serverAddress);
 		synchronized (socketSlot) {
+			if(socketSlot.inError) {
+				System.out.println("socke in error got new one for " + serverAddress);
+				socketSlot = getSocketForADDR(serverAddress);
+			}
 			try {
 				byte[] rawData = encoder.encode(messageData);
 
 				if (!socketSlot.socket.send(rawData)) {
-					throw new Throwable("Error on sending");
+					throw new Throwable("Error on sending to "+serverAddress);
 				}
 
 				if ((rawData = socketSlot.socket.recv()) == null) {
-					throw new Throwable("Error on sending");
+					throw new Throwable("Error on receiving to "+serverAddress);
 				}
 				BasicBSONObject bsonResult = (BasicBSONObject) decoder.readObject(rawData);
-				System.out.println("Submission result->" + bsonResult);
+				//System.out.println("Submission result->" + bsonResult);
 			} catch (Throwable e) {
+				System.out.println("Exception->" + ExceptionHelper.getInstance().printExceptionStack(e));
 				synchronized (serverSlotHashtable) {
 					try {
+						socketSlot.inError = true;
 						socketSlot.socket.close();
 					} catch (Exception e2) {
 					}
+					System.out.println("Removing slot from hash table for "+serverAddress);
 					serverSlotHashtable.remove(serverAddress);
 				}
 				throw e;
@@ -87,6 +95,7 @@ public class JMQRPCClient extends RPCClient {
 
 	class SocketSlot {
 		Socket	socket;
+		boolean inError = false;
 	}
 
 }

@@ -122,7 +122,7 @@ public class USEditInfoView extends RefVaadinBasePanel implements com.vaadin.dat
 	 * @see com.vaadin.data.Container.PropertySetChangeListener#containerPropertySetChange(com.vaadin.data.Container.PropertySetChangeEvent)
 	 */
 	public void containerPropertySetChange(com.vaadin.data.Container.PropertySetChangeEvent event) {
-		System.out.println(event);
+		//System.out.println(event);
 
 	}
 

@@ -451,7 +451,7 @@ public class UnitServerDA extends DataAccess {
 			result = (Vector<UnitServerCuInstance>) executeQueryPreparedStatementAndClose(ps, UnitServerCuInstance.class, null, null, false);
 			for (UnitServerCuInstance unitServerCuInstance : result) {
 				BasicBSONObject bdriverDescription = (BasicBSONObject) JSON.parse(unitServerCuInstance.getDrvSpec());
-				System.out.println(bdriverDescription);
+				//System.out.println(bdriverDescription);
 			}
 		} catch (Throwable e) {
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::returnAllUnitServerCUAssociationbyUSAlias");
@@ -474,7 +474,7 @@ public class UnitServerDA extends DataAccess {
 			result = (Vector<UnitServerCuInstance>) executeQueryPreparedStatementAndClose(ps, UnitServerCuInstance.class, null, null, false);
 			for (UnitServerCuInstance unitServerCuInstance : result) {
 				BasicBSONObject bdriverDescription = (BasicBSONObject) JSON.parse(unitServerCuInstance.getDrvSpec());
-				System.out.println(bdriverDescription);
+				//System.out.println(bdriverDescription);
 			}
 		} catch (Throwable e) {
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::returnAllUnitServerCUAssociationbyUSAlias");
