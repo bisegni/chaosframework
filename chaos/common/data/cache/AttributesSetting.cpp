@@ -177,7 +177,7 @@ void AttributesSetting::addAttribute(string name,
     mapAttributeNameIndex.insert(make_pair<string, VariableIndexType>(name, (tmpIndex=index++)));
     
     //add channel setting
-    boost::shared_ptr<ValueSetting> tmpSP(new ValueSetting(name, size, tmpIndex, type));
+    boost::shared_ptr<ValueSetting> tmpSP(new ValueSetting(name, tmpIndex, size, type));
     
     //add the relative bit
     bitmapChangedAttribute.push_back(false);

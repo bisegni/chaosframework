@@ -81,7 +81,10 @@ namespace chaos{
 					boost::dynamic_bitset<BitBlockDimension> * sharedBitmapChangedAttribute;
 					
 					//!pirvate constructor
-					ValueSetting( const std::string& _name, uint32_t _index, uint32_t _size, chaos::DataType::DataType type);
+					ValueSetting(const std::string& _name,
+								 uint32_t _index,
+								 uint32_t _size,
+								 chaos::DataType::DataType type);
 					
 					//!private destrucotr
 					~ValueSetting();
