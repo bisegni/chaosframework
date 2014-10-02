@@ -26,13 +26,12 @@
 
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandExecutor.h>
 
-namespace chaos_batch = chaos::common::batch_command;
-namespace chaos_data = chaos::common::data;
-namespace cs = chaos::cu::control_manager::slow_command;
-
 namespace chaos {
     namespace cu {
 		namespace control_manager {
+			using namespace chaos::common::batch_command;
+			using namespace chaos::common::data;
+			using namespace chaos::cu::control_manager::slow_command;
 			
 			class ControManager;
 			
@@ -68,19 +67,21 @@ namespace chaos {
 				 Receive the event for set the dataset input element, this virtual method
 				 is empty because can be used by controlunit implementation
 				 */
-				chaos_data::CDataWrapper* setDatasetAttribute(chaos_data::CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException);
+				CDataWrapper* setDatasetAttribute(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException);
 				
 				/*
 				 Event for update some CU configuration
 				 */
-				chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*, bool&) throw (CException);
+				CDataWrapper* updateConfiguration(CDataWrapper*, bool&) throw (CException);
 			protected:
 				
 				virtual void defineSharedVariable();
 				
 				void addCustomSharedVariable(std::string name, uint32_t max_size, chaos::DataType::DataType type);
-				void setVariableValue(chaos_batch::IOCAttributeSharedCache::SharedVeriableDomain domain, std::string name, void *value, uint32_t value_size);
-				chaos_batch::ValueSetting *getVariableValue(chaos_batch::IOCAttributeSharedCache::SharedVeriableDomain domain, const char *variable_name);
+				
+				void setVariableValue(IOCAttributeSharedCache::SharedVariableDomain domain, std::string name, void *value, uint32_t value_size);
+				
+				ValueSetting *getVariableValue(IOCAttributeSharedCache::SharedVariableDomain domain, const std::string& variable_name);
 				// Get all managem declare action instance
 				void _getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance);
 				

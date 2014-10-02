@@ -318,8 +318,8 @@
 		328FB18D15A9962300A1D8E7 /* RpcServerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328FB18C15A9962300A1D8E7 /* RpcServerHandler.h */; };
 		32919A0B1764E68F00724874 /* DriverAccessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32919A091764E68F00724874 /* DriverAccessor.cpp */; };
 		32919A0C1764E68F00724874 /* DriverAccessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 32919A0A1764E68F00724874 /* DriverAccessor.h */; };
-		3296031E1876B45000CDCADA /* AttributeSetting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3296030F1876B45000CDCADA /* AttributeSetting.cpp */; };
-		3296031F1876B45000CDCADA /* AttributeSetting.h in Headers */ = {isa = PBXBuildFile; fileRef = 329603101876B45000CDCADA /* AttributeSetting.h */; };
+		3296031E1876B45000CDCADA /* AttributesSetting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3296030F1876B45000CDCADA /* AttributesSetting.cpp */; };
+		3296031F1876B45000CDCADA /* AttributesSetting.h in Headers */ = {isa = PBXBuildFile; fileRef = 329603101876B45000CDCADA /* AttributesSetting.h */; };
 		329603221876B45000CDCADA /* BatchCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 329603141876B45000CDCADA /* BatchCommand.cpp */; };
 		329603231876B45000CDCADA /* BatchCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 329603151876B45000CDCADA /* BatchCommand.h */; };
 		329603241876B45000CDCADA /* BatchCommandConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 329603161876B45000CDCADA /* BatchCommandConstants.h */; };
@@ -874,8 +874,8 @@
 		3294905A159AF4BF00E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		3294905B159AF4D700E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		3294905C159AF4E600E86BD1 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
-		3296030F1876B45000CDCADA /* AttributeSetting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AttributeSetting.cpp; sourceTree = "<group>"; };
-		329603101876B45000CDCADA /* AttributeSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributeSetting.h; sourceTree = "<group>"; };
+		3296030F1876B45000CDCADA /* AttributesSetting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AttributesSetting.cpp; sourceTree = "<group>"; };
+		329603101876B45000CDCADA /* AttributesSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AttributesSetting.h; sourceTree = "<group>"; };
 		329603141876B45000CDCADA /* BatchCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BatchCommand.cpp; sourceTree = "<group>"; };
 		329603151876B45000CDCADA /* BatchCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchCommand.h; sourceTree = "<group>"; };
 		329603161876B45000CDCADA /* BatchCommandConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatchCommandConstants.h; sourceTree = "<group>"; };
@@ -2033,8 +2033,6 @@
 		3296030E1876B45000CDCADA /* batch_command */ = {
 			isa = PBXGroup;
 			children = (
-				3296030F1876B45000CDCADA /* AttributeSetting.cpp */,
-				329603101876B45000CDCADA /* AttributeSetting.h */,
 				329603141876B45000CDCADA /* BatchCommand.cpp */,
 				329603151876B45000CDCADA /* BatchCommand.h */,
 				329603181876B45000CDCADA /* BatchCommandExecutor.cpp */,
@@ -2283,6 +2281,8 @@
 		32CB737116FE40F9008575F0 /* cache */ = {
 			isa = PBXGroup;
 			children = (
+				3296030F1876B45000CDCADA /* AttributesSetting.cpp */,
+				329603101876B45000CDCADA /* AttributesSetting.h */,
 				327CFF111708D7740069497B /* CacheGlobal.h */,
 				327CFF071708C4EA0069497B /* FastHash.cpp */,
 				327CFF081708C4EB0069497B /* FastHash.h */,
@@ -2552,7 +2552,7 @@
 				324A4B2A191A405700975394 /* const_element.h in Headers */,
 				324A4B0D191A3F6A00975394 /* disallow_copying.h in Headers */,
 				32983F7517896FE1004599A3 /* ObjectInstancer.h in Headers */,
-				3296031F1876B45000CDCADA /* AttributeSetting.h in Headers */,
+				3296031F1876B45000CDCADA /* AttributesSetting.h in Headers */,
 				32640A27169DCC5800450962 /* BufferTracker.h in Headers */,
 				329603241876B45000CDCADA /* BatchCommandConstants.h in Headers */,
 				32640A28169DCC5800450962 /* GarbageThread.h in Headers */,
@@ -2910,7 +2910,7 @@
 				32B159D518B38CA50096B58B /* DirectIODeviceServerChannel.cpp in Sources */,
 				324A4B52191A41EF00975394 /* process_id.cpp in Sources */,
 				32A420A91962E17F00AFE689 /* TCPUVServer.cpp in Sources */,
-				3296031E1876B45000CDCADA /* AttributeSetting.cpp in Sources */,
+				3296031E1876B45000CDCADA /* AttributesSetting.cpp in Sources */,
 				326DB46B14B38BC00018A8D0 /* DefaultCommandDispatcher.cpp in Sources */,
 				326DB46D14B38BC00018A8D0 /* DomainActionsScheduler.cpp in Sources */,
 				326DB47414B38BC00018A8D0 /* IOMemcachedIODriver.cpp in Sources */,

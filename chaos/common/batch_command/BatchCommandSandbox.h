@@ -19,19 +19,22 @@
 //#include <boost/heap/priority_queue.hpp>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/data/cache/AttributesSetting.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
 
 #include <chaos/common/batch_command/BatchCommand.h>
-#include <chaos/common/batch_command/AttributeSetting.h>
 #include <chaos/common/batch_command/BatchCommandTypes.h>
 #include <chaos/common/batch_command/BatchCommandSandboxEventHandler.h>
-namespace chaos_data = chaos::common::data;
 
 namespace chaos{
     namespace common {
         namespace batch_command {
+			
+			using namespace chaos::common::data;
+			using namespace chaos::common::data::cache;
+			
             //forward declaration
             class BatchCommand;
             class BatchCommandExecutor;
@@ -57,10 +60,10 @@ namespace chaos{
              into the sandbox
              */
             struct CommandInfoAndImplementation {
-                chaos_data::CDataWrapper *cmdInfo;
+                CDataWrapper *cmdInfo;
                 BatchCommand *cmdImpl;
                 
-                CommandInfoAndImplementation(chaos_data::CDataWrapper *_cmdInfo, BatchCommand *_cmdImpl);
+                CommandInfoAndImplementation(CDataWrapper *_cmdInfo, BatchCommand *_cmdImpl);
                 ~CommandInfoAndImplementation();
                 
                 void deleteInfo();
@@ -191,7 +194,7 @@ namespace chaos{
                 // Deinit the implementation
                 void deinit() throw(chaos::CException);
                 
-                bool enqueueCommand(chaos_data::CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority);
+                bool enqueueCommand(CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority);
             };
         }
     }

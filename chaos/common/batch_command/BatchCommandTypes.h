@@ -151,11 +151,7 @@ namespace chaos {
                     uint64_t featureCommandTimeout;
                 } Features;
             }
-            
-            typedef  uint8_t BitBlockDimension;
-            typedef  uint16_t VariableIndexType;
-            
-            
+
             //! Namespace for the handler types
             namespace HandlerType {
                 /*!

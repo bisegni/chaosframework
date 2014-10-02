@@ -21,6 +21,7 @@
 #include <chaos/common/batch_command/BatchCommand.h>
 using namespace chaos;
 using namespace chaos::common::data;
+using namespace chaos::common::data::cache;
 using namespace chaos::common::batch_command;
 
 #define LOG_HEAD_SL "[SlowCommand-" << unique_id << "] "
@@ -57,27 +58,27 @@ uint64_t BatchCommand::getUID() {
 	return unique_id;
 }
 
-void BatchCommand::getChangedVariableIndex(IOCAttributeSharedCache::SharedVeriableDomain domain, std::vector<VariableIndexType>& changed_index) {
+void BatchCommand::getChangedVariableIndex(IOCAttributeSharedCache::SharedVariableDomain domain, std::vector<VariableIndexType>& changed_index) {
     CHAOS_ASSERT(sharedAttributeSettingPtr)
     return sharedAttributeSettingPtr->getChangedVariableIndex(domain, changed_index);
 }
 
-ValueSetting *BatchCommand::getVariableValue(IOCAttributeSharedCache::SharedVeriableDomain domain, VariableIndexType variable_index) {
+ValueSetting *BatchCommand::getVariableValue(IOCAttributeSharedCache::SharedVariableDomain domain, VariableIndexType variable_index) {
     CHAOS_ASSERT(sharedAttributeSettingPtr)
     return sharedAttributeSettingPtr->getVariableValue(domain, variable_index);
 }
 
-ValueSetting *BatchCommand::getVariableValue(IOCAttributeSharedCache::SharedVeriableDomain domain, const char *variable_name) {
+ValueSetting *BatchCommand::getVariableValue(IOCAttributeSharedCache::SharedVariableDomain domain, const char *variable_name) {
     CHAOS_ASSERT(sharedAttributeSettingPtr)
     return sharedAttributeSettingPtr->getVariableValue(domain, variable_name);
 }
 
-void BatchCommand::setVariableValueForKey(IOCAttributeSharedCache::SharedVeriableDomain domain, const char *variable_name, void * value, uint32_t size) {
+void BatchCommand::setVariableValueForKey(IOCAttributeSharedCache::SharedVariableDomain domain, const char *variable_name, void * value, uint32_t size) {
     CHAOS_ASSERT(sharedAttributeSettingPtr)
     sharedAttributeSettingPtr->setVariableValueForKey(domain, variable_name, value, size);
 }
 
-void BatchCommand::getVariableNames(IOCAttributeSharedCache::SharedVeriableDomain domain, std::vector<std::string>& names) {
+void BatchCommand::getVariableNames(IOCAttributeSharedCache::SharedVariableDomain domain, std::vector<std::string>& names) {
     CHAOS_ASSERT(sharedAttributeSettingPtr)
     sharedAttributeSettingPtr->getVariableNames(domain, names);
 }

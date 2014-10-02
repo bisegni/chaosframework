@@ -30,8 +30,9 @@ using namespace chaos::cu;
 using namespace chaos::cu::control_manager;
 using namespace chaos::cu::control_manager::slow_command;
 
-namespace chaos_data = chaos::common::data;
-namespace chaos_batch = chaos::common::batch_command;
+using namespace chaos::common::data;
+using namespace chaos::common::data::cache;
+using namespace chaos::common::batch_command;
 
 
 #define LCCU_ LAPP_ << "[Slow Command Control Unit:" << getCUInstance() <<"] - "
@@ -151,9 +152,9 @@ void SCAbstractControlUnit::addExecutionChannels(unsigned int execution_channels
 }
 
 /*
- Receive the evento for set the dataset input element
+ Receive the event for set the dataset input element
  */
-chaos::common::data::CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(chaos::common::data::CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
+CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
 	uint64_t command_id =0;
     if(!datasetAttributeValues->hasKey(chaos_batch::BatchCommandSubmissionKey::COMMAND_ALIAS_STR)) {
         throw CException(-1, "The alias of the slow command is mandatory", "SlowCommandExecutor::setDatasetAttribute");
@@ -166,7 +167,7 @@ chaos::common::data::CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(ch
     detachParam = true;
 
 	//construct the result
-    chaos_data::CDataWrapper *result = new chaos_data::CDataWrapper();
+    CDataWrapper *result = new CDataWrapper();
 	result->addInt64Value(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_id);
     return result;
 }
@@ -174,7 +175,7 @@ chaos::common::data::CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(ch
 /*
  Event for update some CU configuration
  */
-chaos::common::data::CDataWrapper* SCAbstractControlUnit::updateConfiguration(chaos::common::data::CDataWrapper *updatePack, bool& detachParam) throw (CException) {
+CDataWrapper* SCAbstractControlUnit::updateConfiguration(CDataWrapper *updatePack, bool& detachParam) throw (CException) {
 	chaos::common::data::CDataWrapper *result = AbstractControlUnit::updateConfiguration(updatePack, detachParam);
     if(updatePack->hasKey(CUDefinitionKey::CS_CM_THREAD_SCHEDULE_DELAY)){
         chaos_batch::features::Features features;
@@ -191,7 +192,7 @@ void SCAbstractControlUnit::addCustomSharedVariable(std::string name, uint32_t m
     slow_command_executor->global_attribute_cache.addVariable(chaos_batch::IOCAttributeSharedCache::SVD_CUSTOM, name, max_size, type);
 }
 
-void SCAbstractControlUnit::setVariableValue(chaos_batch::IOCAttributeSharedCache::SharedVeriableDomain domain, std::string name, void *value, uint32_t value_size) {
+void SCAbstractControlUnit::setVariableValue(IOCAttributeSharedCache::SharedVariableDomain domain, std::string name, void *value, uint32_t value_size) {
         // add the attribute to the shared setting object
     chaos_batch::VariableIndexType attribute_index = 0;
     if((attribute_index = slow_command_executor->global_attribute_cache.getSharedDomain(domain).getIndexForName(name))) {
@@ -199,7 +200,7 @@ void SCAbstractControlUnit::setVariableValue(chaos_batch::IOCAttributeSharedCach
     }
 }
 
-chaos_batch::ValueSetting *SCAbstractControlUnit::getVariableValue(chaos_batch::IOCAttributeSharedCache::SharedVeriableDomain domain, const char *variable_name) {
+ValueSetting *SCAbstractControlUnit::getVariableValue(IOCAttributeSharedCache::SharedVariableDomain domain,  const std::string& variable_name) {
     return slow_command_executor->global_attribute_cache.getVariableValue(domain, variable_name);
 }
 

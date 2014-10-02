@@ -29,9 +29,10 @@
 #include <boost/chrono.hpp>
 
 #include <chaos/common/data/CDataWrapper.h>
-#include <chaos/common/batch_command/AttributeSetting.h>
+#include <chaos/common/data/cache/AttributesSetting.h>
 #include <chaos/common/batch_command/BatchCommandTypes.h>
-namespace chaos_data = chaos::common::data;
+using namespace chaos::common::data;
+using namespace chaos::common::data::cache;
 
 namespace chaos{
     
@@ -228,22 +229,22 @@ namespace chaos{
                 
                 //! Return the value object for the domain and the string key
                 /*!
-                 \param domain a domain identified by a value of @IOCAttributeSharedCache::SharedVeriableDomain
+                 \param domain a domain identified by a value of @IOCAttributeSharedCache::SharedVariableDomain
                  \key_name a name that identify the variable
                  */
-                ValueSetting *getVariableValue(IOCAttributeSharedCache::SharedVeriableDomain domain, const char *variable_name);
+                ValueSetting *getVariableValue(IOCAttributeSharedCache::SharedVariableDomain domain, const char *variable_name);
                 
                 //! Return the value object for the domain and the index of the variable
-                ValueSetting *getVariableValue(IOCAttributeSharedCache::SharedVeriableDomain domain, VariableIndexType variable_index);
+                ValueSetting *getVariableValue(IOCAttributeSharedCache::SharedVariableDomain domain, VariableIndexType variable_index);
                 
                 //! Set the value for a determinated variable in a determinate domain
-                void setVariableValueForKey(IOCAttributeSharedCache::SharedVeriableDomain domain, const char *variable_name, void * value, uint32_t size);
+                void setVariableValueForKey(IOCAttributeSharedCache::SharedVariableDomain domain, const char *variable_name, void * value, uint32_t size);
                 
                 //! Get the index of the changed attribute
-                void getChangedVariableIndex(IOCAttributeSharedCache::SharedVeriableDomain domain, std::vector<VariableIndexType>& changed_index);
+                void getChangedVariableIndex(IOCAttributeSharedCache::SharedVariableDomain domain, std::vector<VariableIndexType>& changed_index);
                 
                 //! Return the names of all variabl einto a determinated domain
-                void getVariableNames(IOCAttributeSharedCache::SharedVeriableDomain domain, std::vector<std::string>& names);
+                void getVariableNames(IOCAttributeSharedCache::SharedVariableDomain domain, std::vector<std::string>& names);
                 
                 //! return the implemented handler
                 /*!

@@ -1,0 +1,284 @@
+/*
+ *	AttributesSetting.h
+ *	!CHAOS
+ *	Created by Bisegni Claudio.
+ *
+ *    	Copyright 2013 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
+
+#ifndef __CHAOSFramework__AttributesSetting__
+#define __CHAOSFramework__AttributesSetting__
+
+#include <map>
+#include <string>
+
+#include <boost/thread.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/dynamic_bitset.hpp>
+
+#include <chaos/common/chaos_constants.h>
+#include <chaos/common/utility/InizializableService.h>
+
+namespace chaos{
+	namespace common {
+		namespace data {
+			namespace cache {
+				
+				//froward declaration
+				class AttributeSetting;
+				
+				//typedef
+				typedef void * SettingValuePtr;
+				
+				//! the dimensio of the block for the boost::dynamic_bitset class
+				typedef  uint8_t BitBlockDimension;
+				
+				//! the range of index
+				typedef  uint16_t VariableIndexType;
+				
+				
+				
+				//! manage the update of a value
+				/*!
+					A valueSetting is a class that help to understand when a value is changed and updated
+				 */
+				struct ValueSetting {
+					friend class AttributeSetting;
+					const std::string					name;
+					//! the index of this value
+					const uint32_t                      index;
+					
+					//! the size of value
+					const uint32_t                      size;
+					
+					//! is the datatype that represent the value
+					const chaos::DataType::DataType     type;
+					
+					//!
+					//boost::mutex                        mutextAccessSetting;
+					//main buffer
+					void								*buffer;
+					
+					//pointer to current value
+					SettingValuePtr current_value;
+					
+					//! pointer to updated value
+					SettingValuePtr next_value;
+					
+					//global index bitmap for infom that this value(using index) has been changed
+					boost::dynamic_bitset<BitBlockDimension> * sharedBitmapChangedAttribute;
+					
+					//!pirvate constructor
+					ValueSetting( const std::string& _name, uint32_t _index, uint32_t _size, chaos::DataType::DataType type);
+					
+					//!private destrucotr
+					~ValueSetting();
+					
+					void completed();
+					
+					void completedWithError();
+					
+					bool setNextValue(const void* valPtr, uint32_t _size);
+					
+					bool setDefaultValue(const void* valPtr, uint32_t _size);
+					
+					template<typename T>
+					T* getNextValue() {
+						return static_cast<T*>(next_value);
+					}
+					
+					template<typename T>
+					T* getCurrentValue() {
+						return static_cast<T*>(current_value);
+					}
+				};
+				
+				//-----------------------------------------------------------------------------------------------------------------------------
+				
+				//! this class cloccet a set of key with a ValueSetting class associated
+				/*!
+				 This class collect a set on key with the repsective ValueSetting creating a domain o 
+				 values.
+				 */
+				class AttributesSetting : public chaos::utility::InizializableService {
+					//!global index for this set
+					VariableIndexType index;
+					
+					boost::dynamic_bitset<BitBlockDimension> bitmapChangedAttribute;
+					
+					map<string, VariableIndexType> mapAttributeNameIndex;
+					map<VariableIndexType, boost::shared_ptr<ValueSetting> > mapAttributeIndexSettings;
+				public:
+					
+					AttributesSetting();
+					
+					~AttributesSetting();
+					
+					void addAttribute(string name,
+									  uint32_t size,
+									  chaos::DataType::DataType type);
+					
+					void setValueForAttribute(VariableIndexType n,
+											  const void * value,
+											  uint32_t size);
+					
+					void setDefaultValueForAttribute(VariableIndexType n,
+													 const void * value,
+													 uint32_t size);
+					
+					VariableIndexType getIndexForName(const std::string& name );
+					
+					//! get all attribute name in this set
+					void getAttributeNames(std::vector<std::string>& names);
+					
+					//! Initialize instance
+					void init(void *initData) throw(chaos::CException);
+					
+					//! Deinit the implementation
+					void deinit() throw(chaos::CException);
+					
+					//! return the changed id into the vector
+					void getChangedIndex(std::vector<VariableIndexType>& changed_index);
+					
+					//! get the ValueSetting for the index
+					ValueSetting *getValueSettingForIndex(VariableIndexType index);
+					
+					//!fill the CDataWrapper representig the set
+					void fillDataWrapper(CDataWrapper& data_wrapper);
+					
+					VariableIndexType getNumberOfKey();
+				};
+				
+				//-----------------------------------------------------------------------------------------------------------------------------
+				
+				class SharedCacheInterface {
+				public:
+					typedef enum SharedVariableDomain {
+						SVD_INPUT,
+						SVD_OUTPUT,
+						SVD_SYSTEM,
+						SVD_CUSTOM
+					}SharedVariableDomain;
+					
+					//! Return the value object for the domain and the string key
+					/*!
+					 \param domain a domain identified by a value of @IOCAttributeSharedCache::SharedVariableDomain
+					 \key_name a name that identify the variable
+					 */
+					virtual ValueSetting *getVariableValue(SharedVariableDomain domain,
+														   const std::string& variable_name) = 0;
+					
+					//! Return the value object for the domain and the index of the variable
+					virtual ValueSetting *getVariableValue(SharedVariableDomain domain,
+														   VariableIndexType variable_index) = 0;
+					
+					//! Set the value for a determinated variable in a determinate domain
+					virtual void setVariableValueForKey(SharedVariableDomain domain,
+														const std::string& variable_name,
+														void * value, uint32_t size) = 0;
+					
+					//! Get the index of the changed attribute
+					virtual void getChangedVariableIndex(SharedVariableDomain domain,
+														 std::vector<VariableIndexType>& changed_index) = 0;
+					
+					//! Return the names of all variabl einto a determinated domain
+					virtual void getVariableNames(SharedVariableDomain domain,
+												  std::vector<std::string>& names) = 0;
+					
+					//! Add a new variable
+					virtual void addVariable(SharedCacheInterface::SharedVariableDomain domain,
+											 const std::string&  name,
+											 uint32_t max_size,
+											 chaos::DataType::DataType type) = 0;
+					
+					//! Get a specified type of shared domain
+					/*!
+					 Return a specified type of shared domain , identified by input parameter
+					 \param the type of the domain to return
+					 */
+					virtual AttributesSetting& getSharedDomain(SharedVariableDomain domain) = 0;
+				};
+				
+				//-----------------------------------------------------------------------------------------------------------------------------
+				
+				/*!
+				 Convenient class for grupping toghether the three different
+				 cache for the attirbute (input, output, custom).
+				 */
+				class IOCAttributeSharedCache : public chaos::utility::InizializableService, public SharedCacheInterface {
+					AttributesSetting input_set;
+					AttributesSetting output_set;
+					AttributesSetting system_set;
+					AttributesSetting custom_set;
+					
+				public:
+					
+					IOCAttributeSharedCache();
+					~IOCAttributeSharedCache();
+					
+					//! This field point to a custom memory shared by cu and all command
+					void *customData;
+					
+					//! Initialize instance
+					void init(void *initData) throw(chaos::CException);
+					
+					//! Deinit the implementation
+					void deinit() throw(chaos::CException);
+					
+					//! Return the value object for the domain and the string key
+					/*!
+					 \param domain a domain identified by a value of @SharedCacheInterface::SharedVariableDomain
+					 \key_name a name that identify the variable
+					 */
+					ValueSetting *getVariableValue(SharedCacheInterface::SharedVariableDomain domain,
+												   const std::string& variable_name);
+					
+					//! Return the value object for the domain and the index of the variable
+					ValueSetting *getVariableValue(SharedCacheInterface::SharedVariableDomain domain,
+												   VariableIndexType variable_index);
+					
+					//! Set the value for a determinated variable in a determinate domain
+					void setVariableValueForKey(SharedCacheInterface::SharedVariableDomain domain,
+												const std::string& variable_name,
+												void * value,
+												uint32_t size);
+					
+					//! Get the index of the changed attribute
+					void getChangedVariableIndex(SharedCacheInterface::SharedVariableDomain domain,
+												 std::vector<VariableIndexType>& changed_index);
+					
+					//! Return the names of all variabl einto a determinated domain
+					void getVariableNames(SharedCacheInterface::SharedVariableDomain domain,
+										  std::vector<std::string>& names);
+					
+					//! Add a new variable
+					void addVariable(SharedCacheInterface::SharedVariableDomain domain,
+									 const std::string& name,
+									 uint32_t max_size,
+									 chaos::DataType::DataType type);
+					
+					//! Get a specified type of shared domain
+					/*!
+					 Return a specified type of shared domain , identified by input parameter
+					 \param the type of the domain to return
+					 */
+					AttributesSetting& getSharedDomain(SharedCacheInterface::SharedVariableDomain domain);
+				};
+			}
+		}
+	}
+}
+
+#endif /* defined(__CHAOSFramework__AttributesSetting__) */

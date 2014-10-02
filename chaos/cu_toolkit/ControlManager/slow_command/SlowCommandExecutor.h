@@ -33,17 +33,14 @@
 #include <boost/atomic.hpp>
 
 #include <chaos/common/data/DatasetDB.h>
+#include <chaos/common/data/cache/AttributesSetting.h>
 #include <chaos/common/batch_command/BatchCommand.h>
 #include <chaos/common/batch_command/BatchCommandExecutor.h>
-#include <chaos/common/batch_command/AttributeSetting.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/driver_manager/DriverErogatorInterface.h>
 
-namespace boost_cont = boost::container;
-namespace chaos_data = chaos::common::data;
-namespace chaos_batch = chaos::common::batch_command;
 
 namespace chaos {
     namespace cu {
@@ -60,6 +57,13 @@ namespace chaos {
 			class SCAbstractControlUnit;
 
             namespace slow_command {
+				
+				namespace boost_cont = boost::container;
+				namespace chaos_data = chaos::common::data;
+				namespace chaos_cache = chaos::common::data::cache;
+				namespace chaos_batch = chaos::common::batch_command;
+
+				
                 //forward declaration
                 class SlowCommand;
                 
@@ -84,11 +88,13 @@ namespace chaos {
 					chaos::cu::driver_manager::DriverErogatorInterface *driverAccessorsErogator;
                     
                     //! initialize the shared variable according to the device dataset
-					void initAttributeOnSahredVariableDomain(chaos_batch::IOCAttributeSharedCache::SharedVeriableDomain domain, std::vector<string>& attribute_names);
+					void initAttributeOnSahredVariableDomain(chaos_cache::IOCAttributeSharedCache::SharedVariableDomain domain,
+															 std::vector<string>& attribute_names);
                 protected:
                     
                     //! Private constructor
-                    SlowCommandExecutor(std::string _executorID, chaos_data::DatasetDB *_deviceSchemaDbPtr);
+                    SlowCommandExecutor(std::string _executorID,
+										chaos_data::DatasetDB *_deviceSchemaDbPtr);
                     
                     //! Private deconstructor
                     ~SlowCommandExecutor();

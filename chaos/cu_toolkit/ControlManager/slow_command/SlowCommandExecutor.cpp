@@ -31,8 +31,7 @@
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::cu::control_manager::slow_command;
-
-namespace chaos_batch = chaos::common::batch_command;
+using namespace chaos::common::batch_command;
 
 
 #define LOG_HEAD_SBE "[SlowCommandExecutor-" << deviceSchemaDbPtr->getDeviceID() << "] "
@@ -40,7 +39,7 @@ namespace chaos_batch = chaos::common::batch_command;
 #define SCELAPP_ LAPP_ << LOG_HEAD_SBE
 #define SCELDBG_ LDBG_ << LOG_HEAD_SBE
 #define SCELERR_ LERR_ << LOG_HEAD_SBE
-
+using namespace chaos::common::data::cache;
 using namespace chaos::common::batch_command;
 
 SlowCommandExecutor::SlowCommandExecutor(std::string _executorID, DatasetDB *_deviceSchemaDbPtr) : BatchCommandExecutor(_executorID),deviceSchemaDbPtr(_deviceSchemaDbPtr){
@@ -69,11 +68,11 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
 
 }
 
-void SlowCommandExecutor::initAttributeOnSahredVariableDomain(IOCAttributeSharedCache::SharedVeriableDomain domain, std::vector<string>& attribute_names) {
+void SlowCommandExecutor::initAttributeOnSahredVariableDomain(IOCAttributeSharedCache::SharedVariableDomain domain, std::vector<string>& attribute_names) {
 	//add input attribute to shared setting
     RangeValueInfo attributeInfo;
 	
-	AttributeSetting& attribute_setting = global_attribute_cache.getSharedDomain(domain);
+	AttributesSetting& attribute_setting = global_attribute_cache.getSharedDomain(domain);
 	
 	for(int idx = 0;
         idx < attribute_names.size();
@@ -127,7 +126,7 @@ void SlowCommandExecutor::installCommand(string alias, chaos::common::utility::N
 
 
 //! Check if the waithing command can be installed
-chaos_batch::BatchCommand *SlowCommandExecutor::instanceCommandInfo(std::string& commandAlias) {
+BatchCommand *SlowCommandExecutor::instanceCommandInfo(std::string& commandAlias) {
     SlowCommand *result = (SlowCommand*) BatchCommandExecutor::instanceCommandInfo(commandAlias);
     if(result) {
 		//forward the pointers of the needed data
