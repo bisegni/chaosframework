@@ -58,17 +58,17 @@ void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
 	
     SCELAPP_ << "Populating sandbox shared setting for device input attribute";
     deviceSchemaDbPtr->getDatasetAttributesName(DataType::Input, attribute_names);
-    initAttributeOnSahredVariableDomain(IOCAttributeSharedCache::SVD_INPUT, attribute_names);
+    initAttributeOnSahredVariableDomain(AttributeValueSharedCache::SVD_INPUT, attribute_names);
 
 	SCELAPP_ << "Populating sandbox shared setting for device output attribute";
 	attribute_names.clear();
     deviceSchemaDbPtr->getDatasetAttributesName(DataType::Output, attribute_names);
-    initAttributeOnSahredVariableDomain(IOCAttributeSharedCache::SVD_OUTPUT, attribute_names);
+    initAttributeOnSahredVariableDomain(AttributeValueSharedCache::SVD_OUTPUT, attribute_names);
 
 
 }
 
-void SlowCommandExecutor::initAttributeOnSahredVariableDomain(IOCAttributeSharedCache::SharedVariableDomain domain, std::vector<string>& attribute_names) {
+void SlowCommandExecutor::initAttributeOnSahredVariableDomain(AttributeValueSharedCache::SharedVariableDomain domain, std::vector<string>& attribute_names) {
 	//add input attribute to shared setting
     RangeValueInfo attributeInfo;
 	

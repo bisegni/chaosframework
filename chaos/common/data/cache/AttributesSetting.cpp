@@ -251,74 +251,74 @@ void AttributesSetting::getChangedIndex(std::vector<VariableIndexType>& changed_
 VariableIndexType AttributesSetting::getNumberOfKey() {
 	return index;
 }
-#pragma mark IOCAttributeSharedCache
+#pragma mark AttributeValueSharedCache
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-IOCAttributeSharedCache::IOCAttributeSharedCache() {
+AttributeValueSharedCache::AttributeValueSharedCache() {
 	
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-IOCAttributeSharedCache::~IOCAttributeSharedCache() {
+AttributeValueSharedCache::~AttributeValueSharedCache() {
 	
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void IOCAttributeSharedCache::init(void *initData) throw(chaos::CException) {
+void AttributeValueSharedCache::init(void *initData) throw(chaos::CException) {
 	//initialize the input channel setting
     utility::InizializableService::initImplementation(input_set,
 													  initData,
-													  "IOCAttributeSharedCache[Input set]",
+													  "AttributeValueSharedCache[Input set]",
 													  __PRETTY_FUNCTION__);
 	//initialize the output channel setting
     utility::InizializableService::initImplementation(output_set,
 													  initData,
-													  "IOCAttributeSharedCache[Output set]",
+													  "AttributeValueSharedCache[Output set]",
 													  __PRETTY_FUNCTION__);
 	//initialize the custom channel setting
 	utility::InizializableService::initImplementation(system_set,
 													  initData,
-													  "IOCAttributeSharedCache[System set]",
+													  "AttributeValueSharedCache[System set]",
 													  __PRETTY_FUNCTION__);
 	//initialize the custom channel setting
     utility::InizializableService::initImplementation(custom_set,
 													  initData,
-													  "IOCAttributeSharedCache[Custom set]",
+													  "AttributeValueSharedCache[Custom set]",
 													  __PRETTY_FUNCTION__);
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void IOCAttributeSharedCache::deinit() throw(chaos::CException) {
+void AttributeValueSharedCache::deinit() throw(chaos::CException) {
 	//initialize the input channel setting
     utility::InizializableService::deinitImplementation(input_set,
-														"IOCAttributeSharedCache[Input Set]",
+														"AttributeValueSharedCache[Input Set]",
 														__PRETTY_FUNCTION__);
 	//initialize the output channel setting
     utility::InizializableService::deinitImplementation(output_set,
-														"IOCAttributeSharedCache[Output Set]",
+														"AttributeValueSharedCache[Output Set]",
 														__PRETTY_FUNCTION__);
 	//initialize the output channel setting
 	utility::InizializableService::deinitImplementation(system_set,
-														"IOCAttributeSharedCache[System Set]",
+														"AttributeValueSharedCache[System Set]",
 														__PRETTY_FUNCTION__);
 	//initialize the custom channel setting
     utility::InizializableService::deinitImplementation(custom_set,
-														"IOCAttributeSharedCache[Custom Set]",
+														"AttributeValueSharedCache[Custom Set]",
 														__PRETTY_FUNCTION__);
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-AttributesSetting& IOCAttributeSharedCache::getSharedDomain(SharedVariableDomain domain) {
+AttributesSetting& AttributeValueSharedCache::getSharedDomain(SharedVariableDomain domain) {
     switch(domain) {
         case SVD_INPUT:
             return input_set;
@@ -341,7 +341,7 @@ AttributesSetting& IOCAttributeSharedCache::getSharedDomain(SharedVariableDomain
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void IOCAttributeSharedCache::getChangedVariableIndex(IOCAttributeSharedCache::SharedVariableDomain domain,
+void AttributeValueSharedCache::getChangedVariableIndex(AttributeValueSharedCache::SharedVariableDomain domain,
 													  std::vector<VariableIndexType>& changed_index) {
     return getSharedDomain(domain).getChangedIndex(changed_index);
 }
@@ -349,7 +349,7 @@ void IOCAttributeSharedCache::getChangedVariableIndex(IOCAttributeSharedCache::S
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-ValueSetting *IOCAttributeSharedCache::getVariableValue(IOCAttributeSharedCache::SharedVariableDomain domain,
+ValueSetting *AttributeValueSharedCache::getVariableValue(AttributeValueSharedCache::SharedVariableDomain domain,
 														VariableIndexType variable_index) {
     return getSharedDomain(domain).getValueSettingForIndex(variable_index);
 }
@@ -357,7 +357,7 @@ ValueSetting *IOCAttributeSharedCache::getVariableValue(IOCAttributeSharedCache:
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-ValueSetting *IOCAttributeSharedCache::getVariableValue(IOCAttributeSharedCache::SharedVariableDomain domain,
+ValueSetting *AttributeValueSharedCache::getVariableValue(AttributeValueSharedCache::SharedVariableDomain domain,
 														const string& variable_name) {
 	AttributesSetting& attribute_setting = getSharedDomain(domain);
     VariableIndexType index = attribute_setting.getIndexForName(variable_name);
@@ -367,7 +367,7 @@ ValueSetting *IOCAttributeSharedCache::getVariableValue(IOCAttributeSharedCache:
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void IOCAttributeSharedCache::setVariableValueForKey(IOCAttributeSharedCache::SharedVariableDomain domain,
+void AttributeValueSharedCache::setVariableValueForKey(AttributeValueSharedCache::SharedVariableDomain domain,
 													 const string& variable_name,
 													 void * value,
 													 uint32_t size) {
@@ -378,7 +378,7 @@ void IOCAttributeSharedCache::setVariableValueForKey(IOCAttributeSharedCache::Sh
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void IOCAttributeSharedCache::getVariableNames(IOCAttributeSharedCache::SharedVariableDomain domain,
+void AttributeValueSharedCache::getVariableNames(AttributeValueSharedCache::SharedVariableDomain domain,
 											   std::vector<std::string>& names) {
     getSharedDomain(domain).getAttributeNames(names);
 }
@@ -386,7 +386,7 @@ void IOCAttributeSharedCache::getVariableNames(IOCAttributeSharedCache::SharedVa
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void IOCAttributeSharedCache::addVariable(SharedCacheInterface::SharedVariableDomain domain,
+void AttributeValueSharedCache::addVariable(SharedCacheInterface::SharedVariableDomain domain,
 										  const string&  name,
 										  uint32_t max_size,
 										  chaos::DataType::DataType type) {

@@ -56,7 +56,8 @@ control_key("none"),
 control_unit_instance(UUIDUtil::generateUUIDLite()),
 control_unit_type(_control_unit_type),
 control_unit_id(_control_unit_id),
-control_unit_param(_control_unit_param) {
+control_unit_param(_control_unit_param),
+attribute_value_shared_cache(NULL) {
 }
 
 //! Contructor with driver
@@ -69,7 +70,8 @@ control_key("none"),
 control_unit_instance(UUIDUtil::generateUUIDLite()),
 control_unit_type(_control_unit_type),
 control_unit_id(_control_unit_id),
-control_unit_param(_control_unit_param) {
+control_unit_param(_control_unit_param),
+attribute_value_shared_cache(NULL) {
 	//copy array
 	for (int idx = 0; idx < _control_unit_drivers.size(); idx++){
 		control_unit_drivers.push_back(_control_unit_drivers[idx]);

@@ -177,7 +177,7 @@ namespace chaos{
 					
 					//! Return the value object for the domain and the string key
 					/*!
-					 \param domain a domain identified by a value of @IOCAttributeSharedCache::SharedVariableDomain
+					 \param domain a domain identified by a value of @AttributeValueSharedCache::SharedVariableDomain
 					 \key_name a name that identify the variable
 					 */
 					virtual ValueSetting *getVariableValue(SharedVariableDomain domain,
@@ -220,7 +220,7 @@ namespace chaos{
 				 Convenient class for grupping toghether the three different
 				 cache for the attirbute (input, output, custom).
 				 */
-				class IOCAttributeSharedCache : public chaos::utility::InizializableService, public SharedCacheInterface {
+				class AttributeValueSharedCache : public chaos::utility::InizializableService, public SharedCacheInterface {
 					AttributesSetting input_set;
 					AttributesSetting output_set;
 					AttributesSetting system_set;
@@ -228,8 +228,8 @@ namespace chaos{
 					
 				public:
 					
-					IOCAttributeSharedCache();
-					~IOCAttributeSharedCache();
+					AttributeValueSharedCache();
+					~AttributeValueSharedCache();
 					
 					//! This field point to a custom memory shared by cu and all command
 					void *customData;

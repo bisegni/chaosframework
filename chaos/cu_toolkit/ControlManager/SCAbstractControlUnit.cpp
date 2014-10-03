@@ -42,8 +42,12 @@ SCAbstractControlUnit::SCAbstractControlUnit(const std::string& _control_unit_id
 AbstractControlUnit(CUType::SCCU,
 					_control_unit_id,
 					_control_unit_param) {
+	//allocate the executor of the slow command
     slow_command_executor = new SlowCommandExecutor(control_unit_instance, this);
+	//set the driver delegator to the executor
 	slow_command_executor->driverAccessorsErogator = this;
+	//associate the shared cache of the executor to the asbtract control unit one
+	attribute_value_shared_cache = slow_command_executor->getAttributeSharedCache();
 }
 
 /*!
@@ -58,8 +62,12 @@ AbstractControlUnit(CUType::SCCU,
 					_control_unit_id,
 					_control_unit_param,
 					_control_unit_drivers) {
+	//allocate the executor of the slow command
 	slow_command_executor = new SlowCommandExecutor(control_unit_instance, this);
+	//set the driver delegator to the executor
 	slow_command_executor->driverAccessorsErogator = this;
+	//associate the shared cache of the executor to the asbtract control unit one
+	attribute_value_shared_cache = slow_command_executor->getAttributeSharedCache();
 }
 
 SCAbstractControlUnit::~SCAbstractControlUnit() {
@@ -189,10 +197,10 @@ CDataWrapper* SCAbstractControlUnit::updateConfiguration(CDataWrapper *updatePac
 
 void SCAbstractControlUnit::addCustomSharedVariable(std::string name, uint32_t max_size, chaos::DataType::DataType type) {
     // add the attribute to the shared setting object
-    slow_command_executor->global_attribute_cache.addVariable(chaos_batch::IOCAttributeSharedCache::SVD_CUSTOM, name, max_size, type);
+    slow_command_executor->global_attribute_cache.addVariable(chaos_batch::AttributeValueSharedCache::SVD_CUSTOM, name, max_size, type);
 }
 
-void SCAbstractControlUnit::setVariableValue(IOCAttributeSharedCache::SharedVariableDomain domain, std::string name, void *value, uint32_t value_size) {
+void SCAbstractControlUnit::setVariableValue(AttributeValueSharedCache::SharedVariableDomain domain, std::string name, void *value, uint32_t value_size) {
         // add the attribute to the shared setting object
     chaos_batch::VariableIndexType attribute_index = 0;
     if((attribute_index = slow_command_executor->global_attribute_cache.getSharedDomain(domain).getIndexForName(name))) {
@@ -200,7 +208,7 @@ void SCAbstractControlUnit::setVariableValue(IOCAttributeSharedCache::SharedVari
     }
 }
 
-ValueSetting *SCAbstractControlUnit::getVariableValue(IOCAttributeSharedCache::SharedVariableDomain domain,  const std::string& variable_name) {
+ValueSetting *SCAbstractControlUnit::getVariableValue(AttributeValueSharedCache::SharedVariableDomain domain,  const std::string& variable_name) {
     return slow_command_executor->global_attribute_cache.getVariableValue(domain, variable_name);
 }
 

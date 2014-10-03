@@ -122,8 +122,8 @@ namespace chaos {
                 
 				void capWorker();
             protected:
-                //! Global cache shared across the sandbox
-                IOCAttributeSharedCache  global_attribute_cache;
+                //! Global cache shared across the sandbox it can be alsog given
+                AttributeValueSharedCache  global_attribute_cache;
                 
                 //! Check if the waithing command can be installed
                 /*!
@@ -228,6 +228,8 @@ namespace chaos {
                 
                 //! Add a number of sandobx to this instance of executor
                 void addSandboxInstance(unsigned int _sandbox_number);
+				
+				AttributeValueSharedCache *getAttributeSharedCache();
             };
         }
     }

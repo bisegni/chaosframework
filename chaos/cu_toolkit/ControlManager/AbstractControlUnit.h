@@ -30,6 +30,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
+#include <chaos/common/data/cache/AttributesSetting.h>
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/action/ActionDescriptor.h>
 #include <chaos/common/exception/CException.h>
@@ -160,6 +161,8 @@ namespace chaos{
 				//  It's is the dynamically assigned instance of the CU. it will be used
 				// as domain for the rpc action.
 				string control_unit_instance;
+				
+				chaos::common::data::cache::SharedCacheInterface *attribute_value_shared_cache;
 				
 				//! Momentary driver for push data into the central memory
 				data_manager::KeyDataStorage*  keyDataStorage;

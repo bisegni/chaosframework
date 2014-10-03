@@ -139,7 +139,7 @@ namespace chaos{
                  of the input channel or shared variable setting,
                  used into the control algoritm.
                  */
-                IOCAttributeSharedCache *shared_attribute_cache;
+                AttributeValueSharedCache *shared_attribute_cache;
                 
                 //! contain the paused command
                 std::stack<PRIORITY_ELEMENT(CommandInfoAndImplementation)*> commandStack;

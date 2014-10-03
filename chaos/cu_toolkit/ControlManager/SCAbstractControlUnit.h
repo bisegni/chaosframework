@@ -79,9 +79,9 @@ namespace chaos {
 				
 				void addCustomSharedVariable(std::string name, uint32_t max_size, chaos::DataType::DataType type);
 				
-				void setVariableValue(IOCAttributeSharedCache::SharedVariableDomain domain, std::string name, void *value, uint32_t value_size);
+				void setVariableValue(AttributeValueSharedCache::SharedVariableDomain domain, std::string name, void *value, uint32_t value_size);
 				
-				ValueSetting *getVariableValue(IOCAttributeSharedCache::SharedVariableDomain domain, const std::string& variable_name);
+				ValueSetting *getVariableValue(AttributeValueSharedCache::SharedVariableDomain domain, const std::string& variable_name);
 				// Get all managem declare action instance
 				void _getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance);
 				
