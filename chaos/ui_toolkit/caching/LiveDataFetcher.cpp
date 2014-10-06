@@ -54,8 +54,8 @@ void LiveDataFetcher::deinit() throw(chaos::CException) {
     }
 }
 
-void LiveDataFetcher::getData(CDataWrapper& newData, uint64_t& ts) {
-    currentRawDataPtr.reset(dataDriver->retriveRawData());
+void LiveDataFetcher::getData(const std::string& key, CDataWrapper& newData, uint64_t& ts) {
+    currentRawDataPtr.reset(dataDriver->retriveRawData(key));
     
         //create key/value chaos object
     newData.setSerializedData(currentRawDataPtr.get());

@@ -86,10 +86,6 @@ namespace chaos {
                     
 					//! The driver erogator
 					chaos::cu::driver_manager::DriverErogatorInterface *driverAccessorsErogator;
-                    
-                    //! initialize the shared variable according to the device dataset
-					void initAttributeOnSahredVariableDomain(chaos_cache::AttributeValueSharedCache::SharedVariableDomain domain,
-															 std::vector<string>& attribute_names);
                 protected:
                     
                     //! Private constructor

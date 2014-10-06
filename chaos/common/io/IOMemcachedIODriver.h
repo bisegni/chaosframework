@@ -59,13 +59,13 @@ namespace chaos{
 				 * This method retrive the cached object by CSDawrapperUsed as query key and
 				 * return a pointer to the class ArrayPointer of CDataWrapper type
 				 */
-				virtual void storeRawData(chaos_data::SerializationBuffer *serialization)  throw(CException);
+				virtual void storeRawData(const std::string& key, chaos_data::SerializationBuffer *serialization)  throw(CException);
 				
 				/*
 				 * This method retrive the cached object by CSDawrapperUsed as query key and
 				 * return a pointer to the class ArrayPointer of CDataWrapper type
 				 */
-				virtual char * retriveRawData(size_t *dim=NULL)  throw(CException);
+				virtual char * retriveRawData(const std::string& key, size_t *dim=NULL)  throw(CException);
 				/*
 				 Update the driver configuration
 				 */

@@ -65,17 +65,10 @@ namespace chaos{
 					
 					//! is the datatype that represent the value
 					const chaos::DataType::DataType     type;
-					
-					//!
-					//boost::mutex                        mutextAccessSetting;
+
 					//main buffer
-					void								*buffer;
-					
-					//pointer to current value
-					SettingValuePtr current_value;
-					
-					//! pointer to updated value
-					SettingValuePtr next_value;
+					void								*value_buffer;
+
 					
 					//global index bitmap for infom that this value(using index) has been changed
 					boost::dynamic_bitset<BitBlockDimension> * sharedBitmapChangedAttribute;
@@ -89,28 +82,27 @@ namespace chaos{
 					//!private destrucotr
 					~ValueSetting();
 					
-					void completed();
+					//! set a new value in buffer
+					/*!
+					 the memory on value_ptr is copied on the internal memory buffer
+					 \param value_ptr the memory ptr that contains the new value to copy into internal memory
+					 \param value_size the sie of the new value
+					 */
+					bool setValue(const void* value_ptr, uint32_t value_size);
 					
-					void completedWithError();
+					void markAsChanged();
 					
-					bool setNextValue(const void* valPtr, uint32_t _size);
-					
-					bool setDefaultValue(const void* valPtr, uint32_t _size);
+					void markAsUnchanged();
 					
 					template<typename T>
-					T* getNextValue() {
-						return static_cast<T*>(next_value);
-					}
-					
-					template<typename T>
-					T* getCurrentValue() {
-						return static_cast<T*>(current_value);
+					T* getValue() {
+						return static_cast<T*>(value_buffer);
 					}
 				};
 				
 				//-----------------------------------------------------------------------------------------------------------------------------
 				
-				//! this class cloccet a set of key with a ValueSetting class associated
+				//! this class is a set of key with a ValueSetting class associated
 				/*!
 				 This class collect a set on key with the repsective ValueSetting creating a domain o 
 				 values.
@@ -136,10 +128,7 @@ namespace chaos{
 					void setValueForAttribute(VariableIndexType n,
 											  const void * value,
 											  uint32_t size);
-					
-					void setDefaultValueForAttribute(VariableIndexType n,
-													 const void * value,
-													 uint32_t size);
+
 					
 					VariableIndexType getIndexForName(const std::string& name );
 					
@@ -161,7 +150,17 @@ namespace chaos{
 					//!fill the CDataWrapper representig the set
 					void fillDataWrapper(CDataWrapper& data_wrapper);
 					
-					VariableIndexType getNumberOfKey();
+					//! return the number of the attribute into the domain
+					VariableIndexType getNumberOfAttributes();
+					
+					//! reset the chagned index array
+					void resetChangedIndex();
+					
+					//! mark all attribute as changed
+					void markAllAsChanged();
+					
+					//! return true if some attribute has change it's value
+					bool hasChanged();
 				};
 				
 				//-----------------------------------------------------------------------------------------------------------------------------
@@ -174,6 +173,9 @@ namespace chaos{
 						SVD_SYSTEM,
 						SVD_CUSTOM
 					}SharedVariableDomain;
+					
+					SharedCacheInterface(){};
+					virtual ~SharedCacheInterface(){};
 					
 					//! Return the value object for the domain and the string key
 					/*!
@@ -188,10 +190,13 @@ namespace chaos{
 														   VariableIndexType variable_index) = 0;
 					
 					//! Set the value for a determinated variable in a determinate domain
-					virtual void setVariableValueForKey(SharedVariableDomain domain,
-														const std::string& variable_name,
-														void * value, uint32_t size) = 0;
-					
+					virtual void setVariableValue(SharedVariableDomain domain,
+												  const std::string& variable_name,
+												  void * value, uint32_t size) = 0;
+					//! Set the value for a determinated variable in a determinate domain
+					virtual void setVariableValue(SharedVariableDomain domain,
+												  VariableIndexType variable_index,
+												  void * value, uint32_t size) = 0;
 					//! Get the index of the changed attribute
 					virtual void getChangedVariableIndex(SharedVariableDomain domain,
 														 std::vector<VariableIndexType>& changed_index) = 0;
@@ -253,11 +258,15 @@ namespace chaos{
 												   VariableIndexType variable_index);
 					
 					//! Set the value for a determinated variable in a determinate domain
-					void setVariableValueForKey(SharedCacheInterface::SharedVariableDomain domain,
-												const std::string& variable_name,
-												void * value,
-												uint32_t size);
-					
+					void setVariableValue(SharedCacheInterface::SharedVariableDomain domain,
+										  const std::string& variable_name,
+										  void * value,
+										  uint32_t size);
+					//! Set the value for a determinated variable in a determinate domain
+					void setVariableValue(SharedCacheInterface::SharedVariableDomain domain,
+										  VariableIndexType variable_index,
+										  void * value,
+										  uint32_t size);
 					//! Get the index of the changed attribute
 					void getChangedVariableIndex(SharedCacheInterface::SharedVariableDomain domain,
 												 std::vector<VariableIndexType>& changed_index);

@@ -29,7 +29,8 @@ using namespace chaos::cu::control_manager::slow_command;
 #define SCLERR_ LERR_ << SCLOG_HEAD_SL
 
 // default constructor
-SlowCommand::SlowCommand() {
+SlowCommand::SlowCommand():
+attribute_cache(BatchCommand::getSharedCacheInterface()) {
     
 
 }
@@ -55,7 +56,7 @@ chaos::common::data::DatasetDB *SlowCommand::getDeviceDatabase() {
  */
 void SlowCommand::pushDataSet(CDataWrapper *acquired_data) {
     //send data to related buffer
-    keyDataStoragePtr->pushDataSet(acquired_data);
+	keyDataStoragePtr->pushDataSet(data_manager::KeyDataStorageDomainOutput, acquired_data);
 }
 
 /*
@@ -63,5 +64,5 @@ void SlowCommand::pushDataSet(CDataWrapper *acquired_data) {
  according to key
  */
 CDataWrapper *SlowCommand::getNewDataWrapper() {
-    return keyDataStoragePtr->getNewDataWrapper();
+    return keyDataStoragePtr->getNewOutputAttributeDataWrapper();
 }

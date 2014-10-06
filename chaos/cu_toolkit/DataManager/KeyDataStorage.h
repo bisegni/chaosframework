@@ -22,7 +22,7 @@
 #define KeyDataStorage_H
 
 #include <string>
-#include <chaos/cu_toolkit/DataManager/MultiBufferDataStorage.h>
+#include <chaos/common/io/IODataDriver.h>
 #include <chaos/common/utility/ArrayPointer.h>
 
 using namespace std;
@@ -34,26 +34,40 @@ namespace chaos{
     namespace cu {
 		namespace data_manager {
 			
-			class KeyDataStorage : public MultiBufferDataStorage {
-				string dataSetKey;
-				chaos_io::IODataDriver *liveIODriver;
-				auto_ptr<chaos_data::CDataWrapper> keyData;
+			typedef enum KeyDataStorageDomain{
+				KeyDataStorageDomainOutput,
+				KeyDataStorageDomainInput,
+				KeyDataStorageDomainSystem,
+				KeyDataStorageDomainCustom
+			} KeyDataStorageDomain;
+			
+			class KeyDataStorage {
+				string key;
+				string output_key;
+				string input_key;
+				string system_key;
+				string custom_key;
+				chaos_io::IODataDriver *io_data_driver;
 			public:
-				KeyDataStorage(const char*);
-				KeyDataStorage(string&);
+				KeyDataStorage(const std::string& _key,
+							   chaos_io::IODataDriver *_io_data_driver);
 				virtual ~KeyDataStorage();
 				
-				void init(chaos_data::CDataWrapper*);
-				
+				void init(void *init_parameter) throw (chaos::CException);
+
+				void deinit() throw (chaos::CException);
 				/*
 				 Return a new instace for the CSDatawrapped
 				 */
-				chaos_data::CDataWrapper* getNewDataWrapper();
+				chaos_data::CDataWrapper* getNewOutputAttributeDataWrapper();
 				
 				/*
 				 Retrive the data from Live Storage
 				 */
-				ArrayPointer<chaos_data::CDataWrapper>* getLastDataSet();
+				ArrayPointer<chaos_data::CDataWrapper>* getLastDataSet(KeyDataStorageDomain domain);
+				
+				
+				void pushDataSet(KeyDataStorageDomain domain, chaos_data::CDataWrapper *dataset);;
 				
 				/*
 				 Retrive the data from History Storage

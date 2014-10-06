@@ -37,20 +37,14 @@ ValueSetting::ValueSetting(const std::string& _name,
 						   uint32_t _index,
 						   uint32_t _size,
 						   chaos::DataType::DataType _type):
-buffer(NULL),
-current_value(NULL),
-next_value(NULL),
+value_buffer(NULL),
 size(_size),
 name(_name),
 index(_index),
 type(_type) {
-	buffer = std::calloc(1, size*2);
-	if(!buffer) {
+	value_buffer = std::calloc(size, 1);
+	if(!value_buffer) {
 		LERR_ << "error allcoating current_value memory";
-	} else {
-		current_value = buffer;
-		
-		next_value = ((char*)buffer + _size);
 	}
 }
 
@@ -58,55 +52,40 @@ type(_type) {
  
  ---------------------------------------------------------------------------------*/
 ValueSetting::~ValueSetting() {
-    if(buffer) free(buffer);
+    if(value_buffer) free(value_buffer);
+}
+
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+bool ValueSetting::setValue(const void* value_ptr, uint32_t value_size) {
+	if(value_size>size) return false;
+	
+	//copy the new value
+	std::memcpy(value_buffer, value_ptr, value_size);
+	
+	//set the relative field for set has changed
+	sharedBitmapChangedAttribute->set(index);
+	return true;
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void ValueSetting::completed() {
-    std::memcpy(current_value, next_value, size);
-    std::memset(next_value, 0, size);
-    sharedBitmapChangedAttribute->reset(index);
+void ValueSetting::markAsChanged() {
+	sharedBitmapChangedAttribute->set(index);
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void ValueSetting::completedWithError() {
-    std::memset(next_value, 0, size);
-    sharedBitmapChangedAttribute->reset(index);
+void ValueSetting::markAsUnchanged() {
+	sharedBitmapChangedAttribute->reset(index);
 }
 
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
-bool ValueSetting::setNextValue(const void* valPtr, uint32_t _size) {
-    if(_size>size) return false;
-    
-    //copy the new value
-    std::memcpy(next_value, valPtr, _size);
-    
-    //set the relative field for set has changed
-    sharedBitmapChangedAttribute->set(index);
-    return true;
-}
 
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
-bool ValueSetting::setDefaultValue(const void* valPtr, uint32_t _size) {
-    if(_size>size) return false;
-    
-    //copy the new value
-    std::memcpy(current_value, valPtr, _size);
-    
-    //set the relative field for set has changed
-    sharedBitmapChangedAttribute->reset(index);
-    return true;
-}
-
-#pragma mark AttributeSetting
+#pragma mark AttributesSetting
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
@@ -202,19 +181,10 @@ void AttributesSetting::getAttributeNames(std::vector<std::string>& names) {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void AttributesSetting::setDefaultValueForAttribute(VariableIndexType n,
+void AttributesSetting::setValueForAttribute(VariableIndexType n,
 												   const void * value,
 												   uint32_t size) {
-    mapAttributeIndexSettings[n]->setDefaultValue(value, size);
-}
-
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
-void AttributesSetting::setValueForAttribute(VariableIndexType n,
-											const void * value,
-											uint32_t size) {
-    mapAttributeIndexSettings[n]->setNextValue(value, size);
+    mapAttributeIndexSettings[n]->setValue(value, size);
 }
 
 /*---------------------------------------------------------------------------------
@@ -236,6 +206,13 @@ ValueSetting *AttributesSetting::getValueSettingForIndex(VariableIndexType index
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
+VariableIndexType AttributesSetting::getNumberOfAttributes() {
+	return index;
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 void AttributesSetting::getChangedIndex(std::vector<VariableIndexType>& changed_index) {
     size_t index = 0;
     index = bitmapChangedAttribute.find_first();
@@ -248,8 +225,22 @@ void AttributesSetting::getChangedIndex(std::vector<VariableIndexType>& changed_
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-VariableIndexType AttributesSetting::getNumberOfKey() {
-	return index;
+void AttributesSetting::resetChangedIndex() {
+	bitmapChangedAttribute.reset();
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+void AttributesSetting::markAllAsChanged() {
+	bitmapChangedAttribute.set();
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+bool AttributesSetting::hasChanged() {
+	return bitmapChangedAttribute.any();
 }
 #pragma mark AttributeValueSharedCache
 
@@ -367,12 +358,22 @@ ValueSetting *AttributeValueSharedCache::getVariableValue(AttributeValueSharedCa
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void AttributeValueSharedCache::setVariableValueForKey(AttributeValueSharedCache::SharedVariableDomain domain,
-													 const string& variable_name,
-													 void * value,
-													 uint32_t size) {
+void AttributeValueSharedCache::setVariableValue(AttributeValueSharedCache::SharedVariableDomain domain,
+												 const string& variable_name,
+												 void * value,
+												 uint32_t size) {
     VariableIndexType index = getSharedDomain(domain).getIndexForName(variable_name);
     getSharedDomain(domain).setValueForAttribute(index, value, size);
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+void AttributeValueSharedCache::setVariableValue(SharedCacheInterface::SharedVariableDomain domain,
+												 VariableIndexType variable_index,
+												 void * value,
+												 uint32_t size) {
+	 getSharedDomain(domain).setValueForAttribute(variable_index, value, size);
 }
 
 /*---------------------------------------------------------------------------------

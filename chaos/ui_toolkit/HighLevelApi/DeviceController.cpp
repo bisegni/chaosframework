@@ -759,7 +759,8 @@ void DeviceController::stopTracking() {
 void DeviceController::fetchCurrentDeviceValue() {
 	boost::recursive_mutex::scoped_lock lock(trackMutext);
 	size_t value_len = 0;
-	char *value = ioLiveDataDriver->retriveRawData(&value_len);
+	const std::string device_dataset_domain = deviceID + "_o";
+	char *value = ioLiveDataDriver->retriveRawData(device_dataset_domain, &value_len);
 	//check if some value has bee fetcher
 	if(!value) return;
 	
@@ -825,7 +826,8 @@ void DeviceController::clearHandler() {
 
 //! get datapack between time itervall
 void DeviceController::executeTimeIntervallQuery(uint64_t start_ts, uint64_t end_ts, chaos_io::QueryFuture **query_future) {
-	*query_future = ioLiveDataDriver->performQuery(start_ts, end_ts);
+	const std::string device_dataset_domain = deviceID + "_o";
+	*query_future = ioLiveDataDriver->performQuery(device_dataset_domain, start_ts, end_ts);
 }
 
 //! release a query

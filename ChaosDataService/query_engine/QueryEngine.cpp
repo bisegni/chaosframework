@@ -260,7 +260,6 @@ int  QueryEngine::getChannelForQuery(DataCloudQuery *query,
 		*connection_info_handle = NULL;
 		return -1;
 	}
-	(*connection_info_handle)->channel->setDeviceID(query->query.did);
 	
 	//set the query pointer to the connection info
 	(*connection_info_handle)->query = query;
@@ -297,11 +296,11 @@ int  QueryEngine::sendDataToClient(DataCloudQuery *query) {
 		//all found datapack are processed, if there is an error on a cicle,
 		//in the next will not be send data over channel, but only discarded
 		//in this way at the end all the found datapack will be erased
-		for (int sent_count = 0;												//keep track of the page dimension of element to send
+		for (int sent_count = 0;											//keep track of the page dimension of element to send
 			 (sent_count<QueryEngine_FORWARDING_PAGE_DIMENSION &&			//step until the page is not sent or
-			  query->fetchedAndForwadInfo.number_of_element_to_forward && //until we have cicle all vector
-			  !err);															//and we have no err
-			 sent_count++) {													//increment the page element
+			  query->fetchedAndForwadInfo.number_of_element_to_forward &&	//until we have cicle all vector
+			  !err);														//and we have no err
+			 sent_count++) {												//increment the page element
 			
 			//get next element to send
 			datapack_to_forward = query->fetchedAndForwadInfo.fetched_data_vector[--query->fetchedAndForwadInfo.number_of_element_to_forward];

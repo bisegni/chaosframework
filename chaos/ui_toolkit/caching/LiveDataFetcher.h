@@ -38,7 +38,7 @@ namespace chaos {
                 
                 chaos_io::IODataDriver *dataDriver;
                 
-                void getData(chaos_data::CDataWrapper& newData, uint64_t& ts);
+                void getData(const std::string& key, chaos_data::CDataWrapper& newData, uint64_t& ts);
                 
             public:
                 

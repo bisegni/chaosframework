@@ -58,7 +58,13 @@ namespace chaos_dio_channel = chaos::common::direct_io::channel;
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-IODirectIODriver::IODirectIODriver(std::string alias):NamedService(alias), current_endpoint_p_port(0), current_endpoint_s_port(0), current_endpoint_index(0), connectionFeeder(alias, this) {
+IODirectIODriver::IODirectIODriver(std::string alias):
+NamedService(alias),
+current_endpoint_p_port(0),
+current_endpoint_s_port(0),
+current_endpoint_index(0),
+connectionFeeder(alias, this),
+uuid(UUIDUtil::generateUUIDLite()){
 	//clear
 	std::memset(&init_parameter, 0, sizeof(IODirectIODriverInitParam));
 	
@@ -158,7 +164,7 @@ void IODirectIODriver::deinit() throw(CException) {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void IODirectIODriver::storeRawData(chaos::common::data::SerializationBuffer *serialization)  throw(CException) {
+void IODirectIODriver::storeRawData(const std::string& key, chaos::common::data::SerializationBuffer *serialization)  throw(CException) {
 	CHAOS_ASSERT(serialization)
 	boost::shared_lock<boost::shared_mutex>(mutext_feeder);
 	//if(next_client->connection->getState() == chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected)
@@ -166,7 +172,7 @@ void IODirectIODriver::storeRawData(chaos::common::data::SerializationBuffer *se
 	serialization->disposeOnDelete = !next_client;
 	if(next_client) {
 		//free the packet
-		next_client->device_client_channel->storeAndCacheDataOutputChannel((void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen());
+		next_client->device_client_channel->storeAndCacheDataOutputChannel(key, (void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen());
 		return;
 	} else {
 		DEBUG_CODE(IODirectIODriver_DLDBG_ << "No available socket->loose packet");
@@ -177,14 +183,14 @@ void IODirectIODriver::storeRawData(chaos::common::data::SerializationBuffer *se
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-char* IODirectIODriver::retriveRawData(size_t *dim)  throw(CException) {
+char* IODirectIODriver::retriveRawData(const std::string& key, size_t *dim)  throw(CException) {
 	char* result = NULL;
 	boost::shared_lock<boost::shared_mutex>(mutext_feeder);
 	IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
 	if(!next_client) return NULL;
 	
 	uint32_t size =0;
-	next_client->device_client_channel->requestLastOutputData((void**)&result, size);
+	next_client->device_client_channel->requestLastOutputData(key, (void**)&result, size);
 	*dim = (size_t)size;
 	return result;
 }
@@ -196,10 +202,6 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
 	//lock the feeder access
 	boost::unique_lock<boost::shared_mutex>(mutext_feeder);
 	//checkif someone has passed us the device indetification
-	if(newConfigration->hasKey(DatasetDefinitionkey::DEVICE_ID)){
-		dataKey = newConfigration->getStringValue(DatasetDefinitionkey::DEVICE_ID);
-		IODirectIODriver_LAPP_ << "The key for memory cache is: " << dataKey;
-	}
 	if(newConfigration->hasKey(DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS)){
 		IODirectIODriver_LAPP_ << "Get the DataManager LiveData address value";
 		auto_ptr<chaos::common::data::CMultiTypeDataArrayWrapper> liveMemAddrConfig(newConfigration->getVectorValue(DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS));
@@ -245,8 +247,6 @@ void* IODirectIODriver::serviceForURL(const common::network::URL& url, uint32_t 
 			delete(clients_channel);
 			return NULL;
 		}
-		//set device id
-		clients_channel->device_client_channel->setDeviceID(dataKey, common::direct_io::channel::DirectIODeviceClientChannelPutModeStoricizeAnLive);
 		
 		//set the answer information
 		clients_channel->device_client_channel->setAnswerServerInfo(current_endpoint_p_port, current_endpoint_s_port, current_endpoint_index);
@@ -283,13 +283,15 @@ void IODirectIODriver::handleEvent(chaos_direct_io::DirectIOClientConnection *cl
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-QueryFuture *IODirectIODriver::performQuery(uint64_t start_ts, uint64_t end_ts) {
+QueryFuture *IODirectIODriver::performQuery(const std::string& key,
+											uint64_t start_ts,
+											uint64_t end_ts) {
 	IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
 	if(!next_client) return NULL;
 	
 	QueryFuture *q = NULL;
 	std::string query_id;
-	if(!next_client->device_client_channel->queryDataCloud(start_ts, end_ts, query_id)) {
+	if(!next_client->device_client_channel->queryDataCloud(key, start_ts, end_ts, query_id)) {
 		//acquire write lock
 		boost::unique_lock<boost::shared_mutex> wmap_loc(map_query_future_mutex);
 		q = _getNewQueryFutureForQueryID(query_id);

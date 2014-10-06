@@ -83,10 +83,10 @@ void IOMemcachedIODriver::deinit() throw(CException) {
  * This method retrive the cached object by CSDawrapperUsed as query key and
  * return a pointer to the class ArrayPointer of CDataWrapper type
  */
-void IOMemcachedIODriver::storeRawData(chaos_data::SerializationBuffer *serialization)  throw(CException) {
+void IOMemcachedIODriver::storeRawData(const std::string& key, chaos_data::SerializationBuffer *serialization)  throw(CException) {
 	boost::mutex::scoped_lock lock(useMCMutex);
 	memcached_return_t mcSetResult = MEMCACHED_SUCCESS;
-	mcSetResult = memcached_set(memClient, dataKey.c_str(), dataKey.length(), serialization->getBufferPtr(), serialization->getBufferLen(), 0, 0);
+	mcSetResult = memcached_set(memClient, key.c_str(), key.size(), serialization->getBufferPtr(), serialization->getBufferLen(), 0, 0);
 	//for debug
 	if(mcSetResult!=MEMCACHED_SUCCESS) {
 #if DEBUG
@@ -100,12 +100,12 @@ void IOMemcachedIODriver::storeRawData(chaos_data::SerializationBuffer *serializ
  * This method retrive the cached object by CSDawrapperUsed as query key and
  * return a pointer to the class ArrayPointer of CDataWrapper type
  */
-char* IOMemcachedIODriver::retriveRawData(size_t *dim)  throw(CException) {
+char* IOMemcachedIODriver::retriveRawData(const std::string& key, size_t *dim)  throw(CException) {
 	uint32_t flags= 0;
 	size_t value_length= 0;
 	memcached_return_t mcSetResult = MEMCACHED_SUCCESS;
 	boost::mutex::scoped_lock lock(useMCMutex);
-	char* result =  memcached_get(memClient, dataKey.c_str(), dataKey.length(), &value_length, &flags,  &mcSetResult);
+	char* result =  memcached_get(memClient, key.c_str(), key.size(), &value_length, &flags,  &mcSetResult);
 	if(dim) *dim = value_length;
 	return result;
 }
@@ -119,12 +119,6 @@ CDataWrapper* IOMemcachedIODriver::updateConfiguration(CDataWrapper* newConfigra
 	LMEMDRIVER_ << "Update Configuration";
 	
 	if(!memClient) throw CException(0, "Write memcached structure not allocated", "IOMemcachedIODriver::updateConfiguration");
-	
-	//checkif someone has passed us the device indetification
-	if(newConfigration->hasKey(DatasetDefinitionkey::DEVICE_ID)){
-		dataKey = newConfigration->getStringValue(DatasetDefinitionkey::DEVICE_ID);
-		LMEMDRIVER_ << "The key for memory cache is: " << dataKey;
-	}
 	
 	if(newConfigration->hasKey(DataProxyConfigurationKey::CS_DM_LD_SERVER_ADDRESS) && memClient){
 		LMEMDRIVER_ << "Get the DataManager LiveData address value";

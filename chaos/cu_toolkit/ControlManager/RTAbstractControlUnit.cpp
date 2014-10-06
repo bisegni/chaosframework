@@ -24,8 +24,11 @@
 
 using namespace chaos;
 using namespace chaos::common::data;
+using namespace chaos::common::data::cache;
+
 using namespace chaos::cu;
 using namespace chaos::cu::control_manager;
+
 using namespace boost;
 using namespace boost::chrono;
 
@@ -38,6 +41,9 @@ AbstractControlUnit(CUType::RTCU,
 					_control_unit_param) {
     //allocate the handler engine
     attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
+	
+	//associate the shared cache of the executor to the asbtract control unit one
+	attribute_value_shared_cache = new AttributeValueSharedCache();
 }
 
 /*!
@@ -53,10 +59,18 @@ AbstractControlUnit(CUType::RTCU,
 					_control_unit_param,
 					_control_unit_drivers) {
     //allocate the handler engine
-    attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);	
+    attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
+	
+	//associate the shared cache of the executor to the asbtract control unit one
+	attribute_value_shared_cache = new AttributeValueSharedCache();
 }
 
 RTAbstractControlUnit::~RTAbstractControlUnit() {
+	//release attribute shared cache
+	if(attribute_value_shared_cache) {
+		delete(attribute_value_shared_cache);
+	}
+	
     //release handler engine
     if(attributeHandlerEngine) {
         delete attributeHandlerEngine;
@@ -89,7 +103,11 @@ void RTAbstractControlUnit::init(void *initData) throw(CException) {
 	AbstractControlUnit::init(initData);
 	scheduler_run = false;
     RTCULAPP_ << "Initialize the DSAttribute handler engine for device:" << DatasetDB::getDeviceID();
-    utility::StartableService::initImplementation(attributeHandlerEngine, (void*)NULL, "DSAttribute handler engine", "RTAbstractControlUnit::init");
+    utility::StartableService::initImplementation(attributeHandlerEngine, (void*)NULL, "DSAttribute handler engine", __PRETTY_FUNCTION__);
+	
+	RTCULAPP_ << "Initializing shared attribute cache " << DatasetDB::getDeviceID();
+	utility::InizializableService::initImplementation((AttributeValueSharedCache*)attribute_value_shared_cache, (void*)NULL, "attribute_value_shared_cache", __PRETTY_FUNCTION__);
+	
 }
 
 /*!
@@ -124,8 +142,12 @@ void RTAbstractControlUnit::deinit() throw(CException) {
 	//call parent impl
 	AbstractControlUnit::deinit();
 	
+	RTCULAPP_ << "Initializing shared attribute cache " << DatasetDB::getDeviceID();
+	utility::InizializableService::deinitImplementation((AttributeValueSharedCache*)attribute_value_shared_cache, "attribute_value_shared_cache", __PRETTY_FUNCTION__);
+
+	
     RTCULAPP_ << "Deinitializing the DSAttribute handler engine for device:" << DatasetDB::getDeviceID();
-    utility::StartableService::deinitImplementation(attributeHandlerEngine, "DSAttribute handler engine", "RTAbstractControlUnit::deinit");
+    utility::StartableService::deinitImplementation(attributeHandlerEngine, "DSAttribute handler engine", __PRETTY_FUNCTION__);
 }
 
 /*
@@ -180,23 +202,6 @@ void RTAbstractControlUnit::threadStartStopManagment(bool startAction) throw(CEx
 	}
 }
 
-/*
- Return a new instance of CDataWrapper filled with a mandatory data
- according to key
- */
-CDataWrapper *RTAbstractControlUnit::getNewDataWrapper() {
-	return keyDataStorage->getNewDataWrapper();
-}
-
-
-/*
- Send device data to output buffer
- */
-void RTAbstractControlUnit::pushDataSet(CDataWrapper *acquiredData) {
-	//send data to related buffer
-	keyDataStorage->pushDataSet(acquiredData);
-}
-
 /*!
  Event for update some CU configuration
  */
@@ -226,9 +231,53 @@ CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* updatePac
 void RTAbstractControlUnit::executeOnThread() {
 	while(scheduler_run) {
 		unitRun();
+		
+		//! check if the output dataset need to be pushed
+		pushOutputDataset();
+		
 		//check if we are in sequential or in threaded mode
 		boost::this_thread::sleep_for(boost::chrono::microseconds(schedule_dalay));
 	}
+}
+
+void RTAbstractControlUnit::pushOutputDataset() {
+	AttributesSetting& output_attribute_cache = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_OUTPUT);
+	
+	//check if something as changed
+	if(!output_attribute_cache.hasChanged()) return;
+	
+	CDataWrapper *output_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
+	if(!output_attribute_dataset) return;
+	
+	for(int idx = 0;
+		idx < output_attribute_cache.getNumberOfAttributes();
+		idx++) {
+		//
+		ValueSetting * value_set = output_attribute_cache.getValueSettingForIndex(idx);
+		switch(value_set->type) {
+			case DataType::TYPE_BOOLEAN:
+				output_attribute_dataset->addBoolValue(value_set->name.c_str(), *value_set->getValue<bool>());
+				break;
+			case DataType::TYPE_INT32:
+				output_attribute_dataset->addInt32Value(value_set->name.c_str(), *value_set->getValue<int32_t>());
+				break;
+			case DataType::TYPE_INT64:
+				output_attribute_dataset->addInt64Value(value_set->name.c_str(), *value_set->getValue<int64_t>());
+				break;
+			case DataType::TYPE_DOUBLE:
+				output_attribute_dataset->addDoubleValue(value_set->name.c_str(), *value_set->getValue<double>());
+				break;
+			case DataType::TYPE_STRING:
+				output_attribute_dataset->addStringValue(value_set->name.c_str(), *value_set->getValue<const char *>());
+				break;
+			case DataType::TYPE_BYTEARRAY:
+				output_attribute_dataset->addBinaryValue(value_set->name.c_str(), *value_set->getValue<char*>(), value_set->size);
+				break;
+		}
+	}
+	
+	//now we nede to push the outputdataset
+	keyDataStorage->pushDataSet(data_manager::KeyDataStorageDomainOutput, output_attribute_dataset);
 }
 
 /*

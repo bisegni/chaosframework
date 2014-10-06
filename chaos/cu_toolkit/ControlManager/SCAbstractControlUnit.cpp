@@ -76,12 +76,6 @@ SCAbstractControlUnit::~SCAbstractControlUnit() {
     }
 }
 
-
-
-void SCAbstractControlUnit::defineSharedVariable() {
-    
-}
-
 void  SCAbstractControlUnit::_getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance) {
     //broadcast to the parent the method call
     AbstractControlUnit::_getDeclareActionInstance(declareActionInstance);
@@ -109,7 +103,7 @@ void SCAbstractControlUnit::init(void *initData) throw(CException) {
     
     //now we can call funciton for custom definition of the shared variable
     LCCU_ << "Setting up custom shared variable for device " << DatasetDB::getDeviceID();
-    defineSharedVariable();
+
 }
 
 /*
@@ -193,22 +187,5 @@ CDataWrapper* SCAbstractControlUnit::updateConfiguration(CDataWrapper *updatePac
 		slow_command_executor->setCommandFeatures(features);
 	}
 	return result;
-}
-
-void SCAbstractControlUnit::addCustomSharedVariable(std::string name, uint32_t max_size, chaos::DataType::DataType type) {
-    // add the attribute to the shared setting object
-    slow_command_executor->global_attribute_cache.addVariable(chaos_batch::AttributeValueSharedCache::SVD_CUSTOM, name, max_size, type);
-}
-
-void SCAbstractControlUnit::setVariableValue(AttributeValueSharedCache::SharedVariableDomain domain, std::string name, void *value, uint32_t value_size) {
-        // add the attribute to the shared setting object
-    chaos_batch::VariableIndexType attribute_index = 0;
-    if((attribute_index = slow_command_executor->global_attribute_cache.getSharedDomain(domain).getIndexForName(name))) {
-        slow_command_executor->global_attribute_cache.getSharedDomain(domain).setDefaultValueForAttribute(attribute_index, value, value_size);
-    }
-}
-
-ValueSetting *SCAbstractControlUnit::getVariableValue(AttributeValueSharedCache::SharedVariableDomain domain,  const std::string& variable_name) {
-    return slow_command_executor->global_attribute_cache.getVariableValue(domain, variable_name);
 }
 

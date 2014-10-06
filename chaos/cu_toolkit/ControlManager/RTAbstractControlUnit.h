@@ -61,39 +61,32 @@ namespace chaos {
 				 */
 				void _defineActionAndDataset(chaos_data::CDataWrapper&) throw(CException);
 				
-				
+				//! init rt control unit
 				void init(void *initData) throw(CException);
 				
-				/*
-				 Internal implementation of the runmethod, that (for now) will schedule the slowcommand sandbox
-				 */
+				//! start rt control unit
 				void start() throw(CException);
 				
-				/*
-				 Execute the Control Unit work
-				 */
+				//! stop rt control unit
 				void stop() throw(CException);
 				
+				//! deinit rt control unit
 				void deinit() throw(CException);
+				
+				//! push the output data if it is changed
+				void pushOutputDataset();
 			protected:
 				
+				//! schdule a run of the rt control unit
 				virtual void unitRun() throw(CException) = 0;
 				
-				
-				void pushDataSet(chaos_data::CDataWrapper *acquiredData);
-				
+				//! set the dafult run schedule time intervall
 				void setDefaultScheduleDelay(uint64_t _defaultScheduleDelay);
-				/*!
-				 return a new instance of CDataWrapper filled with a mandatory data
-				 according to key
-				 */
-				chaos_data::CDataWrapper *getNewDataWrapper();
 				
 				/*
 				 return the appropriate thread for the device
 				 */
 				inline void threadStartStopManagment(bool startAction) throw(CException);
-				
 				
 				/*!
 				 Event for update some CU configuration
@@ -189,18 +182,6 @@ namespace chaos {
 													  typename TDSObjectHandler<T, std::string>::TDSHandler  objectHandler) {
 					
 					addTemplatedAttributeToDataSet(attributeName, attributeDescription, DataType::TYPE_STRING, DataType::Input, new TDSObjectHandler<T, std::string>(objectPointer, objectHandler));
-				}
-				
-				/*!
-				 Add the new attribute in the dataset for at the CU dataset with an associated handler
-				 */
-				template<typename T>
-				void addInputStructAttributeToDataSet(const char*const attributeName,
-													  const char*const attributeDescription,
-													  T* objectPointer,
-													  typename TDSObjectHandler<T, chaos_data::CDataWrapper>::TDSHandler  objectHandler) {
-					
-					addTemplatedAttributeToDataSet(attributeName, attributeDescription, DataType::TYPE_STRUCT, DataType::Input, new TDSObjectHandler<T, chaos_data::CDataWrapper>(objectPointer, objectHandler));
 				}
 				
 				//! add an handler for a determinate device id and attribute set

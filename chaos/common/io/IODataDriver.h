@@ -42,8 +42,6 @@ namespace chaos{
 			
 			class IODataDriver: public Configurable {
 			protected:
-				std::string dataKey;
-				
 				QueryFuture *_getNewQueryFutureForQueryID(const std::string& query_id);
 				
 				void _releaseQueryFuture(QueryFuture *query_future_ptr);
@@ -68,30 +66,34 @@ namespace chaos{
 				/*!
 				 * This method cache all object passed to driver
 				 */
-				void storeData(chaos_data::CDataWrapper *dataToStore) throw(CException);
+				void storeData(const std::string& key,
+							   chaos_data::CDataWrapper *dataToStore) throw(CException);
 				
 				/*!
 				 * This method retrive the cached object by CSDawrapperUsed as query key and
 				 * return a pointer to the class ArrayPointer of CDataWrapper type
 				 */
-				virtual ArrayPointer<chaos_data::CDataWrapper>* retriveData(chaos_data::CDataWrapper*const)  throw(CException);
+				virtual ArrayPointer<chaos_data::CDataWrapper>* retriveData(const std::string& key,
+																			chaos_data::CDataWrapper*const)  throw(CException);
 				
 				/*!
 				 * This method retrive the cached object by CSDawrapperUsed as query key and
 				 * return a pointer to the class ArrayPointer of CDataWrapper type
 				 */
-				virtual ArrayPointer<chaos_data::CDataWrapper>* retriveData()  throw(CException);
+				virtual ArrayPointer<chaos_data::CDataWrapper>* retriveData(const std::string& key)  throw(CException);
 				
 				/*!
 				 * This method store a buffer into live cached
 				 */
-				virtual void storeRawData(chaos_data::SerializationBuffer *serialization)  throw(CException) = 0;
+				virtual void storeRawData(const std::string& key,
+										  chaos_data::SerializationBuffer *serialization)  throw(CException) = 0;
 				
 				/*!
 				 * This method retrive the cached object by CSDawrapperUsed as query key and
 				 * return a pointer to the class ArrayPointer of CDataWrapper type
 				 */
-				virtual char * retriveRawData(size_t* dataDim=NULL)  throw(CException) = 0;
+				virtual char * retriveRawData(const std::string& key,
+											  size_t* dataDim=NULL)  throw(CException) = 0;
 				
 				/*!
 				 Update the driver configuration
@@ -100,7 +102,9 @@ namespace chaos{
 				
 				
 				//! perform a query since and
-				virtual QueryFuture *performQuery(uint64_t start_ts, uint64_t end_ts);
+				virtual QueryFuture *performQuery(const std::string& key,
+												  uint64_t start_ts,
+												  uint64_t end_ts);
 				
 				//! close a query 
 				virtual void releaseQuery(QueryFuture *query_future);

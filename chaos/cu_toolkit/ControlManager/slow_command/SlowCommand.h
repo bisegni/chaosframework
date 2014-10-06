@@ -31,7 +31,7 @@
 #include <chaos/common/data/DatasetDB.h>
 #include <chaos/common/batch_command/BatchCommand.h>
 
-
+#include <chaos/cu_toolkit/ControlManager/AttributeSharedCacheWrapper.h>
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/driver_manager/DriverErogatorInterface.h>
 
@@ -51,7 +51,11 @@ namespace chaos{
             
             //! The name space that group all foundamental class need by slow control !CHOAS implementation
             namespace slow_command {
-                
+				
+				namespace command {
+					class SetAttributeCommand;
+				}
+				
                 //forward declaration
                 class SlowCommandExecutor;
 
@@ -63,17 +67,19 @@ namespace chaos{
                  - Acquire Handler, acquire the data for the command (if needed)
                  - Correlation and Commit handler, make the neccessary correlation and send the necessary command to the driver
                  */
-                class SlowCommand: public chaos::common::batch_command::BatchCommand {
+                class SlowCommand: protected chaos::common::batch_command::BatchCommand {
                     friend class SlowCommandExecutor;
-                    
+					friend class command::SetAttributeCommand;
                     //! key data storage to forwsard data to central memory (momentary until directi/O will be created)
                     data_manager::KeyDataStorage *keyDataStoragePtr;
                     
                     //! point to the in memory device database
 					chaos::common::data::DatasetDB  *deviceDatabasePtr;
-                    
-                    
+
                 protected:
+					//! shared attribute cache
+					AttributeSharedCacheWrapper attribute_cache;
+					
 					//! The erogator of the driver requested by the control unit
 					chaos::cu::driver_manager::DriverErogatorInterface *driverAccessorsErogator;
                     
@@ -82,7 +88,6 @@ namespace chaos{
                     
                     //! default destructor
                     virtual ~SlowCommand();
-                    
 					
                     /*!
                      return the device database with the dafualt device information
@@ -99,7 +104,6 @@ namespace chaos{
                      according to key
                      */
                     chaos_data::CDataWrapper *getNewDataWrapper();
-                    
                 public:
                     
                     //! return the identification of the device

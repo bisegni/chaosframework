@@ -40,6 +40,7 @@
 
 #include <chaos/common/data/DatasetDB.h>
 
+#include <chaos/cu_toolkit/ControlManager/AttributeSharedCacheWrapper.h>
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/driver_manager/DriverErogatorInterface.h>
 
@@ -71,8 +72,10 @@ namespace chaos{
     
     namespace cu {
         namespace control_manager {
-			namespace cu_driver = chaos::cu::driver_manager::driver;
-			namespace chaos_data = chaos::common::data;
+			using namespace chaos::common::data;
+			using namespace chaos::common::data::cache;
+			using namespace chaos::cu::driver_manager;
+			using namespace chaos::cu::driver_manager::driver;
 			
 			class ControlManager;
 			class WorkUnitManagement;
@@ -83,9 +86,9 @@ namespace chaos{
 			 that needs to be used to create device and his dataset are contained into the DeviceSchemaDB class.
 			 */
 			class AbstractControlUnit :
-			public chaos::cu::driver_manager::DriverErogatorInterface,
+			public DriverErogatorInterface,
 			public DeclareAction,
-			protected chaos_data::DatasetDB,
+			protected DatasetDB,
 			public utility::StartableService {
 				//friendly class declaration
 				friend class ControlManager;
@@ -95,8 +98,8 @@ namespace chaos{
 				friend class RTAbstractControlUnit;
 			public:
 				//! definition of the type for the driver list
-				typedef std::vector<chaos::cu::driver_manager::driver::DrvRequestInfo>				ControlUnitDriverList;
-				typedef std::vector<chaos::cu::driver_manager::driver::DrvRequestInfo>::iterator	ControlUnitDriverListIterator;
+				typedef std::vector<DrvRequestInfo>				ControlUnitDriverList;
+				typedef std::vector<DrvRequestInfo>::iterator	ControlUnitDriverListIterator;
 			private:
 				std::string  control_key;
 				//! contains the description of the type of the control unit
@@ -112,7 +115,17 @@ namespace chaos{
 				ControlUnitDriverList control_unit_drivers;
 				
 				//! list of the accessor of the driver requested by the unit implementation
-				std::vector< cu_driver::DriverAccessor *> accessorInstances;
+				std::vector< DriverAccessor *> accessorInstances;
+				
+				//! attributed value shared cache
+				/*!
+				 The data in every attribute is published automatically on the chaos data service
+				 with somne triggering logic according to the domain one.
+				 */
+				SharedCacheInterface *attribute_value_shared_cache;
+				
+				//! the wrapper for the user to isolate the shared cache
+				AttributeSharedCacheWrapper *attribute_shared_cache_wrapper;
 				
 				/*!
 				 Add a new KeyDataStorage for a specific key
@@ -122,22 +135,22 @@ namespace chaos{
 				/*!
 				 Initialize the Custom Contro Unit and return the configuration
 				 */
-				virtual chaos_data::CDataWrapper* _init(chaos_data::CDataWrapper*, bool& detachParam) throw(CException);
+				virtual CDataWrapper* _init(CDataWrapper*, bool& detachParam) throw(CException);
 				
 				/*!
 				 Deinit the Control Unit
 				 */
-				virtual chaos_data::CDataWrapper* _deinit(chaos_data::CDataWrapper*, bool& detachParam) throw(CException);
+				virtual CDataWrapper* _deinit(CDataWrapper*, bool& detachParam) throw(CException);
 				
 				/*!
 				 Starto the  Control Unit scheduling for device
 				 */
-				virtual chaos_data::CDataWrapper* _start(chaos_data::CDataWrapper*, bool& detachParam) throw(CException);
+				virtual CDataWrapper* _start(CDataWrapper*, bool& detachParam) throw(CException);
 				
 				/*!
 				 Stop the Custom Control Unit scheduling for device
 				 */
-				virtual chaos_data::CDataWrapper* _stop(chaos_data::CDataWrapper*, bool& detachParam) throw(CException);
+				virtual CDataWrapper* _stop(CDataWrapper*, bool& detachParam) throw(CException);
 				
 				/*!
 				 Define the control unit DataSet and Action into
@@ -157,12 +170,23 @@ namespace chaos{
 				// Startable Service method
 				void deinit() throw(CException);
 				
+				//! initialize the dataset attributes (input and output)
+				void initAttributeOnSharedAttributeCache(AttributeValueSharedCache::SharedVariableDomain domain,
+														std::vector<string>& attribute_names);
+				
+				void completeOutputAttribute();
+				
+				//! initialize system attribute
+				void initSystemAttributeOnSharedAttributeCache();
+
 			protected:
+
 				//  It's is the dynamically assigned instance of the CU. it will be used
 				// as domain for the rpc action.
 				string control_unit_instance;
 				
-				chaos::common::data::cache::SharedCacheInterface *attribute_value_shared_cache;
+				//! index of the acquisition time stamp into the cache
+				uint32_t acq_timestamp_cache_index;
 				
 				//! Momentary driver for push data into the central memory
 				data_manager::KeyDataStorage*  keyDataStorage;
@@ -174,7 +198,7 @@ namespace chaos{
 				/*!
 				 This method configure the CDataWrapper whit all th einromation for describe the implemented device
 				 */
-				virtual void _defineActionAndDataset(chaos_data::CDataWrapper&) throw(CException);
+				virtual void _defineActionAndDataset(CDataWrapper&) throw(CException);
 				
 				//! Get all managed declare action instance
 				/*!
@@ -188,21 +212,21 @@ namespace chaos{
 				 This method is called when the input attribute of the dataset need to be valorized,
 				 subclass need to perform all the appropiate action to set these attribute
 				 */
-				chaos_data::CDataWrapper* _setDatasetAttribute(chaos_data::CDataWrapper*, bool&) throw (CException);
+				CDataWrapper* _setDatasetAttribute(CDataWrapper*, bool&) throw (CException);
 				
                 //! Return the state of the control unit
 				/*!
 				 Return the current control unit state identifyed by ControlUnitState types
 				 fitted into the CDatawrapper with the key CUStateKey::CONTROL_UNIT_STATE
 				 */
-				chaos_data::CDataWrapper* _getState(chaos_data::CDataWrapper*, bool& detachParam) throw(CException);
+				CDataWrapper* _getState(CDataWrapper*, bool& detachParam) throw(CException);
 				
 				//! Return the information about the type of the current instace of control unit
 				/*!
 				 Return unit fitted into cdata wrapper:
 				 CU type: string type associated with the key @CUDefinitionKey::CS_CM_CU_TYPE
 				 */
-				chaos_data::CDataWrapper* _getInfo(chaos_data::CDataWrapper*, bool& detachParam) throw(CException);
+				CDataWrapper* _getInfo(CDataWrapper*, bool& detachParam) throw(CException);
 				
                 //! Abstract Method that need to be used by the sublcass to define the dataset
 				/*!
@@ -217,7 +241,14 @@ namespace chaos{
 				 \param neededDriver need to be filled with the structure DrvRequestInfo filled with the information
 				 about the needed driver [name, version and initialization param if preset statically]
 				 */
-				virtual void unitDefineDriver(std::vector<cu_driver::DrvRequestInfo>& neededDriver);
+				virtual void unitDefineDriver(std::vector<DrvRequestInfo>& neededDriver);
+				
+				//! abstract method to permit to the control unit to define custom attribute
+				/*!
+				 Custom attirbute, into the shared cache can be accessed globally into the control unit environment
+				 they are publishe on every value change commit
+				 */
+				virtual void unitDefineCustomAttribute() = 0;
 				
                 //! Abstract method for the initialization of the control unit
 				/*!
@@ -252,7 +283,7 @@ namespace chaos{
 				 Receive the event for set the dataset input element, this virtual method
 				 is empty because can be used by controlunit implementation
 				 */
-				virtual chaos_data::CDataWrapper* setDatasetAttribute(chaos_data::CDataWrapper*, bool& detachParam) throw (CException) = 0;
+				virtual CDataWrapper* setDatasetAttribute(CDataWrapper*, bool& detachParam) throw (CException) = 0;
 				
                 // Infrastructure configuration update
 				/*!
@@ -260,7 +291,7 @@ namespace chaos{
 				 checked to control waht is needed to update. Subclass that override this method need first inherited
 				 the parent one and the check if the CDataWrapper contains something usefull for it.
 				 */
-				virtual chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*, bool&) throw (CException);
+				virtual CDataWrapper* updateConfiguration(CDataWrapper*, bool&) throw (CException);
 				
 				//! return the accessor by an index
 				/*
@@ -269,6 +300,11 @@ namespace chaos{
 				 */
 				driver_manager::driver::DriverAccessor * getAccessoInstanceByIndex(int idx);
 				
+				inline
+				AttributeSharedCacheWrapper * const getAttributeCache() {
+					return attribute_shared_cache_wrapper;
+				}
+
 			public:
 				
 				//! Default Contructor

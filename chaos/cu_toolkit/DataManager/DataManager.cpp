@@ -26,7 +26,6 @@
 #include <chaos/common/io/IODirectIODriver.h>
 
 #include <chaos/cu_toolkit/DataManager/DataManager.h>
-#include <chaos/cu_toolkit/DataManager/DataBuffer/OutputDataBuffer.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManager.h>
 
 #include <boost/format.hpp>
@@ -128,27 +127,8 @@ IODataDriver *DataManager::getDataLiveDriverNewInstance() throw(CException) {
  * return a ne winstance of a MultiBufferDataStorage class
  */
 KeyDataStorage *DataManager::getKeyDataStorageNewInstanceForKey(string& key) throw(CException) {
-        //creat enew instance
-    KeyDataStorage *keyBuffer = new KeyDataStorage(key);
-    if(!keyBuffer) throw CException(0, "error creating instance of KeyDataStorage", "DataManager::getKeyDataStorageNewInstanceForKey");
-    
-        //set the new instance of output live driver buffer
-    OutputDataBuffer *outputLiveBuffer = new OutputDataBuffer();
-    
-        //make the live driver
     IODataDriver *outputDriver = getDataLiveDriverNewInstance();
-    
-        //set the driver
-    outputLiveBuffer->setIODriver(outputDriver);
-        
-        //set the first buffer
-    keyBuffer->setLiveOBuffer(outputLiveBuffer);
-    
-        //initialize the buffer
-        //(*msBuffer).init();
-    
-        //return the MultiBufferDataStorage
-    return keyBuffer;
+    return new KeyDataStorage(key, outputDriver);
 }
 
 /*
@@ -198,7 +178,7 @@ void DataManager::updateConfigurationForDeviceIdKey(string& deviceIdKey, CDataWr
  Submit a CDataWrapper on device id KeyDataStorage
  */
 void DataManager::pushDeviceDataByIdKey(string& deviceIdKey, CDataWrapper* deviceCDataWrapper) throw(CException) {
-        deviceIDKeyDataStorageMap[deviceIdKey]->pushDataSet(deviceCDataWrapper);
+        deviceIDKeyDataStorageMap[deviceIdKey]->pushDataSet(data_manager::KeyDataStorageDomainOutput, deviceCDataWrapper);
 }
 
 /*
@@ -206,7 +186,7 @@ void DataManager::pushDeviceDataByIdKey(string& deviceIdKey, CDataWrapper* devic
  */
 ArrayPointer<CDataWrapper> *DataManager::getLastCDataWrapperForDeviceIdKey(string& deviceIdKey)  throw(CException) {
         //use keydatastorage from map
-    return deviceIDKeyDataStorageMap[deviceIdKey]->getLastDataSet();
+    return deviceIDKeyDataStorageMap[deviceIdKey]->getLastDataSet(data_manager::KeyDataStorageDomainOutput);
 }
 
 /*
@@ -214,5 +194,5 @@ ArrayPointer<CDataWrapper> *DataManager::getLastCDataWrapperForDeviceIdKey(strin
  according to key
  */
 CDataWrapper *DataManager::getNewDataWrapperForDeviceIdKey(string& deviceIdKey) {
-    return deviceIDKeyDataStorageMap[deviceIdKey]->getNewDataWrapper();
+    return deviceIDKeyDataStorageMap[deviceIdKey]->getNewOutputAttributeDataWrapper();
 }

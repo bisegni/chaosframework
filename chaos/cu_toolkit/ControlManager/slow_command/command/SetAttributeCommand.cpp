@@ -40,41 +40,37 @@ void SetAttributeCommand::setHandler(CDataWrapper *data) {
     }
     
     //we can do the work
-    
+	SharedCacheInterface * const shared_cache = SlowCommand::getSharedCacheInterface();
+	
     std::string name = data->getStringValue(BatchCommandsKey::ATTRIBUTE_SET_NAME);
 	//get the name of the input shared variable
-    ValueSetting *vs = getVariableValue(AttributeValueSharedCache::SVD_INPUT, name.c_str());
-    
+    ValueSetting *vs = shared_cache->getVariableValue(AttributeValueSharedCache::SVD_INPUT, name.c_str());
+
     switch (vs->type) {
         case chaos::DataType::TYPE_BOOLEAN:{
             bool v = data->getBoolValue(BatchCommandsKey::ATTRIBUTE_SET_VALUE);
-            vs->setNextValue(&v, 1);
+            vs->setValue(&v, 1);
             break;}
         case chaos::DataType::TYPE_BYTEARRAY:{
             int bin_size = 0;
             const char * v = data->getBinaryValue(BatchCommandsKey::ATTRIBUTE_SET_VALUE, bin_size);
-            vs->setNextValue(static_cast<const void*>(v), bin_size);
+            vs->setValue(static_cast<const void*>(v), bin_size);
             break;}
         case chaos::DataType::TYPE_DOUBLE:{
             double v = data->getDoubleValue(BatchCommandsKey::ATTRIBUTE_SET_VALUE);
-            vs->setNextValue(&v, sizeof(double));
+            vs->setValue(&v, sizeof(double));
             break;}
         case chaos::DataType::TYPE_INT32:{
             int32_t v = data->getInt32Value(BatchCommandsKey::ATTRIBUTE_SET_VALUE);
-            vs->setNextValue(&v, sizeof(int32_t));
+            vs->setValue(&v, sizeof(int32_t));
             break;}
         case chaos::DataType::TYPE_INT64:{
             int64_t v = data->getInt64Value(BatchCommandsKey::ATTRIBUTE_SET_VALUE);
-            vs->setNextValue(&v, sizeof(int64_t));
+            vs->setValue(&v, sizeof(int64_t));
             break;}
         case chaos::DataType::TYPE_STRING:{
             string v = data->getStringValue(BatchCommandsKey::ATTRIBUTE_SET_VALUE);
-            vs->setNextValue(v.c_str(), sizeof(int64_t));
+            vs->setValue(v.c_str(), sizeof(int64_t));
             break;}
-        case chaos::DataType::TYPE_STRUCT:
-            break;
-
-        default:
-            break;
     }
 }

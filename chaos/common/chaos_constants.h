@@ -253,8 +253,6 @@ namespace chaos {
             TYPE_STRING,
             //!byte array variable length
             TYPE_BYTEARRAY,
-            //!struct type
-            TYPE_STRUCT,
             //!bool variable length
             TYPE_BOOLEAN
         } DataType;
@@ -516,12 +514,12 @@ namespace chaos {
     /** @} */ // end of DataProxyConfigurationKey
     
     
-    /** @defgroup ChaosDataPackKey Chaos Data Pack standard for hardware instrument
-     This is the collection of the standard key that are contained into the data pack
-     that describe a device hardware metrix on it's input and output channel
+    /** @defgroup ChaosDataPackOutputAttribute Chaos Data Pack output attirbute
+     This is the collection of the standard key that are contained into the output
+	 attribute data pack that describe a producer state
      @{
      */
-    //! Namespace for standard constant used for hardware instrument
+    //! Namespace for standard constant used for output attribute of a producer
     namespace DataPackKey{
         //!define the device id key, this represent the
         //!primary key of the device
@@ -534,8 +532,25 @@ namespace chaos {
         //!this define key associated to the trigger
         static const char * const CS_CSV_TRIGGER_KEY                          = "cs|csv|trigger_key";
     }
-    /** @} */ // end of ChaosLiveHistoryConfiguration
-    
+    /** @} */ // end of ChaosDataPackOutputAttribute
+	
+	/** @defgroup DataPackSystemKey Chaos Data Pack for System Attribute
+	 @{
+	 these are the stantdard key for chaos system attirbute
+	 */
+	//! Namespace for standard constant used for system attribute
+	namespace DataPackSystemKey{
+		//!is the ehartbeat of a data producer
+		static const char * const DP_SYS_HEARTBEAT			= "dp_sys_hp";
+		
+		//!is the last error occurred into the data producer
+		static const char * const DP_SYS_LAST_ERROR			= "dp_sys_lerr";
+		
+		//!is the last error message occurred into data producer
+		static const char * const DP_SYS_LAST_ERROR_MESSAGE	= "dp_sys_lerr_msg";
+	}
+	/** @} */ // end of DataPackSystemKey
+	
     namespace event {
         /** @defgroup EventConfiguration Chaos event constant for server
          and cleint configuration

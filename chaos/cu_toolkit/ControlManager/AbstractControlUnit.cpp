@@ -38,9 +38,11 @@
 using namespace boost::uuids;
 
 using namespace chaos::common::data;
+using namespace chaos::common::data::cache;
 
 using namespace chaos::cu::data_manager;
 using namespace chaos::cu::control_manager;
+using namespace chaos::cu::driver_manager;
 using namespace chaos::cu::driver_manager::driver;
 
 #define ACULAPP_ LAPP_ << "[Control Unit:"<<control_unit_instance<<"-"<<control_unit_id<<"] - "
@@ -57,7 +59,9 @@ control_unit_instance(UUIDUtil::generateUUIDLite()),
 control_unit_type(_control_unit_type),
 control_unit_id(_control_unit_id),
 control_unit_param(_control_unit_param),
-attribute_value_shared_cache(NULL) {
+attribute_value_shared_cache(NULL),
+attribute_shared_cache_wrapper(NULL),
+acq_timestamp_cache_index(0) {
 }
 
 //! Contructor with driver
@@ -71,7 +75,9 @@ control_unit_instance(UUIDUtil::generateUUIDLite()),
 control_unit_type(_control_unit_type),
 control_unit_id(_control_unit_id),
 control_unit_param(_control_unit_param),
-attribute_value_shared_cache(NULL) {
+attribute_value_shared_cache(NULL),
+attribute_shared_cache_wrapper(NULL),
+acq_timestamp_cache_index(0){
 	//copy array
 	for (int idx = 0; idx < _control_unit_drivers.size(); idx++){
 		control_unit_drivers.push_back(_control_unit_drivers[idx]);
@@ -192,7 +198,7 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
 #endif
 }
 
-void AbstractControlUnit::unitDefineDriver(std::vector<cu_driver::DrvRequestInfo>& neededDriver) {
+void AbstractControlUnit::unitDefineDriver(std::vector<DrvRequestInfo>& neededDriver) {
 	
 	for(ControlUnitDriverListIterator iter = control_unit_drivers.begin();
 		iter != control_unit_drivers.end();
@@ -222,11 +228,36 @@ void AbstractControlUnit::_getDeclareActionInstance(std::vector<const chaos::Dec
  Initialize the Custom Contro Unit and return the configuration
  */
 CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& detachParam) throw(CException) {
-	utility::StartableService::initImplementation(this, static_cast<void*>(initConfiguration), "AbstractControlUnit", "AbstractControlUnit::_init");
+	if(!attribute_value_shared_cache) throw CException(-1, "No Shared cache implementation found", __PRETTY_FUNCTION__);
+	
+	std::vector<string> attribute_names;
+	utility::StartableService::initImplementation(this, static_cast<void*>(initConfiguration), "AbstractControlUnit", __PRETTY_FUNCTION__);
 	
 	//the init of the implementation unit goes after the infrastructure one
-	ACULDBG_ << "Start custom inititialization";
+	ACULDBG_ << "Start internal and custom inititialization";
 	try {
+		ACULAPP_ << "Allcoate the user cache wrapper";
+		attribute_shared_cache_wrapper = new AttributeSharedCacheWrapper(attribute_value_shared_cache);
+		
+		ACULAPP_ << "Populating shared attribute cache for input attribute";
+		DatasetDB::getDatasetAttributesName(DataType::Input, attribute_names);
+		initAttributeOnSharedAttributeCache(AttributeValueSharedCache::SVD_INPUT, attribute_names);
+		
+		ACULAPP_ << "Populating shared attribute cache for output attribute";
+		attribute_names.clear();
+		DatasetDB::getDatasetAttributesName(DataType::Output, attribute_names);
+		initAttributeOnSharedAttributeCache(AttributeValueSharedCache::SVD_OUTPUT, attribute_names);
+		
+		ACULAPP_ << "Complete shared attribute cache for output attribute";
+		completeOutputAttribute();
+		
+		ACULAPP_ << "Populating shared attribute cache for system attribute";
+		initSystemAttributeOnSharedAttributeCache();
+		
+		//define the implementations custom variable
+		unitDefineCustomAttribute();
+		
+		//initialize implementations
 		unitInit();
 		
 		//call update param function
@@ -248,13 +279,12 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
  */
 CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detachParam) throw(CException) {
 	//call start method of the startable interface
-	utility::StartableService::startImplementation(this, "AbstractControlUnit", "AbstractControlUnit::_start");
+	utility::StartableService::startImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
 	ACULDBG_ << "Start sublass for deviceID:" << DatasetDB::getDeviceID();
 	try {
 		unitStart();
 	}catch(CException& ex) {
 		//inthis case i need to stop the abstract control unit
-
 		try{
 			bool detach;
 			_stop(NULL, detach);
@@ -278,7 +308,7 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachPa
 	}
 
 	//call start method of the startable interface
-	utility::StartableService::stopImplementation(this, "AbstractControlUnit", "AbstractControlUnit::_stop");
+	utility::StartableService::stopImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
 	//first we need to stop the implementation unit
 	return NULL;
 }
@@ -291,12 +321,16 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
 	try {
 		ACULDBG_ << "Deinit custom deinitialization for device:" << DatasetDB::getDeviceID();
 		unitDeinit();
+		
+		ACULAPP_ << "Dellcocate the user cache wrapper";
+		if(attribute_shared_cache_wrapper) delete(attribute_shared_cache_wrapper);
+
 	} catch (CException& ex) {
 		ACULDBG_ << "Exception on unit deinit:" << ex.what();
 	}
 	
 	try {
-		utility::StartableService::deinitImplementation(this, "AbstractControlUnit", "AbstractControlUnit::_deinit");
+		utility::StartableService::deinitImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
 	} catch (CException& ex) {
 		ACULDBG_ << "Exception on abstract control l unit deinit:" << ex.what();
 	}
@@ -310,7 +344,7 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
 	CDataWrapper *executionResult = NULL;
 	try {
 		if(!datasetAttributeValues) {
-			throw CException(-1, "No Input parameter", "AbstractControlUnit::_setDatasetAttribute");
+			throw CException(-1, "No Input parameter", __PRETTY_FUNCTION__);
 		}
 		
 #if DEBUG
@@ -318,12 +352,12 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
 #endif
 		
 		if(!datasetAttributeValues->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
-			throw CException(-2, "No Device Defined in param", "AbstractControlUnit::setDatasetAttribute");
+			throw CException(-2, "No Device Defined in param", __PRETTY_FUNCTION__);
 		}
 		//retrive the deviceid
 		string deviceID = datasetAttributeValues->getStringValue(DatasetDefinitionkey::DEVICE_ID);
 		if(utility::StartableService::getServiceState() == CUStateKey::DEINIT) {
-			throw CException(-3, "The Control Unit is in deinit state", "AbstractControlUnit::_setDatasetAttribute");
+			throw CException(-3, "The Control Unit is in deinit state", __PRETTY_FUNCTION__);
 		}
 		//send dataset attribute change pack to control unit implementation
 		executionResult = setDatasetAttribute(datasetAttributeValues, detachParam);
@@ -343,18 +377,18 @@ void AbstractControlUnit::init(void *initData) throw(CException) {
 	CDataWrapper *initConfiguration = static_cast<CDataWrapper*>(initData);
 	if(!initConfiguration ||
 	   !initConfiguration->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
-		throw CException(-1, "No Device Init information in param", "AbstractControlUnit::_init");
+		throw CException(-1, "No Device Init information in param", __PRETTY_FUNCTION__);
 	}
 	
 	std::string deviceID = initConfiguration->getStringValue(DatasetDefinitionkey::DEVICE_ID);
 	if(deviceID.compare(DatasetDB::getDeviceID())) {
 		ACULERR_ << "device:" << deviceID << "not known by this Work Unit";
-		throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_init");
+		throw CException(-2, "Device not known by this control unit", __PRETTY_FUNCTION__);
 	}
 	ACULAPP_ << "Initializating Phase for device:" << deviceID;
 	//at this point and before the unit implementation init i need to get
 	//the infromation about the needed drivers
-	std::vector<cu_driver::DrvRequestInfo> unitNeededDrivers;
+	std::vector<DrvRequestInfo> unitNeededDrivers;
 	
 	//got the needded driver definition
 	unitDefineDriver(unitNeededDrivers);
@@ -411,12 +445,88 @@ void AbstractControlUnit::deinit() throw(CException) {
 
 }
 
+void AbstractControlUnit::initAttributeOnSharedAttributeCache(AttributeValueSharedCache::SharedVariableDomain domain,
+															  std::vector<string>& attribute_names) {
+	//add input attribute to shared setting
+	RangeValueInfo attributeInfo;
+	
+	AttributesSetting& attribute_setting = attribute_value_shared_cache->getSharedDomain(domain);
+	
+	for(int idx = 0;
+		idx < attribute_names.size();
+		idx++) {
+		
+		attributeInfo.reset();
+		
+		// retrive the attribute description from the device database
+		DatasetDB::getAttributeRangeValueInfo(attribute_names[idx], attributeInfo);
+		
+		// add the attribute to the shared setting object
+		attribute_setting.addAttribute(attribute_names[idx], attributeInfo.maxSize, attributeInfo.valueType);
+		
+		if(!attributeInfo.defaultValue.size()) continue;
+		
+		//setting value using index (the index into the sharedAttributeSetting are sequencial to the inserted order)
+		switch (attributeInfo.valueType) {
+			case DataType::TYPE_BOOLEAN : {
+				bool val = boost::lexical_cast<bool>(attributeInfo.defaultValue);
+				attribute_setting.setValueForAttribute(idx, &val, sizeof(bool));
+				break;}
+			case DataType::TYPE_DOUBLE : {
+				double val = boost::lexical_cast<double>(attributeInfo.defaultValue);
+				attribute_setting.setValueForAttribute(idx, &val, sizeof(double));
+				break;}
+			case DataType::TYPE_INT32 : {
+				int32_t val = boost::lexical_cast<int32_t>(attributeInfo.defaultValue);
+				attribute_setting.setValueForAttribute(idx, &val, sizeof(int32_t));
+				break;}
+			case DataType::TYPE_INT64 : {
+				int64_t val = boost::lexical_cast<int64_t>(attributeInfo.defaultValue);
+				attribute_setting.setValueForAttribute(idx, &val, sizeof(int64_t));
+				break;}
+			case DataType::TYPE_STRING : {
+				const char * val = attributeInfo.defaultValue.c_str();
+				attribute_setting.setValueForAttribute(idx, val, (uint32_t)attributeInfo.defaultValue.size());
+				break;}
+			case DataType::TYPE_BYTEARRAY: {
+				ACULDBG_ << "Binary default setting has not been yet managed";
+				break;
+			}
+			default:
+				break;
+		}
+	}
+}
+
+void AbstractControlUnit::completeOutputAttribute() {
+	ACULDBG_ << "Complete the shared cache output attribute";
+	AttributesSetting& domain_attribute_setting = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_OUTPUT);
+	
+	std::string device_id_str = DatasetDB::getDeviceID();
+	domain_attribute_setting.addAttribute(DataPackKey::CS_CSV_TIME_STAMP, sizeof(uint64_t), DataType::TYPE_INT64);
+	
+	int32_t total_output_attribute = domain_attribute_setting.getNumberOfAttributes();
+}
+
+void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
+	AttributesSetting& domain_attribute_setting = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_SYSTEM);
+	//add heart beat attribute
+	ACULDBG_ << "Adding syste attribute on shared cache";
+	domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_HEARTBEAT, 0, DataType::TYPE_INT64);
+	
+	//add error attribute
+	domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_LAST_ERROR, 0, DataType::TYPE_INT32);
+	
+	//add error message attribute
+	domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_LAST_ERROR_MESSAGE, 255, DataType::TYPE_STRING);
+}
+
 /*
  Get the current control unit state
  */
 CDataWrapper* AbstractControlUnit::_getState(CDataWrapper* getStatedParam, bool& detachParam) throw(CException) {
 	if(!getStatedParam->hasKey(DatasetDefinitionkey::DEVICE_ID)){
-		throw CException(-1, "Get State Pack without DeviceID", "AbstractControlUnit::_getState");
+		throw CException(-1, "Get State Pack without DeviceID", __PRETTY_FUNCTION__);
 	}
 	CDataWrapper *stateResult = new CDataWrapper();
 	string deviceID = getStatedParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
@@ -441,20 +551,20 @@ CDataWrapper* AbstractControlUnit::_getInfo(CDataWrapper* getStatedParam, bool& 
 CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack, bool& detachParam) throw (CException) {
 	//load all keyDataStorageMap for the registered devices
 	if(!updatePack || !updatePack->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
-		throw CException(-1, "Update pack without DeviceID", "AbstractControlUnit::updateConfiguration");
+		throw CException(-1, "Update pack without DeviceID", __PRETTY_FUNCTION__);
 	}
 	
 	string deviceID = updatePack->getStringValue(DatasetDefinitionkey::DEVICE_ID);
 	
 	if(deviceID.compare(DatasetDB::getDeviceID())) {
 		ACULAPP_ << "device:" << DatasetDB::getDeviceID() << "not known by this ContorlUnit";
-		throw CException(-2, "Device not known by this control unit", "AbstractControlUnit::_stop");
+		throw CException(-2, "Device not known by this control unit", __PRETTY_FUNCTION__);
 	}
 	
 	//check to see if the device can ben initialized
 	if(utility::StartableService::getServiceState() == INIT_STATE) {
 		ACULAPP_ << "device:" << DatasetDB::getDeviceID() << " not initialized";
-		throw CException(-3, "Device Not Initilized", "AbstractControlUnit::updateConfiguration");
+		throw CException(-3, "Device Not Initilized", __PRETTY_FUNCTION__);
 	}
 	
 	//check to see if the device can ben initialized
@@ -470,7 +580,7 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
  The index parameter correspond to the order that the driver infromation are
  added by the unit implementation into the function AbstractControlUnit::unitDefineDriver.
  */
-cu_driver::DriverAccessor *AbstractControlUnit::getAccessoInstanceByIndex(int idx) {
+DriverAccessor *AbstractControlUnit::getAccessoInstanceByIndex(int idx) {
 	if( idx >= accessorInstances.size() ) return NULL;
 	return accessorInstances[idx];
 }
