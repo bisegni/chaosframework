@@ -32,7 +32,8 @@ AttributeSharedCacheWrapper::~AttributeSharedCacheWrapper() {
 }
 
 void AttributeSharedCacheWrapper::setOutputDomainAsChanged() {
-	
+	AttributesSetting& attribute_setting = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_OUTPUT);
+	attribute_setting.markAllAsChanged();
 }
 
 // Set the value for a determinated variable in a determinate domain
@@ -56,6 +57,19 @@ void AttributeSharedCacheWrapper::setOutputAttributeValue(VariableIndexType attr
 												   size);
 }
 
+bool AttributeSharedCacheWrapper::setOutputAttributeNewSize(const std::string& attribute_name,
+															uint32_t new_size) {
+	CHAOS_ASSERT(attribute_value_shared_cache)
+	AttributesSetting& attribute_setting = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_OUTPUT);
+	return attribute_setting.setNewSize(attribute_setting.getIndexForName(attribute_name), new_size);
+}
+
+bool AttributeSharedCacheWrapper::setOutputAttributeNewSize(VariableIndexType attribute_index,
+															uint32_t new_size) {
+	CHAOS_ASSERT(attribute_value_shared_cache)
+	AttributesSetting& attribute_setting = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_OUTPUT);
+	return attribute_setting.setNewSize(attribute_index, new_size);
+}
 
 // Get the index of the changed attribute
 void AttributeSharedCacheWrapper::getChangedInputAttributeIndex(std::vector<VariableIndexType>& changed_index) {
@@ -110,5 +124,7 @@ void AttributeSharedCacheWrapper::setCustomAttributeValue(VariableIndexType attr
 }
 
 void AttributeSharedCacheWrapper::setCustomDomainAsChanged() {
-	
+	AttributesSetting& attribute_setting = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_CUSTOM);
+	attribute_setting.markAllAsChanged();
+
 }

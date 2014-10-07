@@ -48,7 +48,10 @@ namespace chaos{
 				//! the range of index
 				typedef  uint16_t VariableIndexType;
 				
-				
+#define READWRITE_ATTRIBUTE_HANDLE(x) x * *
+#define READONLY_ATTRIBUTE_HANDLE(x) const x * *
+#define ATTRIBUTE_HANDLE_GET_VALUE(x) **x
+#define ATTRIBUTE_HANDLE_GET_PTR(x) *x
 				
 				//! manage the update of a value
 				/*!
@@ -82,6 +85,9 @@ namespace chaos{
 					//!private destrucotr
 					~ValueSetting();
 					
+					//!
+					bool setNewSize(uint32_t _new_size);
+					
 					//! set a new value in buffer
 					/*!
 					 the memory on value_ptr is copied on the internal memory buffer
@@ -94,9 +100,11 @@ namespace chaos{
 					
 					void markAsUnchanged();
 					
+					//! the value is returned has handle because the pointer can change it size ans so
+					//! the pointer can be relocated
 					template<typename T>
-					T* getValue() {
-						return static_cast<T*>(value_buffer);
+					T** getValueHandle() {
+						return reinterpret_cast<T**>(&value_buffer);
 					}
 				};
 				
@@ -161,6 +169,8 @@ namespace chaos{
 					
 					//! return true if some attribute has change it's value
 					bool hasChanged();
+					
+					bool setNewSize(VariableIndexType attribute_index, uint32_t new_size);
 				};
 				
 				//-----------------------------------------------------------------------------------------------------------------------------

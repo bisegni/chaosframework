@@ -61,7 +61,8 @@ control_unit_id(_control_unit_id),
 control_unit_param(_control_unit_param),
 attribute_value_shared_cache(NULL),
 attribute_shared_cache_wrapper(NULL),
-acq_timestamp_cache_index(0) {
+acq_timestamp_cache_index(0),
+device_event_channel(NULL){
 }
 
 //! Contructor with driver
@@ -77,7 +78,8 @@ control_unit_id(_control_unit_id),
 control_unit_param(_control_unit_param),
 attribute_value_shared_cache(NULL),
 attribute_shared_cache_wrapper(NULL),
-acq_timestamp_cache_index(0){
+acq_timestamp_cache_index(0),
+device_event_channel(NULL){
 	//copy array
 	for (int idx = 0; idx < _control_unit_drivers.size(); idx++){
 		control_unit_drivers.push_back(_control_unit_drivers[idx]);
@@ -364,7 +366,7 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
 		
 	} catch (CException& ex) {
 		//at this time notify the wel gone setting of comand
-		if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(DatasetDB::getDeviceID(), ex.errorCode);
+		if(device_event_channel) device_event_channel->notifyForAttributeSetting(DatasetDB::getDeviceID(), ex.errorCode);
 		
 		throw ex;
 	}
@@ -505,7 +507,8 @@ void AbstractControlUnit::completeOutputAttribute() {
 	std::string device_id_str = DatasetDB::getDeviceID();
 	domain_attribute_setting.addAttribute(DataPackKey::CS_CSV_TIME_STAMP, sizeof(uint64_t), DataType::TYPE_INT64);
 	
-	int32_t total_output_attribute = domain_attribute_setting.getNumberOfAttributes();
+	//get the timestamp index
+	timestamp_acq_cache_index = domain_attribute_setting.getNumberOfAttributes() - 1;
 }
 
 void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {

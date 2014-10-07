@@ -40,7 +40,7 @@ AbstractControlUnit(CUType::RTCU,
 					_control_unit_id,
 					_control_unit_param) {
     //allocate the handler engine
-    attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
+   // attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
 	
 	//associate the shared cache of the executor to the asbtract control unit one
 	attribute_value_shared_cache = new AttributeValueSharedCache();
@@ -59,7 +59,7 @@ AbstractControlUnit(CUType::RTCU,
 					_control_unit_param,
 					_control_unit_drivers) {
     //allocate the handler engine
-    attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
+    //attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
 	
 	//associate the shared cache of the executor to the asbtract control unit one
 	attribute_value_shared_cache = new AttributeValueSharedCache();
@@ -72,9 +72,9 @@ RTAbstractControlUnit::~RTAbstractControlUnit() {
 	}
 	
     //release handler engine
-    if(attributeHandlerEngine) {
-        delete attributeHandlerEngine;
-    }
+    //if(attributeHandlerEngine) {
+    //    delete attributeHandlerEngine;
+    //}
 }
 
 void RTAbstractControlUnit::setDefaultScheduleDelay(uint64_t _schedule_dalay) {
@@ -102,8 +102,8 @@ void RTAbstractControlUnit::init(void *initData) throw(CException) {
 	//call parent impl
 	AbstractControlUnit::init(initData);
 	scheduler_run = false;
-    RTCULAPP_ << "Initialize the DSAttribute handler engine for device:" << DatasetDB::getDeviceID();
-    utility::StartableService::initImplementation(attributeHandlerEngine, (void*)NULL, "DSAttribute handler engine", __PRETTY_FUNCTION__);
+    //RTCULAPP_ << "Initialize the DSAttribute handler engine for device:" << DatasetDB::getDeviceID();
+    //utility::StartableService::initImplementation(attributeHandlerEngine, (void*)NULL, "DSAttribute handler engine", __PRETTY_FUNCTION__);
 	
 	RTCULAPP_ << "Initializing shared attribute cache " << DatasetDB::getDeviceID();
 	utility::InizializableService::initImplementation((AttributeValueSharedCache*)attribute_value_shared_cache, (void*)NULL, "attribute_value_shared_cache", __PRETTY_FUNCTION__);
@@ -146,17 +146,8 @@ void RTAbstractControlUnit::deinit() throw(CException) {
 	utility::InizializableService::deinitImplementation((AttributeValueSharedCache*)attribute_value_shared_cache, "attribute_value_shared_cache", __PRETTY_FUNCTION__);
 
 	
-    RTCULAPP_ << "Deinitializing the DSAttribute handler engine for device:" << DatasetDB::getDeviceID();
-    utility::StartableService::deinitImplementation(attributeHandlerEngine, "DSAttribute handler engine", __PRETTY_FUNCTION__);
-}
-
-/*
- Add a new handler
- */
-void RTAbstractControlUnit::addHandlerForDSAttribute(handler::DSAttributeHandler * classHandler)  throw (CException) {
-    if(!classHandler) return;
-    //add the handler
-    attributeHandlerEngine->addHandlerForDSAttribute(classHandler);
+   // RTCULAPP_ << "Deinitializing the DSAttribute handler engine for device:" << DatasetDB::getDeviceID();
+   // utility::StartableService::deinitImplementation(attributeHandlerEngine, "DSAttribute handler engine", __PRETTY_FUNCTION__);
 }
 
 /*!
@@ -219,7 +210,7 @@ CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* updatePac
 			// we need to optimize and be sure that event channel
 			// is mandatory so we can left over the 'if' check
 			//----------------------
-			if(deviceEventChannel) deviceEventChannel->notifyForScheduleUpdateWithNewValue(DatasetDB::getDeviceID(), uSecdelay);
+			if(device_event_channel) device_event_channel->notifyForScheduleUpdateWithNewValue(DatasetDB::getDeviceID(), uSecdelay);
 		}
 	}
 	return result;
@@ -229,7 +220,14 @@ CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* updatePac
  Execute the scehduling for the device
  */
 void RTAbstractControlUnit::executeOnThread() {
+	uint64_t acq_timestamp = 0;
+	
 	while(scheduler_run) {
+		//set the acquiition time stamp and update it on cache
+		acq_timestamp = TimingUtil::getTimeStamp();
+		attribute_value_shared_cache->setVariableValue(AttributeValueSharedCache::SVD_OUTPUT,
+													   timestamp_acq_cache_index, &acq_timestamp, sizeof(uint64_t));
+		
 		unitRun();
 		
 		//! check if the output dataset need to be pushed
@@ -256,22 +254,22 @@ void RTAbstractControlUnit::pushOutputDataset() {
 		ValueSetting * value_set = output_attribute_cache.getValueSettingForIndex(idx);
 		switch(value_set->type) {
 			case DataType::TYPE_BOOLEAN:
-				output_attribute_dataset->addBoolValue(value_set->name.c_str(), *value_set->getValue<bool>());
+				output_attribute_dataset->addBoolValue(value_set->name.c_str(), **value_set->getValueHandle<bool>());
 				break;
 			case DataType::TYPE_INT32:
-				output_attribute_dataset->addInt32Value(value_set->name.c_str(), *value_set->getValue<int32_t>());
+				output_attribute_dataset->addInt32Value(value_set->name.c_str(), **value_set->getValueHandle<int32_t>());
 				break;
 			case DataType::TYPE_INT64:
-				output_attribute_dataset->addInt64Value(value_set->name.c_str(), *value_set->getValue<int64_t>());
+				output_attribute_dataset->addInt64Value(value_set->name.c_str(), **value_set->getValueHandle<int64_t>());
 				break;
 			case DataType::TYPE_DOUBLE:
-				output_attribute_dataset->addDoubleValue(value_set->name.c_str(), *value_set->getValue<double>());
+				output_attribute_dataset->addDoubleValue(value_set->name.c_str(), **value_set->getValueHandle<double>());
 				break;
 			case DataType::TYPE_STRING:
-				output_attribute_dataset->addStringValue(value_set->name.c_str(), *value_set->getValue<const char *>());
+				output_attribute_dataset->addStringValue(value_set->name.c_str(), **value_set->getValueHandle<const char *>());
 				break;
 			case DataType::TYPE_BYTEARRAY:
-				output_attribute_dataset->addBinaryValue(value_set->name.c_str(), *value_set->getValue<char*>(), value_set->size);
+				output_attribute_dataset->addBinaryValue(value_set->name.c_str(), **value_set->getValueHandle<char*>(), value_set->size);
 				break;
 		}
 	}
@@ -283,10 +281,71 @@ void RTAbstractControlUnit::pushOutputDataset() {
 /*
  Receive the evento for set the dataset input element
  */
-CDataWrapper* RTAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
-	attributeHandlerEngine->executeHandler(datasetAttributeValues);
+CDataWrapper* RTAbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_attribute_values, bool& detachParam) throw (CException) {
+	CHAOS_ASSERT(dataset_attribute_values)
+	std::vector<std::string> in_attribute_name;
+	RangeValueInfo attributeInfo;
+	
+	//get all input attribute name
+	getDatasetAttributesName(DataType::Input , in_attribute_name);
+	
+	if(dataset_attribute_values->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
+		std::string _messageDeviceID = dataset_attribute_values->getStringValue(DatasetDefinitionkey::DEVICE_ID);
+		
+		//compare the message device id and the local
+		for (std::vector<std::string>::iterator iter = in_attribute_name.begin();
+			 iter != in_attribute_name.end();
+			 iter++) {
+			//execute attribute handler
+			const char * cAttrName = iter->c_str();
+			
+			//check if the attribute name is present
+			if(dataset_attribute_values->hasKey(cAttrName)) {
+				
+				ValueSetting * attribute_cache_value = attribute_value_shared_cache->getVariableValue(SharedCacheInterface::SVD_INPUT, iter->c_str());
+				
+				//get attribute info
+				getAttributeRangeValueInfo(*iter, attributeInfo);
+				//call handler
+				switch (attribute_cache_value->type) {
+					case DataType::TYPE_BOOLEAN: {
+						bool bv = dataset_attribute_values->getBoolValue(cAttrName);
+						attribute_cache_value->setValue(&bv, sizeof(bool));
+						break;
+					}
+					case DataType::TYPE_INT32: {
+						int32_t i32v = dataset_attribute_values->getInt32Value(cAttrName);
+						attribute_cache_value->setValue(&i32v, sizeof(int32_t));
+						break;
+					}
+					case DataType::TYPE_INT64: {
+						int64_t i64v = dataset_attribute_values->getInt64Value(cAttrName);
+						attribute_cache_value->setValue(&i64v, sizeof(int64_t));
+						break;
+					}
+					case DataType::TYPE_STRING: {
+						std::string str = dataset_attribute_values->getStringValue(cAttrName);
+						attribute_cache_value->setValue(str.c_str(), (uint32_t)str.size());
+						break;
+					}
+					case DataType::TYPE_DOUBLE: {
+						double dv = dataset_attribute_values->getDoubleValue(cAttrName);
+						attribute_cache_value->setValue(&dv, sizeof(double));
+						break;
+					}
+					case DataType::TYPE_BYTEARRAY: {
+						int bin_size = 0;
+						const char *binv = dataset_attribute_values->getBinaryValue(cAttrName, bin_size);
+						attribute_cache_value->setValue(binv, bin_size);
+						break;
+					}
+				}
+			}
+		}
+	}
+
 	
 	//at this time notify the wel gone setting of comand
-	if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(DatasetDB::getDeviceID(), 0);
+	//if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(DatasetDB::getDeviceID(), 0);
 	return NULL;
 }

@@ -45,7 +45,7 @@ KeyDataStorage::~KeyDataStorage() {
 }
 
 void KeyDataStorage::init(void *init_parameter) throw (chaos::CException) {
-	if(io_data_driver) throw chaos::CException(-1, "IO data driver not set", __PRETTY_FUNCTION__);
+	if(!io_data_driver) throw chaos::CException(-1, "IO data driver not set", __PRETTY_FUNCTION__);
 	
 	io_data_driver->init(init_parameter);
 }

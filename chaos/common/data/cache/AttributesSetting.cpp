@@ -60,7 +60,7 @@ ValueSetting::~ValueSetting() {
  
  ---------------------------------------------------------------------------------*/
 bool ValueSetting::setValue(const void* value_ptr, uint32_t value_size) {
-	if(value_size>size) return false;
+	if(value_size>size || !value_buffer) return false;
 	
 	//copy the new value
 	std::memcpy(value_buffer, value_ptr, value_size);
@@ -69,6 +69,24 @@ bool ValueSetting::setValue(const void* value_ptr, uint32_t value_size) {
 	sharedBitmapChangedAttribute->set(index);
 	return true;
 }
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+bool ValueSetting::setNewSize(uint32_t _new_size) {
+	bool result = true;
+	switch(type) {
+		case chaos::DataType::TYPE_BYTEARRAY:
+		case chaos::DataType::TYPE_STRING:
+			value_buffer = (double*)realloc(value_buffer, _new_size);
+			result = (value_buffer != NULL);
+			break;
+		default:
+			break;
+	}
+	return result;
+}
+
 
 /*---------------------------------------------------------------------------------
  
@@ -241,6 +259,13 @@ void AttributesSetting::markAllAsChanged() {
  ---------------------------------------------------------------------------------*/
 bool AttributesSetting::hasChanged() {
 	return bitmapChangedAttribute.any();
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+bool AttributesSetting::setNewSize(VariableIndexType attribute_index, uint32_t new_size) {
+	return mapAttributeIndexSettings[attribute_index]->setNewSize(new_size);
 }
 #pragma mark AttributeValueSharedCache
 

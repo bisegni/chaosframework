@@ -180,7 +180,10 @@ namespace chaos{
 				void initSystemAttributeOnSharedAttributeCache();
 
 			protected:
-
+				//! is the index within the output attribute shared cache for the acquisition time stamp
+				//! it is keep at the beginnig of the run method
+				uint32_t timestamp_acq_cache_index;
+				
 				//  It's is the dynamically assigned instance of the CU. it will be used
 				// as domain for the rpc action.
 				string control_unit_instance;
@@ -192,7 +195,7 @@ namespace chaos{
 				data_manager::KeyDataStorage*  keyDataStorage;
 				
 				//! Event channel to permit the fire of the device event
-				event::channel::InstrumentEventChannel *deviceEventChannel;
+				event::channel::InstrumentEventChannel *device_event_channel;
 				
 				//! Define the dataset information of the device implementeted into the CU
 				/*!

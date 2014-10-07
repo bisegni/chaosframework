@@ -129,7 +129,7 @@ bool DSAttributeHandlerExecutionEngine::executeHandler(CDataWrapper *message) th
     //if(deviceID.compare(referenceDeviceSchemaDB->getDeviceID())) return false;
     
     if((result = message->hasKey(DatasetDefinitionkey::DEVICE_ID))) {
-        std::string _messageDeiveID = message->getStringValue(DatasetDefinitionkey::DEVICE_ID);
+        std::string _messageDeviceID = message->getStringValue(DatasetDefinitionkey::DEVICE_ID);
         
         //compare the message device id and the local
         for (std::set<std::string>::iterator iter = managedAttributesName.begin();
@@ -170,11 +170,6 @@ bool DSAttributeHandlerExecutionEngine::executeHandler(CDataWrapper *message) th
                     case DataType::TYPE_BYTEARRAY: {
                         binv = message->getBinaryValue(cAttrName, binv_dim);
                         abstractValuePtr = &binv;
-                        break;
-                    }
-                    case DataType::TYPE_STRUCT: {
-                        cdatv = message->getCSDataValue(cAttrName);
-                        abstractValuePtr = &cdatv;
                         break;
                     }
                 }

@@ -265,9 +265,6 @@ QString  MainWindow::returnAttributeTypeInString(string& attributeName) {
     case chaos::DataType::TYPE_INT64:
         result = "TYPE_INT64";
         break;
-    case chaos::DataType::TYPE_STRUCT:
-        result = "TYPE_STRUCT";
-        break;
     case chaos::DataType::TYPE_STRING:
         result = "TYPE_STRING";
         break;

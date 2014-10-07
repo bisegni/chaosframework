@@ -67,7 +67,7 @@ namespace chaos{
                  - Acquire Handler, acquire the data for the command (if needed)
                  - Correlation and Commit handler, make the neccessary correlation and send the necessary command to the driver
                  */
-                class SlowCommand: protected chaos::common::batch_command::BatchCommand {
+                class SlowCommand: public chaos::common::batch_command::BatchCommand {
                     friend class SlowCommandExecutor;
 					friend class command::SetAttributeCommand;
                     //! key data storage to forwsard data to central memory (momentary until directi/O will be created)
@@ -76,6 +76,11 @@ namespace chaos{
                     //! point to the in memory device database
 					chaos::common::data::DatasetDB  *deviceDatabasePtr;
 
+					
+					SharedCacheInterface * const getSharedCacheInterface() {
+						return NULL;
+					}
+					
                 protected:
 					//! shared attribute cache
 					AttributeSharedCacheWrapper attribute_cache;
@@ -104,6 +109,7 @@ namespace chaos{
                      according to key
                      */
                     chaos_data::CDataWrapper *getNewDataWrapper();
+
                 public:
                     
                     //! return the identification of the device

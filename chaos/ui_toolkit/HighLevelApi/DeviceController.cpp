@@ -305,11 +305,6 @@ int DeviceController::setAttributeToValue(const char *attributeName, const char 
 			attributeValuePack.addInt64Value(attributeName, i64ValuePtr);
 			break;
 		}
-		case DataType::TYPE_STRUCT:{
-			CDataWrapper cdValue(attributeValue);
-			attributeValuePack.appendAllElement(cdValue);
-			break;
-		}
 		case DataType::TYPE_BYTEARRAY:{
 			//const char *byteArrayValuePtr = static_cast<const char*>(attributeValue);
 			//attributeValuePack.addBinaryValue(attributeName, byteArrayValuePtr, bufferValuedDim);
@@ -358,11 +353,6 @@ int DeviceController::setAttributeToValue(const char *attributeName, DataType::D
 		case DataType::TYPE_INT64:{
 			int64_t *i64ValuePtr = static_cast<int64_t*>(attributeValue);
 			attributeValuePack.addInt64Value(attributeName, *i64ValuePtr);
-			break;
-		}
-		case DataType::TYPE_STRUCT:{
-			CDataWrapper *cdValuePtr = static_cast<CDataWrapper*>(attributeValue);
-			attributeValuePack.appendAllElement(*cdValuePtr);
 			break;
 		}
 		case DataType::TYPE_BYTEARRAY:{

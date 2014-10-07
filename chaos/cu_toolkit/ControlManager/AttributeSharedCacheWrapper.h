@@ -41,46 +41,46 @@ namespace chaos{
 				// Return the value object for the domain and the string key
 				template<typename T>
 				void getCachedOutputAttributeValue(const std::string& variable_name,
-												   T** value_ptr) {
+												   T*** value_ptr) {
 					CHAOS_ASSERT(attribute_value_shared_cache)
 					ValueSetting *value_setting = attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_OUTPUT,
 																								 variable_name);
 					if(value_setting) {
-						*value_ptr = value_setting->getValue<T>();
+						*value_ptr = value_setting->getValueHandle<T>();
 					}
 				}
 				
 				// Return the value object for the domain and the index of the variable
 				template<typename T>
 				void getCachedOutputAttributeValue(VariableIndexType variable_index,
-												   T** value_ptr) {
+												   T*** value_ptr) {
 					ValueSetting *value_setting = attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_OUTPUT,
 																								 variable_index);
 					if(value_setting) {
-						*value_ptr = value_setting->getValue<T>();
+						*value_ptr = value_setting->getValueHandle<T>();
 					}
 				}
 				
 				// Return the value object for the domain and the string key
 				template<typename T>
 				void getCachedCustomAttributeValue(const std::string& variable_name,
-												   T** value_ptr) {
+												   T*** value_ptr) {
 					CHAOS_ASSERT(attribute_value_shared_cache)
 					ValueSetting *value_setting = attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_CUSTOM,
 																								 variable_name);
 					if(value_setting) {
-						*value_ptr = value_setting->getValue<T>();
+						*value_ptr = value_setting->getValueHandle<T>();
 					}
 				}
 				
 				// Return the value object for the domain and the index of the variable
 				template<typename T>
 				void getCachedCustomAttributeValue(VariableIndexType variable_index,
-												   T** value_ptr) {
+												   T*** value_ptr) {
 					ValueSetting *value_setting = attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_CUSTOM,
 																								 variable_index);
 					if(value_setting) {
-						*value_ptr = value_setting->getValue<T>();
+						*value_ptr = value_setting->getValueHandle<T>();
 					}
 				}
 				
@@ -88,11 +88,11 @@ namespace chaos{
 				template<typename T>
 				void getReadonlyCachedAttributeValue(AttributeValueSharedCache::SharedVariableDomain domain,
 													 const std::string& variable_name,
-													 const T** value_ptr) {
+													 const T*** value_ptr) {
 					CHAOS_ASSERT(attribute_value_shared_cache)
 					ValueSetting *value_setting = attribute_value_shared_cache->getVariableValue(domain, variable_name);
 					if(value_setting) {
-						*value_ptr = value_setting->getValue<T>();
+						*value_ptr = value_setting->getValueHandle<T>();
 					}
 				}
 				
@@ -100,10 +100,10 @@ namespace chaos{
 				template<typename T>
 				void getReadonlyCachedAttributeValue(AttributeValueSharedCache::SharedVariableDomain domain,
 													 VariableIndexType variable_index,
-													 const T** value_ptr) {
+													 const T*** value_ptr) {
 					ValueSetting *value_setting = attribute_value_shared_cache->getVariableValue(domain, variable_index);
 					if(value_setting) {
-						*value_ptr = value_setting->getValue<T>();
+						*value_ptr = (const T**)value_setting->getValueHandle<T>();
 					}
 				}
 				
@@ -112,10 +112,16 @@ namespace chaos{
 											 void * value,
 											 uint32_t size);
 				// Set the value for a determinated variable in a determinate domain
-				void setOutputAttributeValue(VariableIndexType attrbiute_index,
+				void setOutputAttributeValue(VariableIndexType attribute_index,
 													void * value,
 													uint32_t size);
 				void setOutputDomainAsChanged();
+				
+				bool setOutputAttributeNewSize(const std::string& attribute_name,
+											   uint32_t new_size);
+				
+				bool setOutputAttributeNewSize(VariableIndexType attribute_index,
+											   uint32_t new_size);
 				
 				// Get the index of the changed attribute
 				void getChangedInputAttributeIndex(std::vector<VariableIndexType>& changed_index);

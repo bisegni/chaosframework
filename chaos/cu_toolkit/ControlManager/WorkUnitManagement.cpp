@@ -124,7 +124,7 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
 			WUMAPP_ << "Control unit is unpublished, need to be setup";
 			//associate the event channel to the control unit
 			WUMAPP_ << "Adding event channel";
-			work_unit_instance->deviceEventChannel = CommandManager::getInstance()->getInstrumentEventChannel();
+			work_unit_instance->device_event_channel = CommandManager::getInstance()->getInstrumentEventChannel();
 			
 			WUMAPP_ << "Setup Control Unit Sanbox for cu with instance";
 			work_unit_instance->_defineActionAndDataset(mds_registration_message);
@@ -213,9 +213,9 @@ void WorkUnitManagement::scheduleSM() throw (CException) {
             }
 			
 
-			if(work_unit_instance->deviceEventChannel) {
-				CommandManager::getInstance()->deleteInstrumentEventChannel(work_unit_instance->deviceEventChannel);
-				work_unit_instance->deviceEventChannel = NULL;
+			if(work_unit_instance->device_event_channel) {
+				CommandManager::getInstance()->deleteInstrumentEventChannel(work_unit_instance->device_event_channel);
+				work_unit_instance->device_event_channel = NULL;
 			}
 			
 			WUMAPP_  << "work unit is going to be unpublished";
