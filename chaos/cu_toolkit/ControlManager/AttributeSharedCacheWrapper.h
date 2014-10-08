@@ -20,6 +20,7 @@
 #ifndef __CHAOSFramework__AttributeSharedCahe__
 #define __CHAOSFramework__AttributeSharedCahe__
 
+#include <chaos/common/exception/CException.h>
 #include <chaos/common/data/cache/AttributesSetting.h>
 
 namespace chaos{
@@ -38,15 +39,52 @@ namespace chaos{
 			public:
 				AttributeSharedCacheWrapper(SharedCacheInterface * const _attribute_value_shared_cache);
 				~AttributeSharedCacheWrapper();
+
+				//! return the typed const ptr associated at a name for a determinate domain
+				template<typename T>
+				T * getRWPtr(AttributeValueSharedCache::SharedVariableDomain domain,
+							 const std::string& attribute_name) {
+					CHAOS_ASSERT(attribute_value_shared_cache)
+					switch(domain) {
+						case AttributeValueSharedCache::SVD_INPUT:
+							throw CException(-1, "Input variable domain can't be used as read write pointer", __PRETTY_FUNCTION__);
+							break;
+						case AttributeValueSharedCache::SVD_SYSTEM:
+							throw CException(-1, "System variable domain can't be used as read write pointer", __PRETTY_FUNCTION__);
+							break;
+						default:
+							break;
+					}
+					ValueSetting *value_setting = attribute_value_shared_cache->getVariableValue(domain, attribute_name);
+					return value_setting->getValuePtr<T>();
+				}
+				
+				//! return the typed const ptr associated at a name for a determinate domain
+				template<typename T>
+				const T * getROPtr(AttributeValueSharedCache::SharedVariableDomain domain,
+								   const std::string& attribute_name) {
+					CHAOS_ASSERT(attribute_value_shared_cache)
+					ValueSetting *value_setting = attribute_value_shared_cache->getVariableValue(domain, attribute_name);
+					return (const T *)value_setting->getValuePtr<T>();
+				}
+				
+				//! return the typed value associated at a name for a determinate domain
+				template<typename T>
+				T getValue(AttributeValueSharedCache::SharedVariableDomain domain,
+						   const std::string& attribute_name) {
+					CHAOS_ASSERT(attribute_value_shared_cache)
+					ValueSetting *value_setting = attribute_value_shared_cache->getVariableValue(domain, attribute_name);
+					return *value_setting->getValuePtr<T>();
+				}
+				
 				// Return the value object for the domain and the string key
 				template<typename T>
-				void getCachedOutputAttributeValue(const std::string& variable_name,
+				void getCachedOutputAttributeValue(const std::string& attribute_name,
 												   T*** value_ptr) {
 					CHAOS_ASSERT(attribute_value_shared_cache)
-					ValueSetting *value_setting = attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_OUTPUT,
-																								 variable_name);
+					ValueSetting *value_setting = attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_OUTPUT, attribute_name);
 					if(value_setting) {
-						*value_ptr = value_setting->getValueHandle<T>();
+						*value_ptr = (T**)&value_setting->value_buffer;
 					}
 				}
 				
@@ -54,22 +92,20 @@ namespace chaos{
 				template<typename T>
 				void getCachedOutputAttributeValue(VariableIndexType variable_index,
 												   T*** value_ptr) {
-					ValueSetting *value_setting = attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_OUTPUT,
-																								 variable_index);
+					ValueSetting *value_setting = attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_OUTPUT, variable_index);
 					if(value_setting) {
-						*value_ptr = value_setting->getValueHandle<T>();
+						*value_ptr = (T**)&value_setting->value_buffer;
 					}
 				}
 				
 				// Return the value object for the domain and the string key
 				template<typename T>
-				void getCachedCustomAttributeValue(const std::string& variable_name,
+				void getCachedCustomAttributeValue(const std::string& attribute_name,
 												   T*** value_ptr) {
 					CHAOS_ASSERT(attribute_value_shared_cache)
-					ValueSetting *value_setting = attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_CUSTOM,
-																								 variable_name);
+					ValueSetting *value_setting = attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_CUSTOM, attribute_name);
 					if(value_setting) {
-						*value_ptr = value_setting->getValueHandle<T>();
+						*value_ptr = (T**)&value_setting->value_buffer;
 					}
 				}
 				
@@ -77,22 +113,21 @@ namespace chaos{
 				template<typename T>
 				void getCachedCustomAttributeValue(VariableIndexType variable_index,
 												   T*** value_ptr) {
-					ValueSetting *value_setting = attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_CUSTOM,
-																								 variable_index);
+					ValueSetting *value_setting = attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_CUSTOM, variable_index);
 					if(value_setting) {
-						*value_ptr = value_setting->getValueHandle<T>();
+						*value_ptr = (T**)&value_setting->value_buffer;
 					}
 				}
 				
 				// Return the value object for the domain and the string key
 				template<typename T>
 				void getReadonlyCachedAttributeValue(AttributeValueSharedCache::SharedVariableDomain domain,
-													 const std::string& variable_name,
+													 const std::string& attribute_name,
 													 const T*** value_ptr) {
 					CHAOS_ASSERT(attribute_value_shared_cache)
-					ValueSetting *value_setting = attribute_value_shared_cache->getVariableValue(domain, variable_name);
+					ValueSetting *value_setting = attribute_value_shared_cache->getVariableValue(domain, attribute_name);
 					if(value_setting) {
-						*value_ptr = value_setting->getValueHandle<T>();
+						*value_ptr = (const T**)&value_setting->value_buffer;
 					}
 				}
 				
@@ -103,7 +138,7 @@ namespace chaos{
 													 const T*** value_ptr) {
 					ValueSetting *value_setting = attribute_value_shared_cache->getVariableValue(domain, variable_index);
 					if(value_setting) {
-						*value_ptr = (const T**)value_setting->getValueHandle<T>();
+						*value_ptr = (const T**)&value_setting->value_buffer;
 					}
 				}
 				

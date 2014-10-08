@@ -255,9 +255,19 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
 		
 		ACULAPP_ << "Populating shared attribute cache for system attribute";
 		initSystemAttributeOnSharedAttributeCache();
+
 		
 		//define the implementations custom variable
 		unitDefineCustomAttribute();
+		
+		//create fast vector access for cached value
+		fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_OUTPUT), cache_output_attribute_vector);
+		
+		fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_INPUT), cache_input_attribute_vector);
+		
+		fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_SYSTEM), cache_system_attribute_vector);
+		
+		fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_CUSTOM), cache_custom_attribute_vector);
 		
 		//initialize implementations
 		unitInit();
@@ -323,6 +333,11 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
 	try {
 		ACULDBG_ << "Deinit custom deinitialization for device:" << DatasetDB::getDeviceID();
 		unitDeinit();
+		
+		cache_output_attribute_vector.clear();
+		cache_input_attribute_vector.clear();
+		cache_custom_attribute_vector.clear();
+		cache_system_attribute_vector.clear();
 		
 		ACULAPP_ << "Dellcocate the user cache wrapper";
 		if(attribute_shared_cache_wrapper) delete(attribute_shared_cache_wrapper);
@@ -447,6 +462,15 @@ void AbstractControlUnit::deinit() throw(CException) {
 
 }
 
+void AbstractControlUnit::fillCachedValueVector(AttributesSetting& attribute_cache,
+												  std::vector<ValueSetting*>& cached_value) {
+	for(int idx = 0;
+		idx < attribute_cache.getNumberOfAttributes();
+		idx++) {
+		cached_value.push_back(attribute_cache.getValueSettingForIndex(idx));
+	}
+}
+
 void AbstractControlUnit::initAttributeOnSharedAttributeCache(AttributeValueSharedCache::SharedVariableDomain domain,
 															  std::vector<string>& attribute_names) {
 	//add input attribute to shared setting
@@ -505,6 +529,9 @@ void AbstractControlUnit::completeOutputAttribute() {
 	AttributesSetting& domain_attribute_setting = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_OUTPUT);
 	
 	std::string device_id_str = DatasetDB::getDeviceID();
+	domain_attribute_setting.addAttribute(DataPackKey::CS_CSV_CU_ID, (uint32_t)device_id_str.size(), DataType::TYPE_STRING);
+	domain_attribute_setting.setValueForAttribute((domain_attribute_setting.getNumberOfAttributes()-1), device_id_str.c_str(), (uint32_t)device_id_str.size());
+	
 	domain_attribute_setting.addAttribute(DataPackKey::CS_CSV_TIME_STAMP, sizeof(uint64_t), DataType::TYPE_INT64);
 	
 	//get the timestamp index

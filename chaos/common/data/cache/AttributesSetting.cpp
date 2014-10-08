@@ -21,6 +21,7 @@
 #include <string>
 
 #include <chaos/common/global.h>
+#include <chaos/common/exception/CException.h>
 #include <chaos/common/data/cache/AttributesSetting.h>
 
 #define CSLAPP_ LAPP_ << "[AttributeSetting-" << "] "
@@ -42,9 +43,11 @@ size(_size),
 name(_name),
 index(_index),
 type(_type) {
-	value_buffer = std::calloc(size, 1);
-	if(!value_buffer) {
-		LERR_ << "error allcoating current_value memory";
+	if(size) {
+		value_buffer = std::calloc(size, 1);
+		if(!value_buffer) {
+			LERR_ << "error allcoating current_value memory";
+		}
 	}
 }
 
@@ -59,14 +62,16 @@ ValueSetting::~ValueSetting() {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-bool ValueSetting::setValue(const void* value_ptr, uint32_t value_size) {
+bool ValueSetting::setValue(const void* value_ptr,
+							uint32_t value_size,
+							bool tag_has_changed) {
 	if(value_size>size || !value_buffer) return false;
 	
 	//copy the new value
 	std::memcpy(value_buffer, value_ptr, value_size);
 	
 	//set the relative field for set has changed
-	sharedBitmapChangedAttribute->set(index);
+	if(tag_has_changed) sharedBitmapChangedAttribute->set(index);
 	return true;
 }
 
@@ -78,7 +83,7 @@ bool ValueSetting::setNewSize(uint32_t _new_size) {
 	switch(type) {
 		case chaos::DataType::TYPE_BYTEARRAY:
 		case chaos::DataType::TYPE_STRING:
-			value_buffer = (double*)realloc(value_buffer, _new_size);
+			value_buffer = (double*)realloc(value_buffer, (size = _new_size));
 			result = (value_buffer != NULL);
 			break;
 		default:
@@ -209,6 +214,9 @@ void AttributesSetting::setValueForAttribute(VariableIndexType n,
  
  ---------------------------------------------------------------------------------*/
 VariableIndexType AttributesSetting::getIndexForName(const std::string& name ) {
+	if(!mapAttributeNameIndex.count(name)) {
+		throw chaos::CException(-1, "No name present in Attribute setting", __PRETTY_FUNCTION__);
+	}
     return mapAttributeNameIndex[name];
 }
 
@@ -216,8 +224,9 @@ VariableIndexType AttributesSetting::getIndexForName(const std::string& name ) {
  
  ---------------------------------------------------------------------------------*/
 ValueSetting *AttributesSetting::getValueSettingForIndex(VariableIndexType index) {
-    if(!mapAttributeIndexSettings.count(index)) return NULL;
-        
+	if(!mapAttributeIndexSettings.count(index)) {
+		throw chaos::CException(-1, "No index present in Attribute setting", __PRETTY_FUNCTION__);
+	}
     return mapAttributeIndexSettings[index].get();
 }
 

@@ -33,17 +33,12 @@ void IODataDriver::deinit() throw(CException) {
 void IODataDriver::storeData(const std::string& key, CDataWrapper *dataToStore) throw(CException){
     
     if(!dataToStore) return;
-    
-        //get the key to store data on the memcached
-        //string key = dataToStore->getStringValue(DataPackKey::CS_CSV_CU_ID);
+	
 	SerializationBuffer* serialization = dataToStore->getBSONData();
-    //if(!serialization) {
-   //     return;
-   // }
-    
-    storeRawData(key, serialization);
-   // delete(serialization);
 
+	storeRawData(key, serialization);
+	
+	delete(dataToStore);
 }
 
 

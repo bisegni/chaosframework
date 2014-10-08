@@ -58,31 +58,6 @@ uint64_t BatchCommand::getUID() {
 	return unique_id;
 }
 
-void BatchCommand::getChangedVariableIndex(AttributeValueSharedCache::SharedVariableDomain domain, std::vector<VariableIndexType>& changed_index) {
-    CHAOS_ASSERT(sharedAttributeSettingPtr)
-    return sharedAttributeSettingPtr->getChangedVariableIndex(domain, changed_index);
-}
-
-ValueSetting *BatchCommand::getVariableValue(AttributeValueSharedCache::SharedVariableDomain domain, VariableIndexType variable_index) {
-    CHAOS_ASSERT(sharedAttributeSettingPtr)
-    return sharedAttributeSettingPtr->getVariableValue(domain, variable_index);
-}
-
-ValueSetting *BatchCommand::getVariableValue(AttributeValueSharedCache::SharedVariableDomain domain, const char *variable_name) {
-    CHAOS_ASSERT(sharedAttributeSettingPtr)
-    return sharedAttributeSettingPtr->getVariableValue(domain, variable_name);
-}
-
-void BatchCommand::setVariableValueForKey(AttributeValueSharedCache::SharedVariableDomain domain, const char *variable_name, void * value, uint32_t size) {
-    CHAOS_ASSERT(sharedAttributeSettingPtr)
-    sharedAttributeSettingPtr->setVariableValueForKey(domain, variable_name, value, size);
-}
-
-void BatchCommand::getVariableNames(AttributeValueSharedCache::SharedVariableDomain domain, std::vector<std::string>& names) {
-    CHAOS_ASSERT(sharedAttributeSettingPtr)
-    sharedAttributeSettingPtr->getVariableNames(domain, names);
-}
-
 /*
  Start the slow command sequence
  */

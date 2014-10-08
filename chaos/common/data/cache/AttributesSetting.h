@@ -64,7 +64,7 @@ namespace chaos{
 					const uint32_t                      index;
 					
 					//! the size of value
-					const uint32_t                      size;
+					uint32_t                      size;
 					
 					//! is the datatype that represent the value
 					const chaos::DataType::DataType     type;
@@ -94,7 +94,7 @@ namespace chaos{
 					 \param value_ptr the memory ptr that contains the new value to copy into internal memory
 					 \param value_size the sie of the new value
 					 */
-					bool setValue(const void* value_ptr, uint32_t value_size);
+					bool setValue(const void* value_ptr, uint32_t value_size, bool tag_has_changed = true);
 					
 					void markAsChanged();
 					
@@ -103,8 +103,8 @@ namespace chaos{
 					//! the value is returned has handle because the pointer can change it size ans so
 					//! the pointer can be relocated
 					template<typename T>
-					T** getValueHandle() {
-						return reinterpret_cast<T**>(&value_buffer);
+					T* getValuePtr() {
+						return reinterpret_cast<T*>(value_buffer);
 					}
 				};
 				

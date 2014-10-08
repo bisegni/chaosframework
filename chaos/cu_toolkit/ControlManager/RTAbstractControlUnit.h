@@ -53,8 +53,6 @@ namespace chaos {
 				bool scheduler_run;
 				boost::scoped_ptr<boost::thread>  scheduler_thread;
 				
-				//DSAttributeHandlerExecutionEngine *attributeHandlerEngine;
-				
 				/*!
 				 Define the control unit DataSet and Action into
 				 a CDataWrapper
@@ -75,10 +73,18 @@ namespace chaos {
 				
 				//! push the output data if it is changed
 				void pushOutputDataset();
+
 			protected:
 				
 				//! schdule a run of the rt control unit
 				virtual void unitRun() throw(CException) = 0;
+				
+				//! attribute change handler
+				/*!
+				 the handle is fired after the input attribute cache as been update triggere
+				 by the rpc request for attribute change.
+				 */
+				virtual void unitInputAttributeChangedHandler() throw(CException) = 0;
 				
 				//! set the dafult run schedule time intervall
 				void setDefaultScheduleDelay(uint64_t _defaultScheduleDelay);

@@ -107,7 +107,6 @@ void RTAbstractControlUnit::init(void *initData) throw(CException) {
 	
 	RTCULAPP_ << "Initializing shared attribute cache " << DatasetDB::getDeviceID();
 	utility::InizializableService::initImplementation((AttributeValueSharedCache*)attribute_value_shared_cache, (void*)NULL, "attribute_value_shared_cache", __PRETTY_FUNCTION__);
-	
 }
 
 /*!
@@ -141,7 +140,7 @@ void RTAbstractControlUnit::stop() throw(CException) {
 void RTAbstractControlUnit::deinit() throw(CException) {
 	//call parent impl
 	AbstractControlUnit::deinit();
-	
+
 	RTCULAPP_ << "Initializing shared attribute cache " << DatasetDB::getDeviceID();
 	utility::InizializableService::deinitImplementation((AttributeValueSharedCache*)attribute_value_shared_cache, "attribute_value_shared_cache", __PRETTY_FUNCTION__);
 
@@ -225,8 +224,7 @@ void RTAbstractControlUnit::executeOnThread() {
 	while(scheduler_run) {
 		//set the acquiition time stamp and update it on cache
 		acq_timestamp = TimingUtil::getTimeStamp();
-		attribute_value_shared_cache->setVariableValue(AttributeValueSharedCache::SVD_OUTPUT,
-													   timestamp_acq_cache_index, &acq_timestamp, sizeof(uint64_t));
+		cache_output_attribute_vector[timestamp_acq_cache_index]->setValue(&acq_timestamp, sizeof(uint64_t), false);
 		
 		unitRun();
 		
@@ -247,35 +245,47 @@ void RTAbstractControlUnit::pushOutputDataset() {
 	CDataWrapper *output_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
 	if(!output_attribute_dataset) return;
 	
+	//write device id for first
+	ValueSetting * value_set = cache_output_attribute_vector[timestamp_acq_cache_index-1];
+	output_attribute_dataset->addStringValue(value_set->name.c_str(), value_set->getValuePtr<const char>());
+	
+	//write acq ts for second
+	value_set = cache_output_attribute_vector[timestamp_acq_cache_index];
+	output_attribute_dataset->addInt64Value(value_set->name.c_str(), *value_set->getValuePtr<int64_t>());
+	
+	//add all other output channel
 	for(int idx = 0;
-		idx < output_attribute_cache.getNumberOfAttributes();
+		idx < cache_output_attribute_vector.size() - 2;
 		idx++) {
 		//
-		ValueSetting * value_set = output_attribute_cache.getValueSettingForIndex(idx);
+		ValueSetting * value_set = cache_output_attribute_vector[idx];
 		switch(value_set->type) {
 			case DataType::TYPE_BOOLEAN:
-				output_attribute_dataset->addBoolValue(value_set->name.c_str(), **value_set->getValueHandle<bool>());
+				output_attribute_dataset->addBoolValue(value_set->name.c_str(), *value_set->getValuePtr<bool>());
 				break;
 			case DataType::TYPE_INT32:
-				output_attribute_dataset->addInt32Value(value_set->name.c_str(), **value_set->getValueHandle<int32_t>());
+				output_attribute_dataset->addInt32Value(value_set->name.c_str(), *value_set->getValuePtr<int32_t>());
 				break;
 			case DataType::TYPE_INT64:
-				output_attribute_dataset->addInt64Value(value_set->name.c_str(), **value_set->getValueHandle<int64_t>());
+				output_attribute_dataset->addInt64Value(value_set->name.c_str(), *value_set->getValuePtr<int64_t>());
 				break;
 			case DataType::TYPE_DOUBLE:
-				output_attribute_dataset->addDoubleValue(value_set->name.c_str(), **value_set->getValueHandle<double>());
+				output_attribute_dataset->addDoubleValue(value_set->name.c_str(), *value_set->getValuePtr<double>());
 				break;
 			case DataType::TYPE_STRING:
-				output_attribute_dataset->addStringValue(value_set->name.c_str(), **value_set->getValueHandle<const char *>());
+				output_attribute_dataset->addStringValue(value_set->name.c_str(), value_set->getValuePtr<const char>());
 				break;
 			case DataType::TYPE_BYTEARRAY:
-				output_attribute_dataset->addBinaryValue(value_set->name.c_str(), **value_set->getValueHandle<char*>(), value_set->size);
+				output_attribute_dataset->addBinaryValue(value_set->name.c_str(), value_set->getValuePtr<char>(), value_set->size);
 				break;
 		}
 	}
 	
 	//now we nede to push the outputdataset
 	keyDataStorage->pushDataSet(data_manager::KeyDataStorageDomainOutput, output_attribute_dataset);
+	
+	//reset chagned attribute into output dataset
+	output_attribute_cache.resetChangedIndex();
 }
 
 /*
@@ -342,9 +352,9 @@ CDataWrapper* RTAbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_a
 				}
 			}
 		}
+		//inform subclas for the change
+		unitInputAttributeChangedHandler();
 	}
-
-	
 	//at this time notify the wel gone setting of comand
 	//if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(DatasetDB::getDeviceID(), 0);
 	return NULL;

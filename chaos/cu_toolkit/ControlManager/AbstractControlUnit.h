@@ -179,6 +179,8 @@ namespace chaos{
 				//! initialize system attribute
 				void initSystemAttributeOnSharedAttributeCache();
 
+				void fillCachedValueVector(AttributesSetting& attribute_cache,
+										   std::vector<ValueSetting*>& cached_value);
 			protected:
 				//! is the index within the output attribute shared cache for the acquisition time stamp
 				//! it is keep at the beginnig of the run method
@@ -197,6 +199,13 @@ namespace chaos{
 				//! Event channel to permit the fire of the device event
 				event::channel::InstrumentEventChannel *device_event_channel;
 				
+				
+				//! fast vector accessor
+				std::vector<ValueSetting*> cache_output_attribute_vector;
+				std::vector<ValueSetting*> cache_input_attribute_vector;
+				std::vector<ValueSetting*> cache_custom_attribute_vector;
+				std::vector<ValueSetting*> cache_system_attribute_vector;
+
 				//! Define the dataset information of the device implementeted into the CU
 				/*!
 				 This method configure the CDataWrapper whit all th einromation for describe the implemented device
