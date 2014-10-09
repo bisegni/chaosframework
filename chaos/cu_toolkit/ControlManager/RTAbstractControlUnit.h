@@ -49,6 +49,7 @@ namespace chaos {
 				friend class ControlManager;
 				friend class DomainActionsScheduler;
 				
+				uint64_t last_hearbeat_time;
 				uint64_t schedule_dalay;
 				bool scheduler_run;
 				boost::scoped_ptr<boost::thread>  scheduler_thread;
@@ -74,6 +75,8 @@ namespace chaos {
 				//! push the output data if it is changed
 				void pushOutputDataset();
 
+				//! push the system dataset if something is changed
+				void pushSystemDataset();
 			protected:
 				
 				//! schdule a run of the rt control unit

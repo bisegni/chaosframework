@@ -179,6 +179,23 @@ void AttributesSetting::addAttribute(string name,
     mapAttributeNameIndex.insert(make_pair<string, VariableIndexType>(name, (tmpIndex=index++)));
     
     //add channel setting
+	switch(type) {
+		case chaos::DataType::TYPE_BOOLEAN:
+			size = sizeof(bool);
+			break;
+		case chaos::DataType::TYPE_DOUBLE:
+			size = sizeof(double);
+			break;
+		case chaos::DataType::TYPE_INT32:
+			size = sizeof(int32_t);
+			break;
+		case chaos::DataType::TYPE_INT64:
+			size = sizeof(int64_t);
+			break;
+			
+		default:
+			break;
+	}
     boost::shared_ptr<ValueSetting> tmpSP(new ValueSetting(name, tmpIndex, size, type));
     
     //add the relative bit

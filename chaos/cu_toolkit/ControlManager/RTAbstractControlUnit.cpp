@@ -103,6 +103,7 @@ void RTAbstractControlUnit::init(void *initData) throw(CException) {
 	//call parent impl
 	AbstractControlUnit::init(initData);
 	scheduler_run = false;
+	last_hearbeat_time = 0;
     //RTCULAPP_ << "Initialize the DSAttribute handler engine for device:" << DatasetDB::getDeviceID();
     //utility::StartableService::initImplementation(attributeHandlerEngine, (void*)NULL, "DSAttribute handler engine", __PRETTY_FUNCTION__);
 	
@@ -227,6 +228,14 @@ void RTAbstractControlUnit::executeOnThread() {
 		acq_timestamp = TimingUtil::getTimeStamp();
 		cache_output_attribute_vector[timestamp_acq_cache_index]->setValue(&acq_timestamp, sizeof(uint64_t), false);
 		
+		if(acq_timestamp > last_hearbeat_time+1000) {
+			cache_custom_attribute_vector[0]->setValue(&acq_timestamp, sizeof(uint64_t));
+			//fire new hearbeat
+			pushSystemDataset();
+			//reset time for heartbeat
+			last_hearbeat_time = acq_timestamp;
+		}
+		
 		unitRun();
 		
 		//! check if the output dataset need to be pushed
@@ -246,12 +255,10 @@ void RTAbstractControlUnit::pushOutputDataset() {
 	CDataWrapper *output_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
 	if(!output_attribute_dataset) return;
 	
-	//write device id for first
-	ValueSetting * value_set = cache_output_attribute_vector[timestamp_acq_cache_index-1];
-	output_attribute_dataset->addStringValue(value_set->name.c_str(), value_set->getValuePtr<const char>());
+	//the device id is preinsert by keyDataStorage
 	
 	//write acq ts for second
-	value_set = cache_output_attribute_vector[timestamp_acq_cache_index];
+	ValueSetting * value_set = cache_output_attribute_vector[timestamp_acq_cache_index];
 	output_attribute_dataset->addInt64Value(value_set->name.c_str(), *value_set->getValuePtr<int64_t>());
 	
 	//add all other output channel
@@ -287,6 +294,20 @@ void RTAbstractControlUnit::pushOutputDataset() {
 	
 	//reset chagned attribute into output dataset
 	output_attribute_cache.resetChangedIndex();
+}
+
+void RTAbstractControlUnit::pushSystemDataset() {
+	//get the cdatawrapper for the pack
+	CDataWrapper *system_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
+	if(system_attribute_dataset) {
+		system_attribute_dataset->addInt64Value(DataPackSystemKey::DP_SYS_HEARTBEAT, *cache_system_attribute_vector[0]->getValuePtr<int64_t>());
+		system_attribute_dataset->addInt32Value(DataPackSystemKey::DP_SYS_LAST_ERROR, *cache_system_attribute_vector[1]->getValuePtr<int32_t>());
+		
+		const char *error_str = cache_system_attribute_vector[2]->getValuePtr<const char>();
+		system_attribute_dataset->addStringValue(DataPackSystemKey::DP_SYS_LAST_ERROR_MESSAGE, error_str);
+		//push out the system dataset
+		keyDataStorage->pushDataSet(data_manager::KeyDataStorageDomainSystem, system_attribute_dataset);
+	}
 }
 
 #define CHECK_FOR_RANGE_VALUE(t, v, attr_name)\
