@@ -18,10 +18,11 @@
  *    	limitations under the License.
  */
 
+#include <limits>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
-
 #include <chaos/cu_toolkit/ControlManager/RTAbstractControlUnit.h>
 
+#include <boost/format.hpp>
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::data::cache;
@@ -288,6 +289,16 @@ void RTAbstractControlUnit::pushOutputDataset() {
 	output_attribute_cache.resetChangedIndex();
 }
 
+#define CHECK_FOR_RANGE_VALUE(t, v, attr_name)\
+t max = attributeInfo.maxRange.size()?boost::lexical_cast<t>(attributeInfo.maxRange):std::numeric_limits<t>::max();\
+t min = attributeInfo.maxRange.size()?boost::lexical_cast<t>(attributeInfo.minRange):std::numeric_limits<t>::min();\
+if(v < min || v > max) throw CException(-1,  boost::str(boost::format("Invalid value (%1%) [max:%2% Min:%3%] for attribute %4%") % v % attr_name % attributeInfo.minRange % attributeInfo.maxRange).c_str(), __PRETTY_FUNCTION__);\
+
+#define CHECK_FOR_STRING_RANGE_VALUE(v, attr_name)\
+if(attributeInfo.minRange.size() && v < attributeInfo.minRange ) throw CException(-1, boost::str(boost::format("Invalid value (%1%) [max:%2% Min:%3%] for attribute %4%") % v % attr_name % attributeInfo.minRange % attributeInfo.maxRange).c_str(), __PRETTY_FUNCTION__);\
+if(attributeInfo.maxRange.size() && v > attributeInfo.maxRange ) throw CException(-1, boost::str(boost::format("Invalid value (%1%) [max:%2% Min:%3%] for attribute %4%") % v % attr_name %attributeInfo.minRange % attributeInfo.maxRange).c_str(), __PRETTY_FUNCTION__);\
+
+
 /*
  Receive the evento for set the dataset input element
  */
@@ -325,22 +336,26 @@ CDataWrapper* RTAbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_a
 					}
 					case DataType::TYPE_INT32: {
 						int32_t i32v = dataset_attribute_values->getInt32Value(cAttrName);
+						CHECK_FOR_RANGE_VALUE(int32_t, i32v, cAttrName)
 						attribute_cache_value->setValue(&i32v, sizeof(int32_t));
 						break;
 					}
 					case DataType::TYPE_INT64: {
 						int64_t i64v = dataset_attribute_values->getInt64Value(cAttrName);
+						CHECK_FOR_RANGE_VALUE(int64_t, i64v, cAttrName)
 						attribute_cache_value->setValue(&i64v, sizeof(int64_t));
-						break;
-					}
-					case DataType::TYPE_STRING: {
-						std::string str = dataset_attribute_values->getStringValue(cAttrName);
-						attribute_cache_value->setValue(str.c_str(), (uint32_t)str.size());
 						break;
 					}
 					case DataType::TYPE_DOUBLE: {
 						double dv = dataset_attribute_values->getDoubleValue(cAttrName);
+						CHECK_FOR_RANGE_VALUE(double, dv, cAttrName)
 						attribute_cache_value->setValue(&dv, sizeof(double));
+						break;
+					}
+					case DataType::TYPE_STRING: {
+						std::string str = dataset_attribute_values->getStringValue(cAttrName);
+						CHECK_FOR_STRING_RANGE_VALUE(str, cAttrName)
+						attribute_cache_value->setValue(str.c_str(), (uint32_t)str.size());
 						break;
 					}
 					case DataType::TYPE_BYTEARRAY: {

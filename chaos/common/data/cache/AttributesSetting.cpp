@@ -269,7 +269,6 @@ void AttributesSetting::markAllAsChanged() {
 bool AttributesSetting::hasChanged() {
 	return bitmapChangedAttribute.any();
 }
-
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
@@ -426,4 +425,15 @@ void AttributeValueSharedCache::addVariable(SharedCacheInterface::SharedVariable
 										  uint32_t max_size,
 										  chaos::DataType::DataType type) {
     getSharedDomain(domain).addAttribute(name, max_size, type);
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+void AttributeValueSharedCache::getLockOnDomain(SharedVariableDomain domain, bool write_lock) {
+	if(write_lock) {
+		boost::unique_lock<boost::shared_mutex>(getSharedDomain(domain).mutex);
+	} else {
+		boost::shared_lock<boost::shared_mutex>(getSharedDomain(domain).mutex);
+	}
 }

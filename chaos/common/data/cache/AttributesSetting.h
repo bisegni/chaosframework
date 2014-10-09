@@ -68,10 +68,10 @@ namespace chaos{
 					
 					//! is the datatype that represent the value
 					const chaos::DataType::DataType     type;
-
+					
 					//main buffer
 					void								*value_buffer;
-
+					
 					
 					//global index bitmap for infom that this value(using index) has been changed
 					boost::dynamic_bitset<BitBlockDimension> * sharedBitmapChangedAttribute;
@@ -112,7 +112,7 @@ namespace chaos{
 				
 				//! this class is a set of key with a ValueSetting class associated
 				/*!
-				 This class collect a set on key with the repsective ValueSetting creating a domain o 
+				 This class collect a set on key with the repsective ValueSetting creating a domain o
 				 values.
 				 */
 				class AttributesSetting : public chaos::utility::InizializableService {
@@ -123,7 +123,10 @@ namespace chaos{
 					
 					map<string, VariableIndexType> mapAttributeNameIndex;
 					map<VariableIndexType, boost::shared_ptr<ValueSetting> > mapAttributeIndexSettings;
+					
+
 				public:
+					boost::shared_mutex	mutex;
 					
 					AttributesSetting();
 					
@@ -136,7 +139,7 @@ namespace chaos{
 					void setValueForAttribute(VariableIndexType n,
 											  const void * value,
 											  uint32_t size);
-
+					
 					
 					VariableIndexType getIndexForName(const std::string& name );
 					
@@ -170,13 +173,62 @@ namespace chaos{
 					//! return true if some attribute has change it's value
 					bool hasChanged();
 					
+					//! set new size on attribute by index
 					bool setNewSize(VariableIndexType attribute_index, uint32_t new_size);
 				};
 				
 				//-----------------------------------------------------------------------------------------------------------------------------
 				
+				class SharedCacheLockDomain {
+				public:
+					virtual ~SharedCacheLockDomain(){}
+					
+					virtual void lock() = 0;
+					
+					virtual void unlock() = 0;
+				};
+				
+				class WriteSharedCacheLockDomain : public SharedCacheLockDomain {
+					auto_ptr<boost::unique_lock<boost::shared_mutex> > w_lock;
+				public:
+					WriteSharedCacheLockDomain(boost::unique_lock<boost::shared_mutex> *_l):
+					w_lock(_l){}
+					
+					~WriteSharedCacheLockDomain() {
+						w_lock->unlock();
+					}
+					
+					void lock() {
+						w_lock->lock();
+					}
+					
+					void unlock() {
+						w_lock->unlock();
+					}
+				};
+				
+				class ReadSharedCacheLockDomain : public SharedCacheLockDomain {
+					auto_ptr<boost::shared_lock<boost::shared_mutex> > r_lock;
+				public:
+					ReadSharedCacheLockDomain(boost::shared_lock<boost::shared_mutex>  *_l):
+					r_lock(_l){}
+					
+					~ReadSharedCacheLockDomain() {
+						r_lock->unlock();
+					}
+					
+					void lock() {
+						r_lock->lock();
+					}
+					
+					void unlock() {
+						r_lock->unlock();
+					}
+				};
+				//-----------------------------------------------------------------------------------------------------------------------------
 				class SharedCacheInterface {
 				public:
+					
 					typedef enum SharedVariableDomain {
 						SVD_INPUT,
 						SVD_OUTPUT,
@@ -227,6 +279,13 @@ namespace chaos{
 					 \param the type of the domain to return
 					 */
 					virtual AttributesSetting& getSharedDomain(SharedVariableDomain domain) = 0;
+					
+					//! return a class that implemnt the read o write lock on the specified domain
+					/*!
+					 \param domain the target that need to lock
+					 \param write_lock false for read and true for write lock
+					 */
+					virtual void getLockOnDomain(SharedVariableDomain domain, bool write_lock) = 0;
 				};
 				
 				//-----------------------------------------------------------------------------------------------------------------------------
@@ -292,11 +351,10 @@ namespace chaos{
 									 chaos::DataType::DataType type);
 					
 					//! Get a specified type of shared domain
-					/*!
-					 Return a specified type of shared domain , identified by input parameter
-					 \param the type of the domain to return
-					 */
 					AttributesSetting& getSharedDomain(SharedCacheInterface::SharedVariableDomain domain);
+					
+					//! return a class that implemnt the read o write lock on the specified domain
+					void getLockOnDomain(SharedVariableDomain domain, bool write_lock);
 				};
 			}
 		}
