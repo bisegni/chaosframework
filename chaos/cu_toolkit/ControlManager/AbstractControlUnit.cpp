@@ -544,6 +544,10 @@ void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
 	ACULDBG_ << "Adding syste attribute on shared cache";
 	domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_HEARTBEAT, 0, DataType::TYPE_INT64);
 	
+	//add unit type
+	domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_UNIT_TYPE, (uint32_t)control_unit_type.size(), DataType::TYPE_STRING);
+	domain_attribute_setting.setValueForAttribute(domain_attribute_setting.getNumberOfAttributes()-1, control_unit_type.c_str(),  (uint32_t)control_unit_type.size());
+	
 	//add error attribute
 	domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_LAST_ERROR, 0, DataType::TYPE_INT32);
 	
@@ -613,4 +617,92 @@ CDataWrapper*  AbstractControlUnit::updateConfiguration(CDataWrapper* updatePack
 DriverAccessor *AbstractControlUnit::getAccessoInstanceByIndex(int idx) {
 	if( idx >= accessorInstances.size() ) return NULL;
 	return accessorInstances[idx];
+}
+
+
+void AbstractControlUnit::pushOutputDataset() {
+	AttributesSetting& output_attribute_cache = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_OUTPUT);
+	//check if something as changed
+	if(!output_attribute_cache.hasChanged()) return;
+	
+	CDataWrapper *output_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
+	if(!output_attribute_dataset) return;
+	
+	//the device id is preinsert by keyDataStorage
+	
+	//write acq ts for second
+	ValueSetting * value_set = cache_output_attribute_vector[timestamp_acq_cache_index];
+	output_attribute_dataset->addInt64Value(value_set->name.c_str(), *value_set->getValuePtr<int64_t>());
+	
+	//add all other output channel
+	for(int idx = 0;
+		idx < cache_output_attribute_vector.size() - 2; //the device id and timestamp in added out of this list
+		idx++) {
+		//
+		ValueSetting * value_set = cache_output_attribute_vector[idx];
+		switch(value_set->type) {
+			case DataType::TYPE_BOOLEAN:
+				output_attribute_dataset->addBoolValue(value_set->name.c_str(), *value_set->getValuePtr<bool>());
+				break;
+			case DataType::TYPE_INT32:
+				output_attribute_dataset->addInt32Value(value_set->name.c_str(), *value_set->getValuePtr<int32_t>());
+				break;
+			case DataType::TYPE_INT64:
+				output_attribute_dataset->addInt64Value(value_set->name.c_str(), *value_set->getValuePtr<int64_t>());
+				break;
+			case DataType::TYPE_DOUBLE:
+				output_attribute_dataset->addDoubleValue(value_set->name.c_str(), *value_set->getValuePtr<double>());
+				break;
+			case DataType::TYPE_STRING:
+				output_attribute_dataset->addStringValue(value_set->name.c_str(), value_set->getValuePtr<const char>());
+				break;
+			case DataType::TYPE_BYTEARRAY:
+				output_attribute_dataset->addBinaryValue(value_set->name.c_str(), value_set->getValuePtr<char>(), value_set->size);
+				break;
+		}
+	}
+	
+	//now we nede to push the outputdataset
+	keyDataStorage->pushDataSet(data_manager::KeyDataStorageDomainOutput, output_attribute_dataset);
+	
+	//reset chagned attribute into output dataset
+	output_attribute_cache.resetChangedIndex();
+}
+
+void AbstractControlUnit::pushSystemDataset() {
+	AttributesSetting& systemm_attribute_cache = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_SYSTEM);
+	if(!systemm_attribute_cache.hasChanged()) return;
+	//get the cdatawrapper for the pack
+	CDataWrapper *system_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
+	if(system_attribute_dataset) {
+		for(std::vector<ValueSetting*>::iterator it = cache_system_attribute_vector.begin();
+			it != cache_system_attribute_vector.end();
+			it++) {
+			
+			switch((*it)->type) {
+				case DataType::TYPE_BOOLEAN:
+					system_attribute_dataset->addBoolValue((*it)->name.c_str(), *(*it)->getValuePtr<bool>());
+					break;
+				case DataType::TYPE_INT32:
+					system_attribute_dataset->addInt32Value((*it)->name.c_str(), *(*it)->getValuePtr<int32_t>());
+					break;
+				case DataType::TYPE_INT64:
+					system_attribute_dataset->addInt64Value((*it)->name.c_str(), *(*it)->getValuePtr<int64_t>());
+					break;
+				case DataType::TYPE_DOUBLE:
+					system_attribute_dataset->addDoubleValue((*it)->name.c_str(), *(*it)->getValuePtr<double>());
+					break;
+				case DataType::TYPE_STRING:
+					system_attribute_dataset->addStringValue((*it)->name.c_str(), (*it)->getValuePtr<const char>());
+					break;
+				case DataType::TYPE_BYTEARRAY:
+					system_attribute_dataset->addBinaryValue((*it)->name.c_str(), (*it)->getValuePtr<char>(), (*it)->size);
+					break;
+			}
+		}
+		//push out the system dataset
+		keyDataStorage->pushDataSet(data_manager::KeyDataStorageDomainSystem, system_attribute_dataset);
+	}
+	//reset changed index
+	systemm_attribute_cache.resetChangedIndex();
 }

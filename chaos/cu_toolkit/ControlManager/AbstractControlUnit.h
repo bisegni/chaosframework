@@ -175,9 +175,6 @@ namespace chaos{
 														std::vector<string>& attribute_names);
 				
 				void completeOutputAttribute();
-				
-				//! initialize system attribute
-				void initSystemAttributeOnSharedAttributeCache();
 
 				void fillCachedValueVector(AttributesSetting& attribute_cache,
 										   std::vector<ValueSetting*>& cached_value);
@@ -206,6 +203,9 @@ namespace chaos{
 				std::vector<ValueSetting*> cache_custom_attribute_vector;
 				std::vector<ValueSetting*> cache_system_attribute_vector;
 
+				//! initialize system attribute
+				virtual void initSystemAttributeOnSharedAttributeCache();
+				
 				//! Define the dataset information of the device implementeted into the CU
 				/*!
 				 This method configure the CDataWrapper whit all th einromation for describe the implemented device
@@ -316,7 +316,7 @@ namespace chaos{
 				AttributeSharedCacheWrapper * const getAttributeCache() {
 					return attribute_shared_cache_wrapper;
 				}
-
+				
 			public:
 				
 				//! Default Contructor
@@ -368,6 +368,12 @@ namespace chaos{
 				
 				//! getControlUnitParam
 				const string& getCUParam();
+				
+				//push output dataset
+				virtual void pushOutputDataset();
+				
+				//push system dataset
+				virtual void pushSystemDataset();
 			};
 		}
     }

@@ -44,7 +44,14 @@ SCAbstractControlUnit::SCAbstractControlUnit(const std::string& _control_unit_id
 AbstractControlUnit(CUType::SCCU,
 					_control_unit_id,
 					_control_unit_param),
-slow_command_executor(NULL) {}
+slow_command_executor(NULL) {
+	//allocate the SlowCommandExecutor, custom implementation of batch command executor engine
+	slow_command_executor = new SlowCommandExecutor(control_unit_instance, this, this);
+	//set the driver delegator to the executor
+	slow_command_executor->driverAccessorsErogator = this;
+	//associate the shared cache of the executor to the asbtract control unit one
+	attribute_value_shared_cache = slow_command_executor->getAttributeSharedCache();
+}
 
 /*!
  Parametrized constructor
@@ -58,10 +65,20 @@ AbstractControlUnit(CUType::SCCU,
 					_control_unit_id,
 					_control_unit_param,
 					_control_unit_drivers),
-slow_command_executor(NULL){}
+slow_command_executor(NULL){
+	//allocate the SlowCommandExecutor, custom implementation of batch command executor engine
+	slow_command_executor = new SlowCommandExecutor(control_unit_instance, this, this);
+	//set the driver delegator to the executor
+	slow_command_executor->driverAccessorsErogator = this;
+	//associate the shared cache of the executor to the asbtract control unit one
+	attribute_value_shared_cache = slow_command_executor->getAttributeSharedCache();
+}
 
 SCAbstractControlUnit::~SCAbstractControlUnit() {
-	
+	if(slow_command_executor) {
+		delete(slow_command_executor);
+		slow_command_executor = NULL;
+	}
 }
 
 void  SCAbstractControlUnit::_getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance) {
@@ -80,12 +97,7 @@ void SCAbstractControlUnit::init(void *initData) throw(CException) {
 	//SlowCommandExecutor has his own instance of cache and this control unit need to
 	//use that
 	
-	//allocate the SlowCommandExecutor, custom implementation of batch command executor engine
-	slow_command_executor = new SlowCommandExecutor(control_unit_instance, this);
-	//set the driver delegator to the executor
-	slow_command_executor->driverAccessorsErogator = this;
-	//associate the shared cache of the executor to the asbtract control unit one
-	attribute_value_shared_cache = slow_command_executor->getAttributeSharedCache();
+	
 	//init executor
 	utility::StartableService::initImplementation(slow_command_executor, (void*)NULL, "Slow Command Executor", __PRETTY_FUNCTION__);
 	
@@ -120,9 +132,6 @@ void SCAbstractControlUnit::deinit() throw(CException) {
 		//deassociate the data storage
 		slow_command_executor->keyDataStoragePtr = NULL;
 		slow_command_executor->deviceSchemaDbPtr = NULL;
-		
-		delete(slow_command_executor);
-		slow_command_executor = NULL;
 	} else {
 		SCACU_LAPP_ << "No command executor allocated for " << DatasetDB::getDeviceID();
 	}
@@ -161,6 +170,24 @@ void SCAbstractControlUnit::addExecutionChannels(unsigned int execution_channels
     slow_command_executor->addSandboxInstance(execution_channels);
 }
 
+//! system dataset configuraiton overload
+void SCAbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
+	//first call root system dataset initialization method
+	AbstractControlUnit::initSystemAttributeOnSharedAttributeCache();
+	
+	//add slow control system prorperty
+	AttributesSetting& domain_attribute_setting = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_SYSTEM);
+	//add heart beat attribute
+	SCACU_LAPP_ << "Adding addiodiotnal system attribute for control unit numbers";
+	domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_RUN_UNIT_AVAILABLE, 0, DataType::TYPE_INT32);
+	
+	uint32_t run_unit = slow_command_executor->getNumberOfSandboxInstance();
+	domain_attribute_setting.setValueForAttribute(domain_attribute_setting.getNumberOfAttributes()-1, &run_unit, sizeof(uint32_t));
+	
+	//add sand box identifier for the last system event
+	domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_RUN_UNIT_ID, 127, DataType::TYPE_STRING);
+}
+
 /*
  Receive the event for set the dataset input element
  */
@@ -196,4 +223,3 @@ CDataWrapper* SCAbstractControlUnit::updateConfiguration(CDataWrapper *updatePac
 	}
 	return result;
 }
-

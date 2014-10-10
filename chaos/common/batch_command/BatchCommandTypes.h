@@ -59,7 +59,8 @@ namespace chaos {
 				 * \brief Describe the event that the sand box can forward for notify the current state of a command
 				 */
 				typedef enum BatchSandboxEventType {
-					EVT_HEART_BEAT = 0,			/**< The sandobx is hearbeating [uint64_t]*/
+					EVT_RUN			= 0,		/**< The sandobx has stepped [no data]*/
+					EVT_HEART_BEAT	= 1			/**< The sandobx is hearbeating [uint64_t]*/
 				} BatchSandboxEventType;
 			}
 

@@ -93,6 +93,10 @@ void BatchCommandExecutor::addNewSandboxInstance() {
     BCELDBG_ << "Add new sandbox to the executor with identification ->" << tmp_ptr->identification;
 }
 
+unsigned int BatchCommandExecutor::getNumberOfSandboxInstance() {
+	return (unsigned int)sandbox_map.size();
+}
+
 AttributeValueSharedCache *BatchCommandExecutor::getAttributeSharedCache() {
 	return &global_attribute_cache;
 }

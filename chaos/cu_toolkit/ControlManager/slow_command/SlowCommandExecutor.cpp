@@ -23,6 +23,7 @@
 
 #include <chaos/common/global.h>
 
+#include <chaos/cu_toolkit/ControlManager/SCAbstractControlUnit.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommand.h>
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommandExecutor.h>
 
@@ -43,15 +44,17 @@ using namespace chaos::common::data::cache;
 using namespace chaos::common::batch_command;
 
 SlowCommandExecutor::SlowCommandExecutor(std::string _executorID,
-										 DatasetDB *_deviceSchemaDbPtr):
+										 DatasetDB *_deviceSchemaDbPtr,
+										 SCAbstractControlUnit *_control_unit_instance):
 BatchCommandExecutor(_executorID),
 deviceSchemaDbPtr(_deviceSchemaDbPtr),
-attribute_cache(new AttributeSharedCacheWrapper(getAttributeSharedCache())){
+attribute_cache(new AttributeSharedCacheWrapper(getAttributeSharedCache())),
+control_unit_instance(_control_unit_instance),
+ts_hb_cache(NULL),
+last_ru_id_cache(NULL),
+last_acq_ts_cache(NULL){}
 
-}
-
-SlowCommandExecutor::~SlowCommandExecutor() {
-}
+SlowCommandExecutor::~SlowCommandExecutor(){}
 
 // Initialize instance
 void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
@@ -95,8 +98,58 @@ void SlowCommandExecutor::handleCommandEvent(uint64_t command_seq,
 
 //! general sandbox event handler
 void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
-											 common::batch_command::BatchSandboxEventType::BatchSandboxEventType type,
+											 BatchSandboxEventType::BatchSandboxEventType type,
 											 void* type_value_ptr,
 											 uint32_t type_value_size) {
+	//let the base class handle the event
+	BatchCommandExecutor::handleSandboxEvent(sandbox_id, type, type_value_ptr, type_value_size);
+
+	if(!last_ru_id_cache) {
+		last_ru_id_cache = getAttributeSharedCache()->getVariableValue(SharedCacheInterface::SVD_SYSTEM,
+																	   DataPackSystemKey::DP_SYS_RUN_UNIT_ID);
+		if(!last_ru_id_cache) {
+			SCELERR_ << "Error getting cache slot for unit id";
+			return;
+		}
+	}
+
+	//set the last system event sandbox id
+	last_ru_id_cache->setValue(sandbox_id.c_str(), (uint32_t)sandbox_id.size());
+	
+	switch(type) {
+		case BatchSandboxEventType::EVT_HEART_BEAT: {
+			if(type_value_size == sizeof(uint64_t)) {
+				uint64_t *hb = static_cast<uint64_t*>(type_value_ptr);
+				if(!ts_hb_cache) {
+					ts_hb_cache =  getAttributeSharedCache()->getVariableValue(SharedCacheInterface::SVD_SYSTEM,
+																			   DataPackSystemKey::DP_SYS_HEARTBEAT);
+					if(!ts_hb_cache) {
+						SCELERR_ << "Error getti cache slot for heartbeat timestamp";
+						return;
+					}
+				}
+				ts_hb_cache->setValue(hb, type_value_size);
+				//notify to push data
+				control_unit_instance->pushSystemDataset();
+			}
+			break;
+		}
+			
+		case BatchSandboxEventType::EVT_RUN: {
+			uint64_t *hb = static_cast<uint64_t*>(type_value_ptr);
+			if(!last_acq_ts_cache) {
+				last_acq_ts_cache =  getAttributeSharedCache()->getVariableValue(SharedCacheInterface::SVD_OUTPUT,
+																				 DataPackKey::CS_CSV_TIME_STAMP);
+				if(!last_acq_ts_cache) {
+					SCELERR_ << "Error gettin cache slot for acquisition timestamp";
+					return;
+				}
+			}
+			last_acq_ts_cache->setValue(hb, type_value_size);
+			//push output dataset
+			control_unit_instance->pushOutputDataset();
+		}
+	}
+	
 	
 }

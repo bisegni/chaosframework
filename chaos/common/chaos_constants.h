@@ -543,11 +543,21 @@ namespace chaos {
 		//!is the ehartbeat of a data producer
 		static const char * const DP_SYS_HEARTBEAT			= "dp_sys_hp";
 		
+		//!is the last error message occurred into data producer
+		static const char * const DP_SYS_UNIT_TYPE			= "dp_sys_unit_type";
+		
 		//!is the last error occurred into the data producer
 		static const char * const DP_SYS_LAST_ERROR			= "dp_sys_lerr";
 		
 		//!is the last error message occurred into data producer
 		static const char * const DP_SYS_LAST_ERROR_MESSAGE	= "dp_sys_lerr_msg";
+		
+		//!is the number of run unit
+		static const char * const DP_SYS_RUN_UNIT_AVAILABLE	= "dp_sys_ru_available";
+		
+		//!is the run unit identifier
+		static const char * const DP_SYS_RUN_UNIT_ID		= "dp_sys_ru_id";
+
 	}
 	/** @} */ // end of DataPackSystemKey
 	

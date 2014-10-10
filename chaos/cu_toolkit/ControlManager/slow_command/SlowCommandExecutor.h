@@ -54,6 +54,7 @@ namespace chaos {
         
         namespace control_manager {
 			//forward declaration
+			class AbstractControlUnit;
 			class SCAbstractControlUnit;
 
             namespace slow_command {
@@ -88,11 +89,21 @@ namespace chaos {
 					
 					//! attribute cache wrapper
 					AttributeSharedCacheWrapper * attribute_cache;
+					
+					AbstractControlUnit *control_unit_instance;
+					
+					//fast hearb beat cache access
+					ValueSetting *ts_hb_cache;
+					//fast unit last id cache value
+					ValueSetting *last_ru_id_cache;
+					//fast unit last acq ts cache value
+					ValueSetting *last_acq_ts_cache;
                 protected:
                     
                     //! Private constructor
                     SlowCommandExecutor(std::string _executorID,
-										chaos_data::DatasetDB *_deviceSchemaDbPtr);
+										chaos_data::DatasetDB *_deviceSchemaDbPtr,
+										SCAbstractControlUnit *_control_unit_instance);
                     
                     //! Private deconstructor
                     ~SlowCommandExecutor();

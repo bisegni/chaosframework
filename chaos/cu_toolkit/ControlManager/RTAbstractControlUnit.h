@@ -71,12 +71,6 @@ namespace chaos {
 				
 				//! deinit rt control unit
 				void deinit() throw(CException);
-				
-				//! push the output data if it is changed
-				void pushOutputDataset();
-
-				//! push the system dataset if something is changed
-				void pushSystemDataset();
 			protected:
 				
 				//! schdule a run of the rt control unit

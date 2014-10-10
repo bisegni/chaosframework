@@ -77,6 +77,8 @@ namespace chaos {
 				// Get all managem declare action instance
 				void _getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance);
 				
+				//! system dataset configuraiton overload
+				void initSystemAttributeOnSharedAttributeCache();
 			public:
 				
 				/*! default constructor

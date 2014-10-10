@@ -511,18 +511,25 @@ void BatchCommandSandbox::runCommand() {
     do{
         if(currentExecutingCommand) {
             curr_executing_impl = currentExecutingCommand->element->cmdImpl;
-            stat.lastCmdStepStart = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count();
+            stat.lastCmdStepStart = boost::chrono::duration_cast<boost::chrono::milliseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count();
             
             // call the acquire phase
             acquireHandlerFunctor();
             
             //call the correlation and commit phase();
             correlationHandlerFunctor();
-            
-			//coompute step duration
-			stat.lastCmdStepTime = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count()-stat.lastCmdStepStart;
 			
-			if(stat.lastCmdStepStart > stat.lastHBTime + 1000000) {
+			if(event_handler) {
+				//signal the step of the run
+				event_handler->handleSandboxEvent(identification,
+												  BatchSandboxEventType::EVT_RUN,
+												  &stat.lastCmdStepStart, sizeof(uint64_t));
+			}
+			
+			//coompute step duration
+			stat.lastCmdStepTime = boost::chrono::duration_cast<boost::chrono::milliseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count()-stat.lastCmdStepStart;
+			
+			if(stat.lastCmdStepStart > stat.lastHBTime + 1000) {
 				stat.lastHBTime = stat.lastCmdStepStart;
 				//every seconds fire an hearbeat event for this sandbox
 				if(event_handler) {

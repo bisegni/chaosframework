@@ -74,7 +74,7 @@ namespace chaos{
                     //! point to the in memory device database
 					chaos::common::data::DatasetDB  *deviceDatabasePtr;
 
-					
+					//redefine the visibility
 					SharedCacheInterface * const getSharedCacheInterface() {
 						return chaos::common::batch_command::BatchCommand::getSharedCacheInterface();
 					}
@@ -96,7 +96,9 @@ namespace chaos{
                      return the device database with the dafualt device information
                      */
                     chaos_data::DatasetDB  * const getDeviceDatabase();
-                    
+					
+					
+					//! return the attribute cache pointer
 					AttributeSharedCacheWrapper * const getAttributeCache();
 
                 public:

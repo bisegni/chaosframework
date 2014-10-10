@@ -234,6 +234,9 @@ namespace chaos {
                 //! Add a number of sandobx to this instance of executor
                 void addSandboxInstance(unsigned int _sandbox_number);
 				
+				//! return the number of sandbox installed
+				unsigned int getNumberOfSandboxInstance();
+				
 				//! return the shared, between commadn, attribute cache
 				AttributeValueSharedCache *getAttributeSharedCache();
             };
