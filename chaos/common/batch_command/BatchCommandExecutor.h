@@ -117,12 +117,16 @@ namespace chaos {
                 //! Add a new command state structure to the queue (checking the alredy presence)
                 inline boost::shared_ptr<CommandState> getCommandState(uint64_t command_sequence);
 
-                //command event handler
-                void handleEvent(uint64_t command_seq, BatchCommandEventType::BatchCommandEventType type, void* type_attribute_ptr);
-                
+				//permit to regulate the queue of command state
 				void capWorker();
             protected:
-                //! Global cache shared across the sandbox it can be alsog given
+				//command event handler
+				virtual void handleCommandEvent(uint64_t command_seq, BatchCommandEventType::BatchCommandEventType type, void* type_value_ptr);
+				
+				//! general sandbox event handler
+				virtual void handleSandboxEvent(const std::string& sandbox_id, BatchSandboxEventType::BatchSandboxEventType type, void* type_value_ptr, uint32_t type_value_size);
+
+				//! Global cache shared across the sandbox it can be alsog given
                 AttributeValueSharedCache  global_attribute_cache;
                 
                 //! Check if the waithing command can be installed
@@ -180,6 +184,7 @@ namespace chaos {
                  non ended command state, will be remove from the history.
                  */
                 chaos_data::CDataWrapper* flushCommandStates(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
+
             public:
                 
                 //! Private constructor
@@ -229,6 +234,7 @@ namespace chaos {
                 //! Add a number of sandobx to this instance of executor
                 void addSandboxInstance(unsigned int _sandbox_number);
 				
+				//! return the shared, between commadn, attribute cache
 				AttributeValueSharedCache *getAttributeSharedCache();
             };
         }

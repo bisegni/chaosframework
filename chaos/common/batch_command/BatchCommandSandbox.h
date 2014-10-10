@@ -158,10 +158,14 @@ namespace chaos{
                  that are not implemented are managed according to the submition rule
                  */
                 inline bool installHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation)* cmd_to_install);
+				
+				//! remove an handler fo a command
                 inline void removeHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation)* cmd_to_install);
-                
+				
+				//kill the current running command without rule(like -9)
                 void killCurrentCommand();
-                
+				
+				//default private constructor and destructor
                 BatchCommandSandbox();
                 ~BatchCommandSandbox();
                 

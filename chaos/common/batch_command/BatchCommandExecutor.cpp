@@ -248,8 +248,10 @@ void BatchCommandExecutor::deinit() throw(chaos::CException) {
     chaos::utility::StartableService::deinit();
 }
 
-//Event handler
-void BatchCommandExecutor::handleEvent(uint64_t command_id, BatchCommandEventType::BatchCommandEventType type, void* type_attribute_ptr) {
+//command event handler
+void BatchCommandExecutor::handleCommandEvent(uint64_t command_id,
+											  BatchCommandEventType::BatchCommandEventType type,
+											  void* type_value_ptr) {
 	DEBUG_CODE(BCELDBG_ << "Received event of type->" << type << " on command id -> "<<command_id;)
 	switch(type) {
 		case BatchCommandEventType::EVT_QUEUED: {
@@ -268,7 +270,7 @@ void BatchCommandExecutor::handleEvent(uint64_t command_id, BatchCommandEventTyp
 			boost::shared_ptr<CommandState>  cmd_state = getCommandState(command_id);
 			if(cmd_state.get()) {
 				cmd_state->last_event = type;
-				cmd_state->fault_description = *static_cast<FaultDescription*>(type_attribute_ptr);
+				cmd_state->fault_description = *static_cast<FaultDescription*>(type_value_ptr);
 			}
 			break;
 		}
@@ -281,6 +283,14 @@ void BatchCommandExecutor::handleEvent(uint64_t command_id, BatchCommandEventTyp
 			break;
 		}
 	}
+}
+
+//! general sandbox event handler
+void BatchCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
+											  BatchSandboxEventType::BatchSandboxEventType type,
+											  void* type_value_ptr,
+											  uint32_t type_value_size) {
+	
 }
 
 

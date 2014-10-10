@@ -247,7 +247,7 @@ void BatchCommandSandbox::deinit() throw(chaos::CException) {
     
     SCSLAPP_ << "clean all paused and waiting command";
     SCSLAPP_ << "Clear the executing command";
-    if(event_handler && currentExecutingCommand) event_handler->handleEvent(currentExecutingCommand->element->cmdImpl->unique_id, BatchCommandEventType::EVT_KILLED, NULL);
+    if(event_handler && currentExecutingCommand) event_handler->handleCommandEvent(currentExecutingCommand->element->cmdImpl->unique_id, BatchCommandEventType::EVT_KILLED, NULL);
     DELETE_OBJ_POINTER(currentExecutingCommand)
     
     //free the remained commands into the stack
@@ -255,7 +255,7 @@ void BatchCommandSandbox::deinit() throw(chaos::CException) {
     while (!commandStack.empty()) {
         nextAvailableCommand = commandStack.top();
 		commandStack.pop();
-        if(event_handler && currentExecutingCommand) event_handler->handleEvent(nextAvailableCommand->element->cmdImpl->unique_id, BatchCommandEventType::EVT_KILLED, NULL);
+        if(event_handler && currentExecutingCommand) event_handler->handleCommandEvent(nextAvailableCommand->element->cmdImpl->unique_id, BatchCommandEventType::EVT_KILLED, NULL);
         DELETE_OBJ_POINTER(nextAvailableCommand)
     }
     SCSLAPP_ << "Paused command into the stack removed";
@@ -264,7 +264,7 @@ void BatchCommandSandbox::deinit() throw(chaos::CException) {
     while (!command_submitted_queue.empty()) {
         nextAvailableCommand = command_submitted_queue.top();
 		command_submitted_queue.pop();
-        if(event_handler && currentExecutingCommand) event_handler->handleEvent(nextAvailableCommand->element->cmdImpl->unique_id, BatchCommandEventType::EVT_KILLED, NULL);
+        if(event_handler && currentExecutingCommand) event_handler->handleCommandEvent(nextAvailableCommand->element->cmdImpl->unique_id, BatchCommandEventType::EVT_KILLED, NULL);
         DELETE_OBJ_POINTER(nextAvailableCommand)
     }
         
@@ -324,11 +324,11 @@ void BatchCommandSandbox::checkNextCommand() {
                     command_submitted_queue.pop();
                     if(event_handler) {
                         if(next_available_command->element->cmdImpl->runningProperty == RunningPropertyType::RP_Fault){
-                            event_handler->handleEvent(next_available_command->element->cmdImpl->unique_id,
-                                                      BatchCommandEventType::EVT_FAULT,
-                                                      static_cast<FaultDescription*>(&next_available_command->element->cmdImpl->faultDescription));
+                            event_handler->handleCommandEvent(next_available_command->element->cmdImpl->unique_id,
+															  BatchCommandEventType::EVT_FAULT,
+															  static_cast<FaultDescription*>(&next_available_command->element->cmdImpl->faultDescription));
                         } else {
-                            event_handler->handleEvent(next_available_command->element->cmdImpl->unique_id, BatchCommandEventType::EVT_COMPLETED, NULL);
+                            event_handler->handleCommandEvent(next_available_command->element->cmdImpl->unique_id, BatchCommandEventType::EVT_COMPLETED, NULL);
                         }
                     }
                     
@@ -367,7 +367,7 @@ void BatchCommandSandbox::checkNextCommand() {
                             DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] push last command into stack";)
                             commandStack.push(tmp_command);
                             DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] elemente in commandStack " << commandStack.size();)
-                            if(event_handler) event_handler->handleEvent(tmp_command->element->cmdImpl->unique_id, BatchCommandEventType::EVT_PAUSED, NULL);
+                            if(event_handler) event_handler->handleCommandEvent(tmp_command->element->cmdImpl->unique_id, BatchCommandEventType::EVT_PAUSED, NULL);
                         }
                         
                         threadSchedulerPauseCondition.unlock();
@@ -399,21 +399,21 @@ void BatchCommandSandbox::checkNextCommand() {
                 //execute the set handler in this separate thread
                 switch (current_check_value) {
                     case RSR_KILL_KURRENT_COMMAND:
-                        if(event_handler && command_to_delete) event_handler->handleEvent(command_to_delete->element->cmdImpl->unique_id,
-                                                                                          BatchCommandEventType::EVT_KILLED,
-                                                                                          NULL);
+                        if(event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->unique_id,
+																								 BatchCommandEventType::EVT_KILLED,
+																								 NULL);
                         break;
                         
                     case RSR_CURRENT_CMD_HAS_ENDED:
-                        if(event_handler && command_to_delete) event_handler->handleEvent(command_to_delete->element->cmdImpl->unique_id,
-                                                                                          BatchCommandEventType::EVT_COMPLETED,
-                                                                                          NULL);
+                        if(event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->unique_id,
+																								 BatchCommandEventType::EVT_COMPLETED,
+																								 NULL);
                         break;
                         
                     case RSR_CURRENT_CMD_HAS_FAULTED:
-                        if(event_handler && command_to_delete) event_handler->handleEvent(command_to_delete->element->cmdImpl->unique_id,
-                                                                                          BatchCommandEventType::EVT_FAULT,
-                                                                                          static_cast<FaultDescription*>(&command_to_delete->element->cmdImpl->faultDescription));
+                        if(event_handler && command_to_delete) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->unique_id,
+																								 BatchCommandEventType::EVT_FAULT,
+																								 static_cast<FaultDescription*>(&command_to_delete->element->cmdImpl->faultDescription));
                         break;
                         
                     default:
@@ -453,14 +453,14 @@ void BatchCommandSandbox::checkNextCommand() {
                     
                     switch(command_to_delete->element->cmdImpl->runningProperty) {
                             case RunningPropertyType::RP_End:
-                                if(event_handler) event_handler->handleEvent(command_to_delete->element->cmdImpl->unique_id,
-                                                                             BatchCommandEventType::EVT_COMPLETED,
-                                                                             NULL);
+                                if(event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->unique_id,
+																					BatchCommandEventType::EVT_COMPLETED,
+																					NULL);
                                 break;
                             case RunningPropertyType::RP_Fault:
-                                if(event_handler) event_handler->handleEvent(command_to_delete->element->cmdImpl->unique_id,
-                                                                             BatchCommandEventType::EVT_FAULT,
-                                                                             static_cast<FaultDescription*>(&command_to_delete->element->cmdImpl->faultDescription));
+                                if(event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->unique_id,
+																					BatchCommandEventType::EVT_FAULT,
+																					static_cast<FaultDescription*>(&command_to_delete->element->cmdImpl->faultDescription));
 
                                 break;
                     }
@@ -471,14 +471,14 @@ void BatchCommandSandbox::checkNextCommand() {
 					installHandler(NULL);
                     switch(currentExecutingCommand->element->cmdImpl->runningProperty) {
                         case RunningPropertyType::RP_End:
-                            if(event_handler) event_handler->handleEvent(currentExecutingCommand->element->cmdImpl->unique_id,
-                                                                         BatchCommandEventType::EVT_COMPLETED,
-                                                                         NULL);
+                            if(event_handler) event_handler->handleCommandEvent(currentExecutingCommand->element->cmdImpl->unique_id,
+																				BatchCommandEventType::EVT_COMPLETED,
+																				NULL);
                             break;
                         case RunningPropertyType::RP_Fault:
-                            if(event_handler) event_handler->handleEvent(currentExecutingCommand->element->cmdImpl->unique_id,
-                                                                         BatchCommandEventType::EVT_FAULT,
-                                                                         static_cast<FaultDescription*>(&currentExecutingCommand->element->cmdImpl->faultDescription));
+                            if(event_handler) event_handler->handleCommandEvent(currentExecutingCommand->element->cmdImpl->unique_id,
+																				BatchCommandEventType::EVT_FAULT,
+																				static_cast<FaultDescription*>(&currentExecutingCommand->element->cmdImpl->faultDescription));
                             
                             break;
                     }
@@ -521,6 +521,16 @@ void BatchCommandSandbox::runCommand() {
             
 			//coompute step duration
 			stat.lastCmdStepTime = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count()-stat.lastCmdStepStart;
+			
+			if(stat.lastCmdStepStart > stat.lastHBTime + 1000000) {
+				stat.lastHBTime = stat.lastCmdStepStart;
+				//every seconds fire an hearbeat event for this sandbox
+				if(event_handler) {
+					event_handler->handleSandboxEvent(identification,
+													  BatchSandboxEventType::EVT_HEART_BEAT,
+													  &stat.lastHBTime, sizeof(uint64_t));
+				}
+			}
 			
             //fire post command step
             curr_executing_impl->commandPost();
@@ -635,7 +645,7 @@ bool BatchCommandSandbox::installHandler(PRIORITY_ELEMENT(CommandInfoAndImplemen
         currentExecutingCommand = cmd_to_install;
 		
 		//fire the running event
-		if(event_handler)event_handler->handleEvent(tmp_impl->unique_id, BatchCommandEventType::EVT_RUNNING, NULL);
+		if(event_handler)event_handler->handleCommandEvent(tmp_impl->unique_id, BatchCommandEventType::EVT_RUNNING, NULL);
 		
     } else {
         currentExecutingCommand = NULL;
@@ -681,7 +691,7 @@ bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_in
     command_submitted_queue.push(new PriorityQueuedElement<CommandInfoAndImplementation>(new CommandInfoAndImplementation(command_to_info, command_impl), priority, true));
     
 	//fire the waiting command
-    if(event_handler) event_handler->handleEvent(command_impl->unique_id, BatchCommandEventType::EVT_QUEUED, NULL);
+    if(event_handler) event_handler->handleCommandEvent(command_impl->unique_id, BatchCommandEventType::EVT_QUEUED, NULL);
 	lock_checker.unlock();
     waithForNextCheck.unlock();
     return true;

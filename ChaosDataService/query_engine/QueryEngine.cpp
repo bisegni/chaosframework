@@ -114,10 +114,12 @@ void QueryEngine::start() throw(chaos::CException) {
  ---------------------------------------------------------------------------------*/
 void QueryEngine::stop() throw(chaos::CException) {
 	work_on_query = false;
-	answer_thread_pool.join_all();
 	//unlock all thread
 	thread_semaphore->signal(thread_pool_size);
 	
+	//waith all thread
+	answer_thread_pool.join_all();
+
 	//delete all connection
 	for(MapConnectionIterator it = map_query_id_connection.begin();
 		it != map_query_id_connection.end();

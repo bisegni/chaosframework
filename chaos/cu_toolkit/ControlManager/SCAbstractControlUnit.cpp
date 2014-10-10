@@ -35,20 +35,16 @@ using namespace chaos::common::data::cache;
 using namespace chaos::common::batch_command;
 
 
-#define LCCU_ LAPP_ << "[Slow Command Control Unit:" << getCUInstance() <<"] - "
+#define SCACU_LAPP_ LAPP_ << "[SCAbstractControlUnit:" << getCUInstance() <<"] - "
+#define SCACU_LDBG_ LDBG_ << "[SCAbstractControlUnit:" << getCUInstance() <<"] - "
+#define SCACU_LERR_ LERR_ << "[SCAbstractControlUnit:" << getCUInstance() <<" ("<< __LINE__ <<")] - "
 
 SCAbstractControlUnit::SCAbstractControlUnit(const std::string& _control_unit_id,
 											 const std::string& _control_unit_param):
 AbstractControlUnit(CUType::SCCU,
 					_control_unit_id,
-					_control_unit_param) {
-	//allocate the executor of the slow command
-    slow_command_executor = new SlowCommandExecutor(control_unit_instance, this);
-	//set the driver delegator to the executor
-	slow_command_executor->driverAccessorsErogator = this;
-	//associate the shared cache of the executor to the asbtract control unit one
-	attribute_value_shared_cache = slow_command_executor->getAttributeSharedCache();
-}
+					_control_unit_param),
+slow_command_executor(NULL) {}
 
 /*!
  Parametrized constructor
@@ -61,19 +57,11 @@ SCAbstractControlUnit::SCAbstractControlUnit(const std::string& _control_unit_id
 AbstractControlUnit(CUType::SCCU,
 					_control_unit_id,
 					_control_unit_param,
-					_control_unit_drivers) {
-	//allocate the executor of the slow command
-	slow_command_executor = new SlowCommandExecutor(control_unit_instance, this);
-	//set the driver delegator to the executor
-	slow_command_executor->driverAccessorsErogator = this;
-	//associate the shared cache of the executor to the asbtract control unit one
-	attribute_value_shared_cache = slow_command_executor->getAttributeSharedCache();
-}
+					_control_unit_drivers),
+slow_command_executor(NULL){}
 
 SCAbstractControlUnit::~SCAbstractControlUnit() {
-    if(slow_command_executor) {
-        delete(slow_command_executor);
-    }
+	
 }
 
 void  SCAbstractControlUnit::_getDeclareActionInstance(std::vector<const DeclareAction *>& declareActionInstance) {
@@ -88,6 +76,19 @@ void  SCAbstractControlUnit::_getDeclareActionInstance(std::vector<const Declare
  Initialize the Custom Contro Unit and return the configuration
  */
 void SCAbstractControlUnit::init(void *initData) throw(CException) {
+	//this need to be made first of AbstractControlUnit::init(initData); because
+	//SlowCommandExecutor has his own instance of cache and this control unit need to
+	//use that
+	
+	//allocate the SlowCommandExecutor, custom implementation of batch command executor engine
+	slow_command_executor = new SlowCommandExecutor(control_unit_instance, this);
+	//set the driver delegator to the executor
+	slow_command_executor->driverAccessorsErogator = this;
+	//associate the shared cache of the executor to the asbtract control unit one
+	attribute_value_shared_cache = slow_command_executor->getAttributeSharedCache();
+	//init executor
+	utility::StartableService::initImplementation(slow_command_executor, (void*)NULL, "Slow Command Executor", __PRETTY_FUNCTION__);
+	
 	//call parent impl
 	AbstractControlUnit::init(initData);
 	
@@ -95,14 +96,14 @@ void SCAbstractControlUnit::init(void *initData) throw(CException) {
     slow_command_executor->keyDataStoragePtr = AbstractControlUnit::keyDataStorage;
     slow_command_executor->deviceSchemaDbPtr = this; //control unit is it'self the database
     
-    LCCU_ << "Install default slow command for device " << DatasetDB::getDeviceID();
+    SCACU_LAPP_ << "Install default slow command for device " << DatasetDB::getDeviceID();
     installCommand<command::SetAttributeCommand>(chaos_batch::BatchCommandsKey::ATTRIBUTE_SET_VALUE_CMD_ALIAS);
     
-    LCCU_ << "Initializing slow command sandbox for device " << DatasetDB::getDeviceID();
-    utility::StartableService::initImplementation(slow_command_executor, (void*)NULL, "Slow Command Executor", "SCAbstractControlUnit::init");
+    SCACU_LAPP_ << "Initializing slow command sandbox for device " << DatasetDB::getDeviceID();
+	
     
     //now we can call funciton for custom definition of the shared variable
-    LCCU_ << "Setting up custom shared variable for device " << DatasetDB::getDeviceID();
+    SCACU_LAPP_ << "Setting up custom shared variable for device " << DatasetDB::getDeviceID();
 
 }
 
@@ -113,11 +114,18 @@ void SCAbstractControlUnit::deinit() throw(CException) {
 	//call parent impl
 	AbstractControlUnit::deinit();
 	
-    LCCU_ << "Deinitialize sandbox deinitialization for device:" << DatasetDB::getDeviceID();
-    utility::StartableService::deinitImplementation(slow_command_executor, "Slow Command Executor", "SCAbstractControlUnit::deinit");
-    //deassociate the data storage
-    slow_command_executor->keyDataStoragePtr = NULL;
-    slow_command_executor->deviceSchemaDbPtr = NULL;
+	if(slow_command_executor) {
+		SCACU_LAPP_ << "Deinitialize the command executor for " << DatasetDB::getDeviceID();
+		utility::StartableService::deinitImplementation(slow_command_executor, "Slow Command Executor", __PRETTY_FUNCTION__);
+		//deassociate the data storage
+		slow_command_executor->keyDataStoragePtr = NULL;
+		slow_command_executor->deviceSchemaDbPtr = NULL;
+		
+		delete(slow_command_executor);
+		slow_command_executor = NULL;
+	} else {
+		SCACU_LAPP_ << "No command executor allocated for " << DatasetDB::getDeviceID();
+	}
 }
 
 /*
@@ -127,8 +135,8 @@ void SCAbstractControlUnit::start() throw(CException) {
 	//call parent impl
 	AbstractControlUnit::start();
 	
-    LCCU_ << "Start sandbox for device:" << DatasetDB::getDeviceID();
-    utility::StartableService::startImplementation(slow_command_executor, "Slow Command Executor", "SCAbstractControlUnit::start");
+    SCACU_LAPP_ << "Start sandbox for device:" << DatasetDB::getDeviceID();
+    utility::StartableService::startImplementation(slow_command_executor, "Slow Command Executor", __PRETTY_FUNCTION__);
 
 }
 
@@ -139,8 +147,8 @@ void SCAbstractControlUnit::stop() throw(CException) {
 	//call parent impl
 	AbstractControlUnit::stop();
 	
-    LCCU_ << "Stop slow command executor for device:" << DatasetDB::getDeviceID();
-    utility::StartableService::stopImplementation(slow_command_executor, "Slow Command Executor", "SCAbstractControlUnit::stop");
+    SCACU_LAPP_ << "Stop slow command executor for device:" << DatasetDB::getDeviceID();
+    utility::StartableService::stopImplementation(slow_command_executor, "Slow Command Executor", __PRETTY_FUNCTION__);
 
 }
 
@@ -159,7 +167,7 @@ void SCAbstractControlUnit::addExecutionChannels(unsigned int execution_channels
 CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
 	uint64_t command_id =0;
     if(!datasetAttributeValues->hasKey(chaos_batch::BatchCommandSubmissionKey::COMMAND_ALIAS_STR)) {
-        throw CException(-1, "The alias of the slow command is mandatory", "SlowCommandExecutor::setDatasetAttribute");
+        throw CException(-1, "The alias of the slow command is mandatory", __PRETTY_FUNCTION__);
     }
 
     // in slow control cu the CDataWrapper instance received from rpc is internally managed

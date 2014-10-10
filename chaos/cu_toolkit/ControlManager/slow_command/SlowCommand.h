@@ -70,21 +70,19 @@ namespace chaos{
                 class SlowCommand: public chaos::common::batch_command::BatchCommand {
                     friend class SlowCommandExecutor;
 					friend class command::SetAttributeCommand;
-                    //! key data storage to forwsard data to central memory (momentary until directi/O will be created)
-                    data_manager::KeyDataStorage *keyDataStoragePtr;
                     
                     //! point to the in memory device database
 					chaos::common::data::DatasetDB  *deviceDatabasePtr;
 
 					
 					SharedCacheInterface * const getSharedCacheInterface() {
-						return NULL;
+						return chaos::common::batch_command::BatchCommand::getSharedCacheInterface();
 					}
 					
-                protected:
 					//! shared attribute cache
-					AttributeSharedCacheWrapper attribute_cache;
-					
+					AttributeSharedCacheWrapper * attribute_cache;
+                protected:
+
 					//! The erogator of the driver requested by the control unit
 					chaos::cu::driver_manager::DriverErogatorInterface *driverAccessorsErogator;
                     
@@ -97,18 +95,9 @@ namespace chaos{
                     /*!
                      return the device database with the dafualt device information
                      */
-                    chaos_data::DatasetDB  *getDeviceDatabase();
+                    chaos_data::DatasetDB  * const getDeviceDatabase();
                     
-                    /*
-                     Send device data to output buffer
-                     */
-                    void pushDataSet(chaos_data::CDataWrapper *acquired_data);
-                    
-                    /*
-                     Return a new instance of CDataWrapper filled with a mandatory data
-                     according to key
-                     */
-                    chaos_data::CDataWrapper *getNewDataWrapper();
+					AttributeSharedCacheWrapper * const getAttributeCache();
 
                 public:
                     

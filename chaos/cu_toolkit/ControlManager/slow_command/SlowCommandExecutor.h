@@ -62,7 +62,6 @@ namespace chaos {
 				namespace chaos_data = chaos::common::data;
 				namespace chaos_cache = chaos::common::data::cache;
 				namespace chaos_batch = chaos::common::batch_command;
-
 				
                 //forward declaration
                 class SlowCommand;
@@ -86,6 +85,9 @@ namespace chaos {
                     
 					//! The driver erogator
 					chaos::cu::driver_manager::DriverErogatorInterface *driverAccessorsErogator;
+					
+					//! attribute cache wrapper
+					AttributeSharedCacheWrapper * attribute_cache;
                 protected:
                     
                     //! Private constructor
@@ -98,21 +100,25 @@ namespace chaos {
                     //Check if the waithing command can be installed
                     chaos_batch::BatchCommand *instanceCommandInfo(std::string& commandAlias);
 
+					//overlodaed command event handler
+					void handleCommandEvent(uint64_t command_seq,
+											chaos_batch::BatchCommandEventType::BatchCommandEventType type,
+											void* type_value_ptr);
+					
+					//! general sandbox event handler
+					void handleSandboxEvent(const std::string& sandbox_id,
+											common::batch_command::BatchSandboxEventType::BatchSandboxEventType type,
+											void* type_value_ptr,
+											uint32_t type_value_size);
                 public:
                     
                     // Initialize instance
                     virtual void init(void*) throw(chaos::CException);
 
                     //! Install a command associated with a type
-                    /*!
-                     Install the isntancer for a determinated SlowCommand, for an easly way to do this can be used
-                     the macro SLOWCOMMAND_INSTANCER(SlowCommandClass) where "SlowCommandClass" is the calss that
-                     extend SlowCommand to implement a new command. The access to the internal map is not sincornized
-                     and need to be made befor the executor will be started
-                     \param alias the name associated to the command
-                     \param instancer the instance of the instancer that will produce the "instance" of the command
-                     */
-                    void installCommand(std::string alias, chaos::common::utility::NestedObjectInstancer<SlowCommand, chaos_batch::BatchCommand> *instancer);
+                    void installCommand(std::string alias,
+										chaos::common::utility::NestedObjectInstancer<SlowCommand, chaos_batch::BatchCommand> *instancer);
+
                 };
             }
         }

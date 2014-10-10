@@ -45,7 +45,8 @@ using namespace chaos::common::batch_command;
 SlowCommandExecutor::SlowCommandExecutor(std::string _executorID,
 										 DatasetDB *_deviceSchemaDbPtr):
 BatchCommandExecutor(_executorID),
-deviceSchemaDbPtr(_deviceSchemaDbPtr){
+deviceSchemaDbPtr(_deviceSchemaDbPtr),
+attribute_cache(new AttributeSharedCacheWrapper(getAttributeSharedCache())){
 
 }
 
@@ -77,8 +78,25 @@ BatchCommand *SlowCommandExecutor::instanceCommandInfo(std::string& commandAlias
     if(result) {
 		//forward the pointers of the needed data
 		result->driverAccessorsErogator = driverAccessorsErogator;
-        result->keyDataStoragePtr = keyDataStoragePtr;
         result->deviceDatabasePtr = deviceSchemaDbPtr;
+		result->attribute_cache = attribute_cache;
     }
     return result;
+}
+//overlodaed command event handler
+void SlowCommandExecutor::handleCommandEvent(uint64_t command_seq,
+											 BatchCommandEventType::BatchCommandEventType type,
+											 void* type_value_ptr) {
+	//let the base class handle the event
+	BatchCommandExecutor::handleCommandEvent(command_seq, type, type_value_ptr);
+	
+	//now we need to update the system cache or out cache
+}
+
+//! general sandbox event handler
+void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
+											 common::batch_command::BatchSandboxEventType::BatchSandboxEventType type,
+											 void* type_value_ptr,
+											 uint32_t type_value_size) {
+	
 }
