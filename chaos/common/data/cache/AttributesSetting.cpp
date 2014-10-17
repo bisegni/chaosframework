@@ -113,7 +113,8 @@ void ValueSetting::markAsUnchanged() {
  
  ---------------------------------------------------------------------------------*/
 AttributesSetting::AttributesSetting():
-index(0){
+index(0),
+mutex(new boost::shared_mutex()){
    // bitmapChangedAttribute = new boost::dynamic_bitset<BitBlockDimension>(mapAttributeIndexSettings.size());
 }
 
@@ -447,10 +448,12 @@ void AttributeValueSharedCache::addVariable(SharedCacheInterface::SharedVariable
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void AttributeValueSharedCache::getLockOnDomain(SharedVariableDomain domain, bool write_lock) {
+boost::shared_ptr<SharedCacheLockDomain> AttributeValueSharedCache::getLockOnDomain(SharedVariableDomain domain, bool write_lock) {
+	boost::shared_ptr<SharedCacheLockDomain> result;
 	if(write_lock) {
-		boost::unique_lock<boost::shared_mutex>(getSharedDomain(domain).mutex);
+		result.reset(new WriteSharedCacheLockDomain(getSharedDomain(domain).mutex));
 	} else {
-		boost::shared_lock<boost::shared_mutex>(getSharedDomain(domain).mutex);
+		result.reset(new ReadSharedCacheLockDomain(getSharedDomain(domain).mutex));
 	}
+	return result;
 }

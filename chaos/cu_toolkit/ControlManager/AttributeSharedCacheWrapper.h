@@ -158,7 +158,7 @@ namespace chaos{
 				bool setOutputAttributeNewSize(VariableIndexType attribute_index,
 											   uint32_t new_size);
 				
-				void getLockOnOutputAttributeCache(bool write_lock = true);
+				boost::shared_ptr<SharedCacheLockDomain> getLockOnOutputAttributeCache(bool write_lock = true);
 				
 				// Get the index of the changed attribute
 				void getChangedInputAttributeIndex(std::vector<VariableIndexType>& changed_index);
@@ -185,7 +185,7 @@ namespace chaos{
 				
 				void setCustomDomainAsChanged();
 				
-				void getLockOnCustomAttributeCache(bool write_lock = true);
+				boost::shared_ptr<SharedCacheLockDomain> getLockOnCustomAttributeCache(bool write_lock = true);
 			};
 		}
 	}

@@ -71,7 +71,7 @@ bool AttributeSharedCacheWrapper::setOutputAttributeNewSize(VariableIndexType at
 	return attribute_setting.setNewSize(attribute_index, new_size);
 }
 
-void AttributeSharedCacheWrapper::getLockOnOutputAttributeCache(bool write_lock) {
+boost::shared_ptr<SharedCacheLockDomain> AttributeSharedCacheWrapper::getLockOnOutputAttributeCache(bool write_lock) {
 	CHAOS_ASSERT(attribute_value_shared_cache)
 	return attribute_value_shared_cache->getLockOnDomain(AttributeValueSharedCache::SVD_OUTPUT, write_lock);
 }
@@ -134,7 +134,7 @@ void AttributeSharedCacheWrapper::setCustomDomainAsChanged() {
 
 }
 
-void AttributeSharedCacheWrapper::getLockOnCustomAttributeCache(bool write_lock) {
+boost::shared_ptr<SharedCacheLockDomain> AttributeSharedCacheWrapper::getLockOnCustomAttributeCache(bool write_lock) {
 	return 	attribute_value_shared_cache->getLockOnDomain(AttributeValueSharedCache::SVD_CUSTOM, write_lock);
 
 }

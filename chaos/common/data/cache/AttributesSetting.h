@@ -126,7 +126,7 @@ namespace chaos{
 					
 
 				public:
-					boost::shared_mutex	mutex;
+					boost::shared_ptr<boost::shared_mutex>	mutex;
 					
 					AttributesSetting();
 					
@@ -180,7 +180,12 @@ namespace chaos{
 				//-----------------------------------------------------------------------------------------------------------------------------
 				
 				class SharedCacheLockDomain {
+				protected:
+					boost::shared_ptr<boost::shared_mutex>	mutex;
 				public:
+					SharedCacheLockDomain(boost::shared_ptr<boost::shared_mutex> _mutex):
+					mutex(_mutex){
+					}
 					virtual ~SharedCacheLockDomain(){}
 					
 					virtual void lock() = 0;
@@ -189,40 +194,42 @@ namespace chaos{
 				};
 				
 				class WriteSharedCacheLockDomain : public SharedCacheLockDomain {
-					auto_ptr<boost::unique_lock<boost::shared_mutex> > w_lock;
+					boost::unique_lock<boost::shared_mutex> w_lock;
 				public:
-					WriteSharedCacheLockDomain(boost::unique_lock<boost::shared_mutex> *_l):
-					w_lock(_l){}
+					WriteSharedCacheLockDomain(boost::shared_ptr<boost::shared_mutex> _mutex):
+					SharedCacheLockDomain(_mutex),
+					w_lock(*mutex.get(), boost::defer_lock){}
 					
 					~WriteSharedCacheLockDomain() {
-						w_lock->unlock();
+						w_lock.unlock();
 					}
 					
 					void lock() {
-						w_lock->lock();
+						w_lock.lock();
 					}
 					
 					void unlock() {
-						w_lock->unlock();
+						w_lock.unlock();
 					}
 				};
 				
 				class ReadSharedCacheLockDomain : public SharedCacheLockDomain {
-					auto_ptr<boost::shared_lock<boost::shared_mutex> > r_lock;
+					boost::shared_lock<boost::shared_mutex> r_lock;
 				public:
-					ReadSharedCacheLockDomain(boost::shared_lock<boost::shared_mutex>  *_l):
-					r_lock(_l){}
+					ReadSharedCacheLockDomain(boost::shared_ptr<boost::shared_mutex> _mutex):
+					SharedCacheLockDomain(_mutex),
+					r_lock(*mutex.get(), boost::defer_lock){}
 					
 					~ReadSharedCacheLockDomain() {
-						r_lock->unlock();
+						r_lock.unlock();
 					}
 					
 					void lock() {
-						r_lock->lock();
+						r_lock.lock();
 					}
 					
 					void unlock() {
-						r_lock->unlock();
+						r_lock.unlock();
 					}
 				};
 				//-----------------------------------------------------------------------------------------------------------------------------
@@ -285,7 +292,7 @@ namespace chaos{
 					 \param domain the target that need to lock
 					 \param write_lock false for read and true for write lock
 					 */
-					virtual void getLockOnDomain(SharedVariableDomain domain, bool write_lock) = 0;
+					virtual boost::shared_ptr<SharedCacheLockDomain> getLockOnDomain(SharedVariableDomain domain, bool write_lock) = 0;
 				};
 				
 				//-----------------------------------------------------------------------------------------------------------------------------
@@ -354,7 +361,7 @@ namespace chaos{
 					AttributesSetting& getSharedDomain(SharedCacheInterface::SharedVariableDomain domain);
 					
 					//! return a class that implemnt the read o write lock on the specified domain
-					void getLockOnDomain(SharedVariableDomain domain, bool write_lock);
+					boost::shared_ptr<SharedCacheLockDomain> getLockOnDomain(SharedVariableDomain domain, bool write_lock);
 				};
 			}
 		}

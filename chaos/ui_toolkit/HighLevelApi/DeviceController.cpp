@@ -206,7 +206,12 @@ int DeviceController::getDeviceAttributeType(const string& attributesName, DataT
 
 //---------------------------------------------------------------------------------------------------
 int DeviceController::getType(std::string& control_unit_type) {
-	return deviceChannel->getType(control_unit_type, millisecToWait);
+	int err = 0;
+	if(!cu_type.size()) {
+		err = deviceChannel->getType(cu_type, millisecToWait);
+	}
+	control_unit_type = cu_type;
+	return err;
 }
 
 //---------------------------------------------------------------------------------------------------

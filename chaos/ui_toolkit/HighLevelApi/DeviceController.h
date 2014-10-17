@@ -51,6 +51,9 @@ namespace chaos {
             uint32_t millisecToWait;
                 //! represent the device id controlled by this instance
             string deviceID;
+				//!cached cu type
+			string cu_type;
+			
                 //! Metadata Server channel for get device information
             MDSMessageChannel *mdsChannel;
                 //! Device MEssage channel to control via chaos rpc the device
