@@ -178,6 +178,8 @@ namespace chaos{
 
 				void fillCachedValueVector(AttributesSetting& attribute_cache,
 										   std::vector<ValueSetting*>& cached_value);
+				
+				void fillCDatawrapperWithCachedValue(std::vector<ValueSetting*>& cached_attributes, CDataWrapper& dataset);
 			protected:
 				//! is the index within the output attribute shared cache for the acquisition time stamp
 				//! it is keep at the beginnig of the run method
@@ -373,7 +375,15 @@ namespace chaos{
 				virtual void pushOutputDataset();
 				
 				//push system dataset
+				virtual void pushInputDataset();
+				
+				//push system dataset
+				virtual void pushCustomDataset();
+				
+				//push system dataset
 				virtual void pushSystemDataset();
+				
+
 			};
 		}
     }

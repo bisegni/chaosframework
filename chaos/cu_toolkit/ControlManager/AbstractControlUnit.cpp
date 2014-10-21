@@ -669,40 +669,81 @@ void AbstractControlUnit::pushOutputDataset() {
 	output_attribute_cache.resetChangedIndex();
 }
 
+//push system dataset
+void AbstractControlUnit::pushInputDataset() {
+	AttributesSetting& input_attribute_cache = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_INPUT);
+	if(!input_attribute_cache.hasChanged()) return;
+	//get the cdatawrapper for the pack
+	CDataWrapper *input_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
+	if(input_attribute_dataset) {
+		//fill the dataset
+		fillCDatawrapperWithCachedValue(cache_input_attribute_vector, *input_attribute_dataset);
+		
+		//push out the system dataset
+		keyDataStorage->pushDataSet(data_manager::KeyDataStorageDomainInput, input_attribute_dataset);
+	}
+	//reset changed index
+	input_attribute_cache.resetChangedIndex();
+}
+
+//push system dataset
+void AbstractControlUnit::pushCustomDataset() {
+	AttributesSetting& custom_attribute_cache = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_CUSTOM);
+	if(!custom_attribute_cache.hasChanged()) return;
+	//get the cdatawrapper for the pack
+	CDataWrapper *custom_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
+	if(custom_attribute_dataset) {
+		//fill the dataset
+		fillCDatawrapperWithCachedValue(cache_custom_attribute_vector, *custom_attribute_dataset);
+		
+		//push out the system dataset
+		keyDataStorage->pushDataSet(data_manager::KeyDataStorageDomainInput, custom_attribute_dataset);
+	}
+	//reset changed index
+	custom_attribute_cache.resetChangedIndex();
+}
+
 void AbstractControlUnit::pushSystemDataset() {
 	AttributesSetting& systemm_attribute_cache = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_SYSTEM);
 	if(!systemm_attribute_cache.hasChanged()) return;
 	//get the cdatawrapper for the pack
 	CDataWrapper *system_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
 	if(system_attribute_dataset) {
-		for(std::vector<ValueSetting*>::iterator it = cache_system_attribute_vector.begin();
-			it != cache_system_attribute_vector.end();
-			it++) {
-			
-			switch((*it)->type) {
-				case DataType::TYPE_BOOLEAN:
-					system_attribute_dataset->addBoolValue((*it)->name.c_str(), *(*it)->getValuePtr<bool>());
-					break;
-				case DataType::TYPE_INT32:
-					system_attribute_dataset->addInt32Value((*it)->name.c_str(), *(*it)->getValuePtr<int32_t>());
-					break;
-				case DataType::TYPE_INT64:
-					system_attribute_dataset->addInt64Value((*it)->name.c_str(), *(*it)->getValuePtr<int64_t>());
-					break;
-				case DataType::TYPE_DOUBLE:
-					system_attribute_dataset->addDoubleValue((*it)->name.c_str(), *(*it)->getValuePtr<double>());
-					break;
-				case DataType::TYPE_STRING:
-					system_attribute_dataset->addStringValue((*it)->name.c_str(), (*it)->getValuePtr<const char>());
-					break;
-				case DataType::TYPE_BYTEARRAY:
-					system_attribute_dataset->addBinaryValue((*it)->name.c_str(), (*it)->getValuePtr<char>(), (*it)->size);
-					break;
-			}
-		}
+		//fill the dataset
+		fillCDatawrapperWithCachedValue(cache_system_attribute_vector, *system_attribute_dataset);
+		
 		//push out the system dataset
 		keyDataStorage->pushDataSet(data_manager::KeyDataStorageDomainSystem, system_attribute_dataset);
 	}
 	//reset changed index
 	systemm_attribute_cache.resetChangedIndex();
 }
+
+void AbstractControlUnit::fillCDatawrapperWithCachedValue(std::vector<ValueSetting*>& cached_attributes, CDataWrapper& dataset) {
+	for(std::vector<ValueSetting*>::iterator it = cached_attributes.begin();
+		it != cached_attributes.end();
+		it++) {
+		
+		switch((*it)->type) {
+			case DataType::TYPE_BOOLEAN:
+				dataset.addBoolValue((*it)->name.c_str(), *(*it)->getValuePtr<bool>());
+				break;
+			case DataType::TYPE_INT32:
+				dataset.addInt32Value((*it)->name.c_str(), *(*it)->getValuePtr<int32_t>());
+				break;
+			case DataType::TYPE_INT64:
+				dataset.addInt64Value((*it)->name.c_str(), *(*it)->getValuePtr<int64_t>());
+				break;
+			case DataType::TYPE_DOUBLE:
+				dataset.addDoubleValue((*it)->name.c_str(), *(*it)->getValuePtr<double>());
+				break;
+			case DataType::TYPE_STRING:
+				dataset.addStringValue((*it)->name.c_str(), (*it)->getValuePtr<const char>());
+				break;
+			case DataType::TYPE_BYTEARRAY:
+				dataset.addBinaryValue((*it)->name.c_str(), (*it)->getValuePtr<char>(), (*it)->size);
+				break;
+		}
+	}
+}
+

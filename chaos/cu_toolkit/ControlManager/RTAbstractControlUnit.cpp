@@ -324,6 +324,10 @@ CDataWrapper* RTAbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_a
 				}
 			}
 		}
+		
+		//push the input attribute dataset
+		
+		
 		//inform subclas for the change
 		unitInputAttributeChangedHandler();
 	}
