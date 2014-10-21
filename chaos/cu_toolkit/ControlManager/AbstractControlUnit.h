@@ -173,12 +173,17 @@ namespace chaos{
 				//! initialize the dataset attributes (input and output)
 				void initAttributeOnSharedAttributeCache(AttributeValueSharedCache::SharedVariableDomain domain,
 														std::vector<string>& attribute_names);
-				
+				//! complete the output dataset cached with mandatory attribute
+				/*!
+				 The mandatory attribute like timestamp and triggered id are added after the user defined output aattribute
+				 */
 				void completeOutputAttribute();
 
+				//! fill the array with the cached value, the array is used for the fast access of cached data
 				void fillCachedValueVector(AttributesSetting& attribute_cache,
 										   std::vector<ValueSetting*>& cached_value);
 				
+				//! filel the dataset packet for the cached attribute in the array
 				void fillCDatawrapperWithCachedValue(std::vector<ValueSetting*>& cached_attributes, CDataWrapper& dataset);
 			protected:
 				//! is the index within the output attribute shared cache for the acquisition time stamp
@@ -199,7 +204,7 @@ namespace chaos{
 				event::channel::InstrumentEventChannel *device_event_channel;
 				
 				
-				//! fast vector accessor
+				//! fast cached attribute vector accessor
 				std::vector<ValueSetting*> cache_output_attribute_vector;
 				std::vector<ValueSetting*> cache_input_attribute_vector;
 				std::vector<ValueSetting*> cache_custom_attribute_vector;
@@ -314,6 +319,7 @@ namespace chaos{
 				 */
 				driver_manager::driver::DriverAccessor * getAccessoInstanceByIndex(int idx);
 				
+				//!return the accessor for the sared attribute cache
 				inline
 				AttributeSharedCacheWrapper * const getAttributeCache() {
 					return attribute_shared_cache_wrapper;
@@ -382,8 +388,6 @@ namespace chaos{
 				
 				//push system dataset
 				virtual void pushSystemDataset();
-				
-
 			};
 		}
     }

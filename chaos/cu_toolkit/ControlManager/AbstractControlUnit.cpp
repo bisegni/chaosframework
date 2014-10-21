@@ -697,7 +697,7 @@ void AbstractControlUnit::pushCustomDataset() {
 		fillCDatawrapperWithCachedValue(cache_custom_attribute_vector, *custom_attribute_dataset);
 		
 		//push out the system dataset
-		keyDataStorage->pushDataSet(data_manager::KeyDataStorageDomainInput, custom_attribute_dataset);
+		keyDataStorage->pushDataSet(data_manager::KeyDataStorageDomainCustom, custom_attribute_dataset);
 	}
 	//reset changed index
 	custom_attribute_cache.resetChangedIndex();

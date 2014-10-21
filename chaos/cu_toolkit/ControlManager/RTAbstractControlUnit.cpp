@@ -325,11 +325,12 @@ CDataWrapper* RTAbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_a
 			}
 		}
 		
-		//push the input attribute dataset
-		
-		
-		//inform subclas for the change
+		//inform the subclass for the change
 		unitInputAttributeChangedHandler();
+		
+		
+		//push the input attribute dataset
+		pushInputDataset();
 	}
 	//at this time notify the wel gone setting of comand
 	//if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(DatasetDB::getDeviceID(), 0);
