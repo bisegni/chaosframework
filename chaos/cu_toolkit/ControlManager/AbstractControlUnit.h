@@ -304,6 +304,17 @@ namespace chaos{
 				 */
 				virtual void unitDeinit() throw(CException) = 0;
 				
+				
+				//! this andler is called befor the input attribute will be updated
+				virtual void unitInputAttributePreChangeHandler() throw(CException);
+				
+				//! attribute change handler
+				/*!
+				 the handle is fired after the input attribute cache as been update triggere
+				 by the rpc request for attribute change.
+				 */
+				virtual void unitInputAttributeChangedHandler() throw(CException);
+				
                 //Abstract method used to sublcass to set theri needs
 				/*!
 				 Receive the event for set the dataset input element, this virtual method

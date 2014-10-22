@@ -136,5 +136,8 @@ void AttributeSharedCacheWrapper::setCustomDomainAsChanged() {
 
 boost::shared_ptr<SharedCacheLockDomain> AttributeSharedCacheWrapper::getLockOnCustomAttributeCache(bool write_lock) {
 	return 	attribute_value_shared_cache->getLockOnDomain(AttributeValueSharedCache::SVD_CUSTOM, write_lock);
+}
 
+boost::shared_ptr<SharedCacheLockDomain> AttributeSharedCacheWrapper::getReadLockOnInputAttributeCache() {
+	return 	attribute_value_shared_cache->getLockOnDomain(AttributeValueSharedCache::SVD_INPUT, false);
 }

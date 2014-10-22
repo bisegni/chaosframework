@@ -186,6 +186,8 @@ namespace chaos{
 				void setCustomDomainAsChanged();
 				
 				boost::shared_ptr<SharedCacheLockDomain> getLockOnCustomAttributeCache(bool write_lock = true);
+				
+				boost::shared_ptr<SharedCacheLockDomain> getReadLockOnInputAttributeCache();
 			};
 		}
 	}

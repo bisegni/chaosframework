@@ -209,7 +209,7 @@ void SCAbstractControlUnit::completeInputAttribute() {
 CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
 	uint64_t command_id =0;
 	CDataWrapper *result = NULL;
-    if(!datasetAttributeValues->hasKey(chaos_batch::BatchCommandSubmissionKey::COMMAND_ALIAS_STR)) {
+    if(datasetAttributeValues->hasKey(chaos_batch::BatchCommandSubmissionKey::COMMAND_ALIAS_STR)) {
 		// in slow control cu the CDataWrapper instance received from rpc is internally managed
 		//so we need to detach it
 		// submit the detacched command to slow controll subsystem

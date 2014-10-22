@@ -76,16 +76,6 @@ namespace chaos {
 				//! schdule a run of the rt control unit
 				virtual void unitRun() throw(CException) = 0;
 				
-				//! this andler is called befor the input attribute will be updated
-				virtual void unitInputAttributePreChangeHandler() throw(CException) = 0;
-				
-				//! attribute change handler
-				/*!
-				 the handle is fired after the input attribute cache as been update triggere
-				 by the rpc request for attribute change.
-				 */
-				virtual void unitInputAttributeChangedHandler() throw(CException) = 0;
-				
 				//! set the dafult run schedule time intervall
 				void setDefaultScheduleDelay(uint64_t _defaultScheduleDelay);
 				
@@ -103,11 +93,7 @@ namespace chaos {
 				 Thread method for the scheduler
 				 */
 				void executeOnThread();
-				/*
-				 Receive the event for set the dataset input element, this virtual method
-				 is empty because can be used by controlunit implementation
-				 */
-				chaos_data::CDataWrapper* setDatasetAttribute(chaos_data::CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException);
+
 			public:
 				
 				/*! default constructor

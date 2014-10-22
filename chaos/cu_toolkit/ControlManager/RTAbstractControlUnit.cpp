@@ -245,26 +245,3 @@ void RTAbstractControlUnit::executeOnThread() {
 		boost::this_thread::sleep_for(boost::chrono::microseconds(schedule_dalay));
 	}
 }
-
-/*
- Receive the evento for set the dataset input element
- */
-CDataWrapper* RTAbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_attribute_values, bool& detachParam) throw (CException) {
-	try {
-		//call pre handler
-		unitInputAttributePreChangeHandler();
-		
-		//call base implementation
-		AbstractControlUnit::setDatasetAttribute(dataset_attribute_values, detachParam);
-		
-		//inform the subclass for the change
-		unitInputAttributeChangedHandler();
-	}catch(CException& ex) {
-		
-		//inform the subclass for the change
-		unitInputAttributeChangedHandler();
-		
-		throw ex;
-	}
-	return NULL;
-}
