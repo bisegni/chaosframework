@@ -79,6 +79,9 @@ namespace chaos {
 				
 				//! system dataset configuraiton overload
 				void initSystemAttributeOnSharedAttributeCache();
+
+				//! compelte th einput attribute with the alias of the slow commands registered
+				void completeInputAttribute();
 			public:
 				
 				/*! default constructor

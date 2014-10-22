@@ -129,7 +129,6 @@ namespace chaos {
                     //! Install a command associated with a type
                     void installCommand(std::string alias,
 										chaos::common::utility::NestedObjectInstancer<SlowCommand, chaos_batch::BatchCommand> *instancer);
-
                 };
             }
         }

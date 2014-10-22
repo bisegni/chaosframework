@@ -40,7 +40,7 @@ namespace chaos{
 			namespace chaos_data = chaos::common::data;
 			REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(IOMemcachedIODriver, IODataDriver), public NamedService {
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(IOMemcachedIODriver)
-				boost::mutex useMCMutex;
+				boost::shared_mutex useMCMutex;
 				memcached_st *memClient;
 			public:
 				

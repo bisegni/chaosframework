@@ -177,8 +177,15 @@ namespace chaos{
 				/*!
 				 The mandatory attribute like timestamp and triggered id are added after the user defined output aattribute
 				 */
-				void completeOutputAttribute();
+				virtual void completeOutputAttribute();
 
+				//! complete the input attribute
+				/*!
+				 this method can be overloaded by subclass to add 
+				 automatically generated input attribute
+				 */
+				virtual void completeInputAttribute();
+				
 				//! fill the array with the cached value, the array is used for the fast access of cached data
 				void fillCachedValueVector(AttributesSetting& attribute_cache,
 										   std::vector<ValueSetting*>& cached_value);
@@ -302,7 +309,7 @@ namespace chaos{
 				 Receive the event for set the dataset input element, this virtual method
 				 is empty because can be used by controlunit implementation
 				 */
-				virtual CDataWrapper* setDatasetAttribute(CDataWrapper*, bool& detachParam) throw (CException) = 0;
+				virtual CDataWrapper* setDatasetAttribute(CDataWrapper*, bool& detachParam) throw (CException);
 				
                 // Infrastructure configuration update
 				/*!

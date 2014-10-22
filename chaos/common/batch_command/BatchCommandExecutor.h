@@ -223,7 +223,14 @@ namespace chaos {
                  \param instancer the instance of the instancer that will produce the "instance" of the command
                  */
                 void installCommand(string alias, chaos::common::utility::ObjectInstancer<BatchCommand> *instancer);
-                
+				
+				//!return all the aliases of the installe batch command
+				/*!
+				 \param commands_alias will be filled with the alias of the
+				 registered commands
+				 */
+				void getAllCommandAlias(std::vector<std::string>& commands_alias);
+				
                 //! Submite the new slow command information
                 /*!
                  The information for the command are contained into the DataWrapper data serialization,

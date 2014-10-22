@@ -92,8 +92,6 @@ void SlowCommandExecutor::handleCommandEvent(uint64_t command_seq,
 											 void* type_value_ptr) {
 	//let the base class handle the event
 	BatchCommandExecutor::handleCommandEvent(command_seq, type, type_value_ptr);
-	
-	//now we need to update the system cache or out cache
 }
 
 //! general sandbox event handler

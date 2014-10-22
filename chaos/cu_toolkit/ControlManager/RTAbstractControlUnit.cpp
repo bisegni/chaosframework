@@ -22,7 +22,7 @@
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
 #include <chaos/cu_toolkit/ControlManager/RTAbstractControlUnit.h>
 
-#include <boost/format.hpp>
+
 using namespace chaos;
 using namespace chaos::common::data;
 using namespace chaos::common::data::cache;
@@ -246,93 +246,25 @@ void RTAbstractControlUnit::executeOnThread() {
 	}
 }
 
-#define CHECK_FOR_RANGE_VALUE(t, v, attr_name)\
-t max = attributeInfo.maxRange.size()?boost::lexical_cast<t>(attributeInfo.maxRange):std::numeric_limits<t>::max();\
-t min = attributeInfo.maxRange.size()?boost::lexical_cast<t>(attributeInfo.minRange):std::numeric_limits<t>::min();\
-if(v < min || v > max) throw CException(-1,  boost::str(boost::format("Invalid value (%1%) [max:%2% Min:%3%] for attribute %4%") % v % attr_name % attributeInfo.minRange % attributeInfo.maxRange).c_str(), __PRETTY_FUNCTION__);\
-
-#define CHECK_FOR_STRING_RANGE_VALUE(v, attr_name)\
-if(attributeInfo.minRange.size() && v < attributeInfo.minRange ) throw CException(-1, boost::str(boost::format("Invalid value (%1%) [max:%2% Min:%3%] for attribute %4%") % v % attr_name % attributeInfo.minRange % attributeInfo.maxRange).c_str(), __PRETTY_FUNCTION__);\
-if(attributeInfo.maxRange.size() && v > attributeInfo.maxRange ) throw CException(-1, boost::str(boost::format("Invalid value (%1%) [max:%2% Min:%3%] for attribute %4%") % v % attr_name %attributeInfo.minRange % attributeInfo.maxRange).c_str(), __PRETTY_FUNCTION__);\
-
-
 /*
  Receive the evento for set the dataset input element
  */
 CDataWrapper* RTAbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_attribute_values, bool& detachParam) throw (CException) {
-	CHAOS_ASSERT(dataset_attribute_values)
-	std::vector<std::string> in_attribute_name;
-	RangeValueInfo attributeInfo;
-	
-	//get all input attribute name
-	getDatasetAttributesName(DataType::Input , in_attribute_name);
-	
-	if(dataset_attribute_values->hasKey(DatasetDefinitionkey::DEVICE_ID)) {
-		std::string _messageDeviceID = dataset_attribute_values->getStringValue(DatasetDefinitionkey::DEVICE_ID);
+	try {
+		//call pre handler
+		unitInputAttributePreChangeHandler();
 		
-		//compare the message device id and the local
-		for (std::vector<std::string>::iterator iter = in_attribute_name.begin();
-			 iter != in_attribute_name.end();
-			 iter++) {
-			//execute attribute handler
-			const char * cAttrName = iter->c_str();
-			
-			//check if the attribute name is present
-			if(dataset_attribute_values->hasKey(cAttrName)) {
-				
-				ValueSetting * attribute_cache_value = attribute_value_shared_cache->getVariableValue(SharedCacheInterface::SVD_INPUT, iter->c_str());
-				
-				//get attribute info
-				getAttributeRangeValueInfo(*iter, attributeInfo);
-				//call handler
-				switch (attribute_cache_value->type) {
-					case DataType::TYPE_BOOLEAN: {
-						bool bv = dataset_attribute_values->getBoolValue(cAttrName);
-						attribute_cache_value->setValue(&bv, sizeof(bool));
-						break;
-					}
-					case DataType::TYPE_INT32: {
-						int32_t i32v = dataset_attribute_values->getInt32Value(cAttrName);
-						CHECK_FOR_RANGE_VALUE(int32_t, i32v, cAttrName)
-						attribute_cache_value->setValue(&i32v, sizeof(int32_t));
-						break;
-					}
-					case DataType::TYPE_INT64: {
-						int64_t i64v = dataset_attribute_values->getInt64Value(cAttrName);
-						CHECK_FOR_RANGE_VALUE(int64_t, i64v, cAttrName)
-						attribute_cache_value->setValue(&i64v, sizeof(int64_t));
-						break;
-					}
-					case DataType::TYPE_DOUBLE: {
-						double dv = dataset_attribute_values->getDoubleValue(cAttrName);
-						CHECK_FOR_RANGE_VALUE(double, dv, cAttrName)
-						attribute_cache_value->setValue(&dv, sizeof(double));
-						break;
-					}
-					case DataType::TYPE_STRING: {
-						std::string str = dataset_attribute_values->getStringValue(cAttrName);
-						CHECK_FOR_STRING_RANGE_VALUE(str, cAttrName)
-						attribute_cache_value->setValue(str.c_str(), (uint32_t)str.size());
-						break;
-					}
-					case DataType::TYPE_BYTEARRAY: {
-						int bin_size = 0;
-						const char *binv = dataset_attribute_values->getBinaryValue(cAttrName, bin_size);
-						attribute_cache_value->setValue(binv, bin_size);
-						break;
-					}
-				}
-			}
-		}
+		//call base implementation
+		AbstractControlUnit::setDatasetAttribute(dataset_attribute_values, detachParam);
+		
+		//inform the subclass for the change
+		unitInputAttributeChangedHandler();
+	}catch(CException& ex) {
 		
 		//inform the subclass for the change
 		unitInputAttributeChangedHandler();
 		
-		
-		//push the input attribute dataset
-		pushInputDataset();
+		throw ex;
 	}
-	//at this time notify the wel gone setting of comand
-	//if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(DatasetDB::getDeviceID(), 0);
 	return NULL;
 }

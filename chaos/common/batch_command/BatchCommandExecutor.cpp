@@ -394,6 +394,14 @@ void BatchCommandExecutor::installCommand(string alias, chaos::common::utility::
     mapCommandInstancer.insert(make_pair<string, chaos::common::utility::ObjectInstancer<BatchCommand>* >(alias, instancer));
 }
 
+void BatchCommandExecutor::getAllCommandAlias(std::vector<std::string>& commands_alias) {
+	for(std::map<string, chaos::common::utility::ObjectInstancer<BatchCommand>* >::iterator it = mapCommandInstancer.begin();
+		it != mapCommandInstancer.end();
+		it++) {
+		commands_alias.push_back(it->first);
+	}
+}
+
 //! Check if the waithing command can be installed
 BatchCommand *BatchCommandExecutor::instanceCommandInfo(CDataWrapper *submissionInfo) {
     std::string commandAlias;

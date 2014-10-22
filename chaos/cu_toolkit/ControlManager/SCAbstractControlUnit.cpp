@@ -188,24 +188,49 @@ void SCAbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
 	domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_RUN_UNIT_ID, 127, DataType::TYPE_STRING);
 }
 
+void SCAbstractControlUnit::completeInputAttribute() {
+	SCACU_LAPP_ << "Complete the shared cache input attribute";
+	AttributesSetting& domain_attribute_setting = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_INPUT);
+	
+	std::vector<std::string> command_alias;
+	slow_command_executor->getAllCommandAlias(command_alias);
+	
+	for(std::vector<std::string>::iterator it = command_alias.begin();
+		it != command_alias.end();
+		it++) {
+		SCACU_LAPP_ << "Add input attribute for slow command:" << *it;
+		domain_attribute_setting.addAttribute(*it, 255, DataType::TYPE_STRING);
+	}
+}
+
 /*
  Receive the event for set the dataset input element
  */
 CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
 	uint64_t command_id =0;
+	CDataWrapper *result = NULL;
     if(!datasetAttributeValues->hasKey(chaos_batch::BatchCommandSubmissionKey::COMMAND_ALIAS_STR)) {
-        throw CException(-1, "The alias of the slow command is mandatory", __PRETTY_FUNCTION__);
-    }
-
-    // in slow control cu the CDataWrapper instance received from rpc is internally managed
-    //so we need to detach it
-    // submit the detacched command to slow controll subsystem
-    slow_command_executor->submitCommand(datasetAttributeValues, command_id);
-    detachParam = true;
-
-	//construct the result
-    CDataWrapper *result = new CDataWrapper();
-	result->addInt64Value(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_id);
+		// in slow control cu the CDataWrapper instance received from rpc is internally managed
+		//so we need to detach it
+		// submit the detacched command to slow controll subsystem
+		slow_command_executor->submitCommand(datasetAttributeValues, command_id);
+		detachParam = true;
+		
+		//add command info to input attribute
+		std::string command_alias = datasetAttributeValues->getStringValue(chaos_batch::BatchCommandSubmissionKey::COMMAND_ALIAS_STR);
+		ValueSetting *attr_value = attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_INPUT, command_alias);
+		if(attr_value) {
+			std::string cmd_param = datasetAttributeValues->getJSONString();
+			attr_value->setValue(cmd_param.c_str(), (uint32_t)cmd_param.size());
+			pushInputDataset();
+		}
+		//construct the result
+		result = new CDataWrapper();
+		result->addInt64Value(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64, command_id);
+	} else {
+		//call base implementation
+		result = AbstractControlUnit::setDatasetAttribute(datasetAttributeValues, detachParam);
+	}
     return result;
 }
 

@@ -84,7 +84,7 @@ void IOMemcachedIODriver::deinit() throw(CException) {
  * return a pointer to the class ArrayPointer of CDataWrapper type
  */
 void IOMemcachedIODriver::storeRawData(const std::string& key, chaos_data::SerializationBuffer *serialization)  throw(CException) {
-	boost::mutex::scoped_lock lock(useMCMutex);
+	boost::unique_lock<boost::shared_mutex> lock(useMCMutex);
 	memcached_return_t mcSetResult = MEMCACHED_SUCCESS;
 	mcSetResult = memcached_set(memClient, key.c_str(), key.size(), serialization->getBufferPtr(), serialization->getBufferLen(), 0, 0);
 	//for debug
@@ -104,7 +104,7 @@ char* IOMemcachedIODriver::retriveRawData(const std::string& key, size_t *dim)  
 	uint32_t flags= 0;
 	size_t value_length= 0;
 	memcached_return_t mcSetResult = MEMCACHED_SUCCESS;
-	boost::mutex::scoped_lock lock(useMCMutex);
+	boost::unique_lock<boost::shared_mutex> lock(useMCMutex);
 	char* result =  memcached_get(memClient, key.c_str(), key.size(), &value_length, &flags,  &mcSetResult);
 	if(dim) *dim = value_length;
 	return result;
@@ -115,7 +115,7 @@ char* IOMemcachedIODriver::retriveRawData(const std::string& key, size_t *dim)  
  */
 CDataWrapper* IOMemcachedIODriver::updateConfiguration(CDataWrapper* newConfigration) {
 	memcached_return_t configResult = MEMCACHED_SUCCESS;
-	boost::mutex::scoped_lock lock(useMCMutex);
+	boost::unique_lock<boost::shared_mutex> lock(useMCMutex);
 	LMEMDRIVER_ << "Update Configuration";
 	
 	if(!memClient) throw CException(0, "Write memcached structure not allocated", "IOMemcachedIODriver::updateConfiguration");
