@@ -258,6 +258,9 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
 		ACULAPP_ << "Complete shared attribute cache for output attribute";
 		completeOutputAttribute();
 		
+		ACULAPP_ << "Complete shared attribute cache for input attribute";
+		completeInputAttribute();
+		
 		ACULAPP_ << "Populating shared attribute cache for system attribute";
 		initSystemAttributeOnSharedAttributeCache();
 
