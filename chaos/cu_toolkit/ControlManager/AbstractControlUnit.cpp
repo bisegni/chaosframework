@@ -210,6 +210,10 @@ void AbstractControlUnit::unitDefineDriver(std::vector<DrvRequestInfo>& neededDr
 	}
 }
 
+void AbstractControlUnit::unitDefineCustomAttribute() {
+	
+}
+
 /*
  Define the control unit DataSet and Action into
  a CDataWrapper

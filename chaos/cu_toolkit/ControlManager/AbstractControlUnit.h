@@ -267,7 +267,7 @@ namespace chaos{
 				 Custom attirbute, into the shared cache can be accessed globally into the control unit environment
 				 they are publishe on every value change commit
 				 */
-				virtual void unitDefineCustomAttribute() = 0;
+				virtual void unitDefineCustomAttribute();
 				
                 //! Abstract method for the initialization of the control unit
 				/*!
