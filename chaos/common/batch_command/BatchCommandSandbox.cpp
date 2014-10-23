@@ -698,7 +698,10 @@ bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_in
     command_submitted_queue.push(new PriorityQueuedElement<CommandInfoAndImplementation>(new CommandInfoAndImplementation(command_to_info, command_impl), priority, true));
     
 	//fire the waiting command
-    if(event_handler) event_handler->handleCommandEvent(command_impl->unique_id, BatchCommandEventType::EVT_QUEUED, NULL);
+    if(event_handler) event_handler->handleCommandEvent(command_impl->unique_id,
+														BatchCommandEventType::EVT_QUEUED,
+														(void*)command_impl->command_alias.c_str(),
+														(uint32_t)command_impl->command_alias.size());
 	lock_checker.unlock();
     waithForNextCheck.unlock();
     return true;

@@ -110,11 +110,12 @@ namespace chaos {
                     
                     //Check if the waithing command can be installed
                     chaos_batch::BatchCommand *instanceCommandInfo(std::string& commandAlias);
-
+					
 					//overlodaed command event handler
 					void handleCommandEvent(uint64_t command_seq,
 											chaos_batch::BatchCommandEventType::BatchCommandEventType type,
-											void* type_value_ptr);
+											void* type_value_ptr,
+											uint32_t type_value_size);
 					
 					//! general sandbox event handler
 					void handleSandboxEvent(const std::string& sandbox_id,
@@ -124,8 +125,11 @@ namespace chaos {
                 public:
                     
                     // Initialize instance
-                    virtual void init(void*) throw(chaos::CException);
+                    void init(void*) throw(chaos::CException);
 
+					// Start the implementation
+					void start() throw(chaos::CException);
+					
                     //! Install a command associated with a type
                     void installCommand(std::string alias,
 										chaos::common::utility::NestedObjectInstancer<SlowCommand, chaos_batch::BatchCommand> *instancer);

@@ -77,7 +77,10 @@ namespace chaos{
                 friend struct CommandInfoAndImplementation;
                 //!unique command id
                 uint64_t unique_id;
-                
+				
+				//! the alias associated to the command
+				std::string command_alias;
+				
                 //! keep track whenever set handler has been called
                 bool already_setupped;
                 

@@ -255,7 +255,8 @@ void BatchCommandExecutor::deinit() throw(chaos::CException) {
 //command event handler
 void BatchCommandExecutor::handleCommandEvent(uint64_t command_id,
 											  BatchCommandEventType::BatchCommandEventType type,
-											  void* type_value_ptr) {
+											  void* type_value_ptr,
+											  uint32_t type_value_size) {
 	DEBUG_CODE(BCELDBG_ << "Received event of type->" << type << " on command id -> "<<command_id;)
 	switch(type) {
 		case BatchCommandEventType::EVT_QUEUED: {
@@ -388,6 +389,10 @@ void BatchCommandExecutor::setDefaultCommand(string command_alias, unsigned int 
     default_command_sandbox_instance = sandbox_instance<1?1:sandbox_instance;
 }
 
+const std::string& BatchCommandExecutor::getDefaultCommand() {
+	return default_command_alias;
+}
+
 //! Install a command associated with a type
 void BatchCommandExecutor::installCommand(string alias, chaos::common::utility::ObjectInstancer<BatchCommand> *instancer) {
     BCELAPP_ << "Install new command with alias -> " << alias;
@@ -404,14 +409,16 @@ void BatchCommandExecutor::getAllCommandAlias(std::vector<std::string>& commands
 
 //! Check if the waithing command can be installed
 BatchCommand *BatchCommandExecutor::instanceCommandInfo(CDataWrapper *submissionInfo) {
-    std::string commandAlias;
-    commandAlias = submissionInfo->getStringValue(BatchCommandSubmissionKey::COMMAND_ALIAS_STR);
-    DEBUG_CODE(BCELDBG_ << "Instancing command " << commandAlias;)
-    BatchCommand *instance = instanceCommandInfo(commandAlias);
+    std::string command_alias = submissionInfo->getStringValue(BatchCommandSubmissionKey::COMMAND_ALIAS_STR);
+    DEBUG_CODE(BCELDBG_ << "Instancing command " << command_alias;)
+    BatchCommand *instance = instanceCommandInfo(command_alias);
     if(instance) {
+		//set the alias for this command
+		instance->command_alias = command_alias;
+		
         if(submissionInfo->hasKey(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32)) {
             instance->submissionRule = submissionInfo->getInt32Value(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32);
-            DEBUG_CODE(BCELDBG_ << "Submission rule for command " << commandAlias << " is: " << ((uint16_t)instance->submissionRule);)
+            DEBUG_CODE(BCELDBG_ << "Submission rule for command " << command_alias << " is: " << ((uint16_t)instance->submissionRule);)
         } else {
             instance->submissionRule = SubmissionRuleType::SUBMIT_NORMAL;
         }

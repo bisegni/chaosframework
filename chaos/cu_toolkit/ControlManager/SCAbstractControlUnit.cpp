@@ -215,13 +215,19 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAt
 		// submit the detacched command to slow controll subsystem
 		slow_command_executor->submitCommand(datasetAttributeValues, command_id);
 		detachParam = true;
-		
-		//add command info to input attribute
+		//in this event the value is the alias of the command
+		//publish command value
 		std::string command_alias = datasetAttributeValues->getStringValue(chaos_batch::BatchCommandSubmissionKey::COMMAND_ALIAS_STR);
 		ValueSetting *attr_value = attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_INPUT, command_alias);
 		if(attr_value) {
 			std::string cmd_param = datasetAttributeValues->getJSONString();
-			attr_value->setValue(cmd_param.c_str(), (uint32_t)cmd_param.size());
+			//add new size
+			attr_value->setNewSize((uint32_t)cmd_param.size());
+			
+			//set the value without notify because command value are managed internally only
+			attr_value->setValue(cmd_param.c_str(), (uint32_t)cmd_param.size(), false);
+			
+			//push input dataset change
 			pushInputDataset();
 		}
 		//construct the result

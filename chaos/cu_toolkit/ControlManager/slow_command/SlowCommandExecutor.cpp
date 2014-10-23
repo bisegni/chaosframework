@@ -58,40 +58,73 @@ SlowCommandExecutor::~SlowCommandExecutor(){}
 
 // Initialize instance
 void SlowCommandExecutor::init(void *initData) throw(chaos::CException) {
-    std::vector<std::string> attribute_names;
-    
-    //initialize superclass
+	std::vector<std::string> attribute_names;
+	
+	//initialize superclass
 	BatchCommandExecutor::init(initData);
 }
 
+// Start the implementation
+void SlowCommandExecutor::start() throw(chaos::CException) {
+	//the default command, if there is is launched here so we need to update the system dataaset
+	const std::string& command_alias = getDefaultCommand();
+	if(command_alias.size()) {
+		ValueSetting *attr_value = getAttributeSharedCache()->getVariableValue(AttributeValueSharedCache::SVD_INPUT, command_alias);
+		if(attr_value) {
+			std::string cmd_param = "none";
+			//add new size
+			attr_value->setNewSize((uint32_t)cmd_param.size());
+			
+			//set the value without notify because command value are managed internally only
+			attr_value->setValue(cmd_param.c_str(), (uint32_t)cmd_param.size(), false);
+			
+			//push input dataset change
+			control_unit_instance->pushInputDataset();
+		}
+	}
+	//initialize superclass
+	BatchCommandExecutor::start();
+}
 
 //! Install a command associated with a type
 void SlowCommandExecutor::installCommand(string alias, chaos::common::utility::NestedObjectInstancer<SlowCommand, chaos_batch::BatchCommand> *instancer) {
-    //call superclss method
-    BatchCommandExecutor::installCommand(alias, instancer);
+	//call superclss method
+	BatchCommandExecutor::installCommand(alias, instancer);
 }
 
 
 //! Check if the waithing command can be installed
 BatchCommand *SlowCommandExecutor::instanceCommandInfo(std::string& commandAlias) {
 	//install command into the batch command executor root class
-    SlowCommand *result = (SlowCommand*) BatchCommandExecutor::instanceCommandInfo(commandAlias);
+	SlowCommand *result = (SlowCommand*) BatchCommandExecutor::instanceCommandInfo(commandAlias);
 	
 	//cusotmize slow command sublcass
-    if(result) {
+	if(result) {
 		//forward the pointers of the needed data
 		result->driverAccessorsErogator = driverAccessorsErogator;
-        result->deviceDatabasePtr = deviceSchemaDbPtr;
+		result->deviceDatabasePtr = deviceSchemaDbPtr;
 		result->attribute_cache = attribute_cache;
-    }
-    return result;
+	}
+	return result;
 }
 //overlodaed command event handler
 void SlowCommandExecutor::handleCommandEvent(uint64_t command_seq,
 											 BatchCommandEventType::BatchCommandEventType type,
-											 void* type_value_ptr) {
+											 void* type_value_ptr,
+											 uint32_t type_value_size) {
 	//let the base class handle the event
-	BatchCommandExecutor::handleCommandEvent(command_seq, type, type_value_ptr);
+	BatchCommandExecutor::handleCommandEvent(command_seq,
+											 type,
+											 type_value_ptr,
+											 type_value_size);
+	
+	switch(type) {
+		case BatchCommandEventType::EVT_QUEUED: {
+			break;
+		}
+		default:
+			break;
+	}
 }
 
 //! general sandbox event handler
@@ -101,7 +134,7 @@ void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
 											 uint32_t type_value_size) {
 	//let the base class handle the event
 	BatchCommandExecutor::handleSandboxEvent(sandbox_id, type, type_value_ptr, type_value_size);
-
+	
 	if(!last_ru_id_cache) {
 		last_ru_id_cache = getAttributeSharedCache()->getVariableValue(SharedCacheInterface::SVD_SYSTEM,
 																	   DataPackSystemKey::DP_SYS_RUN_UNIT_ID);
@@ -110,7 +143,7 @@ void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
 			return;
 		}
 	}
-
+	
 	//set the last system event sandbox id
 	last_ru_id_cache->setValue(sandbox_id.c_str(), (uint32_t)sandbox_id.size());
 	

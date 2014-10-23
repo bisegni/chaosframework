@@ -121,7 +121,7 @@ namespace chaos {
 				void capWorker();
             protected:
 				//command event handler
-				virtual void handleCommandEvent(uint64_t command_seq, BatchCommandEventType::BatchCommandEventType type, void* type_value_ptr);
+				virtual void handleCommandEvent(uint64_t command_seq, BatchCommandEventType::BatchCommandEventType type, void* type_value_ptr, uint32_t type_value_size);
 				
 				//! general sandbox event handler
 				virtual void handleSandboxEvent(const std::string& sandbox_id, BatchSandboxEventType::BatchSandboxEventType type, void* type_value_ptr, uint32_t type_value_size);
@@ -212,7 +212,9 @@ namespace chaos {
                  \param sandbox_instance is the 1-based index of the sandbox where install the command
                  */
                 void setDefaultCommand(string alias, unsigned int sandbox_instance = 1);
-                
+				
+				const std::string & getDefaultCommand();
+				
                 //! Install a command associated with a type
                 /*!
                  Install the isntancer for a determinated SlowCommand, for an easly way to do this can be used
