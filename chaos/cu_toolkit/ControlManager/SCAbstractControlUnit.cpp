@@ -162,7 +162,7 @@ void SCAbstractControlUnit::stop() throw(CException) {
 }
 
 // Perform a command registration
-void SCAbstractControlUnit::setDefaultCommand(std::string dafaultCommandName, unsigned int sandbox_instance) {
+void SCAbstractControlUnit::setDefaultCommand(const std::string& dafaultCommandName, unsigned int sandbox_instance) {
     slow_command_executor->setDefaultCommand(dafaultCommandName, sandbox_instance);
 }
 
@@ -184,8 +184,18 @@ void SCAbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
 	uint32_t run_unit = slow_command_executor->getNumberOfSandboxInstance();
 	domain_attribute_setting.setValueForAttribute(domain_attribute_setting.getNumberOfAttributes()-1, &run_unit, sizeof(uint32_t));
 	
+	std::vector<std::string> all_sandbox_ids;
+	slow_command_executor->getSandboxID(all_sandbox_ids);
+	
 	//add sand box identifier for the last system event
 	domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_RUN_UNIT_ID, 127, DataType::TYPE_STRING);
+
+	for(std::vector<std::string>::iterator it = all_sandbox_ids.begin();
+		it != all_sandbox_ids.end();
+		it++) {
+		//add timestamp for every single sandbox
+		domain_attribute_setting.addAttribute((*it)+"_hb", 0, DataType::TYPE_INT64);
+	}
 }
 
 void SCAbstractControlUnit::completeInputAttribute() {

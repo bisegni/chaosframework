@@ -39,6 +39,15 @@ namespace chaos_batch = chaos::common::batch_command;
 
 namespace chaos {
     namespace ui{
+		
+		//! identify the domain qhere fetch the data
+		typedef enum DatasetDomain {
+			DatasetDomainOutput = 0,
+			DatasetDomainInput,
+			DatasetDomainCustom,
+			DatasetDomainSystem
+		} DatasetDomain;
+		
             //! Controller for a single device instance
         /*! 
          This represent a global controller for a single device, identified by DEVICE_ID. The contorlle rpermit to
@@ -50,7 +59,11 @@ namespace chaos {
                 //!time to waith for the answer to an request;
             uint32_t millisecToWait;
                 //! represent the device id controlled by this instance
-            string deviceID;
+            string device_id;
+			string output_key;
+			string input_key;
+			string system_key;
+			string custom_key;
 				//!cached cu type
 			string cu_type;
 			
@@ -66,9 +79,12 @@ namespace chaos {
             //auto_ptr<CDataWrapper> lastDeviceDefinition;
             
                 //!point to the freashest live value for this device dataset
-            auto_ptr<CDataWrapper> currentLiveValue;
-                
-                //mutext for multi threading track operation 
+            auto_ptr<CDataWrapper> current_output_dataset;
+			auto_ptr<CDataWrapper> current_input_dataset;
+			auto_ptr<CDataWrapper> current_custom_dataset;
+			auto_ptr<CDataWrapper> current_system_dataset;
+			
+                //mutext for multi threading track operation
             boost::recursive_mutex trackMutext;
             
                 //!store the type of the attribute for fast retrieve
@@ -155,10 +171,10 @@ namespace chaos {
              */
             void getDeviceDatasetAttributesName(vector<string>& attributesName);
 
-	    /*!
+			/*!
              Get time stamp of last packet
              */
-	    int getTimeStamp(uint64_t& live);
+			int getTimeStamp(uint64_t& live);
             /*!
              Get description for attribute name
              */
@@ -344,9 +360,17 @@ namespace chaos {
             //get the CDatawrapper for the live value
             /*!
              the returned object is not own by requester but only by DeviceController isntance
+			 \deprecated use new api getCurrentDatasetForDomain
              */
+			__attribute__((__deprecated__))
             CDataWrapper * getLiveCDataWrapperPtr();
-            
+			
+			//!
+			CDataWrapper * getCurrentDatasetForDomain(DatasetDomain domain);
+			
+			//!
+			void fetchCurrentDatatasetFromDomain(DatasetDomain domain);
+			
             /*!
              Fetch the current live value form live storage
              */

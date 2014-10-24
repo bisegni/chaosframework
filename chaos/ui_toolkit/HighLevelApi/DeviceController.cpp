@@ -36,12 +36,18 @@ namespace cc_data = chaos::common::data;
 string timestampAttributeNameStr = DataPackKey::CS_CSV_TIME_STAMP;
 
 //---------------------------------------------------------------------------------------------------
-DeviceController::DeviceController(string& _deviceID):deviceID(_deviceID),datasetDB(true) {
+DeviceController::DeviceController(string& _deviceID):
+device_id(_deviceID),
+datasetDB(true) {
     mdsChannel = NULL;
     deviceChannel = NULL;
     ioLiveDataDriver = NULL;
     millisecToWait = MSEC_WAIT_OPERATION;
-    
+	
+	output_key	= device_id + DataPackPrefixID::OUTPUT_DATASE_PREFIX;
+	input_key	= device_id + DataPackPrefixID::INPUT_DATASE_PREFIX;
+	system_key	= device_id + DataPackPrefixID::SYSTEM_DATASE_PREFIX;
+	custom_key	= device_id + DataPackPrefixID::CUSTOM_DATASE_PREFIX;
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -75,7 +81,7 @@ uint32_t DeviceController::getRequestTimeWaith(){
 
 //---------------------------------------------------------------------------------------------------
 void DeviceController::getDeviceId(string& dId) {
-    dId.assign(deviceID);
+	dId = device_id;
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -89,14 +95,14 @@ void DeviceController::updateChannel() throw(CException) {
         if(!mdsChannel) throw CException(-1, "No MDS Channel created", "DeviceController::init");
     }
     
-    err = mdsChannel->getLastDatasetForDevice(deviceID, &devDefHandler, millisecToWait);
+    err = mdsChannel->getLastDatasetForDevice(device_id, &devDefHandler, millisecToWait);
     if(err!=ErrorCode::EC_NO_ERROR || !devDefHandler) throw CException(-2, "No device dataset received", "DeviceController::updateChannel");
     
     auto_ptr<CDataWrapper> lastDeviceDefinition(devDefHandler);
     
     datasetDB.addAttributeToDataSetFromDataWrapper(*lastDeviceDefinition.get());
     
-    err = mdsChannel->getNetworkAddressForDevice(deviceID, &devAddress, millisecToWait);
+    err = mdsChannel->getNetworkAddressForDevice(device_id, &devAddress, millisecToWait);
     if(err!=ErrorCode::EC_NO_ERROR || !devAddress) throw CException(-3, "No Address found for device", "DeviceController::init");
     
     //update live data driver
@@ -396,7 +402,7 @@ int DeviceController::submitSlowControlCommand(string commandAlias,
 	if(submission_checker_steps_delay) localCommandPack.addInt32Value(chaos_batch::BatchCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, submission_checker_steps_delay);
 	
 	//err = deviceChannel->setAttributeValue(localCommandPack, false, millisecToWait);
-	localCommandPack.addStringValue(DatasetDefinitionkey::DEVICE_ID, deviceID);
+	localCommandPack.addStringValue(DatasetDefinitionkey::DEVICE_ID, device_id);
 	err = deviceChannel->sendCustomRequest("setDatasetAttribute", &localCommandPack, &resultData, millisecToWait);
 	if(err == ErrorCode::EC_NO_ERROR && resultData && resultData->hasKey(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64)) {
 		//fill the command id
@@ -431,7 +437,7 @@ int DeviceController::submitSlowControlCommand(string commandAlias,
 	if(submission_checker_steps_delay) localCommandPack.addInt32Value(chaos_batch::BatchCommandSubmissionKey::SUBMISSION_RETRY_DELAY_UI32, (uint32_t) submission_checker_steps_delay);
 	
 	//forward the request
-	localCommandPack.addStringValue(DatasetDefinitionkey::DEVICE_ID, deviceID);
+	localCommandPack.addStringValue(DatasetDefinitionkey::DEVICE_ID, device_id);
 	err = deviceChannel->sendCustomRequest("setDatasetAttribute", &localCommandPack, &resultData, millisecToWait);
 	if(err == ErrorCode::EC_NO_ERROR && resultData && resultData->hasKey(chaos_batch::BatchCommandExecutorRpcActionKey::RPC_GET_COMMAND_STATE_CMD_ID_UI64)) {
 		//fill the command id
@@ -721,11 +727,69 @@ void DeviceController::addAttributeToTrack(string& attrbiuteName) {
 
 //---------------------------------------------------------------------------------------------------
 CDataWrapper * DeviceController::getLiveCDataWrapperPtr() {
-	return currentLiveValue.get();
+	return current_output_dataset.get();
 }
 
+
+//---------------------------------------------------------------------------------------------------
+CDataWrapper * DeviceController::getCurrentDatasetForDomain(DatasetDomain domain) {
+	CDataWrapper *result = NULL;
+	switch(domain) {
+		case DatasetDomainOutput:
+			result = current_output_dataset.get();
+			break;
+		case DatasetDomainInput:
+			result = current_input_dataset.get();
+			break;
+		case DatasetDomainCustom:
+			result = current_custom_dataset.get();
+			break;
+		case DatasetDomainSystem:
+			result = current_system_dataset.get();
+			break;
+	}
+	return result;
+}
+
+//---------------------------------------------------------------------------------------------------
+void DeviceController::fetchCurrentDatatasetFromDomain(DatasetDomain domain) {
+	CHAOS_ASSERT(ioLiveDataDriver)
+	char *value = NULL;
+	unsigned long value_len = 0;
+	switch(domain) {
+		case DatasetDomainOutput:
+			value = ioLiveDataDriver->retriveRawData(output_key, &value_len);
+			//check if some value has bee fetcher
+			if(!value) return;
+			current_output_dataset.reset(new CDataWrapper(value));
+			break;
+		case DatasetDomainInput:
+			value = ioLiveDataDriver->retriveRawData(input_key, &value_len);
+			//check if some value has bee fetcher
+			if(!value) return;
+			current_input_dataset.reset(new CDataWrapper(value));
+			break;
+		case DatasetDomainCustom:
+			value = ioLiveDataDriver->retriveRawData(custom_key, &value_len);
+			//check if some value has bee fetcher
+			if(!value) return;
+			current_custom_dataset.reset(new CDataWrapper(value));
+			break;
+		case DatasetDomainSystem:
+			value = ioLiveDataDriver->retriveRawData(system_key, &value_len);
+			//check if some value has bee fetcher
+			if(!value) return;
+			current_system_dataset.reset(new CDataWrapper(value));
+			break;
+		default:
+			return;
+	}
+	free(value);
+}
+
+//---------------------------------------------------------------------------------------------------
 int DeviceController::getTimeStamp(uint64_t& live){
-	CDataWrapper * d= currentLiveValue.get();
+	CDataWrapper * d= current_output_dataset.get();
 	if(d){
 		live = d->getInt64Value(DataPackKey::CS_CSV_TIME_STAMP);
 		return 0;
@@ -753,17 +817,12 @@ void DeviceController::stopTracking() {
 //---------------------------------------------------------------------------------------------------
 void DeviceController::fetchCurrentDeviceValue() {
 	boost::recursive_mutex::scoped_lock lock(trackMutext);
-	size_t value_len = 0;
-	const std::string device_dataset_domain = deviceID + "_o";
-	char *value = ioLiveDataDriver->retriveRawData(device_dataset_domain, &value_len);
-	//check if some value has bee fetcher
-	if(!value) return;
 	
-	currentLiveValue.reset(new CDataWrapper(value));
-	free(value);
+	//! fetch the output odmain
+	fetchCurrentDatatasetFromDomain(DatasetDomainOutput);
 	
 	if(trackingAttribute.size() == 0) return;
-	CDataWrapper *tmpPtr = currentLiveValue.get();
+	CDataWrapper *tmpPtr = current_output_dataset.get();
 	
 	//add timestamp value
 	int64_t got_ts = tmpPtr->getInt64Value(DataPackKey::CS_CSV_TIME_STAMP);
@@ -801,7 +860,7 @@ void DeviceController::fetchCurrentDeviceValue() {
 }
 
 CDataWrapper *DeviceController::getCurrentData(){
-	return currentLiveValue.get();
+	return current_output_dataset.get();
 }
 /*!
  Set the handler for all answer received by the device
@@ -821,8 +880,7 @@ void DeviceController::clearHandler() {
 
 //! get datapack between time itervall
 void DeviceController::executeTimeIntervallQuery(uint64_t start_ts, uint64_t end_ts, chaos_io::QueryFuture **query_future) {
-	const std::string device_dataset_domain = deviceID + "_o";
-	*query_future = ioLiveDataDriver->performQuery(device_dataset_domain, start_ts, end_ts);
+	*query_future = ioLiveDataDriver->performQuery(output_key, start_ts, end_ts);
 }
 
 //! release a query

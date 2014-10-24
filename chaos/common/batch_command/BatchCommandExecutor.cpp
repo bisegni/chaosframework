@@ -97,6 +97,14 @@ unsigned int BatchCommandExecutor::getNumberOfSandboxInstance() {
 	return (unsigned int)sandbox_map.size();
 }
 
+void BatchCommandExecutor::getSandboxID(std::vector<std::string> & sandbox_id){
+	for(std::map<unsigned int, BatchCommandSandbox*>::iterator it = sandbox_map.begin();
+		it != sandbox_map.end();
+		it++){
+		sandbox_id.push_back(it->second->identification);
+	}
+}
+
 AttributeValueSharedCache *BatchCommandExecutor::getAttributeSharedCache() {
 	return &global_attribute_cache;
 }
@@ -376,17 +384,16 @@ boost::shared_ptr<CommandState> BatchCommandExecutor::getCommandState(uint64_t c
 }
 
 //! Perform a command registration
-void BatchCommandExecutor::setDefaultCommand(string command_alias, unsigned int sandbox_instance) {
+void BatchCommandExecutor::setDefaultCommand(const string& command_alias, unsigned int sandbox_instance) {
     // check if we can set the default, the condition are:
     // the executor and the sandbox are in the init state or in stop state
     if(chaos::utility::StartableService::serviceState == ::chaos::utility::service_state_machine::StartableServiceType::SS_STARTED) {
         throw CException(1, "The command infrastructure is in running state", "BatchCommandExecutor::setDefaultCommand");
     }
     
-    BCELAPP_ << "Install the default command with alias: " << default_command_alias;
-
     default_command_alias = command_alias;
     default_command_sandbox_instance = sandbox_instance<1?1:sandbox_instance;
+	BCELAPP_ << "Install the default command with alias: " << default_command_alias;	
 }
 
 const std::string& BatchCommandExecutor::getDefaultCommand() {

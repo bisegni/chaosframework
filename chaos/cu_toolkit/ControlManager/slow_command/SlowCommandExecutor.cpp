@@ -153,7 +153,7 @@ void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
 				uint64_t *hb = static_cast<uint64_t*>(type_value_ptr);
 				if(!ts_hb_cache) {
 					ts_hb_cache =  getAttributeSharedCache()->getVariableValue(SharedCacheInterface::SVD_SYSTEM,
-																			   DataPackSystemKey::DP_SYS_HEARTBEAT);
+																			   sandbox_id+"_hb");
 					if(!ts_hb_cache) {
 						SCELERR_ << "Error getti cache slot for heartbeat timestamp";
 						return;

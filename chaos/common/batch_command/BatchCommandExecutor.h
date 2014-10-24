@@ -211,7 +211,7 @@ namespace chaos {
                  \param alias is the name of the command to use as default (started at startup)
                  \param sandbox_instance is the 1-based index of the sandbox where install the command
                  */
-                void setDefaultCommand(string alias, unsigned int sandbox_instance = 1);
+                void setDefaultCommand(const string& alias, unsigned int sandbox_instance = 1);
 				
 				const std::string & getDefaultCommand();
 				
@@ -245,6 +245,8 @@ namespace chaos {
 				
 				//! return the number of sandbox installed
 				unsigned int getNumberOfSandboxInstance();
+				
+				void getSandboxID(std::vector<std::string> & sandbox_id);
 				
 				//! return the shared, between commadn, attribute cache
 				AttributeValueSharedCache *getAttributeSharedCache();

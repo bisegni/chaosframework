@@ -513,7 +513,20 @@ namespace chaos {
     }
     /** @} */ // end of DataProxyConfigurationKey
     
-    
+	/** @defgroup DataPackPrefixID Chaos Data Prefix
+	This collection is a set for the prefix used for identify the domain 
+	 for the unique id key in chaos data cloud
+	 @{
+	 */
+	//! Namespace for the domain for the unique identification key
+	namespace DataPackPrefixID {
+		static const char * const OUTPUT_DATASE_PREFIX = "_o";
+		static const char * const INPUT_DATASE_PREFIX = "_i";
+		static const char * const CUSTOM_DATASE_PREFIX = "_c";
+		static const char * const SYSTEM_DATASE_PREFIX = "_s";
+	}
+	 /** @} */ // end of DataPackPrefixID
+	
     /** @defgroup ChaosDataPackOutputAttribute Chaos Data Pack output attirbute
      This is the collection of the standard key that are contained into the output
 	 attribute data pack that describe a producer state

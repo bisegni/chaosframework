@@ -102,7 +102,7 @@ namespace chaos {
 				
 				~SCAbstractControlUnit();
 				
-				void setDefaultCommand(std::string dafaultCommandName, unsigned int sandbox_instance = 0);
+				void setDefaultCommand(const std::string& dafaultCommandName, unsigned int sandbox_instance = 0);
 				void addExecutionChannels(unsigned int execution_channels=1);
 				
 				template<typename T>
