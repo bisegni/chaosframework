@@ -18,7 +18,6 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_initToolkit
     int result = initToolkit(initParam);
     env->ReleaseStringUTFChars(initParamString, initParam);
     return result;
-//    return 1; // Debug
   }
 
 /*
@@ -39,7 +38,6 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getNewControllerForDeviceID
     env->CallIntMethod(devIdPtr, mid, device_id);
     env->ReleaseStringUTFChars(deviceIdString, deviceId);
     return result;
-//    return devIdPtrIntValue;  // Debug
   }
 
 /*
@@ -49,9 +47,7 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getNewControllerForDeviceID
  */
 JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_setControllerTimeout
   (JNIEnv *env, jobject obj, jint devID, jint timeout){
-
-    return setControllerTimeout(uint32_t(devID), uint32_t(timeout));
-//    return 2; // Debug
+    return setControllerTimeout((uint32_t)devID, (uint32_t)timeout);
 }
 
 /*
@@ -68,8 +64,8 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getDeviceDatasetAttributeName
     char * * attribute_name_array = NULL;
     uint32_t attribute_name_array_size;
 
-    int result=getDeviceDatasetAttributeNameForDirection(uint32_t(devID),
-							 int16_t(attributeDirection),
+    int result=getDeviceDatasetAttributeNameForDirection((uint32_t)devID,
+							 (int16_t)attributeDirection,
 							 &attribute_name_array,
 							 &attribute_name_array_size);
 
@@ -90,7 +86,6 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getDeviceDatasetAttributeName
       // delete array
       free(attribute_name_array);
     }
-
     return result;
 }
 
@@ -101,9 +96,7 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getDeviceDatasetAttributeName
  */
 JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_initDevice
   (JNIEnv * env, jobject obj, jint devID){
-
-    return initDevice(uint32_t(devID));
-//    return 4; // Debug
+    return initDevice((uint32_t)devID);
 }
 
 /*
@@ -113,9 +106,7 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_initDevice
  */
 JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_startDevice
   (JNIEnv * env, jobject obj, jint devID){
-
-    return startDevice(uint32_t(devID));
-//    return 5; // Debug
+    return startDevice((uint32_t)devID);
 }
 
 /*
@@ -125,9 +116,7 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_startDevice
  */
 JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_setDeviceRunScheduleDelay
   (JNIEnv *env, jobject obj, jint devID, jint delayTimeInMilliseconds){
-
-    return setDeviceRunScheduleDelay(uint32_t(devID), int32_t(delayTimeInMilliseconds));
-//    return 6; // Debug
+    return setDeviceRunScheduleDelay((uint32_t)devID, (int32_t)delayTimeInMilliseconds);
 }
 
 /*
@@ -137,9 +126,7 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_setDeviceRunScheduleDelay
  */
 JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_stopDevice
   (JNIEnv *env, jobject obj, jint devID){
-
-    return stopDevice(uint32_t(devID));
-//    return 7; // Debug
+    return stopDevice((uint32_t)devID);
 }
 
 /*
@@ -149,9 +136,7 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_stopDevice
  */
 JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_deinitDevice
   (JNIEnv *env, jobject obj, jint devID){
-
-    return deinitDevice(uint32_t(devID));
-//    return 8; // Debug
+    return deinitDevice((uint32_t)devID);
 }
 
 /*
@@ -161,49 +146,85 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_deinitDevice
  */
 JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_fetchLiveData
   (JNIEnv *env, jobject obj, jint devID){
-
-    return fetchLiveData(uint32_t(devID));
-//    return 9; // Debug
+    return fetchLiveData((uint32_t)devID);
 }
+
+/*
+ * Class:     it_infn_chaos_JNIChaos
+ * Method:    fetchLiveDatasetByDomain
+ * Signature: (II)I
+ */
+JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_fetchLiveDatasetByDomain
+  (JNIEnv *env, jobject obj, jint devID, jint domainType){
+    return fetchLiveDatasetByDomain((uint32_t)devID, (uint16_t)domainType);
+}
+
+/*
+ * Class:     it_infn_chaos_JNIChaos
+ * Method:    getJSONDescriptionForDataset
+ * Signature: (IILjava/lang/StringBuffer;)I
+ */
+JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getJSONDescriptionForDataset
+  (JNIEnv *env, jobject obj, jint devID, jint domainType, jobject jsonDescription){
+    char * json_dataset_handler;
+    int result = getJSONDescriptionForDataset(devID, domainType, &json_dataset_handler);
+    if(!result && json_dataset_handler) {
+      //get class reppresentation for string buffer
+      jclass str_buff_obj = env->GetObjectClass (jsonDescription);
+
+      //get reference to append method
+      jmethodID str_buff_obj_append = env->GetMethodID (str_buff_obj, "append", "(Ljava/lang/String;)Ljava/lang/StringBuffer;");
+      if (str_buff_obj_append != 0) {
+        //create jstring
+        jstring _json_desc = env->NewStringUTF ((const char *) json_dataset_handler);
+
+        //append to string buffer
+        env->CallObjectMethod(jsonDescription, str_buff_obj_append, _json_desc);
+      }
+
+      //delete the string
+      free(json_dataset_handler);
+    }
+    return result;
+}
+
 
 /*
  * Class:     it_infn_chaos_JNIChaos
  * Method:    getStrValueForAttribute
- * Signature: (ILjava/lang/String;Ljava/lang/String;)I
+ * Signature: (ILjava/lang/String;Ljava/lang/StringBuffer;)I
  */
 JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getStrValueForAttribute
-  (JNIEnv *env, jobject obj, jint devID, jstring dsAttrNameString, jstring dsAttrValueHandleString){
+  (JNIEnv *env, jobject obj, jint devID, jstring dsAttrNameString, jobject dsAttrValueString){
 
+    char * attribute_value = NULL;
     const char * const dsAttrName = env->GetStringUTFChars(dsAttrNameString,0);
-    char * dsAttrValueHandle = (char*)env->GetStringUTFChars(dsAttrValueHandleString,0);
-    char * dsAttrValueHandlePtr=(char*)malloc(strlen(dsAttrValueHandle)+1);
-    strcpy(dsAttrValueHandlePtr,dsAttrValueHandle);
-    char ** dsAttrValueHandlePtr2=&dsAttrValueHandlePtr;
+    //get attribute value to c string
+    int result = getStrValueForAttribute((uint32_t)devID, dsAttrName, &attribute_value);
 
-    int result = getStrValueForAttribute(uint32_t(devID), dsAttrName, dsAttrValueHandlePtr2);
-    env->ReleaseStringUTFChars(dsAttrNameString, dsAttrName);
-    env->ReleaseStringUTFChars(dsAttrValueHandleString, dsAttrValueHandle);
-    free(dsAttrValueHandlePtr);
+    if(attribute_value) {
+      //write string parameter in string buffer
+
+      //get class reppresentation for string buffer
+      jclass str_buff_obj = env->GetObjectClass (dsAttrValueString);
+      if(str_buff_obj) {
+        //get reference to append method
+        jmethodID str_buff_obj_append = env->GetMethodID (str_buff_obj, "append", "(Ljava/lang/String;)Ljava/lang/StringBuffer;");
+        if(str_buff_obj_append) {
+          //create jstring
+          jstring _attribute_value = env->NewStringUTF ((const char *) attribute_value);
+
+          //append to string buffer
+          env->CallObjectMethod(dsAttrValueString, str_buff_obj_append, _attribute_value);
+        }
+      }
+      free(attribute_value);
+    }
+
+    //release attribute name c string
+    if(dsAttrName) env->ReleaseStringUTFChars(dsAttrNameString, dsAttrName);
     return result;
 //    return 10; // Debug
-}
-
-/*
- * Class:     it_infn_chaos_JNIChaos
- * Method:    getStrValueForAttr
- * Signature: (ILjava/lang/String;Ljava/lang/String;)I
- */
-JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getStrValueForAttr
-  (JNIEnv *env, jobject obj, jint devID, jstring dsAttrNameString, jstring dsAttrValueHandleString){
-
-    const char * const dsAttrName = env->GetStringUTFChars(dsAttrNameString,0);
-    char * dsAttrValueHandle = (char*)env->GetStringUTFChars(dsAttrValueHandleString,0);
-
-    int result = getStrValueForAttr(uint32_t(devID), dsAttrName, dsAttrValueHandle);
-    env->ReleaseStringUTFChars(dsAttrNameString, dsAttrName);
-    env->ReleaseStringUTFChars(dsAttrValueHandleString, dsAttrValueHandle);
-    return result;
-//    return 11; // Debug
 }
 
 /*
@@ -217,7 +238,8 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_setStrValueForAttribute
     const char * const dsAttrName = env->GetStringUTFChars(dsAttrNameString,0);
     const char * const dsAttrValueCStr = env->GetStringUTFChars(dsAttrValueCStrString,0);
 
-    int result = setStrValueForAttribute(uint32_t(devID), dsAttrName, dsAttrValueCStr);
+    int result = setStrValueForAttribute((uint32_t)devID, dsAttrName, dsAttrValueCStr);
+
     env->ReleaseStringUTFChars(dsAttrNameString, dsAttrName);
     env->ReleaseStringUTFChars(dsAttrValueCStrString, dsAttrValueCStr);
     return result;
@@ -236,11 +258,9 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getTimeStamp
     jmethodID mid = env->GetMethodID(clazz, "getValue", "()I");
     jint tsPtrIntValue = env->CallIntMethod(tsPtr, mid);
     uint64_t tsPtrUint64Value, *tsPtrUint64;
-    tsPtrUint64Value=uint64_t(tsPtrIntValue);
+    tsPtrUint64Value=(uint64_t)tsPtrIntValue;
     tsPtrUint64=&tsPtrUint64Value;
-
-    return getTimeStamp(uint32_t(devID), tsPtrUint64);
-//    return 13; // Debug
+    return getTimeStamp((uint32_t)devID, tsPtrUint64);
 }
 
 /*
@@ -251,30 +271,47 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getTimeStamp
 JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_submitSlowControlCommand
   (JNIEnv *env, jobject obj, jint devID, jstring commandAliasString, jint submissioneRule,
    jint priority, jobject commandIDPtr, jint schedulerStepsDelay, jint submissionCheckerStepsDelay, jstring slowCommandDataString){
+printf("begin:\n");
+fflush(stdout);
+    const char * commandAlias = env->GetStringUTFChars(commandAliasString, 0);
+printf("commandAlias:");printf(commandAlias);printf("\n");
+fflush(stdout);
+    const char * slowCommandData = NULL;
+    printf("get slowCommandData size \n");
+    fflush(stdout);
+    if( slowCommandDataString && env->GetStringLength(slowCommandDataString) ) {
+      printf("we have command data of %d", env->GetStringLength(slowCommandDataString));printf("\n");
+      fflush(stdout);
+      slowCommandData = env->GetStringUTFChars(slowCommandDataString, 0);
+      printf("slowCommandData:");printf(slowCommandData);printf("\n");
+    }else {
+      printf("no command data");
+    }
 
-    const char * const commandAlias = env->GetStringUTFChars(commandAliasString,0);
-    const char * const slowCommandData = env->GetStringUTFChars(slowCommandDataString,0);
-
+  fflush(stdout);
+  printf("\ncommand id preparation:\n");
+fflush(stdout);
+    uint64_t command_id = 0;
     jclass clazz = env->GetObjectClass(commandIDPtr);
-    jmethodID mid = env->GetMethodID(clazz, "getValue", "()I");
-    jint commandIDPtrIntValue = env->CallIntMethod(commandIDPtr, mid);
-    uint64_t commandIDPtrUint64Value, *commandIDPtrUint64;
-    commandIDPtrUint64Value=uint64_t(commandIDPtrIntValue);
-    commandIDPtrUint64=&commandIDPtrUint64Value;
+    jmethodID mid = env->GetMethodID(clazz, "setValue", "(I)V");
 
-    int result = submitSlowControlCommand(uint32_t(devID),
+printf("call api:\n");
+fflush(stdout);
+
+    int result = submitSlowControlCommand((uint32_t)devID,
 					    commandAlias,
-					    uint16_t(submissioneRule),
-					    uint32_t(priority),
-					    commandIDPtrUint64,
-					    uint32_t(schedulerStepsDelay),
-					    uint32_t(submissionCheckerStepsDelay),
+					    (uint16_t)submissioneRule,
+					    (uint32_t)priority,
+					    &command_id,
+					    (uint32_t)schedulerStepsDelay,
+					    (uint32_t)submissionCheckerStepsDelay,
 					    slowCommandData);
+
+    env->CallIntMethod(commandIDPtr, mid, command_id);
 
     env->ReleaseStringUTFChars(commandAliasString, commandAlias);
     env->ReleaseStringUTFChars(slowCommandDataString, slowCommandData);
     return result;
-//    return 14; // Debug
 }
 
 /*
@@ -284,9 +321,7 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_submitSlowControlCommand
  */
 JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_deinitController
   (JNIEnv *env, jobject obj, jint devID) {
-
-    return deinitController(uint32_t(devID));
-//    return 15; // Debug
+    return deinitController((uint32_t)devID);
   }
 
 /*
@@ -296,7 +331,5 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_deinitController
  */
 JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_deinitToolkit
   (JNIEnv *env, jobject obj) {
-
     return deinitToolkit();
-//    return 16; // Debug
   }

@@ -21,8 +21,6 @@
 #ifndef __CHAOSFramework__RTAbstractControlUnit__
 #define __CHAOSFramework__RTAbstractControlUnit__
 
-#include <chaos/cu_toolkit/ControlManager/DSAttributeHandlerExecutionEngine.h>
-#include <chaos/cu_toolkit/ControlManager/handler/TDSObjectHandler.h>
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 
 #include <boost/thread.hpp>
@@ -42,8 +40,6 @@ namespace chaos {
     namespace cu {
 		namespace control_manager {
 			class ControManager;
-			
-			using namespace cu::control_manager::handler;
 			
 			class RTAbstractControlUnit : public AbstractControlUnit  {
 				friend class ControlManager;

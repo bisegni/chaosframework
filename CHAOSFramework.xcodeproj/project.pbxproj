@@ -183,7 +183,6 @@
 		32640A3D169DCC5800450962 /* IteratorReader.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A24169DCC5800450962 /* IteratorReader.h */; };
 		32640A3E169DCC5800450962 /* MemoryAllocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A25169DCC5800450962 /* MemoryAllocator.h */; };
 		32640A3F169DCC5800450962 /* SmartPointer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32640A26169DCC5800450962 /* SmartPointer.h */; };
-		3264B05C1673623F002E87FA /* TDSObjectHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 3264B05B1673623E002E87FA /* TDSObjectHandler.h */; };
 		3264BBD51784887900E2F5A0 /* AbstractPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264BBD41784887900E2F5A0 /* AbstractPlugin.cpp */; };
 		3264BBD71784BFE400E2F5A0 /* PluginInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3264BBD61784BFE400E2F5A0 /* PluginInspector.cpp */; };
 		3265BF4615D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3265BF4515D1A9CA00C3CAC6 /* ChaosUIToolkitCWrapper.h */; };
@@ -301,12 +300,6 @@
 		3289F9A6168508460080D93F /* SQLiteEntityDB.h in Headers */ = {isa = PBXBuildFile; fileRef = 3289F9A4168508460080D93F /* SQLiteEntityDB.h */; };
 		328CC9D61763CCC7000B30B6 /* AbstractDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328CC9D41763CCC7000B30B6 /* AbstractDriver.cpp */; };
 		328CC9D71763CCC7000B30B6 /* AbstractDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 328CC9D51763CCC7000B30B6 /* AbstractDriver.h */; };
-		328D2FB71660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328D2FB51660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp */; };
-		328D2FB81660EACD007F482E /* DSAttributeHandlerExecutionEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 328D2FB61660EACD007F482E /* DSAttributeHandlerExecutionEngine.h */; };
-		328D2FB91660EAD6007F482E /* DSAttributeHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328D2FB01660E3EC007F482E /* DSAttributeHandler.cpp */; };
-		328D2FBA1660EADC007F482E /* DSAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328D2FB11660E3EC007F482E /* DSAttributeHandler.h */; };
-		328D2FBE1660EF71007F482E /* TDSAttributeHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328D2FBC1660EF71007F482E /* TDSAttributeHandler.h */; };
-		328D2FC316612AB3007F482E /* DSInt32Handler.h in Headers */ = {isa = PBXBuildFile; fileRef = 328D2FC116612AB3007F482E /* DSInt32Handler.h */; };
 		328E36EB1786B89500C1564D /* PluginLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E36EA1786B89500C1564D /* PluginLoader.cpp */; };
 		328E36ED1786C00D00C1564D /* PluginDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 328E36EC1786C00D00C1564D /* PluginDefinition.h */; };
 		328E405D17287B82004E5938 /* LFDataCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 328E405B17287B82004E5938 /* LFDataCache.cpp */; };
@@ -442,7 +435,6 @@
 		32D6C8981815293200E9689B /* DirectIOHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C8971815293200E9689B /* DirectIOHandler.h */; };
 		32D6C89A1815294700E9689B /* DirectIOForwarder.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D6C8991815294700E9689B /* DirectIOForwarder.h */; };
 		32D72CAB197D196D00512B89 /* WorkUnitManagement.h in Headers */ = {isa = PBXBuildFile; fileRef = 32D72CA9197D196D00512B89 /* WorkUnitManagement.h */; };
-		32DB1188166267FB0036D1B9 /* DSDoubleHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DB1187166267FB0036D1B9 /* DSDoubleHandler.h */; };
 		32DBF9D118E1845E0095B289 /* CouchbaseCacheDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */; };
 		32DCC36F192517DA00E14256 /* VFSStageReadableFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32DCC36D192517DA00E14256 /* VFSStageReadableFile.cpp */; };
 		32DD884F15E2663B000AF740 /* DefaultEventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DD884D15E2663B000AF740 /* DefaultEventDispatcher.h */; };
@@ -711,7 +703,6 @@
 		32640A24169DCC5800450962 /* IteratorReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IteratorReader.h; sourceTree = "<group>"; };
 		32640A25169DCC5800450962 /* MemoryAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryAllocator.h; sourceTree = "<group>"; };
 		32640A26169DCC5800450962 /* SmartPointer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartPointer.h; sourceTree = "<group>"; };
-		3264B05B1673623E002E87FA /* TDSObjectHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSObjectHandler.h; sourceTree = "<group>"; };
 		3264BBD41784887900E2F5A0 /* AbstractPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractPlugin.cpp; sourceTree = "<group>"; };
 		3264BBD61784BFE400E2F5A0 /* PluginInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInspector.cpp; sourceTree = "<group>"; };
 		326573F218CCD365009E9B6B /* TemplatedKeyObjectContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TemplatedKeyObjectContainer.h; sourceTree = "<group>"; };
@@ -848,12 +839,6 @@
 		3289F9A4168508460080D93F /* SQLiteEntityDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLiteEntityDB.h; sourceTree = "<group>"; };
 		328CC9D41763CCC7000B30B6 /* AbstractDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractDriver.cpp; sourceTree = "<group>"; };
 		328CC9D51763CCC7000B30B6 /* AbstractDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractDriver.h; sourceTree = "<group>"; };
-		328D2FB01660E3EC007F482E /* DSAttributeHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DSAttributeHandler.cpp; sourceTree = "<group>"; };
-		328D2FB11660E3EC007F482E /* DSAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSAttributeHandler.h; sourceTree = "<group>"; };
-		328D2FB51660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DSAttributeHandlerExecutionEngine.cpp; sourceTree = "<group>"; };
-		328D2FB61660EACD007F482E /* DSAttributeHandlerExecutionEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSAttributeHandlerExecutionEngine.h; sourceTree = "<group>"; };
-		328D2FBC1660EF71007F482E /* TDSAttributeHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TDSAttributeHandler.h; sourceTree = "<group>"; };
-		328D2FC116612AB3007F482E /* DSInt32Handler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSInt32Handler.h; sourceTree = "<group>"; };
 		328E36EA1786B89500C1564D /* PluginLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginLoader.cpp; sourceTree = "<group>"; };
 		328E36EC1786C00D00C1564D /* PluginDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginDefinition.h; sourceTree = "<group>"; };
 		328E405B17287B82004E5938 /* LFDataCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LFDataCache.cpp; sourceTree = "<group>"; };
@@ -1011,7 +996,6 @@
 		32D72CA8197D196D00512B89 /* WorkUnitManagement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkUnitManagement.cpp; sourceTree = "<group>"; };
 		32D72CA9197D196D00512B89 /* WorkUnitManagement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkUnitManagement.h; sourceTree = "<group>"; };
 		32DA666F1700DBB6004FC02B /* endian.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = endian.h; sourceTree = "<group>"; };
-		32DB1187166267FB0036D1B9 /* DSDoubleHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DSDoubleHandler.h; sourceTree = "<group>"; };
 		32DBF9CF18E1845E0095B289 /* CouchbaseCacheDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CouchbaseCacheDriver.cpp; sourceTree = "<group>"; };
 		32DBF9D018E1845E0095B289 /* CouchbaseCacheDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CouchbaseCacheDriver.h; sourceTree = "<group>"; };
 		32DCC36D192517DA00E14256 /* VFSStageReadableFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VFSStageReadableFile.cpp; sourceTree = "<group>"; };
@@ -1840,9 +1824,6 @@
 			isa = PBXGroup;
 			children = (
 				325F8B4E1763AED200EFE616 /* slow_command */,
-				328D2FBF16612A15007F482E /* handler */,
-				328D2FB51660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp */,
-				328D2FB61660EACD007F482E /* DSAttributeHandlerExecutionEngine.h */,
 				3250105D19E2DB4A00809415 /* AttributeSharedCacheWrapper.cpp */,
 				3250105E19E2DB4A00809415 /* AttributeSharedCacheWrapper.h */,
 				326DB4A514B3A3E50018A8D0 /* AbstractControlUnit.cpp */,
@@ -1984,19 +1965,6 @@
 				3232F457177743DC003E1D4A /* AbstractDriverPlugin.h */,
 			);
 			path = driver;
-			sourceTree = "<group>";
-		};
-		328D2FBF16612A15007F482E /* handler */ = {
-			isa = PBXGroup;
-			children = (
-				328D2FC116612AB3007F482E /* DSInt32Handler.h */,
-				32DB1187166267FB0036D1B9 /* DSDoubleHandler.h */,
-				328D2FBC1660EF71007F482E /* TDSAttributeHandler.h */,
-				328D2FB01660E3EC007F482E /* DSAttributeHandler.cpp */,
-				328D2FB11660E3EC007F482E /* DSAttributeHandler.h */,
-				3264B05B1673623E002E87FA /* TDSObjectHandler.h */,
-			);
-			path = handler;
 			sourceTree = "<group>";
 		};
 		32954969176B90A800B5A064 /* driver_manager */ = {
@@ -2612,12 +2580,6 @@
 				326DB4CA14B3A3E50018A8D0 /* DataManagerException.h in Headers */,
 				326DB4CC14B3A3E50018A8D0 /* KeyDataStorage.h in Headers */,
 				3287F7E717B27621009DD6ED /* DriverManager.h in Headers */,
-				328D2FB81660EACD007F482E /* DSAttributeHandlerExecutionEngine.h in Headers */,
-				328D2FBA1660EADC007F482E /* DSAttributeHandler.h in Headers */,
-				328D2FBE1660EF71007F482E /* TDSAttributeHandler.h in Headers */,
-				328D2FC316612AB3007F482E /* DSInt32Handler.h in Headers */,
-				32DB1188166267FB0036D1B9 /* DSDoubleHandler.h in Headers */,
-				3264B05C1673623F002E87FA /* TDSObjectHandler.h in Headers */,
 				325F8B521763AF2300EFE616 /* SlowCommand.h in Headers */,
 				328CC9D71763CCC7000B30B6 /* AbstractDriver.h in Headers */,
 				32919A0C1764E68F00724874 /* DriverAccessor.h in Headers */,
@@ -3009,8 +2971,6 @@
 				326DB4C814B3A3E50018A8D0 /* DataManager.cpp in Sources */,
 				3215861017875FDB0090E7E6 /* DriverPluginLoader.cpp in Sources */,
 				326DB4CB14B3A3E50018A8D0 /* KeyDataStorage.cpp in Sources */,
-				328D2FB71660EACD007F482E /* DSAttributeHandlerExecutionEngine.cpp in Sources */,
-				328D2FB91660EAD6007F482E /* DSAttributeHandler.cpp in Sources */,
 				325F8B511763AF2300EFE616 /* SlowCommand.cpp in Sources */,
 				328CC9D61763CCC7000B30B6 /* AbstractDriver.cpp in Sources */,
 				32234D3F176E045100525E0C /* SlowCommandExecutor.cpp in Sources */,

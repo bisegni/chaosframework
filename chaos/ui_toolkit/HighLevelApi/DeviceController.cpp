@@ -598,7 +598,9 @@ void DeviceController::initializeAttributeIndexMap() {
 }
 
 //---------------------------------------------------------------------------------------------------
-void DeviceController::allocateNewLiveBufferForAttributeAndType(string& attributeName, DataType::DataSetAttributeIOAttribute attributeDirection, DataType::DataType attrbiuteType) {
+void DeviceController::allocateNewLiveBufferForAttributeAndType(string& attributeName,
+																DataType::DataSetAttributeIOAttribute attributeDirection,
+																DataType::DataType attrbiuteType) {
 	boost::recursive_mutex::scoped_lock  lock(trackMutext);
 	if(attributeDirection == DataType::Output ||
 	   attributeDirection == DataType::Bidirectional ){

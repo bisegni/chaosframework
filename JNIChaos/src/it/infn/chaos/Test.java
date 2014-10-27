@@ -20,9 +20,11 @@ public class Test {
         System.out.println((System.getProperty("java.library.path")));
         JNIChaos jni=new JNIChaos();
         IntReference ir = new IntReference();
+        IntReference cmd_id = new IntReference();
         Vector<String> attributeNames = new Stack<String>();
-        String deviceIDString="rt-sin-a";
-
+        String deviceIDString="sc-sin-a";
+        StringBuffer tmpSB = new StringBuffer();
+        
         int err = jni.initToolkit("metadata-server=pcbisegni:5000\nlog-on-console=true");
         if(err != 0) return;
         
@@ -54,31 +56,89 @@ public class Test {
 		}
         
         err = jni.initDevice(ir.getValue());
-        if(err != 0) {
+        if(err < 0) {
         	jni.deinitToolkit();
         	return;
         }
         
         err = jni.startDevice(ir.getValue());
-        if(err != 0) {
+        if(err < 0) {
         	jni.deinitToolkit();
         	return;
         }
         
-        err = jni.setDeviceRunScheduleDelay(ir.getValue(), 200);
-        if(err != 0) {
+        System.out.println("Fetch sytem dataset:");
+        err = jni.fetchLiveDatasetByDomain(ir.getValue(), 3);
+        if(err < 0) {
         	jni.deinitToolkit();
         	return;
         }
+        
+        System.out.println("print json dataset for system domain:");
+        err = jni.getJSONDescriptionForDataset(ir.getValue(), 3, tmpSB);
+        if(err < 0) {
+        	jni.deinitToolkit();
+        	return;
+        }
+        System.out.println(tmpSB.toString());
+
+        err = jni.setDeviceRunScheduleDelay(ir.getValue(), 200);
+        if(err < 0) {
+        	jni.deinitToolkit();
+        	return;
+        }
+        
+        System.out.println("get sinWave Parameter:");
+        tmpSB.setLength(0);
+        err = jni.fetchLiveData(ir.getValue());
+        err = jni.getStrValueForAttribute(ir.getValue(), "sinWave", tmpSB);
+        if(err < 0) {
+        	jni.deinitToolkit();
+        	return;
+        }
+        System.out.println(tmpSB.toString());
+        
+        System.out.println("set point value");
+        err = jni.setStrValueForAttribute(ir.getValue(), "points", "1500");
+        if(err < 0) {
+        	jni.deinitToolkit();
+        	return;
+        }
+        
+        System.out.println("send slow command");
+        String t = "corr_test";
+        err = jni.submitSlowControlCommand(ir.getValue(), t, 0, 50, cmd_id, 0, 0, null);
+        if(err < 0) {
+        	jni.deinitToolkit();
+        	return;
+        }
+        
+        System.out.println("Fetch input dataset:");
+        err = jni.fetchLiveDatasetByDomain(ir.getValue(), 1);
+        if(err < 0) {
+        	jni.deinitToolkit();
+        	return;
+        }
+        
+        System.out.println("print json dataset for input domain:");
+        tmpSB.setLength(0);
+        err = jni.getJSONDescriptionForDataset(ir.getValue(), 1, tmpSB);
+        if(err < 0) {
+        	jni.deinitToolkit();
+        	return;
+        }
+        System.out.println(tmpSB.toString());
+        
+        
         
         err = jni.stopDevice(ir.getValue());
-        if(err != 0) {
+        if(err < 0) {
         	jni.deinitToolkit();
         	return;
         }
         
         err = jni.deinitDevice(ir.getValue());
-        if(err != 0) {
+        if(err < 0) {
         	jni.deinitToolkit();
         	return;
         }

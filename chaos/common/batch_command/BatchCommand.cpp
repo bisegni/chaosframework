@@ -78,7 +78,7 @@ bool BatchCommand::timeoutHandler() {return true;}
 
 //! called befor the command start the execution
 void BatchCommand::commandPre() {
-	timing_stats.command_set_time_usec = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count();
+	timing_stats.command_set_time_usec = boost::chrono::duration_cast<boost::chrono::milliseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count();
 }
 
 #define SET_FAULT(c, m, d) \

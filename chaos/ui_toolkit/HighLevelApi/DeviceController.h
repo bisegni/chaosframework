@@ -133,7 +133,6 @@ namespace chaos {
              
              */
             void allocateNewLiveBufferForAttributeAndType(string& attributeName, DataType::DataSetAttributeIOAttribute type, DataType::DataType attrbiuteType);
-            
         protected:
                 //! the fetcher thread method
             void executeOnThread(const string&) throw(CException);
@@ -195,7 +194,8 @@ namespace chaos {
              Get the direction of the attribute
              */
             int getDeviceAttributeType(const string& attributesName, DataType::DataType& type);
-            
+			
+			//!
 			int getAttributeStrValue(const string attributesName, string& attribute_value);
 			
 			//! Get the type of the control unit
@@ -365,10 +365,10 @@ namespace chaos {
 			__attribute__((__deprecated__))
             CDataWrapper * getLiveCDataWrapperPtr();
 			
-			//!
+			//!return the last fetched dataset for the domain
 			CDataWrapper * getCurrentDatasetForDomain(DatasetDomain domain);
 			
-			//!
+			//! fetch from the chaso central cache the dataset associated to the domain
 			void fetchCurrentDatatasetFromDomain(DatasetDomain domain);
 			
             /*!
