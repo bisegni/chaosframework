@@ -760,25 +760,25 @@ void DeviceController::fetchCurrentDatatasetFromDomain(DatasetDomain domain) {
 	unsigned long value_len = 0;
 	switch(domain) {
 		case DatasetDomainOutput:
-			value = ioLiveDataDriver->retriveRawData(output_key, &value_len);
+		  value = ioLiveDataDriver->retriveRawData(output_key, (size_t*)&value_len);
 			//check if some value has bee fetcher
 			if(!value) return;
 			current_output_dataset.reset(new CDataWrapper(value));
 			break;
 		case DatasetDomainInput:
-			value = ioLiveDataDriver->retriveRawData(input_key, &value_len);
+			value = ioLiveDataDriver->retriveRawData(input_key, (size_t*)&value_len);
 			//check if some value has bee fetcher
 			if(!value) return;
 			current_input_dataset.reset(new CDataWrapper(value));
 			break;
 		case DatasetDomainCustom:
-			value = ioLiveDataDriver->retriveRawData(custom_key, &value_len);
+			value = ioLiveDataDriver->retriveRawData(custom_key, (size_t*)&value_len);
 			//check if some value has bee fetcher
 			if(!value) return;
 			current_custom_dataset.reset(new CDataWrapper(value));
 			break;
 		case DatasetDomainSystem:
-			value = ioLiveDataDriver->retriveRawData(system_key, &value_len);
+			value = ioLiveDataDriver->retriveRawData(system_key, (size_t*)&value_len);
 			//check if some value has bee fetcher
 			if(!value) return;
 			current_system_dataset.reset(new CDataWrapper(value));
