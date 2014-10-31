@@ -65,7 +65,9 @@ ValueSetting::~ValueSetting() {
 bool ValueSetting::setValue(const void* value_ptr,
 							uint32_t value_size,
 							bool tag_has_changed) {
-	if(value_size>size || !value_buffer) return false;
+	if(value_size>size) {
+		value_size = size;
+	}
 	
 	//copy the new value
 	std::memcpy(value_buffer, value_ptr, value_size);

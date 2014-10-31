@@ -200,9 +200,7 @@ namespace chaos{
 					SharedCacheLockDomain(_mutex),
 					w_lock(*mutex.get(), boost::defer_lock){}
 					
-					~WriteSharedCacheLockDomain() {
-						w_lock.unlock();
-					}
+					~WriteSharedCacheLockDomain() {}
 					
 					void lock() {
 						w_lock.lock();
@@ -220,9 +218,7 @@ namespace chaos{
 					SharedCacheLockDomain(_mutex),
 					r_lock(*mutex.get(), boost::defer_lock){}
 					
-					~ReadSharedCacheLockDomain() {
-						r_lock.unlock();
-					}
+					~ReadSharedCacheLockDomain() {}
 					
 					void lock() {
 						r_lock.lock();

@@ -466,23 +466,24 @@ void BatchCommandSandbox::checkNextCommand() {
                     }
                     DELETE_OBJ_POINTER(command_to_delete);
                 } else {
-                    DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Cur command ended or fault without no other command to execute ";)
-                    removeHandler(currentExecutingCommand);
+					PRIORITY_ELEMENT(CommandInfoAndImplementation)  *command_to_delete = currentExecutingCommand;
+                    DEBUG_CODE(SCSLDBG_ << "[checkNextCommand] Current command ended or fault without no other command to execute ";)
+                    removeHandler(command_to_delete);
 					installHandler(NULL);
-                    switch(currentExecutingCommand->element->cmdImpl->runningProperty) {
+                    switch(command_to_delete->element->cmdImpl->runningProperty) {
                         case RunningPropertyType::RP_End:
-                            if(event_handler) event_handler->handleCommandEvent(currentExecutingCommand->element->cmdImpl->unique_id,
+                            if(event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->unique_id,
 																				BatchCommandEventType::EVT_COMPLETED,
 																				NULL);
                             break;
                         case RunningPropertyType::RP_Fault:
-                            if(event_handler) event_handler->handleCommandEvent(currentExecutingCommand->element->cmdImpl->unique_id,
+                            if(event_handler) event_handler->handleCommandEvent(command_to_delete->element->cmdImpl->unique_id,
 																				BatchCommandEventType::EVT_FAULT,
-																				static_cast<FaultDescription*>(&currentExecutingCommand->element->cmdImpl->faultDescription));
+																				static_cast<FaultDescription*>(&command_to_delete->element->cmdImpl->faultDescription));
                             
                             break;
                     }
-                    DELETE_OBJ_POINTER(currentExecutingCommand);
+                    DELETE_OBJ_POINTER(command_to_delete);
                 }
             }
 			DEBUG_CODE(SCSLAPP_ << "[checkNextCommand] unlock the mutextAccessCurrentCommand";)
