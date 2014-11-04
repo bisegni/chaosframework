@@ -337,11 +337,20 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachPa
  deinit all datastorage
  */
 CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& detachParam) throw(CException) {
+	
  	//first we start the deinitializaiton of the implementation unit
 	try {
 		ACULDBG_ << "Deinit custom deinitialization for device:" << DatasetDB::getDeviceID();
 		unitDeinit();
 		
+		//saftely deinititalize the abstract control unit
+		try {
+			utility::StartableService::deinitImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
+		} catch (CException& ex) {
+			ACULDBG_ << "Exception on abstract control l unit deinit:" << ex.what();
+		}
+
+		//clear all cache sub_structure
 		cache_output_attribute_vector.clear();
 		cache_input_attribute_vector.clear();
 		cache_custom_attribute_vector.clear();
@@ -349,15 +358,8 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
 		
 		ACULAPP_ << "Dellcocate the user cache wrapper";
 		if(attribute_shared_cache_wrapper) delete(attribute_shared_cache_wrapper);
-
 	} catch (CException& ex) {
 		ACULDBG_ << "Exception on unit deinit:" << ex.what();
-	}
-	
-	try {
-		utility::StartableService::deinitImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
-	} catch (CException& ex) {
-		ACULDBG_ << "Exception on abstract control l unit deinit:" << ex.what();
 	}
 	return NULL;
 }
