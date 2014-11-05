@@ -357,7 +357,10 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
 		cache_system_attribute_vector.clear();
 		
 		ACULAPP_ << "Dellcocate the user cache wrapper";
-		if(attribute_shared_cache_wrapper) delete(attribute_shared_cache_wrapper);
+		if(attribute_shared_cache_wrapper) {
+			delete(attribute_shared_cache_wrapper);
+			attribute_shared_cache_wrapper = NULL;
+		}			
 	} catch (CException& ex) {
 		ACULDBG_ << "Exception on unit deinit:" << ex.what();
 	}
