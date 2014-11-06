@@ -10,6 +10,7 @@
 #include <exception>
 
 #include <chaos/common/global.h>
+#include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/batch_command/BatchCommandSandbox.h>
 #include <chaos/common/batch_command/BatchCommandExecutor.h>
 #include <chaos/common/batch_command/BatchCommandConstants.h>
@@ -512,7 +513,7 @@ void BatchCommandSandbox::runCommand() {
     do{
         if(currentExecutingCommand) {
             curr_executing_impl = currentExecutingCommand->element->cmdImpl;
-            stat.lastCmdStepStart = boost::chrono::duration_cast<boost::chrono::milliseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count();
+            stat.lastCmdStepStart = TimingUtil::getTimeStamp();
             
             // call the acquire phase
             acquireHandlerFunctor();
@@ -528,7 +529,7 @@ void BatchCommandSandbox::runCommand() {
 			}
 			
 			//coompute step duration
-			stat.lastCmdStepTime = boost::chrono::duration_cast<boost::chrono::milliseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count()-stat.lastCmdStepStart;
+			stat.lastCmdStepTime = TimingUtil::getTimeStamp();
 			
 			if(stat.lastCmdStepStart > stat.lastHBTime + 1000) {
 				stat.lastHBTime = stat.lastCmdStepStart;
