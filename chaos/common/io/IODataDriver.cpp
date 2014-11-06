@@ -30,39 +30,34 @@ void IODataDriver::deinit() throw(CException) {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void IODataDriver::storeData(CDataWrapper *dataToStore) throw(CException){
+void IODataDriver::storeData(const std::string& key, CDataWrapper *dataToStore) throw(CException){
     
     if(!dataToStore) return;
-    
-        //get the key to store data on the memcached
-        //string key = dataToStore->getStringValue(DataPackKey::CS_CSV_CU_ID);
+	
 	SerializationBuffer* serialization = dataToStore->getBSONData();
-    //if(!serialization) {
-   //     return;
-   // }
-    
-    storeRawData(serialization);
-   // delete(serialization);
 
+	storeRawData(key, serialization);
+	
+	delete(dataToStore);
 }
 
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-ArrayPointer<CDataWrapper>*  IODataDriver::retriveData(CDataWrapper*const)  throw(CException){
+ArrayPointer<CDataWrapper>*  IODataDriver::retriveData(const std::string& key, CDataWrapper*const)  throw(CException){
         //check for key length
-    return retriveData();
+    return retriveData(key);
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-ArrayPointer<CDataWrapper>* IODataDriver::retriveData()  throw(CException) {
+ArrayPointer<CDataWrapper>* IODataDriver::retriveData(const std::string& key)  throw(CException) {
     
     ArrayPointer<CDataWrapper> *result = new ArrayPointer<CDataWrapper>();
     
-    char *value = retriveRawData();
+    char *value = retriveRawData(key);
     if (value) {
             //some value has been received
             //allocate the data wrapper object with serialization got from memcached
@@ -102,28 +97,35 @@ void IODataDriver::_releaseQueryFuture(QueryFuture *query_future_ptr) {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void IODataDriver::_pushResultToQueryFuture(QueryFuture& query_future, chaos_data::CDataWrapper *data_pack, uint64_t element_index) {
+void IODataDriver::_pushResultToQueryFuture(QueryFuture& query_future,
+											chaos_data::CDataWrapper *data_pack,
+											uint64_t element_index) {
 	query_future.pushDataPack(data_pack, element_index);
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void IODataDriver::_startQueryFutureResult(QueryFuture& query_future, uint64_t _total_element_found) {
+void IODataDriver::_startQueryFutureResult(QueryFuture& query_future,
+										   uint64_t _total_element_found) {
 	query_future.notifyStartResultPhase(_total_element_found);
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void IODataDriver::_endQueryFutureResult(QueryFuture& query_future, int32_t _error, const std::string& _error_message) {
+void IODataDriver::_endQueryFutureResult(QueryFuture& query_future,
+										 int32_t _error,
+										 const std::string& _error_message) {
 	query_future.notifyEndResultPhase(_error, _error_message);
 }
 
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-QueryFuture *IODataDriver::performQuery(uint64_t start_ts, uint64_t end_ts) {
+QueryFuture *IODataDriver::performQuery(const std::string& key,
+										uint64_t start_ts,
+										uint64_t end_ts) {
 	return NULL;
 }
 

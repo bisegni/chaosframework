@@ -89,19 +89,27 @@ JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_fetchLiveData
 
 /*
  * Class:     it_infn_chaos_JNIChaos
- * Method:    getStrValueForAttribute
- * Signature: (ILjava/lang/String;Ljava/lang/String;)I
+ * Method:    fetchLiveDatasetByDomain
+ * Signature: (II)I
  */
-JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getStrValueForAttribute
-  (JNIEnv *, jobject, jint, jstring, jstring);
+JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_fetchLiveDatasetByDomain
+  (JNIEnv *env, jobject obj, jint devID, jint domainType);
 
 /*
  * Class:     it_infn_chaos_JNIChaos
- * Method:    getStrValueForAttr
- * Signature: (ILjava/lang/String;Ljava/lang/String;)I
+ * Method:    getJSONDescriptionForDataset
+ * Signature: (IILjava/lang/StringBuffer;)I
  */
-JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getStrValueForAttr
-  (JNIEnv *, jobject, jint, jstring, jstring);
+JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getJSONDescriptionForDataset
+  (JNIEnv *env, jobject obj, jint devID, jint domainType, jobject jsonDescription);
+
+/*
+ * Class:     it_infn_chaos_JNIChaos
+ * Method:    getStrValueForAttribute
+ * Signature: (ILjava/lang/String;Ljava/lang/StringBuffer;)I
+ */
+JNIEXPORT jint JNICALL Java_it_infn_chaos_JNIChaos_getStrValueForAttribute
+  (JNIEnv *, jobject, jint, jstring, jobject);
 
 /*
  * Class:     it_infn_chaos_JNIChaos

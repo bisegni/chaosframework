@@ -21,8 +21,8 @@
 #include <chaos/cu_toolkit/ControlManager/slow_command/SlowCommand.h>
 using namespace chaos;
 using namespace chaos::common::data;
+using namespace chaos::cu::control_manager;
 using namespace chaos::cu::control_manager::slow_command;
-
 #define SCLOG_HEAD_SL "[SlowCommand-" << device_id << "-" << unique_id << "] "
 #define SCLAPP_ LAPP_ << SCLOG_HEAD_SL
 #define SCLDBG_ LDBG_ << SCLOG_HEAD_SL
@@ -39,29 +39,17 @@ SlowCommand::~SlowCommand() {
     
 }
 
-std::string SlowCommand::getDeviceID() {
-    return std::string(deviceDatabasePtr->getDeviceID());
+const string & SlowCommand::getDeviceID() {
+    return dataset_attribute_db_ptr->getDeviceID();
 }
 
 /*
  return the device database with the dafualt device information
  */
-chaos::common::data::DatasetDB *SlowCommand::getDeviceDatabase() {
-    return deviceDatabasePtr;
+chaos::common::data::DatasetDB * const SlowCommand::getDeviceDatabase() {
+    return dataset_attribute_db_ptr;
 }
 
-/*
- Send device data to output buffer
- */
-void SlowCommand::pushDataSet(CDataWrapper *acquired_data) {
-    //send data to related buffer
-    keyDataStoragePtr->pushDataSet(acquired_data);
-}
-
-/*
- Return a new instance of CDataWrapper filled with a mandatory data
- according to key
- */
-CDataWrapper *SlowCommand::getNewDataWrapper() {
-    return keyDataStoragePtr->getNewDataWrapper();
+AttributeSharedCacheWrapper * const SlowCommand::getAttributeCache() {
+	return attribute_cache;
 }

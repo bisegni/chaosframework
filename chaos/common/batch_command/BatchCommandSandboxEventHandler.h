@@ -26,15 +26,23 @@ namespace chaos{
                 friend class BatchCommandSandbox;
                 
             protected:
-                //! general event handler
+                //! general command event handler
                 /*!
                  \param command_seq sequence code that identify a command
                  \param type the type of the event that occour to the command
                  \param type_attribute_ptr the attribute of the command that is specified to the type
                  */
-                virtual void handleEvent(uint64_t command_seq, BatchCommandEventType::BatchCommandEventType type, void* type_attribute_ptr) = 0;
+                virtual void handleCommandEvent(uint64_t command_seq, BatchCommandEventType::BatchCommandEventType type, void* type_value_ptr = NULL, uint32_t type_value_size = 0) = 0;
+				
+				//! general sandbox event handler
+				/*!
+				 \param sandbox_idx the idx of the sandobx that is firing the event
+				 \param type the type of the event that occour to the sandbox
+				 \param type_value_ptr the value of the command event that is specified to the type
+				 \param type_value_size the size of value of the event
+				 */
+				virtual void handleSandboxEvent(const std::string& sandbox_id, BatchSandboxEventType::BatchSandboxEventType type, void* type_value_ptr = NULL, uint32_t type_value_size = 0) = 0;
             };
-            
         }
     }
 }

@@ -62,37 +62,24 @@ namespace chaos {
 					//static deallocator forthis channel
 					static DirectIODeviceClientChannelDeallocator STATIC_DirectIODeviceClientChannelDeallocator;
 					
-					//fixed header
-					//the real size of the put header computed according to the dimension of the key
-					uint32_t put_header_computed_size;
-					opcode_headers::DirectIODeviceChannelHeaderPutOpcode *put_opcode_header;
-					
-					//the precomputed header for get last shared output channel
-					opcode_headers::DirectIODeviceChannelHeaderGetOpcode get_opcode_header;
-
-					std::string device_id;
-					DirectIODeviceClientChannelPutMode put_mode;
 					AnswerServerInfo answer_server_info;
-					
-					void prepare_put_opcode();
-					void prepare_get_opcode();
 				protected:
 					DirectIODeviceClientChannel(std::string alias);
 
 				public:
 					~DirectIODeviceClientChannel();
 					
-					//! Set the device id for this channel
-					void setDeviceID(std::string _CU_id, DirectIODeviceClientChannelPutMode _put_mode = DirectIODeviceClientChannelPutModeLiveOnly);
-					
 					//! set the information on witch port forward the answer(the ip is the ip of the machine)
 					void setAnswerServerInfo(uint16_t p_server_port, uint16_t s_server_port, uint16_t answer_enpoint);
 					
 					//! Send device serialization with priority
-                    int64_t storeAndCacheDataOutputChannel(void *buffer, uint32_t buffer_len);
+					int64_t storeAndCacheDataOutputChannel(const std::string& key,
+														   void *buffer,
+														   uint32_t buffer_len,
+														   DirectIODeviceClientChannelPutMode _put_mode = DirectIODeviceClientChannelPutModeLiveOnly);
 					
 					//! Send a request for the last output data
-                    int64_t requestLastOutputData(void **result, uint32_t &size);
+                    int64_t requestLastOutputData(const std::string& key, void **result, uint32_t &size);
 					
 					//! Perform a temporal query on a key
 					/*!
@@ -103,7 +90,7 @@ namespace chaos {
 					 \param query_id the newly associated query id is returned.
 					 \return error
 					 */
-                    int64_t queryDataCloud(uint64_t start_ts, uint64_t end_ts, std::string& query_id);
+					int64_t queryDataCloud(const std::string& key, uint64_t start_ts, uint64_t end_ts, std::string& query_id);
 					
 					//! start the answering sequence to a query
 					/*!

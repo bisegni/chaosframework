@@ -49,7 +49,6 @@ namespace chaos{
 				//mutex for lock operation on service request
 				boost::mutex managing_data_mutex;
 				shared_ptr<chaos_io::IODataDriver> liveDriver;
-				shared_ptr<MultiBufferDataStorage> outputBuffer;
 				map<string, KeyDataStorage*>  deviceIDKeyDataStorageMap;
 				
 				/*

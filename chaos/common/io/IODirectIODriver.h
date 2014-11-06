@@ -34,7 +34,7 @@
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/utility/ObjectSlot.h>
-
+#include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/network/URLServiceFeeder.h>
 
 #include <boost/thread.hpp>
@@ -102,6 +102,7 @@ namespace chaos{
 				boost::shared_mutex				map_query_future_mutex;
 				std::map<string, QueryFuture*>	map_query_future;
 				
+				std::string uuid;
 			protected:
 				void disposeService(void *service_ptr);
 				void* serviceForURL(const common::network::URL& url, uint32_t service_index);
@@ -127,12 +128,12 @@ namespace chaos{
 				/*
 				 * storeRawData
 				 */
-				virtual void storeRawData(chaos_data::SerializationBuffer *serialization)  throw(CException);
+				virtual void storeRawData(const std::string& key, chaos_data::SerializationBuffer *serialization)  throw(CException);
 				
 				/*
 				 * retriveRawData
 				 */
-				virtual char * retriveRawData(size_t *dim=NULL)  throw(CException);
+				virtual char * retriveRawData(const std::string& key, size_t *dim=NULL)  throw(CException);
 				
 				/*
 				 * updateConfiguration
@@ -140,7 +141,9 @@ namespace chaos{
 				chaos_data::CDataWrapper* updateConfiguration(chaos_data::CDataWrapper*);
 				
 				//! perform a query since and
-				QueryFuture *performQuery(uint64_t start_ts, uint64_t end_ts);
+				QueryFuture *performQuery(const std::string& key,
+										  uint64_t start_ts,
+										  uint64_t end_ts);
 				
 				//! release a query
 				void releaseQuery(QueryFuture *query_future);

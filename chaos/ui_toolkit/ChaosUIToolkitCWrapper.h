@@ -138,6 +138,23 @@ extern "C" {
      */
     int fetchLiveData(uint32_t devID);
 
+		//! fetch the live data for the required dataset
+	/*!
+	 \param domain_type is the the domain the need to be fetched from the chaos
+	 data chache: 0=DatasetDomainOutput, 1=DatasetDomainInput, 2=DatasetDomainCustom, 3=DatasetDomainSystem
+	 */
+	int fetchLiveDatasetByDomain(uint32_t devID,
+								 int16_t domain_type);
+	
+	//! return the json representation of the dataset of the needed domain
+	/*!
+	 the json representation is got form the latest live dataaset for the domain updated by the
+	 last call to the fetchLiveDatasetByDomain api.
+	 */
+	int getJSONDescriptionForDataset(uint32_t devID,
+									 int16_t domain_type,
+									 char ** json_dataset_handler);
+	
         //! Return a string represetnation of an attribute value
     /*!
      Return the stirng representation of an attribute value. The current attribute value is keept from the

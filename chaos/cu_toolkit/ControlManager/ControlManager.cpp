@@ -253,8 +253,8 @@ void ControlManager::deinit() throw(CException) {
             }
         }
         LCMAPP_  << "Dispose event channel for Control Unit Sanbox:" << WU_IDENTIFICATION(cu->work_unit_instance);
-        CommandManager::getInstance()->deleteInstrumentEventChannel(cu->work_unit_instance->deviceEventChannel);
-        cu->work_unit_instance->deviceEventChannel = NULL;
+        CommandManager::getInstance()->deleteInstrumentEventChannel(cu->work_unit_instance->device_event_channel);
+        cu->work_unit_instance->device_event_channel = NULL;
         cuDeclareActionsInstance.clear();
         LCMAPP_  << "Unload" << cu->work_unit_instance->getCUInstance();
     }

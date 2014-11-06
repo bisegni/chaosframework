@@ -47,6 +47,7 @@ namespace chaos_batch = chaos::common::batch_command;
 #define OPT_SCHEDULE_TIME   "stime"
 #define OPT_PRINT_STATE     "print-state"
 #define OPT_PRINT_TYPE		"print-type"
+#define OPT_PRINT_DATASET	"print-dataset"
 #define OPT_GET_DS_VALUE	"get_ds_value"
 //--------------slow contorol option----------------------------------------------------
 #define OPT_SL_ALIAS									"sc-alias"
@@ -102,6 +103,7 @@ int main (int argc, char* argv[] )
         int op =-1;
         bool printState = false;
 		bool printType = false;
+		int32_t print_domain_current_value = -1;
         long scheduleTime;
 		uint32_t timeout;
 		
@@ -131,6 +133,7 @@ int main (int argc, char* argv[] )
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<long>(OPT_SCHEDULE_TIME, "the time in microseconds for devide schedule time");
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<bool>(OPT_PRINT_STATE, "Print the state of the device", false, &printState);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<bool>(OPT_PRINT_TYPE, "Print the type of the control unit of the device", false, &printType);
+		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<int32_t>(OPT_PRINT_DATASET, "print the dataset for the domain -1=no-print, 0=output, 1=input, 2=custom, 3=system", -1, &print_domain_current_value);
         ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption< vector<string> >(OPT_GET_DS_VALUE, "Print last value of the dataset keys[to use with opcode 11]", &key_to_show, true);
 		
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<string>(OPT_SL_ALIAS, "The alias associted to the command for the slow control cu", "", &scAlias);
@@ -176,7 +179,9 @@ int main (int argc, char* argv[] )
 		//get the actual state of device
         err = controller->getState(deviceState);
         if(err == ErrorCode::EC_TIMEOUT && op!=11) throw CException(5, "Time out on connection", "Get state for device");
-        
+		
+		controller->fetchCurrentDeviceValue();
+		
         if(printState) {
             std::cout << "Current state:";
             print_state(deviceState);
@@ -190,6 +195,17 @@ int main (int argc, char* argv[] )
 			if(err == ErrorCode::EC_TIMEOUT) throw CException(6, "Time out on connection", "Get type of the control unit");
             std::cout << control_unit_type << std::endl;
         }
+		
+		if(print_domain_current_value >= 0) {
+			if(print_domain_current_value > 3) {
+				 std::cout << "bad domain type";
+			} else {
+				controller->fetchCurrentDatatasetFromDomain((DatasetDomain)print_domain_current_value);
+				if(controller->getCurrentDatasetForDomain((DatasetDomain)print_domain_current_value) != NULL) {
+					std::cout << controller->getCurrentDatasetForDomain((DatasetDomain)print_domain_current_value)->getJSONString() <<std::endl;
+				}
+			}
+		}
 		
         switch (op) {
             case 1:

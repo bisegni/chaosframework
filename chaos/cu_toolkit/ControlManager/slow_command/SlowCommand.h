@@ -31,7 +31,7 @@
 #include <chaos/common/data/DatasetDB.h>
 #include <chaos/common/batch_command/BatchCommand.h>
 
-
+#include <chaos/cu_toolkit/ControlManager/AttributeSharedCacheWrapper.h>
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/driver_manager/DriverErogatorInterface.h>
 
@@ -51,7 +51,11 @@ namespace chaos{
             
             //! The name space that group all foundamental class need by slow control !CHOAS implementation
             namespace slow_command {
-                
+				
+				namespace command {
+					class SetAttributeCommand;
+				}
+				
                 //forward declaration
                 class SlowCommandExecutor;
 
@@ -65,15 +69,20 @@ namespace chaos{
                  */
                 class SlowCommand: public chaos::common::batch_command::BatchCommand {
                     friend class SlowCommandExecutor;
-                    
-                    //! key data storage to forwsard data to central memory (momentary until directi/O will be created)
-                    data_manager::KeyDataStorage *keyDataStoragePtr;
+					friend class command::SetAttributeCommand;
                     
                     //! point to the in memory device database
-					chaos::common::data::DatasetDB  *deviceDatabasePtr;
-                    
-                    
+					chaos::common::data::DatasetDB  *dataset_attribute_db_ptr;
+
+					//redefine the visibility
+					SharedCacheInterface * const getSharedCacheInterface() {
+						return chaos::common::batch_command::BatchCommand::getSharedCacheInterface();
+					}
+					
+					//! shared attribute cache
+					AttributeSharedCacheWrapper * attribute_cache;
                 protected:
+
 					//! The erogator of the driver requested by the control unit
 					chaos::cu::driver_manager::DriverErogatorInterface *driverAccessorsErogator;
                     
@@ -82,28 +91,20 @@ namespace chaos{
                     
                     //! default destructor
                     virtual ~SlowCommand();
-                    
 					
                     /*!
                      return the device database with the dafualt device information
                      */
-                    chaos_data::DatasetDB  *getDeviceDatabase();
-                    
-                    /*
-                     Send device data to output buffer
-                     */
-                    void pushDataSet(chaos_data::CDataWrapper *acquired_data);
-                    
-                    /*
-                     Return a new instance of CDataWrapper filled with a mandatory data
-                     according to key
-                     */
-                    chaos_data::CDataWrapper *getNewDataWrapper();
-                    
+                    chaos_data::DatasetDB  * const getDeviceDatabase();
+					
+					
+					//! return the attribute cache pointer
+					AttributeSharedCacheWrapper * const getAttributeCache();
+
                 public:
                     
                     //! return the identification of the device
-                    std::string getDeviceID();
+                    const string & getDeviceID();
                 };
             }
         }

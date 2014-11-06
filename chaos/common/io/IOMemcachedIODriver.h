@@ -40,7 +40,7 @@ namespace chaos{
 			namespace chaos_data = chaos::common::data;
 			REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(IOMemcachedIODriver, IODataDriver), public NamedService {
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(IOMemcachedIODriver)
-				boost::mutex useMCMutex;
+				boost::shared_mutex useMCMutex;
 				memcached_st *memClient;
 			public:
 				
@@ -59,13 +59,13 @@ namespace chaos{
 				 * This method retrive the cached object by CSDawrapperUsed as query key and
 				 * return a pointer to the class ArrayPointer of CDataWrapper type
 				 */
-				virtual void storeRawData(chaos_data::SerializationBuffer *serialization)  throw(CException);
+				virtual void storeRawData(const std::string& key, chaos_data::SerializationBuffer *serialization)  throw(CException);
 				
 				/*
 				 * This method retrive the cached object by CSDawrapperUsed as query key and
 				 * return a pointer to the class ArrayPointer of CDataWrapper type
 				 */
-				virtual char * retriveRawData(size_t *dim=NULL)  throw(CException);
+				virtual char * retriveRawData(const std::string& key, size_t *dim=NULL)  throw(CException);
 				/*
 				 Update the driver configuration
 				 */

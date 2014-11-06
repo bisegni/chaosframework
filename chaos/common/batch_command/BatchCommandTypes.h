@@ -41,16 +41,30 @@ namespace chaos {
                  * \brief Describe the event that the sand box can forward for notify the current state of a command
                  */
                 typedef enum BatchCommandEventType {
-                    EVT_QUEUED = 0,		/**< The command is queued */
-                    EVT_WAITING=1,		/**< The command is the next command to executed and i whaiting the end of the current */
-                    EVT_RUNNING=2,		/**< The command is running */
+                    EVT_QUEUED = 0,			/**< The command is queued */
+                    EVT_WAITING=1,			/**< The command is the next command to executed and i whaiting the end of the current */
+                    EVT_RUNNING=2,			/**< The command is running */
                     EVT_PAUSED=3,			/**< The command is paused */
                     EVT_COMPLETED=4,		/**< The command has completed is work successfully */
                     EVT_FAULT=5,			/**< The command has fault */
                     EVT_KILLED=6			/**< The event has been killed */
                 } BatchCommandEventType;
             }
-            
+
+			//! Namespace for the slow command event type within the framework
+			namespace BatchSandboxEventType {
+				
+				/*!
+				 * \enum SlowCommandEventType
+				 * \brief Describe the event that the sand box can forward for notify the current state of a command
+				 */
+				typedef enum BatchSandboxEventType {
+					EVT_RUN			= 0,		/**< The sandobx has stepped [no data]*/
+					EVT_HEART_BEAT	= 1			/**< The sandobx is hearbeating [uint64_t]*/
+				} BatchSandboxEventType;
+			}
+
+			
             /*!
              \struct FaultDescription
              \brief  Describe the fault of the command. This fileds need to be valorized
@@ -99,9 +113,10 @@ namespace chaos {
              Used for collect the statistic about current running command.
              */
             typedef struct {
-                uint64_t lastCmdStepStart;	/**< Represent the time collected at the start of the scehduler step (before acquisition phase) */
-                uint64_t lastCmdStepTime;	/**< Represent the time collected at the end of the scehduler step (befor the sleep or pause of the thread) */
-            } SandboxStat;
+                uint64_t lastCmdStepStart;	/**< Represent the time collected at the start of the scehduler step (before acquisition phase)[microseconds] */
+                uint64_t lastCmdStepTime;	/**< Represent the time collected at the end of the scehduler step (befor the sleep or pause of the thread)[microseconds] */
+				uint64_t lastHBTime;		/**< is the last heartbeat time [microseconds] */
+			} SandboxStat;
             
             //! Namespace for the features of the slow command
             namespace features {
@@ -151,11 +166,7 @@ namespace chaos {
                     uint64_t featureCommandTimeout;
                 } Features;
             }
-            
-            typedef  uint8_t BitBlockDimension;
-            typedef  uint16_t VariableIndexType;
-            
-            
+
             //! Namespace for the handler types
             namespace HandlerType {
                 /*!

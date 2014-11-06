@@ -93,6 +93,22 @@ void BatchCommandExecutor::addNewSandboxInstance() {
     BCELDBG_ << "Add new sandbox to the executor with identification ->" << tmp_ptr->identification;
 }
 
+unsigned int BatchCommandExecutor::getNumberOfSandboxInstance() {
+	return (unsigned int)sandbox_map.size();
+}
+
+void BatchCommandExecutor::getSandboxID(std::vector<std::string> & sandbox_id){
+	for(std::map<unsigned int, BatchCommandSandbox*>::iterator it = sandbox_map.begin();
+		it != sandbox_map.end();
+		it++){
+		sandbox_id.push_back(it->second->identification);
+	}
+}
+
+AttributeValueSharedCache *BatchCommandExecutor::getAttributeSharedCache() {
+	return &global_attribute_cache;
+}
+
 //! Add a number of sandobx to this instance of executor
 void BatchCommandExecutor::addSandboxInstance(unsigned int _sandbox_number) {
     //lock for map modification
@@ -244,8 +260,11 @@ void BatchCommandExecutor::deinit() throw(chaos::CException) {
     chaos::utility::StartableService::deinit();
 }
 
-//Event handler
-void BatchCommandExecutor::handleEvent(uint64_t command_id, BatchCommandEventType::BatchCommandEventType type, void* type_attribute_ptr) {
+//command event handler
+void BatchCommandExecutor::handleCommandEvent(uint64_t command_id,
+											  BatchCommandEventType::BatchCommandEventType type,
+											  void* type_value_ptr,
+											  uint32_t type_value_size) {
 	DEBUG_CODE(BCELDBG_ << "Received event of type->" << type << " on command id -> "<<command_id;)
 	switch(type) {
 		case BatchCommandEventType::EVT_QUEUED: {
@@ -264,7 +283,7 @@ void BatchCommandExecutor::handleEvent(uint64_t command_id, BatchCommandEventTyp
 			boost::shared_ptr<CommandState>  cmd_state = getCommandState(command_id);
 			if(cmd_state.get()) {
 				cmd_state->last_event = type;
-				cmd_state->fault_description = *static_cast<FaultDescription*>(type_attribute_ptr);
+				cmd_state->fault_description = *static_cast<FaultDescription*>(type_value_ptr);
 			}
 			break;
 		}
@@ -277,6 +296,14 @@ void BatchCommandExecutor::handleEvent(uint64_t command_id, BatchCommandEventTyp
 			break;
 		}
 	}
+}
+
+//! general sandbox event handler
+void BatchCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
+											  BatchSandboxEventType::BatchSandboxEventType type,
+											  void* type_value_ptr,
+											  uint32_t type_value_size) {
+	
 }
 
 
@@ -357,17 +384,20 @@ boost::shared_ptr<CommandState> BatchCommandExecutor::getCommandState(uint64_t c
 }
 
 //! Perform a command registration
-void BatchCommandExecutor::setDefaultCommand(string command_alias, unsigned int sandbox_instance) {
+void BatchCommandExecutor::setDefaultCommand(const string& command_alias, unsigned int sandbox_instance) {
     // check if we can set the default, the condition are:
     // the executor and the sandbox are in the init state or in stop state
     if(chaos::utility::StartableService::serviceState == ::chaos::utility::service_state_machine::StartableServiceType::SS_STARTED) {
         throw CException(1, "The command infrastructure is in running state", "BatchCommandExecutor::setDefaultCommand");
     }
     
-    BCELAPP_ << "Install the default command with alias: " << default_command_alias;
-
     default_command_alias = command_alias;
     default_command_sandbox_instance = sandbox_instance<1?1:sandbox_instance;
+	BCELAPP_ << "Install the default command with alias: " << default_command_alias;	
+}
+
+const std::string& BatchCommandExecutor::getDefaultCommand() {
+	return default_command_alias;
 }
 
 //! Install a command associated with a type
@@ -376,16 +406,26 @@ void BatchCommandExecutor::installCommand(string alias, chaos::common::utility::
     mapCommandInstancer.insert(make_pair<string, chaos::common::utility::ObjectInstancer<BatchCommand>* >(alias, instancer));
 }
 
+void BatchCommandExecutor::getAllCommandAlias(std::vector<std::string>& commands_alias) {
+	for(std::map<string, chaos::common::utility::ObjectInstancer<BatchCommand>* >::iterator it = mapCommandInstancer.begin();
+		it != mapCommandInstancer.end();
+		it++) {
+		commands_alias.push_back(it->first);
+	}
+}
+
 //! Check if the waithing command can be installed
 BatchCommand *BatchCommandExecutor::instanceCommandInfo(CDataWrapper *submissionInfo) {
-    std::string commandAlias;
-    commandAlias = submissionInfo->getStringValue(BatchCommandSubmissionKey::COMMAND_ALIAS_STR);
-    DEBUG_CODE(BCELDBG_ << "Instancing command " << commandAlias;)
-    BatchCommand *instance = instanceCommandInfo(commandAlias);
+    std::string command_alias = submissionInfo->getStringValue(BatchCommandSubmissionKey::COMMAND_ALIAS_STR);
+    DEBUG_CODE(BCELDBG_ << "Instancing command " << command_alias;)
+    BatchCommand *instance = instanceCommandInfo(command_alias);
     if(instance) {
+		//set the alias for this command
+		instance->command_alias = command_alias;
+		
         if(submissionInfo->hasKey(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32)) {
             instance->submissionRule = submissionInfo->getInt32Value(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32);
-            DEBUG_CODE(BCELDBG_ << "Submission rule for command " << commandAlias << " is: " << ((uint16_t)instance->submissionRule);)
+            DEBUG_CODE(BCELDBG_ << "Submission rule for command " << command_alias << " is: " << ((uint16_t)instance->submissionRule);)
         } else {
             instance->submissionRule = SubmissionRuleType::SUBMIT_NORMAL;
         }

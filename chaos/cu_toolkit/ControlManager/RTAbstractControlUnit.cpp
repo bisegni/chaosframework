@@ -18,14 +18,18 @@
  *    	limitations under the License.
  */
 
+#include <limits>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
-
 #include <chaos/cu_toolkit/ControlManager/RTAbstractControlUnit.h>
+
 
 using namespace chaos;
 using namespace chaos::common::data;
+using namespace chaos::common::data::cache;
+
 using namespace chaos::cu;
 using namespace chaos::cu::control_manager;
+
 using namespace boost;
 using namespace boost::chrono;
 
@@ -37,7 +41,10 @@ AbstractControlUnit(CUType::RTCU,
 					_control_unit_id,
 					_control_unit_param) {
     //allocate the handler engine
-    attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
+   // attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
+	
+	//associate the shared cache of the executor to the asbtract control unit one
+	attribute_value_shared_cache = new AttributeValueSharedCache();
 }
 
 /*!
@@ -53,14 +60,22 @@ AbstractControlUnit(CUType::RTCU,
 					_control_unit_param,
 					_control_unit_drivers) {
     //allocate the handler engine
-    attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);	
+    //attributeHandlerEngine = new DSAttributeHandlerExecutionEngine(this);
+	
+	//associate the shared cache of the executor to the asbtract control unit one
+	attribute_value_shared_cache = new AttributeValueSharedCache();
 }
 
 RTAbstractControlUnit::~RTAbstractControlUnit() {
+	//release attribute shared cache
+	if(attribute_value_shared_cache) {
+		delete(attribute_value_shared_cache);
+	}
+	
     //release handler engine
-    if(attributeHandlerEngine) {
-        delete attributeHandlerEngine;
-    }
+    //if(attributeHandlerEngine) {
+    //    delete attributeHandlerEngine;
+    //}
 }
 
 void RTAbstractControlUnit::setDefaultScheduleDelay(uint64_t _schedule_dalay) {
@@ -88,8 +103,12 @@ void RTAbstractControlUnit::init(void *initData) throw(CException) {
 	//call parent impl
 	AbstractControlUnit::init(initData);
 	scheduler_run = false;
-    RTCULAPP_ << "Initialize the DSAttribute handler engine for device:" << DatasetDB::getDeviceID();
-    utility::StartableService::initImplementation(attributeHandlerEngine, (void*)NULL, "DSAttribute handler engine", "RTAbstractControlUnit::init");
+	last_hearbeat_time = 0;
+    //RTCULAPP_ << "Initialize the DSAttribute handler engine for device:" << DatasetDB::getDeviceID();
+    //utility::StartableService::initImplementation(attributeHandlerEngine, (void*)NULL, "DSAttribute handler engine", __PRETTY_FUNCTION__);
+	
+	RTCULAPP_ << "Initializing shared attribute cache " << DatasetDB::getDeviceID();
+	utility::InizializableService::initImplementation((AttributeValueSharedCache*)attribute_value_shared_cache, (void*)NULL, "attribute_value_shared_cache", __PRETTY_FUNCTION__);
 }
 
 /*!
@@ -123,18 +142,13 @@ void RTAbstractControlUnit::stop() throw(CException) {
 void RTAbstractControlUnit::deinit() throw(CException) {
 	//call parent impl
 	AbstractControlUnit::deinit();
-	
-    RTCULAPP_ << "Deinitializing the DSAttribute handler engine for device:" << DatasetDB::getDeviceID();
-    utility::StartableService::deinitImplementation(attributeHandlerEngine, "DSAttribute handler engine", "RTAbstractControlUnit::deinit");
-}
 
-/*
- Add a new handler
- */
-void RTAbstractControlUnit::addHandlerForDSAttribute(handler::DSAttributeHandler * classHandler)  throw (CException) {
-    if(!classHandler) return;
-    //add the handler
-    attributeHandlerEngine->addHandlerForDSAttribute(classHandler);
+	RTCULAPP_ << "Initializing shared attribute cache " << DatasetDB::getDeviceID();
+	utility::InizializableService::deinitImplementation((AttributeValueSharedCache*)attribute_value_shared_cache, "attribute_value_shared_cache", __PRETTY_FUNCTION__);
+
+	
+   // RTCULAPP_ << "Deinitializing the DSAttribute handler engine for device:" << DatasetDB::getDeviceID();
+   // utility::StartableService::deinitImplementation(attributeHandlerEngine, "DSAttribute handler engine", __PRETTY_FUNCTION__);
 }
 
 /*!
@@ -180,23 +194,6 @@ void RTAbstractControlUnit::threadStartStopManagment(bool startAction) throw(CEx
 	}
 }
 
-/*
- Return a new instance of CDataWrapper filled with a mandatory data
- according to key
- */
-CDataWrapper *RTAbstractControlUnit::getNewDataWrapper() {
-	return keyDataStorage->getNewDataWrapper();
-}
-
-
-/*
- Send device data to output buffer
- */
-void RTAbstractControlUnit::pushDataSet(CDataWrapper *acquiredData) {
-	//send data to related buffer
-	keyDataStorage->pushDataSet(acquiredData);
-}
-
 /*!
  Event for update some CU configuration
  */
@@ -214,7 +211,7 @@ CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* updatePac
 			// we need to optimize and be sure that event channel
 			// is mandatory so we can left over the 'if' check
 			//----------------------
-			if(deviceEventChannel) deviceEventChannel->notifyForScheduleUpdateWithNewValue(DatasetDB::getDeviceID(), uSecdelay);
+			//if(device_event_channel) device_event_channel->notifyForScheduleUpdateWithNewValue(DatasetDB::getDeviceID(), uSecdelay);
 		}
 	}
 	return result;
@@ -224,20 +221,27 @@ CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* updatePac
  Execute the scehduling for the device
  */
 void RTAbstractControlUnit::executeOnThread() {
+	uint64_t acq_timestamp = 0;
+	
 	while(scheduler_run) {
+		//set the acquiition time stamp and update it on cache
+		acq_timestamp = TimingUtil::getTimeStamp();
+		cache_output_attribute_vector[timestamp_acq_cache_index]->setValue(&acq_timestamp, sizeof(uint64_t), false);
+		
+		if(acq_timestamp > last_hearbeat_time+1000) {
+			cache_custom_attribute_vector[0]->setValue(&acq_timestamp, sizeof(uint64_t));
+			//fire new hearbeat
+			pushSystemDataset();
+			//reset time for heartbeat
+			last_hearbeat_time = acq_timestamp;
+		}
+		
 		unitRun();
+		
+		//! check if the output dataset need to be pushed
+		pushOutputDataset();
+		
 		//check if we are in sequential or in threaded mode
 		boost::this_thread::sleep_for(boost::chrono::microseconds(schedule_dalay));
 	}
-}
-
-/*
- Receive the evento for set the dataset input element
- */
-CDataWrapper* RTAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAttributeValues, bool& detachParam) throw (CException) {
-	attributeHandlerEngine->executeHandler(datasetAttributeValues);
-	
-	//at this time notify the wel gone setting of comand
-	if(deviceEventChannel) deviceEventChannel->notifyForAttributeSetting(DatasetDB::getDeviceID(), 0);
-	return NULL;
 }

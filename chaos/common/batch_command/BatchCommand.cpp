@@ -21,6 +21,7 @@
 #include <chaos/common/batch_command/BatchCommand.h>
 using namespace chaos;
 using namespace chaos::common::data;
+using namespace chaos::common::data::cache;
 using namespace chaos::common::batch_command;
 
 #define LOG_HEAD_SL "[SlowCommand-" << unique_id << "] "
@@ -57,31 +58,6 @@ uint64_t BatchCommand::getUID() {
 	return unique_id;
 }
 
-void BatchCommand::getChangedVariableIndex(IOCAttributeSharedCache::SharedVeriableDomain domain, std::vector<VariableIndexType>& changed_index) {
-    CHAOS_ASSERT(sharedAttributeSettingPtr)
-    return sharedAttributeSettingPtr->getChangedVariableIndex(domain, changed_index);
-}
-
-ValueSetting *BatchCommand::getVariableValue(IOCAttributeSharedCache::SharedVeriableDomain domain, VariableIndexType variable_index) {
-    CHAOS_ASSERT(sharedAttributeSettingPtr)
-    return sharedAttributeSettingPtr->getVariableValue(domain, variable_index);
-}
-
-ValueSetting *BatchCommand::getVariableValue(IOCAttributeSharedCache::SharedVeriableDomain domain, const char *variable_name) {
-    CHAOS_ASSERT(sharedAttributeSettingPtr)
-    return sharedAttributeSettingPtr->getVariableValue(domain, variable_name);
-}
-
-void BatchCommand::setVariableValueForKey(IOCAttributeSharedCache::SharedVeriableDomain domain, const char *variable_name, void * value, uint32_t size) {
-    CHAOS_ASSERT(sharedAttributeSettingPtr)
-    sharedAttributeSettingPtr->setVariableValueForKey(domain, variable_name, value, size);
-}
-
-void BatchCommand::getVariableNames(IOCAttributeSharedCache::SharedVeriableDomain domain, std::vector<std::string>& names) {
-    CHAOS_ASSERT(sharedAttributeSettingPtr)
-    sharedAttributeSettingPtr->getVariableNames(domain, names);
-}
-
 /*
  Start the slow command sequence
  */
@@ -102,7 +78,7 @@ bool BatchCommand::timeoutHandler() {return true;}
 
 //! called befor the command start the execution
 void BatchCommand::commandPre() {
-	timing_stats.command_set_time_usec = boost::chrono::duration_cast<boost::chrono::microseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count();
+	timing_stats.command_set_time_usec = boost::chrono::duration_cast<boost::chrono::milliseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count();
 }
 
 #define SET_FAULT(c, m, d) \
