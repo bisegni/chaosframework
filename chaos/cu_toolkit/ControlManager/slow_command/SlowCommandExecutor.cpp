@@ -99,6 +99,9 @@ void SlowCommandExecutor::deinit() throw(chaos::CException) {
 	LDBG_ << "No implementation on deinit";
 	//initialize superclass
 	BatchCommandExecutor::deinit();
+	ts_hb_cache = NULL;
+	last_ru_id_cache = NULL;
+	last_acq_ts_cache = NULL;
 }
 
 //! Install a command associated with a type
