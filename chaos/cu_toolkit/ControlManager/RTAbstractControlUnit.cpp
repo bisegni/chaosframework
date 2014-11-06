@@ -211,7 +211,7 @@ CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* updatePac
 			// we need to optimize and be sure that event channel
 			// is mandatory so we can left over the 'if' check
 			//----------------------
-			if(device_event_channel) device_event_channel->notifyForScheduleUpdateWithNewValue(DatasetDB::getDeviceID(), uSecdelay);
+			//if(device_event_channel) device_event_channel->notifyForScheduleUpdateWithNewValue(DatasetDB::getDeviceID(), uSecdelay);
 		}
 	}
 	return result;

@@ -394,8 +394,6 @@ CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAtt
 		
 	} catch (CException& ex) {
 		//at this time notify the wel gone setting of comand
-		if(device_event_channel) device_event_channel->notifyForAttributeSetting(DatasetDB::getDeviceID(), ex.errorCode);
-		
 		throw ex;
 	}
 	

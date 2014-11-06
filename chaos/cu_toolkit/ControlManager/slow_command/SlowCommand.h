@@ -72,7 +72,7 @@ namespace chaos{
 					friend class command::SetAttributeCommand;
                     
                     //! point to the in memory device database
-					chaos::common::data::DatasetDB  *deviceDatabasePtr;
+					chaos::common::data::DatasetDB  *dataset_attribute_db_ptr;
 
 					//redefine the visibility
 					SharedCacheInterface * const getSharedCacheInterface() {

@@ -79,10 +79,10 @@ namespace chaos {
                     friend class chaos::cu::control_manager::SCAbstractControlUnit;
 
                     //!Live push driver
-                    data_manager::KeyDataStorage  *keyDataStoragePtr;
+                    data_manager::KeyDataStorage  *key_data_storage;
                     
                     //! the reference to the master device database
-                    chaos_data::DatasetDB *deviceSchemaDbPtr;
+                    chaos_data::DatasetDB *dataset_attribute_db_ptr;
                     
 					//! The driver erogator
 					chaos::cu::driver_manager::DriverErogatorInterface *driverAccessorsErogator;
@@ -130,7 +130,13 @@ namespace chaos {
 					// Start the implementation
 					void start() throw(chaos::CException);
 					
-                    //! Install a command associated with a type
+					// Start the implementation
+					void stop() throw(chaos::CException);
+					
+					// Deinit instance
+					void deinit() throw(chaos::CException);
+
+					//! Install a command associated with a type
                     void installCommand(std::string alias,
 										chaos::common::utility::NestedObjectInstancer<SlowCommand, chaos_batch::BatchCommand> *instancer);
                 };

@@ -97,17 +97,18 @@ void SCAbstractControlUnit::init(void *initData) throw(CException) {
 	//SlowCommandExecutor has his own instance of cache and this control unit need to
 	//use that
 	
-	
-	//init executor
-	utility::StartableService::initImplementation(slow_command_executor, (void*)NULL, "Slow Command Executor", __PRETTY_FUNCTION__);
-	
 	//call parent impl
 	AbstractControlUnit::init(initData);
 	
-    //associate the data storage
-    slow_command_executor->keyDataStoragePtr = AbstractControlUnit::keyDataStorage;
-    slow_command_executor->deviceSchemaDbPtr = this; //control unit is it'self the database
-    
+	
+	//associate the data storage and dataset database..this need to be associated before the executor initialization
+	slow_command_executor->key_data_storage = AbstractControlUnit::keyDataStorage;
+	//control unit is it'self the database
+	slow_command_executor->dataset_attribute_db_ptr = this;
+ 
+	//init executor
+	utility::StartableService::initImplementation(slow_command_executor, (void*)NULL, "Slow Command Executor", __PRETTY_FUNCTION__);
+	
     SCACU_LAPP_ << "Install default slow command for device " << DatasetDB::getDeviceID();
     installCommand<command::SetAttributeCommand>(chaos_batch::BatchCommandsKey::ATTRIBUTE_SET_VALUE_CMD_ALIAS);
     
@@ -130,8 +131,8 @@ void SCAbstractControlUnit::deinit() throw(CException) {
 		SCACU_LAPP_ << "Deinitialize the command executor for " << DatasetDB::getDeviceID();
 		utility::StartableService::deinitImplementation(slow_command_executor, "Slow Command Executor", __PRETTY_FUNCTION__);
 		//deassociate the data storage
-		slow_command_executor->keyDataStoragePtr = NULL;
-		slow_command_executor->deviceSchemaDbPtr = NULL;
+		slow_command_executor->key_data_storage = NULL;
+		slow_command_executor->dataset_attribute_db_ptr = NULL;
 	} else {
 		SCACU_LAPP_ << "No command executor allocated for " << DatasetDB::getDeviceID();
 	}

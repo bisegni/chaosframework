@@ -35,7 +35,7 @@ using namespace chaos::cu::control_manager::slow_command;
 using namespace chaos::common::batch_command;
 
 
-#define LOG_HEAD_SBE "[SlowCommandExecutor-" << deviceSchemaDbPtr->getDeviceID() << "] "
+#define LOG_HEAD_SBE "[SlowCommandExecutor-" << dataset_attribute_db_ptr->getDeviceID() << "] "
 
 #define SCELAPP_ LAPP_ << LOG_HEAD_SBE
 #define SCELDBG_ LDBG_ << LOG_HEAD_SBE
@@ -44,10 +44,10 @@ using namespace chaos::common::data::cache;
 using namespace chaos::common::batch_command;
 
 SlowCommandExecutor::SlowCommandExecutor(std::string _executorID,
-										 DatasetDB *_deviceSchemaDbPtr,
+										 DatasetDB *_dataset_attribute_db_ptr,
 										 SCAbstractControlUnit *_control_unit_instance):
 BatchCommandExecutor(_executorID),
-deviceSchemaDbPtr(_deviceSchemaDbPtr),
+dataset_attribute_db_ptr(_dataset_attribute_db_ptr),
 attribute_cache(new AttributeSharedCacheWrapper(getAttributeSharedCache())),
 control_unit_instance(_control_unit_instance),
 ts_hb_cache(NULL),
@@ -82,8 +82,23 @@ void SlowCommandExecutor::start() throw(chaos::CException) {
 			control_unit_instance->pushInputDataset();
 		}
 	}
-	//initialize superclass
+	//start superclass
 	BatchCommandExecutor::start();
+}
+
+
+// Start the implementation
+void SlowCommandExecutor::stop() throw(chaos::CException) {
+	LDBG_ << "No implementation on stop";
+	//initialize superclass
+	BatchCommandExecutor::stop();
+}
+
+// Deinit instance
+void SlowCommandExecutor::deinit() throw(chaos::CException) {
+	LDBG_ << "No implementation on deinit";
+	//initialize superclass
+	BatchCommandExecutor::deinit();
 }
 
 //! Install a command associated with a type
@@ -102,7 +117,7 @@ BatchCommand *SlowCommandExecutor::instanceCommandInfo(std::string& commandAlias
 	if(result) {
 		//forward the pointers of the needed data
 		result->driverAccessorsErogator = driverAccessorsErogator;
-		result->deviceDatabasePtr = deviceSchemaDbPtr;
+		result->dataset_attribute_db_ptr = dataset_attribute_db_ptr;
 		result->attribute_cache = attribute_cache;
 	}
 	return result;

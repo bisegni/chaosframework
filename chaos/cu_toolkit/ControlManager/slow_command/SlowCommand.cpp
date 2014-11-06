@@ -40,14 +40,14 @@ SlowCommand::~SlowCommand() {
 }
 
 std::string SlowCommand::getDeviceID() {
-    return std::string(deviceDatabasePtr->getDeviceID());
+    return std::string(dataset_attribute_db_ptr->getDeviceID());
 }
 
 /*
  return the device database with the dafualt device information
  */
 chaos::common::data::DatasetDB * const SlowCommand::getDeviceDatabase() {
-    return deviceDatabasePtr;
+    return dataset_attribute_db_ptr;
 }
 
 AttributeSharedCacheWrapper * const SlowCommand::getAttributeCache() {

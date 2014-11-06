@@ -34,8 +34,8 @@ void DatasetDB::setDeviceID(std::string _deviceID) {
     deviceID = _deviceID;
 }
 
-const char * DatasetDB::getDeviceID() {
-    return deviceID.c_str();
+const string & DatasetDB::getDeviceID() {
+    return deviceID;
 }
 
 //! Add device dataset definitio by serialized form

@@ -44,7 +44,7 @@ namespace chaos {
 				~DatasetDB();
 				
 				
-				const char * getDeviceID();
+				const string & getDeviceID();
 				
 				//! Add device dataset definitio by serialized form
 				/*!
