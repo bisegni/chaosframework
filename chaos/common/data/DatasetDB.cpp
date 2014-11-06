@@ -30,7 +30,7 @@ DatasetDB::~DatasetDB() {
     
 }
 
-void DatasetDB::setDeviceID(std::string _deviceID) {
+void DatasetDB::setDeviceID(const std::string &_deviceID) {
     deviceID = _deviceID;
 }
 

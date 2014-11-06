@@ -38,7 +38,7 @@ namespace chaos {
 				std::string deviceID;
 				
 			protected:
-				void setDeviceID(std::string _deviceID);
+				void setDeviceID(const std::string & _deviceID);
 			public:
 				DatasetDB(bool onMemory);
 				~DatasetDB();

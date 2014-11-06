@@ -39,8 +39,8 @@ SlowCommand::~SlowCommand() {
     
 }
 
-std::string SlowCommand::getDeviceID() {
-    return std::string(dataset_attribute_db_ptr->getDeviceID());
+const string & SlowCommand::getDeviceID() {
+    return dataset_attribute_db_ptr->getDeviceID();
 }
 
 /*

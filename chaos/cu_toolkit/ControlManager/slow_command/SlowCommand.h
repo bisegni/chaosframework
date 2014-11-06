@@ -104,7 +104,7 @@ namespace chaos{
                 public:
                     
                     //! return the identification of the device
-                    std::string getDeviceID();
+                    const string & getDeviceID();
                 };
             }
         }
