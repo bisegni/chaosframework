@@ -421,7 +421,7 @@ BatchCommand *BatchCommandExecutor::instanceCommandInfo(CDataWrapper *submission
     BatchCommand *instance = instanceCommandInfo(command_alias);
     if(instance) {
 		//set the alias for this command
-		instance->command_alias = command_alias;
+		instance->setCommandAlias(command_alias);
 		
         if(submissionInfo->hasKey(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32)) {
             instance->submissionRule = submissionInfo->getInt32Value(BatchCommandSubmissionKey::SUBMISSION_RULE_UI32);

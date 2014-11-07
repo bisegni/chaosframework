@@ -71,7 +71,8 @@ namespace chaos {
              before to set the rState to RunningState::RS_Fault option
              */
             typedef struct FaultDescription {
-                uint32_t    code;           /**< The number code of the error */
+				std::string	source;			/**< the object that has fault */
+                int32_t		code;           /**< The number code of the error */
                 std::string description;    /**< The description of the fault */
                 std::string domain;         /**< The domain identify the context where the fault is occured */
             } FaultDescription;

@@ -52,7 +52,10 @@ attribute_cache(new AttributeSharedCacheWrapper(getAttributeSharedCache())),
 control_unit_instance(_control_unit_instance),
 ts_hb_cache(NULL),
 last_ru_id_cache(NULL),
-last_acq_ts_cache(NULL){}
+last_acq_ts_cache(NULL),
+last_error_code(NULL),
+last_error_message(NULL),
+last_error_domain(NULL){}
 
 SlowCommandExecutor::~SlowCommandExecutor(){}
 
@@ -102,6 +105,9 @@ void SlowCommandExecutor::deinit() throw(chaos::CException) {
 	ts_hb_cache = NULL;
 	last_ru_id_cache = NULL;
 	last_acq_ts_cache = NULL;
+	last_error_code = NULL;
+	last_error_message = NULL;
+	last_error_domain = NULL;
 }
 
 //! Install a command associated with a type
@@ -138,6 +144,28 @@ void SlowCommandExecutor::handleCommandEvent(uint64_t command_seq,
 	
 	switch(type) {
 		case BatchCommandEventType::EVT_QUEUED: {
+			break;
+		}
+		case BatchCommandEventType::EVT_FAULT: {
+			if(type_value_size == sizeof(FaultDescription)) {
+				FaultDescription *faul_desc = static_cast<FaultDescription*>(type_value_ptr);
+				if(!last_error_code) {
+					last_error_code = getAttributeSharedCache()->getVariableValue(SharedCacheInterface::SVD_SYSTEM,
+																				  DataPackSystemKey::DP_SYS_LAST_ERROR);
+				}
+				if(!last_error_message) {
+					last_error_message = getAttributeSharedCache()->getVariableValue(SharedCacheInterface::SVD_SYSTEM,
+																					 DataPackSystemKey::DP_SYS_LAST_ERROR_MESSAGE);
+				}
+				if(!last_error_domain) {
+					last_error_domain = getAttributeSharedCache()->getVariableValue(SharedCacheInterface::SVD_SYSTEM,
+																					DataPackSystemKey::DP_SYS_LAST_ERROR_DOMAIN);
+				}
+				//write error on cache
+				last_error_code->setValue(&faul_desc->code, sizeof(int32_t));
+				last_error_message->setValue(faul_desc->description.c_str(), (int32_t)faul_desc->description.size());
+				last_error_domain->setValue(faul_desc->domain.c_str(), (int32_t)faul_desc->domain.size());
+			}
 			break;
 		}
 		default:
