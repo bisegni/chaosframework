@@ -59,7 +59,7 @@ void AsyncCentralManager::_internalEventLoop(void *args) {
 		//call sync loop runner
 		uv_run(uv_l_loc, UV_RUN_DEFAULT);
 		//wait some little time
-		usleep(500);
+		usleep(500000);
 	}
 	
 }

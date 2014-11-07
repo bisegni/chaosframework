@@ -50,8 +50,8 @@ namespace chaos{
 
 		typedef enum RunMode {
 			QUERY = 1,
-			INDEXER,
-			BOTH
+			INDEXER = 2,
+			BOTH = 3
 		} RunMode;
 		
         //! Chaos Data Service singleton

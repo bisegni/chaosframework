@@ -83,7 +83,9 @@ void IOMemcachedIODriver::deinit() throw(CException) {
  * This method retrive the cached object by CSDawrapperUsed as query key and
  * return a pointer to the class ArrayPointer of CDataWrapper type
  */
-void IOMemcachedIODriver::storeRawData(const std::string& key, chaos_data::SerializationBuffer *serialization)  throw(CException) {
+void IOMemcachedIODriver::storeRawData(const std::string& key,
+									   chaos_data::SerializationBuffer *serialization,
+									   int store_hint)  throw(CException) {
 	boost::unique_lock<boost::shared_mutex> lock(useMCMutex);
 	memcached_return_t mcSetResult = MEMCACHED_SUCCESS;
 	mcSetResult = memcached_set(memClient, key.c_str(), key.size(), serialization->getBufferPtr(), serialization->getBufferLen(), 0, 0);

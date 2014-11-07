@@ -164,7 +164,9 @@ void IODirectIODriver::deinit() throw(CException) {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void IODirectIODriver::storeRawData(const std::string& key, chaos::common::data::SerializationBuffer *serialization)  throw(CException) {
+void IODirectIODriver::storeRawData(const std::string& key,
+									chaos::common::data::SerializationBuffer *serialization,
+									int store_hint)  throw(CException) {
 	CHAOS_ASSERT(serialization)
 	boost::shared_lock<boost::shared_mutex>(mutext_feeder);
 	//if(next_client->connection->getState() == chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionEventConnected)
@@ -172,8 +174,11 @@ void IODirectIODriver::storeRawData(const std::string& key, chaos::common::data:
 	serialization->disposeOnDelete = !next_client;
 	if(next_client) {
 		//free the packet
-		next_client->device_client_channel->storeAndCacheDataOutputChannel(key, (void*)serialization->getBufferPtr(), (uint32_t)serialization->getBufferLen());
-		return;
+		serialization->disposeOnDelete = false;
+		next_client->device_client_channel->storeAndCacheDataOutputChannel(key,
+																		   (void*)serialization->getBufferPtr(),
+																		   (uint32_t)serialization->getBufferLen(),
+																		   (direct_io::channel::DirectIODeviceClientChannelPutMode)store_hint);
 	} else {
 		DEBUG_CODE(IODirectIODriver_DLDBG_ << "No available socket->loose packet");
 	}

@@ -19,8 +19,8 @@
  */
 
 #include "QueryDataConsumer.h"
-
 #include "worker/DeviceSharedDataWorker.h"
+
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 #include <chaos/common/utility/endianess.h>
 #include <chaos/common/utility/InetUtility.h>
@@ -51,7 +51,8 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
 	if(!settings)  throw chaos::CException(-1, "No setting provided", __FUNCTION__);
 	if(!settings->cache_driver_impl.size())  throw chaos::CException(-2, "No cache implemetation provided", __FUNCTION__);
 	if(!settings->startup_chache_servers.size())  throw chaos::CException(-3, "No cache servers provided", __FUNCTION__);
-	
+
+	//get new chaos direct io endpoint
 	server_endpoint = network_broker->getDirectIOServerEndpoint();
 	if(!server_endpoint) throw chaos::CException(-4, "Invalid server endpoint", __FUNCTION__);
 	QDCAPP_ << "QueryDataConsumer initialized with endpoint "<< server_endpoint->getRouteIndex();
@@ -74,12 +75,13 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
 	cache_driver = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
 	
 	//allocate query manager
-	query_engine = new query_engine::QueryEngine(network_broker->getDirectIOClientInstance(),
-												 settings->query_manager_thread_poll_size,
-												 vfs_manager_instance);
-	if(!query_engine) throw chaos::CException(-5, "Error allocating Query Engine", __FUNCTION__);
-	chaos::utility::StartableService::initImplementation(query_engine, init_data, "QueryEngine", __PRETTY_FUNCTION__);
-	
+	if(!settings->cache_only) {
+		query_engine = new query_engine::QueryEngine(network_broker->getDirectIOClientInstance(),
+													 settings->query_manager_thread_poll_size,
+													 vfs_manager_instance);
+		if(!query_engine) throw chaos::CException(-5, "Error allocating Query Engine", __FUNCTION__);
+		chaos::utility::StartableService::initImplementation(query_engine, init_data, "QueryEngine", __PRETTY_FUNCTION__);
+	}
 	//Sahred data worker
 	chaos::data_service::worker::DeviceSharedDataWorker *tmp = NULL;
 	for(int idx = 0; idx < settings->caching_worker_num; idx++) {
@@ -103,28 +105,32 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
 	cache_driver->updateConfig();
 	
 	//start virtual file mantainers timer
-	QDCAPP_ << "Start virtual file mantainers timer with a timeout of " << settings->vfile_mantainer_delay*1000 << "seconds";
-	chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, settings->vfile_mantainer_delay*1000);
+	if(!settings->cache_only) {
+		QDCAPP_ << "Start virtual file mantainers timer with a timeout of " << settings->vfile_mantainer_delay*1000 << "seconds";
+		chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, settings->vfile_mantainer_delay*1000);
+	}
 }
 
 void QueryDataConsumer::start() throw (chaos::CException) {
-	chaos::utility::StartableService::startImplementation(query_engine, "QueryEngine", __PRETTY_FUNCTION__);
+	if(query_engine) chaos::utility::StartableService::startImplementation(query_engine, "QueryEngine", __PRETTY_FUNCTION__);
 }
 
 void QueryDataConsumer::stop() throw (chaos::CException) {
-	chaos::utility::StartableService::stopImplementation(query_engine, "QueryEngine", __PRETTY_FUNCTION__);
+	if(query_engine) chaos::utility::StartableService::stopImplementation(query_engine, "QueryEngine", __PRETTY_FUNCTION__);
 }
 
 void QueryDataConsumer::deinit() throw (chaos::CException) {
-	QDCAPP_ << "Remove virtual file mantainers timer";
-	chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
-
+	if(!settings->cache_only) {
+		QDCAPP_ << "Remove virtual file mantainers timer";
+		chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
+	}
+	
 	QDCAPP_ << "Release direct io device channel into the endpoint";
 	server_endpoint->releaseChannelInstance(device_channel);
 	
 	if(query_engine) {
 		chaos::utility::StartableService::deinitImplementation(query_engine, "QueryEngine", __PRETTY_FUNCTION__);
-		delete(query_engine);
+		DELETE_OBJ_POINTER(query_engine)
 	}
 	
 	QDCAPP_ << "Deallocating device push data worker list";
@@ -132,8 +138,7 @@ void QueryDataConsumer::deinit() throw (chaos::CException) {
 		QDCAPP_ << "Release device worker "<< idx;
 		device_data_worker[idx]->stop();
 		device_data_worker[idx]->deinit();
-		delete(device_data_worker[idx]);
-		device_data_worker[idx] = NULL;
+		DELETE_OBJ_POINTER(device_data_worker[idx])
 	}
 	free(device_data_worker);
 }
@@ -165,6 +170,7 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
 													   header->field.p_port %
 													   header->field.s_port %
 													   header->field.endpoint);
+	//compose the id of the query
 	std::string query_id(header->field.query_id, 8);
 	//execute the query
 	query_engine->executeQuery(new query_engine::DataCloudQuery(query_id,

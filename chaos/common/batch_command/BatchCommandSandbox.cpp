@@ -585,7 +585,7 @@ void BatchCommandSandbox::runCommand() {
 						//adjust a little bit the jitter
 						if(curr_executing_impl->commandFeatures.featureSchedulerStepsDelay > 0) {
 							int64_t timeToWaith = curr_executing_impl->commandFeatures.featureSchedulerStepsDelay - stat.lastCmdStepTime;
-							threadSchedulerPauseCondition.waitUSec(timeToWaith>0?timeToWaith:0);
+							threadSchedulerPauseCondition.wait(timeToWaith>0?timeToWaith:0);
 						}
 						break;
 					}

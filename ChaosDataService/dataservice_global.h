@@ -22,6 +22,7 @@
 namespace chaos{
     namespace data_service {
 
+#define OPT_CACHE_ONLY				"cache_only"
 #define OPT_RUN_MODE				"run_mode"
 		
 		//cache configuration
@@ -74,7 +75,7 @@ namespace chaos{
 		
 		//! Setting for dataservice configuration
 		typedef struct ChaosDataServiceSetting {
-
+			bool						cache_only;
 			//!cache configuration
 			std::string					cache_driver_impl;
 			CacheServerList				startup_chache_servers;
@@ -97,8 +98,8 @@ namespace chaos{
 			vfs::VFSManagerSetting		file_manager_setting;
 			
 			//-------------index system------------------
-			//! current index driver implementaiton to use
-			std::string index_driver_impl;
+			//! current db driver implementaiton to use
+			std::string db_driver_impl;
 			
 			//! the instance of the index driver for this manager
 			::chaos::data_service::db_system::DBDriverSetting db_driver_setting;

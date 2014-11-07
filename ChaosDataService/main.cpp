@@ -31,6 +31,11 @@ int main(int argc, char * argv[]) {
 		std::vector<std::string> cache_servers;
 		
 		//cache parameter
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< bool >(OPT_CACHE_ONLY,
+																							 "Specify if we need to enable only the caching feature(no history managment)",
+																							 true,
+																							 &ChaosDataService::getInstance()->settings.cache_only);
+
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_RUN_MODE,
 																									 "Specify the run mode[1 - Query Consumer, 2 - Stage Indexer, 3 - Both]");
 		
@@ -63,18 +68,6 @@ int main(int argc, char * argv[]) {
 																									 "Number ofthread in the pool of query consumer",
 																									 QUERY_CONSUMER_QM_THREAD_POOL_SIZE,
 																									 &ChaosDataService::getInstance()->settings.query_manager_thread_poll_size);
-		
-		//answer conf
-		//ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_ANSWER_WORKER_NUM,
-		//																						 "The number of the answer worker",
-		//																						 ANSWER_WORKER_NUMBER,
-		//																						 &ChaosDataService::getInstance()->settings.answer_worker_num);
-		
-		//ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_ANSWER_WORKER_THREAD,
-		//																						 "The thread number of each answer worker",
-		//																						 1,
-		//																						 &ChaosDataService::getInstance()->settings.answer_worker_setting.job_thread_number);
-		
 		//indexer
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_INDEXER_WORKER_NUM,
 																								 "The number of the indexer worker",
@@ -103,7 +96,7 @@ int main(int argc, char * argv[]) {
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_DB_DRIVER_IMPL,
 																									"The name of the index driver implementation [MongoDB]",
 																									"Mongo",
-																									&ChaosDataService::getInstance()->settings.index_driver_impl);
+																									&ChaosDataService::getInstance()->settings.db_driver_impl);
 		
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_DB_DRIVER_SERVERS,
 																												 "The list of the index servers",

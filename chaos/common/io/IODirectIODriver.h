@@ -128,7 +128,9 @@ namespace chaos{
 				/*
 				 * storeRawData
 				 */
-				virtual void storeRawData(const std::string& key, chaos_data::SerializationBuffer *serialization)  throw(CException);
+				virtual void storeRawData(const std::string& key,
+										  chaos_data::SerializationBuffer *serialization,
+										  int store_hint)  throw(CException);
 				
 				/*
 				 * retriveRawData

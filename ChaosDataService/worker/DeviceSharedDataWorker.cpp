@@ -39,29 +39,34 @@ void DeviceSharedDataWorker::init(void *init_data) throw (chaos::CException) {
 	std::string path(UUIDUtil::generateUUIDLite());
 	
 	DSDW_LAPP_ << "allocating cache driver for every thread";
-	for(int idx = 0; idx < settings.job_thread_number; idx++) {
-		std::string stage_file_name("/thread_");
-		stage_file_name.append(boost::lexical_cast<std::string>(idx));
-		
-		ThreadCookie *_tc_ptr = new ThreadCookie();
-		if(vfs_manager_instance->getWriteableStageFile(path+stage_file_name, &_tc_ptr->vfs_stage_file)) {
-			//we have got an error
-			DSDW_LERR_ << "Error getting vfs file for " << path+stage_file_name;
-			throw chaos::CException(-2, "Error creating vfs stage file", __PRETTY_FUNCTION__);
+	if(vfs_manager_instance) {
+		//we have the file manager configure
+		for(int idx = 0; idx < settings.job_thread_number; idx++) {
+			std::string stage_file_name("/thread_");
+			stage_file_name.append(boost::lexical_cast<std::string>(idx));
+			
+			ThreadCookie *_tc_ptr = new ThreadCookie();
+			if(vfs_manager_instance->getWriteableStageFile(path+stage_file_name, &_tc_ptr->vfs_stage_file)) {
+				//we have got an error
+				DSDW_LERR_ << "Error getting vfs file for " << path+stage_file_name;
+				throw chaos::CException(-2, "Error creating vfs stage file", __PRETTY_FUNCTION__);
+			}
+			//associate the thread cooky for the idx value
+			thread_cookie[idx] = _tc_ptr;
 		}
-		//associate the thread cooky for the idx value
-		thread_cookie[idx] = _tc_ptr;
 	}
-	
 	cache_driver_ptr = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
 }
 
 void DeviceSharedDataWorker::deinit() throw (chaos::CException) {
-	for(int idx = 0; idx < settings.job_thread_number; idx++) {
-		ThreadCookie *tmp_cookie = reinterpret_cast<ThreadCookie *>(thread_cookie[idx]);
-		vfs_manager_instance->releaseFile(tmp_cookie->vfs_stage_file);
+	if(vfs_manager_instance) {
+		for(int idx = 0; idx < settings.job_thread_number; idx++) {
+			ThreadCookie *tmp_cookie = reinterpret_cast<ThreadCookie *>(thread_cookie[idx]);
+			vfs_manager_instance->releaseFile(tmp_cookie->vfs_stage_file);
+		}
+		
+		std::memset(thread_cookie, 0, sizeof(void*)*settings.job_thread_number);
 	}
-	std::memset(thread_cookie, 0, sizeof(void*)*settings.job_thread_number);
 	if(cache_driver_ptr) delete(cache_driver_ptr);
 	DataWorker::deinit();
 }
@@ -102,27 +107,32 @@ bool DeviceSharedDataWorker::submitJobInfo(WorkerJobPtr job_info) {
 	DeviceSharedWorkerJob *job_ptr = reinterpret_cast<DeviceSharedWorkerJob*>(job_info);
 	switch(job_ptr->request_header->tag) {
 		case 0:// storicize only
-			result = DataWorker::submitJobInfo(job_info);
+			if(vfs_manager_instance) result = DataWorker::submitJobInfo(job_info);
 			break;
 			
 		case 2:// storicize and live
 			cache_driver_ptr->putData(GET_PUT_OPCODE_KEY_PTR(job_ptr->request_header),
-														  job_ptr->request_header->key_len,
-														  job_ptr->data_pack,
-														  job_ptr->data_pack_len);
-			result = DataWorker::submitJobInfo(job_info);
+									  job_ptr->request_header->key_len,
+									  job_ptr->data_pack,
+									  job_ptr->data_pack_len);
+			//if we have the file manager configure we can push the job for write data in storage workfloy
+			if(vfs_manager_instance) result = DataWorker::submitJobInfo(job_info);
 			break;
 			
 		case 1:{// live only only
 			cache_driver_ptr->putData(GET_PUT_OPCODE_KEY_PTR(job_ptr->request_header),
-														  job_ptr->request_header->key_len,
-														  job_ptr->data_pack,
-														  job_ptr->data_pack_len);
-			free(job_ptr->request_header);
-			free(job_ptr->data_pack);
-			free(job_info);
+									  job_ptr->request_header->key_len,
+									  job_ptr->data_pack,
+									  job_ptr->data_pack_len);
 			break;
 		}
+	}
+	
+	if(job_ptr->request_header->tag == 1 ||
+	   !vfs_manager_instance) {
+		free(job_ptr->request_header);
+		free(job_ptr->data_pack);
+		free(job_info);
 	}
 	return result;
 }

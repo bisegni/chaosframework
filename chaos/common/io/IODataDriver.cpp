@@ -30,13 +30,15 @@ void IODataDriver::deinit() throw(CException) {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void IODataDriver::storeData(const std::string& key, CDataWrapper *dataToStore) throw(CException){
+void IODataDriver::storeData(const std::string& key,
+							 CDataWrapper *dataToStore,
+							 int store_hint) throw(CException){
     
     if(!dataToStore) return;
 	
 	SerializationBuffer* serialization = dataToStore->getBSONData();
 
-	storeRawData(key, serialization);
+	storeRawData(key, serialization, store_hint);
 	
 	delete(dataToStore);
 }
