@@ -356,7 +356,7 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
 		cache_custom_attribute_vector.clear();
 		cache_system_attribute_vector.clear();
 		
-		ACULAPP_ << "Dellcocate the user cache wrapper";
+		ACULAPP_ << "Deallocate the user cache wrapper";
 		if(attribute_shared_cache_wrapper) {
 			delete(attribute_shared_cache_wrapper);
 			attribute_shared_cache_wrapper = NULL;
@@ -568,6 +568,9 @@ void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
 	
 	//add error message attribute
 	domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_LAST_ERROR_MESSAGE, 255, DataType::TYPE_STRING);
+	
+	//add error domain
+	domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_LAST_ERROR_DOMAIN, 255, DataType::TYPE_STRING);
 }
 
 /*

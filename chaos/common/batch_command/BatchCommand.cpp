@@ -18,6 +18,7 @@
  *    	limitations under the License.
  */
 #include <string>
+#include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/batch_command/BatchCommand.h>
 using namespace chaos;
 using namespace chaos::common::data;
@@ -46,6 +47,7 @@ BatchCommand::BatchCommand() {
 	//set default value for running property and submission flag
     runningProperty = RunningPropertyType::RP_Normal;
     submissionRule = SubmissionRuleType::SUBMIT_NORMAL;
+
 }
 
 // default destructor
@@ -56,6 +58,10 @@ BatchCommand::~BatchCommand() {
 //return the unique id
 uint64_t BatchCommand::getUID() {
 	return unique_id;
+}
+
+void BatchCommand::setCommandAlias(const std::string& _command_alias) {
+	fault_description.source = command_alias = _command_alias;
 }
 
 /*
@@ -78,15 +84,15 @@ bool BatchCommand::timeoutHandler() {return true;}
 
 //! called befor the command start the execution
 void BatchCommand::commandPre() {
-	timing_stats.command_set_time_usec = boost::chrono::duration_cast<boost::chrono::milliseconds>(boost::chrono::steady_clock::now().time_since_epoch()).count();
+	timing_stats.command_set_time_usec = TimingUtil::getTimeStamp();
 }
 
 #define SET_FAULT(c, m, d) \
 BC_FAULT_RUNNIG_PROPERTY \
 BCLERR_ << "Exception -> err:" << c << " msg: "<<m<<" domain:"<<d; \
-faultDescription.code = c; \
-faultDescription.description = m; \
-faultDescription.domain = d;
+fault_description.code = c; \
+fault_description.description = m; \
+fault_description.domain = d;
 //! called after the command step excecution
 void BatchCommand::commandPost() {
 	if(commandFeatures.featuresFlag & features::FeaturesFlagTypes::FF_SET_COMMAND_TIMEOUT) {

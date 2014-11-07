@@ -98,6 +98,11 @@ namespace chaos {
 					ValueSetting *last_ru_id_cache;
 					//fast unit last acq ts cache value
 					ValueSetting *last_acq_ts_cache;
+					
+					//fast cache error variable accessor
+					ValueSetting *last_error_code;
+					ValueSetting *last_error_message;
+					ValueSetting *last_error_domain;
                 protected:
                     
                     //! Private constructor

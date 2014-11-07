@@ -116,7 +116,7 @@ namespace chaos{
                 uint8_t submissionRule;
                 
                 //! Fault description
-                FaultDescription faultDescription;
+                FaultDescription fault_description;
                 
                 //! shared setting across all slow command
                 SharedCacheInterface *sharedAttributeSettingPtr;
@@ -155,6 +155,8 @@ namespace chaos{
 				
 				//! return the last step time of the sandbox
 				uint64_t getLastStepTime();
+				
+				void setCommandAlias(const std::string& _command_alias);
 				
 				//! set the features with the uint32 value
 				/*!

@@ -564,6 +564,9 @@ namespace chaos {
 		
 		//!is the last error message occurred into data producer
 		static const char * const DP_SYS_LAST_ERROR_MESSAGE	= "dp_sys_lerr_msg";
+
+		//!is the domain where the last error has occurred into data producer
+		static const char * const DP_SYS_LAST_ERROR_DOMAIN	= "dp_sys_lerr_domain";
 		
 		//!is the number of run unit
 		static const char * const DP_SYS_RUN_UNIT_AVAILABLE	= "dp_sys_ru_available";
