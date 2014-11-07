@@ -229,7 +229,12 @@ void RTAbstractControlUnit::executeOnThread() {
 		cache_output_attribute_vector[timestamp_acq_cache_index]->setValue(&acq_timestamp, sizeof(uint64_t), false);
 		
 		if(acq_timestamp > last_hearbeat_time+1000) {
-			cache_custom_attribute_vector[0]->setValue(&acq_timestamp, sizeof(uint64_t));
+            // TODO: NOT CLEAR
+            if(cache_custom_attribute_vector.size()){
+                cache_custom_attribute_vector[0]->setValue(&acq_timestamp, sizeof(uint64_t));
+            }
+            //////
+            
 			//fire new hearbeat
 			pushSystemDataset();
 			//reset time for heartbeat
