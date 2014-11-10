@@ -191,7 +191,8 @@ namespace chaos{
 										   std::vector<ValueSetting*>& cached_value);
 				
 				//! filel the dataset packet for the cached attribute in the array
-				void fillCDatawrapperWithCachedValue(std::vector<ValueSetting*>& cached_attributes, CDataWrapper& dataset);
+				inline void fillCDatawrapperWithCachedValue(std::vector<ValueSetting*>& cached_attributes,
+															CDataWrapper& dataset);
 			protected:
 				//! is the index within the output attribute shared cache for the acquisition time stamp
 				//! it is keep at the beginnig of the run method

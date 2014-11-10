@@ -45,6 +45,7 @@ namespace chaos {
 				friend class ControlManager;
 				friend class DomainActionsScheduler;
 				
+				uint64_t **hb_handle;
 				uint64_t last_hearbeat_time;
 				uint64_t schedule_dalay;
 				bool scheduler_run;

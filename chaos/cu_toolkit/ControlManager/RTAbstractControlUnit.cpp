@@ -118,6 +118,9 @@ void RTAbstractControlUnit::start() throw(CException) {
 	//call parent impl
 	AbstractControlUnit::start();
 	
+	//prefetch handle for heartbeat cached value
+	hb_handle = reinterpret_cast<uint64_t**>(&attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_SYSTEM, DataPackSystemKey::DP_SYS_HEARTBEAT)->value_buffer);
+	
     RTCULAPP_ << "Starting thread for device:" << DatasetDB::getDeviceID();
     threadStartStopManagment(true);
     RTCULAPP_ << "Thread started for device:" << DatasetDB::getDeviceID();
@@ -222,18 +225,15 @@ CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* updatePac
  */
 void RTAbstractControlUnit::executeOnThread() {
 	uint64_t acq_timestamp = 0;
-	
 	while(scheduler_run) {
 		//set the acquiition time stamp and update it on cache
 		acq_timestamp = TimingUtil::getTimeStamp();
 		cache_output_attribute_vector[timestamp_acq_cache_index]->setValue(&acq_timestamp, sizeof(uint64_t), false);
 		
 		if(acq_timestamp > last_hearbeat_time+1000) {
-            // TODO: NOT CLEAR
-            if(cache_custom_attribute_vector.size()){
-                cache_custom_attribute_vector[0]->setValue(&acq_timestamp, sizeof(uint64_t));
-            }
-            //////
+			//set eh
+			**hb_handle = acq_timestamp;
+			//cache_system_attribute_vector[0]->setValue(&acq_timestamp, sizeof(uint64_t));
             
 			//fire new hearbeat
 			pushSystemDataset();

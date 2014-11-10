@@ -38,7 +38,8 @@ void AttributeSharedCacheWrapper::setOutputDomainAsChanged() {
 
 // Set the value for a determinated variable in a determinate domain
 void AttributeSharedCacheWrapper::setOutputAttributeValue(const std::string& attribute_name,
-														void * value, uint32_t size) {
+														  void * value,
+														  uint32_t size) {
 	CHAOS_ASSERT(attribute_value_shared_cache)
 	attribute_value_shared_cache->setVariableValue(AttributeValueSharedCache::SVD_OUTPUT,
 												   attribute_name,

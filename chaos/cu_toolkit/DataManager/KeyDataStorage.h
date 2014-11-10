@@ -25,6 +25,7 @@
 #include <chaos/common/io/IODataDriver.h>
 #include <chaos/common/utility/ArrayPointer.h>
 
+#include <boost/thread.hpp>
 using namespace std;
 
 namespace chaos_data = chaos::common::data;
@@ -48,6 +49,9 @@ namespace chaos{
 				string system_key;
 				string custom_key;
 				chaos_io::IODataDriver *io_data_driver;
+				
+				//mutex to protect access to data io driver
+				boost::mutex mutex_push_data;
 			public:
 				KeyDataStorage(const std::string& _key,
 							   chaos_io::IODataDriver *_io_data_driver);

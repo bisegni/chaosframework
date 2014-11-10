@@ -70,8 +70,9 @@ CDataWrapper* KeyDataStorage::getNewOutputAttributeDataWrapper() {
 ArrayPointer<CDataWrapper>* KeyDataStorage::getLastDataSet(KeyDataStorageDomain domain) {
         //retrive data from cache for the key managed by
         //this instance of keydatastorage
-	
 	CHAOS_ASSERT(io_data_driver);
+	//lock for protect the access
+	boost::unique_lock<boost::mutex> l(mutex_push_data);
 	switch(domain) {
 		case KeyDataStorageDomainOutput:
 			  return io_data_driver->retriveData(output_key);
@@ -90,6 +91,9 @@ ArrayPointer<CDataWrapper>* KeyDataStorage::getLastDataSet(KeyDataStorageDomain 
 }
 
 void KeyDataStorage::pushDataSet(KeyDataStorageDomain domain, chaos_data::CDataWrapper *dataset) {
+	CHAOS_ASSERT(io_data_driver);
+	//lock for protect the access
+	boost::unique_lock<boost::mutex> l(mutex_push_data);
 	switch(domain) {
 		case KeyDataStorageDomainOutput:
 			io_data_driver->storeData(output_key, dataset);
