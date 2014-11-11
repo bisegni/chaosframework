@@ -127,6 +127,9 @@ namespace chaos{
 				//! the wrapper for the user to isolate the shared cache
 				AttributeSharedCacheWrapper *attribute_shared_cache_wrapper;
 				
+				//! fast access for acquisition timestamp
+				ValueSetting *timestamp_acq_cached_value;
+				
 				/*!
 				 Add a new KeyDataStorage for a specific key
 				 */
@@ -194,16 +197,9 @@ namespace chaos{
 				inline void fillCDatawrapperWithCachedValue(std::vector<ValueSetting*>& cached_attributes,
 															CDataWrapper& dataset);
 			protected:
-				//! is the index within the output attribute shared cache for the acquisition time stamp
-				//! it is keep at the beginnig of the run method
-				uint32_t timestamp_acq_cache_index;
-				
 				//  It's is the dynamically assigned instance of the CU. it will be used
 				// as domain for the rpc action.
 				string control_unit_instance;
-				
-				//! index of the acquisition time stamp into the cache
-				uint32_t acq_timestamp_cache_index;
 				
 				//! Momentary driver for push data into the central memory
 				data_manager::KeyDataStorage*  keyDataStorage;

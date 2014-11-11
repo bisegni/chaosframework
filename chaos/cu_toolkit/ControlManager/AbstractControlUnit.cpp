@@ -62,7 +62,7 @@ control_unit_id(_control_unit_id),
 control_unit_param(_control_unit_param),
 attribute_value_shared_cache(NULL),
 attribute_shared_cache_wrapper(NULL),
-acq_timestamp_cache_index(0),
+timestamp_acq_cached_value(NULL),
 device_event_channel(NULL){
 }
 
@@ -79,7 +79,7 @@ control_unit_id(_control_unit_id),
 control_unit_param(_control_unit_param),
 attribute_value_shared_cache(NULL),
 attribute_shared_cache_wrapper(NULL),
-acq_timestamp_cache_index(0),
+timestamp_acq_cached_value(NULL),
 device_event_channel(NULL){
 	//copy array
 	for (int idx = 0; idx < _control_unit_drivers.size(); idx++){
@@ -445,6 +445,15 @@ void AbstractControlUnit::init(void *initData) throw(CException) {
 
 // Startable Service method
 void AbstractControlUnit::start() throw(CException) {
+	//init on shared cache the all the dataaset with the default value
+	attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_OUTPUT).markAllAsChanged();
+	pushOutputDataset();
+	attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_INPUT).markAllAsChanged();
+	pushInputDataset();
+	attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_CUSTOM).markAllAsChanged();
+	pushCustomDataset();
+	attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_SYSTEM).markAllAsChanged();
+	pushSystemDataset();
 }
 
 // Startable Service method
@@ -539,14 +548,9 @@ void AbstractControlUnit::completeOutputAttribute() {
 	ACULDBG_ << "Complete the shared cache output attribute";
 	AttributesSetting& domain_attribute_setting = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_OUTPUT);
 	
-	std::string device_id_str = DatasetDB::getDeviceID();
-	domain_attribute_setting.addAttribute(DataPackKey::CS_CSV_CU_ID, (uint32_t)device_id_str.size(), DataType::TYPE_STRING);
-	domain_attribute_setting.setValueForAttribute((domain_attribute_setting.getNumberOfAttributes()-1), device_id_str.c_str(), (uint32_t)device_id_str.size());
-	
+	//add timestamp
 	domain_attribute_setting.addAttribute(DataPackKey::CS_CSV_TIME_STAMP, sizeof(uint64_t), DataType::TYPE_INT64);
-	
-	//get the timestamp index
-	timestamp_acq_cache_index = domain_attribute_setting.getNumberOfAttributes() - 1;
+	timestamp_acq_cached_value = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(DataPackKey::CS_CSV_TIME_STAMP));
 }
 
 void AbstractControlUnit::completeInputAttribute() {
@@ -555,6 +559,7 @@ void AbstractControlUnit::completeInputAttribute() {
 
 void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
 	AttributesSetting& domain_attribute_setting = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_SYSTEM);
+	
 	//add heart beat attribute
 	ACULDBG_ << "Adding syste attribute on shared cache";
 	domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_HEARTBEAT, 0, DataType::TYPE_INT64);
@@ -762,15 +767,12 @@ void AbstractControlUnit::pushOutputDataset() {
 	CDataWrapper *output_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
 	if(!output_attribute_dataset) return;
 	
-	//the device id is preinsert by keyDataStorage
-	
 	//write acq ts for second
-	ValueSetting * value_set = cache_output_attribute_vector[timestamp_acq_cache_index];
-	output_attribute_dataset->addInt64Value(value_set->name.c_str(), *value_set->getValuePtr<int64_t>());
+	output_attribute_dataset->addInt64Value(timestamp_acq_cached_value->name.c_str(), *timestamp_acq_cached_value->getValuePtr<int64_t>());
 	
 	//add all other output channel
 	for(int idx = 0;
-		idx < cache_output_attribute_vector.size() - 2; //the device id and timestamp in added out of this list
+		idx < cache_output_attribute_vector.size() - 1; //the device id and timestamp in added out of this list
 		idx++) {
 		//
 		ValueSetting * value_set = cache_output_attribute_vector[idx];
@@ -810,6 +812,9 @@ void AbstractControlUnit::pushInputDataset() {
 	//get the cdatawrapper for the pack
 	CDataWrapper *input_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
 	if(input_attribute_dataset) {
+		//input dataset timestamp is added only when pushed on cache
+		input_attribute_dataset->addInt64Value(DataPackKey::CS_CSV_TIME_STAMP, TimingUtil::getTimeStamp());
+
 		//fill the dataset
 		fillCDatawrapperWithCachedValue(cache_input_attribute_vector, *input_attribute_dataset);
 		
@@ -825,6 +830,9 @@ void AbstractControlUnit::pushCustomDataset() {
 	//get the cdatawrapper for the pack
 	CDataWrapper *custom_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
 	if(custom_attribute_dataset) {
+		//custom dataset timestamp is added only when pushed on cache
+		custom_attribute_dataset->addInt64Value(DataPackKey::CS_CSV_TIME_STAMP, TimingUtil::getTimeStamp());
+
 		//fill the dataset
 		fillCDatawrapperWithCachedValue(cache_custom_attribute_vector, *custom_attribute_dataset);
 		
@@ -839,6 +847,10 @@ void AbstractControlUnit::pushSystemDataset() {
 	//get the cdatawrapper for the pack
 	CDataWrapper *system_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
 	if(system_attribute_dataset) {
+		//system dataset timestamp is added when pushed on cache laso if contain the hearbeat field
+		//! the dataaset can be pushed also in other moment
+		system_attribute_dataset->addInt64Value(DataPackKey::CS_CSV_TIME_STAMP, TimingUtil::getTimeStamp());
+
 		//fill the dataset
 		fillCDatawrapperWithCachedValue(cache_system_attribute_vector, *system_attribute_dataset);
 		

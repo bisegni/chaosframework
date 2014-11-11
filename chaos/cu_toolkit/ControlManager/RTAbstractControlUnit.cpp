@@ -118,8 +118,9 @@ void RTAbstractControlUnit::start() throw(CException) {
 	//call parent impl
 	AbstractControlUnit::start();
 	
-	//prefetch handle for heartbeat cached value
-	hb_handle = reinterpret_cast<uint64_t**>(&attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_SYSTEM, DataPackSystemKey::DP_SYS_HEARTBEAT)->value_buffer);
+	//prefetch handle for heartbeat and acuisition ts cached value
+	hb_cached_value = attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_SYSTEM, DataPackSystemKey::DP_SYS_HEARTBEAT);
+	run_acquisition_ts_handle = reinterpret_cast<uint64_t**>(&attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_OUTPUT, DataPackKey::CS_CSV_TIME_STAMP)->value_buffer);
 	
     RTCULAPP_ << "Starting thread for device:" << DatasetDB::getDeviceID();
     threadStartStopManagment(true);
@@ -224,23 +225,16 @@ CDataWrapper* RTAbstractControlUnit::updateConfiguration(CDataWrapper* updatePac
  Execute the scehduling for the device
  */
 void RTAbstractControlUnit::executeOnThread() {
-	uint64_t acq_timestamp = 0;
 	while(scheduler_run) {
 		//set the acquiition time stamp and update it on cache
-		acq_timestamp = TimingUtil::getTimeStamp();
-		cache_output_attribute_vector[timestamp_acq_cache_index]->setValue(&acq_timestamp, sizeof(uint64_t), false);
-		
-		if(acq_timestamp > last_hearbeat_time+1000) {
-			//set eh
-			**hb_handle = acq_timestamp;
-			//cache_system_attribute_vector[0]->setValue(&acq_timestamp, sizeof(uint64_t));
-            
-			//fire new hearbeat
+		if((**run_acquisition_ts_handle = TimingUtil::getTimeStamp()) > last_hearbeat_time+1000) {
+			//copy to hearbeat cached value
+			last_hearbeat_time = **run_acquisition_ts_handle;
+			hb_cached_value->setValue(&last_hearbeat_time, sizeof(uint64_t));
+			//fire system data set
 			pushSystemDataset();
-			//reset time for heartbeat
-			last_hearbeat_time = acq_timestamp;
 		}
-		
+		//! exec the control unit step
 		unitRun();
 		
 		//! check if the output dataset need to be pushed

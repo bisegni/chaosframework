@@ -555,8 +555,8 @@ void BatchCommandSandbox::runCommand() {
 												  &stat.lastCmdStepStart, sizeof(uint64_t));
 			}
 			
-			//coompute step duration
-			stat.lastCmdStepTime = TimingUtil::getTimeStamp();
+			//compute step duration
+			stat.lastCmdStepTime = stat.lastCmdStepStart - TimingUtil::getTimeStamp();
 			
 			if(stat.lastCmdStepStart > stat.lastHBTime + 1000) {
 				stat.lastHBTime = stat.lastCmdStepStart;
@@ -584,8 +584,8 @@ void BatchCommandSandbox::runCommand() {
 						DEBUG_CODE(SCSLDBG_ << "[runCommand] - waith the delay needed by current command";)
 						//adjust a little bit the jitter
 						if(curr_executing_impl->commandFeatures.featureSchedulerStepsDelay > 0) {
-							int64_t timeToWaith = curr_executing_impl->commandFeatures.featureSchedulerStepsDelay - stat.lastCmdStepTime;
-							threadSchedulerPauseCondition.wait(timeToWaith>0?timeToWaith:0);
+							int64_t timeToWaith = curr_executing_impl->commandFeatures.featureSchedulerStepsDelay - (stat.lastCmdStepTime*1000);
+							threadSchedulerPauseCondition.waitUSec(timeToWaith>0?timeToWaith:0);
 						}
 						break;
 					}

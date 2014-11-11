@@ -150,7 +150,7 @@ namespace chaos {
                     //! If true the user modification to the features are denied
                     //bool lockedOnUserModification;
                     
-                    //! Command specific delay beetween two sequence of the commadn step (acquire->correlation) in microseocnds
+                    //! Command specific delay beetween two sequence of the commadn step (acquire->correlation) in milliseconds
                     uint64_t featureSchedulerStepsDelay;
                     
                     //! Checker time
