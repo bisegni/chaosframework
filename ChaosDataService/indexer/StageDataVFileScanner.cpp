@@ -60,6 +60,7 @@ boost::shared_ptr<DataFileInfo> StageDataVFileScanner::getWriteableFileForDID(co
 		
 		//we need to create a new data file for new readed unique identifier
 		if(!vfs_manager->getWriteableDataFile(did, &result->data_file_ptr) && result->data_file_ptr){
+			boost::unique_lock<boost::mutex> lock(mutext_did_data_file);
 			//insert file into the hasmap
 			map_did_data_file.insert(make_pair(did, result));
 		}else {
@@ -74,6 +75,7 @@ boost::shared_ptr<DataFileInfo> StageDataVFileScanner::getWriteableFileForDID(co
 
 int StageDataVFileScanner::closeAllDatafile() {
 	int err = 0;
+	boost::unique_lock<boost::mutex> lock(mutext_did_data_file);
 	//scan as endded with error so we need to clean
 	for(std::map<std::string, shared_ptr<DataFileInfo> >::iterator it =  map_did_data_file.begin();
 		it != map_did_data_file.end();
@@ -96,7 +98,7 @@ int StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack) {
 	uint64_t cur_ts = chaos::TimingUtil::getTimeStamp();
 	
 	if(!data_pack.hasField(chaos::DataPackKey::CS_CSV_CU_ID) ||
-	   !data_pack.hasField(chaos::DataPackKey::CS_CSV_CU_ID)) {
+	   !data_pack.hasField(chaos::DataPackKey::CS_CSV_TIME_STAMP)) {
 		StageDataVFileScannerLDBG_ << "Current scanned data pack doesn't have required field so we skip it";
 		return 0;
 	}
@@ -175,6 +177,7 @@ int StageDataVFileScanner::endScanHandler(int end_scan_error) {
 		StageDataVFileScannerLAPP_ << "An error has occurred during scanner, close all datafile";
 		closeAllDatafile();
 	} else {
+		boost::unique_lock<boost::mutex> lock(mutext_did_data_file);
 		//all is gone weel but we need to do some mantainance
 		//scan as endded with error so we need to clean
 		for(std::map<std::string, shared_ptr<DataFileInfo> >::iterator it =  map_did_data_file.begin();
@@ -191,4 +194,9 @@ int StageDataVFileScanner::endScanHandler(int end_scan_error) {
 
 	}
 	return err;
+}
+
+int StageDataVFileScanner::mantains() {
+	//mantains file
+	return endScanHandler(0);
 }

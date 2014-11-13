@@ -81,6 +81,9 @@ namespace chaos{
 				
 				//! scan an entire block of the stage file
 				int scan();
+				
+				//! matains stage
+				virtual int mantains() = 0;
 			};
 		}
 	}

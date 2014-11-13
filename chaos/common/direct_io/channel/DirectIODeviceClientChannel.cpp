@@ -223,7 +223,7 @@ int64_t DirectIODeviceClientChannel::sendResultToQueryDataCloud(const std::strin
 
 //! Set the end of the answer to a query
 int64_t DirectIODeviceClientChannel::endQueryDataCloudResult(const std::string& query_id,
-															 uint32_t error,
+															 int32_t error,
 															 const std::string& error_message) {
 	DECLARE_AND_CALLOC_DATA_PACK(data_pack)
 	DECLARE_AND_CALLOC_HEADER(DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResult, cq_end_result_header)

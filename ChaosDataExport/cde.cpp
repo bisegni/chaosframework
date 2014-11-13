@@ -316,17 +316,20 @@ int main(int argc, char* argv[])
 					sendBackOnRow();
 				}
 				
+				//print last percent
+				if(query_future->getState() != chaos::common::io::QueryFutureStateError) {
+					std::cout << "Exporting ";
+					printPercendDone(computePercent(query_future->getCurrentElementIndex(), query_future->getTotalElementFound()));
+					std::cout << std::endl;
+				}
+
 			};
-			//print last percent
-			std::cout << "Exporting ";
-			printPercendDone(computePercent(query_future->getCurrentElementIndex(), query_future->getTotalElementFound()));
-			std::cout << std::endl;
-			//print the statistic
+						//print the statistic
 			printStat(query_future);
-			std::cout << "Releasing query";
+			std::cout << "Releasing query" << std::endl;
 			//release the query
 			controller->releaseQuery(query_future);
-			std::cout << "Releasing controller";
+			std::cout << "Releasing controller" << std::endl;
 			HLDataApi::getInstance()->disposeDeviceControllerPtr(controller);
 		}
 	} catch (CException& e) {

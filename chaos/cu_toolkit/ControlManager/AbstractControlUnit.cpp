@@ -446,6 +446,8 @@ void AbstractControlUnit::init(void *initData) throw(CException) {
 // Startable Service method
 void AbstractControlUnit::start() throw(CException) {
 	//init on shared cache the all the dataaset with the default value
+	//set first timestamp for simulate the run step
+	*timestamp_acq_cached_value->getValuePtr<uint64_t>() = TimingUtil::getTimeStamp();
 	attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_OUTPUT).markAllAsChanged();
 	pushOutputDataset();
 	attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_INPUT).markAllAsChanged();

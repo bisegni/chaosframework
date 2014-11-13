@@ -165,12 +165,13 @@ void StageDataConsumer::scanStage() {
 	while(work_on_stage) {
 		if((scanner_info = getNextAvailableScanner())) {
 			StageDataConsumerLAPP_ << "Schedule scanner "<< scanner_info->index << " of" << global_scanner_num << " for file ->"<< scanner_info->scanner->getScannedVFSPath();
-			// scan a compelte block
+			// scan a complete block
 			scanner_info->scanner->scan();
-			//give some time to kernel
-			
+			//mantains scanner
+			scanner_info->scanner->mantains();
 			StageDataConsumerLAPP_ << "End scanner for file ->"<< scanner_info->scanner->getScannedVFSPath();
 			
+			//reschedule scanner
 			rescheduleScannerInfo(scanner_info);
 		}
 		//waith some time
