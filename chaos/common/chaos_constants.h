@@ -536,18 +536,18 @@ namespace chaos {
 		//!define the device unique key, this represent the primary key of the producer[string]
 		static const char * const DPCK_DEVICE_ID                       = "dpck.device_id";
 		
-		//!this define the acquisition timestamp of the data rapresented by the dataset[uint64_t]
+		//!this define the acquisition timestamp of the data represented by the dataset[uint64_t]
 		static const char * const DPCK_TIMESTAMP                       = "dpck.ts";
 		
 		//!define the type of the dataset [output(0) - input(1) - custom(2) - system(3) int32_t]
 		static const char * const DPCK_DATASET_TYPE                    = "dpck.ds_type";
-		//! the constant that represent the output dataaset type
+		//! the constant that represent the output dataset type
 		static const unsigned int DPCK_DATASET_TYPE_OUTPUT             = 0;
-		//! the constant that represent the input dataaset type
+		//! the constant that represent the input dataset type
 		static const unsigned int DPCK_DATASET_TYPE_INPUT              = 1;
-		//! the constant that represent the custom dataaset type
+		//! the constant that represent the custom dataset type
 		static const unsigned int DPCK_DATASET_TYPE_CUSTOM             = 2;
-		//! the constant that represent the system dataaset type
+		//! the constant that represent the system dataset type
 		static const unsigned int DPCK_DATASET_TYPE_SYSTEM             = 3;
 	}
 	 /** @} */ // end of DataPackCommonKey
