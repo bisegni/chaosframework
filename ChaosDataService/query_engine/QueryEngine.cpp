@@ -360,6 +360,7 @@ void QueryEngine::freeSentData(void* sent_data_ptr, common::direct_io::DisposeSe
  ---------------------------------------------------------------------------------*/
 void QueryEngine::process_query() {
 	int err = 0;
+	int32_t query_error = 0;
 	DataCloudQuery *query = NULL;
 	QEDBG_ << "Enter process query thread";
 	while(work_on_query) {
@@ -374,8 +375,8 @@ void QueryEngine::process_query() {
 						QEERR_ << "Error executing query";
 						query->query_phase = DataCloudQuery::DataCloudQueryPhaseError;
 						
-						//send end of result phase
-						sendEndResultFaseToClient(query, -1);
+						//set error
+						query_error = -1;
 					} else {
 						query->query_phase = DataCloudQuery::DataCloudQueryPhaseFetchData;
 						sendStartResultFaseToClient(query);
@@ -386,6 +387,7 @@ void QueryEngine::process_query() {
 					QEDBG_ << "Answer "<< QUERY_INFO((*query));
 					if((err = query->vfs_query->readDataPackPage(query->fetchedAndForwadInfo.fetched_data_vector, 100))) {
 						query->query_phase = DataCloudQuery::DataCloudQueryPhaseError;
+						query_error = -2;
 					} else {
 						if(query->fetchedAndForwadInfo.fetched_data_vector.size() == 0 &&
 						   query->vfs_query->getNumberOfFetchedElement() == query->vfs_query->getNumberOfElementFound()) {
@@ -405,6 +407,7 @@ void QueryEngine::process_query() {
 					if((err = sendDataToClient(query))) {
 						//if there is an error sending data back to client remove the query
 						query->query_phase = DataCloudQuery::DataCloudQueryPhaseError;
+						query_error = -3;
 					} else if(!query->fetchedAndForwadInfo.number_of_element_to_forward) {
 						//we have forward all element so whe ned to fetch another page of data
 						query->query_phase = DataCloudQuery::DataCloudQueryPhaseFetchData;
@@ -429,7 +432,7 @@ void QueryEngine::process_query() {
 				switch(query->query_phase) {
 					case DataCloudQuery::DataCloudQueryPhaseError:
 						QEDBG_ << "Error on "<< QUERY_INFO((*query));
-						sendEndResultFaseToClient(query, -2);
+						sendEndResultFaseToClient(query, query_error);
 						break;
 						
 					case DataCloudQuery::DataCloudQueryPhaseEnd:

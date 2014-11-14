@@ -330,7 +330,7 @@ int VFSFile::syncCurrentOffsetToJournal() {
  ---------------------------------------------------------------------------------*/
 int VFSFile::mantain(int closing_state) {
 	int err = 0;
-	if(!isDataBlockValid(current_journal_data_block)) {
+	if(!isDataBlockValid(current_data_block)) {
 		if((err = closeCurrentDataBlock(closing_state))) {
 		VFSF_LERR_ << "Error closing datablock " << err;
 		}

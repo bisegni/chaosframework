@@ -176,7 +176,7 @@ namespace chaos {
 							//! error occured ifthere was one
 							int32_t	error;
 							
-							//!string error message passed as data(if there is one
+							//!string error message passed as data(if there is one)
 							uint32_t error_message_length;
 						} field;
 					} DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResult, *DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResultPtr;

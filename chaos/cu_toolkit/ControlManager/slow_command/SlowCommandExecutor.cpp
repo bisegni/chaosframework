@@ -216,7 +216,7 @@ void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
 			uint64_t *hb = static_cast<uint64_t*>(type_value_ptr);
 			if(!last_acq_ts_cache) {
 				last_acq_ts_cache =  getAttributeSharedCache()->getVariableValue(SharedCacheInterface::SVD_OUTPUT,
-																				 DataPackKey::CS_CSV_TIME_STAMP);
+																				 DataPackCommonKey::DPCK_TIMESTAMP);
 				if(!last_acq_ts_cache) {
 					SCELERR_ << "Error gettin cache slot for acquisition timestamp";
 					return;

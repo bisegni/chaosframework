@@ -73,7 +73,7 @@ namespace chaos{
 				uint64_t last_hb_on_vfile;
 				
 				//!association between did and his data file
-				boost::shared_mutex mutext_did_data_file;
+				boost::mutex mutext_did_data_file;
 				std::map<std::string, shared_ptr<DataFileInfo> > map_did_data_file;
 
 				
@@ -92,6 +92,13 @@ namespace chaos{
 									  vfs::VFSStageReadableFile *_working_stage_file);
 				
 				~StageDataVFileScanner();
+				
+				//! mantains all the allocated writeable file
+				/*!
+				 All data file allcoated need to be closed when it belong
+				 no more valid
+				 */
+				int mantains();
 			};
 		}
 	}

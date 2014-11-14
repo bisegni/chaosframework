@@ -446,6 +446,8 @@ void AbstractControlUnit::init(void *initData) throw(CException) {
 // Startable Service method
 void AbstractControlUnit::start() throw(CException) {
 	//init on shared cache the all the dataaset with the default value
+	//set first timestamp for simulate the run step
+	*timestamp_acq_cached_value->getValuePtr<uint64_t>() = TimingUtil::getTimeStamp();
 	attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_OUTPUT).markAllAsChanged();
 	pushOutputDataset();
 	attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_INPUT).markAllAsChanged();
@@ -549,8 +551,8 @@ void AbstractControlUnit::completeOutputAttribute() {
 	AttributesSetting& domain_attribute_setting = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_OUTPUT);
 	
 	//add timestamp
-	domain_attribute_setting.addAttribute(DataPackKey::CS_CSV_TIME_STAMP, sizeof(uint64_t), DataType::TYPE_INT64);
-	timestamp_acq_cached_value = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(DataPackKey::CS_CSV_TIME_STAMP));
+	domain_attribute_setting.addAttribute(DataPackCommonKey::DPCK_TIMESTAMP, sizeof(uint64_t), DataType::TYPE_INT64);
+	timestamp_acq_cached_value = domain_attribute_setting.getValueSettingForIndex(domain_attribute_setting.getIndexForName(DataPackCommonKey::DPCK_TIMESTAMP));
 }
 
 void AbstractControlUnit::completeInputAttribute() {
@@ -769,7 +771,8 @@ void AbstractControlUnit::pushOutputDataset() {
 	
 	//write acq ts for second
 	output_attribute_dataset->addInt64Value(timestamp_acq_cached_value->name.c_str(), *timestamp_acq_cached_value->getValuePtr<int64_t>());
-	
+	//add dataset type
+	output_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT);
 	//add all other output channel
 	for(int idx = 0;
 		idx < cache_output_attribute_vector.size() - 1; //the device id and timestamp in added out of this list
@@ -813,8 +816,11 @@ void AbstractControlUnit::pushInputDataset() {
 	CDataWrapper *input_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
 	if(input_attribute_dataset) {
 		//input dataset timestamp is added only when pushed on cache
-		input_attribute_dataset->addInt64Value(DataPackKey::CS_CSV_TIME_STAMP, TimingUtil::getTimeStamp());
+		input_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
 
+		//add dataset type
+		input_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_INPUT);
+		
 		//fill the dataset
 		fillCDatawrapperWithCachedValue(cache_input_attribute_vector, *input_attribute_dataset);
 		
@@ -831,8 +837,11 @@ void AbstractControlUnit::pushCustomDataset() {
 	CDataWrapper *custom_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
 	if(custom_attribute_dataset) {
 		//custom dataset timestamp is added only when pushed on cache
-		custom_attribute_dataset->addInt64Value(DataPackKey::CS_CSV_TIME_STAMP, TimingUtil::getTimeStamp());
+		custom_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
 
+		//add dataset type
+		custom_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_CUSTOM);
+		
 		//fill the dataset
 		fillCDatawrapperWithCachedValue(cache_custom_attribute_vector, *custom_attribute_dataset);
 		
@@ -849,8 +858,9 @@ void AbstractControlUnit::pushSystemDataset() {
 	if(system_attribute_dataset) {
 		//system dataset timestamp is added when pushed on cache laso if contain the hearbeat field
 		//! the dataaset can be pushed also in other moment
-		system_attribute_dataset->addInt64Value(DataPackKey::CS_CSV_TIME_STAMP, TimingUtil::getTimeStamp());
-
+		system_attribute_dataset->addInt64Value(DataPackCommonKey::DPCK_TIMESTAMP, TimingUtil::getTimeStamp());
+		//add dataset type
+		system_attribute_dataset->addInt32Value(DataPackCommonKey::DPCK_DATASET_TYPE, DataPackCommonKey::DPCK_DATASET_TYPE_SYSTEM);
 		//fill the dataset
 		fillCDatawrapperWithCachedValue(cache_system_attribute_vector, *system_attribute_dataset);
 		

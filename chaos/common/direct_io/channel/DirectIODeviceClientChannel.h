@@ -121,7 +121,9 @@ namespace chaos {
 					 \param is the error if there is one
 					 \param error_message is the message of the error, if one
 					 */
-					int64_t endQueryDataCloudResult(const std::string& query_id, uint32_t error, const std::string& error_message=std::string(""));
+					int64_t endQueryDataCloudResult(const std::string& query_id,
+													int32_t error,
+													const std::string& error_message=std::string(""));
 				};
 
 				

@@ -32,8 +32,8 @@ int main(int argc, char * argv[]) {
 		
 		//cache parameter
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< bool >(OPT_CACHE_ONLY,
-																							 "Specify if we need to enable only the caching feature(no history managment)",
-																							 true,
+																							 "Specify if we need to enable only the caching feature (no history managment)",
+																							 false,
 																							 &ChaosDataService::getInstance()->settings.cache_only);
 
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_RUN_MODE,

@@ -27,9 +27,10 @@ namespace chaos {
 			typedef enum QueryFutureState {
 				QueryFutureStateCreated,			/**< Query has been only created */
 				QueryFutureStateExecuted,			/**< Query has been submitted to remote endpoint */
-				QueryFutureStateStartResult,		/**< Query has received the message for begin the resutl trasmission */
+				QueryFutureStateStartResult,		/**< Query has received the message for begin the result trasmission */
 				QueryFutureStateReceivingResult,	/**< Query has receiving the result data */
-				QueryFutureStateEndResult			/**< Query has ended*/
+				QueryFutureStateEndResult,			/**< Query has ended*/
+				QueryFutureStateError				/**< Query is in error*/
 			} QueryFutureState;
 			
 			//! is the result for a query
