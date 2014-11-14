@@ -80,7 +80,7 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 	switch(job_ptr->request_header->tag) {
 		case 0:// storicize only
 		case 2:// storicize and live
-			//
+			//write data on stage file
 			this_thread_cookie->vfs_stage_file->write(job_ptr->data_pack, job_ptr->data_pack_len);
 			free(job_ptr->request_header);
 			free(job_ptr->data_pack);
@@ -139,10 +139,11 @@ bool DeviceSharedDataWorker::submitJobInfo(WorkerJobPtr job_info) {
 
 //!
 void DeviceSharedDataWorker::mantain() throw (chaos::CException) {
+	// lock for mantains
 	for(int idx = 0; idx < settings.job_thread_number; idx++) {
 		ThreadCookie *current_tread_cookie = reinterpret_cast<ThreadCookie *>(thread_cookie[idx]);
 		//write lock on mantainance mutex
-		boost::shared_lock<boost::shared_mutex> rl(current_tread_cookie->mantainance_mutex);
+		boost::unique_lock<boost::shared_mutex> rl(current_tread_cookie->mantainance_mutex);
 		
 		//mantainance on virtual file
 		current_tread_cookie->vfs_stage_file->mantain();

@@ -527,25 +527,42 @@ namespace chaos {
 	}
 	 /** @} */ // end of DataPackPrefixID
 	
-    /** @defgroup ChaosDataPackOutputAttribute Chaos Data Pack output attirbute
+	/** @defgroup DataPackCommonKey Chaos Data Pack common key
+	 This is the collection of the common key that are contained into the
+	 all the dataset of a data producer
+	 @{
+	 */
+	namespace DataPackCommonKey {
+		//!define the device unique key, this represent the primary key of the producer[string]
+		static const char * const DPCK_DEVICE_ID                       = "dpck.device_id";
+		
+		//!this define the acquisition timestamp of the data rapresented by the dataset[uint64_t]
+		static const char * const DPCK_TIMESTAMP                       = "dpck.ts";
+		
+		//!define the type of the dataset [output(0) - input(1) - custom(2) - system(3) int32_t]
+		static const char * const DPCK_DATASET_TYPE                    = "dpck.ds_type";
+		//! the constant that represent the output dataaset type
+		static const unsigned int DPCK_DATASET_TYPE_OUTPUT             = 0;
+		//! the constant that represent the input dataaset type
+		static const unsigned int DPCK_DATASET_TYPE_INPUT              = 1;
+		//! the constant that represent the custom dataaset type
+		static const unsigned int DPCK_DATASET_TYPE_CUSTOM             = 2;
+		//! the constant that represent the system dataaset type
+		static const unsigned int DPCK_DATASET_TYPE_SYSTEM             = 3;
+	}
+	 /** @} */ // end of DataPackCommonKey
+	
+    /** @defgroup DataPackKey Chaos Data Pack output attirbute
      This is the collection of the standard key that are contained into the output
 	 attribute data pack that describe a producer state
      @{
      */
     //! Namespace for standard constant used for output attribute of a producer
-    namespace DataPackKey{
-        //!define the device id key, this represent the
-        //!primary key of the device
-        static const char * const CS_CSV_CU_ID                            = "cs|csv|device_id";
-        
-        //!this define the timestamp of the data rapresented
-        //!in the dataset row
-        static const char * const CS_CSV_TIME_STAMP                           = "cs|csv|timestamp";
-        
+    namespace DataPackOutputKey {
         //!this define key associated to the trigger
-        static const char * const CS_CSV_TRIGGER_KEY                          = "cs|csv|trigger_key";
+        static const char * const DPOK_TRIGGER_CODE                   = "dpok.trigger_key";
     }
-    /** @} */ // end of ChaosDataPackOutputAttribute
+    /** @} */ // end of DataPackKey
 	
 	/** @defgroup DataPackSystemKey Chaos Data Pack for System Attribute
 	 @{

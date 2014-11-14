@@ -61,5 +61,5 @@ void LiveDataFetcher::getData(const std::string& key, CDataWrapper& newData, uin
     newData.setSerializedData(currentRawDataPtr.get());
     
         //extras the timestamp of the pack
-    ts = newData.getInt64Value(DataPackKey::CS_CSV_TIME_STAMP);
+    ts = newData.getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
 }

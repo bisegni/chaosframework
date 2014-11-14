@@ -32,8 +32,6 @@ namespace cc_data = chaos::common::data;
 
 #define MSEC_WAIT_OPERATION 1000
 
-//timestamp string variable definition
-string timestampAttributeNameStr = DataPackKey::CS_CSV_TIME_STAMP;
 
 //---------------------------------------------------------------------------------------------------
 DeviceController::DeviceController(string& _deviceID):
@@ -671,13 +669,15 @@ chaos::PointerBuffer *DeviceController::getPtrBufferForAttribute(string& attribu
 		case DataType::TYPE_BYTEARRAY:
 			result = pointerAttributeLiveBuffer[attributeName];
 			break;
+		default:
+			break;
 	}
 	return result;
 }
 
 //---------------------------------------------------------------------------------------------------
 chaos::DataBuffer *DeviceController::getPtrBufferForTimestamp(const int initialDimension) {
-	return int64AttributeLiveBuffer.count(timestampAttributeNameStr)>0? int64AttributeLiveBuffer[timestampAttributeNameStr]:NULL;
+	return int64AttributeLiveBuffer.count(DataPackCommonKey::DPCK_TIMESTAMP)>0? int64AttributeLiveBuffer[DataPackCommonKey::DPCK_TIMESTAMP]:NULL;
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -793,7 +793,7 @@ void DeviceController::fetchCurrentDatatasetFromDomain(DatasetDomain domain) {
 int DeviceController::getTimeStamp(uint64_t& live){
 	CDataWrapper * d= current_output_dataset.get();
 	if(d){
-		live = d->getInt64Value(DataPackKey::CS_CSV_TIME_STAMP);
+		live = d->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
 		return 0;
 	}
 	return -1;
@@ -807,7 +807,7 @@ void DeviceController::setupTracking() {
 	
 	//initialize timestamp buffer
 	chaos::SingleBufferCircularBuffer<int64_t> *newBuffer = new chaos::SingleBufferCircularBuffer<int64_t>(10);
-	int64AttributeLiveBuffer.insert(make_pair(timestampAttributeNameStr, newBuffer));
+	int64AttributeLiveBuffer.insert(make_pair(DataPackCommonKey::DPCK_TIMESTAMP, newBuffer));
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -827,10 +827,10 @@ void DeviceController::fetchCurrentDeviceValue() {
 	CDataWrapper *tmpPtr = current_output_dataset.get();
 	
 	//add timestamp value
-	int64_t got_ts = tmpPtr->getInt64Value(DataPackKey::CS_CSV_TIME_STAMP);
-	if(int64AttributeLiveBuffer[timestampAttributeNameStr]->getLastValue() == got_ts) return;
+	int64_t got_ts = tmpPtr->getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
+	if(int64AttributeLiveBuffer[DataPackCommonKey::DPCK_TIMESTAMP]->getLastValue() == got_ts) return;
 	
-	int64AttributeLiveBuffer[timestampAttributeNameStr]->addValue(got_ts);
+	int64AttributeLiveBuffer[DataPackCommonKey::DPCK_TIMESTAMP]->addValue(got_ts);
 	
 	//update buffer for tracked attribute
 	for (std::vector<string>::iterator iter = trackingAttribute.begin();

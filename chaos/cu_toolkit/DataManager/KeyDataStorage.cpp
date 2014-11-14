@@ -59,8 +59,8 @@ void KeyDataStorage::deinit() throw (chaos::CException) {
  */
 CDataWrapper* KeyDataStorage::getNewOutputAttributeDataWrapper() {
     CDataWrapper *result = new CDataWrapper();
-        //add key to outputdata wrapper
-    result->addStringValue(DataPackKey::CS_CSV_CU_ID, key);
+        //add the unique key
+    result->addStringValue(DataPackCommonKey::DPCK_DEVICE_ID, key);
     return result;
 }
 

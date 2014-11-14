@@ -120,7 +120,8 @@ void RTAbstractControlUnit::start() throw(CException) {
 	
 	//prefetch handle for heartbeat and acuisition ts cached value
 	hb_cached_value = attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_SYSTEM, DataPackSystemKey::DP_SYS_HEARTBEAT);
-	run_acquisition_ts_handle = reinterpret_cast<uint64_t**>(&attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_OUTPUT, DataPackKey::CS_CSV_TIME_STAMP)->value_buffer);
+	run_acquisition_ts_handle = reinterpret_cast<uint64_t**>(&attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_OUTPUT,
+																											 DataPackCommonKey::DPCK_TIMESTAMP)->value_buffer);
 	
     RTCULAPP_ << "Starting thread for device:" << DatasetDB::getDeviceID();
     threadStartStopManagment(true);
