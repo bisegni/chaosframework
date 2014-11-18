@@ -3,7 +3,7 @@
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *    	Copyright 2014 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@
 #include <chaos/common/direct_io/DirectIOServerEndpoint.h>
 #include <chaos/common/async_central/AsyncCentralManager.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>
+#include <chaos/common/direct_io/channel/DirectIOSystemAPIServerChannel.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/network/NetworkBroker.h>
 
@@ -51,26 +52,29 @@ namespace chaos{
         
         class QueryDataConsumer:
 		protected chaos::common::async_central::TimerHandler,
-		public DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler,
+		protected DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler,
+		protected DirectIOSystemAPIServerChannel::DirectIOSystemAPIServerChannelHandler,
 		public utility::StartableService {
             friend class ChaosDataService;
 			std::string cache_impl_name;
-			
+			std::string db_impl_name;
 			
 			ChaosDataServiceSetting					*settings;
 			chaos::NetworkBroker					*network_broker;
 			
             DirectIOServerEndpoint					*server_endpoint;
 			DirectIODeviceServerChannel				*device_channel;
+			DirectIOSystemAPIServerChannel			*system_api_channel;
 			
 			cache_system::CacheDriver				*cache_driver;
 			
 			vfs::VFSManager *vfs_manager_instance;
 			boost::atomic<uint16_t> device_data_worker_index;
 			chaos::data_service::worker::DataWorker	**device_data_worker;
-			
+			chaos::data_service::worker::DataWorker	*snapshot_data_worker;
 			query_engine::QueryEngine *query_engine;
 			
+			//---------------- DirectIODeviceServerChannelHandler -----------------------
             int consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header,
 								void *channel_data,
 								uint32_t channel_data_len,
@@ -87,6 +91,10 @@ namespace chaos{
 									  uint64_t search_end_ts,
 									  DirectIOSynchronousAnswerPtr synchronous_answer);
 			
+			//---------------- DirectIOSystemAPIServerChannelHandler -----------------------
+			int consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshootHeader *header,
+										const std::vector<std::string>& snapped_producer_key,
+										DirectIOSystemAPINewSnapshootResult& api_result);
 			//async central timer hook
 			void timeout();
         public:

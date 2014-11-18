@@ -3,7 +3,7 @@
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *    	Copyright 2014 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -68,9 +68,11 @@ namespace chaos{
 				vfs::VFSManager *vfs_manager_instance;
 				cache_system::CacheDriver	*cache_driver_ptr;
 			protected:
-				void executeJob(WorkerJobPtr job_info, void* cookie);
+				void executeJob(WorkerJobPtr job_info,
+								void* cookie);
 			public:
-				DeviceSharedDataWorker(std::string _cache_impl_name, vfs::VFSManager *_vfs_manager_instance);
+				DeviceSharedDataWorker(const std::string& _cache_impl_name,
+									   vfs::VFSManager *_vfs_manager_instance);
 				~DeviceSharedDataWorker();
 				void init(void *init_data) throw (chaos::CException);
 				void deinit() throw (chaos::CException);

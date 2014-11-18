@@ -70,7 +70,7 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPack *dataPack,
 				boost::split( snapped_producer_keys, concatenated_keys, is_any_of(","), token_compress_on );
 			}
 			//call the handler
-			handler->consumeNewSnapshootEvent(header, snapped_producer_keys, *api_result);
+			handler->consumeNewSnapshotEvent(header, snapped_producer_keys, *api_result);
 			//fix endianes into api result
 			api_result->result_field.error = TO_LITTE_ENDNS_NUM(int32_t, api_result->result_field.error);
 			break;

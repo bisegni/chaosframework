@@ -53,9 +53,9 @@ namespace chaos {
 						 \param snapped_producer_key the list of the producer, identfied the
 						unique key, to include into the snaphsoot
 						 */
-						virtual int consumeNewSnapshootEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshootHeader *header,
-															 const std::vector<std::string>& snapped_producer_key,
-															 DirectIOSystemAPINewSnapshootResult& api_result)
+						virtual int consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshootHeader *header,
+															const std::vector<std::string>& snapped_producer_key,
+															DirectIOSystemAPINewSnapshootResult& api_result)
 						{DELETE_HEADER(header) return 0;};
 						
 					} DirectIOSystemAPIServerChannelHandler;

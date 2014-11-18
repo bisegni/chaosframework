@@ -14,8 +14,8 @@ using namespace chaos::data_service::worker;
 #define DataWorker_LOG_HEAD "[DataWorker] - "
 
 #define DCLAPP_ LAPP_ << DataWorker_LOG_HEAD
-#define DCLDBG_ LDBG_ << DataWorker_LOG_HEAD
-#define DCLERR_ LERR_ << DataWorker_LOG_HEAD
+#define DCLDBG_ LDBG_ << DataWorker_LOG_HEAD << __FUNCTION__
+#define DCLERR_ LERR_ << DataWorker_LOG_HEAD << __FUNCTION__ << " - " << __LINE__ << "-"
 
 DataWorker::DataWorker():work(false), job_queue(1000),job_in_queue(0) {
 	std::memset(&settings, 0, sizeof(DataWorkerSetting));

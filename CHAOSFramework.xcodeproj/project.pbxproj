@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3203D43C1A1BA98D005D29E6 /* SnapshotCreationWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3203D43A1A1BA98D005D29E6 /* SnapshotCreationWorker.cpp */; };
 		3206F1AD19C18A8D00C437D8 /* QueryFuture.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3206F1AB19C18A8D00C437D8 /* QueryFuture.cpp */; };
 		3206F1AE19C18A8D00C437D8 /* QueryFuture.h in Headers */ = {isa = PBXBuildFile; fileRef = 3206F1AC19C18A8D00C437D8 /* QueryFuture.h */; };
 		320C218A151B555A00BD0F41 /* EventServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 320C2189151B555A00BD0F41 /* EventServer.h */; };
@@ -503,6 +504,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		3203D43A1A1BA98D005D29E6 /* SnapshotCreationWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SnapshotCreationWorker.cpp; sourceTree = "<group>"; };
+		3203D43B1A1BA98D005D29E6 /* SnapshotCreationWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnapshotCreationWorker.h; sourceTree = "<group>"; };
 		3206F1AB19C18A8D00C437D8 /* QueryFuture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QueryFuture.cpp; sourceTree = "<group>"; };
 		3206F1AC19C18A8D00C437D8 /* QueryFuture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueryFuture.h; sourceTree = "<group>"; };
 		320C2189151B555A00BD0F41 /* EventServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventServer.h; sourceTree = "<group>"; };
@@ -2075,6 +2078,8 @@
 				32B159D918B4B9F90096B58B /* DataWorker.h */,
 				32A10C0118C87806006EA04C /* DeviceSharedDataWorker.cpp */,
 				32A10C0218C87806006EA04C /* DeviceSharedDataWorker.h */,
+				3203D43A1A1BA98D005D29E6 /* SnapshotCreationWorker.cpp */,
+				3203D43B1A1BA98D005D29E6 /* SnapshotCreationWorker.h */,
 			);
 			path = worker;
 			sourceTree = "<group>";
@@ -2804,6 +2809,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3203D43C1A1BA98D005D29E6 /* SnapshotCreationWorker.cpp in Sources */,
 				32502C7F1923BAF30073E4AB /* VFSStageFile.cpp in Sources */,
 				327D5E4B192DE3430043ED21 /* MongoDBDriver.cpp in Sources */,
 				3272152418B006BC005AC8FD /* CacheDriver.cpp in Sources */,

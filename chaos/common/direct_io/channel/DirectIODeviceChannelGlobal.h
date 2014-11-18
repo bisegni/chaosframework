@@ -222,7 +222,7 @@ namespace chaos {
 					
 					//-----------------------------------SYSTEM CHANNEL--------------------------------
 #pragma mark System Channel
-#define SYSTEM_API_CHANNEL_NEW_SNAPSHOOT 256
+#define SYSTEM_API_CHANNEL_NEW_SNAPSHOOT 256+4
 
 					//! Header for the snapshot system api managment
 					/*!

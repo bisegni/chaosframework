@@ -3,7 +3,7 @@
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *    	Copyright 2014 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
