@@ -23,9 +23,19 @@ namespace chaos {
 	namespace common {
 		namespace direct_io {
 			namespace channel {
-				#define DIOCDC_Channel_Index 1
-				#define DIODataset_Channel_Index 2
-				#define DIOPerformance_Channel_Index 3
+				//index of all channel
+				#define DIOCDC_Channel_Index			1
+				#define DIODataset_Channel_Index		2
+				#define DIOPerformance_Channel_Index	3
+				#define DIOSystemAPI_Channel_Index		4
+				
+				
+#define DELETE_HEADER_DATA(h,d)\
+if(h) free(h);\
+if(d) free(d);
+				
+#define DELETE_HEADER(h)\
+if(h) free(h);
             }
         }
     }

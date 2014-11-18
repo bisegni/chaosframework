@@ -31,17 +31,26 @@ namespace chaos {
 						DeviceChannelOpcodeQueryDataCloudStartResult= 8,	/**< Start the answering sequence to the endpoint [async]*/
 						DeviceChannelOpcodeQueryDataCloudResult		= 16,	/**< contain the answer of the query [async]*/
 						DeviceChannelOpcodeQueryDataCloudEndResult	= 24	/**< End the answering sequence [async]*/
-						//DeviceChannelOpcodePutNewReceivedCommand	= 8		/**< send over the channel the received command */
 					} DeviceChannelOpcode;
 					
 					/*!
-                     \enum DeviceChannelOpcode
+                     \enum PerformanceChannelOpcode
                      Opcode used by the DirectIO device channel
 					 */
 					typedef enum PerformanceChannelOpcode {
 						PerformanceChannelOpcodeReqRoundTrip			= 1,	/**< forwarda a start of a roundtrip test */
 						PerformanceChannelOpcodeRespRoundTrip			= 2,	/**< perform an answer to the roundtrip test */
 					} PerformanceChannelOpcode;
+					
+					/*!
+					 \enum DeviceChannelOpcode
+					 Opcode used by the DirectIO system api channel
+					 and collect all API for system managment
+					 */
+					typedef enum SystemAPIChannelOpcode {
+						SystemAPIChannelOpcodeNewNewSnapshootDataset	= 1,	/**< start new datasets snapshot creation process*/
+						SystemAPIChannelOpcodeNewDeleteSnapshootDataset	= 2,	/**< delete the snapshot associated to the input tag */
+					} SystemAPIChannelOpcode;
 				}
 				
 				/*!
@@ -55,6 +64,8 @@ namespace chaos {
                 
                 //! Name space for grupping the varius headers for every DeviceChannelOpcode
                 namespace opcode_headers {
+					//-----------------------------------DEVICE CHANNEL--------------------------------
+#pragma mark Device Channel
 #define	GET_PUT_OPCODE_FIXED_PART_LEN	2
 					//!macro used to get pointer to the start of the key data
 #define GET_PUT_OPCODE_KEY_PTR(h) (void*)((char*)h+2)
@@ -67,7 +78,8 @@ namespace chaos {
                         uint8_t key_len;
 						//the pointer to key data
 						void*   key_data;
-                    } DirectIODeviceChannelHeaderData, *DirectIODeviceChannelHeaderDataPtr;
+                    } DirectIODeviceChannelHeaderData,
+					*DirectIODeviceChannelHeaderDataPtr;
 					
 #define GET_OPCODE_HEADER_LEN 14
                     //! Header for the DeviceChannelOpcodeGetOutputFromCache opcode
@@ -89,7 +101,8 @@ namespace chaos {
 							//! The 32bit representation for the ip where send the answer
                             uint64_t	address;
                         } field;
-                    } DirectIODeviceChannelHeaderGetOpcode, *DirectIODeviceChannelHeaderGetOpcodePtr;
+                    } DirectIODeviceChannelHeaderGetOpcode,
+					*DirectIODeviceChannelHeaderGetOpcodePtr;
 					
 #define QUERY_DATA_CLOUD_OPCODE_HEADER_LEN 24
 					//! Header for the DirectIODeviceChannelHeaderOpcodeQueryDataCloud opcode
@@ -115,7 +128,8 @@ namespace chaos {
 							//! is the query id associated to the request
 							char		query_id[8];
 						} field;
-					} DirectIODeviceChannelHeaderOpcodeQueryDataCloud, *DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr;
+					} DirectIODeviceChannelHeaderOpcodeQueryDataCloud,
+					*DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr;
 
 					//! bring the metadata infromation of the query result
 					typedef struct QueryResultMetadata {
@@ -139,7 +153,8 @@ namespace chaos {
 							//!the number of total element found for query id
 							uint64_t	total_element_found;
 						} field;
-					} DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResult, *DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResultPtr;
+					} DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResult,
+					*DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResultPtr;
 
 #define QUERY_DATA_CLOUD_RESULT_OPCODE_HEADER_LEN 24
 					//! Header for the DirectIODeviceChannelHeaderOpcodeQueryDataCloud opcode
@@ -158,7 +173,8 @@ namespace chaos {
 							//! the number, relative to the total, of the current element
 							uint64_t	element_index;
 						} field;
-					} DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult, *DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr;
+					} DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult,
+					*DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr;
 					
 #define QUERY_DATA_CLOUD_END_RESULT_OPCODE_HEADER_LEN 24
 					//! Header for the DeviceChannelOpcodeQueryDataCloudEndAnswer opcode
@@ -179,8 +195,13 @@ namespace chaos {
 							//!string error message passed as data(if there is one)
 							uint32_t error_message_length;
 						} field;
-					} DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResult, *DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResultPtr;
+					} DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResult,
+					*DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResultPtr;
 					
+					//-----------------------------------PERFORMANCE CHANNEL--------------------------------
+#pragma mark Performance Channel
+#define PERFORMANCE_CHANNEL_ROUND_TRIP_HEADER_LEN 16
+
 					//! Header for the DirectIOPerformanceChannelHeaderOpcodeRoundTrip opcode
 					/*!
 					 this is the header for request the last output channel dataset
@@ -189,14 +210,52 @@ namespace chaos {
 					 */
                     typedef	union DirectIOPerformanceChannelHeaderOpcodeRoundTrip {
 						//raw data representation of the header
-                        char raw_data[16];
+                        char raw_data[PERFORMANCE_CHANNEL_ROUND_TRIP_HEADER_LEN];
                         struct header {
 							//! The 64bit value for the timestamp get from the client part at the start of the roundtrip test
                             uint64_t	start_rt_ts;
 							//! The 64bit value for the timestamp get from the server layer part at the start of the roundtrip test
                             uint64_t	receiver_rt_ts;
                         } field;
-					} DirectIOPerformanceChannelHeaderOpcodeRoundTrip, *DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr;
+					} DirectIOPerformanceChannelHeaderOpcodeRoundTrip,
+					*DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr;
+					
+					//-----------------------------------SYSTEM CHANNEL--------------------------------
+#pragma mark System Channel
+#define SYSTEM_API_CHANNEL_NEW_SNAPSHOOT 256
+
+					//! Header for the snapshot system api managment
+					/*!
+					 this header is usedfor the managment of the creation 
+					 of a new snapshot 
+					 the opcode associated to this header is:
+					 SystemAPIChannelOpcodeNewSnapshootDatasetNew
+					 */
+					typedef	union DirectIOSystemAPIChannelOpcodeNewSnapshootHeader {
+						//raw data representation of the header
+						char raw_data[SYSTEM_API_CHANNEL_NEW_SNAPSHOOT];
+						struct header {
+							//!is the snapshot name
+							char		snap_name[256];
+							//! is the lenght of comma separated list of the
+							//! producer to include on the snapshot, if it is
+							//! empty all the producer are snapped. The list is
+							//! passed into the data part of the direct io message
+							uint32_t	producer_key_set_len;
+						} field;
+					} DirectIOSystemAPIChannelOpcodeNewSnapshootHeader,
+					*DirectIOSystemAPIChannelOpcodeNewSnapshootHeaderPtr;
+					
+					//!result
+					typedef union DirectIOSystemAPINewSnapshootResult {
+						//raw data representation of the header
+						char raw_data[256+4];
+						struct ResultFiled {
+							int32_t		error;
+							char		error_message[256];
+						} result_field;
+					}DirectIOSystemAPINewSnapshootResult,
+					DirectIOSystemAPINewSnapshootResultPtr;
                 }
 			}
 		}

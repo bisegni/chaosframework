@@ -33,13 +33,6 @@ namespace chaos {
 		namespace direct_io {
 			namespace channel {
 				
-#define DELETE_HEADER_DATA(h,d)\
-if(h) free(h);\
-if(d) free(d);
-
-#define DELETE_HEADER(h)\
-if(h) free(h);
-				
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DirectIODeviceServerChannel, DirectIOVirtualServerChannel), public chaos::common::direct_io::DirectIOEndpointHandler {
                     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIODeviceServerChannel)
 				public:

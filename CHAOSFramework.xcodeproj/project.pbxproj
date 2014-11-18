@@ -345,6 +345,10 @@
 		32AAD78A14CD772F005A097C /* MessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AAD78914CD772F005A097C /* MessageChannel.h */; };
 		32AAD78C14CD773F005A097C /* MessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AAD78B14CD773F005A097C /* MessageChannel.cpp */; };
 		32AAD78E14CD95FD005A097C /* Atomic.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AAD78D14CD95FD005A097C /* Atomic.h */; };
+		32AB51C91A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AB51C71A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.cpp */; };
+		32AB51CA1A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AB51C81A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.h */; };
+		32AB51CD1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AB51CB1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.cpp */; };
+		32AB51CE1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AB51CC1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.h */; };
 		32AF7D4018DAEAF300537DE6 /* PerformanceNodeChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AF7D3E18DAEAF300537DE6 /* PerformanceNodeChannel.cpp */; };
 		32AF7D4118DAEAF300537DE6 /* PerformanceNodeChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AF7D3F18DAEAF300537DE6 /* PerformanceNodeChannel.h */; };
 		32AFEB3919BDDACF00AF49F4 /* QueryEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AFEB3719BDDACF00AF49F4 /* QueryEngine.cpp */; };
@@ -890,6 +894,10 @@
 		32AAD78914CD772F005A097C /* MessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageChannel.h; sourceTree = "<group>"; };
 		32AAD78B14CD773F005A097C /* MessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageChannel.cpp; sourceTree = "<group>"; };
 		32AAD78D14CD95FD005A097C /* Atomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Atomic.h; sourceTree = "<group>"; };
+		32AB51C71A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOSystemAPIClientChannel.cpp; sourceTree = "<group>"; };
+		32AB51C81A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOSystemAPIClientChannel.h; sourceTree = "<group>"; };
+		32AB51CB1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOSystemAPIServerChannel.cpp; sourceTree = "<group>"; };
+		32AB51CC1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOSystemAPIServerChannel.h; sourceTree = "<group>"; };
 		32AF7D3E18DAEAF300537DE6 /* PerformanceNodeChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceNodeChannel.cpp; sourceTree = "<group>"; };
 		32AF7D3F18DAEAF300537DE6 /* PerformanceNodeChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceNodeChannel.h; sourceTree = "<group>"; };
 		32AFEB3719BDDACF00AF49F4 /* QueryEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QueryEngine.cpp; sourceTree = "<group>"; };
@@ -1320,6 +1328,10 @@
 				32B73E9518D9A74600F0B187 /* DirectIOPerformanceClientChannel.h */,
 				32B73E9818D9A8FF00F0B187 /* DirectIOPerformanceServerChannel.cpp */,
 				32B73E9918D9A8FF00F0B187 /* DirectIOPerformanceServerChannel.h */,
+				32AB51C71A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.cpp */,
+				32AB51C81A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.h */,
+				32AB51CB1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.cpp */,
+				32AB51CC1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.h */,
 				32B159D718B39FBB0096B58B /* DirectIODeviceChannelGlobal.h */,
 				3281D35A18A68532005A0828 /* DirectIOChannelGlobal.h */,
 			);
@@ -2305,6 +2317,7 @@
 				326DB43214B38BC00018A8D0 /* ChaosAction.h in Headers */,
 				326DB43414B38BC00018A8D0 /* DeclareAction.h in Headers */,
 				326DB43614B38BC00018A8D0 /* DomainActions.h in Headers */,
+				32AB51CA1A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.h in Headers */,
 				32EE8980191A792000DE2F29 /* stringutils.h in Headers */,
 				32EA501718A15BF000782435 /* DirectIODispatcher.h in Headers */,
 				326DB45714B38BC00018A8D0 /* chaos_constants.h in Headers */,
@@ -2321,6 +2334,7 @@
 				32460521179C55FC00B075DA /* sqlite3.h in Headers */,
 				326DB46614B38BC00018A8D0 /* ChaosDispatcher.h in Headers */,
 				53DADAAF19C8676C00E13DB2 /* SingletonOnArguments.h in Headers */,
+				32AB51CE1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.h in Headers */,
 				32F7FEAC18A5066600FC03AB /* FastDelegateBind.h in Headers */,
 				324A4B50191A41EF00975394 /* cstdint.h in Headers */,
 				324A4B4A191A41EF00975394 /* atomic_word.h in Headers */,
@@ -2895,6 +2909,7 @@
 				32A420A51962D16A00AFE689 /* TCPUVClient.cpp in Sources */,
 				325013D715E980C800DCB13E /* AsioImplEventClient.cpp in Sources */,
 				32C100F7191B6F2900478F40 /* AsyncCentralManager.cpp in Sources */,
+				32AB51C91A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.cpp in Sources */,
 				324A4B10191A3F6A00975394 /* parse_number.cpp in Sources */,
 				3253F2FE189AEEFD00959CA7 /* DirectIOVirtualClientChannel.cpp in Sources */,
 				325013DC15E9843D00DCB13E /* AsioEventForwarder.cpp in Sources */,
@@ -2923,6 +2938,7 @@
 				32C0CC98168CC16400BC2DA7 /* Entity.cpp in Sources */,
 				32B1378E189BEC4100B17CA4 /* ZMQDirectIOServer.cpp in Sources */,
 				32BFF912176C862A00D27A04 /* StartableService.cpp in Sources */,
+				32AB51CD1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.cpp in Sources */,
 				32EFCD6618BDE3A400B5EB77 /* IODirectIODriver.cpp in Sources */,
 				3220F98118A4DBEB00B0A1D4 /* DirectIOVirtualChannel.cpp in Sources */,
 				32B73E9A18D9A8FF00F0B187 /* DirectIOPerformanceServerChannel.cpp in Sources */,
