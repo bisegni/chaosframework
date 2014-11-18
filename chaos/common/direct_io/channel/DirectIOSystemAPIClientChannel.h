@@ -33,7 +33,8 @@ namespace chaos {
 	namespace common {
 		namespace direct_io {
 			namespace channel {
-				
+
+				using namespace chaos::common::direct_io::channel::opcode_headers;
 				//! System API client channel
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DirectIOSystemAPIClientChannel, DirectIOVirtualClientChannel) {
 					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIOSystemAPIClientChannel)
@@ -50,6 +51,19 @@ namespace chaos {
 					//static deallocator forthis channel
 					static DirectIOSystemAPIClientChannelDeallocator STATIC_DirectIOSystemAPIClientChannelDeallocator;
 				public:
+					//! perform the creation of new named snapshoot
+					/*!
+					 The creation of the new snapshot is started in the chaos data service after received 
+					 the request. The API return in async way if the creation is started
+					 \param snapshot_name the name of the snapshot
+					 \param producer_keys the list of the producer key to include in the snapshot, if it is empty
+					 all producer key are included.
+					 \api_result is the result of the api execution
+					 \return the error of the directio client in the forwarding message operation
+					 */
+					int64_t makeNewDatasetSnapshot(const std::string& snapshot_name,
+												   const std::vector<std::string>& producer_keys,
+												   DirectIOSystemAPINewSnapshootResult **api_result_handle);
 				};
 			}
 		}

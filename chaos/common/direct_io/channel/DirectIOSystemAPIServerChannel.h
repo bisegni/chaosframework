@@ -35,7 +35,7 @@ namespace chaos {
 		namespace direct_io {
 			class DirectIODispatcher;
 			namespace channel {
-				
+				using namespace chaos::common::direct_io::channel::opcode_headers;
 				//! serve rimplementation for the System API direct io channel
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DirectIOSystemAPIServerChannel, DirectIOVirtualServerChannel),
 				public chaos::common::direct_io::DirectIOEndpointHandler {
@@ -54,8 +54,8 @@ namespace chaos {
 						unique key, to include into the snaphsoot
 						 */
 						virtual int consumeNewSnapshootEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshootHeader *header,
-															 std::vector<std::string>& snapped_producer_key,
-															 DirectIOSynchronousAnswerPtr synchronous_answer)
+															 const std::vector<std::string>& snapped_producer_key,
+															 DirectIOSystemAPINewSnapshootResult& api_result)
 						{DELETE_HEADER(header) return 0;};
 						
 					} DirectIOSystemAPIServerChannelHandler;

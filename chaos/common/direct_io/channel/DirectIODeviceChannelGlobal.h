@@ -245,6 +245,17 @@ namespace chaos {
 						} field;
 					} DirectIOSystemAPIChannelOpcodeNewSnapshootHeader,
 					*DirectIOSystemAPIChannelOpcodeNewSnapshootHeaderPtr;
+					
+					//!result
+					typedef union DirectIOSystemAPINewSnapshootResult {
+						//raw data representation of the header
+						char raw_data[256+4];
+						struct ResultFiled {
+							int32_t		error;
+							char		error_message[256];
+						} result_field;
+					}DirectIOSystemAPINewSnapshootResult,
+					DirectIOSystemAPINewSnapshootResultPtr;
                 }
 			}
 		}
