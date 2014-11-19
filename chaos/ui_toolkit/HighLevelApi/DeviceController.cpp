@@ -143,7 +143,7 @@ void DeviceController::getDeviceDatasetAttributesName(vector<string>& attributes
 }
 
 //---------------------------------------------------------------------------------------------------
-void DeviceController::getDeviceAttributeRangeValueInfo(const string& attributesName, chaos::RangeValueInfo& rangeInfo) {
+void DeviceController::getDeviceAttributeRangeValueInfo(const string& attributesName, chaos::common::data::RangeValueInfo& rangeInfo) {
     datasetDB.getAttributeRangeValueInfo(attributesName, rangeInfo);
 }
 //---------------------------------------------------------------------------------------------------

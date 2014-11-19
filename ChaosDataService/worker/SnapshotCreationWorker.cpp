@@ -65,7 +65,15 @@ void SnapshotCreationWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 	SnapshotCreationJob *job_ptr = reinterpret_cast<SnapshotCreationJob*>(job_info);
 	//check what kind of push we have
 	//read lock on mantainance mutex
+	SCW_LDBG_ << "Start snapshot creation for name" << job_ptr->snapshot_name;
 	
+	if(job_ptr->produceter_unique_id_set.size()) {
+		SCW_LDBG_ << "snapshot the user set";
+	} else {
+		SCW_LDBG_ << "Retrieve all producer key to snapshot all";
+	}
+	//delete job memory
+	free(job_info);
 }
 
 

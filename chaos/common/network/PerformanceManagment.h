@@ -1,10 +1,22 @@
-//
-//  PerformanceManagment.h
-//  CHAOSFramework
-//
-//  Created by Claudio Bisegni on 19/03/14.
-//  Copyright (c) 2014 INFN. All rights reserved.
-//
+/*
+ *	PerformanceManagment.h
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *
+ *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
 
 #ifndef __CHAOSFramework__PerformanceManagment__
 #define __CHAOSFramework__PerformanceManagment__
@@ -27,9 +39,8 @@ namespace chaos_direct_io = chaos::common::direct_io;
 
 namespace chaos {
 	//class declaration
-	class NetworkBroker;
+	//class NetworkBroker;
 	namespace common {
-		
 		namespace direct_io {
 			//class declaration
 			class DirectIOClient;
@@ -37,7 +48,6 @@ namespace chaos {
 		}
 		
 		namespace network {
-			
 			typedef ::chaos::utility::TemplatedKeyObjectContainer<std::string, chaos_direct_io::DirectIOPerformanceSession*> PMKeyObjectContainer;
 			
 			//! root point for all instance of managment node
@@ -46,11 +56,11 @@ namespace chaos {
 			public chaos::DeclareAction,
 			public direct_io::DirectIOClientConnectionEventHandler,
 			protected PMKeyObjectContainer {
-				friend class chaos::NetworkBroker;
-				chaos::NetworkBroker				*network_broker;
+				friend class chaos::common::network::NetworkBroker;
+				chaos::common::network::NetworkBroker	*network_broker;
 				
-				boost::mutex						mutext_client_connection;
-				chaos_direct_io::DirectIOClient		*global_performance_connection;
+				boost::mutex							mutext_client_connection;
+				chaos_direct_io::DirectIOClient			*global_performance_connection;
 				
 				bool work_on_purge;
 				WaitSemaphore purge_wait_semaphore;

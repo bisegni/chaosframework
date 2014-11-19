@@ -33,14 +33,20 @@
 
 namespace chaos {
     using namespace std;
+	
+	//forward declaration
+	namespace common {
+		namespace network {
+			class NetworkBroker;
 
-    class NetworkBroker;
+		}
+	}
     /*
      Abstract class for standard adapter method for permit, to CommandManager
      the correct initialization for the adapter instance
      */
     class RpcServer : public chaos::utility::StartableService, public NamedService {
-        friend class NetworkBroker;
+		friend class chaos::common::network::NetworkBroker;
     protected:
         //! port where server has been published
         int portNumber;

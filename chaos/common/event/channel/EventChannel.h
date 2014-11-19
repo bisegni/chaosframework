@@ -28,12 +28,17 @@
 
 namespace chaos {
 
-    class NetworkBroker;
+	//forward declaration
+	namespace common {
+		namespace network {
+			class NetworkBroker;
+		}
+	}
     
     namespace event{
-
         namespace channel {
-            
+			using namespace chaos::common::network;
+			
                 //! Managment for send and receive event
             /*!
              The Event Channel permit the forward of a general event descriptor. Every channel
@@ -42,7 +47,7 @@ namespace chaos {
             class EventChannel : public EventAction {
                 
                     // make the broker friendly of this class to access private and protected memeber
-                friend class chaos::NetworkBroker;
+				friend class chaos::common::network::NetworkBroker;
                 
                     // channel identification ID
                 std::string channelID;

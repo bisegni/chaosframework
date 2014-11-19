@@ -28,6 +28,7 @@
 #include <string>
 #include <chaos/common/direct_io/DirectIODataPack.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceChannelGlobal.h>
+#include <chaos/common/message/MDSMessageChannel.h>
 
 #include <boost/thread.hpp>
 
@@ -52,8 +53,12 @@ namespace chaos{
 			public DataWorker {
 				std::string cache_impl_name;
 				std::string db_impl_name;
+				
 				cache_system::CacheDriver	*cache_driver_ptr;
 				db_system::DBDriver			*db_driver_ptr;
+				
+				//channel to mds
+				//MDSMessageChannel *mds_message_channel;
 			protected:
 				void executeJob(WorkerJobPtr job_info, void* cookie);
 			public:

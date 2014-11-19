@@ -42,9 +42,12 @@
 
 namespace chaos{
 	namespace common {
-		namespace io {
+		//!forward declaration
+		namespace network {
 			class NetworkBorker;
-			
+		}
+		
+		namespace io {
 			using namespace std;
 			using namespace boost;
 			
@@ -57,7 +60,7 @@ namespace chaos{
 			 Struct for initialization of the io driver
 			 */
 			typedef struct IODirectIODriverInitParam {
-				chaos::NetworkBroker					*network_broker;
+				chaos::common::network::NetworkBroker	*network_broker;
 				chaos_direct_io::DirectIOClient			*client_instance;
 				chaos_direct_io::DirectIOServerEndpoint *endpoint_instance;
 			} IODirectIODriverInitParam, *IODirectIODriverInitParamPtr;

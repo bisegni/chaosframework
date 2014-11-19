@@ -28,9 +28,12 @@
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
 #include <chaos/common/utility/StartableService.h>
 namespace chaos {
-    
-    class NetworkBroker;
-    
+	namespace common {
+		namespace network {
+			class NetworkBroker;			
+		}
+	}
+	
     namespace event {
         
             //!Event client base class
@@ -38,7 +41,7 @@ namespace chaos {
          
          */
         class EventClient : public NamedService, EventForwarder, chaos::utility::StartableService {
-            friend class chaos::NetworkBroker;
+            friend class chaos::common::network::NetworkBroker;
             
         protected:
             uint8_t threadNumber;            

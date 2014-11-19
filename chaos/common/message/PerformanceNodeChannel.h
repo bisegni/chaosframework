@@ -36,8 +36,8 @@ namespace chaos {
 			 This class represent a message chanel for comunication with a device
 			 */
 			class PerformanceNodeChannel : public MessageChannel {
-				friend class chaos::NetworkBroker;
-				chaos_directio::DirectIOClient *client_instance;
+				friend class chaos::common::network::NetworkBroker;
+				chaos_direct_io::DirectIOClient *client_instance;
 				chaos_direct_io::DirectIOPerformanceSession *local_performance_session;
 			protected:
 				//! base constructor

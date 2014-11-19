@@ -33,11 +33,11 @@ namespace chaos {
 			is specified how connection two node together.
 		 */
 		namespace direct_io {
-            
+			
 			//! Structure to identify the target server of the client connection
 			typedef struct DirectIOConnection {
-				std::string             connection_name;
-				CNodeNetworkAddress		server_address;
+				std::string										connection_name;
+				chaos::common::network::CNodeNetworkAddress		server_address;
 			} DirectIOCOnnection;
 			
             //! Namespace that enclose all type of data flow rule

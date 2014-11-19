@@ -35,12 +35,13 @@
 #include <chaos/common/io/IODirectIODriver.h>
 #include <chaos/common/io/IOMemcachedIODriver.h>
 
-namespace chaos_io = chaos::common::io;
 
 namespace chaos {
     namespace ui{
    
-        
+		namespace chaos_io = chaos::common::io;
+		namespace chaos_network = chaos::common::network;
+
         /*
          LLRpcApi Class api for rpc system
          */
@@ -48,7 +49,7 @@ namespace chaos {
             friend class ChaosUIToolkit;
             friend class Singleton<LLRpcApi>;
             
-            chaos::NetworkBroker *network_broker;
+            chaos_network::NetworkBroker *network_broker;
             /*
              LL Rpc Api static initialization it should be called once for application
              */

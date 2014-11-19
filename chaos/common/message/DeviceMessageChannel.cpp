@@ -20,10 +20,8 @@
 #include "DeviceMessageChannel.h"
 #include <chaos/common/chaos_constants.h>
 
-using namespace chaos;
+using namespace chaos::common::message;
 using namespace chaos::common::data;
-
-
 
 //------------------------------------
 DeviceMessageChannel::DeviceMessageChannel(NetworkBroker *msgBroker, CDeviceNetworkAddress *_deviceNetworkAddress) : NodeMessageChannel(msgBroker, _deviceNetworkAddress){

@@ -23,6 +23,7 @@
 #include <chaos/common/event/evt_desc/InstrumentEventDescriptor.h>
 
 using namespace chaos;
+using namespace chaos::common::network;
 using namespace chaos::event;
 using namespace chaos::event::channel;
 using namespace chaos::event::instrument;

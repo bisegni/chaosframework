@@ -43,11 +43,14 @@
 
 namespace chaos {
 	
-	class NetworkBroker;
-	
 	namespace common {
+		
+		//forward declaration
+		namespace network {
+			class NetworkBroker;
+		}
 		namespace direct_io {
-			
+			//forward declaration
             namespace channel {
                 class DirectIOVirtualClientChannel;
             }
@@ -67,7 +70,7 @@ namespace chaos {
 			public chaos::utility::InizializableService,
 			public DirectIOURLManagment,
 			protected DCKeyObjectContainer {
-				friend class chaos::NetworkBroker;
+				friend class chaos::common::network::NetworkBroker;
 				
 				std::string			impl_alias;
                 boost::atomic_uint	channel_counter;

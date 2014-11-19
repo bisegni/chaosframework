@@ -41,6 +41,7 @@
 
 using namespace chaos::utility;
 using namespace chaos::common::data;
+using namespace chaos::common::network;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 using namespace chaos::common::direct_io::channel::opcode_headers;
@@ -60,7 +61,7 @@ namespace chaos{
 			std::string db_impl_name;
 			
 			ChaosDataServiceSetting					*settings;
-			chaos::NetworkBroker					*network_broker;
+			NetworkBroker	*network_broker;
 			
             DirectIOServerEndpoint					*server_endpoint;
 			DirectIODeviceServerChannel				*device_channel;
