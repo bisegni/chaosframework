@@ -100,8 +100,7 @@ IODataDriver *LLRpcApi::getDataProxyChannelNewInstance() throw(CException) {
 /*
  */
 MDSMessageChannel *LLRpcApi::getNewMetadataServerChannel() {
-    string serverHost = GlobalConfiguration::getInstance()->getMetadataServerAddress();
-    return network_broker->getMetadataserverMessageChannel(serverHost);
+    return network_broker->getMetadataserverMessageChannel();
 }
 
 /*!

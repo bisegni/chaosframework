@@ -291,7 +291,7 @@ namespace chaos {
 				/*!
 				 Performe the creation of metadata server
 				 */
-				MDSMessageChannel *getMetadataserverMessageChannel(string& remoteHost);
+				MDSMessageChannel *getMetadataserverMessageChannel();
 				
 				//!Device channel creation
 				/*!

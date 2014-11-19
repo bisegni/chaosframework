@@ -532,9 +532,9 @@ MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress
 /*!
  Performe the creation of metadata server
  */
-MDSMessageChannel *NetworkBroker::getMetadataserverMessageChannel(string& remoteHost) {
+MDSMessageChannel *NetworkBroker::getMetadataserverMessageChannel() {
     CNodeNetworkAddress *mdsNodeAddr = new CNodeNetworkAddress();
-    mdsNodeAddr->ipPort = remoteHost.c_str();
+    mdsNodeAddr->ipPort = GlobalConfiguration::getInstance()->getMetadataServerAddress();
     mdsNodeAddr->nodeID = ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN;
     return static_cast<MDSMessageChannel*>(getNewMessageChannelForRemoteHost(mdsNodeAddr, MDS));
 }

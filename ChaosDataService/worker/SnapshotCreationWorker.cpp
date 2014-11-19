@@ -25,6 +25,7 @@
 
 #include <boost/lexical_cast.hpp>
 
+using namespace chaos::common::network;
 using namespace chaos::data_service::worker;
 
 #define SnapshotCreationWorker_LOG_HEAD "[SnapshotCreationWorker] - "
@@ -36,21 +37,29 @@ using namespace chaos::data_service::worker;
 //------------------------------------------------------------------------------------------------------------------------
 
 SnapshotCreationWorker::SnapshotCreationWorker(const std::string& _cache_impl_name,
-											   const std::string& _db_impl_name):
+											   const std::string& _db_impl_name,
+											   NetworkBroker	*_network_broker):
 cache_impl_name(_cache_impl_name),
-db_impl_name(_db_impl_name) {}
+db_impl_name(_db_impl_name),
+network_broker(_network_broker),
+mds_channel(NULL){}
 
 SnapshotCreationWorker::~SnapshotCreationWorker() {}
 
 void SnapshotCreationWorker::init(void *init_data) throw (chaos::CException) {
 	DataWorker::init(init_data);
 	
+	if(!network_broker) throw CException(-1, "No network broker set", __PRETTY_FUNCTION__);
+	
+	SCW_LAPP_ << "get mds channel";
+	mds_channel = network_broker->getMetadataserverMessageChannel();
+	if(!mds_channel) throw CException(-2, "No metadataserver channel created", __PRETTY_FUNCTION__);
+		
 	SCW_LAPP_ << "allocating cache driver";
 	cache_driver_ptr = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
 	
 	SCW_LAPP_ << "allocating cache driver";
 	db_driver_ptr = chaos::ObjectFactoryRegister<db_system::DBDriver>::getInstance()->getNewInstanceByName(db_impl_name);
-
 }
 
 void SnapshotCreationWorker::deinit() throw (chaos::CException) {
@@ -58,6 +67,11 @@ void SnapshotCreationWorker::deinit() throw (chaos::CException) {
 	if(cache_driver_ptr) delete(cache_driver_ptr);
 	SCW_LAPP_ << "deallocating db driver";
 	if(db_driver_ptr) delete(db_driver_ptr);
+	
+	if(mds_channel && network_broker) {
+		network_broker->disposeMessageChannel(mds_channel);
+	}
+	
 	DataWorker::deinit();
 }
 

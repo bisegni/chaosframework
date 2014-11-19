@@ -36,7 +36,7 @@ namespace chaos{
 	namespace data_service {
 		namespace worker {
 			namespace chaos_direct_io	= chaos::common::direct_io;
-			
+			namespace chaos_network		= chaos::common::network;
 
 			//! worker information for snapshot creation
 			struct SnapshotCreationJob :
@@ -51,19 +51,25 @@ namespace chaos{
 			//! worker for create the snapshoot in async way
 			class SnapshotCreationWorker:
 			public DataWorker {
+				//! implementaiton for caching
 				std::string cache_impl_name;
+				//! implementation for database
 				std::string db_impl_name;
 				
-				cache_system::CacheDriver	*cache_driver_ptr;
-				db_system::DBDriver			*db_driver_ptr;
+				//! Network infrastructure
+				chaos_network::NetworkBroker		*network_broker;
+				chaos_network::MDSMessageChannel	*mds_channel;
 				
-				//channel to mds
-				//MDSMessageChannel *mds_message_channel;
+				//!
+				cache_system::CacheDriver			*cache_driver_ptr;
+				db_system::DBDriver					*db_driver_ptr;
+				
 			protected:
 				void executeJob(WorkerJobPtr job_info, void* cookie);
 			public:
 				SnapshotCreationWorker(const std::string& _cache_impl_name,
-									   const std::string& _db_impl_name);
+									   const std::string& _db_impl_name,
+									   chaos_network::NetworkBroker	*_network_broker);
 				~SnapshotCreationWorker();
 				void init(void *init_data) throw (chaos::CException);
 				void deinit() throw (chaos::CException);

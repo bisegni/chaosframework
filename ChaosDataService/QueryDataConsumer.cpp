@@ -108,7 +108,9 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
 	
 	QDCAPP_ << "Allocating Snapshoot worker";
 	if(!settings->cache_only) {
-		snapshot_data_worker = new chaos::data_service::worker::SnapshotCreationWorker(cache_impl_name, db_impl_name);
+		snapshot_data_worker = new chaos::data_service::worker::SnapshotCreationWorker(cache_impl_name,
+																					   db_impl_name,
+																					   network_broker);
 		if(!snapshot_data_worker) throw chaos::CException(-5, "Error allocating snapshot worker", __FUNCTION__);
 		chaos::utility::StartableService::initImplementation(query_engine, init_data, "QueryEngine", __PRETTY_FUNCTION__);
 		for(CacheServerListIterator iter = settings->startup_chache_servers.begin();
