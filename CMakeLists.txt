@@ -48,6 +48,9 @@ ADD_SUBDIRECTORY(ChaosDataService bin/bin_cds)
 message(STATUS "Configure Chaos Data Export")
 ADD_SUBDIRECTORY(ChaosDataExport bin/chaos_cde)
 
+message(STATUS "Configure Chaos Snapshot Utility")
+ADD_SUBDIRECTORY(ChaosSnapshotUtility bin/chaos_snap_util)
+
 message(STATUS "Configure Chaos CLI")
 ADD_SUBDIRECTORY(example/ChaosCLI bin/chaos_cli)
 

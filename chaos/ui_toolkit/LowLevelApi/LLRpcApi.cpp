@@ -30,9 +30,26 @@ using namespace chaos::ui;
 
 #define LLRA_LAPP_ LAPP_ << "[LLRpcApi] - "
 
+uint32_t DIOConn::garbage_counter;
+
 
 #define INIT_STEP   0
 #define DEINIT_STEP 1
+
+/*
+ */
+LLRpcApi::LLRpcApi():
+direct_io_client(NULL){
+	network_broker = new NetworkBroker();
+}
+
+/*
+ */
+LLRpcApi::~LLRpcApi() {
+	if(network_broker)
+		delete (network_broker);
+}
+
 /*
  LL Rpc Api static initialization it should be called once for application
  */
@@ -46,6 +63,11 @@ void LLRpcApi::init()  throw (CException) {
     LLRA_LAPP_ << "Starting NetworkBroker";
     network_broker->start();
     LLRA_LAPP_ << "NetworkBroker Started";
+	
+	//get new direct io client
+	direct_io_client = network_broker->getDirectIOClientInstance();
+	if(!direct_io_client) throw CException(-1, "Invalid direct io client instance", __PRETTY_FUNCTION__);
+	chaos::utility::InizializableService::initImplementation(direct_io_client, NULL, "DirectIOCLient", __PRETTY_FUNCTION__);
 }
 
 /*
@@ -54,24 +76,17 @@ void LLRpcApi::init()  throw (CException) {
 void LLRpcApi::deinit()  throw (CException) {
     LLRA_LAPP_ << "Deinit LLRpcApi";
     SetupStateManager::levelDownFrom(DEINIT_STEP, "LLRpcApi already deinitialized");
+	
+	if(direct_io_client) {
+		chaos::utility::InizializableService::deinitImplementation(direct_io_client, "DirectIOCLient", __PRETTY_FUNCTION__);
+		delete direct_io_client;
+	}
+	
     LLRA_LAPP_ << "Stop NetworkBroker";
     network_broker->stop();
     LLRA_LAPP_ << "Deinit NetworkBroker";
     network_broker->deinit();
     LLRA_LAPP_ << "NetworkBroker deinitialized";
-}
-
-/*
- */
-LLRpcApi::LLRpcApi() {
-    network_broker = new NetworkBroker();
-}
-
-/*
- */
-LLRpcApi::~LLRpcApi() {
-    if(network_broker)
-        delete (network_broker);
 }
 
 /*
@@ -137,4 +152,18 @@ event::channel::InstrumentEventChannel *LLRpcApi::getNewInstrumentEventChannel()
 
 void LLRpcApi::disposeEventChannel(event::channel::EventChannel *eventChannel) throw (CException) {
     network_broker->disposeEventChannel(eventChannel);
+}
+
+SystemApiChannel *LLRpcApi::getSystemApiClientChannel(const std::string& direct_io_address) {
+	DIOConn *conn = NULL;
+	boost::unique_lock<boost::mutex> l(mutex_map_dio_addr_conn);
+	if(map_dio_addr_conn.count(direct_io_address)) {
+		conn = map_dio_addr_conn[direct_io_address];
+	} else {
+		conn = new DIOConn(direct_io_client->getNewConnection(direct_io_address));
+	}
+}
+
+void releaseSystemApyChannel(SystemApiChannel *system_api_channel) {
+	
 }

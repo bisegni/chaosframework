@@ -64,6 +64,9 @@ namespace chaos{
 				cache_system::CacheDriver			*cache_driver_ptr;
 				db_system::DBDriver					*db_driver_ptr;
 				
+				int storeDatasetTypeInSnapsnot(const std::string& snapshot_name,
+											   const std::string& unique_id,
+											   const std::string& dataset_type);
 			protected:
 				void executeJob(WorkerJobPtr job_info, void* cookie);
 			public:

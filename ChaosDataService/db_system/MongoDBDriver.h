@@ -138,6 +138,16 @@ namespace chaos {
 					
 					//! perform a search on data pack indexes
 					int idxStartSearchDataPack(const DataPackIndexQuery& _query, DBIndexCursor **index_cursor);
+					
+					//! Create a new snapshot
+					int snapshotCreateNewWithName(const std::string& snapshot_name);
+					
+					//! Add an element to a named snapshot
+					int snapshotAddElementToSnapshot(const std::string& snapshot_name,
+													 const std::string& producer_unique_key,
+													 const std::string& dataset_type,
+													 void* data,
+													 uint32_t data_len);
 				};
 			}
 	}

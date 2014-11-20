@@ -75,17 +75,82 @@ void SnapshotCreationWorker::deinit() throw (chaos::CException) {
 	DataWorker::deinit();
 }
 
+int SnapshotCreationWorker::storeDatasetTypeInSnapsnot(const std::string& snapshot_name,
+													   const std::string& unique_id,
+													   const std::string& dataset_type) {
+	int err = 0;
+	void *data = NULL;
+	uint32_t data_len = 0;
+	std::string dataset_to_fetch = unique_id + dataset_type;
+	SCW_LDBG_ << "Get live data for " << dataset_to_fetch << " in channel ";
+	if((err = cache_driver_ptr->getData((void*)dataset_to_fetch.c_str(), dataset_to_fetch.size(), &data, data_len))) {
+		SCW_LERR_<< "Error retrieving live data for " << dataset_to_fetch << " with error: " << err;
+	} else if(data) {
+		SCW_LDBG_ << "Store data on snapshot for " << dataset_to_fetch;
+		if((err = db_driver_ptr->snapshotAddElementToSnapshot(snapshot_name,
+															  unique_id,
+															  dataset_type,
+															  data,
+															  data_len))) {
+			SCW_LERR_<< "Error storign dataset type "<< dataset_type <<" for " << unique_id << " in snapshot " << snapshot_name << " with error: " << err;
+		}
+		
+		free(data);
+	}else {
+		err = -1;
+		SCW_LERR_<< "No data has been fetched for " << dataset_to_fetch;
+	}
+	return err;
+}
+
 void SnapshotCreationWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
+	int err = 0;
+
+	
 	SnapshotCreationJob *job_ptr = reinterpret_cast<SnapshotCreationJob*>(job_info);
 	//check what kind of push we have
 	//read lock on mantainance mutex
 	SCW_LDBG_ << "Start snapshot creation for name" << job_ptr->snapshot_name;
-	
-	if(job_ptr->produceter_unique_id_set.size()) {
-		SCW_LDBG_ << "snapshot the user set";
-	} else {
-		SCW_LDBG_ << "Retrieve all producer key to snapshot all";
+	if(!job_ptr->snapshot_name.size()) {
+		err = -1;
+		SCW_LERR_<< "The name of the snapshot is invalid";
+	} else if((err = db_driver_ptr->snapshotCreateNewWithName(job_ptr->snapshot_name))) {
+		SCW_LERR_<< "Error creating snapshot "<< job_ptr->snapshot_name <<" on database with error: " << err;
+	}else {
+		//get the unique id to snap
+		if(job_ptr->produceter_unique_id_set.size()) {
+			SCW_LDBG_ << "make snapshot on the user producer'id set";
+		} else {
+			SCW_LDBG_ << "make snapshot on all producer key";
+			mds_channel->getAllDeviceID(job_ptr->produceter_unique_id_set);
+		}
+		
+		//scann all id
+		for (std::vector<std::string>::iterator it = job_ptr->produceter_unique_id_set.begin();
+			 it != job_ptr->produceter_unique_id_set.end();
+			 it++) {
+			
+			//snap output channel
+			if(storeDatasetTypeInSnapsnot(job_ptr->snapshot_name, *it, DataPackPrefixID::OUTPUT_DATASE_PREFIX)) {
+				
+			}
+			//snap input channel
+			if(storeDatasetTypeInSnapsnot(job_ptr->snapshot_name, *it, DataPackPrefixID::INPUT_DATASE_PREFIX)) {
+				
+			}
+			//snap custom channel
+			if(storeDatasetTypeInSnapsnot(job_ptr->snapshot_name, *it, DataPackPrefixID::CUSTOM_DATASE_PREFIX)){
+				
+			}
+			//snap system channel
+			if(storeDatasetTypeInSnapsnot(job_ptr->snapshot_name, *it, DataPackPrefixID::SYSTEM_DATASE_PREFIX)) {
+				
+			}
+		}
 	}
+	
+	
+	
 	//delete job memory
 	free(job_info);
 }

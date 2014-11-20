@@ -106,7 +106,7 @@ int MongoDBIndexCursor::performNextPagedQuery() {
 	} else {
 		number_of_element_fetched += (uint32_t)fetched_element_page.size();
 		//get last elelement timestamp and adjust the query
-		last_max_ts_searched = paged_query.end_ts = fetched_element_page[fetched_element_page.size()-1].getField(MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC).Long();
+		last_max_ts_searched = paged_query.end_ts = fetched_element_page[fetched_element_page.size()-1].getField(MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS_NUMERIC).Long();
 
 	}
 	return err;
@@ -123,11 +123,11 @@ DataPackIndexQueryResult *MongoDBIndexCursor::getIndex() {
 	//get next element
 	mongo::BSONObj next_element = fetched_element_page[number_of_returned_element_in_page++];
 	DataPackIndexQueryResult *result = new DataPackIndexQueryResult();
-	std::string block_domain = next_element.getField(MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_DOMAIN).String();
-	std::string block_path = next_element.getField(MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_PATH).String();
-	uint64_t block_offset = (uint64_t)next_element.getField(MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET).Long();
+	std::string block_domain = next_element.getField(MONGO_DB_FIELD_IDX_DATA_PACK_DATA_BLOCK_DST_DOMAIN).String();
+	std::string block_path = next_element.getField(MONGO_DB_FIELD_IDX_DATA_PACK_DATA_BLOCK_DST_PATH).String();
+	uint64_t block_offset = (uint64_t)next_element.getField(MONGO_DB_FIELD_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET).Long();
 	
 	result->dst_location = new chaos::data_service::vfs::PathFileLocation(block_domain, block_path, block_offset);
-	result->datapack_size = (uint32_t)next_element.getField(MONGO_DB_IDX_DATA_PACK_SIZE).numberInt();
+	result->datapack_size = (uint32_t)next_element.getField(MONGO_DB_FIELD_IDX_DATA_PACK_SIZE).numberInt();
 	return result;
 }

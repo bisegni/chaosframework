@@ -59,6 +59,10 @@ namespace chaos {
             
             DeviceController *getControllerForDeviceID(string deviceID, uint32_t controller_timeout=1000) throw (CException);
             void disposeDeviceControllerPtr(DeviceController *) throw (CException);
+			
+			void createNewSnapshot(const std::string& snapshot_name);
+			
+			void deleteSnapshot(const std::string& snapshot_name);
         };
     }
 }
