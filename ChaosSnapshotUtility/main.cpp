@@ -1,15 +1,82 @@
-//
-//  main.cpp
-//  ChaosSnapshotUtility
-//
-//  Created by Claudio Bisegni on 20/11/14.
-//  Copyright (c) 2014 infn. All rights reserved.
-//
+/*
+ *	main.cpp
+ *	!CHOAS
+ *	Created by Bisegni Claudio.
+ *
+ *    	Copyright 2014 INFN, National Institute of Nuclear Physics
+ *
+ *    	Licensed under the Apache License, Version 2.0 (the "License");
+ *    	you may not use this file except in compliance with the License.
+ *    	You may obtain a copy of the License at
+ *
+ *    	http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *    	Unless required by applicable law or agreed to in writing, software
+ *    	distributed under the License is distributed on an "AS IS" BASIS,
+ *    	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *    	See the License for the specific language governing permissions and
+ *    	limitations under the License.
+ */
 
+#include <string>
 #include <iostream>
 
-int main(int argc, const char * argv[]) {
-	// insert code here...
-	std::cout << "Hello, World!\n";
-    return 0;
+#include <chaos/ui_toolkit/ChaosUIToolkit.h>
+#include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
+#include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
+
+#define OPT_CU_ID			"device-id"
+#define OPT_CDS_ADDRESS		"cds-address"
+#define OPT_SNAP_NAME		"snapshot-name"
+#define OPT_SNAPSHOT_OP		"op"
+
+using namespace chaos;
+using namespace chaos::ui;
+
+int main(int argc, char * argv[]) {
+	std::string device_id;
+	std::string snap_name;
+	std::string cds_addr;
+	unsigned int operation;
+	try{
+		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<std::string>(OPT_CDS_ADDRESS, "CDS address", &cds_addr);
+		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<std::string>(OPT_CU_ID, "The identification string of the device to snapshuot", &device_id);
+		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<std::string>(OPT_SNAP_NAME, "The name of the snapshot", &snap_name);
+		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<unsigned int>(OPT_SNAPSHOT_OP, "Operation on snapshot [create(0), delete(1)]", 0, &operation);
+		
+		ChaosUIToolkit::getInstance()->init(argc, argv);
+		//! [UIToolkit Init]
+		
+		if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CDS_ADDRESS)){
+			throw CException(-1, "The cds address is mandatory", "check param");
+		}
+		
+		if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CU_ID)){
+			throw CException(-1, "No device identification set", "check param");
+		}
+		
+		if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SNAP_NAME)){
+			throw CException(-2, "Invalid snapshot name set", "check param");
+		}
+		
+		if(!snap_name.size()) throw CException(-3, "Snapshot name can't zero-length", "check param");
+		
+		SystemApiChannel *system_api_channel = LLRpcApi::getInstance()->getSystemApiClientChannel(cds_addr);
+		if(system_api_channel) {
+			LLRpcApi::getInstance()->releaseSystemApyChannel(system_api_channel);
+		}
+	} catch (CException& e) {
+		std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
+	} catch (...) {
+		std::cerr << "General error " << std::endl;
+	}
+	
+	try {
+		//! [UIToolkit Deinit]
+		ChaosUIToolkit::getInstance()->deinit();
+		//! [UIToolkit Deinit]
+	} catch (CException& e) {
+		std::cerr << e.errorCode << " - "<< e.errorDomain << " - " << e.errorMessage << std::endl;
+	}
+	return 0;
 }

@@ -112,7 +112,7 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
 																					   db_impl_name,
 																					   network_broker);
 		if(!snapshot_data_worker) throw chaos::CException(-5, "Error allocating snapshot worker", __FUNCTION__);
-		chaos::utility::StartableService::initImplementation(query_engine, init_data, "QueryEngine", __PRETTY_FUNCTION__);
+		chaos::utility::StartableService::initImplementation(snapshot_data_worker, init_data, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
 		for(CacheServerListIterator iter = settings->startup_chache_servers.begin();
 			iter != settings->startup_chache_servers.end();
 			iter++) {

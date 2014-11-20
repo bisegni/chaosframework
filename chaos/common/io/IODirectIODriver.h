@@ -40,6 +40,11 @@
 #include <boost/thread.hpp>
 #include <boost/atomic.hpp>
 
+namespace chaos_data = chaos::common::data;
+namespace chaos_utility = chaos::common::utility;
+namespace chaos_direct_io = chaos::common::direct_io;
+namespace chaos_dio_channel = chaos::common::direct_io::channel;
+
 namespace chaos{
 	namespace common {
 		//!forward declaration
@@ -50,11 +55,6 @@ namespace chaos{
 		namespace io {
 			using namespace std;
 			using namespace boost;
-			
-			namespace chaos_data = chaos::common::data;
-			namespace chaos_utility = chaos::common::utility;
-			namespace chaos_direct_io = chaos::common::direct_io;
-			namespace chaos_dio_channel = chaos::common::direct_io::channel;
 			
 			/*!
 			 Struct for initialization of the io driver

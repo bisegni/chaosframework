@@ -27,10 +27,10 @@ using namespace boost;
 using namespace chaos;
 using namespace chaos::common::io;
 using namespace chaos::ui;
-
+using namespace chaos::common::direct_io;
 #define LLRA_LAPP_ LAPP_ << "[LLRpcApi] - "
 
-uint32_t DIOConn::garbage_counter;
+uint32_t DIOConn::garbage_counter = 0;
 
 
 #define INIT_STEP   0
@@ -38,9 +38,9 @@ uint32_t DIOConn::garbage_counter;
 
 /*
  */
-LLRpcApi::LLRpcApi():
-direct_io_client(NULL){
+LLRpcApi::LLRpcApi() {
 	network_broker = new NetworkBroker();
+	direct_io_client = NULL;
 }
 
 /*
@@ -162,8 +162,28 @@ SystemApiChannel *LLRpcApi::getSystemApiClientChannel(const std::string& direct_
 	} else {
 		conn = new DIOConn(direct_io_client->getNewConnection(direct_io_address));
 	}
+	conn->garbage_counter++;
+	return new SystemApiChannel(conn, (channel::DirectIOSystemAPIClientChannel*)conn->connection->getNewChannelInstance("DirectIOSystemAPIClientChannel"));
 }
 
-void releaseSystemApyChannel(SystemApiChannel *system_api_channel) {
+void LLRpcApi::releaseSystemApyChannel(SystemApiChannel *system_api_channel) {
+	boost::unique_lock<boost::mutex> l(mutex_map_dio_addr_conn);
+	if(!system_api_channel) return;
+	
+	DIOConn *conn = system_api_channel->connection;
+	if(conn) {
+		conn->garbage_counter--;
+		if(system_api_channel->system_api_channel) {
+			conn->connection->releaseChannelInstance(system_api_channel->system_api_channel);
+		}
+		
+		if(!conn->garbage_counter) {
+			//need to be deleted the connection from the map
+			map_dio_addr_conn.erase(conn->connection->getURL());
+			
+			//and form the root client
+			direct_io_client->releaseConnection(conn->connection);
+		}
+	}
 	
 }

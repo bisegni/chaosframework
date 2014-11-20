@@ -63,7 +63,10 @@ namespace chaos {
 			chaos_direct_io::channel::DirectIOSystemAPIClientChannel *system_api_channel;
 		private:
 			DIOConn *connection;
-			SystemApiChannel(DIOConn *_connection):connection(_connection){};
+			SystemApiChannel(DIOConn *_connection,
+							 chaos_direct_io::channel::DirectIOSystemAPIClientChannel *_system_api_channel):
+			connection(_connection),
+			system_api_channel(_system_api_channel){};
 			~SystemApiChannel(){};
 		};
 		
