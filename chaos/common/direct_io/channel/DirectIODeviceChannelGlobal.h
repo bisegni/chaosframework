@@ -222,7 +222,7 @@ namespace chaos {
 					
 					//-----------------------------------SYSTEM CHANNEL--------------------------------
 #pragma mark System Channel
-#define SYSTEM_API_CHANNEL_NEW_SNAPSHOOT 256
+#define SYSTEM_API_CHANNEL_NEW_SNAPSHOOT 256+4
 
 					//! Header for the snapshot system api managment
 					/*!
@@ -247,15 +247,11 @@ namespace chaos {
 					*DirectIOSystemAPIChannelOpcodeNewSnapshootHeaderPtr;
 					
 					//!result
-					typedef union DirectIOSystemAPINewSnapshootResult {
-						//raw data representation of the header
-						char raw_data[256+4];
-						struct ResultFiled {
+					typedef  struct DirectIOSystemAPINewSnapshootResult {
 							int32_t		error;
 							char		error_message[256];
-						} result_field;
 					}DirectIOSystemAPINewSnapshootResult,
-					DirectIOSystemAPINewSnapshootResultPtr;
+					*DirectIOSystemAPINewSnapshootResultPtr;
                 }
 			}
 		}

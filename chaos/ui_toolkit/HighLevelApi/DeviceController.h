@@ -36,10 +36,12 @@
 
 namespace chaos_io = chaos::common::io;
 namespace chaos_batch = chaos::common::batch_command;
+namespace chaos_message = chaos::common::message;
+namespace chaos_network = chaos::common::network;
 
 namespace chaos {
     namespace ui{
-		
+
 		//! identify the domain qhere fetch the data
 		typedef enum DatasetDomain {
 			DatasetDomainOutput = 0,
@@ -68,9 +70,9 @@ namespace chaos {
 			string cu_type;
 			
                 //! Metadata Server channel for get device information
-            MDSMessageChannel *mdsChannel;
+			chaos_message::MDSMessageChannel *mdsChannel;
                 //! Device MEssage channel to control via chaos rpc the device
-            DeviceMessageChannel *deviceChannel;
+            chaos_message::DeviceMessageChannel *deviceChannel;
                 //! The io driver for accessing live data of the device
 			chaos_io::IODataDriver *ioLiveDataDriver;
                 //!Dataset database
@@ -185,7 +187,7 @@ namespace chaos {
             /*!
              Get range valu einfo for attrbiute name
              */
-            void getDeviceAttributeRangeValueInfo(const string& attributesName, chaos::RangeValueInfo& rangeInfo);
+			void getDeviceAttributeRangeValueInfo(const string& attributesName, chaos::common::data::RangeValueInfo& rangeInfo);
             /*!
              Get the direction of the attribute
              */

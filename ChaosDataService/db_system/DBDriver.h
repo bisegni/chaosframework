@@ -3,7 +3,7 @@
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *    	Copyright 2014 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -203,7 +203,33 @@ namespace chaos {
 																DataPackIndexQueryState dp_index_state) = 0;
 				
 				//! perform a search on data pack indexes
+				/*!
+				 start a query on index database  and return the cursor for paging the result
+				 \param _query the query
+				 \param index_cursor paged cursor for retrieve the result
+				 */
 				virtual int idxStartSearchDataPack(const chaos::data_service::db_system::DataPackIndexQuery& _query, DBIndexCursor **index_cursor) = 0;
+				
+				//! Create a new snapshot
+				/*!
+				 Create a new snapshot with the name
+				 */
+				virtual int snapshotCreateNewWithName(const std::string& snapshot_name) = 0;
+				
+				//! Add an element to a named snapshot
+				/*!
+				 add an element to the snapshot
+				 \param snapshot_name the name of the snapshot where put the element
+				 \param producer_unique_key the unique key of the producer
+				 \param dataset_type the type of the dataset, refer to @DataPackCommonKey::DPCK_DATASET_TYPE field of the dataset
+				 \param data the serialized data of the dataset
+				 \param data_len the length of the serialized data
+				 */
+				virtual int snapshotAddElementToSnapshot(const std::string& snapshot_name,
+														 const std::string& producer_unique_key,
+														 const std::string& dataset_type,
+														 void* data,
+														 uint32_t data_len) = 0;
 			};
 		}
 	}

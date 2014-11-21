@@ -33,6 +33,10 @@ namespace chaos {
 		namespace direct_io {
 			namespace channel {
 				
+				//! Sercver channel for the managment of data request
+				/*!
+				 This channel answer to the client api for data managment, push, get last data and various query
+				 */
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DirectIODeviceServerChannel, DirectIOVirtualServerChannel), public chaos::common::direct_io::DirectIOEndpointHandler {
                     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIODeviceServerChannel)
 				public:

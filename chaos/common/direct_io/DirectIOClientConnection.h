@@ -35,9 +35,13 @@
 #include <chaos/common/direct_io/channel/DirectIOVirtualClientChannel.h>
 
 namespace chaos {
-	class NetworkBroker;
 	
 	namespace common {
+		
+		namespace network {
+			class NetworkBroker;
+		}
+		
 		namespace direct_io {
             //forward delcarations
             class DirectIOClient;
@@ -77,7 +81,7 @@ namespace chaos {
 			public DirectIOURLManagment,
 			protected DICKeyObjectContainer {
                 friend class DirectIOClient;
-				friend class chaos::NetworkBroker;
+				friend class chaos::common::network::NetworkBroker;
 								
 			protected:
 				std::string		url;

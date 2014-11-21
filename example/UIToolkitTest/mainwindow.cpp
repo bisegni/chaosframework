@@ -249,7 +249,7 @@ void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
 
 QString  MainWindow::returnAttributeTypeInString(string& attributeName) {
     QString result;
-    chaos::RangeValueInfo attributeInfo;
+    chaos::common::data::RangeValueInfo attributeInfo;
     deviceController->getDeviceAttributeRangeValueInfo(attributeName, attributeInfo);
 
     switch(attributeInfo.valueType){
@@ -277,7 +277,7 @@ void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
     if(index.column() != 0) return;
     QString selectedAttribute = ui->tableView->model()->data(index, Qt::DisplayRole).toString();
     std::string attributeName =  selectedAttribute.toStdString() ;
-    chaos::RangeValueInfo rangeInfo;
+    chaos::common::data::RangeValueInfo rangeInfo;
     // check the type of attribute
     chaos::DataType::DataSetAttributeIOAttribute direction;
     if(deviceController->getDeviceAttributeDirection(attributeName, direction)!=0){
@@ -410,7 +410,7 @@ void MainWindow::executeOnThread(){
     while(runThread){
         deviceController->fetchCurrentDeviceValue();
         if(checkSequentialIDKey.size()>0){
-            chaos::CDataWrapper *wrapper = deviceController->getCurrentData();
+            chaos::common::data::CDataWrapper *wrapper = deviceController->getCurrentData();
             if(wrapper == NULL) {
                 std::cout << "No data" << std::endl;
                 continue;

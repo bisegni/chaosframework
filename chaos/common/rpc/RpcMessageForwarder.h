@@ -27,20 +27,19 @@
 #include <chaos/common/network/NetworkForwardInfo.h>
 
 namespace chaos {
-
-    /*!
-     Abstract class that indetify the implementation as an rpc message forwarder
-     */
-    class RpcMessageForwarder {
-        
-    public:
-        /*!
-         Submit a pack, all the inromation for forwarding it are already into CDataWrapper
-         \param MessageNetworkDestination the information for the message forward to network node
-         \param onThisThread if true the message is forwarded in the same thread of the caller
-         */
-        virtual bool submitMessage(NetworkForwardInfo *forwardInfo, bool onThisThread=false)=0;
-    };
+	/*!
+	 Abstract class that indetify the implementation as an rpc message forwarder
+	 */
+	class RpcMessageForwarder {
+		
+	public:
+		/*!
+		 Submit a pack, all the inromation for forwarding it are already into CDataWrapper
+		 \param MessageNetworkDestination the information for the message forward to network node
+		 \param onThisThread if true the message is forwarded in the same thread of the caller
+		 */
+		virtual bool submitMessage(chaos::common::network::NetworkForwardInfo *forwardInfo, bool onThisThread=false)=0;
+	};
 }
 
 #endif

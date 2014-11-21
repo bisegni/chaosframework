@@ -29,12 +29,16 @@
 
 
 namespace chaos {
-    class NetworkBroker;
-    
+	namespace common {
+		namespace network {
+			class NetworkBroker;
+		}
+	}
+	
     namespace event{
         
         class EventServer : public NamedService , chaos::utility::StartableService {
-            friend class chaos::NetworkBroker;
+            friend class chaos::common::network::NetworkBroker;
                 //! handler that can manage the event reception
             EventHandler *rootEventHandler;
         protected:

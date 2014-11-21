@@ -32,6 +32,7 @@
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/rpc/RpcMessageForwarder.h>
 
+using namespace chaos::common::network;
 namespace chaos_data = chaos::common::data;
 
 namespace chaos {
@@ -44,15 +45,19 @@ namespace chaos {
         //message to forward to remote server
         chaos_data::CDataWrapper *message;
     } MessageForwardingInfo;
-    
-    class NetworkBroker;
-    
+	
+	namespace common {
+		namespace network {
+			    class NetworkBroker;
+		}
+	}
+
     /*!
      Abstract class for standard adapter method for permit, to CommandManager
      the correct initialization for the adapter instance
      */
     class RpcClient: public RpcMessageForwarder, public chaos::utility::StartableService, public NamedService {
-        friend class NetworkBroker;
+		friend class chaos::common::network::NetworkBroker;
     protected:
         
         /*!

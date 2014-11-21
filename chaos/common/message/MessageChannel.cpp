@@ -21,7 +21,9 @@
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 
-using namespace chaos;
+//using namespace chaos;
+using namespace chaos::common::network;
+using namespace chaos::common::message;
 using namespace chaos::common::data;
 
 #define MessageChannel_LOG_HEAD "[MessageChannel] - "
@@ -111,7 +113,7 @@ CDataWrapper *MessageChannel::response(CDataWrapper *responseData, bool& detachD
 
 /*
  */
-atomic_int_type MessageChannel::prepareRequestPackAndSend(bool async, const char * const nodeID, const char * const actionName, CDataWrapper *requestPack, bool onThisThread) {
+chaos::atomic_int_type MessageChannel::prepareRequestPackAndSend(bool async, const char * const nodeID, const char * const actionName, CDataWrapper *requestPack, bool onThisThread) {
     CHAOS_ASSERT(nodeID && actionName && requestPack)
         //get new reqeust id
     atomic_int_type currentRequestID = atomic_increment(&channelRequestIDCounter);
@@ -218,6 +220,6 @@ void MessageChannel::clearHandler() {
 /*!
  Poll for see if the response is arrived
  */
-common::data::CDataWrapper* MessageChannel::pollAnswer(atomic_int_type request_id, uint32_t millisec_to_wait) {
+CDataWrapper* MessageChannel::pollAnswer(atomic_int_type request_id, uint32_t millisec_to_wait) {
     return sem.wait(request_id, millisec_to_wait);
 }

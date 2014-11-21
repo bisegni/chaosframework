@@ -88,7 +88,7 @@ int computePercent(uint64_t done, uint64_t all) {
 chaos::common::data::SerializationBuffer *getCSVDecoding( DeviceController& controller, const std::vector<std::string>& output_element_name, CDataWrapper& data_pack) {
 	chaos::common::data::SerializationBuffer *result = NULL;
 	std::stringstream csv_lin;
-	chaos::RangeValueInfo attribute_info;
+	chaos::common::data::RangeValueInfo attribute_info;
 	
 	int idx = 0;
 	for(std::vector<std::string>::const_iterator it = output_element_name.begin();

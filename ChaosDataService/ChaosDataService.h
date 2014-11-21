@@ -3,7 +3,7 @@
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *    	Copyright 2014 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -70,11 +70,20 @@ namespace chaos{
 			//root pointer of the index driver
 			db_system::DBDriver *db_driver_ptr;
 			
-			utility::StartableServiceContainer<chaos::NetworkBroker> network_broker;
+			
+			//!chaos internal network router
+			utility::StartableServiceContainer<chaos::common::network::NetworkBroker> network_broker;
+			
+			//! CDS virtual file system manager
 			utility::InizializableServiceContainer<vfs::VFSManager> vfs_file_manager;
 
+			//! CDS data consumer that respond to data api
 			utility::StartableServiceContainer<QueryDataConsumer> data_consumer;
+			
+			//! CDS index part that elaborate stage file
 			utility::StartableServiceContainer<StageDataConsumer> stage_data_consumer;
+			
+			//! convert param_key to a string of string hash map
 			void fillKVParameter(std::map<std::string, std::string>& kvmap, const char * param_key);
         public:
 			//----------setting----------

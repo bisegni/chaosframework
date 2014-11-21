@@ -3,7 +3,7 @@
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *    	Copyright 2014 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@
 #include "vfs/VFSManager.h"
 #include "worker/DataWorker.h"
 #include "cache_system/cache_system.h"
+#include "db_system/db_system.h"
 #include "query_engine/QueryEngine.h"
 
 #include <chaos/common/utility/ObjectSlot.h>
@@ -33,6 +34,7 @@
 #include <chaos/common/direct_io/DirectIOServerEndpoint.h>
 #include <chaos/common/async_central/AsyncCentralManager.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>
+#include <chaos/common/direct_io/channel/DirectIOSystemAPIServerChannel.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/network/NetworkBroker.h>
 
@@ -40,6 +42,7 @@
 
 using namespace chaos::utility;
 using namespace chaos::common::data;
+using namespace chaos::common::network;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 using namespace chaos::common::direct_io::channel::opcode_headers;
@@ -51,26 +54,29 @@ namespace chaos{
         
         class QueryDataConsumer:
 		protected chaos::common::async_central::TimerHandler,
-		public DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler,
+		protected DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler,
+		protected DirectIOSystemAPIServerChannel::DirectIOSystemAPIServerChannelHandler,
 		public utility::StartableService {
             friend class ChaosDataService;
 			std::string cache_impl_name;
-			
+			std::string db_impl_name;
 			
 			ChaosDataServiceSetting					*settings;
-			chaos::NetworkBroker					*network_broker;
+			NetworkBroker	*network_broker;
 			
             DirectIOServerEndpoint					*server_endpoint;
 			DirectIODeviceServerChannel				*device_channel;
+			DirectIOSystemAPIServerChannel			*system_api_channel;
 			
 			cache_system::CacheDriver				*cache_driver;
-			
+			db_system::DBDriver						*db_driver;
 			vfs::VFSManager *vfs_manager_instance;
 			boost::atomic<uint16_t> device_data_worker_index;
 			chaos::data_service::worker::DataWorker	**device_data_worker;
-			
+			chaos::data_service::worker::DataWorker	*snapshot_data_worker;
 			query_engine::QueryEngine *query_engine;
 			
+			//---------------- DirectIODeviceServerChannelHandler -----------------------
             int consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header,
 								void *channel_data,
 								uint32_t channel_data_len,
@@ -87,10 +93,15 @@ namespace chaos{
 									  uint64_t search_end_ts,
 									  DirectIOSynchronousAnswerPtr synchronous_answer);
 			
+			//---------------- DirectIOSystemAPIServerChannelHandler -----------------------
+			int consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshootHeader *header,
+										void *concatenated_unique_id_memory,
+										uint32_t concatenated_unique_id_memory_size,
+										DirectIOSystemAPINewSnapshootResult *api_result);
 			//async central timer hook
 			void timeout();
         public:
-			QueryDataConsumer(vfs::VFSManager *_vfs_manager_instance);
+			QueryDataConsumer(vfs::VFSManager *_vfs_manager_instance, db_system::DBDriver *_db_driver);
             ~QueryDataConsumer();
             void init(void *init_data) throw (chaos::CException);
             void start() throw (chaos::CException);

@@ -102,8 +102,7 @@ CDataWrapper* CommandManager::updateConfiguration(CDataWrapper*) {
  Send message over rpc channel
  */
 MDSMessageChannel *CommandManager::getMetadataserverChannel() {
-    string serverHost = GlobalConfiguration::getInstance()->getMetadataServerAddress();
-    return broker->getMetadataserverMessageChannel(serverHost);
+    return broker->getMetadataserverMessageChannel();
 }
 
 /*

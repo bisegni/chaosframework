@@ -17,9 +17,10 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "MDSMessageChannel.h"
+#include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/network/NetworkBroker.h>
-using namespace chaos;
+
+using namespace chaos::common::message;
 using namespace chaos::common::data;
 
 #define CHECK_TIMEOUT_AND_RESULT_CODE(x,e) \

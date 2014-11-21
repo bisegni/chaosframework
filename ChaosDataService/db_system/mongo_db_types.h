@@ -22,12 +22,14 @@ namespace chaos {
 			 //unique index for the vfs colletion
 			 db.vfat.ensureIndex( { "vfs_path": 1, "vfs_domain":1 } , { unique: true } )
 			 */
-#define MONGO_DB_VFS_DB_NAME				"chaos"
-#define MONGO_DB_VFS_DOMAINS_COLLECTION		"domains"
-#define MONGO_DB_VFS_DOMAINS_URL_COLLECTION	"domains_url"
-#define MONGO_DB_VFS_VFAT_COLLECTION		"vfat"
-#define MONGO_DB_VFS_VBLOCK_COLLECTION		"datablock"
-#define MONGO_DB_IDX_DATA_PACK_COLLECTION	"dp_idx"
+#define MONGO_DB_NAME						"chaos"
+#define MONGO_DB_COLLECTION_VFS_DOMAINS		"domains"
+#define MONGO_DB_COLLECTION_VFS_DOMAINS_URL	"domains_url"
+#define MONGO_DB_COLLECTION_VFS_VFAT		"vfat"
+#define MONGO_DB_COLLECTION_VFS_VBLOCK		"datablock"
+#define MONGO_DB_COLLECTION_IDX_DATA_PACK	"dp_idx"
+#define MONGO_DB_COLLECTION_SNAPSHOT		"snapshot"
+#define MONGO_DB_COLLECTION_SNAPSHOT_DATA	"snapshot_data"
 			
 #define MONGO_DB_COLLECTION_NAME(db,coll)	boost::str(boost::format("%1%.%2%") % db % coll)
 			
@@ -53,15 +55,24 @@ namespace chaos {
 #define MONGO_DB_FIELD_DATA_BLOCK_HB						"hb"
 			
 			//db_idx field-------------------------------------------------
-#define MONGO_DB_IDX_DATA_PACK_DID						"did"
-#define MONGO_DB_IDX_DATA_PACK_ACQ_TS					"acq_ts"
-#define MONGO_DB_IDX_DATA_PACK_ACQ_TS_NUMERIC			"acq_ts_numeric"
+#define MONGO_DB_FIELD_IDX_DATA_PACK_DID						"did"
+#define MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS					"acq_ts"
+#define MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS_NUMERIC			"acq_ts_numeric"
 //#define MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_ID		"db_id"
-#define MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_DOMAIN	"db_domain"
-#define MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_PATH		"db_path"
-#define MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET	"db_offset"
-#define MONGO_DB_IDX_DATA_PACK_SIZE						"dp_size"
-#define MONGO_DB_IDX_DATA_PACK_STATE					"dp_state"
+#define MONGO_DB_FIELD_IDX_DATA_PACK_DATA_BLOCK_DST_DOMAIN	"db_domain"
+#define MONGO_DB_FIELD_IDX_DATA_PACK_DATA_BLOCK_DST_PATH		"db_path"
+#define MONGO_DB_FIELD_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET	"db_offset"
+#define MONGO_DB_FIELD_IDX_DATA_PACK_SIZE						"dp_size"
+#define MONGO_DB_FIELD_IDX_DATA_PACK_STATE					"dp_state"
+			
+			//snapshot field-------------------------------------------------
+#define MONGO_DB_FIELD_SNAPSHOT_NAME		"snap_name"
+#define MONGO_DB_FIELD_SNAPSHOT_TS			"snap_ts"
+
+			//snapshot data-------------------------------------------------
+#define MONGO_DB_FIELD_SNAPSHOT_DATA_SNAPSHOT_NAME	"snap_name"
+#define MONGO_DB_FIELD_SNAPSHOT_DATA_PRODUCER_ID	"producer_id"
+//the key that contains the channel serialization is created at runtine with the semantic producer_key[_o,_i,_c,_s]
 		}
 	}
 }

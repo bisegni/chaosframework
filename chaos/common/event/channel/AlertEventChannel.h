@@ -24,18 +24,24 @@
 #include <chaos/common/event/channel/EventChannel.h>
 #include <chaos/common/event/evt_desc/AlertEventDescriptor.h>
 namespace chaos {
-    
-    class NetworkBroker;
-    
+	
+	//! forward declarataion
+	namespace common {
+		namespace network {
+			class NetworkBroker;
+
+		}
+	}
+	
     namespace event {
         namespace channel {
-            
+			using namespace chaos::common::network;
                 //! Channel for manage the alert event type
             /*!
              This channel simplify the alert event forwarding and recivement
              */
             class AlertEventChannel : public EventChannel {
-                friend class chaos::NetworkBroker;
+				friend class chaos::common::network::NetworkBroker;
 
             protected:
                 

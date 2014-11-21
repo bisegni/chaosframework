@@ -42,7 +42,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
     QSettings settings;
     GraphWidget *graphWdg;
-    chaos::MDSMessageChannel *mdsChannel;
+    chaos::common::network::MDSMessageChannel *mdsChannel;
     chaos::ui::DeviceController *deviceController;
     int d_timerId;
     boost::shared_ptr<boost::thread> schedThread;

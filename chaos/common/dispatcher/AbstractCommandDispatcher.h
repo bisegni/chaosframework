@@ -46,8 +46,12 @@ namespace chaos{
     using namespace std;
     using namespace bson;
     using namespace boost;
-        //class RpcClient;
-    class NetworkBroker;
+	namespace common {
+		namespace network {
+			class NetworkBroker;
+		}
+	}
+
     
         //! Base class for the Chaos Action Dispatcher
     /*!

@@ -80,3 +80,11 @@ void HLDataApi::disposeDeviceControllerPtr(DeviceController *ctrl) throw (CExcep
     delete ctrl;
     ctrl = NULL;
 }
+
+void HLDataApi::createNewSnapshot(const std::string& snapshot_name) {
+	
+}
+
+void HLDataApi::deleteSnapshot(const std::string& snapshot_name) {
+	
+}
