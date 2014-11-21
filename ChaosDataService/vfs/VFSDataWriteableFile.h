@@ -29,10 +29,11 @@ namespace chaos {
 			//forward declaration
 			class VFSManager;
 			
-			//! Stage writeable file
+			//! Data indexed writeable file
 			/*!
-			 Manage the write operation on the stage file during the indexing operation
-			 that happen migrating file form state to data or merging two data file.
+			 This calss is used on the indexing process of a stage datafile. Every datafile contains datapack from an unique
+			 instrument id. During stage file indexing process, this file is fille. Quen this instace close a datablock
+			 it need to update all index belong to it in the querable state. In this qay data can be found by serach query
 			 */
 			class VFSDataWriteableFile: public VFSDataFile {
 				friend class VFSManager;
@@ -41,8 +42,10 @@ namespace chaos {
 				inline bool isDataBlockValid(DataBlock *new_data_block_ptr);
 				
 				VFSDataWriteableFile(storage_system::StorageDriver *_storage_driver_ptr,
-									 index_system::IndexDriver *_index_driver_ptr,
+									 db_system::DBDriver *_db_driver_ptr,
 									 std::string data_vfs_relative_path);
+				
+				int releaseDataBlock(DataBlock *data_block_ptr, int closed_state = data_block_state::DataBlockStateNone);
 				
 			public:
 				//! force new data block creation

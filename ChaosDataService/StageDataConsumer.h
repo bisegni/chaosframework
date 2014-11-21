@@ -23,9 +23,8 @@
 #include "dataservice_global.h"
 #include "vfs/VFSManager.h"
 #include "worker/DataWorker.h"
-#include "index_system/StageDataVFileScanner.h"
+#include "indexer/StageDataVFileScanner.h"
 
-#include <chaos/common/utility/ObjectSlot.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/utility/TemplatedKeyValueHash.h>
 #include <chaos/common/async_central/AsyncCentralManager.h>
@@ -37,7 +36,11 @@
 #include <boost/lockfree/queue.hpp>
 namespace chaos{
     namespace data_service {
-        
+		
+		namespace db_system {
+			class DBDriver;
+		}
+		
         class ChaosDataService;
 		
 		/*!
@@ -46,7 +49,7 @@ namespace chaos{
 		 can use a scanner. Every call to the scan method of the
 		 StageDataVFileScanner class permit to scan an intere data block
 		 */
-		typedef struct StageScannerInfo {
+		struct StageScannerInfo {
 			//the sequencial index of the scanner
 			uint32_t							index;
 			
@@ -57,8 +60,8 @@ namespace chaos{
 			boost::mutex						mutex_on_scan;
 			
 			//is the scanner for this slot
-			index_system::StageDataVFileScanner	*scanner;
-		}StageScannerInfo;
+			indexer::StageDataVFileScanner		*scanner;
+		};
 
 		/*!
 		  Worker for stage data elaboration
@@ -68,11 +71,8 @@ namespace chaos{
 		protected chaos::common::async_central::TimerHandler {
             friend class ChaosDataService;
 			ChaosDataServiceSetting	*settings;
-			
 			vfs::VFSManager *vfs_manager_ptr;
-			index_system::IndexDriver *index_driver_ptr;
-			
-			chaos::common::utility::ObjectSlot<chaos::data_service::worker::DataWorker*> indexer_stage_worker_list;
+			db_system::DBDriver *db_driver_ptr;
 
 			//thread managment
 			bool work_on_stage;
@@ -100,7 +100,7 @@ namespace chaos{
 			void rescheduleScannerInfo(StageScannerInfo *scanner_info);
 		public:
 			StageDataConsumer(vfs::VFSManager *_vfs_manager_ptr,
-							  index_system::IndexDriver *_index_driver_ptr,
+							  db_system::DBDriver *_db_driver_ptr,
 							  ChaosDataServiceSetting *_settings);
             ~StageDataConsumer();
             void init(void *init_data) throw (chaos::CException);

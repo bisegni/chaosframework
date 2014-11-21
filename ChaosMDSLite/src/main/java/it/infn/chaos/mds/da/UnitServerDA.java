@@ -4,6 +4,7 @@
 package it.infn.chaos.mds.da;
 
 import it.infn.chaos.mds.business.DatasetAttribute;
+import it.infn.chaos.mds.business.DeviceClass;
 import it.infn.chaos.mds.business.UnitServer;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
 import it.infn.chaos.mds.secutiry.RSAKey;
@@ -189,7 +190,7 @@ public class UnitServerDA extends DataAccess {
 		}
 	}
 
-
+	
 
 	public void updateUSCUAssociation(UnitServerCuInstance unitServerCuInstance) throws RefException {
 		PreparedStatement ps = null;
@@ -215,8 +216,69 @@ public class UnitServerDA extends DataAccess {
 		}
 		
 	}
+	///////////////////// DEVICE CLASSES /////////////
+	/**
+	 * 
+	 * @param usci
+	 * @throws RefException
+	 */
+	public void insertNewDeviceClass(DeviceClass usci) throws RefException {
+		PreparedStatement ps = null;
+		InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_INSERT);
+		iuBuilder.addTable(DeviceClass.class);
+		try {
+			iuBuilder.fillWithBusinessClass(usci);
+			ps = getPreparedStatementForSQLCommand(iuBuilder.toString());
+			iuBuilder.fillPreparedStatement(ps);
+			executeInsertUpdateAndClose(ps);
+		} catch (IllegalArgumentException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::insertNewDeviceClass");
+		} catch (IllegalAccessException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 1, "UnitServerDA::insertNewDeviceClass");
+		} catch (SQLException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 2, "UnitServerDA::insertNewDeviceClass");
+		} finally {
+			closePreparedStatement(ps);
+		}
+	}
 	
+	public void removeDeviceClass(String alias) throws RefException, SQLException {
+		// delete the unit server
+			DeleteSqlBuilder d = new DeleteSqlBuilder();
+			d.addTable(DeviceClass.class);
+			d.addCondition(true, String.format("%s=?", DeviceClass.DEVICE_CLASS_ALIAS));
+			PreparedStatement ps = getPreparedStatementForSQLCommand(d.toString());
+			ps.setString(1, alias);
+			executeInsertUpdateAndClose(ps);
+	}
 	
+	public Vector<DeviceClass> returnAllClassesBy(String dev_interface,String dev_class) throws RefException {
+		SqlBuilder s = new SqlBuilder();
+		Vector<DeviceClass> result = new Vector<DeviceClass>();
+		s.addTable(DeviceClass.class);
+		s.addPseudoColumntoSelect("*");
+		if(dev_interface!=null){
+		
+			s.addCondition(true,String.format("%s='%s'", DeviceClass.DEVICE_CLASS_INTERFACE,dev_interface));
+		}
+		
+		if(dev_class!=null){
+
+			s.addCondition(true,String.format("%s='%s'", DeviceClass.DEVICE_CLASS_NAME,dev_class));
+		}
+		PreparedStatement ps = null;
+		try {
+			ps = getPreparedStatementForSQLCommand(s.toString());
+			
+			
+			result = (Vector<DeviceClass>) executeQueryPreparedStatementAndClose(ps, DeviceClass.class, null, null, false);
+			
+		} catch (Throwable e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::returnAllClassesByInterface");
+		}
+		return result;
+	}
+/////////////////////////////////////////	
 	/**
 	 * Insert new unit server
 	 * 
@@ -451,7 +513,7 @@ public class UnitServerDA extends DataAccess {
 			result = (Vector<UnitServerCuInstance>) executeQueryPreparedStatementAndClose(ps, UnitServerCuInstance.class, null, null, false);
 			for (UnitServerCuInstance unitServerCuInstance : result) {
 				BasicBSONObject bdriverDescription = (BasicBSONObject) JSON.parse(unitServerCuInstance.getDrvSpec());
-				System.out.println(bdriverDescription);
+				//System.out.println(bdriverDescription);
 			}
 		} catch (Throwable e) {
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::returnAllUnitServerCUAssociationbyUSAlias");
@@ -474,7 +536,7 @@ public class UnitServerDA extends DataAccess {
 			result = (Vector<UnitServerCuInstance>) executeQueryPreparedStatementAndClose(ps, UnitServerCuInstance.class, null, null, false);
 			for (UnitServerCuInstance unitServerCuInstance : result) {
 				BasicBSONObject bdriverDescription = (BasicBSONObject) JSON.parse(unitServerCuInstance.getDrvSpec());
-				System.out.println(bdriverDescription);
+				//System.out.println(bdriverDescription);
 			}
 		} catch (Throwable e) {
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::returnAllUnitServerCUAssociationbyUSAlias");

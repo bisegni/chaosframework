@@ -3,6 +3,7 @@ package it.infn.chaos.mds.process;
 import it.infn.chaos.mds.business.DatasetAttribute;
 import it.infn.chaos.mds.business.UnitServer;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
+import it.infn.chaos.mds.business.DeviceClass;
 import it.infn.chaos.mds.da.UnitServerDA;
 
 import java.sql.SQLException;
@@ -266,5 +267,23 @@ public class ManageUnitServerProcess extends RefProcess {
 		commit();
 	}
 
+	
+	public void insertNewDeviceClass(DeviceClass dc) throws InstantiationException, IllegalAccessException, ClassNotFoundException, RefException, SQLException{
+		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
+		usDA.insertNewDeviceClass(dc);
+		commit();
+	}
+	public void removeDeviceClass(String alias) throws RefException, SQLException{
+		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
+		usDA.removeDeviceClass(alias);
+		commit();
+	}
+	
+	public Vector<DeviceClass> returnAllClassesBy(String dc_name, String dc_interface) throws RefException{
+		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
+		return usDA.returnAllClassesBy(dc_name, dc_interface);
+		
+		
+	}
 
 }

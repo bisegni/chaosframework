@@ -65,11 +65,11 @@ public class ActionHandlerExecutionUnit implements Runnable {
 		// add the action message
 		resultMessage.put(RPCConstants.CS_CMDM_ACTION_MESSAGE, resultPack);
 		try {
-			System.out.println(resultMessage.toString());
+			//System.out.println(resultMessage.toString());
 			SingletonServices.getInstance().getMdsRpcClient().sendMessage(resultMessage);
 		} catch (Throwable e) {
 		}
 		
-		System.out.println("Done executing ActionHandlerExecutionUnit");
+		//System.out.println("Done executing ActionHandlerExecutionUnit");
 	}
 }

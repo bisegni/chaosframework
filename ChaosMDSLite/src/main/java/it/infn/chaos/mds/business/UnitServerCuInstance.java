@@ -51,10 +51,18 @@ public class UnitServerCuInstance extends BusinessObject {
 
 	private Vector<DatasetAttribute>	attributeConfigutaion	= new Vector<DatasetAttribute>();
 
+	private String classInterface=null;
+	
 	public Vector<DatasetAttribute> getAttributeConfigutaion() {
 		return attributeConfigutaion;
 	}
 
+	public void setInterface(String str){
+		this.classInterface=str;
+	}
+	public String getInterface(){
+		return this.classInterface;
+	}
 	public void setAttributeConfigutaion(Vector<DatasetAttribute> attributeConfigutaion) {
 		this.attributeConfigutaion = attributeConfigutaion;
 	}
@@ -69,7 +77,7 @@ public class UnitServerCuInstance extends BusinessObject {
 
 	@Override
 	public void checkIntegrityValues() throws RefException {
-		checkValue(getCuId(), "The work unit id is mandatory");
+		checkValue(getCuId(), "The Control Unit UID is mandatory");
 	}
 
 	/*

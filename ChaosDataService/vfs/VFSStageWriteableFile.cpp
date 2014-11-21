@@ -29,10 +29,10 @@ using namespace chaos::data_service::vfs;
 
 
 VFSStageWriteableFile::VFSStageWriteableFile(storage_system::StorageDriver *_storage_driver_ptr,
-											 index_system::IndexDriver *_index_driver_ptr,
+											 db_system::DBDriver *_db_driver_ptr,
 											 std::string stage_vfs_relative_path):
 VFSStageFile(_storage_driver_ptr,
-			 _index_driver_ptr,
+			 _db_driver_ptr,
 			 stage_vfs_relative_path,
 			 VFSStageFileOpenModeWrite) {
 	

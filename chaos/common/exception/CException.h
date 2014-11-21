@@ -37,11 +37,11 @@ namespace chaos{
         
         void composeMsg() {
             std::stringstream ss;
-            ss << "-----------Exception------------";
-            ss << "Domain:" << errorDomain;
-            ss << "Message:" << errorMessage;
-            ss << "Error Code;" << errorCode;
-            ss << "-----------Exception------------";
+			ss << "-----------Exception------------"<<std::endl;
+            ss << "Domain:" << errorDomain<<std::endl;
+            ss << "Message:" << errorMessage<<std::endl;
+            ss << "Error Code;" << errorCode<<std::endl;
+            ss << "-----------Exception------------"<<std::endl;
             const string& strSS = ss.str();
             msg = strSS.c_str();
         }

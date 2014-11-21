@@ -61,10 +61,10 @@ namespace chaos {
 				~DirectIOServerEndpoint();
 				
 				// Event for a new data received
-				void priorityDataReceived(DirectIODataPack *data_pack);
+				int priorityDataReceived(DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer);
                 
                 // Event for a new data received
-				void serviceDataReceived(DirectIODataPack *data_pack);
+				int serviceDataReceived(DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer);
 
 			public:
 				//! Add a new channel instantiator

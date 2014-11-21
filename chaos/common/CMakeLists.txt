@@ -15,7 +15,7 @@ SET(common_lib_src  ${common_lib_src}	configuration/GlobalConfiguration.cpp)
 SET(common_lib_src  ${common_lib_src}	data/CDataWrapper.cpp data/CUSchemaDB.cpp data/DatasetDB.cpp data/entity_db/EntityDB.cpp data/entity_db/sqlite_impl/sqlite3.c
 										data/entity_db/sqlite_impl/SQLiteEntityDB.cpp data/entity/Entity.cpp data/broker/DataBroker.cpp data/broker/publisher/PublisherDataService.cpp 
 										data/broker/reader/ReaderDataService.cpp data/cache/FastHash.cpp data/cache/DataCache.cpp data/cache/LFDataCache.cpp 
-										data/cache/ChannelValueAccessor.cpp data/cache/KeyGroupCache.cpp)
+										data/cache/ChannelValueAccessor.cpp data/cache/KeyGroupCache.cpp data/cache/AttributesSetting.cpp )
 SET(common_lib_src  ${common_lib_src}	memory/ManagedMemory.cpp)
 SET(common_lib_src  ${common_lib_src}	dispatcher/DefaultEventDispatcher.cpp dispatcher/EventTypeScheduler.cpp dispatcher/AbstractEventDispatcher.cpp
 										dispatcher/AbstractCommandDispatcher.cpp dispatcher/DefaultCommandDispatcher.cpp dispatcher/DomainActionsScheduler.cpp)
@@ -30,16 +30,14 @@ SET(common_lib_src  ${common_lib_src}	direct_io/DirectIOClient.cpp direct_io/Dir
 										direct_io/impl/ZMQDirectIOClient.cpp direct_io/impl/ZMQDirectIOServer.cpp 
 										direct_io/impl/ZMQBaseClass.cpp direct_io/impl/ZMQDirectIOClientConnection.cpp
 										direct_io/channel/DirectIOVirtualChannel.cpp direct_io/channel/DirectIOVirtualClientChannel.cpp direct_io/channel/DirectIOVirtualServerChannel.cpp
-										direct_io/channel/DirectIOCDataWrapperClientChannel.cpp direct_io/channel/DirectIOCDataWrapperServerChannel.cpp 
 										direct_io/channel/DirectIODeviceClientChannel.cpp direct_io/channel/DirectIODeviceServerChannel.cpp
 										direct_io/channel/DirectIOPerformanceServerChannel.cpp direct_io/channel/DirectIOPerformanceClientChannel.cpp)
-SET(common_lib_src  ${common_lib_src}	io/IODataDriver.cpp io/IOMemcachedIODriver.cpp io/IODirectIODriver.cpp)
+SET(common_lib_src  ${common_lib_src}	io/IODataDriver.cpp io/IOMemcachedIODriver.cpp io/IODirectIODriver.cpp io/QueryFuture.cpp)
 SET(common_lib_src  ${common_lib_src}	message/DeviceMessageChannel.cpp message/MDSMessageChannel.cpp message/MessageChannel.cpp message/PerformanceNodeChannel.cpp)
 SET(common_lib_src  ${common_lib_src}	network/NetworkBroker.cpp network/PerformanceManagment.cpp network/URLServiceFeeder.cpp network/URL.cpp)
 SET(common_lib_src  ${common_lib_src}	rpc/RpcClient.cpp rpc/RpcServer.cpp rpc/zmq/ZMQClient.cpp rpc/zmq/ZMQServer.cpp rpc/tcpuv/TCPUVClient.cpp rpc/tcpuv/TCPUVServer.cpp)
 SET(common_lib_src  ${common_lib_src}	utility/NamedService.cpp utility/LoadableService.cpp utility/StartableService.cpp utility/InizializableService.cpp)
-SET(common_lib_src  ${common_lib_src}	batch_command/AttributeSetting.cpp batch_command/BatchCommandExecutor.cpp batch_command/BatchCommandSandbox.cpp 
-                                        batch_command/BatchCommand.cpp)
+SET(common_lib_src  ${common_lib_src}	batch_command/BatchCommandExecutor.cpp batch_command/BatchCommandSandbox.cpp batch_command/BatchCommand.cpp)
 
 
 SET(common_lib_library $ENV{CHAOS_LINK_LIBRARY})

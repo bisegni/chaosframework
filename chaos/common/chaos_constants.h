@@ -253,8 +253,6 @@ namespace chaos {
             TYPE_STRING,
             //!byte array variable length
             TYPE_BYTEARRAY,
-            //!struct type
-            TYPE_STRUCT,
             //!bool variable length
             TYPE_BOOLEAN
         } DataType;
@@ -515,27 +513,87 @@ namespace chaos {
     }
     /** @} */ // end of DataProxyConfigurationKey
     
-    
-    /** @defgroup ChaosDataPackKey Chaos Data Pack standard for hardware instrument
-     This is the collection of the standard key that are contained into the data pack
-     that describe a device hardware metrix on it's input and output channel
+	/** @defgroup DataPackPrefixID Chaos Data Prefix
+	This collection is a set for the prefix used for identify the domain 
+	 for the unique id key in chaos data cloud
+	 @{
+	 */
+	//! Namespace for the domain for the unique identification key
+	namespace DataPackPrefixID {
+		static const char * const OUTPUT_DATASE_PREFIX = "_o";
+		static const char * const INPUT_DATASE_PREFIX = "_i";
+		static const char * const CUSTOM_DATASE_PREFIX = "_c";
+		static const char * const SYSTEM_DATASE_PREFIX = "_s";
+	}
+	 /** @} */ // end of DataPackPrefixID
+	
+	/** @defgroup DataPackCommonKey Chaos Data Pack common key
+	 This is the collection of the common key that are contained into the
+	 all the dataset of a data producer
+	 @{
+	 */
+	namespace DataPackCommonKey {
+		//!define the device unique key, this represent the primary key of the producer[string]
+		static const char * const DPCK_DEVICE_ID                       = "dpck.device_id";
+		
+		//!this define the acquisition timestamp of the data represented by the dataset[uint64_t]
+		static const char * const DPCK_TIMESTAMP                       = "dpck.ts";
+		
+		//!define the type of the dataset [output(0) - input(1) - custom(2) - system(3) int32_t]
+		static const char * const DPCK_DATASET_TYPE                    = "dpck.ds_type";
+		//! the constant that represent the output dataset type
+		static const unsigned int DPCK_DATASET_TYPE_OUTPUT             = 0;
+		//! the constant that represent the input dataset type
+		static const unsigned int DPCK_DATASET_TYPE_INPUT              = 1;
+		//! the constant that represent the custom dataset type
+		static const unsigned int DPCK_DATASET_TYPE_CUSTOM             = 2;
+		//! the constant that represent the system dataset type
+		static const unsigned int DPCK_DATASET_TYPE_SYSTEM             = 3;
+	}
+	 /** @} */ // end of DataPackCommonKey
+	
+    /** @defgroup DataPackKey Chaos Data Pack output attirbute
+     This is the collection of the standard key that are contained into the output
+	 attribute data pack that describe a producer state
      @{
      */
-    //! Namespace for standard constant used for hardware instrument
-    namespace DataPackKey{
-        //!define the device id key, this represent the
-        //!primary key of the device
-        static const char * const CS_CSV_CU_ID                            = "cs|csv|device_id";
-        
-        //!this define the timestamp of the data rapresented
-        //!in the dataset row
-        static const char * const CS_CSV_TIME_STAMP                           = "cs|csv|timestamp";
-        
+    //! Namespace for standard constant used for output attribute of a producer
+    namespace DataPackOutputKey {
         //!this define key associated to the trigger
-        static const char * const CS_CSV_TRIGGER_KEY                          = "cs|csv|trigger_key";
+        static const char * const DPOK_TRIGGER_CODE                   = "dpok.trigger_key";
     }
-    /** @} */ // end of ChaosLiveHistoryConfiguration
-    
+    /** @} */ // end of DataPackKey
+	
+	/** @defgroup DataPackSystemKey Chaos Data Pack for System Attribute
+	 @{
+	 these are the stantdard key for chaos system attirbute
+	 */
+	//! Namespace for standard constant used for system attribute
+	namespace DataPackSystemKey{
+		//!is the ehartbeat of a data producer
+		static const char * const DP_SYS_HEARTBEAT			= "dp_sys_hp";
+		
+		//!is the last error message occurred into data producer
+		static const char * const DP_SYS_UNIT_TYPE			= "dp_sys_unit_type";
+		
+		//!is the last error occurred into the data producer
+		static const char * const DP_SYS_LAST_ERROR			= "dp_sys_lerr";
+		
+		//!is the last error message occurred into data producer
+		static const char * const DP_SYS_LAST_ERROR_MESSAGE	= "dp_sys_lerr_msg";
+
+		//!is the domain where the last error has occurred into data producer
+		static const char * const DP_SYS_LAST_ERROR_DOMAIN	= "dp_sys_lerr_domain";
+		
+		//!is the number of run unit
+		static const char * const DP_SYS_RUN_UNIT_AVAILABLE	= "dp_sys_ru_available";
+		
+		//!is the run unit identifier
+		static const char * const DP_SYS_RUN_UNIT_ID		= "dp_sys_ru_id";
+
+	}
+	/** @} */ // end of DataPackSystemKey
+	
     namespace event {
         /** @defgroup EventConfiguration Chaos event constant for server
          and cleint configuration

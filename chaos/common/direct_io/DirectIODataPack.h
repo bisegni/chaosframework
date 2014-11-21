@@ -65,18 +65,38 @@ pack->header.dispatcher_header.fields.channel_part = pack->header.dispatcher_hea
 pack->header.channel_data_size = DIRECT_IO_SET_CHANNEL_DATA_SIZE(d_size);\
 pack->channel_data = d_ptr;
 			
+			
+			typedef struct DirectIOSynchronousAnswer {
+				void *answer_data;
+				uint32_t answer_size;
+			} DirectIOSynchronousAnswer, *DirectIOSynchronousAnswerPtr;
+
+			
             //! DirectIO data pack structure. It is write in little endian
+			/*!
+			 This represent the data pack sent over direct io infrastructure
+			 It is composed by an header that transport:
+			 1) dispatch infromation, used to send data to the specified endpoint on the
+				remote server.
+			 2) the channel header size determinate the lenght of the channel specified header.
+				Every channel can specify a custom header for custom purphose
+			 3) data size is th elenght of the channel data.
+			 */
             typedef struct DirectIODataPack {
                 //! define the length of pack
                 struct header {
 					union {
 						//!header raw data
 						uint64_t    raw_data;
+						
+						//!field for semplify the dispatch header configuration
 						struct dispatcher_header {
 							//! destination routing address
 							uint16_t	route_addr;
+							//! check when a request need a synchronous answer
+							uint16_t	synchronous_answer:1;
 							//! unused padding data
-							uint16_t	unused;
+							uint16_t	unused:15;
 							//! channel index
 							uint16_t	channel_idx: 8;
 							//! channel tag

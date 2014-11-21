@@ -22,18 +22,18 @@
 
 #include "VFSTypes.h"
 #include "DataBlock.h"
-#include "../index_system/IndexDriver.h"
+#include "../db_system/DBDriver.h"
 #include "storage_system/StorageDriver.h"
 
 
 namespace chaos {
 	namespace data_service {
-		namespace index_system {
-			class IndexDriver;
+		namespace db_system {
+			class DBDriver;
 		}
 		namespace vfs {
 		
-			namespace chaos_index = chaos::data_service::index_system;
+			namespace chaos_index = chaos::data_service::db_system;
 			
 			
 			class VFSManager;
@@ -47,7 +47,7 @@ namespace chaos {
 			//! VFS Logical file
 			class VFSFile {
 				friend class VFSManager;
-				friend class IndexDriver;
+				friend class DBDriver;
 				//! operational setting for the virtual file
 				VFSFileInfo vfs_file_info;
 				
@@ -68,7 +68,7 @@ namespace chaos {
 				DataBlock *current_journal_data_block;
 				
 				//!index driver pointer
-				chaos_index::IndexDriver *index_driver_ptr;
+				chaos_index::DBDriver *db_driver_ptr;
 				
 				//!storage driver pointer
 				storage_system::StorageDriver *storage_driver_ptr;
@@ -93,7 +93,7 @@ namespace chaos {
 				
 				//default consturctor or destructor
 				VFSFile(storage_system::StorageDriver *_storage_driver_ptr,
-						index_system::IndexDriver *_index_driver_ptr,
+						db_system::DBDriver *_db_driver_ptr,
 						std::string area,
 						std::string vfs_fpath,
 						int _open_mode);

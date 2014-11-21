@@ -14,24 +14,31 @@
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/caching_system/caching_thread/tracker_interface/DataFetcherInterface.h>
 
+namespace chaos_io = chaos::common::io;
 namespace chaos_data = chaos::common::data;
 
 namespace chaos {
-    
-    class IODataDriver;
-    
+    namespace common{
+		namespace io {
+			class IODataDriver;
+		}
+	}
+	
     namespace ui {
         namespace chaching {
             
             /*!
              Class that implemnt the CDatawrapper fetcher from !CHOAS live data.
              */
-            class LiveDataFetcher : public chaos::caching_system::DataFetcherInterface<chaos_data::CDataWrapper>, public chaos::Configurable, public chaos::utility::StartableService {
+            class LiveDataFetcher :
+			public chaos::caching_system::DataFetcherInterface<chaos_data::CDataWrapper>,
+			public chaos::Configurable,
+			public chaos::utility::StartableService {
                 auto_ptr<char> currentRawDataPtr;
                 
-                chaos::IODataDriver *dataDriver;
+                chaos_io::IODataDriver *dataDriver;
                 
-                void getData(chaos_data::CDataWrapper& newData, uint64_t& ts);
+                void getData(const std::string& key, chaos_data::CDataWrapper& newData, uint64_t& ts);
                 
             public:
                 
@@ -39,7 +46,7 @@ namespace chaos {
                  Default Constructor
                  \param _dataDriver the isntance ofthe driver to use with this fetcer
                  */
-                LiveDataFetcher(chaos::IODataDriver *_dataDriver);
+                LiveDataFetcher(chaos_io::IODataDriver *_dataDriver);
                 
                 /*!
                  Defaut Destructor

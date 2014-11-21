@@ -19,19 +19,22 @@
 //#include <boost/heap/priority_queue.hpp>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/data/CDataWrapper.h>
+#include <chaos/common/data/cache/AttributesSetting.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>
 
 #include <chaos/common/batch_command/BatchCommand.h>
-#include <chaos/common/batch_command/AttributeSetting.h>
 #include <chaos/common/batch_command/BatchCommandTypes.h>
 #include <chaos/common/batch_command/BatchCommandSandboxEventHandler.h>
-namespace chaos_data = chaos::common::data;
 
 namespace chaos{
     namespace common {
         namespace batch_command {
+			
+			using namespace chaos::common::data;
+			using namespace chaos::common::data::cache;
+			
             //forward declaration
             class BatchCommand;
             class BatchCommandExecutor;
@@ -57,10 +60,10 @@ namespace chaos{
              into the sandbox
              */
             struct CommandInfoAndImplementation {
-                chaos_data::CDataWrapper *cmdInfo;
+                CDataWrapper *cmdInfo;
                 BatchCommand *cmdImpl;
                 
-                CommandInfoAndImplementation(chaos_data::CDataWrapper *_cmdInfo, BatchCommand *_cmdImpl);
+                CommandInfoAndImplementation(CDataWrapper *_cmdInfo, BatchCommand *_cmdImpl);
                 ~CommandInfoAndImplementation();
                 
                 void deleteInfo();
@@ -136,7 +139,7 @@ namespace chaos{
                  of the input channel or shared variable setting,
                  used into the control algoritm.
                  */
-                IOCAttributeSharedCache *shared_attribute_cache;
+                AttributeValueSharedCache *shared_attribute_cache;
                 
                 //! contain the paused command
                 std::stack<PRIORITY_ELEMENT(CommandInfoAndImplementation)*> commandStack;
@@ -155,10 +158,14 @@ namespace chaos{
                  that are not implemented are managed according to the submition rule
                  */
                 inline bool installHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation)* cmd_to_install);
+				
+				//! remove an handler fo a command
                 inline void removeHandler(PRIORITY_ELEMENT(CommandInfoAndImplementation)* cmd_to_install);
-                
+				
+				//kill the current running command without rule(like -9)
                 void killCurrentCommand();
-                
+				
+				//default private constructor and destructor
                 BatchCommandSandbox();
                 ~BatchCommandSandbox();
                 
@@ -191,7 +198,7 @@ namespace chaos{
                 // Deinit the implementation
                 void deinit() throw(chaos::CException);
                 
-                bool enqueueCommand(chaos_data::CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority);
+                bool enqueueCommand(CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority);
             };
         }
     }

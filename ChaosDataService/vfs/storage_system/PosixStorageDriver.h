@@ -80,7 +80,7 @@ namespace chaos {
 					int openBlock(chaos_vfs::DataBlock *data_block, unsigned int flags);
 					
 					// open a block of a determinated type with
-					int openBlock(std::string vfs_path, unsigned int flags, chaos_vfs::DataBlock **data_block);
+					int openBlock(const std::string& vfs_path, unsigned int flags, chaos_vfs::DataBlock **data_block);
 					
 					//! close the block of data
 					int closeBlock(chaos_vfs::DataBlock *data_block);
@@ -113,13 +113,13 @@ namespace chaos {
 					int flush(chaos_vfs::DataBlock *data_block);
 					
 					//! create a directory
-					int createDirectory(std::string vfs_path);
+					int createDirectory(const std::string& vfs_path);
 					
 					//! create a directory
-					int createPath(std::string vfs_path);
+					int createPath(const std::string& vfs_path);
 					
 					//! delete a directory
-					int deletePath(std::string vfs_path, bool all = false);
+					int deletePath(const std::string& vfs_path, bool all = false);
 				};
 				
 			}

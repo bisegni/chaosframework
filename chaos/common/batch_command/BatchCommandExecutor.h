@@ -117,13 +117,17 @@ namespace chaos {
                 //! Add a new command state structure to the queue (checking the alredy presence)
                 inline boost::shared_ptr<CommandState> getCommandState(uint64_t command_sequence);
 
-                //command event handler
-                void handleEvent(uint64_t command_seq, BatchCommandEventType::BatchCommandEventType type, void* type_attribute_ptr);
-                
+				//permit to regulate the queue of command state
 				void capWorker();
             protected:
-                //! Global cache shared across the sandbox
-                IOCAttributeSharedCache  global_attribute_cache;
+				//command event handler
+				virtual void handleCommandEvent(uint64_t command_seq, BatchCommandEventType::BatchCommandEventType type, void* type_value_ptr, uint32_t type_value_size);
+				
+				//! general sandbox event handler
+				virtual void handleSandboxEvent(const std::string& sandbox_id, BatchSandboxEventType::BatchSandboxEventType type, void* type_value_ptr, uint32_t type_value_size);
+
+				//! Global cache shared across the sandbox it can be alsog given
+                AttributeValueSharedCache  global_attribute_cache;
                 
                 //! Check if the waithing command can be installed
                 /*!
@@ -180,6 +184,7 @@ namespace chaos {
                  non ended command state, will be remove from the history.
                  */
                 chaos_data::CDataWrapper* flushCommandStates(chaos_data::CDataWrapper *params, bool& detachParam) throw (CException);
+
             public:
                 
                 //! Private constructor
@@ -206,8 +211,10 @@ namespace chaos {
                  \param alias is the name of the command to use as default (started at startup)
                  \param sandbox_instance is the 1-based index of the sandbox where install the command
                  */
-                void setDefaultCommand(string alias, unsigned int sandbox_instance = 1);
-                
+                void setDefaultCommand(const string& alias, unsigned int sandbox_instance = 1);
+				
+				const std::string & getDefaultCommand();
+				
                 //! Install a command associated with a type
                 /*!
                  Install the isntancer for a determinated SlowCommand, for an easly way to do this can be used
@@ -218,7 +225,14 @@ namespace chaos {
                  \param instancer the instance of the instancer that will produce the "instance" of the command
                  */
                 void installCommand(string alias, chaos::common::utility::ObjectInstancer<BatchCommand> *instancer);
-                
+				
+				//!return all the aliases of the installe batch command
+				/*!
+				 \param commands_alias will be filled with the alias of the
+				 registered commands
+				 */
+				void getAllCommandAlias(std::vector<std::string>& commands_alias);
+				
                 //! Submite the new slow command information
                 /*!
                  The information for the command are contained into the DataWrapper data serialization,
@@ -228,6 +242,14 @@ namespace chaos {
                 
                 //! Add a number of sandobx to this instance of executor
                 void addSandboxInstance(unsigned int _sandbox_number);
+				
+				//! return the number of sandbox installed
+				unsigned int getNumberOfSandboxInstance();
+				
+				void getSandboxID(std::vector<std::string> & sandbox_id);
+				
+				//! return the shared, between commadn, attribute cache
+				AttributeValueSharedCache *getAttributeSharedCache();
             };
         }
     }

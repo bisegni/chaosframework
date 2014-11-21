@@ -11,12 +11,11 @@
 #include <chaos/ui_toolkit/caching/LiveDataFetcher.h>
 
 using namespace chaos;
-
+using namespace chaos::common::io;
 using namespace chaos::common::data;
-
 using namespace chaos::ui::chaching;
 
-LiveDataFetcher::LiveDataFetcher(chaos::IODataDriver *_dataDriver):dataDriver(_dataDriver) {
+LiveDataFetcher::LiveDataFetcher(IODataDriver *_dataDriver):dataDriver(_dataDriver) {
     
 }
 
@@ -55,12 +54,12 @@ void LiveDataFetcher::deinit() throw(chaos::CException) {
     }
 }
 
-void LiveDataFetcher::getData(CDataWrapper& newData, uint64_t& ts) {
-    currentRawDataPtr.reset(dataDriver->retriveRawData());
+void LiveDataFetcher::getData(const std::string& key, CDataWrapper& newData, uint64_t& ts) {
+    currentRawDataPtr.reset(dataDriver->retriveRawData(key));
     
         //create key/value chaos object
     newData.setSerializedData(currentRawDataPtr.get());
     
         //extras the timestamp of the pack
-    ts = newData.getInt64Value(DataPackKey::CS_CSV_TIME_STAMP);
+    ts = newData.getInt64Value(DataPackCommonKey::DPCK_TIMESTAMP);
 }

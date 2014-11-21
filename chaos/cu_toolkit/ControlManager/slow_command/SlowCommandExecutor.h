@@ -33,17 +33,14 @@
 #include <boost/atomic.hpp>
 
 #include <chaos/common/data/DatasetDB.h>
+#include <chaos/common/data/cache/AttributesSetting.h>
 #include <chaos/common/batch_command/BatchCommand.h>
 #include <chaos/common/batch_command/BatchCommandExecutor.h>
-#include <chaos/common/batch_command/AttributeSetting.h>
 #include <chaos/common/utility/ObjectInstancer.h>
 
 #include <chaos/cu_toolkit/DataManager/KeyDataStorage.h>
 #include <chaos/cu_toolkit/driver_manager/DriverErogatorInterface.h>
 
-namespace boost_cont = boost::container;
-namespace chaos_data = chaos::common::data;
-namespace chaos_batch = chaos::common::batch_command;
 
 namespace chaos {
     namespace cu {
@@ -57,9 +54,16 @@ namespace chaos {
         
         namespace control_manager {
 			//forward declaration
+			class AbstractControlUnit;
 			class SCAbstractControlUnit;
 
             namespace slow_command {
+				
+				namespace boost_cont = boost::container;
+				namespace chaos_data = chaos::common::data;
+				namespace chaos_cache = chaos::common::data::cache;
+				namespace chaos_batch = chaos::common::batch_command;
+				
                 //forward declaration
                 class SlowCommand;
                 
@@ -75,42 +79,71 @@ namespace chaos {
                     friend class chaos::cu::control_manager::SCAbstractControlUnit;
 
                     //!Live push driver
-                    data_manager::KeyDataStorage  *keyDataStoragePtr;
+                    data_manager::KeyDataStorage  *key_data_storage;
                     
                     //! the reference to the master device database
-                    chaos_data::DatasetDB *deviceSchemaDbPtr;
+                    chaos_data::DatasetDB *dataset_attribute_db_ptr;
                     
 					//! The driver erogator
 					chaos::cu::driver_manager::DriverErogatorInterface *driverAccessorsErogator;
-                    
-                    //! initialize the shared variable according to the device dataset
-					void initAttributeOnSahredVariableDomain(chaos_batch::IOCAttributeSharedCache::SharedVeriableDomain domain, std::vector<string>& attribute_names);
+					
+					//! attribute cache wrapper
+					AttributeSharedCacheWrapper * attribute_cache;
+					
+					AbstractControlUnit *control_unit_instance;
+					
+					//fast hearb beat cache access
+					ValueSetting *ts_hb_cache;
+					//fast unit last id cache value
+					ValueSetting *last_ru_id_cache;
+					//fast unit last acq ts cache value
+					ValueSetting *last_acq_ts_cache;
+					
+					//fast cache error variable accessor
+					ValueSetting *last_error_code;
+					ValueSetting *last_error_message;
+					ValueSetting *last_error_domain;
                 protected:
                     
                     //! Private constructor
-                    SlowCommandExecutor(std::string _executorID, chaos_data::DatasetDB *_deviceSchemaDbPtr);
+                    SlowCommandExecutor(std::string _executorID,
+										chaos_data::DatasetDB *_deviceSchemaDbPtr,
+										SCAbstractControlUnit *_control_unit_instance);
                     
                     //! Private deconstructor
                     ~SlowCommandExecutor();
                     
                     //Check if the waithing command can be installed
                     chaos_batch::BatchCommand *instanceCommandInfo(std::string& commandAlias);
-
+					
+					//overlodaed command event handler
+					void handleCommandEvent(uint64_t command_seq,
+											chaos_batch::BatchCommandEventType::BatchCommandEventType type,
+											void* type_value_ptr,
+											uint32_t type_value_size);
+					
+					//! general sandbox event handler
+					void handleSandboxEvent(const std::string& sandbox_id,
+											common::batch_command::BatchSandboxEventType::BatchSandboxEventType type,
+											void* type_value_ptr,
+											uint32_t type_value_size);
                 public:
                     
                     // Initialize instance
-                    virtual void init(void*) throw(chaos::CException);
+                    void init(void*) throw(chaos::CException);
 
-                    //! Install a command associated with a type
-                    /*!
-                     Install the isntancer for a determinated SlowCommand, for an easly way to do this can be used
-                     the macro SLOWCOMMAND_INSTANCER(SlowCommandClass) where "SlowCommandClass" is the calss that
-                     extend SlowCommand to implement a new command. The access to the internal map is not sincornized
-                     and need to be made befor the executor will be started
-                     \param alias the name associated to the command
-                     \param instancer the instance of the instancer that will produce the "instance" of the command
-                     */
-                    void installCommand(std::string alias, chaos::common::utility::NestedObjectInstancer<SlowCommand, chaos_batch::BatchCommand> *instancer);
+					// Start the implementation
+					void start() throw(chaos::CException);
+					
+					// Start the implementation
+					void stop() throw(chaos::CException);
+					
+					// Deinit instance
+					void deinit() throw(chaos::CException);
+
+					//! Install a command associated with a type
+                    void installCommand(std::string alias,
+										chaos::common::utility::NestedObjectInstancer<SlowCommand, chaos_batch::BatchCommand> *instancer);
                 };
             }
         }

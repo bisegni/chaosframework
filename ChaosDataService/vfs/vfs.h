@@ -20,10 +20,13 @@
 
 #ifndef CHAOSFramework_VFS_h
 #define CHAOSFramework_VFS_h
-
 #include "DataBlock.h"
 #include "VFSFile.h"
 #include "VFSStageFile.h"
 #include "VFSManager.h"
-
+#include "VFSDataFile.h"
+#include "VFSQuery.h"
+#include "VFSStageReadableFile.h"
+#include "VFSStageWriteableFile.h"
+#include "VFSDataWriteableFile.h"
 #endif

@@ -139,10 +139,11 @@ namespace chaos {
             public:
                 int tag;
                 
-                CObjectProcessingPriorityQueue() {
-                    inDeinit = false;
-                    eventListener=0L;
-                    uid = chaos::UUIDUtil::generateUUIDLite();
+				CObjectProcessingPriorityQueue():
+				inDeinit(false),
+				eventListener(NULL),
+				uid(chaos::UUIDUtil::generateUUIDLite()) {
+					
                 }
                 
                 

@@ -26,9 +26,14 @@
 
 using namespace chaos::common::direct_io::channel;
 
+//define the static deallocator class
+DirectIOPerformanceClientChannel::DirectIOPerformanceClientChannelDeallocator DirectIOPerformanceClientChannel::STATIC_DirectIOPerformanceClientChannelDeallocator;
+
+
 DirectIOPerformanceClientChannel::DirectIOPerformanceClientChannel(std::string alias):
-DirectIOVirtualClientChannel(alias, DIOPerformance_Channel_Index, true)  {
-	
+DirectIOVirtualClientChannel(alias, DIOPerformance_Channel_Index)  {
+	//associate the default static allocator
+	header_deallocator = &STATIC_DirectIOPerformanceClientChannelDeallocator;
 }
 
 DirectIOPerformanceClientChannel::~DirectIOPerformanceClientChannel() {
@@ -41,7 +46,9 @@ int64_t DirectIOPerformanceClientChannel::sendRoundTripMessage() {
 	
 	//set opcode
 	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::PerformanceChannelOpcodeReqRoundTrip);
-	opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr header = new opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTrip();
+	opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr header =
+	(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr)calloc(sizeof(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTrip), 1);
+
 	
 	boost::posix_time::ptime time = boost::posix_time::microsec_clock::local_time();
 	boost::posix_time::time_duration duration( time.time_of_day() );
@@ -52,7 +59,7 @@ int64_t DirectIOPerformanceClientChannel::sendRoundTripMessage() {
 	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header, (uint32_t)sizeof(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTrip))
 	
 	//send pack
-	return client_instance->sendServiceData(this, completeDataPack(data_pack));
+	return sendServiceData(data_pack);
 }
 
 int64_t DirectIOPerformanceClientChannel::answerRoundTripMessage(uint64_t received_ts) {
@@ -61,7 +68,8 @@ int64_t DirectIOPerformanceClientChannel::answerRoundTripMessage(uint64_t receiv
 	
 	//set opcode
 	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::PerformanceChannelOpcodeRespRoundTrip);
-	opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr header = new opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTrip();
+	opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr header =
+	(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTripPtr)calloc(sizeof(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTrip), 1);
 	
 	boost::posix_time::ptime time = boost::posix_time::microsec_clock::local_time();
 	boost::posix_time::time_duration duration( time.time_of_day() );
@@ -73,7 +81,7 @@ int64_t DirectIOPerformanceClientChannel::answerRoundTripMessage(uint64_t receiv
 	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, header, (uint32_t)sizeof(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTrip))
 	
 	//send pack
-	return client_instance->sendServiceData(this, completeDataPack(data_pack));
+	return sendServiceData(data_pack);
 
 }
 
@@ -93,10 +101,11 @@ int64_t DirectIOPerformanceClientChannel::answerRoundTripMessage(opcode_headers:
 	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, received_header, (uint32_t)sizeof(opcode_headers::DirectIOPerformanceChannelHeaderOpcodeRoundTrip))
 	
 	//send pack
-	return client_instance->sendServiceData(this, completeDataPack(data_pack));
+	return sendServiceData(data_pack);
 	
 }
-void DirectIOPerformanceClientChannel::freeSentData(void *data,  DisposeSentMemoryInfo& dispose_memory_info) {
-	//free all received data
-	free(data);
+
+//! default data deallocator implementation
+void DirectIOPerformanceClientChannel::DirectIOPerformanceClientChannelDeallocator::freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr) {
+	free(sent_data_ptr);
 }

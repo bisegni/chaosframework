@@ -76,7 +76,7 @@ public class USAddCuTypeView extends RefVaadinBasePanel implements com.vaadin.da
 	 * @see com.vaadin.data.Container.PropertySetChangeListener#containerPropertySetChange(com.vaadin.data.Container.PropertySetChangeEvent)
 	 */
 	public void containerPropertySetChange(com.vaadin.data.Container.PropertySetChangeEvent event) {
-		System.out.println(event);
+		//System.out.println(event);
 
 	}
 

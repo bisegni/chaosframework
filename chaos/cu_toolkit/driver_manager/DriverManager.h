@@ -44,23 +44,19 @@ namespace chaos {
 		}
 		namespace driver_manager {
 			
-			namespace common_utility = chaos::common::utility;
-			namespace cu_driver = chaos::cu::driver_manager::driver;
-			namespace common_plugin = chaos::common::plugin;
-			
 			#define MATERIALIZE_INSTANCE_AND_INSPECTOR(DriverClass) \
-			boost::shared_ptr< common_plugin::PluginInspector> DriverClass ## Inspector(GET_PLUGIN_CLASS_DEFINITION(DriverClass)); \
-			boost::shared_ptr< common_utility::ObjectInstancer< chaos::cu::driver_manager::driver::AbstractDriver > > DriverClass ## Instancer(CU_DRIVER_INSTANCER(DriverClass));
+			boost::shared_ptr< chaos::common::plugin::PluginInspector> DriverClass ## Inspector(GET_PLUGIN_CLASS_DEFINITION(DriverClass)); \
+			boost::shared_ptr< chaos::common::utility::ObjectInstancer< chaos::cu::driver_manager::driver::AbstractDriver > > DriverClass ## Instancer(CU_DRIVER_INSTANCER(DriverClass));
 			
 			#define MATERIALIZE_INSTANCE_AND_INSPECTOR_WITH_NS(n, DriverClass) \
-			boost::shared_ptr< common_plugin::PluginInspector> DriverClass ## Inspector(GET_PLUGIN_CLASS_DEFINITION(DriverClass)); \
-			boost::shared_ptr< common_utility::ObjectInstancer< chaos::cu::driver_manager::driver::AbstractDriver > > DriverClass ## Instancer(CU_DRIVER_INSTANCER(n::DriverClass));
+			boost::shared_ptr< chaos::common::plugin::PluginInspector> DriverClass ## Inspector(GET_PLUGIN_CLASS_DEFINITION(DriverClass)); \
+			boost::shared_ptr< chaos::common::utility::ObjectInstancer< chaos::cu::driver_manager::driver::AbstractDriver > > DriverClass ## Instancer(CU_DRIVER_INSTANCER(n::DriverClass));
 			
 			#define CU_DRIVER_INSTANCER(DriverClass) new chaos::common::utility::TypedObjectInstancer<DriverClass, chaos::cu::driver_manager::driver::AbstractDriver>()
 
 			typedef struct DriverPluginInfo {
-				boost::shared_ptr< common_plugin::PluginInspector > sp_inspector;
-				boost::shared_ptr< common_utility::ObjectInstancer<cu_driver::AbstractDriver> > sp_instancer;
+				boost::shared_ptr< chaos::common::plugin::PluginInspector > sp_inspector;
+				boost::shared_ptr< chaos::common::utility::ObjectInstancer<chaos::cu::driver_manager::driver::AbstractDriver> > sp_instancer;
 			} DriverPluginInfo;
 			
 			//! !CHAOS Driver infrastructure managment
@@ -78,10 +74,10 @@ namespace chaos {
 					is created, the hashing of the input parameter is checked if it is contained in the map. In case
 					of successfull test a live instance is returned.
 				 */
-				std::map<string, cu_driver::AbstractDriver*> mapParameterLiveInstance;
+				std::map<string, chaos::cu::driver_manager::driver::AbstractDriver*> mapParameterLiveInstance;
 				
 				
-				std::map<string, cu_driver::AbstractDriver*> mapDriverUUIDHashLiveInstance;
+				std::map<string, chaos::cu::driver_manager::driver::AbstractDriver*> mapDriverUUIDHashLiveInstance;
 				
 				//!Mutex for priority queue managment
 				boost::shared_mutex    mutextMapAccess;
@@ -116,16 +112,16 @@ namespace chaos {
 				 checking the hashing of the input parameter is created (or got one) device driver instance,
 				 from this a new driver accessor is created
 				 */
-				cu_driver::DriverAccessor *getNewAccessorForDriverInstance(cu_driver::DrvRequestInfo& request_info) throw (chaos::CException);
+				chaos::cu::driver_manager::driver::DriverAccessor *getNewAccessorForDriverInstance(chaos::cu::driver_manager::driver::DrvRequestInfo& request_info) throw (chaos::CException);
 				
 				//! release the accessor instance
-				void releaseAccessor(cu_driver::DriverAccessor *accessor);
+				void releaseAccessor(chaos::cu::driver_manager::driver::DriverAccessor *accessor);
 			public:
 
 				
 				//! Register a new driver
-				void registerDriver(boost::shared_ptr< common_utility::ObjectInstancer<cu_driver::AbstractDriver> > instancer,
-									boost::shared_ptr< common_plugin::PluginInspector > description) throw(chaos::CException);
+				void registerDriver(boost::shared_ptr< chaos::common::utility::ObjectInstancer<chaos::cu::driver_manager::driver::AbstractDriver> > instancer,
+									boost::shared_ptr< chaos::common::plugin::PluginInspector > description) throw(chaos::CException);
 
 			};
 		}

@@ -43,7 +43,10 @@ message(STATUS "Configure Chaos Node Directory Service")
 ADD_SUBDIRECTORY(ChaosNodeDirectory bin/bin_cnd)
 
 message(STATUS "Configure Chaos Data Service")
-ADD_SUBDIRECTORY(ChaosDataService bin/bin_chst)
+ADD_SUBDIRECTORY(ChaosDataService bin/bin_cds)
+
+message(STATUS "Configure Chaos Data Export")
+ADD_SUBDIRECTORY(ChaosDataExport bin/chaos_cde)
 
 message(STATUS "Configure Chaos CLI")
 ADD_SUBDIRECTORY(example/ChaosCLI bin/chaos_cli)

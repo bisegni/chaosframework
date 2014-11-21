@@ -23,6 +23,7 @@
 
 #include <string>
 
+#include <chaos/common/direct_io/impl/ZMQBaseClass.h>
 #include <chaos/common/direct_io/DirectIODataPack.h>
 #include <chaos/common/direct_io/DirectIOClientConnection.h>
 
@@ -56,10 +57,15 @@ namespace chaos {
 				 Class that represetn th eimplementation of one connection of the direct io
 				 connection implemented with zmq
 				 */
-				class ZMQDirectIOClientConnection : public chaos::common::direct_io::DirectIOClientConnection {
+				class ZMQDirectIOClientConnection :
+				protected ZMQBaseClass,
+				public chaos::common::direct_io::DirectIOClientConnection {
 					friend class ZMQDirectIOClient;
 					
+					std::string priority_identity;
 					void *socket_priority;
+
+					std::string service_identity;
 					void *socket_service;
 					
 					ConnectionMonitorInfo *monitor_info;
@@ -69,20 +75,27 @@ namespace chaos {
 					ZMQDirectIOClientConnection(std::string server_description, void *_socket_priority, void *_socket_service, uint16_t endpoint);
 					~ZMQDirectIOClientConnection();
 					
-					inline int64_t writeToSocket(channel::DirectIOVirtualClientChannel *channel, void *socket, DirectIODataPack *data_pack);
+					inline int64_t writeToSocket(void *socket,
+												 std::string& identity,
+												 DirectIODataPack *data_pack,
+												 DirectIOClientDeallocationHandler *header_deallocation_handler,
+												 DirectIOClientDeallocationHandler *data_deallocation_handler,
+												 DirectIOSynchronousAnswer **synchronous_answer = NULL);
 					void monitorWorker();
 					
 				protected:
 					
                     // send the data to the server layer on priority channel
-                    int64_t sendPriorityData(channel::DirectIOVirtualClientChannel *channel, DirectIODataPack *data_pack);
+                    int64_t sendPriorityData(DirectIODataPack *data_pack,
+											 DirectIOClientDeallocationHandler *header_deallocation_handler,
+											 DirectIOClientDeallocationHandler *data_deallocation_handler,
+											 DirectIOSynchronousAnswer **synchronous_answer = NULL);
                     
                     // send the data to the server layer on the service channel
-                    int64_t sendServiceData(channel::DirectIOVirtualClientChannel *channel, DirectIODataPack *data_pack);
-					
-				public:
-					int addServer(std::string server_description);
-					int removeServer(std::string server_description);
+                    int64_t sendServiceData(DirectIODataPack *data_pack,
+											DirectIOClientDeallocationHandler *header_deallocation_handler,
+											DirectIOClientDeallocationHandler *data_deallocation_handler,
+											DirectIOSynchronousAnswer **synchronous_answer = NULL);
 				};
 				
 			}

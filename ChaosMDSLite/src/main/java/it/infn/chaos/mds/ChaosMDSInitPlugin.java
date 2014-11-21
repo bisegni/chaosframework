@@ -78,7 +78,8 @@ public class ChaosMDSInitPlugin implements REFInitPlugin, REFDeinitPlugin {
 				SingletonServices.getInstance().setMdsRpcServer(new JMQRPCServer(1));
 				SingletonServices.getInstance().setMdsRpcClient(new JMQRPCClient(1));
 			}
-			if (SingletonServices.getInstance().getMdsRpcClient() != null && SingletonServices.getInstance().getMdsRpcServer() != null) {
+			if (SingletonServices.getInstance().getMdsRpcClient() != null && 
+					SingletonServices.getInstance().getMdsRpcServer() != null) {
 				SingletonServices.getInstance().getMdsRpcClient().init(0);
 				SingletonServices.getInstance().getMdsRpcClient().start();
 				SingletonServices.getInstance().getMdsRpcServer().init(intPort);

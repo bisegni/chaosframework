@@ -25,6 +25,7 @@
 namespace chaos {
 	namespace common {
 		namespace direct_io {
+			
 			//! Public interface fo the direct io server
 			/*!
 			 This class represent the public interface that need to used to abstract the direct io server implementation.
@@ -40,7 +41,7 @@ namespace chaos {
 				 \param data_size the size of the received data
 				 \param detach inform the server that hte memory buffed doesn't need to be deallocated.
 				 */
-				virtual void priorityDataReceived(DirectIODataPack *data_pack) = 0;
+				virtual int priorityDataReceived(DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer) = 0;
                 
                 //! Event for a new data received
 				/*!
@@ -49,10 +50,10 @@ namespace chaos {
 				 \param data_size the size of the received data
 				 \param detach inform the server that hte memory buffed doesn't need to be deallocated.
 				 */
-				virtual void serviceDataReceived(DirectIODataPack *data_pack) = 0;
+				virtual int serviceDataReceived(DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer) = 0;
 			};
 			
-			typedef void (chaos::common::direct_io::DirectIOHandler::*DirectIOHandlerPtr)(chaos::common::direct_io::DirectIODataPack *data_pack);
+			typedef int (chaos::common::direct_io::DirectIOHandler::*DirectIOHandlerPtr)(chaos::common::direct_io::DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer);
 			
 			#define DirectIOHandlerPtrCaller(instance,variable) ((*instance).*variable)
 		}

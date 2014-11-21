@@ -170,29 +170,24 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
         
         if(!commandPack) return resultPack;
         if(!commandPack->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN))
-            throw CException(0, "Action Call with no action domain", "DefaultCommandDispatcher::dispatchCommand");
+            throw CException(0, "Action Call with no action domain", __PRETTY_FUNCTION__);
         
         if(!commandPack->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME))
-            throw CException(1, "Action Call with no action name", "DefaultCommandDispatcher::dispatchCommand");
+            throw CException(1, "Action Call with no action name", __PRETTY_FUNCTION__);
         
         string actionDomain = commandPack->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
         
 		//RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
-        if(!das_map.count(actionDomain)) throw CException(3, "Action Domain not registered", "DefaultCommandDispatcher::dispatchCommand");
-        
-		//#ifdef DEBUG
-		//        LDEF_CMD_DISPTC_APP_ << "Received the message content:-----------------------START";
-		//        LDEF_CMD_DISPTC_APP_ << commandPack->getJSONString();
-		//        LDEF_CMD_DISPTC_APP_ << "Received the message content:-------------------------END";
-		//#endif
+        if(!das_map.count(actionDomain)) throw CException(3, "Action Domain not registered", __PRETTY_FUNCTION__);
+		
+		LDEF_CMD_DISPTC_DBG_ << "Received the message content:-----------------------START";
+		LDEF_CMD_DISPTC_DBG_ << commandPack->getJSONString();
+		LDEF_CMD_DISPTC_DBG_ << "Received the message content:-------------------------END";
         
 		//submit the action(Thread Safe)
-		//ElementManagingPolicy ep;
-		//ep.elementHasBeenDetached = false;
-		sent = das_map[actionDomain]->push(commandPack);
-        //if(ep.elementHasBeenDetached) {
-		//	delete(commandPack);
-		//}
+        if(!(sent = das_map[actionDomain]->push(commandPack))) {
+			throw CException(1, "No more space in queue", __PRETTY_FUNCTION__);
+		}
 		
 		//tag message has submitted
         resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);

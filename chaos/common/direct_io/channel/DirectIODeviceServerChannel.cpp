@@ -37,21 +37,18 @@ void DirectIODeviceServerChannel::setHandler(DirectIODeviceServerChannel::Direct
 	handler = _handler;
 }
 
-void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
+int DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack, DirectIOSynchronousAnswerPtr synchronous_answer) {
 	CHAOS_ASSERT(handler)
-	
+	int err = 0;
     // the opcode
 	opcode::DeviceChannelOpcode  channel_opcode = static_cast<opcode::DeviceChannelOpcode>(dataPack->header.dispatcher_header.fields.channel_opcode);
-
+	
 	switch (channel_opcode) {
 		case opcode::DeviceChannelOpcodePutOutput: {
             opcode_headers::DirectIODeviceChannelHeaderPutOpcode *header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderPutOpcode* >(dataPack->channel_header_data);
 			//reallign the pointer to the start of the key
-			//header->key_data = (void*)((char*)header+sizeof(DirectIODeviceChannelHeaderPutOpcode));
-
-			//header->device_hash = FROM_LITTLE_ENDNS_NUM(uint32_t, header->device_hash);
 			header->tag = FROM_LITTLE_ENDNS_NUM(uint32_t, header->tag);
-			handler->consumePutEvent(header, dataPack->channel_data, dataPack->header.channel_data_size);
+			err = handler->consumePutEvent(header, dataPack->channel_data, dataPack->header.channel_data_size, synchronous_answer);
             break;
         }
         case opcode::DeviceChannelOpcodeGetLastOutput: {
@@ -60,16 +57,86 @@ void DirectIODeviceServerChannel::consumeDataPack(DirectIODataPack *dataPack) {
             header->field.endpoint = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.endpoint);
             header->field.p_port = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.p_port);
 			header->field.s_port = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.s_port);
-            //header->field.device_hash = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.device_hash);
-			//header->field.answer_server_hash = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.answer_server_hash);
             header->field.address = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.address);
-			handler->consumeGetEvent(header, dataPack->channel_data, dataPack->header.channel_data_size);
+			err = handler->consumeGetEvent(header, dataPack->channel_data, dataPack->header.channel_data_size, synchronous_answer);
             break;
         }
+		case opcode::DeviceChannelOpcodeQueryDataCloud: {
+			chaos_data::CDataWrapper *query = NULL;
+			opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr header = reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloud*>(dataPack->channel_header_data);
+			
+			try {
+				query = new chaos_data::CDataWrapper((char *)dataPack->channel_data);
+				if (query && header) {
+					//decode the endianes off the data
+					header->field.endpoint = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.endpoint);
+					header->field.p_port = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.p_port);
+					header->field.s_port = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.s_port);
+					header->field.address = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.address);
+					
+					std::string key = query->hasKey(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING)?query->getStringValue(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING):"";
+					uint64_t start_ts = query->hasKey(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64)?query->getUInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_STAR_TS_I64):0;
+					uint64_t end_ts = query->hasKey(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64)?query->getUInt64Value(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_END_TS_I64):0;
+					
+					//call server api if we have at least the key
+					if((key.compare("") != 0)) err = handler->consumeDataCloudQuery(header, key, start_ts, end_ts, synchronous_answer);
+				}else {
+					
+				}
+			} catch (...) {
+				// inca se of error header an cdatawrapper are cleaned here
+
+				if(header) free(header);
+			}
+			
+			//data and query are deleted in anyway server api manage only the header
+			if(dataPack->channel_data) free(dataPack->channel_data);
+			if(query) delete(query);
+			break;
+		}
+			
+		case opcode::DeviceChannelOpcodeQueryDataCloudStartResult:{
+			opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResultPtr header =
+			reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResultPtr>(dataPack->channel_header_data);
+			header->field.total_element_found = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.total_element_found);
+			err = handler->consumeDataCloudQueryStartResult(header);
+			break;
+		}
+			
+		case opcode::DeviceChannelOpcodeQueryDataCloudResult: {
+			opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr header =
+			reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudResultPtr>(dataPack->channel_header_data);
+
+					//decode the endianes off the data
+
+					header->field.element_index = FROM_LITTLE_ENDNS_NUM(uint64_t, header->field.element_index);
+
+					//call server api
+					err = handler->consumeDataCloudQueryResult(header,
+															   dataPack->channel_data,
+															   dataPack->header.channel_data_size,
+															   synchronous_answer);
+			break;
+		}
+			
+		case opcode::DeviceChannelOpcodeQueryDataCloudEndResult:{
+			opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResultPtr header =
+			reinterpret_cast< opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResultPtr>(dataPack->channel_header_data);
+			header->field.error = FROM_LITTLE_ENDNS_NUM(int32_t, header->field.error);
+			header->field.error_message_length = FROM_LITTLE_ENDNS_NUM(int32_t, header->field.error_message_length);
+			err = handler->consumeDataCloudQueryEndResult(header,
+														  dataPack->channel_data,
+														  dataPack->header.channel_data_size);
+			break;
+		}
+			
 		default:
 			break;
 	}
-
-	//only data pack is deleted, header data and channel data are managed by hendler
-	delete dataPack;
+	
+	//only data pack is deleted, header and data of the channel are managed by handler
+	free(dataPack);
+	
+	//return no result
+	return err;
 }

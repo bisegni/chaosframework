@@ -18,6 +18,7 @@
  *    	limitations under the License.
  */
 
+#include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/direct_io/DirectIODataPack.h>
 #include <chaos/common/direct_io/impl/ZMQDirectIOServer.h>
@@ -31,10 +32,20 @@
 #define ZMQDIO_SRV_LERR_ LERR_ << ZMQDIO_SRV_LOG_HEAD
 
 
+#define DIRECTIO_FREE_ANSWER_DATA(x)\
+if(x && x->answer_data) free(x->answer_data);\
+if(x) free(x);\
+x = NULL;
+
+
 namespace chaos_data = chaos::common::data;
 
 using namespace chaos::common::direct_io::impl;
 
+void free_answer(void *data, void *hint) {
+	chaos::common::direct_io::DirectIOSynchronousAnswerPtr answer_data = static_cast<chaos::common::direct_io::DirectIOSynchronousAnswerPtr>(hint);
+	DIRECTIO_FREE_ANSWER_DATA(answer_data)
+}
 
 ZMQDirectIOServer::ZMQDirectIOServer(std::string alias):DirectIOServer(alias) {
 	zmq_context = NULL;
@@ -113,12 +124,15 @@ void ZMQDirectIOServer::deinit() throw(chaos::CException) {
 
 #define PS_STR(x) (x?"service":"priority")
 void ZMQDirectIOServer::worker(bool priority_service) {
-	int					linger = 0;
-	int					water_mark = 3;
-	char				header_buffer[DIRECT_IO_HEADER_SIZE];
-	void				*socket				= NULL;
-    int					err					= 0;
-    DirectIODataPack	*data_pack			= NULL;
+	char						header_buffer[DIRECT_IO_HEADER_SIZE];
+	int							linger				= 500;
+	int							water_mark			= 500;
+	int							timeout				= 200;
+	void						*socket				= NULL;
+    int							err					= 0;
+	bool						send_synchronous_answer = false;
+    DirectIODataPack			*data_pack			= NULL;
+	DirectIOSynchronousAnswerPtr synchronous_answer = NULL;
 	
 	ZMQDIO_SRV_LAPP_ << "Startup thread for " << PS_STR(priority_service);
 	
@@ -127,7 +141,7 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 	
 	if(priority_service) {
 		ZMQDIO_SRV_LAPP_ << "Allocating and binding service socket to " << service_socket_bind_str;
-		socket = zmq_socket (zmq_context, ZMQ_DEALER);
+		socket = zmq_socket (zmq_context, ZMQ_ROUTER);
 		err = zmq_setsockopt (socket, ZMQ_LINGER, &linger, sizeof(int));
 		if(err) {
 			std::string msg = boost::str( boost::format("Error Setting linget to service socket"));
@@ -136,10 +150,25 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 		}
 		err = zmq_setsockopt (socket, ZMQ_RCVHWM, &water_mark, sizeof(int));
 		if(err) {
-			std::string msg = boost::str( boost::format("Error Setting watermark to service socket"));
+			std::string msg = boost::str( boost::format("Error Setting ZMQ_RCVHWM to service socket"));
 			ZMQDIO_SRV_LAPP_ << msg;
 			return;
 		}
+		
+		err = zmq_setsockopt (socket, ZMQ_SNDHWM, &water_mark, sizeof(int));
+		if(err) {
+			std::string msg = boost::str( boost::format("Error Setting ZMQ_SNDHWM to service socket"));
+			ZMQDIO_SRV_LAPP_ << msg;
+			return;
+		}
+		
+		err = zmq_setsockopt (socket, ZMQ_SNDTIMEO, &timeout, sizeof(int));
+		if(err) {
+			std::string msg = boost::str( boost::format("Error Setting ZMQ_SNDTIMEO to service socket"));
+			ZMQDIO_SRV_LAPP_ << msg;
+			return;
+		}
+		
 		err = zmq_bind(socket, service_socket_bind_str.c_str());
 		if(err) {
 			std::string msg = boost::str( boost::format("Error binding service socket to  %1% ") % service_socket_bind_str);
@@ -148,7 +177,7 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 		}
 	} else {
 		ZMQDIO_SRV_LAPP_ << "Allocating and binding priority socket to "<< priority_socket_bind_str;
-		socket = zmq_socket (zmq_context, ZMQ_DEALER);
+		socket = zmq_socket (zmq_context, ZMQ_ROUTER);
 		int linger = 1;
 		err = zmq_setsockopt (socket, ZMQ_LINGER, &linger, sizeof(int));
 		if(err) {
@@ -162,6 +191,20 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 			ZMQDIO_SRV_LAPP_ << msg;
 			return;
 		}
+		err = zmq_setsockopt (socket, ZMQ_SNDHWM, &water_mark, sizeof(int));
+		if(err) {
+			std::string msg = boost::str( boost::format("Error Setting watermark to priority socket"));
+			ZMQDIO_SRV_LAPP_ << msg;
+			return;
+		}
+		
+		err = zmq_setsockopt (socket, ZMQ_SNDTIMEO, &timeout, sizeof(int));
+		if(err) {
+			std::string msg = boost::str( boost::format("Error Setting ZMQ_SNDTIMEO to priority socket"));
+			ZMQDIO_SRV_LAPP_ << msg;
+			return;
+		}
+		
 		err = zmq_bind(socket, priority_socket_bind_str.c_str());
 		if(err) {
 			std::string msg = boost::str( boost::format("Error binding priority socket to  %1% ") % priority_socket_bind_str);
@@ -172,13 +215,28 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 	ZMQDIO_SRV_LAPP_ << "Entering in the thread loop for " << PS_STR(priority_service) << " socket";
     while (run_server) {
         try {
+			//received the zmq identity
+			std::string identity;
+			std::string empty_delimiter;
+			err = stringReceive(socket, identity);
+			if(err == -1) {
+                continue;
+            }
+
+			//receive the zmq evenlod delimiter
+			err = stringReceive(socket, empty_delimiter);
+			if(err == -1 ) {
+                continue;
+            }
+			
+			
             //read header
             err = zmq_recv(socket, header_buffer, DIRECT_IO_HEADER_SIZE, 0);
             if(err == -1 ||
 			   err != DIRECT_IO_HEADER_SIZE) {
                 continue;
             }
-			
+
 			//create new datapack
 			data_pack = new DirectIODataPack();
 			
@@ -187,7 +245,9 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 			
 			//set dispatch header data
 			data_pack->header.dispatcher_header.raw_data = DIRECT_IO_GET_DISPATCHER_DATA(header_buffer);
-
+			
+			//get the synchronous answer flag;
+			send_synchronous_answer = data_pack->header.dispatcher_header.fields.synchronous_answer;
 			
 			//check what i need to reice
 			switch(data_pack->header.dispatcher_header.fields.channel_part) {
@@ -231,7 +291,7 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 					
 					data_pack->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(header_buffer);
 					data_pack->channel_data = malloc(data_pack->header.channel_data_size);
-
+					
 					//reiceve all data
 					err = zmq_recv(socket, data_pack->channel_header_data, data_pack->header.channel_header_size, 0);
 					//err = zmq_msg_recv(&m_header_data, socket, 0);
@@ -252,10 +312,45 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 					break;
 			}
 			
+			//check if we need to send async answer
+			if(data_pack->header.dispatcher_header.fields.synchronous_answer) {
+				//the client waith an answer
+				synchronous_answer = (DirectIOSynchronousAnswerPtr) calloc(sizeof(synchronous_answer), 1);
+			}
 			
+			//dispatch to endpoint
+			err = DirectIOHandlerPtrCaller(handler_impl, delegate)(data_pack, synchronous_answer);
+			//check if we need to send async answer
+			if(send_synchronous_answer) {
+				//sending identity
+				stringSendMore(socket, identity.c_str());
+
+				//sending envelop delimiter
+				stringSendMore(socket, EmptyMessage);
 			
-			DirectIOHandlerPtrCaller(handler_impl, delegate)(data_pack);
-			//close the socket of the header and identity
+				//send the data
+				zmq_msg_t answer_data;
+				//construct answer zmq message
+				err = zmq_msg_init_data (&answer_data,
+										synchronous_answer->answer_data,
+										synchronous_answer->answer_size,
+										free_answer,
+										synchronous_answer);
+				
+				if(err == -1) {
+					ZMQDIO_SRV_LAPP_ << "Error creating message for asnwer";
+					DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
+				} else {
+					err = zmq_sendmsg(socket, &answer_data, 0);
+					if(err == -1) {
+						ZMQDIO_SRV_LAPP_ << "Error sending answer";
+						DIRECTIO_FREE_ANSWER_DATA(synchronous_answer)
+					}
+				}
+				//close the message
+				zmq_msg_close(&answer_data);
+			}
+			
 			
         } catch (CException& ex) {
             DECODE_CHAOS_EXCEPTION(ex)

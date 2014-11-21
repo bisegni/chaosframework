@@ -33,38 +33,54 @@ namespace chaos {
             
 			struct DirectIODataPack;
 			
+			//! forward declaration
+			class DirectIOClientDeallocationHandler;
+			
             namespace channel {
-                
-				//!strucutre to maintaine the information about sent buffer and free it
-				struct DisposeSentMemoryInfo {
-					uint8_t		sent_part;
-					uint16_t	sent_opcode;
-					channel::DirectIOVirtualClientChannel *channel;
-					DisposeSentMemoryInfo(channel::DirectIOVirtualClientChannel *_channel,
-										  uint8_t _sent_part,
-										  uint16_t _sent_opcode):channel(_channel), sent_part(_sent_part), sent_opcode(_sent_opcode){};
-				};
 				
-                class DirectIOVirtualClientChannel : protected DirectIOVirtualChannel {
+				class DirectIOVirtualClientChannel :
+				protected DirectIOVirtualChannel,
+				protected DirectIOClientDeallocationHandler {
 					friend class chaos::common::direct_io::DirectIOClientConnection;
                     
 					DirectIOForwarderHandler  forward_handler;
 
 				protected:
-					//uint16_t endpoint;
+					
+					//! subclass can override this with custom persisint() after channel allocation) implementation
+					DirectIOClientDeallocationHandler *header_deallocator;
+					
+					//!only virtual channel class can access this class to permit
+					//! the regulatio of the call
 					DirectIOForwarder *client_instance;
 					
-					int64_t sendData(chaos::common::direct_io::DirectIODataPack *data_pack);
-					virtual void freeSentData(void *data, DisposeSentMemoryInfo& dispose_memory_info);
+					//priority socket
+					int64_t sendPriorityData(chaos::common::direct_io::DirectIODataPack *data_pack,
+											 DirectIOSynchronousAnswer **synchronous_answer = NULL);
+					int64_t sendPriorityData(chaos::common::direct_io::DirectIODataPack *data_pack,
+											 DirectIOClientDeallocationHandler *data_deallocator,
+											 DirectIOSynchronousAnswer **synchronous_answer = NULL);
+					
+					//service socket
+					int64_t sendServiceData(chaos::common::direct_io::DirectIODataPack *data_pack,
+											DirectIOSynchronousAnswer **synchronous_answer = NULL);
+					int64_t sendServiceData(chaos::common::direct_io::DirectIODataPack *data_pack,
+											DirectIOClientDeallocationHandler *data_deallocator,
+											DirectIOSynchronousAnswer **synchronous_answer = NULL);
 					
 					// prepare header for defaut connection data
-					inline DirectIODataPack *completeDataPack(DirectIODataPack *data_pack) {
+					inline DirectIODataPack *completeChannnelDataPack(DirectIODataPack *data_pack, bool synchronous_answer = false) {
+						//complete the datapack
+						data_pack->header.dispatcher_header.fields.synchronous_answer = synchronous_answer;
 						data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
 						return data_pack;
 					}
 					
-                    DirectIOVirtualClientChannel(std::string channel_name, uint8_t channel_route_index, bool priority);
+                    DirectIOVirtualClientChannel(std::string channel_name, uint8_t channel_route_index);
                     ~DirectIOVirtualClientChannel();
+					
+					//! default header deallocator implementation
+					void freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr);
 				public:
 					//void setEndpoint(uint16_t _endpoint);
                 };

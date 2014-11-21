@@ -44,7 +44,7 @@ abstract public class SlowExecutionJob extends RPCActionHadler implements Runnab
 		} catch (RefException e) {
 			e.printStackTrace();
 		}
-		System.out.println(this.getClass().getName() + " is closing");
+		//System.out.println(this.getClass().getName() + " is closing");
 	}
 
 	private void consumeAnswer(BasicBSONObject actionData) {

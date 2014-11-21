@@ -22,12 +22,16 @@
 #define __CHAOSFramework__QueryDataConsumer__
 
 #include "dataservice_global.h"
+#include "db_system/DBDriver.h"
 #include "vfs/VFSManager.h"
 #include "worker/DataWorker.h"
 #include "cache_system/cache_system.h"
+#include "query_engine/QueryEngine.h"
+
 #include <chaos/common/utility/ObjectSlot.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/direct_io/DirectIOServerEndpoint.h>
+#include <chaos/common/async_central/AsyncCentralManager.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/network/NetworkBroker.h>
@@ -35,6 +39,7 @@
 #include <boost/atomic.hpp>
 
 using namespace chaos::utility;
+using namespace chaos::common::data;
 using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 using namespace chaos::common::direct_io::channel::opcode_headers;
@@ -44,7 +49,10 @@ namespace chaos{
         
         class ChaosDataService;
         
-        class QueryDataConsumer : public DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler, public utility::StartableService {
+        class QueryDataConsumer:
+		protected chaos::common::async_central::TimerHandler,
+		public DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler,
+		public utility::StartableService {
             friend class ChaosDataService;
 			std::string cache_impl_name;
 			
@@ -55,15 +63,32 @@ namespace chaos{
             DirectIOServerEndpoint					*server_endpoint;
 			DirectIODeviceServerChannel				*device_channel;
 			
+			cache_system::CacheDriver				*cache_driver;
+			
 			vfs::VFSManager *vfs_manager_instance;
 			boost::atomic<uint16_t> device_data_worker_index;
 			chaos::data_service::worker::DataWorker	**device_data_worker;
-			chaos::common::utility::ObjectSlot<chaos::data_service::worker::DataWorker*> answer_worker_list;
 			
-            void consumeCDataWrapper(uint8_t channel_opcode, chaos::common::data::CDataWrapper *data_wrapper);
-            void consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header, void *channel_data, uint32_t channel_data_len);
-            void consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header, void *channel_data, uint32_t channel_data_len);
-
+			query_engine::QueryEngine *query_engine;
+			
+            int consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header,
+								void *channel_data,
+								uint32_t channel_data_len,
+								DirectIOSynchronousAnswerPtr synchronous_answer);
+			
+            int consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *header,
+								void *channel_data,
+								uint32_t channel_data_len,
+								DirectIOSynchronousAnswerPtr synchronous_answer);
+			
+			int consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQueryDataCloud *header,
+									  const std::string& search_key,
+									  uint64_t search_start_ts,
+									  uint64_t search_end_ts,
+									  DirectIOSynchronousAnswerPtr synchronous_answer);
+			
+			//async central timer hook
+			void timeout();
         public:
 			QueryDataConsumer(vfs::VFSManager *_vfs_manager_instance);
             ~QueryDataConsumer();

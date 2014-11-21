@@ -24,17 +24,34 @@
 using namespace chaos;
 using namespace chaos::common::data;
 
-MessageChannel::MessageChannel(NetworkBroker *_broker, const char*const _remoteHost): broker(_broker), response_handler(NULL){
+#define MessageChannel_LOG_HEAD "[MessageChannel] - "
+
+#define MCAPP_ LAPP_ << MessageChannel_LOG_HEAD
+#define MCDBG_ LDBG_ << MessageChannel_LOG_HEAD << __FUNCTION__ << " - "
+#define MCERR_ LERR_ << MessageChannel_LOG_HEAD << __FUNCTION__ << "(" << __LINE__ << ") - "
+
+
+MessageChannel::MessageChannel(NetworkBroker *_broker,
+							   const std::string& _remote_host):
+broker(_broker),
+response_handler(NULL) {
     //create the network address
-    remoteNodeAddress= _remoteHost;
+    remoteNodeAddress = _remote_host;
 }
 
-MessageChannel::MessageChannel(NetworkBroker *_broker):broker(_broker){
+MessageChannel::MessageChannel(NetworkBroker *_broker):
+broker(_broker){
 
 }
 
 MessageChannel::~MessageChannel() {
-    
+	for(map<atomic_int_type, common::data::CDataWrapper* >::iterator it =  response_id_sync_map.begin();
+		it != response_id_sync_map.end();
+		it++){
+		MCAPP_ << "Cleanup unforwarded message responf for id " << it->first;
+		delete(it->second);
+		
+	}
 }
 
 /*!
@@ -119,8 +136,34 @@ atomic_int_type MessageChannel::prepareRequestPackAndSend(bool async, const char
     return currentRequestID;
 }
 
-/*! 
- called when a result of an 
+/*!
+ Update the address of the channel
+ */
+void MessageChannel::setRemoteNodeAddress(const std::string& remote_addr) {
+	remoteNodeAddress = remote_addr;
+}
+
+/*!
+ Return the broker for that channel
+ */
+NetworkBroker* MessageChannel::getBroker(){
+	return broker;
+}
+
+int32_t MessageChannel::getLastErrorCode() {
+	return last_error_code;
+}
+
+const std::string& MessageChannel::getLastErrorMessage() {
+	return last_error_message;
+}
+
+const std::string& MessageChannel::getLastErrorDomain() {
+	return last_error_domain;
+}
+
+/*!
+ called when a result of an
  */
 void MessageChannel::sendMessage(const char * const nodeID,const char * const actionName, CDataWrapper * const messagePack,  bool onThisThread) {
     CHAOS_ASSERT(nodeID && actionName)

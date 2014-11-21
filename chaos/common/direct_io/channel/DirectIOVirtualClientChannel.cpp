@@ -24,26 +24,63 @@
 using namespace chaos::common::direct_io::channel;
 
 
-DirectIOVirtualClientChannel::DirectIOVirtualClientChannel(string channel_name, uint8_t channel_route_index, bool priority):DirectIOVirtualChannel(channel_name, channel_route_index)/*, endpoint(0)*/ {
-    if(priority) {
-		forward_handler = &DirectIOForwarder::sendPriorityData;
-	} else {
-		forward_handler = &DirectIOForwarder::sendServiceData;
-	}
-}
+DirectIOVirtualClientChannel::DirectIOVirtualClientChannel(string channel_name, uint8_t channel_route_index):
+DirectIOVirtualChannel(channel_name, channel_route_index),
+header_deallocator(this) {}
 
-DirectIOVirtualClientChannel::~DirectIOVirtualClientChannel() {
-    
-}
+DirectIOVirtualClientChannel::~DirectIOVirtualClientChannel() {}
 
-int64_t DirectIOVirtualClientChannel::sendData(chaos::common::direct_io::DirectIODataPack *data_pack) {
+int64_t DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::DirectIODataPack *data_pack,
+													   DirectIOSynchronousAnswer **synchronous_answer) {
 	//set the endpoint that need the receive the pack on the other side
 	//data_pack->header.dispatcher_header.fields.route_addr = endpoint;
 	//set the channel route index within the endpoint
 	data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
 	
 	//send pack
-	return DirectIOForwarderHandlerCaller(client_instance,forward_handler)(this, completeDataPack(data_pack));
+	//return DirectIOForwarderHandlerCaller(client_instance,forward_handler)(this, completeDataPack(data_pack, synchronous_answer != NULL ), synchronous_answer);
+	return sendPriorityData(data_pack, header_deallocator, synchronous_answer);
 }
 
-void DirectIOVirtualClientChannel::freeSentData(void *data, DisposeSentMemoryInfo& dispose_memory_info) {}
+int64_t DirectIOVirtualClientChannel::sendPriorityData(chaos::common::direct_io::DirectIODataPack *data_pack,
+													   DirectIOClientDeallocationHandler *data_deallocator,
+													   DirectIOSynchronousAnswer **synchronous_answer) {
+	//set the endpoint that need the receive the pack on the other side
+	//data_pack->header.dispatcher_header.fields.route_addr = endpoint;
+	//set the channel route index within the endpoint
+	data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
+	
+	//send pack
+	//return DirectIOForwarderHandlerCaller(client_instance,forward_handler)(this, completeDataPack(data_pack, synchronous_answer != NULL ), synchronous_answer);
+	return client_instance->sendPriorityData(completeChannnelDataPack(data_pack, synchronous_answer!=NULL), header_deallocator, data_deallocator, synchronous_answer);
+}
+
+int64_t DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::DirectIODataPack *data_pack,
+													  DirectIOSynchronousAnswer **synchronous_answer) {
+	//set the endpoint that need the receive the pack on the other side
+	//data_pack->header.dispatcher_header.fields.route_addr = endpoint;
+	//set the channel route index within the endpoint
+	data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
+	
+	//send pack
+	//return DirectIOForwarderHandlerCaller(client_instance,forward_handler)(this, completeDataPack(data_pack, synchronous_answer != NULL ), synchronous_answer);
+	return sendServiceData(data_pack, header_deallocator, synchronous_answer);
+}
+
+int64_t DirectIOVirtualClientChannel::sendServiceData(chaos::common::direct_io::DirectIODataPack *data_pack,
+													   DirectIOClientDeallocationHandler *data_deallocator,
+													   DirectIOSynchronousAnswer **synchronous_answer) {
+	//set the endpoint that need the receive the pack on the other side
+	//data_pack->header.dispatcher_header.fields.route_addr = endpoint;
+	//set the channel route index within the endpoint
+	data_pack->header.dispatcher_header.fields.channel_idx = channel_route_index;
+	
+	//send pack
+	//return DirectIOForwarderHandlerCaller(client_instance,forward_handler)(this, completeDataPack(data_pack, synchronous_answer != NULL ), synchronous_answer);
+	return client_instance->sendPriorityData(completeChannnelDataPack(data_pack, synchronous_answer!=NULL), header_deallocator, data_deallocator, synchronous_answer);
+}
+
+//! default header deallocator implementation
+void DirectIOVirtualClientChannel::freeSentData(void* sent_data_ptr, DisposeSentMemoryInfo *free_info_ptr) {
+	free(sent_data_ptr);
+}

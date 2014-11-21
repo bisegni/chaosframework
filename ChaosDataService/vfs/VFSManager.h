@@ -25,7 +25,8 @@
 #include "VFSStageWriteableFile.h"
 #include "VFSDataWriteableFile.h"
 #include "VFSStageReadableFile.h"
-#include "../index_system/IndexDriver.h"
+#include "VFSQuery.h"
+#include "../db_system/DBDriver.h"
 #include "storage_system/StorageDriver.h"
 
 #include <chaos/common/async_central/async_central.h>
@@ -73,7 +74,7 @@ namespace chaos {
 				VFSManagerSetting *setting;
 				
 				//!index driver pointer
-				index_system::IndexDriver *index_driver_ptr;
+				db_system::DBDriver *db_driver_ptr;
 				
 				//!storage driver pointer
 				storage_system::StorageDriver *storage_driver_ptr;
@@ -83,7 +84,7 @@ namespace chaos {
 			protected:
 				void freeObject(std::string key, VFSFilesForPath *element);
 			public:
-				VFSManager(index_system::IndexDriver *_index_driver_ptr);
+				VFSManager(db_system::DBDriver *_db_driver_ptr);
 				~VFSManager();
 				
 				//! Need to be forwarded a point to a structure VFSManagerSetting
@@ -98,6 +99,8 @@ namespace chaos {
 				int getReadableStageFile(std::string stage_vfs_relative_path, VFSStageReadableFile **rsf_file);
 				
 				int getWriteableDataFile(std::string data_vfs_relative_path, VFSDataWriteableFile **wdf_file);
+				
+				int getVFSQuery(const chaos::data_service::db_system::DataPackIndexQuery& _query, VFSQuery **vfs_query);
 				
 				int releaseFile(VFSFile *l_file);
 				

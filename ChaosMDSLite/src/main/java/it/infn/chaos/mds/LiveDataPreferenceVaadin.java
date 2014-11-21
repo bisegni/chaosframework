@@ -26,6 +26,8 @@ public class LiveDataPreferenceVaadin extends CustomComponent {
 	private Table table_1;
 	
 	
+	
+	
 
 	/*- VaadinEditorProperties={"grid":"RegularGrid,20","showGrid":true,"snapToGrid":true,"snapToObject":true,"movingGuides":false,"snappingDistance":10} */
 
@@ -113,8 +115,8 @@ public class LiveDataPreferenceVaadin extends CustomComponent {
 		// common part: create layout
 		horizontalLayout_3 = new HorizontalLayout();
 		horizontalLayout_3.setImmediate(false);
-		horizontalLayout_3.setWidth("100.0%");
-		horizontalLayout_3.setHeight("100.0%");
+		horizontalLayout_3.setWidth("70.0%");
+		horizontalLayout_3.setHeight("70.0%");
 		horizontalLayout_3.setMargin(false);
 		
 		// table_1

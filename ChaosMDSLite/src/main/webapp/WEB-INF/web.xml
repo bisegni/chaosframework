@@ -16,7 +16,7 @@
 		<param-name>mds.port</param-name>
 		<param-value>5000</param-value>
 	</context-param>
-	<!-- -->
+	<!--
 	<context-param>
 		<param-name>mongodb.url</param-name>
 		<param-value>mongodb01:27017,mongodb02:27017,mongodb03:27017</param-value>
@@ -32,7 +32,7 @@
 	<context-param>
 		<param-name>mongodb.db</param-name>
 		<param-value>chaos_mds</param-value>
-	</context-param>
+	</context-param> -->
 	<!-- context param -->
 	<context-param>
 		<param-name>db.appserver.datasource</param-name>
