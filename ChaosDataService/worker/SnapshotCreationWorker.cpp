@@ -24,6 +24,7 @@
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
 #include <boost/lexical_cast.hpp>
+#include <boost/algorithm/string.hpp>
 
 using namespace chaos::common::network;
 using namespace chaos::data_service::worker;
@@ -37,10 +38,10 @@ using namespace chaos::data_service::worker;
 //------------------------------------------------------------------------------------------------------------------------
 
 SnapshotCreationWorker::SnapshotCreationWorker(const std::string& _cache_impl_name,
-											   const std::string& _db_impl_name,
+											   db_system::DBDriver	*_db_driver_ptr,
 											   NetworkBroker	*_network_broker):
 cache_impl_name(_cache_impl_name),
-db_impl_name(_db_impl_name),
+db_driver_ptr(_db_driver_ptr),
 network_broker(_network_broker),
 mds_channel(NULL){}
 
@@ -57,16 +58,12 @@ void SnapshotCreationWorker::init(void *init_data) throw (chaos::CException) {
 		
 	SCW_LAPP_ << "allocating cache driver";
 	cache_driver_ptr = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
-	
-	SCW_LAPP_ << "allocating cache driver";
-	db_driver_ptr = chaos::ObjectFactoryRegister<db_system::DBDriver>::getInstance()->getNewInstanceByName(db_impl_name);
 }
 
 void SnapshotCreationWorker::deinit() throw (chaos::CException) {
 	SCW_LAPP_ << "deallocating cache driver";
 	if(cache_driver_ptr) delete(cache_driver_ptr);
 	SCW_LAPP_ << "deallocating db driver";
-	if(db_driver_ptr) delete(db_driver_ptr);
 	
 	if(mds_channel && network_broker) {
 		network_broker->disposeMessageChannel(mds_channel);
@@ -82,14 +79,14 @@ int SnapshotCreationWorker::storeDatasetTypeInSnapsnot(const std::string& snapsh
 	void *data = NULL;
 	uint32_t data_len = 0;
 	std::string dataset_to_fetch = unique_id + dataset_type;
-	SCW_LDBG_ << "Get live data for " << dataset_to_fetch << " in channel ";
+	SCW_LDBG_ << "Get live data for " << dataset_to_fetch << " in channel";
 	if((err = cache_driver_ptr->getData((void*)dataset_to_fetch.c_str(), dataset_to_fetch.size(), &data, data_len))) {
 		SCW_LERR_<< "Error retrieving live data for " << dataset_to_fetch << " with error: " << err;
 	} else if(data) {
 		SCW_LDBG_ << "Store data on snapshot for " << dataset_to_fetch;
 		if((err = db_driver_ptr->snapshotAddElementToSnapshot(snapshot_name,
 															  unique_id,
-															  dataset_type,
+															  dataset_to_fetch,
 															  data,
 															  data_len))) {
 			SCW_LERR_<< "Error storign dataset type "<< dataset_type <<" for " << unique_id << " in snapshot " << snapshot_name << " with error: " << err;
@@ -105,9 +102,16 @@ int SnapshotCreationWorker::storeDatasetTypeInSnapsnot(const std::string& snapsh
 
 void SnapshotCreationWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 	int err = 0;
-
-	
+	std::vector<std::string> snapped_producer_keys;
 	SnapshotCreationJob *job_ptr = reinterpret_cast<SnapshotCreationJob*>(job_info);
+	//recreate the array of producer key set
+	if(job_ptr->concatenated_unique_id_memory_size) {
+		std::string concatenated_keys((const char*)job_ptr->concatenated_unique_id_memory, job_ptr->concatenated_unique_id_memory_size);
+		//split the concatenated string
+		boost::split( snapped_producer_keys, concatenated_keys, is_any_of(","), token_compress_on );
+		free(job_ptr->concatenated_unique_id_memory);
+	}
+	
 	//check what kind of push we have
 	//read lock on mantainance mutex
 	SCW_LDBG_ << "Start snapshot creation for name" << job_ptr->snapshot_name;
@@ -118,16 +122,16 @@ void SnapshotCreationWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 		SCW_LERR_<< "Error creating snapshot "<< job_ptr->snapshot_name <<" on database with error: " << err;
 	}else {
 		//get the unique id to snap
-		if(job_ptr->produceter_unique_id_set.size()) {
+		if(snapped_producer_keys.size()) {
 			SCW_LDBG_ << "make snapshot on the user producer'id set";
 		} else {
 			SCW_LDBG_ << "make snapshot on all producer key";
-			mds_channel->getAllDeviceID(job_ptr->produceter_unique_id_set);
+			mds_channel->getAllDeviceID(snapped_producer_keys);
 		}
 		
 		//scann all id
-		for (std::vector<std::string>::iterator it = job_ptr->produceter_unique_id_set.begin();
-			 it != job_ptr->produceter_unique_id_set.end();
+		for (std::vector<std::string>::iterator it = snapped_producer_keys.begin();
+			 it != snapped_producer_keys.end();
 			 it++) {
 			
 			//snap output channel

@@ -34,13 +34,14 @@ using namespace chaos;
 using namespace chaos::ui;
 
 int main(int argc, char * argv[]) {
-	std::string device_id;
+	int64_t err = 0;
+	std::vector<std::string> device_id_list;
 	std::string snap_name;
 	std::string cds_addr;
 	unsigned int operation;
 	try{
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<std::string>(OPT_CDS_ADDRESS, "CDS address", &cds_addr);
-		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<std::string>(OPT_CU_ID, "The identification string of the device to snapshuot", &device_id);
+		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_CU_ID, "The identification string of the device to snapshuot", &device_id_list);
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<std::string>(OPT_SNAP_NAME, "The name of the snapshot", &snap_name);
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<unsigned int>(OPT_SNAPSHOT_OP, "Operation on snapshot [create(0), delete(1)]", 0, &operation);
 		
@@ -62,6 +63,25 @@ int main(int argc, char * argv[]) {
 		if(!snap_name.size()) throw CException(-3, "Snapshot name can't zero-length", "check param");
 		
 		SystemApiChannel *system_api_channel = LLRpcApi::getInstance()->getSystemApiClientChannel(cds_addr);
+		
+		chaos::common::direct_io::channel::opcode_headers::DirectIOSystemAPINewSnapshootResultPtr system_api_result = NULL;
+		
+		//!make snap on device
+		if(!(err = system_api_channel->system_api_channel->makeNewDatasetSnapshot(snap_name,
+																				  device_id_list,
+																				  &system_api_result))){
+			if(system_api_result) {
+				std::cout << "Snapshot creation report: " << std::endl;
+				std::cout << "Error code:" << system_api_result->error << std::endl;
+				std::cout << "Error message:" << system_api_result->error_message << std::endl;
+				free(system_api_result);
+			} else {
+				std::cout << "no result received" << std::endl;
+			}
+		} else {
+			std::cout << "Error executing directio call" << std::endl;
+		}
+		
 		if(system_api_channel) {
 			LLRpcApi::getInstance()->releaseSystemApyChannel(system_api_channel);
 		}

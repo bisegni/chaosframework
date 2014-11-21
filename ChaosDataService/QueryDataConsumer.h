@@ -26,6 +26,7 @@
 #include "vfs/VFSManager.h"
 #include "worker/DataWorker.h"
 #include "cache_system/cache_system.h"
+#include "db_system/db_system.h"
 #include "query_engine/QueryEngine.h"
 
 #include <chaos/common/utility/ObjectSlot.h>
@@ -68,7 +69,7 @@ namespace chaos{
 			DirectIOSystemAPIServerChannel			*system_api_channel;
 			
 			cache_system::CacheDriver				*cache_driver;
-			
+			db_system::DBDriver						*db_driver;
 			vfs::VFSManager *vfs_manager_instance;
 			boost::atomic<uint16_t> device_data_worker_index;
 			chaos::data_service::worker::DataWorker	**device_data_worker;
@@ -94,12 +95,13 @@ namespace chaos{
 			
 			//---------------- DirectIOSystemAPIServerChannelHandler -----------------------
 			int consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshootHeader *header,
-										const std::vector<std::string>& snapped_producer_key,
-										DirectIOSystemAPINewSnapshootResult& api_result);
+										void *concatenated_unique_id_memory,
+										uint32_t concatenated_unique_id_memory_size,
+										DirectIOSystemAPINewSnapshootResult *api_result);
 			//async central timer hook
 			void timeout();
         public:
-			QueryDataConsumer(vfs::VFSManager *_vfs_manager_instance);
+			QueryDataConsumer(vfs::VFSManager *_vfs_manager_instance, db_system::DBDriver *_db_driver);
             ~QueryDataConsumer();
             void init(void *init_data) throw (chaos::CException);
             void start() throw (chaos::CException);

@@ -534,13 +534,13 @@ namespace chaos {
 	 */
 	namespace DataPackCommonKey {
 		//!define the device unique key, this represent the primary key of the producer[string]
-		static const char * const DPCK_DEVICE_ID                       = "dpck.device_id";
+		static const char * const DPCK_DEVICE_ID                       = "dpck_device_id";
 		
 		//!this define the acquisition timestamp of the data represented by the dataset[uint64_t]
-		static const char * const DPCK_TIMESTAMP                       = "dpck.ts";
+		static const char * const DPCK_TIMESTAMP                       = "dpck_ts";
 		
 		//!define the type of the dataset [output(0) - input(1) - custom(2) - system(3) int32_t]
-		static const char * const DPCK_DATASET_TYPE                    = "dpck.ds_type";
+		static const char * const DPCK_DATASET_TYPE                    = "dpck_ds_type";
 		//! the constant that represent the output dataset type
 		static const unsigned int DPCK_DATASET_TYPE_OUTPUT             = 0;
 		//! the constant that represent the input dataset type
@@ -560,7 +560,7 @@ namespace chaos {
     //! Namespace for standard constant used for output attribute of a producer
     namespace DataPackOutputKey {
         //!this define key associated to the trigger
-        static const char * const DPOK_TRIGGER_CODE                   = "dpok.trigger_key";
+        static const char * const DPOK_TRIGGER_CODE                   = "dpok_trigger_key";
     }
     /** @} */ // end of DataPackKey
 	

@@ -54,9 +54,10 @@ namespace chaos {
 						unique key, to include into the snaphsoot
 						 */
 						virtual int consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshootHeader *header,
-															const std::vector<std::string>& snapped_producer_key,
-															DirectIOSystemAPINewSnapshootResult& api_result)
-						{DELETE_HEADER(header) return 0;};
+															void *concatenated_unique_id_memory,
+															uint32_t concatenated_unique_id_memory_size,
+															DirectIOSystemAPINewSnapshootResult *api_result)
+						{DELETE_HEADER_DATA(header, concatenated_unique_id_memory) return 0;};
 						
 					} DirectIOSystemAPIServerChannelHandler;
 					

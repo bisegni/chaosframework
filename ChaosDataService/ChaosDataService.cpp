@@ -178,7 +178,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		if(run_mode == QUERY ||
 		   run_mode == BOTH) {
 			CDSLAPP_ << "Allocate the Query Data Consumer";
-			data_consumer.reset(new QueryDataConsumer(vfs_file_manager.get()), "QueryDataConsumer");
+			data_consumer.reset(new QueryDataConsumer(vfs_file_manager.get(), db_driver_ptr), "QueryDataConsumer");
 			if(!data_consumer.get()) throw chaos::CException(-1, "Error instantiating data consumer", __PRETTY_FUNCTION__);
 			data_consumer->settings = &settings;
 			data_consumer->network_broker = network_broker.get();

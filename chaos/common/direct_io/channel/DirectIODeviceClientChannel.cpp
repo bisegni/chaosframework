@@ -90,7 +90,7 @@ int64_t DirectIODeviceClientChannel::storeAndCacheDataOutputChannel(const std::s
 int64_t DirectIODeviceClientChannel::requestLastOutputData(const std::string& key,
 														   void **result,
 														   uint32_t &size) {
-	uint64_t err = 0;
+	int64_t err = 0;
 	DirectIOSynchronousAnswer *answer = NULL;
 	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
 	

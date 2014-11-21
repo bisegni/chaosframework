@@ -38,15 +38,13 @@ using namespace chaos::common::direct_io::channel;
 #define QDCDBG_ LDBG_ << QueryDataConsumer_LOG_HEAD << __FUNCTION__ << " - "
 #define QDCERR_ LERR_ << QueryDataConsumer_LOG_HEAD << __FUNCTION__ << "(" << __LINE__ << ") - "
 
-QueryDataConsumer::QueryDataConsumer(vfs::VFSManager *_vfs_manager_instance):
+QueryDataConsumer::QueryDataConsumer(vfs::VFSManager *_vfs_manager_instance,
+									 db_system::DBDriver *_db_driver):
 vfs_manager_instance(_vfs_manager_instance),
-query_engine(NULL){
-	
-}
+db_driver(_db_driver),
+query_engine(NULL){}
 
-QueryDataConsumer::~QueryDataConsumer() {
-	
-}
+QueryDataConsumer::~QueryDataConsumer() {}
 
 void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
 	if(!settings)  throw chaos::CException(-1, "No setting provided", __FUNCTION__);
@@ -109,7 +107,7 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
 	QDCAPP_ << "Allocating Snapshoot worker";
 	if(!settings->cache_only) {
 		snapshot_data_worker = new chaos::data_service::worker::SnapshotCreationWorker(cache_impl_name,
-																					   db_impl_name,
+																					   db_driver,
 																					   network_broker);
 		if(!snapshot_data_worker) throw chaos::CException(-5, "Error allocating snapshot worker", __FUNCTION__);
 		chaos::utility::StartableService::initImplementation(snapshot_data_worker, init_data, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
@@ -251,21 +249,25 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
 									   void *channel_data,
 									   uint32_t channel_data_len,
 									   DirectIOSynchronousAnswerPtr synchronous_answer) {
-	return cache_driver->getData(channel_data,
+	int err = cache_driver->getData(channel_data,
 								 channel_data_len,
 								 &synchronous_answer->answer_data,
 								 synchronous_answer->answer_size);
+	if(channel_data) free(channel_data);
+	if(header) free(header);
+	return err;
 }
 
 #pragma mark DirectIOSystemAPIServerChannelHandler
 int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshootHeader *header,
-											   const std::vector<std::string>& snapped_producer_key,
-											   DirectIOSystemAPINewSnapshootResult& api_result) {
+											   void *concatenated_unique_id_memory,
+											   uint32_t concatenated_unique_id_memory_size,
+											   DirectIOSystemAPINewSnapshootResult *api_result) {
 	//check if we can work
-	if(!settings->cache_only) {
+	if(settings->cache_only) {
 		//data service is in cache only mode throw the error
-		api_result.result_field.error = -1000;
-		std::strcpy(api_result.result_field.error_message, "Chaos Data Service is in cache only");
+		api_result->error = -1000;
+		std::strcpy(api_result->error_message, "Chaos Data Service is in cache only");
 		//delete header
 		if(header) free(header);
 		return 0;
@@ -276,17 +278,21 @@ int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPI
 	//copy snapshot name
 	job->snapshot_name = header->field.snap_name;
 	//! copy the vector in job configuration
-	job->produceter_unique_id_set = snapped_producer_key;
-	
+	if(concatenated_unique_id_memory_size && concatenated_unique_id_memory) {
+		job->concatenated_unique_id_memory = (char*)concatenated_unique_id_memory;
+		job->concatenated_unique_id_memory_size = concatenated_unique_id_memory_size;
+	}
 	if(!snapshot_data_worker->submitJobInfo(job)) {
 		DEBUG_CODE(QDCDBG_ << "error pushing snapshot creation job " << job->snapshot_name << " in queue");
-		api_result.result_field.error = -1001;
-		std::strcpy(api_result.result_field.error_message, "error pushing snapshot creation job in queue");
+		api_result->error = -1001;
+		std::strcpy(api_result->error_message, "error pushing snapshot creation job in queue");
+		if(concatenated_unique_id_memory) free(concatenated_unique_id_memory);
 		delete job;
 	} else {
-		api_result.result_field.error = 0;
-		std::strcpy(api_result.result_field.error_message, "Creation submitted");
+		api_result->error = 0;
+		std::strcpy(api_result->error_message, "Creation submitted");
 	}
+	if(header) free(header);
 	return 0;
 }
 

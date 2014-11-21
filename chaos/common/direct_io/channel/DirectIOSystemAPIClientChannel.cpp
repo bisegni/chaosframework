@@ -68,11 +68,11 @@ int64_t DirectIOSystemAPIClientChannel::makeNewDatasetSnapshot(const std::string
 		//we have also a set of producer key so senti it in the data part of message
 		std::string producer_key_concatenation;
 		for(std::vector<std::string>::const_iterator it = producer_keys.begin();
-			it != producer_keys.end();
-			it++) {
+			it != producer_keys.end();) {
 			//add key
 			producer_key_concatenation.append(*it);
-			if(it != producer_keys.end()) {
+			
+			if((++it) != producer_keys.end()) {
 				producer_key_concatenation.append(",");
 			}
 		}
@@ -93,7 +93,7 @@ int64_t DirectIOSystemAPIClientChannel::makeNewDatasetSnapshot(const std::string
 		//we got answer
 		if(answer && answer->answer_size == sizeof(DirectIOSystemAPINewSnapshootResult)) {
 			*api_result_handle  = static_cast<DirectIOSystemAPINewSnapshootResult*>(answer->answer_data);
-			(*api_result_handle)->result_field.error = FROM_LITTLE_ENDNS_NUM(int32_t, (*api_result_handle)->result_field.error);
+			(*api_result_handle)->error = FROM_LITTLE_ENDNS_NUM(int32_t, (*api_result_handle)->error);
 		} else {
 			*api_result_handle = NULL;
 		}

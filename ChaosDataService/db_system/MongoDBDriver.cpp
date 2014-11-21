@@ -845,6 +845,10 @@ int MongoDBDriver::snapshotCreateNewWithName(const std::string& snapshot_name) {
 		DEBUG_CODE(MDBID_LDBG_ << "snapshotCreateNewWithName insert ---------------------------------------------";)
 		
 		err = ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT), q);
+		if(err == 11000) {
+			//already exis a snapshot with taht name so no error need to be throw
+			err = 0;
+		}
 	} catch( const mongo::DBException &e ) {
 		MDBID_LERR_ << e.what();
 		err = -1;
@@ -862,7 +866,7 @@ int MongoDBDriver::snapshotAddElementToSnapshot(const std::string& snapshot_name
 	mongo::BSONObjBuilder	new_dataset;
 	mongo::BSONObjBuilder	search_snapshot;
 	try{
-		new_dataset << dataset_type << mongo::BSONObj((const char *)data);
+		new_dataset << "$set"<< BSON(dataset_type << mongo::BSONObj((const char *)data));
 		
 		//search for snapshot name and producer unique key
 		search_snapshot << MONGO_DB_FIELD_SNAPSHOT_DATA_SNAPSHOT_NAME << snapshot_name;
@@ -875,7 +879,8 @@ int MongoDBDriver::snapshotAddElementToSnapshot(const std::string& snapshot_name
 		DEBUG_CODE(MDBID_LDBG_ << "condition" << q;)
 		DEBUG_CODE(MDBID_LDBG_ << "snapshotCreateNewWithName insert ---------------------------------------------";)
 		
-		err = ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT_DATA), q);
+		//update and waith until the data is on the server
+		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT_DATA), q, u, true, false, &mongo::WriteConcern::acknowledged);
 	} catch( const mongo::DBException &e ) {
 		MDBID_LERR_ << e.what();
 		err = -1;

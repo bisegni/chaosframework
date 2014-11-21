@@ -42,10 +42,13 @@ namespace chaos{
 			struct SnapshotCreationJob :
 			public WorkerJob {
 				//the name of the new snapshot
-				std::string					snapshot_name;
+				std::string		snapshot_name;
 				
-				//! if empty all key need to be insert into the snapshot
-				std::vector<std::string>	produceter_unique_id_set;
+				//! buffer fileld with concatenated unique id
+				char *			concatenated_unique_id_memory;
+				
+				//the length of the buffer
+				uint32_t		concatenated_unique_id_memory_size;
 			};
 			
 			//! worker for create the snapshoot in async way
@@ -71,7 +74,7 @@ namespace chaos{
 				void executeJob(WorkerJobPtr job_info, void* cookie);
 			public:
 				SnapshotCreationWorker(const std::string& _cache_impl_name,
-									   const std::string& _db_impl_name,
+									   db_system::DBDriver	*_db_driver_ptr,
 									   chaos_network::NetworkBroker	*_network_broker);
 				~SnapshotCreationWorker();
 				void init(void *init_data) throw (chaos::CException);
