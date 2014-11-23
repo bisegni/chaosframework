@@ -26,19 +26,26 @@
 #include <chaos/common/utility/NamedService.h>
 #include <chaos/common/action/EventAction.h>
 #include <chaos/common/event/evt_desc/EventDescriptor.h>
+
+using namespace chaos::event;
+using namespace chaos::utility;
+
 namespace chaos {
-    using namespace event;
-    using namespace utility;
+    namespace common {
+        namespace network {
+            class NetworkBroker;
+        }
+    }
 
         //! Abstract class for the event dispatcher
     /*!
-     This is the base class that fix the rule for create an event dispatcher. The event dipsatcher has the
+     This is the base class that set the rule for create an event dispatcher. The event dipsatcher has the
      scope to forward the event received from the implemntation of the event server, to internal handler 
      that has been register for specified kind of event.
      */
    
     class AbstractEventDispatcher : public utility::StartableService, event::EventHandler, NamedService {
-        friend class NetworkBroker;
+        friend class chaos::common::network::NetworkBroker;
 
     public:
         AbstractEventDispatcher(string alias);

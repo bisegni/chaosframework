@@ -38,14 +38,14 @@
 #include <chaos/common/utility/StartableService.h>
 
 namespace chaos_data = chaos::common::data;
+using namespace std;
+using namespace bson;
+using namespace boost;
 
 /*
  Base class for the command implementation
  */
 namespace chaos{
-    using namespace std;
-    using namespace bson;
-    using namespace boost;
 	namespace common {
 		namespace network {
 			class NetworkBroker;
@@ -60,7 +60,7 @@ namespace chaos{
      by this base class
      */
     class AbstractCommandDispatcher : public RpcServerHandler, Configurable, utility::StartableService, NamedService {
-        friend class NetworkBroker;
+        friend class chaos::common::network::NetworkBroker;
         
             //! Rpc Client for action result
         /*!Pointer to the associated rpc client, used to send the result of an action*/

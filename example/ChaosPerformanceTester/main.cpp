@@ -36,6 +36,7 @@
 
 using namespace std;
 using namespace chaos;
+using namespace chaos::common::network;
 using namespace chaos::ui;
 using namespace bson;
 using namespace boost;
@@ -92,7 +93,7 @@ int main (int argc, char* argv[] ) {
 		if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_RT_TEST)) {
 			command_sequence.push_back(1);
 		}
-		device_network_address = new chaos::CNetworkAddress();
+		device_network_address = new CNetworkAddress();
 		device_network_address->ipPort = ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->getOption<std::string>(OPT_NODE_ADDRESS);
 		chaos::common::message::PerformanceNodeChannel *perf_channel = LLRpcApi::getInstance()->getNewPerformanceChannel(device_network_address);
 		chaos::common::direct_io::DirectIOPerformanceSession *session = NULL;
