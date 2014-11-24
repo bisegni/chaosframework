@@ -94,10 +94,20 @@ namespace chaos{
 									  DirectIOSynchronousAnswerPtr synchronous_answer);
 			
 			//---------------- DirectIOSystemAPIServerChannelHandler -----------------------
-			int consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshotHeader *header,
+			// Manage the creation of a snapshot
+			int consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
 										void *concatenated_unique_id_memory,
 										uint32_t concatenated_unique_id_memory_size,
 										DirectIOSystemAPISnapshotResult *api_result);
+			
+			// Manage the delete operation on an existing snapshot
+			int consumeDeleteSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
+										   DirectIOSystemAPISnapshotResult *api_result);
+			
+			// Return the dataset for a producerkey ona specific snapshot
+			int consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
+											   const std::string& producer_id,
+											   DirectIOSystemAPIGetDatasetSnapshotResult *api_result);
 			//async central timer hook
 			void timeout();
         public:

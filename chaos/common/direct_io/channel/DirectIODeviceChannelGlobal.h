@@ -48,8 +48,9 @@ namespace chaos {
 					 and collect all API for system managment
 					 */
 					typedef enum SystemAPIChannelOpcode {
-						SystemAPIChannelOpcodeNewNewSnapshotDataset	= 1,		/**< start new datasets snapshot creation process*/
-						SystemAPIChannelOpcodeNewDeleteSnapshotDataset	= 2,	/**< delete the snapshot associated to the input tag */
+						SystemAPIChannelOpcodeNewSnapshotDataset		= 1,	/**< start new datasets snapshot creation process*/
+						SystemAPIChannelOpcodeDeleteSnapshotDataset		= 2,	/**< delete the snapshot associated to the input tag */
+						SystemAPIChannelOpcodeGetSnapshotDatasetForAKey	= 3,	/**< return the snapshoted datasets for a determinated producer key*/
 					} SystemAPIChannelOpcode;
 				}
 				
@@ -224,14 +225,16 @@ namespace chaos {
 #pragma mark System Channel
 #define SYSTEM_API_CHANNEL_NEW_Snapshot 256+4
 
-					//! Header for the snapshot system api managment
+					//! Header for the snapshot system api managment for new, delete and get managment
 					/*!
-					 this header is usedfor the managment of the creation 
-					 of a new snapshot 
+					 this header is used for the managment of the creation, deletion and retrieve
+					 of a snapshot
 					 the opcode associated to this header is:
-					 SystemAPIChannelOpcodeNewSnapshotDatasetNew
+						- SystemAPIChannelOpcodeNewNewSnapshotDataset
+						- SystemAPIChannelOpcodeNewDeleteSnapshotDataset
+						- SystemAPIChannelOpcodeGetSnapshotDatasetForAKey
 					 */
-					typedef	union DirectIOSystemAPIChannelOpcodeNewSnapshotHeader {
+					typedef	union DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader {
 						//raw data representation of the header
 						char raw_data[SYSTEM_API_CHANNEL_NEW_Snapshot];
 						struct header {
@@ -243,8 +246,8 @@ namespace chaos {
 							//! passed into the data part of the direct io message
 							uint32_t	producer_key_set_len;
 						} field;
-					} DirectIOSystemAPIChannelOpcodeNewSnapshotHeader,
-					*DirectIOSystemAPIChannelOpcodeNewSnapshotHeaderPtr;
+					} DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader,
+					*DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr;
 					
 					//!result of the new and delete api
 					typedef  struct DirectIOSystemAPISnapshotResult {
@@ -258,11 +261,14 @@ namespace chaos {
 						//! api result
 						DirectIOSystemAPISnapshotResult api_result;
 						
-						//channels
-						data::CDataWrapper *output_channel;
-						data::CDataWrapper *input_channel;
-						data::CDataWrapper *custom_channel;
-						data::CDataWrapper *system_channel;
+						//channels lenght
+						uint32_t output_channel_len;
+						uint32_t input_channel_len;
+						uint32_t custom_channel_len;
+						uint32_t system_channel_len;
+						
+						//!concatenated channels data in order [o,i,c,s]
+						void* channels_data;
 					}DirectIOSystemAPIGetDatasetSnapshotResult,
 					*DirectIOSystemAPIGetDatasetSnapshotResultPtr;
                 }

@@ -155,6 +155,16 @@ namespace chaos {
 					int snapshotIncrementJobCounter(const std::string& working_job_unique_id,
 													const std::string& snapshot_name,
 													bool add);
+					
+					//! get the dataset from a snapshot
+					virtual int snapshotGetDatasetForProducerKey(const std::string& snapshot_name,
+																 const std::string& producer_unique_key,
+																 const std::string& dataset_type,
+																 void **channel_data,
+																 uint32_t& channel_data_size);
+					
+					//! Delete a snapshot where no job is working
+					virtual int snapshotDeleteWithName(const std::string& snapshot_name);
 				};
 			}
 	}

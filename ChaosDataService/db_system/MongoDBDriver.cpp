@@ -81,13 +81,13 @@ void MongoDBDriver::init(void *init_data) throw (chaos::CException) {
 	index_on_domain = BSON(MONGO_DB_FIELD_SNAPSHOT_NAME<< 1);
 	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_SNAPSHOT, index_on_domain, true, "", true);
 	if(err) throw chaos::CException(-1, "Error creating snapshot collection index", __PRETTY_FUNCTION__);
-
+	
 	index_on_domain = BSON(MONGO_DB_FIELD_SNAPSHOT_DATA_SNAPSHOT_NAME << 1 <<
 						   MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE << 1 <<
 						   MONGO_DB_FIELD_SNAPSHOT_DATA_PRODUCER_ID << 1);
 	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_SNAPSHOT_DATA, index_on_domain, true, "", true);
 	if(err) throw chaos::CException(-1, "Error creating snapshot data collection index", __PRETTY_FUNCTION__);
-
+	
 }
 
 //!deinit
@@ -176,8 +176,8 @@ int MongoDBDriver::vfsDomainHeartBeat(vfs::VFSDomain domain) {
 
 //! Register a new data block wrote on stage area
 int MongoDBDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,
-										   chaos_vfs::DataBlock *data_block,
-										   vfs::data_block_state::DataBlockState new_block_state) {
+									  chaos_vfs::DataBlock *data_block,
+									  vfs::data_block_state::DataBlockState new_block_state) {
 	int err = 0;
 	bool f_exists = false;
 	
@@ -254,7 +254,7 @@ int MongoDBDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,
 
 //! Delete a virtual file datablock
 int MongoDBDriver::vfsDeleteDataBlock(chaos_vfs::VFSFile *vfs_file,
-										   chaos_vfs::DataBlock *data_block) {
+									  chaos_vfs::DataBlock *data_block) {
 	int err = 0;
 	mongo::BSONObjBuilder file_search;
 	mongo::BSONObj file_search_result;
@@ -291,8 +291,8 @@ int MongoDBDriver::vfsDeleteDataBlock(chaos_vfs::VFSFile *vfs_file,
 
 //! Set the state for a stage datablock
 int MongoDBDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
-											   chaos_vfs::DataBlock *data_block,
-											   int state) {
+										  chaos_vfs::DataBlock *data_block,
+										  int state) {
 	int err = 0;
 	mongo::BSONObjBuilder bson_search;
 	mongo::BSONObjBuilder bson_block_query;
@@ -336,10 +336,10 @@ int MongoDBDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
 
 //! Set the state for a stage datablock
 int MongoDBDriver::vfsSetStateOnDataBlock(chaos_vfs::VFSFile *vfs_file,
-											   chaos_vfs::DataBlock *data_block,
-											   int cur_state,
-											   int new_state,
-											   bool& success) {
+										  chaos_vfs::DataBlock *data_block,
+										  int cur_state,
+										  int new_state,
+										  bool& success) {
 	int err = 0;
 	mongo::BSONObjBuilder command;
 	mongo::BSONObjBuilder query_master;
@@ -402,7 +402,7 @@ int MongoDBDriver::vfsSetHeartbeatOnDatablock(chaos_vfs::VFSFile *vfs_file,
 		DEBUG_CODE(MDBID_LDBG_ << "vfsSetHeartbeatOnDatablock query ---------------------------------------------";)
 		DEBUG_CODE(MDBID_LDBG_ << "Query: "  << q.jsonString();)
 		DEBUG_CODE(MDBID_LDBG_ << "vfsSetHeartbeatOnDatablock query ---------------------------------------------";)
-
+		
 		if(err) {
 			MDBID_LERR_ << "Error " << err << " updating state on datablock";
 		}
@@ -485,7 +485,7 @@ int MongoDBDriver::vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
 		//search on file path, the datablock is always the end token of the path
 		
 		query_master << MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH << BSON("$regex" << boost::str(boost::format("%1%%2%") % vfs_file->getVFSFileInfo()->vfs_fpath % ".*"));
-
+		
 		//search for state
 		query_master << MONGO_DB_FIELD_DATA_BLOCK_STATE << state;
 		//search on the timestamp
@@ -495,7 +495,7 @@ int MongoDBDriver::vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
 		DEBUG_CODE(MDBID_LDBG_ << "vfsFindSinceTimeDataBlock query ---------------------------------------------";)
 		DEBUG_CODE(MDBID_LDBG_ << "Query: "  << q.jsonString();)
 		DEBUG_CODE(MDBID_LDBG_ << "vfsFindSinceTimeDataBlock query ---------------------------------------------";)
-
+		
 		
 		err = ha_connection_pool->findOne(result, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_VFS_VBLOCK), q);
 		if(err) {
@@ -615,10 +615,10 @@ int MongoDBDriver::vfsGetFilePathForDomain(const std::string& vfs_domain,
 		_prefix_filter.append(".*");
 		
 		query_master << "$query" << BSON(MONGO_DB_FIELD_FILE_VFS_DOMAIN << vfs_domain << MONGO_DB_FIELD_FILE_VFS_PATH << BSON("$regex" << _prefix_filter))
-					<< "$orderby" << BSON(MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS << 1);
+		<< "$orderby" << BSON(MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS << 1);
 		//search for domain
 		//query_master << MONGO_DB_FIELD_FILE_VFS_DOMAIN << vfs_domain;
-
+		
 		
 		//query_master << MONGO_DB_FIELD_FILE_VFS_PATH << BSON("$regex" << _prefix_filter);
 		
@@ -721,7 +721,7 @@ int MongoDBDriver::idxSetDataPackIndexStateByDataBlock(const std::string& vfs_da
 		if(err) {
 			MDBID_LERR_ << "Error " << err << " updating state on all datablock index";
 		}
-
+		
 	} catch( const mongo::DBException &e ) {
 		MDBID_LERR_ << e.what();
 		err = -1;
@@ -751,7 +751,7 @@ int MongoDBDriver::idxSearchResultCountDataPack(const DataPackIndexQuery& data_p
 		index_search_builder << MONGO_DB_FIELD_IDX_DATA_PACK_DID << data_pack_index_query.did;
 		index_search_builder << MONGO_DB_FIELD_IDX_DATA_PACK_STATE << (int32_t)DataPackIndexQueryStateQuerable; //select only querable indexes
 		index_search_builder << MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS_NUMERIC << BSON("$gte" << (long long)data_pack_index_query.start_ts <<
-																	  "$lte" << (long long)data_pack_index_query.end_ts);
+																					"$lte" << (long long)data_pack_index_query.end_ts);
 		
 		mongo::BSONObj q = index_search_builder.obj();
 		DEBUG_CODE(MDBID_LDBG_ << "idxSearchResultCountDataPack insert ---------------------------------------------";)
@@ -784,17 +784,17 @@ int MongoDBDriver::idxSearchDataPack(const DataPackIndexQuery& data_pack_index_q
 		
 		//set the field to return
 		return_field << MONGO_DB_FIELD_IDX_DATA_PACK_DATA_BLOCK_DST_DOMAIN << 1
-					 << MONGO_DB_FIELD_IDX_DATA_PACK_DATA_BLOCK_DST_PATH << 1
-					 << MONGO_DB_FIELD_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET << 1
-					 << MONGO_DB_FIELD_IDX_DATA_PACK_SIZE << 1
-					 << MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS_NUMERIC << 1;
+		<< MONGO_DB_FIELD_IDX_DATA_PACK_DATA_BLOCK_DST_PATH << 1
+		<< MONGO_DB_FIELD_IDX_DATA_PACK_DATA_BLOCK_DST_OFFSET << 1
+		<< MONGO_DB_FIELD_IDX_DATA_PACK_SIZE << 1
+		<< MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS_NUMERIC << 1;
 		
 		mongo::BSONObj q = index_search_builder.obj();
 		mongo::BSONObj r = return_field.obj();
 		DEBUG_CODE(MDBID_LDBG_ << "idxDeleteDataPackIndex insert ---------------------------------------------";)
 		DEBUG_CODE(MDBID_LDBG_ << "query: " << q.jsonString());
 		DEBUG_CODE(MDBID_LDBG_ << "idxDeleteDataPackIndex insert ---------------------------------------------";)
-
+		
 		ha_connection_pool->findN(found_element, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_IDX_DATA_PACK), q, limit_to, 0, &r);
 	} catch( const mongo::DBException &e ) {
 		MDBID_LERR_ << e.what();
@@ -815,13 +815,13 @@ int MongoDBDriver::idxMaxAndMInimumTimeStampForDataPack(const DataPackIndexQuery
 		
 		index_search_builder << MONGO_DB_FIELD_IDX_DATA_PACK_DID << data_pack_index_query.did;
 		index_search_builder << MONGO_DB_FIELD_IDX_DATA_PACK_STATE << (int32_t)DataPackIndexQueryStateQuerable; //select only querable indexes
-
+		
 		mongo::BSONObj p = return_field.obj();
 		mongo::BSONObj q = index_search_builder.obj();
 		DEBUG_CODE(MDBID_LDBG_ << "idxMaxAndMInimumTimeStampForDataPack insert ---------------------------------------------";)
 		DEBUG_CODE(MDBID_LDBG_ << "query: " << q.jsonString());
 		DEBUG_CODE(MDBID_LDBG_ << "idxMaxAndMInimumTimeStampForDataPack insert ---------------------------------------------";)
-
+		
 		if((err = ha_connection_pool->findOne(r_max, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_IDX_DATA_PACK), mongo::Query(q).sort(MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS_NUMERIC,-1), &p))){
 			MDBID_LERR_ << "Error getting maximum timestamp on index of " << data_pack_index_query.did;
 		} else if((err = ha_connection_pool->findOne(r_min, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_IDX_DATA_PACK), mongo::Query(q).sort(MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS_NUMERIC,1), &p))) {
@@ -887,7 +887,7 @@ int MongoDBDriver::snapshotAddElementToSnapshot(const std::string& working_job_u
 		search_snapshot << MONGO_DB_FIELD_SNAPSHOT_DATA_SNAPSHOT_NAME << snapshot_name;
 		search_snapshot << MONGO_DB_FIELD_SNAPSHOT_DATA_PRODUCER_ID << producer_unique_key;
 		search_snapshot << MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE << working_job_unique_id;
-
+		
 		mongo::BSONObj u = new_dataset.obj();
 		mongo::BSONObj q = search_snapshot.obj();
 		DEBUG_CODE(MDBID_LDBG_ << "snapshotCreateNewWithName insert ---------------------------------------------";)
@@ -926,6 +926,54 @@ int MongoDBDriver::snapshotIncrementJobCounter(const std::string& working_job_un
 		
 		//update and waith until the data is on the server
 		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT), q, u, false, false, &mongo::WriteConcern::acknowledged);
+	} catch( const mongo::DBException &e ) {
+		MDBID_LERR_ << e.what();
+		err = -1;
+	}
+	return err;
+}
+
+//! get the dataset from a snapshot
+int MongoDBDriver::snapshotGetDatasetForProducerKey(const std::string& snapshot_name,
+													const std::string& producer_unique_key,
+													const std::string& dataset_type,
+													void **channel_data,
+													uint32_t& channel_data_size) {
+	
+}
+
+//! Delete a snapshot where no job is working
+int MongoDBDriver::snapshotDeleteWithName(const std::string& snapshot_name) {
+	int err = 0;
+	mongo::BSONObj			result;
+	mongo::BSONObjBuilder	search_snapshot;
+	try{
+		//search for snapshot name and producer unique key
+		search_snapshot << MONGO_DB_FIELD_SNAPSHOT_DATA_SNAPSHOT_NAME << snapshot_name;
+
+		mongo::BSONObj q = search_snapshot.obj();
+		DEBUG_CODE(MDBID_LDBG_ << "snapshotDeleteWithName count ---------------------------------------------";)
+
+		DEBUG_CODE(MDBID_LDBG_ << "condition" << q;)
+		DEBUG_CODE(MDBID_LDBG_ << "snapshotDeleteWithName count ---------------------------------------------";)
+		
+		//update and waith until the data is on the server
+		if((err = ha_connection_pool->findOne(result, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT), q))) {
+			MDBID_LERR_ << "Errore finding the snapshot "<< snapshot_name << "with error "<<err;
+			return err;
+		}
+		
+		//the snapshot to delete is present, so we delete it
+		if((err = ha_connection_pool->remove(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT), q))){
+			MDBID_LERR_ << "Errore deleting the snapshot "<< snapshot_name << "with error "<<err;
+			return err;
+		}
+		
+		
+		//no we need to delete all dataset associated to it
+		if((err = ha_connection_pool->remove(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT_DATA), q))){
+			MDBID_LERR_ << "Errore deleting the snapshot data "<< snapshot_name << "with error "<<err;
+		}
 	} catch( const mongo::DBException &e ) {
 		MDBID_LERR_ << e.what();
 		err = -1;

@@ -259,7 +259,8 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
 }
 
 #pragma mark DirectIOSystemAPIServerChannelHandler
-int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshotHeader *header,
+// Manage the creation of a snapshot
+int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
 											   void *concatenated_unique_id_memory,
 											   uint32_t concatenated_unique_id_memory_size,
 											   DirectIOSystemAPISnapshotResult *api_result) {
@@ -308,3 +309,15 @@ int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPI
 	return 0;
 }
 
+// Manage the delete operation on an existing snapshot
+int QueryDataConsumer::consumeDeleteSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
+												  DirectIOSystemAPISnapshotResult *api_result) {
+	
+}
+
+// Return the dataset for a producerkey ona specific snapshot
+int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
+													  const std::string& producer_id,
+													  DirectIOSystemAPIGetDatasetSnapshotResult *api_result) {
+	
+}

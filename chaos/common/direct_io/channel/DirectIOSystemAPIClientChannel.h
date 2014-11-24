@@ -70,7 +70,8 @@ namespace chaos {
 					 Delete the entry of the snapshot and all dataset associated to it
 					 \param snapshot_name the name of the snapshot to delete
 					 */
-					int64_t deleteDatasetSnapshot(const std::string& snapshot_name);
+					int64_t deleteDatasetSnapshot(const std::string& snapshot_name,
+												  DirectIOSystemAPISnapshotResult **api_result_handle);
 					
 					//! get the snapshot for one or more producer key
 					/*!
@@ -81,7 +82,7 @@ namespace chaos {
 					 */
 					int64_t getDatasetSnapshotForProducerKey(const std::string& snapshot_name,
 															 const std::string& producer_key,
-															 DirectIOSystemAPIGetDatasetSnapshotResult **api_reuslt_handle);
+															 DirectIOSystemAPIGetDatasetSnapshotResult **api_result_handle);
 				};
 			}
 		}
