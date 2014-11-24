@@ -55,7 +55,7 @@ void SnapshotCreationWorker::init(void *init_data) throw (chaos::CException) {
 	SCW_LAPP_ << "get mds channel";
 	mds_channel = network_broker->getMetadataserverMessageChannel();
 	if(!mds_channel) throw CException(-2, "No metadataserver channel created", __PRETTY_FUNCTION__);
-		
+	
 	SCW_LAPP_ << "allocating cache driver";
 	cache_driver_ptr = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
 }
@@ -72,19 +72,40 @@ void SnapshotCreationWorker::deinit() throw (chaos::CException) {
 	DataWorker::deinit();
 }
 
-int SnapshotCreationWorker::storeDatasetTypeInSnapsnot(const std::string& snapshot_name,
+int SnapshotCreationWorker::submitJobInfo(WorkerJobPtr job_info) {
+	int err = 0;
+	SnapshotCreationJob *job_ptr = reinterpret_cast<SnapshotCreationJob*>(job_info);
+	SCW_LDBG_ << "Start snapshot creation for name " << job_ptr->snapshot_name;
+	if(!job_ptr->snapshot_name.size()) {
+		err = -1;
+		SCW_LERR_<< "The name of the snapshot is invalid";
+	} else if((err = db_driver_ptr->snapshotCreateNewWithName(job_ptr->snapshot_name, job_ptr->job_work_code))) {
+		SCW_LERR_<< "Error creating snapshot "<< job_ptr->snapshot_name <<" on database with error: " << err;
+	} else {
+		//all is gone ok..
+		err = DataWorker::submitJobInfo(job_info);
+	}
+	return err;
+}
+
+int SnapshotCreationWorker::storeDatasetTypeInSnapsnot(const std::string& job_work_code,
+													   const std::string& snapshot_name,
 													   const std::string& unique_id,
 													   const std::string& dataset_type) {
 	int err = 0;
 	void *data = NULL;
 	uint32_t data_len = 0;
+	
+	//identify the dataaset
 	std::string dataset_to_fetch = unique_id + dataset_type;
+	
 	SCW_LDBG_ << "Get live data for " << dataset_to_fetch << " in channel";
 	if((err = cache_driver_ptr->getData((void*)dataset_to_fetch.c_str(), dataset_to_fetch.size(), &data, data_len))) {
 		SCW_LERR_<< "Error retrieving live data for " << dataset_to_fetch << " with error: " << err;
 	} else if(data) {
 		SCW_LDBG_ << "Store data on snapshot for " << dataset_to_fetch;
-		if((err = db_driver_ptr->snapshotAddElementToSnapshot(snapshot_name,
+		if((err = db_driver_ptr->snapshotAddElementToSnapshot(job_work_code,
+															  snapshot_name,
 															  unique_id,
 															  dataset_to_fetch,
 															  data,
@@ -102,25 +123,20 @@ int SnapshotCreationWorker::storeDatasetTypeInSnapsnot(const std::string& snapsh
 
 void SnapshotCreationWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 	int err = 0;
+	
+	//the set of unique id to snap
 	std::vector<std::string> snapped_producer_keys;
 	SnapshotCreationJob *job_ptr = reinterpret_cast<SnapshotCreationJob*>(job_info);
-	//recreate the array of producer key set
-	if(job_ptr->concatenated_unique_id_memory_size) {
-		std::string concatenated_keys((const char*)job_ptr->concatenated_unique_id_memory, job_ptr->concatenated_unique_id_memory_size);
-		//split the concatenated string
-		boost::split( snapped_producer_keys, concatenated_keys, is_any_of(","), token_compress_on );
-		free(job_ptr->concatenated_unique_id_memory);
-	}
-	
-	//check what kind of push we have
-	//read lock on mantainance mutex
-	SCW_LDBG_ << "Start snapshot creation for name" << job_ptr->snapshot_name;
-	if(!job_ptr->snapshot_name.size()) {
-		err = -1;
-		SCW_LERR_<< "The name of the snapshot is invalid";
-	} else if((err = db_driver_ptr->snapshotCreateNewWithName(job_ptr->snapshot_name))) {
-		SCW_LERR_<< "Error creating snapshot "<< job_ptr->snapshot_name <<" on database with error: " << err;
-	}else {
+	try {
+		
+		//recreate the array of producer key set
+		if(job_ptr->concatenated_unique_id_memory_size) {
+			std::string concatenated_keys((const char*)job_ptr->concatenated_unique_id_memory, job_ptr->concatenated_unique_id_memory_size);
+			//split the concatenated string
+			boost::split( snapped_producer_keys, concatenated_keys, is_any_of(","), token_compress_on );
+			free(job_ptr->concatenated_unique_id_memory);
+		}
+		
 		//get the unique id to snap
 		if(snapped_producer_keys.size()) {
 			SCW_LDBG_ << "make snapshot on the user producer'id set";
@@ -135,25 +151,26 @@ void SnapshotCreationWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 			 it++) {
 			
 			//snap output channel
-			if(storeDatasetTypeInSnapsnot(job_ptr->snapshot_name, *it, DataPackPrefixID::OUTPUT_DATASE_PREFIX)) {
+			if((err = storeDatasetTypeInSnapsnot(job_ptr->job_work_code, job_ptr->snapshot_name, *it, DataPackPrefixID::OUTPUT_DATASE_PREFIX))) {
 				
 			}
 			//snap input channel
-			if(storeDatasetTypeInSnapsnot(job_ptr->snapshot_name, *it, DataPackPrefixID::INPUT_DATASE_PREFIX)) {
+			if((err = storeDatasetTypeInSnapsnot(job_ptr->job_work_code, job_ptr->snapshot_name, *it, DataPackPrefixID::INPUT_DATASE_PREFIX))) {
 				
 			}
 			//snap custom channel
-			if(storeDatasetTypeInSnapsnot(job_ptr->snapshot_name, *it, DataPackPrefixID::CUSTOM_DATASE_PREFIX)){
+			if((err = storeDatasetTypeInSnapsnot(job_ptr->job_work_code, job_ptr->snapshot_name, *it, DataPackPrefixID::CUSTOM_DATASE_PREFIX))){
 				
 			}
 			//snap system channel
-			if(storeDatasetTypeInSnapsnot(job_ptr->snapshot_name, *it, DataPackPrefixID::SYSTEM_DATASE_PREFIX)) {
+			if((err = storeDatasetTypeInSnapsnot(job_ptr->job_work_code, job_ptr->snapshot_name, *it, DataPackPrefixID::SYSTEM_DATASE_PREFIX))) {
 				
 			}
 		}
+		
+	}catch(...) {
+		
 	}
-	
-	
 	
 	//delete job memory
 	free(job_info);

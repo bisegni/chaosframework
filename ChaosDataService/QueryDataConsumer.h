@@ -94,10 +94,10 @@ namespace chaos{
 									  DirectIOSynchronousAnswerPtr synchronous_answer);
 			
 			//---------------- DirectIOSystemAPIServerChannelHandler -----------------------
-			int consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshootHeader *header,
+			int consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshotHeader *header,
 										void *concatenated_unique_id_memory,
 										uint32_t concatenated_unique_id_memory_size,
-										DirectIOSystemAPINewSnapshootResult *api_result);
+										DirectIOSystemAPINewSnapshotResult *api_result);
 			//async central timer hook
 			void timeout();
         public:

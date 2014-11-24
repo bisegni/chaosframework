@@ -88,15 +88,15 @@ void DataWorker::deinit() throw (chaos::CException) {
 	DCLAPP_ << "job queue is empty";
 }
 
-bool DataWorker::submitJobInfo(WorkerJobPtr job_info) {
+int DataWorker::submitJobInfo(WorkerJobPtr job_info) {
 	if(job_in_queue++ % 1000) {
 		DCLDBG_ << "Job in queue " << job_in_queue;
 	}
 	if( job_queue.push(job_info) ) {
 		job_condition.notify_one();
-		return true;
+		return 0;
 	}
-	return false;
+	return -1;
 }
 
 void DataWorker::mantain() throw (chaos::CException) {

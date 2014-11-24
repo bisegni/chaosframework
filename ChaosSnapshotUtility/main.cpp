@@ -26,15 +26,16 @@
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
 
 #define OPT_CU_ID			"device-id"
-#define OPT_CDS_ADDRESS		"cds-address"
+#define OPT_CDS_ADDRESS	"cds-address"
 #define OPT_SNAP_NAME		"snapshot-name"
-#define OPT_SNAPSHOT_OP		"op"
+#define OPT_SNAPSHOT_OP	"op"
 
 using namespace chaos;
 using namespace chaos::ui;
 
 int main(int argc, char * argv[]) {
 	int64_t err = 0;
+	std::cout << "main " << std::endl;
 	std::vector<std::string> device_id_list;
 	std::string snap_name;
 	std::string cds_addr;
@@ -51,11 +52,6 @@ int main(int argc, char * argv[]) {
 		if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CDS_ADDRESS)){
 			throw CException(-1, "The cds address is mandatory", "check param");
 		}
-		
-		if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_CU_ID)){
-			throw CException(-1, "No device identification set", "check param");
-		}
-		
 		if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SNAP_NAME)){
 			throw CException(-2, "Invalid snapshot name set", "check param");
 		}
@@ -64,12 +60,12 @@ int main(int argc, char * argv[]) {
 		
 		SystemApiChannel *system_api_channel = LLRpcApi::getInstance()->getSystemApiClientChannel(cds_addr);
 		
-		chaos::common::direct_io::channel::opcode_headers::DirectIOSystemAPINewSnapshootResultPtr system_api_result = NULL;
+		chaos::common::direct_io::channel::opcode_headers::DirectIOSystemAPINewSnapshotResultPtr system_api_result = NULL;
 		
 		//!make snap on device
 		if(!(err = system_api_channel->system_api_channel->makeNewDatasetSnapshot(snap_name,
-																				  device_id_list,
-																				  &system_api_result))){
+																			device_id_list,
+																			&system_api_result))){
 			if(system_api_result) {
 				std::cout << "Snapshot creation report: " << std::endl;
 				std::cout << "Error code:" << system_api_result->error << std::endl;

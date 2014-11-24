@@ -68,7 +68,7 @@ namespace chaos{
 				void stop() throw (chaos::CException);
 				void deinit() throw (chaos::CException);
 				virtual void mantain() throw (chaos::CException);
-				virtual bool submitJobInfo(WorkerJobPtr job_info);
+				virtual int submitJobInfo(WorkerJobPtr job_info);
 			};
 			
 		}

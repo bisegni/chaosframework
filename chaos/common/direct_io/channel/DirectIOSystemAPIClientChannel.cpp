@@ -40,30 +40,30 @@ DirectIOSystemAPIClientChannel::~DirectIOSystemAPIClientChannel() {
 	
 }
 
-// start a new snapshoot creation
+// start a new Snapshot creation
 int64_t DirectIOSystemAPIClientChannel::makeNewDatasetSnapshot(const std::string& snapshot_name,
 						   const std::vector<std::string>& producer_keys,
-						   DirectIOSystemAPINewSnapshootResult **api_result_handle) {
+						   DirectIOSystemAPINewSnapshotResult **api_result_handle) {
 	int64_t err = 0;
 	DirectIOSynchronousAnswer *answer = NULL;
 	if(snapshot_name.size() > 255) {
-		//bad snapshoot name size
+		//bad Snapshot name size
 		return -1000;
 	}
 	//allocate the datapack
 	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
 	
 	//allocate the header
-	DirectIOSystemAPIChannelOpcodeNewSnapshootHeaderPtr new_snapshot_opcode_header = (DirectIOSystemAPIChannelOpcodeNewSnapshootHeaderPtr)calloc(sizeof(DirectIOSystemAPIChannelOpcodeNewSnapshootHeader), 1);
+	DirectIOSystemAPIChannelOpcodeNewSnapshotHeaderPtr new_snapshot_opcode_header = (DirectIOSystemAPIChannelOpcodeNewSnapshotHeaderPtr)calloc(sizeof(DirectIOSystemAPIChannelOpcodeNewSnapshotHeader), 1);
 	
 	//set opcode
-	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::SystemAPIChannelOpcodeNewNewSnapshootDataset);
+	data_pack->header.dispatcher_header.fields.channel_opcode = static_cast<uint8_t>(opcode::SystemAPIChannelOpcodeNewNewSnapshotDataset);
 	
 	//copy the snapshot name
 	std::memcpy(new_snapshot_opcode_header->field.snap_name, snapshot_name.c_str(), snapshot_name.size());
 
 	//set header
-	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, new_snapshot_opcode_header, sizeof(DirectIOSystemAPIChannelOpcodeNewSnapshootHeader))
+	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, new_snapshot_opcode_header, sizeof(DirectIOSystemAPIChannelOpcodeNewSnapshotHeader))
 	if(producer_keys.size()) {
 		//we have also a set of producer key so senti it in the data part of message
 		std::string producer_key_concatenation;
@@ -91,8 +91,8 @@ int64_t DirectIOSystemAPIClientChannel::makeNewDatasetSnapshot(const std::string
 		if(answer && answer->answer_data) free(answer->answer_data);
 	} else {
 		//we got answer
-		if(answer && answer->answer_size == sizeof(DirectIOSystemAPINewSnapshootResult)) {
-			*api_result_handle  = static_cast<DirectIOSystemAPINewSnapshootResult*>(answer->answer_data);
+		if(answer && answer->answer_size == sizeof(DirectIOSystemAPINewSnapshotResult)) {
+			*api_result_handle  = static_cast<DirectIOSystemAPINewSnapshotResult*>(answer->answer_data);
 			(*api_result_handle)->error = FROM_LITTLE_ENDNS_NUM(int32_t, (*api_result_handle)->error);
 		} else {
 			*api_result_handle = NULL;
@@ -108,7 +108,7 @@ void DirectIOSystemAPIClientChannel::DirectIOSystemAPIClientChannelDeallocator::
 	switch(free_info_ptr->sent_part) {
 		case DisposeSentMemoryInfo::SentPartHeader:{
 			switch(static_cast<opcode::SystemAPIChannelOpcode>(free_info_ptr->sent_opcode)) {
-				case opcode::SystemAPIChannelOpcodeNewNewSnapshootDataset:
+				case opcode::SystemAPIChannelOpcodeNewNewSnapshotDataset:
 					free(sent_data_ptr);
 					break;
 				default:
@@ -119,7 +119,7 @@ void DirectIOSystemAPIClientChannel::DirectIOSystemAPIClientChannelDeallocator::
 			
 		case DisposeSentMemoryInfo::SentPartData: {
 			switch(static_cast<opcode::SystemAPIChannelOpcode>(free_info_ptr->sent_opcode)) {
-				case opcode::SystemAPIChannelOpcodeNewNewSnapshootDataset:
+				case opcode::SystemAPIChannelOpcodeNewNewSnapshotDataset:
 					free(sent_data_ptr);
 					break;
 				default:

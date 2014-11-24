@@ -116,12 +116,12 @@ void DeviceSharedDataWorker::updateServerConfiguration() {
 	cache_driver_ptr->updateConfig();
 }
 
-bool DeviceSharedDataWorker::submitJobInfo(WorkerJobPtr job_info) {
-	bool result = true;
+int DeviceSharedDataWorker::submitJobInfo(WorkerJobPtr job_info) {
+	int err = 0;
 	DeviceSharedWorkerJob *job_ptr = reinterpret_cast<DeviceSharedWorkerJob*>(job_info);
 	switch(job_ptr->request_header->tag) {
 		case 0:// storicize only
-			if(vfs_manager_instance) result = DataWorker::submitJobInfo(job_info);
+			if(vfs_manager_instance) err = DataWorker::submitJobInfo(job_info);
 			break;
 			
 		case 2:// storicize and live
@@ -130,7 +130,7 @@ bool DeviceSharedDataWorker::submitJobInfo(WorkerJobPtr job_info) {
 									  job_ptr->data_pack,
 									  job_ptr->data_pack_len);
 			//if we have the file manager configure we can push the job for write data in storage workfloy
-			if(vfs_manager_instance) result = DataWorker::submitJobInfo(job_info);
+			if(vfs_manager_instance) err = DataWorker::submitJobInfo(job_info);
 			break;
 			
 		case 1:{// live only only
@@ -148,7 +148,7 @@ bool DeviceSharedDataWorker::submitJobInfo(WorkerJobPtr job_info) {
 		free(job_ptr->data_pack);
 		free(job_info);
 	}
-	return result;
+	return err;
 }
 
 //!

@@ -48,8 +48,8 @@ namespace chaos {
 					 and collect all API for system managment
 					 */
 					typedef enum SystemAPIChannelOpcode {
-						SystemAPIChannelOpcodeNewNewSnapshootDataset	= 1,	/**< start new datasets snapshot creation process*/
-						SystemAPIChannelOpcodeNewDeleteSnapshootDataset	= 2,	/**< delete the snapshot associated to the input tag */
+						SystemAPIChannelOpcodeNewNewSnapshotDataset	= 1,		/**< start new datasets snapshot creation process*/
+						SystemAPIChannelOpcodeNewDeleteSnapshotDataset	= 2,	/**< delete the snapshot associated to the input tag */
 					} SystemAPIChannelOpcode;
 				}
 				
@@ -222,18 +222,18 @@ namespace chaos {
 					
 					//-----------------------------------SYSTEM CHANNEL--------------------------------
 #pragma mark System Channel
-#define SYSTEM_API_CHANNEL_NEW_SNAPSHOOT 256+4
+#define SYSTEM_API_CHANNEL_NEW_Snapshot 256+4
 
 					//! Header for the snapshot system api managment
 					/*!
 					 this header is usedfor the managment of the creation 
 					 of a new snapshot 
 					 the opcode associated to this header is:
-					 SystemAPIChannelOpcodeNewSnapshootDatasetNew
+					 SystemAPIChannelOpcodeNewSnapshotDatasetNew
 					 */
-					typedef	union DirectIOSystemAPIChannelOpcodeNewSnapshootHeader {
+					typedef	union DirectIOSystemAPIChannelOpcodeNewSnapshotHeader {
 						//raw data representation of the header
-						char raw_data[SYSTEM_API_CHANNEL_NEW_SNAPSHOOT];
+						char raw_data[SYSTEM_API_CHANNEL_NEW_Snapshot];
 						struct header {
 							//!is the snapshot name
 							char		snap_name[256];
@@ -243,15 +243,15 @@ namespace chaos {
 							//! passed into the data part of the direct io message
 							uint32_t	producer_key_set_len;
 						} field;
-					} DirectIOSystemAPIChannelOpcodeNewSnapshootHeader,
-					*DirectIOSystemAPIChannelOpcodeNewSnapshootHeaderPtr;
+					} DirectIOSystemAPIChannelOpcodeNewSnapshotHeader,
+					*DirectIOSystemAPIChannelOpcodeNewSnapshotHeaderPtr;
 					
 					//!result
-					typedef  struct DirectIOSystemAPINewSnapshootResult {
+					typedef  struct DirectIOSystemAPINewSnapshotResult {
 							int32_t		error;
 							char		error_message[256];
-					}DirectIOSystemAPINewSnapshootResult,
-					*DirectIOSystemAPINewSnapshootResultPtr;
+					}DirectIOSystemAPINewSnapshotResult,
+					*DirectIOSystemAPINewSnapshotResultPtr;
                 }
 			}
 		}

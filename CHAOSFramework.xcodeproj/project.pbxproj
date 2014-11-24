@@ -505,7 +505,7 @@
 
 /* Begin PBXFileReference section */
 		3203D43A1A1BA98D005D29E6 /* SnapshotCreationWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SnapshotCreationWorker.cpp; sourceTree = "<group>"; };
-		3203D43B1A1BA98D005D29E6 /* SnapshotCreationWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SnapshotCreationWorker.h; sourceTree = "<group>"; };
+		3203D43B1A1BA98D005D29E6 /* SnapshotCreationWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = SnapshotCreationWorker.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		3206F1AB19C18A8D00C437D8 /* QueryFuture.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QueryFuture.cpp; sourceTree = "<group>"; };
 		3206F1AC19C18A8D00C437D8 /* QueryFuture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueryFuture.h; sourceTree = "<group>"; };
 		320C2189151B555A00BD0F41 /* EventServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventServer.h; sourceTree = "<group>"; };
@@ -539,7 +539,7 @@
 		32279F8916FA36B6009EC7B9 /* PublisherDataService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PublisherDataService.cpp; sourceTree = "<group>"; };
 		32279F8A16FA36B6009EC7B9 /* PublisherDataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PublisherDataService.h; sourceTree = "<group>"; };
 		3229700918BCC6FE0004F70D /* DirectIOServerPublicInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOServerPublicInterface.h; sourceTree = "<group>"; };
-		322D98FE18A95F9200C0864C /* QueryDataConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QueryDataConsumer.cpp; sourceTree = "<group>"; };
+		322D98FE18A95F9200C0864C /* QueryDataConsumer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = QueryDataConsumer.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
 		322D98FF18A95F9200C0864C /* QueryDataConsumer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueryDataConsumer.h; sourceTree = "<group>"; };
 		322DE35418D467E5006F1551 /* ConcuredUsedItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConcuredUsedItem.h; sourceTree = "<group>"; };
 		322E1578161B629700C3003C /* NetworkBroker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = NetworkBroker.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
@@ -897,8 +897,8 @@
 		32AAD78914CD772F005A097C /* MessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageChannel.h; sourceTree = "<group>"; };
 		32AAD78B14CD773F005A097C /* MessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageChannel.cpp; sourceTree = "<group>"; };
 		32AAD78D14CD95FD005A097C /* Atomic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Atomic.h; sourceTree = "<group>"; };
-		32AB51C71A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOSystemAPIClientChannel.cpp; sourceTree = "<group>"; };
-		32AB51C81A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOSystemAPIClientChannel.h; sourceTree = "<group>"; };
+		32AB51C71A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; lineEnding = 0; path = DirectIOSystemAPIClientChannel.cpp; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.cpp; };
+		32AB51C81A1A66A300BB0BE3 /* DirectIOSystemAPIClientChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = DirectIOSystemAPIClientChannel.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		32AB51CB1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DirectIOSystemAPIServerChannel.cpp; sourceTree = "<group>"; };
 		32AB51CC1A1A69A300BB0BE3 /* DirectIOSystemAPIServerChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOSystemAPIServerChannel.h; sourceTree = "<group>"; };
 		32AF7D3E18DAEAF300537DE6 /* PerformanceNodeChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceNodeChannel.cpp; sourceTree = "<group>"; };

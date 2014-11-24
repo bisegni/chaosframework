@@ -140,10 +140,12 @@ namespace chaos {
 					int idxStartSearchDataPack(const DataPackIndexQuery& _query, DBIndexCursor **index_cursor);
 					
 					//! Create a new snapshot
-					int snapshotCreateNewWithName(const std::string& snapshot_name);
+					int snapshotCreateNewWithName(const std::string& snapshot_name,
+												  std::string& working_job_unique_id);
 					
 					//! Add an element to a named snapshot
-					int snapshotAddElementToSnapshot(const std::string& snapshot_name,
+					int snapshotAddElementToSnapshot(const std::string& working_job_unique_id,
+													 const std::string& snapshot_name,
 													 const std::string& producer_unique_key,
 													 const std::string& dataset_type,
 													 void* data,

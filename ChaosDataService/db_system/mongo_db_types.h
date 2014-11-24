@@ -66,9 +66,14 @@ namespace chaos {
 #define MONGO_DB_FIELD_IDX_DATA_PACK_STATE					"dp_state"
 			
 			//snapshot field-------------------------------------------------
-#define MONGO_DB_FIELD_SNAPSHOT_NAME		"snap_name"
-#define MONGO_DB_FIELD_SNAPSHOT_TS			"snap_ts"
-
+#define MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE				"check_code"
+#define MONGO_DB_FIELD_SNAPSHOT_NAME					"snap_name"
+#define MONGO_DB_FIELD_SNAPSHOT_TS						"snap_ts"
+#define MONGO_DB_FIELD_SNAPSHOT_STATE					"state"
+#define MONGO_DB_FIELD_VALUE_SNAPSHOT_STATE_WORKING		1
+#define MONGO_DB_FIELD_VALUE_SNAPSHOT_STATE_DONE		0
+			
+			
 			//snapshot data-------------------------------------------------
 #define MONGO_DB_FIELD_SNAPSHOT_DATA_SNAPSHOT_NAME	"snap_name"
 #define MONGO_DB_FIELD_SNAPSHOT_DATA_PRODUCER_ID	"producer_id"

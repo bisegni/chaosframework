@@ -47,22 +47,22 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPack *dataPack,
 	opcode::SystemAPIChannelOpcode  channel_opcode = static_cast<opcode::SystemAPIChannelOpcode>(dataPack->header.dispatcher_header.fields.channel_opcode);
 	
 	switch (channel_opcode) {
-		case opcode::SystemAPIChannelOpcodeNewNewSnapshootDataset: {
+		case opcode::SystemAPIChannelOpcodeNewNewSnapshotDataset: {
 			//set the answer pointer
-			synchronous_answer->answer_data = std::calloc(sizeof(DirectIOSystemAPINewSnapshootResult), 1);
-			synchronous_answer->answer_size = sizeof(DirectIOSystemAPINewSnapshootResult);
+			synchronous_answer->answer_data = std::calloc(sizeof(DirectIOSystemAPINewSnapshotResult), 1);
+			synchronous_answer->answer_size = sizeof(DirectIOSystemAPINewSnapshotResult);
 			
 			//get the header
-			opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshootHeaderPtr header = reinterpret_cast< opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshootHeaderPtr >(dataPack->channel_header_data);
+			opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshotHeaderPtr header = reinterpret_cast< opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshotHeaderPtr >(dataPack->channel_header_data);
 			header->field.producer_key_set_len = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.producer_key_set_len);
 
 			//call the handler
 			handler->consumeNewSnapshotEvent(header,
 											 dataPack->channel_data,
 											 dataPack->header.channel_data_size,
-											 (DirectIOSystemAPINewSnapshootResult*)synchronous_answer->answer_data);
+											 (DirectIOSystemAPINewSnapshotResult*)synchronous_answer->answer_data);
 			//fix endianes into api result
-			((DirectIOSystemAPINewSnapshootResult*)synchronous_answer->answer_data)->error = TO_LITTE_ENDNS_NUM(int32_t, ((DirectIOSystemAPINewSnapshootResult*)synchronous_answer->answer_data)->error);
+			((DirectIOSystemAPINewSnapshotResult*)synchronous_answer->answer_data)->error = TO_LITTE_ENDNS_NUM(int32_t, ((DirectIOSystemAPINewSnapshotResult*)synchronous_answer->answer_data)->error);
 			break;
 		}
 			

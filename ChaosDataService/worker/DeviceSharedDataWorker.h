@@ -78,7 +78,7 @@ namespace chaos{
 				void deinit() throw (chaos::CException);
 				void addServer(std::string server_description);
 				void updateServerConfiguration();
-				bool submitJobInfo(WorkerJobPtr job_info);
+				int submitJobInfo(WorkerJobPtr job_info);
 				void mantain() throw (chaos::CException);
 			};
 		}

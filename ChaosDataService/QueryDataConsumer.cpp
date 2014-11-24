@@ -104,7 +104,7 @@ void QueryDataConsumer::init(void *init_data) throw (chaos::CException) {
 		tmp->start();
 	}
 	
-	QDCAPP_ << "Allocating Snapshoot worker";
+	QDCAPP_ << "Allocating Snapshot worker";
 	if(!settings->cache_only) {
 		snapshot_data_worker = new chaos::data_service::worker::SnapshotCreationWorker(cache_impl_name,
 																					   db_driver,
@@ -186,7 +186,7 @@ void QueryDataConsumer::deinit() throw (chaos::CException) {
 			chaos::utility::StartableService::deinitImplementation(snapshot_data_worker, "SnapshotCreationWorker", __PRETTY_FUNCTION__);
 		} catch(...) {
 		}
-		QDCAPP_ << "Deallocating snapshoot data worker";
+		QDCAPP_ << "Deallocating Snapshot data worker";
 		delete(snapshot_data_worker);
 		snapshot_data_worker = NULL;
 	}
@@ -216,7 +216,7 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
 	job->request_header = header;
 	job->data_pack = channel_data;
 	job->data_pack_len = channel_data_len;
-	if(!device_data_worker[index_to_use]->submitJobInfo(job)) {
+	if(device_data_worker[index_to_use]->submitJobInfo(job)) {
 		DEBUG_CODE(QDCDBG_ << "error pushing data into worker queue");
 		delete job;
 	}
@@ -259,15 +259,16 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
 }
 
 #pragma mark DirectIOSystemAPIServerChannelHandler
-int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshootHeader *header,
+int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshotHeader *header,
 											   void *concatenated_unique_id_memory,
 											   uint32_t concatenated_unique_id_memory_size,
-											   DirectIOSystemAPINewSnapshootResult *api_result) {
+											   DirectIOSystemAPINewSnapshotResult *api_result) {
+	int err = 0;
 	//check if we can work
 	if(settings->cache_only) {
 		//data service is in cache only mode throw the error
-		api_result->error = -1000;
-		std::strcpy(api_result->error_message, "Chaos Data Service is in cache only");
+		api_result->error = -1;
+		std::strncpy(api_result->error_message, "Chaos Data Service is in cache only", 255);
 		//delete header
 		if(header) free(header);
 		return 0;
@@ -282,10 +283,21 @@ int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPI
 		job->concatenated_unique_id_memory = (char*)concatenated_unique_id_memory;
 		job->concatenated_unique_id_memory_size = concatenated_unique_id_memory_size;
 	}
-	if(!snapshot_data_worker->submitJobInfo(job)) {
-		DEBUG_CODE(QDCDBG_ << "error pushing snapshot creation job " << job->snapshot_name << " in queue");
-		api_result->error = -1001;
-		std::strcpy(api_result->error_message, "error pushing snapshot creation job in queue");
+	if((err = snapshot_data_worker->submitJobInfo(job))) {
+		api_result->error = err;
+		switch (err) {
+			case 1: {
+				//there is already a snapshot with same name managed tha other job
+				std::strcpy(api_result->error_message, "There is already a snapshot with same name managed tha other job");
+				break;
+			}
+			default:
+				//other errors
+				std::strcpy(api_result->error_message, "Error creating new snapshot");
+				break;
+		}
+		DEBUG_CODE(QDCDBG_ << api_result->error_message << "[" << job->snapshot_name << "]");
+		
 		if(concatenated_unique_id_memory) free(concatenated_unique_id_memory);
 		delete job;
 	} else {

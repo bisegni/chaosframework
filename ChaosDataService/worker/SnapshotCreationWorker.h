@@ -18,8 +18,8 @@
  *    	limitations under the License.
  */
 
-#ifndef __CHAOSFramework__SnapshootCreationWorker__
-#define __CHAOSFramework__SnapshootCreationWorker__
+#ifndef __CHAOSFramework__SnapshotCreationWorker__
+#define __CHAOSFramework__SnapshotCreationWorker__
 
 #include "DataWorker.h"
 #include "../db_system/db_system.h"
@@ -41,7 +41,10 @@ namespace chaos{
 			//! worker information for snapshot creation
 			struct SnapshotCreationJob :
 			public WorkerJob {
-				//the name of the new snapshot
+				//!used to recognize the job that create the snapshot
+				std::string		job_work_code;
+				
+				//!the name of the new snapshot
 				std::string		snapshot_name;
 				
 				//! buffer fileld with concatenated unique id
@@ -51,7 +54,7 @@ namespace chaos{
 				uint32_t		concatenated_unique_id_memory_size;
 			};
 			
-			//! worker for create the snapshoot in async way
+			//! worker for create the Snapshot in async way
 			class SnapshotCreationWorker:
 			public DataWorker {
 				//! implementaiton for caching
@@ -67,7 +70,8 @@ namespace chaos{
 				cache_system::CacheDriver			*cache_driver_ptr;
 				db_system::DBDriver					*db_driver_ptr;
 				
-				int storeDatasetTypeInSnapsnot(const std::string& snapshot_name,
+				int storeDatasetTypeInSnapsnot(const std::string& job_work_code,
+											   const std::string& snapshot_name,
 											   const std::string& unique_id,
 											   const std::string& dataset_type);
 			protected:
@@ -79,10 +83,11 @@ namespace chaos{
 				~SnapshotCreationWorker();
 				void init(void *init_data) throw (chaos::CException);
 				void deinit() throw (chaos::CException);
+				int submitJobInfo(WorkerJobPtr job_info);
 				void addServer(std::string server_description);
 				void updateServerConfiguration();
 			};
 		}
 	}
 }
-#endif /* defined(__CHAOSFramework__SnapshootCreationWorker__) */
+#endif /* defined(__CHAOSFramework__SnapshotCreationWorker__) */

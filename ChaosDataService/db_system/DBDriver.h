@@ -213,19 +213,25 @@ namespace chaos {
 				//! Create a new snapshot
 				/*!
 				 Create a new snapshot with the name
+				 \param snapshot_name the name of the new snapshot
+				 \param the new job identification id, subseguent operation on snapshot need to be done using this code, otherwise
+				 they will fails.
 				 */
-				virtual int snapshotCreateNewWithName(const std::string& snapshot_name) = 0;
+				virtual int snapshotCreateNewWithName(const std::string& snapshot_name,
+													  std::string& working_job_unique_id) = 0;
 				
 				//! Add an element to a named snapshot
 				/*!
 				 add an element to the snapshot
+				 \param working_job_unique_id the identification of the job
 				 \param snapshot_name the name of the snapshot where put the element
 				 \param producer_unique_key the unique key of the producer
 				 \param dataset_type the type of the dataset, refer to @DataPackCommonKey::DPCK_DATASET_TYPE field of the dataset
 				 \param data the serialized data of the dataset
 				 \param data_len the length of the serialized data
 				 */
-				virtual int snapshotAddElementToSnapshot(const std::string& snapshot_name,
+				virtual int snapshotAddElementToSnapshot(const std::string& working_job_unique_id,
+														 const std::string& snapshot_name,
 														 const std::string& producer_unique_key,
 														 const std::string& dataset_type,
 														 void* data,

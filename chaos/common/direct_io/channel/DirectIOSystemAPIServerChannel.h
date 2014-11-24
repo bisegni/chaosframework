@@ -44,7 +44,7 @@ namespace chaos {
 					//! System API DirectIO server handler
 					typedef class DirectIOSystemAPIServerChannelHandler {
 					public:
-						//! Receive the SystemAPIChannelOpcodeNewSnapshootDatasetNew opcode
+						//! Receive the SystemAPIChannelOpcodeNewSnapshotDatasetNew opcode
 						/*!
 						 The creation for a new snapshot has been requested, all information
 						 on the live cache will be stored into database layer creating a 
@@ -53,10 +53,10 @@ namespace chaos {
 						 \param snapped_producer_key the list of the producer, identfied the
 						unique key, to include into the snaphsoot
 						 */
-						virtual int consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshootHeader *header,
+						virtual int consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshotHeader *header,
 															void *concatenated_unique_id_memory,
 															uint32_t concatenated_unique_id_memory_size,
-															DirectIOSystemAPINewSnapshootResult *api_result)
+															DirectIOSystemAPINewSnapshotResult *api_result)
 						{DELETE_HEADER_DATA(header, concatenated_unique_id_memory) return 0;};
 						
 					} DirectIOSystemAPIServerChannelHandler;

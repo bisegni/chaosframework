@@ -16,9 +16,11 @@
 #include <mongo/client/dbclient.h>
 
 #include <chaos/common/utility/TimingUtil.h>
+#include <chaos/common/utility/UUIDUtil.h>
 
 using namespace chaos::data_service::vfs;
 using namespace chaos::data_service::db_system;
+using namespace chaos;
 
 namespace chaos_data = chaos::common::data;
 
@@ -54,28 +56,35 @@ void MongoDBDriver::init(void *init_data) throw (chaos::CException) {
 	//db.runCommand( { shardCollection : "chaos_vfs.domains" , key : { domain_name: 1, domain_url:1 } , unique : true,  dropDups: true  } )
 	
 	//domain index
-	mongo::BSONObj index_on_domain = BSON(MONGO_DB_FIELD_DOMAIN_NAME<<1<<MONGO_DB_FIELD_DOMAIN_UNIQUE_CODE<<1);
+	mongo::BSONObj index_on_domain = BSON(MONGO_DB_FIELD_DOMAIN_NAME<<1<<
+										  MONGO_DB_FIELD_DOMAIN_UNIQUE_CODE<<1);
 	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_VFS_DOMAINS, index_on_domain, true, "", true);
 	if(err) throw chaos::CException(-1, "Error creating domain collection index", __PRETTY_FUNCTION__);
 	
 	//domain url index
-	index_on_domain = BSON(MONGO_DB_FIELD_DOMAIN_NAME<<1<<MONGO_DB_FIELD_DOMAIN_URL<<1);
+	index_on_domain = BSON(MONGO_DB_FIELD_DOMAIN_NAME<<1<<
+						   MONGO_DB_FIELD_DOMAIN_URL<<1);
 	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_VFS_DOMAINS_URL, index_on_domain, true, "", true);
 	if(err) throw chaos::CException(-1, "Error creating domain urls collection index", __PRETTY_FUNCTION__);
 	
-	index_on_domain = BSON(MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH<<1<<MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN<<1<<MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS<<1);
+	index_on_domain = BSON(MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH<<1<<
+						   MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN<<1<<
+						   MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS<<1);
 	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_VFS_VBLOCK, index_on_domain, true, "", true);
 	if(err) throw chaos::CException(-1, "Error creating data block index", __PRETTY_FUNCTION__);
 	
-	index_on_domain = BSON(MONGO_DB_FIELD_IDX_DATA_PACK_DID<<1<<MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS<<1);
+	index_on_domain = BSON(MONGO_DB_FIELD_IDX_DATA_PACK_DID<<1<<
+						   MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS<<1);
 	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_IDX_DATA_PACK, index_on_domain, true, "", true);
 	if(err) throw chaos::CException(-1, "Error creating data pack index collection index", __PRETTY_FUNCTION__);
 	
-	index_on_domain = BSON(MONGO_DB_FIELD_SNAPSHOT_NAME<<1);
+	index_on_domain = BSON(MONGO_DB_FIELD_SNAPSHOT_NAME<< 1);
 	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_SNAPSHOT, index_on_domain, true, "", true);
 	if(err) throw chaos::CException(-1, "Error creating snapshot collection index", __PRETTY_FUNCTION__);
 
-	index_on_domain = BSON(MONGO_DB_FIELD_SNAPSHOT_DATA_SNAPSHOT_NAME << 1 << MONGO_DB_FIELD_SNAPSHOT_DATA_PRODUCER_ID << 1);
+	index_on_domain = BSON(MONGO_DB_FIELD_SNAPSHOT_DATA_SNAPSHOT_NAME << 1 <<
+						   MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE << 1 <<
+						   MONGO_DB_FIELD_SNAPSHOT_DATA_PRODUCER_ID << 1);
 	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_SNAPSHOT_DATA, index_on_domain, true, "", true);
 	if(err) throw chaos::CException(-1, "Error creating snapshot data collection index", __PRETTY_FUNCTION__);
 
@@ -832,14 +841,20 @@ int MongoDBDriver::idxMaxAndMInimumTimeStampForDataPack(const DataPackIndexQuery
 }
 
 //! Create a new snapshot
-int MongoDBDriver::snapshotCreateNewWithName(const std::string& snapshot_name) {
+int MongoDBDriver::snapshotCreateNewWithName(const std::string& snapshot_name,
+											 std::string& working_job_unique_id) {
 	int err = 0;
-	mongo::BSONObjBuilder	new_snapshot_insert;
+	mongo::BSONObjBuilder	new_snapshot_start;
+	
+	//----- generate the random code ------ for this snapshot
+	working_job_unique_id = UUIDUtil::generateUUIDLite();
 	try{
-		new_snapshot_insert << MONGO_DB_FIELD_SNAPSHOT_NAME << snapshot_name;
-		new_snapshot_insert << MONGO_DB_FIELD_SNAPSHOT_TS << mongo::Date_t(TimingUtil::getTimeStamp());
+		new_snapshot_start << MONGO_DB_FIELD_SNAPSHOT_NAME << snapshot_name;
+		new_snapshot_start << MONGO_DB_FIELD_SNAPSHOT_TS << mongo::Date_t(TimingUtil::getTimeStamp());
+		new_snapshot_start << MONGO_DB_FIELD_SNAPSHOT_STATE << MONGO_DB_FIELD_VALUE_SNAPSHOT_STATE_WORKING;
+		new_snapshot_start << MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE << working_job_unique_id;
 		
-		mongo::BSONObj q = new_snapshot_insert.obj();
+		mongo::BSONObj q = new_snapshot_start.obj();
 		DEBUG_CODE(MDBID_LDBG_ << "snapshotCreateNewWithName insert ---------------------------------------------";)
 		DEBUG_CODE(MDBID_LDBG_ << q;)
 		DEBUG_CODE(MDBID_LDBG_ << "snapshotCreateNewWithName insert ---------------------------------------------";)
@@ -847,7 +862,7 @@ int MongoDBDriver::snapshotCreateNewWithName(const std::string& snapshot_name) {
 		err = ha_connection_pool->insert(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT), q);
 		if(err == 11000) {
 			//already exis a snapshot with taht name so no error need to be throw
-			err = 0;
+			err = 1;
 		}
 	} catch( const mongo::DBException &e ) {
 		MDBID_LERR_ << e.what();
@@ -857,7 +872,8 @@ int MongoDBDriver::snapshotCreateNewWithName(const std::string& snapshot_name) {
 }
 
 //! Add an element to a named snapshot
-int MongoDBDriver::snapshotAddElementToSnapshot(const std::string& snapshot_name,
+int MongoDBDriver::snapshotAddElementToSnapshot(const std::string& working_job_unique_id,
+												const std::string& snapshot_name,
 												const std::string& producer_unique_key,
 												const std::string& dataset_type,
 												void* data,
@@ -871,6 +887,7 @@ int MongoDBDriver::snapshotAddElementToSnapshot(const std::string& snapshot_name
 		//search for snapshot name and producer unique key
 		search_snapshot << MONGO_DB_FIELD_SNAPSHOT_DATA_SNAPSHOT_NAME << snapshot_name;
 		search_snapshot << MONGO_DB_FIELD_SNAPSHOT_DATA_PRODUCER_ID << producer_unique_key;
+		search_snapshot << MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE << working_job_unique_id;
 
 		mongo::BSONObj u = new_dataset.obj();
 		mongo::BSONObj q = search_snapshot.obj();
