@@ -236,6 +236,17 @@ namespace chaos {
 														 const std::string& dataset_type,
 														 void* data,
 														 uint32_t data_len) = 0;
+				
+				//! Increment or decrement the number of the job that are working on
+				/*!
+				 this function permit to manage the number of job that are working on the snapshot
+				 \param working_job_unique_id the code associated to the job
+				 \param snapshot_name the name of the snapshot to modify
+				 \param add if true it add +1 if false add -1
+				 */
+				virtual int snapshotIncrementJobCounter(const std::string& working_job_unique_id,
+														const std::string& snapshot_name,
+														bool add) = 0;
 			};
 		}
 	}

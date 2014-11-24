@@ -150,6 +150,11 @@ namespace chaos {
 													 const std::string& dataset_type,
 													 void* data,
 													 uint32_t data_len);
+					
+					//! Increment or decrement the number of the job that are working on
+					int snapshotIncrementJobCounter(const std::string& working_job_unique_id,
+													const std::string& snapshot_name,
+													bool add);
 				};
 			}
 	}

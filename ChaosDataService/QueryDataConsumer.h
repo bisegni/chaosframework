@@ -97,7 +97,7 @@ namespace chaos{
 			int consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshotHeader *header,
 										void *concatenated_unique_id_memory,
 										uint32_t concatenated_unique_id_memory_size,
-										DirectIOSystemAPINewSnapshotResult *api_result);
+										DirectIOSystemAPISnapshotResult *api_result);
 			//async central timer hook
 			void timeout();
         public:

@@ -49,8 +49,8 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPack *dataPack,
 	switch (channel_opcode) {
 		case opcode::SystemAPIChannelOpcodeNewNewSnapshotDataset: {
 			//set the answer pointer
-			synchronous_answer->answer_data = std::calloc(sizeof(DirectIOSystemAPINewSnapshotResult), 1);
-			synchronous_answer->answer_size = sizeof(DirectIOSystemAPINewSnapshotResult);
+			synchronous_answer->answer_data = std::calloc(sizeof(DirectIOSystemAPISnapshotResult), 1);
+			synchronous_answer->answer_size = sizeof(DirectIOSystemAPISnapshotResult);
 			
 			//get the header
 			opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshotHeaderPtr header = reinterpret_cast< opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshotHeaderPtr >(dataPack->channel_header_data);
@@ -60,9 +60,9 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPack *dataPack,
 			handler->consumeNewSnapshotEvent(header,
 											 dataPack->channel_data,
 											 dataPack->header.channel_data_size,
-											 (DirectIOSystemAPINewSnapshotResult*)synchronous_answer->answer_data);
+											 (DirectIOSystemAPISnapshotResult*)synchronous_answer->answer_data);
 			//fix endianes into api result
-			((DirectIOSystemAPINewSnapshotResult*)synchronous_answer->answer_data)->error = TO_LITTE_ENDNS_NUM(int32_t, ((DirectIOSystemAPINewSnapshotResult*)synchronous_answer->answer_data)->error);
+			((DirectIOSystemAPISnapshotResult*)synchronous_answer->answer_data)->error = TO_LITTE_ENDNS_NUM(int32_t, ((DirectIOSystemAPISnapshotResult*)synchronous_answer->answer_data)->error);
 			break;
 		}
 			

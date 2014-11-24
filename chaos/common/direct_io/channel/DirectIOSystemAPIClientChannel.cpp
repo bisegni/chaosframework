@@ -43,7 +43,7 @@ DirectIOSystemAPIClientChannel::~DirectIOSystemAPIClientChannel() {
 // start a new Snapshot creation
 int64_t DirectIOSystemAPIClientChannel::makeNewDatasetSnapshot(const std::string& snapshot_name,
 						   const std::vector<std::string>& producer_keys,
-						   DirectIOSystemAPINewSnapshotResult **api_result_handle) {
+						   DirectIOSystemAPISnapshotResult **api_result_handle) {
 	int64_t err = 0;
 	DirectIOSynchronousAnswer *answer = NULL;
 	if(snapshot_name.size() > 255) {
@@ -91,8 +91,8 @@ int64_t DirectIOSystemAPIClientChannel::makeNewDatasetSnapshot(const std::string
 		if(answer && answer->answer_data) free(answer->answer_data);
 	} else {
 		//we got answer
-		if(answer && answer->answer_size == sizeof(DirectIOSystemAPINewSnapshotResult)) {
-			*api_result_handle  = static_cast<DirectIOSystemAPINewSnapshotResult*>(answer->answer_data);
+		if(answer && answer->answer_size == sizeof(DirectIOSystemAPISnapshotResult)) {
+			*api_result_handle  = static_cast<DirectIOSystemAPISnapshotResult*>(answer->answer_data);
 			(*api_result_handle)->error = FROM_LITTLE_ENDNS_NUM(int32_t, (*api_result_handle)->error);
 		} else {
 			*api_result_handle = NULL;
@@ -100,6 +100,18 @@ int64_t DirectIOSystemAPIClientChannel::makeNewDatasetSnapshot(const std::string
 	}
 	if(answer) free(answer);
 	return err;
+}
+
+//! delete the snapshot identified by name
+int64_t DirectIOSystemAPIClientChannel::deleteDatasetSnapshot(const std::string& snapshot_name) {
+	return 0;
+}
+
+//! get the snapshot for one or more producer key
+int64_t DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const std::string& snapshot_name,
+										 const std::string& producer_key,
+										 DirectIOSystemAPIGetDatasetSnapshotResult **api_reuslt_handle) {
+	return 0;
 }
 
 //! default data deallocator implementation

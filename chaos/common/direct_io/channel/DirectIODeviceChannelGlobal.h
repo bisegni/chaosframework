@@ -246,12 +246,25 @@ namespace chaos {
 					} DirectIOSystemAPIChannelOpcodeNewSnapshotHeader,
 					*DirectIOSystemAPIChannelOpcodeNewSnapshotHeaderPtr;
 					
-					//!result
-					typedef  struct DirectIOSystemAPINewSnapshotResult {
+					//!result of the new and delete api
+					typedef  struct DirectIOSystemAPISnapshotResult {
 							int32_t		error;
 							char		error_message[256];
-					}DirectIOSystemAPINewSnapshotResult,
-					*DirectIOSystemAPINewSnapshotResultPtr;
+					}DirectIOSystemAPISnapshotResult,
+					*DirectIOSystemAPISnapshotResultPtr;
+					
+					//!result of the new and delete api
+					typedef  struct DirectIOSystemAPIGetDatasetSnapshotResult {
+						//! api result
+						DirectIOSystemAPISnapshotResult api_result;
+						
+						//channels
+						data::CDataWrapper *output_channel;
+						data::CDataWrapper *input_channel;
+						data::CDataWrapper *custom_channel;
+						data::CDataWrapper *system_channel;
+					}DirectIOSystemAPIGetDatasetSnapshotResult,
+					*DirectIOSystemAPIGetDatasetSnapshotResultPtr;
                 }
 			}
 		}

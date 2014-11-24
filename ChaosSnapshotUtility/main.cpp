@@ -60,7 +60,7 @@ int main(int argc, char * argv[]) {
 		
 		SystemApiChannel *system_api_channel = LLRpcApi::getInstance()->getSystemApiClientChannel(cds_addr);
 		
-		chaos::common::direct_io::channel::opcode_headers::DirectIOSystemAPINewSnapshotResultPtr system_api_result = NULL;
+		chaos::common::direct_io::channel::opcode_headers::DirectIOSystemAPISnapshotResultPtr system_api_result = NULL;
 		
 		//!make snap on device
 		if(!(err = system_api_channel->system_api_channel->makeNewDatasetSnapshot(snap_name,

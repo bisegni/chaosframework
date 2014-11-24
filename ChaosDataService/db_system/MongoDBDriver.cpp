@@ -851,7 +851,6 @@ int MongoDBDriver::snapshotCreateNewWithName(const std::string& snapshot_name,
 	try{
 		new_snapshot_start << MONGO_DB_FIELD_SNAPSHOT_NAME << snapshot_name;
 		new_snapshot_start << MONGO_DB_FIELD_SNAPSHOT_TS << mongo::Date_t(TimingUtil::getTimeStamp());
-		new_snapshot_start << MONGO_DB_FIELD_SNAPSHOT_STATE << MONGO_DB_FIELD_VALUE_SNAPSHOT_STATE_WORKING;
 		new_snapshot_start << MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE << working_job_unique_id;
 		
 		mongo::BSONObj q = new_snapshot_start.obj();
@@ -898,6 +897,35 @@ int MongoDBDriver::snapshotAddElementToSnapshot(const std::string& working_job_u
 		
 		//update and waith until the data is on the server
 		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT_DATA), q, u, true, false, &mongo::WriteConcern::acknowledged);
+	} catch( const mongo::DBException &e ) {
+		MDBID_LERR_ << e.what();
+		err = -1;
+	}
+	return err;
+}
+
+int MongoDBDriver::snapshotIncrementJobCounter(const std::string& working_job_unique_id,
+											   const std::string& snapshot_name,
+											   bool add) {
+	int err = 0;
+	mongo::BSONObjBuilder	inc_update;
+	mongo::BSONObjBuilder	search_snapshot;
+	try{
+		inc_update << "$inc"<< BSON(MONGO_DB_FIELD_SNAPSHOT_JOB_CONCURRENCY<< (add?1:-1));
+		
+		//search for snapshot name and producer unique key
+		search_snapshot << MONGO_DB_FIELD_SNAPSHOT_DATA_SNAPSHOT_NAME << snapshot_name;
+		search_snapshot << MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE << working_job_unique_id;
+		
+		mongo::BSONObj u = inc_update.obj();
+		mongo::BSONObj q = search_snapshot.obj();
+		DEBUG_CODE(MDBID_LDBG_ << "snapshotIncrementJobCounter insert ---------------------------------------------";)
+		DEBUG_CODE(MDBID_LDBG_ << "update:" << u;)
+		DEBUG_CODE(MDBID_LDBG_ << "condition" << q;)
+		DEBUG_CODE(MDBID_LDBG_ << "snapshotIncrementJobCounter insert ---------------------------------------------";)
+		
+		//update and waith until the data is on the server
+		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT), q, u, false, false, &mongo::WriteConcern::acknowledged);
 	} catch( const mongo::DBException &e ) {
 		MDBID_LERR_ << e.what();
 		err = -1;

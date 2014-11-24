@@ -262,7 +262,7 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
 int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshotHeader *header,
 											   void *concatenated_unique_id_memory,
 											   uint32_t concatenated_unique_id_memory_size,
-											   DirectIOSystemAPINewSnapshotResult *api_result) {
+											   DirectIOSystemAPISnapshotResult *api_result) {
 	int err = 0;
 	//check if we can work
 	if(settings->cache_only) {

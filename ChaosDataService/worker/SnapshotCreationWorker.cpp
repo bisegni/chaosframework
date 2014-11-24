@@ -127,8 +127,19 @@ void SnapshotCreationWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 	//the set of unique id to snap
 	std::vector<std::string> snapped_producer_keys;
 	SnapshotCreationJob *job_ptr = reinterpret_cast<SnapshotCreationJob*>(job_info);
-	try {
+	
+	if((err = db_driver_ptr->snapshotIncrementJobCounter(job_ptr->job_work_code,
+														 job_ptr->snapshot_name,
+														 true))) {
+		SCW_LERR_<< "error incrementing the snapshot job counter for " << job_ptr->snapshot_name << " with error: " << err;
+		//delete job memory
+		free(job_info);
 		
+		return;
+	}
+	try {
+
+
 		//recreate the array of producer key set
 		if(job_ptr->concatenated_unique_id_memory_size) {
 			std::string concatenated_keys((const char*)job_ptr->concatenated_unique_id_memory, job_ptr->concatenated_unique_id_memory_size);
@@ -172,6 +183,11 @@ void SnapshotCreationWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 		
 	}
 	
+	if((err = db_driver_ptr->snapshotIncrementJobCounter(job_ptr->job_work_code,
+														 job_ptr->snapshot_name,
+														 false))) {
+		SCW_LERR_<< "error decrementig the snapshot job counter for " << job_ptr->snapshot_name << " with error: " << err;
+	}
 	//delete job memory
 	free(job_info);
 }

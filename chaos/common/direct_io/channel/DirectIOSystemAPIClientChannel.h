@@ -63,7 +63,25 @@ namespace chaos {
 					 */
 					int64_t makeNewDatasetSnapshot(const std::string& snapshot_name,
 												   const std::vector<std::string>& producer_keys,
-												   DirectIOSystemAPINewSnapshotResult **api_result_handle);
+												   DirectIOSystemAPISnapshotResult **api_result_handle);
+					
+					//! delete the snapshot identified by name
+					/*!
+					 Delete the entry of the snapshot and all dataset associated to it
+					 \param snapshot_name the name of the snapshot to delete
+					 */
+					int64_t deleteDatasetSnapshot(const std::string& snapshot_name);
+					
+					//! get the snapshot for one or more producer key
+					/*!
+					 Retrieve the dataset form the snapshot for one or more producer key.
+					 Is possible to decide the type of the snapshot to get
+					 \param snapshot_name the name of the snapshot to delete
+					 \param producer_key the key of the producer for wich return the datasets
+					 */
+					int64_t getDatasetSnapshotForProducerKey(const std::string& snapshot_name,
+															 const std::string& producer_key,
+															 DirectIOSystemAPIGetDatasetSnapshotResult **api_reuslt_handle);
 				};
 			}
 		}

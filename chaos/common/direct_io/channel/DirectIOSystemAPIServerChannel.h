@@ -56,7 +56,7 @@ namespace chaos {
 						virtual int consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNewSnapshotHeader *header,
 															void *concatenated_unique_id_memory,
 															uint32_t concatenated_unique_id_memory_size,
-															DirectIOSystemAPINewSnapshotResult *api_result)
+															DirectIOSystemAPISnapshotResult *api_result)
 						{DELETE_HEADER_DATA(header, concatenated_unique_id_memory) return 0;};
 						
 					} DirectIOSystemAPIServerChannelHandler;

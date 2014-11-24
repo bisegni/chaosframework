@@ -69,9 +69,7 @@ namespace chaos {
 #define MONGO_DB_FIELD_JOB_WORK_UNIQUE_CODE				"check_code"
 #define MONGO_DB_FIELD_SNAPSHOT_NAME					"snap_name"
 #define MONGO_DB_FIELD_SNAPSHOT_TS						"snap_ts"
-#define MONGO_DB_FIELD_SNAPSHOT_STATE					"state"
-#define MONGO_DB_FIELD_VALUE_SNAPSHOT_STATE_WORKING		1
-#define MONGO_DB_FIELD_VALUE_SNAPSHOT_STATE_DONE		0
+#define MONGO_DB_FIELD_SNAPSHOT_JOB_CONCURRENCY			"job_concurency"
 			
 			
 			//snapshot data-------------------------------------------------
