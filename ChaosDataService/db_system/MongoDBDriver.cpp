@@ -939,7 +939,40 @@ int MongoDBDriver::snapshotGetDatasetForProducerKey(const std::string& snapshot_
 													const std::string& dataset_type,
 													void **channel_data,
 													uint32_t& channel_data_size) {
-	
+	int err = 0;
+	mongo::BSONObj			result;
+	mongo::BSONObjBuilder	search_snapshot;
+	try{
+		//search for snapshot name and producer unique key
+		search_snapshot << MONGO_DB_FIELD_SNAPSHOT_DATA_SNAPSHOT_NAME << snapshot_name
+		<< MONGO_DB_FIELD_SNAPSHOT_DATA_PRODUCER_ID << producer_unique_key;
+		
+		mongo::BSONObj q = search_snapshot.obj();
+		DEBUG_CODE(MDBID_LDBG_ << "snapshotGetDatasetForProducerKey findOne ---------------------------------------------";)
+		DEBUG_CODE(MDBID_LDBG_ << "condition" << q;)
+		DEBUG_CODE(MDBID_LDBG_ << "snapshotGetDatasetForProducerKey findOne ---------------------------------------------";)
+		
+		//update and waith until the data is on the server
+		if((err = ha_connection_pool->findOne(result, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_SNAPSHOT_DATA), q))) {
+			MDBID_LERR_ << "Errore finding the snapshot "<< snapshot_name << " for the unique key "<< producer_unique_key <<"with error "<<err;
+		} else {
+			std::string channel_unique_key = producer_unique_key+dataset_type;
+			if(result.hasField(channel_unique_key)) {
+				//! get data
+				mongo::BSONObj channel_data_obj = result.getObjectField(channel_unique_key);
+				if((channel_data_size = channel_data_obj.objsize())) {
+					*channel_data = malloc(channel_data_size);
+					if(*channel_data) {
+						std::memcpy(*channel_data, (void*)channel_data_obj.objdata(), channel_data_size);
+					}
+				}
+			}
+		}
+	} catch( const mongo::DBException &e ) {
+		MDBID_LERR_ << e.what();
+		err = -1;
+	}
+	return 0;
 }
 
 //! Delete a snapshot where no job is working
@@ -950,10 +983,9 @@ int MongoDBDriver::snapshotDeleteWithName(const std::string& snapshot_name) {
 	try{
 		//search for snapshot name and producer unique key
 		search_snapshot << MONGO_DB_FIELD_SNAPSHOT_DATA_SNAPSHOT_NAME << snapshot_name;
-
+		
 		mongo::BSONObj q = search_snapshot.obj();
 		DEBUG_CODE(MDBID_LDBG_ << "snapshotDeleteWithName count ---------------------------------------------";)
-
 		DEBUG_CODE(MDBID_LDBG_ << "condition" << q;)
 		DEBUG_CODE(MDBID_LDBG_ << "snapshotDeleteWithName count ---------------------------------------------";)
 		

@@ -227,7 +227,7 @@ namespace chaos {
 				 \param working_job_unique_id the identification of the job
 				 \param snapshot_name the name of the snapshot where put the element
 				 \param producer_unique_key the unique key of the producer
-				 \param dataset_type the type of the dataset, refer to @DataPackCommonKey::DPCK_DATASET_TYPE field of the dataset
+				 \param dataset_type the type of the dataset, refer to @DataPackPrefixID field of the dataset
 				 \param data the serialized data of the dataset
 				 \param data_len the length of the serialized data
 				 */
@@ -255,7 +255,7 @@ namespace chaos {
 				 snapshot
 				 \param snapshot_name the name of the snapshot to delete
 				 \param producer_unique_key the unique key of the producer
-				 \param dataset_type the type of the dataset, refer to @DataPackCommonKey::DPCK_DATASET_TYPE field of the dataset
+				 \param dataset_type the type of the dataset, refer to @DataPackPrefixID field of the dataset
 				 \param channel_data the data of the channel;
 				 \param channel_data_size the size of the channel data
 				 */

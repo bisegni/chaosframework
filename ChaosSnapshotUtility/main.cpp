@@ -25,13 +25,14 @@
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
 
-#define OPT_CU_ID			"device-id"
-#define OPT_CDS_ADDRESS	"cds-address"
-#define OPT_SNAP_NAME		"snapshot-name"
-#define OPT_SNAPSHOT_OP	"op"
-
+#define OPT_CU_ID				"device-id"
+#define OPT_CDS_ADDRESS			"cds-address"
+#define OPT_SNAP_NAME			"snapshot-name"
+#define OPT_SNAPSHOT_OP			"op"
+#define OPT_SNAPSHOT_DS_TYPE	"dataset_type"
 using namespace chaos;
 using namespace chaos::ui;
+using namespace chaos::common::data;
 
 int main(int argc, char * argv[]) {
 	int64_t err = 0;
@@ -39,12 +40,14 @@ int main(int argc, char * argv[]) {
 	std::vector<std::string> device_id_list;
 	std::string snap_name;
 	std::string cds_addr;
+	uint32_t ds_type;
 	unsigned int operation;
 	try{
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<std::string>(OPT_CDS_ADDRESS, "CDS address", &cds_addr);
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_CU_ID, "The identification string of the device to snapshuot", &device_id_list);
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<std::string>(OPT_SNAP_NAME, "The name of the snapshot", &snap_name);
-		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<unsigned int>(OPT_SNAPSHOT_OP, "Operation on snapshot [create(0), delete(1)]", 0, &operation);
+		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<unsigned int>(OPT_SNAPSHOT_OP, "Operation on snapshot [create(0), delete(1), get(2)]", 0, &operation);
+		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<unsigned int>(OPT_SNAPSHOT_DS_TYPE, "Dataset type [output(0), input(1), custom(2), system(3)]", 0, &ds_type);
 		
 		ChaosUIToolkit::getInstance()->init(argc, argv);
 		//! [UIToolkit Init]
@@ -55,27 +58,78 @@ int main(int argc, char * argv[]) {
 		if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SNAP_NAME)){
 			throw CException(-2, "Invalid snapshot name set", "check param");
 		}
-		
-		if(!snap_name.size()) throw CException(-3, "Snapshot name can't zero-length", "check param");
+		if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SNAPSHOT_OP)){
+			throw CException(-3, "Invalid operation set", "check param");
+		}
+		if(!snap_name.size()) throw CException(-4, "Snapshot name can't zero-length", "check param");
 		
 		SystemApiChannel *system_api_channel = LLRpcApi::getInstance()->getSystemApiClientChannel(cds_addr);
+		if(!system_api_channel) throw CException(-5, "Invalid system api channel instance", "getSystemApiClientChannel");
 		
 		chaos::common::direct_io::channel::opcode_headers::DirectIOSystemAPISnapshotResultPtr system_api_result = NULL;
-		
-		//!make snap on device
-		if(!(err = system_api_channel->system_api_channel->makeNewDatasetSnapshot(snap_name,
-																			device_id_list,
-																			&system_api_result))){
-			if(system_api_result) {
-				std::cout << "Snapshot creation report: " << std::endl;
-				std::cout << "Error code:" << system_api_result->error << std::endl;
-				std::cout << "Error message:" << system_api_result->error_message << std::endl;
-				free(system_api_result);
-			} else {
-				std::cout << "no result received" << std::endl;
+		switch(operation) {
+			case 0:{//new
+				//!make snap on device
+				if(!(err = system_api_channel->system_api_channel->makeNewDatasetSnapshot(snap_name,
+																						  device_id_list,
+																						  &system_api_result))){
+					if(system_api_result) {
+						std::cout << "Snapshot creation report: " << std::endl;
+						std::cout << "Error code:" << system_api_result->error << std::endl;
+						std::cout << "Error message:" << system_api_result->error_message << std::endl;
+						free(system_api_result);
+					} else {
+						std::cout << "no result received" << std::endl;
+					}
+				} else {
+					std::cout << "Error executing directio call" << std::endl;
+				}
+				break;
 			}
-		} else {
-			std::cout << "Error executing directio call" << std::endl;
+			case 1:{//delete
+				if(!(err = system_api_channel->system_api_channel->deleteDatasetSnapshot(snap_name,
+																						 &system_api_result))){
+					if(system_api_result) {
+						std::cout << "Snapshot delete report: " << std::endl;
+						std::cout << "Error code:" << system_api_result->error << std::endl;
+						std::cout << "Error message:" << system_api_result->error_message << std::endl;
+						free(system_api_result);
+					} else {
+						std::cout << "no result received" << std::endl;
+					}
+				} else {
+					std::cout << "Error executing directio call" << std::endl;
+				}
+				break;
+			}
+			case 2:{//get
+				if(device_id_list.size()!=1) throw CException(-6, "For get oepration only a single producer key is required", "Get snapshot dataset operation");
+				if(!ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_SNAPSHOT_DS_TYPE)){
+					throw CException(-7, "The type of dataset is mandatory in get operation", "Get dataset from snapshot");
+				}
+				chaos::common::direct_io::channel::opcode_headers::DirectIOSystemAPIGetDatasetSnapshotResultPtr get_system_api_result = NULL;
+				if(!(err = system_api_channel->system_api_channel->getDatasetSnapshotForProducerKey(snap_name,
+																									device_id_list[0],
+																									ds_type,
+																									&get_system_api_result))){
+					if(get_system_api_result) {
+						std::cout << "Snapshot delete report: " << std::endl;
+						std::cout << "Error code:" << get_system_api_result->api_result.error << std::endl;
+						std::cout << "Error message:" << get_system_api_result->api_result.error_message << std::endl;
+						if(get_system_api_result->channel_data) {
+							auto_ptr<CDataWrapper> data(new CDataWrapper(((char*)get_system_api_result+sizeof(chaos::common::direct_io::channel::opcode_headers::DirectIOSystemAPISnapshotResult) + 4)));
+							std::cout << "Data found-------------------------"<< std::endl;
+							std::cout << data->getJSONString() << std::endl;
+						}
+						free(get_system_api_result);
+					} else {
+						std::cout << "no result received" << std::endl;
+					}
+				} else {
+					std::cout << "Error executing directio call" << std::endl;
+				}
+				break;
+			}
 		}
 		
 		if(system_api_channel) {

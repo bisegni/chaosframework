@@ -148,6 +148,7 @@ int64_t DirectIOSystemAPIClientChannel::deleteDatasetSnapshot(const std::string&
 //! get the snapshot for one or more producer key
 int64_t DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const std::string& snapshot_name,
 																		 const std::string& producer_key,
+																		 uint32_t channel_type,
 																		 DirectIOSystemAPIGetDatasetSnapshotResult **api_result_handle) {
 	int64_t err = 0;
 	DirectIOSynchronousAnswer *answer = NULL;
@@ -167,6 +168,7 @@ int64_t DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const s
 	
 	//copy the snapshot name to the header
 	std::memcpy(get_snapshot_opcode_header->field.snap_name, snapshot_name.c_str(), snapshot_name.size());
+	get_snapshot_opcode_header->field.channel_type = channel_type;
 	
 	//set header
 	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, get_snapshot_opcode_header, sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader))
@@ -187,7 +189,7 @@ int64_t DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const s
 		if(answer && answer->answer_data) free(answer->answer_data);
 	} else {
 		//we got answer
-		if(answer && answer->answer_size == sizeof(DirectIOSystemAPISnapshotResult)) {
+		if(answer) {
 			*api_result_handle  = static_cast<DirectIOSystemAPIGetDatasetSnapshotResult*>(answer->answer_data);
 			(*api_result_handle)->api_result.error = FROM_LITTLE_ENDNS_NUM(int32_t, (*api_result_handle)->api_result.error);
 		} else {

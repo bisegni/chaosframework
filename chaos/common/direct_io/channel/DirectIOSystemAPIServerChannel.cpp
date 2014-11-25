@@ -87,27 +87,38 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPack *dataPack,
 			
 		case opcode::SystemAPIChannelOpcodeGetSnapshotDatasetForAKey: {
 			std::string producer_key;
-			//set the answer pointer
-			synchronous_answer->answer_data = std::calloc(sizeof(DirectIOSystemAPIGetDatasetSnapshotResult), 1);
-			synchronous_answer->answer_size = sizeof(DirectIOSystemAPIGetDatasetSnapshotResult);
+			void *channel_found_data = NULL;
+			uint32_t channel_found_data_length = 0;
 			
 			//get the header
+			DirectIOSystemAPIGetDatasetSnapshotResult *result_data = (DirectIOSystemAPIGetDatasetSnapshotResult*)std::calloc(sizeof(DirectIOSystemAPIGetDatasetSnapshotResult), 1);
 			opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr header = reinterpret_cast< opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr >(dataPack->channel_header_data);
 			header->field.producer_key_set_len = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.producer_key_set_len);
 			
 			//chec if a producere key has been forwarded
-			if(!dataPack->header.channel_data_size) {
+			if(dataPack->header.channel_data_size) {
 				//set error
 				producer_key.assign((const char*)dataPack->channel_data, dataPack->header.channel_data_size);
 				//delete the memory where is located producer key
 				free(dataPack->channel_data);
 			}
 			
-			
 			//call the handler
 			handler->consumeGetDatasetSnapshotEvent(header,
 													producer_key,
-													(DirectIOSystemAPIGetDatasetSnapshotResult*)synchronous_answer->answer_data);
+													&channel_found_data,
+													channel_found_data_length,
+													&result_data->api_result);
+			//set the answer pointer
+			if(channel_found_data) {
+				//whe have data to return
+				result_data = (DirectIOSystemAPIGetDatasetSnapshotResult*)std::realloc(result_data, (synchronous_answer->answer_size = (channel_found_data_length+sizeof(DirectIOSystemAPIGetDatasetSnapshotResult))));
+				synchronous_answer->answer_data = result_data;
+
+				std::memcpy(((char*)result_data+sizeof(DirectIOSystemAPISnapshotResult)+4), channel_found_data, channel_found_data_length);
+				((DirectIOSystemAPIGetDatasetSnapshotResult*)synchronous_answer->answer_data)->channel_len = channel_found_data_length;
+				free(channel_found_data);
+			}
 			//fix endianes into api result
 			((DirectIOSystemAPIGetDatasetSnapshotResult*)synchronous_answer->answer_data)->api_result.error =
 			TO_LITTE_ENDNS_NUM(int32_t, ((DirectIOSystemAPIGetDatasetSnapshotResult*)synchronous_answer->answer_data)->api_result.error);

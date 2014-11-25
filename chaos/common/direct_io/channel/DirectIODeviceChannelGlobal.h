@@ -223,7 +223,7 @@ namespace chaos {
 					
 					//-----------------------------------SYSTEM CHANNEL--------------------------------
 #pragma mark System Channel
-#define SYSTEM_API_CHANNEL_NEW_Snapshot 256+4
+#define SYSTEM_API_CHANNEL_NEW_Snapshot 256+4+4
 
 					//! Header for the snapshot system api managment for new, delete and get managment
 					/*!
@@ -240,6 +240,10 @@ namespace chaos {
 						struct header {
 							//!is the snapshot name
 							char		snap_name[256];
+							
+							//! the type of channel
+							uint32_t	channel_type;
+							
 							//! is the lenght of comma separated list of the
 							//! producer to include on the snapshot, if it is
 							//! empty all the producer are snapped. The list is
@@ -262,13 +266,10 @@ namespace chaos {
 						DirectIOSystemAPISnapshotResult api_result;
 						
 						//channels lenght
-						uint32_t output_channel_len;
-						uint32_t input_channel_len;
-						uint32_t custom_channel_len;
-						uint32_t system_channel_len;
+						uint32_t channel_len;
 						
 						//!concatenated channels data in order [o,i,c,s]
-						void* channels_data;
+						void* channel_data;
 					}DirectIOSystemAPIGetDatasetSnapshotResult,
 					*DirectIOSystemAPIGetDatasetSnapshotResultPtr;
                 }

@@ -312,12 +312,76 @@ int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPI
 // Manage the delete operation on an existing snapshot
 int QueryDataConsumer::consumeDeleteSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
 												  DirectIOSystemAPISnapshotResult *api_result) {
-	
+	int err = 0;
+	if(settings->cache_only) {
+		//data service is in cache only mode throw the error
+		api_result->error = -1;
+		std::strncpy(api_result->error_message, "Chaos Data Service is in cache only", 255);
+		//delete header
+		if(header) free(header);
+		return 0;
+	}
+	if((err = db_driver->snapshotDeleteWithName(header->field.snap_name))) {
+		api_result->error = err;
+		std::strcpy(api_result->error_message, "Error deleteing the snapshot");
+		QDCERR_ << api_result->error_message << "->" << header->field.snap_name;
+	} else {
+		api_result->error = 0;
+		std::strcpy(api_result->error_message, "Snapshot deleted");
+	}
+	return err;
 }
 
 // Return the dataset for a producerkey ona specific snapshot
 int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
 													  const std::string& producer_id,
-													  DirectIOSystemAPIGetDatasetSnapshotResult *api_result) {
+													  void **channel_found_data,
+													  uint32_t& channel_found_data_length,
+													  DirectIOSystemAPISnapshotResult *api_result) {
+	int err = 0;
+	std::string channel_type;
+	if(settings->cache_only) {
+		//data service is in cache only mode throw the error
+		api_result->error = -1;
+		std::strncpy(api_result->error_message, "Chaos Data Service is in cache only", 255);
+		//delete header
+		if(header) free(header);
+		return -1;
+	}
 	
+	//trduce int to postfix channel type
+	switch(header->field.channel_type) {
+		case 0:
+			channel_type = DataPackPrefixID::OUTPUT_DATASE_PREFIX;
+			break;
+		case 1:
+			channel_type = DataPackPrefixID::INPUT_DATASE_PREFIX;
+			break;
+		case 2:
+			channel_type = DataPackPrefixID::CUSTOM_DATASE_PREFIX;
+			break;
+		case 3:
+			channel_type = DataPackPrefixID::SYSTEM_DATASE_PREFIX;
+			break;
+	}
+	
+	if((err = db_driver->snapshotGetDatasetForProducerKey(header->field.snap_name,
+														  producer_id,
+														  channel_type,
+														  channel_found_data,
+														  channel_found_data_length))) {
+		api_result->error = err;
+		std::strcpy(api_result->error_message, "Error retriving the snapshoted dataaset for producer key");
+		QDCERR_ << api_result->error_message << "[" << header->field.snap_name << "/" << producer_id<<"]";
+	} else {
+		if(*channel_found_data) {
+			api_result->error = 0;
+			std::strcpy(api_result->error_message, "Snapshot found");
+		} else {
+			api_result->error = -2;
+			std::strcpy(api_result->error_message, "Channel data not found in snapshot");
+			
+		}
+	}
+	return err;
 }

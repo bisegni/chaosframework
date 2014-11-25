@@ -107,7 +107,9 @@ namespace chaos{
 			// Return the dataset for a producerkey ona specific snapshot
 			int consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader *header,
 											   const std::string& producer_id,
-											   DirectIOSystemAPIGetDatasetSnapshotResult *api_result);
+											   void **channel_found_data,
+											   uint32_t& channel_found_data_length,
+											   DirectIOSystemAPISnapshotResult *api_result);
 			//async central timer hook
 			void timeout();
         public:
