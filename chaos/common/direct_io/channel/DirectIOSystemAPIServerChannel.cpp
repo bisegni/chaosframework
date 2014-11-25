@@ -92,6 +92,9 @@ int DirectIOSystemAPIServerChannel::consumeDataPack(DirectIODataPack *dataPack,
 			
 			//get the header
 			DirectIOSystemAPIGetDatasetSnapshotResult *result_data = (DirectIOSystemAPIGetDatasetSnapshotResult*)std::calloc(sizeof(DirectIOSystemAPIGetDatasetSnapshotResult), 1);
+			synchronous_answer->answer_data = result_data;
+			synchronous_answer->answer_size = sizeof(DirectIOSystemAPIGetDatasetSnapshotResult);
+			
 			opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr header = reinterpret_cast< opcode_headers::DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr >(dataPack->channel_header_data);
 			header->field.producer_key_set_len = FROM_LITTLE_ENDNS_NUM(uint32_t, header->field.producer_key_set_len);
 			
