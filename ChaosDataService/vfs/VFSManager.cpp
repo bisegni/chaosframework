@@ -205,10 +205,12 @@ int VFSManager::getWriteableStageFile(std::string
 	VFSStageWriteableFile *writeable_stage_file = new VFSStageWriteableFile(storage_driver_ptr, db_driver_ptr, stage_vfs_relative_path);
 	if(!writeable_stage_file) return -1;
 	
+	DEBUG_CODE(VFSFM_LDBG_ << "Stage file created:" << writeable_stage_file->getVFSFileInfo()->vfs_fpath;)
+
 	//the vfs file is identified by a folder containing all data block
 	if(!writeable_stage_file->isGood()) {
 		return -2;
-		delete storage_driver_ptr;
+		delete writeable_stage_file;
 	}
 	
 	//get or create the infro for logical file isntance
@@ -252,7 +254,7 @@ int VFSManager::getReadableStageFile(std::string stage_vfs_relative_path,
 	//the vfs file is identified by a folder containing all data block
 	if(!readable_stage_file->isGood()) {
 		return -2;
-		delete storage_driver_ptr;
+		delete readable_stage_file;
 	}
 	
 	//get or create the infro for logical file isntance
@@ -296,7 +298,7 @@ int VFSManager::getWriteableDataFile(std::string data_vfs_relative_path,
 	//the vfs file is identified by a folder containing all data block
 	if(!writeable_data_file->isGood()) {
 		return -2;
-		delete storage_driver_ptr;
+		delete writeable_data_file;
 	}
 	
 	//get or create the infro for logical file isntance

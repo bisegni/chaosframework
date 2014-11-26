@@ -48,7 +48,8 @@ last_wr_ts(0),
 storage_driver_ptr(_storage_driver_ptr),
 db_driver_ptr(_db_driver_ptr),
 current_data_block(NULL),
-current_journal_data_block(NULL) {
+current_journal_data_block(NULL),
+good(true){
 	//check the path if his prefix is not equal to area (omit duplcieted name in path for prefix)
 	if(vfs_fpath.substr(0, area.size()).find(area, 0) == std::string::npos) {
 		vfs_file_info.vfs_fpath = area + "/" +vfs_fpath;
