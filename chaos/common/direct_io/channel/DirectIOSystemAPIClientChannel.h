@@ -70,18 +70,21 @@ namespace chaos {
 					 Delete the entry of the snapshot and all dataset associated to it
 					 \param snapshot_name the name of the snapshot to delete
 					 */
-					int64_t deleteDatasetSnapshot(const std::string& snapshot_name);
+					int64_t deleteDatasetSnapshot(const std::string& snapshot_name,
+												  DirectIOSystemAPISnapshotResult **api_result_handle);
 					
 					//! get the snapshot for one or more producer key
 					/*!
 					 Retrieve the dataset form the snapshot for one or more producer key.
 					 Is possible to decide the type of the snapshot to get
 					 \param snapshot_name the name of the snapshot to delete
+					 \param channel_type the type of the channel [0-output, 1-input, 2-custom, 3-system]]
 					 \param producer_key the key of the producer for wich return the datasets
 					 */
 					int64_t getDatasetSnapshotForProducerKey(const std::string& snapshot_name,
 															 const std::string& producer_key,
-															 DirectIOSystemAPIGetDatasetSnapshotResult **api_reuslt_handle);
+															 uint32_t channel_type,
+															 DirectIOSystemAPIGetDatasetSnapshotResult **api_result_handle);
 				};
 			}
 		}

@@ -48,8 +48,9 @@ namespace chaos {
 					 and collect all API for system managment
 					 */
 					typedef enum SystemAPIChannelOpcode {
-						SystemAPIChannelOpcodeNewNewSnapshotDataset	= 1,		/**< start new datasets snapshot creation process*/
-						SystemAPIChannelOpcodeNewDeleteSnapshotDataset	= 2,	/**< delete the snapshot associated to the input tag */
+						SystemAPIChannelOpcodeNewSnapshotDataset		= 1,	/**< start new datasets snapshot creation process*/
+						SystemAPIChannelOpcodeDeleteSnapshotDataset		= 2,	/**< delete the snapshot associated to the input tag */
+						SystemAPIChannelOpcodeGetSnapshotDatasetForAKey	= 3,	/**< return the snapshoted datasets for a determinated producer key*/
 					} SystemAPIChannelOpcode;
 				}
 				
@@ -222,29 +223,35 @@ namespace chaos {
 					
 					//-----------------------------------SYSTEM CHANNEL--------------------------------
 #pragma mark System Channel
-#define SYSTEM_API_CHANNEL_NEW_Snapshot 256+4
+#define SYSTEM_API_CHANNEL_NEW_Snapshot 256+4+4
 
-					//! Header for the snapshot system api managment
+					//! Header for the snapshot system api managment for new, delete and get managment
 					/*!
-					 this header is usedfor the managment of the creation 
-					 of a new snapshot 
+					 this header is used for the managment of the creation, deletion and retrieve
+					 of a snapshot
 					 the opcode associated to this header is:
-					 SystemAPIChannelOpcodeNewSnapshotDatasetNew
+						- SystemAPIChannelOpcodeNewNewSnapshotDataset
+						- SystemAPIChannelOpcodeNewDeleteSnapshotDataset
+						- SystemAPIChannelOpcodeGetSnapshotDatasetForAKey
 					 */
-					typedef	union DirectIOSystemAPIChannelOpcodeNewSnapshotHeader {
+					typedef	union DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader {
 						//raw data representation of the header
 						char raw_data[SYSTEM_API_CHANNEL_NEW_Snapshot];
 						struct header {
 							//!is the snapshot name
 							char		snap_name[256];
+							
+							//! the type of channel
+							uint32_t	channel_type;
+							
 							//! is the lenght of comma separated list of the
 							//! producer to include on the snapshot, if it is
 							//! empty all the producer are snapped. The list is
 							//! passed into the data part of the direct io message
 							uint32_t	producer_key_set_len;
 						} field;
-					} DirectIOSystemAPIChannelOpcodeNewSnapshotHeader,
-					*DirectIOSystemAPIChannelOpcodeNewSnapshotHeaderPtr;
+					} DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader,
+					*DirectIOSystemAPIChannelOpcodeNDGSnapshotHeaderPtr;
 					
 					//!result of the new and delete api
 					typedef  struct DirectIOSystemAPISnapshotResult {
@@ -258,11 +265,11 @@ namespace chaos {
 						//! api result
 						DirectIOSystemAPISnapshotResult api_result;
 						
-						//channels
-						data::CDataWrapper *output_channel;
-						data::CDataWrapper *input_channel;
-						data::CDataWrapper *custom_channel;
-						data::CDataWrapper *system_channel;
+						//channels lenght
+						uint32_t channel_len;
+						
+						//!concatenated channels data in order [o,i,c,s]
+						void* channel_data;
 					}DirectIOSystemAPIGetDatasetSnapshotResult,
 					*DirectIOSystemAPIGetDatasetSnapshotResultPtr;
                 }

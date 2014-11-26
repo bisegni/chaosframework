@@ -208,7 +208,8 @@ namespace chaos {
 				 \param _query the query
 				 \param index_cursor paged cursor for retrieve the result
 				 */
-				virtual int idxStartSearchDataPack(const chaos::data_service::db_system::DataPackIndexQuery& _query, DBIndexCursor **index_cursor) = 0;
+				virtual int idxStartSearchDataPack(const chaos::data_service::db_system::DataPackIndexQuery& _query,
+												   DBIndexCursor **index_cursor) = 0;
 				
 				//! Create a new snapshot
 				/*!
@@ -226,7 +227,7 @@ namespace chaos {
 				 \param working_job_unique_id the identification of the job
 				 \param snapshot_name the name of the snapshot where put the element
 				 \param producer_unique_key the unique key of the producer
-				 \param dataset_type the type of the dataset, refer to @DataPackCommonKey::DPCK_DATASET_TYPE field of the dataset
+				 \param dataset_type the type of the dataset, refer to @DataPackPrefixID field of the dataset
 				 \param data the serialized data of the dataset
 				 \param data_len the length of the serialized data
 				 */
@@ -247,6 +248,30 @@ namespace chaos {
 				virtual int snapshotIncrementJobCounter(const std::string& working_job_unique_id,
 														const std::string& snapshot_name,
 														bool add) = 0;
+				
+				//! get the dataset from a snapshot
+				/*!
+				 Return the dataset asociated to a prducer key from a determinated
+				 snapshot
+				 \param snapshot_name the name of the snapshot to delete
+				 \param producer_unique_key the unique key of the producer
+				 \param dataset_type the type of the dataset, refer to @DataPackPrefixID field of the dataset
+				 \param channel_data the data of the channel;
+				 \param channel_data_size the size of the channel data
+				 */
+				virtual int snapshotGetDatasetForProducerKey(const std::string& snapshot_name,
+															 const std::string& producer_unique_key,
+															 const std::string& dataset_type,
+															 void **channel_data,
+															 uint32_t& channel_data_size) = 0;
+				
+				//! Delete a snapshot where no job is working
+				/*!
+				 Delete the snapshot and all dataset associated to it
+				 \param snapshot_name the name of the snapshot to delete
+				 */
+				virtual int snapshotDeleteWithName(const std::string& snapshot_name) = 0;
+
 			};
 		}
 	}
