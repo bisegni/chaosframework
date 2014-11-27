@@ -86,6 +86,7 @@ void DeviceSharedDataWorker::deinit() throw (chaos::CException) {
 }
 
 void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
+	int err = 0;
 	DeviceSharedWorkerJob *job_ptr = reinterpret_cast<DeviceSharedWorkerJob*>(job_info);
 	ThreadCookie *this_thread_cookie = reinterpret_cast<ThreadCookie *>(cookie);
 	//check what kind of push we have
@@ -95,7 +96,12 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 		case 0:// storicize only
 		case 2:// storicize and live
 			//write data on stage file
-			this_thread_cookie->vfs_stage_file->write(job_ptr->data_pack, job_ptr->data_pack_len);
+			if((err = this_thread_cookie->vfs_stage_file->write(job_ptr->data_pack, job_ptr->data_pack_len))) {
+				DSDW_LERR_<< "Error writing data to file " << this_thread_cookie->vfs_stage_file->getVFSFileInfo()->vfs_fpath;
+			} else if((err = this_thread_cookie->vfs_stage_file->giveHeartbeat())){
+				DSDW_LERR_<< "Error giving heartbeat to data "  << this_thread_cookie->vfs_stage_file->getVFSFileInfo()->vfs_fpath;
+			}
+			
 			free(job_ptr->request_header);
 			free(job_ptr->data_pack);
 			free(job_info);

@@ -44,17 +44,17 @@ namespace chaos {
      */
     class TimingUtil {
     public:
-        /*
-         Return the current timestamp
-         */
+        //!Return the current timestamp in milliseconds
         static inline int64_t getTimeStamp() {
             return (boost::posix_time::microsec_clock::local_time()-EPOCH).total_milliseconds();
         }
 		
+		//!Return the current utc timestamp in milliseconds
 		static inline int64_t getUTCTimeStamp() {
             return (boost::posix_time::microsec_clock::universal_time()-EPOCH).total_milliseconds();
         }
 		
+		//!chack if a string is well format for date representation
 		static bool dateWellFormat(const std::string& timestamp) {
 			boost::posix_time::ptime time;
 			size_t i=0;
@@ -82,6 +82,18 @@ namespace chaos {
 			} else {
 				return 0;
 			}
+		}
+		
+		//! return the timestam from now to dealy , in the past(false) or future(true)
+		static inline uint64_t getTimestampWithDelay(uint64_t delay,
+													 bool past_future = false) {
+			boost::posix_time::time_duration ts;
+			if(past_future) {
+				ts = boost::posix_time::milliseconds(getTimeStamp() + delay);
+			} else {
+				ts = boost::posix_time::milliseconds(getTimeStamp() - delay);
+			}
+			return ts.total_milliseconds();
 		}
 	};
 }

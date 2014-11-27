@@ -100,6 +100,19 @@ namespace chaos {
 					int vfsUpdateDatablockCurrentWorkPosition(chaos_vfs::VFSFile *vfs_file,
 															  chaos_vfs::DataBlock *data_block);
 					
+					//! return the path of the vfile that contains the oldest block with info
+					int vfsGetFilePathForOldestBlockState(const std::string& domain,
+														  const std::string& data_area,
+														  int state,
+														  std::string& vfile_path);
+					
+					//! Change the state to all datablock that are in timeout
+					int vfsChangeStateToOutdatedChunck(const std::string& domain,
+													   const std::string& data_area,
+													   uint32_t timeout_state_in_sec,
+													   int timeout_state,
+													   int new_state);
+					
 					//! Return the next available datablock created since timestamp
 					int vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
 												  uint64_t timestamp,

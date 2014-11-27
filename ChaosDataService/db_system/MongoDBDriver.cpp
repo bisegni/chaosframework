@@ -469,6 +469,104 @@ chaos_vfs::DataBlock *MongoDBDriver::fillDatablock(const mongo::BSONObj& full_da
 	return data_block;
 }
 
+//! return the path of the vfile that contains the oldest block with info
+int MongoDBDriver::vfsGetFilePathForOldestBlockState(const std::string& domain,
+													 const std::string& data_area,
+													 int state,
+													 std::string& vfile_path) {
+	int err = 0;
+	mongo::BSONObjBuilder query_master;
+	mongo::BSONObj result;
+	try{
+		//search for domain
+		query_master << MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN << domain;
+		
+		//search on file path, the datablock is always the end token of the path
+		
+		query_master << MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH << BSON("$regex" << boost::str(boost::format("%1%%2%") % data_area % ".*"));
+		
+		//search for state
+		query_master << MONGO_DB_FIELD_DATA_BLOCK_STATE << state;
+		//search on the timestamp
+		query_master << MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS << mongo::BSONObjBuilder().appendDate("$gt", TimingUtil::getTimestampFromString("1970-01-01")).obj();
+		
+		mongo::BSONObj q = query_master.obj();
+		DEBUG_CODE(MDBID_LDBG_ << "vfsGetFilePathForOldestBlockState query ---------------------------------------------";)
+		DEBUG_CODE(MDBID_LDBG_ << "Query: "  << q.jsonString();)
+		DEBUG_CODE(MDBID_LDBG_ << "vfsGetFilePathForOldestBlockState query ---------------------------------------------";)
+		
+		mongo::Query mongo_query = q;
+		mongo_query.sort(BSON(MONGO_DB_FIELD_DATA_BLOCK_CREATION_TS << 1));
+		err = ha_connection_pool->findOne(result, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_VFS_VBLOCK), mongo_query);
+		if(err) {
+			MDBID_LERR_ << "Error " << err << " searching oldest datablock with state";
+		} else if(result.isEmpty()){
+			MDBID_LERR_ << "No datablock found for the criteria";
+		} else if(result.hasField(MONGO_DB_FIELD_FILE_PRIMARY_KEY)){
+			mongo::BSONObjBuilder file_query;
+			file_query << "_id" << result[MONGO_DB_FIELD_FILE_PRIMARY_KEY].OID();
+			q = file_query.obj();
+			DEBUG_CODE(MDBID_LDBG_ << "vfsGetFilePathForOldestBlockState 2nd query ---------------------------------------------";)
+			DEBUG_CODE(MDBID_LDBG_ << "Query: "  << q.jsonString();)
+			DEBUG_CODE(MDBID_LDBG_ << "vfsGetFilePathForOldestBlockState 2nd query ---------------------------------------------";)
+			err = ha_connection_pool->findOne(result, MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_VFS_VFAT), q);
+			if(err) {
+				MDBID_LERR_ << "Error " << err << " searching file description";
+			} else if(result.isEmpty()){
+				MDBID_LERR_ << "file description found";
+			} else if(result.hasField(MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH)){
+				vfile_path = result.getStringField(MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH);
+			}
+		}
+	} catch( const mongo::DBException &e ) {
+		MDBID_LERR_ << e.what();
+		err = -1;
+	}
+	return err;
+
+}
+
+//! Change the state to all datablock that are in timeout
+int MongoDBDriver::vfsChangeStateToOutdatedChunck(const std::string& domain,
+												  const std::string& data_area,
+												  uint32_t timeout_state_in_sec,
+												  int timeout_state,
+												  int new_state) {
+	int err = 0;
+	mongo::BSONObjBuilder update;
+	mongo::BSONObjBuilder query_master;
+	try{
+		//domain search
+		query_master << MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN << domain;
+		//path search
+		query_master << MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH << BSON("$regex" << boost::str(boost::format("%1%%2%") % data_area % ".*"));
+		//query on state
+		query_master << MONGO_DB_FIELD_DATA_BLOCK_STATE << timeout_state;
+		
+		//search on the timestamp
+		query_master << MONGO_DB_FIELD_DATA_BLOCK_VALID_UNTIL_TS << mongo::BSONObjBuilder().appendDate("$lt", TimingUtil::getTimestampWithDelay(timeout_state_in_sec*1000)).obj();
+
+		//set the atomic update on the tate
+		update<< "$set" << BSON( MONGO_DB_FIELD_DATA_BLOCK_STATE << new_state);
+		
+		mongo::BSONObj q = query_master.obj();
+		mongo::BSONObj u = update.obj();
+		DEBUG_CODE(MDBID_LDBG_ << "vfsChangeStateToOutdatedChunck update ---------------------------------------------";)
+		DEBUG_CODE(MDBID_LDBG_ << "Query: "  << q.jsonString();)
+		DEBUG_CODE(MDBID_LDBG_ << "Update: "  << u.jsonString();)
+		DEBUG_CODE(MDBID_LDBG_ << "vfsChangeStateToOutdatedChunck update ---------------------------------------------";)
+		
+		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_VFS_VBLOCK), q, u, false, true);
+		if(err) {
+			MDBID_LERR_ << "Error " << err << " updating state on all datablock in timeout";
+		}
+	} catch( const mongo::DBException &e ) {
+		MDBID_LERR_ << e.what();
+		err = -1;
+	}
+	return err;
+}
+
 //! Return the next available datablock created since timestamp
 int MongoDBDriver::vfsFindSinceTimeDataBlock(chaos_vfs::VFSFile *vfs_file,
 											 uint64_t timestamp,

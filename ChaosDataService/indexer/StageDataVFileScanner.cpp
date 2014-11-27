@@ -37,11 +37,9 @@ using namespace chaos::data_service::indexer;
 namespace vfs=chaos::data_service::vfs;
 
 StageDataVFileScanner::StageDataVFileScanner(vfs::VFSManager *_vfs_manager,
-											 db_system::DBDriver *_db_driver,
-											 vfs::VFSStageReadableFile *_working_stage_file):
+											 db_system::DBDriver *_db_driver):
 DataPackScanner(_vfs_manager,
-				_db_driver,
-				_working_stage_file),
+				_db_driver),
 last_hb_on_vfile(0) {
 	
 }
@@ -93,7 +91,8 @@ int StageDataVFileScanner::startScanHandler() {
 	return 0;
 }
 
-int StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack) {
+int StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack,
+										   vfs::VFSFile *working_data_file) {
 	int err = 0;
 	uint64_t cur_ts = chaos::TimingUtil::getTimeStamp();
 	

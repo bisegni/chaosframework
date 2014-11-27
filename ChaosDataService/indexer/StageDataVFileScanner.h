@@ -79,7 +79,7 @@ namespace chaos{
 				
 				int startScanHandler();
 				
-				int processDataPack(const bson::BSONObj& data_pack);
+				int processDataPack(const bson::BSONObj& data_pack, vfs::VFSFile *working_data_file);
 				
 				int endScanHandler(int end_scan_error);
 				
@@ -88,8 +88,7 @@ namespace chaos{
 				int closeAllDatafile();
 			public:
 				StageDataVFileScanner(vfs::VFSManager *_vfs_manager,
-									  db_system::DBDriver *_db_driver,
-									  vfs::VFSStageReadableFile *_working_stage_file);
+									  db_system::DBDriver *_db_driver);
 				
 				~StageDataVFileScanner();
 				

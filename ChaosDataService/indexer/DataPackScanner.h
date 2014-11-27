@@ -59,11 +59,8 @@ namespace chaos{
 				//index driver
 				db_system::DBDriver *db_driver;
 				
-				//!working file (stage or data)
-				vfs::VFSFile *working_data_file;
-				
-				//! abstract method for prcoessing one datapack at time
-				virtual int processDataPack(const bson::BSONObj& data_pack) = 0;
+				//! abstract method for processing one datapack at time
+				virtual int processDataPack(const bson::BSONObj& data_pack, vfs::VFSFile *working_data_file) = 0;
 
 				//! handler called befor the scan task
 				virtual int startScanHandler() = 0;
@@ -72,15 +69,14 @@ namespace chaos{
 				virtual int endScanHandler(int end_scan_error) = 0;
 			public:
 				DataPackScanner(vfs::VFSManager *_vfs_manager,
-								db_system::DBDriver *_db_driver,
-								vfs::VFSFile *_working_data_file);
+								db_system::DBDriver *_db_driver);
 				
 				~DataPackScanner();
 				
 				std::string getScannedVFSPath();
 				
 				//! scan an entire block of the stage file
-				int scan();
+				int scan(vfs::VFSFile *_working_data_file);
 				
 				//! matains stage
 				virtual int mantains() = 0;

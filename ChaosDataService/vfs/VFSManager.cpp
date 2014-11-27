@@ -96,7 +96,7 @@ void VFSManager::init(void * init_data) throw (chaos::CException) {
 	//assign the storage driver to the  data block fetcher cache
 	query::DataBlockCache::getInstance()->storage_driver = storage_driver_ptr;
 	chaos::utility::InizializableService::initImplementation(query::DataBlockCache::getInstance(), NULL, "DataBlockCache", __PRETTY_FUNCTION__);
-
+	
 	chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, HB_REPEAT_TIME);
 }
 /*---------------------------------------------------------------------------------
@@ -176,16 +176,16 @@ int VFSManager::getFile(std::string area,
 		if(!files_for_path) return -3;
 		VFSManagerKeyObjectContainer::registerElement(vfs_fpath, files_for_path);
 	}
-
+	
 	//lock the files info for path
 	boost::unique_lock<boost::mutex> lock(files_for_path->_mutex);
-
+	
 	//generate isntance unique key
 	logical_file->vfs_file_info.identify_key = boost::str(boost::format("%1%_%2%") % vfs_fpath % files_for_path->instance_counter++);
 	logical_file->vfs_file_info.vfs_domain = storage_driver_ptr->getStorageDomain();
 	logical_file->vfs_file_info.max_block_size = setting-> max_block_size;
 	logical_file->vfs_file_info.max_block_lifetime = setting-> max_block_lifetime;
-
+	
 	files_for_path->map_logical_files.insert(make_pair(logical_file->vfs_file_info.identify_key, logical_file));
 	
 	*l_file = logical_file;
@@ -206,7 +206,7 @@ int VFSManager::getWriteableStageFile(std::string
 	if(!writeable_stage_file) return -1;
 	
 	DEBUG_CODE(VFSFM_LDBG_ << "Stage file created:" << writeable_stage_file->getVFSFileInfo()->vfs_fpath;)
-
+	
 	//the vfs file is identified by a folder containing all data block
 	if(!writeable_stage_file->isGood()) {
 		return -2;
@@ -235,7 +235,7 @@ int VFSManager::getWriteableStageFile(std::string
 	
 	*wsf_file = writeable_stage_file;
 	DEBUG_CODE(VFSFM_LDBG_ << "Created writeable data file with vfs path->" << writeable_stage_file->getVFSFileInfo()->vfs_fpath;)
-
+	
 	return 0;
 }
 
@@ -347,7 +347,7 @@ int VFSManager::releaseFile(VFSFile *l_file) {
 	DEBUG_CODE(VFSFM_LDBG_ << "Delete vfs fiel with path->" << l_file->vfs_file_info.vfs_fpath;)
 	
 	VFSFilesForPath *files_for_path = NULL;
-
+	
 	//check if the file belong to this manager
 	if(VFSManagerKeyObjectContainer::hasKey(l_file->vfs_file_info.vfs_fpath)) {
 		files_for_path = VFSManagerKeyObjectContainer::accessItem(l_file->vfs_file_info.vfs_fpath);
@@ -390,5 +390,33 @@ int VFSManager::deleteDirectory(std::string vfs_path,
  ---------------------------------------------------------------------------------*/
 int VFSManager::getAllStageFileVFSPath(std::vector<std::string>& stage_file_vfs_paths,
 									   int limit_to_size) {
-	return db_driver_ptr->vfsGetFilePathForDomain(storage_driver_ptr->getStorageDomain(), std::string(VFS_STAGE_AREA),stage_file_vfs_paths, limit_to_size);
+	return db_driver_ptr->vfsGetFilePathForDomain(storage_driver_ptr->getStorageDomain(),
+												  std::string(VFS_STAGE_AREA),
+												  stage_file_vfs_paths,
+												  limit_to_size);
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+int VFSManager::getNextIndexableStageFileVFSPath(std::string& indexable_stage_file_vfs_path) {
+	return db_driver_ptr->vfsGetFilePathForOldestBlockState(storage_driver_ptr->getStorageDomain(),
+															std::string(VFS_STAGE_AREA),
+															data_block_state::DataBlockStateNone,
+															indexable_stage_file_vfs_path);
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+int VFSManager::changeStateToTimeoutedDatablock(bool stage_data,
+												uint32_t timeout_delay,
+												data_block_state::DataBlockState timeout_state,
+												data_block_state::DataBlockState new_state) {
+
+	return db_driver_ptr->vfsChangeStateToOutdatedChunck(storage_driver_ptr->getStorageDomain(),
+														 stage_data?std::string(VFS_DATA_AREA):std::string(VFS_STAGE_AREA),
+														 timeout_delay,
+														 timeout_state,
+														 new_state);
 }

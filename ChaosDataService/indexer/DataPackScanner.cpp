@@ -34,11 +34,9 @@ using namespace chaos::data_service::indexer;
 namespace vfs=chaos::data_service::vfs;
 
 DataPackScanner::DataPackScanner(vfs::VFSManager *_vfs_manager,
-								 db_system::DBDriver *_db_driver,
-								 vfs::VFSFile *_working_data_file):
+								 db_system::DBDriver *_db_driver):
 vfs_manager(_vfs_manager),
 db_driver(_db_driver),
-working_data_file(_working_data_file),
 data_buffer(NULL),
 curret_data_buffer_len(0) {
 	
@@ -51,9 +49,6 @@ DataPackScanner::~DataPackScanner() {
 	
 }
 
-std::string DataPackScanner::getScannedVFSPath() {
-	return working_data_file->getVFSFileInfo()->vfs_fpath;
-}
 
 void DataPackScanner::grow(uint32_t new_size) {
 	if(curret_data_buffer_len < new_size) {
@@ -68,7 +63,7 @@ break; \
 
 #define BSON_HEADER_SIZE 4
 // scan an entire block of the stage file
-int DataPackScanner::scan() {
+int DataPackScanner::scan(vfs::VFSFile *working_data_file) {
 	int err = 0;
 	bool has_data = false;
 	if(!data_buffer) return -1;
@@ -118,7 +113,8 @@ int DataPackScanner::scan() {
 		
 		//! write read phase
 		working_data_file->appendValueToJournal("p");
-		if((err = processDataPack(bson::BSONObj(static_cast<const char*>(data_buffer))))){
+		if((err = processDataPack(bson::BSONObj(static_cast<const char*>(data_buffer)),
+								  working_data_file))){
 			DataPackScannerLERR_ << "error processing data";
 		}
 		//! open journal tag for the reading

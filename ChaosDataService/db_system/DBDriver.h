@@ -142,6 +142,39 @@ namespace chaos {
 				virtual int vfsUpdateDatablockCurrentWorkPosition(chaos_vfs::VFSFile *vfs_file,
 																  chaos_vfs::DataBlock *data_block) = 0;
 				
+				//! Return the path of the vfile that contains the oldest block with info
+				/*!
+				 Find wich block has the the state in input and if belong to data or state
+				 and return the oldest.
+				 \param domain is the domain in wich need to be search
+				 \param data_area is the area in wich need to belong the datablock
+				 \param state is the state that need to have the datablock returned
+				 \param data_block is the datablock handler which contains the new datablock (if found) otherwise 
+				 NULL is returned
+				 */
+				virtual int vfsGetFilePathForOldestBlockState(const std::string& domain,
+															  const std::string& data_area,
+															  int state,
+															  std::string& vfile_path) = 0;
+				
+				//! Change the state to all datablock that are in timeout
+				/*!
+				 Datablock are found combining the timeout_state_in_sec delay of "valid until"
+				 field and timeout_state. All datablock that match this rule, will have 
+				 their state changed to new_state.
+				 \param domain the domain where search
+				 \param data_areai sthe ared of the domain where search
+				 \param timeout_state_in_sec, is the dealy(in seconds) for wich a datablock need to be
+				 considere in timeout
+				 \param timeout_state is the state to filter the datablock that are in timout
+				 \param new_state is the new state that the mathced datablock will have
+				 */
+				virtual int vfsChangeStateToOutdatedChunck(const std::string& domain,
+														   const std::string& data_area,
+														   uint32_t timeout_state_in_sec,
+														   int timeout_state,
+														   int new_state) = 0;
+				
 				//! Return the next available datablock created since timestamp
 				/*!
 				 The rule on how select the Datablock is regulated by direction flag. It set the next or prev, starting from

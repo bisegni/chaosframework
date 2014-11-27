@@ -22,7 +22,7 @@
 
 #include <unistd.h>
 #include <chaos/common/utility/UUIDUtil.h>
-
+#include <chaos/common/utility/TimingUtil.h>
 using namespace chaos::data_service;
 
 #define StageDataConsumer_LOG_HEAD "[StageDataConsumer] - "
@@ -47,9 +47,7 @@ StageDataConsumer::StageDataConsumer(vfs::VFSManager *_vfs_manager_ptr,
 settings(_settings),
 work_on_stage(false),
 vfs_manager_ptr(_vfs_manager_ptr),
-db_driver_ptr(_db_driver_ptr),
-global_scanner_num(0),
-queue_scanners(1) {
+db_driver_ptr(_db_driver_ptr) {
 	
 }
 
@@ -65,11 +63,7 @@ void StageDataConsumer::init(void *init_data) throw (chaos::CException) {
 }
 
 void StageDataConsumer::start() throw (chaos::CException) {
-
-	StageDataConsumerLAPP_ << "Start find path timer with delay of"<<(settings->indexer_scan_delay*1000)<<" seconds";
-	//scan path every 60 seconds
-	chaos::common::async_central::AsyncCentralManager::getInstance()->addTimer(this, 0, settings->indexer_scan_delay*1000);
-	
+	time_to_check_timeouted_stage_file = 0;
 	StageDataConsumerLAPP_ << "Start stage scanner thread";
 	work_on_stage = true;
 	for(int idx = 0; idx < settings->indexer_worker_num; idx++) {
@@ -78,104 +72,73 @@ void StageDataConsumer::start() throw (chaos::CException) {
 }
 
 void StageDataConsumer::stop() throw (chaos::CException) {
-	StageDataConsumerLAPP_ << "Stop find path timer";
-	chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
-	
 	StageDataConsumerLAPP_ << "Stop stage scanner thread";
 	work_on_stage = false;
 	thread_scanners.join_all();
 	
-	//clear the porcessi queue whitout delete the element
-	StageScannerInfo *scanner_info = NULL;
-	while(!queue_scanners.empty()) {
-		queue_scanners.pop(scanner_info);
-		//delete the element
-		DISPOSE_SCANNER_INFO(scanner_info)
-	}
-
 }
 
 void StageDataConsumer::deinit() throw (chaos::CException) {
-
-}
-
-void StageDataConsumer::timeout() {
-	int err = 0;
-	std::vector<std::string> current_stage_file;
 	
-	StageScannerInfo *scanner_info = NULL;
-	vfs::VFSStageReadableFile *readable_stage_file = NULL;
-	
-	if(vfs_manager_ptr->getAllStageFileVFSPath(current_stage_file)) return;
-	
-	//cicle all found vfs file path to search wich are new
-	for (std::vector<std::string>::iterator it = current_stage_file.begin();
-		 it != current_stage_file.end();
-		 it++) {
-		//check if we alread have this path
-		if(std::find(vector_working_path.begin(), vector_working_path.end(), *it) == vector_working_path.end()) {
-			//get new vfs stage readable file
-			if((err = vfs_manager_ptr->getReadableStageFile(*it, &readable_stage_file))) {
-				//error gettin file
-				StageDataConsumerLDBG_ << "Error getting vfs stage readable file for vfs path: " << *it;
-				continue;
-			}
-			
-			//scanner not present, so we need to add it
-			scanner_info = new StageScannerInfo();
-			LOCK_SCANNER_INFO(scanner_info)
-			scanner_info->index = ++global_scanner_num;
-			scanner_info->scanner = new indexer::StageDataVFileScanner(vfs_manager_ptr, db_driver_ptr, readable_stage_file);
-			
-			//add new scanner infor to the processing queue to be scheduled and in vector to keep track of it
-			vector_working_path.push_back(*it);
-			queue_scanners.push(scanner_info);
-		}
-	}
-}
-
-StageScannerInfo *StageDataConsumer::getNextAvailableScanner() {
-	StageScannerInfo *result = NULL;
-	StageScannerInfo *scanner_info = NULL;
-	uint32_t n_element = global_scanner_num;
-	while ((n_element--)>0) {
-		if(!queue_scanners.pop(scanner_info)) continue;
-		//we have a scanner available
-		LOCK_SCANNER_INFO(scanner_info)
-		
-		if(scanner_info->in_use) continue;
-		
-		scanner_info->in_use = true;
-		result = scanner_info;
-		break;
-	}
-	return result;
-}
-
-void StageDataConsumer::rescheduleScannerInfo(StageScannerInfo *scanner_info) {
-	LOCK_SCANNER_INFO(scanner_info)
-	scanner_info->in_use = false;
-	queue_scanners.push(scanner_info);
 }
 
 void StageDataConsumer::scanStage() {
 	StageDataConsumerLAPP_ << "Enter stage scanner thread";
-	StageScannerInfo *scanner_info = NULL;
+	int err = 0;
+	uint64_t curr_ts = 0;
+	std::string indexable_stage_file_vfs_path;
+	std::vector<std::string> current_stage_file;
+	vfs::VFSStageReadableFile *stage_file_to_process = NULL;
+	indexer::StageDataVFileScanner *indexer = new indexer::StageDataVFileScanner(vfs_manager_ptr, db_driver_ptr);
 	//
 	while(work_on_stage) {
-		if((scanner_info = getNextAvailableScanner())) {
-			StageDataConsumerLAPP_ << "Schedule scanner "<< scanner_info->index << " of" << global_scanner_num << " for file ->"<< scanner_info->scanner->getScannedVFSPath();
-			// scan a complete block
-			scanner_info->scanner->scan();
-			//mantains scanner
-			scanner_info->scanner->mantains();
-			StageDataConsumerLAPP_ << "End scanner for file ->"<< scanner_info->scanner->getScannedVFSPath();
-			
-			//reschedule scanner
-			rescheduleScannerInfo(scanner_info);
+		try {
+			{
+				boost::unique_lock<boost::mutex> l(mutex_timeout_check);
+				if((curr_ts = chaos::TimingUtil::getTimeStamp()) > time_to_check_timeouted_stage_file + 60000) {
+					StageDataConsumerLDBG_ << "Mnage timeout datablock in aquiring state";
+					//every minut start the check for the timeout datafile
+					time_to_check_timeouted_stage_file = curr_ts;
+					
+					//pull all databloc in acquiring state that are in timeout
+					//! to none to perform the indexing of the contained data
+					vfs_manager_ptr->changeStateToTimeoutedDatablock(false,													//stage area
+																	 60,													//add 60 second for valid until field check
+																	 vfs::data_block_state::DataBlockStateAquiringData,		//get only block in acquiring state(and in timeout)
+																	 vfs::data_block_state::DataBlockStateNone);			//set it to done
+				}
+			}
+			// get
+			if((err = vfs_manager_ptr->getNextIndexableStageFileVFSPath(indexable_stage_file_vfs_path))) {
+				StageDataConsumerLDBG_ << "Error retrieving the nex indexable vfile";
+			} else if(indexable_stage_file_vfs_path.size()) {
+				if((err = vfs_manager_ptr->getReadableStageFile(indexable_stage_file_vfs_path,
+																&stage_file_to_process))) {
+					//error gettin file
+					StageDataConsumerLDBG_ << "Error getting vfs stage readable file ";
+					continue;
+				} else {
+					StageDataConsumerLAPP_ << "Scan for index process the file ->"<< stage_file_to_process->getVFSFileInfo()->vfs_fpath;
+					// scan one block of virtual file
+					indexer->scan(stage_file_to_process);
+					//mantains scanner
+					indexer->mantains();
+					
+					StageDataConsumerLAPP_ << "End scanner for file ->"<< stage_file_to_process->getVFSFileInfo()->vfs_fpath;
+				}
+			} else {
+				//no file has been found to scann so we can sleep a little bit
+				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+			}
+		} catch (...) {
+			StageDataConsumerLERR_ << "General exception and doesn need to occure";
 		}
-		//waith some time
-		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+		if(stage_file_to_process) {
+			vfs_manager_ptr->releaseFile(stage_file_to_process);
+			stage_file_to_process = NULL;
+		}
+		//clean the path of last found file path
+		indexable_stage_file_vfs_path.clear();
 	}
 	StageDataConsumerLAPP_ << "Leaving stage scanner thread";
 }

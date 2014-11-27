@@ -109,8 +109,27 @@ namespace chaos {
 				int deleteDirectory(std::string vfs_path, bool all_path = false);
 				
 				int getAllStageFileVFSPath(std::vector<std::string>& stage_file_vfs_paths, int limit_to_size = 100);
+				
+				//! return the next available indexable stage file
+				int getNextIndexableStageFileVFSPath(std::string& indexable_stage_file_vfs_path);
+				
+				//! change the state to all timeouted chunk
+				/*!
+					Find in the area selected the datablock that are in timeout.
+					A datablock is considered in timeout when his heartbeat filed
+					is aged of timeout_delay number of second. The considered datablock are identified by
+					timeout_state and are changed to new_state.
+				 \param stage_data is the ared in wich is effected the search
+				 \param timeout_delay is the delay for the heartbeat that is to be considered as timeouted
+				 \param timeout_state is the state of the datablock that are included in the search
+				 \param new_state is the new state to set to all datablock that are in timeout
+				 */
+				int changeStateToTimeoutedDatablock(bool stage_data,
+													uint32_t timeout_delay,
+													data_block_state::DataBlockState timeout_state,
+													data_block_state::DataBlockState new_state);
 			};
-
+			
 		}
 	}
 }
