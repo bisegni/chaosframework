@@ -4,6 +4,7 @@
 package it.infn.chaos.mds;
 
 import it.infn.chaos.mds.business.DatasetAttribute;
+import it.infn.chaos.mds.business.DeviceClass;
 import it.infn.chaos.mds.business.DriverSpec;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
 
@@ -24,6 +25,9 @@ import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.ListSelect;
+import com.vaadin.ui.NativeSelect;
+import com.vaadin.ui.Select;
 import com.vaadin.ui.Window.Notification;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Window;
@@ -52,13 +56,7 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 	static final Action[]				ACTIONS_IN_EDIT					= new Action[] { ACTION_SAVE };
 	public static final String			SET_SC_CUTYPE_VALUE				= "SET_SC_CUTYPE_VALUE";
 	public static final Object			SET_ASSOCIATION_TO_EDIT			= "SET_ASSOCIATION_TO_EDIT";
-	public static final String			EVENT_CANCEL_USCU_ASSOC_VIEW	= "EVENT_CANCEL_USCU_ASSOC_VIEW";
-	public static final String			EVENT_SAVE_USCU_ASSOC_VIEW		= "EVENT_SAVE_USCU_ASSOC_VIEW";
-	public static final String			EVENT_ADD_DRIVER_SPEC			= "EVENT_ADD_DRIVER_SPEC";
-	public static final String			EVENT_REMOVE_DRIVER_SPEC		= "EVENT_REMOVE_DRIVER_SPEC";
-	public static final String			EVENT_LOAD_INSTANCE_ATTRIBUTE	= "USCUAssociationListView_EVENT_LOAD_INSTANCE_ATTRIBUTE";
-	public static final String			EVENT_SAVE_ATTRIBUTE_CONFIG		= "USCUAssociationListView_EVENT_SAVE_ATTRIBUTE_CONFIG";
-
+	
 
 	private static final Object			TABLE_COLUMN_DRIVER_ALIAS		= "Name";
 	private static final Object			TABLE_COLUMN_DRIVER_VERSION		= "Version";
@@ -70,6 +68,7 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 	private UnitServerCuInstance		associationToEdit				= null;
 	protected int						idx;
 	protected int 						modified=0;
+	private Vector<DeviceClass>			deviceClasses=null; 
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -79,6 +78,11 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 	@Override
 	public void initGui() {
 		addComponent(impl);
+		impl.getCuTypeSelection().setNullSelectionAllowed(false);
+		//impl.getCuTypeSelection().setItemCaptionMode(Select.ITEM_CAPTION_MODE_ID);
+		impl.getCuTypeSelection().setMultiSelect(false);
+		impl.getCuTypeSelection().setImmediate(true);
+		impl.getCuTypeSelection().removeAllItems();
 		// impl.getTableDriverSpecifications().addStyleName("components-inside");
 		impl.getTableDriverSpecifications().addListener((ItemClickListener) this);
 		// impl.getTableDriverSpecifications().setEditable(true);
@@ -133,7 +137,7 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 
 					            public void onClose(ConfirmDialog dialog) {
 					                if (dialog.isConfirmed()) {
-					                	notifyEventoToControllerWithData(NewUSCUAssociationView.EVENT_CANCEL_USCU_ASSOC_VIEW, my_ev.getSource(), null);
+					                	notifyEventoToControllerWithData(MDSUIEvents.EVENT_CANCEL_USCU_ASSOC_VIEW, my_ev.getSource(), null);
 					                }
 					            }
 					            private ConfirmDialog.Listener init(ClickEvent ev){my_ev = ev; return this;}
@@ -141,7 +145,7 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 					
 					
 				} else {
-                	notifyEventoToControllerWithData(NewUSCUAssociationView.EVENT_CANCEL_USCU_ASSOC_VIEW, event.getSource(), null);
+                	notifyEventoToControllerWithData(MDSUIEvents.EVENT_CANCEL_USCU_ASSOC_VIEW, event.getSource(), null);
 
 				}
 				
@@ -170,13 +174,32 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 		impl.getButtonSave().addListener(new ClickListener() {
 			public void buttonClick(ClickEvent event) {
 				UnitServerCuInstance usci = associationToEdit == null ? new UnitServerCuInstance():associationToEdit;
+				
 				try {
+					if(impl.getUsSelected().getValue().toString()== null){
+						getWindow().showNotification( "Save Association", "Not a Valid Unit Server", Notification.TYPE_ERROR_MESSAGE);
+						return;
+					}
 					usci.setUnitServerAlias(impl.getUsSelected().getValue().toString());
+					NativeSelect list= impl.getCuTypeSelection();
+					if(list.getValue()==null){
+						getWindow().showNotification( "Save Association", "Use the 'Class Type' TAB to choose a 'CU Type', or create a new class use 'CU Class...' BUTTON", Notification.TYPE_ERROR_MESSAGE);
+						return;
+					}
+					String dc = (deviceClasses==null)?null:deviceClasses.get((Integer) list.getValue()).getDeviceClass();
+					if(dc== null){
+						getWindow().showNotification( "Save Association", "Not a Valid CU Class", Notification.TYPE_ERROR_MESSAGE);
+						return;
+					}
+					if(impl.getCuIDTextField().getValue().toString() == null){
+						getWindow().showNotification( "Save Association", "You must specify a CU ID", Notification.TYPE_ERROR_MESSAGE);
+						return;
+						
+					}
 					usci.setCuId(impl.getCuIDTextField().getValue().toString());
-					usci.setCuType(impl.getCuTypeSelection().getValue().toString());
+					usci.setCuType(dc);
 					usci.setCuParam(impl.getCuParamTextArea().getValue().toString());
 					usci.setAutoLoad((Boolean) impl.getCheckBoxAutoLoad().getValue());
-					
 					usci.removeAllDriverSpec();
 					Collection<Integer> indexList = (Collection<Integer>) impl.getTableDriverSpecifications().getItemIds();
 					for (Integer idx : indexList) {
@@ -190,7 +213,7 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 					usci.setDrvSpec(usci.getDriverDescriptionAsBson().toString());
 					usci.checkIntegrityValues();
 				} catch (Throwable e) {
-					getWindow().showNotification( "Save Association", "Some value are not good");
+					getWindow().showNotification( "Save Association", "Some value are not good", Notification.TYPE_ERROR_MESSAGE);
 
 				}
 				
@@ -262,7 +285,7 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 				}
 				selectedInstance.setAttributeConfigutaion(toSave);
 				getWindow().showNotification("Attribute Configuration", "<b>The configuration has been saved</b>", Window.Notification.TYPE_HUMANIZED_MESSAGE);
-				notifyEventoToControllerWithData(NewUSCUAssociationView.EVENT_SAVE_USCU_ASSOC_VIEW, event.getSource(), selectedInstance);
+				notifyEventoToControllerWithData(MDSUIEvents.EVENT_SAVE_USCU_ASSOC_VIEW, event.getSource(), selectedInstance);
 
 			}
 				////
@@ -320,7 +343,13 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 			}
 		});
 
+		/// New CU Class
+		impl.getButtonNewCUClass().addListener(new ClickListener(){
+			public void buttonClick(ClickEvent event){
+				notifyEventoToControllerWithData(MDSUIEvents.EVENT_EDIT_DEVICE_CLASS, event.getSource(),associationToEdit );
 
+			}
+		});
 
 	}
 
@@ -336,9 +365,11 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 		if (sourceData instanceof ViewNotifyEvent) {
 			modified =0;
 			viewEvent = (ViewNotifyEvent) sourceData;
+			if(viewEvent.getEventData()==null)
+				return;
 			
 			if (viewEvent.getEventKind().equals(NewUSCUAssociationView.SET_SC_CUTYPE_VALUE)) {
-				impl.getUsSelected().setValue(((String[]) viewEvent.getEventData())[0]);
+				impl.getUsSelected().setValue(((String) viewEvent.getEventData()));
 				//impl.getCuTypeSelected().setValue(((String[]) viewEvent.getEventData())[1]);
 			} else if (viewEvent.getEventKind().equals(NewUSCUAssociationView.SET_ASSOCIATION_TO_EDIT)) {
 				associationToEdit =  (UnitServerCuInstance) viewEvent.getEventData();
@@ -354,12 +385,33 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 					woItem.getItemProperty(NewUSCUAssociationView.TABLE_COLUMN_DRIVER_VERSION).setValue(driverSpec.getDriverVersion());
 					woItem.getItemProperty(NewUSCUAssociationView.TABLE_COLUMN_DRIVER_INIT).setValue(driverSpec.getDriverInit());	
 				}
-				notifyEventoToControllerWithData(EVENT_LOAD_INSTANCE_ATTRIBUTE,impl.getTableAttributeConfig(), associationToEdit);
+				notifyEventoToControllerWithData(MDSUIEvents.EVENT_LOAD_INSTANCE_ATTRIBUTE,impl.getTableAttributeConfig(), associationToEdit);
 				
-			} else if(viewEvent.getEventKind().equals(NewUSCUAssociationView.EVENT_LOAD_INSTANCE_ATTRIBUTE)){
+			} else if(viewEvent.getEventKind().equals(MDSUIEvents.EVENT_LOAD_INSTANCE_ATTRIBUTE)){
 					
 				datattr = (Vector<DatasetAttribute>) viewEvent.getEventData();
 					
+			} else if(viewEvent.getEventKind().equals(MDSUIEvents.EVENT_UPDATE_DEVICE_CLASS)){
+				deviceClasses=(Vector<DeviceClass>)viewEvent.getEventData();
+				int idx=0;
+				if(deviceClasses==null)
+					return;
+				NativeSelect list= impl.getCuTypeSelection();
+				list.removeAllItems();
+				list.setReadOnly(false);
+
+				for(DeviceClass c:deviceClasses){
+					list.addItem(idx);
+					list.setItemCaption(idx++, c.getDeviceClassAlias() + "["+c.getDeviceClass()+"]" + "("+c.getDeviceClassInterface()+")");
+
+					if((associationToEdit!=null)) {
+						if(associationToEdit.getCuType().compareTo(c.getDeviceClass())==0){
+							//list.setReadOnly(true);
+							list.setValue(idx-1);
+						}
+					}
+
+				}
 			}
 			if (datattr == null)
 				return;

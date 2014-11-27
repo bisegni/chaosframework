@@ -3,6 +3,7 @@
  */
 package it.infn.chaos.mds.business;
 
+import org.bson.BasicBSONObject;
 import org.ref.common.business.BusinessObject;
 import org.ref.common.business.DBColumn;
 import org.ref.common.business.DBPrimaryKey;
@@ -13,7 +14,7 @@ import org.ref.common.business.DBTable;
  * 
  */
 @DBTable(name = "data_server")
-public class DataServer extends BusinessObject {
+public class DataServer extends BSONBusinessObject {
 	public static final long	serialVersionUID	= -7648734249066851869L;
 	public static final String	KEY_HOSTAME			= "hostname";
 	public static final String	KEY_ID_SERVER		= "id_server";
@@ -102,6 +103,30 @@ public class DataServer extends BusinessObject {
 	 */
 	public void setIsLiveServer(Boolean isLiveServer) {
 		this.isLiveServer = isLiveServer;
+	}
+
+	/* (non-Javadoc)
+	 * @see it.infn.chaos.mds.business.BSONBusinessObject#fillFromBson(java.lang.Object)
+	 */
+	@Override
+	public void fillFromBson(Object bson) throws Throwable {
+		BasicBSONObject bobj =(BasicBSONObject) bson;
+		setHostname(bobj.getString(DataServer.KEY_HOSTAME));
+		setIdServer(bobj.getInt(DataServer.KEY_ID_SERVER));
+		setIsLiveServer(bobj.getBoolean(DataServer.KEY_IS_LIVE));
+			
+	}
+
+	/* (non-Javadoc)
+	 * @see it.infn.chaos.mds.business.BSONBusinessObject#toBson()
+	 */
+	@Override
+	public Object toBson() throws Throwable {
+		BasicBSONObject bobj = new BasicBSONObject();
+		bobj.append(DataServer.KEY_HOSTAME, this.getHostname());
+		bobj.append(DataServer.KEY_ID_SERVER, this.getIdServer());
+		bobj.append(DataServer.KEY_IS_LIVE, this.getIsLiveServer());
+		return bobj;
 	}
 
 }

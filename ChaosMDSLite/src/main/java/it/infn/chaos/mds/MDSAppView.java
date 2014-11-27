@@ -3,8 +3,18 @@ package it.infn.chaos.mds;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
 import it.infn.chaos.mds.event.EventsToVaadin;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Observable;
+import java.util.Set;
 import java.util.Vector;
 
 import org.ref.common.mvc.ViewNotifyEvent;
@@ -15,20 +25,28 @@ import com.vaadin.data.Item;
 import com.vaadin.event.Action;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
+import com.vaadin.terminal.DownloadStream;
+import com.vaadin.terminal.ExternalResource;
+import com.vaadin.terminal.Resource;
+import com.vaadin.terminal.StreamResource;
+import com.vaadin.terminal.StreamResource.StreamSource;
+import com.vaadin.terminal.URIHandler;
+import com.vaadin.terminal.gwt.server.WebApplicationContext;
 import com.vaadin.ui.AbstractSelect.ItemDescriptionGenerator;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Upload.SucceededEvent;
 import com.vaadin.ui.Window.Notification;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.Upload;
 import com.github.wolfie.refresher.Refresher;;
+
 @SuppressWarnings("serial")
 public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener {
-	static final Action			ACTION_EDIT									= new Action("Edit");
-	static final Action			ACTION_SAVE									= new Action("Save");
-
+	
 	static final Action			ACTION_US_EDIT_ALIAS						= new Action("Edit Unit Server Alias");
 	static final Action			ACTION_US_LOAD_ALL							= new Action("Load all Control Units");
 	static final Action			ACTION_US_UNLOAD_ALL						= new Action("Unload all Control Units");
@@ -40,11 +58,18 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	static final Action			ACTION_NODE_INIT							= new Action("Node Init");
 	static final Action			ACTION_NODE_DEINIT							= new Action("Node DeInit");
 	static final Action			ACTION_NODE_SHUTDOWN						= new Action("Node ShutDown");
+	static final Action			ACTION_EDIT								= new Action("Edit");
+	static final Action			ACTION_SAVE								= new Action("Save");
 
+	
+	static final Action			ACTION_EDIT_CU								= new Action("Edit..");
+	
+	static final Action			ACTION_CU_LOAD						   		= new Action("CU Load");
+	static final Action			ACTION_CU_UNLOAD							= new Action("CU Unload");
+	static final Action			ACTION_CU_COPY								= new Action("Copy");
 
-	static final Action[]		ACTIONS_TO_EDIT								= new Action[] { ACTION_EDIT };
-	static final Action[]		ACTIONS_IN_EDIT								= new Action[] { ACTION_SAVE };
-	static final Action[]		EDIT_US										= new Action[] { ACTION_US_CREATE_CU,ACTION_US_EDIT_ALIAS, ACTION_US_LOAD_ALL, ACTION_US_UNLOAD_ALL, ACTION_US_SHOW_ALL };
+	static final Action[]		ACTIONS_TABLE_EDIT						= new Action[] { ACTION_EDIT_CU };
+	static final Action[]		ACTIONS_OF_REGISTERED_US				= new Action[] { ACTION_US_EDIT_ALIAS, ACTION_US_LOAD_ALL, ACTION_US_UNLOAD_ALL};
 	static final Action[]		NODE_ACTIONS								= new Action[] { ACTION_NODE_START, ACTION_NODE_STOP, ACTION_NODE_INIT, ACTION_NODE_DEINIT,ACTION_NODE_SHUTDOWN };
 
 	public static final String	EVENT_DEVICE_SELECTED						= "MDSAppView_EVENT_DEVICE_SELECTED";
@@ -99,6 +124,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	public static final String	TAB_UNIT_SERVER_NAME						= "Unit Server Name";
 	public static final String	TAB_UNIT_SERVER_ADDRESS						= "Address";
 	public static final String	TAB_UNIT_SERVER_HB_TS						= "heartbeat timestamp";
+	public static final String	TAB_UNIT_SERVER_REGISTERED					= "registered";
 	public static final String	KEY_USERVER_CUTYPE_TAB						= "KEY_USERVER_CUTYPE_TAB";
 	public static final String	TAB_UNIT_SERVER_CUTYPE_ALIAS_NAME			= "CU ID";
 	public static final String	TAB_UNIT_SERVER_CUTYPE_TYPE_NAME			= "CU Type Name";
@@ -113,6 +139,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	 
 	private boolean				editingAttribute							= false;
 	public static Refresher	 	refresher									= new Refresher();
+	private String				selectedUnit								= null;
 	@Override
 	public void initGui() {
 		
@@ -137,6 +164,9 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 
 		setComponentKey(KEY_DEVICE_TAB, mv.getTableDevice());
 //		setComponentKey(KEY_DEVICE_START_AT_INIT_BUTTON, mv.getButtonInitializedAtStartup());
+		
+		
+//////////// US
 		mv.getTableUnitServer().addListener(this);
 		mv.getTableUnitServer().setEditable(false);
 		mv.getTableUnitServer().setSelectable(true);
@@ -145,59 +175,70 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 		mv.getTableUnitServer().addContainerProperty(TAB_UNIT_SERVER_NAME, String.class, null);
 		mv.getTableUnitServer().addContainerProperty(TAB_UNIT_SERVER_ADDRESS, String.class, null);
 		mv.getTableUnitServer().addContainerProperty(TAB_UNIT_SERVER_HB_TS, Date.class, null);
+		mv.getTableUnitServer().addContainerProperty(TAB_UNIT_SERVER_REGISTERED, Integer.class, null);
+
+		mv.getTableUnitServer().addStyleName("chaosmdslitetheme");
+		mv.getTableUnitServer().setCellStyleGenerator(new Table.CellStyleGenerator() {
+		    public String getStyle(Object itemId, Object propertyId) {
+		        // Row style setting, not relevant in this example.
+		        if (propertyId == null)
+		            return "green"; // Will not actually be visible
+
+		       // int row = ((Integer)itemId).intValue();
+		       // int col = Integer.parseInt((String)propertyId);
+		        Item it=mv.getTableUnitServer().getItem(itemId);
+		        String prop = it.getItemProperty(TAB_UNIT_SERVER_REGISTERED).toString();
+		        if(prop==null || Integer.valueOf(prop)<=0){
+		        	return "red";
+		        } else {
+		        	return "green";
+		        }
+		        	
+		     
+		    }
+		});
 		mv.getTableUnitServer().addActionHandler(new Action.Handler() {
 			public Action[] getActions(Object target, Object sender) {
-				return EDIT_US;
+				return new Action[]{ACTION_US_EDIT_ALIAS};
 			}
 
 			public void handleAction(Action action, Object sender, Object target) {
 				setEditingAttribute(!isEditingAttribute());
 				if (ACTION_US_EDIT_ALIAS == action) {
 					notifyEventoToControllerWithData(EVENT_UNIT_SERVER_EDIT_ALIAS, mv.getTableUnitServer().getValue(), sender);
-				}else if (ACTION_US_LOAD_ALL == action) {
-					notifyEventoToControllerWithData(EVENT_UNIT_SERVER_LOAD_ALL_ASSOCIATION, null, null);
-				}else if (ACTION_US_UNLOAD_ALL == action) {
-					notifyEventoToControllerWithData(EVENT_UNIT_SERVER_UNLOAD_ALL_ASSOCIATION, null, sender);
-				}else if (ACTION_US_SHOW_ALL == action) {
-					notifyEventoToControllerWithData(EVENT_UNIT_SERVER_SHOW_ALL_ASSOCIATION, null, sender);
-				}else if (ACTION_US_CREATE_CU == action) {
-					if(mv.getTableUnitServerCUType().getValue()!=null){
-						notifyEventoToControllerWithData(EVENT_UNIT_SERVER_CREATE_US_CU_ASSOCIATION, null, sender);
-					} else {
-						getWindow().showNotification("New CU", "<b>A Type CU needs to be selected</b>", Window.Notification.TYPE_ERROR_MESSAGE);
-
-					}
 				}
 			}
 
 		});
-
-		mv.getTableUnitServerCUType().addListener(this);
-		mv.getTableUnitServerCUType().setEditable(false);
-		mv.getTableUnitServerCUType().setSelectable(true);
-		mv.getTableUnitServerCUType().setImmediate(true);
-		mv.getTableUnitServerCUType().setReadThrough(true);
-		mv.getTableUnitServerCUType().addContainerProperty(TAB_UNIT_SERVER_CUTYPE_ALIAS_NAME, String.class, null);
-		mv.getTableUnitServerCUType().addContainerProperty(TAB_UNIT_SERVER_CUTYPE_TYPE_NAME, String.class, null);
-		mv.getTableUnitServerCUType().addContainerProperty(TAB_UNIT_SERVER_CUTYPE_INTERFACE_NAME, String.class, null);
-		mv.getTableUnitServerCUType().addContainerProperty(TAB_UNIT_SERVER_CUTYPE_REGISTERED, String.class, null);
-		mv.getTableUnitServerCUType().addActionHandler(new Action.Handler() {
-			public Action[] getActions(Object target, Object sender) {
-				return new Action[] { ACTION_EDIT };
+		mv.getButtonNewCU().setEnabled(false);
+		mv.getButtonNewCU().setImmediate(true);
+		mv.getButtonNewUS().addListener(new ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				notifyEventoToControllerWithData(EVENT_UNIT_SERVER_NEW, event.getSource(), null);
 			}
-
-			public void handleAction(Action action, Object sender, Object target) {
-				if (ACTION_EDIT == action) {
-					if (mv.getTableUnitServerCUType().getValue() == null) {
-						getWindow().showNotification("Edit association error", "Not A legal Value", Notification.TYPE_ERROR_MESSAGE);
-						return;
-					} else {
-						notifyEventoToControllerWithData(USCUAssociationListView.EVENT_EDIT_ASSOCIATION, sender, mv.getTableUnitServerCUType().getValue());
-					}
-				}
-			}
-
 		});
+
+		mv.getButtonDelUS().addListener(new ClickListener() {
+			public void buttonClick(ClickEvent event) {
+				ConfirmDialog.show(getWindow(), "Do you want to delete US and all the CUs: " +event.getSource().toString() + " ?" ,
+				        new ConfirmDialog.Listener() {
+							ClickEvent my_ev;
+
+				            public void onClose(ConfirmDialog dialog) {
+				                if (dialog.isConfirmed()) {
+				    				notifyEventoToControllerWithData(EVENT_UNIT_SERVER_DELETE, my_ev.getSource(), null);
+				                }
+				            }
+				            private ConfirmDialog.Listener init(ClickEvent ev){my_ev = ev; return this;}
+				        }.init(event));
+
+			}
+		});
+		
+	/////////////////
+		
+		
+   /////////////// DEVICE
 		mv.getTableDevice().addListener(this);
 		mv.getTableDevice().setEditable(false);
 		mv.getTableDevice().setSelectable(true);
@@ -235,29 +276,54 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 			}
 			
 		});
-		mv.getButtonNewUS().addListener(new ClickListener() {
-			public void buttonClick(ClickEvent event) {
-				notifyEventoToControllerWithData(EVENT_UNIT_SERVER_NEW, event.getSource(), null);
+		
+		
+
+	///////////////////// CU  ///////////
+		 
+		
+	
+		mv.getTableUnitServerCUType().addListener(this);
+		mv.getTableUnitServerCUType().setEditable(false);
+		mv.getTableUnitServerCUType().setSelectable(true);
+		mv.getTableUnitServerCUType().setImmediate(true);
+		mv.getTableUnitServerCUType().setReadThrough(true);
+		mv.getTableUnitServerCUType().addContainerProperty(TAB_UNIT_SERVER_CUTYPE_ALIAS_NAME, String.class, null);
+		mv.getTableUnitServerCUType().addContainerProperty(TAB_UNIT_SERVER_CUTYPE_TYPE_NAME, String.class, null);
+		mv.getTableUnitServerCUType().addContainerProperty(TAB_UNIT_SERVER_CUTYPE_INTERFACE_NAME, String.class, null);
+		mv.getTableUnitServerCUType().addContainerProperty(TAB_UNIT_SERVER_CUTYPE_REGISTERED, String.class, null);
+		mv.getTableUnitServerCUType().addActionHandler(new Action.Handler() {
+			public Action[] getActions(Object target, Object sender) {
+				return new Action[] { ACTION_EDIT_CU,ACTION_CU_COPY,ACTION_CU_LOAD,ACTION_CU_UNLOAD };
 			}
-		});
 
-		mv.getButtonDelUS().addListener(new ClickListener() {
-			public void buttonClick(ClickEvent event) {
-				ConfirmDialog.show(getWindow(), "Do you want to delete US and all the CUs: " +event.getSource().toString() + " ?" ,
-				        new ConfirmDialog.Listener() {
-							ClickEvent my_ev;
+			public void handleAction(Action action, Object sender, Object target) {
+				if (ACTION_EDIT_CU == action) {
+					if (mv.getTableUnitServerCUType().getValue() == null) {
+						getWindow().showNotification("Edit association error", "Not A legal Value", Notification.TYPE_ERROR_MESSAGE);
+						return;
+					} else {
+						notifyEventoToControllerWithData(MDSUIEvents.EVENT_EDIT_ASSOCIATION, sender, mv.getTableUnitServerCUType().getValue());
+					} 
+				} else if (ACTION_CU_LOAD == action) {
+					Set<UnitServerCuInstance> scu= new HashSet<UnitServerCuInstance>();
+					scu.add((UnitServerCuInstance) mv.getTableUnitServerCUType().getValue());
+					notifyEventoToControllerWithData(MDSUIEvents.EVENT_LOAD_INSTANCE, sender, scu);
+					
+				} else if (ACTION_CU_UNLOAD == action) {
+					Set<UnitServerCuInstance> scu= new HashSet<UnitServerCuInstance>();
+					scu.add((UnitServerCuInstance) mv.getTableUnitServerCUType().getValue());
+					notifyEventoToControllerWithData(MDSUIEvents.EVENT_UNLOAD_INSTANCE, sender, scu);
 
-				            public void onClose(ConfirmDialog dialog) {
-				                if (dialog.isConfirmed()) {
-				    				notifyEventoToControllerWithData(EVENT_UNIT_SERVER_DELETE, my_ev.getSource(), null);
-				                }
-				            }
-				            private ConfirmDialog.Listener init(ClickEvent ev){my_ev = ev; return this;}
-				        }.init(event));
-
+				} else if (ACTION_CU_COPY == action) {
+					Set<UnitServerCuInstance> scu= new HashSet<UnitServerCuInstance>();
+					scu.add((UnitServerCuInstance) mv.getTableUnitServerCUType().getValue());
+					notifyEventoToControllerWithData(MDSUIEvents.EVENT_COPY_CU, sender, mv.getTableUnitServerCUType().getValue());
+				}
 			}
-		});
 
+		});
+		
 		mv.getButtonNewCU().addListener(new ClickListener() {
 			public void buttonClick(ClickEvent event) {
 				if(mv.getTableUnitServer().getValue()!=null){
@@ -278,7 +344,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 
 					            public void onClose(ConfirmDialog dialog) {
 					                if (dialog.isConfirmed()) {
-										notifyEventoToControllerWithData(USCUAssociationListView.EVENT_REMOVE_ASSOCIATION, my_ev.getSource(), mv.getTableUnitServerCUType().getValue());
+										notifyEventoToControllerWithData(MDSUIEvents.EVENT_REMOVE_ASSOCIATION, my_ev.getSource(), mv.getTableUnitServerCUType().getValue());
 					                }
 					            }
 					            private ConfirmDialog.Listener init(ClickEvent ev){my_ev = ev; return this;}
@@ -288,85 +354,13 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 				
 			}	
 		});
-
+///////////////////
 		
-//		mv.getButtonUnitServerUpdate().addListener(new ClickListener() {
-//			public void buttonClick(ClickEvent event) {
-//				notifyEventoToControllerWithData(EVENT_UPDATE_UNIT_SERVER_LIST, event.getSource(), null);
-//			}
-//		});
-//
-//		mv.getButtonUSCUAssociate().addListener(new ClickListener() {
-//			public void buttonClick(ClickEvent event) {
-//				notifyEventoToControllerWithData(EVENT_UNIT_SERVER_CREATE_US_CU_ASSOCIATION, event.getSource(), null);
-//			}
-//		});
-//
-//		mv.getButtonRefresh().addListener(new ClickListener() {
-//			public void buttonClick(ClickEvent event) {
-//				notifyEventoToControllerWithData(EVENT_UPDATE_DEVICE_LIST, event.getSource(), null);
-//			}
-//		});
-//
-//		mv.getButtonDelete().addListener(new ClickListener() {
-//			public void buttonClick(ClickEvent event) {
-//				notifyEventoToControllerWithData(EVENT_DELETE_SELECTED_DEVICE, event.getSource(), null);
-//			}
-//		});
-//
 		mv.getButtonPreference().addListener(new ClickListener() {
 			public void buttonClick(ClickEvent event) {
 				notifyEventoToControllerWithData(EVENT_SHOW_PREFERENCE, event.getSource(), null);
 			}
 		});
-//
-//		mv.getButtonInitializedAtStartup().addListener(new ClickListener() {
-//			public void buttonClick(ClickEvent event) {
-//				notifyEventoToControllerWithData(EVENT_INITIALIZE_DEVICE_AT_STARTUP, event.getSource(), null);
-//			}
-//		});
-//
-//		mv.getButtonAddCUType().addListener(new ClickListener() {
-//			public void buttonClick(ClickEvent event) {
-//				if (mv.getTableUnitServer().getValue() == null) {
-//					getWindow().showNotification("New CU Type", "<b>A unit server needs to be selected</b>", Window.Notification.TYPE_ERROR_MESSAGE);
-//				} else {
-//					notifyEventoToControllerWithData(EVENT_UNIT_SERVER_CU_TYPE_ADD, event.getSource(), mv.getTableUnitServer().getValue());
-//				}
-//			}
-//		});
-//		mv.getButtonRemoveCUType().addListener(new ClickListener() {
-//			public void buttonClick(ClickEvent event) {
-//				if (mv.getTableUnitServerCUType().getValue() == null) {
-//					getWindow().showNotification("Delete CU Type", "<b>A cu type needs to be selected</b>", Window.Notification.TYPE_ERROR_MESSAGE);
-//				} else {
-//					notifyEventoToControllerWithData(EVENT_UNIT_SERVER_CU_TYPE_REMOVE, event.getSource(), mv.getTableUnitServerCUType().getValue());
-//				}
-//			}
-//		});
-//		mv.getButtonUpdateListCUType().addListener(new ClickListener() {
-//			public void buttonClick(ClickEvent event) {
-//				if (mv.getTableUnitServer().getValue() == null) {
-//					getWindow().showNotification("Update CU Type List", "<b>A unit server needs to be seletec</b>", Window.Notification.TYPE_ERROR_MESSAGE);
-//				} else {
-//					notifyEventoToControllerWithData(EVENT_UNIT_SERVER_CU_TYPE_UPDATE_LIST, event.getSource(), mv.getTableUnitServer().getValue());
-//				}
-//			}
-//		});
-
-//		mv.getTableDataset().addListener(this);
-//		setComponentKey(KEY_DATASET_TAB, mv.getTableDataset());
-//
-//		mv.getTableDataset().addContainerProperty(TAB2_TIMESTAMP, Date.class, null);
-//		mv.getTableDataset().addContainerProperty(TAB2_ATTR_NUMBER, Integer.class, null);
-//		mv.getTableDataset().setNullSelectionAllowed(false);
-//		mv.getTableDataset().setSelectable(true);
-//		mv.getTableDataset().setImmediate(true);
-//		mv.getButtonRefresh().addListener(new ClickListener() {
-//			public void buttonClick(ClickEvent event) {
-//				notifyEventoToControllerWithData(EVENT_UPDATE_DS_ATTRIBUTE_LIST, event.getSource(), null);
-//			}
-//		});
 
 		mv.getTableDatasetAttribute().addListener(this);
 		setComponentKey(KEY_DATASET_ATTRIBUTE_TAB, mv.getTableDatasetAttribute());
@@ -380,7 +374,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 		mv.getTableDatasetAttribute().addContainerProperty(TAB3_TAGS_PATH, String.class, null);
 		mv.getTableDatasetAttribute().addActionHandler(new Action.Handler() {
 			public Action[] getActions(Object target, Object sender) {
-				return isEditingAttribute() ? ACTIONS_IN_EDIT : ACTIONS_TO_EDIT;
+				return new Action[] { ACTION_EDIT,ACTION_SAVE };
 			}
 
 			public void handleAction(Action action, Object sender, Object target) {
@@ -388,7 +382,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 				if (ACTION_EDIT == action) {
 					mv.getTableDatasetAttribute().setEditable(!mv.getTableDatasetAttribute().isEditable());
 					mv.getTableDatasetAttribute().refreshRowCache();
-				} else if (ACTION_SAVE == action) {
+				} else if (ACTION_SAVE== action) {
 					mv.getTableDatasetAttribute().setEditable(!mv.getTableDatasetAttribute().isEditable());
 					mv.getTableDatasetAttribute().refreshRowCache();
 					notifyEventoToControllerWithData(EVENT_ATTRIBUTE_SAVE, null, null);
@@ -407,6 +401,9 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 					return null;
 			}
 		});
+		
+		
+
 	}
 
 	/*
@@ -415,25 +412,49 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	 * @see org.ref.server.webapp.RefVaadinBasePanel#update(java.util.Observable, java.lang.Object)
 	 */
 	public void update(Observable source, Object sourceData) {
+	
+
+		
 		if (sourceData instanceof ViewNotifyEvent) {
 			ViewNotifyEvent viewEvent = (ViewNotifyEvent) sourceData;
+			
 			if (viewEvent.getEventKind().equals(MDSAppView.EVENT_ATTRIBUTE_EDITING)) {
 				setEditingAttribute(true);
 				mv.getTableDatasetAttribute().setEditable(true);
 				mv.getTableDatasetAttribute().refreshRowCache();
-			} else if (viewEvent.getEventKind().equals(USCUAssociationListView.EVENT_UPDATE_LIST)) {
+			} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_UPDATE_LIST)) {
 				mv.getTableUnitServerCUType().removeAllItems();
+				
 				Vector<UnitServerCuInstance> currentInstancesForUnitServer = (Vector<UnitServerCuInstance>) viewEvent.getEventData();
-				if (currentInstancesForUnitServer == null)
+				if ((currentInstancesForUnitServer == null) || (currentInstancesForUnitServer.size()<=0))
 					return;
+				
+				selectedUnit = currentInstancesForUnitServer.get(0).getUnitServerAlias();
+				for (UnitServerCuInstance unitServerCuInstance : currentInstancesForUnitServer) {
+					Item woItem = mv.getTableUnitServerCUType().addItem(unitServerCuInstance);
+					woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_ALIAS_NAME).setValue(unitServerCuInstance.getCuId());
+					woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_TYPE_NAME).setValue(unitServerCuInstance.getCuType());
+					woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_INTERFACE_NAME).setValue(unitServerCuInstance.getInterface());
+					woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_REGISTERED).setValue(unitServerCuInstance.getState());
+				}
+				
+			} else if (viewEvent.getEventKind().equals(MDSUIEvents.CTRL_CONFIG_GENERATED)) {
+				String filename = (String)viewEvent.getEventData();
+				if(filename==null){
+					return;
+				}
+				
+				
+				FileResource ssource = new FileResource(filename);
+				
+	       
+			   Date dd = new Date();
+			   StreamResource resource = new StreamResource(ssource, "MDSConfig_"+(dd.getTime()/1000) +" .txt",getApplication());
+			   resource.setMIMEType("application/octet-stream");
 
-			for (UnitServerCuInstance unitServerCuInstance : currentInstancesForUnitServer) {
-				Item woItem = mv.getTableUnitServerCUType().addItem(unitServerCuInstance);
-				woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_ALIAS_NAME).setValue(unitServerCuInstance.getCuId());
-				woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_TYPE_NAME).setValue(unitServerCuInstance.getCuType());
-				woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_INTERFACE_NAME).setValue(unitServerCuInstance.getInterface());
-				woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_REGISTERED).setValue(unitServerCuInstance.getState());
-			}
+			   getWindow().open(resource,"_blank");
+			  // ssource.removeResource();
+				
 			}
 		}
 	}
@@ -452,8 +473,119 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 		} else if (event.getSource().equals(mv.getButtonUSCUShowAll())) {
 			notifyEventoToControllerWithData(EVENT_UNIT_SERVER_SHOW_ALL_ASSOCIATION, event.getSource(), event.getItemId());
 		} else*/ if (event.getSource().equals(mv.getTableUnitServer())) {
+			if(mv.getTableUnitServer().getValue()==null){
+				mv.getButtonNewCU().setEnabled(true); // the state is in late
+			
+			} else {
+				mv.getButtonNewCU().setEnabled(false);	
+			}
+			Item it = event.getItem();
+			String registered = it.getItemProperty(TAB_UNIT_SERVER_REGISTERED).toString();
+			mv.getTableUnitServer().removeAllActionHandlers();
+			mv.getTableUnitServerCUType().removeAllActionHandlers();
+			if(registered!=null && (Integer.valueOf(registered) > 0)){
+			
+				mv.getTableUnitServer().addActionHandler(new Action.Handler() {
+					public Action[] getActions(Object target, Object sender) {
+						return ACTIONS_OF_REGISTERED_US;
+					}
+
+					public void handleAction(Action action, Object sender, Object target) {
+						setEditingAttribute(!isEditingAttribute());
+						if (ACTION_US_EDIT_ALIAS == action) {
+							notifyEventoToControllerWithData(EVENT_UNIT_SERVER_EDIT_ALIAS, mv.getTableUnitServer().getValue(), sender);
+						}else if (ACTION_US_LOAD_ALL == action) {
+							notifyEventoToControllerWithData(EVENT_UNIT_SERVER_LOAD_ALL_ASSOCIATION, null, null);
+						}else if (ACTION_US_UNLOAD_ALL == action) {
+							notifyEventoToControllerWithData(EVENT_UNIT_SERVER_UNLOAD_ALL_ASSOCIATION, null, sender);
+						}/*else if (ACTION_US_SHOW_ALL == action) {
+							notifyEventoToControllerWithData(EVENT_UNIT_SERVER_SHOW_ALL_ASSOCIATION, null, sender);
+						}else if (ACTION_US_CREATE_CU == action) {
+							if(mv.getTableUnitServerCUType().getValue()!=null){
+								notifyEventoToControllerWithData(EVENT_UNIT_SERVER_CREATE_US_CU_ASSOCIATION, null, sender);
+							} else {
+								getWindow().showNotification("New CU", "<b>A Type CU needs to be selected</b>", Window.Notification.TYPE_ERROR_MESSAGE);
+
+							}
+						}*/
+					}
+
+				});
+				mv.getTableUnitServerCUType().addActionHandler(new Action.Handler() {
+					public Action[] getActions(Object target, Object sender) {
+						return new Action[] { ACTION_EDIT_CU,ACTION_CU_COPY,ACTION_CU_LOAD,ACTION_CU_UNLOAD };
+					}
+
+					public void handleAction(Action action, Object sender, Object target) {
+						if (ACTION_EDIT_CU == action) {
+							if (mv.getTableUnitServerCUType().getValue() == null) {
+								getWindow().showNotification("Edit association error", "Not A legal Value", Notification.TYPE_ERROR_MESSAGE);
+								return;
+							} else {
+								notifyEventoToControllerWithData(MDSUIEvents.EVENT_EDIT_ASSOCIATION, sender, mv.getTableUnitServerCUType().getValue());
+							} 
+						} else if (ACTION_CU_LOAD == action) {
+							Set<UnitServerCuInstance> scu= new HashSet<UnitServerCuInstance>();
+							scu.add((UnitServerCuInstance) mv.getTableUnitServerCUType().getValue());
+							notifyEventoToControllerWithData(MDSUIEvents.EVENT_LOAD_INSTANCE, sender, scu);
+							
+						} else if (ACTION_CU_UNLOAD == action) {
+							Set<UnitServerCuInstance> scu= new HashSet<UnitServerCuInstance>();
+							scu.add((UnitServerCuInstance) mv.getTableUnitServerCUType().getValue());
+							notifyEventoToControllerWithData(MDSUIEvents.EVENT_UNLOAD_INSTANCE, sender, scu);
+
+						} else if (ACTION_CU_COPY == action) {
+							Set<UnitServerCuInstance> scu= new HashSet<UnitServerCuInstance>();
+							scu.add((UnitServerCuInstance) mv.getTableUnitServerCUType().getValue());
+							notifyEventoToControllerWithData(MDSUIEvents.EVENT_COPY_CU, sender, mv.getTableUnitServerCUType().getValue());
+						}
+					}
+
+				});
+			} else {
+				mv.getTableUnitServer().addActionHandler(new Action.Handler() {
+					public Action[] getActions(Object target, Object sender) {
+						return new Action[]{ACTION_US_EDIT_ALIAS};
+					}
+
+					public void handleAction(Action action, Object sender, Object target) {
+						setEditingAttribute(!isEditingAttribute());
+						if (ACTION_US_EDIT_ALIAS == action) {
+							notifyEventoToControllerWithData(EVENT_UNIT_SERVER_EDIT_ALIAS, mv.getTableUnitServer().getValue(), sender);
+						}
+					}
+
+					
+
+				});
+				mv.getTableUnitServerCUType().addActionHandler(new Action.Handler() {
+					public Action[] getActions(Object target, Object sender) {
+						return new Action[] { ACTION_EDIT_CU,ACTION_CU_COPY};
+					}
+
+					public void handleAction(Action action, Object sender, Object target) {
+						if (ACTION_EDIT_CU == action) {
+							if (mv.getTableUnitServerCUType().getValue() == null) {
+								getWindow().showNotification("Edit association error", "Not A legal Value", Notification.TYPE_ERROR_MESSAGE);
+								return;
+							} else {
+								notifyEventoToControllerWithData(MDSUIEvents.EVENT_EDIT_ASSOCIATION, sender, mv.getTableUnitServerCUType().getValue());
+							} 
+						} else if (ACTION_CU_COPY == action) {
+							Set<UnitServerCuInstance> scu= new HashSet<UnitServerCuInstance>();
+							scu.add((UnitServerCuInstance) mv.getTableUnitServerCUType().getValue());
+							notifyEventoToControllerWithData(MDSUIEvents.EVENT_COPY_CU, sender, mv.getTableUnitServerCUType().getValue());
+						} 
+					}
+
+				});
+			}
+			
+			
 			notifyEventoToControllerWithData(EVENT_UNIT_SERVER_SELECTED, event.getSource(), event.getItemId());
+			
 		} else if (event.getSource().equals(mv.getTableUnitServerCUType())) {
+			mv.getButtonDelCU().setEnabled(true);
 			notifyEventoToControllerWithData(EVENT_UNIT_SERVER_CU_TYPE_SELECTED, event.getSource(), event.getItemId());
 		} else if (event.getSource().equals(mv.getTableDevice())) {
 			notifyEventoToControllerWithData(EVENT_DEVICE_SELECTED, event.getSource(), event.getItemId());

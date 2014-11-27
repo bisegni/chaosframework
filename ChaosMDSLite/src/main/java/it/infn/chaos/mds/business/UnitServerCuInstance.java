@@ -7,6 +7,7 @@ import it.infn.chaos.mds.RPCConstants;
 
 import java.util.Vector;
 
+import org.bson.BSONObject;
 import org.bson.BasicBSONObject;
 import org.bson.types.BasicBSONList;
 import org.ref.common.business.BusinessObject;
@@ -21,7 +22,7 @@ import com.mongodb.util.JSON;
  * 
  */
 @DBTable(name = "unit_server_cu_instance")
-public class UnitServerCuInstance extends BusinessObject {
+public class UnitServerCuInstance extends BSONBusinessObject {
 	private static final long			serialVersionUID		= -3540643481390952382L;
 	public static final String			UNIT_SERVER_ALIAS		= "unit_server_alias";
 	public static final String			CU_ID					= "cu_id";
@@ -30,6 +31,10 @@ public class UnitServerCuInstance extends BusinessObject {
 	public static final String			DRIVER_SPEC				= "driver_spec";
 	public static final String			AUTO_LOAD				= "auto_load";
 	public static final String			STATE					= "state";
+	public static final String			CU_INTERFACE			= "cu_interface";
+	public static final String			ATTR_SPEC				= "attr_spec";
+
+	
 	@DBColumn(name = UNIT_SERVER_ALIAS, maxDimension = 64)
 	private String						unitServerAlias			= null;
 	@DBColumn(name = CU_ID, maxDimension = 64)
@@ -49,12 +54,12 @@ public class UnitServerCuInstance extends BusinessObject {
 	@DBColumn(name = STATE, maxDimension = 64)
 	private String						state					= "----";
 
-	private Vector<DatasetAttribute>	attributeConfigutaion	= new Vector<DatasetAttribute>();
+	private Vector<DatasetAttribute>	attributeConfiguration	= new Vector<DatasetAttribute>();
 
 	private String classInterface=null;
 	
 	public Vector<DatasetAttribute> getAttributeConfigutaion() {
-		return attributeConfigutaion;
+		return attributeConfiguration;
 	}
 
 	public void setInterface(String str){
@@ -63,8 +68,8 @@ public class UnitServerCuInstance extends BusinessObject {
 	public String getInterface(){
 		return this.classInterface;
 	}
-	public void setAttributeConfigutaion(Vector<DatasetAttribute> attributeConfigutaion) {
-		this.attributeConfigutaion = attributeConfigutaion;
+	public void setAttributeConfigutaion(Vector<DatasetAttribute> attr) {
+		this.attributeConfiguration = attr;
 	}
 
 	public String getCuType() {
@@ -137,7 +142,15 @@ public class UnitServerCuInstance extends BusinessObject {
 	public boolean isCuIdModified() {
 		return this.oldCUId != null;
 	}
-
+	
+	public void cuIdModified(boolean b) {
+		if(b== false){
+			this.oldCUId = null;
+		} else {
+			this.oldCUId = this.cuId;
+		}
+		
+	}
 	public String getOldCUId() {
 		return oldCUId;
 	}
@@ -172,6 +185,7 @@ public class UnitServerCuInstance extends BusinessObject {
 			BasicBSONList blist = new BasicBSONList();
 			for (DriverSpec ds : getDriverSpec()) {
 				BasicBSONObject dspec = new BasicBSONObject();
+				
 				dspec.append("DriverDescriptionName", ds.getDriverName());
 				dspec.append("DriverDescriptionVersion", ds.getDriverVersion());
 				dspec.append("DriverDescriptionInitParam", ds.getDriverInit());
@@ -186,13 +200,20 @@ public class UnitServerCuInstance extends BusinessObject {
 		return bobj;
 	}
 
-	public Vector<DriverSpec> fillDriverVectorFromBSONDescription() {
-		getDriverSpec().clear();
-		if (getDrvSpec() == null)
-			return getDriverSpec();
-
-		BasicBSONObject bobj = (BasicBSONObject) JSON.parse(getDrvSpec());
+	public BasicBSONObject getAttributeDescriptionAsBson() {
+		BasicBSONObject bobj = new BasicBSONObject();
+		BasicBSONList blist = new BasicBSONList();
+		for (DatasetAttribute ds : getAttributeConfigutaion()) {		
+				blist.add(ds.toBson());
+		}
+		bobj.append("AttrDesc", blist);
+		 
+		return bobj;
+	}
+	
+	private  void fillDriverFromBSON(BasicBSONObject bobj){
 		if (bobj.containsField("DriverDescription")) {
+			
 			BasicBSONList blist = (BasicBSONList) bobj.get("DriverDescription");
 			for (Object object : blist) {
 				BasicBSONObject bo = (BasicBSONObject) object;
@@ -203,9 +224,18 @@ public class UnitServerCuInstance extends BusinessObject {
 				addDrvierSpec(newDriverSpec);
 			}
 		}
+	}
+	public Vector<DriverSpec> fillDriverVectorFromBSONDescription() {
+		getDriverSpec().clear();
+		if (getDrvSpec() == null)
+			return getDriverSpec();
+
+		BasicBSONObject bobj = (BasicBSONObject) JSON.parse(getDrvSpec());
+		fillDriverFromBSON(bobj);
 		return getDriverSpec();
 	}
 
+	
 	public void addDrvierSpec(DriverSpec driverSpec) {
 		this.driverSpec.addElement(driverSpec);
 	}
@@ -234,5 +264,43 @@ public class UnitServerCuInstance extends BusinessObject {
 		this.driverSpec.removeAllElements();
 		this.drvSpec = null;
 		
+	}
+
+	@Override
+	public void fillFromBson(Object bson) throws Throwable {
+		BasicBSONObject bobj =(BasicBSONObject)bson;
+		setUnitServerAlias(bobj.getString(UNIT_SERVER_ALIAS));
+		setCuId(bobj.getString(CU_ID));
+		setCuType(bobj.getString(CU_TYPE));
+		setCuParam(bobj.getString(CU_PARAM));
+		setAutoLoad(bobj.getBoolean(AUTO_LOAD));
+		
+		fillDriverFromBSON(bobj);
+		setDrvSpec(getDriverDescriptionAsBson().toString());
+
+		BasicBSONList blist = (BasicBSONList) bobj.get("AttrDesc");
+		attributeConfiguration = new Vector<DatasetAttribute>();
+		for(Object obj:blist){
+			DatasetAttribute ds =new DatasetAttribute();
+			ds.fillFromBson(obj);
+			attributeConfiguration.add(ds);
+		}
+		
+	}
+
+	@Override
+	public Object toBson() throws Throwable {
+		BasicBSONObject bobj = new BasicBSONObject();
+		
+		bobj.append(UNIT_SERVER_ALIAS,this.getUnitServerAlias());
+		bobj.append(CU_ID,this.getCuId());
+		bobj.append(CU_TYPE,this.getCuType());
+		bobj.append(CU_PARAM,this.getCuParam());
+		bobj.append(AUTO_LOAD,this.getAutoLoad());
+		//bobj.append(DRIVER_SPEC,this.getDriverDescriptionAsBson());
+		//bobj.append(ATTR_SPEC,getAttributeDescriptionAsBson());
+		bobj.putAll((BSONObject)getDriverDescriptionAsBson());
+		bobj.putAll((BSONObject)getAttributeDescriptionAsBson());
+		return bobj;
 	}
 }

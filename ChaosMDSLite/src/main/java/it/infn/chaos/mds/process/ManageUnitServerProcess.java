@@ -237,6 +237,11 @@ public class ManageUnitServerProcess extends RefProcess {
 		commit();
 	}
 
+	public Vector<String> getCuTypeForUnitServer(String unit) throws RefException{
+		UnitServerDA usDA = (UnitServerDA)  getDataAccessInstance(UnitServerDA.class);
+		return usDA.giveCuTypeForServer(unit);
+		
+	}
 	/**
 	 * 
 	 * @param eventData

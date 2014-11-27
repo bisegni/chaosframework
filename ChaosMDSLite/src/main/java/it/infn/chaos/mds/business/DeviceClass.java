@@ -30,7 +30,7 @@ public class DeviceClass extends BSONBusinessObject {
 	private String deviceClassInterface=null;
 
 	@DBColumn(name=DEVICE_CLASS_SOURCE)
-	private Integer deviceSource= null;
+	private String deviceSource= null;
 
 	public DeviceClass() {
 	}
@@ -67,11 +67,11 @@ public class DeviceClass extends BSONBusinessObject {
 		this.deviceClassInterface = deviceClassInterface;
 	}
 
-	public int getDeviceSource() {
+	public String getDeviceSource() {
 		return this.deviceSource;
 	}
 
-	public void setDeviceSource(Integer deviceSource) {
+	public void setDeviceSource(String deviceSource) {
 		this.deviceSource = deviceSource;
 	}
 
@@ -95,14 +95,21 @@ public class DeviceClass extends BSONBusinessObject {
 
 	@Override
 	public void fillFromBson(Object bson) throws Throwable {
-		// TODO Auto-generated method stub
-		
+		BasicBSONObject bobj = (BasicBSONObject) bson;
+		setDeviceClassAlias(bobj.getString(DeviceClass.DEVICE_CLASS_ALIAS));
+		setDeviceClass(bobj.getString(DeviceClass.DEVICE_CLASS_NAME));
+		setDeviceClassInterface(bobj.getString(DeviceClass.DEVICE_CLASS_INTERFACE));
+		setDeviceSource(bobj.getString(DeviceClass.DEVICE_CLASS_SOURCE));
 	}
 
 	@Override
 	public Object toBson() throws Throwable {
-		// TODO Auto-generated method stub
-		return null;
+		BasicBSONObject bobj = new BasicBSONObject();
+		bobj.append(DeviceClass.DEVICE_CLASS_ALIAS, this.getDeviceClassAlias());
+		bobj.append(DeviceClass.DEVICE_CLASS_NAME, this.getDeviceClass());
+		bobj.append(DeviceClass.DEVICE_CLASS_INTERFACE, this.getDeviceClassInterface());
+		bobj.append(DeviceClass.DEVICE_CLASS_SOURCE, this.getDeviceSource());
+		return bobj;
 	}
 	
 	@Override

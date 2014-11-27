@@ -272,6 +272,7 @@ public class CUQueryHandler extends RPCActionHadler {
 			closeDataAccess(dDA, true);
 			closeDataAccess(usDA, true);
 			ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 5);
+			// TODO
 			EventsToVaadin ev= EventsToVaadin.getInstance();
 			//ChaosEventsToVaadinController ev= new ChaosEventsToVaadinController();
 	//		d.setState(Device.STAT_REGISTERED);
