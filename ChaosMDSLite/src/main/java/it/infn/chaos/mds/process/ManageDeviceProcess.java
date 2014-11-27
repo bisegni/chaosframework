@@ -27,6 +27,19 @@ public class ManageDeviceProcess extends RefProcess {
 	public void getFullDevicDeskOrInsert() {
 
 	}
+	
+	public Device getDevice(String id) throws Throwable {
+		List<Device> ld =getAllDevices();
+		if(ld==null) 
+			return null;
+		for(Device dev:ld){
+			if(dev.getDeviceIdentification().equals(id)){
+				return dev;
+			}
+		}
+		return null;
+	}
+
 
 	/**
 	 * return all the registered device
@@ -35,7 +48,7 @@ public class ManageDeviceProcess extends RefProcess {
 	 * @throws Throwable
 	 */
 	@ProcessActionDescription
-	public List<Device> getAlDevices() throws Throwable {
+	public List<Device> getAllDevices() throws Throwable {
 		DeviceDA dDA = (DeviceDA) getDataAccessInstance(DeviceDA.class);
 		return dDA.getAllDevice();
 	}
@@ -83,6 +96,14 @@ public class ManageDeviceProcess extends RefProcess {
 		DeviceDA dDA = (DeviceDA) getDataAccessInstance(DeviceDA.class);
 		Device d = dDA.getDeviceFromDeviceIdentification(deviceIdentification);
 		setDeviceStartupInitizializationOption(d.getDeviceIdentification(), !d.getInitAtStartup());
+	}
+	
+	public Dataset getLastDatasetForDevice(String id) throws Throwable {
+		List<Dataset> list = getAllDatasetForDeviceIdentification(id);
+		if(list.size()>0){
+			return list.get(list.size()-1);
+		}
+		return null;
 	}
 	
 	/**

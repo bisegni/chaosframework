@@ -7,14 +7,18 @@ import it.infn.chaos.mds.business.DataServer;
 
 import java.util.List;
 import java.util.Observable;
+import java.util.Vector;
 
 import org.ref.common.mvc.ViewNotifyEvent;
 import org.ref.server.webapp.RefVaadinBasePanel;
 
+import com.vaadin.data.Item;
 import com.vaadin.data.util.BeanContainer;
 import com.vaadin.event.Action;
+import com.vaadin.ui.Upload;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Upload.SucceededEvent;
 
 /**
  * @author bisegni
@@ -28,6 +32,12 @@ public class LiveDataPreferenceView extends RefVaadinBasePanel implements com.va
 	public static final String					EVENT_PREFERENCE_DELETE_SERVER		= "event_preference_delete_server";
 	public static final String					EVENT_PREFERENCE_UPDATE_SERVER_LIST	= "event_preference_update_server_list";
 	public static final String					EVENT_PREFERENCE_UPDATE_SERVER_DATA	= "event_preference_update_server_data";
+	
+	public static final String					CONFIG_REPLACE_ALL					= "Replace All";
+	public static final String					CONFIG_KEEP_SERVER					= "Keep Server";
+	public static final String					CONFIG_KEEP_CONFIG					= "Keep Config";
+	public static final String					CONFIG_KEEP_BOTH					= "Keep Both (renaming conflits)";
+	public static final String					CONFIG_DIR							="/tmp/MDS/";
 	static final Action							ACTION_EDIT							= new Action("Edit");
 	static final Action							ACTION_SAVE							= new Action("Save");
 	static final Action[]						ACTIONS_TO_EDIT						= new Action[] { ACTION_EDIT };
@@ -103,6 +113,56 @@ public class LiveDataPreferenceView extends RefVaadinBasePanel implements com.va
 			}
 
 		});
+		liveDataView.getReplaceOption().setImmediate(true);
+		liveDataView.getReplaceOption().setNullSelectionAllowed(false);
+	/*	liveDataView.getReplaceOption().addItem(CONFIG_REPLACE_ALL);
+		liveDataView.getReplaceOption().addItem(CONFIG_KEEP_SERVER);
+		liveDataView.getReplaceOption().addItem(CONFIG_KEEP_CONFIG);
+		liveDataView.getReplaceOption().addItem(CONFIG_KEEP_BOTH);
+		*/
+		liveDataView.getReplaceOption().addItem(0);
+		liveDataView.getReplaceOption().addItem(1);
+		liveDataView.getReplaceOption().addItem(2);
+		liveDataView.getReplaceOption().addItem(3);
+		liveDataView.getReplaceOption().setItemCaption(0, CONFIG_REPLACE_ALL);
+		liveDataView.getReplaceOption().setItemCaption(1, CONFIG_KEEP_SERVER);
+		liveDataView.getReplaceOption().setItemCaption(2, CONFIG_KEEP_CONFIG);
+		liveDataView.getReplaceOption().setItemCaption(3, CONFIG_KEEP_BOTH);
+/*
+		liveDataView.getReplaceOption().addContainerProperty(CONFIG_REPLACE_ALL, Integer.class, 0);
+		liveDataView.getReplaceOption().addContainerProperty(CONFIG_KEEP_SERVER, Integer.class, 1);
+		liveDataView.getReplaceOption().addContainerProperty(CONFIG_KEEP_CONFIG, Integer.class, 2);
+		liveDataView.getReplaceOption().addContainerProperty(CONFIG_KEEP_BOTH,   Integer.class, 3);
+		*/
+		
+		
+		liveDataView.getReplaceOption().select(0);
+	/////////////////////////////////////
+	/////// DOWNLOAD
+	
+	liveDataView.getButtonDownload().addListener(new ClickListener(){
+	public void buttonClick(ClickEvent event) {	
+	notifyEventoToControllerWithData(MDSUIEvents.EVENT_DUMP_CONFIGURATION, event, null);
+	
+	}
+	});
+	//// UPLOAD
+	FileUploader fup=new FileUploader(CONFIG_DIR);
+	liveDataView.getUpload().setReceiver(fup);
+	
+	liveDataView.getUpload().addListener(new Upload.SucceededListener() {
+	
+	@Override
+	public void uploadSucceeded(SucceededEvent event) {
+		Vector<Object> param = new Vector<Object>();
+		param.add(CONFIG_DIR + event.getFilename());		
+		param.add(liveDataView.getReplaceOption().getValue());
+		notifyEventoToControllerWithData(MDSUIEvents.EVENT_APPLY_CONFIGURATION, event, param);				
+	}
+	});
+
+////
+
 	}
 
 	/*

@@ -4,6 +4,7 @@
 package it.infn.chaos.mds.da;
 
 import it.infn.chaos.mds.business.DatasetAttribute;
+import it.infn.chaos.mds.business.DeviceClass;
 import it.infn.chaos.mds.business.UnitServer;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
 import it.infn.chaos.mds.secutiry.RSAKey;
@@ -39,7 +40,7 @@ public class UnitServerDA extends DataAccess {
 	 * @return
 	 * @throws Throwable
 	 */
-	public Vector<UnitServer> getAlUnitServer() throws Throwable {
+	public Vector<UnitServer> getAllUnitServer() throws Throwable {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		Vector<UnitServer> result = new Vector<UnitServer>();
@@ -189,7 +190,7 @@ public class UnitServerDA extends DataAccess {
 		}
 	}
 
-
+	
 
 	public void updateUSCUAssociation(UnitServerCuInstance unitServerCuInstance) throws RefException {
 		PreparedStatement ps = null;
@@ -215,8 +216,75 @@ public class UnitServerDA extends DataAccess {
 		}
 		
 	}
+	///////////////////// DEVICE CLASSES /////////////
+	/**
+	 * 
+	 * @param usci
+	 * @throws RefException
+	 */
+	public void insertNewDeviceClass(DeviceClass usci) throws RefException {
+		PreparedStatement ps = null;
+		
+		InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder(usci.getClassId()!=null?InsertUpdateBuilder.MODE_UPDATE:InsertUpdateBuilder.MODE_INSERT);
+		iuBuilder.addTable(DeviceClass.class);
+		try {
+			iuBuilder.fillWithBusinessClass(usci);
+			ps = getPreparedStatementForSQLCommand(iuBuilder.toString());
+			iuBuilder.fillPreparedStatement(ps);
+			executeInsertUpdateAndClose(ps);
+		} catch (IllegalArgumentException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::insertNewDeviceClass");
+		} catch (IllegalAccessException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 1, "UnitServerDA::insertNewDeviceClass");
+		} catch (SQLException e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 2, "UnitServerDA::insertNewDeviceClass");
+		} finally {
+			closePreparedStatement(ps);
+		}
+	}
 	
+	public void removeDeviceClass(String alias) throws RefException, SQLException {
+		// delete the unit server
+			DeleteSqlBuilder d = new DeleteSqlBuilder();
+			d.addTable(DeviceClass.class);
+			if(alias!=null){
+				d.addCondition(true, String.format("%s=?", DeviceClass.DEVICE_CLASS_NAME));
+			}
+			
+				PreparedStatement ps = getPreparedStatementForSQLCommand(d.toString());
+			if(alias!=null){
+				ps.setString(1, alias);
+			}
+			executeInsertUpdateAndClose(ps);
+	}
 	
+	public Vector<DeviceClass> returnAllClassesBy(String dev_interface,String dev_class) throws RefException {
+		SqlBuilder s = new SqlBuilder();
+		Vector<DeviceClass> result = new Vector<DeviceClass>();
+		s.addTable(DeviceClass.class);
+		s.addPseudoColumntoSelect("*");
+		if(dev_interface!=null){
+		
+			s.addCondition(true,String.format("%s='%s'", DeviceClass.DEVICE_CLASS_INTERFACE,dev_interface));
+		}
+		
+		if(dev_class!=null){
+
+			s.addCondition(true,String.format("%s='%s'", DeviceClass.DEVICE_CLASS_NAME,dev_class));
+		}
+		PreparedStatement ps = null;
+		try {
+			ps = getPreparedStatementForSQLCommand(s.toString());
+			
+			
+			result = (Vector<DeviceClass>) executeQueryPreparedStatementAndClose(ps, DeviceClass.class, null, null, false);
+			
+		} catch (Throwable e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::returnAllClassesByInterface");
+		}
+		return result;
+	}
+/////////////////////////////////////////	
 	/**
 	 * Insert new unit server
 	 * 
@@ -342,9 +410,13 @@ public class UnitServerDA extends DataAccess {
 		// delete the unit server
 		DeleteSqlBuilder d = new DeleteSqlBuilder();
 		d.addTable(UnitServer.class);
-		d.addCondition(true, String.format("%s=?", UnitServer.UNIT_SERVER_ALIAS));
+		if(unitServerToDelete!=null){
+			d.addCondition(true, String.format("%s=?", UnitServer.UNIT_SERVER_ALIAS));
+		}
 		PreparedStatement ps = getPreparedStatementForSQLCommand(d.toString());
-		ps.setString(1, unitServerToDelete);
+		if(unitServerToDelete!=null){
+			ps.setString(1, unitServerToDelete);
+		}
 		executeInsertUpdateAndClose(ps);
 	}
 
@@ -398,7 +470,27 @@ public class UnitServerDA extends DataAccess {
 			closePreparedStatement(ps);
 		}
 	}
+	public Vector<String> giveCuTypeForServer(String unitServerAlias) throws RefException{
+		Vector<String> result=new Vector<String>();
+		ResultSet rs = null;
+		SqlBuilder s = new SqlBuilder();
+		s.addPseudoColumntoSelect("*");
+		s.addTable("unit_server_published_cu");
+		s.addCondition(true, String.format("%s=?", "unit_server_alias"));
+		PreparedStatement ps = null;
+		try {
+			ps = getPreparedStatementForSQLCommand(s.toString());
 
+			ps.setString(1, unitServerAlias);
+			rs = ps.executeQuery();
+			while(rs.next()){
+				result.add(rs.getString("control_unit_alias"));
+			}
+		} catch (Throwable e) {
+			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::returnAllUnitServerCUAssociationbyUSAlias");
+		}
+		return result;
+	}
 	public void deletePublishedCU(UnitServer unitServer) throws RefException {
 		deletePublishedCU(unitServer.getAlias());
 	}
@@ -406,11 +498,16 @@ public class UnitServerDA extends DataAccess {
 	public void deletePublishedCU(String unitServerIdentifier) throws RefException {
 		PreparedStatement ps = null;
 		DeleteSqlBuilder d = new DeleteSqlBuilder();
+	
 		d.addTable("unit_server_published_cu");
-		d.addCondition(true, "unit_server_alias = ?");
+		if(unitServerIdentifier!=null){
+			d.addCondition(true, "unit_server_alias = ?");
+		}
 		try {
 			ps = getPreparedStatementForSQLCommand(d.toString());
-			ps.setString(1, unitServerIdentifier);
+			if(unitServerIdentifier!=null){
+				ps.setString(1, unitServerIdentifier);
+			}
 			executeInsertUpdateAndClose(ps);
 		} catch (SQLException e) {
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::deletePublishedCU");
@@ -423,12 +520,16 @@ public class UnitServerDA extends DataAccess {
 		PreparedStatement ps = null;
 		DeleteSqlBuilder d = new DeleteSqlBuilder();
 		d.addTable("unit_server_published_cu");
-		d.addCondition(true, "unit_server_alias = ?");
-		d.addCondition(true, "control_unit_alias = ?");
+		if(unitServerIdentifier!=null){
+			d.addCondition(true, "unit_server_alias = " + "'"+unitServerIdentifier+"'");
+		}
+		if(cuTypeName!=null){
+			d.addCondition(true, "control_unit_alias = " + "'"+cuTypeName+"'");
+		}
+		
 		try {
 			ps = getPreparedStatementForSQLCommand(d.toString());
-			ps.setString(1, unitServerIdentifier);
-			ps.setString(2, cuTypeName);
+			
 			executeInsertUpdateAndClose(ps);
 		} catch (SQLException e) {
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::deletePublishedCU");
@@ -610,9 +711,12 @@ public class UnitServerDA extends DataAccess {
 		try {
 			DeleteSqlBuilder d = new DeleteSqlBuilder();
 			d.addTable("attribute_config");
-			d.addCondition(true, String.format("%s=?", "unique_id"));
+			if(associationInstance !=null){
+				d.addCondition(true, String.format("%s=?", "unique_id"));
+			}
 			ps = getPreparedStatementForSQLCommand(d.toString());
-			ps.setString(1, associationInstance.getCuId());
+			if(associationInstance !=null)
+				ps.setString(1, associationInstance.getCuId());
 			executeInsertUpdateAndClose(ps);
 		} catch (IllegalArgumentException e) {
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::setState");

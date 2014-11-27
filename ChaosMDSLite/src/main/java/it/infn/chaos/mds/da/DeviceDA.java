@@ -112,7 +112,7 @@ public class DeviceDA extends DataAccess {
 	 * @throws Throwable
 	 */
 	public Date getLastHeatbeat(String deviceIdentifiation) throws Throwable {
-		return getLastHeatbeat(getDeviceIdFormInstance(deviceIdentifiation));
+		return getLastHeartbeat(getDeviceIdFormInstance(deviceIdentifiation));
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class DeviceDA extends DataAccess {
 	 * @return
 	 * @throws Exception
 	 */
-	public Date getLastHeatbeat(Integer deviceID) throws Exception {
+	public Date getLastHeartbeat(Integer deviceID) throws Exception {
 		ResultSet rs = null;
 		PreparedStatement ps = null;
 		Date tsResult = null;
@@ -180,6 +180,8 @@ public class DeviceDA extends DataAccess {
 	 * @throws SQLException
 	 */
 	public void deleteDeviceByDeviceID(Integer idDevice) throws SQLException {
+		if(idDevice==null) return;
+		
 		deleteDatasetsForDeviceID(idDevice);
 		DeleteSqlBuilder dSqlBuilder = new DeleteSqlBuilder();
 		dSqlBuilder.addTable(Device.class);

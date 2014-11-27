@@ -5,10 +5,11 @@ package it.infn.chaos.mds.rpcaction;
 
 import it.infn.chaos.mds.RPCConstants;
 import it.infn.chaos.mds.SingletonServices;
-import it.infn.chaos.mds.batchexecution.LoadUnloadWorkUnit;
-import it.infn.chaos.mds.batchexecution.LoadUnloadWorkUnit.LoadUnloadWorkUnitSetting;
+import it.infn.chaos.mds.batchexecution.SystemCommandWorkUnit;
 import it.infn.chaos.mds.batchexecution.UnitServerACK;
 import it.infn.chaos.mds.batchexecution.WorkUnitACK;
+import it.infn.chaos.mds.batchexecution.SystemCommandWorkUnit.LoadUnloadWorkUnitSetting;
+
 import it.infn.chaos.mds.business.Device;
 import it.infn.chaos.mds.business.UnitServer;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
@@ -152,7 +153,7 @@ public class CUQueryHandler extends RPCActionHadler {
 				SingletonServices.getInstance().getSlowExecution().submitJob(UnitServerACK.class.getName(), actionData);
 				// check if we have association in auto-load
 				if (setting.unit_server_container != null && setting.associations != null && setting.associations.size() > 0) {
-					SingletonServices.getInstance().getSlowExecution().submitJob(LoadUnloadWorkUnit.class.getName(), setting, 2);
+					SingletonServices.getInstance().getSlowExecution().submitJob(SystemCommandWorkUnit.class.getName(), setting, 2);
 				}
 			} catch (InstantiationException e) {
 				e.printStackTrace();
@@ -227,6 +228,7 @@ public class CUQueryHandler extends RPCActionHadler {
 			d.setCuInstance(controlUnitInstance);
 			d.setNetAddress(controlUnitNetAddress);
 			d.fillFromBson(actionData);
+			
 			// add device id into ack pack
 			ackPack.append(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS, actionData.getString(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS));
 			ackPack.append(RPCConstants.DATASET_DEVICE_ID, actionData.getString(RPCConstants.DATASET_DEVICE_ID));
@@ -270,8 +272,10 @@ public class CUQueryHandler extends RPCActionHadler {
 			closeDataAccess(dDA, true);
 			closeDataAccess(usDA, true);
 			ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 5);
+			// TODO
 			EventsToVaadin ev= EventsToVaadin.getInstance();
 			//ChaosEventsToVaadinController ev= new ChaosEventsToVaadinController();
+	//		d.setState(Device.STAT_REGISTERED);
 			ev.deviceRegistrationEvent();
 		} catch (RefException e) {
 			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);

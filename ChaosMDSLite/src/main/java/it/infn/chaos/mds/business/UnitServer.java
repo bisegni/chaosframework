@@ -5,6 +5,8 @@ package it.infn.chaos.mds.business;
 
 import java.util.Vector;
 
+import org.bson.BasicBSONObject;
+import org.bson.types.BasicBSONList;
 import org.ref.common.business.BusinessObject;
 import org.ref.common.business.DBColumn;
 import org.ref.common.business.DBTable;
@@ -15,7 +17,7 @@ import org.ref.common.type.Timestamp;
  * 
  */
 @DBTable(name = "unit_server")
-public class UnitServer extends BusinessObject {
+public class UnitServer extends BSONBusinessObject {
 	public boolean isAliasChanged() {
 		return isAliasChanged;
 	}
@@ -45,8 +47,12 @@ public class UnitServer extends BusinessObject {
 	@DBColumn(name = PRIVATE_KEY, maxDimension = 1024)
 	private String			private_key		= null;
 
+	@DBColumn(name = "reg_state")
+	private Integer			reg_state		= null;
+	
 	private Vector<String>	publischedCU	= new Vector<String>();
 	private boolean			isAliasChanged	= false;
+	private Vector<UnitServerCuInstance>	cuInstances	= new Vector<UnitServerCuInstance>();
 
 	/*
 	 * (non-Javadoc)
@@ -137,5 +143,52 @@ public class UnitServer extends BusinessObject {
 
 	public void setPrivate_key(String private_key) {
 		this.private_key = private_key;
+	}
+	
+	public Integer getState() {
+		return this.reg_state;
+	}
+
+	public void setState(Integer stat) {
+		this.reg_state = stat;
+	}
+
+	public void setCuInstances(Vector<UnitServerCuInstance> cuiv){
+		this.cuInstances = cuiv;
+	}
+	public Vector<UnitServerCuInstance>  getCuInstances(){
+		return this.cuInstances;
+	}
+	
+	@Override
+	public void fillFromBson(Object bson) throws Throwable {
+		BasicBSONObject bobj =(BasicBSONObject) bson;
+		this.setAlias(bobj.getString(UNIT_SERVER_ALIAS));
+		this.setPrivate_key(bobj.getString(PRIVATE_KEY));
+		this.setPrivate_key(bobj.getString(PUBLIC_KEY));
+		BasicBSONList blist = (BasicBSONList)bobj.get("cu_desc");
+		cuInstances = new Vector<UnitServerCuInstance>();
+		for (Object object : blist) {
+			UnitServerCuInstance cu = new UnitServerCuInstance();
+			BasicBSONObject bo = (BasicBSONObject) object;
+			cu.fillFromBson(bo);
+			cuInstances.add(cu);
+		}
+		
+	}
+
+	@Override
+	public Object toBson() throws Throwable {
+		BasicBSONObject bobj = new BasicBSONObject();
+		bobj.append(UNIT_SERVER_ALIAS, this.getAlias());
+		bobj.append(PRIVATE_KEY, this.getPrivate_key());
+		bobj.append(PUBLIC_KEY, this.getPublic_key());
+		BasicBSONList blist = new BasicBSONList();
+		for (UnitServerCuInstance ds : cuInstances) {
+				blist.add(ds.toBson());
+		}
+		
+		bobj.append("cu_desc", blist);
+		return bobj;
 	}
 }

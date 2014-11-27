@@ -20,7 +20,7 @@ abstract public class SlowExecutionJob extends RPCActionHadler implements Runnab
 	private String								jobDomain			= UUID.randomUUID().toString().substring(0, 10);
 	private final Semaphore						available			= new Semaphore(0);
 	private Hashtable<Integer, BasicBSONObject>	resultHashTable		= new Hashtable<Integer, BasicBSONObject>();
-
+	private String errorExecuting 									= null;
 	public SlowExecutionJob() {
 		clientInstance = SingletonServices.getInstance().getMdsRpcClient();
 
@@ -34,9 +34,11 @@ abstract public class SlowExecutionJob extends RPCActionHadler implements Runnab
 
 	@Override
 	public void run() {
+		errorExecuting = new String();
 		try {
 			executeJob();
 		} catch (Throwable e1) {
+			errorExecuting = e1.toString();
 			e1.printStackTrace();
 		}
 		try {
@@ -47,6 +49,9 @@ abstract public class SlowExecutionJob extends RPCActionHadler implements Runnab
 		//System.out.println(this.getClass().getName() + " is closing");
 	}
 
+	public String getErrors(){
+		return errorExecuting;
+	}
 	private void consumeAnswer(BasicBSONObject actionData) {
 		if (actionData.containsKey((Object) RPCConstants.CS_CMDM_MESSAGE_ID)) {
 			synchronized (resultHashTable) {

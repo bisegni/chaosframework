@@ -85,9 +85,12 @@ public class DataServerDA extends DataAccess {
 	public void deleteDataserver(Integer idServer) throws SQLException {
 		DeleteSqlBuilder dsql = new DeleteSqlBuilder();
 		dsql.addTable(DataServer.class);
-		dsql.addCondition(true, "id_server = ?");
+		if(idServer != null){
+			dsql.addCondition(true, "id_server = ?");
+		}
 		PreparedStatement ps = getPreparedStatementForSQLCommand(dsql.toString());
-		ps.setInt(1, idServer);
+		if(idServer != null)
+			ps.setInt(1, idServer);
 		executeInsertUpdateAndClose(ps);
 	}
 }
