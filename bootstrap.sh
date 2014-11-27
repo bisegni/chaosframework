@@ -12,6 +12,33 @@ OS=$(uname -s)
 ARCH=$(uname -m)
 KERNEL_VER=$(uname -r)
 KERNEL_SHORT_VER=$(uname -r|cut -d\- -f1|tr -d '.'| tr -d '[A-Z][a-z]')
+HOST=$(hostname)
+CORES=$(getconf _NPROCESSORS_ONLN)
+
+if [ "$ARCH" = "armv7l" ]; then
+    NPROC=1
+    echo "ARM architecture detected, using $NPROC processors"
+else
+    if (command -v free >/dev/null 2>&1); then
+	MEM=$(( $(free -m | grep 'Mem' | awk '{print int(($2/1024)+0.5)}') ))
+    else
+	if (command -v sysctl >/dev/null 2>&1); then
+	    MEM=$(sysctl -a | grep 'hw.memsize '| awk '{print $3/(1024*1024*1024)}')
+	else
+	    MEM=1
+	fi;
+    fi;
+
+    echo "Your system \"$HOST\" has $CORES cpu cores and $MEM gigabytes of physical memory"
+
+    if [ $MEM -ge $CORES ]; then
+	NPROC=$CORES
+    else
+	NPROC=$MEM
+    fi;
+
+fi;
+echo "Selected compilation concurrent level is: $NPROC"
 
 if [ -n "$CHAOS_BOOST_VERSION" ]; then
 	BOOST_VERSION="1_"$CHAOS_BOOST_VERSION"_0"
@@ -393,13 +420,6 @@ else
         cmake $COMP_TYPE -DCMAKE_INSTALL_PREFIX:PATH=$PREFIX -DCMAKE_CXX_COMPILER=$CXX  -DCMAKE_C_COMPILER=$CC -DBUILD_PREFIX=$PREFIX $SCRIPTPATH/.
     fi
 
-fi
-
-NPROC=4
-
-if [ "$ARCH" = "armv7l" ]; then
-    NPROC=1
-    echo "ARM architecture using $NPROC processors"
 fi
 
 if [ -n "$CHAOS_DEVELOPMENT" ]; then
