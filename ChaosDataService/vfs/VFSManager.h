@@ -39,6 +39,10 @@ namespace chaos {
 		
 		namespace vfs {
 			
+			
+#define VFSManager_MAX_BLOCK_SIZE		1024*1024*5		// 5 megabyte
+#define VFSManager_MAX_BLOCK_LIFETIME	1000*60*2		// 5 minutes
+			
 			//! VFS file manager setting
 			typedef struct VFSManagerSetting {
 				//! identify the max size for a logical file block
@@ -48,7 +52,7 @@ namespace chaos {
 				uint32_t		max_block_lifetime;
 				
 				//! current storage driver implementaiton to use
-				std::string storage_driver_impl;
+				std::string		storage_driver_impl;
 				
 				//! the instance of the storage driver for this manager
 				storage_system::StorageDriverSetting storage_driver_setting;

@@ -93,6 +93,17 @@ int main(int argc, char * argv[]) {
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_STORAGE_DRIVER_KVP,
 																									"The key value parameter for storage implementation driver (ex k:v-k1:v1)");
 		
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< uint32_t >(OPT_VFS_STORAGE_MAX_BLOCK_LIFETIME,
+																								 "Is the lifetime that every bloc is valid to accept data",
+																								 VFSManager_MAX_BLOCK_LIFETIME,
+																								 &ChaosDataService::getInstance()->settings.file_manager_setting.max_block_lifetime);
+		
+		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< uint32_t >(OPT_VFS_STORAGE_MAX_BLOCK_SIZE,
+																								 "Is the max size that a block can reach",
+																								 VFSManager_MAX_BLOCK_LIFETIME,
+																								 &ChaosDataService::getInstance()->settings.file_manager_setting.max_block_size);
+		
+		//db
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_DB_DRIVER_IMPL,
 																									"The name of the index driver implementation [MongoDB]",
 																									"Mongo",
