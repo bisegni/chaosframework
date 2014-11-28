@@ -40,7 +40,7 @@ namespace chaos {
 				std::string did;
 				
 				//! datapack type as @chaos::DataPackCommonKey::DPCK_DATASET_TYPE
-				uint32_t	pack_type;
+				uint32_t	ds_type;
 				
 				//! the timestamp that identifying the time qhen the data pack has been collected
 				uint64_t	acquisition_ts;

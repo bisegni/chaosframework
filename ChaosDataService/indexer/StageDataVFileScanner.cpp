@@ -108,7 +108,7 @@ int StageDataVFileScanner::processDataPack(const bson::BSONObj& data_pack,
 	
 	//get values for key that are mandatory for default index
 	new_data_pack_index.did = data_pack.getField(chaos::DataPackCommonKey::DPCK_DEVICE_ID).String();
-	new_data_pack_index.pack_type = data_pack.getField(chaos::DataPackCommonKey::DPCK_DATASET_TYPE).numberInt();
+	new_data_pack_index.ds_type = data_pack.getField(chaos::DataPackCommonKey::DPCK_DATASET_TYPE).numberInt();
 	new_data_pack_index.acquisition_ts = data_pack.getField(chaos::DataPackCommonKey::DPCK_TIMESTAMP).numberLong();
 	new_data_pack_index.datapack_size = data_pack.objsize();
 	
