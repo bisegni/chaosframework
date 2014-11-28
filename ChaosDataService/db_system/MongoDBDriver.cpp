@@ -851,14 +851,16 @@ int MongoDBDriver::idxSearchResultCountDataPack(const DataPackIndexQuery& data_p
 	mongo::BSONObjBuilder	return_field;
 	try{
 		//add default index information
-		index_search_builder << MONGO_DB_FIELD_IDX_DATA_PACK_DID << data_pack_index_query.did;
-		index_search_builder << MONGO_DB_FIELD_IDX_DATA_PACK_STATE << (int32_t)DataPackIndexQueryStateQuerable; //select only querable indexes
-		index_search_builder << MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS_NUMERIC << BSON("$gte" << (long long)data_pack_index_query.start_ts <<
-																					"$lte" << (long long)data_pack_index_query.end_ts);
+		index_search_builder << MONGO_DB_FIELD_IDX_DATA_PACK_DID << data_pack_index_query.did
+								<< MONGO_DB_FIELD_IDX_DATA_PACK_TYPE << data_pack_index_query.ds_type
+								<< MONGO_DB_FIELD_IDX_DATA_PACK_STATE << (int32_t)DataPackIndexQueryStateQuerable //select only querable indexes
+								<< MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS_NUMERIC << BSON("$gte" << (long long)data_pack_index_query.start_ts <<
+																					   "$lte" << (long long)data_pack_index_query.end_ts);
 		
-		mongo::BSONObj q = index_search_builder.obj();
+		mongo::Query q = index_search_builder.obj();
+		q.sort(BSON(MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS_NUMERIC<<1));
 		DEBUG_CODE(MDBID_LDBG_ << "idxSearchResultCountDataPack insert ---------------------------------------------";)
-		DEBUG_CODE(MDBID_LDBG_ << "query: " << q.jsonString());
+		DEBUG_CODE(MDBID_LDBG_ << "query: " << q.obj.jsonString());
 		DEBUG_CODE(MDBID_LDBG_ << "idxSearchResultCountDataPack insert ---------------------------------------------";)
 		
 		mongo::BSONObj r = return_field.obj();
@@ -881,9 +883,10 @@ int MongoDBDriver::idxSearchDataPack(const DataPackIndexQuery& data_pack_index_q
 	mongo::BSONObjBuilder	return_field;
 	try{
 		//add default index information
-		index_search_builder << MONGO_DB_FIELD_IDX_DATA_PACK_DID << data_pack_index_query.did;
-		index_search_builder << MONGO_DB_FIELD_IDX_DATA_PACK_STATE << (int32_t)DataPackIndexQueryStateQuerable; //select only querable indexes
-		index_search_builder << MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS_NUMERIC << BSON("$gte" << (long long)data_pack_index_query.start_ts);
+		index_search_builder << MONGO_DB_FIELD_IDX_DATA_PACK_DID << data_pack_index_query.did
+								<< MONGO_DB_FIELD_IDX_DATA_PACK_TYPE << data_pack_index_query.ds_type
+								<< MONGO_DB_FIELD_IDX_DATA_PACK_STATE << (int32_t)DataPackIndexQueryStateQuerable //select only querable indexes
+								<< MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS_NUMERIC << BSON("$gte" << (long long)data_pack_index_query.start_ts);
 		
 		//set the field to return
 		return_field << MONGO_DB_FIELD_IDX_DATA_PACK_DATA_BLOCK_DST_DOMAIN << 1
@@ -916,8 +919,9 @@ int MongoDBDriver::idxMaxAndMInimumTimeStampForDataPack(const DataPackIndexQuery
 	try{
 		return_field << MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS_NUMERIC << 1;
 		
-		index_search_builder << MONGO_DB_FIELD_IDX_DATA_PACK_DID << data_pack_index_query.did;
-		index_search_builder << MONGO_DB_FIELD_IDX_DATA_PACK_STATE << (int32_t)DataPackIndexQueryStateQuerable; //select only querable indexes
+		index_search_builder << MONGO_DB_FIELD_IDX_DATA_PACK_DID << data_pack_index_query.did
+								<< MONGO_DB_FIELD_IDX_DATA_PACK_TYPE << data_pack_index_query.ds_type
+								<< MONGO_DB_FIELD_IDX_DATA_PACK_STATE << (int32_t)DataPackIndexQueryStateQuerable; //select only querable indexes
 		
 		mongo::BSONObj p = return_field.obj();
 		mongo::BSONObj q = index_search_builder.obj();

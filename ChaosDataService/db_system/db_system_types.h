@@ -75,6 +75,9 @@ namespace chaos {
 				//! device identification
 				std::string did;
 				
+				//! a value of type chaos::DataPackCommonKey::DPCK_DATASET_TYPE that represent the desered dataset domain
+				uint32_t	ds_type;
+				
 				//! start timestamp
 				uint64_t	start_ts;
 				
@@ -89,9 +92,12 @@ namespace chaos {
 				//! copy constructor
 				DataPackIndexQuery(const std::string & _did,
 								   uint64_t _start_ts,
-								   uint64_t _end_ts):
-				did(_did), start_ts(_start_ts), end_ts(_end_ts)
-				{};
+								   uint64_t _end_ts,
+								   int _ds_type):
+				did(_did),
+				start_ts(_start_ts),
+				end_ts(_end_ts),
+				ds_type(_ds_type){};
 			};
 			
 			//! db server list type

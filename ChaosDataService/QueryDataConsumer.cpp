@@ -238,7 +238,10 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
 	std::string query_id(header->field.query_id, 8);
 	//execute the query
 	query_engine->executeQuery(new query_engine::DataCloudQuery(query_id,
-																db_system::DataPackIndexQuery(search_key, search_start_ts, search_end_ts),
+																db_system::DataPackIndexQuery(search_key,
+																							  search_start_ts,
+																							  search_end_ts,
+																							  chaos::DataPackCommonKey::DPCK_DATASET_TYPE_OUTPUT),
 																answer_server_description));
 	//delete header and
 	if(header) free(header);
