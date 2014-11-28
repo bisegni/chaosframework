@@ -40,8 +40,8 @@ namespace chaos {
 		namespace vfs {
 			
 			
-#define VFSManager_MAX_BLOCK_SIZE		1024*1024*5		// 5 megabyte
-#define VFSManager_MAX_BLOCK_LIFETIME	1000*60*2		// 5 minutes
+#define VFSManager_MAX_BLOCK_SIZE		1024*1024*10		// 10 megabyte
+#define VFSManager_MAX_BLOCK_LIFETIME	1000*60*5			// 5 minutes
 			
 			//! VFS file manager setting
 			typedef struct VFSManagerSetting {

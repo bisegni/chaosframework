@@ -100,7 +100,7 @@ int main(int argc, char * argv[]) {
 		
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< uint32_t >(OPT_VFS_STORAGE_MAX_BLOCK_SIZE,
 																								 "Is the max size that a block can reach",
-																								 VFSManager_MAX_BLOCK_LIFETIME,
+																								 VFSManager_MAX_BLOCK_SIZE,
 																								 &ChaosDataService::getInstance()->settings.file_manager_setting.max_block_size);
 		
 		//db

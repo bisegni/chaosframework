@@ -50,7 +50,10 @@ int VFSDataWriteableFile::releaseDataBlock(DataBlock *data_block_ptr,
 	std::string db_vfs_domain = data_block_ptr->vfs_domain;
 	std::string db_vfs_path = data_block_ptr->vfs_path;
 	if((err = VFSDataFile::releaseDataBlock(data_block_ptr, closed_state))){
-	} else if((err = db_driver_ptr->idxSetDataPackIndexStateByDataBlock(db_vfs_domain,
+		VFSWF_LERR_ << "Error closing processed datafile state on all datablock possible index " << err;
+	}
+	
+	if((err = db_driver_ptr->idxSetDataPackIndexStateByDataBlock(db_vfs_domain,
 																 db_vfs_path,
 																 db_system::DataPackIndexQueryStateQuerable))) {
 		VFSWF_LERR_ << "Error setting querable state on all datablock possible index " << err;
