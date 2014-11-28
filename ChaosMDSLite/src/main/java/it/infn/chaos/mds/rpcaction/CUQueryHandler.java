@@ -10,6 +10,7 @@ import it.infn.chaos.mds.batchexecution.UnitServerACK;
 import it.infn.chaos.mds.batchexecution.WorkUnitACK;
 import it.infn.chaos.mds.batchexecution.SystemCommandWorkUnit.LoadUnloadWorkUnitSetting;
 import it.infn.chaos.mds.business.Device;
+import it.infn.chaos.mds.business.DeviceClass;
 import it.infn.chaos.mds.business.UnitServer;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
 import it.infn.chaos.mds.da.DeviceDA;
@@ -123,6 +124,18 @@ public class CUQueryHandler extends RPCActionHadler {
 				usDA.updateUnitServerTSAndIP(us);
 			} else {
 				usDA.insertNewUnitServer(us);
+			}
+			for (String cuClass : us.getPublischedCU()) {
+				DeviceClass dc = new DeviceClass();
+				dc.setDeviceClass(cuClass);
+				dc.setDeviceClassAlias(cuClass);
+				dc.setDeviceSource("pre-existent");
+				try {
+					usDA.insertNewDeviceClass(dc);
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+				
 			}
 			// now start all association in auto-load for that server, if are present
 			instanceForUnitServer = usDA.loadAllAssociationForUnitServerAliasInAutoload(us.getAlias());
