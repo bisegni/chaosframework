@@ -47,16 +47,16 @@ bool VFSStageWriteableFile::isDataBlockValid(DataBlock *new_data_block_ptr) {
 	if((check_validity_counter % 16)) return true;
 	
 	//check standard check
-	return VFSFile::isDataBlockValid(new_data_block_ptr);
+	return VFSStageFile::isDataBlockValid(new_data_block_ptr);
 }
 
 // write data on the current data block
 int VFSStageWriteableFile::write(void *data, uint32_t data_len) {
 	int err = 0;
 	if(!isDataBlockValid(current_data_block)) {
-		if((err = VFSFile::releaseDataBlock(current_data_block))) {
+		if((err = releaseDataBlock(current_data_block))) {
 			VFSWF_LERR_ << "Error releaseing datablock " << err;
-		} else if((err = VFSFile::getNewDataBlock(&current_data_block))) {
+		} else if((err = getNewDataBlock(&current_data_block))) {
 			VFSWF_LERR_ << "Error creating datablock " << err;
 		}
 	}

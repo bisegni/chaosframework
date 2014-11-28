@@ -134,7 +134,7 @@ int VFSStageReadableFile::read(void *data, uint32_t data_len) {
 		if( (err = checkForBlockChange(overlaped_block_read))) return err;
 		if(!current_data_block) return read_data;
 		//try to load the
-		read_data = VFSFile::read((void*)((char*)data+read_data), data_len - read_data);
+		read_data = VFSStageFile::read((void*)((char*)data+read_data), data_len - read_data);
 	}
 	return read_data;
 }
