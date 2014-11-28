@@ -33,9 +33,6 @@ using namespace chaos::data_service::vfs;
 #define VFSFM_LDBG_ LDBG_ << VFSManager_LOG_HEAD << __FUNCTION__ << " - "
 #define VFSFM_LERR_ LERR_ << VFSManager_LOG_HEAD << __FUNCTION__ << " - "
 
-#define VFSManager_MAX_BLOCK_SIZE		1024*1024*5		// 5 megabyte
-#define VFSManager_MAX_BLOCK_LIFETIME	1000*60*2		// 5 minutes
-
 #define HB_REPEAT_TIME 2000
 
 /*---------------------------------------------------------------------------------

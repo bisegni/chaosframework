@@ -55,7 +55,8 @@ namespace chaos {
 #define MONGO_DB_FIELD_DATA_BLOCK_HB						"hb"
 			
 			//db_idx field-------------------------------------------------
-#define MONGO_DB_FIELD_IDX_DATA_PACK_DID						"did"
+#define MONGO_DB_FIELD_IDX_DATA_PACK_DID					"did"
+#define MONGO_DB_FIELD_IDX_DATA_PACK_TYPE					"type"
 #define MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS					"acq_ts"
 #define MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS_NUMERIC			"acq_ts_numeric"
 //#define MONGO_DB_IDX_DATA_PACK_DATA_BLOCK_DST_ID		"db_id"

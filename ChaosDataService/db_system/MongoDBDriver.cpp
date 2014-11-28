@@ -753,6 +753,7 @@ int MongoDBDriver::idxAddDataPackIndex(const DataPackIndex& index) {
 	try{
 		//add default index information
 		index_builder << MONGO_DB_FIELD_IDX_DATA_PACK_DID << index.did;
+		index_builder << MONGO_DB_FIELD_IDX_DATA_PACK_TYPE << index.pack_type;
 		index_builder << MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS << mongo::Date_t(index.acquisition_ts);
 		index_builder << MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS_NUMERIC << (long long)index.acquisition_ts;
 		index_builder << MONGO_DB_FIELD_IDX_DATA_PACK_DATA_BLOCK_DST_DOMAIN << getDataBlockFromFileLocation(index.dst_location)->vfs_domain;
@@ -808,14 +809,17 @@ int MongoDBDriver::idxSetDataPackIndexStateByDataBlock(const std::string& vfs_da
 		//add default index information
 		index_search_builder << MONGO_DB_FIELD_IDX_DATA_PACK_DATA_BLOCK_DST_DOMAIN << vfs_datablock_domain;
 		index_search_builder << MONGO_DB_FIELD_IDX_DATA_PACK_DATA_BLOCK_DST_PATH << vfs_datablock_path;
-		mongo::BSONObj q = index_search_builder.obj();
-		DEBUG_CODE(MDBID_LDBG_ << "idxSetDataPackIndexStateByDataBlock insert ---------------------------------------------";)
-		DEBUG_CODE(MDBID_LDBG_ << "query: " << q.jsonString());
-		DEBUG_CODE(MDBID_LDBG_ << "idxSetDataPackIndexStateByDataBlock insert ---------------------------------------------";)
 		
 		bson_block_update << "$set"<< BSON(MONGO_DB_FIELD_IDX_DATA_PACK_STATE << (int32_t)dp_index_state);
+
+		mongo::BSONObj q = index_search_builder.obj();
+		mongo::BSONObj u = bson_block_update.obj();
+		DEBUG_CODE(MDBID_LDBG_ << "idxSetDataPackIndexStateByDataBlock update ---------------------------------------------";)
+		DEBUG_CODE(MDBID_LDBG_ << "query: " << q.jsonString());
+		DEBUG_CODE(MDBID_LDBG_ << "update: " << u.jsonString());
+		DEBUG_CODE(MDBID_LDBG_ << "idxSetDataPackIndexStateByDataBlock update ---------------------------------------------";)
 		
-		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_IDX_DATA_PACK), q, bson_block_update.obj(), false, true);
+		err = ha_connection_pool->update(MONGO_DB_COLLECTION_NAME(db_name, MONGO_DB_COLLECTION_IDX_DATA_PACK), q, u, false, true, &mongo::WriteConcern::acknowledged);
 		if(err) {
 			MDBID_LERR_ << "Error " << err << " updating state on all datablock index";
 		}

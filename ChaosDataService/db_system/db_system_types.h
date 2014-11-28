@@ -39,6 +39,9 @@ namespace chaos {
 				//! unique identification of the instrumentation that has produced the data
 				std::string did;
 				
+				//! datapack type as @chaos::DataPackCommonKey::DPCK_DATASET_TYPE
+				uint32_t	pack_type;
+				
 				//! the timestamp that identifying the time qhen the data pack has been collected
 				uint64_t	acquisition_ts;
 				

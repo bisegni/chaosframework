@@ -539,7 +539,7 @@ namespace chaos {
 		//!this define the acquisition timestamp of the data represented by the dataset[uint64_t]
 		static const char * const DPCK_TIMESTAMP                       = "dpck_ts";
 		
-		//!define the type of the dataset [output(0) - input(1) - custom(2) - system(3) int32_t]
+		//!define the type of the dataset uint32_t [output(0) - input(1) - custom(2) - system(3) int32_t]
 		static const char * const DPCK_DATASET_TYPE                    = "dpck_ds_type";
 		//! the constant that represent the output dataset type
 		static const unsigned int DPCK_DATASET_TYPE_OUTPUT             = 0;
