@@ -64,8 +64,9 @@ namespace chaos{
 			
 			//! worker for live device sharing
 			class DeviceSharedDataWorker : public DataWorker {
-				std::string cache_impl_name;
-				vfs::VFSManager *vfs_manager_instance;
+				std::string					cache_impl_name;
+				vfs::VFSManager				*vfs_manager_instance;
+				uint64_t					last_stage_file_hb;
 				cache_system::CacheDriver	*cache_driver_ptr;
 			protected:
 				void executeJob(WorkerJobPtr job_info,

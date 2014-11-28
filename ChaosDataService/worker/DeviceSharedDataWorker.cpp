@@ -21,6 +21,7 @@
 
 #include "DeviceSharedDataWorker.h"
 #include <chaos/common/utility/UUIDUtil.h>
+#include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/data/cache/FastHash.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
@@ -49,6 +50,9 @@ DeviceSharedDataWorker::~DeviceSharedDataWorker() {
 
 void DeviceSharedDataWorker::init(void *init_data) throw (chaos::CException) {
 	DataWorker::init(init_data);
+	
+	last_stage_file_hb = 0;
+	
 	//generate random path for this worker
 	std::string path(UUIDUtil::generateUUIDLite());
 	
@@ -98,8 +102,15 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 			//write data on stage file
 			if((err = this_thread_cookie->vfs_stage_file->write(job_ptr->data_pack, job_ptr->data_pack_len))) {
 				DSDW_LERR_<< "Error writing data to file " << this_thread_cookie->vfs_stage_file->getVFSFileInfo()->vfs_fpath;
-			} else if((err = this_thread_cookie->vfs_stage_file->giveHeartbeat())){
-				DSDW_LERR_<< "Error giving heartbeat to data "  << this_thread_cookie->vfs_stage_file->getVFSFileInfo()->vfs_fpath;
+			}
+			
+			if((TimingUtil::getTimeStamp() - last_stage_file_hb) > 1000) {
+				
+				last_stage_file_hb = TimingUtil::getTimeStamp();
+				
+				if((err = this_thread_cookie->vfs_stage_file->giveHeartbeat())){
+					DSDW_LERR_<< "Error giving heartbeat to data "  << this_thread_cookie->vfs_stage_file->getVFSFileInfo()->vfs_fpath;
+				}
 			}
 			
 			free(job_ptr->request_header);
