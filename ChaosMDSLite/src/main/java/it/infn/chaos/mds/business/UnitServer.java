@@ -28,6 +28,8 @@ public class UnitServer extends BSONBusinessObject {
 	public static final String	CONTROL_UNIT_ALIAS	= "control_unit_alias";
 	public static final String	PRIVATE_KEY			= "private_key";
 	public static final String	PUBLIC_KEY			= "public_key";
+	public static final String	REG_STATE			= "reg_state";
+
 	private static final long	serialVersionUID	= 947001022484682227L;
 
 	private String				oldAliasOnChange	= null;
@@ -47,7 +49,7 @@ public class UnitServer extends BSONBusinessObject {
 	@DBColumn(name = PRIVATE_KEY, maxDimension = 1024)
 	private String			private_key		= null;
 
-	@DBColumn(name = "reg_state")
+	@DBColumn(name = REG_STATE)
 	private Integer			reg_state		= null;
 	
 	private Vector<String>	publischedCU	= new Vector<String>();

@@ -16,6 +16,14 @@ public class MDSUIEvents {
 	public static final String 	        	EVENT_COPY_CU = "VIEW_EVENT_COPY_CU";
 	public static final String 				EVENT_DUMP_CONFIGURATION = "VIEW_EVENT_DUMP_CONFIG";
 	public static final String 				EVENT_APPLY_CONFIGURATION = "VIEW_EVENT_APPLY_CONFIG";
+	public static final String 				EVENT_CU_REGISTERED = "VIEW_CHAOS_CU_REGISTERED";
+	public static final String 				EVENT_UI_REGISTERED = "VIEW_CHAOS_UI_REGISTERED";
+	public static final String 				EVENT_CHAOS_ERROR = "VIEW_CHAOS_ERROR";
+	public static final String EVENT_NODE_START = "EVENT_NODE_START";
+	public static final String EVENT_NODE_STOP = "EVENT_NODE_STOP";
+
+	public static final String EVENT_NODE_INIT = "EVENT_NODE_INIT";
+	public static final String EVENT_NODE_DEINIT = "EVENT_NODE_DEINIT";
 
 	
 	public static final String			EVENT_CANCEL_USCU_ASSOC_VIEW	= "VIEW_EVENT_CANCEL_USCU_ASSOC_VIEW";
@@ -26,6 +34,10 @@ public class MDSUIEvents {
 	public static final String			EVENT_SAVE_ATTRIBUTE_CONFIG		= "VIEW_EVENT_SAVE_ATTRIBUTE_CONFIG";
 	public static final String 			EVENT_UPDATE_DEVICE_CLASS 		= "CTRL_EVENT_UPDATE_DEVICE_CLASS";
 	public static final String 			CTRL_CONFIG_GENERATED = "CTRL_EVENT_CONFIG_GENERATED";
+	
+
+
+	public static String EVENT_REFRESH_STATE= "VIEW_EVENT_REFRESH_STATE";
 
 
 }

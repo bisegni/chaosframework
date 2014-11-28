@@ -9,12 +9,12 @@ import it.infn.chaos.mds.batchexecution.SystemCommandWorkUnit;
 import it.infn.chaos.mds.batchexecution.UnitServerACK;
 import it.infn.chaos.mds.batchexecution.WorkUnitACK;
 import it.infn.chaos.mds.batchexecution.SystemCommandWorkUnit.LoadUnloadWorkUnitSetting;
-
 import it.infn.chaos.mds.business.Device;
 import it.infn.chaos.mds.business.UnitServer;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
 import it.infn.chaos.mds.da.DeviceDA;
 import it.infn.chaos.mds.da.UnitServerDA;
+import it.infn.chaos.mds.event.ChaosEventComponent;
 import it.infn.chaos.mds.event.EventsToVaadin;
 import it.infn.chaos.mds.rpc.server.RPCActionHadler;
 
@@ -94,13 +94,15 @@ public class CUQueryHandler extends RPCActionHadler {
 		String registrationPublicKey = null;
 		Vector<UnitServerCuInstance> instanceForUnitServer = null;
 		LoadUnloadWorkUnitSetting setting = new LoadUnloadWorkUnitSetting();
+		UnitServer us = null;
 		try {
 			usDA = getDataAccessInstance(UnitServerDA.class);
 			if (actionData == null)
 				new RefException("No info forwarded for unit server registration", 1, "CUQueryHandler::registerUnitServer");
-			UnitServer us = new UnitServer();
+			us = new UnitServer();
 			us.setAlias(actionData.getString(RPCConstants.MDS_REGISTER_UNIT_SERVER_ALIAS));
 			us.setIp_port(actionData.getString(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS));
+			us.setState(-1);
 			BasicBSONList bsonAttributesArray = (BasicBSONList) actionData.get(RPCConstants.MDS_REGISTER_UNIT_SERVER_CONTROL_UNIT_ALIAS);
 			ListIterator<Object> dsDescIter = bsonAttributesArray.listIterator();
 			while (dsDescIter.hasNext()) {
@@ -130,12 +132,20 @@ public class CUQueryHandler extends RPCActionHadler {
 			setting.loadUnload = true;
 			setting.associations = instanceSet;
 			instanceForUnitServer = usDA.loadAllAssociationForUnitServerAliasInAutoload(us.getAlias());
-			
+			us.setState(5);
+			usDA.updateUnitServerTSAndIP(us);
+
 			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 5);
 			closeDataAccess(usDA, true);
-			
+			try{
+				ChaosEventComponent ev= ChaosEventComponent.getInstance();
+				ev.unitRegistrationEvent(us.getAlias());
+			} catch (Throwable e){
+				e.printStackTrace();
+			}
 		} catch (InstantiationException e) {
 			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
+		
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "CUQueryHandler::registerUnitServer");
 		} catch (IllegalAccessException e) {
 			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
@@ -272,11 +282,12 @@ public class CUQueryHandler extends RPCActionHadler {
 			closeDataAccess(dDA, true);
 			closeDataAccess(usDA, true);
 			ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 5);
-			// TODO
-			EventsToVaadin ev= EventsToVaadin.getInstance();
-			//ChaosEventsToVaadinController ev= new ChaosEventsToVaadinController();
-	//		d.setState(Device.STAT_REGISTERED);
-			ev.deviceRegistrationEvent();
+		try{
+			ChaosEventComponent ev= ChaosEventComponent.getInstance();
+			ev.deviceRegistrationEvent(controlUnitInstance);
+		} catch (Throwable e){
+			e.printStackTrace();
+		}
 		} catch (RefException e) {
 			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
 			try {

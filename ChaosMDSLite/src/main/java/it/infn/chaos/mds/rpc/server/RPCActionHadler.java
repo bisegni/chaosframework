@@ -3,6 +3,9 @@
  */
 package it.infn.chaos.mds.rpc.server;
 
+import it.infn.chaos.mds.event.ChaosEventComponent;
+import it.infn.chaos.mds.event.EventsToVaadin;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Enumeration;
@@ -48,6 +51,16 @@ abstract public class RPCActionHadler {
 		} catch (RefException e) {
 			result = actionData;
 			RPCUtils.addRefExceptionToBson(result, e);
+			try{
+				Vector<String> data = new Vector<String>();
+				data.add(domain);
+				data.add(action);
+				ChaosEventComponent ev= ChaosEventComponent.getInstance();
+				ev.errorEvent(data);
+			
+			} catch (Throwable ee){
+				ee.printStackTrace();
+			}
 		} catch (Throwable e) {
 			result = actionData;
 			RPCUtils.addRefExceptionElementToBson(result, "CURegistration::getLastDataset", e.getMessage(), 0);

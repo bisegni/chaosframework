@@ -67,6 +67,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 	private String					unitServerCUTypeSelected;
 	private UnitServerCuInstance	cuselected=null;
 	private Application				webapp=null;
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -239,6 +240,10 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 					
 					updateDeviceClassTable();
 					
+				}  else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_REFRESH_STATE)) {
+					//refreshedUS
+					updateUnitServerList();
+					updateDeviceList();					
 				}  else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_REMOVE_DEVICE_CLASS)) {
 					DeviceClass dc = (DeviceClass)viewEvent.getEventData();
 					addRemoveDeviceClass(true,viewEvent.getEventData());
@@ -322,7 +327,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 					updateUnitServerList();
 					deleteViewByKey("EDIT_US_ALIAS");
 					openViewByKeyAndClass("VISTA", MDSAppView.class);
-				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UPDATE_UNIT_SERVER_LIST)) {
+				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UPDATE_UNIT_SERVER_LIST)||viewEvent.getEventKind().equals(MDSUIEvents.EVENT_UI_REGISTERED)) {
 					updateUnitServerList();
 				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UNIT_SERVER_CU_TYPE_ADD)) {
 					openViewByKeyAndClass("US_CU_TYPE_ADD", USAddCuTypeView.class, OpenViewIn.DIALOG, "Add unit type");
@@ -355,11 +360,16 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 				} else if (viewEvent.getEventKind().equals(USEditInfoView.EVENT_DELETE_SECURITY_KEY)) {
 					musp.deleteSecurityKeys((UnitServer) viewEvent.getEventData());
 					notifyEventoToViewWithData(USEditInfoView.EVENT_SET_UNIT_SERVER, this, musp.getUnitServerByIdentification(((UnitServer) viewEvent.getEventData()).getAlias()));
-				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_CU_REGISTERED)) {
+				} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_CU_REGISTERED)) {
 					updateDeviceList();	
-				}  else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_NODE_START)) {
+				} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_NODE_START)) {
 					String device = viewEvent.getEventData().toString();
-					
+				} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_NODE_STOP)) {
+					String device = viewEvent.getEventData().toString();
+				} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_NODE_INIT)) {
+					String device = viewEvent.getEventData().toString();
+				} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_NODE_DEINIT)) {
+					String device = viewEvent.getEventData().toString();
 				}
 
 			}

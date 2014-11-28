@@ -1,7 +1,9 @@
 package it.infn.chaos.mds;
 
 import it.infn.chaos.mds.business.UnitServerCuInstance;
+import it.infn.chaos.mds.event.ChaosEventComponent.ChaosEventListener;
 import it.infn.chaos.mds.event.EventsToVaadin;
+import it.infn.chaos.mds.event.VaadinEvent;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -42,7 +44,9 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.Upload;
-import com.github.wolfie.refresher.Refresher;;
+import com.github.wolfie.refresher.Refresher;
+
+import it.infn.chaos.mds.event.ChaosEventComponent;
 
 @SuppressWarnings("serial")
 public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener {
@@ -70,7 +74,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 
 	static final Action[]		ACTIONS_TABLE_EDIT						= new Action[] { ACTION_EDIT_CU };
 	static final Action[]		ACTIONS_OF_REGISTERED_US				= new Action[] { ACTION_US_EDIT_ALIAS, ACTION_US_LOAD_ALL, ACTION_US_UNLOAD_ALL};
-	static final Action[]		NODE_ACTIONS								= new Action[] { ACTION_NODE_START, ACTION_NODE_STOP, ACTION_NODE_INIT, ACTION_NODE_DEINIT,ACTION_NODE_SHUTDOWN };
+	static final Action[]		NODE_ACTIONS								= new Action[] { ACTION_NODE_START, ACTION_NODE_STOP, ACTION_NODE_INIT, ACTION_NODE_DEINIT/*,ACTION_NODE_SHUTDOWN*/ };
 
 	public static final String	EVENT_DEVICE_SELECTED						= "MDSAppView_EVENT_DEVICE_SELECTED";
 	public static final String	EVENT_DATASET_SELECTED						= "MDSAppView_EVENT_DATASET_SELECTED";
@@ -84,10 +88,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	public static final String	EVENT_UPDATE_UNIT_SERVER_LIST				= "MDSAppView_EVENT_UPDATE_UNIT_SERVER_LIST";
 
 	// device action events
-	public static final String	EVENT_NODE_INIT								= "MDSAppView_EVENT_NODE_INIT";
-	public static final String	EVENT_NODE_DEINIT							= "MDSAppView_EVENT_NODE_DEINIT";
-	public static final String	EVENT_NODE_START							= "MDSAppView_EVENT_NODE_START";
-	public static final String	EVENT_NODE_STOP								= "MDSAppView_EVENT_NODE_STOP";
+	
 	public static final String	EVENT_NODE_SHUTDOWN							= "MDSAppView_EVENT_NODE_SHUTDOWN";
 
 
@@ -139,23 +140,24 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	 
 	private boolean				editingAttribute							= false;
 	public static Refresher	 	refresher									= new Refresher();
+	public static ChaosEventComponent	chaosEventComponent					= ChaosEventComponent.getInstance();
 	private String				selectedUnit								= null;
 	@Override
 	public void initGui() {
 		
-		refresher.setRefreshInterval(1000); 
+		refresher.setRefreshInterval(2000); 
 		addComponent(refresher);
 		addComponent(mv);
 		
 		refresher.addListener(new Refresher.RefreshListener() {
 			private static final long serialVersionUID = -8765221895426102605L;
 			public void refresh(Refresher source) {
-				// TODO Auto-generated method stub
-				
+				//notifyEventoToControllerWithData(MDSUIEvents.EVENT_REFRESH_STATE, source, null);
 			}
 		});
 			
 	
+		addComponent(chaosEventComponent);
 		
 		mv.setWidth("100.0%");
 		mv.setHeight("100.0%");
@@ -165,7 +167,25 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 		setComponentKey(KEY_DEVICE_TAB, mv.getTableDevice());
 //		setComponentKey(KEY_DEVICE_START_AT_INIT_BUTTON, mv.getButtonInitializedAtStartup());
 		
+		chaosEventComponent.addListener(new ChaosEventListener() {
+			
 		
+
+			@Override
+			public void event(VaadinEvent source) {
+				if(source.getEventKind() == ChaosEventComponent.CHAOS_EVENT_CU_REGISTERED){
+					notifyEventoToControllerWithData(MDSUIEvents.EVENT_CU_REGISTERED, this, source.getData());
+
+				} else if(source.getEventKind() == ChaosEventComponent.CHAOS_EVENT_UI_REGISTERED){
+					notifyEventoToControllerWithData(MDSUIEvents.EVENT_UI_REGISTERED, this, source.getData());
+
+				} else if(source.getEventKind() == ChaosEventComponent.CHAOS_EVENT_ERROR){
+					notifyEventoToControllerWithData(MDSUIEvents.EVENT_CHAOS_ERROR, this, source.getData());
+
+				} 				
+
+			}
+		});
 //////////// US
 		mv.getTableUnitServer().addListener(this);
 		mv.getTableUnitServer().setEditable(false);
@@ -262,13 +282,13 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 			@Override
 			public void handleAction(Action action, Object sender, Object target) {
 				if (ACTION_NODE_START == action) {
-					notifyEventoToControllerWithData(EVENT_NODE_START, mv.getTableDevice().getValue(), sender);
+					notifyEventoToControllerWithData(MDSUIEvents.EVENT_NODE_START, mv.getTableDevice().getValue(), sender);
 				}else if (ACTION_NODE_STOP == action) {
-					notifyEventoToControllerWithData(EVENT_NODE_STOP,  mv.getTableDevice().getValue(), sender);
+					notifyEventoToControllerWithData(MDSUIEvents.EVENT_NODE_STOP,  mv.getTableDevice().getValue(), sender);
 				}else if (ACTION_NODE_INIT == action) {
-					notifyEventoToControllerWithData(EVENT_NODE_INIT, mv.getTableDevice().getValue(), sender);
+					notifyEventoToControllerWithData(MDSUIEvents.EVENT_NODE_INIT, mv.getTableDevice().getValue(), sender);
 				}else if (ACTION_NODE_DEINIT == action) {
-					notifyEventoToControllerWithData(EVENT_NODE_DEINIT, mv.getTableDevice().getValue(), sender);
+					notifyEventoToControllerWithData(MDSUIEvents.EVENT_NODE_DEINIT, mv.getTableDevice().getValue(), sender);
 				}else if (ACTION_NODE_SHUTDOWN == action) {
 					notifyEventoToControllerWithData(EVENT_NODE_SHUTDOWN, mv.getTableDevice().getValue(), sender);
 				

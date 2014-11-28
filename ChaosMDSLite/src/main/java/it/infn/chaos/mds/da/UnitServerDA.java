@@ -299,6 +299,8 @@ public class UnitServerDA extends DataAccess {
 		iuBuilder.addTable(UnitServer.class);
 		iuBuilder.addColumnAndValue(UnitServer.UNIT_SERVER_HB_TIME, "$CURRENT_TIMESTAMP");
 		iuBuilder.addColumnAndValue(UnitServer.UNIT_SERVER_IP_PORT, unitServer.getIp_port());
+		iuBuilder.addColumnAndValue(UnitServer.REG_STATE, unitServer.getState());
+
 		iuBuilder.addCondition(true, "unit_server_alias=?");
 		
 		PreparedStatement ps = null;
