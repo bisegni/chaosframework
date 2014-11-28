@@ -753,6 +753,7 @@ int MongoDBDriver::idxAddDataPackIndex(const DataPackIndex& index) {
 	try{
 		//add default index information
 		index_builder << MONGO_DB_FIELD_IDX_DATA_PACK_DID << index.did;
+		index_builder << MONGO_DB_FIELD_IDX_DATA_PACK_TYPE << index.pack_type;
 		index_builder << MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS << mongo::Date_t(index.acquisition_ts);
 		index_builder << MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS_NUMERIC << (long long)index.acquisition_ts;
 		index_builder << MONGO_DB_FIELD_IDX_DATA_PACK_DATA_BLOCK_DST_DOMAIN << getDataBlockFromFileLocation(index.dst_location)->vfs_domain;
