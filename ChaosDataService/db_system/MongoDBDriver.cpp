@@ -74,6 +74,7 @@ void MongoDBDriver::init(void *init_data) throw (chaos::CException) {
 	if(err) throw chaos::CException(-1, "Error creating data block index", __PRETTY_FUNCTION__);
 	
 	index_on_domain = BSON(MONGO_DB_FIELD_IDX_DATA_PACK_DID<<1<<
+						   MONGO_DB_FIELD_IDX_DATA_PACK_TYPE<<1<<
 						   MONGO_DB_FIELD_IDX_DATA_PACK_ACQ_TS<<1);
 	err = ha_connection_pool->ensureIndex(db_name, MONGO_DB_COLLECTION_IDX_DATA_PACK, index_on_domain, true, "", true);
 	if(err) throw chaos::CException(-1, "Error creating data pack index collection index", __PRETTY_FUNCTION__);
