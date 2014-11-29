@@ -92,6 +92,7 @@ int MongoDBIndexCursor::performNextPagedQuery() {
 	
 	DataPackIndexQuery paged_query;
 	paged_query.did = query.did;
+	paged_query.ds_type = query.ds_type;
 	//set the start timestamp
 	paged_query.start_ts = (last_max_ts_searched?last_max_ts_searched+1:query.start_ts);
 	

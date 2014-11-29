@@ -106,6 +106,10 @@ void StageDataConsumer::scanStage() {
 																	 60,													//add 60 second for valid until field check
 																	 vfs::data_block_state::DataBlockStateAquiringData,		//get only block in acquiring state(and in timeout)
 																	 vfs::data_block_state::DataBlockStateNone);			//set it to done
+				
+					
+					//mantains scanner
+					indexer->mantains();
 				}
 			}
 			// get

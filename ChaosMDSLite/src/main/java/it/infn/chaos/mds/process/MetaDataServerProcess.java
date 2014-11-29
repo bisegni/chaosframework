@@ -181,7 +181,12 @@ public class MetaDataServerProcess extends RefProcess{
 		for(UnitServer us:usv){
 			usda.insertNewUnitServer(us);
 			for(UnitServerCuInstance cu:us.getCuInstances()){
-				usda.addCuTypeToUnitServer(us.getAlias(), cu.getCuType());
+				
+				try {
+					usda.addCuTypeToUnitServer(us.getAlias(), cu.getCuType());
+				} catch(Throwable e){
+					
+				}
 				usda.insertNewUSCUAssociation(cu);
 				usda.saveAllAttributeConfigForAssociation(cu);
 				
