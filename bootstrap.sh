@@ -21,9 +21,9 @@ if [ "$ARCH" = "armv7l" ]; then
 else
     if (command -v sysctl >/dev/null 2>&1); then
       if [ `echo $OS | tr '[:upper:]' '[:lower:]'` = `echo "Darwin" | tr '[:upper:]' '[:lower:]'` ]; then
-	       MEM=$(sysctl -a | grep 'hw.memsize'| awk '{print $2/(1024*1024*1024)}')
+	        MEM=$(sysctl -a | grep 'hw.memsize'| awk '{print $2/(1024*1024*1024)}')
       else
-        MEM=$(sysctl -a | grep 'hw.memsize'| awk '{print $3/(1024*1024*1024)}')
+          MEM=$(( $(free -m | grep 'Mem' | awk '{print int(($2/1024)+0.5)}') ))
       fi;
 	  else
       MEM=1
