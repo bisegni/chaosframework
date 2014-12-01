@@ -19,15 +19,13 @@ if [ "$ARCH" = "armv7l" ]; then
     NPROC=1
     echo "ARM architecture detected, using $NPROC processors"
 else
-    if (command -v sysctl >/dev/null 2>&1); then
-      if [ `echo $OS | tr '[:upper:]' '[:lower:]'` = `echo "Darwin" | tr '[:upper:]' '[:lower:]'` ]; then
-	        MEM=$(sysctl -a | grep 'hw.memsize'| awk '{print $2/(1024*1024*1024)}')
-      else
+    MEM=1
+
+    if [ `echo $OS | tr '[:upper:]' '[:lower:]'` = `echo "Darwin" | tr '[:upper:]' '[:lower:]'` ]; then
+	        MEM=$(sysctl -a | grep 'hw.memsize:'| awk '{print $2/(1024*1024*1024)}')
+    else
           MEM=$(( $(free -m | grep 'Mem' | awk '{print int(($2/1024)+0.5)}') ))
-      fi;
-	  else
-      MEM=1
-	  fi;
+    fi;
 
     echo "Your system \"$HOST\" has $CORES cpu cores and $MEM gigabytes of physical memory"
     if [ $MEM -ge $CORES ]; then
