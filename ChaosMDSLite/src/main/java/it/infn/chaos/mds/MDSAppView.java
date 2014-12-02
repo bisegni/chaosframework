@@ -152,6 +152,9 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	public static Refresher	 	refresher									= new Refresher();
 	public static ChaosEventComponent	chaosEventComponent					= ChaosEventComponent.getInstance();
 	private String				selectedUnit								= null;
+	private int					nrepaint									= 0; 
+	private static 	long		time_to_dead								= 60*1000;
+	
 	@Override
 	public void initGui() {
 		
@@ -162,11 +165,13 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 		refresher.addListener(new Refresher.RefreshListener() {
 			private static final long serialVersionUID = -8765221895426102605L;
 			public void refresh(Refresher source) {
-				notifyEventoToControllerWithData(MDSUIEvents.EVENT_REFRESH_STATE, source, null);
+				if(nrepaint>0){
+					notifyEventoToControllerWithData(MDSUIEvents.EVENT_REFRESH_STATE, source, null);
+				}
 			}
 		});
 			
-		addComponent(chaosEventComponent);
+		//addComponent(chaosEventComponent);
 		
 		mv.setWidth("100.0%");
 		mv.setHeight("100.0%");
@@ -207,7 +212,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 		mv.getTableUnitServer().addContainerProperty(TAB_UNIT_SERVER_NAME, String.class, null);
 		mv.getTableUnitServer().addContainerProperty(TAB_UNIT_SERVER_ADDRESS, String.class, null);
 		mv.getTableUnitServer().addContainerProperty(TAB_UNIT_SERVER_HB_TS, Date.class, null);
-		mv.getTableUnitServer().addContainerProperty(TAB_UNIT_SERVER_REGISTERED, Integer.class, null);
+		mv.getTableUnitServer().addContainerProperty(TAB_UNIT_SERVER_REGISTERED, String.class, null);
 
 		mv.getTableUnitServer().addStyleName("chaosmdslitetheme");
 		mv.getTableUnitServer().setCellStyleGenerator(new Table.CellStyleGenerator() {
@@ -230,9 +235,11 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 					e.printStackTrace();
 				}
 		        Date now = new Date();
-		        if((prop==null || Integer.valueOf(prop)<=0)){
+		        int val=0;
+		       
+		        if(prop==null){
 		        	return "red";
-		        } else if((now.getTime() - dt.getTime())>(60)*1000 ){
+		        } else if((now.getTime() - dt.getTime())>time_to_dead ){
 		        	return "black";
 		        } else {
 		        	return "green";
@@ -342,7 +349,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 					e.printStackTrace();
 				}
 		        Date now = new Date();
-		       if((now.getTime() - dt.getTime())>(60)*1000 ){
+		       if((now.getTime() - dt.getTime())>time_to_dead ){
 		        	return "red";
 		        } else {
 		        	return "green";
@@ -486,10 +493,10 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	public void update(Observable source, Object sourceData) {
 	
 
-		
+		Date now = new Date();
 		if (sourceData instanceof ViewNotifyEvent) {
 			ViewNotifyEvent viewEvent = (ViewNotifyEvent) sourceData;
-			
+			nrepaint++;
 			if (viewEvent.getEventKind().equals(MDSAppView.EVENT_ATTRIBUTE_EDITING)) {
 				setEditingAttribute(true);
 				mv.getTableDatasetAttribute().setEditable(true);
@@ -504,7 +511,14 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 					woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_NAME).setValue(us.getAlias());
 					woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_ADDRESS).setValue(us.getIp_port());
 					woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_HB_TS).setValue(us.getUnitServerHB().getDate());
-					woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_REGISTERED).setValue(us.getState());
+					if((now.getTime() - us.getUnitServerHB().getDate().getTime())>time_to_dead){
+						
+						woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_REGISTERED).setValue("---");
+					} else {
+						
+						woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_REGISTERED).setValue(Integer.toString(us.getState()));
+					}
+					
 				}
 			} else if(viewEvent.getEventKind().equals(MDSUIEvents.EVENT_REFRESH_US)){
 				// load all dataset
@@ -515,11 +529,18 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 				UnitServer us = (UnitServer)viewEvent.getEventData();
 				Table t = (Table) mv.getTableUnitServer();
 				Item woItem = t.getItem(us.getAlias());
+			
 				if(woItem!=null){
 					woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_NAME).setValue(us.getAlias());
 					woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_ADDRESS).setValue(us.getIp_port());
 					woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_HB_TS).setValue(us.getUnitServerHB().getDate());
-					woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_REGISTERED).setValue(us.getState());
+					
+					if((now.getTime() - us.getUnitServerHB().getDate().getTime())>time_to_dead){
+						
+						woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_REGISTERED).setValue("---");
+					} else {
+						woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_REGISTERED).setValue(Integer.toString(us.getState()));
+					}
 				}
 			} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_UPDATE_LIST)) {
 				mv.getTableUnitServerCUType().removeAllItems();
@@ -529,6 +550,16 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 					return;
 				
 				selectedUnit = currentInstancesForUnitServer.get(0).getUnitServerAlias();
+				Table us = (Table) mv.getTableUnitServer();
+				Item it = us.getItem(us.getValue());
+				us.removeStyleName("red");
+				if(it!=null){
+					String stat = it.getItemProperty(MDSAppView.TAB_UNIT_SERVER_REGISTERED).toString();
+					if(stat!=null && stat.equals("---")){
+						us.setStyleName("red");
+					} 
+				}
+				
 				for (UnitServerCuInstance unitServerCuInstance : currentInstancesForUnitServer) {
 					Item woItem = mv.getTableUnitServerCUType().addItem(unitServerCuInstance);
 					woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_ALIAS_NAME).setValue(unitServerCuInstance.getCuId());
@@ -546,11 +577,16 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 					Item woItem =mv.getTableUnitServerCUType().getItem(unitServerCuInstance);
 					if(woItem==null)
 						return;
+					
 					woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_ALIAS_NAME).setValue(unitServerCuInstance.getCuId());
 					woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_TYPE_NAME).setValue(unitServerCuInstance.getCuType());
 					if(unitServerCuInstance.getInterface()!=null)
 						woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_INTERFACE_NAME).setValue(unitServerCuInstance.getInterface());
-					woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_REGISTERED).setValue(unitServerCuInstance.getState());
+					if((now.getTime() - us.getUnitServerHB().getDate().getTime() )  > time_to_dead){
+						woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_REGISTERED).setValue("---");
+					} else {
+						woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_REGISTERED).setValue(unitServerCuInstance.getState());
+					}
 				}
 			} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_UPDATE_DEVICE_LIST)) {
 				List<Device> allDevices = (List<Device>) viewEvent.getEventData();
@@ -643,11 +679,16 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-	        Date now = new Date();
+	       // Date now = new Date();
 			mv.getTableUnitServer().removeAllActionHandlers();
 			mv.getTableUnitServerCUType().removeAllActionHandlers();
-			if(registered!=null && (Integer.valueOf(registered) > 0)&& (now.getTime()-dt.getTime())<(60*1000)){
-			
+			int regvalue= 0;
+			try{
+				regvalue = Integer.valueOf(registered);
+			} catch(Throwable e){
+				
+			}
+			if(registered!=null && (!registered.equals("---"))){
 				mv.getTableUnitServer().addActionHandler(new Action.Handler() {
 					public Action[] getActions(Object target, Object sender) {
 						return ACTIONS_OF_REGISTERED_US;
@@ -764,9 +805,11 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 					e.printStackTrace();
 				}
 		        Date now = new Date();
-		       if((now.getTime() - dt.getTime())>(60)*1000 ){
+		       if((now.getTime() - dt.getTime())>time_to_dead){
 		        	t.removeAllActionHandlers();
+		        	
 		        } else {
+		        	t.removeAllActionHandlers();
 		        	t.addActionHandler(new Action.Handler() {
 		    			public Action[] getActions(Object target, Object sender) {
 		    				return NODE_ACTIONS;

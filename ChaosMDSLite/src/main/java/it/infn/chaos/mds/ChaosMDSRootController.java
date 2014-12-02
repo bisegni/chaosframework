@@ -571,10 +571,19 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 	
 	private void refreshUnitServer(UnitServer us) throws Throwable {
 		// load all dataset
-	
-		notifyEventoToViewWithData(MDSUIEvents.EVENT_REFRESH_US, this,us);
-		notifyEventoToViewWithData(MDSUIEvents.EVENT_REFRESH_LIST, this,us);
 		
+		if(us==null){
+			List<UnitServer> allUnitServer = musp.getAllUnitServer();
+			for(UnitServer uss:allUnitServer){
+				Vector<UnitServerCuInstance> cuiv=musp.loadAllAssociationForUnitServerAlias(uss.getAlias());
+				uss.setCuInstances(cuiv);
+				notifyEventoToViewWithData(MDSUIEvents.EVENT_REFRESH_US, this,uss);
+				notifyEventoToViewWithData(MDSUIEvents.EVENT_REFRESH_LIST, this,uss);
+			}
+		} else {
+			notifyEventoToViewWithData(MDSUIEvents.EVENT_REFRESH_US, this,us);
+			notifyEventoToViewWithData(MDSUIEvents.EVENT_REFRESH_LIST, this,us);
+		}
 
 	}
 	/**
