@@ -60,3 +60,4 @@ example/build-UIToolkitTest-Desktop-Debug/*
 ChaosMDSLite/RefCommon.jardesc
 ChaosMDSLite/RefServer.jardesc
 /example/UIToolkitTest/powersupply/nbproject/private/
+*.json

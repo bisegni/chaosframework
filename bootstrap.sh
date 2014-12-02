@@ -19,24 +19,20 @@ if [ "$ARCH" = "armv7l" ]; then
     NPROC=1
     echo "ARM architecture detected, using $NPROC processors"
 else
-    if (command -v free >/dev/null 2>&1); then
-	MEM=$(( $(free -m | grep 'Mem' | awk '{print int(($2/1024)+0.5)}') ))
+    MEM=1
+
+    if [ `echo $OS | tr '[:upper:]' '[:lower:]'` = `echo "Darwin" | tr '[:upper:]' '[:lower:]'` ]; then
+	        MEM=$(sysctl -a | grep 'hw.memsize:'| awk '{print $2/(1024*1024*1024)}')
     else
-	if (command -v sysctl >/dev/null 2>&1); then
-	    MEM=$(sysctl -a | grep 'hw.memsize '| awk '{print $3/(1024*1024*1024)}')
-	else
-	    MEM=1
-	fi;
+          MEM=$(( $(free -m | grep 'Mem' | awk '{print int(($2/1024)+0.5)}') ))
     fi;
 
     echo "Your system \"$HOST\" has $CORES cpu cores and $MEM gigabytes of physical memory"
-
     if [ $MEM -ge $CORES ]; then
-	NPROC=$CORES
+	     NPROC=$CORES
     else
-	NPROC=$MEM
+	     NPROC=$MEM
     fi;
-
 fi;
 echo "Selected compilation concurrent level is: $NPROC"
 
@@ -116,7 +112,7 @@ if [ `echo $OS | tr '[:upper:]' '[:lower:]'` = `echo "Darwin" | tr '[:upper:]' '
     export CXX="clang++ $CXXFLAGS"
 
     export LD=clang
-    
+
 #    LMEM_VERSION=1.0.16
 fi
 
@@ -159,7 +155,7 @@ if [ -d "$BASE_EXTERNAL/zlib-$ZLIB_VERSION" ]; then
 	    cd $BASE_EXTERNAL/zlib-$ZLIB_VERSION
 	    echo "entering in $BASE_EXTERNAL/zlib-$ZLIB_VERSION"
 	    echo "using $CC and $CXX"
-	    ./configure --prefix=$PREFIX 
+	    ./configure --prefix=$PREFIX
 	    do_make "ZLIB"
 else
     echo "$BASE_EXTERNAL/zlib-$ZLIB_VERSION not found"
@@ -175,27 +171,27 @@ if [ ! -d "$PREFIX/include/boost" ]; then
 	    echo "## cannot download boost_$BOOST_VERSION.tar.gz"
 	    exit 1
 	 fi
-        
+
     fi
 
     if [ ! -e $BASE_EXTERNAL/boost ]; then
         tar zxvf $BASE_EXTERNAL/boost_$BOOST_VERSION.tar.gz -C $BASE_EXTERNAL
         mv $BASE_EXTERNAL/boost_$BOOST_VERSION $BASE_EXTERNAL/boost
     fi
-    
+
 #install old version of boost log
     if [ $BOOST_NUMBER_VERSION -le 1530 ] && [ ! -d "$BASE_EXTERNAL/boost_log" ]; then
-	
+
 	if !(git clone https://cvs.lnf.infn.it/boost_log $BASE_EXTERNAL/boost_log); then
 	    echo "## cannot git clone  https://cvs.lnf.infn.it/boost_log"
 	    exit 1
 	fi
-	
+
 	if [ ! -d "$BASE_EXTERNAL/boost/boost/log" ]; then
 	    echo "link $BASE_EXTERNAL/boost/boost/log -> $BASE_EXTERNAL/boost_log/boost/log"
 	    ln -s $BASE_EXTERNAL/boost_log/boost/log $BASE_EXTERNAL/boost/boost/log
 	fi
-	
+
 	if [ ! -d "$BASE_EXTERNAL/boost/libs/log" ]; then
 	    echo "link $BASE_EXTERNAL/boost/libs/log -> $BASE_EXTERNAL/boost_log/libs/log"
 	    ln -s $BASE_EXTERNAL/boost_log/libs/log $BASE_EXTERNAL/boost/libs/log
@@ -210,12 +206,12 @@ if [ ! -d "$PREFIX/include/boost" ]; then
 	exit 1;
     fi
 
-    echo "-> $CROSS_HOST" 
+    echo "-> $CROSS_HOST"
     if [ -n "$CROSS_HOST" ]; then
 	echo "* Patching project-config.jam to cross compile for $CROSS_HOST"
-	sed -i .bak -e "s/using gcc/using gcc : arm : $CXX/" project-config.jam 
+	sed -i .bak -e "s/using gcc/using gcc : arm : $CXX/" project-config.jam
     fi
-    
+
 
     cd $BASE_EXTERNAL/boost
     echo "Compile and install boost libraries into $PREFIX/"
@@ -397,7 +393,7 @@ if [ ! -f "$PREFIX/include/zmq.h" ]; then
 #        make -j4
 #    fi
     ./autogen.sh
-	./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE --with-gnu-ld 
+	./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE --with-gnu-ld
 	do_make "ZMQ"
 
 #	./autogen.sh
