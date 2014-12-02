@@ -1,5 +1,7 @@
 package it.infn.chaos.mds;
 
+import it.infn.chaos.mds.business.Device;
+import it.infn.chaos.mds.business.UnitServer;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
 import it.infn.chaos.mds.event.ChaosEventComponent.ChaosEventListener;
 import it.infn.chaos.mds.event.EventsToVaadin;
@@ -13,8 +15,12 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Observable;
 import java.util.Set;
 import java.util.Vector;
@@ -49,6 +55,7 @@ import com.github.wolfie.refresher.Refresher;
 import it.infn.chaos.mds.event.ChaosEventComponent;
 
 @SuppressWarnings("serial")
+
 public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener {
 	
 	static final Action			ACTION_US_EDIT_ALIAS						= new Action("Edit Unit Server Alias");
@@ -110,10 +117,13 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	public static final String	TAB1_DEV_STATUS								= "Status";
 
 	public static final String	TAB1_DEVICE_INSTANCE						= "Device Instance";
+	public static final String	TAB1_DEVICE_US								= "US";
+
 	public static final String	TAB1_NET_ADDRESS							= "Net Address";
 	public static final String	TAB1_LAST_HB								= "Last HB";
 	public static final String	TAB2_TIMESTAMP								= "Date Time";
 	public static final String	TAB2_ATTR_NUMBER							= "Attributes";
+	
 	public static final String	TAB3_NAME									= "Name";
 	public static final String	TAB3_TYPE									= "Type";
 	public static final String	TAB3_DIR									= "Direction";
@@ -130,7 +140,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	public static final String	TAB_UNIT_SERVER_CUTYPE_ALIAS_NAME			= "CU ID";
 	public static final String	TAB_UNIT_SERVER_CUTYPE_TYPE_NAME			= "CU Type Name";
 	public static final String	TAB_UNIT_SERVER_CUTYPE_INTERFACE_NAME		= "CU Interface";
-	public static final String	TAB_UNIT_SERVER_CUTYPE_REGISTERED			= "CU Registered";
+	public static final String	TAB_UNIT_SERVER_CUTYPE_REGISTERED			= "CU State";
 	public static final String	KEY_DEVICE_TAB								= "DEVICE_TAB";
 	public static final String	KEY_DATASET_TAB								= "KEY_DATASET_TAB";
 	public static final String	KEY_DEVICE_START_AT_INIT_BUTTON				= "KEY_DEVICE_START_AT_INIT_BUTTON";
@@ -145,18 +155,17 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	@Override
 	public void initGui() {
 		
-		refresher.setRefreshInterval(2000); 
+		refresher.setRefreshInterval(5000); 
 		addComponent(refresher);
 		addComponent(mv);
 		
 		refresher.addListener(new Refresher.RefreshListener() {
 			private static final long serialVersionUID = -8765221895426102605L;
 			public void refresh(Refresher source) {
-				//notifyEventoToControllerWithData(MDSUIEvents.EVENT_REFRESH_STATE, source, null);
+				notifyEventoToControllerWithData(MDSUIEvents.EVENT_REFRESH_STATE, source, null);
 			}
 		});
 			
-	
 		addComponent(chaosEventComponent);
 		
 		mv.setWidth("100.0%");
@@ -166,10 +175,10 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 
 		setComponentKey(KEY_DEVICE_TAB, mv.getTableDevice());
 //		setComponentKey(KEY_DEVICE_START_AT_INIT_BUTTON, mv.getButtonInitializedAtStartup());
-		
+
+
 		chaosEventComponent.addListener(new ChaosEventListener() {
-			
-		
+
 
 			@Override
 			public void event(VaadinEvent source) {
@@ -182,7 +191,10 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 				} else if(source.getEventKind() == ChaosEventComponent.CHAOS_EVENT_ERROR){
 					notifyEventoToControllerWithData(MDSUIEvents.EVENT_CHAOS_ERROR, this, source.getData());
 
-				} 				
+				} else if(source.getEventKind() == ChaosEventComponent.CHAOS_EVENT_US_UPDATE){
+					notifyEventoToControllerWithData(MDSUIEvents.CHAOS_EVENT_US_UPDATE, this, source.getData());
+
+				}				
 
 			}
 		});
@@ -208,13 +220,24 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 		       // int col = Integer.parseInt((String)propertyId);
 		        Item it=mv.getTableUnitServer().getItem(itemId);
 		        String prop = it.getItemProperty(TAB_UNIT_SERVER_REGISTERED).toString();
-		        if(prop==null || Integer.valueOf(prop)<=0){
+		        String timestamp = it.getItemProperty(TAB_UNIT_SERVER_HB_TS).toString();
+		        Date dt =null;
+		        SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+		        try {
+					dt = formatter.parse(timestamp);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		        Date now = new Date();
+		        if((prop==null || Integer.valueOf(prop)<=0)){
 		        	return "red";
+		        } else if((now.getTime() - dt.getTime())>(60)*1000 ){
+		        	return "black";
 		        } else {
 		        	return "green";
 		        }
-		        	
-		     
+		           
 		    }
 		});
 		mv.getTableUnitServer().addActionHandler(new Action.Handler() {
@@ -266,8 +289,10 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 		mv.getTableDevice().setReadThrough(true);
 		mv.getTableDevice().setNullSelectionAllowed(false);
 		mv.getTableDevice().addContainerProperty(TAB1_DEVICE_INSTANCE, String.class, null);
+	/*
+		mv.getTableDevice().addContainerProperty(TAB1_DEVICE_US, String.class, null);
 		mv.getTableDevice().addContainerProperty(TAB1_DEV_STATUS, String.class, null);
-
+*/
 		mv.getTableDevice().addContainerProperty(TAB1_NET_ADDRESS, String.class, null);
 		mv.getTableDevice().addContainerProperty(TAB1_LAST_HB, Date.class, null);
 		mv.getTableDevice().addContainerProperty(TAB2_TIMESTAMP, Date.class, null);
@@ -282,22 +307,49 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 			@Override
 			public void handleAction(Action action, Object sender, Object target) {
 				if (ACTION_NODE_START == action) {
-					notifyEventoToControllerWithData(MDSUIEvents.EVENT_NODE_START, mv.getTableDevice().getValue(), sender);
+					Device dev=(Device) mv.getTableDevice().getValue();
+					notifyEventoToControllerWithData(MDSUIEvents.EVENT_NODE_START, sender, dev.getDeviceIdentification());
 				}else if (ACTION_NODE_STOP == action) {
-					notifyEventoToControllerWithData(MDSUIEvents.EVENT_NODE_STOP,  mv.getTableDevice().getValue(), sender);
+					notifyEventoToControllerWithData(MDSUIEvents.EVENT_NODE_STOP,  sender, mv.getTableDevice().getValue());
 				}else if (ACTION_NODE_INIT == action) {
-					notifyEventoToControllerWithData(MDSUIEvents.EVENT_NODE_INIT, mv.getTableDevice().getValue(), sender);
+					notifyEventoToControllerWithData(MDSUIEvents.EVENT_NODE_INIT, sender, mv.getTableDevice().getValue());
 				}else if (ACTION_NODE_DEINIT == action) {
-					notifyEventoToControllerWithData(MDSUIEvents.EVENT_NODE_DEINIT, mv.getTableDevice().getValue(), sender);
+					notifyEventoToControllerWithData(MDSUIEvents.EVENT_NODE_DEINIT, sender, mv.getTableDevice().getValue());
 				}else if (ACTION_NODE_SHUTDOWN == action) {
-					notifyEventoToControllerWithData(EVENT_NODE_SHUTDOWN, mv.getTableDevice().getValue(), sender);
+					notifyEventoToControllerWithData(EVENT_NODE_SHUTDOWN, sender, mv.getTableDevice().getValue());
 				
 				}
 			}
 			
 		});
 		
-		
+		mv.getTableDevice().setCellStyleGenerator(new Table.CellStyleGenerator() {
+		    public String getStyle(Object itemId, Object propertyId) {
+		        // Row style setting, not relevant in this example.
+		        if (propertyId == null)
+		            return "green"; // Will not actually be visible
+
+		       // int row = ((Integer)itemId).intValue();
+		       // int col = Integer.parseInt((String)propertyId);
+		        Item it=mv.getTableDevice().getItem(itemId);
+		        String timestamp = it.getItemProperty(TAB1_LAST_HB).toString();
+		        Date dt =null;
+		        SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+		        try {
+					dt = formatter.parse(timestamp);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		        Date now = new Date();
+		       if((now.getTime() - dt.getTime())>(60)*1000 ){
+		        	return "red";
+		        } else {
+		        	return "green";
+		        }
+		           
+		    }
+		});
 
 	///////////////////// CU  ///////////
 		 
@@ -442,6 +494,33 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 				setEditingAttribute(true);
 				mv.getTableDatasetAttribute().setEditable(true);
 				mv.getTableDatasetAttribute().refreshRowCache();
+			} else if(viewEvent.getEventKind().equals(MDSUIEvents.EVENT_UPDATE_US)){
+				// load all dataset
+				List<UnitServer> allUnitServer = (List<UnitServer>)viewEvent.getEventData();
+				Table t = (Table) mv.getTableUnitServer();
+				t.removeAllItems();
+				for (UnitServer us : allUnitServer) {
+					Item woItem = t.addItem(us.getAlias());
+					woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_NAME).setValue(us.getAlias());
+					woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_ADDRESS).setValue(us.getIp_port());
+					woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_HB_TS).setValue(us.getUnitServerHB().getDate());
+					woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_REGISTERED).setValue(us.getState());
+				}
+			} else if(viewEvent.getEventKind().equals(MDSUIEvents.EVENT_REFRESH_US)){
+				// load all dataset
+				if(viewEvent.getEventData() == null){
+					mv.getTableUnitServer().requestRepaint();
+					return;
+				}
+				UnitServer us = (UnitServer)viewEvent.getEventData();
+				Table t = (Table) mv.getTableUnitServer();
+				Item woItem = t.getItem(us.getAlias());
+				if(woItem!=null){
+					woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_NAME).setValue(us.getAlias());
+					woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_ADDRESS).setValue(us.getIp_port());
+					woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_HB_TS).setValue(us.getUnitServerHB().getDate());
+					woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_REGISTERED).setValue(us.getState());
+				}
 			} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_UPDATE_LIST)) {
 				mv.getTableUnitServerCUType().removeAllItems();
 				
@@ -458,7 +537,60 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 					woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_REGISTERED).setValue(unitServerCuInstance.getState());
 				}
 				
+			} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_REFRESH_LIST)) {
+				UnitServer us = (UnitServer) viewEvent.getEventData();
+				if(us==null)
+					return;
+				for(UnitServerCuInstance unitServerCuInstance:us.getCuInstances()){
+
+					Item woItem =mv.getTableUnitServerCUType().getItem(unitServerCuInstance);
+					if(woItem==null)
+						return;
+					woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_ALIAS_NAME).setValue(unitServerCuInstance.getCuId());
+					woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_TYPE_NAME).setValue(unitServerCuInstance.getCuType());
+					if(unitServerCuInstance.getInterface()!=null)
+						woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_INTERFACE_NAME).setValue(unitServerCuInstance.getInterface());
+					woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_REGISTERED).setValue(unitServerCuInstance.getState());
+				}
+			} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_UPDATE_DEVICE_LIST)) {
+				List<Device> allDevices = (List<Device>) viewEvent.getEventData();
+				int i =0;
+				Table t = mv.getTableDevice();
+				t.removeAllItems();
+				for(Device device:allDevices){
+					Item woItem =  t.addItem(device);
+					woItem.getItemProperty(MDSAppView.TAB1_DEVICE_INSTANCE).setValue(device.getDeviceIdentification());
+/*					if(device.getParent()!=null){
+						woItem.getItemProperty(MDSAppView.TAB1_DEVICE_US).setValue(device.getParent().getUnitServerAlias());
+						woItem.getItemProperty(MDSAppView.TAB1_DEV_STATUS).setValue(device.getParent().getState());
+					}
+					*/
+					woItem.getItemProperty(MDSAppView.TAB1_NET_ADDRESS).setValue(device.getNetAddress());
+					woItem.getItemProperty(MDSAppView.TAB1_LAST_HB).setValue(device.getLastHeartBeatTimestamp() != null ? device.getLastHeartBeatTimestamp().getDate() : null);
+					woItem.getItemProperty(MDSAppView.TAB2_TIMESTAMP).setValue(device.getLastDatasetForDevice().getDate());
+					woItem.getItemProperty(MDSAppView.TAB2_ATTR_NUMBER).setValue(device.getAttributes());
+				}
+			} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_REFRESH_DEVICE_LIST)) {
+				List<Device> allDevices = (List<Device>) viewEvent.getEventData();
+				int i =0;
+				Table t = mv.getTableDevice();
+				for(Device device:allDevices){
+					Item woItem =  t.getItem(device);
+					if(woItem == null)
+						return;
+					woItem.getItemProperty(MDSAppView.TAB1_DEVICE_INSTANCE).setValue(device.getDeviceIdentification());
+	/*				if(device.getParent()!=null){
+						woItem.getItemProperty(MDSAppView.TAB1_DEVICE_US).setValue(device.getParent().getUnitServerAlias());
+						woItem.getItemProperty(MDSAppView.TAB1_DEV_STATUS).setValue(device.getParent().getState());
+					}
+					*/
+					woItem.getItemProperty(MDSAppView.TAB1_NET_ADDRESS).setValue(device.getNetAddress());
+					woItem.getItemProperty(MDSAppView.TAB1_LAST_HB).setValue(device.getLastHeartBeatTimestamp() != null ? device.getLastHeartBeatTimestamp().getDate() : null);
+					woItem.getItemProperty(MDSAppView.TAB2_TIMESTAMP).setValue(device.getLastDatasetForDevice().getDate());
+					woItem.getItemProperty(MDSAppView.TAB2_ATTR_NUMBER).setValue(device.getAttributes());
+				}
 			} else if (viewEvent.getEventKind().equals(MDSUIEvents.CTRL_CONFIG_GENERATED)) {
+			
 				String filename = (String)viewEvent.getEventData();
 				if(filename==null){
 					return;
@@ -501,9 +633,20 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 			}
 			Item it = event.getItem();
 			String registered = it.getItemProperty(TAB_UNIT_SERVER_REGISTERED).toString();
+			String prop = it.getItemProperty(TAB_UNIT_SERVER_REGISTERED).toString();
+		    String timestamp = it.getItemProperty(TAB_UNIT_SERVER_HB_TS).toString();
+		    Date dt =null;
+	        SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+	        try {
+				dt = formatter.parse(timestamp);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        Date now = new Date();
 			mv.getTableUnitServer().removeAllActionHandlers();
 			mv.getTableUnitServerCUType().removeAllActionHandlers();
-			if(registered!=null && (Integer.valueOf(registered) > 0)){
+			if(registered!=null && (Integer.valueOf(registered) > 0)&& (now.getTime()-dt.getTime())<(60*1000)){
 			
 				mv.getTableUnitServer().addActionHandler(new Action.Handler() {
 					public Action[] getActions(Object target, Object sender) {
@@ -563,6 +706,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 
 				});
 			} else {
+				//notifyEventoToControllerWithData(MDSUIEvents.EVENT_REMOVE_CU_DEVICES,this,mv.getTableUnitServer().getValue());
 				mv.getTableUnitServer().addActionHandler(new Action.Handler() {
 					public Action[] getActions(Object target, Object sender) {
 						return new Action[]{ACTION_US_EDIT_ALIAS};
@@ -608,7 +752,47 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 			mv.getButtonDelCU().setEnabled(true);
 			notifyEventoToControllerWithData(EVENT_UNIT_SERVER_CU_TYPE_SELECTED, event.getSource(), event.getItemId());
 		} else if (event.getSource().equals(mv.getTableDevice())) {
+			Table t = mv.getTableDevice();
+			 Item it  = t.getItem(event.getItemId());
+			  String timestamp = it.getItemProperty(TAB1_LAST_HB).toString();
+		        Date dt =null;
+		        SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+		        try {
+					dt = formatter.parse(timestamp);
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		        Date now = new Date();
+		       if((now.getTime() - dt.getTime())>(60)*1000 ){
+		        	t.removeAllActionHandlers();
+		        } else {
+		        	t.addActionHandler(new Action.Handler() {
+		    			public Action[] getActions(Object target, Object sender) {
+		    				return NODE_ACTIONS;
+		    			}
+		    			@Override
+		    			public void handleAction(Action action, Object sender, Object target) {
+		    				if (ACTION_NODE_START == action) {
+		    					Device dev=(Device) mv.getTableDevice().getValue();
+		    					notifyEventoToControllerWithData(MDSUIEvents.EVENT_NODE_START, sender, dev.getDeviceIdentification());
+		    				}else if (ACTION_NODE_STOP == action) {
+		    					notifyEventoToControllerWithData(MDSUIEvents.EVENT_NODE_STOP,  sender, mv.getTableDevice().getValue());
+		    				}else if (ACTION_NODE_INIT == action) {
+		    					notifyEventoToControllerWithData(MDSUIEvents.EVENT_NODE_INIT, sender, mv.getTableDevice().getValue());
+		    				}else if (ACTION_NODE_DEINIT == action) {
+		    					notifyEventoToControllerWithData(MDSUIEvents.EVENT_NODE_DEINIT, sender, mv.getTableDevice().getValue());
+		    				}else if (ACTION_NODE_SHUTDOWN == action) {
+		    					notifyEventoToControllerWithData(EVENT_NODE_SHUTDOWN, sender, mv.getTableDevice().getValue());
+		    				
+		    				}
+		    			}
+		    			
+		    		});
+		        }
+		       
 			notifyEventoToControllerWithData(EVENT_DEVICE_SELECTED, event.getSource(), event.getItemId());
+			
 		} /*else if (event.getSource().equals(mv.getTableDataset())) {
 			notifyEventoToControllerWithData(EVENT_DATASET_SELECTED, event.getSource(), event.getItemId());
 		}*/ else if (event.getSource().equals(mv.getTableDatasetAttribute())) {

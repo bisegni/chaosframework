@@ -34,6 +34,13 @@ public class MDSUIEvents {
 	public static final String			EVENT_SAVE_ATTRIBUTE_CONFIG		= "VIEW_EVENT_SAVE_ATTRIBUTE_CONFIG";
 	public static final String 			EVENT_UPDATE_DEVICE_CLASS 		= "CTRL_EVENT_UPDATE_DEVICE_CLASS";
 	public static final String 			CTRL_CONFIG_GENERATED = "CTRL_EVENT_CONFIG_GENERATED";
+	public static final String CHAOS_EVENT_US_UPDATE = "VIEW_EVENT_REFRESH_US";
+	public static final String EVENT_UPDATE_US = "CTRL_EVENT_UPDATE_US_LIST";
+	public static final String EVENT_REFRESH_US = "CTRL_EVENT_REFRESH_US";
+	public static final String EVENT_UPDATE_DEVICE_LIST = "CTRL_UPDATE_DEVICE_LIST";
+	public static final String EVENT_REFRESH_LIST = "CTRL_REFRESH_CU_LIST";
+	public static final String EVENT_REFRESH_DEVICE_LIST = "CTRL_REFRESH_DEVICE_LIST";
+	public static final Object EVENT_REMOVE_CU_DEVICES = "EVENT_REMOVE_CU_DEVICES";
 	
 
 

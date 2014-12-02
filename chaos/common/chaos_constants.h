@@ -388,12 +388,20 @@ namespace chaos {
 		
 		//! this action perform the registration for the control unit dataset
         static const char * const MDS_REGISTER_CONTROL_UNIT						= "registerControlUnit";
+        
+        //! key the addresses the list of the states of the CU for a given Unit Serve   string]
+        static const char * const UNIT_SERVER_CU_STATES                            = "unit_server_cu_states";
+
 		
 		//! Action to retrive all device id
 		static const char * const MDS_GET_ALL_DEVICE							= "getAllActiveDevice";
 		
 		//! Perform the heart beat of the cu
 		static const char * const MDS_CU_HEARTBEAT								= "heartbeatControlUnit";
+        
+        //! Perform the heart beat of the cu
+		static const char * const MDS_UNIT_SERVER_HEARTBEAT							= "heartbeatUnitServer";
+
 		
 		//! Perform request of the network address for a node identified by a device id
 		static const char * const MDS_GET_NODE_ADDRESS							= "getNodeNetworkAddress";
@@ -405,6 +413,13 @@ namespace chaos {
 		
 		//! Action called by mds for ack message in the unit server registration process
         static const char * const ACTION_UNIT_SERVER_REG_ACK	= "unitServerRegistrationACK";
+        
+        //! Action called by mds to retrieve unit server status (the status of all cointained CUs)
+        static const char * const ACTION_UNIT_SERVER_STATUS_REQ	= "unitServerStatusREQ";
+
+        //! key for the server alias used by the instance [string]
+        static const char * const UNIT_SERVER_STATES_ANSWER				= "unit_server_states";
+
 
 		//! Action called by mds for ack message in the unit server registration process
         static const char * const ACTION_WORK_UNIT_REG_ACK		= "workUnitRegistrationACK";

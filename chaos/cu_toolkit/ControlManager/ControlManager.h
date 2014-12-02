@@ -208,6 +208,11 @@ namespace chaos {
 				void stopControlUnitSMThread(bool whait = true);
 				
 				
+                /*!
+				 Action to poll status of a UnitServer and all CUs
+				 */
+				CDataWrapper* unitServerStatus(CDataWrapper *message_data, bool &detach) throw (CException);
+				
 				/*!
 				 Action that show the unit server registration result(success or failure)
 				 */

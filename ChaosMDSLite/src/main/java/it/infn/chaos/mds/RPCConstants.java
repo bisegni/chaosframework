@@ -76,4 +76,6 @@ public class RPCConstants {
 	// ! key that idetify the result of unit server registration[int32]
 	public static final String	MDS_REGISTER_UNIT_SERVER_RESULT				= "reg_unit_serv_result";
 
+	public static final String UNIT_SERVER_CU_STATES = "unit_server_cu_states";
+
 }

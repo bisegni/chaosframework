@@ -3,6 +3,11 @@
  */
 package it.infn.chaos.mds;
 
+import it.infn.chaos.mds.batchexecution.DeinitCU;
+import it.infn.chaos.mds.batchexecution.GetCUState;
+import it.infn.chaos.mds.batchexecution.InitCU;
+import it.infn.chaos.mds.batchexecution.StartCU;
+import it.infn.chaos.mds.batchexecution.StopCU;
 import it.infn.chaos.mds.batchexecution.SystemCommandWorkUnit;
 import it.infn.chaos.mds.batchexecution.SlowExecution;
 import it.infn.chaos.mds.batchexecution.UnitServerACK;
@@ -94,6 +99,16 @@ public class ChaosMDSInitPlugin implements REFInitPlugin, REFDeinitPlugin {
 			SingletonServices.getInstance().getSlowExecution().registerSlowControlJob(UnitServerACK.class);
 			SingletonServices.getInstance().getSlowExecution().registerSlowControlJob(WorkUnitACK.class);
 			SingletonServices.getInstance().getSlowExecution().registerSlowControlJob(SystemCommandWorkUnit.class);
+			SingletonServices.getInstance().getSlowExecution().registerSlowControlJob(GetCUState.class);
+			SingletonServices.getInstance().getSlowExecution().registerSlowControlJob(InitCU.class);
+			SingletonServices.getInstance().getSlowExecution().registerSlowControlJob(StartCU.class);
+			SingletonServices.getInstance().getSlowExecution().registerSlowControlJob(StopCU.class);
+			SingletonServices.getInstance().getSlowExecution().registerSlowControlJob(DeinitCU.class);
+
+
+
+
+
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}

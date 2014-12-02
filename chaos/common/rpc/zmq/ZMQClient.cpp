@@ -214,12 +214,13 @@ void ZMQClient::processBufferElement(NetworkForwardInfo *messageInfo, ElementMan
 	try{
 		socket_info = getSocketForNFI(messageInfo);
 		//now we can use the socket
+        boost::unique_lock<boost::shared_mutex> lock_socket(socket_info->socket_mutex);
+		ZMQC_LDBG << "Lock acquired on socket mutex";
+		
 		if(!(socket_info.get() && socket_info->socket)) {
 			ZMQC_LDBG << "Socket creation error";
 			return;
 		}
-		boost::unique_lock<boost::shared_mutex> lock_socket(socket_info->socket_mutex);
-		ZMQC_LDBG << "Lock acquired on socket mutex";
 		
 		//detach buffer from carrier object so we don't need to copy anymore the data
 		callSerialization->disposeOnDelete = false;

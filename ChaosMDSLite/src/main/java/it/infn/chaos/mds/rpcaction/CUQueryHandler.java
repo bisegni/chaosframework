@@ -41,6 +41,8 @@ public class CUQueryHandler extends RPCActionHadler {
 	private static final String	SYSTEM					= "system";
 	private static final String	REGISTER_CONTROL_UNIT	= "registerControlUnit";
 	private static final String	HEARTBEAT_CONTROL_UNIT	= "heartbeatControlUnit";
+	private static final String	UNIT_SERVER_STATES	= "unit_server_states";
+
 
 	/*
 	 * (non-Javadoc)
@@ -51,6 +53,8 @@ public class CUQueryHandler extends RPCActionHadler {
 	public void intiHanlder() throws RefException {
 		addDomainAction(SYSTEM, RPCConstants.MDS_REGISTER_UNIT_SERVER);
 		addDomainAction(SYSTEM, CUQueryHandler.REGISTER_CONTROL_UNIT);
+		addDomainAction(SYSTEM, CUQueryHandler.UNIT_SERVER_STATES);
+
 	}
 
 	/*
@@ -66,6 +70,9 @@ public class CUQueryHandler extends RPCActionHadler {
 				result = registerControUnit(actionData);
 			} else if (action.equals(HEARTBEAT_CONTROL_UNIT)) {
 				result = heartbeat(actionData);
+			} else if (action.equals(UNIT_SERVER_STATES)) {
+				result = unit_server_states(actionData);
+			
 			} else if (action.equals(RPCConstants.MDS_REGISTER_UNIT_SERVER)) {
 				try {
 					result = registerUnitServer(actionData);
@@ -77,6 +84,64 @@ public class CUQueryHandler extends RPCActionHadler {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * @param actionData
+	 * @return
+	 */
+	private BasicBSONObject unit_server_states(BasicBSONObject actionData) {
+		UnitServerDA usDA = null;
+		DeviceDA dDA = null;
+
+		UnitServer us = null;
+		us = new UnitServer();
+		us.setAlias(actionData.getString(RPCConstants.MDS_REGISTER_UNIT_SERVER_ALIAS));
+		us.setIp_port(actionData.getString(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS));
+		try {
+			Vector<UnitServerCuInstance> instanceForUnitServer = null;
+
+			usDA = getDataAccessInstance(UnitServerDA.class);
+			dDA = getDataAccessInstance(DeviceDA.class);
+
+			usDA.updateUnitServerTSAndIP(us);
+			us = usDA.getUnitServerByAlias(us.getAlias());
+			instanceForUnitServer = usDA.returnAllUnitServerCUAssociationbyUSAlias(us.getAlias());
+			for(UnitServerCuInstance cu:instanceForUnitServer){
+				usDA.setState(cu.getCuId(), "---");
+				
+			}
+			BasicBSONList bsonAttributesArray = (BasicBSONList) actionData.get(RPCConstants.UNIT_SERVER_CU_STATES);
+			if(bsonAttributesArray!=null){
+				for(Object obj:bsonAttributesArray){
+					BasicBSONObject bobj = (BasicBSONObject)obj;
+					for(UnitServerCuInstance cu:instanceForUnitServer){
+						if(bobj.get(cu.getCuId())!=null){
+							Integer state = bobj.getInt(cu.getCuId());
+							if(state!=null){
+								//dDA.getDeviceIdFormInstance(cu.getCuId());
+								//cu.setState(Integer.toString(state));
+								dDA.performDeviceHB(cu.getCuId());
+
+								usDA.setState(cu.getCuId(), Integer.toString(state));
+
+							}
+						}
+					}
+				}
+				us.setCuInstances(instanceForUnitServer);
+			}
+			ChaosEventComponent ev= ChaosEventComponent.getInstance();
+			ev.usUpdate(us);
+			
+			closeDataAccess(usDA, true);
+			closeDataAccess(dDA, true);
+
+
+		} catch(Throwable e){
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**
@@ -132,7 +197,7 @@ public class CUQueryHandler extends RPCActionHadler {
 				dc.setDeviceSource("pre-existent");
 				try {
 					usDA.insertNewDeviceClass(dc);
-				} catch (Exception e) {
+				} catch (Throwable e) {
 					// TODO: handle exception
 				}
 				

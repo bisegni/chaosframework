@@ -243,7 +243,7 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
 	//the init of the implementation unit goes after the infrastructure one
 	ACULDBG_ << "Start internal and custom inititialization";
 	try {
-		ACULAPP_ << "Allcoate the user cache wrapper";
+		ACULAPP_ << "Allocate the user cache wrapper";
 		attribute_shared_cache_wrapper = new AttributeSharedCacheWrapper(attribute_value_shared_cache);
 		
 		ACULAPP_ << "Populating shared attribute cache for input attribute";
@@ -584,10 +584,12 @@ void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
  Get the current control unit state
  */
 CDataWrapper* AbstractControlUnit::_getState(CDataWrapper* getStatedParam, bool& detachParam) throw(CException) {
+   
 	if(!getStatedParam->hasKey(DatasetDefinitionkey::DEVICE_ID)){
-		throw CException(-1, "Get State Pack without DeviceID", __PRETTY_FUNCTION__);
+        throw CException(-1, "Get State Pack without DeviceID", __PRETTY_FUNCTION__);
 	}
-	CDataWrapper *stateResult = new CDataWrapper();
+    CDataWrapper *stateResult = new CDataWrapper();
+
 	string deviceID = getStatedParam->getStringValue(DatasetDefinitionkey::DEVICE_ID);
 	
 	stateResult->addInt32Value(CUStateKey::CONTROL_UNIT_STATE, static_cast<CUStateKey::ControlUnitState>(utility::StartableService::getServiceState()));

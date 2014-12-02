@@ -130,6 +130,14 @@ void ControlManager::init(void *initParameter) throw(CException) {
 																					   ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN,
 																					   ChaosSystemDomainAndActionLabel::ACTION_UNIT_SERVER_REG_ACK,
 																					   "Unit server registration ack message");
+        
+        actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
+                                                                                      &ControlManager::unitServerStatus,
+                                                                                      ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN,
+                                                                                      ChaosSystemDomainAndActionLabel::ACTION_UNIT_SERVER_STATUS_REQ,
+                                                                                      "Unit server states");
+
+        
 	}
     
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
@@ -483,6 +491,25 @@ CDataWrapper* ControlManager::unloadControlUnit(CDataWrapper *message_data, bool
 	return NULL;
 }
 
+CDataWrapper* ControlManager::unitServerStatus(CDataWrapper *message_data, bool &detach) throw (CException){
+    chaos_data::CDataWrapper unit_server_status;
+    unit_server_status.addStringValue(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_ALIAS, unit_server_alias);
+    unit_server_status.addInt32Value(ChaosSystemDomainAndActionLabel::MDS_UNIT_SERVER_HEARTBEAT,  (uint32_t) TimingUtil::getTimeStamp());
+    LCMDBG_ << "[Action] Get Unit State";
+
+	map<string, shared_ptr<WorkUnitManagement> >::iterator iter;
+    for(iter = map_cuid_registered_instance.begin();iter!=map_cuid_registered_instance.end();iter++){
+        chaos_data::CDataWrapper item;
+        item.addInt32Value(iter->first.c_str(),iter->second->getCurrentState());
+        LCMDBG_ << "[Action] Get Unit State, \""<<iter->first<<"\" ="<<iter->second->getCurrentState();
+        unit_server_status.appendCDataWrapperToArray(item);
+    }
+    unit_server_status.finalizeArrayForKey(ChaosSystemDomainAndActionLabel::UNIT_SERVER_CU_STATES);
+	mds_channel->sendUnitServerCUStates(unit_server_status);
+    
+    return NULL;
+	
+}
 
 //! ack received for the registration of the uwork unit
 CDataWrapper* ControlManager::workUnitRegistrationACK(CDataWrapper *message_data, bool &detach) throw (CException) {

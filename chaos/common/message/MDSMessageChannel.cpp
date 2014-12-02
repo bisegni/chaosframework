@@ -42,6 +42,22 @@ void MDSMessageChannel::sendHeartBeatForDeviceID(string& identificationID) {
 }
 
 
+//! Send unit server CU states to MDS
+int MDSMessageChannel::sendUnitServerCUStates(CDataWrapper& deviceDataset, bool requestCheck, uint32_t millisecToWait) {
+    int err = ErrorCode::EC_NO_ERROR;
+    string currentBrokerIpPort;
+    getBroker()->getPublishedHostAndPort(currentBrokerIpPort);
+    deviceDataset.addStringValue(CUDefinitionKey::CS_CM_CU_INSTANCE_NET_ADDRESS, currentBrokerIpPort.c_str());
+    if(requestCheck){
+        auto_ptr<CDataWrapper> cuStates( MessageChannel::sendRequest(nodeAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::UNIT_SERVER_STATES_ANSWER, &deviceDataset, millisecToWait));
+        CHECK_TIMEOUT_AND_RESULT_CODE(cuStates, err)
+    } else {
+        MessageChannel::sendMessage(nodeAddress->nodeID.c_str(), ChaosSystemDomainAndActionLabel::UNIT_SERVER_STATES_ANSWER, &deviceDataset);
+    }
+    return err;
+}
+
+
 //! Send unit server description to MDS
 int MDSMessageChannel::sendUnitServerRegistration(CDataWrapper& deviceDataset, bool requestCheck, uint32_t millisecToWait) {
     int err = ErrorCode::EC_NO_ERROR;

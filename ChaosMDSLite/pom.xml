@@ -21,7 +21,7 @@
    <artifactId>refresher</artifactId>
    <version>1.1.1</version>
 
-</dependency>
+	</dependency>
 
 		
 		
@@ -87,6 +87,11 @@
 			<artifactId>vaadin</artifactId>
 			<version>${vaadin.version}</version>
 		</dependency>
+		<dependency>
+        <groupId>com.vaadin</groupId>
+        <artifactId>vaadin-themes</artifactId>
+        <version>7.0.0</version>
+   		 </dependency>
 		 <dependency>
       <groupId>com.google.gwt</groupId>
       <artifactId>gwt-user</artifactId>
@@ -218,6 +223,7 @@
             <executions>
                 <execution>
                     <goals>
+                    
                         <goal>compile</goal>
                         
                         
@@ -249,8 +255,7 @@
                         <configuration>
                         </configuration>
                         <goals>
-                            <goal>update-widgetset</goal>
-                          
+				          <goal>update-widgetset</goal>
                         </goals>
                     </execution>
                 </executions>

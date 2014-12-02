@@ -210,4 +210,35 @@ public class Device extends BSONBusinessObject {
 		this.initAtStartup = initAtStartup;
 	}
 
+	private Timestamp timestamp;
+	/**
+	 * @param timestamp
+	 */
+	public void setLastDatasetForDevice(Timestamp t) {
+		timestamp = t;		
+	}
+	
+	public Timestamp getLastDatasetForDevice( ) {
+		return timestamp;		
+	}
+
+	int attributes;
+	/**
+	 * @param i
+	 */
+	public void setAttributes(int i) {
+		attributes = i;		
+	}
+	
+	public int getAttributes() {
+		return attributes;		
+	}
+
+	private UnitServerCuInstance cu;
+	public UnitServerCuInstance getParent() {
+		return cu;		
+	}
+	public void setParent(UnitServerCuInstance c) {
+		cu=c;		
+	}
 }

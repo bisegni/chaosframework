@@ -44,6 +44,8 @@ public class SystemCommandWorkUnit extends SlowExecutionJob {
 
 	private void sendLoadUnloadControlUnitMessage(UnitServer unitServer, UnitServerCuInstance instance, boolean load) throws Throwable {
 		// send
+		if(instance == null)
+			return;
 		BasicBSONObject msgData = instance.getDriverDescriptionAsBson();
 		// msgData.pu
 		msgData.append("controlUnitTypeAlias", instance.getCuType());

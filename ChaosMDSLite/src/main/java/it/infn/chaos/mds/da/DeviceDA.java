@@ -42,6 +42,8 @@ public class DeviceDA extends DataAccess {
 	 * @throws SQLException
 	 */
 	public void performDeviceHB(Integer deviceID) throws SQLException {
+		if(deviceID==null)
+			return;
 		InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_UPDATE);
 		iuBuilder.addTable(Device.class);
 		iuBuilder.addColumnAndValue("last_hb", "$CURRENT_TIMESTAMP");

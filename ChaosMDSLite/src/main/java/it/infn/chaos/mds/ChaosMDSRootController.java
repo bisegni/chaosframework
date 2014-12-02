@@ -1,6 +1,10 @@
 package it.infn.chaos.mds;
 
+import it.infn.chaos.mds.batchexecution.GetCUState;
+import it.infn.chaos.mds.batchexecution.InitCU;
+import it.infn.chaos.mds.batchexecution.StartCU;
 import it.infn.chaos.mds.batchexecution.SystemCommandWorkUnit;
+import it.infn.chaos.mds.batchexecution.UnitServerACK;
 import it.infn.chaos.mds.batchexecution.SystemCommandWorkUnit.LoadUnloadWorkUnitSetting;
 import it.infn.chaos.mds.business.DataServer;
 import it.infn.chaos.mds.business.Dataset;
@@ -32,6 +36,7 @@ import java.util.Observable;
 import java.util.Set;
 import java.util.Vector;
 
+import org.bson.BasicBSONObject;
 import org.ref.common.exception.RefException;
 import org.ref.common.mvc.ViewNotifyEvent;
 import org.ref.server.auth.RefAuthneticatorListener;
@@ -67,7 +72,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 	private String					unitServerCUTypeSelected;
 	private UnitServerCuInstance	cuselected=null;
 	private Application				webapp=null;
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -100,6 +105,8 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 			  ac.getWindow().addURIHandler(uriHandler);
 			  
 			  webapp = ac.getWindow().getApplication();
+			  webapp.setTheme("chaosmdslitetheme");
+
 			  
 	}
 
@@ -113,7 +120,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 		try {
 			if (applicationViewComponent.equals(getViewByKey("VISTA"))) {
 				updateUnitServerList();
-				updateDeviceList();
+				updateDeviceList(false);
 			} else if (applicationViewComponent.equals(getViewByKey("VISTA_DUE"))) {
 				notifyEventoToViewWithData(LiveDataPreferenceView.EVENT_PREFERENCE_UPDATE_SERVER_LIST, this, msp.getAllServer());
 			}
@@ -163,7 +170,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_DEVICE_SELECTED)) {
 					deviceHasBeenSelected(viewEvent.getEventData());
 				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UPDATE_DEVICE_LIST)) {
-					updateDeviceList();
+					updateDeviceList(false);
 				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_DATASET_SELECTED)) {
 					updateDatasetAttributeList((Dataset) viewEvent.getEventData());
 				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_ATTRIBUTE_SAVE)) {
@@ -242,9 +249,15 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 					
 				}  else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_REFRESH_STATE)) {
 					//refreshedUS
-					updateUnitServerList();
-					updateDeviceList();					
-				}  else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_REMOVE_DEVICE_CLASS)) {
+					//updateUnitServerList();
+					//updateDeviceList();	
+					getUnitState();
+					refreshUnitServer(null);
+					updateDeviceList(true);
+				}   else if (viewEvent.getEventKind().equals(MDSUIEvents.CHAOS_EVENT_US_UPDATE)){
+					refreshUnitServer((UnitServer)viewEvent.getEventData());
+				}   else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_REMOVE_DEVICE_CLASS)) {
+				
 					DeviceClass dc = (DeviceClass)viewEvent.getEventData();
 					addRemoveDeviceClass(true,viewEvent.getEventData());
 					if(cuselected!=null){
@@ -361,9 +374,21 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 					musp.deleteSecurityKeys((UnitServer) viewEvent.getEventData());
 					notifyEventoToViewWithData(USEditInfoView.EVENT_SET_UNIT_SERVER, this, musp.getUnitServerByIdentification(((UnitServer) viewEvent.getEventData()).getAlias()));
 				} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_CU_REGISTERED)) {
-					updateDeviceList();	
+					updateDeviceList(false);	
+				} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_REMOVE_CU_DEVICES)) {
+					Set<UnitServerCuInstance> usv=new HashSet<UnitServerCuInstance>();
+					if(viewEvent.getEventData() == null)
+						return;
+					usv.add((UnitServerCuInstance) viewEvent.getEventData());
+					removeDeviceAssociated(usv);	
 				} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_NODE_START)) {
 					String device = viewEvent.getEventData().toString();
+					String[] info=getCufromDev(device);
+					if(info!=null){
+						
+						SingletonServices.getInstance().getSlowExecution().submitJob(StartCU.class.getName(),info );
+					}
+
 				} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_NODE_STOP)) {
 					String device = viewEvent.getEventData().toString();
 				} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_NODE_INIT)) {
@@ -436,7 +461,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 		for (UnitServerCuInstance association : ass) {
 			mdp.deleteDeviceByInstance(association.getCuId());
 		}
-		updateDeviceList();
+		updateDeviceList(false);
 	}
 	
 	private void dumpConfiguration() throws Throwable{
@@ -480,6 +505,22 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 		}
 	}
 
+	/**
+	 * 
+	 * @param eventData
+	 * @param b
+	 * @throws Throwable
+	 */
+	private void getUnitState() throws Throwable {
+		List<UnitServer> allUnitServer = musp.getAllUnitServer();
+		for(UnitServer us:allUnitServer){
+			BasicBSONObject actionData = new BasicBSONObject();
+			if(us.getIp_port()!=null){
+				actionData.append(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS, us.getIp_port());
+				SingletonServices.getInstance().getSlowExecution().submitJob(GetCUState.class.getName(), actionData);
+			}
+		}
+	}
 	/**
 	 * 
 	 * @param associationToRemove
@@ -527,24 +568,23 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 		updateUnitServerList();
 	}
 
+	
+	private void refreshUnitServer(UnitServer us) throws Throwable {
+		// load all dataset
+	
+		notifyEventoToViewWithData(MDSUIEvents.EVENT_REFRESH_US, this,us);
+		notifyEventoToViewWithData(MDSUIEvents.EVENT_REFRESH_LIST, this,us);
+		
+
+	}
 	/**
 	 * 
 	 * @throws Throwable
 	 */
 	private void updateUnitServerList() throws Throwable {
-		unitServerHasBeenSelected(null);
-		MDSAppView view = getViewByKey("VISTA");
 		// load all dataset
 		List<UnitServer> allUnitServer = musp.getAllUnitServer();
-		Table t = (Table) view.getComponentByKey(MDSAppView.KEY_USERVER_TAB);
-		t.removeAllItems();
-		for (UnitServer us : allUnitServer) {
-			Item woItem = t.addItem(us.getAlias());
-			woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_NAME).setValue(us.getAlias());
-			woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_ADDRESS).setValue(us.getIp_port());
-			woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_HB_TS).setValue(us.getUnitServerHB().getDate());
-			woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_REGISTERED).setValue(us.getState());
-		}
+		notifyEventoToViewWithData(MDSUIEvents.EVENT_UPDATE_US, this,allUnitServer);
 	}
 
 	private void addRemoveDeviceClass(boolean remove,Object dc) throws SQLException, RefException, InstantiationException, IllegalAccessException, ClassNotFoundException{
@@ -652,7 +692,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 			String deviceIdentification = iterator.next();
 			mdp.swapDeviceStartupInitizializationOption(deviceIdentification);
 		}
-		updateDeviceList();
+		updateDeviceList(false);
 	}
 
 	private void updateServerData() throws Throwable {
@@ -677,7 +717,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 		Table t = (Table) view.getComponentByKey(MDSAppView.KEY_DEVICE_TAB);
 		Object o = t.getValue();
 		mdp.deleteDeviceByInstance(o.toString());
-		updateDeviceList();
+		updateDeviceList(false);
 	}
 
 	/**
@@ -788,64 +828,60 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 
 	}
 
-	private void updateDeviceTable(Device device) throws Throwable{
-		if(device==null)
-			return;
-		MDSAppView view = getViewByKey("VISTA");
-		// load all dataset		
-		Table t = (Table) view.getComponentByKey(MDSAppView.KEY_DEVICE_TAB);
-		Item woItem = t.addItem(device.getDeviceIdentification());
-		woItem.getItemProperty(MDSAppView.TAB1_DEVICE_INSTANCE).setValue(device.getDeviceIdentification());
-		//woItem.getItemProperty(MDSAppView.TAB1_DEV_STATUS).setValue(device.getState());
-		woItem.getItemProperty(MDSAppView.TAB1_NET_ADDRESS).setValue(device.getNetAddress());
-		woItem.getItemProperty(MDSAppView.TAB1_LAST_HB).setValue(device.getLastHeartBeatTimestamp() != null ? device.getLastHeartBeatTimestamp().getDate() : null);
-		woItem.getItemProperty(MDSAppView.TAB2_TIMESTAMP).setValue(mdp.getLastDatasetForDevice(device.getDeviceIdentification()).getTimestamp().getDate());
-		woItem.getItemProperty(MDSAppView.TAB2_ATTR_NUMBER).setValue(mdp.getLastDatasetForDevice(device.getDeviceIdentification()).getAttributes() != null ? mdp.getLastDatasetForDevice(device.getDeviceIdentification()).getAttributes().size() : 0);
-	//	woItem.getItemProperty("INIT").setValue(device.getInitAtStartup());
-	}
-	
-	private void updateDeviceTable(String id) throws Throwable {
-		MDSAppView view = getViewByKey("VISTA");
-		// load all dataset
-		Device device = mdp.getDevice(id);
-		
-		Table t = (Table) view.getComponentByKey(MDSAppView.KEY_DEVICE_TAB);
-		t.removeAllItems();
-		updateDeviceTable(device);
-	}
 	
 	
-	/**
-	 * @throws Throwable
-	 */
-	private void updateDeviceList(Vector<UnitServerCuInstance> cus) throws Throwable {
-		MDSAppView view = getViewByKey("VISTA");
-		Table t = (Table) view.getComponentByKey(MDSAppView.KEY_DEVICE_TAB);
-		t.removeAllItems();
-		if(cus==null)
-			return;
-		
-		for (UnitServerCuInstance cu : cus){
-			updateDeviceTable(cu.getCuId());
+	
+	
+	private String[] getCufromDev(String name) throws Throwable{
+		String[] ret=null;
+		List<UnitServer> allUnitServer = musp.getAllUnitServer();
+		for(UnitServer us:allUnitServer){
+
+			List<UnitServerCuInstance> cus = musp.loadAllAssociationForUnitServerAlias(us.getAlias());
+			for(UnitServerCuInstance cu:cus){
+				if(cu.getCuId().equals(name)){
+					ret = new String[2];
+					ret[0]=us.getIp_port();
+					ret[1]=name;
+					return ret;
+				}
+			}
 		}
+		return null;
 	}
-	
 	/**
 	 * @throws Throwable
 	 */
-	private void updateDeviceList() throws Throwable {
+	private void updateDeviceList(boolean refresh) throws Throwable {
 		deviceHasBeenSelected(null);
-		MDSAppView view = getViewByKey("VISTA");
-		// load all dataset
+	//	List<UnitServer> allUnitServer = musp.getAllUnitServer();
 		List<Device> allDevices = mdp.getAllDevices();
-		
-		Table t = (Table) view.getComponentByKey(MDSAppView.KEY_DEVICE_TAB);
-		t.removeAllItems();
-		if(allDevices==null || (allDevices.size()==0))
-			return;
-		for (Device device : allDevices) {
-			updateDeviceTable(device);
+/*
+		for(Device dev:allDevices){
+				List<UnitServerCuInstance> cus = musp.loadAllAssociationForUnitServerAlias(us.getAlias());
+				for(UnitServerCuInstance cu:cus){
+					if(cu.getCuId() == dev.getDeviceIdentification()){
+						dev.setParent(cu);
+						dev.setLastDatasetForDevice(mdp.getLastDatasetForDevice(dev.getDeviceIdentification()).getTimestamp());
+						dev.setAttributes(mdp.getLastDatasetForDevice(dev.getDeviceIdentification()).getAttributes() != null ? mdp.getLastDatasetForDevice(dev.getDeviceIdentification()).getAttributes().size() : 0);
+
+					}
+				}
+			}
 		}
+		*/
+		for(Device dev:allDevices){
+			dev.setLastDatasetForDevice(mdp.getLastDatasetForDevice(dev.getDeviceIdentification()).getTimestamp());
+			dev.setAttributes(mdp.getLastDatasetForDevice(dev.getDeviceIdentification()).getAttributes() != null ? mdp.getLastDatasetForDevice(dev.getDeviceIdentification()).getAttributes().size() : 0);
+		}
+	
+		if(refresh){
+			notifyEventoToViewWithData(MDSUIEvents.EVENT_REFRESH_DEVICE_LIST, this,allDevices);
+
+		} else {
+			notifyEventoToViewWithData(MDSUIEvents.EVENT_UPDATE_DEVICE_LIST, this,allDevices);
+		}
+
 	}
 
 	/*

@@ -64,6 +64,17 @@ namespace chaos {
 				 */
 				int sendUnitServerRegistration(CDataWrapper& unitServerDescription, bool requestCheck = false, uint32_t millisecToWait = 0);
 				
+                //! Send Unit server CU states to MDS
+				/*!
+				 Perform the registration of the unit server
+				 \param unitServerDescription the description of the unit server to publish
+				 \param requestCheck flasg the message has request if it is true
+				 \param millisecToWait delay after wich the wait is interrupt
+				 */
+
+                int sendUnitServerCUStates(CDataWrapper& deviceDataset, bool requestCheck= false, uint32_t millisecToWait=0);
+                    
+                    
 				//! Send dataset to MDS
 				/*!
 				 Perform the registration of the control unit dataaset

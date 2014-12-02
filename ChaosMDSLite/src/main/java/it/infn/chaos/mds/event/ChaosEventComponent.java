@@ -1,8 +1,12 @@
 package it.infn.chaos.mds.event;
 
+import it.infn.chaos.mds.business.UnitServer;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.bson.BasicBSONObject;
 
 import com.vaadin.ui.AbstractComponent;
 
@@ -15,6 +19,7 @@ public class ChaosEventComponent extends AbstractComponent {
 	public static final String  CHAOS_EVENT_CU_REGISTERED 						= "CHAOS_EVENT_CU_REGISTERED";
 	public static final String  CHAOS_EVENT_UI_REGISTERED 					= "CHAOS_EVENT_UI_REGISTERED";
 	public static final String  CHAOS_EVENT_ERROR				= "CHAOS_EVENT_ERROR";
+	public static final String CHAOS_EVENT_US_UPDATE = "CHAOS_EVENT_US_UPDATE";
 	
 	public interface ChaosEventListener extends Serializable {
 	    public void event(VaadinEvent source);
@@ -55,5 +60,12 @@ public class ChaosEventComponent extends AbstractComponent {
 		public void errorEvent(Object data){
 			VaadinEvent ev = new VaadinEvent(CHAOS_EVENT_ERROR,data);
 			fire(ev);
+		}
+		/**
+		 * @param us
+		 */
+		public void usUpdate(UnitServer us) {
+			VaadinEvent ev = new VaadinEvent(CHAOS_EVENT_US_UPDATE,us);
+			fire(ev);			
 		}
 }
