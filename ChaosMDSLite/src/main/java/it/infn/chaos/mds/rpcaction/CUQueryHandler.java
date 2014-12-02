@@ -41,8 +41,7 @@ public class CUQueryHandler extends RPCActionHadler {
 	private static final String	SYSTEM					= "system";
 	private static final String	REGISTER_CONTROL_UNIT	= "registerControlUnit";
 	private static final String	HEARTBEAT_CONTROL_UNIT	= "heartbeatControlUnit";
-	private static final String	UNIT_SERVER_STATES	= "unit_server_states";
-
+	private static final String	UNIT_SERVER_STATES		= "unit_server_states";
 
 	/*
 	 * (non-Javadoc)
@@ -72,7 +71,7 @@ public class CUQueryHandler extends RPCActionHadler {
 				result = heartbeat(actionData);
 			} else if (action.equals(UNIT_SERVER_STATES)) {
 				result = unit_server_states(actionData);
-			
+
 			} else if (action.equals(RPCConstants.MDS_REGISTER_UNIT_SERVER)) {
 				try {
 					result = registerUnitServer(actionData);
@@ -107,38 +106,77 @@ public class CUQueryHandler extends RPCActionHadler {
 			usDA.updateUnitServerTSAndIP(us);
 			us = usDA.getUnitServerByAlias(us.getAlias());
 			instanceForUnitServer = usDA.returnAllUnitServerCUAssociationbyUSAlias(us.getAlias());
-			for(UnitServerCuInstance cu:instanceForUnitServer){
+			for (UnitServerCuInstance cu : instanceForUnitServer) {
 				usDA.setState(cu.getCuId(), "---");
-				
+
 			}
 			BasicBSONList bsonAttributesArray = (BasicBSONList) actionData.get(RPCConstants.UNIT_SERVER_CU_STATES);
-			if(bsonAttributesArray!=null){
-				for(Object obj:bsonAttributesArray){
-					BasicBSONObject bobj = (BasicBSONObject)obj;
-					for(UnitServerCuInstance cu:instanceForUnitServer){
-						if(bobj.get(cu.getCuId())!=null){
-							Integer state = bobj.getInt(cu.getCuId());
-							if(state!=null){
-								//dDA.getDeviceIdFormInstance(cu.getCuId());
-								//cu.setState(Integer.toString(state));
-								dDA.performDeviceHB(cu.getCuId());
+			if (bsonAttributesArray != null) {
+				for (Object obj : bsonAttributesArray) {
+					BasicBSONObject bobj = (BasicBSONObject) obj;
+					if (bobj.containsField("device_key")) {
+						String cu_id = bobj.getString("device_key");
+						Integer cu_sm_state = bobj.getInt(cu_id + "_sm_state");
+						Integer cu_state = bobj.getInt(cu_id + "_state");
+						String str_cu_state = null;
+						String str_cu_sm_state = null;
+						switch (cu_state) {
+						case 0:
+							str_cu_state = String.format("CUState: %s", "Deinit");
+							break;
+						case 1:
+							str_cu_state = String.format("CUState: %s", "Init");
+							break;
+						case 2:
+							str_cu_state = String.format("CUState: %s", "Start");
+							break;
+						case 3:
+							str_cu_state = String.format("CUState: %s", "Stop");
+							break;
 
-								usDA.setState(cu.getCuId(), Integer.toString(state));
+						}
 
-							}
+						switch (cu_sm_state) {
+						case 0:
+							str_cu_sm_state = String.format("SMState: %s", "Unpub");
+							break;
+						case 1:
+							str_cu_sm_state = String.format("SMState: %s", "StartPub");
+							break;
+						case 2:
+							str_cu_sm_state = String.format("SMState: %s", "Publishing");
+							break;
+						case 3:
+							str_cu_sm_state = String.format("SMState: %s", "Published");
+							break;
+						case 4:
+							str_cu_sm_state = String.format("SMState: %s", "StartUnpub");
+							break;
+						case 5:
+							str_cu_sm_state = String.format("SMState: %s", "Unpublishing");
+							break;
+						case 6:
+							str_cu_sm_state = String.format("SMState: %s", "Unpublishing");
+							break;
+
+						}
+						// String state = String.format("CUState: %d CUSMState: %d", args)
+						if (cu_state != null) {
+							dDA.performDeviceHB(cu_id);
+							usDA.setState(cu_id, String.format("%s %s", str_cu_state, str_cu_sm_state));
+
 						}
 					}
 				}
 				us.setCuInstances(instanceForUnitServer);
 			}
-			ChaosEventComponent ev= ChaosEventComponent.getInstance();
+			ChaosEventComponent ev = ChaosEventComponent.getInstance();
 			ev.usUpdate(us);
-			
+
 			closeDataAccess(usDA, true);
 			closeDataAccess(dDA, true);
 
-
-		} catch(Throwable e){
+		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -149,8 +187,8 @@ public class CUQueryHandler extends RPCActionHadler {
 	 * 
 	 * @param actionData
 	 * @return
-	 * @throws NoSuchProviderException 
-	 * @throws NoSuchAlgorithmException 
+	 * @throws NoSuchProviderException
+	 * @throws NoSuchAlgorithmException
 	 * @throws SQLException
 	 * @throws IllegalAccessException
 	 * @throws InstantiationException
@@ -175,16 +213,15 @@ public class CUQueryHandler extends RPCActionHadler {
 				us.addPublischedCU(dsDescIter.next().toString());
 			}
 
-			if(actionData.containsField(RPCConstants.MDS_REGISTER_UNIT_SERVER_KEY)) {
-				registrationPublicKey =  actionData.getString(RPCConstants.MDS_REGISTER_UNIT_SERVER_KEY);
+			if (actionData.containsField(RPCConstants.MDS_REGISTER_UNIT_SERVER_KEY)) {
+				registrationPublicKey = actionData.getString(RPCConstants.MDS_REGISTER_UNIT_SERVER_KEY);
 			}
-			//the registration pack contain an rsa key check if it match with the private
-			if(!usDA.checkPublicKey(us.getAlias(), registrationPublicKey)) {
+			// the registration pack contain an rsa key check if it match with the private
+			if (!usDA.checkPublicKey(us.getAlias(), registrationPublicKey)) {
 				actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
 				return null;
 			}
-			
-			
+
 			if (usDA.unitServerAlreadyRegistered(us)) {
 				usDA.updateUnitServerTSAndIP(us);
 			} else {
@@ -200,7 +237,7 @@ public class CUQueryHandler extends RPCActionHadler {
 				} catch (Throwable e) {
 					// TODO: handle exception
 				}
-				
+
 			}
 			// now start all association in auto-load for that server, if are present
 			instanceForUnitServer = usDA.loadAllAssociationForUnitServerAliasInAutoload(us.getAlias());
@@ -215,15 +252,15 @@ public class CUQueryHandler extends RPCActionHadler {
 
 			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 5);
 			closeDataAccess(usDA, true);
-			try{
-				ChaosEventComponent ev= ChaosEventComponent.getInstance();
+			try {
+				ChaosEventComponent ev = ChaosEventComponent.getInstance();
 				ev.unitRegistrationEvent(us.getAlias());
-			} catch (Throwable e){
+			} catch (Throwable e) {
 				e.printStackTrace();
 			}
 		} catch (InstantiationException e) {
 			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
-		
+
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "CUQueryHandler::registerUnitServer");
 		} catch (IllegalAccessException e) {
 			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
@@ -316,7 +353,7 @@ public class CUQueryHandler extends RPCActionHadler {
 			d.setCuInstance(controlUnitInstance);
 			d.setNetAddress(controlUnitNetAddress);
 			d.fillFromBson(actionData);
-			
+
 			// add device id into ack pack
 			ackPack.append(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS, actionData.getString(RPCConstants.CONTROL_UNIT_INSTANCE_NETWORK_ADDRESS));
 			ackPack.append(RPCConstants.DATASET_DEVICE_ID, actionData.getString(RPCConstants.DATASET_DEVICE_ID));
@@ -339,7 +376,7 @@ public class CUQueryHandler extends RPCActionHadler {
 
 					// add new dataset
 					dDA.insertNewDataset(d.getDataset());
-				}else {
+				} else {
 					usDA.configuraDataseAttributestForCUID(d.getDeviceIdentification(), d.getDataset().getAttributes());
 					dDA.updateDatasetAttributeValue(d.getDataset());
 				}
@@ -360,12 +397,12 @@ public class CUQueryHandler extends RPCActionHadler {
 			closeDataAccess(dDA, true);
 			closeDataAccess(usDA, true);
 			ackPack.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 5);
-		try{
-			ChaosEventComponent ev= ChaosEventComponent.getInstance();
-			ev.deviceRegistrationEvent(controlUnitInstance);
-		} catch (Throwable e){
-			e.printStackTrace();
-		}
+			try {
+				ChaosEventComponent ev = ChaosEventComponent.getInstance();
+				ev.deviceRegistrationEvent(controlUnitInstance);
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
 		} catch (RefException e) {
 			actionData.append(RPCConstants.MDS_REGISTER_UNIT_SERVER_RESULT, (int) 6);
 			try {

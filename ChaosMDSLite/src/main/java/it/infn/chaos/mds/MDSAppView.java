@@ -3,24 +3,16 @@ package it.infn.chaos.mds;
 import it.infn.chaos.mds.business.Device;
 import it.infn.chaos.mds.business.UnitServer;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
+import it.infn.chaos.mds.event.ChaosEventComponent;
 import it.infn.chaos.mds.event.ChaosEventComponent.ChaosEventListener;
-import it.infn.chaos.mds.event.EventsToVaadin;
 import it.infn.chaos.mds.event.VaadinEvent;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Observable;
 import java.util.Set;
 import java.util.Vector;
@@ -29,30 +21,19 @@ import org.ref.common.mvc.ViewNotifyEvent;
 import org.ref.server.webapp.RefVaadinBasePanel;
 import org.vaadin.dialogs.ConfirmDialog;
 
+import com.github.wolfie.refresher.Refresher;
 import com.vaadin.data.Item;
 import com.vaadin.event.Action;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
-import com.vaadin.terminal.DownloadStream;
-import com.vaadin.terminal.ExternalResource;
-import com.vaadin.terminal.Resource;
 import com.vaadin.terminal.StreamResource;
-import com.vaadin.terminal.StreamResource.StreamSource;
-import com.vaadin.terminal.URIHandler;
-import com.vaadin.terminal.gwt.server.WebApplicationContext;
 import com.vaadin.ui.AbstractSelect.ItemDescriptionGenerator;
 import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
-import com.vaadin.ui.Upload.SucceededEvent;
-import com.vaadin.ui.Window.Notification;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
-import com.vaadin.ui.Window;
-import com.vaadin.ui.Upload;
-import com.github.wolfie.refresher.Refresher;
-
-import it.infn.chaos.mds.event.ChaosEventComponent;
+import com.vaadin.ui.Window.Notification;
 
 @SuppressWarnings("serial")
 
@@ -227,12 +208,12 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 		        String prop = it.getItemProperty(TAB_UNIT_SERVER_REGISTERED).toString();
 		        String timestamp = it.getItemProperty(TAB_UNIT_SERVER_HB_TS).toString();
 		        Date dt =null;
-		        SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+		        SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
 		        try {
 					dt = formatter.parse(timestamp);
 				} catch (ParseException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
+					return "red";
 				}
 		        Date now = new Date();
 		        int val=0;
@@ -341,7 +322,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 		        Item it=mv.getTableDevice().getItem(itemId);
 		        String timestamp = it.getItemProperty(TAB1_LAST_HB).toString();
 		        Date dt =null;
-		        SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+		        SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
 		        try {
 					dt = formatter.parse(timestamp);
 				} catch (ParseException e) {
@@ -516,7 +497,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 						woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_REGISTERED).setValue("---");
 					} else {
 						
-						woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_REGISTERED).setValue(Integer.toString(us.getState()));
+						woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_REGISTERED).setValue(us.getState());
 					}
 					
 				}
@@ -539,7 +520,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 						
 						woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_REGISTERED).setValue("---");
 					} else {
-						woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_REGISTERED).setValue(Integer.toString(us.getState()));
+						woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_REGISTERED).setValue(us.getState());
 					}
 				}
 			} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_UPDATE_LIST)) {
@@ -672,7 +653,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 			String prop = it.getItemProperty(TAB_UNIT_SERVER_REGISTERED).toString();
 		    String timestamp = it.getItemProperty(TAB_UNIT_SERVER_HB_TS).toString();
 		    Date dt =null;
-	        SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+	        SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
 	        try {
 				dt = formatter.parse(timestamp);
 			} catch (ParseException e) {
@@ -797,7 +778,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 			 Item it  = t.getItem(event.getItemId());
 			  String timestamp = it.getItemProperty(TAB1_LAST_HB).toString();
 		        Date dt =null;
-		        SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+		        SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
 		        try {
 					dt = formatter.parse(timestamp);
 				} catch (ParseException e) {
@@ -817,8 +798,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 		    			@Override
 		    			public void handleAction(Action action, Object sender, Object target) {
 		    				if (ACTION_NODE_START == action) {
-		    					Device dev=(Device) mv.getTableDevice().getValue();
-		    					notifyEventoToControllerWithData(MDSUIEvents.EVENT_NODE_START, sender, dev.getDeviceIdentification());
+		    					notifyEventoToControllerWithData(MDSUIEvents.EVENT_NODE_START, sender, mv.getTableDevice().getValue());
 		    				}else if (ACTION_NODE_STOP == action) {
 		    					notifyEventoToControllerWithData(MDSUIEvents.EVENT_NODE_STOP,  sender, mv.getTableDevice().getValue());
 		    				}else if (ACTION_NODE_INIT == action) {

@@ -500,8 +500,13 @@ CDataWrapper* ControlManager::unitServerStatus(CDataWrapper *message_data, bool 
 	map<string, shared_ptr<WorkUnitManagement> >::iterator iter;
     for(iter = map_cuid_registered_instance.begin();iter!=map_cuid_registered_instance.end();iter++){
         chaos_data::CDataWrapper item;
-        item.addInt32Value(iter->first.c_str(),iter->second->getCurrentState());
-        LCMDBG_ << "[Action] Get Unit State, \""<<iter->first<<"\" ="<<iter->second->getCurrentState();
+		std::string cusm_state_key = iter->first+"_sm_state";
+		std::string cu_state_key = iter->first+"_state";
+		item.addStringValue("device_key", iter->first);
+		item.addInt32Value(cusm_state_key.c_str(), (uint32_t)iter->second->getCurrentState());
+		item.addInt32Value(cu_state_key.c_str(), (uint32_t)iter->second->work_unit_instance->getServiceState());
+        LCMDBG_ << "[Action] Get CU managment state, \""<<iter->first<<"\" ="<<iter->second->getCurrentState();
+		LCMDBG_ << "[Action] Get CU state, \""<<iter->first<<"\" ="<<(uint32_t)iter->second->work_unit_instance->getServiceState();
         unit_server_status.appendCDataWrapperToArray(item);
     }
     unit_server_status.finalizeArrayForKey(ChaosSystemDomainAndActionLabel::UNIT_SERVER_CU_STATES);

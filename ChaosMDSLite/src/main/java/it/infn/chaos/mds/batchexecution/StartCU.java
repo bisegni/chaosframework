@@ -6,6 +6,7 @@ package it.infn.chaos.mds.batchexecution;
 import org.bson.BasicBSONObject;
 
 import it.infn.chaos.mds.RPCConstants;
+import it.infn.chaos.mds.business.Device;
 
 
 
@@ -19,8 +20,8 @@ public class StartCU extends SlowExecutionJob {
 	 * @see it.infn.chaos.mds.slowexecution.SlowExecution.SlowExecutioJob#executeJob()
 	 */
 	protected void executeJob() throws Throwable {
-		String[] data = (String[]) getInputData();
-		sendMessage(data[0], data[1], "startControlUnit", null);
+		Device device = (Device) getInputData();
+		sendMessage(device.getNetAddress(), device.getCuInstance(), "startControlUnit", null);
 	}
 
 }

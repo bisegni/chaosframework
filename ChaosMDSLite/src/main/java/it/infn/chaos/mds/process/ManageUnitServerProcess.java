@@ -1,9 +1,12 @@
 package it.infn.chaos.mds.process;
 
+import it.infn.chaos.mds.RPCConstants;
 import it.infn.chaos.mds.business.DatasetAttribute;
+import it.infn.chaos.mds.business.Device;
 import it.infn.chaos.mds.business.UnitServer;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
 import it.infn.chaos.mds.business.DeviceClass;
+import it.infn.chaos.mds.da.DeviceDA;
 import it.infn.chaos.mds.da.UnitServerDA;
 
 import java.sql.SQLException;
@@ -13,6 +16,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.Vector;
 
+import org.bson.BasicBSONObject;
 import org.ref.common.exception.RefException;
 import org.ref.server.interapplicationenvironment.ProcessActionDescription;
 import org.ref.server.interapplicationenvironment.ProcessDescription;
@@ -146,6 +150,17 @@ public class ManageUnitServerProcess extends RefProcess {
 		return usDA.returnAllUnitServerCUAssociationbyUSAlias(unitServerAlias);
 	}
 
+	/**
+	 * 
+	 * @param uniqueID
+	 * @return
+	 * @throws Throwable 
+	 */
+	public Device getDeviceFromUniqueID(String uniqueID) throws Throwable {
+		DeviceDA dDA = (DeviceDA) getDataAccessInstance(DeviceDA.class);
+		return dDA.getDeviceFromDeviceIdentification(uniqueID);
+	}
+	
 	/**
 	 * 
 	 * @param associationToRemove
