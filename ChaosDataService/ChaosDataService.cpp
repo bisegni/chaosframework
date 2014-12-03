@@ -111,6 +111,10 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
             CDSLERR_ << "SIGQUIT Signal handler registraiton error";
         }
 		
+		if (signal((int) SIGTERM, ChaosDataService::signalHanlder) == SIG_ERR){
+			CDSLERR_ << "SIGTERM Signal handler registraiton error";
+		}
+		
 		//check for mandatory configuration
 		if(!getGlobalConfigurationInstance()->hasOption(OPT_RUN_MODE)) {
 			//no cache server provided
@@ -214,9 +218,9 @@ void ChaosDataService::start() throw(CException) {
 		}
 		
 		//print information header on CDS address
-		std::cout << "--------------------------------------------------------------------------------------" << std::endl;
-		std::cout << "Chaos Data Service publisched with url: " << network_broker->getDirectIOUrl() << "|0"<< std::endl;
-		std::cout << "--------------------------------------------------------------------------------------" << std::endl;
+		CDSLAPP_ << "--------------------------------------------------------------------------------------";
+		CDSLAPP_ << "Chaos Data Service publisched with url: " << network_broker->getDirectIOUrl() << "|0";
+		CDSLAPP_ << "--------------------------------------------------------------------------------------";
 		
         waitCloseSemaphore.wait();
     } catch (CException& ex) {

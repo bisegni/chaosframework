@@ -98,7 +98,10 @@ void ChaosCUToolkit::init(void *init_data)  throw(CException) {
         if (signal((int) SIGQUIT, ChaosCUToolkit::signalHanlder) == SIG_ERR){
             LERR_ << "SIGQUIT Signal handler registraiton error";
         }
-    
+		
+		if (signal((int) SIGTERM, ChaosCUToolkit::signalHanlder) == SIG_ERR){
+			LERR_ << "SIGTERM Signal handler registraiton error";
+		}
 
 		chaos::utility::StartableService::initImplementation(cu_driver_manager::DriverManager::getInstance(), NULL, "DriverManager", "ChaosCUToolkit::init");
 
