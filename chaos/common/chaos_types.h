@@ -21,4 +21,17 @@
 #ifndef CHAOSFramework_chaos_types_h
 #define CHAOSFramework_chaos_types_h
 #include <chaos/common/batch_command/BatchCommandTypes.h>
+
+/** @defgroup Control_Unit_Definition_Api Control Unit Definition Public API
+ @{
+ */
+
+/** @} */ // end of Control_Unit_Definition_Api Slow Control API
+
+
+/** @defgroup Control_Unit_User_Api Control Unit User Public API
+ @{ This is the collection of the api that the user can call within the control unit definition
+ */
+
+/** @} */ // end of Control_Unit_User_Api Slow Control API
 #endif

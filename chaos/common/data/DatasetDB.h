@@ -65,7 +65,8 @@ namespace chaos {
 				/*!
 				 Add the new attribute to the deviceID dataset specifing
 				 the default parameter
-				 
+				 \ingroup Control_Unit_User_Api
+				 \ingroup Control_Unit_Definition_Api
 				 \param attributeName the name of the new attribute
 				 \param attributeDescription the description of the attribute
 				 \param attributeType the type of the new attribute
@@ -82,6 +83,7 @@ namespace chaos {
 				//!Get dataset attribute names
 				/*!
 				 Return all dataset attribute name
+				 \ingroup Control_Unit_User_Api
 				 \param attributesName the array that will be filled with the name
 				 */
 				void getDatasetAttributesName(vector<string>& attributesName);
@@ -89,6 +91,7 @@ namespace chaos {
 				//!Get device attribute name that has a specified direction
 				/*!
 				 Return all dataset attribute name
+				 \ingroup Control_Unit_User_Api
 				 \param directionType the direction for attribute filtering
 				 \param attributesName the array that will be filled with the name
 				 */
@@ -98,6 +101,7 @@ namespace chaos {
 				//!Get  attribute description
 				/*!
 				 Return the dataset description
+				 \ingroup Control_Unit_User_Api
 				 \param attributesName the name of the attribute
 				 \param attributeDescription the returned description
 				 */
@@ -107,6 +111,7 @@ namespace chaos {
 				//!Get the value information for a specified attribute name
 				/*!
 				 Return the range value for the attribute
+				 \ingroup Control_Unit_User_Api
 				 \param attributesName the name of the attribute
 				 \param rangeInfo the range and default value of the attribute
 				 */
@@ -116,6 +121,7 @@ namespace chaos {
 				//!Set the range values for an attribute of the device
 				/*!
 				 set the range value for the attribute of the device
+				 \ingroup Control_Unit_User_Api
 				 \param attributesName the name of the attribute
 				 \param rangeInfo the range and default value of the attribute, the fields
 				 of the struct are not cleaned, so if an attrbute doesn't has
@@ -127,6 +133,7 @@ namespace chaos {
 				//!Get the direction of an attribute
 				/*!
 				 Return the direcion of the attribute
+				 \ingroup Control_Unit_User_Api
 				 \param attributesName the name of the attribute
 				 \param directionType the direction of the attribute
 				 */

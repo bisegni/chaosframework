@@ -38,6 +38,11 @@ namespace chaos {
 			typedef EntityPtrMap::iterator EntityPtrMapIterator;
 			
 			//!Describe the range of the value for an attribute of the dataset
+			/*!
+			 \ingroup Control_Unit_User_Api
+			 This structure contains the additiona ilnformation  about a 
+			 dataset attribute
+			 */
 			typedef struct RangeValueInfo {
 				//!max value of the range
 				uint32_t maxSize;
@@ -49,7 +54,6 @@ namespace chaos {
 				string defaultValue;
 				//!Type of the value
 				DataType::DataType valueType;
-				
 				//! reset all filed
 				void reset();
 			} RangeValueInfo;
@@ -211,7 +215,7 @@ namespace chaos {
 				/*!
 				 Add the new attribute to the deviceID dataset specifing
 				 the default parameter
-				 
+				 \ingroup Control_Unit_User_Api
 				 \param deviceID the id of the device
 				 \param attributeName the name of the new attribute
 				 \param attributeDescription the description of the attribute
@@ -239,6 +243,7 @@ namespace chaos {
 				
 				//!Get device dataset attribute names
 				/*!
+				 \ingroup Control_Unit_User_Api
 				 Return all dataset attribute name
 				 \param deviceID the identification of the device
 				 \param attributesName the array that will be filled with the name
@@ -248,6 +253,7 @@ namespace chaos {
 				
 				//!Get device attribute name that has a specified direction
 				/*!
+				 \ingroup Control_Unit_User_Api
 				 Return all dataset attribute name
 				 \param deviceID the identification of the device
 				 \param directionType the direction for attribute filtering

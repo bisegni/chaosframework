@@ -242,7 +242,7 @@ namespace chaos {
     //! Name space for grupping the definition of the chaos basic datatype
     namespace DataType {
         //!typede for datatype
-        typedef enum {
+        typedef enum DataType{
             //!Integer 32 bit length
             TYPE_INT32 = 0,
             //!Integer 64 bit length
@@ -258,9 +258,12 @@ namespace chaos {
         } DataType;
         
         //!define the direction of dataset element
-        typedef enum {
+        typedef enum DataSetAttributeIOAttribute{
+			//!define an atribute in input
 			Input = 0,
+			//!define an atribute in output
 			Output=1,
+			//!define an atribute either two direction
 			Bidirectional=2,
         } DataSetAttributeIOAttribute;
     }
