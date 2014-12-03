@@ -101,8 +101,8 @@ void ChaosDataService::fillKVParameter(std::map<std::string, std::string>& kvmap
  */
 void ChaosDataService::init(void *init_data)  throw(CException) {
     try {
-        CDSLAPP_ << "Initializing CHAOS Control System Library";
         ChaosCommon<ChaosDataService>::init(init_data);
+		CDSLAPP_ << "Initializing CHAOS Control System Library";
         if (signal((int) SIGINT, ChaosDataService::signalHanlder) == SIG_ERR){
             CDSLERR_ << "SIGINT Signal handler registraiton error";
         }
