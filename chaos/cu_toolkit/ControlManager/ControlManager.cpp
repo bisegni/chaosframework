@@ -70,6 +70,12 @@ void ControlManager::init(void *initParameter) throw(CException) {
 	AbstActionDescShrPtr actionDescription;
 	use_unit_server =	GlobalConfiguration::getInstance()->hasOption(CONTROL_MANAGER_UNIT_SERVER_ENABLE) &&
 	GlobalConfiguration::getInstance()->getOption<bool>(CONTROL_MANAGER_UNIT_SERVER_ENABLE);
+	
+	LCMAPP_ << "Get the Metadataserver channel";
+	mds_channel = CommandManager::getInstance()->getMetadataserverChannel();
+	if(mds_channel) LCMAPP_ << "Metadataserver has been allocated";
+	else throw CException(-2, "Error allcoating metadata server channel", __PRETTY_FUNCTION__);
+	
     if(use_unit_server) {
 		LCMAPP_  << "Enable unit server";
 		
@@ -96,12 +102,6 @@ void ControlManager::init(void *initParameter) throw(CException) {
 			
 			
 		}
-		
-		LCMAPP_ << "Get the Metadataserver channel";
-		mds_channel = CommandManager::getInstance()->getMetadataserverChannel();
-		if(mds_channel) LCMAPP_ << "Metadataserver has been allocated";
-		else throw CException(-2, "Error allcoating metadata server channel", __PRETTY_FUNCTION__);
-
 		
 		unit_server_alias = GlobalConfiguration::getInstance()->getOption<std::string>(CONTROL_MANAGER_UNIT_SERVER_ALIAS);
 		
@@ -136,16 +136,14 @@ void ControlManager::init(void *initParameter) throw(CException) {
 																					   ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN,
 																					   ChaosSystemDomainAndActionLabel::ACTION_UNIT_SERVER_REG_ACK,
 																					   "Unit server registration ack message");
-        
-        actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
-                                                                                      &ControlManager::unitServerStatus,
-                                                                                      ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN,
-                                                                                      ChaosSystemDomainAndActionLabel::ACTION_UNIT_SERVER_STATUS_REQ,
-                                                                                      "Unit server states");
-
-        
 	}
-    
+	
+	actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
+																				   &ControlManager::unitServerStatus,
+																				   ChaosSystemDomainAndActionLabel::SYSTEM_DOMAIN,
+																				   ChaosSystemDomainAndActionLabel::ACTION_UNIT_SERVER_STATUS_REQ,
+																				   "Unit server states");
+	
     actionDescription = DeclareAction::addActionDescritionInstance<ControlManager>(this,
                                                                                    &ControlManager::updateConfiguration,
                                                                                    "commandManager",
@@ -494,7 +492,7 @@ CDataWrapper* ControlManager::unloadControlUnit(CDataWrapper *message_data, bool
 
 CDataWrapper* ControlManager::unitServerStatus(CDataWrapper *message_data, bool &detach) throw (CException){
     chaos_data::CDataWrapper unit_server_status;
-    unit_server_status.addStringValue(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_ALIAS, unit_server_alias);
+	unit_server_status.addStringValue(ChaosSystemDomainAndActionLabel::MDS_REGISTER_UNIT_SERVER_ALIAS, unit_server_alias.size()?unit_server_alias:"No Server Defined");
     unit_server_status.addInt32Value(ChaosSystemDomainAndActionLabel::MDS_UNIT_SERVER_HEARTBEAT,  (uint32_t) TimingUtil::getTimeStamp());
     LCMDBG_ << "[Action] Get Unit State";
 

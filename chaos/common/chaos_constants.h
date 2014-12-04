@@ -230,7 +230,6 @@ namespace chaos {
         static const char * const MAX_RANGE                         = "ds_max_range";
         //!key representing the default value
         static const char * const MIN_RANGE                         = "ds_min_range";
-        
     }
     
     /** @} */ // end of DatasetDefinitionkey
@@ -302,7 +301,7 @@ namespace chaos {
     //! Name space for grupping option used for define the custom action to share via RPC chaos system
     namespace RpcActionDefinitionKey {
         //!command manager rpc tag, this is the tag that rpc subsystem must to use to transfer BSON package between chaos node rpc endpoint
-        static const char * const CS_CMDM_RPC_TAG                                = "chaos_rpc";
+        static const char * const CS_CMDM_RPC_TAG                             = "chaos_rpc";
         //!key for action domain descriptors array {[domain, name, paramteres....]}
         static const char * const CS_CMDM_ACTION_DESC                         = "cs|cmdm|act_desc";
         
