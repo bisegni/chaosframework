@@ -299,11 +299,9 @@ public class ManageUnitServerProcess extends RefProcess {
 		commit();
 	}
 	
-	public Vector<DeviceClass> returnAllClassesBy(String dc_name, String dc_interface) throws RefException{
+	public Vector<DeviceClass> returnAllClassesBy(String unit_server, String dc_name, String dc_interface) throws RefException{
 		UnitServerDA usDA = (UnitServerDA) getDataAccessInstance(UnitServerDA.class);
-		return usDA.returnAllClassesBy(dc_name, dc_interface);
-		
-		
+		return usDA.returnAllClassesBy(unit_server, dc_name, dc_interface);
 	}
 
 }

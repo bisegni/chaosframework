@@ -51,7 +51,7 @@ public class MetaDataServerProcess extends RefProcess{
 		usv = usda.getAllUnitServer();
 
 		dsl = dsda.getAllDataServer();
-		dcv = usda.returnAllClassesBy(null, null);
+		dcv = usda.returnAllClassesBy(null, null, null);
 		// load units
 		for(UnitServer us:usv){
 			// load cu of a unit server

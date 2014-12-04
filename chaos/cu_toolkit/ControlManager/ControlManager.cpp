@@ -97,6 +97,12 @@ void ControlManager::init(void *initParameter) throw(CException) {
 			
 		}
 		
+		LCMAPP_ << "Get the Metadataserver channel";
+		mds_channel = CommandManager::getInstance()->getMetadataserverChannel();
+		if(mds_channel) LCMAPP_ << "Metadataserver has been allocated";
+		else throw CException(-2, "Error allcoating metadata server channel", __PRETTY_FUNCTION__);
+
+		
 		unit_server_alias = GlobalConfiguration::getInstance()->getOption<std::string>(CONTROL_MANAGER_UNIT_SERVER_ALIAS);
 		
 		//init CU action
@@ -152,11 +158,6 @@ void ControlManager::init(void *initParameter) throw(CException) {
                                                                                    "Update Command Manager Configuration");
 	//register command manager action
     CommandManager::getInstance()->registerAction(this);
-    
-    LCMAPP_ << "Get the Metadataserver channel";
-    mds_channel = CommandManager::getInstance()->getMetadataserverChannel();
-    if(mds_channel) LCMAPP_ << "Metadataserver has been allocated";
-    else throw CException(-2, "Error allcoating metadata server channel", __PRETTY_FUNCTION__);
 }
 
 /*

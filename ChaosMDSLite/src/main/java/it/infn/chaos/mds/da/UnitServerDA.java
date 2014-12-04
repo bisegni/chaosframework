@@ -258,27 +258,34 @@ public class UnitServerDA extends DataAccess {
 			executeInsertUpdateAndClose(ps);
 	}
 	
-	public Vector<DeviceClass> returnAllClassesBy(String dev_interface,String dev_class) throws RefException {
+	public Vector<DeviceClass> returnAllClassesBy(String unit_server, String dev_interface, String dev_class) throws RefException {
 		SqlBuilder s = new SqlBuilder();
+		SqlTable dct = null;
+		SqlTable unit_server_cu_pub = null;
 		Vector<DeviceClass> result = new Vector<DeviceClass>();
-		s.addTable(DeviceClass.class);
-		s.addPseudoColumntoSelect("*");
+		dct = s.addTable(DeviceClass.class);
+		if(unit_server != null && unit_server.length() > 0) {
+			unit_server_cu_pub = s.addTable("unit_server_published_cu");
+		}
+
+		s.addPseudoColumntoSelect(String.format("%s.*", dct.getTableName()));
 		if(dev_interface!=null){
-		
 			s.addCondition(true,String.format("%s='%s'", DeviceClass.DEVICE_CLASS_INTERFACE,dev_interface));
 		}
 		
 		if(dev_class!=null){
-
 			s.addCondition(true,String.format("%s='%s'", DeviceClass.DEVICE_CLASS_NAME,dev_class));
 		}
+		
+		if(unit_server != null && unit_server.length() > 0) {
+			s.addCondition(true, String.format("%s.device_class_alias = %s.control_unit_alias", dct.getTableName(), unit_server_cu_pub.getTableName()));
+			s.addCondition(true, String.format("%s.unit_server_alias = '%s'", unit_server_cu_pub.getTableName(), unit_server));
+		}
+		
 		PreparedStatement ps = null;
 		try {
 			ps = getPreparedStatementForSQLCommand(s.toString());
-			
-			
 			result = (Vector<DeviceClass>) executeQueryPreparedStatementAndClose(ps, DeviceClass.class, null, null, false);
-			
 		} catch (Throwable e) {
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 0, "UnitServerDA::returnAllClassesByInterface");
 		}

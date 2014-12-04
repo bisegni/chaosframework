@@ -205,7 +205,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 						if (unitServerSelected != null) {
 							openViewByKeyAndClass("NEW_US_CU_ASSOCIATION", NewUSCUAssociationView.class, OpenViewIn.MAIN_VIEW, "New Unit server - Control Unit Association");
 
-							updateDeviceClassTable();
+							updateDeviceClassTable(unitServerSelected);
 							notifyEventoToViewWithData(NewUSCUAssociationView.SET_SC_CUTYPE_VALUE, this, unitServerSelected);
 						} else {
 							MDSAppView view = getViewByKey("VISTA");
@@ -246,7 +246,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 
 					openViewByKeyAndClass("NEW_DEVICE_CLASS", DeviceClassListView.class, OpenViewIn.MAIN_VIEW, "New/Edit Device Class");
 
-					updateDeviceClassTable();
+					updateDeviceClassTable(null);
 
 				} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_REFRESH_STATE)) {
 					// refreshedUS
@@ -275,7 +275,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 				} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_CLOSE_DEVICE_CLASS_VIEW)) {
 					deleteViewByKey("NEW_DEVICE_CLASS");
 					openViewByKeyAndClass("NEW_US_CU_ASSOCIATION", NewUSCUAssociationView.class, OpenViewIn.MAIN_VIEW, "New/Edit Unit server - Control Unit Association");
-					updateDeviceClassTable();
+					updateDeviceClassTable(null);
 				} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_CANCEL_USCU_ASSOC_VIEW)) {
 					deleteViewByKey("NEW_US_CU_ASSOCIATION");
 					openViewByKeyAndClass("VISTA", MDSAppView.class);
@@ -328,7 +328,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 					cuselected = (UnitServerCuInstance) viewEvent.getEventData();
 					openViewByKeyAndClass("NEW_US_CU_ASSOCIATION", NewUSCUAssociationView.class, OpenViewIn.MAIN_VIEW, "New/Edit Unit server - Control Unit Association");
 					notifyEventoToViewWithData(NewUSCUAssociationView.SET_ASSOCIATION_TO_EDIT, this, cuselected);
-					updateDeviceClassTable();
+					updateDeviceClassTable(cuselected.getUnitServerAlias());
 
 				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UNIT_SERVER_EDIT_ALIAS)) {
 					openViewByKeyAndClass("EDIT_US_ALIAS", USEditInfoView.class, OpenViewIn.MAIN_VIEW, "Edit Unit Server Property");
@@ -616,9 +616,9 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 		return;
 	}
 
-	private void updateDeviceClassTable() throws RefException {
+	private void updateDeviceClassTable(String unit_server_selected) throws RefException {
 
-		Vector<DeviceClass> dcv = musp.returnAllClassesBy(null, null);
+		Vector<DeviceClass> dcv = musp.returnAllClassesBy(unit_server_selected, null, null);
 		notifyEventoToViewWithData(MDSUIEvents.EVENT_UPDATE_DEVICE_CLASS, this, dcv);
 
 	}
@@ -635,7 +635,7 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 		UnitServer us = musp.getUnitServerByIdentification(unitServerIdentification.toString());
 		Vector<UnitServerCuInstance> cuiv = musp.loadAllAssociationForUnitServerAlias(unitServerIdentification.toString());
 		for (UnitServerCuInstance ci : cuiv) {
-			Vector<DeviceClass> dcv = musp.returnAllClassesBy(null, ci.getCuType());
+			Vector<DeviceClass> dcv = musp.returnAllClassesBy(us.getAlias(), null, ci.getCuType());
 			if (dcv != null && (dcv.size() > 0)) {
 				ci.setInterface(dcv.get(0).getDeviceClassInterface());
 			} else if (dcv.size() == 0) {
@@ -649,14 +649,6 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 			}
 		}
 		notifyEventoToViewWithData(MDSUIEvents.EVENT_UPDATE_LIST, this, cuiv);
-
-		/*
-		 * MDSAppView view = getViewByKey("VISTA"); Table cuTypeTable = (Table) view.getComponentByKey(MDSAppView.KEY_USERVER_CUTYPE_TAB);
-		 * 
-		 * cuTypeTable.removeAllItems(); if (unitServerIdentification == null) return;
-		 * 
-		 * UnitServer us = musp.getUnitServerByIdentification(unitServerIdentification.toString()); if (us != null) { for (String controlUnitType : us.getPublischedCU()) { Item woItem = cuTypeTable.addItem(controlUnitType); woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_CUTYPE_TYPE_NAME).setValue(controlUnitType); String us_server = us.getAlias(); updateDeviceList(musp.loadAllAssociationForUnitServerAlias(us_server)); } if(us.getPublischedCU().size()==0){ updateDeviceList(null); } }
-		 */
 	}
 
 	/**
