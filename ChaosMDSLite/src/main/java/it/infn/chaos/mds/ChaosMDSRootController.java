@@ -635,7 +635,8 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 		UnitServer us = musp.getUnitServerByIdentification(unitServerIdentification.toString());
 		Vector<UnitServerCuInstance> cuiv = musp.loadAllAssociationForUnitServerAlias(unitServerIdentification.toString());
 		for (UnitServerCuInstance ci : cuiv) {
-			Vector<DeviceClass> dcv = musp.returnAllClassesBy(us.getAlias(), null, ci.getCuType());
+			// simply fill the device class table with the information provided
+			Vector<DeviceClass> dcv = musp.returnAllClassesBy(null, null, ci.getCuType());
 			if (dcv != null && (dcv.size() > 0)) {
 				ci.setInterface(dcv.get(0).getDeviceClassInterface());
 			} else if (dcv.size() == 0) {

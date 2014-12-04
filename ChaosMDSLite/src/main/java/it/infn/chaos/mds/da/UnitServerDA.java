@@ -278,7 +278,7 @@ public class UnitServerDA extends DataAccess {
 		}
 		
 		if(unit_server != null && unit_server.length() > 0) {
-			s.addCondition(true, String.format("%s.device_class_alias = %s.control_unit_alias", dct.getTableName(), unit_server_cu_pub.getTableName()));
+		//	s.addCondition(true, String.format("%s.device_class_alias = %s.control_unit_alias", dct.getTableName(), unit_server_cu_pub.getTableName()));
 			s.addCondition(true, String.format("%s.unit_server_alias = '%s'", unit_server_cu_pub.getTableName(), unit_server));
 		}
 		
