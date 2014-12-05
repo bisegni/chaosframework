@@ -178,6 +178,14 @@ public class CUQueryHandler extends RPCActionHadler {
 
 		} catch (Throwable e) {
 			e.printStackTrace();
+			try {
+				closeDataAccess(usDA, false);
+				closeDataAccess(dDA, false);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
 		}
 		return null;
 	}
