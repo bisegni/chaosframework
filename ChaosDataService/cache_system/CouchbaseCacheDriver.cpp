@@ -97,15 +97,15 @@ void CouchbaseCacheDriver::init(void *init_data) throw (chaos::CException) {
 	CacheDriver::init(init_data);
 	
 	if(cache_settings->key_value_custom_param.count("bucket")) {
-		bucket_name = cache_settings["bucket"];
+		bucket_name = cache_settings->key_value_custom_param["bucket"];
 	}
 	
 	if(cache_settings->key_value_custom_param.count("user")) {
-		bucket_user = cache_settings["user"];
+		bucket_user = cache_settings->key_value_custom_param["user"];
 	}
 	
 	if(cache_settings->key_value_custom_param.count("pwd")) {
-		bucket_pwd = cache_settings["pwd"];
+		bucket_pwd = cache_settings->key_value_custom_param["pwd"];
 	}
 }
 
