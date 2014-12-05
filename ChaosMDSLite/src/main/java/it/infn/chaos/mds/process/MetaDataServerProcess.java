@@ -15,6 +15,7 @@ import it.infn.chaos.mds.da.UnitServerDA;
 import java.io.File;
 import java.io.PrintWriter;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Vector;
@@ -89,71 +90,162 @@ public class MetaDataServerProcess extends RefProcess{
 	 * @param replace 
 	 * @throws Throwable 
 	 */
-	public void applyConfig(String filename, Integer replace) throws Throwable {
+	public synchronized void applyConfig(String filename, Integer replace) throws Throwable {
 		// TODO Auto-generated method stub
 		
 		String text = new Scanner( new File(filename) ).useDelimiter("\\A").next();
 		
 		MetaDataServer mds=new MetaDataServer(text);
+		readDB();
 		
-		if(replace == 0){
-			// just replace
+		if(replace != 0){
+			List<DataServer> dsl_t = new ArrayList<DataServer>();
+			Vector<UnitServer> usv_t= new Vector<UnitServer>();
+			Vector<DeviceClass> dcv_t = new Vector<DeviceClass>();
+			if(replace == 1){
+				dsl_t.addAll(dsl);
+				usv_t.addAll(usv);
+				dcv_t.addAll(dcv);
+				
+				for(DataServer ds:mds.getDataServers()){
+					DataServer found=null;
+					for(DataServer ds_current:dsl){
+						if(ds.getHostname().equals(ds_current.getHostname())){
+							found = ds;
+						}
+					}
+					if(found == null){
+						ds.setIdServer(dcv.size()+1);
+						dsl_t.add(ds);
+					}
+				}
+
+				for(UnitServer us:mds.getUSs()){
+					UnitServer found=null;
+					for(UnitServer us_current:usv){
+						if(us.getAlias().equals(us_current.getAlias())){
+							found = us;
+						}
+					}
+					if(found == null){
+						usv_t.add(us);
+					}
+				}
+				
+				for(DeviceClass dc:mds.getDeviceClasses()){
+					DeviceClass found=null;
+					for(DeviceClass dc_current:dcv){
+						if(dc.getDeviceClass().equals(dc_current.getDeviceClass())){
+							found = dc;
+						}
+					}
+					if(found == null){
+						
+						dcv_t.add(dc);
+					}
+				}
+				
+			} else if(replace ==2){
+				dsl_t.addAll(mds.getDataServers());
+				usv_t.addAll(mds.getUSs());
+				dcv_t.addAll(mds.getDeviceClasses());
+				for(DataServer ds:dsl){
+					DataServer found=null;
+					for(DataServer ds_current:mds.getDataServers()){
+						if(ds.getHostname().equals(ds_current.getHostname())){
+							found = ds;
+						}
+					}
+					if(found == null){
+						ds.setIdServer(dcv.size()+1);
+						dsl_t.add(ds);
+					}
+				}
+				for(UnitServer us:usv){
+					UnitServer found=null;
+					for(UnitServer us_current:mds.getUSs()){
+						if(us.getAlias().equals(us_current.getAlias())){
+							found = us;
+						}
+					}
+					if(found == null){
+						usv_t.add(us);
+					}
+				}
+				
+				for(DeviceClass dc:dcv){
+					DeviceClass found=null;
+					for(DeviceClass dc_current:mds.getDeviceClasses()){
+						if(dc.getDeviceClass().equals(dc_current.getDeviceClass())){
+							found = dc;
+						}
+					}
+					if(found == null){
+						dcv_t.add(dc);
+					}
+				}
+				
+			} else if(replace ==3){
+				dsl_t.addAll(dsl);
+				usv_t.addAll(usv);
+				dcv_t.addAll(dcv);
+				for(DataServer ds:mds.getDataServers()){
+					DataServer found=null;
+					for(DataServer ds_current:dsl){
+						if(ds.getHostname().equals(ds_current.getHostname())){
+							found = ds_current;
+						}
+					}
+					if(found == null){
+						ds.setIdServer(dcv.size()+1);
+						dsl_t.add(ds);
+					} else {
+						found.setHostname(found.getHostname() + "_1");
+						found.setIdServer(dcv.size()+1);
+
+						dsl_t.add(found);
+					}
+				}
+				
+				for(UnitServer us:mds.getUSs()){
+					UnitServer found=null;
+					for(UnitServer us_current:usv){
+						if(us.getAlias().equals(us_current.getAlias())){
+							found = us_current;
+						}
+					}
+					if(found == null){
+						usv_t.add(us);
+					} else {
+						found.setAlias(found.getAlias() + "_1");
+						usv_t.add(found);
+					}
+				}
+				
+				for(DeviceClass dc:mds.getDeviceClasses()){
+					DeviceClass found=null;
+					for(DeviceClass dc_current:dcv){
+						if(dc.getDeviceClass().equals(dc_current.getDeviceClass())){
+							found = dc_current;
+						}
+					}
+					if(found == null){
+						dcv_t.add(dc);
+					} else {
+						found.setDeviceClass(found.getDeviceClass() + "_1");
+						dcv_t.add(found);
+					}
+				}
+			}
+		usv= usv_t;
+		dcv = dcv_t;
+		dsl = dsl_t;
+		} else {
 			dsl = mds.getDataServers();
 			usv = mds.getUSs();
 			dcv = mds.getDeviceClasses();
-		} else {
-			
-			for(DataServer ds_current:dsl){
-				for(DataServer ds:mds.getDataServers()){
-					if(ds.getHostname() == ds_current.getHostname()){
-						if(replace == 2){
-							// keep config
-							dsl.remove(ds_current);
-							dsl.add(ds);
-						} else if(replace==3){
-							String ren=ds.getHostname() + "_1";
-							ds.setHostname(ren);
-							dsl.add(ds);
-						}
-					}
-					
-				}
-			}
-		
-			for(UnitServer us_current:usv){
-				for(UnitServer us:mds.getUSs()){
-					if(us.getAlias() == us_current.getAlias()){
-						if(replace == 2){
-							// keep config
-							usv.remove(us_current);
-							usv.add(us);
-						} else if(replace==3){
-							String ren=us.getAlias() + "_1";
-							us.setAlias(ren);
-							usv.add(us);
-						}
-					}
-					
-				}
-			}
-			for(DeviceClass dc_current:dcv){
-				for(DeviceClass dc:mds.getDeviceClasses()){
-					if(dc.getDeviceClass() == dc_current.getDeviceClass()){
-						if(replace == 2){
-							// keep config
-							dcv.remove(dc_current);
-							dcv.add(dc);
-						} else if(replace==3){
-							String ren=dc.getDeviceClass() + "_1";
-							dc.setDeviceClass(ren);
-							dcv.add(dc);
-						}
-					}
-					
-				}
-			}
-			
 		}
+		
 		writeDB();
 		
 		
@@ -173,6 +265,7 @@ public class MetaDataServerProcess extends RefProcess{
 		usda.removeAllAttributeConfigurationForAssociation(null);
 		commit();
 		for(DataServer ds:dsl){
+			ds.setIdServer(null);
 			dsda.saveServer(ds);
 		}
 		for(DeviceClass dc:dcv){
