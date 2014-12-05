@@ -48,7 +48,7 @@ namespace chaos {
                 int32_t service_port;
 				DirectIODispatcher *handler_impl;
 			public:
-				DirectIOServer(std::string alias);
+				DirectIOServer(const std::string& alias);
 				
 				virtual ~DirectIOServer();
                 

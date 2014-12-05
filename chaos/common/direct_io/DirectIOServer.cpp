@@ -24,8 +24,11 @@
 
 using namespace chaos::common::direct_io;
 
-DirectIOServer::DirectIOServer(std::string alias):NamedService(alias),priority_port(0), service_port(0) {
-	handler_impl = NULL;
+DirectIOServer::DirectIOServer(const std::string& alias):
+NamedService(alias),
+priority_port(0),
+service_port(0),
+handler_impl(NULL){
 }
 
 DirectIOServer::~DirectIOServer() {
