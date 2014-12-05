@@ -289,7 +289,8 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 					}
 					deleteViewByKey("VISTA_DUE");
 					openViewByKeyAndClass("VISTA", MDSAppView.class);
-
+					refreshUnitServer(null);
+					updateDeviceList(true);
 				} else if (viewEvent.getEventKind().equals(MDSAppView.EVENT_UNIT_SERVER_LOAD_ALL_ASSOCIATION)) {
 					if (unitServerSelected != null) {
 						loadUnloadAllUnitServerAssociation(true);
