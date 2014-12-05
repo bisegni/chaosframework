@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__DataWorker__
 #define __CHAOSFramework__DataWorker__
 
-#include "../dataservice_global.h"
+//#include "../dataservice_global.h"
 
 #include <chaos/common/utility/StartableService.h>
 
@@ -31,11 +31,20 @@
 
 #define DEFAULT_JOB_THREAD 1
 
-namespace chaos{
+namespace chaos {
     namespace data_service {
 		namespace worker {
 			
-			class DataWorker: public chaos::utility::StartableService  {
+			typedef struct WorkerJob {
+				WorkerJob(){};
+				virtual ~WorkerJob(){};
+			} WorkerJob, *WorkerJobPtr;
+			
+			typedef struct DataWorkerSetting {
+				unsigned int job_thread_number;
+			} DataWorkerSetting;
+			
+			class DataWorker : public chaos::utility::StartableService  {
 				//job queue list
 				boost::lockfree::queue<WorkerJobPtr> job_queue;
 				

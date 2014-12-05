@@ -18,6 +18,7 @@
  *    	limitations under the License.
  */
 
+#include "../dataservice_global.h"
 #include "SnapshotCreationWorker.h"
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/data/cache/FastHash.h>
@@ -41,6 +42,7 @@ SnapshotCreationWorker::SnapshotCreationWorker(const std::string& _cache_impl_na
 											   db_system::DBDriver	*_db_driver_ptr,
 											   NetworkBroker	*_network_broker):
 cache_impl_name(_cache_impl_name),
+cache_driver_ptr(NULL),
 db_driver_ptr(_db_driver_ptr),
 network_broker(_network_broker),
 mds_channel(NULL){}
@@ -58,11 +60,19 @@ void SnapshotCreationWorker::init(void *init_data) throw (chaos::CException) {
 	
 	SCW_LAPP_ << "allocating cache driver";
 	cache_driver_ptr = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
+	if(!cache_driver_ptr) throw chaos::CException(-3, "Cached driver not found", __PRETTY_FUNCTION__);
+	chaos::utility::InizializableService::initImplementation(cache_driver_ptr, &global_setting.cache_driver_setting, "CacheDriver", __PRETTY_FUNCTION__);
 }
 
 void SnapshotCreationWorker::deinit() throw (chaos::CException) {
 	SCW_LAPP_ << "deallocating cache driver";
-	if(cache_driver_ptr) delete(cache_driver_ptr);
+	if(cache_driver_ptr) {
+		try{
+			chaos::utility::InizializableService::deinitImplementation(cache_driver_ptr, "CacheDriver", __PRETTY_FUNCTION__);
+		} catch(...) {
+		}
+		delete(cache_driver_ptr);
+	}
 	SCW_LAPP_ << "deallocating db driver";
 	
 	if(mds_channel && network_broker) {

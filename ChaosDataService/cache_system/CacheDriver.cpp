@@ -24,3 +24,16 @@ using namespace chaos::data_service::cache_system;
 CacheDriver::CacheDriver(std::string alias) : NamedService(alias) {}
 
 CacheDriver::~CacheDriver() {}
+
+//! init
+/*!
+ Need a point to a structure DBDriverSetting for the setting
+ */
+void CacheDriver::init(void *init_data) throw (chaos::CException) {
+	cache_settings = static_cast<CacheDriverSetting*>(init_data);
+}
+
+//!deinit
+void CacheDriver::deinit() throw (chaos::CException) {
+	
+}

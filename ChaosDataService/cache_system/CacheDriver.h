@@ -21,12 +21,16 @@
 #ifndef __CHAOSFramework__CacheDriver__
 #define __CHAOSFramework__CacheDriver__
 
-#include "../dataservice_global.h"
+//#include "../dataservice_global.h"
 
 #include <stdint.h>
 #include <string>
 
 #include <chaos/common/utility/NamedService.h>
+#include <chaos/common/utility/InizializableService.h>
+
+#include "cache_system_types.h"
+
 namespace chaos {
     namespace data_service {
         namespace cache_system {
@@ -37,21 +41,39 @@ namespace chaos {
              work to do on cache. Cache system is to be intended as global
              to all CacheDriver instance.
              */
-            class CacheDriver : public chaos::NamedService {
+            class CacheDriver :
+			public chaos::NamedService,
+			public chaos::utility::InizializableService {
 			protected:
+				CacheDriverSetting *cache_settings;
 				CacheDriver(std::string alias);
             public:
 				virtual ~CacheDriver();
 				
-                virtual int putData(void *element_key, uint8_t element_key_len, void *value, uint32_t value_len) = 0;
+                virtual int putData(void *element_key,
+									uint8_t element_key_len,
+									void *value,
+									uint32_t value_len) = 0;
                 
-                virtual int getData(void *element_key, uint8_t element_key_len, void **value, uint32_t& value_len) = 0;
+                virtual int getData(void *element_key,
+									uint8_t element_key_len,
+									void **value,
+									uint32_t& value_len) = 0;
 
                 virtual int addServer(std::string server_desc) = 0;
                 
                 virtual int removeServer(std::string server_desc) = 0;
 				
 				virtual int updateConfig() = 0;
+				
+				//! init
+				/*!
+				 Need a point to a structure DBDriverSetting for the setting
+				 */
+				void init(void *init_data) throw (chaos::CException);
+				
+				//!deinit
+				void deinit() throw (chaos::CException);
             };
         }
     }

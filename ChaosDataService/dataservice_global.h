@@ -15,6 +15,7 @@
 
 #include "vfs/vfs.h"
 #include "db_system/db_system.h"
+#include "cache_system/cache_system.h"
 
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
@@ -30,6 +31,7 @@ namespace chaos{
 #define OPT_CACHE_DRIVER			"cache_driver"
 #define OPT_CACHE_WORKER_NUM		"cache_worker_num"
 #define OPT_CACHE_WORKER_THREAD		"cache_worker_thread"
+#define OPT_CACHE_DRIVER_KVP		"cache_driver_kvp"
 #define CACHE_WORKER_NUMBER			1
 	
 		//query data consumer
@@ -60,29 +62,12 @@ namespace chaos{
 #define OPT_DB_DRIVER_SERVERS	"db_servers"
 #define OPT_DB_DRIVER_KVP		"db_driver_kvp"
 				
-		namespace worker {
-			
-			typedef struct WorkerJob {
-				WorkerJob(){};
-				virtual ~WorkerJob(){};
-			} WorkerJob, *WorkerJobPtr;
-			
-			typedef struct DataWorkerSetting {
-				unsigned int job_thread_number;
-			} DataWorkerSetting;
-		}
-     
-		typedef std::vector<std::string>			CacheServerList;
-		typedef std::vector<std::string>::iterator	CacheServerListIterator;
-		
+
 		//! Setting for dataservice configuration
 		typedef struct ChaosDataServiceSetting {
 			bool						cache_only;
 			//!cache configuration
-			std::string					cache_driver_impl;
-			CacheServerList				startup_chache_servers;
-			unsigned int				caching_worker_num;
-			worker::DataWorkerSetting	caching_worker_setting;
+			chaos::data_service::cache_system::CacheDriverSetting cache_driver_setting;
 			
 			//----------query consumer---------------
 			unsigned int				vfile_mantainer_delay;
@@ -106,6 +91,8 @@ namespace chaos{
 			//! the instance of the index driver for this manager
 			::chaos::data_service::db_system::DBDriverSetting db_driver_setting;
 		} ChaosDataServiceSetting;
+		
+		static ChaosDataServiceSetting global_setting;
 	}
 }
 

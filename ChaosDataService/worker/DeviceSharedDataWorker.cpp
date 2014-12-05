@@ -18,7 +18,7 @@
  *    	limitations under the License.
  */
 
-
+#include "dataservice_global.h"
 #include "DeviceSharedDataWorker.h"
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/utility/TimingUtil.h>
@@ -74,6 +74,7 @@ void DeviceSharedDataWorker::init(void *init_data) throw (chaos::CException) {
 		}
 	}
 	cache_driver_ptr = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
+	chaos::utility::InizializableService::initImplementation(cache_driver_ptr, &global_setting.cache_driver_setting, "CacheDriver", __PRETTY_FUNCTION__);
 }
 
 void DeviceSharedDataWorker::deinit() throw (chaos::CException) {
@@ -85,7 +86,13 @@ void DeviceSharedDataWorker::deinit() throw (chaos::CException) {
 		
 		std::memset(thread_cookie, 0, sizeof(void*)*settings.job_thread_number);
 	}
-	if(cache_driver_ptr) delete(cache_driver_ptr);
+	
+	if(cache_driver_ptr) {
+		try {
+			chaos::utility::InizializableService::deinitImplementation(cache_driver_ptr, "CacheDriver", __PRETTY_FUNCTION__);
+		} catch(...) {}
+		delete(cache_driver_ptr);
+	}
 	DataWorker::deinit();
 }
 

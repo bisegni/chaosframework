@@ -91,7 +91,32 @@ CouchbaseCacheDriver::~CouchbaseCacheDriver() {
 	if(instance) lcb_destroy(instance);
 }
 
+//! init
+void CouchbaseCacheDriver::init(void *init_data) throw (chaos::CException) {
+	//call superclass init
+	CacheDriver::init(init_data);
+	
+	if(cache_settings->key_value_custom_param.count("bucket")) {
+		bucket_name = cache_settings["bucket"];
+	}
+	
+	if(cache_settings->key_value_custom_param.count("user")) {
+		bucket_user = cache_settings["user"];
+	}
+	
+	if(cache_settings->key_value_custom_param.count("pwd")) {
+		bucket_pwd = cache_settings["pwd"];
+	}
+}
+
+//!deinit
+void CouchbaseCacheDriver::deinit() throw (chaos::CException) {
+	//call superclass deinit
+	CacheDriver::deinit();
+}
+
 int CouchbaseCacheDriver::putData(void *element_key, uint8_t element_key_len,  void *value, uint32_t value_len) {
+	CHAOS_ASSERT(getServiceState() == utility::service_state_machine::InizializableServiceType::IS_INITIATED)
 	//boost::shared_lock<boost::shared_mutex> lock(mutex_server);
 	lcb_store_cmd_t cmd;
     const lcb_store_cmd_t * const commands[] = { &cmd };
@@ -117,6 +142,7 @@ int CouchbaseCacheDriver::putData(void *element_key, uint8_t element_key_len,  v
 
 int CouchbaseCacheDriver::getData(void *element_key, uint8_t element_key_len,  void **value, uint32_t& value_len) {
 	//boost::shared_lock<boost::shared_mutex> lock(mutex_server);
+	CHAOS_ASSERT(getServiceState() == utility::service_state_machine::InizializableServiceType::IS_INITIATED)
 	lcb_get_cmd_t cmd;
 	lcb_error_t err = LCB_SUCCESS;
 	const lcb_get_cmd_t *commands[1];
@@ -206,9 +232,10 @@ int CouchbaseCacheDriver::updateConfig() {
 	//create_options
 	create_options.version = 2;
 	create_options.v.v2.transports = transports;
-	create_options.v.v2.user = "chaos";
-	create_options.v.v2.passwd = "chaos";
-	create_options.v.v2.bucket = "chaos";
+	if(bucket_user.size()) create_options.v.v2.user = bucket_user.c_str();
+	if(bucket_pwd.size()) create_options.v.v2.passwd = bucket_pwd.c_str();
+	if(bucket_name.size()) create_options.v.v2.bucket = bucket_name.c_str();
+	
 	all_server_str.assign("");
 	for (ServerIterator iter = all_server_to_use.begin();
 		 iter!=all_server_to_use.end();
