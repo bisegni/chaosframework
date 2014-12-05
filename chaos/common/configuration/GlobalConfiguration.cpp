@@ -17,8 +17,12 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
+#include <fstream>
 #include <iostream>
+
 #include <chaos/common/log/LogManager.h>
+#include <boost/interprocess/sync/file_lock.hpp>
+#include <boost/interprocess/sync/scoped_lock.hpp>
 
 #include "GlobalConfiguration.h"
 
@@ -163,6 +167,16 @@ void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& o
 }
 
 void GlobalConfiguration::checkDefaultOption() throw (CException) {
+	
+	//lock file for permit to choose different tcp port for services
+	std::fstream domain_file_lock_stream("/tmp/chaos_init.lock",
+										 std::ios_base::out |
+										 std::ios_base::binary);
+	
+	//check if we have got the lock
+	boost::interprocess::file_lock flock("/tmp/chaos_init.lock");
+	boost::interprocess::scoped_lock<boost::interprocess::file_lock> e_lock(flock);
+	
     //now we can fill the gloabl configuration
     //start with getting log configuration
     CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(logOnConsole, InitOption::OPT_LOG_ON_CONSOLE)
