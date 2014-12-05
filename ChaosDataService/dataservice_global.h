@@ -91,8 +91,6 @@ namespace chaos{
 			//! the instance of the index driver for this manager
 			::chaos::data_service::db_system::DBDriverSetting db_driver_setting;
 		} ChaosDataServiceSetting;
-		
-		static ChaosDataServiceSetting global_setting;
 	}
 }
 

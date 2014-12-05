@@ -34,7 +34,7 @@ int main(int argc, char * argv[]) {
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< bool >(OPT_CACHE_ONLY,
 																							 "Specify if we need to enable only the caching feature (no history managment)",
 																							 false,
-																							 &global_setting.cache_only);
+																							 &ChaosDataService::getInstance()->setting.cache_only);
 
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_RUN_MODE,
 																									 "Specify the run mode[1 - Query Consumer, 2 - Stage Indexer, 3 - Both]");
@@ -43,20 +43,20 @@ int main(int argc, char * argv[]) {
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_CACHE_DRIVER,
 																									"Cache driver implementation",
 																									"Memcached",
-																									&global_setting.cache_driver_setting.cache_driver_impl);
+																									&ChaosDataService::getInstance()->setting.cache_driver_setting.cache_driver_impl);
 		
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_CACHE_SERVER_LIST,
 																												 "The list of the cache server",
-																												 &global_setting.cache_driver_setting.startup_chache_servers);
+																												 &ChaosDataService::getInstance()->setting.cache_driver_setting.startup_chache_servers);
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_CACHE_WORKER_NUM,
 																									 "The number of the cache worker",
 																									 CACHE_WORKER_NUMBER,
-																									 &global_setting.cache_driver_setting.caching_worker_num);
+																									 &ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_num);
 		
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_CACHE_WORKER_THREAD,
 																								 "The thread number of each cache worker",
 																								 1,
-																								 &global_setting.cache_driver_setting.caching_worker_setting.job_thread_number);
+																								 &ChaosDataService::getInstance()->setting.cache_driver_setting.caching_worker_setting.job_thread_number);
 		
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_CACHE_DRIVER_KVP,
 																									"The key value parameter for cache implementation driver (ex k:v-k1:v1)");
@@ -65,33 +65,33 @@ int main(int argc, char * argv[]) {
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_QUERY_CONSUMER_VFILE_MANTAINANCE_DELAY,
 																								 "Repeat time for virtual file mantainer in query consumer in seconds",
 																								 QUERY_CONSUMER_VFILE_MANTAINANCE_DEFAULT_DELAY,
-																								 &global_setting.vfile_mantainer_delay);
+																								 &ChaosDataService::getInstance()->setting.vfile_mantainer_delay);
 		
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_QUERY_CONSUMER_QM_THREAD_POOL_SIZE,
 																									 "Number ofthread in the pool of query consumer",
 																									 QUERY_CONSUMER_QM_THREAD_POOL_SIZE,
-																									 &global_setting.query_manager_thread_poll_size);
+																									 &ChaosDataService::getInstance()->setting.query_manager_thread_poll_size);
 		//indexer
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_INDEXER_WORKER_NUM,
 																								 "The number of the indexer worker",
 																								 INDEXER_DEFAULT_WORKER_NUMBER,
-																								 &global_setting.indexer_worker_num);
+																								 &ChaosDataService::getInstance()->setting.indexer_worker_num);
 		
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< unsigned int >(OPT_INDEXER_SCAN_DELAY,
 																								 "The repeat delay for virtual system scan in seconds",
 																								 INDEXER_DEFAULT_SCAN_DELAY,
-																								 &global_setting.indexer_scan_delay);
+																								 &ChaosDataService::getInstance()->setting.indexer_scan_delay);
 		
 		//vfs conf
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_STORAGE_DRIVER_IMPL,
 																									"The name of the vfs storage implementation [Posix]",
 																									"Posix",
-																									&global_setting.file_manager_setting.storage_driver_impl);
+																									&ChaosDataService::getInstance()->setting.file_manager_setting.storage_driver_impl);
 		
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_STORAGE_DOMAIN,
 																									"The name of the domain exposed by the driver",
 																									"CHAOS_DOMAIN",
-																									&global_setting.file_manager_setting.storage_driver_setting.domain.name);
+																									&ChaosDataService::getInstance()->setting.file_manager_setting.storage_driver_setting.domain.name);
 		
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_VFS_STORAGE_DRIVER_KVP,
 																									"The key value parameter for storage implementation driver (ex k:v-k1:v1)");
@@ -99,22 +99,23 @@ int main(int argc, char * argv[]) {
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< uint32_t >(OPT_VFS_STORAGE_MAX_BLOCK_LIFETIME,
 																								 "Is the lifetime that every bloc is valid to accept data",
 																								 VFSManager_MAX_BLOCK_LIFETIME,
-																								 &global_setting.file_manager_setting.max_block_lifetime);
+																								 &ChaosDataService::getInstance()->setting.file_manager_setting.max_block_lifetime);
 		
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< uint32_t >(OPT_VFS_STORAGE_MAX_BLOCK_SIZE,
 																								 "Is the max size that a block can reach",
 																								 VFSManager_MAX_BLOCK_SIZE,
-																								 &global_setting.file_manager_setting.max_block_size);
+																								 &ChaosDataService::getInstance()->setting.file_manager_setting.max_block_size);
 		
 		//db
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_DB_DRIVER_IMPL,
 																									"The name of the index driver implementation [MongoDB]",
 																									"Mongo",
-																									&global_setting.db_driver_impl);
+																									&ChaosDataService::getInstance()->setting.db_driver_impl);
 		
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_DB_DRIVER_SERVERS,
 																												 "The list of the index servers",
-																												 &global_setting.db_driver_setting.servers);
+																												 &ChaosDataService::getInstance()->setting.db_driver_setting.servers);
+		
 		ChaosDataService::getInstance()->getGlobalConfigurationInstance()->addOption< std::string >(OPT_DB_DRIVER_KVP,
 																									"The key value parameter for database implementation driver (ex k:v-k1:v1)");
 		
@@ -124,6 +125,7 @@ int main(int argc, char * argv[]) {
 		//initilize the faramework
 		ChaosDataService::getInstance()->init(NULL);
 		
+		//
         ChaosDataService::getInstance()->start();
     } catch(chaos::CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)

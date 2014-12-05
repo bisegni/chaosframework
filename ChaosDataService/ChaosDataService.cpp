@@ -121,7 +121,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 			throw chaos::CException(-1, "No run mode specified", __PRETTY_FUNCTION__);
 		}
 		
-		if(!global_setting.cache_only &&																		//we aren't in cache only
+		if(!setting.cache_only &&																		//we aren't in cache only
 		   (getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_RUN_MODE) > BOTH ||	//check if we have a valid run mode
 		   getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_RUN_MODE) < QUERY)) {
 			//no cache server provided
@@ -129,7 +129,7 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		}
 		
 		//get the run mode and if we are in cache only.... enable only query mode
-		run_mode = global_setting.cache_only?QUERY:(RunMode)getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_RUN_MODE);
+		run_mode = setting.cache_only?QUERY:(RunMode)getGlobalConfigurationInstance()->getOption<unsigned int>(OPT_RUN_MODE);
 		
 		//check for mandatory configuration
 		if(!getGlobalConfigurationInstance()->hasOption(OPT_CACHE_SERVER_LIST)) {
@@ -142,15 +142,15 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		}
 		
 		if(getGlobalConfigurationInstance()->hasOption(OPT_CACHE_DRIVER_KVP)) {
-			fillKVParameter(global_setting.cache_driver_setting.key_value_custom_param, OPT_CACHE_DRIVER_KVP);
+			fillKVParameter(setting.cache_driver_setting.key_value_custom_param, OPT_CACHE_DRIVER_KVP);
 		}
 		
-		if(!global_setting.cache_only && getGlobalConfigurationInstance()->hasOption(OPT_VFS_STORAGE_DRIVER_KVP)) {
-			fillKVParameter(global_setting.file_manager_setting.storage_driver_setting.key_value_custom_param, OPT_VFS_STORAGE_DRIVER_KVP);
+		if(!setting.cache_only && getGlobalConfigurationInstance()->hasOption(OPT_VFS_STORAGE_DRIVER_KVP)) {
+			fillKVParameter(setting.file_manager_setting.storage_driver_setting.key_value_custom_param, OPT_VFS_STORAGE_DRIVER_KVP);
 		}
 		
-		if(!global_setting.cache_only && getGlobalConfigurationInstance()->hasOption(OPT_DB_DRIVER_KVP)) {
-			fillKVParameter(global_setting.db_driver_setting.key_value_custom_param, OPT_DB_DRIVER_KVP);
+		if(!setting.cache_only && getGlobalConfigurationInstance()->hasOption(OPT_DB_DRIVER_KVP)) {
+			fillKVParameter(setting.db_driver_setting.key_value_custom_param, OPT_DB_DRIVER_KVP);
 		}
 		
 		//allocate the network broker
@@ -160,25 +160,25 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 		network_broker.init(NULL, __PRETTY_FUNCTION__);
 
 		//allocate the db driver
-		if(!global_setting.cache_only && global_setting.db_driver_impl.compare("")) {
+		if(!setting.cache_only && setting.db_driver_impl.compare("")) {
 			//we have a db driver setuped
-			std::string db_driver_class_name = boost::str(boost::format("%1%DBDriver") % global_setting.db_driver_impl);
+			std::string db_driver_class_name = boost::str(boost::format("%1%DBDriver") % setting.db_driver_impl);
 			CDSLAPP_ << "Allocate index driver of type "<<db_driver_class_name;
 			db_driver_ptr = chaos::ObjectFactoryRegister<db_system::DBDriver>::getInstance()->getNewInstanceByName(db_driver_class_name);
 			if(!db_driver_ptr) throw chaos::CException(-1, "No index driver found", __PRETTY_FUNCTION__);
-			chaos::utility::InizializableService::initImplementation(db_driver_ptr, &global_setting.db_driver_setting, db_driver_ptr->getName(), __PRETTY_FUNCTION__);
+			chaos::utility::InizializableService::initImplementation(db_driver_ptr, &setting.db_driver_setting, db_driver_ptr->getName(), __PRETTY_FUNCTION__);
 		}
 		
 		//chec if we ar ein cache only
-		if(!global_setting.cache_only) {
+		if(!setting.cache_only) {
 			//configure the domain url equal to the directio io server one plus the deafult endpoint "0"
-			global_setting.file_manager_setting.storage_driver_setting.domain.local_url = network_broker->getDirectIOUrl();
-			global_setting.file_manager_setting.storage_driver_setting.domain.local_url.append("|0");
+			setting.file_manager_setting.storage_driver_setting.domain.local_url = network_broker->getDirectIOUrl();
+			setting.file_manager_setting.storage_driver_setting.domain.local_url.append("|0");
 		
 			//initialize vfs file manager
 			CDSLAPP_ << "Allocate VFS Manager";
 			vfs_file_manager.reset(new vfs::VFSManager(db_driver_ptr), "VFSFileManager");
-			vfs_file_manager.init(&global_setting.file_manager_setting, __PRETTY_FUNCTION__);
+			vfs_file_manager.init(&setting.file_manager_setting, __PRETTY_FUNCTION__);
 			
 		}
 		
@@ -187,14 +187,14 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 			CDSLAPP_ << "Allocate the Query Data Consumer";
 			data_consumer.reset(new QueryDataConsumer(vfs_file_manager.get(), db_driver_ptr), "QueryDataConsumer");
 			if(!data_consumer.get()) throw chaos::CException(-1, "Error instantiating data consumer", __PRETTY_FUNCTION__);
-			data_consumer->settings = &global_setting;
+			data_consumer->settings = &setting;
 			data_consumer->network_broker = network_broker.get();
 			data_consumer.init(NULL, __PRETTY_FUNCTION__);
 		}
 		if(run_mode == INDEXER ||
 		   run_mode == BOTH) {
 			CDSLAPP_ << "Allocate the Data Consumer";
-			stage_data_consumer.reset(new StageDataConsumer(vfs_file_manager.get(), db_driver_ptr, &global_setting), "StageDataConsumer");
+			stage_data_consumer.reset(new StageDataConsumer(vfs_file_manager.get(), db_driver_ptr, &setting), "StageDataConsumer");
 			if(!stage_data_consumer.get()) throw chaos::CException(-1, "Error instantiating stage data consumer", __PRETTY_FUNCTION__);
 			stage_data_consumer.init(NULL, __PRETTY_FUNCTION__);
 		}

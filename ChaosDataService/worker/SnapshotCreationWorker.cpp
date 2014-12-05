@@ -18,7 +18,7 @@
  *    	limitations under the License.
  */
 
-#include "../dataservice_global.h"
+#include "../ChaosDataService.h"
 #include "SnapshotCreationWorker.h"
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/data/cache/FastHash.h>
@@ -61,7 +61,7 @@ void SnapshotCreationWorker::init(void *init_data) throw (chaos::CException) {
 	SCW_LAPP_ << "allocating cache driver";
 	cache_driver_ptr = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
 	if(!cache_driver_ptr) throw chaos::CException(-3, "Cached driver not found", __PRETTY_FUNCTION__);
-	chaos::utility::InizializableService::initImplementation(cache_driver_ptr, &global_setting.cache_driver_setting, "CacheDriver", __PRETTY_FUNCTION__);
+	chaos::utility::InizializableService::initImplementation(cache_driver_ptr, &ChaosDataService::getInstance()->setting.cache_driver_setting, "CacheDriver", __PRETTY_FUNCTION__);
 }
 
 void SnapshotCreationWorker::deinit() throw (chaos::CException) {
