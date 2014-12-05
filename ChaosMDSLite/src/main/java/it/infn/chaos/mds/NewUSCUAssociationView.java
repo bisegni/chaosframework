@@ -335,10 +335,12 @@ public class NewUSCUAssociationView extends RefVaadinBasePanel implements com.va
 
 		impl.getButtonRemoveAttributeConfig().addListener(new ClickListener() {
 			public void buttonClick(ClickEvent event) {
-				Set<Integer> c = (Set<Integer>) impl.getTableAttributeConfig().getValue();
-				for (Integer idx : c) {
-					impl.getTableAttributeConfig().removeItem(idx);
-				}
+				Table t=impl.getTableAttributeConfig();
+				Integer it = (Integer) t.getValue();
+				if(it==null)
+					return;
+				t.removeItem(it);
+				
 				modified ++;
 			}
 		});
