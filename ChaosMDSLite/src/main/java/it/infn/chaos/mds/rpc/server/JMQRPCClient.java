@@ -95,7 +95,7 @@ public class JMQRPCClient extends RPCClient {
 						// System.out.println("Submission result->" + bsonResult);
 						// socketSlot.socket.disconnect(serverAddress);
 					} catch (Throwable e) {
-						System.out.println("Exception->" + ExceptionHelper.getInstance().printExceptionStack(e));
+						//System.out.println("Exception->" + ExceptionHelper.getInstance().printExceptionStack(e));
 
 						synchronized (serverSlotHashtable) {
 							try {
@@ -104,7 +104,7 @@ public class JMQRPCClient extends RPCClient {
 								socketSlot.socket.close();
 							} catch (Exception e2) {
 							}
-							System.out.println("Removing slot from hash table for " + serverAddress);
+							
 							serverSlotHashtable.remove(serverAddress);
 						}
 						throw e;

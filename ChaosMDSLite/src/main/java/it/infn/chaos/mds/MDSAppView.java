@@ -537,7 +537,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 				Table t = (Table) mv.getTableUnitServer();
 				Item woItem = t.getItem(us.getAlias());
 			
-				if(woItem!=null){
+				if((woItem!=null)&& woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_NAME)!=null){
 					woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_NAME).setValue(us.getAlias());
 					woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_ADDRESS).setValue(us.getIp_port());
 					woItem.getItemProperty(MDSAppView.TAB_UNIT_SERVER_HB_TS).setValue(us.getUnitServerHB().getDate());
