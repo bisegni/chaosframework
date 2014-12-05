@@ -413,8 +413,8 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 		} catch (Throwable e) {
 			// MDSAppView view = getViewByKey("VISTA");
 			// Window win = view.getWindow();
-			if (errwin != null) {
-				RefVaadinErrorDialog.showError(errwin, "Internal Error:", e.getMessage());
+			if ((errwin != null) && e.getMessage()!=null) {
+				RefVaadinErrorDialog.showError(errwin, "Internal Error:", "Stack Trace:" + e.getMessage());
 			}
 			e.printStackTrace();
 		}

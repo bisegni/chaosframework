@@ -16,6 +16,8 @@ import java.util.Locale;
 import java.util.Observable;
 import java.util.Set;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.ref.common.mvc.ViewNotifyEvent;
 import org.ref.server.webapp.RefVaadinBasePanel;
@@ -121,7 +123,9 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	public static final String	TAB_UNIT_SERVER_CUTYPE_ALIAS_NAME			= "CU ID";
 	public static final String	TAB_UNIT_SERVER_CUTYPE_TYPE_NAME			= "CU Type Name";
 	public static final String	TAB_UNIT_SERVER_CUTYPE_INTERFACE_NAME		= "CU Interface";
-	public static final String	TAB_UNIT_SERVER_CUTYPE_REGISTERED			= "CU State";
+	public static final String	TAB_UNIT_SERVER_CUTYPE_STATE				= "CU State";
+	public static final String	TAB_UNIT_SERVER_CUTYPE_SM					= "CU SM";
+
 	public static final String	KEY_DEVICE_TAB								= "DEVICE_TAB";
 	public static final String	KEY_DATASET_TAB								= "KEY_DATASET_TAB";
 	public static final String	KEY_DEVICE_START_AT_INIT_BUTTON				= "KEY_DEVICE_START_AT_INIT_BUTTON";
@@ -135,7 +139,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	private String				selectedUnit								= null;
 	private int					nrepaint									= 0; 
 	private static 	long		time_to_dead								= 60*1000;
-	
+	private static String 		stateRegex									= "\\w+\\:(\\w+)\\s+\\w+\\:(\\w+)";
 	@Override
 	public void initGui() {
 		
@@ -351,7 +355,9 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 		mv.getTableUnitServerCUType().addContainerProperty(TAB_UNIT_SERVER_CUTYPE_ALIAS_NAME, String.class, null);
 		mv.getTableUnitServerCUType().addContainerProperty(TAB_UNIT_SERVER_CUTYPE_TYPE_NAME, String.class, null);
 		mv.getTableUnitServerCUType().addContainerProperty(TAB_UNIT_SERVER_CUTYPE_INTERFACE_NAME, String.class, null);
-		mv.getTableUnitServerCUType().addContainerProperty(TAB_UNIT_SERVER_CUTYPE_REGISTERED, String.class, null);
+		mv.getTableUnitServerCUType().addContainerProperty(TAB_UNIT_SERVER_CUTYPE_STATE, String.class, null);
+		mv.getTableUnitServerCUType().addContainerProperty(TAB_UNIT_SERVER_CUTYPE_SM, String.class, null);
+
 		mv.getTableUnitServerCUType().addActionHandler(new Action.Handler() {
 			public Action[] getActions(Object target, Object sender) {
 				return new Action[] { ACTION_EDIT_CU,ACTION_CU_COPY,ACTION_CU_LOAD,ACTION_CU_UNLOAD };
@@ -466,6 +472,21 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 
 	}
 
+	private String[] getState(String state){
+		String[] ret= new String[2];
+		ret[0] = null;
+		ret[1] = null;
+
+		Pattern p= Pattern.compile(stateRegex);
+		Matcher m= p.matcher(state);
+		while(m.find()){
+			ret[0]=m.group(1);
+			ret[1]=m.group(2);
+		}
+		return ret;
+	}
+
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -540,13 +561,25 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 						us.setStyleName("red");
 					} 
 				}
+			
 				
 				for (UnitServerCuInstance unitServerCuInstance : currentInstancesForUnitServer) {
 					Item woItem = mv.getTableUnitServerCUType().addItem(unitServerCuInstance);
 					woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_ALIAS_NAME).setValue(unitServerCuInstance.getCuId());
 					woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_TYPE_NAME).setValue(unitServerCuInstance.getCuType());
 					woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_INTERFACE_NAME).setValue(unitServerCuInstance.getInterface());
-					woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_REGISTERED).setValue(unitServerCuInstance.getState());
+					String[] mystate=getState(unitServerCuInstance.getState());
+					if(mystate[0]!=null){
+						woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_STATE).setValue(mystate[0]);
+					} else {
+						woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_STATE).setValue("---");
+					}
+					if(mystate[1]!=null){
+						woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_SM).setValue(mystate[0]);
+					} else {
+						woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_SM).setValue("---");
+
+					}
 				}
 				
 			} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_REFRESH_LIST)) {
@@ -563,10 +596,27 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 					woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_TYPE_NAME).setValue(unitServerCuInstance.getCuType());
 					if(unitServerCuInstance.getInterface()!=null)
 						woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_INTERFACE_NAME).setValue(unitServerCuInstance.getInterface());
+					String state = unitServerCuInstance.getState();
+						
+					String[] mystate=getState(state);
 					if((now.getTime() - us.getUnitServerHB().getDate().getTime() )  > time_to_dead){
-						woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_REGISTERED).setValue("---");
+						woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_STATE).setValue("---");
+						woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_SM).setValue("---");
+
 					} else {
-						woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_REGISTERED).setValue(unitServerCuInstance.getState());
+						if(mystate[0]!=null){
+							woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_STATE).setValue(mystate[0]);	
+						} else {
+							woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_STATE).setValue("---");
+						}
+						if(mystate[1]!=null){
+							woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_SM).setValue(mystate[1]);
+
+						} else {
+							woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_SM).setValue("---");
+
+						}
+						//woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_STATE).setValue(unitServerCuInstance.getState());
 					}
 				}
 			} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_UPDATE_DEVICE_LIST)) {
