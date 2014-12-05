@@ -139,7 +139,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	private String				selectedUnit								= null;
 	private int					nrepaint									= 0; 
 	private static 	long		time_to_dead								= 60*1000;
-	private static String 		stateRegex									= "\\w+\\:(\\w+)\\s+\\w+\\:(\\w+)";
+	private static String 		stateRegex									= "\\w+\\:(.+)\\s+\\w+\\:(.+)";
 	@Override
 	public void initGui() {
 		
@@ -476,13 +476,18 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 		String[] ret= new String[2];
 		ret[0] = null;
 		ret[1] = null;
-
 		Pattern p= Pattern.compile(stateRegex);
 		Matcher m= p.matcher(state);
+		if(state!=null){
+			ret[0] = state;
+			ret[1] = state;
+		}
 		while(m.find()){
+
 			ret[0]=m.group(1);
 			ret[1]=m.group(2);
 		}
+		
 		return ret;
 	}
 
@@ -575,7 +580,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 						woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_STATE).setValue("---");
 					}
 					if(mystate[1]!=null){
-						woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_SM).setValue(mystate[0]);
+						woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_SM).setValue(mystate[1]);
 					} else {
 						woItem.getItemProperty(TAB_UNIT_SERVER_CUTYPE_SM).setValue("---");
 
