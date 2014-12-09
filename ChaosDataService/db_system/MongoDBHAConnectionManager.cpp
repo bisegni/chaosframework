@@ -13,7 +13,7 @@
 #include <boost/format.hpp>
 
 #define RETRIVE_MIN_TIME 500
-#define RETRIVE_MAX_TIME 1500
+#define RETRIVE_MAX_TIME 5000
 
 #define MongoDBHAConnection_LOG_HEAD "[MongoDBHAConnection] - "
 #define MDBHAC_LAPP_ LAPP_ << MongoDBHAConnection_LOG_HEAD
@@ -35,10 +35,11 @@ case 16090: \
 case 13127: \
 case 13348: \
 case 13678: \
+	DEBUG_CODE(MDBHAC_LERR_ << "Conenction error:" << x;)\
 	continue; \
 break; \
 default: \
- 	break; \
+break; \
 }
 
 namespace chaos_data = chaos::common::data;
@@ -148,9 +149,13 @@ bool MongoDBHAConnectionManager::getConnection(MongoDBHAConnection *connection_s
 	//get the number of valid server
 	uint32_t valid_server_num = (uint32_t)valid_connection_queue.size();
 	
+	DEBUG_CODE(MDBHAC_LDBG_ << "Try " << valid_server_num << " connection";)
+	
 	//try fo find a good conncetion
 	while(!nextCS && cur_index < valid_server_num) {
 		cur_index++;
+		DEBUG_CODE(MDBHAC_LDBG_ << "Try " << cur_index;)
+
 		// get next available server connection string
 		if((nextCS = valid_connection_queue.front())) {
 			//remove invalid connection string form queue and put it into the offline one
@@ -158,8 +163,14 @@ bool MongoDBHAConnectionManager::getConnection(MongoDBHAConnection *connection_s
 			try {
 				DriverScopedConnection c(*nextCS);
 				connection_is_good = c.ok();
-				c.get()->setWriteConcern(mongo::WriteConcern::journaled);
+				DEBUG_CODE(MDBHAC_LDBG_ << "(idx:" << cur_index << ") connection_is_good:" << connection_is_good;)
+				if(connection_is_good) {
+					DEBUG_CODE(MDBHAC_LDBG_ << "(idx:" << cur_index << ") set default write concern";)
+					c.get()->setWriteConcern(mongo::WriteConcern::journaled);
+				}
 			} catch (std::exception &ex) {
+				DEBUG_CODE(MDBHAC_LERR_ << "(idx:" << cur_index << ") exception:" << ex.what();)
+
 				// in any case of error put the current conneciton string into offline queue
 				offline_connection_queue.push(nextCS);
 				//check nex string if there is one
@@ -167,9 +178,12 @@ bool MongoDBHAConnectionManager::getConnection(MongoDBHAConnection *connection_s
 				continue;
 			}
 			if(connection_is_good) {
+				DEBUG_CODE(MDBHAC_LDBG_ << "(idx:" << cur_index << ") connection is good";)
 				//put the used description at the end of the queue
 				valid_connection_queue.push(nextCS);
 			} else {
+				DEBUG_CODE(MDBHAC_LDBG_ << "(idx:" << cur_index << ") connection is NOT good";)
+
 				// push into offline queue
 				offline_connection_queue.push(nextCS);
 				
