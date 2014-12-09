@@ -40,7 +40,7 @@ public class UnitServerDA extends DataAccess {
 	 * @return
 	 * @throws Throwable
 	 */
-	public Vector<UnitServer> getAllUnitServer() throws Throwable {
+	synchronized public Vector<UnitServer> getAllUnitServer() throws Throwable {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		Vector<UnitServer> result = new Vector<UnitServer>();
@@ -55,6 +55,7 @@ public class UnitServerDA extends DataAccess {
 				fillUnitServerWithCUTypes(us);
 				result.addElement(us);
 			}
+		
 		} catch (IllegalArgumentException e) {
 			throw new RefException(ExceptionHelper.getInstance().putExcetpionStackToString(e), 1, "UnitServerDA::getAlUnitServer");
 		} catch (IllegalAccessException e) {
@@ -72,7 +73,7 @@ public class UnitServerDA extends DataAccess {
 	 * @return
 	 * @throws RefException
 	 */
-	public UnitServer getUnitServerByAlias(String unitServerAlias) throws RefException {
+	synchronized public UnitServer getUnitServerByAlias(String unitServerAlias) throws RefException {
 		PreparedStatement ps = null;
 		UnitServer result = null;
 		SqlBuilder s = new SqlBuilder();
@@ -98,7 +99,7 @@ public class UnitServerDA extends DataAccess {
 		return result;
 	}
 
-	public void fillUnitServerWithCUTypes(UnitServer us) throws RefException {
+	synchronized public void fillUnitServerWithCUTypes(UnitServer us) throws RefException {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		SqlBuilder cuTypesSql = new SqlBuilder();
@@ -130,7 +131,7 @@ public class UnitServerDA extends DataAccess {
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
 	 */
-	public void insertNewUnitServer(UnitServer unitServer) throws RefException {
+	synchronized public void insertNewUnitServer(UnitServer unitServer) throws RefException {
 		PreparedStatement ps = null;
 		// generate the key
 		try {
@@ -170,7 +171,7 @@ public class UnitServerDA extends DataAccess {
 	 * @param usci
 	 * @throws RefException
 	 */
-	public void insertNewUSCUAssociation(UnitServerCuInstance usci) throws RefException {
+	synchronized public void insertNewUSCUAssociation(UnitServerCuInstance usci) throws RefException {
 		PreparedStatement ps = null;
 		InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_INSERT);
 		iuBuilder.addTable(UnitServerCuInstance.class);
@@ -192,7 +193,7 @@ public class UnitServerDA extends DataAccess {
 
 	
 
-	public void updateUSCUAssociation(UnitServerCuInstance unitServerCuInstance) throws RefException {
+	synchronized public void updateUSCUAssociation(UnitServerCuInstance unitServerCuInstance) throws RefException {
 		PreparedStatement ps = null;
 		try {
 			InsertUpdateBuilder u = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_UPDATE);
@@ -222,7 +223,7 @@ public class UnitServerDA extends DataAccess {
 	 * @param usci
 	 * @throws RefException
 	 */
-	public void insertNewDeviceClass(DeviceClass usci) throws RefException {
+	synchronized public void insertNewDeviceClass(DeviceClass usci) throws RefException {
 		PreparedStatement ps = null;
 		
 		InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder(usci.getClassId()!=null?InsertUpdateBuilder.MODE_UPDATE:InsertUpdateBuilder.MODE_INSERT);
@@ -243,7 +244,7 @@ public class UnitServerDA extends DataAccess {
 		}
 	}
 	
-	public void removeDeviceClass(String alias) throws RefException, SQLException {
+	synchronized public void removeDeviceClass(String alias) throws RefException, SQLException {
 		// delete the unit server
 			DeleteSqlBuilder d = new DeleteSqlBuilder();
 			d.addTable(DeviceClass.class);
@@ -258,7 +259,7 @@ public class UnitServerDA extends DataAccess {
 			executeInsertUpdateAndClose(ps);
 	}
 	
-	public Vector<DeviceClass> returnAllClassesBy(String unit_server, String dev_interface, String dev_class) throws RefException {
+	synchronized public Vector<DeviceClass> returnAllClassesBy(String unit_server, String dev_interface, String dev_class) throws RefException {
 		SqlBuilder s = new SqlBuilder();
 		SqlTable dct = null;
 		SqlTable unit_server_cu_pub = null;
@@ -301,7 +302,7 @@ public class UnitServerDA extends DataAccess {
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
 	 */
-	public void updateUnitServerTSAndIP(UnitServer unitServer) throws RefException {
+	synchronized public void updateUnitServerTSAndIP(UnitServer unitServer) throws RefException {
 		InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_UPDATE);
 		iuBuilder.addTable(UnitServer.class);
 		iuBuilder.addColumnAndValue(UnitServer.UNIT_SERVER_HB_TIME, "$CURRENT_TIMESTAMP");
@@ -336,7 +337,7 @@ public class UnitServerDA extends DataAccess {
 		}
 	}
 
-	public void updateUnitServerProperty(UnitServer unitServer) throws RefException {
+	synchronized public void updateUnitServerProperty(UnitServer unitServer) throws RefException {
 		
 		InsertUpdateBuilder iuPublishedCUBuilder = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_UPDATE);
 		iuPublishedCUBuilder.addTable("unit_server_published_cu");
@@ -393,7 +394,7 @@ public class UnitServerDA extends DataAccess {
 	 * @param unitServer
 	 * @throws RefException
 	 */
-	public void deleteSecurityKeys(UnitServer unitServer) throws RefException {
+	synchronized public void deleteSecurityKeys(UnitServer unitServer) throws RefException {
 		InsertUpdateBuilder iuBuilder = new InsertUpdateBuilder(InsertUpdateBuilder.MODE_UPDATE);
 		iuBuilder.addTable(UnitServer.class);
 		iuBuilder.addColumnAndValue(UnitServer.PRIVATE_KEY, "");
@@ -412,7 +413,7 @@ public class UnitServerDA extends DataAccess {
 		}
 	}
 
-	public void deleteUnitServer(String unitServerToDelete) throws RefException, SQLException {
+	synchronized public void deleteUnitServer(String unitServerToDelete) throws RefException, SQLException {
 		// delete all association
 		deletePublishedCU(unitServerToDelete);
 
@@ -429,7 +430,7 @@ public class UnitServerDA extends DataAccess {
 		executeInsertUpdateAndClose(ps);
 	}
 
-	public boolean unitServerAlreadyRegistered(UnitServer unitServer) throws RefException {
+	synchronized public boolean unitServerAlreadyRegistered(UnitServer unitServer) throws RefException {
 		boolean result = false;
 		ResultSet rs = null;
 		PreparedStatement ps = null;
@@ -454,13 +455,13 @@ public class UnitServerDA extends DataAccess {
 		return result;
 	}
 
-	public void insertPublishedCU(UnitServer unitServer) throws RefException {
+	synchronized public void insertPublishedCU(UnitServer unitServer) throws RefException {
 		for (String cuAlias : unitServer.getPublischedCU()) {
 			addCuTypeToUnitServer(unitServer.getAlias(), cuAlias);
 		}
 	}
 
-	public void addCuTypeToUnitServer(String unitServerAlias, String cuTypeName) throws RefException {
+	synchronized public void addCuTypeToUnitServer(String unitServerAlias, String cuTypeName) throws RefException {
 		PreparedStatement ps = null;
 		InsertUpdateBuilder iuBuilder = null;
 		try {
@@ -479,7 +480,7 @@ public class UnitServerDA extends DataAccess {
 			closePreparedStatement(ps);
 		}
 	}
-	public Vector<String> giveCuTypeForServer(String unitServerAlias) throws RefException{
+	synchronized public Vector<String> giveCuTypeForServer(String unitServerAlias) throws RefException{
 		Vector<String> result=new Vector<String>();
 		ResultSet rs = null;
 		SqlBuilder s = new SqlBuilder();
@@ -500,11 +501,11 @@ public class UnitServerDA extends DataAccess {
 		}
 		return result;
 	}
-	public void deletePublishedCU(UnitServer unitServer) throws RefException {
+	synchronized public void deletePublishedCU(UnitServer unitServer) throws RefException {
 		deletePublishedCU(unitServer.getAlias());
 	}
 
-	public void deletePublishedCU(String unitServerIdentifier) throws RefException {
+	synchronized public void deletePublishedCU(String unitServerIdentifier) throws RefException {
 		PreparedStatement ps = null;
 		DeleteSqlBuilder d = new DeleteSqlBuilder();
 	
@@ -525,7 +526,7 @@ public class UnitServerDA extends DataAccess {
 		}
 	}
 
-	public void removeCuTypeToUnitServer(String unitServerIdentifier, String cuTypeName) throws RefException {
+	synchronized public void removeCuTypeToUnitServer(String unitServerIdentifier, String cuTypeName) throws RefException {
 		PreparedStatement ps = null;
 		DeleteSqlBuilder d = new DeleteSqlBuilder();
 		d.addTable("unit_server_published_cu");
@@ -547,7 +548,7 @@ public class UnitServerDA extends DataAccess {
 		}
 	}
 
-	public Vector<UnitServerCuInstance> returnAllUnitServerCUAssociationbyUSAlias(String unitServerAlias) throws RefException {
+	synchronized public Vector<UnitServerCuInstance> returnAllUnitServerCUAssociationbyUSAlias(String unitServerAlias) throws RefException {
 		SqlBuilder s = new SqlBuilder();
 		Vector<UnitServerCuInstance> result = new Vector<UnitServerCuInstance>();
 		s.addTable(UnitServerCuInstance.class);
@@ -569,7 +570,7 @@ public class UnitServerDA extends DataAccess {
 		return result;
 	}
 
-	public Vector<UnitServerCuInstance> loadAllAssociationForUnitServerAliasInAutoload(String unitServerAlias) throws RefException {
+	synchronized public Vector<UnitServerCuInstance> loadAllAssociationForUnitServerAliasInAutoload(String unitServerAlias) throws RefException {
 		SqlBuilder s = new SqlBuilder();
 		Vector<UnitServerCuInstance> result = new Vector<UnitServerCuInstance>();
 		s.addTable(UnitServerCuInstance.class);
@@ -598,7 +599,7 @@ public class UnitServerDA extends DataAccess {
 	 * @throws RefException
 	 * @throws SQLException
 	 */
-	public void removeAssociation(UnitServerCuInstance associationToRemove) throws RefException {
+	synchronized public void removeAssociation(UnitServerCuInstance associationToRemove) throws RefException {
 		DeleteSqlBuilder dsb = new DeleteSqlBuilder();
 		dsb.addTable(UnitServerCuInstance.class);
 		dsb.addCondition(true, String.format("%s = ?", UnitServerCuInstance.UNIT_SERVER_ALIAS));
@@ -630,7 +631,7 @@ public class UnitServerDA extends DataAccess {
 	 * @return
 	 * @throws RefException
 	 */
-	public boolean cuIDIsMDSManaged(String controlUnitInstance) throws RefException {
+	synchronized public boolean cuIDIsMDSManaged(String controlUnitInstance) throws RefException {
 		SqlBuilder s = new SqlBuilder();
 		s.addTable(UnitServerCuInstance.class);
 		s.addPseudoColumntoSelect("count(*)");
@@ -683,7 +684,7 @@ public class UnitServerDA extends DataAccess {
 	 * @return
 	 * @throws RefException
 	 */
-	public Vector<DatasetAttribute> loadAllAttributeConfigForAssociation(String cuID) throws RefException {
+	synchronized public Vector<DatasetAttribute> loadAllAttributeConfigForAssociation(String cuID) throws RefException {
 		Vector<DatasetAttribute> result = new Vector<DatasetAttribute>();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -714,7 +715,7 @@ public class UnitServerDA extends DataAccess {
 		return result;
 	}
 
-	public void removeAllAttributeConfigurationForAssociation(UnitServerCuInstance associationInstance) throws RefException {
+	synchronized public void removeAllAttributeConfigurationForAssociation(UnitServerCuInstance associationInstance) throws RefException {
 		// first delete all config for device id
 		PreparedStatement ps = null;
 		try {
@@ -741,7 +742,7 @@ public class UnitServerDA extends DataAccess {
 	 * @param associationInstance
 	 * @throws RefException
 	 */
-	public void saveAllAttributeConfigForAssociation(UnitServerCuInstance associationInstance) throws RefException {
+	synchronized public void saveAllAttributeConfigForAssociation(UnitServerCuInstance associationInstance) throws RefException {
 		PreparedStatement ps = null;
 		try {
 			// first delete all config for device id
