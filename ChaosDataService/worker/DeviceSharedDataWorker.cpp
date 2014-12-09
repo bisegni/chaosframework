@@ -100,7 +100,9 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 		case 0:// storicize only
 		case 2:// storicize and live
 			//write data on stage file
-			if((err = this_thread_cookie->vfs_stage_file->write(job_ptr->data_pack, job_ptr->data_pack_len))) {
+			
+			if( !this_thread_cookie->vfs_stage_file ||
+			   (err = this_thread_cookie->vfs_stage_file->write(job_ptr->data_pack, job_ptr->data_pack_len))) {
 				DSDW_LERR_<< "Error writing data to file " << this_thread_cookie->vfs_stage_file->getVFSFileInfo()->vfs_fpath;
 			}
 			
