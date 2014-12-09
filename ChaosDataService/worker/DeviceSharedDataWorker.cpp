@@ -157,6 +157,10 @@ int DeviceSharedDataWorker::submitJobInfo(WorkerJobPtr job_info) {
 									  job_ptr->data_pack_len);
 			break;
 		}
+		default: {
+			DSDW_LERR_ << "Bad storage tag: " << job_ptr->request_header->tag;
+			break;
+		}
 	}
 	
 	if(job_ptr->request_header->tag == 1 ||
