@@ -103,6 +103,7 @@ void DirectIOServerEndpoint::releaseChannelInstance(channel::DirectIOVirtualServ
 int DirectIOServerEndpoint::priorityDataReceived(DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer) {
 	int err = 0;
 	spinlock.lock();
+	DEBUG_CODE(DIOSE_LDBG_ << "New priority message for channel index:" << data_pack->header.dispatcher_header.fields.channel_idx;)
 	//boost::shared_lock<boost::shared_mutex> Lock(mutex_channel_slot);
 	if(channel_slot[data_pack->header.dispatcher_header.fields.channel_idx])
 		err =  channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack, synchronous_answer);
@@ -114,6 +115,7 @@ int DirectIOServerEndpoint::priorityDataReceived(DirectIODataPack *data_pack, Di
 int DirectIOServerEndpoint::serviceDataReceived(DirectIODataPack *data_pack, DirectIOSynchronousAnswerPtr synchronous_answer) {
 	int err = 0;
 	spinlock.lock();
+	DEBUG_CODE(DIOSE_LDBG_ << "New service message for channel index:" << data_pack->header.dispatcher_header.fields.channel_idx;)
 	//boost::shared_lock<boost::shared_mutex> Lock(mutex_channel_slot);
 	if(channel_slot[data_pack->header.dispatcher_header.fields.channel_idx])
 		err = channel_slot[data_pack->header.dispatcher_header.fields.channel_idx]->server_channel_delegate->consumeDataPack(data_pack, synchronous_answer);

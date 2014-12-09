@@ -254,12 +254,12 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 				case DIRECT_IO_CHANNEL_PART_EMPTY:
 					break;
 				case DIRECT_IO_CHANNEL_PART_HEADER_ONLY:
-					
 					//init header data buffer
 					data_pack->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(header_buffer);
 					data_pack->channel_header_data = malloc(data_pack->header.channel_header_size);
 					data_pack->channel_data = NULL;
-                    
+					DEBUG_CODE(ZMQDIO_SRV_LDBG_ << "New DIRECT_IO_CHANNEL_PART_HEADER_ONLY message of size: " << data_pack->header.channel_header_size;)
+					
 					//init message with buffer
 					err = zmq_recv(socket, data_pack->channel_header_data, data_pack->header.channel_header_size, 0);
 					//err = zmq_msg_recv(&m_header_data, socket, 0);
@@ -270,12 +270,12 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 					}
 					break;
 				case DIRECT_IO_CHANNEL_PART_DATA_ONLY:
-					
 					//init data buffer
 					data_pack->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(header_buffer);
 					data_pack->channel_data = malloc(data_pack->header.channel_data_size);
 					data_pack->channel_header_data = NULL;
-                    
+					DEBUG_CODE(ZMQDIO_SRV_LDBG_ << "New DIRECT_IO_CHANNEL_PART_DATA_ONLY message of size: "<< data_pack->header.channel_data_size;)
+     
 					//init message with buffer
 					err = zmq_recv(socket, data_pack->channel_data, data_pack->header.channel_data_size, 0);
 					if(err == -1) {
@@ -285,13 +285,17 @@ void ZMQDirectIOServer::worker(bool priority_service) {
 					}
 					break;
 				case DIRECT_IO_CHANNEL_PART_HEADER_DATA:
+
 					//init header data and channel data buffers
 					data_pack->header.channel_header_size = DIRECT_IO_GET_CHANNEL_HEADER_SIZE(header_buffer);
 					data_pack->channel_header_data = malloc(data_pack->header.channel_header_size);
 					
 					data_pack->header.channel_data_size = DIRECT_IO_GET_CHANNEL_DATA_SIZE(header_buffer);
 					data_pack->channel_data = malloc(data_pack->header.channel_data_size);
-					
+
+					DEBUG_CODE(ZMQDIO_SRV_LDBG_ << "New DIRECT_IO_CHANNEL_PART_HEADER_DATA message of header size: " << data_pack->header.channel_header_size;)
+					DEBUG_CODE(ZMQDIO_SRV_LDBG_ << "New DIRECT_IO_CHANNEL_PART_HEADER_DATA message of data size: "<< data_pack->header.channel_data_size;)
+
 					//reiceve all data
 					err = zmq_recv(socket, data_pack->channel_header_data, data_pack->header.channel_header_size, 0);
 					//err = zmq_msg_recv(&m_header_data, socket, 0);
