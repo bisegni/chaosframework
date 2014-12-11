@@ -62,7 +62,7 @@ namespace chaos{
 			std::string db_impl_name;
 			
 			ChaosDataServiceSetting					*settings;
-			NetworkBroker	*network_broker;
+			NetworkBroker                           *network_broker;
 			
             DirectIOServerEndpoint					*server_endpoint;
 			DirectIODeviceServerChannel				*device_channel;
@@ -70,11 +70,12 @@ namespace chaos{
 			
 			cache_system::CacheDriver				*cache_driver;
 			db_system::DBDriver						*db_driver;
-			vfs::VFSManager *vfs_manager_instance;
-			boost::atomic<uint16_t> device_data_worker_index;
+			vfs::VFSManager                         *vfs_manager_instance;
+            
+			boost::atomic<uint16_t>                 device_data_worker_index;
 			chaos::data_service::worker::DataWorker	**device_data_worker;
 			chaos::data_service::worker::DataWorker	*snapshot_data_worker;
-			query_engine::QueryEngine *query_engine;
+			query_engine::QueryEngine               *query_engine;
 			
 			//---------------- DirectIODeviceServerChannelHandler -----------------------
             int consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *header,

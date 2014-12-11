@@ -47,13 +47,9 @@ StageDataConsumer::StageDataConsumer(vfs::VFSManager *_vfs_manager_ptr,
 settings(_settings),
 work_on_stage(false),
 vfs_manager_ptr(_vfs_manager_ptr),
-db_driver_ptr(_db_driver_ptr) {
-	
-}
+db_driver_ptr(_db_driver_ptr) {}
 
-StageDataConsumer::~StageDataConsumer() {
-	
-}
+StageDataConsumer::~StageDataConsumer() {}
 
 void StageDataConsumer::init(void *init_data) throw (chaos::CException) {
 	if(!settings)  throw chaos::CException(-1, "No setting provided", __FUNCTION__);
@@ -91,12 +87,16 @@ void StageDataConsumer::scanStage() {
 	vfs::VFSStageReadableFile *stage_file_to_process = NULL;
 	indexer::StageDataVFileScanner *indexer = new indexer::StageDataVFileScanner(vfs_manager_ptr, db_driver_ptr);
 	//
+    if(!indexer) {
+        StageDataConsumerLDBG_ << "Error creating the indexer";
+        return;
+    }
 	while(work_on_stage) {
 		try {
 			{
 				boost::unique_lock<boost::mutex> l(mutex_timeout_check);
 				if((curr_ts = chaos::TimingUtil::getTimeStamp()) > time_to_check_timeouted_stage_file + 60000) {
-					StageDataConsumerLDBG_ << "Mnage timeout datablock in aquiring state";
+					StageDataConsumerLDBG_ << "Manage timeout datablock in aquiring state";
 					//every minut start the check for the timeout datafile
 					time_to_check_timeouted_stage_file = curr_ts;
 					
@@ -122,6 +122,7 @@ void StageDataConsumer::scanStage() {
 					StageDataConsumerLDBG_ << "Error getting vfs stage readable file ";
 					continue;
 				} else {
+                    CHAOS_ASSERT(stage_file_to_process)
 					StageDataConsumerLAPP_ << "Scan for index process the file ->"<< stage_file_to_process->getVFSFileInfo()->vfs_fpath;
 					// scan one block of virtual file
 					indexer->scan(stage_file_to_process);
@@ -144,5 +145,9 @@ void StageDataConsumer::scanStage() {
 		//clean the path of last found file path
 		indexable_stage_file_vfs_path.clear();
 	}
+    if(indexer) {
+        StageDataConsumerLDBG_ << "Delete indexer";
+        delete(indexer);
+    }
 	StageDataConsumerLAPP_ << "Leaving stage scanner thread";
 }

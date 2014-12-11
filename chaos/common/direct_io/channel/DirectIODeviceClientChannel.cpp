@@ -132,11 +132,10 @@ int64_t DirectIODeviceClientChannel::requestLastOutputData(const std::string& ke
 
 int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key, uint64_t start_ts, uint64_t end_ts, string& query_id) {
 	chaos_data::CDataWrapper query_description;
-	size_t size_ptr = 0;
 	//allcoate the data to send direct io pack
 	DirectIODataPack *data_pack = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
 	DirectIODeviceChannelHeaderOpcodeQueryDataCloudPtr query_data_cloud_header =
-	(DirectIODeviceChannelHeaderOpcodeQueryDataCloud*)calloc((size_ptr = sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloud)), 1);
+	(DirectIODeviceChannelHeaderOpcodeQueryDataCloud*)calloc(sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloud), 1);
 	
 	//fill the query CDataWrapper
 	query_description.addStringValue(DeviceChannelOpcodeQueryDataCloudParam::QUERY_PARAM_SEARCH_KEY_STRING, key);
@@ -164,7 +163,7 @@ int64_t DirectIODeviceClientChannel::queryDataCloud(const std::string& key, uint
 	buffer->disposeOnDelete = false;
 	
 	//set header and data for the query
-    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, query_data_cloud_header, QUERY_DATA_CLOUD_OPCODE_HEADER_LEN)
+    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, query_data_cloud_header, sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloud))
 	DIRECT_IO_SET_CHANNEL_DATA(data_pack, (void*)buffer->getBufferPtr(), (uint32_t)buffer->getBufferLen());
 	
 	//send query request
@@ -188,7 +187,7 @@ int64_t DirectIODeviceClientChannel::startQueryDataCloudResult(const std::string
 	cq_start_result_header->field.total_element_found = TO_LITTE_ENDNS_NUM(uint64_t, total_element_found);
 
 	//set the header for forward
-	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, cq_start_result_header, QUERY_DATA_CLOUD_START_RESULT_OPCODE_HEADER_LEN)
+	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, cq_start_result_header, sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudStartResult))
 
 	//send message
 	return sendServiceData(data_pack);
@@ -213,7 +212,7 @@ int64_t DirectIODeviceClientChannel::sendResultToQueryDataCloud(const std::strin
 	cq_result_header->field.element_index = TO_LITTE_ENDNS_NUM(uint64_t, element_index);
 	
 	//set header and data for the query
-    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, cq_result_header, QUERY_DATA_CLOUD_RESULT_OPCODE_HEADER_LEN)
+    DIRECT_IO_SET_CHANNEL_HEADER(data_pack, cq_result_header, sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudResult))
 	DIRECT_IO_SET_CHANNEL_DATA(data_pack, data, data_len);
 	
 	//send query request
@@ -239,7 +238,7 @@ int64_t DirectIODeviceClientChannel::endQueryDataCloudResult(const std::string& 
 	cq_end_result_header->field.error_message_length = TO_LITTE_ENDNS_NUM(uint32_t, (uint32_t)error_message.size());
 	
 	//set the header for forward
-	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, cq_end_result_header, QUERY_DATA_CLOUD_START_RESULT_OPCODE_HEADER_LEN)
+	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, cq_end_result_header, sizeof(DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResult))
 	if(cq_end_result_header->field.error_message_length) {
 		//send error message has data
 		

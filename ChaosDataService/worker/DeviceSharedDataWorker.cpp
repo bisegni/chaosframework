@@ -41,12 +41,10 @@ namespace chaos_vfs = chaos::data_service::vfs;
 DeviceSharedDataWorker::DeviceSharedDataWorker(const std::string& _cache_impl_name,
 											   vfs::VFSManager *_vfs_manager_instance):
 cache_impl_name(_cache_impl_name),
-vfs_manager_instance(_vfs_manager_instance) {
-	
-}
+vfs_manager_instance(_vfs_manager_instance),
+cache_driver_ptr(NULL) {}
 
-DeviceSharedDataWorker::~DeviceSharedDataWorker() {
-}
+DeviceSharedDataWorker::~DeviceSharedDataWorker() {}
 
 void DeviceSharedDataWorker::init(void *init_data) throw (chaos::CException) {
 	DataWorker::init(init_data);
@@ -93,6 +91,12 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 	int err = 0;
 	DeviceSharedWorkerJob *job_ptr = reinterpret_cast<DeviceSharedWorkerJob*>(job_info);
 	ThreadCookie *this_thread_cookie = reinterpret_cast<ThreadCookie *>(cookie);
+    
+    CHAOS_ASSERT(job_ptr)
+    CHAOS_ASSERT(job_ptr->request_header);
+    CHAOS_ASSERT(job_ptr->data_pack);
+    CHAOS_ASSERT(this_thread_cookie)
+    
 	//check what kind of push we have
 	//read lock on mantainance mutex
 	boost::shared_lock<boost::shared_mutex> rl(this_thread_cookie->mantainance_mutex);
@@ -100,16 +104,15 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 		case 0:// storicize only
 		case 2:// storicize and live
 			//write data on stage file
-			
-			if( !this_thread_cookie->vfs_stage_file ||
-			   (err = this_thread_cookie->vfs_stage_file->write(job_ptr->data_pack, job_ptr->data_pack_len))) {
+            CHAOS_ASSERT(job_ptr->data_pack)
+			CHAOS_ASSERT(this_thread_cookie->vfs_stage_file)
+			if((err = this_thread_cookie->vfs_stage_file->write(job_ptr->data_pack, job_ptr->data_pack_len))) {
 				DSDW_LERR_<< "Error writing data to file " << this_thread_cookie->vfs_stage_file->getVFSFileInfo()->vfs_fpath;
 			}
 			
+            //check for timeout
 			if((TimingUtil::getTimeStamp() - last_stage_file_hb) > 1000) {
-				
 				last_stage_file_hb = TimingUtil::getTimeStamp();
-				
 				if((err = this_thread_cookie->vfs_stage_file->giveHeartbeat())){
 					DSDW_LERR_<< "Error giving heartbeat to data "  << this_thread_cookie->vfs_stage_file->getVFSFileInfo()->vfs_fpath;
 				}
@@ -117,7 +120,7 @@ void DeviceSharedDataWorker::executeJob(WorkerJobPtr job_info, void* cookie) {
 			
 			free(job_ptr->request_header);
 			free(job_ptr->data_pack);
-			free(job_info);
+			free(job_ptr);
 			break;
 			
 		case 1:{// live only
@@ -137,7 +140,12 @@ void DeviceSharedDataWorker::updateServerConfiguration() {
 
 int DeviceSharedDataWorker::submitJobInfo(WorkerJobPtr job_info) {
 	int err = 0;
+    if(!job_info) return 0;
 	DeviceSharedWorkerJob *job_ptr = reinterpret_cast<DeviceSharedWorkerJob*>(job_info);
+    CHAOS_ASSERT(job_ptr->request_header)
+    CHAOS_ASSERT(job_ptr->data_pack)
+    CHAOS_ASSERT(cache_driver_ptr)
+    
 	switch(job_ptr->request_header->tag) {
 		case 0:// storicize only
 			if(vfs_manager_instance) err = DataWorker::submitJobInfo(job_info);
@@ -179,6 +187,7 @@ void DeviceSharedDataWorker::mantain() throw (chaos::CException) {
 	// lock for mantains
 	for(int idx = 0; idx < settings.job_thread_number; idx++) {
 		ThreadCookie *current_tread_cookie = reinterpret_cast<ThreadCookie *>(thread_cookie[idx]);
+        CHAOS_ASSERT(current_tread_cookie)
 		//write lock on mantainance mutex
 		boost::unique_lock<boost::shared_mutex> rl(current_tread_cookie->mantainance_mutex);
 		

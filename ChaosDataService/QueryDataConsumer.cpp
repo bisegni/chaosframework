@@ -38,11 +38,17 @@ using namespace chaos::common::direct_io::channel;
 #define QDCDBG_ LDBG_ << QueryDataConsumer_LOG_HEAD << __FUNCTION__ << " - "
 #define QDCERR_ LERR_ << QueryDataConsumer_LOG_HEAD << __FUNCTION__ << "(" << __LINE__ << ") - "
 
+//constructor
 QueryDataConsumer::QueryDataConsumer(vfs::VFSManager *_vfs_manager_instance,
 									 db_system::DBDriver *_db_driver):
 vfs_manager_instance(_vfs_manager_instance),
 db_driver(_db_driver),
-query_engine(NULL){}
+query_engine(NULL),
+settings(NULL),
+server_endpoint(NULL),
+device_channel(NULL),
+system_api_channel(NULL),
+cache_driver(NULL) {}
 
 QueryDataConsumer::~QueryDataConsumer() {}
 
@@ -162,8 +168,10 @@ void QueryDataConsumer::deinit() throw (chaos::CException) {
 		chaos::common::async_central::AsyncCentralManager::getInstance()->removeTimer(this);
 	}
 	
-	QDCAPP_ << "Release direct io device channel into the endpoint";
-	server_endpoint->releaseChannelInstance(device_channel);
+    if(server_endpoint) {
+        QDCAPP_ << "Release direct io device channel into the endpoint";
+        server_endpoint->releaseChannelInstance(device_channel);
+    }
 	
 	if(query_engine) {
 		chaos::utility::StartableService::deinitImplementation(query_engine, "QueryEngine", __PRETTY_FUNCTION__);
@@ -211,7 +219,12 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
 									   void *channel_data,
 									   uint32_t channel_data_len,
 									   DirectIOSynchronousAnswerPtr synchronous_answer) {
+    CHAOS_ASSERT(header)
+    CHAOS_ASSERT(channel_data)
+    //calculate the index to use
 	uint32_t index_to_use = device_data_worker_index++ % settings->caching_worker_num;
+    CHAOS_ASSERT(device_data_worker[index_to_use])
+    //get the job
 	chaos::data_service::worker::DeviceSharedWorkerJob *job = new chaos::data_service::worker::DeviceSharedWorkerJob();
 	job->request_header = header;
 	job->data_pack = channel_data;
@@ -228,6 +241,9 @@ int QueryDataConsumer::consumeDataCloudQuery(DirectIODeviceChannelHeaderOpcodeQu
 											 uint64_t search_start_ts,
 											 uint64_t search_end_ts,
 											 DirectIOSynchronousAnswerPtr synchronous_answer) {
+    //debug check
+    CHAOS_ASSERT(query_engine)
+    
 	//compose the DirectIO endpoint where forward the answer
 	std::string answer_server_description = boost::str(boost::format("%1%:%2%:%3%|%4%") %
 													   UI64_TO_STRIP(header->field.address) %
@@ -252,6 +268,9 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
 									   void *channel_data,
 									   uint32_t channel_data_len,
 									   DirectIOSynchronousAnswerPtr synchronous_answer) {
+    //debug check
+    CHAOS_ASSERT(query_engine)
+
 	int err = cache_driver->getData(channel_data,
 								 channel_data_len,
 								 &synchronous_answer->answer_data,
@@ -277,7 +296,10 @@ int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPI
 		if(header) free(header);
 		return 0;
 	}
-	
+    //debug check
+    CHAOS_ASSERT(snapshot_data_worker)
+    CHAOS_ASSERT(concatenated_unique_id_memory)
+    CHAOS_ASSERT(api_result)
 	//prepare and submit the job into worker
 	chaos::data_service::worker::SnapshotCreationJob *job = new chaos::data_service::worker::SnapshotCreationJob();
 	//copy snapshot name
@@ -292,14 +314,15 @@ int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPI
 		switch (err) {
 			case 1: {
 				//there is already a snapshot with same name managed tha other job
-				std::strcpy(api_result->error_message, "There is already a snapshot with same name managed tha other job");
+				std::strncpy(api_result->error_message, "There is already a snapshot with same name managed tha other job", 255);
 				break;
 			}
 			default:
 				//other errors
-				std::strcpy(api_result->error_message, "Error creating new snapshot");
+				std::strncpy(api_result->error_message, "Error creating new snapshot", 255);
 				break;
 		}
+        //print error also on log
 		DEBUG_CODE(QDCDBG_ << api_result->error_message << "[" << job->snapshot_name << "]");
 		
 		if(concatenated_unique_id_memory) free(concatenated_unique_id_memory);
@@ -324,6 +347,9 @@ int QueryDataConsumer::consumeDeleteSnapshotEvent(opcode_headers::DirectIOSystem
 		if(header) free(header);
 		return 0;
 	}
+    //debug check
+    CHAOS_ASSERT(db_driver)
+    CHAOS_ASSERT(api_result)
 	if((err = db_driver->snapshotDeleteWithName(header->field.snap_name))) {
 		api_result->error = err;
 		std::strcpy(api_result->error_message, "Error deleteing the snapshot");
@@ -351,7 +377,11 @@ int QueryDataConsumer::consumeGetDatasetSnapshotEvent(opcode_headers::DirectIOSy
 		if(header) free(header);
 		return -1;
 	}
-	
+    //debug check
+    CHAOS_ASSERT(header)
+    CHAOS_ASSERT(api_result)
+    CHAOS_ASSERT(db_driver)
+
 	//trduce int to postfix channel type
 	switch(header->field.channel_type) {
 		case 0:

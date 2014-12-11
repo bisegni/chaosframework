@@ -142,7 +142,8 @@ void QueryEngine::deinit() throw(CException) {
  ---------------------------------------------------------------------------------*/
 void QueryEngine::executeQuery(DataCloudQuery *query) {
 	if(!query) return;
-	
+	CHAOS_ASSERT(vfs_manager_ptr)
+    
 	//get a new vfs query
 	if(vfs_manager_ptr->getVFSQuery(query->query, &query->vfs_query)) {
 		QEERR_ << "error quetting VFSQuery for " << QUERY_INFO((*query));
@@ -370,6 +371,7 @@ void QueryEngine::process_query() {
 			switch(query->query_phase) {
 				case DataCloudQuery::DataCloudQueryPhaseNeedSearch:
 					//start the query
+                    CHAOS_ASSERT(query->vfs_query)
 					QEDBG_ << "Start "<< QUERY_INFO((*query));
 					if((err = query->vfs_query->executeQuery()) ) {
 						QEERR_ << "Error executing query";
@@ -384,6 +386,7 @@ void QueryEngine::process_query() {
 					break;
 					
 				case DataCloudQuery::DataCloudQueryPhaseFetchData:
+                    CHAOS_ASSERT(query->vfs_query)
 					QEDBG_ << "Answer "<< QUERY_INFO((*query));
 					if((err = query->vfs_query->readDataPackPage(query->fetchedAndForwadInfo.fetched_data_vector, 100))) {
 						query->query_phase = DataCloudQuery::DataCloudQueryPhaseError;

@@ -49,8 +49,8 @@ namespace chaos{
 		public utility::StartableService {
             friend class ChaosDataService;
 			ChaosDataServiceSetting	*settings;
-			vfs::VFSManager *vfs_manager_ptr;
-			db_system::DBDriver *db_driver_ptr;
+			vfs::VFSManager         *vfs_manager_ptr;
+			db_system::DBDriver     *db_driver_ptr;
 
 			//thread managment
 			bool work_on_stage;
