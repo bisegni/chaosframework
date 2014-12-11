@@ -97,6 +97,8 @@ namespace chaos {
                             uint16_t	p_port;
                             //! The priority port value for the device that we need to get
                             uint16_t	s_port;
+							//! padding
+							uint16_t	unused;
                             //! The 32bit representation for the ip where send the answer
                             uint64_t	address;
                         } field;
