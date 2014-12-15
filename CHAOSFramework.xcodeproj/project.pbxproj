@@ -1051,6 +1051,7 @@
 		32F7FEA018A4FD9B00FC03AB /* DirectIOEndpointHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOEndpointHandler.h; sourceTree = "<group>"; };
 		32F7FEA218A5066600FC03AB /* FastDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastDelegate.h; sourceTree = "<group>"; };
 		32F7FEA318A5066600FC03AB /* FastDelegateBind.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FastDelegateBind.h; sourceTree = "<group>"; };
+		32FB20031A31B5DA00307A86 /* cache_system_types.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = cache_system_types.h; sourceTree = "<group>"; };
 		53DADAAE19C8676C00E13DB2 /* SingletonOnArguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingletonOnArguments.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -1916,6 +1917,7 @@
 				3272152218B006BC005AC8FD /* CacheDriver.cpp */,
 				3272152318B006BC005AC8FD /* CacheDriver.h */,
 				32B159E318B635580096B58B /* cache_system.h */,
+				32FB20031A31B5DA00307A86 /* cache_system_types.h */,
 			);
 			path = cache_system;
 			sourceTree = "<group>";
