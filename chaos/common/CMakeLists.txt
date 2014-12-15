@@ -21,7 +21,7 @@ SET(common_lib_src  ${common_lib_src}	data/CDataWrapper.cpp data/CUSchemaDB.cpp 
 										data/broker/reader/ReaderDataService.cpp data/cache/FastHash.cpp data/cache/DataCache.cpp data/cache/LFDataCache.cpp )
 
 
-SET(common_lib_src  ${common_lib_src}	data/cache/ChannelValueAccessor.cpp data/cache/KeyGroupCache.cpp data/cache/AttributesSetting.cpp
+SET(common_lib_src  ${common_lib_src}	data/cache/ChannelValueAccessor.cpp data/cache/KeyGroupCache.cpp 
 										data/cache/AttributeValue.cpp data/cache/AttributeCache.cpp data/cache/AbstractSharedDomainCache.cpp
 										data/cache/AttributeValueSharedCache.cpp)
 
