@@ -566,6 +566,11 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 		if (unitServerSelected != null) {
 			musp.deleteUnitServer(unitServerSelected);
 			updateUnitServerList();
+			Vector<UnitServerCuInstance> cuiv = musp.loadAllAssociationForUnitServerAlias(unitServerSelected);
+			for(UnitServerCuInstance c:cuiv){
+				mdp.deleteDeviceByInstance(c.getCuId());
+			}
+			updateDeviceList(false);
 		}
 	}
 
@@ -826,24 +831,36 @@ public class ChaosMDSRootController extends RefVaadinApplicationController imple
 	 */
 	private void updateDeviceList(boolean refresh) throws Throwable {
 		deviceHasBeenSelected(null);
-		// List<UnitServer> allUnitServer = musp.getAllUnitServer();
+		Vector<Device> devlist = new Vector<Device>();
 		List<Device> allDevices = mdp.getAllDevices();
+		List<UnitServer> allUnitServer = musp.getAllUnitServer();
+		for(UnitServer us:allUnitServer){
+			List<UnitServerCuInstance> cus = musp.loadAllAssociationForUnitServerAlias(us.getAlias()); 
+			for(UnitServerCuInstance cu:cus){
+				for(Device d:allDevices){
+					if(d.getDeviceIdentification().equals(cu.getCuId())){
+						devlist.add(d);
+					}
+				}
+			}
+		}
+	
 		/*
 		 * for(Device dev:allDevices){ List<UnitServerCuInstance> cus = musp.loadAllAssociationForUnitServerAlias(us.getAlias()); for(UnitServerCuInstance cu:cus){ if(cu.getCuId() == dev.getDeviceIdentification()){ dev.setParent(cu); dev.setLastDatasetForDevice(mdp.getLastDatasetForDevice(dev.getDeviceIdentification()).getTimestamp()); dev.setAttributes(mdp.getLastDatasetForDevice(dev.getDeviceIdentification()).getAttributes() != null ?
 		 * mdp.getLastDatasetForDevice(dev.getDeviceIdentification()).getAttributes().size() : 0);
 		 * 
 		 * } } } }
 		 */
-		for (Device dev : allDevices) {
+		for (Device dev : devlist) {
 			dev.setLastDatasetForDevice(mdp.getLastDatasetForDevice(dev.getDeviceIdentification()).getTimestamp());
 			dev.setAttributes(mdp.getLastDatasetForDevice(dev.getDeviceIdentification()).getAttributes() != null ? mdp.getLastDatasetForDevice(dev.getDeviceIdentification()).getAttributes().size() : 0);
 		}
-
+		
 		if (refresh) {
-			notifyEventoToViewWithData(MDSUIEvents.EVENT_REFRESH_DEVICE_LIST, this, allDevices);
+			notifyEventoToViewWithData(MDSUIEvents.EVENT_REFRESH_DEVICE_LIST, this, devlist);
 
 		} else {
-			notifyEventoToViewWithData(MDSUIEvents.EVENT_UPDATE_DEVICE_LIST, this, allDevices);
+			notifyEventoToViewWithData(MDSUIEvents.EVENT_UPDATE_DEVICE_LIST, this, devlist);
 		}
 
 	}

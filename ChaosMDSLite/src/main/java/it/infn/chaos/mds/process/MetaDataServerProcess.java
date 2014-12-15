@@ -5,11 +5,13 @@ package it.infn.chaos.mds.process;
 
 import it.infn.chaos.mds.business.DataServer;
 import it.infn.chaos.mds.business.DatasetAttribute;
+import it.infn.chaos.mds.business.Device;
 import it.infn.chaos.mds.business.DeviceClass;
 import it.infn.chaos.mds.business.MetaDataServer;
 import it.infn.chaos.mds.business.UnitServer;
 import it.infn.chaos.mds.business.UnitServerCuInstance;
 import it.infn.chaos.mds.da.DataServerDA;
+import it.infn.chaos.mds.da.DeviceDA;
 import it.infn.chaos.mds.da.UnitServerDA;
 
 import java.io.File;
@@ -245,7 +247,12 @@ public class MetaDataServerProcess extends RefProcess{
 			usv = mds.getUSs();
 			dcv = mds.getDeviceClasses();
 		}
-		
+		DeviceDA dvda=(DeviceDA)getDataAccessInstance(DeviceDA.class);
+
+		List<Device> dvl =dvda.getAllActiveDevice();
+		for(Device d:dvl){
+			dvda.deleteDeviceByDeviceIdentification(d.getCuInstance());
+		}
 		writeDB();
 		
 		

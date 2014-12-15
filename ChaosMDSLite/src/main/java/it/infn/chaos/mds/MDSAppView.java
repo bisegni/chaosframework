@@ -20,6 +20,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.ref.common.mvc.ViewNotifyEvent;
+import org.ref.common.type.Timestamp;
 import org.ref.server.webapp.RefVaadinBasePanel;
 import org.vaadin.dialogs.ConfirmDialog;
 
@@ -138,12 +139,13 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	public static ChaosEventComponent	chaosEventComponent					= ChaosEventComponent.getInstance();
 	private String				selectedUnit								= null;
 	private int					nrepaint									= 0; 
-	private static 	long		time_to_dead								= 60*1000;
+	private static 	long		time_to_dead								= 10*1000;
+	private static 	long 		refresh_ms									= 5000;
 	private static String 		stateRegex									= "\\w+\\:(.+)\\s+\\w+\\:(.+)";
 	@Override
 	public void initGui() {
 		
-		refresher.setRefreshInterval(5000); 
+		refresher.setRefreshInterval(refresh_ms); 
 		addComponent(refresher);
 		addComponent(mv);
 		
@@ -167,7 +169,8 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 //		setComponentKey(KEY_DEVICE_START_AT_INIT_BUTTON, mv.getButtonInitializedAtStartup());
 
 
-		chaosEventComponent.addListener(new ChaosEventListener() {
+		/*
+		 * chaosEventComponent.addListener(new ChaosEventListener() {
 
 
 			@Override
@@ -188,6 +191,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 
 			}
 		});
+		*/
 //////////// US
 		mv.getTableUnitServer().addListener(this);
 		mv.getTableUnitServer().setEditable(false);
@@ -626,7 +630,6 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 				}
 			} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_UPDATE_DEVICE_LIST)) {
 				List<Device> allDevices = (List<Device>) viewEvent.getEventData();
-				int i =0;
 				Table t = mv.getTableDevice();
 				t.removeAllItems();
 				for(Device device:allDevices){
@@ -637,6 +640,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 						woItem.getItemProperty(MDSAppView.TAB1_DEV_STATUS).setValue(device.getParent().getState());
 					}
 					*/
+					
 					woItem.getItemProperty(MDSAppView.TAB1_NET_ADDRESS).setValue(device.getNetAddress());
 					woItem.getItemProperty(MDSAppView.TAB1_LAST_HB).setValue(device.getLastHeartBeatTimestamp() != null ? device.getLastHeartBeatTimestamp().getDate() : null);
 					woItem.getItemProperty(MDSAppView.TAB2_TIMESTAMP).setValue(device.getLastDatasetForDevice().getDate());
@@ -644,23 +648,29 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 				}
 			} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_REFRESH_DEVICE_LIST)) {
 				List<Device> allDevices = (List<Device>) viewEvent.getEventData();
-				int i =0;
 				Table t = mv.getTableDevice();
+				if(allDevices.isEmpty()){
+					t.removeAllItems();
+				}
 				for(Device device:allDevices){
 					Item woItem =  t.getItem(device);
-					if(woItem == null)
-						return;
-					woItem.getItemProperty(MDSAppView.TAB1_DEVICE_INSTANCE).setValue(device.getDeviceIdentification());
-	/*				if(device.getParent()!=null){
-						woItem.getItemProperty(MDSAppView.TAB1_DEVICE_US).setValue(device.getParent().getUnitServerAlias());
-						woItem.getItemProperty(MDSAppView.TAB1_DEV_STATUS).setValue(device.getParent().getState());
+					if(woItem == null){
+					   woItem =  t.addItem(device);
 					}
-					*/
+					
+					woItem.getItemProperty(MDSAppView.TAB1_DEVICE_INSTANCE).setValue(device.getDeviceIdentification());
+	
+					Timestamp ts=device.getLastHeartBeatTimestamp();
+					
+					if((ts!=null)){
+						woItem.getItemProperty(MDSAppView.TAB1_LAST_HB).setValue(ts.getDate());
+					} 
 					woItem.getItemProperty(MDSAppView.TAB1_NET_ADDRESS).setValue(device.getNetAddress());
-					woItem.getItemProperty(MDSAppView.TAB1_LAST_HB).setValue(device.getLastHeartBeatTimestamp() != null ? device.getLastHeartBeatTimestamp().getDate() : null);
 					woItem.getItemProperty(MDSAppView.TAB2_TIMESTAMP).setValue(device.getLastDatasetForDevice().getDate());
+
 					woItem.getItemProperty(MDSAppView.TAB2_ATTR_NUMBER).setValue(device.getAttributes());
 				}
+				t.requestRepaint();
 			} else if (viewEvent.getEventKind().equals(MDSUIEvents.CTRL_CONFIG_GENERATED)) {
 			
 				String filename = (String)viewEvent.getEventData();
@@ -673,7 +683,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 				
 	       
 			   Date dd = new Date();
-			   StreamResource resource = new StreamResource(ssource, "MDSConfig_"+(dd.getTime()/1000) +" .txt",getApplication());
+			   StreamResource resource = new StreamResource(ssource, "MDSConfig_"+(dd.getTime()/1000) +".txt",getApplication());
 			   resource.setMIMEType("application/octet-stream");
 
 			   getWindow().open(resource,"_blank");
