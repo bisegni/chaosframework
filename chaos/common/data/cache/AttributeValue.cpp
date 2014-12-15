@@ -19,6 +19,7 @@
  */
 
 #include <chaos/common/global.h>
+#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/data/cache/AttributeValue.h>
 
 
@@ -26,6 +27,7 @@
 #define AVLDBG_ LDBG_ << "[AttributeValue -" << "] " << __PRETTY_FUNCTION__ << " - "
 #define AVLERR_ LERR_ << "[AttributeValue -" << "] " << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
 
+using namespace chaos::common::data;
 using namespace chaos::common::data::cache;
 
 /*---------------------------------------------------------------------------------
@@ -36,14 +38,18 @@ AttributeValue::AttributeValue(const std::string& _name,
 							   uint32_t _size,
 							   chaos::DataType::DataType _type):
 value_buffer(NULL),
+current_buffer(NULL),
+alternative_buffer(NULL),
 size(_size),
 name(_name),
 index(_index),
 type(_type) {
 	if(size) {
-		value_buffer = std::calloc(size, 1);
+		value_buffer = std::calloc(size*2, 1);
 		if(!value_buffer) {
 			AVLERR_ << "error allcoating current_value memory";
+		}else{
+			reallignPointer();
 		}
 	}
 }
@@ -55,6 +61,13 @@ AttributeValue::~AttributeValue() {
 	if(value_buffer) free(value_buffer);
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+void AttributeValue::reallignPointer() {
+	current_buffer = value_buffer;
+	alternative_buffer = (char*)value_buffer + size;
+}
 
 /*---------------------------------------------------------------------------------
  
@@ -82,8 +95,11 @@ bool AttributeValue::setNewSize(uint32_t _new_size) {
 	switch(type) {
 		case chaos::DataType::TYPE_BYTEARRAY:
 		case chaos::DataType::TYPE_STRING:
-			value_buffer = (double*)realloc(value_buffer, (size = _new_size));
-			result = (value_buffer != NULL);
+			value_buffer = (double*)realloc(value_buffer, (size = _new_size)*2);
+			if((result = (value_buffer != NULL))) {
+				std::memset(value_buffer, 0, size*2);
+				reallignPointer();
+			}
 			break;
 		default:
 			break;
@@ -106,6 +122,16 @@ void AttributeValue::markAsUnchanged() {
 	sharedBitmapChangedAttribute->reset(index);
 }
 
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 bool AttributeValue::isGood() {
 	return value_buffer!= NULL;
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+CDataWrapper *AttributeValue::getValueAsCDatawrapperPtr() {
+	return new CDataWrapper((const char *)value_buffer);
 }

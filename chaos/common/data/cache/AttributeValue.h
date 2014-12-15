@@ -31,6 +31,9 @@
 namespace chaos{
 	namespace common {
 		namespace data {
+			
+			class CDataWrapper;
+			
 			namespace cache {
 				
 				
@@ -39,7 +42,7 @@ namespace chaos{
 				
 				//! manage the update of a value
 				/*!
-				 A valueSetting is a class that help to understand when a value is changed and updated
+				 A AttributeValue is a class that help to understand when a value is changed and updated
 				 */
 				struct AttributeValue {
 					friend class AttributeSetting;
@@ -53,9 +56,12 @@ namespace chaos{
 					//! is the datatype that represent the value
 					const chaos::DataType::DataType     type;
 					
-					//main buffer
+					//!main buffer
 					void								*value_buffer;
-					
+					//!current value buffer
+					void								*current_buffer;
+					//!alternative value buffer
+					void								*alternative_buffer;
 					
 					//global index bitmap for infom that this value(using index) has been changed
 					boost::dynamic_bitset<BitBlockDimension> * sharedBitmapChangedAttribute;
@@ -69,7 +75,7 @@ namespace chaos{
 					//!private destrucotr
 					~AttributeValue();
 					
-					//!
+					//! change the size of the attribute value
 					bool setNewSize(uint32_t _new_size);
 					
 					//! set a new value in buffer
@@ -78,10 +84,14 @@ namespace chaos{
 					 \param value_ptr the memory ptr that contains the new value to copy into internal memory
 					 \param value_size the sie of the new value
 					 */
-					bool setValue(const void* value_ptr, uint32_t value_size, bool tag_has_changed = true);
+					bool setValue(const void* value_ptr,
+								  uint32_t value_size,
+								  bool tag_has_changed = true);
 					
+					//! marck attribute as changed
 					void markAsChanged();
 					
+					//! marck attribute as changed
 					void markAsUnchanged();
 					
 					//! the value is returned has handle because the pointer can change it size ans so
@@ -91,7 +101,16 @@ namespace chaos{
 						return reinterpret_cast<T*>(value_buffer);
 					}
 					
+					//! return the buffer as cdatawrapper
+					/*!
+					 This will work only if the contained data is a cdata buffer serialization
+					 */
+					CDataWrapper *getValueAsCDatawrapperPtr();
+					
+					//! check if attribute buffer is good
 					bool isGood();
+				private:
+					inline void reallignPointer();
 				};
 			}
 		}
