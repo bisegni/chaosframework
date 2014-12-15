@@ -62,11 +62,7 @@ namespace chaos{
 			std::string db_impl_name;
 			
 			ChaosDataServiceSetting					*settings;
-<<<<<<< HEAD
-			NetworkBroker                           *network_broker;
-=======
 			NetworkBroker							*network_broker;
->>>>>>> update_cds_cache_setting
 			
             DirectIOServerEndpoint					*server_endpoint;
 			DirectIODeviceServerChannel				*device_channel;

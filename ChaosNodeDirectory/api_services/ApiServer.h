@@ -30,7 +30,7 @@ namespace chaos {
             class ApiServer : public Singleton<ApiServer>, public utility::StartableService, private SetupStateManager {
                 friend class Singleton<ApiServer>;
                 chaos::cnd::data::DataManagment *dm;
-                chaos::NetworkBroker *networkBroker;
+                NetworkBroker *networkBroker;
                 
             public:
                 

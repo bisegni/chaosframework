@@ -48,7 +48,7 @@ settings(NULL),
 server_endpoint(NULL),
 device_channel(NULL),
 system_api_channel(NULL),
-cache_driver(NULL) {}
+cache_driver_get_last(NULL) {}
 
 QueryDataConsumer::~QueryDataConsumer() {}
 
@@ -225,16 +225,12 @@ int QueryDataConsumer::consumePutEvent(DirectIODeviceChannelHeaderPutOpcode *hea
 									   void *channel_data,
 									   uint32_t channel_data_len,
 									   DirectIOSynchronousAnswerPtr synchronous_answer) {
-<<<<<<< HEAD
     CHAOS_ASSERT(header)
     CHAOS_ASSERT(channel_data)
     //calculate the index to use
-	uint32_t index_to_use = device_data_worker_index++ % settings->caching_worker_num;
+	uint32_t index_to_use = device_data_worker_index++ % settings->cache_driver_setting.caching_worker_num;
     CHAOS_ASSERT(device_data_worker[index_to_use])
     //get the job
-=======
-	uint32_t index_to_use = device_data_worker_index++ % settings->cache_driver_setting.caching_worker_num;
->>>>>>> update_cds_cache_setting
 	chaos::data_service::worker::DeviceSharedWorkerJob *job = new chaos::data_service::worker::DeviceSharedWorkerJob();
 	job->request_header = header;
 	job->data_pack = channel_data;
@@ -278,20 +274,12 @@ int QueryDataConsumer::consumeGetEvent(DirectIODeviceChannelHeaderGetOpcode *hea
 									   void *channel_data,
 									   uint32_t channel_data_len,
 									   DirectIOSynchronousAnswerPtr synchronous_answer) {
-<<<<<<< HEAD
-    //debug check
-    CHAOS_ASSERT(query_engine)
-
-	int err = cache_driver->getData(channel_data,
-								 channel_data_len,
-								 &synchronous_answer->answer_data,
-								 synchronous_answer->answer_size);
-=======
+	//debug check
+	CHAOS_ASSERT(query_engine)
 	int err = cache_driver_get_last->getData(channel_data,
 											 channel_data_len,
 											 &synchronous_answer->answer_data,
 											 synchronous_answer->answer_size);
->>>>>>> update_cds_cache_setting
 	if(channel_data) free(channel_data);
 	if(header) free(header);
 	return err;
