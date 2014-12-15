@@ -22,7 +22,7 @@
 using namespace chaos::cu::control_manager;
 using namespace chaos::common::data::cache;
 
-AttributeSharedCacheWrapper::AttributeSharedCacheWrapper(SharedCacheInterface *_attribute_value_shared_cache):
+AttributeSharedCacheWrapper::AttributeSharedCacheWrapper(AbstractSharedDomainCache *_attribute_value_shared_cache):
 attribute_value_shared_cache(_attribute_value_shared_cache){
 	
 }
@@ -32,7 +32,7 @@ AttributeSharedCacheWrapper::~AttributeSharedCacheWrapper() {
 }
 
 void AttributeSharedCacheWrapper::setOutputDomainAsChanged() {
-	AttributesSetting& attribute_setting = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_OUTPUT);
+	AttributeCache& attribute_setting = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
 	attribute_setting.markAllAsChanged();
 }
 
@@ -41,10 +41,10 @@ void AttributeSharedCacheWrapper::setOutputAttributeValue(const std::string& att
 														  void * value,
 														  uint32_t size) {
 	CHAOS_ASSERT(attribute_value_shared_cache)
-	attribute_value_shared_cache->setVariableValue(AttributeValueSharedCache::SVD_OUTPUT,
-												   attribute_name,
-												   value,
-												   size);
+	attribute_value_shared_cache->setAttributeValue(DOMAIN_OUTPUT,
+													attribute_name,
+													value,
+													size);
 }
 
 // Set the value for a determinated variable in a determinate domain
@@ -52,7 +52,7 @@ void AttributeSharedCacheWrapper::setOutputAttributeValue(VariableIndexType attr
 																void * value,
 																uint32_t size) {
 	CHAOS_ASSERT(attribute_value_shared_cache)
-	attribute_value_shared_cache->setVariableValue(AttributeValueSharedCache::SVD_OUTPUT,
+	attribute_value_shared_cache->setAttributeValue(DOMAIN_OUTPUT,
 												   attribute_index,
 												   value,
 												   size);
@@ -61,39 +61,39 @@ void AttributeSharedCacheWrapper::setOutputAttributeValue(VariableIndexType attr
 bool AttributeSharedCacheWrapper::setOutputAttributeNewSize(const std::string& attribute_name,
 															uint32_t new_size) {
 	CHAOS_ASSERT(attribute_value_shared_cache)
-	AttributesSetting& attribute_setting = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_OUTPUT);
+	AttributeCache& attribute_setting = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
 	return attribute_setting.setNewSize(attribute_setting.getIndexForName(attribute_name), new_size);
 }
 
 bool AttributeSharedCacheWrapper::setOutputAttributeNewSize(VariableIndexType attribute_index,
 															uint32_t new_size) {
 	CHAOS_ASSERT(attribute_value_shared_cache)
-	AttributesSetting& attribute_setting = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_OUTPUT);
+	AttributeCache& attribute_setting = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
 	return attribute_setting.setNewSize(attribute_index, new_size);
 }
 
 boost::shared_ptr<SharedCacheLockDomain> AttributeSharedCacheWrapper::getLockOnOutputAttributeCache(bool write_lock) {
 	CHAOS_ASSERT(attribute_value_shared_cache)
-	return attribute_value_shared_cache->getLockOnDomain(AttributeValueSharedCache::SVD_OUTPUT, write_lock);
+	return attribute_value_shared_cache->getLockOnDomain(DOMAIN_OUTPUT, write_lock);
 }
 
 // Get the index of the changed attribute
 void AttributeSharedCacheWrapper::getChangedInputAttributeIndex(std::vector<VariableIndexType>& changed_index) {
 	CHAOS_ASSERT(attribute_value_shared_cache)
-	attribute_value_shared_cache->getChangedVariableIndex(AttributeValueSharedCache::SVD_INPUT,
-														  changed_index);
+	attribute_value_shared_cache->getChangedAttributeIndex(DOMAIN_INPUT,
+														   changed_index);
 }
 
 void AttributeSharedCacheWrapper::resetChangedInputIndex() {
-	AttributesSetting& attribute_setting = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_INPUT);
+	AttributeCache& attribute_setting = attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT);
 	attribute_setting.resetChangedIndex();
 }
 
 // Return the names of all variabl einto a determinated domain
-void AttributeSharedCacheWrapper::getVariableNames(AttributeValueSharedCache::SharedVariableDomain domain,
-										   std::vector<std::string>& names) {
+void AttributeSharedCacheWrapper::getAttributeNames(SharedCacheDomain domain,
+													std::vector<std::string>& names) {
 	CHAOS_ASSERT(attribute_value_shared_cache)
-	attribute_value_shared_cache->getVariableNames(domain, names);
+	attribute_value_shared_cache->getAttributeNames(domain, names);
 }
 
 // Add a new variable
@@ -101,10 +101,10 @@ void AttributeSharedCacheWrapper::addCustomAttribute(const std::string&  name,
 													 uint32_t max_size,
 													 chaos::DataType::DataType type) {
 	CHAOS_ASSERT(attribute_value_shared_cache)
-	attribute_value_shared_cache->addVariable(AttributeValueSharedCache::SVD_CUSTOM,
-											  name,
-											  max_size,
-											  type);
+	attribute_value_shared_cache->addAttribute(DOMAIN_CUSTOM,
+											   name,
+											   max_size,
+											   type);
 }
 
 // Set the value for a determinated variable in a determinate domain
@@ -112,7 +112,7 @@ void AttributeSharedCacheWrapper::setCustomAttributeValue(const std::string& att
 																void * value,
 																uint32_t size) {
 	CHAOS_ASSERT(attribute_value_shared_cache)
-	attribute_value_shared_cache->setVariableValue(AttributeValueSharedCache::SVD_CUSTOM,
+	attribute_value_shared_cache->setAttributeValue(DOMAIN_CUSTOM,
 												   attribute_name,
 												   value,
 												   size);
@@ -123,22 +123,22 @@ void AttributeSharedCacheWrapper::setCustomAttributeValue(VariableIndexType attr
 																  void * value,
 																  uint32_t size) {
 	CHAOS_ASSERT(attribute_value_shared_cache)
-	attribute_value_shared_cache->setVariableValue(AttributeValueSharedCache::SVD_CUSTOM,
+	attribute_value_shared_cache->setAttributeValue(DOMAIN_CUSTOM,
 												   attribute_index,
 												   value,
 												   size);
 }
 
 void AttributeSharedCacheWrapper::setCustomDomainAsChanged() {
-	AttributesSetting& attribute_setting = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_CUSTOM);
-	attribute_setting.markAllAsChanged();
+	AttributeCache& cached = attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM);
+	cached.markAllAsChanged();
 
 }
 
 boost::shared_ptr<SharedCacheLockDomain> AttributeSharedCacheWrapper::getLockOnCustomAttributeCache(bool write_lock) {
-	return 	attribute_value_shared_cache->getLockOnDomain(AttributeValueSharedCache::SVD_CUSTOM, write_lock);
+	return 	attribute_value_shared_cache->getLockOnDomain(DOMAIN_CUSTOM, write_lock);
 }
 
 boost::shared_ptr<SharedCacheLockDomain> AttributeSharedCacheWrapper::getReadLockOnInputAttributeCache() {
-	return 	attribute_value_shared_cache->getLockOnDomain(AttributeValueSharedCache::SVD_INPUT, false);
+	return 	attribute_value_shared_cache->getLockOnDomain(DOMAIN_INPUT, false);
 }

@@ -60,7 +60,7 @@ void SetAttributeCommand::setHandler(CDataWrapper *data) {
 	getDeviceDatabase()->getAttributeRangeValueInfo(name, attribute_info);
 	
 	//get the cache slot for attribute
-	ValueSetting * attribute_cache_value = getSharedCacheInterface()->getVariableValue(SharedCacheInterface::SVD_INPUT, name);
+	AttributeValue * attribute_cache_value = getSharedCacheInterface()->getAttributeValue(DOMAIN_INPUT, name);
 	
 	//manage types
 	switch (attribute_cache_value->type) {

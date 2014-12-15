@@ -72,7 +72,7 @@ void SlowCommandExecutor::start() throw(chaos::CException) {
 	//the default command, if there is is launched here so we need to update the system dataaset
 	const std::string& command_alias = getDefaultCommand();
 	if(command_alias.size()) {
-		ValueSetting *attr_value = getAttributeSharedCache()->getVariableValue(AttributeValueSharedCache::SVD_INPUT, command_alias);
+		AttributeValue *attr_value = getAttributeSharedCache()->getAttributeValue(DOMAIN_INPUT, command_alias);
 		if(attr_value) {
 			std::string cmd_param = "none";
 			//add new size
@@ -150,16 +150,16 @@ void SlowCommandExecutor::handleCommandEvent(uint64_t command_seq,
 			if(type_value_size == sizeof(FaultDescription)) {
 				FaultDescription *faul_desc = static_cast<FaultDescription*>(type_value_ptr);
 				if(!last_error_code) {
-					last_error_code = getAttributeSharedCache()->getVariableValue(SharedCacheInterface::SVD_SYSTEM,
-																				  DataPackSystemKey::DP_SYS_LAST_ERROR);
+					last_error_code = getAttributeSharedCache()->getAttributeValue(DOMAIN_SYSTEM,
+																				   DataPackSystemKey::DP_SYS_LAST_ERROR);
 				}
 				if(!last_error_message) {
-					last_error_message = getAttributeSharedCache()->getVariableValue(SharedCacheInterface::SVD_SYSTEM,
-																					 DataPackSystemKey::DP_SYS_LAST_ERROR_MESSAGE);
+					last_error_message = getAttributeSharedCache()->getAttributeValue(DOMAIN_SYSTEM,
+																					  DataPackSystemKey::DP_SYS_LAST_ERROR_MESSAGE);
 				}
 				if(!last_error_domain) {
-					last_error_domain = getAttributeSharedCache()->getVariableValue(SharedCacheInterface::SVD_SYSTEM,
-																					DataPackSystemKey::DP_SYS_LAST_ERROR_DOMAIN);
+					last_error_domain = getAttributeSharedCache()->getAttributeValue(DOMAIN_SYSTEM,
+																					 DataPackSystemKey::DP_SYS_LAST_ERROR_DOMAIN);
 				}
 				//write error on cache
 				last_error_code->setValue(&faul_desc->code, sizeof(int32_t));
@@ -182,8 +182,8 @@ void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
 	BatchCommandExecutor::handleSandboxEvent(sandbox_id, type, type_value_ptr, type_value_size);
 	
 	if(!last_ru_id_cache) {
-		last_ru_id_cache = getAttributeSharedCache()->getVariableValue(SharedCacheInterface::SVD_SYSTEM,
-																	   DataPackSystemKey::DP_SYS_RUN_UNIT_ID);
+		last_ru_id_cache = getAttributeSharedCache()->getAttributeValue(DOMAIN_SYSTEM,
+																		DataPackSystemKey::DP_SYS_RUN_UNIT_ID);
 		if(!last_ru_id_cache) {
 			SCELERR_ << "Error getting cache slot for unit id";
 			return;
@@ -198,8 +198,8 @@ void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
 			if(type_value_size == sizeof(uint64_t)) {
 				uint64_t *hb = static_cast<uint64_t*>(type_value_ptr);
 				if(!ts_hb_cache) {
-					ts_hb_cache =  getAttributeSharedCache()->getVariableValue(SharedCacheInterface::SVD_SYSTEM,
-																			   sandbox_id+"_hb");
+					ts_hb_cache =  getAttributeSharedCache()->getAttributeValue(DOMAIN_SYSTEM,
+																				sandbox_id+"_hb");
 					if(!ts_hb_cache) {
 						SCELERR_ << "Error getti cache slot for heartbeat timestamp";
 						return;
@@ -215,8 +215,8 @@ void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
 		case BatchSandboxEventType::EVT_RUN: {
 			uint64_t *hb = static_cast<uint64_t*>(type_value_ptr);
 			if(!last_acq_ts_cache) {
-				last_acq_ts_cache =  getAttributeSharedCache()->getVariableValue(SharedCacheInterface::SVD_OUTPUT,
-																				 DataPackCommonKey::DPCK_TIMESTAMP);
+				last_acq_ts_cache =  getAttributeSharedCache()->getAttributeValue(DOMAIN_OUTPUT,
+																				  DataPackCommonKey::DPCK_TIMESTAMP);
 				if(!last_acq_ts_cache) {
 					SCELERR_ << "Error gettin cache slot for acquisition timestamp";
 					return;
@@ -227,6 +227,4 @@ void SlowCommandExecutor::handleSandboxEvent(const std::string& sandbox_id,
 			control_unit_instance->pushOutputDataset();
 		}
 	}
-	
-	
 }

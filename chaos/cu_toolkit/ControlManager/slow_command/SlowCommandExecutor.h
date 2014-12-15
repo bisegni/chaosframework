@@ -33,7 +33,7 @@
 #include <boost/atomic.hpp>
 
 #include <chaos/common/data/DatasetDB.h>
-#include <chaos/common/data/cache/AttributesSetting.h>
+#include <chaos/common/data/cache/AttributeCache.h>
 #include <chaos/common/batch_command/BatchCommand.h>
 #include <chaos/common/batch_command/BatchCommandExecutor.h>
 #include <chaos/common/utility/ObjectInstancer.h>
@@ -93,16 +93,16 @@ namespace chaos {
 					AbstractControlUnit *control_unit_instance;
 					
 					//fast hearb beat cache access
-					ValueSetting *ts_hb_cache;
+					AttributeValue *ts_hb_cache;
 					//fast unit last id cache value
-					ValueSetting *last_ru_id_cache;
+					AttributeValue *last_ru_id_cache;
 					//fast unit last acq ts cache value
-					ValueSetting *last_acq_ts_cache;
+					AttributeValue *last_acq_ts_cache;
 					
 					//fast cache error variable accessor
-					ValueSetting *last_error_code;
-					ValueSetting *last_error_message;
-					ValueSetting *last_error_domain;
+					AttributeValue *last_error_code;
+					AttributeValue *last_error_message;
+					AttributeValue *last_error_domain;
                 protected:
                     
                     //! Private constructor

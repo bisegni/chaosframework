@@ -75,7 +75,7 @@ namespace chaos{
 					chaos::common::data::DatasetDB  *dataset_attribute_db_ptr;
 
 					//redefine the visibility
-					SharedCacheInterface * const getSharedCacheInterface() {
+					AbstractSharedDomainCache * const getSharedCacheInterface() {
 						return chaos::common::batch_command::BatchCommand::getSharedCacheInterface();
 					}
 					

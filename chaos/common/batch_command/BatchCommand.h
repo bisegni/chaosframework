@@ -29,7 +29,7 @@
 #include <boost/chrono.hpp>
 
 #include <chaos/common/data/CDataWrapper.h>
-#include <chaos/common/data/cache/AttributesSetting.h>
+#include <chaos/common/data/cache/AttributeValueSharedCache.h>
 #include <chaos/common/batch_command/BatchCommandTypes.h>
 using namespace chaos::common::data;
 using namespace chaos::common::data::cache;
@@ -119,7 +119,7 @@ namespace chaos{
                 FaultDescription fault_description;
                 
                 //! shared setting across all slow command
-                SharedCacheInterface *sharedAttributeSettingPtr;
+                AbstractSharedDomainCache *sharedAttributeCachePtr;
                 
                 //! called befor the command start the execution
                 void commandPre();
@@ -136,8 +136,8 @@ namespace chaos{
                 virtual ~BatchCommand();
 				
 				virtual
-				SharedCacheInterface * const getSharedCacheInterface() {
-					return sharedAttributeSettingPtr;
+				AbstractSharedDomainCache * const getSharedCacheInterface() {
+					return sharedAttributeCachePtr;
 				}
 				
             public:
@@ -156,6 +156,7 @@ namespace chaos{
 				//! return the last step time of the sandbox
 				uint64_t getLastStepTime();
 				
+				//! set the alias of the command
 				void setCommandAlias(const std::string& _command_alias);
 				
 				//! set the features with the uint32 value

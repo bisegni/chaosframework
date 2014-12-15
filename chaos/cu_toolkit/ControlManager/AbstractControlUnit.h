@@ -30,7 +30,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 
-#include <chaos/common/data/cache/AttributesSetting.h>
+#include <chaos/common/data/cache/AttributeValueSharedCache.h>
 #include <chaos/common/general/Configurable.h>
 #include <chaos/common/action/ActionDescriptor.h>
 #include <chaos/common/exception/CException.h>
@@ -122,13 +122,13 @@ namespace chaos{
 				 The data in every attribute is published automatically on the chaos data service
 				 with somne triggering logic according to the domain one.
 				 */
-				SharedCacheInterface *attribute_value_shared_cache;
+				AbstractSharedDomainCache *attribute_value_shared_cache;
 				
 				//! the wrapper for the user to isolate the shared cache
 				AttributeSharedCacheWrapper *attribute_shared_cache_wrapper;
 				
 				//! fast access for acquisition timestamp
-				ValueSetting *timestamp_acq_cached_value;
+				AttributeValue *timestamp_acq_cached_value;
 				
 				/*!
 				 Add a new KeyDataStorage for a specific key
@@ -174,7 +174,7 @@ namespace chaos{
 				void deinit() throw(CException);
 				
 				//! initialize the dataset attributes (input and output)
-				void initAttributeOnSharedAttributeCache(AttributeValueSharedCache::SharedVariableDomain domain,
+				void initAttributeOnSharedAttributeCache(SharedCacheDomain domain,
 														std::vector<string>& attribute_names);
 				//! complete the output dataset cached with mandatory attribute
 				/*!
@@ -190,11 +190,11 @@ namespace chaos{
 				virtual void completeInputAttribute();
 				
 				//! fill the array with the cached value, the array is used for the fast access of cached data
-				void fillCachedValueVector(AttributesSetting& attribute_cache,
-										   std::vector<ValueSetting*>& cached_value);
+				void fillCachedValueVector(AttributeCache& attribute_cache,
+										   std::vector<AttributeValue*>& cached_value);
 				
 				//! filel the dataset packet for the cached attribute in the array
-				inline void fillCDatawrapperWithCachedValue(std::vector<ValueSetting*>& cached_attributes,
+				inline void fillCDatawrapperWithCachedValue(std::vector<AttributeValue*>& cached_attributes,
 															CDataWrapper& dataset);
 			protected:
 				//  It's is the dynamically assigned instance of the CU. it will be used
@@ -209,10 +209,10 @@ namespace chaos{
 				
 				
 				//! fast cached attribute vector accessor
-				std::vector<ValueSetting*> cache_output_attribute_vector;
-				std::vector<ValueSetting*> cache_input_attribute_vector;
-				std::vector<ValueSetting*> cache_custom_attribute_vector;
-				std::vector<ValueSetting*> cache_system_attribute_vector;
+				std::vector<AttributeValue*> cache_output_attribute_vector;
+				std::vector<AttributeValue*> cache_input_attribute_vector;
+				std::vector<AttributeValue*> cache_custom_attribute_vector;
+				std::vector<AttributeValue*> cache_system_attribute_vector;
 
 				//! initialize system attribute
 				virtual void initSystemAttributeOnSharedAttributeCache();
@@ -301,6 +301,12 @@ namespace chaos{
 				 */
 				virtual void unitDeinit() throw(CException) = 0;
 				
+				//!handler calledfor restor a control unit to a determinate point
+				/*!
+				 On the call of this handler the cache restore part is filled with the dataset
+				 that at restore point was pushed by control unit.
+				 */
+				virtual void unitRestoreToPoint();
 				
 				//! this andler is called befor the input attribute will be updated
 				virtual void unitInputAttributePreChangeHandler() throw(CException);

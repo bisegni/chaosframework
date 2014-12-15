@@ -105,7 +105,7 @@ void BatchCommandExecutor::getSandboxID(std::vector<std::string> & sandbox_id){
 	}
 }
 
-AttributeValueSharedCache *BatchCommandExecutor::getAttributeSharedCache() {
+AbstractSharedDomainCache *BatchCommandExecutor::getAttributeSharedCache() {
 	return &global_attribute_cache;
 }
 
@@ -457,7 +457,7 @@ BatchCommand *BatchCommandExecutor::instanceCommandInfo(std::string& commandAlia
 		//forward the pointer of the driver accessor
 		//result->driverAccessorsErogator = driverAccessorsErogator;
         if(result) {
-            result->sharedAttributeSettingPtr = &global_attribute_cache;
+            result->sharedAttributeCachePtr = &global_attribute_cache;
         } else {
            DEBUG_CODE(BCELDBG_ << "Error instantiating the command " << commandAlias;)
         }

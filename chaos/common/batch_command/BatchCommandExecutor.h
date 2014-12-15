@@ -249,7 +249,7 @@ namespace chaos {
 				void getSandboxID(std::vector<std::string> & sandbox_id);
 				
 				//! return the shared, between commadn, attribute cache
-				AttributeValueSharedCache *getAttributeSharedCache();
+				AbstractSharedDomainCache *getAttributeSharedCache();
             };
         }
     }

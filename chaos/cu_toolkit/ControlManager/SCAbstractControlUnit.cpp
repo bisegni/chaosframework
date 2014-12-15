@@ -177,7 +177,7 @@ void SCAbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
 	AbstractControlUnit::initSystemAttributeOnSharedAttributeCache();
 	
 	//add slow control system prorperty
-	AttributesSetting& domain_attribute_setting = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_SYSTEM);
+	AttributeCache& domain_attribute_setting = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
 	//add heart beat attribute
 	SCACU_LAPP_ << "Adding addiodiotnal system attribute for control unit numbers";
 	domain_attribute_setting.addAttribute(DataPackSystemKey::DP_SYS_RUN_UNIT_AVAILABLE, 0, DataType::TYPE_INT32);
@@ -201,7 +201,7 @@ void SCAbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
 
 void SCAbstractControlUnit::completeInputAttribute() {
 	SCACU_LAPP_ << "Complete the shared cache input attribute";
-	AttributesSetting& domain_attribute_setting = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_INPUT);
+	AttributeCache& domain_attribute_setting = attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT);
 	
 	std::vector<std::string> command_alias;
 	slow_command_executor->getAllCommandAlias(command_alias);
@@ -229,7 +229,7 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAt
 		//in this event the value is the alias of the command
 		//publish command value
 		std::string command_alias = datasetAttributeValues->getStringValue(chaos_batch::BatchCommandSubmissionKey::COMMAND_ALIAS_STR);
-		ValueSetting *attr_value = attribute_value_shared_cache->getVariableValue(AttributeValueSharedCache::SVD_INPUT, command_alias);
+		AttributeValue *attr_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_INPUT, command_alias);
 		if(attr_value) {
 			std::string cmd_param = datasetAttributeValues->getJSONString();
 			//add new size

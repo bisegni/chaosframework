@@ -248,12 +248,12 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
 		
 		ACULAPP_ << "Populating shared attribute cache for input attribute";
 		DatasetDB::getDatasetAttributesName(DataType::Input, attribute_names);
-		initAttributeOnSharedAttributeCache(AttributeValueSharedCache::SVD_INPUT, attribute_names);
+		initAttributeOnSharedAttributeCache(DOMAIN_INPUT, attribute_names);
 		
 		ACULAPP_ << "Populating shared attribute cache for output attribute";
 		attribute_names.clear();
 		DatasetDB::getDatasetAttributesName(DataType::Output, attribute_names);
-		initAttributeOnSharedAttributeCache(AttributeValueSharedCache::SVD_OUTPUT, attribute_names);
+		initAttributeOnSharedAttributeCache(DOMAIN_OUTPUT, attribute_names);
 		
 		ACULAPP_ << "Complete shared attribute cache for output attribute";
 		completeOutputAttribute();
@@ -269,13 +269,13 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
 		unitDefineCustomAttribute();
 		
 		//create fast vector access for cached value
-		fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_OUTPUT), cache_output_attribute_vector);
+		fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT), cache_output_attribute_vector);
 		
-		fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_INPUT), cache_input_attribute_vector);
+		fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT), cache_input_attribute_vector);
 		
-		fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_SYSTEM), cache_system_attribute_vector);
+		fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM), cache_system_attribute_vector);
 		
-		fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_CUSTOM), cache_custom_attribute_vector);
+		fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM), cache_custom_attribute_vector);
 		
 		//initialize implementations
 		unitInit();
@@ -448,13 +448,13 @@ void AbstractControlUnit::start() throw(CException) {
 	//init on shared cache the all the dataaset with the default value
 	//set first timestamp for simulate the run step
 	*timestamp_acq_cached_value->getValuePtr<uint64_t>() = TimingUtil::getTimeStamp();
-	attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_OUTPUT).markAllAsChanged();
+	attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT).markAllAsChanged();
 	pushOutputDataset();
-	attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_INPUT).markAllAsChanged();
+	attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT).markAllAsChanged();
 	pushInputDataset();
-	attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_CUSTOM).markAllAsChanged();
+	attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM).markAllAsChanged();
 	pushCustomDataset();
-	attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_SYSTEM).markAllAsChanged();
+	attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM).markAllAsChanged();
 	pushSystemDataset();
 }
 
@@ -484,8 +484,8 @@ void AbstractControlUnit::deinit() throw(CException) {
 
 }
 
-void AbstractControlUnit::fillCachedValueVector(AttributesSetting& attribute_cache,
-												  std::vector<ValueSetting*>& cached_value) {
+void AbstractControlUnit::fillCachedValueVector(AttributeCache& attribute_cache,
+												std::vector<AttributeValue*>& cached_value) {
 	for(int idx = 0;
 		idx < attribute_cache.getNumberOfAttributes();
 		idx++) {
@@ -493,12 +493,12 @@ void AbstractControlUnit::fillCachedValueVector(AttributesSetting& attribute_cac
 	}
 }
 
-void AbstractControlUnit::initAttributeOnSharedAttributeCache(AttributeValueSharedCache::SharedVariableDomain domain,
+void AbstractControlUnit::initAttributeOnSharedAttributeCache(SharedCacheDomain domain,
 															  std::vector<string>& attribute_names) {
 	//add input attribute to shared setting
 	RangeValueInfo attributeInfo;
 	
-	AttributesSetting& attribute_setting = attribute_value_shared_cache->getSharedDomain(domain);
+	AttributeCache& attribute_setting = attribute_value_shared_cache->getSharedDomain(domain);
 	
 	for(int idx = 0;
 		idx < attribute_names.size();
@@ -548,7 +548,7 @@ void AbstractControlUnit::initAttributeOnSharedAttributeCache(AttributeValueShar
 
 void AbstractControlUnit::completeOutputAttribute() {
 	ACULDBG_ << "Complete the shared cache output attribute";
-	AttributesSetting& domain_attribute_setting = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_OUTPUT);
+	AttributeCache& domain_attribute_setting = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
 	
 	//add timestamp
 	domain_attribute_setting.addAttribute(DataPackCommonKey::DPCK_TIMESTAMP, sizeof(uint64_t), DataType::TYPE_INT64);
@@ -560,7 +560,7 @@ void AbstractControlUnit::completeInputAttribute() {
 }
 
 void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
-	AttributesSetting& domain_attribute_setting = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_SYSTEM);
+	AttributeCache& domain_attribute_setting = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
 	
 	//add heart beat attribute
 	ACULDBG_ << "Adding syste attribute on shared cache";
@@ -606,6 +606,11 @@ CDataWrapper* AbstractControlUnit::_getInfo(CDataWrapper* getStatedParam, bool& 
 	return stateResult;
 }
 
+//!handler calledfor restor a control unit to a determinate point
+void AbstractControlUnit::unitRestoreToPoint() {
+	
+}
+
 //! this andler is called befor the input attribute will be updated
 void AbstractControlUnit::unitInputAttributePreChangeHandler() throw(CException) {
 	
@@ -631,7 +636,7 @@ if(attributeInfo.maxRange.size() && v > attributeInfo.maxRange ) throw CExceptio
 
 CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_attribute_values, bool& detachParam) throw (CException) {
 	CHAOS_ASSERT(dataset_attribute_values)
-	boost::shared_ptr<SharedCacheLockDomain> w_lock = attribute_value_shared_cache->getLockOnDomain(AttributeValueSharedCache::SVD_INPUT, true);
+	boost::shared_ptr<SharedCacheLockDomain> w_lock = attribute_value_shared_cache->getLockOnDomain(DOMAIN_INPUT, true);
 	w_lock->lock();
 
 	std::vector<std::string> in_attribute_name;
@@ -655,7 +660,7 @@ CDataWrapper* AbstractControlUnit::setDatasetAttribute(CDataWrapper *dataset_att
 				//check if the attribute name is present
 				if(dataset_attribute_values->hasKey(cAttrName)) {
 					
-					ValueSetting * attribute_cache_value = attribute_value_shared_cache->getVariableValue(SharedCacheInterface::SVD_INPUT, iter->c_str());
+					AttributeValue * attribute_cache_value = attribute_value_shared_cache->getAttributeValue(DOMAIN_INPUT, iter->c_str());
 					
 					//get attribute info
 					getAttributeRangeValueInfo(*iter, attributeInfo);
@@ -761,8 +766,8 @@ DriverAccessor *AbstractControlUnit::getAccessoInstanceByIndex(int idx) {
 
 
 void AbstractControlUnit::pushOutputDataset() {
-	AttributesSetting& output_attribute_cache = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_OUTPUT);
-	boost::shared_ptr<SharedCacheLockDomain> r_lock = attribute_value_shared_cache->getLockOnDomain(AttributeValueSharedCache::SVD_OUTPUT, false);
+	AttributeCache& output_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT);
+	boost::shared_ptr<SharedCacheLockDomain> r_lock = attribute_value_shared_cache->getLockOnDomain(DOMAIN_OUTPUT, false);
 	r_lock->lock();
 	
 	//check if something as changed
@@ -780,7 +785,7 @@ void AbstractControlUnit::pushOutputDataset() {
 		idx < cache_output_attribute_vector.size() - 1; //the device id and timestamp in added out of this list
 		idx++) {
 		//
-		ValueSetting * value_set = cache_output_attribute_vector[idx];
+		AttributeValue * value_set = cache_output_attribute_vector[idx];
 		switch(value_set->type) {
 			case DataType::TYPE_BOOLEAN:
 				output_attribute_dataset->addBoolValue(value_set->name.c_str(), *value_set->getValuePtr<bool>());
@@ -812,7 +817,7 @@ void AbstractControlUnit::pushOutputDataset() {
 
 //push system dataset
 void AbstractControlUnit::pushInputDataset() {
-	AttributesSetting& input_attribute_cache = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_INPUT);
+	AttributeCache& input_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT);
 	if(!input_attribute_cache.hasChanged()) return;
 	//get the cdatawrapper for the pack
 	CDataWrapper *input_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
@@ -833,7 +838,7 @@ void AbstractControlUnit::pushInputDataset() {
 
 //push system dataset
 void AbstractControlUnit::pushCustomDataset() {
-	AttributesSetting& custom_attribute_cache = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_CUSTOM);
+	AttributeCache& custom_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM);
 	if(!custom_attribute_cache.hasChanged()) return;
 	//get the cdatawrapper for the pack
 	CDataWrapper *custom_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
@@ -853,7 +858,7 @@ void AbstractControlUnit::pushCustomDataset() {
 }
 
 void AbstractControlUnit::pushSystemDataset() {
-	AttributesSetting& systemm_attribute_cache = attribute_value_shared_cache->getSharedDomain(AttributeValueSharedCache::SVD_SYSTEM);
+	AttributeCache& systemm_attribute_cache = attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM);
 	if(!systemm_attribute_cache.hasChanged()) return;
 	//get the cdatawrapper for the pack
 	CDataWrapper *system_attribute_dataset = keyDataStorage->getNewOutputAttributeDataWrapper();
@@ -873,8 +878,8 @@ void AbstractControlUnit::pushSystemDataset() {
 	systemm_attribute_cache.resetChangedIndex();
 }
 
-void AbstractControlUnit::fillCDatawrapperWithCachedValue(std::vector<ValueSetting*>& cached_attributes, CDataWrapper& dataset) {
-	for(std::vector<ValueSetting*>::iterator it = cached_attributes.begin();
+void AbstractControlUnit::fillCDatawrapperWithCachedValue(std::vector<AttributeValue*>& cached_attributes, CDataWrapper& dataset) {
+	for(std::vector<AttributeValue*>::iterator it = cached_attributes.begin();
 		it != cached_attributes.end();
 		it++) {
 		

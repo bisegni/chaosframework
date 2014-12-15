@@ -19,7 +19,7 @@
 //#include <boost/heap/priority_queue.hpp>
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/data/CDataWrapper.h>
-#include <chaos/common/data/cache/AttributesSetting.h>
+#include <chaos/common/data/cache/AttributeValueSharedCache.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/pqueue/CObjectProcessingPriorityQueue.h>

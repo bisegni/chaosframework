@@ -46,7 +46,7 @@ namespace chaos {
 				friend class DomainActionsScheduler;
 				
 				uint64_t **run_acquisition_ts_handle;
-				ValueSetting *hb_cached_value;
+				AttributeValue *hb_cached_value;
 				uint64_t last_hearbeat_time;
 				uint64_t schedule_dalay;
 				bool scheduler_run;
