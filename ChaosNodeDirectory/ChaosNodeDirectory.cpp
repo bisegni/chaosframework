@@ -28,7 +28,9 @@ using boost::shared_ptr;
 
 WaitSemaphore ChaosNodeDirectory::waitCloseSemaphore;
 
-#define LCND_ LAPP_ << "[ChaosNodeDirectory]- "
+#define LCND_LAPP LAPP_ << "[ChaosNodeDirectory] - "
+#define LCND_LDBG LDBG_ << "[ChaosNodeDirectory] - " << __PRETTY_FUNCTION << " - "
+#define LCND_LERR LERR_ << "[ChaosNodeDirectory] - " << __PRETTY_FUNCTION << "(" << __LINE__ << ") - " 
 
     //! C and C++ attribute parser
 /*!
@@ -50,15 +52,13 @@ void ChaosNodeDirectory::init(istringstream &initStringStream) throw (CException
  */
 void ChaosNodeDirectory::init(void *init_data)  throw(CException) {
     try {
-        
-        LCND_ << "Initializing";
         ChaosCommon<ChaosNodeDirectory>::init(init_data);
         if (signal((int) SIGINT, ChaosNodeDirectory::signalHanlder) == SIG_ERR) {
-            throw CException(0, "Error registering SIGINT signal", "ChaosNodeDirectory::init");
+            throw CException(0, "Error registering SIGINT signal", __PRETTY_FUNCTION__);
         }
  
         if (signal((int) SIGQUIT, ChaosNodeDirectory::signalHanlder) == SIG_ERR) {
-            throw CException(0, "Error registering SIG_ERR signal", "ChaosNodeDirectory::init");
+            throw CException(0, "Error registering SIG_ERR signal", __PRETTY_FUNCTION__);
         }
 
     } catch (CException& ex) {
@@ -74,20 +74,23 @@ void ChaosNodeDirectory::init(void *init_data)  throw(CException) {
 void ChaosNodeDirectory::start()  throw(CException) {
         //lock o monitor for waith the end
     try {
-        LCND_ << "Starting";
-
-        
-
-        LCND_ << "Started";
         //at this point i must with for end signal
         waitCloseSemaphore.wait();
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
-        exit(1);
     }
         //execute the deinitialization of CU
-    stop();
-    deinit();
+	try{
+		stop();
+	} catch (CException& ex) {
+		DECODE_CHAOS_EXCEPTION(ex)
+	}
+
+	try{
+		deinit();
+	} catch (CException& ex) {
+		DECODE_CHAOS_EXCEPTION(ex)
+	}
 }
 
 /*
@@ -104,10 +107,7 @@ void ChaosNodeDirectory::stop()   throw(CException) {
  Deiniti all the manager
  */
 void ChaosNodeDirectory::deinit()   throw(CException) {
-    LCND_ << "Stopping";
-        //start Control Manager
-      
-    LCND_ << "Stopped";
+
 }
 
 /*

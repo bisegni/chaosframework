@@ -36,7 +36,6 @@ ApiServer::~ApiServer() {
 // Initialize instance
 void ApiServer::init(void *initData) throw(chaos::CException) {
     AS_LAPP_ << "Init";
-    SetupStateManager::levelUpFrom(INIT_STEP, "Already initialized");
     
     utility::StartableService::initImplementation(dm, initData, "chaos::cnd::data::DataManagment", "ApiServer::init");
     
@@ -48,7 +47,6 @@ void ApiServer::init(void *initData) throw(chaos::CException) {
 
 // Start the implementation
 void ApiServer::start() throw(chaos::CException) {
-    SetupStateManager::levelUpFrom(START_STEP, "Already started");
     
     utility::StartableService::startImplementation(dm, "chaos::cnd::data::DataManagment", "ApiServer::start");
     
@@ -60,7 +58,6 @@ void ApiServer::start() throw(chaos::CException) {
 
 // Start the implementation
 void ApiServer::stop() throw(chaos::CException) {
-    SetupStateManager::levelDownFrom(STOP_STEP, "Already stopped");
     AS_LAPP_ << "Starting NetworkBroker";
     networkBroker->stop();
     AS_LAPP_ << "NetworkBroker Started";
@@ -70,7 +67,6 @@ void ApiServer::stop() throw(chaos::CException) {
 
 // Deinit the implementation
 void ApiServer::deinit() throw(chaos::CException) {
-    SetupStateManager::levelDownFrom(DEINIT_STEP, "Already deinitialized");
     AS_LAPP_ << "Starting NetworkBroker";
     networkBroker->deinit();
     AS_LAPP_ << "NetworkBroker Started";

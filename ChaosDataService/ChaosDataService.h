@@ -86,8 +86,8 @@ namespace chaos{
 			//! convert param_key to a string of string hash map
 			void fillKVParameter(std::map<std::string, std::string>& kvmap, const char * param_key);
         public:
-			//----------setting----------
-			ChaosDataServiceSetting settings;
+			
+			ChaosDataServiceSetting setting;
 			
             //! C and C++ attribute parser
             /*!

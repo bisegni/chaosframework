@@ -38,7 +38,10 @@ namespace chaos {
         /*!
          
          */
-        class ChaosNodeDirectory : public ChaosCommon<ChaosNodeDirectory>, public ServerDelegator, public utility::StartableService {
+        class ChaosNodeDirectory :
+		public ChaosCommon<ChaosNodeDirectory>,
+		public ServerDelegator,
+		public utility::StartableService {
             friend class Singleton<ChaosNodeDirectory>;
             
             static WaitSemaphore waitCloseSemaphore;

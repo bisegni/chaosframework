@@ -56,6 +56,10 @@ namespace chaos {
 				lcb_error_t				last_err;
 				std::string				last_err_str;
 				
+				std::string				bucket_name;
+				std::string				bucket_user;
+				std::string				bucket_pwd;
+				
 				std::string all_server_str;
 				boost::shared_mutex	mutex_server;
 				std::vector<std::string> all_server_to_use;
@@ -94,6 +98,12 @@ namespace chaos {
                 int removeServer(std::string server_desc);
 				
 				int updateConfig();
+				
+				//! init
+				void init(void *init_data) throw (chaos::CException);
+				
+				//!deinit
+				void deinit() throw (chaos::CException);
             };
         }
     }
