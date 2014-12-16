@@ -29,7 +29,9 @@
 #include <chaos/common/utility/Atomic.h>
 #include <chaos/common/thread/TemplatedConcurrentQueue.h>
 #ifdef __GNUC__
-    #define UINT16_MAX 65535
+#ifndef UINT16_MAX
+#define UINT16_MAX 65535
+#endif
 #endif
 
 namespace chaos_thread_ns = chaos::common::thread;
