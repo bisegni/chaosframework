@@ -138,7 +138,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 	public static Refresher	 	refresher									= new Refresher();
 	public static ChaosEventComponent	chaosEventComponent					= ChaosEventComponent.getInstance();
 	private String				selectedUnit								= null;
-	private int					nrepaint									= 0; 
+	private static int			nrepaint									= 0; 
 	private static 	long		time_to_dead								= 10*1000;
 	private static 	long 		refresh_ms									= 5000;
 	private static String 		stateRegex									= "\\w+\\:(.+)\\s+\\w+\\:(.+)";
@@ -154,6 +154,8 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 			public void refresh(Refresher source) {
 				if(nrepaint>0){
 					notifyEventoToControllerWithData(MDSUIEvents.EVENT_REFRESH_STATE, source, null);
+				} else {
+					nrepaint++;
 				}
 			}
 		});
@@ -209,7 +211,9 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 		        // Row style setting, not relevant in this example.
 		        if (propertyId == null)
 		            return "green"; // Will not actually be visible
-
+		        if(nrepaint<0)
+		        	return mv.getTableUnitServer().getStyle();
+		        
 		       // int row = ((Integer)itemId).intValue();
 		       // int col = Integer.parseInt((String)propertyId);
 		        Item it=mv.getTableUnitServer().getItem(itemId);
@@ -321,10 +325,13 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 		
 		mv.getTableDevice().setCellStyleGenerator(new Table.CellStyleGenerator() {
 		    public String getStyle(Object itemId, Object propertyId) {
+		    	
+		    	
 		        // Row style setting, not relevant in this example.
 		        if (propertyId == null)
 		            return "green"; // Will not actually be visible
-
+		        if(nrepaint<0)
+		        	return mv.getTableDevice().getStyle();
 		       // int row = ((Integer)itemId).intValue();
 		       // int col = Integer.parseInt((String)propertyId);
 		        Item it=mv.getTableDevice().getItem(itemId);
@@ -508,6 +515,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 		if (sourceData instanceof ViewNotifyEvent) {
 			ViewNotifyEvent viewEvent = (ViewNotifyEvent) sourceData;
 			nrepaint++;
+
 			if (viewEvent.getEventKind().equals(MDSAppView.EVENT_ATTRIBUTE_EDITING)) {
 				setEditingAttribute(true);
 				mv.getTableDatasetAttribute().setEditable(true);
@@ -533,6 +541,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 				}
 			} else if(viewEvent.getEventKind().equals(MDSUIEvents.EVENT_REFRESH_US)){
 				// load all dataset
+
 				if(viewEvent.getEventData() == null){
 					mv.getTableUnitServer().requestRepaint();
 					return;
@@ -555,7 +564,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 				}
 			} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_UPDATE_LIST)) {
 				mv.getTableUnitServerCUType().removeAllItems();
-				
+
 				Vector<UnitServerCuInstance> currentInstancesForUnitServer = (Vector<UnitServerCuInstance>) viewEvent.getEventData();
 				if ((currentInstancesForUnitServer == null) || (currentInstancesForUnitServer.size()<=0))
 					return;
@@ -593,6 +602,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 				
 			} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_REFRESH_LIST)) {
 				UnitServer us = (UnitServer) viewEvent.getEventData();
+
 				if(us==null)
 					return;
 				for(UnitServerCuInstance unitServerCuInstance:us.getCuInstances()){
@@ -647,6 +657,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 					woItem.getItemProperty(MDSAppView.TAB2_ATTR_NUMBER).setValue(device.getAttributes());
 				}
 			} else if (viewEvent.getEventKind().equals(MDSUIEvents.EVENT_REFRESH_DEVICE_LIST)) {
+
 				List<Device> allDevices = (List<Device>) viewEvent.getEventData();
 				Table t = mv.getTableDevice();
 				if(allDevices.isEmpty()){
@@ -707,6 +718,8 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 		} else if (event.getSource().equals(mv.getButtonUSCUShowAll())) {
 			notifyEventoToControllerWithData(EVENT_UNIT_SERVER_SHOW_ALL_ASSOCIATION, event.getSource(), event.getItemId());
 		} else*/ if (event.getSource().equals(mv.getTableUnitServer())) {
+			nrepaint = -2;
+
 			if(mv.getTableUnitServer().getValue()==null){
 				mv.getButtonNewCU().setEnabled(true); // the state is in late
 			
@@ -715,25 +728,11 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 			}
 			Item it = event.getItem();
 			String registered = it.getItemProperty(TAB_UNIT_SERVER_REGISTERED).toString();
-			String prop = it.getItemProperty(TAB_UNIT_SERVER_REGISTERED).toString();
-		    String timestamp = it.getItemProperty(TAB_UNIT_SERVER_HB_TS).toString();
-		    Date dt =null;
-	        SimpleDateFormat formatter = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
-	        try {
-				dt = formatter.parse(timestamp);
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
 	       // Date now = new Date();
 			mv.getTableUnitServer().removeAllActionHandlers();
 			mv.getTableUnitServerCUType().removeAllActionHandlers();
-			int regvalue= 0;
-			try{
-				regvalue = Integer.valueOf(registered);
-			} catch(Throwable e){
-				
-			}
+			
 			if(registered!=null && (!registered.equals("---"))){
 				mv.getTableUnitServer().addActionHandler(new Action.Handler() {
 					public Action[] getActions(Object target, Object sender) {
@@ -742,11 +741,15 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 
 					public void handleAction(Action action, Object sender, Object target) {
 						setEditingAttribute(!isEditingAttribute());
+						nrepaint = 1;
+
 						if (ACTION_US_EDIT_ALIAS == action) {
 							notifyEventoToControllerWithData(EVENT_UNIT_SERVER_EDIT_ALIAS, mv.getTableUnitServer().getValue(), sender);
 						}else if (ACTION_US_LOAD_ALL == action) {
+
 							notifyEventoToControllerWithData(EVENT_UNIT_SERVER_LOAD_ALL_ASSOCIATION, null, null);
 						}else if (ACTION_US_UNLOAD_ALL == action) {
+
 							notifyEventoToControllerWithData(EVENT_UNIT_SERVER_UNLOAD_ALL_ASSOCIATION, null, sender);
 						}/*else if (ACTION_US_SHOW_ALL == action) {
 							notifyEventoToControllerWithData(EVENT_UNIT_SERVER_SHOW_ALL_ASSOCIATION, null, sender);
@@ -767,6 +770,8 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 					}
 
 					public void handleAction(Action action, Object sender, Object target) {
+						nrepaint =1;
+
 						if (ACTION_EDIT_CU == action) {
 							if (mv.getTableUnitServerCUType().getValue() == null) {
 								getWindow().showNotification("Edit association error", "Not A legal Value", Notification.TYPE_ERROR_MESSAGE);
@@ -815,6 +820,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 					}
 
 					public void handleAction(Action action, Object sender, Object target) {
+					
 						if (ACTION_EDIT_CU == action) {
 							if (mv.getTableUnitServerCUType().getValue() == null) {
 								getWindow().showNotification("Edit association error", "Not A legal Value", Notification.TYPE_ERROR_MESSAGE);
@@ -836,9 +842,12 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 			notifyEventoToControllerWithData(EVENT_UNIT_SERVER_SELECTED, event.getSource(), event.getItemId());
 			
 		} else if (event.getSource().equals(mv.getTableUnitServerCUType())) {
+
 			mv.getButtonDelCU().setEnabled(true);
 			notifyEventoToControllerWithData(EVENT_UNIT_SERVER_CU_TYPE_SELECTED, event.getSource(), event.getItemId());
 		} else if (event.getSource().equals(mv.getTableDevice())) {
+			nrepaint = -10;
+
 			Table t = mv.getTableDevice();
 			 Item it  = t.getItem(event.getItemId());
 			  String timestamp = it.getItemProperty(TAB1_LAST_HB).toString();
@@ -862,6 +871,7 @@ public class MDSAppView extends RefVaadinBasePanel implements ItemClickListener 
 		    			}
 		    			@Override
 		    			public void handleAction(Action action, Object sender, Object target) {
+		    				nrepaint =1;
 		    				if (ACTION_NODE_START == action) {
 		    					notifyEventoToControllerWithData(MDSUIEvents.EVENT_NODE_START, sender, mv.getTableDevice().getValue());
 		    				}else if (ACTION_NODE_STOP == action) {
