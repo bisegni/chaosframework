@@ -203,6 +203,15 @@ char* IODirectIODriver::retriveRawData(const std::string& key, size_t *dim)  thr
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
+int IODirectIODriver::loadDatasetToRestorePoint(const std::string& restore_point_tag_name,
+												const std::string& key_to_restore,
+												chaos_data::CDataWrapper **dcatawrapper_handler) {
+	return 0;
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::common::data::CDataWrapper* newConfigration) {
 	//lock the feeder access
 	boost::unique_lock<boost::shared_mutex>(mutext_feeder);

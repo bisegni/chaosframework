@@ -112,6 +112,13 @@ char* IOMemcachedIODriver::retriveRawData(const std::string& key, size_t *dim)  
 	return result;
 }
 
+//! restore a key form a restore tag
+int IOMemcachedIODriver::loadDatasetToRestorePoint(const std::string& restore_point_tag_name,
+												   const std::string& key_to_restore,
+												   chaos_data::CDataWrapper **dcatawrapper_handler) {
+	return -1;
+}
+
 /*
  Update the driver configuration
  */

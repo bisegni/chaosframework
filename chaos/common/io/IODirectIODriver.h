@@ -140,6 +140,11 @@ namespace chaos{
 				 */
 				virtual char * retriveRawData(const std::string& key, size_t *dim=NULL)  throw(CException);
 				
+				//! restore a key form a restore tag
+				int loadDatasetToRestorePoint(const std::string& restore_point_tag_name,
+											  const std::string& key_to_restore,
+											  chaos_data::CDataWrapper **dcatawrapper_handler);
+				
 				/*
 				 * updateConfiguration
 				 */

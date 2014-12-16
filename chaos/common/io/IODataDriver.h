@@ -39,8 +39,9 @@ namespace chaos{
 			 * History Output driver base abstract classe, that define two method to control
 			 * the initialization and history persistence of the data
 			 */
-			
 			class IODataDriver: public Configurable {
+				//! map that contain for every restore point the corresponding datasets
+				map<string , std::map<std::string, boost::shared_ptr<chaos_data::CDataWrapper> > > map_restore_point;
 			protected:
 				QueryFuture *_getNewQueryFutureForQueryID(const std::string& query_id);
 				
@@ -83,6 +84,7 @@ namespace chaos{
 				 * return a pointer to the class ArrayPointer of CDataWrapper type
 				 */
 				virtual ArrayPointer<chaos_data::CDataWrapper>* retriveData(const std::string& key)  throw(CException);
+
 				
 				/*!
 				 * This method store a buffer into live cached
@@ -90,13 +92,32 @@ namespace chaos{
 				virtual void storeRawData(const std::string& key,
 										  chaos_data::SerializationBuffer *serialization,
 										  int store_hint = 2)  throw(CException) = 0;
-				
+
 				/*!
 				 * This method retrive the cached object by CSDawrapperUsed as query key and
 				 * return a pointer to the class ArrayPointer of CDataWrapper type
 				 */
 				virtual char * retriveRawData(const std::string& key,
 											  size_t* dataDim=NULL)  throw(CException) = 0;
+				
+				
+				//! restore all the datasets for a restore point
+				virtual int loadRestorePoint(const std::string& restore_point_tag_name,
+											 const std::vector<std::string> key_list);
+				
+				//! restore a key form a restore tag
+				/*!
+				  A dataset refer to a key is loaded from a restore point identified by 
+				 a tag.
+				 \param restore_point_tag_name the tag of the restore point
+				 \param key_to_restore is the key to restore from the tag
+				 */
+				virtual int loadDatasetToRestorePoint(const std::string& restore_point_tag_name,
+													  const std::string& dataset_key,
+													  chaos_data::CDataWrapper **dcatawrapper_handler) = 0;
+				
+				boost::shared_ptr<chaos_data::CDataWrapper> getDatasetFromRestorePoint(const std::string& restore_point_tag_name,
+																					   const std::string& dataset_key);
 				
 				/*!
 				 Update the driver configuration

@@ -36,7 +36,6 @@ namespace chaos{
 			
 			namespace cache {
 				
-				
 				//! the dimensio of the block for the boost::dynamic_bitset class
 				typedef  uint8_t BitBlockDimension;
 				
@@ -58,10 +57,6 @@ namespace chaos{
 					
 					//!main buffer
 					void								*value_buffer;
-					//!current value buffer
-					void								*current_buffer;
-					//!alternative value buffer
-					void								*alternative_buffer;
 					
 					//global index bitmap for infom that this value(using index) has been changed
 					boost::dynamic_bitset<BitBlockDimension> * sharedBitmapChangedAttribute;

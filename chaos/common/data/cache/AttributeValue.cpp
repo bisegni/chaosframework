@@ -38,18 +38,14 @@ AttributeValue::AttributeValue(const std::string& _name,
 							   uint32_t _size,
 							   chaos::DataType::DataType _type):
 value_buffer(NULL),
-current_buffer(NULL),
-alternative_buffer(NULL),
 size(_size),
 name(_name),
 index(_index),
 type(_type) {
 	if(size) {
-		value_buffer = std::calloc(size*2, 1);
+		value_buffer = std::calloc(size, 1);
 		if(!value_buffer) {
 			AVLERR_ << "error allcoating current_value memory";
-		}else{
-			reallignPointer();
 		}
 	}
 }
@@ -64,14 +60,6 @@ AttributeValue::~AttributeValue() {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-void AttributeValue::reallignPointer() {
-	current_buffer = value_buffer;
-	alternative_buffer = (char*)value_buffer + size;
-}
-
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
 bool AttributeValue::setValue(const void* value_ptr,
 							uint32_t value_size,
 							bool tag_has_changed) {
@@ -79,6 +67,7 @@ bool AttributeValue::setValue(const void* value_ptr,
 		value_size = size;
 	}
 	CHAOS_ASSERT(value_buffer)
+	
 	//copy the new value
 	std::memcpy(value_buffer, value_ptr, value_size);
 	
@@ -97,8 +86,7 @@ bool AttributeValue::setNewSize(uint32_t _new_size) {
 		case chaos::DataType::TYPE_STRING:
 			value_buffer = (double*)realloc(value_buffer, (size = _new_size)*2);
 			if((result = (value_buffer != NULL))) {
-				std::memset(value_buffer, 0, size*2);
-				reallignPointer();
+				std::memset(value_buffer, 0, size);
 			}
 			break;
 		default:
