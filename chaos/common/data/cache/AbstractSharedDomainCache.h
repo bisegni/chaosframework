@@ -73,8 +73,8 @@ namespace chaos{
 				typedef enum SharedCacheDomain {
 					DOMAIN_INPUT,
 					DOMAIN_OUTPUT,
-					DOMAIN_SYSTEM,
-					DOMAIN_CUSTOM
+					DOMAIN_CUSTOM,
+					DOMAIN_SYSTEM
 				} SharedCacheDomain;
 				
 				
@@ -82,7 +82,7 @@ namespace chaos{
 				class AbstractSharedDomainCache {
 				public:
 					AbstractSharedDomainCache();
-					~AbstractSharedDomainCache();
+					virtual ~AbstractSharedDomainCache();
 					//! Return the value object for the domain and the string key
 					/*!
 					 \param domain a domain identified by a value of @AbstractSharedDomainCacheDomain

@@ -476,7 +476,13 @@ namespace chaos {
         //! pause the run method for a determinated device
         static const char * const ACTION_CU_STOP				= "stopControlUnit";
 		
-        //! return the state of the device
+		//! pause the run method for a determinated device
+		static const char * const ACTION_CU_RESTORE				= "restoreControlUnit";
+		
+		//! restore the control unit to a determinate temporal tag
+		static const char * const ACTION_CU_RESTORE_PARAM_TAG	= "restoreControlUnitTag";
+		
+        //! is the name of the temporal tag to use as restore point
         static const char * const ACTION_CU_GET_STATE			= "getControlUnitState";
 		
 		//! return the control unit information

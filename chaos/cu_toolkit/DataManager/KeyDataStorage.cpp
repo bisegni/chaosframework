@@ -30,6 +30,13 @@ using namespace chaos::cu::data_manager;
 
 #define DEFAULT_OBUFFER_THREAD_NUMEBR   1
 
+#define KeyDataStorageLOG_HEAD "[KeyDataStorage] - "
+
+#define KeyDataStorageLAPP	LAPP_ << KeyDataStorageLOG_HEAD
+#define KeyDataStorageLDBG	LDBG_ << KeyDataStorageLOG_HEAD << __PRETTY_FUNCTION__ << " - "
+#define KeyDataStorageLERR	LERR_ << KeyDataStorageLOG_HEAD << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
+
+
 KeyDataStorage::KeyDataStorage(const std::string& _key,
 							   chaos_io::IODataDriver *_io_data_driver):
 key(_key),
@@ -108,16 +115,98 @@ void KeyDataStorage::pushDataSet(KeyDataStorageDomain domain, chaos_data::CDataW
 			io_data_driver->storeData(custom_key, dataset);
 			break;
 	}
-
 }
 
+//! load all dataseet for a restore point
+int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
+	int err = 0;
+	chaos_data::CDataWrapper *dataset = NULL;
 
-/*
- Retrive the data from History Storage
- */
-ArrayPointer<CDataWrapper>* KeyDataStorage::getHistoricalDataSet(CDataWrapper *searchIption) {
-    return NULL;
+	if(!restore_point_map.count(restore_point_tag)) {
+		//allocate map for the restore tag
+		restore_point_map.insert(make_pair(restore_point_tag, std::map<std::string, boost::shared_ptr<chaos_data::CDataWrapper> >()));
+	}
+	
+	if((err = io_data_driver->loadDatasetTypeFromRestorePoint(restore_point_tag,
+															  key,
+															  KeyDataStorageDomainOutput,
+															  &dataset))) {
+		KeyDataStorageLERR << " Error loading dataset of domain KeyDataStorageDomainOutput from restore point:" << restore_point_tag << " for the key:" << key;
+		clearRestorePoint(restore_point_tag);
+		return err;
+	} else {
+		restore_point_map[restore_point_tag].insert(make_pair(output_key, boost::shared_ptr<chaos_data::CDataWrapper>(dataset)));
+	}
+	   
+	if((err = io_data_driver->loadDatasetTypeFromRestorePoint(restore_point_tag,
+															  key,
+															  KeyDataStorageDomainInput,
+															  &dataset))) {
+		KeyDataStorageLERR << " Error loading dataset of domain KeyDataStorageDomainInput from restore point:" << restore_point_tag << " for the key:" << key;
+		clearRestorePoint(restore_point_tag);
+		return err;
+	} else {
+		restore_point_map[restore_point_tag].insert(make_pair(input_key, boost::shared_ptr<chaos_data::CDataWrapper>(dataset)));
+	}
+
+	if((err = io_data_driver->loadDatasetTypeFromRestorePoint(restore_point_tag,
+															  key,
+															  KeyDataStorageDomainCustom,
+															  &dataset))) {
+		KeyDataStorageLERR << " Error loading dataset of domain KeyDataStorageDomainInput from restore point:" << restore_point_tag << " for the key:" << key;
+		clearRestorePoint(restore_point_tag);
+		return err;
+	} else {
+		restore_point_map[restore_point_tag].insert(make_pair(custom_key, boost::shared_ptr<chaos_data::CDataWrapper>(dataset)));
+	}
+
+	if((err = io_data_driver->loadDatasetTypeFromRestorePoint(restore_point_tag,
+															  key,
+															  KeyDataStorageDomainSystem,
+															  &dataset))) {
+		KeyDataStorageLERR << " Error loading dataset of domain KeyDataStorageDomainInput from restore point:" << restore_point_tag << " for the key:" << key;
+		clearRestorePoint(restore_point_tag);
+		return err;
+	} else {
+		restore_point_map[restore_point_tag].insert(make_pair(system_key, boost::shared_ptr<chaos_data::CDataWrapper>(dataset)));
+	}
+
+	return err;
 }
+
+//! clear all loaded dataset for a restore point
+int KeyDataStorage::clearRestorePoint(const std::string& restore_point_tag) {
+	int err = 0;
+	if(restore_point_map.count(restore_point_tag)) {
+		restore_point_map[restore_point_tag].clear();
+	}
+	return err;
+	
+}
+
+//!return the dataset asccoaited to a domain in a determinated restore tag
+boost::shared_ptr<chaos_data::CDataWrapper> KeyDataStorage::getDatasetFromRestorePoint(const std::string& restore_point_tag,
+																					   KeyDataStorageDomain domain) {
+	if(!restore_point_map.count(restore_point_tag)) {
+		return boost::shared_ptr<chaos_data::CDataWrapper>();
+	}
+	
+	switch(domain) {
+		case KeyDataStorageDomainOutput:
+			return restore_point_map[restore_point_tag][output_key];
+		case KeyDataStorageDomainInput:
+			return restore_point_map[restore_point_tag][input_key];
+		case KeyDataStorageDomainSystem:
+			return restore_point_map[restore_point_tag][custom_key];
+		case KeyDataStorageDomainCustom:
+			return restore_point_map[restore_point_tag][system_key];
+			
+		default:
+			CHAOS_ASSERT(false)
+		break;
+	}
+}
+
 
 /*
  

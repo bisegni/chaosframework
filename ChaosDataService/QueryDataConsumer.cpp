@@ -303,7 +303,6 @@ int QueryDataConsumer::consumeNewSnapshotEvent(opcode_headers::DirectIOSystemAPI
 	}
     //debug check
     CHAOS_ASSERT(snapshot_data_worker)
-    CHAOS_ASSERT(concatenated_unique_id_memory)
     CHAOS_ASSERT(api_result)
 	//prepare and submit the job into worker
 	chaos::data_service::worker::SnapshotCreationJob *job = new chaos::data_service::worker::SnapshotCreationJob();

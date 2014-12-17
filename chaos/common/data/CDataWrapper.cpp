@@ -214,6 +214,28 @@ bool CDataWrapper::hasKey(const char* key) {
     return bsonBuilder->asTempObj().hasElement(key);
 }
 
+//return all key contained into the object
+void CDataWrapper::getAllKey(std::vector<std::string>& contained_key) {
+	BSONObjIterator obj_iterator(bsonBuilder->asTempObj());
+	while(obj_iterator.more()) {
+		//we have another key
+		BSONElement element = obj_iterator.next();
+		
+		//add key to vector
+		contained_key.push_back(element.fieldNameStringData().toString());
+	}
+}
+
+//return all key contained into the object
+uint32_t CDataWrapper::getValueSize(const std::string& key) {
+	return bsonBuilder->asTempObj().getField(key).valuesize();
+}
+
+//! return the raw value ptr address
+const char * CDataWrapper::getRawValuePtr(const std::string& key) {
+	return bsonBuilder->asTempObj().getField(key).value();
+}
+
 //add a bool value
 void CDataWrapper::addBoolValue(const char *key, bool boolValue) {
     bsonBuilder->append(key, boolValue);

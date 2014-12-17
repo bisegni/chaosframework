@@ -40,8 +40,6 @@ namespace chaos{
 			 * the initialization and history persistence of the data
 			 */
 			class IODataDriver: public Configurable {
-				//! map that contain for every restore point the corresponding datasets
-				map<string , std::map<std::string, boost::shared_ptr<chaos_data::CDataWrapper> > > map_restore_point;
 			protected:
 				QueryFuture *_getNewQueryFutureForQueryID(const std::string& query_id);
 				
@@ -101,24 +99,11 @@ namespace chaos{
 											  size_t* dataDim=NULL)  throw(CException) = 0;
 				
 				
-				//! restore all the datasets for a restore point
-				virtual int loadRestorePoint(const std::string& restore_point_tag_name,
-											 const std::vector<std::string> key_list);
-				
-				//! restore a key form a restore tag
-				/*!
-				  A dataset refer to a key is loaded from a restore point identified by 
-				 a tag.
-				 \param restore_point_tag_name the tag of the restore point
-				 \param key_to_restore is the key to restore from the tag
-				 */
-				virtual int loadDatasetToRestorePoint(const std::string& restore_point_tag_name,
-													  const std::string& dataset_key,
-													  chaos_data::CDataWrapper **dcatawrapper_handler) = 0;
-				
-				boost::shared_ptr<chaos_data::CDataWrapper> getDatasetFromRestorePoint(const std::string& restore_point_tag_name,
-																					   const std::string& dataset_key);
-				
+				//! restore from a tag a dataset associated to a key
+				virtual int loadDatasetTypeFromRestorePoint(const std::string& restore_point_tag_name,
+															const std::string& key,
+															uint32_t dataset_type,
+															chaos_data::CDataWrapper **cdatawrapper_handler) = 0;
 				/*!
 				 Update the driver configuration
 				 */

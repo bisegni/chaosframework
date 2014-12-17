@@ -181,6 +181,11 @@ void AbstractControlUnit::_defineActionAndDataset(CDataWrapper& setupConfigurati
 													 &AbstractControlUnit::_stop,
 													 ChaosSystemDomainAndActionLabel::ACTION_CU_STOP,
 													 "Stop the control unit scheduling");
+	ACULDBG_ << "Register restoreDevice action";
+	addActionDescritionInstance<AbstractControlUnit>(this,
+													 &AbstractControlUnit::_unitRestoreToSnapshot,
+													 ChaosSystemDomainAndActionLabel::ACTION_CU_RESTORE,
+													 "Restore contorl unit to a snapshot tag");
 	ACULDBG_ << "Register getState action";
 	addActionDescritionInstance<AbstractControlUnit>(this,
 													 &AbstractControlUnit::_getState,
@@ -234,7 +239,8 @@ void AbstractControlUnit::_getDeclareActionInstance(std::vector<const chaos::Dec
 /*
  Initialize the Custom Contro Unit and return the configuration
  */
-CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& detachParam) throw(CException) {
+CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration,
+										 bool& detachParam) throw(CException) {
 	if(!attribute_value_shared_cache) throw CException(-1, "No Shared cache implementation found", __PRETTY_FUNCTION__);
 	
 	std::vector<string> attribute_names;
@@ -269,13 +275,17 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
 		unitDefineCustomAttribute();
 		
 		//create fast vector access for cached value
-		fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT), cache_output_attribute_vector);
+		fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_OUTPUT),
+							  cache_output_attribute_vector);
 		
-		fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT), cache_input_attribute_vector);
+		fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_INPUT),
+							  cache_input_attribute_vector);
 		
-		fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM), cache_system_attribute_vector);
+		fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_SYSTEM),
+							  cache_system_attribute_vector);
 		
-		fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM), cache_custom_attribute_vector);
+		fillCachedValueVector(attribute_value_shared_cache->getSharedDomain(DOMAIN_CUSTOM),
+							  cache_custom_attribute_vector);
 		
 		//initialize implementations
 		unitInit();
@@ -297,7 +307,8 @@ CDataWrapper* AbstractControlUnit::_init(CDataWrapper *initConfiguration, bool& 
 /*
  Starto the  Control Unit scheduling for device
  */
-CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detachParam) throw(CException) {
+CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam,
+										  bool& detachParam) throw(CException) {
 	//call start method of the startable interface
 	utility::StartableService::startImplementation(this, "AbstractControlUnit", __PRETTY_FUNCTION__);
 	ACULDBG_ << "Start sublass for deviceID:" << DatasetDB::getDeviceID();
@@ -318,7 +329,8 @@ CDataWrapper* AbstractControlUnit::_start(CDataWrapper *startParam, bool& detach
 /*
  Stop the Custom Control Unit scheduling for device
  */
-CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachParam) throw(CException) {
+CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam,
+										 bool& detachParam) throw(CException) {
 	//first we start the deinitializaiton of the implementation unit
 	try {
 		ACULDBG_ << "Stop sublass for deviceID:" << DatasetDB::getDeviceID();
@@ -333,10 +345,59 @@ CDataWrapper* AbstractControlUnit::_stop(CDataWrapper *stopParam, bool& detachPa
 	return NULL;
 }
 
+//! fill cache with found dataset at the restore point
+void AbstractControlUnit::fillRestoreCacheWithDatasetFromTag(data_manager::KeyDataStorageDomain domain,
+															 CDataWrapper& dataset,
+															 AbstractSharedDomainCache& restore_cache) {
+	// the list of the key
+	std::vector<std::string> dataset_key;
+	
+	// get all key name
+	dataset.getAllKey(dataset_key);
+	
+	uint32_t value_size = 0;
+	const char * raw_value_ptr = NULL;
+	AttributeValue *cached_attribute_value = NULL;
+	for(std::vector<std::string>::iterator it = dataset_key.begin();
+		it != dataset_key.end();
+		it++) {
+		//! fetch value size
+		value_size = dataset.getValueSize(*it);
+
+		//! fetch raw data ptr address
+		raw_value_ptr = dataset.getRawValuePtr(*it);
+		if(!value_size &&
+		   !raw_value_ptr) {
+			//add attribute for found key and value
+			restore_cache.addAttribute((SharedCacheDomain)domain,
+									   *it,
+									   value_size,
+									   chaos::DataType::TYPE_BYTEARRAY);
+			
+			//get newly createdattribute from cache
+			cached_attribute_value = restore_cache.getAttributeValue((SharedCacheDomain)domain,
+																	 *it);
+			if(!cached_attribute_value) {
+				ACULERR_ << "Error retriving attribute value from cache for:" << *it;
+				continue;
+			}
+			
+			//copy the found valu ein the cache
+			std::memcpy(cached_attribute_value->value_buffer,
+						(const void *)raw_value_ptr,
+						value_size);
+		}
+		
+		value_size = 0;
+		raw_value_ptr = NULL;
+	}
+}
+
 /*
  deinit all datastorage
  */
-CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& detachParam) throw(CException) {
+CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam,
+										   bool& detachParam) throw(CException) {
 	
  	//first we start the deinitializaiton of the implementation unit
 	try {
@@ -367,10 +428,67 @@ CDataWrapper* AbstractControlUnit::_deinit(CDataWrapper *deinitParam, bool& deta
 	return NULL;
 }
 
+
+/*!
+ Restore the control unit to a precise tag
+ */
+CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreParam,
+														  bool& detachParam) throw(CException) {
+	int err = 0;
+	//check
+	if(!restoreParam || !restoreParam->hasKey(ChaosSystemDomainAndActionLabel::ACTION_CU_RESTORE_PARAM_TAG)) return NULL;
+	
+	if(!keyDataStorage) throw CException(-1, "Key data storage driver not allocated", __PRETTY_FUNCTION__);
+	
+	boost::shared_ptr<AttributeValueSharedCache> attribute_value_shared_cache( new AttributeValueSharedCache());
+	if(!attribute_value_shared_cache.get()) throw CException(-2, "failed to allocate restore cache", __PRETTY_FUNCTION__);
+	
+	boost::shared_ptr<CDataWrapper> dataset_at_tag;
+	//get tag alias
+	const std::string restore_snapshot_tag = restoreParam->getStringValue(ChaosSystemDomainAndActionLabel::ACTION_CU_RESTORE_PARAM_TAG);
+	
+	ACULDBG_ << "Start restoring snapshot tag for: " << restore_snapshot_tag;
+	
+	if((err = keyDataStorage->loadRestorePoint(restore_snapshot_tag))) {
+		ACULERR_ << "Error loading dataset form snapshot tag: " << restore_snapshot_tag;
+		throw CException(err, "Error loading dataset form snapshot", __PRETTY_FUNCTION__);
+	} else {
+		
+		boost::shared_ptr<AttributeValueSharedCache> restore_cache(new AttributeValueSharedCache());
+		attribute_value_shared_cache->init(NULL);
+		
+		for(int idx = 0; idx < 4; idx++) {
+			//dataset loading sucessfull
+			dataset_at_tag = keyDataStorage->getDatasetFromRestorePoint(restore_snapshot_tag,
+																		KeyDataStorageDomainOutput);
+			if(dataset_at_tag.get()) {
+				//fill cache with dataset key/value
+				fillRestoreCacheWithDatasetFromTag((KeyDataStorageDomain)idx,
+												   *dataset_at_tag.get(),
+												   *restore_cache.get());
+			}
+		}
+		
+		try {
+			//unitRestoreToSnapshot
+			unitRestoreToSnapshot(restore_snapshot_tag,
+								  restore_cache.get());
+		} catch (CException& ex) {
+			DECODE_CHAOS_EXCEPTION(ex);
+		}
+		
+		//end
+		restore_cache->deinit();
+		
+	}
+	return NULL;
+}
+
 /*
  Receive the event for set the dataset input element
  */
-CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAttributeValues,  bool& detachParam) throw (CException) {
+CDataWrapper* AbstractControlUnit::_setDatasetAttribute(CDataWrapper *datasetAttributeValues,
+														bool& detachParam) throw (CException) {
 	CDataWrapper *executionResult = NULL;
 	try {
 		if(!datasetAttributeValues) {
@@ -496,8 +614,8 @@ void AbstractControlUnit::fillCachedValueVector(AttributeCache& attribute_cache,
 void AbstractControlUnit::initAttributeOnSharedAttributeCache(SharedCacheDomain domain,
 															  std::vector<string>& attribute_names) {
 	//add input attribute to shared setting
+	CHAOS_ASSERT(attribute_value_shared_cache)
 	RangeValueInfo attributeInfo;
-	
 	AttributeCache& attribute_setting = attribute_value_shared_cache->getSharedDomain(domain);
 	
 	for(int idx = 0;
@@ -583,7 +701,8 @@ void AbstractControlUnit::initSystemAttributeOnSharedAttributeCache() {
 /*
  Get the current control unit state
  */
-CDataWrapper* AbstractControlUnit::_getState(CDataWrapper* getStatedParam, bool& detachParam) throw(CException) {
+CDataWrapper* AbstractControlUnit::_getState(CDataWrapper* getStatedParam,
+											 bool& detachParam) throw(CException) {
    
 	if(!getStatedParam->hasKey(DatasetDefinitionkey::DEVICE_ID)){
         throw CException(-1, "Get State Pack without DeviceID", __PRETTY_FUNCTION__);
@@ -599,7 +718,8 @@ CDataWrapper* AbstractControlUnit::_getState(CDataWrapper* getStatedParam, bool&
 /*
  Get the current control unit state
  */
-CDataWrapper* AbstractControlUnit::_getInfo(CDataWrapper* getStatedParam, bool& detachParam) throw(CException) {
+CDataWrapper* AbstractControlUnit::_getInfo(CDataWrapper* getStatedParam,
+											bool& detachParam) throw(CException) {
 	CDataWrapper *stateResult = new CDataWrapper();
 	//set the string representing the type of the control unit
 	stateResult->addStringValue(CUDefinitionKey::CS_CM_CU_TYPE, control_unit_type);
@@ -607,7 +727,8 @@ CDataWrapper* AbstractControlUnit::_getInfo(CDataWrapper* getStatedParam, bool& 
 }
 
 //!handler calledfor restor a control unit to a determinate point
-void AbstractControlUnit::unitRestoreToPoint() {
+void AbstractControlUnit::unitRestoreToSnapshot(const std::string& restore_snapshot_tag,
+												AbstractSharedDomainCache * const restore_cache) throw(CException) {
 	
 }
 

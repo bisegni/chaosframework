@@ -77,47 +77,6 @@ ArrayPointer<CDataWrapper>* IODataDriver::retriveData(const std::string& key)  t
     return result;
 }
 
-//! restore all the datasets for a restore point
-int IODataDriver::loadRestorePoint(const std::string& restore_point_tag_name,
-								   const std::vector<std::string> key_list) {
-	int err = 0;
-	chaos_data::CDataWrapper *dataset = NULL;
-	
-	if(!map_restore_point.count(restore_point_tag_name)) {
-		//initialize resto point datasets map
-		map_restore_point.insert(make_pair(restore_point_tag_name, std::map<std::string, boost::shared_ptr<chaos_data::CDataWrapper> >()));
-	}
-	
-	for (std::vector<std::string>::const_iterator it = key_list.begin();
-		 it != key_list.end();
-		 it++) {
-		if((err = loadDatasetToRestorePoint(restore_point_tag_name, *it, &dataset))) {
-			IODataDriverLERR << "Error loading dataset form restore point with code:" << err;
-			break;
-		} else {
-			if(dataset) {
-				//! put found dataset on restore point hash
-				map_restore_point[restore_point_tag_name].insert(make_pair(*it, boost::shared_ptr<chaos_data::CDataWrapper>(dataset)));
-			}
-			dataset = NULL;
-		}
-	}
-	return err;
-}
-
-
-/*---------------------------------------------------------------------------------
- 
- ---------------------------------------------------------------------------------*/
-boost::shared_ptr<chaos_data::CDataWrapper> IODataDriver::getDatasetFromRestorePoint(const std::string& restore_point_tag_name,
-																   const std::string& dataset_key) {
-	if(!map_restore_point.count(restore_point_tag_name)) return boost::shared_ptr<chaos_data::CDataWrapper>();
-	
-	if(!map_restore_point[restore_point_tag_name].count(dataset_key)) return boost::shared_ptr<chaos_data::CDataWrapper>();
-	
-	return map_restore_point[restore_point_tag_name][dataset_key];
-}
-
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/

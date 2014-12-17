@@ -72,6 +72,13 @@ namespace chaos {
 				 \millisecToWait the number of millisecond for waith the answer
 				 */
 				int stopDevice(uint32_t millisecToWait = 0);
+				//! Restore the device to a tag
+				/*!
+				 Perform the restore of the device state as was at tag
+				 \param restore_tag the alias of the saved tag
+				 \millisecToWait the number of millisecond for waith the answer
+				 */
+				int restoreDeviceToTag(const std::string& restore_tag, uint32_t millisecToWait = 0);
 				//! get type fo the control unit
 				/*!
 				 Perform request for get the information of the control unit

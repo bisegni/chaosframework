@@ -25,11 +25,12 @@
 #include <chaos/ui_toolkit/LowLevelApi/LLRpcApi.h>
 #include <chaos/ui_toolkit/HighLevelApi/HLDataApi.h>
 
-#define OPT_CU_ID				"device-id"
-#define OPT_CDS_ADDRESS			"cds-address"
-#define OPT_SNAP_NAME			"snapshot-name"
-#define OPT_SNAPSHOT_OP			"op"
-#define OPT_SNAPSHOT_DS_TYPE	"dataset_type"
+#define OPT_CU_ID					"device-id"
+#define OPT_CDS_ADDRESS				"cds-address"
+#define OPT_SNAP_NAME				"snapshot-name"
+#define OPT_SNAPSHOT_OP				"op"
+#define OPT_SNAPSHOT_DS_TYPE		"dataset_type"
+#define OPT_SNAPSHOT_TIMEOUT		"timeout"
 using namespace chaos;
 using namespace chaos::ui;
 using namespace chaos::common::data;
@@ -41,13 +42,15 @@ int main(int argc, char * argv[]) {
 	std::string snap_name;
 	std::string cds_addr;
 	uint32_t ds_type;
-	unsigned int operation;
+	uint32_t timeout = 0;
+	unsigned int operation = 0;
 	try{
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<std::string>(OPT_CDS_ADDRESS, "CDS address", &cds_addr);
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption< std::vector<std::string> >(OPT_CU_ID, "The identification string of the device to snapshuot", &device_id_list);
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<std::string>(OPT_SNAP_NAME, "The name of the snapshot", &snap_name);
-		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<unsigned int>(OPT_SNAPSHOT_OP, "Operation on snapshot [create(0), delete(1), get(2)]", 0, &operation);
+		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<unsigned int>(OPT_SNAPSHOT_OP, "Operation on snapshot [create(0), delete(1), get(2), restore device(3)]", 0, &operation);
 		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<unsigned int>(OPT_SNAPSHOT_DS_TYPE, "Dataset type [output(0), input(1), custom(2), system(3)]", 0, &ds_type);
+		ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->addOption<uint32_t>(OPT_SNAPSHOT_TIMEOUT, "Timeout", 4000, &timeout);
 		
 		ChaosUIToolkit::getInstance()->init(argc, argv);
 		//! [UIToolkit Init]
@@ -128,6 +131,25 @@ int main(int argc, char * argv[]) {
 				} else {
 					std::cout << "Error executing directio call" << std::endl;
 				}
+				break;
+			}
+				
+			case 3: {
+				if(!device_id_list.size())  throw CException(-7, "Device id is mandatory for restore operation", "Restore a device to a tag");
+				
+				for (std::vector<std::string>::iterator it = device_id_list.begin();
+					 it < device_id_list.end();
+					 it++) {
+					std::cout << "Try to restore the device " << *it << " to snapshot tag " << snap_name << std::endl;
+					DeviceController *controller = HLDataApi::getInstance()->getControllerForDeviceID(*it, timeout);
+					if(!controller) continue;
+					
+					//we can work
+					controller->restoreDeviceToTag(snap_name);
+					
+					HLDataApi::getInstance()->disposeDeviceControllerPtr(controller);
+				}
+				
 				break;
 			}
 		}
