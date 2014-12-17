@@ -51,7 +51,7 @@ if [ ! -n "$ZLIB_VERSION" ]; then
 fi;
 
 if [ ! -n "$LMEM_VERSION" ]; then
-    LMEM_VERSION=1.0.16
+    LMEM_VERSION=1.0.18
 fi;
 
 if [ ! -n "$ZMQ_VERSION" ]; then
@@ -371,15 +371,16 @@ if [ ! -f "$PREFIX/include/zmq.h" ]; then
 fi
 
 ## mongoose install
-if [ ! -e $PREFIX/mongoose-cpp/mongoose/moongose.h ]; then
-
-    if !(git clone https://github.com/Gregwar/mongoose-cpp.git $BASE_EXTERNAL/moongose-cpp) ; then
-	echo "## cannot checkout moongoose-cpp"
-	exit 1
-    else
-	cd $BASE_EXTERNAL/moongose-cpp
+if [ ! -f $PREFIX/mongoose-cpp/mongoose.h ]; then
+    if [ ! -f $BASE_EXTERNAL/mongoose-cpp/mongoose.h ]; then
+	if !(git clone https://github.com/Gregwar/mongoose-cpp.git $BASE_EXTERNAL/mongoose-cpp) ; then
+	    echo "## cannot checkout moongoose-cpp"
+	    exit 1
+	fi
+	cd $BASE_EXTERNAL/mongoose-cpp
 	cmake $CHAOS_CMAKE_FLAGS .
-	do_make "moongoose-cpp"
+	do_make "mongoose-cpp"
+	 
     fi
 fi
 ##
