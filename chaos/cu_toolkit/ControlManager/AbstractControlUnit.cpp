@@ -454,9 +454,6 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
 	
 	ACULDBG_ << "Start restoring snapshot tag for: " << restore_snapshot_tag;
 	
-	//! clear all possible resore result
-	keyDataStorage->clearRestorePoint(restore_snapshot_tag);
-	
 	//load snapshot to restore
 	if((err = keyDataStorage->loadRestorePoint(restore_snapshot_tag))) {
 		ACULERR_ << "Error loading dataset form snapshot tag: " << restore_snapshot_tag;
@@ -487,8 +484,16 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
 		}
 		
 		//end
-		restore_cache->deinit();
+		try {
+			restore_cache->deinit();
+		} catch (CException& ex) {
+			DECODE_CHAOS_EXCEPTION(ex);
+		}catch (...) {
+			ACULERR_ << "General error on deinit restore cache";
+		}
 		
+		//! clear snapshoted dataset to free memeory
+		keyDataStorage->clearRestorePoint(restore_snapshot_tag);
 	}
 	return NULL;
 }
