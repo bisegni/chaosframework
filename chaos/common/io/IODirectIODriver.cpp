@@ -228,9 +228,6 @@ int IODirectIODriver::loadDatasetTypeFromRestorePoint(const std::string& restore
 			} catch (...) {
 				IODirectIODriver_LERR_ << "Error deserializing the dataset type:"<<dataset_type<< " for key:" << key << " from snapshot tag:" <<restore_point_tag_name;
 			}
-			
-			//delete the received data
-			free(snapshot_result->channel_data);
 		}
 	}
 	//delete the received result if there was one

@@ -20,7 +20,7 @@
 #include <chaos/common/global.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/bson/util/json.h>
-
+#include <chaos/common/bson/bsontypes.h>
 using namespace bson;
 
 using namespace chaos;
@@ -228,12 +228,43 @@ void CDataWrapper::getAllKey(std::vector<std::string>& contained_key) {
 
 //return all key contained into the object
 uint32_t CDataWrapper::getValueSize(const std::string& key) {
-	return bsonBuilder->asTempObj().getField(key).valuesize();
+	BSONElement ele  = bsonBuilder->asTempObj().getField(key);
+	int bsize = 0;
+	switch(ele.type()) {
+		case NumberLong:
+		case NumberInt:
+		case Bool:
+		case NumberDouble:
+			return ele.valuesize();
+		case String:
+			return ele.valuestrsize();
+		case BinData:
+			ele.binData(bsize);
+			return bsize;
+		default:
+			break;
+	}
+	return 0;
 }
 
 //! return the raw value ptr address
 const char * CDataWrapper::getRawValuePtr(const std::string& key) {
-	return bsonBuilder->asTempObj().getField(key).value();
+	BSONElement ele  = bsonBuilder->asTempObj().getField(key);
+	int bsize = 0;
+	switch(ele.type()) {
+		case NumberLong:
+		case NumberInt:
+		case Bool:
+		case NumberDouble:
+			return ele.value();
+		case String:
+			return ele.valuestrsafe();
+		case BinData:
+			return ele.binDataClean(bsize);
+		default:
+			break;
+	}
+	return NULL;	
 }
 
 //add a bool value

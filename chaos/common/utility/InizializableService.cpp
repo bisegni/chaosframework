@@ -99,7 +99,7 @@ bool InizializableService::deinitImplementation(InizializableService *impl, cons
         if(impl->state_machine.process_event(service_state_machine::EventType::deinitialize()) == boost::msm::back::HANDLED_TRUE) {
             impl->deinit();
         } else {
-            throw CException(0, "Service cant be started", domainString);
+            throw CException(0, "Service cant be deinitialized", domainString);
         }
         impl->serviceState = impl->state_machine.current_state()[0];//service_state_machine::InizializableServiceType::IS_DEINTIATED;
         IS_LAPP  << implName << "Deinitialized";

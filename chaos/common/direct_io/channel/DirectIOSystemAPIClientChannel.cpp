@@ -189,7 +189,7 @@ int64_t DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const s
 		if(answer && answer->answer_data) free(answer->answer_data);
 	} else {
 		//we got answer
-		if(answer) {
+		if(answer && answer->answer_data) {
 			*api_result_handle  = static_cast<DirectIOSystemAPIGetDatasetSnapshotResult*>(answer->answer_data);
 			(*api_result_handle)->api_result.error = FROM_LITTLE_ENDNS_NUM(int32_t, (*api_result_handle)->api_result.error);
 		} else {

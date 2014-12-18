@@ -1,8 +1,8 @@
-/*	
+/*
  *	KeyDataStorage.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -48,7 +48,7 @@ io_data_driver(_io_data_driver) {
 }
 
 KeyDataStorage::~KeyDataStorage() {
-    
+	restore_point_map.clear();
 }
 
 void KeyDataStorage::init(void *init_parameter) throw (chaos::CException) {
@@ -59,39 +59,40 @@ void KeyDataStorage::init(void *init_parameter) throw (chaos::CException) {
 
 void KeyDataStorage::deinit() throw (chaos::CException) {
 	if(io_data_driver) io_data_driver->deinit();
+	restore_point_map.clear();
 }
 /*
  Return a new instace for the CSDatawrapped filled
  with default madatory data
  */
 CDataWrapper* KeyDataStorage::getNewOutputAttributeDataWrapper() {
-    CDataWrapper *result = new CDataWrapper();
-        //add the unique key
-    result->addStringValue(DataPackCommonKey::DPCK_DEVICE_ID, key);
-    return result;
+	CDataWrapper *result = new CDataWrapper();
+	//add the unique key
+	result->addStringValue(DataPackCommonKey::DPCK_DEVICE_ID, key);
+	return result;
 }
 
 /*
  Retrive the data from Live Storage
  */
 ArrayPointer<CDataWrapper>* KeyDataStorage::getLastDataSet(KeyDataStorageDomain domain) {
-        //retrive data from cache for the key managed by
-        //this instance of keydatastorage
+	//retrive data from cache for the key managed by
+	//this instance of keydatastorage
 	CHAOS_ASSERT(io_data_driver);
 	//lock for protect the access
 	boost::unique_lock<boost::mutex> l(mutex_push_data);
 	switch(domain) {
 		case KeyDataStorageDomainOutput:
-			  return io_data_driver->retriveData(output_key);
+			return io_data_driver->retriveData(output_key);
 			break;
 		case KeyDataStorageDomainInput:
-			  return io_data_driver->retriveData(input_key);
+			return io_data_driver->retriveData(input_key);
 			break;
 		case KeyDataStorageDomainSystem:
-			  return io_data_driver->retriveData(system_key);
+			return io_data_driver->retriveData(system_key);
 			break;
 		case KeyDataStorageDomainCustom:
-			  return io_data_driver->retriveData(custom_key);
+			return io_data_driver->retriveData(custom_key);
 			break;
 	}
 	
@@ -121,7 +122,7 @@ void KeyDataStorage::pushDataSet(KeyDataStorageDomain domain, chaos_data::CDataW
 int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
 	int err = 0;
 	chaos_data::CDataWrapper *dataset = NULL;
-
+	
 	if(!restore_point_map.count(restore_point_tag)) {
 		//allocate map for the restore tag
 		restore_point_map.insert(make_pair(restore_point_tag, std::map<std::string, boost::shared_ptr<chaos_data::CDataWrapper> >()));
@@ -135,9 +136,12 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
 		clearRestorePoint(restore_point_tag);
 		return err;
 	} else {
-		restore_point_map[restore_point_tag].insert(make_pair(output_key, boost::shared_ptr<chaos_data::CDataWrapper>(dataset)));
+		if(dataset){
+			restore_point_map[restore_point_tag].insert(make_pair(output_key, boost::shared_ptr<chaos_data::CDataWrapper>(dataset)));
+			dataset = NULL;
+		}
 	}
-	   
+	
 	if((err = io_data_driver->loadDatasetTypeFromRestorePoint(restore_point_tag,
 															  key,
 															  KeyDataStorageDomainInput,
@@ -146,9 +150,12 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
 		clearRestorePoint(restore_point_tag);
 		return err;
 	} else {
-		restore_point_map[restore_point_tag].insert(make_pair(input_key, boost::shared_ptr<chaos_data::CDataWrapper>(dataset)));
+		if(dataset){
+			restore_point_map[restore_point_tag].insert(make_pair(input_key, boost::shared_ptr<chaos_data::CDataWrapper>(dataset)));
+			dataset = NULL;
+		}
 	}
-
+	
 	if((err = io_data_driver->loadDatasetTypeFromRestorePoint(restore_point_tag,
 															  key,
 															  KeyDataStorageDomainCustom,
@@ -157,9 +164,12 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
 		clearRestorePoint(restore_point_tag);
 		return err;
 	} else {
-		restore_point_map[restore_point_tag].insert(make_pair(custom_key, boost::shared_ptr<chaos_data::CDataWrapper>(dataset)));
+		if(dataset){
+			restore_point_map[restore_point_tag].insert(make_pair(custom_key, boost::shared_ptr<chaos_data::CDataWrapper>(dataset)));
+			dataset = NULL;
+		}
 	}
-
+	
 	if((err = io_data_driver->loadDatasetTypeFromRestorePoint(restore_point_tag,
 															  key,
 															  KeyDataStorageDomainSystem,
@@ -168,9 +178,12 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
 		clearRestorePoint(restore_point_tag);
 		return err;
 	} else {
-		restore_point_map[restore_point_tag].insert(make_pair(system_key, boost::shared_ptr<chaos_data::CDataWrapper>(dataset)));
+		if(dataset){
+			restore_point_map[restore_point_tag].insert(make_pair(system_key, boost::shared_ptr<chaos_data::CDataWrapper>(dataset)));
+			dataset = NULL;
+		}
 	}
-
+	
 	return err;
 }
 
@@ -203,7 +216,7 @@ boost::shared_ptr<chaos_data::CDataWrapper> KeyDataStorage::getDatasetFromRestor
 			
 		default:
 			CHAOS_ASSERT(false)
-		break;
+			break;
 	}
 }
 
@@ -212,9 +225,9 @@ boost::shared_ptr<chaos_data::CDataWrapper> KeyDataStorage::getDatasetFromRestor
  
  */
 CDataWrapper* KeyDataStorage::updateConfiguration(CDataWrapper *newConfiguration) {
-        //add in the configuration the key for the device
-    newConfiguration->addStringValue(DataProxyConfigurationKey::CS_DM_LD_CU_ADDRESS_KEY, key);
-		//update the driver configration
+	//add in the configuration the key for the device
+	newConfiguration->addStringValue(DataProxyConfigurationKey::CS_DM_LD_CU_ADDRESS_KEY, key);
+	//update the driver configration
 	if(io_data_driver) io_data_driver->updateConfiguration(newConfiguration);
-    return NULL;
+	return NULL;
 }

@@ -366,8 +366,8 @@ void AbstractControlUnit::fillRestoreCacheWithDatasetFromTag(data_manager::KeyDa
 
 		//! fetch raw data ptr address
 		raw_value_ptr = dataset.getRawValuePtr(*it);
-		if(!value_size &&
-		   !raw_value_ptr) {
+		if(value_size &&
+		   raw_value_ptr) {
 			//add attribute for found key and value
 			restore_cache.addAttribute((SharedCacheDomain)domain,
 									   *it,
@@ -438,10 +438,15 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
 	//check
 	if(!restoreParam || !restoreParam->hasKey(ChaosSystemDomainAndActionLabel::ACTION_CU_RESTORE_PARAM_TAG)) return NULL;
 	
-	if(!keyDataStorage) throw CException(-1, "Key data storage driver not allocated", __PRETTY_FUNCTION__);
+	if(getServiceState() != chaos::utility::service_state_machine::InizializableServiceType::IS_INITIATED &&
+	   getServiceState() != chaos::utility::service_state_machine::StartableServiceType::SS_STARTED ) {
+		throw CException(-1, "Control Unit is not initilized or started", __PRETTY_FUNCTION__);
+	}
+	
+	if(!keyDataStorage) throw CException(-2, "Key data storage driver not allocated", __PRETTY_FUNCTION__);
 	
 	boost::shared_ptr<AttributeValueSharedCache> attribute_value_shared_cache( new AttributeValueSharedCache());
-	if(!attribute_value_shared_cache.get()) throw CException(-2, "failed to allocate restore cache", __PRETTY_FUNCTION__);
+	if(!attribute_value_shared_cache.get()) throw CException(-3, "failed to allocate restore cache", __PRETTY_FUNCTION__);
 	
 	boost::shared_ptr<CDataWrapper> dataset_at_tag;
 	//get tag alias
@@ -449,13 +454,17 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
 	
 	ACULDBG_ << "Start restoring snapshot tag for: " << restore_snapshot_tag;
 	
+	//! clear all possible resore result
+	keyDataStorage->clearRestorePoint(restore_snapshot_tag);
+	
+	//load snapshot to restore
 	if((err = keyDataStorage->loadRestorePoint(restore_snapshot_tag))) {
 		ACULERR_ << "Error loading dataset form snapshot tag: " << restore_snapshot_tag;
 		throw CException(err, "Error loading dataset form snapshot", __PRETTY_FUNCTION__);
 	} else {
 		
 		boost::shared_ptr<AttributeValueSharedCache> restore_cache(new AttributeValueSharedCache());
-		attribute_value_shared_cache->init(NULL);
+		restore_cache->init(NULL);
 		
 		for(int idx = 0; idx < 4; idx++) {
 			//dataset loading sucessfull
