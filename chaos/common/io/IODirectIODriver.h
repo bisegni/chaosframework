@@ -29,6 +29,7 @@
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/direct_io/DirectIOClient.h>
 #include <chaos/common/direct_io/DirectIOServerEndpoint.h>
+#include <chaos/common/direct_io/channel/DirectIOSystemAPIClientChannel.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceClientChannel.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceServerChannel.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
@@ -72,8 +73,9 @@ namespace chaos{
 			} IODData;
 			
 			typedef struct IODirectIODriverClientChannels {
-				chaos_direct_io::DirectIOClientConnection		*connection;
-				chaos_dio_channel::DirectIODeviceClientChannel	*device_client_channel;
+				chaos_direct_io::DirectIOClientConnection			*connection;
+				chaos_dio_channel::DirectIODeviceClientChannel		*device_client_channel;
+				chaos_dio_channel::DirectIOSystemAPIClientChannel	*system_client_channel;
 			} IODirectIODriverClientChannels;
 			
 			/*!
@@ -91,8 +93,8 @@ namespace chaos{
 				uint16_t	current_endpoint_s_port;
 				uint16_t	current_endpoint_index;
 				
-				chaos_dio_channel::DirectIODeviceServerChannel	*device_server_channel;
-				chaos_utility::ObjectSlot<IODirectIODriverClientChannels*> channels_slot;
+				chaos_dio_channel::DirectIODeviceServerChannel				*device_server_channel;
+				chaos_utility::ObjectSlot<IODirectIODriverClientChannels*>	channels_slot;
 				
 				WaitSemaphore wait_get_answer;
 				boost::shared_mutex mutext_feeder;
@@ -131,14 +133,20 @@ namespace chaos{
 				/*
 				 * storeRawData
 				 */
-				virtual void storeRawData(const std::string& key,
+				void storeRawData(const std::string& key,
 										  chaos_data::SerializationBuffer *serialization,
 										  int store_hint)  throw(CException);
 				
 				/*
 				 * retriveRawData
 				 */
-				virtual char * retriveRawData(const std::string& key, size_t *dim=NULL)  throw(CException);
+				char * retriveRawData(const std::string& key, size_t *dim=NULL)  throw(CException);
+				
+				//! restore from a tag a dataset associated to a key
+				virtual int loadDatasetTypeFromRestorePoint(const std::string& restore_point_tag_name,
+															const std::string& key,
+															uint32_t dataset_type,
+															chaos_data::CDataWrapper **cdatawrapper_handler);
 				
 				/*
 				 * updateConfiguration

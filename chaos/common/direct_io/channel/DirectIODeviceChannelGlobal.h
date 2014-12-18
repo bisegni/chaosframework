@@ -257,7 +257,8 @@ namespace chaos {
                         char		error_message[256];
                     }DirectIOSystemAPISnapshotResult,
                     *DirectIOSystemAPISnapshotResultPtr;
-                    
+					
+					#define GET_SYSTEM_API_GET_SNAPSHOT_RESULT_BASE_PTR(h) ((char*)h+sizeof(chaos::common::direct_io::channel::opcode_headers::DirectIOSystemAPISnapshotResult)+4)
                     //!result of the new and delete api
                     typedef  struct DirectIOSystemAPIGetDatasetSnapshotResult {
                         //! api result

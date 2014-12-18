@@ -183,6 +183,15 @@ namespace chaos {
 				//check if the key is present in data wrapper
 				bool hasKey(const char*);
 				
+				//return all key contained into the object
+				void getAllKey(std::vector<std::string>& contained_key);
+				
+				//return all key contained into the object
+				uint32_t getValueSize(const std::string& key);
+				
+				//! get raw value ptr address
+				const char * getRawValuePtr(const std::string& key);
+				
 				//reset the datawrapper
 				void reset();
 				

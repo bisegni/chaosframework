@@ -39,7 +39,6 @@ namespace chaos{
 			 * History Output driver base abstract classe, that define two method to control
 			 * the initialization and history persistence of the data
 			 */
-			
 			class IODataDriver: public Configurable {
 			protected:
 				QueryFuture *_getNewQueryFutureForQueryID(const std::string& query_id);
@@ -83,6 +82,7 @@ namespace chaos{
 				 * return a pointer to the class ArrayPointer of CDataWrapper type
 				 */
 				virtual ArrayPointer<chaos_data::CDataWrapper>* retriveData(const std::string& key)  throw(CException);
+
 				
 				/*!
 				 * This method store a buffer into live cached
@@ -90,7 +90,7 @@ namespace chaos{
 				virtual void storeRawData(const std::string& key,
 										  chaos_data::SerializationBuffer *serialization,
 										  int store_hint = 2)  throw(CException) = 0;
-				
+
 				/*!
 				 * This method retrive the cached object by CSDawrapperUsed as query key and
 				 * return a pointer to the class ArrayPointer of CDataWrapper type
@@ -98,6 +98,12 @@ namespace chaos{
 				virtual char * retriveRawData(const std::string& key,
 											  size_t* dataDim=NULL)  throw(CException) = 0;
 				
+				
+				//! restore from a tag a dataset associated to a key
+				virtual int loadDatasetTypeFromRestorePoint(const std::string& restore_point_tag_name,
+															const std::string& key,
+															uint32_t dataset_type,
+															chaos_data::CDataWrapper **cdatawrapper_handler) = 0;
 				/*!
 				 Update the driver configuration
 				 */

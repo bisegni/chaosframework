@@ -128,7 +128,7 @@ void IODirectIODriver::deinit() throw(CException) {
 	IODirectIODriver_LAPP_ << "Remove active query";
 	//acquire write lock on map
 	boost::unique_lock<boost::shared_mutex> wmap_loc(map_query_future_mutex);
-
+	
 	//scan all remained query
 	for(std::map<string, QueryFuture*>::iterator it = map_query_future.begin();
 		it != map_query_future.end();
@@ -203,6 +203,41 @@ char* IODirectIODriver::retriveRawData(const std::string& key, size_t *dim)  thr
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
+//! restore from a tag a dataset associated to a key
+int IODirectIODriver::loadDatasetTypeFromRestorePoint(const std::string& restore_point_tag_name,
+													  const std::string& key,
+													  uint32_t dataset_type,
+													  chaos_data::CDataWrapper **cdatawrapper_handler) {
+	int err = 0;
+	boost::shared_lock<boost::shared_mutex>(mutext_feeder);
+	IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
+	if(!next_client) return NULL;
+	chaos_dio_channel::DirectIOSystemAPIGetDatasetSnapshotResultPtr snapshot_result = NULL;
+	if((err = (int)next_client->system_client_channel->getDatasetSnapshotForProducerKey(restore_point_tag_name,
+																						key,
+																						dataset_type,
+																						&snapshot_result))) {
+		IODirectIODriver_LERR_ << "Error loading the dataset type:"<<dataset_type<< " for key:" << key << " from restor point:" <<restore_point_tag_name;
+	} else {
+		if(snapshot_result && snapshot_result->channel_data) {
+			//we have the dataaset
+			try {
+				*cdatawrapper_handler = new chaos_data::CDataWrapper((const char*)GET_SYSTEM_API_GET_SNAPSHOT_RESULT_BASE_PTR(snapshot_result));
+			} catch (std::exception& ex) {
+				IODirectIODriver_LERR_ << "Error deserializing the dataset type:"<<dataset_type<< " for key:" << key << " from snapshot tag:" <<restore_point_tag_name << " with error:" << ex.what();
+			} catch (...) {
+				IODirectIODriver_LERR_ << "Error deserializing the dataset type:"<<dataset_type<< " for key:" << key << " from snapshot tag:" <<restore_point_tag_name;
+			}
+		}
+	}
+	//delete the received result if there was one
+	if(snapshot_result) free(snapshot_result);
+	return err;
+}
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
 chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::common::data::CDataWrapper* newConfigration) {
 	//lock the feeder access
 	boost::unique_lock<boost::shared_mutex>(mutext_feeder);
@@ -230,7 +265,9 @@ chaos::common::data::CDataWrapper* IODirectIODriver::updateConfiguration(chaos::
 void IODirectIODriver::disposeService(void *service_ptr) {
 	if(!service_ptr) return;
 	IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(service_ptr);
-	next_client->connection->releaseChannelInstance(next_client->device_client_channel);
+	
+	if(next_client->system_client_channel) next_client->connection->releaseChannelInstance(next_client->system_client_channel);
+	if(next_client->device_client_channel) next_client->connection->releaseChannelInstance(next_client->device_client_channel);
 	init_parameter.client_instance->releaseConnection(next_client->connection);
 	delete(next_client);
 }
@@ -245,14 +282,33 @@ void* IODirectIODriver::serviceForURL(const common::network::URL& url, uint32_t 
 	if(tmp_connection) {
 		clients_channel = new IODirectIODriverClientChannels();
 		clients_channel->connection = tmp_connection;
-		clients_channel->device_client_channel = (chaos_dio_channel::DirectIODeviceClientChannel *)tmp_connection->getNewChannelInstance("DirectIODeviceClientChannel");
+		
+		//allocate the client channel
+		clients_channel->device_client_channel = (chaos_dio_channel::DirectIODeviceClientChannel*)tmp_connection->getNewChannelInstance("DirectIODeviceClientChannel");
 		if(!clients_channel->device_client_channel) {
 			IODirectIODriver_DLDBG_ << "Error creating client device channel for " << url.getURL();
+			
+			//release conenction
 			init_parameter.client_instance->releaseConnection(tmp_connection);
+			
+			//relase struct
 			delete(clients_channel);
 			return NULL;
 		}
 		
+		clients_channel->system_client_channel = (chaos_dio_channel::DirectIOSystemAPIClientChannel*)tmp_connection->getNewChannelInstance("DirectIOSystemAPIClientChannel");
+		if(!clients_channel->system_client_channel) {
+			IODirectIODriver_DLDBG_ << "Error creating client system api channel for " << url.getURL();
+			
+			//releasing device channel
+			tmp_connection->releaseChannelInstance(clients_channel->device_client_channel);
+			
+			//release connection
+			init_parameter.client_instance->releaseConnection(tmp_connection);
+			//relase struct
+			delete(clients_channel);
+			return NULL;
+		}
 		//set the answer information
 		clients_channel->device_client_channel->setAnswerServerInfo(current_endpoint_p_port, current_endpoint_s_port, current_endpoint_index);
 		
@@ -269,7 +325,7 @@ void* IODirectIODriver::serviceForURL(const common::network::URL& url, uint32_t 
  
  ---------------------------------------------------------------------------------*/
 void IODirectIODriver::handleEvent(chaos_direct_io::DirectIOClientConnection *client_connection,
-										   chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) {
+								   chaos_direct_io::DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) {
 	//if the channel has bee disconnected turn the relative index offline, if onli reput it online
 	boost::unique_lock<boost::shared_mutex>(mutext_feeder);
 	uint32_t service_index = boost::lexical_cast<uint32_t>(client_connection->getCustomStringIdentification());
@@ -331,10 +387,10 @@ int IODirectIODriver::consumeDataCloudQueryStartResult(chaos_dio_channel::opcode
 	
 	//get the query id
 	std::string query_id(header->field.query_id, 8);
-
+	
 	//acquire read lock
 	boost::shared_lock<boost::shared_mutex> rmap_loc(map_query_future_mutex);
-
+	
 	//get qeury iterator on map
 	std::map<string, QueryFuture*>::iterator it = map_query_future.find(query_id);
 	if(it != map_query_future.end()) {
@@ -352,7 +408,7 @@ int IODirectIODriver::consumeDataCloudQueryResult(chaos_dio_channel::opcode_head
 												  uint32_t data_lenght,
 												  chaos_dio::DirectIOSynchronousAnswerPtr synchronous_answer){
 	std::string query_id(header->field.query_id, 8);
-
+	
 	//acquire read lock
 	boost::shared_lock<boost::shared_mutex> rmap_loc(map_query_future_mutex);
 	
@@ -380,6 +436,7 @@ int IODirectIODriver::consumeDataCloudQueryResult(chaos_dio_channel::opcode_head
 int IODirectIODriver::consumeDataCloudQueryEndResult(chaos_dio_channel::opcode_headers::DirectIODeviceChannelHeaderOpcodeQueryDataCloudEndResult *header,
 													 void *error_message_string_data,
 													 uint32_t error_message_string_data_length) {
+	int err = 0;
 	//get the query id
 	std::string query_id(header->field.query_id, 8);
 	
@@ -397,7 +454,6 @@ int IODirectIODriver::consumeDataCloudQueryEndResult(chaos_dio_channel::opcode_h
 			//initialize the query for for the result receivement
 			_endQueryFutureResult(*it->second, header->field.error);
 		}
-		
 	}
-
+	return err;
 }

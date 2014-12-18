@@ -230,7 +230,10 @@ namespace chaos {
              Perform, if it's not be done the stop operation and afther the hardware deinitialization
              */
             int deinitDevice();
-            
+			
+			//! resto the device to a saved tag
+			int restoreDeviceToTag(const std::string& restore_tag);
+			
             int setAttributeValue(string& attributeName, int32_t attributeValue);
             int setAttributeValue(const char *attributeName, int32_t attributeValue);
             

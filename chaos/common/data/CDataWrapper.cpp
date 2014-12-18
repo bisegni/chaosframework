@@ -20,7 +20,7 @@
 #include <chaos/common/global.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/bson/util/json.h>
-
+#include <chaos/common/bson/bsontypes.h>
 using namespace bson;
 
 using namespace chaos;
@@ -212,6 +212,59 @@ const char* CDataWrapper::getBinaryValue(const char *key, int& bufLen)  {
 //check if the key is present in data wrapper
 bool CDataWrapper::hasKey(const char* key) {
     return bsonBuilder->asTempObj().hasElement(key);
+}
+
+//return all key contained into the object
+void CDataWrapper::getAllKey(std::vector<std::string>& contained_key) {
+	BSONObjIterator obj_iterator(bsonBuilder->asTempObj());
+	while(obj_iterator.more()) {
+		//we have another key
+		BSONElement element = obj_iterator.next();
+		
+		//add key to vector
+		contained_key.push_back(element.fieldNameStringData().toString());
+	}
+}
+
+//return all key contained into the object
+uint32_t CDataWrapper::getValueSize(const std::string& key) {
+	BSONElement ele  = bsonBuilder->asTempObj().getField(key);
+	int bsize = 0;
+	switch(ele.type()) {
+		case NumberLong:
+		case NumberInt:
+		case Bool:
+		case NumberDouble:
+			return ele.valuesize();
+		case String:
+			return ele.valuestrsize();
+		case BinData:
+			ele.binData(bsize);
+			return bsize;
+		default:
+			break;
+	}
+	return 0;
+}
+
+//! return the raw value ptr address
+const char * CDataWrapper::getRawValuePtr(const std::string& key) {
+	BSONElement ele  = bsonBuilder->asTempObj().getField(key);
+	int bsize = 0;
+	switch(ele.type()) {
+		case NumberLong:
+		case NumberInt:
+		case Bool:
+		case NumberDouble:
+			return ele.value();
+		case String:
+			return ele.valuestrsafe();
+		case BinData:
+			return ele.binDataClean(bsize);
+		default:
+			break;
+	}
+	return NULL;	
 }
 
 //add a bool value

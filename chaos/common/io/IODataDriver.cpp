@@ -9,9 +9,16 @@
 #include <chaos/common/io/IODataDriver.h>
 #include <chaos/common/io/QueryFuture.h>
 
+#define IODataDriverLOG_HEAD "[IODataDriver] - "
+
+#define IODataDriverLAPP	LAPP_ << IODataDriverLOG_HEAD
+#define IODataDriverLDBG	LDBG_ << IODataDriverLOG_HEAD << __PRETTY_FUNCTION__ << " - "
+#define IODataDriverLERR	LERR_ << IODataDriverLOG_HEAD << __PRETTY_FUNCTION__ << "(" << __LINE__ << ") - "
+
 using namespace chaos;
 using namespace chaos::common::io;
 using namespace chaos::common::data;
+
 
 /*---------------------------------------------------------------------------------
  

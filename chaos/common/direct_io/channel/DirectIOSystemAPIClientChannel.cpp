@@ -87,7 +87,7 @@ int64_t DirectIOSystemAPIClientChannel::makeNewDatasetSnapshot(const std::string
 		DIRECT_IO_SET_CHANNEL_DATA(data_pack, producer_key_concatenation_memory, (uint32_t)producer_key_concatenation.size());
 	}
 	//send data with synchronous answer flag
-	if((err = (int)sendPriorityData(data_pack, &answer))) {
+	if((err = (int)sendServiceData(data_pack, &answer))) {
 		//error getting last value
 		if(answer && answer->answer_data) free(answer->answer_data);
 	} else {
@@ -129,7 +129,7 @@ int64_t DirectIOSystemAPIClientChannel::deleteDatasetSnapshot(const std::string&
 	DIRECT_IO_SET_CHANNEL_HEADER(data_pack, new_snapshot_opcode_header, sizeof(DirectIOSystemAPIChannelOpcodeNDGSnapshotHeader))
 	
 	//send data with synchronous answer flag
-	if((err = (int)sendPriorityData(data_pack, &answer))) {
+	if((err = (int)sendServiceData(data_pack, &answer))) {
 		//error getting last value
 		if(answer && answer->answer_data) free(answer->answer_data);
 	} else {
@@ -184,12 +184,12 @@ int64_t DirectIOSystemAPIClientChannel::getDatasetSnapshotForProducerKey(const s
 		DIRECT_IO_SET_CHANNEL_DATA(data_pack, producer_key_send_buffer, (uint32_t)producer_key.size());
 	}
 	//send data with synchronous answer flag
-	if((err = (int)sendPriorityData(data_pack, &answer))) {
+	if((err = (int)sendServiceData(data_pack, &answer))) {
 		//error getting last value
 		if(answer && answer->answer_data) free(answer->answer_data);
 	} else {
 		//we got answer
-		if(answer) {
+		if(answer && answer->answer_data) {
 			*api_result_handle  = static_cast<DirectIOSystemAPIGetDatasetSnapshotResult*>(answer->answer_data);
 			(*api_result_handle)->api_result.error = FROM_LITTLE_ENDNS_NUM(int32_t, (*api_result_handle)->api_result.error);
 		} else {

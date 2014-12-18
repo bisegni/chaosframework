@@ -59,7 +59,7 @@ namespace chaos{
 				 * This method retrive the cached object by CSDawrapperUsed as query key and
 				 * return a pointer to the class ArrayPointer of CDataWrapper type
 				 */
-				virtual void storeRawData(const std::string& key,
+				void storeRawData(const std::string& key,
 										  chaos_data::SerializationBuffer *serialization,
 										  int store_hint)  throw(CException);
 				
@@ -67,7 +67,14 @@ namespace chaos{
 				 * This method retrive the cached object by CSDawrapperUsed as query key and
 				 * return a pointer to the class ArrayPointer of CDataWrapper type
 				 */
-				virtual char * retriveRawData(const std::string& key, size_t *dim=NULL)  throw(CException);
+				char * retriveRawData(const std::string& key, size_t *dim=NULL)  throw(CException);
+				
+				//! restore a key form a restore tag
+				int loadDatasetTypeFromRestorePoint(const std::string& restore_point_tag_name,
+													const std::string& key,
+													uint32_t dataset_type,
+													chaos_data::CDataWrapper **cdatawrapper_handler);
+				
 				/*
 				 Update the driver configuration
 				 */

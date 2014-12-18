@@ -21,7 +21,9 @@
 #ifndef KeyDataStorage_H
 #define KeyDataStorage_H
 
+#include <map>
 #include <string>
+
 #include <chaos/common/io/IODataDriver.h>
 #include <chaos/common/utility/ArrayPointer.h>
 
@@ -35,11 +37,11 @@ namespace chaos{
     namespace cu {
 		namespace data_manager {
 			
-			typedef enum KeyDataStorageDomain{
-				KeyDataStorageDomainOutput,
+			typedef enum KeyDataStorageDomain {
+				KeyDataStorageDomainOutput = 0,
 				KeyDataStorageDomainInput,
-				KeyDataStorageDomainSystem,
-				KeyDataStorageDomainCustom
+				KeyDataStorageDomainCustom,
+				KeyDataStorageDomainSystem
 			} KeyDataStorageDomain;
 			
 			class KeyDataStorage {
@@ -48,6 +50,10 @@ namespace chaos{
 				string input_key;
 				string system_key;
 				string custom_key;
+				
+				//restore poitn map
+				std::map<std::string, std::map<std::string, boost::shared_ptr<chaos_data::CDataWrapper> > > restore_point_map;
+				
 				chaos_io::IODataDriver *io_data_driver;
 				
 				//mutex to protect access to data io driver
@@ -70,14 +76,19 @@ namespace chaos{
 				 */
 				ArrayPointer<chaos_data::CDataWrapper>* getLastDataSet(KeyDataStorageDomain domain);
 				
+				//! push a dataset associated to a domain
+				void pushDataSet(KeyDataStorageDomain domain, chaos_data::CDataWrapper *dataset);
 				
-				void pushDataSet(KeyDataStorageDomain domain, chaos_data::CDataWrapper *dataset);;
+				//! load all dataseet for a restore point
+				int loadRestorePoint(const std::string& restore_point_tag);
+
+				//! clear all loaded dataset for a restore point
+				int clearRestorePoint(const std::string& restore_point_tag);
 				
-				/*
-				 Retrive the data from History Storage
-				 */
-				ArrayPointer<chaos_data::CDataWrapper>*  getHistoricalDataSet(chaos_data::CDataWrapper*);
-				
+				//!return the dataset asccoaited to a domain in a determinated restore tag
+				boost::shared_ptr<chaos_data::CDataWrapper>  getDatasetFromRestorePoint(const std::string& restore_point_tag,
+																						KeyDataStorageDomain domain);
+
 				/*
 				 Permit to be live configurable
 				 */

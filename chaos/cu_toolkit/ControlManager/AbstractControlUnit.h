@@ -156,6 +156,11 @@ namespace chaos{
 				virtual CDataWrapper* _stop(CDataWrapper*, bool& detachParam) throw(CException);
 				
 				/*!
+				 Restore the control unit to a precise tag
+				 */
+				virtual CDataWrapper* _unitRestoreToSnapshot(CDataWrapper*, bool& detachParam) throw(CException);
+				
+				/*!
 				 Define the control unit DataSet and Action into
 				 a CDataWrapper
 				 */
@@ -196,6 +201,10 @@ namespace chaos{
 				//! filel the dataset packet for the cached attribute in the array
 				inline void fillCDatawrapperWithCachedValue(std::vector<AttributeValue*>& cached_attributes,
 															CDataWrapper& dataset);
+				
+				void fillRestoreCacheWithDatasetFromTag(data_manager::KeyDataStorageDomain domain,
+														CDataWrapper& dataset,
+														AbstractSharedDomainCache& restore_cache);
 			protected:
 				//  It's is the dynamically assigned instance of the CU. it will be used
 				// as domain for the rpc action.
@@ -305,8 +314,13 @@ namespace chaos{
 				/*!
 				 On the call of this handler the cache restore part is filled with the dataset
 				 that at restore point was pushed by control unit.
+				 \parram restore_snapshot_tag is the alias of the snapshot of the needed datasets
+				 \param restore_cache is the cache, like norma used in control unit development,
+				 that contain the four domain filled with the attribute/value faound
+				 on saved tag
 				 */
-				virtual void unitRestoreToPoint();
+				virtual void unitRestoreToSnapshot(const std::string& restore_snapshot_tag,
+												   AbstractSharedDomainCache * const restore_cache) throw(CException);
 				
 				//! this andler is called befor the input attribute will be updated
 				virtual void unitInputAttributePreChangeHandler() throw(CException);
