@@ -181,3 +181,10 @@ bool AttributeCache::hasChanged() {
 bool AttributeCache::setNewSize(VariableIndexType attribute_index, uint32_t new_size) {
 	return mapAttributeIndex[attribute_index]->setNewSize(new_size);
 }
+
+/*---------------------------------------------------------------------------------
+ 
+ ---------------------------------------------------------------------------------*/
+bool AttributeCache::hasAttribute(const std::string& attribute_name) {
+	return mapAttributeNameIndex.count(attribute_name) != 0;
+}

@@ -1,4 +1,4 @@
-/*
+  /*
  *	KeyDataStorage.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
@@ -128,10 +128,10 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
 		restore_point_map.insert(make_pair(restore_point_tag, std::map<std::string, boost::shared_ptr<chaos_data::CDataWrapper> >()));
 	}
 	
-	if((err = io_data_driver->loadDatasetTypeFromRestorePoint(restore_point_tag,
-															  key,
-															  KeyDataStorageDomainOutput,
-															  &dataset))) {
+	if((err = io_data_driver->loadDatasetTypeFromSnapshotTag(restore_point_tag,
+															 key,
+															 KeyDataStorageDomainOutput,
+															 &dataset))) {
 		KeyDataStorageLERR << " Error loading dataset of domain KeyDataStorageDomainOutput from restore point:" << restore_point_tag << " for the key:" << key;
 		clearRestorePoint(restore_point_tag);
 		return err;
@@ -142,10 +142,10 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
 		}
 	}
 	
-	if((err = io_data_driver->loadDatasetTypeFromRestorePoint(restore_point_tag,
-															  key,
-															  KeyDataStorageDomainInput,
-															  &dataset))) {
+	if((err = io_data_driver->loadDatasetTypeFromSnapshotTag(restore_point_tag,
+															 key,
+															 KeyDataStorageDomainInput,
+															 &dataset))) {
 		KeyDataStorageLERR << " Error loading dataset of domain KeyDataStorageDomainInput from restore point:" << restore_point_tag << " for the key:" << key;
 		clearRestorePoint(restore_point_tag);
 		return err;
@@ -156,10 +156,10 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
 		}
 	}
 	
-	if((err = io_data_driver->loadDatasetTypeFromRestorePoint(restore_point_tag,
-															  key,
-															  KeyDataStorageDomainCustom,
-															  &dataset))) {
+	if((err = io_data_driver->loadDatasetTypeFromSnapshotTag(restore_point_tag,
+															 key,
+															 KeyDataStorageDomainCustom,
+															 &dataset))) {
 		KeyDataStorageLERR << " Error loading dataset of domain KeyDataStorageDomainInput from restore point:" << restore_point_tag << " for the key:" << key;
 		clearRestorePoint(restore_point_tag);
 		return err;
@@ -170,10 +170,10 @@ int KeyDataStorage::loadRestorePoint(const std::string& restore_point_tag) {
 		}
 	}
 	
-	if((err = io_data_driver->loadDatasetTypeFromRestorePoint(restore_point_tag,
-															  key,
-															  KeyDataStorageDomainSystem,
-															  &dataset))) {
+	if((err = io_data_driver->loadDatasetTypeFromSnapshotTag(restore_point_tag,
+															 key,
+															 KeyDataStorageDomainSystem,
+															 &dataset))) {
 		KeyDataStorageLERR << " Error loading dataset of domain KeyDataStorageDomainInput from restore point:" << restore_point_tag << " for the key:" << key;
 		clearRestorePoint(restore_point_tag);
 		return err;
@@ -209,9 +209,9 @@ boost::shared_ptr<chaos_data::CDataWrapper> KeyDataStorage::getDatasetFromRestor
 			return restore_point_map[restore_point_tag][output_key];
 		case KeyDataStorageDomainInput:
 			return restore_point_map[restore_point_tag][input_key];
-		case KeyDataStorageDomainSystem:
-			return restore_point_map[restore_point_tag][custom_key];
 		case KeyDataStorageDomainCustom:
+			return restore_point_map[restore_point_tag][custom_key];
+		case KeyDataStorageDomainSystem:
 			return restore_point_map[restore_point_tag][system_key];
 			
 		default:

@@ -100,10 +100,17 @@ namespace chaos{
 				
 				
 				//! restore from a tag a dataset associated to a key
-				virtual int loadDatasetTypeFromRestorePoint(const std::string& restore_point_tag_name,
-															const std::string& key,
-															uint32_t dataset_type,
-															chaos_data::CDataWrapper **cdatawrapper_handler) = 0;
+				/*!
+				 try to load a dataset from snapshot identified by the tag
+				 \param snapshot_tag_name the name of the tag that identify the snapshot
+				 \param key is the unique key of the producer
+				 \param dataset_type is the type of dataset to fetch
+				 \param cdatawrapper_handler handler for the found dataset(the deallocation need to be managed by caller)
+				 */
+				virtual int loadDatasetTypeFromSnapshotTag(const std::string& snapshot_tag_name,
+														   const std::string& key,
+														   uint32_t dataset_type,
+														   chaos_data::CDataWrapper **cdatawrapper_handler) = 0;
 				/*!
 				 Update the driver configuration
 				 */

@@ -100,7 +100,7 @@ namespace chaos{
 					/*!
 					 This will work only if the contained data is a cdata buffer serialization
 					 */
-					CDataWrapper *getValueAsCDatawrapperPtr();
+					CDataWrapper *getValueAsCDatawrapperPtr(bool from_json = false);
 					
 					//! check if attribute buffer is good
 					bool isGood();

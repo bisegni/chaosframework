@@ -214,6 +214,11 @@ void SCAbstractControlUnit::completeInputAttribute() {
 	}
 }
 
+void SCAbstractControlUnit::submitSlowCommand(CDataWrapper *slow_command_pack, uint64_t& command_id) {
+	CHAOS_ASSERT(slow_command_executor)
+	slow_command_executor->submitCommand(slow_command_pack, command_id);
+}
+
 /*
  Receive the event for set the dataset input element
  */
@@ -221,6 +226,7 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAt
 	uint64_t command_id =0;
 	CDataWrapper *result = NULL;
     if(datasetAttributeValues->hasKey(chaos_batch::BatchCommandSubmissionKey::COMMAND_ALIAS_STR)) {
+		CHAOS_ASSERT(slow_command_executor)
 		// in slow control cu the CDataWrapper instance received from rpc is internally managed
 		//so we need to detach it
 		// submit the detacched command to slow controll subsystem
@@ -236,7 +242,7 @@ CDataWrapper* SCAbstractControlUnit::setDatasetAttribute(CDataWrapper *datasetAt
 			attr_value->setNewSize((uint32_t)cmd_param.size());
 			
 			//set the value without notify because command value are managed internally only
-			attr_value->setValue(cmd_param.c_str(), (uint32_t)cmd_param.size(), false);
+			attr_value->setValue(cmd_param.c_str(), (uint32_t)cmd_param.size(), true);
 			
 			//push input dataset change
 			pushInputDataset();

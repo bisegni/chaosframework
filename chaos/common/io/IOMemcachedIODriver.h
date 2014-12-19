@@ -70,10 +70,10 @@ namespace chaos{
 				char * retriveRawData(const std::string& key, size_t *dim=NULL)  throw(CException);
 				
 				//! restore a key form a restore tag
-				int loadDatasetTypeFromRestorePoint(const std::string& restore_point_tag_name,
-													const std::string& key,
-													uint32_t dataset_type,
-													chaos_data::CDataWrapper **cdatawrapper_handler);
+				int loadDatasetTypeFromSnapshotTag(const std::string& restore_point_tag_name,
+												   const std::string& key,
+												   uint32_t dataset_type,
+												   chaos_data::CDataWrapper **cdatawrapper_handler);
 				
 				/*
 				 Update the driver configuration

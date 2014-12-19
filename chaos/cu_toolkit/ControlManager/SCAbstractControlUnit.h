@@ -82,6 +82,16 @@ namespace chaos {
 
 				//! compelte th einput attribute with the alias of the slow commands registered
 				void completeInputAttribute();
+				
+				//! push dataset
+				/*!
+				 \ingroup Control_Unit_User_Api
+				 \param slow_command_pack is the whole command pack that contains either
+				 the alias and the parameter (for engine e for execution) of the command.
+				 \param command_id is the filed where is returned the unique id associated to the submitted command
+				 */
+				void submitSlowCommand(CDataWrapper *slow_command_pack,
+									   uint64_t& command_id);
 			public:
 				
 				/*! default constructor

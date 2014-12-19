@@ -466,7 +466,7 @@ CDataWrapper* AbstractControlUnit::_unitRestoreToSnapshot(CDataWrapper *restoreP
 		for(int idx = 0; idx < 4; idx++) {
 			//dataset loading sucessfull
 			dataset_at_tag = keyDataStorage->getDatasetFromRestorePoint(restore_snapshot_tag,
-																		KeyDataStorageDomainOutput);
+																		(KeyDataStorageDomain)idx);
 			if(dataset_at_tag.get()) {
 				//fill cache with dataset key/value
 				fillRestoreCacheWithDatasetFromTag((KeyDataStorageDomain)idx,

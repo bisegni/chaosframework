@@ -120,6 +120,13 @@ bool AttributeValue::isGood() {
 /*---------------------------------------------------------------------------------
  
  ---------------------------------------------------------------------------------*/
-CDataWrapper *AttributeValue::getValueAsCDatawrapperPtr() {
-	return new CDataWrapper((const char *)value_buffer);
+CDataWrapper *AttributeValue::getValueAsCDatawrapperPtr(bool from_json) {
+	CDataWrapper *result = NULL;
+	if(!from_json) {
+		result = new CDataWrapper((const char *)value_buffer);
+	} else {
+		result = new CDataWrapper();
+		result->setSerializedJsonData((const char *)value_buffer);
+	}
+	return result;
 }

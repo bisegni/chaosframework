@@ -71,8 +71,8 @@ namespace chaos{
 				
 				
 				typedef enum SharedCacheDomain {
+					DOMAIN_OUTPUT = 0,
 					DOMAIN_INPUT,
-					DOMAIN_OUTPUT,
 					DOMAIN_CUSTOM,
 					DOMAIN_SYSTEM
 				} SharedCacheDomain;

@@ -204,7 +204,7 @@ char* IODirectIODriver::retriveRawData(const std::string& key, size_t *dim)  thr
  
  ---------------------------------------------------------------------------------*/
 //! restore from a tag a dataset associated to a key
-int IODirectIODriver::loadDatasetTypeFromRestorePoint(const std::string& restore_point_tag_name,
+int IODirectIODriver::loadDatasetTypeFromSnapshotTag(const std::string& restore_point_tag_name,
 													  const std::string& key,
 													  uint32_t dataset_type,
 													  chaos_data::CDataWrapper **cdatawrapper_handler) {
