@@ -88,6 +88,7 @@ if [ -n "$CHAOS_CROSS_HOST" ]; then
 fi
 
 do_make() {
+    echo "* make $1 with "$NPROC" processors"
     if [ -n "$CHAOS_DEVELOPMENT" ]; then
 	if !(make -j$NPROC VERBOSE=1); then
 	    echo "## error compiling $1 in VERBOSE"
@@ -207,16 +208,8 @@ if [ ! -d "$PREFIX/include/boost" ]; then
     cd $BASE_EXTERNAL/boost
     echo "Compile and install boost libraries into $PREFIX/"
 
-    if [ -n "$CHAOS32" ]; then
-    	echo "INSTALLING BOOST 32"
-    	./b2 link=shared cflags=-m32 cxxflags=-m32 address-model=32 --prefix=$PREFIX --with-iostreams --with-program_options --with-chrono --with-random --with-filesystem --with-log --with-regex --with-system --with-thread --with-atomic --with-timer install
-    else
-        if [ `echo $OS | tr [:upper:] [:lower:]` = `echo "Darwin" | tr [:upper:] [:lower:]` ] && [ $KERNEL_SHORT_VER -ge 1300 ]; then
-            ./b2  toolset=clang cxxflags=-stdlib=libstdc++ linkflags=-stdlib=libstdc++ link=shared --prefix=$PREFIX --with-program_options --with-random --with-chrono --with-filesystem --with-iostreams --with-log --with-regex --with-system --with-thread --with-atomic --with-timer install
-        else
-            ./b2  link=shared --prefix=$PREFIX --with-program_options --with-chrono --with-filesystem --with-iostreams --with-log --with-regex --with-random --with-system --with-thread --with-atomic --with-timer install
-        fi
-    fi
+    ./b2 $CHAOS_BOOST_FLAGS -j $NPROC
+
 else
     echo "Boost Already present"
 fi
@@ -236,8 +229,11 @@ if [ ! -d "$PREFIX/include/modbus" ] || [ ! -d "$BASE_EXTERNAL/libmodbus" ]; the
     fi
 
     ./autogen.sh
-    ./configure --prefix=$PREFIX $CROSS_HOST_CONFIGURE
-
+    if [ -n "$CHAOS_STATIC" ]; then
+	./configure --enable-static --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+    else
+	./configure --enable-shared --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+    fi
 
     make clean
     do_make "MODBUS"
@@ -393,9 +389,9 @@ cmake $CHAOS_CMAKE_FLAGS .
 do_make "!CHAOS"
 
 
-if [ -n "$CHAOS_DEVELOPMENT" ]; then
-    echo "Remove the installed header"
-    rm -rf $CHAOS_DIR/usr/local/include/chaos
-    echo "Link !CHAOS source root directory for include because we are in development mode"
-    ln -sf $CHAOS_DIR/chaos $CHAOS_DIR/usr/local/include/chaos
-fi
+# if [ -n "$CHAOS_DEVELOPMENT" ]; then
+#     echo "Remove the installed header"
+#     rm -rf $CHAOS_DIR/usr/local/include/chaos
+#     echo "Link !CHAOS source root directory for include because we are in development mode"
+#     ln -sf $CHAOS_DIR/chaos $CHAOS_DIR/usr/local/include/chaos
+# fi

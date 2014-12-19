@@ -18,7 +18,7 @@
 #pragma once
 
 #ifdef _WIN32
-#include <chaos/common/bson/platform/windows_basic.h"
+#include <chaos/common/bson/platform/windows_basic.h>
 #endif
 
 #include <boost/noncopyable.hpp>

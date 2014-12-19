@@ -5,15 +5,18 @@ SET( ${PROJECT_NAME}_MAJOR_VERSION 0 )
 SET( ${PROJECT_NAME}_MINOR_VERSION 1 ) 
 SET( ${PROJECT_NAME}_PATCH_LEVEL 0 )
 
-add_definitions(-DBOOST_ALL_DYN_LINK)
+IF( NOT BUILD_FORCE_STATIC)
+  add_definitions(-DBOOST_ALL_DYN_LINK)
+ENDIF()
+
 add_definitions(-DDEBUG)
 
 OPTION( BUILD_FORCE_32 "Force 32 bit compilation" OFF )
 
 EXECUTE_PROCESS(COMMAND chaos/common/version.sh)
 
-INCLUDE_DIRECTORIES(. ${PROJECT_SOURCE_DIR}/usr/local/include /usr/local/include /usr/include) 
-LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/usr/local/lib /usr/local/lib /usr/lib)
+INCLUDE_DIRECTORIES(. ${CMAKE_INSTALL_PREFIX}/include /usr/local/include) 
+LINK_DIRECTORIES(${CMAKE_INSTALL_PREFIX}/lib /usr/local/lib)
 ADD_DEFINITIONS(-O3 )
     
 IF( BUILD_FORCE_32 ) 
@@ -48,8 +51,6 @@ ADD_SUBDIRECTORY(ChaosDataService bin/bin_cds)
 message(STATUS "Configure Chaos Data Export")
 ADD_SUBDIRECTORY(ChaosDataExport bin/chaos_cde)
 
-message(STATUS "Configure Chaos Snapshot Utility")
-ADD_SUBDIRECTORY(ChaosSnapshotUtility bin/chaos_snap_util)
 
 message(STATUS "Configure Chaos CLI")
 ADD_SUBDIRECTORY(example/ChaosCLI bin/chaos_cli)
@@ -65,6 +66,9 @@ ADD_SUBDIRECTORY(example/ChaosPerformanceTester bin/ChaosPerformanceTester)
 
 message(STATUS "Configure ChaosMemCacheTest test excutable")
 ADD_SUBDIRECTORY(test/MemcachedEmbeddedTest bin/cache_test)
+
+message(STATUS "Configure Chaos Snapshot Utility")
+ADD_SUBDIRECTORY(ChaosSnapshotUtility bin/chaos_snap_util)
 
 #message(STATUS "Configure Plugin Test")
 #ADD_SUBDIRECTORY(test/PluginTest bin/plugin_test)

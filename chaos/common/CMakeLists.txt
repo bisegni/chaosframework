@@ -62,7 +62,13 @@ SET(common_lib_src  ${common_lib_src}	batch_command/BatchCommandExecutor.cpp bat
 SET(common_lib_library $ENV{CHAOS_LINK_LIBRARY})
 separate_arguments(common_lib_library)
 
+IF(BUILD_FORCE_STATIC)
+ADD_LIBRARY(chaos_common STATIC ${common_lib_src})
+ELSE()
 ADD_LIBRARY(chaos_common SHARED ${common_lib_src})
+ENDIF()
+
+#SET_TARGET_PROPERTIES(chaos_common_static PROPERTIES OUTPUT_NAME chaos_common)
 
 #set_target_properties(chaos_common PROPERTIES VERSION 1.0.0 SOVERSION 1) 
 
@@ -73,6 +79,8 @@ FILE(GLOB files "*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common)
 FILE(GLOB files "async_central/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/async_central)
+FILE(GLOB files "batch_command/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/batch_command)
 FILE(GLOB files "plugin/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/plugin)
 FILE(GLOB files "action/*.h")
@@ -121,16 +129,27 @@ FILE(GLOB files "io/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/io)
 FILE(GLOB files "direct_io/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/direct_io)
+
+FILE(GLOB files "direct_io/channel/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/direct_io/channel)
+
+FILE(GLOB files "direct_io/impl/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/direct_io/impl)
+
 FILE(GLOB files "message/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/message)
 FILE(GLOB files "pool/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/pool)
 FILE(GLOB files "pqueue/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/pqueue)
-FILE(GLOB files "rpc/*.h")
-INSTALL(FILES ${files} DESTINATION include/chaos/common/rpc)
 FILE(GLOB files "network/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/network)
+
+FILE(GLOB files "rpc/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/rpc)
+FILE(GLOB files "rpc/zmq/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/rpc/zmq)
+
 FILE(GLOB files "thread/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/thread)
 FILE(GLOB files "utility/*.h")
@@ -156,3 +175,7 @@ INSTALL(FILES ${files} DESTINATION include/chaos/common/caching_system/common_bu
 INSTALL(TARGETS chaos_common
         DESTINATION "lib"
         PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
+
+# INSTALL(TARGETS chaos_common_static
+#         DESTINATION "lib"
+#         PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
