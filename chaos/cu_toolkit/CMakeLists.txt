@@ -6,9 +6,13 @@ SET(cu_lib_src  ${cu_lib_src} ControlManager/SCAbstractControlUnit.cpp ControlMa
 SET(cu_lib_src  ${cu_lib_src} ControlManager/slow_command/SlowCommandExecutor.cpp ControlManager/slow_command/SlowCommand.cpp ControlManager/slow_command/command/SetAttributeCommand.cpp
 								ControlManager/AttributeSharedCacheWrapper.cpp)
 
-
+IF(BUILD_FORCE_STATIC)
+ADD_LIBRARY(chaos_cutoolkit STATIC ${cu_lib_src})
+ELSE()
 ADD_LIBRARY(chaos_cutoolkit SHARED ${cu_lib_src})
+ENDIF()
 
+#SET_TARGET_PROPERTIES(chaos_cutoolkit_static PROPERTIES OUTPUT_NAME chaos_cutoolkit)
 #set_target_properties(chaos_cutoolkit PROPERTIES VERSION 1.0.0 SOVERSION 1) 
 
 SET(chaos_cutoolkit_lib $ENV{CHAOS_LINK_LIBRARY})
@@ -50,4 +54,8 @@ INSTALL(FILES ${files} DESTINATION include/chaos/cu_toolkit/DataManager/DataBuff
 INSTALL(TARGETS chaos_cutoolkit
         DESTINATION "lib"
         PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
+
+# INSTALL(TARGETS chaos_cutoolkit_static
+#         DESTINATION "lib"
+#         PERMISSIONS OWNER_WRITE OWNER_READ GROUP_READ WORLD_READ)
 
