@@ -40,7 +40,7 @@ namespace chaos {
      */
     DECLARE_CLASS_FACTORY(ZMQClient, RpcClient), public CObjectProcessingQueue<NetworkForwardInfo> {
         REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ZMQClient)
-        ZMQClient(string alias);
+        ZMQClient(const string& alias);
         virtual ~ZMQClient();
 		
 		boost::shared_mutex map_socket_mutex;

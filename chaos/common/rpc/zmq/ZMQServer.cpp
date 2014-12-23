@@ -37,12 +37,12 @@ static void my_free (void *data, void *hint)
 }
 
 DEFINE_CLASS_FACTORY(ZMQServer, RpcServer);
-ZMQServer::ZMQServer(string alias):RpcServer(alias) {
-    
+ZMQServer::ZMQServer(const string& alias):RpcServer(alias) {
+
 }
 
 ZMQServer::~ZMQServer() {
-    
+
 }
 
     //init the server getting the configuration value
@@ -52,26 +52,26 @@ void ZMQServer::init(void *init_data) throw(CException) {
     ZMQS_LAPP << "initialization";
     try {
         runServer = true;
-        
+
         portNumber = adapterConfiguration->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT );
-        
+
         threadNumber = adapterConfiguration->getInt32Value(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_THREAD_NUMBER);
-        
+
         ZMQS_LAPP << "port number:" << portNumber;
         ZMQS_LAPP << "thread number:" << threadNumber;
-        
+
             //create the ZMQContext
         CHAOS_ASSERT(zmqContext = zmq_ctx_new())
-        
+
             //et the thread number
         zmq_ctx_set(zmqContext, ZMQ_IO_THREADS, threadNumber);
         ZMQS_LAPP << "zmqContext initilized";
-        
-        
+
+
         bindStr << "tcp://*:";
         bindStr << portNumber;
         ZMQS_LAPP << "bind url: "<<bindStr.str();
-        
+
         ZMQS_LAPP << "Workers initialized";
         ZMQS_LAPP << "initialized";
     } catch (std::exception& e) {
@@ -94,7 +94,7 @@ void ZMQServer::start() throw(CException) {
 
     //start the rpc adapter
 void ZMQServer::stop() throw(CException) {
-   
+
 }
 
     //deinit the rpc adapter
@@ -112,7 +112,7 @@ void ZMQServer::deinit() throw(CException) {
  Thread method that work on buffer item
  */
 void ZMQServer::executeOnThread(){
-    
+
         //data pack pointer
     int err = 0;
 	int	linger = 500;
@@ -120,10 +120,10 @@ void ZMQServer::executeOnThread(){
 	int	send_timeout = 100;
     zmq_msg_t response;
 	CDataWrapper *cdataWrapperPack = NULL;
-	
+
 	void *receiver = zmq_socket (zmqContext, ZMQ_REP);
     if(!receiver) return;
-    
+
     err = zmq_bind(receiver, bindStr.str().c_str());
     if(err == 0){
         ZMQS_LAPP << "Thread id:" << boost::lexical_cast<std::string>(boost::this_thread::get_id()) << "binded successfully";
@@ -166,8 +166,8 @@ void ZMQServer::executeOnThread(){
                 //  Send reply back to client
                 //dispatch the command
             cdataWrapperPack = commandHandler->dispatchCommand(new CDataWrapper((const char*)zmq_msg_data(&request)));
-            
-            
+
+
             auto_ptr<SerializationBuffer> result(cdataWrapperPack->getBSONData());
             result->disposeOnDelete = false;
             err = zmq_msg_init_data(&response, (void*)result->getBufferPtr(), result->getBufferLen(), my_free, NULL);
@@ -175,7 +175,7 @@ void ZMQServer::executeOnThread(){
             err = zmq_sendmsg(receiver, &response, ZMQ_NOBLOCK);
 			ZMQS_LDBG << "ACK Sent";
 			err = zmq_msg_close(&request);
-			
+
                 //deallocate the data wrapper pack if it has been allocated
             if(cdataWrapperPack) delete(cdataWrapperPack);
 			cdataWrapperPack = NULL;

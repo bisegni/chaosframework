@@ -44,7 +44,7 @@ static void my_free (void *data, void *hint)
 }
 
 
-ZMQClient::ZMQClient(string alias):RpcClient(alias){
+ZMQClient::ZMQClient(const string& alias):RpcClient(alias){
 };
 
 ZMQClient::~ZMQClient(){

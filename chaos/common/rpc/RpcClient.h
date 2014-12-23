@@ -88,7 +88,7 @@ namespace chaos {
         /*!
          Constructor di default per i
          */
-        RpcClient(string alias);
+        RpcClient(const std::string& alias);
     };
 }
 #endif

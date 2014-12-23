@@ -160,6 +160,48 @@ void DefaultCommandDispatcher::deregisterAction(DeclareAction *declareActionClas
 	
 }
 
+CDataWrapper* DefaultCommandDispatcher::executeCommandSync(CDataWrapper * action_pack) {
+	//allocate new Result Pack
+	CDataWrapper *result = new CDataWrapper();
+	try{
+		
+		if(!action_pack) {
+			MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -1, "Invalid action pack", __PRETTY_FUNCTION__)
+			return result;
+		}
+		if(!action_pack->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN)){
+			MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -2, "Action call with no action domain", __PRETTY_FUNCTION__)
+			return result;
+		}
+		
+		if(!action_pack->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME)) {
+			MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -3, "Action Call with no action name", __PRETTY_FUNCTION__)
+			return result;
+		}
+		
+		string action_domain = action_pack->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
+		
+		//RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
+		if(!das_map.count(action_domain)) {
+			MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -4, "Action Domain not registered", __PRETTY_FUNCTION__)
+			return result;
+		}
+		
+		//submit the action(Thread Safe)
+		das_map[action_domain]->synchronousCall(action_pack, result);
+		
+		//tag message has submitted
+		result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
+	}catch(CException& ex){
+		DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(result, ex)
+	} catch(...){
+		MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -5, "General exception received", __PRETTY_FUNCTION__)
+	}
+	
+	delete(action_pack);
+	return result;
+}
+
 /*
  This method sub the pack received by RPC system to the execution queue accordint to the pack domain
  the multithreading push is managed by OBuffer that is the superclass of DomainActionsScheduler. This method
@@ -183,9 +225,9 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
 		//RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
         if(!das_map.count(actionDomain)) throw CException(3, "Action Domain not registered", __PRETTY_FUNCTION__);
 		
-		LDEF_CMD_DISPTC_DBG_ << "Received the message content:-----------------------START";
-		LDEF_CMD_DISPTC_DBG_ << commandPack->getJSONString();
-		LDEF_CMD_DISPTC_DBG_ << "Received the message content:-------------------------END";
+		DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Received the message content:-----------------------START";)
+		DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << commandPack->getJSONString();)
+		DEBUG_CODE(LDEF_CMD_DISPTC_DBG_ << "Received the message content:-------------------------END";)
         
 		//submit the action(Thread Safe)
         if(!(sent = das_map[actionDomain]->push(commandPack))) {
@@ -194,15 +236,9 @@ CDataWrapper *DefaultCommandDispatcher::dispatchCommand(CDataWrapper *commandPac
 		
 		//tag message has submitted
         resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, 0);
-    }catch(CException& cse){
+    }catch(CException& ex){
 		if(!sent && commandPack) delete(commandPack);
-		//tag message has not submitted
-		//resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_RESULT, 1);
-        
-		//set error to general exception error
-        resultPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, cse.errorMessage);
-        resultPack->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN, cse.errorDomain);
-        resultPack->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, cse.errorCode);
+		DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(resultPack, ex)
     } catch(...){
 		if(!sent && commandPack) delete(commandPack);
 		//tag message has not submitted

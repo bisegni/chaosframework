@@ -51,8 +51,11 @@ namespace chaos {
             //!reference to global dispatcher used to resubmit sub command
         AbstractCommandDispatcher *dispatcher;
     public:
-        virtual void processBufferElement(chaos_data::CDataWrapper*, ElementManagingPolicy&) throw(CException);
-        
+        virtual void processBufferElement(chaos_data::CDataWrapper*,
+										  ElementManagingPolicy&) throw(CException);
+		
+		//!call the action in an async way
+        virtual void synchronousCall(chaos_data::CDataWrapper *action_pack, chaos_data::CDataWrapper *result);
     public:
         /*!
          Default constructor

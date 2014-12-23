@@ -90,10 +90,15 @@ LERR_ << "Message:" << x.errorMessage;\
 LERR_ << "Error Code;" << x.errorCode;\
 LERR_ << "-----------Exception------------";
 
-#define DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(cdatawrapper, ex)\
-cdatawrapper->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, ex.errorCode);\
-cdatawrapper->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN, ex.errorDomain);\
-cdatawrapper->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, ex.errorMessage);
+#define DECODE_CHAOS_EXCEPTION_IN_CDATAWRAPPERPTR(dw, ex)\
+dw->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, ex.errorCode);\
+dw->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN, ex.errorDomain);\
+dw->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, ex.errorMessage);
+
+#define MANAGE_ERROR_IN_CDATAWRAPPERPTR(dw, code, message, domain)\
+dw->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN, domain);\
+dw->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, code);\
+dw->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, message);
 
 #define DELETE_OBJ_POINTER(x)\
 delete(x); x=NULL;\

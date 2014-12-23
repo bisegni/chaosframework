@@ -59,7 +59,11 @@ namespace chaos{
      to manage the priority execution all the registration of the domain and action are managed
      by this base class
      */
-    class AbstractCommandDispatcher : public RpcServerHandler, Configurable, utility::StartableService, NamedService {
+    class AbstractCommandDispatcher :
+	public RpcServerHandler,
+	public Configurable,
+	public utility::StartableService,
+	public NamedService {
         friend class chaos::common::network::NetworkBroker;
         
             //! Rpc Client for action result
@@ -122,7 +126,7 @@ namespace chaos{
          deallocation is managed by rpc client, otherwise("true" value) the caller need to delete the object it self
          \return boolean value to informa is the mesage has been submitted
          */
-        bool submitMessage(string& serverAndPort,  chaos_data::CDataWrapper* messageToSend, bool onThisThread = false)  throw(CException);
+        bool submitMessage(string& serverAndPort,  chaos_data::CDataWrapper* messageToSend, bool onThisThread = false) throw(CException);
         
             //! Action registration
         /*

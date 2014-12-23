@@ -44,7 +44,7 @@ namespace chaos {
         thread_group threadGroup;
         bool runServer;
         
-        ZMQServer(string alias);
+        ZMQServer(const string& alias);
         virtual ~ZMQServer();
     public:
 

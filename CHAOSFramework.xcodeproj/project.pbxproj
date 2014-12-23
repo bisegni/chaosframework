@@ -342,6 +342,10 @@
 		32A809D814D82E28000F2DF7 /* MDSMessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */; };
 		32A8F7D1172BE3FD0090DB78 /* KeyGroupCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A8F7CF172BE3FD0090DB78 /* KeyGroupCache.cpp */; };
 		32A8F7D2172BE3FD0090DB78 /* KeyGroupCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A8F7D0172BE3FD0090DB78 /* KeyGroupCache.h */; };
+		32A91FCA1A49AF0700DCF364 /* RpcSyncServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A91FC81A49AF0700DCF364 /* RpcSyncServer.cpp */; };
+		32A91FCB1A49AF0700DCF364 /* RpcSyncServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A91FC91A49AF0700DCF364 /* RpcSyncServer.h */; };
+		32A91FCE1A49B37300DCF364 /* HTTPRpcSyncServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32A91FCC1A49B37300DCF364 /* HTTPRpcSyncServer.cpp */; };
+		32A91FCF1A49B37300DCF364 /* HTTPRpcSyncServer.h in Headers */ = {isa = PBXBuildFile; fileRef = 32A91FCD1A49B37300DCF364 /* HTTPRpcSyncServer.h */; };
 		32AAD78814CD660B005A097C /* RpcClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AAD78714CD660B005A097C /* RpcClient.h */; };
 		32AAD78A14CD772F005A097C /* MessageChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 32AAD78914CD772F005A097C /* MessageChannel.h */; };
 		32AAD78C14CD773F005A097C /* MessageChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32AAD78B14CD773F005A097C /* MessageChannel.cpp */; };
@@ -899,6 +903,10 @@
 		32A809D714D82E28000F2DF7 /* MDSMessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MDSMessageChannel.cpp; sourceTree = "<group>"; };
 		32A8F7CF172BE3FD0090DB78 /* KeyGroupCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeyGroupCache.cpp; sourceTree = "<group>"; };
 		32A8F7D0172BE3FD0090DB78 /* KeyGroupCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyGroupCache.h; sourceTree = "<group>"; };
+		32A91FC81A49AF0700DCF364 /* RpcSyncServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RpcSyncServer.cpp; sourceTree = "<group>"; };
+		32A91FC91A49AF0700DCF364 /* RpcSyncServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcSyncServer.h; sourceTree = "<group>"; };
+		32A91FCC1A49B37300DCF364 /* HTTPRpcSyncServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTTPRpcSyncServer.cpp; sourceTree = "<group>"; };
+		32A91FCD1A49B37300DCF364 /* HTTPRpcSyncServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTTPRpcSyncServer.h; sourceTree = "<group>"; };
 		32AAD78714CD660B005A097C /* RpcClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RpcClient.h; sourceTree = "<group>"; };
 		32AAD78914CD772F005A097C /* MessageChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageChannel.h; sourceTree = "<group>"; };
 		32AAD78B14CD773F005A097C /* MessageChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageChannel.cpp; sourceTree = "<group>"; };
@@ -1576,6 +1584,7 @@
 				326DB40814B38BC00018A8D0 /* pool */,
 				326DB40C14B38BC00018A8D0 /* pqueue */,
 				326DB41114B38BC00018A8D0 /* rpc */,
+				32A91FC71A49AEC300DCF364 /* sync_rpc */,
 				320C2180151B2BF200BD0F41 /* event */,
 				32AAD78114CD630D005A097C /* message */,
 				326DB41914B38BC00018A8D0 /* network */,
@@ -2044,6 +2053,17 @@
 			path = tcpuv;
 			sourceTree = "<group>";
 		};
+		32A91FC71A49AEC300DCF364 /* sync_rpc */ = {
+			isa = PBXGroup;
+			children = (
+				32A91FC81A49AF0700DCF364 /* RpcSyncServer.cpp */,
+				32A91FC91A49AF0700DCF364 /* RpcSyncServer.h */,
+				32A91FCC1A49B37300DCF364 /* HTTPRpcSyncServer.cpp */,
+				32A91FCD1A49B37300DCF364 /* HTTPRpcSyncServer.h */,
+			);
+			path = sync_rpc;
+			sourceTree = "<group>";
+		};
 		32AAD78114CD630D005A097C /* message */ = {
 			isa = PBXGroup;
 			children = (
@@ -2364,6 +2384,7 @@
 				324A4B50191A41EF00975394 /* cstdint.h in Headers */,
 				324A4B4A191A41EF00975394 /* atomic_word.h in Headers */,
 				326DB46814B38BC00018A8D0 /* AbstractCommandDispatcher.h in Headers */,
+				32A91FCF1A49B37300DCF364 /* HTTPRpcSyncServer.h in Headers */,
 				329603251876B45000CDCADA /* BatchCommandException.h in Headers */,
 				326DB46C14B38BC00018A8D0 /* DefaultCommandDispatcher.h in Headers */,
 				326DB46E14B38BC00018A8D0 /* DomainActionsScheduler.h in Headers */,
@@ -2583,6 +2604,7 @@
 				320FB0EC18A39E650014CDB3 /* DirectIO.h in Headers */,
 				327F51DF1952E81D00BA3D01 /* DirectIOURLManagment.h in Headers */,
 				329CFCF318CDEE2F002C37CF /* ObjectSlot.h in Headers */,
+				32A91FCB1A49AF0700DCF364 /* RpcSyncServer.h in Headers */,
 				32CDA9A5198932C500663D8B /* LoadableService.h in Headers */,
 				32279F8516F8DEAF009EC7B9 /* DataBroker.h in Headers */,
 				32279F8C16FA36B6009EC7B9 /* PublisherDataService.h in Headers */,
@@ -2976,6 +2998,7 @@
 				32B571F2168E02C30002A198 /* bson_validate.cpp in Sources */,
 				32B57207168E02D10002A198 /* oid.cpp in Sources */,
 				329603261876B45000CDCADA /* BatchCommandExecutor.cpp in Sources */,
+				32A91FCE1A49B37300DCF364 /* HTTPRpcSyncServer.cpp in Sources */,
 				32B159CD18AE08720096B58B /* ZMQSocketFeeder.cpp in Sources */,
 				32460520179C55FC00B075DA /* sqlite3.c in Sources */,
 				324A4B54191A41EF00975394 /* random.cpp in Sources */,
@@ -2985,6 +3008,7 @@
 				324A4B71191A428500975394 /* bson_extract.cpp in Sources */,
 				32B1378A189BEC3300B17CA4 /* ZMQDirectIOClient.cpp in Sources */,
 				329603221876B45000CDCADA /* BatchCommand.cpp in Sources */,
+				32A91FCA1A49AF0700DCF364 /* RpcSyncServer.cpp in Sources */,
 				32BFF90E176C842E00D27A04 /* InizializableService.cpp in Sources */,
 				32C5A42718D9959800C0435C /* DirectIOPerformanceSession.cpp in Sources */,
 				32279F8416F8DEAF009EC7B9 /* DataBroker.cpp in Sources */,

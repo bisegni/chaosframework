@@ -14,7 +14,7 @@ using namespace chaos;
 /*!
  Constructor di default per i
  */
-RpcClient::RpcClient(string alias):NamedService(alias){
+RpcClient::RpcClient(const std::string& alias):NamedService(alias){
 };
 
 /*!

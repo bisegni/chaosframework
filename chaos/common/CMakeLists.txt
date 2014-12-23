@@ -54,6 +54,8 @@ SET(common_lib_src  ${common_lib_src}	network/NetworkBroker.cpp network/Performa
 
 SET(common_lib_src  ${common_lib_src}	rpc/RpcClient.cpp rpc/RpcServer.cpp rpc/zmq/ZMQClient.cpp rpc/zmq/ZMQServer.cpp rpc/tcpuv/TCPUVClient.cpp rpc/tcpuv/TCPUVServer.cpp)
 
+SET(common_lib_src  ${common_lib_src}	sync_rpc/RpcSyncServer.cpp sync_rpc/HTTPRpcSyncServer.cpp)
+
 SET(common_lib_src  ${common_lib_src}	utility/NamedService.cpp utility/LoadableService.cpp utility/StartableService.cpp utility/InizializableService.cpp)
 
 SET(common_lib_src  ${common_lib_src}	batch_command/BatchCommandExecutor.cpp batch_command/BatchCommandSandbox.cpp batch_command/BatchCommand.cpp)

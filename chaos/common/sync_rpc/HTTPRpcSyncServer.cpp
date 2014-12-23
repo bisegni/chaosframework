@@ -1,9 +1,9 @@
 /*
- *	RpcServer.cpp
+ *	HTTPRpcSyncServer.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
- *    	Copyright 2012 INFN, National Institute of Nuclear Physics
+ *    	Copyright 2014 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
  *    	you may not use this file except in compliance with the License.
@@ -17,24 +17,37 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include <chaos/common/rpc/RpcServer.h>
 
-using namespace chaos;
 
-RpcServer::RpcServer(const std::string& alias):
-NamedService(alias) {
+#include <chaos/common/sync_rpc/HTTPRpcSyncServer.h>
+
+using namespace chaos::common::sync_rpc;
+
+HTTPRpcSyncServer::HTTPRpcSyncServer(const string& alias):
+RpcSyncServer(alias){
+	
 }
 
-/*!
- Return the published port
- */
-int RpcServer::getPublishedPort(){
-    return portNumber;
+HTTPRpcSyncServer::~HTTPRpcSyncServer() {
+	
 }
 
-/*
- set the command dispatcher associated to the instance of rpc adapter
- */
-void RpcServer::setCommandDispatcher(RpcServerHandler *newCommandHandler) {
-    commandHandler = newCommandHandler;
+//inherited method
+void HTTPRpcSyncServer::init(void*) throw(CException) {
+	
+}
+
+//inherited method
+void HTTPRpcSyncServer::start() throw(CException) {
+	
+}
+
+//inherited method
+void HTTPRpcSyncServer::stop() throw(CException) {
+	
+}
+
+//inherited method
+void HTTPRpcSyncServer::deinit() throw(CException) {
+	
 }

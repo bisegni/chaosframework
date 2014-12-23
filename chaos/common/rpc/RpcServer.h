@@ -1,8 +1,8 @@
-/*	
- *	AbstractRpcAdapter.h
+/*
+ *	RpcServer.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -69,7 +69,7 @@ namespace chaos {
         virtual void deinit() throw(CException) = 0;
         
     public:
-        RpcServer(string alias);
+        RpcServer(const std::string& alias);
         
         /*!
          Return the published port

@@ -74,12 +74,11 @@ namespace chaos{
          */
         virtual void deregisterAction(DeclareAction*)  throw(CException) ;
         
-        /*!
-         This method sub the pack received by RPC system to the execution queue accordint to the pack domain
-         the multithreading push is managed by OBuffer that is the superclass of DomainActionsScheduler. This method
-         will ever return an allocated object. The deallocaiton is demanded to caller
-         */
-        virtual chaos_data::CDataWrapper* dispatchCommand(chaos_data::CDataWrapper*) throw(CException);
+		// inherited method
+        chaos_data::CDataWrapper* dispatchCommand(chaos_data::CDataWrapper*) throw(CException);
+		
+		// inherited method
+		chaos_data::CDataWrapper* executeCommandSync(chaos_data::CDataWrapper * action_pack);
 
     };
 }
