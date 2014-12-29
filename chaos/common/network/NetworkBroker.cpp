@@ -50,6 +50,7 @@ NetworkBroker::NetworkBroker():performance_session_managment(this){
     eventServer = NULL;
     rpcServer = NULL;
     rpcClient = NULL;
+    sync_rpc_server = NULL;
     commandDispatcher = NULL;
     
     directIODispatcher = NULL;
@@ -77,7 +78,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
     
     
     if(!globalConfiguration) {
-        throw CException(1, "No global configuraiton found", "NetworkBroker::init");
+        throw CException(1, "No global configuraiton found", __PRETTY_FUNCTION__);
     }
     
 	//---------------------------- D I R E C T I/O ----------------------------
@@ -108,10 +109,10 @@ void NetworkBroker::init(void *initData) throw(CException) {
     if(globalConfiguration->hasKey(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION)) {
         eventDispatcher = ObjectFactoryRegister<AbstractEventDispatcher>::getInstance()->getNewInstanceByName("DefaultEventDispatcher");
         if(!eventDispatcher)
-            throw CException(2, "Event dispatcher implementation not found", "NetworkBroker::init");
+            throw CException(2, "Event dispatcher implementation not found", __PRETTY_FUNCTION__);
         
-        if(!chaos::utility::StartableService::initImplementation(eventDispatcher, static_cast<void*>(globalConfiguration), "DefaultEventDispatcher", "NetworkBroker::init"))
-            throw CException(3, "Event dispatcher has not been initialized due an error", "NetworkBroker::init");
+        if(!chaos::utility::StartableService::initImplementation(eventDispatcher, static_cast<void*>(globalConfiguration), "DefaultEventDispatcher", __PRETTY_FUNCTION__))
+            throw CException(3, "Event dispatcher has not been initialized due an error", __PRETTY_FUNCTION__);
         
         
         string eventAdapterType = globalConfiguration->getStringValue(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION);
@@ -121,7 +122,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         MB_LAPP  << "Trying to initilize Event Server: " << eventServerName;
         eventServer = ObjectFactoryRegister<EventServer>::getInstance()->getNewInstanceByName(eventServerName);
-        if(chaos::utility::StartableService::initImplementation(eventServer, static_cast<void*>(globalConfiguration), eventServer->getName(), "NetworkBroker::init")){
+        if(chaos::utility::StartableService::initImplementation(eventServer, static_cast<void*>(globalConfiguration), eventServer->getName(), __PRETTY_FUNCTION__)){
 			//register the root handler on event server
             eventServer->setEventHanlder(eventDispatcher);
         }
@@ -129,7 +130,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         MB_LAPP  << "Trying to initilize Event Client: " << eventClientName;
         eventClient = ObjectFactoryRegister<EventClient>::getInstance()->getNewInstanceByName(eventClientName);
-        chaos::utility::StartableService::initImplementation(eventClient, static_cast<void*>(globalConfiguration), eventClientName.c_str(), "NetworkBroker::init");
+        chaos::utility::StartableService::initImplementation(eventClient, static_cast<void*>(globalConfiguration), eventClientName.c_str(), __PRETTY_FUNCTION__);
     }
 	//---------------------------- E V E N T ----------------------------
     
@@ -139,10 +140,10 @@ void NetworkBroker::init(void *initData) throw(CException) {
         MB_LAPP  << "Get DefaultCommandDispatcher implementation";
         commandDispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher");
         if(!commandDispatcher)
-            throw CException(2, "Command dispatcher implementation not found", "NetworkBroker::init");
+            throw CException(2, "Command dispatcher implementation not found", __PRETTY_FUNCTION__);
         
-        if(!chaos::utility::StartableService::initImplementation(commandDispatcher, static_cast<void*>(globalConfiguration), "DefaultCommandDispatcher", "NetworkBroker::init"))
-            throw CException(3, "Command dispatcher has not been initialized due an error", "NetworkBroker::init");
+        if(!chaos::utility::StartableService::initImplementation(commandDispatcher, static_cast<void*>(globalConfiguration), "DefaultCommandDispatcher", __PRETTY_FUNCTION__))
+            throw CException(3, "Command dispatcher has not been initialized due an error", __PRETTY_FUNCTION__);
         
         
 		// get the rpc type to instantiate
@@ -153,9 +154,9 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         MB_LAPP  << "Trying to initilize RPC Server: " << rpcServerName;
         rpcServer = ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(rpcServerName);
-		if(!rpcServer) throw CException(4, "Error allocating rpc server implementation", "NetworkBroker::init");
+		if(!rpcServer) throw CException(4, "Error allocating rpc server implementation", __PRETTY_FUNCTION__);
 		
-        if(chaos::utility::StartableService::initImplementation(rpcServer, static_cast<void*>(globalConfiguration), rpcServer->getName(), "NetworkBroker::init")) {
+        if(chaos::utility::StartableService::initImplementation(rpcServer, static_cast<void*>(globalConfiguration), rpcServer->getName(), __PRETTY_FUNCTION__)) {
 			//set the handler on the rpc server
             rpcServer->setCommandDispatcher(commandDispatcher);
         }
@@ -163,16 +164,38 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         MB_LAPP  << "Trying to initilize RPC Client: " << rpcClientName;
         rpcClient = ObjectFactoryRegister<RpcClient>::getInstance()->getNewInstanceByName(rpcClientName);
-		if(!rpcClient) throw CException(4, "Error allocating rpc client implementation", "NetworkBroker::init");
+		if(!rpcClient) throw CException(4, "Error allocating rpc client implementation", __PRETTY_FUNCTION__);
 
-        if(chaos::utility::StartableService::initImplementation(rpcClient, static_cast<void*>(globalConfiguration), rpcClient->getName(), "NetworkBroker::init")) {
+        if(chaos::utility::StartableService::initImplementation(rpcClient, static_cast<void*>(globalConfiguration), rpcClient->getName(), __PRETTY_FUNCTION__)) {
 			//set the forwarder into dispatcher for answere
             if(commandDispatcher) commandDispatcher->setRpcForwarder(rpcClient);
         }
     } else {
-        throw CException(4, "No RPC Adapter type found in configuration", "NetworkBroker::init");
+        throw CException(4, "No RPC Adapter type found in configuration", __PRETTY_FUNCTION__);
     }
 	//---------------------------- R P C ----------------------------
+    //---------------------------- R P C SYNC ----------------------------
+    if(globalConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ENABLE)){
+        //get the dispatcher
+        MB_LAPP  << "Setup RPC Synch implementation";
+        
+        // get the rpc type to instantiate
+        string rpc_sync_impl = globalConfiguration->getStringValue(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ADAPTER_TYPE);
+        //construct the rpc server and client name
+        string rpc_sync_impl_name = rpc_sync_impl+"RpcSyncServer";
+        
+        MB_LAPP  << "Trying to initilize RPC Server: " << rpc_sync_impl_name;
+        sync_rpc_server = ObjectFactoryRegister<sync_rpc::RpcSyncServer>::getInstance()->getNewInstanceByName(rpc_sync_impl_name);
+        if(!sync_rpc_server) throw CException(4, "Error allocating rpc sync server implementation", __PRETTY_FUNCTION__);
+        
+        if(chaos::utility::StartableService::initImplementation(sync_rpc_server, static_cast<void*>(globalConfiguration), sync_rpc_server->getName(), __PRETTY_FUNCTION__)) {
+            //set the handler on the rpc server
+            sync_rpc_server->setCommandDispatcher(commandDispatcher);
+        }
+    } else {
+        throw CException(4, "No RPC Sync Adapter type found in configuration", __PRETTY_FUNCTION__);
+    }
+    //---------------------------- R P C SYNC ----------------------------
 	MB_LAPP  << "Initialize performance session manager";
 	chaos::utility::StartableService::initImplementation(performance_session_managment, static_cast<void*>(globalConfiguration), "PerformanceManagment",  __PRETTY_FUNCTION__);
 }

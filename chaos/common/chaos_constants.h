@@ -38,6 +38,10 @@ namespace chaos {
 		static const char * const   OPT_CONF_FILE						= "conf_file";
         //!   Specify the implementation to use for rp messaging
         static const char * const   OPT_RPC_IMPLEMENTATION              = "rpc-server-impl";
+        //!   Specify the implementation to use for rp messaging
+        static const char * const   OPT_RPC_SYNC_ENABLE                 = "rpc-syncserver-enable";
+        //!   Specify the implementation to use for rp messaging
+        static const char * const   OPT_RPC_SYNC_IMPLEMENTATION         = "rpc-syncserver-impl";
         //!   Specify the network port where rpc system will publish al the service
         static const char * const   OPT_RPC_SERVER_PORT                 = "rpc-server-port";
         //!  Specify the number of the thread that the rpc ssytem must use to process the request
@@ -77,6 +81,10 @@ namespace chaos {
     namespace RpcConfigurationKey {
         //!  specify the type of the adatpre to be used
         static const char * const CS_CMDM_RPC_ADAPTER_TYPE                = "cs|cmdm|rpc_adapter_type";
+        //!  specify when use the rpc synchronous interface
+        static const char * const CS_CMDM_RPC_SYNC_ENABLE           = "cs|cmdm|rpc_sync_enable";
+        //!  specify the type of the adapter to use for syncrhonous rpc server
+        static const char * const CS_CMDM_RPC_SYNC_ADAPTER_TYPE           = "cs|cmdm|rpc_sync_adapter_type";
         //!  specify the port where the rpc must publish the his socket
         static const char * const CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT        = "cs|cmdm|rpc_adapter_port";
         //!  the number of the thread to user

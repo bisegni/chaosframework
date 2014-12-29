@@ -25,6 +25,7 @@
 #include <boost/thread/mutex.hpp>
 
 #include <chaos/common/rpc/ChaosRpc.h>
+#include <chaos/common/sync_rpc/ChaosSyncRpc.h>
 #include <chaos/common/direct_io/DirectIO.h>
 #include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/action/DeclareAction.h>
@@ -112,6 +113,9 @@ namespace chaos {
 				//! Rpc server for message listening
 				RpcServer *rpcServer;
 
+                //! Rpc sync interface
+                sync_rpc::RpcSyncServer *sync_rpc_server;
+                
 				//rpc action dispatcher
 				AbstractCommandDispatcher *commandDispatcher;
 				

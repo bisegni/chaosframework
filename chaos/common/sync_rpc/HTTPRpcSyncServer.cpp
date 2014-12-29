@@ -18,13 +18,16 @@
  *    	limitations under the License.
  */
 
-
+#include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/sync_rpc/HTTPRpcSyncServer.h>
 
+
 using namespace chaos::common::sync_rpc;
+using namespace Mongoose;
 
 HTTPRpcSyncServer::HTTPRpcSyncServer(const string& alias):
-RpcSyncServer(alias){
+RpcSyncServer(alias),
+http_server(8080){
 	
 }
 
@@ -34,20 +37,39 @@ HTTPRpcSyncServer::~HTTPRpcSyncServer() {
 
 //inherited method
 void HTTPRpcSyncServer::init(void*) throw(CException) {
-	
+    http_server.registerController(this);
+    http_server.setOption("enable_directory_listing", "false");
 }
 
 //inherited method
 void HTTPRpcSyncServer::start() throw(CException) {
-	
+    
+    http_server.start();
+    
+    cout << "Server started, routes:" << endl;
+    dumpRoutes();
+
 }
 
 //inherited method
 void HTTPRpcSyncServer::stop() throw(CException) {
-	
+    http_server.stop();
 }
 
 //inherited method
 void HTTPRpcSyncServer::deinit() throw(CException) {
 	
+}
+
+void HTTPRpcSyncServer::consumeJSONApi(Request &request, StreamResponse &response) {
+    response << "Hello " << htmlEntities(request.get("name", "... what's your name ?")) << endl;
+}
+
+void HTTPRpcSyncServer::setup() {
+    // Example of prefix, putting all the urls into "/api"
+    WebController::setPrefix("/api");
+    
+    // Hello demo
+    WebController::addRoute("GET", "/", HTTPRpcSyncServer, consumeJSONApi);
+    WebController::addRoute("GET", "/hello", HTTPRpcSyncServer, consumeJSONApi);
 }

@@ -24,6 +24,9 @@
 #include <chaos/common/sync_rpc/RpcSyncServer.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
+#include <mongoose/Server.h>
+#include <mongoose/WebController.h>
+
 namespace chaos {
 	namespace common {
 		namespace sync_rpc {
@@ -31,12 +34,18 @@ namespace chaos {
 			/*
 			 Class that implement the Chaos RPC server using HTTP
 			 */
-			REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(HTTPRpcSyncServer, RpcSyncServer)  {
+			REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(HTTPRpcSyncServer, RpcSyncServer),
+            public Mongoose::WebController {
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(HTTPRpcSyncServer)
 				
 				HTTPRpcSyncServer(const string& alias);
 				~HTTPRpcSyncServer();
 				
+                Mongoose::Server http_server;
+                
+                void consumeJSONApi(Mongoose::Request &request, Mongoose::StreamResponse &response);
+                
+                void setup();
 			protected:
 				//inherited method
 				void init(void*) throw(CException);
