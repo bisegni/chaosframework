@@ -1,5 +1,5 @@
 /*	
- *	ChaosNodeDirectory.cpp
+ *	ChaosMetadataService.cpp
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *	
@@ -17,7 +17,7 @@
  *    	See the License for the specific language governing permissions and
  *    	limitations under the License.
  */
-#include "ChaosNodeDirectory.h"
+#include "ChaosMetadataService.h"
 #include <csignal>
 #include <chaos/common/exception/CException.h>
 
@@ -26,38 +26,38 @@ using namespace chaos;
 using namespace chaos::nd;
 using boost::shared_ptr;
 
-WaitSemaphore ChaosNodeDirectory::waitCloseSemaphore;
+WaitSemaphore ChaosMetadataService::waitCloseSemaphore;
 
-#define LCND_LAPP LAPP_ << "[ChaosNodeDirectory] - "
-#define LCND_LDBG LDBG_ << "[ChaosNodeDirectory] - " << __PRETTY_FUNCTION << " - "
-#define LCND_LERR LERR_ << "[ChaosNodeDirectory] - " << __PRETTY_FUNCTION << "(" << __LINE__ << ") - " 
+#define LCND_LAPP LAPP_ << "[ChaosMetadataService] - "
+#define LCND_LDBG LDBG_ << "[ChaosMetadataService] - " << __PRETTY_FUNCTION << " - "
+#define LCND_LERR LERR_ << "[ChaosMetadataService] - " << __PRETTY_FUNCTION << "(" << __LINE__ << ") - " 
 
     //! C and C++ attribute parser
 /*!
  Specialized option for startup c and cpp program main options parameter
  */
-void ChaosNodeDirectory::init(int argc, char* argv[]) throw (CException) {
-    ChaosCommon<ChaosNodeDirectory>::init(argc, argv);
+void ChaosMetadataService::init(int argc, char* argv[]) throw (CException) {
+    ChaosCommon<ChaosMetadataService>::init(argc, argv);
 }
     //!stringbuffer parser
 /*
  specialized option for string stream buffer with boost semantics
  */
-void ChaosNodeDirectory::init(istringstream &initStringStream) throw (CException) {
-    ChaosCommon<ChaosNodeDirectory>::init(initStringStream);
+void ChaosMetadataService::init(istringstream &initStringStream) throw (CException) {
+    ChaosCommon<ChaosMetadataService>::init(initStringStream);
 }
 
 /*
  *
  */
-void ChaosNodeDirectory::init(void *init_data)  throw(CException) {
+void ChaosMetadataService::init(void *init_data)  throw(CException) {
     try {
-        ChaosCommon<ChaosNodeDirectory>::init(init_data);
-        if (signal((int) SIGINT, ChaosNodeDirectory::signalHanlder) == SIG_ERR) {
+        ChaosCommon<ChaosMetadataService>::init(init_data);
+        if (signal((int) SIGINT, ChaosMetadataService::signalHanlder) == SIG_ERR) {
             throw CException(0, "Error registering SIGINT signal", __PRETTY_FUNCTION__);
         }
  
-        if (signal((int) SIGQUIT, ChaosNodeDirectory::signalHanlder) == SIG_ERR) {
+        if (signal((int) SIGQUIT, ChaosMetadataService::signalHanlder) == SIG_ERR) {
             throw CException(0, "Error registering SIG_ERR signal", __PRETTY_FUNCTION__);
         }
 
@@ -71,7 +71,7 @@ void ChaosNodeDirectory::init(void *init_data)  throw(CException) {
 /*
  *
  */ 
-void ChaosNodeDirectory::start()  throw(CException) {
+void ChaosMetadataService::start()  throw(CException) {
         //lock o monitor for waith the end
     try {
         //at this point i must with for end signal
@@ -96,7 +96,7 @@ void ChaosNodeDirectory::start()  throw(CException) {
 /*
  Stop the toolkit execution
  */
-void ChaosNodeDirectory::stop()   throw(CException) {
+void ChaosMetadataService::stop()   throw(CException) {
     //lock lk(monitor);
         //unlock the condition for end start method
     //endWaithCondition.notify_one();
@@ -106,14 +106,14 @@ void ChaosNodeDirectory::stop()   throw(CException) {
 /*
  Deiniti all the manager
  */
-void ChaosNodeDirectory::deinit()   throw(CException) {
+void ChaosMetadataService::deinit()   throw(CException) {
 
 }
 
 /*
  *
  */
-void ChaosNodeDirectory::signalHanlder(int signalNumber) {
+void ChaosMetadataService::signalHanlder(int signalNumber) {
     //lock lk(monitor);
         //unlock the condition for end start method
     //endWaithCondition.notify_one();

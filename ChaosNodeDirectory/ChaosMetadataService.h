@@ -1,5 +1,5 @@
 /*
- *	ChaosNodeDirectory.h
+ *	ChaosMetadataService.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
  *
@@ -38,16 +38,16 @@ namespace chaos {
         /*!
          
          */
-        class ChaosNodeDirectory :
-		public ChaosCommon<ChaosNodeDirectory>,
+        class ChaosMetadataService :
+		public ChaosCommon<ChaosMetadataService>,
 		public ServerDelegator,
 		public utility::StartableService {
-            friend class Singleton<ChaosNodeDirectory>;
+            friend class Singleton<ChaosMetadataService>;
             
             static WaitSemaphore waitCloseSemaphore;
             
-            ChaosNodeDirectory(){};
-            ~ChaosNodeDirectory(){};
+            ChaosMetadataService(){};
+            ~ChaosMetadataService(){};
             static void signalHanlder(int);
             
         public:
