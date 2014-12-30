@@ -28,6 +28,7 @@
 #include <chaos/common/ChaosCommon.h>
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/utility/StartableService.h>
+
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManager.h>
 
@@ -45,6 +46,9 @@ namespace chaos {
             friend class Singleton<ChaosMetadataService>;
             
             static WaitSemaphore waitCloseSemaphore;
+            
+            //! network broker for talk with others chaos node
+            chaos::utility::StartableServiceContainer<NetworkBroker> network_broker_service;
             
             ChaosMetadataService(){};
             ~ChaosMetadataService(){};

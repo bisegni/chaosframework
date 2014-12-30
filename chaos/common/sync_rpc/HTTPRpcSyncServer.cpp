@@ -62,6 +62,7 @@ void HTTPRpcSyncServer::deinit() throw(CException) {
 }
 
 void HTTPRpcSyncServer::consumeJSONApi(Request &request, StreamResponse &response) {
+    LAPP_ << request.getUrl();
     response << "Hello " << htmlEntities(request.get("name", "... what's your name ?")) << endl;
 }
 
@@ -70,6 +71,6 @@ void HTTPRpcSyncServer::setup() {
     WebController::setPrefix("/api");
     
     // Hello demo
-    WebController::addRoute("GET", "/", HTTPRpcSyncServer, consumeJSONApi);
-    WebController::addRoute("GET", "/hello", HTTPRpcSyncServer, consumeJSONApi);
+    WebController::addRoute("GET", "/devices", HTTPRpcSyncServer, consumeJSONApi);
+    WebController::addRoute("GET", "/device/dataset", HTTPRpcSyncServer, consumeJSONApi);
 }

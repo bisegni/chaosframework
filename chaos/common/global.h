@@ -116,11 +116,9 @@ LAPP_ << CSLIB_VERSION_NUMBER;\
 LAPP_ << "-----------------------------------------";
 
 #define CHAOS_NOT_THROW(x)\
-try { \
-x \
-} catch (...) { \
-   \
-}
+try {x} catch (chaos::CException& ex) { \
+DECODE_CHAOS_EXCEPTION(ex)\
+} catch (...) {}
 /*
  Abstraction for the server delegator
  */

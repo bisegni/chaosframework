@@ -45,19 +45,19 @@ using namespace chaos::common::network;
 /*!
  
  */
-NetworkBroker::NetworkBroker():performance_session_managment(this){
-    eventClient = NULL;
-    eventServer = NULL;
-    rpcServer = NULL;
-    rpcClient = NULL;
-    sync_rpc_server = NULL;
-    commandDispatcher = NULL;
-    
-    directIODispatcher = NULL;
-    directIOServer = NULL;
-    canUseMetadataServer = GlobalConfiguration::getInstance()->isMEtadataServerConfigured();
-    if(canUseMetadataServer){
-        metadataServerAddress = GlobalConfiguration::getInstance()->getMetadataServerAddress();
+NetworkBroker::NetworkBroker():
+performance_session_managment(this),
+event_client(NULL),
+event_server(NULL),
+rpc_server(NULL),
+rpc_client(NULL),
+sync_rpc_server(NULL),
+command_dispatcher(NULL),
+direct_io_dispatcher(NULL),
+direct_io_server(NULL) {
+    can_use_metadata_server = GlobalConfiguration::getInstance()->isMEtadataServerConfigured();
+    if(can_use_metadata_server){
+        metadata_server_address = GlobalConfiguration::getInstance()->getMetadataServerAddress();
     }
 }
 
@@ -85,19 +85,18 @@ void NetworkBroker::init(void *initData) throw(CException) {
 	if(globalConfiguration->hasKey(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_IMPL_TYPE)) {
         string direct_io_impl = globalConfiguration->getStringValue(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_IMPL_TYPE);
 		//construct the rpc server and client name
-        string directIOServerImpl = direct_io_impl+"DirectIOServer";
-        directIOClientImpl = direct_io_impl+"DirectIOClient";
-        MB_LAPP  << "DirectIO Client implementation is configured has : " << directIOClientImpl;
-        MB_LAPP  << "Trying to initilize DirectIO Server: " << directIOServerImpl;
-        directIOServer = ObjectFactoryRegister<common::direct_io::DirectIOServer>::getInstance()->getNewInstanceByName(directIOServerImpl);
-		if(!directIOServer) throw CException(1, "Error creating direct io server implementation:\""+directIOServerImpl+"\"", __FUNCTION__);
+        string direct_io_server_impl = direct_io_impl+"DirectIOServer";
+        direct_io_client_impl = direct_io_impl + "DirectIOClient";
+        MB_LAPP  << "Trying to initilize DirectIO Server: " << direct_io_server_impl;
+        direct_io_server = ObjectFactoryRegister<common::direct_io::DirectIOServer>::getInstance()->getNewInstanceByName(direct_io_server_impl);
+		if(!direct_io_server) throw CException(1, "Error creating direct io server implementation", __PRETTY_FUNCTION__);
 		
 		//allocate the dispatcher
-		MB_LAPP  << "Allocate DirectIODispatcher DirectIODispatcher";
-		directIOServer->setHandler(directIODispatcher = new common::direct_io::DirectIODispatcher());
+		MB_LAPP  << "Allocate DirectIODispatcher";
+		direct_io_server->setHandler(direct_io_dispatcher = new common::direct_io::DirectIODispatcher());
 		
 		//initialize direct io server
-		chaos::utility::StartableService::initImplementation(directIOServer, static_cast<void*>(globalConfiguration), directIOServer->getName(), __FUNCTION__);
+		chaos::utility::StartableService::initImplementation(direct_io_server, static_cast<void*>(globalConfiguration), direct_io_server->getName(), __PRETTY_FUNCTION__);
 		
 		//init the my_ip variable for all client
 		common::direct_io::DirectIOClientConnection::my_str_ip = GlobalConfiguration::getInstance()->getLocalServerAddress();
@@ -107,30 +106,29 @@ void NetworkBroker::init(void *initData) throw(CException) {
 	
 	//---------------------------- E V E N T ----------------------------
     if(globalConfiguration->hasKey(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION)) {
-        eventDispatcher = ObjectFactoryRegister<AbstractEventDispatcher>::getInstance()->getNewInstanceByName("DefaultEventDispatcher");
-        if(!eventDispatcher)
+        event_dispatcher = ObjectFactoryRegister<AbstractEventDispatcher>::getInstance()->getNewInstanceByName("DefaultEventDispatcher");
+        if(!event_dispatcher)
             throw CException(2, "Event dispatcher implementation not found", __PRETTY_FUNCTION__);
         
-        if(!chaos::utility::StartableService::initImplementation(eventDispatcher, static_cast<void*>(globalConfiguration), "DefaultEventDispatcher", __PRETTY_FUNCTION__))
+        if(!chaos::utility::StartableService::initImplementation(event_dispatcher, static_cast<void*>(globalConfiguration), "DefaultEventDispatcher", __PRETTY_FUNCTION__))
             throw CException(3, "Event dispatcher has not been initialized due an error", __PRETTY_FUNCTION__);
         
         
-        string eventAdapterType = globalConfiguration->getStringValue(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION);
+        string event_adapter_type = globalConfiguration->getStringValue(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION);
 		//construct the rpc server and client name
-        string eventServerName = eventAdapterType+"EventServer";
-        string eventClientName = eventAdapterType+"EventClient";
+        string event_server_name = event_adapter_type+"EventServer";
+        string event_client_name = event_adapter_type+"EventClient";
         
-        MB_LAPP  << "Trying to initilize Event Server: " << eventServerName;
-        eventServer = ObjectFactoryRegister<EventServer>::getInstance()->getNewInstanceByName(eventServerName);
-        if(chaos::utility::StartableService::initImplementation(eventServer, static_cast<void*>(globalConfiguration), eventServer->getName(), __PRETTY_FUNCTION__)){
+        MB_LAPP  << "Trying to initilize Event Server: " << event_server_name;
+        event_server = ObjectFactoryRegister<EventServer>::getInstance()->getNewInstanceByName(event_server_name);
+        if(chaos::utility::StartableService::initImplementation(event_server, static_cast<void*>(globalConfiguration), event_server->getName(), __PRETTY_FUNCTION__)){
 			//register the root handler on event server
-            eventServer->setEventHanlder(eventDispatcher);
+            event_server->setEventHanlder(event_dispatcher);
         }
         
-        
-        MB_LAPP  << "Trying to initilize Event Client: " << eventClientName;
-        eventClient = ObjectFactoryRegister<EventClient>::getInstance()->getNewInstanceByName(eventClientName);
-        chaos::utility::StartableService::initImplementation(eventClient, static_cast<void*>(globalConfiguration), eventClientName.c_str(), __PRETTY_FUNCTION__);
+        MB_LAPP  << "Trying to initilize Event Client: " << event_client_name;
+        event_client = ObjectFactoryRegister<EventClient>::getInstance()->getNewInstanceByName(event_client_name);
+        chaos::utility::StartableService::initImplementation(event_client, static_cast<void*>(globalConfiguration), event_client->getName(), __PRETTY_FUNCTION__);
     }
 	//---------------------------- E V E N T ----------------------------
     
@@ -138,37 +136,37 @@ void NetworkBroker::init(void *initData) throw(CException) {
     if(globalConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE)){
 		//get the dispatcher
         MB_LAPP  << "Get DefaultCommandDispatcher implementation";
-        commandDispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher");
-        if(!commandDispatcher)
+        command_dispatcher = ObjectFactoryRegister<AbstractCommandDispatcher>::getInstance()->getNewInstanceByName("DefaultCommandDispatcher");
+        if(!command_dispatcher)
             throw CException(2, "Command dispatcher implementation not found", __PRETTY_FUNCTION__);
         
-        if(!chaos::utility::StartableService::initImplementation(commandDispatcher, static_cast<void*>(globalConfiguration), "DefaultCommandDispatcher", __PRETTY_FUNCTION__))
+        if(!chaos::utility::StartableService::initImplementation(command_dispatcher, static_cast<void*>(globalConfiguration), "DefaultCommandDispatcher", __PRETTY_FUNCTION__))
             throw CException(3, "Command dispatcher has not been initialized due an error", __PRETTY_FUNCTION__);
         
         
 		// get the rpc type to instantiate
-        string rpcRapterType = globalConfiguration->getStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE);
+        string rpc_adapter_type = globalConfiguration->getStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE);
 		//construct the rpc server and client name
-        string rpcServerName = rpcRapterType+"Server";
-        string rpcClientName = rpcRapterType+"Client";
+        string rpc_server_name = rpc_adapter_type+"Server";
+        string rpc_client_name = rpc_adapter_type+"Client";
         
-        MB_LAPP  << "Trying to initilize RPC Server: " << rpcServerName;
-        rpcServer = ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(rpcServerName);
-		if(!rpcServer) throw CException(4, "Error allocating rpc server implementation", __PRETTY_FUNCTION__);
+        MB_LAPP  << "Trying to initilize RPC Server: " << rpc_server_name;
+        rpc_server = ObjectFactoryRegister<RpcServer>::getInstance()->getNewInstanceByName(rpc_server_name);
+		if(!rpc_server) throw CException(4, "Error allocating rpc server implementation", __PRETTY_FUNCTION__);
 		
-        if(chaos::utility::StartableService::initImplementation(rpcServer, static_cast<void*>(globalConfiguration), rpcServer->getName(), __PRETTY_FUNCTION__)) {
+        if(chaos::utility::StartableService::initImplementation(rpc_server, static_cast<void*>(globalConfiguration), rpc_server->getName(), __PRETTY_FUNCTION__)) {
 			//set the handler on the rpc server
-            rpcServer->setCommandDispatcher(commandDispatcher);
+            rpc_server->setCommandDispatcher(command_dispatcher);
         }
         
         
-        MB_LAPP  << "Trying to initilize RPC Client: " << rpcClientName;
-        rpcClient = ObjectFactoryRegister<RpcClient>::getInstance()->getNewInstanceByName(rpcClientName);
-		if(!rpcClient) throw CException(4, "Error allocating rpc client implementation", __PRETTY_FUNCTION__);
+        MB_LAPP  << "Trying to initilize RPC Client: " << rpc_client_name;
+        rpc_client = ObjectFactoryRegister<RpcClient>::getInstance()->getNewInstanceByName(rpc_client_name);
+		if(!rpc_client) throw CException(4, "Error allocating rpc client implementation", __PRETTY_FUNCTION__);
 
-        if(chaos::utility::StartableService::initImplementation(rpcClient, static_cast<void*>(globalConfiguration), rpcClient->getName(), __PRETTY_FUNCTION__)) {
+        if(chaos::utility::StartableService::initImplementation(rpc_client, static_cast<void*>(globalConfiguration), rpc_client->getName(), __PRETTY_FUNCTION__)) {
 			//set the forwarder into dispatcher for answere
-            if(commandDispatcher) commandDispatcher->setRpcForwarder(rpcClient);
+            command_dispatcher->setRpcForwarder(rpc_client);
         }
     } else {
         throw CException(4, "No RPC Adapter type found in configuration", __PRETTY_FUNCTION__);
@@ -177,7 +175,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
     //---------------------------- R P C SYNC ----------------------------
     if(globalConfiguration->hasKey(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ENABLE)){
         //get the dispatcher
-        MB_LAPP  << "Setup RPC Synch implementation";
+        MB_LAPP  << "Setup RPC Sync implementation";
         
         // get the rpc type to instantiate
         string rpc_sync_impl = globalConfiguration->getStringValue(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ADAPTER_TYPE);
@@ -190,7 +188,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         
         if(chaos::utility::StartableService::initImplementation(sync_rpc_server, static_cast<void*>(globalConfiguration), sync_rpc_server->getName(), __PRETTY_FUNCTION__)) {
             //set the handler on the rpc server
-            sync_rpc_server->setCommandDispatcher(commandDispatcher);
+            sync_rpc_server->setCommandDispatcher(command_dispatcher);
         }
     } else {
         throw CException(4, "No RPC Sync Adapter type found in configuration", __PRETTY_FUNCTION__);
@@ -198,6 +196,10 @@ void NetworkBroker::init(void *initData) throw(CException) {
     //---------------------------- R P C SYNC ----------------------------
 	MB_LAPP  << "Initialize performance session manager";
 	chaos::utility::StartableService::initImplementation(performance_session_managment, static_cast<void*>(globalConfiguration), "PerformanceManagment",  __PRETTY_FUNCTION__);
+    
+    //get host and port for fastly set it into the requests
+    published_host_and_port.clear();
+    getPublishedHostAndPort(published_host_and_port);
 }
 
 /*!
@@ -208,15 +210,14 @@ void NetworkBroker::deinit() throw(CException) {
 	chaos::utility::StartableService::deinitImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);
 
 	//---------------------------- D I R E C T I/O ----------------------------
-	MB_LAPP  << "Deinit DirectIO server: " << directIOServer->getName();
-    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(directIOServer, directIOServer->getName(), "NetworkBroker::deinit");)
-	DELETE_OBJ_POINTER(directIOServer);
+    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(direct_io_server, direct_io_server->getName(), "NetworkBroker::deinit");)
+	DELETE_OBJ_POINTER(direct_io_server);
 	//---------------------------- D I R E C T I/O ----------------------------
 	
 	//---------------------------- E V E N T ----------------------------
     MB_LAPP  << "Deallocate all event channel";
-    for (map<string, event::channel::EventChannel*>::iterator channnelIter = activeEventChannel.begin();
-         channnelIter != activeEventChannel.end();
+    for (map<string, event::channel::EventChannel*>::iterator channnelIter = active_event_channel.begin();
+         channnelIter != active_event_channel.end();
          channnelIter++) {
         
         event::channel::EventChannel *eventChannelToDispose = channnelIter->second;
@@ -228,29 +229,31 @@ void NetworkBroker::deinit() throw(CException) {
         delete(eventChannelToDispose);
     }
     MB_LAPP  << "Clear event channel map";
-    activeEventChannel.clear();
+    active_event_channel.clear();
 
-    MB_LAPP  << "Deinit event client: " << eventClient->getName();
-    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(eventClient, eventClient->getName(), "NetworkBroker::deinit");)
-    DELETE_OBJ_POINTER (eventClient);
+    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(event_client, event_client->getName(), __PRETTY_FUNCTION__);)
+    DELETE_OBJ_POINTER(event_client);
     
-    MB_LAPP  << "Deinit event server: " << eventServer->getName();
-    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(eventServer, eventServer->getName(), "NetworkBroker::deinit");)
-    DELETE_OBJ_POINTER(eventServer);
+    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(event_server, event_server->getName(), __PRETTY_FUNCTION__);)
+    DELETE_OBJ_POINTER(event_server);
     
     MB_LAPP  << "Deinit Event dispatcher";
-    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(eventDispatcher, "DefaultEventDispatcher", "NetworkBroker::deinit");)
-    DELETE_OBJ_POINTER(eventDispatcher);
+    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(event_dispatcher, "DefaultEventDispatcher", __PRETTY_FUNCTION__);)
+    DELETE_OBJ_POINTER(event_dispatcher);
 	//---------------------------- E V E N T ----------------------------
 	
+    //---------------------------- R P C SYNC ----------------------------
+    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);)
+    //---------------------------- R P C SYNC ----------------------------
+
     
 	//---------------------------- R P C ----------------------------
     MB_LAPP  << "Deallocate all rpc channel";
-    for (map<string, MessageChannel*>::iterator channnelIter = activeRpcChannel.begin();
-         channnelIter != activeRpcChannel.end();
-         channnelIter++) {
+    for (map<string, MessageChannel*>::iterator it = active_rpc_channel.begin();
+         it != active_rpc_channel.end();
+         it++) {
         
-        MessageChannel *messageChannelToDispose = channnelIter->second;
+        MessageChannel *messageChannelToDispose = it->second;
         
 		//deinit channel
         messageChannelToDispose->deinit();
@@ -259,19 +262,17 @@ void NetworkBroker::deinit() throw(CException) {
         delete(messageChannelToDispose);
     }
     MB_LAPP  << "Clear rpc channel map";
-    activeRpcChannel.clear();
+    active_rpc_channel.clear();
     
-    MB_LAPP  << "Deinit rpc client: " << rpcClient->getName();
-    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(rpcClient, rpcClient->getName(), "NetworkBroker::deinit");)
-    DELETE_OBJ_POINTER(rpcClient);
+    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);)
+    DELETE_OBJ_POINTER(rpc_client);
     
-    MB_LAPP  << "Deinit rpc server: " << rpcServer->getName();
-    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(rpcServer, rpcServer->getName(), "NetworkBroker::deinit");)
-	DELETE_OBJ_POINTER(rpcServer);
+    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);)
+	DELETE_OBJ_POINTER(rpc_server);
     
     MB_LAPP  << "Deinit Command Dispatcher";
-    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(commandDispatcher, "DefaultCommandDispatcher", "NetworkBroker::deinit");)
-    DELETE_OBJ_POINTER(commandDispatcher);
+    CHAOS_NOT_THROW(chaos::utility::StartableService::deinitImplementation(command_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);)
+    DELETE_OBJ_POINTER(command_dispatcher);
 	//---------------------------- R P C ----------------------------
 	
 }
@@ -280,73 +281,38 @@ void NetworkBroker::deinit() throw(CException) {
  * all part are started
  */
 void NetworkBroker::start() throw(CException){
-	MB_LAPP  << "Start DirectIO server: " << directIOServer->getName();
-    chaos::utility::StartableService::startImplementation(directIOServer, directIOServer->getName(), "NetworkBroker::start");
-	
-    MB_LAPP  << "Start event dispatcher ";
-    chaos::utility::StartableService::startImplementation(eventDispatcher, "DefaultEventDispatcher", "NetworkBroker::start");
-    
-    MB_LAPP  << "Start event server: " << eventServer->getName();
-    chaos::utility::StartableService::startImplementation(eventServer, eventServer->getName(), "NetworkBroker::start");
-    
-    MB_LAPP  << "Start event client: " << eventClient->getName();
-    chaos::utility::StartableService::startImplementation(eventClient, eventClient->getName(), "NetworkBroker::start");
-    
-    MB_LAPP  << "Start command dispatcher ";
-    chaos::utility::StartableService::startImplementation(commandDispatcher, "DefaultCommandDispatcher", "NetworkBroker::start");
-	
-    MB_LAPP  << "Start rpc server: " << rpcServer->getName();
-    chaos::utility::StartableService::startImplementation(rpcServer, rpcServer->getName(), "NetworkBroker::start");
-    
-    MB_LAPP  << "Start rpc server: " << rpcClient->getName();
-    chaos::utility::StartableService::startImplementation(rpcClient, rpcClient->getName(), "NetworkBroker::start");
-    
-    MB_LAPP << "get the published host and port from rpc server";
-    getPublishedHostAndPort(publishedHostAndPort);
-    MB_LAPP << "Rpc server has been published in: " << publishedHostAndPort;
-	
-	MB_LAPP  << "Start performance session manager";
-	chaos::utility::StartableService::startImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);
-
+    chaos::utility::StartableService::startImplementation(direct_io_server, direct_io_server->getName(), __PRETTY_FUNCTION__);
+    chaos::utility::StartableService::startImplementation(event_dispatcher, "DefaultEventDispatcher", __PRETTY_FUNCTION__);
+    chaos::utility::StartableService::startImplementation(event_server, event_server->getName(), __PRETTY_FUNCTION__);
+    chaos::utility::StartableService::startImplementation(event_client, event_client->getName(), __PRETTY_FUNCTION__);
+    chaos::utility::StartableService::startImplementation(command_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);
+    chaos::utility::StartableService::startImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);
+    chaos::utility::StartableService::startImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);
+    chaos::utility::StartableService::startImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);
+    chaos::utility::StartableService::startImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);
 }
 
 /*!
  * all part are started
  */
 void NetworkBroker::stop() throw(CException) {
-
-    MB_LAPP  << "Stop rpc server: " << rpcClient->getName();
-    chaos::utility::StartableService::stopImplementation(rpcClient, rpcClient->getName(), "NetworkBroker::stop");
-	
-    MB_LAPP  << "Stop rpc server: " << rpcServer->getName();
-    chaos::utility::StartableService::stopImplementation(rpcServer, rpcServer->getName(), "NetworkBroker::stop");
-	
-    MB_LAPP  << "Stop command dispatcher ";
-    chaos::utility::StartableService::stopImplementation(commandDispatcher, "DefaultCommandDispatcher", "NetworkBroker::stop");
-	
-    MB_LAPP  << "Stop event client: " << eventClient->getName();
-    chaos::utility::StartableService::stopImplementation(eventClient, eventClient->getName(), "NetworkBroker::stop");
-	
-    MB_LAPP  << "Stop event server: " << eventServer->getName();
-    chaos::utility::StartableService::stopImplementation(eventServer, eventServer->getName(), "NetworkBroker::stop");
-	
-    MB_LAPP  << "Stop event dispatcher ";
-    chaos::utility::StartableService::stopImplementation(eventDispatcher, "DefaultEventDispatcher", "NetworkBroker::stop");
-	
-	MB_LAPP  << "Stop DirectIO server: " << directIOServer->getName();
-    chaos::utility::StartableService::stopImplementation(directIOServer, directIOServer->getName(), "NetworkBroker::Stop");
-	
-	MB_LAPP  << "Stop performance session manager";
-	chaos::utility::StartableService::stopImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);
-
+    CHAOS_NOT_THROW(chaos::utility::StartableService::stopImplementation(performance_session_managment, "PerformanceManagment",  __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(chaos::utility::StartableService::stopImplementation(sync_rpc_server, sync_rpc_server->getName(), __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(chaos::utility::StartableService::stopImplementation(rpc_client, rpc_client->getName(), __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(chaos::utility::StartableService::stopImplementation(rpc_server, rpc_server->getName(), __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(chaos::utility::StartableService::stopImplementation(command_dispatcher, "DefaultCommandDispatcher", __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(chaos::utility::StartableService::stopImplementation(event_client, event_client->getName(), __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(chaos::utility::StartableService::stopImplementation(event_server, event_server->getName(), __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(chaos::utility::StartableService::stopImplementation(event_dispatcher, "DefaultEventDispatcher", __PRETTY_FUNCTION__);)
+    CHAOS_NOT_THROW(chaos::utility::StartableService::stopImplementation(direct_io_server, direct_io_server->getName(), __PRETTY_FUNCTION__);)
 }
 
 /*!
  Return the port where the rpc server has been published
  */
 int NetworkBroker::getPublishedPort() {
-    CHAOS_ASSERT(rpcServer);
-    return rpcServer->getPublishedPort();
+    CHAOS_ASSERT(rpc_server);
+    return rpc_server->getPublishedPort();
 }
 
 /*!
@@ -354,11 +320,10 @@ int NetworkBroker::getPublishedPort() {
  rpc server of message broker
  */
 void NetworkBroker::getPublishedHostAndPort(string& hostAndPort) {
-    CHAOS_ASSERT(rpcServer);
-    
+    CHAOS_ASSERT(rpc_server);
     hostAndPort = GlobalConfiguration::getInstance()->getLocalServerAddress();
     hostAndPort.append(":");
-    hostAndPort.append(lexical_cast<string>(rpcServer->getPublishedPort()));
+    hostAndPort.append(lexical_cast<string>(rpc_server->getPublishedPort()));
 }
 
 std::string NetworkBroker::getRPCUrl() {
@@ -368,7 +333,8 @@ std::string NetworkBroker::getRPCUrl() {
 }
 
 std::string NetworkBroker::getDirectIOUrl() {
-	return directIOServer->getUrl();
+    CHAOS_ASSERT(rpc_server);
+	return direct_io_server->getUrl();
 }
 
 #pragma mark Event Registration and forwarding
@@ -379,8 +345,8 @@ std::string NetworkBroker::getDirectIOUrl() {
  \param eventType a type for the event for which the user want to register
  */
 void NetworkBroker::registerEventAction(EventAction *eventAction, event::EventType eventType, const char * const identification) {
-    CHAOS_ASSERT(eventDispatcher && eventAction);
-    eventDispatcher->registerEventAction(eventAction, eventType, identification);
+    CHAOS_ASSERT(event_dispatcher && eventAction);
+    event_dispatcher->registerEventAction(eventAction, eventType, identification);
 }
 
 //!Event Action deregistration
@@ -388,8 +354,8 @@ void NetworkBroker::registerEventAction(EventAction *eventAction, event::EventTy
  Deregister an event action
  */
 void NetworkBroker::deregisterEventAction(EventAction *eventAction) {
-    CHAOS_ASSERT(eventDispatcher && eventAction);
-    eventDispatcher->deregisterEventAction(eventAction);
+    CHAOS_ASSERT(event_dispatcher && eventAction);
+    event_dispatcher->deregisterEventAction(eventAction);
 }
 
 //!Event channel creation
@@ -398,26 +364,26 @@ void NetworkBroker::deregisterEventAction(EventAction *eventAction) {
  \param eventType is one of the value listent in EventType enum that specify the
  type of the eventfor wich we want a channel
  */
-event::channel::EventChannel *NetworkBroker::getNewEventChannelFromType(event::EventType  eventType) {
-    event::channel::EventChannel *newEventChannel = NULL;
-    switch (eventType) {
+event::channel::EventChannel *NetworkBroker::getNewEventChannelFromType(event::EventType  event_type) {
+    event::channel::EventChannel *new_event_channel = NULL;
+    switch (event_type) {
         case event::EventTypeAlert:
-            newEventChannel = new event::channel::AlertEventChannel(this);
+            new_event_channel = new event::channel::AlertEventChannel(this);
             break;
         case event::EventTypeInstrument:
-            newEventChannel = new event::channel::InstrumentEventChannel(this);
+            new_event_channel = new event::channel::InstrumentEventChannel(this);
             break;
         default:
             break;
     }
 	//check if the channel has been created
-    if(newEventChannel){
-        newEventChannel->init();
-        boost::mutex::scoped_lock lock(mapEventChannelAccess);
-        activeEventChannel.insert(make_pair(newEventChannel->channelID, newEventChannel));
+    if(new_event_channel){
+        new_event_channel->init();
+        boost::mutex::scoped_lock lock(muext_map_event_channel_access);
+        active_event_channel.insert(make_pair(new_event_channel->channelID, new_event_channel));
     }
     
-    return newEventChannel;
+    return new_event_channel;
 }
 //!Device channel creation
 /*!
@@ -441,22 +407,22 @@ event::channel::InstrumentEventChannel *NetworkBroker::getNewInstrumentEventChan
 /*!
  Perform the event channel deallocation
  */
-void NetworkBroker::disposeEventChannel(event::channel::EventChannel *eventChannelToDispose) {
-    if(!eventChannelToDispose) return;
+void NetworkBroker::disposeEventChannel(event::channel::EventChannel *event_channel_to_dispose) {
+    if(!event_channel_to_dispose) return;
     
-    boost::mutex::scoped_lock lock(mapEventChannelAccess);
+    boost::mutex::scoped_lock lock(muext_map_event_channel_access);
     
 	//check if the channel is active
-    if(activeEventChannel.count(eventChannelToDispose->channelID) == 0) return;
+    if(active_event_channel.count(event_channel_to_dispose->channelID) == 0) return;
     
 	//remove the channel as active
-    activeEventChannel.erase(eventChannelToDispose->channelID);
+    active_event_channel.erase(event_channel_to_dispose->channelID);
     
 	//deallocate it
-    eventChannelToDispose->deinit();
+    event_channel_to_dispose->deinit();
     
 	//dispose it
-    delete(eventChannelToDispose);
+    delete(event_channel_to_dispose);
 }
 
 //!message event
@@ -465,10 +431,10 @@ void NetworkBroker::disposeEventChannel(event::channel::EventChannel *eventChann
  \param event the new evento to submit
  */
 bool NetworkBroker::submitEvent(event::EventDescriptor *event) {
-    CHAOS_ASSERT(eventClient)
+    CHAOS_ASSERT(event_client)
     bool result = true;
     try{
-        eventClient->submitEvent(event);
+        event_client->submitEvent(event);
     } catch(CException& ex) {
         result = false;
         DECODE_CHAOS_EXCEPTION(ex);
@@ -481,17 +447,17 @@ bool NetworkBroker::submitEvent(event::EventDescriptor *event) {
 /*
  Register actions defined by AbstractActionDescriptor instance contained in the array
  */
-void NetworkBroker::registerAction(DeclareAction* declareActionClass) {
-    CHAOS_ASSERT(commandDispatcher)
-    commandDispatcher->registerAction(declareActionClass);
+void NetworkBroker::registerAction(DeclareAction* declare_action_class) {
+    CHAOS_ASSERT(declare_action_class)
+    command_dispatcher->registerAction(declare_action_class);
 }
 
 /*
  Deregister actions for a determianted domain
  */
-void NetworkBroker::deregisterAction(DeclareAction* declareActionClass) {
-    CHAOS_ASSERT(commandDispatcher)
-    commandDispatcher->deregisterAction(declareActionClass);
+void NetworkBroker::deregisterAction(DeclareAction* declare_action_class) {
+    CHAOS_ASSERT(declare_action_class)
+    command_dispatcher->deregisterAction(declare_action_class);
 }
 
 #pragma mark Message Submission
@@ -499,54 +465,65 @@ void NetworkBroker::deregisterAction(DeclareAction* declareActionClass) {
 /*!
  Submit a message specifing the destination
  */
-bool NetworkBroker::submitMessage(string& serverAndPort, CDataWrapper *message, NetworkErrorHandler handler, const char * senderIdentifier, int64_t senderTag, bool onThisThread) {
-    CHAOS_ASSERT(message && rpcClient)
+bool NetworkBroker::submitMessage(string& host,
+                                  CDataWrapper *message,
+                                  NetworkErrorHandler handler,
+                                  const char * sender_identifier,
+                                  int64_t sendet_tag,
+                                  bool on_this_thread) {
+    CHAOS_ASSERT(message && rpc_client)
     NetworkForwardInfo *nfi = new NetworkForwardInfo();
-    nfi->destinationAddr = serverAndPort;
+    nfi->destinationAddr = host;
     nfi->message = message;
 	//add answer id to datawrapper
-    return rpcClient->submitMessage(nfi, onThisThread);
+    return rpc_client->submitMessage(nfi, on_this_thread);
 }
 
 /*!
  Submite a new request to send to the remote host
  */
-bool NetworkBroker::submiteRequest(string& serverAndPort,  CDataWrapper *request, NetworkErrorHandler handler, const char * senderIdentifier, int64_t senderTag, bool onThisThread) {
-    CHAOS_ASSERT(request && rpcClient)
-    request->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP, publishedHostAndPort);
+bool NetworkBroker::submiteRequest(string& host,
+                                   CDataWrapper *request,
+                                   NetworkErrorHandler handler,
+                                   const char * sender_identifier,
+                                   int64_t sender_tag,
+                                   bool on_this_thread) {
+    CHAOS_ASSERT(request && rpc_client)
+    request->addStringValue(RpcActionDefinitionKey::CS_CMDM_ANSWER_HOST_IP, published_host_and_port);
     NetworkForwardInfo *nfi = new NetworkForwardInfo();
-    nfi->destinationAddr = serverAndPort;
+    nfi->destinationAddr = host;
     nfi->message = request;
-    return rpcClient->submitMessage(nfi, onThisThread);
+    return rpc_client->submitMessage(nfi, on_this_thread);
 }
 
 /*
  */
-MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress *nodeNetworkAddress, EntityType type) {
-    CHAOS_ASSERT(nodeNetworkAddress)
+MessageChannel *NetworkBroker::getNewMessageChannelForRemoteHost(CNetworkAddress *node_network_aAddress,
+                                                                 EntityType type) {
+    CHAOS_ASSERT(node_network_aAddress)
     MessageChannel *channel = NULL;
     switch (type) {
         case RAW:
-            channel = new MessageChannel(this, nodeNetworkAddress->ipPort);
-            delete(nodeNetworkAddress);
+            channel = new MessageChannel(this, node_network_aAddress->ipPort);
+            delete(node_network_aAddress);
             break;
             
         case MDS:
-            channel = new MDSMessageChannel(this, static_cast<CNodeNetworkAddress*>(nodeNetworkAddress));
+            channel = new MDSMessageChannel(this, static_cast<CNodeNetworkAddress*>(node_network_aAddress));
             break;
             
         case DEVICE:
-            channel = new DeviceMessageChannel(this, static_cast<CDeviceNetworkAddress*>(nodeNetworkAddress));
+            channel = new DeviceMessageChannel(this, static_cast<CDeviceNetworkAddress*>(node_network_aAddress));
             break;
 		case PERFORMANCE:
-			channel = new common::message::PerformanceNodeChannel(this, nodeNetworkAddress, performance_session_managment.getLocalDirectIOClientInstance());
+			channel = new common::message::PerformanceNodeChannel(this, node_network_aAddress, performance_session_managment.getLocalDirectIOClientInstance());
             break;
     }
 	//check if the channel has been created
     if(channel){
         channel->init();
-        boost::mutex::scoped_lock lock(mapRpcChannelAcces);
-        activeRpcChannel.insert(make_pair(channel->channelID, channel));
+        boost::mutex::scoped_lock lock(mutex_map_rpc_channel_acces);
+        active_rpc_channel.insert(make_pair(channel->channelID, channel));
     }
     return channel;
 }
@@ -580,22 +557,22 @@ chaos::common::message::PerformanceNodeChannel *NetworkBroker::getPerformanceCha
 /*!
  Perform the message channel deallocation
  */
-void NetworkBroker::disposeMessageChannel(MessageChannel *messageChannelToDispose) {
-    if(!messageChannelToDispose) return;
+void NetworkBroker::disposeMessageChannel(MessageChannel *message_channel_to_dispose) {
+    if(!message_channel_to_dispose) return;
     
-    boost::mutex::scoped_lock lock(mapRpcChannelAcces);
+    boost::mutex::scoped_lock lock(mutex_map_rpc_channel_acces);
     
 	//check if the channel is active
-    if(activeRpcChannel.count(messageChannelToDispose->channelID) == 0) return;
+    if(active_rpc_channel.count(message_channel_to_dispose->channelID) == 0) return;
     
 	//remove the channel as active
-    activeRpcChannel.erase(messageChannelToDispose->channelID);
+    active_rpc_channel.erase(message_channel_to_dispose->channelID);
     
 	//deallocate it
-    messageChannelToDispose->deinit();
+    message_channel_to_dispose->deinit();
     
 	//dispose it
-    delete(messageChannelToDispose);
+    delete(message_channel_to_dispose);
 }
 //!Channel deallocation
 /*!
@@ -606,15 +583,16 @@ void NetworkBroker::disposeMessageChannel(NodeMessageChannel *messageChannelToDi
 }
 //Allocate a new endpoint in the direct io server
 chaos_direct_io::DirectIOServerEndpoint *NetworkBroker::getDirectIOServerEndpoint() {
-    chaos_direct_io::DirectIOServerEndpoint *result_endpoint = directIODispatcher->getNewEndpoint();
+    CHAOS_ASSERT(direct_io_dispatcher)
+    chaos_direct_io::DirectIOServerEndpoint *result_endpoint = direct_io_dispatcher->getNewEndpoint();
     return result_endpoint;
 }
 //Dispose an endpoint of the direct io server
 void NetworkBroker::releaseDirectIOServerEndpoint(chaos_direct_io::DirectIOServerEndpoint *end_point) {
-    directIODispatcher->releaseEndpoint(end_point);
+    direct_io_dispatcher->releaseEndpoint(end_point);
 }
 //Return a new direct io client instance
 chaos_direct_io::DirectIOClient *NetworkBroker::getDirectIOClientInstance() {
-    MB_LAPP  << "Allocate a new DirectIOClient of type " << directIOClientImpl;
-    return ObjectFactoryRegister<common::direct_io::DirectIOClient>::getInstance()->getNewInstanceByName(directIOClientImpl);
+    MB_LAPP  << "Allocate a new DirectIOClient of type " << direct_io_client_impl;
+    return ObjectFactoryRegister<common::direct_io::DirectIOClient>::getInstance()->getNewInstanceByName(direct_io_client_impl);
 }

@@ -37,6 +37,8 @@ namespace chaos {
 		//! config file parameter
 		static const char * const   OPT_CONF_FILE						= "conf_file";
         //!   Specify the implementation to use for rp messaging
+        static const char * const   OPT_RPC_IMPL_KV_PARAM               = "rpc-kv-param";
+        //!   Specify the implementation to use for rp messaging
         static const char * const   OPT_RPC_IMPLEMENTATION              = "rpc-server-impl";
         //!   Specify the implementation to use for rp messaging
         static const char * const   OPT_RPC_SYNC_ENABLE                 = "rpc-syncserver-enable";
@@ -79,16 +81,20 @@ namespace chaos {
      */
     //! Name space for grupping option used for rpc system configuration
     namespace RpcConfigurationKey {
+        //! the regular expression for check the wel format key/valuparameter list for CS_CMDM_RPC_KV_IMPL_PARAM
+        static const char * const CS_CMDM_RPC_KV_IMPL_PARAM_STRING_REGEX    = "[a-zA-Z0-9/_]+|[a-zA-Z0-9/_]+(-[a-zA-Z0-9/_]+|[a-zA-Z0-9/_]+)*";
+        //!  specify key/value paramter used by implementations with the template [k|v-k1|v1....]
+        static const char * const CS_CMDM_RPC_KV_IMPL_PARAM                 = "cs|cmdm|rpc_kv_impl_param";
         //!  specify the type of the adatpre to be used
-        static const char * const CS_CMDM_RPC_ADAPTER_TYPE                = "cs|cmdm|rpc_adapter_type";
+        static const char * const CS_CMDM_RPC_ADAPTER_TYPE                  = "cs|cmdm|rpc_adapter_type";
         //!  specify when use the rpc synchronous interface
-        static const char * const CS_CMDM_RPC_SYNC_ENABLE           = "cs|cmdm|rpc_sync_enable";
+        static const char * const CS_CMDM_RPC_SYNC_ENABLE                   = "cs|cmdm|rpc_sync_enable";
         //!  specify the type of the adapter to use for syncrhonous rpc server
-        static const char * const CS_CMDM_RPC_SYNC_ADAPTER_TYPE           = "cs|cmdm|rpc_sync_adapter_type";
+        static const char * const CS_CMDM_RPC_SYNC_ADAPTER_TYPE             = "cs|cmdm|rpc_sync_adapter_type";
         //!  specify the port where the rpc must publish the his socket
-        static const char * const CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT        = "cs|cmdm|rpc_adapter_port";
+        static const char * const CS_CMDM_RPC_ADAPTER_TCP_UDP_PORT          = "cs|cmdm|rpc_adapter_port";
         //!  the number of the thread to user
-        static const char * const CS_CMDM_RPC_ADAPTER_THREAD_NUMBER       = "cs|cmdm|rpc_adapter_tn";
+        static const char * const CS_CMDM_RPC_ADAPTER_THREAD_NUMBER         = "cs|cmdm|rpc_adapter_tn";
     }
     /** @} */ // end of RpcConfigurationKey
     

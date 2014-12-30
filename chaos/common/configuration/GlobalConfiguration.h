@@ -29,6 +29,8 @@
 
 #include <string>
 #include <istream>
+#include <map>
+
 #include <boost/shared_ptr.hpp>
 #include <boost/program_options/option.hpp>
 #include <boost/program_options/options_description.hpp>
@@ -99,6 +101,14 @@ x = hasOption(y);
          Generalized parser option function
          */
         int32_t filterLogLevel(string& levelStr) throw (CException);
+        
+        //! contains the key value pair for the rpc implementation
+        std::map<std::string, std::string> map_kv_param_rpc_impl;
+        
+        //fill the rpc
+        void fillKVParameter(std::map<std::string, std::string>& kvmap,
+                             const std::string& kv_string,
+                             const std::string& regex);
     public:
 		void loadStartupParameter(int, char* argv[]) throw (CException);
 		void loadStreamParameter(std::istream &config_file) throw (CException);
@@ -210,75 +220,45 @@ x = hasOption(y);
         /**
          *return the cdatawrapper that contains the global configuraiton
          */
-        chaos_data::CDataWrapper *getConfiguration(){
-            return &configuration;
-        }
+        chaos_data::CDataWrapper *getConfiguration();
         
         /**
          *Add the metadataserver address
          */
-        void addMetadataServerAddress(const string& mdsAddress) throw (CException) {
-            bool isHostnameAndPort = regex_match(mdsAddress, ServerHostNameRegExp);
-            bool isIpAndPort  = regex_match(mdsAddress, ServerIPAndPortRegExp);
-            if(!isHostnameAndPort && !isIpAndPort)
-                throw CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
-            
-                //address can be added
-            configuration.addStringValue(DataProxyConfigurationKey::CS_LIB_METADATASET_ADDRESS, mdsAddress);
-        }
+        void addMetadataServerAddress(const string& mdsAddress) throw (CException);
         
         /**
          *Add the metadataserver address
          */
-        void addLocalServerAddress(const std::string& mdsAddress) throw (CException) {
-            bool isIp = regex_match(mdsAddress, ServerIPRegExp);
-            if(!isIp)
-                throw CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
-            
-                //address can be added
-            configuration.addStringValue("local_ip", mdsAddress);
-        }
+        void addLocalServerAddress(const std::string& mdsAddress) throw (CException);
         /**
          *Add the metadataserver address
          */
-        void addLocalServerBasePort(int32_t localDefaultPort) throw (CException) {
-            configuration.addInt32Value("base_port", localDefaultPort);
-        }
+        void addLocalServerBasePort(int32_t localDefaultPort) throw (CException);
         /*
          return the address of metadataserver
          */
-        string getMetadataServerAddress() {
-            return configuration.getStringValue(DataProxyConfigurationKey::CS_LIB_METADATASET_ADDRESS);
-        }
+        string getMetadataServerAddress();
         
         /*
          return the address of metadataserver
          */
-        string getLocalServerAddress() {
-            return configuration.getStringValue("local_ip");
-        }
+        string getLocalServerAddress();
         
         /*
          return the address of metadataserver
          */
-        int32_t getLocalServerBasePort() {
-            return configuration.getInt32Value("base_port");
-        }
+        int32_t getLocalServerBasePort();
         
-        string getLocalServerAddressAnBasePort(){
-            char buf[128];
-            string addr = configuration.getStringValue("local_ip");
-            sprintf ( buf, "%s:%d", addr.c_str(), (int)configuration.getInt32Value("base_port"));
-            addr.assign(buf);
-            return addr; 
-        }
+        string getLocalServerAddressAnBasePort();
         
         /*
          return the address of metadataserver
          */
-        bool isMEtadataServerConfigured() {
-            return configuration.hasKey(DataProxyConfigurationKey::CS_LIB_METADATASET_ADDRESS);
-        }
+        bool isMEtadataServerConfigured();
+        
+        //! return the rpc implementation kevy value map
+        const std::map<std::string, std::string>& getRpcImplKVParam() const;
     };  
 }
 #endif

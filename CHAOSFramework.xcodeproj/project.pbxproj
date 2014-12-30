@@ -1213,7 +1213,7 @@
 			path = reader;
 			sourceTree = "<group>";
 		};
-		323236C9164573C60052CE06 /* ChaosNodeDirectory */ = {
+		323236C9164573C60052CE06 /* ChaosMetadataService */ = {
 			isa = PBXGroup;
 			children = (
 				3230D9E81652AAF100113C93 /* CMakeLists.txt */,
@@ -1224,7 +1224,7 @@
 				32C7B8FA16DD35D7005B3B21 /* api_services */,
 				323236CC164573C60052CE06 /* ChaosNodeDirectory.1 */,
 			);
-			path = ChaosNodeDirectory;
+			path = ChaosMetadataService;
 			sourceTree = "<group>";
 		};
 		323236D8164573F50052CE06 /* ChaosDataService */ = {
@@ -1415,7 +1415,7 @@
 			isa = PBXGroup;
 			children = (
 				326DB3B114B38BC00018A8D0 /* chaos */,
-				323236C9164573C60052CE06 /* ChaosNodeDirectory */,
+				323236C9164573C60052CE06 /* ChaosMetadataService */,
 				323236D8164573F50052CE06 /* ChaosDataService */,
 				32B1090E188C1D6200969D3D /* TestAsyncRpc */,
 				3258AF011935EE4D00A66D44 /* ArchitectureTest */,

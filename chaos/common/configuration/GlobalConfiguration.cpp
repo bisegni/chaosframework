@@ -21,12 +21,17 @@
 #include <iostream>
 
 #include <chaos/common/log/LogManager.h>
+
+#include <boost/regex.hpp>
+#include <boost/algorithm/string.hpp>
+
 #include <boost/interprocess/sync/file_lock.hpp>
 #include <boost/interprocess/sync/scoped_lock.hpp>
 
 #include "GlobalConfiguration.h"
 
 using namespace chaos;
+using namespace boost;
 namespace po = boost::program_options;
 
 #define _RPC_PORT					8888
@@ -40,18 +45,19 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
     
     try{
         addOption(InitOption::OPT_HELP, "Produce help message");
-		//cache parameter
-		addOption<std::string>(InitOption::OPT_CONF_FILE,"File configuration path");
-		addOption(InitOption::OPT_DATA_IO_IMPL, po::value< string >()->default_value("IODirect"), "Specify the data io implementation");
-		addOption(InitOption::OPT_DIRECT_IO_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the direct io implementation");
-		addOption(InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, po::value<int>()->default_value(_DIRECT_IO_PRIORITY_PORT), "DirectIO priority server port");
-		addOption(InitOption::OPT_DIRECT_IO_SERVICE_SERVER_PORT, po::value<int>()->default_value(_DIRECT_IO_SERVICE_PORT), "DirectIO service server port");
+        //cache parameter
+        addOption<std::string>(InitOption::OPT_CONF_FILE,"File configuration path");
+        addOption(InitOption::OPT_DATA_IO_IMPL, po::value< string >()->default_value("IODirect"), "Specify the data io implementation");
+        addOption(InitOption::OPT_DIRECT_IO_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the direct io implementation");
+        addOption(InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, po::value<int>()->default_value(_DIRECT_IO_PRIORITY_PORT), "DirectIO priority server port");
+        addOption(InitOption::OPT_DIRECT_IO_SERVICE_SERVER_PORT, po::value<int>()->default_value(_DIRECT_IO_SERVICE_PORT), "DirectIO service server port");
         addOption(InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER, po::value<int>()->default_value(2),"DirectIO server thread number");
         addOption(InitOption::OPT_RPC_SYNC_ENABLE, po::value< bool >()->default_value(true), "Enable the sync wrapper to rpc protocol");
         addOption(InitOption::OPT_RPC_SYNC_IMPLEMENTATION, po::value< string >()->default_value("HTTP"), "Specify the synchronous rpc implementation");
         addOption(InitOption::OPT_RPC_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the rpc implementation");
-		addOption(InitOption::OPT_RPC_SERVER_PORT, po::value<int>()->default_value(_RPC_PORT), "RPC server port");
+        addOption(InitOption::OPT_RPC_SERVER_PORT, po::value<int>()->default_value(_RPC_PORT), "RPC server port");
         addOption(InitOption::OPT_RPC_SERVER_THREAD_NUMBER, po::value<int>()->default_value(2),"RPC server thread number");
+        addOption(InitOption::OPT_RPC_IMPL_KV_PARAM, po::value<string>(),"RPC implementation key value parameter[k|v-k1|v1]");
         addOption(InitOption::OPT_LIVE_DATA_SERVER_ADDRESS, po::value< vector<string> >()->multitoken(), "Live server:port address");
         addOption(InitOption::OPT_METADATASERVER_ADDRESS, po::value< string >()->default_value("localhost:5000"), "Metadataserver server:port address");
         addOption(InitOption::OPT_LOG_ON_CONSOLE, po::value< bool >()->zero_tokens(), "Specify when the log must be forwarded on console");
@@ -102,7 +108,7 @@ int32_t GlobalConfiguration::filterLogLevel(string& levelStr) throw (CException)
 }
 
 void GlobalConfiguration::loadStartupParameter(int argc, char* argv[]) throw (CException) {
-	try{
+    try{
         //
         po::store(po::parse_command_line(argc, argv, desc), vm);
     }catch (po::error &e) {
@@ -114,7 +120,7 @@ void GlobalConfiguration::loadStartupParameter(int argc, char* argv[]) throw (CE
 }
 
 void GlobalConfiguration::loadStreamParameter(std::istream &config_file)  throw (CException) {
-	try{
+    try{
         //
         po::store(po::parse_config_file(config_file, desc), vm);
     }catch (po::error &e) {
@@ -126,7 +132,7 @@ void GlobalConfiguration::loadStreamParameter(std::istream &config_file)  throw 
 }
 
 void GlobalConfiguration::scanOption()  throw (CException) {
-	try{
+    try{
         po::notify(vm);
     }catch (po::error &e) {
         //write error also on cerr
@@ -134,12 +140,12 @@ void GlobalConfiguration::scanOption()  throw (CException) {
         throw CException(0, e.what(), __PRETTY_FUNCTION__);
         
     }
-	
-	if (hasOption(InitOption::OPT_HELP)) {
+    
+    if (hasOption(InitOption::OPT_HELP)) {
         std::cout << desc;
         exit(0);
         return;
-		
+        
     }
 }
 
@@ -161,24 +167,24 @@ void GlobalConfiguration::parseParameter(const po::basic_parsed_options<char>& o
         
     }
     
-	//scan option
-	scanOption();
-	
-	//check the default option
-	checkDefaultOption();
+    //scan option
+    scanOption();
+    
+    //check the default option
+    checkDefaultOption();
 }
 
 void GlobalConfiguration::checkDefaultOption() throw (CException) {
-	
-	//lock file for permit to choose different tcp port for services
-	std::fstream domain_file_lock_stream("/tmp/chaos_init.lock",
-										 std::ios_base::out |
-										 std::ios_base::binary);
-	
-	//check if we have got the lock
-	boost::interprocess::file_lock flock("/tmp/chaos_init.lock");
-	boost::interprocess::scoped_lock<boost::interprocess::file_lock> e_lock(flock);
-	
+    
+    //lock file for permit to choose different tcp port for services
+    std::fstream domain_file_lock_stream("/tmp/chaos_init.lock",
+                                         std::ios_base::out |
+                                         std::ios_base::binary);
+    
+    //check if we have got the lock
+    boost::interprocess::file_lock flock("/tmp/chaos_init.lock");
+    boost::interprocess::scoped_lock<boost::interprocess::file_lock> e_lock(flock);
+    
     //now we can fill the gloabl configuration
     //start with getting log configuration
     CHECK_AND_DEFINE_BOOL_ZERO_TOKEN_OPTION(logOnConsole, InitOption::OPT_LOG_ON_CONSOLE)
@@ -208,31 +214,39 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
     
     CHECK_AND_DEFINE_OPTION(string, rpcImpl, InitOption::OPT_RPC_IMPLEMENTATION)
     configuration.addStringValue(RpcConfigurationKey::CS_CMDM_RPC_ADAPTER_TYPE, rpcImpl);
-	
+    
     CHECK_AND_DEFINE_OPTION(bool, rpc_sync_enable, InitOption::OPT_RPC_SYNC_ENABLE)
     else{
         rpc_sync_enable = false;
     }
     configuration.addBoolValue(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ENABLE, rpc_sync_enable);
-
+    
     CHECK_AND_DEFINE_OPTION(string, rpc_sync_impl, InitOption::OPT_RPC_SYNC_IMPLEMENTATION)
     configuration.addStringValue(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ADAPTER_TYPE, rpc_sync_impl);
     
-	//direct io
-	CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, direct_io_server_thread_number, InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER, 2)
-	configuration.addInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_SERVER_THREAD_NUMBER, direct_io_server_thread_number);
-	
-	CHECK_AND_DEFINE_OPTION(string, direct_io_server_impl, InitOption::OPT_DIRECT_IO_IMPLEMENTATION)
-	configuration.addStringValue(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_IMPL_TYPE, direct_io_server_impl);
-	
-	CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, direct_io_priority_port, InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, _DIRECT_IO_PRIORITY_PORT)
+    CHECK_AND_DEFINE_OPTION(string, rpc_impl_kv_param, InitOption::OPT_RPC_IMPL_KV_PARAM)
+    configuration.addStringValue(RpcConfigurationKey::CS_CMDM_RPC_KV_IMPL_PARAM_STRING_REGEX, rpc_sync_impl);
+    
+    //fill the key value list
+    if(rpc_impl_kv_param.size()) {
+        fillKVParameter(map_kv_param_rpc_impl, rpc_impl_kv_param, std::string(RpcConfigurationKey::CS_CMDM_RPC_KV_IMPL_PARAM_STRING_REGEX));
+    }
+    
+    //direct io
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, direct_io_server_thread_number, InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER, 2)
+    configuration.addInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_SERVER_THREAD_NUMBER, direct_io_server_thread_number);
+    
+    CHECK_AND_DEFINE_OPTION(string, direct_io_server_impl, InitOption::OPT_DIRECT_IO_IMPLEMENTATION)
+    configuration.addStringValue(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_IMPL_TYPE, direct_io_server_impl);
+    
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, direct_io_priority_port, InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, _DIRECT_IO_PRIORITY_PORT)
     freeFoundPort = InetUtility::scanForLocalFreePort(direct_io_priority_port);
     configuration.addInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_PRIORITY_PORT, (uint32_t)freeFoundPort);
     
-	CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, direct_io_service_port, InitOption::OPT_DIRECT_IO_SERVICE_SERVER_PORT, _DIRECT_IO_SERVICE_PORT)
+    CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, direct_io_service_port, InitOption::OPT_DIRECT_IO_SERVICE_SERVER_PORT, _DIRECT_IO_SERVICE_PORT)
     freeFoundPort = InetUtility::scanForLocalFreePort(direct_io_service_port);
     configuration.addInt32Value(common::direct_io::DirectIOConfigurationKey::DIRECT_IO_SERVICE_PORT, (uint32_t)freeFoundPort);
-	
+    
     //cevent
     configuration.addStringValue(event::EventConfiguration::OPTION_KEY_EVENT_ADAPTER_IMPLEMENTATION, "AsioImpl");
     
@@ -278,4 +292,113 @@ void GlobalConfiguration::addOption(const char* name,
     }catch (po::error &e) {
         throw CException(0, e.what(), "GlobalConfiguration::addOption");
     }
+}
+
+void GlobalConfiguration::fillKVParameter(std::map<std::string, std::string>& kvmap,
+                                          const std::string& kv_string,
+                                          const std::string& regex) {
+    //no cache server provided
+    std::string tmp = kv_string;
+    if(!regex_match(tmp, boost::regex(regex.c_str()))) {
+        throw chaos::CException(-3, "Malformed kv parameter string", __PRETTY_FUNCTION__);
+    }
+    std::vector<std::string> kvtokens;
+    std::vector<std::string> kv_splitted;
+    algorithm::split(kvtokens,
+                     kv_string,
+                     algorithm::is_any_of("-"),
+                     algorithm::token_compress_on);
+    for (int idx = 0;
+         idx < kvtokens.size();
+         idx++) {
+        //clear previosly pair
+        kv_splitted.clear();
+        
+        //get new pair
+        algorithm::split(kv_splitted,
+                         kvtokens[idx],
+                         algorithm::is_any_of("|"),
+                         algorithm::token_compress_on);
+        // add key/value pair
+        kvmap.insert(make_pair(kv_splitted[0], kv_splitted[1]));
+    }
+}
+
+/**
+ *return the cdatawrapper that contains the global configuraiton
+ */
+chaos_data::CDataWrapper *GlobalConfiguration::getConfiguration(){
+    return &configuration;
+}
+
+/**
+ *Add the metadataserver address
+ */
+void GlobalConfiguration::addMetadataServerAddress(const string& mdsAddress) throw (CException) {
+    bool isHostnameAndPort = regex_match(mdsAddress, ServerHostNameRegExp);
+    bool isIpAndPort  = regex_match(mdsAddress, ServerIPAndPortRegExp);
+    if(!isHostnameAndPort && !isIpAndPort)
+        throw CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
+    
+    //address can be added
+    configuration.addStringValue(DataProxyConfigurationKey::CS_LIB_METADATASET_ADDRESS, mdsAddress);
+}
+
+/**
+ *Add the metadataserver address
+ */
+void GlobalConfiguration::addLocalServerAddress(const std::string& mdsAddress) throw (CException) {
+    bool isIp = regex_match(mdsAddress, ServerIPRegExp);
+    if(!isIp)
+        throw CException(1, "Bad server address", "GlobalConfiguration::addMetadataServerAddress");
+    
+    //address can be added
+    configuration.addStringValue("local_ip", mdsAddress);
+}
+
+/**
+ *Add the metadataserver address
+ */
+void GlobalConfiguration::addLocalServerBasePort(int32_t localDefaultPort) throw (CException) {
+    configuration.addInt32Value("base_port", localDefaultPort);
+}
+
+/*
+ return the address of metadataserver
+ */
+string GlobalConfiguration::getMetadataServerAddress() {
+    return configuration.getStringValue(DataProxyConfigurationKey::CS_LIB_METADATASET_ADDRESS);
+}
+
+/*
+ return the address of metadataserver
+ */
+string GlobalConfiguration::getLocalServerAddress() {
+    return configuration.getStringValue("local_ip");
+}
+
+/*
+ return the address of metadataserver
+ */
+int32_t GlobalConfiguration::getLocalServerBasePort() {
+    return configuration.getInt32Value("base_port");
+}
+
+string GlobalConfiguration::getLocalServerAddressAnBasePort(){
+    char buf[128];
+    string addr = configuration.getStringValue("local_ip");
+    sprintf ( buf, "%s:%d", addr.c_str(), (int)configuration.getInt32Value("base_port"));
+    addr.assign(buf);
+    return addr;
+}
+
+/*
+ return the address of metadataserver
+ */
+bool GlobalConfiguration::isMEtadataServerConfigured() {
+    return configuration.hasKey(DataProxyConfigurationKey::CS_LIB_METADATASET_ADDRESS);
+}
+
+const std::map<std::string, std::string>& GlobalConfiguration::getRpcImplKVParam() const {
+    return map_kv_param_rpc_impl;
 }

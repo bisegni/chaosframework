@@ -90,52 +90,57 @@ namespace chaos {
 			 It abstract the !CHAOS rule for sending message and wait for answer and other facility.
 			 */
 			class NetworkBroker: public chaos::utility::StartableService {
-				//!Event Client for event forwarding
-				std::string directIOClientImpl;
-				
 				//! performance session managment
 				chaos::common::network::PerformanceManagment performance_session_managment;
 				
+                //! point to current host and port
+                std::string published_host_and_port;
+                
+                //! has the server address of mds for fast access
+                std::string metadata_server_address;
+                
+                bool can_use_metadata_server;
+                
+                //!name of direct io client implementation to use
+                std::string direct_io_client_impl;
+                
 				//!Direct IO server interface
-				direct_io::DirectIOServer *directIOServer;
+				direct_io::DirectIOServer *direct_io_server;
+                
 				//! Direct IO dispatcher
-				direct_io::DirectIODispatcher *directIODispatcher;
+				direct_io::DirectIODispatcher *direct_io_dispatcher;
 				
 				//!Event Client for event forwarding
-				event::EventClient *eventClient;
+				event::EventClient *event_client;
 				
 				//!Event server for event handlind
-				event::EventServer *eventServer;
+				event::EventServer *event_server;
 				
 				//! Rpc client for message forwarding
-				RpcClient *rpcClient;
+				RpcClient *rpc_client;
 				
 				//! Rpc server for message listening
-				RpcServer *rpcServer;
+				RpcServer *rpc_server;
 
                 //! Rpc sync interface
                 sync_rpc::RpcSyncServer *sync_rpc_server;
                 
 				//rpc action dispatcher
-				AbstractCommandDispatcher *commandDispatcher;
+				AbstractCommandDispatcher *command_dispatcher;
 				
 				//! Rpc server for message dispatcher
-				AbstractEventDispatcher *eventDispatcher;
+				AbstractEventDispatcher *event_dispatcher;
 				
 				//!keep track of active channel
-				map<string, MessageChannel*> activeRpcChannel;
+				map<string, MessageChannel*> active_rpc_channel;
 				//!Mutex for rpc channel managment
-				boost::mutex mapRpcChannelAcces;
+				boost::mutex mutex_map_rpc_channel_acces;
 				
 				//!keep track of active channel
-				map<string, chaos::event::channel::EventChannel*> activeEventChannel;
+				map<string, chaos::event::channel::EventChannel*> active_event_channel;
 				
 				//!Mutex for event channel managment
-				boost::mutex mapEventChannelAccess;
-				
-				string publishedHostAndPort;
-				string metadataServerAddress;
-				bool canUseMetadataServer;
+				boost::mutex muext_map_event_channel_access;
 				
 				
 				//! private raw channel creation

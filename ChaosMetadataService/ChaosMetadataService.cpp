@@ -60,7 +60,9 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
         if (signal((int) SIGQUIT, ChaosMetadataService::signalHanlder) == SIG_ERR) {
             throw CException(0, "Error registering SIG_ERR signal", __PRETTY_FUNCTION__);
         }
-
+        
+        network_broker_service.reset(new NetworkBroker(), "NetworkBroker");
+        network_broker_service.init(NULL, __PRETTY_FUNCTION__);
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         exit(1);
@@ -74,6 +76,9 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
 void ChaosMetadataService::start()  throw(CException) {
         //lock o monitor for waith the end
     try {
+        //start network brocker
+        network_broker_service.start(__PRETTY_FUNCTION__);
+        
         //at this point i must with for end signal
         waitCloseSemaphore.wait();
     } catch (CException& ex) {
@@ -87,7 +92,7 @@ void ChaosMetadataService::start()  throw(CException) {
 	}
 
 	try{
-		deinit();
+ 		deinit();
 	} catch (CException& ex) {
 		DECODE_CHAOS_EXCEPTION(ex)
 	}
@@ -97,8 +102,9 @@ void ChaosMetadataService::start()  throw(CException) {
  Stop the toolkit execution
  */
 void ChaosMetadataService::stop()   throw(CException) {
-    //lock lk(monitor);
-        //unlock the condition for end start method
+    //stop network brocker
+    network_broker_service.stop(__PRETTY_FUNCTION__);
+    
     //endWaithCondition.notify_one();
     waitCloseSemaphore.unlock();
 }
@@ -107,7 +113,8 @@ void ChaosMetadataService::stop()   throw(CException) {
  Deiniti all the manager
  */
 void ChaosMetadataService::deinit()   throw(CException) {
-
+    //deinit network brocker
+    network_broker_service.deinit(__PRETTY_FUNCTION__);
 }
 
 /*

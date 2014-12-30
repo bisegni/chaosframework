@@ -138,6 +138,11 @@ namespace chaos {
 			bool deinit(const string & domainString) {
 				return InizializableService::deinitImplementation(startable_service_instance, service_name, domainString);
 			}
+            
+            bool isInstantiated() {
+                return startable_service_instance != NULL;
+            }
+            
 			T* get() {
 				return startable_service_instance;
 			}
