@@ -19,11 +19,19 @@
  */
 
 #include <chaos/common/utility/TimingUtil.h>
+#include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/sync_rpc/HTTPRpcSyncServer.h>
 
-
+using namespace chaos;
 using namespace chaos::common::sync_rpc;
 using namespace Mongoose;
+
+#define HTTPRSS_LOG_HEAD "["<<getName()<<"] - "
+
+#define HTTPRSSLAPP_ LAPP_ << HTTPRSS_LOG_HEAD
+#define HTTPRSSLDBG_ LDBG_ << HTTPRSS_LOG_HEAD << __FUNCTION__
+#define HTTPRSSLERR_ LERR_ << HTTPRSS_LOG_HEAD
+
 
 HTTPRpcSyncServer::HTTPRpcSyncServer(const string& alias):
 RpcSyncServer(alias),
@@ -39,16 +47,30 @@ HTTPRpcSyncServer::~HTTPRpcSyncServer() {
 void HTTPRpcSyncServer::init(void*) throw(CException) {
     http_server.registerController(this);
     http_server.setOption("enable_directory_listing", "false");
+    http_server.setOption("enable_keep_alive", "true");
+    const std::map<std::string, std::string>& kv_param = GlobalConfiguration::getInstance()->getRpcImplKVParam();
+    if(kv_param.size()) {
+        //we have some kv entry
+        for (std::map<std::string, std::string>::const_iterator it = kv_param.begin();
+             it != kv_param.end();
+             it++) {
+            HTTPRSSLAPP_ << "Set cutom key value param "<<it->first << "=" <<it->second;
+            //add all option if the are recognized
+            if(it->first.compare("listening_ports") == 0 ||
+               it->first.compare("ssl_certificate") == 0 ||
+               it->first.compare("num_threads") == 0) {
+                http_server.setOption(it->first.c_str(), it->second.c_str());
+            } else {
+                HTTPRSSLAPP_ << it->first << " is an invalid key";  
+            }
+        }
+    }
 }
 
 //inherited method
 void HTTPRpcSyncServer::start() throw(CException) {
-    
     http_server.start();
-    
     cout << "Server started, routes:" << endl;
-    dumpRoutes();
-
 }
 
 //inherited method

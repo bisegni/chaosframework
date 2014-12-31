@@ -82,8 +82,8 @@ namespace chaos {
     //! Name space for grupping option used for rpc system configuration
     namespace RpcConfigurationKey {
         //! the regular expression for check the wel format key/valuparameter list for CS_CMDM_RPC_KV_IMPL_PARAM
-        static const char * const CS_CMDM_RPC_KV_IMPL_PARAM_STRING_REGEX    = "[a-zA-Z0-9/_]+|[a-zA-Z0-9/_]+(-[a-zA-Z0-9/_]+|[a-zA-Z0-9/_]+)*";
-        //!  specify key/value paramter used by implementations with the template [k|v-k1|v1....]
+        static const char * const CS_CMDM_RPC_KV_IMPL_PARAM_STRING_REGEX    = "([a-zA-Z0-9/_,.]+)=([a-zA-Z0-9/_,.]+)(\\|([a-zA-Z0-9/_,.]+)=([a-zA-Z0-9/_,.]+))*";
+        //!  specify key/value paramter used by implementations with the template [k=v-k1|v1....]
         static const char * const CS_CMDM_RPC_KV_IMPL_PARAM                 = "cs|cmdm|rpc_kv_impl_param";
         //!  specify the type of the adatpre to be used
         static const char * const CS_CMDM_RPC_ADAPTER_TYPE                  = "cs|cmdm|rpc_adapter_type";

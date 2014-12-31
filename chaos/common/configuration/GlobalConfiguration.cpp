@@ -306,7 +306,7 @@ void GlobalConfiguration::fillKVParameter(std::map<std::string, std::string>& kv
     std::vector<std::string> kv_splitted;
     algorithm::split(kvtokens,
                      kv_string,
-                     algorithm::is_any_of("-"),
+                     algorithm::is_any_of("|"),
                      algorithm::token_compress_on);
     for (int idx = 0;
          idx < kvtokens.size();
@@ -317,7 +317,7 @@ void GlobalConfiguration::fillKVParameter(std::map<std::string, std::string>& kv
         //get new pair
         algorithm::split(kv_splitted,
                          kvtokens[idx],
-                         algorithm::is_any_of("|"),
+                         algorithm::is_any_of("="),
                          algorithm::token_compress_on);
         // add key/value pair
         kvmap.insert(make_pair(kv_splitted[0], kv_splitted[1]));

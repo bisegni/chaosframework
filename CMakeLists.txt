@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 2.6)
 include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
 project (chaos)
 
-SET( ${PROJECT_NAME}_MAJOR_VERSION 0 ) 
-SET( ${PROJECT_NAME}_MINOR_VERSION 1 ) 
+SET( ${PROJECT_NAME}_MAJOR_VERSION 0 )
+SET( ${PROJECT_NAME}_MINOR_VERSION 1 )
 SET( ${PROJECT_NAME}_PATCH_LEVEL 0 )
 
 
@@ -13,7 +13,7 @@ add_definitions(-DDEBUG)
 EXECUTE_PROCESS(COMMAND chaos/common/version.sh)
 
 ADD_DEFINITIONS(-O3 )
-    
+
 
 IF(NOT BUILD_PREFIX)
 set (BUILD_PREFIX usr/local)
@@ -31,8 +31,8 @@ ADD_SUBDIRECTORY(chaos/cu_toolkit bin/bin_cutoolkit)
 message(STATUS "Configure UIToolkit Layer")
 ADD_SUBDIRECTORY(chaos/ui_toolkit bin/bin_uitoolkit)
 
-message(STATUS "Configure Chaos Node Directory Service")
-ADD_SUBDIRECTORY(ChaosNodeDirectory bin/bin_cnd)
+message(STATUS "Configure Chaos Metadata Service")
+ADD_SUBDIRECTORY(ChaosMetadataService bin/bin_cnd)
 
 message(STATUS "Configure Chaos Data Service")
 ADD_SUBDIRECTORY(ChaosDataService bin/bin_cds)
