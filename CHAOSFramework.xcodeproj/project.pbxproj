@@ -557,7 +557,7 @@
 		3230BEBB1817A9E100EA5793 /* libchaos_common.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_common.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3230BEBC1817A9E100EA5793 /* libchaos_cutoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_cutoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		3230BEBD1817A9E100EA5793 /* libchaos_uitoolkit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchaos_uitoolkit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		3230BEBE1817A9E100EA5793 /* ChaosNodeDirectory */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = ChaosNodeDirectory; path = ChaosMetadataService; sourceTree = BUILT_PRODUCTS_DIR; };
+		3230BEBE1817A9E100EA5793 /* ChaosMetadataService */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosMetadataService; sourceTree = BUILT_PRODUCTS_DIR; };
 		3230BEBF1817A9E100EA5793 /* ChaosDataService */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosDataService; sourceTree = BUILT_PRODUCTS_DIR; };
 		3230BEC0181A6ADB00EA5793 /* DatasetDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatasetDB.cpp; sourceTree = "<group>"; };
 		3230BEC1181A6ADB00EA5793 /* DatasetDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatasetDB.h; sourceTree = "<group>"; };
@@ -1422,7 +1422,7 @@
 				3230BEBB1817A9E100EA5793 /* libchaos_common.dylib */,
 				3230BEBC1817A9E100EA5793 /* libchaos_cutoolkit.dylib */,
 				3230BEBD1817A9E100EA5793 /* libchaos_uitoolkit.dylib */,
-				3230BEBE1817A9E100EA5793 /* ChaosNodeDirectory */,
+				3230BEBE1817A9E100EA5793 /* ChaosMetadataService */,
 				3230BEBF1817A9E100EA5793 /* ChaosDataService */,
 				32B1090D188C1D6200969D3D /* TestAsyncRpc */,
 				3258AF001935EE4D00A66D44 /* EchitectureTests */,
@@ -2686,7 +2686,7 @@
 			);
 			name = ChaosMetadataService;
 			productName = ChaosNodeDirectory;
-			productReference = 3230BEBE1817A9E100EA5793 /* ChaosNodeDirectory */;
+			productReference = 3230BEBE1817A9E100EA5793 /* ChaosMetadataService */;
 			productType = "com.apple.product-type.tool";
 		};
 		323236D5164573F50052CE06 /* ChaosDataService */ = {

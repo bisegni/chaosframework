@@ -22,6 +22,8 @@
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/sync_rpc/HTTPRpcSyncServer.h>
 
+#include <boost/regex.hpp>
+
 using namespace chaos;
 using namespace chaos::common::sync_rpc;
 using namespace Mongoose;
@@ -32,6 +34,7 @@ using namespace Mongoose;
 #define HTTPRSSLDBG_ LDBG_ << HTTPRSS_LOG_HEAD << __FUNCTION__
 #define HTTPRSSLERR_ LERR_ << HTTPRSS_LOG_HEAD
 
+static const boost::regex API_URL_FORMAT("/api/v1/([a-zA-Z0-9\/_]+)");
 
 HTTPRpcSyncServer::HTTPRpcSyncServer(const string& alias):
 RpcSyncServer(alias),
@@ -47,7 +50,7 @@ HTTPRpcSyncServer::~HTTPRpcSyncServer() {
 void HTTPRpcSyncServer::init(void*) throw(CException) {
     http_server.registerController(this);
     http_server.setOption("enable_directory_listing", "false");
-    http_server.setOption("enable_keep_alive", "true");
+    http_server.setOption("enable_keep_alive", "yes");
     const std::map<std::string, std::string>& kv_param = GlobalConfiguration::getInstance()->getRpcImplKVParam();
     if(kv_param.size()) {
         //we have some kv entry
@@ -83,16 +86,21 @@ void HTTPRpcSyncServer::deinit() throw(CException) {
 	
 }
 
-void HTTPRpcSyncServer::consumeJSONApi(Request &request, StreamResponse &response) {
+Response *HTTPRpcSyncServer::process(Request &request) {
+    StreamResponse *response = new StreamResponse();
+    LAPP_ << request.getMethod();
     LAPP_ << request.getUrl();
-    response << "Hello " << htmlEntities(request.get("name", "... what's your name ?")) << endl;
+    std::map<string, string> param = request.getAllVariable();
+    for (std::map<string, string>::iterator it = param.begin();
+         it != param.end(); it++) {
+        HTTPRSSLAPP_ << it->first << "=" << it->second;
+    }
+    response->setCode(200);
+    response->setHeader("Content-Type", "application/bson");
+    *response << "Hello " << htmlEntities(request.get("name", "... what's your name ?")) << endl;
+    return response;
 }
 
-void HTTPRpcSyncServer::setup() {
-    // Example of prefix, putting all the urls into "/api"
-    WebController::setPrefix("/api");
-    
-    // Hello demo
-    WebController::addRoute("GET", "/devices", HTTPRpcSyncServer, consumeJSONApi);
-    WebController::addRoute("GET", "/device/dataset", HTTPRpcSyncServer, consumeJSONApi);
+bool HTTPRpcSyncServer::handles(string method, string url) {
+    return regex_match(url, API_URL_FORMAT);
 }

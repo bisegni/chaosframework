@@ -43,9 +43,9 @@ namespace chaos {
 				
                 Mongoose::Server http_server;
                 
-                void consumeJSONApi(Mongoose::Request &request, Mongoose::StreamResponse &response);
+                Mongoose::Response *process(Mongoose::Request &request);
                 
-                void setup();
+                bool handles(string method, string url);
 			protected:
 				//inherited method
 				void init(void*) throw(CException);
