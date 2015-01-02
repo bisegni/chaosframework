@@ -29,6 +29,10 @@
 
 namespace chaos {
 	namespace common {
+        namespace data {
+            class CDataWrapper;
+        }
+        
 		namespace sync_rpc {
 			
 			/*

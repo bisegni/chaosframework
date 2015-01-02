@@ -62,7 +62,7 @@ namespace chaos {
         /*
          check for action name presence
          */
-        bool hasActionName(string&);
+        bool hasActionName(const string&);
         
 		//! return the number of the registered action in the domain
 		uint32_t registeredActions();
@@ -71,7 +71,7 @@ namespace chaos {
          return the reference to action desciptor ssociated with action name
          for managed domain
          */
-        AbstActionDescShrPtr& getActionDescriptornFormActionName(string&);
+        AbstActionDescShrPtr& getActionDescriptornFormActionName(const string&);
     };
     
 }

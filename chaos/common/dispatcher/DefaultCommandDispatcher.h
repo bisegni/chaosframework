@@ -79,7 +79,11 @@ namespace chaos{
 		
 		// inherited method
 		chaos_data::CDataWrapper* executeCommandSync(chaos_data::CDataWrapper * action_pack);
-
+        
+        // inherited method
+        chaos_data::CDataWrapper* executeCommandSync(const std::string& domain,
+                                                     const std::string& action,
+                                                     chaos_data::CDataWrapper * message_data);
     };
 }
 #endif

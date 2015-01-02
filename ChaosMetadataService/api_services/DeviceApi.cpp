@@ -19,7 +19,7 @@ DeviceApi::DeviceApi() {
     DeclareAction::addActionDescritionInstance<DeviceApi>(this,
                                                           &DeviceApi::registerDevice,
                                                           "device",
-                                                          "registerDevice",
+                                                          "register_device",
                                                           "Start the registartion phae of a device");
 }
 
@@ -31,7 +31,7 @@ DeviceApi::~DeviceApi() {
  Register a device
  */
 CDataWrapper* DeviceApi::registerDevice(CDataWrapper *registrationdData, bool& detach) throw(CException) {
-    if(registrationdData == NULL) throw CException(0, "The package cna't be null", "DeviceApi::registerDevice");
+    if(registrationdData == NULL) throw CException(-1, "The package can't be null", __PRETTY_FUNCTION__);
     
     //try to register new device if noone has been
     dm->getDeviceDatabase()->addAttributeToDataSetFromDataWrapper(*registrationdData);

@@ -81,7 +81,7 @@ uint32_t DomainActions::registeredActions() {
 /*
  check for action name presence
  */
-bool DomainActions::hasActionName(string& actName) {
+bool DomainActions::hasActionName(const string& actName) {
     return actionDescriptionsMap.count(actName)==1;
 }
 
@@ -89,7 +89,7 @@ bool DomainActions::hasActionName(string& actName) {
  return the reference to action desciptor ssociated with action name
  for managed domain
  */
-AbstActionDescShrPtr& DomainActions::getActionDescriptornFormActionName(string& actName) {
+AbstActionDescShrPtr& DomainActions::getActionDescriptornFormActionName(const string& actName) {
     AbstActionDescShrPtr& action = actionDescriptionsMap[actName];
     return action;
 }

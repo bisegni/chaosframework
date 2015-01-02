@@ -55,7 +55,9 @@ namespace chaos {
 										  ElementManagingPolicy&) throw(CException);
 		
 		//!call the action in an async way
-        virtual void synchronousCall(chaos_data::CDataWrapper *action_pack, chaos_data::CDataWrapper *result);
+        virtual void synchronousCall(const std::string& action,
+                                     chaos_data::CDataWrapper *message,
+                                     chaos_data::CDataWrapper *result);
     public:
         /*!
          Default constructor

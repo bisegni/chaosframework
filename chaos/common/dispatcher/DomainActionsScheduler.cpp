@@ -76,20 +76,21 @@ void DomainActionsScheduler::setDispatcher(AbstractCommandDispatcher *newDispatc
 	dispatcher = newDispatcher;
 }
 
-void DomainActionsScheduler::synchronousCall(CDataWrapper *action_pack, CDataWrapper *result) {
+void DomainActionsScheduler::synchronousCall(const std::string& action,
+                                             chaos_data::CDataWrapper *message,
+                                             chaos_data::CDataWrapper *result) {
 	bool message_has_been_detached = false;
-	auto_ptr<CDataWrapper>  action_message;
-	string  action_name = action_pack->getStringValue( RpcActionDefinitionKey::CS_CMDM_ACTION_NAME );
+	auto_ptr<CDataWrapper>  action_message(message);
 	
-	if(!domainActionsContainer->hasActionName(action_name)) {
-		LAPP_ << "The action " << action_name << " is not present for domain " << domainActionsContainer->getDomainName();
+    if(!domainActionsContainer->hasActionName(action)) {
+		LAPP_ << "The action " << action << " is not present for domain " << domainActionsContainer->getDomainName();
 		result->addInt32Value(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_CODE, -1);
 		result->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_DOMAIN, __PRETTY_FUNCTION__);
 		result->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, "Action is nto present in the domain");
 		return;
 	}
 	//get the action reference
-	AbstActionDescShrPtr action_desc_ptr = domainActionsContainer->getActionDescriptornFormActionName(action_name);
+	AbstActionDescShrPtr action_desc_ptr = domainActionsContainer->getActionDescriptornFormActionName(action);
 	
 	//lock the action for write, so we can schedule it
 	ActionReadLock read_lock_for_action_execution(action_desc_ptr->actionAccessMutext);
@@ -104,10 +105,6 @@ void DomainActionsScheduler::synchronousCall(CDataWrapper *action_pack, CDataWra
 		result->addStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_SUBMISSION_ERROR_MESSAGE, "Action can't be fired");
 	} else {
 		
-		//get the action message
-		if( action_pack->hasKey( RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE ) ) {
-			action_message.reset(action_pack->getCSDataValue(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE));
-		}
 		//call and return
 		try {
 			auto_ptr<CDataWrapper> action_result(action_desc_ptr->call(action_message.get(), message_has_been_detached));

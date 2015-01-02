@@ -21,10 +21,12 @@
 #include <chaos/common/utility/TimingUtil.h>
 #include <chaos/common/configuration/GlobalConfiguration.h>
 #include <chaos/common/sync_rpc/HTTPRpcSyncServer.h>
-
+#include <chaos/common/data/CDataWrapper.h>
 #include <boost/regex.hpp>
+#include <boost/algorithm/string.hpp>
 
 using namespace chaos;
+using namespace chaos::common::data;
 using namespace chaos::common::sync_rpc;
 using namespace Mongoose;
 
@@ -34,7 +36,7 @@ using namespace Mongoose;
 #define HTTPRSSLDBG_ LDBG_ << HTTPRSS_LOG_HEAD << __FUNCTION__
 #define HTTPRSSLERR_ LERR_ << HTTPRSS_LOG_HEAD
 
-static const boost::regex API_URL_FORMAT("/api/v1/([a-zA-Z0-9\/_]+)");
+static const boost::regex REG_API_URL_FORMAT("/rpc((/[a-zA-Z0-9_]+))*");
 
 HTTPRpcSyncServer::HTTPRpcSyncServer(const string& alias):
 RpcSyncServer(alias),
@@ -57,7 +59,7 @@ void HTTPRpcSyncServer::init(void*) throw(CException) {
         for (std::map<std::string, std::string>::const_iterator it = kv_param.begin();
              it != kv_param.end();
              it++) {
-            HTTPRSSLAPP_ << "Set cutom key value param "<<it->first << "=" <<it->second;
+            HTTPRSSLAPP_ << "Set custom key value param "<<it->first << "=" <<it->second;
             //add all option if the are recognized
             if(it->first.compare("listening_ports") == 0 ||
                it->first.compare("ssl_certificate") == 0 ||
@@ -87,20 +89,66 @@ void HTTPRpcSyncServer::deinit() throw(CException) {
 }
 
 Response *HTTPRpcSyncServer::process(Request &request) {
+    SerializationBuffer *result_buffer = NULL;
     StreamResponse *response = new StreamResponse();
-    LAPP_ << request.getMethod();
-    LAPP_ << request.getUrl();
-    std::map<string, string> param = request.getAllVariable();
-    for (std::map<string, string>::iterator it = param.begin();
-         it != param.end(); it++) {
-        HTTPRSSLAPP_ << it->first << "=" << it->second;
+    std::string method  = request.getMethod();
+    std::string url     = request.getUrl();
+    std::string content = request.getHeaderKeyValue("Content-Type");
+    bool        json    = content.compare("application/json") == 0;
+    bool        bson    = json?false:content.compare("application/bson") == 0;
+    HTTPRSSLAPP_ << method;
+    HTTPRSSLAPP_ << url;
+    HTTPRSSLAPP_ << content;
+    HTTPRSSLAPP_ << request.getData();
+
+    std::vector<std::string> api_parameter_in_url;
+    algorithm::split(api_parameter_in_url,
+                     url,
+                     algorithm::is_any_of("/"),
+                     algorithm::token_compress_on);
+    
+    for(std::vector<std::string>::iterator it = api_parameter_in_url.begin();
+        it != api_parameter_in_url.end();
+        it++) {
+        HTTPRSSLAPP_ << *it;
     }
-    response->setCode(200);
-    response->setHeader("Content-Type", "application/bson");
-    *response << "Hello " << htmlEntities(request.get("name", "... what's your name ?")) << endl;
+    
+    if(api_parameter_in_url.size()== 4 &&
+       (json || bson)) {
+        CDataWrapper *message_data = NULL;
+        std::string data  = request.getData();
+        
+        if (json) {
+            message_data = new CDataWrapper();
+            message_data->setSerializedJsonData(data.c_str());
+        } else if(bson) {
+            message_data = new CDataWrapper(data.c_str());
+        }
+        
+        DEBUG_CODE(HTTPRSSLDBG_ << "Call api fordomain:" << api_parameter_in_url[2]
+                                << " action:" << api_parameter_in_url[3] << " and message data:"
+                                << (message_data!=NULL?message_data->getJSONString():"No message data");)
+        std::auto_ptr<CDataWrapper> result(commandHandler->executeCommandSync(api_parameter_in_url[2],
+                                                                              api_parameter_in_url[3],
+                                                                              message_data));
+        if (json) {
+            result_buffer = result->getJSONData();
+            response->setHeader("Content-Type", "application/json");
+        } else if(bson) {
+            result_buffer = result->getBSONData();
+            response->setHeader("Content-Type", "application/bson");
+        }
+        //write response
+        response->setCode(200);
+        response->write(result_buffer->getBufferPtr(), result_buffer->getBufferLen());
+    } else {
+        response->setCode(400);
+        response->setHeader("Content-Type", "application/bson");
+        *response << htmlEntities("Invalid api call!") << endl;
+    }
     return response;
 }
 
 bool HTTPRpcSyncServer::handles(string method, string url) {
-    return regex_match(url, API_URL_FORMAT);
+    return regex_match(url, REG_API_URL_FORMAT);
 }

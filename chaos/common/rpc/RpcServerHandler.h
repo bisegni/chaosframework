@@ -51,6 +51,19 @@ namespace chaos {
 		 @return the response of the called action
 		 */
 		virtual chaos_data::CDataWrapper* executeCommandSync(chaos_data::CDataWrapper * action_pack) = 0;
+        
+        //! execute an action in synchronous mode
+        /*!
+         This method will be called by the implementation of RPCServer when a new data apck
+         will be received
+         @param domain the domain where search the action
+         @param action is the alias of the rpc action to call
+         @param action_pack the CDatawrapper instance pointer received by rpc server taht contain infromatio to execute an action
+         @return the response of the called action
+         */
+        virtual chaos_data::CDataWrapper* executeCommandSync(const std::string& domain,
+                                                             const std::string& action,
+                                                             chaos_data::CDataWrapper * message_data) = 0;
     };
 }
 #endif
