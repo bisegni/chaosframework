@@ -42,6 +42,9 @@ DirectIODataPack *n = (DirectIODataPack*)calloc(sizeof(DirectIODataPack), 1);
 #define DECLARE_AND_CALLOC_HEADER(x,n)\
 x *n = (x*)calloc(sizeof(x),1);
 
+
+DEFINE_CLASS_FACTORY(DirectIODeviceClientChannel, DirectIOVirtualClientChannel);
+
 //define the static deallocator class
 DirectIODeviceClientChannel::DirectIODeviceClientChannelDeallocator DirectIODeviceClientChannel::STATIC_DirectIODeviceClientChannelDeallocator;
 

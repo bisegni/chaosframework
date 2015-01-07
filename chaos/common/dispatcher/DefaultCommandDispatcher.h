@@ -39,7 +39,7 @@ namespace chaos{
     /*!
      This class implemente the default CSLib dispatcher. It define an axecution buffer for every action domain
      */
-    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DefaultCommandDispatcher, AbstractCommandDispatcher) {
+    DECLARE_CLASS_FACTORY(DefaultCommandDispatcher, AbstractCommandDispatcher) {
         bool deinitialized;
         
 		chaos::common::thread::SharedMutex das_map_mutex;

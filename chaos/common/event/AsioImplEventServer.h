@@ -42,7 +42,7 @@ namespace chaos {
         /*!
          
          */
-        REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(AsioImplEventServer, EventServer) {
+        DECLARE_CLASS_FACTORY(AsioImplEventServer, EventServer) {
             friend class AsioEventHandler;
             
             //! alert socket

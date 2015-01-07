@@ -102,10 +102,12 @@ namespace chaos {
     class ObjectInstancer {
     public:
         ObjectInstancer(ObjectFactory *commandFactory) {
+            LDBG_<<" instancing "<<commandFactory->getAlias();
             if(commandFactory){
                 ObjectFactoryRegister<T>::getInstance()->registerObjectFactory(commandFactory->getAlias(), commandFactory);
             }
         }
+        
     };
     
 #define MAKE_SERVICE_CLASS_CONSTRUCTOR(SERVICE_NAME) SERVICE_NAME(string *alias):NamedService(alias){};
@@ -115,8 +117,15 @@ namespace chaos {
      Macro for help the Command Dispatcher classes registration
      */
 #define REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(CMD_CLASS_NAME, BASE_CLASS_NAME) class CMD_CLASS_NAME;\
-static const ObjectInstancer<BASE_CLASS_NAME> CMD_CLASS_NAME ## ObjectInstancer(new ObjectFactoryAliasInstantiation<CMD_CLASS_NAME>(#CMD_CLASS_NAME));\
+extern const chaos::ObjectInstancer<BASE_CLASS_NAME> CMD_CLASS_NAME ## ObjectInstancer(new ObjectFactoryAliasInstantiation<CMD_CLASS_NAME>(#CMD_CLASS_NAME));\
 class CMD_CLASS_NAME : public BASE_CLASS_NAME
+
+#define DECLARE_CLASS_FACTORY(CMD_CLASS_NAME,BASE_CLASS_NAME) class CMD_CLASS_NAME;\
+extern chaos::ObjectInstancer<BASE_CLASS_NAME> CMD_CLASS_NAME ## ObjectInstancer;\
+class CMD_CLASS_NAME : public BASE_CLASS_NAME
+
+#define DEFINE_CLASS_FACTORY(CMD_CLASS_NAME,BASE_CLASS_NAME) \
+chaos::ObjectInstancer<BASE_CLASS_NAME> CMD_CLASS_NAME ## ObjectInstancer(new chaos::ObjectFactoryAliasInstantiation<CMD_CLASS_NAME>(#CMD_CLASS_NAME));
     
 #define REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(t) \
     friend class chaos::ObjectFactoryAliasInstantiation<t>;

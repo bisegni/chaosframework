@@ -28,6 +28,7 @@ using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 using namespace chaos::common::direct_io::channel::opcode_headers;
 
+DEFINE_CLASS_FACTORY(DirectIOPerformanceServerChannel, DirectIOVirtualServerChannel);
 
 DirectIOPerformanceServerChannel::DirectIOPerformanceServerChannel(std::string alias):
 DirectIOVirtualServerChannel(alias, DIOPerformance_Channel_Index), handler(NULL) {

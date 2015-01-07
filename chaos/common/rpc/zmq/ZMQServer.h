@@ -36,7 +36,7 @@ namespace chaos {
     /*
      Class that implement the Chaos RPC adapter for 0mq protocoll
      */
-    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(ZMQServer, RpcServer)  {
+    DECLARE_CLASS_FACTORY(ZMQServer, RpcServer)  {
         REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ZMQServer)
         int threadNumber;
         void *zmqContext;

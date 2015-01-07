@@ -45,7 +45,7 @@ namespace chaos {
     /*!
      Class that implement the Chaos RPC adapter using libuv library
      */
-    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(TCPUVServer, RpcServer)  {
+    DECLARE_CLASS_FACTORY(TCPUVServer, RpcServer)  {
         REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(TCPUVServer)
         //! uv dedicated loop for rpc server activity
 		uv_loop_t loop;

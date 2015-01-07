@@ -36,7 +36,7 @@ namespace chaos {
 				class MongoDBIndexCursor;
 				
 				//! Mongodb implementation for the index driver
-				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(MongoDBDriver, DBDriver) {
+				DECLARE_CLASS_FACTORY(MongoDBDriver, DBDriver) {
 					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(MongoDBDriver)
 					MongoDBDriver(std::string alias);
 					friend class MongoDBIndexCursor;

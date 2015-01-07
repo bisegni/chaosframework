@@ -37,7 +37,7 @@ namespace chaos {
 			namespace channel {
 				using namespace chaos::common::direct_io::channel::opcode_headers;
 				//! serve rimplementation for the System API direct io channel
-				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DirectIOSystemAPIServerChannel, DirectIOVirtualServerChannel),
+				DECLARE_CLASS_FACTORY(DirectIOSystemAPIServerChannel, DirectIOVirtualServerChannel),
 				public chaos::common::direct_io::DirectIOEndpointHandler {
 					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIOSystemAPIServerChannel)
 				public:

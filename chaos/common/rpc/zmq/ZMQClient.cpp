@@ -35,6 +35,9 @@ using namespace boost::algorithm;
 #define ZMQC_LAPP LAPP_ << "[ZMQClient] - "
 #define ZMQC_LDBG LDBG_ << "[ZMQClient] - "
 #define ZMQC_LERR LERR_ << "[ZMQClient] - "
+
+DEFINE_CLASS_FACTORY(ZMQClient, RpcClient);
+
 static void my_free (void *data, void *hint)
 {
 	delete (char*)data;

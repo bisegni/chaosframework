@@ -36,11 +36,14 @@
 if(x && x->answer_data) free(x->answer_data);\
 if(x) free(x);\
 x = NULL;
-
+ 
 
 namespace chaos_data = chaos::common::data;
 
 using namespace chaos::common::direct_io::impl;
+using namespace chaos::common::direct_io;
+
+DEFINE_CLASS_FACTORY(ZMQDirectIOServer, DirectIOServer);
 
 void free_answer(void *data, void *hint) {
 	chaos::common::direct_io::DirectIOSynchronousAnswerPtr answer_data = static_cast<chaos::common::direct_io::DirectIOSynchronousAnswerPtr>(hint);

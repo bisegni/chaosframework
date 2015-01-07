@@ -80,7 +80,7 @@ namespace chaos{
 			
 			/*!
 			 */
-			REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(IODirectIODriver, IODataDriver),
+			DECLARE_CLASS_FACTORY(IODirectIODriver, IODataDriver),
 			public NamedService,
 			public common::network::URLServiceFeederHandler,
 			private chaos_dio_channel::DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler,

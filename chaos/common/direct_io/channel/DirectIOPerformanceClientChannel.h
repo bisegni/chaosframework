@@ -32,7 +32,7 @@ namespace chaos {
 		namespace direct_io {
 			class DirectIOClientConnection;
 			namespace channel {
-				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DirectIOPerformanceClientChannel, DirectIOVirtualClientChannel) {
+				DECLARE_CLASS_FACTORY(DirectIOPerformanceClientChannel, DirectIOVirtualClientChannel) {
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIOPerformanceClientChannel)
 					friend class DirectIOClientConnection;
 					

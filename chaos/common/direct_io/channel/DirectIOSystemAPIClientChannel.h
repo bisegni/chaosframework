@@ -36,7 +36,7 @@ namespace chaos {
 
 				using namespace chaos::common::direct_io::channel::opcode_headers;
 				//! System API client channel
-				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DirectIOSystemAPIClientChannel, DirectIOVirtualClientChannel) {
+				DECLARE_CLASS_FACTORY(DirectIOSystemAPIClientChannel, DirectIOVirtualClientChannel) {
 					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIOSystemAPIClientChannel)
 					friend class DirectIODispatcher;
 					

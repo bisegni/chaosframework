@@ -26,6 +26,7 @@ using namespace chaos;
 using namespace chaos::event;
 
 #define EVTDISPAPP_ LAPP_ << "[DefaultEventDispatcher] - "
+DEFINE_CLASS_FACTORY(DefaultEventDispatcher, AbstractEventDispatcher);
 
     //! Basic Constructor
 DefaultEventDispatcher::DefaultEventDispatcher(string alias):AbstractEventDispatcher(alias) {

@@ -33,6 +33,7 @@ using namespace chaos::event;
 
 #define DEFAULT_BASE_IP                 "0.0.0.0"
 
+DEFINE_CLASS_FACTORY(AsioImplEventServer, EventServer);
 AsioImplEventServer::AsioImplEventServer(string alias):EventServer(alias) {
     threadNumber = 0;
     alertHandler = NULL;

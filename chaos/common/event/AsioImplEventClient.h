@@ -38,7 +38,7 @@ namespace chaos {
         
         class AsioEventForwarder;
         
-        REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(AsioImplEventClient, EventClient) {
+        DECLARE_CLASS_FACTORY(AsioImplEventClient, EventClient) {
         protected:
             /*
              init the event adapter

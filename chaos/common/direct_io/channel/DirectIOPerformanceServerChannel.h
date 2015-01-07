@@ -34,7 +34,7 @@ namespace chaos {
 			class DirectIODispatcher;
 			namespace channel {
 				
-				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DirectIOPerformanceServerChannel, DirectIOVirtualServerChannel), public chaos::common::direct_io::DirectIOEndpointHandler {
+				DECLARE_CLASS_FACTORY(DirectIOPerformanceServerChannel, DirectIOVirtualServerChannel), public chaos::common::direct_io::DirectIOEndpointHandler {
                     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIOPerformanceServerChannel)
 					friend class DirectIODispatcher;
 					

@@ -53,6 +53,8 @@ namespace chaos_data = chaos::common::data;
 namespace chaos_dio = chaos::common::direct_io;
 namespace chaos_dio_channel = chaos::common::direct_io::channel;
 
+DEFINE_CLASS_FACTORY(IODirectIODriver, IODataDriver);
+
 //using namespace memcache;
 
 /*---------------------------------------------------------------------------------

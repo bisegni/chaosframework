@@ -36,6 +36,7 @@ static void my_free (void *data, void *hint)
     delete (char*)data;
 }
 
+DEFINE_CLASS_FACTORY(ZMQServer, RpcServer);
 ZMQServer::ZMQServer(string alias):RpcServer(alias) {
     
 }

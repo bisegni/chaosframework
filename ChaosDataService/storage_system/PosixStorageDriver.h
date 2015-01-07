@@ -44,7 +44,7 @@ namespace chaos {
 				 KV Custom param:
 				 "posix_root_path":root directory that became domain root
 				 */
-				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(PosixStorageDriver, StorageDriver) {
+				DECLARE_CLASS_FACTORY(PosixStorageDriver, StorageDriver) {
 					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(PosixStorageDriver)
 					
 					std::string fs_driver_domain_path;

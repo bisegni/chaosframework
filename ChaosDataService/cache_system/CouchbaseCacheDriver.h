@@ -49,7 +49,7 @@ namespace chaos {
              work to do on cache. Cache system is to be intended as global
              to all CacheDriver instance.
              */
-			REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(CouchbaseCacheDriver, CacheDriver) {
+			DECLARE_CLASS_FACTORY(CouchbaseCacheDriver, CacheDriver) {
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(CouchbaseCacheDriver)
 				lcb_t					instance;
 				struct lcb_create_st	create_options;

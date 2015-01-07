@@ -35,7 +35,7 @@ namespace chaos {
 		namespace direct_io {
             namespace impl {
 				
-                REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(ZMQDirectIOServer, DirectIOServer) , private ZMQBaseClass {
+                DECLARE_CLASS_FACTORY(ZMQDirectIOServer, DirectIOServer) , private ZMQBaseClass {
                     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ZMQDirectIOServer)
                     void *zmq_context;
                     

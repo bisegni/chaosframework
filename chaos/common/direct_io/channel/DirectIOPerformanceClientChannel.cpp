@@ -26,6 +26,8 @@
 
 using namespace chaos::common::direct_io::channel;
 
+DEFINE_CLASS_FACTORY(DirectIOPerformanceClientChannel, DirectIOVirtualClientChannel);
+
 //define the static deallocator class
 DirectIOPerformanceClientChannel::DirectIOPerformanceClientChannelDeallocator DirectIOPerformanceClientChannel::STATIC_DirectIOPerformanceClientChannelDeallocator;
 

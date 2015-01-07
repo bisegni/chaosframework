@@ -51,7 +51,7 @@ namespace chaos {
 				/*!
 				 This class manage the forwarding of data that represent the device dataset channels (i/O)
 				 */
-				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DirectIODeviceClientChannel, DirectIOVirtualClientChannel) {
+				DECLARE_CLASS_FACTORY(DirectIODeviceClientChannel, DirectIOVirtualClientChannel) {
 					REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(DirectIODeviceClientChannel)
 					
 					class DirectIODeviceClientChannelDeallocator:

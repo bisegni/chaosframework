@@ -36,6 +36,7 @@ using namespace boost::algorithm;
 
 
 //using namespace memcache;
+DEFINE_CLASS_FACTORY(IOMemcachedIODriver, IODataDriver);
 
 /*
  * Driver constructor

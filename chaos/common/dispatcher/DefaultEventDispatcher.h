@@ -32,7 +32,7 @@ namespace chaos {
     
     class EventTypeScheduler;
     
-    REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(DefaultEventDispatcher, AbstractEventDispatcher) {
+    DECLARE_CLASS_FACTORY(DefaultEventDispatcher, AbstractEventDispatcher) {
         
             //! Alert scheduler
         EventTypeScheduler *alertEventScheduler;

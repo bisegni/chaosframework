@@ -31,6 +31,9 @@ using namespace boost;
 #define LDEF_CMD_DISPTC_APP_ LAPP_ << "[DefaultCommandDispatcher] - "
 #define LDEF_CMD_DISPTC_DBG_ LDBG_ << "[DefaultCommandDispatcher] - "
 #define LDEF_CMD_DISPTC_ERR_ LERR_ << "[DefaultCommandDispatcher] ("<< __LINE__ <<") -"
+
+DEFINE_CLASS_FACTORY(DefaultCommandDispatcher, AbstractCommandDispatcher);
+
 DefaultCommandDispatcher::DefaultCommandDispatcher(string alias) : AbstractCommandDispatcher(alias) {
 }
 

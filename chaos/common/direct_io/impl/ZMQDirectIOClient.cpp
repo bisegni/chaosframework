@@ -40,6 +40,7 @@ using namespace chaos::common::direct_io::impl;
 typedef boost::unique_lock<boost::shared_mutex>	ZMQDirectIOClientWriteLock;
 typedef boost::shared_lock<boost::shared_mutex> ZMQDirectIOClientReadLock;
 
+DEFINE_CLASS_FACTORY(ZMQDirectIOClient, DirectIOClient);
 
 //------------------------------STATIC METHOD---------------------------------
 int ZMQDirectIOClient::readMesg(void* s, zmq_event_t* event, char* ep) {

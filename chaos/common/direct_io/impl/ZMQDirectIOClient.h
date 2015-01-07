@@ -44,7 +44,7 @@ namespace chaos {
 				// ZMQ Direct IO Implementation
 				/*!
 				 */
-                REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(ZMQDirectIOClient, DirectIOClient), private ZMQBaseClass {
+                DECLARE_CLASS_FACTORY(ZMQDirectIOClient, DirectIOClient), private ZMQBaseClass {
                     REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(ZMQDirectIOClient)
 
 					friend class DirectIOVirtualClientChannel;

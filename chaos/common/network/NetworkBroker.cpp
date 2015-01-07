@@ -89,7 +89,7 @@ void NetworkBroker::init(void *initData) throw(CException) {
         MB_LAPP  << "DirectIO Client implementation is configured has : " << directIOClientImpl;
         MB_LAPP  << "Trying to initilize DirectIO Server: " << directIOServerImpl;
         directIOServer = ObjectFactoryRegister<common::direct_io::DirectIOServer>::getInstance()->getNewInstanceByName(directIOServerImpl);
-		if(!directIOServer) throw CException(1, "Error creating direct io server implementation", __FUNCTION__);
+		if(!directIOServer) throw CException(1, "Error creating direct io server implementation:\""+directIOServerImpl+"\"", __FUNCTION__);
 		
 		//allocate the dispatcher
 		MB_LAPP  << "Allocate DirectIODispatcher DirectIODispatcher";

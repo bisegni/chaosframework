@@ -24,6 +24,8 @@ using namespace chaos::common::direct_io;
 using namespace chaos::common::direct_io::channel;
 using namespace chaos::common::direct_io::channel::opcode_headers;
 
+DEFINE_CLASS_FACTORY(DirectIOSystemAPIClientChannel, DirectIOVirtualClientChannel);
+
 //define the static deallocator class
 DirectIOSystemAPIClientChannel::DirectIOSystemAPIClientChannelDeallocator
 DirectIOSystemAPIClientChannel::STATIC_DirectIOSystemAPIClientChannelDeallocator;
