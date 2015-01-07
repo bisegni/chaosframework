@@ -1,3 +1,6 @@
+cmake_minimum_required(VERSION 2.6)
+include($ENV{CHAOS_BUNDLE}/tools/project_template/CMakeChaos.txt)
+
 SET(src main.cpp)
 SET(src  ${src} ChaosDataService.cpp QueryDataConsumer.cpp StageDataConsumer.cpp)
 
@@ -22,14 +25,12 @@ SET(src  ${src} vfs/query/DataBlockCache.cpp vfs/query/DataBlockFetcher.cpp)
 
 ADD_EXECUTABLE(ChaosDataService ${src})
 
-SET(ChaosDataServiceLib $ENV{CHAOS_LINK_LIBRARY})
-separate_arguments(ChaosDataServiceLib)
-SET(ChaosDataServiceLib dl mongoclient couchbase chaos_common boost_filesystem ${ChaosDataServiceLib})
 
-IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	TARGET_LINK_LIBRARIES(ChaosDataService pthread ${ChaosDataServiceLib})
-ELSE(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-	TARGET_LINK_LIBRARIES(ChaosDataService ${ChaosDataServiceLib})
-ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+IF(BUILD_FORCE_STATIC)
+  SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive")
+  TARGET_LINK_LIBRARIES(ChaosDataService mongoclient couchbase  ${FrameworkLib})
+ELSE()
+  TARGET_LINK_LIBRARIES(ChaosDataService mongoclient couchbase chaos_common ${FrameworkLib})
+ENDIF()
 
 INSTALL_TARGETS(/bin ChaosDataService)

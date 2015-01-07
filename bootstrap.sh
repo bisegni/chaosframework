@@ -292,7 +292,12 @@ if [ ! -f "$PREFIX/include/libcouchbase/couchbase.h" ]; then
 	tar zxvf $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION.tar.gz -C $BASE_EXTERNAL
     fi
     cd $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION
-    ./configure --prefix=$PREFIX --disable-couchbasemock --disable-plugins $CROSS_HOST_CONFIGURE
+   if [ -n "$CHAOS_STATIC" ]; then
+	./configure --enable-static --disable-couchbasemock --disable-plugins  --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+    else
+	./configure --enable-shared --disable-couchbasemock --disable-plugins  --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+    fi
+
     do_make "COUCHBASE"
     echo "Couchbase done"
 fi
@@ -366,10 +371,24 @@ if [ ! -f "$PREFIX/include/zmq.h" ]; then
     echo "ZMQ done"
 fi
 
+## json cpp
+if [ ! -f $PREFIX/json/json.h ]; then
+    if [ ! -f $BASE_EXTERNAL/json/json.h ]; then
+	if !(git clone https://github.com/open-source-parsers/jsoncpp.git $BASE_EXTERNAL/jsoncpp) ; then
+	    echo "## cannot checkout jsoncpp"
+	    exit 1
+	fi
+	cd $BASE_EXTERNAL/jsoncpp
+	cmake $CHAOS_CMAKE_FLAGS .
+	do_make "jsoncpp"
+	 
+    fi
+fi
+
 ## mongoose install
 if [ ! -f $PREFIX/mongoose-cpp/mongoose.h ]; then
     if [ ! -f $BASE_EXTERNAL/mongoose-cpp/mongoose.h ]; then
-	if !(git clone https://github.com/Gregwar/mongoose-cpp.git $BASE_EXTERNAL/mongoose-cpp) ; then
+	if !(git clone https://github.com/bisegni/mongoose-cpp.git $BASE_EXTERNAL/mongoose-cpp) ; then
 	    echo "## cannot checkout moongoose-cpp"
 	    exit 1
 	fi
@@ -379,6 +398,7 @@ if [ ! -f $PREFIX/mongoose-cpp/mongoose.h ]; then
 	 
     fi
 fi
+
 ##
 
 
