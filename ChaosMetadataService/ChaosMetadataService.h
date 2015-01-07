@@ -28,12 +28,9 @@
 
 #include <chaos/common/global.h>
 #include <chaos/common/ChaosCommon.h>
+#include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/thread/WaitSemaphore.h>
 #include <chaos/common/utility/StartableService.h>
-
-#include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
-#include <chaos/cu_toolkit/CommandManager/CommandManager.h>
-
 
 namespace chaos {
     namespace nd {

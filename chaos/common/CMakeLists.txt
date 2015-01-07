@@ -152,6 +152,9 @@ INSTALL(FILES ${files} DESTINATION include/chaos/common/rpc)
 FILE(GLOB files "rpc/zmq/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/rpc/zmq)
 
+FILE(GLOB files "sync_rpc/*.h")
+INSTALL(FILES ${files} DESTINATION include/chaos/common/sync_rpc)
+
 FILE(GLOB files "thread/*.h")
 INSTALL(FILES ${files} DESTINATION include/chaos/common/thread)
 FILE(GLOB files "utility/*.h")

@@ -32,7 +32,10 @@ message(STATUS "Configure UIToolkit Layer")
 ADD_SUBDIRECTORY(chaos/ui_toolkit bin/bin_uitoolkit)
 
 message(STATUS "Configure Chaos Metadata Service")
-ADD_SUBDIRECTORY(ChaosMetadataService bin/bin_cnd)
+ADD_SUBDIRECTORY(ChaosMetadataService bin/bin_metadata_service)
+
+message(STATUS "Configure Chaos WAN Proxy")
+ADD_SUBDIRECTORY(ChaosWANProxy bin/bin_wan_proxy)
 
 message(STATUS "Configure Chaos Data Service")
 ADD_SUBDIRECTORY(ChaosDataService bin/bin_cds)
