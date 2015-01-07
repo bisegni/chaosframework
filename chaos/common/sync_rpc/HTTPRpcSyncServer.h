@@ -38,7 +38,7 @@ namespace chaos {
 			/*
 			 Class that implement the Chaos RPC server using HTTP
 			 */
-			REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY(HTTPRpcSyncServer, RpcSyncServer),
+			DECLARE_CLASS_FACTORY(HTTPRpcSyncServer, RpcSyncServer),
             public Mongoose::WebController {
 				REGISTER_AND_DEFINE_DERIVED_CLASS_FACTORY_HELPER(HTTPRpcSyncServer)
 				

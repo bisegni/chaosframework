@@ -38,6 +38,7 @@ using namespace Mongoose;
 
 static const boost::regex REG_API_URL_FORMAT("/rpc((/[a-zA-Z0-9_]+))*");
 
+DEFINE_CLASS_FACTORY(HTTPRpcSyncServer, RpcSyncServer);
 HTTPRpcSyncServer::HTTPRpcSyncServer(const string& alias):
 RpcSyncServer(alias),
 http_server(8080){
