@@ -373,13 +373,13 @@ fi
 
 ## json cpp
 if [ ! -f $PREFIX/json/json.h ]; then
-    if [ ! -f $BASE_EXTERNAL/json/json.h ]; then
+    if [ ! -d $BASE_EXTERNAL/jsoncpp ]; then
 	if !(git clone https://github.com/open-source-parsers/jsoncpp.git $BASE_EXTERNAL/jsoncpp) ; then
 	    echo "## cannot checkout jsoncpp"
 	    exit 1
 	fi
 	cd $BASE_EXTERNAL/jsoncpp
-	cmake $CHAOS_CMAKE_FLAGS .
+	cmake $CHAOS_CMAKE_FLAGS -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF.
 	do_make "jsoncpp"
 	 
     fi
@@ -393,7 +393,7 @@ if [ ! -f $PREFIX/mongoose-cpp/mongoose.h ]; then
 	    exit 1
 	fi
 	cd $BASE_EXTERNAL/mongoose-cpp
-	cmake $CHAOS_CMAKE_FLAGS .
+	cmake $CHAOS_CMAKE_FLAGS -DHAS_JSONCPP=ON.
 	do_make "mongoose-cpp"
 	 
     fi
