@@ -21,8 +21,8 @@
 #ifndef ChaosMetadataService_H
 #define ChaosMetadataService_H
 #pragma GCC diagnostic ignored "-Woverloaded-virtual"
-
-#include "api_services/DeviceApi.h"
+// TODO 
+///#include "api_services/DeviceApi.h"
 
 #include <boost/thread/condition.hpp>
 
@@ -53,7 +53,7 @@ namespace chaos {
             ~ChaosMetadataService(){};
             static void signalHanlder(int);
             
-            cnd::api::DeviceApi deviceApi;
+	    //            cnd::api::DeviceApi deviceApi;
         public:
             typedef boost::mutex::scoped_lock lock;
                 //! C and C++ attribute parser

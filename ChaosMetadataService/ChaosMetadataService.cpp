@@ -18,6 +18,7 @@
  *    	limitations under the License.
  */
 #include "ChaosMetadataService.h"
+#include "api_services/DeviceApi.h"
 #include <csignal>
 #include <chaos/common/exception/CException.h>
 

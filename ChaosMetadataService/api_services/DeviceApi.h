@@ -21,7 +21,7 @@
 #ifndef __CHAOSFramework__DeviceApi__
 #define __CHAOSFramework__DeviceApi__
 
-#include "ApiProvider.h"
+//#include "ApiProvider.h"
 
 namespace chaos_data = chaos::common::data;
 

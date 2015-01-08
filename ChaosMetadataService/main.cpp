@@ -29,9 +29,9 @@ using namespace chaos;
 int main(int argc, char * argv[]) {
 	try {
 		//Init the Node
-		chaos::nd::ChaosMetadataService::getInstance()->init(argc, argv);
+	  //		chaos::nd::ChaosMetadataService::getInstance()->init(argc, argv);
 		//!Start the node
-		chaos::nd::ChaosMetadataService::getInstance()->start();
+	  //		chaos::nd::ChaosMetadataService::getInstance()->start();
 	} catch (CException& ex) {
 		DECODE_CHAOS_EXCEPTION(ex)
 	}
