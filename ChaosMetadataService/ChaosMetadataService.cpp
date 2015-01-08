@@ -65,6 +65,13 @@ void ChaosMetadataService::init(void *init_data)  throw(CException) {
         network_broker_service.init(NULL, __PRETTY_FUNCTION__);
         
         network_broker_service->registerAction(&deviceApi);
+		
+		LAPP_ << "-----------------------------------------";
+		LAPP_ << "!CHAOS Metadata service stardet";
+		LAPP_ << "RPC Server address: " << network_broker_service->getRPCUrl();
+		LAPP_ << "DirectIO Server address: " << network_broker_service->getDirectIOUrl();
+		LAPP_ << "Sync RPC URL: " << network_broker_service->getSyncRPCUrl();
+		LAPP_ << "-----------------------------------------";
     } catch (CException& ex) {
         DECODE_CHAOS_EXCEPTION(ex)
         exit(1);

@@ -41,11 +41,15 @@ namespace chaos {
 				by different client
 				dio_client---> data message -->dio_server
 			 */
-			class DirectIOServer : public chaos::utility::StartableService, public NamedService, public DirectIOServerPublicInterface {
+			class DirectIOServer :
+			public chaos::utility::StartableService,
+			public NamedService,
+			public DirectIOServerPublicInterface {
 				//! handler implementation for the server instance
             protected:
                 int32_t priority_port;
                 int32_t service_port;
+				std::string service_url;
 				DirectIODispatcher *handler_impl;
 			public:
 				DirectIOServer(const std::string& alias);
@@ -74,7 +78,7 @@ namespace chaos {
 
                 uint32_t getServicePort();
 				
-				std::string getUrl();
+				const std::string& getUrl();
 
 			};
 			

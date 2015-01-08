@@ -35,6 +35,7 @@ using namespace boost;
 namespace po = boost::program_options;
 
 #define _RPC_PORT					8888
+#define _SYNC_RPC_PORT				8080
 #define _DIRECT_IO_PRIORITY_PORT	1672
 #define _DIRECT_IO_SERVICE_PORT		30175
 
@@ -52,8 +53,9 @@ void GlobalConfiguration::preParseStartupParameters() throw (CException){
         addOption(InitOption::OPT_DIRECT_IO_PRIORITY_SERVER_PORT, po::value<int>()->default_value(_DIRECT_IO_PRIORITY_PORT), "DirectIO priority server port");
         addOption(InitOption::OPT_DIRECT_IO_SERVICE_SERVER_PORT, po::value<int>()->default_value(_DIRECT_IO_SERVICE_PORT), "DirectIO service server port");
         addOption(InitOption::OPT_DIRECT_IO_SERVER_THREAD_NUMBER, po::value<int>()->default_value(2),"DirectIO server thread number");
-        addOption(InitOption::OPT_RPC_SYNC_ENABLE, po::value< bool >()->default_value(true), "Enable the sync wrapper to rpc protocol");
+        addOption(InitOption::OPT_RPC_SYNC_ENABLE, po::value< bool >()->default_value(false), "Enable the sync wrapper to rpc protocol");
         addOption(InitOption::OPT_RPC_SYNC_IMPLEMENTATION, po::value< string >()->default_value("HTTP"), "Specify the synchronous rpc implementation");
+		addOption(InitOption::OPT_RPC_SYNC_PORT, po::value< int >()->default_value(_SYNC_RPC_PORT), "Port where is published the syncrhonous rpc interface");
         addOption(InitOption::OPT_RPC_IMPLEMENTATION, po::value< string >()->default_value("ZMQ"), "Specify the rpc implementation");
         addOption(InitOption::OPT_RPC_SERVER_PORT, po::value<int>()->default_value(_RPC_PORT), "RPC server port");
         addOption(InitOption::OPT_RPC_SERVER_THREAD_NUMBER, po::value<int>()->default_value(2),"RPC server thread number");
@@ -220,7 +222,10 @@ void GlobalConfiguration::checkDefaultOption() throw (CException) {
         rpc_sync_enable = false;
     }
     configuration.addBoolValue(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ENABLE, rpc_sync_enable);
-    
+	
+	CHECK_AND_DEFINE_OPTION_WITH_DEFAULT(int, rpc_sync_port, InitOption::OPT_RPC_SYNC_PORT, 8080)
+	configuration.addInt32Value(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ADAPTER_PORT, InetUtility::scanForLocalFreePort(rpc_sync_port));
+	
     CHECK_AND_DEFINE_OPTION(string, rpc_sync_impl, InitOption::OPT_RPC_SYNC_IMPLEMENTATION)
     configuration.addStringValue(RpcConfigurationKey::CS_CMDM_RPC_SYNC_ADAPTER_TYPE, rpc_sync_impl);
     

@@ -39,6 +39,8 @@ DirectIOServer::~DirectIOServer() {
 void DirectIOServer::init(void *init_data) throw(chaos::CException) {
 	if(handler_impl == NULL) throw chaos::CException(-1, "handler has not been configured", __FUNCTION__);
 	StartableService::initImplementation(handler_impl, init_data, "DirectIOServer handler", __FUNCTION__);
+	//construct the direct io service url
+	service_url = boost::str( boost::format("%1%:%2%:%3%") % chaos::GlobalConfiguration::getInstance()->getLocalServerAddress() % priority_port % service_port);
 }
 
 // Start the implementation
@@ -78,6 +80,6 @@ uint32_t DirectIOServer::getServicePort() {
     return service_port;
 }
 
-std::string DirectIOServer::getUrl() {
-	return  boost::str( boost::format("%1%:%2%:%3%") % chaos::GlobalConfiguration::getInstance()->getLocalServerAddress() % priority_port % service_port);
+const std::string& DirectIOServer::getUrl() {
+	return  service_url;
 }

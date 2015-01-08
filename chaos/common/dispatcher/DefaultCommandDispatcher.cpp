@@ -160,37 +160,41 @@ void DefaultCommandDispatcher::deregisterAction(DeclareAction *declareActionClas
     
 }
 
-CDataWrapper* DefaultCommandDispatcher::executeCommandSync(CDataWrapper * action_pack) {
+CDataWrapper* DefaultCommandDispatcher::executeCommandSync(CDataWrapper * message_data) {
     //allocate new Result Pack
     CDataWrapper *result = new CDataWrapper();
     try{
         
-        if(!action_pack) {
+        if(!message_data) {
             MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -1, "Invalid action pack", __PRETTY_FUNCTION__)
+			CHK_AND_DELETE_OBJ_POINTER(message_data)
             return result;
         }
-        if(!action_pack->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN)){
+        if(!message_data->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN)){
             MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -2, "Action call with no action domain", __PRETTY_FUNCTION__)
-            return result;
+			CHK_AND_DELETE_OBJ_POINTER(message_data)
+			return result;
         }
-        string action_domain = action_pack->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
+        string action_domain = message_data->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_DOMAIN);
         
-        if(!action_pack->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME)) {
+        if(!message_data->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME)) {
             MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -3, "Action Call with no action name", __PRETTY_FUNCTION__)
-            return result;
+            CHK_AND_DELETE_OBJ_POINTER(message_data)
+			return result;
         }
-        string action_name = action_pack->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
+        string action_name = message_data->getStringValue(RpcActionDefinitionKey::CS_CMDM_ACTION_NAME);
         
         
         //RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
         if(!das_map.count(action_domain)) {
             MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -4, "Action Domain not registered", __PRETTY_FUNCTION__)
-            return result;
+            CHK_AND_DELETE_OBJ_POINTER(message_data)
+			return result;
         }
         
         //submit the action(Thread Safe)
         das_map[action_domain]->synchronousCall(action_name,
-                                                action_pack,
+                                                message_data,
                                                 result);
         
         //tag message has submitted
@@ -200,8 +204,6 @@ CDataWrapper* DefaultCommandDispatcher::executeCommandSync(CDataWrapper * action
     } catch(...){
         MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -5, "General exception received", __PRETTY_FUNCTION__)
     }
-    
-    delete(action_pack);
     return result;
 }
 
@@ -213,6 +215,7 @@ CDataWrapper* DefaultCommandDispatcher::executeCommandSync(const std::string& do
         //RpcActionDefinitionKey::CS_CMDM_ACTION_NAME
         if(!das_map.count(domain)) {
             MANAGE_ERROR_IN_CDATAWRAPPERPTR(result, -1, "Action Domain not registered", __PRETTY_FUNCTION__)
+			CHK_AND_DELETE_OBJ_POINTER(message_data)
             return result;
         }
         

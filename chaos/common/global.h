@@ -106,7 +106,7 @@ delete(x); x=NULL;\
 
 #define CHK_AND_DELETE_OBJ_POINTER(x)\
 if (x){\
-    delete(x); x=NULL;\
+    DELETE_OBJ_POINTER(x)\
 }
 
 #define PRINT_LIB_HEADER  \

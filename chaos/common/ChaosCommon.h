@@ -177,6 +177,6 @@ namespace chaos {
 					return GlobalConfiguration::getInstance();
 				}
 				
-				};
-				}
+		};
+}
 #endif

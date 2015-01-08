@@ -1018,6 +1018,7 @@
 		32C7EADB1A5D9EE30008DFE8 /* ChaosWANProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChaosWANProxy.cpp; sourceTree = "<group>"; };
 		32C7EADC1A5D9EE30008DFE8 /* ChaosWANProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosWANProxy.h; sourceTree = "<group>"; };
 		32C7EADE1A5D9FA30008DFE8 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
+		32C7EADF1A5E868C0008DFE8 /* UrlAccessibleService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UrlAccessibleService.h; sourceTree = "<group>"; };
 		32CB736D16FE3432008575F0 /* ReaderDataService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReaderDataService.cpp; sourceTree = "<group>"; };
 		32CB736E16FE3432008575F0 /* ReaderDataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReaderDataService.h; sourceTree = "<group>"; };
 		32CB7CDE17099C8D00767FC1 /* DataCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataCache.cpp; sourceTree = "<group>"; };
@@ -1855,6 +1856,7 @@
 				322DE35418D467E5006F1551 /* ConcuredUsedItem.h */,
 				32A391C218FE923E001C5A73 /* TemplatedKeyValueHash.h */,
 				32502C841924FC7E0073E4AB /* Delegate.h */,
+				32C7EADF1A5E868C0008DFE8 /* UrlAccessibleService.h */,
 			);
 			path = utility;
 			sourceTree = "<group>";
@@ -4115,6 +4117,7 @@
 				32C7EAD91A5D9E450008DFE8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

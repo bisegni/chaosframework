@@ -45,7 +45,7 @@ namespace chaos {
 				HTTPRpcSyncServer(const string& alias);
 				~HTTPRpcSyncServer();
 				
-                Mongoose::Server http_server;
+                Mongoose::Server *http_server;
                 
                 Mongoose::Response *process(Mongoose::Request &request);
                 

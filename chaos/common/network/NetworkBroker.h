@@ -196,6 +196,12 @@ namespace chaos {
 				 */
 				void getPublishedHostAndPort(string&);
 				
+				//!Return the sync rpc url
+				/*!
+				 return the rpc url
+				 */
+				std::string getSyncRPCUrl();
+				
 				//!Return the rpc url
 				/*!
 				 return the rpc url

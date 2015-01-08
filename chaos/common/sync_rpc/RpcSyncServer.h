@@ -29,6 +29,7 @@
 #include <chaos/common/exception/CException.h>
 #include <chaos/common/utility/StartableService.h>
 #include <chaos/common/utility/NamedService.h>
+#include <chaos/common/utility/UrlAccessibleService.h>
 
 namespace chaos {
 	namespace common {
@@ -41,11 +42,14 @@ namespace chaos {
 			 Abstract class for standard adapter method for permit, to CommandManager
 			 the correct initialization for the adapter instance
 			 */
-			class RpcSyncServer :
+			class RpcSyncServer:
 			public chaos::utility::StartableService,
+			public chaos::common::utility::UrlAccessibleService,
 			public NamedService {
 				friend class chaos::common::network::NetworkBroker;
 			protected:
+				int service_port;
+				std::string service_url;
 				
 				RpcServerHandler *commandHandler;
 				
@@ -77,6 +81,9 @@ namespace chaos {
 				 Return the published port
 				 */
 				int getPublishedPort();
+				
+				//! inherited method
+				const std::string& getUrl();
 				
 				/*
 				 set the command dispatcher associated to the instance of rpc adapter

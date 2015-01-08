@@ -337,6 +337,15 @@ std::string NetworkBroker::getDirectIOUrl() {
 	return direct_io_server->getUrl();
 }
 
+//!Return the sync rpc url
+std::string NetworkBroker::getSyncRPCUrl() {
+	if(sync_rpc_server) {
+		return sync_rpc_server->getUrl();
+	} else {
+		return string("Sync rpc not started");
+	}
+}
+
 #pragma mark Event Registration and forwarding
 //! event Action registration for the current instance of NetworkBroker
 /*!

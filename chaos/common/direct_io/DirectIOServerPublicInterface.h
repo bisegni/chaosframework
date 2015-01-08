@@ -21,6 +21,7 @@
 #define CHAOSFramework_AbstractDirectIOServer_h
 
 #include <stdint.h>
+#include <chaos/common/utility/UrlAccessibleService.h>
 namespace chaos {
 	namespace common {
 		namespace direct_io {
@@ -28,11 +29,12 @@ namespace chaos {
             /*!
              Direct io server public interface
              */
-            class DirectIOServerPublicInterface {
+			class DirectIOServerPublicInterface:
+			public chaos::common::utility::UrlAccessibleService {
             public:
                 virtual uint32_t getPriorityPort() = 0;
                 virtual uint32_t getServicePort() = 0;
-				virtual std::string getUrl() = 0;
+				const std::string& getUrl() = 0;
             };
             
         }

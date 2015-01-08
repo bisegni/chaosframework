@@ -20,6 +20,7 @@
 
 #include <chaos/common/sync_rpc/RpcSyncServer.h>
 
+#include <boost/format.hpp>
 using namespace chaos::common::sync_rpc;
 
 RpcSyncServer::RpcSyncServer(const std::string& alias):
@@ -31,9 +32,13 @@ RpcSyncServer::~RpcSyncServer(){}
  Return the published port
  */
 int RpcSyncServer::getPublishedPort(){
-	return 0;
+	return service_port;
 }
 
+//! inherited method
+const std::string& RpcSyncServer::getUrl() {
+	return service_url;
+}
 /*
  set the command dispatcher associated to the instance of rpc adapter
  */
@@ -45,7 +50,6 @@ void RpcSyncServer::setCommandDispatcher(chaos::RpcServerHandler *newCommandHand
  init the rpc adapter
  */
 void RpcSyncServer::init(void*) throw(CException) {
-	
 }
 
 /*
