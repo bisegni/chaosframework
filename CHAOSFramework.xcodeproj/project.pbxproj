@@ -425,10 +425,10 @@
 		32C5A42718D9959800C0435C /* DirectIOPerformanceSession.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C5A42518D9959800C0435C /* DirectIOPerformanceSession.cpp */; };
 		32C5A42818D9959800C0435C /* DirectIOPerformanceSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 32C5A42618D9959800C0435C /* DirectIOPerformanceSession.h */; };
 		32C7B8FD16DD362A005B3B21 /* ApiServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7B8FB16DD362A005B3B21 /* ApiServer.cpp */; };
-		32C7B90116DD365D005B3B21 /* DataManagment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7B8FF16DD365D005B3B21 /* DataManagment.cpp */; };
 		32C7B90516DD6159005B3B21 /* DeviceApi.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7B90316DD6159005B3B21 /* DeviceApi.cpp */; };
 		32C7EAD71A5D9E450008DFE8 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7EAD61A5D9E450008DFE8 /* main.cpp */; };
 		32C7EADD1A5D9EE30008DFE8 /* ChaosWANProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7EADB1A5D9EE30008DFE8 /* ChaosWANProxy.cpp */; };
+		32C7EAE31A5EC1140008DFE8 /* AbstractMSDatabaseDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32C7EAE11A5EC1140008DFE8 /* AbstractMSDatabaseDriver.cpp */; };
 		32CB736F16FE3432008575F0 /* ReaderDataService.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CB736D16FE3432008575F0 /* ReaderDataService.cpp */; };
 		32CB737016FE3432008575F0 /* ReaderDataService.h in Headers */ = {isa = PBXBuildFile; fileRef = 32CB736E16FE3432008575F0 /* ReaderDataService.h */; };
 		32CB7CE017099C8D00767FC1 /* DataCache.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 32CB7CDE17099C8D00767FC1 /* DataCache.cpp */; };
@@ -1008,9 +1008,6 @@
 		32C5A42618D9959800C0435C /* DirectIOPerformanceSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DirectIOPerformanceSession.h; sourceTree = "<group>"; };
 		32C7B8FB16DD362A005B3B21 /* ApiServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApiServer.cpp; sourceTree = "<group>"; };
 		32C7B8FC16DD362A005B3B21 /* ApiServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiServer.h; sourceTree = "<group>"; };
-		32C7B8FF16DD365D005B3B21 /* DataManagment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataManagment.cpp; sourceTree = "<group>"; };
-		32C7B90016DD365D005B3B21 /* DataManagment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DataManagment.h; sourceTree = "<group>"; };
-		32C7B90216DD5794005B3B21 /* ApiProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiProvider.h; sourceTree = "<group>"; };
 		32C7B90316DD6159005B3B21 /* DeviceApi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeviceApi.cpp; sourceTree = "<group>"; };
 		32C7B90416DD6159005B3B21 /* DeviceApi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceApi.h; sourceTree = "<group>"; };
 		32C7EAD41A5D9E450008DFE8 /* ChaosWANProxy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ChaosWANProxy; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1019,6 +1016,8 @@
 		32C7EADC1A5D9EE30008DFE8 /* ChaosWANProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChaosWANProxy.h; sourceTree = "<group>"; };
 		32C7EADE1A5D9FA30008DFE8 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		32C7EADF1A5E868C0008DFE8 /* UrlAccessibleService.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UrlAccessibleService.h; sourceTree = "<group>"; };
+		32C7EAE11A5EC1140008DFE8 /* AbstractMSDatabaseDriver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AbstractMSDatabaseDriver.cpp; sourceTree = "<group>"; };
+		32C7EAE21A5EC1140008DFE8 /* AbstractMSDatabaseDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AbstractMSDatabaseDriver.h; sourceTree = "<group>"; };
 		32CB736D16FE3432008575F0 /* ReaderDataService.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ReaderDataService.cpp; sourceTree = "<group>"; };
 		32CB736E16FE3432008575F0 /* ReaderDataService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReaderDataService.h; sourceTree = "<group>"; };
 		32CB7CDE17099C8D00767FC1 /* DataCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DataCache.cpp; sourceTree = "<group>"; };
@@ -1244,8 +1243,8 @@
 				323236CA164573C60052CE06 /* main.cpp */,
 				32E9F48B16485012006EAF37 /* ChaosMetadataService.cpp */,
 				32E9F48C16485012006EAF37 /* ChaosMetadataService.h */,
-				32C7B8FE16DD3631005B3B21 /* data */,
 				32C7B8FA16DD35D7005B3B21 /* api_services */,
+				32C7EAE01A5EC0D60008DFE8 /* db */,
 				323236CC164573C60052CE06 /* ChaosNodeDirectory.1 */,
 			);
 			path = ChaosMetadataService;
@@ -2288,20 +2287,10 @@
 			children = (
 				32C7B8FB16DD362A005B3B21 /* ApiServer.cpp */,
 				32C7B8FC16DD362A005B3B21 /* ApiServer.h */,
-				32C7B90216DD5794005B3B21 /* ApiProvider.h */,
 				32C7B90316DD6159005B3B21 /* DeviceApi.cpp */,
 				32C7B90416DD6159005B3B21 /* DeviceApi.h */,
 			);
 			path = api_services;
-			sourceTree = "<group>";
-		};
-		32C7B8FE16DD3631005B3B21 /* data */ = {
-			isa = PBXGroup;
-			children = (
-				32C7B8FF16DD365D005B3B21 /* DataManagment.cpp */,
-				32C7B90016DD365D005B3B21 /* DataManagment.h */,
-			);
-			path = data;
 			sourceTree = "<group>";
 		};
 		32C7EAD51A5D9E450008DFE8 /* ChaosWANProxy */ = {
@@ -2313,6 +2302,15 @@
 				32C7EADC1A5D9EE30008DFE8 /* ChaosWANProxy.h */,
 			);
 			path = ChaosWANProxy;
+			sourceTree = "<group>";
+		};
+		32C7EAE01A5EC0D60008DFE8 /* db */ = {
+			isa = PBXGroup;
+			children = (
+				32C7EAE11A5EC1140008DFE8 /* AbstractMSDatabaseDriver.cpp */,
+				32C7EAE21A5EC1140008DFE8 /* AbstractMSDatabaseDriver.h */,
+			);
+			path = db;
 			sourceTree = "<group>";
 		};
 		32CB737116FE40F9008575F0 /* cache */ = {
@@ -2905,10 +2903,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				32C7EAE31A5EC1140008DFE8 /* AbstractMSDatabaseDriver.cpp in Sources */,
 				323236CB164573C60052CE06 /* main.cpp in Sources */,
 				32E9F48D16485012006EAF37 /* ChaosMetadataService.cpp in Sources */,
 				32C7B8FD16DD362A005B3B21 /* ApiServer.cpp in Sources */,
-				32C7B90116DD365D005B3B21 /* DataManagment.cpp in Sources */,
 				32C7B90516DD6159005B3B21 /* DeviceApi.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

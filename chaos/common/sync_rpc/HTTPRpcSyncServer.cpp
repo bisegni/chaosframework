@@ -113,10 +113,6 @@ Response *HTTPRpcSyncServer::process(Request &request) {
     std::string content = request.getHeaderKeyValue("Content-Type");
     bool        json    = content.compare("application/json") == 0;
     bool        bson    = json?false:content.compare("application/bson") == 0;
-    DEBUG_CODE(HTTPRSSLDBG_ << method;)
-    DEBUG_CODE(HTTPRSSLDBG_ << url;)
-    DEBUG_CODE(HTTPRSSLDBG_ << content;)
-    DEBUG_CODE(HTTPRSSLDBG_ << request.getData();)
 
     std::vector<std::string> api_parameter_in_url;
     algorithm::split(api_parameter_in_url,
