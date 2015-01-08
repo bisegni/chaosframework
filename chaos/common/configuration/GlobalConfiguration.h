@@ -79,7 +79,8 @@ x = hasOption(y);
     /*
      Central class for all CHOAS framework configuraitons
      */
-    class GlobalConfiguration : public Singleton<GlobalConfiguration>{
+    class GlobalConfiguration:
+	public common::utility::Singleton<GlobalConfiguration>{
             //for program option
         po::variables_map vm;
         po::options_description desc;

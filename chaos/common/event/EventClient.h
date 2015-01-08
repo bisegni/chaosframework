@@ -40,7 +40,10 @@ namespace chaos {
         /*!
          
          */
-        class EventClient : public NamedService, EventForwarder, chaos::utility::StartableService {
+        class EventClient:
+		public common::utility::NamedService,
+		public EventForwarder,
+		public chaos::common::utility::StartableService {
             friend class chaos::common::network::NetworkBroker;
             
         protected:

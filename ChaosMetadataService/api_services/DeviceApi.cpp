@@ -46,6 +46,5 @@ CDataWrapper* DeviceApi::registerDevice(CDataWrapper *registrationdData, bool& d
     if(registrationdData == NULL) throw CException(-1, "The package can't be null", __PRETTY_FUNCTION__);
     
     //try to register new device if noone has been
-    dm->getDeviceDatabase()->addAttributeToDataSetFromDataWrapper(*registrationdData);
     return NULL;
 }

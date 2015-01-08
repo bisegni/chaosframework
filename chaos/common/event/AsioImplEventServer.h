@@ -85,7 +85,7 @@ namespace chaos {
             
             void sendEventDataToRootHandler(unsigned char * buff, uint16_t length);
         public:
-            AsioImplEventServer(string alias);
+            AsioImplEventServer(const string& alias);
             
         private:
             boost::asio::io_service io_service;

@@ -24,6 +24,7 @@
 
 using namespace std;
 using namespace chaos;
+using namespace chaos::common::utility;
 using namespace chaos::event;
 using namespace chaos::event::channel;
 

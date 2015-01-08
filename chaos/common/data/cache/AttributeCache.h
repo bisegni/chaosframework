@@ -42,7 +42,7 @@ namespace chaos{
 				 values.
 				 */
 				class AttributeCache :
-				public chaos::utility::InizializableService {
+				public utility::InizializableService {
 					//!global index for this set
 					VariableIndexType index;
 					

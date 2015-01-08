@@ -26,7 +26,7 @@
 #include <chaos/common/utility/ObjectFactoryRegister.h>
 
 #include <boost/lexical_cast.hpp>
-
+using namespace chaos::common::utility;
 using namespace chaos::data_service::worker;
 namespace chaos_vfs = chaos::data_service::vfs;
 
@@ -71,8 +71,8 @@ void DeviceSharedDataWorker::init(void *init_data) throw (chaos::CException) {
 			thread_cookie[idx] = _tc_ptr;
 		}
 	}
-	cache_driver_ptr = chaos::ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
-	chaos::utility::InizializableService::initImplementation(cache_driver_ptr, &ChaosDataService::getInstance()->setting.cache_driver_setting, "CacheDriver", __PRETTY_FUNCTION__);
+	cache_driver_ptr = ObjectFactoryRegister<cache_system::CacheDriver>::getInstance()->getNewInstanceByName(cache_impl_name);
+	InizializableService::initImplementation(cache_driver_ptr, &ChaosDataService::getInstance()->setting.cache_driver_setting, "CacheDriver", __PRETTY_FUNCTION__);
 }
 
 void DeviceSharedDataWorker::deinit() throw (chaos::CException) {
@@ -87,7 +87,7 @@ void DeviceSharedDataWorker::deinit() throw (chaos::CException) {
 	
 	if(cache_driver_ptr) {
 		try {
-			chaos::utility::InizializableService::deinitImplementation(cache_driver_ptr, "CacheDriver", __PRETTY_FUNCTION__);
+			InizializableService::deinitImplementation(cache_driver_ptr, "CacheDriver", __PRETTY_FUNCTION__);
 		} catch(...) {}
 		delete(cache_driver_ptr);
 	}

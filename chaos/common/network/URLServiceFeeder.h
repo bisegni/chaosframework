@@ -54,7 +54,8 @@ namespace chaos {
              mode the top element is removed from the queue and insert to the end.
              NOTE: the service pointer into URLService structure is not deallocated.
              */
-            class URLServiceFeeder: public chaos::NamedService {
+            class URLServiceFeeder:
+			public utility::NamedService {
             public:
                     //!describe the feed mode for the fedder
                 typedef enum URLServiceFeedMode {

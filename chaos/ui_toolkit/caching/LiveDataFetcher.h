@@ -33,7 +33,7 @@ namespace chaos {
             class LiveDataFetcher :
 			public chaos::caching_system::DataFetcherInterface<chaos_data::CDataWrapper>,
 			public chaos::Configurable,
-			public chaos::utility::StartableService {
+			public common::utility::StartableService {
                 auto_ptr<char> currentRawDataPtr;
                 
                 chaos_io::IODataDriver *dataDriver;

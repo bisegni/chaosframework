@@ -122,7 +122,7 @@ MongoDBHAConnectionManager::~MongoDBHAConnectionManager() {
 
 inline bool MongoDBHAConnectionManager::canRetry() {
 	bool retry = false;
-	uint64_t cur_ts = chaos::TimingUtil::getTimeStamp();
+	uint64_t cur_ts = common::utility::TimingUtil::getTimeStamp();
 	if((retry = cur_ts > next_retrive_intervall)) {
 		next_retrive_intervall = cur_ts + RETRIVE_MAX_TIME;
 	}

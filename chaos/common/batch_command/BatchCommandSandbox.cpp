@@ -17,6 +17,7 @@
 
 using namespace chaos::chrono;
 using namespace chaos::common::data;
+using namespace chaos::common::utility;
 using namespace chaos::common::batch_command;
 
 
@@ -720,7 +721,7 @@ void BatchCommandSandbox::killCurrentCommand() {
 bool BatchCommandSandbox::enqueueCommand(chaos_data::CDataWrapper *command_to_info, BatchCommand *command_impl, uint32_t priority) {
 	CHAOS_ASSERT(command_impl)
 	boost::recursive_mutex::scoped_lock lock_checker(mutexNextCommandChecker);
-	if(chaos::utility::StartableService::serviceState == chaos::utility::service_state_machine::InizializableServiceType::IS_DEINTIATED) return false;
+	if(StartableService::serviceState == service_state_machine::InizializableServiceType::IS_DEINTIATED) return false;
 	
 	//
 	SCSLDBG_ << "New command enqueue";

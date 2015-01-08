@@ -28,7 +28,7 @@
 #include <chaos/common/event/evt_desc/EventDescriptor.h>
 
 using namespace chaos::event;
-using namespace chaos::utility;
+using namespace chaos::common::utility;
 
 namespace chaos {
     namespace common {
@@ -44,7 +44,10 @@ namespace chaos {
      that has been register for specified kind of event.
      */
    
-    class AbstractEventDispatcher : public utility::StartableService, event::EventHandler, NamedService {
+    class AbstractEventDispatcher:
+	public common::utility::StartableService,
+	public common::utility::NamedService,
+	public event::EventHandler {
         friend class chaos::common::network::NetworkBroker;
 
     public:
@@ -55,7 +58,9 @@ namespace chaos {
         /*
             Perform the registration of an handler
          */
-        virtual void registerEventAction(EventAction *eventAction, EventType eventType, const char * const identificationString = NULL)  throw(CException) = 0;
+        virtual void registerEventAction(EventAction *eventAction,
+										 EventType eventType,
+										 const char * const identificationString = NULL)  throw(CException) = 0;
         
             //! Event handler deregistration
         /*

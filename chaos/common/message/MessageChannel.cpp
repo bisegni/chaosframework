@@ -25,7 +25,7 @@
 using namespace chaos::common::network;
 using namespace chaos::common::message;
 using namespace chaos::common::data;
-
+using namespace chaos::common::utility;
 #define MessageChannel_LOG_HEAD "[MessageChannel] - "
 
 #define MCAPP_ LAPP_ << MessageChannel_LOG_HEAD
@@ -113,7 +113,11 @@ CDataWrapper *MessageChannel::response(CDataWrapper *responseData, bool& detachD
 
 /*
  */
-chaos::atomic_int_type MessageChannel::prepareRequestPackAndSend(bool async, const char * const nodeID, const char * const actionName, CDataWrapper *requestPack, bool onThisThread) {
+atomic_int_type MessageChannel::prepareRequestPackAndSend(bool async,
+														  const char * const nodeID,
+														  const char * const actionName,
+														  CDataWrapper *requestPack,
+														  bool onThisThread) {
     CHAOS_ASSERT(nodeID && actionName && requestPack)
         //get new reqeust id
     atomic_int_type currentRequestID = atomic_increment(&channelRequestIDCounter);
@@ -180,7 +184,12 @@ void MessageChannel::sendMessage(const char * const nodeID,const char * const ac
 
 /*
  */
-CDataWrapper* MessageChannel::sendRequest(const char * const nodeID, const char * const actionName, CDataWrapper * const requestPack, uint32_t millisecToWait, bool async,  bool onThisThread) {
+CDataWrapper* MessageChannel::sendRequest(const char * const nodeID,
+										  const char * const actionName,
+										  CDataWrapper * const requestPack,
+										  uint32_t millisecToWait,
+										  bool async,
+										  bool onThisThread) {
     CHAOS_ASSERT(nodeID && actionName)
     CDataWrapper *result = NULL;
     CDataWrapper *dataPack = new CDataWrapper();

@@ -124,7 +124,7 @@ namespace chaos {
 			 data cloud query
 			 */
 			class QueryEngine:
-			public utility::StartableService,
+			public common::utility::StartableService,
 			protected chaos_direct_io::DirectIOClientConnectionEventHandler,
 			protected chaos_direct_io::DirectIOClientDeallocationHandler {
 				chaos_direct_io::DirectIOClient *directio_client_instance;

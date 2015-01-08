@@ -66,10 +66,10 @@ CUSchemaDB::CUSchemaDB(const char *databaseName, bool onMemory) {
 void CUSchemaDB::initDB(const char *name, bool onMemory) {
     //create a database
     uint32_t keyTmp = 0;
-    entityDB = ObjectFactoryRegister<edb::EntityDB>::getInstance()->getNewInstanceByName("SQLiteEntityDB");
+    entityDB = utility::ObjectFactoryRegister<edb::EntityDB>::getInstance()->getNewInstanceByName("SQLiteEntityDB");
     if(!entityDB) return;
     std::string composeName(name);
-    composeName.append(UUIDUtil::generateUUIDLite());
+    composeName.append(utility::UUIDUtil::generateUUIDLite());
     entityDB->initDB(composeName.c_str(), onMemory);
     
     MAKE_KEY(DatasetDefinitionkey::DEVICE_ID, keyTmp);

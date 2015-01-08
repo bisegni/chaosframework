@@ -31,7 +31,8 @@ namespace chaos {
         /*
          Low level api for data access api
          */
-        class LLDataApi : public Singleton<LLDataApi>  {
+        class LLDataApi:
+		public common::utility::Singleton<LLDataApi>  {
             friend class ChaosUIToolkit;
             IODataDriver *liveDriver;
             

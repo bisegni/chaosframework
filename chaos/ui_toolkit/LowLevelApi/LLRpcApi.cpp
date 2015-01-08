@@ -26,6 +26,7 @@ using namespace boost;
 
 using namespace chaos;
 using namespace chaos::common::io;
+using namespace chaos::common::utility;
 using namespace chaos::ui;
 using namespace chaos::common::direct_io;
 #define LLRA_LAPP_ LAPP_ << "[LLRpcApi] - "
@@ -67,7 +68,7 @@ void LLRpcApi::init()  throw (CException) {
 	//get new direct io client
 	direct_io_client = network_broker->getDirectIOClientInstance();
 	if(!direct_io_client) throw CException(-1, "Invalid direct io client instance", __PRETTY_FUNCTION__);
-	chaos::utility::InizializableService::initImplementation(direct_io_client, NULL, "DirectIOCLient", __PRETTY_FUNCTION__);
+	InizializableService::initImplementation(direct_io_client, NULL, "DirectIOCLient", __PRETTY_FUNCTION__);
 }
 
 /*
@@ -78,7 +79,7 @@ void LLRpcApi::deinit()  throw (CException) {
     SetupStateManager::levelDownFrom(DEINIT_STEP, "LLRpcApi already deinitialized");
 	
 	if(direct_io_client) {
-		chaos::utility::InizializableService::deinitImplementation(direct_io_client, "DirectIOCLient", __PRETTY_FUNCTION__);
+		InizializableService::deinitImplementation(direct_io_client, "DirectIOCLient", __PRETTY_FUNCTION__);
 		delete direct_io_client;
 	}
 	

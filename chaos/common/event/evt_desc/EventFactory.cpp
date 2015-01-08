@@ -31,6 +31,7 @@ using namespace chaos::event::alert;
 using namespace chaos::event::instrument;
 using namespace chaos::event::command;
 using namespace chaos::event::custom;
+using namespace chaos::common::utility;
 
 EventDescriptor *EventFactory::getEventInstance(const unsigned char * serializedEvent,  uint16_t length)  throw (CException) {
     EventDescriptor *result = NULL;

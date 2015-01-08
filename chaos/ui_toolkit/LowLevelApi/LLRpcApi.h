@@ -73,7 +73,9 @@ namespace chaos {
         /*
          LLRpcApi Class api for rpc system
          */
-        class LLRpcApi : public Singleton<LLRpcApi>, private SetupStateManager {
+        class LLRpcApi:
+		public common::utility::Singleton<LLRpcApi>,
+		private SetupStateManager {
             friend class ChaosUIToolkit;
             friend class Singleton<LLRpcApi>;
             //!chaos network router

@@ -28,6 +28,7 @@
 
 using namespace std;
 using namespace chaos;
+using namespace chaos::common::utility;
 using namespace chaos::data_service;
 using boost::shared_ptr;
 
@@ -164,9 +165,9 @@ void ChaosDataService::init(void *init_data)  throw(CException) {
 			//we have a db driver setuped
 			std::string db_driver_class_name = boost::str(boost::format("%1%DBDriver") % setting.db_driver_impl);
 			CDSLAPP_ << "Allocate index driver of type "<<db_driver_class_name;
-			db_driver_ptr = chaos::ObjectFactoryRegister<db_system::DBDriver>::getInstance()->getNewInstanceByName(db_driver_class_name);
+			db_driver_ptr = ObjectFactoryRegister<db_system::DBDriver>::getInstance()->getNewInstanceByName(db_driver_class_name);
 			if(!db_driver_ptr) throw chaos::CException(-1, "No index driver found", __PRETTY_FUNCTION__);
-			chaos::utility::InizializableService::initImplementation(db_driver_ptr, &setting.db_driver_setting, db_driver_ptr->getName(), __PRETTY_FUNCTION__);
+			InizializableService::initImplementation(db_driver_ptr, &setting.db_driver_setting, db_driver_ptr->getName(), __PRETTY_FUNCTION__);
 		}
 		
 		//chec if we ar ein cache only
@@ -286,7 +287,7 @@ void ChaosDataService::deinit() throw(CException) {
 	if(db_driver_ptr) {
 		CDSLAPP_ << "Deallocate index driver";
 		try {
-			chaos::utility::InizializableService::deinitImplementation(db_driver_ptr, db_driver_ptr->getName(), __PRETTY_FUNCTION__);
+			InizializableService::deinitImplementation(db_driver_ptr, db_driver_ptr->getName(), __PRETTY_FUNCTION__);
 		} catch (chaos::CException e) {
 			CDSLAPP_ << e.what();
 		}

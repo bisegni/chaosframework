@@ -67,7 +67,7 @@ namespace chaos {
                 virtual void handleEvent(DirectIOClientConnection *client_connection, DirectIOClientConnectionStateType::DirectIOClientConnectionStateType event) = 0;
             };
 			
-			typedef  chaos::utility::TemplatedKeyObjectContainer< unsigned int, channel::DirectIOVirtualClientChannel*> DICKeyObjectContainer;
+			typedef  utility::TemplatedKeyObjectContainer< unsigned int, channel::DirectIOVirtualClientChannel*> DICKeyObjectContainer;
 			
 			
             //! Represent the start point of a messaget towards an endpoint

@@ -81,7 +81,7 @@ namespace chaos{
 			/*!
 			 */
 			DECLARE_CLASS_FACTORY(IODirectIODriver, IODataDriver),
-			public NamedService,
+			public chaos::common::utility::NamedService,
 			public common::network::URLServiceFeederHandler,
 			private chaos_dio_channel::DirectIODeviceServerChannel::DirectIODeviceServerChannelHandler,
 			protected chaos_direct_io::DirectIOClientConnectionEventHandler {

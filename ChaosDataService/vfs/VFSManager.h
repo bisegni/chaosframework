@@ -67,10 +67,10 @@ namespace chaos {
 				FileInstanceMap	map_logical_files;
 			} VFSFilesForPath;
 			
-			typedef chaos::utility::TemplatedKeyObjectContainer<std::string, VFSFilesForPath*> VFSManagerKeyObjectContainer;
+			typedef common::utility::TemplatedKeyObjectContainer<std::string, VFSFilesForPath*> VFSManagerKeyObjectContainer;
 			
 			class VFSManager :
-			public chaos::utility::InizializableService,
+			public common::utility::InizializableService,
 			public chaos::common::async_central::TimerHandler,
 			protected VFSManagerKeyObjectContainer {
 				//! point to user allcoated configuration structure, the instance

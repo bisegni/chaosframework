@@ -60,8 +60,10 @@ namespace chaos {
 			} DriverPluginInfo;
 			
 			//! !CHAOS Driver infrastructure managment
-			class DriverManager : public chaos::utility::StartableService, public chaos::Singleton<DriverManager> {
-				friend class chaos::Singleton<DriverManager>;
+			class DriverManager:
+			public common::utility::StartableService,
+			public chaos::common::utility::Singleton<DriverManager> {
+				friend class chaos::common::utility::Singleton<DriverManager>;
 				friend class chaos::cu::control_manager::AbstractControlUnit;
 				
 				//! this map correlate the alias to the object instancer

@@ -89,7 +89,7 @@ namespace chaos{
 			public DriverErogatorInterface,
 			public DeclareAction,
 			protected DatasetDB,
-			public utility::StartableService {
+			public common::utility::StartableService {
 				//friendly class declaration
 				friend class ControlManager;
 				friend class WorkUnitManagement;

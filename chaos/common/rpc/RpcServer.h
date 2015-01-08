@@ -45,7 +45,9 @@ namespace chaos {
      Abstract class for standard adapter method for permit, to CommandManager
      the correct initialization for the adapter instance
      */
-    class RpcServer : public chaos::utility::StartableService, public NamedService {
+    class RpcServer:
+	public common::utility::StartableService,
+	public common::utility::NamedService {
 		friend class chaos::common::network::NetworkBroker;
     protected:
         //! port where server has been published

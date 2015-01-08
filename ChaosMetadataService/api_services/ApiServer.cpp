@@ -22,6 +22,8 @@
 #include <chaos/common/global.h>
 
 using namespace chaos;
+using namespace chaos::common::data;
+
 using namespace chaos::cnd;
 using namespace chaos::cnd::api;
 
@@ -30,21 +32,17 @@ using namespace chaos::cnd::api;
 /*!
  */
 ApiServer::ApiServer() {
-    dm = new data::DataManagment();
+	
 }
 
 /*!
  */
 ApiServer::~ApiServer() {
-    if(dm) delete(dm);
 }
 
 // Initialize instance
 void ApiServer::init(void *initData) throw(chaos::CException) {
     AS_LAPP_ << "Init";
-    
-    utility::StartableService::initImplementation(dm, initData, "chaos::cnd::data::DataManagment", "ApiServer::init");
-    
     AS_LAPP_ << "Init NetworkBroker";
     networkBroker->init();
     AS_LAPP_ << "NetworkBroker Initialized";
@@ -53,9 +51,6 @@ void ApiServer::init(void *initData) throw(chaos::CException) {
 
 // Start the implementation
 void ApiServer::start() throw(chaos::CException) {
-    
-    utility::StartableService::startImplementation(dm, "chaos::cnd::data::DataManagment", "ApiServer::start");
-    
     AS_LAPP_ << "Starting DataManagment";
     networkBroker->start();
     AS_LAPP_ << "NetworkBroker Started";
@@ -67,8 +62,6 @@ void ApiServer::stop() throw(chaos::CException) {
     AS_LAPP_ << "Starting NetworkBroker";
     networkBroker->stop();
     AS_LAPP_ << "NetworkBroker Started";
-    
-    utility::StartableService::stopImplementation(dm, "chaos::cnd::data::DataManagment", "ApiServer::stop");
 }
 
 // Deinit the implementation
@@ -76,30 +69,4 @@ void ApiServer::deinit() throw(chaos::CException) {
     AS_LAPP_ << "Starting NetworkBroker";
     networkBroker->deinit();
     AS_LAPP_ << "NetworkBroker Started";
-    
-    utility::StartableService::deinitImplementation(dm, "chaos::cnd::data::DataManagment", "ApiServer::deinit");
-}
-
-/*!
- Register a class that define some api
- */
-void ApiServer::registerApi(ApiProvider *apiClass) {
-    CHAOS_ASSERT(apiClass)
-    //set the data managment
-    apiClass->dm = dm;
-    
-    //register the action of the api
-    networkBroker->registerAction(apiClass);
-}
-
-/*!
- Deeregister a class that define some api
- */
-void ApiServer::deregisterApi(ApiProvider *apiClass) {
-    CHAOS_ASSERT(apiClass)
-    //deregister the action of the api
-    networkBroker->deregisterAction(apiClass);
-    
-    apiClass->dm = NULL;
-
 }

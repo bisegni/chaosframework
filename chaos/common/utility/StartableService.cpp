@@ -21,7 +21,7 @@
 #include <chaos/common/global.h>
 #include <chaos/common/utility/StartableService.h>
 
-using namespace chaos::utility;
+using namespace chaos::common::utility;
 
 
 #define SS_LAPP LAPP_ << "["<<implName<<"]- "

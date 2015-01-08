@@ -23,6 +23,7 @@
 #include <unistd.h>
 #include <chaos/common/utility/UUIDUtil.h>
 #include <chaos/common/utility/TimingUtil.h>
+using namespace chaos::common::utility;
 using namespace chaos::data_service;
 
 #define StageDataConsumer_LOG_HEAD "[StageDataConsumer] - "
@@ -95,7 +96,7 @@ void StageDataConsumer::scanStage() {
 		try {
 			{
 				boost::unique_lock<boost::mutex> l(mutex_timeout_check);
-				if((curr_ts = chaos::TimingUtil::getTimeStamp()) > time_to_check_timeouted_stage_file + 60000) {
+				if((curr_ts = TimingUtil::getTimeStamp()) > time_to_check_timeouted_stage_file + 60000) {
 					StageDataConsumerLDBG_ << "Manage timeout datablock in aquiring state";
 					//every minut start the check for the timeout datafile
 					time_to_check_timeouted_stage_file = curr_ts;

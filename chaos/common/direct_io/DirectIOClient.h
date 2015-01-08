@@ -58,7 +58,7 @@ namespace chaos {
 			
             typedef std::map< unsigned int, channel::DirectIOVirtualClientChannel* > ChannelMap;
             typedef std::map< unsigned int, channel::DirectIOVirtualClientChannel* >::iterator ChannelMapIterator;
-            typedef chaos::utility::TemplatedKeyObjectContainer<std::string, DirectIOClientConnection*> DCKeyObjectContainer;
+            typedef utility::TemplatedKeyObjectContainer<std::string, DirectIOClientConnection*> DCKeyObjectContainer;
 			//! Direct IO client base class
 			/*!
 			 This class represent the base interface for the operation on direct io output channel,
@@ -66,8 +66,9 @@ namespace chaos {
 			 may server and the same data will be forwarded to all server
 			 dio_client---> data message -->dio_server
 			 */
-			class DirectIOClient :	public NamedService,
-			public chaos::utility::InizializableService,
+			class DirectIOClient:
+			public utility::NamedService,
+			public utility::InizializableService,
 			public DirectIOURLManagment,
 			protected DCKeyObjectContainer {
 				friend class chaos::common::network::NetworkBroker;

@@ -1,8 +1,8 @@
-/*	
+/*
  *	ArrayPointer.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,62 +23,65 @@
 
 #include <vector>
 #include <boost/ptr_container/ptr_vector.hpp>
+using namespace std;
+using namespace boost;
 
 namespace chaos {
-    using namespace std;
-    using namespace boost;
-    /*
-     This class represent a groupo or list of a CDataWrapper
-     Class
-     */
-    template <typename T>
-    class ArrayPointer{
-        vector<T*> pointerArray;
-    public:
-        
-        typedef typename vector<T*>::iterator ArrayPointerIterator;
-        
-        /*
-         Destructor
-         */
-        ~ArrayPointer() {
-            clear();
-        }
-        
-        /*
-         Add a new object pointer
-         */
-        void add(T *objPtr){
-            pointerArray.push_back(objPtr); 
-        }
-        
-        
-        /*
-         Clear all the array with contained pointer
-         */
-        void clear(){
-                //we need to delete all remainig element
-            for (typename vector<T*>::iterator tIter = pointerArray.begin(); 
-                 tIter != pointerArray.end(); 
-                 tIter++) {
-                delete *tIter;
-            }
-        }
-        
-        /*
-         return poitner with [] operatore
-         */
-        T* operator[](int i) { return pointerArray[i]; }
-        
-        /*
-         return the number of objet pointer managed
-         */
-        typename vector<T*>::size_type size() const { return pointerArray.size(); };
-
-        ArrayPointerIterator begin(){ return pointerArray.begin(); }
-        
-        ArrayPointerIterator end(){ return pointerArray.end(); }
-    }; 
-    
+	namespace common {
+		namespace utility {
+			/*
+			 This class represent a groupo or list of a CDataWrapper
+			 Class
+			 */
+			template <typename T>
+			class ArrayPointer{
+				vector<T*> pointerArray;
+			public:
+				
+				typedef typename vector<T*>::iterator ArrayPointerIterator;
+				
+				/*
+				 Destructor
+				 */
+				~ArrayPointer() {
+					clear();
+				}
+				
+				/*
+				 Add a new object pointer
+				 */
+				void add(T *objPtr){
+					pointerArray.push_back(objPtr);
+				}
+				
+				
+				/*
+				 Clear all the array with contained pointer
+				 */
+				void clear(){
+					//we need to delete all remainig element
+					for (typename vector<T*>::iterator tIter = pointerArray.begin();
+						 tIter != pointerArray.end();
+						 tIter++) {
+						delete *tIter;
+					}
+				}
+				
+				/*
+				 return poitner with [] operatore
+				 */
+				T* operator[](int i) { return pointerArray[i]; }
+				
+				/*
+				 return the number of objet pointer managed
+				 */
+				typename vector<T*>::size_type size() const { return pointerArray.size(); };
+				
+				ArrayPointerIterator begin(){ return pointerArray.begin(); }
+				
+				ArrayPointerIterator end(){ return pointerArray.end(); }
+			};
+		}
+	}
 }
 #endif

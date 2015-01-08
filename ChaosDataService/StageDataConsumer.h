@@ -46,7 +46,7 @@ namespace chaos{
 		  Worker for stage data elaboration
 		 */
         class StageDataConsumer :
-		public utility::StartableService {
+		public common::utility::StartableService {
             friend class ChaosDataService;
 			ChaosDataServiceSetting	*settings;
 			vfs::VFSManager         *vfs_manager_ptr;

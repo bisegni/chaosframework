@@ -25,10 +25,10 @@
 #include <chaos/cu_toolkit/driver_manager/DriverManager.h>
 
 
-namespace common_utility = chaos::common::utility;
-namespace cu_driver_manager = chaos::cu::driver_manager;
-namespace cu_driver = chaos::cu::driver_manager::driver;
-namespace common_plugin = chaos::common::plugin;
+using namespace chaos::common::utility;
+using namespace chaos::cu::driver_manager;
+using namespace chaos::cu::driver_manager::driver;
+using namespace chaos::common::plugin;
 
 #define DMLAPP_ LAPP_ << "[DriverManager] "
 #define DMLDBG_ LDBG_ << "[DriverManager] "
@@ -37,47 +37,47 @@ namespace common_plugin = chaos::common::plugin;
 /*
  Constructor
  */
-cu_driver_manager::DriverManager::DriverManager() {
+DriverManager::DriverManager() {
 	
 }
 
 /*
  Desctructor
  */
-cu_driver_manager::DriverManager::~DriverManager() {
+DriverManager::~DriverManager() {
 	
 }
 
 // Initialize instance
-void cu_driver_manager::DriverManager::init(void *initParameter) throw(chaos::CException) {
+void DriverManager::init(void *initParameter) throw(chaos::CException) {
 	
 }
 
 // Start the implementation
-void cu_driver_manager::DriverManager::start() throw(chaos::CException) {
+void DriverManager::start() throw(chaos::CException) {
 	
 }
 
 // Stop the implementation
-void cu_driver_manager::DriverManager::stop() throw(chaos::CException) {
+void DriverManager::stop() throw(chaos::CException) {
 	
 }
 
 
 // Deinit the implementation
-void cu_driver_manager::DriverManager::deinit() throw(chaos::CException) {
+void DriverManager::deinit() throw(chaos::CException) {
     boost::unique_lock<boost::shared_mutex> lock(mutextMapAccess);
 	
 	//deinitialize all allcoated driver
 	mapParameterLiveInstance.clear();
-	for(std::map<string, cu_driver::AbstractDriver*>::iterator it = mapDriverUUIDHashLiveInstance.begin();
+	for(std::map<string, AbstractDriver*>::iterator it = mapDriverUUIDHashLiveInstance.begin();
 		it != mapDriverUUIDHashLiveInstance.end();
 		it++){
 		
 		//deinitialize driver
 		try {
 			DMLAPP_ << "Deinitializing device driver with uuid = " << it->second->driverUUID;
-			chaos::utility::InizializableService::deinitImplementation(it->second, "AbstractDriver", "DriverManager::deinit");
+			InizializableService::deinitImplementation(it->second, "AbstractDriver", "DriverManager::deinit");
 		} catch (...) {
 			DMLAPP_ << "Error deinitializing device driver with uuid = " << it->second->driverUUID;
 			
@@ -90,8 +90,8 @@ void cu_driver_manager::DriverManager::deinit() throw(chaos::CException) {
 }
 
 // Register a new driver
-void cu_driver_manager::DriverManager::registerDriver(boost::shared_ptr< common_utility::ObjectInstancer<cu_driver::AbstractDriver> > instancer,
-													  boost::shared_ptr< common_plugin::PluginInspector > description) throw(chaos::CException) {
+void DriverManager::registerDriver(boost::shared_ptr< ObjectInstancer<AbstractDriver> > instancer,
+													  boost::shared_ptr< PluginInspector > description) throw(chaos::CException) {
     boost::unique_lock<boost::shared_mutex> lock(mutextMapAccess);
 	
 	if(!instancer)
@@ -116,12 +116,12 @@ void cu_driver_manager::DriverManager::registerDriver(boost::shared_ptr< common_
 }
 
 // Get a new driver accessor for a driver instance
-cu_driver::DriverAccessor *cu_driver_manager::DriverManager::getNewAccessorForDriverInstance(cu_driver::DrvRequestInfo& request_info) throw(chaos::CException) {
+DriverAccessor *DriverManager::getNewAccessorForDriverInstance(DrvRequestInfo& request_info) throw(chaos::CException) {
 	boost::unique_lock<boost::shared_mutex> lock(mutextMapAccess);
 	
 	std::string composedDriverName;
 	std::string stringForMap;
-	cu_driver::DriverAccessor *accessor = NULL;
+	DriverAccessor *accessor = NULL;
     std::string driverInfo;
 	// the hashing of th einstance  is composed by name+version+input_parameter[if given], because
 	// different device drive can have same parameter names. If no input is passed the hashing is
@@ -162,12 +162,12 @@ cu_driver::DriverAccessor *cu_driver_manager::DriverManager::getNewAccessorForDr
 		throw chaos::CException(1,msg , "DriverManager::getNewAccessorForDriverInstance");
 	}
 	// i can create the instance
-	cu_driver::AbstractDriver *driverInstance = mapDriverAliasVersionInstancer[composedDriverName]->sp_instancer->getInstance();
+	AbstractDriver *driverInstance = mapDriverAliasVersionInstancer[composedDriverName]->sp_instancer->getInstance();
 	//associate the driver identification string
 	driverInstance->identificationString = stringForMap;
 	//initialize the newly create instance
 	DMLAPP_ << "Initializing device driver " << driverInfo <<", initialization parameters:\""<<request_info.init_parameter<<"\" with uuid = " << driverInstance->driverUUID;
-	chaos::utility::InizializableService::initImplementation(driverInstance, (void*)(request_info.init_parameter.c_str()), "AbstractDriver", "DriverManager::getNewAccessorForDriverInstance");
+	InizializableService::initImplementation(driverInstance, (void*)(request_info.init_parameter.c_str()), "AbstractDriver", "DriverManager::getNewAccessorForDriverInstance");
 	
 	//here the driver has been initializated and has been associated with the hash of the parameter
 	DMLAPP_ << "Add device driver with hash = " << driverInstance->identificationString;
@@ -181,12 +181,12 @@ cu_driver::DriverAccessor *cu_driver_manager::DriverManager::getNewAccessorForDr
 }
 
 //! release the accessor instance
-void cu_driver_manager::DriverManager::releaseAccessor(cu_driver::DriverAccessor *accessor) {
+void DriverManager::releaseAccessor(DriverAccessor *accessor) {
 	boost::unique_lock<boost::shared_mutex> lock(mutextMapAccess);
 	
 	if(!mapDriverUUIDHashLiveInstance.count(accessor->driver_uuid)) return;
 	
-	cu_driver::AbstractDriver *dInstance = mapDriverUUIDHashLiveInstance[accessor->driver_uuid];
+	AbstractDriver *dInstance = mapDriverUUIDHashLiveInstance[accessor->driver_uuid];
 	//we can relase the accessor
 	if(!dInstance->releaseAccessor(accessor)) {
 		throw chaos::CException(1, "This errore never have to appen", "DriverManager::releaseAccessor");
@@ -196,7 +196,7 @@ void cu_driver_manager::DriverManager::releaseAccessor(cu_driver::DriverAccessor
 		//deinitialize driver
 		try {
 			DMLAPP_ << "Deinitializing device driver with uuid = " << dInstance->driverUUID <<" (\""<<dInstance->identificationString + "\")";
-			chaos::utility::InizializableService::deinitImplementation(dInstance, "AbstractDriver", "DriverManager::deinit");
+			InizializableService::deinitImplementation(dInstance, "AbstractDriver", "DriverManager::deinit");
 		} catch (...) {
 			DMLAPP_ << "Error deinitializing device driver with uuid = " << dInstance->driverUUID<<" (\""<<dInstance->identificationString + "\")";
 			

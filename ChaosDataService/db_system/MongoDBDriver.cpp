@@ -21,7 +21,7 @@
 using namespace chaos::data_service::vfs;
 using namespace chaos::data_service::db_system;
 using namespace chaos;
-
+using namespace chaos::common::utility;
 namespace chaos_data = chaos::common::data;
 
 #define MongoDBDriver_LOG_HEAD "[MongoDBDriver] - "
@@ -142,7 +142,7 @@ int MongoDBDriver::vfsAddDomain(vfs::VFSDomain domain) {
 		//compose the insert
 		domain_url_registration.append(MONGO_DB_FIELD_DOMAIN_NAME, domain.name);
 		domain_url_registration.append(MONGO_DB_FIELD_DOMAIN_URL, domain.local_url);
-		domain_url_registration.append(MONGO_DB_FIELD_DOMAIN_HB, mongo::Date_t(chaos::TimingUtil::getTimeStamp()));
+		domain_url_registration.append(MONGO_DB_FIELD_DOMAIN_HB, mongo::Date_t(TimingUtil::getTimeStamp()));
 		
 		mongo::BSONObj i = domain_url_registration.obj();
 		DEBUG_CODE(MDBID_LDBG_ << "vfsAddDomain domain_url_registration insert ---------------------------------------------";)
@@ -175,7 +175,7 @@ int MongoDBDriver::vfsDomainHeartBeat(vfs::VFSDomain domain) {
 		//compose file search criteria
 		b_query.append(MONGO_DB_FIELD_DOMAIN_NAME, domain.name);
 		b_query.append(MONGO_DB_FIELD_DOMAIN_URL, domain.local_url);
-		b_update_filed.append(MONGO_DB_FIELD_DOMAIN_HB, mongo::Date_t(chaos::TimingUtil::getTimeStamp()));
+		b_update_filed.append(MONGO_DB_FIELD_DOMAIN_HB, mongo::Date_t(TimingUtil::getTimeStamp()));
 		b_update.append("$set", b_update_filed.obj());
 		
 		mongo::BSONObj q = b_query.obj();
@@ -249,7 +249,7 @@ int MongoDBDriver::vfsAddNewDataBlock(chaos_vfs::VFSFile *vfs_file,
 		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_VFS_PATH, data_block->vfs_path);
 		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN, (data_block->vfs_domain = vfs_file->getVFSFileInfo()->vfs_domain));
 		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_CURRENT_WORK_POSITION, (long long)0);
-		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_HB, mongo::Date_t(chaos::TimingUtil::getTimeStamp()));
+		bson_block.append(MONGO_DB_FIELD_DATA_BLOCK_HB, mongo::Date_t(TimingUtil::getTimeStamp()));
 		
 		mongo::BSONObj i = bson_block.obj();
 		DEBUG_CODE(MDBID_LDBG_ << "vfsAddNewDataBlock insert ---------------------------------------------";)
@@ -445,7 +445,7 @@ int MongoDBDriver::vfsSetHeartbeatOnDatablock(chaos_vfs::VFSFile *vfs_file,
 		bson_block_query << MONGO_DB_FIELD_DATA_BLOCK_VFS_DOMAIN << vfs_file->getVFSFileInfo()->vfs_domain;
 		
 		//compose udpate
-		bson_block_update << "$set"<< BSON(MONGO_DB_FIELD_DATA_BLOCK_HB << mongo::Date_t(((timestamp == 0)?chaos::TimingUtil::getTimeStamp():timestamp)));
+		bson_block_update << "$set"<< BSON(MONGO_DB_FIELD_DATA_BLOCK_HB << mongo::Date_t(((timestamp == 0)?TimingUtil::getTimeStamp():timestamp)));
 		
 		//for heart beat we use unsecure write
 		mongo::BSONObj q = bson_block_query.obj();

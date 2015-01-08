@@ -23,11 +23,15 @@
 
 using namespace chaos;
 using namespace chaos::event;
+using namespace chaos::common::utility;
 
 #define EVENT_CURRENT_VERSION 0
 
     //--------------------------------------------------------------
-EventDescriptor::EventDescriptor(EventType _instanceType, uint8_t _instancePriority):instanceType(_instanceType), instancePriority(_instancePriority) {
+EventDescriptor::EventDescriptor(EventType _instanceType,
+								 uint8_t _instancePriority):
+instanceType(_instanceType),
+instancePriority(_instancePriority) {
         //initialize data
     initData();
 }

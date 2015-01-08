@@ -26,6 +26,7 @@
 
 using namespace std;
 using namespace chaos;
+using namespace chaos::common::utility;
 using namespace chaos::ui;
 namespace chaos_batch = chaos::common::batch_command;
 namespace cc_data = chaos::common::data;
@@ -613,24 +614,24 @@ void DeviceController::allocateNewLiveBufferForAttributeAndType(string& attribut
 		switch (attributeTypeMap[attributeName]) {
 				
 			case DataType::TYPE_INT32:{
-				chaos::SingleBufferCircularBuffer<int32_t> *newBuffer = new chaos::SingleBufferCircularBuffer<int32_t>(30);
+				SingleBufferCircularBuffer<int32_t> *newBuffer = new SingleBufferCircularBuffer<int32_t>(30);
 				int32AttributeLiveBuffer.insert(make_pair(attributeName, newBuffer));
 			}
 				break;
 				
 			case DataType::TYPE_INT64:{
-				chaos::SingleBufferCircularBuffer<int64_t> *newBuffer = new chaos::SingleBufferCircularBuffer<int64_t>(30);
+				SingleBufferCircularBuffer<int64_t> *newBuffer = new SingleBufferCircularBuffer<int64_t>(30);
 				int64AttributeLiveBuffer.insert(make_pair(attributeName, newBuffer));
 			}
 				break;
 				
 			case DataType::TYPE_DOUBLE:{
-				chaos::SingleBufferCircularBuffer<double_t> *newBuffer = new chaos::SingleBufferCircularBuffer<double_t>(30);
+				SingleBufferCircularBuffer<double_t> *newBuffer = new SingleBufferCircularBuffer<double_t>(30);
 				doubleAttributeLiveBuffer.insert(make_pair(attributeName, newBuffer));
 			}
 				break;
 			case DataType::TYPE_BYTEARRAY:{
-				chaos::PointerBuffer *newBuffer = new chaos::PointerBuffer();
+				PointerBuffer *newBuffer = new PointerBuffer();
 				pointerAttributeLiveBuffer.insert(make_pair(attributeName, newBuffer));
 			}
 				break;
@@ -643,9 +644,9 @@ void DeviceController::allocateNewLiveBufferForAttributeAndType(string& attribut
 }
 
 //---------------------------------------------------------------------------------------------------
-chaos::DataBuffer *DeviceController::getBufferForAttribute(string& attributeName) {
+DataBuffer *DeviceController::getBufferForAttribute(string& attributeName) {
 	boost::recursive_mutex::scoped_lock lock(trackMutext);
-	chaos::DataBuffer * result = NULL;
+	DataBuffer * result = NULL;
 	//allocate attribute traccking
 	if(attributeTypeMap.count(attributeName) == 0 || attributeDirectionMap.count(attributeName) == 0 ) return result;
 	
@@ -666,9 +667,9 @@ chaos::DataBuffer *DeviceController::getBufferForAttribute(string& attributeName
 }
 
 //---------------------------------------------------------------------------------------------------
-chaos::PointerBuffer *DeviceController::getPtrBufferForAttribute(string& attributeName) {
+PointerBuffer *DeviceController::getPtrBufferForAttribute(string& attributeName) {
 	boost::recursive_mutex::scoped_lock lock(trackMutext);
-	chaos::PointerBuffer * result = NULL;
+	PointerBuffer * result = NULL;
 	//allocate attribute traccking
 	if(attributeTypeMap.count(attributeName) == 0 || attributeDirectionMap.count(attributeName) == 0 ) return result;
 	
@@ -683,7 +684,7 @@ chaos::PointerBuffer *DeviceController::getPtrBufferForAttribute(string& attribu
 }
 
 //---------------------------------------------------------------------------------------------------
-chaos::DataBuffer *DeviceController::getPtrBufferForTimestamp(const int initialDimension) {
+DataBuffer *DeviceController::getPtrBufferForTimestamp(const int initialDimension) {
 	return int64AttributeLiveBuffer.count(DataPackCommonKey::DPCK_TIMESTAMP)>0? int64AttributeLiveBuffer[DataPackCommonKey::DPCK_TIMESTAMP]:NULL;
 }
 
@@ -691,21 +692,21 @@ chaos::DataBuffer *DeviceController::getPtrBufferForTimestamp(const int initialD
 void DeviceController::deinitializeAttributeIndexMap() {
 	//boost::recursive_mutex::scoped_lock lock(trackMutext);
 	//dispose circula buffer
-	for (std::map<string,  chaos::SingleBufferCircularBuffer<int32_t> *>::iterator iter = int32AttributeLiveBuffer.begin();
+	for (std::map<string,  SingleBufferCircularBuffer<int32_t> *>::iterator iter = int32AttributeLiveBuffer.begin();
 		 iter != int32AttributeLiveBuffer.end();
 		 iter++) {
 		delete(iter->second);
 	}
 	int32AttributeLiveBuffer.clear();
 	
-	for (std::map<string,  chaos::SingleBufferCircularBuffer<int64_t> *>::iterator iter = int64AttributeLiveBuffer.begin();
+	for (std::map<string,  SingleBufferCircularBuffer<int64_t> *>::iterator iter = int64AttributeLiveBuffer.begin();
 		 iter != int64AttributeLiveBuffer.end();
 		 iter++) {
 		delete(iter->second);
 	}
 	int64AttributeLiveBuffer.clear();
 	
-	for (std::map<string,  chaos::SingleBufferCircularBuffer<double_t> *>::iterator iter = doubleAttributeLiveBuffer.begin();
+	for (std::map<string,  SingleBufferCircularBuffer<double_t> *>::iterator iter = doubleAttributeLiveBuffer.begin();
 		 iter != doubleAttributeLiveBuffer.end();
 		 iter++) {
 		delete(iter->second);
@@ -813,7 +814,7 @@ void DeviceController::setupTracking() {
 	initializeAttributeIndexMap();
 	
 	//initialize timestamp buffer
-	chaos::SingleBufferCircularBuffer<int64_t> *newBuffer = new chaos::SingleBufferCircularBuffer<int64_t>(10);
+	SingleBufferCircularBuffer<int64_t> *newBuffer = new SingleBufferCircularBuffer<int64_t>(10);
 	int64AttributeLiveBuffer.insert(make_pair(DataPackCommonKey::DPCK_TIMESTAMP, newBuffer));
 }
 

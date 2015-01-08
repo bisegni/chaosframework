@@ -22,6 +22,7 @@
 
 #include <boost/format.hpp>
 
+using namespace chaos::common::utility;
 using namespace chaos::data_service::query_engine;
 namespace chaos_direct_io = chaos::common::direct_io;
 namespace chaos_direct_io_ch = chaos::common::direct_io::channel;
@@ -87,7 +88,7 @@ QueryEngine::~QueryEngine() {
  ---------------------------------------------------------------------------------*/
 void QueryEngine::init(void *init_data)  throw(chaos::CException) {
 	if(!directio_client_instance) throw chaos::CException(-1, "No direct io setupped", __FUNCTION__);
-	utility::InizializableService::initImplementation(directio_client_instance, init_data, "directio_client_instance", __PRETTY_FUNCTION__);
+	InizializableService::initImplementation(directio_client_instance, init_data, "directio_client_instance", __PRETTY_FUNCTION__);
 	
 	if(!vfs_manager_ptr) throw chaos::CException(-2, "No vfs manager setupped", __FUNCTION__);
 	
@@ -134,7 +135,7 @@ void QueryEngine::stop() throw(chaos::CException) {
  
  ---------------------------------------------------------------------------------*/
 void QueryEngine::deinit() throw(CException) {
-	utility::InizializableService::deinitImplementation(directio_client_instance, "directio_client_instance", __PRETTY_FUNCTION__);
+	InizializableService::deinitImplementation(directio_client_instance, "directio_client_instance", __PRETTY_FUNCTION__);
 }
 
 /*---------------------------------------------------------------------------------

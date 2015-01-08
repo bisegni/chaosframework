@@ -31,7 +31,8 @@ namespace chaos {
         /*
          High level api for maning device datasert
          */
-        class HLDataApi  : public Singleton<HLDataApi> {
+		class HLDataApi:
+		public common::utility::Singleton<HLDataApi> {
             friend class ChaosUIToolkit;
             friend class Singleton<HLDataApi>;
             

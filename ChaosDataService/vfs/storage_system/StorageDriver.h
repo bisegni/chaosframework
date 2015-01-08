@@ -52,7 +52,9 @@ namespace chaos {
 				 This class represent the abstraction of the
 				 work to do on chaos VFS
 				 */
-				class StorageDriver : public chaos::NamedService, public chaos::utility::InizializableService {
+				class StorageDriver:
+				public common::utility::NamedService,
+				public common::utility::InizializableService {
 				protected:
 					
 					//! Driver sepcific configration

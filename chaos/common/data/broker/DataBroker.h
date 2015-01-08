@@ -69,7 +69,9 @@ namespace chaos {
 				 
 				 This is also the class where is managed the handshake for registration of the remote listeners.
 				 */
-				class DataBroker : public chaos::utility::StartableService, chaos::DeclareAction {
+				class DataBroker:
+				public utility::StartableService,
+				public chaos::DeclareAction {
 					
 				public:
 					//! Initialize the data broker

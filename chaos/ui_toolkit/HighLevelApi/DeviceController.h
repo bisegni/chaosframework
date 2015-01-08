@@ -95,10 +95,10 @@ namespace chaos {
             std::vector<string> trackingAttribute;
             
                 //!map for live data circular buffer
-            std::map<string,  chaos::SingleBufferCircularBuffer<int32_t> *> int32AttributeLiveBuffer;
-            std::map<string,  chaos::SingleBufferCircularBuffer<int64_t> *> int64AttributeLiveBuffer;
-            std::map<string,  chaos::SingleBufferCircularBuffer<double_t> *> doubleAttributeLiveBuffer;
-            std::map<string,  PointerBuffer*> pointerAttributeLiveBuffer;
+            std::map<string,  common::utility::SingleBufferCircularBuffer<int32_t> *> int32AttributeLiveBuffer;
+            std::map<string,  common::utility::SingleBufferCircularBuffer<int64_t> *> int64AttributeLiveBuffer;
+            std::map<string,  common::utility::SingleBufferCircularBuffer<double_t> *> doubleAttributeLiveBuffer;
+            std::map<string,  common::utility::PointerBuffer*> pointerAttributeLiveBuffer;
             
                 //! Defautl Constructor
             /*!
@@ -381,9 +381,9 @@ namespace chaos {
              */
             void fetchCurrentDeviceValue();
             
-            chaos::DataBuffer *getBufferForAttribute(string& attributeName);
-            chaos::PointerBuffer *getPtrBufferForAttribute(string& attributeName);
-            chaos::DataBuffer *getPtrBufferForTimestamp(const int initialDimension = 10);
+            common::utility::DataBuffer *getBufferForAttribute(string& attributeName);
+            common::utility::PointerBuffer *getPtrBufferForAttribute(string& attributeName);
+            common::utility::DataBuffer *getPtrBufferForTimestamp(const int initialDimension = 10);
             
             CDataWrapper *getCurrentData();
             /*!

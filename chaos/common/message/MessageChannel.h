@@ -66,7 +66,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
 			
 			/*! \} */
 			
-			typedef void (*MessageHandler)(atomic_int_type, common::data::CDataWrapper*);
+			typedef void (*MessageHandler)(chaos::common::utility::atomic_int_type, common::data::CDataWrapper*);
 			
 			
 			//! MessageChannel
@@ -82,7 +82,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
 				friend class chaos::common::network::NetworkBroker;
 				
 				//! atomic int for request id
-				atomic_int_type channelRequestIDCounter;
+				chaos::common::utility::atomic_int_type channelRequestIDCounter;
 				
 				//! remote host where send the message and request
 				
@@ -92,7 +92,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
 				string channelID;
 				
 				//!multi key semaphore for manage the return of the action and result association to the reqeust id
-				MultiKeyObjectWaitSemaphore<atomic_int_type,common::data::CDataWrapper*> sem;
+				MultiKeyObjectWaitSemaphore<chaos::common::utility::atomic_int_type,common::data::CDataWrapper*> sem;
 				
 				//! Mutex for managing the maps manipulation
 				boost::shared_mutex mutext_answer_managment;
@@ -101,7 +101,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
 				MessageHandler response_handler;
 				
 				//!map to sync request and result
-				map<atomic_int_type, common::data::CDataWrapper* > response_id_sync_map;
+				map<chaos::common::utility::atomic_int_type, common::data::CDataWrapper* > response_id_sync_map;
 				
 				/*!
 				 Initialization phase of the channel
@@ -124,7 +124,11 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
 				 \param requestPack the request pack to send
 				 \return the unique request id
 				 */
-				atomic_int_type prepareRequestPackAndSend(bool, const char * const, const char * const, common::data::CDataWrapper*, bool);
+				chaos::common::utility::atomic_int_type prepareRequestPackAndSend(bool async,
+																				  const char * const nodeID,
+																				  const char * const actionName,
+																				  CDataWrapper *requestPack,
+																				  bool onThisThread);
 				
 			protected:
 				//! Message broker associated with the channel instance
@@ -194,7 +198,7 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
 				/*!
 				 Poll for see if the response is arrived
 				 */
-				common::data::CDataWrapper* pollAnswer(atomic_int_type request_id, uint32_t millisec_to_wait = 0);
+				common::data::CDataWrapper* pollAnswer(chaos::common::utility::atomic_int_type request_id, uint32_t millisec_to_wait = 0);
 				
 				/*!
 				 \brief send a syncronous request and can wait for a determinated number of milliseconds the answer. If it has not
@@ -205,7 +209,12 @@ if(x->hasKey(RpcActionDefinitionKey::CS_CMDM_ACTION_MESSAGE)) x->getCSDataValue(
 				 \param millisecToWait waith the response for onli these number of millisec then return
 				 \return the answer of the request, a null value mean that the wait time is expired
 				 */
-				common::data::CDataWrapper* sendRequest(const char * const, const char * const, common::data::CDataWrapper* const, uint32_t millisecToWait=0, bool async = false, bool onThisThread = false);
+				common::data::CDataWrapper* sendRequest(const char * const nodeID,
+														const char * const actionName,
+														CDataWrapper * const requestPack,
+														uint32_t millisecToWait=0,
+														bool async = false,
+														bool onThisThread = false);
 			};
 		}
 	}

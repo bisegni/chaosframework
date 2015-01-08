@@ -20,6 +20,7 @@
 
 #include <chaos/common/data/cache/KeyGroupCache.h>
 
+using namespace chaos::common::utility;
 using namespace chaos::common::data::cache;
 
 KeyGroupCache::KeyGroupCache() {
@@ -123,7 +124,7 @@ void KeyGroupCache::garbageCache() {
 int KeyGroupCache::addKeyInfo(const char * key, chaos::DataType::DataType type, uint32_t channelMaxLength) {
     int err = 0;
         //check if we can receive other new channel
-    if(getServiceState() != ::chaos::utility::service_state_machine::InizializableServiceType::IS_DEINTIATED)
+    if(getServiceState() != service_state_machine::InizializableServiceType::IS_DEINTIATED)
         throw CException(1, "Operation not permited, the cache is not initialized","KeyGroupCache::addChannel");
     
         //check if is already present into the hash

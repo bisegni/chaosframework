@@ -43,8 +43,8 @@ namespace chaos {
 			 Managment class fot the async central
 			 */
 			class AsyncCentralManager :
-			public Singleton<AsyncCentralManager>,
-			public chaos::utility::InizializableService {
+			public utility::Singleton<AsyncCentralManager>,
+			public utility::InizializableService {
 				friend class Singleton<AsyncCentralManager>;
 				uv_thread_t	thread_loop_id;
 				uv_loop_t *uv_l;

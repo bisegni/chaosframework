@@ -30,7 +30,7 @@ AsioEventForwarder::AsioEventForwarder(const boost::asio::ip::address& multicast
                                        unsigned short mPort,
                                        boost::asio::io_service& io_service
                                        ) :_socket(io_service), _endpoint(multicast_address, mPort) {
-    hanlderID = UUIDUtil::generateUUIDLite();
+    hanlderID = common::utility::UUIDUtil::generateUUIDLite();
     sent = true;
 }
 

@@ -48,11 +48,11 @@ namespace chaos {
 		}
 		
 		namespace network {
-			typedef ::chaos::utility::TemplatedKeyObjectContainer<std::string, chaos_direct_io::DirectIOPerformanceSession*> PMKeyObjectContainer;
+			typedef utility::TemplatedKeyObjectContainer<std::string, chaos_direct_io::DirectIOPerformanceSession*> PMKeyObjectContainer;
 			
 			//! root point for all instance of managment node
 			class PerformanceManagment :
-			public chaos::utility::StartableService,
+			public chaos::common::utility::StartableService,
 			public chaos::DeclareAction,
 			public direct_io::DirectIOClientConnectionEventHandler,
 			protected PMKeyObjectContainer {
