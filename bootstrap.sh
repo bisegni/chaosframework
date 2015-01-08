@@ -292,10 +292,12 @@ if [ ! -f "$PREFIX/include/libcouchbase/couchbase.h" ]; then
 	tar zxvf $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION.tar.gz -C $BASE_EXTERNAL
     fi
     cd $BASE_EXTERNAL/libcouchbase-$COUCHBASE_VERSION
+#    ./configure --enable-shared --disable-examples --disable-tests --disable-couchbasemock --enable-ssl=no --disable-plugins  --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+
    if [ -n "$CHAOS_STATIC" ]; then
-	./configure --enable-static --disable-couchbasemock --disable-plugins  --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+   	./configure --enable-static --disable-shared --disable-examples --disable-tests --disable-couchbasemock --enable-ssl=no --disable-plugins  --prefix=$PREFIX $CROSS_HOST_CONFIGURE
     else
-	./configure --enable-shared --disable-couchbasemock --disable-plugins  --prefix=$PREFIX $CROSS_HOST_CONFIGURE
+   	./configure --enable-shared --disable-examples --disable-tests --disable-couchbasemock --enable-ssl=no --disable-plugins  --prefix=$PREFIX $CROSS_HOST_CONFIGURE
     fi
 
     do_make "COUCHBASE"

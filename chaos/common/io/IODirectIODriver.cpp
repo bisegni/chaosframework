@@ -213,7 +213,7 @@ int IODirectIODriver::loadDatasetTypeFromSnapshotTag(const std::string& restore_
 	int err = 0;
 	boost::shared_lock<boost::shared_mutex>(mutext_feeder);
 	IODirectIODriverClientChannels	*next_client = static_cast<IODirectIODriverClientChannels*>(connectionFeeder.getService());
-	if(!next_client) return NULL;
+	if(!next_client) return 0;
 	chaos_dio_channel::DirectIOSystemAPIGetDatasetSnapshotResultPtr snapshot_result = NULL;
 	if((err = (int)next_client->system_client_channel->getDatasetSnapshotForProducerKey(restore_point_tag_name,
 																						key,

@@ -9,13 +9,10 @@ ADD_EXECUTABLE(BenchTestReactor ${reactor_device_exe_src})
 ADD_EXECUTABLE(BenchTestController ${reactor_controller_exe_src})
 IF(BUILD_FORCE_STATIC)
   SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive")
-  TARGET_LINK_LIBRARIES(BenchTestReactor chaos_cutoolkit ${FrameworkLib})
-  TARGET_LINK_LIBRARIES(BenchTestController chaos_uitoolkit chaos_cutoolkit ${FrameworkLib})
-ELSE()
-    TARGET_LINK_LIBRARIES(BenchTestReactor chaos_cutoolkit chaos_common ${FrameworkLib})
-  TARGET_LINK_LIBRARIES(BenchTestController chaos_uitoolkit chaos_cutoolkit chaos_common ${FrameworkLib})
-
 ENDIF()
+
+TARGET_LINK_LIBRARIES(BenchTestReactor chaos_cutoolkit chaos_common ${FrameworkLib})
+TARGET_LINK_LIBRARIES(BenchTestController chaos_uitoolkit chaos_cutoolkit chaos_common ${FrameworkLib})
 
 INSTALL_TARGETS(/bin BenchTestReactor)
 INSTALL_TARGETS(/bin BenchTestController)

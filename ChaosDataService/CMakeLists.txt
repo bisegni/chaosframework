@@ -28,9 +28,7 @@ ADD_EXECUTABLE(ChaosDataService ${src})
 
 IF(BUILD_FORCE_STATIC)
   SET(CMAKE_EXE_LINKER_FLAGS "-static -Wl,--whole-archive -lchaos_common -Wl,--no-whole-archive")
-  TARGET_LINK_LIBRARIES(ChaosDataService mongoclient couchbase  ${FrameworkLib})
-ELSE()
-  TARGET_LINK_LIBRARIES(ChaosDataService mongoclient couchbase chaos_common ${FrameworkLib})
 ENDIF()
 
+TARGET_LINK_LIBRARIES(ChaosDataService mongoclient couchbase chaos_common ${FrameworkLib})
 INSTALL_TARGETS(/bin ChaosDataService)
