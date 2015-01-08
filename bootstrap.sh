@@ -374,29 +374,27 @@ fi
 ## json cpp
 if [ ! -f $PREFIX/json/json.h ]; then
     if [ ! -d $BASE_EXTERNAL/jsoncpp ]; then
-	if !(git clone https://github.com/open-source-parsers/jsoncpp.git $BASE_EXTERNAL/jsoncpp) ; then
-	    echo "## cannot checkout jsoncpp"
-	    exit 1
-	fi
+		if !(git clone https://github.com/open-source-parsers/jsoncpp.git $BASE_EXTERNAL/jsoncpp) ; then
+			echo "## cannot checkout jsoncpp"
+			exit 1
+		fi
+    fi
 	cd $BASE_EXTERNAL/jsoncpp
 	cmake $CHAOS_CMAKE_FLAGS -DJSONCPP_WITH_TESTS=OFF -DJSONCPP_WITH_POST_BUILD_UNITTEST=OFF.
 	do_make "jsoncpp"
-	 
-    fi
 fi
 
 ## mongoose install
 if [ ! -f $PREFIX/mongoose-cpp/mongoose.h ]; then
     if [ ! -f $BASE_EXTERNAL/mongoose-cpp/mongoose.h ]; then
-	if !(git clone https://github.com/bisegni/mongoose-cpp.git $BASE_EXTERNAL/mongoose-cpp) ; then
-	    echo "## cannot checkout moongoose-cpp"
-	    exit 1
-	fi
+		if !(git clone https://github.com/bisegni/mongoose-cpp.git $BASE_EXTERNAL/mongoose-cpp) ; then
+			echo "## cannot checkout moongoose-cpp"
+			exit 1
+		fi
+    fi
 	cd $BASE_EXTERNAL/mongoose-cpp
 	cmake $CHAOS_CMAKE_FLAGS -DHAS_JSONCPP=ON.
 	do_make "mongoose-cpp"
-	 
-    fi
 fi
 
 ##
