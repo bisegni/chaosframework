@@ -27,7 +27,7 @@
 #include <chaos/common/global.h>
 #include <chaos/common/ChaosCommon.h>
 #include <chaos/common/thread/WaitSemaphore.h>
-#include <chaos/common/utility/SetupStateManager.h>
+
 #include <chaos/cu_toolkit/ControlManager/AbstractControlUnit.h>
 #include <chaos/cu_toolkit/CommandManager/CommandManager.h>
 #include <chaos/cu_toolkit/driver_manager/DriverManager.h>

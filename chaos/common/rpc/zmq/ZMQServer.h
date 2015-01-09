@@ -29,7 +29,7 @@
 
 #include <chaos/common/rpc/RpcServer.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
-#include <chaos/common/utility/SetupStateManager.h>
+
 
 namespace chaos {
     using namespace std;

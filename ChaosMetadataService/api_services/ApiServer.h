@@ -24,7 +24,7 @@
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/utility/Singleton.h>
 #include <chaos/common/exception/CException.h>
-#include <chaos/common/utility/SetupStateManager.h>
+
 #include <chaos/common/utility/StartableService.h>
 
 namespace chaos {

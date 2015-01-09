@@ -29,7 +29,7 @@
 #include <chaos/common/network/NetworkBroker.h>
 #include <chaos/common/message/MDSMessageChannel.h>
 #include <chaos/common/message/DeviceMessageChannel.h>
-#include <chaos/common/utility/SetupStateManager.h>
+
 #include <chaos/common/event/channel/AlertEventChannel.h>
 #include <chaos/common/event/channel/InstrumentEventChannel.h>
 #include <chaos/common/io/IODirectIODriver.h>
