@@ -90,21 +90,21 @@ fi
 do_make() {
     echo "* make $1 with "$NPROC" processors"
     if [ -n "$CHAOS_DEVELOPMENT" ]; then
-	if !(make -j$NPROC VERBOSE=1); then
+	if !(make -j$NPROC VERBOSE=1 install); then
 	    echo "## error compiling $1 in VERBOSE"
 	    exit 1
 	fi
     else
-	if !(make -j$NPROC); then
+	if !(make -j$NPROC install); then
 	    echo "## error compiling $1"
 	    exit 1
 	fi
     fi
 
-    if !(make install); then
-	echo "## error installing $1"
-	exit 1
-    fi
+    # if !(make install); then
+    # 	echo "## error installing $1"
+    # 	exit 1
+    # fi
 }
 
 
