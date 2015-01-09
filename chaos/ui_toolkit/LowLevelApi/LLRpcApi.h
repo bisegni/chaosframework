@@ -1,8 +1,8 @@
-/*	
+/*
  *	LLRpcApi.h
  *	!CHOAS
  *	Created by Bisegni Claudio.
- *	
+ *
  *    	Copyright 2012 INFN, National Institute of Nuclear Physics
  *
  *    	Licensed under the Apache License, Version 2.0 (the "License");
@@ -45,10 +45,10 @@ namespace chaos_network = chaos::common::network;
 namespace chaos_direct_io = chaos::common::direct_io;
 
 namespace chaos {
-    namespace ui{
+	namespace ui{
 		
 		class LLRpcApi;
-
+		
 		struct DIOConn {
 			friend class LLRpcApi;
 		private:
@@ -70,16 +70,15 @@ namespace chaos {
 			~SystemApiChannel(){};
 		};
 		
-        /*
-         LLRpcApi Class api for rpc system
-         */
-        class LLRpcApi:
-		public common::utility::Singleton<LLRpcApi>,
-		private SetupStateManager {
-            friend class ChaosUIToolkit;
-            friend class Singleton<LLRpcApi>;
-            //!chaos network router
-            chaos_network::NetworkBroker *network_broker;
+		/*
+		 LLRpcApi Class api for rpc system
+		 */
+		class LLRpcApi:
+		public common::utility::Singleton<LLRpcApi> {
+			friend class ChaosUIToolkit;
+			friend class Singleton<LLRpcApi>;
+			//!chaos network router
+			chaos_network::NetworkBroker *network_broker;
 			
 			//! root direct io client
 			chaos_direct_io::DirectIOClient *direct_io_client;
@@ -88,56 +87,56 @@ namespace chaos {
 			boost::mutex				mutex_map_dio_addr_conn;
 			std::map<string, DIOConn*>	map_dio_addr_conn;
 			
-            /*
-             LL Rpc Api static initialization it should be called once for application
-             */
-            void init() throw (CException);
-            /*
-             Deinitialization of LL rpc api
-             */
-            void deinit() throw (CException);
-        
-            /*
-             */
-            LLRpcApi();
-            
-            /*
-             */
-            ~LLRpcApi();
-            
-        public:
+			/*
+			 LL Rpc Api static initialization it should be called once for application
+			 */
+			void init() throw (CException);
+			/*
+			 Deinitialization of LL rpc api
+			 */
+			void deinit() throw (CException);
+			
+			/*
+			 */
+			LLRpcApi();
+			
+			/*
+			 */
+			~LLRpcApi();
+			
+		public:
 			chaos_io::IODataDriver *getDataProxyChannelNewInstance() throw(CException);
 			
-            /*!
-             Return a new channel for talk with metadata server
-             */
-            MDSMessageChannel *getNewMetadataServerChannel();
-            
-            /*!
-             Return a new device channel
-             */
-            DeviceMessageChannel *getNewDeviceMessageChannel(CDeviceNetworkAddress *deviceNetworkAddress);
-            
+			/*!
+			 Return a new channel for talk with metadata server
+			 */
+			MDSMessageChannel *getNewMetadataServerChannel();
+			
+			/*!
+			 Return a new device channel
+			 */
+			DeviceMessageChannel *getNewDeviceMessageChannel(CDeviceNetworkAddress *deviceNetworkAddress);
+			
 			chaos::common::message::PerformanceNodeChannel *getNewPerformanceChannel(CNetworkAddress *note_network_address);
 			
-            /*!
-             Delete a previously instantiatedchannel
-             */
-            void deleteMessageChannel(MessageChannel*);
-            
 			/*!
-             Delete a previously instantiatedchannel
-             */
-            void deleteMessageChannel(NodeMessageChannel*);
+			 Delete a previously instantiatedchannel
+			 */
+			void deleteMessageChannel(MessageChannel*);
 			
-            event::channel::AlertEventChannel *getNewAlertEventChannel() throw (CException);
-            event::channel::InstrumentEventChannel *getNewInstrumentEventChannel() throw (CException);
-            void disposeEventChannel(event::channel::EventChannel *) throw (CException);
+			/*!
+			 Delete a previously instantiatedchannel
+			 */
+			void deleteMessageChannel(NodeMessageChannel*);
+			
+			event::channel::AlertEventChannel *getNewAlertEventChannel() throw (CException);
+			event::channel::InstrumentEventChannel *getNewInstrumentEventChannel() throw (CException);
+			void disposeEventChannel(event::channel::EventChannel *) throw (CException);
 			
 			SystemApiChannel *getSystemApiClientChannel(const std::string& direct_io_address);
 			void releaseSystemApyChannel(SystemApiChannel *system_api_channel);
 			
-        };
-    }
+		};
+	}
 }
 #endif

@@ -38,6 +38,7 @@
 
 using namespace std;
 using namespace chaos;
+using namespace chaos::common::utility;
 using namespace chaos::ui;
 using namespace bson;
 using namespace boost;
@@ -200,19 +201,19 @@ int main(int argc, char* argv[])
 		
 		//get the timestamp for query boundary
 		if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_START_TIME)){
-			if(!chaos::TimingUtil::dateWellFormat(start_time)) {
+			if(!TimingUtil::dateWellFormat(start_time)) {
 				throw CException(-2, "Invalid star date format", "check date");
 			}
-			start_ts = chaos::TimingUtil::getTimestampFromString(start_time);
+			start_ts = TimingUtil::getTimestampFromString(start_time);
 			std::cout << "Set start data to"<< start_time << std::endl;
 		}
 		
 		if(ChaosUIToolkit::getInstance()->getGlobalConfigurationInstance()->hasOption(OPT_END_TIME)){
-			if(!chaos::TimingUtil::dateWellFormat(end_time)) {
+			if(!TimingUtil::dateWellFormat(end_time)) {
 				throw CException(-3, "Invalid end date format", "check date");
 			}
 			
-			end_ts = chaos::TimingUtil::getTimestampFromString(end_time);
+			end_ts = TimingUtil::getTimestampFromString(end_time);
 			std::cout << "Set end data to"<< end_time << std::endl;
 		}
 		
@@ -253,7 +254,7 @@ int main(int argc, char* argv[])
 		if(!controller) throw CException(4, "Error allcoating decive controller", "device controller creation");
 		
 		
-		chaos::common::io::QueryFuture *query_future = NULL;
+		common::io::QueryFuture *query_future = NULL;
 		controller->executeTimeIntervallQuery(start_ts, end_ts, &query_future);
 		
 		std::vector<std::string> output_element_name;

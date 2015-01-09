@@ -33,10 +33,6 @@ using namespace chaos::common::direct_io;
 
 uint32_t DIOConn::garbage_counter = 0;
 
-
-#define INIT_STEP   0
-#define DEINIT_STEP 1
-
 /*
  */
 LLRpcApi::LLRpcApi() {
@@ -55,9 +51,6 @@ LLRpcApi::~LLRpcApi() {
  LL Rpc Api static initialization it should be called once for application
  */
 void LLRpcApi::init()  throw (CException) {
-    LLRA_LAPP_ << "Init";
-    SetupStateManager::levelUpFrom(INIT_STEP, "LLRpcApi already initialized");
-    
     LLRA_LAPP_ << "Init NetworkBroker";
     network_broker->init();
     LLRA_LAPP_ << "NetworkBroker Initialized";
@@ -76,8 +69,6 @@ void LLRpcApi::init()  throw (CException) {
  */
 void LLRpcApi::deinit()  throw (CException) {
     LLRA_LAPP_ << "Deinit LLRpcApi";
-    SetupStateManager::levelDownFrom(DEINIT_STEP, "LLRpcApi already deinitialized");
-	
 	if(direct_io_client) {
 		InizializableService::deinitImplementation(direct_io_client, "DirectIOCLient", __PRETTY_FUNCTION__);
 		delete direct_io_client;
