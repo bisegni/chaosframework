@@ -21,11 +21,10 @@
 #ifndef Singleton_H
 #define Singleton_H
 
-#include <boost/utility.hpp>
 #include <boost/thread/once.hpp>
-#include <boost/shared_ptr.hpp>
-#include <chaos/common/general/Configurable.h>
-using namespace boost;
+#include <boost/noncopyable.hpp>
+#include <chaos/common/global.h>
+
 
 namespace chaos {
 	namespace common{
@@ -45,7 +44,7 @@ friend class Singleton<ClassName>;
 			 * Utility class for singleton find here: http://www.boostcookbook.com/Recipe:/1235044
 			 */
 			template<class T>
-			class Singleton : private noncopyable {
+			class Singleton : private boost::noncopyable {
 			public:
 				static T* getInstance() {
 					//static T singletonInstance;

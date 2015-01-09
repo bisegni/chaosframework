@@ -24,6 +24,7 @@
 #include <string>
 #include <stdint.h>
 #include <chaos/common/utility/ObjectFactoryRegister.h>
+#include <chaos/common/data/CDataWrapper.h>
 #include <chaos/common/direct_io/channel/DirectIODeviceChannelGlobal.h>
 #include <chaos/common/direct_io/channel/DirectIOVirtualClientChannel.h>
 
